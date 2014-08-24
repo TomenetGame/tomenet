@@ -960,7 +960,7 @@ void cmd_drop(void)
 			amt = inventory[item].number;
 		else {
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' for all)? ", inventory[item].number);
+			amt = c_get_quantity("How many ('a' or spacebar for all)? ", inventory[item].number);
 		}
 	}
 	else amt = 1;
@@ -975,7 +975,7 @@ void cmd_drop_gold(void)
 
 	/* Get how much */
 	inkey_letter_all = TRUE;
-	amt = c_get_quantity("How much gold ('a' for all)? ", -1);
+	amt = c_get_quantity("How much gold ('a' or spacebar for all)? ", -1);
 
 	/* Send it */
 	if (amt)
@@ -1047,7 +1047,7 @@ void cmd_take_off(void)
 	if (inventory[item].number > 1 && verified_item
 	    && is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		inkey_letter_all = TRUE;
-		amt = c_get_quantity("How many ('a' for all)? ", inventory[item].number);
+		amt = c_get_quantity("How many ('a' or spacebar for all)? ", inventory[item].number);
 		Send_take_off_amt(item, amt);
 	} else {
 		Send_take_off(item);
@@ -1084,7 +1084,7 @@ void cmd_destroy(void)
 		if (is_cheap_misc(inventory[item].tval) && c_cfg.whole_ammo_stack && !verified_item) amt = inventory[item].number;
 		else {
 			inkey_letter_all = TRUE;
-			amt = c_get_quantity("How many ('a' for all)? ", inventory[item].number);
+			amt = c_get_quantity("How many ('a' or spacebar for all)? ", inventory[item].number);
 		}
 	} else amt = 1;
 

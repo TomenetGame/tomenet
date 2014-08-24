@@ -3052,7 +3052,7 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	if (!prompt) {
 		/* Build a prompt */
 		inkey_letter_all = TRUE;
-		sprintf(tmp, "Quantity (1-%d, 'a' for all): ", max);
+		sprintf(tmp, "Quantity (1-%d, 'a' or spacebar for all): ", max);
 
 		/* Use that prompt */
 		prompt = tmp;
