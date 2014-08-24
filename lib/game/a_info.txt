@@ -2174,7 +2174,7 @@ D:and makes audible whispers from the deceased.
 
 N:161:of Ahromarwar
 I:46:3:3
-W:20:10:40:20000
+W:20:10:30:20000
 P:0:0d0:25:15:30
 F:STEALTH | AUTOMATIC_99 | XTRA_MIGHT | HIDE_TYPE
 D:A trap that can almost never be detected. Its missiles may be mere pebbles, 
@@ -2186,7 +2186,7 @@ D:hide or armour.
 
 N:162:'Hanisbroner's Surprise'
 I:46:6:3
-W:20:20:40:20000
+W:20:20:20:20000
 P:0:0d0:0:0:25
 F:STEALTH | XTRA_SHOTS | TELEPORT_TO | HIDE_TYPE | AUTOMATIC_99
 D:A magical trap, armed with a wand. Unaccountably, its victims keep 
@@ -2197,7 +2197,7 @@ D:on coming back for more...
 
 N:163:'Merlion Karc's Demonbane'
 I:46:2:2
-W:20:20:200:20000
+W:20:20:40:20000
 P:0:0d0:17:27:37
 F:STEALTH | XTRA_SHOTS | XTRA_MIGHT | HIDE_TYPE | ONLY_DEMON
 D:A snare set not for animals, or people, but for demons alone, and 

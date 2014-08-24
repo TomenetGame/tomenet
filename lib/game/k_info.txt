@@ -4376,7 +4376,7 @@ D:This trap kit uses scrolls or runes.
 N:563:Device
 G:`:s
 I:46:6:0
-W:20:0:10:50
+W:20:0:15:50
 A:10/2:20/2:40/2
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | IGNORE_ELEC | IGNORE_WATER
 D:This trap kit uses magic devices.
