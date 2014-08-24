@@ -6806,9 +6806,10 @@ Also, you'll be more prone to disarming attacks.
 Similar is possible for shields. If you try to use a shield which is too heavy
 for you, you'll get another warning message:
 "You have trouble wielding such a heavy shield".
-That means you will hardly be able to deflect anything, and also you'll get
-less Armour Class increase from it than it usually provides. Even if your
-shield has magical reflection ability, you won't be able to utilize it.
+That means you will hardly be able to deflect anything with this shield and
+won't get get any 'reflection' ability from it, if it provides this.
+All other abilities you gain from it are not affected though (eg resistances
+or stat boni), you will benefit from these just fine.
 
 Your character might have a chance to parry attacks with his weapon and block
 attacks with his shield, provided he uses one.
