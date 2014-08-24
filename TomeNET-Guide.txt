@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9628,6 +9628,8 @@ be 1 in 800 in that case.
 Some example values, assuming 0.000 'Digging' skill
 and unenchanted (ie (+0,+0)) digging tools with (+1) to digging:
 ----------------------------------------------------------------
+
+Without a digging tool..
 -You always have a chance to remove rubble and organic material, even without
  a digging tool. Might take quite a while if your strength is low though.
 -You cannot tunnel through granite wall without a digging tool if your STRength
@@ -9638,15 +9640,17 @@ and unenchanted (ie (+0,+0)) digging tools with (+1) to digging:
  below 18/60.
 -You cannot tunnel through sand walls without a digging tool if your STRength
  is below 18/20.
+
+With a digging tool..
+-You can tunnel through all materials other than granite walls with just a
+ basic shovel even if your STRength is only 3.
+ (For quartz, you have a 3% chance to succeed at 18/50 STR with the shovel
+  and at 18/10 STR with a pick. If you use an enchanted shovel (+9,+9) (+1)
+  however, you already have a 3% chance to succeed at only 5 STR.)
 -You cannot tunnel through granite with a shovel if your STRength is
  below 18/30.
 -You cannot tunnel through granite with a pick if your STRength is
  below 12.
--You can tunnel through all other materials with just a basic shovel even if
- your STRength is only 3.
- (For quartz, you have a 3% chance to succeed at 18/50 STR with the shovel
-  and at 18/10 STR with a pick. If you use an enchanted shovel (+9,+9) (+1)
-  however, you already have a 3% chance to succeed at only 5 STR.)
 
 You can tunnel through all tunneable materials, no matter your strength, with..
 -a (+1) shovel that has +hit and +dam enchanted to a total of at least +15.
