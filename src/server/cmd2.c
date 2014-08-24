@@ -463,6 +463,17 @@ void do_cmd_go_up(int Ind) {
 
 	/* Create a way back */
 	create_down_stair = TRUE; /* appearently unused */
+
+	/* C. Blue -- Megahack to fix the player having enough energy left to perform another action after taking upstairs,
+	   but insufficient energy to perform another action after taking downstairs, due to different new floor speeds!
+	   Especially for going upwards this is required to fix the "you cannot see" bug, when the player has enoug
+	   energy to cast a spell BEFORE process_player_change_wpos() gets called, while when going downstairs,
+	   in receive_activate_skill() the spellcast command will rebound once due to insufficient energy, resulting in
+	   the spell to actually work (even though this could be considered exactly the wrong way around :D)..
+	   So this hack in both cmd_go_up and cmd_go_down fixes two things:
+	   1) them being treated inequally, since after up the player can still act while after down he can't
+	   2) the "you cannot see" bug that results from '1)' when trying to cast right after going up. */
+	if (p_ptr->energy >= level_speed(wpos)) p_ptr->energy = level_speed(wpos) - 1;
 }
 
 /*
@@ -1069,6 +1080,17 @@ void do_cmd_go_down(int Ind)
 
 	/* Create a way back */
 	create_up_stair = TRUE; /* appearently unused */
+
+	/* C. Blue -- Megahack to fix the player having enough energy left to perform another action after taking upstairs,
+	   but insufficient energy to perform another action after taking downstairs, due to different new floor speeds!
+	   Especially for going upwards this is required to fix the "you cannot see" bug, when the player has enoug
+	   energy to cast a spell BEFORE process_player_change_wpos() gets called, while when going downstairs,
+	   in receive_activate_skill() the spellcast command will rebound once due to insufficient energy, resulting in
+	   the spell to actually work (even though this could be considered exactly the wrong way around :D)..
+	   So this hack in both cmd_go_up and cmd_go_down fixes two things:
+	   1) them being treated inequally, since after up the player can still act while after down he can't
+	   2) the "you cannot see" bug that results from '1)' when trying to cast right after going up. */
+	if (p_ptr->energy >= level_speed(wpos)) p_ptr->energy = level_speed(wpos) - 1;
 }
 
 
