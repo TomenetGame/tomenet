@@ -3372,21 +3372,25 @@ void calc_boni(int Ind) {
 		break;
 	case TRAIT_BRONZE: /* Draconic Bronze */
 		if (p_ptr->lev >= 5) { p_ptr->resist_conf = TRUE; csheet_boni[14].cb[2] |= CB3_RCONF; }
+		if (p_ptr->lev >= 10) { p_ptr->resist_elec = TRUE; csheet_boni[14].cb[0] |= CB1_RELEC; }
 		if (p_ptr->lev >= 10) { p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA; }
 		if (p_ptr->lev >= 20) { p_ptr->reflect = TRUE; csheet_boni[14].cb[6] |= CB7_RREFL; }
 		break;
 	case TRAIT_SILVER: /* Draconic Silver */
 		if (p_ptr->lev >= 5) { p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD; }
+		if (p_ptr->lev >= 10) { p_ptr->resist_acid = TRUE; csheet_boni[14].cb[1] |= CB2_RACID; }
 		if (p_ptr->lev >= 15) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
 		if (p_ptr->lev >= 20) { p_ptr->reflect = TRUE; csheet_boni[14].cb[6] |= CB7_RREFL; }
 		break;
 	case TRAIT_GOLD: /* Draconic Gold */
-		if (p_ptr->lev >= 5) { p_ptr->resist_acid = TRUE; csheet_boni[14].cb[1] |= CB2_RACID; }
+		if (p_ptr->lev >= 5) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
+		if (p_ptr->lev >= 10) { p_ptr->resist_acid = TRUE; csheet_boni[14].cb[1] |= CB2_RACID; }
 		if (p_ptr->lev >= 15) { p_ptr->resist_sound = TRUE; csheet_boni[14].cb[2] |= CB3_RSOUN; }
 		if (p_ptr->lev >= 20) { p_ptr->reflect = TRUE; csheet_boni[14].cb[6] |= CB7_RREFL; }
 		break;
 	case TRAIT_LAW: /* Draconic Law */
 		if (p_ptr->lev >= 5) { p_ptr->resist_shard = TRUE; csheet_boni[14].cb[2] |= CB3_RSHRD; }
+		if (p_ptr->lev >= 10) { p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA; }
 		if (p_ptr->lev >= 15) { p_ptr->resist_sound = TRUE; csheet_boni[14].cb[2] |= CB3_RSOUN; }
 		break;
 	case TRAIT_CHAOS: /* Draconic Chaos */

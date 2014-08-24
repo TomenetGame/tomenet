@@ -70,7 +70,7 @@ __traits_diz = {
 
 "Bronze lineage",
     {"The \255ubronze\255U lineage provides intrinsic resistance",
-    "to confusion (5) and paralysis (10)",
+    "to confusion (5), paralysis and electricity (10)",
     "and its metallic scales have a chance to",
     "reflect bolts and arrows (20).",
     "This lineage provides confusion breath.",
@@ -78,7 +78,7 @@ __traits_diz = {
 
 "Silver lineage",
     {"The \255usilver\255U lineage provides intrinsic resistance",
-    "to cold (5) and poison (15)",
+    "to cold (5), acid (10) and poison (15)",
     "and its metallic scales have a chance to",
     "reflect bolts and arrows (20).",
     "This lineage provides inertia breath.",
@@ -86,7 +86,7 @@ __traits_diz = {
 
 "Golden lineage",
     {"The \255ugolden\255U lineage provides intrinsic resistance",
-    "to acid (5) and sound (15)",
+    "to fire (5), acid (10) and sound (15)",
     "and its metallic scales have a chance to",
     "reflect bolts and arrows (20).",
     "This lineage provides sound breath.",
@@ -94,7 +94,7 @@ __traits_diz = {
 
 "Law lineage",
     {"The \255ulaw\255U lineage provides intrinsic resistance to",
-    "shards (5) and sound (15).",
+    "shards (5), paralysis (10) and sound (15).",
     "This lineage provides shards breath.",
     "", "", "", "", "", "", "", "", "",},
 
