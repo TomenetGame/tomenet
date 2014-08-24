@@ -6014,7 +6014,12 @@ void note_toggle_cursed(object_type *o_ptr, bool cursed) {
 	if ((cn = strstr(note2, "uncursed"))) {
 		while (note2[0] && (cn = strstr(note2, "uncursed"))) {
 			cnp = cn + 7;
-			if (cn > note2 && *(cn - 1) == '-') cn--; /* cut out leading '-' delimiter before "uncursed" */
+			if (cn > note2 && //the 'uncursed' does not start on the first character of note2?
+			    *(cn - 1) == '-') cn--; /* cut out leading '-' delimiter before "uncursed" */
+
+			/* strip formerly trailing delimiter if it'd end up on first position in the new inscription */
+			if (cn == note2 && *(cnp + 1) == '-') cnp++;
+
 			do {
 				cnp++;
 				*cn = *cnp;
@@ -6027,7 +6032,12 @@ void note_toggle_cursed(object_type *o_ptr, bool cursed) {
 	if ((cn = strstr(note2, "cursed"))) {
 		while (note2[0] && (cn = strstr(note2, "cursed"))) {
 			cnp = cn + 5;
-			if (cn > note2 && *(cn - 1) == '-') cn--; /* cut out leading '-' delimiter before "cursed" */
+			if (cn > note2 && //the 'cursed' does not start on the first character of note2?
+			    *(cn - 1) == '-') cn--; /* cut out leading '-' delimiter before "cursed" */
+
+			/* strip formerly trailing delimiter if it'd end up on first position in the new inscription */
+			if (cn == note2 && *(cnp + 1) == '-') cnp++;
+
 			do {
 				cnp++;
 				*cn = *cnp;
@@ -6036,8 +6046,8 @@ void note_toggle_cursed(object_type *o_ptr, bool cursed) {
 		}
 	}
 
+	/* append the new cursed-state indicator */
 	if (note2[0]) strcat(note2, "-");
-
 	if (cursed) {
 		strcat(note2, "cursed");
 		o_ptr->note = quark_add(note2);
