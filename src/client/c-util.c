@@ -3114,8 +3114,10 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 
 
 	/* 'a' means "all" - C. Blue */
-	//if (isalpha(buf[0])) {
-	if (buf[0] == 'a') {
+	if (buf[0] == 'a'
+	    /* allow old 'type in any letter for "all"' hack again too?: */
+	    || isalpha(buf[0])
+	    ) {
 		if (max >= 0) amt = max;
 		/* hack for dropping gold (max is -1) */
 		else amt = 1000000000;
