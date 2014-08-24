@@ -89,6 +89,11 @@ void do_cmd_go_up(int Ind) {
 		return;
 	}
 
+	if (cfg.runlevel < 5 && surface) {
+		msg_print(Ind,"The tower is closed");
+		return;
+	}
+
 #if STAIR_FAIL_IF_CONFUSED
 	/* Hack -- handle confusion */
 	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED)) {
@@ -102,11 +107,6 @@ void do_cmd_go_up(int Ind) {
 		return;
 	}
 #endif // STAIR_FAIL_IF_CONFUSED
-
-	if (cfg.runlevel < 5 && surface) {
-		msg_print(Ind,"The dungeon is closed");
-		return;
-	}
 
 	/* not for some global events (Highlander Tournament) */
 	if ((p_ptr->global_event_temp & PEVF_SEPDUN_00) && (p_ptr->wpos.wz == -1)) {
@@ -129,8 +129,8 @@ void do_cmd_go_up(int Ind) {
 			msg_print(Ind, "I see no up staircase here.");
 			return;
 		}
-#if 1	/* no need for this anymore - C. Blue */
-	// argh there is.. people exploit the hell out of every possibility they see. - C. Blue
+#if 1	// no need for this anymore - C. Blue
+	// ..argh there is! people exploit the hell out of every possibility they see. - C. Blue
 #ifdef SEPARATE_RECALL_DEPTHS
 		else if ((get_recall_depth(&twpos, p_ptr) + 5 <= ABS(twpos.wz)) && (twpos.wz != 0)) /* player may return to town though! */
 #else
@@ -456,7 +456,8 @@ void do_cmd_go_up(int Ind) {
 
 	p_ptr->new_level_flag = TRUE;
 
-    forget_view(Ind); //the_sandman
+	forget_view(Ind); //the_sandman
+
 	/* He'll be safe for 2 turns */
 	set_invuln_short(Ind, STAIR_GOI_LENGTH);
 
@@ -717,18 +718,18 @@ void do_cmd_go_down(int Ind)
 	/* Verify stairs */
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
 	if (!is_admin(p_ptr) &&
-		c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE &&
-		(!p_ptr->prob_travel || (c_ptr->info & CAVE_STCK)))
+	    c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE &&
+	    (!p_ptr->prob_travel || (c_ptr->info & CAVE_STCK)))
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
-		if(twpos.wz>0) twpos.wz--;
+		if (twpos.wz > 0) twpos.wz--;
 		if (!p_ptr->ghost) {
 			msg_print(Ind, "I see no down staircase here.");
 			return;
 		}
 #if 1	// no need for this anymore - C. Blue
-	// argh there is.. people exploit the hell out of every possibility they see. - C. Blue
+	// ..argh there is! people exploit the hell out of every possibility they see. - C. Blue
 #ifdef SEPARATE_RECALL_DEPTHS
 		else if ((get_recall_depth(&twpos, p_ptr) + 5 <= ABS(twpos.wz)) && (twpos.wz != 0)) /* player may return to town though! */
 #else
@@ -776,8 +777,7 @@ void do_cmd_go_down(int Ind)
 /*	if (tower && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
 	if (tower && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
 	     wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
-	    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE))
-	{
+	    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)) {
 		msg_print(Ind,"\377rThe stairways leading downwards are magically sealed in this tower.");
 		if (!is_admin(p_ptr)) return;
 	}
@@ -1029,9 +1029,9 @@ void do_cmd_go_down(int Ind)
 			return;
 		}
 
-#ifdef RPG_SERVER	/* This is an iron-server... Prob trav should not work - the_sandman */
+#ifdef RPG_SERVER /* This is an iron-server... Prob trav should not work - the_sandman */
 		msg_print(Ind, "This harsh world knows not what you're trying to do.");
-	        forget_view(Ind);//the_sandman
+	        forget_view(Ind); //the_sandman
 		if (!is_admin(p_ptr)) return;
 #endif
 
@@ -1053,6 +1053,7 @@ void do_cmd_go_down(int Ind)
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
 		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 	}
+
 	/* A player has left this depth */
 	wpcopy(&old_wpos, wpos);
 	wpos->wz--;
