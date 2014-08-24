@@ -1058,6 +1058,9 @@ struct player_type
 #endif
 	bool distinct_floor_feeling;
 	bool exp_bar;
+
+	bool dummy_option_7;
+	bool dummy_option_8;
 };
 
 extern bool imprison(int Ind, int time, char *reason);
