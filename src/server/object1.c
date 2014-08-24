@@ -3460,7 +3460,37 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 	fprintf(fff, "\n");
 //	/* give weight warning, so player won't buy something he can't use. (todo: for shields and bows too) */
 //	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
+#if 0 /* don't colour the # of bpr */
 	fprintf(fff, "\377sUsing it you would have \377W%d\377s blow%s and do an average damage per round of:\n", p_ptr->num_blow, (p_ptr->num_blow > 1) ? "s" : "");
+#else /* colour the # of bpr -- compare with prt_bpr() */
+	{
+		byte attr = TERM_L_GREEN;//TERM_L_WHITE;
+
+		switch (p_ptr->pclass) {
+		case CLASS_WARRIOR:
+		case CLASS_MIMIC:
+		case CLASS_PALADIN:
+		case CLASS_RANGER:
+		case CLASS_ROGUE:
+		case CLASS_MINDCRAFTER:
+			if (p_ptr->num_blow == 1) attr = TERM_ORANGE;
+			else if (p_ptr->num_blow == 2) attr = TERM_YELLOW;
+			break;
+		case CLASS_SHAMAN:
+		case CLASS_ADVENTURER:
+		case CLASS_RUNEMASTER:
+		case CLASS_PRIEST:
+		case CLASS_DRUID:
+			if (p_ptr->num_blow == 1) attr = TERM_YELLOW;
+			break;
+		case CLASS_MAGE:
+		case CLASS_ARCHER:
+			break;
+		}
+
+		fprintf(fff, "\377sUsing it you would have \377%c%d\377s blow%s and do an average damage per round of:\n", color_attr_to_char(attr), p_ptr->num_blow, (p_ptr->num_blow > 1) ? "s" : "");
+	}
+#endif
 
 	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "evil creatures", NULL);
