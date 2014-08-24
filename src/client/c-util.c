@@ -3061,8 +3061,15 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	/* Ask for a quantity */
 	if (!get_string(prompt, buf, QUANTITY_WIDTH)) return (0);
 
-
 #if 1
+	/* special hack to enable old 'any letter = all' hack without interfering with 'k'/'M' for kilo/mega: */
+	if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M') && buf[1]
+	    && (buf[1] < '0' || buf[1] > '9')) {
+		//all..
+		buf[0] = 'a';
+		buf[1] = 0;
+	} else
+
 	/* new method slightly extended: allow leading 'k' or 'm' too */
 	if ((buf[0] == 'k' || buf[0] == 'K' || buf[0] == 'm' || buf[0] == 'M') && buf[1]) {
 		/* add leading '0' to revert it to the usual format */
