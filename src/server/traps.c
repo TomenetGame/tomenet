@@ -3351,107 +3351,107 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 
 	/* Depend on rod type */
         switch (o_ptr->sval) {
-		case SV_ROD_DETECT_TRAP:
-//                        m_ptr->smart |= SM_NOTE_TRAP;
-			break;
-		case SV_ROD_DETECTION:
-//                        m_ptr->smart |= SM_NOTE_TRAP;
-			break;
-		case SV_ROD_ILLUMINATION:
-			typ = GF_LITE_WEAK;
-			dam = damroll(2, 15);
-			rad = 3;
-//			lite_room(y, x);
-			break;
-		case SV_ROD_CURING:
-			typ = GF_CURING; //GF_OLD_HEAL;
-			dam = 0x4 + 0x8 + 0x10 + 0x20; //damroll(3, 4); /* and heal conf? */
-			break;
-		case SV_ROD_HEALING:
-			typ = GF_OLD_HEAL;
-			dam = 300;
-			break;
-		case SV_ROD_SPEED:
-			typ = GF_OLD_SPEED;
-			dam = 50;
-			break;
-		case SV_ROD_TELEPORT_AWAY:
-			typ = GF_AWAY_ALL;
-			dam = MAX_SIGHT * 5;
-			break;
-		case SV_ROD_DISARMING:
-			break;
-		case SV_ROD_LITE:
-			typ = GF_LITE_WEAK;
-			dam = damroll(6, 8);
-			break;
-		case SV_ROD_SLEEP_MONSTER:
-			typ = GF_OLD_SLEEP;
-			dam = 50;
-			break;
-		case SV_ROD_SLOW_MONSTER:
-			typ = GF_OLD_SLOW;
-			dam = 50;
-			break;
-		case SV_ROD_DRAIN_LIFE:
-			typ = GF_OLD_DRAIN;
-			dam = 75;
-			break;
-		case SV_ROD_POLYMORPH:
-			typ = GF_OLD_POLY;
-			dam = 50;
-			break;
-		case SV_ROD_ACID_BOLT:
-			typ = GF_ACID;
-			dam = damroll(8, 8);
-			flg &= ~PROJECT_NORF;
-			flg |= PROJECT_EVSG;
-			break;
-		case SV_ROD_ELEC_BOLT:
-			typ = GF_ELEC;
-			dam = damroll(6, 8);
-			flg &= ~PROJECT_NORF;
-			flg |= PROJECT_EVSG;
-			break;
-		case SV_ROD_FIRE_BOLT:
-			typ = GF_FIRE;
-			dam = damroll(10, 8);
-			flg &= ~PROJECT_NORF;
-			flg |= PROJECT_EVSG;
-			break;
-		case SV_ROD_COLD_BOLT:
-			typ = GF_COLD;
-			dam = damroll(7, 8);
-			flg &= ~PROJECT_NORF;
-			flg |= PROJECT_EVSG;
-			break;
-		case SV_ROD_ACID_BALL:
-			typ = GF_ACID;
-			dam = 320;
-			rad = 2;
-			break;
-		case SV_ROD_ELEC_BALL:
-			typ = GF_ELEC;
-			dam = 250;
-			rad = 2;
-			break;
-		case SV_ROD_FIRE_BALL:
-			typ = GF_FIRE;
-			dam = 350;
-			rad = 2;
-			break;
-		case SV_ROD_COLD_BALL:
-			typ = GF_COLD;
-			dam = 300;
-			rad = 2;
-			break;
-		case SV_ROD_HAVOC:
-			typ = GF_CHAOS;
-			dam = 500;
-			rad = 5;
-			break;
-		default:
-			return (FALSE);
+	case SV_ROD_DETECT_TRAP:
+//		m_ptr->smart |= SM_NOTE_TRAP;
+		break;
+	case SV_ROD_DETECTION:
+//		m_ptr->smart |= SM_NOTE_TRAP;
+		break;
+	case SV_ROD_ILLUMINATION:
+		typ = GF_LITE_WEAK;
+		dam = damroll(2, 15);
+		rad = 3;
+//		lite_room(y, x);
+		break;
+	case SV_ROD_CURING:
+		typ = GF_CURING; //GF_OLD_HEAL;
+		dam = 0x4 + 0x8 + 0x10 + 0x20; //damroll(3, 4); /* and heal conf? */
+		break;
+	case SV_ROD_HEALING:
+		typ = GF_OLD_HEAL;
+		dam = 300;
+		break;
+	case SV_ROD_SPEED:
+		typ = GF_OLD_SPEED;
+		dam = 50;
+		break;
+	case SV_ROD_TELEPORT_AWAY:
+		typ = GF_AWAY_ALL;
+		dam = MAX_SIGHT * 5;
+		break;
+	case SV_ROD_DISARMING:
+		break;
+	case SV_ROD_LITE:
+		typ = GF_LITE_WEAK;
+		dam = damroll(6, 8);
+		break;
+	case SV_ROD_SLEEP_MONSTER:
+		typ = GF_OLD_SLEEP;
+		dam = 50;
+		break;
+	case SV_ROD_SLOW_MONSTER:
+		typ = GF_OLD_SLOW;
+		dam = 50;
+		break;
+	case SV_ROD_DRAIN_LIFE:
+		typ = GF_OLD_DRAIN;
+		dam = 75;
+		break;
+	case SV_ROD_POLYMORPH:
+		typ = GF_OLD_POLY;
+		dam = 50;
+		break;
+	case SV_ROD_ACID_BOLT:
+		typ = GF_ACID;
+		dam = damroll(8, 8);
+		flg &= ~PROJECT_NORF;
+		flg |= PROJECT_EVSG;
+		break;
+	case SV_ROD_ELEC_BOLT:
+		typ = GF_ELEC;
+		dam = damroll(6, 8);
+		flg &= ~PROJECT_NORF;
+		flg |= PROJECT_EVSG;
+		break;
+	case SV_ROD_FIRE_BOLT:
+		typ = GF_FIRE;
+		dam = damroll(10, 8);
+		flg &= ~PROJECT_NORF;
+		flg |= PROJECT_EVSG;
+		break;
+	case SV_ROD_COLD_BOLT:
+		typ = GF_COLD;
+		dam = damroll(7, 8);
+		flg &= ~PROJECT_NORF;
+		flg |= PROJECT_EVSG;
+		break;
+	case SV_ROD_ACID_BALL:
+		typ = GF_ACID;
+		dam = 320;
+		rad = 2;
+		break;
+	case SV_ROD_ELEC_BALL:
+		typ = GF_ELEC;
+		dam = 250;
+		rad = 2;
+		break;
+	case SV_ROD_FIRE_BALL:
+		typ = GF_FIRE;
+		dam = 350;
+		rad = 2;
+		break;
+	case SV_ROD_COLD_BALL:
+		typ = GF_COLD;
+		dam = 300;
+		rad = 2;
+		break;
+	case SV_ROD_HAVOC:
+		typ = GF_CHAOS;
+		dam = 500;
+		rad = 5;
+		break;
+	default:
+		return (FALSE);
 	}
 
 	if (dam) identify_mon_trap_load(who, o_ptr);
@@ -3467,7 +3467,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 
 	/* Set rod recharge time */
 //	o_ptr->timeout -= (f4 & TR4_CHEAPNESS)?tip_ptr->pval / 2:tip_ptr->pval;
-	o_ptr->timeout = (f4 & TR4_CHEAPNESS)?tip_ptr->pval / 2:tip_ptr->pval;
+	o_ptr->pval = (f4 & TR4_CHEAPNESS) ? tip_ptr->pval / 2 : tip_ptr->pval;
 
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
