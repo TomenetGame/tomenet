@@ -3342,7 +3342,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	u32b f1, f2, f3, f4, f5, f6, esp, flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP;
-	object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
+	//object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
 
 	cave_type **zcave;
 	zcave = getcave(&m_ptr->wpos);
@@ -3466,8 +3466,8 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	if (typ) (void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
 
 	/* Set rod recharge time */
-//	o_ptr->timeout -= (f4 & TR4_CHEAPNESS)?tip_ptr->pval / 2:tip_ptr->pval;
-	o_ptr->pval = (f4 & TR4_CHEAPNESS) ? tip_ptr->pval / 2 : tip_ptr->pval;
+//	o_ptr->timeout -= (f4 & TR4_CHEAPNESS) ? tip_ptr->pval / 2 : tip_ptr->pval;
+	o_ptr->pval = (f4 & TR4_CHEAPNESS) ? o_ptr->level / 2 + 5 : o_ptr->level + 10;
 
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
