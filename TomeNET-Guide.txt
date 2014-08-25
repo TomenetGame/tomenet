@@ -15213,6 +15213,9 @@ the monsters that you encounter, so you will be able to decide if you should
 attack or flee.
 In my opinion playing TomeNET can be called "the art not to die".
 
+Note: As an everlasting character you can somewhat cheat death by activating
+"Instant Resurrection" in any temple, see (4.5a) for details and drawbacks.
+
 
 
 (8.2) Character Dumps
