@@ -3450,7 +3450,7 @@ void invcopy(object_type *o_ptr, int k_idx)
 	    o_ptr->tval == TV_FOOD)
 		o_ptr->pval = k_ptr->pval;
 	else if (o_ptr->tval == TV_LITE)
-		o_ptr->timeout = k_ptr->pval;
+		o_ptr->timeout = k_ptr->pval;//hack
 
 	else if (o_ptr->tval != TV_ROD)
 		o_ptr->bpval = k_ptr->pval;
