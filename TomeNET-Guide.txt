@@ -8357,7 +8357,7 @@ Remove Curse    Breaks lesser curses on items, allowing you to unwear or
 Recharging      Recharges a magical rod/wand/staff (see (5.22)).
 Rune of Protection  Creates a warding glyph on the floor that stops monsters
                     from crossing the field or summoning on it.
-Protection from evil    Repels evil creatures that try to attack you.
+Protection from evil    Repels evil creatures that try to attack you in melee.
                         See the prayer 'Protection from evil' in (6.8)!
 *Destruction*   Causes a local earthquake, nearly completely wiping the area
                 of monsters and objects.
@@ -13110,7 +13110,9 @@ Priest schools:
                     Required skill level for first spell level: 11.
 
     Protection from evil.
-                    Repels evil creatures that try to attack you.
+                    Evil creatures that try to attack you in melee might get
+                    repelled, thereby preventing them from actually hitting
+                    you.
                     Works very well, as long as the creature isn't of a higher
                     level than you.
                     Required skill level for first spell level: 12.
@@ -13137,7 +13139,9 @@ Priest schools:
                     Required skill level for first spell level: 40.
 
     BONI:           Protects the player from undead at 30, from demons at 40,
-                    and from evil in general at 50. Better than the spell.
+                    and from evil in general at 50. Works similar to the
+                    'protection from evil' spell, but has better effect on
+                    monsters of higher level.
 
 
 - Holy Curing
