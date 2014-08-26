@@ -800,6 +800,7 @@ available for text editing:
 CTRL+P/N    Cycle through your message history.
 
 CTRL+V/B    Move cursor to beginning/end of line.
+
 CTRL+Q/W    Move cursor back/forward by one word.
 CTRL+E      Delete word before the cursor.
 

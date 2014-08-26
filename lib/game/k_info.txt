@@ -1691,7 +1691,7 @@ G:?:d
 I:70:37:0
 W:30:0:5:250
 A:7/2:15/2:30/2
-D:Temporarily attempts to repel evil creatures that try to hit you.
+D:Evil creatures that try to hit you in melee might get repelled temporarily.
 
 N:210:Satisfy Hunger
 G:?:d
