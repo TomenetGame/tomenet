@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -331,6 +331,12 @@ or glance at (7.3) first ;)
 (0.2) Command reference & key sets
 ----------------------------------
 Can be different depending on OS / configuration.
+This chapter consists of three subsections:
+Command keys, Text editing keys, Slash commands.
+
+
+Command keys
+------------
 
 Key combinations with CTRL key can be entered in the macro menu by prefixing
 the key with a '^' symbol. For example, a swap-macro in normal key set could be
@@ -784,6 +790,25 @@ TAB or CTRL+I
         (Currently targets the most hurt player who is in your party, or the
         most wounded player in general if you aren't in a party.)
 
+
+Text editing keys
+-----------------
+
+When typing in a line of text (eg to chat), the following control keys are
+available for text editing:
+
+CTRL+P/N    Cycle through your message history.
+
+CTRL+V/B    Move cursor to beginning/end of line.
+CTRL+Q/W    Move cursor back/forward by one word.
+CTRL+E      Delete word before the cursor.
+
+CTRL+A/S    Move cursor back/forward by one character.
+CTRL+D      Delete character under the cursor.
+
+
+Slash commands
+--------------
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
