@@ -522,6 +522,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 	object_kind *ok_ptr;
 
+	struct dun_level *l_ptr = getfloor(wpos);
+	bool no_summon = (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON));
+	//bool no_teleport = (l_ptr && (l_ptr->flags2 & LF2_NO_TELE));
+
 	/* Paranoia */
 	cave_type **zcave;
 	if (!in_bounds(y, x)) return(FALSE);
@@ -663,6 +667,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Summon Monster Trap */
 		case TRAP_OF_SUMMON_MONSTER:
 			msg_print(Ind, "A spell hangs in the air.");
+			if (no_summon) break;
 			summon_override_checks = SO_IDDC;
 			//            for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], 0, SUMMON_UNDEAD, 1);	// max?
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 100, SUMMON_ALL_U98, 1, 0);
@@ -672,6 +677,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Summon Undead Trap */
 		case TRAP_OF_SUMMON_UNDEAD:
 			msg_print(Ind, "A mighty spell hangs in the air.");
+			if (no_summon) break;
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_UNDEAD, 1, 0);
 			summon_override_checks = SO_NONE;
@@ -680,6 +686,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Summon Greater Undead Trap */
 		case TRAP_OF_SUMMON_GREATER_UNDEAD:
 			msg_print(Ind, "An old and evil spell hangs in the air.");
+			if (no_summon) break;
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_HI_UNDEAD, 1, 0);
 			summon_override_checks = SO_NONE;
@@ -889,6 +896,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 		/* Summon Fast Quylthulgs Trap */
 		case TRAP_OF_SUMMON_FAST_QUYLTHULGS:
+			if (no_summon) break;
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++)
 				ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_QUYLTHULG, 1, 0);
@@ -2238,6 +2246,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_DISINTEGRATION_I: ident = player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap); destroy_chest(i_ptr); break;
 		case TRAP_OF_DISINTEGRATION_II: ident = player_handle_breath_trap(Ind, 3, GF_DISINTEGRATE, trap); destroy_chest(i_ptr); break;
 		case TRAP_OF_BATTLE_FIELD:
+			if (no_summon) break;
 			ident = player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap);
 			destroy_chest(i_ptr);
 			summon_override_checks = SO_IDDC;
@@ -3649,6 +3658,9 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 	bool id = FALSE;
 	cave_type **zcave;
 	zcave = getcave(&wpos);
+	dun_level *l_ptr = getfloor(&wpos);
+	bool no_summon = (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON));
+	//bool no_teleport = (l_ptr && (l_ptr->flags2 & LF2_NO_TELE));
 
 	/* Depend on scroll type */
 	switch (o_ptr->sval) {
@@ -3693,12 +3705,14 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 			}
 			return (FALSE);
 		case SV_SCROLL_SUMMON_MONSTER:
+			if (no_summon) return FALSE;
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0)) id = TRUE;
 			summon_override_checks = SO_NONE;
 			if (id) identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_SUMMON_UNDEAD:
+			if (no_summon) return FALSE;
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD, 1, 0)) id = TRUE;
 			summon_override_checks = SO_NONE;
@@ -4396,7 +4410,7 @@ bool mon_hit_trap(int m_idx)
 	//	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 #if 0 /* DGDGDGDG */
-	monster_lore *l_ptr = &l_list[m_ptr->r_idx];
+	monster_lore *lore_ptr = &l_list[m_ptr->r_idx];
 #endif
 
 	object_type *kit_o_ptr, *load_o_ptr, *j_ptr;
@@ -4523,7 +4537,7 @@ bool mon_hit_trap(int m_idx)
 
 		/* Tell the player about it */
 #if 0 /* DGDGDGDG */
-		if (m_ptr->ml) l_ptr->r_flags2 |= (RF2_NOTICE_TRAP & r_ptr->flags2);
+		if (m_ptr->ml) lore_ptr->r_flags2 |= (RF2_NOTICE_TRAP & r_ptr->flags2);
 #endif
 		/* Get trap disarming difficulty */
 		difficulty = (kit_o_ptr->ac + kit_o_ptr->to_a);
@@ -4568,7 +4582,7 @@ bool mon_hit_trap(int m_idx)
 
 			/* Tell the player about it */
 #if 0 /* DGDGDGDG */
-			l_ptr->r_flags2 |= (RF2_DISARM_TRAP & r_ptr->flags2);
+			lore_ptr->r_flags2 |= (RF2_DISARM_TRAP & r_ptr->flags2);
 #endif
 			/* Print a message */
 			msg_format(who, "%^s disarms a trap!", m_name);
