@@ -2741,6 +2741,7 @@ bool set_stun(int Ind, int v)
 			msg_format_near(Ind, "%s has been knocked out.", p_ptr->name);
 			msg_print(Ind, "\377rYou have been knocked out.");
 			s_printf("%s EFFECT: Knockedout %s.\n", showtime(), p_ptr->name);
+			p_ptr->energy = 0;/* paranoia, couldn't reproduce it so far - don't allow him a final action with his rest of energy */
 			break;
 		}
 
