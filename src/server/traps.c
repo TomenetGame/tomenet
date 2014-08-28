@@ -3050,8 +3050,7 @@ static bool item_tester_hook_scroll_rune(object_type *o_ptr)
  * c_special holds trapkit o_idx, and trapkit holds trapload o_idx
  */
 //static s16b pop_montrap(worldpos *wpos, int y, int x, object_type *j_ptr)
-static s16b pop_montrap(int Ind, object_type *j_ptr, u16b next_o_idx)
-{
+static s16b pop_montrap(int Ind, object_type *j_ptr, u16b next_o_idx) {
 	player_type *p_ptr = Players[Ind];
 	s16b o_idx;
 	worldpos *wpos = &p_ptr->wpos;
@@ -3080,6 +3079,9 @@ static s16b pop_montrap(int Ind, object_type *j_ptr, u16b next_o_idx)
 
 		/* Build a stack */
 		o_ptr->next_o_idx = next_o_idx;
+
+		/* don't remove it quickly in towns */
+		o_ptr->marked2 = ITEM_REMOVAL_MONTRAP;
 	}
 
 	/* Result */
@@ -3277,8 +3279,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 /* Hrm it's complicated.. 
  * We'd better not touch FEAT and use only CS	- Jir -
  */
-void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
-{
+void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 	int this_o_idx, next_o_idx;
 	object_type forge;
 	object_type *o_ptr;
@@ -3314,6 +3315,38 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
 
 		/* Drop it */
 		drop_near(q_ptr, -1, wpos, y, x);
+	}
+
+//	cave[py][px].special = cave[py][px].special2 = 0;
+	cs_erase(c_ptr, cs_ptr);
+}
+
+void erase_mon_trap(worldpos *wpos, int y, int x) {
+	int this_o_idx, next_o_idx;
+	object_type *o_ptr;
+	cave_type *c_ptr;
+	cave_type **zcave;
+	struct c_special *cs_ptr;
+
+	if (!(zcave = getcave(wpos))) return;
+
+	c_ptr = &zcave[y][x];
+	cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
+	cave_set_feat_live(wpos, y, x, cs_ptr->sc.montrap.feat);
+
+	/* Drop objects being carried */
+	for (this_o_idx = cs_ptr->sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx) {
+		/* Acquire object */
+		o_ptr = &o_list[this_o_idx];
+
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
+
+		/* Paranoia */
+		o_ptr->held_m_idx = 0;
+
+		/* Delete the object */
+		delete_object_idx(this_o_idx, FALSE);
 	}
 
 //	cave[py][px].special = cave[py][px].special2 = 0;

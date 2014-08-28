@@ -5597,7 +5597,7 @@ static void scan_objs() {
 	/* objects time-outing disabled? */
 	if (!cfg.surface_item_removal && !cfg.dungeon_item_removal) return;
 
-	for(i = 0; i < o_max; i++){
+	for (i = 0; i < o_max; i++) {
 		o_ptr = &o_list[i];
 		if (!o_ptr->k_idx) continue;
 
@@ -5631,7 +5631,28 @@ static void scan_objs() {
 				stay n times as long as cfg.surface_item_removal specifies */
 				if (o_ptr->marked2 == ITEM_REMOVAL_QUICK) {
 					if (++o_ptr->marked >= 10) {
+						/* handle monster trap, if this item was part of one */
+						if (sj) {
+							erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
+							sj = FALSE;
+						} else
+
+						/* normal object */
 						delete_object_idx(i, TRUE);
+
+						dcnt++;
+					}
+				} else if (o_ptr->marked2 == ITEM_REMOVAL_MONTRAP) {
+					if (++o_ptr->marked >= 6) {
+						/* handle monster trap, if this item was part of one */
+						if (sj) {
+							erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
+							sj = FALSE;
+						} else
+
+						/* normal object */
+						delete_object_idx(i, TRUE);
+
 						dcnt++;
 					}
 				} else if (++o_ptr->marked >= ((like_artifact_p(o_ptr) || /* stormy too */
@@ -5640,7 +5661,15 @@ static void scan_objs() {
 				    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? cfg.death_wild_item_removal : 0)
 				    + (o_ptr->marked2 == ITEM_REMOVAL_LONG_WILD ? cfg.long_wild_item_removal : 0)
 				    ) {
+					/* handle monster trap, if this item was part of one */
+					if (sj) {
+						erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
+						sj = FALSE;
+					} else
+
+					/* normal object */
 					delete_object_idx(i, TRUE);
+
 					dcnt++;
 				}
 			}
@@ -5666,9 +5695,17 @@ static void scan_objs() {
 				the dungeon master or by unique monsters on their death
 				stay n times as long as cfg.surface_item_removal specifies */
 				if (++o_ptr->marked >= ((artifact_p(o_ptr) ||
-				    (o_ptr->note && !o_ptr->owner))?
+				    (o_ptr->note && !o_ptr->owner)) ?
 				    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal)) {
+					/* handle monster trap, if this item was part of one */
+					if (sj) {
+						erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
+						sj = FALSE;
+					} else
+
+					/* normal object */
 					delete_object_idx(i, TRUE);
+
 					dcnt++;
 				}
 			}
