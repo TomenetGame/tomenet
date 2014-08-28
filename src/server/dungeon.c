@@ -5643,7 +5643,7 @@ static void scan_objs() {
 						dcnt++;
 					}
 				} else if (o_ptr->marked2 == ITEM_REMOVAL_MONTRAP) {
-					if (++o_ptr->marked >= 6) {
+					if (++o_ptr->marked >= 120) {
 						/* handle monster trap, if this item was part of one */
 						if (sj) {
 							erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
