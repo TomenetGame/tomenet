@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8899,7 +8899,7 @@ floor. Items that IGNORE_COLD also resist impact damage.
 Usually items that contain wood, leather or stuff are susceptible to fire and
 acid, while things that consist only of metal are just susceptible to acid.
 
-                    Acid    Elec    Fire    Cold    Impact  Water
+                    Acid    Elec    Fire    Cold    Impact* Water
 -----------------------------------------------------------------
 Arrows              x               x
 Bolts               x               x
@@ -8957,6 +8957,16 @@ Handbooks           x               x                       x
 Tomes               x               x
 Greater Crystals
 Custom Books        x               x
+
+*Impact-based attacks:
+These do not hurt items in your inventory. For example impact hounds breathing
+at you will not destroy any potions in your backpack.
+However, there are some cases where impact-type destruction can happen to your
+inventory items:
+1) Falling through a trap door/chasm without having 'Feather Falling'.
+2) Rocket attacks, if you do not resist both, shards AND sound!
+3) Inferno/detonation damage, if you do not resist both, shards and sound.
+   However, inferno and detonation damage cannot be caused by monsters.
 
 Items ignore certain elements if they have the according resistance due to ego
 powers, for example a leather shield of resist fire will ignore fire.
