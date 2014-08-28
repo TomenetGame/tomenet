@@ -5629,19 +5629,22 @@ A monster trap consists of
 
 Each kind of trap kit requires different items serving as ammunition:
 Catapult Trap Kit       -       Sling ammo (fires with 2x base might).
+ (orange)
 Arrow Trap Kit          -       Arrows (fires with 3x base might).
+ (red)
 Bolt Trap Kit           -       Bolts (fires with 4x base might).
+ (bright red)
 Fumes Trap Kit          -       Potions. The effects are very similar to the
-                                effects when throwing a potion at a monster,
+ (dark blue)                    effects when throwing a potion at a monster,
                                 the trap will greatly increase the potion's
                                 effectiveness though, by generating a thick
                                 fume that envelops nearby creatues and
                                 possibly gets inhaled as well.
 Magic Trap Kit          -       Scrolls or runes. Even scrolls that are usually
-                                only used on other items might have effects on
+ (violet)                       only used on other items might have effects on
                                 certain creatures.
 Device Trap Kit         -       Wands/Staves/Rods.
-                                The charges of wands and staves will be
+ (slate)                        The charges of wands and staves will be
                                 decreased by 1 each time the trap sets off.
                                 Rod-traps will have timeouts, same as the rod
                                 itself.
