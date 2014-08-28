@@ -7639,6 +7639,7 @@ extern int PlayerUID;
 #define ITEM_REMOVAL_DEATH_WILD	3	/* Items are death loot, but not in dungeon (would be ITEM_REMOVAL_NEVER) but in the wilderness */
 #define ITEM_REMOVAL_LONG_WILD	4	/* Item times out even much slower than from ITEM_REMOVAL_DEATH_WILD */
 #define ITEM_REMOVAL_QUICK	5	/* To keep pvp-arena clean: 10 minutes timeout flat. */
+#define ITEM_REMOVAL_MONTRAP	6	/* Item is part of a monster trap and hence should last quite a while */
 
 
 /* C. Blue - Automatic transport sequences for characters
