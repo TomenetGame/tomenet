@@ -169,7 +169,7 @@ DETECTMONSTERS = add_spell
 			return ""
 	end,
         ["desc"] =	{
-        		"Detects all monsters near you.",
+			"Detects all nearby non-invisible creatures.",
                         "***Affected by the Meta spell: Project Spell***",
         }
 }

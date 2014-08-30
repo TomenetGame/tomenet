@@ -233,7 +233,8 @@ MSENSEMON = add_spell
 			return "dur 10+d10+d"..get_level(Ind, MSENSEMON, 50)
 			end,
 	["desc"] =      {
---			"Lets you see nearby creatures and allows you to see invisible.",
+--			"Detects all nearby non-invisible creatures once and also lets",
+--			"you see invisible creatures for a while.",
 --			"At level 20 it lets you sense the presence creatures for a while.",
 			"Lets you sense the presence creatures for a while.",
 	}

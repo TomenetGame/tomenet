@@ -112,7 +112,8 @@ HSENSE = add_spell
 		return ""
 	end,
 	["desc"] =      {
-		"Lets you see nearby creatures, as well as invisible ones.",
+		"Detects all nearby non-invisible creatures once and also lets",
+		"you see invisible creatures for a while.",
 		"At level 15 it also maps the dungeon around you.",
 		"At level 30 it grants you clairvoyance and lets you",
 		"sense the presence of creatures for a while.",
@@ -140,7 +141,8 @@ HSENSEMON = add_spell
 		return ""
 	end,
 	["desc"] =      {
-		"Lets you see nearby creatures and allows you to see invisible.",
+		"Detects all nearby non-invisible creatures once and also lets",
+		"you see invisible creatures for a while.",
 		"At level 30 it lets you sense the presence creatures for a while.",
 	}
 }
