@@ -3620,7 +3620,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			}
 */
 			disturb(Ind, 1, 0);
-			if (m_ptr->r_idx == RI_ZU_AON) { /* can always TELE_TO */
+			if (m_ptr->r_idx != RI_ZU_AON) { /* can always TELE_TO */
 				int chance = (195 - p_ptr->skill_sav) / 2;
 				if (p_ptr->res_tele) chance = 50;
 				/* Hack -- duplicated check to avoid silly message */
