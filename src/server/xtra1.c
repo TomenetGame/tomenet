@@ -4403,9 +4403,6 @@ void calc_boni(int Ind) {
 		p_ptr->see_infra += 5;
 	}
 
-	/* Temporary st-anchor */
-	if (p_ptr->st_anchor) p_ptr->resist_continuum = TRUE;
-
 	/* Hack -- Res Chaos -> Res Conf */
 	if (p_ptr->resist_chaos) p_ptr->resist_conf = TRUE;
 
@@ -4422,7 +4419,10 @@ void calc_boni(int Ind) {
 	if (p_ptr->see_inv != old_see_inv) p_ptr->update |= (PU_MONSTERS);
 
 	/* Temporary space-time anchor */
-	if (p_ptr->st_anchor) p_ptr->anti_tele = TRUE;
+	if (p_ptr->st_anchor) {
+		p_ptr->anti_tele = TRUE;
+		p_ptr->resist_continuum = TRUE;
+	}
 
 
 	/* Bloating slows the player down (a little) */
