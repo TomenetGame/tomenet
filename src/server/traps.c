@@ -2579,7 +2579,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		ident = FALSE;
 	} else if (!p_ptr->warning_trap) {
 		msg_print(Ind, "\374\377yHINT: You triggered a trap! Traps can be nasty, but if you successfully disarm");
-		msg_print(Ind, "\374\377y      one you gain experience from that. To try, step aside and press \377oSHIFT+D\377y.");
+		msg_print(Ind, "\374\377y      one you gain experience from that. To try, step aside and press \377oSHIFT+d\377y.");
 		s_printf("warning_trap: %s\n", p_ptr->name);
 		p_ptr->warning_trap = 1;
 	}

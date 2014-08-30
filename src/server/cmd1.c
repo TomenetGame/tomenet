@@ -5814,7 +5814,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				everyone_lite_spot(wpos, y, x);
 
 				if (!p_ptr->warning_tunnel) {
-					msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with SHIFT+T.");
+					if (p_ptr->rogue_like_commands)
+						msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with '\377o+\377y' key.");
+					else
+						msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with \377oSHIFT+t\377y.");
 					msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
 					s_printf("warning_tunnel: %s\n", p_ptr->name);
 					p_ptr->warning_tunnel = 1;
@@ -5826,7 +5829,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				everyone_lite_spot(wpos, y, x);
 
 				if (!p_ptr->warning_tunnel2) {
-					msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with SHIFT+T.");
+					if (p_ptr->rogue_like_commands)
+						msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with '\377o+\377y' key.");
+					else
+						msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with \377oSHIFT+t\377y.");
 					msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
 					s_printf("warning_tunnel2: %s\n", p_ptr->name);
 					p_ptr->warning_tunnel2 = 1;
@@ -5891,7 +5897,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					msg_print(Ind, "There is rubble blocking your way.");
 
 					if (!p_ptr->warning_tunnel) {
-						msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with SHIFT+T.");
+						if (p_ptr->rogue_like_commands)
+							msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with '\377o+\377y' key.");
+						else
+							msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with \377oSHIFT+t\377y.");
 						msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
 						s_printf("warning_tunnel: %s\n", p_ptr->name);
 						p_ptr->warning_tunnel = 1;
@@ -5903,7 +5912,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					//msg_print(Ind, "There is a wall with valuable minerals blocking your way.");
 
 					if (!p_ptr->warning_tunnel2) {
-						msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with SHIFT+T.");
+						if (p_ptr->rogue_like_commands)
+							msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with '\377o+\377y' key.");
+						else
+							msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with \377oSHIFT+t\377y.");
 						msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
 						s_printf("warning_tunnel2: %s\n", p_ptr->name);
 						p_ptr->warning_tunnel2 = 1;
@@ -6090,19 +6102,19 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		if (!p_ptr->warning_staircase &&
 		    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE ||
 		    c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
-			msg_print(Ind, "\374\377yHINT: You found a staircase. Press the according key '<' or '>' to enter!");
+			msg_print(Ind, "\374\377yHINT: You found a staircase. Press the according key '\377o<\377y' or '\377o>\377y' to enter!");
 			s_printf("warning_staircase: %s\n", p_ptr->name);
 			//p_ptr->warning_staircase = 1;
 		}
 
 		if (!p_ptr->warning_voidjumpgate && c_ptr->feat == FEAT_BETWEEN) {
-			msg_print(Ind, "\374\377yHINT: You found a void jump gate. You may press '>' to teleport!");
+			msg_print(Ind, "\374\377yHINT: You found a void jump gate. You may press '\377o>\377y' to teleport!");
 			s_printf("warning_voidjumpgate: %s\n", p_ptr->name);
 			p_ptr->warning_voidjumpgate = 1;
 		}
 
 		if (!p_ptr->warning_fountain && c_ptr->feat == FEAT_FOUNTAIN) {
-			msg_print(Ind, "\374\377yHINT: You found a fountain. Press '_' if you want to drink from it!");
+			msg_print(Ind, "\374\377yHINT: You found a fountain. Press '\377o_\377y' if you want to drink from it!");
 			s_printf("warning_fountain: %s\n", p_ptr->name);
 			p_ptr->warning_fountain = 1;
 		}
@@ -6653,7 +6665,7 @@ static bool run_test(int Ind)
 		/* unlit grids abort running */
 		if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW))) {
 			if (!p_ptr->warning_run_lite) {
-				msg_print(Ind, "\374\377yHINT: You cannot run in the dark. Press 'w' and equip a light source!");
+				msg_print(Ind, "\374\377yHINT: You cannot run in the dark. Press '\377ow\377y' and equip a light source!");
 				p_ptr->warning_run_lite = TRUE;
 				s_printf("warning_run_lite: %s\n", p_ptr->name);
 			}

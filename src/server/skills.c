@@ -293,7 +293,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		/* automatically upgrade currently taken stance power */
 		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
-			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
+			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('\377gm\377G' key)");
 			if (old_value < 150 && new_value >= 150) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
 				if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
@@ -313,7 +313,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_MIMIC:
-			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
+			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('\377gm\377G' key)");
 			if (old_value < 200 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
 				if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
@@ -333,7 +333,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_PALADIN:
-			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
+			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('\377gm\377G' key)");
 			if (old_value < 200 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
 				if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
@@ -353,7 +353,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_RANGER:
-			if (old_value < 50 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
+			if (old_value < 50 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('\377gm\377G' key)");
 			if (old_value < 150 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
 				if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
@@ -382,7 +382,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 	case SKILL_ARCHERY:
 		if (old_value < 40 && new_value >= 40)
-			msg_print(Ind, "\374\377GYou learn the shooting technique 'Flare missile'! (press 'm')");
+			msg_print(Ind, "\374\377GYou learn the shooting technique 'Flare missile'! (press '\377gm\377G')");
 		if (old_value < 80 && new_value >= 80)
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Precision shot'!");
 		if (old_value < 100 && new_value >= 100)

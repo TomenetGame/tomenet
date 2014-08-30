@@ -3004,7 +3004,7 @@ void calc_boni(int Ind) {
 		/* Don't kill warnings by inspecting weapons/armour in stores! */
 		if (!suppress_message)
 		if (p_ptr->warning_dual_mode == 0 && !old_dual_wield && !p_ptr->dual_mode) {
-			msg_print(Ind, "\374\377yHINT: Dual-wield mode isn't enabled! Press 'm' to toggle it!");
+			msg_print(Ind, "\374\377yHINT: Dual-wield mode isn't enabled! Press '\377om\377y' to toggle it!");
 			s_printf("warning_dual_mode: %s\n", p_ptr->name);
 			p_ptr->warning_dual_mode = 1;
 		}
@@ -6220,7 +6220,7 @@ void calc_boni(int Ind) {
 			p_ptr->warning_bpr = 1;
 			msg_print(Ind, "\374\377yWARNING! Your number of melee attacks per round has just dropped to ONE.");
 			msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
-			msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (press shift+c to check the #).");
+			msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (shown in the bottom status line).");
 			msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
 			msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
 			msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
@@ -6234,8 +6234,12 @@ void calc_boni(int Ind) {
 			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
 			msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
 			msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
-			if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
-				msg_print(Ind, "\374\377y    Try taking off your shield ('\377ot\377y' key) and see if that helps.");
+			if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+				if (p_ptr->rogue_like_commands)
+					msg_print(Ind, "\374\377y    Try taking off your shield ('\377oSHIFT+t\377y') and see if that helps.");
+				else
+					msg_print(Ind, "\374\377y    Try taking off your shield ('\377ot\377y' key) and see if that helps.");
+			}
 			switch (p_ptr->pclass) {
 			case CLASS_WARRIOR:
 				msg_print(Ind, "\374\377y    Warriors should try either a dagger, whip, spear or hatchet.");

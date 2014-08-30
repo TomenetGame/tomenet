@@ -4606,7 +4606,7 @@ static bool process_player_end_aux(int Ind)
 
 					if (!p_ptr->warning_lite_refill) {
 						p_ptr->warning_lite_refill = 1;
-						msg_print(Ind, "\374\377yHINT: Press SHIFT+F to refill your light source. You will need a flask of");
+						msg_print(Ind, "\374\377yHINT: Press \377oSHIFT+f\377y to refill your light source. You will need a flask of");
 						msg_print(Ind, "\374\377y      oil for lanterns, or another torch to combine with an extinct torch.");
 //						s_printf("warning_lite_refill: %s\n", p_ptr->name);
 					}
@@ -6640,8 +6640,12 @@ void process_player_change_wpos(int Ind) {
 		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
 		msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
 		msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
-		if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
-			msg_print(Ind, "\374\377y    Try taking off your shield ('t' key) and see if that helps.");
+		if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+			if (p_ptr->rogue_like_commands)
+				msg_print(Ind, "\374\377y    Try taking off your shield (\377oSHIFT+t\377y) and see if that helps.");
+			else
+				msg_print(Ind, "\374\377y    Try taking off your shield ('\377ot\377y' key) and see if that helps.");
+		}
 		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
 			msg_print(Ind, "\374\377y    Warriors should try either a dagger, whip, spear or hatchet.");
@@ -6671,15 +6675,15 @@ void process_player_change_wpos(int Ind) {
 	}
 	else if (p_ptr->warning_run == 0) {
 		p_ptr->warning_run = 1;
-		msg_print(Ind, "\374\377yHINT: To run fast, use \377RSHIFT + direction\377y keys.");
-		msg_print(Ind, "\374\377y      For that, Numlock key must be OFF and no awake monster in sight!");
+		msg_print(Ind, "\374\377yHINT: To run fast, use \377oSHIFT+direction\377y keys.");
+		msg_print(Ind, "\374\377y      For that, \377oNUMLOCK\377y key must be OFF and no awake monster in sight!");
 		s_printf("warning_run: %s\n", p_ptr->name);
 	}
 	else if (p_ptr->warning_lite == 0 && p_ptr->cur_lite == 0 &&
 	    (p_ptr->wpos.wz < 0 || (p_ptr->wpos.wz == 0 && night_surface))) { //Training Tower currently exempt
 		if (p_ptr->wpos.wz < 0) p_ptr->warning_lite = 1;
 		msg_print(Ind, "\374\377yHINT: You don't wield any light source at the moment!");
-		msg_print(Ind, "\374\377y      Press '\377Rw\377y' to wield a torch or lantern (or other items).");
+		msg_print(Ind, "\374\377y      Press '\377ow\377y' to wield a torch or lantern (or other items).");
 		s_printf("warning_lite: %s\n", p_ptr->name);
 	}
 

@@ -3474,9 +3474,9 @@ bool set_food(int Ind, int v)
 					msg_print(Ind, "\374\377R         monsters in melee (close combat). Town monsters will work too.");
 				} else if (p_ptr->prace == RACE_ENT) {
 					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Find something to drink or rest");
-					msg_print(Ind, "\374\377R         (SHIFT+R) on earth/dirt/grass/water floor tiles for a while.");
+					msg_print(Ind, "\374\377R         (\377oSHIFT+r\377R) on earth/dirt/grass/water floor tiles for a while.");
 				} else {
-					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Press SHIFT+E to eat something");
+					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Press \377oSHIFT+e\377R to eat something");
 					msg_print(Ind, "\374\377R         or read a 'scroll of satisfy hunger' if you have one.");
 				}
 				s_printf("warning_hungry(weak): %s\n", p_ptr->name);
@@ -3493,9 +3493,9 @@ bool set_food(int Ind, int v)
 					msg_print(Ind, "\374\377o         monsters in melee (close combat). Town monsters will work too.");
 				} else if (p_ptr->prace == RACE_ENT) {
 					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Find something to drink or rest ");
-					msg_print(Ind, "\374\377o         (SHIFT+R) on earth/dirt/grass/water floor tiles for a while.");
+					msg_print(Ind, "\374\377o         (\377RSHIFT+r\377o) on earth/dirt/grass/water floor tiles for a while.");
 				} else {
-					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Press SHIFT+E to eat something");
+					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Press \377RSHIFT+e\377o to eat something");
 					msg_print(Ind, "\374\377o         or read a 'scroll of satisfy hunger' if you have one.");
 				}
 				s_printf("warning_hungry(hungry): %s\n", p_ptr->name);
@@ -3952,11 +3952,11 @@ void check_experience(int Ind) {
 	/* Give helpful msg about how to distribute skill points at first level-up */
 	if (p_ptr->newbie_hints && (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * 5))) {
 	    // && p_ptr->inval) /* (p_ptr->warning_skills) */
-		msg_print(Ind, "\374\377GHINT: Press \377gSHIFT + g\377G to distribute your skill points!");
+		msg_print(Ind, "\374\377GHINT: Press \377gSHIFT+g\377G to distribute your skill points!");
 	}
 
 	if (p_ptr->warning_cloak == 2 && p_ptr->lev >= 15)
-		msg_print(Ind, "\374\377GHINT: You can press \377gSHIFT + v\377G to cloak your appearance.");
+		msg_print(Ind, "\374\377GHINT: You can press \377gSHIFT+v\377G to cloak your appearance.");
 
 	/* Tell player to use numpad to move diagonally */
 	if (old_lev < 2 && p_ptr->lev >= 2 && p_ptr->warning_numpadmove == 0) {
@@ -4040,15 +4040,15 @@ void check_experience(int Ind) {
 	/* Give warning message to utilize techniques */
 	if (old_lev < 15 && p_ptr->lev >= 15) {
 		if (p_ptr->warning_technique_melee == 0 && p_ptr->warning_technique_ranged == 0) {
-			msg_print(Ind, "\374\377yHINT: Press 'm' to access 'Fighting Techniques' and 'Shooting Techniques'!");
+			msg_print(Ind, "\374\377yHINT: Press '\377om\377y' to access 'Fighting Techniques' and 'Shooting Techniques'!");
 			msg_print(Ind, "\374\377y      You can also create macros for these. See the TomeNET guide for details.");
 			s_printf("warning_techniques: %s\n", p_ptr->name);
 		} else if (p_ptr->warning_technique_melee == 0) {
-			msg_print(Ind, "\374\377yHINT: Press 'm' to access 'Fighting Techniques'!");
+			msg_print(Ind, "\374\377yHINT: Press '\377om\377y' to access 'Fighting Techniques'!");
 			msg_print(Ind, "\374\377y      You can also create macros for these. See the TomeNET guide for details.");
 			s_printf("warning_technique_melee: %s\n", p_ptr->name);
 		} else if (p_ptr->warning_technique_ranged == 0) {
-			msg_print(Ind, "\374\377yHINT: Press 'm' to access 'Shooting Techniques'!");
+			msg_print(Ind, "\374\377yHINT: Press '\377om\377y' to access 'Shooting Techniques'!");
 			msg_print(Ind, "\374\377y      You can also create macros for these. See the TomeNET guide for details.");
 			s_printf("warning_technique_ranged: %s\n", p_ptr->name);
 		}
@@ -4191,7 +4191,7 @@ void check_experience(int Ind) {
 //			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to levitate!");
 		if (old_lev < 20 && p_ptr->lev >= 20) {
 			msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
-			msg_print(Ind, "\374\377G(Press 'm' key and choose 'use innate power' to polymorph.)");
+			msg_print(Ind, "\374\377G(Press '\377gm\377G' key and choose '\377guse innate power\377G' to polymorph.)");
 		}
 		break;
 #ifdef ENABLE_MAIA
@@ -4257,7 +4257,7 @@ void check_experience(int Ind) {
 	case CLASS_ROGUE:
 #ifdef ENABLE_CLOAKING
 		if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL) {
-			msg_print(Ind, "\374\377GYou learn how to cloak yourself to pass unnoticed (press 'V').");
+			msg_print(Ind, "\374\377GYou learn how to cloak yourself to pass unnoticed (press '\377gSHIFT+v\377G').");
 			if (!p_ptr->warning_cloak) p_ptr->warning_cloak = 2;
 		}
 #endif
@@ -4270,7 +4270,7 @@ void check_experience(int Ind) {
 		/* compare mimic_druid in defines.h */
 		if (old_lev < 5 && p_ptr->lev >= 5) {
 			msg_print(Ind, "\374\377GYou learn how to change into a Cave Bear (#160) and Panther (#198)");
-			msg_print(Ind, "\374\377G(Press 'm' key and choose 'use innate power' to polymorph.)");
+			msg_print(Ind, "\374\377G(Press '\377gm\377G' key and choose '\377guse innate power\377G' to polymorph.)");
 		}
 		if (old_lev < 10 && p_ptr->lev >= 10) {
 			msg_print(Ind, "\374\377GYou learn how to change into a Grizzly Bear (#191) and Yeti (#154)");
@@ -4298,10 +4298,10 @@ void check_experience(int Ind) {
 
 	/* learn fighting techniques */
 	if (old_lev < mtech_lev[p_ptr->pclass][0] && p_ptr->lev >= mtech_lev[p_ptr->pclass][0])
-		msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press '\377gm\377G')");
 	if (old_lev < mtech_lev[p_ptr->pclass][1] && p_ptr->lev >= mtech_lev[p_ptr->pclass][1])
 		msg_print(Ind, p_ptr->pclass == CLASS_MINDCRAFTER ?
-		    "\374\377GYou learn the fighting technique 'Taunt'! (press 'm')" :
+		    "\374\377GYou learn the fighting technique 'Taunt'! (press '\377gm\377G')" :
 		    "\374\377GYou learn the fighting technique 'Taunt'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][3] && p_ptr->lev >= mtech_lev[p_ptr->pclass][3])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'!");
@@ -5159,7 +5159,7 @@ void monster_death(int Ind, int m_idx) {
 				if (p_ptr->body_monster == credit_idx) p_ptr->tim_mimic = p_ptr->tim_mimic_what = 0;
 				if (!p_ptr->warning_mimic) {
 					p_ptr->warning_mimic = 1;
-					msg_print(Ind, "\374\377U(Press '\377ym\377U' key and choose 'use innate power' to polymorph.)");
+					msg_print(Ind, "\374\377U(Press '\377ym\377U' key and choose '\377yuse innate power\377U' to polymorph.)");
 					s_printf("warning_mimic: %s\n", p_ptr->name);
 				}
 			}
@@ -7425,9 +7425,9 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 #if 1 /* Enable, iff newbies-level leading to perma-death is disabled above. */
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
 		msg_format(Ind, "\374\377oYou died below level %d, which means that your items didn't drop.", cfg.newbies_cannot_drop);
-		msg_print(Ind, "\374\377oTherefore, it's recommended to press 'Q' to suicide and start over.");
-		if (p_ptr->wpos.wz < 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '<' to float back to town,");
-		else if (p_ptr->wpos.wz > 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '>' to float back to town,");
+		msg_print(Ind, "\374\377oTherefore, it's recommended to press '\377RQ\377o' to suicide and start over.");
+		if (p_ptr->wpos.wz < 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R<\377o' to float back to town,");
+		else if (p_ptr->wpos.wz > 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R>\377o' to float back to town,");
 		else if (in_bree(&p_ptr->wpos)) msg_print(Ind, "\374\377oIf you don't like to do that, of course you may just continue");
 		else msg_print(Ind, "\374\377oIf you don't like to do that, just continue by flying back to town");
 		msg_print(Ind, "\374\377oand enter the temple (\377g4\377o) to be revived and handed some money.");
@@ -7721,7 +7721,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		p_ptr->warning_ghost = 1;
 		msg_print(Ind, "\375\377RHINT: You died! You can wait for someone to revive you or use \377o<\377R or \377o>");
 		msg_print(Ind, "\375\377R      keys to float back to town and revive yourself in the temple (the \377g4\377R).");
-		msg_print(Ind, "\375\377R      If you wish to start over, press \377oSHIFT+Q\377R to erase this character.");
+		msg_print(Ind, "\375\377R      If you wish to start over, press \377oSHIFT+q\377R to erase this character.");
 		s_printf("warning_ghost: %s\n", p_ptr->name);
 	}
 }

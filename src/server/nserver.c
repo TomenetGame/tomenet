@@ -2029,6 +2029,15 @@ static void sync_options(int Ind, bool *options) {
 	int i;
 
 	/* Do the dirty work */
+
+	p_ptr->rogue_like_commands = options[0];
+
+	if (is_older_than(&p_ptr->version, 4, 4, 8, 7, 0, 0)) /* which effectively means < 4.4.9 */ {
+		p_ptr->warn_unique_credit = FALSE;
+	} else {
+		p_ptr->warn_unique_credit = options[1];
+	}
+
 #if 0
 	p_ptr->carry_query_flag = options[3];
 #else
@@ -2043,12 +2052,6 @@ static void sync_options(int Ind, bool *options) {
 		else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie hints requires you to exit and log in again.");
 	}
 #endif
-
-	if (is_older_than(&p_ptr->version, 4, 4, 8, 7, 0, 0)) /* which effectively means < 4.4.9 */ {
-		p_ptr->warn_unique_credit = FALSE;
-	} else {
-		p_ptr->warn_unique_credit = options[1];
-	}
 
 	p_ptr->use_old_target = options[4];
 	p_ptr->always_pickup = options[5];
@@ -2518,14 +2521,14 @@ static int Handle_login(int ind)
 		/* no bloody noob ever seems to read this how2run thingy.. (p_ptr->warning_welcome) */
 		msg_print(NumPlayers, "\374\377y ");
 		msg_print(NumPlayers, "\374\377y   ***  Welcome to Tomenet! You can chat with \377R:\377y key. Say hello :)  ***");
-		msg_print(NumPlayers, "\374\377y      To run fast, use \377RSHIFT + direction\377y keys (numlock must be OFF)");
+		msg_print(NumPlayers, "\374\377y      To run fast, use \377oSHIFT+direction\377y keys (\377oNUMLOCK\377y must be OFF)");
 		if (p_ptr->warning_wield == 0)
-			msg_print(NumPlayers, "\374\377y      Before you move out, press \377Rw\377y to equip your weapon and armour!");
+			msg_print(NumPlayers, "\374\377y      Before you move out, press \377ow\377y to equip your weapon and armour!");
 		else
-			msg_print(NumPlayers, "\374\377y      Before you move out, press \377Rw\377y to equip your starting items!");
+			msg_print(NumPlayers, "\374\377y      Before you move out, press \377ow\377y to equip your starting items!");
 		msg_print(NumPlayers, "\374\377y ");
-//		msg_print(NumPlayers, "\377RTurn off numlock and hit SHIFT + numkeys to run (move quickly).");
-//		msg_print(NumPlayers, "\377RHit '?' key for help. Hit ':' to chat. Hit '@' to see who is online.");
+//		msg_print(NumPlayers, "\377RTurn off \377oNUMLOCK\377R and hit \377oSHIFT+numkeys\377R to run (move quickly).");
+//		msg_print(NumPlayers, "\377RHit '\377o?\377R' key for help. Hit '\377o:\377R' to chat. Hit '\377o@\377R' to see who is online.");
 //		msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
 
 		/* Play audio greeting too! - C. Blue */
@@ -2756,7 +2759,7 @@ static int Handle_login(int ind)
 
 			if (p_ptr->inval) {
 				msg_print(NumPlayers, "\374\377RNOTE: 'PvP mode' is a special type of gameplay. NOT recommended for beginners!");
-				msg_print(NumPlayers, "\374\377R      If you didn't choose PvP mode on purpose, press shift+q to start over.");
+				msg_print(NumPlayers, "\374\377R      If you didn't choose PvP mode on purpose, press \377oSHIFT+q\377R to start over.");
 			}
 		}
 	}
@@ -2764,7 +2767,7 @@ static int Handle_login(int ind)
 #ifdef ENABLE_DRACONIAN_TRAITS
         if (p_ptr->prace == RACE_DRACONIAN && !p_ptr->ptrait) {
 		msg_print(NumPlayers, "\377oDraconians now have specific 'traits'. You do not have one yet!");
-		msg_print(NumPlayers, "\377o Press ':' key to chat and enter the command    /trait   to get one.");
+		msg_print(NumPlayers, "\377o Press '\377R:\377o' key to chat and enter the command   \377R/trait\377o  to get one.");
         }
 #endif
 
@@ -7370,8 +7373,8 @@ static int Receive_walk(int ind)
 			/* Give a warning after first 10 walked steps, then every 50 walked steps. */
 			if (p_ptr->warning_run_steps == 60) p_ptr->warning_run_steps = 10;
 			if (p_ptr->warning_run_steps == 10) {
-				msg_print(player, "\374\377oHINT: You can run swiftly by holding the SHIFT key when pressing a direction!");
-				msg_print(player, "\374\377o      To use this, the NUMLOCK key (labelled 'Num') must be turned off,");
+				msg_print(player, "\374\377oHINT: You can run swiftly by holding the \377RSHIFT\377o key when pressing a direction!");
+				msg_print(player, "\374\377o      To use this, the \377RNUMLOCK\377o key (labelled 'Num') must be turned off,");
 				msg_print(player, "\374\377o      and no awake monster must be in your line-of-sight (except in Bree).");
 				s_printf("warning_run_steps: %s\n", p_ptr->name);
 			}

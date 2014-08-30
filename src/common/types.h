@@ -1904,6 +1904,7 @@ struct player_type {
 //	unsigned int version;		/* His version */
 	version_type version;
 	bool v_outdated, v_latest, v_test, v_test_latest, v_unknown;
+	bool rogue_like_commands;
 
 	s32b id;		/* Unique ID to each player */
 	u32b account;		/* account group id */
