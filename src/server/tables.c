@@ -2817,7 +2817,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 350,
+                                '+', 500,
                         },
                         {
                                 SKILL_SLING,
@@ -3258,7 +3258,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_SLING,
@@ -3465,7 +3465,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 350,
+                                '+', 500,
                         },
                         {
                                 SKILL_MARTIAL_ARTS,
@@ -3623,7 +3623,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 700,
+                                '+', 600,
                         },
                         {
                                 SKILL_DEVICE,
@@ -3954,7 +3954,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 400,
+                                '+', 600,
                         },
                         {
                                 /* let's keep it low for now - offbalancing */
@@ -4153,7 +4153,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 /* let's keep it low for now - offbalancing */
@@ -4443,6 +4443,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 0,
                         },
+#if 1 /* druids are martial artists, so no need for these */
                         {
                                 SKILL_SLING,
                                 '+', 0,
@@ -4463,6 +4464,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 350,
                         },
+#endif
                         {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 1000, /* make newbies' lives easier */
@@ -4997,7 +4999,7 @@ player_class class_info[MAX_CLASS] =
 			{
 				SKILL_BOOMERANG,
 				'+', 0,
-				'+', 1000,
+				'+', 800,
 			},
 			/*
 			{
@@ -5214,7 +5216,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 1000,
-                                '+', 250,
+                                '+', 500,
                         },
 
                         /* Magic tree */
