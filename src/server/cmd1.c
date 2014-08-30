@@ -5819,6 +5819,18 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					s_printf("warning_tunnel: %s\n", p_ptr->name);
 					p_ptr->warning_tunnel = 1;
 				}
+			/* Treasure - just for the 'warning' hint */
+			} else if (c_ptr->feat == FEAT_MAGMA_K || c_ptr->feat == FEAT_QUARTZ_K || c_ptr->feat == FEAT_SANDWALL_K) {
+				msg_print(Ind, "You feel a wall blocking your way.");
+				*w_ptr |= CAVE_MARK;
+				everyone_lite_spot(wpos, y, x);
+
+				if (!p_ptr->warning_tunnel2) {
+					msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with SHIFT+T.");
+					msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
+					s_printf("warning_tunnel2: %s\n", p_ptr->name);
+					p_ptr->warning_tunnel2 = 1;
+				}
 			/* Closed door */
 			} else if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
 				 (c_ptr->feat == FEAT_HOME)) {
@@ -5883,6 +5895,18 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
 						s_printf("warning_tunnel: %s\n", p_ptr->name);
 						p_ptr->warning_tunnel = 1;
+					}
+				}
+				/* Treasure - just for the 'warning' hint */
+				else if (c_ptr->feat == FEAT_MAGMA_K || c_ptr->feat == FEAT_QUARTZ_K || c_ptr->feat == FEAT_SANDWALL_K) {
+					msg_print(Ind, "There is a wall blocking your way.");
+					//msg_print(Ind, "There is a wall with valuable minerals blocking your way.");
+
+					if (!p_ptr->warning_tunnel2) {
+						msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with SHIFT+T.");
+						msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
+						s_printf("warning_tunnel2: %s\n", p_ptr->name);
+						p_ptr->warning_tunnel2 = 1;
 					}
 				}
 				/* Tree */
