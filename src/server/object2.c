@@ -6821,10 +6821,13 @@ static int reward_spell_check(player_type *p_ptr, long int treshold) {
 
 	return (selection);
 }
-static int reward_misc_check(player_type *p_ptr) {
-/*  TV_LITE
-    TV_AMULET
-    TV_RING	*/
+static int reward_misc_check(player_type *p_ptr, long int treshold) {
+	/* TV_TRAPKIT */
+	if (p_ptr->s_info[SKILL_TRAPPING].value >= treshold) return 4;
+
+	/*  TV_LITE
+	    TV_AMULET
+	    TV_RING	*/
 	return (randint(3));
 }
 
@@ -6877,7 +6880,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	ranged_choice = reward_ranged_check(p_ptr, treshold);
 	armor_choice = reward_armor_check(p_ptr, mha, rha);
 	spell_choice = reward_spell_check(p_ptr, treshold);
-	misc_choice = reward_misc_check(p_ptr);
+	misc_choice = reward_misc_check(p_ptr, treshold);
 	/* martial arts -> no heavy armor (paranoia, shouldn't happen, already cought in reward_armor_check) */
 	if (melee_choice == 5 &&
 	    (armor_choice == 2 || armor_choice == 3))
@@ -6924,6 +6927,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	if (melee_choice && ((!armor_choice && !ranged_choice) || magik(50))) final_choice = 1;
 	if (ranged_choice && !final_choice && (!armor_choice || magik(50))) final_choice = 2;
 	if (melee_choice == 5) final_choice = 3;
+	if (misc_choice == 4 && (!final_choice || (final_choice && magik(33))) && (!armor_choice || magik(50))) final_choice = 6;
 	if (armor_choice && !final_choice) final_choice = 3;
 /*	if (final_choice == 3 && magik(25)) final_choice = 5; <- no misc items for now, won't be good if not (rand)arts anyway! */
 	/* to catch cases where NO result has been chosen at all (paranoia): */
@@ -6976,6 +6980,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case 3: reward_tval = TV_RING; break;
 		}
 		break;
+	case 6: reward_maxweight = 500;
+		reward_tval = TV_TRAPKIT;
+		reward_sval = 0;
+		break;
 	}
 
 	/* respect unusuable slots depending on monster form */
@@ -6995,7 +7003,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 
 		/* for armour being selected */
-		if (is_armour(tmp_obj.tval)) {
+		else if (is_armour(tmp_obj.tval)) {
 			wearables = 0;
 			wearable[0] = item_tester_hook_wear(Ind, INVEN_BODY) ? 10 + 30 + 3 : 0;
 			wearable[1] = item_tester_hook_wear(Ind, INVEN_OUTER) ? 10 : 0;
@@ -7049,6 +7057,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				s_printf("REWARD_CANNOT_WEAR: changed to %d\n", reward_tval);
 			}
 		}
+
+		/* of course we cannot wield trapping kits, nothing to do here */
+		else if (tmp_obj.tval == TV_TRAPKIT) ;
 
 		/* for other items: */
 		else {
