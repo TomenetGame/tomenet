@@ -8512,7 +8512,8 @@ Healing         Staves:
                 Heals 100 to 350 hit points, depending on magic device skill,
                 cures stun and cuts.
 Dragon's Breath These wands fire a ball of dragon odem (more powerful than
-                normal ball spell wands.)
+                normal ball spell wands.) - randomly on each cast one of:
+                Fire, frost, lightning, acid or poison.
 Restoration     Restores experience points (aka live levels) and drained stats,
                 ie STR/INT/WIS/DEX/CON/CHR.
 Havoc           Fires balls or beams of random type, the exact outcome is hard
