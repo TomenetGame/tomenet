@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 31. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -105,7 +105,8 @@ Contents
     (5.2)   Ranged weapons, brands
     (5.2a)  Fire-till-kill mode
     (5.3)   Slaying vs brands
-    (5.4)   Martial Arts, brands
+    (5.3a)  Martial Arts, brands
+    (5.4)   Application of attack-affecting item mods
     (5.5)   Weight of weapons and armour
     (5.6)   Resistances & caps, Immunities, Susceptibilities
     (5.7)   Qualitative classification of items, identifying & selling items
@@ -3236,9 +3237,9 @@ This line consists of the following icons that may show up:
                    accuracy with your ranged weapon.
     Light-red 'F'  You are martial arts user and your backpack is too
                    heavy, so that you don't receive Free Action from MA!
-                   See (5.4) for more detailed information.
+                   See (5.3a) for more detailed information.
     Yellow (       You are martial arts user and your armour is too heavy.
-                   You might receive various penalties (see (5.4)).
+                   You might receive various penalties (see (5.3a)).
                    NOTE: Up to client version 4.4.2 this can stand for both,
                    the meaning described above and the meaning of 'Blue ('
                    described below. Starting with 4.4.2a, these two were
@@ -3256,7 +3257,7 @@ This line consists of the following icons that may show up:
                    mindcrafter school spells, reducing your MP. Only affects
                    characters who have trained in one or more of the
                    mindcrafter schools.
-Also see (5.4) and especially (5.5) for more information about encumberment,
+Also see (5.3a) and especially (5.5) for more information about encumberment,
 and for specific details about penalties that are applied.
 
 
@@ -7023,8 +7024,8 @@ the type of sling, bow or crossbow).
 
 
 
-(5.4) Martial Arts, brands
---------------------------
+(5.3a) Martial Arts, brands
+---------------------------
 The "auto-retaliator" (see 4.1a) also works if you fight bare-handed.
 
 Training Martial Arts will give you..
@@ -7170,10 +7171,33 @@ attack against them.
 
 
 
+(5.4) Application of attack-affecting item mods
+-----------------------------------------------
+While item abilities such as resistances or stat boosts are always applied,
+magical mods that affect attacks might not be.
+Such mods are:
+
++to-hit, +to-dam, extra attacks, critical hits, vampiric, slays and brands.
+
+These mods on weapons are only applied to attacks done with that particular
+weapon.
+Except for 'extra attacks', which generally increases your number of attacks
+and will not discriminate which weapon will be used for attacking if you are
+dual-wielding - both weapons always have a 50% chance each blow.
+
+These mods on other items, like gloves or rings, will affect all weapons,
+even ranged ones, and also martial arts!
+Exceptions:
+ - +to-dam boni will not be applied to ranged weapons, only to melee attacks.
+ - Extra attacks are not applied to ranged weapons, only to melee attacks.
+ - Vampirism effect will be weaker (compare table at the end of (5.15)).
+
+
+
 (5.5) Weight of weapons and armour
 ----------------------------------
 Weight of items in your inventory or equipment can have great effect on
-martial artists. If you use martial arts, also see (5.4) for more information.
+martial artists. If you use martial arts, also see (5.3a) for more information.
 
 Even if you're not using martial arts, there are certain types of encumberment
 which may affect your character:
@@ -10048,6 +10072,8 @@ Note that not every skill is available to every profession (class).
                                 Crit boni on weapons only apply to the weapon
                                 itself, while bonus on other items such as
                                 gloves or rings count for all kind of attacks.
+                                (Same goes for slaying/brand mods on items by
+                                the way.)
                                 For weapon users, the weight of their weapon
                                 affects their critical hits:
                                 If your weapon is lighter than 10.0 lb, your
@@ -10192,7 +10218,7 @@ Note that not every skill is available to every profession (class).
                                 Under certain conditions MA abilities cannot
                                 be used and lose their effect. About this and
                                 for more information about Martial Arts in
-                                general, see (5.4)!
+                                general, see (5.3a)!
 
     .Interception               Ability to interfere with adjacent enemies.
                                 Can prevent them from teleporting, casting,
@@ -10903,7 +10929,7 @@ Blows/Round
     on your strength, dexterity, your class, your weapon.
     Spending points in specific weapon masteries will give you an additional
     blow at 25 and at 50 (like sword or blunt mastery).
-    Tables of blows/round limits are at (5.4) for martial arts, and at (6.5)
+    Tables of blows/round limits are at (5.3a) for martial arts, and at (6.5)
     and (6.5a) for melee weapons.
 Shots/Round
     How often per round you are able to use your ranged weapon.
@@ -11786,7 +11812,7 @@ To that maximum of blows per round further boni are added, like extra blows
 from a specific weapon-type mastery or from rings of extra attacks or magical
 influence from priest prayer 'Zeal'.
 Note that these blows/round limits don't count for Martial Arts users (as long
-as they fight barehanded). See (5.4) for a table of MA attacks.
+as they fight barehanded). See (5.3a) for a table of MA attacks.
 "Parrying" is done with weapons, while "blocking" is done with a shield;
 See (6.11) for details about parry and block.
 
