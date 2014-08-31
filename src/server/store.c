@@ -3464,7 +3464,10 @@ void store_sell(int Ind, int item, int amt) {
 	}
 
 	if (o_ptr->questor) {
-		msg_print(Ind, "\377yYou cannot sell this item. Use 'k' to destroy it. (Might abandon the quest!)");
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377yYou can't sell this item. Use '\377oCTRL+d\377y' to destroy it. (Might abandon the quest!)");
+		else
+			msg_print(Ind, "\377yYou cannot sell this item. Use '\377ok\377y' to destroy it. (Might abandon the quest!)");
 		return;
 	}
 
@@ -3612,7 +3615,10 @@ void store_confirm(int Ind) {
 		}
 	}
 	if (o_ptr->questor) {
-		msg_print(Ind, "\377yYou cannot drop this item. Use 'k' to destroy it. (Might abandon the quest!)");
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377yYou can't sell this item. Use '\377oCTRL+d\377y' to destroy it. (Might abandon the quest!)");
+		else
+			msg_print(Ind, "\377yYou cannot sell this item. Use '\377ok\377y' to destroy it. (Might abandon the quest!)");
 		return;
 	}
 	/* -------------------------------------------------------------------------------------- */
@@ -5019,7 +5025,10 @@ void home_sell(int Ind, int item, int amt)
 		}
 	}
 	if (o_ptr->questor) {
-		msg_print(Ind, "\377yYou cannot drop this item. Use 'k' to destroy it. (Might abandon the quest!)");
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377yYou can't sell this item. Use '\377oCTRL+d\377y' to destroy it. (Might abandon the quest!)");
+		else
+			msg_print(Ind, "\377yYou cannot sell this item. Use '\377ok\377y' to destroy it. (Might abandon the quest!)");
 		return;
 	}
 

@@ -4828,7 +4828,7 @@ void do_cmd_fire(int Ind, int dir)
 	    && !strstr(o_name, "!=")
 	    && p_ptr->warning_autopickup == 0) {
 		p_ptr->warning_autopickup = 1;
-		msg_print(Ind, "\374\377yHINT: Press '{' key and inscribe your ammunition '\377o!=\377y' to pick it up automatically!");
+		msg_print(Ind, "\374\377yHINT: Press '\377o{\377y' key and inscribe your ammunition '\377o!=\377y' to pick it up automatically!");
 		s_printf("warning_autopickup: %s\n", p_ptr->name);
 	}
 
@@ -6023,7 +6023,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	}
 
 	if (o_ptr->questor) {
-		msg_print(Ind, "\377yYou cannot drop this item. Use 'k' to destroy it. (Might abandon the quest!)");
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377yYou can't drop this item. Use '\377oCTRL+d\377y' to destroy it. (Might abandon the quest!)");
+		else
+			msg_print(Ind, "\377yYou cannot drop this item. Use '\377ok\377y' to destroy it. (Might abandon the quest!)");
 		return;
 	}
 

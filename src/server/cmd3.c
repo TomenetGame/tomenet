@@ -1304,7 +1304,10 @@ void do_cmd_drop(int Ind, int item, int quantity)
 #if (STARTEQ_TREATMENT == 1)
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9))) {
-		msg_print(Ind, "\377yYou are not experienced enough to drop items. (Destroy it with 'k' or sell it instead.)");
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377yYou are not experienced enough to drop items. (Destroy it with '\377oCTRL+d\377y' or sell it instead.)");
+		else
+			msg_print(Ind, "\377yYou are not experienced enough to drop items. (Destroy it with '\377ok\377y' or sell it instead.)");
 		return;
 	}
 #endif
@@ -1329,12 +1332,18 @@ void do_cmd_drop(int Ind, int item, int quantity)
 		}
 	}
 	if (o_ptr->questor) {
-		msg_print(Ind, "\377yYou cannot drop this item. Use 'k' to destroy it. (Might abandon the quest!)");
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377yYou can't drop this item. Use '\377oCTRL+d\377y' to destroy it. (Might abandon the quest!)");
+		else
+			msg_print(Ind, "\377yYou cannot drop this item. Use '\377ok\377y' to destroy it. (Might abandon the quest!)");
 		return;
 	}
 
 	if (p_ptr->inval) {
-		msg_print(Ind, "\377yYou may not drop items, wait for an admin to validate your account. (Destroy it with 'k' or sell it instead.)");
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377yYou may not drop items, wait for an admin to validate your account. (Destroy it with '\377oCTRL+d\377y' or sell it instead.)");
+		else
+			msg_print(Ind, "\377yYou may not drop items, wait for an admin to validate your account. (Destroy it with '\377ok\377y' or sell it instead.)");
 		return;
 	}
 
@@ -1368,7 +1377,10 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	    !exceptionally_shareable_item(o_ptr) && o_ptr->tval != TV_GAME &&
 	    !(o_ptr->tval == TV_PARCHMENT && (o_ptr->sval == SV_DEED_HIGHLANDER || o_ptr->sval == SV_DEED_DUNGEONKEEPER))) {
 		msg_print(Ind, "\377yPlease don't litter the town with level 0 items which are unusable");
-		msg_print(Ind, "\377y by other players. Use 'k' to destroy an item instead.");
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377y by other players. Use '\377oCTRL+d\377y' to destroy an item instead.");
+		else
+			msg_print(Ind, "\377y by other players. Use '\377ok\377y' to destroy an item instead.");
 		if (!is_admin(p_ptr)) return;
 	}
 
