@@ -4,7 +4,7 @@
            +---------------------------------------------/
 
 A manual to the game can be found in your TomeNET folder, it's the file
-'TomeNET-Guide.txt', or (recommended!) read it online at www.tomenet.net.
+'TomeNET-Guide.txt', or read it online at www.tomenet.net (recommended!).
 
 Press : to chat with other players.
 Press SHIFT+direction to run swiftly (numlock must be off).
