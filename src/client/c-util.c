@@ -6185,6 +6185,7 @@ static void do_cmd_options_install_audio_packs(void) {
 
 	bool sound_pack = TRUE, music_pack = TRUE;
 	bool sound_already = (audio_sfx > 3), music_already = (audio_music > 0);
+	bool password_ok = TRUE;
 
 	/* Clear screen */
 	Term_clear();
@@ -6410,14 +6411,34 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		Term_fresh();
 		Term_flush();
 #if defined(WINDOWS)
+		remove("music/music.cfg"); //just for password_ok check below
+
 		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-musicpack.7z", NULL);
+
+		/* actually check for successful password, by checking whether at least music.cfg was extracted */
+		if (!(fff = fopen("music/music.cfg", "r"))) password_ok = FALSE;
+		else if (fgetc(fff) == EOF) { //paranoia
+			password_ok = FALSE;
+			fclose(fff);
+		} else fclose(fff);
+
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		sprintf(out_val, "xcopy /I /E /Q /Y /H music %s", path);
 		r = system(out_val);
 		r = system("rmdir /S /Q music");
 #else /* assume posix */
 if (!strcmp(ANGBAND_SYS, "x11")) {
+		remove("music/music.cfg"); //just for password_ok check below
+
 		r = system("7zG x TomeNET-musicpack.7z");
+
+		/* actually check for successful password, by checking whether at least music.cfg was extracted */
+		if (!(fff = fopen("music/music.cfg", "r"))) password_ok = FALSE;
+		else if (fgetc(fff) == EOF) { //paranoia
+			password_ok = FALSE;
+			fclose(fff);
+		} else fclose(fff);
+
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		//r = system(format("mv music %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole music folder */
@@ -6425,7 +6446,17 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		r = system(out_val);
 		r = system("rm -rf music");
 } else { /* gcu */
+		remove("music/music.cfg"); //just for password_ok check below
+
 		r = system("7z x TomeNET-musicpack.7z");
+
+		/* actually check for successful password, by checking whether at least music.cfg was extracted */
+		if (!(fff = fopen("music/music.cfg", "r"))) password_ok = FALSE;
+		else if (fgetc(fff) == EOF) { //paranoia
+			password_ok = FALSE;
+			fclose(fff);
+		} else fclose(fff);
+
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		//r = system(format("mv music %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole music folder */
@@ -6434,8 +6465,13 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		r = system("rm -rf music");
 }
 #endif
-		Term_putstr(0, 6, -1, TERM_L_GREEN, "Music pack has been installed.             ");
-		Term_putstr(0, 7, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
+
+		if (password_ok) {
+			Term_putstr(0, 6, -1, TERM_L_GREEN, "Music pack has been installed.             ");
+			Term_putstr(0, 7, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
+		} else {
+			Term_putstr(0, 6, -1, TERM_L_RED, "You entered a wrong password. Music pack could not be installed.");
+		}
 	}
 
 	r = r;//slay silly compiler warning
