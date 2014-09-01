@@ -2753,7 +2753,6 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_run_monlos = 1;
 	}
 	if (p_ptr->max_plv > 4) {
-		p_ptr->warning_fountain = 1;
 		p_ptr->warning_voidjumpgate = 1;
 		p_ptr->warning_staircase = 1;
 		p_ptr->warning_autoret = 99;//p_ptr->warning_autoret_ok = ;
@@ -2764,6 +2763,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	}
 	if (p_ptr->max_plv > 7) {
 		p_ptr->warning_trap = 1;
+		p_ptr->warning_fountain = 1;
 	}
 	if (p_ptr->max_plv > 10) {
 		p_ptr->warning_ghost = 1;
