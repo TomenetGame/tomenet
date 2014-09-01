@@ -15,8 +15,13 @@
 
 #include "angband.h"
 
+//#define ENABLE_DOOR_CHECK
+
 static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 static void town_gen_hack(struct worldpos *wpos);
+#ifdef ENABLE_DOOR_CHECK
+static bool door_makes_no_sense(cave_type **zcave, int x, int y);
+#endif
 
 struct stairs_list {
 	int x, y;
@@ -905,6 +910,10 @@ static void place_locked_door(struct worldpos *wpos, int y, int x) {
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
+#ifdef ENABLE_DOOR_CHECK
+	if (door_makes_no_sense(zcave, x, y)) return;
+#endif
+
 	/* Create locked door */
 	c_ptr->feat = FEAT_DOOR_HEAD + randint(7);
 	aquatic_terrain_hack(zcave, x, y);
@@ -926,6 +935,10 @@ static void place_secret_door(struct worldpos *wpos, int y, int x) {
 	struct c_special *cs_ptr;
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
+
+#ifdef ENABLE_DOOR_CHECK
+	if (door_makes_no_sense(zcave, x, y)) return;
+#endif
 
 	if ((cs_ptr = AddCS(c_ptr, CS_MIMIC))) {
 		/* Vaults */
@@ -969,6 +982,10 @@ static void place_random_door(struct worldpos *wpos, int y, int x) {
 	cave_type *c_ptr;
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
+
+#ifdef ENABLE_DOOR_CHECK
+	if (door_makes_no_sense(zcave, x, y)) return;
+#endif
 
 #if 0 /* fixed the build_tunnel() code, should make this hack obsolete */
 	/* hack: after adding dungeon-custom boundary feats, we had a panic in
@@ -8070,8 +8087,6 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 	/* Apply the piercings that we found */
 	for (i = 0; i < dun->wall_n; i++) {
-		int feat;
-
 		/* Access the grid */
 		y = dun->wall[i].y;
 		x = dun->wall[i].x;
@@ -8090,37 +8105,41 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 #endif
 		    (!(d_ptr->flags1 & (DF1_NO_DOORS)))) &&
 		    rand_int(100) < DUN_TUN_PEN) {
-			/* Place a random door */
-			place_random_door(wpos, y, x);
-
 #ifdef WIDE_CORRIDORS
-			/* Remember type of door */
-			feat = zcave[y][x].feat;
+			/* hack: prepare 2nd door part for door_makes_no_sense() check */
+			int x2, y2;
 
 			/* Make sure both halves get a door */
-			if (i % 2)
-			{
+			if (i % 2) {
 				/* Access the grid */
-				y = dun->wall[i - 1].y;
-				x = dun->wall[i - 1].x;
-			}
-			else
-			{
+				y2 = dun->wall[i - 1].y;
+				x2 = dun->wall[i - 1].x;
+			} else {
 				/* Access the grid */
-				y = dun->wall[i + 1].y;
-				x = dun->wall[i + 1].x;
+				y2 = dun->wall[i + 1].y;
+				x2 = dun->wall[i + 1].x;
 
 				/* Increment counter */
 				i++;
 			}
 
+ #ifdef ENABLE_DOOR_CHECK
+			/* hack! provisional feat */
+			zcave[y2][x2].feat = FEAT_WALL_EXTRA;
+ #endif
+#endif
+
+			/* Place a random door */
+			place_random_door(wpos, y, x);
+
+#ifdef WIDE_CORRIDORS
 			/* Place the same type of door */
-			zcave[y][x].feat = feat;
+			zcave[y2][x2].feat = zcave[y][x].feat;
 
 			/* let's trap this too ;) */
 			if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
-					rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) continue;
-			place_trap(wpos, y, x, 0);
+			    rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) continue;
+			place_trap(wpos, y2, x2, 0);
 #endif
 		}
 	}
@@ -8380,6 +8399,11 @@ static void try_doors(worldpos *wpos, int y, int x) {
 				yy = y + ddy_ddd[i];
 				xx = x + ddx_ddd[i];
 
+#ifdef ENABLE_DOOR_CHECK
+				/* hack for door_makes_no_sense() check */
+				zcave[yy + ddy_ddd[dir_next[i]]][xx + ddx_ddd[dir_next[i]]].feat = FEAT_WALL_EXTRA;
+#endif
+
 				/* Place a door */
 				place_random_door(wpos, yy, xx);
 
@@ -8419,6 +8443,11 @@ static void try_doors(worldpos *wpos, int y, int x) {
 			/* Access location */
 			yy = y + ddy_ddd[i];
 			xx = x + ddx_ddd[i];
+
+#ifdef ENABLE_DOOR_CHECK
+			/* hack for door_makes_no_sense() check */
+			zcave[yy + ddy_ddd[dir_next[i]]][xx + ddx_ddd[dir_next[i]]].feat = FEAT_WALL_EXTRA;
+#endif
 
 			/* Place a secret door */
 			place_secret_door(wpos, yy, xx);
@@ -10178,6 +10207,20 @@ for(mx = 1; mx < 131; mx++) {
         }
 }
 
+#endif
+
+#ifdef ENABLE_DOOR_CHECK
+#if 0 /* special secondary check maybe, apart from the usual door_makes_no_sense() -- THIS IS JUST A DOODLE - NON FUNCTIONAL! */
+	/* scan level for weird doors and remove them */
+	for (x = 0; x < MAX_WID; x++)
+		for (y = 0; y < MAX_HGT; y++) {
+			k = zcave[y][x].feat;
+			if ((k < FEAT_DOOR_HEAD || k > FEAT_DOOR_TAIL) && k != FEAT_SECRET) continue;
+			if (door_makes_no_sense(zcave, x, y))
+			    ;
+			    //zcave[y][x] = FEAT_FLOOR;
+	}
+#endif
 #endif
 
 	level_generation_time = FALSE;
@@ -12127,3 +12170,100 @@ int get_seasonal_tree(void) {
 	}
 	return (FEAT_HIGH_MOUNTAIN); /* just to clear compiler warning */
 }
+
+#ifdef ENABLE_DOOR_CHECK
+/* Check that a door that is about to be placed makes actually at least slight sense.
+   Mostly disallow doors that have no 'wall with hinges' next to them,
+   ie doors hanging in the air freely.
+   Current disadvantage: Enabling this will prevent 'quad-doors' which may look
+   cool as *big* entrance to a room.  - C. Blue */
+#define DOOR_FLOOR(feat) \
+    (((feat < FEAT_DOOR_HEAD || feat > FEAT_DOOR_TAIL) \
+    && feat != FEAT_SECRET) && \
+    (f_info[feat].flags1 & FF1_FLOOR))
+#define DOOR_WALL(feat) \
+    (((feat < FEAT_DOOR_HEAD || feat > FEAT_DOOR_TAIL) \
+    && feat != FEAT_SECRET) && \
+    !(f_info[feat].flags1 & FF1_FLOOR))
+//#define DOOR_SEPARATING
+static bool door_makes_no_sense(cave_type **zcave, int x, int y) {
+	int tmp, feat;
+	bool walls = FALSE; //disallow duplicate door that 'hangs in the air'
+#ifdef DOOR_SEPARATING
+	int ok_step = 0;
+	int adjacent_floors = 0; //allow an exception via 'collapsed passage' excuse ;)
+#endif
+
+
+	/* Check that this door makes any sense */
+	feat = zcave[y + ddy_cyc[0]][x + ddx_cyc[0]].feat;
+
+#ifdef DOOR_SEPARATING
+	/* check 'sustaining-wall' condition */
+	if (DOOR_WALL(feat)) walls = TRUE;
+
+	/* check the other stuff */
+	if (DOOR_FLOOR(feat)) {
+		ok_step = 1;
+		adjacent_floors = 1;
+	}
+#else
+	/* check 'sustaining-wall' condition */
+	if (DOOR_WALL(feat)) return FALSE;
+#endif
+
+
+	for (tmp = 1; tmp < 8; tmp++) {
+		feat = zcave[y + ddy_cyc[tmp]][x + ddx_cyc[tmp]].feat;
+
+#ifdef DOOR_SEPARATING /* we can assume it has withered or been destroyed, so the door is useless now but still there! */
+		/* check 'sustaining-wall' condition */
+		if (!walls && DOOR_WALL(feat)) walls = TRUE;
+
+		/* optional: check 'collapsed passage' exception */
+		if (DOOR_FLOOR(feat)) adjacent_floors++;
+
+		/* check that the door actually separates any passages */
+		switch (ok_step) {
+		case 0:
+			if (DOOR_FLOOR(feat)) ok_step = 2;
+			break;
+		case 2:
+			if (!DOOR_FLOOR(feat)) ok_step = 4;
+			break;
+		case 4:
+			if (DOOR_FLOOR(feat)) return FALSE;
+			break;
+		case 1:
+			if (!DOOR_FLOOR(feat)) ok_step = 3;
+			break;
+		case 3:
+			if (DOOR_FLOOR(feat)) ok_step = 5;
+			break;
+		case 5:
+			if (!DOOR_FLOOR(feat)) return FALSE;
+			break;
+		}
+#else
+		/* check 'sustaining-wall' condition */
+		if (!walls && DOOR_WALL(feat)) return FALSE;
+#endif
+	}
+
+#ifdef DOOR_SEPARATING
+	/* condition of 'sustaining wall'? */
+	if (!walls) return TRUE;
+
+
+	/* exception for 'collapsed passages'? */
+	if (adjacent_floors <= 3) return FALSE;
+#endif
+
+#if 0 /* debug */
+zcave[y][x].feat = FEAT_SEALED_DOOR;
+s_printf("TRUE\n");
+#endif
+
+	return TRUE;
+}
+#endif
