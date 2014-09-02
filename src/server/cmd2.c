@@ -4826,8 +4826,8 @@ void do_cmd_fire(int Ind, int dir)
 
 	if (!returning && !ethereal
 	    && !strstr(o_name, "!=")
-	    && p_ptr->warning_autopickup == 0) {
-		p_ptr->warning_autopickup = 1;
+	    && p_ptr->warning_autopickup < p_ptr->lev) { /* wow - repeat this hint every level =P */
+		p_ptr->warning_autopickup = p_ptr->lev;
 		msg_print(Ind, "\374\377yHINT: Press '\377o{\377y' key and inscribe your ammunition '\377o!=\377y' to pick it up automatically!");
 		s_printf("warning_autopickup: %s\n", p_ptr->name);
 	}

@@ -2617,7 +2617,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_technique_melee = 1;
 		p_ptr->warning_technique_ranged = 1;
 		p_ptr->warning_hungry = 2;
-		p_ptr->warning_autopickup = 1;
+		p_ptr->warning_autopickup = PY_MAX_LEVEL;
 		p_ptr->warning_ranged_autoret = 1;
 		p_ptr->warning_cloak = 1;
 		p_ptr->warning_macros = 1;
