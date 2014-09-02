@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. September 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10263,6 +10263,13 @@ Note that not every skill is available to every profession (class).
                                 Interception chance caps at 80% (cap is
                                 applied after all other penalties have been
                                 factored in, at the very end of calculation).
+
+                                Note that multiple players trying to intercept
+                                the same monster does not result in 'stacking'
+                                of their interception chances:
+                                The player who has (under given circumstances
+                                such as being blinded etc) the best chance to
+                                intercept will override the others.
 
     +Archery                    Improves ranged to-damage bonus.
                                 Allows you to learn some shooting techniques
