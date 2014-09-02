@@ -4507,9 +4507,9 @@ void calc_boni(int Ind) {
 				break_shadow_running(Ind);
 				if (!p_ptr->warning_dual && p_ptr->dual_wield && p_ptr->pclass != CLASS_ROGUE) {
 					p_ptr->warning_dual = 1;
-					msg_print(Ind, "\374\377yHINT: You won't get any benefits from dual-wielding if your armour is");
-					msg_print(Ind, "\374\377y      too heavy; in that case, consider using one weapon together with");
-					msg_print(Ind, "\374\377y      a shield, or -if your STR is very high- try a two-handed weapon.");
+					msg_print(Ind, "\374\377yHINT: You cannot dual-wield effectively if your armour is too heavy!");
+					msg_print(Ind, "\374\377y      If you don't want to use lighter armour, consider using one weapon");
+					msg_print(Ind, "\374\377y      and a shield, or (if your STRength is VERY high) a two-handed weapon.");
 					s_printf("warning_dual: %s\n", p_ptr->name);
 				}
 			}
