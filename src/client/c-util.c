@@ -4800,7 +4800,8 @@ Chain_Macro:
 						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
 						Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377G{bad}");
 						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to throw any item that is inscribed '{bad}'.");
-						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
+						Term_putstr(5, 13, -1, TERM_GREEN, "(That can for example give otherwise useless potions some use..).");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial item name or inscription:");
 						break;
 
 					case mw_custom:
