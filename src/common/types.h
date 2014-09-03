@@ -1250,10 +1250,10 @@ struct xorder_type {
  * struct for individual levels.
  */
 typedef struct dun_level dun_level;
-struct dun_level
-{
+struct dun_level {
 	int ondepth;
 	time_t lastused;
+	time_t total_static_time;
 	u32b id;		/* Unique ID to check if players logged out on the same
 				   floor or not, when they log in again- C. Blue */
 	byte up_x,up_y;
@@ -1336,6 +1336,7 @@ struct wilderness_type {
 	struct dungeon_type *dungeon;
 	s16b ondepth;
 	time_t lastused;
+	time_t total_static_time;
 	cave_type **cave;
 	byte up_x, up_y;
 	byte dn_x, dn_y;
