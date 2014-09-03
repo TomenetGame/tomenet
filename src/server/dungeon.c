@@ -5271,7 +5271,7 @@ static void do_unstat(struct worldpos *wpos) {
 	if (ge_special_sector && wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) return;
 
 	// Anyone on this depth?
-	for (j = 1; j < NumPlayers + 1; j++)
+	for (j = 1; j <= NumPlayers; j++)
 		if (inarea(&Players[j]->wpos, wpos)) return;
 
 	// If this level is static and no one is actually on it
