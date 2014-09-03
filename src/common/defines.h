@@ -318,6 +318,17 @@
    Gets doubled for winner-arts and doubled on rpg-server (cumulative). */
 #define FLUENT_ARTIFACT_WEEKS 5
 
+
+/* Can staticed levels no longer get their static-timeout 'reset' by someone
+   logging on on them and leaving again? */
+#define NO_STATIC_TIMER_RESET
+/* Allow exception for someone dying there when it's already stale, if his
+   level is at least 1/4 of the depth and >= cfg.newbies_cannot_drop? */
+#define STATIC_TIMER_RESETS_ON_DEATH
+/* Sauron's floor in Mt Doom has a shorter static timer */
+#define SAURON_FLOOR_FAST_UNSTAT
+
+
 /*
  * The types of communication that we send to the metaserver
  */

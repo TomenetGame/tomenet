@@ -5261,7 +5261,7 @@ bool stale_level(struct worldpos *wpos, int grace) {
 	return FALSE;
 }
 
-static void do_unstat(struct worldpos *wpos) {
+static void do_unstat(struct worldpos *wpos, bool fast_unstat) {
 	int j;
 
 	/* Highlander Tournament sector00 is static while players are in dungeon! */
@@ -5276,6 +5276,10 @@ static void do_unstat(struct worldpos *wpos) {
 
 	// If this level is static and no one is actually on it
 //	if (stale_level(wpos)) {
+#ifdef SAURON_FLOOR_FAST_UNSTAT
+		if (fast_unstat) j = 60 * 60; //1h
+		else
+#endif
 		j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
 
 		/* limit static time in Ironman Deep Dive Challenge a lot */
@@ -5352,7 +5356,7 @@ static void purge_old()
 
 				if (cfg.level_unstatic_chance > 0 &&
 				    players_on_depth(&twpos))
-					do_unstat(&twpos);
+					do_unstat(&twpos, FALSE);
 
 				if (!players_on_depth(&twpos) && !istown(&twpos) &&
 				    getcave(&twpos) && stale_level(&twpos, cfg.anti_scum))
@@ -5364,7 +5368,7 @@ static void purge_old()
 						twpos.wz = i;
 						if (cfg.level_unstatic_chance > 0 &&
 						    players_on_depth(&twpos))
-							do_unstat(&twpos);
+							do_unstat(&twpos, d_ptr->type == DI_MT_DOOM && i == d_ptr->maxdepth);
 
 						if (!players_on_depth(&twpos) && getcave(&twpos) &&
 						    stale_level(&twpos, cfg.anti_scum))
@@ -5377,7 +5381,7 @@ static void purge_old()
 						twpos.wz = -i;
 						if (cfg.level_unstatic_chance > 0 &&
 						    players_on_depth(&twpos))
-							do_unstat(&twpos);
+							do_unstat(&twpos, d_ptr->type == DI_MT_DOOM && i == d_ptr->maxdepth);
 
 						if (!players_on_depth(&twpos) && getcave(&twpos) &&
 						    stale_level(&twpos, cfg.anti_scum))

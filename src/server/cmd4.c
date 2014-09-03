@@ -2238,15 +2238,15 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff,"\n");
 
 	fprintf(fff, "The floor will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
-	if ((k = cfg.level_unstatic_chance))
-		fprintf(fff, "Leaving/ghostdying in dungeon keeps the floor static for %d*dunlevel minutes.\n", k);
-
-	if ((k = cfg.min_unstatic_level) > 0) 
-		fprintf(fff, "Shallow dungeon (before level %d) will never be static. Save in town!\n", k);
-
-	if ((k = cfg.preserve_death_level) < 201)
-		fprintf(fff, "Site of death under level %d will be static, allowing others to loot it.\n", k);
-
+	if ((k = cfg.level_unstatic_chance) && cfg.min_unstatic_level) {
+		if (cfg.preserve_death_level < 201)
+			fprintf(fff, "Ghost-dying on dungeon level %d or deeper, or logging out on dungeon level %d\n or deeper keeps the floor static for %d*dunlevel minutes\n", cfg.preserve_death_level, cfg.min_unstatic_level, k);
+		else
+			fprintf(fff, "Logging out on dungeon level %d or deeper keeps the floor static for\n %d*dunlevel minutes.\n", cfg.min_unstatic_level, k);
+#ifdef SAURON_FLOOR_FAST_UNSTAT
+		fprintf(fff, " Sauron's floor is an exception and will stay static for 60 minutes.\n");
+#endif
+	}
 
 	fprintf(fff,"\n");
 		

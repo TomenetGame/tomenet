@@ -3203,8 +3203,11 @@ static void set_server_option(char * option, char * value)
 		cfg.mage_hp_bonus = str_to_boolean(value);
 	else if (!strcmp(option,"NEWBIES_CANNOT_DROP"))
 		cfg.newbies_cannot_drop = atoi(value);
-	else if (!strcmp(option,"PRESERVE_DEATH_LEVEL"))
+	else if (!strcmp(option,"PRESERVE_DEATH_LEVEL")) {
 		cfg.preserve_death_level = atoi(value);
+		if (cfg.min_unstatic_level > cfg.preserve_death_level)
+			cfg.preserve_death_level = cfg.min_unstatic_level;
+	}
 	else if (!strcmp(option,"NO_GHOST"))
 		cfg.no_ghost = str_to_boolean(value);
 	else if (!strcmp(option,"MAX_LIFES"))
@@ -3231,8 +3234,11 @@ static void set_server_option(char * option, char * value)
 		cfg.game_port = atoi(value);
 	else if (!strcmp(option,"GW_PORT"))
 		cfg.gw_port = atoi(value);
-	else if (!strcmp(option,"MIN_UNSTATIC_LEVEL"))
+	else if (!strcmp(option,"MIN_UNSTATIC_LEVEL")) {
 		cfg.min_unstatic_level = atoi(value);
+		if (cfg.min_unstatic_level > cfg.preserve_death_level)
+			cfg.preserve_death_level = cfg.min_unstatic_level;
+	}
 	else if (!strcmp(option,"SPELL_INTERFERE"))
 		cfg.spell_interfere = atoi(value);
 	else if (!strcmp(option,"CONSOLE_PORT"))
