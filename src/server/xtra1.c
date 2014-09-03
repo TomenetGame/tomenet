@@ -6926,7 +6926,7 @@ void announce_global_event(int ge_id) {
 	//if (time_left >= 120) msg_broadcast_format(0, "\374\377U[\377W%s (\377U%d\377W) starts in %d minutes\377U]", ge->title, ge_id + 1, time_left / 60);
 	if (time_left >= 120) msg_broadcast_format(0, "\374\377W[%s (\377U%d\377W) starts in %d minutes]", ge->title, ge_id + 1, time_left / 60);
 	/* otherwise just seconds */
-	else msg_broadcast_format(0, "\377W[%s (%d) starts in %d seconds!]", ge->title, ge_id + 1, time_left);
+	else msg_broadcast_format(0, "\374\377W[%s (%d) starts in %d seconds!]", ge->title, ge_id + 1, time_left);
 
 	/* display additional commands on first advertisement */
 	if (ge->first_announcement) {
@@ -8249,7 +8249,7 @@ static void process_global_event(int ge_id) {
 	
 	/* Check for end of event */
 	if (ge->getype == GE_NONE) {
-		msg_broadcast_format(0, "\377s[%s has ended]", ge->title);
+		msg_broadcast_format(0, "\374\377W[%s has ended]", ge->title);
 		s_printf("%s EVENT_END: %d - '%s'.\n", showtime(), ge_id + 1, ge->title);
 	}
 }
