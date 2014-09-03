@@ -5261,12 +5261,8 @@ bool stale_level(struct worldpos *wpos, int grace) {
 	return FALSE;
 }
 
-static void do_unstat(struct worldpos *wpos)
-{
-	int num_on_depth = 0;
+static void do_unstat(struct worldpos *wpos) {
 	int j;
-	player_type *p_ptr;
-
 
 	/* Highlander Tournament sector00 is static while players are in dungeon! */
 	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z && sector00separation) return;
@@ -5274,16 +5270,12 @@ static void do_unstat(struct worldpos *wpos)
 	/* Arena Monster Challenge */
 	if (ge_special_sector && wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) return;
 
+	// Anyone on this depth?
+	for (j = 1; j < NumPlayers + 1; j++)
+		if (inarea(&Players[j]->wpos, wpos)) return;
 
-	// Count the number of players actually in game on this depth
-	for (j = 1; j < NumPlayers + 1; j++) {
-		p_ptr = Players[j];
-		if (inarea(&p_ptr->wpos, wpos)) num_on_depth++;
-	}
 	// If this level is static and no one is actually on it
-	if (!num_on_depth)
-//			&& stale_level(wpos))
-	{
+//	if (stale_level(wpos)) {
 		j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
 
 		/* limit static time in Ironman Deep Dive Challenge a lot */
@@ -5295,8 +5287,8 @@ static void do_unstat(struct worldpos *wpos)
 		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
 		if (((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) ||
 		    stale_level(wpos, j))
-			new_players_on_depth(wpos,0,FALSE);
-	}
+			new_players_on_depth(wpos, 0, FALSE);
+//	}
 }
 
 /*
