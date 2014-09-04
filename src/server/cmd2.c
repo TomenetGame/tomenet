@@ -4471,7 +4471,12 @@ void do_cmd_fire(int Ind, int dir)
 	}
 	
 	if (o_ptr->tval != p_ptr->tval_ammo && !boomerang) {
-		msg_print(Ind, "You cannot fire that!");
+		switch (p_ptr->tval_ammo) {
+		case TV_SHOT: msg_print(Ind, "Your ranged weapon can only fire shots or pebbles!"); return;
+		case TV_ARROW: msg_print(Ind, "Your ranged weapon can only fire arrows!"); return;
+		case TV_BOLT: msg_print(Ind, "Your ranged weapon can only fire bolts!"); return;
+		}
+		msg_print(Ind, "Your ranged weapon is too heavy for you to use!"); return;
 		return;
 	}
 
