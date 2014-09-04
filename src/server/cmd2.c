@@ -4300,8 +4300,7 @@ bool retaliating_cmd = FALSE;
 /* Added a lot of hacks to handle boomerangs.	- Jir - */
 /* Added another lot of hacks to handle quiver-slot.	- Jir - */
 /* XXX it's... way too dirty. consider using 'project()' */
-void do_cmd_fire(int Ind, int dir)
-{
+void do_cmd_fire(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 
@@ -4353,6 +4352,12 @@ void do_cmd_fire(int Ind, int dir)
 #endif
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
+
+	if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
+		msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to fire your bow with a single keypress!");
+		msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
+		s_printf("warning_macros: %s\n", p_ptr->name);
+	}
 
 	/* New '+' feat in 4.4.6.2 */
 	if (dir == 11) {
