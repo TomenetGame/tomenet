@@ -4004,9 +4004,8 @@ void check_experience(int Ind) {
 				found_macroishness = TRUE;
 		/* give a warning if it seems as if this character doesn't use any macros ;) */
 		if (!found_macroishness) {
-			msg_print(Ind, "\374\377oHINT: Start getting the hang of '\377Rmacros\377o' ('%' key) in order to ensure");
-			msg_print(Ind, "\374\377o      survival in critical combat situations. \377RPress '%' and 'z'\377o to start the");
-			msg_print(Ind, "\374\377o      macro wizard and/or read the guide (text file 'TomeNET-Guide.txt').");
+			msg_print(Ind, "\374\377oHINT: Create '\377Rmacros\377o' aka hotkeys to ensure survival in critical situations!");
+			msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to start the macro wizard.");
 			s_printf("warning_macros: %s\n", p_ptr->name);
 		}
 	}
