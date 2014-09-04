@@ -525,7 +525,7 @@ s_printf("Type: %s\n", r_types[type].name);
 	
 	/* Energy Requirement */
 	s16b energy = rspell_energy(Ind, imperative, type);
-	
+
 	/* Handle '+' targetting mode */
 	if (dir == 11) {
 		get_aim_dir(Ind);
@@ -997,6 +997,13 @@ s_printf("Duration: %d\n", duration);
 		p_ptr->shooting_till_kill = FALSE;
 	}
 #endif
+
+	if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
+		msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to cast a spell with a single keypress!");
+		msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
+		p_ptr->warning_macros = 1;
+		s_printf("warning_macros: %s\n", p_ptr->name);
+	}
 
 	return 1;
 }

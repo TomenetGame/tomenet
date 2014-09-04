@@ -4303,6 +4303,7 @@ bool retaliating_cmd = FALSE;
 void do_cmd_fire(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
+	bool warn = FALSE;
 
 	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
 #ifdef PY_FIRE_ON_WALL
@@ -4352,12 +4353,6 @@ void do_cmd_fire(int Ind, int dir) {
 #endif
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
-
-	if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
-		msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to fire your bow with a single keypress!");
-		msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
-		s_printf("warning_macros: %s\n", p_ptr->name);
-	}
 
 	/* New '+' feat in 4.4.6.2 */
 	if (dir == 11) {
@@ -4849,6 +4844,8 @@ void do_cmd_fire(int Ind, int dir) {
 	prev_x = bx;
 	prev_y = by;
 #endif
+
+	if (!p_ptr->warning_macros && dir != 5 && dir < 10) warn = TRUE;
 
 	while (TRUE) {
 		/* Travel until stopped */
@@ -5781,6 +5778,13 @@ void do_cmd_fire(int Ind, int dir) {
 	/* hack for auto-retaliator hack in dungeon.c fire_till_kill-related call of do_cmd_fire() */
 	p_ptr->auto_retaliating = FALSE;
 #endif
+
+	if (warn) {
+		msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to fire your bow with a single keypress!");
+		msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
+		p_ptr->warning_macros = 1;
+		s_printf("warning_macros: %s\n", p_ptr->name);
+	}
 }
 
 /*

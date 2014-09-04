@@ -1568,8 +1568,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 /* Hrm, 'item' should be used for spells like Identify;
  * TODO: revise the PKT_ACTIVATE_SKILL packet type
  */
-void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
-{
+void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[book];
 	int ftk_maybe;
@@ -1660,6 +1659,13 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	if (spell != -1) {
 		ftk_maybe = (exec_lua(Ind, format("return cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, book = %d, item = %d, aux = %d})", Ind, spell, spell, dir, book, item, aux)));
 		ftk_type = (exec_lua(Ind, format("return get_spell_ftk(%d)", spell)));
+
+		if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
+			msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to cast a spell with a single keypress!");
+			msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
+			p_ptr->warning_macros = 1;
+			s_printf("warning_macros: %s\n", p_ptr->name);
+		}
 
 #if 1 /* Fire-Till-Kill */
 		if (p_ptr->shooty_till_kill && ftk_maybe) {
