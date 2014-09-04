@@ -2127,11 +2127,11 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->taciturn_messages = options[65];
 		p_ptr->last_words = options[66];
 	} else {
-		bool vlf = p_ptr->view_lite_floor;
+		bool vlf = p_ptr->view_lite_extra;
 		p_ptr->last_words = TRUE;
 		p_ptr->taciturn_messages = options[66];
-		p_ptr->view_lite_floor = options[65];
-		if (vlf != p_ptr->view_lite_floor) p_ptr->redraw |= PR_MAP;
+		p_ptr->view_lite_extra = options[65];
+		if (vlf != p_ptr->view_lite_extra) p_ptr->redraw |= PR_MAP;
 	}
 
 	p_ptr->limit_chat = options[67];

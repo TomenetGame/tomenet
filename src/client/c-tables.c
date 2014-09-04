@@ -488,8 +488,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.last_words,		TRUE,	1,	9, 66, TRUE,
 	"last_words",			"Get last words when the character dies" },
 #else
-	{ &c_cfg.view_lite_floor,	FALSE,	1,	9, 65, TRUE,
-	"view_lite_floor",		"Lamp light affects more floor types" },
+	{ &c_cfg.view_lite_extra,	FALSE,	1,	9, 65, TRUE,
+	"view_lite_extra",		"Lamp light affects more floor/wall types" },
 #endif
 
 	{ &c_cfg.taciturn_messages,	FALSE,	1,	9, 66, TRUE,
