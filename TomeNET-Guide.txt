@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. September 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. September 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10763,7 +10763,13 @@ Note that not every skill is available to every profession (class).
                                 piles if your skill is actually 50.000).
 
                                 Depending on the skill, you might also uncover
-                                special things.
+                                unusual features such as fountains or
+                                staircases or somewhat more often (compared to
+                                finding just random items from digging) find
+                                chests, runes or heavy material pieces suitable
+                                for golem creation.
+                                The quality of objects found also depends on
+                                your digging skill.
 
                                 Certain tools such as shovels, picks and
                                 mattocks will also increase your digging speed
