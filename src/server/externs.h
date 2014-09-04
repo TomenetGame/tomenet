@@ -2290,7 +2290,7 @@ extern int fireworks_delay;
 extern int shutdown_recall_timer, shutdown_recall_state;
 
 /* runecraft.c */
-extern byte execute_rspell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bool retaliate);
+extern byte cast_rune_spell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bool retaliate);
 extern void warding_rune(int Ind, byte typ, byte mod, byte lvl);
 extern bool warding_rune_break(int m_idx);
 /* common/tables.c */

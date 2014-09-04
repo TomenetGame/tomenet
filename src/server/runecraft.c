@@ -466,7 +466,7 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 /*
  * Cast a runespell if able. The main function!
  */
-byte execute_rspell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bool retaliate) {
+byte cast_rune_spell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bool retaliate) {
 	player_type *p_ptr = Players[Ind];
 	
 	/** Activity Update **/

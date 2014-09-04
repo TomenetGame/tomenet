@@ -8072,7 +8072,7 @@ static int Receive_activate_skill(int ind)
 			if (dir == -1) dir = 5;
 
 			if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
-			(void)execute_rspell(player, dir, (u16b)book, (u16b)spell, (u16b)item, 0);
+			(void)cast_rune_spell(player, dir, (u16b)book, (u16b)spell, (u16b)item, 0);
 			p_ptr->shooty_till_kill = FALSE;
 			break;
 
@@ -10519,7 +10519,7 @@ void Handle_direction(int Ind, int dir) {
 		else p_ptr->current_spell = -1;
 	}
 	else if (p_ptr->current_rcraft != -1)
-		(void)execute_rspell(Ind, dir, p_ptr->current_rcraft_e_flags, p_ptr->current_rcraft_m_flags, 0, 0);
+		(void)cast_rune_spell(Ind, dir, p_ptr->current_rcraft_e_flags, p_ptr->current_rcraft_m_flags, 0, 0);
        	else if (p_ptr->current_rod != -1)
 		do_cmd_zap_rod_dir(Ind, dir);
 	else if (p_ptr->current_activation != -1)

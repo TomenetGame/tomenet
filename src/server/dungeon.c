@@ -2262,7 +2262,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 				else m_flags |= r_imperatives[m_index].flag;
 			}
 			else {
-				if (execute_rspell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2) return (p_ptr->fail_no_melee);
+				if (cast_rune_spell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2) return (p_ptr->fail_no_melee);
 				return TRUE;
 			}
 
@@ -2276,12 +2276,12 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 				else m_flags |= r_types[m_index].flag;
 			}
 			else {
-				if (execute_rspell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2) return (p_ptr->fail_no_melee);
+				if (cast_rune_spell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2) return (p_ptr->fail_no_melee);
 				return TRUE;
 			}
 
 			/* Retaliate or Melee */
-			if (execute_rspell(Ind, 5, e_flags, m_flags, 0, 1) == 2) return (p_ptr->fail_no_melee);
+			if (cast_rune_spell(Ind, 5, e_flags, m_flags, 0, 1) == 2) return (p_ptr->fail_no_melee);
 			return TRUE;
 
 		break; }
@@ -5120,7 +5120,7 @@ static void process_player_end(int Ind) {
 						cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
 						if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
 					} else if (p_ptr->shoot_till_kill_rcraft) {
-						(void)execute_rspell(Ind, 5, p_ptr->FTK_e_flags, p_ptr->FTK_m_flags, 0, 1);
+						(void)cast_rune_spell(Ind, 5, p_ptr->FTK_e_flags, p_ptr->FTK_m_flags, 0, 1);
 					} else if (p_ptr->shoot_till_kill_mimic) {
 						do_cmd_mimic(Ind, p_ptr->shoot_till_kill_mimic - 1 + 3, 5);
 					} else {
