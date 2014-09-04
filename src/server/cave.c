@@ -2588,9 +2588,9 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
  * grids using the "view_special_lite" option (for "white" floor grids),
  * causing certain grids to be displayed using special colors.  If the
  * player is "blind", we will use "dark gray", else if the grid is lit
- * by the torch, and the "view_yellow_lite" option is set, we will use
+ * by the torch, and the "view_lamp_lite" option is set, we will use
  * "yellow", else if the grid is "dark", we will use "dark gray", else
- * if the grid is not "viewable", and the "view_bright_lite" option is
+ * if the grid is not "viewable", and the "view_shade_floor" option is
  * set, and the we will use "slate" (gray).  We will use "white" for all
  * other cases, in particular, for illuminated viewable floor grids.
  *
@@ -2598,8 +2598,8 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
  * grids using the "view_granite_lite" option (for "white" wall grids),
  * causing certain grids to be displayed using special colors.  If the
  * player is "blind", we will use "dark gray", else if the grid is lit
- * by the torch, and the "view_yellow_lite" option is set, we will use
- * "yellow", else if the "view_bright_lite" option is set, and the grid
+ * by the torch, and the "view_lamp_lite" option is set, we will use
+ * "yellow", else if the "view_shade_floor" option is set, and the grid
  * is not "viewable", or is "dark", or is glowing, but not when viewed
  * from the player's current location, we will use "slate" (gray).  We
  * will use "white" for all other cases, in particular, for correctly
@@ -2607,7 +2607,7 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
  *
  * Note that, when "view_granite_lite" is set, we use an inline version
  * of the "player_can_see_bold()" function to check the "viewability" of
- * grids when the "view_bright_lite" option is set, and we do NOT use
+ * grids when the "view_shade_floor" option is set, and we do NOT use
  * any special colors for "dark" wall grids, since this would allow the
  * player to notice the walls of illuminated rooms from a hallway that
  * happened to run beside the room.  The alternative, by the way, would
@@ -2794,7 +2794,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				    lite_snow) &&
 				    ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW))) {
 					/* Torch lite */
-					if (p_ptr->view_yellow_lite) {
+					if (p_ptr->view_lamp_lite) {
 #ifdef CAVE_LITE_COLOURS
 						if ((c_ptr->info & CAVE_LITE_WHITE)) {
 							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_WHITE;
@@ -2825,7 +2825,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 #endif
 				    ) {
 					/* Special flag */
-					if (p_ptr->view_bright_lite) {
+					if (p_ptr->view_shade_floor) {
 #ifndef SHADE_ALL_FLOOR
 						/* Use "gray" */
 						a = TERM_SLATE;
@@ -2949,7 +2949,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				    lite_snow) &&
 				    (c_ptr->info & CAVE_LITE)) {
 					/* Torch lite */
-					if (p_ptr->view_yellow_lite) {
+					if (p_ptr->view_lamp_lite) {
 #ifdef CAVE_LITE_COLOURS
 						if ((c_ptr->info & CAVE_LITE_WHITE)) {
 							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma walls
@@ -2970,12 +2970,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					}
 				}
 
-				/* Handle "view_bright_lite2" */
+				/* Handle "view_shade_walls" */
 				/* NOTE: The only prob here is that if magma doesn't have a different
 					 symbol from granite walls, for example if the player maps
 					 both to 'solid block' character, shaded granite walls and
 					 magma walls will look the same - C. Blue */
-				else if (p_ptr->view_bright_lite2 && !(f_ptr->flags2 & FF2_NO_SHADE)) {
+				else if (p_ptr->view_shade_walls && !(f_ptr->flags2 & FF2_NO_SHADE)) {
 					/* Not viewable */
 					if (!(*w_ptr & CAVE_VIEW)) {
 						/* Allow distinguishing permanent walls from granite */

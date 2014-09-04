@@ -2103,15 +2103,15 @@ static void sync_options(int Ind, bool *options) {
 		if ((p_ptr->view_animated_lite = options[52]) != tmp) p_ptr->redraw |= PR_MAP;
 	}
 	if (is_older_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
-		p_ptr->view_bright_lite2 = options[57];
+		p_ptr->view_shade_walls = options[57];
 	else {
-		tmp = p_ptr->view_bright_lite2;
-		if ((p_ptr->view_bright_lite2 = options[55]) != tmp) p_ptr->redraw |= PR_MAP;
+		tmp = p_ptr->view_shade_walls;
+		if ((p_ptr->view_shade_walls = options[55]) != tmp) p_ptr->redraw |= PR_MAP;
 	}
-	tmp = p_ptr->view_yellow_lite;
-	if ((p_ptr->view_yellow_lite = options[56]) != tmp) p_ptr->redraw |= PR_MAP;
-	tmp = p_ptr->view_bright_lite;
-	if ((p_ptr->view_bright_lite = options[57]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->view_lamp_lite;
+	if ((p_ptr->view_lamp_lite = options[56]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->view_shade_floor;
+	if ((p_ptr->view_shade_floor = options[57]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_granite_lite;
 	if ((p_ptr->view_granite_lite = options[58]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_special_lite;
