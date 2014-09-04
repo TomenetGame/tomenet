@@ -376,7 +376,7 @@ D:1:You dig in the rubble.
 N:50:magma vein
 G:%:D
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL
 D:1:You tunnel into the magma vein.
 
 # 0x33 --> quartz vein
@@ -384,7 +384,7 @@ D:1:You tunnel into the magma vein.
 N:51:quartz vein
 G:%:w
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL
 D:1:You tunnel into the quartz vein.
 
 # 0x34 --> magma vein + treasure
@@ -393,7 +393,7 @@ N:52:magma vein
 G:%:D
 M:50
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL
 D:1:You tunnel into the magma vein.
 
 # 0x35 --> quartz vein + treasure
@@ -402,7 +402,7 @@ N:53:quartz vein
 G:%:w
 M:51
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE_OPTIONAL
 D:1:You tunnel into the quartz vein.
 
 # 0x36 --> magma vein + known treasure
