@@ -81,7 +81,7 @@ X:easy_tunnel
 X:clear_inscr
 X:auto_inscribe
 X:taciturn_messages
-Y:last_words
+X:view_lite_floor
 X:limit_chat
 Y:thin_down_flush
 X:auto_target
