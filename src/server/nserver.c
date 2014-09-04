@@ -2123,8 +2123,17 @@ static void sync_options(int Ind, bool *options) {
 //	p_ptr->auto_destroy = options[63];
 	p_ptr->clear_inscr = options[63];
 	p_ptr->auto_inscribe = options[64];
-	p_ptr->taciturn_messages = options[65];
-	p_ptr->last_words = options[66];
+	if (!is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0)) {
+		p_ptr->taciturn_messages = options[65];
+		p_ptr->last_words = options[66];
+	} else {
+		bool vlf = p_ptr->view_lite_floor;
+		p_ptr->last_words = TRUE;
+		p_ptr->taciturn_messages = options[66];
+		p_ptr->view_lite_floor = options[65];
+		if (vlf != p_ptr->view_lite_floor) p_ptr->redraw |= PR_MAP;
+	}
+
 	p_ptr->limit_chat = options[67];
 
 	tmp = p_ptr->depth_in_feet;

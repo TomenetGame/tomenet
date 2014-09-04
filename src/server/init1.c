@@ -1066,7 +1066,7 @@ static cptr f_info_flags2[] =
 
 	"NO_SHADE",
 	"NO_LITE_WHITEN",
-	"XXX",
+	"LAMP_LITE_OPTIONAL",
 	"XXX",
 
 	"XXX",

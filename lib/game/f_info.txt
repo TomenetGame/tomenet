@@ -493,39 +493,39 @@ F:FLOOR | NOTICE | SUPPORT_LIGHT | CAN_RUN | REMEMBER
 
 N:65:Straight Road startpoint
 G:*:w
-F:FLOOR | REMEMBER | NOTICE
+F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 
 N:66:section of the Straight Road
 G:*:B
-F:FLOOR | REMEMBER | NOTICE
+F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 
 N:67:section of the Straight Road
 G:*:b
-F:FLOOR | REMEMBER | NOTICE
+F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 
 N:68:section of the Straight Road
 G:*:B
-F:FLOOR | REMEMBER | NOTICE
+F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 
 N:69:section of the Straight Road
 G:*:b
-F:FLOOR | REMEMBER | NOTICE
+F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 
 N:70:section of the Straight Road
 G:*:W
-F:FLOOR | REMEMBER | NOTICE
+F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 
 N:71:section of the Straight Road (discharged)
 G:*:W
-F:FLOOR | REMEMBER | NOTICE
+F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 
 N:72:Straight Road exit
 G:*:w
-F:FLOOR | REMEMBER | NOTICE
+F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 
 N:73:corrupted section of the Straight Road
 G:*:D
-F:FLOOR | REMEMBER | NOTICE
+F:FLOOR | REMEMBER | NOTICE | LAMP_LITE_OPTIONAL
 
 # 74 --> shop
 
@@ -625,19 +625,19 @@ D:0:Ohhh, it is dark and deep.
 N:88:dirt
 G:.:u
 F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_SHADE
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE_OPTIONAL
 
 N:89:patch of grass
 G:.:G
 F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_SHADE
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE_OPTIONAL
 
 N:90:ice
 #G:.:W
 #E:1d1:50:ICE
 #F:FLOOR | NOTICE
 G:.:B
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT NO_SHADE
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | NO_SHADE
 #keep it light blue instead of white when using white-light lamp
 #| LAMP_LITE | 
 
@@ -820,7 +820,7 @@ D:0:Images of pain and death feels your mind.
 # Used as a marked for random quests
 N:172:floor
 G:.:r
-F:FLOOR | CAN_RUN | DONT_NOTICE_RUNNING
+F:FLOOR | CAN_RUN | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | LAMP_LITE_SNOW
 
 # Underground Tunnel
 N:173:Underground Tunnel

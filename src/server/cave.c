@@ -2778,7 +2778,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
 			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
-			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)))) {
+			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
+			    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_floor))) {
 				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
 
 				/* Handle "blind" */
@@ -2788,7 +2789,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 
 				/* Handle "torch-lit" grids */
-				else if (((f_ptr->flags2 & FF2_LAMP_LITE) || lite_snow) &&
+				else if (((f_ptr->flags2 & FF2_LAMP_LITE) ||
+				    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_floor) ||
+				    lite_snow) &&
 				    ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW))) {
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {
@@ -2930,7 +2933,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
 			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
-			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)))) {
+			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
+			    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_floor))) {
 				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
 
 				/* Handle "blind" */
@@ -2940,7 +2944,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 
 				/* Handle "torch-lit" grids */
-				else if (((f_ptr->flags2 & FF2_LAMP_LITE) || lite_snow) &&
+				else if (((f_ptr->flags2 & FF2_LAMP_LITE) ||
+				    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_floor) ||
+				    lite_snow) &&
 				    (c_ptr->info & CAVE_LITE)) {
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {

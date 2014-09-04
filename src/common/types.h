@@ -2140,6 +2140,7 @@ struct player_type {
 	bool view_granite_lite;
 	bool view_special_lite;
 	bool view_animated_lite;
+	bool view_lite_floor;
 
 	/* TomeNET additions -- consider using macro or bitfield */
 	bool easy_open;
@@ -3291,6 +3292,7 @@ struct client_opts {
 	bool view_bright_lite2;
 	bool view_granite_lite;
 	bool view_special_lite;
+	bool view_lite_floor;
 
 	bool easy_open;
 	bool easy_disarm;

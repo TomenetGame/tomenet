@@ -43,7 +43,7 @@
 #define VERSION_PATCH		7
 #define VERSION_EXTRA		2
 #define VERSION_BRANCH		0
-#define VERSION_BUILD		0
+#define VERSION_BUILD		1
 
 /* MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15).
    If a player is online with a version > this && <= current version (VERSION_)
@@ -5717,6 +5717,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define FF2_NIGHT_DARK		0x00000008L	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
 #define FF2_NO_SHADE		0x00000010L	/* Don't shade to TERM_SLATE in view_bright_lite (or vault walls become indistinguishable from granite, without magic light) */
 #define FF2_NO_LITE_WHITEN	0x00000020L	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
+#define FF2_LAMP_LITE_OPTIONAL	0x00000040L	/* For _floor_ grids: Gets coloured by view_granite_lite, if user has toggled an according option. */
 //hole
 #define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 

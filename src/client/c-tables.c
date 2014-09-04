@@ -484,11 +484,16 @@ option_type option_info[OPT_MAX] =
 	"auto_inscribe",		"Use additional predefined auto-inscriptions" },
 #endif
 
-	{ &c_cfg.taciturn_messages,	FALSE,	1,	9, 65, TRUE,
-	"taciturn_messages",		"Suppress server messages as far as possible" },
-
+#if 0
 	{ &c_cfg.last_words,		TRUE,	1,	9, 66, TRUE,
 	"last_words",			"Get last words when the character dies" },
+#else
+	{ &c_cfg.view_lite_floor,	FALSE,	1,	9, 65, TRUE,
+	"view_lite_floor",		"Lamp light affects more floor types" },
+#endif
+
+	{ &c_cfg.taciturn_messages,	FALSE,	1,	9, 66, TRUE,
+	"taciturn_messages",		"Suppress server messages as far as possible" },
 
 	{ &c_cfg.limit_chat,		FALSE,	1,	9, 67, FALSE,//works, but pretty useless - disabled to make room
 	"limit_chat",			"Chat only with players on the same floor" },
