@@ -3839,6 +3839,7 @@ void load_banlist(void) {
 
 		if (fscanf(fp, "%[^|]|%[^|]|%[^|]|%d|%[^\n]\n", ptr->acc, ptr->ip, ptr->hostname, &ptr->time, ptr->reason) == EOF) {
 			s_printf("Reading banlist.txt: %s\n", strerror(ferror(fp)));
+			KILL(ptr, struct combo_ban);
 			break;
 		}
 

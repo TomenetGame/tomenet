@@ -550,12 +550,17 @@ int check_account(char *accname, char *c_name) {
 		for (i = 0; i < chars; i++)
 			if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
 		if (chars) C_KILL(id_list, chars, int);
-		if (i == chars) return 0; /* 'name already in use' */
+		if (i == chars) {
+			if (l_acc) KILL(l_acc, struct account);
+			if (l2_acc) KILL(l2_acc, struct account);
+			return 0; /* 'name already in use' */
+		}
 	} else if (!l_acc && l2_acc) {
 		KILL(l2_acc, struct account);
 		return 0; /* we don't even have an account yet? 'name already in use' for sure */
 	}
-	KILL(l2_acc, struct account);
+	if (l_acc) KILL(l_acc, struct account);
+	if (l2_acc) KILL(l2_acc, struct account);
 
 	if ((l_acc = GetAccount(accname, NULL, FALSE))) {
 		int *id_list, chars;
