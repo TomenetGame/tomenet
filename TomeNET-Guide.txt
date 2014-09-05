@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. September 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. September 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6461,6 +6461,8 @@ Dungeon Keeper (everyone can win, 1+ participants)
     -If you stand still for a turn, you can 'run' over one adjacent floor grid
      as quickly as you can double-tap a movement key (maybe create a macro).
     -Players usually do not start next to rooms that have escape beacons.
+    -Don't OCD this dungeon. Your goal is to pass through as many rooms as
+     possible, not to cover areas "cleanly".
 
 
 Asides from extermination orders and events, there is another, permanently
