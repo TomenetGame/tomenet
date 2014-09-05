@@ -5366,11 +5366,12 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	/* Slip on icy floor */
 	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->levitate && !p_ptr->tim_wraith)) {
 		if (magik(70 - p_ptr->lev)) {
+			iterations = 10;//not strictly needed here, but anyway
 			do {
 				i = randint(9);
 				y = p_ptr->py + ddy[i];
 				x = p_ptr->px + ddx[i];
-			} while (i == 5);
+			} while (i == 5 && --iterations > 0);
 			msg_print(Ind, "You slip on the icy floor.");
 		}
 #if 0
