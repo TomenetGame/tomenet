@@ -7733,7 +7733,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				q_questor->q_loc.tpref = NULL;
 				if (tmpbuf[0] != '-') {
-					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 					strcpy(c, tmpbuf);
 					q_questor->q_loc.tpref = c;
 					q_questor->q_loc.tpref_x = tpx;
@@ -7824,7 +7824,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_stage->dun_stores = stor;
 				q_stage->dun_theme = theme;
 				if (tmpbuf2[0] != '-') {
-					c = (char*)malloc(strlen(tmpbuf2 + 1) * sizeof(char));
+					c = (char*)malloc((strlen(tmpbuf2) + 1) * sizeof(char));
 					strcpy(c, tmpbuf2);
 					q_stage->dun_name = c;
 				}
@@ -7836,7 +7836,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (j >= 14) {
 					q_stage->dun_final_tpref = NULL;
 					if (tmpbuf[0] != '-') {
-						c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+						c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 						strcpy(c, tmpbuf);
 						q_stage->dun_final_tpref = c;
 						if (j >= 15) {
@@ -7873,7 +7873,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				q_stage->dun_loc.tpref = NULL;
 				if (tmpbuf[0] != '-') {
-					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 					strcpy(c, tmpbuf);
 					q_stage->dun_loc.tpref = c;
 					q_stage->dun_loc.tpref_x = tpx;
@@ -7911,7 +7911,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_mspawn->rlevmin = lvmin;
 				q_mspawn->rlevmax = lvmax;
 				if (tmpbuf[0] != '-') {
-					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 					strcpy(c, tmpbuf);
 					q_mspawn->name = c;
 				}
@@ -7943,7 +7943,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				q_mspawn->loc.tpref = NULL;
 				if (tmpbuf[0] != '-') {
-					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 					strcpy(c, tmpbuf);
 					q_mspawn->loc.tpref = c;
 					q_mspawn->loc.tpref_x = tpx;
@@ -8071,7 +8071,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_qmorph->invincible = (invinc != 0);
 			q_qmorph->death_fail = dfail;
 			if (strcmp(tmpbuf, "-")) {
-				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+				c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 				strcpy(c, tmpbuf);
 				q_qmorph->name = c;
 			}
@@ -8598,7 +8598,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					else c++;
 					s[strlen(s)] = 0;
 
-					cc = (char*)malloc(strlen(s + 1) * sizeof(char));
+					cc = (char*)malloc((strlen(s) + 1) * sizeof(char));
 					strcpy(cc, s);
 					q_kill->name[j] = cc;
 
@@ -8705,7 +8705,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					else c++;
 					s[strlen(s)] = 0;
 
-					cc = (char*)malloc(strlen(s + 1) * sizeof(char));
+					cc = (char*)malloc((strlen(s) + 1) * sizeof(char));
 					strcpy(cc, s);
 					q_ret->name[j] = cc;
 
@@ -8740,7 +8740,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			if (tmpbuf[0] == '-') q_goal->target_tpref = NULL;
 			else {
-				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+				c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 				strcpy(c, tmpbuf);
 				q_goal->target_tpref = c;
 				q_goal->target_tpref_x = tpx;
@@ -8771,7 +8771,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			if (tmpbuf[0] == '-') q_del->tpref = NULL;
 			else {
-				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+				c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 				strcpy(c, tmpbuf);
 				q_del->tpref = c;
 				q_del->tpref_x = tpx;
@@ -8832,7 +8832,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				q_qitem->q_loc.tpref = NULL;
 				if (tmpbuf[0] != '-') {
-					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 					strcpy(c, tmpbuf);
 					q_qitem->q_loc.tpref = c;
 					q_qitem->q_loc.tpref_x = tpx;
