@@ -5295,6 +5295,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
 	int csmove = TRUE;
+	int iterations = 10;
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -5318,7 +5319,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	/* Vampires turning into bats only get very slightly erratic movement */
 	if (p_ptr->prace == RACE_VAMPIRE) {
 		if (p_ptr->body_monster == RI_VAMPIRE_BAT && magik(5)) {
-			int iterations = 10;
 			do {
 				i = randint(9);
 				y = p_ptr->py + ddy[i];
@@ -5355,7 +5355,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			if (!player_can_enter(Ind, zcave[y][x].feat, FALSE)) i = 5;
 			/* convenience hack: don't stop running if we just left proximity of a wall */
 			if (p_ptr->running) rnd = TRUE;
-		} while (i == 5);
+		} while (i == 5 && --iterations > 0);
 	} else {
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
