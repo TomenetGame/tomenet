@@ -6957,6 +6957,9 @@ void global_event_signup(int Ind, int n, cptr parm) {
 	bool re_impossible = FALSE, no_ego = FALSE, perfect_ego = FALSE;
 	char ce[80], *cep, parm2e[80], *p2ep;
 	char *separator;
+
+	int r_found_tmp = 0, re_found_tmp = 0, re_r_tmp = 0;
+	int r_found_tmp_len = 0, r_found_len = 0;
 #endif
 
 	/* Still room for more participants? */
@@ -7043,6 +7046,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			cp = c;
 			while (*cp) {*cp = tolower(*cp); cp++;}
 
+
 			/* exact match? */
 			if (!strcmp(p2p, c)) {
 				r_found = i;
@@ -7065,7 +7069,10 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			}
 
 #ifndef GE_ARENA_ALLOW_EGO
-			if (strstr(p2p, c)) r_found = i;
+			if (strstr(p2p, c)) {
+				r_found = i;
+				r_found_len = strlen(c);
+			}
 #else
 			/* partial match? could have ego power too. */
 			if ((separator = strstr(p2p, c))) {
@@ -7078,8 +7085,21 @@ void global_event_signup(int Ind, int n, cptr parm) {
 					strncpy(parm2e, p2p, strlen(p2p) - strlen(c)); /* then ego power starts at the beginning of the monster name */
 					parm2e[strlen(p2p) - strlen(c)] = 0;
 				}
+
+				/* if we already found both, a matching monster + ego, be wary of this new result!
+				   Otherwise, 'black orc vet' will result in a plain 'Black' getting spawned.. */
+				if (r_found && re_found) {
+					r_found_tmp = r_found;
+					re_found_tmp = re_found;
+					re_r_tmp = re_r;
+				} else if (r_found) {
+					r_found_tmp = r_found;
+					r_found_tmp_len = r_found_len;
+				}
+
 				/* remember choice in case we don't find anything better */
 				r_found = i;
+				r_found_len = strlen(c);
 
 				/* check ego power - if exact match then we're done */
 				/* trim spaces just to be sure */
@@ -7109,6 +7129,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 
 #if 1
 							/* special hack: check all remaining races and prefer them if EXACT match - added for 'Fallen Angel'! */
+							//actually, with ne addition of 'r_found_len' this should now be obsolete?
 							while (++i < MAX_R_IDX) {
 								/* get monster race name */
 								strcpy(c, r_info[i].name + r_name);
@@ -7134,6 +7155,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 									/* done. Discard perfect 'ego power+base race' in favour for just plain perfect base race,
 									   to allow 'Fallen Angel' base monster instead of 'Fallen' ego type on 'Angel' base monster. */
 									r_found = i;
+									r_found_len = strlen(c);
 									no_ego = TRUE;
 									re_found = 0;
 									break;
@@ -7148,7 +7170,8 @@ void global_event_signup(int Ind, int n, cptr parm) {
 					} else if (re_impossible) continue; /* don't allow partial matches if an exact match already failed us */
 
 					/* partial match? */
-					else if (strstr(p2ep, ce)) {
+					//else if (strstr(p2ep, ce)) {
+					else if (strstr(ce, p2ep)) {
 						if (mego_ok(i, p)) {
 							/* remember choice in case we don't find anything better */
 							re_found = p;
@@ -7159,6 +7182,18 @@ void global_event_signup(int Ind, int n, cptr parm) {
 				if (perfect_ego) break;
 #endif
 			}
+
+			/* if we already found both, a matching monster + ego, be wary of this new result!
+			   Otherwise, 'black orc vet' will result in a plain 'Black' getting spawned.. */
+			if (r_found_tmp && re_found_tmp && !re_found) {
+				r_found = r_found_tmp;
+				re_found = re_found_tmp;
+				re_r = re_r_tmp;
+			}
+			/* if we still found no ego power, at least choose the base type that matches a longer string.
+			   Otherwise 'black orc vet' will result in a Black spawning.. */
+			else if (r_found_tmp && !re_found_tmp && !re_found && r_found_tmp_len > r_found_len)
+				r_found = r_found_tmp;
 		}
 
 		if (!r_found) {
