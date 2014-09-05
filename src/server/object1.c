@@ -4338,6 +4338,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 						    /* any non-trivial (on the object name itself visible) abilities? */
 						    ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
 						    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK)))
+							can_have_hidden_powers = TRUE;
 						continue;
 					}
 					if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
