@@ -97,10 +97,10 @@ void do_cmd_go_up(int Ind) {
 #if STAIR_FAIL_IF_CONFUSED
 	/* Hack -- handle confusion */
 	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED)) {
-		int dir = 5;
+		int dir = 5, tries = 10;
 
 		/* Prevent walking nowhere */
-		while (dir == 5)
+		while (dir == 5 && --tries)
 			dir = rand_int(9) + 1;
 
 		do_cmd_walk(Ind, dir, FALSE);
@@ -669,10 +669,10 @@ void do_cmd_go_down(int Ind)
 #if STAIR_FAIL_IF_CONFUSED
 	/* Hack -- handle confusion */
 	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED)) {
-		int dir = 5;
+		int dir = 5, tries = 10;
 
 		/* Prevent walking nowhere */
-		while (dir == 5)
+		while (dir == 5 && --tries)
 			dir = rand_int(9) + 1;
 
 		do_cmd_walk(Ind, dir, FALSE);
@@ -3852,10 +3852,11 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 	if (dir) {
 		/* Hack -- handle confusion */
 		if (p_ptr->confused) {
+			int tries = 10;
 			dir = 5;
 
 			/* Prevent walking nowhere */
-			while (dir == 5)
+			while (dir == 5 && --tries)
 				dir = rand_int(9) + 1;
 		}
 
