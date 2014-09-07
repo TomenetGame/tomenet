@@ -2578,6 +2578,8 @@ I:17:3:0
 W:20:20:2:35000
 P:0:2d4:0:0:0
 F:SLAY_UNDEAD | VAMPIRIC
+D:Said to have first appeared in an undead-ridden place inside a mountain
+D:covered with fields of red grass, its origin is a mystery.
 
 # The Set of Cesti of Eternal Peace
 # (This cesti should be able to appease monsters by activation.)
@@ -2641,6 +2643,7 @@ F:SLOW_DIGEST | SHOW_MODS | SEE_INVIS | RES_DISEN |
 F:FREE_ACT | RES_NETHER | HOLD_LIFE | 
 F:SUST_STR | SUST_DEX | SUST_CON | 
 F:ANTIMAGIC_50 | ANTIMAGIC_20 | DRAIN_MANA
+D:Its creator didn't believe in much, but he knew all about pain.
 
 
 # The Long Bow 'Doublezee'
@@ -2653,6 +2656,8 @@ F:CHR | SEARCH | HIDE_TYPE |
 F:XTRA_SHOTS | SHOW_MODS
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_SOUND
 F:ESP_ANIMAL | SLAY_ANIMAL
+D:A slim hunting bow of unique design and with enchantments protecting its
+D:user against the elements of nature.
 
 
 # The Picklock of Bilbo Baggins
@@ -2664,6 +2669,8 @@ W:15:1:2:30000
 P:0:1d1:0:0:0
 F:DEX | SUST_DEX | SEE_INVIS | STEALTH | DISARM | SEARCH | HIDE_TYPE
 F:ACTIVATE
+D:It's no surprise that a thief of highest caliber would come with the best
+D:tools available for his line of work.
 
 
 # The Sling of Halflings
@@ -2673,8 +2680,9 @@ I:19:2:3
 W:15:45:50:45000
 P:0:0d0:20:25:0
 F:DEX | SUST_DEX | STEALTH | HIDE_TYPE
-F:REGEN | XTRA_MIGHT | XTRA_SHOTS
-F:ESP_ANIMAL | SEE_INVIS |
+F:REGEN | XTRA_MIGHT | XTRA_SHOTS | ESP_ANIMAL | SEE_INVIS
+D:More effort has gone into crafting this hunting weapon than you would
+D:have expected. In fact there is no fault to be found in balance or power.
 
 
 # The Pint of Ale of the Khazad
@@ -2685,14 +2693,12 @@ I:80:38:500
 W:10:1:3:5000
 P:0:2d3:0:0:0
 #Z:Confuse self
-D:In the not-too-distant past, DarkGod created three pints of magic ale.
-D:This ale was of the highest quality -- far stronger than the standard  
-D:fine ale. But more importantly, it was blessed with magic similar to that
-D:used to preserve magical ammo. One could drink, drink, and drink some
-D:more, and three pints always remained. It came to pass that these three pints
-D:were bestowed upon Moltor, the drunkest of the Dwarves. They were
-D:bound to his very soul, so they remained with him despite his frequent deaths
-D:and rebirths. For some time Moltor enjoyed his ale, and all was well.
+D:In the not too distant past, DarkGod created three pints of magic ale.
+D:This ale was of the highest quality and far stronger than other brews.
+D:But more importantly, it never seemed to run out! One could drink, drink,
+D:and drink some more, and there was always more.
+D:It came to pass that these three pints were bestowed upon Moltor, the drunkest
+D:of the Dwarves. For some time Moltor enjoyed his ale, and all was well.
 
 
 # The Sea-blue Silk Cape 'Ocean Soul'
@@ -2968,8 +2974,8 @@ P:0:5d8:20:30:0
 F:STR | WIS | HIDE_TYPE | RES_FEAR | FREE_ACT | SEE_INVIS | SHOW_MODS |
 F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_TROLL | SLAY_ORC | 
 F:BRAND_FIRE | LITE3 | IM_FIRE | RES_LITE | BLESSED
-D:This radiating and perfectly shaped weapon was brought down to earth on the
-D:southern hemisphere by a mighty guardian of the skies.
+D:This radiating and beautifully shaped weapon was brought down to earth in the
+D:southern regions by a mighty guardian of the skies.
 
 
 # The Lance 'Stormspire'
@@ -2981,8 +2987,8 @@ P:0:5d8:20:30:0
 F:BLOWS | CON | LIFE | HIDE_TYPE | RES_FEAR | FREE_ACT | SHOW_MODS |
 F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
 F:BRAND_ELEC | SH_ELEC | IM_ELEC | BLESSED
-D:This furious and perfectly shaped weapon was brought down to earth on the
-D:northern hemisphere by a mighty guardian of the skies.
+D:This flashing and beautifully shaped weapon was brought down to earth in the
+D:northern regions by a mighty guardian of the skies.
 
 
 # The Scourge 'Bloodscourge'
