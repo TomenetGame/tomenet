@@ -354,7 +354,7 @@ N:40:& Executioner's Sword~
 G:|:r
 I:23:28:0
 W:40:0:260:850
-A:40/1
+A:40/2
 P:0:5d6:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -362,7 +362,7 @@ N:41:& Katana~
 G:|:W
 I:23:20:0
 W:20:0:100:470
-A:20/1
+A:20/2
 P:0:3d4:0:0:0
 F:SHOW_MODS | SHOULD2H
 
@@ -386,7 +386,7 @@ N:44:& Rapier~
 G:|:W
 I:23:7:0
 W:5:0:40:42
-A:5/1
+A:5/2
 P:0:1d6:0:0:0
 F:SHOW_MODS
 
@@ -506,7 +506,7 @@ P:0:2d5:0:0:0
 F:SHOW_MODS | COULD2H
 
 
-##### Polearms #####
+##### Polearms and Axes #####
 
 N:59:& Beaked Axe~
 G:/:s
@@ -613,7 +613,7 @@ P:0:6d3:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:72:& Scythe~ of Slicing
-G:/:r
+G:/:B
 I:22:30:0
 W:60:0:300:3500
 A:60/3
@@ -3059,6 +3059,34 @@ A:95/16
 P:0:1d1:0:0:0
 
 
+# Extra weapons to buff some categories away from too high rarity
+
+N:385:& Executioner Axe~
+G:/:r
+I:24:6:0
+W:50:0:300:800
+A:50/2
+P:0:4d8:0:0:0
+F:SHOW_MODS | MUST2H
+
+N:386:& Hatchet~
+G:/:s
+I:24:5:0
+W:3:0:70:45
+A:3/1:10/1
+P:0:2d3:0:0:0
+F:SHOW_MODS
+
+N:387:& Double-Headed War Axe~
+G:/:U
+I:24:4:0
+W:60:0:340:1800
+A:60/3
+P:0:5d8:0:0:0
+F:SHOW_MODS | MUST2H
+
+
+
 ##### For Halloween #####
 
 #N:388:& Candy Corn~
@@ -4163,11 +4191,11 @@ F:IGNORE_WATER
 #F:SPECIAL_GENE
 #D:It is a magical compoment that can purify water.
 
-N:533:& Hatchet~
+N:533:& Cleaver~
 G:/:s
 I:24:1:0
-W:6:0:50:45
-A:6/1
+W:2:0:50:45
+A:2/1:8/1
 P:0:1d5:0:0:0
 F:SHOW_MODS
 
@@ -4197,7 +4225,7 @@ N:537:& Sickle~
 G:/:s
 I:22:3:0
 W:10:0:50:110
-A:10/3
+A:10/2
 P:0:2d3:0:0:0
 F:SHOW_MODS
 
@@ -4213,7 +4241,7 @@ N:543:& Broad Spear~
 G:/:w
 I:22:7:0
 W:14:0:100:190
-A:14/3
+A:14/2
 P:0:1d9:0:0:0
 F:SHOW_MODS | COULD2H
 
@@ -4221,7 +4249,7 @@ N:544:& Rhomphaia~
 G:/:W
 I:22:9:0
 W:10:0:120:240
-A:10/2
+A:10/3
 P:0:2d4:0:0:0
 F:SHOW_MODS | COULD2H
 
@@ -5634,7 +5662,7 @@ N:777:& Shadow Blade~
 G:|:D
 I:23:32:2
 W:50:900:45:2000
-A:48/4:60/2:80/1
+A:48/4:60/4:80/4
 P:0:3d4:-2:2:0
 F:RES_DARK | STEALTH
 F:IGNORE_ACID | IGNORE_WATER
@@ -5799,7 +5827,7 @@ A:0/10
 #F:NORM_ART | FULL_NAME
 #F:IGNORE_FIRE | IGNORE_ACID | IGNORE_COLD | IGNORE_ELEC | IGNORE_WATER
 
-N:803:& Cleaver~
+N:803:& Double-Bitted Axe~
 G:/:s
 I:24:2:0
 W:13:0:100:175
@@ -5821,7 +5849,7 @@ N:805:& Slaughter Axe~
 G:/:G
 I:24:30:0
 W:50:0:300:1100
-A:50/4
+A:50/3
 P:0:5d7:3:3:0
 F:SLAY_ANIMAL | SHOW_MODS | MUST2H
 
@@ -6497,7 +6525,7 @@ N:919:& Thunder Axe~
 G:/:b
 I:24:33:0
 W:60:0:380:2900
-A:70/6
+A:70/5
 P:0:6d8:5:5:0
 F:SHOW_MODS | MUST2H | SLAY_GIANT | BRAND_ELEC | RES_ELEC
 F:IGNORE_FIRE | IGNORE_WATER
