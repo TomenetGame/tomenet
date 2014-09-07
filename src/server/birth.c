@@ -2778,6 +2778,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_bpr = 1;
 		p_ptr->warning_rest = 3;
 		p_ptr->warning_hungry = 1;
+		p_ptr->warning_macros = 1;
 	}
 	if (p_ptr->max_plv > 20) {
 		p_ptr->warning_dual_mode = 1;
