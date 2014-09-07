@@ -4763,6 +4763,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
 #define RESF_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED | RESF_NOHIVALUE)	/* prevent generation of especially powerful high-level items */
+#define RESF_MID2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED)	/* prevent generation of especially powerful high-level items, but allow full ESP for example (no price limit) */
 #define RESF_HIGH		RESF_NOART /* alias */
 #define RESF_NOART		(RESF_NOTRUEART | RESF_NORANDART)	/* prevent generation of any artefacts */
 #define RESF_WILD		RESF_NONE

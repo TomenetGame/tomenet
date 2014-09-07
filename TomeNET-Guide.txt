@@ -6307,7 +6307,8 @@ If you carry out the extermination order you received, you will be rewarded
 with a good or great item, depending on the difficulty (monster level) and
 chance.
 The item does not depend on your race, class, skills or luck in any way,
-it's completely random.
+it's completely random. It's quality is also on average lower than the items
+obtained from winning events (read further below about events).
 If you fail to carry out your order in time, the order will be cancelled and
 you can just get a new one if you want to. There is no penalty.
 
@@ -6387,6 +6388,10 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     points spent. So you should not turn in the deed before you actually spent
     your skill points. For example if you spend several points into
     sword-mastery then _if_ you receive a weapon it will actually be a sword.
+    See (8.5) for details!
+    Highlander Tournament rewards can theoretically end up with a higher item
+    value in gold than rewards from other events. Reward items cannot be sold
+    to stores though.
 
 Arena Monster Challenge (no losses or gains, for testing your abilities)
     The wizards of Arena Monster Challenge (tm) have prepared a spectacular
@@ -6448,7 +6453,7 @@ Dungeon Keeper (everyone can win, 1+ participants)
     Winner parchments can be turned in for either an item or a temporary luck
     buff (about 30 minutes duration). The item will depend on how you have
     spent your skill points, so make sure to distribute some skill points first
-    before turning in a parchment for an item reward.
+    before turning in a parchment for an item reward. See (8.5) for details!
     The winner parchments can also be given to other characters, but those will
     only be able to exchange them for a luck buff, not for an item-
 
