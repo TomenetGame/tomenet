@@ -3350,6 +3350,16 @@ F:WINNERS_ONLY | STR | CON | IM_ELEC | RES_MANA | RES_DISEN
 D:An armor of thick gleaming layers of adamantite that appears utterly
 D:impenetrable. Powerful engraved runes ornate arm and leg protectors.
 
+# Double-Headed War Axe 'Skull Splitter'
+
+N:273:'Skull Splitter'
+I:24:4:5
+W:60:40:340:160000
+P:0:5d9:30:20:0
+F:SHOW_MODS | SLAY_GIANT |SLAY_TROLL | SLAY_ORC
+F:SLAY_DEMON | SLAY_DRAGON | SLAY_UNDEAD | STR | RES_FEAR
+D:Whatever the foe, if it has a skull it better watch out.
+
 
 #weapon base items that don't have arts yet:
 #Three Piece Rod, Club; Awl-Pike, Rhomphaia
