@@ -3568,11 +3568,16 @@ static void log_arts(int a_idx, struct worldpos *wpos) {
 	case ART_DWARVEN_ALE:
 		s_printf("ARTIFACT: 'Pint of Ale of the Khazad' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
+#if 0
 	case ART_BILBO:
 		s_printf("ARTIFACT: 'Picklock of Bilbo Baggins' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
+#endif
 	case ART_MIRROROFGLORY:
 		s_printf("ARTIFACT: 'Mirror of Glory' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	case ART_DREADNOUGHT:
+		s_printf("ARTIFACT: 'Dreadnought' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 #if 0
 	case ART_NARYA:
