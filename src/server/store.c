@@ -1239,7 +1239,7 @@ static void store_item_optimize(store_type *st_ptr, int item)
  * Based on a suggestion by "Lee Vogt" <lvogt@cig.mcel.mot.com>
  */
 //static bool black_market_crap(object_type *o_ptr, bool town_bm) {
-static bool black_market_crap(object_type *o_ptr) {
+static bool black_market_crap(object_type *o_ptr, int st_idx) {
 #if 1 /* relevant code blocks further below have been disabled (checking of other stores) */
 	int		i, j, k;
 	store_type *st_ptr;
@@ -1296,6 +1296,15 @@ static bool black_market_crap(object_type *o_ptr) {
 			}
 		}
 	}
+#endif
+
+#if 1 /* this fixes a big prob: tele scroll in 5 will prevent tele scrolls in all BMs, so.. */
+	/* If item is NOT in the BM's template, only then it's "crappy" */
+	for (j = 0; j < st_info[st_idx].table_num; j++)
+		/* for now only if the item is explicitely mentioned, not via sval-wildcard */
+		if (st_info[st_idx].table[j][0] < 10000 &&
+		    o_ptr->k_idx == st_info[st_idx].table[j][0])
+			return FALSE;
 #endif
 
     /* only perform this check for black markets in towns, not in dungeons */
@@ -1668,7 +1677,7 @@ static void store_create(store_type *st_ptr) {
 		if (black_market) {
 			/* Hack -- No "crappy" items */
 			//if (black_market_crap(o_ptr, town_bm)) continue;
-			if (black_market_crap(o_ptr)) continue;
+			if (black_market_crap(o_ptr, st_ptr->st_idx)) continue;
 
 			/* Hack -- No "cheap" items */
 			if (object_value(0, o_ptr) <= 50) continue; //was <10
@@ -4224,7 +4233,7 @@ void store_maint(store_type *st_ptr)
 
 			/* Destroy crappy items */
 			//if (black_market_crap(o_ptr, town_bm)) {
-			if (black_market_crap(o_ptr)) {
+			if (black_market_crap(o_ptr, st_ptr->st_idx)) {
 				/* Destroy the item */
 				store_item_increase(st_ptr, j, 0 - o_ptr->number);
 				store_item_optimize(st_ptr, j);
