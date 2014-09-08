@@ -286,6 +286,8 @@ struct stairs_list {
 #define IRONDEEPDIVE_BIG_IF_POSSIBLE
 /* Ironman Deep Dive Challenge levels of SMALL or SMALLEST theme should actually be enlarged for better exp gain? */
 #define IRONDEEPDIVE_EXPAND_SMALL
+/* Ironman Deep Dive Challenge levels have less chance to generate vaults */
+#define IDDC_FEWER_VAULTS
 
 
 /*
@@ -8492,6 +8494,12 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type
 		    (d_ptr->flags3 & DF3_FEW_ROOMS))
 		    && rand_int(20))
 			return FALSE;
+
+#ifdef IDDC_FEWER_VAULTS
+		if (in_irondeepdive(wpos) && rand_int(4) &&
+		    (typ == 7 || typ == 8 || typ == 11))
+			return FALSE;
+#endif
 	}
 
 #if 0
