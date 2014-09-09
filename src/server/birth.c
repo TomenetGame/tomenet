@@ -2221,7 +2221,7 @@ static void player_setup(int Ind, bool new) {
 		    ) {
 			NumPlayers++; // hack for cave_midx_debug - mikaelh
 			/* not a '_force'd teleport, so won't get out of NO_TELE vaults! */
-			if (!teleport_player(Ind, 5, TRUE)) teleport_player(Ind, 200, TRUE)
+			if (!teleport_player(Ind, 5, TRUE)) teleport_player(Ind, 200, TRUE);
 			NumPlayers--;
 		}
 
@@ -2266,7 +2266,7 @@ static void player_setup(int Ind, bool new) {
 		    ) {
 			NumPlayers++; // hack for cave_midx_debug - mikaelh
 			/* not a '_force'd teleport, so won't get out of NO_TELE vaults! */
-			if (!teleport_player(Ind, 5, TRUE)) teleport_player(Ind, 200, TRUE)
+			if (!teleport_player(Ind, 5, TRUE)) teleport_player(Ind, 200, TRUE);
 			NumPlayers--;
 		}
 	}
