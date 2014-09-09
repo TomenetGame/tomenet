@@ -4032,7 +4032,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 					if (!(r_ptr->flags1 & RF1_UNIQUE) &&
 					    !((r_ptr->flags2 & RF2_POWERFUL) && (r_ptr->flags8 & RF8_NO_CUT)) &&
 					    (randint(marts * 2) > r_ptr->level) &&
-					    m_ptr->mspeed > m_ptr->speed - 20) {
+					    m_ptr->mspeed > m_ptr->speed - 10) {
 						did_slow = TRUE;
 						m_ptr->mspeed -= 3 + rand_int(3);
 					}
