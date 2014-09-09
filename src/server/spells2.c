@@ -7104,9 +7104,8 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	}
 
 	if (getlevel(wpos) > (m_ptr->level + 7)) {
-	    int l = m_ptr->level + ((getlevel(wpos) - (m_ptr->level + 7)) / 3);
-	    m_ptr->exp = MONSTER_EXP(l);
-	    monster_check_experience(c_ptr->m_idx, TRUE);
+		m_ptr->exp = MONSTER_EXP(m_ptr->level + ((getlevel(wpos) - (m_ptr->level + 7)) / 3));
+		monster_check_experience(c_ptr->m_idx, TRUE);
 	}
 
 	strcpy(buf, (r_name + r_ptr->name));
@@ -7260,9 +7259,8 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	}
 
 	if (getlevel(wpos) >= (m_ptr->level + 8)) {
-	    int l = m_ptr->level + ((getlevel(wpos) - m_ptr->level - 5) / 3);
-	    m_ptr->exp = MONSTER_EXP(l);
-	    monster_check_experience(c_ptr->m_idx, TRUE);
+		m_ptr->exp = MONSTER_EXP(m_ptr->level + ((getlevel(wpos) - m_ptr->level - 5) / 3));
+		monster_check_experience(c_ptr->m_idx, TRUE);
 	}
 
 	strcpy(buf, (r_name + r_ptr->name));

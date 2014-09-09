@@ -31,8 +31,7 @@
 /* Debug spawning of a particular monster */
 //#define PMO_DEBUG RI_SAURON
 
-static cptr horror_desc[MAX_HORROR] =
-{
+static cptr horror_desc[MAX_HORROR] = {
 	"abominable",
 	"abysmal",
 	"appalling",
@@ -58,8 +57,7 @@ static cptr horror_desc[MAX_HORROR] =
 	"unspeakable",
 };
 
-static cptr funny_desc[MAX_FUNNY] =
-{
+static cptr funny_desc[MAX_FUNNY] = {
 	"silly",
 	"hilarious",
 	"absurd",
@@ -88,8 +86,7 @@ static cptr funny_desc[MAX_FUNNY] =
 	"preposterous",
 };
 
-static cptr funny_comments[MAX_COMMENT] =
-{
+static cptr funny_comments[MAX_COMMENT] = {
 	"Wow, cosmic, man!",
 	"Rad!",
 	"Groovy!",
@@ -103,28 +100,30 @@ int pick_ego_monster(int r_idx, int Level);
 
 
 /* Monster gain a few levels ? */
-int monster_check_experience(int m_idx, bool silent)
-{
+int monster_check_experience(int m_idx, bool silent) {
 	u32b		i, try;
 	u32b		levels_gained = 0, levels_gained_tmp = 0, levels_gained_melee = 0, tmp_dice, tmp;
-        monster_type    *m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = race_inf(m_ptr);
+        monster_type	*m_ptr = &m_list[m_idx];
+        monster_race	*r_ptr = race_inf(m_ptr);
 	int old_level = m_ptr->level;
+	bool levup = FALSE;
+
 	/* Gain levels while possible */
 	while ((m_ptr->level < MONSTER_LEVEL_MAX) &&
-	       (m_ptr->exp >= (MONSTER_EXP(m_ptr->level + 1))))
-	{
+	    (m_ptr->exp >= (MONSTER_EXP(m_ptr->level + 1)))) {
 		/* Gain a level */
 		m_ptr->level++;
+		levup = TRUE;
+
 #if 0 /* Check the return code now for level ups */
-		if(m_ptr->owner ) {
-			int i;
+		if (m_ptr->owner ) {
 			for (i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->id == m_ptr->owner)
 					msg_print(i, "\377UYour pet looks more experienced!");
 			}
 		}
 #endif
+
 		/* Gain hp */
 		if (magik(90)) {
 			m_ptr->maxhp += (r_ptr->hside * r_ptr->hdice) / 20;//10
@@ -192,6 +191,7 @@ int monster_check_experience(int m_idx, bool silent)
 		/* to fix rounding issues and prevent super monsters (2d50 -> 3d50 at +1 level) */
 		tmp_dice = m_ptr->blow[i].d_dice;
 		if (!tmp_dice) continue;
+
 		/* Add a limit for insanity attacks */
 //disabled this, instead I just weakened Water Demons! - C. Blue -	if (m_ptr->blow[i].effect == RBE_SANITY) levels_gained_melee /= 2;
 		levels_gained_melee = levels_gained_tmp;
@@ -299,12 +299,16 @@ int monster_check_experience(int m_idx, bool silent)
                         }
 		}
 	}
-	return (old_level-m_ptr->level == 0? 0 : 1);
+
+	/* Adjust monster cur speed to new base speed on levelup
+	   (as a side effect, resetting possible GF_OLD_SLOW effects and similar - doesn't matter really). */
+	if (levup) m_ptr->mspeed = m_ptr->speed;
+
+	return (old_level - m_ptr->level == 0 ? 0 : 1);
 }
 
 /* Monster gain some xp */
-int monster_gain_exp(int m_idx, u32b exp, bool silent)
-{
+int monster_gain_exp(int m_idx, u32b exp, bool silent) {
 	monster_type *m_ptr = &m_list[m_idx];
 
 	m_ptr->exp += exp;
@@ -2067,8 +2071,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
  * Here comes insanity from PernAngband.. hehehe.. - Jir -
  */
 //void sanity_blast(int Ind, monster_type * m_ptr, bool necro)
-static void sanity_blast(int Ind, int m_idx, bool necro)
-{
+static void sanity_blast(int Ind, int m_idx, bool necro) {
 	player_type *p_ptr = Players[Ind];
 	monster_type    *m_ptr = &m_list[m_idx];
 	bool happened = FALSE;
@@ -2077,10 +2080,9 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 	/* Don't blast the master */
 	if (p_ptr->admin_dm) return;
 
-	if (!necro)
-	{
-		char            m_name[MNAME_LEN];
-		monster_race    *r_ptr;
+	if (!necro) {
+		char		m_name[MNAME_LEN];
+		monster_race	*r_ptr;
 
 		if (m_ptr != NULL) r_ptr = race_inf(m_ptr);
 		else return;
@@ -2089,12 +2091,9 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 
 		monster_desc(Ind, m_name, m_idx, 0);
 
-		if (!(r_ptr->flags1 & RF1_UNIQUE))
-		{
-			if (r_ptr->flags1 & RF1_FRIENDS)
-				power /= 2;
-		}
-		else power *= 2;
+		if (!(r_ptr->flags1 & RF1_UNIQUE)) {
+			if (r_ptr->flags1 & RF1_FRIENDS) power /= 2;
+		} else power *= 2;
 
 		/* No effect yet, just loaded... */
 		//		if (!hack_mind) return;
@@ -2105,7 +2104,6 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 
 		if (!(r_ptr->flags2 & RF2_ELDRITCH_HORROR))
 			return; /* oops */
-
 
 
 		/* Pet eldritch horrors are safe most of the time */
@@ -2119,7 +2117,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 		if (p_ptr->image) {
 			/* Something silly happens... */
 			msg_format(Ind, "You behold the %s visage of %s!",
-					funny_desc[(randint(MAX_FUNNY))-1], m_name);
+			    funny_desc[(randint(MAX_FUNNY))-1], m_name);
 			if (randint(3) == 1) {
 				msg_print(Ind, funny_comments[randint(MAX_COMMENT)-1]);
 				p_ptr->image = (p_ptr->image + randint(m_ptr->level));
@@ -2129,7 +2127,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 
 		/* Something frightening happens... */
 		msg_format(Ind, "You behold the %s visage of %s!",
-				horror_desc[(randint(MAX_HORROR))-1], m_name);
+		    horror_desc[(randint(MAX_HORROR))-1], m_name);
 
 #ifdef OLD_MONSTER_LORE
 		r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
@@ -2145,8 +2143,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 	}
 	else msg_print(Ind, "Your sanity is shaken by reading the Necronomicon!");
 
-	if (randint(power)<p_ptr->skill_sav) /* Mind blast */
-	{
+	if (randint(power) < p_ptr->skill_sav) { /* Mind blast */
 		if (!p_ptr->resist_conf)
 			(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 		if ((!p_ptr->resist_chaos) && (randint(3) == 1))
@@ -2154,16 +2151,14 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 		return;
 	}
 
-	if (randint(power)<p_ptr->skill_sav) /* Lose int & wis */
-	{
+	if (randint(power) < p_ptr->skill_sav) { /* Lose int & wis */
 		do_dec_stat (Ind, A_INT, STAT_DEC_NORMAL);
 		do_dec_stat (Ind, A_WIS, STAT_DEC_NORMAL);
 		return;
 	}
 
 
-	if (randint(power) < p_ptr->skill_sav) /* Brain smash */
-	{
+	if (randint(power) < p_ptr->skill_sav) { /* Brain smash */
 		if (!p_ptr->resist_conf)
 			(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 		if (!p_ptr->free_act)
@@ -2177,45 +2172,35 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 		return;
 	}
 
-	if (randint(power) < p_ptr->skill_sav) /* Permanent lose int & wis */
-	{
+	if (randint(power) < p_ptr->skill_sav) { /* Permanent lose int & wis */
 		if (dec_stat(Ind, A_INT, 10, TRUE)) happened = TRUE;
 		if (dec_stat(Ind, A_WIS, 10, TRUE)) happened = TRUE;
-		if (happened)
-			msg_print(Ind, "You feel much less sane than before.");
+		if (happened) msg_print(Ind, "You feel much less sane than before.");
 		return;
 	}
 
 
 	if (randint(power)<p_ptr->skill_sav && /* Amnesia */
-	    !(p_ptr->pclass == CLASS_MINDCRAFTER && magik(50)))
-	{
-
-		if (lose_all_info(Ind))
-			msg_print(Ind, "You forget everything in your utmost terror!");
+	    !(p_ptr->pclass == CLASS_MINDCRAFTER && magik(50))) {
+		if (lose_all_info(Ind)) msg_print(Ind, "You forget everything in your utmost terror!");
 		return;
 	}
 
 	/* Else gain permanent insanity */
 #if 0
 	if ((p_ptr->muta3 & MUT3_MORONIC) && (p_ptr->muta2 & MUT2_BERS_RAGE) &&
-			((p_ptr->muta2 & MUT2_COWARDICE) || (p_ptr->resist_fear)) &&
-			((p_ptr->muta2 & MUT2_HALLU) || (p_ptr->resist_chaos)))
-	{
+	    ((p_ptr->muta2 & MUT2_COWARDICE) || (p_ptr->resist_fear)) &&
+	    ((p_ptr->muta2 & MUT2_HALLU) || (p_ptr->resist_chaos))) {
 		/* The poor bastard already has all possible insanities! */
 		return;
 	}
 
-	while (!happened)
-	{
-		switch(randint(4))
-		{
+	while (!happened) {
+		switch(randint(4)) {
 			case 1:
-				if (!(p_ptr->muta3 & MUT3_MORONIC))
-				{
+				if (!(p_ptr->muta3 & MUT3_MORONIC)) {
 					msg_print("You turn into an utter moron!");
-					if (p_ptr->muta3 & MUT3_HYPER_INT)
-					{
+					if (p_ptr->muta3 & MUT3_HYPER_INT) {
 						msg_print("Your brain is no longer a living computer.");
 						p_ptr->muta3 &= ~(MUT3_HYPER_INT);
 					}
@@ -2224,13 +2209,11 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 				}
 				break;
 			case 2:
-				if (!(p_ptr->muta2 & MUT2_COWARDICE) && !(p_ptr->resist_fear))
-				{
+				if (!(p_ptr->muta2 & MUT2_COWARDICE) && !(p_ptr->resist_fear)) {
 					msg_print("You become paranoid!");
 
 					/* Duh, the following should never happen, but anyway... */
-					if (p_ptr->muta3 & MUT3_FEARLESS)
-					{
+					if (p_ptr->muta3 & MUT3_FEARLESS) {
 						msg_print("You are no longer fearless.");
 						p_ptr->muta3 &= ~(MUT3_FEARLESS);
 					}
@@ -2240,16 +2223,14 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 				}
 				break;
 			case 3:
-				if (!(p_ptr->muta2 & MUT2_HALLU) && !(p_ptr->resist_chaos))
-				{
+				if (!(p_ptr->muta2 & MUT2_HALLU) && !(p_ptr->resist_chaos)) {
 					msg_print("You are afflicted by a hallucinatory insanity!");
 					p_ptr->muta2 |= MUT2_HALLU;
 					happened = TRUE;
 				}
 				break;
 			default:
-				if (!(p_ptr->muta2 & MUT2_BERS_RAGE))
-				{
+				if (!(p_ptr->muta2 & MUT2_BERS_RAGE)) {
 					msg_print("You become subject to fits of berserk rage!");
 					p_ptr->muta2 |= MUT2_BERS_RAGE;
 					happened = TRUE;
@@ -2314,8 +2295,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
  * "disturb_near" (monster which is "easily" viewable moves in some
  * way).  Note that "moves" includes "appears" and "disappears".
  */
-void update_mon(int m_idx, bool dist)
-{
+void update_mon(int m_idx, bool dist) {
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
 	player_type *p_ptr;
@@ -2494,9 +2474,7 @@ void update_mon(int m_idx, bool dist)
 					}
 
 					/* Normal mind, allow telepathy */
-					else {
-						hard = flag = TRUE;
-					}
+					else hard = flag = TRUE;
 
 #ifdef OLD_MONSTER_LORE
 					/* Apply telepathy */
@@ -2632,8 +2610,7 @@ void update_mon(int m_idx, bool dist)
 /* does nothing except handling flickering animation for WEIRD_MIND on esp.
    Note: We assume (just for efficiency reasons) that we're only called if
    monster is actually RF2_WEIRD_MIND. */
-void update_mon_flicker(int m_idx)
-{
+void update_mon_flicker(int m_idx) {
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
 
@@ -2652,8 +2629,7 @@ void update_mon_flicker(int m_idx)
 /*
  * This function simply updates all the (non-dead) monsters (see above).
  */
-void update_monsters(bool dist)
-{
+void update_monsters(bool dist) {
 	int          i;
 
 	/* Efficiency -- Clear multihued flag */
@@ -2676,8 +2652,7 @@ void update_monsters(bool dist)
  * This function updates the visiblity flags for everyone who may see
  * this player.
  */
-void update_player(int Ind)
-{
+void update_player(int Ind) {
 	player_type *p_ptr, *q_ptr = Players[Ind];
 
 	int i;
@@ -2895,8 +2870,7 @@ void update_player(int Ind)
 /* only takes care of updating player's invisibility flickering.
    Note: we assume (just for efficiency reasons) that we're only called
    if player is actually invisible. */
-void update_player_flicker(int Ind)
-{
+void update_player_flicker(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Can we see invisible players ? */
@@ -2918,8 +2892,7 @@ void update_player_flicker(int Ind)
 /*
  * This function simply updates all the players (see above).
  */
-void update_players(void)
-{
+void update_players(void) {
 	int i;
 
 	/* Update each player */
@@ -2936,8 +2909,7 @@ void update_players(void)
 
 
 /* Scan all players on the level and see if at least one can find the unique */
-static bool allow_unique_level(int r_idx, struct worldpos *wpos)
-{
+static bool allow_unique_level(int r_idx, struct worldpos *wpos) {
 	int i;
 
 	for (i = 1; i <= NumPlayers; i++) {
@@ -3489,11 +3461,6 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	m_ptr->hp = m_ptr->maxhp;
 
 
-	/* Extract the monster base speed */
-	m_ptr->speed = r_ptr->speed;
-	/* Set monster cur speed to normal base speed */
-	m_ptr->mspeed = m_ptr->speed;
-
 	/* Extract base ac and  other things */
 	m_ptr->ac = r_ptr->ac;
 
@@ -3507,19 +3474,23 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	m_ptr->exp = MONSTER_EXP(m_ptr->level);
 	m_ptr->owner = 0;
 
+	/* Extract the monster base speed */
+	m_ptr->speed = r_ptr->speed;
 	/* Hack -- small racial variety */
 	if (!(r_ptr->flags1 & RF1_UNIQUE)) {
 		/* Allow some small variation per monster */
 		i = extract_energy[m_ptr->speed] / 100;
 		if (i) {
 			j = rand_spread(0, i);
-			m_ptr->mspeed += j;
+			m_ptr->speed += j;
 
-			if (m_ptr->mspeed < j) m_ptr->mspeed = 255;
+			if (m_ptr->speed < j) m_ptr->speed = 255;//overflow paranoia
 		}
 
-//		if (i) m_ptr->mspeed += rand_spread(0, i);
+//		if (i) m_ptr->speed += rand_spread(0, i);
 	}
+	/* Set monster cur speed to normal base speed */
+	m_ptr->mspeed = m_ptr->speed;
 
 	/* Starts 'flickered out'? */
 	if ((r_ptr->flags2 & RF2_WEIRD_MIND) && rand_int(10)) m_ptr->no_esp_phase = TRUE;
@@ -3559,9 +3530,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	}
 
 	if (dlev >= (m_ptr->level + 8)) {
-	    int l = m_ptr->level + ((dlev - m_ptr->level - 5) / 3);
-	    m_ptr->exp = MONSTER_EXP(l);
-	    monster_check_experience(c_ptr->m_idx, TRUE);
+		m_ptr->exp = MONSTER_EXP(m_ptr->level + ((dlev - m_ptr->level - 5) / 3));
+		monster_check_experience(c_ptr->m_idx, TRUE);
 	}
 
 
@@ -3732,8 +3702,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 /*
  * Attempt to place a "group" of monsters around the given location
  */
-static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool little, int s_clone, int clone_summoning)
-{
+static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool little, int s_clone, int clone_summoning) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	int n, i;
@@ -3824,8 +3793,7 @@ static int place_monster_idx = 0;
 /*
  * Hack -- help pick an escort type
  */
-static bool place_monster_okay_escort(int r_idx)
-{
+static bool place_monster_okay_escort(int r_idx) {
 	monster_race *r_ptr = &r_info[place_monster_idx];
 	monster_race *z_ptr = &r_info[r_idx];
 
@@ -4185,8 +4153,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
  *
  * Use "monster_level" for the monster level
  */
-bool alloc_monster(struct worldpos *wpos, int dis, int slp)
-{
+bool alloc_monster(struct worldpos *wpos, int dis, int slp) {
 	int                     y, x, i, d, min_dis = 999;
 	int                     tries = 0;
 	player_type *p_ptr;
@@ -4194,8 +4161,7 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp)
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Find a legal, distant, unoccupied, space */
-	while (tries < 50)
-	{
+	while (tries < 50) {
 		/* Increase the counter */
 		tries++;
 
@@ -4346,8 +4312,7 @@ static int summon_specific_type = 0; /* SUMMON_ALL */
 /* Disallow summoning unique monsters except for
    explicite SUMMON_UNIQUE/SUMMON_HI_UNIQUE calls? */
 #define EXPLICITE_UNIQUE_SUMMONING
-static bool summon_specific_okay(int r_idx)
-{
+static bool summon_specific_okay(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 	bool okay = FALSE;
 
@@ -4619,16 +4584,14 @@ static bool summon_specific_okay(int r_idx)
  *
  * Note that this function may not succeed, though this is very rare.
  */
-bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning)
-{
+bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning) {
 	int i, x, y, r_idx;
 	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
 	if(!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Look for a location */
-	for (i = 0; i < 20; ++i)
-	{
+	for (i = 0; i < 20; ++i) {
 		/* Pick a distance */
 		int d = (i / 15) + 1;
 
@@ -4704,8 +4667,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 
 /* summon a specific race near this location */
 /* summon until we can't find a location or we have summoned size */
-bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int s_clone, unsigned char size)
-{
+bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int s_clone, unsigned char size) {
 	int c, i, x, y;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -4750,8 +4712,7 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 
 
 /* summon a specific race at a random location */
-bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char size)
-{
+bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char size) {
 	int                     y, x;
 	int                     tries = 0;
 
@@ -4786,8 +4747,7 @@ bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clon
 }
 
 /* summon a single monster in every detail in a random location */
-int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone)
-{
+int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone) {
 	int                     y, x;
 	int                     tries = 0;
 
@@ -4795,8 +4755,7 @@ int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, boo
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Find a legal, distant, unoccupied, space */
-	while (tries < 50)
-	{
+	while (tries < 50) {
 		/* Increase the counter */
 		tries++;
 
@@ -4840,8 +4799,7 @@ int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, boo
  *
  * Note that "reproduction" REQUIRES empty space.
  */
-bool multiply_monster(int m_idx)
-{
+bool multiply_monster(int m_idx) {
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race	*r_ptr = race_inf(m_ptr);
 	int		i, y, x;
@@ -4877,8 +4835,6 @@ bool multiply_monster(int m_idx)
 	/* Result */
 	return (result);
 }
-
-
 
 
 
@@ -4940,8 +4896,7 @@ void message_pain(int Ind, int m_idx, int dam) {
 
 
 	/* Notice non-damage */
-	if (dam == 0)
-	{
+	if (dam == 0) {
 		msg_format(Ind, "%^s is unharmed.", m_name);
 		return;
 	}
