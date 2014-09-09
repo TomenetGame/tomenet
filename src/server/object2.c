@@ -7232,21 +7232,21 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_ADVENTURER:
 		case CLASS_SHAMAN:
 			if ((p_ptr->stat_max[A_INT] > p_ptr->stat_max[A_WIS]) &&
-			    (o_ptr->name2 == EGO_WISDOM || o_ptr->name2b == EGO_WISDOM)) continue;
+			    (o_ptr->name2 == EGO_WISDOM && !o_ptr->name2b)) continue;
 			if ((p_ptr->stat_max[A_WIS] > p_ptr->stat_max[A_INT]) &&
-			    (o_ptr->name2 == EGO_INTELLIGENCE || o_ptr->name2b == EGO_INTELLIGENCE)) continue;
+			    (o_ptr->name2 == EGO_INTELLIGENCE && !o_ptr->name2b)) continue;
 			break;
 		case CLASS_MAGE:
 		case CLASS_RANGER:
 		case CLASS_ROGUE:
 		case CLASS_RUNEMASTER:
 		case CLASS_MINDCRAFTER:
-			if (o_ptr->name2 == EGO_WISDOM || o_ptr->name2b == EGO_WISDOM) continue;
+			if (o_ptr->name2 == EGO_WISDOM && !o_ptr->name2b) continue;
 			break;
 		case CLASS_PRIEST:
 		case CLASS_PALADIN:
 		case CLASS_DRUID:
-			if (o_ptr->name2 == EGO_INTELLIGENCE || o_ptr->name2b == EGO_INTELLIGENCE) continue;
+			if (o_ptr->name2 == EGO_INTELLIGENCE && !o_ptr->name2b) continue;
 			break;
 		}
 		
@@ -7260,19 +7260,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 
 		/* Don't generate mage-only benefitting reward if we don't use magic */
-		if (!spell_choice) {
+		if (!spell_choice && !o_ptr->name2b) { /* as _double ego_, it should be acceptable :-p */
 			switch (o_ptr->name2) {
-			//case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
-			//case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
-			case EGO_INTELLIGENCE:
-			case EGO_WISDOM:
-			case EGO_BRILLIANCE:
-			case EGO_OFTHEMAGI:
-			case EGO_ISTARI:
-				continue;
-			}
-			/* as _double ego_, it should be acceptable :-p */
-			if (!o_ptr->name2) switch (o_ptr->name2b) {
 			//case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
 			//case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
 			case EGO_INTELLIGENCE:
@@ -7285,7 +7274,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 		/* don't generate too worthless magi-specific items,
 		   prevented by simply hacking the pval up! */
-		else {
+		else if (spell_choice) {
 			switch (o_ptr->name2) {
 			case EGO_INTELLIGENCE:
 			case EGO_WISDOM:
