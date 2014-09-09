@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. September 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. September 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -14540,11 +14540,12 @@ office in Bree, you will get a semi-random excellent item for free, to start
 your career with. Semi-random because it partially depends on your skill point
 distribution, so before turning in your parchment for an item at the office,
 make sure you hit SHIFT+G and distribute your skill points to your liking.
+For details about how this item is generated, see (8.5) Reward item creation,
+it actually uses the same mechanics.
 
 PvP-mode characters are called 'Gladiators' and use special rulesets that make
 it easier to rise in levels and less of a hassle when you get actually killed
 by an opponent! The special rules that apply are as follows:
-
 
 -PVP chars have only one life and no ghost, ie are erased on death same as
  no-ghost chars. However, they play more fast-paced and are quickly brought up
