@@ -1400,15 +1400,22 @@ void prt(cptr str, int row, int col)
 /*
  * Print the last n characters of str onto the screen.
  */
-static void c_ptr_last(int x, int y, int n, byte attr, char *str)
-{
+static void c_prt_last(byte attr, char *str, int y, int x, int n) {
 	int len = strlen(str);
 
-	if (n < len) {
+	if (n < len)
 		Term_putstr(x, y, n, attr, str + (len - n));
-	} else {
+	else
 		Term_putstr(x, y, len, attr, str);
-	}
+}
+/* Added for new string input editability - C. Blue */
+static void c_prt_n(byte attr, char *str, int y, int x, int n) {
+	char tmp[strlen(str) + 1];
+
+	strncpy(tmp, str, n);
+	tmp[n] = 0;
+
+	Term_putstr(x, y, -1, attr, tmp);
 }
 
 
@@ -1480,8 +1487,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 	/* Display the default answer */
 	Term_erase(x, y, len);
-	if (mode & ASKFOR_PRIVATE) c_ptr_last(x, y, vis_len, TERM_YELLOW, buf[0] ? "(default)" : "");
-	else c_ptr_last(x, y, vis_len, TERM_YELLOW, buf);
+	if (mode & ASKFOR_PRIVATE) c_prt_last(TERM_YELLOW, buf[0] ? "(default)" : "", y, x, vis_len);
+	else c_prt_last(TERM_YELLOW, buf, y, x, vis_len);
 
 	if (mode & ASKFOR_CHATTING) {
 		strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat) - 1);
@@ -1495,9 +1502,12 @@ bool askfor_aux(char *buf, int len, char mode) {
 	/* Process input */
 	while (!done) {
 		/* Place cursor */
-		if (strlen(buf) > vis_len)
-			Term_gotoxy(x + l + vis_len - strlen(buf), y);
-		else
+		if (strlen(buf) > vis_len) {
+			if (l > strlen(buf) - vis_len)
+				Term_gotoxy(x + l + vis_len - strlen(buf), y);
+			else
+				Term_gotoxy(x, y); //would need a new var 'x_edit' to allow having the cursor at other positions
+		} else
 			Term_gotoxy(x + l, y);
 
 		/* Get a key */
@@ -1731,16 +1741,26 @@ bool askfor_aux(char *buf, int len, char mode) {
 					cur_hist = 0;
 				}
 
+				/* paranoia?: */
+				if (len >= strlen(message_history_chat[cur_hist])) strcpy(buf, message_history_chat[cur_hist]);
+				else {
+
 				strncpy(buf, message_history_chat[cur_hist], len);
 				buf[len] = '\0';
+				}
 			} else {
 				if ((!hist_looped && hist_end < cur_hist) ||
 					(hist_looped && cur_hist >= MSG_HISTORY_MAX)) {
 					cur_hist = 0;
 				}
 
+				/* paranoia?: */
+				if (len >= strlen(message_history_chat[cur_hist])) strcpy(buf, message_history_chat[cur_hist]);
+				else {
+
 				strncpy(buf, message_history[cur_hist], len);
 				buf[len] = '\0';
+				}
 			}
 
 			k = l = strlen(buf);
@@ -1754,16 +1774,26 @@ bool askfor_aux(char *buf, int len, char mode) {
 					cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end;
 				}
 
+				/* paranoia?: */
+				if (len >= strlen(message_history_chat[cur_hist])) strcpy(buf, message_history_chat[cur_hist]);
+				else {
+
 				strncpy(buf, message_history_chat[cur_hist], len);
 				buf[len] = '\0';
+				}
 			} else {
 				if (cur_hist) cur_hist--;
 				else {
 					cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end;
 				}
 
+				/* paranoia?: */
+				if (len >= strlen(message_history_chat[cur_hist])) strcpy(buf, message_history_chat[cur_hist]);
+				else {
+
 				strncpy(buf, message_history[cur_hist], len);
 				buf[len] = '\0';
+				}
 			}
 
 			k = l = strlen(buf);
@@ -1826,9 +1856,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 		/* Update the entry */
 		if (!(mode & ASKFOR_PRIVATE)) {
 			Term_erase(x, y, vis_len);
-			c_ptr_last(x, y, vis_len, TERM_WHITE, buf);
+			if (k >= vis_len) {
+				if (l > k - vis_len)
+					c_prt_last(TERM_WHITE, buf + k - vis_len, y, x, vis_len);
+				else
+					c_prt_n(TERM_WHITE, buf + l, y, x, vis_len);
+			} else
+				c_prt(TERM_WHITE, buf, y, x);
 		} else {
-			Term_erase(x + k, y, len - k);
+			if (len > k) Term_erase(x + k, y, len - k);
 			if (k) Term_putch(x + k - 1, y, TERM_WHITE, 'x');
 		}
 	}
