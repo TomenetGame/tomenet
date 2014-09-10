@@ -1919,8 +1919,8 @@ static void player_outfit(int Ind)
 #endif
 
 	/* Hack -- Give the player newbie guide Parchment */
-//	invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_NEWBIE));
-	invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_NEWS));
+	invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_NEWBIE));
+	//invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_NEWS));
 	o_ptr->number = 1;
 	do_player_outfit();
 }

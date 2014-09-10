@@ -22,6 +22,8 @@
 Press '@' key to see which other players are online. Press ':' key to chat with
 them and say hello. Press 'w' key to equip each of your starter items, most
 characters start with weapon, armour and torches, which you should all equip.
+If you joined together with a friend, you can form a party with him by pressing
+Shift+P key: Create a party and add him to it.
 A full list of all keys and commands is in the TomeNET Guide in chapter (0.2).
 
 You can access character knowledge with '~' and program options with '=' key.
