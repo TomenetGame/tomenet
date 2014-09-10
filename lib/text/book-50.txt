@@ -3,95 +3,77 @@
                   \----------------------------------------/
 
 
-==============================================================================
+===============================================================================
                             Welcome to TomeNET
 
-If you are new to TomeNET, read the 'TomeNET-Guide.txt' in your TomeNET
-directory. Latest version available online at www.tomenet.net -> 'The Guide'.
-It contains all information about TomeNET, as well as a 'how-to-start' part.
+ If you are new to TomeNET, read the 'TomeNET-Guide.txt' in your TomeNET
+ directory. Latest version available online at www.tomenet.net -> 'The Guide'.
+ It contains all information about TomeNET, as well as a 'how-to-start' part.
 
-****************************************************************************
-Listen to this once bit of advice. Don't get discouraged!!
-If you are new to TomeNET, you will die..... a lot. But, as you get more
-experienced, you will become better at surviving, and may even live to see
-level 20. >;) Have fun!
-****************************************************************************
+ Listen to this bit of advice. Don't get discouraged!
+ If you are new to TomeNET, you will die..... a lot. But, as you get more
+ experienced, you will become better at surviving, and may even live to see
+ level 20. >;) Have fun!
 
-First of all, please press '@' key on the game screen to see who are playing
-on the server; if any, press ':' to chat with them.  They could be of great
-help to you if you're good and polite :)
+*******************************************************************************
 
-To get a more detailed help, list of commands and latest news press '?' key.
-To get a list of extended commands, enter '/?' on the chat-line.
-And to get more information the manuals don't contain, ask other players ;)
+ A short how-to-get-started:
 
-The game is running on the real-time; if you've been playing ToME or other
-rogue-like games, you may think the game is too slow... but soon you'll
-understand it's not.  The situations and the monsters will never give you
-enough time to think and react - probably you should die once or twice to get
-accustomed to the time-system of this world.  Be vigilant and respond quickly.
-(don't forget to feed yourself!)
+Press '@' key to see which other players are online. Press ':' key to chat with
+them and say hello. Press 'w' key to equip each of your starter items, most
+characters start with weapon, armour and torches, which you should all equip.
+A full list of all keys and commands is in the TomeNET Guide in chapter (0.2).
 
-To save the game, press ^X ... you can save the game anywhere, however it is
-strongly recommended to do it on the town, since your character is handled as
-'staying there still' for 30 seconds after saving which means the monsters
-around can kill you in the while.
+You can access character knowledge with '~' and program options with '=' key.
+The audio mixer is available with CTRL+U/F. To quit the game, press CTRL+X.
+To pick up items, press 'g'. To run, hold Shift key when pressing a directional
+key. It is recommended to use the numpad keys rather than the arrow keys for
+movemenet, so you can actually move diagonally too.
 
+If your keyboard doesn't have a numpad, you can consider pressing '=' and then
+'1' and turning on the first option called "rogue_like_commands", which provide
+an alternative key map that maps movement keys to y/k/u, h/l, b/j/n.
 
-##### Notes on some rules
+Make sure you read up in the guide, about the race and class you chose. For
+example if you're a half-troll warrior, search the guide for "- half-troll" and
+for "- warrior". If you're a dwarven druid, search for "- dwarf" and "- druid".
 
-For abuse-preventing purposes, new characters can be subject to some
-restrictions, eg. cannot drop items/objects.  The restrictions will be lifted
-as you gain levels (normally lv5).
+Your first stop is the training tower, its entrance is located along the path
+leading south-eastwards out of town, it is a green '<' symbol. Just step on it
+and you'll see a short hint in yellow colour, telling you how to enter.
+In the training tower you cannot die, instead you will just get teleported
+outside and receive a small penalty on experience points and gold.
+When you gained a few level-ups, consider going to the Barrow-Downs dungeon,
+which is located to the west of the town centre, marked by a white '>'.
 
-Please don't attempt to use subchars (to hold spare items, take and sell items
-etc).  it is regarded as 'cheating' and subject to the character deletion.
+From time to time the game might throw some more hints at you, usually
+displayed as yellow text, sometimes orange if especially critical in your
+current situation - make sure you don't miss those as they're tailored to
+guide you.
 
-Generally please don't seek to abuse the system.
+If you're a close combat class, such as warrior, mimic or paladin, make sure
+that you get at least two attacks per round with your weapon. You can see your
+number of attacks, also called "blows per round", at the bottom of the screen:
+It will say "x BpR" where x is the actual number.
+The number of attacks per round you get depend on three factors: Your strength,
+your dexterity and the weight of the weapon. Make sure your strength is at
+least 18/20, better would be 18/30 or 18/40 even. Dexterity should be at least
+10. If you still only get one attack, discard your weapon and buy a light
+weapon from the town stores. Best choice would be a weapon that does not exceed
+a weight of 3.0 lbs. Try to get the lightest one possible.
 
+If you're a class using magic or ranged weapons, you'll need to create a hotkey
+right away, which will allow you to fire your weapon or cast an attack spell at
+the closest monster by pressing it. Hotkeys are called "macros" in TomeNET.
+Macros can be created for any action, not just casting spells or attacking, but
+also for quaffing potions or reading scrolls.
+To create macros, press the '%' key to enter the macro menu. If you are new to
+the game, just press 'z' there to invoke the macro wizard, which will guide
+you through the process in easy steps. Don't forget to save your macros by
+pressing 's' when you're back in the macro menu. A filename will be suggested
+automatically, which is actually your character's name with ".prf" attached to
+it. Accept this name by pressing the Enter key. The idea is that macro files
+that have the same name as your character will be loaded automatically when you
+log in with that character!
 
-##### Etiquette desirable
-
-Being multi-player game, there are some sort of 'etiquette' you are supposed
-to keep in mind, so that everyone can play it with comfort.
-
-[For newcomers:]
-- say 'hello' or something when you log on. (use ':' key)
-- leave the shop as soon as possible; never form a line behind you!
-- never litter the town; destroy (ctrl-d or 'k') useless items instead.
-- avoid saving in shallow floor, esp. never save on 50ft.
-
-[General etiquette:]
-- never pester the other players; remember they don't have to do you a favor.
-- don't be too rude, watch your language; you don't have to be so goody-goody,
-  but at least avoid offending others.
-  (If you've gone too far, some super-game majors can be taken..)
-- avoid the topics concerning privacy or politics (Netiquette!)
-
-[For experienced players:]
-- answer the cries of those killed, or no one will help you in turn.
-- buy houses only in need; sell smaller ones when you buy a bigger one.
-- never summon monsters on town! always imagine a lv1 newbie when in town.
-- be good to the newbies; they could really use your help.
-
-In short: 'Think of the others.'
-
-
-##### Minimal hints for survival
-
-You cannot survive without appropriate set of macros, for sure..
-Create macros to fire arrows, read scrolls etc.  Time is money!
-
-You melee the neighboring monster automatically;  However you can change this
-behavior with item inscriptions.
-For example, inscribe {@O} on your bow and see what will happen.
-
-Pay extra attention when climbing stairs or doing recall;  monsters may start
-attacking you before you're ready!
-
-Some monsters can be of *MUCH* more threat under realtime - for example, Cave
-spiders and Maggot's dogs (and townies).  If you're not accustomed to the game
-system well yet, stick to -50ft till you gain levels enough.
-
-
-Alright - Happy Diving!
+Enjoy, and don't hesitate to ask other players for help!
