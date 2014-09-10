@@ -3887,8 +3887,7 @@ void prt_map(int Ind)
  *
  * Note that all "walls" always look like "secret doors" (see "map_info()").
  */
-static byte priority_table[][2] =
-{
+static byte priority_table[][2] = {
 	/* Dark */
 	{ FEAT_NONE, 2 },
 
@@ -3945,9 +3944,20 @@ static byte priority_table[][2] =
 	{ FEAT_MOUNTAIN, 20 },
 
 	/* Fountain */
-	{ FEAT_FOUNTAIN, 22 },
-	{ FEAT_FOUNTAIN_BLOOD, 22 },
-	{ FEAT_EMPTY_FOUNTAIN, 22 },
+	{ FEAT_FOUNTAIN, 21 },
+	{ FEAT_FOUNTAIN_BLOOD, 21 },
+	{ FEAT_EMPTY_FOUNTAIN, 21 },
+
+	{ FEAT_SEALED_DOOR, 22 }, /* for pvp-arena */
+	{ FEAT_UNSEALED_DOOR, 22},
+	{ FEAT_ESCAPE_DOOR, 22}, /* for quests */
+
+	/* Shops */
+	{ FEAT_SHOP, 23 },
+
+	/* Void Jump Gates */
+	{ FEAT_BETWEEN_TEMP, 24 },
+	{ FEAT_BETWEEN, 24 },
 
 	/* Stairs */
 	{ FEAT_LESS, 25 },
@@ -3959,6 +3969,9 @@ static byte priority_table[][2] =
 
 	{ FEAT_SHAFT_UP, 25 },
 	{ FEAT_SHAFT_DOWN, 25 },
+
+	/* Event Beacon (Dungeon Keeper) */
+	{ FEAT_BEACON, 26 },
 
 	/* End */
 	{ 0, 0 }
@@ -3972,6 +3985,9 @@ static byte priority(byte a, char c) {
 	int i, p0, p1;
 
 	feature_type *f_ptr;
+
+	/* hack for shops: every shop's base door is actually '1' */
+	if (c >= '1' && c <= '9') c = '1';
 
 	/* Scan the table */
 	for (i = 0; TRUE; i++) {
@@ -4017,8 +4033,7 @@ static byte priority(byte a, char c) {
  */
 
 
-void display_map(int Ind, int *cy, int *cx)
-{
+void display_map(int Ind, int *cy, int *cx) {
 	player_type *p_ptr = Players[Ind];
 
 	int i, j, x, y;
