@@ -6932,7 +6932,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	if (melee_choice && ((!armor_choice && !ranged_choice) || magik(50))) final_choice = 1;
 	if (ranged_choice && !final_choice && (!armor_choice || magik(50))) final_choice = 2;
 	if (melee_choice == 5) final_choice = 3;
-	if (misc_choice == 4 && (!final_choice || (final_choice && magik(33))) && (!armor_choice || magik(50))) final_choice = 6;
+	if (misc_choice == 4 && (!final_choice || (final_choice && magik(75))) && (!armor_choice || magik(50))) final_choice = 6;
 	if (armor_choice && !final_choice) final_choice = 3;
 /*	if (final_choice == 3 && magik(25)) final_choice = 5; <- no misc items for now, won't be good if not (rand)arts anyway! */
 	/* to catch cases where NO result has been chosen at all (paranoia): */
