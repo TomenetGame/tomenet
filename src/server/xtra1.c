@@ -7323,17 +7323,28 @@ static void process_global_event(int ge_id) {
 		ge->state[0] = 255; /* ..and process clean-up! */
 	}
 
-	if (ge->announcement_time * cfg.fps - elapsed_turns == 240L * cfg.fps) { /* extra warning at T-4min for last minute subscribers */
+	/* extra warning at T-4min for last minute subscribers */
+	if (ge->announcement_time * cfg.fps - elapsed_turns == 240L * cfg.fps) {
 		announce_global_event(ge_id);
 		return; /* not yet >:) */
+
+	/* Start/announce event */
 	} else if (ge->announcement_time * cfg.fps - elapsed_turns >= 0) {
 //debug		msg_format(1, ".%d.%d", ge->announcement_time * cfg.fps - elapsed_turns, elapsed_turns);
+
+		/* Start/announce event, take two */
 		if (!((ge->announcement_time * cfg.fps - elapsed_turns) % (GE_ANNOUNCE_INTERVAL * cfg.fps))) {
+
+			/* we're still just announcing the event -- nothing more to do for now */
 			if (ge->announcement_time * cfg.fps - elapsed_turns > 0L) {
 				announce_global_event(ge_id);
 				return; /* not yet >:) */
+
+			/* prepare to start the event! */
 			} else {
-				/* count participants */
+				dungeon_type *d_ptr;
+
+				/* count participants first, to see if there are enough to start the event */
 				for (i = 0; i < MAX_GE_PARTICIPANTS; i++) {
 					if (!ge->participant[i]) continue;
 
@@ -7344,7 +7355,9 @@ static void process_global_event(int ge_id) {
 						s_printf("EVENT_CHECK_PARTICIPANTS: ID %d no longer available.\n", ge->participant[i]);
 						continue;
 					}
+
 					p_ptr = Players[j];
+					d_ptr = getdungeon(&p_ptr->wpos);
 
 					/* Check that he still fulfils requirements, if any */
 					switch (ge->getype) {
@@ -7352,6 +7365,13 @@ static void process_global_event(int ge_id) {
 						if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
+							p_ptr->global_event_type[ge_id] = GE_NONE;
+							ge->participant[i] = 0;
+							continue;
+						}
+						if (d_ptr && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_RECALL)) || (d_ptr->flags2 & (DF2_IRON | DF2_NO_EXIT_WOR)))) {
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
+							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
 							p_ptr->global_event_type[ge_id] = GE_NONE;
 							ge->participant[i] = 0;
 							continue;
@@ -7365,6 +7385,13 @@ static void process_global_event(int ge_id) {
 							ge->participant[i] = 0;
 							continue;
 						}
+						if (d_ptr && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_RECALL)) || (d_ptr->flags2 & (DF2_IRON | DF2_NO_EXIT_WOR)))) {
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
+							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
+							p_ptr->global_event_type[ge_id] = GE_NONE;
+							ge->participant[i] = 0;
+							continue;
+						}
 						break;
 					}
 
@@ -7372,7 +7399,7 @@ static void process_global_event(int ge_id) {
 					participants++;
 				}
 
-				/* enough participants? Don't hand out reward for free to someone. */
+				/* not enough participants? Don't hand out reward for free to someone. */
 				if (ge->min_participants && (participants < ge->min_participants)) {
 					msg_broadcast_format(0, "\377y%s needs at least %d participant%s.", ge->title, ge->min_participants, ge->min_participants == 1 ? "" : "s");
 					s_printf("%s EVENT_NOPLAYERS: %d (%s) has only %d/%d participants.\n", showtime(), ge_id + 1, ge->title, participants, ge->min_participants);
@@ -7381,6 +7408,8 @@ static void process_global_event(int ge_id) {
 						if (Players[j]->global_event_type[ge_id] == ge->getype)
 							Players[j]->global_event_type[ge_id] = GE_NONE;
 					ge->getype = GE_NONE;
+
+				/* Participants are ok, event now starts! */
 				} else {
 					s_printf("%s EVENT_STARTS: %d (%s) has %d participants.\n", showtime(), ge_id + 1, ge->title, participants);
 					msg_broadcast_format(0, "\374\377U[>>\377C%s (\377U%d\377C) starts now!\377U<<]", ge->title, ge_id + 1);
@@ -7391,12 +7420,13 @@ static void process_global_event(int ge_id) {
 
 						for (i = 1; i <= NumPlayers; i++) {
 							if (Players[i]->id != ge->participant[j]) continue;
-
 							Players[i]->global_event_participated[ge->getype]++;
 						}
 					}
 				}
 			}
+
+		/* we're still just announcing the event -- nothing more to do for now */
 		} else {
 			return; /* still announcing */
 		}
