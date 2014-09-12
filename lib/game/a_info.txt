@@ -1301,7 +1301,7 @@ D:went snicker-snack!"
 N:93:of Theoden
 I:24:10:4
 W:20:15:180:60000
-P:0:4d6:15:20:0
+P:0:4d6:20:20:0
 F:WIS | CON | HIDE_TYPE | 
 F:SLAY_DRAGON | ESP_EVIL | ESP_UNDEAD | SLOW_DIGEST | ACTIVATE | SHOW_MODS
 D:The narrow axe head of this weapon, finely balanced by a crow's beak, 
@@ -1406,16 +1406,16 @@ D:to save beleaguered Gondor, and from his lance fled massive trolls
 D:and dire wolves.
 
 
-# The Great Axe of Durin
+# The Double-Headed War Axe of Durin
 
 N:101:of Durin
-I:24:25:4
-W:30:90:270:150000
-P:0:7d5:10:20:15
+I:24:4:2
+W:60:90:340:150000
+P:0:5d9:18:26:15
 F:STR | CON | TUNNEL | HIDE_TYPE | ESP_EVIL | RES_FEAR | 
 F:SLAY_DRAGON | KILL_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
 F:RES_ACID | IM_FIRE | RES_LITE | RES_DARK | RES_CHAOS | SHOW_MODS | 
-F:BRAND_ACID | BRAND_FIRE
+F:BRAND_ACID | BRAND_FIRE | BLOWS
 D:The twin massive axe heads of this ancient demon's dread gleam with 
 D:mithril inlay, which tell sagas of endurance, invoking the powers of 
 D:Khazad-dum to protect the wearer and slay all evils found underground.
@@ -2091,7 +2091,7 @@ D:Forged by the Dwarves to defend their home of Khazad-dum from dragons,
 D:this axe has been lost to time... until now.
 
 
-# The Cleaver 'Limbslicer'
+# The Double-Bitted Axe 'Limbslicer'
 
 N:155:'Limbslicer'
 I:24:2:4
@@ -3073,12 +3073,12 @@ F:SLAY_EVIL | KILL_UNDEAD | SLAY_DEMON
 D:This spear never misses when it comes to giving the final blow.
 
 
-# Thunder Axe 'Dawn of Hope'
+# Thunder Axe 'Twilight of Hope'
 
 N:248:'Dawn of Hope'
 I:24:33:4
 W:75:60:390:170000
-P:0:7d10:20:25:0
+P:0:7d10:25:30:0
 F:SHOW_MODS | STR | CON | RES_FEAR | FREE_ACT | IM_ELEC | IM_FIRE
 F:RES_LITE | RES_DARK | SEE_INVIS | SLAY_EVIL | SLAY_GIANT |
 F:SLAY_DEMON | SLAY_DRAGON | SLAY_UNDEAD | AGGRAVATE
@@ -3355,13 +3355,13 @@ F:WINNERS_ONLY | STR | CON | IM_ELEC | RES_MANA | RES_DISEN
 D:An armor of thick gleaming layers of adamantite that appears utterly
 D:impenetrable. Powerful engraved runes ornate arm and leg protectors.
 
-# Double-Headed War Axe 'Skull Splitter'
+# The Executioner Axe 'Skull Splitter'
 
 N:273:'Skull Splitter'
-I:24:4:5
-W:60:40:340:110000
-P:0:5d9:30:26:0
-F:SHOW_MODS | SLAY_GIANT |SLAY_TROLL | SLAY_ORC
+I:24:6:5
+W:60:40:300:110000
+P:0:6d6:25:26:0
+F:SHOW_MODS | SLAY_GIANT | SLAY_TROLL | SLAY_ORC
 F:SLAY_DEMON | SLAY_DRAGON | SLAY_UNDEAD | STR | RES_FEAR
 D:Whatever the foe, if it has a skull it better watch out.
 
