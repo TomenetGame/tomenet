@@ -470,7 +470,7 @@ G:\:U
 I:21:3:0
 W:10:0:140:200
 A:10/1
-P:0:1d11:0:0:10
+P:0:4d4:0:0:10
 F:SHOW_MODS | MUST2H
 
 N:55:& War Maul~
@@ -478,7 +478,7 @@ G:\:D
 I:21:8:0
 W:10:0:150:316
 A:10/1
-P:0:3d5:0:0:0
+P:0:3d6:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:56:& Lead-Filled Mace~
@@ -486,7 +486,7 @@ G:\:D
 I:21:15:0
 W:15:0:180:502
 A:15/1
-P:0:3d6:0:0:0
+P:0:3d7:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:57:& Mace~ of Disruption
@@ -521,7 +521,7 @@ G:/:s
 I:22:13:0
 W:20:0:190:463
 A:20/1
-P:0:3d7:0:0:0
+P:0:7d3:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:61:& Halberd~
@@ -529,7 +529,7 @@ G:/:s
 I:22:15:0
 W:25:0:220:830
 A:25/1
-P:0:3d8:0:0:0
+P:0:4d8:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:62:& Awl-Pike~
@@ -537,15 +537,15 @@ G:/:s
 I:22:4:0
 W:10:0:160:411
 A:10/1
-P:0:1d18:0:0:0
+P:0:2d9:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:63:& Pike~
 G:/:s
 I:22:8:0
-W:15:0:160:558
+W:15:0:200:558
 A:15/1
-P:0:2d9:0:0:0
+P:0:3d9:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:64:& Spear~
@@ -561,7 +561,7 @@ G:/:y
 I:22:5:0
 W:5:0:90:362
 A:5/1
-P:0:1d14:0:0:0
+P:0:2d7:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:66:& Lance~
@@ -569,7 +569,7 @@ G:/:s
 I:22:20:0
 W:10:0:300:930
 A:10/1
-P:0:4d8:0:0:0
+P:0:4d9:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:67:& Great Axe~
@@ -607,10 +607,10 @@ F:SHOW_MODS | COULD2H
 N:71:& Scythe~
 G:/:s
 I:22:17:0
-W:25:0:250:800
+W:25:0:220:800
 A:25/1
-P:0:6d3:0:0:0
-F:SHOW_MODS | SHOULD2H
+P:0:6d4:0:0:0
+F:SHOW_MODS | MUST2H
 
 N:72:& Scythe~ of Slicing
 G:/:B
@@ -4154,7 +4154,7 @@ G:/:o
 I:22:26:0
 W:35:0:140:500
 A:35/3
-P:0:3d5:0:0:0
+P:0:3d6:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:529:& Three Piece Rod~
@@ -4308,7 +4308,7 @@ G:/:s
 I:22:6:0
 W:18:0:155:501
 A:18/2
-P:0:1d18:0:0:0
+P:0:2d10:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:552:& Guisarme~
@@ -4316,15 +4316,15 @@ G:/:s
 I:22:16:0
 W:21:0:180:480
 A:21/1
-P:0:2d10:0:0:0
-F:SHOW_MODS | SHOULD2H
+P:0:3d10:0:0:0
+F:SHOW_MODS | MUST2H
 
 N:553:& Heavy Lance~
 G:/:s
 I:22:29:0
 W:33:0:350:1500
 A:33/2
-P:0:5d8:0:0:0
+P:0:4d10:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:554:& Basillard~

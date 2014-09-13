@@ -1326,7 +1326,7 @@ D:down.
 N:95:'Osondir'
 I:22:15:1
 W:10:8:220:52000
-P:0:3d8:19:15:0
+P:0:4d8:19:15:0
 F:CHR | HIDE_TYPE | BLOWS | 
 F:BRAND_FIRE | SLAY_UNDEAD | SLAY_GIANT | IM_FIRE | RES_SOUND | 
 F:FEATHER | SEE_INVIS | SHOW_MODS | ESP_GIANT
@@ -1338,8 +1338,8 @@ D:clear-eyed in barrows fell, wielding a halberd glowing ruby red.
 
 N:96:'Til-i-arc'
 I:22:8:3
-W:20:15:160:97000
-P:0:2d9:10:25:0
+W:20:15:200:97000
+P:0:3d9:10:25:0
 F:INT | HIDE_TYPE | 
 F:BRAND_COLD | BRAND_FIRE | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT | ESP_GIANT |
 F:IM_FIRE | IM_COLD | SUST_INT | SLOW_DIGEST | SHOW_MODS |
@@ -1398,7 +1398,7 @@ D:fear into the hearts of foes lie on this perfectly balanced spear.
 N:100:of Eorlingas
 I:22:20:4
 W:20:23:360:75000
-P:0:5d8:3:21:0
+P:0:5d9:3:21:0
 F:STR | DEX | SPEED | HIDE_TYPE | RES_FEAR | SLAY_ANIMAL | 
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS
 D:"Forth Eorlingas!". To the field of Cormallen came Eorl the Young
@@ -1495,7 +1495,7 @@ D:creatures of the earth.
 N:107:of Wrath
 I:22:5:2
 W:15:35:300:40000
-P:0:2d14:16:18:0
+P:0:4d7:16:18:0
 F:STR | DEX | HIDE_TYPE | CHAOTIC | DRAIN_MANA | SPECIAL_GENE |
 F:SLAY_EVIL | KILL_UNDEAD | RES_LITE | RES_DARK | SEE_INVIS | 
 F:BLESSED | SHOW_MODS
@@ -1509,7 +1509,7 @@ D:evil and undead.
 N:108:of Ulmo
 I:22:5:4
 W:50:90:70:80000
-P:0:3d11:15:19:0
+P:0:3d7:15:19:0
 F:DEX | HIDE_TYPE | 
 F:SLAY_DRAGON | SLAY_ANIMAL | FREE_ACT | HOLD_LIFE | IM_ACID | 
 F:RES_NETHER | SEE_INVIS | SLOW_DIGEST | REGEN | ACTIVATE | RES_WATER | 
@@ -1523,8 +1523,8 @@ D:of the undead, and is utterly in command of the element of water.
 
 N:109:'Avavir'
 I:22:17:4
-W:1:8:250:18000
-P:0:6d3:8:8:10
+W:1:8:220:18000
+P:0:6d4:8:8:10
 F:DEX | CHR | HIDE_TYPE | 
 F:BRAND_COLD | BRAND_FIRE | FREE_ACT | RES_FIRE | RES_COLD | 
 F:RES_LITE | SEE_INVIS | ACTIVATE | SHOW_MODS
@@ -1650,7 +1650,7 @@ D:invokes the strength of mountains to ward off the tumult of the elements.
 N:118:'Nar-i-vagil'
 I:21:3:3
 W:12:18:140:20000
-P:0:1d11:10:20:15
+P:0:4d4:10:20:15
 F:INT | HIDE_TYPE | 
 F:SLAY_ANIMAL | BRAND_FIRE | RES_FIRE | SHOW_MODS | FREE_ACT
 D:Named for a fiery star and set with gems of great worth binding mystic 
@@ -1676,7 +1676,7 @@ D:grants keen sight and the knowledge of many hidden things.
 N:120:of Olorin
 I:21:3:4
 W:30:105:140:80000
-P:0:2d11:10:16:15
+P:0:4d8:10:16:15
 F:INT | WIS | CHR | HIDE_TYPE | SEARCH | SPECIAL_GENE |
 F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC | ACTIVATE | SHOW_MODS
 F:HOLD_LIFE | RES_FIRE | RES_SHARDS | RES_NETHER | SEE_INVIS | ESP_EVIL
@@ -1708,7 +1708,7 @@ D:of the Undead!
 N:122:'Turmil'
 I:21:8:4
 W:6:15:140:40000
-P:0:3d5:10:8:8
+P:0:3d6:10:8:8
 F:WIS | INFRA | HIDE_TYPE | 
 F:BRAND_COLD | SLAY_ORC | RES_COLD | RES_LITE | REGEN | REGEN_MANA |
 F:ACTIVATE | SHOW_MODS | ESP_ORC | ESP_TROLL | ESP_GIANT | RES_SHARDS
@@ -2796,7 +2796,7 @@ D:with terror.
 N:224:of the Guardian
 I:22:6:0
 W:35:30:220:130000
-P:0:2d18:20:20:0
+P:0:3d10:20:20:0
 F:RES_FEAR | FREE_ACT | ESP_EVIL | SLAY_EVIL | SLOW_DIGEST |
 F:RES_COLD | RES_ELEC | RES_DARK | RES_DISEN
 D:The guard on duty's best friend.
@@ -2807,7 +2807,7 @@ D:The guard on duty's best friend.
 N:225:of the Abyss Rider
 I:22:29:-3
 W:50:43:400:100000
-P:0:6d8:0:13:0
+P:0:5d10:0:13:0
 F:CHR | HIDE_TYPE | RES_FEAR | SLAY_ANIMAL | SLAY_DRAGON | KILL_DEMON |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS |
 F:RES_DARK | RES_NETHER | RES_CHAOS | DRAIN_MANA | CURSED | HEAVY_CURSE |
@@ -2854,7 +2854,7 @@ D:A bolt that electrocutes its targets and leaves them stunned.
 N:229:'Zodia'
 I:22:16:3
 W:70:45:360:180000
-P:0:6d9:0:0:0
+P:0:6d10:0:0:0
 F:SHOW_MODS | BLOWS | BRAND_ELEC | DEX | RES_NEXUS |
 F:FREE_ACT | IM_ELEC | MUST2H
 D:This huge guisarme was forged by the storm giants and grants its
@@ -2969,7 +2969,7 @@ D:feather spangled boots resists the influence of gravity.
 N:239:'Sunspire'
 I:22:20:4
 W:60:70:300:120000
-P:0:5d8:20:30:0
+P:0:5d9:20:30:0
 F:STR | WIS | HIDE_TYPE | RES_FEAR | FREE_ACT | SEE_INVIS | SHOW_MODS |
 F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_TROLL | SLAY_ORC | 
 F:BRAND_FIRE | LITE3 | IM_FIRE | RES_LITE | BLESSED
@@ -2982,7 +2982,7 @@ D:southern regions by a mighty guardian of the skies.
 N:240:'Stormspire'
 I:22:20:1
 W:60:70:300:180000
-P:0:5d8:20:30:0
+P:0:5d9:20:30:0
 F:BLOWS | CON | LIFE | HIDE_TYPE | RES_FEAR | FREE_ACT | SHOW_MODS |
 F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
 F:BRAND_ELEC | SH_ELEC | IM_ELEC | BLESSED
