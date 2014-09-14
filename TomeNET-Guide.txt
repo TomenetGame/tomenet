@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. September 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. September 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8312,6 +8312,7 @@ Chauve-Souris   Turns you into a fruit bat. Quaff another one to be restored
                 to your original form. A wand/rod of polymorph might help too.
                 Make sure you don't resist nexus if someone tries to polymorph
                 you back. Or just use 'Morph Restoration' service.
+                Characters with 'Fruit Bat' body modification are immune.
 Enlightenment   Illuminates and maps the whole level and reveals all objects.
                 It also identifies all of the user's items.
 *Enlightenment* Raises your intelligence and wisdom, detect treasures,
