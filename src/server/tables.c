@@ -2751,7 +2751,7 @@ player_class class_info[MAX_CLASS] =
 		{ 5, -2, -2, 2, 2, -1},
 		{ 22+100, 0, 0, 0+100, 0, 0},
 		20, 18, 18, 1,  14, 2, 70, 55,
-		10, 7,  10, 0,  0,  0,  45, 40,
+		10, 9,  10, 0,  0,  0,  45, 40,
 		10, 0,//6,  10,//9, 10,
 //		11, 0,
                 {
@@ -2834,7 +2834,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -2919,7 +2919,7 @@ player_class class_info[MAX_CLASS] =
 		{-5, 3, 0, 1, -2, 1},
 		{0, 0+100, 0, 0, 0, 0},
 		30, 36, 30, 2,  16, 20, 34, 20,
-		7,  13, 9,  0,  0,  0,  15, 15,
+		7,  11, 9,  0,  0,  0,  15, 15,
 		0, 35,//0,30
 //		3, 35,
                 {
@@ -2941,7 +2941,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 1200,
+                                '+', 1100,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -3162,7 +3162,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 1100,
+                                '+', 900,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -3294,7 +3294,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 950,
                         },
 
 			/* Necromancy for this class - experimental */
@@ -3485,7 +3485,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 850,
                         },
 
 			/* Necromancy for this class - experimental */
@@ -3566,7 +3566,7 @@ player_class class_info[MAX_CLASS] =
 		{ 1, 0, 2, 3, 1, -1},
 		{0, 0, 0, 18+100, 0, 0},
 		30, 22, 28, 2,  24, 20, 56, 72,
-		8,  7, 10, 0,  0,  0,  30, 50,
+		8,  9, 10, 0,  0,  0,  30, 50,
 		5, 10,//3, 15,//5, 15
 //		8, 15,
                 {
@@ -3628,7 +3628,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 700,
                         },
 
 			/* Necromancy for this class - experimental */
@@ -3711,7 +3711,7 @@ player_class class_info[MAX_CLASS] =
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
 		10, 21, 54, 1,  13, 16, 60, 40, //was c_thb 29
-		2, 8,  10, 0,  0,  2,  35, 10,
+		2, 9,  10, 0,  0,  2,  35, 10,
 		8, 30,//5, 30,//7,30
 //		10, 30,
                 {
@@ -3820,7 +3820,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 800,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -4032,7 +4032,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 1100,
+                                '+', 1000,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -4095,7 +4095,7 @@ player_class class_info[MAX_CLASS] =
 		{ 0, 0, 0, 0, 0, 0},
 		{19, 0, 0, 10, 0, 0},//20,10
 		30, 22, 20, 3,  15, 15, 50, 50,
-		10, 10,  10, 0,  5,  5,  25, 25,//..,0,0,25,25
+		10, 9,  10, 0,  5,  5,  25, 25,//..,0,0,25,25
 		6, 25, //3,  0,//5,0,
 //		8, 10,
                 {
@@ -4177,7 +4177,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 1100,
+                                '+', 900,
                         },
                         {
                                 SKILL_SPELL,
@@ -4520,7 +4520,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 1100,
+                                '+', 1000,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -4597,7 +4597,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 1000,
                         },
                         {
                                 SKILL_SPELL,
@@ -4782,7 +4782,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 1000,
                         },
                         {
                                 SKILL_SPELL,
@@ -5147,7 +5147,7 @@ player_class class_info[MAX_CLASS] =
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
 		30, 28, 36,  3, 35, 14, 55, 45,
-		 0,  9,  5,  0,  3,  3, 26, 25,
+		 0, 10,  5,  0,  3,  3, 26, 25,
 //		5, 25,
 		6, 25,
                 {
@@ -5228,7 +5228,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 0,
-                                '+', 700,
+                                '+', 850,
                         },
                         {
                                 SKILL_PPOWER,

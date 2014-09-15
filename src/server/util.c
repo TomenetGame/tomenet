@@ -6928,6 +6928,11 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	/* Extract the item level */
 	int lev = k_info[o_ptr->k_idx].level;
 
+#if 0 /* not needed anymore since x_dev and skill-ratios have been adjusted in tables.c */
+	/* Reduce very high levels */
+	lev = (400 - ((200 - lev) * (200 - lev)) / 100) / 4;//1..75
+#endif
+
 	/* Base chance of success */
 	int chance = p_ptr->skill_dev;
 
