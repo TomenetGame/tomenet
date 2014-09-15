@@ -2363,24 +2363,27 @@ void carry(int Ind, int pickup, int confirm) {
 				    && !(o_ptr->ident & ID_SENSE) && object_felt_p(Ind, o_ptr)) {
 					/* We have "felt" this kind of object already before */
 				        o_ptr->ident |= (ID_SENSE);
-					if (!object_felt_heavy_p(Ind, o_ptr)) {
-						/* at least give a notice */
-						msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
-						    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux2_magic(o_ptr));
-						/* otherwise inscribe it textually */
-						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
-					} else {
-						/* at least give a notice */
-						msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
-						    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux1_magic(o_ptr));
-						/* otherwise inscribe it textually */
-						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
+					/* Also, rings and amulets aren't covered by auxX_magic, so we have to exempt them (null string!): */
+					if (o_ptr->tval != TV_RING && o_ptr->tval != TV_AMULET) {
+						if (!object_felt_heavy_p(Ind, o_ptr)) {
+							/* at least give a notice */
+							msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
+							    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux2_magic(o_ptr));
+							/* otherwise inscribe it textually */
+							if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
+						} else {
+							/* at least give a notice */
+							msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
+							    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux1_magic(o_ptr));
+							/* otherwise inscribe it textually */
+							if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
+						}
 					}
 #if 0
 					/* Combine / Reorder the pack (later) */
-			                p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-			                /* Window stuff */
-			                p_ptr->window |= (PW_INVEN | PW_EQUIP);
+					p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+					/* Window stuff */
+					p_ptr->window |= (PW_INVEN | PW_EQUIP);
 #endif
 				} else {
 					/* Just standard message */
