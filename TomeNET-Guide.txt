@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. September 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. September 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8777,6 +8777,11 @@ Teleportation rings: Explode for teleportation.
 (For information about the 'timeout' on true artifacts, see 'Artifact resets'
 further below.)
 
+Artifacts of any type cannot be enchanted by any means, nor harmed by elemental
+attacks of any type. Also they have a high chance to resist disenchantment
+effects. (If the player actually resists disenchantment already then they are
+completely safe.)
+
 Artifact types in general
 -------------------------
 Some items are 'named', those possess especially great magic powers and are
@@ -8877,13 +8882,22 @@ and also
 You'd get a small luck bonus, or 'set bonus'. The more artifacts of similar
 name you equip the greater the luck bonus will be.
 The exact luck boni for those 'artifact sets' starting at two items are:
-4, 9, 16, 25, 36, 40 (cap). So it's basically the amount of artifacts squared.
-Different sets don't stack, only the biggest set counts.
 
-Artifacts of any type cannot be enchanted by any means, nor harmed by elemental
-attacks of any type. Also they have a high chance to resist disenchantment
-effects. (If the player actually resists disenchantment already then they are
-completely safe.)
+  Number of artifacts equipped  |  Luck bonus
+  ------------------------------+-------------
+                    2           |    + 3
+                    3           |    + 6
+                    4           |    +10
+                    5           |    +15
+                    6           |    +21
+                    7           |    +28
+                    8           |    +36
+                    9 or more   |    +40 (cap)
+
+..which is actually the sum of all numbers from 1 up to the number of artifacts
+you have equipped. Eg 2 artifacts -> 1+2 = 3. 4 artifacts -> 1+2+3+4 = 10.
+
+Multiple equipped sets don't stack, only the biggest set counts!
 
 
 Artifact resets

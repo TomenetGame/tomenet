@@ -4198,8 +4198,9 @@ void calc_boni(int Ind) {
 		//for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) //Mh, this doesn't really always work, needs better tracking in the luck calculation code?
 			//if (equipment_set_amount[i]) csheet_boni[i].luck += equipment_set_bonus; //Kurzel!! - Do multiple EQ sets stack or only take highest?
 //		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus) / 2;
-		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus);
 //		equipment_set_bonus = (equipment_set_bonus - 1) * 4;
+//		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus);
+		equipment_set_bonus = (equipment_set_bonus * (equipment_set_bonus + 1)) / 2;
 		/* just prevent numerical overflows in p_ptr->luck (paranoiaish) */
 		if (equipment_set_bonus > 40) equipment_set_bonus = 40;
 		p_ptr->luck += equipment_set_bonus;
