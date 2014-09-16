@@ -488,6 +488,9 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 Cloaking will also increase your searching, greatly increase
                 your stealth, but decrease your speed. Sneakiness skill may
                 very slightly reduce the decrease.
+                If you attack a monster while cloaked, it'll count as backstab,
+                making full use of your 'Backstabbing' skill if you have
+                trained it. See (6.2) for 'Backstabbing' details!
                 Note: Cloaking has no effect on shoplifting; it breaks on
                 entering any shop.
                 Note: Although ESP is supposed to detect cloaked targets, for
