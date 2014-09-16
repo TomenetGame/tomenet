@@ -8025,11 +8025,12 @@ NO_MAGIC ('Antimagic shell')
         Raises your saving throw to 95%, making you nearly immune to any
         malicious magical influence (like paralysation or slowness, but also to
         monsters cursing you). Also prevents you from using any magic device or
-        casting spells.
+        casting spells. You can still use scrolls and potions though.
 ANTIMAGIC ('Antimagic field')
         Prevents you from using any magic device or casting spells, also
         prevents nearby monsters and other players from casting spells (but
-        not from using magic devices).
+        not from using magic devices). You can still use scrolls and potions
+        though.
         The field has less influence on _party members_ who try to cast.
         The radius is approximately the field power / 9, and is cumulative
         to the 'Antimagic' skill. The field power is the chance of
@@ -8159,6 +8160,7 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 prevents the user from using magic devices or casting spells,
                 and also has a chance to interrupt nearby monsters and players
                 who try to cast spells but doesn't affect their magic devices.
+                You can still use scrolls and potions though.
                 The chance to interrupt spellcasters is 30% minus 3/5 of the
                 to-hit and to-dam values of the dark sword. Example:
                 A Dark Sword (+3,+7) has 30 - (3+7) * 3/5 = 24% chance of
@@ -10499,6 +10501,8 @@ Note that not every skill is available to every profession (class).
                                 this skill you won't be able to use any spells
                                 or magic devices (wands, staves, rods, items
                                 that can be activated) anymore!
+                                Being antimagic still allows you to use scrolls
+                                and potions though.
 
                                 An antimagic field will also shorten the
                                 duration of certain magical temporary buffs
