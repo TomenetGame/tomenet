@@ -6225,7 +6225,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Drain Life */
 		case GF_OLD_DRAIN:
-		{
 			if (seen) obvious = TRUE;
 
 			/* Prevent internal overflow (int) - allow up to 35% leech */
@@ -6235,6 +6234,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = ((m_ptr->hp / 10) * dam) / 10;
 			else
 				dam = (m_ptr->hp * dam) / 100;
+			/* Make it have an effect on low-HP monsters such as townies */
+			if (!dam) dam = 1;
 
 			if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
 			else p_ptr->ret_dam = 0; /* paranoia */
@@ -6246,20 +6247,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				(strchr("Egv", r_ptr->d_char)))
 			{
 #ifdef OLD_MONSTER_LORE
-				if (r_ptr->flags3 & RF3_UNDEAD)
-				{
+				if (r_ptr->flags3 & RF3_UNDEAD) {
 					if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
 				}
-//				if (r_ptr->flags3 & RF3_DEMON)
-//				{
+//				if (r_ptr->flags3 & RF3_DEMON) {
 //					if (seen) r_ptr->r_flags3 |= RF3_DEMON;
 //				}
-				if (r_ptr->flags3 & RF3_NONLIVING)
-				{
+				if (r_ptr->flags3 & RF3_NONLIVING) {
 					if (seen) r_ptr->r_flags3 |= RF3_NONLIVING;
 				}
-				if (r_ptr->flags1 & RF1_UNIQUE)
-				{
+				if (r_ptr->flags1 & RF1_UNIQUE) {
 					if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
 				}
 #endif
@@ -6282,9 +6279,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 
 			break;
-		}
 		
-		case GF_ANNIHILATION: {
+		case GF_ANNIHILATION:
 			i = dam - 1;
 			if (seen) obvious = TRUE;
 			if (m_ptr->hp > 9362)
@@ -6293,7 +6289,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = ((m_ptr->hp / 10) * dam) / 10;
 			else
 				dam = (m_ptr->hp * dam) / 100;
-			
+			/* Make it have an effect on low-HP monsters such as townies */
+			if (!dam) dam = 1;
+
 			if (dam > i * 200) {
 				dam = i * 200;
 				if ((r_ptr->flags1 & RF1_UNIQUE) ||
@@ -6313,12 +6311,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam *= 3; dam /= (randint(6) + 6);
 				}
 			}
-			
-		break; }
+		break;
 
 		/* Polymorph monster (Use "dam" as "power") */
 		case GF_OLD_POLY:
-		{
 			if (seen) obvious = TRUE;
 
 			/* Attempt to polymorph (see below) */
@@ -6338,12 +6334,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			quiet_dam = TRUE;
 
 			break;
-		}
-
 
 		/* Clone monsters (Ignore "dam") */
 		case GF_OLD_CLONE:
-		{
 			if (seen) obvious = TRUE;
 
 			/* Heal fully */
@@ -6362,8 +6355,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			quiet_dam = TRUE;
 
 			break;
-		}
-
 
 		/* Heal Monster (use "dam" as amount of healing) */
 		case GF_OLD_HEAL:
