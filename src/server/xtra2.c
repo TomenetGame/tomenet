@@ -6278,6 +6278,8 @@ static void inven_death_damage(int Ind, int verbose) {
 
 		/* hack: don't discard his remaining gold - a penalty was already deducted from it */
 		if (o_ptr->tval == TV_GOLD) continue;
+		/* guild keys are supposedly indestructible, so whatever.. */
+		if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY) continue;
 
 		if (magik(DEATH_PACK_ITEM_LOST)) {
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
