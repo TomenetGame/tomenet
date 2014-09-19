@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. September 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. September 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1360,19 +1360,20 @@ Word-of-Recall scrolls:
                 /rec -350
                 /rec 32 32        <- notice: No komma between the coordinates!
 
-    NOTE: You must've already been at that depth or deeper in order to teleport
-    there via WoR!
+    NOTES:
+    1) You must've already been at that depth or deeper in order to teleport
+       there via WoR!
+    2) In order to recall to a place on the world map, you need to have been
+       there before, NOT while you were dead (ghost), but while you were
+       alive! So don't try to travel to Gondolin as a ghost, the priest over
+       there will reject you and you won't remember the place when you return
+       and revive in Bree.
 
-    IMPORTANT: In order to recall to a place on the world map, you need to
-    have been there before, NOT while you were dead (ghost), but while you
-    were alive! So don't try to travel to Gondolin as a ghost, the priest
-    over there will reject you and you won't remember the place when you
-    return and revive in Bree.
-
-    Example, a player is in Bree (32,32) and wants to recall to Orc Cave -300ft
-    which we assume is at (31,25) and he has already been at 31,25 before, so
-    he can use Word-of-recall to get there. He has his WoR scrolls inscribed
-    '@R' and now types the following chat commands in order:
+    EXAMPLE:
+    A player is in Bree (32,32) and wants to recall to Orc Cave -300ft which we
+    assume is located at (31,25) and he has already been at 31,25 before, so he
+    can use Word-of-recall to get there. He has his WoR scrolls inscribed '@R'
+    and now types the following chat commands in order:
         /rec 31 25
         (he waits until that kicked in and transported him to Orc Cave surface)
         /rec -300
