@@ -977,7 +977,8 @@ They all start with a slash '/' hence they're called slash commands:
  (/leave,/quit)
 
 /fe         Repeat the level feeling. See (4.8) for more information.
- (/feeling)
+ (/feeling) If you aren't eligible for receiving a floor feeling, you will
+            instead get the message "You feel nothing special.".
 
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
@@ -5855,6 +5856,12 @@ you or following players entering that floor will still get that same feeling.
 Or if a powerful monster spawns later on on an initially "boring place" level,
 it'll remain to feel like a boring place, despite the new monster that might
 actually make it pretty non-boring now..
+
+
+You can check the floor feeling again anytime with the '/feel' command. If you
+weren't eligible for receiving a floor feeling (because you didn't spend enough
+time on the previous floor) then this command will just tell you:
+  "You feel nothing special.".
 
 
 If you are in the Ironman Deep Dive Challenge dungeon, you will get a feeling
