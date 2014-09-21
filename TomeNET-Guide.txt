@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. September 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. September 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -16872,5 +16872,11 @@ SOLUTION:   Unfortunately the updater cannot defeat captchas of one-click
             then.
             (In general, captcha requests tend to pop up when the file is very
             frequently accessed.)
+
+PROBLEM 48: On Linux/X11 I get 100% cpu usage when switching workspace away
+            from TomeNET when I have 'recall_flicker' option enabled.
+SOLUTION:   This is suspected to be a problem with 'Awesome' window manager.
+            The only workaround so far is to disable recall_flicker or use a
+            different window manager.
 
 ==============================================================================
