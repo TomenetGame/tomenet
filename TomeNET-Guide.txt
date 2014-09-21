@@ -16873,10 +16873,21 @@ SOLUTION:   Unfortunately the updater cannot defeat captchas of one-click
             (In general, captcha requests tend to pop up when the file is very
             frequently accessed.)
 
-PROBLEM 48: On Linux/X11 I get 100% cpu usage when switching workspace away
+PROBLEM 48: On Linux/X11 I get 100% cpu usage unless I disable audio (with the
+            '-q' command-line option). This usually happens with more special
+            audio hardware.
+SOLUTION:   Change the audio sample rate in '.tomenetrc' config file to match
+            your audio hardware's native sample rate. Most on-board sound chips
+            use 48000 aka 48kHz, but if you encounter this problem you probably
+            use a more sophisticated system that might run at higher rates such
+            as 96000 aka 96kHz.
+
+PROBLEM 49: On Linux/X11 I get 100% cpu usage when switching workspace away
             from TomeNET when I have 'recall_flicker' option enabled.
 SOLUTION:   This is suspected to be a problem with 'Awesome' window manager.
             The only workaround so far is to disable recall_flicker or use a
             different window manager.
+            AMD graphics drivers have also been suspected but this is currently
+            pure speculation.
 
 ==============================================================================
