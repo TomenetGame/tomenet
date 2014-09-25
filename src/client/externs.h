@@ -387,7 +387,7 @@ extern bool redraw_store;
 extern bool request_pending;
 extern bool request_abort;
 
-extern char last_prompt[MAX_CHARS];
+extern char last_prompt[MSG_LEN];
 extern bool last_prompt_macro;
 
 /*

@@ -7390,7 +7390,8 @@ void prompt_topline(cptr prompt) {
 #if 0
  #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* store prompt in case macro fails at an item prompt etc */
-	strcpy(last_prompt, prompt);
+	strncpy(last_prompt, prompt, MSG_LEN);
+	last_prompt[MSG_LEN - 1] = 0;
 	last_prompt_macro = parse_macro;
 	if (!parse_macro)
  #endif
@@ -7398,7 +7399,8 @@ void prompt_topline(cptr prompt) {
 #else
  if (c_cfg.keep_topline) {
 	/* store prompt in case macro fails at an item prompt etc */
-	strcpy(last_prompt, prompt);
+	strncpy(last_prompt, prompt, MSG_LEN);
+	last_prompt[MSG_LEN - 1] = 0;
 	last_prompt_macro = parse_macro;
 	if (!parse_macro)
 		prt(prompt, 0, 0);
