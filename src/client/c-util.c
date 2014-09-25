@@ -1740,27 +1740,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 					(hist_chat_looped && cur_hist >= MSG_HISTORY_MAX)) {
 					cur_hist = 0;
 				}
-
-				/* paranoia?: */
-				if (len >= strlen(message_history_chat[cur_hist])) strcpy(buf, message_history_chat[cur_hist]);
-				else {
-
 				strncpy(buf, message_history_chat[cur_hist], len);
 				buf[len] = '\0';
-				}
 			} else {
 				if ((!hist_looped && hist_end < cur_hist) ||
 					(hist_looped && cur_hist >= MSG_HISTORY_MAX)) {
 					cur_hist = 0;
 				}
-
-				/* paranoia?: */
-				if (len >= strlen(message_history_chat[cur_hist])) strcpy(buf, message_history_chat[cur_hist]);
-				else {
-
 				strncpy(buf, message_history[cur_hist], len);
 				buf[len] = '\0';
-				}
 			}
 
 			k = l = strlen(buf);
@@ -1773,27 +1761,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 				else {
 					cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end;
 				}
-
-				/* paranoia?: */
-				if (len >= strlen(message_history_chat[cur_hist])) strcpy(buf, message_history_chat[cur_hist]);
-				else {
-
 				strncpy(buf, message_history_chat[cur_hist], len);
 				buf[len] = '\0';
-				}
 			} else {
 				if (cur_hist) cur_hist--;
 				else {
 					cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end;
 				}
-
-				/* paranoia?: */
-				if (len >= strlen(message_history_chat[cur_hist])) strcpy(buf, message_history_chat[cur_hist]);
-				else {
-
 				strncpy(buf, message_history[cur_hist], len);
 				buf[len] = '\0';
-				}
 			}
 
 			k = l = strlen(buf);
