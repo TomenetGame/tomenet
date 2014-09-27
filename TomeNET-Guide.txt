@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. September 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 27. September 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -16894,10 +16894,11 @@ SOLUTION:   Change the audio sample rate in '.tomenetrc' config file to match
 
 PROBLEM 49: On Linux/X11 I get 100% cpu usage when switching workspace away
             from TomeNET when I have 'recall_flicker' option enabled.
+            (The system on which this happened had AMD graphics drivers, but
+            that might not be relevant.)
 SOLUTION:   This is suspected to be a problem with 'Awesome' window manager.
-            The only workaround so far is to disable recall_flicker or use a
-            different window manager.
-            AMD graphics drivers have also been suspected but this is currently
-            pure speculation.
+            However, if you use Gnome, starting Awesome through
+              gnome-session --session=awesome
+            has been reported to solve the problem.
 
 ==============================================================================
