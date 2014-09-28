@@ -40,6 +40,9 @@
 /* duration of GoI when climbing stairs.	[2], must be 0<=n<=4. */
 #define STAIR_GOI_LENGTH 3
 
+/* Boomerangs cannot be destroyed by using them (they just fall to the floor). */
+#define INDESTRUCTIBLE_BOOMERANGS
+
 
 /*
  * Go up one level                                      -RAK-
@@ -5516,7 +5519,11 @@ void do_cmd_fire(int Ind, int dir) {
 			if (boomerang) /* change a large part of the break chance to actually
 					  result in not returning instead of real breaking - C. Blue */
 			{
+#ifdef INDESTRUCTIBLE_BOOMERANGS
+				if (TRUE) {
+#else
 				if (magik(90)) {
+#endif
 					msg_format(Ind, "\377oYour %s drops to the ground.",o_name);
 #if 1 /* hope this works */
 					inven_item_increase(Ind, item, -1);
