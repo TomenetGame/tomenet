@@ -7423,18 +7423,6 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 	if (p_ptr->total_winner && !is_admin(p_ptr) && p_ptr->alive)
 		l_printf("%s \\{r%s (%d) lost %s royal title by death\n", showdate(), p_ptr->name, p_ptr->lev, p_ptr->male ? "his" : "her");
 
-#if 1 /* Enable, iff newbies-level leading to perma-death is disabled above. */
-	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
-		msg_format(Ind, "\374\377oYou died below level %d, which means that your items didn't drop.", cfg.newbies_cannot_drop);
-		msg_print(Ind, "\374\377oTherefore, it's recommended to press '\377RQ\377o' to suicide and start over.");
-		if (p_ptr->wpos.wz < 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R<\377o' to float back to town,");
-		else if (p_ptr->wpos.wz > 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R>\377o' to float back to town,");
-		else if (in_bree(&p_ptr->wpos)) msg_print(Ind, "\374\377oIf you don't like to do that, of course you may just continue");
-		else msg_print(Ind, "\374\377oIf you don't like to do that, just continue by flying back to town");
-		msg_print(Ind, "\374\377oand enter the temple (\377g4\377o) to be revived and handed some money.");
-	}
-#endif
-
 	/* Tell everyone he died */
 	if (p_ptr->alive) {
 		if (cfg.unikill_format) {
@@ -7717,6 +7705,41 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	/* Windows */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+#if 1 /* Enable, iff newbies-level leading to perma-death is disabled above. */
+	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
+		msg_format(Ind, "\374\377oYou died below level %d, which means that your items didn't drop.", cfg.newbies_cannot_drop);
+		msg_print(Ind, "\374\377oTherefore, it's recommended to press '\377RQ\377o' to suicide and start over.");
+		if (p_ptr->wpos.wz < 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R<\377o' to float back to town,");
+		else if (p_ptr->wpos.wz > 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R>\377o' to float back to town,");
+		else if (in_bree(&p_ptr->wpos)) msg_print(Ind, "\374\377oIf you don't like to do that, of course you may just continue");
+		else msg_print(Ind, "\374\377oIf you don't like to do that, just continue by flying back to town");
+		msg_print(Ind, "\374\377oand enter the temple (\377g4\377o) to be revived and handed some money.");
+	} else
+#endif
+	if (!p_ptr->warning_death) {
+		/* normal warning - in dungeon */
+		if (p_ptr->wpos.wz) {
+			p_ptr->warning_death = 1;
+			msg_print(Ind, "\374\377yIf you leave this floor and nobody else stays on it, it will change and");
+			msg_print(Ind, "\374\377ytherefore all your items would be lost! You now have two choices:");
+			if (p_ptr->wpos.wz > 0)
+				msg_print(Ind, "\374\377ya) Float back to town with '\377o>\377y' key and revive yourself in the temple ('\377g4\377y').");
+			else
+				msg_print(Ind, "\374\377ya) Float back to town with '\377o<\377y' key and revive yourself in the temple ('\377g4\377y').");
+			msg_print(Ind, "\374\377yb) Stay here as a ghost and ask someone else to come and revive you.");
+		} else {
+		/* specialty - on worldmap */
+			if (in_bree(&p_ptr->wpos))
+				msg_print(Ind, "\374\377yRevive yourself by floating over to the temple ('\377g4\377y') and entering it.");
+			else {
+				msg_print(Ind, "\374\377yYou now have two choices:");
+				msg_print(Ind, "\374\377ya) Float back to town and revive yourself by entering the temple ('\377g4\377y').");
+				msg_print(Ind, "\374\377yb) Stay here as a ghost and ask someone else to come and revive you.");
+			}
+		}
+	}
+
+#if 0 /* currently disabled, because replaced by warning_death */
 	/* Possibly tell him what to do now */
 	if (p_ptr->warning_ghost == 0) {
 		p_ptr->warning_ghost = 1;
@@ -7725,6 +7748,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		msg_print(Ind, "\375\377R      If you wish to start over, press \377oSHIFT+q\377R to erase this character.");
 		s_printf("warning_ghost: %s\n", p_ptr->name);
 	}
+#endif
 }
 
 /*

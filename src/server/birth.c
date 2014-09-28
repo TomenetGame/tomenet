@@ -2634,6 +2634,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_trap = 1;
 		p_ptr->warning_tele = 1;
 		p_ptr->warning_fracexp = 1;
+		p_ptr->warning_death = 1;
 		return;
 	}
 
@@ -2731,6 +2732,11 @@ void disable_specific_warnings(player_type *p_ptr) {
 	if ((p_ptr->mode & MODE_DED_IDDC))
 		p_ptr->warning_wor = 1;
 
+	if ((p_ptr->mode & (MODE_NO_GHOST | MODE_PVP))) {
+		p_ptr->warning_ghost = 1;
+		p_ptr->warning_death = 1;
+	}
+
 	/* Some warnings cease at certain levels */
 	disable_lowlevel_warnings(p_ptr);
 }
@@ -2791,6 +2797,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	}
 	if (p_ptr->max_plv > 30) {
 		p_ptr->warning_instares = 1;
+		p_ptr->warning_death = 1;
 	}
 }
 
