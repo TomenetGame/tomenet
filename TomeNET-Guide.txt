@@ -13866,7 +13866,7 @@ Auto-retaliation:
 -----------------
 If you inscribe @O[a-g][a-g] on a rune in your inventory, you will retaliate
 with a spell of the selected modifier and type. For example, if you set the
-inscription to @Oab on a rune of light, the 'beam' spell type will be
+inscription to @Oac on a rune of light, the 'ball’ spell type will be
 selected, with a 'minimized' spell modifier. It is advised to use the !R
 inscription to prevent your last rune from being consumed in spell failure.
 
@@ -13969,14 +13969,14 @@ influencing level, cost, fail rate, damage, casting time, radius, and duration.
 -------------------------------------------------------------------------------
 Name       | Lvl | Description                           | Enhanced
 -------------------------------------------------------------------------------
-Bolt       |   1 | Hits a target in line of effect.      | Non-reflecting.
-Beam       |   5 | Hits every target in line of effect.  | Damage over time.
-Cloud      |  10 | Damages an area over time.            | Follows the caster.
-Ball       |  15 | Instantly damages an area.            | Full area damage.
-Sign       |  20 | Instant or temporary element effects. | See element tables.
-Glyph      |  25 | Set or retrieve a rune as a glyph.    | No rune/explosion.
+Bolt       |   1 | Damages a single target.              | Beam variation.
+Cloud      |   5 | Damages an area over time.            | Storm variation.
+Ball       |  10 | Area damage decreasing with radius.   | No damage decrease.
+Sign       |  15 | Instant or temporary element effects. | See element tables.
+Glyph      |  20 | Set/retrieve a rune. Damaging glyph.  | No rune, no damage.
+Wave       |  25 | Radiates outward from the caster.     | Line of sight.
 Sigil      |  30 | Resist enhancement. Consumes a rune.  | See boni table.
-Wave       |  35 | Radiates outward from the caster.     | Hits line of sight.
+
 
 Enhanced Sigil Boni
 -------------------

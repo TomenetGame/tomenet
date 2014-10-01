@@ -543,7 +543,8 @@ s_printf("Type: %s\n", r_types[type].name);
 		p_ptr->shoot_till_kill_rcraft = FALSE;
 		
 		/* If the spell targets and is instant */
-		if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BEAM) || (r_types[type].flag == T_BALL)) {
+		//if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BEAM) || (r_types[type].flag == T_BALL)) {
+		if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BALL)) {
 			
 			/* If a new spell, update FTK */
 			if (p_ptr->FTK_e_flags != e_flags || p_ptr->FTK_m_flags != m_flags) {
@@ -768,15 +769,15 @@ s_printf("Duration: %d\n", duration);
 		case T_BOLT: {
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
 			if (r_imperatives[imperative].flag != I_ENHA) fire_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
-			else fire_grid_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
+			else fire_beam(Ind, gf_type, dir, dice, p_ptr->attacker); //fire_grid_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
 		break; }
-		
+		/*
 		case T_BEAM: {
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
 			if (r_imperatives[imperative].flag != I_ENHA) fire_beam(Ind, gf_type, dir, dice, p_ptr->attacker);
 			else fire_wall(Ind, gf_type, dir, damage, duration, 9, p_ptr->attacker);
 		break; }
-		
+		*/
 		case T_CLOU: {
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
 			if (r_imperatives[imperative].flag != I_ENHA) fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
@@ -953,16 +954,15 @@ s_printf("Duration: %d\n", duration);
 			else warding_glyph(Ind);
 		break; }
 		
-		case T_ENCH: {
-			rspell_sigil(Ind, projection, imperative, item);
-		break; }
-		
 		case T_WAVE: {
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, damage, 1, duration, 2, EFF_WAVE, p_ptr->attacker);
 			else project_los(Ind, gf_type, damage, p_ptr->attacker);
 		break; }
 		
+		case T_ENCH: {
+			rspell_sigil(Ind, projection, imperative, item);
+		break; }
 	}
 	
 	/** Expend Resources **/
