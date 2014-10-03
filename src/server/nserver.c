@@ -2146,6 +2146,9 @@ static void sync_options(int Ind, bool *options) {
 	p_ptr->always_repeat = options[6];
 	p_ptr->fail_no_melee = options[72];
 
+	/* in case we toggled linear_stats: */
+	p_ptr->redraw |= (PR_STATS);
+
 	tmp = p_ptr->short_item_names;
 	if ((p_ptr->short_item_names = options[77]) != tmp) {
 		/* update inventory */

@@ -9939,7 +9939,8 @@ Draconian Istar has an intelligence cap of 18/100 + 2 (Draconian) + 3
 (Istar) = 18/150.
 
 Stats can be raised over the character's cap by equipment. The total possible
-maximum of an attribute is always 18/220 (40), which is displayed as 18/***.
+maximum of an attribute is always 18/220 (40), which is displayed as '18/***'
+or '**' if using linear_stats.
 
 Strength (STR)
     -How heavy may your weapon, bow or shield be? You can't fight with a
