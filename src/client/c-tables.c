@@ -201,7 +201,7 @@ cptr window_flag_desc[8] =
 option_type option_info[OPT_MAX] =
 {
 	{ &c_cfg.rogue_like_commands,	FALSE,	1,	0, 0, TRUE,
-	"rogue_like_commands",		"Rogue-like commands" },
+	"rogue_like_commands",		"Rogue-like keymap (for covering lack of a numpad)" },
 
 #if 0
 	{ &c_cfg.quick_messages,	FALSE,	1,	0, 1, TRUE,

@@ -7875,17 +7875,17 @@ extern int PlayerUID;
 
 /* Types */
 /* Order matches the index in common/tables.c; ascending by level. */
-#define RCRAFT_MAX_TYPES 8
+#define RCRAFT_MAX_TYPES 7
 
 #define T_BOLT 0x0001
-#define T_BEAM 0x0002
-#define T_CLOU 0x0004
-#define T_BALL 0x0008
+//#define T_BEAM 0x0002
+#define T_CLOU 0x0002
+#define T_BALL 0x0004
 
-#define T_SIGN 0x0010
-#define T_RUNE 0x0020
+#define T_SIGN 0x0008
+#define T_RUNE 0x0010
+#define T_WAVE 0x0020
 #define T_ENCH 0x0040
-#define T_WAVE 0x0080
 
 /* Imperatives */
 /* Order matches the index in common/tables.c; ascending by level. */

@@ -2034,18 +2034,31 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 		switch (r_types[i].flag) {
 		
 			case T_BOLT: {
-				sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
-				color,
-				'a' + i,
-				r_types[i].name,
-				sdiff,
-				cost,
-				fail,
-				dx,
-				dy
-				);
+				if (r_imperatives[imperative].flag != I_ENHA) {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
+					color,
+					'a' + i,
+					r_types[i].name,
+					sdiff,
+					cost,
+					fail,
+					dx,
+					dy
+					);
+				} else {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d beam",
+					color,
+					'a' + i,
+					r_types[i].name,
+					sdiff,
+					cost,
+					fail,
+					dx,
+					dy
+					);
+				}
 			break; }
-			
+			/*
 			case T_BEAM: {
 				if (r_imperatives[imperative].flag == I_ENHA) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d",
@@ -2071,7 +2084,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					);
 				}
 			break; }
-			
+			*/
 			case T_CLOU: {
 				if (r_imperatives[imperative].flag != I_ENHA) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
@@ -2679,28 +2692,6 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 				}
 			break; }
 			
-			case T_ENCH: {
-				if (r_imperatives[imperative].flag != I_ENHA) {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune resist",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail
-					);
-				} else {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune misc",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail
-					);
-				}
-			break; }
-			
 			case T_WAVE: {
 				if (r_imperatives[imperative].flag != I_ENHA) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d",
@@ -2722,6 +2713,28 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					cost,
 					fail,
 					damage
+					);
+				}
+			break; }
+			
+			case T_ENCH: {
+				if (r_imperatives[imperative].flag != I_ENHA) {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune resist",
+					color,
+					'a' + i,
+					r_types[i].name,
+					sdiff,
+					cost,
+					fail
+					);
+				} else {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune misc",
+					color,
+					'a' + i,
+					r_types[i].name,
+					sdiff,
+					cost,
+					fail
 					);
 				}
 			break; }
@@ -3163,7 +3176,7 @@ void do_runespell() {
 	/* Request the Direction -- Hardcoded */
 	byte projection = flags_to_projection(e_flags);
 	if (((m_flags & T_BOLT) == T_BOLT)
-	 || ((m_flags & T_BEAM) == T_BEAM)
+	 // || ((m_flags & T_BEAM) == T_BEAM)
 	 || (((m_flags & T_CLOU) == T_CLOU) && !((m_flags & I_ENHA) == I_ENHA))
 	 || ((m_flags & T_BALL) == T_BALL)
 	 || (((m_flags & T_SIGN) == T_SIGN) && (

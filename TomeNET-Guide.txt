@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. September 2014 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.7b - official websites are:
+| Latest update: 7. October 2014 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.7c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -4679,6 +4679,20 @@ Ghosts have some special abilities, these are
 Ghosts can access undead powers with 'U' (currently not available, sorry).
 Those powers drain your experience. If you use them too often and run out
 of experience you will fade away (your character is erased then).
+
+
+Getting help
+------------
+Don't hesistate to ask other players online for help. You can press '@' to see
+who is currently logged on. To try and get the attention of someone who seems
+to be afk, you can try the  /page  command. It will make his game client beep
+three times.
+Write in normal chat (so everyone can read it) that you need help, the dungeon
+you are in, and the depth you are on, eg: "Help! I died in Mordor -50 ft!"
+Make sure your ghost is in a safe spot, preferably within walls, so most
+monsters will be unable to attack you. Avoid moving around until the player you
+called for a rescue confirms that he has cleared out the monsters and tells you
+where you should move next.
 
 
 
@@ -9939,7 +9953,8 @@ Draconian Istar has an intelligence cap of 18/100 + 2 (Draconian) + 3
 (Istar) = 18/150.
 
 Stats can be raised over the character's cap by equipment. The total possible
-maximum of an attribute is always 18/220 (40), which is displayed as 18/***.
+maximum of an attribute is always 18/220 (40), which is displayed as '18/***'
+or '**' if using linear_stats.
 
 Strength (STR)
     -How heavy may your weapon, bow or shield be? You can't fight with a
@@ -12911,7 +12926,7 @@ Istar schools:
 - Air
 
     Noxious Cloud   Fires a poison cloud at a designated target.
-                    Lv30: Unbreath cloud, irresistible.
+                    Lv30: Unbreath cloud, harder to resist.
                     Required skill level for first spell level: 3.
 
     Lightning Bolt  Fires a lightning bolt at a target.
@@ -13866,7 +13881,7 @@ Auto-retaliation:
 -----------------
 If you inscribe @O[a-g][a-g] on a rune in your inventory, you will retaliate
 with a spell of the selected modifier and type. For example, if you set the
-inscription to @Oab on a rune of light, the 'beam' spell type will be
+inscription to @Oac on a rune of light, the 'ball’ spell type will be
 selected, with a 'minimized' spell modifier. It is advised to use the !R
 inscription to prevent your last rune from being consumed in spell failure.
 
@@ -13969,14 +13984,14 @@ influencing level, cost, fail rate, damage, casting time, radius, and duration.
 -------------------------------------------------------------------------------
 Name       | Lvl | Description                           | Enhanced
 -------------------------------------------------------------------------------
-Bolt       |   1 | Hits a target in line of effect.      | Non-reflecting.
-Beam       |   5 | Hits every target in line of effect.  | Damage over time.
-Cloud      |  10 | Damages an area over time.            | Follows the caster.
-Ball       |  15 | Instantly damages an area.            | Full area damage.
-Sign       |  20 | Instant or temporary element effects. | See element tables.
-Glyph      |  25 | Set or retrieve a rune as a glyph.    | No rune/explosion.
+Bolt       |   1 | Damages a single target.              | Beam variation.
+Cloud      |   5 | Damages an area over time.            | Storm variation.
+Ball       |  10 | Area damage decreasing with radius.   | No damage decrease.
+Sign       |  15 | Instant or temporary element effects. | See element tables.
+Glyph      |  20 | Set/retrieve a rune. Damaging glyph.  | No rune, no damage.
+Wave       |  25 | Radiates outward from the caster.     | Line of sight.
 Sigil      |  30 | Resist enhancement. Consumes a rune.  | See boni table.
-Wave       |  35 | Radiates outward from the caster.     | Hits line of sight.
+
 
 Enhanced Sigil Boni
 -------------------
@@ -15348,8 +15363,11 @@ the monsters that you encounter, so you will be able to decide if you should
 attack or flee.
 In my opinion playing TomeNET can be called "the art not to die".
 
-Note: As an everlasting character you can somewhat cheat death by activating
-"Instant Resurrection" in any temple, see (4.5a) for details and drawbacks.
+Notes:
+ - As an everlasting character you can somewhat cheat death by activating
+   "Instant Resurrection" in any temple, see (4.5a) for details and drawbacks.
+ - You can use the  /page  command to get someone's attention if he seems afk
+   and you need his help. This command will make his game client beep 3 times.
 
 
 

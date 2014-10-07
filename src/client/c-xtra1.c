@@ -62,7 +62,7 @@ void cnv_stat(int val, char *out_val) {
 			int bonus = (val - 18);
 
 			if (bonus >= 220)
-				sprintf(out_val, "    40");
+				sprintf(out_val, "    **");
 			else
 				sprintf(out_val, "    %2d", 18 + (bonus / 10));
 		}

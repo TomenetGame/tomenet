@@ -6395,8 +6395,10 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
 {
         char pattacker[80];
-	int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
-        snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
+		//int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
+		//Actually, since beams affect the whole tile, don't deflect or reflect them (we don't have proper code for changing beam path anyway) - Kurzel
+        int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
+		snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
 #ifdef USE_SOUND_2010
 	if (Players[Ind]->sfx_magicattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);

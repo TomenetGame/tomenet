@@ -1970,9 +1970,11 @@ static void monster_lore(void) {
 				/* match? */
 				if (monster_list_symbol[i][1] == s[1] &&
 				    (!s[2] ||
-				     /* don't display 'v'iolet monsters that are really multi-hued, when searching for 'v'iolet monsters */
+				     /* don't display 'v'iolet monsters that are really multi-hued, when searching for 'v'iolet monsters. */
 				     (monster_list_symbol[i][0] == s[2] &&
-				     !(s[2] == 'v' && (monster_list_any[i] || monster_list_breath[i])))
+				    /* ... extended on any colour (Chaos Butterfly was L_GREEN for example) */
+				     //!(s[2] == 'v' && (monster_list_any[i] || monster_list_breath[i])))
+				     !(monster_list_any[i] || monster_list_breath[i]))
 				     ||
 				    (s[2] == 'm' && monster_list_any[i]) ||
 				    (s[2] == 'M' && monster_list_breath[i]))) {
@@ -2000,7 +2002,9 @@ static void monster_lore(void) {
 				    (!s[2] ||
 				     /* don't display 'v'iolet monsters that are really multi-hued, when searching for 'v'iolet monsters */
 				     (monster_list_symbol[i][0] == s[2] &&
-				     !(s[2] == 'v' && (monster_list_any[i] || monster_list_breath[i])))
+				     /* ... extended on any colour (Chaos Butterfly was L_GREEN for example) */
+				     //!(s[2] == 'v' && (monster_list_any[i] || monster_list_breath[i])))
+				     !(monster_list_any[i] || monster_list_breath[i]))
 				     ||
 				    (s[2] == 'm' && monster_list_any[i]) ||
 				    (s[2] == 'M' && monster_list_breath[i]))) {
