@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. October 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. October 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7c - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4679,6 +4679,20 @@ Ghosts have some special abilities, these are
 Ghosts can access undead powers with 'U' (currently not available, sorry).
 Those powers drain your experience. If you use them too often and run out
 of experience you will fade away (your character is erased then).
+
+
+Getting help
+------------
+Don't hesistate to ask other players online for help. You can press '@' to see
+who is currently logged on. To try and get the attention of someone who seems
+to be afk, you can try the  /page  command. It will make his game client beep
+three times.
+Write in normal chat (so everyone can read it) that you need help, the dungeon
+you are in, and the depth you are on, eg: "Help! I died in Mordor -50 ft!"
+Make sure your ghost is in a safe spot, preferably within walls, so most
+monsters will be unable to attack you. Avoid moving around until the player you
+called for a rescue confirms that he has cleared out the monsters and tells you
+where you should move next.
 
 
 
@@ -15349,8 +15363,11 @@ the monsters that you encounter, so you will be able to decide if you should
 attack or flee.
 In my opinion playing TomeNET can be called "the art not to die".
 
-Note: As an everlasting character you can somewhat cheat death by activating
-"Instant Resurrection" in any temple, see (4.5a) for details and drawbacks.
+Notes:
+ - As an everlasting character you can somewhat cheat death by activating
+   "Instant Resurrection" in any temple, see (4.5a) for details and drawbacks.
+ - You can use the  /page  command to get someone's attention if he seems afk
+   and you need his help. This command will make his game client beep 3 times.
 
 
 
