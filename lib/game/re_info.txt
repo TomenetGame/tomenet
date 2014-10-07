@@ -606,7 +606,7 @@ S:HASTE | BLINK | BLIND | SLOW | BO_FIRE | BO_ELEC | S_ANIMAL
 #S:HASTE | BLINK | BLIND | HOLD | SLOW | BO_FIRE | BO_ELEC | S_ANIMAL
 
 #Rabid animals; extra HP
-N:48:rabid
+N:48:Rabid
 G:*:*
 B:BITE:DISEASE:+3d+3
 I:+0:%120d+0:+0:+0:=0
@@ -614,7 +614,7 @@ W:+0:50:+0:%110:B
 F:ANIMAL
 
 #Various cats can be made out of living stone. Statue-like. You can't cut them or poison them. 3x AC with lots more hp.
-N:49:of living stone
+N:49:of Living Stone
 G:*:w
 I:+0:%200d+0:+0:%300:=0
 W:+10:35:+0:%300:A
@@ -624,7 +624,7 @@ O:CAN_SWIM
 M:RES_SHARDS | NO_CUT | IM_POIS | FORCE_MAXHP
 
 #Birds can sometimes be spirit guardians. They hit a lot harder and summon other animals. More hp.
-N:50:spirit guardian
+N:50:Spirit Guardian
 G:*:*
 I:+0:%200d+0:+0:+100:=0
 W:+15:35:+0:%300:A
@@ -637,7 +637,7 @@ M:FORCE_MAXHP | DROP_1D2
 S:1_IN_5 | S_ANIMAL
 
 #Dog and hound pack leaders hit much harder with more hp.
-N:51:pack leader
+N:51:Pack Leader
 G:*:*
 I:+0:%150d+0:+0:+200:=0
 W:+20:30:+0:%300:A
@@ -650,7 +650,7 @@ M:FORCE_MAXHP
 
 #Eyes that are under devilry. They do extra spells. All the big ones are EVIL and excluded.
 #Tested 25/09/2014
-N:52:of devilry
+N:52:of Devilry
 G:*:*
 I:+0:+0d+0:+0:+0:=0
 W:+0:25:+0:%50:A
@@ -659,7 +659,7 @@ H:AQUATIC | EVIL
 S:1_IN_5 | BLINK | BLIND | SLOW | HOLD | SCARE | CURSE | DARKNESS
 
 #Heroic halflings, dark elves, lizard men etc. are faster and hit harder and have more hp.
-N:53:hero
+N:53:Hero
 G:*:*
 I:+10:%150d+10:+0:+0:=0
 W:+10:25:+0:%300:A
@@ -670,7 +670,7 @@ M:NO_FEAR | DROP_1D2
 
 #Bats, shaman, mages, priests etc. that are reckless don't keep their distance in a fight.
 #Tested 21/09/2014
-N:54:reckless
+N:54:Reckless
 G:*:*
 I:+0:+0d+0:+0:+0:=0
 W:+0:20:+0:%50:B
@@ -679,7 +679,7 @@ M:NO_FEAR
 O:AI_ANNOY
 
 #Blazing golems. Some special golems are ever burning and immune to fire but can be cooled.
-N:55:everburning
+N:55:Everburning
 G:*:r
 I:+0:+0d+0:+0:+0:=0
 W:+0:45:+0:%100:B
@@ -688,7 +688,7 @@ H:IM_FIRE
 M:IM_FIRE | HAS_LITE | AURA_FIRE | SUSCEP_COLD
 
 #There are some vortexes that are more fierce than others. They are much faster and harder to defeat.
-N:56:fierce
+N:56:Fierce
 G:*:*
 I:+20:%200d+0:+0:+0:=0
 W:+5:25:+0:%200:B
@@ -696,7 +696,7 @@ F:R_CHAR_v
 M:FORCE_MAXHP
 
 #Elemental princes. Rare. Good drop.
-N:57:prince
+N:57:Prince
 G:*:*
 I:+20:%200d%200:+0:+0:=0
 W:+5:35:+0:%300:A
@@ -704,7 +704,7 @@ F:R_CHAR_E
 M:DROP_2D2 | DROP_GOOD
 
 #Demonised skeletons and flying skulls etc.
-N:58:demonised
+N:58:Demonic
 G:u:*
 I:+20:%200d%200:+0:+0:=0
 W:+20:35:+0:%300:B
@@ -713,14 +713,14 @@ M:FORCE_MAXHP | DROP_2D2 | DROP_GOOD
 S:1_IN_10 | BR_FIRE
 
 #Orcs and the like sometimes ride wolves, making them faster and more dangerous
-N:59:wolf rider
+N:59:Wolf Rider
 G:C:*
 I:+10:%150d%150:+0:+0:=0
 W:+20:20:+0:%200:A
 F:R_CHAR_o
 
 #Various types of troll king, pretty rare.
-N:60:king
+N:60:King
 G:T:*
 I:+10:%200d%200:+0:+0:=0
 W:+30:50:+0:%500:A
@@ -729,7 +729,7 @@ M:FORCE_MAXHP | DROP_2D2 | DROP_GOOD
 
 #They really are big spiders when described as "monstrous"
 #N:61:(monstrous)
-N:61:queen
+N:61:Queen
 G:*:*
 I:%100:%200d%200:+0:+0:=0
 W:+15:40:+0:%200:A
