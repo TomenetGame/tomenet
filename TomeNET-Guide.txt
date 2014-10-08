@@ -15591,6 +15591,9 @@ lamp, which already has that by default ie needs no fuel), so if unlucky it
 might seem as if an item did not gain any mods, but in fact it just did not
 gain any NEW mods it didn't already possess.
 
+-'Activation' does not tax the base power either. It's a free property same as
+ignore-flags mentioned above. (Prominent example: Dragon scale mails.)
+
 -Note that any mod the base item type already possesses will definitely also be
 in the final randart.
 Examples: Shadow Blades and Witan Boots will modify stealth, Demon Hammers
