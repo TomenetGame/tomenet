@@ -1435,7 +1435,11 @@ void carry(int Ind, int pickup, int confirm) {
 	if (!(c_ptr->o_idx)) return;
 
 	/* Ghosts cannot pick things up */
-	if ((p_ptr->ghost && !p_ptr->admin_dm)) return;
+	if ((p_ptr->ghost && !p_ptr->admin_dm)) {
+		//anti-spam? p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		msg_print(Ind, "\377yGhosts cannot pick up items. You need to get resurrected first.");
+		return;
+	}
 
 #if 0
     /* ok this is too harsh. also, it can be assumed that if you bow down to pick up items,
