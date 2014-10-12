@@ -4745,12 +4745,16 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				break;
 			default:
 				/* changed from >0 to >1 to make items retain a slice of their actual abilities */
-				if (o_ptr->pval > 1
+				if ((o_ptr->pval > 1 || o_ptr->bpval > 1)
 				    && !is_ammo(o_ptr->tval)
 				    && o_ptr->tval != TV_CHEST
 				    && o_ptr->tval != TV_BOOK
-				    && (o_ptr->tval != TV_RING || o_ptr->sval != SV_RING_POLYMORPH))
-					o_ptr->pval--;
+				    && (o_ptr->tval != TV_RING || o_ptr->sval != SV_RING_POLYMORPH)) {
+					if (o_ptr->pval > 1) {
+						if (o_ptr->bpval > 1 && rand_int(2)) o_ptr->bpval--;
+						else o_ptr->pval--;
+					} else o_ptr->bpval--;
+				}
 				break;
 			}
 			break;
