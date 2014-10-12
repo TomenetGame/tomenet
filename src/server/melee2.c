@@ -1448,7 +1448,12 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 
 		/* Apply Martial-arts bonus */
 		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr) &&
-		    !q_ptr->inventory[INVEN_WIELD].k_idx && !q_ptr->inventory[INVEN_BOW].k_idx &&
+		    !q_ptr->inventory[INVEN_WIELD].k_idx &&
+#ifndef ENABLE_MA_BOOMERANG
+		    !q_ptr->inventory[INVEN_BOW].k_idx &&
+#else
+		    q_ptr->inventory[INVEN_BOW].tval != TV_BOW &&
+#endif
 		    !q_ptr->inventory[INVEN_ARM].k_idx)
 			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 25);
 

@@ -2466,7 +2466,7 @@ void calc_body_spells(int Ind) {
 #if 0	// moved to defines.h
 bool monk_heavy_armor(int Ind)
 {
-#if 1 // DGDGDGDG -- no more monks for the time being
+ #if 1 // DGDGDGDG -- no more monks for the time being
 	player_type *p_ptr = Players[Ind];
 	u16b monk_arm_wgt = 0;
 
@@ -2475,18 +2475,18 @@ bool monk_heavy_armor(int Ind)
 
 	/* Weight the armor */
 	monk_arm_wgt = armour_weight(p_ptr);
-#if 0
+  #if 0
 	monk_arm_wgt += p_ptr->inventory[INVEN_BODY].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_HEAD].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_ARM].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_OUTER].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_HANDS].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_FEET].weight;
-#endif	// 0
+  #endif	// 0
 
 //	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
 	return (monk_arm_wgt > 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200));
-#endif
+ #endif
 }
 #endif	// 0
 
@@ -4651,21 +4651,24 @@ void calc_boni(int Ind) {
 		}
 
 		/* Monks get extra ac for wearing very light or no armour at all */
+#ifndef ENABLE_MA_BOOMERANG
 		if (!p_ptr->inventory[INVEN_BOW].k_idx &&
-			!p_ptr->inventory[INVEN_WIELD].k_idx &&
-			(!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) && /* for dual-wielders */
-			!p_ptr->cumber_weight) {
+#else
+		if (p_ptr->inventory[INVEN_BOW].tval != TV_BOW &&
+#endif
+		    !p_ptr->inventory[INVEN_WIELD].k_idx &&
+		    (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) && /* for dual-wielders */
+		    !p_ptr->cumber_weight) {
 			int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
 			int martsbonus, martsweight, martscapacity;
 			
 			martsbonus = (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
 			martsweight = p_ptr->inventory[INVEN_BODY].weight;
 			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 80);
-			if (!(p_ptr->inventory[INVEN_BODY].k_idx))
-			{
+			if (!(p_ptr->inventory[INVEN_BODY].k_idx)) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
-			} else if (martsweight <= martscapacity){
+			} else if (martsweight <= martscapacity) {
 				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
 				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
 			}
@@ -5130,7 +5133,11 @@ void calc_boni(int Ind) {
 
 	/* Different calculation for monks with empty hands */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx &&
+#ifndef ENABLE_MA_BOOMERANG
 	    !(p_ptr->inventory[INVEN_BOW].k_idx)) {
+#else
+	    p_ptr->inventory[INVEN_BOW].tval != TV_BOW) {
+#endif
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
 		p_ptr->num_blow = 0;
 

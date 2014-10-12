@@ -2698,8 +2698,12 @@ static int Handle_login(int ind)
 		if (!p_ptr->warning_ma_weapon &&
 		    (p_ptr->inventory[INVEN_WIELD].k_idx ||
 		    is_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */
+#ifndef ENABLE_MA_BOOMERANG
 		    p_ptr->inventory[INVEN_BOW].k_idx))
-			msg_print(NumPlayers, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
+#else
+		    p_ptr->inventory[INVEN_BOW].tval == TV_BOW))
+#endif
+			msg_print(NumPlayers, "\374\377RWarning: Using any sort of weapon or bow renders Martial Arts skill effectless.");
 		else if (!p_ptr->warning_ma_shield &&
 		    p_ptr->inventory[INVEN_ARM].k_idx)
 			msg_print(NumPlayers, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");

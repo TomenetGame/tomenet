@@ -67,39 +67,23 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield)
 
 	/* What are we "doing" with the object */
 	if (amt < o_ptr->number)
-	{
 		act = "Took off";
-	}
 	else if (item == INVEN_WIELD)
-	{
 		act = "You were wielding";
-	}
 	else if (item == INVEN_ARM)
-	{
 		act = "You were wielding";
-	}
 	else if (item == INVEN_BOW)
-	{
 		act = "You were shooting with";
-	}
 	else if (item == INVEN_LITE)
-	{
 		act = "Light source was";
-	}
 	/* Took off ammo */
 	else if (item == INVEN_AMMO)
-	{
 		act = "You were carrying in your quiver";
-	}
 	/* Took off tool */
 	else if (item == INVEN_TOOL)
-	{
 		act = "You were using";
-	}
 	else
-	{
 		act = "You were wearing";
-	}
 
 #ifdef USE_SOUND_2010
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "takeoff_");
@@ -998,8 +982,16 @@ return;
 
 	/* display some warnings if the item will severely conflict with Martial Arts skill */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
-		if ((is_weapon(o_ptr->tval) || o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG)
+		if ((is_weapon(o_ptr->tval) ||
+#ifndef ENABLE_MA_BOOMERANG
+		    o_ptr->tval == TV_BOOMERANG ||
+#endif
+		    o_ptr->tval == TV_BOW)
+#ifndef ENABLE_MA_BOOMERANG
 		    && !p_ptr->inventory[INVEN_BOW].k_idx
+#else
+		    && p_ptr->inventory[INVEN_BOW].tval != TV_BOW
+#endif
 		    && !p_ptr->inventory[INVEN_WIELD].k_idx
 		    && (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) /* for dual-wielders */
 			ma_warning_weapon = TRUE;
@@ -1185,7 +1177,11 @@ return;
 	/* display warnings, possibly */
 	if (ma_warning_weapon && p_ptr->warning_ma_weapon == 0) {
 //		p_ptr->warning_ma_weapon = 1;
+#ifndef ENABLE_MA_BOOMERANG
 		msg_print(Ind, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
+#else
+		msg_print(Ind, "\374\377RWarning: Using any sort of weapon or bow renders Martial Arts skill effectless.");
+#endif
 //		s_printf("warning_ma_weapon: %s\n", p_ptr->name);
 	} else if (ma_warning_shield && p_ptr->warning_ma_shield == 0) {
 //		p_ptr->warning_ma_shield = 1;

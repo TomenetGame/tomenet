@@ -2726,7 +2726,11 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)
 	    && !p_ptr->inventory[INVEN_WIELD].k_idx
 	    && !p_ptr->inventory[INVEN_ARM].k_idx
+#ifndef ENABLE_MA_BOOMERANG
 	    && !p_ptr->inventory[INVEN_BOW].k_idx)
+#else
+	    && p_ptr->inventory[INVEN_BOW].tval != TV_BOW)
+#endif
 		martial = TRUE;
 
 #if 0
@@ -3762,7 +3766,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)
 	    && !p_ptr->inventory[INVEN_WIELD].k_idx
 	    && !p_ptr->inventory[INVEN_ARM].k_idx
+#ifndef ENABLE_MA_BOOMERANG
 	    && !p_ptr->inventory[INVEN_BOW].k_idx)
+#else
+	    && p_ptr->inventory[INVEN_BOW].tval != TV_BOW)
+#endif
 		martial = TRUE;
 
 	/* check whether monster can be backstabbed */
