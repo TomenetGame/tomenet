@@ -1003,7 +1003,7 @@ static bool choose_stat_order(void)
 					c_put_str(TERM_YELLOW, "   How well can you resist malicious effects    ", 6, 30);
 					c_put_str(TERM_YELLOW, "    and influences on both body and mind        ", 7, 30);
 					c_put_str(TERM_YELLOW, "    (saving throw).                             ", 8, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 9, 30);
+					c_put_str(TERM_YELLOW, "   How much insanity your mind can take.        ", 9, 30);
 					c_put_str(TERM_YELLOW, "                                                ", 10, 30);
 					c_put_str(TERM_YELLOW, "                                                ", 11, 30);
 					break;
