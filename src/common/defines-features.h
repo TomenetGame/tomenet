@@ -158,12 +158,13 @@
 /* Allow usage of /hilite command (todo: turn into client option) */
 #define ENABLE_SELF_FLASHING
 
+/* Allow Martial Arts users to wield boomerangs? */
+#define ENABLE_MA_BOOMERANG
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
- #define ENABLE_MA_BOOMERANG	/* Allow Martial Arts users to wield boomerangs? */
-
  /* limit to_ac to +30 instead of +35 -- Reason: Give base AC more weight!
     Counter-balanced by different AC_CAP/AC_DIV values, so no nerf for players! */
  #define TO_AC_CAP_30
@@ -184,8 +185,6 @@
 #endif
 
 #ifdef TEST_SERVER
- #define ENABLE_MA_BOOMERANG	/* Allow Martial Arts users to wield boomerangs? */
-
  /* limit to_ac to +30 instead of +35 -- Reason: Give base AC more weight!
     Counter-balanced by different AC_CAP/AC_DIV values, so no nerf for players! */
  #define TO_AC_CAP_30		/* limit to_ac to +30 instead of +35 */
