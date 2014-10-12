@@ -2695,18 +2695,28 @@ static int Handle_login(int ind)
 
 	/* display some warnings if an item will severely conflict with Martial Arts skill */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
+		bool warn_takeoff = FALSE;
 		if (!p_ptr->warning_ma_weapon &&
 		    (p_ptr->inventory[INVEN_WIELD].k_idx ||
 		    is_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */
 #ifndef ENABLE_MA_BOOMERANG
-		    p_ptr->inventory[INVEN_BOW].k_idx))
+		    p_ptr->inventory[INVEN_BOW].k_idx)) {
 #else
-		    p_ptr->inventory[INVEN_BOW].tval == TV_BOW))
+		    p_ptr->inventory[INVEN_BOW].tval == TV_BOW)) {
 #endif
-			msg_print(NumPlayers, "\374\377RWarning: Using any sort of weapon or bow renders Martial Arts skill effectless.");
-		else if (!p_ptr->warning_ma_shield &&
-		    p_ptr->inventory[INVEN_ARM].k_idx)
+#ifndef ENABLE_MA_BOOMERANG
+			msg_print(NumPlayers, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
+#else
+			msg_print(NumPlayers, "\374\377RWarning: Using any melee weapon or bow renders Martial Arts skill effectless.");
+#endif
+			warn_takeoff = TRUE;
+		}
+		if (!p_ptr->warning_ma_shield &&
+		    p_ptr->inventory[INVEN_ARM].k_idx) {
 			msg_print(NumPlayers, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
+			warn_takeoff = TRUE;
+		}
+		if (warn_takeoff) msg_print(NumPlayers, "\374\377R         Press 't' key to take off your weapons or shield.");
 	}
 
 	/* automatically re-add him to the guild of his last character? */

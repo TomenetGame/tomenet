@@ -207,8 +207,28 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 	case SKILL_MARTIAL_ARTS:
 		if (old_value == 0 && new_value > 0) {
-			if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
-				msg_print(Ind, "\377oYou cannot use special martial art styles with a shield!");
+			bool warn_takeoff = FALSE;
+			/* display some warnings if an item will severely conflict with Martial Arts skill */
+			if (p_ptr->inventory[INVEN_WIELD].k_idx ||
+			    is_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */
+#ifndef ENABLE_MA_BOOMERANG
+			    p_ptr->inventory[INVEN_BOW].k_idx) {
+#else
+			    p_ptr->inventory[INVEN_BOW].tval == TV_BOW) {
+#endif
+#ifndef ENABLE_MA_BOOMERANG
+				msg_print(Ind, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
+#else
+				msg_print(Ind, "\374\377RWarning: Using any melee weapon or bow renders Martial Arts skill effectless.");
+#endif
+				warn_takeoff = TRUE;
+			}
+			if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+				msg_print(Ind, "\377RWarning: You cannot use special martial art styles with a shield!");
+				warn_takeoff = TRUE;
+			}
+			if (warn_takeoff) msg_print(Ind, "\374\377R         Press 't' key to take off your weapons or shield.");
+
 			/* Martial artists shouldn't get a weapon-wield warning */
 			p_ptr->warning_wield = 1;
 			/* also don't send any weapon-bpr related warnings since their

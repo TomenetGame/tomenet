@@ -754,7 +754,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	char o_name[ONAME_LEN];
 	u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5, f6 = 0, esp = 0;
-	bool highlander = FALSE;
+	bool highlander = FALSE, warn_takeoff = FALSE;
 
 
 	/* Restrict the choices */
@@ -1180,14 +1180,18 @@ return;
 #ifndef ENABLE_MA_BOOMERANG
 		msg_print(Ind, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
 #else
-		msg_print(Ind, "\374\377RWarning: Using any sort of weapon or bow renders Martial Arts skill effectless.");
+		msg_print(Ind, "\374\377RWarning: Using any melee weapon or bow renders Martial Arts skill effectless.");
 #endif
 //		s_printf("warning_ma_weapon: %s\n", p_ptr->name);
-	} else if (ma_warning_shield && p_ptr->warning_ma_shield == 0) {
+		warn_takeoff = TRUE;
+	}
+	if (ma_warning_shield && p_ptr->warning_ma_shield == 0) {
 //		p_ptr->warning_ma_shield = 1;
 		msg_print(Ind, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
 //		s_printf("warning_ma_shield: %s\n", p_ptr->name);
+		warn_takeoff = TRUE;
 	}
+	if (warn_takeoff) msg_print(Ind, "\374\377R         Press 't' key to take off your weapons or shield.");
 
 	if (hobbit_warning) msg_print(Ind, "\377yYou feel somewhat less dextrous than when barefeet.");
 
