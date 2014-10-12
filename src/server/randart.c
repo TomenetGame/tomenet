@@ -640,6 +640,7 @@ static void add_ability (artifact_type *a_ptr) {
 				a_ptr->flags1 |= TR1_BRAND_POIS;
 				if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_POIS;
 			} else if (r < 72) {
+				/* +EA turns into xshots on boomies */
 				if (a_ptr->tval == TV_BOOMERANG) a_ptr->flags3 |= TR3_XTRA_SHOTS;
 				else {
 					a_ptr->flags1 |= TR1_BLOWS;
@@ -647,7 +648,8 @@ static void add_ability (artifact_type *a_ptr) {
 					if (a_ptr->pval > 3) a_ptr->pval = 3;
 				}
 			} else if (r < 74) {
-				if (a_ptr->tval == TV_BOOMERANG) { /* no +LIFE on boomerangs! */
+				/* no +LIFE on boomerangs! turn into xshots instead */
+				if (a_ptr->tval == TV_BOOMERANG) {
 					a_ptr->flags3 |= TR3_XTRA_SHOTS;
 				} else if (a_ptr->tval != TV_DIGGING) { /* no +LIFE on diggers! */
 					a_ptr->flags1 |= TR1_LIFE;
@@ -1093,6 +1095,13 @@ static void add_ability (artifact_type *a_ptr) {
 					a_ptr->flags5 |= TR5_REFLECT;
 					break;
 				}
+				/* hack: no +speed on boomerangs
+				   (mainly for ENABLE_MA_BOOMERANG in regards to MA mimics -> +speed overkill) */
+				if (a_ptr->tval == TV_BOOMERANG) {
+					//a_ptr->flags |= TR_; -- no good filler available atm. so just retry.
+					break;
+				}
+
 				a_ptr->flags1 |= TR1_SPEED;
 				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (3);
 				else do_pval (a_ptr);
