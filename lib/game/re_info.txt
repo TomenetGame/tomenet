@@ -681,7 +681,7 @@ O:AI_ANNOY
 
 #Blazing golems. Some special golems are ever burning and immune to fire but can be cooled.
 N:55:Everburning
-G:*:r
+G:*:f
 I:+0:+0d+0:+0:+0:=0
 W:+0:45:+0:%100:B
 F:R_CHAR_g
@@ -706,7 +706,7 @@ M:DROP_2D2 | DROP_GOOD
 
 #Demonised skeletons and flying skulls etc.
 N:58:Demonic
-G:u:*
+G:*:r
 I:+20:%200d%200:+0:+0:=0
 W:+20:35:+0:%300:B
 F:R_CHAR_s
