@@ -4896,8 +4896,12 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
 	if (f3 & (TR3_XTRA_MIGHT))
 		fprintf(fff, "It fires missiles with extra might.\n");
-	if (f3 & (TR3_XTRA_SHOTS))
-		fprintf(fff, "It fires missiles excessively fast.\n");
+	if (f3 & (TR3_XTRA_SHOTS)) {
+		if (o_ptr->tval == TV_BOOMERANG)
+			fprintf(fff, "It flies excessively fast.\n");
+		else
+			fprintf(fff, "It fires missiles excessively fast.\n");
+	}
 
 	if (f4 & (TR4_EASY_USE))
 		fprintf(fff, "It is especially easy to activate.\n");
