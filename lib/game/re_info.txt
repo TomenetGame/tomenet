@@ -608,10 +608,11 @@ S:HASTE | BLINK | BLIND | SLOW | BO_FIRE | BO_ELEC | S_ANIMAL
 #Rabid animals; extra HP
 N:48:Rabid
 G:*:*
-B:BITE:DISEASE:+3d+3
+B:BITE:DISEASE:+2d+2
 I:+0:%120d+0:+0:+0:=0
 W:+0:50:+0:%110:B
 F:ANIMAL
+H:R_CHAR_Z
 
 #Various cats can be made out of living stone. Statue-like. You can't cut them or poison them. 3x AC with lots more hp.
 N:49:of Living Stone
