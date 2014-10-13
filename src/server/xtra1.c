@@ -6778,7 +6778,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 	ge->end_turn = 0;
 	ge->ending = 0;
 	strcpy(ge->title, "(UNTITLED EVENT)");
-	for (i = 0; i<6; i++) strcpy(ge->description[i], "");
+	for (i = 0; i < 10; i++) strcpy(ge->description[i], "");
 	strcpy(ge->description[0], "(NO DESCRIPTION AVAILABLE)");
 	ge->hidden = FALSE;
 	ge->min_participants = 0; /* no minimum */
@@ -6802,6 +6802,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[6], " Rules: Make sure that you don't gain ANY experience until it starts.  ");
 		strcpy(ge->description[7], "        Also, you aren't allowed to pick up ANY gold/items from another");
 		strcpy(ge->description[8], "        player before the tournament begins!                           ");
+		strcpy(ge->description[9], "");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
 								most of the time is just for announcing it
 								so players will sign on via /evsign <n> */
@@ -6833,6 +6834,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 //		strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
 		strcpy(ge->description[7], format(" (Example: '/evsign %d black orc vet' gets you a veteran archer!)", n+1));
 		strcpy(ge->description[8], "");
+		strcpy(ge->description[9], "");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
 #if 0
 		switch(rand_int(2)) { /* Determine terrain type! */
@@ -6859,6 +6861,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[6], " time, before the horned reaper finds you or the dungeon is flooded    ");
 		strcpy(ge->description[7], " with lava (begins after 5 minutes, after 8 minutes it is submerged    ");
 		strcpy(ge->description[8], " which will mean certain death, even if you are immune to fire).       ");
+		strcpy(ge->description[9], " The escape beacons are self-illuminating so you won't miss them.");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 60 ; /* 60 minutes max. duration,
 								most of the time is just for announcing it
 								so players will sign on via /evsign <n> */
