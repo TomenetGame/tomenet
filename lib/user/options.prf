@@ -69,9 +69,9 @@ X:player_list2
 X:view_animated_lite
 Y:censor_swearing
 Y:safe_macros
-X:view_bright_lite2
-Y:view_yellow_lite
-Y:view_bright_lite
+X:view_shade_walls
+Y:view_lamp_lite
+Y:view_shade_floor
 Y:view_granite_lite
 Y:view_special_lite
 
@@ -81,7 +81,7 @@ X:easy_tunnel
 X:clear_inscr
 X:auto_inscribe
 X:taciturn_messages
-X:view_lite_floor
+X:view_lite_extra
 X:limit_chat
 Y:thin_down_flush
 X:auto_target
