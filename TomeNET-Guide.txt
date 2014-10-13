@@ -133,6 +133,7 @@ Contents
     (5.21c) Digging - Further information
     (5.22)  Recharging
     (5.23)  Wraithform
+    (5.24)  Item sharing rules and exceptions
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -9904,6 +9905,66 @@ Wraithform is very powerful since it allows you to move around the dungeon
 without having to follow its room/passages structure, making it easy to pick
 encounters or loot items you detected on the ground via detection magic,
 and to escape dangerous situations easily (just retreat into walls).
+
+
+
+(5.24) Item sharing rules and exceptions
+----------------------------------------
+The following item sharing rules apply to a standard server configuration.
+It is possible that a server runs certain alterations of some aspects.
+
+
+Trading items between characters of different mode
+--------------------------------------------------
+Usually items cannot be exchanged between characters of different modes, eg
+everlasting mode, pvp mode and other modes.
+Normal mode and unworldly mode characters can exchange items though, they are
+basically unified as 'non-everlasting' mode aka 'scoreboard mode'.
+They too cannot exchange items with pvp mode characters though.
+Game pieces are an exception and can always be used by anyone.
+
+(If the server is running a non-standard configuration, it might be possible
+for everlasting or pvp characters to actually pick up items from other modes
+but not vice versa.)
+
+
+Trading zero-level items
+------------------------
+Level 0 items, which are either starter items, special boss drops or event
+reward items can only be used by the first owner and are unusable by anyone
+else. Certain event parchments can actually be traded despite being level 0.
+
+
+Exceptions for emergency cases
+------------------------------
+Certain items can be exchanged freely between incompatible modes to make rescue
+missions easier:
+Torches, food, scrolls of satisfy hunger, oil flasks, word-of-recall scrolls.
+These items will get a 100% discount when they are exchanged between modes.
+
+An exception for level 0 items are the following starter items:
+Torches, food, scrolls of satisfy hunger.
+They too will get a 100% discount and their level will actually change to 1.
+
+
+Special restrictions
+--------------------
+Items usually cannot be sent via telekinesis if the target player does not
+meet the item's level requirements.
+True artifacts usually cannot be picked up by a player who does not meet the
+item's level requirements.
+Some items can only be used by 'winners' (characters who have beaten Morgoth).
+These items cannot be sent via telekinesis to a non-winner either.
+
+
+Dungeon-specific exceptions
+---------------------------
+In the ironman deep dive challenge (IDDC) and in the Nether Realm dungeon,
+items can actually be traded between any character mode.
+Within the IDDC, item levels don't even have any effect!
+For the Nether Realm, the items must have been found within the Nether Realm.
+As soon as a character leaves the worldmap sector of the Nether Realm, the
+items lose their ability to be traded between incompatible character modes.
 
 
 
