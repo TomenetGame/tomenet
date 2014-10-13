@@ -6872,6 +6872,16 @@ void grid_affects_player(int Ind) {
 bool exceptionally_shareable_item(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
 	    (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
+	    (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) ||
+	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
+	    // "Why not share ale? -Molt" <- good idea, here too!
+	    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD))
+		return TRUE;
+	return FALSE;
+}
+/* Starter items that can be shared despite being level 0! */
+bool shareable_starter_item(object_type *o_ptr) {
+	if ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
 	    // "Why not share ale? -Molt" <- good idea, here too!
 	    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD))

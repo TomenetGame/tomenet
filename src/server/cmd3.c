@@ -2328,10 +2328,7 @@ void do_cmd_steal(int Ind, int dir) {
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (2).\n", p_ptr->name, q_ptr->name, success);
 			} else {
 				/* Turn level 0 food into level 1 food - mikaelh */
-				if (o_ptr->level == 0 &&
-				    ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
-				    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD) ||
-				    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER))) {
+				if (o_ptr->level == 0 && shareable_starter_item(o_ptr)) {
 					o_ptr->level = 1;
 					o_ptr->discount = 100;
 				}
