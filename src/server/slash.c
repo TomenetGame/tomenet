@@ -2352,7 +2352,15 @@ void do_slash_cmd(int Ind, char *message)
 			message2[j + MAX_CHARS_WIDE - 1] = '\0';
 
 			/* Check whether target is actually online by now :) */
-			if ((i = name_lookup_loose_quiet(Ind, tname, FALSE, FALSE))) {
+			if ((i = name_lookup_loose_quiet(Ind, tname, FALSE, FALSE))
+			    && !check_ignore(i, Ind)) {
+				player_type *q_ptr = Players[i];
+
+				if ((q_ptr->page_on_privmsg ||
+				    (q_ptr->page_on_afk_privmsg && q_ptr->afk)) &&
+				    q_ptr->paging == 0)
+					q_ptr->paging = 1;
+
 				msg_format(i, "\377RNote from %s: %s", p_ptr->name, message2 + j + 1);
 //				return; //so double-msg him just to be safe he sees it
 			}
