@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. October 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. October 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -12119,8 +12119,8 @@ be able to cure insanity.
 ---------------------
 If a mimic polymorphs into a certain monster form, abilities and stats will be
 averaged between the normal ('@') body and the form. In most cases if the form
-is performing worse than @-form in a certain ability, the @-form will dominate
-and the ability will be only slightly worse than normal.
+is performing worse than @-form in a certain field, the @-form will dominate
+and the ability will be only slightly worse than normal, if even at all.
 The averaging is done because the mimic with all his equipment polymorphs into
 the target form. It's not like the polymorphing is done first and afterwards
 armour, weapon or jewelry is equipped.
@@ -12171,10 +12171,10 @@ I: speed : hit points : vision : armor class : alertness
     monster HP is calculated by the following formula before further
     calculations are made: monster HP = 50000 / ((50000 / hdice*hsides) + 20).)
     Now, if the mimic's HP are less then the result, the mimic's HP will
-    become approx. ((3*x*y) + (2*normal_HP)) / 5. (2/5 monster HP, 3/5 player
-    HP.) If the mimic's HP in player form (code 0) are greater than x*y, the
-    resulting HP will be ((x*y * 4) + (mimic_HP * 1)) / 5.
-    (1/5 monster HP, 4/5 player HP!)
+    become approx. 2/5 of that capped monster HP + 3/5 of the player's original
+    HP. If the mimic's HP in player form (code 0) are higher than the monster
+    HP then the monster HP will not have any adverse effect, instead the normal
+    HP will stay.
     A specialty: Players in very high character levels can see their hit points
     'overtake' the monster form hit points, if the monster form level isn't
     very high in comparison. Example: While a green dragonrider will provide a
@@ -12253,13 +12253,14 @@ B: attack method : attack effect : damage
     The monster damage dice for each attack are multiplied and the products
     are all added up, the result is divided by 4.
     The result is now capped against 200, the closer this graph comes towards
-    200 the flatter the curve will become.
+    200 the flatter the curve will become. Let's call the resulting monster
+    damage value 'monDam':
     This value is now compared against the player's melee to-damage bonus.
-    If (monDam > toDam) then newToDam = 1/2 toDam + 1/2 monDam.
-    If (monDam < toDam) then newToDam = 3/4 toDam + 1/4 monDam.
-    So the monster damage has only a small influence if it's lower than
-    the player's to-damage bonus, but it has a high influence if the
-    monster is more powerful than the player.
+    If (monDam > meleetoDam) then newToDam = 1/2 meleetoDam + 1/2 monDam.
+    If (monDam < meleetoDam) then newToDam = meleetoDam.
+    So, very similar to how HP are averaged, the monster damage has no
+    influence if it's lower than the player's melee to-damage bonus, but it
+    may provide a great boost if the monster is more powerful than the player.
 
 F: flag list
     The flags are translated to mimic abilities as follows:
