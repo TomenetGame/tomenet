@@ -3950,7 +3950,7 @@ void check_experience(int Ind) {
 	disable_lowlevel_warnings(p_ptr);
 
 	/* Give helpful msg about how to distribute skill points at first level-up */
-	if (p_ptr->newbie_hints && (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * 5))) {
+	if (p_ptr->newbie_hints && (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * SKILL_NB_BASE))) {
 	    // && p_ptr->inval) /* (p_ptr->warning_skills) */
 		msg_print(Ind, "\374\377GHINT: Press \377gSHIFT+g\377G to distribute your skill points!");
 	}

@@ -7488,7 +7488,7 @@ extern int PlayerUID;
 #ifdef ARCADE_SERVER
  #define SKILL_NB_BASE		0
 #else
- #define SKILL_NB_BASE           5
+ #define SKILL_NB_BASE		5
 #endif
 
 

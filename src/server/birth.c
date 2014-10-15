@@ -3101,7 +3101,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 #else
                 p_ptr->exp = (s64b)player_exp[p_ptr->lev - 2];
 #endif
-		p_ptr->skill_points = (p_ptr->lev - 1) * 5;
+		p_ptr->skill_points = (p_ptr->lev - 1) * SKILL_NB_BASE;
 		p_ptr->au = 9950 + rand_int(101);
 
 		/* give her/him a free mimic transformation for starting out */

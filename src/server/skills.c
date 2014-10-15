@@ -973,7 +973,7 @@ void respec_skills(int Ind, bool update_skills) {
 
 	/* Calculate amount of skill points that should be
 	    available to the player depending on his level */
-	p_ptr->skill_points = (p_ptr->max_plv - 1) * 5;
+	p_ptr->skill_points = (p_ptr->max_plv - 1) * SKILL_NB_BASE;
 
 	/* in case we changed mimicry skill */
 	do_mimic_change(Ind, 0, TRUE);

@@ -136,7 +136,7 @@ typedef unsigned int u32b;
 #define SKF1_HIDDEN             0x00000001      /* Starts hidden */
 
 /* Skill points per level */
-#define SKILL_NB_BASE           4
+#define SKILL_NB_BASE           5
 
 
 /*
