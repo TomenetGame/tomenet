@@ -6778,24 +6778,44 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		    (armor_choice == 2 || armor_choice == 3))
 			armor_choice = 1;
 	} else { /* player didn't distribute ANY skill points, sigh */
+		melee_choice = 0;
+		mha = FALSE;
+		rha = FALSE;
+		ranged_choice = 0;
+		spell_choice = 0;
 		switch (p_ptr->pclass) {
+		case CLASS_WARRIOR:
+		case CLASS_MIMIC:
+		case CLASS_PALADIN:
+		case CLASS_MINDCRAFTER:
+			if (!rand_int(4)) melee_choice = 6;
+			break;
+		case CLASS_ADVENTURER:
+		case CLASS_PRIEST:
+		case CLASS_DRUID:
+			mha = TRUE;
+			break;
+		case CLASS_ROGUE:
+			melee_choice = 1;
+			rha = TRUE;
+			break;
+		case CLASS_ARCHER:
+		case CLASS_RANGER:
+			ranged_choice = 1;
+			break;
+		case CLASS_MAGE:
+		case CLASS_RUNEMASTER:
+		case CLASS_SHAMAN:
+			spell_choice = 1;
+			break;
 		}
-		melee_choice = reward_melee_check(p_ptr, treshold);
-		mha = (melee_choice == 5); /* monk heavy armor */
-		rha = (get_skill(p_ptr, SKILL_DODGE)); /* rogue heavy armor; pclass == rogue or get_skill(skill_critical) are implied by this one due to current tables.c. dual_wield is left out on purpose. */
 		/* analyze current setup (for reward_armor_check) */
 		if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)
 			rha = TRUE; /* we're dual-wielding */
 		/* make choices */
-		ranged_choice = reward_ranged_check(p_ptr, treshold);
 		armor_choice = reward_armor_check(p_ptr, mha, rha);
-		spell_choice = reward_spell_check(p_ptr, treshold);
-		misc_choice = reward_misc_check(p_ptr, treshold);
-		/* martial arts -> no heavy armor (paranoia, shouldn't happen, already cought in reward_armor_check) */
-		if (melee_choice == 5 &&
-		    (armor_choice == 2 || armor_choice == 3))
-			armor_choice = 1;
+		misc_choice = randint(3);
 	}
 
 	/* Special low limits for Martial Arts or Rogue-skill users: */
