@@ -128,7 +128,7 @@ void prt_title(cptr title) {
 #endif
 #define EXP_BAR_HI_DRAINED TERM_YELLOW
 #define EXP_BAR_LO_DRAINED TERM_L_UMBER
-#define EXP_BAR_NO_DRAINED TERM_L_DARK
+#define EXP_BAR_NO_DRAINED TERM_UMBER
 
 void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv, s32b adv_prev) {
 	char tmp[32], exp_bar_char;
@@ -235,10 +235,10 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #ifdef EXP_BAR_FILLDARK
 		/* Paint dark base ;) */
 		if (cur >= max) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "---------");
-		else Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, "---------");
+		else Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO_DRAINED, "---------");
 #else
 		if (cur >= max) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "         ");//just erase any previous '-' or exp bar possibly
-		else Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, "-");
+		else Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO_DRAINED, "-");
 #endif
 		if (cur >= max) {
 			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
