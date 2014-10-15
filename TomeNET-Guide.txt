@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. October 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. October 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -12825,6 +12825,8 @@ to kill to learn the form.)
 Of course some of these forms might also be useful for martial arts users.
 (Note that martial artists cannot make use of ranged weapons or weapons in
 general though, without losing their excellent bare-handed melee skills.)
+
+Commonly seen advanced forms: Bloodletter of Khorne, Storm Giant, Dragonriders.
 
 
 
