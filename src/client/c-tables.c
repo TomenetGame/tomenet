@@ -595,8 +595,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.keep_topline,		FALSE,	4,	0, 95, TRUE,
 	"keep_topline",			"Don't clear messages in the top line if avoidable" },
 
-	{ &c_cfg.no_store_sfx,		TRUE,	5,	1, 96, TRUE,
-	"no_store_sfx",			"Don't play sound fx when entering/leaving a store" },
+	{ &c_cfg.no_store_bell,		FALSE,	5,	1, 96, TRUE,
+	"no_store_bell",		"Don't play sound fx when entering/leaving a store" },
 
 	{ &c_cfg.quiet_house_sfx,	TRUE,	5,	1, 97, TRUE,
 	"quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },

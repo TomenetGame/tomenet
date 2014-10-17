@@ -111,7 +111,7 @@ Y:ovl_sfx_mon_spell
 Y:ovl_sfx_mon_misc
 X:no_monsterattack_sfx
 X:no_shriek_sfx
-Y:no_store_sfx
+X:no_store_bell
 Y:quiet_house_sfx
 X:no_house_sfx
 X:no_weather

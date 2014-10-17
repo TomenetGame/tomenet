@@ -3333,7 +3333,7 @@ struct client_opts {
 	bool no_shriek_sfx;
 
 	bool keep_topline;
-	bool no_store_sfx;
+	bool no_store_bell;
 	bool quiet_house_sfx;
 	bool no_house_sfx;
 	bool no_weather;
