@@ -6760,7 +6760,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	if (maxweight_armor < 30) maxweight_armor = 30;
 
 	/* analyze skills */
-	if (p_ptr->skill_points == (p_ptr->max_plv - 1) * SKILL_NB_BASE) {
+	if (p_ptr->skill_points != (p_ptr->max_plv - 1) * SKILL_NB_BASE) {
 		melee_choice = reward_melee_check(p_ptr, treshold);
 		mha = (melee_choice == 5); /* monk heavy armor */
 		rha = (get_skill(p_ptr, SKILL_DODGE)); /* rogue heavy armor; pclass == rogue or get_skill(skill_critical) are implied by this one due to current tables.c. dual_wield is left out on purpose. */
