@@ -13428,6 +13428,8 @@ Priest schools:
     Zeal            Gives +1 extra attack per round for a while.    (auto-p.)
                     Lv10: Gives +2 EA.                         (auto-project)
                     Lv20: Gives +3 EA.                         (auto-project)
+                    Friendly players around the caster that are affected by the
+                    spell will receive up to +2 EA depending on spell level.
                     Note: The EA effect won't be applied to barehanded players
                     if they don't have Martial Arts skill of at least 01.000.
                     Required skill level for first spell level: 31.
