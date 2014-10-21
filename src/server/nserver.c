@@ -2212,7 +2212,8 @@ static void sync_options(int Ind, bool *options) {
 		} else p_ptr->no_weather = options[99];
 #endif
 		p_ptr->hilite_player = options[100];
-		p_ptr->alert_mana = options[101];
+		if (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER) p_ptr->alert_mana = FALSE;
+		else p_ptr->alert_mana = options[101];
 		p_ptr->exp_bar = options[103];//just for tracking this feature's popularity =P
 		p_ptr->consistent_players = options[104];
 		p_ptr->flash_self = options[105] ? 0 : -1;
