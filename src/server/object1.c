@@ -4544,7 +4544,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 				fprintf(fff, "\377WIt has %d%% chances to break upon hit///.\n", breakage_chance(o_ptr));
 
  #if 1 /* display trigger chance for magic devices? */
-			if (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE))
+			if ((is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE))
+			    && o_ptr->tval != TV_BOOK)
 				fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", activate_magic_device_chance(Ind, o_ptr));
  #endif
 		}
@@ -5145,7 +5146,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	}
 
 #if 1 /* display trigger chance for magic devices? */
-	if (eff_full && (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE)))
+	if ((eff_full && (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE)))
+	    && o_ptr->tval != TV_BOOK)
 		fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", activate_magic_device_chance(Ind, o_ptr));
 #endif
 
