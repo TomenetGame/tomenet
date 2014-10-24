@@ -6278,6 +6278,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			   HACK: the priest_spell variable is defined above. 
 			*/
 			if (priest_spell) {
+				//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
 				if (dam) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
 				p_ptr->ret_dam = 0;
 			}
@@ -9770,7 +9771,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			} else
 #endif
 			{
-				msg_format(Ind, "\377gYou are healed for %d hit points",dam);
+				msg_format(Ind, "\377gYou are healed for %d hit points", dam);
 				//(spammy) msg_format_near(Ind, "\377g%s has been healed for %d hit points!.", p_ptr->name, dam);
 				if (IS_PLAYER(-who) /* paranoia? */
 				     && -who != Ind) /* don't notify ourselves about healing ourselves */

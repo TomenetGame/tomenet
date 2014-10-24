@@ -150,7 +150,7 @@ HDRAINLIFE = add_spell
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["am"] =	75,
 	["level"] = 	20,
-	["mana"] = 	5,
+	["mana"] = 	10,
 	["mana_max"] = 	80,
 	["fail"] = 	30,
 	["stat"] = 	A_WIS,
@@ -158,7 +158,7 @@ HDRAINLIFE = add_spell
 	["spell"] = 	function(args)
 		local type
 		drain_life(Ind, args.dir, 10 + get_level(Ind, HDRAINLIFE, 10))
-		hp_player(Ind, player.ret_dam / 2)
+		hp_player(Ind, player.ret_dam / 4)
 	end,
 	["info"] = 	function()
 		return "drains "..(10 + get_level(Ind, HDRAINLIFE, 10)).."% life"
@@ -194,15 +194,15 @@ HDRAINCLOUD = add_spell
 	["name"] = 	"Doomed Grounds",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["am"] =	75,
-	["level"] = 	40,     -- pointless for crap with low lvl anyway
-	["mana"] = 	50,
+	["level"] = 	30,     -- pointless for crap with low lvl anyway
+	["mana"] = 	40,
 	["mana_max"] = 	100,
 	["fail"] = 	-30,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] =     function(args)
 --			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), 10, " drains for")
-			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 4 + get_level(Ind, HDRAINCLOUD, 4), 10, " drains for")
+			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 4 + get_level(Ind, HDRAINCLOUD, 39) / 4, 10, " drains for")
 			-- dmgs a Power D for 2050 (307 goes to hp), Balance D for 1286 (192 goes to hp) from full hp
 			-- (with, of course, maxed spell power and h_offense schools)
 			-- The amount of what goes to player is 15% of the damage the monster taken.
@@ -215,7 +215,7 @@ HDRAINCLOUD = add_spell
 			--                                                      -the_sandman
 	end,
 	["info"] = 	function()
-			return "dam ".."var".." rad 3 dur "..(8 + get_level(Ind, HDRAINCLOUD, 10))
+			return "dam ".."var".." rad 3 dur "..(4 + get_level(Ind, HDRAINCLOUD, 39) / 4)
 	end,
 	["desc"] = 	{
 			"Curses an area temporarily, sucking life force of those walking it.",

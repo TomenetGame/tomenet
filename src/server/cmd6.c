@@ -3696,9 +3696,9 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 		case SV_WAND_DRAIN_LIFE:
 		{
-			if(drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
+			if (drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
 				ident = TRUE;
-				hp_player(Ind, p_ptr->ret_dam / 2);
+				hp_player(Ind, p_ptr->ret_dam / 4);
 				p_ptr->ret_dam = 0;
 			}
 			break;
@@ -3876,7 +3876,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 		case SV_WAND_ANNIHILATION:
 		{
-			if (annihilate(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 15))) {
+			if (annihilate(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
 				ident = TRUE;
 			}
 			break;
@@ -4430,9 +4430,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_DRAIN_LIFE:
 		{
-			if(drain_life(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 15))) {
+			if (drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
 				ident = TRUE;
-				hp_player(Ind, p_ptr->ret_dam / 3);
+				hp_player(Ind, p_ptr->ret_dam / 4);
 				p_ptr->ret_dam = 0;
 			}
 			//o_ptr->pval = 23;

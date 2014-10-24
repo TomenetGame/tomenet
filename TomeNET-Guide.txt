@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. October 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. October 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8540,11 +8540,11 @@ Perception      Identifies a specific item.
 Enlightenment   Magically maps your surroundings.
 Polymorph       Polymorphs your target randomly into another form.
                 Doesn't works on players who resist nexus.
-Drain Life      Wand: Drains 10..20% life from your target, giving you 50% of
+Drain Life      Wand: Drains 10..20% life from your target, giving you 25% of
                 the drained life force.
-                Rod: Drains 15..30% life from your target, giving you 33% of
+                Rod: Drains 10..20% life from your target, giving you 25% of
                 the drained life force.
-Annihilation    Wand only: Drains 15..30% life from your target.
+Annihilation    Wand only: Drains 15..25% life from your target.
 Magi            Restores your intelligence and 500 mana points.
 Power           Dispels nearby monsters.
 Holiness        Dispels nearby evil. Also protects you from evil for a while.
@@ -13271,7 +13271,7 @@ Priest schools:
                     and returns a part of it to your hit points.
                     Required skill level for first spell level: 20.
 
-    Doomed Grounds  Similar to 'Drain Life' but affects a whole area.
+    Doomed Grounds  Similar to 'Drain Life', weaker, but affects a whole area.
                     Required skill level for first spell level: 40.
 
     BONI:           Adds slay undead at 30, slay demon at 40, slay evil at 50
