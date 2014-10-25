@@ -140,7 +140,7 @@ extern bool inkey_xtra;
 extern bool inkey_scan;
 extern bool inkey_flag;
 extern s16b coin_type;
-extern bool opening_chest;
+extern s32b opening_chest;
 extern bool use_graphics;
 extern bool use_sound;
 extern bool scan_monsters;
