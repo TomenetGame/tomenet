@@ -1447,8 +1447,7 @@ player_race race_info[MAX_RACE] =
                 72,  6, 180, 25,
                 66,  4, 150, 20,
                 0,
-//                0xFFFFFFFF,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL,
                 100,
                 {
                         /* HUMAN POWER!! */
@@ -1485,8 +1484,7 @@ player_race race_info[MAX_RACE] =
                 66,  6, 130, 15,
                 62,  6, 100, 10,
                 2,
-//                0xFFFFFFFF,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL,
                 110,
                 {
                         {
@@ -1527,10 +1525,7 @@ player_race race_info[MAX_RACE] =
                 60,  4, 100,  6,
                 54,  4, 80,  6,
                 3,
-//  111011101101 -> 101101110111
-// 0xB77 -> EED
-//		0xB77,
-		CFW+CFI+CFR+CFM+CFA+CFN+CFX+CFD+CFU+CFC,
+		CF_ALL,
                 120,
                 {
                         {
@@ -1596,11 +1591,7 @@ player_race race_info[MAX_RACE] =
                 36,  3, 60,  3,
                 33,  3, 50,  3,
                 3,
-//                0xF77, 111101110111 -> 111011101111
-//		0xEEF,
-//		0xF77,
-//		0xF7F,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL,
                 90,
                 {
                         {
@@ -1650,10 +1641,7 @@ player_race race_info[MAX_RACE] =
                 42,  3, 90,  6,
                 39,  3, 75,  3,
                 4,
-//                0xC77, 110001110111 -> 111011100011
-//		0xEE3,
-//		0xC77,
-		CFW+CFI+CFR+CFM+CFA+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL,
                 120,
                 {
                         {
@@ -1703,10 +1691,7 @@ player_race race_info[MAX_RACE] =
                 48,  3, 150, 10,
                 46,  3, 120, 10,
                 5,
-//                0x7FB, 011111111011 -> 010111111110
-//		0xDFE,
-//		0x7FB,
-		CFW+CFP+CFR+CFM+CFA+CFL+CFX+CFD+CFS+CFU,
+		CF_ALL,
                 95,
                 {
                         {
@@ -1746,12 +1731,7 @@ player_race race_info[MAX_RACE] =
                 66,  1, 150,  5,
                 62,  1, 120,  5,
                 3,
-//                0xF7B, 111101111011 -> 010111101111
-//0101-1110-1111 0x5EF
-//0101-0111-1011 0x57B
-//		0x5EF,
-//		0x57B,
-		CFW+CFP+CFR+CFM+CFA+CFX+CFS,
+		CF_ALL,
                 50,
                 {
                         {
@@ -1807,10 +1787,7 @@ player_race race_info[MAX_RACE] =
                 96, 10, 250, 50,
                 84,  8, 225, 40,
                 3,
-//                0x67B, 011001111011 -> 110111100110
-//		0xDE6,
-//		0x67B,
-		CFW+CFP+CFR+CFM+CFA+CFX+CFD+CFS,
+		CF_ALL,
                 20,
                 {
                         {
@@ -1872,8 +1849,7 @@ player_race race_info[MAX_RACE] =
                 82, 5, 190, 20,
                 78,  6, 180, 15,
                 0,
-//                0xFFFFFFFF,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL,
                 105,
                 {
                         /* Dunadan makes good generalist */
@@ -1925,10 +1901,7 @@ player_race race_info[MAX_RACE] =
                 90, 10, 190, 20,
                 82, 10, 180, 15,
                 4,
-//                0xF77, 101101110111 -> 111011101101
-//		0xEEF,
-//		0xB77,
-		CFW+CFI+CFR+CFM+CFA+CFN+CFX+CFD+CFU+CFC,
+		CF_ALL,
                 125,
                 {
                         {
@@ -1988,10 +1961,8 @@ player_race race_info[MAX_RACE] =
                 72,  6, 180, 25,
                 66,  4, 150, 20,
                 0,
-//                0x7FF,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL,
                 50,
-//                {{ 0 }},
 		{
                         {
                                 SKILL_CLIMB,
@@ -2020,10 +1991,7 @@ player_race race_info[MAX_RACE] =
                 66,  1, 150,  5,
                 62,  1, 120,  5,
                 3,
-//                0x673,  011001110011 -> 110011100110
-//		0xCE6,
-//		0xB73,
-		CFW+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL,
                 70,
                 {
                         /* Never ask me the reason why, I love boomerang :) */
@@ -2065,10 +2033,8 @@ player_race race_info[MAX_RACE] =
                 72, 6, 100, 25,
                 66, 4, 100, 20,
                 0,
-//                0xD2B,  110100101011 -> 110101001011
-//		0xD4B,
-//		0x72B,
-		CFW+CFP+CFM+CFX+CFD+CFS,
+		//No archer, rogue
+		CF_ALL&~CFR&~CFA,
                 90,
                 {
 			{
@@ -2137,9 +2103,7 @@ player_race race_info[MAX_RACE] =
                 180,  6, 255, 25,
                 150,  4, 230, 20,
                 5,
-//                0xF6F,  111101101111 -> 111101101111
-//		0xF6F,
-		CFW+CFI+CFP+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL,
                 95,
                 {
                         {
@@ -2193,7 +2157,7 @@ player_race race_info[MAX_RACE] =
                 66,  1, 150,  5,
                 62,  1, 120,  5,
                 5,
-		CFW+CFR+CFM+CFA+CFD+CFS+CFU+CFX +CFN, /* mh, adventurer?.. -- new: Ranger too */
+		CF_ALL,
                 120,
                 {
                         {
@@ -2234,10 +2198,7 @@ player_race race_info[MAX_RACE] =
                 90, 10, 180, 20,
                 82, 10, 180, 15,
                 8,
-//                0xF77, 111101110111 -> 111011101111
-//		0xEEF,
-//		0xF7F,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL,
                 115,
                 {
 #if 0
@@ -2300,10 +2261,8 @@ player_race race_info[MAX_RACE] =
                 90, 10, 180, 20,
                 82, 10, 170, 15,
                 15,
-//                0xF77, 111101110111 -> 111011101111
-//		0xEEF,
-//		0x857,
-		CFW+CFI+CFR+CFA+CFX+CFU+CFC,
+		//No paladin,druid,priest
+		CF_ALL&~CFL&~CFD&~CFP,
                 125,
                 {
                         {
@@ -2432,142 +2391,6 @@ player_race race_info[MAX_RACE] =
  */
         {
                 "Maia",
-/*
-Ah, the angel and demon race!
-Here is the plan:
-- 2 New uniques: a minor demon (Darkling) and a lesser angel (Candlebearer)
-  (Maybe they do not move, do not give exp, do not attack?)
-- Starts as a divine
-- Level 1-20 skill tree plan:
-  - Combat 1.0
-    - Weap mastery 1.0
-      - sword/blunt/pole/axe 0.5
-      - MA 0.0
-    - Magic 1.0, all children off ?
-  - Sneakiness 0.5
-    - Stealth 0.4
-    - Stealing/Disarm 0.4
-- At level 20:
-  - if Darkling is killed:
-    - turns into an angel:
-      - Divination skill unlocked (0.0, +0.4)
-      - Holy XXX skills unlocked (0.0, +0.4)
-      - Nature skill unlocked (0.0, +0.4)
-      - Swordsmastery skills unlocked/increased (0.0, +0.4)
-      - intrinstic light radius (+1 per 4 levels)
-      - Sneak/stealth skills unlocked/increased (0.0, +0.4)
-      - MD skill unlocked (0.0, +0.4)
-      - Udun are disabled!
-XXX      - light res
-XXX      - extra AC per level (+1 per level past 20)
-  - if Candlebearer is killed:
-    - turns into a demon:
-      - Air skill unlcoked (0.0, +0.4)
-      - Conveyance skill unlocked (0.0, +0.4)
-      - Udun skill unlocked (0.0, +5.0)
-      - Necromany skills get massive boosting! (0.0, +1.5)
-      - Blunt skills get boosted (0.0, +0.4)
-      - Axe skills get boosted (0.0, +0.4)
-      - MA skills get boosted (0.0, +0.3)
-      - Holy XXX are disabled!
-XXX      - fire res
-XXX      - cold susceptibility!!!! (sucker!)
-XXX      - extra hp per level (+2 per level past 20)
-XXX- At level 50:
-XXX  - angels:
-XXX    - slay_evil
-XXX    - res poison
-XXX    - Levitate~~~
-XXX    - ELEC_SHEATH
-XXX  - demons:
-XXX    - fire immune
-XXX    - res poison
-XXX    - FIRE_SHEATH
-
-XXXTODO: A quest to transform into an angel or a demon instead of counting kills ^_^
-XXXTODO: OR! Make 2 new uniques: Darkling and a Lightbearer.... 
-XXX        If Darkling is killed at 20, you turn into an Angel
-XXX        If lightbearer is killed at 20, you turn into a Demon
-XXX        Both/neither are killed at 20: you die. Simple. 
-XXXTODO: Display the message at 15, warning at 19
-XXX
-TODO: 3 options:
-      - No new schools (use preexisting)
-      - Only allow new school
-      - We can lower the amount of skill points gained by this race and have a new
-      school while allowing some of the current schools be learned by this race
-TODO: - stuff....
-      - no, really. the new school (Divine Power?), disable warriors and archers from the list
-      - NO GLYPHING! NO WALL CREATIONS! NO TREE GROWAGE!
-SPELLS: ({ythanks, dg)
-		Angel:
-			5: Feather Falling,
-			10: Manabolt				cost 10 SP	follow manabolt curve
-			20: Manablast				cost 1.5*manabolt cost		manabolt dmg curve(beam attack)
-			25: Manaball				cost 2*manabolt cost		manabolt dmg curve(ball attack)
-			30: Slay Evil,FA, mana regen
-			35: light resistance+susp darkness, levitation, no food needed?
-			40: esp good, esp demon, esp undead
-			45: Cloud of Power			cost =player lvl.	= playerlvl  mana+fire cloud?	dur=playerlevel/2
-			50: ManaStorm, No stun			cost = playerlevel*2	dmg=(playerlevel*10)+200 area spell.
-			55: Holy Wrath				cost = playerlevel*2	700 dmg all evil creature in LoS, 2.5x vs undead/demons
-			60: Divine Wrath			cost = playerlevel*3	1500 dmg to all creature in LoS, irresistable. 75% dmg vs all unique, x2 vs demons/undead
-			65: +1 spd per 2 level
-			70: Wraith,unwraith, Divine Barrier	cost = 100%SP. all creatures summoned within barrier radius have 25% original HP. barrier radius = light radius. dur=30turn 700 turn cool down.
-			75: lol. "Objection!" - Polymorph into blades 		with full equipment		Duration = 2500 turns, 3000 turns cool down.
-		Demon:
-			5: Fire resistance
-			10: DarkBolt				same as angel's manabolt
-			20: Darkball				cost = 2*darkbolt		same dmg(ball attack)
-			25: FA, hp regen
-			30: Darkness resistance+susp light, Fire Brand, Acid Brand,no food needed?
-			35: Kill Wall, resist poison	
-			40: Cloud of the End			cost = playerlevel*2 	Armageddon Cloud dmg = Playerlevel	dur=playerlevel/2
-			45: increase Critial chance?
-			50: Unholy Vengence, Fire Immunity	+1 bpr, Spd+ = playerlevel/ 4		(does not stack with spd pots)
-			55: HP boost				4% hp boost every 2 level
-			60: Rocket				dmg = (playerhp/3) + 250 rocket dmg
-			65: Gate Creation, Gate Destruction	creates/destroys a speical void gate, allows players to access with >, Even out of no teleport vaults!  need an exit and entrance. cost 100% max SP. Only 2 gates allowed at once.
-		        70: Soul Reaver				cost = 100% max SP, 750 dmg to all creature.  (3%+criticalchance) instant kill lvl 110 or lower, living, non-unique creatures in LoS(count as kill) (3%+critchance) chance of lowering unique's hp by 40%. 700 turn cool down.
-			75: lawl. btw N aren't evil :( - Polymorph into Nether Guard 	with full equip			Duration = 2500 turns, 3000 turns cool down.
-(real) spells:
-(plan is to have only 1 skill and a generically named spells that have different effect depending on the caster's alignment!
-level is determined runemastery style =P (player_level + skill_level)/2 (or we could set cap to 70... too much work here though i think)
-level 10: 	Power bolt		A: mana bolt
-					D: fire bolt-- no, nether
-
-level 15: 	Power blast		A: light beam
-					D: darkness beam-- no, nether
-
-level 25:	Power ball		A: mana/light ball
-					D: hellfire ball?-- no, nether
-
-level 30: 	Vengence		A: mass tele_to!!!
-					D: see:power staff 
-
-level 40:	Empowerment		A: +speed (level/4)
-					D: +hp: +1 at 40, +2 at 52 +3 at 55
-
-level 50:	Intensify		A: slow los(max -10? more?, non unis), mana/time res
-					D: same as +(1..10) crit ring (maxes at 60)
-
-level 60(70): 	Power Cloud		A: mana cloud
-					D: rocket cloud
-
-level 62(74): 	Gateway			A: instant wor for everyone in party on same floor!
-					D: void gate creation... on the same level only though. omghax
-TODO: better generic names plx
-TODO: school name: Astral Knowledge
-
-TODO: CONE direction!!!111oneoneone~!
-TODO: More usage for starlight direction too?
-
-Random notes:
-Nothing here that truly heals/buffs people (those bonus are to self only). They can get them from other schools
-30.A: Meat for me! Literally. OR we can go for gathering party members on the same floor to us. Useful if they're all scattered
-62.A: Activating /rec XX YY from Bree also ports every party member in Bree to XX YY :)
-62.D: No idea about the amount of work required.
-*/
                 { 1,  3, 3,  1,  0, 2 }, //boosted int/wisdom/dex
                 3, 20, 3, 0,  5, 1, 15, 5,
 		11, 400,//too low == bad since you need the quest mobs
@@ -2576,9 +2399,7 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
                 66,  8, 130, 40,
                 10,
 		/* Plan is to disable warrior and archer since they do not have SP */
-//                0xFFFFFFFF, //All classess for now
-//		0x00000F99,
-		CFP+CFI+CFR+CFM+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
+		CF_ALL&~CFW&~CFA,
                 125,
                 {
 /* The plan is to have a skill tree that is updated as the player level.
