@@ -13272,7 +13272,7 @@ Priest schools:
                     Required skill level for first spell level: 20.
 
     Doomed Grounds  Similar to 'Drain Life', weaker, but affects a whole area.
-                    Required skill level for first spell level: 40.
+                    Required skill level for first spell level: 30.
 
     BONI:           Adds slay undead at 30, slay demon at 40, slay evil at 50
                     to all melee and ranged attacks.
