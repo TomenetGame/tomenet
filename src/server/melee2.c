@@ -6681,7 +6681,7 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist)
  * Experimental
  * Evileye
  */
-void process_npcs(){
+void process_npcs() {
 #if 0
 	struct cave_type **zcave;
 	zcave = getcave(&Npcs[0].wpos);
@@ -6696,6 +6696,292 @@ void process_npcs(){
  * Hack -- local "player stealth" value (see below)
  */
 static u32b noise = 0L;
+
+
+static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, cave_type *c_ptr, bool pfriend) {
+	int p_idx_target = c_ptr ? 0 - c_ptr->m_idx : 0;
+	player_type *pd_ptr = Players[p_idx_target];
+	cave_type **zcave = getcave(&m_ptr->wpos);
+
+	if ((!p_idx_target && c_ptr) || !zcave) return NULL; //paranoia x 2
+
+#ifdef C_BLUE_AI_MELEE /* if multiple targets adjacent, choose between them */
+	if (!m_ptr->confused) {
+		bool keeping_previous_target = FALSE;
+		int i, p_idx_chosen = p_idx_target, reason;
+		int p_idx[9], targets = 0;
+		int p_idx_weak[9], p_idx_medium[9];//, p_idx_strong[9];
+		int weak_targets = 0, medium_targets = 0, strong_targets = 0;
+		int p_idx_low[9], low_targets = 0, lowest_target_level = 100, highest_target_level = 0;
+		cave_type *cd_ptr;
+		int p_idx_non_distracting[9], non_distracting_targets = 0;
+		int target_toughness = 0;
+		int ox = m_ptr->fx, oy = m_ptr->fy;
+
+		/* remember our previous target */
+		m_ptr->last_target_melee = m_ptr->last_target_melee_temp;
+
+		/* get all adjacent players */
+		for (i = 0; i < 8; i++) {
+			if (!in_bounds(oy + ddy_ddd[i], ox + ddx_ddd[i])) continue;
+
+			cd_ptr = &zcave[oy + ddy_ddd[i]][ox + ddx_ddd[i]];
+
+			/* found not a player? */
+			if (cd_ptr->m_idx >= 0) continue;
+
+			pd_ptr = Players[-(cd_ptr->m_idx)];
+
+			/* get him if allowed */
+			if ((m_ptr->owner == pd_ptr->id) || /* Don't attack your master! */
+			    pd_ptr->admin_invinc /* Invincible players can't be atacked! */
+			    /* non-hostile questors dont attack people */
+			    || pfriend
+ #ifdef TELEPORT_SURPRISES
+			    || TELEPORT_SURPRISED(pd_ptr, r_ptr)
+ #endif
+			    ) /* surprise effect */
+				continue;
+
+			/* for when we don't have any target yet (AI_ANNOY specialty) */
+			if (!p_idx_target) p_idx_target = pd_ptr->Ind;
+
+			/* did we choose this player for target in our previous turn?
+			   then lets stick with it and not change targets again */
+			if (-cd_ptr->m_idx == m_ptr->last_target_melee &&
+			    -cd_ptr->m_idx != m_ptr->switch_target) {
+				keeping_previous_target = TRUE;
+ #ifdef C_BLUE_AI_MELEE_NASTY
+				break;
+ #endif
+			}
+
+			targets++;
+			p_idx[targets] = -cd_ptr->m_idx;
+
+			/* did that player NOT use a 'distract' (ie detaunting) ability on this monster? */
+			if (-cd_ptr->m_idx != m_ptr->switch_target) {
+				non_distracting_targets++;
+				p_idx_non_distracting[non_distracting_targets] = -cd_ptr->m_idx;
+
+				/* remember whether player's class is vulnerable or tough in melee situation.
+				   a pretty rough estimate, since skills are not taken into account at all. */
+				switch (pd_ptr->pclass) {
+				case CLASS_ROGUE:
+					/* todo maybe: might be medium target if not crit-hitter/intercepter?
+					   but only SMART monsters could possibly recognise the player's skills,
+					   so just use own AC and HP for now, to determine our confidence: */
+					if (m_ptr->ac >= 120 + rand_int(20) || m_ptr->hp >= 4000 + rand_int(2000)) {
+						target_toughness = 1;
+						break;
+					}
+					target_toughness = 2;//wowie
+					break;
+
+				case CLASS_WARRIOR:
+				case CLASS_PALADIN:
+				case CLASS_MIMIC:
+					target_toughness = 2;
+					break;
+
+				case CLASS_DRUID: /* rather tough? */
+				case CLASS_MINDCRAFTER: /* rather tough? */
+					target_toughness = 2;
+					break;
+
+				case CLASS_ADVENTURER: /* todo maybe: depends on mimic form */
+					if ((!pd_ptr->body_monster || pd_ptr->form_hp_ratio < 125)
+					    && pd_ptr->ac + pd_ptr->to_a < p_tough_ac[pd_ptr->lev > 50 ? 50 : pd_ptr->lev - 1]) {
+						target_toughness = 0;
+						break;
+					}
+					target_toughness = 1;
+					break;
+
+				case CLASS_RANGER:
+				case CLASS_ARCHER:
+					target_toughness = 1;
+					break;
+
+				case CLASS_SHAMAN: /* todo maybe: depends on mimic form */
+					if ((pd_ptr->body_monster && pd_ptr->form_hp_ratio >= 125)
+					    || pd_ptr->ac + pd_ptr->to_a >= p_tough_ac[pd_ptr->lev > 50 ? 50 : pd_ptr->lev - 1]) {
+						target_toughness = 1;
+						break;
+					}
+					target_toughness = 0;
+					break;
+
+				case CLASS_RUNEMASTER: /* medium or light? */
+					target_toughness = 0;
+					break;
+
+				case CLASS_MAGE:
+					/* the odds are turning? >_> */
+					if (pd_ptr->tim_manashield) {
+						target_toughness = 1;//might even be 2?
+						break;
+					}
+					target_toughness = 0;
+					break;
+
+				case CLASS_PRIEST:
+					/* todo maybe: actually, priests can be skilled to make medium targets?
+					   --recognise anti-evil aura: */
+					if (get_skill(pd_ptr, SKILL_HDEFENSE) >= 30 && (r_ptr->flags3 & RF3_UNDEAD) && pd_ptr->lev * 2 >= r_ptr->level)
+						target_toughness = 1;
+					else if (get_skill(pd_ptr, SKILL_HDEFENSE) >= 40 && (r_ptr->flags3 & RF3_DEMON) && pd_ptr->lev * 3 >= r_ptr->level * 2)
+						target_toughness = 1;
+					else if (get_skill(pd_ptr, SKILL_HDEFENSE) >= 50 && (r_ptr->flags3 & RF3_EVIL) && pd_ptr->lev * 3 >= r_ptr->level * 2)
+						target_toughness = 1;
+					else
+						target_toughness = 0;
+					break;
+				}
+
+				/* Note: Leaving out 'protection from evil' scroll/prayer for now, since that one is primarily effective
+				   at lower levels, and there it's well-deserved fun to see baddies getting repelled from you ^^ */
+
+				/* if a player is low on hit points, consider him weaker */
+				if (target_toughness && (pd_ptr->chp * 10) / pd_ptr->mhp <= 4) target_toughness--;
+
+				switch (target_toughness) {
+				case 2:
+					strong_targets++;
+					//p_idx_strong[strong_targets] = -cd_ptr->m_idx;
+					break;
+				case 1:
+					medium_targets++;
+					p_idx_medium[medium_targets] = -cd_ptr->m_idx;
+					break;
+				default:
+					weak_targets++;
+					p_idx_weak[weak_targets] = -cd_ptr->m_idx;
+					break;
+				}
+			}
+
+			/* remember lowest and highest victim level */
+			if (pd_ptr->lev < lowest_target_level) lowest_target_level = pd_ptr->lev;
+			if (pd_ptr->lev > highest_target_level) highest_target_level = pd_ptr->lev;
+		}
+
+ #ifdef C_BLUE_AI_MELEE_NASTY
+		/* if we have multiple targets and our currently picked one isn't ideal, reevaluate sometimes */
+		if ((r_ptr->flags2 & RF2_SMART) && !rand_int(5))
+			keeping_previous_target = FALSE;
+ #endif
+
+//s_printf("targets=%d\n", targets);
+		if (targets) { /* Note: If an admin is in the path of a monster, this may happen to be 0 */
+
+			/* *** Rules to choose between allowed targets: ***
+			   Animals attack the one that "seems" most wounded: (hp_max / hp_cur) ?
+			    maybe not good. except for wolves or such :).
+			    attack randomly for now.
+			   Low undead who have empty mind/Nonliving/weirdmind/emptymind attack randomly.
+			   Really "weakest" target would be based on
+			    HP/AC/parry/deflect/dodge/manashield/level/class, too complicated.
+			   SMART monsters attack based on class and level (can have manashield at level x?) :).
+			    At high levels this matters less, then just slightly prefer lowest level player.
+			   STUPID monsters attack randomly.
+			   Angels attack randomly (they don't swing like "hey you're weakest, I'm gonna kill you first!").
+			   POWERFUL or deemed powerful (ancient dragons, dragonriders) or "proud" monsters attack randomly.
+			   All other monsters -including minded undead- attack based on class during low levels, and random at high levels.
+			*/
+			reason = 1;
+
+			if (r_ptr->flags7 & RF7_NO_DEATH) reason = 0;
+			if (r_ptr->flags7 & RF7_MULTIPLY) reason = 0;
+			if (r_ptr->flags3 & RF3_NONLIVING) reason = 0;
+			if (r_ptr->flags3 & RF3_GOOD) reason = 0;
+			if (r_ptr->flags3 & RF3_GIANT) reason = 0;
+			if (r_ptr->flags3 & RF3_ANIMAL) reason = 0;
+			if (r_ptr->flags2 & RF2_STUPID) reason = 0;
+			if (r_ptr->flags2 & RF2_WEIRD_MIND) reason = 0;
+
+			if (r_ptr->flags2 & RF2_POWERFUL) reason = 0; /* doesn't care ;) */
+			if (strchr("AD", r_ptr->d_char)) reason = 0;
+			if (r_ptr->flags2 & RF2_SMART) reason = 2;
+			if (r_ptr->flags2 & RF2_EMPTY_MIND) reason = -1;
+
+ #ifndef STUPID_MONSTER
+			/* generate behaviour based on selected rule */
+			switch (reason) {
+			case -1: /* random & ignore distraction attempts */
+				p_idx_chosen = p_idx[randint(targets)];
+				break;
+			case 0: /* random */
+				if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+				else p_idx_chosen = p_idx[randint(targets)];
+				break;
+			case 1: /* at low level choose weaker classes first */
+				if ((lowest_target_level < 30)
+				    && magik(90)) {
+					if (weak_targets && magik(90)) p_idx_chosen = p_idx_weak[randint(weak_targets)];
+					else if (medium_targets && magik(90)) p_idx_chosen = p_idx_medium[randint(medium_targets)];
+					else if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+					else p_idx_chosen = p_idx[randint(targets)];
+				} else if (non_distracting_targets &&
+				    magik(90))
+					p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+				else p_idx_chosen = p_idx[randint(targets)];
+				break;
+			case 2: /* like (1), but more sophisticated */
+				if ((highest_target_level < 30 && lowest_target_level + 5 > highest_target_level) &&
+				    magik(90)) {
+					if (weak_targets && magik(90)) p_idx_chosen = p_idx_weak[randint(weak_targets)];
+					else if (medium_targets && magik(90)) p_idx_chosen = p_idx_medium[randint(medium_targets)];
+					else if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+					else p_idx_chosen = p_idx[randint(targets)];
+				} else if (highest_target_level > lowest_target_level + lowest_target_level / 10) {
+					if (magik(90)) {
+						/* check which targets have a significantly lower level than others */
+						for (i = 1; i <= targets; i++) {
+							if (Players[p_idx[i]]->lev + Players[p_idx[i]]->lev / 10 < highest_target_level) {
+								low_targets++;
+								p_idx_low[low_targets] = p_idx[i];
+							}
+						}
+						/* choose one of the lowbies of the player pack */
+						p_idx_chosen = p_idx_low[randint(low_targets)];
+					} else p_idx_chosen = p_idx[randint(targets)];
+				} else {
+					p_idx_chosen = p_idx[randint(targets)];
+				}
+				break;
+			}
+ #else
+			/* not sure whether STUPID_MONSTERS should really keep distracting possible */
+			if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+			else p_idx_chosen = p_idx[randint(targets)];
+ #endif
+			/* Remember this target, so we won't switch to a different one
+			   in case this player has a levelup or something during our fighting,
+			   depending on our monster's way to choose a target (see above).
+			   This could be made dependent on further monster behaviour! :) */
+			if (keeping_previous_target) p_idx_chosen = m_ptr->last_target_melee;
+			/* note: storing id would be cleaner than idx, but it doesn't really make a practical difference */
+			else m_ptr->last_target_melee = p_idx_chosen;
+			
+			/* connect to outside world */
+			p_idx_target = p_idx_chosen;
+		}
+	} else
+#endif /* C_BLUE_AI_MELEE */
+
+	/* Don't attack your master! Invincible players can't be atacked! */
+	if (m_ptr->owner == pd_ptr->id || pd_ptr->admin_invinc
+	    /* non-hostile questors dont attack people */
+	    || pfriend
+ #ifdef TELEPORT_SURPRISES
+	    || TELEPORT_SURPRISED(pd_ptr, r_ptr)
+ #endif
+	    )
+		return NULL;
+
+	return (p_idx_target ? Players[p_idx_target] : NULL);
+}
 
 /*
  * Process a monster
@@ -6726,8 +7012,7 @@ static u32b noise = 0L;
  * Note that the "Ind" specifies the player that the monster will go after.
  */
 /* TODO: revise FEAT_*, or strange intrusions can happen */
-static void process_monster(int Ind, int m_idx, bool force_random_movement)
-{
+static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	player_type	*p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type	**zcave;
@@ -6754,6 +7039,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	bool		do_turn;
 	bool		do_move;
 	bool		do_view;
+	bool		do_melee;
 
 	bool		did_open_door;
 	bool		did_bash_door;
@@ -7277,6 +7563,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	do_turn = FALSE;
 	do_move = FALSE;
 	do_view = FALSE;
+	/* for AI_ANNOY only: fall back to attacking if out of moves */
+	do_melee = ((r_ptr->flags7 & RF7_AI_ANNOY) && !(r_ptr->flags1 & RF1_NEVER_BLOW));
 
 	/* Assume nothing */
 	did_open_door = FALSE;
@@ -7318,18 +7606,17 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 //		if (c_ptr->feat == FEAT_SHOP_TAIL - 1)
 		/* Shops only protect on world surface, dungeon shops are dangerous!
 		   (optional alternative: make player unable to attack while in shop in turn) */
-		if (c_ptr->feat == FEAT_SHOP && wpos->wz == 0) {
-			/* Nothing */
+		if (c_ptr->feat == FEAT_SHOP) {
+			/* attack player in dungeon store */
+			if (wpos->wz && c_ptr->m_idx < 0) do_move = TRUE;
+			/* else nothing */
 		}
 
-		/* "protected" grid without player on it => cannot enter!  - C. Blue
-		   - todo: test behaviour in arena.
-		   Note: If player was on it, monster will be able to attack him at least :) */
+		/* "protected" grid without player on it => cannot enter!  - C. Blue */
 		else if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
 		    (c_ptr->m_idx >= 0)) {
 			/* nothing */
 		}
-
 
 /* Isn't this whole 'Tainted grid' stuff OBSOLETE?
    Because: If monster_is_safe is false, it will always have set AI_STATE_EFFECT. */
@@ -7346,47 +7633,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			/* Nothing */
 		}
 #endif
-/* OBSOLETE? */
 
-
-#if 0
-		/* Floor is open? */
-		else if (cave_floor_bold(zcave, ny, nx)) {
-			/* Go ahead and move */
-			do_move = TRUE;
-		}
-
-		/* Some monsters can fly */
-		else if (((f_info[c_ptr->feat].flags1 & FF1_CAN_FEATHER) && (r_ptr->flags7 & (RF7_CAN_FLY))) ||
-		    ((f_info[c_ptr->feat].flags1 & FF1_CAN_LEVITATE) && (r_ptr->flags7 & (RF7_CAN_FLY)))) {
-			/* Pass through walls/doors/rubble/_trees_ */
-			do_move = TRUE;
-		}
-
-		/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */
-		//else if ((c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_EVIL_TREE ||
-		else if ((c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_TREE ||
-			c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_IVY) &&
-			((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL) ||
-			/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */
-			(r_ptr->flags2 & RF2_PASS_WALL) || (r_ptr->flags2 & RF2_KILL_WALL) ||
-			/* POWERFUL monsters can hack down trees if they're non-light aka _physically_ powerful (hacky..) */
-			((base_r_ptr->flags2 & RF2_POWERFUL) && r_ptr->weight >= 250)))//todo: do some monsters still wrongly weigh 0 lbs?
-		{
-			/* Pass through trees if monster lives in the woods >:) */
-			do_move = TRUE;
-		}
-
-		/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */
-		else if ((c_ptr->feat == FEAT_MOUNTAIN) &&
-			((r_ptr->flags8 & RF8_WILD_MOUNTAIN) ||
-			(r_ptr->flags8 & RF8_WILD_VOLCANO) ||
-			(r_ptr->flags7 & RF7_SPIDER))) /* Spiders can always climb */
-		{
-			/* Pass mountains (climb) if it's natural environment */
-			do_move = TRUE;
-		}
-#else
 		else if (creature_can_enter(r_ptr, c_ptr)) {
 			do_move = TRUE;
 
@@ -7402,20 +7649,16 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				did_kill_wall = TRUE;
 #endif
 
-				cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
-
 				/* Forget the "field mark", if any */
 				everyone_forget_spot(wpos, ny, nx);
-				/* Notice */
-				note_spot_depth(wpos, ny, nx);
-				/* Redraw */
-				everyone_lite_spot(wpos, ny, nx);
+
+				cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
 
 				/* Note changes to viewable region */
 				if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
 			}
 		}
-#endif
+
 		/* Player ghost in wall or on FF1_PROTECTED grid: Monster may attack in melee anyway */
 		else if (c_ptr->m_idx < 0) {
 			/* Move into player */
@@ -7448,25 +7691,30 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		    || (c_ptr->feat == FEAT_WALL_HOUSE))
 		{
 			/* Nothing */
+			/* Paranoia: Keep do_melee enabled, so Morgoth would in theory (ie if he had
+			   AI_ANNOY, which he of course doesn't have) be allowed to make TWO actions
+			   per move: 1) try digging and 2) actually attack, if digging failed. */
 		}
 
 		/* Monster destroys walls (and doors) */
+		/* Note: Since do_melee isn't false'd if rand(digging) fails, monsters could still attack
+		   despite having had a go at digging (slightly cheating since that'd be 2 actions a turn). */
 #ifdef MONSTER_DIG_FACTOR
-/* EVILEYE - correct me if i interpreted this wrongly. */
-/* You're right, mine was wrong - Jir - */
+		/* EVILEYE - correct me if i interpreted this wrongly. */
+		/* You're right, mine was wrong - Jir - */
 		else if (r_ptr->flags2 & RF2_KILL_WALL ||
-			(!(r_ptr->flags1 & RF1_NEVER_MOVE ||
-			   r_ptr->flags2 & RF2_EMPTY_MIND ||
-			   r_ptr->flags2 & RF2_STUPID) &&
-			(!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR)
-			 && magik(5 + r_ptr->level))))
+		    (!(r_ptr->flags1 & RF1_NEVER_MOVE ||
+		    r_ptr->flags2 & RF2_EMPTY_MIND ||
+		   r_ptr->flags2 & RF2_STUPID) &&
+		    (!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR)
+		     && magik(5 + r_ptr->level))))
 #else
 		else if ((r_ptr->flags2 & RF2_KILL_WALL) ||
-			/* POWERFUL monsters can hack down trees */
-			((base_r_ptr->flags2 & RF2_POWERFUL) &&
-			//c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_EVIL_TREE ||
-			(c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_TREE ||
-			c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_IVY)))
+		    /* POWERFUL monsters can hack down trees */
+		    ((base_r_ptr->flags2 & RF2_POWERFUL) &&
+		    //c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_EVIL_TREE ||
+		    (c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_TREE ||
+		    c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_IVY)))
 #endif
 		{
 			/* Eat through walls/doors/rubble */
@@ -7479,19 +7727,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #endif
 #endif
 
+			/* Forget the "field mark", if any */
+			everyone_forget_spot(wpos, ny, nx);
+
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
 			//c_ptr->feat = twall_erosion(wpos, ny, nx);
 			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
-
-			/* Forget the "field mark", if any */
-			everyone_forget_spot(wpos, ny, nx);
-
-			/* Notice */
-			note_spot_depth(wpos, ny, nx);
-
-			/* Redraw */
-			everyone_lite_spot(wpos, ny, nx);
 
 			/* Note changes to viewable region */
 			if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
@@ -7619,6 +7861,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				/* Handle viewable doors */
 				if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
 			}
+
+			/* Note: Since do_melee isn't false'd if rand(opening/bashing) fails, monsters could still attack
+			   despite having had a go at opening/bashing (slightly cheating since that'd be 2 actions a turn). */
 		}
 		/* Floor is trapped? */
 		else if (c_ptr->feat == FEAT_MON_TRAP) {
@@ -7659,6 +7904,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					do_move = TRUE;
 				}
 			}
+
+			/* Note: Since do_melee isn't false'd if rand(digging) fails, monsters could still attack
+			   despite having had a go at digging (slightly cheating since that'd be 2 actions a turn). */
+
 #ifdef SAURON_ANTI_GLYPH
 			/* Special power boost for Sauron if he gets hindered by glyphs */
 			else if (m_ptr->r_idx == RI_SAURON && base_r_ptr->freq_innate != SAURON_SPELL_BOOST) {
@@ -7691,285 +7940,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 		/* The player is in the way.  Attack him. */
 		if (do_move && (c_ptr->m_idx < 0)) {
-			int p_idx_target = 0 - c_ptr->m_idx;
-			player_type *q_ptr;
+			player_type *q_ptr = get_melee_target(r_ptr, m_ptr, c_ptr, pfriend);
 
-#ifdef C_BLUE_AI_MELEE /* if multiple targets adjacent, choose between them */
-    if (!m_ptr->confused) {
-			bool keeping_previous_target = FALSE;
-			int i, p_idx_chosen = 0 - c_ptr->m_idx, reason;
-			int p_idx[9], targets = 0;
-			int p_idx_weak[9], p_idx_medium[9];//, p_idx_strong[9];
-			int weak_targets = 0, medium_targets = 0, strong_targets = 0;
-			int p_idx_low[9], low_targets = 0, lowest_target_level = 100, highest_target_level = 0;
-			cave_type *cd_ptr;
-			player_type *pd_ptr;
-			int p_idx_non_distracting[9], non_distracting_targets = 0;
-			int target_toughness = 0;
-
-			/* remember our previous target */
-			m_ptr->last_target_melee = m_ptr->last_target_melee_temp;
-
-			/* get all adjacent players */
-			for (i = 0; i < 8; i++) {
-				if (!in_bounds(oy + ddy_ddd[i], ox + ddx_ddd[i])) continue;
-
-				cd_ptr = &zcave[oy + ddy_ddd[i]][ox + ddx_ddd[i]];
-
-				/* found not a player? */
-				if (cd_ptr->m_idx >= 0) continue;
-
-				pd_ptr = Players[-(cd_ptr->m_idx)];
-
-				/* get him if allowed */
-				if ((m_ptr->owner == pd_ptr->id) || /* Don't attack your master! */
-				    pd_ptr->admin_invinc /* Invincible players can't be atacked! */
- #ifdef TELEPORT_SURPRISES
-				    || TELEPORT_SURPRISED(pd_ptr, r_ptr)
- #endif
-				    ) /* surprise effect */
-					continue;
-
-				/* did we choose this player for target in our previous turn?
-				   then lets stick with it and not change targets again */
-				if (-cd_ptr->m_idx == m_ptr->last_target_melee &&
-				    -cd_ptr->m_idx != m_ptr->switch_target) {
-					keeping_previous_target = TRUE;
- #ifdef C_BLUE_AI_MELEE_NASTY
-					break;
- #endif
-				}
-
-				targets++;
-				p_idx[targets] = -cd_ptr->m_idx;
-
-				/* did that player NOT use a 'distract' (ie detaunting) ability on this monster? */
-				if (-cd_ptr->m_idx != m_ptr->switch_target) {
-					non_distracting_targets++;
-					p_idx_non_distracting[non_distracting_targets] = -cd_ptr->m_idx;
-
-					/* remember whether player's class is vulnerable or tough in melee situation.
-					   a pretty rough estimate, since skills are not taken into account at all. */
-					switch (pd_ptr->pclass) {
-					case CLASS_ROGUE:
-						/* todo maybe: might be medium target if not crit-hitter/intercepter?
-						   but only SMART monsters could possibly recognise the player's skills,
-						   so just use own AC and HP for now, to determine our confidence: */
-						if (m_ptr->ac >= 120 + rand_int(20) || m_ptr->hp >= 4000 + rand_int(2000)) {
-							target_toughness = 1;
-							break;
-						}
-						target_toughness = 2;//wowie
-						break;
-
-					case CLASS_WARRIOR:
-					case CLASS_PALADIN:
-					case CLASS_MIMIC:
-						target_toughness = 2;
-						break;
-
-					case CLASS_DRUID: /* rather tough? */
-					case CLASS_MINDCRAFTER: /* rather tough? */
-						target_toughness = 2;
-						break;
-
-					case CLASS_ADVENTURER: /* todo maybe: depends on mimic form */
-						if ((!pd_ptr->body_monster || pd_ptr->form_hp_ratio < 125)
-						    && pd_ptr->ac + pd_ptr->to_a < p_tough_ac[pd_ptr->lev > 50 ? 50 : pd_ptr->lev - 1]) {
-							target_toughness = 0;
-							break;
-						}
-						target_toughness = 1;
-						break;
-
-					case CLASS_RANGER:
-					case CLASS_ARCHER:
-						target_toughness = 1;
-						break;
-
-					case CLASS_SHAMAN: /* todo maybe: depends on mimic form */
-						if ((pd_ptr->body_monster && pd_ptr->form_hp_ratio >= 125)
-						    || pd_ptr->ac + pd_ptr->to_a >= p_tough_ac[pd_ptr->lev > 50 ? 50 : pd_ptr->lev - 1]) {
-							target_toughness = 1;
-							break;
-						}
-						target_toughness = 0;
-						break;
-
-					case CLASS_RUNEMASTER: /* medium or light? */
-						target_toughness = 0;
-						break;
-
-					case CLASS_MAGE:
-						/* the odds are turning? >_> */
-						if (pd_ptr->tim_manashield) {
-							target_toughness = 1;//might even be 2?
-							break;
-						}
-						target_toughness = 0;
-						break;
-
-					case CLASS_PRIEST:
-						/* todo maybe: actually, priests can be skilled to make medium targets?
-						   --recognise anti-evil aura: */
-						if (get_skill(pd_ptr, SKILL_HDEFENSE) >= 30 && (r_ptr->flags3 & RF3_UNDEAD) && p_ptr->lev * 2 >= r_ptr->level)
-							target_toughness = 1;
-						else if (get_skill(p_ptr, SKILL_HDEFENSE) >= 40 && (r_ptr->flags3 & RF3_DEMON) && p_ptr->lev * 3 >= r_ptr->level * 2)
-							target_toughness = 1;
-						else if (get_skill(p_ptr, SKILL_HDEFENSE) >= 50 && (r_ptr->flags3 & RF3_EVIL) && p_ptr->lev * 3 >= r_ptr->level * 2)
-							target_toughness = 1;
-						else
-							target_toughness = 0;
-						break;
-					}
-
-					/* Note: Leaving out 'protection from evil' scroll/prayer for now, since that one is primarily effective
-					   at lower levels, and there it's well-deserved fun to see baddies getting repelled from you ^^ */
-
-					/* if a player is low on hit points, consider him weaker */
-					if (target_toughness && (pd_ptr->chp * 10) / pd_ptr->mhp <= 4) target_toughness--;
-
-					switch (target_toughness) {
-					case 2:
-						strong_targets++;
-						//p_idx_strong[strong_targets] = -cd_ptr->m_idx;
-						break;
-					case 1:
-						medium_targets++;
-						p_idx_medium[medium_targets] = -cd_ptr->m_idx;
-						break;
-					default:
-						weak_targets++;
-						p_idx_weak[weak_targets] = -cd_ptr->m_idx;
-						break;
-					}
-				}
-
-				/* remember lowest and highest victim level */
-				if (pd_ptr->lev < lowest_target_level) lowest_target_level = pd_ptr->lev;
-				if (pd_ptr->lev > highest_target_level) highest_target_level = pd_ptr->lev;
-			}
-
- #ifdef C_BLUE_AI_MELEE_NASTY
-			/* if we have multiple targets and our currently picked one isn't ideal, reevaluate sometimes */
-			if ((r_ptr->flags2 & RF2_SMART) && !rand_int(5))
-				keeping_previous_target = FALSE;
- #endif
-
-//s_printf("targets=%d\n", targets);
-		    if (targets) { /* Note: If an admin is in the path of a monster, this may happen to be 0 */
-
-			/* *** Rules to choose between allowed targets: ***
-			   Animals attack the one that "seems" most wounded: (hp_max / hp_cur) ?
-			    maybe not good. except for wolves or such :).
-			    attack randomly for now.
-			   Low undead who have empty mind/Nonliving/weirdmind/emptymind attack randomly.
-			   Really "weakest" target would be based on
-			    HP/AC/parry/deflect/dodge/manashield/level/class, too complicated.
-			   SMART monsters attack based on class and level (can have manashield at level x?) :).
-			    At high levels this matters less, then just slightly prefer lowest level player.
-			   STUPID monsters attack randomly.
-			   Angels attack randomly (they don't swing like "hey you're weakest, I'm gonna kill you first!").
-			   POWERFUL or deemed powerful (ancient dragons, dragonriders) or "proud" monsters attack randomly.
-			   All other monsters -including minded undead- attack based on class during low levels, and random at high levels.
-			*/
-			reason = 1;
-
-			if (r_ptr->flags7 & RF7_NO_DEATH) reason = 0;
-			if (r_ptr->flags7 & RF7_MULTIPLY) reason = 0;
-			if (r_ptr->flags3 & RF3_NONLIVING) reason = 0;
-			if (r_ptr->flags3 & RF3_GOOD) reason = 0;
-			if (r_ptr->flags3 & RF3_GIANT) reason = 0;
-			if (r_ptr->flags3 & RF3_ANIMAL) reason = 0;
-			if (r_ptr->flags2 & RF2_STUPID) reason = 0;
-			if (r_ptr->flags2 & RF2_WEIRD_MIND) reason = 0;
-
-			if (r_ptr->flags2 & RF2_POWERFUL) reason = 0; /* doesn't care ;) */
-			if (strchr("AD", r_ptr->d_char)) reason = 0;
-			if (r_ptr->flags2 & RF2_SMART) reason = 2;
-			if (r_ptr->flags2 & RF2_EMPTY_MIND) reason = -1;
-
- #ifndef STUPID_MONSTER
-			/* generate behaviour based on selected rule */
-			switch (reason) {
-			case -1: /* random & ignore distraction attempts */
-				p_idx_chosen = p_idx[randint(targets)];
-				break;
-			case 0: /* random */
-				if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
-				else p_idx_chosen = p_idx[randint(targets)];
-				break;
-			case 1: /* at low level choose weaker classes first */
-				if ((lowest_target_level < 30)
-				    && magik(90)) {
-					if (weak_targets && magik(90)) p_idx_chosen = p_idx_weak[randint(weak_targets)];
-					else if (medium_targets && magik(90)) p_idx_chosen = p_idx_medium[randint(medium_targets)];
-					else if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
-					else p_idx_chosen = p_idx[randint(targets)];
-				} else if (non_distracting_targets &&
-				    magik(90))
-					p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
-				else p_idx_chosen = p_idx[randint(targets)];
-				break;
-			case 2: /* like (1), but more sophisticated */
-				if ((highest_target_level < 30 && lowest_target_level + 5 > highest_target_level) &&
-				    magik(90)) {
-					if (weak_targets && magik(90)) p_idx_chosen = p_idx_weak[randint(weak_targets)];
-					else if (medium_targets && magik(90)) p_idx_chosen = p_idx_medium[randint(medium_targets)];
-					else if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
-					else p_idx_chosen = p_idx[randint(targets)];
-				} else if (highest_target_level > lowest_target_level + lowest_target_level / 10) {
-					if (magik(90)) {
-						/* check which targets have a significantly lower level than others */
-						for (i = 1; i <= targets; i++) {
-							if (Players[p_idx[i]]->lev + Players[p_idx[i]]->lev / 10 < highest_target_level) {
-								low_targets++;
-								p_idx_low[low_targets] = p_idx[i];
-							}
-						}
-						/* choose one of the lowbies of the player pack */
-						p_idx_chosen = p_idx_low[randint(low_targets)];
-					} else p_idx_chosen = p_idx[randint(targets)];
-				} else {
-					p_idx_chosen = p_idx[randint(targets)];
-				}
-				break;
-			}
- #else
-			/* not sure whether STUPID_MONSTERS should really keep distracting possible */
-			if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
-			else p_idx_chosen = p_idx[randint(targets)];
- #endif
-			/* Remember this target, so we won't switch to a different one
-			   in case this player has a levelup or something during our fighting,
-			   depending on our monster's way to choose a target (see above).
-			   This could be made dependent on further monster behaviour! :) */
-			if (keeping_previous_target) p_idx_chosen = m_ptr->last_target_melee;
-			/* note: storing id would be cleaner than idx, but it doesn't really make a practical difference */
-			else m_ptr->last_target_melee = p_idx_chosen;
-			
-			/* connect to outside world */
-			p_idx_target = p_idx_chosen;
-		    }
-    }
-#endif /* C_BLUE_AI_MELEE */
-
-
-			q_ptr = Players[p_idx_target];
-
-			/* Don't attack your master! Invincible players can't be atacked! */
-			if (q_ptr && m_ptr->owner != q_ptr->id && !q_ptr->admin_invinc
-			    /* non-hostile questors dont attack people */
-			    && !pfriend
-#ifdef TELEPORT_SURPRISES
-			    && !TELEPORT_SURPRISED(q_ptr, r_ptr)
-#endif
-			    ) {
+			if (q_ptr) {
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
 //				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
 				    (cave_floor_bold(zcave, oy, ox)) &&
-				    magik(10) && !p_ptr->martyr &&
+				    magik(10) && !q_ptr->martyr &&
 				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5)))
 				{
 					char m_name[MNAME_LEN];
@@ -7987,7 +7965,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					s_printf("MOVE_BODY: '%s' got switched by '%s'.\n", q_ptr->name, m_name);
 				} else {
 					/* Do the attack */
-					(void)make_attack_melee(p_idx_target, m_idx);
+					(void)make_attack_melee(q_ptr->Ind, m_idx);
 
 					/* Took a turn */
 					do_turn = TRUE;
@@ -8034,22 +8012,6 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				do_move = FALSE;
 			}
 		}
-
-#if 0
-		/* restrict aquatic life to the pond */
-		if(do_move && (r_ptr->flags7 & RF7_AQUATIC)){
-			if((c_ptr->feat != FEAT_DEEP_WATER) &&
-				(zcave[oy][ox].feat == FEAT_DEEP_WATER)) do_move = FALSE;
-		}
-
-		/* Hack -- those that hate water */
-		if (do_move && c_ptr->feat == FEAT_DEEP_WATER) {
-			if (!(r_ptr->flags3 & RF3_UNDEAD) &&
-				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ) &&
-				(zcave[oy][ox].feat != FEAT_DEEP_WATER))
-				do_move = FALSE;
-		}
-#endif	// 0
 
 		/* A monster is in the way */
 		if (do_move && c_ptr->m_idx > 0) {
@@ -8368,6 +8330,28 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		if (do_turn)  {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 			break;
+		}
+	}
+
+	/* AI_ANNOY special treatment: Actually attack when out of moves! */
+	if (!do_move && !do_turn && do_melee) {
+		player_type *q_ptr = get_melee_target(r_ptr, m_ptr, NULL, pfriend);
+
+		if (q_ptr) {
+			m_ptr->energy -= level_speed(&m_ptr->wpos);
+
+			/* Note: we ignore RF2_MOVE_BODY here, instead we always do a normal attack.
+			   This doesn't matter much though, since this is only for AI_ANNOY anyway. */
+
+			/* Do the attack */
+			(void)make_attack_melee(q_ptr->Ind, m_idx);
+
+			/* Took a turn */
+			do_turn = TRUE;
+			m_ptr->energy -= level_speed(&m_ptr->wpos);
+
+			/* Do not move */
+			do_move = FALSE;
 		}
 	}
 
