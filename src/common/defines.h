@@ -6508,24 +6508,24 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
  */
 
 #define creature_can_enter(R,C) \
-(cave_floor_grid(C) || /* Floor is open? */ \
-(((f_info[(C)->feat].flags1 & FF1_CAN_FEATHER) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
-((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY))) || \
-/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
-/* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
-(((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
-(((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
-/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
-((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
-/* POWERFUL monsters can hack down trees */ \
-((R)->flags2 & RF2_POWERFUL))) || \
-/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
-(((C)->feat == FEAT_MOUNTAIN) && \
-(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO))))
+    (cave_floor_grid(C) || /* Floor is open? */ \
+    (((f_info[(C)->feat].flags1 & FF1_CAN_FEATHER) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
+    ((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY))) || \
+    /* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+    /* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
+    (((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
+    (((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
+    /* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
+    ((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
+    /* POWERFUL monsters can hack down trees */ \
+    ((R)->flags2 & RF2_POWERFUL))) || \
+    /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+    (((C)->feat == FEAT_MOUNTAIN) && \
+    (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO))))
 
-//((C)->m_idx < 0)) /* Player ghost in wall XXX */
-// (((c_ptr->feat != FEAT_SHOP) && /* Tavern entrance?(need GetCS to check that) // if (c_ptr->feat == FEAT_SHOP_TAIL - 1) */
-// ((m_ptr->ai_state & AI_STATE_EFFECT) || monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))) && /* Tainted grid? */
+    //((C)->m_idx < 0)) /* Player ghost in wall XXX */
+    // (((c_ptr->feat != FEAT_SHOP) && /* Tavern entrance?(need GetCS to check that) // if (c_ptr->feat == FEAT_SHOP_TAIL - 1) */
+    // ((m_ptr->ai_state & AI_STATE_EFFECT) || monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))) && /* Tainted grid? */
 
 /*
  * Extended version of the above. This one is used in find_hiding and find_safety - C. Blue
