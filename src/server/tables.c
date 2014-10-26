@@ -2033,8 +2033,8 @@ player_race race_info[MAX_RACE] =
                 72, 6, 100, 25,
                 66, 4, 100, 20,
                 0,
-		//No archer, rogue
-		CF_ALL&~CFR&~CFA,
+		//No archer, rogue, Istar/Ranger/Runemster
+		CF_ALL&~CFR&~CFA&~CFI&~CFN&~CFU,
                 90,
                 {
 			{
@@ -2198,7 +2198,8 @@ player_race race_info[MAX_RACE] =
                 90, 10, 180, 20,
                 82, 10, 180, 15,
                 8,
-		CF_ALL,
+                // no Paladins
+		CF_ALL&~CFL,
                 115,
                 {
 #if 0
