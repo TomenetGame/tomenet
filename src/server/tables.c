@@ -2261,8 +2261,8 @@ player_race race_info[MAX_RACE] =
                 90, 10, 180, 20,
                 82, 10, 170, 15,
                 15,
-		//No paladin,druid,priest
-		CF_ALL&~CFL&~CFD&~CFP,
+		//No paladin,druid,priest,shaman/mimic
+		CF_ALL&~CFL&~CFD&~CFP&~CFM&~CFS,
                 125,
                 {
                         {
