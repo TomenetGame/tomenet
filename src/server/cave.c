@@ -7408,8 +7408,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
  * NOTE: We assume, that allow_terraforming() has already been checked before
  *       cave_set_feat_live() is actually called.
  */
-void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
-{
+void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	player_type *p_ptr;
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -7551,6 +7550,11 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 
 		/* Only works for players on the level */
 		if (!inarea(wpos, &p_ptr->wpos)) continue;
+
+#if 0 /* done in melee2.c when a monster eats a wall, so it's visible from afar, if level is mapped, that "walls turn black" */
+		/* Forget the spot */
+		Players[i]->cave_flag[y][x] &= ~CAVE_MARK;
+#endif
 
 		/* Notice */
 		note_spot(i, y, x);
