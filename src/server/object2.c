@@ -6366,7 +6366,10 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 		forge.note_utag = strlen(quark_str(unique_quark)); /* mark this note as 'unique monster quark' */
 	}
 
-	if (opening_chest) forge.owner = opening_chest;
+	if (opening_chest) {
+		forge.owner = opening_chest;
+		forge.mode = opening_chest_mode;
+	}
 
 	forge.marked2 = removal_marker;
 	forge.discount = object_discount; /* usually 0, except for creation from stolen acquirement scrolls */

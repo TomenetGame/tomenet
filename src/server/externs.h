@@ -227,6 +227,7 @@ extern bool inkey_scan;
 extern bool inkey_flag;
 extern s16b coin_type;
 extern s32b opening_chest;
+extern byte opening_chest_mode;
 extern bool scan_monsters;
 extern bool scan_objects;
 extern s32b o_nxt;

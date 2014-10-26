@@ -1211,6 +1211,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 		for (; number > 0; --number) {
 				/* Opening a chest -- this hack makes sure we don't find a chest in a chest, even though yo like chests */
 				opening_chest = o_ptr->owner;
+				opening_chest_mode = o_ptr->mode;
 
 				/* Determine the "value" of the items */
 //				object_level = ABS(o_ptr->pval) + 10;
