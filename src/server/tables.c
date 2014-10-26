@@ -2033,8 +2033,8 @@ player_race race_info[MAX_RACE] =
                 72, 6, 100, 25,
                 66, 4, 100, 20,
                 0,
-		//No archer, rogue, Istar/Ranger/Runemster
-		CF_ALL&~CFR&~CFA&~CFI&~CFN&~CFU,
+		//No archer, rogue
+		CF_ALL&~CFR&~CFA,
                 90,
                 {
 			{
