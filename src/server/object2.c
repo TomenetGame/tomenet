@@ -7156,6 +7156,21 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Don't generate cursed randarts.. */
 		if (cursed_p(o_ptr)) continue;
 
+		if (o_ptr->name2 == EGO_COMBAT)
+			switch (p_ptr->pclass) {
+			case CLASS_WARRIOR:
+			case CLASS_MIMIC:
+			case CLASS_RANGER:
+			case CLASS_ROGUE:
+			case CLASS_MINDCRAFTER:
+			case CLASS_PRIEST:
+			case CLASS_PALADIN:
+			case CLASS_DRUID:
+				break;
+			default:
+				continue;
+			}
+
 		/* analyze class (so far nothing is done here, but everything is determined by skills instead) */
 		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
