@@ -1100,7 +1100,7 @@ F:NEVER_MOVE | CAN_SWIM |
 F:STUPID | EMPTY_MIND | 
 F:IM_POIS | HURT_LITE | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
-S:1_IN_15 | 
+S:1_IN_10 |
 S:DRAIN_MANA
 D:It's a large pile of yellow flesh. 
 
@@ -1191,7 +1191,7 @@ F:NEVER_MOVE | CAN_SWIM |
 F:STUPID | EMPTY_MIND |
 F:RES_POIS | HURT_LITE | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
-S:1_IN_15 | 
+S:1_IN_10 | 
 S:DRAIN_MANA
 D:It is a large pile of silver flesh that sucks all light from its 
 D:surroundings. 
@@ -1288,7 +1288,7 @@ O:0:0:0:0
 B:GAZE:LOSE_STR:1d6
 F:NEVER_MOVE | CAN_FLY | DROP_CORPSE | 
 F:HURT_LITE | NO_FEAR | BASEANGBAND | HAS_LITE
-S:1_IN_11 | 
+S:1_IN_7 | 
 S:DRAIN_MANA
 D:A disembodied eye, crackling with energy. 
 
@@ -1611,7 +1611,7 @@ B:GAZE:UN_BONUS
 F:ATTR_ANY | RES_DISE | DROP_CORPSE | 
 F:NEVER_MOVE | CAN_FLY | 
 F:HURT_LITE | NO_FEAR | BASEANGBAND
-S:1_IN_9 | 
+S:1_IN_6 | 
 S:DRAIN_MANA | UNMAGIC
 D:A disembodied eye, crackling with magic. 
 
@@ -1962,7 +1962,7 @@ O:0:0:0:0
 B:GAZE:BLIND:2d6
 F:NEVER_MOVE | CAN_FLY | DROP_CORPSE | 
 F:HURT_LITE | NO_FEAR | BASEANGBAND | NO_CUT
-S:1_IN_7 | 
+S:1_IN_5 | 
 S:DRAIN_MANA | UNMAGIC
 D:A disembodied eye, bloodshot and nasty. 
 
@@ -2335,7 +2335,7 @@ B:CRAWL:ACID:2d4
 F:RAND_50 | 
 F:EMPTY_MIND |  CAN_SWIM | DROP_CORPSE | 
 F:IM_POIS | BASEANGBAND
-S:1_IN_11 | 
+S:1_IN_7 | 
 S:DRAIN_MANA
 D:It is a strange, slimy, icky creature. 
 
@@ -2902,7 +2902,7 @@ F:NEVER_MOVE |
 F:STUPID | EMPTY_MIND | RES_DISE |
 F:IM_POIS | CAN_SWIM |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
-S:1_IN_11 | 
+S:1_IN_7 | 
 S:DRAIN_MANA | UNMAGIC
 D:It is a strange glowing growth on the dungeon floor. 
 
@@ -3203,7 +3203,7 @@ F:NEVER_MOVE |
 F:STUPID | EMPTY_MIND | 
 F:IM_POIS | HURT_LITE | CAN_SWIM |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
-S:1_IN_11 | 
+S:1_IN_7 | 
 S:DRAIN_MANA
 D:Yum! It looks quite tasty.  It is a pulsing mound of glowing flesh. 
 
@@ -5712,7 +5712,7 @@ F:TAKE_ITEM | KILL_BODY | OPEN_DOOR | BASH_DOOR |
 F:IM_POIS | NO_FEAR | 
 F:MORTAL | BASEANGBAND | NO_CUT
 F:MULTIPLY
-S:1_IN_11 | 
+S:1_IN_7 | 
 S:DRAIN_MANA
 D:It is a strangely moving puddle. 
 
