@@ -616,6 +616,31 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 
 	my_fclose(fff);
 }
+const char *flags2highlight[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", ""};
+static int highlit_flags(char *line) {
+	const char **f = flags2highlight;
+	int i = 0;
+
+	while (*f[0]) {
+		if ((strstr(line, *f))) i += 4;
+		f++;
+	}
+	return i;
+}
+static void highlight_flags(char *info) {
+	const char **f = flags2highlight, a_val = 's';
+	char info_tmp[MAX_CHARS], *p2;
+
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f))) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377w%s\377%c", *f, a_val);
+			strcat(info_tmp, p2 + 7);
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+}
 void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
 	FILE *fff;
@@ -959,6 +984,9 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					strcpy(info, info_tmp);
 				}
 
+				/* Highlight certain important flags for quick readability */
+				highlight_flags(info);
+
 				/* add flags to existing line */
 				p1 = info;
 				while (p1) {
@@ -967,6 +995,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 						strcat(paste_lines[pl], p1);
 						Term_putstr(f_col, 7 + l, -1, ta_val, p1);
 						f_col += strlen(p1);
+						f_col -= highlit_flags(p1);
 
 						/* done */
 						break;
@@ -985,6 +1014,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							strcat(paste_lines[pl], p1);
 							Term_putstr(2, 7 + l, -1, ta_val, p1);
 							f_col = 2 + strlen(p1);
+							f_col -= highlit_flags(p1);
 
 							/* done */
 							break;
@@ -1003,6 +1033,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 								strcat(paste_lines[pl], p1);
 								Term_putstr(2, 7 + l, -1, ta_val, p1);
 								f_col = 2 + strlen(p1);
+								f_col -= highlit_flags(p1);
 
 								/* done */
 								break;
@@ -1014,6 +1045,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 								strcat(paste_lines[pl], info_tmp);
 								Term_putstr(f_col, 7 + l, -1, ta_val, info_tmp);
 								f_col += strlen(info_tmp);
+								f_col -= highlit_flags(info_tmp);
 								p1 = p2 + 1;
 
 								/* go on */
