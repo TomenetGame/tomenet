@@ -8529,8 +8529,8 @@ Genocide        See 'Scrolls'.
 *Destruction*   See 'Scrolls'.
 Wonder          Wands of wonder cast random magic spells.
 Starlight       Casts 8 beams of light in a star-shaped pattern.
-Curing          Cures being gorged, removes blindness/confusion/stun,
-                cures poison/cuts.
+Curing          Cures being gorged, poison and cuts,
+                removes blindness/confusion/stun/hallucinations.
 Probing         Tells you hit points, melee attacks, speed and armour class of
                 monsters in your line of sight.
 Detection       Detects treasures, objects, traps, secret doors, and
@@ -8550,10 +8550,10 @@ Power           Dispels nearby monsters.
 Holiness        Dispels nearby evil. Also protects you from evil for a while.
                 Cures poison/cuts, removes fear/stun, heals you somewhat.
 Healing         Staves:
-                Heals 300 to 400 hit points, depending on magic device skill,
+                Heals 250 to 400 hit points, depending on magic device skill,
                 cures stun and cuts.
                 Rods:
-                Heals 100 to 350 hit points, depending on magic device skill,
+                Heals 100 to 400 hit points, depending on magic device skill,
                 cures stun and cuts.
 Dragon's Breath These wands fire a ball of dragon odem (more powerful than
                 normal ball spell wands.) - randomly on each cast one of:
