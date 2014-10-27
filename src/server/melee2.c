@@ -2794,8 +2794,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		case RF5_OFFSET+9:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
-			if (p_ptr->csp)
-			{
+			if (p_ptr->csp) {
 				int r1;
 
 				/* Disturb if legal */
@@ -2805,21 +2804,19 @@ bool make_attack_spell(int Ind, int m_idx) {
 				msg_format(Ind, "%^s draws psychic energy from you!", m_name);
 
 				/* Attack power */
-				r1 = (randint(rlev) / 2) + 1;
+				r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4;
+
+				/* An open mind invites mana drain attacks */
+				if ((p_ptr->esp_link_flags & LINKF_OPEN)) r1 *= 2;
 
 				/* Full drain */
-				if (r1 >= p_ptr->csp)
-				{
+				if (r1 >= p_ptr->csp) {
 					r1 = p_ptr->csp;
 					p_ptr->csp = 0;
 					p_ptr->csp_frac = 0;
 				}
-
 				/* Partial drain */
-				else
-				{
-					p_ptr->csp -= r1;
-				}
+				else p_ptr->csp -= r1;
 
 				/* Redraw mana */
 				p_ptr->redraw |= (PR_MANA);
@@ -2828,20 +2825,16 @@ bool make_attack_spell(int Ind, int m_idx) {
 				p_ptr->window |= (PW_PLAYER);
 
 				/* Heal the monster */
-				if (m_ptr->hp < m_ptr->maxhp)
-				{
+				if (m_ptr->hp < m_ptr->maxhp) {
 					/* Heal */
-					m_ptr->hp += (6 * r1);
+					m_ptr->hp += r1 * 2;
 					if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
 
 					/* Redraw (later) if needed */
 					update_health(m_idx);
 
 					/* Special message */
-					if (seen)
-					{
-						msg_format(Ind, "%^s appears healthier.", m_name);
-					}
+					if (seen) msg_format(Ind, "%^s appears healthier.", m_name);
 				}
 			}
 			update_smart_learn(m_idx, DRS_MANA);
