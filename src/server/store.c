@@ -1874,8 +1874,9 @@ static void store_create(store_type *st_ptr) {
 					/* prevent books in SBM too? */
 					//else if (k_ptr->tval == TV_BOOK) continue;
 
-					/* make uber rods harder to get */
-					else if (k_ptr->tval == TV_ROD) continue;
+					/* make uber rods harder to get but still allow for shopping
+					   (with the 9-in-10: roughly similar felt chance as in XBM now) */
+					else if (k_ptr->tval == TV_ROD && !rand_int(10)) continue;
 
 					/* no easy golem parts */
 					else if (k_ptr->tval == TV_GOLEM) continue;
