@@ -3189,7 +3189,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 
 		case SV_STAFF_HEALING:
 		{
-			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 100))) ident = TRUE;
+			if (hp_player(Ind, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 150))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			break;
@@ -4053,6 +4053,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 
 		case SV_ROD_CURING:
 		{
+			if (set_image(Ind, 0)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
@@ -4066,21 +4067,13 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 
 		case SV_ROD_HEALING:
 		{
-#if 0
-			if (hp_player(Ind, 700)) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			if (o_ptr) o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
-			break;
-#else /* how about... */
 //scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 250))) ident = TRUE;
+			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 //a bit too much?	if (o_ptr) o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 			if (o_ptr) o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 			break;
-#endif
 		}
 
 		case SV_ROD_RESTORATION:
@@ -4631,6 +4624,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_CURING:
 		{
+			if (set_image(Ind, 0)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
@@ -4644,21 +4638,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_HEALING:
 		{
-#if 0
-			if (hp_player(Ind, 700)) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
-			break;
-#else /* how about... */
 //scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 250))) ident = TRUE;
+			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 //a bit too much?	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 			o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 			break;
-#endif
 		}
 
 		case SV_ROD_RESTORATION:
