@@ -1304,23 +1304,15 @@ void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3
 }
 
 /* Return the value of the flags the object has... */
-s32b flag_cost(object_type * o_ptr, int plusses)
-{
+s32b flag_cost(object_type *o_ptr, int plusses) {
 	s32b total = 0; //, am;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
+
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-	if (f5 & TR5_TEMPORARY)
-	{
-		return 0;
-	}
-	/*
-	if (f4 & TR4_CURSE_NO_DROP)
-	{
-		return 0;
-	}
-	*/
+	if (f5 & TR5_TEMPORARY) return 0;
+	//if (f4 & TR4_CURSE_NO_DROP) return 0;
 
 	/* Hack - This shouldn't be here, still.. */
 	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -1328,11 +1320,10 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 
 	if (f3 & TR3_WRAITH) total += 250000;
 	if (f5 & TR5_INVIS) total += 30000;
-	if (!(f4 & TR4_FUEL_LITE))
-	{
-	        if (f3 & TR3_LITE1) total += 750;
-	        if (f4 & TR4_LITE2) total += 1250;
-	        if (f4 & TR4_LITE3) total += 2750;
+	if (!(f4 & TR4_FUEL_LITE)) {
+		if (f3 & TR3_LITE1) total += 750;
+		if (f4 & TR4_LITE2) total += 1250;
+		if (f4 & TR4_LITE3) total += 2750;
 	}
 
 	if ((!(f4 & TR4_FUEL_LITE)) && (f3 & TR3_IGNORE_FIRE)) total += 100;
@@ -1504,6 +1495,8 @@ s32b flag_cost(object_type * o_ptr, int plusses)
  *
  * XXX: 'Ego randarts' are not handled correltly, so be careful!
  */
+/* Ego powers multiply the price instead of adding? */
+#define EGO_MDEV_FACTOR
 s64b object_value_real(int Ind, object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -1560,6 +1553,23 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 			/* Hack -- "worthless" ego-items */
 			if (!e_ptr->cost) return (0L);
 
+#ifdef EGO_MDEV_FACTOR
+			/* Hack: Ego magic devices cost a multiple of their base price */
+			if (is_magic_device(o_ptr->tval)) {
+				/* Hack -- Reward the ego-item with a bonus */
+				value += e_ptr->cost / 2;
+
+				/* these egos are defined to multiply the price.. */
+				switch (o_ptr->name2) {
+				case EGO_PLENTY:	value = (value * 3) / 2; break;
+				case EGO_RSIMPLICITY:	value *= 2; break;
+				case EGO_RCHARGING:	value *= 2; break;
+				case EGO_RISTARI:	value *= 3; break;
+				/* for undefined egos, just add up to the normal ego cost */
+				default:		value += e_ptr->cost / 2;
+				}
+			} else
+#endif
 			/* Hack -- Reward the ego-item with a bonus */
 			value += e_ptr->cost;
 
@@ -1576,6 +1586,23 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				/* Hack -- "worthless" ego-items */
 				if (!e_ptr->cost) return (0L);
 
+#ifdef EGO_MDEV_FACTOR
+				/* Hack: Ego magic devices cost a multiple of their base price */
+				if (is_magic_device(o_ptr->tval)) {
+					/* Hack -- Reward the ego-item with a bonus */
+					value += e_ptr->cost / 2;
+
+					/* these egos are defined to multiply the price.. */
+					switch (o_ptr->name2b) {
+					case EGO_PLENTY:	value = (value * 3) / 2; break;
+					case EGO_RSIMPLICITY:	value *= 2; break;
+					case EGO_RCHARGING:	value *= 2; break;
+					case EGO_RISTARI:	value *= 3; break;
+					/* for undefined egos, just add up to the normal ego cost */
+					default:		value += e_ptr->cost / 2;
+					}
+				} else
+#endif
 				/* Hack -- Reward the ego-item with a bonus */
 				value += e_ptr->cost;
 			}
