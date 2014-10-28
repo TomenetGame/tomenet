@@ -2200,6 +2200,7 @@ void msg_print(int Ind, cptr msg_raw)
 				    (msg[msg_scan - 1] >= 'A' && msg[msg_scan - 1] <= 'Z') ||
 				    (msg[msg_scan - 1] >= 'a' && msg[msg_scan - 1] <= 'z') ||
 				    (msg[msg_scan - 1] >= '0' && msg[msg_scan - 1] <= '9') ||
+				    msg[msg_scan - 1] == '_' || /* for pasting lore-flags to chat! */
 				    msg[msg_scan - 1] == '(' ||
 				    msg[msg_scan - 1] == '[' ||
 				    msg[msg_scan - 1] == '{' ||
@@ -2229,6 +2230,7 @@ void msg_print(int Ind, cptr msg_raw)
 #if 1 /* don't break smileys? */
 				    msg[msg_scan] == '-' ||
 #endif
+				    msg[msg_scan] == '_' ||/* for pasting lore-flags to chat! */
 				    msg[msg_scan] == ')' ||
 				    msg[msg_scan] == ']' ||
 				    msg[msg_scan] == '}' ||
@@ -2255,6 +2257,9 @@ void msg_print(int Ind, cptr msg_raw)
 						msg[space_scan - 1] == ')' ||
 						msg[space_scan - 1] == ']' ||
 						msg[space_scan - 1] == '}' ||
+#endif
+#if 0
+						msg[space_scan - 1] == '_' ||/* for pasting lore-flags to chat! */
 #endif
 						msg[space_scan - 1] == '(' ||
 						msg[space_scan - 1] == '[' ||
