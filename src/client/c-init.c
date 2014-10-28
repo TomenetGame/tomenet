@@ -30,6 +30,10 @@ const struct module sound_modules[] = {
 };
 #endif /* USE_SOUND_2010 */
 
+/* Use improved method for pasting monster/artifact lore into chat */
+#define NEW_PASTELINE_METHOD
+
+
 static void init_arrays(void) {
 	int i;
 
@@ -715,7 +719,6 @@ static void highlight_flags(char *info) {
 		f++;
 	}
 }
-#define NEW_PASTELINE_METHOD
 void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
 	FILE *fff;
@@ -1084,7 +1087,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				/* Highlight certain important flags for quick readability */
 				highlight_flags(info);
 
-#ifdef NEW_PASTELINE_METHOD /* todo: make it work */
+#ifdef NEW_PASTELINE_METHOD
 				/* add flags to existing paste_lines line */
 				/* 8 = 6 for colour codes etc around cname + 2 for paranoia */
 				p1 = info;
@@ -1245,7 +1248,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					}
 					/* try to split up the line */
 					else {
-						/* can't split up F line? */
+						/* can't split up S line? */
 						if (!(p2 = strchr(p1, ' '))) {
 							/* start next line */
 							l++;
@@ -1718,8 +1721,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	bool got_W_line = FALSE; /* usually only W: lines are affected, right? */
 	bool got_F_lines = FALSE, got_P_line = FALSE;
 	int f_col = 0; /* used for F flags */
-	const char a_key = 'u', a_val = 's'; /* 'Speed:', 'Normal' */
-	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE; /* 'Speed:', 'Normal' */
+	const char a_key = 'u', a_val = 's', a_flag = 's'; /* 'Speed:', 'Normal' */
+	const char ta_key = TERM_UMBER, ta_flag = TERM_SLATE;//ta_val = TERM_SLATE, /* 'Speed:', 'Normal' */
 
 	int tval, sval = 0, v_ac, v_acx, v_hit, v_dam, rarity;
 	char v_ddice[10];
@@ -2031,7 +2034,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				if ((p2 = strstr(info, "SPECIAL_GENE"))) {
 					strcpy(info_tmp, info);
 #if 0
-					sprintf(info_tmp + (p2 - info), "\377ySPECIAL_GENE\377%c", a_val);
+					sprintf(info_tmp + (p2 - info), "\377ySPECIAL_GENE\377%c", a_flag);
 #else /* strip instead, since we have 'Carried by a dungeon boss' now */
 					info_tmp[(p2 - info)] = '\0';
 #endif
@@ -2040,7 +2043,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				}
 				if ((p2 = strstr(info, "WINNERS_ONLY"))) {
 					strcpy(info_tmp, info);
-					sprintf(info_tmp + (p2 - info), "\377vWINNERS_ONLY\377%c", a_val);
+					sprintf(info_tmp + (p2 - info), "\377vWINNERS_ONLY\377%c", a_flag);
 					strcat(info_tmp, p2 + 12);
 					strcpy(info, info_tmp);
 				}
@@ -2071,13 +2074,42 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					strcpy(info, info_tmp);
 				}
 
+#ifdef NEW_PASTELINE_METHOD
+				/* add flags to existing paste_lines line */
+				/* 8 = 6 for colour codes etc around cname + 2 for paranoia */
+				p1 = info;
+				if (p1) {//paranoia
+					if (strlen(paste_lines[pl]) + strlen(p1) < MSG_LEN - 1 - strlen(cname) - 8 - 7) {//7 = world server tax (pure paranoia here)
+						strcat(paste_lines[pl], p1);
+					} else { /* split it up */
+						if (!(p2 = strchr(p1 + 1, ' '))) { /* can't split? */
+							/* start next line */
+							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p1));
+						} else { /* split ok */
+							char *p3;
+							int p;
+
+							p3 = p2 = p1;
+							while ((p2 = strchr(p2 + 1, ' ')) && strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) < MSG_LEN - 1 - strlen(cname) - 8 - 7) p3 = p2;
+							//paste_lines[pl][strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) - 1] = 0;
+							p = strlen(paste_lines[pl]) + strlen(p1) - strlen(p3);
+							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3));
+							paste_lines[pl][p] = 0;
+							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p3 + 1));
+						}
+					}
+				}
+#endif
+
 				/* add flags to existing line */
 				p1 = info;
 				while (p1) {
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
+#ifndef NEW_PASTELINE_METHOD
 						strcat(paste_lines[pl], p1);
-						Term_putstr(f_col, 7 + l, -1, ta_val, p1);
+#endif
+						Term_putstr(f_col, 7 + l, -1, ta_flag, p1);
 						f_col += strlen(p1);
 						if (strstr(p1, "SPECIAL_GENE")) f_col -= 4;
 						if (strstr(p1, "WINNERS_ONLY")) f_col -= 4;
@@ -2093,11 +2125,15 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 							l++;
 							if (++pf_col_cnt == 2) {
 								pf_col_cnt = 0;
+#ifndef NEW_PASTELINE_METHOD
 								pl++;
-								strcpy(paste_lines[pl], format("\377%c", a_val));
+								strcpy(paste_lines[pl], format("\377%c", a_flag));
+#endif
 							}
+#ifndef NEW_PASTELINE_METHOD
 							strcat(paste_lines[pl], p1);
-							Term_putstr(2, 7 + l, -1, ta_val, p1);
+#endif
+							Term_putstr(2, 7 + l, -1, ta_flag, p1);
 							f_col = 2 + strlen(p1);
 							if (strstr(p1, "SPECIAL_GENE")) f_col -= 4;
 							if (strstr(p1, "WINNERS_ONLY")) f_col -= 4;
@@ -2113,11 +2149,15 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 								l++;
 								if (++pf_col_cnt == 2) {
 									pf_col_cnt = 0;
+#ifndef NEW_PASTELINE_METHOD
 									pl++;
-									strcpy(paste_lines[pl], format("\377%c", a_val));
+									strcpy(paste_lines[pl], format("\377%c", a_flag));
+#endif
 								}
+#ifndef NEW_PASTELINE_METHOD
 								strcat(paste_lines[pl], p1);
-								Term_putstr(2, 7 + l, -1, ta_val, p1);
+#endif
+								Term_putstr(2, 7 + l, -1, ta_flag, p1);
 								f_col = 2 + strlen(p1);
 								if (strstr(p1, "SPECIAL_GENE")) f_col -= 4;
 								if (strstr(p1, "WINNERS_ONLY")) f_col -= 4;
@@ -2129,8 +2169,10 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 							else {
 								strcpy(info_tmp, p1);
 								info_tmp[p2 - p1 + 1] = '\0';
+#ifndef NEW_PASTELINE_METHOD
 								strcat(paste_lines[pl], info_tmp);
-								Term_putstr(f_col, 7 + l, -1, ta_val, info_tmp);
+#endif
+								Term_putstr(f_col, 7 + l, -1, ta_flag, info_tmp);
 								f_col += strlen(info_tmp);
 								if (strstr(info_tmp, "SPECIAL_GENE")) f_col -= 4;
 								if (strstr(info_tmp, "WINNERS_ONLY")) f_col -= 4;
