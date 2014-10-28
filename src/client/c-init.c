@@ -619,7 +619,8 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 const char *flags2highlight[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", ""};
 const char *flags2highlight2[] = {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC", "SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", ""};
 const char *flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", ""};//omitting DRAGONRIDER, NONLIVING, SPIDER
-const char *flags2highlight4[] = {"UNIQUE", "NAZGUL", ""};//omitting NEUTRAL, FRIENDLY, PET, QUESTOR
+const char *flags2highlight4[] = {"UNIQUE", "NAZGUL", ""};//no hints about dungeon/game boss status available or used
+const char *flags2highlight5[] = {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR", ""};//currently unavailable
 static int highlit_flags(char *line) {
 	const char **f = flags2highlight;
 	char *p2;
@@ -648,10 +649,16 @@ static int highlit_flags(char *line) {
 		f++;
 	}
 
+	f = flags2highlight5;
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
+		f++;
+	}
+
 	return i;
 }
 static void highlight_flags(char *info) {
-	const char **f = flags2highlight, a_flag = 'D';
+	const char **f = flags2highlight, a_flag = 's';
 	char info_tmp[MAX_CHARS], *p2;
 
 	while (*f[0]) {
@@ -696,6 +703,17 @@ static void highlight_flags(char *info) {
 		}
 		f++;
 	}
+
+	f = flags2highlight5;
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377g%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
 }
 void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
@@ -710,8 +728,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	bool set_F_colon = FALSE, set_S_colon = FALSE;
 #endif
 	int f_col = 0; /* used for both, F flags and S flags */
-	const char a_key = 'u', a_val = 's', a_atk = 's', a_flag = 'D'; /* 'Speed:', 'Normal', 4xmelee */
-	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE, ta_atk = TERM_SLATE, ta_flag = TERM_L_DARK; /* 'Speed:', 'Normal', 4xmelee */
+	const char a_key = 'u', a_val = 's', a_atk = 's', a_flag = 's'; /* 'Speed:', 'Normal', 4xmelee */
+	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE, ta_atk = TERM_SLATE, ta_flag = TERM_SLATE; /* 'Speed:', 'Normal', 4xmelee */
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
@@ -1037,6 +1055,12 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					strcpy(info_tmp, info);
 					info_tmp[(p2 - info)] = '\0';
 					strcat(info_tmp, p2 + 7);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "SPECIAL_GENE"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 13);
 					strcpy(info, info_tmp);
 				}
 

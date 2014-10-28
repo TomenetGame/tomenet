@@ -5311,7 +5311,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF9_WYRM_PROTECT	0x00000400      /* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
 #define RF9_DOPPLEGANGER	0x00000800      /* The monster looks like you */
 #define RF9_ONLY_DEPTH			0x00001000      /* The monster can only be generated at the GIVEN depth */
-#define RF9_SPECIAL_GENE		0x00002000      /* The monster can only be generated in special conditions like quests, special dungeons, ... */
+#define RF9_SPECIAL_GENE		0x00002000      /* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
 #define RF9_NEVER_GENE			0x00004000      /* The monster cannot be normaly generated */
 /* no_conf, no_fear, no_sleep, res_<others> already exist (C. Blue) */
 /* These flags are added to r_info for improved logic in mimic forms (eg chaos hound gives res_chaos) */
