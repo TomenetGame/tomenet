@@ -715,7 +715,7 @@ static void highlight_flags(char *info) {
 		f++;
 	}
 }
-//#define NEW_PASTELINE_METHOD
+#define NEW_PASTELINE_METHOD
 void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
 	FILE *fff;
@@ -1084,31 +1084,36 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				/* Highlight certain important flags for quick readability */
 				highlight_flags(info);
 
-				/* add flags to existing line */
-				p1 = info;
-				while (p1) {
 #ifdef NEW_PASTELINE_METHOD /* todo: make it work */
-					/* add flags to existing paste_lines line */
-					/* 6 for colour codes etc around cname, 2 for paranoia */
-					if (strlen(paste_lines[pl] + strlen(p1)) < MSG_LEN - 1 - strlen(cname) * 3 - (6 + 2) * 3) {
+				/* add flags to existing paste_lines line */
+				/* 8 = 6 for colour codes etc around cname + 2 for paranoia */
+				p1 = info;
+				if (p1) {//paranoia
+					if (strlen(paste_lines[pl]) + strlen(p1) < MSG_LEN - 1 - strlen(cname) - 8 - 7) {//7 = world server tax (pure paranoia here)
 						strcat(paste_lines[pl], p1);
 					} else { /* split it up */
 						if (!(p2 = strchr(p1 + 1, ' '))) { /* can't split? */
 							/* start next line */
-							pl++;
-							strcpy(paste_lines[pl], format("\377%c", a_flag));
+							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p1));
 						} else { /* split ok */
 							char *p3;
-							p2 = p1;
-							while ((p2 = strchr(p2 + 1, ' '))) p3 = p2;
-							paste_lines[pl][strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) - 0] = 0;
-							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3) - 1);
-							pl++;
-							strcpy(paste_lines[pl], format("\377%c", a_flag));
-							strcat(paste_lines[pl], p3 + 1);
+							int p;
+
+							p3 = p2 = p1;
+							while ((p2 = strchr(p2 + 1, ' ')) && strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) < MSG_LEN - 1 - strlen(cname) - 8 - 7) p3 = p2;
+							//paste_lines[pl][strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) - 1] = 0;
+							p = strlen(paste_lines[pl]) + strlen(p1) - strlen(p3);
+							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3));
+							paste_lines[pl][p] = 0;
+							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p3 + 1));
 						}
 					}
+				}
 #endif
+
+				/* add flags to existing line */
+				p1 = info;
+				while (p1) {
 
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
