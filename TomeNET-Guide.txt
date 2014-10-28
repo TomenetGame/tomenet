@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. October 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. October 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9424,6 +9424,7 @@ Weapons and other items that you can equip may be 'vampiric' (see (5.8)),
 meaning that they drain life from your target.
 Mimics who use a vampire form and players of 'Vampire' race will also get a
 vampiric 'brand' on their melee attacks (see (6.7)).
+Vampirism does not work with magic, only with physical attacks.
 
 Vampiric life draining heals you with a part of the damage you afflicted on
 your target, almost each hit! The more damage you deal and the more attacks per
