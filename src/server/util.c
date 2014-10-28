@@ -3816,6 +3816,9 @@ static void player_talk_aux(int Ind, char *message)
 		}
 #endif
 
+/* --- todo: change all the NAME_LEN in 'prevent buffer overflow' to the actual name length,
+             so clients can type the full amount of characters in chat messages again. */
+
 		/* Send message to target party */
 		if (p_ptr->mutedchat < 2) {
 #ifdef GROUP_CHAT_NOCLUTTER
