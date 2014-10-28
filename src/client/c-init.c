@@ -715,6 +715,7 @@ static void highlight_flags(char *info) {
 		f++;
 	}
 }
+//#define NEW_PASTELINE_METHOD
 void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
 	FILE *fff;
@@ -1086,9 +1087,34 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				/* add flags to existing line */
 				p1 = info;
 				while (p1) {
+#ifdef NEW_PASTELINE_METHOD /* todo: make it work */
+					/* add flags to existing paste_lines line */
+					/* 6 for colour codes etc around cname, 2 for paranoia */
+					if (strlen(paste_lines[pl] + strlen(p1)) < MSG_LEN - 1 - strlen(cname) * 3 - (6 + 2) * 3) {
+						strcat(paste_lines[pl], p1);
+					} else { /* split it up */
+						if (!(p2 = strchr(p1 + 1, ' '))) { /* can't split? */
+							/* start next line */
+							pl++;
+							strcpy(paste_lines[pl], format("\377%c", a_flag));
+						} else { /* split ok */
+							char *p3;
+							p2 = p1;
+							while ((p2 = strchr(p2 + 1, ' '))) p3 = p2;
+							paste_lines[pl][strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) - 0] = 0;
+							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3) - 1);
+							pl++;
+							strcpy(paste_lines[pl], format("\377%c", a_flag));
+							strcat(paste_lines[pl], p3 + 1);
+						}
+					}
+#endif
+
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
+#ifndef NEW_PASTELINE_METHOD
 						strcat(paste_lines[pl], p1);
+#endif
 						Term_putstr(f_col, 7 + l, -1, ta_flag, p1);
 						f_col += strlen(p1);
 						f_col -= highlit_flags(p1);
@@ -1104,10 +1130,14 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							l++;
 							if (++pf_col_cnt == 2) {
 								pf_col_cnt = 0;
+#ifndef NEW_PASTELINE_METHOD
 								pl++;
 								strcpy(paste_lines[pl], format("\377%c", a_flag));
+#endif
 							}
+#ifndef NEW_PASTELINE_METHOD
 							strcat(paste_lines[pl], p1);
+#endif
 							Term_putstr(2, 7 + l, -1, ta_flag, p1);
 							f_col = 2 + strlen(p1);
 							f_col -= highlit_flags(p1);
@@ -1123,10 +1153,14 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 								l++;
 								if (++pf_col_cnt == 2) {
 									pf_col_cnt = 0;
+#ifndef NEW_PASTELINE_METHOD
 									pl++;
 									strcpy(paste_lines[pl], format("\377%c", a_flag));
+#endif
 								}
+#ifndef NEW_PASTELINE_METHOD
 								strcat(paste_lines[pl], p1);
+#endif
 								Term_putstr(2, 7 + l, -1, ta_flag, p1);
 								f_col = 2 + strlen(p1);
 								f_col -= highlit_flags(p1);
@@ -1138,7 +1172,9 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							else {
 								strcpy(info_tmp, p1);
 								info_tmp[p2 - p1 + 1] = '\0';
+#ifndef NEW_PASTELINE_METHOD
 								strcat(paste_lines[pl], info_tmp);
+#endif
 								Term_putstr(f_col, 7 + l, -1, ta_flag, info_tmp);
 								f_col += strlen(info_tmp);
 								f_col -= highlit_flags(info_tmp);
