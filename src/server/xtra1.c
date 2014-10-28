@@ -6960,7 +6960,6 @@ void global_event_signup(int Ind, int n, cptr parm) {
 	/* for monster type: */
 	char c[80], parm2[80], *cp, *p2p;
 	int r_found = 0;
-	bool r_impossible = FALSE;
 
 #ifdef GE_ARENA_ALLOW_EGO
 	/* for ego monsters: */
@@ -7047,8 +7046,8 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		while (*p2p == ' ') p2p++;
 		while (p2p[strlen(p2p) - 1] == ' ') p2p[strlen(p2p) - 1] = 0;
 
-	        /* Scan the monster races */
-	        for (i = 1; i < MAX_R_IDX; i++) {
+		/* Scan the monster races */
+		for (i = 1; i < MAX_R_IDX; i++) {
 			/* get monster race name */
 			strcpy(c, r_info[i].name + r_name);
 			if (!strlen(c)) continue;
@@ -7063,17 +7062,6 @@ void global_event_signup(int Ind, int n, cptr parm) {
 				r_found = i;
 				no_ego = TRUE;
 				re_found = 0;
-
-				if (!is_admin(p_ptr) &&
-				    ((r_info[i].flags1 & RF1_UNIQUE) ||
-				    (r_info[i].flags1 & RF1_QUESTOR) ||
-				    (r_info[i].flags7 & RF7_NEVER_ACT) ||
-				    (r_info[i].flags7 & RF7_PET) ||
-				    (r_info[i].flags7 & RF7_NEUTRAL) ||
-				    (r_info[i].flags7 & RF7_FRIENDLY) ||
-				    (r_info[i].flags8 & RF8_JOKEANGBAND) ||
-				    (r_info[i].rarity == 255)))
-					r_impossible = TRUE;
 
 				/* done. No room for ego power. */
 				break;
@@ -7211,10 +7199,6 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			msg_format(Ind, "\377yCouldn't find base monster (punctuation and name must be exact).", n);
 			return;
 		}
-		if (r_impossible) {
-			msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
-			return;
-		}
 #ifdef GE_ARENA_ALLOW_EGO
 		if (re_impossible) {
 			msg_print(Ind, "\377ySorry, that ego creature is beyond the wizards' abilities.");
@@ -7228,6 +7212,20 @@ void global_event_signup(int Ind, int n, cptr parm) {
 
 		/* if we found a race and ego that somewhat fit, prefer that over just a race without ego, that somewhat fits */
 		if (re_found) r_found = re_r;
+
+		/* base monster type is not allowed? */
+		if (!is_admin(p_ptr) &&
+		    ((r_info[r_found].flags1 & RF1_UNIQUE) ||
+		    (r_info[r_found].flags1 & RF1_QUESTOR) ||
+		    (r_info[r_found].flags7 & RF7_NEVER_ACT) ||
+		    (r_info[r_found].flags7 & RF7_PET) ||
+		    (r_info[r_found].flags7 & RF7_NEUTRAL) ||
+		    (r_info[r_found].flags7 & RF7_FRIENDLY) ||
+		    (r_info[r_found].flags8 & RF8_JOKEANGBAND) ||
+		    (r_info[r_found].rarity == 255))) {
+			msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
+			return;
+		}
 
 		ge->extra[1] = r_found;
 #ifndef GE_ARENA_ALLOW_EGO
