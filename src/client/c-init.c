@@ -844,8 +844,18 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				info_val = atoi(p1);
 				if (info_val == 0) strcat(info, format("\377%cAwake\377%c.", a_val, a_key));
 				else {
+#if 0
 					sprintf(info_tmp, "\377%cSleeps (%d)\377%c.", a_val, info_val, a_key);
 					strcat(info, info_tmp);
+#else
+					/* use /cough (wakeup_monsters_somewhat()) effectiveness for reference :D */
+					//16:1, 26:1 or 2
+					if (info_val <= 26) sprintf(info_tmp, "\377%cSleeps lightly\377%c.", a_val, a_key);//1 or 2 coughs
+					else if (info_val <= 80) sprintf(info_tmp, "\377%cSleeps\377%c.", a_val, a_key);//big chunk
+					else if (info_val <= 120) sprintf(info_tmp, "\377%cSleeps\377%c.", a_val, a_key);//big chunk
+					else sprintf(info_tmp, "\377%cSleeps deeply\377%c.", a_val, a_key);//small amount
+					strcat(info, info_tmp);
+#endif
 				}
 			    /* all done, display: */
 				strcpy(paste_lines[++pl], format("\377%c", a_key));
@@ -1057,10 +1067,16 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					strcat(info_tmp, p2 + 7);
 					strcpy(info, info_tmp);
 				}
-				if ((p2 = strstr(info, "SPECIAL_GENE"))) {
+				if ((p2 = strstr(info, "SPECIAL_GENE"))) {/* currently not doing anything for monsters, only for artifacts */
 					strcpy(info_tmp, info);
 					info_tmp[(p2 - info)] = '\0';
 					strcat(info_tmp, p2 + 13);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "FORCE_SLEEP"))) {/* doesn't do anything anymore (was: start out with low energy) */
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 12);
 					strcpy(info, info_tmp);
 				}
 
