@@ -617,25 +617,81 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	my_fclose(fff);
 }
 const char *flags2highlight[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", ""};
+const char *flags2highlight2[] = {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC", "SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", ""};
+const char *flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", ""};//omitting DRAGONRIDER, NONLIVING, SPIDER
+const char *flags2highlight4[] = {"UNIQUE", "NAZGUL", ""};//omitting NEUTRAL, FRIENDLY, PET, QUESTOR
 static int highlit_flags(char *line) {
 	const char **f = flags2highlight;
+	char *p2;
 	int i = 0;
 
 	while (*f[0]) {
-		if ((strstr(line, *f))) i += 4;
+		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
 		f++;
 	}
+
+	f = flags2highlight2;
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
+		f++;
+	}
+
+	f = flags2highlight3;
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
+		f++;
+	}
+
+	f = flags2highlight4;
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
+		f++;
+	}
+
 	return i;
 }
 static void highlight_flags(char *info) {
-	const char **f = flags2highlight, a_val = 's';
+	const char **f = flags2highlight, a_flag = 'D';
 	char info_tmp[MAX_CHARS], *p2;
 
 	while (*f[0]) {
-		if ((p2 = strstr(info, *f))) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
 			strcpy(info_tmp, info);
-			sprintf(info_tmp + (p2 - info), "\377w%s\377%c", *f, a_val);
-			strcat(info_tmp, p2 + 7);
+			sprintf(info_tmp + (p2 - info), "\377w%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+
+	f = flags2highlight2;
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377y%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+
+	f = flags2highlight3;
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377o%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+
+	f = flags2highlight4;
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377U%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
 			strcpy(info, info_tmp);
 		}
 		f++;
@@ -654,8 +710,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	bool set_F_colon = FALSE, set_S_colon = FALSE;
 #endif
 	int f_col = 0; /* used for both, F flags and S flags */
-	const char a_key = 'u', a_val = 's', a_atk = 's'; /* 'Speed:', 'Normal', 4xmelee */
-	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE, ta_atk = TERM_SLATE; /* 'Speed:', 'Normal', 4xmelee */
+	const char a_key = 'u', a_val = 's', a_atk = 's', a_flag = 'D'; /* 'Speed:', 'Normal', 4xmelee */
+	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE, ta_atk = TERM_SLATE, ta_flag = TERM_L_DARK; /* 'Speed:', 'Normal', 4xmelee */
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
@@ -958,7 +1014,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					/* fix missing newline from 'B:' lines */
 					l++;
 					Term_putstr(1, 7 + l, -1, ta_key, "Flags:");
-					strcpy(paste_lines[++pl], format("\377%cFlags: \377%c", a_key, a_val));
+					strcpy(paste_lines[++pl], format("\377%cFlags: \377%c", a_key, a_flag));
 					f_col = 8;
 					got_F_lines = TRUE;
 				}
@@ -993,7 +1049,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
 						strcat(paste_lines[pl], p1);
-						Term_putstr(f_col, 7 + l, -1, ta_val, p1);
+						Term_putstr(f_col, 7 + l, -1, ta_flag, p1);
 						f_col += strlen(p1);
 						f_col -= highlit_flags(p1);
 
@@ -1009,10 +1065,10 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							if (++pf_col_cnt == 3) {
 								pf_col_cnt = 0;
 								pl++;
-								strcpy(paste_lines[pl], format("\377%c", a_val));
+								strcpy(paste_lines[pl], format("\377%c", a_flag));
 							}
 							strcat(paste_lines[pl], p1);
-							Term_putstr(2, 7 + l, -1, ta_val, p1);
+							Term_putstr(2, 7 + l, -1, ta_flag, p1);
 							f_col = 2 + strlen(p1);
 							f_col -= highlit_flags(p1);
 
@@ -1028,10 +1084,10 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 								if (++pf_col_cnt == 3) {
 									pf_col_cnt = 0;
 									pl++;
-									strcpy(paste_lines[pl], format("\377%c", a_val));
+									strcpy(paste_lines[pl], format("\377%c", a_flag));
 								}
 								strcat(paste_lines[pl], p1);
-								Term_putstr(2, 7 + l, -1, ta_val, p1);
+								Term_putstr(2, 7 + l, -1, ta_flag, p1);
 								f_col = 2 + strlen(p1);
 								f_col -= highlit_flags(p1);
 
@@ -1043,7 +1099,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 								strcpy(info_tmp, p1);
 								info_tmp[p2 - p1 + 1] = '\0';
 								strcat(paste_lines[pl], info_tmp);
-								Term_putstr(f_col, 7 + l, -1, ta_val, info_tmp);
+								Term_putstr(f_col, 7 + l, -1, ta_flag, info_tmp);
 								f_col += strlen(info_tmp);
 								f_col -= highlit_flags(info_tmp);
 								p1 = p2 + 1;
