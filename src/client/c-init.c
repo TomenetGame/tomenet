@@ -1102,7 +1102,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 						if (!(p2 = strchr(p1, ' '))) {
 							/* start next line */
 							l++;
-							if (++pf_col_cnt == 3) {
+							if (++pf_col_cnt == 2) {
 								pf_col_cnt = 0;
 								pl++;
 								strcpy(paste_lines[pl], format("\377%c", a_flag));
@@ -1121,7 +1121,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							if (p2 - p1 + f_col >= 80) {
 								/* start next line */
 								l++;
-								if (++pf_col_cnt == 3) {
+								if (++pf_col_cnt == 2) {
 									pf_col_cnt = 0;
 									pl++;
 									strcpy(paste_lines[pl], format("\377%c", a_flag));
@@ -1208,7 +1208,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 						if (!(p2 = strchr(p1, ' '))) {
 							/* start next line */
 							l++;
-							if (++pf_col_cnt == 3) {
+							if (++pf_col_cnt == 2) {
 								pf_col_cnt = 0;
 								pl++;
 								strcpy(paste_lines[pl], format("\377%c", a_val));
@@ -1226,7 +1226,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							if (p2 - p1 + f_col >= 80) {
 								/* start next line */
 								l++;
-								if (++pf_col_cnt == 3) {
+								if (++pf_col_cnt == 2) {
 									pf_col_cnt = 0;
 									pl++;
 									strcpy(paste_lines[pl], format("\377%c", a_val));
@@ -2050,7 +2050,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 						if (!(p2 = strchr(p1, ' '))) {
 							/* start next line */
 							l++;
-							if (++pf_col_cnt == 3) {
+							if (++pf_col_cnt == 2) {
 								pf_col_cnt = 0;
 								pl++;
 								strcpy(paste_lines[pl], format("\377%c", a_val));
@@ -2070,7 +2070,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 							if (p2 - p1 + f_col >= 80) {
 								/* start next line */
 								l++;
-								if (++pf_col_cnt == 3) {
+								if (++pf_col_cnt == 2) {
 									pf_col_cnt = 0;
 									pl++;
 									strcpy(paste_lines[pl], format("\377%c", a_val));
