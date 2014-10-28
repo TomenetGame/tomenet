@@ -3175,7 +3175,10 @@ void calc_boni(int Ind) {
 	else if (p_ptr->prace == RACE_HALF_ORC) { p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK; }
 
 	/* Half-Troll */
-	else if (p_ptr->prace == RACE_HALF_TROLL) { p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR; }
+	else if (p_ptr->prace == RACE_HALF_TROLL) {
+		p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
+		p_ptr->regenerate = TRUE; csheet_boni->cb[5] |= CB6_RRGHP;
+	}
 
 	/* Dunadan */
 	else if (p_ptr->prace == RACE_DUNADAN) { p_ptr->sustain_con = TRUE;  csheet_boni[14].cb[11] |= CB12_RSCON; }

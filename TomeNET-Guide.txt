@@ -11197,7 +11197,8 @@ Warrior is strongly recommended.
     Half-trolls have their strength sustained. They are very strong, but also
     very stupid and slow. They make great warriors and iffy priests. They are
     bad at searching, disarming, perception, and stealth. They are so ugly
-    that a Half-Orc grimaces in their presence. They need to eat often.
+    that a Half-Orc grimaces in their presence. They need to eat often but
+    they also regenerate hit point especially quickly.
     Half-Trolls get bonus on 'Blunt-Mastery', 'Health' and 'Swimming'. They
     receive a penalty on 'Critical-Strike' and large penalties on 'Archery',
     'Magic' and 'Sorcery'.
