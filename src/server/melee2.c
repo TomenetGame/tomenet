@@ -6693,7 +6693,7 @@ static u32b noise = 0L;
 
 static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, cave_type *c_ptr, bool pfriend) {
 	int p_idx_target = c_ptr ? 0 - c_ptr->m_idx : 0;
-	player_type *pd_ptr = Players[p_idx_target];
+	player_type *pd_ptr = p_idx_target ? Players[p_idx_target] : NULL;
 	cave_type **zcave = getcave(&m_ptr->wpos);
 
 	if ((!p_idx_target && c_ptr) || !zcave) return NULL; //paranoia x 2
@@ -6964,7 +6964,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 #endif /* C_BLUE_AI_MELEE */
 
 	/* Don't attack your master! Invincible players can't be atacked! */
-	if (m_ptr->owner == pd_ptr->id || pd_ptr->admin_invinc
+	if (!p_idx_target || m_ptr->owner == pd_ptr->id || pd_ptr->admin_invinc
 	    /* non-hostile questors dont attack people */
 	    || pfriend
  #ifdef TELEPORT_SURPRISES
