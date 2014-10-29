@@ -5351,6 +5351,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF0_BA_DISE		0x00000100
 #define RF0_ROAMING		0x00000200		/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
 #define RF0_DROP_1		0x00000400		/* Drop exactly 1 item/gold */
+#define RF0_PSEUDO_UNIQUE	0x00000800		/* Monster isn't a real unique, but its form cannot be learnt */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 

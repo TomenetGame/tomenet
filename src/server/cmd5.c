@@ -1368,8 +1368,7 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 #endif
 }
 
-void do_cmd_mimic(int Ind, int spell, int dir)
-{
+void do_cmd_mimic(int Ind, int spell, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int j, k, offset = 3; /* offset: 3 polymorph powers */
 	bool using_free_mimic = FALSE;
@@ -1394,7 +1393,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		j = p_ptr->body_monster;
 		k = 0;
 
-		while (TRUE){
+		while (TRUE) {
 			j++;
 			k++;
 			if (k > MAX_R_IDX) {
@@ -1406,26 +1405,27 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			if (j > MAX_R_IDX) j = 0;
 
 			if (p_ptr->pclass == CLASS_DRUID) {
-			    if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
-				/* (S)he is no longer afk */
-				un_afk_idle(Ind);
-				do_mimic_change(Ind, j, TRUE);
-				p_ptr->energy -= level_speed(&p_ptr->wpos);
-				return;
-			    } else { continue; }
+				if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
+					/* (S)he is no longer afk */
+					un_afk_idle(Ind);
+					do_mimic_change(Ind, j, TRUE);
+					p_ptr->energy -= level_speed(&p_ptr->wpos);
+					return;
+				} else continue;
 			}
 			if (p_ptr->prace == RACE_VAMPIRE) {
-			    if (mimic_vampire(j, p_ptr->lev) || (j == 0)) {
-				/* (S)he is no longer afk */
-				un_afk_idle(Ind);
-				do_mimic_change(Ind, j, TRUE);
-				p_ptr->energy -= level_speed(&p_ptr->wpos);
-				return;
-			    } else { continue; }
+				if (mimic_vampire(j, p_ptr->lev) || (j == 0)) {
+					/* (S)he is no longer afk */
+					un_afk_idle(Ind);
+					do_mimic_change(Ind, j, TRUE);
+					p_ptr->energy -= level_speed(&p_ptr->wpos);
+					return;
+				} else continue;
 			}
 
 			if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) continue;
 			if (r_info[j].flags1 & RF1_UNIQUE) continue;
+			if (r_info[j].flags0 & RF0_PSEUDO_UNIQUE) continue;
 			if (p_ptr->r_killed[j] < r_info[j].level) continue;
 			if (p_ptr->r_killed[j] < 1 && j) continue;
 			if (strlen(r_info[j].name + r_name) <= 1) continue;
@@ -1476,84 +1476,79 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		//j = get_quantity("Which form (0 for player form)?", 0);
 		j = spell - 20000;
 
-	    if (p_ptr->pclass == CLASS_DRUID) { /* SPecial ^^ */
-		if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
-			/* (S)he is no longer afk */
-			un_afk_idle(Ind);
+		if (p_ptr->pclass == CLASS_DRUID) { /* SPecial ^^ */
+			if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
+				/* (S)he is no longer afk */
+				un_afk_idle(Ind);
 
-			do_mimic_change(Ind, j, TRUE);
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
+				do_mimic_change(Ind, j, TRUE);
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+			} else msg_print(Ind, "You cannot use that form!");
+		} else if (p_ptr->prace == RACE_VAMPIRE) {
+			if (mimic_vampire(j, p_ptr->lev) || (j == 0)) {
+				/* (S)he is no longer afk */
+				un_afk_idle(Ind);
+
+				do_mimic_change(Ind, j, TRUE);
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+			} else msg_print(Ind, "You cannot use that form!");
 		} else {
-			msg_print(Ind, "You cannot use that form!");
-		}
-	    } else if (p_ptr->prace == RACE_VAMPIRE) {
-		if (mimic_vampire(j, p_ptr->lev) || (j == 0)) {
-			/* (S)he is no longer afk */
-			un_afk_idle(Ind);
+			if ((j > MAX_R_IDX) || (j < 0)) {
+				msg_print(Ind, "That form does not exist in the realm!");
+				return;
+			} else if (k == j) {
+				msg_print(Ind, "You are already using that form!");
+				return;
+			} else if (r_info[j].flags1 & RF1_UNIQUE){
+				msg_print(Ind, "That form is unique!");
+				return;
+			} else if (r_info[j].flags0 & RF0_PSEUDO_UNIQUE){
+				msg_print(Ind, "That form is unlearnable!");
+				return;
+			} else if (j && p_ptr->r_killed[j] < 1
+			    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
+			    && !admin) {
+				if (!p_ptr->free_mimic) {
+					msg_print(Ind, "You have no experience with that form at all!");
+					return;
+				} else using_free_mimic = TRUE;
+			} else if (p_ptr->r_killed[j] < r_info[j].level
+			    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
+			    && !admin) {
+				if (!p_ptr->free_mimic) {
+					msg_print(Ind, "You have not yet learned that form!");
+					return;
+				} else using_free_mimic = TRUE;
+			}
 
-			do_mimic_change(Ind, j, TRUE);
+			if (strlen(r_info[j].name + r_name) <= 1) {	/* <- ??? */
+				msg_print(Ind, "You cannot use that form!");
+				return;
+			}
+//			if (!r_info[j].level && !mon_allowed(&r_info[j])){	/* <- ? */
+			else if (!mon_allowed_chance(&r_info[j])) {	/* ! - C. Blue */
+				msg_print(Ind, "You cannot use that form!");
+				return;
+			} else if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))) {
+				msg_print(Ind, "You cannot use that form!");
+				return;
+			} else if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) {
+				msg_print(Ind, "You are not powerful enough to change into that form!");
+				return;
+			}
+
+			/* using up PvP-mode free mimic transformation? */
+			if (j && using_free_mimic) p_ptr->free_mimic--;
+
+			/* Activation tax */
+			else if (j && p_ptr->r_killed[j] < r_info[j].level
+			    && p_ptr->tim_mimic_what == j && p_ptr->tim_mimic > 10)
+				p_ptr->tim_mimic -= 10;
+
+			/* Ok we found */
+			do_mimic_change(Ind, j, using_free_mimic);
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-		} else {
-			msg_print(Ind, "You cannot use that form!");
 		}
-	    } else {
-		if ((j > MAX_R_IDX) || (j < 0)) {
-			msg_print(Ind, "That form does not exist in the realm!");
-			return;
-		} else if (k == j) {
-			msg_print(Ind, "You are already using that form!");
-			return;
-		} else if (r_info[j].flags1 & RF1_UNIQUE){
-			msg_print(Ind, "That form is unique!");
-			return;
-		} else if (j && p_ptr->r_killed[j] < 1
-		    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
-		    && !admin) {
-			if (!p_ptr->free_mimic) {
-				msg_print(Ind, "You have no experience with that form at all!");
-				return;
-			} else {
-				using_free_mimic = TRUE;
-			}
-		} else if (p_ptr->r_killed[j] < r_info[j].level
-		    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
-		    && !admin) {
-			if (!p_ptr->free_mimic) {
-				msg_print(Ind, "You have not yet learned that form!");
-				return;
-			} else {
-				using_free_mimic = TRUE;
-			}
-		}
-
-		if (strlen(r_info[j].name + r_name) <= 1) {	/* <- ??? */
-			msg_print(Ind, "You cannot use that form!");
-			return;
-		}
-//		if (!r_info[j].level && !mon_allowed(&r_info[j])){	/* <- ? */
-		else if (!mon_allowed_chance(&r_info[j])) {	/* ! - C. Blue */
-			msg_print(Ind, "You cannot use that form!");
-			return;
-		} else if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))) {
-			msg_print(Ind, "You cannot use that form!");
-			return;
-		} else if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) {
-			msg_print(Ind, "You are not powerful enough to change into that form!");
-			return;
-		}
-
-		/* using up PvP-mode free mimic transformation? */
-		if (j && using_free_mimic) p_ptr->free_mimic--;
-
-		/* Activation tax */
-		else if (j && p_ptr->r_killed[j] < r_info[j].level
-		    && p_ptr->tim_mimic_what == j && p_ptr->tim_mimic > 10)
-			p_ptr->tim_mimic -= 10;
-
-		/* Ok we found */
-		do_mimic_change(Ind, j, using_free_mimic);
-		p_ptr->energy -= level_speed(&p_ptr->wpos);
-	    }
 	} else {
 		/* (S)he is no longer afk */
 		un_afk_idle(Ind);
