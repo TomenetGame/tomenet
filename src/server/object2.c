@@ -6394,7 +6394,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	}
 
 	if (opening_chest) {
-		forge.owner = opening_chest;
+		forge.owner = opening_chest_owner;
 		forge.mode = opening_chest_mode;
 	}
 
@@ -7377,7 +7377,10 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 	/* Determine how much the treasure is "worth" */
 	forge.pval = (base + (8L * randint(base)) + randint(8)) + bonus;
 
-	if (opening_chest) forge.owner = opening_chest;
+	if (opening_chest) {
+		forge.owner = opening_chest_owner;
+		forge.mode = opening_chest_mode;
+	}
 
 	/* Drop it */
 	drop_near(&forge, -1, wpos, y, x);

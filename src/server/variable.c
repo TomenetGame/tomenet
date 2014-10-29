@@ -115,8 +115,9 @@ s16b signal_count = 0;          /* Hack -- Count interupts */
 
 s16b coin_type;                 /* Hack -- force coin type */
 
-s32b opening_chest;             /* Hack -- prevent chest generation */
-byte opening_chest_mode;        /* Hack -- prevent chest generation */
+bool opening_chest;             /* Hack -- prevent chest generation */
+s32b opening_chest_owner;
+byte opening_chest_mode;
 
 bool scan_monsters;             /* Hack -- optimize multi-hued code, etc */
 bool scan_objects;              /* Hack -- optimize multi-hued code, etc */
