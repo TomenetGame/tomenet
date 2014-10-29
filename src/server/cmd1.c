@@ -1435,7 +1435,7 @@ void carry(int Ind, int pickup, int confirm) {
 	if (!(c_ptr->o_idx)) return;
 
 	/* Ghosts cannot pick things up */
-	if ((p_ptr->ghost && !p_ptr->admin_dm)) {
+	if ((p_ptr->ghost && pickup && !p_ptr->admin_dm)) {
 		//anti-spam? p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 		msg_print(Ind, "\377yGhosts cannot pick up things. You need to get resurrected first.");
 		return;
@@ -1480,7 +1480,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 		/* hack for cloaking: since picking up anything breaks it,
 		   we don't pickup gold except if the player really wants to */
-		if (((p_ptr->cloaked == 1 || p_ptr->shadow_running) && !pickup) || forbidden) {
+		if (((p_ptr->cloaked == 1 || p_ptr->shadow_running) && !pickup) || forbidden || (p_ptr->ghost && !p_ptr->admin_dm)) {
 			if (p_ptr->blind || no_lite(Ind))
 				msg_format(Ind, "You feel %s%s here.", o_name, 
 						o_ptr->next_o_idx ? " on a pile" : "");
