@@ -6381,7 +6381,7 @@ void player_death(int Ind) {
 	cptr titlebuf;
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
 	bool world_broadcast = TRUE, just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
-	bool was_total_winner = p_ptr->total_winner;
+	bool was_total_winner = p_ptr->total_winner, retire = FALSE;
 
 
 	/* character-intrinsic conditions violated -> unpreventable no-ghost death */
@@ -7479,6 +7479,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired as an iron champion.\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
 		s_printf("%s (%d) committed suicide. (Retirement)\n", p_ptr->name, p_ptr->lev);
+		retire = TRUE;
 		death_type = DEATH_QUIT;
 s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
         }
@@ -7499,6 +7500,7 @@ s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s ; trait=%s ; %d deat
 			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to a warm, sunny climate\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
 		s_printf("%s (%d) committed suicide. (Retirement)\n", p_ptr->name, p_ptr->lev);
+		retire = TRUE;
 		death_type = DEATH_QUIT;
 s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	}
@@ -7556,6 +7558,12 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 
 		/* prevent suicide spam, if set in cfg */
 		check_roller(Ind);
+
+		if (!p_ptr->ghost) {
+			if (retire) Send_chardump(Ind, "-retirement");
+			else Send_chardump(Ind, "-death");
+			Net_output1(Ind);
+		}
 
 		erase_player(Ind, death_type, FALSE);
 
