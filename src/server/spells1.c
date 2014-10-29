@@ -5660,26 +5660,20 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_HOLY_FIRE:
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & (RF3_GOOD))
-			{
+			if (r_ptr->flags3 & (RF3_GOOD)) {
 				dam = 0;
 				note = " is immune";
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
 #endif
-			}
-			else if (r_ptr->flags3 & (RF3_EVIL))
-			{
-				if (r_ptr->flags3 & RF3_IM_FIRE)
-				{
+			} else if (r_ptr->flags3 & (RF3_EVIL)) {
+				if (r_ptr->flags3 & RF3_IM_FIRE) {
 					note = " resists";
 					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
 #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
-				}
-				else if (r_ptr->flags9 & RF9_RES_FIRE)
-				{
+				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
 					note = " is hit";
 					dam = (dam * 6) / 4;
 #ifdef OLD_MONSTER_LORE
@@ -5687,17 +5681,15 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 				}
 #if 0
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-				{
+				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
 					note = " is hit hard";
 					dam *= 2;
-#ifdef OLD_MONSTER_LORE
+ #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
-#endif
+ #endif
 				}
 #endif
-				else
-				{
+				else {
 					dam *= 2;
 					note = " is hit hard";
 					//note = " is hit";
@@ -5705,19 +5697,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
 #endif
-			}
-			else
-			{
-				if (r_ptr->flags3 & RF3_IM_FIRE)
-				{
+			} else {
+				if (r_ptr->flags3 & RF3_IM_FIRE) {
 					note = " resists a lot";
 					dam *= 2; dam /= 3;//(randint(6)+10);
 #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
-				}
-				else if (r_ptr->flags9 & RF9_RES_FIRE)
-				{
+				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
 					note = " resists";
 					dam = (dam * 3) / 4;
 #ifdef OLD_MONSTER_LORE
@@ -5725,8 +5712,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 				}
 #if 0
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-				{
+				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
 					note = " resists slightly";
 					dam /= 2;
 #ifdef OLD_MONSTER_LORE
@@ -5734,8 +5720,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 				}
 #endif
-				else
-				{
+				else {
 					note = " resists somewhat";
 //					dam *= 5; dam /= (randint(3)+4);
 				}
@@ -5768,7 +5753,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				    (r_ptr->flags4 & RF4_BR_PLAS) ||
 				    (r_ptr->flags3 & RF3_RES_PLAS)) {
 					note = " resists";
-					dam *= 3; dam /= (randint(6)+6);
+					dam *= 3; dam /= (randint(6) + 6);
 				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
 					note = " resists somewhat";
 					dam *= 3;
@@ -5783,6 +5768,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					dam /= 5;
 				} else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) dam = (dam * 4) / 3;
 			}
+
+			//todo maybe: stun effect? might be op?
 
 			break;
 		}
@@ -5799,7 +5786,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 			} else if ((r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH)) {
 				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
+				dam *= 3; dam /= (randint(6) + 6);
 			}
 //			else if (r_ptr->flags3 & RF3_EVIL)
 			else if (r_ptr->flags3 & RF3_DEMON) {
@@ -5817,18 +5804,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_VAPOUR:
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags9 & RF9_IM_WATER)
-			{
+			if (r_ptr->flags9 & RF9_IM_WATER) {
 				note = " is immune";
 				dam = 0;
-			}
-			else if (r_ptr->flags7 & RF7_AQUATIC)
-			{
+			} else if (r_ptr->flags7 & RF7_AQUATIC) {
 				note = " resists a lot";
 				dam /= 9;
-			}
-			else if (r_ptr->flags3 & RF3_RES_WATE)
-			{
+			} else if (r_ptr->flags3 & RF3_RES_WATE) {
 				note = " resists";
 				dam /= 4;
 			}
@@ -5870,10 +5852,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_SHARDS:
 		{
 			if (seen) obvious = TRUE;
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
-			{
+			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
 				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
+				dam *= 3; dam /= (randint(6) + 6);
 			}
 			break;
 		}
@@ -5885,10 +5866,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #if 0
 //			if (magik(12)) do_cut = (10 + randint(15) +r) / (r + 1);
 			if ((r_ptr->flags4 & (RF4_BR_SHAR)) || (r_ptr->flags9 & RF9_RES_SHARDS) ||
-				(r_ptr->flags3 & RF3_IM_FIRE) || prefix(name, "Plasma") ||
-				(r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS) ||
-				(r_ptr->flags9 & RF9_RES_FIRE))
-			{
+			    (r_ptr->flags3 & RF3_IM_FIRE) || prefix(name, "Plasma") ||
+			    (r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS) ||
+			    (r_ptr->flags9 & RF9_RES_FIRE)) {
 				note = " resists somewhat";
 				dam /= 2;
 //				do_cut = 0;
@@ -5937,10 +5917,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		{
 			if (seen) obvious = TRUE;
 			do_stun = randint(15) / div;
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
-			{
+			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
 				note = " resists";
-				dam *= 2; dam /= (randint(6)+6);
+				dam *= 2; dam /= (randint(6) + 6);
 			}
 			break;
 		}
@@ -5951,13 +5930,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 			do_conf = (10 + randint(15)) / div;
 			if ((r_ptr->flags4 & RF4_BR_CONF) ||
-				(r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
-			{
+			    (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
 				note = " resists";
-				dam *= 2; dam /= (randint(6)+6);
-			}
-			else if (r_ptr->flags3 & RF3_NO_CONF)
-			{
+				dam *= 2; dam /= (randint(6) + 6);
+			} else if (r_ptr->flags3 & RF3_NO_CONF) {
 				note = " resists somewhat";
 				dam /= 2;
 			}
@@ -5969,11 +5945,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		{
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags4 & RF4_BR_DISE) ||
-				prefix(name, "Disen") ||
-				(r_ptr->flags3 & RF3_RES_DISE))
-			{
+			    prefix(name, "Disen") ||
+			    (r_ptr->flags3 & RF3_RES_DISE)) {
 				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
+				dam *= 3; dam /= (randint(6) + 6);
 			}
 			break;
 		}
@@ -5987,7 +5962,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				(r_ptr->flags3 & RF3_RES_NEXU))
 			{
 				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
+				dam *= 3; dam /= (randint(6) + 6);
 			}
 			break;
 		}
@@ -5997,10 +5972,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		{
 			if (seen) obvious = TRUE;
 			do_stun = randint(15) / div;
-			if (r_ptr->flags4 & RF4_BR_WALL)
-			{
+			if (r_ptr->flags4 & RF4_BR_WALL) {
 				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
+				dam *= 3; dam /= (randint(6) + 6);
 			}
 			break;
 		}
@@ -6011,7 +5985,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags4 & RF4_BR_INER) {
 				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
+				dam *= 3; dam /= (randint(6) + 6);
 			}
 			/* Powerful monsters can resist */
 			else if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -6037,7 +6011,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			    || (r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->d_char == 'A'))
 			{
 				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
+				dam *= 3; dam /= (randint(6) + 6);
 			}
 #if 1 /* fixed & sanified */
 			else if (!quiet && rand_int(3) == 0) { /* only occur if a player cast this */
@@ -6064,18 +6038,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			if (seen) obvious = TRUE;
 
-			if ((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE))
-			{
-				if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE))
-				{
+			if ((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE)) {
+				if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE)) {
 #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
 #endif
 					note = " resists";
 					resist_tele = TRUE;
-				}
-				else if (m_ptr->level > randint(100))
-				{
+				} else if (m_ptr->level > randint(100)) {
 #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
 #endif
@@ -6087,25 +6057,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (!resist_tele) do_dist = 10;
 			else do_dist = 0;
 
-			if (r_ptr->flags4 & RF4_BR_GRAV)
-			{
+			if ((r_ptr->flags4 & RF4_BR_GRAV) ||
+			    (r_ptr->flags7 & RF7_CAN_FLY)) {
 				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
+				dam *= 3; dam /= (randint(6) + 6);
 				do_dist = 0;
 			}
+
+			//todo maybe: stun effect? might be op?
+
 			break;
 		}
 
 		/* Pure damage */
 		case GF_MANA:
 		{
-			if (r_ptr->flags9 & RF9_RES_MANA)
-			{
+			if (r_ptr->flags9 & RF9_RES_MANA) {
 				dam /= 3;
 				note = " resists";
-			}
-			else if (r_ptr->flags4 & RF4_BR_MANA)
-			{
+			} else if (r_ptr->flags4 & RF4_BR_MANA) {
 				dam /= 2;
 				note = " resists somewhat";
 			}
@@ -6201,7 +6171,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				//note = " resists";
 				k_sound *= 2;
-				k_sound /= (randint(6)+6);
+				k_sound /= (randint(6) + 6);
 			}
 
 			k_lite = dam / 3; /* 33% LIGHT damage */
@@ -6212,7 +6182,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
 				//note = " resists";
 				k_lite *= 2;
-				k_lite /= (randint(6)+6);
+				k_lite /= (randint(6) + 6);
 				do_blind = 0;
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 #ifdef OLD_MONSTER_LORE
@@ -9299,7 +9269,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Gravity -- stun plus slowness plus teleport */
 	case GF_GRAVITY:
-			/* Feather fall lets us resist gravity */
+			/* Feather fall (flying implies it, so flying is covered too) lets us resist gravity */
 			if (p_ptr->feather_fall) {
 				dam *= 6; dam /= (randint(6) + 6);
 			}
