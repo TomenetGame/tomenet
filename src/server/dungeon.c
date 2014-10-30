@@ -6719,6 +6719,7 @@ void process_player_change_wpos(int Ind) {
 	   with the only exception of server join/leave in nserver.c and Morgoth
 	   live spawn (ie not on level generation time) in monster2.c. - C. Blue */
 	check_Morgoth(Ind);
+	if (p_ptr->new_level_flag) return;
 
 #ifdef CLIENT_SIDE_WEATHER 
 	/* update his client-side weather */
