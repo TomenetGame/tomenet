@@ -4787,13 +4787,13 @@ void monster_death(int Ind, int m_idx) {
 		/* let everyone know, so they are prepared.. >:) */
 		if (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3) {
 			msg_broadcast_format(0, "\374\377L**\377o%s has defeated a tasty halloween spirit!\377L**", p_ptr->name);
-			s_printf("HALLOWEEN: %s has defeated %s.\n", p_ptr->name, m_name);
+			s_printf("HALLOWEEN: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, m_name);
 			great_pumpkin_timer = 15 + rand_int(45);
 		}
 	} else if (season_xmas) {
 		if (m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2) {
 			msg_broadcast_format(0, "\374\377L**\377oSanta dropped the presents near %s!\377L**", p_ptr->name);
-			s_printf("XMAS: %s has defeated %s.\n", p_ptr->name, m_name);
+			s_printf("XMAS: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, m_name);
 			santa_claus_timer = 60 + rand_int(120);
 		}
 	}
