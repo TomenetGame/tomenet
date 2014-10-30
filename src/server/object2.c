@@ -6250,11 +6250,16 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	if (luck < -10) luck = -10;
 	if (luck > 40) luck = 40;
 
+	//200-(8000/(luck+40))		old way (0..100)
+	//(2000-(11250/(5+1)))*4/70	->0..100
+	//(1125-(11250/(10+40)))/10	->0..90	(only prob is, low luck values result in too high factors: 4->32 instead of 19
+	//(1125-(11250/(10+40)))/20	->0..45 ^problem solved, but no diffs 0->1 and 39->40
+	//(1125-(11250/(10+40)))/15	->0..60 ^all solved. low luck values are a bit more effective now than they originally were ('old way'), seems ok.
 	if (luck > 0) {
 		/* max luck = 40 */
-		tmp_luck = 200 - (8000 / (luck + 40));//+4 luck -> tmp_luck == 19
-		if (!good && !great && magik(tmp_luck / 6)) good = TRUE;//was tmp_luck / 2
-		else if (good && !great && magik(tmp_luck / 20)) {great = TRUE; good = TRUE;}//was tmp_luck / 15
+		tmp_luck = (1125 - (11250 / (luck + 10))) / 15;
+		if (!good && !great && magik(tmp_luck / 6)) good = TRUE;
+		else if (good && !great && magik(tmp_luck / 20)) {great = TRUE; good = TRUE;}
 	} else if (luck < 0) {
 		/* min luck = -10 */
 		tmp_luck = 200 - (2000 / (-luck + 10));
@@ -6449,9 +6454,9 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 
 	if (luck > 0) {
 		/* max luck = 40 */
-		tmp_luck = 200 - (8000 / (luck + 40));//+4 luck -> tmp_luck == 19
-		if (!good && !great && magik(tmp_luck / 6)) good = TRUE;//was tmp_luck / 2
-		else if (good && !great && magik(tmp_luck / 20)) {great = TRUE; good = TRUE;}//was tmp_luck / 15
+		tmp_luck = (1125 - (11250 / (luck + 10))) / 15;
+		if (!good && !great && magik(tmp_luck / 6)) good = TRUE;
+		else if (good && !great && magik(tmp_luck / 20)) {great = TRUE; good = TRUE;}
 	} else if (luck < 0) {
 		/* min luck = -10 */
 		tmp_luck = 200 - (2000 / (-luck + 10));
