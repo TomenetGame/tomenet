@@ -3317,7 +3317,28 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6b\n");
 				return 39;
 			}
 		}
+
+		if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3) {
+			/* Don't spawn the pumpkin _solely_ for the person who killed him last time. */
+			bool admins_only = TRUE;
+			int Ind = 0;
+			for (i = 1; i <= NumPlayers; i++) {
+				if (!inarea(&Players[i]->wpos, wpos)) continue;
+				if (Players[i]->admin_dm) continue;
+				admins_only = FALSE;
+				if (Players[i]->id == great_pumpkin_killer) {
+					Ind = i;
+					continue;
+				}
+				break;
+			}
+			if (Ind && i == NumPlayers + 1 && !admins_only) {
+				//mad spam-  s_printf("Great Pumpkin Generation prevented just for last-killer '%s'\n", Players[Ind]->name);
+				return 52;
+			}
+		}
 	}
+
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 7\n");
 #endif
@@ -3377,6 +3398,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
 			return 47;
 		}
 	}
+
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 #endif
@@ -3961,6 +3983,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 
 
 	if (season_halloween && great_pumpkin_timer == 0 && wpos->wz != 0 &&
+	    //level_generation_time && /* spawn it only on level generation time? */
 	    /* Don't waste Great Pumpkins on low-level IDDC floors */
 	    (!in_irondeepdive(wpos) || wpos->wz >= 20)) {
 		bool no_high_level_players = TRUE;
@@ -4015,8 +4038,11 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 				return(TRUE);
 			}
 			/* oupsee */
-//			great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
+#if 0 /* not necessary/wrong even (if place_monster_aux() fails -> problem) */
+			great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
 			return(FALSE);
+#endif
+			/* fall through and generate a usual monster instead */
 		}
 	}
 

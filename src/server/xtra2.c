@@ -4790,6 +4790,7 @@ void monster_death(int Ind, int m_idx) {
 			msg_broadcast_format(0, "\374\377L**\377o%s has defeated a tasty halloween spirit!\377L**", p_ptr->name);
 			s_printf("HALLOWEEN: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, m_name);
 			great_pumpkin_timer = 15 + rand_int(45);
+			great_pumpkin_killer = p_ptr->id;
 		}
 	} else if (season_xmas) {
 		if ((m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2)
