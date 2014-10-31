@@ -5185,11 +5185,12 @@ if (cfg.unikill_format) {
 	/* let's try with titles before the name :) -C. Blue */
 		titlebuf = get_ptitle(q_ptr, FALSE);
 
-		if (is_Morgoth) {
+		if (is_Morgoth)
 			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-		} else {
+		else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
+			snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
+		else
 			snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-		}
 } else {
 	/* for now disabled (works though) since we don't have telepath class
 	   at the moment, and party names would make the line grow too long if
@@ -5197,11 +5198,15 @@ if (cfg.unikill_format) {
 		if (!Ind2) {
 			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
+			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
+				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s.\377U**", r_name_get(m_ptr), p_ptr->name);
 			else
 				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s.\377b**", r_name_get(m_ptr), p_ptr->name);
 		} else {
 			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
+				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by fusion %s-%s.\377U**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 			else
 				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 		}
@@ -5214,6 +5219,8 @@ if (cfg.unikill_format) {
 				{
 					if (is_Morgoth)
 						snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+					else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
+						snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s of %s.\377U**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					else
 						snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s of %s.\377b**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					break;
@@ -5255,7 +5262,7 @@ if (cfg.unikill_format) {
 			floor_msg_format(&p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
 		}
 	}
-	if (is_Sauron) {
+	else if (is_Sauron) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 
 		/* If player killed Sauron, also mark the Shadow (formerly Necromancer) of Dol Guldur as killed!
@@ -5279,6 +5286,9 @@ if (cfg.unikill_format) {
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+
+		msg_format(Ind, "\374\377UYou have conquered %s!", d_name + d_info[d_ptr->type].name);
+
 		if ((
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		    in_irondeepdive(wpos) ? (a_idx = d_info[iddc[ABS(wpos->wz)].type].final_artifact) :
