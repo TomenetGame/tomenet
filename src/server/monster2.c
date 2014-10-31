@@ -3686,7 +3686,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		if (l_ptr) l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 	}
 	if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3)
-		s_printf("HALLOWEEN: The Great Pumpkin (%d) was created on %d\n", r_idx, dlev);
+		s_printf("HALLOWEEN: The Great Pumpkin (%d) was created on %d,%d,%d\n", r_idx, wpos->wx, wpos->wy, wpos->wz);
 
 	/* Handle floor feelings */
 	/* Special events don't necessarily influence floor feelings */
