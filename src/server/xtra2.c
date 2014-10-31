@@ -5187,6 +5187,10 @@ if (cfg.unikill_format) {
 
 		if (is_Morgoth)
 			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
+#if 0 //too flashy?
+		else if (m_ptr->r_idx == RI_ZU_AON)
+			snprintf(buf, sizeof(buf), "\374\377U**\377x%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
+#endif
 		else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
 			snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		else
@@ -5198,6 +5202,10 @@ if (cfg.unikill_format) {
 		if (!Ind2) {
 			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
+#if 0 //too flashy?
+			else if (m_ptr->r_idx == RI_ZU_AON)
+				snprintf(buf, sizeof(buf), "\374\377U**\377x%s was slain by %s.\377U**", r_name_get(m_ptr), p_ptr->name);
+#endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
 				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s.\377U**", r_name_get(m_ptr), p_ptr->name);
 			else
@@ -5205,6 +5213,10 @@ if (cfg.unikill_format) {
 		} else {
 			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+#if 0 //too flashy?
+			else if (m_ptr->r_idx == RI_ZU_AON)
+				snprintf(buf, sizeof(buf), "\374\377U**\377x%s was slain by fusion %s-%s.\377U**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+#endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
 				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by fusion %s-%s.\377U**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 			else
@@ -5219,6 +5231,10 @@ if (cfg.unikill_format) {
 				{
 					if (is_Morgoth)
 						snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+#if 0 //too flashy?
+					else if (m_ptr->r_idx == RI_ZU_AON)
+						snprintf(buf, sizeof(buf), "\374\377U**\377x%s was slain by %s of %s.\377U**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+#endif
 					else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
 						snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s of %s.\377U**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					else
