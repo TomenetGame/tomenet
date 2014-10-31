@@ -5903,7 +5903,37 @@ static void process_various(void)
 
 		if (dungeon_store_timer) dungeon_store_timer--; /* Timeout */
 		if (dungeon_store2_timer) dungeon_store2_timer--; /* Timeout */
+
 		if (great_pumpkin_timer > 0) great_pumpkin_timer--; /* HALLOWEEN */
+		if (great_pumpkin_duration > 0) {
+			great_pumpkin_duration--;
+			if (!great_pumpkin_duration) {
+				monster_type *m_ptr;
+				int k, m_idx;
+
+				for (k = m_top - 1; k >= 0; k--) {
+					/* Access the index */
+					m_idx = m_fast[k];
+					/* Access the monster */
+					m_ptr = &m_list[m_idx];
+					/* Excise "dead" monsters */
+					if (!m_ptr->r_idx) {
+					        /* Excise the monster */
+						m_fast[k] = m_fast[--m_top];
+					        /* Skip */
+					        continue;
+					}
+					/* Players of too high level cannot participate in killing attemps (anti-cheeze) */
+					/* search for Great Pumpkins */
+					if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
+						delete_monster_idx(k, TRUE);
+						//note_spot_depth(&p_ptr->wpos, y, x);
+						great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+					}
+				}
+			}
+		}
+
 		if (season_xmas) { /* XMAS */
 			if (santa_claus_timer > 0) santa_claus_timer--;
 			if (santa_claus_timer == 0) {

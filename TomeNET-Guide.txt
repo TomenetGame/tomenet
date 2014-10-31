@@ -6678,7 +6678,9 @@ Halloween
     or medium or high amount of hit points, depending on the location.
     If you cannot beat the high-HP version, you could try leaving the floor to
     reset it and hope to see the Pumpkin randomly respawn quickly afterwards in
-    easier form.
+    easier form. The pumpkin will despawn on its own if it doesn't get killed
+    before one hour has passed after it appeared. It will quickly respawn on
+    another dungeon level in that case.
 
     The Pumpkin is aiming at intermediate-level characters. It can spawn on any
     dungeon floor shallower than dungeon level 40 (or 50 on Ironman server),

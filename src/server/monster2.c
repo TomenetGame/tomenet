@@ -4031,6 +4031,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0) == 0) {
 //spam				s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);
 				great_pumpkin_timer = -1; /* put generation on hold */
+				great_pumpkin_duration = 60;
 
 				/* This seems to be crashing the server - mikaelh */
 				// check_Pumpkin(); /* recall high-level players off this floor! */

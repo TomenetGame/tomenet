@@ -272,6 +272,7 @@ extern s32b dungeon_store_timer;
 extern s32b dungeon_store2_timer;
 extern s32b great_pumpkin_timer; /* for HALLOWEEN */
 extern s32b great_pumpkin_killer;
+extern s32b great_pumpkin_duration;
 extern s32b santa_claus_timer;
 extern bool night_surface;
 extern s16b MaxSimultaneousPlayers;

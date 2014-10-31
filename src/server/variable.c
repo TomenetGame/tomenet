@@ -135,6 +135,7 @@ s32b dungeon_store_timer = 0;	/* Timemout. Keeps track of its generation */
 s32b dungeon_store2_timer = 0;	/* Timemout. Keeps track of its generation */
 s32b great_pumpkin_timer = 0;	/* Timeout. Keeps track of its generation, for HALLOWEEN */
 s32b great_pumpkin_killer = 0;	/* Player who killed him last time */
+s32b great_pumpkin_duration = 0;	/* How long its instance lasts till it despawns */
 s32b santa_claus_timer = 0;
 bool night_surface = FALSE;
 
