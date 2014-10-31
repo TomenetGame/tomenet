@@ -4428,7 +4428,7 @@ void do_ping() {
 
 #if 1 /* old method: Many weather particles turn on the sfx, few turn it off again. */
 		/* handle audio output -- avoid easy oscillating */
-		if (weather_particles_seen >= 7) {
+		if (weather_particles_seen >= 8) {
 			wind_noticable = TRUE;
  #ifdef USE_SOUND_2010
 			weather_sound_change = 0;
@@ -4446,7 +4446,7 @@ void do_ping() {
 				}
 			}
  #endif
-		} else if (weather_particles_seen <= 4) {
+		} else if (weather_particles_seen <= 3) {
 			wind_noticable = FALSE;
  #ifdef USE_SOUND_2010
 			weather_sound_change++;
