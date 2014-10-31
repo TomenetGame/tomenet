@@ -5926,6 +5926,7 @@ static void process_various(void)
 					/* Players of too high level cannot participate in killing attemps (anti-cheeze) */
 					/* search for Great Pumpkins */
 					if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
+						msg_print_near_monster(m_idx, "\377oThe Great Pumpkin suddenly vanishes into thin air!");
 						delete_monster_idx(k, TRUE);
 						//note_spot_depth(&p_ptr->wpos, y, x);
 						great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
