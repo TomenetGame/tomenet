@@ -3983,7 +3983,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 
 
 	if (season_halloween && great_pumpkin_timer == 0 && wpos->wz != 0 &&
-	    //level_generation_time && /* spawn it only on level generation time? */
+	    level_generation_time && /* spawn it only on level generation time? yes, because of high-lev camping TT while lowbies frequent it, spawning it for him */
 	    /* Don't waste Great Pumpkins on low-level IDDC floors */
 	    (!in_irondeepdive(wpos) || wpos->wz >= 20)) {
 		bool no_high_level_players = TRUE;
