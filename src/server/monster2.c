@@ -3972,7 +3972,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
  * Attempt to find a monster appropriate to the "monster_level"
  */
 bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
-	int r_idx, i;
+	int r_idx = 0, i;
 	player_type *p_ptr;
 	int lev = getlevel(wpos); /* HALLOWEEN; and 
 	new: anti-double-OOD */
@@ -3989,20 +3989,20 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 		bool no_high_level_players = TRUE;
 
 		/* Verify that no high-level player is on this level! */
-	        for (i = 1; i <= NumPlayers; i++) {
-	                p_ptr = Players[i];
-	        	if (is_admin(p_ptr)) continue;
-        	        if (inarea(&p_ptr->wpos, wpos) &&
+		for (i = 1; i <= NumPlayers; i++) {
+			p_ptr = Players[i];
+			//if (is_admin(p_ptr)) continue;
+			if (p_ptr->admin_dm) continue;
+			if (!inarea(&p_ptr->wpos, wpos)) continue;
 #ifndef RPG_SERVER
-	                    (p_ptr->max_lev > 35)) {
+			if (p_ptr->max_lev <= 35) continue;
 //spam				s_printf("Great Pumpkin spawn prevented by player>35 %s\n", p_ptr->name);
 #else
-            		    (p_ptr->max_lev > 40)) {
+			if (p_ptr->max_lev <= 40) continue;
 //spam				s_printf("Great Pumpkin spawn prevented by player>40 %s\n", p_ptr->name);
 #endif
-				no_high_level_players = FALSE;
-				break;
-			}
+			no_high_level_players = FALSE;
+			break;
 		}
 
 		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
@@ -4042,8 +4042,10 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 #if 0 /* not necessary/wrong even (if place_monster_aux() fails -> problem) */
 			great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
 			return(FALSE);
-#endif
+#else
 			/* fall through and generate a usual monster instead */
+			r_idx = 0;
+#endif
 		}
 	}
 
