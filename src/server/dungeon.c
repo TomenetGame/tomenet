@@ -5927,6 +5927,7 @@ static void process_various(void)
 					/* search for Great Pumpkins */
 					if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
 						msg_print_near_monster(m_idx, "\377oThe Great Pumpkin wails and suddenly vanishes into thin air!");
+						s_printf("HALLOWEEN: The Great Pumpkin despawned.\n");
 						delete_monster_idx(k, TRUE);
 						//note_spot_depth(&p_ptr->wpos, y, x);
 						great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
