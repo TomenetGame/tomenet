@@ -4788,7 +4788,7 @@ void monster_death(int Ind, int m_idx) {
 		if ((m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)
 		    && !m_ptr->clone) {
 			msg_broadcast_format(0, "\374\377L**\377o%s has defeated a tasty halloween spirit!\377L**", p_ptr->name);
-			s_printf("HALLOWEEN: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, m_name);
+			s_printf("HALLOWEEN: %s (%d/%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev, m_name);
 			great_pumpkin_timer = 15 + rand_int(45);
 			great_pumpkin_killer = p_ptr->id;
 		}
