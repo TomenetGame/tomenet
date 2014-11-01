@@ -4396,11 +4396,12 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 		/* Make ego item */
 		make_ego_item(level, o_ptr, FALSE, resf);
 	}
+
 #ifdef NEW_SHIELDS_NO_AC
 	/* shields cannot be cursed (aka getting ac malus) or get an ac bonus, if they aren't egos */
-	else if ((k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW)) power = 0;
+	if ((k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW)) ;
+	else
 #endif
-
 	/* Good */
 	if (power > 0) {
 		/* Enchant */
@@ -4412,7 +4413,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 			o_ptr->to_a += toac2;
 		}
 	}
-
 	/* Cursed */
 	else if (power < 0) {
 		/* Penalize */
@@ -4501,7 +4501,13 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 			o_ptr->bpval = randint(2);
 
 			/* Cursed orcish shield */
-			if (power < 0) o_ptr->bpval = -o_ptr->bpval;
+			if (power < 0) {
+				o_ptr->bpval = -o_ptr->bpval;
+  #ifdef NEW_SHIELDS_NO_AC
+				/* Cursed (if "bad") */
+				o_ptr->ident |= ID_CURSED;
+  #endif
+			}
 			break;
 		}
  #endif
