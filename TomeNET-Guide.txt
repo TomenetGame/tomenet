@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. October 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. November 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3001,7 +3001,7 @@ Sometimes this requires you to get rid of your initial weapon and buy a very
 light weapon, for example one of these:
  -dagger or main gauche (sword class),
  -whip (blunt class),
- -hatchet (axe class) or
+ -cleaver (axe class) or
  -spear (polearm class).
 (For more information about the different weapon classes see (5.1a).)
 Sometimes it is even possible to start out with 3 bpr (warriors mostly).
@@ -11555,7 +11555,7 @@ vary. For example a warrior cannot learn magic spells.
     The lightest weapons of each class are:
     - Daggers (sword-mastery)
     - Whips (blunt-mastery)
-    - Hatchets (axe-mastery)
+    - Cleavers (axe-mastery)
     - Spears (polearm-mastery)
     Dual-wielding requires light armour. This should be adequate until you find
     some heavy armour in the dungeon, then you can switch back to 1-handed
@@ -14834,6 +14834,9 @@ Medium level character (up to 25)
 + Especially for clearing vaults you might find a staff of light, a wand of
   trap/door destruction and maybe a wand of teleport other useful. However,
   that would be 3 more inventory slots less to pick up loot :)
++ Potions of curing insanity (all types). If you find these, pick them up and
+  store them in your house! If you encounter a sanity-blasting monster you will
+  want to have these to restore your sanity after the fight.
 
 
 Higher characters (up to 35)
@@ -14847,51 +14850,46 @@ Higher characters (up to 35)
 + Several Scrolls of Phase Door
 + a Rod of Recall
   A rod cannot be destroyed by fire or acid, and you won't have to buy new
-  scrolls of WOR since the rod never runs out. Further, rods of recall are not
-  destroyed by traps, for example a "Trap of no return", which will burn all
-  your scrolls of WOR.
-+ Lots of Scrolls of Identify (up to 99!). Maybe later on a Rod of Perception.
-  A Rod of Perception does the same thing like a Scroll of Identify. A Rod of
-  Perception of Charging would be perfect. This one takes less time to
-  recharge! A Rod of Perception of the Istari..nearly godlike ;)
+  scrolls of WOR since the rod never runs out.
+  A rod of recall is especially useful to travel between towns, so you won't
+  burn through a lot of scrolls just for visiting all the town stores.
++ Lots of Scrolls of Identify (up to 99!). If you're great at handling magic
+  devices, maybe get a Rod of Perception. It does the same thing as a scroll of
+  Identify, but you might want one 'of charging' or 'of the istari'.
 + Several Potions of Speed
 + Potions of Healing
   These potions heal you way more than pots of cure critical wounds. However,
-  they are extremely expensive.
-+ a Staff of Teleportation
-+ 2 or 3 rods of trap location. Maybe a rod of door/stair location.
-+ Some Scrolls of Teleportation, maybe even fireproof.
-  In case your staff is destroyed these scrolls serve as backup. If they are
-  fireproof they really are a good insurance. However, you cannot read while
-  blind or confused or if you stand in darkness. (Maybe someone invents
-  scrolls with magically heated letters that you can read in the dark if you
-  have infra-vision.. ;)
+  they are more expensive.
++ Maybe rods for support: Trap location, disarming, detection.
++ Some Scrolls of Teleportation.
 + a "Sprig of Athelas"
-  This one cures "Black Breath", which infects you if you fight a ring wraith!
+  This one cures "Black Breath", which you can get infected with if you fight a
+  Nazgul (ring wraith)! Normal high undead monsters have a very slim chance too
+  to give you Black Breath.
   You can leave the sprig in your house since Black Breath saps your soul very
   slowly, so there should be enough time to finish business in the dungeon and
   recall to town afterwards to eat a sprig. (See 1.5 for more information
   about Black Breath.)
++ Scrolls of *Remove Curse*. These are expensive in the black market, but are
+  sometimes sold in the temple cheaply, so always check the temple when you
+  come by. You will want these for getting rid of heavily cursed items, such as
+  Nazgul rings of power that you don't use.
++ Potions of curing insanity. If you find these, pick them up and store them in
+  your house! If you encounter a sanity-blasting monster you will want to have
+  these to restore your sanity after the fight.
 
 
 Very high characters (36 and above)
 -----------------------------------
-+ Satisfy Hunger or Lembas
-+ Lots of Potions of Cure Critical Wounds
-  If you manage to get enough Potions of Healing then you won't need pots of
-  cure critical wounds anymore.
++ Satisfy Hunger scrolls or Lembas
 + Potions of Healing
 + Potions of Speed
-+ Potions of Berserk Strength
-+ Several Scrolls of Phase Door
-+ (Fireproof) Scrolls of Teleportation
-+ a Staff of Teleportation (but you should really get blindness resistance in
-  order to rely on Scrolls instead since they never fail.)
-+ a Rod of Recall
-+ 2 or 3 Rods of Trap Location. Maybe a Rod of Door/Stair Location.
-+ maybe a Rod of Illumination and a Rod of Disarming or Trap/Door Destruction
-  for clearing Vaults.
-+ Sprigs of Athelas
++ Scrolls of Teleportation
++ a Rod of Recall (mainly for travelling between towns).
++ Support rods, such as Trap Location, Detection or Disarming (especially
+  useful for clearing vaults).
++ Sprigs of Athelas, scrolls of *Remove Curse*, potions for curing insanity
+  (these supplies can be stored in your house, no need to carry them with you).
 
 
 
@@ -14906,7 +14904,7 @@ Beginners (level 1)
 + Lantern
   because it provides light within a radius of 2 fields instead of 1 field of
   a torch.
-+ A ranged weapon as soon as possible
++ A ranged weapon as soon as possible (a boomerang if you use martial arts).
   Don't forget the ammunition ;)
   Try to get a sling or even better a long bow as soon as possible,
   especially if you are weak at hand-to-hand combat.
@@ -14914,13 +14912,17 @@ Beginners (level 1)
   proceed quickly. Enchant the bow to (+hit,+dam) where +dam helps a lot to
   increase the total damage you inflict on enemies, since it's multiplied by
   the bow's power factor.
+  Note that martial arts users can only use boomerangs, other ranged weapons
+  will nullify their martial arts skills.
 + An appropriate melee weapon (except if using martial arts, eg Druids!)
-  Check out how many blows per round you get with a light Dagger, Whip,
-  Hatchet or Spear, depending on your favourite weapon class.
+  Check out how many blows per round you get with a light dagger, whip,
+  cleaver or spear, depending on your favourite weapon class. If you get more
+  bpr than with your starter weapon, switch!
   If your character has only one blow per round even with light weapons, choose
   a heavy weapon that can deal more damage in one blow. If your character is
   low on strength, pay attention that you don't buy a weapon that is too heavy
-  to use at all.
+  to use at all. You can press 'x' in shops to examine weapons (and all other
+  items), to check if you can benefit from buying it or not.
   If you have only 1 bpr, make sure to dual-wield if your character can do that
   because that will give you a bonus bpr. Don't forget that you cannot dual-
   wield with heavy armour. Rogues should always be dual-wielding.
@@ -14935,9 +14937,12 @@ Low level character (up to 15)
   will become less powerful if used together with a shield, and some weapons
   cannot be used at all in conjunction with a shield. A fighter should have
   approx. 30..45 AC or more.
+  Before buying a piece of armour in a shop, press 'x' to examine it. This will
+  tell you if you'd get encumbered wearing it.
 + Buy a fire resistance ring as soon as possible because many monsters can use
   fire spells early on. Also get an acid resistance amulet maybe, since acid
   damage is especially nasty to your inventory and equipment.
+  If you're an Ent, early on fire resistance is absolutely mandatory.
 
 
 Medium level character (up to 25)
@@ -14945,22 +14950,25 @@ Medium level character (up to 25)
 + Enchant your melee and ranged weapons to at least +8 to damage! Best would
   be (+9,+9) or maybe even (+10,+10). Going over +10 is not feasible with
   normal enchant scrolls, you can use *enchant* scrolls later on.
-  You might ask a very powerful priest or paladin to assist you, that way you
-  might save a great deal of money.... (This pala/priest thing is outdated,
-  sorry. However, you can ask a high level character if he/she helps you by
-  taking your weapons, armour and ammunition to one of the shops that offer
-  an enchantment-service. Those shops can enchant the items quite high,
-  depending on the level of the customer. It's costly though.. Don't sell
-  scrolls of *enchant weapon* or *enchant armour* if you find those, but use
-  them to enchant your items above +9 and up to +15!)
+  You could also ask a high level character if he/she helps you by taking your
+  weapons, armour and ammunition to one of the shops that offer an enchantment
+  service. Those shops can enchant the items quite high, depending on the level
+  of the customer. It's costly though..
+  Don't sell scrolls of *enchant weapon* or *enchant armour* if you find those,
+  but use them to enchant your items above +9 and up to +15!
 + A fighter should have approx. 40..70 AC or more.
-+ Get "Fear Resistance" also know as "Boldness"
-+ Get Free Action.
-  It prevents you from being paralyzed by traps or attacks.
++ Get "Fear Resistance" also know as "Boldness".
++ Get Free Action. You should have this before going much deeper than 1000 ft.
+  It prevents you from being paralyzed by traps or monsters.
 + Get the 4 basic resistances, which are: Lightning/Electricity, Acid,
-  Frost/Cold, Fire/Heat
+  Frost/Cold, Fire/Heat.
 + Consider buying a small house to store backup equipment or special items
   instead of carrying them around with you.
++ If you manage to find an item that lets you telepathically sense trolls, keep
+  it. Use it to locate troll pits, those tend to give a lot of experience!
+  Typical items that provide troll-ESP are dwarven helmets or weapons of
+  *slay troll*. (ESP = extra sensory perception, ie the ability to sense a
+  presence telepathically without a direct line of sight).
 
 
 Higher characters (up to 35)
@@ -14968,40 +14976,51 @@ Higher characters (up to 35)
 + A fighter should have approx. 65..100 AC or more.
 + Try to get a lantern of Brightness or even *Brightness*, a Dwarven Lantern
   or a Feanorian Lamp. These provide more light and/or don't need to be fueled
-  and cannot be extincted. They can also have some special abilities like
+  and cannot be extinguished. They may also have some special abilities like
   preventing you from getting overwhelmed by fear!
 + Get "See Invisible" if possible. Some very nasty monsters are invisible and
   "cold-blooded", that means they cannot be seen by infra-vision.
 + Get Poison Resistance! For example Boots of Mirkwood provide poison
-  resistance. Also Elven Armors often provide it. If you are trained in the
+  resistance. Also Elven armour often provide it. If you are trained in the
   art of mimicry, you could try to use the form of a monster which has poison
   resistance intrinsically. Drolems and other monsters might insta-kill you
   without poison resistance.
+  Elven armour also provides base resistance and has a chance to provide an
+  additional 'high' resistance, so it's really useful to get your resistances
+  covered. Elven armour is not that expensive and not that rare. If you can't
+  find any, ask other players or check the player stores (there tend to be a
+  lot of player stores around the town of Gondolin) for offers!
 + Try to Get Confusion Resistance, so you can always read teleport scrolls!
   Note that chaos resistance also provides confusion resistance.
 + Get Nexus Resistance. Nexus attacks can scramble your body, swapping your
   stats, which can mess up your character. (See 5.6.)
 + Try to get Blindness Resistance, so you can always read teleport scrolls!
   Helms or Caps of seeing give this!
++ Before venturing into Mordor you should have basic (fire/cold/lightning/acid)
+  and poison resistance and 'free action' (paralysis resistance).
+  Confusion resistance and nexus resistance are a plus.
 + Try to get Hold Life.
   This prevents your life force from being drained, making you lose experience
   and going back in character level. Cloaks of Teleri Hold Life and provide
-  Free Action.
-+ Get powerful ego weapons
-  like Gondolins or *Defenders*. These will provide lots of resistances and
-  other abilities as well as deliver extra damage to certain monsters. Even if
-  they give you 1 blow less per round than your normal weapon you should
-  consider these.
+  Free Action too.
++ Try to get items that provide ESP (extra sensory perception). ESP is a
+  telepathic power that allows you to sense monsters even though they aren't
+  in your line of sight! This is tremendously useful as you know what monsters
+  are lurking on the map and where, so you won't run into nasty surprises.
+  Typical item that provide ESP are:
+  Crowns of telepathy (full ESP!)
+  Weapons of *slay evil* (ESP evil), Weapons of Aman (ESP evil), Weapons of
+  Gondolin (ESP evil).
 
 
 Very high characters (36 and above)
 -----------------------------------
-+ A fighter should have at least 90 AC. He might also have already 130 AC at
-  level 36 if he is lucky.
++ A fighter should have at least 90 AC. He might also have already AC as hhigh
+  as about 130 at level 36 if he is lucky.
 + Get as many high resistances as you can.. You will want Nether, Nexus,
-  Disenchantment, Chaos, Sound for example. Note that for example Saruman and
-  many high undead monsters (L and W) have disenchanting melee attacks that
-  waste your equipment pretty badly if you don't resist disenchantment.
+  Disenchantment, Chaos, Sound for example. Note that Saruman and many high
+  undead monsters (L and W) have disenchanting melee attacks that waste your
+  equipment pretty badly if you don't resist disenchantment.
   Sound resistance will prevent stun effects, which if they accumulate can even
   knock you out completely, leaving you unable to do anything at all!
   Also, your damage and spell casting chance are reduced while stunned.
@@ -15009,29 +15028,33 @@ Very high characters (36 and above)
   Hounds, and *especially* Plasma Hounds.
   Note that "Feather Falling" provides resistance to gravity damage.
   ('Levitation' automatically includes feather falling, by the way.)
-  Nether and Chaos "only" drain your experience if not resisted (can be cured
-  with a potion of restore life levels or according magic). The great thing
-  about chaos resistance is that it includes confusion resistance! So if you
-  were wearing a ring of confusion resistance, just replace it with a ring of
-  chaos resistance and you are set.
-  to gravity damage.
+  Nether and Chaos drain your experience if not resisted (can be cured with a
+  potion of restore life levels or according magic). The great thing about
+  chaos resistance is that it includes confusion resistance! So if you were
+  wearing a ring of confusion resistance, just replace it with a ring of chaos
+  resistance and you are set.
 + Get "See Invisible", various nasty monsters are invisible.
-+ Get items that sustain your stats, for example a Robe of Permanence.
++ Get items that sustain your stats, for example a Robe of Permanence if you
+  wear light armour, or a kolla (it's a cloak) if you're a fighter class.
++ Get full ESP: Crowns of telepathy typically provide these.
+  Some classes have an ESP spell available so they don't need ESP items.
 + Get Randarts (randomly generated artifacts) or Artifacts (predefined
-  artifacts / static artifacts) as melee weapon
+  artifacts / static artifacts) for melee weapon:
   You will have to fight ring wraiths. Normal weapons, even those from
   Gondolin or the most powerful *Defenders* will quickly shatter if they come
-  in contact with those unbelievably corrupted creatures of terror and hate.
-  (I remember one day I lost 4 Gondolins that way, pure fun..) Your only way
-  to fight them is to equip an artifact since these resist ring wraiths
-  greatly.
+  in contact with those corrupted creatures of terror and hate.
+  Your only way to fight them is to equip an artifact since these resist ring
+  wraiths greatly - their chance of getting destroyed when striking a Nazgul is
+  1 in 1000, compared to a few hits for non-artifact weapons.
+  (Note that the 'Stormbringer' counts as an artifact in this regard.)
 + You will want items that permanently increase your speed!
   +10 speed or +20 speed will make you approximately twice or three times as
   fast as you usually are. Note that the curve will become flatter the higher
-  your speed is, so moving at more than +40 will not make that much of a
-  difference anymore, it migh tbe better to get +3 attacks or +10 critical hits
-  instead, if you have the possibility to acquire those (use the target dummy
-  in town to test your actual damage output and compare).
+  your speed is, so at some point, increasing your speed any further might be
+  less beneficial to you than boosting your attack speed (items that give extra
+  attacks) or your critical hit chance (items that give critical hits).
+  Use the target dummy in town to test your actual damage output and compare,
+  the /tym (test your might) command may prove useful.
 
 
 
