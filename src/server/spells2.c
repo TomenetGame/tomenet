@@ -1311,7 +1311,7 @@ bool remove_curse(int Ind) {
 	return (remove_curse_aux(Ind, 0x0, 0));
 #else
 	/* assume we're called _only_ as the projectable holy school spell */
-	int i, p = 0;
+	int i, p, r = 0;
 	cave_type **zcave;
 	player_type *p_ptr = Players[Ind];
 
@@ -1324,13 +1324,13 @@ bool remove_curse(int Ind) {
 		/* check grids around the player, first one we find possibly gets a curse fixed */
 		for (i = 7; i >= 0; i--) {
 			if ((p = zcave[p_ptr->py + ddy_ddd[i]][p_ptr->px + ddx_ddd[i]].m_idx >= 0)) continue;
-			p = remove_curse_aux(-p, 0x0 + 0x2, Ind);
+			r = remove_curse_aux(-p, 0x0 + 0x2, Ind);
 			break;
 		}
 	}
 
 	/* remove our own curse(s) */
-	return p;
+	return r;
 #endif
 }
 
@@ -1342,7 +1342,7 @@ bool remove_all_curse(int Ind) {
 	return (remove_curse_aux(Ind, 0x1, 0));
 #else
 	/* assume we're called _only_ as the projectable holy school spell */
-	int i, p = 0;
+	int i, p, r = 0;
 	cave_type **zcave;
 	player_type *p_ptr = Players[Ind];
 
@@ -1355,11 +1355,11 @@ bool remove_all_curse(int Ind) {
 		/* check grids around the player, first one we find possibly gets a curse fixed */
 		for (i = 7; i >= 0; i--) {
 			if ((p = zcave[p_ptr->py + ddy_ddd[i]][p_ptr->px + ddx_ddd[i]].m_idx >= 0)) continue;
-			p = remove_curse_aux(-p, 0x1 + 0x2, Ind);
+			r = remove_curse_aux(-p, 0x1 + 0x2, Ind);
 			break;
 		}
 	}
-	return p;
+	return r;
 #endif
 }
 
