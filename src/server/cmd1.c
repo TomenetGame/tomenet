@@ -30,7 +30,7 @@ static void run_init(int Ind, int dir);
 
 
 /* Anti-(nothing)-hack, following Tony Zeigler's (Ravyn) suggestion */
-//#define BACKTRACE_NOTHINGS
+#define BACKTRACE_NOTHINGS
 #ifdef BACKTRACE_NOTHINGS
  #include <execinfo.h>
 #endif

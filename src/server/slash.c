@@ -20,7 +20,7 @@
 /* how many chars someone may enter (formerly used for /bbs, was an ugly hack) */
 #define MAX_SLASH_LINE_LEN	MSG_LEN
 
-//#define BACKTRACE_NOTHINGS
+#define BACKTRACE_NOTHINGS
 #ifdef BACKTRACE_NOTHINGS
  #include <execinfo.h>
 #endif
