@@ -367,7 +367,7 @@ void do_cmd_check_uniques(int Ind, int line)
 		fprintf(fff, "\377U============== Unique Monster List ==============\n");
 
 	/* Scan the monster races */
-	for (k = 1; k < MAX_R_IDX-1; k++) {
+	for (k = 1; k < MAX_R_IDX - 1; k++) {
 		r_ptr = &r_info[k];
 
 		/* Only print Uniques */
@@ -2530,7 +2530,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 
 	/* for each monster race */
 	/* XXX I'm not sure if this list should be sorted.. */
-	for (i = 1; i <= MAX_R_IDX; i++) {
+	for (i = 1; i < MAX_R_IDX - 1; i++) {
 		r_ptr = &r_info[i];
 
 //		if (letter && *letter != r_ptr->d_char) continue;

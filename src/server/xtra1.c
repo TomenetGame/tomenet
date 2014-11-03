@@ -7050,7 +7050,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		while (p2p[strlen(p2p) - 1] == ' ') p2p[strlen(p2p) - 1] = 0;
 
 		/* Scan the monster races */
-		for (i = 1; i < MAX_R_IDX; i++) {
+		for (i = 1; i < MAX_R_IDX - 1; i++) {
 			/* get monster race name */
 			strcpy(c, r_info[i].name + r_name);
 			if (!strlen(c)) continue;
@@ -7132,7 +7132,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 #if 1
 							/* special hack: check all remaining races and prefer them if EXACT match - added for 'Fallen Angel'! */
 							//actually, with ne addition of 'r_found_len' this should now be obsolete?
-							while (++i < MAX_R_IDX) {
+							while (++i < MAX_R_IDX - 1) {
 								/* get monster race name */
 								strcpy(c, r_info[i].name + r_name);
 								if (!strlen(c)) continue;

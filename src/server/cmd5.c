@@ -1396,13 +1396,13 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 		while (TRUE) {
 			j++;
 			k++;
-			if (k > MAX_R_IDX) {
+			if (k >= MAX_R_IDX - 1) {
 //				j = 0;
 				msg_print(Ind, "You don't know any forms!");
 				return;
 			}
 
-			if (j > MAX_R_IDX) j = 0;
+			if (j >= MAX_R_IDX - 1) j = 0;
 
 			if (p_ptr->pclass == CLASS_DRUID) {
 				if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
@@ -1493,16 +1493,16 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
 			} else msg_print(Ind, "You cannot use that form!");
 		} else {
-			if ((j > MAX_R_IDX) || (j < 0)) {
+			if ((j >= MAX_R_IDX - 1) || (j < 0)) {
 				msg_print(Ind, "That form does not exist in the realm!");
 				return;
 			} else if (k == j) {
 				msg_print(Ind, "You are already using that form!");
 				return;
-			} else if (r_info[j].flags1 & RF1_UNIQUE){
+			} else if (r_info[j].flags1 & RF1_UNIQUE) {
 				msg_print(Ind, "That form is unique!");
 				return;
-			} else if (r_info[j].flags0 & RF0_PSEUDO_UNIQUE){
+			} else if (r_info[j].flags0 & RF0_PSEUDO_UNIQUE) {
 				msg_print(Ind, "That form is unlearnable!");
 				return;
 			} else if (j && p_ptr->r_killed[j] < 1

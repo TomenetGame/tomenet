@@ -4468,7 +4468,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 				o_ptr->level = 1;
 
 				while (tries++ != 1000) {
-					i = randint(MAX_R_IDX - 1); /* skip 0, ie player */
+					i = randint(MAX_R_IDX - 2); /* skip 0, ie player, and the 'undefined ghost' (MAX_R_IDX - 1) */
 					r_ptr = &r_info[i];
 
 					if (!r_ptr->name) continue;
@@ -4588,7 +4588,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 				monster_race *r_ptr;
 
 				while (tries++ != 1000) {
-					i = randint(MAX_R_IDX - 1); /* skip 0, ie player */
+					i = randint(MAX_R_IDX - 2); /* skip 0, ie player and the 'undefined ghost' (MAX_R_IDX - 1) */
 					r_ptr = &r_info[i];
 
 					if (!r_ptr->name) continue;
