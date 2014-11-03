@@ -5231,7 +5231,7 @@ bool stale_level(struct worldpos *wpos, int grace) {
 	         Small drawback: If someone logs back on after having taken a break from IDDC
 	         and he finds himself in a non-accessible area, he'll have to wait for
 	         2 minutes instead of the usual 10 seconds till the floor regens. */
-	if (in_irondeepdive(wpos)) grace = 120;
+	if (in_irondeepdive(wpos) && grace < 120) grace = 120;
 
 	now = time(&now);
 	if (wpos->wz) {
@@ -5276,22 +5276,26 @@ static void do_unstat(struct worldpos *wpos, bool fast_unstat) {
 
 	// If this level is static and no one is actually on it
 //	if (stale_level(wpos)) {
-#ifdef SAURON_FLOOR_FAST_UNSTAT
-		if (fast_unstat) j = 60 * 60; //1h
-		else
-#endif
-		j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
-
 		/* limit static time in Ironman Deep Dive Challenge a lot */
 		if (in_irondeepdive(wpos)) {
-			if (isdungeontown(wpos)) j = 300;
-			else if (j > 600) j = 600; // j = 0 -> immediately unstatice!
-		}
+			if (isdungeontown(wpos)) {
+				if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);
+			} else if ((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) {
+				/* still 2 minutes static for very shallow levels */
+				if (stale_level(wpos, 120)) new_players_on_depth(wpos, 0, FALSE);
+			} else if (stale_level(wpos, 600)) new_players_on_depth(wpos, 0, FALSE);
+		} else {
+#ifdef SAURON_FLOOR_FAST_UNSTAT
+			if (fast_unstat) j = 60 * 60; //1h
+			else
+#endif
+			j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
 
-		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
-		if (((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) ||
-		    stale_level(wpos, j))
-			new_players_on_depth(wpos, 0, FALSE);
+			/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
+			if (((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) ||
+			    stale_level(wpos, j))
+				new_players_on_depth(wpos, 0, FALSE);
+		}
 //	}
 }
 
