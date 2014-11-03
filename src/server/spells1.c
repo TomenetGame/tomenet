@@ -9589,8 +9589,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_REMCURSE_PLAYER: /* only remove one curse */
 #ifdef NEW_REMOVE_CURSE
-		if (dam) remove_curse_aux(Ind, 0x1 + 0x2);
-		else remove_curse_aux(Ind, 0x2);
+		if (dam) remove_curse_aux(Ind, 0x1 + 0x2, -who);
+		else remove_curse_aux(Ind, 0x2, -who);
 #endif
 		break;
 

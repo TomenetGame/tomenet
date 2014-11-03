@@ -827,9 +827,9 @@ s_printf("Duration: %d\n", duration);
 					} else {
 						if (remove_all_curse(Ind)) msg_print(Ind, "There is a purple glow for a moment.");
 #else
-						remove_curse(Ind);
+						remove_curse_aux(Ind, 0x0, 0);
 					} else {
-						remove_all_curse(Ind);
+						remove_curse_aux(Ind, 0x1, 0);
 #endif
 					}
 				break; }

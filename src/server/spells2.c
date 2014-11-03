@@ -1227,7 +1227,7 @@ void wizard_lock(int Ind, int dir){
  * 0x01 - all
  * 0x02 - limit to one item (added for projectable spell)
  */
-static int remove_curse_aux(int Ind, int all) {
+int remove_curse_aux(int Ind, int all, int pInd) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 #ifdef NEW_REMOVE_CURSE
@@ -1236,6 +1236,10 @@ static int remove_curse_aux(int Ind, int all) {
 
 	int i, j, cnt = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
+
+#ifdef NEW_REMOVE_CURSE
+	if (pInd) msg_format(Ind, "%s recites some holy words..", Players[pInd]->name);
+#endif
 
 	for (j = 0; j < INVEN_TOTAL; j++) {
 		i = (j + INVEN_WIELD) % INVEN_TOTAL;
@@ -1303,14 +1307,60 @@ static int remove_curse_aux(int Ind, int all) {
  * Remove most curses
  */
 bool remove_curse(int Ind) {
-	return (remove_curse_aux(Ind, 0));
+#ifndef NEW_REMOVE_CURSE
+	return (remove_curse_aux(Ind, 0x0, 0));
+#else
+	/* assume we're called _only_ as the projectable holy school spell */
+	int i, p = 0;
+	cave_type **zcave;
+	player_type *p_ptr = Players[Ind];
+
+	/* remove our own curse(s) first - can't remove other player's curses while we're not cleansed ;) */
+	i = remove_curse_aux(Ind, 0x0, 0);
+	if (i) return i;
+
+	/* remove someone else's curse */
+	if ((zcave = getcave(p_ptr->wpos))) {
+		/* check grids around the player, first one we find possibly gets a curse fixed */
+		for (i = 7; i >= 0; i--) {
+			if ((p = zcave[p_ptr->py + ddy_ddd[i]][p_ptr->px + ddx_ddd[i]].m_idx >= 0)) continue;
+			p = remove_curse_aux(-p, 0x0 + 0x2, Ind);
+			break;
+		}
+	}
+
+	/* remove our own curse(s) */
+	return p;
+#endif
 }
 
 /*
  * Remove all curses
  */
 bool remove_all_curse(int Ind) {
-	return (remove_curse_aux(Ind, 1));
+#ifndef NEW_REMOVE_CURSE
+	return (remove_curse_aux(Ind, 0x1, 0));
+#else
+	/* assume we're called _only_ as the projectable holy school spell */
+	int i, p = 0;
+	cave_type **zcave;
+	player_type *p_ptr = Players[Ind];
+
+	/* remove our own curse(s) first - can't remove other player's curses while we're not cleansed ;) */
+	i = remove_curse_aux(Ind, 0x1, 0);
+	if (i) return i;
+
+	/* remove someone else's curse */
+	if ((zcave = getcave(p_ptr->wpos))) {
+		/* check grids around the player, first one we find possibly gets a curse fixed */
+		for (i = 7; i >= 0; i--) {
+			if ((p = zcave[p_ptr->py + ddy_ddd[i]][p_ptr->px + ddx_ddd[i]].m_idx >= 0)) continue;
+			p = remove_curse_aux(-p, 0x1 + 0x2, Ind);
+			break;
+		}
+	}
+	return p;
+#endif
 }
 
 /*
