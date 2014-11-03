@@ -20,6 +20,11 @@
 /* how many chars someone may enter (formerly used for /bbs, was an ugly hack) */
 #define MAX_SLASH_LINE_LEN	MSG_LEN
 
+//#define BACKTRACE_NOTHINGS
+#ifdef BACKTRACE_NOTHINGS
+ #include <execinfo.h>
+#endif
+
 static void do_slash_brief_help(int Ind);
 char pet_creation(int Ind);
 //static int lInd = 0;
@@ -303,8 +308,7 @@ static void do_cmd_refresh(int Ind)
  * D:/lua (LUA script command)
  */
 
-void do_slash_cmd(int Ind, char *message)
-{
+void do_slash_cmd(int Ind, char *message) {
 	int i = 0, j = 0, h = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
@@ -6611,6 +6615,24 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377RErased (nothing).");
 				return;
 			}
+#ifdef BACKTRACE_NOTHINGS
+			else if (prefix(message, "/backtrace")) { /* backtrace test */
+
+				int size, i;
+				void *buf[1000];
+				char **fnames;
+
+				size = backtrace(buf, 1000);
+				s_printf("size = %d\n", size);
+
+				fnames = backtrace_symbols(buf, size);
+				for (i = 0; i < size; i++)
+					s_printf("%s\n", fnames[i]);
+
+				msg_print(Ind, "Backtrace written to log.");
+				return;
+			}
+#endif
 			/* erase a certain player character file */
 			else if (prefix(message, "/erasechar"))
 			{

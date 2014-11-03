@@ -30,8 +30,11 @@ static void run_init(int Ind, int dir);
 
 
 /* Anti-(nothing)-hack, following Tony Zeigler's (Ravyn) suggestion */
-bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y)
-{
+//#define BACKTRACE_NOTHINGS
+#ifdef BACKTRACE_NOTHINGS
+ #include <execinfo.h>
+#endif
+bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y) {
 	char o_name[ONAME_LEN];
 
 	if ((o_ptr->wpos.wx != wpos->wx) || (o_ptr->wpos.wy != wpos->wy) || (o_ptr->wpos.wz != wpos->wz) ||
@@ -39,9 +42,23 @@ bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x,
 		/* Item is not at the same (or similar) location as the player? Then he can't pick it up.. */
 		object_desc(0, o_name, o_ptr, TRUE, 3);
 		if (p_ptr != NULL) {
-/*		s_printf("NOTHINGHACK: item %s at %d,%d,%d (%d,%d) meets not target of %s at %d,%d,%d (%d,%d)\n",
-		    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
-		    p_ptr->name, wpos->wx, wpos->wy, wpos->wz, x, y);*/
+#ifdef BACKTRACE_NOTHINGS
+			int size, i;
+			void *buf[1000];
+			char **fnames;
+
+			size = backtrace(buf, 1000);
+			s_printf("size = %d\n", size);
+
+			fnames = backtrace_symbols(buf, size);
+			for (i = 0; i < size; i++)
+				s_printf("%s\n", fnames[i]);
+#endif
+#if 1
+			s_printf("NOTHINGHACK: item %s at %d,%d,%d (%d,%d) meets not target of %s at %d,%d,%d (%d,%d)\n",
+			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
+			    p_ptr->name, wpos->wx, wpos->wy, wpos->wz, x, y);
+#endif
 		}
 		return TRUE;
 	}
