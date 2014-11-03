@@ -821,8 +821,17 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case SV_R_MANA: {
-					if (r_imperatives[imperative].flag != I_ENHA) remove_curse(Ind);
-					else remove_all_curse(Ind);
+					if (r_imperatives[imperative].flag != I_ENHA) {
+#ifndef NEW_REMOVE_CURSE
+						if (remove_curse(Ind)) msg_print(Ind, "There is a purple glow for a moment.");
+					} else {
+						if (remove_all_curse(Ind)) msg_print(Ind, "There is a purple glow for a moment.");
+#else
+						remove_curse(Ind);
+					} else {
+						remove_all_curse(Ind);
+#endif
+					}
 				break; }
 				
 				case SV_R_CONF: {

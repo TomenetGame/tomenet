@@ -8244,7 +8244,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) ||
 		    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
 		    (typ == GF_TELEPORT_PLAYER) || (typ == GF_ZEAL_PLAYER) ||
-		    (typ == GF_RESTORE_PLAYER) ||
+		    (typ == GF_RESTORE_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 		    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 		    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
                     (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) || (typ == GF_PUSH) ||
@@ -8284,7 +8284,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
 		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) && (typ != GF_MINDBOOST_PLAYER) &&
 		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
-		    (typ != GF_RESTORE_PLAYER) &&
+		    (typ != GF_RESTORE_PLAYER) && (typ != GF_REMCURSE_PLAYER) &&
 		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
                     (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
@@ -8402,7 +8402,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
 	    (typ == GF_RESACID_PLAYER) ||*/ (typ == GF_HPINCREASE_PLAYER) ||
 	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
-	    /*(typ == GF_TELEPORT_PLAYER) ||*/ (typ == GF_ZEAL_PLAYER) ||
+	    /*(typ == GF_TELEPORT_PLAYER) ||*/ (typ == GF_ZEAL_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 	    (typ == GF_RESTORE_PLAYER) || (typ == GF_CURING) ||
 	    (typ == GF_CURE_PLAYER) || /*(typ == GF_RESURRECT_PLAYER) ||
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
@@ -8427,7 +8427,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) ||
 	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
 	    (typ == GF_TELEPORT_PLAYER) || (typ == GF_ZEAL_PLAYER) ||
-	    (typ == GF_RESTORE_PLAYER) ||
+	    (typ == GF_RESTORE_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 	    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
@@ -9586,6 +9586,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			set_image(Ind, 0);
 			break;
+
+	case GF_REMCURSE_PLAYER: /* only remove one curse */
+#ifdef NEW_REMOVE_CURSE
+		if (dam) remove_curse_aux(Ind, 0x1 + 0x2);
+		else remove_curse_aux(Ind, 0x2);
+#endif
+		break;
 
 	case GF_HPINCREASE_PLAYER:
 		{
@@ -10841,7 +10848,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	    (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) ||
 	    (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER) ||
 	    (typ == GF_ZEAL_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
-	    (typ == GF_RESTORE_PLAYER) ||
+	    (typ == GF_RESTORE_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 	    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER))

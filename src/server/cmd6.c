@@ -2459,14 +2459,20 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 			case SV_SCROLL_REMOVE_CURSE:
 				if (remove_curse(Ind)) {
+#ifndef NEW_REMOVE_CURSE
 					msg_print(Ind, "\377GYou feel as if someone is watching over you.");
+#endif
 					ident = TRUE;
 				}
 				break;
 
 			case SV_SCROLL_STAR_REMOVE_CURSE:
-				remove_all_curse(Ind);
-				ident = TRUE;
+				if (remove_all_curse(Ind)) {
+#ifndef NEW_REMOVE_CURSE
+					msg_print(Ind, "\377GYou feel as if someone is watching over you.");
+#endif
+					ident = TRUE;
+				}
 				break;
 
 			case SV_SCROLL_ENCHANT_ARMOR:
@@ -3084,18 +3090,16 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		}
 
 		case SV_STAFF_REMOVE_CURSE:
-		{
-			if (remove_curse(Ind))
-			{
-				if (!p_ptr->blind)
-				{
+			if (remove_curse(Ind)) {
+#ifndef NEW_REMOVE_CURSE
+				if (!p_ptr->blind) {
 					if (msg) msg_print(Ind, "The staff glows blue for a moment...");
 					msg_print(Ind, "There is a blue glow for a moment...");
 				}
+#endif
 				ident = TRUE;
 			}
 			break;
-		}
 
 		case SV_STAFF_STARLITE:
 		{

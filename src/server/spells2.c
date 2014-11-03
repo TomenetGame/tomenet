@@ -1225,36 +1225,45 @@ void wizard_lock(int Ind, int dir){
  */
 /*
  * 0x01 - all
+ * 0x02 - limit to one item (added for projectable spell)
  */
-static int remove_curse_aux(int Ind, int all)
-{
+static int remove_curse_aux(int Ind, int all) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
+#ifdef NEW_REMOVE_CURSE
+	char o_name[ONAME_LEN];
+#endif
 
-	int		i, j, cnt = 0;
+	int i, j, cnt = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	/* Attempt to uncurse items being worn */
-	/* Now this can uncurse ones in inventory */
-//	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-	for (j = 0; j < INVEN_TOTAL; j++)
-	{
-
+	for (j = 0; j < INVEN_TOTAL; j++) {
 		i = (j + INVEN_WIELD) % INVEN_TOTAL;
-
 		o_ptr = &p_ptr->inventory[i];
 
 		/* Uncursed already */
 		if (!cursed_p(o_ptr)) continue;
 
 		/* Extract the flags */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Heavily Cursed Items need a special spell */
 		if (!(all & 0x01) && (f3 & TR3_HEAVY_CURSE)) continue;
 
 		/* Perma-Cursed Items can NEVER be uncursed */
-                if ((f3 & TR3_PERMA_CURSE) && !is_admin(p_ptr)) continue;
+		if ((f3 & TR3_PERMA_CURSE) && !is_admin(p_ptr)) continue;
+
+#ifdef NEW_REMOVE_CURSE
+		/* Allow rc to fail sometimes */
+		if (magik(o_ptr->level)) {
+			object_desc(Ind, o_name, o_ptr, FALSE, 3);
+			msg_format(Ind, "Your %s shimmer%s purple for a moment..", o_name, o_ptr->number == 1 ? "s" : "");
+			continue;
+		}
+
+		object_desc(Ind, o_name, o_ptr, FALSE, 3);
+		msg_format(Ind, "Your %s flashes%s blue.", o_name, o_ptr->number == 1 ? "s" : "");
+#endif
 
 		/* Uncurse it */
 		o_ptr->ident &= ~ID_CURSED;
@@ -1275,7 +1284,13 @@ static int remove_curse_aux(int Ind, int all)
 		cnt++;
 
 		/* Not everything at once. */
-		if (!(all & 0x01) && magik(50)) break;
+#ifdef NEW_REMOVE_CURSE
+		if ((all & 0x02) ||
+#else
+		if (
+#endif
+		    (!(all & 0x01) && magik(50)))
+			break;
 	}
 
 	/* Return "something uncursed" */
@@ -1287,16 +1302,14 @@ static int remove_curse_aux(int Ind, int all)
 /*
  * Remove most curses
  */
-bool remove_curse(int Ind)
-{
+bool remove_curse(int Ind) {
 	return (remove_curse_aux(Ind, 0));
 }
 
 /*
  * Remove all curses
  */
-bool remove_all_curse(int Ind)
-{
+bool remove_all_curse(int Ind) {
 	return (remove_curse_aux(Ind, 1));
 }
 
@@ -5920,7 +5933,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
 		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) &&
 		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
-		    (typ != GF_RESTORE_PLAYER) &&
+		    (typ != GF_RESTORE_PLAYER) && (typ != GF_REMCURSE_PLAYER) &&
 		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
@@ -5989,7 +6002,7 @@ bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
 		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) &&
 		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
-		    (typ != GF_RESTORE_PLAYER) &&
+		    (typ != GF_RESTORE_PLAYER) && (typ != GF_REMCURSE_PLAYER) &&
 		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&

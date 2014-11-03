@@ -185,6 +185,8 @@
 #endif
 
 #ifdef TEST_SERVER
+ #define NEW_REMOVE_CURSE	/* rc has fail chance; allow projecting rc spell on others */
+
  /* limit to_ac to +30 instead of +35 -- Reason: Give base AC more weight!
     Counter-balanced by different AC_CAP/AC_DIV values, so no nerf for players! */
  #define TO_AC_CAP_30		/* limit to_ac to +30 instead of +35 */
