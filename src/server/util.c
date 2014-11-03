@@ -5283,8 +5283,7 @@ int get_playerslot_loose(int Ind, char *iname) {
  * NOTE: differs from traditional 'boring' etc feeling!
  * NOTE: added traditional feelings, to warn of dangers - C. Blue
  */
-bool show_floor_feeling(int Ind, bool dungeon_feeling)
-{
+bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
 	struct dungeon_type *d_ptr = getdungeon(wpos);
@@ -5298,7 +5297,7 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling)
 	}
 
 	/* XXX devise a better formula */
-	if (p_ptr->lev * ((p_ptr->lev >= 40) ? 3 : 2) + 5 < getlevel(wpos)) {
+	if (!in_irondeepdive(&p_ptr->wpos) && (p_ptr->lev * ((p_ptr->lev >= 40) ? 3 : 2) + 5 < getlevel(wpos))) {
 		msg_print(Ind, "\374\377rYou feel an imminent danger!");
 		felt = TRUE;
 	}

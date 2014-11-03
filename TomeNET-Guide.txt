@@ -5772,6 +5772,7 @@ These feelings are as follows:
 
   "You feel an imminent danger!" ->     This dungeon level is *way* higher
                                         than your character level.
+                                        (Does not show in the IDDC.)
 
   "You feel a suppressive air." ->      You cannot use wraith form or
                                         probability travel on this level.
@@ -8432,7 +8433,7 @@ Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 Also, non- or uncursed items that induce random teleportation
                 can be inscribed .. to have the teleportation stop (compare
                 (0.3 Important Inscriptions).
-                (It gives you the message:
+                (Scrolls give you the message:
                 'You feel as if someone is watching over you.'.)
 *Remove Curse*  Breaks heavy curses. Note that curses (including heavy ones)
                 on weapons or armours can also be broken by enchanting one of
