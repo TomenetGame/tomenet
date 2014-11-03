@@ -1259,14 +1259,14 @@ int remove_curse_aux(int Ind, int all, int pInd) {
 
 #ifdef NEW_REMOVE_CURSE
 		/* Allow rc to fail sometimes */
-		if (magik(o_ptr->level)) {
+		if ((!(all & 0x01) || (f3 & TR3_HEAVY_CURSE)) && magik(o_ptr->level)) {
 			object_desc(Ind, o_name, o_ptr, FALSE, 3);
 			msg_format(Ind, "Your %s shimmer%s purple for a moment..", o_name, o_ptr->number == 1 ? "s" : "");
 			continue;
 		}
 
 		object_desc(Ind, o_name, o_ptr, FALSE, 3);
-		msg_format(Ind, "Your %s flashes%s blue.", o_name, o_ptr->number == 1 ? "s" : "");
+		msg_format(Ind, "Your %s flash%s blue!", o_name, o_ptr->number == 1 ? "es" : "");
 #endif
 
 		/* Uncurse it */
@@ -1320,7 +1320,7 @@ bool remove_curse(int Ind) {
 	if (i) return i;
 
 	/* remove someone else's curse */
-	if ((zcave = getcave(p_ptr->wpos))) {
+	if ((zcave = getcave(&p_ptr->wpos))) {
 		/* check grids around the player, first one we find possibly gets a curse fixed */
 		for (i = 7; i >= 0; i--) {
 			if ((p = zcave[p_ptr->py + ddy_ddd[i]][p_ptr->px + ddx_ddd[i]].m_idx >= 0)) continue;
@@ -1351,7 +1351,7 @@ bool remove_all_curse(int Ind) {
 	if (i) return i;
 
 	/* remove someone else's curse */
-	if ((zcave = getcave(p_ptr->wpos))) {
+	if ((zcave = getcave(&p_ptr->wpos))) {
 		/* check grids around the player, first one we find possibly gets a curse fixed */
 		for (i = 7; i >= 0; i--) {
 			if ((p = zcave[p_ptr->py + ddy_ddd[i]][p_ptr->px + ddx_ddd[i]].m_idx >= 0)) continue;
