@@ -3326,7 +3326,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6b\n");
 				if (!inarea(&Players[i]->wpos, wpos)) continue;
 				if (Players[i]->admin_dm) continue;
 				admins_only = FALSE;
-				if (Players[i]->id == great_pumpkin_killer) {
+				//if (Players[i]->id == great_pumpkin_killer) {
+				if (streq(Players[i]->accountname, great_pumpkin_killer)) {
 					Ind = i;
 					continue;
 				}
