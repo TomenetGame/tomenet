@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. November 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. November 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -186,26 +186,24 @@ Contents
 If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing/updating TomeNET'.
 
--Get the latest client from the project's main official site www.tomenet.net
+-Get the latest client from the project's main official site www.tomenet.net.
  or from  http://koti.mbnet.fi/mikaelh/tomenet/getting-started.php (Mikael's
- site, which features a monster-search, and this nice introduction in pictures)
- and www.c-blue.de/rogue.html (my own site).
- The game client is named something like 'tomenet-???-client.zip', extract it
- to C:\TomeNET for example.
+ site, which features a monster-search and other stuff).
+ If you're on Microsoft Windows, it is recommended to get the installer package
+ instead of the zip archives.
 
--Either run 'TomeNET-direct.bat' to directly connect to official main server
- (recommended), or run TomeNET.exe and choose a server (Enter 37.187.75.24
- to connect to the official main server).
- NOTE: The official main server's hostname is "europe.tomenet.net",
-       the meta server's hostname is "meta.tomenet.net" (the meta server is the
-       server that presents you the list of actual game servers).
+-Either double-click 'TomeNET-direct.bat' to directly connect to official main
+ server (recommended), or run TomeNET.exe and choose a server manually, for
+ example enter 37.187.75.24 to connect to the official main server.
+ NOTE: The official main server's hostname is "europe.tomenet.net".
+ (The Bat-file will always work properly, even if there are DNS problems which
+ cause the server list not to show up properly.)
 
 -Create a character, Half-Troll warrior is good for beginners.
  The server should now allow you to manually choose your stats.
  In case you chose a (Half-Troll) warrior, try this:
-  STR _at least_ 18/30 (the game client will even suggest 18/40, but if you buy
-  a whip or a dagger right away and use that instead of your heavier starting
-  weapon, then 18/30 will be fine),
+  STR _at least_ 18/30 (to get a high number of attacks per round - the game
+  client will even suggest 18/40 for minimum STR),
   CON as high as possible, INT as low as possible,
   spare points into DEX (especially!), WIS or CHR.
  If you decided to play a paladin make sure you have at least DEX 10.
@@ -224,22 +222,28 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  If you made a druid, put couple of points into all, DEX, STR and CON, and keep
   your WIS relatively high since it's important for druidic spell-casting.
   Some druids might value high starting WIS more than any of the other stats
-  for that reason even.
+  for that reason.
  Explanation:
    CON affects your hit points, more CON -> more HP.
    STR (and DEX) determine your number of attacks per round. 18/30 in STR is
-   enough to get 3 attacks per round with very light weapons, regardless of
-   how you modify your DEX. To get the 3 blows per round (bpr) you'll need to
-   sell your heavy sword and buy a light weapon (3.0 lb or less) like dagger
-   or whip. That is more efficient than 1 or 2 bpr with your original sword!
-   Later on when your character becomes more powerful you can switch back to
-   heavier weaponry.
+   enough for warriors to get 3 attacks per round with very light weapons
+   (daggers or whips) regardless of how you modify your DEX.
+   To get the 3 blows per round (bpr) you'll need to sell your heavy sword and
+   buy a light weapon (3.0 lb or less) like a dagger or whip. That is more
+   efficient than 1 or 2 bpr with your original sword! Later on when your
+   character becomes more powerful you can switch back to heavier weaponry.
    Warriors don't really need INT so you should reduce it to spend the points
    on other attributes. WIS isn't really needed either, but it can be useful
-   to endure sanity-reducing effects.
- (If you are new to the game, it is NOT recommended to choose one of these:
- Istar, Priest, Shaman, Adventurer.
+   to endure sanity-reducing effects and increase your saving throw against
+   certain detrimental effects.
  Details about how STR and DEX affect startup blows/round are given in (6.5a).)
+
+
+ ---- PLEASE NOTE: ----
+ If you are new to the game, it is NOT recommended to choose one of these:
+ Istar, Priest, Shaman, Adventurer.
+ The reason is that these classes are hard to play in the beginning.
+
 
 -Make sure you DO NOT chose 'PvP' mode. It's a restricted special thing that
  has nothing to do with the normal gameplay at all! (See (6.13) for info).
@@ -274,11 +278,12 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 -You can enter stairs down/upwards by standing on them and pressing the
  corresponding key '<' or '>'.
 
--You can press '?' to get an in-game help about keys and commands.
+-You can press '?' to get a short in-game help. The actual list of commands
+ and further info are contained in this guide.
 
--Nearby the town there's often a 'training tower' which is a good place
- to start because if you die there nothing will happen except a slight
- loss of experience and gold. Ask people where the dark-green '<' symbol
+-Nearby the starter town (Bree) there's often a 'training tower' which is a
+ good place to start because if you die there nothing will happen except a
+ slight loss of experience and gold. Ask people where the dark-green '<' symbol
  (the tower entrance) is found. Usually to the lower-right of the town centre.
 
 -If you die outside of the training tower you will usually turn into a ghost.
@@ -288,8 +293,8 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  While you're a ghost you can freely float up/down by pressing '<' and '>'.
 
 -If you have any parchments like 'Guide to Middle Earth' or 'The Gazette' in
- your inventory (bottom right window) you should read those by pressing 'r' to
- read.
+ your inventory (bottom right window) you can read those by pressing 'r' to
+ read. They don't do anything, just a short read containing some information.
 
 -If your character gains a new level it also gains skill points. To distribute
  those, invoke the skill screen with 'G'. (See 3.10, 6.2 and 7.5.)
@@ -302,10 +307,8 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  level you will need an admin to 'validate' your account.
  Usually, all you have to do is to keep playing/stay online for a bit until an
  admin logs in, notices that you are new, and validates your account.
- If that doesn't seem to happen, ask an admin directly, when you see one
- chatting (Admin's names are displayed in dark blue in the chat).
- If the server's intro screen mentions to send an email to an admin, try that
- and specify your account name in it.
+ If that doesn't seem to happen, just ask in chat openly. Some players have
+ validation privileges too and can help you out.
 
 -Press '@' key to see a list of players who're currently online. Note that a
  yellow '(I)' before a name stands for 'invalid', and means that this player
@@ -315,6 +318,12 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  If another player's character level is displayed in light blue colour, that
  means he is within sensible level range of you to form a party! Press SHIFT+P
  for party menu. One of you has to create the party and add the other one.
+ A name displayed in dark blue is an admin.
+ A name displayed in purple is a 'winner', ie a player who managed to beat the
+ game boss, Morgoth, the Lord of Darkness (and hasn't died since).
+ A name displayed in red is a ghost, ie a player who died. :(
+ A name displayed in dark grey is a player who is currently inside the special
+ 'Ironman Deep Dive Challenge' dungeon.
 
 -Note that your character's "speed" may change. Speed is the factor telling you
  how fast your character can move, fight or perform any other kind of action.
@@ -325,8 +334,8 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  items in your inventory, you will see a light brown indicator (for example
  'Slow -3') at the bottom line instead.
 
-It is recommended that you continue reading at (3.2) now,
-or glance at (7.3) first ;)
+You could continue reading at (3.2) now, which explains the user interface,
+or glance at (7.1), (7.2) or (7.3) first which explain some basic strategy.
 
 
 
