@@ -1110,6 +1110,8 @@ N:70:General Store
 I:100:& Wooden Torch~
 I:100:& Wooden Torch~
 I:100:& Wooden Torch~
+I:100:& Wooden Torch~
+I:100:& Wooden Torch~
 I:100:& Brass Lantern~
 I:100:& Brass Lantern~
 I:100:& Brass Lantern~
