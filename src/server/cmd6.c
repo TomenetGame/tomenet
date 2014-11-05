@@ -759,17 +759,21 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				}
 
 			case SV_POTION_DEATH:
-				{
-					if (!p_ptr->suscep_life) {
-						msg_print(Ind, "A feeling of Death flows through your body.");
-						take_hit(Ind, 5000, "a Potion of Death", 0);
-						ident = TRUE;
-					} else {
-						msg_print(Ind, "You burp.");
-						msg_format_near(Ind, "%s burps.", p_ptr->name);
+				if (!p_ptr->suscep_life) {
+					msg_print(Ind, "A feeling of Death flows through your body.");
+					take_hit(Ind, 5000, "a Potion of Death", 0);
+					ident = TRUE;
+				} else {
+					msg_print(Ind, "You burp.");
+					msg_format_near(Ind, "%s burps.", p_ptr->name);
+					if (p_ptr->cst < p_ptr->mst && !p_ptr->shadow_running) {
+						msg_print(Ind, "You feel refreshed.");
+						p_ptr->cst = p_ptr->mst;
+						p_ptr->cst_frac = 0;
+						p_ptr->redraw |= PR_STAMINA;
 					}
-					break;
 				}
+				break;
 
 			case SV_POTION_INFRAVISION:
 				{
@@ -930,6 +934,13 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				if (p_ptr->black_breath) {
 					p_ptr->black_breath = FALSE;
 					msg_print(Ind, "The hold of the Black Breath on you is broken!");
+				}
+				if (!p_ptr->suscep_life &&
+				    p_ptr->cst < p_ptr->mst && !p_ptr->shadow_running) {
+					msg_print(Ind, "You feel refreshed.");
+					p_ptr->cst = p_ptr->mst;
+					p_ptr->cst_frac = 0;
+					p_ptr->redraw |= PR_STAMINA;
 				}
 				ident = TRUE;
 				break;
