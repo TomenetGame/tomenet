@@ -6826,7 +6826,7 @@ void player_death(int Ind) {
 			if (cfg.worldd_pdeath) world_msg(buf);
 #endif
 
-			/* Add to legends log if he was a winner */
+			/* Add to legends log if he was a winner or very high level */
 			if (!is_admin(p_ptr)) {
 				if (p_ptr->total_winner)
 					l_printf("%s \\{r%s royalty %s (%d) died and was instantly resurrected\n", showdate(), p_ptr->male ? "His" : "Her", p_ptr->name, p_ptr->lev);
@@ -7434,7 +7434,8 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 			else if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_GHOST))
 				l_printf("%s \\{r%s (%d) died facing Morgoth\n", showdate(), p_ptr->name, p_ptr->lev);
 #ifndef RPG_SERVER
-			else if (p_ptr->lev >= 50)
+			/* for non-ghost deaths, display somewhat "lower" levels (below 50) too */
+			else if (p_ptr->lev >= 40)
 				l_printf("%s \\{r%s (%d) died\n", showdate(), p_ptr->name, p_ptr->lev);
 #else /* for RPG_SERVER, also display more trivial deaths, so people know the player is up for startup-party again */
 			else if (p_ptr->lev >= 20)
