@@ -5198,6 +5198,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (i > 69) i = 69; /* cap at 95% */
 			i = (i * 138) / 100; /* finalize calculation */
 			i = 100 - i;
+#ifdef TEST_SERVER
+			s_printf("GF_SILENCE: chance i=%d, duration k=%d\n", i, k);
+#endif
 			/* test resistance */
 			if (!((r_ptr->flags4 & RF4_SPELLCASTER_MASK) |
 			    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) |
