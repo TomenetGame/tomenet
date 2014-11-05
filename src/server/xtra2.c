@@ -4684,7 +4684,11 @@ static int get_coin_type(monster_race *r_ptr)
  * may result in the Iron Crown of Morgoth crushing the Lead-Filled
  * Mace "Grond", since the Iron Crown is more important.
  */
+
+/* Display Zu-Aon kills in special colours:
+ *  UxU is too flashy, lcl is possible, xcx maybe best (Nether Realm floor look preserved in msg ;) */
 //#define ZU_AON_FLASHY_MSG
+
 void monster_death(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr = Players[Ind];
@@ -5188,9 +5192,9 @@ if (cfg.unikill_format) {
 
 		if (is_Morgoth)
 			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-#ifdef ZU_AON_FLASHY_MSG /*too flashy?*/
+#ifdef ZU_AON_FLASHY_MSG
 		else if (m_ptr->r_idx == RI_ZU_AON)
-			snprintf(buf, sizeof(buf), "\374\377l**\377c%s was slain by %s %s.\377l**", r_name_get(m_ptr), titlebuf, p_ptr->name);//UxU was too flashy, maybe try lcl
+			snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s %s.\377x**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 #endif
 		else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
 			snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
@@ -5203,9 +5207,9 @@ if (cfg.unikill_format) {
 		if (!Ind2) {
 			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
-#ifdef ZU_AON_FLASHY_MSG /*too flashy?*/
-			else if (m_ptr->r_idx == RI_ZU_AON)
-				snprintf(buf, sizeof(buf), "\374\377l**\377c%s was slain by %s.\377l**", r_name_get(m_ptr), p_ptr->name);//UxU was too flashy, maybe try lcl
+#ifdef ZU_AON_FLASHY_MSG
+			else if (m_ptr->r_idx == RI_ZU_AON
+				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s.\377x**", r_name_get(m_ptr), p_ptr->name);
 #endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
 				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s.\377U**", r_name_get(m_ptr), p_ptr->name);
@@ -5214,9 +5218,9 @@ if (cfg.unikill_format) {
 		} else {
 			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
-#ifdef ZU_AON_FLASHY_MSG /*too flashy?*/
+#ifdef ZU_AON_FLASHY_MSG
 			else if (m_ptr->r_idx == RI_ZU_AON)
-				snprintf(buf, sizeof(buf), "\374\377l**\377c%s was slain by fusion %s-%s.\377l**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);//UxU was too flashy, maybe try lcl
+				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by fusion %s-%s.\377x**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 #endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
 				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by fusion %s-%s.\377U**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
@@ -5232,9 +5236,9 @@ if (cfg.unikill_format) {
 				{
 					if (is_Morgoth)
 						snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
-#ifdef ZU_AON_FLASHY_MSG /*too flashy?*/
+#ifdef ZU_AON_FLASHY_MSG
 					else if (m_ptr->r_idx == RI_ZU_AON)
-						snprintf(buf, sizeof(buf), "\374\377l**\377c%s was slain by %s of %s.\377l**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);//UxU was too flashy, maybe try lcl
+						snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s of %s.\377x**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 #endif
 					else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
 						snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s of %s.\377U**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
