@@ -4687,7 +4687,7 @@ static int get_coin_type(monster_race *r_ptr)
 
 /* Display Zu-Aon kills in special colours:
  *  UxU is too flashy, lcl is possible, xcx maybe best (Nether Realm floor look preserved in msg ;) */
-//#define ZU_AON_FLASHY_MSG
+#define ZU_AON_FLASHY_MSG
 
 void monster_death(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
@@ -5208,7 +5208,7 @@ if (cfg.unikill_format) {
 			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
 #ifdef ZU_AON_FLASHY_MSG
-			else if (m_ptr->r_idx == RI_ZU_AON
+			else if (m_ptr->r_idx == RI_ZU_AON)
 				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s.\377x**", r_name_get(m_ptr), p_ptr->name);
 #endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN))
