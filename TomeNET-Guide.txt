@@ -242,7 +242,8 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  ---- PLEASE NOTE: ----
  If you are new to the game, it is NOT recommended to choose one of these:
  Istar, Priest, Shaman, Adventurer.
- The reason is that these classes are hard to play in the beginning.
+ The reason is that these classes are hard to play in the beginning -
+ compare introductory explanation in (6.5)!
 
 
 -Make sure you DO NOT chose 'PvP' mode. It's a restricted special thing that
@@ -2984,8 +2985,13 @@ either his INTelligence or his WISdom, depending on the actual class. For more
 information about classes and their pros and cons see (6.5).
 Spellcasting involves using 'macros' (see (3.6)) and might be a bit difficult
 for beginners.
-Classes definitely NOT recommended for beginners are:
-Istar (mage), Priest, Shaman, Adventurer.
+
+
+ ---- PLEASE NOTE: ----
+ If you are new to the game, it is NOT recommended to choose one of these:
+ Istar, Priest, Shaman, Adventurer.
+ The reason is that these classes are hard to play in the beginning -
+ compare introductory explanation in (6.5)!
 
 
 Then you have to choose your race. Humans are good allrounders, while the other
