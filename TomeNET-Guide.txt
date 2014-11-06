@@ -11556,7 +11556,9 @@ Hardest classes for beginners to play maybe:
  -Adventurer (cause it's a jack of all trades so you can end up mediocre in
              every regard if you don't know what you're doing)
  -Shaman (triple-relation of forms, combat skills and magic spells)
- -Priest (weak in almost all regards the beginning)
+ -Priest (weak in almost all regards the beginning, but great early on party
+         asset if he gets the 'Cure Wounds' spell and uses it to heal his party
+         members from the back line)
  -Istar (glass cannon in the beginning, so if you are out of mana at the wrong
         time you could die fast)
  -Runemaster (needs some time to get a grip of the spell system, and has not
