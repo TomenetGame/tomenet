@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. November 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. November 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11135,8 +11135,24 @@ active or passive abilities, given in the race/class descriptions in (6.4) and
 Depending on your race, you might need different amounts of experience to gain
 a new character level. You also might have certain intrinsic abilities.
 
-For Beginners a powerful yet simple race/class combination like Half-Troll
-Warrior is strongly recommended.
+For Beginners a powerful yet simple race/class combination like Half-Troll,
+Half-Orc or Dwarven Warrior is strongly recommended. (Warrior being by far the
+most straight-forward and most forgiving class in the beginning.)
+
+The Maia race is not recommended for beginners due to its complexity.
+
+The Yeek race is not recommended for beginners because it's extraordinarily
+weak in all fields (its only upside being that it needs the least amount of
+experience of all races to gain levels).
+
+The Vampire race is not necessarily recommended for beginners due to its
+various quirks that you'll need to pay attention to (feeding, light sources,
+certain healing/curing effects that instead damage vampires).
+
+
+List of all races (make sure to read the paragraph about your race, when you
+create a character!):
+---------------------
 
 - Human
     Humans are allrounders with no special weaknesses or strengths.
@@ -11514,6 +11530,36 @@ Maia        +2  +3  +3  +1  +1  +2      11      400%   100ft
 ----------------------------------------------------
 Depending on your class, your start-up equipment and your skill tree will
 vary. For example a warrior cannot learn magic spells.
+
+Classes most straight-forward/most forgiving to play for starters are:
+ -Warrior
+ -Rogue (dual-wielding sword-type weapons makes them powerful early on)
+ -Paladin (similarly tough as warriors)
+ -Druid (utilise their shapeshifting powers they gain every 5 levels!)
+ -Mindcrafter (just make sure to get Psionic Blast spell macroed right away)
+
+Intermediate starting difficulty:
+ -Archer (easy when teaming up with a meat shield who keeps monsters at bay)
+ -Mimic (mostly plays straight-forward like a warrior, but need to hunt for
+         monster forms which can be hard for beginners, especially if they
+         don't know much about monsters)
+ -Ranger (can do well in many fields such as melee, ranged weapons and spells,
+         somewhat similar to an adventurer).
+
+Hardest classes for beginners to play maybe:
+ -Adventurer (cause it's a jack of all trades so you can end up mediocre in
+             every regard if you don't know what you're doing)
+ -Shaman (triple-relation of forms, combat skills and magic spells)
+ -Priest (weak in almost all regards the beginning)
+ -Istar (glass cannon in the beginning, so if you are out of mana at the wrong
+        time you could die fast)
+ -Runemaster (needs some time to get a grip of the spell system, and has not
+             that high hit points, ie glass cannonish).
+
+
+List of all classes (make sure to read the paragraph about your class, when you
+create a character!):
+---------------------
 
 - Warrior
     A warrior is a hack-and-slash character, who solves most of his problems
