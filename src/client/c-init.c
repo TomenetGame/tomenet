@@ -380,6 +380,7 @@ static void init_monster_list() {
 			}
 			if (buf[0] == '$' && *p1 == '$' && (
 			    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+			    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
 			    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
 			    )) {
 				p1 = p2 = NULL;
@@ -455,6 +456,7 @@ static void init_monster_list() {
 				}
 				if (buf[0] == '$' && *p1 == '$' && (
 				    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+				    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
 				    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
 				    )) {
 					p1 = p2 = NULL;
@@ -797,6 +799,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				}
 				if (buf[0] == '$' && *p1 == '$' && (
 				    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+				    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
 				    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
 				    )) {
 					p1 = p2 = NULL;
@@ -1043,6 +1046,12 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				break;
 			case 'F': /* flags */
 				if (!got_F_lines) {
+					/* hack: monster doesn't have melee attacks! */
+					if (!got_B_lines) {
+						Term_putstr(1, 7 + l, -1, ta_key, "No melee attacks.");
+						got_B_lines = 1;
+					}
+
 					/* fix missing newline from 'B:' lines */
 					l++;
 					Term_putstr(1, 7 + l, -1, ta_key, "Flags:");
@@ -1461,6 +1470,15 @@ static void init_artifact_list() {
 			else if (p2 && p2 < p1) p1 = p2;
 			//strcpy(buf, p1 + 1); // overlapping strings
 			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
+
+			if (buf[0] == '$' && *p1 == '$' && (
+			    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+			    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
+			    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
+			    )) {
+				p1 = p2 = NULL;
+				break;
+			}
 		}
 		if (!p1 && !p2) continue;
 		if (strlen(buf) < 3) continue;
@@ -1501,6 +1519,15 @@ static void init_artifact_list() {
 				else if (p2 && p2 < p1) p1 = p2;
 				//strcpy(buf, p1 + 1); // overlapping strings
 				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
+
+				if (buf[0] == '$' && *p1 == '$' && (
+				    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+				    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
+				    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
+				    )) {
+					p1 = p2 = NULL;
+					break;
+				}
 			}
 			if (!p1 && !p2) continue;
 
@@ -1789,6 +1816,14 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				    !strncmp(buf + 1, "USE_NEW_SHIELDS", 15) ||
 #endif
 				    FALSE
+				    )) {
+					p1 = p2 = NULL;
+					break;
+				}
+				if (buf[0] == '$' && *p1 == '$' && (
+				    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+				    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
+				    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
 				    )) {
 					p1 = p2 = NULL;
 					break;
