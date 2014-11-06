@@ -689,9 +689,11 @@ static void store_process_command(int cmd) {
 
 #ifdef USE_SOUND_2010
 		case KTRL('C'):
+		case KTRL('Q')://rl
 			toggle_music();
 			break;
 		case KTRL('N'):
+		case KTRL('V')://rl
 			toggle_audio();
 			break;
 #endif

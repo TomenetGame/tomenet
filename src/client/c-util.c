@@ -1160,6 +1160,9 @@ static char roguelike_commands(char command)
 		case KTRL('V'): return (KTRL('N'));
 		case KTRL('Q'): return (KTRL('C'));
 
+		/* Force-stack items */
+		case KTRL('C'): return ('K');
+
                 /* Hack -- White-space */
                 case KTRL('M'): return ('\r');
 

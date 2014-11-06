@@ -712,6 +712,8 @@ void cmd_map(char mode)
 #ifdef USE_SOUND_2010
 			else if (ch == KTRL('C')) toggle_music();
 			else if (ch == KTRL('N')) toggle_audio();
+			else if (ch == KTRL('Q')) toggle_music();//rl
+			else if (ch == KTRL('V')) toggle_audio();//rl
 #endif
 
 			continue;
