@@ -13175,6 +13175,7 @@ Istar schools:
                     Renders you instable, allowing to pass walls and to
                     float upwards/downwards.
                     Required skill level for first spell level: 35.
+
     BONI:           Resistance to teleportation attacks at 30.
 
 
