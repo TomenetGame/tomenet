@@ -1098,10 +1098,10 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 
 #ifdef NEW_PASTELINE_METHOD
 				/* add flags to existing paste_lines line */
-				/* 8 = 6 for colour codes etc around cname + 2 for paranoia */
+				/* 8 = 6 for colour codes etc around cname + 2 for paranoia + 4 for Party/Guild chat mode tag */
 				p1 = info;
 				if (p1) {//paranoia
-					if (strlen(paste_lines[pl]) + strlen(p1) < MSG_LEN - 1 - strlen(cname) - 8 - 7) {//7 = world server tax (pure paranoia here)
+					if (strlen(paste_lines[pl]) + strlen(p1) < MSG_LEN - 1 - strlen(cname) - 8 - 4 - 7) {//7 = world server tax (pure paranoia here)
 						strcat(paste_lines[pl], p1);
 					} else { /* split it up */
 						if (!(p2 = strchr(p1 + 1, ' '))) { /* can't split? */
@@ -1112,7 +1112,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							int p;
 
 							p3 = p2 = p1;
-							while ((p2 = strchr(p2 + 1, ' ')) && strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) < MSG_LEN - 1 - strlen(cname) - 8 - 7) p3 = p2;
+							while ((p2 = strchr(p2 + 1, ' ')) && strlen(paste_lines[pl]) + strlen(p1) - strlen(p2) < MSG_LEN - 1 - strlen(cname) - 8 - 4 - 7) p3 = p2;
 							//paste_lines[pl][strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) - 1] = 0;
 							p = strlen(paste_lines[pl]) + strlen(p1) - strlen(p3);
 							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3));
@@ -2111,10 +2111,10 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 #ifdef NEW_PASTELINE_METHOD
 				/* add flags to existing paste_lines line */
-				/* 8 = 6 for colour codes etc around cname + 2 for paranoia */
+				/* 8 = 6 for colour codes etc around cname + 2 for paranoia + 4 for Party/Guild chat mode tag */
 				p1 = info;
 				if (p1) {//paranoia
-					if (strlen(paste_lines[pl]) + strlen(p1) < MSG_LEN - 1 - strlen(cname) - 8 - 7) {//7 = world server tax (pure paranoia here)
+					if (strlen(paste_lines[pl]) + strlen(p1) < MSG_LEN - 1 - strlen(cname) - 8 - 4 - 7) {//7 = world server tax (pure paranoia here)
 						strcat(paste_lines[pl], p1);
 					} else { /* split it up */
 						if (!(p2 = strchr(p1 + 1, ' '))) { /* can't split? */
@@ -2125,7 +2125,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 							int p;
 
 							p3 = p2 = p1;
-							while ((p2 = strchr(p2 + 1, ' ')) && strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) < MSG_LEN - 1 - strlen(cname) - 8 - 7) p3 = p2;
+							while ((p2 = strchr(p2 + 1, ' ')) && strlen(paste_lines[pl]) + strlen(p1) - strlen(p2) < MSG_LEN - 1 - strlen(cname) - 8 - 4 - 7) p3 = p2;
 							//paste_lines[pl][strlen(paste_lines[pl]) + strlen(p1) - strlen(p3) - 1] = 0;
 							p = strlen(paste_lines[pl]) + strlen(p1) - strlen(p3);
 							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3));
