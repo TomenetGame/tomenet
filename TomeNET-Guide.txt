@@ -2188,7 +2188,7 @@ Last but not least, you may use the following command-line options:
 (Skip down to (2.1a) to continue reading.)
 
 
-Linux (using pre-compiled binary):
+Linux (using pre-compiled client):
 ----------------------------------
 Make sure that ncurses and crypt libraries are installed, package names are
 usually libncurses5 and libgcrypt11.
@@ -2199,8 +2199,6 @@ to start the game.
 
 Linux (compiling from source):
 ------------------------------
-(For using the pre-compiled client instead, see further below.)
-
 There are additional distribution-specific information on Mikael's website at:
 http://koti.mbnet.fi/mikaelh/tomenet/installation-linux.php
 (It's linked on www.tomenet.net -> "Links".)
@@ -2233,9 +2231,8 @@ Enter these two lines:
         make clean
         make tomenet
 and the binary 'tomenet' will be created in this folder 'tomenet/src'.
-IMPORTANT NOW: If your makefile is an older version, you need to move the
-binary one level upwards, ie into 'tomenet/' ! If your makefile is newer,
-it might already have done that for you automatically.
+IMPORTANT NOW: You need to move the binary 'tomenet' that was just created one
+               level upwards, so it's placed in the 'tomenet/' folder!
 Go up one level into your 'tomenet/' folder. There type:
         ./tomenet
 to start the game.
