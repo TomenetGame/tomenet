@@ -475,7 +475,7 @@ void Receive_login(void)
 	if (i < max_cpa) {
 		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", 5 + max_cpa, 2);
 		if ((!ded_pvp || !ded_iddc) && max_cpa_plus)
-			c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character", 6 + max_cpa, 2);
+			c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character (IDDC or PvP only)", 6 + max_cpa, 2);
 	} else {
 		c_put_str(CHARSCREEN_COLOUR, format("(Maximum of %d character reached.", max_cpa), 5 + max_cpa, 2);
 		c_put_str(CHARSCREEN_COLOUR, " Get rid of one (suicide) before creating another.)", 6 + max_cpa, 2);

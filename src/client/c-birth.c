@@ -1068,10 +1068,88 @@ static bool choose_stat_order(void)
 
 /* Quick hack!		- Jir -
  * TODO: remove hard-coded things. */
-static bool choose_mode(void)
-{
+static bool choose_mode(void) {
 	char c = '\0';
 	bool hazard = FALSE;
+
+	/* specialty: slot-exclusive-mode char? */
+	if (dedicated) {
+		put_str("i) Ironman Deep Dive Challenge", 16, 2);
+		c_put_str(TERM_SLATE, "(Unworldly - one life only.)", 16, 33);
+		put_str("H) Hellish Ironman Deep Dive Challenge", 17, 2);
+		c_put_str(TERM_SLATE, "(extra hard, sort of ridiculous)", 17, 41);
+		put_str("p) PvP", 18, 2);
+		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 18, 9);
+
+		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+		if (valid_dna) {
+			if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c_put_str(TERM_SLATE, "Hellish", 9, CHAR_COL);
+			else if ((dna_sex & MODE_HARD) == MODE_HARD) c_put_str(TERM_SLATE, "Hard", 9, CHAR_COL);
+			else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);
+			else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
+			else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
+			else c_put_str(TERM_SLATE, "Normal", 9, CHAR_COL);
+		}
+
+		while (1) {
+			if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
+			else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to quit, BACKSPACE to go back): ", 15, 2);
+
+		        Term->scr->cx = Term->wid;
+		        Term->scr->cu = 1;
+
+			if (!hazard) c = inkey();
+			if (c == 'Q') quit(NULL);
+			if (c == '\b') {
+				clear_from(15);
+				return FALSE;
+			}
+
+			if (c == 'p') {
+				sex += MODE_PVP;
+				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+				c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
+				break;
+			} else if (c == 'i') {
+				sex += MODE_NO_GHOST;
+				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+				c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
+				break;
+			}
+			else if (c == 'H') {
+				sex += (MODE_NO_GHOST + MODE_HARD);
+				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+				c_put_str(TERM_L_BLUE, "Hellish", 9, CHAR_COL);
+				break;
+			} else if (c == '?') {
+				/*do_cmd_help("help.hlp");*/
+			} else if (c == '*') {
+				switch (rand_int(3 - 1)) {
+					case 0:
+						c = 'i';
+						break;
+					case 1:
+						c = 'p';
+						break;
+					case 2:
+						c = 'H';
+						break;
+				}
+				hazard = TRUE;
+			} else if (c == '#' && valid_dna) {
+				if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
+				else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'h';
+				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
+				else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
+				else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
+				else c = 'n';
+				hazard = TRUE;
+			} else bell();
+		}
+
+		clear_from(15);
+		return TRUE;
+	}
 
 	put_str("n) Normal", 16, 2);
 	c_put_str(TERM_SLATE, "(3 lifes)", 16, 12);
@@ -1312,7 +1390,7 @@ void get_char_info(void)
 {
 	int i, j;
 	char out_val[160];
-	bool ded = sex & (MODE_DED_PVP | MODE_DED_IDDC);
+	dedicated = sex & (MODE_DED_PVP | MODE_DED_IDDC);
 	sex &= ~(MODE_DED_PVP | MODE_DED_IDDC);
 
 	/* Hack -- display the nick */
@@ -1511,7 +1589,7 @@ cstats:
 	clear_from(20);
 
 	/* Hack: Apply slot-exclusive mode on user demand */
-	if (ded) {
+	if (dedicated) {
 		if (sex & MODE_PVP) sex |= MODE_DED_PVP;
 		else sex |= MODE_DED_IDDC;
 	}
