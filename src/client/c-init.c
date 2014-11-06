@@ -1093,6 +1093,50 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					strcpy(info, info_tmp);
 				}
 
+				/* more unused/inactive flags */
+				if ((p2 = strstr(info, "DROP_CORPSE"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 12);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "DROP_SKELETON"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 14);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "HAS_EGG"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 8);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "IMPRESSED"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 10);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "MORTAL"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 7);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "POSSESSOR"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 10);
+					strcpy(info, info_tmp);
+				}
+				if ((p2 = strstr(info, "DEATH_ORB"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 10);
+					strcpy(info, info_tmp);
+				}
+
 				/* Highlight certain important flags for quick readability */
 				highlight_flags(info);
 
