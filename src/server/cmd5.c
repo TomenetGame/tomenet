@@ -1425,7 +1425,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 
 			if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) continue;
 			if (r_info[j].flags1 & RF1_UNIQUE) continue;
-			if (r_info[j].flags0 & RF0_PSEUDO_UNIQUE) continue;
+			if (r_info[j].flags8 & RF8_PSEUDO_UNIQUE) continue;
 			if (p_ptr->r_killed[j] < r_info[j].level) continue;
 			if (p_ptr->r_killed[j] < 1 && j) continue;
 			if (strlen(r_info[j].name + r_name) <= 1) continue;
@@ -1502,7 +1502,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			} else if (r_info[j].flags1 & RF1_UNIQUE) {
 				msg_print(Ind, "That form is unique!");
 				return;
-			} else if (r_info[j].flags0 & RF0_PSEUDO_UNIQUE) {
+			} else if (r_info[j].flags8 & RF8_PSEUDO_UNIQUE) {
 				msg_print(Ind, "That form is unlearnable!");
 				return;
 			} else if (j && p_ptr->r_killed[j] < 1

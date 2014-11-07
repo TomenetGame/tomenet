@@ -5070,7 +5070,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF3_RES_PLAS		0x01000000	/* Resist plasma */
 #define RF3_RES_NEXU		0x02000000	/* Resist nexus */
 #define RF3_RES_DISE		0x04000000	/* Resist disenchantment */
-#define RF3_UNIQUE_4		0x08000000      /* Is a "Nazgul" unique */
+#define RF3_UNIQUE_4		0x08000000      /* Is a "Nazgul" unique -- UNUSED*/
 #define RF3_NO_FEAR			0x10000000	/* Cannot be scared */
 #define RF3_NO_STUN			0x20000000	/* Cannot be stunned */
 #define RF3_NO_CONF			0x40000000	/* Cannot be confused */
@@ -5218,11 +5218,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF7_CAN_FLY		0x00000004  /* Monster can fly */
 #define RF7_FRIENDLY		0x00000008  /* Monster is friendly */
 #define RF7_PET				0x00000010  /* Monster is a pet */
-#define RF7_MORTAL			0x00000020  /* Monster is a mortal being */
+#define RF7_MORTAL			0x00000020  /* Monster is a mortal being -- UNUSED */
 #define RF7_SPIDER			0x00000040  /* Monster is a spider (can pass webs) */
 #define RF7_NAZGUL			0x00000080  /* Monster is a Nazgul */
 #define RF7_DG_CURSE		0x00000100  /* If killed the monster grant a DG Curse to the player */
-#define RF7_POSSESSOR		0x00000200  /* Is it a dreaded possessor monster ? */
+#define RF7_POSSESSOR		0x00000200  /* Is it a dreaded possessor monster ? -- UNUSED */
 #define RF7_NO_DEATH		0x00000400  /* Cannot be killed */
 #define RF7_NO_TARGET		0x00000800  /* Cannot be targeted */
 #define RF7_AI_ANNOY			0x00001000  /* Try to tease the player */
@@ -5276,7 +5276,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF8_NO_BLOCK			0x00800000	/* This monster never blocks hits */
 #define RF8_ALLOW_RUNNING	0x01000000	/* Player may run even with this monster (awake) in LoS */
 #define RF8_AVOID_PERMAWALLS	0x02000000	/* spawns distant of permanent walls (maybe/only for Dor) */
-#define RF8_PSEUDO_UNIQUE	0x04000000	/* Not a unique monster (does not appear in the uniques list), but named/looks like one (added for Santa Claus) */
+#define RF8_PSEUDO_UNIQUE	0x04000000	/* Not a unique monster (does not appear in the uniques list), but named/looks like one (added for Santa Claus); monster form cannot be learnt by mimics */
 #define RF8_GENO_PERSIST	0x08000000	/* Don't automatically genocide/compact this monster */
 #define RF8_GENO_NO_THIN		0x10000000	/* Don't genocide this monster when thinning out surface spawns */
 #define RF8_CLIMB			0x20000000	/* NOT YET IMPLEMENTED: Can walk over mountain fields */
@@ -5351,7 +5351,6 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF0_BA_DISE		0x00000100
 #define RF0_ROAMING		0x00000200		/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
 #define RF0_DROP_1		0x00000400		/* Drop exactly 1 item/gold */
-#define RF0_PSEUDO_UNIQUE	0x00000800		/* Monster isn't a real unique, but its form cannot be learnt */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 
