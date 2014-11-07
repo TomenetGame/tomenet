@@ -4457,6 +4457,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_POLYMORPH:
 		{
+			//todo for IDDC maybe: change all rods to wands (disallow rod drops), if poly should be enabled
 			if (poly_monster(Ind, dir)) ident = TRUE;
 			//o_ptr->pval = 25;
 			/* up to 50% faster with maxed MD - the_sandman */

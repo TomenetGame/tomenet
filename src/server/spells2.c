@@ -3965,7 +3965,9 @@ bool recharge_aux(int Ind, int item, int pow) {
 		}
 
 		/* Hack: No controlled mass-summoning in ironman deep dive challenge */
-		else if (in_irondeepdive(&p_ptr->wpos) && o_ptr->tval == TV_STAFF && o_ptr->sval == SV_STAFF_SUMMONING) {
+		else if (in_irondeepdive(&p_ptr->wpos) &&
+		    ((o_ptr->tval == TV_STAFF && o_ptr->sval == SV_STAFF_SUMMONING) {
+		    (o_ptr->tval == TV_WAND && o_ptr->sval == SV_WAND_POLYMORPH))) {
 			msg_print(Ind, "There is a static discharge.");
 			o_ptr->pval = 0;
 			o_ptr->ident |= ID_EMPTY;
