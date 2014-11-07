@@ -597,7 +597,7 @@ byte flick_colour(byte attr){
 		case TERM_FIRE:
 			return(randint(7) > 6 ? TERM_YELLOW : rand_int(3) > 1 ? TERM_RED : TERM_L_RED);
 		case TERM_POIS:
-			return(randint(5) > 3 ? TERM_GREEN : TERM_L_GREEN);
+			return(randint(6) > 4 ? TERM_GREEN : TERM_L_GREEN);
 		case TERM_COLD:
 			return(randint(5) > 3 ? TERM_WHITE : TERM_L_WHITE);
 		case TERM_ELEC:
