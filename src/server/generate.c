@@ -11058,7 +11058,10 @@ static void town_gen_hack(struct worldpos *wpos) {
 #else /* ..we have ironman towns in the dungeon, too - C. Blue */
 	/* Well, actually we could just use completely random seed for wpos != 0
 	   and just x,y dependant seed for wpos == 0. Might even be preferrable. */
-	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X + wpos->wz * MAX_WILD_X * MAX_WILD_Y);
+	if (!wpos->wz) Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X);
+	else
+		//Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X + wpos->wz * MAX_WILD_X * MAX_WILD_Y); /* Always same dungeon town at particular wpos */
+		Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) + turn / (cfg.fps * 3600 * 24); /* Different dungeon towns every 24h! */
 #endif
 
 
