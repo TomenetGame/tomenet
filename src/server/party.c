@@ -1401,13 +1401,13 @@ int guild_add(int adder, cptr name) {
 	if (!far_success) s_printf("GUILD_ADD: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
 
 	/* Tell the guild about its new member */
-	guild_msg_format(guild_id, "\374\377y%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
+	guild_msg_format(guild_id, "\374\377y%s has been added to %s by %s.", p_ptr->name, guilds[guild_id].name, q_ptr->name);
 
 	/* One more player in this guild */
 	guilds[guild_id].members++;
 
 	/* Tell him about it */
-	msg_format(Ind, "\374\377yYou've been added to '%s'.", guilds[guild_id].name);
+	msg_format(Ind, "\374\377yYou've been added to '%s' by %s.", guilds[guild_id].name, q_ptr->name);
 
 	/* Set his guild number */
 	p_ptr->guild = guild_id;
@@ -1546,14 +1546,15 @@ int guild_auto_add(int Ind, int guild_id, char *message) {
 	s_printf("GUILD_ADD_AUTO: %s has been added to %s.\n", p_ptr->name, guilds[guild_id].name);
 
 	/* Tell the guild about its new member */
-	sprintf(message, "\374\377y%s has been auto-added to %s.", p_ptr->name, guilds[guild_id].name);
+	//sprintf(message, "\374\377y%s has been auto-added to %s.", p_ptr->name, guilds[guild_id].name);
 	//guild_msg_format(guild_id, "\374\377y%s has been auto-added to %s.", p_ptr->name, guilds[guild_id].name);
+	guild_msg_format(guild_id, "\374\377y%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
 
 	/* One more player in this guild */
 	guilds[guild_id].members++;
 
 	/* Tell him about it */
-	msg_format(Ind, "\374\377yYou've been auto-added to '%s'.", guilds[guild_id].name);
+	msg_format(Ind, "\374\377yYou've been added to '%s'.", guilds[guild_id].name);
 
 	/* Set his guild number */
 	p_ptr->guild = guild_id;
@@ -1644,16 +1645,16 @@ int party_add(int adder, cptr name) {
 	s_printf("PARTY_ADD: %s has been added to %s by %s.\n", p_ptr->name, parties[party_id].name, q_ptr->name);
 
 	/* Tell the party about its new member */
-	party_msg_format(party_id, "\374\377y%s has been added to party %s.", p_ptr->name, parties[party_id].name);
+	party_msg_format(party_id, "\374\377y%s has been added to party %s by %s.", p_ptr->name, parties[party_id].name, q_ptr->name);
 
 	/* One more player in this party */
 	parties[party_id].members++;
 
 	/* Tell him about it */
 	if (parties[party_id].mode == PA_IRONTEAM)
-		msg_format(Ind, "\374\377yYou've been added to iron team '%s'.", parties[party_id].name);
+		msg_format(Ind, "\374\377yYou've been added to iron team '%s' by %s.", parties[party_id].name, q_ptr->name);
 	else
-		msg_format(Ind, "\374\377yYou've been added to party '%s'.", parties[party_id].name);
+		msg_format(Ind, "\374\377yYou've been added to party '%s' by %s.", parties[party_id].name, q_ptr->name);
 
 	/* Set his party number */
 	p_ptr->party = party_id;
