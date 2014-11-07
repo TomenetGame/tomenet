@@ -41,14 +41,16 @@ HGLOBELIGHT = add_spell
 	["fail"] = 	10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		local ret, dir
-
-		if get_level(Ind, HGLOBELIGHT, 50) >= 3 then lite_area(Ind, 10, 4)
-		else lite_room(Ind, player.wpos, player.py, player.px) end
 		if get_level(Ind, HGLOBELIGHT, 50) >= 8 then
-			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT, 6), " calls a globe of light of")
+			msg_print(Ind, "You are surrounded by a white light")
+			lite_room(Ind, player.wpos, player.py, player.px)
+			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT, 6), " calls light for")
+		elseif get_level(Ind, HGLOBELIGHT, 50) >= 3 then
+			lite_area(Ind, 10, 4)
+		else
+			msg_print(Ind, "You are surrounded by a white light")
+			lite_room(Ind, player.wpos, player.py, player.px)
 		end
-		msg_print(Ind, "You are surrounded by a globe of light")
 	end,
 	["info"] = 	function()
 		if get_level(Ind, HGLOBELIGHT, 50) >= 8 then

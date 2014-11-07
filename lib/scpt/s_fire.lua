@@ -9,14 +9,16 @@ GLOBELIGHT = add_spell
 	["mana_max"] = 	15,
 	["fail"] = 	10,
 	["spell"] = 	function()
-		local ret, dir
-
-		if get_level(Ind, GLOBELIGHT, 50) >= 10 then lite_area(Ind, 10, 4)
-		else lite_room(Ind, player.wpos, player.py, player.px) end
 		if get_level(Ind, GLOBELIGHT, 50) >= 25 then
-			fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6), " calls a globe of light of")
+			msg_print(Ind, "You are surrounded by a globe of light")
+			lite_room(Ind, player.wpos, player.py, player.px)
+			fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6), " calls a globe of light for")
+		elseif get_level(Ind, GLOBELIGHT, 50) >= 10 then
+			lite_area(Ind, 10, 4)
+		else
+			msg_print(Ind, "You are surrounded by a globe of light")
+			lite_room(Ind, player.wpos, player.py, player.px)
 		end
-		msg_print(Ind, "You are surrounded by a globe of light")
 	end,
 	["info"] = 	function()
 		if get_level(Ind, GLOBELIGHT, 50) >= 10 then
