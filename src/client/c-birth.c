@@ -146,8 +146,7 @@ static void enter_password(void)
 /*
  * Choose the character's sex				-JWT-
  */
-static bool choose_sex(void)
-{
+static bool choose_sex(void) {
 	char        c = '\0';		/* pfft redesign while(1) */
 	bool hazard = FALSE;
 	bool parity = magik(50);
@@ -160,9 +159,13 @@ static bool choose_sex(void)
 		else c_put_str(TERM_SLATE, "Female", 4, CHAR_COL);
 	}
 
-	while (1)
-	{
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a sex (* for random, \377B#\377s to reincarnate, Q to quit): ", 20, 2);
+	if (auto_reincarnation) {
+		hazard = TRUE;
+		c = '#';
+	}
+
+	while (1) {
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a sex (* for random, \377B#\377s/\377B%\377s to reincarnate, Q to quit): ", 20, 2);
 		else c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to quit): ", 20, 2);
 
 	        Term->scr->cx = Term->wid;
@@ -170,28 +173,20 @@ static bool choose_sex(void)
 
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
-		if (c == 'm')
-		{
+		if (c == 'm') {
 			sex = 1;
 			put_str("      ", 4, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Male", 4, CHAR_COL);
 			break;
-		}
-		else if (c == 'f')
-		{
+		} else if (c == 'f') {
 			sex = 0;
 			put_str("      ", 4, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Female", 4, CHAR_COL);
 			break;
-		}
-		else if (c == '?')
-		{
+		} else if (c == '?') {
 			/*do_cmd_help("help.hlp");*/
-		}
-		else if (c == '*')
-		{
-			switch (rand_int(2))
-			{
+		} else if (c == '*') {
+			switch (rand_int(2)) {
 				case 0:
 					c = 'f';
 					break;
@@ -201,10 +196,21 @@ static bool choose_sex(void)
 			}
 			hazard = TRUE;
 		}
-		else if (c == '#' && valid_dna) {
-			if (dna_sex % 2) c = 'm';
-			else c = 'f';
+		else if (c == '#') {
+			if (valid_dna) {
+				if (dna_sex % 2) c = 'm';
+				else c = 'f';
+				hazard = TRUE;
+			} else {
+				hazard = FALSE;
+				auto_reincarnation = FALSE;
+				continue;
+			}
+		} else if (c == '%' && valid_dna) {
+			c = '#';
 			hazard = TRUE;
+			auto_reincarnation = TRUE;
+			continue;
 		} else bell();
 	}
 
@@ -236,8 +242,7 @@ static void display_race_diz(int r) {
 /*
  * Allows player to select a race			-JWT-
  */
-static bool choose_race(void)
-{
+static bool choose_race(void) {
 	player_race *rp_ptr;
 	int i, j, l, m, n, sel = 0;
 	char c = '\0';
@@ -280,8 +285,13 @@ race_redraw:
 	if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) c_put_str(TERM_SLATE, race_info[dna_race].title, 6, CHAR_COL);
 #endif
 
+	if (auto_reincarnation) {
+		hazard = TRUE;
+		c = '#';
+	}
+
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a race (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a race (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
 		else c_put_str(TERM_SLATE, "Choose a race (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8): ", n, 2);
 		display_race_diz(sel);
 
@@ -338,8 +348,15 @@ race_redraw:
 			if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) j = dna_race;
 			else {
 				valid_dna = 0;
+				hazard = FALSE;
+				auto_reincarnation = FALSE;
 				continue;
 			}
+		} else if (c == '%' && valid_dna) {
+			c = '#';
+			hazard = TRUE;
+			auto_reincarnation = TRUE;
+			continue;
 		}
 
 		if ((j < Setup.max_race) && (j >= 0)) {
@@ -483,9 +500,14 @@ trait_redraw:
 		}
 	}
 
+	if (auto_reincarnation) {
+		hazard = TRUE;
+		c = '#';
+	}
+
 	/* Get a trait */
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a trait (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a trait (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
 		else c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_trait_diz(sel);
 
@@ -538,13 +560,20 @@ trait_redraw:
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(shown_traits);
 		else j = (islower(c) ? A2I(c) : -1);
-		
+
 		if (c == '#') {
 			if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) j = dna_trait;
 			else {
 				valid_dna = 0;
+				hazard = FALSE;
+				auto_reincarnation = FALSE;
 				continue;
 			}
+		} else if (c == '%') {
+			hazard = TRUE;
+			c = '#';
+			auto_reincarnation = TRUE;
+			continue;
 		} else {
 			/* Transform visible index back to real index */
 			for (i = 0; i <= j; i++)
@@ -662,9 +691,14 @@ class_redraw:
 	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, class_info[dna_class].title, 5, CHAR_COL);
 #endif
 
+	if (auto_reincarnation) {
+		hazard = TRUE;
+		c = '#';
+	}
+
 	/* Get a class */
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a class (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8):  ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a class (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8):  ", n, 2);
 		else c_put_str(TERM_SLATE, "Choose a class (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_class_diz(sel);
 
@@ -729,8 +763,15 @@ class_redraw:
 			if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) j = dna_class;
 			else {
 				valid_dna = 0;
+				hazard = FALSE;
+				auto_reincarnation = FALSE;
 				continue;
 			}
+		} else if (c == '%') {
+			auto_reincarnation = TRUE;
+			c = '#';
+			hazard = TRUE;
+			continue;
 		}
 
 		if ((j < Setup.max_class) && (j >= 0)) {
@@ -762,8 +803,7 @@ class_redraw:
 /*
  * Get the desired stat order.
  */
-static bool choose_stat_order(void)
-{
+static bool choose_stat_order(void) {
 	int i, j, k, avail[6], crb, maxed_stats = 0;
 	char c = '\0';
 	char out_val[160], stats[6][4], buf[8], buf2[8], buf3[8];
@@ -851,7 +891,7 @@ static bool choose_stat_order(void)
 		if (valid_dna) c_put_str(TERM_SLATE, "Current:   (Base) (Prev) if possible:", 15, col2);
 		else c_put_str(TERM_SLATE, "Current:   (Base)        if possible:", 15, col2);
 
-		if (valid_dna) c_put_str(TERM_SLATE, "'\377B#\377s' to reincarnate.", 15, col1);
+		if (valid_dna) c_put_str(TERM_SLATE, "'\377B#\377s/\377B%\377s' to reincarnate.", 15, col1);
                 c_put_str(TERM_SLATE, "Use keys '+', '-', 'RETURN'", 16, col1);
                 c_put_str(TERM_SLATE, "or 8/2/4/6 or arrow keys to", 17, col1);
                 c_put_str(TERM_SLATE, "modify and navigate.", 18, col1);
@@ -879,7 +919,11 @@ static bool choose_stat_order(void)
 				}
 			}
 		}
-		
+
+		if (auto_reincarnation) {
+			c = '#';
+		}
+
 		while (1) {
 			c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
 
@@ -925,7 +969,7 @@ static bool choose_stat_order(void)
 		        Term->scr->cx = Term->wid;
 		        Term->scr->cu = 1;
 
-			c = inkey();
+			if (!auto_reincarnation) c = inkey();
 			crb = cp_ptr->c_adj[j] + rp_ptr->r_adj[j];
 			if (c == '-' || c == '4' || c == 'h') {
 				if (stat_order[j] > 10-2 &&
@@ -1049,14 +1093,25 @@ static bool choose_stat_order(void)
 
 				return FALSE;
 			}
-			if (c == '#' && valid_dna) {
-				for (i = 0; i < 6; i++) {
-					if (dna_stat_order[i] > 7 || dna_stat_order[i] < 18) stat_order[i] = dna_stat_order[i];
-					else stat_order[i] = 8;
+			if (c == '#') {
+				if (valid_dna) {
+					for (i = 0; i < 6; i++) {
+						if (dna_stat_order[i] > 7 || dna_stat_order[i] < 18) stat_order[i] = dna_stat_order[i];
+						else stat_order[i] = 8;
+					}
+					for (i = 3; i < 12; i++) Term_erase(30, i, 255);
+					clear_from(13);
+					return TRUE;
+				} else {
+					auto_reincarnation = FALSE;
+					hazard = FALSE;
+					continue;
 				}
-				for (i = 3; i < 12; i++) Term_erase(30, i, 255);
-				clear_from(13);
-				return TRUE;
+			}
+			if (c == '%') {
+				auto_reincarnation = TRUE;
+				c = '#';
+				continue;
 			}
 		}
 
@@ -1089,6 +1144,11 @@ static bool choose_mode(void) {
 			else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
 			else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
 			else c_put_str(TERM_SLATE, "Normal", 9, CHAR_COL);
+		}
+
+		if (auto_reincarnation) {
+			hazard = TRUE;
+			c = '#';
 		}
 
 		while (1) {
@@ -1136,14 +1196,24 @@ static bool choose_mode(void) {
 						break;
 				}
 				hazard = TRUE;
-			} else if (c == '#' && valid_dna) {
-				if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
-				else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'h';
-				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
-				else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
-				else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
-				else c = 'n';
+			} else if (c == '#') {
+				if (valid_dna) {
+					if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
+					else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'H';
+					else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'i';
+					else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'i';
+					else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
+					else c = 'i';
+					hazard = TRUE;
+				} else {
+					auto_reincarnation = FALSE;
+					hazard = FALSE;
+					continue;
+				}
+			} else if (c == '%') {
+				auto_reincarnation = TRUE;
 				hazard = TRUE;
+				c = '#';
 			} else bell();
 		}
 
@@ -1174,6 +1244,11 @@ static bool choose_mode(void) {
 		else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
 		else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
 		else c_put_str(TERM_SLATE, "Normal", 9, CHAR_COL);
+	}
+
+	if (auto_reincarnation) {
+		hazard = TRUE;
+		c = '#';
 	}
 
 	while (1) {
@@ -1249,14 +1324,25 @@ static bool choose_mode(void) {
 					break;
 			}
 			hazard = TRUE;
-		} else if (c == '#' && valid_dna) {
-			if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
-			else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'h';
-			else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
-			else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
-			else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
-			else c = 'n';
+		} else if (c == '#') {
+			if (valid_dna) {
+				if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
+				else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'h';
+				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
+				else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
+				else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
+				else c = 'n';
+				hazard = TRUE;
+			} else {
+				auto_reincarnation = FALSE;
+				hazard = FALSE;
+				continue;
+			}
+		} else if (c == '%') {
+			auto_reincarnation = TRUE;
 			hazard = TRUE;
+			c = '#';
+			continue;
 		} else bell();
 	}
 
@@ -1286,9 +1372,14 @@ static bool choose_body_modification(void)
 		else c_put_str(TERM_SLATE, "Normal body", 8, CHAR_COL);
 	}
 
+	if (auto_reincarnation) {
+		hazard = TRUE;
+		c = '#';
+	}
+
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a body modification (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back): ", 19, 2);
-		else c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to quit, BACKSPACE to go back): ", 19, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose body modification (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back): ", 19, 2);
+		else c_put_str(TERM_SLATE, "Choose body modification (* for random, Q to quit, BACKSPACE to go back): ", 19, 2);
 
 	        Term->scr->cx = Term->wid;
 	        Term->scr->cu = 1;
@@ -1321,10 +1412,21 @@ static bool choose_body_modification(void)
 					break;
 			}
 			hazard = TRUE;
-		} else if (c == '#' && valid_dna) {
-			if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c = 'f';
-			else c = 'n';
+		} else if (c == '#') {
+			if (valid_dna) {
+				if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c = 'f';
+				else c = 'n';
+				hazard = TRUE;
+			} else {
+				auto_reincarnation = FALSE;
+				hazard = FALSE;
+				continue;
+			}
+		} else if (c == '%') {
+			auto_reincarnation = TRUE;
 			hazard = TRUE;
+			c = '#';
+			continue;
 		} else bell();
 	}
 
@@ -1335,8 +1437,7 @@ static bool choose_body_modification(void)
 /*
  * Get the name/pass for this character.
  */
-void get_char_name(void)
-{
+void get_char_name(void) {
 	/* Clear screen */
 	Term_clear();
 
@@ -1386,8 +1487,7 @@ void get_char_name(void)
 /*
  * Get the other info for this character.
  */
-void get_char_info(void)
-{
+void get_char_info(void) {
 	int i, j;
 	char out_val[160];
 	dedicated = sex & (MODE_DED_PVP | MODE_DED_IDDC);
@@ -1576,6 +1676,12 @@ cstats:
 	/* Clear */
 	clear_from(15);
 
+	/* Hack: Apply slot-exclusive mode on user demand */
+	if (dedicated) {
+		if (sex & MODE_PVP) sex |= MODE_DED_PVP;
+		else sex |= MODE_DED_IDDC;
+	}
+
 	/* Save Birth DNA */
 	save_birth_file(cname);
 	
@@ -1587,12 +1693,6 @@ cstats:
 
 	/* Clear */
 	clear_from(20);
-
-	/* Hack: Apply slot-exclusive mode on user demand */
-	if (dedicated) {
-		if (sex & MODE_PVP) sex |= MODE_DED_PVP;
-		else sex |= MODE_DED_IDDC;
-	}
 }
 
 static bool enter_server_name(void)

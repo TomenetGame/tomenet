@@ -1955,8 +1955,7 @@ void load_auto_inscriptions(cptr name)
 }
 
 /* Save Character-Birth file (*.dna) */
-void save_birth_file(cptr name)
-{
+void save_birth_file(cptr name) {
 	FILE *fp;
 	char buf[1024];
 	char real_name[256];
@@ -1977,8 +1976,7 @@ void save_birth_file(cptr name)
 	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
 
 	fp = fopen(buf, "w");
-	if (!fp)
-	{
+	if (!fp) {
 		/* Couldn't write */
 		c_msg_print("Saving character birth dna failed!");
 		return;
@@ -2005,11 +2003,15 @@ void save_birth_file(cptr name)
 }
 
 /* Load Character-Birth file (*.dna) */
-void load_birth_file(cptr name)
-{
+void load_birth_file(cptr name) {
 	FILE *fp;
 	char buf[1024];
 	char real_name[256];
+
+#if 0 /* for future enhancements */
+	int vm = 0, vi = 0, vp = 0;
+	char vt = '%', *p;
+#endif
 
 	strncpy(real_name, name, 249);
 	real_name[249] = '\0';
@@ -2027,8 +2029,7 @@ void load_birth_file(cptr name)
 	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
 
 	fp = fopen(buf, "r");
-	if (!fp)
-	{
+	if (!fp) {
 		/* Couldn't open */
 		return;
 	}
@@ -2038,6 +2039,17 @@ void load_birth_file(cptr name)
 		fclose(fp);
 		return;
 	}
+
+#if 0 /* for future enhancements */
+	/* scan header for version */
+	if ((p = strstr(buf, "TomeNET v"))) {
+		vm = atoi(p + 9);
+		vi = atoi(p + 11);
+		vp = atoi(p + 13);
+		vt = *(p + 14);
+		if (!vt) vt = '-';//note: '-' > '%'
+	}
+#endif
 
 	/* Info */
 	int tmp, i, r;
@@ -2056,7 +2068,13 @@ void load_birth_file(cptr name)
 		dna_stat_order[i] = (s16b)tmp;
 	}
 	r = r;//slay silly compiler warning
-	
+
+#if 0 /* for future enhancements */
+	/* > 4.5.8? */
+	if (vm > 4 || (vm == 4 && (vi > 5 || (vi == 5 && (vp > 8 || (vp == 8 && vt > '-')))))) {
+	}
+#endif
+
 	/* Validate */
 	valid_dna = 1; //Safety for mis-hacked dna files in future? - Kurzel
 	

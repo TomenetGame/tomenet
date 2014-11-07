@@ -334,8 +334,7 @@ int Send_file_end(int ind, unsigned short id) {
 
 #define CHARSCREEN_COLOUR TERM_L_GREEN
 #define COL_CHARS 3
-void Receive_login(void)
-{
+void Receive_login(void) {
 	int n;
 	char ch;
 	int i = 0, max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, mode = 0;
@@ -387,8 +386,21 @@ void Receive_login(void)
 	/* Now that we have the server flags, we can finish setting up Lua - mikaelh */
 	open_lua();
 
-	/* read a character name from command-line or config file? - C. Blue */
-	if (strlen(cname)) return;
+	/* read a character name from command-line or config file? prepare it */
+	if (cname[0]) {
+		cname[0] = toupper(cname[0]);
+		if (auto_reincarnation) {
+			/* check if valid dna exists for reincarnation */
+			load_birth_file(cname);
+			if (valid_dna) {
+				sex = dna_sex;
+				race = dna_race;
+				class = dna_class;
+				trait = dna_trait;
+				return;
+			}
+		}
+	}
 
 	Term_clear();
 
@@ -426,10 +438,14 @@ void Receive_login(void)
 	    > 0) {
 //	while ((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) > 0) {
 		/* End of character list is designated by a 'zero' character */
-		if (!strlen(c_name)) break;
+		if (!c_name[0]) break;
 
 		/* skip all characters that exceed what our client knows as max_cpa */
 		if (i == max_cpa) continue;
+
+		/* read a character name from command-line or config file,
+		   that exists, so we log in with it straight away? */
+		if (streq(cname, c_name)) return;
 
 		strcpy(names[i], c_name);
 
@@ -486,7 +502,7 @@ void Receive_login(void)
 		if (ch == 'Q') quit(NULL);
 	}
 	if (ch == 'N' || ch == 'E') {
-		if (!strlen(cname)) strcpy(c_name, nick);
+		if (!cname[0]) strcpy(c_name, nick);
 		else strcpy(c_name, cname);
 
 		c_put_str(TERM_SLATE, "(ESC to pick a random name)", 9 + max_cpa, COL_CHARS);

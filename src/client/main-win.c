@@ -3900,6 +3900,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -F                 Client FPS");
 					puts("  -l<nick> <passwd>  Login as");
 					puts("  -N<name>           character Name");
+					puts("  -R<name>           character Name, auto-reincarnate");
 					puts("  -p<num>            change game Port number");
 					puts("  -P<path>           set the lib directory Path");
 					puts("  -q                 disable audio capabilities ('quiet mode')");
@@ -3919,7 +3920,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					    "  -k                 don't disable numlock on client startup",
 					    "  -l<nick> <passwd>  Login as",
 					    "  -m                 skip motd (message of the day) on login",
-					    "  -N<name>           character Name",
+					    "  -N<name>           character name",
+					    "  -R<name>           character name, auto-reincarnate",
 					    "  -p<num>            change game Port number",
 					    "  -P<path>           set the lib directory Path",
 					    "  -q                 disable audio capabilities ('quiet mode')",
@@ -3935,6 +3937,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					i += cmd_get_string(&lpCmdLine[i + 1], pass, MAX_CHARS);
 					done = TRUE;
 					break;
+				case 'R':
+					auto_reincarnation = TRUE;
 				case 'N': /* character name */
 					i += cmd_get_string(&lpCmdLine[i + 1], cname, MAX_CHARS);
 					break;

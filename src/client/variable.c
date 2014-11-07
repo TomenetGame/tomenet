@@ -382,3 +382,4 @@ bool silent_dump = FALSE;
 bool equip_no_weapon = FALSE;
 
 bool enabled_readability_blue = FALSE;
+bool auto_reincarnation = FALSE;

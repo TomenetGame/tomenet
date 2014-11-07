@@ -788,14 +788,15 @@ int main(int argc, char **argv)
 			strcpy(path, argv[i]+2);
 			break;
 
+		case 'R':
+			auto_reincarnation = TRUE;
 		case 'N':
 			strcpy(cname, argv[i]+2);
 			break;
 
 		/* Pull login id */
 		case 'l':
-			if (argv[i][2])	/* Hack -- allow space after '-l' */
-			{
+			if (argv[i][2]) { /* Hack -- allow space after '-l' */
 				strcpy(nick, argv[i]+2);
 				modus = 2;
 			}
@@ -874,7 +875,8 @@ int main(int argc, char **argv)
 		puts("  -i                 Ignore .tomenetrc");
 		puts("  -l<nick> <passwd>  Login as");
 		puts("  -m                 skip motd (message of the day) on login");
-		puts("  -N<name>           character Name");
+		puts("  -N<name>           character name");
+		puts("  -R<name>           character name, auto-reincarnate");
 		puts("  -p<num>            change game Port number");
 		puts("  -P<path>           set the lib directory Path");
 		puts("  -q                 disable audio capabilities ('quiet mode')");
