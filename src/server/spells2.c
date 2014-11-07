@@ -7928,8 +7928,8 @@ void tome_creation_aux(int Ind, int item) {
 		return;
 	}
 
-/* for DISCRETE_SPELL_SYSTEM */
-//TODO: call Send_spell_request(Ind, item); here if client is not outdated
+/* for DISCRETE_SPELL_SYSTEM: DSS_EXPANDED_SCROLLS */
+//TODO: call Send_spell_request(Ind, item); here if client is not outdated (DSS_EXPANDED_SCROLLS)
 
 	/* need to actually be able to cast the spell in order to transcribe it! */
 	if (exec_lua(Ind, format("return get_level(%d, %d, 50, -50)", Ind, o2_ptr->pval)) < 1) {

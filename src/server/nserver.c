@@ -5625,7 +5625,7 @@ int Send_item_request(int Ind, char tester_hook) {
 		return Packet_printf(&connp->c, "%c", PKT_ITEM);
 }
 
-/* for DISCRETE_SPELL_SYSTEM */
+/* for DISCRETE_SPELL_SYSTEM: DSS_EXPANDED_SCROLLS */
 int Send_spell_request(int Ind, int item) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
@@ -9408,7 +9408,7 @@ static int Receive_item(int ind)
 	return 1;
 }
 
-/* for DISCRETE_SPELL_SYSTEM */
+/* for DISCRETE_SPELL_SYSTEM: DSS_EXPANDED_SCROLLS */
 static int Receive_spell(int ind) {
 	connection_t *connp = Conn[ind];
 	char ch;

@@ -2203,7 +2203,7 @@ int Receive_item(void) {
 	return 1;
 }
 
-/* for DISCRETE_SPELL_SYSTEM */
+/* for DISCRETE_SPELL_SYSTEM: DSS_EXPANDED_SCROLLS */
 int Receive_spell_request(void) {
 	char	ch;
 	int	n, item, spell;
@@ -4031,7 +4031,7 @@ int Send_item(int item) {
 	return 1;
 }
 
-/* for DISCRETE_SPELL_SYSTEM */
+/* for DISCRETE_SPELL_SYSTEM: DSS_EXPANDED_SCROLLS */
 int Send_spell(int item, int spell) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SPELL, item, spell)) <= 0) return n;

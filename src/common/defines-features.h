@@ -141,6 +141,7 @@
 /* Use newly reworked spell system: Discrete stages for each component of
    compound spells, and fixed mana cost to go with it. */
 #define DISCRETE_SPELL_SYSTEM
+//#define DSS_EXPANDED_SCROLLS /* spell scrolls to carry all versions of a spell instead of just one specific? (Implementation not yet done) */
 
 /* Draconians get to pick a 'lineage trait' on birth,
    giving specific resistances and a breath weapon. - C. Blue */

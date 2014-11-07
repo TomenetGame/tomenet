@@ -785,8 +785,7 @@ void do_ghost(void)
  */
 static int hack_force_spell = -1;
 #ifndef DISCRETE_SPELL_SYSTEM /* good method before the big spell system rework */
-bool get_item_hook_find_spell(int *item, bool inven_first)
-{
+bool get_item_hook_find_spell(int *item, bool inven_first) {
 	int i, spell;
 	char buf[80];
 	char buf2[100];
@@ -851,7 +850,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 		spos = 0;
 		do {
 			spos++;
-			sprintf(buf2, "return get_spellname_in_book(%d, %d)", i, spos);
+			sprintf(buf2, "return get_spellname_in_book(%d, %d)", i, spos); //note: get_spellname_in_book() is not ready for DSS_EXPANDED_SCROLLS!
 			strcpy(sname, string_exec_lua(0, buf2));
 			if (!sname[0]) break;
 
@@ -892,7 +891,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 				}
 
 				sprintf(buf2, "return is_ok_spell(0, %d)", spell);
-    	                        if (!exec_lua(0, buf2)) continue;
+				if (!exec_lua(0, buf2)) continue;
 
 				if (current > highest) {
 					/* the highest spell we found so far that we can cast */
@@ -903,7 +902,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 
 				/* continue checking, maybe we find a higher spell variant that is still usable */
 				continue;
-	                }
+			}
 
 			/* assume that we can probably cast this spell */
 			*item = i;
