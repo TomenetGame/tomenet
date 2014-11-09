@@ -6991,12 +6991,15 @@ int Send_monster_health(int Ind, int num, byte attr)
 	return Packet_printf(&connp->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr);
 }
 
-int Send_chardump(int Ind, cptr tag)
-{
-	connection_t *connp = Conn[Players[Ind]->conn];
+/* Always display oneself as '@' for easier visibility,
+   instead of number or minus sign (when dead)? */
+#define CHARDUMP_VIS_HACK
+int Send_chardump(int Ind, cptr tag) {
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn];
+	int thp;
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for chardump (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -7010,11 +7013,27 @@ int Send_chardump(int Ind, cptr tag)
 			Send_unique_monster(Ind, i);
 #endif
 
+#ifdef CHARDUMP_VIS_HACK
+	/* hack: display own symbol as '@' for this chardump, for easier recognising */
+	thp = p_ptr->chp;
+ #if 0
+	if (p_ptr->chp < 0) /* only for death dumps? */
+ #endif
+		p_ptr->chp = p_ptr->mhp;
+	lite_spot(Ind, p_ptr->py, p_ptr->px);
+#endif
+
 	if (!is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0) ||
 	    MY_VERSION <= (4 << 12 | 4 << 8 | 2 << 4 | 0))
 		return Packet_printf(&connp->c, "%c", PKT_CHARDUMP);
 	else
 		return Packet_printf(&connp->c, "%c%s", PKT_CHARDUMP, tag);
+
+#ifdef CHARDUMP_VIS_HACK
+	/* unhack '@' */
+	p_ptr->chp = thp;
+	lite_spot(Ind, p_ptr->py, p_ptr->px);
+#endif
 }
 
 int Send_unique_monster(int Ind, int r_idx)
