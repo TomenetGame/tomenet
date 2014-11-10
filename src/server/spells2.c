@@ -46,6 +46,10 @@
 //#define PVP_DIMINISHING_HEALING_CAP(p) (3 * ((p)->mhp + (p)->lev * 6)) /* unfair for non-mimics */
 #define PVP_DIMINISHING_HEALING_CAP(p) (((p)->lev + 5) * ((p)->lev + 5)) /* 10: 225, 20: 625, 30: 1225 */
 
+/* Give 'absence' messages for detection magic?
+   This would need magic devices causing these to get identified, since we
+   can read what they supposedly do. */
+//#define DETECT_ABSENCE
 
 /* Helper function to educe spell damage by 50% while in wraithform.
  *  Some spells must be excempt, because their 'dam'
@@ -2156,8 +2160,10 @@ bool detect_monsters_xxx(int Ind, u32b match_flag) {
 		update_monsters(FALSE);
 #endif
 	} else {
+#ifdef DETECT_ABSENCE
 		/* Describe result */
 		msg_format(Ind, "You sense the absence of %s.", desc_monsters);
+#endif
 	}
 
 	/* Result */
@@ -2284,8 +2290,10 @@ bool detect_invisible(int Ind) {
 		update_players();
 #endif
 	} else {
+#ifdef DETECT_ABSENCE
 		msg_print(Ind, "You sense the absence of invisible creatures.");
 		msg_print(Ind, NULL);
+#endif
 	}
 
 	/* Result */
@@ -2368,8 +2376,10 @@ bool detect_evil(int Ind) {
 #endif
 	}
     else {
-        msg_print(Ind, "You sense the absence of evil.");
-        msg_print(Ind, NULL);
+#ifdef DETECT_ABSENCE
+	msg_print(Ind, "You sense the absence of evil.");
+	msg_print(Ind, NULL);
+#endif
     }
 
 	/* Result */
@@ -2499,8 +2509,10 @@ bool detect_creatures(int Ind) {
 		update_players();
 #endif
 	} else {
+#ifdef DETECT_ABSENCE
 		msg_print(Ind, "You sense the absence of creatures.");
 		msg_print(Ind, NULL);
+#endif
 	}
 
 	/* Result */
@@ -2890,7 +2902,9 @@ bool detect_trap(int Ind, int rad) {
 	if (detect) {
 		msg_print(Ind, "You have detected new traps.");
 	} else {
+#ifdef DETECT_ABSENCE
 		msg_print(Ind, "You have detected no new traps.");
+#endif
 	}
 
 	return (detect);
