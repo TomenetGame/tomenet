@@ -16197,6 +16197,10 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   Regarding weapon weight, note that a weapon reward will usually not give you
   less attacks per round than the weapon you are already wielding (if any). If
   you don't wield one, it aims for 3 attacks per round as default.
+- runemasters who receive a piece of armour will usually (as long as it's
+  reasonably possible regarding ego-power type and value) get one that provides
+  resistance to one of the elements they can conjure up with their runecraft
+  skills.
 
 Aside from these, randomness is always a factor so the result may vary.
 
