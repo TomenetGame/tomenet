@@ -2452,6 +2452,16 @@ static errr rd_floor(void)
 		else world_surface_night(&wpos);
 	}
 
+	/* Maybe paranoia, but there was a glitch resulting in IDDC_logscum flag being set in -1k IDDC town */
+	if (in_irondeepdive(&wpos)) {
+		//int dun_lev = getlevel(wpos); -- not sure if dungeon positions have actually already been loaded at this point, so just read wz directly.
+		if (is_fixed_irondeepdive_town(&wpos, ABS(wpos.wz)) ||
+		    is_extra_fixed_irondeepdive_town(&wpos, ABS(wpos.wz))) {
+			struct dun_level *l_ptr = getfloor(&wpos);
+			l_ptr->flags1 |= LF1_DUNGEON_TOWN;
+		}
+	}
+
 	/* Success */
 	return (0);
 }
