@@ -16202,6 +16202,9 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   resistance to one of the elements they can conjure up with their runecraft
   skills. For this special feature any skill greater than zero in a particular
   rune element is sufficient, instead of the usual 3.000 threshold.
+  Resistances your character already possesses do not become prerequisites for
+  the item, so it will not end up redundant with Draconian resistances for
+  example.
 
 Aside from these, randomness is always a factor so the result may vary.
 
