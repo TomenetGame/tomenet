@@ -3633,8 +3633,8 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 
 	dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
 	dam += (o_ptr->to_d + b_ptr->to_d) * 10;
-	dam *= tmul;
 	dam += (p_ptr->to_d_ranged) * 10;
+	dam *= tmul;
 	dam *= FACTOR_MULT + ((mult - FACTOR_MULT) * 2) / 5;
 	dam /= FACTOR_MULT;
 	if (dam > 0) {
