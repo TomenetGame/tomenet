@@ -3666,28 +3666,28 @@ static bool process_player_end_aux(int Ind)
 			if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim)) {
 				/* Take damage */
 				if (!(p_ptr->body_monster) || (
-					!(r_info[p_ptr->body_monster].flags7 &
-						(RF7_AQUATIC | RF7_CAN_SWIM)) &&
-					!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
+				    !(r_info[p_ptr->body_monster].flags7 &
+				    (RF7_AQUATIC | RF7_CAN_SWIM)) ))
 				{
-					int hit = p_ptr->mhp>>6;
+					int hit = p_ptr->mhp >> 6;
 					int swim = get_skill_scale(p_ptr, SKILL_SWIM, 4500);
-					hit += randint(p_ptr->mhp>>5);
+					hit += randint(p_ptr->mhp >> 5);
 					if (!hit) hit = 1;
 
 					/* Take CON into consideration(max 30%) */
-					//note: if hit was 1, this can result in 0 aka no hit!
+					//note: if hit was 1, this can each result in 0 aka no hit!
 					hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
+					if (p_ptr->suscep_life) hit >>= 1;
 
 					/* temporary abs weight calc */
-					if (p_ptr->wt+p_ptr->total_weight/10 > 170 + swim * 2) { // 190
-						long factor = (p_ptr->wt + p_ptr->total_weight / 10) - 150 - swim * 2;	// 170
+					if (p_ptr->wt + p_ptr->total_weight/10 > 170 + swim * 2) { // 190
+						long factor = (p_ptr->wt + p_ptr->total_weight / 10) - 150 - swim * 2; // 170
 						/* too heavy, always drown? */
 						if (factor < 300 && randint(factor) < 20) hit = 0;
 
 						/* Hack: Take STR and DEX into consideration (max 28%) */
 						if (magik(adj_str_wgt[p_ptr->stat_ind[A_STR]] / 2) ||
-								magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]) / 2)
+						    magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]) / 2)
 							hit = 0;
 
 						if (magik(swim)) hit = 0;
@@ -3706,9 +3706,10 @@ static bool process_player_end_aux(int Ind)
 						}
 
 						if (randint(1000 - factor) < 10) {
-							if (p_ptr->prace != RACE_HALF_TROLL) {
+							//if (p_ptr->prace != RACE_HALF_TROLL) {
+							if (!p_ptr->sustain_str) {
 								msg_print(Ind,"\377oYou are weakened by the exertion of swimming!");
-								//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
+								//do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
 								dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
 							}
 						}
