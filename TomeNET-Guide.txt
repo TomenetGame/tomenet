@@ -99,6 +99,7 @@ Contents
     (4.12)  Malicious effects monsters can suffer
     (4.13)  Extermination Orders, Events and Ironman Challenge
     (4.14)  In-game time system
+    (4.15)  Swimming
 (5) Item and monster details
     (5.1)   Melee weapons, brands
     (5.1a)  Melee weapon types
@@ -5194,7 +5195,8 @@ Icy waste       white '.'
      ground might burn your items. Use word-of-recall to get out of here.
 (***) If your backpack is too heavy for you to swim then it'll be a big hassle
       to try and cross deep water without drowning. In that case just get an
-      item that allows you to levitate and you'll be fine.
+      item that allows you to levitate and you'll be fine. (See (4.15) for
+      details about swimming).
 
 
 
@@ -6801,6 +6803,61 @@ The sun will usually rise at around 6am, while night falls at around 7pm. Again
 use the /ex command to see the in-game time for your character.
 Extermination orders (see (4.13)) usually have a time limit of two full in-game
 days, so you will have about 2.5 h to carry them out.
+
+
+
+(4.15) Swimming
+---------------
+Some very light characters can swim without losing hit points occasionally
+('drowning). The weight limit includes equipment, backpack and the character's
+weight itself. For example an elf has no problems swimming through deep water.
+
+The heavier a character gets, the more often he will get a 'tick' of drowning
+inflicted on him, reducing his hit points. This is a continuous process that
+scales from 'no damage at all' at very low total weight to serious drowning for
+really heavily packed characters.
+
+Most races are too heavy to be able to swim perfectly out of the box, and even
+low-weight races will run into trouble when they store things in their backpack
+or wear a couple of items.
+However, this is often not a big problem because even though a character may
+not be able to swim perfectly, it'll still be sufficient to cross large rivers
+without taking much of a dip in hit points, if he isn't carrying or wearing a
+load of heavy items.
+
+
+If you're really too heavy and want to operate in watery surroundings though?
+Here are ways to improve your swimming capabilities:
+----------------------------------------------------
+
+Constitution or being undead (includes mimicked monster forms) will reduce the
+hit point damage, but not the drowning tick frequency.
+Strength and dexterity will randomly reduce the tick frequency but are still no
+guarantee for perfect swimming.
+
+The 'Swimming' skill is the easiest choice to reduce tick frequency, and it
+does so to zero ie perfect swimming, when maxed. at 0.700 you will become able
+to swim very fast, which can be compared to 'running' through the water in
+terms of speed. However, this costs precious skill points, so it's not a very
+popular way of getting good at crossing water.
+
+Mimics and especially druids can use an aquatic form or a form that can swim
+easily, and they will be able to cross water in the same way, without ever
+drowning. Another way is to use a form that grants wraithform or simply a form
+that grants levitation, which is a rather common ability.
+Rangers learn how to swim at great skill at level 25, Martial arts users will
+be able to swim easily at a martial arts skill of 30.000.
+Ents never drown since they're made of wood, while Draconians will actually
+gain intrinsic levitation at level 30.
+Characters training the magic 'Water' or 'Nature' school will acquire
+water-passing at 40.000, while 'Air' school grants levitation at 50.000.
+Other characters can rely on items that grant levitation, swimming (rare), or
+wraithform (by spell or item) to become able to cross water easily. Levitation
+is definitely the most popular choice, since you can 'fly' over water quickly.
+Wraithform is as good as levitation, but hard to acquire.
+
+In short: Obtaining levitation is probably the most popular way for crossing
+larger areas of water.
 
 
 
@@ -10890,6 +10947,8 @@ Note that not every skill is available to every profession (class).
                                 if no monsters are within sight, enabling you
                                 to 'run' through water.
 
+                                For more details about swimming see (4.15).
+
     .Climbing                   You need this at 01.000 to be able to climb.
 
     .Digging                    How well you are able to dig. Also affects
@@ -12458,7 +12517,7 @@ Gnomes          Free action.
 (High-Elves     Resist light, see invisible.)
 Yeeks           Feather falling.
 (Ents           Slow digestion, speed - 2, sensitive to fire, see invisible at
-                level 4, can swim, pass trees.)
+                level 4, can swim easily, pass trees.)
 All animals     Able to pass trees.
 All spiders     Able to pass mountains, able to pass spider webs.
 All ghosts      See invisible, Infra-vision +4 (stacks with undeads' +1 bonus).
