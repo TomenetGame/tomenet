@@ -3676,16 +3676,14 @@ static bool process_player_end_aux(int Ind)
 					if (!hit) hit = 1;
 
 					/* Take CON into consideration(max 30%) */
+					//note: if hit was 1, this can result in 0 aka no hit!
 					hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
 
 					/* temporary abs weight calc */
-					if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim * 2)	// 190
-					{
+					if (p_ptr->wt+p_ptr->total_weight/10 > 170 + swim * 2) { // 190
 						long factor = (p_ptr->wt + p_ptr->total_weight / 10) - 150 - swim * 2;	// 170
 						/* too heavy, always drown? */
-						if (factor < 300) {
-							if (randint(factor) < 20) hit = 0;
-						}
+						if (factor < 300 && randint(factor) < 20) hit = 0;
 
 						/* Hack: Take STR and DEX into consideration (max 28%) */
 						if (magik(adj_str_wgt[p_ptr->stat_ind[A_STR]] / 2) ||
