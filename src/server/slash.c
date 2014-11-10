@@ -9118,7 +9118,8 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "PARANOIA - couldn't get floor.");
 					return;
 				}
-				msg_format(Ind, "flags1 = %d", l_ptr->flags1);
+				msg_format(Ind, "flags1 = %lu", l_ptr->flags1);
+				msg_format(Ind, "flags2 = %lu", l_ptr->flags2);
 				return;
 			}
 		}
