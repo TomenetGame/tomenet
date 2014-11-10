@@ -2452,6 +2452,7 @@ static errr rd_floor(void)
 		else world_surface_night(&wpos);
 	}
 
+#if 0 /* the glitch resulted from an ancient char being parked at that depth */
 	/* Maybe paranoia, but there was a glitch resulting in IDDC_logscum flag being set in -1k IDDC town */
 	if (in_irondeepdive(&wpos)) {
 		//int dun_lev = getlevel(wpos); -- not sure if dungeon positions have actually already been loaded at this point, so just read wz directly.
@@ -2461,6 +2462,7 @@ static errr rd_floor(void)
 			l_ptr->flags1 |= LF1_DUNGEON_TOWN;
 		}
 	}
+#endif
 
 	/* Success */
 	return (0);
