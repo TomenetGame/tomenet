@@ -9107,6 +9107,20 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "Applied.");
 				return;
 			}
+			else if (prefix(message, "/debugfloor")) {
+				struct dun_level *l_ptr;
+				if (!p_ptr->wpos.wz) {
+					msg_print(Ind, "Must be used in dungeon/tower.");
+					return;
+				}
+				l_ptr = getfloor(&p_ptr->wpos);
+				if (!l_ptr) { /* paranoia */
+					msg_print(Ind, "PARANOIA - couldn't get floor.");
+					return;
+				}
+				msg_format(Ind, "flags1 = %d", l_ptr->flags1);
+				return;
+			}
 		}
 	}
 
