@@ -6516,13 +6516,12 @@ int Send_AFK(int Ind, byte afk)
 }
 
 int Send_encumberment(int Ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
-                        byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte rogue_heavyarmor, byte awkward_shoot)
-{
+    byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte rogue_heavyarmor, byte awkward_shoot,
+    byte heavy_swim) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for encumberment (%d.%d.%d)",
 			Ind, connp->state, connp->id));

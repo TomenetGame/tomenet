@@ -640,29 +640,29 @@ static void prt_AFK(int Ind)
 	Send_AFK(Ind, afk);
 }
 
-static void prt_encumberment(int Ind)
-{
+static void prt_encumberment(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	byte cumber_armor = p_ptr->cumber_armor?1:0;
-	byte awkward_armor = p_ptr->awkward_armor?1:0;
+	byte cumber_armor = p_ptr->cumber_armor ? 1 : 0;
+	byte awkward_armor = p_ptr->awkward_armor ? 1 : 0;
 	/* Hack - For mindcrafters, it's the helmet, not the gloves,
 	   but they fortunately use the same item symbol :) */
-	byte cumber_glove = p_ptr->cumber_glove || p_ptr->cumber_helm?1:0;
-	byte heavy_wield = p_ptr->heavy_wield?1:0;
-	byte heavy_shield = p_ptr->heavy_shield?1:0; /* added in 4.4.0f */
-	byte heavy_shoot = p_ptr->heavy_shoot?1:0;
-	byte icky_wield = p_ptr->icky_wield?1:0;
-	byte awkward_wield = p_ptr->awkward_wield?1:0;
-	byte easy_wield = p_ptr->easy_wield?1:0;
-	byte cumber_weight = p_ptr->cumber_weight?1:0;
+	byte cumber_glove = p_ptr->cumber_glove || p_ptr->cumber_helm ? 1 : 0;
+	byte heavy_wield = p_ptr->heavy_wield ? 1 : 0;
+	byte heavy_shield = p_ptr->heavy_shield ? 1 : 0; /* added in 4.4.0f */
+	byte heavy_shoot = p_ptr->heavy_shoot ? 1 : 0;
+	byte icky_wield = p_ptr->icky_wield ? 1 : 0;
+	byte awkward_wield = p_ptr->awkward_wield ? 1 : 0;
+	byte easy_wield = p_ptr->easy_wield ? 1 : 0;
+	byte cumber_weight = p_ptr->cumber_weight ? 1 : 0;
 	/* See next line. Also, we're already using all 12 spaces we have available for icons.
-	byte rogue_heavy_armor = p_ptr->rogue_heavyarmor?1:0; */
+	byte rogue_heavy_armor = p_ptr->rogue_heavyarmor ? 1 : 0; */
 	 /* Hack - MA also gives dodging, which relies on rogue_heavy_armor anyway. */
 	byte monk_heavyarmor, rogue_heavyarmor = 0;
-	byte awkward_shoot = p_ptr->awkward_shoot?1:0;
+	byte awkward_shoot = p_ptr->awkward_shoot ? 1 : 0;
+	bool heavy_swim = p_ptr->heavy_swim ? 1 : 0;
 	if (!is_newer_than(&p_ptr->version, 4, 4, 2, 0, 0, 0)) {
-		monk_heavyarmor = (p_ptr->monk_heavyarmor || p_ptr->rogue_heavyarmor)?1:0;
+		monk_heavyarmor = (p_ptr->monk_heavyarmor || p_ptr->rogue_heavyarmor) ? 1 : 0;
 	} else {
 		monk_heavyarmor = p_ptr->monk_heavyarmor ? 1 : 0;
 		rogue_heavyarmor = p_ptr->rogue_heavyarmor ? 1 : 0;
@@ -675,7 +675,7 @@ static void prt_encumberment(int Ind)
 	}
 
 	Send_encumberment(Ind, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
+                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot, heavy_swim);
 }
 
 static void prt_extra_status(int Ind)
@@ -5716,7 +5716,32 @@ void calc_boni(int Ind) {
 		p_ptr->old_awkward_shoot = p_ptr->awkward_shoot;
 	}
 
+#if 0 /* doesn't work well because it's mostly a continuous increase from hardly-noticing to massive-drowning */
+	/* Swimming-indicator (maybe a bit too cheezy) */
+	p_ptr->heavy_swim = FALSE;
+	//if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim)) { --actually don't count these in
+	if (!p_ptr->can_swim) {
+		if (!(p_ptr->body_monster) || (
+		    !(r_info[p_ptr->body_monster].flags7 &
+		    (RF7_AQUATIC | RF7_CAN_SWIM)))) {
+			int swim = get_skill_scale(p_ptr, SKILL_SWIM, 4500);
 
+			/* temporary abs weight calc */
+			if (p_ptr->wt + p_ptr->total_weight / 10 > 170 + swim * 2) {
+				long factor = (p_ptr->wt + p_ptr->total_weight / 10) - 150 - swim * 2;
+
+				if (factor >= 20) p_ptr->heavy_swim = TRUE;
+			}
+		}
+	}
+	if (p_ptr->old_heavy_swim != p_ptr->heavy_swim) {
+		if (p_ptr->heavy_swim)
+			msg_print(Ind, "\377yYou're too heavy to swim.");
+		else
+			msg_print(Ind, "\377gYou're light enough to swim.");
+	}
+	p_ptr->old_heavy_swim = p_ptr->heavy_swim;
+#endif
 
 
 	/* resistance to fire cancel sensibility to fire */

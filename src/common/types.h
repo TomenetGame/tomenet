@@ -2406,6 +2406,7 @@ struct player_type {
 	bool old_monk_heavyarmor;
 	bool old_awkward_shoot;
 	bool old_rogue_heavyarmor;
+	bool old_heavy_swim;
 
 	s16b old_lite;		/* Old radius of lite (if any) */
 	s16b old_vlite;		/* Old radius of virtual lite (if any) */
@@ -2428,6 +2429,7 @@ struct player_type {
 	bool monk_heavyarmor;	/* Reduced MA power? */
 	bool awkward_shoot;	/* using ranged weapon while having a shield on the arm */
 	bool rogue_heavyarmor;	/* No AoE-searching? Encumbered dual-wield? */
+	bool heavy_swim;	/* Too heavy to swim without drowning chance? */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 	s16b cur_vlite;		/* radius of virtual light (not visible to others) */

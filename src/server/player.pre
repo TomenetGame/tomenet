@@ -731,6 +731,7 @@ struct player_type
         bool monk_heavyarmor;   /* Reduced MA power? */
         bool awkward_shoot;     /* using ranged weapon while having a shield on the arm */
 	bool rogue_heavyarmor;  /* No AoE-searching? Encumbered dual-wield? */
+	bool heavy_swim;	/* Too heavy to swim without drowning chance? */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 	byte lite_type;
