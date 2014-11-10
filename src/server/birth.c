@@ -2230,6 +2230,11 @@ static void player_setup(int Ind, bool new) {
 		    //&& !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
 		    && (!l_ptr || !(l_ptr->flags1 & LF1_DUNGEON_TOWN))) /* !l_ptr check just to silence the compiler.. */
 			p_ptr->IDDC_logscum = TRUE;
+
+#if 1
+		/* fix ancient chars that had logscum flag set in their savegame, before the town was added */
+		if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) p_ptr->IDDC_logscum = FALSE;
+#endif
 	} else if (p_ptr->wpos.wz) {
 		bool unknown = FALSE;
 		l_ptr = getfloor(wpos);
@@ -2253,6 +2258,11 @@ static void player_setup(int Ind, bool new) {
 			    //&& !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
 			    && !(l_ptr->flags1 & LF1_DUNGEON_TOWN))
 				p_ptr->IDDC_logscum = TRUE;
+
+#if 1
+			/* fix ancient chars that had logscum flag set in their savegame, before the town was added */
+			if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) p_ptr->IDDC_logscum = FALSE;
+#endif
 		}
 		/* <else> It's still the same level we left [a moment ago], np.
 		   Here we just keep the IDDC_logscum that we read in load.c. */
