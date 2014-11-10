@@ -16200,7 +16200,8 @@ what you must actively do BEFORE turning in a deed for a reward item is:
 - runemasters who receive a piece of armour will usually (as long as it's
   reasonably possible regarding ego-power type and value) get one that provides
   resistance to one of the elements they can conjure up with their runecraft
-  skills.
+  skills. For this special feature any skill greater than zero in a particular
+  rune element is sufficient, instead of the usual 3.000 threshold.
 
 Aside from these, randomness is always a factor so the result may vary.
 
