@@ -7307,6 +7307,54 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			}
 		}
 
+		/* specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
+		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
+			bool rlite = (p_ptr->s_info[SKILL_R_LITE].value > 0);
+			bool rdark = (p_ptr->s_info[SKILL_R_DARK].value > 0);
+			bool rnexu = (p_ptr->s_info[SKILL_R_NEXU].value > 0);
+			bool rneth = (p_ptr->s_info[SKILL_R_NETH].value > 0);
+			bool rchao = (p_ptr->s_info[SKILL_R_CHAO].value > 0);
+			bool rmana = (p_ptr->s_info[SKILL_R_MANA].value > 0);
+			bool rconf = (rlite && rdark);
+			bool relec = (rlite && rneth);
+			bool rfire = (rlite && rchao);
+			bool rcold = (rdark && rneth);
+			bool racid = (rdark && rchao);
+			bool rpois = (rdark && rmana);
+			bool rsoun = (rnexu && rchao);
+			bool rshar = (rnexu && rmana);
+			bool rdise = (rneth && rchao);
+			u32b relem2, relem5;
+
+			if (p_ptr->resist_fire || p_ptr->immune_fire) rfire = FALSE;
+			if (p_ptr->resist_cold || p_ptr->immune_cold) rcold = FALSE;
+			if (p_ptr->resist_acid || p_ptr->immune_acid) racid = FALSE;
+			if (p_ptr->resist_elec || p_ptr->immune_elec) relec = FALSE;
+			if (p_ptr->resist_pois || p_ptr->immune_poison) rpois = FALSE;
+			if (p_ptr->resist_lite) rlite = FALSE;
+			if (p_ptr->resist_dark) rdark = FALSE;
+			if (p_ptr->resist_nexus) rnexu = FALSE;
+			if (p_ptr->resist_neth) rneth = FALSE;
+			if (p_ptr->resist_chaos) rchao = rconf = FALSE;
+			if (p_ptr->resist_conf) rconf = FALSE;
+			if (p_ptr->resist_sound) rsoun = FALSE;
+			if (p_ptr->resist_shard) rshar = FALSE;
+			if (p_ptr->resist_disen) rdise = FALSE;
+
+			/* note: skip hard/impossible to acquire elements */
+			relem2 = ((rlite ? TR2_RES_LITE : 0x0) | (rdark ? TR2_RES_DARK : 0x0) |
+			    (rnexu ? TR2_RES_NEXUS : 0x0) | (rneth ? TR2_RES_NETHER : 0x0) |
+			    (rchao ? TR2_RES_CHAOS : 0x0) |
+			    (rfire ? TR2_RES_FIRE | TR2_IM_FIRE : 0x0) | (rcold ? TR2_RES_COLD | TR2_IM_COLD : 0x0) |
+			    (relec ? TR2_RES_ELEC | TR2_IM_ELEC : 0x0) | (racid ? TR2_RES_ACID | TR2_IM_ACID : 0x0) |
+			    (rpois ? TR2_RES_POIS : 0x0) |
+			    (rconf ? TR2_RES_CONF | TR2_RES_CHAOS : 0x0) | (rsoun ? TR2_RES_SOUND : 0x0) |
+			    (rshar ? TR2_RES_SHARDS : 0x0) | (rdise ? TR2_RES_DISEN : 0x0));
+			relem5 = (rpois ? TR5_IM_POISON : 0x0);
+
+			if ((relem2 || relem5) && !(f2 & relem2) && !(f5 & relem5)) continue;
+		}
+
 		break;
 	} while (tries < (verygreat ? 20 : 100));
 
