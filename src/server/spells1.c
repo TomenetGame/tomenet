@@ -387,10 +387,8 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
  *
  * Note that this function is one of the more "dangerous" ones...
  */
-s16b poly_r_idx(int r_idx)
-{
+s16b poly_r_idx(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
-
 	int i, r, lev1, lev2;
 
 	/* Hack -- Uniques never polymorph */
@@ -404,8 +402,7 @@ s16b poly_r_idx(int r_idx)
 	lev2 = r_ptr->level + ((randint(20)/randint(9))+1);
 
 	/* Pick a (possibly new) non-unique race */
-	for (i = 0; i < 1000; i++)
-	{
+	for (i = 0; i < 1000; i++) {
 		/* Pick a new race, using a level calculation */
 		/* Don't base this on "dlev" */
 		/*r = get_mon_num((dlev + r_ptr->level) / 2 + 5, (dlev + r_ptr->level) / 2);*/
@@ -442,14 +439,11 @@ s16b poly_r_idx(int r_idx)
  * - allow monsters to have st-anchor?
  */
 //bool check_st_anchor(struct worldpos *wpos)
-bool check_st_anchor(struct worldpos *wpos, int y, int x)
-{
+bool check_st_anchor(struct worldpos *wpos, int y, int x) {
 	int i;
+//	dun_level *l_ptr = getfloor(wpos);
 
-//	dun_level		*l_ptr = getfloor(wpos);
-
-	for (i = 1; i <= NumPlayers; i++)
-	  {
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
 
 		/* Skip disconnected players */
@@ -488,7 +482,7 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x)
  */
 bool teleport_away(int m_idx, int dis) {
 	int		oy, ox, d, i, min;
-	int		ny = 0, nx = 0, tries = 5000;
+	int		ny = 0, nx = 0, max_dis = 200, tries = 5000;
 #ifdef USE_SOUND_2010
 	int org_dis = dis;
 #endif
@@ -521,13 +515,20 @@ bool teleport_away(int m_idx, int dis) {
 	/* No teleporting within no-tele vaults and such */
 	if (zcave[oy][ox].info & CAVE_ICKY) return FALSE;
 
+	/* set distance according to map size, to avoid 'No empty field' failures for very small maps! */
+	if (l_ptr && distance(1, 1, l_ptr->wid, l_ptr->hgt) < max_dis)
+		max_dis = distance(1, 1, l_ptr->wid, l_ptr->hgt);
+
+	/* Verify max distance */
+	if (dis > max_dis) dis = max_dis;
+
 	/* Minimum distance */
 	min = dis / 2;
 
 	/* Look until done */
 	while (look) {
-		/* Verify max distance */
-		if (dis > 200) dis = 200;
+		/* Verify max distance once here */
+		if (dis > max_dis) dis = max_dis;
 
 		/* Try several locations */
 		for (i = 0; i < 500; i++) {
@@ -611,7 +612,7 @@ bool teleport_away(int m_idx, int dis) {
 void teleport_to_player(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	int ny = 0, nx = 0, oy, ox, d, i, min;
-	int dis = 2;
+	int dis = 2, max_dis = 200;
 	bool look = TRUE;
 
 	monster_type *m_ptr = &m_list[m_idx];
@@ -619,9 +620,9 @@ void teleport_to_player(int Ind, int m_idx) {
 	int attempts = 5000;
 
 	struct worldpos *wpos = &m_ptr->wpos;
-//	dun_level *l_ptr = getfloor(wpos);
+	dun_level *l_ptr;
 	cave_type **zcave;
-//		if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
+//	if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return;
@@ -630,6 +631,7 @@ void teleport_to_player(int Ind, int m_idx) {
 //	if (randint(100) > m_ptr->level) return;	/* not here */
 
 	if(!(zcave = getcave(wpos))) return;
+	l_ptr = getfloor(wpos);
 
 	/* Save the old location */
 	oy = m_ptr->fy;
@@ -640,13 +642,20 @@ void teleport_to_player(int Ind, int m_idx) {
 //	if (check_st_anchor(wpos)) return;
 	if (check_st_anchor(wpos, oy, ox)) return;
 
+	/* set distance according to map size, to avoid 'No empty field' failures for very small maps! */
+	if (l_ptr && distance(1, 1, l_ptr->wid, l_ptr->hgt) < max_dis)
+		max_dis = distance(1, 1, l_ptr->wid, l_ptr->hgt);
+
+	/* Verify max distance */
+	if (dis > max_dis) dis = max_dis;
+
 	/* Minimum distance */
 	min = dis / 2;
 
 	/* Look until done */
 	while (look) {
 		/* Verify max distance */
-		if (dis > 200) dis = 200;
+		if (dis > max_dis) dis = max_dis;
 
 		/* Try several locations */
 		for (i = 0; i < 500; i++) {
@@ -736,7 +745,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	int org_dis = dis;
 #endif
 	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
-	int xx , yy, m_idx, tries = 3000;
+	int xx , yy, m_idx, max_dis = 150, tries = 3000; /* (max_dis was 200 at some point) */
 	worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
 
@@ -776,7 +785,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			s_printf("%s TELEPORT_FAIL: Anti-Tele for %s.\n", showtime(), p_ptr->name);
 			return FALSE;
 		}
-		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
+		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
 			msg_print(Ind, "\377RThis location suppresses teleportation!");
 			s_printf("%s TELEPORT_FAIL: Cave-Stck for %s.\n", showtime(), p_ptr->name);
 			return FALSE;
@@ -797,8 +806,15 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			dis = WILDERNESS_TELEPORT_RADIUS;
 	}
 
+	/* set distance according to map size, to avoid 'No empty field' failures for very small maps! */
+	if (l_ptr && distance(1, 1, l_ptr->wid, l_ptr->hgt) < max_dis)
+		max_dis = distance(1, 1, l_ptr->wid, l_ptr->hgt);
+
+	/* Verify max distance */
+	if (dis > max_dis) dis = max_dis;
+
 	/* Verify max distance once here */
-	if (dis > 150) dis = 150;
+	if (dis > max_dis) dis = max_dis;
 
 	/* Minimum distance */
 	min = dis / 2;
@@ -810,7 +826,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	/* Look until done */
 	while (look && tries) {
 		/* Verify max distance */
-		if (dis > 150) dis = 150;   /* 200 */
+		if (dis > max_dis) dis = max_dis;
 
 		/* Try several locations */
 		for (i = 0; i < 500; i++) {
@@ -879,6 +895,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	/* No empty field on this map o_O */
 	if (!tries) {
 		s_printf("%s TELEPORT_FAIL: No empty field found for %s.\n", showtime(), p_ptr->name);
+		msg_print(Ind, "oThe spell strangely fizzles!");
 		return FALSE;
 	}
 
@@ -925,8 +942,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 	/* Don't leave me alone Daisy! */
 	if (!p_ptr->ghost) {
-		for (d = 1; d <= 9; d++)
-		{
+		for (d = 1; d <= 9; d++) {
 			if (d == 5) continue;
 
 			xx = ox + ddx[d];
@@ -934,19 +950,16 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 			if (!in_bounds4(l_ptr, yy, xx)) continue;
 
-			if ((m_idx = zcave[yy][xx].m_idx)>0)
-			{
+			if ((m_idx = zcave[yy][xx].m_idx) > 0) {
 				monster_race *r_ptr = race_inf(&m_list[m_idx]);
 
 				if ((r_ptr->flags6 & RF6_TPORT) &&
-					!((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE)))
+				    !((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE))) {
 					/*
 					 * The latter limitation is to avoid
 					 * totally unkillable suckers...
 					 */
-				{
-					if (!(m_list[m_idx].csleep) && mon_will_run(Ind, m_idx) == FALSE)
-					{
+					if (!(m_list[m_idx].csleep) && mon_will_run(Ind, m_idx) == FALSE) {
 						/* "Skill" test */
 						if (randint(100) < r_ptr->level)
 							teleport_to_player(Ind, m_idx);
@@ -990,8 +1003,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
  * Force teleportation of a player
  *  - mikaelh
  */
-void teleport_player_force(int Ind, int dis)
-{
+void teleport_player_force(int Ind, int dis) {
 	bool anti_tele, death;
 	player_type *p_ptr = Players[Ind];
 
@@ -1057,20 +1069,17 @@ void teleport_player_to(int Ind, int ny, int nx) {
 		if (!tries) return;
 
 		/* Cant telep in houses */
-		if (((wpos->wz == 0) && !(zcave[y][x].info & CAVE_ICKY)) || (wpos->wz))
-		{
+		if (((wpos->wz == 0) && !(zcave[y][x].info & CAVE_ICKY)) || (wpos->wz)) {
 			/* No tele-to into no-tele vaults */
 			if (cave_naked_bold(zcave, y, x) &&
-			    !(zcave[y][x].info & CAVE_STCK))
-			{
+			    !(zcave[y][x].info & CAVE_STCK)) {
 				/* Never break into st-anchor */
 				if (!check_st_anchor(wpos, y, x)) break;
 			}
 		}
 
 		/* Occasionally advance the distance */
-		if (++ctr > (4 * dis * dis + 4 * dis + 1))
-		{
+		if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
 			ctr = 0;
 			dis++;
 		}
@@ -1135,8 +1144,7 @@ void teleport_player_to(int Ind, int ny, int nx) {
 	sound(Ind, "monster_blink", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 }
-void teleport_player_to_force(int Ind, int ny, int nx)
-{
+void teleport_player_to_force(int Ind, int ny, int nx) {
 	bool anti_tele, death;
 	player_type *p_ptr = Players[Ind];
 
