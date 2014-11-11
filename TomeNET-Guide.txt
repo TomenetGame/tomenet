@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. November 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. November 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -100,6 +100,7 @@ Contents
     (4.13)  Extermination Orders, Events and Ironman Challenge
     (4.14)  In-game time system
     (4.15)  Swimming
+    (4.16)  Teleportation
 (5) Item and monster details
     (5.1)   Melee weapons, brands
     (5.1a)  Melee weapon types
@@ -6858,6 +6859,53 @@ Wraithform is as good as levitation, but hard to acquire.
 
 In short: Obtaining levitation is probably the most popular way for crossing
 larger areas of water.
+
+
+
+(4.16) Teleportation
+--------------------
+Teleportation is the magical, instantaneous relocation of a player or monster.
+
+There are five main types of teleportation:
+-Phase door/blink
+  It follows the same rules as 'teleport self', it's just named differently to
+  indicate that it is limited to a rather short range (usually less than 20
+  grids away).
+  The spell available to players are usually called 'phase door' while the
+  spell used by monsters is usually called 'blink', but again that's just a
+  matter of naming.
+-Teleport self
+  The normal 'teleportation' as provided by scrolls, staves or used by monsters
+  which has a very long range and also tries to keep a certain minimum range to
+  make sure you actually get away from trouble.
+-Teleport other
+  It's basically the same as normal teleportation, except it does teleport a
+  targetted player/monster instead of the invoking player/monster himself.
+-Teleport-to
+  Thes spell tries to move the targetted player or monster onto a grid next to
+  the caster. This can be nasty when monsters with dangerous melee attacks cast
+  teleport-to on a player who tried to keep his distance.
+-Word of recall
+  The only non-instantaneous teleportation spell and the one with the longest
+  range. After a certain 'charge' phase has elapsed it will teleport the player
+  over the world map or into or out of a dungeon.
+
+However, under certain conditions, teleportation spells may fail!
+In general for all teleportation attempts, these are:
+
+-Teleport spells cast onto others (teleport other, teleport-to) may get
+  resisted by the target depending on its saving throw, level or status.
+-Trying to teleport in a no-teleport area ('The air in here feels very still').
+-Trying to teleport while having equipped an amulet of anti-teleportation or
+  activated a space-time-anchor effect.
+-Trying to teleport on a floor that has no or only few free floor grids.
+  Teleportation magic tries hard to find a free destination grid, but if it is
+  unlucky due to a low number of available grids it might just fail. So it is
+  not recommended for example for an istar to cast stone prison all over the
+  level, filling it mostly up. This puts attempts to successfully teleport on
+  this level at hazard.
+  'Free' floor grid means a floor grid that doesn't have a monster or item on
+  it and is classified as 'floor' (water and lava count as floor too).
 
 
 
