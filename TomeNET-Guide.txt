@@ -6906,6 +6906,8 @@ In general for all teleportation attempts, these are:
   this level at hazard.
   'Free' floor grid means a floor grid that doesn't have a monster or item on
   it and is classified as 'floor' (water and lava count as floor too).
+  If a teleportation spell fails because it didn't find a free destination grid
+  you will see an orange message "The teleportation spell strangely fizzles!".
 
 
 
