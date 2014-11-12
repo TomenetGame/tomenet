@@ -2362,7 +2362,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	object_type *o2_ptr = &p_ptr->inventory[INVEN_WIELD];
 	object_type *o3_ptr = &p_ptr->inventory[INVEN_ARM];
-	int wood_power = 0;
+	int wood_power = 0, fibre_power = 0;
 
 	cave_type *c_ptr;
 	bool old_floor = FALSE;
@@ -2380,15 +2380,31 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		switch (o2_ptr->tval) {
 		case TV_AXE: wood_power = 40; break;
 		case TV_SWORD: wood_power = 20; break;
+		case TV_POLEARM:
+			if (o2_ptr->sval == SV_SCYTHE ||
+			    o2_ptr->sval == SV_SCYTHE_OF_SLICING ||
+			    o2_ptr->sval == SV_SICKLE)
+				fibre_power = 40; break;
 		}
-		if (k_info[o2_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H)) wood_power <<= 1;
+		if ((k_info[o2_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
+		    && !o3_ptr->k_idx) {
+			wood_power <<= 1;
+			fibre_power <<= 1;
+		}
 	}
 	if (o3_ptr->k_idx && !p_ptr->heavy_wield) {
 		switch (o3_ptr->tval) {
 		case TV_AXE: if (wood_power < 40) wood_power = 40; break;
 		case TV_SWORD: if (wood_power < 20) wood_power = 20; break;
+		case TV_POLEARM:
+			if (o2_ptr->sval == SV_SCYTHE ||
+			    o2_ptr->sval == SV_SCYTHE_OF_SLICING ||
+			    o2_ptr->sval == SV_SICKLE)
+				fibre_power = 40; break;
 		}
 	}
+	/* axes/swords help as well as certain slicing polearms against webs */
+	if (wood_power > fibre_power) fibre_power = wood_power;
 
 	object_level = find_level;
 	if (mining > find_level * 2) mining = find_level * 2;
@@ -2683,7 +2699,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				}
 			} else if (c_ptr->feat == FEAT_IVY) {
 				/* mow down the vegetation */
-				if (((power > wood_power ? power : wood_power) > rand_int(200)) && twall(Ind, y, x)) { /* 400 */
+				if (((power > fibre_power ? power : fibre_power) > rand_int(200)) && twall(Ind, y, x)) { /* 400 */
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
 #ifdef USE_SOUND_2010
@@ -2984,7 +3000,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* Spider Webs */
 			else if (c_ptr->feat == FEAT_WEB) {
 				/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
-				if ((((power > wood_power) ? power : wood_power) > rand_int(100)) && twall(Ind, y, x)) {
+				if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, y, x)) {
 					msg_print(Ind, "You have cleared the web.");
 #ifdef USE_SOUND_2010
 					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
