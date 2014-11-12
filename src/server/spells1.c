@@ -3759,64 +3759,65 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* Analyze the type */
-	switch (typ)
-	{
+	switch (typ) {
 		/* Ignore most effects */
 		case GF_ACID:
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Destroy trees */
-			if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_BUSH)
-			{
+			if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_BUSH) {
+#if 0 /* no msg spam maybe */
 				/* Hack -- special message */
-				if (!quiet && player_can_see_bold(Ind, y, x))
-				{
+				if (!quiet && player_can_see_bold(Ind, y, x)) {
 					msg_print(Ind, "The tree decays!");
 					/* Notice */
 					note_spot(Ind, y, x);
 					obvious = TRUE;
 				}
-
+#endif
 				/* Destroy the tree */
 				cave_set_feat_live(wpos, y, x, FEAT_DEAD_TREE);
-
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
 			}
 
-			/* Burn grass */
-			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY)
-			{
-				/* Destroy the grass */
-				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
-			}
+			/* Burn grass et al */
+			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
+			    c_ptr->feat == FEAT_WEB ||
+			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
+				cave_set_feat_live(wpos, y, x, FEAT_MUD);
 
 			break;
 
-		case GF_ELEC:
-		case GF_COLD:
+		case GF_NUKE:
+			/* damage organic material */
+			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
+			    /*c_ptr->feat == FEAT_WEB ||*/
+			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
+				cave_set_feat_live(wpos, y, x, FEAT_MUD);
+			break;
+
 		case GF_ICE:
-		case GF_THUNDER:	/* a gestalt now, to remove hacky tri-bolt on thunderstorm */
+		case GF_ICEPOISON:
 		case GF_SHARDS:
 		case GF_FORCE:
+			/* Shred certain feats */
+			if (c_ptr->feat == FEAT_WEB || c_ptr->feat == FEAT_FLOWER /* :( */)
+				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+			break;
+		case GF_ELEC:
+		case GF_COLD:
+		case GF_THUNDER:	/* a gestalt now, to remove hacky tri-bolt on thunderstorm */
 		case GF_SOUND:
-		case GF_MANA:
+		case GF_MANA: /* <- no web/flower destructing abilities at this time? :-p */
 		case GF_HOLY_ORB:
 		case GF_CURSE:		/* new spell - the_sandman */
 		/* Druidry: */
 		case GF_HEALINGCLOUD:
-		case GF_ICEPOISON:
-		{
 			break;
-		}
 
 		case GF_EARTHQUAKE:
-		{
 			earthquake(wpos, y, x, 0);
 			break;
-		}
 
 		case GF_STONE_WALL:
-		{
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) break;
 
@@ -3838,7 +3839,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
 			break;
-		}
 
 		/* Burn trees and grass */
 		case GF_HOLY_FIRE:
@@ -3849,38 +3849,40 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_METEOR:
 		case GF_PLASMA:
 		case GF_HELL_FIRE:
-		{
+		case GF_INFERNO:
+		//GF_DETONATION and GF_ROCKET disintegrate anyway
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Destroy trees */
 			if (c_ptr->feat == FEAT_TREE ||
 			    c_ptr->feat == FEAT_BUSH ||
-			    c_ptr->feat == FEAT_DEAD_TREE)
-			{
+			    c_ptr->feat == FEAT_DEAD_TREE) {
+#if 0 /* no need for message spam maybe - and spot is note'd in cave_set_feat_live already */
 				/* Hack -- special message */
-				if (!quiet && player_can_see_bold(Ind, y, x))
-				{
+				if (!quiet && player_can_see_bold(Ind, y, x)) {
 					msg_print(Ind, "The tree burns to the ground!");
 					/* Notice */
 					note_spot(Ind, y, x);
 					obvious = TRUE;
 				}
-
+#endif
 				/* Destroy the tree */
 				cave_set_feat_live(wpos, y, x, FEAT_ASH);
-
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
 			}
 
-			/* Burn grass */
-			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY)
-			{
-				/* Destroy the grass */
+			/* Burn grass, spider webs (Cirith Ungol!) and more.. */
+			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
+			    c_ptr->feat == FEAT_WEB ||
+			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */) {
 				cave_set_feat_live(wpos, y, x, FEAT_ASH);
 			}
 
+			/* misc flavour: turn mud to dirt and/or shallow water into nothing (steam)? */
+			//if (c_ptr->feat == FEAT_MUD) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+			if (c_ptr->feat == FEAT_SHAL_WATER) cave_set_feat_live(wpos, y, x, FEAT_MUD);
+
+			//todo: FEAT_ICE_WALL (those are tunneable, so probably no harm in making them meltable too
+
 			break;
-		}
 
 		/* Destroy Traps (and Locks) */
 		case GF_KILL_TRAP:
@@ -4062,17 +4064,15 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (cave_los(zcave, y, x)) break;
 
 			/* Permanent walls */
-			if ((c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR)
-				&& !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
+			if (c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR) break;
+				//&& !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
 
 			/* the_sandman: sandwalls are stm-able too? */
 			/* fixed it and also added the treasures in sandwalls - mikaelh */
 			/* Sandwall */
-			if (c_ptr->feat == FEAT_SANDWALL)
-			{
+			if (c_ptr->feat == FEAT_SANDWALL) {
 				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "The sandwall collapses!");
 					obvious = TRUE;
 				}
@@ -4081,11 +4081,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_SAND : feat);
 			}
 			/* Sandwall with treasure */
-			else if (c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K)
-			{
+			else if (c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K) {
 				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "The sandwall collapses!");
 					if (!istown(wpos)) msg_print(Ind, "You have found something!");
 					obvious = TRUE;
@@ -4098,69 +4096,59 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!istown(wpos)) place_gold(wpos, y, x, 0);
 			}
 			/* Granite */
-			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
-			{
+			else if (c_ptr->feat >= FEAT_WALL_EXTRA) {
 				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "The wall turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 			}
 			/* Quartz / Magma with treasure */
-			else if (c_ptr->feat >= FEAT_MAGMA_H)
-			{
+			else if (c_ptr->feat >= FEAT_MAGMA_H) {
 				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "The vein turns into mud!");
 					if (!istown(wpos)) msg_print(Ind, "You have found something!");
 					obvious = TRUE;
 				}
 
 				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 
 				/* Place some gold */
 				if (!istown(wpos)) place_gold(wpos, y, x, 0);
 			}
 
 			/* Quartz / Magma */
-			else if (c_ptr->feat >= FEAT_MAGMA)
-			{
+			else if (c_ptr->feat >= FEAT_MAGMA) {
 				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "The vein turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Destroy the wall */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 			}
 
 			/* Rubble */
-			else if (c_ptr->feat == FEAT_RUBBLE)
-			{
+			else if (c_ptr->feat == FEAT_RUBBLE) {
 				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "The rubble turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Destroy the rubble */
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 
 				/* Hack -- place an object */
-				if (rand_int(100) < 10)
-				{
+				if (rand_int(100) < 10) {
 					/* Found something */
-					if (!quiet && player_can_see_bold(Ind, y, x) && !istown(wpos))
-					{
+					if (!quiet && player_can_see_bold(Ind, y, x) && !istown(wpos)) {
 						msg_print(Ind, "There was something buried in the rubble!");
 						obvious = TRUE;
 					}
@@ -4174,35 +4162,30 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* House doors are immune */
-			else if (c_ptr->feat == FEAT_HOME)
-			{
+			else if (c_ptr->feat == FEAT_HOME) {
 				/* Message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "The door resists.");
 					obvious = TRUE;
 				}
 			}
 
 			/* Destroy doors (and secret doors) */
-			else if (c_ptr->feat >= FEAT_DOOR_HEAD)
-			{
+			else if (c_ptr->feat >= FEAT_DOOR_HEAD) {
 				/* Hack -- special message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "The door turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Destroy the feature */
-				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+				cave_set_feat_live(wpos, y, x, FEAT_MUD);
 			}
 
 			/* Forget the wall */
 			everyone_forget_spot(wpos, y, x);
 
-			if (!quiet)
-			{
+			if (!quiet) {
 				/* Notice */
 				note_spot(Ind, y, x);
 
@@ -4295,7 +4278,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Darken the grid */
 		case GF_DARK_WEAK:
 		case GF_DARK:
-		{
 			/* Notice */
 			if (!quiet && player_can_see_bold(Ind, y, x)) obvious = TRUE;
 
@@ -4304,20 +4286,17 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Hack -- Forget "boring" grids */
 //			if (c_ptr->feat <= FEAT_INVIS)
-			if (cave_plain_floor_grid(c_ptr))
-			{
+			if (cave_plain_floor_grid(c_ptr)) {
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
 
-				if (!quiet)
-				{
+				if (!quiet) {
 					/* Notice */
 					note_spot(Ind, y, x);
 				}
 			}
 
-			if (!quiet)
-			{
+			if (!quiet) {
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
 			}
@@ -4328,7 +4307,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* All done */
 			break;
-		}
 
                 case GF_KILL_GLYPH:
                 {
@@ -4360,13 +4338,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (!allow_terraforming(wpos, FEAT_SHAL_WATER)) break;
 
-			int p1 = 0;
-			int p2 = 0;
-			int f1 = 0;
-			int f2 = 0;
-			int f = 0;
-			int k;
-
 			/* "Permanent" features will stay */
 			if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
 
@@ -4374,10 +4345,20 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (dam < 30) break;
 
 
+			int p1 = 0;
+			int p2 = 0;
+			int f1 = 0;
+			int f2 = 0;
+			int f = 0;
+			int k;
+
+			bool old_rand = Rand_quick;
+			u32b tmp_seed = Rand_value;
+
+
 			if ((c_ptr->feat == FEAT_FLOOR) ||
-				(c_ptr->feat == FEAT_DIRT) ||
-				(c_ptr->feat == FEAT_GRASS))
-			{
+			    (c_ptr->feat == FEAT_DIRT) ||
+			    (c_ptr->feat == FEAT_GRASS)) {
 				/* 35% chance to create shallow water */
 				p1 = 35; f1 = FEAT_SHAL_WATER;
 
@@ -4386,36 +4367,27 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				p2 = 40; f2 = FEAT_SHAL_WATER;
 			}
 #if 1
-			else if (c_ptr->feat == FEAT_SHAL_LAVA)
-			{
+			else if (c_ptr->feat == FEAT_SHAL_LAVA) {
 				/* 15% chance to convert it to normal floor */
-				p1 = 15; f1 = FEAT_FLOOR;
+				p1 = 15; f1 = FEAT_ASH;
 			}
- #if 0 /* too easy to turn floor to DEEP_WATER in the end, for unlimited usage of kraken forms */
-			else if (c_ptr->feat == FEAT_DEEP_LAVA)
-			{
-				/* 10% chance to convert it to shallow lava */
-				p1 = 10; f1 = FEAT_SHAL_LAVA;
-
-				/* 5% chance to convert it to normal floor */
-				p2 = 15; f2 = FEAT_FLOOR;
-			}
-//			else if ((c_ptr->feat == FEAT_SHAL_WATER) ||
-			else if (c_ptr->feat == FEAT_DARK_PIT && typ != GF_VAPOUR)
-			{
-				/* 10% chance to convert it to deep water */
-				p1 = 10; f1 = FEAT_DEEP_WATER;
-			}
- #endif // 0
 #endif	// 1
 
+			/* Use the stored/quick RNG */
+			Rand_quick = TRUE;
+			//using fixed seed here to make sure that repeated casting won't cover 100% of the area with water:
+			Rand_value = (3623 * wpos->wy + 29753) * (2843 * wpos->wx + 48869) + (1741 * y + 22109) * y * x + (x + 96779) * x + 42 + wpos->wz;
+
 			k = rand_int(100);
+
+			/* Restore RNG */
+			Rand_quick = old_rand;
+			Rand_value = tmp_seed;
 
 			if (k < p1) f = f1;
 			else if (k < p2) f = f2;
 
-			if (f)
-			{
+			if (f) {
 //uses static array set in generate.c, fix!	if (f == FEAT_FLOOR) place_floor_live(wpos, y, x);
 //				else
 				cave_set_feat_live(wpos, y, x, f);
