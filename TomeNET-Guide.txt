@@ -6895,9 +6895,19 @@ In general for all teleportation attempts, these are:
 
 -Teleport spells cast onto others (teleport other, teleport-to) may get
   resisted by the target depending on its saving throw, level or status.
--Trying to teleport in a no-teleport area ('The air in here feels very still').
+-Trying to teleport while engaged in pvp with a pvp-character. There will be
+ a cooldown of maybe half a minute after a pvp-mode fight until you can use
+ teleportation. If you try to flee by teleportation, you will receive a yellow
+ message: "There's no easy way out of this fight!" >:)
+-Trying on a special floor (for events or an experimental no-teleport dungeon).
+-Trying to teleport in a local no-teleport area.
+  When you enter such an area (no-tele vaults) you will see a message in dark
+  grey, saying "The air in here feels very still". When you try to teleport
+  you will get a message in bright red, saying:
+  "This location suppresses teleportation!"
 -Trying to teleport while having equipped an amulet of anti-teleportation or
-  activated a space-time-anchor effect.
+  activated a space-time-anchor effect. You will get an orange message, saying:
+  "You are surrounded by an anti-teleportation field!"
 -Trying to teleport on a floor that has no or only few free floor grids.
   Teleportation magic tries hard to find a free destination grid, but if it is
   unlucky due to a low number of available grids it might just fail. So it is
