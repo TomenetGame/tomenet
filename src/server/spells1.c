@@ -3730,29 +3730,26 @@ static int project_m_y;
  *
  * XXX XXX XXX Perhaps we should affect doors?
  */
-static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
-{
-	bool	obvious = FALSE;
-
+static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ) {
+	bool obvious = FALSE;
 //	bool quiet = ((Ind <= 0) ? TRUE : FALSE);
 	bool quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : FALSE);
-	int		div;
+	int div;
 
 	player_type *p_ptr = (quiet ? NULL : Players[Ind]);
 
 	byte *w_ptr = (quiet ? NULL : &p_ptr->cave_flag[y][x]);
 	cave_type *c_ptr;
 	cave_type **zcave;
+
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
 
-
 	/* Extract radius */
 	div = r + 1;
-
 	/* Decrease damage */
 	dam = radius_damage(dam, div, typ);
-
 
 	/* XXX XXX */
 	who = who ? who : 0;
@@ -3820,12 +3817,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_STONE_WALL:
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) break;
-
 			if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) break;
-
-	   		/* Beware of the houses in town */
-	   		if ((wpos->wz == 0) && (zcave[y][x].info & CAVE_ICKY)) break;
-
+			/* Beware of the houses in town */
+			if ((wpos->wz == 0) && (zcave[y][x].info & CAVE_ICKY)) break;
 			/* Not if it's an open house door - mikaelh */
 			if (c_ptr->feat == FEAT_HOME_OPEN) break;
 
@@ -3835,7 +3829,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Notice */
 			if (!quiet) note_spot(Ind, y, x);
-
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
 			break;
@@ -3843,6 +3836,14 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Burn trees and grass */
 		case GF_HOLY_FIRE:
 			/* Holy Fire doesn't destroy trees! */
+			/* spider webs (Cirith Ungol!) */
+			if (c_ptr->feat == FEAT_WEB)
+				cave_set_feat_live(wpos, y, x, FEAT_ASH);
+
+#if 1			/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
+			if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
+				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+#endif
 			break;
 
 		case GF_FIRE:
@@ -3872,9 +3873,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Burn grass, spider webs (Cirith Ungol!) and more.. */
 			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
 			    c_ptr->feat == FEAT_WEB ||
-			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */) {
+			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
 				cave_set_feat_live(wpos, y, x, FEAT_ASH);
-			}
 
 			/* misc flavour: turn mud to dirt and/or shallow water into nothing (steam)? */
 			//if (c_ptr->feat == FEAT_MUD) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
@@ -3908,23 +3908,20 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx) {
+					if (c_ptr->o_idx && !c_ptr->m_idx)
 						/* Make sure no traps are displayed on the screen anymore - mikaelh */
 						everyone_clear_ovl_spot(wpos, y, x);
-					} else {
+					else
 						everyone_lite_spot(wpos, y, x);
-					}
 				}
 			}
 
 			/* Secret / Locked doors are found and unlocked */
 			else if ((c_ptr->feat == FEAT_SECRET) ||
-					 ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x01) &&
-					  (c_ptr->feat <= FEAT_DOOR_HEAD + 0x07)))
-			{
+			    ((c_ptr->feat >= FEAT_DOOR_HEAD + 0x01) &&
+			    (c_ptr->feat <= FEAT_DOOR_HEAD + 0x07))) {
 				/* Notice */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "Click!");
 					obvious = TRUE;
 				}
@@ -3941,12 +3938,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx) {
+					if (c_ptr->o_idx && !c_ptr->m_idx)
 						/* Make sure no traps are displayed on the screen anymore - mikaelh */
 						everyone_clear_ovl_spot(wpos, y, x);
-					} else {
+					else
 						everyone_lite_spot(wpos, y, x);
-					}
 				}
 			}
 
@@ -3957,14 +3953,13 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_KILL_DOOR:
 		{
 			byte feat = twall_erosion(wpos, y, x);
-
 			struct c_special *cs_ptr;
+
 			/* Destroy invisible traps */
 //			if (c_ptr->feat == FEAT_INVIS)
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 				/* Hack -- special message */
-				if (!quiet && player_can_see_bold(Ind, y, x))
-				{
+				if (!quiet && player_can_see_bold(Ind, y, x)) {
 					msg_print(Ind, "There is a bright flash of light!");
 					obvious = TRUE;
 				}
@@ -3976,60 +3971,51 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
 
-				if (!quiet)
-				{
+				if (!quiet) {
 					/* Notice */
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx) {
+					if (c_ptr->o_idx && !c_ptr->m_idx)
 						/* Make sure no traps are displayed on the screen anymore - mikaelh */
 						everyone_clear_ovl_spot(wpos, y, x);
-					} else {
+					else
 						everyone_lite_spot(wpos, y, x);
-					}
 				}
 			}
 
 			/* Destroy all visible traps and open doors */
 			if ((c_ptr->feat == FEAT_OPEN) ||
-				(c_ptr->feat == FEAT_BROKEN))
-			{
+			    (c_ptr->feat == FEAT_BROKEN)) {
 				/* Hack -- special message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "There is a bright flash of light!");
 					obvious = TRUE;
 				}
 
 				/* Destroy the feature */
 				cave_set_feat_live(wpos, y, x, feat);
-
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
 
-				if (!quiet)
-				{
+				if (!quiet) {
 					/* Notice */
 					note_spot(Ind, y, x);
 
 					/* Redraw */
-					if (c_ptr->o_idx && !c_ptr->m_idx) {
+					if (c_ptr->o_idx && !c_ptr->m_idx)
 						/* Make sure no traps are displayed on the screen anymore - mikaelh */
 						everyone_clear_ovl_spot(wpos, y, x);
-					} else {
+					else
 						everyone_lite_spot(wpos, y, x);
-					}
 				}
 			}
 
 			/* Destroy all closed doors */
 			if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-				(c_ptr->feat <= FEAT_DOOR_TAIL))
-			{
+			    (c_ptr->feat <= FEAT_DOOR_TAIL)) {
 				/* Hack -- special message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
 					msg_print(Ind, "There is a bright flash of light!");
 					obvious = TRUE;
 				}
@@ -4040,8 +4026,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
 
-				if (!quiet)
-				{
+				if (!quiet) {
 					/* Notice */
 					note_spot(Ind, y, x);
 
@@ -4052,7 +4037,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 				}
 			}
-
 			break;
 		}
 
@@ -4064,7 +4048,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Non-walls (etc) */
 			if (cave_los(zcave, y, x)) break;
-
 			/* Permanent walls */
 			if (c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR) break;
 				//&& !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
@@ -4203,7 +4186,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Make doors */
 		case GF_MAKE_DOOR:
-		{
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) break;
@@ -4211,29 +4193,21 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Create a closed door */
 			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 
-			if (!quiet)
-			{
+			if (!quiet) {
 				/* Notice */
 				note_spot(Ind, y, x);
-
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
-
 				/* Observe */
 				if (*w_ptr & CAVE_MARK) obvious = TRUE;
-
 				/* Update some things */
 				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 			}
-
 			break;
-		}
 
 		/* Make traps */
 		case GF_MAKE_TRAP:
-		{
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-
 			/* Require a "naked" floor grid */
 			if ((zcave[y][x].feat != FEAT_MORE && zcave[y][x].feat != FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
 
@@ -4243,13 +4217,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!quiet) {
 				/* Notice */
 				note_spot(Ind, y, x);
-
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
 			}
-
 			break;
-		}
 
 		/* Lite up the grid */
 		case GF_LITE_WEAK:
@@ -4262,10 +4233,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!quiet) {
 					/* Notice */
 					note_spot_depth(wpos, y, x);
-
 					/* Redraw */
 					everyone_lite_spot(wpos, y, x);
-
 					/* Observe */
 					if (player_can_see_bold(Ind, y, x)) obvious = TRUE;
 				}
@@ -4274,7 +4243,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Mega-Hack -- Update the monster in the affected grid */
 			/* This allows "spear of light" (etc) to work "correctly" */
 			if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
-
 			break;
 
 		/* Darken the grid */
@@ -4291,17 +4259,13 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (cave_plain_floor_grid(c_ptr)) {
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
-
-				if (!quiet) {
+				if (!quiet)
 					/* Notice */
 					note_spot(Ind, y, x);
-				}
 			}
-
-			if (!quiet) {
+			if (!quiet)
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
-			}
 
 			/* Mega-Hack -- Update the monster in the affected grid */
 			/* This allows "spear of light" (etc) to work "correctly" */
@@ -4310,27 +4274,24 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* All done */
 			break;
 
-                case GF_KILL_GLYPH:
-                {
-                        byte feat = twall_erosion(wpos, y, x);
-                        if (!allow_terraforming(wpos, FEAT_TREE)) break;
-                        if (c_ptr->feat == FEAT_GLYPH || c_ptr->feat == FEAT_RUNE)
-                        {
-                                cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
-                        }
-                }
+		case GF_KILL_GLYPH:
+		{
+			byte feat = twall_erosion(wpos, y, x);
+			if (!allow_terraforming(wpos, FEAT_TREE)) break;
+			if (c_ptr->feat == FEAT_GLYPH || c_ptr->feat == FEAT_RUNE)
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
+		}
 
 		/* from PernA	- Jir - */
 #if 0
 		case GF_MAKE_GLYPH:
-		{
 			/* Require a "naked" floor grid */
 			if (!cave_clean_bold(zcave, y, x)) break;
 			if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
 			cave_set_feat_live(&p_ptr->wpos, y, x, FEAT_GLYPH);
 			break;
-		}
 #endif
+
 		// GF_ROCKET and GF_DISINTEGRATE are handled in project()
 
 		case GF_WATER:
@@ -4338,15 +4299,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_VAPOUR:
 		case GF_WATERPOISON:	//New druid stuff
 		{
-			if (!allow_terraforming(wpos, FEAT_SHAL_WATER)) break;
-
-			/* "Permanent" features will stay */
-			if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
-
-			/* Needs more than 30 damage */
-			if (dam < 30) break;
-
-
 			int p1 = 0;
 			int p2 = 0;
 			int f1 = 0;
@@ -4354,9 +4306,14 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			int f = 0;
 			int k;
 
+			if (!allow_terraforming(wpos, FEAT_SHAL_WATER)) break;
+			/* "Permanent" features will stay */
+			if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
+			/* Needs more than 30 damage */
+			if (dam < 30) break;
+
 			bool old_rand = Rand_quick;
 			u32b tmp_seed = Rand_value;
-
 
 			if ((c_ptr->feat == FEAT_FLOOR) ||
 			    (c_ptr->feat == FEAT_DIRT) ||
@@ -4393,18 +4350,14 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //uses static array set in generate.c, fix!	if (f == FEAT_FLOOR) place_floor_live(wpos, y, x);
 //				else
 				cave_set_feat_live(wpos, y, x, f);
-
 				/* Notice */
 				if (!quiet) note_spot(Ind, y, x);
-
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
 //				if (seen) obvious = TRUE;
 			}
-
 			break;
 		}
-
 	}
 
 	/* Return "Anything seen?" */
