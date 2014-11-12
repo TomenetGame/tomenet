@@ -3880,8 +3880,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			//if (c_ptr->feat == FEAT_MUD) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
 			if (c_ptr->feat == FEAT_SHAL_WATER) cave_set_feat_live(wpos, y, x, FEAT_MUD);
 
-			//todo: FEAT_ICE_WALL (those are tunneable, so probably no harm in making them meltable too
-
+#if 1			/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
+			if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
+				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+#endif
 			break;
 
 		/* Destroy Traps (and Locks) */
