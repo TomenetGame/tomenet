@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. November 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. November 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11468,10 +11468,13 @@ create a character!):
     Green       Poison          poison, immune (25)
     Multi-hued  Random of       lightning (5), frost (10), fire (15),
                 those above     acid (20), poison (25)
-    Bronze      Confusion       confusion (5), paralysis (10), reflection (20)
-    Silver      Inertia         cold (5), poison (10), reflection (20)
-    Golden      Sound           acid (5), sound (10), reflection (20)
-    Law         Shards          shards (5), sound (15)
+    Bronze      Confusion       confusion (5), paralysis and electricity (10),
+                                reflection (20)
+    Silver      Inertia         cold (5), acid (10), poison (15),
+                                reflection (20)
+    Golden      Sound           fire (5), acid (10), sound (15),
+                                reflection (20)
+    Law         Shards          shards (5), paralysis (10), sound (15)
     Chaos       Chaos           confusion (5), chaos (15), disenchantment (20)
     Balance     Disenchantment  disenchantment (10), sound (20)
 
