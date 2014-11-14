@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. November 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. November 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -270,6 +270,8 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
  from your inventory which is displayed in the bottom right window.
+ To take off an equipped item, press 't'. The item will be returned to your
+ backpack (aka your inventory).
 
 -You can pick up items if you stand on them and press 'g'. Items that are
  especially valuable in the beginning are magic wands and staves, so make sure
@@ -283,6 +285,22 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 
 -You can press '?' to get a short in-game help. The actual list of commands
  and further info are contained in this guide.
+
+ A few other important keys are:
+ @  show a list of players currently online.
+ ~  knowledge menu (all of your character's knowledge, plus artifact/monster
+    spoilers under ~6 and ~7 respectively.)
+ =  game options menu.
+ %  macro menu ('macros' are hotkeys, allowing you to bind certain actions to a
+    single key press).
+ SHIFT+P  form a party with your buddies. You share experience in a party and
+          you can always see each other on the map and your team mates' current
+          world location in the player list (accessed with '@' key).
+ SHIFT+L  look around the map. Very useful to locate team mates ;).
+ SHIFT+G  distribute your skill points you receive on each level-up.
+ CTRL+U  the audio mixer menu (the hotkeys for toggling master/music work
+         outside of this menu too).
+ CTRL+X  quit the game. Safest way is to quit in a town, not in the dungeon!
 
 -Nearby the starter town (Bree) there's often a 'training tower' which is a
  good place to start because if you die there nothing will happen except a
