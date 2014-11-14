@@ -286,20 +286,6 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 -You can press '?' to get a short in-game help. The actual list of commands
  and further info are contained in this guide.
 
- A few other important keys are:
- ~  knowledge menu (all of your character's knowledge, plus artifact/monster
-    spoilers under ~6 and ~7 respectively.)
- =  game options menu.
- %  macro menu ('macros' are hotkeys, allowing you to bind certain actions to a
-    single key press). (More about macros in (3.6) up to (3.9b).)
- SHIFT+P  form a party with your buddies. You share experience in a party and
-          you can always see each other on the map and your team mates' current
-          world location in the player list (accessed with '@' key).
- SHIFT+L  look around the map. Very useful to locate team mates ;).
- CTRL+U  the audio mixer menu (the hotkeys for toggling master/music work
-         outside of this menu too).
- CTRL+X  quit the game. Safest way is to quit in a town, not in the dungeon!
-
 -Nearby the starter town (Bree) there's often a 'training tower' which is a
  good place to start because if you die there nothing will happen except a
  slight loss of experience and gold. Ask people where the dark-green '<' symbol
@@ -329,20 +315,38 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  If that doesn't seem to happen, just ask in chat openly. Some players have
  validation privileges too and can help you out.
 
--Press '@' key to see a list of players who're currently online. Note that a
- yellow '(I)' before a name stands for 'invalid', and means that this player
+-Press '@' key to see a list of players who're currently online.
+
+ A yellow '(I)' before a name stands for 'invalid', and means that this player
  is still awaiting account validation by an admin.
- Also, if a grey '(O)' is in front of a player name, it means that player is
- using an outdated client. It's very important to keep your client up to date!
+ A grey '(O)' is in front of a player name, it means that player is using an
+ outdated client. It's very important to keep your client up to date!
+
  If another player's character level is displayed in light blue colour, that
  means he is within sensible level range of you to form a party! Press SHIFT+P
  for party menu. One of you has to create the party and add the other one.
+
  A name displayed in dark blue is an admin.
  A name displayed in purple is a 'winner', ie a player who managed to beat the
  game boss, Morgoth, the Lord of Darkness (and hasn't died since).
  A name displayed in red is a ghost, ie a player who died. :(
  A name displayed in dark grey is a player who is currently inside the special
  'Ironman Deep Dive Challenge' dungeon.
+
+-A few other important keys are:
+ ~  knowledge menu (all of your character's knowledge, plus artifact/monster
+    spoilers under ~6 and ~7 respectively.)
+ =  game options menu.
+ %  macro menu ('macros' are hotkeys, allowing you to bind certain actions to a
+    single key press). (More about macros in (3.6) up to (3.9b).)
+ SHIFT+P  form a party with your buddies. You share experience in a party and
+          you can always see each other on the map and your team mates' current
+          world location in the player list (accessed with '@' key).
+ SHIFT+L  look around the map. Very useful to locate team mates ;).
+ CTRL+U  the audio mixer menu (the hotkeys for toggling master/music work
+         outside of this menu too).
+ CTRL+X  quit the game. Safest way is to quit in a town, not in the dungeon!
+
 
 -Note that your character's "speed" may change. Speed is the factor telling you
  how fast your character can move, fight or perform any other kind of action.
