@@ -7001,6 +7001,15 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	/* Extract object flags */
 	object_flags(o_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
 
+#if 1
+	/* equippable magic devices are especially easy to use? (ie no wands/staves/rods)
+	   eg tele rings, serpent amulets, true artifacts */
+	if (!is_magic_device(o_ptr->tval)) {
+		chance += 30;
+		chance = chance - lev / 10;
+	}
+#endif
+
 	/* Is it simple to use ? */
 	if (f4 & TR4_EASY_USE) {
 		chance += USE_DEVICE;
