@@ -2570,7 +2570,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				break;
 
 			case SV_SCROLL_DETECT_ITEM:
-				if (detect_object(Ind, DEFAULT_RADIUS * 2)) ident = TRUE;
+				if (detect_object(Ind, DEFAULT_RADIUS * 3)) ident = TRUE;
 				break;
 
 			case SV_SCROLL_DETECT_TRAP:
@@ -3157,7 +3157,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 
 		case SV_STAFF_DETECT_ITEM:
 		{
-			if (detect_object(Ind, rad * 2)) ident = TRUE;
+			if (detect_object(Ind, rad * 3)) ident = TRUE;
 			break;
 		}
 
