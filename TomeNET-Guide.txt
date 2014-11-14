@@ -287,17 +287,15 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  and further info are contained in this guide.
 
  A few other important keys are:
- @  show a list of players currently online.
  ~  knowledge menu (all of your character's knowledge, plus artifact/monster
     spoilers under ~6 and ~7 respectively.)
  =  game options menu.
  %  macro menu ('macros' are hotkeys, allowing you to bind certain actions to a
-    single key press).
+    single key press). (More about macros in (3.6) up to (3.9b).)
  SHIFT+P  form a party with your buddies. You share experience in a party and
           you can always see each other on the map and your team mates' current
           world location in the player list (accessed with '@' key).
  SHIFT+L  look around the map. Very useful to locate team mates ;).
- SHIFT+G  distribute your skill points you receive on each level-up.
  CTRL+U  the audio mixer menu (the hotkeys for toggling master/music work
          outside of this menu too).
  CTRL+X  quit the game. Safest way is to quit in a town, not in the dungeon!
@@ -318,7 +316,7 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  read. They don't do anything, just a short read containing some information.
 
 -If your character gains a new level it also gains skill points. To distribute
- those, invoke the skill screen with 'G'. (See 3.10, 6.2 and 7.5.)
+ those, invoke the skill screen with SHIFT+G. (See 3.10, 6.2 and 7.5.)
 
 -If you don't like your character and want to delete it, you may commit
  suicide by pressing SHIFT+q or CTRL+k and double-confirming the following
