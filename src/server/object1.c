@@ -3298,13 +3298,15 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_AMUGROM:
 		return "temporary resistance boost every 250+d200 turns";
 	case ART_HELLFIRE:
-		return "invoking raw chaos every 250+d200 turns";
+		return "invoking hellfire every 30+d20 turns";
 	case ART_SPIRITSHARD:
 		return "turning into a wraith every 300+d100 turns";
 	case ART_PHASING:
 		return "opening the final gate to the shores of Valinor every 1000 turns";
 	case ART_LEBOHAUM:
 		return "singing a cheerful song every 30 turns";
+	case ART_HAVOC:
+		return "invoking a force bolt every 1+d2 turns";
 	}
 
 	// requires some substitution..

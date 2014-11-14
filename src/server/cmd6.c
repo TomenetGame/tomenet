@@ -4962,6 +4962,7 @@ bool activation_requires_direction(object_type *o_ptr) {
 		case ART_EOL:
 		case ART_UMBAR:
 		case ART_HELLFIRE:
+		case ART_HAVOC:
 			return TRUE;
 		}
 	}
@@ -6685,10 +6686,14 @@ void do_cmd_activate_dir(int Ind, int dir) {
                                 o_ptr->timeout = rand_int(20) + 20;
                                 break;
 			case ART_HELLFIRE:
-				sprintf(p_ptr->attacker, " invokes raw chaos for");
-				//Increases the extra damage from 1k to 2k since call_chaos's base damage was lowered (havoc rods rebalancing)
-				call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
-				o_ptr->timeout = rand_int(200) + 250;
+				sprintf(p_ptr->attacker, " conjures up hellfire for");
+				fire_ball(Ind, GF_HELL_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 3, p_ptr->attacker);
+				o_ptr->timeout = randint(20) + 30;
+				break;
+			case ART_HAVOC:
+				sprintf(p_ptr->attacker, " casts a force bolt for");
+				fire_bolt(Ind, GF_FORCE, dir, damroll(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 16), 8), p_ptr->attacker);
+				o_ptr->timeout = rand_int(2) + 2;
 				break;
 		}
 	}

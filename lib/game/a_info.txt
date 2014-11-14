@@ -1661,10 +1661,10 @@ D:virtues of protection and thought.
 
 N:119:'Eriril'
 I:6:1:3
-W:16:18:140:50000
+W:16:18:30:50000
 P:0:1d4:0:0:0
-F:INT | WIS | HIDE_TYPE | ESP_EVIL | 
-F:SLAY_EVIL | RES_LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | FREE_ACT | 
+F:INT | WIS | HIDE_TYPE | ESP_EVIL |
+F:SLAY_EVIL | RES_LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | FREE_ACT |
 F:MANA | REGEN_MANA
 D:The radiant golden staff of an Istari of legend, this wizard's companion 
 D:grants keen sight and the knowledge of many hidden things.
@@ -2934,8 +2934,8 @@ N:236:of Hellfire
 I:6:1:12
 W:70:60:12:150000
 P:0:1d5:0:0:0
-F:MANA | IM_FIRE | RES_DISEN | AUTO_ID | REGEN_MANA | 
-F:RES_ELEC | SEE_INVIS | ESP_EVIL | ACTIVATE
+F:MANA | IM_FIRE | RES_DISEN | AUTO_ID | REGEN_MANA |
+F:RES_ELEC | SEE_INVIS | ESP_EVIL
 D:The ebony staff crowned by three rubies, which evoked the hellraiser's power.
 
 
@@ -3364,6 +3364,18 @@ P:0:6d6:25:26:0
 F:SHOW_MODS | SLAY_GIANT | SLAY_TROLL | SLAY_ORC
 F:SLAY_DEMON | SLAY_DRAGON | SLAY_UNDEAD | STR | RES_FEAR
 D:Whatever the foe, if it has a skull it better watch out.
+
+# The Havoc Staff
+
+N:274:of Havoc
+I:6:1:10
+W:57:60:20:150000
+P:0:1d5:0:0:0
+F:MANA | REGEN_MANA | ACTIVATE
+F:RES_DARK | RES_NETHER | RES_ELEC | RES_COLD | ESP_GOOD
+D:An long sceptre crowned with a ram's skull, imbued with magic allowing you to
+D:sense those who oppose evil and to unleash devastating forces on your foe.
+D:A white glow emanates from its hollow eyes as you channel its powers.
 
 
 #weapon base items that don't have arts yet:

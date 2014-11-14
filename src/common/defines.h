@@ -2367,6 +2367,7 @@
 #define ART_PIERCER		268
 #define ART_URUKHAI		269
 #define ART_DREADNOUGHT		272
+#define ART_HAVOC		274
 /* #define ART_ANGTIRCALAD	*/
 
 
