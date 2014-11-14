@@ -224,7 +224,7 @@ bool get_item_hook_find_obj(int *item, bool inven_first)
 		/* translate back so order within each - inven & equip - is alphabetically again */
 		if (!inven_first) {
 			if (j < INVEN_WIELD) i = INVEN_PACK - j;
-			else i = INVEN_WIELD + INVEN_TOTAL - j;
+			else i = INVEN_WIELD + INVEN_TOTAL - 1 - j;
 		} else i = j;
 
 		object_type *o_ptr = &inventory[i];
