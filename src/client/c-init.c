@@ -1060,7 +1060,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					got_F_lines = TRUE;
 				}
 
-				/* strip spaces, convert | to space */
+				/* strip all spaces, convert | to space */
 				p1--;
 				while (*(++p1)) {
 					switch (*p1) {
@@ -1187,6 +1187,9 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					else {
 						/* can't split up F line? */
 						if (!(p2 = strchr(p1, ' '))) {
+							/* hack: catch special case: only the final space didn't fit into the line -> discard it instead */
+							if (*p1 == 0) break;
+
 							/* start next line */
 							l++;
 							if (++pf_col_cnt == 2) {
@@ -1303,6 +1306,9 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					else {
 						/* can't split up S line? */
 						if (!(p2 = strchr(p1, ' '))) {
+							/* hack: catch special case: only the final space didn't fit into the line -> discard it instead */
+							if (*p1 == 0) break;
+
 							/* start next line */
 							l++;
 							if (++pf_col_cnt == 2) {
@@ -2083,7 +2089,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					got_F_lines = TRUE;
 				}
 
-				/* strip spaces, convert | to space */
+				/* strip all spaces, convert | to space */
 				p1--;
 				while (*(++p1)) {
 					switch (*p1) {
@@ -2200,6 +2206,9 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					else {
 						/* can't split up F line? */
 						if (!(p2 = strchr(p1, ' '))) {
+							/* hack: catch special case: only the final space didn't fit into the line -> discard it instead */
+							if (*p1 == 0) break;
+
 							/* start next line */
 							l++;
 							if (++pf_col_cnt == 2) {
