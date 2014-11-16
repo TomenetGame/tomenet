@@ -3779,11 +3779,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
 			    c_ptr->feat == FEAT_WEB ||
 			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
-				cave_set_feat_live(wpos, y, x, FEAT_MUD);
+				cave_set_feat_live(wpos, y, x, FEAT_MUD);//or maybe FEAT_ASH, or just FEAT_DIRT?
 
 			break;
 
 		case GF_NUKE:
+			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* damage organic material */
 			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
 			    /*c_ptr->feat == FEAT_WEB ||*/
@@ -3795,6 +3796,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_ICEPOISON:
 		case GF_SHARDS:
 		case GF_FORCE:
+			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Shred certain feats */
 			if (c_ptr->feat == FEAT_WEB || c_ptr->feat == FEAT_FLOWER /* :( */)
 				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
@@ -3835,6 +3837,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Burn trees and grass */
 		case GF_HOLY_FIRE:
+			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Holy Fire doesn't destroy trees! */
 			/* spider webs (Cirith Ungol!) */
 			if (c_ptr->feat == FEAT_WEB)
