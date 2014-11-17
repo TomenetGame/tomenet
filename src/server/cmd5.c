@@ -710,7 +710,6 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	break;
 //#define RF6_TELE_TO                     0x00000100      /* Move player to monster */ 
     case 72:
-	break;
 // RF6_TELE_AWAY		0x00000200	/* Move player far away */
     case 73:
 	p_ptr->current_spell = j;
