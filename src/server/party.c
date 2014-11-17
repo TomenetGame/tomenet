@@ -590,11 +590,11 @@ int check_account(char *accname, char *c_name) {
 		ded_pvp = FALSE;
 		for (i = 0; i < chars; i++) {
 			int m = lookup_player_mode(id_list[i]);
-			if (m & MODE_DED_IDDC) {
+			if ((m & MODE_DED_IDDC) && !ded_iddc) {
 				ded_iddc = TRUE;
 				plus_free--;
 			}
-			if (m & MODE_DED_PVP) {
+			if ((m & MODE_DED_PVP) && !ded_pvp)  {
 				ded_pvp = TRUE;
 				plus_free--;
 			}
@@ -632,10 +632,14 @@ int check_account(char *accname, char *c_name) {
 		}
 		/* at least one non-exclusive slot free */
 		else {
+ #if 1 /* new: allow any dedicated mode character to be created in 'normal' slots! */
+			success = -7;
+ #else
 			if (!ded_iddc) {
 				if (!ded_pvp) success = -7; /* allow willing creation of any exlusive slot */
 				else success = -8; /* allow willing creating of iddc-exclusive slot */
 			} else if (!ded_pvp) success = -9; /* allow willing creating of pvp-exclusive slot */
+ #endif
 		}
 #endif
 		a_id = l_acc->id;
