@@ -4052,8 +4052,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Non-walls (etc) */
 			if (cave_los(zcave, y, x)) break;
 			/* Permanent walls */
-			if (c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR) break;
-				//&& !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
+			if ((c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR)
+			    && !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
 
 			/* the_sandman: sandwalls are stm-able too? */
 			/* fixed it and also added the treasures in sandwalls - mikaelh */
