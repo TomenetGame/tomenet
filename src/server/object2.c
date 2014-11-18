@@ -7355,6 +7355,62 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if ((relem2 || relem5) && !(f2 & relem2) && !(f5 & relem5)) continue;
 		}
 
+		/* If the item only has high resistance, and no immunity, make sure that we don't already resist it. */
+		if (!(f2 & (TR2_IM_FIRE | TR2_IM_COLD | TR2_IM_ACID | TR2_IM_ELEC)) && !(f5 & TR5_IM_POISON)) {
+			int hres = 0;
+			int pres = 0;
+
+			if (f2 & TR2_RES_LITE) {
+				hres++;
+				if (p_ptr->resist_lite) pres++;
+			}
+			if (f2 & TR2_RES_DARK) {
+				hres++;
+				if (p_ptr->resist_dark) pres++;
+			}
+			if (f2 & TR2_RES_NEXUS) {
+				hres++;
+				if (p_ptr->resist_nexus) pres++;
+			}
+			if (f2 & TR2_RES_NETHER) {
+				hres++;
+				if (p_ptr->resist_neth) pres++;
+			}
+			if (f2 & TR2_RES_CHAOS) {
+				hres++;
+				if (p_ptr->resist_chaos) pres++;
+			}
+			if (f2 & TR2_RES_POIS) {
+				hres++;
+				if (p_ptr->resist_pois) pres++;
+			}
+			if (f2 & TR2_RES_SOUND) {
+				hres++;
+				if (p_ptr->resist_sound) pres++;
+			}
+			if (f2 & TR2_RES_SHARDS) {
+				hres++;
+				if (p_ptr->resist_shard) pres++;
+			}
+			if (f2 & TR2_RES_DISEN) {
+				hres++;
+				if (p_ptr->resist_disen) pres++;
+			}
+
+			if (f2 & TR2_RES_CONF) {
+				hres++;
+				if (p_ptr->resist_conf) pres++;
+			}
+			if (f2 & TR2_RES_BLIND) {
+				hres++;
+				if (p_ptr->resist_blind) pres++;
+			}
+			//if (f5 & TR5_RES_WATER) hres++;
+			//PLASMA, MANA, TIME, FEAR
+
+			if (hres && pres == hres) continue;
+		}
+
 		break;
 	} while (tries < (verygreat ? 20 : 100));
 
