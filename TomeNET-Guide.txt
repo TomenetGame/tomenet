@@ -10311,20 +10311,25 @@ Note that not every skill is available to every profession (class).
                                 target (if attacking causes those).
                                 Reduces Fear/Stun/Confuse durations that you
                                 suffer from.
+
                                 Increases 'Fighting' and 'Bows/Throws'
-                                abilities, thereby increasing your chance to
-                                hit with melee, ranged weapons and when
-                                throwing an item.
+                                abilities somewhat, thereby increasing your
+                                chance to hit with melee, ranged weapons and
+                                when throwing an item and reducing your chance
+                                to get disarmed.
 
                                 If your Combat skill isn't zero, then you can
                                 press 'm' to check your base chance of
                                 parrying (weapon) and blocking (shield), see
                                 (6.11) for more details about parry/block.
 
-    +Weaponmastery              Improves your Fighting ability.
-                                Slightly increases melee to-dam and to-hit for
+    +Weaponmastery              Slightly increases melee to-dam and to-hit for
                                 armed combat: Hit gets increased by 1/3 of your
                                 skill, damage by 1/10.
+                                Improves your 'Fighting' ability somewhat,
+                                thereby further increasing your chance to hit
+                                with melee weapons and reducing your chance to
+                                get disarmed.
 
                                 Slightly increases your chance to score
                                 critical hits in armed combat (Note: The skill
@@ -10594,8 +10599,10 @@ Note that not every skill is available to every profession (class).
                                 such as being blinded etc) the best chance to
                                 intercept will override the others.
 
-    +Archery                    Improves ranged to-damage bonus slightly, by +1
-                                for every 10.000 increase in skill.
+    +Archery                    Improves ranged to-damage bonus somewhat, by +1
+                                for every 5.000 increase in skill.
+                                Also increases 'Bows/Throws' ability somewhat,
+                                which in turn further increases hit chance.
 
                                 Allows you to learn some shooting techniques
                                 and the ability to create ammunition,
@@ -10613,7 +10620,10 @@ Note that not every skill is available to every profession (class).
                                 the items. Before that, you can only
                                 distinguish between cursed and good.
 
-        .Sling-mastery          Increases hit chance (while using a sling).
+        .Sling-mastery          Increases hit chance (while using a sling) by
+                                +1 for every 2.000 skill increase.
+                                Also increases Bows/Throws ability somewhat,
+                                which in turn further increases hit chance.
 
                                 At 10,20,30,40,50 you will get +1 additional
                                 shot per round each (while using a sling).
@@ -10650,10 +10660,12 @@ Note that not every skill is available to every profession (class).
                                 Otherwise same as Sling-mastery, except no
                                 ricochetting.
 
-    .Boomerang-mastery          At 16.6, 33.3 and 50 you get +1 extra throw
-                                each. Boomerang-mastery also increases ranged
-                                to-damage bonus while using a boomerang, and
-                                reduces the chance of a boomerang to break or
+    .Boomerang-mastery          At 16.6, 33.3 and 50 you get +1 extra throw.
+
+                                Increases ranged to-damage bonus when wielding
+                                a boomerang by +1 for every 2.500 increase.
+
+                                Reduces the chance of a boomerang to break or
                                 to fall to the ground instead of returning.
 
                                 Artifact boomerangs never break or fall down.
