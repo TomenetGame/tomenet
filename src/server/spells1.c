@@ -4167,7 +4167,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the feature */
-				cave_set_feat_live(wpos, y, x, FEAT_MUD);
+				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 			}
 
 			/* Forget the wall */
