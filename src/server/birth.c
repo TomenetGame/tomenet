@@ -1785,12 +1785,12 @@ static void player_outfit(int Ind)
 				case RACE_ENT:
 					tv = TV_BLUNT; sv = SV_CLUB; break;
 				case RACE_DWARF:
-					tv = TV_AXE; sv = SV_HATCHET; break;
+					tv = TV_AXE; sv = SV_CLEAVER; break;
 				case RACE_DRACONIAN:
 					tv = TV_POLEARM; sv = SV_SPEAR; break;
 				} break;
 			case SV_SHADOW_BLADE:/* shaman, shadow blade is just a placeholder */
-				tv = TV_AXE; sv = SV_HATCHET;
+				tv = TV_AXE; sv = SV_CLEAVER;
 				switch (p_ptr->prace) {
 				case RACE_HALF_TROLL:
 				case RACE_ENT:

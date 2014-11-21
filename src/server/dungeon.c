@@ -6703,13 +6703,13 @@ void process_player_change_wpos(int Ind) {
 		}
 		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
-			msg_print(Ind, "\374\377y    Warriors should try either a dagger, whip, spear or hatchet.");
+			msg_print(Ind, "\374\377y    Warriors should try either a dagger, whip, spear or cleaver.");
 			break;
 		case CLASS_PALADIN:
-			msg_print(Ind, "\374\377y    Paladins should try either a dagger, whip, spear or hatchet.");
+			msg_print(Ind, "\374\377y    Paladins should try either a dagger, whip, spear or cleaver.");
 			break;
 		case CLASS_MIMIC:
-			msg_print(Ind, "\374\377y    Mimics should try either a dagger, whip, spear or hatchet.");
+			msg_print(Ind, "\374\377y    Mimics should try either a dagger, whip, spear or cleaver.");
 			break;
 		case CLASS_ROGUE:
 			msg_print(Ind, "\374\377y    Rogues should try dual-wielding two daggers or main gauches.");

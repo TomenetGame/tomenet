@@ -2976,10 +2976,11 @@
 #define SV_GROND                        50	/* 3d4  */
 
 /* The "sval" values for TV_AXE */
-#define SV_HATCHET                       1	/* 1d5 */
-#define SV_CLEAVER                       2      /* 2d4 */
+#define SV_CLEAVER			 1	/* 1d5 */
+#define SV_DBITTED			 2	/* 2d4 */
 #define SV_TOMAHAWK			 3	/* 2d4 */
-#define SV_LIGHT_WAR_AXE                 8      /* 2d5 */
+#define SV_HATCHET			 5	/* 2d3 */
+#define SV_LIGHT_WAR_AXE		 8	/* 2d5 */
 #define SV_BEAKED_AXE                   10	/* 2d6 */
 #define SV_BROAD_AXE                    11	/* 2d6 */
 #define SV_BATTLE_AXE                   22	/* 2d8 */
