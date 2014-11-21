@@ -957,8 +957,9 @@ W:48
 
 N:62:Herbalist
 T:95:80:4
-T:95:80:10
-T:95:80:11
+#unhealth/disease had their price zero'ed for pseudo-id :/
+#T:95:80:10
+#T:95:80:11
 T:95:80:12
 T:95:80:13
 T:95:80:14
