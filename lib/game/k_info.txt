@@ -5834,7 +5834,7 @@ A:0/10
 N:803:& Double-Bitted Axe~
 G:/:s
 I:24:2:0
-W:13:0:100:175
+W:13:0:100:155
 A:13/1
 P:0:2d4:0:0:0
 F:SHOW_MODS
@@ -7495,7 +7495,7 @@ F:INSTA_ART | TUNNEL
 N:1033:& Tomahawk~
 G:/:u
 I:24:3:0
-W:15:0:70:45
+W:15:0:80:140
 A:15/2
 P:0:2d4:0:0:0
 F:SHOW_MODS
