@@ -3075,7 +3075,7 @@ F:SHOW_MODS | MUST2H
 N:386:& Hatchet~
 G:/:s
 I:24:5:0
-W:3:0:70:45
+W:3:0:70:85
 A:3/1:10/1
 P:0:2d3:0:0:0
 F:SHOW_MODS
@@ -6468,7 +6468,7 @@ D:Might sometimes also carry an inscription revealing a dungeon location.
 N:915:& Scourge~
 G:\:W
 I:21:21:0
-W:30:0:60:200
+W:30:0:60:190
 A:30/2
 P:0:3d2:0:0:0
 F:SHOW_MODS
