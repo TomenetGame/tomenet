@@ -7225,6 +7225,9 @@ void dungeon(void)
 
 				/* Ignore chars in fixed irondeepdive towns */
 				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
 
 				/* Ignore characters that are not in a dungeon/tower */
 				if (p_ptr->wpos.wz == 0) {
@@ -7252,6 +7255,9 @@ void dungeon(void)
 
 				/* Ignore chars in fixed irondeepdive towns */
 				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
 
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
@@ -7283,6 +7289,9 @@ void dungeon(void)
 
 				/* Ignore chars in fixed irondeepdive towns */
 				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
 
 				/* Ignore characters that are not in a dungeon/tower */
 				if (p_ptr->wpos.wz == 0) {
@@ -7311,6 +7320,9 @@ void dungeon(void)
 
 				/* Ignore chars in fixed irondeepdive towns */
 				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
 
 				/* Ignore characters that are not in a dungeon/tower */
 				if (p_ptr->wpos.wz == 0) {
@@ -7360,6 +7372,9 @@ void dungeon(void)
 
 				/* Ignore chars in fixed irondeepdive towns */
 				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
 
 				/* Ignore characters that are not in a dungeon/tower */
 				if (p_ptr->wpos.wz == 0) {
@@ -7418,6 +7433,9 @@ void dungeon(void)
 
 					/* Ignore chars in fixed irondeepdive towns */
 					if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+					if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
 
 					/* Ignore characters that are afk and not in a dungeon/tower */
 //						if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
