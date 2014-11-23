@@ -3221,7 +3221,9 @@ void do_cmd_look(int Ind, int dir) {
 	} else {
 		int feat = f_info[c_ptr->feat].mimic;
 		cptr name = f_name + f_info[feat].name;
-		if (is_a_vowel(name[0])) p1 = "An ";
+
+		if (f_info[c_ptr->feat].flags2 & FF2_NO_ARTICLE) p1 = "";
+		else if (is_a_vowel(name[0])) p1 = "An ";
 
 		/* Hack -- add trap description */
 		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
@@ -3272,6 +3274,8 @@ void do_cmd_look(int Ind, int dir) {
 		/* Message */
 		if (strlen(info)) snprintf(out_val, sizeof(out_val), "%s%s%s (%s)", p1, p2, name, info);
 		else snprintf(out_val, sizeof(out_val), "%s%s%s", p1, p2, name);
+
+		if (f_info[c_ptr->feat].flags2 & FF2_NO_ARTICLE) out_val[0] = toupper(out_val[0]);
 	}
 
 	if (is_admin(p_ptr)) strcat(out_val, format(" (%d)", c_ptr->feat));

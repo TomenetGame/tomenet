@@ -31,7 +31,7 @@ F:FLOOR
 
 N:1:open floor
 G:.:w
-F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_ARTICLE
 
 # 0x02 -> fountain
 N:2:fountain
@@ -116,10 +116,10 @@ G:_:W
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 D:0:The fountain seems dried out.
 
-N:16:web
+N:16:webs
 G:+:y
-F:CAN_PASS | NOTICE | WEB | NOTICE | TUNNELABLE
-D:1:You tunnel through the web.
+F:CAN_PASS | NOTICE | WEB | NOTICE | TUNNELABLE | NO_ARTICLE
+D:1:You tunnel through the webs.
 
 # Trap -- the flags are not used by the program
 N:17:trap
@@ -135,13 +135,13 @@ F:FLOOR | NOTICE | REMEMBER
 # 0x04 --> crops  
 N:18:crops
 G:%:g
-F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER | NO_ARTICLE
 
 # 0x05 --> loose dirt
 
 N:19:loose dirt
 G:%:u
-F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER | NO_ARTICLE
 
 # 0x0E --> open door to a home
 
@@ -173,7 +173,7 @@ F:PERMANENT
 # logs, used for log cabin
 N:23:logs
 G:=:u
-F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT | NO_ARTICLE
 F:DONT_NOTICE_RUNNING
 
 # drawbridge, used for moats
@@ -576,9 +576,9 @@ F:DONT_NOTICE_RUNNING | NIGHT_DARK | BOUNDARY
 D:1:This rock is far too hard.
 D:2:a very hard and steep stone wall block blocking your way
 
-N:82:solidified cloud
+N:82:solidified clouds
 G:.:W
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | LAMP_LITE
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | LAMP_LITE | NO_ARTICLE
 
 N:83:snow
 G:.:w
@@ -625,7 +625,7 @@ D:0:Ohhh, it is dark and deep.
 N:88:dirt
 G:.:u
 F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_SHADE
-F:DONT_NOTICE_RUNNING | LAMP_LITE_OPTIONAL
+F:DONT_NOTICE_RUNNING | LAMP_LITE_OPTIONAL | NO_ARTICLE
 
 N:89:patch of grass
 G:.:G
@@ -638,12 +638,14 @@ N:90:ice
 #F:FLOOR | NOTICE
 G:.:B
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | NO_SHADE
+F:NO_ARTICLE
 #keep it light blue instead of white when using white-light lamp
 #| LAMP_LITE | 
 
 N:91:sand
 G:.:y
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | LAMP_LITE | NO_SHADE | NO_LITE_WHITEN
+F:NO_ARTICLE
 
 N:92:dead tree
 #G:#:D
@@ -658,11 +660,11 @@ D:2:a tree blocking your way
 
 N:93:ash
 G:.:D
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
 
 N:94:mud
 G:~:u
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
 
 N:95:ice wall
 G:#:B
@@ -728,7 +730,7 @@ G:.:v
 S:v:R:r:v:R:r:D
 E:4d4:8:NETHER
 F:ATTR_MULTI
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
 D:0:The nether mist engulfs you
 
 N:103:glittering water
@@ -742,7 +744,7 @@ S:b:B:B:B:B:b:B
 #S:b:b:b:b:b:b:b
 F:ATTR_MULTI
 #F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | CAN_RUN
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | NO_ARTICLE
 F:WALL | NO_WALK | NO_VISION | PERMANENT | BOUNDARY
 
 #impassable by admins, like PERM_FEAT_SOLID just as mountain chain
@@ -755,7 +757,7 @@ D:2:a very hard stone block blocking your way
 #might also add 'permanent water' and 'permanent grass' to improve Valinor.
 
 #just a functional-less marker for divine_gateway(), to look cool */
-N:105:unstable Void Jumpgate
+N:105:unstable void jumpgate
 G:+:M
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 D:0:An unstable silhouette of a void jumpgate in the making
@@ -767,7 +769,7 @@ D:0:Ohhh, it is *dark* and *deep*.
 
 N:107:bottomless, cloudy sky
 G:~:W
-F:LOS | NO_WALK | DONT_NOTICE_RUNNING | PERMANENT
+F:LOS | NO_WALK | DONT_NOTICE_RUNNING | PERMANENT | NO_ARTICLE
 D:0:Ohhh, it is *dark* and *deep*.
 
 N:108:bottomless abyss
@@ -779,7 +781,7 @@ F:DONT_NOTICE_RUNNING | BOUNDARY
 # 109..159 unused -------------------------------------------------------------
 
 
-N:160:Void Jumpgate
+N:160:void jumpgate
 G:+:v
 F:FLOOR | REMEMBER | NOTICE | PERMANENT | CAN_RUN
 D:0:A dark rift opens to the void here.
@@ -787,22 +789,22 @@ D:0:A dark rift opens to the void here.
 
 ###### Here are the altars. ######
 
-N:161:Altar of Being
+N:161:altar of being
 G:0:W
 F:FLOOR | REMEMBER | NOTICE | CAN_RUN
 D:0:You feel at peace.
 
-N:162:Altar of Winds
+N:162:altar of winds
 G:0:B
 F:FLOOR | REMEMBER | NOTICE | CAN_RUN
 D:0:You grow a desire to become a bird.
 
-N:163:Altar of Force
+N:163:altar of force
 G:0:R
 F:FLOOR | REMEMBER | NOTICE | CAN_RUN
 D:0:You grow a desire to fight evil.
 
-N:164:Altar of Darkness
+N:164:altar of darkness
 G:0:D
 F:FLOOR | REMEMBER | NOTICE | CAN_RUN
 D:0:Images of pain and death feels your mind.
@@ -821,9 +823,10 @@ D:0:Images of pain and death feels your mind.
 N:172:floor
 G:.:r
 F:FLOOR | CAN_RUN | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | LAMP_LITE_SNOW
+F:NO_ARTICLE
 
 # Underground Tunnel
-N:173:Underground Tunnel
+N:173:underground tunnel
 #G:#:s
 G:#:D
 F:FLOOR | REMEMBER | SUPPORT_LIGHT | DONT_NOTICE_RUNNING | CAN_RUN
@@ -852,7 +855,7 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 D:1:The lava is far too hot to tunnel into it.
 D:2:a lava wall blocking your way
 
-N:178:Great Fire
+N:178:great fire
 G:%:v
 S:R:R:y:v:y:v:R
 E:150d2:10:HELL_FIRE
@@ -958,7 +961,7 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 # grass with flowers
 N:199:grass with flowers
 G:;:G
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
 
 # cobblestone road
 N:200:cobblestone road
@@ -973,7 +976,7 @@ F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | LAMP_LITE
 N:202:ivy
 G:#:g
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | REMEMBER
-F:NO_VISION | SLOW_RUNNING_1
+F:NO_VISION | SLOW_RUNNING_1 | NO_ARTICLE
 
 # Just to have a town entrance picture
 N:203:town
@@ -981,13 +984,13 @@ G:*:w
 F:FLOOR | NOTICE
 
 # Underground Tunnel
-N:204:Underground Tunnel
+N:204:underground tunnel
 G:^:u
 F:FLOOR | REMEMBER | SUPPORT_LIGHT | DONT_NOTICE_RUNNING | CAN_RUN
 D:0:Oh, an underground tunnel!
 
 # Fire
-N:205:a blazing fire
+N:205:blazing fire
 G:%:y
 S:y:y:y:R:r:y:R
 E:2d5:2:FIRE
@@ -1007,21 +1010,21 @@ D:1:Looks like this pile of rubble is quite hard.
 N:207:rocky ground
 G:.:s
 F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_SHADE
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | NO_ARTICLE
 
-N:208:Team A goal
+N:208:team A goal
 G:.:R
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
-N:209:Team B goal
+N:209:team B goal
 G:.:b
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
 N:210:protected floor
 G:.:u
-F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
 F:DONT_NOTICE_RUNNING | PROTECTED
 
 # Some decoration grids, made for Gondolin entrance to prevent people from getting stuck in there - C. Blue
@@ -1030,7 +1033,7 @@ F:DONT_NOTICE_RUNNING | PROTECTED
 N:211:decorative shallow water
 G:~:B
 S:B:B:B:B:B:B:b
-F:ATTR_MULTI
+F:ATTR_MULTI | NO_ARTICLE
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | SUPPORT_LIGHT
 
 # for Gondolin's entrance area
@@ -1081,7 +1084,7 @@ D:2:a very hard stone block blocking your way
 N:218:decorative deep lava
 G:~:R
 S:R:R:r:R:R:o:y
-F:ATTR_MULTI
+F:ATTR_MULTI | NO_ARTICLE
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | SUPPORT_LIGHT
 
 N:219:bush
