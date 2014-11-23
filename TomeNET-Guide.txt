@@ -13223,11 +13223,10 @@ Istar schools:
 - Fire
 
     Globe of Light  Creates a globe of magical light.
-                    Lv10: Damages monsters.
-                    Lv25: Turns into a more powerful kind of light.
-                          Its radius and damage begin to increase and it will
-                          damage not just monsters that are susceptible to
-                          light but all monsters.
+                    Lv10: Hurts monsters that are susceptible to light.
+                    Lv25: Calls a more powerful kind of light. This light
+                          hurts all types of monsters.
+                          Radius and damage will further increase.
                     Required skill level for first spell level: 2.
 
     Fire Bolt       Fires a fire bolt at a target.
@@ -13538,8 +13537,10 @@ Priest schools:
                     Required skill level for first spell level: 1.
 
     Holy Light      Creates a globe of pure light.
-                    Lv3: Damages monsters.
-                    Lv8: Calls a more powerful kind of light.
+                    Lv3: Hurts monsters that are susceptible to light.
+                    Lv8: Calls a more powerful kind of light. This light
+                         hurts all types of monsters.
+                         Radius and damage will further increase.
                     Required skill level for first spell level: 2.
                     Shared spell (see above): H.Offense, H.Support.
 

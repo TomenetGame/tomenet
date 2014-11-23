@@ -61,8 +61,8 @@ HGLOBELIGHT = add_spell
 	end,
 	["desc"] =	{
 			"Creates a globe of pure light",
-			"At level 3 it starts damaging monsters",
-			"At level 8 it starts creating a more powerful kind of light"
+			"At level 3 it hurts monsters that are susceptible to light",
+			"At level 8 it becomes more powerful and hurts all monsters"
 	}
 }
 
