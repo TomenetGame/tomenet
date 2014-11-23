@@ -7080,8 +7080,16 @@ void interact_audio(void) {
 
 			if (quiet_mode) Term_putstr(12, 4, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
 			else if (audio_sfx > 3 && audio_music > 0) Term_putstr(12, 4, -1, TERM_L_GREEN, "     Sound pack and music pack have been detected.      ");
-			else if (audio_sfx > 3 && audio_music == 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Sound pack detected. No music pack seems to be installed.");
-			else if (audio_sfx <= 3 && audio_music > 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Music pack detected. No sound pack seems to be installed.");
+			//else if (audio_sfx > 3 && audio_music == 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Sound pack detected. No music pack seems to be installed.");
+			else if (audio_sfx > 3 && audio_music == 0) {
+				Term_putstr(12, 4, -1, TERM_L_GREEN, "Sound pack detected.");
+				Term_putstr(34, 4, -1, TERM_L_RED, "No music pack seems to be installed.");
+			}
+			//else if (audio_sfx <= 3 && audio_music > 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Music pack detected. No sound pack seems to be installed.");
+			else if (audio_sfx <= 3 && audio_music > 0) {
+				Term_putstr(12, 4, -1, TERM_L_GREEN, "Music pack detected.");
+				Term_putstr(34, 4, -1, TERM_L_RED, "No sound pack seems to be installed.");
+			}
 			else Term_putstr(12, 4, -1, TERM_L_RED,                                         "Neither sound pack nor music pack seems to be installed. ");
 
 			if (c_cfg.rogue_like_commands)
