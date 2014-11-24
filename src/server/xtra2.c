@@ -3642,8 +3642,8 @@ void shape_Maia_skills(int Ind) {
 		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
 		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
 		do_Maia_skill(Ind, SKILL_AURA_DEATH, 30);
-		do_Maia_skill(Ind, SKILL_R_DARK, 20);
-		do_Maia_skill(Ind, SKILL_R_NETH, 20);
+		do_Maia_skill(Ind, SKILL_R_DARK, 17);
+		do_Maia_skill(Ind, SKILL_R_NETH, 17);
 		break;
 
 	case TRAIT_ENLIGHTENED:
@@ -3663,8 +3663,8 @@ void shape_Maia_skills(int Ind) {
 		do_Maia_skill(Ind, SKILL_SWORD, 13);
 		do_Maia_skill(Ind, SKILL_BLUNT, 13);
 		do_Maia_skill(Ind, SKILL_POLEARM, 13);
-		do_Maia_skill(Ind, SKILL_R_LITE, 20);
-		do_Maia_skill(Ind, SKILL_R_MANA, 20);
+		do_Maia_skill(Ind, SKILL_R_LITE, 17);
+		do_Maia_skill(Ind, SKILL_R_MANA, 17);
 		break;
 	default: ;
 	}
