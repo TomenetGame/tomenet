@@ -750,7 +750,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	dun_level *l_ptr;
 
 	bool look = TRUE;
-	bool left_shop = (dis == 1);
+	bool left_shop = (dis == 1) || istown(wpos);//istown hack: prevent teleporting people who can't swim into the lake in Bree
 
 	/* Space/Time Anchor */
 	cave_type **zcave;
@@ -861,8 +861,8 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			/* No teleporting into monster nests (experimental, 2008-05-26) */
 			if (zcave[y][x].info & CAVE_NEST_PIT) continue;
 
-	                /* Prevent landing onto a store entrance */
-	                if (zcave[y][x].feat == FEAT_SHOP) continue;
+			/* Prevent landing onto a store entrance */
+			if (zcave[y][x].feat == FEAT_SHOP) continue;
 
 			if (left_shop) {
 				if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
@@ -870,7 +870,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 					if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire)))
 						continue;
 				if (zcave[y][x].feat == FEAT_DEEP_WATER)
-					//if (!(p_ptr->immune_water || p_ptr->res_water || 
+					//if (!(p_ptr->immune_water || p_ptr->res_water ||
 					if (!(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith))
 						continue;
 			}
@@ -1039,6 +1039,7 @@ void teleport_player_to(int Ind, int ny, int nx) {
 	int tries = 3000;
 	dun_level *l_ptr;
 	cave_type **zcave;
+	bool town = istown(wpos);//prevent teleporting people who can't swim into the lake in Bree
 
 	if (!(zcave = getcave(wpos))) return;
 	if (p_ptr->anti_tele) return;
@@ -1068,13 +1069,39 @@ void teleport_player_to(int Ind, int ny, int nx) {
 		}
 		if (!tries) return;
 
+		if (town) {
+			if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
+			    zcave[y][x].feat == FEAT_DEEP_LAVA)
+				if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire))) {
+					/* Occasionally advance the distance */
+					if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
+						ctr = 0;
+						dis++;
+					}
+					continue;
+				}
+			if (zcave[y][x].feat == FEAT_DEEP_WATER)
+				//if (!(p_ptr->immune_water || p_ptr->res_water ||
+				if (!(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith)) {
+					/* Occasionally advance the distance */
+					if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
+						ctr = 0;
+						dis++;
+					}
+					continue;
+				}
+		}
+
 		/* Cant telep in houses */
 		if (((wpos->wz == 0) && !(zcave[y][x].info & CAVE_ICKY)) || (wpos->wz)) {
 			/* No tele-to into no-tele vaults */
 			if (cave_naked_bold(zcave, y, x) &&
 			    !(zcave[y][x].info & CAVE_STCK)) {
 				/* Never break into st-anchor */
-				if (!check_st_anchor(wpos, y, x)) break;
+				if (!check_st_anchor(wpos, y, x)) {
+					/* tele-to success */
+					break;
+				}
 			}
 		}
 
