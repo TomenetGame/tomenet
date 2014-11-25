@@ -3999,6 +3999,9 @@ void do_slash_cmd(int Ind, char *message) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
+			/* char names always start on upper-case */
+			message3[0] = toupper(message3[0]);
+
 			if (!(p_id = lookup_player_id(message3))) {
 #if 0 /* don't check for account name */
 				msg_print(Ind, "That character name does not exist.");
