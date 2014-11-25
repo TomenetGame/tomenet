@@ -8575,7 +8575,11 @@ void do_slash_cmd(int Ind, char *message) {
 				/* list declared IDDC themes for current IDDC layout */
 				for (i = 1; i <= 127; i++) {
 					if (ft != iddc[i].type
-					    && i != 40 && i != 80) { /* added to fix the list visuals for the reverse approach (127..1) theme generation */
+					    && i != 40 && i != 80
+ #ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+					    && i != 20 && i != 60
+ #endif
+					    ) { /* added to fix the list visuals for the reverse approach (127..1) theme generation */
 						if (ft != -1) {
 							msg_format(Ind, "%c%4d ft (%2d floors): %s %s", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ',
 							    last * 50, i - last, d_name + d_info[ft].name, !(last <= d_info[ft].maxdepth && i > d_info[ft].maxdepth) ? "" :
@@ -8585,6 +8589,12 @@ void do_slash_cmd(int Ind, char *message) {
 								msg_format(Ind, "%c2000 ft: \377yMenegroth", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
 							else if (last < 80 && i >= 80)
 								msg_format(Ind, "%c4000 ft: \377yNargothrond", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
+ #ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+							if (last < 20 && i >= 20)
+								msg_format(Ind, "%c1000 ft: \377y<town>", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
+							else if (last < 60 && i >= 60)
+								msg_format(Ind, "%c3000 ft: \377y<town>", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
+ #endif
 
 							last = i;
 						}
