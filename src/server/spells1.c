@@ -9509,8 +9509,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_format(0 - who, "You teleport %s away.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
 			}
 
-			if (fuzzy) msg_print(Ind, "You feel you are somewhere else.");
-			else msg_format(Ind, "%^s teleports you away.", killer);
+			if (fuzzy) msg_print(Ind, "Someone teleports you away!");
+			else msg_format(Ind, "%^s teleports you away!", killer);
 			teleport_player(Ind, 200, TRUE);
 			break;
 		}
@@ -9814,8 +9814,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_format(0 - who, "You teleport %s away.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
 			}
 
-			if (fuzzy) msg_print(Ind, "You feel translocated!");
-			else msg_format(Ind, "%^s teleports you!", killer);
+			if (fuzzy) msg_print(Ind, "Someone teleports you away!");
+			else msg_format(Ind, "%^s teleports you away!", killer);
 
 			teleport_player(Ind, dam, TRUE);
 			break;
