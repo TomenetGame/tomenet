@@ -617,14 +617,29 @@ H       CTRL+G  re-apply client-side and (if 'auto_inscribe' option is enabled)
                 server-side auto-inscriptions to an item.
 
 CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.1a).)
-                Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
+                Note: Mixer settings are saved automatically, provided you use
+                CTRL+X to quit.
                 (Compare troubleshooting section (8.8), problem 21.)
 
+                Here you can set audio volume for sound effects and music or
+                mute them separately. The hotkeys for muting work outside of
+                the mixer screen too, during normal gameplay.
+
+                If you haven't installed a sound or music pack, you can do
+                that by running the TomeNET-Updater or by downloading packs
+                manually (for download links see the 'download' page on the
+                TomeNET homepage for official packs, or look in the forum for
+                user-made packs).
+
 CTRL+C  CTRL+Q  Toggles music. (Shortcut for toggling it in the mixer settings.)
+                This hotkey works outside of the mixer screen too.
 
 CTRL+N  CTRL+V  Toggles audio. (Shortcut for master toggle in the mixer settings).
-                Note: If you press this while in chat prompt, you can cycle forward
-                through lines you previously typed (also see CTRL+P).
+                This hotkey works outside of the mixer screen too.
+
+                Note: If you press this while in chat prompt, you will instead
+                cycle forwards through lines you previously typed - also see
+                CTRL+P key, which cycles backwards.
 
 
 SPACE   Stop executing repeatable actions such as searching, tunnelling or
@@ -786,7 +801,8 @@ K       forcibly combines a level 0 item in your inventory with other items of
 
 CTRL+P  view previous messages.
         Note: You can also press this when in chat prompt, to cycle backward
-        through lines that you previously typed (also see CTRL+N).
+        through lines that you previously typed (also see CTRL+N, which cycles
+        forwards).
 
 CTRL+O  view previous chat messages.
 
