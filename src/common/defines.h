@@ -8010,6 +8010,7 @@ extern int PlayerUID;
  #define RID_GO_MOVE		3
 #endif
 #define RID_GUILD_RENAME	4
+#define RID_GUILD_CREATE	5
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 

@@ -10382,9 +10382,13 @@ static int Receive_guild(int ind) {
 	int player = -1, n;
 	char ch, buf[MAX_CHARS];
 	s16b command;
+	player_type *p_ptr = NULL;
 
-	if (connp->id != -1) player = GetInd[connp->id];
-		else return 1;
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	}
+	else return 1;
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
@@ -10393,10 +10397,11 @@ static int Receive_guild(int ind) {
 
 	switch (command) {
 	case GUILD_CREATE:
-		guild_create(player, buf);
+		strcpy(p_ptr->cur_file_title, buf);//hack: abuse cur_file_title
+		Send_request_cfr(player, RID_GUILD_CREATE, format("Creating a guild costs %d Au. Are you sure?", GUILD_PRICE), FALSE);
 		break;
 	case GUILD_ADD:
-		if (!Players[player]->guild) guild_add_self(player, buf);
+		if (!p_ptr->guild) guild_add_self(player, buf);
 		else guild_add(player, buf);
 		break;
 	case GUILD_DELETE:

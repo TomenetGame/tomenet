@@ -8630,6 +8630,10 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	case RID_GUILD_RENAME:
 		if (cfr) Send_request_str(Ind, RID_GUILD_RENAME, "Enter a new guild name: ", "");
 		return;
+	case RID_GUILD_CREATE:
+		if (cfr) guild_create(Ind, p_ptr->cur_file_title);
+		p_ptr->cur_file_title[0] = 0;//not really needed
+		return;
 	default: ;
 	}
 }
