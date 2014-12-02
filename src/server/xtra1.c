@@ -5161,7 +5161,11 @@ void calc_boni(int Ind) {
 		if (!monk_heavy_armor(p_ptr)) {
 			p_ptr->to_h_melee += (marts * 3) / 2;
 			//p_ptr->to_d_melee += (marts / 2); /* was 3 */
+#if 0 /* experimental */
 			p_ptr->to_d_melee += ((marts * 2) / 5); /* for better form influence of MA mimics */
+#else
+			p_ptr->to_d_melee += (marts / 2); /* for better form influence of MA mimics */
+#endif
 			/* Testing: added a new bonus. No more single digit dmg at lvl 20, I hope, esp as warrior. the_sandman */
 			/* changed by C. Blue, so it's available to mimics too */
 			p_ptr->to_d_melee += 20 - (400 / (marts + 20)); /* get strong quickly and early - quite special ;-o */
