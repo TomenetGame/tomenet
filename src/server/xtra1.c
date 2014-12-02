@@ -5392,10 +5392,18 @@ void calc_boni(int Ind) {
 #if 0 /* Way too high +dam gain for GT/Hru: Form can increase to-dam by at least +40! */
 		d = (4000 / ((1500 / (d + 4)) + 22)) - 10; //original stuff, some monsters add too much dam
 #else
+ #if 1 /* a bit too little distinguishment for high-dam forms (eg Jabberwock vs Maulotaur) */
 		//d = (3200 / ((900 / (d + 4)) + 22)) - 10; //still too high
 		//d = (3200 / ((800 / (d + 4)) + 22)) - 20; //not enough, but on the way
 		//d = (2850 / ((650 / (d + 4)) + 22)) - 20; //not quite there yet
 		d = (2500 / ((500 / (d + 4)) + 22)) - 20; //final target: Aim at +27 to-dam increase, which is still a lot
+ #else
+		/* problem: these won't cut it - need splines or something..
+		   Goal: rise quickly, stay flat in mid-range, increase again in top range but cap quickly. */
+		//d = (2000 / ((500 / (d + 10)) + 14)) - 30;
+		//d = (2050 / ((530 / (d + 10)) + 13)) - 30;
+		//d = (2000 / ((550 / (d + 10)) + 13)) - 30;
+ #endif
 #endif
 
 		/* Calculate new averaged to-dam bonus */
