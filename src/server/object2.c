@@ -2059,7 +2059,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		if (o_ptr->tval == TV_GLOVES)
 			total += 100000;
 		else
-			total += 50000;
+			total += 65000;
 	}
 	if (f3 & TR3_WRAITH) total += 100000;
 	if (f5 & TR5_INVIS) total += 10000;
