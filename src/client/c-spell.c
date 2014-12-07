@@ -1214,7 +1214,7 @@ static void print_combatstances()
 	put_str("Name", 1, col + 5);
 
 	prt("", j, col);
-	put_str("a) Balanced stance (normal behaviour)", j++, col);
+	put_str("a) Balanced stance (standard)", j++, col);
 
 	prt("", j, col);
 	put_str("b) Defensive stance", j++, col);
