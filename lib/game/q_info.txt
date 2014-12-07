@@ -234,6 +234,9 @@ Wr:0:0:$$Q That's not the right password, $$r!
 Y:0:-1:-:suxen:-:1
 y:0:-1:-:suxen
 yR:-:You may enter!
+Y:0:-1:-:$$p1:-:1
+y:0:-1:-:$$p1
+yR:-:You may enter!
 J:1:0:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
 
 Q:1:1059:p:u:-1:-1:Guard
