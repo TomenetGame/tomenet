@@ -24,12 +24,14 @@
 
 /* Hack: Martial arts to-damage bonus is partially counted as 'imaginary object +dam bonus' instead of purely 'skill bonus'?
    This is relevant for shapeshifters, because to_d_melee gets averaged, while to_d (from weapons) gets flat added!
-   It is recommended to leave this disabled and use MIMIC_TO_D_DENTHACK instead! */
-//#define MARTIAL_TO_D_HACK
+   This is a pretty ugly hack. :( */
+#define MARTIAL_TO_D_HACK
 /* Mimic +dam bonus from forms takes a 'dent' in the slightly above-average region? (Recommended)
    This helps Jabberwock form to shine vs more "08/15" forms such as Maulotaur in terms of damage output! */
-#ifndef MARTIAL_TO_D_HACK
- #define MIMIC_TO_D_DENTHACK
+#ifdef MARTIAL_TO_D_HACK
+ #define MIMIC_TO_D_DENTHACK /* optional */
+#else
+ #define MIMIC_TO_D_DENTHACK /* should always be on */
 #endif
 
 /* Announce global events every 900 seconds */
@@ -5177,9 +5179,11 @@ void calc_boni(int Ind) {
 #endif
 			/* Testing: added a new bonus. No more single digit dmg at lvl 20, I hope, esp as warrior. the_sandman */
 			/* changed by C. Blue, so it's available to mimics too */
-#ifndef MARTIAL_TO_D_HACK /* recommended */
+#ifndef MARTIAL_TO_D_HACK
 			p_ptr->to_d_melee += 20 - (400 / (marts + 20)); /* get strong quickly and early - quite special ;-o */
-#else /* Instead of to_d_melee, we use to_d here. The idea is that shapechanger shouldn't get too low +dam from high-power forms! */
+#else /* Instead of to_d_melee, we use to_d here. The idea is that shapechanger shouldn't get too low +dam from high-power forms. ugly hack :( */
+			/* actually we shouldn't do this. AC can no longer be reduced by weak forms,
+			   so weapons shouldn't count as part of the form either, hence MA dmg fully counts as part of the form now.. */
 			p_ptr->to_d += 20 - (400 / (marts + 20)); /* get strong quickly and early - quite special ;-o */
 			p_ptr->dis_to_d += 20 - (400 / (marts + 20));
 #endif
@@ -5404,29 +5408,25 @@ void calc_boni(int Ind) {
 		- even The Destroyer form would reach just 138 ;) */
 		d /= 4; /* average monster damage per blow */
 		/* GWoP: 63, GT: 91, GB: 37, GDR: 14 */
-#ifndef MARTIAL_TO_D_HACK /* actually the problem is that MA get all +dam in to_d_melee, while weapon-using mimics get it in to_d which isn't affected! */
- #ifndef MIMIC_TO_D_DENTHACK /* a bit too little distinguishment for high-dam MA forms (Jabberwock vs Maulotaur for druids -> almost NO difference!) */
+#ifndef MIMIC_TO_D_DENTHACK /* a bit too little distinguishment for high-dam MA forms (Jabberwock vs Maulotaur for druids -> almost NO difference!) */
 		//d = (3200 / ((900 / (d + 4)) + 22)) - 10; //still too high
 		//d = (3200 / ((800 / (d + 4)) + 22)) - 20; //not enough, but on the way
 		//d = (2850 / ((650 / (d + 4)) + 22)) - 20; //not quite there yet
-		d = (2500 / ((500 / (d + 4)) + 22)) - 20; //final target: Aim at +27 to-dam increase, which is still a lot
- #else /* add a 'dent' for '08/15 forms' :-p to help Jabberwock shine moar vs Maulotaur */
+		//d = (2500 / ((500 / (d + 4)) + 22)) - 20; //final target: Aim at +27 to-dam increase, which is still a lot --still too high ~~
+		d = (2200 / ((250 / (d + 4)) + 22)) - 20;
+		//d = (2000 / ((130 / (d + 4)) + 22)) - 20;//too little +dam increase
+#else /* add a 'dent' for '08/15 forms' :-p to help Jabberwock shine moar vs Maulotaur */
 		/* problem: these won't cut it - need cubic splines or something..
 		   Goal: rise quickly, stay flat in mid-range, increase again in top range but cap quickly. */
-		//d = (2000 / ((500 / (d + 10)) + 14)) - 30;
-		//d = (2050 / ((530 / (d + 10)) + 13)) - 30;
-		//d = (2000 / ((550 / (d + 10)) + 13)) - 30;
 		/* mhhh, instead let's try to subtract one polynomial from another, to add a "dent" (downwards) into the power curve
 		   at 'common/boring' monster damage ranges (Maulotaur for example, although slightly better than most lame average^^) */
 		//WRONG: this formula was for double values of d, oops (as if Maulo had 55 and Jabber 112)
 		//d = (2500 / ((500 / (d + 4)) + 22)) - 20 - 10000 / ((d - 50) * (d - 50) + 490);
 		//Maulo@25, Jabber@55, this seems fine:
 		//d = (2500 / ((500 / (d + 4)) + 22)) - 20 - 700 / ((d - 25) * (d - 25) + 70);//geez :/ it's the Godzilla of the the mimic formulas I think..
-		d = (2500 / ((500 / (d + 4)) + 22)) - 20 - 1300 / ((d - 26) * (d - 26) + 90);//geez :/ it's the Godzilla of the the mimic formulas I think..
- #endif
-#else /* actually we shouldn't do this. AC can no longer be reduced by weak forms, so weapons shouldn't count as part of the form either, hence MA dmg fully counts as part of the form now.. */
-		//we use to_d instead of to_d_melee for partial MA damage!
-		d = (2500 / ((500 / (d + 4)) + 22)) - 20; //final target: Aim at +27 to-dam increase, which is still a lot
+		//d = (2500 / ((500 / (d + 4)) + 22)) - 20 - 1300 / ((d - 26) * (d - 26) + 90);//was ok
+		d = (2200 / ((250 / (d + 4)) + 22)) - 20 - 650 / ((d - 25) * (d - 25) + 90);
+		//d = (2000 / ((130 / (d + 4)) + 22)) - 20 - 650 / ((d - 25) * (d - 25) + 90);//too little
 #endif
 
 		/* Calculate new averaged to-dam bonus */
