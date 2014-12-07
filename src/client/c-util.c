@@ -2217,7 +2217,7 @@ bool get_check2(cptr prompt, bool default_yes) {
 
 	/* More normal */
 	if (default_yes) {
-		if (i == 'n' || i == 'N') return FALSE;
+		if (i == 'n' || i == 'N' || i == '\e') return FALSE;
 		return TRUE;
 	}
 
