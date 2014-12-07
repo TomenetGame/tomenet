@@ -10,6 +10,8 @@
 #define QI_TALK_LINES		15	/* amount of text lines per talk dialogue */
 #define QI_KEYWORDS		100	/* for dialogue with the questor */
 #define QI_KEYWORD_LEN		30	/* length of a keyword, for dialogue with the questor */
+#define QI_PASSWORDS		5	/* special keywords that are actually passwords that are randomly regenerated each session */
+#define QI_PASSWORD_LEN		12	/* length of a password-keyword, for dialogue with the questor */
 #define QI_KEYWORD_REPLIES	50	/* replies from for a questor, depending on keyword entered */
 #define QI_KEYWORDS_PER_REPLY	5	/* so many different keywords may trigger the same keyword-reply text */
 #define QI_STAGE_REWARDS 	10	/* max # of rewards handed out per completed stage */

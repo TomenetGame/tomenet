@@ -57,7 +57,7 @@ V:1.0.0
 #   this is a hack: This stage's dialogue will actually mimic the stage dialogue from the stage of the absolute value of 'examine' argument. NOTE: You must not refer to another cloned dialogue!
 # (optional - for questor dialogue) Wr:questor:stage:default reply line (replaces the 'has nothing to say about that' line)
 #   use $$Q or $$q up to one time, to insert the questor's name! Q = show in light umber (for active talk), q = show in dark umber (for passive narration)
-# (optional - up to 100x - dialogue keywords) Y:questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or 255 for dont change stage)
+# (optional - up to 100x - dialogue keywords) Y:questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice; or $$p1 to $$p5 for up to 5 different randomly generated passwords):changeflags:nextstage (or 255 for dont change stage)
 # (optional - after a Y-line) YQ:list of further questors (their index numbers, 0..29) for which this keyword is valid, separated by colons
 # (optional - after a Y-line) YS:list of further stages during which this keyword is valid, separated by colons
 # (optional - up to 50x - replies to keywords) y:questor (-1 for any):stage (-1 for any):flags:keyword

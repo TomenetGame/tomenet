@@ -8809,8 +8809,16 @@ void do_slash_cmd(int Ind, char *message) {
 				if (tk) {
 					int l;
 					quest_info *q_ptr = &q_info[k];
+					char tmp[MAX_CHARS];
+					tmp[0] = 0;
 
 					msg_format(Ind, "\377UQuest '%s' (%d,%s) - oreg %d:", q_name + q_ptr->name, k, q_ptr->codename, q_ptr->objects_registered);
+					for (i = 0; i < QI_PASSWORDS; i++) {
+						strcat(tmp, q_ptr->password[i]);
+						if (i < QI_PASSWORDS - 1) strcat(tmp, ",");
+					}
+					msg_format(Ind, "Passwords: %s", tmp);
+
 					for (i = 0; i < q_ptr->stages; i++) {
 						msg_format(Ind, "stage %d (qinfo:?): actq %d, autoac %d, cstage %d", i, q_ptr->stage[i].activate_quest, q_ptr->stage[i].auto_accept, q_ptr->stage[i].change_stage);
 					}

@@ -597,6 +597,7 @@ typedef struct quest_info {
 	/* amount of different keywords for player-npc-dialogue */
 	int keywords;
 	qi_keyword *keyword;
+	char password[QI_PASSWORDS][QI_PASSWORD_LEN + 1];/* for special keywords that are actually randomly generated passwords */
 
 	/* amount of different replies to keywords in player-npc-dialogue */
 	int kwreplies;

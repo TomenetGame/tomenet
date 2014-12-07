@@ -90,6 +90,23 @@ static cptr qi_msg_done = "\377oYou cannot acquire this quest again.";
 static cptr qi_msg_max = "\377yYou are already pursuing the maximum possible number of concurrent quests.";
 
 
+/* syllable generation for random passwords */
+static cptr pw_consonant[] = {
+    "b", "c", "d", "f", "g", "k", "l", "m", "n", "p", "r", "s", "t", "w", "x", "z", /* <- (16) */
+    "h", "j", "v", /*"qu",*/ "kw", "bl", "br", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "kl", /*"kn",*/ "kr", /* <- may only occur as prefix in a syllable (32) */
+    "pl", "pn", "pr", "ps", "sk", "sl", "sm", "sn", "sp", /*"sr",*/ "st", /* <- may only occur as prefix in a syllable */
+    /*"th",*/ "tr", "tw", "vl", "vn", "vr", /*"wl",*/ "wr", /* <- may only occur as prefix in a syllable */
+    "sh", "ch", /* <- may not occur as both prefix and suffix in the same syllable (2) */
+    "ck"}; /* <- may only occur as suffix in a syllable (1) */
+#define PW_ALL 16
+#define PW_PRE 32
+#define PW_XOR 2
+#define PW_SUF 1
+static cptr pw_vocal[] = {
+    "a", "e", "i", "o", "u", /*"y",*/
+    "ay", "oy", "ee", "oo"}; /* <- may not be followed by 'ck'--actually not by any consonant (4) */
+#define PW_YV 4
+
 /* Called every minute to check which quests to activate/deactivate depending on time/daytime */
 void process_quests(void) {
 	quest_info *q_ptr;
@@ -1083,6 +1100,123 @@ static bool quest_spawn_questor(int q_idx, int questor_idx) {
 	return TRUE;
 }
 
+/* Initialise randomised passwords */
+void quest_init_passwords(int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, q;
+	int pwc = sizeof(pw_consonant) / sizeof(pw_consonant[0]);
+	int pwv = sizeof(pw_vocal) / sizeof(pw_vocal[0]);
+	bool p, v;
+	int tries = 100;
+
+	for (i = 0; i < QI_PASSWORDS; i++) {
+		/* syllable 1 */
+		q = rand_int(pwc - 1);
+		strcpy(q_ptr->password[i], pw_consonant[q]);
+		if (q >= pwc - PW_SUF - PW_XOR) p = TRUE;
+		else p = FALSE;
+
+		q = rand_int(pwv);
+		strcat(q_ptr->password[i], pw_vocal[q]);
+		if (q >= pwv - PW_YV) v = TRUE;
+		else v = FALSE;
+
+#if 0 /* allow 'pseudo-russian'? ;) sound a bit odd though */
+		if (rand_int(2)) {
+#else
+		if (!v && rand_int(2)) {
+#endif
+			if (p && v) q = rand_int(pwc - PW_SUF - PW_XOR - PW_PRE);
+			else if (v) {
+				q = rand_int(pwc - PW_YV - PW_PRE);
+				if (q >= PW_ALL) q += PW_PRE;
+			}
+			else if (p) {
+				q = rand_int(pwc - PW_SUF - PW_PRE);
+				if (q >= PW_ALL) q += PW_PRE;
+				if (q == pwc - PW_SUF - PW_XOR) q += PW_SUF;
+			} else {
+				q = rand_int(pwc - PW_PRE);
+				if (q >= PW_ALL) q += PW_PRE;
+			}
+			strcat(q_ptr->password[i], pw_consonant[q]);
+		}
+
+		/* syllable 2 */
+		q = rand_int(pwc - 1);
+		strcat(q_ptr->password[i], pw_consonant[q]);
+		if (q >= pwc - PW_SUF - PW_XOR) p = TRUE;
+		else p = FALSE;
+
+		q = rand_int(pwv);
+		strcat(q_ptr->password[i], pw_vocal[q]);
+		if (q >= pwv - PW_YV) v = TRUE;
+		else v = FALSE;
+
+#if 0 /* allow 'pseudo-russian'? ;) sound a bit odd though */
+		if (rand_int(2)) {
+#else
+		if (!v && rand_int(2)) {
+#endif
+			if (p && v) q = rand_int(pwc - PW_SUF - PW_XOR - PW_PRE);
+			else if (v) {
+				q = rand_int(pwc - PW_SUF - PW_PRE);
+				if (q >= PW_ALL) q += PW_PRE;
+			}
+			else if (p) {
+				q = rand_int(pwc - PW_XOR - PW_PRE);
+				if (q >= PW_ALL) q += PW_PRE;
+				if (q == pwc - PW_SUF - PW_XOR) q += PW_XOR;
+			} else {
+				q = rand_int(pwc - PW_PRE);
+				if (q >= PW_ALL) q += PW_PRE;
+			}
+			strcat(q_ptr->password[i], pw_consonant[q]);
+		}
+
+		if (strlen(q_ptr->password[i]) > QI_PASSWORD_LEN - 5) continue;
+
+		/* syllable 3 */
+		q = rand_int(pwc - 1);
+		strcat(q_ptr->password[i], pw_consonant[q]);
+		if (q >= pwc - 3) p = TRUE;
+		else p = FALSE;
+
+		q = rand_int(pwv);
+		strcat(q_ptr->password[i], pw_vocal[q]);
+		if (q >= pwv - PW_YV) v = TRUE;
+		else v = FALSE;
+
+#if 0 /* allow 'pseudo-russian'? ;) sound a bit odd though */
+		if (rand_int(2)) {
+#else
+		if (!v && rand_int(2)) {
+#endif
+			if (p && v) q = rand_int(pwc - PW_SUF - PW_XOR - PW_PRE);
+			else if (v) {
+				q = rand_int(pwc - PW_SUF - PW_PRE);
+				if (q >= PW_ALL) q += PW_PRE;
+			}
+			else if (p) {
+				q = rand_int(pwc - PW_XOR);
+				if (q >= PW_ALL) q += PW_PRE;
+				if (q == pwc - PW_SUF - PW_XOR) q += PW_XOR;
+			} else {
+				q = rand_int(pwc - PW_PRE);
+				if (q >= PW_ALL) q += PW_PRE;
+			}
+			strcat(q_ptr->password[i], pw_consonant[q]);
+		}
+
+		/* ^^' repeat? */
+		if (handle_censor(q_ptr->password[i])) {
+			tries--;
+			if (tries) i--;
+			else s_printf("Warning: Quest %d password #%d '%s' fails censor check, out of tries!\n", q_idx, i, q_ptr->password[i]);
+		} else tries = 100;
+	}
+}
+
 /* Spawn questor, prepare sector/floor, make things static if requested, etc. */
 bool quest_activate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -1129,6 +1263,8 @@ bool quest_activate(int q_idx) {
 				q_ptr->stage[i].goal[q].kill->number_left = 0;
 		}
 	}
+
+	quest_init_passwords(q_idx);
 
 	/* Initialise with starting stage 0 */
 	q_ptr->turn_activated = turn;
@@ -3482,6 +3618,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	char *c, text[MAX_CHARS * 2];
 	qi_keyword *q_key;
 	qi_kwreply *q_kwr;
+	int password_hack;
 
 	/* trim leading/trailing spaces */
 	while (*str == ' ') str++;
@@ -3516,7 +3653,18 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		/* check if required flags match to enable this keyword */
 		if ((q_key->flags & quest_get_flags(Ind, q_idx)) != q_key->flags) continue;
 
-		if (strcmp(q_key->keyword, str)) continue; /* not matching? */
+		/* Scan for $$p randomised password hack */
+		if (q_key->keyword[0] == '$' &&
+		    q_key->keyword[1] == '$' &&
+		    q_key->keyword[2] == 'p') {
+			password_hack = q_key->keyword[3] - '0';
+			/* boundary checks */
+			if (password_hack <= 0 || password_hack > QI_PASSWORDS) continue;
+			/* password correct? */
+			if (strcmp(q_ptr->password[password_hack - 1], str)) continue;
+		}
+		/* proceed normally (no password hack) */
+		else if (strcmp(q_key->keyword, str)) continue; /* not matching? */
 
 		/* reply? */
 		for (j = 0; j < q_ptr->kwreplies; j++) {
