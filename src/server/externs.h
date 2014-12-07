@@ -2183,6 +2183,7 @@ extern void process_quests(void);
 /* not just internal anymore, for admin control: */
 extern bool quest_activate(int q_idx);
 extern void quest_deactivate(int q_idx);
+extern void quest_init_passwords(int q_idx);
 extern s16b quest_get_cooldown(int pInd, int q_idx);
 extern void quest_set_cooldown(int pInd, int q_idx, s16b cooldown);
 extern s16b quest_get_stage(int pInd, int q_idx);

@@ -2641,6 +2641,10 @@ static bool save_quests_file(void) {
 		wr_s16b(q_ptr->timed_countdown_stage);
 		wr_byte(q_ptr->timed_countdown_quiet);
 
+		//dynamically generated random passwords
+		for (j = 0; j < QI_PASSWORDS; j++)
+			wr_string(q_ptr->password[j]);
+
 		//questors:
 		wr_byte(q_ptr->questors);
 		for (j = 0; j < q_ptr->questors; j++) {

@@ -136,7 +136,6 @@ static bool s_older_than(byte x, byte y, byte z) {
  * This function determines if the version of the quests savefile
  * currently being read is older than version "x.y.z".
  */
-#if 0 /* compiler warning -- till it's needed */
 static bool q_older_than(byte x, byte y, byte z) {
 	/* Much older, or much more recent */
 	if (qsf_major < x) return (TRUE);
@@ -153,7 +152,7 @@ static bool q_older_than(byte x, byte y, byte z) {
 	/* Identical versions */
 	return FALSE;
 }
-#endif
+
 /*
  * Hack -- determine if an item is "wearable" (or a missile)
  */
@@ -3983,6 +3982,15 @@ static errr load_quests_file() {
 		rd_s16b(&q_ptr->timed_countdown);
 		rd_s16b(&q_ptr->timed_countdown_stage);
 		rd_byte((byte *) &q_ptr->timed_countdown_quiet);
+
+		//dynamically generated random passwords
+		if (!q_older_than(1, 0, 1)) {
+			for (j = 0; j < QI_PASSWORDS; j++)
+				rd_string(q_ptr->password[j], QI_PASSWORD_LEN + 1);
+		} else {
+			/* substitute now */
+			quest_init_passwords(i);
+		}
 
 		//questors:
 		rd_byte(&load_questors);
