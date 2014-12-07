@@ -4046,6 +4046,7 @@ void interact_macros(void)
 #define mw_prfimm 'G'
 #define mw_rune 'h'
 #define mw_fight 'i'
+#define mw_stance 'I'
 #define mw_shoot 'j'
 #define mw_trap 'k'
 #define mw_device 'l'
@@ -4085,20 +4086,20 @@ Chain_Macro:
 				switch (i) {
 				case 0:
 					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(10, 10, -1, TERM_L_GREEN, "a/b) Drink a potion/read a scroll");
-					Term_putstr(10, 11, -1, TERM_L_GREEN, "c/C) Fire ranged weapon/throw an item");
-					Term_putstr(10, 12, -1, TERM_L_GREEN, "d/D) Cast school/mimic spell without a target (or target manually)");
-					Term_putstr(10, 13, -1, TERM_L_GREEN, "e/E) Cast school/mimic spell with target");
-					Term_putstr(10, 14, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (with and without target)");
-					Term_putstr(10, 15, -1, TERM_L_GREEN, "g/G) Polymorph into monster/set preferred immunity (mimicry users)");
-					Term_putstr(10, 16, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
-					Term_putstr(10, 17, -1, TERM_L_GREEN, "i) Use a fighting technique (most melee classes)");
-					Term_putstr(10, 18, -1, TERM_L_GREEN, "j) Use a shooting technique (archers and rangers)");
-					Term_putstr(10, 19, -1, TERM_L_GREEN, "k) Set up a monster trap");
-					Term_putstr(10, 20, -1, TERM_L_GREEN, "l) Use a magic device or activate an item");
-					Term_putstr(10, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target");
-					Term_putstr(10, 22, -1, TERM_L_GREEN, "n) Enter a custom action (same as pressing 'a' in macro screen)");
-					Term_putstr(10, 23, -1, TERM_L_GREEN, "o) Load a macro file");
+					Term_putstr(8, 10, -1, TERM_L_GREEN, "a/b) Drink a potion/read a scroll");
+					Term_putstr(8, 11, -1, TERM_L_GREEN, "c/C) Fire ranged weapon/throw an item");
+					Term_putstr(8, 12, -1, TERM_L_GREEN, "d/D) Cast school/mimic spell without a target (or target manually)");
+					Term_putstr(8, 13, -1, TERM_L_GREEN, "e/E) Cast school/mimic spell with target");
+					Term_putstr(8, 14, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target)");
+					Term_putstr(8, 15, -1, TERM_L_GREEN, "g/G) Polymorph into monster/set preferred immunity (mimicry users)");
+					Term_putstr(8, 16, -1, TERM_L_GREEN, "h)   Draw runes to cast a runespell");
+					Term_putstr(8, 17, -1, TERM_L_GREEN, "i/I) Use a fighting technique/switch combat stance (most melee classes)");
+					Term_putstr(8, 18, -1, TERM_L_GREEN, "j)   Use a shooting technique (archers and rangers)");
+					Term_putstr(8, 19, -1, TERM_L_GREEN, "k)   Set up a monster trap");
+					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Use a magic device or activate an item");
+					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target");
+					Term_putstr(8, 22, -1, TERM_L_GREEN, "n)   Enter a custom action (same as pressing 'a' in macro screen)");
+					Term_putstr(8, 23, -1, TERM_L_GREEN, "o)   Load a macro file");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
@@ -4113,7 +4114,7 @@ Chain_Macro:
 							continue;
 						default:
 							/* invalid action -> exit wizard */
-							if ((choice < 'a' || choice > mw_LAST) && choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' && choice != 'G') {
+							if ((choice < 'a' || choice > mw_LAST) && choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' && choice != 'G' && choice != 'I') {
 //								i = -1;
 								continue;
 							}
@@ -4184,6 +4185,38 @@ Chain_Macro:
 						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GSprint");
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact technique name:");
+						break;
+					case mw_stance:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please pick a stance:");
+						Term_putstr(10, 11, -1, TERM_GREEN, "  \377Ga\377g) Balanced stance (standard)");
+						Term_putstr(10, 12, -1, TERM_GREEN, "  \377Gb\377g) Defensive stance");
+						Term_putstr(10, 13, -1, TERM_GREEN, "  \377Gc\377g) Offensive stance");
+
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -1; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (choice < 'a' || choice > 'c') {
+//									i = -1;
+									continue;
+								}
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -1) continue;
+
+						buf[0] = choice;
+						choice = mw_stance;
 						break;
 					case mw_shoot:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact technique name.");// and pay attention");
@@ -4873,7 +4906,7 @@ Chain_Macro:
 						if (i == -1) continue;
 					}
 					/* no need for inputting an item/spell to use with the macro? */
-					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm) {
+					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance) {
 						if (choice == mw_load) Term_gotoxy(23, 16);
 						else if (choice == mw_poly) Term_gotoxy(47, 17);
 						else Term_gotoxy(47, 16);
@@ -4966,6 +4999,15 @@ Chain_Macro:
 						buf2[7] = 'r';
 						buf2[8] = '@';
 						strcpy(buf2 + 9, buf);
+						break;
+					case mw_stance:
+						buf2[3] = 'm';
+						buf2[4] = '@';
+						buf2[5] = '1';
+						buf2[6] = '3';
+						buf2[7] = '\\';
+						buf2[8] = 'r';
+						buf2[9] = buf[0];
 						break;
 					case mw_shoot:
 						buf2[3] = 'm';
