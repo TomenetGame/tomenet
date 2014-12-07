@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. November 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. December 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11524,7 +11524,8 @@ create a character!):
     Ents are able to slowly replenish their nourishment by rooting themselves
     into the ground by entering 'R'esting mode, provided it's natural ground
     such as grass, earth, mud or water. Their food state will go up to 'Full'
-    that way.
+    that way. They cannot eat normal food but will feed greatly from drinking
+    potions that provide nourishment. They can never be gorged though.
     Ents intrinsically resist the force of unleashed water.
     They get bonus to 'Health' and a large bonus on 'Calmness' and on the magic
     schools 'Earth' and 'Water'. They receive a large penalty on 'Fire' school,
