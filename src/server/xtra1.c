@@ -5160,7 +5160,7 @@ void calc_boni(int Ind) {
 
 		if (!monk_heavy_armor(p_ptr)) {
 			p_ptr->to_h_melee += (marts * 3) / 2;
-#if 0 /* experimental */
+#if 1 /* experimental */
 			p_ptr->to_d_melee += ((marts * 2) / 5); /* for better form influence of MA mimics */
 #else
 			p_ptr->to_d_melee += (marts / 2); /* was 3 */
