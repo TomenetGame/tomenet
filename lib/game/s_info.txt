@@ -447,7 +447,7 @@ $DUAL_WIELD$A:1:Switch between main-hand and dual-hand
 
 $ENABLE_STANCES$N:79:Combat Stances
 $ENABLE_STANCES$D:Ability to use different stances in armed melee combat.
-$ENABLE_STANCES$A:13:Change combat stance
+$ENABLE_STANCES$A:13:Switch combat stance
 $ENABLE_STANCES$I:1000:0
 $ENABLE_STANCES$F:MKEY_HARDCODE | AUTO_MAX
 
