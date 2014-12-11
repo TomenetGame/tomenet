@@ -1247,7 +1247,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 /* -------------------------------------- pval-independant limits -------------------------------------- */
 
 	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 10d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
-	while (a_ptr->dd * (a_ptr->ds + 1) >= slay_limit_randart(a_ptr, k_ptr)
+	while (a_ptr->dd * (a_ptr->ds + 1) > slay_limit_randart(a_ptr, k_ptr)
 //	    || ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
 	    ) {
 		if (a_ptr->dd <= k_ptr->dd) a_ptr->ds--;
@@ -1482,7 +1482,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 /* -------------------------------------- pval-independant limits -------------------------------------- */
 
 	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 10d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
-	while (a_ptr->dd * (a_ptr->ds + 1) >= slay_limit_randart(a_ptr, k_ptr)
+	while (a_ptr->dd * (a_ptr->ds + 1) > slay_limit_randart(a_ptr, k_ptr)
 //	    || ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
 	    ) {
 		if (a_ptr->dd <= k_ptr->dd) a_ptr->ds--;
