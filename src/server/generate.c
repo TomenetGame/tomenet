@@ -288,7 +288,8 @@ struct stairs_list {
 #define IRONDEEPDIVE_EXPAND_SMALL
 /* Ironman Deep Dive Challenge levels have less chance to generate vaults */
 #define IDDC_FEWER_VAULTS
-
+/* Final guardians are guaranteed spawns instead of rolling against their r-rarity? */
+#define IDDC_GUARANTEED_FG
 
 /*
  * Simple structure to hold a map location
@@ -10036,7 +10037,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	    in_irondeepdive(wpos) ?
 	    ((k = d_info[iddc[ABS(wpos->wz)].type].final_guardian)
 	     && d_info[iddc[ABS(wpos->wz)].type].maxdepth == ABS(wpos->wz)
-	     && !rand_int((r_info[k].rarity + 2) / 2)) :
+ #ifndef IDDC_GUARANTEED_FG /* not guaranteed spawn? (default) */
+	     && !rand_int((r_info[k].rarity + 1) / 2)
+ #endif
+	     ) :
 #endif
 	    ((k = d_info[d_ptr->type].final_guardian)
 	    && d_ptr->maxdepth == ABS(wpos->wz)
