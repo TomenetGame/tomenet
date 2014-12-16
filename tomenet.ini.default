@@ -31,7 +31,7 @@ LibPath=.\lib
 DisableNumlock=1
 
 ; - Use lighter 'dark blue' colour to increase readability on some screens
-LighterDarkBlue=0
+LighterDarkBlue=1
 
 ; - enable graphics in general (0 = off)
 Graphics=0

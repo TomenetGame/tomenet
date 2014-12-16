@@ -609,7 +609,7 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		fputs("#fullauto\n", config2);
 		fputs("\n", config2);
 
-		fputs("#lighterDarkBlue\n", config2);
+		fputs("lighterDarkBlue\n", config2);
 		fputs("\n", config2);
 
 //#ifdef USE_GRAPHICS
