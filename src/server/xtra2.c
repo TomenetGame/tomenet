@@ -5459,18 +5459,18 @@ if (cfg.unikill_format) {
 					/* Congratulations */
 					msg_print(i, "\377G*** CONGRATULATIONS ***");
 					if (q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
-						msg_format(i, "\374\377GYou have won the game and are henceforth titled '%s'!", (q_ptr->male)?"Emperor":"Empress");
-						msg_broadcast_format(i, "\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"Emperor":"Empress", q_ptr->name);
-						if (!is_admin(q_ptr)) l_printf("%s \\{v%s has been crowned %s\n", showdate(), q_ptr->name, q_ptr->male ? "emperor" : "empress");
+						msg_format(i, "\374\377GYou have won the game and are henceforth titled '%s'!", (q_ptr->male) ? "Emperor" : "Empress");
+						msg_broadcast_format(i, "\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male) ? "Emperor" : "Empress", q_ptr->name);
+						if (!is_admin(q_ptr)) l_printf("%s \\{v%s (%d) has been crowned %s\n", showdate(), q_ptr->name, q_ptr->lev, q_ptr->male ? "emperor" : "empress");
 #ifdef TOMENET_WORLDS
-						if (cfg.worldd_pwin) world_msg(format("\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"Emperor":"Empress", q_ptr->name));
+						if (cfg.worldd_pwin) world_msg(format("\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male) ? "Emperor" : "Empress", q_ptr->name));
 #endif
 					} else {
-						msg_format(i, "\374\377GYou have won the game and are henceforth titled '%s!'", (q_ptr->male)?"King":"Queen");
-						msg_broadcast_format(i, "\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"King":"Queen", q_ptr->name);
-						if (!is_admin(q_ptr)) l_printf("%s \\{v%s has been crowned %s\n", showdate(), q_ptr->name, q_ptr->male ? "king" : "queen");
+						msg_format(i, "\374\377GYou have won the game and are henceforth titled '%s!'", (q_ptr->male) ? "King" : "Queen");
+						msg_broadcast_format(i, "\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male) ? "King" : "Queen", q_ptr->name);
+						if (!is_admin(q_ptr)) l_printf("%s \\{v%s (%d) has been crowned %s\n", showdate(), q_ptr->name, q_ptr->lev, q_ptr->male ? "king" : "queen");
 #ifdef TOMENET_WORLDS
-						if (cfg.worldd_pwin) world_msg(format("\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"King":"Queen", q_ptr->name));
+						if (cfg.worldd_pwin) world_msg(format("\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male) ? "King" : "Queen", q_ptr->name));
 #endif
 					}
 					msg_print(i, "\377G(You may retire (by committing suicide) when you are ready.)");
