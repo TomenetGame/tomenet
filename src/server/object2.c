@@ -5881,16 +5881,6 @@ void determine_level_req(int level, object_type *o_ptr) {
 	if (o_ptr->level * 10 < o_ptr->to_d * 12) o_ptr->level = (o_ptr->to_d * 12) / 10;
 
 
-#if 0 /* done above instead, where EGO_ are tested */
-	/* Reduce outrageous ego item levels (double-ego adamantite of immunity for example */
-	if (o_ptr->name2) {
-		if (o_ptr->level > 51) o_ptr->level = 48 + rand_int(4);
-		else if (o_ptr->level > 48) o_ptr->level = 48 + rand_int(2);
-	}
-//	else {
-#endif
-
-
 	/* --------------- Reduce excessive level --------------- */
 
 
@@ -5900,15 +5890,31 @@ void determine_level_req(int level, object_type *o_ptr) {
 	if (o_ptr->level > 45) o_ptr->level--;
 	if (o_ptr->level > 40) o_ptr->level--;
 
+#if 0
 	/* tone down deep randarts a bit to allow winner-trading */
 	if (o_ptr->name1 == ART_RANDART) {
 		if (o_ptr->level > 51) o_ptr->level = 51 + ((o_ptr->level - 51) / 3);
 	}
 
 	/* tone down deep winners_only items to allow winner-trading */
-	if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) {
-		if (o_ptr->level > 51) o_ptr->level -= ((o_ptr->level - 51) / 2);
+	else if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) {
+		if (o_ptr->level > 51) o_ptr->level = 51 + ((o_ptr->level - 51) / 2);
 	}
+
+	/* done above instead, where EGO_ are tested */
+	/* Reduce outrageous ego item levels (double-ego adamantite of immunity for example */
+	else if (o_ptr->name2) {
+		if (o_ptr->level > 51) o_ptr->level = 48 + rand_int(4);
+		else if (o_ptr->level > 48) o_ptr->level = 48 + rand_int(2);
+	}
+#else /* unify.. */
+	/* tone down very-high-level items for trading */
+	if (o_ptr->level > 51) o_ptr->level = 51 + ((o_ptr->level - 51) / 3);
+	/* further tone down if no randart and no winners-only */
+	if (o_ptr->level > 50 &&
+	    o_ptr->name1 != ART_RANDART && !(k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY))
+		o_ptr->level -= rand_int(3);
+#endif
 
 	/* Special limit for +LIFE randarts */
 	if ((o_ptr->name1 == ART_RANDART) &&
