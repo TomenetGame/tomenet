@@ -5204,7 +5204,6 @@ static bool wraith_access_virtual(int Ind, int y, int x)
 bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	player_type *p_ptr = Players[Ind];
 	bool pass_wall;
-
 	bool only_wall = FALSE;
 
 	/* Dungeon Master pass through everything (cept array boundary :) */
@@ -5232,7 +5231,7 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 
 	switch (feature) {
 		case FEAT_DEEP_WATER:
-			if (comfortably && 
+			if (comfortably &&
 			    //!(p_ptr->immune_water || p_ptr->res_water ||.
 			    !(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith))
 				return FALSE;
@@ -5240,7 +5239,9 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 
 		case FEAT_SHAL_LAVA:
 		case FEAT_DEEP_LAVA:
-			if (comfortably && !p_ptr->immune_fire) return FALSE;
+			if (comfortably && !p_ptr->immune_fire &&
+			    !(p_ptr->resist_fire && p_ptr->oppose_fire))
+				return FALSE;
 			return (TRUE);	/* you can pass, but you may suffer dmg */
 
 		case FEAT_DEAD_TREE:
