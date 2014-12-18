@@ -5887,7 +5887,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			do_stun = randint(15) / div;
 			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
 				note = " resists";
-				dam *= 2; dam /= (randint(6) + 6);
+				dam *= 3; dam /= (randint(6) + 6);
 			}
 			break;
 		}
@@ -5900,7 +5900,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if ((r_ptr->flags4 & RF4_BR_CONF) ||
 			    (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
 				note = " resists";
-				dam *= 2; dam /= (randint(6) + 6);
+				dam *= 3; dam /= (randint(6) + 6);
 			} else if (r_ptr->flags3 & RF3_NO_CONF) {
 				note = " resists somewhat";
 				dam /= 2;
@@ -6096,7 +6096,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 			{
 				//note = " resists";
-				k = (k * 3) / (randint(6)+6);
+				k = (k * 3) / (randint(6) + 6);
 			}
 			dam = dam + k;
 			break;
@@ -6138,7 +6138,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
 			{
 				//note = " resists";
-				k_sound *= 2;
+				k_sound *= 3;
 				k_sound /= (randint(6) + 6);
 			}
 
@@ -6647,7 +6647,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 					{
 							note = " resists";
-							dam *= 3; dam /= (randint(6)+6);
+							dam *= 3; dam /= (randint(6) + 6);
 					}
 					break;
 				}
@@ -6742,7 +6742,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = do_blind = 0;
 			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
 				note = " resists";
-				dam *= 2; dam /= (randint(6) + 6);
+				dam *= 3; dam /= (randint(6) + 6);
 				do_blind = 0;
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 #ifdef OLD_MONSTER_LORE
@@ -6767,7 +6767,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
 			    || (r_ptr->flags3 & RF3_UNDEAD)) {
 				note = " resists";
-				dam *= 2; dam /= (randint(6) + 6);
+				dam *= 3; dam /= (randint(6) + 6);
 				do_blind = 0;
 			}
 			break;
@@ -7123,7 +7123,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 			} else if (r_ptr->flags9 & (RF9_RES_POIS)) {
 				note = " resists";
-				dam *= 3; dam /= (randint(6)+6);
+				dam *= 3; dam /= (randint(6) + 6 );
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags9 |= (RF9_RES_POIS);
 #endif
@@ -12103,7 +12103,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_SOUND:
 			//do_stun = 18;
 			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
-				dam /= 4;
+				dam /= 3;
 				//do_stun = 0;
 			}
 			break;
@@ -12205,7 +12205,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			k_sound = dam / 3; /* 33% SOUND damage */
 			//do_stun = 8;
 			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
-				k_sound /= 4;
+				k_sound /= 3;
 				//do_stun = 0;
 			}
 
@@ -12392,7 +12392,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam = 0;
 				//do_blind = 0;
 			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
-				dam /= 4;
+				dam /= 3;
 				//do_blind = 0;
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 				dam *= 2;
@@ -12403,7 +12403,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			//do_blind = damroll(3, (dam / 20)) + 1;
 			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
 			    || (r_ptr->flags3 & RF3_UNDEAD)) {
-				dam /= 4;
+				dam /= 3;
 				//do_blind = 0;
 			}
 			break;
