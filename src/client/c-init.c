@@ -622,49 +622,59 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 
 	my_fclose(fff);
 }
-const char *flags2highlight[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", ""};
-const char *flags2highlight2[] = {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC", "SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", ""};
-const char *flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", ""};//omitting DRAGONRIDER, NONLIVING, SPIDER
-const char *flags2highlight4[] = {"UNIQUE", "NAZGUL", ""};//no hints about dungeon/game boss status available or used
-const char *flags2highlight5[] = {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR", ""};//currently unavailable
-static int highlit_flags(char *line) {
-	const char **f = flags2highlight;
+const char *mon_flags2highlight[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", ""};
+const char *mon_flags2highlight2[] = {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC", "SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", ""};
+const char *mon_flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", ""};//omitting DRAGONRIDER, NONLIVING, SPIDER
+const char *mon_flags2highlight4[] = {"UNIQUE", "NAZGUL", ""};//no hints about dungeon/game boss status available or used
+const char *mon_flags2highlight5[] = {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR", ""};//currently unavailable
+static int mon_highlit_flags(char *line) {
+	const char **f = mon_flags2highlight;
 	char *p2;
 	int i = 0;
 
 	while (*f[0]) {
-		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
 		f++;
 	}
 
-	f = flags2highlight2;
+	f = mon_flags2highlight2;
 	while (*f[0]) {
-		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
 		f++;
 	}
 
-	f = flags2highlight3;
+	f = mon_flags2highlight3;
 	while (*f[0]) {
-		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
 		f++;
 	}
 
-	f = flags2highlight4;
+	f = mon_flags2highlight4;
 	while (*f[0]) {
-		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
 		f++;
 	}
 
-	f = flags2highlight5;
+	f = mon_flags2highlight5;
 	while (*f[0]) {
-		if ((p2 = strstr(line, *f)) && (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) i += 4;
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
 		f++;
 	}
 
 	return i;
 }
-static void highlight_flags(char *info) {
-	const char **f = flags2highlight, a_flag = 's';
+static void mon_highlight_flags(char *info) {
+	const char **f = mon_flags2highlight, a_flag = 's';
 	char info_tmp[MAX_CHARS], *p2;
 
 	while (*f[0]) {
@@ -677,7 +687,7 @@ static void highlight_flags(char *info) {
 		f++;
 	}
 
-	f = flags2highlight2;
+	f = mon_flags2highlight2;
 	while (*f[0]) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
 			strcpy(info_tmp, info);
@@ -688,7 +698,7 @@ static void highlight_flags(char *info) {
 		f++;
 	}
 
-	f = flags2highlight3;
+	f = mon_flags2highlight3;
 	while (*f[0]) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
 			strcpy(info_tmp, info);
@@ -699,7 +709,7 @@ static void highlight_flags(char *info) {
 		f++;
 	}
 
-	f = flags2highlight4;
+	f = mon_flags2highlight4;
 	while (*f[0]) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
 			strcpy(info_tmp, info);
@@ -710,7 +720,7 @@ static void highlight_flags(char *info) {
 		f++;
 	}
 
-	f = flags2highlight5;
+	f = mon_flags2highlight5;
 	while (*f[0]) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
 			strcpy(info_tmp, info);
@@ -1138,7 +1148,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				}
 
 				/* Highlight certain important flags for quick readability */
-				highlight_flags(info);
+				mon_highlight_flags(info);
 
 #ifdef NEW_PASTELINE_METHOD
 				/* add flags to existing paste_lines line */
@@ -1178,7 +1188,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 #endif
 						Term_putstr(f_col, 7 + l, -1, ta_flag, p1);
 						f_col += strlen(p1);
-						f_col -= highlit_flags(p1);
+						f_col -= mon_highlit_flags(p1);
 
 						/* done */
 						break;
@@ -1204,7 +1214,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 #endif
 							Term_putstr(2, 7 + l, -1, ta_flag, p1);
 							f_col = 2 + strlen(p1);
-							f_col -= highlit_flags(p1);
+							f_col -= mon_highlit_flags(p1);
 
 							/* done */
 							break;
@@ -1227,7 +1237,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 #endif
 								Term_putstr(2, 7 + l, -1, ta_flag, p1);
 								f_col = 2 + strlen(p1);
-								f_col -= highlit_flags(p1);
+								f_col -= mon_highlit_flags(p1);
 
 								/* done */
 								break;
@@ -1241,7 +1251,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 #endif
 								Term_putstr(f_col, 7 + l, -1, ta_flag, info_tmp);
 								f_col += strlen(info_tmp);
-								f_col -= highlit_flags(info_tmp);
+								f_col -= mon_highlit_flags(info_tmp);
 								p1 = p2 + 1;
 
 								/* go on */
@@ -1786,6 +1796,105 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 	my_fclose(fff);
 }
+const char *obj_flags2highlight[] = {"SPECIAL_GENE", ""};
+const char *obj_flags2highlight2[] = {"WINNERS_ONLY", ""};
+const char *obj_flags2highlight3[] = {"STR", "INT", "WIS", "DEX", "CON", "CHR", "STEALTH", "BLOWS", "CRIT", "MANA", "SEARCH", "INFRA", "TUNNEL", "SPEED", "LIFE", "LUCK", "DISARM", ""};//flags affected by (b)pval
+const char *obj_flags2highlight4[] = {"NO_TELE", "DRAIN_MANA", "DRAIN_HP", "DRAIN_EXP", "AGGRAVATE", "NEVER_BLOW", "BLACK_BREATH", "CLONE", "PERMA_CURSE", "HEAVY_CURSE", "TY_CURSE", "DG_CURSE", "CURSE_NO_DROP", "AUTO_CURSE", "CURSED", ""};
+static int obj_highlit_flags(char *line) {
+	const char **f = obj_flags2highlight;
+	char *p2;
+	int i = 0;
+
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
+		f++;
+	}
+
+	f = obj_flags2highlight2;
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
+		f++;
+	}
+
+	f = obj_flags2highlight3;
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
+		f++;
+	}
+
+	f = obj_flags2highlight4;
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
+		f++;
+	}
+
+	return i;
+}
+static void obj_highlight_flags(char *info, bool minus) {
+	const char **f = obj_flags2highlight, a_flag = 's';
+	char info_tmp[MAX_CHARS], *p2;
+
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377y%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+
+	f = obj_flags2highlight2;
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377v%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+
+	f = obj_flags2highlight3;
+	/* flags affected by (b)pval: can increase or decrease our abilities -> different colour! */
+	if (minus) while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377R%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+	else while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377G%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+
+	f = obj_flags2highlight4;
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377D%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+}
 /* assume/handle certain features: */
 #define USE_NEW_SHIELDS
 void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
@@ -1801,7 +1910,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	const char a_key = 'u', a_val = 's', a_flag = 's'; /* 'Speed:', 'Normal' */
 	const char ta_key = TERM_UMBER, ta_flag = TERM_SLATE;//ta_val = TERM_SLATE, /* 'Speed:', 'Normal' */
 
-	int tval, sval = 0, v_ac, v_acx, v_hit, v_dam, rarity;
+	int tval, sval = 0, v_ac, v_acx, v_hit, v_dam, rarity, pval = 0;
 	char v_ddice[10];
 	bool empty;
 
@@ -1923,6 +2032,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 			    /* pval */
 				info_val = atoi(p1);
+				pval = info_val;//remember (for flag-colouring)
 				if (info_val == 0) {
 					/* no boni? move rarity info to the next line (W:) then. */
 					break;
@@ -2115,25 +2225,13 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					}
 				}
 
-				/* different colour for certain special flags, to stand out */
+				/* Strip flags that are useless to know */
 				if ((p2 = strstr(info, "SPECIAL_GENE"))) {
 					strcpy(info_tmp, info);
-#if 0
-					sprintf(info_tmp + (p2 - info), "\377ySPECIAL_GENE\377%c", a_flag);
-#else /* strip instead, since we have 'Carried by a dungeon boss' now */
 					info_tmp[(p2 - info)] = '\0';
-#endif
 					strcat(info_tmp, p2 + 13);
 					strcpy(info, info_tmp);
 				}
-				if ((p2 = strstr(info, "WINNERS_ONLY"))) {
-					strcpy(info_tmp, info);
-					sprintf(info_tmp + (p2 - info), "\377vWINNERS_ONLY\377%c", a_flag);
-					strcat(info_tmp, p2 + 12);
-					strcpy(info, info_tmp);
-				}
-
-				/* Strip flags that are useless to know */
 				if ((p2 = strstr(info, "HIDE_TYPE"))) {
 					strcpy(info_tmp, info);
 					info_tmp[(p2 - info)] = '\0';
@@ -2158,6 +2256,9 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					strcat(info_tmp, p2 + 7);
 					strcpy(info, info_tmp);
 				}
+
+				/* Highlight certain important flags for quick readability */
+				obj_highlight_flags(info, pval < 0);
 
 #ifdef NEW_PASTELINE_METHOD
 				/* add flags to existing paste_lines line */
@@ -2196,8 +2297,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 #endif
 						Term_putstr(f_col, 7 + l, -1, ta_flag, p1);
 						f_col += strlen(p1);
-						if (strstr(p1, "SPECIAL_GENE")) f_col -= 4;
-						if (strstr(p1, "WINNERS_ONLY")) f_col -= 4;
+						f_col -= obj_highlit_flags(p1);
 
 						/* done */
 						break;
@@ -2223,8 +2323,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 #endif
 							Term_putstr(2, 7 + l, -1, ta_flag, p1);
 							f_col = 2 + strlen(p1);
-							if (strstr(p1, "SPECIAL_GENE")) f_col -= 4;
-							if (strstr(p1, "WINNERS_ONLY")) f_col -= 4;
+							f_col -= obj_highlit_flags(p1);
 
 							/* done */
 							break;
@@ -2247,8 +2346,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 #endif
 								Term_putstr(2, 7 + l, -1, ta_flag, p1);
 								f_col = 2 + strlen(p1);
-								if (strstr(p1, "SPECIAL_GENE")) f_col -= 4;
-								if (strstr(p1, "WINNERS_ONLY")) f_col -= 4;
+								f_col -= obj_highlit_flags(p1);
 
 								/* done */
 								break;
@@ -2262,8 +2360,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 #endif
 								Term_putstr(f_col, 7 + l, -1, ta_flag, info_tmp);
 								f_col += strlen(info_tmp);
-								if (strstr(info_tmp, "SPECIAL_GENE")) f_col -= 4;
-								if (strstr(info_tmp, "WINNERS_ONLY")) f_col -= 4;
+								f_col -= obj_highlit_flags(info_tmp);
 								p1 = p2 + 1;
 
 								/* go on */
