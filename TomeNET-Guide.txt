@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. December 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. December 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -17117,10 +17117,18 @@ SOLUTION:   Try to reduce or even disable flush-waits, by toggling the client
 
 PROBLEM 29: I accidenally closed one of the sub-windows and now it's gone.
             How do I get it back?
-SOLUTION:   Closing a sub-window sets it to 'invisible'. To change that, close
-            TomeNET first, then edit the file 'TomeNET.ini' in any text editor,
-            locate the particular window, and you'll see a line saying
-            "Visibility=0". Change the 0 to 1 and start TomeNET again.
+SOLUTION:   Closing a sub-window sets it to 'invisible'. To change that, there
+            are two ways:
+            1) in game: Press = and then f for the window flags menu, select
+            the affected window and press 'v' to toggle its visibility. You
+            will need to restart the game for the change to take effect.
+            2) close TomeNET first, then edit the file 'TomeNET.ini' which is
+            located in your TomeNET folder with any text editor, locate the
+            particular window, and you'll see a line saying "Visibility=0".
+            Change the 0 to 1. Have a look at the X and Y coordinate of the
+            same window too and make sure they aren't negative. If they are,
+            just set them to 0. Save the ini file when you are done and start
+            TomeNET again.
 
 PROBLEM 30: Changes I do to my macros seem to not get saved or macros I deleted
             seem to still be there or client options I configured seem to reset
