@@ -750,7 +750,8 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	dun_level *l_ptr;
 
 	bool look = TRUE;
-	bool left_shop = (dis == 1) || istown(wpos);//istown hack: prevent teleporting people who can't swim into the lake in Bree
+	bool left_shop = (dis == 1) || istown(wpos) //istown hack: prevent teleporting people who can't swim into the lake in Bree
+	    || isdungeontown(wpos); //for IDDC random towns to avoid lava/water item destruction on logging in
 
 	/* Space/Time Anchor */
 	cave_type **zcave;
