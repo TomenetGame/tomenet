@@ -151,24 +151,29 @@ static const os_PALETTE(16) default_palette =
 	{
 		0x00000000,   /* TERM_DARK */
 		0xffffff00,   /* TERM_WHITE */
-		0x96969600,   /* TERM_SLATE */
-		0x0096ff00,   /* TERM_ORANGE */
-		0x0000cc00,   /* TERM_RED */
-		0x58960000,   /* TERM_GREEN */
+		0x9d9d9d00,   /* TERM_SLATE */
+		0x008dff00,   /* TERM_ORANGE */
+		0x0000b700,   /* TERM_RED */
+		0x449d0000,   /* TERM_GREEN */
 #ifndef READABILITY_BLUE
 		0xff000000,   /* TERM_BLUE */
 #else
 		0xff330000,   /* TERM_BLUE */
 #endif
-		0x00589600,   /* TERM_UMBER */
+		0x0066d800,   /* TERM_UMBER */
+#ifndef DISTINCT_DARK
+		0x74747400,      /* DARKGRAY */
 		0x58585800,   /* TERM_L_DARK */
+#else
+		0x58585800,   /* TERM_L_DARK */
+#endif
 		0xcccccc00,   /* TERM_L_WHITE */
-		0xff00ff00,   /* TERM_VIOLET */
+		0xff00af00,   /* TERM_VIOLET */
 		0x00ffff00,   /* TERM_YELLOW */
-		0x0000ff00,   /* TERM_L_RED */
+		0x3030ff00,   /* TERM_L_RED */
 		0x00ff0000,   /* TERM_L_GREEN */
 		0xffff0000,   /* TERM_L_BLUE */
-		0x5896cc00,   /* TERM_L_UMBER */
+		0x559dc700,   /* TERM_L_UMBER */
 	}
 };
 

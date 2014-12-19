@@ -1481,27 +1481,32 @@ void xhtml_screenshot(cptr name)
 {
 	static cptr color_table[17] =
 	{
-		"#000000",      /* BLACK */
-		"#ffffff",      /* WHITE */
-		"#9d9d9d",      /* GRAY */
-		"#ff8d00",      /* ORANGE */
-		"#b70000",      /* RED */
-		"#009d44",      /* GREEN */
+		"#000000",	/* BLACK */
+		"#ffffff",	/* WHITE */
+		"#9d9d9d",	/* GRAY */
+		"#ff8d00",	/* ORANGE */
+		"#b70000",	/* RED */
+		"#009d44",	/* GREEN */
 //#ifndef READABILITY_BLUE
-#if 1
-		"#0000ff",      /* BLUE */
+#if 0
+		"#0000ff",	/* BLUE */
 #else
-		"#0033ff",      /* BLUE */
+		"#0033ff",	/* BLUE */
 #endif
-		"#8d6600",      /* BROWN */
-		"#747474",      /* DARKGRAY */
-		"#d7d7d7",      /* LIGHTGRAY */
-		"#af00ff",      /* PURPLE */
-		"#ffff00",      /* YELLOW */
-		"#ff3030",      /* PINK */
-		"#00ff00",      /* LIGHTGREEN */
-		"#00ffff",      /* LIGHTBLUE */
-		"#c79d55",      /* LIGHTBROWN */
+		"#8d6600",	/* BROWN */
+//#ifndef DISTINCT_DARK
+#if 0
+		"#747474",	/* DARKGRAY */
+#else
+		"#585858",	/* DARKGRAY */
+#endif
+		"#d7d7d7",	/* LIGHTGRAY */
+		"#af00ff",	/* PURPLE */
+		"#ffff00",	/* YELLOW */
+		"#ff3030",	/* PINK */
+		"#00ff00",	/* LIGHTGREEN */
+		"#00ffff",	/* LIGHTBLUE */
+		"#c79d55",	/* LIGHTBROWN */
 		"#f0f0f0",	/* Invalid color */
 	};
 	FILE *fp;

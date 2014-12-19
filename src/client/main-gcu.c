@@ -961,9 +961,17 @@ errr init_gcu(void)
 		init_color(3,  1000,  552,    0);	/* Orange */
 		init_color(4,   717,    0,    0);	/* Red */
 		init_color(5,     0,  615,  266);	/* Green */
+#ifndef READIBILITY_BLUE
 		init_color(6,     0,    0, 1000);	/* Blue */
+#else
+		init_color(6,     0,  200, 1000);	/* Blue */
+#endif
 		init_color(7,   552,  400,    0);	/* Umber */
-		init_color(8,   454,  454,  454);	/* "Light Dark" */
+#ifndef DISTINCT_DARK
+		init_color(8,   453,  453,  453);	/* "Light Dark" */
+#else
+		init_color(8,   344,  344,  344);	/* "Light Dark" */
+#endif
 		init_color(9,   843,  843,  843);	/* Light Slate */
 		init_color(10,  686,    0, 1000);	/* Violet */
 		init_color(11, 1000, 1000,    0);	/* Yellow */

@@ -220,7 +220,11 @@
 
  /* Use a somewhat lighter 'dark blue' for TERM_BLUE to improve readability
     on some screens / under certain circumstances? */
- //#define READABILITY_BLUE
+ //#define READABILITY_BLUE --has been turned into a config file option!
+
+ /* Use a somewhat darker 'light dark' for TERM_L_DARK to improve distinction
+    from slate tone? */
+ #define DISTINCT_DARK
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/
