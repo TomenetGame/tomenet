@@ -66,6 +66,7 @@ extern char* get_conn_userhost(int ind);
 extern char *get_player_ip(int Ind);
 extern bool get_conn_state_ok(int Ind);
 extern void do_quit(int ind, bool tellclient);
+extern bool check_multi_exploit(char *acc, char *nick);
 
 /* randart.c */
 extern artifact_type *ego_make(object_type *o_ptr);

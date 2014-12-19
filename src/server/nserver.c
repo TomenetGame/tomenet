@@ -511,7 +511,7 @@ static bool update_acc_file_version(void) {
 
 	if (fp_old && fp) {
 		s_printf("Updating tomenet.acc structure.. ");
-                while(!feof(fp_old)){
+                while (!feof(fp_old)) {
                         retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
                         if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
 
@@ -702,7 +702,7 @@ void setup_contact_socket(void)
 }
 
 #ifdef TOMENET_WORLDS
-void world_connect(int Ind){
+void world_connect(int Ind) {
 	/* evileye testing only */
 	/* really, server should DIE if this happens */
 	if (WorldSocket != -1) {
@@ -741,7 +741,7 @@ static int Reply(char *host_addr, int fd)
 
 
 /* invite only */
-static bool player_allowed(char *name){
+static bool player_allowed(char *name) {
 	FILE *sfp;
 	char buffer[80];
 	bool success = FALSE;
@@ -859,9 +859,9 @@ static void Trim_name(char *nick_name)
 
 /* verify that account, user, host name are valid,
    and that we're resuming from the same IP address if we're resuming  */
-static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume)
-{
+static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume) {
 	player_type *p_ptr = NULL;
+	connection_t *connp = NULL;
 	int i;
 
 	if (real_name[0] == 0 || host_name[0] == 0 ||
@@ -870,60 +870,90 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 
 	if (strchr(nick_name, ':')) return E_INVAL;
 
-	if (check_for_resume)
-	    for (i = 1; i < NumPlayers + 1; i++) {
-		if(Players[i]->conn != NOT_CONNECTED ) {
-		    p_ptr = Players[i];
-			/*
-			 * FIXME: p_ptr->name is character name while nick_name is
-			 * account name, so this check always fail.  Evileye? :)
-			 */
-		    if (strcasecmp(p_ptr->name, nick_name) == 0) {
-			/*plog(format("%s %s", Players[i]->name, nick_name));*/
+	if (check_for_resume) {
+		for (i = 1; i < NumPlayers + 1; i++) {
+			if (Players[i]->conn != NOT_CONNECTED ) {
+				p_ptr = Players[i];
+				/*
+				 * FIXME: p_ptr->name is character name while nick_name is
+				 * account name, so this check always fail.  Evileye? :)
+				 */
+				if (strcasecmp(p_ptr->name, nick_name) == 0) {
+					/*plog(format("%s %s", Players[i]->name, nick_name));*/
 
-			/* The following code allows you to "override" an
-			 * existing connection by connecting again  -Crimson */
+					/* The following code allows you to "override" an
+					 * existing connection by connecting again  -Crimson */
 
-			/* XXX Hack -- since the password is not read until later, to
-			 * authorize the "hijacking" of an existing connection,
-			 * we check to see if the username and hostname are
-			 * identical.  Note that it may be possobile to spoof this,
-			 * kicking someone off.  This is a quick hack that should 
-			 * be replaced with proper password checking. 
-			 */
-			/* XXX another Hack -- don't allow to resume connection if
-			 * in 'character edit' mode		- Jir -
-			 */
+					/* XXX Hack -- since the password is not read until later, to
+					 * authorize the "hijacking" of an existing connection,
+					 * we check to see if the username and hostname are
+					 * identical.  Note that it may be possobile to spoof this,
+					 * kicking someone off.  This is a quick hack that should 
+					 * be replaced with proper password checking. 
+					 */
+					/* XXX another Hack -- don't allow to resume connection if
+					 * in 'character edit' mode		- Jir -
+					 */
 
-			/* resume connection at this point is not compatible
-			   with multicharacter accounts */
-			if ((!strcasecmp(p_ptr->realname, real_name)) &&
-					(!strcasecmp(p_ptr->addr, addr)) && (cfg.runlevel != 1024)){
-				printf("%s %s\n", p_ptr->realname, p_ptr->addr);
-				Destroy_connection(p_ptr->conn, "resume connection");
+					/* resume connection at this point is not compatible
+					   with multicharacter accounts */
+					if (!strcasecmp(p_ptr->realname, real_name) &&
+					    //!strcasecmp(p_ptr->accountname, acc_name) &&  --not needed, can't access nick_name from different account
+					    !strcasecmp(p_ptr->addr, addr) && cfg.runlevel != 1024) {
+						printf("%s %s\n", p_ptr->realname, p_ptr->addr);
+						Destroy_connection(p_ptr->conn, "resume connection");
+					}
+					else return E_IN_USE;
+				}
+
+				/* All restrictions on the number of allowed players from one IP have 
+				 * been removed at this time. -APD
+				 *
+				 * Restored after the advent of Tcp/IP, becuase there is
+				 * no longer any good reason to allow them.  --Crimson
+
+				if (!strcasecmp(Players[i]->realname, real_name) &&
+				    !strcasecmp(Players[i]->addr, addr) &&
+				    strcasecmp(Players[i]->realname, cfg_admin_wizard) &&
+				    strcasecmp(Players[i]->realname, cfg_dungeon_master)) {
+					return E_TWO_PLAYERS;
+				}
+				*/
+			}
+		}
+		/* new, fix timing exploit that allows multi-login, part 1/2 (resuming) */
+		for (i = 0; i < max_connections; i++) {
+			connp = Conn[i];
+			if (!connp || connp->state == CONN_FREE) continue;// != CONN_LOGIN
+			if (!connp->c_name) continue;//hasn't chosen a character to login with yet?
+			if (strcasecmp(connp->c_name, nick_name)) continue;
+			//if (strcasecmp(connp->nick, acc_name)) continue;  --not needed, can't access nick_name from different account
+			if (!strcasecmp(connp->real, real_name) &&
+			    !strcasecmp(connp->addr, addr) && cfg.runlevel != 1024) {
+				printf("%s %s\n", connp->real, connp->addr);
+				Destroy_connection(i, "resume connection");
 			}
 			else return E_IN_USE;
-		    }
-
-		    /* All restrictions on the number of allowed players from one IP have 
-		     * been removed at this time. -APD
-		     *
-		     * Restored after the advent of Tcp/IP, becuase there is
-		     * no longer any good reason to allow them.  --Crimson
-
-		    if (!strcasecmp(Players[i]->realname, real_name) &&
-			!strcasecmp(Players[i]->addr, addr) &&
-			strcasecmp(Players[i]->realname, cfg_admin_wizard) &&
-			strcasecmp(Players[i]->realname, cfg_dungeon_master))
-		    {
-			return E_TWO_PLAYERS;
-		    }
-		     */
 		}
-		/* */
-	    }
+	}
 
 	return SUCCESS;
+}
+/* new, fix timing exploit that allows multi-login, part 2/2 (non-resuming) */
+bool check_multi_exploit(char *acc, char *nick) {
+	connection_t *connp = NULL;
+	int i;
+
+	for (i = 0; i < max_connections; i++) {
+		connp = Conn[i];
+		if (!connp || connp->state == CONN_FREE) continue;// != CONN_LOGIN
+		if (!connp->c_name) continue;//hasn't chosen a character to login with yet?
+		if (!strcasecmp(connp->c_name, nick)) continue; //this case is instead handled by part 1/2: resume connection!
+		if (strcasecmp(connp->nick, acc)) continue;
+		s_printf("check_multi_exploit=TRUE\n");
+		return TRUE;
+	}
+	return FALSE;
 }
 
 #if 0
@@ -1114,7 +1144,7 @@ static void Contact(int fd, int arg)
 #if 1
 	s_printf("Received contact from %s:%d.\n", host_name, port);
 	s_printf("Address: %s.\n", host_addr);
-	s_printf("Info: real_name %s, port %hu, nick %s, host %s, version %hu\n", real_name, port, nick_name, host_name, version);  
+	s_printf("Info: real_name %s, port %hu, nick %s, host %s, version %hu\n", real_name, port, nick_name, host_name, version);
 #endif
 
 	/* Replace all weird chars - mikaelh */
@@ -1859,7 +1889,7 @@ static int Handle_setup(int ind)
  * real name or hostname.
  */
 #if 0
-static bool validstrings(char *nick, char *real, char *host){
+static bool validstrings(char *nick, char *real, char *host) {
 	int i;
 	int rval = 1;
 
@@ -3512,7 +3542,7 @@ static int Receive_quit(int ind) {
 	return 1;
 }
 
-static int Receive_login(int ind){
+static int Receive_login(int ind) {
 	connection_t *connp = Conn[ind], *connp2 = NULL;
 	//unsigned char ch;
 	int i, n;
@@ -4103,7 +4133,7 @@ static int Receive_play(int ind)
 
 /* Head of file transfer system receive */
 /* DO NOT TOUCH - work in progress */
-static int Receive_file(int ind){
+static int Receive_file(int ind) {
 	char command, ch;
 	char fname[MAX_CHARS];	/* possible filename */
 	int x;	/* return value/ack */
@@ -4118,16 +4148,15 @@ static int Receive_file(int ind){
 	Ind = GetInd[connp->id];
 	p_ptr = Players[Ind];
 	n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &command, &fnum);
-	if(n == 3){
-		switch(command){
+	if (n == 3) {
+		switch (command) {
 			case PKT_FILE_INIT:
 				/* Admin to do this only !!! */
 				Packet_scanf(&connp->r, "%s", fname);
-				if(!is_admin(p_ptr)){
+				if (!is_admin(p_ptr)) {
 					msg_print(Ind, "\377rFile transfer refused");
-					x = 0; 
-				}
-				else{
+					x = 0;
+				} else {
 					msg_print(Ind, "\377gAttempting file transfer");
 					x = local_file_init(ind, fnum, fname);
 				}
@@ -4145,7 +4174,7 @@ static int Receive_file(int ind){
 				Packet_scanf(&connp->r, "%s", fname);
 				if (!is_admin(p_ptr)) {
 					msg_print(Ind, "\377rFile check refused");
-					x = 0; 
+					x = 0;
 				} else {
 					msg_print(Ind, "\377yChecking file");
 					x = local_file_check(fname, &csum);
@@ -4185,35 +4214,35 @@ static int Receive_file(int ind){
 	return(1);
 }
 
-int Receive_file_data(int ind, unsigned short len, char *buffer){
+int Receive_file_data(int ind, unsigned short len, char *buffer) {
 	connection_t *connp = Conn[ind];
 	memcpy(buffer, connp->r.ptr, len);
 	connp->r.ptr += len;
 	return(1);
 }
 
-int Send_file_check(int ind, unsigned short id, char *fname){
+int Send_file_check(int ind, unsigned short id, char *fname) {
 	connection_t *connp = Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
 	return(1);
 }
 
-int Send_file_init(int ind, unsigned short id, char *fname){
+int Send_file_init(int ind, unsigned short id, char *fname) {
 	connection_t *connp = Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
 	return(1);
 }
 
-int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
+int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len) {
 	connection_t *connp = Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
-	if (Sockbuf_write(&connp->c, buf, len) != len){
+	if (Sockbuf_write(&connp->c, buf, len) != len) {
 		printf("failed sending file data\n");
 	}
 	return(1);
 }
 
-int Send_file_end(int ind, unsigned short id){
+int Send_file_end(int ind, unsigned short id) {
 	connection_t *connp = Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
 	return(1);
@@ -4561,7 +4590,7 @@ int Send_skill_init(int Ind, u16b i)
 
 }
 
-int Send_skill_points(int Ind){
+int Send_skill_points(int Ind) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 	player_type *p_ptr = Players[Ind];
 
@@ -5521,7 +5550,7 @@ int Send_message(int Ind, cptr msg)
 	    player_type *p_ptr2;
 	    connection_t *connp2;
 
-	    if (!Ind2){
+	    if (!Ind2) {
 	      hack_message = TRUE;
 	      end_mind(Ind, TRUE);
 	      hack_message = FALSE;
@@ -9484,7 +9513,7 @@ static int Receive_message(int ind)
 	return 1;
 }
 
-static int Receive_admin_house(int ind){
+static int Receive_admin_house(int ind) {
 	connection_t *connp = Conn[ind];
 	char ch;
 	s16b dir;

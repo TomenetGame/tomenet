@@ -655,10 +655,17 @@ int check_account(char *accname, char *c_name) {
 		if (!ptr || ptr->account == a_id) {
 			/* Cannot create another character while being logged on, if not ACC_MULTI.
 			   Allow to login with the same name to 'resume connection' though. */
-			for (i = 1; i <= NumPlayers; i++) {
-				if (Players[i]->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, Players[i]->name))
-					return(-2);
+			if (!(flags & ACC_MULTI)) {
+				/* check for login-timing exploit */
+				if (check_multi_exploit(accname, c_name)) return -2;
+				/* check for normal ineligible multi-login attempts */
+				for (i = 1; i <= NumPlayers; i++) {
+					if (Players[i]->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, Players[i]->name))
+						return(-2);
+				}
 			}
+
+			/* all green */
 			return(success);
 		}
 	}
