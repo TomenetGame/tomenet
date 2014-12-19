@@ -4877,7 +4877,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	if (f3 & (TR3_SLOW_DIGEST))
 		fprintf(fff, "It slows your metabolism.\n");
 	if (f3 & (TR3_REGEN))
-		fprintf(fff, "It speeds your regenerative powers.\n");
+		fprintf(fff, "It speeds your hit point regeneration.\n");
 	if (f5 & (TR5_REGEN_MANA))
 		fprintf(fff, "It speeds your mana recharging.\n");
 	if (f5 & (TR5_REFLECT))
