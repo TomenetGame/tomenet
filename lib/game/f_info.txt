@@ -777,6 +777,11 @@ G: :w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | BOUNDARY
 
+N:109:volcanic rock
+G:.:D
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
+#F:SUPPORT_LIGHT | LAMP_LITE_SNOW
+
 
 # 109..159 unused -------------------------------------------------------------
 

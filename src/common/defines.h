@@ -2003,6 +2003,7 @@
 #define FEAT_ABYSS		0x6A
 #define FEAT_CLOUDYSKY		0x6B
 #define FEAT_ABYSS_BOUNDARY	0x6C
+#define FEAT_VOLCANIC		0x6D
 
 /* Features 0x6C - 0x9F -- unused */
 
@@ -2046,6 +2047,7 @@
 /* Feature 0xCC -- Underground Tunnel */
 #define FEAT_FIRE               0xCD /* 205 */
 /* Feature 0xCE -- pile of rubble (permanent) */
+#define FEAT_ROCKY		0xCF /*207 */
 /* Features 0xCF - 0xFF */
 #define FEAT_AGOAL		208
 #define FEAT_BGOAL		209

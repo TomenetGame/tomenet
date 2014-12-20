@@ -4332,9 +4332,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			int p1 = 0;
 			int p2 = 0;
-			int f1 = 0;
-			int f2 = 0;
-			int f = 0;
+			int f1 = FEAT_NONE;
+			int f2 = FEAT_NONE;
+			int f = FEAT_NONE;
 			int k;
 
 			if (!allow_terraforming(wpos, FEAT_SHAL_WATER)) break;
@@ -4349,19 +4349,19 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if ((c_ptr->feat == FEAT_FLOOR) ||
 			    (c_ptr->feat == FEAT_DIRT) ||
 			    (c_ptr->feat == FEAT_GRASS)) {
-				/* 35% chance to create shallow water */
-				p1 = 35; f1 = FEAT_SHAL_WATER;
+				/* p1 % chance to create this feat */
+				p1 = 20; f1 = FEAT_SHAL_WATER;
 
-				/* 5% chance to create deep water */
-//				p2 = 40; f2 = FEAT_DEEP_WATER;
-				p2 = 40; f2 = FEAT_SHAL_WATER;
+				if (c_ptr->feat == FEAT_DIRT)
+					/* reduce feat1 chance */
+					p1 = 10;
+					/* p2 % chance to create this feat */
+					p2 = 15; f2 = FEAT_MUD;
 			}
-#if 1
 			else if (c_ptr->feat == FEAT_SHAL_LAVA) {
 				/* 15% chance to convert it to normal floor */
-				p1 = 15; f1 = FEAT_ASH;
+				p1 = 15; f1 = FEAT_VOLCANIC;//FEAT_ROCKY, FEAT_ASH
 			}
-#endif	// 1
 
 			/* Use the stored/quick RNG */
 			Rand_quick = TRUE;
@@ -4375,7 +4375,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			Rand_value = tmp_seed;
 
 			if (k < p1) f = f1;
-			else if (k < p2) f = f2;
+			else if (k < p1 + p2) f = f2;
 
 			if (f) {
 //uses static array set in generate.c, fix!	if (f == FEAT_FLOOR) place_floor_live(wpos, y, x);
