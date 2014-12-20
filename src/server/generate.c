@@ -15,6 +15,7 @@
 
 #include "angband.h"
 
+/* Avoid generating doors that are standing around in weird/pointless locations (eg without walls attached) -- todo: fix/complete */
 //#define ENABLE_DOOR_CHECK
 
 static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
@@ -290,6 +291,10 @@ struct stairs_list {
 #define IDDC_FEWER_VAULTS
 /* Final guardians are guaranteed spawns instead of rolling against their r-rarity? */
 #define IDDC_GUARANTEED_FG
+
+/* experimental - this might be too costly on cpu: add volcanic floor around lava rivers - C. Blue */
+#define VOLCANIC_FLOOR
+
 
 /*
  * Simple structure to hold a map location
@@ -9864,6 +9869,48 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 #endif	/* 0 */
 
+#ifdef VOLCANIC_FLOOR /* experimental - this might be too costly on cpu: add volcanic floor around lava rivers - C. Blue */
+		for (x = 0; x < dun->l_ptr->wid; x++)
+			for (y = 0; y < dun->l_ptr->hgt; y++) {
+				if (zcave[y][x].feat != FEAT_SHAL_LAVA && zcave[y][x].feat != FEAT_DEEP_LAVA) continue;
+				for (i = 0; i < 4; i++) {
+					k = zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat;
+					switch (k) {
+					case FEAT_WEB:
+					case FEAT_CROP:
+					case FEAT_FLOWER:
+					case FEAT_IVY:
+					case FEAT_GRASS:
+						/* never persist */
+						zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_ASH;
+						continue;
+					case FEAT_SNOW:
+					case FEAT_SHAL_WATER:
+					case FEAT_DARK_PIT:
+					case FEAT_ICE:
+					case FEAT_MUD:
+					case FEAT_ICE_WALL:
+						/* never persist */
+						zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
+						continue;
+					case FEAT_TREE:
+					case FEAT_BUSH://mh
+						/* never persist */
+						zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_DEAD_TREE;
+						continue;
+					case FEAT_SAND:
+					case FEAT_FLOOR:
+					case FEAT_LOOSE_DIRT:
+					case FEAT_DIRT:
+						/* rarely persist */
+						if (!rand_int(7)) continue;
+						zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
+					default:
+						continue;
+					}
+				}
+			}
+#endif
 
 		/* Destroy the level if necessary */
 		if (destroyed) destroy_level(wpos);
