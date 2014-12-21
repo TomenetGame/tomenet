@@ -1062,6 +1062,7 @@
    (mimic_shaman_E, mimic_druid, mimic_vampire, check_experience(), do_cmd_check_extra_info()).) */
 #define RI_UFTHAK		260
 #define RI_VAMPIRE_BAT		391
+#define RI_BLOODLETTER		523
 #define RI_SANTA1		733	/* terror santa from hell */
 #define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
 #define RI_OREMORJ		843	/* note: jokeangband */
