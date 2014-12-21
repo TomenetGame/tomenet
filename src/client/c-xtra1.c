@@ -557,7 +557,8 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 	depth_town = town;
 	depth_colour = colour;
 	depth_colour_sector = colour_sector;
-	strcpy(depth_name, name);
+	/* if-check: may be identical pointer (!) */
+	if (depth_name != name) strcpy(depth_name, name);
 
 	/* remember cursor position */
 	Term_locate(&x2, &y2);

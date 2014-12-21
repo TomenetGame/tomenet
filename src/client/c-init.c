@@ -675,7 +675,7 @@ static int mon_highlit_flags(char *line) {
 }
 static void mon_highlight_flags(char *info) {
 	const char **f = mon_flags2highlight, a_flag = 's';
-	char info_tmp[MAX_CHARS], *p2;
+	char info_tmp[MSG_LEN], *p2;
 
 	while (*f[0]) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
@@ -1840,7 +1840,7 @@ static int obj_highlit_flags(char *line) {
 }
 static void obj_highlight_flags(char *info, bool minus) {
 	const char **f = obj_flags2highlight, a_flag = 's';
-	char info_tmp[MAX_CHARS], *p2;
+	char info_tmp[MSG_LEN], *p2;
 
 	while (*f[0]) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
