@@ -482,7 +482,7 @@ r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES] =
 
 r_type r_types[RCRAFT_MAX_TYPES] =
 {
-{ T_BOLT, "bolt",	 1,  1, 15, 3,  4, 53, 41,  0,   0, 0, 0,  0,  0 },
+{ T_BOLT, "bolt",	 1,  1, 15, 3,  4, 25, 41,  0,   0, 0, 0,  0,  0 },
 //{ T_BEAM, "beam",	 5,  5, 25, 3,  9, 53, 46, 16, 256, 0, 0,  3,  7 },
 { T_CLOU, "cloud",	 5,  3, 30, 0,  0,  0,  0,  9, 121, 1, 4,  6, 14 },
 { T_BALL, "ball",	10,  5, 30, 0,  0,  0,  0, 25, 784, 2, 4,  0,  0 },
