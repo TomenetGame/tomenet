@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. December 2014 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.8 - official websites are:
+| Latest update: 21. December 2014 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
