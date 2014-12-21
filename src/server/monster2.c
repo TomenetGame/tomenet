@@ -31,6 +31,11 @@
 /* Debug spawning of a particular monster */
 //#define PMO_DEBUG RI_SAURON
 
+/* Nerf summoning for the specific case of summoning Bloodletters of Khorne?
+   This avoids instant-ko in cases where the player might've been unlucky. */
+#define BLOODLETTER_SUMMON_NERF
+
+
 static cptr horror_desc[MAX_HORROR] = {
 	"abominable",
 	"abysmal",
@@ -3884,6 +3889,9 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 
 	/* Require the "group" flag */
 	if (!grp) return 0;
+#ifdef BLOODLETTER_SUMMON_NERF
+	if (r_idx == RI_BLOODLETTER) return 0;
+#endif
 
 	/* Friend for certain monsters */
 	if (r_ptr->flags1 & RF1_FRIEND) {

@@ -8334,8 +8334,7 @@ E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:EXP_20:13d1
 B:HIT:EXP_20:13d1
-#modified the last attack from 13d1 to reduce stun when a pack gets summoned
-B:HIT:EXP_20:3d4
+B:HIT:EXP_20:13d1
 F:FORCE_MAXHP | OPEN_DOOR | FRIENDS | DROP_60 | REGENERATE |
 F:ONLY_ITEM | NO_FEAR |
 F:EVIL | IM_POIS | RES_COLD | IM_FIRE | DEMON | ZANGBAND | HAS_LITE
