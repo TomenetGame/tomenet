@@ -7917,7 +7917,7 @@ extern int PlayerUID;
 #define S_DURATION_MAX 50
 #define S_WEIGHT_LO 150 //refer common/tables.c
 #define S_WEIGHT_HI 1200 //refer common/tables.c
-#define S_WEIGHT_INFLUENCE 6 //range 0-10, lower makes elements have a closer spread of damage caps
+#define S_WEIGHT_INFLUENCE 8 //range 0-10, lower makes elements have a closer spread of damage caps
 
 /* Macros */
 #define rget_level(x) ((skill * (x)) / 50)
