@@ -6447,7 +6447,7 @@ G:?:d
 I:70:62:0
 W:25:0:5:0
 A:25/6
-D:Heavily disenchants items that you are using or in your backpack.
+D:Completely disenchants and discharges all magical items in your backpack.
 
 N:913:Teleport To
 G:-:d
