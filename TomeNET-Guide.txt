@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. December 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. December 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3256,6 +3256,37 @@ Below that, there are further status indicators such as
  eat when you become hungry you might get paralyzed sporadically and eventually
  even die of starvation!
 
+In the lower middle to lower right area of the bottom status line of the main
+window, you find:
+-your speed (Normal, Slow or Fast)
+-your number of melee attacks per round (BpR aka blows per round)
+-your current depth or town. If you are in a town the town's name is displayed,
+ otherwise the dungeon depth (negative numbers) or tower height (positive
+ numbers) are shown, either in feet (each level equals 50 ft) or in levels,
+ depending on your configuration. So if you stand on the world surface (0 ft)
+ and enter a dungeon, you'd end up at -50 ft.
+ This number can also have different colour, indicating some things:
+ -A white number means no special effect.
+ -An orange number means that word-of-recall magic is pending.
+ -A yellow number means that your character's level is somewhat too high
+  compared to the dungeon/tower level you are on, and therefore you will get
+  greatly reduced amounts of experience points.
+ -A grey number means that your character's level is way too high compared to
+  the dungeon/tower level you are on, and therefore you will not get any
+  experience points at all here.
+ -When you spend about 2 minutes on a dungeon floor, a light blue asterisk '*'
+  will appear behind the depth indicator, or if you are in a town the town's
+  name will change colour to light blue.
+  This means that on the next dungeon floor you enter you will receive an extra
+  feeling, displayed in yellow colour, that tells you some rough information
+  about the dangers lurking there. For more information see (4.8).
+
+Note: There are certain areas in the game that inhibit teleportation, mostly
+so-called "no-teleport vaults". These areas are extremely dangerous because if
+a monster summons other monsters around you, you might not be able to escape!
+If you enter such a no-tele area, it will be indicated as described in (4.8)
+under "vault feelings".
+
 By the way: If you enter the game and find that you don't like your
 character and want to recreate it from scratch, you can suicide by pressing
 'Q' (capital Q), followed by confirming the question if you really want to
@@ -5956,7 +5987,9 @@ feeling as soon as you are about to enter the vault:
                                         The fact that you are standing within
                                         a no-tele area is also indicated by
                                         your (xx, yy) position display on the
-                                        lower left area of the main window
+                                        lower left area of the main window and
+                                        also your speed indicator on the bottom
+                                        status line of the main window
                                         turning from light green to dark grey!
                                         Also, the music will in most cases
                                         change from the normal theme of that
