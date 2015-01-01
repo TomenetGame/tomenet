@@ -704,6 +704,8 @@ G:*:*
 I:+20:%200d%200:+0:+0:=0
 W:+5:35:+0:%300:A
 F:R_CHAR_E
+# no unmakers:
+H:MULTIPLY
 M:DROP_2D2 | DROP_GOOD
 
 #Demonised skeletons and flying skulls etc.
@@ -737,7 +739,7 @@ G:*:*
 I:%100:%200d%200:+0:+0:=0
 W:+15:40:+0:%200:A
 F:SPIDER
-M:FORCE_MAXHP 
+M:FORCE_MAXHP
 
 # N:x:ego name
 # G:x:y                 x is the char, y the attribute, * means the normal one
