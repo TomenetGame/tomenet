@@ -1563,7 +1563,7 @@ F:AGGRAVATE | CURSED | HEAVY_CURSE | PERMA_CURSE |
 F:INSTA_ART | SPECIAL_GENE | SHOW_MODS | LEVELS | IMPACT |
 F:TUNNEL | LIFE | STR | CON | ESP_ALL | HIDE_TYPE
 #F:ACTIVATE <-disabled, for Darkie^^
-D:The mighty Hammer of the Underworld, blackened by doomspells of shattering, 
+D:The mighty hammer of the underworld, blackened by doomspells of shattering,
 D:whose wielder holds the lives of all Morgoth's servants in his hand.
 
 
