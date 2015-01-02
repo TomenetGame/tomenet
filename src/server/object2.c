@@ -6117,14 +6117,14 @@ int kind_is_legal(int k_idx, u32b resf) {
 
 /*
  * Hack -- determine if a template is "good"
+ *   ugh, this is pretty bad hard-coding, and probably not even needed anymore?
+ *   note: Removing the speed-ring hardcode will probably lower their drop rate from wyrms and other good-droppers!
  */
-static int kind_is_good(int k_idx, u32b resf)
-{
+static int kind_is_good(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
 
 	/* Analyze the item type */
-	switch (k_ptr->tval)
-	{
+	switch (k_ptr->tval) {
 		/* Armor -- Good unless damaged */
 		case TV_HARD_ARMOR:
 		case TV_SOFT_ARMOR:
@@ -6135,10 +6135,8 @@ static int kind_is_good(int k_idx, u32b resf)
 		case TV_GLOVES:
 		case TV_HELM:
 		case TV_CROWN:
-		{
 			if (k_ptr->to_a < 0) return 0;
 			return 100;
-		}
 
 		/* Weapons -- Good unless damaged */
 		case TV_BOW:
@@ -6148,11 +6146,9 @@ static int kind_is_good(int k_idx, u32b resf)
 		case TV_DIGGING:
 		case TV_AXE:
 		case TV_BOOMERANG:
-		{
 			if (k_ptr->to_h < 0) return 0;
 			if (k_ptr->to_d < 0) return 0;
 			return 100;
-		}
 
 		/* Ammo -- Arrows/Bolts are good */
 		case TV_BOLT:
@@ -6160,13 +6156,14 @@ static int kind_is_good(int k_idx, u32b resf)
 		case TV_SHOT:	/* are Shots bad? */
 			if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
 		case TV_MSTAFF:
-		{
 			return 100;
-		}
+
+		/* Trap kits are good now, since weapons are, too (required for dungeon keeper reward sval generation..) */
+		case TV_TRAPKIT:
+			return 100;
 
 		/* Rings -- Rings of Speed are good */
 		case TV_RING:
-		{
 			if (k_ptr->sval == SV_RING_SPEED) return 100;
 			if (k_ptr->sval == SV_RING_BARAHIR) return 100;
 			if (k_ptr->sval == SV_RING_TULKAS) return 100;
@@ -6175,11 +6172,9 @@ static int kind_is_good(int k_idx, u32b resf)
 			if (k_ptr->sval == SV_RING_VILYA) return 100;
 			if (k_ptr->sval == SV_RING_POWER) return 100;
 			return 0;
-		}
 
 		/* Amulets -- Amulets of the Magi are good */
 		case TV_AMULET:
-		{
 #if 0
 			if (k_ptr->sval == SV_AMULET_THE_MAGI) return 100;
 			if (k_ptr->sval == SV_AMULET_THE_MOON) return 100;
@@ -6187,7 +6182,6 @@ static int kind_is_good(int k_idx, u32b resf)
 			if (k_ptr->sval == SV_AMULET_TERKEN) return 100;
 #endif
 			return 0;
-		}
 	}
 
 	/* Assume not good */
@@ -6963,7 +6957,6 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		break;
 	case 6: reward_maxweight = 500;
 		reward_tval = TV_TRAPKIT;
-		reward_sval = 0;
 		break;
 	}
 
@@ -7059,6 +7052,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	if (!reward_sval) {
 		int weapon_bpr = 0; /* try that the reward weapon does not reduce bpr compared to current bpr */
 		bool weapon_2h = FALSE; /* make the reward weapon 2-handed if we're using 2-handed */
+
 		if (is_weapon(reward_tval)) { /* melee weapon */
 			if (p_ptr->inventory[INVEN_WIELD].k_idx) {
 				i = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_WIELD]);
@@ -7079,7 +7073,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			tries++;
 			k_idx = 0;
 
-			if (reward_tval != TV_AMULET && reward_tval != TV_RING) { /* rings+amulets don't count as good so they won't be generated (see kind_is_good) */
+			/* rings (except speed) and amulets don't count as good so they won't be generated (see kind_is_good) */
+			if (reward_tval != TV_AMULET && reward_tval != TV_RING) {
 				get_obj_num_hook = kind_is_good;
 				get_obj_num_prep_tval(reward_tval, resf);
 			} else {
