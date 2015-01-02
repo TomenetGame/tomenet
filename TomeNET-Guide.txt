@@ -13917,7 +13917,9 @@ Mindcraft schools:
                     Required skill level for first spell level: 25.
 
     Stabilize Thoughts
-                    Cures some insanity and removes effects.   (auto-project)
+                    Cures some insanity and removes effects:   (auto-project)
+                    -Fear and confusion at level 5,
+                    -Hallucinations at level 10.
                     Required skill level for first spell level: 25.
 
     Telekinesis II  Inscribe your book @P<Playername>, cast it, select an
