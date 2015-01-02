@@ -9741,7 +9741,8 @@ Some monsters have better chances to spot the player, depending on
                         orcs, trolls, stupid monsters are worse),
         -the vision power of the monster,
         -the level of the monster,
-        -player carrying a light source, doubles the chance of spotting him,
+        -player carrying a light source (not affected by vampires' "intrinsic
+         light"), doubles the chance of spotting him,
         -player wearing an aggravating item, further triples the chance.
 
 Invisibility also affects other players:
