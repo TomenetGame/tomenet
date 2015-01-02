@@ -578,7 +578,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYour shooting power with bows gains extra might due to your training!");
 		break;
 	case SKILL_XBOW:
-		if ((old_value < 125 && new_value >= 125) || (old_value < 375 && new_value >= 500)) {
+		if ((old_value < 125 && new_value >= 125) || (old_value < 375 && new_value >= 375)) {
 			msg_print(Ind, "\374\377GYour shooting power with crossbows gains extra might due to your training!");
 		}
 		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
