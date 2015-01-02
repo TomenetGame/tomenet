@@ -8733,7 +8733,7 @@ D:darkest black hue. Acid drips from its body.
 
 N:547:Mumak
 G:q:s
-I:110:90d10:20:55:100
+I:110:90d10:20:75:100
 W:35:3:150000:2100
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -11144,7 +11144,7 @@ D:blood is fire. It charges at you ignoring everything else.
 
 N:673:Mumak
 G:q:s
-I:110:90d10:20:55:100
+I:110:90d10:20:75:100
 W:63:2:150000:1200
 E:0:1:0:2:1:0
 O:0:0:0:0
