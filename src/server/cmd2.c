@@ -3871,6 +3871,8 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 
 	/* Get a "repeated" direction */
 	if (dir) {
+		char consume_full_energy;
+
 		/* Hack -- handle confusion */
 		if (p_ptr->confused) {
 			int tries = 10;
@@ -3926,11 +3928,12 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			}
 		}
 		/* Actually move the character */
-		move_player(Ind, dir, pickup, NULL);
+		move_player(Ind, dir, pickup, &consume_full_energy);
 		p_ptr->warning_autoret_ok = 0;
 
-		/* Take a turn */
-		if (!(p_ptr->melee_sprint || p_ptr->shadow_running)) {
+		/* Take a turn (or less) */
+		if (consume_full_energy) p_ptr->energy -= level_speed(&p_ptr->wpos);//force-attacking always costs a whole turn
+		else if (!(p_ptr->melee_sprint || p_ptr->shadow_running)) {
 			if (p_ptr->mode & MODE_PVP)
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 			else
