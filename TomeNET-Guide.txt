@@ -482,6 +482,10 @@ g       g       pick up an item from the floor. You have to stand on the item
                 the number pad while numlock is turned off. Gold is always
                 picked up automatically.
 
+K       CTRL+C  forcibly combines a level 0 item in your inventory with other
+                items of the same type that aren't level 0. Be warned, that
+                this will change the level of all the items involved to 0.
+
 C       C       see a character overview.
 
 L       W       look around your current sector/floor (use direction keys).
@@ -794,10 +798,6 @@ _       Two uses, regarding a) fountains or b) item piles:
 
 !       look at the in-game bulletin board. Players can write lines of text to
         it by using the /bbs <text> command.
-
-K       forcibly combines a level 0 item in your inventory with other items of
-        the same type that aren't level 0. Be warned, that this will change the
-        level of all the items involved to 0.
 
 CTRL+P  view previous messages.
         Note: You can also press this when in chat prompt, to cycle backward
