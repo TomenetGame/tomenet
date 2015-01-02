@@ -6591,6 +6591,11 @@ void do_cmd_options(void) {
 		Term_putstr(3,15, -1, TERM_SLATE, "(Fonts and window visibility are saved automatically on quitting via CTRL+X)");
 #endif
 
+		if (c_cfg.rogue_like_commands)
+			Term_putstr(3,16, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+F hotkey)");
+		else
+			Term_putstr(3,16, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+U hotkey)");
+
 		Term_putstr(3,18, -1, TERM_WHITE, "(\377UA\377w) Account Options");
 		Term_putstr(3,19, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
 
@@ -6674,6 +6679,9 @@ void do_cmd_options(void) {
 		/* Cycle all fonts */
 		else if (k == 'c') change_font(-1);
 #endif
+
+		/* Access audio mixer */
+		else if (k == 'x') interact_audio();
 
 		else if (k == 'I') do_cmd_options_install_audio_packs();
 
