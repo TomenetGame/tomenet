@@ -2221,7 +2221,7 @@ I:32:6:0
 W:20:15:40:55555
 P:20:0d0:0:0:40
 F:ACTIVATE
-F:FREE_ACT
+F:FREE_ACT | RES_CONF | RES_SOUND | RES_FEAR
 D:With the helm 'Lebohaum' your head is safe!
 
 
