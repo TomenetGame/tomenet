@@ -8086,6 +8086,7 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 		msg_print(j, "\377oYou have been given a extermination order\377y!");
 //	msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
 	msg_format(j, "\377oFind and kill \377y%d \377g%s\377o (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
+	msg_format(Ind, "\377oThe remaining time to carry it out is \377y%d\377o minutes.", MAX_XORDER_TURNS / (cfg.fps * 60));
 	xorders[i].active++;
 
 	if (!xorders[i].active) {
@@ -8118,6 +8119,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 					msg_format(Ind, "\377oYour %sorder is to exterminate \377y%d \377g%s\377o (level %d).",
 					    (xorders[i].flags & QUEST_GUILD) ? "guild's " : "", Players[Ind]->xorder_num,
 					    r_name + r_info[xorders[i].type].name, r_info[xorders[i].type].level);
+					msg_format(Ind, "\377oThe remaining time to carry it out is \377y%d\377o minutes.", (MAX_XORDER_TURNS - (turn - xorders[i].turn)) / (cfg.fps * 60));
 				return FALSE;
 			}
 		}
