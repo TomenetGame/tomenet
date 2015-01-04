@@ -6125,63 +6125,114 @@ static int kind_is_good(int k_idx, u32b resf) {
 
 	/* Analyze the item type */
 	switch (k_ptr->tval) {
-		/* Armor -- Good unless damaged */
-		case TV_HARD_ARMOR:
-		case TV_SOFT_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-			if (k_ptr->to_a < 0) return 0;
-			return 100;
+	/* Armor -- Good unless damaged */
+	case TV_HARD_ARMOR:
+	case TV_SOFT_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+		if (k_ptr->to_a < 0) return 0;
+		return 100;
 
-		/* Weapons -- Good unless damaged */
-		case TV_BOW:
-		case TV_SWORD:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_DIGGING:
-		case TV_AXE:
-		case TV_BOOMERANG:
-			if (k_ptr->to_h < 0) return 0;
-			if (k_ptr->to_d < 0) return 0;
-			return 100;
+	/* Weapons -- Good unless damaged */
+	case TV_BOW:
+	case TV_SWORD:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_DIGGING:
+	case TV_AXE:
+	case TV_BOOMERANG:
+		if (k_ptr->to_h < 0) return 0;
+		if (k_ptr->to_d < 0) return 0;
+		return 100;
 
-		/* Ammo -- Arrows/Bolts are good */
-		case TV_BOLT:
-		case TV_ARROW:
-		case TV_SHOT:	/* are Shots bad? */
-			if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
-		case TV_MSTAFF:
-			return 100;
+	/* Ammo -- Arrows/Bolts are good */
+	case TV_BOLT:
+	case TV_ARROW:
+	case TV_SHOT:	/* are Shots bad? */
+		if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
+	case TV_MSTAFF:
+		return 100;
 
-		/* Trap kits are good now, since weapons are, too (required for dungeon keeper reward sval generation..) */
-		case TV_TRAPKIT:
-			return 100;
-
-		/* Rings -- Rings of Speed are good */
-		case TV_RING:
-			if (k_ptr->sval == SV_RING_SPEED) return 100;
-			if (k_ptr->sval == SV_RING_BARAHIR) return 100;
-			if (k_ptr->sval == SV_RING_TULKAS) return 100;
-			if (k_ptr->sval == SV_RING_NARYA) return 100;
-			if (k_ptr->sval == SV_RING_NENYA) return 100;
-			if (k_ptr->sval == SV_RING_VILYA) return 100;
-			if (k_ptr->sval == SV_RING_POWER) return 100;
-			return 0;
-
-		/* Amulets -- Amulets of the Magi are good */
-		case TV_AMULET:
-#if 0
-			if (k_ptr->sval == SV_AMULET_THE_MAGI) return 100;
-			if (k_ptr->sval == SV_AMULET_THE_MOON) return 100;
-			if (k_ptr->sval == SV_AMULET_SPEED) return 100;
-			if (k_ptr->sval == SV_AMULET_TERKEN) return 100;
+	/* Trap kits are good now, since weapons are, too (required for dungeon keeper reward sval generation..) */
+#if 0 /* disabled them again, because _every_ monster would drop them like weapons/armour, ie way too high frequency! - instead, added kind_is_good_reward() */
+	case TV_TRAPKIT:
+		return 100;
 #endif
-			return 0;
+
+	/* Rings -- Rings of Speed are good */
+	case TV_RING:
+		if (k_ptr->sval == SV_RING_SPEED) return 100;
+		if (k_ptr->sval == SV_RING_BARAHIR) return 100;
+		if (k_ptr->sval == SV_RING_TULKAS) return 100;
+		if (k_ptr->sval == SV_RING_NARYA) return 100;
+		if (k_ptr->sval == SV_RING_NENYA) return 100;
+		if (k_ptr->sval == SV_RING_VILYA) return 100;
+		if (k_ptr->sval == SV_RING_POWER) return 100;
+		return 0;
+
+	/* Amulets -- Amulets of the Magi are good */
+	case TV_AMULET:
+#if 0
+		if (k_ptr->sval == SV_AMULET_THE_MAGI) return 100;
+		if (k_ptr->sval == SV_AMULET_THE_MOON) return 100;
+		if (k_ptr->sval == SV_AMULET_SPEED) return 100;
+		if (k_ptr->sval == SV_AMULET_TERKEN) return 100;
+#endif
+		return 0;
+	}
+
+	/* Assume not good */
+	return 0;
+}
+
+/* Variant of kind_is_good() that includes trap kits,
+   specifically made for create_reward(). */
+static int kind_is_good_reward(int k_idx, u32b resf) {
+	object_kind *k_ptr = &k_info[k_idx];
+
+	/* Analyze the item type */
+	switch (k_ptr->tval) {
+	/* Armor -- Good unless damaged */
+	case TV_HARD_ARMOR:
+	case TV_SOFT_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+		if (k_ptr->to_a < 0) return 0;
+		return 100;
+
+	/* Weapons -- Good unless damaged */
+	case TV_BOW:
+	case TV_SWORD:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_DIGGING:
+	case TV_AXE:
+	case TV_BOOMERANG:
+		if (k_ptr->to_h < 0) return 0;
+		if (k_ptr->to_d < 0) return 0;
+		return 100;
+
+	/* Ammo -- Arrows/Bolts are good */
+	case TV_BOLT:
+	case TV_ARROW:
+	case TV_SHOT:	/* are Shots bad? */
+		if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
+	case TV_MSTAFF:
+		return 100;
+
+	/* Trap kits are good now, since weapons are, too (required for dungeon keeper reward sval generation..) */
+	case TV_TRAPKIT:
+		return 100;
 	}
 
 	/* Assume not good */
@@ -7075,7 +7126,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 			/* rings (except speed) and amulets don't count as good so they won't be generated (see kind_is_good) */
 			if (reward_tval != TV_AMULET && reward_tval != TV_RING) {
-				get_obj_num_hook = kind_is_good;
+				get_obj_num_hook = kind_is_good_reward;
 				get_obj_num_prep_tval(reward_tval, resf);
 			} else {
 				get_obj_num_hook = NULL;
