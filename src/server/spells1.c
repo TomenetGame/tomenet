@@ -1654,16 +1654,19 @@ byte spell_color(int type)
  * that tells 'what kind of damage'.
  */
 bool bypass_invuln = FALSE;
-
-void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
-{
+void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	cptr hit_from_real = hit_from; /* non-hallucinated attacker */
 	player_type *p_ptr = Players[Ind];
 
 	// The "number" that the character is displayed as before the hit
 	int old_num, new_num;
 
-	if (p_ptr->alert_afk_dam && p_ptr->afk
+	if (((p_ptr->alert_afk_dam && p_ptr->afk)
+#ifdef ALERT_OFFPANEL_DAM
+	    /* new: alert when we're off-panel (cmd_locate) */
+	    || (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col)
+#endif
+	    )
 	    /* don't alert about 0-damage terrain effect */
 	    && (damage || -Ind_attacker != PROJECTOR_TERRAIN)
 #ifdef USE_SOUND_2010
@@ -1932,7 +1935,12 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from) {
 	int warning = (p_ptr->msane * hitpoint_warn / 10);
 #endif	// 0
 
-	if (p_ptr->alert_afk_dam && p_ptr->afk
+	if (((p_ptr->alert_afk_dam && p_ptr->afk)
+#ifdef ALERT_OFFPANEL_DAM
+	    /* new: alert when we're off-panel (cmd_locate) */
+	    || (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col)
+#endif
+	    )
 #ifdef USE_SOUND_2010
 	    ) {
 		Send_warning_beep(Ind);
@@ -2061,8 +2069,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from) {
  * if not permanent nor fatal, use lose_exp instead.
  * - Jir -
  */
-void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool disturb)
-{
+void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool disturb) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Amulet of Immortality */
@@ -2077,7 +2084,12 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 	}
 
 #if 0
-	if (p_ptr->alert_afk_dam && p_ptr->afk
+	if (((p_ptr->alert_afk_dam && p_ptr->afk)
+#ifdef ALERT_OFFPANEL_DAM
+	    /* new: alert when we're off-panel (cmd_locate) */
+	    || (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col)
+#endif
+	    )
 #ifdef USE_SOUND_2010
 	    ) {
 		Send_warning_beep(Ind);

@@ -2458,6 +2458,12 @@ static void player_setup(int Ind, bool new) {
 
 	panel_calculate(Ind);
 
+#ifdef ALERT_OFFPANEL_DAM
+	/* For alert-beeps on damage: Init remembered panel */
+	p_ptr->panel_row_old = p_ptr->panel_row;
+	p_ptr->panel_col_old = p_ptr->panel_col;
+#endif
+
 	/* Make sure his party still exists */
 	if (p_ptr->party && parties[p_ptr->party].members == 0) {
 		/* Reset to neutral */

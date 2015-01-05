@@ -4583,8 +4583,7 @@ return;
 /*
  * Lose experience
  */
-void lose_exp(int Ind, s32b amount)
-{
+void lose_exp(int Ind, s32b amount) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Amulet of Immortality */
@@ -4605,7 +4604,11 @@ void lose_exp(int Ind, s32b amount)
 	if (!amount) return;
 
 #if 1
-        if (p_ptr->alert_afk_dam && p_ptr->afk
+        if (((p_ptr->alert_afk_dam && p_ptr->afk)
+#ifdef ALERT_OFFPANEL_DAM
+	    || (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col)
+#endif
+	    )
 #ifdef USE_SOUND_2010
             ) {
                 Send_warning_beep(Ind);

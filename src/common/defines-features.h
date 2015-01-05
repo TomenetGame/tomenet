@@ -162,6 +162,8 @@
 /* Allow Martial Arts users to wield boomerangs? */
 #define ENABLE_MA_BOOMERANG
 
+/* Warning beep on taking damage while off-panel via locate command */
+#define ALERT_OFFPANEL_DAM
 
 /* --------------------- Server-type dependant features -------------------- */
 

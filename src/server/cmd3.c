@@ -3324,6 +3324,12 @@ void do_cmd_locate(int Ind, int dir) {
 			handle_stuff(Ind);
 		}
 
+#ifdef ALERT_OFFPANEL_DAM
+		/* For alert-beeps on damage: Reset remembered panel */
+		p_ptr->panel_row_old = p_ptr->panel_row;
+		p_ptr->panel_col_old = p_ptr->panel_col;
+#endif
+
 		return;
 	}
 
