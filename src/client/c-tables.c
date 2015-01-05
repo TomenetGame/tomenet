@@ -316,7 +316,6 @@ option_type option_info[OPT_MAX] =
 	"alert_afk_dam",		"Beep when taking damage while AFK" },//alert_failure
 
 
-
 	{ &c_cfg.auto_afk,		TRUE,	2,	1, 0, TRUE,	/* former auto_haggle */
 	"auto_afk",			"Set 'AFK mode' automatically" },
 
@@ -495,7 +494,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.taciturn_messages,	FALSE,	1,	9, 66, TRUE,
 	"taciturn_messages",		"Suppress server messages as far as possible" },
 
-	{ &c_cfg.limit_chat,		FALSE,	1,	9, 67, FALSE,//works, but pretty useless - disabled to make room
+    //works, but pretty useless - disabled to make room in its options page
+	{ &c_cfg.limit_chat,		FALSE,	1,	9, 67, FALSE,
 	"limit_chat",			"Chat only with players on the same floor" },
 
 	{ &c_cfg.thin_down_flush,	TRUE,	3,	9, 68, TRUE,
@@ -535,6 +535,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.disable_flush,		FALSE,	3,	9, 78, TRUE,
 	"disable_flush",		"Disable delays from flush signals" },
 
+    //todo: check shopkeeper speakage
 #if 0
 	{ &c_cfg.speak_unique,		TRUE,	1,	13, xx, TRUE,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
@@ -607,6 +608,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.no_weather,		FALSE,	4,	1, 99, TRUE,
 	"no_weather",			"Disable weather visuals and sounds completely" },
 
+    //todo: fix/implement good cursor on *nix/osx
 	{ &c_cfg.hilite_player,		FALSE,	4,	1, 100, FALSE,
 	"hilite_player",		"Hilite own character icon with the cursor" },
 
@@ -616,7 +618,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.no_verify_sell,	FALSE,	4,	0, 102, TRUE,
 	"no_verify_sell",		"Skip safety question when selling items" },
 
-	//disabled use_color and limit_chat to make room for 2 more 'UI options'
+    //disabled use_color and limit_chat to make room for 2 more 'UI options'
 	{ &c_cfg.exp_bar,		FALSE,	1,	9, 103, TRUE,
 	"exp_bar",			"Show experience bar instead of a number" },
 
@@ -625,6 +627,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.flash_player,		FALSE,	4,	1, 105, TRUE,
 	"flash_player",			"Flash own character icon after far relocation" },
+
+	{ &c_cfg.alert_offpanel_dam,	FALSE,	6,	0, 106, TRUE,
+	"alert_offpanel_dam",		"Beep when taking damage while off-panel" },
 };
 
 

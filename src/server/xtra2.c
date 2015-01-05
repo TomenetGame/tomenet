@@ -4605,18 +4605,18 @@ void lose_exp(int Ind, s32b amount) {
 
 #if 1
         if (((p_ptr->alert_afk_dam && p_ptr->afk)
-#ifdef ALERT_OFFPANEL_DAM
-	    || (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col)
-#endif
+ #ifdef ALERT_OFFPANEL_DAM
+	    || (p_ptr->alert_offpanel_dam && (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col))
+ #endif
 	    )
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
             ) {
                 Send_warning_beep(Ind);
                 //sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
-#else
+ #else
             && p_ptr->paging == 0) {
                 p_ptr->paging = 1;
-#endif
+ #endif
         }
 #endif
 

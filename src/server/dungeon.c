@@ -4757,10 +4757,14 @@ static bool process_player_end_aux(int Ind)
 	/* Drain Hitpoints */
 	if (p_ptr->drain_life) {
 		bool aad = p_ptr->alert_afk_dam;
+		bool aod = p_ptr->alert_offpanel_dam;
 		int drain = (p_ptr->drain_life) * (rand_int(p_ptr->mhp / 100) + 1);
+
 		p_ptr->alert_afk_dam = FALSE;
+		p_ptr->alert_offpanel_dam = FALSE;
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
 		p_ptr->alert_afk_dam = aad;
+		p_ptr->alert_offpanel_dam = aod;
 	}
 
 	/* Note changes */

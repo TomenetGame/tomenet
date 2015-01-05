@@ -6570,31 +6570,32 @@ void do_cmd_options(void) {
 		Term_clear();
 
 		/* Why are we here */
-		c_prt(TERM_L_GREEN, "TomeNET options", 2, 0);
+		c_prt(TERM_L_GREEN, "TomeNET options", 0, 0);
 
 		/* Give some choices */
-		Term_putstr(3, 4, -1, TERM_WHITE, "(\377y1\377w) User Interface Options 1");
-		Term_putstr(3, 5, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
-		Term_putstr(3, 6, -1, TERM_WHITE, "(\377y3\377w) Audio Options");
-		Term_putstr(3, 7, -1, TERM_WHITE, "(\377y4\377w) Game-Play Options 1");
-		Term_putstr(3, 8, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 2");
-		Term_putstr(3, 9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
-		Term_putstr(3,10, -1, TERM_WHITE, "(\377ys\377w) Save Options & Flags");
-		Term_putstr(3,11, -1, TERM_WHITE, "(\377yl\377w) Load Options & Flags");
+		Term_putstr(3, 2, -1, TERM_WHITE, "(\377y1\377w) User Interface Options 1");
+		Term_putstr(3, 3, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
+		Term_putstr(3, 4, -1, TERM_WHITE, "(\377y3\377w) User Interface Options 3");
+		Term_putstr(3, 5, -1, TERM_WHITE, "(\377y4\377w) Audio Options");
+		Term_putstr(3, 6, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 1");
+		Term_putstr(3, 7, -1, TERM_WHITE, "(\377y6\377w) Game-Play Options 2");
+		Term_putstr(3, 8, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
+		Term_putstr(3, 9, -1, TERM_WHITE, "(\377os\377w) Save Options & Flags");
+		Term_putstr(3,10, -1, TERM_WHITE, "(\377ol\377w) Load Options & Flags");
+
+		Term_putstr(3,12, -1, TERM_SLATE, "The following options are all saved automatically on quitting via CTRL+X:");
+		if (c_cfg.rogue_like_commands)
+			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+F hotkey)");
+		else
+			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+U hotkey)");
 
 #if defined(WINDOWS) || defined(USE_X11)
  #ifdef ENABLE_SUBWINDOW_MENU
-		Term_putstr(3,13, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+		Term_putstr(3,14, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 		/* CHANGE_FONTS_X11 */
-		Term_putstr(3,14, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (tap multiple times)");
-		Term_putstr(3,15, -1, TERM_SLATE, "(Fonts and window visibility are saved automatically on quitting via CTRL+X)");
+		Term_putstr(3,15, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (tap multiple times)");
 #endif
-
-		if (c_cfg.rogue_like_commands)
-			Term_putstr(3,16, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+F hotkey)");
-		else
-			Term_putstr(3,16, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+U hotkey)");
 
 		Term_putstr(3,18, -1, TERM_WHITE, "(\377UA\377w) Account Options");
 		Term_putstr(3,19, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
@@ -6618,10 +6619,12 @@ void do_cmd_options(void) {
 		} else if (k == '2') {
 			do_cmd_options_aux(4, "User Interface Options 2");
 		} else if (k == '3') {
-			do_cmd_options_aux(5, "Audio Options");
+			do_cmd_options_aux(6, "User Interface Options 3");
 		} else if (k == '4') {
-			do_cmd_options_aux(2, "Game-Play Options 1");
+			do_cmd_options_aux(5, "Audio Options");
 		} else if (k == '5') {
+			do_cmd_options_aux(2, "Game-Play Options 1");
+		} else if (k == '6') {
 			do_cmd_options_aux(3, "Game-Play Options 2");
 		}
 

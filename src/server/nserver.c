@@ -2247,6 +2247,8 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->exp_bar = options[103];//just for tracking this feature's popularity =P
 		p_ptr->consistent_players = options[104];
 		p_ptr->flash_self = options[105] ? 0 : -1;
+
+		p_ptr->alert_offpanel_dam = options[106];
 	}
 }
 
