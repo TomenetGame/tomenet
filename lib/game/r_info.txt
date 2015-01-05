@@ -16944,7 +16944,7 @@ D:A Dragonrider of Pern. Among the weaker breeds, but still dangerous.
 
 N:957:Brown Dragonrider
 G:D:u
-I:130:70d70:30:100:50
+I:130:65d65:30:100:50
 W:50:2:30000:10000
 E:1:1:1:2:1:1
 O:50:50:0:0
@@ -16963,7 +16963,7 @@ D:A Dragonrider of Pern. Beware its flame.
 
 N:958:Bronze Dragonrider
 G:D:U
-I:130:80d80:30:100:50
+I:130:70d70:30:100:50
 W:60:2:30000:15000
 E:1:1:1:2:1:1
 O:50:50:0:0
@@ -16982,7 +16982,7 @@ D:A Dragonrider of Pern, mightiest among the males.
 
 N:959:Gold Dragonrider
 G:D:y
-I:130:90d90:30:100:50
+I:130:80d80:30:100:50
 W:70:2:30000:20000
 E:1:1:1:2:1:1
 O:50:50:0:0
