@@ -1498,7 +1498,8 @@ void xhtml_screenshot(cptr name)
 #if 0
 		"#747474",	/* DARKGRAY */
 #else
-		"#585858",	/* DARKGRAY */
+		//"#585858",	/* DARKGRAY */
+		"#666666",	/* DARKGRAY */
 #endif
 		"#d7d7d7",	/* LIGHTGRAY */
 		"#af00ff",	/* PURPLE */

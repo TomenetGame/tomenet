@@ -2227,7 +2227,8 @@ static char color_name[16][8] =
 #ifndef DISTINCT_DARK
 	"#747474",      /* DARKGRAY */
 #else
-	"#585858",      /* DARKGRAY */
+	//"#585858",      /* DARKGRAY */
+	"#666666",      /* DARKGRAY */
 #endif
 	"#d7d7d7",      /* LIGHTGRAY */
 	"#af00ff",      /* PURPLE */

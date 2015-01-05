@@ -470,7 +470,8 @@ static COLORREF win_clr[16] =
 #ifndef DISTINCT_DARK
 	PALETTERGB(0x74, 0x74, 0x74),  /* 1 1 1  Lt. Dark */
 #else
-	PALETTERGB(0x58, 0x58, 0x58),  /* 1 1 1  Lt. Dark */
+	//PALETTERGB(0x58, 0x58, 0x58),  /* 1 1 1  Lt. Dark */
+	PALETTERGB(0x66, 0x66, 0x66),  /* 1 1 1  Lt. Dark */
 #endif
 	PALETTERGB(0xD7, 0xD7, 0xD7),  /* 3 3 3  Lt. Slate */
 	PALETTERGB(0xAF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
