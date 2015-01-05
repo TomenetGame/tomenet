@@ -1830,6 +1830,35 @@ void do_cmd_open(int Ind, int dir)
 		    !((c_ptr->feat == FEAT_HOME)) &&
 		    (o_ptr->tval != TV_CHEST))
 		{
+#if 1 /* just for fun */
+			/* fun exception: open door mimic players */
+			if ((i = -c_ptr->m_idx) > 0) {
+				player_type *q_ptr = Players[i];
+				if (q_ptr->body_monster == RI_DOOR_MIMIC && !q_ptr->dummy_option_7) {
+					q_ptr->dummy_option_7 = TRUE; /* 'open' :-p */
+					msg_print(i, "That tickles!");
+					note_spot(i, q_ptr->py, q_ptr->px);
+					everyone_lite_spot(&q_ptr->wpos, q_ptr->py, q_ptr->px);
+
+					/* S(he) is no longer afk */
+					un_afk_idle(Ind);
+
+					break_cloaking(Ind, 3);
+					break_shadow_running(Ind);
+					stop_precision(Ind);
+					stop_shooting_till_kill(Ind);
+
+					/* Take half a turn */
+					p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+#ifdef USE_SOUND_2010
+					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+
+					return;
+				}
+			}
+#endif
 			/* Message */
 			msg_print(Ind, "You see nothing there to open.");
 		}
@@ -1899,7 +1928,7 @@ void do_cmd_open(int Ind, int dir)
 				chest_trap(Ind, y, x, c_ptr->o_idx);
 
 				break_cloaking(Ind, 3);
-				break_shadow_running(Ind); 
+				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
 
@@ -1948,7 +1977,7 @@ void do_cmd_open(int Ind, int dir)
 				sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 				break_cloaking(Ind, 3);
-				break_shadow_running(Ind); 
+				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
 
@@ -2004,12 +2033,12 @@ void do_cmd_open(int Ind, int dir)
 					/* S(he) is no longer afk */
 					un_afk_idle(Ind);
 					break_cloaking(Ind, 3);
-					break_shadow_running(Ind); 
+					break_shadow_running(Ind);
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
 
 					/* Take half a turn */
-					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
+					p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 					/* Redraw */
@@ -2045,7 +2074,7 @@ void do_cmd_open(int Ind, int dir)
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
-						break_shadow_running(Ind); 
+						break_shadow_running(Ind);
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
 						p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -2062,7 +2091,7 @@ void do_cmd_open(int Ind, int dir)
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
-						break_shadow_running(Ind); 
+						break_shadow_running(Ind);
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
 						p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -2175,6 +2204,35 @@ void do_cmd_close(int Ind, int dir)
 
 		/* Require open door */
 		else if (c_ptr->feat != FEAT_OPEN && c_ptr->feat != FEAT_HOME_OPEN) {
+#if 1 /* just for fun */
+			/* fun exception: open door mimic players */
+			int i;
+			if ((i = -c_ptr->m_idx) > 0) {
+				player_type *q_ptr = Players[i];
+				if (q_ptr->body_monster == RI_DOOR_MIMIC && q_ptr->dummy_option_7) {
+					q_ptr->dummy_option_7 = FALSE; /* 'close' :-p */
+					msg_print(i, "That tickles!");
+					note_spot(i, q_ptr->py, q_ptr->px);
+					everyone_lite_spot(&q_ptr->wpos, q_ptr->py, q_ptr->px);
+
+					/* S(he) is no longer afk */
+					un_afk_idle(Ind);
+
+					break_cloaking(Ind, 2);
+					break_shadow_running(Ind);
+					stop_precision(Ind);
+					stop_shooting_till_kill(Ind);
+					/* Take a turn */
+					p_ptr->energy -= level_speed(&p_ptr->wpos);
+#ifdef USE_SOUND_2010
+					sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+
+					return;
+				}
+			}
+#endif
+
 			/* Message */
 			msg_print(Ind, "You see nothing there to close.");
 		}
@@ -2206,7 +2264,7 @@ void do_cmd_close(int Ind, int dir)
 			un_afk_idle(Ind);
 
 			break_cloaking(Ind, 2);
-			break_shadow_running(Ind); 
+			break_shadow_running(Ind);
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
 
@@ -2234,7 +2292,7 @@ void do_cmd_close(int Ind, int dir)
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 			break_cloaking(Ind, 2);
-			break_shadow_running(Ind); 
+			break_shadow_running(Ind);
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
 
@@ -5858,7 +5916,7 @@ bool interfere(int Ind, int chance)
 			if (m_ptr->csleep || m_ptr->monfear || m_ptr->stunned || m_ptr->confused)
 				continue;
 			/* Pet never interfere  - the_sandman */
-			if (m_ptr->pet) continue; 
+			if (m_ptr->pet) continue;
 		}
 		else
 		{
@@ -7240,6 +7298,6 @@ void break_shadow_running(int Ind) {
 	        Players[Ind]->update |= (PU_BONUS | PU_VIEW);
     		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
 		/* update so everyone sees the colour animation */
-                everyone_lite_spot(&Players[Ind]->wpos, Players[Ind]->py, Players[Ind]->px); 
+                everyone_lite_spot(&Players[Ind]->wpos, Players[Ind]->py, Players[Ind]->px);
 	}
 }

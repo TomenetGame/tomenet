@@ -3259,7 +3259,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			if ((p2_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p2_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
 				c = r_info[p2_ptr->inventory[INVEN_BODY].bpval].d_char;
 			}
-			else if (p2_ptr->body_monster) c = r_info[p2_ptr->body_monster].d_char;
+			else if (p2_ptr->body_monster) {
+				c = r_info[p2_ptr->body_monster].d_char;
+#if 1 /* just for fun */
+				if (p2_ptr->body_monster == RI_DOOR_MIMIC && p2_ptr->dummy_option_7) c = '\'';
+#endif
+			}
 			else if (p2_ptr->fruit_bat) c = 'b';
 			else c = '@';
 
@@ -3554,6 +3559,9 @@ void lite_spot(int Ind, int y, int x)
 
 			/* Get the "player" char */
 			c = r_ptr->d_char;
+#if 1 /* just for fun */
+			if (p_ptr->body_monster == RI_DOOR_MIMIC && p_ptr->dummy_option_7) c = '\'';
+#endif
 
 /*			if (p_ptr->invis && !p_ptr->body_monster) {  - hmm why not always TERM_VIOLET */
 			if (p_ptr->invis) {
