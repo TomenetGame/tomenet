@@ -550,16 +550,18 @@ byte flick_colour(byte attr){
 
 	/* additional flickering from 'black'n'white' flag? */
 	if (flags & TERM_BNW) {
-		if (attr && rand_int(7) < 5) return (attr);
-		return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+		if (!(attr && rand_int(6) < 4))
+			return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+		/* fall through */
 	/* additional flickering from 'pvp' flag? */
 	} else if (flags & TERM_PVP) {
-		if (attr && rand_int(6) < 3) return (attr);
-		switch (randint(3)) {
-		case 1: return TERM_L_DARK;
-		case 2: return TERM_L_RED;
-		case 3: return TERM_YELLOW;
-		}
+		if (!(attr && rand_int(6) < 3))
+			switch (randint(3)) {
+			case 1: return TERM_L_DARK;
+			case 2: return TERM_L_RED;
+			case 3: return TERM_YELLOW;
+			}
+		/* fall through */
 	}
 
 	if (attr == TERM_SHIELDM) {
@@ -569,16 +571,16 @@ byte flick_colour(byte attr){
 		return((randint(2) == 1) ? TERM_VIOLET : TERM_ORANGE);
 		else
 		return((randint(2) == 1) ? TERM_L_RED : TERM_ORANGE);
-*/		switch(randint(3)){
-		case 1:return TERM_VIOLET;
-		case 2:return TERM_L_RED;
-		case 3:return TERM_ORANGE;
+*/		switch (randint(3)) {
+		case 1: return TERM_VIOLET;
+		case 2: return TERM_L_RED;
+		case 3: return TERM_ORANGE;
 		}
 	}
 	if (attr == TERM_SHIELDI) {
 /*	if ((attr >= TERM_SHIELDI) && (attr <= 0xFF)){
 		if (randint(4) == 1) return (attr - TERM_SHIELDI);
-*/		switch(randint(5)) {
+*/		switch (randint(5)) {
 		case 1: return (TERM_L_RED);
 		case 2: return (TERM_L_GREEN);
 		case 3: return (TERM_L_BLUE);
