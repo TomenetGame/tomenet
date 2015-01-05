@@ -162,8 +162,7 @@ static const os_PALETTE(16) default_palette =
 #endif
 		0x0066d800,   /* TERM_UMBER */
 #ifndef DISTINCT_DARK
-		0x74747400,      /* DARKGRAY */
-		0x58585800,   /* TERM_L_DARK */
+		0x74747400,   /* TERM_L_DARK */
 #else
 		0x58585800,   /* TERM_L_DARK */
 #endif
