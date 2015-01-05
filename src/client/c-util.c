@@ -6594,7 +6594,7 @@ void do_cmd_options(void) {
 		Term_putstr(3,14, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 		/* CHANGE_FONTS_X11 */
-		Term_putstr(3,15, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (tap multiple times)");
+		Term_putstr(3,15, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (can be tapped multiple times)");
 #endif
 
 		Term_putstr(3,18, -1, TERM_WHITE, "(\377UA\377w) Account Options");
