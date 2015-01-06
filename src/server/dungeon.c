@@ -6690,6 +6690,17 @@ void process_player_change_wpos(int Ind) {
 	/* Clear the flag */
 	p_ptr->new_level_flag = FALSE;
 
+	/* Is arriving in a fixed IDDC-town noteworthy maybe? */
+	if (is_fixed_irondeepdive_town(&p_ptr->wpos, dlv)) {
+		if (dlv == 40) {
+			msg_broadcast_format(0, "\374\377s%s has reached Menegroth.", p_ptr->name);
+			l_printf("%s \\{s%s reached Menegroth\n", showdate(), p_ptr->name);
+		} else if (dlv == 80) {
+			msg_broadcast_format(0, "\374\377s%s has reached Nargothrond.", p_ptr->name);
+			l_printf("%s \\{s%s reached Nargothrond\n", showdate(), p_ptr->name);
+		}
+	}
+
 	/* warning messages, mostly for newbies */
 	if (p_ptr->ghost) ; /* don't warn ghosts */
 	else if (p_ptr->warning_bpr2 != 1 && p_ptr->num_blow == 1 && 

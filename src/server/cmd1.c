@@ -2062,7 +2062,7 @@ void carry(int Ind, int pickup, int confirm) {
 						    && !multiple_artifact_p(o_ptr) && !is_admin(p_ptr)) {
 							char o_name_short[ONAME_LEN];
 							object_desc(0, o_name_short, o_ptr, TRUE, 256);
-							l_printf("%s \\{U%s found %s.\n", showdate(), p_ptr->name, o_name_short);
+							l_printf("%s \\{U%s found %s\n", showdate(), p_ptr->name, o_name_short);
 						}
 					}
 #if CHEEZELOG_LEVEL > 2

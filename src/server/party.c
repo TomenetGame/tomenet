@@ -1000,7 +1000,7 @@ int guild_create(int Ind, cptr name) {
 	msg_broadcast(0, temp);
 //	msg_print(Ind, "\374\377Gou can adjust guild options with the '/guild_cfg' command.");
 	s_printf("GUILD_CREATE: (by %s) '%s'\n", p_ptr->name, guilds[index].name);
-	l_printf("%s \\{yA new guild '%s' has been created.\n", showdate(), guilds[index].name);
+	l_printf("%s \\{yA new guild '%s' has been created\n", showdate(), guilds[index].name);
 
 	p_ptr->au -= GUILD_PRICE;
 	p_ptr->redraw |= PR_GOLD;
@@ -2359,7 +2359,7 @@ bool guild_rename(int Ind, char *new_name) {
 	msg_broadcast_format(0, "\374\377yThe guild '\377%c%s\377y' changed name to '\377%c%s\377y'.",
 	    COLOUR_CHAT_GUILD, guilds[gid].name, COLOUR_CHAT_GUILD, new_name);
 
-	l_printf("%s \\{yThe guild '%s' changed name to '%s'.\n",
+	l_printf("%s \\{yThe guild '%s' changed name to '%s'\n",
 	    showdate(), guilds[gid].name, new_name);
 
 	strcpy(guilds[gid].name, new_name);
@@ -3640,7 +3640,7 @@ void scan_players() {
 				if (!acc) acc = "(no account)";
 				s_printf("  Removing player: %s (%s)\n", ptr->name, acc);
 
-				if (ptr->level >= 50 && ptr->admin == 0) l_printf("%s \\{D%s, level %d, was erased by timeout.\n", showdate(), ptr->name, ptr->level);
+				if (ptr->level >= 50 && ptr->admin == 0) l_printf("%s \\{D%s, level %d, was erased by timeout\n", showdate(), ptr->name, ptr->level);
 
 				for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
 					if (streq(parties[i].owner, ptr->name)) {
