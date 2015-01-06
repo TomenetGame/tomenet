@@ -1809,7 +1809,7 @@ struct skill_player
 
 
 //todo, instead of ACC_GREETED, ACC_WARN_.. etc, maybe:	a dedicated 'u32b warnings;	/* account flags for received (one-time) hints/warnings */'
-struct account{
+struct account {
 	u32b id;	/* account id */
 	u32b flags;	/* account flags */
 	char name[30];	/* login */
@@ -1827,15 +1827,15 @@ struct account{
 	u32b guild_dna;	/* auto-rejoin its guild after a char perma-died */
 };
 /* Used for updating tomenet.acc structure: */
-struct account_old{
+struct account_old {
 	u32b id;	/* account id */
 	u32b flags;	/* account flags */
 	char name[30];	/* login */
 	char pass[20];	/* some crypts are not 13 */
 #ifdef ACC32
-	int acc_laston;
+	int acc_laston, acc_laston_real;
 #else
-	time_t acc_laston;	/* last time this account logged on (for expiry check) */
+	time_t acc_laston, acc_laston_real;	/* last time this account logged on (for expiry check) */
 #endif
 	s32b cheeze;	/* value in gold of cheezed goods or money */
 	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */

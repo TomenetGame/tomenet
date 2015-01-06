@@ -510,6 +510,9 @@ static bool update_acc_file_version(void) {
 	s_printf("done.\n");
 
 	if (fp_old && fp) {
+		/* helper vars */
+		char *ptr;
+
 		s_printf("Updating tomenet.acc structure.. ");
                 while (!feof(fp_old)) {
                         retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
@@ -518,9 +521,10 @@ static bool update_acc_file_version(void) {
 			/* copy unchanged structure parts: */
 			c_acc.id = c_acc_old.id;
 			c_acc.flags = c_acc_old.flags;
-			strcpy(c_acc.name, c_acc_old.name);
+			//strcpy(c_acc.name, c_acc_old.name);
 			strcpy(c_acc.pass, c_acc_old.pass);
 			c_acc.acc_laston = c_acc_old.acc_laston;
+			c_acc.acc_laston_real = c_acc_old.acc_laston_real;
 			c_acc.cheeze = c_acc_old.cheeze;
 			c_acc.cheeze_self = c_acc_old.cheeze_self;
 			c_acc.deed_event = c_acc_old.deed_event;
@@ -528,7 +532,11 @@ static bool update_acc_file_version(void) {
 			c_acc.guild_id = c_acc_old.guild_id;
 			c_acc.guild_dna = c_acc.guild_id ? guilds[c_acc.guild_id].dna : 0;
 			/* changes/additions: */
-			c_acc.acc_laston_real = c_acc_old.acc_laston;
+			for (ptr = &c_acc_old.name[strlen(c_acc_old.name)]; ptr-- > c_acc_old.name; ) {
+				if (*ptr == ' ') *ptr = '\0';
+				else break;
+			}
+			strcpy(c_acc.name, c_acc_old.name);
 
 			/* write it back */
 //                        fseek(fp, 0L, SEEK_END);
