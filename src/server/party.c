@@ -815,7 +815,7 @@ static bool group_name_legal_characters(cptr name) {
 		if (!((*ptr >= 'A' && *ptr <= 'Z') ||
 		    (*ptr >= 'a' && *ptr <= 'z') ||
 		    (*ptr >= '0' && *ptr <= '9') ||
-		    strchr(" .,-'`'&_$%~#<>|", *ptr))) /* chars allowed for character name */
+		    strchr(" .,-'&_$%~#<>|", *ptr))) /* chars allowed for character name */
 			return FALSE;
 	return TRUE;
 }

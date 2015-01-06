@@ -852,7 +852,7 @@ static void Trim_name(char *nick_name)
 		if (!((*ptr >= 'A' && *ptr <= 'Z') ||
 		    (*ptr >= 'a' && *ptr <= 'z') ||
 		    (*ptr >= '0' && *ptr <= '9') ||
-		    strchr(" .,-'`'&_$%~#<>|", *ptr))) /* chars allowed for character name, */
+		    strchr(" .,-'&_$%~#<>|", *ptr))) /* chars allowed for character name, */
 			*ptr = '_'; /* but they become _ in savefile name */
 	}
 }
@@ -3575,6 +3575,9 @@ static int Receive_login(int ind) {
 		bool censor_swearing_tmp = censor_swearing;
 		char tmp_name[NAME_LEN];
 		struct account *acc;
+
+		/* remove disallowed chars and spaces at the end */
+		Trim_name(connp->nick);
 
 		/* Check if player tries to create an account of the same name as
 		   an already existing character - give an error message.
