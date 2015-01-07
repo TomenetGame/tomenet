@@ -271,7 +271,12 @@
 #define MAX_ID 65536
 #define MAX_ACCOUNTS	8192
 
+/* For storing event rewards for to-be-created characters of an account */
+#define MAX_CONTENDER_BUFFERS 128
+#define MAX_ACHIEVEMENT_BUFFERS 128
 
+/* For temporarily reserving character names for an account */
+#define MAX_RESERVED_NAMES 128
 
 
 /*

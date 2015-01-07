@@ -2687,7 +2687,7 @@ static int Handle_login(int ind)
 	if (p_ptr->free_mimic) msg_format(NumPlayers, "\377GYou have %d free mimicry transformation left.", p_ptr->free_mimic);
 
 	/* receive previously buffered global-event-contender-deed from other character of her/his account */
-	for (i = 0; i < 128; i++) {
+	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++) {
 		if (ge_contender_buffer_ID[i] == p_ptr->account) {
 			ge_contender_buffer_ID[i] = 0;
 			i = lookup_kind(TV_PARCHMENT, ge_contender_buffer_deed[i]);
@@ -2703,7 +2703,7 @@ static int Handle_login(int ind)
 		}
 	}
 	/* receive previously buffered achievement deed (pvp) from other character of her/his account */
-	for (i = 0; i < 128; i++) {
+	for (i = 0; i < MAX_ACHIEVEMENT_BUFFERS; i++) {
 		if (achievement_buffer_ID[i] == p_ptr->account) {
 			switch (achievement_buffer_deed[i]) {
 			case SV_DEED_PVP_MAX: /* this one is transferrable to non-pvp char */
@@ -3635,7 +3635,7 @@ static int Receive_login(int ind) {
 		}
 
 		if (connp->pass && (l_acc = GetAccount(connp->nick, connp->pass, FALSE))) {
-			int *id_list, i;
+			int *id_list;
 			byte tmpm;
 			char colour_sequence[3];
 			/* server flags to tell the client more about us - just informational purpose: */
@@ -3762,6 +3762,20 @@ static int Receive_login(int ind) {
                         return(-1);
 		}
 		censor_swearing = censor_swearing_tmp;
+
+		/* check if player tries to use one of the temporarily reserved character names */
+		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+			if (!reserved_name_character[i][0]) break;
+			if (strcmp(reserved_name_character[i], choice)) continue;
+
+			if (!strcmp(reserved_name_account[i], connp->nick)) {
+				reserved_name_character[i][0] = '\0'; //clear reservation
+				break;
+			}
+
+			Destroy_connection(ind, "Name already in use by another player.");
+			return(-1);
+		}
 
 		/* at this point, we are authorised as the owner
 		   of the account. any valid name will be

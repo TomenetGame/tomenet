@@ -2258,10 +2258,10 @@ extern int artifact_reset;
 extern global_event_type global_event[MAX_GLOBAL_EVENTS];
 extern int sector00separation, sector00downstairs, sector00music, sector00wall, ge_special_sector; /* see variable.c */
 extern u32b sector00flags1, sector00flags2;
-extern u32b ge_contender_buffer_ID[128];
-extern int ge_contender_buffer_deed[128];
-extern u32b achievement_buffer_ID[128];
-extern int achievement_buffer_deed[128];
+extern u32b ge_contender_buffer_ID[MAX_CONTENDER_BUFFERS];
+extern int ge_contender_buffer_deed[MAX_CONTENDER_BUFFERS];
+extern u32b achievement_buffer_ID[MAX_ACHIEVEMENT_BUFFERS];
+extern int achievement_buffer_deed[MAX_ACHIEVEMENT_BUFFERS];
 
 /* for temporary disabling all validity checks when a dungeon master/wizard summons something - C. Blue */
 extern u32b summon_override_checks;
@@ -2351,3 +2351,8 @@ extern int nrc_x, nrc_y, netherrealm_end_wz;
 
 extern bool sauron_weakened, sauron_weakened_iddc;
 extern int __audio_sfx_max, __audio_mus_max;
+
+/* character names temporarily reserved for specific accounts */
+extern char reserved_name_character[MAX_RESERVED_NAMES][NAME_LEN];
+extern char reserved_name_account[MAX_RESERVED_NAMES][NAME_LEN];
+extern int reserved_name_timeout[MAX_RESERVED_NAMES];

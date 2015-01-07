@@ -142,16 +142,15 @@
 /* If during certain events, remember his/her account ID, for handing out a reward
    to a different character which he chooses on next login! - C. Blue
 */
-static void buffer_account_for_event_deed(player_type *p_ptr, int death_type)
-{
+static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 	int i,j;
 #if 0 /* why should this be enabled, hmm */
-	for (i = 0; i < 128; i++)
+	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++)
 		if (ge_contender_buffer_ID[i] == p_ptr->account) return; /* player already has a buffer entry */
 #endif
-	for (i = 0; i < 128; i++)
+	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++)
 		if (ge_contender_buffer_ID[i] == 0) break;
-	if (i == 128) return; /* no free buffer entries anymore, sorry! */
+	if (i == MAX_CONTENDER_BUFFERS) return; /* no free buffer entries anymore, sorry! */
 	ge_contender_buffer_ID[i] = p_ptr->account;
 	for (j = 0; j < MAX_GLOBAL_EVENTS; j++)
 		switch (p_ptr->global_event_type[j]) {
@@ -175,16 +174,15 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type)
 	ge_contender_buffer_ID[i] = 0; /* didn't find any event where player participated */
 }
 
-static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievement)
-{
+static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievement) {
 	int i;
 #if 0 /* why should this be enabled, hmm */
-	for (i = 0; i < 128; i++)
+	for (i = 0; i < MAX_ACHIEVEMENT_BUFFERS; i++)
 		if (achievement_buffer_ID[i] == p_ptr->account) return; /* player already has a buffer entry */
 #endif
-	for (i = 0; i < 128; i++)
+	for (i = 0; i < MAX_ACHIEVEMENT_BUFFERS; i++)
 		if (achievement_buffer_ID[i] == 0) break;
-	if (i == 128) return; /* no free buffer entries anymore, sorry! */
+	if (i == MAX_ACHIEVEMENT_BUFFERS) return; /* no free buffer entries anymore, sorry! */
 	achievement_buffer_ID[i] = p_ptr->account;
 	switch (achievement) {
 	case ACHV_PVP_MAX:
@@ -6239,6 +6237,7 @@ static void check_killing_reward(int Ind) {
 static void erase_player(int Ind, int death_type, bool static_floor) {
 	player_type *p_ptr = Players[Ind];
 	char buf[1024];
+	int i;
 
 	kill_houses(p_ptr->id, OT_PLAYER);
 	rem_xorder(p_ptr->xorder_id);
@@ -6278,6 +6277,18 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	}
 
 	buffer_account_for_event_deed(p_ptr, death_type);
+
+	/* temporarily reserve his character name in case he want's to remake that character */
+	for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+		if (reserved_name_character[i][0]) continue;
+
+		strcpy(reserved_name_character[i], p_ptr->name);
+		strcpy(reserved_name_account[i], p_ptr->accountname);
+		reserved_name_timeout[i] = 60 * 24; //minutes
+		break;
+	}
+	if (i == MAX_RESERVED_NAMES)
+		s_printf("Warning: Coudln't reserve character name '%s' for account '%s'!\n", p_ptr->name, p_ptr->accountname);
 
 	/* Remove him from the player name database */
 	delete_player_name(p_ptr->name);

@@ -6073,6 +6073,25 @@ static void process_various(void)
 			/* the_sandman: added colour */
 			msg_format(j,"\377v%s rises from the dead!",(r_name + r_ptr->name));
 		}
+
+		/* discard reserved character names that exceed their timeout */
+		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+			if (!reserved_name_character[i][0]) break;
+			if (reserved_name_timeout[i]) {
+				reserved_name_timeout[i]--;
+				continue;
+			}
+			for (j = i + 1; j < MAX_RESERVED_NAMES; j++) {
+				if (!reserved_name_character[j][0]) {
+					reserved_name_character[j - 1][0] = '\0';
+					break;
+				}
+				strcpy(reserved_name_character[j - 1], reserved_name_character[j]);
+				strcpy(reserved_name_account[j - 1], reserved_name_account[j]);
+				reserved_name_timeout[j - 1] = reserved_name_timeout[j];
+			}
+			break;
+		}
 	}
 
 #if 0

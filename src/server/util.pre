@@ -381,8 +381,8 @@ artifact_type a_info[MAX_A_IDX];
 /* extern global_event_type global_event[MAX_GLOBAL_EVENTS];   see types.h - C. Blue */
 extern int sector00separation;
 extern int ge_special_sector;
-extern u32b ge_contender_buffer_ID[128];
-extern int ge_contender_buffer_deed[128];
+extern u32b ge_contender_buffer_ID[MAX_CONTENDER_BUFFERS];
+extern int ge_contender_buffer_deed[MAX_ACHIEVEMENT_BUFFERS];
 
 /* The party information */
 struct party_type

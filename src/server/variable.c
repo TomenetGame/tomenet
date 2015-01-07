@@ -879,10 +879,10 @@ int sector00wall = 0; /* outer wall tile around the sector to be displayed inste
 u32b sector00flags1 = 0x0, sector00flags2 = 0x0; /* floor flags */
 int ge_special_sector = 0; /* to make it known that a certain sector (or multiple sectors, given in
 			    defines.h as WPOS_ constants) are now in special use for global events. */
-u32b ge_contender_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */
-int ge_contender_buffer_deed[128]; /* contender's deeds on different characters (Highlander Tournament!) */
-u32b achievement_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */
-int achievement_buffer_deed[128]; /* an achievement deeds on different characters (PvP Mode) */
+u32b ge_contender_buffer_ID[MAX_CONTENDER_BUFFERS]; /* Remember account IDs of players who are supposed to receive */
+int ge_contender_buffer_deed[MAX_CONTENDER_BUFFERS]; /* contender's deeds on different characters (Highlander Tournament!) */
+u32b achievement_buffer_ID[MAX_ACHIEVEMENT_BUFFERS]; /* Remember account IDs of players who are supposed to receive */
+int achievement_buffer_deed[MAX_ACHIEVEMENT_BUFFERS]; /* an achievement deeds on different characters (PvP Mode) */
 
 /* for dungeon master/wizard summoning, to override all validity checks and
    definitely summon what his/her heart desires! - C. Blue */
@@ -1018,3 +1018,8 @@ int nrc_x, nrc_y, netherrealm_end_wz;
 
 bool sauron_weakened = FALSE, sauron_weakened_iddc = FALSE;
 int __audio_sfx_max, __audio_mus_max;
+
+/* character names temporarily reserved for specific accounts */
+char reserved_name_character[MAX_RESERVED_NAMES][NAME_LEN];
+char reserved_name_account[MAX_RESERVED_NAMES][NAME_LEN];
+int reserved_name_timeout[MAX_RESERVED_NAMES];
