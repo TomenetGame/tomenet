@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. January 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. January 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4191,9 +4191,12 @@ NOTE: Whenever the macro wizard asks you to enter a partial name of an item to
 ----------------------------------------
 Whenever you use an attack spell or a wand or rod that cast bolts or balls,
 the game prompts you to enter a direction.
+Similarly, friendly spells such as 'cure wounds' require you to target another
+player (or yourself).
+So there are different targetting methods you can choose from:
 
-In our macros so far we have answered that question by specifying '*t' instead
-of an actual direction ie one of: 1,2,3,4,6,7,8,9.
+In our macros so far we have answered the 'which direction' question by
+specifying '*t' instead of an actual direction ie one of 1,2,3,4,6,7,8,9.
 We have learned that '*' means 'acquire target' and 't' means 'choose closest
 hostile target'. If there are two targets that are equally close, one that is
 awake is preferred over one that is alseep.
@@ -4237,6 +4240,14 @@ answered with..
        both, magic devices that take a direction and those that don't, since
        the '-' will just be ignored for those that don't.
 
+Friendly targetting:
+--------------------
+Sometimes you want to target a friendly player. For this you can use '('.
+That key currently targets the most hurt player who is in your party, or the
+most wounded player in general if you aren't in a party.
+After this target has been set, you can refer to it with '-', '+' or '5' same
+as for hostile targets you set with '*' explained above.
+
 Example macros:
 ---------------
   *tz0-     Will zap rod 0 at the closest hostile entity. If there is none,
@@ -4249,6 +4260,11 @@ Example macros:
             own location, ie '5'. This could be useful if you want to clear
             out piles of loot with a rod of acid balls, effectively destroying
             all lesser items that cannot resist acid and melt from it.
+  (m@11\r@Cure Wounds\r-
+            Will cast the spell 'Cure Wounds' (from the Holy Curing school)
+            at the most wounded friendly player. Will not do anything if no
+            player is nearby. Replace the '-' by a '5' to target yourself
+            if no other player is around.
 
 
 
