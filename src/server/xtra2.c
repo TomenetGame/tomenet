@@ -1028,7 +1028,7 @@ bool set_invis(int Ind, int v, int p)
 
 	/* Open */
 	if (v) {
-		if (!p_ptr->tim_invisibility) {
+		if (!p_ptr->tim_invisibility && !p_ptr->invis) {
 			msg_format_near(Ind, "%s fades in the shadows!", p_ptr->name);
 			msg_print(Ind, "You fade in the shadow!");
 			notice = TRUE;
@@ -1037,7 +1037,7 @@ bool set_invis(int Ind, int v, int p)
 
 	/* Shut */
 	else {
-		if (p_ptr->tim_invisibility) {
+		if (p_ptr->tim_invisibility && !p_ptr->invis) {
 			msg_format_near(Ind, "The shadows enveloping %s disipate.", p_ptr->name);
 			msg_print(Ind, "The shadows enveloping you disipate.");
 			notice = TRUE;
