@@ -1653,10 +1653,18 @@ void handle_music(int Ind) {
 
 void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool smooth) {
 	player_type *p_ptr = Players[Ind];
+	dun_level *l_ptr = getfloor(wpos);
 
 	/* sounds that guaranteedly override everthing */
 	if (in_valinor(wpos)) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_SHORE, TRUE);
+		return;
+	}
+
+	/* don't play outdoor (or any other) ambient sfx if we're in a special pseudo-indoors sector */
+	if ((l_ptr && (l_ptr->flags2 & LF2_INDOORS)) ||
+	    (in_sector00(wpos) && (sector00flags2 & LF2_INDOORS))) {
+		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, FALSE);
 		return;
 	}
 
