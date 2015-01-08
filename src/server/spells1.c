@@ -3819,7 +3819,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
 			    c_ptr->feat == FEAT_WEB ||
 			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
-				cave_set_feat_live(wpos, y, x, FEAT_MUD);//or maybe FEAT_ASH, or just FEAT_DIRT?
+				cave_set_feat_live(wpos, y, x, FEAT_DIRT);//(was FEAT_MUD) or maybe FEAT_ASH?
 
 			break;
 
@@ -3829,7 +3829,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
 			    /*c_ptr->feat == FEAT_WEB ||*/
 			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
-				cave_set_feat_live(wpos, y, x, FEAT_MUD);
+				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
 			break;
 
 		case GF_ICE:
