@@ -624,7 +624,7 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 }
 const char *mon_flags2highlight[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", ""};
 const char *mon_flags2highlight2[] = {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC", "SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", ""};
-const char *mon_flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", ""};//omitting DRAGONRIDER, NONLIVING, SPIDER
+const char *mon_flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", ""};//omitting DRAGONRIDER, NONLIVING, SPIDER
 const char *mon_flags2highlight4[] = {"UNIQUE", "NAZGUL", ""};//no hints about dungeon/game boss status available or used
 const char *mon_flags2highlight5[] = {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR", ""};//currently unavailable
 static int mon_highlit_flags(char *line) {
@@ -650,8 +650,10 @@ static int mon_highlit_flags(char *line) {
 	f = mon_flags2highlight3;
 	while (*f[0]) {
 		if ((p2 = strstr(line, *f)) &&
-		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377')) { //make sure the string is not just part of a different, longer flag string
+			if (!strcmp(*f, "DRAGONRIDER")) f++;//skip "DRAGON"
 			i += 4;
+		}
 		f++;
 	}
 
