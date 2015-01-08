@@ -3431,8 +3431,8 @@ struct global_event_type {
     int getype;			/* Type of the event (or quest) */
     bool paused;		/* Is the event currently paused? (special admin command) */
     s32b paused_turns;		/* Keeps track of turns the event was actually frozen */
-    s32b state[64];		/* progress */
-    s32b extra[64];		/* extra info */
+    s32b state[64];		/* progress (zero'ed on event start) */
+    s32b extra[64];		/* extra info (zero'ed on event start) */
     s32b participant[MAX_GE_PARTICIPANTS];	/* player IDs */
     s32b creator;       	/* Player ID or 0L */
     long int announcement_time;	/* for how many seconds the event will be announced until it actually starts */
@@ -3451,6 +3451,7 @@ struct global_event_type {
     int min_participants;	/* minimum amount of participants */
     int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */
     int cleanup;		/* what kind of cleaning-up is required when event ends (state=255) ? */
+    bool noghost;		/* event will erase character on failure */
 };
 
 /* Runecraft */

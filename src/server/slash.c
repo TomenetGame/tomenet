@@ -2514,19 +2514,41 @@ void do_slash_cmd(int Ind, char *message) {
 			} else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden == FALSE || admin)) {
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			} else {
+				/* determine if we can still sign up, to display the appropriate signup-command too */
+				char signup[MAX_CHARS];
+				signup[0] = '\0';
+				if (!(global_event[k-1].signup_time == -1) &&
+				    !(!global_event[k-1].signup_time &&
+				     (!global_event[k-1].announcement_time ||
+				     (global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0))) &&
+				    !(global_event[k-1].signup_time &&
+				     (global_event[k-1].signup_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0)))
+				        strcpy(signup, format(" Type \377U/evsign %d\377W to sign up!", k));
+
 				msg_format(Ind, "\377sInfo on event #%d '\377s%s\377s':", k, global_event[k-1].title);
 				for (i = 0; i < 10; i++) if (strcmp(global_event[k-1].description[i], ""))
 					msg_print(Ind, global_event[k-1].description[i]);
+				if (global_event[k-1].noghost) msg_print(Ind, "\377RIn this event death is permanent - if you die your character will be erased!");
+
 //				msg_print(Ind, "\377d ");
 				if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) >= 120) {
-					msg_format(Ind, "\377WThis event will start in %d minutes.", (global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60);
+					msg_format(Ind, "\377WThis event will start in %d minutes.%s",
+					    (global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60,
+					    signup);
 				} else if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) > 0) {
-					msg_format(Ind, "\377WThis event will start in %d seconds.", global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps));
+					msg_format(Ind, "\377WThis event will start in %d seconds.%s",
+					    global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps),
+					    signup);
 				} else if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) > -120) {
-					msg_format(Ind, "\377WThis event has been running for %d seconds.", -global_event[k-1].announcement_time + ((turn - global_event[k-1].start_turn) / cfg.fps));
+					msg_format(Ind, "\377WThis event has been running for %d seconds.%s",
+					    -global_event[k-1].announcement_time + ((turn - global_event[k-1].start_turn) / cfg.fps),
+					    signup);
 				} else {
-					msg_format(Ind, "\377WThis event has been running for %d minutes.", -(global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60);
+					msg_format(Ind, "\377WThis event has been running for %d minutes.%s",
+					    -(global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60,
+					    signup);
 				}
+
 				strcpy(ppl, "\377WSubscribers: ");
 				for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 					if (!global_event[k-1].participant[j]) continue;

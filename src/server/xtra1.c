@@ -6847,6 +6847,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 	ge->min_participants = 0; /* no minimum */
 	ge->limited = 0; /* no maximum */
 	ge->cleanup = 0; /* no cleaning up needed so far (for when the event ends) */
+	ge->noghost = FALSE;
 
 	/* IMPORTANT: state[0] == 255 is used as indicator that cleaning-up must be done, event has ended. */
 	switch(getype) {
@@ -6866,6 +6867,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[7], "        Also, you aren't allowed to pick up ANY gold/items from another");
 		strcpy(ge->description[8], "        player before the tournament begins!                           ");
 		strcpy(ge->description[9], "");
+		ge->noghost = TRUE;
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
 								most of the time is just for announcing it
 								so players will sign on via /evsign <n> */
@@ -6925,6 +6927,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[7], " with lava (begins after 5 minutes, after 8 minutes it is submerged    ");
 		strcpy(ge->description[8], " which will mean certain death, even if you are immune to fire).       ");
 		strcpy(ge->description[9], " The escape beacons are self-illuminating so you won't miss them.");
+		ge->noghost = TRUE;
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 60 ; /* 60 minutes max. duration,
 								most of the time is just for announcing it
 								so players will sign on via /evsign <n> */
