@@ -34,9 +34,8 @@
 /*
  * Choose the character's name
  */
-static void choose_name(void)
-{
-	char tmp[23];
+static void choose_name(void) {
+	char tmp[ACCOUNTNAME_LEN], fmt[ACCOUNTNAME_LEN];
 
 	/* Prompt and ask */
 #ifndef SIMPLE_LOGIN
@@ -61,8 +60,7 @@ static void choose_name(void)
 #endif
 
 	/* Ask until happy */
-	while (1)
-	{
+	while (1) {
 		/* Go to the "name" area */
 #ifndef SIMPLE_LOGIN
 		move_cursor(2, 15);
@@ -73,14 +71,15 @@ static void choose_name(void)
 		strcpy(tmp, nick);
 
 		/* Get an input, ignore "Escape" */
-		if (askfor_aux(tmp, 15, 0)) strcpy(nick, tmp);
+		if (askfor_aux(tmp, ACCOUNTNAME_LEN - 1, 0)) strcpy(nick, tmp);
 
 		/* All done */
 		break;
 	}
 
 	/* Pad the name (to clear junk) */
-	sprintf(tmp, "%-15.15s", nick);
+	sprintf(fmt, "%%-%d.%ds", ACCOUNTNAME_LEN - 1, ACCOUNTNAME_LEN - 1);
+	sprintf(tmp, fmt, nick);
 
 	/* Re-Draw the name (in light blue) */
 #ifndef SIMPLE_LOGIN
@@ -97,10 +96,9 @@ static void choose_name(void)
 /*
  * Choose the character's name
  */
-static void enter_password(void)
-{
+static void enter_password(void) {
 	size_t c;
-	char tmp[23];
+	char tmp[PASSWORD_LEN];
 
 #ifndef SIMPLE_LOGIN
 	/* Prompt and ask */
@@ -111,8 +109,7 @@ static void enter_password(void)
 	strcpy(tmp, pass);
 
 	/* Ask until happy */
-	while (1)
-	{
+	while (1) {
 		/* Go to the "name" area */
 #ifndef SIMPLE_LOGIN
 		move_cursor(3, 15);
@@ -121,7 +118,7 @@ static void enter_password(void)
 #endif
 
 		/* Get an input, ignore "Escape" */
-		if (askfor_aux(tmp, 15, ASKFOR_PRIVATE)) strcpy(pass, tmp);
+		if (askfor_aux(tmp, PASSWORD_LEN - 1, ASKFOR_PRIVATE)) strcpy(pass, tmp);
 
 		/* All done */
 		break;

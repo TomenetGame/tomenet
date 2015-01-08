@@ -1516,7 +1516,7 @@ void xhtml_screenshot(cptr name)
 	byte cur_attr, prt_attr;
 	int i, x, y, max;
 	char buf[1024];
-	char real_name[256];
+	char file_name[256];
 
 	x = strlen(name) - 4;
 
@@ -1587,15 +1587,15 @@ void xhtml_screenshot(cptr name)
 		/* Use the next number in the name */
 		strncpy(buf, name, x);
 		buf[x] = '\0';
-		snprintf(real_name, 256, "%s%04d.xhtml", buf, max + 1);
-		path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+		snprintf(file_name, 256, "%s%04d.xhtml", buf, max + 1);
+		path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 	}
 	else
 	{
-		strncpy(real_name, name, 249);
-		real_name[249] = '\0';
-		strcat(real_name, ".xhtml");
-		path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+		strncpy(file_name, name, 249);
+		file_name[249] = '\0';
+		strcat(file_name, ".xhtml");
+		path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 		fp = fopen(buf, "rb");
 		if (fp)
 		{
@@ -1615,8 +1615,8 @@ void xhtml_screenshot(cptr name)
 		return;
 	}
 
-	x = strlen(real_name);
-	real_name[x - 6] = '\0'; /* Kill the ".xhtml" from the end */
+	x = strlen(file_name);
+	file_name[x - 6] = '\0'; /* Kill the ".xhtml" from the end */
 
 	fprintf(fp, "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"
 	             "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"DTD/xhtml1-strict.dtd\">\n"
@@ -1624,7 +1624,7 @@ void xhtml_screenshot(cptr name)
 	             "<head>\n");
 	fprintf(fp, "<meta name=\"GENERATOR\" content=\"TomeNET %d.%d.%d%s\"/>\n",
 	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
-	fprintf(fp, "<title>%s</title>\n", real_name);
+	fprintf(fp, "<title>%s</title>\n", file_name);
 	fprintf(fp, "</head>\n"
 	             "<body>\n"
 	             "<pre style=\"color: #ffffff; background-color: #000000; font-family: monospace\">\n");
@@ -1723,7 +1723,7 @@ void xhtml_screenshot(cptr name)
 
 	fclose(fp);
 
-	if (!silent_dump) c_msg_format("Screenshot saved to %s.xhtml", real_name);
+	if (!silent_dump) c_msg_format("Screenshot saved to %s.xhtml", file_name);
 	else silent_dump = FALSE;
 }
 
@@ -1733,11 +1733,11 @@ void save_auto_inscriptions(cptr name)
 {
 	FILE *fp;
 	char buf[1024];
-	char real_name[256];
+	char file_name[256];
 	int i;
 
-	strncpy(real_name, name, 249);
-	real_name[249] = '\0';
+	strncpy(file_name, name, 249);
+	file_name[249] = '\0';
 
 	/* add '.ins' extension if not already existing */
 	if (strlen(name) > 4) {
@@ -1746,10 +1746,10 @@ void save_auto_inscriptions(cptr name)
 		    name[strlen(name) - 3] == 'i' &&
 		    name[strlen(name) - 4] == '.') {
 			/* fine */
-		} else strcat(real_name, ".ins");
-	} else strcat(real_name, ".ins");
+		} else strcat(file_name, ".ins");
+	} else strcat(file_name, ".ins");
 
-	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+	path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 
 	fp = fopen(buf, "w");
 	if (!fp)
@@ -1779,12 +1779,12 @@ void load_auto_inscriptions(cptr name)
 {
 	FILE *fp;
 	char buf[1024];
-	char real_name[256];
+	char file_name[256];
 	int i, c, j, c_eff;
 	bool replaced;
 
-	strncpy(real_name, name, 249);
-	real_name[249] = '\0';
+	strncpy(file_name, name, 249);
+	file_name[249] = '\0';
 
 	/* add '.ins' extension if not already existing */
 	if (strlen(name) > 4) {
@@ -1793,10 +1793,10 @@ void load_auto_inscriptions(cptr name)
 		    name[strlen(name) - 3] == 'i' &&
 		    name[strlen(name) - 4] == '.') {
 			/* fine */
-		} else strcat(real_name, ".ins");
-	} else strcat(real_name, ".ins");
+		} else strcat(file_name, ".ins");
+	} else strcat(file_name, ".ins");
 
-	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+	path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 
 	fp = fopen(buf, "r");
 	if (!fp) {
@@ -1964,10 +1964,10 @@ void load_auto_inscriptions(cptr name)
 void save_birth_file(cptr name) {
 	FILE *fp;
 	char buf[1024];
-	char real_name[256];
+	char file_name[256];
 
-	strncpy(real_name, name, 249);
-	real_name[249] = '\0';
+	strncpy(file_name, name, 249);
+	file_name[249] = '\0';
 
 	/* add '.dna' extension if not already existing */
 	if (strlen(name) > 4) {
@@ -1976,10 +1976,10 @@ void save_birth_file(cptr name) {
 		    name[strlen(name) - 3] == 'd' &&
 		    name[strlen(name) - 4] == '.') {
 			/* fine */
-		} else strcat(real_name, ".dna");
-	} else strcat(real_name, ".dna");
+		} else strcat(file_name, ".dna");
+	} else strcat(file_name, ".dna");
 
-	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+	path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 
 	fp = fopen(buf, "w");
 	if (!fp) {
@@ -2012,15 +2012,15 @@ void save_birth_file(cptr name) {
 void load_birth_file(cptr name) {
 	FILE *fp;
 	char buf[1024];
-	char real_name[256];
+	char file_name[256];
 
 #if 0 /* for future enhancements */
 	int vm = 0, vi = 0, vp = 0;
 	char vt = '%', *p;
 #endif
 
-	strncpy(real_name, name, 249);
-	real_name[249] = '\0';
+	strncpy(file_name, name, 249);
+	file_name[249] = '\0';
 
 	/* add '.dna' extension if not already existing */
 	if (strlen(name) > 4) {
@@ -2029,10 +2029,10 @@ void load_birth_file(cptr name) {
 		    name[strlen(name) - 3] == 'd' &&
 		    name[strlen(name) - 4] == '.') {
 			/* fine */
-		} else strcat(real_name, ".dna");
-	} else strcat(real_name, ".dna");
+		} else strcat(file_name, ".dna");
+	} else strcat(file_name, ".dna");
 
-	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+	path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 
 	fp = fopen(buf, "r");
 	if (!fp) {

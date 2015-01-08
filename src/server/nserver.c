@@ -1021,8 +1021,7 @@ static void Console(int fd, int arg)
 }
 #endif // if 0
 
-static void Contact(int fd, int arg)
-{
+static void Contact(int fd, int arg) {
 	int bytes, login_port, newsock;
 	u16b version = 0;
 	unsigned magic;
@@ -1041,12 +1040,9 @@ static void Contact(int fd, int arg)
 	 * and so we must do so.
 	 */
 
-	if (fd == Socket)
-	{
+	if (fd == Socket) {
 		if ((newsock = SocketAccept(fd)) == -1)
-		{
 			quit("Couldn't accept game TCP connection.\n");
-		}
 		install_input(Contact, newsock, 2);
 		return;
 	}
@@ -1055,13 +1051,11 @@ static void Contact(int fd, int arg)
 	 * Someone connected to us, now try and decipher the message
 	 */
 	Sockbuf_clear(&ibuf);
-	if ((bytes = DgramReceiveAny(fd, ibuf.buf, ibuf.size)) <= 8)
-	{
+	if ((bytes = DgramReceiveAny(fd, ibuf.buf, ibuf.size)) <= 8) {
 		/* If 0 bytes have been sent than the client has probably closed
 		 * the connection
 		 */
-		if (bytes == 0)
-		{
+		if (bytes == 0) {
 	/* evileye - still in contact input, so close the socket here */
 	/* Dont tell me it is ugly. I know ;( */
 	/* Sched should do accepts and closes */
@@ -1069,9 +1063,7 @@ static void Contact(int fd, int arg)
 	/*end evileye*/
 			remove_input(fd);
 		}
-		else if (bytes < 0 && errno != EWOULDBLOCK && errno != EAGAIN &&
-			errno != EINTR)
-		{
+		else if (bytes < 0 && errno != EWOULDBLOCK && errno != EAGAIN && errno != EINTR) {
 			/* Clear the error condition for the contact socket */
 			GetSocketError(fd);
 		}
@@ -1083,8 +1075,7 @@ static void Contact(int fd, int arg)
 	/* Get the IP address of the client, without using the broken DgramLastAddr() */
 	struct sockaddr_in sin;
 	int len = sizeof(sin);
-	if (getpeername(fd, (struct sockaddr *) &sin, &len) >= 0)
-	{
+	if (getpeername(fd, (struct sockaddr *) &sin, &len) >= 0) {
 		u32b addr = ntohl(sin.sin_addr.s_addr);
 		strnfmt(host_addr, sizeof(host_addr), "%d.%d.%d.%d", (byte)(addr>>24),
 			(byte)(addr>>16), (byte)(addr>>8), (byte)addr);
@@ -1120,8 +1111,7 @@ static void Contact(int fd, int arg)
 	}
 	if (version == 0xFFFFU) {
 		/* Extended version support */
-		if (Packet_scanf(&ibuf, "%d%d%d%d%d%d", &version_ext.major, &version_ext.minor, &version_ext.patch, &version_ext.extra, &version_ext.branch, &version_ext.build) <= 0)
-		{
+		if (Packet_scanf(&ibuf, "%d%d%d%d%d%d", &version_ext.major, &version_ext.minor, &version_ext.patch, &version_ext.extra, &version_ext.branch, &version_ext.build) <= 0) {
 			plog(format("Incomplete extended version from %s", host_addr));
 			return;
 		}
@@ -1146,8 +1136,14 @@ static void Contact(int fd, int arg)
 		version_ext.build = 0;
 	}
 
+	//what does this stuff do?
 	nick_name[sizeof(nick_name) - 1] = '\0';
 	host_name[sizeof(host_name) - 1] = '\0';
+
+	/* server-side limit checks */
+	nick_name[ACCOUNTNAME_LEN - 1] = '\0';
+	real_name[REALNAME_LEN - 1] = '\0';
+	host_name[HOSTNAME_LEN - 1] = '\0';
 
 #if 1
 	s_printf("Received contact from %s:%d.\n", host_name, port);
@@ -3738,8 +3734,12 @@ static int Receive_login(int ind) {
 		bool censor_swearing_tmp = censor_swearing;
 		char tmp_name[NAME_LEN];
 
+#if 0
 		/* just in case - some places can't handle a longer name and a valid client shouldn't supply a name this long anyway - mikaelh */
 		choice[NAME_LEN - 1] = '\0';
+#else
+		choice[CHARACTERNAME_LEN - 1] = '\0';
+#endif
 
 		/* Prevent EXPLOIT (adding a SPACE to foreign charname) */
 		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, strlen(choice));
