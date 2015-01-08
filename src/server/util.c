@@ -1511,8 +1511,7 @@ void handle_music(int Ind) {
 		p_ptr->music_monster = -2;
 		Send_music(Ind, 48, 0); //Monster Arena Challenge
 		return;
-	} else if (sector00separation && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
-	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z) {
+	} else if (in_sector00(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
 		Send_music(Ind, sector00music, 0);

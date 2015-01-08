@@ -8247,7 +8247,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool town = istown(wpos) || isdungeontown(wpos);
 	bool townarea = istownarea(wpos, MAX_TOWNAREA);
 //unused atm	bool dungeon_town = isdungeontown(wpos);
-	bool sector00 = (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z);
+	bool sector00 = (in_sector00(wpos));
 	bool valinor = in_valinor(wpos);
 	bool nr_bottom = in_netherrealm(wpos) && getlevel(wpos) == netherrealm_end;
 	bool arena_pvp = (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z);
@@ -8449,8 +8449,7 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 	}
 
 	/* no weather in sector00 during events */
-	if (sector00separation && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
-	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z) {
+	if (in_sector00(&p_ptr->wpos)) {
 		if (!entered_level) return;
 		/* erase weather */
 		Send_weather(Ind, -1, 0, WEATHER_GEN_TICKS,

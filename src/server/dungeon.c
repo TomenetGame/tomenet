@@ -1629,8 +1629,7 @@ bool player_day(int Ind) {
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	if (p_ptr->wpos.wz) return FALSE;
-	if (sector00separation && p_ptr->wpos.wz == WPOS_SECTOR00_Z &&
-	    p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y)
+	if (in_sector00(&p_ptr->wpos))
 		return FALSE;
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
 
@@ -1683,8 +1682,7 @@ bool player_night(int Ind) {
 	if (!zcave) return FALSE; /* paranoia */
 
 	if (p_ptr->wpos.wz) return FALSE;
-	if (sector00separation && p_ptr->wpos.wz == WPOS_SECTOR00_Z &&
-	    p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y)
+	if (in_sector00(&p_ptr->wpos))
 		return FALSE;
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
 
