@@ -7421,7 +7421,7 @@ void dungeon(void)
 			}
 		}
 
-		if (cfg.runlevel == 2043) {
+		if (cfg.runlevel == 2043 || cfg.runlevel == 2042) {
 			if (shutdown_recall_timer <= 60 && shutdown_recall_state < 3) {
 				msg_broadcast(0, "\374\377I*** \377RServer shutdown in max 1 minute (auto-recall). \377I***");
 				shutdown_recall_state = 3;
@@ -7453,7 +7453,10 @@ void dungeon(void)
 						recall_player(i, "");
 					}
 				}
-				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+				if (cfg.runlevel == 2043)
+					msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+				if (cfg.runlevel == 2042)
+					msg_broadcast(-1, "\374\377G<<<\377oServer is now going down for maintenance.\377G>>>");
 				cfg.runlevel = 2049;
 			} else {
 				for (i = NumPlayers; i > 0 ;i--) {
@@ -7480,7 +7483,10 @@ void dungeon(void)
 					break;
 				}
 				if (!i) {
-					msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+					if (cfg.runlevel == 2043)
+						msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+					if (cfg.runlevel == 2042)
+						msg_broadcast(-1, "\374\377G<<<\377oServer is now going down for maintenance.\377G>>>");
 					cfg.runlevel = 2049;
 				}
 			}
@@ -7737,6 +7743,7 @@ void set_runlevel(int val) {
 			//meta = FALSE;
 			break;
 			/* Hack -- character edit (possessor) mode */
+		case 2042:
 		case 2043:
 		case 2044:
 		case 2045:
@@ -9183,11 +9190,14 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 
 /* Initiates forced shutdown with all players getting recalled automatically.
    Added this for use within LUA files, for automatic seasonal event updating. - C. Blue */
-void timed_shutdown(int k) {
+void timed_shutdown(int k, bool terminate) {
 //	msg_admins(0, format("\377w* Shutting down in %d minutes *", k));
-	msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server restart in %d minute%s. \377I***", k, (k == 1) ? "" : "s");
+	if (terminate)
+		msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server maintenance shutdown in %d minute%s. \377I***", k, (k == 1) ? "" : "s");
+	else
+		msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server restart in %d minute%s. \377I***", k, (k == 1) ? "" : "s");
 
-	cfg.runlevel = 2043;
+	cfg.runlevel = terminate ? 2042 : 2043;
 	shutdown_recall_timer = k * 60;
 
 	/* hack: suppress duplicate message */

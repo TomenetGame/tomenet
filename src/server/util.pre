@@ -480,7 +480,7 @@ extern int timer_pvparena2;
 extern int Send_weather(int ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds);
 
 /* Allow LUA scripts to restart the server (seasonal events) */
-extern void timed_shutdown(int k);
+extern void timed_shutdown(int k, bool terminate);
 extern void geno_towns(void);
 
 #ifdef ENABLE_GO_GAME

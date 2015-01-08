@@ -4209,14 +4209,15 @@ void do_slash_cmd(int Ind, char *message) {
 				cfg.runlevel = 2051;
 				return;
 			}
-			else if (prefix(message, "/shutrec")) {
+			else if (prefix(message, "/shutrec")) { /* /shutrec [<minutes>] [T] */
 				if (!k) k = 5;
-				timed_shutdown(k);
+				if (strchr(message, 'T')) timed_shutdown(k, TRUE);//terminate server for maintenance
+				else timed_shutdown(k, TRUE);
 				return;
 			}
 			else if (prefix(message, "/shutcancel")) {
 				msg_admins(0, "\377w* Shut down cancelled *");
-				if (cfg.runlevel == 2043)
+				if (cfg.runlevel == 2043 || cfg.runlevel == 2042)
 					msg_broadcast_format(0, "\377I*** \377yServer-shutdown cancelled. \377I***");
 				cfg.runlevel = 6;
 				return;
