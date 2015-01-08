@@ -3701,6 +3701,9 @@ void do_cmd_bash(int Ind, int dir) {
 			/* Hack -- Bash power based on strength */
 			/* (Ranges from 3 to 20 to 100 to 200) */
 			bash = adj_str_blow[p_ptr->stat_ind[A_STR]];
+			/* factor in Berserk Strength potions, but cap them to 18\*** effect */
+			if (p_ptr->shero) bash += 100;
+			if (bash > adj_str_blow[37]) bash = adj_str_blow[37];
 
 			/* Extract door power */
 			temp = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
@@ -6210,6 +6213,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Hack -- Distance -- Reward strength, penalize weight */
 	tdis = (adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * mul / div;
+	if (p_ptr->shero) tdis += 100 * mul / div;
 
 	/* hack for rugby - all throws capped */
 	if (o_ptr->tval == 1 && o_ptr->sval == 9) {
