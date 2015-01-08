@@ -1789,6 +1789,9 @@ void do_cmd_open(int Ind, int dir)
 	    //&& !strchr("thpkng", r_info[p_ptr->body_monster].d_char))) {
 #ifdef PLAYER_STORES
 		struct c_special *cs_ptr;
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
+		c_ptr = &zcave[y][x];
 
 		/* allow entering player stores in wraithform/no-OPEN_DOOR-form */
 		if (p_ptr->ghost || !c_ptr->feat == FEAT_HOME || !dir) {
@@ -1796,9 +1799,6 @@ void do_cmd_open(int Ind, int dir)
 			return;
 		}
 
-		y = p_ptr->py + ddy[dir];
-		x = p_ptr->px + ddx[dir];
-		c_ptr = &zcave[y][x];
 		if (!(cs_ptr = GetCS(c_ptr, CS_DNADOOR)) || /* orig house failure */
 		    access_door(Ind, cs_ptr->sc.ptr, TRUE)) {
 			msg_print(Ind, "You cannot open things!");
