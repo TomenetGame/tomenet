@@ -1,0 +1,47 @@
+# Object files
+*.o
+
+# Binaries in root folder
+tomenet
+tomenet.server
+accedit
+evilmeta
+
+# Binaries in src folder
+src/tomenet
+src/tomenet.server
+src/accedit
+src/evilmeta
+
+# Tolua binary
+src/server/tolua
+
+# Preproc binary
+src/preproc/preproc
+
+# Data files from a running server
+lib/data/*
+
+# Save files from a running server
+lib/save/*
+
+# banlist.txt from a running server
+lib/config/banlist.txt
+
+# Account file
+tomenet.acc
+
+# Generated files
+src/client/player.pkg
+src/client/spells.pkg
+src/client/util.pkg
+src/client/w_play.c
+src/client/w_spells.c
+src/client/w_util.c
+src/server/player.pkg
+src/server/spells.pkg
+src/server/util.pkg
+src/server/w_play.c
+src/server/w_spells.c
+src/server/w_util.c
+src/common/w_z_pack.c
