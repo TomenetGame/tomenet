@@ -7469,7 +7469,7 @@ static int Receive_walk(int ind)
 #endif
 	}
 
-	if (p_ptr->command_rep) p_ptr->command_rep =- 1;
+	if (p_ptr->command_rep) p_ptr->command_rep = -1;
 
 	if (player && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		if (p_ptr->warning_run == 0) {
@@ -7526,7 +7526,7 @@ static int Receive_run(int ind) {
 	/* paranoia? */
 //	if (player == -1) return;
 
-	if (p_ptr->command_rep) p_ptr->command_rep =- 1;
+	if (p_ptr->command_rep) p_ptr->command_rep = -1;
 
 	/* If not the dungeon master, who can always run */
 	if (!p_ptr->admin_dm) {
@@ -9111,7 +9111,7 @@ static int Receive_disarm(int ind)
 		p_ptr->command_rep = 0;
 		return(0);
 	}
-	if (p_ptr && p_ptr->command_rep != PKT_DISARM) p_ptr->command_rep =- 1;
+	if (p_ptr && p_ptr->command_rep != PKT_DISARM) p_ptr->command_rep = -1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_disarm(player, dir);
@@ -10507,7 +10507,7 @@ static int Receive_guild_config(int ind) {
 		guild->flags = flags;
 		break;
 	case 1: /* set minlev */
-                if (flags < 0) flags = 0;
+                // if (flags < 0) flags = 0; // always false because flags is unsigned
                 if (flags > 100) flags = 100;
                 //msg_format(player, "Minimum level required to join the guild so far was %d..", guild->minlev);
 		guild->minlev = flags;

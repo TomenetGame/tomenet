@@ -6538,7 +6538,7 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		}
 	}
 
-	r = r;//slay silly compiler warning
+//	r = r;//slay silly compiler warning
 
 	Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
 	Term_fresh();
@@ -6747,7 +6747,7 @@ static void print_tomb(cptr reason)
 
 		FILE        *fp;
 
-		time_t	ct = time((time_t)0);
+		time_t	ct = time(NULL);
 
 
 		/* Clear screen */

@@ -122,7 +122,7 @@ void world_comm(int fd, int arg) {
 		}
 		rpmlist = NULL;
 #endif
-		WorldSocket =- 1;
+		WorldSocket = -1;
 	}
 	blen += x;
 	while (blen >= sizeof(struct wpacket)) {

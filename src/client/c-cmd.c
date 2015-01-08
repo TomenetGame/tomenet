@@ -2566,7 +2566,7 @@ void cmd_message(void)
 	                    			if (tmp[0] == '\\') strcat(buf, " ");
 
 						strcat(buf, "\377-");
-						strncat(buf, tmp, sizeof(buf) - strlen(buf));
+						strncat(buf, tmp, sizeof(buf) - strlen(buf) - 1);
 					}
 				}
 				/* just discard */
@@ -2611,7 +2611,7 @@ void cmd_message(void)
                     				if (tmp[0] == '\\') strcat(buf, " ");
 
 	                        		strcat(buf, "\377-");
-		                		strncat(buf, tmp, sizeof(buf) - strlen(buf));
+		                		strncat(buf, tmp, sizeof(buf) - strlen(buf) - 1);
 					}
                     	        }
 				/* just discard */
@@ -3125,7 +3125,7 @@ static void cmd_house_paint(int dir) {
 	}
 
 	buf[0] = 'P';
-	sprintf(&buf[1],"%hd", item);
+	sprintf(&buf[1], "%d", item);
 	Send_admin_house(dir, buf);
 }
 

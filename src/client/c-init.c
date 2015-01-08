@@ -2696,7 +2696,7 @@ void client_init(char *argv1, bool skip)
 {
 	sockbuf_t ibuf;
 	unsigned magic = 12345;
-	unsigned char reply_to, status;
+	unsigned char reply_to, status = 0;
 	//int login_port;
 	int bytes, retries;
 	char host_name[80];

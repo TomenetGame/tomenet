@@ -3774,7 +3774,7 @@ void scan_accounts() {
 		}
 
 		/* Check for bad account id */
-		else if (c_acc.id < 0 || c_acc.id >= MAX_ACCOUNTS) {
+		else if (c_acc.id >= MAX_ACCOUNTS) {
 			/* Log it */
 			s_printf("  Bad account ID: %d\n", c_acc.id);
 

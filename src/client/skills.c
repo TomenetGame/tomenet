@@ -233,7 +233,7 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) 
 
 		i = table[j][0];
 
-		if ((p_ptr->s_info[i].value == 0)) {
+		if (p_ptr->s_info[i].value == 0) {
 			if (p_ptr->s_info[i].mod == 0) color = TERM_L_DARK;
 			else color = TERM_ORANGE;
 		} else if ((p_ptr->s_info[i].value == SKILL_MAX) ||
