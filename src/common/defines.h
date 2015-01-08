@@ -7924,12 +7924,13 @@ extern int PlayerUID;
 #define S_DURATION_MAX 50
 #define S_WEIGHT_LO 150 //refer common/tables.c
 #define S_WEIGHT_HI 1200 //refer common/tables.c
-#define S_WEIGHT_INFLUENCE 8 //range 0-10, lower makes elements have a closer spread of damage caps
+#define S_WEIGHT_INFLUENCE 80 //0 to S_WEIGHT_INFLUENCE_MAX; directly proportional to the spread of element damage caps.
+#define S_WEIGHT_INFLUENCE_MAX 100 //Used to be 10, now one more significant figure!
 
 /* Macros */
 #define rget_level(x) ((skill * (x)) / 50)
-#define rget_weight(x) (S_WEIGHT_HI * ((10 - S_WEIGHT_INFLUENCE) + (S_WEIGHT_INFLUENCE * (x - S_WEIGHT_LO) / (S_WEIGHT_HI - S_WEIGHT_LO))) / 10 + S_WEIGHT_LO)
-
+#define rget_weight(x) ((S_WEIGHT_HI * (100 * (S_WEIGHT_INFLUENCE_MAX - S_WEIGHT_INFLUENCE) + (100 * S_WEIGHT_INFLUENCE * (x - S_WEIGHT_LO) / (S_WEIGHT_HI - S_WEIGHT_LO))) / S_WEIGHT_INFLUENCE_MAX + 100 * S_WEIGHT_LO) / 100)
+#define rget_dice_weight(x) ((S_WEIGHT_HI * (100 * (S_WEIGHT_INFLUENCE_MAX - S_WEIGHT_INFLUENCE / 2) + (100 * S_WEIGHT_INFLUENCE / 2 * (x - S_WEIGHT_LO) / (S_WEIGHT_HI - S_WEIGHT_LO))) / S_WEIGHT_INFLUENCE_MAX + 100 * S_WEIGHT_LO) / 100)
 
 /* macro for debugging Doppelgaenger @s */
 #define cave_midx_debug(wpos_, cy, cx, midx) { \
