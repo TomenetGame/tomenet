@@ -374,7 +374,7 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
 
-all: tomenet tomenet.server accedit evilmeta
+all: tomenet tomenet.server accedit
 	@echo Now you need to copy the binaries out of the src directory or run \"make install\".
 
 # sorry. install on every make is a real pain ;)
@@ -383,7 +383,6 @@ install: all
 	install -b tomenet ..
 	install -b tomenet.server ..
 	install -b accedit ..
-	install -b evilmeta ..
 	touch ../tomenet.acc
 
 
@@ -419,6 +418,7 @@ tomenet.server: $(SERV_OBJS) $(TOLUA)
 
 #
 # Build the evileye meta client
+# Note: evilmeta is outdated, server has a built-in meta client
 #
 evilmeta: server/evilmeta.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o evilmeta server/evilmeta.c
@@ -458,10 +458,12 @@ $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
 #
 
 clean:
+	cd server/lua; rm -f *.o
 	cd server; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
 	cd client; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
 	cd common; rm -f *.o w_z_pack.c
 	cd console; rm -f *.o
+	rm -f account/accedit.o preproc/preproc.o
 
 re: clean all
 

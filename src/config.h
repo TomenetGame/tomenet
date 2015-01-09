@@ -223,6 +223,7 @@
 //#define	META_ADDRESS "62.210.141.11"
 //#define	META_ADDRESS_2 "europe.tomenet.net"
 #define		META_ADDRESS "meta.tomenet.net"
+#define		META_ADDRESS_2 "37.187.75.24"
 
 /*
  * Server gateway: Provide raw data for applications
