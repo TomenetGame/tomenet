@@ -420,9 +420,9 @@ void Receive_login(void) {
 			max_cpa_plus = 0;
 		}
 	}
-	if (s_TEST) c_put_str(TERM_SLATE, "The server is running 'TEST_SERVER' settings.", 22, 10);
-	else if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 10);
-	if (s_PARTY) c_put_str(TERM_SLATE, "This server is running 'PARTY_SERVER' settings.", 23, 10);
+	if (s_TEST) c_put_str(TERM_SLATE, "The server is running 'TEST_SERVER' settings.", 22, 25);
+	else if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 25);
+	if (s_PARTY) c_put_str(TERM_SLATE, "This server is running 'PARTY_SERVER' settings.", 23, 25);
 
 	c_put_str(CHARSCREEN_COLOUR, "Character Overview", 0, 30);
 	if (max_cpa_plus)
