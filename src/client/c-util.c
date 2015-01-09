@@ -6245,7 +6245,6 @@ static void do_cmd_options_install_audio_packs(void) {
 	LPDWORD path_7z_size_p = (LPDWORD)&path_7z_size;
 	unsigned long path_7z_type = REG_SZ;
 #endif
-	int r;
 
 	bool sound_pack = TRUE, music_pack = TRUE;
 	bool sound_already = (audio_sfx > 3), music_already = (audio_music > 0);
@@ -6341,11 +6340,11 @@ static void do_cmd_options_install_audio_packs(void) {
 #else /* assume posix */
 if (!strcmp(ANGBAND_SYS, "x11")) {
  #if 0	/* command-line 7z */
-	r = system("7z > tmp.7z");
+	(void) system("7z > tmp.7z");
  #else	/* GUI 7z (for password prompts) */
  	fff = fopen("tmp", "w");
  	fclose(fff);
-	r = system("7zG a tmp.7z tmp");
+	(void)system("7zG a tmp.7z tmp");
 	remove("tmp");
  #endif
         if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
@@ -6363,7 +6362,7 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7zG) found.");
 } else { /* gcu */
 	/* assume posix; ncurses commandline */
-	r = system("7z > tmp.7z");
+	(void)system("7z > tmp.7z");
 	if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
 		Term_putstr(0, 1, -1, TERM_RED, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
 		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
@@ -6426,25 +6425,25 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-soundpack.7z", NULL);
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
 		sprintf(out_val, "xcopy /I /E /Q /Y /H sound %s", path);
-		r = system(out_val);
-		r = system("rmdir /S /Q sound");
+		(void)system(out_val);
+		(void)system("rmdir /S /Q sound");
 #else /* assume posix */
 if (!strcmp(ANGBAND_SYS, "x11")) {
-		r = system("7zG x TomeNET-soundpack.7z");
+		(void)system("7zG x TomeNET-soundpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
-		//r = system(format("mv sound %s", path));
+		//(void)system(format("mv sound %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole sound folder */
 		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
-		r = system(out_val);
-		r = system("rm -rf sound");
+		(void)system(out_val);
+		(void)system("rm -rf sound");
 } else { /* gcu */
-		r = system("7z x TomeNET-soundpack.7z");
+		(void)system("7z x TomeNET-soundpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
-		//r = system(format("mv sound %s", path));
+		//(void)system(format("mv sound %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole sound folder */
 		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
-		r = system(out_val);
-		r = system("rm -rf sound");
+		(void)system(out_val);
+		(void)system("rm -rf sound");
 }
 #endif
 		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed.             ");
@@ -6488,13 +6487,13 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		sprintf(out_val, "xcopy /I /E /Q /Y /H music %s", path);
-		r = system(out_val);
-		r = system("rmdir /S /Q music");
+		(void)system(out_val);
+		(void)system("rmdir /S /Q music");
 #else /* assume posix */
 if (!strcmp(ANGBAND_SYS, "x11")) {
 		remove("music/music.cfg"); //just for password_ok check below
 
-		r = system("7zG x TomeNET-musicpack.7z");
+		(void)system("7zG x TomeNET-musicpack.7z");
 
 		/* actually check for successful password, by checking whether at least music.cfg was extracted */
 		if (!(fff = fopen("music/music.cfg", "r"))) password_ok = FALSE;
@@ -6504,15 +6503,15 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		} else fclose(fff);
 
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
-		//r = system(format("mv music %s", path));
+		//(void)system(format("mv music %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole music folder */
 		sprintf(out_val, "cp --recursive -f music/* %s/", path);
-		r = system(out_val);
-		r = system("rm -rf music");
+		(void)system(out_val);
+		(void)system("rm -rf music");
 } else { /* gcu */
 		remove("music/music.cfg"); //just for password_ok check below
 
-		r = system("7z x TomeNET-musicpack.7z");
+		(void)system("7z x TomeNET-musicpack.7z");
 
 		/* actually check for successful password, by checking whether at least music.cfg was extracted */
 		if (!(fff = fopen("music/music.cfg", "r"))) password_ok = FALSE;
@@ -6522,11 +6521,11 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		} else fclose(fff);
 
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
-		//r = system(format("mv music %s", path));
+		//(void)system(format("mv music %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole music folder */
 		sprintf(out_val, "cp --recursive -f music/* %s/", path);
-		r = system(out_val);
-		r = system("rm -rf music");
+		(void)system(out_val);
+		(void)system("rm -rf music");
 }
 #endif
 
@@ -6537,8 +6536,6 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 			Term_putstr(0, 6, -1, TERM_L_RED, "You entered a wrong password. Music pack could not be installed.");
 		}
 	}
-
-//	r = r;//slay silly compiler warning
 
 	Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
 	Term_fresh();
