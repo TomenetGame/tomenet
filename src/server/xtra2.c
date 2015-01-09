@@ -8594,7 +8594,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		    (r_ptr->flags3 & RF3_NONLIVING) ||
 		    (strchr("Egv", r_ptr->d_char)))
 		    /* not too far away? */
-		    && (ABS(m_ptr->fx - p_ptr->px <= 1) && ABS(m_ptr->fy - p_ptr->py <= 1))) {
+		    && (ABS(m_ptr->fx - p_ptr->px) <= 1 && ABS(m_ptr->fy - p_ptr->py) <= 1)) {
 			int feed = m_ptr->maxhp + 100;
 			feed = (6 - (300 / feed)) * 100;//300..600
 			if (r_ptr->flags3 & RF3_DEMON) feed /= 2;
