@@ -7883,7 +7883,10 @@ static void process_global_event(int ge_id) {
 					p_ptr->recall_pos.wz = 0;
 					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 					p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
-				        recall_player(i, "");
+					recall_player(i, "");
+					/* required, or the double-wpos-change in below's 'unstatic_level()' call will cause
+					   panic save due to old wpos possibly still being in non-existant highlander dungeon */
+					process_player_change_wpos(i);
 				}
 			}
 
@@ -8363,7 +8366,7 @@ static void process_global_event(int ge_id) {
 			/* cleanly teleport all lingering admins out instead of displacing them into (non-generated) pvp-dungeon ^^ */
 			for (i = 1; i <= NumPlayers; i++)
 				if (inarea(&Players[i]->wpos, &wpos)) {
-					Players[i]->new_level_method = (Players[i]->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+					Players[i]->new_level_method = LEVEL_OUTSIDE_RAND;
 					Players[i]->recall_pos.wx = cfg.town_x;
 					Players[i]->recall_pos.wy = cfg.town_y;
 					Players[i]->recall_pos.wz = 0;
