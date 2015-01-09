@@ -88,8 +88,10 @@ static uint32_t parity[4] = {PARITY1, PARITY2, PARITY3, PARITY4};
   STATIC FUNCTIONS
   ----------------*/
 inline static int idxof(int i);
+#if (!defined(HAVE_ALTIVEC)) && (!defined(HAVE_SSE2))
 inline static void rshift128(w128_t *out,  w128_t const *in, int shift);
 inline static void lshift128(w128_t *out,  w128_t const *in, int shift);
+#endif
 inline static void gen_rand_all(void);
 inline static void gen_rand_array(w128_t *array, int size);
 inline static uint32_t func1(uint32_t x);
@@ -126,6 +128,7 @@ inline static int idxof(int i) {
  * @param in the 128-bit data to be shifted
  * @param shift the shift value
  */
+#if (!defined(HAVE_ALTIVEC)) && (!defined(HAVE_SSE2))
 #ifdef ONLY64
 inline static void rshift128(w128_t *out, w128_t const *in, int shift) {
     uint64_t th, tl, oh, ol;
@@ -195,6 +198,7 @@ inline static void lshift128(w128_t *out, w128_t const *in, int shift) {
     out->u[3] = (uint32_t)(oh >> 32);
     out->u[2] = (uint32_t)oh;
 }
+#endif
 #endif
 
 /**
