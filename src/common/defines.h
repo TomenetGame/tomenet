@@ -565,20 +565,35 @@
 /*
  * TODO: make them redefinable w/o client update
  */
- 
-#define MAX_F_IDX	256	/* Max size for "f_info[]" */
-#define MAX_K_IDX	1024 	/* Max size for "k_info[]" */
+
+#define MAX_F_IDX	384	/* Max size for "f_info[]" */
+#define MAX_K_IDX	1280	/* Max size for "k_info[]" */
 #define MAX_A_IDX	512	/* Max size for "a_info[]" */
-#define MAX_E_IDX	256 	/* Max size for "e_info[]" */
-#define MAX_R_IDX	1152	/* Max size for "r_info[]" */
+#define MAX_E_IDX	384	/* Max size for "e_info[]" */
+#define MAX_R_IDX	1280	/* Max size for "r_info[]" */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
 #define MAX_T_IDX	256	/* Max size for "t_info[]" */
-#define MAX_OW_IDX	96	/* Max size for "ow_info[]" */
-#define MAX_ST_IDX	96	/* Max size for "st_info[]" */
+#define MAX_OW_IDX	128	/* Max size for "ow_info[]" */
+#define MAX_ST_IDX	128	/* Max size for "st_info[]" */
 #define MAX_BA_IDX	96	/* Max size for "ba_info[]" */
 #define MAX_D_IDX	64	/* Max size for "d_info[]" */
 #define MAX_Q_IDX	100	/* Max size for "q_info[]" */
+
+/* for compatibility with 4.5.8.1- clients: */
+#define MAX_F_IDX_COMPAT	256
+#define MAX_K_IDX_COMPAT	1024
+#define MAX_A_IDX_COMPAT	512
+#define MAX_E_IDX_COMPAT	256
+#define MAX_R_IDX_COMPAT	1152
+#define MAX_V_IDX_COMPAT 	256
+#define MAX_RE_IDX_COMPAT	128
+#define MAX_T_IDX_COMPAT	256
+#define MAX_OW_IDX_COMPAT	96
+#define MAX_ST_IDX_COMPAT	96
+#define MAX_BA_IDX_COMPAT	96
+#define MAX_D_IDX_COMPAT	64
+#define MAX_Q_IDX_COMPAT	100
 
 /* Max ego base type restrictions */
 #define MAX_EGO_BASETYPES	10
