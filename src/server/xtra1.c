@@ -848,7 +848,7 @@ static void health_redraw(int Ind)
 	}
 
 	/* Tracking a dead monster (???) */
-	else if (!m_list[p_ptr->health_who].hp < 0) {
+	else if (m_list[p_ptr->health_who].hp < 0) {
 		/* Indicate that the monster health is "unknown" */
 		Send_monster_health(Ind, 0, TERM_WHITE);
 	}

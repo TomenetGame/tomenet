@@ -2154,7 +2154,7 @@ void do_slash_cmd(int Ind, char *message) {
 						break;
 					}
 				}
-				if (!i == MAX_GUILDNOTES) {
+				if (i == MAX_GUILDNOTES) {
 					msg_format(Ind, "\377oSorry, the server reached the maximum of %d guild notes.", MAX_GUILDNOTES);
 					return;
 				}
