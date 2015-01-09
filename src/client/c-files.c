@@ -1997,7 +1997,7 @@ void save_birth_file(cptr name) {
 	fprintf(fp, "%d\n", class); //Class
 	fprintf(fp, "%d\n", race); //Race
 	fprintf(fp, "%d\n", trait); //Trait
-	
+
 	/* Stats */
 	int i;
 	for (i = 0; i < 6; i++) {
@@ -2060,20 +2060,24 @@ void load_birth_file(cptr name) {
 	/* Info */
 	int tmp, i, r;
 	r = fscanf(fp, "\n%d", &tmp); //Sex/Body/Mode
+	if (r == EOF || r == 0) return; // Failed to read from file
 	dna_sex = (s16b)tmp;
 	r = fscanf(fp, "\n%d", &tmp); //Class
+	if (r == EOF || r == 0) return; // Failed to read from file
 	dna_class = (s16b)tmp;
 	r = fscanf(fp, "\n%d", &tmp); //Race
+	if (r == EOF || r == 0) return; // Failed to read from file
 	dna_race = (s16b)tmp;
 	r = fscanf(fp, "\n%d", &tmp); //Trait
+	if (r == EOF || r == 0) return; // Failed to read from file
 	dna_trait = (s16b)tmp;
-	
+
 	/* Stats */
 	for (i = 0; i < 6; i++) {
 		r = fscanf(fp, "\n%d", &tmp);
+		if (r == EOF || r == 0) return; // Failed to read from file
 		dna_stat_order[i] = (s16b)tmp;
 	}
-	r = r;//slay silly compiler warning
 
 #if 0 /* for future enhancements */
 	/* > 4.5.8? */
@@ -2083,7 +2087,7 @@ void load_birth_file(cptr name) {
 
 	/* Validate */
 	valid_dna = 1; //Safety for mis-hacked dna files in future? - Kurzel
-	
+
 	/* Done */
 	fclose(fp);
 }
