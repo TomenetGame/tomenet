@@ -3872,8 +3872,8 @@ static int Receive_login(int ind) {
 	return(0);
 }
 
-#define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
-#define RECEIVE_PLAY_SIZE_OPTMAXOLD (2*6+OPT_MAX_OLD+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
+#define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
+#define RECEIVE_PLAY_SIZE_OPTMAXOLD (2*6+OPT_MAX_OLD+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
 //#define STRICT_RECEIVE_PLAY
 static int Receive_play(int ind) {
 	connection_t *connp = Conn[ind];
@@ -4089,7 +4089,7 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "feature" char/attrs */
-		for (i = 0; i < MAX_F_IDX; i++)
+		for (i = 0; i < MAX_F_IDX_COMPAT; i++)
 		{
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
 
@@ -4105,7 +4105,7 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "object" char/attrs */
-		for (i = 0; i < MAX_K_IDX; i++)
+		for (i = 0; i < MAX_K_IDX_COMPAT; i++)
 		{
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
 
@@ -4121,7 +4121,7 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "monster" char/attrs */
-		for (i = 0; i < MAX_R_IDX; i++)
+		for (i = 0; i < MAX_R_IDX_COMPAT; i++)
 		{
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 
