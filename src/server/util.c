@@ -6732,7 +6732,7 @@ void restore_estate(int Ind) {
 		if (!strcmp(data, "AU:")) {
 			au = 0;
 			r = fscanf(fp, "%lu\n", &au);
-			if (!au) {
+			if (r == EOF || r == 0 || !au) {
 				s_printf("  error: Corrupted AU: line.\n");
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
 				relay_estate(buf, buf2, fp, fp_tmp);
@@ -6758,6 +6758,13 @@ void restore_estate(int Ind) {
 		/* get object from backup file */
 		else if (!strcmp(data, "OB:")) {
 			r = fread(o_ptr, sizeof(object_type), 1, fp);
+			if (r == 0) {
+				s_printf("  error: Failed to read object.\n");
+				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
+				fprintf(fp_tmp, "OB:");
+				relay_estate(buf, buf2, fp, fp_tmp);
+				return;
+			}
 			/* Update item's kind-index in case k_info.txt has been modified */
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 #ifdef SEAL_INVALID_OBJECTS
@@ -6776,7 +6783,7 @@ void restore_estate(int Ind) {
 			data_len = atoi(data_note);
 			data_note[0] = '\0';
 #endif
-			if (data_len == -2) {
+			if (rc == NULL || data_len == -2) {
 			        object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				s_printf("  error: Corrupted note line (item '%s').\n", o_name);
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
@@ -6785,8 +6792,15 @@ void restore_estate(int Ind) {
 			}
 			if (data_len != -1) {
 				r = fread(data_note, sizeof(char), data_len, fp);
-				data_note[data_len] = '\0';
-				o_ptr->note = quark_add(data_note);
+				if (r == data_len) {
+					data_note[data_len] = '\0';
+					o_ptr->note = quark_add(data_note);
+				} else {
+					s_printf("  error: Failed to read note line (item '%s').\n", o_name);
+					msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
+					relay_estate(buf, buf2, fp, fp_tmp);
+					return;
+				}
 			}
 
 			/* is it a pile of gold? */
@@ -6851,8 +6865,6 @@ void restore_estate(int Ind) {
 			return;
 		}
 	}
-	rc = rc;//slay silly compiler warning
-	r = r;
 }
 
 /* For gathering statistical Ironman Deep Dive Challenge data on players clearing out monsters */
