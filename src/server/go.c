@@ -2232,7 +2232,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	char tmp[80];
 #endif
 #ifdef ENGINE_GNUGO
-	char *rc;
+	char *rc = NULL;
 #endif
 
 	/* Cancel prompt for move */
@@ -2296,11 +2296,10 @@ static void go_challenge_cleanup(bool server_shutdown) {
 
 			while (!feof(sgf)) {
 				rc = fgets(buf, 1024, sgf);
-		                if (!feof(sgf)) {
-	    	        		ck = strstr(buf, "KM[");
-		            		if (ck) *(ck + 3) = '1';
-		            		fputs(buf, fp);
-				}
+				if (!rc) break;
+				ck = strstr(buf, "KM[");
+				if (ck) *(ck + 3) = '1';
+				fputs(buf, fp);
 			}
 			fclose(fp);
 			fclose(sgf);
@@ -2313,7 +2312,6 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	/* Prepare for next game in advance - skip on server shutdown */
 	if (!server_shutdown) writeToPipe("clear_board");
 
-	rc = rc;//slay silly compiler warning
 	/* Clean up everything */
 	go_game_up = FALSE;
 	go_engine_next_action = NACT_NONE;

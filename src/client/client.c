@@ -847,7 +847,9 @@ int main(int argc, char **argv)
 		case 'e': {
 			/* Since ALSA might spam underrun errors.. */
 			FILE *fr = freopen("tomenet.log", "w", stderr);
-			fr = fr;//just kill silly compiler warning
+			if (!fr) {
+				fprintf(stderr, "Failed to open tomenet.log for writing!\n");
+			}
 			break;
 		}
 

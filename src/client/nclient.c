@@ -2983,7 +2983,7 @@ int Receive_floor(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &tval)) <= 0) return n;
 
 	/* Ignore for now */
-	tval = tval;
+	//tval = tval;
 
 	return 1;
 }

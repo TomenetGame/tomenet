@@ -12070,7 +12070,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_CHAOS:
-			if (r_ptr->level / 2 < 15) ;//do_poly = TRUE;
+			//if (r_ptr->level / 2 < 15) ;//do_poly = TRUE;
 			//do_conf = 10;
 			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
 				dam /= 3;
