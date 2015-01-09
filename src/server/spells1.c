@@ -1206,6 +1206,7 @@ void teleport_player_to_force(int Ind, int ny, int nx) {
  /* in the wilderness, teleport to a neighboring wilderness level.
   * 'force' : TRUE only for level-unstaticing, ie administration work.
   *           (can transport players out of dungeons in ways that are not 'legal' (ironman etc).
+  * New: Disallow entering/exiting dungeons this way.
   */
 void teleport_player_level(int Ind, bool force) {
 	player_type *p_ptr = Players[Ind];
@@ -1231,7 +1232,9 @@ void teleport_player_level(int Ind, bool force) {
 	wpcopy(&old_wpos, wpos);
 	wpcopy(&new_depth, wpos);
 
-	/* If in the wilderness, teleport to a random neighboring level */
+	/* If in the wilderness, teleport to a random neighboring level.
+	   This is especially important to prevent player from entering dungeons
+	   that have NO_ENTRY_WOR or similar flags (eg Valinor)! - C. Blue */
 	if (wpos->wz == 0) {
 		/* get a valid neighbor */
 		do {
@@ -1259,7 +1262,7 @@ void teleport_player_level(int Ind, bool force) {
 			}
 		} while (inarea(wpos, &new_depth) && --tries);
 		if (!tries) {
-			msg_print(Ind, "There is a large magical discharge in the air.");
+			msg = "There is a large magical discharge in the air.";
 			return;
 		}
 
@@ -1271,8 +1274,8 @@ void teleport_player_level(int Ind, bool force) {
 			p_ptr->wild_map[(new_depth.wx + new_depth.wy * MAX_WILD_X) / 8] |=
 			    (1 << ((new_depth.wx + new_depth.wy * MAX_WILD_X) % 8));
 	/* sometimes go down */
-	} else if ((can_go_down(wpos, 0x1) &&
-	    ((!can_go_up(wpos, 0x1) || (rand_int(100) < 50)) ||
+	} else if ((can_go_down(wpos, 0x1) && wpos->wz > 1 &&
+	    ((!can_go_up(wpos, 0x1) || wpos->wz >= -1 || (rand_int(100) < 50)) ||
 	     (wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
 	    || (force && can_go_down_simple(wpos))) {
 		new_depth.wz--;
@@ -1280,14 +1283,14 @@ void teleport_player_level(int Ind, bool force) {
 		p_ptr->new_level_method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
 	}
 	/* else go up */
-	else if ((can_go_up(wpos, 0x1) &&
+	else if ((can_go_up(wpos, 0x1) && wpos->wz < -1 &&
 	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
 	    || (force && can_go_up_simple(wpos))) {
 		new_depth.wz++;
 		msg = "You rise up through the ceiling.";
 		p_ptr->new_level_method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
 	} else {
-		msg_print(Ind, "There is a large magical discharge in the air.");
+		msg = "There is a large magical discharge in the air.";
 		return;
 	}
 
@@ -1322,9 +1325,10 @@ void teleport_player_level(int Ind, bool force) {
 
 /* Like teleport_player_level() but does this for ALL players on a wpos at once
    so they end up together again. Added for quest_prepare_zcave(). - C. Blue
-   Note: This bypasses all teleportation-preventing aspects. */
+   Note: This bypasses all teleportation-preventing aspects.
+   New: Disallow entering/exiting dungeons this way. */
 void teleport_players_level(struct worldpos *wpos) {
-	int i, method = LEVEL_OUTSIDE_RAND;
+	int i, method = LEVEL_OUTSIDE_RAND, tries = 100;
 	player_type *p_ptr;
 	struct worldpos new_wpos, old_wpos;
 	char *msg = "\377rCritical bug!";
@@ -1335,30 +1339,11 @@ void teleport_players_level(struct worldpos *wpos) {
 	wpcopy(&old_wpos, wpos);
 	wpcopy(&new_wpos, wpos);
 
-	/* sometimes go down */
-	if ((can_go_down(wpos, 0x1) &&
-	    ((!can_go_up(wpos, 0x1) || (rand_int(100) < 50)) ||
-	     (wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
-	    || (can_go_down_simple(wpos)))
-	{
-		new_wpos.wz--;
-		msg = "Some arcane magic suddenly makes you sink through the floor.";
-		method = (new_wpos.wz || (istown(&new_wpos)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
-	}
-	/* else go up */
-	else if ((can_go_up(wpos, 0x1) &&
-	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
-	    || (can_go_up_simple(wpos)))
-	{
-		new_wpos.wz++;
-		msg = "Some arcane magic suddenly makes You rise up through the ceiling.";
-		method = (new_wpos.wz || (istown(&new_wpos)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
-	}
-
-	/* If in the wilderness, teleport to a random neighboring level */
-	else if (wpos->wz == 0 && new_wpos.wz == 0) {
+	/* If in the wilderness, teleport to a random neighboring level.
+	   This is especially important to prevent player from entering dungeons
+	   that have NO_ENTRY_WOR or similar flags (eg Valinor)! - C. Blue */
+	if (wpos->wz == 0) {
 		/* get a valid neighbor */
-		wpcopy(&new_wpos, wpos);
 		do {
 			switch (rand_int(4)) {
 			case DIR_NORTH:
@@ -1382,11 +1367,32 @@ void teleport_players_level(struct worldpos *wpos) {
 				msg = "A sudden magical gust of wind blows you west.";
 				break;
 			}
+		} while (inarea(wpos, &new_wpos) && --tries);
+		if (!tries) {
+			msg = "There is a large magical discharge in the air.";
+			s_printf("Warning: teleport_players_level() failed.");
+			return;
 		}
-		while (inarea(wpos, &new_wpos));
 
 		method = LEVEL_OUTSIDE_RAND;
+	/* sometimes go down */
+	} else if ((can_go_down(wpos, 0x1) && wpos->wz > 1 &&
+	    ((!can_go_up(wpos, 0x1) || wpos->wz >= -1 || (rand_int(100) < 50)) ||
+	     (wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
+	    || (can_go_down_simple(wpos))) {
+		new_wpos.wz--;
+		msg = "Some arcane magic suddenly makes you sink through the floor.";
+		method = (new_wpos.wz || (istown(&new_wpos)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
+	}
+	/* else go up */
+	else if ((can_go_up(wpos, 0x1) && wpos->wz < -1 &&
+	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
+	    || (can_go_up_simple(wpos))) {
+		new_wpos.wz++;
+		msg = "Some arcane magic suddenly makes You rise up through the ceiling.";
+		method = (new_wpos.wz || (istown(&new_wpos)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
 	} else {
+		msg = "There is a large magical discharge in the air.";
 		s_printf("Warning: teleport_players_level() failed.");
 		return;
 	}
