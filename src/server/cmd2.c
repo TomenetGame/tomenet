@@ -1794,7 +1794,7 @@ void do_cmd_open(int Ind, int dir)
 		c_ptr = &zcave[y][x];
 
 		/* allow entering player stores in wraithform/no-OPEN_DOOR-form */
-		if (p_ptr->ghost || !c_ptr->feat == FEAT_HOME || !dir) {
+		if (p_ptr->ghost || c_ptr->feat != FEAT_HOME || !dir) {
 			msg_print(Ind, "You cannot open things!");
 			return;
 		}
