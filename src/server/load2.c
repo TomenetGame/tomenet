@@ -1353,7 +1353,7 @@ static void rd_house(int n)
 		rd_byte(&house_ptr->coords.rect.height);
 	}
 	else{
-		i =- 2;
+		i = -2;
 		C_MAKE(house_ptr->coords.poly, MAXCOORD, char);
 		do {
 			i += 2;
