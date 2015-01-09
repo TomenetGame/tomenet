@@ -4571,21 +4571,31 @@ void restore_acclists(void) {
 	}
 	/* begin with a version tag */
 	r = fscanf(fp, "%s\n", tmp);
+	if (r == EOF || r == 0) {
+		s_printf("  error: failed to read version tag.\n");
+		fclose(fp);
+		return;
+	}
 
 	while (!feof(fp)) {
 		r = fscanf(fp, "%d\n", &name_len);
+		if (r == EOF || r == 0) break;
 		r = fread(name_forge, sizeof(char), name_len, fp);
+		if (r == 0) break;
 		name_forge[name_len] = '\0';
 #if 0
 		r = fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 		    &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->xorder, &ptr->race, &ptr->class, &ptr->mode);
+		if (r == EOF || r == 0) break;
  #ifdef AUCTION_SYSTEM
 		r = fscanf(fp, "%d%d", &ptr->au, &ptr->balance);
+		if (r == EOF || r == 0) break;
  #endif
 #else
 		r = fread(ptr, sizeof(hash_entry), 1, fp);
+		if (r == 0) break;
 		ptr->name = NULL;//just to be clean
 #endif
 
@@ -4599,7 +4609,6 @@ void restore_acclists(void) {
 		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", name_forge, ptr->id, ptr->account);
 	}
 
-	r = r;//slay silly compiler warning
 	s_printf("done.\n");
 	fclose(fp);
 }
