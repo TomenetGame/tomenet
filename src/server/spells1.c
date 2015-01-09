@@ -1214,6 +1214,7 @@ void teleport_player_level(int Ind, bool force) {
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char *msg = "\377rCritical bug!";
 	cave_type **zcave;
+	int tries = 100;
 
 	if (!(zcave = getcave(wpos))) return;
 	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) && !force) return;
@@ -1230,12 +1231,50 @@ void teleport_player_level(int Ind, bool force) {
 	wpcopy(&old_wpos, wpos);
 	wpcopy(&new_depth, wpos);
 
+	/* If in the wilderness, teleport to a random neighboring level */
+	if (wpos->wz == 0) {
+		/* get a valid neighbor */
+		do {
+			switch (rand_int(4)) {
+			case DIR_NORTH:
+				if (new_depth.wy < MAX_WILD_Y - 1)
+					new_depth.wy++;
+				msg = "A gust of wind blows you north.";
+				break;
+			case DIR_EAST:
+				if (new_depth.wx < MAX_WILD_X - 1)
+					new_depth.wx++;
+				msg = "A gust of wind blows you east.";
+				break;
+			case DIR_SOUTH:
+				if (new_depth.wy > 0)
+					new_depth.wy--;
+				msg = "A gust of wind blows you south.";
+				break;
+			case DIR_WEST:
+				if (new_depth.wx > 0)
+					new_depth.wx--;
+				msg = "A gust of wind blows you west.";
+				break;
+			}
+		} while (inarea(wpos, &new_depth) && --tries);
+		if (!tries) {
+			msg_print(Ind, "There is a large magical discharge in the air.");
+			return;
+		}
+
+		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+		/* update the players new wilderness location */
+
+		/* update the players wilderness map */
+		if (!p_ptr->ghost)
+			p_ptr->wild_map[(new_depth.wx + new_depth.wy * MAX_WILD_X) / 8] |=
+			    (1 << ((new_depth.wx + new_depth.wy * MAX_WILD_X) % 8));
 	/* sometimes go down */
-	if ((can_go_down(wpos, 0x1) &&
+	} else if ((can_go_down(wpos, 0x1) &&
 	    ((!can_go_up(wpos, 0x1) || (rand_int(100) < 50)) ||
 	     (wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
-	    || (force && can_go_down_simple(wpos)))
-	{
+	    || (force && can_go_down_simple(wpos))) {
 		new_depth.wz--;
 		msg = "You sink through the floor.";
 		p_ptr->new_level_method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
@@ -1243,52 +1282,12 @@ void teleport_player_level(int Ind, bool force) {
 	/* else go up */
 	else if ((can_go_up(wpos, 0x1) &&
 	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
-	    || (force && can_go_up_simple(wpos)))
-	{
+	    || (force && can_go_up_simple(wpos))) {
 		new_depth.wz++;
 		msg = "You rise up through the ceiling.";
 		p_ptr->new_level_method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
-	}
-
-	/* If in the wilderness, teleport to a random neighboring level */
-	else if (wpos->wz == 0 && new_depth.wz == 0) {
-		/* get a valid neighbor */
-		wpcopy(&new_depth, wpos);
-		do {
-			switch (rand_int(4)) {
-				case DIR_NORTH:
-					if (new_depth.wy < MAX_WILD_Y - 1)
-						new_depth.wy++;
-					msg = "A gust of wind blows you north.";
-					break;
-				case DIR_EAST:
-					if (new_depth.wx < MAX_WILD_X - 1)
-						new_depth.wx++;
-					msg = "A gust of wind blows you east.";
-					break;
-				case DIR_SOUTH:
-					if (new_depth.wy > 0)
-						new_depth.wy--;
-					msg = "A gust of wind blows you south.";
-					break;
-				case DIR_WEST:
-					if (new_depth.wx > 0)
-						new_depth.wx--;
-					msg = "A gust of wind blows you west.";
-					break;
-			}
-		}
-		while (inarea(wpos, &new_depth));
-
-		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-		/* update the players new wilderness location */
-
-		/* update the players wilderness map */
-		if(!p_ptr->ghost)
-			p_ptr->wild_map[(new_depth.wx + new_depth.wy * MAX_WILD_X) / 8] |=
-				(1 << ((new_depth.wx + new_depth.wy * MAX_WILD_X) % 8));
 	} else {
-		msg_print(Ind, "The scroll seemed to fail");
+		msg_print(Ind, "There is a large magical discharge in the air.");
 		return;
 	}
 
