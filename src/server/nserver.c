@@ -3571,7 +3571,7 @@ static int Receive_login(int ind) {
 
 	if ((n = Packet_scanf(&connp->r, "%s", choice)) != 1) {
 		errno = 0;
-		printf("%d\n",n);
+		printf("%d\n", n);
 		plog("Failed reading login packet");
 		Destroy_connection(ind, "receive error in login");
 		return -1;
@@ -3582,6 +3582,16 @@ static int Receive_login(int ind) {
 		bool censor_swearing_tmp = censor_swearing;
 		char tmp_name[NAME_LEN];
 		struct account *acc;
+
+		/* security check: a bugged client might try to send the character name, but allows an 'empty' name!
+		   Here, the server would think that 'choice' being empty is signaling a different login stage.
+		   However, if the client was really trying to send an (empty) character name, at least connp->pass
+		   would be 0x0 at this point, causing the server to segfault! - C. Blue */
+		if (!connp->pass ||//<-important check
+		    !connp->nick || !connp->real || !connp->host || !connp->addr) {//<-just paranoia checks
+			Destroy_connection(ind, "Unexpected login error. Please contact an administrator.");
+			return(-1);
+		}
 
 		/* remove disallowed chars and spaces at the end */
 		Trim_name(connp->nick);
@@ -3663,10 +3673,10 @@ static int Receive_login(int ind) {
 			sflags0 |= SFLG0_TEST;
 #endif
 #ifndef RPG_SERVER	/* not implemented for RPG SERVER atm */
- #ifdef DED_IDDC_CHAR
+ #ifdef ALLOW_DED_IDDC_MODE
 			sflags0 |= SFLG0_DED_IDDC;
  #endif
- #ifdef DED_PVP_CHAR
+ #ifdef ALLOW_DED_PVP_MODE
 			sflags0 |= SFLG0_DED_PVP;
  #endif
 #endif
@@ -3692,7 +3702,7 @@ static int Receive_login(int ind) {
 			connp->pass = NULL;
 			n = player_id_list(&id_list, l_acc->id);
 			/* Display all account characters here */
-			for(i = 0; i < n; i++) {
+			for (i = 0; i < n; i++) {
 				u16b ptype = lookup_player_type(id_list[i]);
 
 				/* do not change protocol here */
@@ -3865,8 +3875,7 @@ static int Receive_login(int ind) {
 #define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
 #define RECEIVE_PLAY_SIZE_OPTMAXOLD (2*6+OPT_MAX_OLD+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
 //#define STRICT_RECEIVE_PLAY
-static int Receive_play(int ind)
-{
+static int Receive_play(int ind) {
 	connection_t *connp = Conn[ind];
 	unsigned char ch;
 	int i, n;

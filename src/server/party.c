@@ -530,7 +530,7 @@ int check_account(char *accname, char *c_name) {
 	hash_entry *ptr;
 	int i, success = 1;
 #ifndef RPG_SERVER
-	bool ded_iddc, ded_pvp;
+	int ded_iddc, ded_pvp;
 #endif
 
 	/* Make sure noone creates a character of the same name as another player's accountname!
@@ -565,7 +565,7 @@ int check_account(char *accname, char *c_name) {
 	if ((l_acc = GetAccount(accname, NULL, FALSE))) {
 		int *id_list, chars;
 #ifndef RPG_SERVER
-		int max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, plus_free = 2;
+		int max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, plus_free = 0;
 #endif
                 chars = player_id_list(&id_list, l_acc->id);
 #ifdef RPG_SERVER /* Allow only up to 1 character per account! */
@@ -579,26 +579,28 @@ int check_account(char *accname, char *c_name) {
 			return(-1);
 		}
 #else
- #ifdef DED_IDDC_CHAR
-		max_cpa_plus++;
+ #ifdef ALLOW_DED_IDDC_MODE
+		max_cpa_plus += MAX_DED_IDDC_CHARS;
+		plus_free += MAX_DED_IDDC_CHARS;
  #endif
- #ifdef DED_PVP_CHAR
-		max_cpa_plus++;
+ #ifdef ALLOW_DED_PVP_MODE
+		max_cpa_plus += MAX_DED_PVP_CHARS;
+		plus_free += MAX_DED_PVP_CHARS;
  #endif
 
-		ded_iddc = FALSE;
-		ded_pvp = FALSE;
+		ded_iddc = 0;
+		ded_pvp = 0;
 		for (i = 0; i < chars; i++) {
 			int m = lookup_player_mode(id_list[i]);
-			if ((m & MODE_DED_IDDC) && !ded_iddc) {
-				ded_iddc = TRUE;
+			if ((m & MODE_DED_IDDC) && ded_iddc < MAX_DED_IDDC_CHARS) {
+				ded_iddc++;
 				plus_free--;
 			}
-			if ((m & MODE_DED_PVP) && !ded_pvp)  {
-				ded_pvp = TRUE;
+			if ((m & MODE_DED_PVP) && ded_pvp < MAX_DED_PVP_CHARS)  {
+				ded_pvp++;
 				plus_free--;
 			}
-			/* paranoia */
+			/* paranoia (server-client version/type mismatch might cause this in the future) */
 			if (plus_free < 0) {
 				s_printf("debug error: plus_free is %d\n", plus_free);
 				plus_free = 0;
@@ -620,14 +622,14 @@ int check_account(char *accname, char *c_name) {
 		/* only exclusive char slots left */
 		} else if (chars >= max_cpa + max_cpa_plus - plus_free) {
 			/* paranoia (maybe if slot # gets changed again in the future) */
-			if (ded_iddc && ded_pvp) {
+			if (ded_iddc == MAX_DED_IDDC_CHARS && ded_pvp == MAX_DED_PVP_CHARS) {
 				/* out of character slots */
 				if (chars) C_KILL(id_list, chars, int);
 				KILL(l_acc, struct account);
 				return(-3);
 			}
-			if (ded_iddc) success = -4; /* set char mode to MODE_DED_PVP */
-			else if (ded_pvp) success = -5; /* set char mode to MODE_DED_IDDC */
+			if (ded_iddc == MAX_DED_IDDC_CHARS) success = -4; /* set char mode to MODE_DED_PVP */
+			else if (ded_pvp == MAX_DED_PVP_CHARS) success = -5; /* set char mode to MODE_DED_IDDC */
 			else success = -6; /* char mode can be either, make it depend on user choice */
 		}
 		/* at least one non-exclusive slot free */
@@ -635,10 +637,10 @@ int check_account(char *accname, char *c_name) {
  #if 1 /* new: allow any dedicated mode character to be created in 'normal' slots! */
 			success = -7;
  #else
-			if (!ded_iddc) {
-				if (!ded_pvp) success = -7; /* allow willing creation of any exlusive slot */
+			if (ded_iddc < MAX_DED_IDDC_CHARS) {
+				if (ded_pvp < MAX_DED_PVP_CHARS) success = -7; /* allow willing creation of any exlusive slot */
 				else success = -8; /* allow willing creating of iddc-exclusive slot */
-			} else if (!ded_pvp) success = -9; /* allow willing creating of pvp-exclusive slot */
+			} else if (ded_pvp < MAX_DED_PVP_CHARS) success = -9; /* allow willing creating of pvp-exclusive slot */
  #endif
 		}
 #endif
@@ -4222,22 +4224,20 @@ int player_id_list(int **list, u32b account) {
 	hash_entry *ptr;
 	int *llist;
 	int max_cpa = MAX_CHARS_PER_ACCOUNT;
-#ifdef DED_IDDC_CHAR
-	max_cpa++;
+#ifdef ALLOW_DED_IDDC_MODE
+	max_cpa += MAX_DED_IDDC_CHARS;
 #endif
-#ifdef DED_PVP_CHAR
-	max_cpa++;
+#ifdef ALLOW_DED_PVP_MODE
+	max_cpa += MAX_DED_PVP_CHARS;
 #endif
 
 	/* Count up the number of valid entries */
-	for (i = 0; i < NUM_HASH_ENTRIES; i++)
-	{
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
 		/* Acquire this chain */
 		ptr = hash_table[i];
 
 		/* Check this chain */
-		while (ptr)
-		{
+		while (ptr) {
 			/* One more entry */
 			if(!account || ptr->account == account)
 				len++;
@@ -4246,7 +4246,7 @@ int player_id_list(int **list, u32b account) {
 			ptr = ptr->next;
 		}
 	}
-	if(!len) return(0);
+	if (!len) return(0);
 
 	/* Allocate memory for the list */
 	C_MAKE((*list), len, int);
@@ -4255,17 +4255,14 @@ int player_id_list(int **list, u32b account) {
 	llist = *list;
 
 	/* Look again, this time storing ID's */
-	for (i = 0; i < NUM_HASH_ENTRIES; i++)
-	{
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
 		/* Acquire this chain */
 		ptr = hash_table[i];
 
 		/* Check this chain */
-		while (ptr)
-		{
+		while (ptr) {
 			/* Store this ID */
-			if(!account || ptr->account == account)
-			{
+			if (!account || ptr->account == account) {
 				llist[k++] = ptr->id;
 
 				/* Insertion sort for account specific lists */

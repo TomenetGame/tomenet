@@ -16,10 +16,10 @@
 /* Distinguished light colour for flaming lites, magic lights, vampire light */
 #define CAVE_LITE_COLOURS
 
-/* Add an extra character slot dedicated to Ironman Deep Dive Challenge */
-#define DED_IDDC_CHAR
-/* Add an extra character slot dedicated to PvP mode */
-#define DED_PVP_CHAR
+/* Add extra character slot(s) dedicated to Ironman Deep Dive Challenge (MAX_DED_IDDC_CHARS) */
+#define ALLOW_DED_IDDC_MODE
+/* Add extra character slot(s) dedicated to PvP mode (MAX_DED_PVP_CHARS) */
+#define ALLOW_DED_PVP_MODE
 
 /* Use daily pre-generated IDDC lineups of dungeon types, with transitions, bosses, etc? */
 #define IRONDEEPDIVE_MIXED_TYPES

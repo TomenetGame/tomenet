@@ -338,9 +338,9 @@ void Receive_login(void) {
 	int n;
 	char ch;
 	int i = 0, max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, mode = 0;
-	char names[max_cpa + 1][MAX_CHARS], colour_sequence[3];
+	char names[max_cpa + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS + 1][MAX_CHARS], colour_sequence[3];
 	char tmp[MAX_CHARS + 3];	/* like we'll need it... */
-	bool ded_pvp = FALSE, ded_iddc = FALSE, ded_pvp_shown, ded_iddc_shown;
+	int ded_pvp = 0, ded_iddc = 0, ded_pvp_shown, ded_iddc_shown;
 	char loc[MAX_CHARS];
 
 	static char c_name[MAX_CHARS];
@@ -404,24 +404,32 @@ void Receive_login(void) {
 
 	Term_clear();
 
+	if (is_newer_than(&server_version, 4, 5, 8, 1, 0, 0)) {
+		if (s_DED_IDDC) max_cpa_plus += MAX_DED_IDDC_CHARS;
+		if (s_DED_PVP) max_cpa_plus += MAX_DED_PVP_CHARS;
+	} else {
+		if (s_DED_IDDC) max_cpa_plus++;
+		if (s_DED_PVP) max_cpa_plus++;
+	}
+
 	if (s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'ARCADE_SERVER' settings.", 21, 10);
 	if (s_RPG) {
 		if (!s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'IRONMAN_SERVER' settings.", 21, 10);
-		if (!s_RPG_ADMIN) max_cpa = 1;
+		if (!s_RPG_ADMIN) {
+			max_cpa = 1;
+			max_cpa_plus = 0;
+		}
 	}
-	if (s_DED_IDDC) max_cpa_plus++;
-	if (s_DED_PVP) max_cpa_plus++;
 	if (s_TEST) c_put_str(TERM_SLATE, "The server is running 'TEST_SERVER' settings.", 22, 10);
 	else if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 10);
 	if (s_PARTY) c_put_str(TERM_SLATE, "This server is running 'PARTY_SERVER' settings.", 23, 10);
 
 	c_put_str(CHARSCREEN_COLOUR, "Character Overview", 0, 30);
-	if (!s_RPG || s_RPG_ADMIN) {
-		if (max_cpa_plus)
-			c_put_str(CHARSCREEN_COLOUR, format("(You can create up to %d+%d different characters to play with)", max_cpa, max_cpa_plus), 1, 10);
-		else
-			c_put_str(CHARSCREEN_COLOUR, format("(You can create up to %d different characters to play with)", max_cpa), 1, 10);
-	} else
+	if (max_cpa_plus)
+		c_put_str(CHARSCREEN_COLOUR, format("(You can create up to %d+%d different characters to play with)", max_cpa, max_cpa_plus), 1, 10);
+	else if (max_cpa > 1)
+		c_put_str(CHARSCREEN_COLOUR, format("(You can create up to %d different characters to play with)", max_cpa), 1, 10);
+	else
 		c_put_str(CHARSCREEN_COLOUR, "(You can create only ONE characters at a time to play with)", 1, 10);
 	c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 2);
 
@@ -453,12 +461,12 @@ void Receive_login(void) {
 		c_put_str(TERM_WHITE, tmp, 4 + i, COL_CHARS);
 
 		if (mode & MODE_DED_PVP) {
-			ded_pvp = TRUE;
+			ded_pvp++;
 			sprintf(tmp, "%s%s", colour_sequence, "PVP");
 			c_put_str(TERM_WHITE, tmp, 4 + i, 52);
 		}
 		if (mode & MODE_DED_IDDC) {
-			ded_iddc = TRUE;
+			ded_iddc++;
 			sprintf(tmp, "%s%s", colour_sequence, "IDDC");
 			c_put_str(TERM_WHITE, tmp, 4 + i, 52);
 		}
@@ -474,23 +482,38 @@ void Receive_login(void) {
 	ded_pvp_shown = ded_pvp;
 	ded_iddc_shown = ded_iddc;
 	for (n = max_cpa - i; n > 0; n--) {
-		if (max_cpa_plus == 2) {
-			if (!ded_pvp_shown) {
-				c_put_str(TERM_SLATE, "<free PvP-exclusive slot>", 4 + i + n - 1, COL_CHARS);
-				ded_pvp_shown = TRUE;
-				continue;
+		if (is_newer_than(&server_version, 4, 5, 8, 1, 0, 0)) {
+			if (max_cpa_plus) {
+				if (ded_pvp_shown < MAX_DED_PVP_CHARS) {
+					c_put_str(TERM_SLATE, "<free PvP-exclusive slot>", 4 + i + n - 1, COL_CHARS);
+					ded_pvp_shown++;
+					continue;
+				}
+				if (ded_iddc_shown < MAX_DED_IDDC_CHARS) {
+					c_put_str(TERM_SLATE, "<free IDDC-exclusive slot>", 4 + i + n - 1, COL_CHARS);
+					ded_iddc_shown++;
+					continue;
+				}
 			}
-			if (!ded_iddc_shown) {
-				c_put_str(TERM_SLATE, "<free IDDC-exclusive slot>", 4 + i + n - 1, COL_CHARS);
-				ded_iddc_shown = TRUE;
-				continue;
+		} else {
+			if (max_cpa_plus == 2) {//if it's anything > 0 actually (0 == s_RPG)
+				if (!ded_pvp_shown) {
+					c_put_str(TERM_SLATE, "<free PvP-exclusive slot>", 4 + i + n - 1, COL_CHARS);
+					ded_pvp_shown = MAX_DED_PVP_CHARS;//hack: 'TRUE'
+					continue;
+				}
+				if (!ded_iddc_shown) {
+					c_put_str(TERM_SLATE, "<free IDDC-exclusive slot>", 4 + i + n - 1, COL_CHARS);
+					ded_iddc_shown = MAX_DED_IDDC_CHARS;//hack: 'TRUE'
+					continue;
+				}
 			}
 		}
 		c_put_str(TERM_SLATE, "<free slot>", 4 + i + n - 1, COL_CHARS);
 	}
 	if (i < max_cpa) {
 		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", 5 + max_cpa, 2);
-		if ((!ded_pvp || !ded_iddc) && max_cpa_plus)
+		if ((ded_pvp < MAX_DED_PVP_CHARS || ded_iddc < MAX_DED_IDDC_CHARS) && max_cpa_plus)
 			c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character (IDDC or PvP only)", 6 + max_cpa, 2);
 	} else {
 		c_put_str(CHARSCREEN_COLOUR, format("(Maximum of %d character reached.", max_cpa), 5 + max_cpa, 2);
