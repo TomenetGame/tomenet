@@ -208,7 +208,7 @@ typedef struct qi_kill {
 	s16b ridx[10];					/* kill certain monster(s), 0 for none, -1 for any. */
 
 	cptr name[5];					/* partial name that can match. AND's with char/attr/lev */
-	char rchar[5];					/*  ..certain types, 254 for any, 255 for none. AND's with name/attr/lev. */
+	char rchar[5];					/*  ..certain types, 126 for any, 127 for none. AND's with name/attr/lev. */
 	byte rattr[5];					/*  ..certain colours, 254 for any, 255 for none. AND's with name/char/lev. */
 	byte rlevmin, rlevmax;				/* 0 for any. AND's with char/attr. */
 

@@ -2181,7 +2181,7 @@ static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 	q_questor->death_fail = q_qmorph->death_fail;
 	if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);
 	if (q_qmorph->ridx) q_questor->ridx = q_qmorph->ridx;
-	if (q_qmorph->rchar != 255) q_questor->rchar = q_qmorph->rchar;
+	if (q_qmorph->rchar != 127) q_questor->rchar = q_qmorph->rchar;
 	if (q_qmorph->rattr != 255) q_questor->rattr = q_qmorph->rattr;
 	if (q_qmorph->rlev) m_list[q_questor->mo_idx].level = q_qmorph->rlev;
 #if 0
@@ -2430,7 +2430,7 @@ static void quest_remove_dungeon(int q_idx, int stage) {
 }
 /* Helper vars for quest_aux(), sigh.. TODO: some other way? ^^ */
 static cptr quest_aux_name = NULL;
-static byte quest_aux_char = 255;
+static char quest_aux_char = 127;
 static byte quest_aux_attr = 255;
 /* Helper function for quest_mspawn_pick, well more specifically for get_mon_num_hook. */
 static bool quest_aux(int r_idx) {
@@ -2439,7 +2439,7 @@ static bool quest_aux(int r_idx) {
 	if (r_ptr->flags1 & RF1_UNIQUE) return FALSE;
 	if (quest_aux_name && !strstr(r_name + r_ptr->name, quest_aux_name)) return FALSE;
 	if (quest_aux_attr != 255 && r_ptr->d_attr != quest_aux_attr) return FALSE;
-	if (quest_aux_char != 255 && r_ptr->d_char != quest_aux_char) return FALSE;
+	if (quest_aux_char != 127 && r_ptr->d_char != quest_aux_char) return FALSE;
 
 	return TRUE;
 }
@@ -3789,14 +3789,14 @@ static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type
 		if (q_kill->name[i] && !strstr(mname, q_kill->name[i])) continue;
 
 		/* no char specified? */
-		if (q_kill->rchar[i] == 255) continue;
+		if (q_kill->rchar[i] == 127) continue;
 		 /* accept any char? */
-		if (q_kill->rchar[i] != 254 &&
+		if (q_kill->rchar[i] != 126 &&
 		    /* specified a char? */
 		    q_kill->rchar[i] != r_ptr->d_char) continue;
 
 		/* no attr specified? */
-		if (q_kill->rattr[i] == 255) continue;//redundant with rchar==255 check
+		if (q_kill->rattr[i] == 255) continue;//redundant with rchar==127 check
 		 /* accept any attr? */
 		if (q_kill->rattr[i] != 254 &&
 		    /* specified an attr? */
