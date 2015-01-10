@@ -16,26 +16,6 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
-#define TRUE
-#define FALSE
-
-#define TERM_DARK                0  /* 'd' */   /* 0,0,0 */
-#define TERM_WHITE               1  /* 'w' */   /* 4,4,4 */
-#define TERM_SLATE               2  /* 's' */   /* 2,2,2 */
-#define TERM_ORANGE              3  /* 'o' */   /* 4,2,0 */
-#define TERM_RED                 4  /* 'r' */   /* 3,0,0 */
-#define TERM_GREEN               5  /* 'g' */   /* 0,2,1 */
-#define TERM_BLUE                6  /* 'b' */   /* 0,0,4 */
-#define TERM_UMBER               7  /* 'u' */   /* 2,1,0 */
-#define TERM_L_DARK              8  /* 'D' */   /* 1,1,1 */
-#define TERM_L_WHITE             9  /* 'W' */   /* 3,3,3 */
-#define TERM_VIOLET             10  /* 'v' */   /* 4,0,4 */
-#define TERM_YELLOW             11  /* 'y' */   /* 4,4,0 */
-#define TERM_L_RED              12  /* 'R' */   /* 4,0,0 */
-#define TERM_L_GREEN            13  /* 'G' */   /* 0,4,0 */
-#define TERM_L_BLUE             14  /* 'B' */   /* 0,4,4 */
-#define TERM_L_UMBER            15  /* 'U' */   /* 3,2,1 */
-
 
 $extern s32b intMod(s32b a, s32b b);
 $extern s32b intAnd(s32b a, s32b b);
@@ -67,52 +47,6 @@ extern void c_prt(byte attr, cptr str, int row, int col);
 extern void wipe_hooks(void);
 extern void dump_hooks(void);
 extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
-
-#define HOOK_MONSTER_DEATH      0
-#define HOOK_OPEN               1
-#define HOOK_GEN_QUEST          2
-#define HOOK_END_TURN           3
-#define HOOK_FEELING            4
-#define HOOK_NEW_MONSTER        5
-#define HOOK_GEN_LEVEL          6
-#define HOOK_BUILD_ROOM1        7
-#define HOOK_NEW_LEVEL          8
-#define HOOK_QUEST_FINISH       9
-#define HOOK_QUEST_FAIL         10
-#define HOOK_GIVE               11
-#define HOOK_CHAR_DUMP          12
-#define HOOK_INIT_QUEST         13
-#define HOOK_WILD_GEN           14
-#define HOOK_DROP               15
-#define HOOK_IDENTIFY           16
-#define HOOK_MOVE               17
-#define HOOK_STAIR              18
-#define HOOK_MONSTER_AI         19
-#define HOOK_PLAYER_LEVEL       20
-#define HOOK_WIELD              21
-#define HOOK_INIT               22
-#define HOOK_QUAFF              23
-#define HOOK_AIM                24
-#define HOOK_USE                25
-#define HOOK_ACTIVATE           26
-#define HOOK_ZAP                27
-#define HOOK_READ               28
-#define HOOK_CALC_BONUS         29
-#define HOOK_PLAYER_FLAGS       30
-#define HOOK_KEYPRESS           31
-#define HOOK_CHAT               32
-#define HOOK_MON_SPEAK          33
-#define HOOK_MKEY               34
-#define HOOK_BIRTH_OBJECTS      35
-#define HOOK_ACTIVATE_DESC      36
-#define HOOK_INIT_GAME          37
-#define HOOK_ACTIVATE_POWER     38
-#define HOOK_ITEM_NAME          39
-#define HOOK_SAVE_GAME          40
-#define HOOK_LOAD_GAME          41
-#define HOOK_LEVEL_REGEN        42
-#define HOOK_LEVEL_END_GEN      43
-#define HOOK_NPCTEST		44
 */
 
 extern void c_msg_print(cptr msg);

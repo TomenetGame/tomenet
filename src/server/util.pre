@@ -21,38 +21,6 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
-#define TRUE
-#define FALSE
-
-#define MAX_F_IDX       256     /* Max size for "f_info[]" */
-#define MAX_K_IDX       1024 /* Max size for "k_info[]" */
-#define MAX_A_IDX       256     /* Max size for "a_info[]" */
-#define MAX_E_IDX       256 /* Max size for "e_info[]" */
-#define MAX_R_IDX       1152    /* Max size for "r_info[]" */
-#define MAX_V_IDX       256     /* Max size for "v_info[]" */
-#define MAX_RE_IDX      128     /* Max size for "re_info[]" */
-#define MAX_T_IDX       256 /* Max size for "t_info[]" */
-#define MAX_OW_IDX      96 /* Max size for "ow_info[]" */
-#define MAX_ST_IDX      96 /* Max size for "st_info[]" */
-#define MAX_BA_IDX      96 /* Max size for "ba_info[]" */
-#define MAX_D_IDX       64 /* Max size for "d_info[]" */
-
-#define TERM_DARK                0  /* 'd' */   /* 0,0,0 */
-#define TERM_WHITE               1  /* 'w' */   /* 4,4,4 */
-#define TERM_SLATE               2  /* 's' */   /* 2,2,2 */
-#define TERM_ORANGE              3  /* 'o' */   /* 4,2,0 */
-#define TERM_RED                 4  /* 'r' */   /* 3,0,0 */
-#define TERM_GREEN               5  /* 'g' */   /* 0,2,1 */
-#define TERM_BLUE                6  /* 'b' */   /* 0,0,4 */
-#define TERM_UMBER               7  /* 'u' */   /* 2,1,0 */
-#define TERM_L_DARK              8  /* 'D' */   /* 1,1,1 */
-#define TERM_L_WHITE             9  /* 'W' */   /* 3,3,3 */
-#define TERM_VIOLET             10  /* 'v' */   /* 4,0,4 */
-#define TERM_YELLOW             11  /* 'y' */   /* 4,4,0 */
-#define TERM_L_RED              12  /* 'R' */   /* 4,0,0 */
-#define TERM_L_GREEN            13  /* 'G' */   /* 0,4,0 */
-#define TERM_L_BLUE             14  /* 'B' */   /* 0,4,4 */
-#define TERM_L_UMBER            15  /* 'U' */   /* 3,2,1 */
 
 struct hash_entry
 {
@@ -244,52 +212,6 @@ extern void wipe_hooks(void);
 extern void dump_hooks(void);
 extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 
-#define HOOK_MONSTER_DEATH      0
-#define HOOK_OPEN               1
-#define HOOK_GEN_QUEST          2
-#define HOOK_END_TURN           3
-#define HOOK_FEELING            4
-#define HOOK_NEW_MONSTER        5
-#define HOOK_GEN_LEVEL          6
-#define HOOK_BUILD_ROOM1        7
-#define HOOK_NEW_LEVEL          8
-#define HOOK_QUEST_FINISH       9
-#define HOOK_QUEST_FAIL         10
-#define HOOK_GIVE               11
-#define HOOK_CHAR_DUMP          12
-#define HOOK_INIT_QUEST         13
-#define HOOK_WILD_GEN           14
-#define HOOK_DROP               15
-#define HOOK_IDENTIFY           16
-#define HOOK_MOVE               17
-#define HOOK_STAIR              18
-#define HOOK_MONSTER_AI         19
-#define HOOK_PLAYER_LEVEL       20
-#define HOOK_WIELD              21
-#define HOOK_INIT               22
-#define HOOK_QUAFF              23
-#define HOOK_AIM                24
-#define HOOK_USE                25
-#define HOOK_ACTIVATE           26
-#define HOOK_ZAP                27
-#define HOOK_READ               28
-#define HOOK_CALC_BONUS         29
-#define HOOK_PLAYER_FLAGS       30
-#define HOOK_KEYPRESS           31
-#define HOOK_CHAT               32
-#define HOOK_MON_SPEAK          33
-#define HOOK_MKEY               34
-#define HOOK_BIRTH_OBJECTS      35
-#define HOOK_ACTIVATE_DESC      36
-#define HOOK_INIT_GAME          37
-#define HOOK_ACTIVATE_POWER     38
-#define HOOK_ITEM_NAME          39
-#define HOOK_SAVE_GAME          40
-#define HOOK_LOAD_GAME          41
-#define HOOK_LEVEL_REGEN        42
-#define HOOK_LEVEL_END_GEN      43
-#define HOOK_NPCTEST		44	/* undecided on npc hooks atm */
-					/* this one is proximity activated */
 
 extern s32b dungeon_store_timer;	/* Keeps track of its generation */
 extern s32b dungeon_store2_timer;	/* Keeps track of its generation */
@@ -433,43 +355,6 @@ extern int fireworks;
 extern int fireworks_delay;
 
 extern cptr *ANGBAND_DIR;
-
-#define CLASS_WARRIOR		0
-#define CLASS_MAGE              1
-#define CLASS_PRIEST            2
-#define CLASS_ROGUE             3
-#define CLASS_MIMIC             4
-#define CLASS_ARCHER            5
-#define CLASS_PALADIN           6
-#define CLASS_RANGER            7
-#define CLASS_ADVENTURER        8
-/* #define CLASS_BARD            9 */
-#define CLASS_DRUID             9
-#define CLASS_SHAMAN            10
-#define CLASS_RUNEMASTER        11
-#define CLASS_MINDCRAFTER	12
-
-/*
- * The traits
- */
-#define TRAIT_NONE		0	/* N/A */
-
-#define TRAIT_BLUE		1	/* Draconians */
-#define TRAIT_WHITE		2
-#define TRAIT_RED		3
-#define TRAIT_BLACK		4
-#define TRAIT_GREEN		5
-#define TRAIT_MULTI		6
-#define TRAIT_BRONZE		7
-#define TRAIT_SILVER		8
-#define TRAIT_GOLD		9
-#define TRAIT_LAW		10
-#define TRAIT_CHAOS		11
-#define TRAIT_BALANCE		12
-#define TRAIT_POWER		13
-
-#define TRAIT_ENLIGHTENED	14	/* Maiar */
-#define TRAIT_CORRUPTED		15
 
 
 /* timers for special events */

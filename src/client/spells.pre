@@ -23,7 +23,6 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
-#define DEFAULT_RADIUS			18
 
 /*
  * The spell function must provide the desc
