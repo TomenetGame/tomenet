@@ -2721,8 +2721,8 @@ void msg_print_near_monster(int m_idx, cptr msg)
 		/* Skip if not visible */
 		if (!p_ptr->mon_vis[m_idx]) continue;
 
-		/* Can he see this player? */
-//		if (!p_ptr->cave_flag[y][x] & CAVE_VIEW) continue;
+		/* Can he see this monster? */
+		if (!p_ptr->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW) continue;
 
 		/* Acquire the monster name */
 		monster_desc(i, m_name, m_idx, 0);
