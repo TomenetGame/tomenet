@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. January 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. January 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -759,6 +759,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
                 a bit irritating.
 
 :       type a chat message. To whisper privately, enter <player>:<text>
+        eg:  Gandalf:hi!  - actually the first few letters of the target
+        player's name are enough, like:  Gan:hi!
         You can also enter a slash command here.
         Press TAB to cycle between different chat modes, such as party-chat.
         For details about chat features see (3.3).
