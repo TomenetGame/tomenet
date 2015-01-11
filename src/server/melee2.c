@@ -8319,12 +8319,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					s_printf("ITEM_CONSUMED: %s by %s\n", o_name, m_name_real);
 
 					/* Describe observable situations */
-					if (player_has_los_bold(Ind, ny, nx)) {
-						/* ^^ */
-						msg_format(Ind, "%^s eats %s.", m_name, o_name);
-						m_ptr->energy -= level_speed(&m_ptr->wpos) * 5;
-						//do_move = FALSE;
-					}
+ #if 0
+					if (player_has_los_bold(Ind, ny, nx))
+						msg_format(Ind, "%^s eats %s.", m_name, o_name); /* ^^ */
+ #else
+					msg_print_near_monster(m_idx, format("eats %s.", o_name));
+ #endif
+
+					m_ptr->energy -= level_speed(&m_ptr->wpos) * 8;//seconds, approx. 8 is max due to s16b overflow!
 
 					/* Delete the object */
 					delete_object(wpos, ny, nx, FALSE);
