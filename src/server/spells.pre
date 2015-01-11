@@ -1,7 +1,7 @@
 /* register server type for #if..#else..#endif structures with 'preproc' */
-#include "../config.h"
-#include "../common/defines-local.h"
-#include "../common/defines-features.h"
+#parse "../config.h"
+#parse "../common/defines-local.h"
+#parse "../common/defines-features.h"
 
 
 /* $Id$ */

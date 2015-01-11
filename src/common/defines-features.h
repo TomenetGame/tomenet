@@ -153,6 +153,19 @@
 /* like BONE_AND_TREASURE_CHAMBERS, just for IDDC */
 #define IDDC_BONE_AND_TREASURE_CHAMBERS
 
+
+/* New in 4.5.1.2: Support 100% client-side animated spellcasting - C. Blue
+   Note: This must be on for clients >= 4.5.1.2.0.0 and off for those before.
+   Same for servers. */
+#define EXTENDED_TERM_COLOURS
+
+/* Special extended colours that make use of background colouring - C. Blue
+   Note: This is highly EXPERIMENTAL and not even implemented atm.,
+         the only thing that works is proof of concept code that displays
+         rain in alternating colours, TERM_ORANGE and TERM2_BLUE. */
+//#define EXTENDED_BG_COLOURS
+
+
 /* better chance for non-low +hit,+dam on randart melee weapons and boomerangs */
 #define RANDART_WEAPON_BUFF
 
