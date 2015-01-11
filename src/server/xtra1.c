@@ -37,6 +37,9 @@
 /* Announce global events every 900 seconds */
 #define GE_ANNOUNCE_INTERVAL 900
 
+/* Seconds left when to fire a final announcement */
+#define GE_FINAL_ANNOUNCEMENT 300 /* 240 */
+
 /* Allow ego monsters in Arena Challenge global event? */
 #define GE_ARENA_ALLOW_EGO
 
@@ -6957,9 +6960,9 @@ int start_global_event(int Ind, int getype, char *parm) {
 
 	/* extra announcement if announcement time isn't the usual multiple of announcement intervals */
 #if 1 /* this is ok, and leaving it for now */
-	if ((ge->announcement_time % GE_ANNOUNCE_INTERVAL) && (ge->announcement_time % 240)) announce_global_event(n);
+	if ((ge->announcement_time % GE_ANNOUNCE_INTERVAL) && (ge->announcement_time % GE_FINAL_ANNOUNCEMENT)) announce_global_event(n);
 #else /* this would be even finer, but actually it's not needed as long as start_global_event() is called with sensible announcement_time :) */
-/* note that this else-branch is missing the 240-check atm */
+/* note that this else-branch is missing the GE_FINAL_ANNOUNCEMENT-check atm */
 	if (ge->announcement_time >= 120 && !(GE_ANNOUNCE_INTERVAL % 60)) { /* if we announce in x-minute-steps, and have at least 2 minutes left.. */
 		if ((ge->announcement_time / 60) % (GE_ANNOUNCE_INTERVAL / 60)) announce_global_event(n); /* ..then don't double-announce for this whole minute */
 	} else { /* if we announce in second-steps or weird fractions of minutes, or if we display the remaining time in seconds anyway because it's <120s.. */
@@ -7398,8 +7401,8 @@ static void process_global_event(int ge_id) {
 		ge->state[0] = 255; /* ..and process clean-up! */
 	}
 
-	/* extra warning at T-4min for last minute subscribers */
-	if (ge->announcement_time * cfg.fps - elapsed_turns == 240L * cfg.fps) {
+	/* extra warning at T - x min for last minute subscribers */
+	if (ge->announcement_time * cfg.fps - elapsed_turns == GE_FINAL_ANNOUNCEMENT * cfg.fps) {
 		announce_global_event(ge_id);
 		return; /* not yet >:) */
 
