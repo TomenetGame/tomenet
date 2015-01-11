@@ -8165,7 +8165,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			    (o_ptr->tval != TV_KEY) &&
 #endif
 			    ((r_ptr->flags2 & RF2_TAKE_ITEM) ||
-			     (r_ptr->flags2 & RF2_KILL_ITEM)))
+			     (r_ptr->flags2 & RF2_KILL_ITEM)
+#if 1
+			    || (m_ptr->r_idx == RI_PANDA)
+#endif
+			     ))
 			{
 				char m_name[MNAME_LEN];
 				char m_name_real[MNAME_LEN];
@@ -8201,7 +8205,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 						if (p_ptr->mon_vis[m_idx] && player_has_los_bold(Ind, ny, nx)) {
 							/* Dump a message */
 							msg_format(Ind, "%^s tries to pick up %s, but fails.",
-							           m_name, o_name);
+							    m_name, o_name);
 						}
 					}
 				}
@@ -8304,9 +8308,29 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 						/* Wipe the object */
 						delete_object_idx(this_o_idx, TRUE);
 					}
-#endif	// 0
+#endif
+				}
+
+#if 1 /* special item consumers, hard-coded */
+				/* Pick up the item */
+				else if (m_ptr->r_idx == RI_PANDA &&
+				    o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT &&
+				    (strstr(o_name, "bamboo") || strstr(o_name, "Bamboo"))) {
+					s_printf("ITEM_CONSUMED: %s by %s\n", o_name, m_name_real);
+
+					/* Describe observable situations */
+					if (player_has_los_bold(Ind, ny, nx)) {
+						/* ^^ */
+						msg_format(Ind, "%^s eats %s.", m_name, o_name);
+						m_ptr->energy -= level_speed(&m_ptr->wpos) * 5;
+						//do_move = FALSE;
+					}
+
+					/* Delete the object */
+					delete_object(wpos, ny, nx, FALSE);
 				}
 			}
+#endif
 
 			/* Check for monster trap */
 			if (c_ptr->feat == FEAT_MON_TRAP && mon_hit_trap(m_idx)) return;
