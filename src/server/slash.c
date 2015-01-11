@@ -3689,7 +3689,7 @@ void do_slash_cmd(int Ind, char *message) {
 				if (ok == -4 || ok == -9 || ok == -6 || ok == -7) {
 					p_ptr->mode |= MODE_DED_PVP;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}
@@ -3697,7 +3697,7 @@ void do_slash_cmd(int Ind, char *message) {
 #else /* allow unlimitid pvp-dedicated chars */
 				p_ptr->mode |= MODE_DED_PVP;
 				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
-				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
+				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
 //				Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 #endif
 				return;
@@ -3715,13 +3715,14 @@ void do_slash_cmd(int Ind, char *message) {
 					p_ptr->mode &= ~MODE_EVERLASTING;
 					p_ptr->mode |= MODE_NO_GHOST;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}
 				msg_print(Ind, "\377yYou already have a slot-exclusive IDDC-mode character.");
 #else /* new way: ANY character may be convert, already in town even */
-				if (p_ptr->max_exp || p_ptr->max_plv > 1) {
+				if ((p_ptr->max_exp || p_ptr->max_plv > 1) &&
+				    !in_irondeepdive(&p_ptr->wpos)) {
 					msg_print(Ind, "\377yYou must have zero experience points to be eligible to convert to IDDC!");
 					s_printf("FAILED.\n");
 					return;
@@ -3730,21 +3731,23 @@ void do_slash_cmd(int Ind, char *message) {
 				p_ptr->mode &= ~MODE_EVERLASTING;
 				p_ptr->mode |= MODE_NO_GHOST;
 				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
-				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
+				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
 
 				/* set typical character parameters as if we were born like this */
+				if (!in_irondeepdive(&p_ptr->wpos)) {
  #ifdef EVENT_TOWNIE_GOLD_LIMIT
-				if (EVENT_TOWNIE_GOLD_LIMIT != -1) {
-					p_ptr->au += EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;
-					p_ptr->gold_picked_up = EVENT_TOWNIE_GOLD_LIMIT;
-					p_ptr->redraw |= PR_GOLD;
-				}
+					if (EVENT_TOWNIE_GOLD_LIMIT != -1) {
+						p_ptr->au += EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;
+						p_ptr->gold_picked_up = EVENT_TOWNIE_GOLD_LIMIT;
+						p_ptr->redraw |= PR_GOLD;
+					}
  #endif
  #if 1 /* note that this allows use of WoR to get to IDDC :) */
-				/* automatically know the location of IDDC dungeon */
-				p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
-				    (1 << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
+					/* automatically know the location of IDDC dungeon */
+					p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
+					    (1 << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
  #endif
+				}
 				p_ptr->warning_dungeon = 1;
 				p_ptr->warning_wor = 1;
 				p_ptr->warning_ghost = 1;
