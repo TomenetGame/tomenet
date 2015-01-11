@@ -1258,7 +1258,7 @@ void sound_near(int Ind, cptr name, cptr alternative, int type) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (!inarea(&Players[i]->wpos, &Players[Ind]->wpos)) continue;
 
-		/* Can he see this player? */
+		/* Can player see the target player? */
 //		if (!(Players[i]->cave_flag[Players[Ind]->py][Players[Ind]->px] & CAVE_VIEW)) continue;
 
 		/* within audible range? */
@@ -1316,7 +1316,7 @@ void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alte
 		/* Make sure this player is at this depth */
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
-		/* Can (s)he see the site? */
+		/* Can player see the site via LOS? */
 		if (viewable && !(p_ptr->cave_flag[y][x] & CAVE_VIEW)) continue;
 
 		/* within audible range? */
@@ -1389,11 +1389,8 @@ void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {
 		/* Skip if not visible */
 //		if (!p_ptr->mon_vis[m_idx]) continue;
 
-		/* Can he see this player? */
-//		if (!p_ptr->cave_flag[y][x] & CAVE_VIEW) continue;
-
-		/* Can (s)he see the site? */
-//		if (!(p_ptr->cave_flag[y][x] & CAVE_VIEW)) continue;
+		/* Can player see this monster via LOS? */
+//		if (!(p_ptr->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) continue;
 
 		/* within audible range? */
 		d = distance(m_ptr->fy, m_ptr->fx, Players[i]->py, Players[i]->px);
@@ -2541,8 +2538,7 @@ void msg_print_near(int Ind, cptr msg)
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 		/* Can he see this player? */
-		if (p_ptr->cave_flag[y][x] & CAVE_VIEW)
-		{
+		if (p_ptr->cave_flag[y][x] & CAVE_VIEW) {
 			/* Send the message */
 			msg_print(i, msg);
 		}
@@ -2722,7 +2718,7 @@ void msg_print_near_monster(int m_idx, cptr msg)
 		if (!p_ptr->mon_vis[m_idx]) continue;
 
 		/* Can he see this monster? */
-		if (!p_ptr->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW) continue;
+		if (!(p_ptr->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) continue;
 
 		/* Acquire the monster name */
 		monster_desc(i, m_name, m_idx, 0);
