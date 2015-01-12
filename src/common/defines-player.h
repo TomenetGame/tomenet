@@ -1,8 +1,12 @@
 /* $Id$ */
-/* File: defines.h */
+/* File: defines-player.h */
 
-/* Purpose: global constants and macro definitions */
+/* Purpose: global constants and macro definitions for player.pre lua file */
 
+#define PW_PLAYER	8
+
+#define PY_FOOD_MAX	15000	/* Food value (Bloated) */
+#define PY_FOOD_FULL	10000	/* Food value (Normal) */
 
 /*
  * Maximum number of "normal" pack slots, and the index of the "overflow"
@@ -13,50 +17,14 @@
  * by the fact that the screen can only show 23 items plus a one-line prompt.
  */
 #define INVEN_PACK	23
-
 /*
  * Indexes used for various "equipment" slots (hard-coded by savefiles, etc).
  */
 #define INVEN_WIELD	24
-#define INVEN_ARM	25
-#define INVEN_BOW	26
-#define INVEN_LEFT	27
-#define INVEN_RIGHT	28
-#define INVEN_NECK	29
-#define INVEN_LITE	30
-#define INVEN_BODY	31
-#define INVEN_OUTER	32
-#define INVEN_HEAD	33
-#define INVEN_HANDS	34
-#define INVEN_FEET	35
-
-#define INVEN_AMMO      36 /* 1 quiver -- TORSO */
-#define INVEN_TOOL      37 /* 1 tool -- ARMS */
-
-#if 0	/* ToME ones - later, later :) */
-#define INVEN_WIELD     24 /* 3 weapons -- WEAPONS */
-#define INVEN_BOW       27 /* 1 bow -- WEAPON */
-#define INVEN_RING      28 /* 6 rings -- FINGER */
-#define INVEN_NECK      34 /* 2 amulets -- HEAD */
-#define INVEN_LITE      36 /* 1 lite -- TORSO */
-#define INVEN_BODY      37 /* 1 body -- TORSO */
-#define INVEN_OUTER     38 /* 1 cloak -- TORSO */
-#define INVEN_ARM       39 /* 3 arms -- ARMS */
-#define INVEN_HEAD      42 /* 2 heads -- HEAD */
-#define INVEN_HANDS     44 /* 3 hands -- ARMS */
-#define INVEN_FEET      47 /* 2 feets -- LEGS */
-#define INVEN_CARRY     49 /* 1 carried monster -- TORSO */
-#define INVEN_AMMO      50 /* 1 quiver -- TORSO */
-#define INVEN_TOOL      51 /* 1 tool -- ARMS */
-#endif	/* 0 */
-
-
 /*
  * Total number of inventory slots (hard-coded).
  */
 #define INVEN_TOTAL	38	/* since they start at 0, max slot index is INVEN_TOTAL - 1 (!) */
-/* Number of equipment slots, INVEN_TOTAL ... INVEN_TOTAL + INVEN_EQ - 1 */
-#define INVEN_EQ        (INVEN_TOTAL - INVEN_WIELD)
 
 
 /*
@@ -120,6 +88,11 @@
 #define CLASS_SHAMAN		10
 #define CLASS_RUNEMASTER	11
 #define CLASS_MINDCRAFTER	12
+
+
+/* for spell-casting */
+#define TRAIT_ENLIGHTENED	14	/* Maiar */
+#define TRAIT_CORRUPTED		15
 
 
 /*

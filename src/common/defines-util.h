@@ -1,7 +1,14 @@
 /* $Id$ */
-/* File: defines.h */
+/* File: defines-util.h */
 
-/* Purpose: global constants and macro definitions */
+/* Purpose: global constants and macro definitions for util.pre lua file */
+
+
+/*
+ * Bit flags for the "c_get_item" function
+ */
+#define USE_EQUIP	0x01	/* Allow equip items */
+#define USE_INVEN	0x02	/* Allow inven items */
 
 
 #define TERM_DARK	0	/* 'd' */	/* 0,0,0 */

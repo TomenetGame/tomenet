@@ -3,6 +3,9 @@
 #parse "../common/defines-local.h"
 #parse "../common/defines-features.h"
 
+/* specific includes for spells.pre file */
+#include "../common/defines-spells.h"
+
 
 /* $Id$ */
 /* File: spells.pkg */
