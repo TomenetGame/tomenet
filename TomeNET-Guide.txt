@@ -918,6 +918,9 @@ They all start with a slash '/' hence they're called slash commands:
                      /convertexclusive <your-character-name>
                      for example:
                      /convertexclusive Gandalf
+                     If you still have a free exclusive character slot
+                     available then your character is moved to that slot,
+                     freeing up a generic character slot again.
 
 /coin       Flip a coin to get either heads or tails.
             The result is random and can be seen by other players who stand
@@ -6637,7 +6640,7 @@ Ironman Deep Dive Challenge (IDDC)
     If you make a 'slot-exclusive' IDDC character, it will start out with 300
     extra gold, and in turn automatically be unable to pick up any more gold or
     items of other players, and it won't get experience from eating bad food
-    either.
+    either. (It cannot buy houses either, but you won't need those anyway.)
 
     Players in the IDDC receive a 20% experience gain bonus in addition to the
     usual 15% experience bonus all ironman dungeons provide, so overall you
@@ -6704,7 +6707,8 @@ Ironman Deep Dive Challenge (IDDC)
 
     An IDDC-slot-exclusive character that makes it out of the dungeon will be
     restricted to the world surface. If it attempts to enter any dungeon or
-    tower it will automatically retire instantly.
+    tower it will automatically retire instantly. Note that it cannot buy any
+    houses, but it won't need those anyway.
 
     Usually unique monsters may not spawn in two or more places in the game
     world at once, but the IDDC is actually an exception. In here, a unique
@@ -6762,10 +6766,10 @@ Ironman Deep Dive Challenge (IDDC)
     dungeon level instead.
 
     NOTE: You can use the command '/convertexclusive' to convert one of your
-    characters into a dedicated IDDC character, moving it to the specific
-    IDDC-only-character slot and freeing up the generic character slot.
-    This of course only works if you don't have an IDDC-exclusive character
-    already.
+    characters into a dedicated IDDC character, moving it to a specific
+    IDDC-only-character slot and freeing up the generic character slot again.
+    This of course only works if you still have a free IDDC-exclusive character
+    slot available.
 
 
 Seasonal events
@@ -15073,6 +15077,7 @@ by an opponent! The special rules that apply are as follows:
  (takes about 30 seconds to wear off, or just enter a town to reset).
 -PvP characters are unaffected by certain effects caused by other players:
  Hallucination, Life force drain (exp drain), Stat drain, Nexus scrambling.
+-They may not own more than one house.
 
 Note: Item rewards depend on your character, see (8.5) for more information
       about item rewards.
