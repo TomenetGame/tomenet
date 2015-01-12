@@ -3727,9 +3727,12 @@ void do_slash_cmd(int Ind, char *message) {
 					s_printf("FAILED.\n");
 					return;
 				}
+
 				p_ptr->mode |= MODE_DED_IDDC;
 				p_ptr->mode &= ~MODE_EVERLASTING;
 				p_ptr->mode |= MODE_NO_GHOST;
+				/* (get rid of his houses -- not needed though since you can't currently buy houses at level 1) */
+
 				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
 				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
 

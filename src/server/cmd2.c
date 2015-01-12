@@ -1407,6 +1407,14 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 			msg_print(Ind, "You cannot transfer houses to players that aren't validated!");
 			return(FALSE);
 		}
+		if ((Players[i]->mode & MODE_PVP) && Players[i]->houses_owned >= 1) {
+			msg_print(Ind, "PvP characters may not own more than one house!");
+			return FALSE;
+		}
+		if (Players[i]->mode & MODE_DED_IDDC) {
+			msg_print(Ind, "IDDC-exclusive characters may not own houses!");
+			return FALSE;
+		}
 		if (cfg.houses_per_player && (Players[i]->houses_owned >= ((Players[i]->lev > 50 ? 50 : Players[i]->lev) / cfg.houses_per_player)) && !is_admin(Players[i])) {
 			if ((int)(Players[i]->lev / cfg.houses_per_player) == 0)
 				msg_format(Ind, "That player needs to be at least level %d to own a house!", cfg.houses_per_player);
@@ -6779,8 +6787,7 @@ void house_admin(int Ind, int dir, char *args){
  Hacked to sell houses for half price. -APD-
  Doesn't use a turn / disable AFK at this time. - C. Blue
  */
-void do_cmd_purchase_house(int Ind, int dir)
-{
+void do_cmd_purchase_house(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 
@@ -6898,10 +6905,20 @@ void do_cmd_purchase_house(int Ind, int dir)
 		price = dna->price / 100 * factor;
 		if (price < 100) price = 100;
 
-		if (price>p_ptr->au) {
+		if (price > p_ptr->au) {
 			msg_print(Ind,"You do not have enough gold!");
 			return;
 		}
+
+		if ((p_ptr->mode & MODE_PVP) && p_ptr->houses_owned >= 1) {
+			msg_print(Ind, "PvP characters may not own more than one house!");
+			return;
+		}
+		if (p_ptr->mode & MODE_DED_IDDC) {
+			msg_print(Ind, "IDDC-exclusive characters may not own houses!");
+			return;
+		}
+
 		if (cfg.houses_per_player && (p_ptr->houses_owned >= ((p_ptr->lev > 50 ? 50 : p_ptr->lev) / cfg.houses_per_player)) && !is_admin(p_ptr)) {
 			if ((int)(p_ptr->lev / cfg.houses_per_player) == 0)
 				msg_format(Ind, "You need to be at least level %d to buy a house!", cfg.houses_per_player);
