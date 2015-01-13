@@ -198,7 +198,7 @@ __classes_diz = {
     "what the creatures around the area can see. He can",
     "also affect his own mind and body, to bolster his",
     "combat abilities or those of his team mates.",
-    "Their primary stat are strength and intelligence,",
+    "Their primary stats are strength and intelligence,",
     "and some of their spells can actually be cast",
     "while they are blinded or even confused.",
     "",},
