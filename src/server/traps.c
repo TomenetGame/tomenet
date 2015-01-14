@@ -3334,7 +3334,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x) {
 	cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
 	cave_set_feat_live(wpos, y, x, cs_ptr->sc.montrap.feat);
 
-	/* Drop objects being carried */
+	/* Erase objects being carried */
 	for (this_o_idx = cs_ptr->sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx) {
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
@@ -3346,7 +3346,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x) {
 		o_ptr->held_m_idx = 0;
 
 		/* Delete the object */
-		delete_object_idx(this_o_idx, FALSE);
+		delete_object_idx(this_o_idx, TRUE);
 	}
 
 //	cave[py][px].special = cave[py][px].special2 = 0;
@@ -4821,7 +4821,7 @@ bool mon_hit_trap(int m_idx)
 
 					if (load_o_ptr->number <= 0) {
 						remove = TRUE;
-						delete_object_idx(kit_o_ptr->next_o_idx, FALSE);
+						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
 						kit_o_ptr->next_o_idx = 0;
 					}
 

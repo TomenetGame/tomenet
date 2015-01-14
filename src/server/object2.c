@@ -238,7 +238,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* may
 #endif	// 0
 
 		/* Delete the object */
-//		if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx);
+//		if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx, unfound_art);
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -9490,7 +9490,7 @@ void erase_artifact(int a_idx) {
 				m_ptr->hold_o_idx = o_ptr->next_o_idx;
 				monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 				s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #1)\n  '%s'\n", o_ptr->held_m_idx, m_name, o_name);
-				delete_object_idx(i, FALSE);
+				delete_object_idx(i, TRUE);
 				msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 				return;
 			} else {
@@ -9501,7 +9501,7 @@ void erase_artifact(int a_idx) {
 						q_ptr->next_o_idx = o_list[this_o_idx].next_o_idx;
 						monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 						s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #%d)\n  '%s'\n", o_ptr->held_m_idx, m_name, i, o_name);
-						delete_object_idx(this_o_idx, FALSE);
+						delete_object_idx(this_o_idx, TRUE);
 						msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 						return;
 					}
@@ -9513,7 +9513,7 @@ void erase_artifact(int a_idx) {
 		}
 
 		s_printf("FLUENT_ARTIFACT_RESETS: floor '%s'\n", o_name);
-		delete_object_idx(i, FALSE);
+		delete_object_idx(i, TRUE);
 		msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 		return;
 	}

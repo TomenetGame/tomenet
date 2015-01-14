@@ -8237,12 +8237,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 #ifdef MONSTER_INVENTORY
 					this_o_idx = c_ptr->o_idx;
 
-#ifdef MONSTER_ITEM_CONSUME
+ #ifdef MONSTER_ITEM_CONSUME
 					if (magik(MONSTER_ITEM_CONSUME)) {
 						/* Delete the object */
 						delete_object_idx(this_o_idx, TRUE);
 					} else
-#endif	// MONSTER_ITEM_CONSUME
+ #endif	// MONSTER_ITEM_CONSUME
 					{
 						/* paranoia */
 						o_ptr->held_m_idx = 0;
@@ -8267,7 +8267,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					}
 #else
 					/* Delete the object */
-					delete_object(wpos, ny, nx, FALSE);
+					delete_object(wpos, ny, nx, TRUE);
 #endif	// MONSTER_INVENTORY
 				}
 
@@ -8329,7 +8329,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					m_ptr->energy -= level_speed(&m_ptr->wpos) * 8;//seconds, approx. 8 is max due to s16b overflow!
 
 					/* Delete the object */
-					delete_object(wpos, ny, nx, FALSE);
+					delete_object(wpos, ny, nx, TRUE);
 				}
 			}
 #endif

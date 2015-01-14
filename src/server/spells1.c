@@ -3520,7 +3520,7 @@ bool apply_discharge_item(int o_idx, int dam)
 
 	/* Special treatment for new ego-type: Ethereal (ammunition): */
 	if (is_ammo(o_ptr->tval) && (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL)) {
-		if (o_ptr->number == 1) delete_object_idx(o_idx, FALSE);
+		if (o_ptr->number == 1) delete_object_idx(o_idx, TRUE);
 		else o_ptr->number--;
 		damaged = TRUE;
 	}

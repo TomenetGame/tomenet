@@ -1687,7 +1687,7 @@ static void lake_level(struct worldpos *wpos)
 				{
 #if 0
 					/* Delete the object (if any) */
-					delete_object(wpos, y, x);
+					delete_object(wpos, y, x, TRUE);
 #endif
 
 					/* Access the grid */

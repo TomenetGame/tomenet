@@ -1805,7 +1805,7 @@ static void erase_guild_key(int id) {
 				m_ptr->hold_o_idx = o_ptr->next_o_idx;
 				monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 				s_printf("GUILD_KEY_ERASE: monster inventory (%d, '%s', #1)\n", o_ptr->held_m_idx, m_name);
-				delete_object_idx(i, FALSE);
+				delete_object_idx(i, TRUE);
 				return;
 			} else {
 				i = 1;
@@ -1815,7 +1815,7 @@ static void erase_guild_key(int id) {
 						q_ptr->next_o_idx = o_list[this_o_idx].next_o_idx;
 						monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 						s_printf("GUILD_KEY_ERASE: monster inventory (%d, '%s', #%d)\n", o_ptr->held_m_idx, m_name, i);
-						delete_object_idx(this_o_idx, FALSE);
+						delete_object_idx(this_o_idx, TRUE);
 						return;
 					}
 					q_ptr = &o_list[this_o_idx];
@@ -1826,7 +1826,7 @@ static void erase_guild_key(int id) {
                 }
 
 		s_printf("GUILD_KEY_ERASE: floor\n");
-                delete_object_idx(i, FALSE);
+                delete_object_idx(i, TRUE);
                 return;
         }
 

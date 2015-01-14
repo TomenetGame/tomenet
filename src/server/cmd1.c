@@ -1610,7 +1610,7 @@ void carry(int Ind, int pickup, int confirm) {
 		/* Delete gold */
 		if (amount == o_ptr->pval) {
 			//delete_object(wpos, p_ptr->py, p_ptr->px);
-			delete_object_idx(c_ptr->o_idx, FALSE);
+			delete_object_idx(c_ptr->o_idx, FALSE);//TRUE, but it's only gold, so can't be trueart anyway
 		}
 		/* Reduce gold */
 		else o_ptr->pval -= amount;

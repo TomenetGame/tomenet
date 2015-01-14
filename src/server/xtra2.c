@@ -6110,7 +6110,7 @@ void kill_house_contents(house_type *h_ptr) {
 		ex = h_ptr->x + h_ptr->coords.rect.width - 1;
 		for (y = sy; y < ey; y++) {
 			for (x = sx; x < ex; x++) {
-				delete_object(wpos,y,x, TRUE);
+				delete_object(wpos, y, x, TRUE);
 			}
 		}
 
