@@ -3537,13 +3537,12 @@ static int censor(char *line) {
  * through /mute <name> and disabled through /unmute <name>).
  *				- the_sandman
  */
-static void player_talk_aux(int Ind, char *message)
-{
- 	int i, len, target = 0;
+static void player_talk_aux(int Ind, char *message) {
+	int i, len, target = 0, target_raw_len = 0;
 	char search[MSG_LEN], sender[MAX_CHARS];
 	char message2[MSG_LEN];
 	player_type *p_ptr = NULL, *q_ptr;
- 	char *colon;
+	char *colon;
 	bool me = FALSE, log = TRUE, nocolon = FALSE;
 	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
 #ifdef KURZEL_PK
@@ -3642,6 +3641,8 @@ static void player_talk_aux(int Ind, char *message)
 		/* no double-colon '::' smileys inside possible item inscriptions */
 		char *bracer = strchr(message, '{');
 		bool maybe_inside_inscription = bracer != NULL && bracer < colon;
+
+		target_raw_len = colon - message;
 
 		/* if another colon followed this one then
 		   it was not meant to be a control char */
@@ -3986,7 +3987,7 @@ static void player_talk_aux(int Ind, char *message)
 			w_player = world_find_player(search, 0);
 			if (w_player) {
 				/* prevent buffer overflow */
-				message[MSG_LEN - strlen(p_ptr->name) - 7 - 8] = 0;//8 are world server tax
+				message[MSG_LEN - strlen(p_ptr->name) - 7 - 8 - strlen(w_player->name) + target_raw_len] = 0;//8 are world server tax
 				world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon + 1);
 				msg_format(Ind, "\375\377s[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
 
@@ -4036,7 +4037,7 @@ static void player_talk_aux(int Ind, char *message)
 #endif
 
 			/* prevent buffer overflow */
-			message[MSG_LEN - strlen(sender) - 7] = 0;
+			message[MSG_LEN - strlen(sender) - 7 - strlen(q_ptr->name) + target_raw_len] = 0;
 
 			/* Send message to target */
 			msg_format(target, "\375\377g[%s:%s] %s", sender, q_ptr->name, colon);
@@ -4093,11 +4094,17 @@ static void player_talk_aux(int Ind, char *message)
 			return;
 		}
 
+#ifdef GROUP_CHAT_NOCLUTTER
 		/* prevent buffer overflow */
 		message[MSG_LEN - strlen(sender) - 10] = 0;
-
 		/* Send message to target party */
 		party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[(P) %s] %s", COLOUR_CHAT_PARTY, sender, colon);
+#else
+		/* prevent buffer overflow */
+		message[MSG_LEN - 7 - strlen(sender) - strlen(parties[0 - target].name) + target_raw_len] = 0;
+		party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, colon);
+#endif
+
 		//party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
