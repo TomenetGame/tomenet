@@ -3159,6 +3159,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
 					if (!o_ptr->xtra1) o_ptr->xtra1 = (*ap); //wut.. remove this hack? should be superfluous anyway
 					(*ap) = o_ptr->xtra1;
+					/* new: also allow custom char */
+					if (o_ptr->xtra2) (*cp) = o_ptr->xtra2;
 				}
 
 				if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) {
