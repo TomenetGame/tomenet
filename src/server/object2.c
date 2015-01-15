@@ -9489,7 +9489,7 @@ void erase_artifact(int a_idx) {
 			if (m_ptr->hold_o_idx == i) {
 				m_ptr->hold_o_idx = o_ptr->next_o_idx;
 				monster_desc(0, m_name, o_ptr->held_m_idx, 0);
-				s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #1)\n  '%s'\n", o_ptr->held_m_idx, m_name, o_name);
+				s_printf("FLUENT_ARTIFACT_RESETS: %d - monster inventory (%d, '%s', #1)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, o_name);
 				delete_object_idx(i, TRUE);
 				msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 				return;
@@ -9500,7 +9500,7 @@ void erase_artifact(int a_idx) {
 					if (this_o_idx == i) {
 						q_ptr->next_o_idx = o_list[this_o_idx].next_o_idx;
 						monster_desc(0, m_name, o_ptr->held_m_idx, 0);
-						s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #%d)\n  '%s'\n", o_ptr->held_m_idx, m_name, i, o_name);
+						s_printf("FLUENT_ARTIFACT_RESETS: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, i, o_name);
 						delete_object_idx(this_o_idx, TRUE);
 						msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 						return;
@@ -9512,7 +9512,7 @@ void erase_artifact(int a_idx) {
 			}
 		}
 
-		s_printf("FLUENT_ARTIFACT_RESETS: floor '%s'\n", o_name);
+		s_printf("FLUENT_ARTIFACT_RESETS: %d - floor '%s'\n", a_idx, o_name);
 		delete_object_idx(i, TRUE);
 		msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 		return;
@@ -9527,7 +9527,7 @@ void erase_artifact(int a_idx) {
 			if (!o_ptr->k_idx) continue;
 
 			if (o_ptr->name1 == a_idx) {
-				s_printf("FLUENT_ARTIFACT_RESETS: player '%s'\n  '%s'\n", p_ptr->name, o_name);
+				s_printf("FLUENT_ARTIFACT_RESETS: %d - player '%s'\n  '%s'\n", a_idx, p_ptr->name, o_name);
 				//object_desc(this_o_idx, o_name, o_ptr, FALSE, 3);
 				msg_format(this_o_idx, "\374\377R%s bids farewell to you...", o_name_short);
 				handle_art_d(a_idx);
@@ -9568,7 +9568,7 @@ void erase_artifact(int a_idx) {
 			/* try to load him! */
 			if (!load_player(NumPlayers)) {
 				/* bad fail */
-				s_printf("FLUENT_ARTIFACT_RESETS_ERROR: load_player '%s' failed\n  '%s'\n", p_ptr->name, o_name);
+				s_printf("FLUENT_ARTIFACT_RESETS_ERROR: %d - load_player '%s' failed\n  '%s'\n", a_idx, p_ptr->name, o_name);
 				/* unhack */
 				C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 				KILL(p_ptr, player_type);
@@ -9581,7 +9581,7 @@ void erase_artifact(int a_idx) {
 				if (!o_ptr->k_idx) continue;
 
 				if (o_ptr->name1 == a_idx) {
-					s_printf("FLUENT_ARTIFACT_RESETS: savegame '%s'\n  '%s'\n", p_ptr->name, o_name);
+					s_printf("FLUENT_ARTIFACT_RESETS: %d - savegame '%s'\n  '%s'\n", a_idx, p_ptr->name, o_name);
 					handle_art_d(a_idx);
 					o_ptr->tval = o_ptr->sval = o_ptr->k_idx = o_ptr->name1 = 0;
 					p_ptr->fluent_artifact_reset = TRUE; /* hack to notify him next time he logs on */
@@ -9607,7 +9607,7 @@ void erase_artifact(int a_idx) {
 	NumPlayers--;
 
 	/* Paranoia: Failed to locate the artifact. Shouldn't happen! */
-	s_printf("FLUENT_ARTIFACT_RESETS_ERROR: not found '%s'\n", o_name);
+	s_printf("FLUENT_ARTIFACT_RESETS_ERROR: %d - not found '%s'\n", a_idx, o_name);
 
 	/* It can actually happen if the savegame was deleted manually.
 	   In such cases, free the artifact again. This might cause problems
