@@ -9509,6 +9509,9 @@ void erase_artifact(int a_idx) {
 					next_o_idx = q_ptr->next_o_idx;
 					i++;
 				}
+				/* paranoid fail */
+				s_printf("FLUENT_ARTIFACT_RESETS_ERROR: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, i, o_name);
+				return;
 			}
 		}
 
