@@ -1373,8 +1373,7 @@ if (season_halloween) {
 //bool monst_check_grab(int Ind, int m_idx, cptr desc)
 /* Don't allow interception of multiple players to stack? */
 #define NO_INTERCEPTION_STACKING
-bool monst_check_grab(int m_idx, int mod, cptr desc)
-{
+bool monst_check_grab(int m_idx, int mod, cptr desc) {
 //	player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
@@ -1390,7 +1389,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 	int rlev = r_ptr->level;
 
 	/* hack: if we dont auto-retaliate vs a monster than we dont intercept either */
-	if (r_info->flags8 & RF8_NO_AUTORET) return FALSE;
+	if (r_ptr->flags8 & RF8_NO_AUTORET) return FALSE;
 	/* this one just cannot be intercepted */
 	if (m_ptr->r_idx == RI_LIVING_LIGHTNING) return FALSE;
 
