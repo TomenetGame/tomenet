@@ -2888,6 +2888,9 @@ self-explaining or that are especially important are listed in detail here:
         Should always be enabled! Will reduce probability for off-screen kills,
         since the screen scrolls much earlier when you come close to a border!
 
+    Get kicked out automatically by the game when starving and idle for 30
+        seconds. (idle_starve_kick)
+
 (8) Check Server Options
     Displays a list of the server rules and configuration.
 

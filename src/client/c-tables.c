@@ -630,6 +630,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.alert_offpanel_dam,	FALSE,	6,	0, 106, TRUE,
 	"alert_offpanel_dam",		"Beep when taking damage while off-panel" },
+
+	{ &c_cfg.idle_starve_kick,	FALSE,	3,	1, 107, TRUE,
+	"idle_starve_kick",		"Disconnect when idle for 30s while starving" },
 };
 
 

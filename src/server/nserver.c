@@ -2252,7 +2252,9 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->consistent_players = options[104];
 		p_ptr->flash_self = options[105] ? 0 : -1;
 
+		/* 4.5.8.2: */
 		p_ptr->alert_offpanel_dam = options[106];
+		p_ptr->idle_starve_kick = options[107];
 	}
 }
 
@@ -7400,17 +7402,14 @@ int Send_apply_auto_insc(int Ind, int slot) {
  */
 
 // This does absolutly nothing other than keep our connection active.
-static int Receive_keepalive(int ind)
-{
+static int Receive_keepalive(int ind) {
 	int n, Ind;
 	connection_t *connp = Conn[ind];
 	char ch;
 	player_type *p_ptr;
 
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
@@ -7419,7 +7418,7 @@ static int Receive_keepalive(int ind)
 
 	connp->inactive_keepalive++;
 
-	if(connp->id != -1) {
+	if (connp->id != -1) {
 		Ind = GetInd[connp->id];
 		p_ptr = Players[Ind];
 
@@ -7427,14 +7426,12 @@ static int Receive_keepalive(int ind)
 		p_ptr->idle_char += 2;
 
 		/* Kick a starving player */
-		if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > STARVE_KICK_TIMER / 2)
-		{
+		if (p_ptr->idle_starve_kick && p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > STARVE_KICK_TIMER / 2) {
 			Destroy_connection(ind, STARVING_AUTOKICK_MSG);
 			return 2;
 		}
 
-		else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_keepalive > AUTO_AFK_TIMER / 2)	/* dont oscillate ;) */
-		{
+		else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_keepalive > AUTO_AFK_TIMER / 2) { /* dont oscillate ;) */
 			/* auto AFK timer (>1 min) */
 //			if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */
 			toggle_afk(Ind, "");
@@ -10976,15 +10973,12 @@ static int Receive_ping(int ind) {
 	int n, id, tim, utim, Ind;
 	player_type *p_ptr;
 
-	if ((n = Packet_scanf(&connp->r, "%c%c%d%d%d%S", &ch, &pong, &id, &tim, &utim, &buf)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
+	if ((n = Packet_scanf(&connp->r, "%c%c%d%d%d%S", &ch, &pong, &id, &tim, &utim, &buf)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
-	if (!pong)
-	{
+	if (!pong) {
 		connp->inactive_ping++;
 
 		if (connp->id != -1) {
@@ -11001,22 +10995,19 @@ static int Receive_ping(int ind) {
 #endif
 
 			/* Kick a starving player */
-			if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > STARVE_KICK_TIMER)
-			{
+			if (p_ptr->idle_starve_kick && p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > STARVE_KICK_TIMER) {
 				Destroy_connection(ind, STARVING_AUTOKICK_MSG);
 				return 2;
 			}
 
-			else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_ping > AUTO_AFK_TIMER)	/* dont oscillate ;) */
-			{
+			else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_ping > AUTO_AFK_TIMER) { /* dont oscillate ;) */
 				/* auto AFK timer (>1 min) */
 //				if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */
 				toggle_afk(Ind, "");
 			}
 		}
 
-		if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-		{
+		if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 			errno = 0;
 			plog(format("Connection not ready for pong (%d.%d.%d)",
 				ind, connp->state, connp->id));

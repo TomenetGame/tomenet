@@ -2170,6 +2170,7 @@ struct player_type {
 	bool player_list;
 	bool player_list2;
 	bool auto_untag;
+	bool idle_starve_kick;
 	bool newbie_hints;
 	bool censor_swearing;
 	bool warn_unique_credit;
@@ -3277,6 +3278,7 @@ struct client_opts {
 	bool page_on_privmsg;
 	bool page_on_afk_privmsg;
 	bool auto_untag;//smart_learn;
+	bool idle_starve_kick;
 	bool big_map;//smart_cheat;
 
 	bool view_reduce_lite;
