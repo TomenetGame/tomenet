@@ -2221,6 +2221,9 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->no_weather = FALSE;
 		p_ptr->hilite_player = FALSE;
 		p_ptr->alert_mana = FALSE;
+
+		p_ptr->alert_offpanel_dam = FALSE;
+		p_ptr->idle_starve_kick = TRUE;
 	} else {
 		bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
 		p_ptr->sfx_combat = !options[47];
@@ -2252,9 +2255,13 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->consistent_players = options[104];
 		p_ptr->flash_self = options[105] ? 0 : -1;
 
-		/* 4.5.8.2: */
-		p_ptr->alert_offpanel_dam = options[106];
-		p_ptr->idle_starve_kick = options[107];
+		if (is_older_than(&p_ptr->version, 4, 5, 8, 2, 0, 0)) {
+			p_ptr->alert_offpanel_dam = FALSE;
+			p_ptr->idle_starve_kick = TRUE;
+		} else {
+			p_ptr->alert_offpanel_dam = options[106];
+			p_ptr->idle_starve_kick = options[107];
+		}
 	}
 }
 
