@@ -245,8 +245,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
  * Slay Evil (x2), and Kill dragon (x5).
  */
 /* accepts Ind <=0 */
-s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg, bool thrown)
-{
+s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg, bool thrown) {
 	int mult = FACTOR_MULT, bonus = 0;
 	monster_race *r_ptr = race_inf(m_ptr);
 	u32b f1, f2, f3, f4, f5, f6, esp;
@@ -422,7 +421,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	}
 
 	/* Extra melee branding */
-	if (p_ptr && !is_ammo(o_ptr->tval)) {
+	if (p_ptr && !is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG) {
 		/* Apply brands from (powerful) auras! */
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
@@ -834,8 +833,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
  * Note that "flasks of oil" do NOT do fire damage, although they
  * certainly could be made to do so.  XXX XXX
  */
-s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg, bool thrown)
-{
+s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg, bool thrown) {
 	int mult = FACTOR_MULT, bonus = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = NULL;
@@ -968,7 +966,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	}
 
 	/* Extra melee branding */
-	if (p_ptr && !is_ammo(o_ptr->tval)) {
+	if (p_ptr && !is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG) {
 		/* Apply brands from (powerful) auras! */
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
