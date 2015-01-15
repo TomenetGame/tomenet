@@ -1828,6 +1828,15 @@ int Receive_char(void) {
 		is_us = TRUE;
 	}
 
+#ifdef TEST_CLIENT
+	/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */
+ #ifndef WINDOWS
+	if (c == 127) c = 2;
+ #else
+	if (c == 2) c = 127;
+ #endif
+#endif
+
 	/* remember map_info in client-side buffer */
 	if (x >= PANEL_X && x < PANEL_X + screen_wid &&
 	    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
