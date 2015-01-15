@@ -2417,6 +2417,14 @@ int Receive_line_info(void) {
 		for (i = 0; i < n; i++) {
 			/* Don't draw anything if "char" is zero */
 			if (c && draw) {
+#ifdef TEST_CLIENT
+				/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */
+ #ifndef WINDOWS
+				if (c == 127) c = 2;
+ #else
+				if (c == 2) c = 127;
+ #endif
+#endif
 				/* remember map_info in client-side buffer */
 				if (ch != PKT_MINI_MAP &&
 				    x + i >= PANEL_X && x + i < PANEL_X + screen_wid &&
