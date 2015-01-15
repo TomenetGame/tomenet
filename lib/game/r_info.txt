@@ -19179,11 +19179,11 @@ S:BA_MANA | S_ANGEL
 S:BR_DISE
 #since Blades have it too, what gives..:
 S:TELE_TO
-D:Through many succeeding cycles of time, as Ray after Ray provided The Pathway
-D:for the descent of new Spirits, Lord Michael has remained as the Guardian
-D:Overlord of the Angelic Host, the Elemental Kingdom and humanity. He shall
-D:not fold his Cosmic Wings about him to return home until the final Angelic
-D:Being is freed, the last man is redeemed and the last Elemental returned to
+D:Through many succeeding cycles of time, as ray after ray provided The pathway
+D:for the descent of new spirits, lord Michael has remained as the guardian
+D:overlord of the angelic host, the elemental kingdom and humanity. He shall
+D:not fold his cosmic wings about him to return home until the final angelic
+D:being is freed, the last man is redeemed and the last elemental returned to
 D:its perfect state.
 
 N:1075:Lord Jubei, The Legendary Swordsmaster
