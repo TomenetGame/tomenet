@@ -2061,14 +2061,14 @@ bool curse_an_item(int Ind, int slot)
  * 0x01 - Affect the equipments too
  * 0x02 - Turn scrolls/potions/wands/rods/staves into 'Nothing' kind
  */
-bool do_cancellation(int Ind, int flags)
-{
+bool do_cancellation(int Ind, int flags) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	bool ident = TRUE;
 
-	for (i = 0; i < ((flags & 0x01) ? INVEN_TOTAL : INVEN_WIELD); i++)
-	{
+	s_printf("CANCELLATION: %s (%d)\n", p_ptr->name, flags);
+
+	for (i = 0; i < ((flags & 0x01) ? INVEN_TOTAL : INVEN_WIELD); i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
 		if (!o_ptr->k_idx) continue;
 		if (like_artifact_p(o_ptr)) continue;
