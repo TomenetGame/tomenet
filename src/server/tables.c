@@ -2778,7 +2778,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,
-                                '+', 400,
+                                '+', 450,
                         },
 						/* Health tree */
                         {
@@ -2999,7 +2999,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 550,
                         },
 						/* Health tree */
                         {
@@ -4357,7 +4357,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,/*1000*/
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_STEALTH,
