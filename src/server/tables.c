@@ -2778,7 +2778,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,
-                                '+', 300,
+                                '+', 400,
                         },
 						/* Health tree */
                         {
@@ -2999,7 +2999,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,
-                                '+', 450,
+                                '+', 500,
                         },
 						/* Health tree */
                         {
@@ -3355,7 +3355,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_INTERCEPT,
@@ -4357,7 +4357,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,/*1000*/
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_STEALTH,
@@ -5087,7 +5087,7 @@ player_class class_info[MAX_CLASS] =
 			{
 				SKILL_DODGE,
 				'+', 0,
-				'+', 400,
+				'+', 600,
 			},
                         {
                                 SKILL_CALMNESS,
