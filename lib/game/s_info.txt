@@ -244,7 +244,7 @@ F:HIDDEN
 
 N:35:Calmness
 D:Reduces chances of opponents to interfere with some of your actions
-D:most notably such as shooting or entering void gates.
+D:most notably such as firing ranged weapons or entering void gates.
 I:1000:0
 
 N:36:Swimming
