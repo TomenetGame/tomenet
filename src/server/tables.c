@@ -4357,7 +4357,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,/*1000*/
-                                '+', 600,
+                                '+', 500,
                         },
                         {
                                 SKILL_STEALTH,
