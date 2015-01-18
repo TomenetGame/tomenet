@@ -172,8 +172,15 @@
 /*
  * If defined, monsters will pick up the gold like normal items.
  * Ever wondered why monster rogues never do that? :)
+ * (Exception: Monsters may still _steal_ gold even if this is disabled!)
  */
 #define		MONSTER_PICKUP_GOLD
+
+/* Monsters won't take/kill/steal items of TV_SPECIAL */
+#define MON_IGNORE_SPECIAL
+
+/* Monsters won't take/kill/steal items of TV_KEY */
+//#define MON_IGNORE_KEYS
 
 /*
  * Chance of an item picked up by a monster to disappear, in %. [30]
@@ -5122,6 +5129,22 @@ static int digging_difficulty(byte feat)
 }
 #endif
 
+bool mon_allowed_pickup(int tval) {
+	if (tval != TV_GAME
+#ifndef MONSTER_PICKUP_GOLD
+	    && tval != TV_GOLD
+#endif
+#ifdef MON_IGNORE_KEYS
+	    && tval != TV_KEY
+#endif
+#ifdef MON_IGNORE_SPECIAL
+	    && tval != TV_SPECIAL
+#endif
+	)
+	    return TRUE;
+	return FALSE;
+}
+
 /*
  * Choose "logical" directions for monster movement
  */
@@ -5417,18 +5440,11 @@ static void get_moves(int Ind, int m_idx, int *mm)
 #ifdef	MONSTERS_GREEDY
 		/* Monsters try to pick things up */
 		if (!done && (r_ptr->flags2 & (RF2_TAKE_ITEM | RF2_KILL_ITEM)) &&
-			(zcave[m_ptr->fy][m_ptr->fx].o_idx) && magik(80))
-		{
+		    (zcave[m_ptr->fy][m_ptr->fx].o_idx) && magik(80)) {
 			object_type *o_ptr = &o_list[zcave[m_ptr->fy][m_ptr->fx].o_idx];
-			if (o_ptr->k_idx &&
-#ifndef MONSTER_PICKUP_GOLD
-				(o_ptr->tval != TV_GOLD) &&
-#endif	// MONSTER_PICKUP_GOLD
-#ifdef MON_IGNORE_KEYS
-				(o_ptr->tval != TV_KEY) &&
-#endif
-				(monster_can_pickup(r_ptr, o_ptr)))
-			{
+
+			if (o_ptr->k_idx && mon_allowed_pickup(o_ptr->tval) &&
+			    monster_can_pickup(r_ptr, o_ptr)) {
 				/* Just Stay */
 				return;
 			}
@@ -5448,15 +5464,9 @@ static void get_moves(int Ind, int m_idx, int *mm)
 				/* look for booty */
 				if (zcave[y2][x2].o_idx) {
 					object_type *o_ptr = &o_list[zcave[y2][x2].o_idx];
-					if (o_ptr->k_idx &&
-#ifndef MONSTER_PICKUP_GOLD
-							(o_ptr->tval != TV_GOLD) &&
-#endif	// MONSTER_PICKUP_GOLD
-#ifdef MON_IGNORE_KEYS
-							(o_ptr->tval != TV_KEY) &&
-#endif
-							(monster_can_pickup(r_ptr, o_ptr)))
-					{
+
+					if (o_ptr->k_idx && mon_allowed_pickup(o_ptr->tval) &&
+					    monster_can_pickup(r_ptr, o_ptr)) {
 						/* Extract the new "pseudo-direction" */
 						y = m_ptr->fy - y2;
 						x = m_ptr->fx - x2;
@@ -8157,19 +8167,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 			/* Take or Kill objects (not "gold") on the floor */
 			if (o_ptr->k_idx &&
-#ifndef MONSTER_PICKUP_GOLD
-				(o_ptr->tval != TV_GOLD) &&
-#endif	// MONSTER_PICKUP_GOLD
-#ifdef MON_IGNORE_KEYS
-			    (o_ptr->tval != TV_KEY) &&
-#endif
 			    ((r_ptr->flags2 & RF2_TAKE_ITEM) ||
 			     (r_ptr->flags2 & RF2_KILL_ITEM)
 #if 1
 			    || (m_ptr->r_idx == RI_PANDA)
 #endif
-			     ))
-			{
+			    ) && mon_allowed_pickup(o_ptr->tval)) {
 				char m_name[MNAME_LEN];
 				char m_name_real[MNAME_LEN];
 				char o_name[ONAME_LEN];

@@ -171,8 +171,7 @@ static cptr desc_whisper[] =
 
 
 /* returns 'TRUE' if the thief will blink away. */
-static bool do_eat_gold(int Ind, int m_idx)
-{
+static bool do_eat_gold(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	monster_type    *m_ptr = &m_list[m_idx];
 #if 0
@@ -188,17 +187,12 @@ static bool do_eat_gold(int Ind, int m_idx)
 	if (gold > 5000) gold = (p_ptr->au / 20) + randint(3000);
 	if (gold > p_ptr->au) gold = p_ptr->au;
 	p_ptr->au -= gold;
-	if (gold <= 0)
-	{
+	if (gold <= 0) {
 		msg_print(Ind, "Nothing was stolen.");
-	}
-	else if (p_ptr->au)
-	{
+	} else if (p_ptr->au) {
 		msg_print(Ind, "Your purse feels lighter.");
 		msg_format(Ind, "\376\377o%d coins were stolen!", gold);
-	}
-	else
-	{
+	} else {
 		msg_print(Ind, "Your purse feels lighter.");
 		msg_print(Ind, "\376\377oAll of your coins were stolen!");
 	}
@@ -207,8 +201,7 @@ static bool do_eat_gold(int Ind, int m_idx)
 	if (magik(50)) gold = gold * rand_int(100) / 100;
 
 	/* XXX simply one mass, in case player had huge amount of $ */
-	while (gold > 0)
-	{
+	while (gold > 0) {
 		object_type forge, *j_ptr = &forge;
 
 		/* Wipe the object */
@@ -269,9 +262,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 		if (artifact_p(o_ptr)) continue;
 
 		/* Don't steal keys */
-#ifdef MON_IGNORE_KEYS
-		if (o_ptr->tval == TV_KEY) continue;
-#endif
+		if (!mon_allowed_pickup(o_ptr->tval)) continue;
 
 		/* Get a description */
 		object_desc(Ind, o_name, o_ptr, FALSE, 3);
