@@ -204,7 +204,7 @@ option_type option_info[OPT_MAX] =
 	"rogue_like_commands",		"Rogue-like keymap (for covering lack of a numpad)" },
 
 #if 0
-	{ &c_cfg.quick_messages,	FALSE,	1,	0, 1, TRUE,
+	{ &c_cfg.quick_messages,	FALSE,	6,	0, 1, TRUE,
 	"quick_messages",		"Activate quick messages (skill etc)" },
 #else
 	{ &c_cfg.warn_unique_credit,	FALSE,	4,	0, 1, TRUE,
@@ -215,7 +215,7 @@ option_type option_info[OPT_MAX] =
 	"other_query_flag",		"Prompt for various information (mimic polymorph)" },
 
 #if 0
-	{ &c_cfg.carry_query_flag,	FALSE,	2,	0, 3, FALSE,
+	{ &c_cfg.carry_query_flag,	FALSE,	3,	0, 3, FALSE,
 	"carry_query_flag",		"(broken) Prompt before picking things up" },
 #else
 	{ &c_cfg.newbie_hints,		TRUE,	4,	0, 3, TRUE,
@@ -243,7 +243,7 @@ option_type option_info[OPT_MAX] =
 	//10
 
 #if 0
-	{ &c_cfg.show_labels,		TRUE,	1,	0, 10, FALSE,
+	{ &c_cfg.show_labels,		TRUE,	6,	0, 10, FALSE,
 	"show_labels",			"(broken) Show labels in object listings" },
 #else
 	{ &c_cfg.hilite_chat,		TRUE,	4,	0, 10, TRUE,
@@ -252,7 +252,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.show_weights,		TRUE,	1,	0, 11, TRUE,
 	"show_weights",			"Show weights in object listings" },
 #if 0
-	{ &c_cfg.show_choices,		FALSE,	1,	0, 12, FALSE,
+	{ &c_cfg.show_choices,		FALSE,	6,	0, 12, FALSE,
 	"show_choices",			"(broken) Show choices in certain sub-windows" },
 #else
 	{ &c_cfg.hibeep_chat,		TRUE,	4,	0, 12, TRUE,
@@ -260,7 +260,7 @@ option_type option_info[OPT_MAX] =
 #endif
 
 #if 0
-	{ &c_cfg.show_details,		TRUE,	1,	0, 13, FALSE,
+	{ &c_cfg.show_details,		TRUE,	6,	0, 13, FALSE,
 	"show_details",			"(broken) Show details in certain sub-windows" },
 #else
 	{ &c_cfg.font_map_solid_walls,	FALSE,	1,	0, 13, TRUE,
@@ -331,7 +331,7 @@ option_type option_info[OPT_MAX] =
 	"stack_allow_wands",		"Allow wands/staffs/rods to stack" },
 
 #if 0
-	{ &c_cfg.expand_look,		FALSE,	1,	1, 4, FALSE,
+	{ &c_cfg.expand_look,		FALSE,	6,	1, 4, FALSE,
 	"expand_look",			"(broken) Expand the power of the look command" },
 #else
 	{ &c_cfg.uniques_alive,		FALSE,	4,	1, 24, TRUE,
@@ -339,7 +339,7 @@ option_type option_info[OPT_MAX] =
 #endif
 
 #if 0
-	{ &c_cfg.expand_list,		FALSE,	1,	1, 5, FALSE,
+	{ &c_cfg.expand_list,		FALSE,	6,	1, 5, FALSE,
 	"expand_list",			"(broken) Expand the power of the list commands" },
 #else
 	{ &c_cfg.overview_startup,	FALSE,	4,	1, 5, TRUE,
@@ -390,7 +390,7 @@ option_type option_info[OPT_MAX] =
 	"safe_float",			"Prevent floating for a short while after death" },
 
 #if 0
-	{ &c_cfg.avoid_other,		FALSE,	1,	1, 19, FALSE,
+	{ &c_cfg.avoid_other,		FALSE,	6,	1, 19, FALSE,
 	"avoid_other",			"(broken) Avoid processing special colors" },
 #else
 	{ &c_cfg.no_combat_sfx,		FALSE,	5,	1, 19, TRUE,
@@ -398,7 +398,7 @@ option_type option_info[OPT_MAX] =
 #endif
 
 #if 0
-	{ &c_cfg.flush_failure,		TRUE,	1,	1, 20, FALSE, /* (resurrect me?) */
+	{ &c_cfg.flush_failure,		TRUE,	6,	1, 20, FALSE, /* (resurrect me?) */
 	"flush_failure",		"(broken) Flush input on various failures" },
 #else
 	{ &c_cfg.no_magicattack_sfx,	FALSE,	5,	1, 21, TRUE,
@@ -406,7 +406,7 @@ option_type option_info[OPT_MAX] =
 #endif
 
 #if 0
-	{ &c_cfg.flush_disturb,		FALSE,	1,	1, 21, FALSE,
+	{ &c_cfg.flush_disturb,		FALSE,	6,	1, 21, FALSE,
 	"flush_disturb",		"(broken) Flush input whenever disturbed" },
 #else
 	{ &c_cfg.no_defense_sfx,	FALSE,	5,	1, 20, TRUE,
@@ -422,7 +422,7 @@ option_type option_info[OPT_MAX] =
 	"player_list2",			"Compacts the player list in @ screen even more" },//fresh_before
 
 #if 0
-	{ &c_cfg.fresh_after,           FALSE,  1,      1, 24, FALSE,
+	{ &c_cfg.fresh_after,           FALSE,  6,      1, 24, FALSE,
 	"fresh_after",                  "(obsolete) Flush output after every command" },
 #else
 	{ &c_cfg.view_animated_lite,	FALSE,	1,	1, 24, TRUE,
@@ -443,17 +443,17 @@ option_type option_info[OPT_MAX] =
 	"view_shade_walls",		"Use special colors to shade wall grids" },
 #endif
 
-	{ &c_cfg.view_lamp_lite,	TRUE,	1,	1, 28, TRUE,
-	"view_lamp_lite",		"Use special colors for lamp-lit grids" },
+	{ &c_cfg.view_lamp_floor,	TRUE,	1,	1, 28, TRUE,
+	"view_lamp_floor",		"Use special colors for lamp-lit floor grids" },
 
 	{ &c_cfg.view_shade_floor,	TRUE,	1,	1, 29, TRUE,
 	"view_shade_floor",		"Use special colors to shade floor grids" },
 
-	{ &c_cfg.view_granite_lite,	TRUE,	1,	1, 30, TRUE,
-	"view_granite_lite",		"Use special colors for lit wall grids" },
+	{ &c_cfg.wall_lighting,	TRUE,	1,	1, 30, TRUE,
+	"wall_lighting",		"Generally enable lighting/shading for wall grids" },
 
-	{ &c_cfg.view_special_lite,	TRUE,	1,	1, 31, TRUE,	/* (59) */
-	"view_special_lite",		"Use special colors for lit floor grids" },
+	{ &c_cfg.floor_lighting,	TRUE,	1,	1, 31, TRUE,	/* (59) */
+	"floor_lighting",		"Generally enable lighting/shading for floor grids" },
 
 
 	//60
@@ -484,14 +484,14 @@ option_type option_info[OPT_MAX] =
 #endif
 
 #if 0
-	{ &c_cfg.last_words,		TRUE,	1,	9, 66, TRUE,
+	{ &c_cfg.last_words,		TRUE,	6,	9, 66, TRUE,
 	"last_words",			"Get last words when the character dies" },
 #else
 	{ &c_cfg.view_lite_extra,	FALSE,	1,	9, 65, TRUE,
 	"view_lite_extra",		"Lamp light affects more floor/wall types" },
 #endif
 
-	{ &c_cfg.taciturn_messages,	FALSE,	1,	9, 66, TRUE,
+	{ &c_cfg.taciturn_messages,	FALSE,	6,	9, 66, TRUE,
 	"taciturn_messages",		"Suppress server messages as far as possible" },
 
     //works, but pretty useless - disabled to make room in its options page
@@ -537,7 +537,7 @@ option_type option_info[OPT_MAX] =
 
     //todo: check shopkeeper speakage
 #if 0
-	{ &c_cfg.speak_unique,		TRUE,	1,	13, xx, TRUE,
+	{ &c_cfg.speak_unique,		TRUE,	6,	13, xx, TRUE,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
 #endif
 
@@ -608,6 +608,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.no_weather,		FALSE,	4,	1, 99, TRUE,
 	"no_weather",			"Disable weather visuals and sounds completely" },
 
+	//100
+
     //todo: fix/implement good cursor on *nix/osx
 	{ &c_cfg.hilite_player,		FALSE,	4,	1, 100, FALSE,
 	"hilite_player",		"Hilite own character icon with the cursor" },
@@ -633,6 +635,10 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.idle_starve_kick,	FALSE,	3,	1, 107, TRUE,
 	"idle_starve_kick",		"Disconnect when idle for 30s while starving" },
+
+	{ &c_cfg.view_lamp_walls,	TRUE,	1,	1, 28, TRUE,
+	"view_lamp_walls",		"Use special colors for lamp-lit wall grids" },
+
 };
 
 

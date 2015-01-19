@@ -329,12 +329,12 @@ Hilite the player with the cursor    [hilite_player]
     
 Use special colors for torch-lit grids    [view_yellow_lite]
     This option causes special colors to be used for "torch-lit" grids in
-    certain situations (see "view_granite_lite" and "view_special_lite").
+    certain situations (see "wall_lighting" and "floor_lighting").
     Turning this option off will slightly improve game speed.
 
 Use special colors for 'viewable' grids    [view_bright_lite]
     This option causes special colors to be used for non "viewable" grids
-    in certain situations (see "view_granite_lite" and "view_special_lite").
+    in certain situations (see "wall_lighting" and "floor_lighting").
     When this option is set, floor grids which are normally drawn in "white"
     but which are not currently "viewable" by the player are instead drawn
     in "dark gray".  This makes the "viewable" grids to appear "brighter"
@@ -342,7 +342,7 @@ Use special colors for 'viewable' grids    [view_bright_lite]
     grids are in "line of sight".  Turning this option off will probably
     increase the speed of the game.
 
-Use special colors for wall grids (slow)    [view_granite_lite]
+Use special colors for wall grids (slow)    [wall_lighting]
     This option activates a special color scheme for all "wall" grids which
     are normally drawn in "white" (as walls and rubble normally are).  When
     the player is blind, we use "dark gray", else if the grid is torch-lit,
@@ -352,7 +352,7 @@ Use special colors for wall grids (slow)    [view_granite_lite]
     we use "gray", otherwise we use the normal "white".  Turning this option
     off will probably increase the speed of the game.
 
-Use special colors for floor grids (slow)    [view_special_lite]
+Use special colors for floor grids (slow)    [floor_lighting]
     This option activates a special color scheme for all "floor" grids which
     are normally drawn in "white" (as they normally are).  When the player is
     blind, we use "dark gray", else if the grid is torch-lit, we use "yellow"

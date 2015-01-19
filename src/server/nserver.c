@@ -2142,14 +2142,14 @@ static void sync_options(int Ind, bool *options) {
 		tmp = p_ptr->view_shade_walls;
 		if ((p_ptr->view_shade_walls = options[55]) != tmp) p_ptr->redraw |= PR_MAP;
 	}
-	tmp = p_ptr->view_lamp_lite;
-	if ((p_ptr->view_lamp_lite = options[56]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->view_lamp_floor;
+	if ((p_ptr->view_lamp_floor = options[56]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_shade_floor;
 	if ((p_ptr->view_shade_floor = options[57]) != tmp) p_ptr->redraw |= PR_MAP;
-	tmp = p_ptr->view_granite_lite;
-	if ((p_ptr->view_granite_lite = options[58]) != tmp) p_ptr->redraw |= PR_MAP;
-	tmp = p_ptr->view_special_lite;
-	if ((p_ptr->view_special_lite = options[59]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->wall_lighting;
+	if ((p_ptr->wall_lighting = options[58]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->floor_lighting;
+	if ((p_ptr->floor_lighting = options[59]) != tmp) p_ptr->redraw |= PR_MAP;
 
 	p_ptr->easy_open = options[60];
 	p_ptr->easy_disarm = options[61];
@@ -2224,6 +2224,7 @@ static void sync_options(int Ind, bool *options) {
 
 		p_ptr->alert_offpanel_dam = FALSE;
 		p_ptr->idle_starve_kick = TRUE;
+		p_ptr->view_lamp_walls = p_ptr->view_lamp_floor;//was the same option so far, now split up
 	} else {
 		bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
 		p_ptr->sfx_combat = !options[47];
@@ -2258,9 +2259,12 @@ static void sync_options(int Ind, bool *options) {
 		if (is_older_than(&p_ptr->version, 4, 5, 8, 2, 0, 0)) {
 			p_ptr->alert_offpanel_dam = FALSE;
 			p_ptr->idle_starve_kick = TRUE;
+			p_ptr->view_lamp_walls = p_ptr->view_lamp_floor;//was the same option so far, now split up
 		} else {
 			p_ptr->alert_offpanel_dam = options[106];
 			p_ptr->idle_starve_kick = options[107];
+			tmp = p_ptr->view_lamp_walls;
+			if ((p_ptr->view_lamp_walls = options[108]) != tmp) p_ptr->redraw |= PR_MAP;
 		}
 	}
 }

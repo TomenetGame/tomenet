@@ -203,7 +203,8 @@ CLI_LUAOBJS = \
 #
 # This is my compiler of choice, it seems to work most everywhere
 #
-CC = gcc
+#CC = gcc
+CC = clang
 
 # For allowing #if..#else..#endif constructs in LUA files - C. Blue
 # Note: The flags must contain

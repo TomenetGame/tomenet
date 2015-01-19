@@ -2553,7 +2553,7 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
  * Note that "floors" and "invisible traps" (and "zero" features) are
  * drawn as "floors" using a special check for optimization purposes,
  * and these are the only features which get drawn using the special
- * lighting effects activated by "view_special_lite".
+ * lighting effects activated by "floor_lighting".
  *
  * Note the use of the "mimic" field in the "terrain feature" processing,
  * which allows any feature to "pretend" to be another feature.  This is
@@ -2585,7 +2585,7 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
  * always treated exactly like "floors", which prevents "cheating".
  *
  * Note the "special lighting effects" which can be activated for floor
- * grids using the "view_special_lite" option (for "white" floor grids),
+ * grids using the "floor_lighting" option (for "white" floor grids),
  * causing certain grids to be displayed using special colors.  If the
  * player is "blind", we will use "dark gray", else if the grid is lit
  * by the torch, and the "view_lamp_lite" option is set, we will use
@@ -2595,7 +2595,7 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
  * other cases, in particular, for illuminated viewable floor grids.
  *
  * Note the "special lighting effects" which can be activated for wall
- * grids using the "view_granite_lite" option (for "white" wall grids),
+ * grids using the "wall_lighting" option (for "white" wall grids),
  * causing certain grids to be displayed using special colors.  If the
  * player is "blind", we will use "dark gray", else if the grid is lit
  * by the torch, and the "view_lamp_lite" option is set, we will use
@@ -2605,7 +2605,7 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
  * will use "white" for all other cases, in particular, for correctly
  * illuminated viewable wall grids.
  *
- * Note that, when "view_granite_lite" is set, we use an inline version
+ * Note that, when "wall_lighting" is set, we use an inline version
  * of the "player_can_see_bold()" function to check the "viewability" of
  * grids when the "view_shade_floor" option is set, and we do NOT use
  * any special colors for "dark" wall grids, since this would allow the
@@ -2774,7 +2774,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 
 			/* Special lighting effects */
-			else if (p_ptr->view_special_lite &&
+			else if (p_ptr->floor_lighting &&
 			    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
 			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
@@ -2794,7 +2794,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				    lite_snow) &&
 				    ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW))) {
 					/* Torch lite */
-					if (p_ptr->view_lamp_lite) {
+					if (p_ptr->view_lamp_floor) {
 #ifdef CAVE_LITE_COLOURS
 						if ((c_ptr->info & CAVE_LITE_WHITE)) {
 							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_WHITE;
@@ -2929,7 +2929,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 
 			/* Special lighting effects */
-			if (p_ptr->view_granite_lite &&
+			if (p_ptr->wall_lighting &&
 			    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
 			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
@@ -2949,7 +2949,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				    lite_snow) &&
 				    (c_ptr->info & CAVE_LITE)) {
 					/* Torch lite */
-					if (p_ptr->view_lamp_lite) {
+					if (p_ptr->view_lamp_walls) {
 #ifdef CAVE_LITE_COLOURS
 						if ((c_ptr->info & CAVE_LITE_WHITE)) {
 							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma walls
@@ -4061,17 +4061,17 @@ void display_map(int Ind, int *cy, int *cx) {
 	byte sa[80];
 	char sc[80];
 
-	bool old_view_special_lite;
-	bool old_view_granite_lite;
+	bool old_floor_lighting;
+	bool old_wall_lighting;
 
 
 	/* Save lighting effects */
-	old_view_special_lite = p_ptr->view_special_lite;
-	old_view_granite_lite = p_ptr->view_granite_lite;
+	old_floor_lighting = p_ptr->floor_lighting;
+	old_wall_lighting = p_ptr->wall_lighting;
 
 	/* Disable lighting effects */
-	p_ptr->view_special_lite = FALSE;
-	p_ptr->view_granite_lite = FALSE;
+	p_ptr->floor_lighting = FALSE;
+	p_ptr->wall_lighting = FALSE;
 
 
 	/* Clear the chars and attributes */
@@ -4187,8 +4187,8 @@ void display_map(int Ind, int *cy, int *cx) {
 
 
 	/* Restore lighting effects */
-	p_ptr->view_special_lite = old_view_special_lite;
-	p_ptr->view_granite_lite = old_view_granite_lite;
+	p_ptr->floor_lighting = old_floor_lighting;
+	p_ptr->wall_lighting = old_wall_lighting;
 }
 
 
@@ -4210,8 +4210,8 @@ static void wild_display_map(int Ind, char mode) {
 	byte sa[80];
 	char sc[80];
 
-	bool old_view_special_lite;
-	bool old_view_granite_lite;
+	bool old_floor_lighting;
+	bool old_wall_lighting;
 	struct worldpos twpos;
 	twpos.wz = 0;
 
@@ -4237,12 +4237,12 @@ static void wild_display_map(int Ind, char mode) {
 
 
 	/* Save lighting effects */
-	old_view_special_lite = p_ptr->view_special_lite;
-	old_view_granite_lite = p_ptr->view_granite_lite;
+	old_floor_lighting = p_ptr->floor_lighting;
+	old_wall_lighting = p_ptr->wall_lighting;
 
 	/* Disable lighting effects */
-	p_ptr->view_special_lite = FALSE;
-	p_ptr->view_granite_lite = FALSE;
+	p_ptr->floor_lighting = FALSE;
+	p_ptr->wall_lighting = FALSE;
 
 
 	/* Clear the chars and attributes */
@@ -4444,8 +4444,8 @@ static void wild_display_map(int Ind, char mode) {
 	}
 
 	/* Restore lighting effects */
-	p_ptr->view_special_lite = old_view_special_lite;
-	p_ptr->view_granite_lite = old_view_granite_lite;
+	p_ptr->floor_lighting = old_floor_lighting;
+	p_ptr->wall_lighting = old_wall_lighting;
 }
 
 

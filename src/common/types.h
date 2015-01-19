@@ -2135,11 +2135,12 @@ struct player_type {
 
 	bool view_reduce_lite;
 	bool view_reduce_view;
-	bool view_lamp_lite;
+	bool view_lamp_floor;
+	bool view_lamp_walls;
 	bool view_shade_floor;
 	bool view_shade_walls;
-	bool view_granite_lite;
-	bool view_special_lite;
+	bool wall_lighting;
+	bool floor_lighting;
 	bool view_animated_lite;
 	bool view_lite_extra;
 
@@ -3294,11 +3295,12 @@ struct client_opts {
 	bool censor_swearing;//fresh_message;
 	bool safe_macros;//compress_savefile;
 	bool hilite_player;
-	bool view_lamp_lite;
+	bool view_lamp_floor;
+	bool view_lamp_walls;
 	bool view_shade_floor;
 	bool view_shade_walls;
-	bool view_granite_lite;
-	bool view_special_lite;
+	bool wall_lighting;
+	bool floor_lighting;
 	bool view_lite_extra;
 
 	bool easy_open;

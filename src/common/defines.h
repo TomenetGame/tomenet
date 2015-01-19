@@ -5748,13 +5748,13 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 	(FF1_FLOOR | FF1_CAN_FEATHER | FF1_CAN_LEVITATE | FF1_CAN_RUN | FF1_CAN_CLIMB)
 
 
-#define FF2_LAMP_LITE		0x00000001L	/* Gets coloured by view_granite_lite. Implies SPECIAL_LITE. */
-#define FF2_LAMP_LITE_SNOW	0x00000002L	/* Gets coloured by view_granite_lite, if it's winter season, due to assumed snow-covering. Implies SPECIAL_LITE if successful. */
+#define FF2_LAMP_LITE		0x00000001L	/* Gets coloured by wall_lighting. Implies SPECIAL_LITE. */
+#define FF2_LAMP_LITE_SNOW	0x00000002L	/* Gets coloured by wall_lighting, if it's winter season, due to assumed snow-covering. Implies SPECIAL_LITE if successful. */
 #define FF2_SPECIAL_LITE	0x00000004L	/* Gets coloured slate/gets slightly darkened by special fx: no LoS/no GLOW. This is implied by LAMP_LITE and successful LAMP_LITE_SNOW. */
 #define FF2_NIGHT_DARK		0x00000008L	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
 #define FF2_NO_SHADE		0x00000010L	/* Don't shade to TERM_SLATE in view_shade_floor (or vault walls become indistinguishable from granite, without magic light) */
 #define FF2_NO_LITE_WHITEN	0x00000020L	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
-#define FF2_LAMP_LITE_OPTIONAL	0x00000040L	/* For _floor_ grids: Gets coloured by view_granite_lite, if user has toggled an according option. */
+#define FF2_LAMP_LITE_OPTIONAL	0x00000040L	/* For _floor_ grids: Gets coloured by wall_lighting, if user has toggled an according option. */
 #define FF2_NO_ARTICLE		0x00000080L	/* floor feat doesn't have an article ('a(n)'/'the') in front of it when being described */
 //hole
 #define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */

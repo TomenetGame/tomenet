@@ -2794,8 +2794,8 @@ self-explaining or that are especially important are listed in detail here:
         view_bright_lite2 (darkens wall grids out of sight)
         view_yellow_lite (your light source lights up certain floor/wall grids)
         view_bright_lite (darkens floor grids out of sight)
-        view_granite_lite (enables special lighting fx listed above for walls)
-        view_special_lite (enables special lighting fx listed above for floors)
+        wall_lighting (enables lighting/shading fx listed above for walls)
+        floor_lighting (enables lighting/shading fx listed above for floors)
 
 (4) Audio Options
     (See (2.1a) for more information about sound and music.)

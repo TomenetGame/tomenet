@@ -72,8 +72,8 @@ Y:safe_macros
 X:view_shade_walls
 Y:view_lamp_lite
 Y:view_shade_floor
-Y:view_granite_lite
-Y:view_special_lite
+Y:wall_lighting
+Y:floor_lighting
 
 Y:easy_open
 X:easy_disarm
