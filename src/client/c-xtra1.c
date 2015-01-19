@@ -128,7 +128,8 @@ void prt_title(cptr title) {
 #endif
 #define EXP_BAR_HI_DRAINED TERM_YELLOW
 #define EXP_BAR_LO_DRAINED TERM_L_UMBER
-#define EXP_BAR_NO_DRAINED TERM_UMBER
+#define EXP_BAR_NO_DRAINED TERM_YELLOW
+//#define EXP_BAR_NO_DRAINED TERM_UMBER
 
 void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv, s32b adv_prev) {
 	char tmp[32], exp_bar_char;
