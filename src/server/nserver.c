@@ -2068,9 +2068,8 @@ static void sync_options(int Ind, bool *options) {
 
 	if (is_older_than(&p_ptr->version, 4, 4, 8, 7, 0, 0)) /* which effectively means < 4.4.9 */ {
 		p_ptr->warn_unique_credit = FALSE;
-	} else {
+	else
 		p_ptr->warn_unique_credit = options[1];
-	}
 
 	if (is_older_than(&p_ptr->version, 4, 4, 8, 2, 0, 0))
 		p_ptr->newbie_hints = TRUE;
@@ -4058,8 +4057,6 @@ static int Receive_play(int ind) {
 					return -1;
 				}
 			}
-			/* use default values for skipped, new options */
-			connp->Client_setup.options[96] = TRUE;
 		}
 
 		/* Read screen dimensions */
@@ -10261,8 +10258,6 @@ static int Receive_options(int ind) {
 					return n;
 				}
 			}
-			/* use default values for skipped, new options */
-			connp->Client_setup.options[96] = TRUE;
 		}
 
 		/* Sync named options */
