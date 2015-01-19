@@ -2063,7 +2063,7 @@ static void sync_options(int Ind, bool *options) {
 	int i;
 
 	/* Do the dirty work */
-
+    if (is_older_than(&p_ptr->version, 4, 5, 8, 2, 0, 0)) {
 	p_ptr->rogue_like_commands = options[0];
 
 	if (is_older_than(&p_ptr->version, 4, 4, 8, 7, 0, 0)) /* which effectively means < 4.4.9 */ {
@@ -2262,6 +2262,152 @@ static void sync_options(int Ind, bool *options) {
 			if ((p_ptr->view_lamp_walls = options[3]) != tmp) p_ptr->redraw |= PR_MAP;
 		}
 	}
+    } else { /* 4.5.8.2+ (after 4.5.8a release) */
+	bool vlf = p_ptr->view_lite_extra;
+	bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
+
+	p_ptr->rogue_like_commands = options[0];
+	p_ptr->warn_unique_credit = options[1];
+
+	tmp = p_ptr->newbie_hints;
+	p_ptr->newbie_hints = options[3];
+	/* disable some or all newbie hints */
+	if (!p_ptr->newbie_hints) disable_specific_warnings(p_ptr);
+	else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie hints requires you to exit and log in again.");
+
+	p_ptr->use_old_target = options[4];
+	p_ptr->always_pickup = options[5];
+	p_ptr->stack_force_notes = options[8];
+	p_ptr->stack_force_costs = options[9];
+
+	tmp = p_ptr->font_map_solid_walls;
+	if ((p_ptr->font_map_solid_walls = options[13]) != tmp) p_ptr->redraw |= PR_MAP;
+
+	p_ptr->find_ignore_stairs = options[16];
+	p_ptr->find_ignore_doors = options[17];
+	p_ptr->find_cut = options[18];
+	p_ptr->find_examine = options[19];
+	p_ptr->disturb_move = options[20];
+	p_ptr->disturb_near = options[21];
+	p_ptr->disturb_panel = options[22];
+	p_ptr->disturb_state = options[23];
+	p_ptr->disturb_minor = options[24];
+	p_ptr->disturb_other = options[25];
+	p_ptr->alert_hitpoints = options[26];
+	p_ptr->alert_afk_dam = options[27];
+	p_ptr->auto_afk = options[28];
+	p_ptr->newb_suicide = options[29];
+	p_ptr->stack_allow_items = options[30];
+	p_ptr->stack_allow_wands = options[31];
+
+	tmp = p_ptr->view_perma_grids;
+	if ((p_ptr->view_perma_grids = options[34]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->view_torch_grids;
+	if ((p_ptr->view_torch_grids = options[35]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->view_reduce_lite;
+	if ((p_ptr->view_reduce_lite = options[44]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->view_reduce_view;
+	if ((p_ptr->view_reduce_view = options[45]) != tmp) p_ptr->redraw |= PR_MAP;
+
+	p_ptr->safe_float = options[46];
+	p_ptr->censor_swearing = options[53];
+
+	tmp = p_ptr->view_animated_lite;
+	if ((p_ptr->view_animated_lite = options[52]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->view_shade_walls;
+	if ((p_ptr->view_shade_walls = options[55]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->view_lamp_floor;
+	if ((p_ptr->view_lamp_floor = options[56]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->view_shade_floor;
+	if ((p_ptr->view_shade_floor = options[57]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->wall_lighting;
+	if ((p_ptr->wall_lighting = options[58]) != tmp) p_ptr->redraw |= PR_MAP;
+	tmp = p_ptr->floor_lighting;
+	if ((p_ptr->floor_lighting = options[59]) != tmp) p_ptr->redraw |= PR_MAP;
+
+	p_ptr->easy_open = options[60];
+	p_ptr->easy_disarm = options[61];
+	p_ptr->easy_tunnel = options[62];
+//	p_ptr->auto_destroy = options[63];
+	p_ptr->clear_inscr = options[63];
+	p_ptr->auto_inscribe = options[64];
+
+	p_ptr->last_words = TRUE;
+	p_ptr->taciturn_messages = options[66];
+	p_ptr->view_lite_extra = options[65];
+	if (vlf != p_ptr->view_lite_extra) p_ptr->redraw |= PR_MAP;
+
+	p_ptr->limit_chat = options[67];
+
+	tmp = p_ptr->depth_in_feet;
+	if ((p_ptr->depth_in_feet = options[7]) != tmp) p_ptr->redraw |= PR_DEPTH;
+
+	p_ptr->auto_target = options[69];
+	p_ptr->autooff_retaliator = options[70];
+	p_ptr->wide_scroll_margin = options[71];
+	p_ptr->always_repeat = options[6];
+	p_ptr->fail_no_melee = options[72];
+
+	/* in case we toggled linear_stats: */
+	p_ptr->redraw |= (PR_STATS);
+
+	tmp = p_ptr->short_item_names;
+	if ((p_ptr->short_item_names = options[77]) != tmp) {
+		/* update inventory */
+		for (i = 0; i < INVEN_WIELD; i++)
+			WIPE(&p_ptr->inventory_copy[i], object_type);
+		p_ptr->window |= PW_INVEN;
+	}
+
+	// bool speak_unique;
+
+	p_ptr->uniques_alive = options[32];
+	p_ptr->overview_startup = options[33];
+	p_ptr->page_on_privmsg = options[40];
+	p_ptr->page_on_afk_privmsg = options[41];
+	p_ptr->auto_untag = options[42];
+	p_ptr->player_list = options[50];
+	p_ptr->player_list2 = options[51];
+	p_ptr->half_sfx_attack = options[86];
+	p_ptr->cut_sfx_attack = options[87];
+
+	p_ptr->sfx_combat = !options[47];
+	p_ptr->sfx_magicattack = !options[48];
+	p_ptr->sfx_defense = !options[49];
+	p_ptr->sfx_monsterattack = !options[93];
+	p_ptr->sfx_shriek = !options[94];
+	p_ptr->sfx_store = !options[96];
+	p_ptr->sfx_house_quiet = options[97];
+	p_ptr->sfx_house = !options[98];
+	if (p_ptr->sfx_house != sfx_house || p_ptr->sfx_house_quiet != sfx_house_quiet) {
+		if (p_ptr->grid_house) {
+			if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
+			else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
+			else Send_sfx_volume(Ind, 100, 100);
+		}
+	}
+#ifdef CLIENT_SIDE_WEATHER
+	if (options[99] && !p_ptr->no_weather) {
+		/* update his client-side weather */
+		player_weather(Ind, TRUE, TRUE, TRUE);
+		p_ptr->no_weather = TRUE;
+	} else p_ptr->no_weather = options[99];
+#endif
+	p_ptr->hilite_player = options[100];
+
+	if (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER) p_ptr->alert_mana = FALSE;
+	else p_ptr->alert_mana = options[101];
+
+	p_ptr->exp_bar = options[103];//just for tracking this feature's popularity =P
+	p_ptr->consistent_players = options[104];
+	p_ptr->flash_self = options[105] ? 0 : -1;
+
+	p_ptr->alert_offpanel_dam = options[106];
+	p_ptr->idle_starve_kick = options[107];
+
+	tmp = p_ptr->view_lamp_walls;
+	if ((p_ptr->view_lamp_walls = options[3]) != tmp) p_ptr->redraw |= PR_MAP;
+    }
 }
 
 /*
