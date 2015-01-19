@@ -1176,7 +1176,6 @@ return;
 
 	/* display warnings, possibly */
 	if (ma_warning_weapon && p_ptr->warning_ma_weapon == 0) {
-//		p_ptr->warning_ma_weapon = 1;
 #ifndef ENABLE_MA_BOOMERANG
 		msg_print(Ind, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
 #else
@@ -1184,12 +1183,17 @@ return;
 #endif
 //		s_printf("warning_ma_weapon: %s\n", p_ptr->name);
 		warn_takeoff = TRUE;
+
+		/* might find esp-weapon at non-low levels, so stop spamming this warning then */
+		if (p_ptr->lev >= 15) p_ptr->warning_ma_weapon = 1;
 	}
 	if (ma_warning_shield && p_ptr->warning_ma_shield == 0) {
-//		p_ptr->warning_ma_shield = 1;
 		msg_print(Ind, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
 //		s_printf("warning_ma_shield: %s\n", p_ptr->name);
 		warn_takeoff = TRUE;
+
+		/* might find esp-shield at non-low levels, so stop spamming this warning then */
+		if (p_ptr->lev >= 15) p_ptr->warning_ma_shield = 1;
 	}
 	if (warn_takeoff) msg_print(Ind, "\374\377R         Press 't' key to take off your weapons or shield.");
 

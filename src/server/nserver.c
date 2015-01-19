@@ -2745,6 +2745,7 @@ static int Handle_login(int ind)
 	/* display some warnings if an item will severely conflict with Martial Arts skill */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
 		bool warn_takeoff = FALSE;
+
 		if (!p_ptr->warning_ma_weapon &&
 		    (p_ptr->inventory[INVEN_WIELD].k_idx ||
 		    is_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */
@@ -2759,11 +2760,17 @@ static int Handle_login(int ind)
 			msg_print(NumPlayers, "\374\377RWarning: Using any melee weapon or bow renders Martial Arts skill effectless.");
 #endif
 			warn_takeoff = TRUE;
+
+			/* might find esp-weapon at non-low levels, so stop spamming this warning then */
+			if (p_ptr->lev >= 15) p_ptr->warning_ma_weapon = 1;
 		}
 		if (!p_ptr->warning_ma_shield &&
 		    p_ptr->inventory[INVEN_ARM].k_idx) {
 			msg_print(NumPlayers, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
 			warn_takeoff = TRUE;
+
+			/* might find esp-shield at non-low levels, so stop spamming this warning then */
+			if (p_ptr->lev >= 15) p_ptr->warning_ma_shield = 1;
 		}
 		if (warn_takeoff) msg_print(NumPlayers, "\374\377R         Press 't' key to take off your weapons or shield.");
 	}
