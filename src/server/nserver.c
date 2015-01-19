@@ -2072,9 +2072,6 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->warn_unique_credit = options[1];
 	}
 
-#if 0
-	p_ptr->carry_query_flag = options[3];
-#else
 	if (is_older_than(&p_ptr->version, 4, 4, 8, 2, 0, 0))
 		p_ptr->newbie_hints = TRUE;
 	else {
@@ -2085,7 +2082,6 @@ static void sync_options(int Ind, bool *options) {
 		if (!p_ptr->newbie_hints) disable_specific_warnings(p_ptr);
 		else if (!tmp) msg_print(Ind, "\374\377yEnabling newbie hints requires you to exit and log in again.");
 	}
-#endif
 
 	p_ptr->use_old_target = options[4];
 	p_ptr->always_pickup = options[5];
@@ -2264,7 +2260,7 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->alert_offpanel_dam = options[106];
 			p_ptr->idle_starve_kick = options[107];
 			tmp = p_ptr->view_lamp_walls;
-			if ((p_ptr->view_lamp_walls = options[108]) != tmp) p_ptr->redraw |= PR_MAP;
+			if ((p_ptr->view_lamp_walls = options[3]) != tmp) p_ptr->redraw |= PR_MAP;
 		}
 	}
 }

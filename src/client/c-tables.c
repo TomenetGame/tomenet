@@ -203,8 +203,8 @@ option_type option_info[OPT_MAX] = {
 	    "rogue_like_commands",	"Rogue-like keymap (for covering lack of a numpad)" },
 	{ &c_cfg.warn_unique_credit,	FALSE,	4,	0, 1, TRUE,
 	    "warn_unique_credit",	"Beep on attacking a unique you already killed" },
-	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 2, TRUE,
-	    "other_query_flag",		"Prompt for various information (mimic polymorph)" },
+	{ &c_cfg.view_lamp_walls,	TRUE,	1,	1, 28, TRUE,
+	    "view_lamp_walls",		"Use special colors for lamp-lit wall grids" },
 	{ &c_cfg.newbie_hints,		TRUE,	4,	0, 3, TRUE,
 	    "newbie_hints",		"Display hints/warnings for new players" },
 	{ &c_cfg.use_old_target,	TRUE,	2,	0, 4, TRUE,
@@ -431,11 +431,11 @@ option_type option_info[OPT_MAX] = {
 	    "alert_offpanel_dam",	"Beep when taking damage while off-panel" },
 	{ &c_cfg.idle_starve_kick,	FALSE,	3,	1, 107, TRUE,
 	    "idle_starve_kick",		"Disconnect when idle for 30s while starving" },
-	{ &c_cfg.view_lamp_walls,	TRUE,	1,	1, 28, TRUE,
-	    "view_lamp_walls",		"Use special colors for lamp-lit wall grids" },
 
     /* deprecated/broken/todo options */
 #if 0
+	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 2, TRUE,
+	    "other_query_flag",		"Prompt for various information (mimic polymorph)" },
 	{ &c_cfg.quick_messages,	FALSE,	6,	0, 1, TRUE,
 	    "quick_messages",		"Activate quick messages (skill etc)" },
 	{ &c_cfg.carry_query_flag,	FALSE,	3,	0, 3, FALSE,
