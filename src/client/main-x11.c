@@ -1823,18 +1823,18 @@ static errr CheckEvent(bool wait) {
 
 			/* hack: Switch big_map mode (and clear screen)  */
 			if (td == &screen && in_game &&
-			    ((rows == 24 && Client_setup.options[43]) ||
-			    (rows == 46 && !Client_setup.options[43]))) {
+			    ((rows == 24 && Client_setup.options[CO_BIGMAP]) ||
+			    (rows == 46 && !Client_setup.options[CO_BIGMAP]))) {
 				/* and for big_map.. */
 				if (rows == 24) {
 					/* turn off big_map */
 					c_cfg.big_map = FALSE;
-            				Client_setup.options[43] = FALSE;
+            				Client_setup.options[CO_BIGMAP] = FALSE;
         			        screen_hgt = SCREEN_HGT;
 				} else {
 					/* turn on big_map */
 					c_cfg.big_map = TRUE;
-            				Client_setup.options[43] = TRUE;
+            				Client_setup.options[CO_BIGMAP] = TRUE;
         			        screen_hgt = MAX_SCREEN_HGT;
 				}
 				Term_clear();

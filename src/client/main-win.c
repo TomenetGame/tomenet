@@ -3090,11 +3090,11 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			term *old;
 
 			/* Remember final size values from WM_SIZE -> SIZE_RESTORED */
-			if ((screen_term_rows == 24 && Client_setup.options[43]) ||
-			    (screen_term_rows == 46 && !Client_setup.options[43])) {
-		                bool val = !Client_setup.options[43];
+			if ((screen_term_rows == 24 && Client_setup.options[CO_BIGMAP]) ||
+			    (screen_term_rows == 46 && !Client_setup.options[CO_BIGMAP])) {
+		                bool val = !Client_setup.options[CO_BIGMAP];
 
-		                Client_setup.options[43] = val;
+		                Client_setup.options[CO_BIGMAP] = val;
 		                c_cfg.big_map = val;
 
                     		if (!val) screen_hgt = SCREEN_HGT;

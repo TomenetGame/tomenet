@@ -2931,8 +2931,8 @@ void client_init(char *argv1, bool skip)
 #if defined(USE_X11) || defined(WINDOWS)
         if (bigmap_hint && !c_cfg.big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
 	        c_cfg.big_map = TRUE;
-		Client_setup.options[43] = TRUE;
-		check_immediate_options(43, TRUE, FALSE);
+		Client_setup.options[CO_BIGMAP] = TRUE;
+		check_immediate_options(CO_BIGMAP, TRUE, FALSE);
 		//(void)options_dump("global.opt");
 		(void)options_dump(format("%s.opt", cname));
         }

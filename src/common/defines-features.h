@@ -240,6 +240,9 @@
  /* Use a somewhat darker 'light dark' for TERM_L_DARK to improve distinction
     from slate tone? */
  #define DISTINCT_DARK
+
+ /* Remove some hard-coding in the client options */
+ #define CO_BIGMAP	7
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/

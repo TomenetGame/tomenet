@@ -885,7 +885,7 @@ errr init_gcu(void)
 
         /* BIG_MAP is currently not supported in GCU client */
         c_cfg.big_map = FALSE;
-        Client_setup.options[43] = FALSE;
+        Client_setup.options[CO_BIGMAP] = FALSE;
 	screen_hgt = SCREEN_HGT;
 
 
