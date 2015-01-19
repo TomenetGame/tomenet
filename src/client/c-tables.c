@@ -355,7 +355,7 @@ option_type option_info[OPT_MAX] = {
 	{ &c_cfg.wide_scroll_margin,	TRUE,	3,	9, 71, TRUE,
 	    "wide_scroll_margin",	"Scroll the screen more frequently" },
 	{ &c_cfg.fail_no_melee,		FALSE,	3,	9, 72, TRUE,
-	    "fail_no_melee",		"Stay still when item-retaliation fails" },
+	    "fail_no_melee",		"Don't melee if other auto-retaliation ways fail" },
 	{ &c_cfg.always_show_lists,	FALSE,	1,	9, 73, TRUE,
 	    "always_show_lists",		"Always show lists in item/skill selection" },
 	{ &c_cfg.target_history,	FALSE,	4,	9, 74, TRUE,
