@@ -2321,6 +2321,17 @@ static int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x
 				case 6: colour = TERM_SLATE; break;
 				}
 				break;
+#if 0 /* maybe keep disabled, for stone2mud effects on world surface - doesn't matter much though? */
+			case FEAT_MUD:
+				switch (Rand_div(7)) {
+				case 0: case 1: case 2: case 3:
+					colour = TERM_L_WHITE; break;
+				case 4: case 5: case 6: if (c_ptr->info & CAVE_LITE) colour = TERM_L_UMBER;
+					else colour = TERM_UMBER;
+					break;
+				}
+				break;
+#endif
 			case FEAT_GRASS:
 				switch (Rand_div(7)) {
 				case 0: case 1: case 2: case 3: case 4:

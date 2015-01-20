@@ -142,6 +142,7 @@ F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER | NO_ARTICLE
 N:19:loose dirt
 G:%:u
 F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER | NO_ARTICLE
+#no lighting options for now, to maintain static garden visuals (could be changed..)
 
 # 0x0E --> open door to a home
 
@@ -665,6 +666,7 @@ F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
 N:94:mud
 G:~:u
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | NO_ARTICLE
+F:LAMP_LITE_OPTIONAL | LAMP_LITE_SNOW | NO_SHADE
 
 N:95:ice wall
 G:#:B
@@ -842,6 +844,7 @@ N:174:stream of tainted water
 G:~:u
 F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
+F:LAMP_LITE_OPTIONAL | LAMP_LITE_SNOW | NO_SHADE
 
 N:175:monster trap
 G:;:v
