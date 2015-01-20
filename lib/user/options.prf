@@ -76,6 +76,7 @@ Y:view_shade_walls
 Y:floor_lighting
 Y:view_lamp_floor
 Y:view_shade_floor
+X:view_lite_extra
 
 Y:easy_open
 X:easy_disarm
@@ -83,7 +84,6 @@ X:easy_tunnel
 X:clear_inscr
 X:auto_inscribe
 X:taciturn_messages
-X:view_lite_extra
 X:limit_chat
 Y:thin_down_flush
 X:auto_target
