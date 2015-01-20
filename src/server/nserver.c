@@ -2312,47 +2312,46 @@ static void sync_options(int Ind, bool *options) {
 
 	//page 2
 
-#ifdef CLIENT_SIDE_WEATHER
-	if (options[22] && !p_ptr->no_weather) {
-		/* update his client-side weather */
-		player_weather(Ind, TRUE, TRUE, TRUE);
-		p_ptr->no_weather = TRUE;
-	} else p_ptr->no_weather = options[23];
-#endif
+	p_ptr->uniques_alive = options[22];
+	p_ptr->overview_startup = options[23];
+	p_ptr->limit_chat = options[24];
 
-	p_ptr->warn_unique_credit = options[26];
+	p_ptr->warn_unique_credit = options[27];
 
 	/* in case we toggled linear_stats: */
 	p_ptr->redraw |= (PR_STATS);
 	//..other client-side only stuff..
 
 	tmp = p_ptr->depth_in_feet;
-	if ((p_ptr->depth_in_feet = options[29]) != tmp) p_ptr->redraw |= PR_DEPTH;
-	p_ptr->newb_suicide = options[29];
+	if ((p_ptr->depth_in_feet = options[30]) != tmp) p_ptr->redraw |= PR_DEPTH;
+	p_ptr->newb_suicide = options[31];
 
-	p_ptr->uniques_alive = options[32];
-	p_ptr->overview_startup = options[33];
-
-	p_ptr->player_list = options[35];
-	p_ptr->player_list2 = options[36];
+	p_ptr->player_list = options[34];
+	p_ptr->player_list2 = options[35];
 
 	tmp = p_ptr->short_item_names;
-	if ((p_ptr->short_item_names = options[38]) != tmp) {
+	if ((p_ptr->short_item_names = options[37]) != tmp) {
 		/* update inventory */
 		for (i = 0; i < INVEN_WIELD; i++)
 			WIPE(&p_ptr->inventory_copy[i], object_type);
 		p_ptr->window |= PW_INVEN;
 	}
 
-	p_ptr->limit_chat = options[42];
+	p_ptr->taciturn_messages = options[40];
+
+#ifdef CLIENT_SIDE_WEATHER
+	if (options[43] && !p_ptr->no_weather) {
+		/* update his client-side weather */
+		player_weather(Ind, TRUE, TRUE, TRUE);
+		p_ptr->no_weather = TRUE;
+	} else p_ptr->no_weather = options[43];
+#endif
 
 	//page 3
 
-	p_ptr->flash_self = options[43] ? 0 : -1;
-	p_ptr->hilite_player = options[44];
-	p_ptr->consistent_players = options[45];
-
-	p_ptr->taciturn_messages = options[48];
+	p_ptr->flash_self = options[44] ? 0 : -1;
+	p_ptr->hilite_player = options[45];
+	p_ptr->consistent_players = options[46];
 
 	//page 4
 

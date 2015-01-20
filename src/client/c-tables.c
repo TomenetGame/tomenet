@@ -254,70 +254,69 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "exp_bar",			"Show experience bar instead of a number" },
 
     //page 2 - 22
-	{ &c_cfg.recall_flicker,	TRUE,	4,	1, 22, TRUE,
-	    "recall_flicker",		"Flicker messages in recall" },
-	{ &c_cfg.no_weather,		FALSE,	4,	1, 23, TRUE,
-	    "no_weather",		"Disable weather visuals and sounds completely" },
+	{ &c_cfg.uniques_alive,		FALSE,	4,	1, 22, TRUE,
+	    "uniques_alive",		"List only unslain uniques for your local party" },
+	{ &c_cfg.overview_startup,	FALSE,	4,	1, 23, TRUE,
+	    "overview_startup",		"Display overview resistance/boni page at startup" },
+	{ &c_cfg.limit_chat,		FALSE,	4,	9, 24, TRUE,
+	    "limit_chat",		"Chat only with players on the same floor" },
 
-	{ &c_cfg.allow_paging,		TRUE,	4,	0, 24, TRUE,
+	{ &c_cfg.allow_paging,		TRUE,	4,	0, 25, TRUE,
 	    "allow_paging",		"Allow users to page you (recommended!)" },
-	{ &c_cfg.ring_bell,		TRUE,	4,	0, 25, TRUE,
+	{ &c_cfg.ring_bell,		TRUE,	4,	0, 26, TRUE,
 	    "ring_bell",		"Beep on misc warnings and errors" },
-	{ &c_cfg.warn_unique_credit,	FALSE,	4,	0, 26, TRUE,
+	{ &c_cfg.warn_unique_credit,	FALSE,	4,	0, 27, TRUE,
 	    "warn_unique_credit",	"Beep on attacking a unique you already killed" },
 
-	{ &c_cfg.linear_stats,		FALSE,	4,	9, 27, TRUE,
+	{ &c_cfg.linear_stats,		FALSE,	4,	9, 28, TRUE,
 	    "linear_stats",			"Stats are represented in a linear way" },
-	{ &c_cfg.exp_need,		FALSE,	4,	9, 28, TRUE,
+	{ &c_cfg.exp_need,		FALSE,	4,	9, 29, TRUE,
 	    "exp_need",			"Show the experience needed for next level" },
-	{ &c_cfg.depth_in_feet,		TRUE,	4,	0, 29, TRUE,
+	{ &c_cfg.depth_in_feet,		TRUE,	4,	0, 30, TRUE,
 	    "depth_in_feet",		"Show dungeon level in feet" },
-	{ &c_cfg.newb_suicide,		TRUE,	4,	1, 30, TRUE,	/* former auto_scum */
+	{ &c_cfg.newb_suicide,		TRUE,	4,	1, 31, TRUE,	/* former auto_scum */
 	    "newb_suicide",		"Display newbie suicides" },
-	{ &c_cfg.show_weights,		TRUE,	4,	0, 31, TRUE,
+	{ &c_cfg.show_weights,		TRUE,	4,	0, 32, TRUE,
 	    "show_weights",		"Show weights in object listings" },
-	{ &c_cfg.uniques_alive,		FALSE,	4,	1, 32, TRUE,
-	    "uniques_alive",		"List only unslain uniques for your local party" },
-	{ &c_cfg.overview_startup,	FALSE,	4,	1, 33, TRUE,
-	    "overview_startup",		"Display overview resistance/boni page at startup" },
     /* currently problematic: best might be to move line-splitting to client side, from util.c
        For now, let's just insert hourly chat marker lines instead. - C. Blue */
-	{ &c_cfg.time_stamp_chat,	FALSE,	4,	0, 34, TRUE,
+	{ &c_cfg.time_stamp_chat,	FALSE,	4,	0, 33, TRUE,
 	    "time_stamp_chat",		"Add hourly time stamps to chat window" },
-	{ &c_cfg.player_list,		FALSE,	4,	1, 35, TRUE,
+	{ &c_cfg.player_list,		FALSE,	4,	1, 34, TRUE,
 	    "player_list",		"Show a more compact player list in @ screen" },//flush_command
-	{ &c_cfg.player_list2,		FALSE,	4,	1, 36, TRUE,
+	{ &c_cfg.player_list2,		FALSE,	4,	1, 35, TRUE,
 	    "player_list2",		"Compacts the player list in @ screen even more" },//fresh_before
-	{ &c_cfg.hide_unusable_skills,	TRUE,	4,	0, 37, TRUE,
+	{ &c_cfg.hide_unusable_skills,	TRUE,	4,	0, 36, TRUE,
 	    "hide_unusable_skills",	"Hide unusable skills" },
-	{ &c_cfg.short_item_names,	FALSE,	4,	0, 38, TRUE,
+	{ &c_cfg.short_item_names,	FALSE,	4,	0, 37, TRUE,
 	    "short_item_names", 	"Don't display 'flavours' in item names" },
-	{ &c_cfg.keep_topline,		FALSE,	4,	0, 39, TRUE,
+	{ &c_cfg.keep_topline,		FALSE,	4,	0, 38, TRUE,
 	    "keep_topline",		"Don't clear messages in the top line if avoidable" },
-	{ &c_cfg.target_history,	FALSE,	4,	9, 40, TRUE,
+	{ &c_cfg.target_history,	FALSE,	4,	9, 39, TRUE,
 	    "target_history",		"Add target informations to the message history" },
-	{ &c_cfg.always_show_lists,	FALSE,	4,	9, 41, TRUE,
-	    "always_show_lists",		"Always show lists in item/skill selection" },
-
-	{ &c_cfg.limit_chat,		FALSE,	4,	9, 42, TRUE,
-	    "limit_chat",		"Chat only with players on the same floor" },
-	//HOLE: 1
-
-    //page 3 - 43
-    //todo: fix/implement good cursor on *nix/osx
-	{ &c_cfg.flash_player,		FALSE,	6,	1, 43, TRUE,
-	    "flash_player",		"Flash own character icon after far relocation" },
-	{ &c_cfg.hilite_player,		FALSE,	6,	1, 44, FALSE,
-	    "hilite_player",		"Hilite own character icon with the cursor" },
-	{ &c_cfg.consistent_players,	FALSE,	6,	1, 45, TRUE,
-	    "consistent_players",	"Use consistent symbols and colours for players" },
-	{ &c_cfg.no_verify_sell,	FALSE,	6,	0, 46, TRUE,
-	    "no_verify_sell",		"Skip safety question when selling items" },
-	{ &c_cfg.no_verify_destroy,	FALSE,	6,	0, 47, TRUE,	/* former dungeon_align */
-	    "no_verify_destroy",	"Skip safety question when destroying items" },
-	{ &c_cfg.taciturn_messages,	FALSE,	6,	9, 48, TRUE,
+	{ &c_cfg.taciturn_messages,	FALSE,	6,	9, 40, TRUE,
 	    "taciturn_messages",	"Suppress server messages as far as possible" },
-	//HOLE:16
+	{ &c_cfg.always_show_lists,	FALSE,	4,	9, 41, TRUE,
+	    "always_show_lists",	"Always show lists in item/skill selection" },
+
+	{ &c_cfg.recall_flicker,	TRUE,	4,	1, 42, TRUE,
+	    "recall_flicker",		"Show animated text colours in sub-windows" },
+	{ &c_cfg.no_weather,		FALSE,	4,	1, 43, TRUE,
+	    "no_weather",		"Disable weather visuals and sounds completely" },
+
+    //page 3 - 44
+	{ &c_cfg.flash_player,		FALSE,	6,	1, 44, TRUE,
+	    "flash_player",		"Flash own character icon after far relocation" },
+    //todo: fix/implement good cursor on *nix/osx
+	{ &c_cfg.hilite_player,		FALSE,	6,	1, 45, FALSE,
+	    "hilite_player",		"Hilite own character icon with the cursor" },
+	{ &c_cfg.consistent_players,	FALSE,	6,	1, 46, TRUE,
+	    "consistent_players",	"Use consistent symbols and colours for players" },
+	{ &c_cfg.no_verify_sell,	FALSE,	6,	0, 47, TRUE,
+	    "no_verify_sell",		"Skip safety question when selling items" },
+	{ &c_cfg.no_verify_destroy,	FALSE,	6,	0, 48, TRUE,	/* former dungeon_align */
+	    "no_verify_destroy",	"Skip safety question when destroying items" },
+	//HOLE:17
 
     //page 4 - 49
 	{ &c_cfg.auto_afk,		TRUE,	2,	1, 49, TRUE,	/* former auto_haggle */
