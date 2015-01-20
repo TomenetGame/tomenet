@@ -18,7 +18,6 @@ Y:stack_force_costs
 Y:hilite_chat
 Y:show_weights
 Y:hibeep_chat
-X:font_map_solid_walls
 Y:use_color
 Y:ring_bell
 
@@ -66,14 +65,17 @@ X:no_magicattack_sfx
 X:no_defense_sfx
 X:player_list
 X:player_list2
-X:view_animated_lite
 Y:censor_swearing
 Y:safe_macros
-X:view_shade_walls
-Y:view_lamp_lite
-Y:view_shade_floor
+
+X:font_map_solid_walls
+Y:view_animated_lite
 Y:wall_lighting
+Y:view_lamp_walls
+Y:view_shade_walls
 Y:floor_lighting
+Y:view_lamp_floor
+Y:view_shade_floor
 
 Y:easy_open
 X:easy_disarm

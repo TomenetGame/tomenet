@@ -221,14 +221,14 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.font_map_solid_walls,	FALSE,	1,	0, 8, TRUE,
 	    "font_map_solid_walls",	"Certain fonts only: Walls look like solid blocks" },
-	{ &c_cfg.view_animated_lite,	FALSE,	1,	1, 9, TRUE,
+	{ &c_cfg.view_animated_lite,	TRUE,	1,	1, 9, TRUE,
 	    "view_animated_lite",	"Animate lantern light, flickering in colour" },
     //10
 	{ &c_cfg.wall_lighting,		TRUE,	1,	1, 10, TRUE,
 	    "wall_lighting",		"Generally enable lighting/shading for wall grids" },
 	{ &c_cfg.view_lamp_walls,	TRUE,	1,	1, 11, TRUE,
 	    "view_lamp_walls",		"Use special colors for lamp-lit wall grids" },
-	{ &c_cfg.view_shade_walls,	FALSE,	1,	1, 12, TRUE,
+	{ &c_cfg.view_shade_walls,	TRUE,	1,	1, 12, TRUE,
 	    "view_shade_walls",		"Use special colors to shade wall grids" },
 
 	{ &c_cfg.floor_lighting,	TRUE,	1,	1, 13, TRUE,	/* (59) */
