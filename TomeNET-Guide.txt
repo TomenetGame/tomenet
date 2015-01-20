@@ -2738,6 +2738,10 @@ self-explaining or that are especially important are listed in detail here:
     Rogue-like commands (rogue_like_commands)
         Toggles between normal key set and traditional rogue-like key set.
 
+    Double height of the map shown in the main window (big_map)
+        Definitely enable this to see if you prefer it: It doubles the size of
+        the game-play area displayed in the main window.
+
     Suppress server messages as far as possible (taciturn_messages)
         Will prevent some of the not-so-important server messages to be
         shown, for example 'You have <item>' when picking up an item.
@@ -2789,13 +2793,19 @@ self-explaining or that are especially important are listed in detail here:
     A bunch of options for special visual effects and lighting.
         These options change how lighting is applied to lamp light and walls,
         lamp light colour and how walls are displayed depending on the font:
+
         font_map_solid_walls (depending on font displays walls as solid blocks)
         view_animated_lite (fire-based light sources flicker yellow-orange)
-        view_bright_lite2 (darkens wall grids out of sight)
-        view_yellow_lite (your light source lights up certain floor/wall grids)
-        view_bright_lite (darkens floor grids out of sight)
-        wall_lighting (enables lighting/shading fx listed above for walls)
-        floor_lighting (enables lighting/shading fx listed above for floors)
+
+        wall_lighting (generally enables lighting/shading fx for walls:)
+        view_lamp_walls (your light source lights up certain wall grids)
+        view_shade_walls (darkens wall grids out of sight)
+
+        floor_lighting (generally enables lighting/shading fx for floors:)
+        view_lamp_floor (your light source lights up certain floor grids)
+        view_shade_floor (darkens floor grids out of sight)
+
+        view_lite_extra (lights up a few additional wall/floor types)
 
 (4) Audio Options
     (See (2.1a) for more information about sound and music.)
@@ -2814,10 +2824,6 @@ self-explaining or that are especially important are listed in detail here:
     Set 'AFK mode' automatically (auto_afk)
         Rogues might want to turn this off in order to sit out their blacklist
         timer in town.
-
-    Double height of the map shown in the main window (big_map)
-        Definitely enable this to see if you prefer it: It doubles the size of
-        the game-play area displayed in the main window.
 
     Prevent floating for a short while after death (safe_float)
         For a few turns after your character dies you cannot float up or down
