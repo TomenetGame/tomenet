@@ -282,27 +282,28 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
        For now, let's just insert hourly chat marker lines instead. - C. Blue */
 	{ &c_cfg.time_stamp_chat,	FALSE,	4,	0, 33, TRUE,
 	    "time_stamp_chat",		"Add hourly time stamps to chat window" },
-	{ &c_cfg.player_list,		FALSE,	4,	1, 34, TRUE,
-	    "player_list",		"Show a more compact player list in @ screen" },//flush_command
-	{ &c_cfg.player_list2,		FALSE,	4,	1, 35, TRUE,
-	    "player_list2",		"Compacts the player list in @ screen even more" },//fresh_before
-	{ &c_cfg.hide_unusable_skills,	TRUE,	4,	0, 36, TRUE,
+	{ &c_cfg.hide_unusable_skills,	TRUE,	4,	0, 34, TRUE,
 	    "hide_unusable_skills",	"Hide unusable skills" },
-	{ &c_cfg.short_item_names,	FALSE,	4,	0, 37, TRUE,
+	{ &c_cfg.short_item_names,	FALSE,	4,	0, 35, TRUE,
 	    "short_item_names", 	"Don't display 'flavours' in item names" },
-	{ &c_cfg.keep_topline,		FALSE,	4,	0, 38, TRUE,
+	{ &c_cfg.keep_topline,		FALSE,	4,	0, 36, TRUE,
 	    "keep_topline",		"Don't clear messages in the top line if avoidable" },
-	{ &c_cfg.target_history,	FALSE,	4,	9, 39, TRUE,
+	{ &c_cfg.target_history,	FALSE,	4,	9, 37, TRUE,
 	    "target_history",		"Add target informations to the message history" },
-	{ &c_cfg.taciturn_messages,	FALSE,	6,	9, 40, TRUE,
+	{ &c_cfg.taciturn_messages,	FALSE,	4,	9, 38, TRUE,
 	    "taciturn_messages",	"Suppress server messages as far as possible" },
-	{ &c_cfg.always_show_lists,	FALSE,	4,	9, 41, TRUE,
+	{ &c_cfg.always_show_lists,	FALSE,	4,	9, 39, TRUE,
 	    "always_show_lists",	"Always show lists in item/skill selection" },
 
-	{ &c_cfg.recall_flicker,	TRUE,	4,	1, 42, TRUE,
+	{ &c_cfg.recall_flicker,	TRUE,	4,	1, 40, TRUE,
 	    "recall_flicker",		"Show animated text colours in sub-windows" },
-	{ &c_cfg.no_weather,		FALSE,	4,	1, 43, TRUE,
+	{ &c_cfg.no_weather,		FALSE,	4,	1, 41, TRUE,
 	    "no_weather",		"Disable weather visuals and sounds completely" },
+
+	{ &c_cfg.player_list,		FALSE,	4,	1, 42, TRUE,
+	    "player_list",		"Show a more compact player list in @ screen" },//flush_command
+	{ &c_cfg.player_list2,		FALSE,	4,	1, 43, TRUE,
+	    "player_list2",		"Compacts the player list in @ screen even more" },//fresh_before
 
     //page 3 - 44
 	{ &c_cfg.flash_player,		FALSE,	6,	1, 44, TRUE,
