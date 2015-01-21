@@ -1522,7 +1522,8 @@
 
 
 /*** Option Definitions ***/
-#define OPT_MAX		128	/* 64; 96 */
+#define OPT_MAX		154	/* 6+1 pages a 22 options */
+#define OPT_MAX_COMPAT	128	/* 64; 96 */
 #define OPT_MAX_OLD	96	/* for clients <= 4.5.5 */
 
 

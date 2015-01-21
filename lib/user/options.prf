@@ -85,6 +85,7 @@ X:clear_inscr
 X:auto_inscribe
 X:taciturn_messages
 X:limit_chat
+X:no_afk_msg
 Y:thin_down_flush
 X:auto_target
 X:autooff_retaliator

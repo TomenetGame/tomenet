@@ -155,6 +155,9 @@ extern s16b o_max;
 extern s16b m_max;
 extern s16b o_top;
 extern s16b m_top;
+
+
+//deprecate: game options -- nowadays they're client options instead -- todo: clear
 extern bool rogue_like_commands;
 extern bool warn_unique_credit;//quick_messages;
 extern bool other_query_flag;

@@ -2313,28 +2313,28 @@ static void sync_options(int Ind, bool *options) {
 	//page 2
 
 	p_ptr->uniques_alive = options[22];
-	p_ptr->overview_startup = options[23];
+	p_ptr->warn_unique_credit = options[23];
 	p_ptr->limit_chat = options[24];
-
-	p_ptr->warn_unique_credit = options[27];
+	p_ptr->no_afk_msg = options[25];
+	p_ptr->overview_startup = options[26];
 
 	/* in case we toggled linear_stats: */
 	p_ptr->redraw |= (PR_STATS);
 	//..other client-side only stuff..
 
 	tmp = p_ptr->depth_in_feet;
-	if ((p_ptr->depth_in_feet = options[30]) != tmp) p_ptr->redraw |= PR_DEPTH;
-	p_ptr->newb_suicide = options[31];
+	if ((p_ptr->depth_in_feet = options[31]) != tmp) p_ptr->redraw |= PR_DEPTH;
+	p_ptr->newb_suicide = options[32];
 
 	tmp = p_ptr->short_item_names;
-	if ((p_ptr->short_item_names = options[35]) != tmp) {
+	if ((p_ptr->short_item_names = options[36]) != tmp) {
 		/* update inventory */
 		for (i = 0; i < INVEN_WIELD; i++)
 			WIPE(&p_ptr->inventory_copy[i], object_type);
 		p_ptr->window |= PW_INVEN;
 	}
 
-	p_ptr->taciturn_messages = options[38];
+	p_ptr->taciturn_messages = options[39];
 
 #ifdef CLIENT_SIDE_WEATHER
 	if (options[41] && !p_ptr->no_weather) {
@@ -2354,65 +2354,67 @@ static void sync_options(int Ind, bool *options) {
 
 	//page 4
 
-	p_ptr->auto_afk = options[49];
-	p_ptr->idle_starve_kick = options[50];
-	p_ptr->safe_float = options[51];
+	p_ptr->auto_afk = options[50];
+	p_ptr->idle_starve_kick = options[51];
+	p_ptr->safe_float = options[52];
 
 //	p_ptr->auto_destroy = options[];
-	p_ptr->auto_untag = options[53];
-	p_ptr->clear_inscr = options[54];
-	p_ptr->auto_inscribe = options[55];
-	p_ptr->stack_force_notes = options[56];
-	p_ptr->stack_force_costs = options[57];
-	p_ptr->stack_allow_items = options[58];
-	p_ptr->stack_allow_wands = options[59];
+	p_ptr->auto_untag = options[54];
+	p_ptr->clear_inscr = options[55];
+	p_ptr->auto_inscribe = options[56];
+	p_ptr->stack_force_notes = options[57];
+	p_ptr->stack_force_costs = options[58];
+	p_ptr->stack_allow_items = options[59];
+	p_ptr->stack_allow_wands = options[60];
 
-	p_ptr->always_repeat = options[61];
-	p_ptr->always_pickup = options[62];
-	p_ptr->use_old_target = options[63];
-	p_ptr->autooff_retaliator = options[64];
-	p_ptr->fail_no_melee = options[65];
-	p_ptr->wide_scroll_margin = options[66];
-	p_ptr->auto_target = options[67];
+	p_ptr->always_repeat = options[62];
+	p_ptr->always_pickup = options[63];
+	p_ptr->use_old_target = options[64];
+	p_ptr->autooff_retaliator = options[65];
+	p_ptr->fail_no_melee = options[66];
+	p_ptr->wide_scroll_margin = options[67];
+	p_ptr->auto_target = options[68];
 
 	//page 5
 
-	p_ptr->find_ignore_stairs = options[70];
-	p_ptr->find_ignore_doors = options[71];
-	p_ptr->find_cut = options[72];
-	p_ptr->find_examine = options[73];
-	p_ptr->disturb_move = options[74];
-	p_ptr->disturb_near = options[75];
-	p_ptr->disturb_panel = options[76];
-	p_ptr->disturb_state = options[77];
-	p_ptr->disturb_minor = options[78];
-	p_ptr->disturb_other = options[79];
+	p_ptr->find_ignore_stairs = options[71];
+	p_ptr->find_ignore_doors = options[72];
+	p_ptr->find_cut = options[73];
+	p_ptr->find_examine = options[74];
+	p_ptr->disturb_move = options[75];
+	p_ptr->disturb_near = options[76];
+	p_ptr->disturb_panel = options[77];
+	p_ptr->disturb_state = options[78];
+	p_ptr->disturb_minor = options[79];
+	p_ptr->disturb_other = options[80];
 	tmp = p_ptr->view_perma_grids;
-	if ((p_ptr->view_perma_grids = options[80]) != tmp) p_ptr->redraw |= PR_MAP;
+	if ((p_ptr->view_perma_grids = options[81]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_torch_grids;
-	if ((p_ptr->view_torch_grids = options[81]) != tmp) p_ptr->redraw |= PR_MAP;
+	if ((p_ptr->view_torch_grids = options[82]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_reduce_lite;
-	if ((p_ptr->view_reduce_lite = options[82]) != tmp) p_ptr->redraw |= PR_MAP;
+	if ((p_ptr->view_reduce_lite = options[83]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_reduce_view;
-	if ((p_ptr->view_reduce_view = options[83]) != tmp) p_ptr->redraw |= PR_MAP;
-	p_ptr->easy_open = options[84];
-	p_ptr->easy_disarm = options[85];
-	p_ptr->easy_tunnel = options[86];
+	if ((p_ptr->view_reduce_view = options[84]) != tmp) p_ptr->redraw |= PR_MAP;
+	p_ptr->easy_open = options[85];
+	p_ptr->easy_disarm = options[86];
+	p_ptr->easy_tunnel = options[87];
 
 	//page 6
 
 	// bool speak_unique;
-	p_ptr->sfx_combat = !options[92];
-	p_ptr->sfx_magicattack = !options[93];
-	p_ptr->sfx_defense = !options[94];
-	p_ptr->half_sfx_attack = options[95];
-	p_ptr->cut_sfx_attack = options[96];
-	p_ptr->sfx_monsterattack = !options[102];
-	p_ptr->sfx_shriek = !options[103];
-	p_ptr->sfx_store = !options[104];
-	p_ptr->sfx_house_quiet = options[105];
-	p_ptr->sfx_house = !options[106];
-	if (p_ptr->sfx_house != sfx_house || p_ptr->sfx_house_quiet != sfx_house_quiet) {
+	p_ptr->sfx_combat = !options[93];
+	p_ptr->sfx_magicattack = !options[94];
+	p_ptr->sfx_defense = !options[95];
+	p_ptr->half_sfx_attack = options[96];
+	p_ptr->cut_sfx_attack = options[97];
+	p_ptr->sfx_monsterattack = !options[103];
+	p_ptr->sfx_shriek = !options[104];
+	p_ptr->sfx_store = !options[105];
+	p_ptr->sfx_house_quiet = options[106];
+	p_ptr->sfx_house = !options[107];
+
+	if (p_ptr->sfx_house != sfx_house ||
+	    p_ptr->sfx_house_quiet != sfx_house_quiet) {
 		if (p_ptr->grid_house) {
 			if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
 			else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
@@ -4046,6 +4048,7 @@ static int Receive_login(int ind) {
 }
 
 #define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
+#define RECEIVE_PLAY_SIZE_OPTMAXCOMPAT (2*6+OPT_MAX_COMPAT+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
 #define RECEIVE_PLAY_SIZE_OPTMAXOLD (2*6+OPT_MAX_OLD+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
 //#define STRICT_RECEIVE_PLAY
 static int Receive_play(int ind) {
@@ -4156,12 +4159,12 @@ static int Receive_play(int ind) {
 		connp->trait = trait;
 
 //		if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
-		if ((is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0) ?
-		    RECEIVE_PLAY_SIZE : RECEIVE_PLAY_SIZE_OPTMAXOLD)
+		if ((is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1) ? RECEIVE_PLAY_SIZE :
+		    (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0) ? RECEIVE_PLAY_SIZE_OPTMAXCOMPAT : RECEIVE_PLAY_SIZE_OPTMAXOLD))
 		    > connp->r.len - (connp->r.ptr - connp->r.buf)) {
 #if DEBUG_LEVEL > 2
 			plog(format("Play packet is not large enough yet (%d)",
-						connp->r.len - (connp->r.ptr - connp->r.buf)));
+			    connp->r.len - (connp->r.ptr - connp->r.buf)));
 #endif	// DEBUG_LEVEL
 			connp->r.ptr = connp->r.buf;
 			return 1;
@@ -4169,17 +4172,14 @@ static int Receive_play(int ind) {
 
 #if DEBUG_LEVEL > 2
 			plog(format("Play packet is now large enough (%d)",
-						connp->r.len - (connp->r.ptr - connp->r.buf)));
+			    connp->r.len - (connp->r.ptr - connp->r.buf)));
 #endif	// DEBUG_LEVEL
 
 #if 1	// moved from Handle_listening
 		/* Read the stat order */
-		for (i = 0; i < 6; i++)
-		{
+		for (i = 0; i < 6; i++) {
 			n = Packet_scanf(&connp->r, "%hd", &connp->stat_order[i]);
-
-			if (n <= 0)
-			{
+			if (n <= 0) {
 				Destroy_connection(ind, "Misread stat order");
 				return -1;
 			}
@@ -4188,19 +4188,24 @@ static int Receive_play(int ind) {
 #if 0
 		/* Read class extra */
 		n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
-
-		if (n <= 0)
-		{
+		if (n <= 0) {
 			Destroy_connection(ind, "Misread class extra");
 			return -1;
 		}
 #endif	// 0
 
 		/* Read the options */
-		if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) {
+		if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) {
 			for (i = 0; i < OPT_MAX; i++) {
 				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
-
+				if (n <= 0) {
+					Destroy_connection(ind, "Misread options");
+					return -1;
+				}
+			}
+		} else if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) {
+			for (i = 0; i < OPT_MAX_COMPAT; i++) {
+				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "Misread options");
 					return -1;
@@ -4209,7 +4214,6 @@ static int Receive_play(int ind) {
 		} else {
 			for (i = 0; i < OPT_MAX_OLD; i++) {
 				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
-
 				if (n <= 0) {
 					Destroy_connection(ind, "Misread options");
 					return -1;
@@ -4244,12 +4248,9 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "unknown" char/attrs */
-		for (i = 0; i < TV_MAX; i++)
-		{
+		for (i = 0; i < TV_MAX; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
-
-			if (n <= 0)
-			{
+			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread unknown redefinitions");
 				return -1;
@@ -4260,12 +4261,9 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "feature" char/attrs */
-		for (i = 0; i < MAX_F_IDX_COMPAT; i++)
-		{
+		for (i = 0; i < MAX_F_IDX_COMPAT; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
-
-			if (n <= 0)
-			{
+			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread feature redefinitions");
 				return -1;
@@ -4276,12 +4274,9 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "object" char/attrs */
-		for (i = 0; i < MAX_K_IDX_COMPAT; i++)
-		{
+		for (i = 0; i < MAX_K_IDX_COMPAT; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
-
-			if (n <= 0)
-			{
+			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread object redefinitions");
 				return -1;
@@ -4292,12 +4287,9 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "monster" char/attrs */
-		for (i = 0; i < MAX_R_IDX_COMPAT; i++)
-		{
+		for (i = 0; i < MAX_R_IDX_COMPAT; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
-
-			if (n <= 0)
-			{
+			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread monster redefinitions");
 				return -1;
@@ -4308,12 +4300,9 @@ static int Receive_play(int ind) {
 		}
 #endif	// 0
 	}
-	if (connp->state != CONN_LOGIN)
-	{
-		if (connp->state != CONN_PLAYING)
-		{
-			if (connp->state == CONN_READY)
-			{
+	if (connp->state != CONN_LOGIN) {
+		if (connp->state != CONN_PLAYING) {
+			if (connp->state == CONN_READY) {
 				connp->r.ptr = connp->r.buf + connp->r.len;
 				return 0;
 			}
@@ -10398,10 +10387,18 @@ static int Receive_options(int ind) {
 
 	if (player) {
 		bool options[OPT_MAX];
-		if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) {
+
+		if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) {
 			for (i = 0; i < OPT_MAX; i++) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
-
+				if (n <= 0) {
+					Destroy_connection(ind, "read error");
+					return n;
+				}
+			}
+		} else if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) {
+			for (i = 0; i < OPT_MAX_COMPAT; i++) {
+				n = Packet_scanf(&connp->r, "%c", &options[i]);
 				if (n <= 0) {
 					Destroy_connection(ind, "read error");
 					return n;
@@ -10410,7 +10407,6 @@ static int Receive_options(int ind) {
 		} else {
 			for (i = 0; i < OPT_MAX_OLD; i++) {
 				n = Packet_scanf(&connp->r, "%c", &options[i]);
-
 				if (n <= 0) {
 					Destroy_connection(ind, "read error");
 					return n;
@@ -10425,8 +10421,7 @@ static int Receive_options(int ind) {
 	return 1;
 }
 
-static int Receive_screen_dimensions(int ind)
-{
+static int Receive_screen_dimensions(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	int player = -1, n;

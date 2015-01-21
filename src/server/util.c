@@ -4490,6 +4490,7 @@ void toggle_afk(int Ind, char *msg)
 		/* Skip disconnected players */
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (check_ignore(i, Ind)) continue;
+		if (Players[i]->no_afk_msg) continue;
 		if (Players[i]->ignoring_chat && !(p_ptr->party && player_in_party(p_ptr->party, i))) continue;
 
 		/* Skip himself */

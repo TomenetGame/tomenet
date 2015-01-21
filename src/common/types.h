@@ -2154,6 +2154,7 @@ struct player_type {
 	bool taciturn_messages;
 	bool last_words;
 	bool limit_chat;
+	bool no_afk_msg;
 	/* bool speak_unique; */
 
 	/* 'make clean; make' consumes time :) */
@@ -3312,6 +3313,7 @@ struct client_opts {
 	bool taciturn_messages;
 	bool last_words;
 	bool limit_chat;
+	bool no_afk_msg;
 	bool thin_down_flush;
 	bool auto_target;
 	bool autooff_retaliator;
