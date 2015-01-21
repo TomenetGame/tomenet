@@ -3751,6 +3751,7 @@ void do_slash_cmd(int Ind, char *message) {
 					    (1 << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
  #endif
 				}
+				p_ptr->warning_worldmap = 1;
 				p_ptr->warning_dungeon = 1;
 				p_ptr->warning_wor = 1;
 				p_ptr->warning_ghost = 1;

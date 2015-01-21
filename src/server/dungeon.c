@@ -6775,6 +6775,7 @@ void process_player_change_wpos(int Ind) {
 	}
 
 	if (!p_ptr->warning_worldmap && p_ptr->wpos.wz == 0 &&
+	    !in_sector00(&p_ptr->wpos) &&
 	    (ABS(p_ptr->wpos.wx - 32) >= 2 || ABS(p_ptr->wpos.wy - 32) >= 2)) {
 		msg_print(Ind, "\374\377yHINT: You can press '\377oM\377y' to browse a worldmap.");
 		msg_print(Ind, "\374\377y      Towns, for example Bree, are denoted as yellow 'T'.");
@@ -6783,6 +6784,7 @@ void process_player_change_wpos(int Ind) {
 	}
 
 	if (!p_ptr->warning_dungeon && p_ptr->wpos.wz == 0 &&
+	    !in_sector00(&p_ptr->wpos) &&
 	    (ABS(p_ptr->wpos.wx - 32) >= 3 || ABS(p_ptr->wpos.wy - 32) >= 3)) {
 		msg_print(Ind, "\374\377yHINT: Consider going to the Training Tower first, to gain some levels.");
 		msg_print(Ind, "\374\377y      After that, seek out a dungeon. The tower is located in Bree.");
