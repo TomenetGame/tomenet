@@ -447,10 +447,10 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
 	//HOLE: 2
 
-    /* unmutable options, pfft */
-	{ &c_cfg.use_color,		TRUE,	1,	0, 108, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
+    /* unmutable options, pfft -- these are never shown in any options menu (-> FALSE) */
+	{ &c_cfg.use_color,		TRUE,	1,	0, 152, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
 	    "use_color",		"(deprecated) Use color if possible" },
-	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 2, FALSE,
+	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 153, FALSE,
 	    "other_query_flag",		"Prompt for various information (mimic polymorph)" },
 
     /* deprecated/broken/todo options */
