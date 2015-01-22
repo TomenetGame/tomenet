@@ -3347,10 +3347,12 @@ struct client_opts {
 	bool quiet_house_sfx;
 	bool no_house_sfx;
 
-    //deprecated/broken/todo
-#if 0
+    //unmutable, pfft
 	bool use_color;
 	bool other_query_flag;
+
+    //deprecated/broken/todo
+#if 0
 	bool quick_messages;
 	bool carry_query_flag;
 	bool show_labels;

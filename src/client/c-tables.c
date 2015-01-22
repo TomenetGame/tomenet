@@ -447,12 +447,14 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
 	//HOLE: 2
 
+    /* unmutable options, pfft */
+	{ &c_cfg.use_color,		TRUE,	1,	0, 108, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
+	    "use_color",		"(deprecated) Use color if possible" },
+	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 2, FALSE,
+	    "other_query_flag",		"Prompt for various information (mimic polymorph)" },
+
     /* deprecated/broken/todo options */
 #if 0
-	{ &c_cfg.use_color,		TRUE,	1,	0, 14, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
-	    "use_color",		"(deprecated) Use color if possible" },
-	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 2, TRUE,
-	    "other_query_flag",		"Prompt for various information (mimic polymorph)" },
 	{ &c_cfg.quick_messages,	FALSE,	6,	0, 1, TRUE,
 	    "quick_messages",		"Activate quick messages (skill etc)" },
 	{ &c_cfg.carry_query_flag,	FALSE,	3,	0, 3, FALSE,
