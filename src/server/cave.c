@@ -2641,8 +2641,7 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
  * "x_ptr->xxx", is quicker than "x_info[x].xxx", if this is incorrect
  * then a whole lot of code should be changed...  XXX XXX
  */
-void map_info(int Ind, int y, int x, byte *ap, char *cp)
-{
+void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 	player_type *p_ptr = Players[Ind];
 
 	cave_type *c_ptr;
@@ -2656,7 +2655,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	char c;
 
 	int a_org;
-	bool lite_snow;
+	bool lite_snow, keep = FALSE;
 
 	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
@@ -2741,12 +2740,15 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					    cs_ptr->sc.montrap.trap_kit,
 					    feat);
 				}
+				keep = TRUE;
 			}
 
 			/* Hack to display "runes of warding" which are coloured by GF_TYPE */
 			/* Illusory wall masks everythink */
-			if ((cs_ptr = GetCS(c_ptr, CS_RUNE)) && c_ptr->feat != FEAT_ILLUS_WALL)
+			if ((cs_ptr = GetCS(c_ptr, CS_RUNE)) && c_ptr->feat != FEAT_ILLUS_WALL) {
 				a = get_rune_color(Ind, cs_ptr->sc.rune.typ);
+				keep = TRUE;
+			}
 
 			/* Hack to display detected traps */
 			/* Illusory wall masks everythink */
@@ -2765,6 +2767,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 						a = get_trap_color(Ind, t_idx, feat);
 					}
+					keep = TRUE;
 				}
 			}
 
@@ -2782,6 +2785,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				a = access_door_colour(Ind, cs_ptr->sc.ptr);
 
 				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
+			}
+
+			/* don't apply special lighting/shading on traps/montraps/runes! */
+			else if (keep) {
+				/* nothing */
 			}
 
 			/* Special lighting effects */
@@ -2922,6 +2930,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					} else {
 						a = get_trap_color(Ind, t_idx, feat);
 					}
+					keep = TRUE;
 				}
 			}
 			/* Hack -- gee it's great to be back home */
@@ -2937,10 +2946,16 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 #else
 				a = access_door_colour(Ind, cs_ptr->sc.ptr);
 #endif
+				keep = TRUE;
+			}
+
+			/* don't apply special lighting/shading on traps in 'walls' (secret doors) or closed doors */
+			if (keep) {
+				/* nothing */
 			}
 
 			/* Special lighting effects */
-			if (p_ptr->wall_lighting &&
+			else if (p_ptr->wall_lighting &&
 			    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
 			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
