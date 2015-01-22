@@ -205,7 +205,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.newbie_hints,		TRUE,	1,	0, 1, TRUE,
 	    "newbie_hints",		"Display hints/warnings for new players" },
 	{ &c_cfg.censor_swearing,	TRUE,	1,	1, 2, TRUE,
-	    "censor_swearing",		"Censor certain swear words in public messages" },//fresh_message
+	    "censor_swearing",		"Censor certain swear words in public messages" },
 
 	{ &c_cfg.hilite_chat,		TRUE,	1,	0, 3, TRUE,
 	    "hilite_chat",		"Highlight chat messages containing your name" },
@@ -217,36 +217,33 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "page_on_afk_privmsg",	"Beep when receiving a private message while AFK" },
 
 	{ &c_cfg.big_map,		FALSE,	1,	1, 7, TRUE,
-	    "big_map",			"Double height of the map shown in the main window" },//smart_cheat
+	    "big_map",			"Double height of the map shown in the main window" },
 
 	{ &c_cfg.font_map_solid_walls,	FALSE,	1,	0, 8, TRUE,
 	    "font_map_solid_walls",	"Certain fonts only: Walls look like solid blocks" },
 	{ &c_cfg.view_animated_lite,	TRUE,	1,	1, 9, TRUE,
 	    "view_animated_lite",	"Animate lantern light, flickering in colour" },
-    //10
 	{ &c_cfg.wall_lighting,		TRUE,	1,	1, 10, TRUE,
 	    "wall_lighting",		"Generally enable lighting/shading for wall grids" },
 	{ &c_cfg.view_lamp_walls,	TRUE,	1,	1, 11, TRUE,
 	    "view_lamp_walls",		"Use special colors for lamp-lit wall grids" },
 	{ &c_cfg.view_shade_walls,	TRUE,	1,	1, 12, TRUE,
 	    "view_shade_walls",		"Use special colors to shade wall grids" },
-
-	{ &c_cfg.floor_lighting,	TRUE,	1,	1, 13, TRUE,	/* (59) */
+	{ &c_cfg.floor_lighting,	TRUE,	1,	1, 13, TRUE,
 	    "floor_lighting",		"Generally enable lighting/shading for floor grids" },
 	{ &c_cfg.view_lamp_floor,	TRUE,	1,	1, 14, TRUE,
 	    "view_lamp_floor",		"Use special colors for lamp-lit floor grids" },
 	{ &c_cfg.view_shade_floor,	TRUE,	1,	1, 15, TRUE,
 	    "view_shade_floor",		"Use special colors to shade floor grids" },
-
 	{ &c_cfg.view_lite_extra,	FALSE,	1,	9, 16, TRUE,
-	    "view_lite_extra",		"Lamp light affects more floor/wall types" },//17
+	    "view_lite_extra",		"Lamp light affects more floor/wall types" },
 
 	{ &c_cfg.alert_hitpoint,	FALSE,	1,	0, 17, TRUE,
 	    "alert_hitpoint",		"Beep about critical hitpoints/sanity" },
 	{ &c_cfg.alert_mana,		FALSE,	1,	0, 18, TRUE,
 	    "alert_mana",		"Beep about critically low mana pool" },
 	{ &c_cfg.alert_afk_dam,		FALSE,	1,	0, 19, TRUE,
-	    "alert_afk_dam",		"Beep when taking damage while AFK" },//alert_failure
+	    "alert_afk_dam",		"Beep when taking damage while AFK" },
 	{ &c_cfg.alert_offpanel_dam,	FALSE,	1,	0, 20, TRUE,
 	    "alert_offpanel_dam",	"Beep when taking damage while off-panel" },
 
@@ -276,7 +273,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "exp_need",			"Show the experience needed for next level" },
 	{ &c_cfg.depth_in_feet,		TRUE,	4,	0, 31, TRUE,
 	    "depth_in_feet",		"Show dungeon level in feet" },
-	{ &c_cfg.newb_suicide,		TRUE,	4,	1, 32, TRUE,	/* former auto_scum */
+	{ &c_cfg.newb_suicide,		TRUE,	4,	1, 32, TRUE,
 	    "newb_suicide",		"Display newbie suicides" },
 	{ &c_cfg.show_weights,		TRUE,	4,	0, 33, TRUE,
 	    "show_weights",		"Show weights in object listings" },
@@ -301,9 +298,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_weather",		"Disable weather visuals and sounds completely" },
 
 	{ &c_cfg.player_list,		FALSE,	4,	1, 42, TRUE,
-	    "player_list",		"Show a more compact player list in @ screen" },//flush_command
+	    "player_list",		"Show a more compact player list in @ screen" },
 	{ &c_cfg.player_list2,		FALSE,	4,	1, 43, TRUE,
-	    "player_list2",		"Compacts the player list in @ screen even more" },//fresh_before
+	    "player_list2",		"Compacts the player list in @ screen even more" },
 
     //page 3 - 44
 	{ &c_cfg.flash_player,		FALSE,	6,	1, 44, TRUE,
@@ -318,18 +315,18 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "recall_flicker",		"Show animated text colours in sub-windows" },
 	{ &c_cfg.no_verify_sell,	FALSE,	6,	0, 48, TRUE,
 	    "no_verify_sell",		"Skip safety question when selling items" },
-	{ &c_cfg.no_verify_destroy,	FALSE,	6,	0, 49, TRUE,	/* former dungeon_align */
+	{ &c_cfg.no_verify_destroy,	FALSE,	6,	0, 49, TRUE,
 	    "no_verify_destroy",	"Skip safety question when destroying items" },
 	//HOLE:16
 
     //page 4 - 49
-	{ &c_cfg.auto_afk,		TRUE,	2,	1, 50, TRUE,	/* former auto_haggle */
+	{ &c_cfg.auto_afk,		TRUE,	2,	1, 50, TRUE,
 	    "auto_afk",			"Set 'AFK mode' automatically" },
 	{ &c_cfg.idle_starve_kick,	FALSE,	2,	1, 51, TRUE,
 	    "idle_starve_kick",		"Disconnect when idle for 30s while starving" },
 	{ &c_cfg.safe_float,		FALSE,	2,	1, 52, TRUE,
 	    "safe_float",		"Prevent floating for a short while after death" },
-	{ &c_cfg.safe_macros,		TRUE,	2,	1, 53, TRUE, /* was compress_savefile (broken&obsolete); use Term_flush() to clear macro execution */
+	{ &c_cfg.safe_macros,		TRUE,	2,	1, 53, TRUE,
 	    "safe_macros",		"Abort macro execution if an action fails" },
 
 	{ &c_cfg.auto_untag,		FALSE,	2,	1, 54, TRUE,
@@ -346,26 +343,26 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "stack_allow_items",	"Allow weapons and armor to stack" },
 	{ &c_cfg.stack_allow_wands,	TRUE,	2,	1, 60, TRUE,
 	    "stack_allow_wands",	"Allow wands/staffs/rods to stack" },
-	{ &c_cfg.whole_ammo_stack,	FALSE,	2,	0, 61, TRUE,	/* former dungeon_stair */
+	{ &c_cfg.whole_ammo_stack,	FALSE,	2,	0, 61, TRUE,
 	    "whole_ammo_stack",		"For ammo/misc items always operate on whole stack" },
 	{ &c_cfg.always_repeat,		TRUE,	2,	0, 62, TRUE,
 	    "always_repeat",		"Repeat obvious commands (eg search/tunnel)" },
 	{ &c_cfg.always_pickup,		FALSE,	2,	0, 63, TRUE,
 	    "always_pickup",		"Pick things up by default" },
 	{ &c_cfg.use_old_target,	TRUE,	2,	0, 64, TRUE,
-	    "use_old_target",		"Use old target by default" },//15
+	    "use_old_target",		"Use old target by default" },
 	{ &c_cfg.autooff_retaliator,	FALSE,	2,	9, 65, TRUE,
 	    "autooff_retaliator",	"Stop the retaliator when protected by GoI etc" },
 	{ &c_cfg.fail_no_melee,		FALSE,	2,	9, 66, TRUE,
-	    "fail_no_melee",		"Don't melee if other auto-retaliation ways fail" },//17
+	    "fail_no_melee",		"Don't melee if other auto-retaliation ways fail" },
 	{ &c_cfg.wide_scroll_margin,	TRUE,	2,	9, 67, TRUE,
-	    "wide_scroll_margin",	"Scroll the screen more frequently" },//18
+	    "wide_scroll_margin",	"Scroll the screen more frequently" },
 	{ &c_cfg.auto_target,		FALSE,	2,	9, 68, TRUE,
 	    "auto_target",		"Automatically set target to the nearest enemy" },
 	{ &c_cfg.thin_down_flush,	TRUE,	2,	9, 69, TRUE,
 	    "thin_down_flush",		"Thin down screen flush signals to avoid freezing" },
 	{ &c_cfg.disable_flush,		FALSE,	2,	9, 70, TRUE,
-	    "disable_flush",		"Disable delays from flush signals" },//21
+	    "disable_flush",		"Disable delays from flush signals" },
 	//HOLE:1
 
     //page 5 - 70
@@ -480,8 +477,6 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "fresh_after",		"(obsolete) Flush output after every command" },
 	{ &c_cfg.auto_destroy,		FALSE,	3,	9, 63, FALSE,
 	    "auto_destroy",		"(broken) No query to destroy known junks" },
-	{ &c_cfg.auto_inscribe,		FALSE,	3,	9, 64, FALSE,
-	    "auto_inscribe",		"Automatically inscribe books and so on" },
 	{ &c_cfg.last_words,		TRUE,	6,	9, 66, TRUE,
 	    "last_words",		"Get last words when the character dies" },
     //todo: check shopkeeper speakage

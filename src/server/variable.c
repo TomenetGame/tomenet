@@ -420,21 +420,6 @@ char *reject_uniques;
  */
 byte tval_to_attr[128];
 char tval_to_char[128];
-
-/*
- * Simple keymap method, see "init.c" and "cmd6.c".
- * Be sure to use "index & 0x7F" to avoid illegal access
- */
-byte keymap_cmds[128];
-byte keymap_dirs[128];
-
-
-/*
- * Global table of color definitions
- * Be sure to use "index & 0xFF" to avoid illegal access
- */
-byte color_table[256][4];
-
 /*
  * The vault generation arrays
  */

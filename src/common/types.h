@@ -3228,25 +3228,85 @@ struct server_opts
 typedef struct client_opts client_opts;
 
 struct client_opts {
+    //page 1
 	bool rogue_like_commands;
-	bool warn_unique_credit;//quick_messages;
-	bool other_query_flag;
-	bool carry_query_flag;
-	bool use_old_target;
-	bool always_pickup;
-	bool always_repeat;
+	bool newbie_hints;
+	bool censor_swearing;
+	bool hilite_chat;
+	bool hibeep_chat;
+	bool page_on_privmsg;
+	bool page_on_afk_privmsg;
+	bool big_map;
+	bool font_map_solid_walls;
+	bool view_animated_lite;
+	bool wall_lighting;
+	bool view_lamp_walls;
+	bool view_shade_walls;
+	bool floor_lighting;
+	bool view_lamp_floor;
+	bool view_shade_floor;
+	bool view_lite_extra;
+	bool alert_hitpoint;
+	bool alert_mana;
+	bool alert_afk_dam;
+	bool alert_offpanel_dam;
+	bool exp_bar;
+    //page 2
+	bool uniques_alive;
+	bool warn_unique_credit;
+	bool limit_chat;
+	bool no_afk_msg;
+	bool overview_startup;
+	bool allow_paging;
+	bool ring_bell;
+	bool linear_stats;
+	bool exp_need;
 	bool depth_in_feet;
+	bool newb_suicide;
+	bool show_weights;
+	bool time_stamp_chat;
+	bool hide_unusable_skills;
+	bool short_item_names;
+	bool keep_topline;
+	bool target_history;
+	bool taciturn_messages;
+	bool always_show_lists;
+	bool no_weather;
+	bool player_list;
+	bool player_list2;
+
+    //page 3
+	bool flash_player;
+	bool hilite_player;
+	bool consistent_players;
+	bool recall_flicker;
+	bool no_verify_destroy;
+	bool no_verify_sell;
+
+    //page 5
+	bool auto_afk;
+	bool idle_starve_kick;
+	bool safe_float;
+	bool safe_macros;
+	bool auto_untag;
+	bool clear_inscr;
+	bool auto_inscribe;
 	bool stack_force_notes;
 	bool stack_force_costs;
-	bool hilite_chat;//show_labels;
-	bool show_weights;
-	bool hibeep_chat;//show_choices;
-	bool font_map_solid_walls;//show_details;
-	bool ring_bell;
-	bool use_color;
-	bool short_item_names;
-	bool hide_unusable_skills;
+	bool stack_allow_items;
+	bool stack_allow_wands;
+	bool whole_ammo_stack;
+	bool always_repeat;
+	bool always_pickup;
+	bool use_old_target;
+	bool autooff_retaliator;
+	bool fail_no_melee;
+	bool wide_scroll_margin;
+	bool auto_target;
+	bool thin_down_flush;
+	bool disable_flush;
 
+    //page 6
 	bool find_ignore_stairs;
 	bool find_ignore_doors;
 	bool find_cut;
@@ -3257,81 +3317,23 @@ struct client_opts {
 	bool disturb_state;
 	bool disturb_minor;
 	bool disturb_other;
-	bool alert_hitpoint;
-	bool alert_mana;
-	bool alert_afk_dam;//alert_failure;
-	bool alert_offpanel_dam;//alert_failure;
-
-	bool auto_afk;
-	bool newb_suicide;
-	bool stack_allow_items;
-	bool stack_allow_wands;
-	bool uniques_alive;//expand_look;
-	bool overview_startup;//expand_list;
 	bool view_perma_grids;
 	bool view_torch_grids;
-	bool newbie_hints;
-	bool no_verify_destroy; //dungeon_align;
-	bool no_verify_sell;
-	bool whole_ammo_stack; //dungeon_stair;
-	bool recall_flicker;
-/*	bool flow_by_sound;	*/
-	bool time_stamp_chat; //flow_by_smell;
-	bool page_on_privmsg;
-	bool page_on_afk_privmsg;
-	bool auto_untag;//smart_learn;
-	bool idle_starve_kick;
-	bool big_map;//smart_cheat;
-
 	bool view_reduce_lite;
 	bool view_reduce_view;
-	bool safe_float;//avoid_abort;
-	bool no_combat_sfx;//avoid_other;
-	bool no_magicattack_sfx;//flush_failure;
-	bool no_defense_sfx;//flush_disturb;
-	bool player_list;
-	bool player_list2;
-	//bool fresh_after;
-	bool view_animated_lite;
-	bool censor_swearing;//fresh_message;
-	bool safe_macros;//compress_savefile;
-	bool hilite_player;
-	bool view_lamp_floor;
-	bool view_lamp_walls;
-	bool view_shade_floor;
-	bool view_shade_walls;
-	bool wall_lighting;
-	bool floor_lighting;
-	bool view_lite_extra;
-
 	bool easy_open;
 	bool easy_disarm;
 	bool easy_tunnel;
-//	bool auto_destroy;
-	bool clear_inscr;
-	bool auto_inscribe;
-	bool taciturn_messages;
-	bool last_words;
-	bool limit_chat;
-	bool no_afk_msg;
-	bool thin_down_flush;
-	bool auto_target;
-	bool autooff_retaliator;
-	bool wide_scroll_margin;
-	bool fail_no_melee;
-	bool always_show_lists;
-	bool target_history;
-	bool linear_stats;
-	bool exp_need;
-	bool exp_bar;
-	bool disable_flush;
 
-	bool allow_paging;
+    //page 4
 	bool audio_paging;
-	bool paging_max_volume;
 	bool paging_master_volume;
+	bool paging_max_volume;
 	bool no_ovl_close_sfx;
 	bool ovl_sfx_attack;
+	bool no_combat_sfx;
+	bool no_magicattack_sfx;
+	bool no_defense_sfx;
 	bool half_sfx_attack;
 	bool cut_sfx_attack;
 	bool ovl_sfx_command;
@@ -3341,14 +3343,44 @@ struct client_opts {
 	bool ovl_sfx_mon_misc;
 	bool no_monsterattack_sfx;
 	bool no_shriek_sfx;
-
-	bool keep_topline;
 	bool no_store_bell;
 	bool quiet_house_sfx;
 	bool no_house_sfx;
-	bool no_weather;
-	bool consistent_players;
-	bool flash_player;
+
+    //deprecated/broken/todo
+#if 0
+	bool use_color;
+	bool other_query_flag;
+	bool quick_messages;
+	bool carry_query_flag;
+	bool show_labels;
+	bool show_choices;
+	bool show_details;
+	bool expand_look;
+	bool expand_list;
+	bool avoid_other;
+	bool flush_failure;
+	bool flush_disturb;
+	bool fresh_after;
+	bool auto_destroy;
+	bool last_words;
+	bool speak_unique;
+
+	//additional stuff
+	bool auto_scum;
+	bool flush_command;
+	bool fresh_before;
+	bool auto_haggle;
+	bool flow_by_sound;
+	bool flow_by_smell;
+	bool dungeon_stair;
+	bool smart_learn;
+	bool smart_cheat;
+	bool alert_failure;
+	bool dungeon_align;
+	bool avoid_abort;
+	bool compress_savefile;
+#endif
 };
 
 /*

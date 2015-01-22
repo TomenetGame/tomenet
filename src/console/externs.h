@@ -25,8 +25,6 @@ extern bool force_cui;
 extern term *ang_term[8];
 extern u32b window_flag[8];
 
-extern byte color_table[256][4];
-
 extern cptr ANGBAND_SYS;
 
 extern s16b command_cmd;

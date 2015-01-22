@@ -357,9 +357,6 @@ extern char *allow_uniques;
 extern char *reject_uniques;
 extern byte tval_to_attr[128];
 extern char tval_to_char[128];
-extern byte keymap_cmds[128];
-extern byte keymap_dirs[128];
-extern byte color_table[256][4];
 /*extern player_race *rp_ptr;
 extern player_class *cp_ptr;
 extern player_magic *mp_ptr;*/
