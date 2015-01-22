@@ -6430,6 +6430,7 @@ void player_death(int Ind) {
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
 	bool world_broadcast = TRUE, just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
 	bool was_total_winner = p_ptr->total_winner, retire = FALSE;
+	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
 
 
 	/* character-intrinsic conditions violated -> unpreventable no-ghost death */
@@ -6493,7 +6494,7 @@ void player_death(int Ind) {
 
 	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH)) secure = TRUE;
 
-	if (in_irondeepdive(&p_ptr->wpos)
+	if (in_iddc
 	    && !is_admin(p_ptr)) {
 		for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
 			if (deep_dive_level[i] >= ABS(p_ptr->wpos.wz) || deep_dive_level[i] == -1) {
@@ -6951,18 +6952,6 @@ void player_death(int Ind) {
 				inven_item_optimize(Ind, INVEN_WIELD);
 			}
 
-#ifndef FALLEN_WINNERSONLY
-			/* Take off winner artifacts and winner-only items */
-			for (i = INVEN_WIELD; i <= INVEN_TOTAL; i++) {
-				o_ptr = &p_ptr->inventory[i];
-				object_flags(o_ptr, &dummy, &dummy, &dummy, &dummy, &f5, &dummy, &dummy);
-				if ((f5 & TR5_WINNERS_ONLY)) {
-					bypass_inscrption = TRUE;
-					inven_takeoff(Ind, i, 255, FALSE);
-				}
-			}
-#endif
-
 			/* update stats */
 			p_ptr->update |= PU_SANITY;
 			update_stuff(Ind);
@@ -7000,6 +6989,18 @@ void player_death(int Ind) {
 					    p_ptr->inventory[j].name1 != ART_RANDART)
 						a_info[p_ptr->inventory[j].name1].winner = FALSE;
 			}
+
+#ifndef FALLEN_WINNERSONLY
+			/* Take off winner artifacts and winner-only items */
+			for (i = INVEN_WIELD; i <= INVEN_TOTAL; i++) {
+				o_ptr = &p_ptr->inventory[i];
+				object_flags(o_ptr, &dummy, &dummy, &dummy, &dummy, &f5, &dummy, &dummy);
+				if ((f5 & TR5_WINNERS_ONLY)) {
+					bypass_inscrption = TRUE;
+					inven_takeoff(Ind, i, 255, FALSE);
+				}
+			}
+#endif
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_BASIC);
@@ -7123,7 +7124,11 @@ void player_death(int Ind) {
 
 		if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
 		    /* Don't drop Morgoth's crown or Grond */
-		    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND)) {
+		    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND)
+#ifdef IDDC_NO_TRADE_CHEEZE
+		    && !(in_iddc && o_ptr->NR_tradable)
+#endif
+		    ) {
 #ifdef DEATH_ITEM_SCATTER
 			/* Apply penalty of death */
 			if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER))

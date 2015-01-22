@@ -6740,6 +6740,9 @@ Ironman Deep Dive Challenge (IDDC)
     while they are inside the ironman deep dive dungeon.
     Level requirements on items are not in effect while inside the ironman deep
     dive challenge either, so item levels are meaningless.
+    An exception are items brought from outside the IDDC into it:
+    Apart from food and torches, these can only be dropped when a player
+    reaches at least dungeon floor #5.
 
     Party bonus experience is higher than outside of IDDC. This means that the
     experience you get per killed monster is much closer to the experience you
