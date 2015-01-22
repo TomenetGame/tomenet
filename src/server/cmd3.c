@@ -1287,8 +1287,7 @@ void do_cmd_takeoff(int Ind, int item, int amt)
 /*
  * Drop an item
  */
-void do_cmd_drop(int Ind, int item, int quantity)
-{
+void do_cmd_drop(int Ind, int item, int quantity) {
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
@@ -1303,6 +1302,13 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	}
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+#ifdef IDDC_NO_TRADE_CHEEZE /* new anti-cheeze hack: abuse NR_tradable for this */
+	if (in_irondeepdive(&p_ptr->wpos) && o_ptr->NR_tradable) {
+		msg_format(Ind, "\377yYou may not drop items you brought from outside this dungeon until you reach at least floor %d.", IDDC_NO_TRADE_CHEEZE);
+		return;
+	}
+#endif
 
 	/* Handle the newbies_cannot_drop option */	
 #if (STARTEQ_TREATMENT == 1)

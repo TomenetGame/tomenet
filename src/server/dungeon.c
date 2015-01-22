@@ -6389,6 +6389,23 @@ void process_player_change_wpos(int Ind) {
 		for (j = 1; j < INVEN_TOTAL; j++)
 			p_ptr->inventory[j].NR_tradable = FALSE;
 #endif
+#ifdef IDDC_NO_TRADE_CHEEZE
+	/* hack: abuse NR_tradable to mark items _untradable_ for first couple of IDDC floors */
+	if (p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X &&
+	    p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y) {
+		/* on entering the first floor, mark all items we already possess for anti-trade-cheeze */
+		if (p_ptr->wpos.wz == WPOS_IRONDEEPDIVE_Z) {
+			for (j = 1; j < INVEN_TOTAL; j++) {
+				if (exceptionally_shareable_item(&p_ptr->inventory[j])) continue;
+				p_ptr->inventory[j].NR_tradable = TRUE;
+			}
+		/* after reaching n-th floor, unmark them to make them freely available for trading again */
+		} else if (ABS(p_ptr->wpos_old.wz) < IDDC_NO_TRADE_CHEEZE && ABS(p_ptr->wpos.wz) >= IDDC_NO_TRADE_CHEEZE) {
+			for (j = 1; j < INVEN_TOTAL; j++)
+				p_ptr->inventory[j].NR_tradable = FALSE;
+		}
+	}
+#endif
 
 #if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES) || defined(ALLOW_NR_CROSS_ITEMS)
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);

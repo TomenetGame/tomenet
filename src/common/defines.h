@@ -797,6 +797,10 @@
    (form party, trade items) while inside the Ironman Deep Dive Challenge? */
 #define IRONDEEPDIVE_ALLOW_INCOMPAT
 
+/* Special anti-cheeze hack: Disallow carrying items from town to IDDC and
+   giving them to another character inside IDDC, for the first n floors. */
+#define IDDC_NO_TRADE_CHEEZE 5
+
 /* Give a crazy form learning boost inside Ironman Deep Dive Challenge? [9] */
 #define IDDC_MIMICRY_BOOST 9
 
