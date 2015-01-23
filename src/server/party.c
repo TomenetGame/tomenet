@@ -434,8 +434,14 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass) {
 			c_acc->flags = (ACC_ADMIN | ACC_NOSCORE);
 		else
 			c_acc->flags = (ACC_TRIAL | ACC_NOSCORE);
+
 		strncpy(c_acc->name, name, 29);
 		c_acc->name[29] = '\0';
+
+		condense_name(buf, c_acc->name);
+		strncpy(c_acc->name_normalised, buf, 29);
+		c_acc->name_normalised[29] = '\0';
+
 		strcpy(c_acc->pass, t_crypt(pass, name));
 		if (!(WriteAccount(c_acc, TRUE))) {
 			KILL(c_acc, struct account);

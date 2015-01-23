@@ -3752,7 +3752,7 @@ static int Receive_login(int ind) {
 	if (strlen(choice) == 0) { /* we have entered an account name */
 		u32b p_id;
 		bool censor_swearing_tmp = censor_swearing;
-		char tmp_name[NAME_LEN];
+		char tmp_name[NAME_LEN], tmp_name2[NAME_LEN];
 		struct account *acc;
 
 		/* security check: a bugged client might try to send the character name, but allows an 'empty' name!
@@ -3785,6 +3785,30 @@ static int Receive_login(int ind) {
 			}
 		}
 
+		/* check if player tries to use one of the temporarily reserved character names as this account name */
+		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+			if (!reserved_name_character[i][0]) break;
+
+			/* new: also for 'similar' names that don't belong to us */
+			condense_name(tmp_name, reserved_name_character[i]);
+			condense_name(tmp_name2, connp->nick);
+			if (!strcmp(tmp_name, tmp_name2) &&
+			    strcmp(reserved_name_account[i], connp->nick)) {
+				Destroy_connection(ind, "Name already in use.");
+				return(-0);
+			}
+
+			if (strcmp(reserved_name_character[i], connp->nick)) continue;
+
+			if (!strcmp(reserved_name_account[i], connp->nick)) {
+				reserved_name_character[i][0] = '\0'; //clear reservation
+				break;
+			}
+
+			Destroy_connection(ind, "Name already in use.");
+			return(-0);
+		}
+
 		/* Check if a too similar name already exists --
 		   must be called before GetAccount() is called, because that function
 		   imprints the condensed name onto a newly created account. */
@@ -3812,8 +3836,8 @@ static int Receive_login(int ind) {
 		strcpy(tmp_name, connp->nick);
 		if (handle_censor(tmp_name)) {
 			censor_swearing = censor_swearing_tmp;
-                        Destroy_connection(ind, "This account name is not available. Please choose a different name.");
-                        return(-1);
+			Destroy_connection(ind, "This account name is not available. Please choose a different name.");
+			return(-1);
 		}
 		censor_swearing = censor_swearing_tmp;
 
@@ -3922,9 +3946,10 @@ static int Receive_login(int ind) {
 		}
 		Sockbuf_flush(&connp->w);
 		return(0);
+
 	} else if (connp->password_verified) { /* we have entered a character name */
 		int check_account_reason = 0;
-		bool censor_swearing_tmp = censor_swearing;
+		bool censor_swearing_tmp = censor_swearing, took_reservation = FALSE;
 		char tmp_name[NAME_LEN];
 
 #if 0
@@ -3945,11 +3970,6 @@ static int Receive_login(int ind) {
                         return(-1);
 		}
 
-		if (lookup_similar_account(choice, connp->nick)) {
-			Destroy_connection(ind, "A similar account name exists. Please choose a different name.");
-			return -1;
-		}
-
 		/* Check for forbidden names (swearing).
 		   Note: This overrides 'censor_swearing' and is always on! */
 		censor_swearing = censor_swearing_identity;
@@ -3968,11 +3988,21 @@ static int Receive_login(int ind) {
 
 			if (!strcmp(reserved_name_account[i], connp->nick)) {
 				reserved_name_character[i][0] = '\0'; //clear reservation
+				took_reservation = TRUE;
 				break;
 			}
 
 			Destroy_connection(ind, "Name already in use by another player.");
 			return(-1);
+		}
+
+		/* Check if a too similar account name already exists.
+		   Only for characters that don't exist yet and would be newly created. */
+		if (!lookup_player_id(choice) && lookup_similar_account(choice, connp->nick)
+		    /* exception! reserved character names have priority */
+		    && !took_reservation) {
+			Destroy_connection(ind, "A similar account name exists. Please choose a different name.");
+			return -1;
 		}
 
 		/* at this point, we are authorised as the owner
