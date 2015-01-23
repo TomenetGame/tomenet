@@ -211,7 +211,7 @@ int acc_set_flags(char *name, u32b flags, bool set) {
 }
 
 /* get account flags */
-u32b acc_get_flags(char *name){
+u32b acc_get_flags(char *name) {
 	struct account *c_acc;
 	u32b flags;
 
@@ -276,7 +276,7 @@ int acc_set_guild_dna(char *name, u32b dna) {
 }
 
 /* get account guild info */
-s32b acc_get_guild(char *name){
+s32b acc_get_guild(char *name) {
 	struct account *c_acc;
 	s32b guild_id;
 
@@ -287,7 +287,7 @@ s32b acc_get_guild(char *name){
 	KILL(c_acc, struct account);
 	return guild_id;
 }
-u32b acc_get_guild_dna(char *name){
+u32b acc_get_guild_dna(char *name) {
 	struct account *c_acc;
 	u32b dna;
 
@@ -313,7 +313,7 @@ int acc_set_deed_event(char *name, char deed_sval) {
 	KILL(c_acc, struct account);
 	return(1);
 }
-char acc_get_deed_event(char *name){
+char acc_get_deed_event(char *name) {
 	struct account *c_acc;
 	char deed_sval;
 
@@ -338,7 +338,7 @@ int acc_set_deed_achievement(char *name, char deed_sval) {
 	KILL(c_acc, struct account);
 	return(1);
 }
-char acc_get_deed_achievement(char *name){
+char acc_get_deed_achievement(char *name) {
 	struct account *c_acc;
 	char deed_sval;
 
@@ -364,7 +364,7 @@ char acc_get_deed_achievement(char *name){
    They will not be subject to their own 90
    days timeout, but will be removed upon
    the removal of the last character. */
-struct account *GetAccount(cptr name, char *pass, bool leavepass){
+struct account *GetAccount(cptr name, char *pass, bool leavepass) {
 	FILE *fp;
 	char buf[1024];
 	struct account *c_acc;
@@ -453,7 +453,7 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 }
 
 /* Return account structure of a specified account name */
-struct account *Admin_GetAccount(cptr name){
+struct account *Admin_GetAccount(cptr name) {
 	FILE *fp;
 	char buf[1024];
 	struct account *c_acc;
@@ -479,8 +479,55 @@ struct account *Admin_GetAccount(cptr name){
 	return(NULL);
 }
 
+/* Check for an account of similar name to 'name'. If one is found, the name
+   will be forbiden to be used, except if 'accname' is identical to the found
+   account's name:
+   If checking for a character name, accname must be set to its account holder.
+   If checking for an account name, accname must be NULL. */
+bool lookup_similar_account(cptr name, cptr accname) {
+	FILE *fp;
+	char buf[1024], tmpname[NAME_LEN];
+	struct account *c_acc;
+
+	MAKE(c_acc, struct account);
+	/* ew, cannot reserve memory! we abuse the return value to cause an
+	   'invalid account name' style error on purpose in this case, for paranoia */
+	if (!c_acc) return TRUE;
+
+	condense_name(tmpname, name);
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb");
+	if (!fp) {
+		KILL(c_acc, struct account);
+		return FALSE; /* cannot access account file */
+	}
+	while (fread(c_acc, sizeof(struct account), 1, fp)) {
+		if (c_acc->flags & ACC_DELD) continue;
+		if (!strcmp(c_acc->name_normalised, tmpname)) {
+			fclose(fp);
+
+			/* Identical name? that's fine. Also accept if the account actually belongs to us. */
+			if (!strcmp(c_acc->name, name) ||
+			    (accname && !strcmp(c_acc->name, accname))) {
+				KILL(c_acc, struct account);
+				return FALSE;
+			}
+
+			/* not identical but just too similar? forbidden! */
+			KILL(c_acc, struct account);
+			return TRUE;
+		}
+	}
+	fclose(fp);
+
+	/* no identical/similar account found */
+	KILL(c_acc, struct account);
+	return FALSE;
+}
+
 /* Return account name of a specified PLAYER id */
-cptr lookup_accountname(int p_id){
+cptr lookup_accountname(int p_id) {
 	FILE *fp;
 	char buf[1024];
 	static struct account c_acc;

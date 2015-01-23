@@ -511,7 +511,7 @@ static bool update_acc_file_version(void) {
 
 	if (fp_old && fp) {
 		/* helper vars */
-		char *ptr;
+		//char *ptr;
 
 		s_printf("Updating tomenet.acc structure.. ");
                 while (!feof(fp_old)) {
@@ -521,7 +521,7 @@ static bool update_acc_file_version(void) {
 			/* copy unchanged structure parts: */
 			c_acc.id = c_acc_old.id;
 			c_acc.flags = c_acc_old.flags;
-			//strcpy(c_acc.name, c_acc_old.name);
+			strcpy(c_acc.name, c_acc_old.name);
 			strcpy(c_acc.pass, c_acc_old.pass);
 			c_acc.acc_laston = c_acc_old.acc_laston;
 			c_acc.acc_laston_real = c_acc_old.acc_laston_real;
@@ -531,12 +531,9 @@ static bool update_acc_file_version(void) {
 			c_acc.deed_achievement = c_acc_old.deed_achievement;
 			c_acc.guild_id = c_acc_old.guild_id;
 			c_acc.guild_dna = c_acc.guild_id ? guilds[c_acc.guild_id].dna : 0;
+
 			/* changes/additions: */
-			for (ptr = &c_acc_old.name[strlen(c_acc_old.name)]; ptr-- > c_acc_old.name; ) {
-				if (*ptr == ' ') *ptr = '\0';
-				else break;
-			}
-			strcpy(c_acc.name, c_acc_old.name);
+			condense_name(c_acc.name_normalised, c_acc_old.name);
 
 			/* write it back */
 //                        fseek(fp, 0L, SEEK_END);
@@ -3752,7 +3749,7 @@ static int Receive_login(int ind) {
 		return -1;
 	}
 
-	if (strlen(choice) == 0) {
+	if (strlen(choice) == 0) { /* we have entered an account name */
 		u32b p_id;
 		bool censor_swearing_tmp = censor_swearing;
 		char tmp_name[NAME_LEN];
@@ -3786,6 +3783,14 @@ static int Receive_login(int ind) {
 				}
 				KILL(acc, struct account);
 			}
+		}
+
+		/* Check if a too similar name already exists --
+		   must be called before GetAccount() is called, because that function
+		   imprints the condensed name onto a newly created account. */
+		if (lookup_similar_account(connp->nick, NULL)) {
+			Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case.");
+			return -1;
 		}
 
 		if (!connp->nick[0]) {
@@ -3917,7 +3922,7 @@ static int Receive_login(int ind) {
 		}
 		Sockbuf_flush(&connp->w);
 		return(0);
-	} else if (connp->password_verified) {
+	} else if (connp->password_verified) { /* we have entered a character name */
 		int check_account_reason = 0;
 		bool censor_swearing_tmp = censor_swearing;
 		char tmp_name[NAME_LEN];
@@ -3938,6 +3943,11 @@ static int Receive_login(int ind) {
 //			Packet_printf(&connp->c, "%c", E_INVAL);
                         Destroy_connection(ind, "Forbidden character name. Please choose a different name.");
                         return(-1);
+		}
+
+		if (lookup_similar_account(choice, connp->nick)) {
+			Destroy_connection(ind, "A similar account name exists. Please choose a different name.");
+			return -1;
 		}
 
 		/* Check for forbidden names (swearing).

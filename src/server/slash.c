@@ -6541,6 +6541,7 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "Looking up account %s.", message3);
 				l_acc = Admin_GetAccount(message3);
 				if (l_acc) {
+					msg_format(Ind, " (Normalised name is <%s>)", l_acc->name_normalised);
 					n = player_id_list(&id_list, l_acc->id);
 					/* Display all account characters here */
 					for (i = 0; i < n; i++) {

@@ -1378,6 +1378,7 @@ extern void fix_lost_guild_mode(int g_id);
 extern hash_entry *hash_table[NUM_HASH_ENTRIES];
 extern bool guild_rename(int Ind, char *new_name);
 extern void get_laston(char *name, char *response, bool admin);
+extern bool lookup_similar_account(cptr name, cptr accname);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);
@@ -1811,6 +1812,7 @@ extern bool exceptionally_shareable_item(object_type *o_ptr);
 extern bool shareable_starter_item(object_type *o_ptr);
 extern int activate_magic_device_chance(int Ind, object_type *o_ptr);
 extern bool activate_magic_device(int Ind, object_type *o_ptr);
+extern void condense_name(char *condensed, cptr name);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
