@@ -3813,7 +3813,7 @@ static int Receive_login(int ind) {
 		   must be called before GetAccount() is called, because that function
 		   imprints the condensed name onto a newly created account.
 		   Don't prevent already existing accounts from logging in though. */
-		if (Admin_GetAccount(connp->nick) && lookup_similar_account(connp->nick, NULL)) {
+		if (!Admin_GetAccount(connp->nick) && lookup_similar_account(connp->nick, NULL)) {
 			Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case.");
 			return -1;
 		}
