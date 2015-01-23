@@ -81,7 +81,8 @@ unsigned short recwrite(struct account *rec, long filepos) {
 	if ((flock(wfd, LOCK_EX)) != 0) return(0);
 #endif
 	lseek(wfd, filepos, SEEK_SET);
-	write(wfd, rec, sizeof(struct account));
+	if (write(wfd, rec, sizeof(struct account) == -1))
+		fprintf(stderr, "write error occurred.");
 #ifndef NETBSD
 	while((flock(wfd, LOCK_UN)) != 0);
 #endif
