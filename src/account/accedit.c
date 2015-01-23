@@ -59,7 +59,7 @@ void setupscreen() {
 	move(0, 0);
 	clrtoeol();
 	mvprintw(0, COLS / 2 - 18, "TomeNET account editor - 2002 Evileye");
-	mvprintw(1, COLS / 2 - 10, "(Updated by C. Blue)");
+	mvprintw(1, COLS / 2 - 10, "(Updated by Mikaelh and C. Blue)");
 	attroff(A_STANDOUT);
 	mvprintw(LINES - 3, COLS / 2 - 19, "N: next      P: previous     D: Delete");
 	mvprintw(LINES - 4, COLS / 2 - 19, "V: Validate A: Admin S: Score M: Multi");
@@ -373,7 +373,7 @@ void editor() {
 
 	while (!quit) {
 		mvwprintw(mainwin, 0, 4, "%-30s   ID: %.10d", c_acc.name, c_acc.id);
-		mvwprintw(mainwin, 1, 4, "%-20s", c_acc.pass);
+		mvwprintw(mainwin, 1, 4, "%-20s             (%-30s)", c_acc.pass, c_acc.name_normalised);
 		mvwprintw(mainwin, 3, 4, "Trial (inval): %-4s", c_acc.flags & ACC_TRIAL ? "Yes " : "No  ");
 		mvwprintw(mainwin, 4, 4, "Administrator: %-4s", c_acc.flags & ACC_ADMIN ? "*** Yes *** " : "No          ");
 		mvwprintw(mainwin, 5, 4, "Scoreboard:    %-4s", c_acc.flags & ACC_NOSCORE ? "No  " : "Yes ");
