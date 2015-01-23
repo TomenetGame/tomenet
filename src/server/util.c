@@ -7104,6 +7104,7 @@ void condense_name(char *condensed, const char *name) {
 	}
 	*bufptr = 0;
 	//extra strict: discard digits at the end of the name
-	for (ptr = bufptr; ptr >= condensed; ptr--)
+	for (ptr = bufptr - 1; ptr >= condensed; ptr--)
 		if (isdigit(*ptr)) *ptr = 0;
+		else break;
 }
