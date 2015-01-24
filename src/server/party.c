@@ -493,7 +493,9 @@ struct account *Admin_GetAccount(cptr name) {
 bool lookup_similar_account(cptr name, cptr accname) {
 	FILE *fp;
 	char buf[1024], tmpname[NAME_LEN];
+	const char *ptr, *ptr2;
 	struct account *c_acc;
+	int diff;
 
 	MAKE(c_acc, struct account);
 	/* ew, cannot reserve memory! we abuse the return value to cause an
@@ -510,24 +512,66 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	}
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if (c_acc->flags & ACC_DELD) continue;
-		if (!strcmp(c_acc->name_normalised, tmpname)) {
-			fclose(fp);
 
-			/* Identical name? that's fine. Also accept if the account actually belongs to us. */
-			if (!strcmp(c_acc->name, name) ||
-			    (accname && !strcmp(c_acc->name, accname))) {
+		/* Always accept if the account actually belongs to us. */
+		if (accname && !strcmp(c_acc->name, accname)) {
+			fclose(fp);
+			KILL(c_acc, struct account);
+			return FALSE;
+		}
+
+#if 1
+		/* Super-strict mode? Disallow (non-trivial) names that only have 1+ letter inserted somewhere */
+		if (strlen(name) >= 5 && strlen(c_acc->name) >= 5) { //non-trivial length
+			/* '->' */
+			diff = 0;
+			ptr2 = name;
+			for (ptr = c_acc->name; *ptr && *ptr2; ) {
+				if (tolower(*ptr) != tolower(*ptr2)) diff++;
+				else ptr++;
+				ptr2++;
+			}
+			//too little difference between account name and this character name? forbidden!
+			if (diff <= (strlen(name) - 5) / 2 + 1) {
 				KILL(c_acc, struct account);
-				return FALSE;
+				return TRUE;
 			}
 
-			/* not identical but just too similar? forbidden! */
-			KILL(c_acc, struct account);
-			return TRUE;
+			/* '<-' */
+			diff = 0;
+			ptr2 = c_acc->name;
+			for (ptr = name; *ptr && *ptr2; ) {
+				if (tolower(*ptr) != tolower(*ptr2)) diff++;
+				else ptr++;
+				ptr2++;
+			}
+			//too little difference between account name and this character name? forbidden!
+			if (diff <= (strlen(name) - 5) / 2 + 1) {
+				KILL(c_acc, struct account);
+				return TRUE;
+			}
 		}
+#endif
+
+		/* Differring normalised names? Skip. */
+		if (strcmp(c_acc->name_normalised, tmpname)) continue;
+
+		/* We found same normalised names. Check! */
+		fclose(fp);
+
+		/* Identical name (account vs character)? that's fine. */
+		if (!strcmp(c_acc->name, name)) {
+			KILL(c_acc, struct account);
+			return FALSE;
+		}
+
+		/* not identical but just too similar? forbidden! */
+		KILL(c_acc, struct account);
+		return TRUE;
 	}
 	fclose(fp);
 
-	/* no identical/similar account found */
+	/* no identical/similar account found, all green! */
 	KILL(c_acc, struct account);
 	return FALSE;
 }
