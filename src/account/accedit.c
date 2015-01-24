@@ -33,6 +33,7 @@ int ListAccounts(int fpos);
 void statinput(char *prompt, char *string, int max);
 void getstring(const char *prompt, char *string, int max);
 int findacc(void);
+void purge_duplicates(void);
 
 FILE *fp;
 WINDOW *listwin, *mainwin;
@@ -345,6 +346,9 @@ int ListAccounts(int fpos) {
 					c_acc.flags |= ACC_PRIVILEGED;
 				}
 				break;
+			case 'U':
+				purge_duplicates();
+				break;
 			default:
 				beep();
 		}
@@ -564,6 +568,9 @@ void editor() {
 						c_acc.flags |= ACC_PRIVILEGED;
 					}
 					break;
+				case 'U':
+					purge_duplicates();
+					break;
 				default:
 					ch = ' ';
 					beep();
@@ -672,7 +679,7 @@ static char *t_crypt(char *inbuf, const char *salt) {
 #endif
 }
 
-unsigned short ask(char *prompt){
+unsigned short ask(char *prompt) {
 	char ch;
 	mvprintw(LINES - 1, 0, prompt);
 	do {
@@ -683,4 +690,8 @@ unsigned short ask(char *prompt){
 	move(LINES - 1, 0);
 	clrtoeol();
 	return ((ch == 'Y' || ch == 'y'));
+}
+
+void purge_duplicates(void) {
+	//char accname[];
 }
