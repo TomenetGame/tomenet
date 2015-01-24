@@ -6918,8 +6918,7 @@ void process_player_change_wpos(int Ind) {
  * various inputs and timings.
  */
 
-void dungeon(void)
-{
+void dungeon(void) {
 	int i;
 	player_type *p_ptr;
 
@@ -7260,8 +7259,15 @@ void dungeon(void)
 
 		if (cfg.runlevel == 2049) {
 			shutdown_server();
-		}
-		if (cfg.runlevel == 2051) {
+		} else if (cfg.runlevel == 2052) {
+			/* same as /shutdown 0, except server will return -2 instead of -1.
+			   can be used by scripts to initiate maintenance downtime etc. */
+			set_runlevel(-1);
+
+			/* paranoia - set_runlevel() will call exit() */
+			time(&cfg.closetime);
+			return;
+		} else if (cfg.runlevel == 2051) {
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
 				p_ptr = Players[i];
@@ -7293,9 +7299,9 @@ void dungeon(void)
 			}
 		}
 #ifdef ENABLE_GO_GAME
-		if (cfg.runlevel == 2048 && !go_game_up) {
+		else if (cfg.runlevel == 2048 && !go_game_up) {
 #else
-		if (cfg.runlevel == 2048) {
+		else if (cfg.runlevel == 2048) {
 #endif
 			for (i = NumPlayers; i > 0 ;i--) {
 				p_ptr = Players[i];
@@ -7324,8 +7330,7 @@ void dungeon(void)
 				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
-		}
-		if (cfg.runlevel == 2047) {
+		} else if (cfg.runlevel == 2047) {
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
 				p_ptr = Players[i];
@@ -7355,8 +7360,7 @@ void dungeon(void)
 				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
-		}
-		if (cfg.runlevel == 2046) {
+		} else if (cfg.runlevel == 2046) {
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
 				p_ptr = Players[i];
@@ -7386,8 +7390,7 @@ void dungeon(void)
 				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
-		}
-		if (cfg.runlevel == 2045) {
+		} else if (cfg.runlevel == 2045) {
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
 				if(Players[i]->conn == NOT_CONNECTED) continue;
@@ -7400,8 +7403,7 @@ void dungeon(void)
 				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
-		}
-		if (cfg.runlevel == 2044) {
+		} else if (cfg.runlevel == 2044) {
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
 				p_ptr = Players[i];
@@ -7472,11 +7474,13 @@ void dungeon(void)
 						recall_player(i, "");
 					}
 				}
-				if (cfg.runlevel == 2043)
+				if (cfg.runlevel == 2043) {
 					msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-				if (cfg.runlevel == 2042)
+					cfg.runlevel = 2049;
+				} else { //if (cfg.runlevel == 2042) {
 					msg_broadcast(-1, "\374\377G<<<\377oServer is now going down for maintenance.\377G>>>");
-				cfg.runlevel = 2049;
+					cfg.runlevel = 2052;
+				}
 			} else {
 				for (i = NumPlayers; i > 0 ;i--) {
 					p_ptr = Players[i];
@@ -7502,11 +7506,13 @@ void dungeon(void)
 					break;
 				}
 				if (!i) {
-					if (cfg.runlevel == 2043)
+					if (cfg.runlevel == 2043) {
 						msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-					if (cfg.runlevel == 2042)
+						cfg.runlevel = 2049;
+					} else { //if (cfg.runlevel == 2042)
 						msg_broadcast(-1, "\374\377G<<<\377oServer is now going down for maintenance.\377G>>>");
-					cfg.runlevel = 2049;
+						cfg.runlevel = 2052;
+					}
 				}
 			}
 		}
@@ -7731,6 +7737,7 @@ void set_runlevel(int val) {
 			/* terminate: return a value that lets a script know that
 			   it must not restart us. */
 			cfg.runlevel = -1;
+			s_printf("***SERVER MAINTENANCE TERMINATION***\n");
 		case 0:
 			shutdown_server();
 		case 1:

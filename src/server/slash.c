@@ -4218,8 +4218,8 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/shutrec")) { /* /shutrec [<minutes>] [T] */
 				if (!k) k = 5;
-				if (strchr(message, 'T')) timed_shutdown(k, TRUE);//terminate server for maintenance
-				else timed_shutdown(k, TRUE);
+				if (strchr(message3, 'T')) timed_shutdown(k, TRUE);//terminate server for maintenance
+				else timed_shutdown(k, FALSE);
 				return;
 			}
 			else if (prefix(message, "/shutcancel")) {
