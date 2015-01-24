@@ -6501,7 +6501,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 #define ESTATE_BACKUP_VERSION "v1"
 bool backup_estate(void) {
 	FILE *fp;
-	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[NAME_LEN], c;
+	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CHARACTERNAME_LEN], c;
 	cptr name;
 	int i, j, k;
 	int sy, sx, ey,ex , x, y;

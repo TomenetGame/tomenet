@@ -493,7 +493,7 @@ struct account *Admin_GetAccount(cptr name) {
     - C. Blue */
 bool lookup_similar_account(cptr name, cptr accname) {
 	FILE *fp;
-	char buf[1024], tmpname[NAME_LEN];
+	char buf[1024], tmpname[ACCOUNTNAME_LEN > CHARACTERNAME_LEN ? ACCOUNTNAME_LEN : CHARACTERNAME_LEN];
 	const char *ptr, *ptr2;
 	struct account *c_acc;
 	int diff;

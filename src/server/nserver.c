@@ -3802,7 +3802,7 @@ static int Receive_login(int ind) {
 	if (strlen(choice) == 0) { /* we have entered an account name */
 		u32b p_id;
 		bool censor_swearing_tmp = censor_swearing;
-		char tmp_name[NAME_LEN], tmp_name2[NAME_LEN];
+		char tmp_name[ACCOUNTNAME_LEN], tmp_name2[ACCOUNTNAME_LEN];
 		struct account *acc;
 
 		/* security check: a bugged client might try to send the character name, but allows an 'empty' name!
@@ -4001,7 +4001,7 @@ static int Receive_login(int ind) {
 	} else if (connp->password_verified) { /* we have entered a character name */
 		int check_account_reason = 0;
 		bool censor_swearing_tmp = censor_swearing, took_reservation = FALSE;
-		char tmp_name[NAME_LEN];
+		char tmp_name[CHARACTERNAME_LEN];
 
 #if 0
 		/* just in case - some places can't handle a longer name and a valid client shouldn't supply a name this long anyway - mikaelh */

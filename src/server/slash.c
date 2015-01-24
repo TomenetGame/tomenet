@@ -4538,7 +4538,7 @@ void do_slash_cmd(int Ind, char *message) {
 				   unbanall just erases the whole banlist. */
 				struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
 				bool unban_ip = FALSE, unban_acc = FALSE, found = FALSE;
-				char ip[MAX_CHARS], account[NAME_LEN];
+				char ip[MAX_CHARS], account[ACCOUNTNAME_LEN + 5];//paranoia-reserve if admin makes input error. todo: proper length check
 
 				if (prefix(message, "/unbanall")) {
 					struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
