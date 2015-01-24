@@ -488,8 +488,9 @@ struct account *Admin_GetAccount(cptr name) {
 /* Check for an account of similar name to 'name'. If one is found, the name
    will be forbiden to be used, except if 'accname' is identical to the found
    account's name:
+   If checking for an account name, accname must be NULL.
    If checking for a character name, accname must be set to its account holder.
-   If checking for an account name, accname must be NULL. */
+    - C. Blue */
 bool lookup_similar_account(cptr name, cptr accname) {
 	FILE *fp;
 	char buf[1024], tmpname[NAME_LEN];
@@ -522,7 +523,8 @@ bool lookup_similar_account(cptr name, cptr accname) {
 
 #if 1
 		/* Super-strict mode? Disallow (non-trivial) names that only have 1+ letter inserted somewhere */
-		if (strlen(name) >= 5 && strlen(c_acc->name) >= 5) { //non-trivial length
+		if (!accname && //only apply this check to account names, be lenient for character names
+		    strlen(name) >= 5 && strlen(c_acc->name) >= 5) { //non-trivial length
 			/* '->' */
 			diff = 0;
 			ptr2 = name;
@@ -543,6 +545,22 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			for (ptr = name; *ptr && *ptr2; ) {
 				if (tolower(*ptr) != tolower(*ptr2)) diff++;
 				else ptr++;
+				ptr2++;
+			}
+			//too little difference between account name and this character name? forbidden!
+			if (diff <= (strlen(name) - 5) / 2 + 1) {
+				KILL(c_acc, struct account);
+				return TRUE;
+			}
+
+			/* '='  -- note: weakness here is, the first 2 methods don't combine with this one ;).
+			   So the checks could be tricked by combining one 'replaced char' with one 'too many char'
+			   to circumvent the limitations for longer names that usually would require a 3+ difference.. =P */
+			diff = 0;
+			ptr2 = c_acc->name;
+			for (ptr = name; *ptr && *ptr2; ) {
+				if (tolower(*ptr) != tolower(*ptr2)) diff++;
+				ptr++;
 				ptr2++;
 			}
 			//too little difference between account name and this character name? forbidden!
