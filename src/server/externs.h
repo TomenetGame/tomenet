@@ -1153,7 +1153,7 @@ extern void change_mind(int Ind, bool open_or_close);
 extern int Send_apply_auto_insc(int Ind, int slot);
 
 extern int fake_Receive_tunnel(int Ind, int dir);
-
+extern bool purge_acc_file(void);
 
 
 /* object1.c */

@@ -9232,6 +9232,11 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				return;
 			}
+			else if (prefix(message, "/purgeaccountfile")) {
+				purge_acc_file();
+				msg_print(Ind, "done.");
+				return;
+			}
 		}
 	}
 

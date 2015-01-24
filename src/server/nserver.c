@@ -483,83 +483,126 @@ bool Report_to_meta(int flag)
 /* update tomenet.acc record structure to a new version - C. Blue
    Done by opening 'tomenet.acc_old' and (over)writing 'tomenet.acc'. */
 static bool update_acc_file_version(void) {
-        FILE *fp_old, *fp;
+	FILE *fp_old, *fp;
 	struct account_old c_acc_old;
 	struct account c_acc;
         size_t retval;
 	char buf[1024];
-        int amt = 0;
-
-//	return FALSE; /* security, while not actively used */
+	int amt = 0, total = 0;
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc_old");
 	fp_old = fopen(buf, "rb");
-
 	/* No updating to do?
 	   Exit here, if no 'tomenet.acc_old' file exists: */
 	if (!fp_old) return(FALSE);
-	s_printf("Initiating update of tomenet.acc file.. ");
+
+	s_printf("Initiating tomenet.acc update.. ");
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "wb");
 	if (!fp) {
-		s_printf("failed.\n");
+		s_printf("failed opening tomenet.acc.\n");
 		fclose(fp_old);
 		return(FALSE);
 	}
-	s_printf("done.\n");
 
-	if (fp_old && fp) {
-		/* helper vars */
-		char *ptr;
+	/* helper vars */
+	char *ptr;
 
-		s_printf("Updating tomenet.acc structure.. ");
-                while (!feof(fp_old)) {
-                        retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
-                        if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
+	while (!feof(fp_old)) {
+		retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
+		if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
+		total++;
 
-			/* copy unchanged structure parts: */
-			c_acc.id = c_acc_old.id;
-			c_acc.flags = c_acc_old.flags;
-			//strcpy(c_acc.name, c_acc_old.name);
-			strcpy(c_acc.pass, c_acc_old.pass);
-			c_acc.acc_laston = c_acc_old.acc_laston;
-			c_acc.acc_laston_real = c_acc_old.acc_laston_real;
-			c_acc.cheeze = c_acc_old.cheeze;
-			c_acc.cheeze_self = c_acc_old.cheeze_self;
-			c_acc.deed_event = c_acc_old.deed_event;
-			c_acc.deed_achievement = c_acc_old.deed_achievement;
-			c_acc.guild_id = c_acc_old.guild_id;
-			c_acc.guild_dna = c_acc.guild_id ? guilds[c_acc.guild_id].dna : 0;
+		/* copy unchanged structure parts: */
+		c_acc.id = c_acc_old.id;
+		c_acc.flags = c_acc_old.flags;
+		//strcpy(c_acc.name, c_acc_old.name);
+		strcpy(c_acc.pass, c_acc_old.pass);
+		c_acc.acc_laston = c_acc_old.acc_laston;
+		c_acc.acc_laston_real = c_acc_old.acc_laston_real;
+		c_acc.cheeze = c_acc_old.cheeze;
+		c_acc.cheeze_self = c_acc_old.cheeze_self;
+		c_acc.deed_event = c_acc_old.deed_event;
+		c_acc.deed_achievement = c_acc_old.deed_achievement;
+		c_acc.guild_id = c_acc_old.guild_id;
+		c_acc.guild_dna = c_acc.guild_id ? guilds[c_acc.guild_id].dna : 0;
 
-			/* changes/additions - cumulative since 4.5.8a release time, to not break non-official servers: */
-			//1: disallow spaces at the end of account names
-			for (ptr = &c_acc_old.name[strlen(c_acc_old.name)]; ptr-- > c_acc_old.name; ) {
-				if (*ptr == ' ') *ptr = '\0';
-				else break;
-			}
-			strcpy(c_acc.name, c_acc_old.name);
-			//2: add 'name_normalised'
-			condense_name(c_acc.name_normalised, c_acc_old.name);
+		/* changes/additions - cumulative since 4.5.8a release time, to not break non-official servers: */
+		//1: disallow spaces at the end of account names
+		for (ptr = &c_acc_old.name[strlen(c_acc_old.name)]; ptr-- > c_acc_old.name; ) {
+			if (*ptr == ' ') *ptr = '\0';
+			else break;
+		}
+		strcpy(c_acc.name, c_acc_old.name);
+		//2: add 'name_normalised'
+		condense_name(c_acc.name_normalised, c_acc_old.name);
 
-			/* write it back */
-//                        fseek(fp, 0L, SEEK_END);
-			if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1) {
-				s_printf("Failed to write to new account file: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
-			}
-			amt++;
-                }
-		s_printf("%d records updated.\n", amt);
-        } else {
-		s_printf("Failure: tomenet.acc not updated.\n");
-        }
+		/* write it back */
+		if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1)
+			s_printf("failure: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
+
+		amt++;
+	}
+	s_printf("%d of %d records updated.\n", amt, total);
 	fclose(fp);
 	fclose(fp_old);
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc_old");
 	remove(buf);
 
-        return(TRUE);
+	return(TRUE);
+}
+
+/* Purge deleted accounts from tomenet.acc file by rewriting it. */
+bool purge_acc_file(void) {
+	FILE *fp_old, *fp;
+	struct account c_acc;
+        size_t retval;
+	char buf[1024], buf2[1024];
+	int amt = 0, total = 0;
+
+	s_printf("Initiating tomenet.acc purge.. ");
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp_old = fopen(buf, "rb");
+	if (!fp_old) {
+		s_printf("failed opening tomenet.acc.\n");
+		fclose(fp_old);
+		return(FALSE);
+	}
+
+	path_build(buf2, 1024, ANGBAND_DIR_SAVE, "tomenet.acc_new");
+	fp = fopen(buf2, "wb");
+	if (!fp) {
+		s_printf("failed opening tomenet.acc_new.\n");
+		fclose(fp_old);
+		return(FALSE);
+	}
+
+	while (!feof(fp_old)) {
+		retval = fread(&c_acc, sizeof(struct account), 1, fp_old);
+		if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
+		total++;
+
+		/* Purge all deleted accounts */
+		if (c_acc.flags & ACC_DELD) {
+			amt++;
+			continue;
+		}
+
+		/* write it back */
+		if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1)
+			s_printf("failure: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
+	}
+	s_printf("%d of %d records purged.\n", amt, total);
+	fclose(fp);
+	fclose(fp_old);
+
+	remove(buf);
+	rename(buf2, buf);
+
+	return(TRUE);
 }
 
 /*
