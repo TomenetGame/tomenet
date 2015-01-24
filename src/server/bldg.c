@@ -1678,9 +1678,18 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 	switch (bact) {
 		case BACT_RESEARCH_ITEM:
+			/* since paid is always TRUE for identify_fully_item(),
+			   we can fix the 'Au refresh overwrites *id* info'
+			   visual glitch here, by sending gold first. */
+			p_ptr->au -= bcost;
+			//store_prt_gold(Ind);
+			Send_gold(Ind, p_ptr->au, p_ptr->balance);
+
 //			paid = research_item(Ind, item);
 			paid = identify_fully_item(Ind, item);
-			break;
+
+			return FALSE;//..and to complete the Send_gold() hack, return here
+			//break;
 #if 0
 		case BACT_TOWN_HISTORY:
 			town_history();
@@ -2149,8 +2158,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			break;
 	}
 
-	if (paid)
-	{
+	if (paid) {
 		p_ptr->au -= bcost;
 
 		/* Display the current gold */
