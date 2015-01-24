@@ -6033,20 +6033,28 @@ void calc_boni(int Ind) {
 						if (o_ptr->name2) {
 							e_ptr = &e_info[o_ptr->name2];
 							for (j = 0; j < 5; j++) {
-								if (e_ptr->rar[j] != 100) {
-									/* hack: can *identifying* actually make a difference at all? */
-									if (e_ptr->rar[j] != 0 &&
-									    /* any non-trivial (on the object name itself visible) abilities? */
-									    ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
-									    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK)))
-										can_have_hidden_powers = TRUE;
-									continue;
-								}
+								if (e_ptr->rar[j] == 0) continue;
+								/* hack: can *identifying* actually make a difference at all? */
+
+								/* any non-trivial (on the object name itself visible) abilities? */
 								if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
 								    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
+								    /* random ego mods (R_xxx)? */
 								    (e_ptr->esp[j] & ESP_R_MASK)) {
 									can_have_hidden_powers = TRUE;
 								}
+
+								/* random base mods? */
+								if (e_ptr->rar[j] != 100) {
+									if (e_ptr->flags1[j] | e_ptr->flags2[j] | e_ptr->flags3[j] |
+									    e_ptr->flags4[j] | e_ptr->flags5[j] | e_ptr->flags6[j] |
+									    e_ptr->esp[j]) {
+										can_have_hidden_powers = TRUE;
+										continue;
+									}
+								}
+
+								/* fixed base mods, ie which we absolutely know will be on the item even without *id*ing */
 								f1 |= e_ptr->flags1[j];
 								f2 |= e_ptr->flags2[j];
 								f3 |= e_ptr->flags3[j];
@@ -6054,25 +6062,33 @@ void calc_boni(int Ind) {
 								f5 |= e_ptr->flags5[j];
 								f6 |= e_ptr->flags6[j];
 								esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
-							    }
+							}
 						}
 						if (o_ptr->name2b) {
 							e_ptr = &e_info[o_ptr->name2b];
 							for (j = 0; j < 5; j++) {
-								if (e_ptr->rar[j] != 100) {
-									/* hack: can *identifying* actually make a difference at all? */
-									if (e_ptr->rar[j] != 0 &&
-									    /* any non-trivial (on the object name itself visible) abilities? */
-									    ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
-									    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK)))
-										can_have_hidden_powers = TRUE;
-									continue;
-								}
+								if (e_ptr->rar[j] == 0) continue;
+								/* hack: can *identifying* actually make a difference at all? */
+
+								/* any non-trivial (on the object name itself visible) abilities? */
 								if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
 								    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
+								    /* random ego mods (R_xxx)? */
 								    (e_ptr->esp[j] & ESP_R_MASK)) {
 									can_have_hidden_powers = TRUE;
 								}
+
+								/* random base mods? */
+								if (e_ptr->rar[j] != 100) {
+									if (e_ptr->flags1[j] | e_ptr->flags2[j] | e_ptr->flags3[j] |
+									    e_ptr->flags4[j] | e_ptr->flags5[j] | e_ptr->flags6[j] |
+									    e_ptr->esp[j]) {
+										can_have_hidden_powers = TRUE;
+										continue;
+									}
+								}
+
+								/* fixed base mods, ie which we absolutely know will be on the item even without *id*ing */
 								f1 |= e_ptr->flags1[j];
 								f2 |= e_ptr->flags2[j];
 								f3 |= e_ptr->flags3[j];

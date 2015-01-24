@@ -242,7 +242,7 @@ SDL_CONFIG = /usr/mingw32/bin/sdl-config
 #LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
 ##
 ## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually (as located on my system - C. Blue):
-CFLAGS = -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL -I/usr/i486-mingw32/include/SDL -DWINVER=0x0501 -Wno-unused-but-set-variable
+CFLAGS = -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL -I/usr/i486-mingw32/include/SDL -DWINVER=0x0501 -Wno-unused-but-set-variable -DACC32
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer -L/usr/i486-mingw32/lib
 ##
 ## Without SDL:
