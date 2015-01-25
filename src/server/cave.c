@@ -19,6 +19,11 @@
    Note: This overrides NO_SHADE flag. */
 //#define SHADE_ALL_FLOOR
 
+/* Don't shade self-illuminated grids that are out of view, if they are on the
+   world surface and it's night time.
+   Primary idea: Shop entrance areas don't get partially shaded with slate tone
+   when player circles around them. It looked a little bit odd maybe. */
+#define DONT_SHADE_GLOW_AT_NIGHT
 
 /*
  * Scans for cave_type array pointer.
@@ -3008,8 +3013,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 					 both to 'solid block' character, shaded granite walls and
 					 magma veins will look the same - C. Blue */
 				else if (p_ptr->view_shade_walls && !(f_ptr->flags2 & FF2_NO_SHADE)) {
-					/* Not viewable */
-					if (!(*w_ptr & CAVE_VIEW)) {
+					/* Not glowing */
+					if (!(c_ptr->info & CAVE_GLOW)) {
 						/* Allow distinguishing permanent walls from granite */
 						if (a_org != TERM_WHITE) {
 							if (a_org == TERM_L_WHITE) a = TERM_SLATE;
@@ -3018,8 +3023,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 						/* don't "brighten up" if it was darkened by night */
 						else if (a == TERM_WHITE) a = TERM_L_WHITE;
 					}
-						/* Not glowing */
-					else if (!(c_ptr->info & CAVE_GLOW)) {
+					/* Not viewable */
+					else if (!(*w_ptr & CAVE_VIEW)
+#ifdef DONT_SHADE_GLOW_AT_NIGHT
+					    && !(night_surface && !p_ptr->wpos.wz)
+#endif
+					    ) {
 						/* Allow distinguishing permanent walls from granite */
 						if (a_org != TERM_WHITE) {
 							if (a_org == TERM_L_WHITE) a = TERM_SLATE;
