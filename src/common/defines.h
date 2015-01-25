@@ -5728,7 +5728,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define FF1_DONT_NOTICE_RUNNING 0x00000400L
 #define FF1_CAN_RUN             0x00000800L
 #define FF1_DOOR                0x00001000L
-#define FF1_SUPPORT_LIGHT       0x00002000L
+ #define FF1_SUPPORT_LIGHT       0x00002000L	/* -- currently NO EFFECT! -- */
 #define FF1_CAN_CLIMB           0x00004000L
 #define FF1_TUNNELABLE          0x00008000L
 #define FF1_WEB                 0x00010000L

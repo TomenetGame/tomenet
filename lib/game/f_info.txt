@@ -663,6 +663,7 @@ D:2:a tree blocking your way
 N:93:ash
 G:.:D
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
+F:LAMP_LITE_OPTIONAL
 
 N:94:mud
 G:~:u
@@ -786,6 +787,7 @@ N:109:volcanic rock
 G:.:D
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
 #F:SUPPORT_LIGHT | LAMP_LITE_SNOW
+F:LAMP_LITE_OPTIONAL
 
 
 # 109..159 unused -------------------------------------------------------------

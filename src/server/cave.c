@@ -2816,10 +2816,16 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 					if (p_ptr->view_lamp_floor) {
 #ifdef CAVE_LITE_COLOURS
 						if ((c_ptr->info & CAVE_LITE_WHITE)) {
-							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_WHITE;
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for ash
+							    TERM_WHITE;//normal
 						} else if ((c_ptr->info & CAVE_LITE_VAMP)) {
-							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_WHITE; /* usual glowing floor grids are TERM_WHITE, so lamp light shouldn't be darker (TERM_L_WHITE).. */
-						} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for ash
+							    TERM_WHITE; /* usual glowing floor grids are TERM_WHITE, so lamp light shouldn't be darker (TERM_L_WHITE).. */
+						} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) {
+							if (is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0) && a == TERM_L_DARK) a = TERM_LAMP_DARK;//<-specialty: shaded ash
+							else a = TERM_UMBER;//TERM_LAMP
+						}
+						else if (a == TERM_L_DARK) a = TERM_UMBER;//<-specialty: shaded ash
 						else a = TERM_YELLOW;
 #else
 						a = TERM_YELLOW;
@@ -2978,17 +2984,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 					if (p_ptr->view_lamp_walls) {
 #ifdef CAVE_LITE_COLOURS
 						if ((c_ptr->info & CAVE_LITE_WHITE)) {
-							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma walls
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma vein
 							    TERM_L_WHITE; /* for now: instead of TERM_WHITE; to distinguish from permanent walls */
 						} else if ((c_ptr->info & CAVE_LITE_VAMP)) {
 							//if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_SLATE; /* to make a difference to TERM_L_WHITE; for the time being (see above) */
-							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma walls
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma vein
 							    TERM_L_WHITE; /* TERM_SLATE just looks too weird */
 						} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) {
-							if (is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0) && a == TERM_L_DARK) a = TERM_LAMP_DARK;//<-specialty: shaded magma walls
+							if (is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0) && a == TERM_L_DARK) a = TERM_LAMP_DARK;//<-specialty: shaded magma vein
 							else a = TERM_LAMP;
 						}
-						else if (a == TERM_L_DARK) a = TERM_L_UMBER;//<-specialty: shaded magma walls
+						else if (a == TERM_L_DARK) a = TERM_L_UMBER;//<-specialty: shaded magma vein
 						else a = TERM_YELLOW;
 #else
 						a = TERM_YELLOW;
@@ -3000,7 +3006,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 				/* NOTE: The only prob here is that if magma doesn't have a different
 					 symbol from granite walls, for example if the player maps
 					 both to 'solid block' character, shaded granite walls and
-					 magma walls will look the same - C. Blue */
+					 magma veins will look the same - C. Blue */
 				else if (p_ptr->view_shade_walls && !(f_ptr->flags2 & FF2_NO_SHADE)) {
 					/* Not viewable */
 					if (!(*w_ptr & CAVE_VIEW)) {
