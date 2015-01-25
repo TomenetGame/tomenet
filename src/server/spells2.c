@@ -3481,9 +3481,9 @@ bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags) {
  */
 bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, int flags) {
 	player_type *p_ptr = Players[Ind];
-	bool		okay = FALSE;
-	object_type		*o_ptr;
-	char		o_name[ONAME_LEN];
+	bool okay = FALSE;
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
 
 	/* Assume enchant weapon */
 	item_tester_hook = item_tester_hook_weapon;
@@ -3576,9 +3576,15 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 }
 
 
-bool ident_spell(int Ind)
-{
+bool ident_spell(int Ind) {
 	player_type *p_ptr = Players[Ind];
+
+	/* special hack for !X on ID spells */
+	if (p_ptr->current_item < 0) {
+		clear_current(Ind);
+		ident_spell_aux(Ind, p_ptr->current_item);
+		return TRUE;
+	}
 
 	get_item(Ind, ITH_NONE);
 
@@ -3595,14 +3601,13 @@ bool ident_spell(int Ind)
  * This routine does *not* automatically combine objects.
  * Returns TRUE if something was identified, else FALSE.
  */
-bool ident_spell_aux(int Ind, int item)
-{
+bool ident_spell_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
 
-	object_type		*o_ptr;
-
-	char		o_name[ONAME_LEN];
-
+	/* clean up special hack for !X on ID spells */
+	p_ptr->current_item = 0;
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
@@ -3650,7 +3655,7 @@ bool ident_spell_aux(int Ind, int item)
 
 	p_ptr->current_identify = 0;
 
-	p_ptr->inventory[item].auto_insc = TRUE;
+	if (item >= 0) p_ptr->inventory[item].auto_insc = TRUE;
 
 	/* Something happened */
 	return (TRUE);
@@ -3659,6 +3664,13 @@ bool ident_spell_aux(int Ind, int item)
 
 bool identify_fully(int Ind) {
 	player_type *p_ptr = Players[Ind];
+
+	/* special hack for !X on ID spells */
+	if (p_ptr->current_item < 0) {
+		clear_current(Ind);
+		identify_fully_item(Ind, p_ptr->current_item);
+		return TRUE;
+	}
 
 	get_item(Ind, ITH_NONE);
 
@@ -3675,14 +3687,13 @@ bool identify_fully(int Ind) {
  * Fully "identify" an object in the inventory	-BEN-
  * This routine returns TRUE if an item was identified.
  */
-bool identify_fully_item(int Ind, int item)
-{
+bool identify_fully_item(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
 
-	object_type		*o_ptr;
-
-	char		o_name[ONAME_LEN];
-
+	/* clean up special hack for !X on ID spells */
+	p_ptr->current_item = 0;
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -3716,27 +3727,20 @@ bool identify_fully_item(int Ind, int item)
 
 	/* Describe */
 	if (item >= INVEN_WIELD)
-	{
 		msg_format(Ind, "%^s: %s (%c).",
 		           describe_use(Ind, item), o_name, index_to_label(item));
-	}
 	else if (item >= 0)
-	{
 		msg_format(Ind, "In your pack: %s (%c).",
 		           o_name, index_to_label(item));
-	}
 	else
-	{
 		msg_format(Ind, "On the ground: %s.",
 		           o_name);
-	}
 
 	/* Describe it fully */
 	identify_fully_aux(Ind, o_ptr);
 
 	/* Did we use up an item? */
-	if (p_ptr->using_up_item >= 0)
-	{
+	if (p_ptr->using_up_item >= 0) {
 //		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;
@@ -3747,15 +3751,17 @@ bool identify_fully_item(int Ind, int item)
 	/* We no longer have a *identify* in progress */
 	p_ptr->current_star_identify = 0;
 
+	/* extra: in case the item wasn't normally identified yet but right away *id*ed, apply this too.. */
+	if (item >= 0) p_ptr->inventory[item].auto_insc = TRUE;
+
 	/* Success */
 	return (TRUE);
 }
 
 /* silent version of identify_fully_item() that doesn't display anything - C. Blue */
-bool identify_fully_item_quiet(int Ind, int item)
-{
+bool identify_fully_item_quiet(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type		*o_ptr;
+	object_type *o_ptr;
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
@@ -3797,8 +3803,7 @@ bool identify_fully_item_quiet(int Ind, int item)
 /* variant of identify_fully_item_quiet that doesn't use player inventory,
    added for !X on Iron Helm of Knowledge, which probably doesn't make much
    sense though - C. Blue */
-bool identify_fully_object_quiet(int Ind, object_type *o_ptr)
-{
+bool identify_fully_object_quiet(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Identify it fully */
@@ -3831,8 +3836,7 @@ bool identify_fully_object_quiet(int Ind, object_type *o_ptr)
  * Hook for "get_item()".  Determine if something is rechargable.
  */
 //static bool item_tester_hook_recharge(object_type *o_ptr)
-bool item_tester_hook_recharge(object_type *o_ptr)
-{
+bool item_tester_hook_recharge(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Extract the flags */
@@ -3849,8 +3853,7 @@ bool item_tester_hook_recharge(object_type *o_ptr)
 }
 
 
-bool recharge(int Ind, int num)
-{
+bool recharge(int Ind, int num) {
 	player_type *p_ptr = Players[Ind];
 
 	get_item(Ind, ITH_RECHARGE);

@@ -1165,10 +1165,10 @@ void do_slash_cmd(int Ind, char *message) {
 							}
 						} else {
 							if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
-							/* no <4.4.1.8 is now longer supported! to make s_aux.lua slimmer */
-								spell_rec_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell_rec));
+							/* now <4.4.1.8 is no longer supported! to make s_aux.lua slimmer */
+								spell_rec_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell_rec));//NO LONGER SUPPORTED
 #ifdef ENABLE_MAIA
-								spell_rel_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell_rel));
+								spell_rel_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell_rel));//NO LONGER SUPPORTED
 #endif
 								if (!spell_rec_found && !spell_rel_found) {
 									/* Be severe and point out the wrong inscription: */

@@ -10915,11 +10915,10 @@ void Handle_item(int Ind, int item) {
 		ident_spell_aux(Ind, item);
 	} else if (p_ptr->current_star_identify) {
 		identify_fully_item(Ind, item);
-		p_ptr->inventory[item].auto_insc = TRUE;
 	} else if (p_ptr->current_recharge) {
 		recharge_aux(Ind, item, p_ptr->current_recharge);
 	} else if (p_ptr->current_artifact) {
-	    create_artifact_aux(Ind, item);
+		create_artifact_aux(Ind, item);
 	} else if (p_ptr->current_telekinesis != NULL) {
 		telekinesis_aux(Ind, item);
 	} else if (p_ptr->current_curse != 0) {

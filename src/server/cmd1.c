@@ -1435,6 +1435,9 @@ void whats_under_your_feet(int Ind) {
 /* Prevent characters in Bree from taking gold/items while they cannot drop
    them again due to being lower level than cfg.newbies_cannot_drop? */
 #define NEWBIES_CANT_GRAB_IN_BREE
+/* Allow BAGIDENTIFY spell to be used with !X inscription?
+   This is currently not supported, because the spell is cast BEFORE the item is picked up. */
+//#define ALLOW_X_BAGID
 void carry(int Ind, int pickup, int confirm) {
 	object_type *o_ptr;
 
@@ -2237,126 +2240,222 @@ void carry(int Ind, int pickup, int confirm) {
 						break;
 					}
 
-					if (!ID_item_found) /* Check ID tools in our inventory if we haven't had any activatable tool */
-					for (index = 0; index < INVEN_PACK; index++) {
-						i_ptr = &(p_ptr->inventory[index]);
+					if (!ID_item_found) { /* Check ID tools in our inventory if we haven't had any activatable tool */
+						int spell = -1, spell1, spell2, spell3, spell4;
+						bool spell1_found = FALSE, spell2_found = FALSE, spell3_found = FALSE, spell4_found = FALSE;
 
-						/* Check if the player does want this feature (!X - for now :) ) */
-						if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+						spell1 = exec_lua(Ind, "return IDENTIFY");
+						spell2 = exec_lua(Ind, "return MIDENTIFY");
+						spell3 = exec_lua(Ind, "return STARIDENTIFY");
+						spell4 = exec_lua(Ind, "return BAGIDENTIFY");
 
-						/* ID rod && ID staff (no *perc*) */
-						if (can_use(Ind, i_ptr) &&
-						    ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY && !i_ptr->pval) ||
-						    (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0))) {
-							bool flipped = FALSE;
+						for (index = 0; index < INVEN_PACK; index++) {
+							i_ptr = &(p_ptr->inventory[index]);
 
-							ID_item_found = TRUE;
+							/* Check if the player does want this feature (!X - for now :) ) */
+							if (!check_guard_inscription(i_ptr->note, 'X')) continue;
 
-							if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-								msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
-								continue; // find the scrolls =/
-							}
+							if (!can_use(Ind, i_ptr)) continue;
 
-							/* Roll for usage */
-							if (!activate_magic_device(Ind, i_ptr)) {
-								if (i_ptr->tval == TV_ROD)
-									msg_print(Ind, "You failed to use the rod properly.");
-								else
-									msg_print(Ind, "You failed to use the staff properly.");
+							/* ID rod && ID staff (no *perc*) */
+							if ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY && !i_ptr->pval) ||
+							    (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0)) {
+								bool flipped = FALSE;
+
+								ID_item_found = TRUE;
+
+								if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+									msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
+									continue; // find the scrolls =/
+								}
+
+								/* Roll for usage */
+								if (!activate_magic_device(Ind, i_ptr)) {
+									if (i_ptr->tval == TV_ROD)
+										msg_print(Ind, "You failed to use the rod properly.");
+									else
+										msg_print(Ind, "You failed to use the staff properly.");
+									break;
+								}
+
+								//We managed to pull it off :-)
+								/* we id the newly picked up item */
+								object_aware(Ind, o_ptr);
+								object_known(o_ptr);
+
+								p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+								if (!object_aware_p(Ind, i_ptr)) flipped = object_aware(Ind, i_ptr);
+								object_tried(Ind, i_ptr, flipped);
+								p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+								if (i_ptr->tval == TV_ROD) {
+									//Formula is taken from cmd6.c
+									i_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+									if (i_ptr->name2 == EGO_RISTARI /* of istari */ || i_ptr->name2 == EGO_RCHARGING /* of charging */)
+										i_ptr->pval /= 2;
+
+									//Unstack
+									if (i_ptr->number > 1) {
+										/* Make a fake item */
+										object_type tmp_obj;
+										tmp_obj = *i_ptr;
+										tmp_obj.number = 1;
+
+										/* Restore "charge" */
+										i_ptr->pval = 0;
+
+										/* Unstack the used item */
+										i_ptr->number--;
+										p_ptr->total_weight -= tmp_obj.weight;
+										inven_carry(Ind, &tmp_obj);
+
+										/* Message */
+										msg_print(Ind, "You unstack your rod.");
+									}
+								} else if (i_ptr->tval == TV_STAFF) {
+									//Decrease the charge
+									i_ptr->pval--;
+
+									//Unstack
+									if (i_ptr->number > 1) {
+										/* Make a fake item */
+										object_type tmp_obj;
+										tmp_obj = *i_ptr;
+										tmp_obj.number = 1;
+
+										/* Restore the charges */
+										i_ptr->pval++;
+
+										/* Unstack the used item */
+										i_ptr->number--;
+										p_ptr->total_weight -= tmp_obj.weight;
+										int item = inven_carry(Ind, &tmp_obj);
+
+										/* Message */
+										msg_print(Ind, "You unstack your staff."); 
+										if (item >= 0) inven_item_charges(Ind, item);
+										else floor_item_charges(0-item);
+									}
+								}
+
+								/* consume a turn */
+/* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
+								p_ptr->energy -= level_speed(&p_ptr->wpos);*/
+								break;
+							} else
+							/* ID scroll */
+							if (i_ptr->tval == TV_SCROLL && i_ptr->sval == SV_SCROLL_IDENTIFY && i_ptr->number > 0) { 
+								ID_item_found = TRUE;
+
+						 		if (p_ptr->blind || no_lite(Ind) || p_ptr->confused)
+									//Screw it. break!
+									break;
+
+								/* we id the newly picked up item */
+								object_aware(Ind, o_ptr);
+								object_known(o_ptr);
+
+								/* Destroy a scroll in the pack */
+								if (index >= 0) {
+									inven_item_increase(Ind, index, -1);
+									inven_item_describe(Ind, index);
+									inven_item_optimize(Ind, index);
+								}
+
+								/* consume a turn */
+/* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
+								p_ptr->energy -= level_speed(&p_ptr->wpos);*/
+								break;
+							} else
+							/* ID spell -- IDENTIFY or MIDENTIFY or even STARIDENTIFY or BAGIDENTIFY. */
+							if (i_ptr->tval == TV_BOOK) {
+								if (i_ptr->sval == SV_SPELLBOOK) {
+									if (i_ptr->pval == spell1 || i_ptr->pval == spell2 ||
+									    i_ptr->pval == spell3
+#ifdef ALLOW_X_BAGID
+									    || i_ptr->pval == spell4
+#endif
+									    ) {
+										/* Have we learned this spell yet at all? */
+										if (!exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, i_ptr->pval))) {
+											/* Just continue&ignore instead of return, since we
+											   might just have picked up someone else's book! */
+											msg_print(Ind, "\377oYou cannot cast the identify spell of your inscribed spell scroll.");
+											continue;
+										}
+										/* If so then use it */
+										spell = i_ptr->pval;
+										//wow-- use ground item! ;) (except for BAGIDENTIFY)
+										if (spell != spell4) p_ptr->current_item = -c_ptr->o_idx;
+									} else {
+										/* "No recall spell found in this book!" */
+										//continue;
+										/* Be severe and point out the wrong inscription: */
+										msg_print(Ind, "\377oThe inscribed spell scroll isn't an eligible identify spell.");
+										continue;
+									}
+								} else {
+									if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+									/* now <4.4.1.8 is no longer supported! to make s_aux.lua slimmer */
+										spell1_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell1));//NO LONGER SUPPORTED
+										spell2_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell2));//NO LONGER SUPPORTED
+										spell3_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell3));//NO LONGER SUPPORTED
+#ifdef ALLOW_X_BAGID
+										spell4_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell4));//NO LONGER SUPPORTED
+#endif
+										if (!spell1_found && !spell2_found &&
+										    !spell3_found && !spell4_found) {
+											/* Be severe and point out the wrong inscription: */
+											msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
+											continue;
+										}
+									} else {
+										spell1_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell1));
+										spell2_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell2));
+										spell3_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell3));
+#ifdef ALLOW_X_BAGID
+										spell4_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell4));
+#endif
+										if (!spell1_found && !spell2_found &&
+										    !spell3_found && !spell4_found) {
+											/* Be severe and point out the wrong inscription: */
+											msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
+											continue;
+										}
+									}
+								}
+								/* Have we learned this spell yet at all? */
+								//wow, first time use of '-item' ground access nowadays? :-p
+								if (spell1_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell1))) {
+									spell = spell1;
+									p_ptr->current_item = -c_ptr->o_idx;
+								}
+								else if (spell2_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell2))) {
+									spell = spell2;
+									p_ptr->current_item = -c_ptr->o_idx;
+								} else if (spell3_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell3))) {
+									spell = spell3;
+									p_ptr->current_item = -c_ptr->o_idx;
+								}
+#ifdef ALLOW_X_BAGID
+								else if (spell4_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell4)))
+									spell = spell4;
+#endif
+								/* Just continue&ignore instead of return, since we
+								   might just have picked up someone else's book! */
+								if (spell == -1) {
+									msg_print(Ind, "\377oYou cannot cast the identify spell of your inscribed book.");
+									continue;
+								}
+
+								ID_item_found = TRUE;
+								cast_school_spell(Ind, index, spell, -1, -1, 0);
+
+								/* consume a turn */
+/* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
+								p_ptr->energy -= level_speed(&p_ptr->wpos);*/
 								break;
 							}
-
-							//We managed to pull it off :-)
-							/* we id the newly picked up item */
-							object_aware(Ind, o_ptr);
-							object_known(o_ptr);
-
-							p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-							if (!object_aware_p(Ind, i_ptr)) flipped = object_aware(Ind, i_ptr);
-							object_tried(Ind, i_ptr, flipped);
-							p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
-							if (i_ptr->tval == TV_ROD) {
-								//Formula is taken from cmd6.c
-								i_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
-								if (i_ptr->name2 == EGO_RISTARI /* of istari */ || i_ptr->name2 == EGO_RCHARGING /* of charging */)
-									i_ptr->pval /= 2;
-
-								//Unstack
-								if (i_ptr->number > 1) {
-									/* Make a fake item */
-									object_type tmp_obj;
-									tmp_obj = *i_ptr;
-									tmp_obj.number = 1;
-
-									/* Restore "charge" */
-									i_ptr->pval = 0;
-
-									/* Unstack the used item */
-									i_ptr->number--;
-									p_ptr->total_weight -= tmp_obj.weight;
-									inven_carry(Ind, &tmp_obj);
-
-									/* Message */
-									msg_print(Ind, "You unstack your rod.");
-								}
-							} else if (i_ptr->tval == TV_STAFF) {
-								//Decrease the charge
-								i_ptr->pval--;
-
-								//Unstack
-								if (i_ptr->number > 1) {
-									/* Make a fake item */
-									object_type tmp_obj;
-									tmp_obj = *i_ptr;
-									tmp_obj.number = 1;
-
-									/* Restore the charges */
-									i_ptr->pval++;
-
-									/* Unstack the used item */
-									i_ptr->number--;
-									p_ptr->total_weight -= tmp_obj.weight;
-									int item = inven_carry(Ind, &tmp_obj);
-
-									/* Message */
-									msg_print(Ind, "You unstack your staff."); 
-									if (item >= 0) inven_item_charges(Ind, item);
-									else floor_item_charges(0-item);
-								}
-							}
-
-							/* consume a turn */
-/* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
-							p_ptr->energy -= level_speed(&p_ptr->wpos);*/
-							break;
-						} else
-						/* ID scroll */
-						if (i_ptr->tval == TV_SCROLL && i_ptr->sval == SV_SCROLL_IDENTIFY && i_ptr->number > 0) { 
-							ID_item_found = TRUE;
-
-					 		if (p_ptr->blind || no_lite(Ind) || p_ptr->confused) {
-								//Allow the possible existence of an id staff/rod in bag and contain !X?
-								//continue;
-								//Screw it. break!
-								break;
-							}
-
-							/* we id the newly picked up item */
-							object_aware(Ind, o_ptr);
-							object_known(o_ptr);
-
-							/* Destroy a scroll in the pack */
-							if (index >= 0) {
-								inven_item_increase(Ind, index, -1);
-								inven_item_describe(Ind, index);
-								inven_item_optimize(Ind, index);
-							}
-
-							/* consume a turn */
-/* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
-							p_ptr->energy -= level_speed(&p_ptr->wpos);*/
-							break;
 						}
 					}
 				}
