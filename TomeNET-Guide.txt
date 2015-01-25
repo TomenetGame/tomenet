@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. January 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. January 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1456,10 +1456,12 @@ Ammunition:
 Weapons that ricochet (sling ammo):
     !R          Prevents ricochetting.
 
-Scrolls of Identify, Rods/Staves of Perception:
+Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
     !X          If you pick up an unidentified item, you will automatically
                 read a scroll to identify it.
                 This inscription also works on 'The Stone of Lore'.
+                It does not work for Arcane Lore, since that is purely a bag ID
+                spell.
                 See (5.7) for more information about identification.
 
 An item that can be activated:
