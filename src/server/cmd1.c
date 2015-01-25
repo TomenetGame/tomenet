@@ -2450,6 +2450,9 @@ void carry(int Ind, int pickup, int confirm) {
 
 								ID_item_found = TRUE;
 								cast_school_spell(Ind, index, spell, -1, -1, 0);
+								/* clean up, in case a spell changed due to being higher level and
+								   skipped the individual-id part, so current_item didn't get cleared. */
+								p_ptr->current_item = -1;
 
 								/* consume a turn */
 /* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
