@@ -13,7 +13,7 @@
  */
 #define MULTI_HUED_PROPER
 
-/* View_bright_lite really shades all floor types, not just FEAT_FLOOR.
+/* View_shade_floor really shades all floor types, not just FEAT_FLOOR.
    For this, the floor feats must have SPECIAL_LITE flag (or LAMP_LITE).
    This usually doesn't look as cool as you might expect. - C. Blue
    Note: This overrides NO_SHADE flag. */
