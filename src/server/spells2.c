@@ -3580,9 +3580,9 @@ bool ident_spell(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* special hack for !X on ID spells */
-	if (p_ptr->current_item < 0) {
+	if (p_ptr->current_item < -1) {
 		clear_current(Ind);
-		ident_spell_aux(Ind, p_ptr->current_item);
+		ident_spell_aux(Ind, p_ptr->current_item + 1);
 		return TRUE;
 	}
 
@@ -3607,7 +3607,7 @@ bool ident_spell_aux(int Ind, int item) {
 	char o_name[ONAME_LEN];
 
 	/* clean up special hack for !X on ID spells */
-	p_ptr->current_item = 0;
+	p_ptr->current_item = -1;
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
@@ -3666,9 +3666,9 @@ bool identify_fully(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* special hack for !X on ID spells */
-	if (p_ptr->current_item < 0) {
+	if (p_ptr->current_item < -1) {
 		clear_current(Ind);
-		identify_fully_item(Ind, p_ptr->current_item);
+		identify_fully_item(Ind, p_ptr->current_item + 1);
 		return TRUE;
 	}
 
@@ -3693,7 +3693,7 @@ bool identify_fully_item(int Ind, int item) {
 	char o_name[ONAME_LEN];
 
 	/* clean up special hack for !X on ID spells */
-	p_ptr->current_item = 0;
+	p_ptr->current_item = -1;
 
 	/* Get the item (in the pack) */
 	if (item >= 0)

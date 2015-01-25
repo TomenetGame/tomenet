@@ -2386,7 +2386,7 @@ void carry(int Ind, int pickup, int confirm) {
 										/* If so then use it */
 										spell = i_ptr->pval;
 										//wow-- use ground item! ;) (except for BAGIDENTIFY)
-										if (spell != spell4) p_ptr->current_item = -c_ptr->o_idx;
+										if (spell != spell4) p_ptr->current_item = -c_ptr->o_idx - 1;
 									} else {
 										/* "No recall spell found in this book!" */
 										//continue;
@@ -2428,14 +2428,14 @@ void carry(int Ind, int pickup, int confirm) {
 								//wow, first time use of '-item' ground access nowadays? :-p
 								if (spell1_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell1))) {
 									spell = spell1;
-									p_ptr->current_item = -c_ptr->o_idx;
+									p_ptr->current_item = -c_ptr->o_idx - 1;
 								}
 								else if (spell2_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell2))) {
 									spell = spell2;
-									p_ptr->current_item = -c_ptr->o_idx;
+									p_ptr->current_item = -c_ptr->o_idx - 1;
 								} else if (spell3_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell3))) {
 									spell = spell3;
-									p_ptr->current_item = -c_ptr->o_idx;
+									p_ptr->current_item = -c_ptr->o_idx - 1;
 								}
 #ifdef ALLOW_X_BAGID
 								else if (spell4_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell4)))
