@@ -424,7 +424,7 @@ static void rd_item(object_type *o_ptr) {
 
 	/* (4.5.8.2 testing) Convert potion svals, their order has been rearranged to optimise inventory sorting order */
 	if (o_ptr->tval == TV_POTION && older_than(4, 5, 32)) {
-		//10<->4,14->65,65->64,54<->62; 12->40,13->12,15-23->13-21,64->22,40->23
+		//10<->4,14->65,65->64,54<->62; 12->40,13->12,15-23->13-21,64->23,40->22
 		switch (o_ptr->sval) {
 		case 4: o_ptr->sval = 10; break;
 		case 10: o_ptr->sval = 4; break;
@@ -440,9 +440,9 @@ static void rd_item(object_type *o_ptr) {
 		case 21: o_ptr->sval = 19; break;
 		case 22: o_ptr->sval = 20; break;
 		case 23: o_ptr->sval = 21; break;
-		case 40: o_ptr->sval = 23; break;
+		case 40: o_ptr->sval = 22; break;
 		case 54: o_ptr->sval = 62; break;
-		case 64: o_ptr->sval = 22; break;
+		case 64: o_ptr->sval = 23; break;
 		case 65: o_ptr->sval = 64; break;
 		}
 	}
