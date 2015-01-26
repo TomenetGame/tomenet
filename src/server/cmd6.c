@@ -1377,7 +1377,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 			set_food(Ind, feed);
 		}
 	} else if (p_ptr->prace == RACE_ENT) {
-		if (o_ptr->sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + 1500);
+		if (o_ptr->sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 		else (void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2));
 	} else if (p_ptr->suscep_life) {
 		(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2) / 3);
@@ -1505,7 +1505,7 @@ void do_cmd_drink_fountain(int Ind) {
 		}
 		/* lake/river: fresh water */
 		msg_print(Ind, "You quenched your thirst.");
-		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 1500);
+		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 
 #ifdef FOUNTAIN_GUARDS
 		//(unlimited charges!) fountain_guard(Ind, FALSE);
@@ -1572,7 +1572,7 @@ void do_cmd_drink_fountain(int Ind) {
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
-		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 1500);
+		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 
 #ifdef FOUNTAIN_GUARDS
 		//(unlimited charges!) fountain_guard(Ind, FALSE);
@@ -1603,7 +1603,7 @@ void do_cmd_drink_fountain(int Ind) {
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
-		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 1500);
+		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 
 #ifdef FOUNTAIN_GUARDS
 		//(unlimited charges!) fountain_guard(Ind, FALSE);
@@ -1628,7 +1628,7 @@ void do_cmd_drink_fountain(int Ind) {
 	else msg_print(Ind, "You quenched your thirst.");
 
 	if (p_ptr->prace == RACE_ENT) {
-		if (sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + 1500);
+		if (sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 		else (void)set_food(Ind, pval * 2);
 	}
 
