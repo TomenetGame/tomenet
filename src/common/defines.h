@@ -3516,28 +3516,30 @@
 #define SV_POTION_APPLE_JUICE            1
 #define SV_POTION_SLIME_MOLD             2
 #define SV_POTION_BLOOD                  3
-#define SV_POTION_SLOWNESS               4
 #define SV_POTION_SALT_WATER             5
 #define SV_POTION_POISON                 6
 #define SV_POTION_BLINDNESS              7
 #define SV_POTION_INVIS                  8
 #define SV_POTION_CONFUSION              9
+#define SV_POTION_SLOWNESS              10
 //#define SV_POTION_MUTATION		10
 /* used for EXPAND_TV_POTION		10 */
 #define SV_POTION_SLEEP                 11
-//#define SV_POTION_LEARNING		12 /* not used. see SV_POTION2_LEARNING instead */
+//#define SV_POTION_LEARNING		40 /* not used. see SV_POTION2_LEARNING instead */
 /* used for EXPAND_TV_POTION		12 */
-#define SV_POTION_LOSE_MEMORIES         13
+#define SV_POTION_LOSE_MEMORIES         12
 /* xxx -- used for EXPAND_TV_POTION	14 */
-#define SV_POTION_RUINATION             15
-#define SV_POTION_DEC_STR               16
-#define SV_POTION_DEC_INT               17
-#define SV_POTION_DEC_WIS               18
-#define SV_POTION_DEC_DEX               19
-#define SV_POTION_DEC_CON               20
-#define SV_POTION_DEC_CHR               21
-#define SV_POTION_DETONATIONS           22
-#define SV_POTION_DEATH                 23
+#define SV_POTION_RUINATION             13
+#define SV_POTION_DEC_STR               14
+#define SV_POTION_DEC_INT               15
+#define SV_POTION_DEC_WIS               16
+#define SV_POTION_DEC_DEX               17
+#define SV_POTION_DEC_CON               18
+#define SV_POTION_DEC_CHR               19
+#define SV_POTION_DETONATIONS           20
+#define SV_POTION_DEATH                 21
+#define SV_POTION_STAR_RESTORE_MANA     22
+#define SV_POTION_RESTORE_MANA          23
 #define SV_POTION_INFRAVISION           24
 #define SV_POTION_DETECT_INVIS          25
 #define SV_POTION_SLOW_POISON           26
@@ -3554,7 +3556,6 @@
 #define SV_POTION_STAR_HEALING          37
 #define SV_POTION_HEALING               38
 #define SV_POTION_LIFE                  39
-#define SV_POTION_STAR_RESTORE_MANA     40
 #define SV_POTION_RESTORE_EXP           41
 #define SV_POTION_RES_STR               42
 #define SV_POTION_RES_INT               43
@@ -3579,7 +3580,6 @@
 #define SV_POTION_INVULNERABILITY       62
 /*disabled: #define SV_POTION_NEW_LIFE  63
   used for EXPAND_TV_POTION		63 */
-#define SV_POTION_RESTORE_MANA          64
 
 #ifndef EXPAND_TV_POTION
  #define SV_POTION_LAST			64	/* used for handling fountains */
@@ -3588,12 +3588,12 @@
 #endif
 
 /* for EXPAND_TV_POTION, always defined for conversion in load2.c: */
-#define SV_POTION_CHAUVE_SOURIS		10
-#define SV_POTION_LEARNING		12
-#define SV_POTION_CURE_SANITY		14
-#define SV_POTION_CURE_LIGHT_SANITY	54
+#define SV_POTION_CHAUVE_SOURIS		4
+#define SV_POTION_LEARNING		40
+#define SV_POTION_CURE_LIGHT_SANITY	62
 #define SV_POTION_CURE_SERIOUS_SANITY	63
-#define SV_POTION_CURE_CRITICAL_SANITY	65
+#define SV_POTION_CURE_CRITICAL_SANITY	64
+#define SV_POTION_CURE_SANITY		65
 
 
 /*
