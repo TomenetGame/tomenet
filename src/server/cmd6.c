@@ -6087,19 +6087,22 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_AURA_FIRE) || is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
+	else if (is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
+	//else if (is_ego_p(o_ptr, EGO_AURA_FIRE) || is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
 		msg_print(Ind, "Your cloak flashes in flames...");
 		(void)set_oppose_fire(Ind, randint(40) + 40);
 		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_AURA_ELEC) || is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
+	else if (is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
+	//else if (is_ego_p(o_ptr, EGO_AURA_ELEC) || is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
 		msg_print(Ind, "Your cloak sparkles with lightning...");
 		(void)set_oppose_elec(Ind, randint(40) + 40);
 		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_AURA_COLD) || is_ego_p(o_ptr, EGO_AURA_COLD2)) {
+	else if (is_ego_p(o_ptr, EGO_AURA_COLD2)) {
+	//else if (is_ego_p(o_ptr, EGO_AURA_COLD) || is_ego_p(o_ptr, EGO_AURA_COLD2)) {
 		msg_print(Ind, "Your cloak shines with frost...");
 		(void)set_oppose_cold(Ind, randint(40) + 40);
 		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);

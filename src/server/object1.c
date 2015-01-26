@@ -3146,11 +3146,11 @@ cptr item_activation(object_type *o_ptr) {
 
 	// requires some substitution..
 	/* Some ego items can be activated */
-	if (is_ego_p(o_ptr, EGO_AURA_FIRE))
+	if (is_ego_p(o_ptr, EGO_AURA_FIRE2))
 		return "temporary fire resistance every 50..150+d40 turns";
-	if (is_ego_p(o_ptr, EGO_AURA_ELEC))
+	if (is_ego_p(o_ptr, EGO_AURA_ELEC2))
 		return "temporary lighting resistance every 50..150+d40 turns";
-	if (is_ego_p(o_ptr, EGO_AURA_COLD))
+	if (is_ego_p(o_ptr, EGO_AURA_COLD2))
 		return "temporary frost resistance every 50..150+d40 turns";
 
 	if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
