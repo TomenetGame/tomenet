@@ -447,7 +447,7 @@ static void rd_item(object_type *o_ptr) {
 		}
 	}
 	/* bugfix for an earlier version of above conversion stuff */
-	if (o_ptr->tval == TV_POTION && older_than(4, 5, 33)) {
+	else if (o_ptr->tval == TV_POTION && older_than(4, 5, 33)) {
 		if (o_ptr->sval == 22) o_ptr->sval = 23;
 		else if (o_ptr->sval == 23) o_ptr->sval = 22;
 	}
