@@ -5327,7 +5327,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		case ART_FEANOR:
 			(void)set_fast(Ind, randint(20) + 20, 15); /* removed stacking */
-			o_ptr->timeout = 200;
+			o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
 		case ART_THEODEN:
 			msg_print(Ind, "The blade of your axe glows black...");
@@ -5342,41 +5342,41 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_CASPANION:
 			msg_print(Ind, "Your armour glows bright red...");
 			destroy_doors_touch(Ind, 1);
-			o_ptr->timeout = 10;
+			o_ptr->timeout = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
 		case ART_AVAVIR:
 			set_recall(Ind, rand_int(20) + 15, o_ptr);
-			o_ptr->timeout = 200;
+			o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_TARATOL:
 			(void)set_fast(Ind, randint(20) + 20, 15); /* removed stacking */
-			o_ptr->timeout = rand_int(100) + 100;
+			o_ptr->timeout = rand_int(50) + 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 70);
 			break;
 		case ART_ERIRIL:
 			/* Identify and combine pack */
 			(void)ident_spell(Ind);
 			/* XXX Note that the artifact is always de-charged */
-			o_ptr->timeout = 10;
+			o_ptr->timeout = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 8);
 			break;
 		case ART_OLORIN:
 			probing(Ind);
 			detection(Ind, DEFAULT_RADIUS * 2);
-			o_ptr->timeout = 20;
+			o_ptr->timeout = 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			break;
 		case ART_EONWE:
 			msg_print(Ind, "Your axe lets out a long, shrill note...");
 			(void)obliteration(Ind);
-			o_ptr->timeout = 1000;
+			o_ptr->timeout = 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 500);
 			break;
 		case ART_LOTHARANG:
 			msg_print(Ind, "Your battle axe radiates deep purple...");
 			hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)));
 			(void)set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker);
-			o_ptr->timeout = rand_int(3) + 3;
+			o_ptr->timeout = rand_int(3) + 3 - get_skill_scale(p_ptr, SKILL_DEVICE, 2);//o_o
 			break;
 		case ART_CUBRAGOL:
 			(void)brand_bolts(Ind);
-			o_ptr->timeout = 999;
+			o_ptr->timeout = 999 - get_skill_scale(p_ptr, SKILL_DEVICE, 777);
 			break;
 		case ART_ARUNRUTH:
 			msg_print(Ind, "Your sword glows a pale blue...");
@@ -5398,19 +5398,19 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "\377GYou feel much better...");
 			(void)hp_player(Ind, 1000);
 			(void)set_cut(Ind, 0, 0);
-			o_ptr->timeout = 888;
+			o_ptr->timeout = 888 - get_skill_scale(p_ptr, SKILL_DEVICE, 666);
 			break;
 		case ART_BELEGENNON:
 			teleport_player(Ind, 10, TRUE);
-			o_ptr->timeout = 2;
+			o_ptr->timeout = 2 - get_skill_scale(p_ptr, SKILL_DEVICE, 1);//>_>
 			break;
 		case ART_CELEBORN:
 			(void)genocide(Ind);
-			o_ptr->timeout = 500;
+			o_ptr->timeout = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 			break;
 		case ART_LUTHIEN:
 			restore_level(Ind);
-			o_ptr->timeout = 450;
+			o_ptr->timeout = 450 - get_skill_scale(p_ptr, SKILL_DEVICE, 350);
 			break;
 		case ART_ULMO:
 			msg_print(Ind, "Your trident glows deep red...");
@@ -5424,21 +5424,21 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			(void)set_oppose_fire(Ind, randint(20) + 20);
 			(void)set_oppose_cold(Ind, randint(20) + 20);
 			(void)set_oppose_pois(Ind, randint(20) + 20);
-			o_ptr->timeout = 111;
+			o_ptr->timeout = 111 - get_skill_scale(p_ptr, SKILL_DEVICE, 56);
 			break;
 		case ART_HOLCOLLETH:
 			msg_print(Ind, "Your cloak glows deep blue...");
 			sleep_monsters_touch(Ind);
-			o_ptr->timeout = 55;
+			o_ptr->timeout = 55 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 			break;
 		case ART_THINGOL:
 			msg_print(Ind, "You hear a low humming noise...");
 			recharge(Ind, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 40));
-			o_ptr->timeout = 70;
+			o_ptr->timeout = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
 		case ART_COLANNON:
 			teleport_player(Ind, 100, FALSE);
-			o_ptr->timeout = 45;
+			o_ptr->timeout = 45 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 			break;
 		case ART_TOTILA:
 			msg_print(Ind, "Your flail glows in scintillating colours...");
@@ -5478,19 +5478,19 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_HOLHENNETH:
 			msg_print(Ind, "An image forms in your mind...");
 			detection(Ind, DEFAULT_RADIUS * 2);
-			o_ptr->timeout = rand_int(55) + 55;
+			o_ptr->timeout = rand_int(25) + 55 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 			break;
 		case ART_GONDOR:
 			msg_print(Ind, "\377GYou feel a warm tingling inside...");
 			(void)hp_player(Ind, 500);
 			(void)set_cut(Ind, 0, 0);
-			o_ptr->timeout = 500;
+			o_ptr->timeout = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 			break;
 		case ART_RAZORBACK:
 			msg_print(Ind, "You are surrounded by lightning!");
 			sprintf(p_ptr->attacker, " casts a lightning ball for");
 			for (i = 0; i < 8; i++) fire_ball(Ind, GF_ELEC, ddd[i], 150 + get_skill_scale(p_ptr, SKILL_DEVICE, 450), 3, p_ptr->attacker);
-			o_ptr->timeout = 1000;
+			o_ptr->timeout = 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 700);
 			break;
 		case ART_BLADETURNER:
 			msg_print(Ind, "Your armour glows in many colours...");
@@ -5505,41 +5505,41 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			(void)set_oppose_fire(Ind, randint(50) + 50);
 			(void)set_oppose_cold(Ind, randint(50) + 50);
 			(void)set_oppose_pois(Ind, randint(50) + 50);
-			o_ptr->timeout = 400;
+			o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);
 			break;
 		case ART_GALADRIEL:
 			msg_print(Ind, "The phial wells with clear light...");
 			lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
 			if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "the phial of galadriel", 0);
                         	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-			o_ptr->timeout = rand_int(10) + 10;
+			o_ptr->timeout = rand_int(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_ELENDIL:
 			msg_print(Ind, "The star shines brightly...");
 			map_area(Ind);
-			o_ptr->timeout = rand_int(50) + 50;
+			o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 			break;
 		case ART_THRAIN:
 			msg_print(Ind, "The stone glows a deep green...");
 			wiz_lite(Ind);
 			(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
 			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
-			o_ptr->timeout = rand_int(100) + 100;
+			o_ptr->timeout = rand_int(150) + 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 800);
 			break;
 		case ART_INGWE:
 			msg_print(Ind, "An aura of good floods the area...");
 			dispel_evil(Ind, p_ptr->lev * 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
-			o_ptr->timeout = rand_int(300) + 300;
+			o_ptr->timeout = rand_int(150) + 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
 			break;
 		case ART_CARLAMMAS:
 			msg_print(Ind, "The amulet lets out a shrill wail...");
 			(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
-			o_ptr->timeout = rand_int(225) + 225;
+			o_ptr->timeout = rand_int(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);
 			break;
 		case ART_TULKAS:
 			msg_print(Ind, "The ring glows brightly...");
-			(void)set_fast(Ind, randint(75) + 75, 15); /* removed stacking */
-			o_ptr->timeout = rand_int(150) + 150;
+			(void)set_fast(Ind, randint(50) + 75, 15); /* removed stacking */
+			o_ptr->timeout = rand_int(100) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_NARYA:
 			msg_print(Ind, "The ring glows deep red...");
@@ -5565,26 +5565,26 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			for (k = 1; k < 10; k++)
 				if (k - 5) fire_beam(Ind, GF_LITE, k, 75 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), " emits a beam of light for");
 
-			o_ptr->timeout = rand_int(75) + 75;
+			o_ptr->timeout = rand_int(50) + 75 - get_skill_scale(p_ptr, SKILL_DEVICE, 60);
 			break;
 		case ART_CELEBRIMBOR:
 			set_tim_esp(Ind, p_ptr->tim_esp + randint(20) + 20);
 			 /* not removed stacking */
-			o_ptr->timeout = rand_int(50) + 20;
+			o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		case ART_SKULLCLEAVER:
 			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
-			o_ptr->timeout = rand_int(200) + 200;
+			o_ptr->timeout = rand_int(200) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_HARADRIM:
 			set_afraid(Ind, 0);
 			set_shero(Ind, randint(25) + 25); /* removed stacking */
 			hp_player(Ind, 30);
-			o_ptr->timeout = rand_int(50) + 50;
+			o_ptr->timeout = rand_int(40) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 			break;
 		case ART_FUNDIN:
 			dispel_evil(Ind, p_ptr->lev * 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 400));
-			o_ptr->timeout = rand_int(100) + 100;
+			o_ptr->timeout = rand_int(50) + 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
 			break;
 		case ART_NAIN:
 		case ART_EOL:
@@ -5647,10 +5647,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			r_ptr->r_flags9 = r_ptr->flags9;
  #endif
 
-			o_ptr->timeout = rand_int(200) + 500;
+			o_ptr->timeout = rand_int(200) + 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 350);
 #else
 			probing(Ind);
-			o_ptr->timeout = rand_int(200) + 300;
+			o_ptr->timeout = rand_int(200) + 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
 #endif
 			break;
 		case ART_KNOWLEDGE:
@@ -5658,7 +5658,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "\377RYou hear horrible, otherworldy sounds of the dead in your head..");
                                 take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead");
 //				take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
-			o_ptr->timeout = rand_int(200) + 100;
+			o_ptr->timeout = rand_int(100) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_UNDEATH:
 			msg_print(Ind, "The phial wells with dark light...");
@@ -5672,11 +5672,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				(void)dec_stat(Ind, A_CHR, 25, STAT_DEC_PERMANENT);
 				(void)dec_stat(Ind, A_INT, 25, STAT_DEC_PERMANENT);
 			}
-			o_ptr->timeout = rand_int(10) + 10;
+			o_ptr->timeout = rand_int(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_HIMRING:
 			(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
-			o_ptr->timeout = rand_int(225) + 225;
+			o_ptr->timeout = rand_int(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
 		case ART_FLAR:
 #if 0
@@ -5694,18 +5694,18 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				teleport_player(Ind, 10, TRUE);
 			}
 			else teleport_player_to(ij,ii);
-			o_ptr->timeout = 100;
+			o_ptr->timeout = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 #else
 			/* Initiate or complete gateway creation. - C. Blue
 			   If we initiated it, do not set a timeout, so we can activate
 			   F'lar a second time at will to complete the spell, then timeout. */
-			if (py_create_gateway(Ind) == 2) o_ptr->timeout = 1000;
+			if (py_create_gateway(Ind) == 2) o_ptr->timeout = 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 500);
 #endif
 			break;
 		case ART_BARAHIR:
 			msg_print(Ind, "You exterminate small life.");
 			(void)dispel_monsters(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300));
-			o_ptr->timeout = rand_int(55) + 55;
+			o_ptr->timeout = rand_int(55) + 55 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 			break;
 		/* The Stone of Lore is perilous, for the sake of game balance. */
 		case ART_STONE_LORE:
@@ -5743,7 +5743,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			//if (rand_int(20) == 0) take_hit(Ind, damroll(4, 10), "perilous secrets", 0); else
 			take_hit(Ind, damroll(1, 12), "perilous secrets", 0);
 
-			o_ptr->timeout = 10;
+			o_ptr->timeout = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
 		case ART_MEDIATOR:
 			p_ptr->current_activation = item;
@@ -5767,11 +5767,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 					(void)stair_creation(Ind);
 					break;
 			}
-			o_ptr->timeout = 35;
+			o_ptr->timeout = 35 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
 			break;
 		case ART_ERU:
 			msg_print(Ind, "Your sword glows an intense white...");
-			hp_player(Ind, 7000);
+			hp_player(Ind, 1000);
 			heal_insanity(Ind, 50);
 			set_blind(Ind, 0);
 			set_poisoned(Ind, 0, 0);
@@ -5779,7 +5779,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			set_stun(Ind, 0);
 			set_cut(Ind, 0, 0);
 			set_image(Ind, 0);
-			o_ptr->timeout = 500;
+			o_ptr->timeout = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
 			break;
 		case ART_DAWN:
 #if 0 /* needs pet code */
@@ -5788,7 +5788,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #else
 			do_banish_undead(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
 #endif
-			o_ptr->timeout = 500 + randint(500);
+			o_ptr->timeout = 500 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 			break;
 #if 0
 		case ART_AVAVIR:
@@ -5805,7 +5805,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				p_ptr->word_recall = 0;
 				msg_print(Ind, "A tension leaves the air around you...");
 			}
-			o_ptr->timeout = 200;
+			o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 #endif
 		case ART_EVENSTAR:
@@ -5816,7 +5816,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			(void)do_res_stat(Ind, A_INT);
 			(void)do_res_stat(Ind, A_WIS);
 			(void)do_res_stat(Ind, A_CHR);
-			o_ptr->timeout = 150;
+			o_ptr->timeout = 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 #if 1
 		case ART_ELESSAR:
@@ -5824,7 +5824,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 			p_ptr->black_breath = FALSE;
 			hp_player(Ind, 100);
-			o_ptr->timeout = 200;
+			o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 #endif
 		case ART_GANDALF:
@@ -5836,7 +5836,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				p_ptr->redraw |= (PR_MANA);
 				p_ptr->window |= (PW_PLAYER);
 			}
-			o_ptr->timeout = 666;
+			o_ptr->timeout = 666 - get_skill_scale(p_ptr, SKILL_DEVICE, 444);
 			break;
 		case ART_MARDRA:
 #if 0	// needing pet code
@@ -5855,7 +5855,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #else
 			do_banish_dragons(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
 #endif
-			o_ptr->timeout = 1000;
+			o_ptr->timeout = 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 500);
 			break;
 		case ART_PALANTIR_ITHIL:
 		case ART_PALANTIR:
@@ -5863,8 +5863,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			wiz_lite_extra(Ind);
 			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
 			(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
-			//				(void)detect_stair(Ind);
-			o_ptr->timeout = rand_int(100) + 100;
+			//(void)detect_stair(Ind);
+			o_ptr->timeout = rand_int(150) + 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 800);
 			break;
 #if 0	// Instruments
 		case ART_ROBINTON:
@@ -5892,7 +5892,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_DRUEDAIN:
 			msg_print(Ind, "Your drum shows you the world.");
 			detect_all();
-			o_ptr->timeout = 99;
+			o_ptr->timeout = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
 		case ART_ROHAN:
 			msg_print(Ind, "Your horn glows deep red.");
@@ -5902,7 +5902,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			set_hero(Ind, damroll(5,10) + 30); /* removed stacking */
 			set_fast(Ind, damroll(5,10) + 30, 20); /* removed stacking */
 			hp_player(30);
-			o_ptr->timeout = 250;
+			o_ptr->timeout = 250 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
 		case ART_HELM:
 			msg_print(Ind, "Your horn emits a loud sound.");
@@ -5914,8 +5914,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_BOROMIR:
 			msg_print(Ind, "Your horn calls for help.");
 			for(i = 0; i < 15; i++)
-				summon_specific_friendly(py, px, ((plev * 3) / 2),SUMMON_HUMAN, TRUE);
-			o_ptr->timeout = 1000;
+				summon_specific_friendly(py, px, ((plev * 3) / 2), SUMMON_HUMAN, TRUE);
+			o_ptr->timeout = 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 500);
 			break;
 #endif	// 0
 		case ART_HURIN:
@@ -5923,7 +5923,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			hp_player(Ind, 30);
 			set_afraid(Ind, 0);
 			set_shero(Ind, randint(50) + 50); /* removed stacking */
-			o_ptr->timeout = rand_int(200) + 100;
+			o_ptr->timeout = rand_int(75) + 175 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_AXE_GOTHMOG:
 			msg_print(Ind, "Your lochaber axe erupts in fire...");
@@ -5939,14 +5939,14 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_GROND:
 			msg_print(Ind, "Your hammer hits the floor...");
 			alter_reality();
-			o_ptr->timeout = 100;
+			o_ptr->timeout = 20000;
 			break;
 #endif
 		case ART_NATUREBANE:
 			msg_print(Ind, "Your axe glows blood red...");
 			//dispel_monsters(500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
 			do_banish_animals(Ind, 80);
-			o_ptr->timeout = 200 + randint(200);
+			o_ptr->timeout = 200 + randint(200) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_NIGHT:
 			msg_print(Ind, "Your axe emits a black aura...");
@@ -5964,21 +5964,21 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_BILBO:
 			msg_print(Ind, "Your picklock flashes...");
 			destroy_doors_touch(Ind, 2);
-			o_ptr->timeout = 30 + randint(30);
+			o_ptr->timeout = 30 + randint(10) - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		case ART_SOULCURE:
 			if (p_ptr->blessed_power <= 20) {
 				msg_print(Ind, "Your gloves glow golden...");
 				p_ptr->blessed_power = 20;
 				set_blessed(Ind, randint(48) + 24); /* removed stacking */
-				o_ptr->timeout = 150 + randint(200);
+				o_ptr->timeout = 150 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			} else {
 				msg_print(Ind, "Your gloves shimmer..");
 			}
 			break;
 		case ART_AMUGROM:
 			msg_print(Ind, "The amulet sparkles in scintillating colours...");
-			o_ptr->timeout = 250 + randint(200);
+			o_ptr->timeout = 150 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			(void)set_oppose_acid(Ind, randint(30) + 40); /* removed stacking */
 			(void)set_oppose_elec(Ind, randint(30) + 40);
 			(void)set_oppose_fire(Ind, randint(30) + 40);
@@ -5987,8 +5987,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_SPIRITSHARD:
 			msg_print(Ind, "Shimmers and flashes travel over the surface of the amulet...");
-			o_ptr->timeout = 300 + randint(100);
-			(void)set_tim_wraith(Ind, 150);
+			o_ptr->timeout = 100 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
+			(void)set_tim_wraith(Ind, 50 + rand_int(11));
 			break;
 		case ART_PHASING:
 			msg_print(Ind, "Your surroundings fade.. you are carried away through a tunnel of light!");
@@ -6015,7 +6015,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* ego activation etc */
 	else if (is_ego_p(o_ptr, EGO_DRAGON)) {
 		teleport_player(Ind, 100, FALSE);
-		o_ptr->timeout = 50 + randint(50);
+		o_ptr->timeout = 50 + randint(35) - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -6048,7 +6048,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		set_afraid(Ind, 0);
 		set_fury(Ind, rand_int(5) + 15); /* removed stacking */
 		hp_player(Ind, 40);
-		o_ptr->timeout = 100 + randint(50);
+		o_ptr->timeout = 100 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -6069,7 +6069,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	else if (is_ego_p(o_ptr, EGO_SPECTRAL)) {
                 //set_shadow(Ind, 20 + randint(20));
 		set_tim_wraith(Ind, 15 + randint(10));
-		o_ptr->timeout = 50 + randint(50);
+		o_ptr->timeout = 50 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 
 		/* Window stuff */
 		p_ptr->window |= PW_INVEN | PW_EQUIP;
@@ -6084,25 +6084,25 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		(void)set_oppose_fire(Ind, randint(20) + 50);
 		(void)set_oppose_cold(Ind, randint(20) + 50);
 		(void)set_oppose_pois(Ind, randint(20) + 50);
-		o_ptr->timeout = rand_int(40) + 170 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 		return;
 	}
 	else if (is_ego_p(o_ptr, EGO_AURA_FIRE) || is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
 		msg_print(Ind, "Your cloak flashes in flames...");
 		(void)set_oppose_fire(Ind, randint(40) + 40);
-		o_ptr->timeout = rand_int(50) + 150;
+		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 		return;
 	}
 	else if (is_ego_p(o_ptr, EGO_AURA_ELEC) || is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
 		msg_print(Ind, "Your cloak sparkles with lightning...");
 		(void)set_oppose_elec(Ind, randint(40) + 40);
-		o_ptr->timeout = rand_int(50) + 150;
+		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 		return;
 	}
 	else if (is_ego_p(o_ptr, EGO_AURA_COLD) || is_ego_p(o_ptr, EGO_AURA_COLD2)) {
 		msg_print(Ind, "Your cloak shines with frost...");
 		(void)set_oppose_cold(Ind, randint(40) + 40);
-		o_ptr->timeout = rand_int(50) + 150;
+		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 		return;
 	}
 
@@ -6290,7 +6290,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 void do_cmd_activate_dir(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-
 	int item;
 
 	item = p_ptr->current_activation;
@@ -6303,10 +6302,10 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
-        if (magik((p_ptr->antimagic * 8) / 5)) {
-                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-                return;
-        }
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
@@ -6323,11 +6322,11 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'A')) {
-                msg_print(Ind, "The item's inscription prevents it.");
-                return;
-        };
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	};
 
-        if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	break_cloaking(Ind, 0);
 	stop_precision(Ind);
@@ -6517,128 +6516,128 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			case ART_NARTHANC:
 				sprintf(p_ptr->attacker, " fires a fire bolt for");
 				fire_bolt(Ind, GF_FIRE, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(8) + 8;
+				o_ptr->timeout = rand_int(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 				break;
 			case ART_NIMTHANC:
 				sprintf(p_ptr->attacker, " fires a frost bolt for");
 				fire_bolt(Ind, GF_COLD, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(7) + 7;
+				o_ptr->timeout = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 				break;
 			case ART_DETHANC:
 				sprintf(p_ptr->attacker, " fires a lightning bolt for");
 				fire_bolt(Ind, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(6) + 6;
+				o_ptr->timeout = rand_int(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
 				break;
 			case ART_RILIA:
 				sprintf(p_ptr->attacker, " casts a stinking cloud for");
 //				fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 3, p_ptr->attacker);
 				fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7), 3, 4, 9, p_ptr->attacker);
-				o_ptr->timeout = rand_int(4) + 4;
+				o_ptr->timeout = rand_int(2) + 4 - get_skill_scale(p_ptr, SKILL_DEVICE, 2);
 				break;
 			case ART_BELANGIL:
 				sprintf(p_ptr->attacker, " casts a cold ball for");
 				fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 2, p_ptr->attacker);
-				o_ptr->timeout = rand_int(5) + 5;
+				o_ptr->timeout = rand_int(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
 				break;
 			case ART_RINGIL:
 				sprintf(p_ptr->attacker, " casts a cold ball for");
 				fire_ball(Ind, GF_COLD, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 2, p_ptr->attacker);
-				o_ptr->timeout = 300;
+				o_ptr->timeout = 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
 				break;
 			case ART_ANDURIL:
 				sprintf(p_ptr->attacker, " casts a fire ball for");
 				fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
-				o_ptr->timeout = 400;
+				o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
 				break;
 			case ART_FIRESTAR:
 				sprintf(p_ptr->attacker, " casts a fire ball for");
 				fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 3, p_ptr->attacker);
-				o_ptr->timeout = 100;
+				o_ptr->timeout = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 75);
 				break;
 			case ART_THEODEN:
 				if (drain_life(Ind, dir, 25))
 					hp_player(Ind, p_ptr->ret_dam / 3);
 				p_ptr->ret_dam = 0;
-				o_ptr->timeout = 400;
+				o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
 				break;
 			case ART_TURMIL:
 				if (drain_life(Ind, dir, 15))
 					hp_player(Ind, p_ptr->ret_dam / 2);
 				p_ptr->ret_dam = 0;
-				o_ptr->timeout = 70;
+				o_ptr->timeout = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 				break;
 			case ART_ARUNRUTH:
 				sprintf(p_ptr->attacker, " fires a frost bolt for");
 				fire_bolt(Ind, GF_COLD, dir, damroll(12 + get_skill_scale(p_ptr, SKILL_DEVICE, 15), 8), p_ptr->attacker);
-				o_ptr->timeout = 500;
+				o_ptr->timeout = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 				break;
 			case ART_AEGLOS:
 				sprintf(p_ptr->attacker, " casts a cold ball for");
 				fire_ball(Ind, GF_COLD, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
-				o_ptr->timeout = 500;
+				o_ptr->timeout = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 				break;
 			case ART_OROME:
 				wall_to_mud(Ind, dir);
-				o_ptr->timeout = 5;
+				o_ptr->timeout = 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
 				break;
 			case ART_ULMO:
 				teleport_monster(Ind, dir);
-				o_ptr->timeout = 150;
+				o_ptr->timeout = 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 				break;
 			case ART_TOTILA:
 				confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
-				o_ptr->timeout = 50;
+				o_ptr->timeout = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 				break;
 			case ART_CAMMITHRIM:
 				sprintf(p_ptr->attacker, " fires a missile for");
 				fire_bolt(Ind, GF_MISSILE, dir, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 8), 6), p_ptr->attacker);
-				o_ptr->timeout = 2;
+				o_ptr->timeout = 2 - get_skill_scale(p_ptr, SKILL_DEVICE, 1);
 				break;
 			case ART_PAURHACH:
 				sprintf(p_ptr->attacker, " fires a fire bolt for");
 				fire_bolt(Ind, GF_FIRE, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(8) + 8;
+				o_ptr->timeout = rand_int(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 				break;
 			case ART_PAURNIMMEN:
 				sprintf(p_ptr->attacker, " fires a frost bolt for");
 				fire_bolt(Ind, GF_COLD, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(7) + 7;
+				o_ptr->timeout = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 				break;
 			case ART_PAURAEGEN:
 				sprintf(p_ptr->attacker, " fires a lightning bolt for");
 				fire_bolt(Ind, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(6) + 6;
+				o_ptr->timeout = rand_int(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
 				break;
 			case ART_PAURNEN:
 				sprintf(p_ptr->attacker, " fires an acid bolt for");
 				fire_bolt(Ind, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(5) + 5;
+				o_ptr->timeout = rand_int(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
 				break;
 			case ART_FINGOLFIN:
 				sprintf(p_ptr->attacker, " fires an arrow for");
 				fire_bolt(Ind, GF_ARROW, dir, 150, p_ptr->attacker);
-				o_ptr->timeout = rand_int(90) + 90;
+				o_ptr->timeout = rand_int(30) + 90 - get_skill_scale(p_ptr, SKILL_DEVICE, 75);
 				break;
 			case ART_NARYA:
 				sprintf(p_ptr->attacker, " casts a fire ball for");
 				fire_ball(Ind, GF_FIRE, dir, 120 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
-				o_ptr->timeout = rand_int(225) + 225;
+				o_ptr->timeout = rand_int(75) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 				break;
 			case ART_NENYA:
 				sprintf(p_ptr->attacker, " casts a cold ball for");
 				fire_ball(Ind, GF_COLD, dir, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
-				o_ptr->timeout = rand_int(325) + 325;
+				o_ptr->timeout = rand_int(125) + 325 - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
 				break;
 			case ART_VILYA:
 				sprintf(p_ptr->attacker, " casts a lightning ball for");
 				fire_ball(Ind, GF_ELEC, dir, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
-				o_ptr->timeout = rand_int(425) + 425;
+				o_ptr->timeout = rand_int(175) + 425 - get_skill_scale(p_ptr, SKILL_DEVICE, 325);
 				break;
 			case ART_POWER:
 				ring_of_power(Ind, dir);
 				o_ptr->timeout = rand_int(450) + 450;
 				break;
-                        case ART_MEDIATOR:
+			case ART_MEDIATOR:
 				msg_print(Ind, "You breathe the elements.");
 				sprintf(p_ptr->attacker, " breathes the elements for");
 				fire_ball(Ind, GF_MISSILE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
@@ -6653,24 +6652,24 @@ void do_cmd_activate_dir(int Ind, int dir) {
 				(void)set_oppose_fire(Ind, randint(50) + 50);
 				(void)set_oppose_cold(Ind, randint(50) + 50);
 				(void)set_oppose_pois(Ind, randint(50) + 50);
-				o_ptr->timeout = 400;
+				o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
 				break;
 			case ART_EREBOR:
 				if (do_prob_travel(Ind, dir)) {
 					msg_print(Ind, "You found a passage!");
-					o_ptr->timeout = 200;
+					o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 				} else msg_print(Ind, "Nothing happens!");
 				break;
-                        case ART_AXE_GOTHMOG:
+			case ART_AXE_GOTHMOG:
 				sprintf(p_ptr->attacker, " casts a fireball for");
-                                fire_ball(Ind, GF_FIRE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
-                                o_ptr->timeout = 200 + rand_int(200);
-                                break;
-                        case ART_MELKOR:
+				fire_ball(Ind, GF_FIRE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
+				o_ptr->timeout = 200 + rand_int(200) - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
+				break;
+			case ART_MELKOR:
 				sprintf(p_ptr->attacker, " casts a darkness storm for");
-                                fire_ball(Ind, GF_DARK, dir, 150 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 3, p_ptr->attacker);
-                                o_ptr->timeout = 100;
-                                break;
+				fire_ball(Ind, GF_DARK, dir, 150 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 3, p_ptr->attacker);
+				o_ptr->timeout = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
+				break;
 			case ART_NIGHT:
 			{
 				int i;
@@ -6679,72 +6678,72 @@ void do_cmd_activate_dir(int Ind, int dir) {
 						hp_player(Ind, p_ptr->ret_dam / 2);
 					p_ptr->ret_dam = 0;
 				}
-				o_ptr->timeout = 250;
+				o_ptr->timeout = 250 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);
 				break;
 			}
-                        case ART_NAIN:
+			case ART_NAIN:
 				wall_to_mud(Ind, dir);
-                                o_ptr->timeout = rand_int(5) + 7;
-                                break;
-                        case ART_EOL:
+				o_ptr->timeout = rand_int(5) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
+				break;
+			case ART_EOL:
 				sprintf(p_ptr->attacker, " fires a mana bolt for");
-                                fire_bolt(Ind, GF_MANA, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-                                o_ptr->timeout = rand_int(7) + 7;
-                                break;
-                        case ART_UMBAR:
+				fire_bolt(Ind, GF_MANA, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
+				o_ptr->timeout = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+				break;
+			case ART_UMBAR:
 				sprintf(p_ptr->attacker, " fires a missile for");
-                                fire_bolt(Ind, GF_MISSILE, dir, damroll(10 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 10), p_ptr->attacker);
-                                o_ptr->timeout = rand_int(20) + 20;
-                                break;
+				fire_bolt(Ind, GF_MISSILE, dir, damroll(10 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 10), p_ptr->attacker);
+				o_ptr->timeout = rand_int(10) + 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+				break;
 			case ART_HELLFIRE:
 				sprintf(p_ptr->attacker, " conjures up hellfire for");
 				fire_ball(Ind, GF_HELL_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 3, p_ptr->attacker);
-				o_ptr->timeout = randint(20) + 30;
+				o_ptr->timeout = randint(10) + 30;
 				break;
 			case ART_HAVOC:
 				sprintf(p_ptr->attacker, " casts a force bolt for");
 				fire_bolt(Ind, GF_FORCE, dir, damroll(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 16), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(2) + 2;
+				o_ptr->timeout = rand_int(2) + 1;
 				break;
 		}
 	}
 
         /* Hack -- Amulet of the Serpents can be activated as well */
 	else if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_SERPENT)) {
-                msg_print(Ind, "You breathe venom...");
+		msg_print(Ind, "You breathe venom...");
 		sprintf(p_ptr->attacker, " breathes venom for");
-                fire_ball(Ind, GF_POIS, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
-                o_ptr->timeout = rand_int(60) + 40;
-        }
+		fire_ball(Ind, GF_POIS, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
+		o_ptr->timeout = rand_int(60) + 40;
+	}
 	else if (o_ptr->tval == TV_RING) {
 		switch (o_ptr->sval) {
-                        case SV_RING_ELEC:
-                                /* Get a direction for breathing (or abort) */
+			case SV_RING_ELEC:
+				/* Get a direction for breathing (or abort) */
 				sprintf(p_ptr->attacker, " casts a lightning ball for");
-                                fire_ball(Ind, GF_ELEC, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
-                                (void)set_oppose_elec(Ind, randint(20) + 20); /* removed stacking */
-				o_ptr->timeout = rand_int(50) + 50;
+				fire_ball(Ind, GF_ELEC, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
+				(void)set_oppose_elec(Ind, randint(20) + 20); /* removed stacking */
+				o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 				break;
 			case SV_RING_ACID:
-                                /* Get a direction for breathing (or abort) */
+				/* Get a direction for breathing (or abort) */
 				sprintf(p_ptr->attacker, " casts an acid ball for");
 				fire_ball(Ind, GF_ACID, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
 				(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 				break;
 			case SV_RING_ICE:
-                                /* Get a direction for breathing (or abort) */
+				/* Get a direction for breathing (or abort) */
 				sprintf(p_ptr->attacker, " casts a frost ball for");
 				fire_ball(Ind, GF_COLD, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
 				(void)set_oppose_cold(Ind, randint(20) + 20); /* removed stacking */
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 				break;
 			case SV_RING_FLAMES:
-                                /* Get a direction for breathing (or abort) */
+				/* Get a direction for breathing (or abort) */
 				sprintf(p_ptr->attacker, " casts a fire ball for");
 				fire_ball(Ind, GF_FIRE, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
 				(void)set_oppose_fire(Ind, randint(20) + 20); /* removed stacking */
-				o_ptr->timeout = rand_int(50) + 50;
+				o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 				break;
 		}
         }

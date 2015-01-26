@@ -2537,6 +2537,8 @@
 #define EGO_BACKBITING		125
 #define EGO_SHATTERED           126
 #define EGO_BLASTED             127
+#define EGO_MUSIC_ELDAR		128
+#define EGO_MUSIC_POWER		129
 #define EGO_INST_DRAGONKIND     130
 #define EGO_GNOMISH		131
 #define EGO_DWARVISH		132
