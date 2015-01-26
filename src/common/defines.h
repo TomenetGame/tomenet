@@ -1511,8 +1511,6 @@
 #define PY_FOOD_FAINT	1000	/* Food value (Fainting) was 500 */
 #define PY_FOOD_STARVE	200	/* Food value (Starving) was 100 */
 
-#define WATER_ENT_FOOD	1500	/* How much drinking water feeds ents */
-
 /*
  * Player regeneration constants
  */

@@ -58,6 +58,8 @@
  */
 
 
+/* How much drinking water feeds ents */
+#define WATER_ENT_FOOD 1500
 
 
 /* Quick hack to make use of firestones		- Jir -
