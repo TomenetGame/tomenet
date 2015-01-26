@@ -4768,6 +4768,26 @@ static bool process_player_end_aux(int Ind)
 	/* Note changes */
 	j = 0;
 
+	/* Process inventory (blood potions going bad) */
+	for (i = 0; i < INVEN_PACK; i++) {
+		/* Get the object */
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
+
+		if (!(o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) || !o_ptr->timeout) continue;
+
+		o_ptr->timeout--;
+		/* Notice changes */
+		if (!(o_ptr->timeout)) {
+			inven_item_increase(Ind, i, -o_ptr->number);
+			inven_item_describe(Ind, i);
+			inven_item_optimize(Ind, i);
+			j++;
+		}
+	}
+
 	/* Process equipment */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		/* Get the object */

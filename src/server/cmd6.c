@@ -621,7 +621,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				msg_print(Ind, "The salty potion makes you vomit!");
 				msg_format_near(Ind, "%s vomits!", p_ptr->name);
 				/* made salt water less deadly -APD */
-				(void)set_food(Ind, (p_ptr->food/2)-400);
+				(void)set_food(Ind, (p_ptr->food / 2) - 400);
 				(void)set_poisoned(Ind, 0, 0);
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
 			} else {
@@ -1369,17 +1369,19 @@ void do_cmd_quaff_potion(int Ind, int item) {
 
 
 	/* Potions can feed the player */
-#if 0 /* enable maybe if undead forms also result in vampire-race like feed restrictions */
-	if (!p_ptr->suscep_life)
-#else /* until then.. */
 	if (p_ptr->prace == RACE_VAMPIRE) {
-		/* nothing */
+		if (o_ptr->sval == SV_POTION_BLOOD) {
+			int feed = o_ptr->pval + p_ptr->food;
+			/* never get gorged */
+			if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
+			set_food(Ind, feed);
+		}
 	} else if (p_ptr->prace == RACE_ENT) {
-		(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 10));
+		if (o_ptr->sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + 1500);
+		else (void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2));
 	} else if (p_ptr->suscep_life) {
 		(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2) / 3);
 	} else
-#endif
 		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
 
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
@@ -1445,8 +1447,7 @@ static void fountain_guard(int Ind, bool blood) {
 /*
  * Drink from a fountain
  */
-void do_cmd_drink_fountain(int Ind)
-{
+void do_cmd_drink_fountain(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -1504,7 +1505,7 @@ void do_cmd_drink_fountain(int Ind)
 		}
 		/* lake/river: fresh water */
 		msg_print(Ind, "You quenched your thirst.");
-		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
+		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 1500);
 
 #ifdef FOUNTAIN_GUARDS
 		//(unlimited charges!) fountain_guard(Ind, FALSE);
@@ -1523,12 +1524,17 @@ void do_cmd_drink_fountain(int Ind)
 		}
 
 		if (p_ptr->prace == RACE_VAMPIRE) {
+			int feed = k_info[lookup_kind(TV_POTION, SV_POTION_BLOOD)].pval + p_ptr->food;
+
 			switch (rand_int(3)) {
 			case 0: msg_print(Ind, "Delicious.");
 			case 1: msg_print(Ind, "It's fresh.");
 			case 2: msg_print(Ind, "You're less thirsty.");
 			}
-			(void)set_food(Ind, p_ptr->food + 500);
+
+			/* never get gorged */
+			if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
+			set_food(Ind, feed);
 		} else if (p_ptr->suscep_life) {
 			msg_print(Ind, "You quenched your thirst.");
 			(void)set_food(Ind, p_ptr->food + 100);
@@ -1566,7 +1572,7 @@ void do_cmd_drink_fountain(int Ind)
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
-		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
+		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 1500);
 
 #ifdef FOUNTAIN_GUARDS
 		//(unlimited charges!) fountain_guard(Ind, FALSE);
@@ -1597,7 +1603,7 @@ void do_cmd_drink_fountain(int Ind)
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		msg_print(Ind, "You quenched your thirst.");
-		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
+		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 1500);
 
 #ifdef FOUNTAIN_GUARDS
 		//(unlimited charges!) fountain_guard(Ind, FALSE);
@@ -1621,7 +1627,10 @@ void do_cmd_drink_fountain(int Ind)
 	if (ident) cs_ptr->sc.fountain.known = TRUE;
 	else msg_print(Ind, "You quenched your thirst.");
 
-	if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
+	if (p_ptr->prace == RACE_ENT) {
+		if (sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + 1500);
+		else (void)set_food(Ind, pval * 2);
+	}
 
 	cs_ptr->sc.fountain.rest--;
 	if (cs_ptr->sc.fountain.rest <= 0) {
@@ -1644,8 +1653,9 @@ void do_cmd_drink_fountain(int Ind)
  */
 /* XXX this can be abusable; disable it in case */
 /* TODO: allow to fill on FEAT_DEEP_WATER (potion of water :) */
-void do_cmd_fill_bottle(int Ind)
-{
+/* Allow filling bottles with fountain blood? */
+#define ALLOW_BLOOD_BOTTLING
+void do_cmd_fill_bottle(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -1666,6 +1676,7 @@ void do_cmd_fill_bottle(int Ind)
 		return;
 	}
 
+#ifndef ALLOW_BLOOD_BOTTLING
 	if (c_ptr->feat == FEAT_FOUNTAIN_BLOOD) {
 		msg_print(Ind, "Fresh blood perishes too quickly.");
 		return;
@@ -1675,6 +1686,12 @@ void do_cmd_fill_bottle(int Ind)
 		msg_print(Ind, "You see no fountain here.");
 		return;
 	}
+#else
+	if (c_ptr->feat != FEAT_FOUNTAIN && c_ptr->feat != FEAT_FOUNTAIN_BLOOD) {
+		msg_print(Ind, "You see no fountain here.");
+		return;
+	}
+#endif
 
 	/* Oops! */
 	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN))) {
@@ -1692,13 +1709,10 @@ void do_cmd_fill_bottle(int Ind)
 		return;
 	}
 
-	if (cs_ptr->sc.fountain.type <= SV_POTION_LAST)
-	{
+	if (cs_ptr->sc.fountain.type <= SV_POTION_LAST) {
 		tval = TV_POTION;
 		sval = cs_ptr->sc.fountain.type;
-	}
-	else
-	{
+	} else {
 		tval = TV_POTION2;
 		sval = cs_ptr->sc.fountain.type - SV_POTION_LAST;
 	}
@@ -1706,29 +1720,24 @@ void do_cmd_fill_bottle(int Ind)
 	k_idx = lookup_kind(tval, sval);
 
 	/* Doh! */
-	if (!k_idx)
-	{
+	if (!k_idx) {
 //		msg_print(Ind, "You quenched the thirst.");
 		return;
 	}
 
-	if (!get_something_tval(Ind, TV_BOTTLE, &item))
-	{
+	if (!get_something_tval(Ind, TV_BOTTLE, &item)) {
 		msg_print(Ind, "You have no bottles to fill.");
 		return;
 	}
 
 	/* Destroy a bottle in the pack */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		inven_item_increase(Ind, item, -1);
 		inven_item_describe(Ind, item);
 		inven_item_optimize(Ind, item);
 	}
-
 	/* Destroy a potion on the floor */
-	else
-	{
+	else {
 		floor_item_increase(0 - item, -1);
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
@@ -1742,19 +1751,19 @@ void do_cmd_fill_bottle(int Ind)
 	determine_level_req(getlevel(&p_ptr->wpos), q_ptr);
 
 //	if (c_ptr->info & CAVE_IDNT)
-	if (cs_ptr->sc.fountain.known)
-	{
+	if (cs_ptr->sc.fountain.known) {
 		object_aware(Ind, q_ptr);
 		object_known(q_ptr);
 	}
 	else if (object_aware_p(Ind, q_ptr)) cs_ptr->sc.fountain.known = TRUE;
-
+#ifdef ALLOW_BLOOD_BOTTLING
+	if (q_ptr->sval == SV_POTION_BLOOD) q_ptr->timeout = 1750 + rand_int(501);//goes bad after a while!
+#endif
 	inven_carry(Ind, q_ptr);
 
 	cs_ptr->sc.fountain.rest--;
 
-	if (cs_ptr->sc.fountain.rest <= 0)
-	{
+	if (cs_ptr->sc.fountain.rest <= 0) {
 		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
 		cs_erase(c_ptr, cs_ptr);
 	}

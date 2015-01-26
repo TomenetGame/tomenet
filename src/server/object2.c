@@ -2999,6 +2999,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	player_type *p_ptr = NULL;
 	int total = o_ptr->number + j_ptr->number;
 
+
 	/* Hack -- gold always merge */
 //	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
 
@@ -3008,6 +3009,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return FALSE;
 	/* Don't stack quest items if not from same quest AND stage! */
 	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return FALSE;
+
+
+	/* Don't stack potions of blood because of their timeout */
+	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return FALSE;
+
 
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
@@ -3055,13 +3061,12 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 				break;
 			}
 			return FALSE;
+
 		/* Chests */
 		case TV_KEY:
 		case TV_CHEST:
-		{
 			/* Never okay */
 			return (FALSE);
-		}
 
 		/* Food and Potions and Scrolls */
 		case TV_SCROLL:
@@ -3070,18 +3075,15 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_FOOD:
 		case TV_POTION:
 		case TV_POTION2:
-		{
 			/* Hack for ego foods :) */
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 
 			/* Assume okay */
 			break;
-		}
 
 		/* Staffs and Wands */
 		case TV_WAND:
-		{
 			/* Require either knowledge or known empty for both wands. */
 			if ((!(o_ptr->ident & (ID_EMPTY)) &&
 			    (!Ind || !object_known_p(Ind, o_ptr))) ||
@@ -3102,10 +3104,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 			/* Assume okay */
 			break;
-		}
 
 		case TV_STAFF:
-		{
 			/* Require knowledge */
 			if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (FALSE);
 
@@ -3122,11 +3122,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 			/* Fall through */
 			/* NO MORE FALLING THROUGH! MUHAHAHA the_sandman */
-		}
 
 		/* Staffs and Wands and Rods */
 		case TV_ROD:
-		{
 			/* Overpoweredness, Hello! - the_sandman */
 			if (o_ptr->sval == SV_ROD_HAVOC) return (FALSE);
 
@@ -3141,7 +3139,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 			/* Probably okay */
 			break;
-		}
 
 		/* Weapons and Armor */
 		case TV_DRAG_ARMOR:	return(FALSE);
@@ -3162,7 +3159,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_TRAPKIT: /* so they don't stack carelessly - the_sandman */
-		{
 			/* Require permission */
 			if (!Ind || !p_ptr->stack_allow_items) return (FALSE);
 
@@ -3176,7 +3172,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			}
 
 			/* Fall through */
-		}
 
 		/* Rings, Amulets, Lites */
 		case TV_RING:
@@ -3186,7 +3181,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_LITE:
 		case TV_TOOL:
 		case TV_BOOK:	/* Books can be 'fireproof' */
-		{
 			/* custom tomes which appear identical, spell-wise too, may stack */
 			if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) &&
 			    ((o_ptr->xtra1 != j_ptr->xtra1) ||
@@ -3212,13 +3206,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
 
 			/* Fall through */
-		}
 
 		/* Missiles */
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
-		{
 			/* Require identical "bonuses" -
 			   except for ammunition which carries special inscription (will merge!) - C. Blue */
 			if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) ||
@@ -3269,21 +3261,19 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 			/* Probably okay */
 			break;
-		}
+
 		case TV_GOLEM:
 			if (o_ptr->pval != j_ptr->pval) return(FALSE);
 			break;
 
 		/* Various */
 		default:
-		{
 			/* Require knowledge */
 			if (Ind && (!object_known_p(Ind, o_ptr) ||
 				    !object_known_p(Ind, j_ptr))) return (FALSE);
 
 			/* Probably okay */
 			break;
-		}
 	}
 
 

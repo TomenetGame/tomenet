@@ -3417,7 +3417,7 @@ bool apply_discharge(int Ind, int dam)
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 		/* damage it */
-		if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_LITE) {
+		if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_LITE && o_ptr->tval != TV_POTION && o_ptr->tval != TV_FOOD) {
 			if (o_ptr->timeout) damaged = TRUE;
 			if (o_ptr->timeout > 1000) o_ptr->timeout -= 80 + rand_int(41);
 			else if (o_ptr->timeout > 100) o_ptr->timeout -= 15 + rand_int(11);
@@ -3493,7 +3493,7 @@ bool apply_discharge_item(int o_idx, int dam)
 	    (f2 & TR2_RES_ELEC)) return(FALSE);
 
 	/* damage it */
-	if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_LITE) {
+	if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_LITE && o_ptr->tval != TV_POTION && o_ptr->tval != TV_FOOD) {
 		if (o_ptr->timeout) damaged = TRUE;
 		if (o_ptr->timeout > 1000) o_ptr->timeout -= 80 + rand_int(41);
 		else if (o_ptr->timeout > 100) o_ptr->timeout -= 15 + rand_int(11);

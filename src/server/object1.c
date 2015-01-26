@@ -2863,13 +2863,20 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		t = object_desc_str(t, r_info[o_ptr->bpval].name + r_name);
 	}
 
+	if (known && o_ptr->timeout) {
+		/* Items going bad */
+		if (o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) {
+			t = object_desc_str(t, !(mode & 8) ? " (" : "(");
+			t = object_desc_num(t, o_ptr->timeout);
+			t = object_desc_str(t, !(mode & 8) ? " turns of shelf life)" : "t)");
+		}
 
-	/* Indicate "charging" artifacts XXX XXX XXX */
-	if (known && o_ptr->timeout && !((o_ptr->tval == TV_LITE) && (f4 & TR4_FUEL_LITE))
-	    && !((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)))
-	{
-		/* Hack -- Dump " (charging)" if relevant */
-		t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
+		/* Indicate "charging" artifacts XXX XXX XXX */
+		else if (!((o_ptr->tval == TV_LITE) && (f4 & TR4_FUEL_LITE))
+		    && !((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))) {
+			/* Hack -- Dump " (charging)" if relevant */
+			t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
+		}
 	}
 
 
