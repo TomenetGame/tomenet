@@ -3737,7 +3737,7 @@ bool identify_fully_item(int Ind, int item) {
 		           o_name);
 
 	/* Describe it fully */
-	identify_fully_aux(Ind, o_ptr);
+	(void)identify_fully_aux(Ind, o_ptr);
 
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
