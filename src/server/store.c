@@ -3798,12 +3798,11 @@ void store_confirm(int Ind) {
  */
 void store_examine(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-
 	store_type *st_ptr;
 	//owner_type *ot_ptr;
-
 	int			i;
 	object_type		*o_ptr;
+	bool assume_aware = TRUE;
 
 
 	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
@@ -3816,9 +3815,10 @@ void store_examine(int Ind, int item) {
         if (i == -1) i = gettown_dun(Ind);
 
 #ifdef PLAYER_STORES
-	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+	if (p_ptr->store_num <= -2) { /* it's a player's private store! */
 		st_ptr = &fake_store[-2 - p_ptr->store_num];
-	else
+		assume_aware = FALSE;
+	} else
 #endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 //	ot_ptr = &owners[st][st_ptr->owner];
@@ -3848,7 +3848,7 @@ void store_examine(int Ind, int item) {
 	/* Require full knowledge */
 	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr);
 	/* Describe it fully */
-	else if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr, assume_aware)) msg_print(Ind, "You see nothing special.");
 
 	return;
 }
@@ -5404,8 +5404,7 @@ void home_purchase(int Ind, int item, int amt)
 /*
  * Examine an item in a store			   -JDL-
  */
-void home_examine(int Ind, int item)
-{
+void home_examine(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 //	int st = p_ptr->store_num;
 	int	h_idx;
@@ -5443,7 +5442,7 @@ void home_examine(int Ind, int item)
 	/* Require full knowledge */
 	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr);
 	/* Describe it fully */
-	else if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr, FALSE)) msg_print(Ind, "You see nothing special.");
 
 	return;
 }

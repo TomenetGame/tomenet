@@ -1571,7 +1571,7 @@ int auction_examine(int Ind, int auction_id)
 		msg_print(Ind, "No information available.");
 
 	/* Describe it fully */
-	if (!identify_fully_aux(Ind, o_ptr))
+	if (!identify_fully_aux(Ind, o_ptr), FALSE)
 		msg_print(Ind, "You see nothing special.");
 
 	return 0;

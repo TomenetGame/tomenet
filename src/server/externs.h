@@ -1171,7 +1171,7 @@ extern void reset_visuals(void);
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *f6, u32b *esp);
 extern void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode);
 extern void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mode);
-extern bool identify_fully_aux(int Ind, object_type *o_ptr);
+extern bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware);
 extern void observe_aux(int Ind, object_type *o_ptr);
 extern s16b index_to_label(int i);
 extern s16b label_to_inven(int Ind, int c);

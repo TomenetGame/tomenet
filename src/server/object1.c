@@ -4197,10 +4197,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full);
 void observe_aux(int Ind, object_type *o_ptr) {
 	(void)identify_combo_aux(Ind, o_ptr, FALSE);
 }
-bool identify_fully_aux(int Ind, object_type *o_ptr) {
+bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware) {
 	/* special hack (added for *id*ed items in player stores):
 	   we cannot fully inspect a flavoured item if we don't know the flavour yet */
-	if (!object_aware_p(Ind, o_ptr))
+	if (!assume_aware && !object_aware_p(Ind, o_ptr))
 		return identify_combo_aux(Ind, o_ptr, FALSE);
 
 	return identify_combo_aux(Ind, o_ptr, TRUE);
