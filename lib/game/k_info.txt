@@ -7463,7 +7463,7 @@ I:71:3:0
 W:40:255:4:500
 A:40/255
 P:0:1d1:0:0:0
-F:FOUNTAIN
+#F:FOUNTAIN
 D:A potion of fresh blood, it will go bad quickly.
 
 # The Smokin' Boots of Moltor, the Dwarven Archer
