@@ -340,8 +340,7 @@ static void strip_bytes(int n)
  * "uncursed" when imported from pre-2.7.9 savefiles.
  */
 /* For wilderness levels, dun_depth has been changed from 1 to 4 bytes. */
-static void rd_item(object_type *o_ptr)
-{
+static void rd_item(object_type *o_ptr) {
 	byte old_dd;
 	byte old_ds;
 	s16b old_ac;
@@ -422,6 +421,31 @@ static void rd_item(object_type *o_ptr)
 		}
 	}
 #endif
+
+	/* (4.5.8.2 testing) Convert potion svals, their order has been rearranged to optimise inventory sorting order */
+	if (o_ptr->tval == TV_POTION && older_than(4, 5, 32)) {
+		//10<->4,14->65,65->64,54<->62; 12->40,13->12,15-23->13-21,64->22,40->23
+		switch (o_ptr->sval) {
+		case 4: o_ptr->sval = 10; break;
+		case 10: o_ptr->sval = 4; break;
+		case 12: o_ptr->sval = 40; break;
+		case 13: o_ptr->sval = 12; break;
+		case 14: o_ptr->sval = 65; break;
+		case 15: o_ptr->sval = 13; break;
+		case 16: o_ptr->sval = 14; break;
+		case 17: o_ptr->sval = 15; break;
+		case 18: o_ptr->sval = 16; break;
+		case 19: o_ptr->sval = 17; break;
+		case 20: o_ptr->sval = 18; break;
+		case 21: o_ptr->sval = 19; break;
+		case 22: o_ptr->sval = 20; break;
+		case 23: o_ptr->sval = 21; break;
+		case 40: o_ptr->sval = 23; break;
+		case 54: o_ptr->sval = 62; break;
+		case 64: o_ptr->sval = 22; break;
+		case 65: o_ptr->sval = 64; break;
+		}
+	}
 
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);
