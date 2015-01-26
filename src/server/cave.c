@@ -3190,9 +3190,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 				if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
 					(*ap) = TERM_L_BLUE;
 
-				/* hack: custom books' colour depends on their content! - C. Blue */
-				if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
-					(*ap) = get_book_name_color(Ind, o_ptr);
+				/* hacks: mindcrafter 'crystals' are yellow, custom books' colour depends on their content! - C. Blue */
+				if (o_ptr->tval == TV_BOOK) {
+					if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
+						(*ap) = TERM_YELLOW;
+					else if (is_custom_tome(o_ptr->sval))
+						(*ap) = get_book_name_color(Ind, o_ptr);
+				}
+
 				/* hack: colour of fancy shirts or custom objects can vary  */
 				if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 				    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
@@ -3202,6 +3207,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 					if (o_ptr->xtra2) (*cp) = o_ptr->xtra2;
 				}
 
+				/* quest items can have custom appearance too */
 				if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) {
 					(*cp) = o_ptr->xtra1;
 					(*ap) = o_ptr->xtra2;
