@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. January 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. January 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.8b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3550,6 +3550,14 @@ a Ration of Food {0,+}
 
     Note that you usually can neither trade nor sell items that are level 0.
     Food is an exception to this rule, since it can be traded (but not sold).
+
+    For those interested in more details, that item level is roughly determined
+    based on the following factors:
+     - Base item level (the dungeon depth where it starts popping up)
+     - A slight increase for when it's found on even much deeper floors
+     - An increase depending on ego powers it possesses.
+    Some items have special level requirement calculations, for example the
+    level of a ring of speed is directly tied to its +speed value.
 
 a Chain Mail {0,+} (-2) [14,+0]
     The {..} part is already known, it's the same as for the ration described
