@@ -410,11 +410,11 @@ void cast_rune_spell (int Ind, int dir) {
 #else
 	} else if (magik(1) && magik(10)) {
 #endif
+		msg_print(Ind, "\377rThe rune cracks and becomes unusable.");
 		/* Break me! */ 
 		inven_item_increase(Ind, mod_rune, -1); //Only the mod... 
 		inven_item_describe(Ind, mod_rune);
 		inven_item_optimize(Ind, mod_rune);
-		msg_print(Ind, "\377rThe rune cracks and becomes unusable.");
 		return;
 	} else {
 		if (what) msg_format(Ind, "\377gYou cast \377U%s\377g gracefully.", what);
