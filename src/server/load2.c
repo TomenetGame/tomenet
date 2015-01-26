@@ -446,6 +446,11 @@ static void rd_item(object_type *o_ptr) {
 		case 65: o_ptr->sval = 64; break;
 		}
 	}
+	/* bugfix for an earlier version of above conversion stuff */
+	if (o_ptr->tval == TV_POTION && older_than(4, 5, 33)) {
+		if (o_ptr->sval == 22) o_ptr->sval = 23;
+		else if (o_ptr->sval == 23) o_ptr->sval = 22;
+	}
 
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);
