@@ -1814,7 +1814,7 @@ D:Restores and permanently increases strength.
 
 N:226:Weakness
 G:!:d
-I:71:16:0
+I:71:14:0
 W:3:0:4:0
 A:3/1
 P:0:3d12:0:0:0
@@ -1841,7 +1841,7 @@ D:Restores and permanently increases intelligence.
 
 N:229:Stupidity
 G:!:d
-I:71:17:0
+I:71:15:0
 W:20:0:4:0
 A:20/1
 P:0:1d1:0:0:0
@@ -1868,7 +1868,7 @@ D:Restores and permanently increases wisdom.
 
 N:232:Naivety
 G:!:d
-I:71:18:0
+I:71:16:0
 W:20:0:4:0
 A:20/1
 P:0:1d1:0:0:0
@@ -1895,7 +1895,7 @@ D:Restores and permanently increases charisma.
 
 N:235:Ugliness
 G:!:d
-I:71:21:0
+I:71:19:0
 W:20:0:4:0
 A:20/1
 P:0:1d1:0:0:0
@@ -1925,7 +1925,7 @@ D:Cures blindness, confusion, stun, poison, cuts, hallucination, being gorged.
 
 N:238:Invulnerability
 G:!:d
-I:71:62:-2500
+I:71:54:-2500
 W:90:0:4:100000
 A:127/255
 P:0:1d1:0:0:0
@@ -2024,7 +2024,7 @@ F:FOUNTAIN
 
 N:250:Slowness
 G:!:d
-I:71:4:50
+I:71:10:50
 W:1:0:4:0
 A:1/1
 P:0:1d1:0:0:0
@@ -2059,7 +2059,7 @@ F:FOUNTAIN
 
 N:254:Lose Memories
 G:!:d
-I:71:13:0
+I:71:12:0
 W:10:0:4:0
 A:10/1
 P:0:1d1:0:0:0
@@ -2166,7 +2166,7 @@ D:Administer when poisoned.
 
 N:266:Restore Mana
 G:!:d
-I:71:64:0
+I:71:23:0
 W:25:0:4:450
 A:25/1
 P:0:1d1:0:0:0
@@ -3429,7 +3429,7 @@ $NEW_SHIELDS_NO_AC$F:EASY_KNOW
 
 N:415:Death
 G:!:d
-I:71:23:0
+I:71:21:0
 W:55:0:4:0
 A:55/4
 P:0:20d20:0:0:0
@@ -3437,7 +3437,7 @@ D:Handle with care.
 
 N:416:Ruination
 G:!:d
-I:71:15:0
+I:71:13:0
 W:40:0:4:0
 A:40/8
 P:0:20d20:0:0:0
@@ -3446,7 +3446,7 @@ D:Deals damage and drains all stats.
 
 N:417:Detonations
 G:!:d
-I:71:22:0
+I:71:20:0
 W:60:0:4:10000
 A:60/8
 P:0:25d25:0:0:0
@@ -3608,7 +3608,7 @@ D:Heals 3d8 hit points, cures blindness and heals cuts somewhat.
 
 N:438:Clumsiness
 G:!:d
-I:71:19:0
+I:71:17:0
 W:5:0:4:0
 A:5/1
 P:0:1d1:0:0:0
@@ -3617,7 +3617,7 @@ F:FOUNTAIN
 
 N:439:Sickliness
 G:!:d
-I:71:20:0
+I:71:18:0
 W:10:0:4:0
 A:10/1
 P:0:1d1:0:0:0
@@ -6266,7 +6266,7 @@ F:REFLECT
 
 N:892:Cure Light Insanity
 G:!:d
-$EXPAND_TV_POTION$I:71:54:0
+$EXPAND_TV_POTION$I:71:62:0
 $EXPAND_TV_POTION!I:72:14:0
 W:5:5:4:250
 A:5/4:10/2:20/1
@@ -6286,7 +6286,7 @@ D:Restores 8d12 sanity points and removes hallucinations.
 
 N:894:Cure Critical Insanity
 G:!:d
-$EXPAND_TV_POTION$I:71:65:0
+$EXPAND_TV_POTION$I:71:64:0
 $EXPAND_TV_POTION!I:72:16:0
 W:15:12:4:5000
 A:15/8:30/4:45/2:60/1
@@ -6296,7 +6296,7 @@ D:Restores 16d18 sanity points and removes hallucinations.
 
 N:895:Cure Insanity
 G:!:d
-$EXPAND_TV_POTION$I:71:14:0
+$EXPAND_TV_POTION$I:71:65:0
 $EXPAND_TV_POTION!I:72:17:0
 W:25:5:4:15000
 A:25/12:50/5:60/2
@@ -6353,7 +6353,7 @@ D:Stops natural breeders on your dungeon level from multiplying any further.
 
 N:901:Chauve-Souris
 G:!:d
-$EXPAND_TV_POTION$I:71:10:0
+$EXPAND_TV_POTION$I:71:4:0
 $EXPAND_TV_POTION!I:72:19:0
 W:15:5:4:3000
 A:15/10
@@ -6418,7 +6418,7 @@ A:0/12
 
 N:909:Learning
 G:!:d
-$EXPAND_TV_POTION$I:71:12:0
+$EXPAND_TV_POTION$I:71:40:0
 $EXPAND_TV_POTION!I:72:20:0
 W:127:255:4:25000
 A:127/255
@@ -6544,7 +6544,7 @@ F:HIDE_TYPE
 #new potion since mana shield was changed a big deal
 N:921:*Restore Mana*
 G:!:d
-I:71:40:0
+I:71:22:0
 W:50:0:4:4000
 A:50/4:70/3:90/2
 P:0:1d1:0:0:0

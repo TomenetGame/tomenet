@@ -241,7 +241,7 @@ static byte food_col[MAX_SHROOM] =
  * (water, apple juice, slime mold juice, something)
  */
 
-#ifdef EXTRA_FLAVORS
+#ifdef EXTRA_FLAVORS//not implemented!
 
 /* 15 */
 static cptr potion_mod[MAX_MOD_COLORS] =
@@ -286,18 +286,18 @@ static cptr potion_base[MAX_BASE_COLORS] =
 
 static char potion_adj[MAX_COLORS][24];
 
-#else /* no EXTRA_FLAVOURS */
+#else /* no EXTRA_FLAVOURS -- (extra flavours aren't implemented yet) */
 
 static cptr potion_adj[MAX_COLORS] = {
         "Clear", "Light Brown", "Icky Green", "Scarlet", /* instead of "Blood Red", */
-	"Azure", "Blue", "Blue Speckled", "Black",
-	"Brown", "Brown Speckled", "Bubbling", "Chartreuse",
-	"Cloudy", "Copper Speckled", "Crimson", "Cyan",
-	"Dark Blue", "Dark Green", "Dark Red", "Gold Speckled",
-	"Green", "Green Speckled", "Grey", "Grey Speckled",
-	"Hazy", "Indigo", "Light Blue", "Light Green",
-	"Magenta", "Metallic Blue", "Metallic Red", "Metallic Green",
-	"Metallic Purple", "Misty", "Orange", "Orange Speckled",
+	"Orange", "Cloudy", "Azure", "Blue",
+	"Blue Speckled", "Black", "Brown", "Brown Speckled",
+	"Bubbling", "Chartreuse", "Copper Speckled", "Crimson",
+	"Cyan", "Dark Blue", "Dark Green", "Dark Red",
+	"Gold Speckled", "Green", "Green Speckled", "Grey",
+	"Grey Speckled", "Hazy", "Indigo", "Light Blue",
+	"Light Green", "Magenta", "Metallic Blue", "Metallic Red",
+	"Metallic Green", "Metallic Purple", "Misty", "Orange Speckled",
 	"Pink", "Pink Speckled", "Puce", "Purple",
 	"Purple Speckled", "Red", "Red Speckled", "Silver Speckled",
 	"Smoky", "Tangerine", "Violet", "Vermilion",
@@ -328,14 +328,14 @@ static cptr potion_adj[MAX_COLORS] = {
     static byte potion_col[MAX_COLORS] = {
   #endif
 	TERM_ELEC, TERM_L_UMBER, TERM_GREEN, TERM_RED,
-	TERM_L_BLUE, TERM_BLUE, TERM_ELEC, TERM_L_DARK,
-	TERM_UMBER, TERM_SHAR, TERM_COLD, TERM_L_GREEN,
-	TERM_ACID, TERM_CONF, TERM_RED, TERM_L_BLUE,
-	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_LITE,
-	TERM_GREEN, TERM_POIS, TERM_SLATE, TERM_ACID,
-	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN,
-	TERM_L_RED, TERM_BLUE, TERM_RED, TERM_GREEN,
-	TERM_VIOLET, TERM_L_WHITE, TERM_ORANGE, TERM_SOUN,
+	TERM_ORANGE, TERM_ACID, TERM_L_BLUE, TERM_BLUE,
+	TERM_ELEC, TERM_L_DARK, TERM_UMBER, TERM_SHAR,
+	TERM_COLD, TERM_L_GREEN, TERM_CONF, TERM_RED,
+	TERM_L_BLUE, TERM_BLUE, TERM_GREEN, TERM_RED,
+	TERM_LITE, TERM_GREEN, TERM_POIS, TERM_SLATE,
+	TERM_ACID, TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE,
+	TERM_L_GREEN, TERM_L_RED, TERM_BLUE, TERM_RED,
+	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_SOUN,
 	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET,
 	TERM_VIOLET, TERM_RED, TERM_RED, TERM_COLD,
 	TERM_DARKNESS, TERM_ORANGE, TERM_VIOLET, TERM_RED,
@@ -361,14 +361,14 @@ static cptr potion_adj[MAX_COLORS] = {
     static byte potion_col[MAX_COLORS] = {
   #endif
         TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_LITE,
-	TERM_L_BLUE, TERM_BLUE, TERM_BLUE, TERM_L_DARK,
-	TERM_UMBER, TERM_UMBER, TERM_L_WHITE, TERM_L_GREEN,
-	TERM_WHITE, TERM_L_UMBER, TERM_RED, TERM_L_BLUE,
-	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_YELLOW,
-	TERM_GREEN, TERM_GREEN, TERM_SLATE, TERM_SLATE,
-	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN,
-	TERM_RED, TERM_BLUE, TERM_RED, TERM_GREEN,
-	TERM_VIOLET, TERM_L_WHITE, TERM_ORANGE, TERM_ORANGE,
+	TERM_ORANGE, TERM_WHITE, TERM_L_BLUE, TERM_BLUE,
+	TERM_BLUE, TERM_L_DARK, TERM_UMBER, TERM_UMBER,
+	TERM_L_WHITE, TERM_L_GREEN, TERM_L_UMBER, TERM_RED,
+	TERM_L_BLUE, TERM_BLUE, TERM_GREEN, TERM_RED,
+	TERM_YELLOW, TERM_GREEN, TERM_GREEN, TERM_SLATE,
+	TERM_SLATE, TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE,
+	TERM_L_GREEN, TERM_RED, TERM_BLUE, TERM_RED,
+	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_ORANGE,
 	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET,
 	TERM_VIOLET, TERM_RED, TERM_RED, TERM_L_WHITE,
 	TERM_L_DARK, TERM_ORANGE, TERM_VIOLET, TERM_RED,
@@ -680,12 +680,9 @@ static byte default_tval_to_char(int tval)
  *
  * Note that the "hacked seed" may provide an RNG with alternating parity!
  */
-void flavor_init(void)
-{
+void flavor_init(void) {
 	int		i, j;
-
 	byte	temp_col;
-
 	cptr	temp_adj;
 
 
@@ -697,16 +694,14 @@ void flavor_init(void)
 
 
 	/* Efficiency -- Rods/Wands share initial array */
-	for (i = 0; i < MAX_METALS; i++)
-	{
+	for (i = 0; i < MAX_METALS; i++) {
 		rod_adj[i] = wand_adj[i];
 		rod_col[i] = wand_col[i];
 	}
 
 
 	/* Rings have "ring colors" */
-	for (i = 0; i < MAX_ROCKS; i++)
-	{
+	for (i = 0; i < MAX_ROCKS; i++) {
 		j = rand_int(MAX_ROCKS);
 		temp_adj = ring_adj[i];
 		ring_adj[i] = ring_adj[j];
@@ -717,8 +712,7 @@ void flavor_init(void)
 	}
 
 	/* Amulets have "amulet colors" */
-	for (i = 0; i < MAX_AMULETS; i++)
-	{
+	for (i = 0; i < MAX_AMULETS; i++) {
 		j = rand_int(MAX_AMULETS);
 		temp_adj = amulet_adj[i];
 		amulet_adj[i] = amulet_adj[j];
@@ -729,8 +723,7 @@ void flavor_init(void)
 	}
 
 	/* Staffs */
-	for (i = 0; i < MAX_WOODS; i++)
-	{
+	for (i = 0; i < MAX_WOODS; i++) {
 		j = rand_int(MAX_WOODS);
 		temp_adj = staff_adj[i];
 		staff_adj[i] = staff_adj[j];
@@ -741,8 +734,7 @@ void flavor_init(void)
 	}
 
 	/* Wands */
-	for (i = 0; i < MAX_METALS; i++)
-	{
+	for (i = 0; i < MAX_METALS; i++) {
 		j = rand_int(MAX_METALS);
 		temp_adj = wand_adj[i];
 		wand_adj[i] = wand_adj[j];
@@ -753,8 +745,7 @@ void flavor_init(void)
 	}
 
 	/* Rods */
-	for (i = 0; i < MAX_METALS; i++)
-	{
+	for (i = 0; i < MAX_METALS; i++) {
 		j = rand_int(MAX_METALS);
 		temp_adj = rod_adj[i];
 		rod_adj[i] = rod_adj[j];
@@ -765,8 +756,7 @@ void flavor_init(void)
 	}
 
 	/* Foods (Mushrooms) */
-	for (i = 0; i < MAX_SHROOM; i++)
-	{
+	for (i = 0; i < MAX_SHROOM; i++) {
 		j = rand_int(MAX_SHROOM);
 		temp_adj = food_adj[i];
 		food_adj[i] = food_adj[j];
@@ -777,9 +767,8 @@ void flavor_init(void)
 	}
 
 	/* Potions (the first 4 potions are fixed) */
-	for (i = 4; i < MAX_COLORS; i++)
-	{
-		j = rand_int(MAX_COLORS - 4) + 4;
+	for (i = STATIC_COLORS; i < MAX_COLORS; i++) {
+		j = rand_int(MAX_COLORS - STATIC_COLORS) + STATIC_COLORS;
 		temp_adj = potion_adj[i];
 		potion_adj[i] = potion_adj[j];
 		potion_adj[j] = temp_adj;
@@ -789,23 +778,18 @@ void flavor_init(void)
 	}
 
 	/* Scrolls (random titles, always white) */
-	for (i = 0; i < MAX_TITLES; i++)
-	{
+	for (i = 0; i < MAX_TITLES; i++) {
 		/* Get a new title */
-		while (TRUE)
-		{
+		while (TRUE) {
 			char buf[80];
-
 			bool okay;
 
 			/* Start a new title */
 			buf[0] = '\0';
 
 			/* Collect words until done */
-			while (TRUE)
-			{
+			while (TRUE) {
 				int q, s;
-
 				char tmp[80];
 
 				/* Start a new word */
@@ -815,8 +799,7 @@ void flavor_init(void)
 				s = ((rand_int(100) < 30) ? 1 : 2);
 
 				/* Add a one or two syllable word */
-				for (q = 0; q < s; q++)
-				{
+				for (q = 0; q < s; q++) {
 					/* Add the syllable */
 					strcat(tmp, syllables[rand_int(MAX_SYLLABLES)]);
 				}
@@ -838,8 +821,7 @@ void flavor_init(void)
 			okay = TRUE;
 
 			/* Check for "duplicate" scroll titles */
-			for (j = 0; j < i; j++)
-			{
+			for (j = 0; j < i; j++) {
 				cptr hack1 = scroll_adj[j];
 				cptr hack2 = scroll_adj[i];
 
@@ -873,8 +855,7 @@ void flavor_init(void)
 	Rand_quick = FALSE;
 
 	/* Analyze every object */
-	for (i = 1; i < max_k_idx; i++)
-	{
+	for (i = 1; i < max_k_idx; i++) {
 		object_kind *k_ptr = &k_info[i];
 
 		/* Skip "empty" objects */
@@ -2116,7 +2097,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			}
 
 			/* Color the object */
-			modstr = potion_adj[indexx + (o_ptr->tval == TV_POTION2 ? 4 : 0)]; /* the first 4 potions are unique */
+			modstr = potion_adj[indexx + (o_ptr->tval == TV_POTION2 ? STATIC_COLORS : 0)]; /* the first n potions have static flavours */
 			if (aware) append_name = TRUE;
 			if (short_item_names) basenm = aware ? "& Potion~" : "& # Potion~";
 			else basenm = "& # Potion~";
