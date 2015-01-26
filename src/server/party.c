@@ -501,7 +501,10 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	MAKE(c_acc, struct account);
 	/* ew, cannot reserve memory! we abuse the return value to cause an
 	   'invalid account name' style error on purpose in this case, for paranoia */
-	if (!c_acc) return TRUE;
+	if (!c_acc) {
+		s_printf("ERROR: COULDN'T ALLOCATE MEMORY IN lookup_similar_account()!\n");
+		return TRUE;
+	}
 
 	condense_name(tmpname, name);
 
@@ -533,8 +536,13 @@ bool lookup_similar_account(cptr name, cptr accname) {
 				else ptr++;
 				ptr2++;
 			}
+			//all remaining characters that couldn't be matched are also "different"
+			while (*ptr++) diff++;
+			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
-			if (diff <= (strlen(name) - 5) / 2 + 1) {
+			if (diff <= (strlen(c_acc->name) - 5) / 2 + 1) {
+//debug
+s_printf("lookup_similar_account() <1>: name=%s, accname=%s, condensed=%s, c_acc=%s\n", name, accname ? accname : "-", tmpname, c_acc->name);
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -547,8 +555,13 @@ bool lookup_similar_account(cptr name, cptr accname) {
 				else ptr++;
 				ptr2++;
 			}
+			//all remaining characters that couldn't be matched are also "different"
+			while (*ptr++) diff++;
+			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (strlen(name) - 5) / 2 + 1) {
+//debug
+s_printf("lookup_similar_account() <2>: name=%s, accname=%s, condensed=%s, c_acc=%s\n", name, accname ? accname : "-", tmpname, c_acc->name);
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -563,8 +576,13 @@ bool lookup_similar_account(cptr name, cptr accname) {
 				ptr++;
 				ptr2++;
 			}
+			//all remaining characters that couldn't be matched are also "different"
+			while (*ptr++) diff++;
+			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (strlen(name) - 5) / 2 + 1) {
+//debug
+s_printf("lookup_similar_account() <3>: name=%s, accname=%s, condensed=%s, c_acc=%s\n", name, accname ? accname : "-", tmpname, c_acc->name);
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -583,6 +601,8 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			return FALSE;
 		}
 
+//debug
+s_printf("lookup_similar_account() <4>: name=%s, accname=%s, condensed=%s, c_acc=%s, c_acc/norm=%s\n", name, accname ? accname : "-", tmpname, c_acc->name, c_acc->name_normalised);
 		/* not identical but just too similar? forbidden! */
 		KILL(c_acc, struct account);
 		return TRUE;
