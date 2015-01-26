@@ -442,14 +442,10 @@ static void rd_item(object_type *o_ptr) {
 		case 23: o_ptr->sval = 21; break;
 		case 40: o_ptr->sval = 22; break;
 		case 54: o_ptr->sval = 62; break;
+		case 62: o_ptr->sval = 54; break;
 		case 64: o_ptr->sval = 23; break;
 		case 65: o_ptr->sval = 64; break;
 		}
-	}
-	/* bugfix for an earlier version of above conversion stuff */
-	else if (o_ptr->tval == TV_POTION && older_than(4, 5, 33)) {
-		if (o_ptr->sval == 22) o_ptr->sval = 23;
-		else if (o_ptr->sval == 23) o_ptr->sval = 22;
 	}
 
 	/* Base pval */

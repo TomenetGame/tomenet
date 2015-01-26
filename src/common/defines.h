@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	33
+#define SF_VERSION_PATCH	32
 #define SF_VERSION_EXTRA	0
 
 /* For quests savefile purpose only */
@@ -3570,6 +3570,7 @@
 #define SV_POTION_INC_CON               52
 #define SV_POTION_INC_CHR               53
 /* xxx -- used for EXPAND_TV_POTION	54 */
+#define SV_POTION_INVULNERABILITY       54
 #define SV_POTION_AUGMENTATION          55
 #define SV_POTION_ENLIGHTENMENT         56
 #define SV_POTION_STAR_ENLIGHTENMENT    57
@@ -3577,7 +3578,6 @@
 #define SV_POTION_EXPERIENCE            59
 #define SV_POTION_RESISTANCE            60
 #define SV_POTION_CURING                61
-#define SV_POTION_INVULNERABILITY       62
 /*disabled: #define SV_POTION_NEW_LIFE  63
   used for EXPAND_TV_POTION		63 */
 
