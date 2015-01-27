@@ -7620,6 +7620,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			/* nothing */
 		}
 
+		/* walk around invincible admins instead of trying to attack them */
+		else if (c_ptr->m_idx < 0 && Players[-c_ptr->m_idx]->admin_invinc) ;
+
 /* Isn't this whole 'Tainted grid' stuff OBSOLETE?
    Because: If monster_is_safe is false, it will always have set AI_STATE_EFFECT. */
 		/* Tainted grid? */
@@ -7944,7 +7947,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		if (do_move && (c_ptr->m_idx < 0)) {
 			player_type *q_ptr = get_melee_target(r_ptr, m_ptr, c_ptr, pfriend);
 
-			if (q_ptr) {
+			if (q_ptr && !q_ptr->admin_invinc) {
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
 //				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
