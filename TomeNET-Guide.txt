@@ -10037,9 +10037,9 @@ With a digging tool..
  (For quartz, you have a 3% chance to succeed at 18/50 STR with the shovel
   and at 18/10 STR with a pick. If you use an enchanted shovel (+9,+9) (+1)
   however, you already have a 3% chance to succeed at only 5 STR.)
--You cannot tunnel through granite with a shovel if your STRength is
+-You cannot tunnel through granite with a basic shovel if your STRength is
  below 18/30.
--You cannot tunnel through granite with a pick if your STRength is
+-You cannot tunnel through granite with a basic pick if your STRength is
  below 12.
 
 You can tunnel through all tunneable materials, no matter your strength, with..
