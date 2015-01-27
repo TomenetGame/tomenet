@@ -3138,6 +3138,11 @@ void recall_player(int Ind, char *message){
 	/* cancel any user recalls */
 	p_ptr->word_recall = 0;
 
+
+	/* check for /tpto admin command that allows changing between 2 wz positions that are both != 0: */
+	if (p_ptr->wpos.wz) return;
+
+
 	/* Update wilderness map! This is for RECALL_MAX_RANGE:
 	   We learn about the intermediate world map sectors we land on. */
 	if (!p_ptr->ghost)
