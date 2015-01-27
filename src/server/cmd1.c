@@ -6815,10 +6815,13 @@ static bool run_test(int Ind)
 
 		/* unlit grids abort running */
 		if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW))) {
-			if (!p_ptr->warning_run_lite) {
-				msg_print(Ind, "\374\377yHINT: You cannot run in the dark. Press '\377ow\377y' and equip a light source!");
-				p_ptr->warning_run_lite = TRUE;
-				s_printf("warning_run_lite: %s\n", p_ptr->name);
+			if (p_ptr->warning_run_lite != 10) {
+				p_ptr->warning_run_lite++;
+				if (p_ptr->warning_run_lite == 9) {
+					p_ptr->warning_run_lite = 0;
+					msg_print(Ind, "\374\377yHINT: You cannot run in the dark. Press '\377ow\377y' and equip a light source!");
+					s_printf("warning_run_lite: %s\n", p_ptr->name);
+				}
 			}
 			return TRUE;
 		}
@@ -7291,7 +7294,7 @@ void run_step(int Ind, int dir, char *consume_full_energy)
 			return;
 		}
 
-		p_ptr->warning_run = 1;
+		if (p_ptr->warning_run < 3) p_ptr->warning_run++;
 
 		/* C. Blue fun stuff =p */
 		if (prev_dir != p_ptr->find_current) p_ptr->corner_turn++;

@@ -6797,13 +6797,15 @@ void process_player_change_wpos(int Ind) {
 		msg_print(Ind, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
 		s_printf("warning_wield: %s\n", p_ptr->name);
 	}
-	else if (p_ptr->warning_run == 0) {
-		p_ptr->warning_run = 1;
+#if 1
+	else if (p_ptr->warning_run < 3) {
+		p_ptr->warning_run++;
 		msg_print(Ind, "\374\377yHINT: To run fast, use \377oSHIFT+direction\377y keys.");
 		msg_print(Ind, "\374\377y      For that, \377oNUMLOCK\377y key must be OFF and no awake monster in sight!");
 		s_printf("warning_run: %s\n", p_ptr->name);
 	}
-	else if (p_ptr->warning_lite == 0 && p_ptr->cur_lite == 0 &&
+#endif
+	if (p_ptr->warning_lite == 0 && p_ptr->cur_lite == 0 &&
 	    (p_ptr->wpos.wz < 0 || (p_ptr->wpos.wz == 0 && night_surface))) { //Training Tower currently exempt
 		if (p_ptr->wpos.wz < 0) p_ptr->warning_lite = 1;
 		msg_print(Ind, "\374\377yHINT: You don't wield any light source at the moment!");

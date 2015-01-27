@@ -2611,9 +2611,9 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_bpr = 1;
 		p_ptr->warning_bpr2 = 1;
 		p_ptr->warning_bpr3 = 1;
-		p_ptr->warning_run = 1;//p_ptr->warning_run_steps = ;
+		p_ptr->warning_run = 3;//p_ptr->warning_run_steps = ;
 		p_ptr->warning_run_monlos = 1;
-		p_ptr->warning_run_lite = 1;
+		p_ptr->warning_run_lite = 10;
 		p_ptr->warning_wield = 1;
 		p_ptr->warning_chat = 1;
 		p_ptr->warning_lite = 1;
@@ -2780,7 +2780,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_autoret = 99;//p_ptr->warning_autoret_ok = ;
 	}
 	if (p_ptr->max_plv > 5) {
-		p_ptr->warning_run = 1;
+		p_ptr->warning_run = 3;
 		p_ptr->warning_lite = 1;
 	}
 	if (p_ptr->max_plv > 7) {
@@ -2790,7 +2790,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	if (p_ptr->max_plv > 10) {
 		p_ptr->warning_ghost = 1;
 		p_ptr->warning_dual = 1;
-		p_ptr->warning_run_lite = 1;
+		p_ptr->warning_run_lite = 10;
 		p_ptr->warning_ranged_autoret = 1;
 		p_ptr->warning_mimic = 1;
 		p_ptr->warning_tunnel = 1;

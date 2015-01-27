@@ -7727,7 +7727,7 @@ static int Receive_walk(int ind)
 	if (p_ptr->command_rep) p_ptr->command_rep = -1;
 
 	if (player && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-		if (p_ptr->warning_run == 0) {
+		if (p_ptr->warning_run < 3) {
 			p_ptr->warning_run_steps++;
 			/* Give a warning after first 10 walked steps, then every 50 walked steps. */
 			if (p_ptr->warning_run_steps == 60) p_ptr->warning_run_steps = 10;
