@@ -4776,9 +4776,9 @@ void do_cmd_fire(int Ind, int dir) {
 	}
 
 #if (STARTEQ_TREATMENT > 1)
-        if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-            !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
-                o_ptr->level = 0;
+	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL)
+		o_ptr->level = 0;
 #endif
 
 	/* S(he) is no longer afk */
@@ -5306,7 +5306,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 				/* Note the collision */
 				/* Note the collision */
-				if(!(o_ptr->tval == 1 && o_ptr->sval == 9))
+				if(!(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL))
 					hit_body = TRUE;
 
 				/* Did we hit it (penalize range) */
@@ -6146,9 +6146,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	if (!bashing) {
 #if (STARTEQ_TREATMENT > 1)
-	        if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-    		    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
-            		o_ptr->level = 0;
+		if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+		    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL)
+			o_ptr->level = 0;
 #endif
 	}
 
@@ -6156,7 +6156,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	un_afk_idle(Ind);
 
 	/* Handle rugby ball */
-	if (o_ptr->tval == 1 && o_ptr->sval == 9 && !bashing){
+	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL && !bashing) {
 		msg_print(Ind, "\377yYou pass the ball");
 		msg_format_near(Ind, "\377y%s passes the ball", p_ptr->name);
 	}
@@ -6224,7 +6224,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	if (p_ptr->shero) tdis += 100 * mul / div;
 
 	/* hack for rugby - all throws capped */
-	if (o_ptr->tval == 1 && o_ptr->sval == 9) {
+	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) {
 		if (tdis < 5) tdis = 5;
 	}
 
@@ -6363,15 +6363,14 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		/* Player here, try to hit him */
 		if (zcave[y][x].m_idx < 0) {
 			/* rugby */
-			if(o_ptr->tval == 1 && o_ptr->sval == 9){
+			if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) {
 				cave_type *c_ptr = &zcave[y][x];
-				if(rand_int(11) > 6){
-					msg_format_near(0 - c_ptr->m_idx, "\377y%s catches the ball", Players[0-c_ptr->m_idx]->name);
+				if (rand_int(11) > 6) {
+					msg_format_near(0 - c_ptr->m_idx, "\377y%s catches the ball", Players[0 - c_ptr->m_idx]->name);
 					msg_print(0 - c_ptr->m_idx, "\377yYou catch the ball");
 					inven_carry(0 - c_ptr->m_idx, o_ptr);
-				}
-				else{
-					msg_format_near(0 - c_ptr->m_idx, "\377r%s misses the ball", Players[0-c_ptr->m_idx]->name);
+				} else {
+					msg_format_near(0 - c_ptr->m_idx, "\377r%s misses the ball", Players[0 - c_ptr->m_idx]->name);
 					msg_print(0 - c_ptr->m_idx, "\377rYou miss the ball");
 					o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 					drop_near(o_ptr, -1, wpos, y, x);

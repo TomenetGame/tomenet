@@ -2878,6 +2878,22 @@
 #define SV_BROKEN_SKULL		1
 #define SV_BROKEN_BONE		2
 
+/* Svals for TV_GAME */
+#define SV_GAME_BALL		1
+#define SV_WHITE_PIECE		2
+#define SV_BLACK_PIECE		3
+#define SV_WHITE_PAWN		4
+#define SV_WHITE_KING		5
+#define SV_WHITE_QUEEN		6
+#define SV_WHITE_ROOK		7
+#define SV_WHITE_KNIGHT		8
+#define SV_WHITE_BISHOP		9
+#define SV_BLACK_PAWN		10
+#define SV_BLACK_KING		11
+#define SV_BLACK_QUEEN		12
+#define SV_BLACK_ROOK		13
+#define SV_BLACK_KNIGHT		14
+#define SV_BLACK_BISHOP		15
 
 
 /* items requiring hard-coded adjustments;

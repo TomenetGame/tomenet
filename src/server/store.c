@@ -5306,9 +5306,9 @@ void home_purchase(int Ind, int item, int amt)
 #if CHEEZELOG_LEVEL > 2
 		/* Take cheezelog
 		 */
-		if (p_ptr->id != o_ptr->owner && 
-		   (o_ptr->tval != 1 && o_ptr->sval != 9) /* Heavy ball */ )
-		{
+		if (p_ptr->id != o_ptr->owner
+		   //&& !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) /* Heavy ball */
+		   ) {
 			cptr 	name = lookup_player_name(o_ptr->owner);
 			int 	lev = lookup_player_level(o_ptr->owner);
 			cptr	acc_name = lookup_accountname(o_ptr->owner);

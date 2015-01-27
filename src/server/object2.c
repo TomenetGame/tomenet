@@ -7989,8 +7989,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			o_ptr->marked = 0;
 
 			/* Keep game pieces from disappearing */
-			if ((o_ptr->tval == 1) && (o_ptr->sval >= 9))
-				o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+			if (o_ptr->tval == TV_GAME) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 
 			/* items dropped into a house (well or a vault
 			   on surface if such exists) are marked to not

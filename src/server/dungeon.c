@@ -3599,10 +3599,9 @@ static void do_recall(int Ind, bool bypass)
 /* Does player have ball? */
 int has_ball (player_type *p_ptr) {
 	int i;
-	for(i = 0; i < INVEN_WIELD; i++){
-		if(p_ptr->inventory[i].tval == 1 && p_ptr->inventory[i].sval == 9) {
+	for (i = 0; i < INVEN_WIELD; i++) {
+		if (p_ptr->inventory[i].tval == TV_GAME && p_ptr->inventory[i].sval == SV_GAME_BALL)
 			break;
-		}
 	}
 	if (i == INVEN_WIELD) i = -1;
 	return(i);

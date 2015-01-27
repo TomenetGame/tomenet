@@ -2094,7 +2094,7 @@ void carry(int Ind, int pickup, int confirm) {
 				 * TODO: ignore cheap items (like cure critical pot) */
  #if 0
 				else if (p_ptr->id != o_ptr->owner &&
-				        !(o_ptr->tval == 1 && o_ptr->sval == 9) /* Heavy ball */ )
+				        !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) /* Heavy ball */ )
  #else
 				else if (p_ptr->id != o_ptr->owner)
  #endif

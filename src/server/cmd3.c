@@ -1313,7 +1313,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	/* Handle the newbies_cannot_drop option */	
 #if (STARTEQ_TREATMENT == 1)
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9))) {
+	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
 		if (p_ptr->rogue_like_commands)
 			msg_print(Ind, "\377yYou are not experienced enough to drop items. (Destroy it with '\377oCTRL+d\377y' or sell it instead.)");
 		else
@@ -1400,11 +1400,11 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 #if (STARTEQ_TREATMENT > 1)
 #ifndef RPG_SERVER
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL)
 		o_ptr->level = 0;
 #else
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < 2 && !is_admin(p_ptr) &&
-	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL)
 		o_ptr->level = 0;
 #endif 
 #endif
