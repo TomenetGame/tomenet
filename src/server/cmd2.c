@@ -6734,7 +6734,7 @@ void house_admin(int Ind, int dir, char *args){
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;	//(FALSE);
 
-	if(dir && args){
+	if (dir && args) {
 		/* Get requested direction */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
@@ -6765,6 +6765,9 @@ void house_admin(int Ind, int dir, char *args){
 							return;
 						case 'P':
 							paint_house(Ind, x, y, atoi(&args[1]));
+							return;
+						case 'H':
+							knock_house(Ind, x, y);
 							return;
 					}
 					if (success) {

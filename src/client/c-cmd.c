@@ -3129,8 +3129,15 @@ static void cmd_house_paint(int dir) {
 	Send_admin_house(dir, buf);
 }
 
-void cmd_purchase_house(void)
-{
+static void cmd_house_knock(int dir) {
+	char buf[80];
+
+	buf[0] = 'H';
+	buf[1] = '\0';
+	Send_admin_house(dir, buf);
+}
+
+void cmd_purchase_house(void) {
 	char i = 0;
 	int dir;
 
@@ -3142,11 +3149,11 @@ void cmd_purchase_house(void)
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Buy/Sell house");
 	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Change house owner");
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Change house permissions");
+	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Paint house");/* new in 4.4.6: */
 	/* display in dark colour since only admins can do this really */
-	Term_putstr(5, 7, -1, TERM_SLATE, "(4) Delete house");
-	/* new in 4.4.6: */
-	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Enter player store");
-	Term_putstr(5, 9, -1, TERM_WHITE, "(6) Paint house");
+	Term_putstr(5, 9, -1, TERM_WHITE, "(s) Enter player store");/* new in 4.4.6: */
+	Term_putstr(5, 10, -1, TERM_WHITE, "(k) Knock on house door");
+	Term_putstr(5, 20, -1, TERM_L_DARK, "(D) Delete house (server admin only)");
 
 	while (i != ESCAPE) {
 		i = inkey();
@@ -3168,15 +3175,19 @@ void cmd_purchase_house(void)
 				i = ESCAPE;
 				break;
 			case '4':
+				cmd_house_paint(dir);
+				i = ESCAPE;
+				break;
+			case 'D':
 				cmd_house_kill(dir);
 				i = ESCAPE;
 				break;
-			case '5':
+			case 's':
 				cmd_house_store(dir);
 				i = ESCAPE;
 				break;
-			case '6':
-				cmd_house_paint(dir);
+			case 'k':
+				cmd_house_knock(dir);
 				i = ESCAPE;
 				break;
 			case ESCAPE:
@@ -4155,8 +4166,7 @@ static void cmd_master_aux_system()
 }
 
 /* Dungeon Master commands */
-static void cmd_master(void)
-{
+static void cmd_master(void) {
 	char i = 0;
 
 	party_mode = TRUE;
@@ -4170,7 +4180,7 @@ static void cmd_master(void)
 		Term_clear();
 
 		/* Describe */
-		Term_putstr(0, 2, -1, TERM_WHITE, "Dungeon Master commands");
+		Term_putstr(0, 2, -1, TERM_L_DARK, "Dungeon Master commands (server admins only)");
 
 		/* Selections */
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Level Commands");

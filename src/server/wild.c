@@ -4588,6 +4588,26 @@ void paint_house(int Ind, int x, int y, int k) {
 }
 #endif
 
+void knock_house(int Ind, int x, int y) {
+	player_type *p_ptr = Players[Ind];
+	int h_idx;
+
+	/* Check for a house door next to us */
+	h_idx = pick_house(&p_ptr->wpos, y, x);
+	if (h_idx == -1) {
+		msg_print(Ind, "There is no house next to you.");
+		return;
+	}
+
+	/* knock on the house door! */
+	msg_format_near(Ind, "\377s%s knocks on the house door..");
+	msg_print(Ind, "\377sYou knock on the house door..");
+#ifdef USE_SOUND_2010
+	//item_magestaff, block_shield_projectile!, (tunnel_rubble)
+	sound_near_site(y, x, &p_ptr->wpos, 0, "knock", "block_shield_projectile", SFX_TYPE_COMMAND, FALSE);//don't require LOS
+#endif
+}
+
 /* Modify grids of an outdoor level:
    Change features depending on season,
    change lighting depending on daytime */
