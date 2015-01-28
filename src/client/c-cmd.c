@@ -3153,7 +3153,7 @@ void cmd_purchase_house(void) {
 	/* display in dark colour since only admins can do this really */
 	Term_putstr(5, 9, -1, TERM_WHITE, "(s) Enter player store");/* new in 4.4.6: */
 	Term_putstr(5, 10, -1, TERM_WHITE, "(k) Knock on house door");
-	Term_putstr(5, 20, -1, TERM_L_DARK, "(D) Delete house (server admin only)");
+	Term_putstr(5, 20, -1, TERM_L_DARK, "(D) Delete house (server administrators only)");
 
 	while (i != ESCAPE) {
 		i = inkey();
@@ -4180,7 +4180,7 @@ static void cmd_master(void) {
 		Term_clear();
 
 		/* Describe */
-		Term_putstr(0, 2, -1, TERM_L_DARK, "Dungeon Master commands (server admins only)");
+		Term_putstr(0, 2, -1, TERM_L_DARK, "Dungeon Master commands (server administrators only)");
 
 		/* Selections */
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Level Commands");
