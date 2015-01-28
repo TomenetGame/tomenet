@@ -2781,7 +2781,7 @@ static int Handle_login(int ind)
 	greeting = !(acc_get_flags(p_ptr->accountname) & ACC_GREETED);
 	if (p_ptr->inval || greeting) {
 		s_printf("GREETING: %s\n", p_ptr->name);
-		if (i) acc_set_flags(p_ptr->accountname, ACC_GREETED, TRUE);
+
 		/* no bloody noob ever seems to read this how2run thingy.. (p_ptr->warning_welcome) */
 		msg_print(NumPlayers, "\374\377y ");
 		msg_print(NumPlayers, "\374\377y   ***  Welcome to Tomenet! You can chat with \377R:\377y key. Say hello :)  ***");
@@ -2799,7 +2799,16 @@ static int Handle_login(int ind)
 		if (greeting) { /* only the very 1st time, might become annoying */
 			s_printf("GREETING_AUDIO: %s\n", p_ptr->name);
 			sound(NumPlayers, "greeting", NULL, SFX_TYPE_MISC, FALSE);
+
+			acc_set_flags(p_ptr->accountname, ACC_GREETED, TRUE);
 		}
+	}
+	/* Notify all online admins about an invalid player having joined, so they may validate him */
+	if (p_ptr->inval) for (i = 1; i < NumPlayers + 1; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (!is_admin(Players[i])) continue;
+		msg_format(i, "\374\377D(Admin) Invalid account \"%s\", host: \"%s\"", p_ptr->accountname, p_ptr->hostname);
+		if (!Players[i]->paging) Players[i]->paging = 2;
 	}
 
 	/* warning_rest only occurs once per account */
