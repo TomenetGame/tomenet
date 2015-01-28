@@ -4600,7 +4600,7 @@ void knock_house(int Ind, int x, int y) {
 	}
 
 	/* knock on the house door! */
-	msg_format_near(Ind, "\377s%s knocks on the house door..");
+	msg_format_near(Ind, "\377s%s knocks on the house door..", p_ptr->name);
 	msg_print(Ind, "\377sYou knock on the house door..");
 #ifdef USE_SOUND_2010
 	//item_magestaff, block_shield_projectile!, (tunnel_rubble)
