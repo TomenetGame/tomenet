@@ -451,6 +451,21 @@ void do_slash_cmd(int Ind, char *message) {
 		return;
 // :)		break_cloaking(Ind, 3);
 	}
+	else if (prefix(message, "/self")) /* A local version of '/me', relating to it like '/say' to global chat */
+	{
+		if (colon++) {
+			censor_message = TRUE;
+			censor_length = strlen(colon);
+			msg_format_near(Ind, "\377%c%^s %s", COLOUR_CHAT, p_ptr->name, colon);
+			msg_format(Ind, "\377%c%s %s", COLOUR_CHAT, p_ptr->name, colon);
+			censor_message = FALSE;
+			handle_punish(Ind, censor_punish);
+		} else {
+			msg_print(Ind, "What do you want to do?");
+		}
+		return;
+// :)		break_cloaking(Ind, 3);
+	}
 
 	else
 	{
