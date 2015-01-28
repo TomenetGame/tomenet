@@ -1753,6 +1753,7 @@ bool lose_all_info(int Ind) {
 
 			/* Hack -- Remove auto-inscriptions */
 			if ((streq(q, "cursed")) ||
+			    //"uncursed"?
 			    (streq(q, "broken")) ||
 			    (streq(q, "good")) ||
 			    (streq(q, "average")) ||

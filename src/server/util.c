@@ -5942,7 +5942,7 @@ cptr compat_mode(byte mode1, byte mode2) {
    save highest found pseudo-id string in psid. - C. Blue */
 void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 	char *p, s0[80];
-	int id = 0; /* assume no pseudo-id inscription */
+	int id = -1; /* assume no pseudo-id inscription */
 
 	if (s == NULL) return;
 	strcpy(s2, s);
@@ -5951,7 +5951,17 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 		strcpy(s0, s2);
 		strcpy(s2, "");
 
-		if ((p = strstr(s0, "terrible-"))) {
+		if ((p = strstr(s0, "uncursed-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 9);
+			if (id < 0) id = 0;
+		} else if ((p = strstr(s0, "uncursed"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 8);
+			if (id < 0) id = 0;
+		} else if ((p = strstr(s0, "terrible-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 9);
@@ -6040,6 +6050,7 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 	strcpy(s2, s0);
 
 	switch (id) {
+	case 0: strcpy(psid, "uncursed"); break;
 	case 1: strcpy(psid, "terrible"); break;
 	case 2: strcpy(psid, "cursed"); break;
 	case 3: strcpy(psid, "bad"); break;

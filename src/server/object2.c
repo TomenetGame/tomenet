@@ -1137,7 +1137,7 @@ void object_known(object_type *o_ptr)
 
 		/* Hack -- Remove auto-inscriptions */
 		if ((streq(q, "bad")) ||
-		    (streq(q, "cursed")) ||
+		    //(streq(q, "cursed")) ||//shouldn't get removed, but can't happen on flavoured items anyway
 		    (streq(q, "broken")) ||
 		    (streq(q, "good")) ||
 		    (streq(q, "average")) ||
