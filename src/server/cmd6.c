@@ -1631,7 +1631,7 @@ void do_cmd_drink_fountain(int Ind) {
 
 	if (p_ptr->prace == RACE_ENT) {
 		if (sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
-		else (void)set_food(Ind, pval * 2);
+		else (void)set_food(Ind, p_ptr->food + pval * 2);
 	}
 
 	cs_ptr->sc.fountain.rest--;
