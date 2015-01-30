@@ -8160,15 +8160,18 @@ void do_slash_cmd(int Ind, char *message) {
 				char buf[256], *b;
 
 				/* delete or complete an entry (to fix duplicate entries, account+class wise) */
-				if ((tk != 1 && tk != 3) || (tk == 3 && !strchr(message2, ':'))) {
-					msg_print(Ind, "usage: /deepdivefix <entry to delete>");
-					msg_print(Ind, "usage: /deepdivefix <entry to modify> <class> <account>:<char>");
+				if (!tk || (tk > 1 && !strchr(message2, ':'))) {//almost -_-
+					msg_print(Ind, "usage: /deepdivefix <#entry to delete>");
+					msg_print(Ind, "usage: /deepdivefix <#entry to modify> <class> <account>:<char>");
+					msg_print(Ind, "usage: /deepdivefix +<#entry to insert> <class> <account>:<char>");
+					msg_print(Ind, "usage: /deepdivefix =<#entry to insert> <level>:<name>");
 					return;
 				}
 				//k++;
 
 				/* delete mode? */
 				if (tk == 1) {
+					msg_print(Ind, "Delete.");
 					/* pull up all succeeding entries by 1  */
 					for (i = k; i < IDDC_HIGHSCORE_SIZE - 1; i++) {
 						deep_dive_level[i] = deep_dive_level[i + 1];
@@ -8180,9 +8183,63 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 
+				/* insert mode? */
+				if (message3[0] == '+') {
+					k = atoi(message3 + 1);
+					msg_print(Ind, "Insert.");
+					/* push down all succeeding entries by 1  */
+					for (i = IDDC_HIGHSCORE_SIZE; i > k; i--) {
+						deep_dive_level[i] = deep_dive_level[i - 1];
+						strcpy(deep_dive_name[i], deep_dive_name[i - 1]);
+						strcpy(deep_dive_char[i], deep_dive_char[i - 1]);
+						strcpy(deep_dive_account[i], deep_dive_account[i - 1]);
+						deep_dive_class[i] = deep_dive_class[i - 1];
+					}
+					/* insert */
+					strcpy(buf, message3 + strlen(token[1]) + strlen(token[2]) + 2);
+					b = strchr(buf, ':');
+					if (!b) {
+						msg_print(Ind, "failed!");
+						return;
+					}
+					*b = 0;
+					strcpy(deep_dive_account[k], buf);
+					b++;
+					strcpy(deep_dive_char[k], b);
+					deep_dive_class[k] = atoi(token[2]);
+					return;
+				}
+				/* complete-inserted mode? */
+				if (message3[0] == '=') {
+					char *bp;
+					k = atoi(message3 + 1);
+					msg_print(Ind, "Complete inserted.");
+					deep_dive_level[k] = atoi(token[2]);
+					strcpy(buf, message3 + strlen(token[1]) + 1);
+					b = strchr(message3, ':');
+					if (!b) {
+						msg_print(Ind, "failed!");
+						return;
+					}
+
+					//convert colour code chars
+					bp = b + 1;
+					while (*++b) {
+						if (*b == '\377') *b = '{';
+					}
+
+					strcpy(deep_dive_name[k], bp);
+					return;
+				}
+
 				/* complete mode */
-				strcpy(buf, token[3]);
+				msg_print(Ind, "Complete.");
+				strcpy(buf, message3 + strlen(token[1]) + strlen(token[2]) + 2);
 				b = strchr(buf, ':');
+				if (!b) {
+					msg_print(Ind, "failed!");
+					return;
+				}
 				*b = 0;
 				strcpy(deep_dive_account[k], buf);
 				b++;
