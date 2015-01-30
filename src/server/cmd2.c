@@ -1443,15 +1443,18 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 		}
 
 		/* Finally change the owner */
-		if (dna->owner_type == OT_PLAYER) {
-			p_ptr->houses_owned--;
-			if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
-		} else if (dna->owner_type == OT_GUILD) {
-			guilds[dna->owner].h_idx = 0;
-			Send_guild_config(dna->owner);
-		}
 		newowner = lookup_player_id_messy(&args[2]);
 		if (!newowner) newowner = -1;
+		else {
+			/* Remove old owner */
+			if (dna->owner_type == OT_PLAYER) {
+				p_ptr->houses_owned--;
+				if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
+			} else if (dna->owner_type == OT_GUILD) {
+				guilds[dna->owner].h_idx = 0;
+				Send_guild_config(dna->owner);
+			}
+		}
 		break;
 #ifdef ENABLE_GUILD_HALL
 	case '2':
@@ -1508,6 +1511,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 	}
 
 	if (newowner != -1) {
+		/* 1: OT_PLAYER */
 		if (args[1] == '1') {
 			for (i = 1; i <= NumPlayers; i++) {     /* in game? maybe long winded */
 				if (Players[i]->id == newowner) {
@@ -1524,8 +1528,12 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 					return(TRUE);
 				}
 			}
+			//hard paranoia: undo!
+			p_ptr->houses_owned++;
+			if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned++;
 			return(FALSE);
 		}
+
 		/* args[1] == '2' aka change to OT_GUILD: */
 		dna->owner = newowner;
 		dna->owner_type = args[1] - '0';
