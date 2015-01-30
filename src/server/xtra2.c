@@ -10618,7 +10618,7 @@ void telekinesis_aux(int Ind, int item) {
 	}
 
 	/* Add a check for full inventory of target player - mikaelh */
-	if (!inven_carry_okay(Ind2, q_ptr)) {
+	if (!inven_carry_okay(Ind2, q_ptr, 0x0)) {
 		msg_print(Ind, "Item doesn't fit into the target player's inventory.");
 		return;
 	}

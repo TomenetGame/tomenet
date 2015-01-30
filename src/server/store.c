@@ -2642,6 +2642,7 @@ void store_stole(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
 	int st = p_ptr->store_num;
+	byte tolerance = 0x0;
 
 	store_type *st_ptr;
 	//owner_type *ot_ptr;
@@ -2663,9 +2664,10 @@ void store_stole(int Ind, int item) {
 	if (i == -1) i = gettown_dun(Ind);
 
 #ifdef PLAYER_STORES
-	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+	if (p_ptr->store_num <= -2) { /* it's a player's private store! */
 		st_ptr = &fake_store[-2 - p_ptr->store_num];
-	else
+		tolerance = 0x8;
+	} else
 #endif
 	/* Store in which town? Or in the dungeon? */
 	st_ptr = &town[i].townstore[st];
@@ -2773,7 +2775,7 @@ void store_stole(int Ind, int item) {
 	sell_obj.note = quark_add("stolen");
 
 	/* Hack -- require room in pack */
-	if (!inven_carry_okay(Ind, &sell_obj)) {
+	if (!inven_carry_okay(Ind, &sell_obj, tolerance)) {
 		msg_print(Ind, "You cannot carry that many different items.");
 		return;
 	}
@@ -2992,6 +2994,7 @@ void store_purchase(int Ind, int item, int amt) {
 
 	int		i, choice;
 	int		item_new;
+	byte tolerance = 0x0;
 
 	s64b		price, best;
 
@@ -3028,9 +3031,10 @@ void store_purchase(int Ind, int item, int amt) {
 	}
 
 #ifdef PLAYER_STORES
-	if (p_ptr->store_num <= -2) /* it's a player's private store! */
+	if (p_ptr->store_num <= -2) { /* it's a player's private store! */
 		st_ptr = &fake_store[-2 - p_ptr->store_num];
-	else
+		tolerance = 0x8;
+	} else
 #endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 //	ot_ptr = &owners[st][st_ptr->owner];
@@ -3198,7 +3202,7 @@ void store_purchase(int Ind, int item, int amt) {
 	}
 
 	/* Hack -- require room in pack */
-	if (!inven_carry_okay(Ind, &sell_obj)) {
+	if (!inven_carry_okay(Ind, &sell_obj, tolerance)) {
 		msg_print(Ind, "You cannot carry that many different items.");
 		return;
 	}
@@ -5293,7 +5297,7 @@ void home_purchase(int Ind, int item, int amt)
 	}
 
 	/* Hack -- require room in pack */
-	if (!inven_carry_okay(Ind, &sell_obj)) {
+	if (!inven_carry_okay(Ind, &sell_obj, 0x0)) {
 		msg_print(Ind, "You cannot carry that many different items.");
 		return;
 	}

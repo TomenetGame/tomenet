@@ -1453,7 +1453,7 @@ void auction_retrieve_items(int Ind, int *retrieved, int *unretrieved)
 				if (bid_ptr->bidder == p_ptr->id)
 				{
 					o_ptr = &auc_ptr->item;
-					if (inven_carry_okay(Ind, o_ptr))
+					if (inven_carry_okay(Ind, o_ptr, 0x0))
 					{
 						o_ptr->owner = p_ptr->id;
 						o_ptr->mode = p_ptr->mode;
@@ -1477,7 +1477,7 @@ void auction_retrieve_items(int Ind, int *retrieved, int *unretrieved)
 				if (auc_ptr->owner == p_ptr->id)
 				{
 					o_ptr = &auc_ptr->item;
-					if (inven_carry_okay(Ind, o_ptr))
+					if (inven_carry_okay(Ind, o_ptr, 0x0))
 					{
 						o_ptr->owner = p_ptr->id;
 						inven_carry(Ind, o_ptr);

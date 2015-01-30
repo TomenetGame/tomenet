@@ -1189,7 +1189,7 @@ extern void floor_item_describe(int item);
 extern void floor_item_increase(int item, int num);
 extern void floor_item_optimize(int item);
 extern void auto_inscribe(int Ind, object_type *o_ptr, int flags);
-extern bool inven_carry_okay(int Ind, object_type *o_ptr);
+extern bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance);
 extern s16b inven_carry(int Ind, object_type *o_ptr);
 extern bool item_tester_okay(object_type *o_ptr);
 extern void display_inven(int Ind);

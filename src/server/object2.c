@@ -2993,6 +2993,7 @@ s64b object_value(int Ind, object_type *o_ptr) {
  * +0x2	- tolerance for level 0 items
  * +0x4 - tolerance for discount and inscription
  *        (added for dropping items on top of stacks inside houses)
+ * +0x8 - ignore non-matching inscriptions. For player stores, which erase inscriptions on purchase anyway!
  * -- C. Blue
  */
 bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
@@ -3211,7 +3212,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
-			/* Require identical "bonuses" -
+			/* Require identical "boni" -
 			   except for ammunition which carries special inscription (will merge!) - C. Blue */
 			if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) ||
 						    artifact_p(o_ptr) || artifact_p(j_ptr))) ||
@@ -3283,19 +3284,22 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	/* Hack -- Require identical "broken" status */
 	if ((o_ptr->ident & ID_BROKEN) != (j_ptr->ident & ID_BROKEN)) return (FALSE);
 
-	/* Hack -- require semi-matching "inscriptions" */
-	/* Hack^2 -- books do merge.. it's to prevent some crashes */
-	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
-	    && strcmp(quark_str(o_ptr->note), "on sale")
-	    && strcmp(quark_str(j_ptr->note), "on sale")
-	    && strcmp(quark_str(o_ptr->note), "stolen")
-	    && strcmp(quark_str(j_ptr->note), "stolen")
-	    && !is_realm_book(o_ptr)
-	    && !check_guard_inscription(o_ptr->note, 'M')
-	    && !check_guard_inscription(j_ptr->note, 'M')) return (FALSE);
+	/* Inscriptions matter not for player-stores (they get erased anyway!) */
+	if (!(tolerance & 0x8)) {
+		/* Hack -- require semi-matching "inscriptions" */
+		/* Hack^2 -- books do merge.. it's to prevent some crashes */
+		if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
+		    && strcmp(quark_str(o_ptr->note), "on sale")
+		    && strcmp(quark_str(j_ptr->note), "on sale")
+		    && strcmp(quark_str(o_ptr->note), "stolen")
+		    && strcmp(quark_str(j_ptr->note), "stolen")
+		    && !is_realm_book(o_ptr)
+		    && !check_guard_inscription(o_ptr->note, 'M')
+		    && !check_guard_inscription(j_ptr->note, 'M')) return (FALSE);
 
-	/* Hack -- normally require matching "inscriptions" */
-	if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (FALSE);
+		/* Hack -- normally require matching "inscriptions" */
+		if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (FALSE);
+	}
 
 	/* Hack -- normally require matching "discounts" */
 	if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return (FALSE);
@@ -8492,7 +8496,7 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 /*
  * Check if we have space for an item in the pack without overflow
  */
-bool inven_carry_okay(int Ind, object_type *o_ptr)
+bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -8508,7 +8512,7 @@ bool inven_carry_okay(int Ind, object_type *o_ptr)
 		object_type *j_ptr = &p_ptr->inventory[i];
 
 		/* Check if the two items can be combined */
-		if (object_similar(Ind, j_ptr, o_ptr, 0x0)) return (TRUE);
+		if (object_similar(Ind, j_ptr, o_ptr, tolerance)) return (TRUE);
 	}
 
 	/* Hack -- try quiver slot (see inven_carry) */

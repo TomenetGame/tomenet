@@ -2029,7 +2029,7 @@ void carry(int Ind, int pickup, int confirm) {
 		}
 
 		/* Note that the pack is too full */
-		else if (!inven_carry_okay(Ind, o_ptr)) {
+		else if (!inven_carry_okay(Ind, o_ptr, 0x0)) {
 			msg_format(Ind, "You have no room for %s.", o_name);
 			Send_floor(Ind, o_ptr->tval);
 

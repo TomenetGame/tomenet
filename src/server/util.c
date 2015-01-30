@@ -6849,7 +6849,7 @@ void restore_estate(int Ind) {
 
 			/* give item to player if he has space left,
 			   otherwise relay rest to temporary file, swap and exit */
-			if (!inven_carry_okay(Ind, o_ptr)) {
+			if (!inven_carry_okay(Ind, o_ptr, 0x0)) {
 				msg_print(Ind, "\377yYour inventory is full, make some space to receive more items.");
 
 				/* write failed item back into new buffer file */
