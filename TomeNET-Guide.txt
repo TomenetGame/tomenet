@@ -1810,7 +1810,7 @@ Unique      A monster that is named and exists only once. Although it can
             Queens, Emperors and Empresses. That means: The game will "forget"
             that you already defeated them, allowing you to defeat them once
             more. There are some exceptions though, the following monsters
-            will never respawn: The Nazguls, Sauron, Michael, Morgoth, and all
+            will never respawn: The Nazgul, Sauron, Michael, Morgoth, and all
             super-uniques that come after Morgoth, starting with Tik'srvzllat.
 
             This respawning happens (albeit very slowly) while you are logged
@@ -2083,7 +2083,7 @@ SLAY/KILL EVIL/UNDEAD weapons) you'll see the message:
 Note: Having those slay/kill mods on gloves instead of the weapon does not
       help! They will not count.
 
-Martial Arts users can fight relatively efficiently against Nazguls, but their
+Martial Arts users can fight relatively efficiently against Nazgul, but their
 chance to receive Black Breath is higher than for weapon users.
 
 If you come in contact with a Nazgul or a very powerful undead creature there
@@ -9158,7 +9158,7 @@ removed the curse (except if the base item type is already worthless).
 
 Artifacts vs Nazgul
 -------------------
-Artifacts greatly resist Nazguls, which cause most other weapons to break more
+Artifacts greatly resist Nazgul, which cause most other weapons to break more
 or less instantly. So even if an artifact weapon you find seems not very
 appealing in particular you might want to keep it just for slaying Nazgul.
 (See (1.3a) for more information about Nazgul.)
