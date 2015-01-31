@@ -3752,7 +3752,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 	int		drain_left = MAX_VAMPIRIC_DRAIN;
 	bool		drainable = TRUE, backstab_feed = FALSE;
 	int		feed;
-	bool		mon_slept, uniq_bell = FALSE;
+	bool		helpless, uniq_bell = FALSE;
 	char		uniq = 'w';
 
 
@@ -3776,7 +3776,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 
 	m_ptr = &m_list[c_ptr->m_idx];
 	r_ptr = race_inf(m_ptr);
-	mon_slept = (m_ptr->csleep != 0);
+	helpless = (m_ptr->csleep || m_ptr->stunned > 100 || m_ptr->confused);
 
 	if ((r_ptr->flags3 & RF3_UNDEAD) ||
 //	    (r_ptr->flags3 & RF3_DEMON) ||
@@ -4027,8 +4027,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 #endif
 		}
 		/* Evaluate: 0 = no, other values = yes */
-		if (mon_slept || !magik(block)) block = 0;
-		if (mon_slept || !magik(parry)) parry = 0;
+		if (helpless || !magik(block)) block = 0;
+		if (helpless || !magik(parry)) parry = 0;
 
 #ifdef TEST_SERVER
 		p_ptr->test_attacks++;

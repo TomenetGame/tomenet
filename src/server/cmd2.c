@@ -5358,7 +5358,7 @@ void do_cmd_fire(int Ind, int dir) {
 #ifdef USE_BLOCKING
 				        /* handle blocking (deflection) */
 				        if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
-				            !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK)
+				            !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) && !m_ptr->csleep && m_ptr->stunned <= 100 && !m_ptr->confused
 				            && !rand_int(24 - r_ptr->level / 10)) { /* small chance to block arrows */
 				                if (visible) {
 				                        char hit_desc[MAX_CHARS];
@@ -6513,7 +6513,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #ifdef USE_BLOCKING
 			        /* handle blocking (deflection) */
 			        if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
-			            !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK)
+			            !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) && !m_ptr->csleep && m_ptr->stunned <= 100 && !m_ptr->confused
 			            && !rand_int(5 - r_ptr->level / 50)) { /* decent chance to block throws */
 			                if (visible) {
 			                        char hit_desc[MAX_CHARS];
