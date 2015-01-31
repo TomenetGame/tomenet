@@ -227,6 +227,14 @@ void initialize_main_pref_files(void)
 	process_pref_file(buf);
 
 
+	/* Hack: command-line client cannot handle big_map */
+	if (!strcmp(ANGBAND_SYS, "gcu")) {
+		c_cfg.big_map = FALSE;
+		(*option_info[CO_BIGMAP].o_var) = FALSE;
+		Client_setup.options[CO_BIGMAP] = FALSE;
+	}
+
+
 	/* Hack: Convert old window.prf or user.prf files that
 	   were made < 4.4.7.1. - C. Blue */
 	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
@@ -2937,6 +2945,9 @@ void client_init(char *argv1, bool skip)
 		(void)options_dump(format("%s.opt", cname));
         }
 #endif
+	/* If command-line client reads from same config file as X11 one it might
+	   read a big-map-enabled screen_hgt, so reset it: */
+	if (!strcmp(ANGBAND_SYS, "gcu")) screen_hgt = SCREEN_HGT;
 
 	/* Character Overview Resist/Boni/Abilities Page on Startup? - Kurzel */
 	if (c_cfg.overview_startup) csheet_page = 2;

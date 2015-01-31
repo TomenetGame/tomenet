@@ -7363,8 +7363,10 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	if (!strcmp(ANGBAND_SYS, "gcu")) {
 		if (option_info[i].o_var == &c_cfg.big_map)
 			c_cfg.big_map = FALSE;
+			(*option_info[i].o_var) = FALSE;
 			Client_setup.options[i] = FALSE;
 			screen_hgt = SCREEN_HGT;
+			if (playing) Send_screen_dimensions();
 	}
 #endif
 

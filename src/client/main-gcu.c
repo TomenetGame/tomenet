@@ -883,9 +883,10 @@ errr init_gcu(void)
 		setenv("TERM", "xterm-16color", -1);
 
 
-        /* BIG_MAP is currently not supported in GCU client */
-        c_cfg.big_map = FALSE;
-        Client_setup.options[CO_BIGMAP] = FALSE;
+	/* BIG_MAP is currently not supported in GCU client */
+	c_cfg.big_map = FALSE;
+	Client_setup.options[CO_BIGMAP] = FALSE;
+	(*option_info[CO_BIGMAP].o_var) = FALSE;
 	screen_hgt = SCREEN_HGT;
 
 
