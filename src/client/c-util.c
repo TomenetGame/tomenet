@@ -6591,11 +6591,14 @@ void do_cmd_options(void) {
 			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+U hotkey)");
 
 #if defined(WINDOWS) || defined(USE_X11)
+		/* Font (and window) settings aren't available in command-line mode */
+		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
-		Term_putstr(3,14, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+			Term_putstr(3,14, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
-		/* CHANGE_FONTS_X11 */
-		Term_putstr(3,15, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (can be tapped multiple times)");
+			/* CHANGE_FONTS_X11 */
+			Term_putstr(3,15, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (can be tapped multiple times)");
+		}
 #endif
 
 		Term_putstr(3,18, -1, TERM_WHITE, "(\377UA\377w) Account Options");
