@@ -2310,10 +2310,11 @@ void update_mon(int m_idx, bool dist) {
 	int fx = m_ptr->fx;
 
 	struct worldpos *wpos = &m_ptr->wpos;
-	cave_type **zcave;
+	cave_type **zcave, *c_ptr;
+	byte *w_ptr;
 
-	int Ind = m_ptr->closest_player;
-	int n, d = 0;
+	int Ind;// = m_ptr->closest_player;
+	int n, d;
 	int dy, dx;
 	dun_level *l_ptr = getfloor(wpos);
 
@@ -2321,22 +2322,22 @@ void update_mon(int m_idx, bool dist) {
 	player_type **_Players = Players;
 
 	/* Seen at all */
-	bool flag = FALSE;
-
+	bool flag;
 	/* Seen by vision */
-	bool easy = FALSE;
-
+	bool easy;
 	/* Seen by telepathy */
-	bool hard = FALSE;
+	bool hard;
 
 #ifdef OLD_MONSTER_LORE
 	/* Various extra flags */
-	bool do_no_esp = FALSE;
-	bool do_empty_mind = FALSE;
-	bool do_weird_mind = FALSE;
+	bool do_no_esp;
+	bool do_empty_mind;
+	bool do_weird_mind;
 #endif
-	bool do_invisible = FALSE;
-	bool do_cold_blood = FALSE;
+	bool do_invisible;
+	bool do_cold_blood;
+
+	d = 0;
 
 	/* Check for each player */
 	for (Ind = 1, n = NumPlayers; Ind <= n; Ind++) {
@@ -2344,6 +2345,10 @@ void update_mon(int m_idx, bool dist) {
 
 		/* Reset the flags */
 		flag = easy = hard = FALSE;
+#ifdef OLD_MONSTER_LORE
+		do_no_esp = do_empty_mind = do_weird_mind = FALSE;
+#endif
+		do_invisible = do_cold_blood = FALSE;
 
 		/* If he's not playing, skip him */
 		if (p_ptr->conn == NOT_CONNECTED)
@@ -2393,8 +2398,8 @@ void update_mon(int m_idx, bool dist) {
 
 		/* Process "nearby" monsters on the current "panel" */
 		if (panel_contains(fy, fx)) {
-			cave_type *c_ptr = &zcave[fy][fx];
-			byte *w_ptr = &p_ptr->cave_flag[fy][fx];
+			c_ptr = &zcave[fy][fx];
+			w_ptr = &p_ptr->cave_flag[fy][fx];
 
 			/* Normal line of sight, and player is not blind */
 			if ((*w_ptr & CAVE_VIEW) && (!p_ptr->blind)) {
