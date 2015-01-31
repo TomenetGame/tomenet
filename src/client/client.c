@@ -904,27 +904,27 @@ int main(int argc, char **argv)
 
 	if (!force_cui) {
 #ifdef USE_GTK
-	/* Attempt to use the "main-gtk.c" support */
-	if (!done) {
-		if (0 == init_gtk(argc, argv)) {
-			ANGBAND_SYS = "gtk";
-			done = TRUE;
+		/* Attempt to use the "main-gtk.c" support */
+		if (!done) {
+			if (0 == init_gtk(argc, argv)) {
+				ANGBAND_SYS = "gtk";
+				done = TRUE;
+			}
 		}
-	}
 #endif
 #ifdef USE_XAW
-	/* Attempt to use the "main-xaw.c" support */
-	if (!done) {
-		if (0 == init_xaw()) done = TRUE;
-		if (done) ANGBAND_SYS = "xaw";
-	}
+		/* Attempt to use the "main-xaw.c" support */
+		if (!done) {
+			if (0 == init_xaw()) done = TRUE;
+			if (done) ANGBAND_SYS = "xaw";
+		}
 #endif
 #ifdef USE_X11
-	/* Attempt to use the "main-x11.c" support */
-	if (!done) {
-		if (0 == init_x11()) done = TRUE;
-		if (done) ANGBAND_SYS = "x11";
-	}
+		/* Attempt to use the "main-x11.c" support */
+		if (!done) {
+			if (0 == init_x11()) done = TRUE;
+			if (done) ANGBAND_SYS = "x11";
+		}
 #endif
 	}
 
