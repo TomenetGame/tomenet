@@ -883,7 +883,7 @@ D:withering, that grant the wearer extraordinary agility.
 
 N:62:of Thror
 I:30:6:3
-W:30:25:80:100000
+W:30:25:80:130000
 P:6:1d1:0:0:20
 F:STR | CON | HIDE_TYPE | SPEED | RES_FEAR | CLIMB
 D:Sturdy footwear of leather and steel as enduring as the long-suffering 
@@ -2414,7 +2414,7 @@ D:that he could channel in battle.
 
 N:179:of Nevrast
 I:30:3:3
-W:20:8:40:115000
+W:20:8:40:100000
 P:3:1d1:0:0:13
 F:STEALTH | CON | SPEED | HIDE_TYPE
 D:Footgear made of bear leather and set with opals, which grant the wearer 
