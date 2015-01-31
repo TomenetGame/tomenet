@@ -86,8 +86,7 @@
  * NOTE: 
  * seemingly TV_POTION2 are not haldled right (ToME native bug?).
  */
-bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
-{
+bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	int	 radius = 2;
 	int	 dt = 0;
 	int	 dam = 0;
@@ -133,6 +132,17 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			dam = damroll(10, 5);
 			ident = TRUE;
 			angry = TRUE;
+
+			/* terraform hack: melt ice^^ (Ding's suggestion) */
+			{
+				cave_type **zcave;
+				if (!(zcave = getcave(wpos))) return TRUE; //paranoia
+				if (zcave[y][x].feat == FEAT_ICE_WALL) { //100% chance for now, beats fire magic o_O
+					if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice wall melts.");
+					cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+				}
+			}
+
 			break;
 		case SV_POTION_LOSE_MEMORIES:
 			dt = GF_OLD_CONF;

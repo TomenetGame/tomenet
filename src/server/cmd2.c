@@ -6041,21 +6041,21 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	int                     i, j, y, x, ny, nx, ty, tx;
-	int                     chance, tdam, tdis;
-	int                     mul, div;
-	int                     cur_dis, visible, real_dis;
-	int			moved_number = 1;
+	int i, j, y, x, ny, nx, ty, tx, wall_x, wall_y;
+	int chance, tdam, tdis;
+	int mul, div;
+	int cur_dis, visible, real_dis;
+	int moved_number = 1;
 
-	object_type         throw_obj;
-	object_type             *o_ptr;
+	object_type throw_obj;
+	object_type *o_ptr;
 
-	bool            hit_body = FALSE, target_ok = target_okay(Ind);
+	bool hit_body = FALSE, target_ok = target_okay(Ind);
 
 	bool hit_wall = FALSE;
 
-	int                     missile_attr;
-	int                     missile_char;
+	int missile_attr;
+	int missile_char;
 
 #ifdef OPTIMIZED_ANIMATIONS
 	/* Projectile path */
@@ -6596,6 +6596,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		}
 	}
 
+	wall_x = nx;
+	wall_y = ny;
+
 #ifdef OPTIMIZED_ANIMATIONS
 	if (path_num) {
 		/* Pick a random spot along the path */
@@ -6659,6 +6662,12 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		k_info[o_ptr->k_idx].tval == TV_BOTTLE)
 	{
 		if ((hit_body) || (hit_wall) || (randint(100) < j)) {
+			/* hack: shatter _on_ the wall grid, not _before_ it */
+			if (hit_wall) {
+				x = wall_x;
+				y = wall_y;
+			}
+
 			/* Message */
 			/* TODO: handle blindness */
 			msg_format_near_site(y, x, wpos, 0, TRUE, "The %s shatters!", o_name);
