@@ -1600,7 +1600,7 @@ errr init_sound_sdl(int argc, char **argv) {
 
 	/* Parse args */
 	for (i = 1; i < argc; i++) {
-		if (prefix(argv[i], "-c")) {
+		if (prefix(argv[i], "-a")) {
 			no_cache_audio = TRUE;
 			plog("Audio cache disabled.");
 			continue;
