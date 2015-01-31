@@ -191,7 +191,10 @@ F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 N:26:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:DONT_NOTICE_RUNNING
+F:LAMP_LITE
+# Note: Could comment out LAMP_LITE to not give away people with lamps idling
+# inside their houses ;)
 
 # XXX XXX XXX
 
@@ -457,19 +460,25 @@ F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
-# 0x3C --> permanent wall -- basic/extra (perm) (for houses/stores)
+# 0x3C --> permanent wall -- basic/extra (perm) (for stores)
 
 N:60:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:DONT_NOTICE_RUNNING
+F:LAMP_LITE
 
 # 0x3D --> permanent wall -- inner (perm) (for vaults)
 
 N:61:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | SPECIAL_LITE
+F:DONT_NOTICE_RUNNING
+F:SPECIAL_LITE
+#Note: This one is used for vaults, and if lighting is changed so it displays
+# this in TERM_L_WHITE (ie darker than its original bright white) then
+# SPECIAL_LITE might need to get commented out to avoid odd-lookage or
+# indistinguishability from lit granite wall pieces between the vault walls..!
 # | NO_SHADE <- in case ice walls need to be distinguished
 
 # 0x3E --> permanent wall -- outer (perm) (for vaults)
@@ -477,7 +486,8 @@ F:DONT_NOTICE_RUNNING | SPECIAL_LITE
 N:62:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | SPECIAL_LITE
+F:DONT_NOTICE_RUNNING
+F:SPECIAL_LITE
 # | NO_SHADE <- in case ice walls need to be distinguished
 
 # 0x3F --> permanent wall -- solid (perm) (for vaults)
@@ -485,7 +495,8 @@ F:DONT_NOTICE_RUNNING | SPECIAL_LITE
 N:63:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | SPECIAL_LITE | BOUNDARY
+F:DONT_NOTICE_RUNNING | BOUNDARY
+F:SPECIAL_LITE 
 # | NO_SHADE <- in case ice walls need to be distinguished
 
 N:64:rune of warding

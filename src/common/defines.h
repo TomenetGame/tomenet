@@ -1942,7 +1942,7 @@
 #define FEAT_LOGS		0x17
 #define FEAT_DRAWBRIDGE		0x18
 #define FEAT_HOME		0x19
-#define FEAT_WALL_HOUSE		0x1A
+#define FEAT_WALL_HOUSE		0x1A	/* permanent wall for player houses */
 
 /* Backward compatibility Hack */
 #define FEAT_HOME_HEAD	0x19

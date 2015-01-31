@@ -2837,25 +2837,20 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 					}
 				}
 
-				/* Handle "dark" grids */
-				else if (!(c_ptr->info & CAVE_GLOW)
+				/* Special flag */
+				if (p_ptr->view_shade_floor
 #ifndef SHADE_ALL_FLOOR
 				    && (!(f_ptr->flags2 & FF2_NO_SHADE) || lite_snow)
 #endif
 				    ) {
-					/* Use "dark gray" */
-					if (a != TERM_DARK) //<-hack: don't accidentally lighten up naturally-dark grids
-						a = TERM_L_DARK;
-				}
-
-				/* Handle "out-of-sight" grids */
-				else if (!(*w_ptr & CAVE_VIEW)
-#ifndef SHADE_ALL_FLOOR
-				    && (!(f_ptr->flags2 & FF2_NO_SHADE) || lite_snow)
-#endif
-				    ) {
-					/* Special flag */
-					if (p_ptr->view_shade_floor) {
+					/* Handle "dark" grids */
+					if (!(c_ptr->info & (CAVE_GLOW | CAVE_LITE))) {
+						/* Use "dark gray" */
+						if (a != TERM_DARK) //<-hack: don't accidentally lighten up naturally-dark grids
+							a = TERM_L_DARK;
+					}
+					/* Handle "out-of-sight" grids */
+					else if (!(*w_ptr & CAVE_VIEW)) {
 #ifndef SHADE_ALL_FLOOR
 						/* Use "gray" */
 						if (a != TERM_DARK && a != TERM_L_DARK) //<-hack: don't accidentally lighten up naturally-dark grids (FEAT_ASH)
@@ -2990,12 +2985,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 					if (p_ptr->view_lamp_walls) {
 #ifdef CAVE_LITE_COLOURS
 						if ((c_ptr->info & CAVE_LITE_WHITE)) {
-							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma vein/volcanic rock
-							    TERM_L_WHITE; /* for now: instead of TERM_WHITE; to distinguish from permanent walls */
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN) && a != TERM_WHITE) //don't darken max white
+								a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma vein/volcanic rock
+								    TERM_L_WHITE; /* for now: instead of TERM_WHITE; to distinguish lit granite from permanent walls */
 						} else if ((c_ptr->info & CAVE_LITE_VAMP)) {
 							//if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_SLATE; /* to make a difference to TERM_L_WHITE; for the time being (see above) */
-							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma vein
-							    TERM_L_WHITE; /* TERM_SLATE just looks too weird */
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN) && a != TERM_WHITE) //don't darken max white
+								a = (a == TERM_L_DARK) ? TERM_SLATE ://<-specialty for magma vein
+								    TERM_L_WHITE; /* TERM_SLATE just looks too weird */
 						} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) {
 							if (is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0)) a = (a == TERM_L_DARK) ? TERM_LAMP_DARK : TERM_LAMP;//<-specialty: shaded magma vein
 							else a = TERM_LAMP;//(a == TERM_L_DARK) ? TERM_L_UMBER : TERM_LAMP;//<-specialty: shaded magma vein
@@ -3012,9 +3009,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 					 symbol from granite walls, for example if the player maps
 					 both to 'solid block' character, shaded granite walls and
 					 magma veins will look the same - C. Blue */
-				else if (p_ptr->view_shade_walls && !(f_ptr->flags2 & FF2_NO_SHADE)) {
+				//else if (p_ptr->view_shade_walls && !(f_ptr->flags2 & FF2_NO_SHADE)) {
+				else if (p_ptr->view_shade_walls && (!(f_ptr->flags2 & FF2_NO_SHADE) || lite_snow)) {
 					/* Not glowing */
-					if (!(c_ptr->info & CAVE_GLOW)) {
+					if (!(c_ptr->info & (CAVE_GLOW | CAVE_LITE))) {
 						/* Allow distinguishing permanent walls from granite */
 						if (a_org != TERM_WHITE) {
 							if (a_org == TERM_L_WHITE) a = TERM_SLATE;
