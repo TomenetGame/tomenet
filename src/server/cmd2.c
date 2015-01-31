@@ -5943,7 +5943,7 @@ bool interfere(int Ind, int chance)
 			/* hostile player? */
 			if (!check_hostile(Ind, -i) ||
 				q_ptr->paralyzed ||
-				q_ptr->stun >= 100 ||
+				q_ptr->stun > 100 ||
 				q_ptr->confused ||
 				q_ptr->afraid ||
 				(r_info[q_ptr->body_monster].flags1 & RF1_NEVER_MOVE))
@@ -5999,7 +5999,7 @@ bool interfere(int Ind, int chance)
 				/* hostile player? */
 				if (!check_hostile(Ind, -i) ||
 					Players[-i]->paralyzed ||
-					Players[-i]->stunned >= 100 ||
+					Players[-i]->stun > 100 ||
 					Players[-i]->confused ||
 					r_info[Players[-i]->body_monster].flags1 & RF1_NEVER_MOVE)
 					continue;
@@ -7152,7 +7152,7 @@ return;
 		msg_print(Ind, "\377yYou cannot cloak yourself while confused.");
 		return;
 	}
-	if (p_ptr->stun >= 50) {
+	if (p_ptr->stun > 50) {
 		msg_print(Ind, "\377yYou cannot cloak yourself while heavily stunned.");
 		return;
 	}

@@ -7319,7 +7319,7 @@ int apply_dodge_chance(int Ind, int attack_level) {
 	int dodge = Players[Ind]->dodge_level;
 	int chance;
 
-	if (Players[Ind]->paralyzed || Players[Ind]->stun >= 100) return(0);
+	if (Players[Ind]->paralyzed || Players[Ind]->stun > 100) return(0);
 
 	/* Dodging doesn't work with a shield */
 	if (Players[Ind]->inventory[INVEN_ARM].k_idx && Players[Ind]->inventory[INVEN_ARM].tval == TV_SHIELD) return(1);
@@ -7387,7 +7387,7 @@ int apply_dodge_chance(int Ind, int attack_level) {
 }
 
 int apply_block_chance(player_type *p_ptr, int n) { /* n can already be modified chance */
-	if (!p_ptr->shield_deflect || n <= 0 || p_ptr->paralyzed || p_ptr->stun >= 100) return(0);
+	if (!p_ptr->shield_deflect || n <= 0 || p_ptr->paralyzed || p_ptr->stun > 100) return(0);
 	if (p_ptr->confused) n = (n * 5) / 10;
 	if (p_ptr->blind) n = (n * 3) / 10;
 	if (p_ptr->image) n = (n * 5) / 10;
@@ -7398,7 +7398,7 @@ int apply_block_chance(player_type *p_ptr, int n) { /* n can already be modified
 }
 
 int apply_parry_chance(player_type *p_ptr, int n) { /* n can already be modified chance */
-	if (!p_ptr->weapon_parry || n <= 0 || p_ptr->paralyzed || p_ptr->stun >= 100) return(0);
+	if (!p_ptr->weapon_parry || n <= 0 || p_ptr->paralyzed || p_ptr->stun > 100) return(0);
 	if (p_ptr->confused) n = (n * 6) / 10;
 	if (p_ptr->blind) n = (n * 1) / 10;
 	if (p_ptr->image) n = (n * 7) / 10;

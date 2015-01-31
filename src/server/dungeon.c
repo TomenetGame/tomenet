@@ -2978,7 +2978,7 @@ static void process_player_begin(int Ind)
 
 	/* Handle paralysis here */
 #ifndef ARCADE_SERVER
-	if (p_ptr->paralyzed || p_ptr->stun >= 100)
+	if (p_ptr->paralyzed || p_ptr->stun > 100)
 		p_ptr->energy = 0;
 #else
 	if (p_ptr->paralyzed)

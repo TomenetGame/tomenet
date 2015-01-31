@@ -2969,9 +2969,9 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					if (magik(chance) && (r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99))) {
 						m_ptr->stunned += 5;//get_skill_scale(p_ptr, SKILL_AURA_POWER, 30) + 10;
-						if (m_ptr->stunned >= 100)
+						if (m_ptr->stunned > 100)
 							msg_format(Ind, "\377o%^s appears frozen.", m_name);
-						else if (m_ptr->stunned >= 50)
+						else if (m_ptr->stunned > 50)
 							msg_format(Ind, "\377o%^s appears heavily shivering.", m_name);
 						else msg_format(Ind, "\377o%^s appears shivering.", m_name);
 					}
@@ -3070,7 +3070,7 @@ bool make_attack_melee(int Ind, int m_idx)
 	   it, but should rather stand still to conserve energy. - C. Blue */
 	if (p_ptr->warning_autoret != 99 && p_ptr->warning_autoret_ok == 0 &&
 	    !(r_ptr->flags8 & RF8_NO_AUTORET) &&
-	    !p_ptr->paralyzed && p_ptr->stun < 100 &&
+	    !p_ptr->paralyzed && p_ptr->stun <= 100 &&
 	    !p_ptr->blind && !p_ptr->confused && !p_ptr->afraid) {
 		p_ptr->warning_autoret++;
 		p_ptr->warning_autoret_ok = 1;

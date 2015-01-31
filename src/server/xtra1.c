@@ -5535,7 +5535,7 @@ void calc_boni(int Ind) {
 
 
 	/* mali for blocking/parrying */
-	if (p_ptr->paralyzed || p_ptr->stun >= 100) {
+	if (p_ptr->paralyzed || p_ptr->stun > 100) {
 		p_ptr->shield_deflect /= 4;
 		p_ptr->weapon_parry = 0;
 		/* also give a stealth bonus? (Sav's suggestion) */
