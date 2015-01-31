@@ -5778,7 +5778,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define FF2_NIGHT_DARK		0x00000008L	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
 #define FF2_NO_SHADE		0x00000010L	/* Don't shade to TERM_SLATE in view_shade_floor (or vault walls become indistinguishable from granite, without magic light) */
 #define FF2_NO_LITE_WHITEN	0x00000020L	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
-#define FF2_LAMP_LITE_OPTIONAL	0x00000040L	/* For _floor_ grids: Gets coloured by wall_lighting, if user has toggled an according option. */
+#define FF2_LAMP_LITE_OPTIONAL	0x00000040L	/* For more floor/wall grids: Get coloured by floor/wall_lighting, if user has toggled the according option. */
 #define FF2_NO_ARTICLE		0x00000080L	/* floor feat doesn't have an article ('a(n)'/'the') in front of it when being described */
 //hole
 #define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */

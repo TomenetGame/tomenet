@@ -664,6 +664,9 @@ N:93:ash
 G:.:D
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
 F:LAMP_LITE_OPTIONAL
+#F: | NO_LITE_WHITEN <-without this, ash won't look that nastily dark,
+#but if the user has enabled optional light indeed, he wants to see
+#lit floor in Mordor/Khazad-dum probably, without 'nonlit' patches..
 
 N:94:mud
 G:~:u
@@ -1024,6 +1027,8 @@ N:207:rocky ground
 G:.:s
 F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_SHADE
 F:DONT_NOTICE_RUNNING | NO_ARTICLE
+F:LAMP_LITE_OPTIONAL
+# | NO_LITE_WHITEN
 
 N:208:team A goal
 G:.:R

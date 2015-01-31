@@ -2803,7 +2803,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
 			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
-			    (!(c_ptr->info & (CAVE_LITE_WHITE | CAVE_LITE_VAMP)) && (f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra))) {
+			    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra))) {
 				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
 
 				/* Handle "blind" */
@@ -2814,7 +2814,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 
 				/* Handle "torch-lit" grids */
 				else if (((f_ptr->flags2 & FF2_LAMP_LITE) ||
-				    (!(c_ptr->info & (CAVE_LITE_WHITE | CAVE_LITE_VAMP)) && (f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra) ||
+				    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra) ||
 				    lite_snow) &&
 				    ((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW))) {
 					/* Torch lite */
@@ -2844,7 +2844,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 #endif
 				    ) {
 					/* Use "dark gray" */
-					a = TERM_L_DARK;
+					if (a != TERM_DARK) //<-hack: don't accidentally lighten up naturally-dark grids
+						a = TERM_L_DARK;
 				}
 
 				/* Handle "out-of-sight" grids */
@@ -2857,7 +2858,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 					if (p_ptr->view_shade_floor) {
 #ifndef SHADE_ALL_FLOOR
 						/* Use "gray" */
-						a = TERM_SLATE;
+						if (a != TERM_DARK && a != TERM_L_DARK) //<-hack: don't accidentally lighten up naturally-dark grids (FEAT_ASH)
+							a = TERM_SLATE;
 #else
 						if (p_ptr->wpos.wz || !night_surface) /* not already shaded in m.c.c.daytime() above? */
 							a = manipulate_cave_colour_shade(c_ptr, &p_ptr->wpos, x, y, a);
