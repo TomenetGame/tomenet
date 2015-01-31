@@ -3715,11 +3715,8 @@ void do_cmd_bash(int Ind, int dir) {
 			msg_print(Ind, "You smash into the door!");
 
 			/* Hack -- Bash power based on strength */
-			/* (Ranges from 3 to 20 to 100 to 200) */
+			/* (Ranges from 3 to 20 to 100 to 200, +10 on avg. from +1 STR) */
 			bash = adj_str_blow[p_ptr->stat_ind[A_STR]];
-			/* factor in Berserk Strength potions, but cap them to 18\*** effect */
-			if (p_ptr->shero) bash += 100;
-			if (bash > adj_str_blow[37]) bash = adj_str_blow[37];
 
 			/* Extract door power */
 			temp = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);

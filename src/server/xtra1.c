@@ -4252,64 +4252,6 @@ void calc_boni(int Ind) {
 		}
 	}
 
-	/* Calculate stats */
-	for (i = 0; i < 6; i++) {
-		int top, use, ind;
-
-		/* Extract the new "stat_use" value for the stat */
-		top = modify_stat_value(p_ptr->stat_max[i], p_ptr->stat_add[i]);
-
-		/* Notice changes */
-		if (p_ptr->stat_top[i] != top) {
-			/* Save the new value */
-			p_ptr->stat_top[i] = top;
-
-			/* Redisplay the stats later */
-			p_ptr->redraw |= (PR_STATS);
-			/* Window stuff */
-			p_ptr->window |= (PW_PLAYER);
-		}
-
-
-		/* Extract the new "stat_use" value for the stat */
-		use = modify_stat_value(p_ptr->stat_cur[i], p_ptr->stat_add[i]);
-
-		/* Notice changes */
-		if (p_ptr->stat_use[i] != use) {
-			/* Save the new value */
-			p_ptr->stat_use[i] = use;
-
-			/* Redisplay the stats later */
-			p_ptr->redraw |= (PR_STATS);
-			/* Window stuff */
-			p_ptr->window |= (PW_PLAYER);
-		}
-
-
-		/* Values: 3, 4, ..., 17 */
-		if (use <= 18) ind = (use - 3);
-		/* Ranges: 18/00-18/09, ..., 18/210-18/219 */
-		else if (use <= 18 + 219) ind = (15 + (use - 18) / 10);
-		/* Range: 18/220+ */
-		else ind = (37);
-
-		/* Notice changes */
-		if (p_ptr->stat_ind[i] != ind) {
-			/* Save the new index */
-			p_ptr->stat_ind[i] = ind;
-
-			/* Change in CON affects Hitpoints */
-			if (i == A_CON) p_ptr->update |= (PU_HP);
-
-			/* Changes that may affect Mana/Spells (dex for runemaster, chr for mindcrafter) */
-			else if (i == A_INT || i == A_WIS || i == A_DEX || i == A_CHR)
-				p_ptr->update |= (PU_MANA);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_PLAYER);
-		}
-	}
-
 
 	/* Apply temporary "stun" */
 	if (p_ptr->stun > 50) {
@@ -4329,7 +4271,7 @@ void calc_boni(int Ind) {
 		int i;
 
 		i = p_ptr->lev / 7;
-		if (i > 5) i = 5;
+		if (i > 3) i = 3;//was 5, untested hmm
 		p_ptr->stat_add[A_CON] += i;
 		p_ptr->stat_add[A_STR] += i;
 		p_ptr->stat_add[A_DEX] += (i + 1) / 2;
@@ -4375,14 +4317,19 @@ void calc_boni(int Ind) {
 		p_ptr->dis_to_h += 12;
 	}
 
-	/* Temporary "Berserk" */
+	/* Temporary "Berserk Strength" (potion) */
 	if (p_ptr->shero) {
+#if 0 /* disabled, since the bonus to A_STR below already increases the damage greatly, even by more than +10 usually.. */
 		p_ptr->to_h += 5;//24
 		p_ptr->dis_to_h += 5;//24
 		p_ptr->to_d += 10;
 		p_ptr->dis_to_d += 10;
+#endif
 		p_ptr->to_a -= 10;//10
 		p_ptr->dis_to_a -= 10;//10
+
+		/* mainly to help bashing doors open, but makes sense in general, also helps tunnelling now.. */
+		p_ptr->stat_add[A_STR] += 10;
 	}
 
 	/* Temporary "Berserk" */
@@ -4493,6 +4440,64 @@ void calc_boni(int Ind) {
 	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
 	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
 
+
+	/* Calculate stats */
+	for (i = 0; i < 6; i++) {
+		int top, use, ind;
+
+		/* Extract the new "stat_use" value for the stat */
+		top = modify_stat_value(p_ptr->stat_max[i], p_ptr->stat_add[i]);
+
+		/* Notice changes */
+		if (p_ptr->stat_top[i] != top) {
+			/* Save the new value */
+			p_ptr->stat_top[i] = top;
+
+			/* Redisplay the stats later */
+			p_ptr->redraw |= (PR_STATS);
+			/* Window stuff */
+			p_ptr->window |= (PW_PLAYER);
+		}
+
+
+		/* Extract the new "stat_use" value for the stat */
+		use = modify_stat_value(p_ptr->stat_cur[i], p_ptr->stat_add[i]);
+
+		/* Notice changes */
+		if (p_ptr->stat_use[i] != use) {
+			/* Save the new value */
+			p_ptr->stat_use[i] = use;
+
+			/* Redisplay the stats later */
+			p_ptr->redraw |= (PR_STATS);
+			/* Window stuff */
+			p_ptr->window |= (PW_PLAYER);
+		}
+
+
+		/* Values: 3, 4, ..., 17 */
+		if (use <= 18) ind = (use - 3);
+		/* Ranges: 18/00-18/09, ..., 18/210-18/219 */
+		else if (use <= 18 + 219) ind = (15 + (use - 18) / 10);
+		/* Range: 18/220+ */
+		else ind = (37);
+
+		/* Notice changes */
+		if (p_ptr->stat_ind[i] != ind) {
+			/* Save the new index */
+			p_ptr->stat_ind[i] = ind;
+
+			/* Change in CON affects Hitpoints */
+			if (i == A_CON) p_ptr->update |= (PU_HP);
+
+			/* Changes that may affect Mana/Spells (dex for runemaster, chr for mindcrafter) */
+			else if (i == A_INT || i == A_WIS || i == A_DEX || i == A_CHR)
+				p_ptr->update |= (PU_MANA);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_PLAYER);
+		}
+	}
 
 
 	/* Assume player not encumbered by armor */
