@@ -1975,10 +1975,11 @@
 #define FEAT_WALL_INNER         0x39
 #define FEAT_WALL_OUTER         0x3A
 #define FEAT_WALL_SOLID         0x3B
-#define FEAT_PERM_EXTRA         0x3C
-#define FEAT_PERM_INNER         0x3D
-#define FEAT_PERM_OUTER         0x3E
-#define FEAT_PERM_SOLID         0x3F
+#define FEAT_PERM_EXTRA         0x3C	/* shop/house walls */
+#define FEAT_PERM_INNER         0x3D	/* inner vault walls (also used for Dungeon Keeper) */
+#define FEAT_PERM_OUTER         0x3E	/* outer vault walls */
+#define FEAT_PERM_SOLID         0x3F	/* dungeon border */
+/* note: also check add_outer_wall() about FEAT_PERM_OUTER and FEAT_PERM_EXTRA */
 
 /* Explosive rune */
 #define FEAT_RUNE		0x40
