@@ -50,8 +50,8 @@ MCONFUSE = add_spell
         ["am"] = 	50,
         ["spell_power"] = 0,
         ["level"] = 	3,
-        ["mana"] = 	3,
-        ["mana_max"] = 	22,
+        ["mana"] = 	2,
+        ["mana_max"] = 	16,
         ["fail"] = 	10,
         ["direction"] = function() if get_level(Ind, MCONFUSE, 50) >= 30 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
@@ -84,8 +84,8 @@ MSLEEP = add_spell
         ["am"] = 	33,
         ["spell_power"] = 0,
 	["level"] =	5,
-	["mana"] =	5,
-	["mana_max"] =	30,
+	["mana"] =	2,
+	["mana_max"] =	16,
 	["fail"] =	10,
         ["direction"] = function() if get_level(Ind, MSLEEP, 50) >= 20 then return FALSE else return TRUE end end,
 	["spell"] =	function(args)
