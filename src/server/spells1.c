@@ -1077,6 +1077,12 @@ void teleport_player_to(int Ind, int ny, int nx) {
 			y = rand_spread(ny, dis);
 			x = rand_spread(nx, dis);
 			if (in_bounds4(l_ptr, y, x)) break;
+
+			/* Occasionally advance the distance */
+			if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
+				ctr = 0;
+				dis++;
+			}
 		}
 		if (!tries) return;
 
