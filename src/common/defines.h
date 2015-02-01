@@ -40,8 +40,8 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		5
-#define VERSION_PATCH		8
-#define VERSION_EXTRA		2
+#define VERSION_PATCH		9
+#define VERSION_EXTRA		0
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -51,8 +51,8 @@
    with a 'T' marker which is visible only to admins.*/
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	5
-#define VERSION_PATCH_LATEST	8
-#define VERSION_EXTRA_LATEST	1
+#define VERSION_PATCH_LATEST	9
+#define VERSION_EXTRA_LATEST	0
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -60,18 +60,18 @@
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	5
 #define VERSION_PATCH_OUTDATED	8
-#define VERSION_EXTRA_OUTDATED	0
+#define VERSION_EXTRA_OUTDATED	2
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	1 /* should always be 1 to invalidate previous 'test' versions */
 
 /* Server release version tag (such as "a", "b" etc):
    Minimum client version tag required to "play 100%". */
-#define SERVER_VERSION_TAG	"a"
+#define SERVER_VERSION_TAG	""
 
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG	"a"
+#define CLIENT_VERSION_TAG	""
 
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
