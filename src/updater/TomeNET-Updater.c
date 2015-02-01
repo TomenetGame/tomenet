@@ -107,23 +107,23 @@ void install_client(GtkButton *button, gpointer label) {
  #if 0 /* winbash is dysfunctional, no alternatives available ----------------------------------------- */
   #if 0 /* problem: 7z doesn't support stripping a path level */ 
 	/* Download */
-	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", "http://www.tomenet.net/downloads/TomeNET-latest-client.zip", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
+	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", "http://www.tomenet.eu/downloads/TomeNET-latest-client.zip", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
 	/* Extract */
 	_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-latest-client.zip", NULL);
   #else /* workaround: we just use the installer instead */
 	/* Download */
-	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", "http://www.tomenet.net/downloads/TomeNET-latest-install.exe", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
+	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", "http://www.tomenet.eu/downloads/TomeNET-latest-install.exe", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
 	/* Extract */
 	_spawnl(_P_WAIT, "TomeNET-latest-install.exe", "TomeNET-latest-install.exe", NULL);
   #endif
  #else /* just use wget and silly html processing for now, ew ----------------------------------------- */
 	/* Download */
   #ifndef USE_URL2FILE
-	res = _spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", "http://www.tomenet.net/downloads/TomeNET-latest-install.exe", NULL);
+	res = _spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", "http://www.tomenet.eu/downloads/TomeNET-latest-install.exe", NULL);
 	if (res != 0) show_error_broken(top_window);
 	else
   #else
-	res = _spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", "http://www.tomenet.net/downloads/TomeNET-latest-install.exe", "TomeNET-latest-install.exe", NULL);
+	res = _spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", "http://www.tomenet.eu/downloads/TomeNET-latest-install.exe", "TomeNET-latest-install.exe", NULL);
 	if (res != 0) show_error_broken(top_window);
 	else
   #endif
@@ -162,7 +162,7 @@ void install_client(GtkButton *button, gpointer label) {
 	fprintf(fp, "cd %s\n", out_val);
 	fprintf(fp, "rm %s\n", clname);
 	fprintf(fp, "rm updater/result.tmp\n");
-	fprintf(fp, "wget http://www.tomenet.net/downloads/%s\n", clname);
+	fprintf(fp, "wget http://www.tomenet.eu/downloads/%s\n", clname);
 	fprintf(fp, "RETVAL=$?\n");
 	fprintf(fp, "echo $RETVAL > updater/result.tmp\n");
 	fprintf(fp, "tar xvjf %s --strip-components 1\n", clname);
