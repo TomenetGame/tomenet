@@ -7363,14 +7363,13 @@ void Send_paste_msg(char *msg) {
 void check_immediate_options(int i, bool yes, bool playing) {
 #ifdef USE_GCU
 	/* BIG_MAP is currently not supported in GCU client */
-	if (!strcmp(ANGBAND_SYS, "gcu")) {
-		if (option_info[i].o_var == &c_cfg.big_map)
-			c_cfg.big_map = FALSE;
-			(*option_info[i].o_var) = FALSE;
-			Client_setup.options[i] = FALSE;
-			screen_hgt = SCREEN_HGT;
-			if (playing) Send_screen_dimensions();
-	}
+	if (!strcmp(ANGBAND_SYS, "gcu") && option_info[i].o_var == &c_cfg.big_map) {
+		c_cfg.big_map = FALSE;
+		(*option_info[i].o_var) = FALSE;
+		Client_setup.options[i] = FALSE;
+		screen_hgt = SCREEN_HGT;
+		if (playing) Send_screen_dimensions();
+	} else
 #endif
 
 	if (option_info[i].o_var == &c_cfg.big_map
