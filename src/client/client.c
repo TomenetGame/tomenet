@@ -420,7 +420,7 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 /* linux clients: save one line of subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	char buf[1024], *ter_name = buf_org + strlen(sec_name), font_name[1024];
-	int x, y, c, r;
+	int x = -32000, y = -32000, c = 0, r = 24;
 
 	x11win_getinfo(t, &x, &y, &c, &r, font_name);
 #if 0 /* we still want to save at least the new visibility state, if it was toggled via in-game menu */
@@ -485,6 +485,8 @@ bool write_mangrc(void) {
 	FILE *config, *config2;
 	char buf[1024];
 
+	buf[0] = 0;//valgrind warning it seems..?
+
 	strcpy(config_name2, mangrc_filename);
 	strcat(config_name2, ".$$$");
 
@@ -530,32 +532,32 @@ bool write_mangrc(void) {
 #endif
 
 #ifdef USE_X11
-/* Don't do this in terminal mode ('-c') */
-if (!strcmp(ANGBAND_SYS, "x11")) {
-			/* new: save window positions/sizes/visibility (and possibly fonts) */
-			if (!strncmp(buf, "Mainwindow", 10))
-				write_mangrc_aux_line(0, "Mainwindow", buf);
-			else if (!strncmp(buf, "Mirrorwindow", 12))
-				write_mangrc_aux_line(1, "Mirrorwindow", buf);
-			else if (!strncmp(buf, "Recallwindow", 12))
-				write_mangrc_aux_line(2, "Recallwindow", buf);
-			else if (!strncmp(buf, "Choicewindow", 12))
-				write_mangrc_aux_line(3, "Choicewindow", buf);
-			else if (!strncmp(buf, "Term-4window", 12))
-				write_mangrc_aux_line(4, "Term-4window", buf);
-			else if (!strncmp(buf, "Term-5window", 12))
-				write_mangrc_aux_line(5, "Term-5window", buf);
-			else if (!strncmp(buf, "Term-6window", 12))
-				write_mangrc_aux_line(6, "Term-6window", buf);
-			else if (!strncmp(buf, "Term-7window", 12))
-				write_mangrc_aux_line(7, "Term-7window", buf);
+			/* Don't do this in terminal mode ('-c') */
+			if (!strcmp(ANGBAND_SYS, "x11")) {
+				/* new: save window positions/sizes/visibility (and possibly fonts) */
+				if (!strncmp(buf, "Mainwindow", 10))
+					write_mangrc_aux_line(0, "Mainwindow", buf);
+				else if (!strncmp(buf, "Mirrorwindow", 12))
+					write_mangrc_aux_line(1, "Mirrorwindow", buf);
+				else if (!strncmp(buf, "Recallwindow", 12))
+					write_mangrc_aux_line(2, "Recallwindow", buf);
+				else if (!strncmp(buf, "Choicewindow", 12))
+					write_mangrc_aux_line(3, "Choicewindow", buf);
+				else if (!strncmp(buf, "Term-4window", 12))
+					write_mangrc_aux_line(4, "Term-4window", buf);
+				else if (!strncmp(buf, "Term-5window", 12))
+					write_mangrc_aux_line(5, "Term-5window", buf);
+				else if (!strncmp(buf, "Term-6window", 12))
+					write_mangrc_aux_line(6, "Term-6window", buf);
+				else if (!strncmp(buf, "Term-7window", 12))
+					write_mangrc_aux_line(7, "Term-7window", buf);
 #if 0 /* keep n/a for now, not really needed */
-			else if (!strncmp(buf, "Term-8window", 12))
-				write_mangrc_aux_line(8, "Term-8window", buf);
-			else if (!strncmp(buf, "Term-9window", 12))
-				write_mangrc_aux_line(9, "Term-9window", buf);
+				else if (!strncmp(buf, "Term-8window", 12))
+					write_mangrc_aux_line(8, "Term-8window", buf);
+				else if (!strncmp(buf, "Term-9window", 12))
+					write_mangrc_aux_line(9, "Term-9window", buf);
 #endif
-}
+			}
 #endif /* USE_X11 */
 
 

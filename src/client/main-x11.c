@@ -573,7 +573,7 @@ static errr Infowin_set_name(cptr name)
 	char buf[128];
 	char *bp = buf;
 	strcpy(buf, name);
-	st = XStringListToTextProperty(&bp, 1, &tp);
+	st = XStringListToTextProperty(&bp, 1, &tp); /* --- Valgrind actually says that this function has a memory leak! --- */
 	if (st) XSetWMName(Metadpy->dpy, Infowin->win, &tp);
 	return (0);
 }
