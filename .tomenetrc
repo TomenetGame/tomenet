@@ -17,12 +17,12 @@
 #name		Gandalf
 
 ## - Meta server providing a list of game servers
-##   leave commented out to use default (meta.tomenet.net)
-#meta		meta.tomenet.net
+##   leave commented out to use default (meta.tomenet.eu)
+#meta		meta.tomenet.eu
 
 ## - Server and port you wish to connect to;
 ##   leave commented out to get a list of servers
-#server		europe.tomenet.net
+#server		europe.tomenet.eu
 #port		18348
 
 ## - Perform automatic login with nick, pass and also character name

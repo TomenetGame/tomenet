@@ -323,7 +323,7 @@ if(find("^tbot:") and find("skill")) then
 pbot("Don't bother gaining skills or buying equipment, that crap's got nothin on your built-in manabolt machinegun. I plan to remove the skills entirely.")
 end
 if(find("^tbot:") and find("help")) then
-pbot("Welcome to the TomeNET Arcade Server. Tired of slowly leveling up and automeleeing and stuff? Here you can run around at +20 speed while manually aiming and firing a manabolt machinegun at unending hordes of swordsmen. See the thread entitled 'Total Carnage' in the tomenet general discussion forum at www.tomenet.net for more information. Also, you can ask me for help about the following topics: macros, rings, levels, skillz, multiplayer. Just send me a message contining one of those words.")
+pbot("Welcome to the TomeNET Arcade Server. Tired of slowly leveling up and automeleeing and stuff? Here you can run around at +20 speed while manually aiming and firing a manabolt machinegun at unending hordes of swordsmen. See the thread entitled 'Total Carnage' in the tomenet general discussion forum at www.tomenet.eu for more information. Also, you can ask me for help about the following topics: macros, rings, levels, skillz, multiplayer. Just send me a message contining one of those words.")
 end
 
 

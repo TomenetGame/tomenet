@@ -6,8 +6,8 @@
 {r			"Tales of Middle Earth"
 
 
-{w                      http://www.tomenet.net/
+{w                      http://www.tomenet.eu/
 {w		 http://koti.mbnet.fi/mikaelh/tomenet/
 
 
-{y	Documentation at http://www.tomenet.net/ -> 'The Guide'
+{y	Documentation at http://www.tomenet.eu/ -> 'The Guide'

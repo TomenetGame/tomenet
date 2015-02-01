@@ -2639,7 +2639,7 @@ static void init_sound() {
 	int i;
 
 	/* One-time popup dialogue, to inform and instruct user of audio capabilities */
-	if (sound_hint) plog("*******************************************\nTomeNET supports music and sound effects!\nTo enable those, you need to install a sound pack,\nsee http://www.tomenet.net/ forum and downloads.\n*******************************************\n");
+	if (sound_hint) plog("*******************************************\nTomeNET supports music and sound effects!\nTo enable those, you need to install a sound pack,\nsee http://www.tomenet.eu/ forum and downloads.\n*******************************************\n");
 
 	if (!use_sound) {
 		/* Don't initialize sound modules */
@@ -2878,9 +2878,9 @@ void client_init(char *argv1, bool skip)
 		/* The server didn't like us.... */
 		switch (status) {
 			case E_VERSION_OLD:
-				quit("Your client is outdated. Please get the latest one from http://www.tomenet.net/");
+				quit("Your client is outdated. Please get the latest one from http://www.tomenet.eu/");
 			case E_VERSION_UNKNOWN:
-				quit("Server responds 'Unknown client version'. Server might be outdated or client is invalid. Latest client is at http://www.tomenet.net/");
+				quit("Server responds 'Unknown client version'. Server might be outdated or client is invalid. Latest client is at http://www.tomenet.eu/");
 			case E_GAME_FULL:
 				quit("Sorry, the game is full.  Try again later.");
 			case E_IN_USE:

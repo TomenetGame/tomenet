@@ -221,8 +221,8 @@
  */
 
 //#define	META_ADDRESS "62.210.141.11"
-//#define	META_ADDRESS_2 "europe.tomenet.net"
-#define		META_ADDRESS "meta.tomenet.net"
+//#define	META_ADDRESS_2 "europe.tomenet.eu"
+#define		META_ADDRESS "meta.tomenet.eu"
 #define		META_ADDRESS_2 "37.187.75.24"
 
 /*
@@ -242,7 +242,7 @@
 #endif
 
 #if 0 /* moved to tomenet.cfg.. */
-#define BIND_NAME "TomeNET.net"
+#define BIND_NAME "tomenet.eu"
 #define	BIND_IP "64.53.71.115"
 #endif
 

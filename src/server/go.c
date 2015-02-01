@@ -913,7 +913,7 @@ void go_challenge_start(int Ind) {
 	sgf = fopen(path, "w");
 	if (sgf) {
 		fprintf(sgf, "(;SZ[9]RU[Chinese]KM[0]\n");
-		fprintf(sgf, "PC[TomeNET - http://www.tomenet.net/]\n");
+		fprintf(sgf, "PC[TomeNET - http://www.tomenet.eu/]\n");
 		if (CPU_has_white) fprintf(sgf, "PW[%s (AI)]PB[%s]BR[%dp]\n", avatar_name, p_ptr->name, p_ptr->go_level);
 		else fprintf(sgf, "PW[%s]PB[%s (AI)]WR[%dp]\n", p_ptr->name, avatar_name, p_ptr->go_level);
 	}

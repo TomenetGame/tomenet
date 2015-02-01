@@ -7,7 +7,7 @@
                             Welcome to TomeNET
 
  If you are new to TomeNET, read the 'TomeNET-Guide.txt' in your TomeNET
- directory. Latest version available online at www.tomenet.net -> 'The Guide'.
+ directory. Latest version available online at www.tomenet.eu -> 'The Guide'.
  It contains all information about TomeNET, as well as a 'how-to-start' part.
 
  Listen to this bit of advice. Don't get discouraged!

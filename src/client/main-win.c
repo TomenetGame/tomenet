@@ -3900,7 +3900,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 #if 0 /* we don't have the console attached anymore */
 					puts(longVersion);
 					puts("Usage  : tomenet [options] [servername]");
-					puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.net");
+					puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu");
 					puts("  -C                 Compatibility mode for very old servers");
 					puts("  -F                 Client FPS");
 					puts("  -l<nick> <passwd>  Login as");
@@ -3919,7 +3919,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					    longVersion,
 					    "Usage  : tomenet [options] [servername]",
 					    "Example: tomenet -lMorgoth MorgyPass",
-					    "                 -p18348 europe.tomenet.net",
+					    "                 -p18348 europe.tomenet.eu",
 					    "  -C                 Compatibility mode for very old servers",
 					    "  -F                 Client FPS",
 					    "  -k                 don't disable numlock on client startup",

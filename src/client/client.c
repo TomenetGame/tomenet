@@ -868,7 +868,7 @@ int main(int argc, char **argv)
 		/* Dump usage information */
 		puts(longVersion);
 		puts("Usage  : tomenet [options] [servername]");
-		puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.net");
+		puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu");
 		puts("       : tomenet -f.myrc -lOlorin_archer");
 		puts("  -c                 Always use CUI(GCU) interface");
 		puts("  -C                 Compatibility mode for very old servers");

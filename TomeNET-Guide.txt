@@ -3,11 +3,11 @@
 +=========================+-
 | Latest update: 1. February 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9 - official websites are:
-| http://www.tomenet.net/ (main site),
-| http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
+| http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
+| http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
 |
 | IF YOU GOT THIS GUIDE WITH THE PROGRAM DOWNLOAD, IE IN A CLIENT ZIP FILE,
-| THEN FIRST THING YOU SHOULD DO NOW IS GO TO www.tomenet.net AND DOWNLOAD THE
+| THEN FIRST THING YOU SHOULD DO NOW IS GO TO www.tomenet.eu AND DOWNLOAD THE
 | LATEST COPY OF THIS GUIDE TO MAKE SURE YOU AREN'T LOOKING AT OUTDATED INFO!
 |
 | If your text editor cannot display the guide properly (needs fixed-width font
@@ -20,7 +20,7 @@
 | Don't blame me if something differs or is missing; it shouldn't though.
 |
 | If you have any suggestions about the guide or the game, please use the /rfe
-| command in the game or write to the official forum on www.tomenet.net.
+| command in the game or write to the official forum on www.tomenet.eu.
 \
 
 
@@ -188,7 +188,7 @@ Contents
 If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing/updating TomeNET'.
 
--Get the latest client from the project's main official site www.tomenet.net.
+-Get the latest client from the project's main official site www.tomenet.eu.
  or from  http://koti.mbnet.fi/mikaelh/tomenet/getting-started.php (Mikael's
  site, which features a monster-search and other stuff).
  If you're on Microsoft Windows, it is recommended to get the installer package
@@ -197,7 +197,7 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 -Either double-click 'TomeNET-direct.bat' to directly connect to official main
  server (recommended), or run TomeNET.exe and choose a server manually, for
  example enter 37.187.75.24 to connect to the official main server.
- NOTE: The official main server's hostname is "europe.tomenet.net".
+ NOTE: The official main server's hostname is "europe.tomenet.eu".
  (The Bat-file will always work properly, even if there are DNS problems which
  cause the server list not to show up properly.)
 
@@ -1831,12 +1831,12 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  command multiple times if one line is not sufficient for the amount of text
  you want to write.
  Alternatively, you can use the bug report section of the official forum at
- www.tomenet.net.
+ www.tomenet.eu.
  Please DO NOT write bugs in chat in the game.
 
 -If you have a suggestion, use the /rfe command instead. It's used the same way
  as the /bug command (see above).
- Alternatively, use the forum at www.tomenet.net.
+ Alternatively, use the forum at www.tomenet.eu.
 
 -Starting at version 4.4.5, TomeNET supports audio, that is, sound effects and
  background music. To find out more, read (2.1a).
@@ -1895,7 +1895,7 @@ the first couple of lines of this guide.
 Note that ToME and TomeNET although both coming from similar roots are actually
 quite different games that are maintained by different persons/teams.
 
-If you want to download the source code, you can get it from www.tomenet.net in
+If you want to download the source code, you can get it from www.tomenet.eu in
 the download section.
 
 
@@ -1904,7 +1904,7 @@ the download section.
 Apart from downloading the game client and playing, you can also get in contact
 with other players and developers via the following media:
 
--The forum at http://www.tomenet.net/.
+-The forum at http://www.tomenet.eu/.
 -IRC: Channel #tomenet on server irc.freenode.net (port 6667)
       (For help on Internet Relay Chat visit www.irchelp.org).
       The channels #tomenet, #tomenet.iron and #tomenet.arcade relay chat from
@@ -1913,7 +1913,7 @@ with other players and developers via the following media:
       See below (1.1b) for how to set up IRC chat in detail.
       See (0.2a) for commands you can send to the TomeNET IRC bot.
 -Voice chat via mumble, get it from http://mumble.sourceforge.net/.
-      IP is 'europe.tomenet.net', port is '23348', password is 'tomenet'.
+      IP is 'europe.tomenet.eu', port is '23348', password is 'tomenet'.
       For details see "(2.4) Installing voice chat".
 
 
@@ -2171,7 +2171,7 @@ Installation from scratch:
 --------------------------
 (Covered are Windows, Linux, OSX, FreeBSD.)
 
-Go to http://www.tomenet.net/ (or one of our personal pages) to download the
+Go to http://www.tomenet.eu/ (or one of our personal pages) to download the
 latest client. Extract it to a new directory, preserving the pathnames.
 
 (Note: If you decide to download the 'test client' instead of the client of the
@@ -2195,7 +2195,7 @@ There is also a manual in your TomeNET folder, the file is called
 in Wordpad, but either in Notepad or in any web browser of your choice, because
 Wordpad tends to warp the layout badly.
 Alternatively you can find the latest version of the manual online for browsing
-and easy searching, on the TomeNET homepage (http://www.tomenet.net/).
+and easy searching, on the TomeNET homepage (http://www.tomenet.eu/).
 
 If you're tech savvy, you could decide to edit the game configuration manually,
 but that is not really required. Continue reading below if you want to do that.
@@ -2246,9 +2246,9 @@ Linux (compiling from source):
 ------------------------------
 There are additional distribution-specific information on Mikael's website at:
 http://koti.mbnet.fi/mikaelh/tomenet/installation-linux.php
-(It's linked on www.tomenet.net -> "Links".)
+(It's linked on www.tomenet.eu -> "Links".)
 
-You can get the source from www.tomenet.net, also see (1.1).
+You can get the source from www.tomenet.eu, also see (1.1).
 
 How to compile the game binary:
 Go into '/tomenet/src' where the file 'makefile' is located.
@@ -2447,7 +2447,7 @@ Starting with version 4.4.5, TomeNET features a new SDL-based audio system,
 which provides sound effects and background music.
 
 To make use of it, all you have to do is download a sound and/or music pack and
-then install it. For downloading, go to www.tomenet.net and then click on
+then install it. For downloading, go to www.tomenet.eu and then click on
 'Downloads'.
 Read on for instructions how to install those once you downloaded them. There
 are two ways, automatically (client does it for you) and manually (you unzip
@@ -2524,7 +2524,7 @@ Note: Some people have reported that the program 'WinRAR' seems to cause
       '7zip' (a sourceforge project at the time of writing) downloadable at:
       http://www.7-zip.org/
 
-You can get the official sound pack on http://www.tomenet.net/ in the download
+You can get the official sound pack on http://www.tomenet.eu/ in the download
 section, and also look for player-made sound or music packs in the forum!
 
 On Microsoft Windows, the easiest way to do this after you downloaded a sound
@@ -2964,7 +2964,7 @@ Instructions to join the TomeNET Mumble server for voice chatting:
 -Go to menu 'Server' -> 'Connect' -> 'Add New..'
  and enter this server information to add the official TomeNET Mumble server:
  Label:     Choose any name you like, eg "TomeNET Voice Chat".
- Adress:    europe.tomenet.net
+ Adress:    europe.tomenet.eu
  Port:      23348
  Username:  Choose any name you like, it's your nickname on the Mumble server.
  Click 'Ok', select the newly added server in the list and click 'Connect'.
@@ -4302,7 +4302,7 @@ queued keypresses that have to be processed.)
 An example macro set for fighters or archers:
 ---------------------------------------------
 This macro set is already in your /lib/user folder! If it's not there,
-download the latest client from www.tomenet.net or our personal pages.
+download the latest client from www.tomenet.eu or our personal pages.
 You can load this macro file by hitting % to invoke the macro menu,
 then enter 'l' to load a macro file, and specifying its filename,
 which is depending on your operating system:
@@ -4369,7 +4369,7 @@ The above macro set slightly changed to fit
 additional needs of a low level istar or other casters:
 -------------------------------------------------------
 This macro set is already in your /lib/user folder! If it's not there,
-download the latest client from www.tomenet.net or our personal pages.
+download the latest client from www.tomenet.eu or our personal pages.
 You can load this macro file by hitting % to invoke the macro menu,
 then enter 'l' to load a macro file, and specifying its filename,
 which is depending on your operating system:
@@ -16549,7 +16549,7 @@ Note: After logging in you may press '?' key for a help screen.
 
  If your client is older than 4.5.3 you probably don't have these macros.
  In that case you can download them at the bottom of the downloads page on
- www.tomenet.net and extract them to folder TomeNET/lib/user.
+ www.tomenet.eu and extract them to folder TomeNET/lib/user.
  But of course you should actually just update your whole client instead.
 *******************************************************************************
 
@@ -16764,7 +16764,7 @@ SOLUTION:   This is a typical problem on Windows XP. There are 3
              example C:\TomeNET\.. .
             -Make sure the path name does not contain any spaces!
             -to edit your "TomeNET.ini" file and specify a host directly by
-             specifying "HOST=europe.tomenet.net".
+             specifying "HOST=europe.tomenet.eu".
              Or you can even give the IP address "HOST=37.187.75.24".
 
 PROBLEM 02: I get to a server list, but it doesn't show any servers. It just
@@ -16778,7 +16778,7 @@ SOLUTION:   There are 2 possible solutions.
              longer period of time though, being very annoying.
              That the server isn't listed doesn't mean that it's down though.
              You should try to connect manually (press 'Q') to either:
-             europe.tomenet.net
+             europe.tomenet.eu
              or (if that doesn't work either) directly to its IP adress:
              37.187.75.24
 
@@ -16923,11 +16923,11 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
             "Name already owned"
                     Account name already exists.
             "Your client is outdated. Please get the latest one from
-            http://www.tomenet.net/"
+            http://www.tomenet.eu/"
                     Download the latest client, see (0.1).
             "Server responds 'Unknown client version'. Server might
             be outdated or client is invalid. Latest client is at
-            http://www.tomenet.net/"
+            http://www.tomenet.eu/"
                     The server might be running an older
                     version than your client is.
             "Sorry, the game is full.  Try again later."
@@ -16993,7 +16993,7 @@ SOLUTION:   If you are behind a firewall make sure that the TCP ports
             blocked. (Well, the metaserver isn't needed to play - specify the
             game server via command-line or when asked for it after starting
             up the game then.)
-            The meta server's hostname is "meta.tomenet.net" and its IP is
+            The meta server's hostname is "meta.tomenet.eu" and its IP is
             actually the same as the official game servers (37.187.75.24);
             In case there is a DNS problem somewhere in the internet you could
             just edit TomeNET.ini and replace the hostname by its actual IP.
@@ -17005,7 +17005,7 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             right now. This can happen from time to time. You don't need the
             meta-server to play TomeNET though.
             Just type in the hostname of the server you'd like to connect to,
-            for official main server:   europe.tomenet.net
+            for official main server:   europe.tomenet.eu
             If the hostname doesn't work you can also try entering its IP
             address 37.187.75.24.
             Make sure your TomeNET.ini file contains the correct server port,
@@ -17021,7 +17021,7 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             right-clicking, dragging, releasing it. Edit this shortcut's
             properties and add the server IP to the command-line.)
             For official main server it would look like this:
-            TomeNET.exe europe.tomenet.net
+            TomeNET.exe europe.tomenet.eu
             If the hostname doesn't work for whatever reason you may try the
             IP adress:
             TomeNET.exe 37.187.75.24
@@ -17043,7 +17043,7 @@ PROBLEM 12: Every time I connect to the server it will automatically download
 SOLUTION:   Possibly write-protection on existing files or the folder.
             Workaround: Make sure you really have the latest LUA files in
             TomeNET's /lib/scpt folder (you can download them from
-            http://www.tomenet.net/ or our personal pages). Then set all LUA
+            http://www.tomenet.eu/ or our personal pages). Then set all LUA
             files in that directory to write-protected. This will prevent
             TomeNET from overwriting them with 0 Byte files.
 

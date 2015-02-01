@@ -1,10 +1,10 @@
 [Online]
 ;Metaserver address
-meta=meta.tomenet.net
+meta=meta.tomenet.eu
 
 ;Pick a host, unlike the UNIX version of TomeNET, this version gets the
 ;host name from the INI file instead of from the command line.
-host=europe.tomenet.net
+host=europe.tomenet.eu
 
 ;Game host's port
 port=18348
