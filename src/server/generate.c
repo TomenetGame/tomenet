@@ -8872,7 +8872,7 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth) {
 
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
-s_printf("fm %d\n", smooth);
+
 	/* Convert smoothness to initial step */
 	if (smooth == 0) step = 0;
 	else if (smooth == 1) step = 1;
