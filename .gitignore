@@ -45,3 +45,7 @@ src/server/w_play.c
 src/server/w_spells.c
 src/server/w_util.c
 src/common/w_z_pack.c
+
+# TomeNET updater binaries
+src/updater/TomeNET-Updater.32b
+src/updater/TomeNET-Updater.64b
