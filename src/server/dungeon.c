@@ -6759,6 +6759,11 @@ void process_player_change_wpos(int Ind) {
 		}
 	}
 
+	/* Did we enter/leave a no-run level? Temporarily disable/reenable warning_run */
+	if ((l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) || (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RUN))) {
+		if (p_ptr->warning_run < 3) p_ptr->warning_run += 10;
+	} else if (p_ptr->warning_run >= 10) p_ptr->warning_run -= 10;
+
 	/* warning messages, mostly for newbies */
 	if (p_ptr->ghost) ; /* don't warn ghosts */
 	else if (p_ptr->warning_bpr2 != 1 && p_ptr->num_blow == 1 && 
