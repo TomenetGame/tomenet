@@ -431,29 +431,29 @@ void compact_objects(int size, bool purge) {
 		/* map the list and compress it */
 		for (i = 1; i < o_max; i++) {
 			if (o_list[i].k_idx) {
-				/* Copy structure */
-				o_list[z] = o_list[i];
-
-				/* Quests: keep questor_m_idx information consistent */
-				if (z != i && o_list[z].questor) {
-					q_ptr = &q_info[o_list[z].quest - 1];
-					/* paranoia check, after server restarted after heavy code changes or sth */
-					if (q_ptr->defined && q_ptr->questors > o_list[z].questor_idx) {
-						/* fix its index */
-#if 0
-						s_printf("QUEST_COMPACT_OBJECTS: quest %d - questor %d o_idx %d->%d\n", o_list[z].quest - 1, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
-#endif
-						q_ptr->questor[o_list[z].questor_idx].mo_idx = z;
-					} else {
-						s_printf("QUEST_COMPACT_OBJECTS: deprecated questor, quest %d - questor %d o_idx %d->%d\n", o_list[z].quest - 1, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
-						o_list[z].questor = FALSE;
-						o_list[z].quest = 0; //do this too, or questitem_d() will falsely recognise it as a quest item
-						/* delete it too? */
-					}
-				}
-
-				/* this needs to go through all objects - mikaelh */
 				if (z != i) {
+					/* Copy structure */
+					o_list[z] = o_list[i];
+
+					/* Quests: keep questor_m_idx information consistent */
+					if (o_list[z].questor) {
+						q_ptr = &q_info[o_list[z].quest - 1];
+						/* paranoia check, after server restarted after heavy code changes or sth */
+						if (q_ptr->defined && q_ptr->questors > o_list[z].questor_idx) {
+							/* fix its index */
+#if 0
+							s_printf("QUEST_COMPACT_OBJECTS: quest %d - questor %d o_idx %d->%d\n", o_list[z].quest - 1, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
+#endif
+							q_ptr->questor[o_list[z].questor_idx].mo_idx = z;
+						} else {
+							s_printf("QUEST_COMPACT_OBJECTS: deprecated questor, quest %d - questor %d o_idx %d->%d\n", o_list[z].quest - 1, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
+							o_list[z].questor = FALSE;
+							o_list[z].quest = 0; //do this too, or questitem_d() will falsely recognise it as a quest item
+							/* delete it too? */
+						}
+					}
+
+					/* this needs to go through all objects - mikaelh */
 					for (Ind = 1; Ind <= NumPlayers; Ind++) {
 						if (Players[Ind]->conn == NOT_CONNECTED) continue;
 						Players[Ind]->obj_vis[z] = Players[Ind]->obj_vis[i];
