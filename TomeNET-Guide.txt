@@ -6606,7 +6606,8 @@ Dungeon Keeper (everyone can win, 1+ participants)
     After about 5 minutes, the dungeon floor however will crackle, and be
     flooded more and more with lava. Time is running out. Now the players who
     haven't escaped yet should hurry, before the maze is completely submerged
-    in lava.
+    in lava. Doors and the exit beacons will stay clear until the very final
+    push of lava occurs which then completely submerges everything.
     However, it seems the former keeper of this abandoned maze left behind a
     horrible guardian, the Horned Reaper. It can sense your presence and if it
     manages to catch you, there is no hope of survival.
