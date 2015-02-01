@@ -541,8 +541,6 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (strlen(c_acc->name) - 5) / 2 + 1) {
-//debug
-s_printf("lookup_similar_account() <1>: name=%s, accname=%s, condensed=%s, c_acc=%s\n", name, accname ? accname : "-", tmpname, c_acc->name);
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -560,8 +558,6 @@ s_printf("lookup_similar_account() <1>: name=%s, accname=%s, condensed=%s, c_acc
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (strlen(name) - 5) / 2 + 1) {
-//debug
-s_printf("lookup_similar_account() <2>: name=%s, accname=%s, condensed=%s, c_acc=%s\n", name, accname ? accname : "-", tmpname, c_acc->name);
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -581,8 +577,6 @@ s_printf("lookup_similar_account() <2>: name=%s, accname=%s, condensed=%s, c_acc
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (strlen(name) - 5) / 2 + 1) {
-//debug
-s_printf("lookup_similar_account() <3>: name=%s, accname=%s, condensed=%s, c_acc=%s\n", name, accname ? accname : "-", tmpname, c_acc->name);
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -601,8 +595,6 @@ s_printf("lookup_similar_account() <3>: name=%s, accname=%s, condensed=%s, c_acc
 			return FALSE;
 		}
 
-//debug
-s_printf("lookup_similar_account() <4>: name=%s, accname=%s, condensed=%s, c_acc=%s, c_acc/norm=%s\n", name, accname ? accname : "-", tmpname, c_acc->name, c_acc->name_normalised);
 		/* not identical but just too similar? forbidden! */
 		KILL(c_acc, struct account);
 		return TRUE;
