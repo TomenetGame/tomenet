@@ -7967,16 +7967,16 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 		/* Tunnel through all other walls */
 		else if ((c_ptr->feat == d_info[dun_type].fill_type[0]) ||
-#ifdef IRONDEEPDIVE_MIXED_TYPES
-			 (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[1]) ||
-		         (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[2]) ||
-		         (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[3]) ||
-#else
 		         (c_ptr->feat == d_info[dun_type].fill_type[1]) ||
 		         (c_ptr->feat == d_info[dun_type].fill_type[2]) ||
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+			 (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[3]) ||
+		         (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[4])
+#else
 		         (c_ptr->feat == d_info[dun_type].fill_type[3]) ||
+		         (c_ptr->feat == d_info[dun_type].fill_type[4])
 #endif
-		         (c_ptr->feat == d_info[dun_type].fill_type[4])) {
+		         ) {
 			/* Accept this location */
 			row1 = tmp_row;
 			col1 = tmp_col;
@@ -7998,16 +7998,15 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 				/* Make sure it's a wall we want to tunnel */
 				if ((c_ptr->feat == d_info[dun_type].fill_type[0]) ||
-#ifdef IRONDEEPDIVE_MIXED_TYPES
-				    (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[1]) ||
-				    (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[2]) ||
-				    (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[3]) ||
-#else
 				    (c_ptr->feat == d_info[dun_type].fill_type[1]) ||
 				    (c_ptr->feat == d_info[dun_type].fill_type[2]) ||
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+				    (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[3]) ||
+				    (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[4]) ||
+#else
 				    (c_ptr->feat == d_info[dun_type].fill_type[3]) ||
-#endif
 				    (c_ptr->feat == d_info[dun_type].fill_type[4]) ||
+#endif
 				    c_ptr->feat == FEAT_WALL_EXTRA) {
 					/* Save the tunnel location */
 					if (dun->tunn_n < TUNN_MAX) {
@@ -8873,7 +8872,7 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth) {
 
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
-
+s_printf("fm %d\n", smooth);
 	/* Convert smoothness to initial step */
 	if (smooth == 0) step = 0;
 	else if (smooth == 1) step = 1;
@@ -9564,7 +9563,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 	}
  #ifdef IRONDEEPDIVE_MIXED_TYPES
-	if (in_irondeepdive(wpos)) fill_level(wpos, empty_level, iddc[ABS(wpos->wz)].step ? 1 + randint(3) : d_info[iddc[ABS(wpos->wz)].type].fill_method); //Random smooth!
+	//if (in_irondeepdive(wpos)) fill_level(wpos, empty_level, iddc[ABS(wpos->wz)].step ? rand_int(4) : d_info[iddc[ABS(wpos->wz)].type].fill_method); //Random smooth! (was 1+randint(3))
+	if (in_irondeepdive(wpos))
+		fill_level(wpos, empty_level, iddc[ABS(wpos->wz)].step <= 1 ?
+		    d_info[iddc[ABS(wpos->wz)].type].fill_method :
+		    d_info[iddc[ABS(wpos->wz)].next].fill_method);
 	else
  #endif
 	fill_level(wpos, empty_level, d_info[d_ptr->type].fill_method);
