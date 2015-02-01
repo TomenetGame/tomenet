@@ -192,6 +192,8 @@ N:26:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
+#don't shade the player houses maybe?
+#F:NO_SHADE
 F:LAMP_LITE
 # Note: Could comment out LAMP_LITE to not give away people with lamps idling
 # inside their houses ;)
