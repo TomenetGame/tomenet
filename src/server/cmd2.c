@@ -4664,7 +4664,7 @@ void do_cmd_fire(int Ind, int dir) {
 	if (boomerang) {
 		if (interfere(Ind, 25)) return; /* boomerang interference chance */
 	} else {
-		if (interfere(Ind, 50)) {
+		if (interfere(Ind, p_ptr->ranged_precision ? 80 : 50)) {
 			if (p_ptr->ranged_barrage &&
 			    o_ptr->number >= 6 &&
 			    p_ptr->cst >= 9)
@@ -5108,13 +5108,14 @@ void do_cmd_fire(int Ind, int dir) {
 						/* Did we hit it (penalize range) */
 
 #ifndef PVP_AC_REDUCTION
-						if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)
+						if ((test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)
+						    || (p_ptr->ranged_precision && visible))
 						    && (!q_ptr->shadow_running || !rand_int(3))) {
 #else
 //						if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
-						if (test_hit_fire(chance - cur_dis,
+						if ((test_hit_fire(chance - cur_dis,
 						    (q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a,
-						    visible)
+						    visible) || (p_ptr->ranged_precision && visible))
 						    && (!q_ptr->shadow_running || !rand_int(3))) {
 #endif
 							char p_name[80];
@@ -5315,7 +5316,7 @@ void do_cmd_fire(int Ind, int dir) {
 					hit_body = TRUE;
 
 				/* Did we hit it (penalize range) */
-				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible)) {
+				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible) || (p_ptr->ranged_precision && visible)) {
 					bool fear = FALSE;
 					char m_name[MNAME_LEN];
 
