@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. February 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. February 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -17423,5 +17423,12 @@ SOLUTION:   This is suspected to be a problem with 'Awesome' window manager.
             However, if you use Gnome, starting Awesome through
               gnome-session --session=awesome
             has been reported to solve the problem.
+
+PROBLEM 50: I get an antivirus warning when I try to run the installer version
+            of TomeNET (the self-installing '.exe' file).
+            Installation also fails or fails partially.
+SOLUTION:   Avast and Trendmicro antivirus are known for causing trouble with
+            the Nullsoft NSIS installer system that TomeNET utilises.
+            Disable the antivirus program before you install TomeNET.
 
 ==============================================================================
