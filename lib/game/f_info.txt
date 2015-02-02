@@ -472,6 +472,7 @@ F:DONT_NOTICE_RUNNING
 F:LAMP_LITE
 F:NO_SHADE
 #Note: For higher town houses, this must have NO_SHADE exactly when #28 has NO_SHADE too.
+#      For Gondolin, make sure feat 75 has NO_SHADE too if this does.
 
 # 0x3D --> permanent wall -- inner (perm) (for vaults)
 
@@ -552,26 +553,32 @@ F:FLOOR | PERMANENT | REMEMBER | NOTICE | CAN_RUN
 F:BLOCK_CONTACT
 
 # 75 --> 78 Quests index
+#Note: If FEAT_PERM_EXTRA has NO_SHADE, so should this,
+#      or Gondolin has a silly grey spot at the quest grid.
 
 N:75:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:NO_SHADE
 
 N:76:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:NO_SHADE
 
 N:77:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:NO_SHADE
 
 N:78:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:NO_SHADE
 
 #added to visually "blank" unused space on floors that are smaller than possible
 N:79:permanent clear wall
