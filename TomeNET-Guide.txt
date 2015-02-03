@@ -926,9 +926,31 @@ They all start with a slash '/' hence they're called slash commands:
             The result is random and can be seen by other players who stand
             nearby.
 
-/deal       Deals a card (completely random).
-            The result is random and can be seen by other players who stand
-            nearby.
+/shuffle [32|52 <jokers>]
+            Prepares a new deck of cards.
+            If you specify no arguments it will shuffle a deck of 52 cards
+            without any jokers as default setting.
+            Valid arguments are either 32 or 52 to pick a deck size. When you
+            specifiy a deck size you may optionally specify an amount of jokers
+            to be added to the deck, which may range from 0 (default) to 12.
+/deal [<name>]
+            Deals a random card from the player's current deck. (Use /shuffle
+            to actually prepare a deck first.)
+            The card dealt can be seen by other players who stand nearby.
+            If you specify a player name the message will tell the others to
+            whom you dealt that card.
+            If it's the final card of the deck, everyone around will be
+            notified of that fact.
+/draw <name>
+            Draws a random card from another player's deck. Basicall same as
+            the /deal command, except for who actually picks the card (the
+            dealer himself or one of the other participants).
+            If it's the final card of the deck, everyone around will be
+            notified of that fact.
+/dealer <name>
+            Hand over your current deck of cards to someone else. If that
+            player already shuffled a deck of his own, that one will be erased
+            aka overwritten by the one he receives from you.
 
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
             The result is random and can be seen by other players who stand
