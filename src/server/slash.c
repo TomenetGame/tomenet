@@ -559,6 +559,8 @@ void do_slash_cmd(int Ind, char *message) {
 			u32b f1, f2, f3, f4, f5, f6, esp;
 			bool nontag = FALSE, baseonly = FALSE;
 
+			//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			if (p_ptr->energy < 0) return;
 			disturb(Ind, 1, 0);
 
 			/* only tagged ones? */
