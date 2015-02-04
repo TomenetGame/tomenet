@@ -7353,6 +7353,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			}
 		}
 
+		/* a reward should have some use - prevent +1 speed boots! */
+		if ((o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) && o_ptr->pval == 1) continue;
+
 		/* specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
 		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
 			bool rlite = (p_ptr->s_info[SKILL_R_LITE].value > 0);
