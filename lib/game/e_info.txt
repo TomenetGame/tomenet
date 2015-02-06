@@ -2221,7 +2221,7 @@ T:23:4:11
 T:23:15:15
 T:23:20:20
 T:23:31:32
-C:15:5:0:10
+C:20:15:0:10
 R:100
 #current idea regarding ignoring damage: hardened steel + moonwood
 F:CRIT | HIDE_TYPE | IGNORE_FIRE
