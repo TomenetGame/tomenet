@@ -2040,7 +2040,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	artifact_type *a_ptr;
 	s32b total = 0, am, minus, slay = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
-	int res_amass = 0;
+	int res_amass = 0, res_base;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -2114,12 +2114,14 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		total += 8500;
 		res_amass++;
 	}
+
 /* f6 Not yet implemented in object_flags/eliminate_common_ego_flags etc. Really needed??
 //	if (f5 & TR5_SENS_FIRE) total -= 100;
 	if (f6 & TR6_SENS_COLD) total -= 100;
 	if (f6 & TR6_SENS_ACID) total -= 100;
 	if (f6 & TR6_SENS_ELEC) total -= 100;
 	if (f6 & TR6_SENS_POIS) total -= 100; */
+
 	if (f2 & TR2_IM_ACID) {
 		total += 30000;
 		res_amass += 2;
@@ -2140,10 +2142,15 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		res_amass += 2;
 		f2 |= TR2_RES_COLD;
 	} else if (f2 & TR2_RES_COLD) total += 1250;
-	/* count complete base res as 1up too */
-	if ((f2 & (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
-	    == (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
-		res_amass++;
+	/* count (semi)complete base res as 1up too */
+	res_base =
+	    (f2 & (TR2_RES_ACID)) ? 1 : 0 +
+	    (f2 & (TR2_RES_ELEC)) ? 1 : 0 +
+	    (f2 & (TR2_RES_FIRE)) ? 1 : 0 +
+	    (f2 & (TR2_RES_COLD)) ? 1 : 0;
+	if (res_base == 3) res_amass++;
+	else if (res_base == 4) res_amass += 2;
+
 	if (f2 & TR2_RES_POIS) {
 		total += 5000;
 		res_amass++;
@@ -2184,6 +2191,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		total += 15000;
 		res_amass += 2;
 	}
+
 	if (f3 & TR3_SH_FIRE) total += 2000;
 	if (f5 & TR5_SH_COLD) total += 2000;
 	if (f3 & TR3_SH_ELEC) total += 2000;
