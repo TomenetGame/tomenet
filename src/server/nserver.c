@@ -5440,6 +5440,13 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		ville = TRUE;
 		desc = "Arena";
 	}
+#if 0
+	/* Hack for Arena Monster Challenge */
+	else if (wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) {
+		ville = TRUE;
+		desc = "Arena";
+	}
+#endif
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
 	/* Hack for Ironman Deep Dive Challenge static dungeons */
 	else if (is_fixed_irondeepdive_town(wpos, dlev)) {
@@ -5452,6 +5459,24 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		}
 	}
 #endif
+	else if (sector00separation) {
+		/* Hack for Dungeon Keeper  */
+		if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z
+		    && (sector00flags2 & LF2_INDOORS)) {
+			ville = TRUE;
+			desc = "Old Dungeon";
+		}
+		/* Hack for Highlander */
+		else if (wpos->wx == WPOS_HIGHLANDER_X && wpos->wy == WPOS_HIGHLANDER_Y && wpos->wz == WPOS_HIGHLANDER_Z) {
+			ville = TRUE;
+			desc = "Highlands";
+		}
+		/* Hack for Highlander (dungeon) */
+		else if (wpos->wx == WPOS_HIGHLANDER_DUN_X && wpos->wy == WPOS_HIGHLANDER_DUN_Y && wpos->wz * WPOS_HIGHLANDER_DUN_Z > 0) {
+			ville = TRUE;
+			desc = "Underground";
+		}
+	}
 
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
 		/* pending recall? */
