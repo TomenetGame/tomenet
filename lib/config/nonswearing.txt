@@ -105,5 +105,5 @@ grape
 sarape
 serape
 therapist
-craping
-draping
+crapin
+drapin
