@@ -283,3 +283,8 @@
    The time until a dungeon goes back down to 0 ('most unexplored') is that time * 10,
    so 800 would result in 8000 minutes aka ~6 days. */
 #define VISIT_TIME_CAP 800
+
+/* Enable backtracing if we're using glibc */
+#ifdef __GLIBC__
+ #define BACKTRACE_NOTHINGS
+#endif
