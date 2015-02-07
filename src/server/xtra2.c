@@ -6663,7 +6663,7 @@ void player_death(int Ind) {
 				}
 				recall_player(Ind, "\377oYou die.. at least it felt like you did..!");
 			}
-			else recall_player(Ind, "\377oYou die.. but your life was secured here!");
+			else recall_player(Ind, "\377oYou almost died.. but your life was secured here!");
 
 			p_ptr->safe_sane = TRUE;
 			/* Apply small penalty for death */
