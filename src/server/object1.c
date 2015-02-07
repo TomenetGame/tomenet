@@ -4265,6 +4265,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	bool aware = object_aware_p(Ind, o_ptr) || full;
 	bool aware_cursed = id || (o_ptr->ident & ID_SENSE);
 	object_type forge;
+	bool am_unknown = FALSE;
 #endif
 	player_type *p_ptr = Players[Ind];
 	int j, am;
@@ -4325,6 +4326,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			f5 = k_info[o_ptr->k_idx].flags5;
 			f6 = k_info[o_ptr->k_idx].flags6;
 			esp = k_info[o_ptr->k_idx].esp;
+
+			/* hack: granted pval-abilities */
+			if (o_ptr->tval == TV_MSTAFF && o_ptr->pval) f1 |= TR1_MANA;
+			if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) am_unknown = TRUE;
 		}
 
 		/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
@@ -4667,7 +4672,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #endif
 
 	if (am > 0) fprintf(fff, "It generates an antimagic field that has %d%% chance of supressing magic.\n", am);
-	if (am < 0) fprintf(fff, "It generates a suppressed antimagic field.\n");
+	else if (am < 0) fprintf(fff, "It generates a suppressed antimagic field.\n");
+#ifdef NEW_ID_SCREEN
+	else if (am_unknown) fprintf(fff, "It generates an antimagic field.\n");
+#endif
 
 	/* And then describe it fully */
 

@@ -6030,6 +6030,8 @@ void calc_boni(int Ind) {
 						f5 = k_info[o_ptr->k_idx].flags5;
 						f6 = k_info[o_ptr->k_idx].flags6;
 						esp = k_info[o_ptr->k_idx].esp;
+						/* hack: granted pval-abilities */
+						if (o_ptr->tval == TV_MSTAFF && o_ptr->pval) f1 |= TR1_MANA;
 					} else can_have_hidden_powers = TRUE; //unknown jewelry type
 					/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
 					if (o_ptr->sigil && !object_fully_known_p(Ind, o_ptr)) can_have_hidden_powers = TRUE;
