@@ -6260,7 +6260,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		if (!p_ptr->warning_voidjumpgate && c_ptr->feat == FEAT_BETWEEN) {
 			msg_print(Ind, "\374\377yHINT: You found a void jump gate. You may press '\377o>\377y' to teleport!");
 			s_printf("warning_voidjumpgate: %s\n", p_ptr->name);
-			p_ptr->warning_voidjumpgate = 1;
+			//p_ptr->warning_voidjumpgate = 1;
 		}
 
 		if (!p_ptr->warning_fountain && c_ptr->feat == FEAT_FOUNTAIN) {

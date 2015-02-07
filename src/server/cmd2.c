@@ -618,8 +618,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 /*
  * Go down one level
  */
-void do_cmd_go_down(int Ind)
-{
+void do_cmd_go_down(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
@@ -713,6 +712,7 @@ void do_cmd_go_down(int Ind)
 			return;
 		}
 
+		p_ptr->warning_voidjumpgate = 1;
 		if (between_effect(Ind, c_ptr)) return;
 		/* not jumped? strange.. */
 	}
