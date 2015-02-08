@@ -1537,6 +1537,9 @@ int guild_add(int adder, cptr name) {
 		return FALSE;
 	}
 
+	/* Ignoring a player will prevent getting added to a party by him */
+	if (check_ignore(Ind, adder)) return FALSE;
+
 	/* Log - security */
 	if (!far_success) s_printf("GUILD_ADD: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
 
@@ -1780,6 +1783,9 @@ int party_add(int adder, cptr name) {
 		msg_print(adder, "\377yOnly newly created characters without experience can join an iron team.");
 		return FALSE;
 	}
+
+	/* Ignoring a player will prevent getting added to a party by him */
+	if (check_ignore(Ind, adder)) return FALSE;
 
 	/* Log - security */
 	s_printf("PARTY_ADD: %s has been added to %s by %s.\n", p_ptr->name, parties[party_id].name, q_ptr->name);
