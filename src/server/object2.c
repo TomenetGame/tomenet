@@ -5733,7 +5733,9 @@ void determine_level_req(int level, object_type *o_ptr) {
 		}
 	}
 
-	if (o_ptr->tval == TV_LITE) {
+	/* prevent exorbitantly high-level lamp randarts:
+	   (base item targets were: dwarven ~20+ , fean ~32+) */
+	if (o_ptr->tval == TV_LITE && o_ptr->name1 != ART_RANDART) {
 		switch (o_ptr->sval) {
 		case SV_LITE_DWARVEN: base += 35; break;
 		case SV_LITE_FEANORIAN: base += 55; break;
@@ -5873,9 +5875,16 @@ void determine_level_req(int level, object_type *o_ptr) {
 	if ((o_ptr->tval == TV_DRAG_ARMOR) && (o_ptr->sval == SV_DRAGON_POWER) && (o_ptr->level < 45)) o_ptr->level = 44 + randint(5);
 
 	if (o_ptr->tval == TV_LITE) {
-		switch (o_ptr->sval) {
-		case SV_LITE_DWARVEN: if (o_ptr->level < 20) o_ptr->level = 20; break;
-		case SV_LITE_FEANORIAN: if (o_ptr->level < 32) o_ptr->level = 32; break;
+		if (o_ptr->name1 == ART_RANDART) {
+			switch (o_ptr->sval) {
+			case SV_LITE_DWARVEN: if (o_ptr->level < 30) o_ptr->level = 30; break;//ego powered lower limit is ~28, going slightly above that..
+			case SV_LITE_FEANORIAN: if (o_ptr->level < 38) o_ptr->level = 38; break;
+			}
+		} else {
+			switch (o_ptr->sval) {
+			case SV_LITE_DWARVEN: if (o_ptr->level < 20) o_ptr->level = 20; break;
+			case SV_LITE_FEANORIAN: if (o_ptr->level < 32) o_ptr->level = 32; break;
+			}
 		}
 	}
 
