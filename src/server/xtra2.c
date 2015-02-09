@@ -6775,7 +6775,7 @@ void player_death(int Ind) {
 	}
 
 #ifdef ENABLE_INSTANT_RES
-	if (p_ptr->insta_res && !erase) {
+	if (p_ptr->insta_res && !erase && p_ptr->alive) {
 		char instant_res_possible = TRUE;
 		int dlvl = getlevel(&p_ptr->wpos);
 		int instant_res_cost = dlvl * dlvl * 10 + 10;
