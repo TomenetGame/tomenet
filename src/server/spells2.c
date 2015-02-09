@@ -4938,24 +4938,24 @@ bool probing(int Ind) {
 		/* Probe visible monsters */
 		if (p_ptr->mon_vis[i]) {
 			char m_name[MNAME_LEN];
-                        char buf[80];
-                        int j;
+			char buf[80];
+			int j;
 
 			/* Start the message */
 			if (!probe) msg_print(Ind, "Probing...");
 
 			/* Get "the monster" or "something" */
 			monster_desc(Ind, m_name, i, 0x04);
-                        sprintf(buf, "blows");
+			sprintf(buf, "blows");
 
-                        for (j = 0; j < 4; j++)
-                                if (m_ptr->blow[j].d_dice) strcat(buf, format(" %dd%d", m_ptr->blow[j].d_dice, m_ptr->blow[j].d_side));
+			for (j = 0; j < 4; j++)
+				if (m_ptr->blow[j].d_dice) strcat(buf, format(" %dd%d", m_ptr->blow[j].d_dice, m_ptr->blow[j].d_side));
 
 			/* Describe the monster */
 			if (r_ptr->flags7 & RF7_NO_DEATH)
-	                        msg_format(Ind, "%^s (%d) has unknown hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->ac, m_ptr->mspeed);
+				msg_format(Ind, "%^s (%d) has unknown hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->ac, m_ptr->mspeed - 110);
 			else
-	                	msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->mspeed);
+				msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
 			/* include m_idx for admins */
 			if (is_admin(p_ptr)) msg_format(Ind, "%^s (Lv%d,%d) %s.", m_name, m_ptr->level, i, buf);
 			else msg_format(Ind, "%^s (Lv%d) %s.", m_name, m_ptr->level, buf);
