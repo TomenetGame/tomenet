@@ -7966,7 +7966,8 @@ Time            Time is pure temporary distortion. There are only rumours
                 Time attacks can have very nasty side effects:
                 -Drain experience (Hold Life won't help).
                 -One of your stats can be lowered (resistance will reduce the
-                 amount).
+                 amount; for runespell backlash damage in particular resistance
+                 will even prevent all drain effects completely).
                 -Drain all your stats (resistance will prevent this).
                 Resistance will cut damage to 6/7..6/12.
                 Breath damage is monster HP/3. Time breath caps at 150.
