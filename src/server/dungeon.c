@@ -3066,7 +3066,7 @@ void summon_player(int victim, struct worldpos *wpos, char *message){
 #endif
 
 /* actually recall a player with no questions asked */
-void recall_player(int Ind, char *message){
+void recall_player(int Ind, char *message) {
 	struct player_type *p_ptr;
 	cave_type **zcave;
 	struct worldpos old_wpos;
@@ -3255,7 +3255,9 @@ void recall_player(int Ind, char *message){
 
 				/* Restrict character to world surface */
 				p_ptr->iron_winner_ded = TRUE;
-		        }
+			}
+
+			p_ptr->IDDC_flags = 0x0; //clear IDDC specialties
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
 		} else {
 		        /* enforce dedicated Ironman Deep Dive Challenge character slot usage */
@@ -3288,6 +3290,8 @@ void recall_player(int Ind, char *message){
 			/* In case he can no longer use his current form */
 			do_mimic_change(Ind, 0, TRUE);
  #endif
+
+			p_ptr->IDDC_flags = 0x0; //clear IDDC specialties
 
 			/* Be nice: Actually set all his true artifacts to non-iddc timeouting
 			   (for IDDC_ARTIFACT_FAST_TIMEOUT) */
@@ -6192,10 +6196,17 @@ void process_player_change_wpos(int Ind) {
 	char o_name_short[ONAME_LEN];
 	bool smooth_ambient = FALSE, travel_ambient = FALSE;
 
-	/* for obtaining statistical IDDC information: */
-	if (!is_admin(p_ptr)) {
-		if (in_irondeepdive(&p_ptr->wpos_old)) s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
-		log_floor_coverage(getfloor(&p_ptr->wpos_old), &p_ptr->wpos_old);
+	/* IDDC specialties */
+	if (in_irondeepdive(&p_ptr->wpos_old)) {
+		/* for obtaining statistical IDDC information: */
+		if (!is_admin(p_ptr)) {
+			s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
+			log_floor_coverage(getfloor(&p_ptr->wpos_old), &p_ptr->wpos_old);
+		}
+
+		/* IDDC_EASY_SPEED_RINGS - allow easy speed-ring finding for the first 2 rings,
+		   from floor 60+ and the other one from floor 80+? */
+		if (wpos->wz == 60 || wpos->wz == 80) p_ptr->IDDC_flags++;//hack: abuse 2 flag bits as a counter
 	}
 
 	/* Decide whether we stayed long enough on the previous

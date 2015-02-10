@@ -6024,6 +6024,33 @@ if (cfg.unikill_format) {
 		}
 	}
 
+#ifdef IDDC_EASY_SPEED_RINGS
+	/* IDDC hacks: Easy speed ring obtaining */
+	if ((p_ptr->IDDC_flags & 0x3) &&
+	    //basically wyrms+ and some especially feared uniques
+	    (m_ptr->level >= 63 || (m_ptr->level >= 59 && (r_ptr->flags1 & RF1_UNIQUE))) &&
+	    (r_ptr->flags1 & (RF1_DROP_GOOD | RF1_DROP_GREAT)) &&
+	    //not TOO easy
+	    !rand_int(5)) {
+		p_ptr->IDDC_flags--;
+
+		/* Get local object */
+		qq_ptr = &forge;
+		object_wipe(qq_ptr);
+
+		invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_SPEED));
+		qq_ptr->number = 1;
+		qq_ptr->note = local_quark;
+		qq_ptr->note_utag = strlen(quark_str(local_quark));
+		apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
+
+		qq_ptr->bpval = 7 + rand_int(4); //make it decent
+		qq_ptr->ident &= ~ID_CURSED; //paranoia
+
+		drop_near(qq_ptr, -1, wpos, y, x);
+	}
+#endif
+
 	/* for when a quest giver turned non-invincible */
 	if (m_ptr->questor) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {

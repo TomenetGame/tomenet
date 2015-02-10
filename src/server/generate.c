@@ -11686,7 +11686,7 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
 	if (l_ptr && (l_ptr->flags2 & LF2_COLLAPSING)) nether_realm_collapsing = FALSE;
 
 	/* for obtaining statistical IDDC information: */
-	//log_floor_coverage(l_ptr, wpos);
+	//if (in_irondeepdive(wpos)) log_floor_coverage(l_ptr, wpos);
 
 #if DEBUG_LEVEL > 1
 	s_printf("deallocating %s\n", wpos_format(0, wpos));

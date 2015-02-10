@@ -2944,6 +2944,7 @@ struct player_type {
 	u32b gold_picked_up;		/* for EVENT_TOWNIE_GOLD_LIMIT */
 	bool IDDC_found_rndtown;	/* prevent multiple random towns within one 'interval' */
 	bool IDDC_logscum;		/* prevent log-scumming instead of proceeding downwards */
+	byte IDDC_flags;		/* added for IDDC special hack: Make it easier to find up to two speed rings */
 
 	bool insta_res;			/* Instant resurrection */
 	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever */
