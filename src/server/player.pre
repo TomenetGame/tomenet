@@ -824,8 +824,9 @@ struct player_type
 
 	int vampiric_melee;
 	int vampiric_ranged;
-	int IDDC_found_rndtown;
-	int IDDC_logscum;
+	bool IDDC_found_rndtown;
+	bool IDDC_logscum;
+	byte IDDC_flags;
 	bool insta_res;
 	bool hilite_player;
 	bool consistent_players;
