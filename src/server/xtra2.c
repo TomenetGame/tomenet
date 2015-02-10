@@ -6025,13 +6025,18 @@ if (cfg.unikill_format) {
 	}
 
 #ifdef IDDC_EASY_SPEED_RINGS
+ #if IDDC_EASY_SPEED_RINGS > 0
 	/* IDDC hacks: Easy speed ring obtaining */
 	if ((p_ptr->IDDC_flags & 0x3) &&
 	    //basically wyrms+ and some especially feared uniques
 	    (m_ptr->level >= 63 || (m_ptr->level >= 59 && (r_ptr->flags1 & RF1_UNIQUE))) &&
 	    (r_ptr->flags1 & (RF1_DROP_GOOD | RF1_DROP_GREAT)) &&
 	    //not TOO easy
-	    !rand_int(5)) {
+  #if IDDC_EASY_SPEED_RINGS > 1
+	    !rand_int(10)) {
+  #else
+	    !rand_int(15)) {
+  #endif
 		p_ptr->IDDC_flags--;
 
 		/* Get local object */
@@ -6049,6 +6054,7 @@ if (cfg.unikill_format) {
 
 		drop_near(qq_ptr, -1, wpos, y, x);
 	}
+ #endif
 #endif
 
 	/* for when a quest giver turned non-invincible */

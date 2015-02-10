@@ -6204,9 +6204,17 @@ void process_player_change_wpos(int Ind) {
 			log_floor_coverage(getfloor(&p_ptr->wpos_old), &p_ptr->wpos_old);
 		}
 
-		/* IDDC_EASY_SPEED_RINGS - allow easy speed-ring finding for the first 2 rings,
-		   from floor 60+ and the other one from floor 80+? */
-		if (wpos->wz == 60 || wpos->wz == 80) p_ptr->IDDC_flags++;//hack: abuse 2 flag bits as a counter
+#ifdef IDDC_EASY_SPEED_RINGS
+ #if IDDC_EASY_SPEED_RINGS > 0
+		/* IDDC_EASY_SPEED_RINGS - allow easy speed-ring finding for the first 1-2 rings,
+		   from floor 60+ and optionally another one from floor 80+? */
+		if (wpos->wz == 60
+  #if IDDC_EASY_SPEED_RINGS > 1
+		    || wpos->wz == 80
+  #endif
+		    ) p_ptr->IDDC_flags++;//hack: abuse 2 flag bits as a counter
+ #endif
+#endif
 	}
 
 	/* Decide whether we stayed long enough on the previous

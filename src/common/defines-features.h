@@ -39,8 +39,8 @@
    (and for once_winners if fallenkings_etiquette is set)? */
 #define WINNER_ARTIFACT_FAST_TIMEOUT
 
-/* Can the first two speed rings be found especially easily in the IDDC? Or too much pampering? */
-#define IDDC_EASY_SPEED_RINGS
+/* Can the first [two] speed rings be found especially easily in the IDDC? Or too much pampering? (0/[1]/2) */
+#define IDDC_EASY_SPEED_RINGS 1
 
 #define DUNGEON_VISIT_BONUS	/* Experimental: Dungeons rarely visited give exp bonus - C. Blue */
 //#define DUNGEON_VISIT_BONUS_DEPTHRANGE /* not yet implemented: enhance DUNGEON_VISIT_BONUS algorithm further (but seems inefficient atm) */
