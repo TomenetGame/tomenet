@@ -996,7 +996,7 @@ s_printf("Duration: %d\n", duration);
 	if (failure)
 		if (!rspell_socket(Ind, projection, FALSE)) {
 			if (dice > damage) damage = dice; //Get the highest damage part of the spell, could be reworked to match actual spell type (as modified by enhanced). TODO
-			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP), "");
+			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP | PROJECT_RNAF), "");
 		}
 
 #ifdef ENABLE_SUSCEPT

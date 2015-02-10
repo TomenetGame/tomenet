@@ -3881,6 +3881,7 @@
 #define PROJECT_NODO	PROJECT_NORF	/* cannot be dodged (basically used in the same places as NORF) */
 #define PROJECT_LODF	0x00020000	/* can only partially be deflected by shield-blocking. */
 #define PROJECT_NODF	0x00040000	/* cannot be deflected by shield-blocking. */
+#define PROJECT_RNAF	0x00080000	/* has no adverse effects if resisted (added for time runecraft on high-elven characters) */
 
 /* ToME expansions */
 #if 0	/* soon */

@@ -9227,8 +9227,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who); /* Prevent going down to level 1 and then taking full damage -> instakill */
 
-			if ((p_ptr->mode & MODE_PVP)) time_influence_choices = 0;
-			else if (p_ptr->resist_time) time_influence_choices = randint(9);
+			if ((p_ptr->mode & MODE_PVP)) break;
+			else if (p_ptr->resist_time) {
+				/* a little hack for high-elven runemasters: super low time damage has no drain effects */
+				if (flg & PROJECT_RNAF) break;
+
+				time_influence_choices = randint(9);
+			}
+			/* hack: very little time damage won't result in ruination */
+			else if (dam < 10) time_influence_choices = randint(9);
 			else time_influence_choices = randint(10);
 
 			switch (time_influence_choices) {
