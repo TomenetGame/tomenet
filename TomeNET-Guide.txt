@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. February 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. February 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -1245,6 +1245,9 @@ They all start with a slash '/' hence they're called slash commands:
 /seen <name>
             Tells you when the character or account of the <name> you
             specified logged in the last time.
+            If the name matches both, account and character, it will report the
+            account if it's been used more frequently than the character of the
+            same name on that account.
             (Same as IRC command ?seen.)
 
 /shot  or  /shot <filename>
@@ -1331,6 +1334,9 @@ or shorter: /tym [rs]
 
 /version    Displays the server version.
  (/ver)
+
+/who <character name>
+            Returns the account name that character belongs to, and basic info.
 
 
 (0.2a) IRC bot commands
