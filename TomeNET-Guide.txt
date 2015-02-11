@@ -1342,7 +1342,7 @@ or shorter: /tym [rs]
 (0.2a) IRC bot commands
 -----------------------
 When in an IRC channel where the 'TomeNET' bot relays chat to and from a
-game server, you may enter these commands:
+game server, you may enter these IRC commands:
 (See (1.1b) on how to set up IRC chat.)
 
 ?players        Will reply with a list of players online on this server.
