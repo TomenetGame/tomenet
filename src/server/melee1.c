@@ -546,7 +546,9 @@ bool make_attack_melee(int Ind, int m_idx)
 	monster_desc(Ind, m_name_gen, m_idx, 0x02);
 
 	/* Get the "died from" information (i.e. "a kobold") */
-	monster_desc(Ind, ddesc, m_idx, 0x0188);
+	//hack: 'The' Horned Reaper from Dungeon Keeper ;)
+	if (m_ptr->r_idx == RI_HORNED_REAPER_GE) monster_desc(Ind, ddesc, m_idx, 0x0180);
+	else monster_desc(Ind, ddesc, m_idx, 0x0188);
 
 	/* determine how much parrying or blocking would endanger our weapon/shield */
 	for (i = 0; i < 4; i++) { 
