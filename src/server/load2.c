@@ -1851,8 +1851,11 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		p_ptr->IDDC_logscum = FALSE;
 	}
 
+	/* hack: no save file version increment for this one */
+	rd_byte(&p_ptr->IDDC_flags);
+
 	/* Future use */
-	strip_bytes(31);
+	strip_bytes(30);
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */

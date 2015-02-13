@@ -6037,7 +6037,9 @@ if (cfg.unikill_format) {
   #else
 	    !rand_int(15)) {
   #endif
+		s_printf("Player '%s' : IDDC_flags %d -> ", p_ptr->name, p_ptr->IDDC_flags);
 		p_ptr->IDDC_flags--;
+		s_printf("%d\n", p_ptr->IDDC_flags);
 
 		/* Get local object */
 		qq_ptr = &forge;
