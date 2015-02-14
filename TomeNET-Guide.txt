@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. February 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. February 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -12312,12 +12312,12 @@ create a character!):
     Their intellect is superior compared to primitive warriors, making them calm
     and silent fighters who are hard to read and are dangerously sharp.
     They have a lot of possibilities to positively or negatively influence the
-    minds of others. However, their repertoire is more limited against
-    creatures of little or no intelligence.
+    minds of others. However, their repertoire is more limited when they are up
+    against creatures of little or no intelligence.
     Their primary attribute is intelligence, which determines their spell
     fail rates as well as the majority of their mana pool. Also somewhat
     affecting their mana pool are charisma and wisdom, although they are
-    of no importance to become an able telepathy user.
+    not mandatory for becoming an able telepathy user.
     Aside from intelligence as primary spell-casting stat they will also want
     decent strength for engaging in close combat.
     Putting on heavy head gear (above 4.0 lb) will negatively impact their
@@ -12329,10 +12329,10 @@ create a character!):
     sight, since they manifest whereever their mind is focussed on (e.g.
     Psionic Blast).
     Their spells also cannot be reflected by monsters for that same reason.
-    Some of the mindcrafters' spells that interact with party members
-    will require them to prepare and open their mind for telepathic
-    for telepathic contact. This is done by the party members by
-    pressing 'p'. Pressing it again will disable further telepathic attempts.
+    Some of the mindcrafters' spells that interact with party members will
+    require them to prepare and open their mind for telepathic  contact. This
+    is done by the party members pressing the 'p' key. Pressing it again will
+    close off their mind again, disabling further telepathic attempts.
     The effects of some necromancy skills are distracting to mindcrafters, so
     training them will require more effort.
     They are able to detect 'Telepath' ego monsters via ESP which usually are
@@ -12346,17 +12346,17 @@ create a character!):
 
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
     early on, Psionic Blast. Look for it in the book store right away.
-    Also get the spell 'Autokinesis I' early on, which is like phase door.
+    Also get the spell 'Autokinesis I' early on, which is a form of phase door.
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
     Arts if you don't want to use weapons, and always keep it maximized.
 
 
-As you gain levels, you will get new titles. These are displayed between
-your class name and your character level in the main window. If you die and
-become a ghost, the title will change to 'Ghost' until you get revived.
-Titles change every 5 levels, the final Title is received on level 50.
-From level 60 and upwards there are special titles available which probably
-very few players will ever acquire.
+As you gain levels, you will get new profession titles. These are displayed
+between your class name and your character level in the main window. If you die
+and become a ghost, the title will change to 'Ghost' until you get revived.
+Titles change every 5 levels, the final title is received on level 50.
+From level 60 and upwards there are special titles available every 10 levels.
+
 
 Here is a table showing boni/mali of the different races:
 'Blows/Round' is the maximum number of melee attacks per round a character can
