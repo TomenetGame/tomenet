@@ -3886,6 +3886,8 @@ static int Receive_login(int ind) {
 			Destroy_connection(ind, "You need to enter a password!");
 			return -1;
 		}
+
+		//maybe todo: check hostname for swearing -_-
 		if (Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE) != SUCCESS) {
 			Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
 			return(-1);
