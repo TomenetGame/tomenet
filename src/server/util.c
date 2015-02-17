@@ -1724,6 +1724,7 @@ void process_ambient_sfx(void) {
 		case WILD_RIVER:
 		case WILD_LAKE:
 		case WILD_SWAMP:
+			if (season == SEASON_WINTER) break;
 			sound_floor_vol(&p_ptr->wpos, "animal_toad", NULL, SFX_TYPE_AMBIENT, 100);
 			w_ptr->ambient_sfx_timer = 4 + rand_int(4);
 			break;
@@ -1741,11 +1742,21 @@ void process_ambient_sfx(void) {
 		case WILD_FOREST:
 		case WILD_DENSEFOREST:
 			if (IS_DAY) {
-				sound_floor_vol(&p_ptr->wpos, "animal_bird", NULL, SFX_TYPE_AMBIENT, 100);
-				w_ptr->ambient_sfx_timer = 10 + rand_int(20);
+				if (season == SEASON_WINTER) {
+					sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, 100);
+					w_ptr->ambient_sfx_timer = 30 + rand_int(60);
+				} else {
+					sound_floor_vol(&p_ptr->wpos, "animal_bird", NULL, SFX_TYPE_AMBIENT, 100);
+					w_ptr->ambient_sfx_timer = 10 + rand_int(20);
+				}
 			} else {
-				sound_floor_vol(&p_ptr->wpos, "animal_owl", NULL, SFX_TYPE_AMBIENT, 100);
-				w_ptr->ambient_sfx_timer = 20 + rand_int(40);
+				if (!rand_int(3)) {
+					sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, 100);
+					w_ptr->ambient_sfx_timer = 30 + rand_int(60);
+				} else {
+					sound_floor_vol(&p_ptr->wpos, "animal_owl", NULL, SFX_TYPE_AMBIENT, 100);
+					w_ptr->ambient_sfx_timer = 20 + rand_int(40);
+				}
 			}
 			break;
 		/* Note: Default terrain that doesn't have ambient sfx will automatically clear people's ambient_sfx_timer too.
