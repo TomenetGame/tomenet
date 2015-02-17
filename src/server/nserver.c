@@ -10621,6 +10621,12 @@ static int Receive_screen_dimensions(int ind) {
 	        if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
 	        else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
 
+#ifdef ALERT_OFFPANEL_DAM
+		/* For alert-beeps on damage: Reset remembered panel */
+		p_ptr->panel_row_old = p_ptr->panel_row;
+		p_ptr->panel_col_old = p_ptr->panel_col;
+#endif
+
                 panel_bounds(player);
 
 

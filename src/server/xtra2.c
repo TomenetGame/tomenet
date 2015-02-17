@@ -8977,6 +8977,12 @@ void panel_calculate(Ind) {
         if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
         else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
 
+#ifdef ALERT_OFFPANEL_DAM
+	/* For alert-beeps on damage: Reset remembered panel */
+	p_ptr->panel_row_old = p_ptr->panel_row;
+	p_ptr->panel_col_old = p_ptr->panel_col;
+#endif
+
 	panel_bounds(Ind);
 
 	tradpanel_calculate(Ind);
@@ -8993,6 +8999,12 @@ void tradpanel_calculate(Ind) {
 	p_ptr->tradpanel_col = ((p_ptr->px - SCREEN_WID / 4) / (SCREEN_WID / 2));
 	if (p_ptr->tradpanel_col > p_ptr->max_tradpanel_cols) p_ptr->tradpanel_col = p_ptr->max_tradpanel_cols;
 	else if (p_ptr->tradpanel_col < 0) p_ptr->tradpanel_col = 0;
+
+#ifdef ALERT_OFFPANEL_DAM
+	/* For alert-beeps on damage: Reset remembered panel */
+	p_ptr->panel_row_old = p_ptr->panel_row;
+	p_ptr->panel_col_old = p_ptr->panel_col;
+#endif
 
 	tradpanel_bounds(Ind);
 }
