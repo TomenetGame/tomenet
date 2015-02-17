@@ -1126,6 +1126,10 @@
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
 
+/* Monster ego power indices */
+#define RE_MASTER_THIEF		33	/* CHAR_CLEAR+ATTR_CLEAR */
+#define RE_SHADOWED		45	/* CHAR_CLEAR+ATTR_CLEAR */
+
 /* Summoning/spawning override flags for checks in monster placement routines */
 #define SO_NONE			0x0000	/* apply all checks (default) */
 #define SO_ALL			0xFFFF	/* ignore ALL checks (admin summmoning) */

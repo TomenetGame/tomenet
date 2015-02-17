@@ -3250,6 +3250,19 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 		if (p_ptr->mon_vis[c_ptr->m_idx]) {
 			monster_race *r_ptr = race_inf(m_ptr);
 
+			/* hack: mindcrafters/rogues can see through
+			   shadowing (shadowed ego) / cloaking (master thief ego) */
+			if ((p_ptr->pclass == CLASS_MINDCRAFTER || p_ptr->pclass == CLASS_ROGUE) && p_ptr->lev >= 30 &&
+#if 0 /* this works, but maybe let's be more specific, in case some exceptional new re-power gets added that shouldn't be affected.. */
+			    (r_ptr->flags1 & RF1_CHAR_CLEAR) && (r_ptr->flags1 & RF1_ATTR_CLEAR) &&
+			    !(r_info[m_ptr->r_idx].flags1 & (RF1_CHAR_CLEAR | RF1_ATTR_CLEAR)))
+#else
+			    (m_ptr->ego == RE_MASTER_THIEF || m_ptr->ego == RE_SHADOWED))
+#endif
+				/* slightly paranoid: we only remove the flags that REALLY weren't
+				   in the base version.. such cases shouldn't really occur though */
+				r_ptr->flags1 &= ~((r_ptr->flags1 & RF1_CHAR_CLEAR) | (r_ptr->flags1 & RF1_ATTR_CLEAR));
+
 			get_monster_color(Ind, m_ptr, r_ptr, c_ptr, ap, cp);
 		}
 	}

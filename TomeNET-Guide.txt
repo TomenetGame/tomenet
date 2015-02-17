@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. February 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 17. February 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -12043,6 +12043,9 @@ create a character!):
     Attacking, taking damage (with the exception of floor grid induced damage
     such as fire damage from lava) and a couple of other actions immediately
     break cloaking, again see (0.2) for details.
+    Being masters of cloaking, at level 30 they become able to see through any
+    similar cloaking or shadowing techniques employed by their opponents
+    (monsters only).
 
     Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
@@ -12337,6 +12340,8 @@ create a character!):
     training them will require more effort.
     They are able to detect 'Telepath' ego monsters via ESP which usually are
     able to conceal their presence telepathically versus all other classes.
+    Similarly at level 30 they become able to pinpoint opponents that attempt
+    to make use of cloaking or shadowing techniques (monsters only).
     Mindcrafters are also able to resist malicious mind-affecting effects better
     than others, for example, mind-blanking or psionic attacks.
     Mindcrafters learn to judge their own sanity much more accurately as they
