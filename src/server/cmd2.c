@@ -5201,7 +5201,7 @@ void do_cmd_fire(int Ind, int dir) {
 								tdam *= tmul;
 
 								/* Apply special damage XXX XXX XXX */
-								tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
+								if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
 
 								/* factor in AC */
 								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
@@ -5413,7 +5413,7 @@ void do_cmd_fire(int Ind, int dir) {
 					tdam *= tmul;
 
 					/* Apply special damage XXX XXX XXX */
-					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
+					if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
 
 					if (ranged_double_real) tdam = (tdam * 35) / 100;
 					if (p_ptr->ranged_precision) {
