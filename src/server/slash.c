@@ -2384,7 +2384,7 @@ void do_slash_cmd(int Ind, char *message) {
 				    q_ptr->paging == 0)
 					q_ptr->paging = 1;
 
-				msg_format(i, "\377RNote from %s: %s", p_ptr->name, message2 + j + 1);
+				msg_format(i, "\374\377RNote from %s: %s", p_ptr->name, message2 + j + 1);
 //				return; //so double-msg him just to be safe he sees it
 			}
 
