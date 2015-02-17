@@ -1827,10 +1827,16 @@ bool make_attack_spell(int Ind, int m_idx) {
 	if (p_ptr->shadow_running) scatter(wpos, &ys, &xs, y, x, 5, 0); 
 
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
-	/* Extract the "within-the-vision-ness" */
-	bool visible = p_ptr->mon_vis[m_idx];
-	/* Extract the "see-able-ness" */
-	bool seen = !blind && visible;
+	/* Extract the "within-the-vision-ness" --
+	   Note: This now requires LoS because it is only used
+	         for non-direct spells. Idea here:
+	         We can easily guess who cast that fireball 'around the corner'.. */
+	bool visible = p_ptr->mon_vis[m_idx]
+			&& player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx);//new: require LoS
+	/* Extract the "see-able-ness" -- 
+	   Note: This allows non-LoS (aka ESP-only) visibility,
+	         because it is only used for direct spells. */
+	bool seen = p_ptr->mon_vis[m_idx] && !blind;
 	/* Assume "normal" target */
 	bool normal = TRUE;
 	/* Assume "projectable" */
@@ -2852,22 +2858,16 @@ bool make_attack_spell(int Ind, int m_idx) {
 		{
 			disturb(Ind, 1, 0);
 			if (!seen)
-			{
 				msg_print(Ind, "You feel something focussing on your mind.");
-			}
 			else
-			{
 				msg_format(Ind, "%^s gazes deep into your eyes.", m_name);
-			}
 
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
 			} else {
 				msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
 				if (!p_ptr->resist_conf)
-				{
 					(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
-				}
 
 				if ((!p_ptr->resist_chaos) && (randint(3) == 1))
 					(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
@@ -2883,13 +2883,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 		{
 			disturb(Ind, 1, 0);
 			if (!seen)
-			{
 				msg_print(Ind, "You feel something focussing on your mind.");
-			}
 			else
-			{
 				msg_format(Ind, "%^s looks deep into your eyes.", m_name);
-			}
+
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
 			} else {
@@ -2897,17 +2894,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 				//				take_hit(Ind, damroll(12, 15), ddesc, 0);
 				take_sanity_hit(Ind, damroll(9,9), ddesc);/* 12,15 was too powerful */
 				if (!p_ptr->resist_blind)
-				{
 					(void)set_blind(Ind, p_ptr->blind + 8 + rand_int(8));
-				}
 				if (!p_ptr->resist_conf)
-				{
 					(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
-				}
 				if (!p_ptr->free_act)
-				{
 					(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4);
-				}
 				(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
 			}
 			break;
@@ -3352,36 +3343,28 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 		/* RF6_HASTE */
 		case RF6_OFFSET+0:
-		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
-			if (visible){
+			if (visible) {
 				//disturb(Ind, 1, 0);
 				if (blind)
-				{
 					msg_format(Ind, "%^s mumbles.", m_name);
-				}
 				else
-				{
 					msg_format(Ind, "%^s concentrates on %s body.", m_name, m_poss);
-				}
 			}
 
 			/* Allow quick speed increases to base+10 */
-			if (m_ptr->mspeed < m_ptr->speed + 10)
-			{
+			if (m_ptr->mspeed < m_ptr->speed + 10) {
 				if (visible) msg_format(Ind, "%^s starts moving faster.", m_name);
 				m_ptr->mspeed += 10;
 			}
 
 			/* Allow small speed increases to base+20 */
-			else if (m_ptr->mspeed < m_ptr->speed + 20)
-			{
+			else if (m_ptr->mspeed < m_ptr->speed + 20) {
 				if (visible) msg_format(Ind, "%^s starts moving faster.", m_name);
 				m_ptr->mspeed += 2;
 			}
 
 			break;
-		}
 
 		/* RF6_XXX1X6 */
 		/* RF6_HAND_DOOM */
@@ -3471,7 +3454,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (m_ptr->stunned <= 0) {
 					m_ptr->stunned = 0;
 					if (seen) msg_format(Ind, "%^s no longer looks stunned!", m_name);
-					else msg_format(Ind, "%^s no longer sounds stunned!", m_name);
+					//else msg_format(Ind, "%^s no longer sounds stunned!", m_name);
 				}
 			}
 
@@ -3479,12 +3462,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (m_ptr->hp >= m_ptr->maxhp) {
 				m_ptr->hp = m_ptr->maxhp;
 				if (seen) msg_format(Ind, "%^s looks REALLY healthy!", m_name);
-				else msg_format(Ind, "%^s sounds REALLY healthy!", m_name);
+				//else msg_format(Ind, "%^s sounds REALLY healthy!", m_name);
 			}
 			/* Partially healed */
 			else {
 				if (seen) msg_format(Ind, "%^s looks healthier.", m_name);
-				else msg_format(Ind, "%^s sounds healthier.", m_name);
+				//else msg_format(Ind, "%^s sounds healthier.", m_name);
 			}
 
 			/* Redraw (later) if needed */
@@ -3494,7 +3477,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (m_ptr->monfear) {
 				/* Cancel fear */
 				m_ptr->monfear = 0;
-				msg_format(Ind, "%^s recovers %s courage.", m_name, m_poss);
+				if (seen) msg_format(Ind, "%^s recovers %s courage.", m_name, m_poss);
 			}
 
 			break;
@@ -3538,10 +3521,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 			//			if (monst_check_grab(Ind, m_idx)) break;
 			/* it's low b/c check for spellcast is already done */
 			if (monst_check_grab(m_idx, 50, "teleport")) break;
-			if (teleport_away(m_idx, 10) && visible)
-			{
+			if (teleport_away(m_idx, 10) && visible) {
 				//disturb(Ind, 1, 0);
-				msg_format(Ind, "%^s blinks away.", m_name);
+				if (blind) msg_print(Ind, "You hear something blink away.");
+				else msg_format(Ind, "%^s blinks away.", m_name);
 #ifdef USE_SOUND_2010
 //redudant: already done in teleport_away()	sound(Ind, "monster_blink", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
@@ -3572,7 +3555,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible)
 			{
 				//disturb(Ind, 1, 0);
-				msg_format(Ind, "%^s teleports away.", m_name);
+				if (blind) msg_print(Ind, "You hear something teleport away.");
+				else msg_format(Ind, "%^s teleports away.", m_name);
 #ifdef USE_SOUND_2010
 				sound(Ind, "monster_teleport", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
