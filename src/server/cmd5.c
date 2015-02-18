@@ -207,12 +207,9 @@ bool check_antimagic(int Ind, int percentage) {
 /*
  * Brand the current weapon
  */
-static void brand_weapon(int Ind)
-{
+static void brand_weapon(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	object_type *o_ptr;
-
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
 	/* you can never modify artifacts / ego-items */
@@ -225,14 +222,10 @@ static void brand_weapon(int Ind)
 
 		char o_name[ONAME_LEN];
 
-		if (rand_int(100) < 25)
-		{
+		if (rand_int(100) < 25) {
 			act = "is covered in a fiery shield!";
 			o_ptr->name2 = EGO_BRAND_FIRE;
-		}
-
-		else
-		{
+		} else {
 			act = "glows deep, icy blue!";
 			o_ptr->name2 = EGO_BRAND_COLD;
 		}
@@ -245,20 +238,15 @@ static void brand_weapon(int Ind)
 
 		/* Hack -- you don't sell the wep blessed by your god, do you? :) */
 		o_ptr->discount = 100;
-	}
-
-	else
-	{
+	} else
 		msg_print(Ind, "The Branding failed.");
-	}
 }
 #endif // 0
 
 /*
  * Use a ghostly ability. --KLJ--
  */
-void do_cmd_ghost_power(int Ind, int ability)
-{
+void do_cmd_ghost_power(int Ind, int ability) {
 	player_type *p_ptr = Players[Ind];
 	magic_type *s_ptr = &ghost_spells[ability];
 	int plev = p_ptr->lev;
@@ -268,16 +256,14 @@ void do_cmd_ghost_power(int Ind, int ability)
 	if (!p_ptr->ghost) return;
 
 	/* Must not be confused */
-	if (p_ptr->confused)
-	{
+	if (p_ptr->confused) {
 		/* Message */
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
 
 	/* Check spells */
-	for (i = 0; i < 64; i++)
-	{
+	for (i = 0; i < 64; i++) {
 		s_ptr = &ghost_spells[i];
 
 		/* Check for existance */
@@ -288,8 +274,7 @@ void do_cmd_ghost_power(int Ind, int ability)
 	}
 
 	/* Check for level */
-	if (s_ptr->slevel > plev)
-	{
+	if (s_ptr->slevel > plev) {
 		/* Message */
 		msg_print(Ind, "You aren't powerful enough to use that ability.");
 		return;
@@ -299,48 +284,33 @@ void do_cmd_ghost_power(int Ind, int ability)
 	un_afk_idle(Ind);
 
 	/* Spell effects */
-	switch(i)
-	{
-		case 0:
-		{
-			teleport_player(Ind, 10, TRUE);
-			break;
-		}
-		case 1:
-		{
-			get_aim_dir(Ind);
-			p_ptr->current_spell = 1;
-			return;
-		}
-		case 2:
-		{
-			get_aim_dir(Ind);
-			p_ptr->current_spell = 2;
-			return;
-		}
-		case 3:
-		{
-			teleport_player(Ind, plev * 8, TRUE);
-			break;
-		}
-		case 4:
-		{
-			get_aim_dir(Ind);
-			p_ptr->current_spell = 4;
-			return;
-		}
-		case 5:
-		{
-			get_aim_dir(Ind);
-			p_ptr->current_spell = 5;
-			return;
-		}
-		case 6:
-		{
-			get_aim_dir(Ind);
-			p_ptr->current_spell = 6;
-			return;
-		}
+	switch(i) {
+	case 0:
+		teleport_player(Ind, 10, TRUE);
+		break;
+	case 1:
+		get_aim_dir(Ind);
+		p_ptr->current_spell = 1;
+		return;
+	case 2:
+		get_aim_dir(Ind);
+		p_ptr->current_spell = 2;
+		return;
+	case 3:
+		teleport_player(Ind, plev * 8, TRUE);
+		break;
+	case 4:
+		get_aim_dir(Ind);
+		p_ptr->current_spell = 4;
+		return;
+	case 5:
+		get_aim_dir(Ind);
+		p_ptr->current_spell = 5;
+		return;
+	case 6:
+		get_aim_dir(Ind);
+		p_ptr->current_spell = 6;
+		return;
 	}
 
 	/* Take a turn */
@@ -354,8 +324,7 @@ void do_cmd_ghost_power(int Ind, int ability)
 /*
  * Directional ghost ability
  */
-void do_cmd_ghost_power_aux(int Ind, int dir)
-{
+void do_cmd_ghost_power_aux(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	magic_type *s_ptr;
 	
@@ -370,36 +339,25 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 	un_afk_idle(Ind);
 
 	/* We assume everything is still OK to cast */
-	switch (p_ptr->current_spell)
-	{
-		case 1:
-		{
-			(void)fear_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
-			break;
-		}
-		case 2:
-		{
-			confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
-			break;
-		}
-		case 4:
-		{
-			sprintf(p_ptr->attacker, " casts a nether bolt for");
-			fire_bolt_or_beam(Ind, p_ptr->lev * 2, GF_NETHER, dir, 50 + damroll(5, 5) + p_ptr->lev, p_ptr->attacker);
-			break;
-		}
-		case 5:
-		{
-			sprintf(p_ptr->attacker, " casts a nether ball for");
-			fire_ball(Ind, GF_NETHER, dir, 100 + 2 * p_ptr->lev, 2, p_ptr->attacker);
-			break;
-		}
-		case 6:
-		{
-			sprintf(p_ptr->attacker, " casts a darkness storm for");
-			fire_ball(Ind, GF_DARK, dir, p_ptr->lev * 5 + damroll(10, 10), 3, p_ptr->attacker);
-			break;
-		}
+	switch (p_ptr->current_spell) {
+	case 1:
+		(void)fear_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+		break;
+	case 2:
+		confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+		break;
+	case 4:
+		sprintf(p_ptr->attacker, " casts a nether bolt for");
+		fire_bolt_or_beam(Ind, p_ptr->lev * 2, GF_NETHER, dir, 50 + damroll(5, 5) + p_ptr->lev, p_ptr->attacker);
+		break;
+	case 5:
+		sprintf(p_ptr->attacker, " casts a nether ball for");
+		fire_ball(Ind, GF_NETHER, dir, 100 + 2 * p_ptr->lev, 2, p_ptr->attacker);
+		break;
+	case 6:
+		sprintf(p_ptr->attacker, " casts a darkness storm for");
+		fire_ball(Ind, GF_DARK, dir, p_ptr->lev * 5 + damroll(10, 10), 3, p_ptr->attacker);
+		break;
 	}
 
 	/* No more spell */
@@ -453,6 +411,11 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	/* Not when confused */
 	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");
+
+		/* Paranoia? Cease fire-till-kill! */
+		p_ptr->shooting_till_kill = FALSE;
+		p_ptr->shooty_till_kill = FALSE;
+		p_ptr->shoot_till_kill_mimic = 0;
 		return;
 	}
 
@@ -466,6 +429,11 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	/* confirm the power */
 	if (!(p_ptr->innate_spells[j] & (1L << (power - j * 32)))) {
 		msg_print(Ind, "You cannot use that power.");
+
+		/* Paranoia? Cease fire-till-kill! */
+		p_ptr->shooting_till_kill = FALSE;
+		p_ptr->shooty_till_kill = FALSE;
+		p_ptr->shoot_till_kill_mimic = 0;
 		return;
 	}
 
@@ -475,6 +443,11 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	if (s_ptr->smana > p_ptr->csp) {
 		msg_print(Ind, "You do not have enough mana to use this power.");
 		//msg_format(Ind, "You need %d mana to use this power.", s_ptr->smana);
+
+		/* Cease fire-till-kill! */
+		p_ptr->shooting_till_kill = FALSE;
+		p_ptr->shooty_till_kill = FALSE;
+		p_ptr->shoot_till_kill_mimic = 0;
 		return;
 	}
 
@@ -771,6 +744,11 @@ static void do_mimic_power(int Ind, int power, int dir) {
 			/* Reduce constitution */
 			(void)dec_stat(Ind, A_CON, 15 + randint(10), perm);
 		}
+
+		/* Cease fire-till-kill! */
+		p_ptr->shooting_till_kill = FALSE;
+		p_ptr->shooty_till_kill = FALSE;
+		p_ptr->shoot_till_kill_mimic = 0;
 	}
 
 	/* Display the spellpoints */
@@ -1243,6 +1221,11 @@ void do_mimic_power_aux(int Ind, int dir)
 			/* Reduce constitution */
 			(void)dec_stat(Ind, A_CON, 15 + randint(10), perm);
 		}
+
+		/* Cease fire-till-kill! */
+		p_ptr->shooting_till_kill = FALSE;
+		p_ptr->shooty_till_kill = FALSE;
+		p_ptr->shoot_till_kill_mimic = 0;
 	}
 
 	/* Reset current spell */
@@ -1257,7 +1240,7 @@ void do_mimic_power_aux(int Ind, int dir)
 #if 1 /* Fire-Till-Kill */
         if (p_ptr->shooty_till_kill) {
 		int ftk;
-#if 0
+ #if 0
 		if (cs < 32) {
 			ftk = monster_spell4[cs].ftk;
 		} else if (cs < 64) {
@@ -1265,19 +1248,19 @@ void do_mimic_power_aux(int Ind, int dir)
 		} else {
 			ftk = monster_spell6[cs - 64].ftk;
 		}
-#else
+ #else
 		ftk = innate_powers[cs].ftk;
-#endif
+ #endif
                 /* spell actually doesn't allow ftk? */
                 if (!ftk) return;
 
                 /* To continue shooting_till_kill, check if spell requires clean LOS to target
                    with no other monsters in the way, so we won't wake up more monsters accidentally. */
-#ifndef PY_PROJ_WALL
+ #ifndef PY_PROJ_WALL
                 if (ftk == 1 && !projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
-#else
+ #else
                 if (ftk == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
-#endif
+ #endif
 
                 /* We lost our target? (monster dead?) */
                 if (dir != 5 || !target_okay(Ind)) return;
