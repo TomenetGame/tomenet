@@ -1750,7 +1750,7 @@ static void player_outfit(int Ind) {
 				case RACE_ENT:
 					tv = TV_BLUNT; sv = SV_BALL_AND_CHAIN; break;
 				case RACE_DWARF:
-					tv = TV_AXE; sv = SV_CLEAVER; break;
+					tv = TV_AXE; sv = SV_HATCHET; break;
 				case RACE_DRACONIAN:
 					tv = TV_POLEARM; sv = SV_RHOMPHAIA; break;
 				} break;
