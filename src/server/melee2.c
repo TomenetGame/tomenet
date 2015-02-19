@@ -3453,7 +3453,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				m_ptr->stunned -= rlev * 2;
 				if (m_ptr->stunned <= 0) {
 					m_ptr->stunned = 0;
-					if (seen) msg_format(Ind, "%^s no longer looks stunned!", m_name);
+					if (visible && seen) msg_format(Ind, "%^s no longer looks stunned!", m_name);
 					//else msg_format(Ind, "%^s no longer sounds stunned!", m_name);
 				}
 			}
@@ -3461,12 +3461,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 			/* Fully healed? */
 			if (m_ptr->hp >= m_ptr->maxhp) {
 				m_ptr->hp = m_ptr->maxhp;
-				if (seen) msg_format(Ind, "%^s looks REALLY healthy!", m_name);
+				if (visible && seen) msg_format(Ind, "%^s looks REALLY healthy!", m_name);
 				//else msg_format(Ind, "%^s sounds REALLY healthy!", m_name);
 			}
 			/* Partially healed */
 			else {
-				if (seen) msg_format(Ind, "%^s looks healthier.", m_name);
+				if (visible && seen) msg_format(Ind, "%^s looks healthier.", m_name);
 				//else msg_format(Ind, "%^s sounds healthier.", m_name);
 			}
 
@@ -3477,7 +3477,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (m_ptr->monfear) {
 				/* Cancel fear */
 				m_ptr->monfear = 0;
-				if (seen) msg_format(Ind, "%^s recovers %s courage.", m_name, m_poss);
+				if (visible && seen) msg_format(Ind, "%^s recovers %s courage.", m_name, m_poss);
 			}
 
 			break;
