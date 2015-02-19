@@ -1637,8 +1637,7 @@ void admin_outfit(int Ind, int realm)
  *
  * Having an item makes the player "aware" of its purpose.
  */
-static void player_outfit(int Ind)
-{
+static void player_outfit(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, tv, sv, pv, k_idx, body;
 
@@ -1727,26 +1726,12 @@ static void player_outfit(int Ind)
 	//admin_outfit(Ind);
 
 	/* Hack -- Give the player useful objects */
-	for (i = 0; i < 5; i++)
-	{
+	for (i = 0; i < 5; i++) {
 		tv = player_init[body][p_ptr->pclass][i][0];
 		sv = player_init[body][p_ptr->pclass][i][1];
 		pv = player_init[body][p_ptr->pclass][i][2];
 
-#if 0
-		/* ugly hack: give warriors different weapons - C. Blue */
-		if (p_ptr->pclass == CLASS_WARRIOR && i == 0) {
-			switch (p_ptr->prace) {
-			case RACE_HALF_TROLL:
-			case RACE_ENT:
-				tv = 21; sv = 5; break;//mace
-			case RACE_DWARF:
-				tv = 24; sv = 11; break;//broad axe; 24,2 cleaver
-			case RACE_DRACONIAN:
-				tv = 22; sv = 5; break;//trident
-			}
-		}
-#else /* improved for more classes */
+		/* Give players some racially flavoured starter weapon */
 		if (tv == TV_SWORD) {
 			switch (sv) {
 			case SV_BROAD_SWORD:/* warrior */
@@ -1805,7 +1790,96 @@ static void player_outfit(int Ind)
 				} break;
 			}
 		}
-#endif
+
+		/* If someone uses too low STR/DEX values, "downgrade"
+		   his starter weapon to a lighter version to ensure at least 2 bpr. */
+		if (is_weapon(tv)) {
+			int wgt, sv2 = sv;
+			int sv_best = sv, bpr_best = 0, bpr;
+			int tv2 = tv, tv_best;
+
+			/* stat_ind has not been set so we have to hack it for calc_blows_obj().
+			   Side-effect: We ignore Hobbits' +2 DEX bonus for not wearing shoes */
+			//abuse 'wgt'
+			for (j = 0; j < 6; j++) {
+				/* Values: 3, 4, ..., 17 */
+				if (stat_use[j] <= 18) wgt = (stat_use[j] - 3);
+				/* Ranges: 18/00-18/09, ..., 18/210-18/219 */
+				else if (stat_use[j] <= 18 + 219) wgt = (15 + (stat_use[j] - 18) / 10);
+				/* Range: 18/220+ */
+				else wgt = 37;
+
+				p_ptr->stat_ind[j] = wgt;
+			}
+
+			switch (p_ptr->pclass) {
+			case CLASS_WARRIOR:
+				j = 3;//aim for 3 bpr first
+				break;
+			case CLASS_MIMIC:
+			case CLASS_PALADIN:
+			case CLASS_MINDCRAFTER:
+			//case CLASS_PRIEST:
+				j = 2;
+				break;
+			default:
+				j = 0;
+			}
+
+			while (TRUE) {
+				invcopy(o_ptr, lookup_kind(tv2, sv2));
+
+				/* weapon is fine? */
+				if ((bpr = calc_blows_obj(Ind, o_ptr)) >= j) {
+					tv = tv2;
+					sv = sv2;
+					break;
+				}
+
+				/* remember heaviest weapon that reached best bpr */
+				if (bpr > bpr_best) {
+					bpr_best = bpr;
+					tv_best = tv2;
+					sv_best = sv2;
+				}
+
+				/* find a weapon that is slightly lighter than our current one */
+				wgt = 0;
+				for (k_idx = 0; k_idx < max_k_idx; k_idx++) {
+					/* must be same weapon class - hack: make blunt+axe interchangable! */
+					if (k_info[k_idx].tval != tv &&
+					    !((k_info[k_idx].tval == TV_AXE && tv == TV_BLUNT) ||
+					    (k_info[k_idx].tval == TV_BLUNT && tv == TV_AXE))) continue;
+					/* forbid weapons that are > level 15 or have slay/brand specialties or are 'broken',
+					   except if explicitely marked as startup weapon (scourge) */
+					if (((k_info[k_idx].flags1 & TR1_MULTMASK) || k_info[k_idx].level > 15 || k_info[k_idx].to_d < 0)
+					    && !(k_info[k_idx].flags6 & TR6_STARTUP)) continue;
+					/* must be lighter than current weapon */
+					if (k_info[k_idx].weight >= o_ptr->weight) continue;
+
+					/* must be as heavy as possible, since we're trying to go lower gradually */
+					if (wgt > k_info[k_idx].weight) continue;
+					if (wgt == k_info[k_idx].weight &&
+					    (rand_int(2) || k_info[k_idx].tval != tv)) continue;
+
+					wgt = k_info[k_idx].weight;
+					sv2 = k_info[k_idx].sval;
+					tv2 = k_info[k_idx].tval;
+				}
+
+				/* no lighter weapon found? */
+				if (tv2 == o_ptr->tval && sv2 == o_ptr->sval) {
+					/* for failing 3 bpr target (warriors):
+					   did we at least reach 2 bpr though? -> accept new weapon */
+					if (calc_blows_obj(Ind, o_ptr) >= 2) {
+						sv = sv_best;
+						tv = tv_best;
+					}
+					/* otherwise keep (heavy) starter weapon */
+					break;
+				}
+			}
+		}
 
 #if 0
 		if (tv == TV_BOOK && sv == SV_SPELLBOOK) { /* hack - correct book orders */

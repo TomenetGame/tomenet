@@ -4664,7 +4664,7 @@
 
 
 #define TR6_INSTA_EGO		0x00000001L		/* Similar to INSTA_ART, this item is always an ego item */
-
+#define TR6_STARTUP		0x00000002L		/* For weapons: Can be picked for starter item on character creation */
 /* Not yet implemented/used. Cold might be needed. For monsters, even susc-poison is implemented.
    For the player I think fire and cold are enough. (C. Blue)
 #define TR6_SENS_FIRE           0x00000001L

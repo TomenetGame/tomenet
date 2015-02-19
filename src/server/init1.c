@@ -843,7 +843,7 @@ static cptr k_info_flags5[] =
 
 static cptr k_info_flags6[] = {
 	"INSTA_EGO",
-	"XXX00000002",
+	"STARTUP",
 	"XXX00000004",
 	"XXX00000008",
 
