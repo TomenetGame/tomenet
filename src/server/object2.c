@@ -7666,6 +7666,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
  */
 /* XXX XXX XXX DIRTY! DIRTY! DIRTY!		- Jir - */
 //#define DROP_KILL_NOTE /* todo: needs adjustments - see below */
+#define DROP_ON_STAIRS_IN_EMERGENCY
 s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
 	int k, d, ny, nx, i, s;	// , y1, x1
 	int bs, bn;
@@ -7676,11 +7677,15 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 	cave_type	*c_ptr;
 
+	bool comb;
 	/* for destruction checks */
 	bool do_kill = FALSE;
 #ifdef DROP_KILL_NOTE
 	bool is_potion = FALSE, plural = FALSE;
 	cptr note_kill = NULL;
+#endif
+#ifdef DROP_ON_STAIRS_IN_EMERGENCY
+	bool allow_stairs = FALSE;
 #endif
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
@@ -7713,9 +7718,25 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 	/* Scan local grids */
 	for (i = 0; i < tdi[3]; i++) {
-		bool comb = FALSE;
+		comb = FALSE;
 
-		if (i >= tdi[d]) d++;
+		if (i >= tdi[d]) {
+#ifdef DROP_ON_STAIRS_IN_EMERGENCY
+			/* New hack for vaults that have mountain separators:
+			   If player spawns in them on a staircase he took and gets disarmed right away,
+			   the weapon can't drop onto the staircase and will get erased!
+			   Similar happens for emerging from an enclosed void jump gate.
+			   So allow dropping items onto stairs in emergency cases. */
+
+			/* Scan once more in rad 0 and 1, but this time allow staircase grids too */
+			if (d == 1 && !allow_stairs) {
+				allow_stairs = TRUE;
+				i = 0;
+				continue;
+			}
+#endif
+			d++;
+		}
 
 		/* Location */
 		ny = y + tdy[i];
@@ -7727,19 +7748,26 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		/* Require line of sight */
 		if (!los(wpos, y, x, ny, nx)) continue;
 
+		/* Obtain grid */
+		c_ptr = &zcave[ny][nx];
+
 		/* Require floor space (or shallow terrain) -KMW- */
 //		if (!(f_info[c_ptr->feat].flags1 & FF1_FLOOR)) continue;
 		if (!cave_floor_bold(zcave, ny, nx) ||
-		    cave_perma_bold(zcave, ny, nx)) continue;
+		    /* Usually cannot drop items on permanent features,
+		       exception for stairs/gates though in case of emergency */
+		    (cave_perma_bold(zcave, ny, nx)
+#ifdef DROP_ON_STAIRS_IN_EMERGENCY
+		     && !(allow_stairs && is_stair(c_ptr->feat))
+#endif
+		     ))
+		        continue;
 
 		/* not on open house doors! -
 		   added this to prevent items landing ON an open door of a list house,
 		   making it impossible to pick up the item again because the character
 		   would enter the house when trying to step onto the grid with the item. - C. Blue */
 		if (zcave[ny][nx].feat == FEAT_HOME_OPEN) continue;
-
-		/* Obtain grid */
-		c_ptr = &zcave[ny][nx];
 
 		/* Hack: Don't drop items below immovable unkillable monsters aka the
 		   Target Dummy, so players can get their items (ammo) back - C. Blue */
