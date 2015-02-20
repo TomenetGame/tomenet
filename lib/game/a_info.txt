@@ -2995,7 +2995,7 @@ D:northern regions by a mighty guardian of the skies.
 N:241:'Bloodscourge'
 I:21:21:3
 W:35:35:70:111000
-P:0:6d2:25:15:0
+P:0:6d2:25:21:0
 F:STR | CON | INFRA | HIDE_TYPE | VAMPIRIC | BLOWS | 
 F:HEAVY_CURSE | CURSED | AUTO_CURSE | AGGRAVATE | 
 F:BRAND_FIRE | ESP_GOOD | ESP_EVIL | 
