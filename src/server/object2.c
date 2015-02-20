@@ -7729,10 +7729,14 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			   So allow dropping items onto stairs in emergency cases. */
 
 			/* Scan once more in rad 0 and 1, but this time allow staircase grids too */
-			if (d == 1 && !allow_stairs) {
-				allow_stairs = TRUE;
-				i = -1;
-				continue;
+			if (d == 1) {
+				if (!flag && !allow_stairs) {
+					allow_stairs = TRUE;
+					d = 0;
+					i = tdi[d - 1] - 1;
+					continue;
+				}
+				allow_stairs = FALSE;
 			}
 #endif
 			d++;
