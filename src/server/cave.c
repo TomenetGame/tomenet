@@ -8579,7 +8579,7 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 void aquatic_terrain_hack(cave_type **zcave, int x, int y) {
 	int d, xx, yy;
 
-	if (!is_stair(zcave[y][x].feat) && !is_door(zcave[y][x].feat)) return;
+	if (!is_always_passable(zcave[y][x].feat)) return;
 
 	for (d = 1; d <= 9; d++) {
 		if (d == 5) continue;
