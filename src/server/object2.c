@@ -7731,7 +7731,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			/* Scan once more in rad 0 and 1, but this time allow staircase grids too */
 			if (d == 1 && !allow_stairs) {
 				allow_stairs = TRUE;
-				i = 0;
+				i = -1;
 				continue;
 			}
 #endif
