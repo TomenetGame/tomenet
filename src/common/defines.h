@@ -2108,7 +2108,10 @@
 
 #define is_stair(feat) \
 	((feat) == FEAT_MORE || (feat) == FEAT_LESS || (feat) == FEAT_WAY_MORE || (feat) == FEAT_WAY_LESS || \
-	(feat) == FEAT_BETWEEN || (feat) == FEAT_BEACON || \
+	(feat) == FEAT_BETWEEN || (feat) == FEAT_BEACON)
+
+#define is_always_passable(feat) \
+	(is_door(feat) || is_stair(feat) || \
 	(feat) == FEAT_FOUNTAIN || (feat) == FEAT_EMPTY_FOUNTAIN || (feat) == FEAT_FOUNTAIN_BLOOD)
 
 

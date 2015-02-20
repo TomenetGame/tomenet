@@ -5774,7 +5774,7 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b 
 	    !(r_ptr->flags7 & RF7_CAN_FLY)) {
 		/* MAY pass all sorts of doors, so they don't get stuck
 		   in water-filled rooms all the time, waiting to get shot - C. Blue */
-		if (!spawn && (is_door(feat) || is_stair(feat)) && (info & CAVE_WATERY)) return TRUE;
+		if (!spawn && is_always_passable(feat) && (info & CAVE_WATERY)) return TRUE;
 		else return FALSE;
 	}
 	/* Lava */

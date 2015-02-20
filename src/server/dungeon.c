@@ -3731,7 +3731,7 @@ static bool process_player_end_aux(int Ind)
 		    && ((c_ptr->feat != FEAT_SHAL_WATER) ||
 		    r_info[p_ptr->body_monster].weight > 700)
 		    /* new: don't get stunned from crossing door/stair grids every time - C. Blue */
-		    && !(is_door(c_ptr->feat) || is_stair(c_ptr->feat))
+		    && !is_always_passable(c_ptr->feat)
 		    && !p_ptr->tim_wraith)
 		{
 			long hit = p_ptr->mhp>>6; /* Take damage */
