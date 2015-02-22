@@ -6431,14 +6431,17 @@ Effect details:
 ---------------
 Fear is a temporary effect, causing the monster to flee. Many monsters turn
         afraid if their hit points drop very low. Wears off after a while.
+        Monsters that have NO_FEAR flag cannot be scared.
 Blindness and confusion are currently the same thing, resulting in erratic
         movements and being unable to cast spells or attack. Usually only
         low level monsters are prone to these.
         They are temporary effects that wear off after a while.
+        Monsters that have NO_CONF flag cannot be confused.
 Sleep is especially nice if it's cast as an area effect. Gets you out of
         trouble, although most higher monsters are immune to it.
         Monsters will wake up after a while, depending on your stealth.
         Sleep effects are NOT cumulative.
+        Monsters that have NO_SLEEP flag cannot be slept.
 Slowing on monsters is currently a permanent effect. Very effective, although
         many higher monsters are immune to it. Also, it is currently
         cumulative (subject to change) and can be applied several times,
@@ -6451,6 +6454,10 @@ Stun    (Note that "stunned" and "dazed" are the same thing.)
         many monsters - even of high level - are not.
         Monsters can also be heavily stunned or knocked out, same as players.
         Stun is temporary and will wear off, if no new stun effect is applied.
+        Monsters that have NO_STUN flag cannot be stunned.
+
+Monsters have a saving throw, and unique monsters are usually immune to some
+of these crowd-control effects.
 
 
 
@@ -7826,6 +7833,7 @@ Blindness       You cannot read scrolls or books while you're blind.
                 those. You still can use magic staves, rods or wands and
                 quaff potions. Quaffing a potion of Healing, Curing or
                 Cure Critical Wounds will remove the blindness.
+                (Monsters that have the NO_CONF flag will suffer less damage.)
 Confusion       While confused you cannot move, shoot or fight straight.
                 Further, you're unable to read scrolls or books.
                 However, you still can use staves, wands and rods.
@@ -7836,6 +7844,7 @@ Confusion       While confused you cannot move, shoot or fight straight.
                 Confusion resistance is covered by chaos resistance, so if you
                 already resist chaos then you don't need any more items that
                 give confusion resistance.
+                (Monsters that have the NO_CONF flag will suffer less damage.)
 Paralysis       Paralysis can be caused by bashing doors, lack of food, by
                 traps and by monsters. Against the latter two effects you can
                 become immune by equipping a 'Free Action' item. You should
