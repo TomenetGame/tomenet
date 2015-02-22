@@ -1682,6 +1682,26 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	// The "number" that the character is displayed as before the hit
 	int old_num, new_num;
 
+	/* Amulet of Immortality */
+	if (p_ptr->admin_invuln) return;
+
+	/* Heavenly invulnerability? */
+	if (p_ptr->martyr && !bypass_invuln) {
+		break_cloaking(Ind, 0); /* still notice! paranoia though, rogues can't use martyr */
+		return;
+	}
+
+	/* Paranoia */
+	if (p_ptr->death) return;
+
+	/* towns are safe-zones from ALL hostile actions - except blood bond */
+	if (IS_PLAYER(Ind_attacker)) {
+		if ((istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) &&
+		    (!check_blood_bond(Ind_attacker, Ind) ||
+		     p_ptr->afk || Players[Ind_attacker]->afk))
+			return;
+	}
+
 	if (((p_ptr->alert_afk_dam && p_ptr->afk)
 #ifdef ALERT_OFFPANEL_DAM
 	    /* new: alert when we're off-panel (cmd_locate) */
@@ -1700,13 +1720,15 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 #endif
 	}
 
-	/* Amulet of Immortality */
-	if (p_ptr->admin_invuln) return;
-
-	/* Heavenly invulnerability? */
-	if (p_ptr->martyr && !bypass_invuln) {
-		break_cloaking(Ind, 0); /* still notice! paranoia though, rogues can't use martyr */
-		return;
+	/* warn if taking (continuous) damage while inside a store! */
+	if (p_ptr->store_num != -1) {
+#ifdef USE_SOUND_2010
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+#else
+		if (p_ptr->paging == 0) p_ptr->paging = 1;
+#endif
+		msg_print(Ind, "\377RWarning - you are taking damage!");
 	}
 
 	// The "number" that the character is displayed as before the hit
@@ -1724,14 +1746,6 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		if (old_num >= 7) old_num = 10;
 	} */
 
-	/* towns are safe-zones from ALL hostile actions - except blood bond */
-	if (IS_PLAYER(Ind_attacker)) {
-		if ((istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) &&
-		    (!check_blood_bond(Ind_attacker, Ind) ||
-		     p_ptr->afk || Players[Ind_attacker]->afk))
-			return;
-        }
-
 	/* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
 	if (IS_PLAYER(Ind_attacker) ||
 	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1)) {
@@ -1741,9 +1755,6 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 
 	// This is probably unused
 	// int warning = (p_ptr->mhp * hitpoint_warn / 10);
-
-	/* Paranoia */
-	if (p_ptr->death) return;
 
 	/* Hack -- player is secured inside a store/house except in dungeons */
 	/* XXX make sure it doesn't "leak"!
@@ -1791,7 +1802,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 
 	/* Re allowed by evileye for power */
 #if 1
-	//		if (p_ptr->tim_manashield)
+	//if (p_ptr->tim_manashield)
 	if (p_ptr->tim_manashield && (!bypass_invuln)) {
 		if (p_ptr->csp > 0) {
 			int taken;
@@ -1958,6 +1969,34 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from) {
 	int warning = (p_ptr->msane * hitpoint_warn / 10);
 #endif	// 0
 
+	/* Heavenly invulnerability? */
+	if (p_ptr->martyr && !bypass_invuln) return;
+
+	/* Amulet of Immortality */
+	if (p_ptr->admin_invuln) return;
+
+	/* Paranoia */
+	if (p_ptr->death) return;
+
+	/* Hack -- player is secured inside a store/house except in dungeons */
+	if (p_ptr->store_num != -1 && !p_ptr->wpos.wz && !bypass_invuln) return;
+
+	/* For 'Arena Monster Challenge' event: */
+	if (safe_area(Ind)) {
+		msg_print(Ind, "\377wYou feel disturbed, but the feeling passes.");
+		return;
+	}
+
+#if 0 //Ind_attacker not available - players cannot cast insanity-draining effects on other players anyway
+	/* towns are safe-zones from ALL hostile actions - except blood bond */
+	if (IS_PLAYER(Ind_attacker)) {
+		if ((istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) &&
+		    (!check_blood_bond(Ind_attacker, Ind) ||
+		     p_ptr->afk || Players[Ind_attacker]->afk))
+			return;
+	}
+#endif
+
 	if (((p_ptr->alert_afk_dam && p_ptr->afk)
 #ifdef ALERT_OFFPANEL_DAM
 	    /* new: alert when we're off-panel (cmd_locate) */
@@ -1974,27 +2013,21 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from) {
 #endif
 	}
 
+	/* warn if taking (continuous) damage while inside a store! */
+	if (p_ptr->store_num != -1) {
+#ifdef USE_SOUND_2010
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+#else
+		if (p_ptr->paging == 0) p_ptr->paging = 1;
+#endif
+		//there's already a message given, usually..
+		//msg_print(Ind, "\377RWarning - you are taking sanity damage!");
+	}
+
 #ifdef USE_SOUND_2010
 	sound(Ind, "insanity", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-
-	/* For 'Arena Monster Challenge' event: */
-	if (safe_area(Ind)) {
-		msg_print(Ind, "\377wYou feel disturbed, but the feeling passes.");
-		return;
-	}
-
-        /* Amulet of Immortality/Invincibility for Dungeon Masters */
-        object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
-        if (o_ptr->k_idx && o_ptr->tval == TV_AMULET &&
-    	    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
-	        return;
-
-	/* Heavenly invulnerability? */
-	if (p_ptr->martyr && !bypass_invuln) return;
-
-	/* Paranoia */
-	if (p_ptr->death) return;
 
 	/* Mega-Hack -- Apply "invulnerability" */
 	if (p_ptr->invuln && (!bypass_invuln) && !p_ptr->invuln_applied) {
@@ -2106,7 +2139,18 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		stop_precision(Ind);
 	}
 
+	if (p_ptr->lev == 99) {
+		//msg_print(Ind, "You are impervious to life force drain!");
+		return;
+	}
+
+	/* arena is safe, although this may be doubtful */
+	if (safe_area(Ind)) return;
+
 #if 0
+	/* Hack -- player is secured inside a store/house except in dungeons */
+	if (p_ptr->store_num != -1 && !p_ptr->wpos.wz && !bypass_invuln) return;
+
 	if (((p_ptr->alert_afk_dam && p_ptr->afk)
  #ifdef ALERT_OFFPANEL_DAM
 	    /* new: alert when we're off-panel (cmd_locate) */
@@ -2122,15 +2166,18 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		p_ptr->paging = 1;
  #endif
 	}
-#endif
 
-	if (p_ptr->lev == 99) {
-		//msg_print(Ind, "You are impervious to life force drain!");
-		return;
+	/* warn if taking (continuous) damage while inside a store! */
+	if (p_ptr->store_num != -1) {
+ #ifdef USE_SOUND_2010
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+ #else
+		if (p_ptr->paging == 0) p_ptr->paging = 1;
+ #endif
+		msg_print(Ind, "\377RWarning - your experience is getting drained!");
 	}
-
-	/* arena is safe, although this may be doubtful */
-	if (safe_area(Ind)) return;
+#endif
 
 	/* Disturb */
 //	disturb(Ind, 1, 0);

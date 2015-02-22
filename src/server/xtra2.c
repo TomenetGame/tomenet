@@ -4581,6 +4581,7 @@ return;
 
 /*
  * Lose experience
+ * (caused by GF_NETHER, GF_CHAOS, traps, exp-melee-hits, TY-curse)
  */
 void lose_exp(int Ind, s32b amount) {
 	player_type *p_ptr = Players[Ind];
@@ -4590,12 +4591,33 @@ void lose_exp(int Ind, s32b amount) {
 
 	if (safe_area(Ind)) return;
 
+	/* Amulet of Immortality */
+	if (p_ptr->admin_invuln) return;
+
+	/* Paranoia */
+	if (p_ptr->death) return;
+
+	/* Hack -- player is secured inside a store/house except in dungeons */
+	if (p_ptr->store_num != -1 && !p_ptr->wpos.wz && !bypass_invuln) return;
+
+#if 0
+	if (disturb) {
+		break_cloaking(Ind, 0);
+		stop_precision(Ind);
+	}
+#endif
+
+	if (p_ptr->lev == 99) {
+		//msg_print(Ind, "You are impervious to life force drain!");
+		return;
+	}
+
 #if 0 /* todo: get this right and all */
-        /* Mega-Hack -- Apply "invulnerability" */
-        if (p_ptr->invuln && (!bypass_invuln) && !p_ptr->invuln_applied) {
-                /* Hack: Just reduce exp loss flat */
-                amount = (amount + 1) / 2;
-        }
+	/* Mega-Hack -- Apply "invulnerability" */
+	if (p_ptr->invuln && (!bypass_invuln) && !p_ptr->invuln_applied) {
+		/* Hack: Just reduce exp loss flat */
+		amount = (amount + 1) / 2;
+	}
 #endif
 
 	/* Never drop below zero experience */
@@ -4603,20 +4625,34 @@ void lose_exp(int Ind, s32b amount) {
 	if (!amount) return;
 
 #if 1
-        if (((p_ptr->alert_afk_dam && p_ptr->afk)
+	if (((p_ptr->alert_afk_dam && p_ptr->afk)
  #ifdef ALERT_OFFPANEL_DAM
 	    || (p_ptr->alert_offpanel_dam && (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col))
  #endif
 	    )
  #ifdef USE_SOUND_2010
-            ) {
-                Send_warning_beep(Ind);
-                //sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+	    ) {
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
  #else
-            && p_ptr->paging == 0) {
-                p_ptr->paging = 1;
+	    && p_ptr->paging == 0) {
+		p_ptr->paging = 1;
  #endif
-        }
+	}
+#endif
+
+#if 1
+	/* warn if taking (continuous) damage while inside a store! */
+	if (p_ptr->store_num != -1) {
+ #ifdef USE_SOUND_2010
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+ #else
+		if (p_ptr->paging == 0) p_ptr->paging = 1;
+ #endif
+		//all places using lose_exp() already give a message..
+		//msg_print(Ind, "\377RWarning - your experience is getting drained!");
+	}
 #endif
 
 	/* Lose some experience */
