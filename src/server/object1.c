@@ -3609,7 +3609,7 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff, u32
 	fprintf(fff, "\n");
 //	/* give weight warning, so player won't buy something he can't use. (todo: for shields and bows too) */
 //	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
-	fprintf(fff, "\377sUsing it you would do an average damage per round of:\n");
+	fprintf(fff, "\377sUsing it you would have %d throw%s and do an average damage per throw of:\n", p_ptr->num_fire, (p_ptr->num_fire > 1) ? "s" : "");
 
 	if (f1 & TR1_SLAY_ANIMAL) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, FLAT_HURT_BONUS, 0, "evil creatures", NULL);
@@ -3715,7 +3715,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1,
 	/* combine slay flags of ammo and bow */
 	f1 |= bow_f1;
 
-	fprintf(fff, "\nUsing it with your current shooter you would do an average damage per shot of:\n");
+	fprintf(fff, "\n\377sUsing it with your current shooter you would do an average damage per shot of:\n");
 	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
 	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "orcs", NULL);
@@ -3784,7 +3784,7 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b 
 	/* combine slay flags of ammo and bow */
 	f1 |= ammo_f1;
 
-	fprintf(fff, "\nUsing it with your current ammunition you would do an average damage per shot of:\n");
+	fprintf(fff, "\n\377sUsing it with your ammo you would have %d shot%s and do an average damage of:\n", p_ptr->num_fire, (p_ptr->num_fire > 1) ? "s" : "");
 	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
 	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "orcs", NULL);
@@ -5004,6 +5004,20 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		case GF_HELL_FIRE: fprintf(fff, "It explodes with hell fire.\n"); break;
 	}
 
+	/* special artifacts hardcoded - C. Blue */
+	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER
+#ifdef NEW_ID_SCREEN
+	    && full
+#endif
+	    )
+		fprintf(fff, "It turns your skin into amber, increasing your powers.\n");
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SLEEPING
+#ifdef NEW_ID_SCREEN
+	    && full
+#endif
+	    )
+		fprintf(fff, "It drops a veil of sleep over all your surroundings.\n");
+
 	if (f3 & (TR3_NO_TELE))
 		fprintf(fff, "\377DIt prevents teleportation.\n");
 	if (f5 & (TR5_DRAIN_MANA))
@@ -5048,6 +5062,16 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	/* Stormbringer hardcoded note to give a warning!- C. Blue */
 	if (o_ptr->name2 == EGO_STORMBRINGER)
 		fprintf(fff, "\377DIt's possessed by mad wrath!\n");
+
+	/* magically returning ranged weapon? */
+	if (o_ptr->tval == TV_BOOMERANG && o_ptr->name1)
+		fprintf(fff, "\377WIt always returns to your quiver.\n");
+	else if (is_ammo(o_ptr->tval)) {
+		if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL)
+			fprintf(fff, "\377WIt magically returns to your quiver most of the time.\n");
+		else if (o_ptr->sval == SV_AMMO_MAGIC || o_ptr->name1)
+			fprintf(fff, "\377WIt always magically returns to your quiver.\n");
+	}
 
 	if (((f5 & TR5_NO_ENCHANT) || o_ptr->name1)
 	    && is_enchantable(o_ptr))
@@ -5098,20 +5122,6 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	}
 	if (buf_tmp_n) fprintf(fff, "%s.\n", buf_tmp);
 
-	/* special artifacts hardcoded - C. Blue */
-	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER
-#ifdef NEW_ID_SCREEN
-	    && full
-#endif
-	    )
-		fprintf(fff, "\377wIt turns your skin into amber, increasing your powers.\n");
-	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SLEEPING
-#ifdef NEW_ID_SCREEN
-	    && full
-#endif
-	    )
-		fprintf(fff, "\377wIt drops a veil of sleep over all your surroundings.\n");
-
 	/* Damage display for weapons */
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		display_weapon_damage(Ind, &forge, fff, f1);
@@ -5151,14 +5161,6 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		} else
 			display_boomerang_damage(Ind, &forge, fff, f1);
 	}
-
-	/* magically returning ranged weapon? */
-	if (is_ammo(o_ptr->tval) &&
-	    (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL ||
-	    o_ptr->sval == SV_AMMO_MAGIC || o_ptr->name1))
-		fprintf(fff, "\377WIt magically returns to your quiver.\n");
-	else if (o_ptr->tval == TV_BOOMERANG && o_ptr->name1)
-		fprintf(fff, "\377WIt magically returns to your quiver.\n");
 
 	/* Breakage/Damage display for ammo */
 	if (eff_full && wield_slot(Ind, o_ptr) == INVEN_AMMO) {
