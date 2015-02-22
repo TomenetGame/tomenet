@@ -1746,9 +1746,10 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	if (p_ptr->death) return;
 
 	/* Hack -- player is secured inside a store/house except in dungeons */
-	/* XXX make sure it doesn't "leak"! */
-	//Glitchy side-effect: Player stops suffering from poison/cuts while in a store!
-	if (p_ptr->store_num != -1 && !p_ptr->wpos.wz) return;
+	/* XXX make sure it doesn't "leak"!
+	 * Glitchy side-effect: Player stops suffering from poison/cuts while in a store!
+	 * ..to fix that, bypass_invuln check has been added. */
+	if (p_ptr->store_num != -1 && !p_ptr->wpos.wz && !bypass_invuln) return;
 
 	/* Silyl admin games -- only in totally safe environment! */
 	if (p_ptr->admin_set_defeat &&
