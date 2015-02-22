@@ -3812,6 +3812,7 @@ static int Receive_login(int ind) {
 		u32b p_id;
 		bool censor_swearing_tmp = censor_swearing;
 		char tmp_name[ACCOUNTNAME_LEN], tmp_name2[ACCOUNTNAME_LEN];
+		char tmp_name_wide[MAX_CHARS_WIDE];
 		struct account *acc;
 
 		/* security check: a bugged client might try to send the character name, but allows an 'empty' name!
@@ -3903,8 +3904,8 @@ static int Receive_login(int ind) {
 			return(-1);
 		}
 #if 1		/* Check hostname too for swearing? */
-		strcpy(tmp_name, connp->host);
-		if (handle_censor(tmp_name)) {
+		strcpy(tmp_name_wide, connp->host);
+		if (handle_censor(tmp_name_wide)) {
 			censor_swearing = censor_swearing_tmp;
 			Destroy_connection(ind, format("Your host name is '%s' which is deemed offensive. Please change it.", connp->host));
 			return(-1);
