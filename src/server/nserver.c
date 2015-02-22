@@ -3887,7 +3887,6 @@ static int Receive_login(int ind) {
 			return -1;
 		}
 
-		//maybe todo: check hostname for swearing -_-
 		if (Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE) != SUCCESS) {
 			Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
 			return(-1);
@@ -3896,12 +3895,23 @@ static int Receive_login(int ind) {
 		/* Check for forbidden names (swearing).
 		   Note: This overrides 'censor_swearing' and is always on! */
 		censor_swearing = censor_swearing_identity;
+		/* Check account name for swearing.. */
 		strcpy(tmp_name, connp->nick);
 		if (handle_censor(tmp_name)) {
 			censor_swearing = censor_swearing_tmp;
 			Destroy_connection(ind, "This account name is not available. Please choose a different name.");
 			return(-1);
 		}
+#if 1		/* Check hostname too for swearing? */
+		strcpy(tmp_name, connp->host);
+		if (handle_censor(tmp_name)) {
+			censor_swearing = censor_swearing_tmp;
+			Destroy_connection(ind, "Your host name is deemed offensive. Please change it.");
+			return(-1);
+		}
+#endif
+		/* (Note: since 'real' name is always replaced by "PLAYER", we don't need to check that one for swearing.) */
+		/* Switch back to normal swearing checking. */
 		censor_swearing = censor_swearing_tmp;
 
 		/* Password obfuscation introduced in pre-4.4.1a client or 4.4.1.1 */
