@@ -6707,7 +6707,10 @@ void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool great, b
 static int reward_melee_check(player_type *p_ptr, long int treshold) {
 	long int rnd_result = 0, selection = 0;
 	long int choice1 = 0, choice2 = 0, choice3 = 0, choice4 = 0, choice5 = 0;
-	if (p_ptr->s_info[SKILL_SWORD].value >= treshold) choice1 = p_ptr->s_info[SKILL_SWORD].value;
+	if (p_ptr->s_info[SKILL_SWORD].value >= treshold
+	    /* hack: critical-hits skill only affects swords! */
+	    || p_ptr->s_info[SKILL_CRITS].value >= treshold)
+		choice1 = p_ptr->s_info[SKILL_SWORD].value;
 	if (p_ptr->s_info[SKILL_BLUNT].value >= treshold) choice2 = p_ptr->s_info[SKILL_BLUNT].value;
 	if (p_ptr->s_info[SKILL_AXE].value >= treshold) choice3 = p_ptr->s_info[SKILL_AXE].value;
 	if (p_ptr->s_info[SKILL_POLEARM].value >= treshold) choice4 = p_ptr->s_info[SKILL_POLEARM].value;
@@ -6868,7 +6871,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	if (p_ptr->skill_points != (p_ptr->max_plv - 1) * SKILL_NB_BASE) {
 		melee_choice = reward_melee_check(p_ptr, treshold);
 		mha = (melee_choice == 5); /* monk heavy armor */
-		rha = (get_skill(p_ptr, SKILL_DODGE)); /* rogue heavy armor; pclass == rogue or get_skill(skill_critical) are implied by this one due to current tables.c. dual_wield is left out on purpose. */
+		rha = (get_skill(p_ptr, SKILL_DODGE)); /* rogue heavy armor; pclass == rogue or get_skill(SKILL_CRITS) are implied by this one due to current tables.c. dual_wield is left out on purpose. */
 		/* analyze current setup (for reward_armor_check) */
 		if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)
