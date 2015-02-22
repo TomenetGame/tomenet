@@ -569,6 +569,13 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 		for (d = 0; d < MAX_GLOBAL_EVENTS; d++) {
 			ge = &global_event[d];
 
+			/* player might have signed up for an event that is now no longer available/cancelled,
+			   resulting in a 'duplicate ghost win' if it was Dungeon Keeper too. */
+			if (!ge->getype) {
+				p_ptr->global_event_type[d] = GE_NONE; /* no longer participant */
+				continue;
+			}
+
 			switch (p_ptr->global_event_type[d]) {
 			case GE_DUNGEON_KEEPER:
 				/* tell everyone + himself that he won */
