@@ -5901,14 +5901,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Shards -- Shard breathers resist */
 		case GF_SHARDS:
-		{
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
 				note = " resists";
 				dam *= 3; dam /= (randint(6) + 6);
 			}
 			break;
-		}
 
 		/* Rocket: Shard resistance helps (PernA) */
 		case GF_INFERNO:
@@ -5958,26 +5956,24 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Sound -- Sound breathers resist */
 		case GF_STUN:
-		{
 			do_stun = (10 + randint(15)) / div;
 			break;
-		}
 
 		/* Sound -- Sound breathers resist */
 		case GF_SOUND:
-		{
 			if (seen) obvious = TRUE;
 			do_stun = randint(15) / div;
 			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
 				note = " resists";
 				dam *= 3; dam /= (randint(6) + 6);
+			} else if (r_ptr->flags3 & RF3_NO_STUN) {
+				note = " resists somewhat";
+				dam /= 2;
 			}
 			break;
-		}
 
 		/* Confusion */
 		case GF_CONFUSION:
-		{
 			if (seen) obvious = TRUE;
 			do_conf = (10 + randint(15)) / div;
 			if ((r_ptr->flags4 & RF4_BR_CONF) ||
@@ -5989,7 +5985,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam /= 2;
 			}
 			break;
-		}
 
 		/* Disenchantment -- Breathers and Disenchanters resist */
 		case GF_DISENCHANT:

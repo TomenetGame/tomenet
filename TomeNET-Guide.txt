@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. February 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. February 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -7833,7 +7833,6 @@ Blindness       You cannot read scrolls or books while you're blind.
                 those. You still can use magic staves, rods or wands and
                 quaff potions. Quaffing a potion of Healing, Curing or
                 Cure Critical Wounds will remove the blindness.
-                (Monsters that have the NO_CONF flag will suffer less damage.)
 Confusion       While confused you cannot move, shoot or fight straight.
                 Further, you're unable to read scrolls or books.
                 However, you still can use staves, wands and rods.
@@ -7844,7 +7843,8 @@ Confusion       While confused you cannot move, shoot or fight straight.
                 Confusion resistance is covered by chaos resistance, so if you
                 already resist chaos then you don't need any more items that
                 give confusion resistance.
-                (Monsters that have the NO_CONF flag will suffer less damage.)
+                (Monsters that have the NO_CONF flag will resist somewhat and
+                suffer less damage.)
 Paralysis       Paralysis can be caused by bashing doors, lack of food, by
                 traps and by monsters. Against the latter two effects you can
                 become immune by equipping a 'Free Action' item. You should
@@ -7885,6 +7885,8 @@ Sound           Sound attacks do less damage but can stun you or even knock
                 details.)
                 Sound resistance will protect you from stunning effects.
                 Breath damage is monster HP/6. Sound breath caps at 400.
+                (Monsters that have the NO_STUN flag will resist somewhat and
+                suffer less damage.)
 Shards          Shard attacks can cause nasty cuts that makes you bleed
                 heavily if you don't resist them.
                 Resistance will cut damage to 6/7..6/12.
