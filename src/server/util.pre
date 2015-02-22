@@ -386,10 +386,10 @@ extern void go_challenge_cancel(void);	/* Aborts currently running game, if any 
 extern u16b numtowns;
 extern s16b quark__num;
 
-extern void swear_set(int i, char *word, int level);
+extern void swear_add(char *word, int level);
 extern char *swear_get_word(int i);
 extern int swear_get_level(int i);
-extern void nonswear_set(int i, char *word);
+extern void nonswear_add(char *word);
 extern char *nonswear_get(int i);
 extern void init_swearing(void);
 #ifdef IRONDEEPDIVE_MIXED_TYPES

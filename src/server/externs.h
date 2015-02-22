@@ -2150,10 +2150,10 @@ extern int global_luck; /* Global +LUCK modifier for the whole server (change th
 extern void lua_intrusion(int Ind, char *problem_diz);
 extern bool lua_mimic_eligible(int Ind, int r_idx);
 extern bool lua_mimic_humanoid(int r_idx);
-void swear_set(int i, char *word, int level);
+void swear_add(char *word, int level);
 char *swear_get_word(int i);
 int swear_get_level(int i);
-void nonswear_set(int i, char *word);
+void nonswear_add(char *word);
 char *nonswear_get(int i);
 extern void lua_fix_max_depth(int Ind);
 extern void lua_fix_max_depth_bug(int Ind);

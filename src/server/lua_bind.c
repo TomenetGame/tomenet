@@ -1189,14 +1189,30 @@ bool lua_mimic_humanoid(int r_idx) {
 	return TRUE;
 }
 
-void swear_set(int i, char *word, int level) {
-	strcpy(swear[i].word, word);
-	swear[i].level = level;
+void swear_add(char *word, int level) {
+	int i;
+
+	for (i = 0; i < MAX_SWEAR; i++) {
+		if (swear[i].word[0]) continue;
+		strcpy(swear[i].word, word);
+		swear[i].level = level;
+		return;
+	}
+	s_printf("FAILED to add swear word '%s' (%d).\n", word, level);
 }
 char *swear_get_word(int i) { return swear[i].word; }
 int swear_get_level(int i) { return swear[i].level; }
 
-void nonswear_set(int i, char *word) { strcpy(nonswear[i], word); }
+void nonswear_add(char *word) {
+	int i;
+
+	for (i = 0; i < MAX_NONSWEAR; i++) {
+		if (nonswear[i][0]) continue;
+		strcpy(nonswear[i], word);
+		return;
+	}
+	s_printf("FAILED to add non-swear word '%s'.\n", word);
+}
 char *nonswear_get(int i) { return nonswear[i]; }
 
 void lua_fix_max_depth(int Ind) {

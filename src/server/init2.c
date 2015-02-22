@@ -2837,9 +2837,12 @@ void init_swearing() {
 		i++;
 	} while (!feof(fp) && i < MAX_SWEAR - 1);
 
-	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue
+	/* obsolete: (if enabled, swear_add stuff must be placed into server_startup_post, not server_startup) - C. Blue
 	   still enabling this though, for re-initialising swearing while server runs. */
-	swear[i].word[0] = '\0';
+	while (i < MAX_SWEAR) {
+		swear[i].word[0] = '\0';
+		i++;
+	}
 
 	fclose(fp);
 
@@ -2865,7 +2868,10 @@ void init_swearing() {
 
 	/* obsolete: (if enabled, swear_set stuff must be placed into server_startup_post, not server_startup) - C. Blue
 	   still enabling this though, for re-initialising swearing while server runs. */
-	nonswear[i][0] = '\0';
+	while (i < MAX_NONSWEAR) {
+		nonswear[i][0] = '\0';
+		i++;
+	}
 
 	fclose(fp);
 }
