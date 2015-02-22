@@ -9087,6 +9087,12 @@ void verify_panel(int Ind)
 	/* Recalculate the boundaries */
 	panel_bounds(Ind);
 
+#ifdef ALERT_OFFPANEL_DAM
+	/* For alert-beeps on damage: Reset remembered panel */
+	p_ptr->panel_row_old = p_ptr->panel_row;
+	p_ptr->panel_col_old = p_ptr->panel_col;
+#endif
+
 	/* client-side weather stuff */
 	p_ptr->panel_changed = TRUE;
 
