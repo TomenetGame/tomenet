@@ -3906,7 +3906,7 @@ static int Receive_login(int ind) {
 		strcpy(tmp_name, connp->host);
 		if (handle_censor(tmp_name)) {
 			censor_swearing = censor_swearing_tmp;
-			Destroy_connection(ind, "Your host name is deemed offensive. Please change it.");
+			Destroy_connection(ind, format("Your host name is '%s' which is deemed offensive. Please change it.", connp->host));
 			return(-1);
 		}
 #endif
