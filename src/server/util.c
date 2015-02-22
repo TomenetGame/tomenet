@@ -3061,10 +3061,11 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 /* Censor swear words while keeping good words, and determining punishment level */
 //NOTE: EXEMPT_BROKEN_SWEARWORDS and HIGHLY_EFFECTIVE_CENSOR shouldn't really work togehter (because latter one kills spaces etc.)
 #define EXEMPT_BROKEN_SWEARWORDS	/* don't 'recognize' swear words that are broken up into 'innocent' parts */
-//#define HIGHLY_EFFECTIVE_CENSOR		/* strip all kinds of non-alpha chars too? */
+//#define HIGHLY_EFFECTIVE_CENSOR		/* strip all kinds of non-alpha chars too? ([disabled])*/
 #define CENSOR_PH_TO_F			/* (slightly picky) convert ph to f ?*/
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
 #define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
+//#define CENSOR_LEET			/* 433+ $p34k: Try to translate certain numbers and symbols to letters? ([disabled]) */
 static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce) {
 	int i, j, k, offset, cc[MSG_LEN], pos, eff_len;
 	char line[MSG_LEN];
@@ -3385,8 +3386,6 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	return(level);
 }
 
-/* 433+ $p34k: Try to translate certain numbers and symbols to letters? */
-//#define CENSOR_LEET
 static int censor(char *line) {
 	int i, j, im, jm, cc[MSG_LEN], offset;
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
