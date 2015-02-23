@@ -4242,7 +4242,8 @@ void calc_boni(int Ind) {
 		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
 //		    !(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
 		    !(zcave[p_ptr->py][p_ptr->px].info & CAVE_PROT) &&
-		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED)) {
+		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED) &&
+		    zcave[p_ptr->py][p_ptr->px].feat != FEAT_SHOP) {
 			p_ptr->sun_burn = TRUE;
 			/* vampire bats can stay longer under the sun light than actual vampire form */
 			if (p_ptr->body_monster != RI_VAMPIRE_BAT) {
