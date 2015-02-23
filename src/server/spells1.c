@@ -1728,7 +1728,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 #else
 		if (p_ptr->paging == 0) p_ptr->paging = 1;
 #endif
-		msg_print(Ind, "\377RWarning - you are taking damage!");
+		/* continuous-damage message only */
+		if (bypass_invuln) msg_print(Ind, "\377RWarning - you are taking damage!");
 	}
 
 	// The "number" that the character is displayed as before the hit
@@ -2175,7 +2176,8 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
  #else
 		if (p_ptr->paging == 0) p_ptr->paging = 1;
  #endif
-		msg_print(Ind, "\377RWarning - your experience is getting drained!");
+		/* continuous-damage message only */
+		if (bypass_invuln) msg_print(Ind, "\377RWarning - your experience is getting drained!");
 	}
 #endif
 
