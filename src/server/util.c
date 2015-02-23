@@ -3066,6 +3066,9 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
 #define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
 //#define CENSOR_LEET			/* 433+ $p34k: Try to translate certain numbers and symbols to letters? ([disabled]) */
+//#define EXEMPT_VSHORT_COMBINED	/* Exempt very short swear words if they're part of a bigger 'word'?
+					   //(Not recommended, since they could just be preceeded by 'the' or 'you' w/o a space) -
+					   //instead, utilize nonswear list. */
 static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce) {
 	int i, j, k, offset, cc[MSG_LEN], pos, eff_len;
 	char line[MSG_LEN];
@@ -3302,9 +3305,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			if (cc[pos] > 0 &&
 			    l1 >= 'a' && l1 <= 'z' &&
 			    (l1 != l0 || strlen(swear[i].word) <= 3)) {
+#ifdef EXEMPT_VSHORT_COMBINED
 				/* special treatment for swear words of <= 3 chars length: */
 				if (strlen(swear[i].word) <= 3) {
-#if 0 /* softened this up, see below */
+ #if 0 /* softened this up, see below */
 					/* if there's UP TO 2 other chars before it or exactly 1 non-duplicate char, it's exempt.
 					   (for more leading chars, nonswear has to be used.) */
 					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
@@ -3325,7 +3329,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 					}
 					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
 					//TODO maybe - or just use nonswear for that
-#else
+ #else
 					/* if there's at least 2 other chars before it, which aren't both duplicates, or
 					   if there's exactly 1 non-duplicate char before it, it's exempt. */
 					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
@@ -3338,8 +3342,9 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 					}
 					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
 					//TODO maybe - or just use nonswear for that
-#endif
+ #endif
 				}
+#endif
 
 				/* check that the swear word occurance was originally non-continuous, ie separated by space etc.
 				   (if this is FALSE then this is rather a case for nonswearwords.txt instead.) */
