@@ -1815,22 +1815,20 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				/* Hack -- amulets of speed and rings of speed are
 				 * cheaper than other items of speed.
 				 */
-				if (o_ptr->tval == TV_AMULET)
-				{
+				if (o_ptr->tval == TV_AMULET) {
 					/* Give credit for speed bonus */
-					//				if (f1 & TR1_SPEED) value += (boost * 25000L);
+					//if (f1 & TR1_SPEED) value += (boost * 25000L);
 					if (f1 & TR1_SPEED) value += pval * pval * 5000L;
-				}
-				else if (o_ptr->tval == TV_RING)
-				{
+				} else if (o_ptr->tval == TV_RING) {
 					/* Give credit for speed bonus */
-					//				if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
+					//if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
 					if (f1 & TR1_SPEED) value += pval * pval * 10000L;
 //					if (f1 & TR1_SPEED) value += pval * pval * 7000L;
 				}
+				/* randarts and speed boots */
 //				else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
 //				else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 5000L;//7000
+				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 6000L;//7000 -> //5000
 
 				pval = o_ptr->pval;
 
@@ -2677,17 +2675,18 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 				 */
 				if (o_ptr->tval == TV_AMULET) {
 					/* Give credit for speed bonus */
-					//				if (f1 & TR1_SPEED) value += (boost * 25000L);
+					//if (f1 & TR1_SPEED) value += (boost * 25000L);
 					if (f1 & TR1_SPEED) value += pval * pval * 5000L;
 				} else if (o_ptr->tval == TV_RING) {
 					/* Give credit for speed bonus */
-					//				if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
+					//if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
 					if (f1 & TR1_SPEED) value += pval * pval * 10000L;
 //					if (f1 & TR1_SPEED) value += pval * pval * 7000L;
 				}
+				/* randarts and speed boots */
 //				else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
 //				else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 5000L;//7000
+				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 6000L;//7000 -> //5000
 
 				pval = o_ptr->pval;
 
