@@ -3068,7 +3068,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 //#define CENSOR_LEET			/* 433+ $p34k: Try to translate certain numbers and symbols to letters? ([disabled]) */
 //#define EXEMPT_VSHORT_COMBINED	/* Exempt very short swear words if they're part of a bigger 'word'?
 					   //(Not recommended, since they could just be preceeded by 'the' or 'you' w/o a space) -
-					   //instead, utilize nonswear list. */
+					   //instead, utilize nonswear list. ([disabled]) */
 static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce) {
 	int i, j, k, offset, cc[MSG_LEN], pos, eff_len;
 	char line[MSG_LEN];
