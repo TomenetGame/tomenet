@@ -7129,8 +7129,8 @@ void mind_map_level(int Ind)
 #endif
 		}
 
-#if 0 /* this will be overheady, since it requires prt_map() here as a bad
-         hack, and PR_MAP/PU_MONSTERS commented out in for-loop below.
+#if 0 /* this will be overheady, since it requires prt_map() here as a bad \
+         hack, and PR_MAP/PU_MONSTERS commented out in for-loop below. \
          See same for-loop for clean solution as good alternative! */
 		prt_map(plist[i]); /* bad hack */
 		/* like detect_creatures(), not excluding invisible monsters though */
@@ -7142,6 +7142,15 @@ void mind_map_level(int Ind)
 		}
 #endif
 	}
+
+	/* Specialty: Detect all dungeon stores! */
+	//TODO: Store the 1 or maybe 2 stores in the l_ptr array instead -_-' */
+	for (y = 0; y < MAX_HGT; y++)
+		for (x = 0; x < MAX_WID; x++) {
+			if (zcave[y][x].feat != FEAT_SHOP) continue;
+			for (i = 0; i < plist_size; i++)
+				Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
+		}
 
 	for (i = 0; i < plist_size; i++) {
 #if 1
