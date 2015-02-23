@@ -2130,6 +2130,7 @@ struct player_type {
 	bool alert_mana;
 	bool alert_afk_dam;
 	bool alert_offpanel_dam;
+	bool no_alert;
 	bool auto_afk;
 	bool newb_suicide;
 	bool stack_allow_items;

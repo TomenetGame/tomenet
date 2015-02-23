@@ -1702,34 +1702,36 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 			return;
 	}
 
-	if (((p_ptr->alert_afk_dam && p_ptr->afk)
+	if (!p_ptr->no_alert) {
+		if (((p_ptr->alert_afk_dam && p_ptr->afk)
 #ifdef ALERT_OFFPANEL_DAM
-	    /* new: alert when we're off-panel (cmd_locate) */
-	    || (p_ptr->alert_offpanel_dam && (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col))
+		    /* new: alert when we're off-panel (cmd_locate) */
+		    || (p_ptr->alert_offpanel_dam && (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col))
 #endif
-	    )
-	    /* don't alert about 0-damage terrain effect */
-	    && (damage || -Ind_attacker != PROJECTOR_TERRAIN)
+		    )
+		    /* don't alert about 0-damage terrain effect */
+		    && (damage || -Ind_attacker != PROJECTOR_TERRAIN)
 #ifdef USE_SOUND_2010
-	    ) {
-		Send_warning_beep(Ind);
-		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+		    ) {
+			Send_warning_beep(Ind);
+			//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
 #else
-	    && p_ptr->paging == 0) {
-		p_ptr->paging = 1;
+		    && p_ptr->paging == 0) {
+			p_ptr->paging = 1;
 #endif
-	}
+		}
 
-	/* warn if taking (continuous) damage while inside a store! */
-	if (p_ptr->store_num != -1) {
+		/* warn if taking (continuous) damage while inside a store! */
+		if (p_ptr->store_num != -1) {
 #ifdef USE_SOUND_2010
-		Send_warning_beep(Ind);
-		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+			Send_warning_beep(Ind);
+			//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
 #else
-		if (p_ptr->paging == 0) p_ptr->paging = 1;
+			if (p_ptr->paging == 0) p_ptr->paging = 1;
 #endif
-		/* continuous-damage message only */
-		if (bypass_invuln) msg_print(Ind, "\377RWarning - you are taking damage!");
+			/* continuous-damage message only */
+			if (bypass_invuln) msg_print(Ind, "\377RWarning - you are taking damage!");
+		}
 	}
 
 	// The "number" that the character is displayed as before the hit
