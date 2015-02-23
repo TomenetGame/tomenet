@@ -7735,7 +7735,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 				if (!flag && !allow_stairs) {
 					allow_stairs = TRUE;
 					d = 0;
-					i = tdi[d - 1] - 1;
+					i = tdi[d] - 1;
 					continue;
 				}
 				allow_stairs = FALSE;
