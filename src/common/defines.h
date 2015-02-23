@@ -297,13 +297,6 @@
 #define FPS (cfg.fps)
 
 
-/* Time to be idle for auto-afk to kick in, in seconds [60] */
-#define AUTO_AFK_TIMER 60
-
-/* Time to be idle and starving for auto-kick to kick in, in seconds [30] */
-#define STARVE_KICK_TIMER 30
-
-
 /* Characters and accounts do never expire? (Enable this in your LAN for example) */
 //#define PLAYERS_NEVER_EXPIRE
 
@@ -320,6 +313,19 @@
 
 /* maximum respawn time for uniques.... from japanese patch */
 #define COME_BACK_TIME_MAX 600
+
+
+/* For flash player option, cfg.fps/n, for teleport [6] */
+#define FLASH_SELF_DIV 4
+/* For flash player option, cfg.fps/n, for floor change [4] */
+#define FLASH_SELF_DIV2 3
+
+
+/* Time to be idle for auto-afk to kick in, in seconds [60] */
+#define AUTO_AFK_TIMER 60
+
+/* Time to be idle and starving for auto-kick to kick in, in seconds [30] */
+#define STARVE_KICK_TIMER 30
 
 
 /* Do artifacts time out after a while to prevent hoarding?

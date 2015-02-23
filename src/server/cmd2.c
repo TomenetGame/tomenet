@@ -536,7 +536,7 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
 	    && p_ptr->flash_self >= 0) {
 		/* flicker player for a moment, to allow for easy location */
 		/* -- only do this when our view panel has changed */
-		p_ptr->flash_self = cfg.fps / 6;
+		p_ptr->flash_self = cfg.fps / FLASH_SELF_DIV;
 	}
 #else
 	    ;

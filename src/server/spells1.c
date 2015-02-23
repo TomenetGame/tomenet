@@ -985,7 +985,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	/* not for phase door, except when our view panel has changed from it */
 	if (p_ptr->flash_self >= 0 &&
 	    (org_dis > 20 || !local_panel(Ind)))
-		p_ptr->flash_self = cfg.fps / 6;
+		p_ptr->flash_self = cfg.fps / FLASH_SELF_DIV;
 #endif
 
 	/* Redraw the new spot */
@@ -1160,9 +1160,9 @@ void teleport_player_to(int Ind, int ny, int nx) {
 #ifdef ENABLE_SELF_FLASHING
 #if 0 /* not for tele-to - let's regarded it as a 'blink' here */
 	/* flicker player for a moment, to allow for easy location */
-	if (p_ptr->flash_self >= 0) p_ptr->flash_self = cfg.fps / 8;
+	if (p_ptr->flash_self >= 0) p_ptr->flash_self = cfg.fps / FLASH_SELF_DIV;
 #else /* exception when our view panel has changed from this tele-to */
-	if (p_ptr->flash_self >= 0 && !local_panel(Ind)) p_ptr->flash_self = cfg.fps / 6;
+	if (p_ptr->flash_self >= 0 && !local_panel(Ind)) p_ptr->flash_self = cfg.fps / FLASH_SELF_DIV;
 #endif
 #endif
 
