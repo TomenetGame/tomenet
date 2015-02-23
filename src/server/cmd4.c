@@ -556,7 +556,7 @@ void do_cmd_check_uniques(int Ind, int line)
 			/* extra marker line to show where our glory ends for the moment */
 			if (!(p_ptr->uniques_alive))
 			if (own_highest && own_highest == k) {
-				fprintf(fff, "\377U  (strongest unique monster you killed)\n");
+				fprintf(fff, "\377U  (strongest unique monster you have slain)\n");
 				/* only display this marker once */
 				own_highest = 0;
 			}
