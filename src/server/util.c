@@ -6966,7 +6966,8 @@ void grid_affects_player(int Ind) {
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
-	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) {
+	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
+	    c_ptr->feat != FEAT_SHOP) {
 		if (!p_ptr->grid_sunlit) {
 			p_ptr->grid_sunlit = TRUE;
 			calc_boni(Ind);
