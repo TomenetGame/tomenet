@@ -2217,47 +2217,56 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			return;
 		}
-		else if (prefix(message, "/notec") || prefix(message, "/note"))
-		{
+		else if (prefix(message, "/note")) {
 			int notes = 0, found_note = MAX_NOTES;
 			j = 0;
 			bool colon = FALSE;
 			char tname[MAX_SLASH_LINE_LEN], *tpname; /* target's account name (must be *long* cause we temporarily store whole message2 in it..pft */
 			struct account *c_acc;
 
+			if (tk < 1) { /* Explain command usage */
+				msg_print(Ind, "Usage:    /note <character or account name>:<text>");
+				msg_print(Ind, "Example:  /note Mithrandir:Your weapon is in the guild hall!");
+				msg_print(Ind, "Usage 2:  /note <name>    will clear all pending notes to that player.");
+				msg_print(Ind, "Usage 3:  /note *         will clear all pending notes to all players.");
+				return;
+			}
+
 			/* cut off, uh, many bytes, to avoid overflow --paranoia, I haven't counted */
 			message2[MAX_SLASH_LINE_LEN - 15] = 0;
 			message3[MAX_SLASH_LINE_LEN - 15] = 0;
 
-			if (prefix(message, "/notec")) {
-				if (tk < 1) { /* Explain command usage */
-					msg_print(Ind, "\377oUsage: /notec <character name>[:<text>]");
-					msg_print(Ind, "\377oExample: /notec Pally:Hiho!");
-					msg_print(Ind, "\377oNot specifiying any text will remove pending notes to the player's account.");
-					msg_print(Ind, "\377oTo clear all pending notes of yours, type:  /note *  or  /notec *");
-					return;
-				}
-
-				/* translate character name to account name */
-				if (!(tpname = strchr(message2 + 7, ':'))) {
-					/* no text given */
-					if (!lookup_player_id(message2 + 7)) {
-						msg_print(Ind, "\377oNo character of that name exists.");
+			/* translate character name to account name */
+			if (!(tpname = strchr(message2 + 6, ':'))) {
+				/* no text given */
+				if (!lookup_player_id(message2 + 6)) {
+					/* character name not found, try to match account name instead */
+					c_acc = GetAccount(message2 + 6, NULL, FALSE);
+					if (!c_acc) {
+						msg_print(Ind, "\377oNo character or account of that name exists.");
 						return;
 					}
+					KILL(c_acc, struct account);
+				} else {
 					strcpy(tname, "/note ");
-					strcat(tname, lookup_accountname(lookup_player_id(message2 + 7)));
+					strcat(tname, lookup_accountname(lookup_player_id(message2 + 6)));
 					strcpy(message2, tname);
 					strcpy(tname, "");
-				} else {
-					/* note text given */
-					tpname[0] = 0;
-					if (!lookup_player_id(message2 + 7)) {
-						msg_print(Ind, "\377oPlayer not found.");
+				}
+			} else {
+				/* note text given */
+				tpname[0] = 0;
+				if (!lookup_player_id(message2 + 6)) {
+					/* character name not found, try to match account name instead */
+					c_acc = GetAccount(message2 + 6, NULL, FALSE);
+					if (!c_acc) {
+						msg_print(Ind, "\377oNo character or account of that name exists.");
 						return;
 					}
+					KILL(c_acc, struct account);
+				} else {
 					strcpy(tname, "/note ");
-					strcat(tname, lookup_accountname(lookup_player_id(message2 + 7)));
+					strcat(tname, lookup_accountname(lookup_player_id(message2 + 6)));
 					strcat(tname, ":");
 					strcat(tname, tpname + 1);
 					strcpy(message2, tname);
@@ -2265,14 +2274,6 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 			}
 
-			if (tk < 1) { /* Explain command usage */
-				msg_print(Ind, "\377oUsage: /note <player account>[:<text>]");
-				msg_print(Ind, "\377oExample: /note Mithrandir:Hiho!");
-				msg_print(Ind, "\377oNot specifiying any text will remove pending notes to that account.");
-				msg_print(Ind, "\377oTo clear all pending notes of yours, type:  /note *");
-				msg_print(Ind, "\377oHint: Use /notec to specify a character name instead of account.");
-				return;
-			}
 			/* Does a colon appear? */
 			for (i = 0; i < (int)strlen(message2); i++)
 				if (message2[i] == ':') colon = TRUE;
@@ -2340,10 +2341,10 @@ void do_slash_cmd(int Ind, char *message) {
 			/* Colon found, store a note to someone */
 			/* Store a new note from this player to the specified player */
 
-			/* does target account exist? */
+			/* does target account exist? -- paranoia at this point! */
 			c_acc = GetAccount(tname, NULL, FALSE);
 			if (!c_acc) {
-				msg_print(Ind, "\377oThat account does not exist. You can use /notec to write to a character name.");
+				msg_print(Ind, "\377oError: Player's account not found.");
 				return;
 			}
 			KILL(c_acc, struct account);

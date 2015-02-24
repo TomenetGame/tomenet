@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. February 2015 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.9 - official websites are:
+| Latest update: 24. February 2015 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.9+ - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
 |
@@ -1126,15 +1126,12 @@ They all start with a slash '/' hence they're called slash commands:
 
 /news       Shows the login screen, same as ~f, but in monochrome.
 
-/note <account name>:<text>
-            Leave a note to another player. Note: You have to specify his
-            ACCOUNT NAME, not a character name. That way, no matter which of
-            his characters he chooses to logon, he always gets the note.
-/notec <character name>:<text>
-            Like /note command, except you specify a character name.
-            The receipient will actually get the note even if he logs on with
-            the 'wrong' character!
-/note <account name>
+/note <character/account name>:<text>
+            Leave a note to another player. The message will actually go to the
+            player's account even if you specified a character name, so no
+            matter which of his characters he chooses to logon, he always gets
+            the note.
+/note <character/account name>
             Delete all pending notes that were addressed to that player.
 /notes      Display all pending notes that you wrote to other players.
 
