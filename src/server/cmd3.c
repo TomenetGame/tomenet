@@ -16,6 +16,8 @@
 #include "angband.h"
 
 
+/* Allow fruit bats to wear boots? [experimental, disabled] */
+#define BATS_ALLOW_FEET
 
 
 bool bypass_inscrption = FALSE;
@@ -478,7 +480,10 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		case INVEN_OUTER:
 		case INVEN_LITE:
 		case INVEN_ARM:
-		case INVEN_TOOL:    //allow them to wear, say, picks and shovels - the_sandman
+#ifdef BATS_ALLOW_FEET
+		case INVEN_FEET:	//allow this mayyyybe?
+#endif
+		case INVEN_TOOL:	//allow them to wear, say, picks and shovels - the_sandman
 			break; //fine
 		default:
 			return FALSE; //not fine
@@ -534,6 +539,13 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			break;
 		case INVEN_FEET:
 			if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
+#ifdef BATS_ALLOW_FEET
+			switch (p_ptr->body_monster) {
+			case 37: case 114: case 187: case 235: case 351:
+			case 377: case 391: case 406: case 484: case 968:
+				return TRUE;
+			}
+#endif
 			break;
 		}
 	}
@@ -632,6 +644,13 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			break;
 		case INVEN_FEET:
 			if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
+#ifdef BATS_ALLOW_FEET
+			switch (p_ptr->body_monster) {
+			case 37: case 114: case 187: case 235: case 351:
+			case 377: case 391: case 406: case 484: case 968:
+				return TRUE;
+			}
+#endif
 			break;
 		}
 	}
@@ -655,7 +674,10 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		case INVEN_OUTER:
 		case INVEN_LITE:
 		case INVEN_ARM:
-		case INVEN_TOOL:    //allow them to wear, say, picks and shovels - the_sandman
+#ifdef BATS_ALLOW_FEET
+		case INVEN_FEET:	//allow this mayyyybe?
+#endif
+		case INVEN_TOOL:	//allow them to wear, say, picks and shovels - the_sandman
 			return TRUE;
 		}
 	}
@@ -672,9 +694,9 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			return TRUE;
 		}
 	}
-#endif	// 0
-	else
-	{
+#endif
+	/* non-fruit bats */
+	else {
 		/* Check for a usable slot */
 		if (slot >= INVEN_WIELD) {
 #if 0
