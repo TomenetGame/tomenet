@@ -3066,14 +3066,20 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
 #define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
 //#define CENSOR_LEET			/* 433+ $p34k: Try to translate certain numbers and symbols to letters? ([disabled]) */
-//#define EXEMPT_VSHORT_COMBINED	/* Exempt very short swear words if they're part of a bigger 'word'?
-					   //(Not recommended, since they could just be preceeded by 'the' or 'you' w/o a space) -
-					   //instead, utilize nonswear list. ([disabled]) */
+#define EXEMPT_VSHORT_COMBINED		/* Exempt very short swear words if they're part of a bigger 'word'?
+					   //(Problem: They could just be preceeded by 'the' or 'you' w/o a space) -
+					   //practically unfeasible (~1250+ words!) to utilize nonswear list for this ([enabled]) */
+#ifdef EXEMPT_VSHORT_COMBINED
+ #define VSHORT_STEALTH_CHECK		/* Perform a check if the swear word is masked by things like 'the', 'you', 'a(n)'.. */
+#endif
 static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce) {
 	int i, j, k, offset, cc[MSG_LEN], pos, eff_len;
 	char line[MSG_LEN];
 	char *word, l0, l1, l2, l3;
 	int level = 0;
+#ifdef VSHORT_STEALTH_CHECK
+	bool masked;
+#endif
 
 	/* create working copies */
 	strcpy(line, buf);
@@ -3308,6 +3314,28 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 #ifdef EXEMPT_VSHORT_COMBINED
 				/* special treatment for swear words of <= 3 chars length: */
 				if (strlen(swear[i].word) <= 3) {
+ #ifdef VSHORT_STEALTH_CHECK
+					/* check for masking by 'the', 'you', 'a(n)' etc. */
+					masked = TRUE;
+					if (cc[pos] == 1 || cc[pos] == 2) {
+						/* if there's 1 or 2 chars before the swear word, it depends on the first
+						   char of the swear word: vowel is ok, consonant is not. */
+						switch (l0) {
+						case 'a': case 'e': case 'i': case 'o': case 'u': case 'y':
+							masked = FALSE;
+							break;
+						}
+					}
+					/* if swear word is followed by a vowel, it's ok. */
+					switch (tolower(line[cc[pos] + strlen(swear[i].word)])) {
+					case 'a': case 'e': case 'i': case 'o': case 'u': case 'y':
+						masked = FALSE;
+						break;
+					}
+				    /* so if it is already determined by now to be a masked swear word, skip the vshort-exemption-checks */
+				    if (!masked) {
+ #endif
+
  #if 0 /* softened this up, see below */
 					/* if there's UP TO 2 other chars before it or exactly 1 non-duplicate char, it's exempt.
 					   (for more leading chars, nonswear has to be used.) */
@@ -3342,6 +3370,9 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 					}
 					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
 					//TODO maybe - or just use nonswear for that
+ #endif
+ #ifdef VSHORT_STEALTH_CHECK
+				    }
  #endif
 				}
 #endif
