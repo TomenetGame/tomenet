@@ -2354,8 +2354,8 @@ void do_slash_cmd(int Ind, char *message) {
 				if (!strcmp(priv_note_sender[i], p_ptr->name) ||
 				    !strcmp(priv_note_sender[i], p_ptr->accountname)) notes++;
 			}
-			if ((notes >= 4) && !is_admin(p_ptr)) {
-				msg_print(Ind, "\377oYou have already reached the maximum of 4 pending notes per player.");
+			if ((notes >= 5) && !is_admin(p_ptr)) {
+				msg_print(Ind, "\377oYou have already reached the maximum of 5 pending notes per player.");
 				return;
 			}
 
