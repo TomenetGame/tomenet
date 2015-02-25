@@ -4248,7 +4248,9 @@ void calc_boni(int Ind) {
 			/* vampire bats can stay longer under the sun light than actual vampire form */
 			if (p_ptr->body_monster != RI_VAMPIRE_BAT) {
 				i = (turn % DAY) / HOUR;
-				p_ptr->drain_life += 5 - ABS(i - (SUNRISE + (NIGHTFALL - SUNRISE) / 2)) / 2; /* for calculate day time distance to noon -> max burn! */
+				i = 5 - ABS(i - (SUNRISE + (NIGHTFALL - SUNRISE) / 2)) / 2; /* for calculate day time distance to noon -> max burn!: 2..5*/
+				if (p_ptr->total_winner) i = (i + 1) / 2;//1..3
+				p_ptr->drain_life += i;
 			} else p_ptr->drain_life++;
 		}
 	}
