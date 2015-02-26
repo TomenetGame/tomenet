@@ -2194,8 +2194,7 @@ void do_slash_cmd(int Ind, char *message) {
 			if (server_warning[0]) msg_format(Ind, "\377R*** Note: %s ***", server_warning);
 			return;
 		}
-		else if (prefix(message, "/notes"))
-		{
+		else if (prefix(message, "/notes")) {
 			int notes = 0;
 			for (i = 0; i < MAX_NOTES; i++) {
 				/* search for pending notes of this player */
@@ -2247,6 +2246,7 @@ void do_slash_cmd(int Ind, char *message) {
 						return;
 					}
 					KILL(c_acc, struct account);
+					tpname[0] = ':';
 				} else {
 					strcpy(tname, "/note ");
 					strcat(tname, lookup_accountname(lookup_player_id(message2 + 6)));
@@ -2264,6 +2264,7 @@ void do_slash_cmd(int Ind, char *message) {
 						return;
 					}
 					KILL(c_acc, struct account);
+					tpname[0] = ':';
 				} else {
 					strcpy(tname, "/note ");
 					strcat(tname, lookup_accountname(lookup_player_id(message2 + 6)));
