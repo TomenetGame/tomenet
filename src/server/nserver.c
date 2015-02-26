@@ -4037,11 +4037,14 @@ static int Receive_login(int ind) {
 		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, strlen(choice));
 		Trim_name(choice);
 
+		/* If already exists, change capitalization to match */
+		if (fix_player_case(choice)) s_printf("Name capitalization: -> '%s'\n", choice);
+
 		/* Check for forbidden names (technical/lore reasons) */
 		if (forbidden_name(choice)) {
 //			Packet_printf(&connp->c, "%c", E_INVAL);
-                        Destroy_connection(ind, "Forbidden character name. Please choose a different name.");
-                        return(-1);
+			Destroy_connection(ind, "Forbidden character name. Please choose a different name.");
+			return(-1);
 		}
 
 		/* Check for forbidden names (swearing).
@@ -4050,15 +4053,15 @@ static int Receive_login(int ind) {
 		strcpy(tmp_name, choice);
 		if (handle_censor(tmp_name)) {
 			censor_swearing = censor_swearing_tmp;
-                        Destroy_connection(ind, "This character name is not available. Please choose a different name.");
-                        return(-1);
+			Destroy_connection(ind, "This character name is not available. Please choose a different name.");
+			return(-1);
 		}
 		censor_swearing = censor_swearing_tmp;
 
 		/* check if player tries to use one of the temporarily reserved character names */
 		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
 			if (!reserved_name_character[i][0]) break;
-			if (strcmp(reserved_name_character[i], choice)) continue;
+			if (strcasecmp(reserved_name_character[i], choice)) continue;
 
 			if (!strcmp(reserved_name_account[i], connp->nick)) {
 				reserved_name_character[i][0] = '\0'; //clear reservation

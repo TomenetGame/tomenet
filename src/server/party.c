@@ -3558,6 +3558,36 @@ int lookup_player_id(cptr name)
 	return 0;
 }
 
+bool fix_player_case(char *name) {
+	hash_entry *ptr;
+	int i;
+
+	/* Search in each array slot */
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		/* Acquire pointer to this chain */
+		ptr = hash_table[i];
+
+		/* Check all entries in this chain */
+		while (ptr) {
+			/* Check this name */
+			if (!strcasecmp(ptr->name, name)) {
+				/* Overwrite it with currently used capitalization */
+				if (strcmp(ptr->name, name)) {
+					strcpy(name, ptr->name);
+					return TRUE;
+				}
+				return FALSE;
+			}
+
+			/* Next entry in chain */
+			ptr = ptr->next;
+		}
+	}
+
+	/* Not found */
+	return FALSE;
+}
+
 /* Messed up version of lookup_player_id for house ownership changes
    that involve messed up characters (in terms of their ID, for example
    if they were copied / restored instead of cleanly created..) mea culpa! */

@@ -1331,6 +1331,7 @@ extern bool check_ignore(int attacker, int target);
 extern bool check_hostile(int attacker, int target);
 extern cptr lookup_accountname(int p_id);
 extern cptr lookup_player_name(int id);
+extern bool fix_player_case(char *name);
 #ifdef AUCTION_SYSTEM
 extern s32b lookup_player_au(int id);
 extern s32b lookup_player_balance(int id);
