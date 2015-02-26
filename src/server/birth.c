@@ -1814,7 +1814,9 @@ static void player_outfit(int Ind) {
 
 			switch (p_ptr->pclass) {
 			case CLASS_WARRIOR:
-				j = 3;//aim for 3 bpr first
+				/* maybe 3, to aim for 3 bpr at first? -
+				   changed it to 2, or all warriors would start with silly 'small' weapons.. */
+				j = 2;
 				break;
 			case CLASS_MIMIC:
 			case CLASS_PALADIN:
