@@ -491,12 +491,18 @@ struct account *Admin_GetAccount(cptr name) {
    If checking for an account name, accname must be NULL.
    If checking for a character name, accname must be set to its account holder.
     - C. Blue */
+/* Super-strict mode? Disallow (non-trivial) char/acc names that only have 1+
+   _letter_ inserted somewhere compared to existing account names */
+#define STRICT_SIMILAR_NAMES
+/* Only apply super-strict check above to account names being created,
+   let character names be created without this extra check. */
+//#define SIMILAR_CHARNAMES_OK
 bool lookup_similar_account(cptr name, cptr accname) {
 	FILE *fp;
 	char buf[1024], tmpname[ACCOUNTNAME_LEN > CHARACTERNAME_LEN ? ACCOUNTNAME_LEN : CHARACTERNAME_LEN];
 	const char *ptr, *ptr2;
 	struct account *c_acc;
-	int diff;
+	int diff, min;
 
 	MAKE(c_acc, struct account);
 	/* ew, cannot reserve memory! we abuse the return value to cause an
@@ -517,17 +523,23 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if (c_acc->flags & ACC_DELD) continue;
 
-		/* Always accept if the account actually belongs to us. */
+		/* We may create character names similar to our own account name as we like */
 		if (accname && !strcmp(c_acc->name, accname)) {
-			fclose(fp);
-			KILL(c_acc, struct account);
-			return FALSE;
+			continue;
 		}
 
-#if 1
+#ifdef STRICT_SIMILAR_NAMES
 		/* Super-strict mode? Disallow (non-trivial) names that only have 1+ letter inserted somewhere */
-		if (!accname && //only apply this check to account names, be lenient for character names
+		if (
+ #ifdef SIMILAR_CHARNAMES_OK
+		    /*only apply this check to account names being created, be lenient for character names */
+		    !accname &&
+ #endif
 		    strlen(name) >= 5 && strlen(c_acc->name) >= 5) { //non-trivial length
+			/* don't exaggerate */
+			if (strlen(name) > strlen(c_acc->name)) min = strlen(c_acc->name);
+			else min = strlen(name);
+
 			/* '->' */
 			diff = 0;
 			ptr2 = name;
@@ -540,7 +552,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr++) diff++;
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
-			if (diff <= (strlen(c_acc->name) - 5) / 2 + 1) {
+			if (diff <= (min - 5) / 2 + 1) {
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -557,7 +569,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr++) diff++;
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
-			if (diff <= (strlen(name) - 5) / 2 + 1) {
+			if (diff <= (min - 5) / 2 + 1) {
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -576,7 +588,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr++) diff++;
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
-			if (diff <= (strlen(name) - 5) / 2 + 1) {
+			if (diff <= (min - 5) / 2 + 1) {
 				KILL(c_acc, struct account);
 				return TRUE;
 			}

@@ -4076,9 +4076,11 @@ static int Receive_login(int ind) {
 		/* Check if a too similar account name already exists.
 		   Only for characters that don't exist yet and would be newly created. */
 		if (!lookup_player_id(choice) && lookup_similar_account(choice, connp->nick)
-		    /* exception! reserved character names have priority */
+		    /* exception! reserved character names have priority.
+		       Otherwise someone could create an account meanwhile to block this player's reincarnation.
+		       Ok, far-fetched paranoia, but still >_>.. */
 		    && !took_reservation) {
-			Destroy_connection(ind, "A similar account name exists. Please choose a different name.");
+			Destroy_connection(ind, "A too similar name exists. Please choose a different name.");
 			return -1;
 		}
 
