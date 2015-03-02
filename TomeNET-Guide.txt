@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. February 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. March 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9+ - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -16940,7 +16940,9 @@ SOLUTION:   This can have several reasons. On disconnection a message box will
                     Can happen if your connection gets disrupted or overloaded.
                     May especially happen on not-so-great connections if you
                     die and the server tries to send a large bunch of death
-                    dump information to your client.
+                    dump information to your client. Note that in that case you
+                    didn't die _because_ of this error, but the error occurred
+                    _because_ you already died.
             "Server closed the connection"
                     Maybe a firewall or bad network problem.
 
