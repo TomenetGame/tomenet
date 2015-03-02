@@ -1199,8 +1199,13 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			r_idx = get_mon_num(w_ptr->radius, w_ptr->radius);
 
 			/* get the owners location */
+#if 0 /* won't this cause monsters to be randomly spawned possibly _inside adjancent player houses_? o_O */
 			x = rand_range(x1, x2) + rand_int(40) - 20;
 			y = rand_range(y1, y2) + rand_int(16) - 8;
+#else
+			x = rand_range(x1, x2);
+			y = rand_range(y1, y2);
+#endif
 
 			/* place the owner */
 			summon_override_checks = SO_HOUSE;
