@@ -5172,10 +5172,10 @@ void calc_boni(int Ind) {
 		if (marts >  9) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 		if (marts > 19) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 		if (marts > 29) { p_ptr->num_blow++; csheet_boni[14].blow++; }
-//		if (marts > 34) p_ptr->num_blow++; /* this is 'marts > 0' now */
+//		if (marts > 34) p_ptr->num_blow++; csheet_boni[14].blow++; } /* This _could_ be added if really required */
 		if (marts > 39) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 		if (marts > 44) { p_ptr->num_blow++; csheet_boni[14].blow++; }
-		if (marts > 49) { p_ptr->num_blow++; csheet_boni[14].blow++; }	/* Do we want 9ea from MA? certainly not. */
+		if (marts > 49) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 
 		if (monk_heavy_armor(p_ptr)) p_ptr->num_blow /= 2;
 
@@ -5183,11 +5183,15 @@ void calc_boni(int Ind) {
 
 		if (!monk_heavy_armor(p_ptr)) {
 			p_ptr->to_h_melee += (marts * 4) / 2;//was *3/2
-#if 1 /* experimental */
+
+#if 1 /* new boost */
+			p_ptr->to_d_melee += ((marts * 3) / 5); /* new MA boost */
+#elif 1 /* experimental */
 			p_ptr->to_d_melee += ((marts * 2) / 5); /* for better form influence of MA mimics */
 #else
 			p_ptr->to_d_melee += (marts / 2); /* was 3 */
 #endif
+
 			/* Testing: added a new bonus. No more single digit dmg at lvl 20, I hope, esp as warrior. the_sandman */
 			/* changed by C. Blue, so it's available to mimics too */
 #ifndef MARTIAL_TO_D_HACK
