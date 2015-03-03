@@ -709,8 +709,10 @@ static void rd_item(object_type *o_ptr) {
 	/* Acquire standard weight */
 	o_ptr->weight = k_ptr->weight;
 
+#if 0 /* what's the purpose of this? seems just wrong? maybe deprecated, ancient hack? */
 	/* Hack -- extract the "broken" flag */
 	if (o_ptr->pval < 0) o_ptr->ident |= ID_BROKEN;
+#endif
 
 
 	/* Artifacts */
