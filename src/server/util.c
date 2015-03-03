@@ -3065,7 +3065,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 #define CENSOR_PH_TO_F			/* (slightly picky) convert ph to f ?*/
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
 #define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
-//#define CENSOR_LEET			/* 433+ $p34k: Try to translate certain numbers and symbols to letters? ([disabled]) */
+#define CENSOR_LEET			/* 433+ $p34k: Try to translate certain numbers and symbols to letters? ([disabled]) */
 #define EXEMPT_VSHORT_COMBINED		/* Exempt very short swear words if they're part of a bigger 'word'?
 					   //(Problem: They could just be preceeded by 'the' or 'you' w/o a space) -
 					   //practically unfeasible (~1250+ words!) to utilize nonswear list for this ([enabled]) */
