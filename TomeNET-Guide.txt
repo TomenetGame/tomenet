@@ -8407,29 +8407,65 @@ IMPACT ('It can cause earthquakes')
         Usually, !E only works on the artifact "Grond".)
 WOUNDING ('It is very sharp and makes your foes bleed.')
         Has additional to-hit/to-dam bonus.
-Weapons of Spinning
-        Spin around on activation, hitting every monster around you in a
-        radius of 1, with an extra stun effect.
-EASY_USE (of Simplicity, 'It is especially easy to activate.')
-        You have a much higher chance of succeeding to use the magic device.
-        Also see (6.10) for more information about the 'Magic Device' skill.
-CHARGING (of Charging) ('It regenerates its mana faster.')
-        This magic device (rod) will take only 1/2 of the usual time to
-        fully recharge.
-Istari (of the Istari)
-        Combination of EASY_USE and CHARGING.
 FUEL_LITE ('It provides light when fueled')
         A light source that needs to be fueled, otherwise it runs out.
         WARNING:
         If this item provides other abilities besides emitting light, be aware
         that you need to keep it fueled for it to do so! If it runs out of fuel
         your character will lose all abilities it provided until you refuel it.
-(NO_SEED
-        An ego item that is never created randomly (in terms of abilities
-        or power).)
 CURSED, HEAVY_CURSE, PERMA_CURSE, AUTO_CURSE,
 CURSE_NO_DROP, TY_CURSE, DG_CURSE
         See (5.14) Curses.
+INVIS   ('It makes you invisible.')
+        Turns you invisible. Items 'of Invisibility' often have a +mod,
+        which gives you additional stealth. Note that this +mod does not
+        qualify or affect your invisibility in any way, but is purely for an
+        extra stealth bonus. See '(5.16) Invisibility' for details.
+BLOWS   ('It affects your attack speed.')
+        This item adds EA (extra attacks) to your number of blows per round.
+SH_ELEC ('It produces an electric sheath.')
+        Surrounds you with a lightning aura, damaging monsters each time they
+        hit you in close combat.
+SH_COLD ('It produces an icy sheath.')
+        Surrounds you with a frost aura, damaging monsters each time they
+        hit you in close combat.
+SH_FIRE ('It produces a fiery sheath.')
+        Surrounds you with a fire aura, damaging monsters each time they
+        hit you in close combat.
+REFLECT ('It reflects bolts and arrows.')
+        Gives you a 75% chance to reflect shots, arrows, bolts and missiles
+        fired at you, 45% chance to reflect magical bolt-type spells and 60%
+        to deflect any physical projectile from traps you triggered.
+        Reflected attacks will hit grids closely around their origin, possibly
+        damaging/killing the monster who shot at you.
+
+Weapons of Spinning
+        Spin around on activation, hitting every monster around you in a
+        radius of 1, with an extra stun effect.
+
+EASY_USE (of Simplicity, 'It is especially easy to activate.')
+        You have a much higher chance of succeeding to use the magic device.
+        Also see (6.10) for more information about the 'Magic Device' skill.
+CHARGING (of Charging) ('It regenerates its mana faster.')
+        This magic device (rod) will take only 1/2 of the usual time to
+        fully recharge.
+'of the Istari' rods.
+        Combination of EASY_USE and CHARGING.
+'of Plenty' wands and staves.
+        These have more charges than usual, and will also gain more charges
+        from recharging than their normal counterparts. (See (5.22) about
+        recharging.)
+
+WINNERS_ONLY
+        This item can only be equipped by winners (kings/queens/emperors/
+        empresses) and fallen winners (those who lost their title because they
+        died).
+        This item can only be found by certain characters, see server options
+        in-game via ~d for details.
+
+(NO_SEED
+        An ego item that is never created randomly (in terms of abilities
+        or power).)
 INSTA_ART
         This item always is an artifact; it has no base-class that can spawn
         non-art items. Example: Long Sword base class can spawn regular long
@@ -8441,35 +8477,6 @@ SPECIAL_GENE
         regular monsters but require a certain key monster to be killed.
         For example the Dragonrider Coat of Mardra can only drop from Mardra
         (there is no guarantee that she will always drop it though).
-'Imbued' books and tomes.
-        Those especially treatened books and tomes resist the influence of
-        heat, water and acid strongly.
-INVIS   ('It makes you invisible.')
-        Turns you invisible. Items 'of Invisibility' often have a +mod,
-        which gives you additional stealth. Note that this +mod does not
-        qualify or affect your invisibility in any way, but is purely for an
-        extra stealth bonus. See '(5.16) Invisibility' for details.
-BLOWS   ('It affects your attack speed.')
-        This item adds EA (extra attacks) to your number of blows per round.
-'of Plenty' wands and staves.
-        These have more charges than usual, and will also gain more charges
-        from recharging than their normal counterparts. (See (5.22) about
-        recharging.)
-WINNERS_ONLY
-        This item can only be equipped by winners (kings/queens/emperors/
-        empresses) and fallen winners (those who lost their title because they
-        died).
-        This item can only be found by certain characters, see server options
-        in-game via ~d for details.
-SH_ELEC ('It produces an electric sheath.')
-        Surrounds you with a lightning aura, damaging monsters each time they
-        hit you in close combat.
-SH_COLD ('It produces an icy sheath.')
-        Surrounds you with a frost aura, damaging monsters each time they
-        hit you in close combat.
-SH_FIRE ('It produces a fiery sheath.')
-        Surrounds you with a fire aura, damaging monsters each time they
-        hit you in close combat.
 
 
 
@@ -12715,6 +12722,7 @@ F: flag list
                 user.
     KILL_WALL   The mimic will dig *easily* through walls.
     REGENERATE  Faster hit point regeneration.
+    REFLECTING  Gives 'reflect' ability to the player, see (5.8) for details.
     CAN_SWIM    The player can pass water fields without problems.
     CAN_FLY     The player can levitate.
     STUPID      -2 intelligence.

@@ -436,7 +436,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 				continue;
 			}
 		}
-		if (p_ptr->reflect && magik(50)) {
+		if (p_ptr->reflect && magik(60)) {
 			msg_print(Ind, "You deflect the attack!");
 			continue;
 		}
