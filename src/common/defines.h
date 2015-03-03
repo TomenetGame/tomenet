@@ -6794,6 +6794,9 @@ extern int PlayerUID;
  /* Reduction in percent (on linear scale) of ambient/weather sfx
     depending on which grid the player is on (ie inside house or outside): [40] */
  #define GRID_SFX_REDUCTION	50
+
+ /* Play slightly quieter shriek sfx to not blast people's ear drums =P [0..100] */
+ #define SFX_SHRIEK_VOLUME	50
 #endif
 
 
