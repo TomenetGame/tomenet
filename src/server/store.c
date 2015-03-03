@@ -704,321 +704,324 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 
 	/* Switch on the store */
 	switch (p_ptr->store_num) {
-		/* General Store */
-		case STORE_GENERAL:
-		case STORE_GENERAL_DUN:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_FOOD:
-				case TV_LITE:
-				case TV_FLASK:
-				case TV_SPIKE:
-				case TV_SHOT:
-				case TV_ARROW:
-				case TV_BOLT:
-				case TV_DIGGING:
-				case TV_CLOAK:
-				case TV_TOOL:
-				case TV_PARCHMENT:
-				/* and now new... :) */
-				case TV_TRAPKIT:
-				case TV_BOOMERANG:
-					break;
-				default:
-					return (FALSE);
-			}
+	/* General Store */
+	case STORE_GENERAL:
+	case STORE_GENERAL_DUN:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_FOOD:
+		case TV_LITE:
+		case TV_FLASK:
+		case TV_SPIKE:
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_DIGGING:
+		case TV_CLOAK:
+		case TV_TOOL:
+		case TV_PARCHMENT:
+		/* and now new... :) */
+		case TV_TRAPKIT:
+		case TV_BOOMERANG:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Armoury */
-		case STORE_ARMOURY:
-		case STORE_ARMOURY_DUN:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_GOLEM:
-					/* Buy massive pieces of wood/metal for forging/fletching! */
-					if (o_ptr->sval > 7) return FALSE;
-				case TV_BOOTS:
-				case TV_GLOVES:
-				case TV_CROWN:
-				case TV_HELM:
-				case TV_SHIELD:
-				case TV_CLOAK:
-				case TV_SOFT_ARMOR:
-				case TV_HARD_ARMOR:
-				case TV_DRAG_ARMOR:
-					break;
-				default:
-					return (FALSE);
-			}
+	/* Armoury */
+	case STORE_ARMOURY:
+	case STORE_ARMOURY_DUN:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_GOLEM:
+			/* Buy massive pieces of wood/metal for forging/fletching! */
+			if (o_ptr->sval > 7) return FALSE;
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_CROWN:
+		case TV_HELM:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Weapon Shop */
-		case STORE_WEAPON:
-		case STORE_WEAPON_DUN:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_GOLEM:
-					/* Buy massive pieces of wood/metal for forging/fletching! */
-					if (o_ptr->sval > 7) return FALSE;
-				case TV_SHOT:
-				case TV_BOLT:
-				case TV_ARROW:
-				case TV_BOW:
-				case TV_BLUNT:
-				case TV_POLEARM:
-				case TV_SWORD:
-				case TV_AXE:
-//				case TV_MSTAFF:
-				case TV_BOOMERANG:
-					break;
-				default:
-					return (FALSE);
-			}
+	/* Weapon Shop */
+	case STORE_WEAPON:
+	case STORE_WEAPON_DUN:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_GOLEM:
+			/* Buy massive pieces of wood/metal for forging/fletching! */
+			if (o_ptr->sval > 7) return FALSE;
+		case TV_SHOT:
+		case TV_BOLT:
+		case TV_ARROW:
+		case TV_BOW:
+		case TV_BLUNT:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_AXE:
+//		case TV_MSTAFF:
+		case TV_BOOMERANG:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Temple */
-		case STORE_TEMPLE:
-		case STORE_TEMPLE_DUN:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_BOOK:
-					if (get_book_name_color(Ind, o_ptr) != TERM_GREEN &&
-					    get_book_name_color(Ind, o_ptr) != TERM_WHITE) /* unused custom books */
-						 return FALSE;
-				case TV_SCROLL:
-				case TV_POTION:
-				case TV_POTION2:
-				case TV_BLUNT:
-					break;
-				default:
-					return (FALSE);
-			}
+	/* Temple */
+	case STORE_TEMPLE:
+	case STORE_TEMPLE_DUN:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_BOOK:
+			if (get_book_name_color(Ind, o_ptr) != TERM_GREEN &&
+			    get_book_name_color(Ind, o_ptr) != TERM_WHITE) /* unused custom books */
+				 return FALSE;
+		case TV_SCROLL:
+		case TV_POTION:
+		case TV_POTION2:
+		case TV_BLUNT:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Alchemist */
-		case STORE_ALCHEMIST:
-		case STORE_ALCHEMIST_DUN:
-		case STORE_DEEPSUPPLY:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_SCROLL:
-				case TV_POTION:
-				case TV_POTION2:
-					break;
-				default:
-					return (FALSE);
-			}
+	/* Alchemist */
+	case STORE_ALCHEMIST:
+	case STORE_ALCHEMIST_DUN:
+	case STORE_DEEPSUPPLY:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_SCROLL:
+		case TV_POTION:
+		case TV_POTION2:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Magic Shop */
-		case STORE_MAGIC:
-		case STORE_MAGIC_DUN:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_BOOK:
-					if (get_book_name_color(Ind, o_ptr) != TERM_L_BLUE &&
-					    get_book_name_color(Ind, o_ptr) != TERM_WHITE) /* unused custom books */
-						return FALSE;
-				case TV_AMULET:
-				case TV_RING:
-				case TV_STAFF:
-				case TV_WAND:
-				case TV_ROD:
-				case TV_SCROLL:
-				case TV_POTION:
-				case TV_POTION2:
-				case TV_MSTAFF:	/* naturally? */
-					break;
-				default:
-					return (FALSE);
-			}
+	/* Magic Shop */
+	case STORE_MAGIC:
+	case STORE_MAGIC_DUN:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_BOOK:
+			if (get_book_name_color(Ind, o_ptr) != TERM_L_BLUE &&
+			    get_book_name_color(Ind, o_ptr) != TERM_WHITE) /* unused custom books */
+				return FALSE;
+		case TV_AMULET:
+		case TV_RING:
+		case TV_STAFF:
+		case TV_WAND:
+		case TV_ROD:
+		case TV_SCROLL:
+		case TV_POTION:
+		case TV_POTION2:
+		case TV_MSTAFF:	/* naturally? */
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Bookstore Shop */
-		case STORE_BOOK:
-		case STORE_BOOK_DUN:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_BOOK:
+	/* Bookstore Shop */
+	case STORE_BOOK:
+	case STORE_BOOK_DUN:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_BOOK:
 #if 0
-				case TV_SYMBIOTIC_BOOK:
-				case TV_MUSIC_BOOK:
-				case TV_DAEMON_BOOK:
-				case TV_DRUID_BOOK:
+		case TV_SYMBIOTIC_BOOK:
+		case TV_MUSIC_BOOK:
+		case TV_DAEMON_BOOK:
+		case TV_DRUID_BOOK:
 #endif	/* 0 */
-					break;
-				default:
-					return (FALSE);
-			}
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Pet Shop */
-//		case STORE_PET:
-		case STORE_RUNE:
-		case STORE_RUNE_DUN:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_RUNE: 
-					break;
-				default:
-					return (FALSE);
-			}
+	/* Pet Shop */
+//	case STORE_PET:
+	case STORE_RUNE:
+	case STORE_RUNE_DUN:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_RUNE: 
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Rare Footwear Shop */
-		case STORE_SHOESX:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_BOOTS:
-					break;
-				default:
-					return (FALSE);
-			}
+	/* Rare Footwear Shop */
+	case STORE_SHOESX:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_BOOTS:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Rare Jewellry Shop */
-		case STORE_JEWELX:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_AMULET:
-				case TV_RING:
-					break;
-				default:
-					return (FALSE);
-			}
+	/* Rare Jewellry Shop */
+	case STORE_JEWELX:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_AMULET:
+		case TV_RING:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		/* Mining Supply Store */
-		case STORE_MINING:
-			switch (o_ptr->tval) {
-				case TV_DIGGING:
-				case TV_LITE:
-				case TV_FLASK: break;
-				case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(FALSE); else break;
-				case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(FALSE); else break;
-				default:
-					return (FALSE);
-			}
-			break;
-		/* Bordertravel supplies */
-		case STORE_BTSUPPLY:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_POTION:
-				case TV_POTION2:
-				case TV_SCROLL:
-				case TV_FOOD:
-				case TV_LITE:
-				case TV_FLASK:
-				case TV_TRAPKIT:
-					break;
-				case TV_RING:
-					if ((o_ptr->sval != SV_RING_RES_NETHER) &&
-					    (o_ptr->sval != SV_RING_FLAMES) &&
-					    (o_ptr->sval != SV_RING_RESIST_FIRE)) return(FALSE);
-					break;
-				default:
-					return (FALSE);
-			}
-			break;
+	/* Mining Supply Store */
+	case STORE_MINING:
+		switch (o_ptr->tval) {
+		case TV_DIGGING:
+		case TV_LITE:
+		case TV_FLASK: break;
+		case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(FALSE); else break;
+		case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(FALSE); else break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		case STORE_HERBALIST:
-			switch (o_ptr->tval) {
-				case TV_BOOK: if (get_book_name_color(Ind, o_ptr) != TERM_L_GREEN) return FALSE;
-				case TV_FOOD:
-					if ((o_ptr->sval <= 19) || (o_ptr->sval == 50) || (o_ptr->sval == 40) ||
-					    (o_ptr->sval == 37) || (o_ptr->sval == 38) || (o_ptr->sval == 39))
-						 break;
-				case TV_POTION:
-					if ((o_ptr->sval != SV_POTION_APPLE_JUICE) &&
-					    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(FALSE);
-					break;
-				default:
-					return (FALSE);
-			}
+	/* Bordertravel supplies */
+	case STORE_BTSUPPLY:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_POTION:
+		case TV_POTION2:
+		case TV_SCROLL:
+		case TV_FOOD:
+		case TV_LITE:
+		case TV_FLASK:
+		case TV_TRAPKIT:
 			break;
+		case TV_RING:
+			if ((o_ptr->sval != SV_RING_RES_NETHER) &&
+			    (o_ptr->sval != SV_RING_FLAMES) &&
+			    (o_ptr->sval != SV_RING_RESIST_FIRE)) return(FALSE);
+			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		case STORE_SPEC_POTION:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_POTION:
-				case TV_POTION2:
-					break;
-				default:
-					return (FALSE);
-			}
+	case STORE_HERBALIST:
+		switch (o_ptr->tval) {
+		case TV_BOOK: if (get_book_name_color(Ind, o_ptr) != TERM_L_GREEN) return FALSE;
+		case TV_FOOD:
+			if ((o_ptr->sval <= 19) || (o_ptr->sval == 50) || (o_ptr->sval == 40) ||
+			    (o_ptr->sval == 37) || (o_ptr->sval == 38) || (o_ptr->sval == 39))
+				 break;
+		case TV_POTION:
+			if ((o_ptr->sval != SV_POTION_APPLE_JUICE) &&
+			    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(FALSE);
 			break;
-		case STORE_SPEC_SCROLL:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_SCROLL:
-					break;
-				default:
-					return (FALSE);
-			}
-			break;
-		case STORE_SPEC_CLOSECOMBAT:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_GOLEM:
-					/* Buy massive pieces of wood/metal for forging/fletching! */
-					if (o_ptr->sval > 7) return FALSE;
-				case TV_BOOTS:
-				case TV_GLOVES:
-				case TV_CROWN:
-				case TV_HELM:
-				case TV_SHIELD:
-				case TV_CLOAK:
-				case TV_SOFT_ARMOR:
-				case TV_HARD_ARMOR:
-				case TV_DRAG_ARMOR:
-				case TV_SHOT:
-				case TV_BOLT:
-				case TV_ARROW:
-				case TV_BOW:
-				case TV_BLUNT:
-				case TV_POLEARM:
-				case TV_SWORD:
-				case TV_AXE:
-				case TV_MSTAFF:
-					break;
-				default:
-					return (FALSE);
-			}
-			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		case STORE_SPEC_ARCHER:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_GOLEM:
-					/* Buy massive pieces of wood/metal for forging/fletching! */
-					if (o_ptr->sval > 7) return FALSE;
-				case TV_SHOT:
-				case TV_BOLT:
-				case TV_ARROW:
-				case TV_BOW:
-				case TV_BOOMERANG:
-					break;
-				default:
-					return (FALSE);
-			}
+	case STORE_SPEC_POTION:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_POTION:
+		case TV_POTION2:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
+	case STORE_SPEC_SCROLL:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_SCROLL:
+			break;
+		default:
+			return (FALSE);
+		}
+		break;
+	case STORE_SPEC_CLOSECOMBAT:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_GOLEM:
+			/* Buy massive pieces of wood/metal for forging/fletching! */
+			if (o_ptr->sval > 7) return FALSE;
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_CROWN:
+		case TV_HELM:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
+		case TV_SHOT:
+		case TV_BOLT:
+		case TV_ARROW:
+		case TV_BOW:
+		case TV_BLUNT:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_AXE:
+		case TV_MSTAFF:
+			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		case STORE_HIDDENLIBRARY:
-			/* Analyze the type */
-			switch (o_ptr->tval) {
-				case TV_BOOK:
-					break;
-				default:
-					return (FALSE);
-			}
+	case STORE_SPEC_ARCHER:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_GOLEM:
+			/* Buy massive pieces of wood/metal for forging/fletching! */
+			if (o_ptr->sval > 7) return FALSE;
+		case TV_SHOT:
+		case TV_BOLT:
+		case TV_ARROW:
+		case TV_BOW:
+		case TV_BOOMERANG:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
 
-		case STORE_STRADER: /* For ironman dungeons */
-			/* doesn't like very cheap items */
-			if (object_value(Ind, o_ptr) < 10) return (FALSE);
+	case STORE_HIDDENLIBRARY:
+		/* Analyze the type */
+		switch (o_ptr->tval) {
+		case TV_BOOK:
 			break;
+		default:
+			return (FALSE);
+		}
+		break;
+
+	case STORE_STRADER: /* For ironman dungeons */
+		/* doesn't like very cheap items */
+		if (object_value(Ind, o_ptr) < 10) return (FALSE);
+		break;
 	}
+
+
 	/* XXX XXX XXX Ignore "worthless" items */
 	if (object_value(Ind, o_ptr) <= 0) return (FALSE);
 
