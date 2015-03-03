@@ -3078,7 +3078,7 @@ bool make_attack_melee(int Ind, int m_idx)
 		p_ptr->warning_autoret_ok = 1;
 		if (p_ptr->warning_autoret == 3) {
 			p_ptr->warning_autoret = 0;
-			msg_print(Ind, "\374\377oHint: Your character will AUTOMATICALLY attack any monster that comes close!");
+			msg_print(Ind, "\374\377oHINT: Your character will AUTOMATICALLY attack any monster that comes close!");
 			msg_print(Ind, "\374\377o      Don't try to \"run into\" a monster, because you might end up missing it.");
 			s_printf("warning_autoret: %s\n", p_ptr->name);
 		}
