@@ -2149,6 +2149,134 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			}
 			Send_request_cfr(Ind, RID_GUILD_RENAME, format("Renaming your guild costs %d Au. Are you sure?", GUILD_PRICE), FALSE);
 			break;
+		case BACT_STATIC:
+#if 1
+if (is_admin(p_ptr))
+			{
+				int x, y, i, j, k;
+				struct dungeon_type *d_ptr;
+				worldpos tpos;
+				bool found = FALSE, first;
+				char dun_name[MAX_CHARS];
+
+				struct dun_level *l_ptr;
+				time_t now = time(&now);
+				int grace;
+
+				FILE *fff;
+				char buf[1024];
+
+				/* Open a new file */
+				fff = my_fopen(p_ptr->infofile, "wb");
+				/* Current file viewing */
+				strcpy(p_ptr->cur_file, p_ptr->infofile);
+				/* Let the player scroll through this info */
+				p_ptr->special_file_type = TRUE;
+
+				for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
+					/* check tower */
+					if ((d_ptr = wild_info[y][x].tower)) {
+						/* skip non-canonical dungeons */
+						if (!d_ptr->type) continue;
+						tpos.wx = x; tpos.wy = y;
+						tpos.wz = 1;
+						/* skip IDDC (included in check above) */
+						//if (in_irondeepdive(&tpos)) continue;
+						strcpy(dun_name, get_dun_name(x, y, TRUE, d_ptr, d_ptr->type, TRUE));
+						first = TRUE;
+
+						for (i = 0; i < d_ptr->maxdepth; i++) {
+							k = 0;
+							tpos.wz = i + 1;
+
+							for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+							if (d_ptr->level[i].ondepth <= k) continue;
+
+							/* add an inter-dungeon spacer */
+							if (first && found) fprintf(fff, "\n");
+
+							l_ptr = &d_ptr->level[ABS(tpos.wz) - 1];
+							if (!l_ptr) {
+								/* paranoia */
+								fprintf(fff, "Something is wrong with %2d,%2d,%2d\n", x, y, i + 1);
+								continue;
+							}
+#ifdef SAURON_FLOOR_FAST_UNSTAT
+							if (d_ptr->type == DI_MT_DOOM && i + 1 == d_ptr->maxdepth) grace = 60 * 60; //1h
+							else
+#endif
+							grace = cfg.level_unstatic_chance * getlevel(&tpos) * 60;
+
+							fprintf(fff, "\377s          %28s %5dft for %d more minutes\n", dun_name, (i + 1) * 50, (int)((grace - (now - l_ptr->lastused)) / 60));
+							/* display spacer instead of repeating the dungeon name subsequently */
+							if (first) for (j = 0; j < strlen(dun_name); j++) dun_name[j] = ' ';
+							found = TRUE;
+							first = FALSE;
+						}
+					}
+					/* check dungeon */
+					if ((d_ptr = wild_info[y][x].dungeon)) {
+						/* skip non-canonical dungeons */
+						if (!d_ptr->type) continue;
+						tpos.wx = x; tpos.wy = y;
+						tpos.wz = -1;
+						/* skip IDDC (included in check above) */
+						//if (in_irondeepdive(&tpos)) continue;
+						strcpy(dun_name, get_dun_name(x, y, FALSE, d_ptr, d_ptr->type, TRUE));
+						first = TRUE;
+
+						for (i = 0; i < d_ptr->maxdepth; i++) {
+							k = 0;
+							tpos.wz = -(i + 1);
+
+							for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+							if (d_ptr->level[i].ondepth <= k) continue;
+
+							/* add an inter-dungeon spacer */
+							if (first && found) fprintf(fff, "\n");
+
+							l_ptr = &d_ptr->level[ABS(tpos.wz) - 1];
+							if (!l_ptr) {
+								/* paranoia */
+								fprintf(fff, "Something is wrong with %2d,%2d,%2d\n", x, y, -(i + 1));
+								continue;
+							}
+
+#ifdef SAURON_FLOOR_FAST_UNSTAT
+							if (d_ptr->type == DI_MT_DOOM && i + 1 == d_ptr->maxdepth) grace = 60 * 60; //1h
+							else
+#endif
+							grace = cfg.level_unstatic_chance * getlevel(&tpos) * 60;
+
+							fprintf(fff, "\377s          %28s %5dft for %d more minutes\n", dun_name, -(i + 1) * 50, (int)((grace - (now - l_ptr->lastused)) / 60));
+							/* display spacer instead of repeating the dungeon name subsequently */
+							if (first) for (j = 0; j < strlen(dun_name); j++) dun_name[j] = ' ';
+							found = TRUE;
+							first = FALSE;
+						}
+					}
+				}
+
+				if (!found) {
+					fprintf(fff, "No static floors recorded.\n");
+				}
+
+				/* Close the file */
+				my_fclose(fff);
+				/* Hack -- anything written? (rewrite me) */
+				fff = my_fopen(p_ptr->infofile, "rb");
+				if (my_fgets(fff, buf, 1024, FALSE)) {
+					my_fclose(fff);
+					return (FALSE);
+				}
+				my_fclose(fff);
+				/* Let the client know it's about to get some info */
+				strcpy(p_ptr->cur_file_title, "Static floor records");
+				Send_special_other(Ind);
+
+				break;
+			}
+#endif
 		default:
 #if 0
 			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {

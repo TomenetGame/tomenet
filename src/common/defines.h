@@ -7629,6 +7629,7 @@ extern int PlayerUID;
 #define BACT_INSTANT_RES		61
 #define BACT_EXPLORATIONS		62
 #define BACT_RENAME_GUILD		63
+#define BACT_STATIC			64
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 
