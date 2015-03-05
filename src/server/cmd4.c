@@ -296,7 +296,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 					else
  #endif
 					if (timeout <= 0) ;
-					else if (timeout < 60 * 2) fprintf(fff, " (\377r%d minutes\377U till reset)", timeout);
+					else if (timeout < 60 * 2) fprintf(fff, " (\377R%d minutes\377U till reset)", timeout);
 					else if (timeout < 60 * 24 * 2) fprintf(fff, " (\377y%d hours\377U till reset)", timeout / 60);
 					else fprintf(fff, " (%d days till reset)", timeout / 60 / 24);
 				}
