@@ -3325,11 +3325,28 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 					/* check for masking by 'the', 'you', 'a(n)' etc. */
 					masked = TRUE;
 					if (cc[pos] == 1 || cc[pos] == 2) {
-						/* if there's 1 or 2 chars before the swear word, it depends on the first
+						/* if there's only 1 or 2 chars before the swear word, it depends on the first
 						   char of the swear word: vowel is ok, consonant is not. */
 						switch (l0) {
 						case 'a': case 'e': case 'i': case 'o': case 'u': case 'y':
 							masked = FALSE;
+							break;
+						}
+					}
+					/* if there are more chars before the swear word, it's maybe ok if
+					   the swear word starts on a vowel ('XXXXass' is very common!) */
+					else {
+						/* ..to be specific, if the char before the swear word is NOT a vowel (well, duh, true for most cases).
+						   Yeah yeah, just trying to fix 'ass' detection here, and a 'y' or 'u' in front of it remains swearing.. */
+						switch (l0) {
+						case 'a': case 'e': case 'i': case 'o': case 'u': case 'y':
+							switch (l1) {
+							case 'a': case 'e': case 'i': case 'o': case 'u': case 'y':
+								break;
+							default:
+								masked = FALSE;
+								break;
+							}
 							break;
 						}
 					}
