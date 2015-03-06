@@ -5008,6 +5008,7 @@ Chain_Macro:
 						buf2[7] = '\\';
 						buf2[8] = 'r';
 						buf2[9] = buf[0];
+						buf2[10] = 0;
 						break;
 					case mw_shoot:
 						buf2[3] = 'm';
