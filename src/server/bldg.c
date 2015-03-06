@@ -88,8 +88,7 @@ bool is_state(int Ind, store_type *s_ptr, int state)
 /*
  * Display a building.
  */
-void show_building(int Ind, store_type *s_ptr)
-{
+void show_building(int Ind, store_type *s_ptr) {
 	char buff[20];
 	int i, cost = 0;
 	byte action_color;
@@ -99,6 +98,12 @@ void show_building(int Ind, store_type *s_ptr)
 
 	for (i = 0; i < 6; i++) {
 		ba_ptr = &ba_info[st_ptr->actions[i]];
+
+		/* hack: some actions are admin-only (for testing purpose) */
+		if (!is_admin(Players[Ind]) && st_ptr->actions[i] == 70) {
+			Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
+			continue;
+		}
 
 		if (ba_ptr->letter != '.') {
 			if (ba_ptr->action_restr == 0) {
