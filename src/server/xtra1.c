@@ -4695,8 +4695,9 @@ void calc_boni(int Ind) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if (martsweight <= martscapacity) {
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 25));
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 25));
+				martsbonus /= 2;
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 40));
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 40));
 			}
 
 			martsbonus = ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
@@ -4706,8 +4707,9 @@ void calc_boni(int Ind) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if ((martsweight <= martscapacity) && (marts > 15)) {
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 5));
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 5));
+				martsbonus /= 2;
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 15));
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 15));
 			}
 
 			martsbonus = ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
@@ -4718,6 +4720,7 @@ void calc_boni(int Ind) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if ((martsweight <= martscapacity) && (marts > 10)) {
+				martsbonus /= 2;
 				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / (martscapacity + 0));
 				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / (martscapacity + 0));
 			}
@@ -4729,8 +4732,9 @@ void calc_boni(int Ind) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if ((martsweight <= martscapacity) && (marts > 4)) {
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 15));
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 15));
+				martsbonus /= 2;
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 20));
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 20));
 			}
 
 			martsbonus = (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
@@ -4740,6 +4744,7 @@ void calc_boni(int Ind) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if (martsweight <= martscapacity) {
+				martsbonus /= 2;
 				p_ptr->to_a += (martsbonus * (martscapacity - martsweight / 2) / (martscapacity + 10));
 				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight / 2) / (martscapacity + 10));
 			}
@@ -4751,8 +4756,9 @@ void calc_boni(int Ind) {
 				p_ptr->to_a += martsbonus;
 				p_ptr->dis_to_a += martsbonus;
 			} else if (martsweight <= martscapacity) {
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 15));
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 15));
+				martsbonus /= 2;
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 20));
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight / 3) / (martscapacity + 20));
 			}
 		}
 	}
