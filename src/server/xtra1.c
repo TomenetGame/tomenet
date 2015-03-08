@@ -2871,6 +2871,8 @@ void calc_boni(int Ind) {
 	bool old_auto_id = p_ptr->auto_id;
 	bool old_dual_wield = p_ptr->dual_wield;
 
+	bool old_sun_burn;
+
 	int lite_inc_norm = 0, lite_inc_white = 0, old_lite_type;
 
 #ifdef EQUIPMENT_SET_BONUS
@@ -4231,6 +4233,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->luck < -10) p_ptr->luck = -10; /* luck caps at -10 */
 	if (p_ptr->luck > 40) p_ptr->luck = 40; /* luck caps at 40 */
 
+	old_sun_burn = p_ptr->sun_burn;
 	p_ptr->sun_burn = FALSE;
 	if ((p_ptr->prace == RACE_VAMPIRE ||
 	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
@@ -4245,6 +4248,7 @@ void calc_boni(int Ind) {
 		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED) &&
 		    zcave[p_ptr->py][p_ptr->px].feat != FEAT_SHOP) {
 			p_ptr->sun_burn = TRUE;
+			if (!old_sun_burn) msg_print(Ind, "\377RYou burn in the sun light!");
 			/* vampire bats can stay longer under the sun light than actual vampire form */
 			if (p_ptr->body_monster != RI_VAMPIRE_BAT) {
 				i = (turn % DAY) / HOUR;
