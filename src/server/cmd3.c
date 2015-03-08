@@ -16,8 +16,8 @@
 #include "angband.h"
 
 
-/* Allow fruit bats to wear boots? [experimental, disabled] */
-#define BATS_ALLOW_FEET
+/* Allow fruit bats to wear body armour? [experimental, disabled] */
+#define BATS_ALLOW_BODY
 
 
 bool bypass_inscrption = FALSE;
@@ -477,12 +477,12 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		case INVEN_LEFT:
 		case INVEN_NECK:
 		case INVEN_HEAD:
-		case INVEN_OUTER:
 		case INVEN_LITE:
-		case INVEN_ARM:
-#ifdef BATS_ALLOW_FEET
-		case INVEN_FEET:	//allow this mayyyybe?
+#ifdef BATS_ALLOW_BODY
+		case INVEN_BODY:	//allow this mayyyybe?
 #endif
+		case INVEN_OUTER:
+		case INVEN_ARM:
 		case INVEN_TOOL:	//allow them to wear, say, picks and shovels - the_sandman
 			break; //fine
 		default:
@@ -519,6 +519,15 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
 			break;
 		case INVEN_BODY:
+#ifdef BATS_ALLOW_BODY
+			/* note: this check is redundant, because bats actually DO have a torso atm!
+			   funnily, native fruit bat players do NOT have one without this option o_O. */
+			switch (p_ptr->body_monster) {
+			case 37: case 114: case 187: case 235: case 351:
+			case 377: case 391: case 406: case 484: case 968:
+				return TRUE;
+			}
+#endif
 		case INVEN_OUTER:
 		case INVEN_AMMO:
 			if (r_ptr->body_parts[BODY_TORSO]) return (TRUE);
@@ -539,13 +548,6 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			break;
 		case INVEN_FEET:
 			if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
-#ifdef BATS_ALLOW_FEET
-			switch (p_ptr->body_monster) {
-			case 37: case 114: case 187: case 235: case 351:
-			case 377: case 391: case 406: case 484: case 968:
-				return TRUE;
-			}
-#endif
 			break;
 		}
 	}
@@ -624,6 +626,15 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
 			break;
 		case INVEN_BODY:
+#ifdef BATS_ALLOW_BODY
+			/* note: this check is redundant, because bats actually DO have a torso atm!
+			   funnily, native fruit bat players do NOT have one without this option o_O. */
+			switch (p_ptr->body_monster) {
+			case 37: case 114: case 187: case 235: case 351:
+			case 377: case 391: case 406: case 484: case 968:
+				return TRUE;
+			}
+#endif
 		case INVEN_OUTER:
 		case INVEN_AMMO:
 			if (r_ptr->body_parts[BODY_TORSO]) return (TRUE);
@@ -644,13 +655,6 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			break;
 		case INVEN_FEET:
 			if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
-#ifdef BATS_ALLOW_FEET
-			switch (p_ptr->body_monster) {
-			case 37: case 114: case 187: case 235: case 351:
-			case 377: case 391: case 406: case 484: case 968:
-				return TRUE;
-			}
-#endif
 			break;
 		}
 	}
@@ -671,12 +675,12 @@ bool item_tester_hook_wear(int Ind, int slot) {
 		case INVEN_LEFT:
 		case INVEN_NECK:
 		case INVEN_HEAD:
-		case INVEN_OUTER:
 		case INVEN_LITE:
-		case INVEN_ARM:
-#ifdef BATS_ALLOW_FEET
-		case INVEN_FEET:	//allow this mayyyybe?
+#ifdef BATS_ALLOW_BODY
+		case INVEN_BODY:	//allow this mayyyybe?
 #endif
+		case INVEN_OUTER:
+		case INVEN_ARM:
 		case INVEN_TOOL:	//allow them to wear, say, picks and shovels - the_sandman
 			return TRUE;
 		}
