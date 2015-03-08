@@ -280,16 +280,17 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		break;
 
 	case SV_FOOD_WAYBREAD:
-	    if (!p_ptr->suscep_life) {
-		msg_print(Ind, "That tastes very good.");
-		(void)set_poisoned(Ind, 0, 0);
-		(void)set_image(Ind, 0);	// ok?
-		(void)hp_player(Ind, damroll(5, 8));
-		set_food(Ind, PY_FOOD_MAX - 1);
-		ident = TRUE;
-	    } else {
-		msg_print(Ind, "Doesn't taste very special.");
-	    }
+		if (!p_ptr->suscep_life) {
+			msg_print(Ind, "That tastes very good.");
+			(void)set_poisoned(Ind, 0, 0);
+			(void)set_image(Ind, 0);	// ok?
+			(void)hp_player(Ind, damroll(5, 8));
+			set_food(Ind, PY_FOOD_MAX - 1);
+			ident = TRUE;
+		} else {
+			msg_print(Ind, "A surge of cleansing disrupts your body.");
+			take_hit(Ind, damroll(5, 2), "lembas", 0);
+		}
 		break;
 
 	case SV_FOOD_PINT_OF_ALE:
