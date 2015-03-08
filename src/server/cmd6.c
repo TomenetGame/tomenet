@@ -280,7 +280,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		break;
 
 	case SV_FOOD_WAYBREAD:
-		if (!p_ptr->suscep_life) {
+		if (!p_ptr->suscep_life && !p_ptr->suscep_good) {
 			msg_print(Ind, "That tastes very good.");
 			(void)set_poisoned(Ind, 0, 0);
 			(void)set_image(Ind, 0);	// ok?
