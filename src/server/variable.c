@@ -170,7 +170,7 @@ server_opts cfg =
 	/* s32b */
 	201,		// preserve_death_level
 	300,50000,	// unique_respawn_time, unique_max_respawn_time
-	3,		// level_unstatic_chance,
+	2,		// level_unstatic_chance,
 
 	8,		// min_unstatic_level
 	-1,18348,18349,18400,	// retire_timer, game_port, console_port, gw_port
