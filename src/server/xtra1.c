@@ -4240,7 +4240,7 @@ void calc_boni(int Ind) {
 	    && !p_ptr->ghost && !(p_ptr->global_event_temp & PEVF_INDOORS_00)
 	    && !(l_ptr && (l_ptr->flags2 & LF2_INDOORS))
 	    && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS))) {
-		/* damage from sun light */
+		/* damage from sunlight */
 		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
 		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
 //		    !(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
@@ -4248,8 +4248,8 @@ void calc_boni(int Ind) {
 		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED) &&
 		    zcave[p_ptr->py][p_ptr->px].feat != FEAT_SHOP) {
 			p_ptr->sun_burn = TRUE;
-			if (!old_sun_burn) msg_print(Ind, "\377RYou burn in the sun light!");
-			/* vampire bats can stay longer under the sun light than actual vampire form */
+			if (!old_sun_burn) msg_print(Ind, "\377RYou burn in the sunlight!");
+			/* vampire bats can stay longer under the sunlight than actual vampire form */
 			if (p_ptr->body_monster != RI_VAMPIRE_BAT) {
 				i = (turn % DAY) / HOUR;
 				i = 5 - ABS(i - (SUNRISE + (NIGHTFALL - SUNRISE) / 2)) / 2; /* for calculate day time distance to noon -> max burn!: 2..5*/

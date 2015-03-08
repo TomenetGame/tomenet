@@ -1673,7 +1673,7 @@ static void player_outfit(int Ind) {
 		do_player_outfit();
 	}
 
-	/* vampires get mummy wrapping against the burning sun light */
+	/* vampires get mummy wrapping against the burning sunlight */
 	if (p_ptr->prace == RACE_VAMPIRE) {
 		invcopy(o_ptr, lookup_kind(TV_TOOL, SV_TOOL_WRAPPING));
 		o_ptr->number = 1;
