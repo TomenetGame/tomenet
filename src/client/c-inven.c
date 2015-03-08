@@ -208,8 +208,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, bool inven_first)
  * This is modified code from ToME. - mikaelh
  */
 cptr get_item_hook_find_obj_what;
-bool get_item_hook_find_obj(int *item, bool inven_first)
-{
+bool get_item_hook_find_obj(int *item, bool inven_first) {
 	int i, j;
 	char buf[ONAME_LEN];
 	char buf1[ONAME_LEN], buf2[ONAME_LEN], *ptr; /* for manual strcasestr() */
@@ -237,9 +236,22 @@ bool get_item_hook_find_obj(int *item, bool inven_first)
 		strcpy(buf1, inventory_name[i]);
 		strcpy(buf2, buf);
 		ptr = buf1;
-		while (*ptr) { *ptr = tolower(*ptr); ptr++; }
+		while (*ptr) {
+			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+			if (*ptr == '@') ptr ++;
+			else *ptr = tolower(*ptr);
+			ptr++;
+		}
 		ptr = buf2;
-		while (*ptr) { *ptr = tolower(*ptr); ptr++; }
+		while (*ptr) {
+			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+			if (*ptr == '@') ptr += 2;
+			*ptr = tolower(*ptr);
+			ptr++;
+		}
+printf("comparing '%s','%s'\n", buf1, buf2);
 		if (strstr(buf1, buf2)) {
 #endif
 			*item = i;
