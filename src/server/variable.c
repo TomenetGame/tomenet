@@ -197,8 +197,8 @@ server_opts cfg =
 	// anti_arts_hoard, anti_arts_house, anti_arts_wild, anti_arts_shop, anti_arts_pickup, 
 	FALSE,TRUE,TRUE,FALSE,TRUE,TRUE,
 	FALSE,TRUE, //anti_arts_send, anti_cheeze_pickup, anti_cheeze_telekinesis
-	10,		// surface_item_removal (minutes for scan_objs)
-	30,		// dungeon_item_removal (minutes for scan_objs)
+	20,		// surface_item_removal (minutes for scan_objs)
+	45,		// dungeon_item_removal (minutes for scan_objs)
 	1440,		// death_wild_item_removal
 	21060,		// long_wild_item_removal
 	100, 999, 5,		// dungeon_shop_chance (*10), dungeon_shop_type (999=random), dungeon_shop_timeout
