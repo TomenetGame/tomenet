@@ -8743,7 +8743,15 @@ static void cloud_set_movement(int i) {
    the clients will by synchronized to the new cloud movement.
    NOTE: 'change' means that either cloud movement changes or that
          a wild sector toggles affected/unaffected state, simply. */
-#define WEATHER_GEN_TICKS 3
+/* make rain fall down slower? */
+#if 1
+ #define WEATHER_GEN_TICKS 3
+ #define WEATHER_SNOW_MULT 3
+#else
+/* make rain fall down faster? (recommended) */
+ #define WEATHER_GEN_TICKS 2
+ #define WEATHER_SNOW_MULT 4
+#endif
 static void cloud_move(int i, bool newly_created) {
 	bool resend_dir = FALSE, sector_changed;
 	wilderness_type *w_ptr;
@@ -8973,10 +8981,10 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 				    5 : 8;
 				w_ptr->weather_speed =
 #if 1 /* correct! (this is a different principle than 'weather_intensity' above) */
-				    (w_ptr->weather_type == 2) ? 3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
+				    (w_ptr->weather_type == 2) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
 #else /* just for testing stuff */
 				    (w_ptr->weather_type == 2 && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
-				    3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
+				    WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
 #endif
 				break;
 			}

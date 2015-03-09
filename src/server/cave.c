@@ -8499,7 +8499,15 @@ void season_change(int s, bool force) {
    panel without waiting for usual number of client ticks.
    NOTE: Called on opportunities (ie when player moves around)
          and also by players_weather(). */
-#define WEATHER_GEN_TICKS 3
+#if 1
+/* make rain fall down slower? */
+ #define WEATHER_GEN_TICKS 3
+ #define WEATHER_SNOW_MULT 3
+#else
+/* make rain fall down faster? */
+ #define WEATHER_GEN_TICKS 2
+ #define WEATHER_SNOW_MULT 4
+#endif
 void player_weather(int Ind, bool entered_level, bool weather_changed, bool panel_redraw) {
 	player_type *p_ptr = Players[Ind];
 	int w;
@@ -8535,11 +8543,11 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 	    + ((weather && panel_redraw) ? 20000 : 0),
 /*	    (wind_gust > 0 ? 1 : (wind_gust < 0 ? 2 : 0))
 	    + ((wind_gust != 0) && (season == SEASON_WINTER) ? 4 : 0), */
-	    (wind_gust > 0 ? 2 * (season == SEASON_WINTER ? 3 : 1) * WEATHER_GEN_TICKS - 1
-	    : (wind_gust < 0 ? 2 * (season == SEASON_WINTER ? 3 : 1) * WEATHER_GEN_TICKS : 0)),
+	    (wind_gust > 0 ? 2 * (season == SEASON_WINTER ? WEATHER_SNOW_MULT : 1) * WEATHER_GEN_TICKS - 1
+	    : (wind_gust < 0 ? 2 * (season == SEASON_WINTER ? WEATHER_SNOW_MULT : 1) * WEATHER_GEN_TICKS : 0)),
 	    WEATHER_GEN_TICKS,
 	    (season == SEASON_WINTER) ? 5 : 8,
-	    (season == SEASON_WINTER) ? 3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS,
+	    (season == SEASON_WINTER) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS,
 	    FALSE, TRUE); /* no virtual cloud if weather is global */
 
 #else /* send his worldmap sector's specific weather situation */
