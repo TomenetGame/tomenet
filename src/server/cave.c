@@ -8547,7 +8547,9 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 	    : (wind_gust < 0 ? 2 * (season == SEASON_WINTER ? WEATHER_SNOW_MULT : 1) * WEATHER_GEN_TICKS : 0)),
 	    WEATHER_GEN_TICKS,
 	    (season == SEASON_WINTER) ? 5 : 8,
-	    (season == SEASON_WINTER) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS,
+	    (season == SEASON_WINTER) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS :
+	    /* hack: for non-windy rainfall, accelerate raindrop falling speed by 1: */
+	    (wind_gust ? 1 * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS - 1),
 	    FALSE, TRUE); /* no virtual cloud if weather is global */
 
 #else /* send his worldmap sector's specific weather situation */
