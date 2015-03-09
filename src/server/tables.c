@@ -2315,7 +2315,7 @@ player_race race_info[MAX_RACE] =
 			/* Moderate bonus to Nether, being the undead... */
 			{
 				SKILL_R_NETH,
-				'+', 800,
+				'+', 0,
 				'%', 120,
 			},
                         {
