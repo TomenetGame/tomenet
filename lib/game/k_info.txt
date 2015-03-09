@@ -25,7 +25,7 @@
 # IMPORTANT NOTES:
 # N:(no.):(name)
 # This (no.) field is obsolete; the server will number the kinds by itself.
-# However the parser still needs the existance of this field, so just write
+# However the parser still needs the existence of this field, so just write
 # '0' or something in case :)
 #
 # When loading a savedata, the server will determine k_idx from

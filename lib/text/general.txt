@@ -53,7 +53,7 @@ large portions of the code, which, after ten years of modifications by various
 people, had begun to resemble a rotting death mold.  Also significant was
 the design of a generic "term.c" package, which has allowed Angband to be
 easily ported to Macintosh, Amiga, X11, Windows, and basically every system
-in existance (including a beta-version for DOS-286).
+in existence (including a beta-version for DOS-286).
 
 In addition, I have added lots of new commands, features, and functionalities,
 most of which appear to have been accepted by most people as a good idea (TM).

@@ -2045,7 +2045,7 @@ static void player_setup(int Ind, bool new) {
                 wpos->wy = cfg.town_y;
 		wpos->wz = 0;
 	}
-	/* If dungeon existances changed, restore players who saved
+	/* If dungeon existences changed, restore players who saved
            within a now-invalid dungeon - C. Blue */
 	if (((wpos->wz > 0) && (wild_info[wpos->wy][wpos->wx].tower == NULL)) ||
 	    ((wpos->wz < 0) && (wild_info[wpos->wy][wpos->wx].dungeon == NULL))) {

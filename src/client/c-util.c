@@ -6384,11 +6384,11 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 	fclose(fff);
 	remove("tmp.7z");
 
-	/* test for existance of sound pack file */
+	/* test for existence of sound pack file */
 	if (!(fff = fopen("TomeNET-soundpack.7z", "r"))) sound_pack = FALSE;
 	else fclose(fff);
 
-	/* test for existance of music pack file */
+	/* test for existence of music pack file */
 	if (!(fff = fopen("TomeNET-musicpack.7z", "r"))) music_pack = FALSE;
 	else fclose(fff);
 

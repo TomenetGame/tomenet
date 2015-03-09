@@ -9165,7 +9165,7 @@ disappear from the stock.
 Usually true artifacts may not be dropped into a house (will just disappear!)
 and may not be carried by winners, ie characters that have beaten Morgoth.
 Since static artifacts are predefined and have fixed abilities, their number
-therefore is limited. Thanks to the existance of random artifacts (see below)
+therefore is limited. Thanks to the existence of random artifacts (see below)
 this won't be able to cause any shortage of artifacts that can be found though.
 
 Static artifacts will also be erased if they are left on the ground and the

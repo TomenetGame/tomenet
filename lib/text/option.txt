@@ -119,7 +119,7 @@ Disturb whenever viewable monster moves    [disturb_near]
     Disturb the player when any viewable monster moves, whenever any
     monster becomes viewable for the first time, and also whenever any
     viewable monster becomes no longer viewable.  This option ignores
-    the existance of "telepathy" for the purpose of determining whether
+    the existence of "telepathy" for the purpose of determining whether
     a monster is "viewable".  See also the "view_reduce_view" option.
 
 Disturb whenever map panel changes    [disturb_panel]

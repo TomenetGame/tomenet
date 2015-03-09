@@ -8291,7 +8291,7 @@ void process_timers() {
 
 	/* PvP Arena in 0,0 - Release monsters: */
 	if (timer_pvparena1) {
-		/* check for existance of arena */
+		/* check for existence of arena */
 		wpos.wx = WPOS_PVPARENA_X;
 		wpos.wy = WPOS_PVPARENA_Y;
 		wpos.wz = WPOS_PVPARENA_Z;

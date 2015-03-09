@@ -49,8 +49,8 @@
  * of a menu item for each window to select the bitmaps.
  *
  * XXX XXX XXX
- * The various "warning" messages assume the existance of the "screen.w"
- * window, I think, and only a few calls actually check for its existance,
+ * The various "warning" messages assume the existence of the "screen.w"
+ * window, I think, and only a few calls actually check for its existence,
  * this may be okay since "NULL" means "on top of all windows". (?)
  *
  * XXX XXX XXX
@@ -546,7 +546,7 @@ static cptr extract_file_name(cptr s)
 
 
 /*
- * Check for existance of a file
+ * Check for existence of a file
  */
 static bool check_file(cptr s)
 {
@@ -595,7 +595,7 @@ static bool check_file(cptr s)
 
 
 /*
- * Check for existance of a directory
+ * Check for existence of a directory
  */
 static bool check_dir(cptr s)
 {

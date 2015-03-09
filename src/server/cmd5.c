@@ -266,7 +266,7 @@ void do_cmd_ghost_power(int Ind, int ability) {
 	for (i = 0; i < 64; i++) {
 		s_ptr = &ghost_spells[i];
 
-		/* Check for existance */
+		/* Check for existence */
 		if (s_ptr->slevel >= 99) continue;
 
 		/* Next spell */

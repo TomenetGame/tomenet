@@ -606,7 +606,7 @@ int fd_make(cptr file, int mode)
 
 #ifdef BEN_HACK
 
-	/* Check for existance */
+	/* Check for existence */
 	/* if (fd_close(fd_open(file, O_RDONLY | O_BINARY))) return (1); */
 
 	/* Mega-Hack -- Create the file */

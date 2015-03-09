@@ -18056,7 +18056,7 @@ F:CTHANGBAND
 S:1_IN_3 | 
 S:HEAL | HASTE | BLIND | CONF | SCARE | TPORT | BLINK
 D:A shabby humanoid with a wrinkled skin. It seems to shift 
-D:in and out of existance as you watch. 
+D:in and out of existence as you watch. 
 
 N:1017:Cultist
 G:p:g

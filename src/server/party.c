@@ -935,7 +935,7 @@ int party_lookup(cptr name) {
 
 
 /*
- * Check for the existance of a player in a party.
+ * Check for the existence of a player in a party.
  */
 bool player_in_party(int party_id, int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -2733,7 +2733,7 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
 
-		/* Check for his existance in the party */
+		/* Check for his existence in the party */
                 if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i)) {
 			/* Increase the "divisor" */
 			average_lev += p_ptr->lev;
@@ -2758,7 +2758,7 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 		    (p_ptr->total_winner && !(Players[Ind]->total_winner || Players[Ind]->once_winner)))
 			continue;
 
-		/* Check for existance in the party */
+		/* Check for existence in the party */
                 if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i)) {
 			/* Calculate this guy's experience */
 

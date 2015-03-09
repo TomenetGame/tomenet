@@ -1710,7 +1710,7 @@ bool load_player(int Ind)
 
 	/* XXX XXX XXX Fix this */
 
-	/* Verify the existance of the savefile */
+	/* Verify the existence of the savefile */
 	if (!err && !file_exist(p_ptr->savefile))
 	{
 		/* Give a message */
@@ -2466,14 +2466,14 @@ static bool load_server_info_classic(void) {
 bool load_server_info(void) {
 	char buf[1024];
 
-	/* check for existance of old huge server save file */
+	/* check for existence of old huge server save file */
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "server");
 	if (file_exist(buf)) {
 //		s_printf("Found classic 'server' savefile\n");
 		return load_server_info_classic();
 	}
 
-	/* check for existance of partial server save files */
+	/* check for existence of partial server save files */
 
 	//TODO
 

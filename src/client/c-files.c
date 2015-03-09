@@ -1445,7 +1445,7 @@ errr file_character(cptr name, bool full)
 
  	/* Unique monsters slain/helped with - C. Blue */
 	fprintf(fff, "  [Unique Monsters]\n\n");
-	/* 1st pass - determine category existance: kill vs assist */
+	/* 1st pass - determine category existence: kill vs assist */
 	x = 0; /* count killing blows */
 	for (i = 0; i < MAX_UNIQUES; i++) if (r_unique[i] == 1) x++;
 	if (!x) fprintf(fff,"You have not slain any unique monsters yourself.\n");

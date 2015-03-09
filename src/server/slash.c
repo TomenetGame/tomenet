@@ -2278,7 +2278,7 @@ void do_slash_cmd(int Ind, char *message) {
 			/* Does a colon appear? */
 			for (i = 0; i < (int)strlen(message2); i++)
 				if (message2[i] == ':') colon = TRUE;
-			/* Depending on colon existance, extract the target name */
+			/* Depending on colon existence, extract the target name */
 			for (i = 5; i < (int)strlen(message2); i++)
 				if (message2[i] == ' ') {
 					for (j = i; j < (int)strlen(message2); j++)
@@ -4100,7 +4100,7 @@ void do_slash_cmd(int Ind, char *message) {
 			 */
 			if (prefix(message, "/val")){
 				if(!tk) return;
-				/* added checking for account existance - mikaelh */
+				/* added checking for account existence - mikaelh */
 				switch(validate(message3)) {
 				case -1: msg_format(Ind, "\377GValidating %s", message3);
 					break;
@@ -4112,7 +4112,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			if (prefix(message, "/inval")){
 				if(!tk) return;
-				/* added checking for account existance - mikaelh */
+				/* added checking for account existence - mikaelh */
 				switch(invalidate(message3, FALSE)) {
 				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
 					break;
@@ -4252,7 +4252,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/val")){
 				if(!tk) return;
-				/* added checking for account existance - mikaelh */
+				/* added checking for account existence - mikaelh */
 				switch(validate(message3)) {
 				case -1: msg_format(Ind, "\377GValidating %s", message3);
 					break;
@@ -4264,7 +4264,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/inval")){
 				if(!tk) return;
-				/* added checking for account existance - mikaelh */
+				/* added checking for account existence - mikaelh */
 				switch(invalidate(message3, TRUE)) {
 				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
 					break;
@@ -4280,7 +4280,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/makeadmin")){
 				if(!tk) return;
-				/* added checking for account existance - mikaelh */
+				/* added checking for account existence - mikaelh */
 				if (makeadmin(message3)) {
 					msg_format(Ind, "\377GMaking %s an admin", message3);
 				} else {

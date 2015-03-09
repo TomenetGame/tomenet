@@ -730,7 +730,7 @@ static void term_data_link(term_data *td)
 
         /* XXX XXX XXX Choose "soft" or "hard" cursor */
         /* A "soft" cursor must be explicitly "drawn" by the program */
-        /* while a "hard" cursor has some "physical" existance and is */
+        /* while a "hard" cursor has some "physical" existence and is */
         /* moved whenever text is drawn on the screen.  See "term.c". */
         /* t->soft_cursor = TRUE; */
 
