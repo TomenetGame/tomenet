@@ -9075,8 +9075,7 @@ static dungeon_grid letter[255];
  */
 bool process_dungeon_file_full = FALSE;
 //static errr process_dungeon_file_aux(char *buf, int *yval, int *xval, int xvalstart, int ymax, int xmax)
-static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *xval, int xvalstart, int ymax, int xmax)
-{
+static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *xval, int xvalstart, int ymax, int xmax) {
 	int i;
 	char *zz[33]; /* was 33 */
 
@@ -9087,47 +9086,36 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 	if (!zcave) return (-1);	/* maybe SIGSEGV soon anyway */
 
-
 	/* Skip "empty" lines */
 	if (!buf[0]) return (0);
-
 	/* Skip "blank" lines */
 	if (isspace(buf[0])) return (0);
-
 	/* Skip comments */
 	if (buf[0] == '#') return (0);
-
 	/* Require "?:*" format */
 	if (buf[1] != ':') return (1);
 
-
 	/* Process "%:<fname>" */
-	if (buf[0] == '%')
-	{
+	if (buf[0] == '%') {
 		/* Attempt to Process the given file */
 		return (process_dungeon_file(buf + 2, wpos, yval, xval, ymax, xmax, FALSE));
 	}
 
 	/* Process "N:<sleep>" */
-	if (buf[0] == 'N')
-	{
+	if (buf[0] == 'N') {
 		int num;
 
 		if ((num = tokenize(buf + 2, 1, zz, ':', '/')) > 0)
-		{
 			meta_sleep = atoi(zz[0]);
-		}
 
 		return (0);
 	}
 
 	/* Process "F:<letter>:<terrain>:<cave_info>:<monster>:<object>:<ego>:<artifact>:<trap>:<special>:<mimic>" -- info for dungeon grid */
-	if (buf[0] == 'F')
-	{
+	if (buf[0] == 'F') {
 		int num;
 
-		if ((num = tokenize(buf + 2, 10, zz, ':', '/')) > 1)
-		{
+		if ((num = tokenize(buf + 2, 10, zz, ':', '/')) > 1) {
 			int index = zz[0][0];
 
 			/* Reset the feature */
@@ -9144,147 +9132,100 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			letter[index].ok = TRUE;
 			letter[index].defined = TRUE;
 
-			if (num > 1)
-			{
-				if (zz[1][0] == '*')
-				{
+			if (num > 1) {
+				if (zz[1][0] == '*') {
 					letter[index].random |= RANDOM_FEATURE;
-					if (zz[1][1])
-					{
+					if (zz[1][1]) {
 						zz[1]++;
 						letter[index].feature = atoi(zz[1]);
 					}
-				}
-				else
-				{
-					letter[index].feature = atoi(zz[1]);
-				}
+				} else letter[index].feature = atoi(zz[1]);
 			}
 
 			if (num > 2)
 				letter[index].cave_info = atoi(zz[2]);
 
 			/* Monster */
-			if (num > 3)
-			{
-				if (zz[3][0] == '*')
-				{
+			if (num > 3) {
+				if (zz[3][0] == '*') {
 					letter[index].random |= RANDOM_MONSTER;
-					if (zz[3][1])
-					{
+					if (zz[3][1]) {
 						zz[3]++;
 						letter[index].monster = atoi(zz[3]);
 					}
-				}
-				else
-				{
-					letter[index].monster = atoi(zz[3]);
-				}
+				} else letter[index].monster = atoi(zz[3]);
 			}
 
 			/* Object */
-			if (num > 4)
-			{
-				if (zz[4][0] == '*')
-				{
+			if (num > 4) {
+				if (zz[4][0] == '*') {
 					letter[index].random |= RANDOM_OBJECT;
 
-					if (zz[4][1])
-					{
+					if (zz[4][1]) {
 						zz[4]++;
 						letter[index].object = atoi(zz[4]);
 					}
-				}
-				else
-				{
-					letter[index].object = atoi(zz[4]);
-				}
+				} else letter[index].object = atoi(zz[4]);
 			}
 
 			/* Ego-Item */
-			if (num > 5)
-			{
-				if (zz[5][0] == '*')
-				{
+			if (num > 5) {
+				if (zz[5][0] == '*') {
 					letter[index].random |= RANDOM_EGO;
 
-					if (zz[5][1])
-					{
+					if (zz[5][1]) {
 						zz[5]++;
 						letter[index].ego = atoi(zz[5]);
 					}
-				}
-				else
-				{
-					letter[index].ego = atoi(zz[5]);
-				}
+				} else letter[index].ego = atoi(zz[5]);
 			}
 
 			/* Artifact */
-			if (num > 6)
-			{
-				if (zz[6][0] == '*')
-				{
+			if (num > 6) {
+				if (zz[6][0] == '*') {
 					letter[index].random |= RANDOM_ARTIFACT;
 
-					if (zz[6][1])
-					{
+					if (zz[6][1]) {
 						zz[6]++;
 						letter[index].artifact = atoi(zz[6]);
 					}
-				}
-				else
-				{
-					letter[index].artifact = atoi(zz[6]);
-				}
+				} else letter[index].artifact = atoi(zz[6]);
 			}
 
-			if (num > 7)
-			{
-				if (zz[7][0] == '*')
-				{
+			if (num > 7) {
+				if (zz[7][0] == '*') {
 					letter[index].random |= RANDOM_TRAP;
 
-					if (zz[7][1])
-					{
+					if (zz[7][1]) {
 						zz[7]++;
 						letter[index].trap = atoi(zz[7]);
 					}
-				}
-				else
-					letter[index].trap = atoi(zz[7]);
+				} else letter[index].trap = atoi(zz[7]);
 			}
 
 #if 0
-			if (num > 8)
-			{
+			if (num > 8) {
 				/* Quests can be defined by name only */
-				if (zz[8][0] == '"')
-				{
+				if (zz[8][0] == '"') {
 					int i;
 
 					/* Hunt & shoot the ending " */
 					i = strlen(zz[8]) - 1;
 					if (zz[8][i] == '"') zz[8][i] = '\0';
 					letter[index].special = 0;
-					for (i = 0; i < max_xo_idx; i++)
-					{
-						if (!strcmp(&zz[8][1], quest[i].name))
-						{
+					for (i = 0; i < max_xo_idx; i++) {
+						if (!strcmp(&zz[8][1], quest[i].name)) {
 							letter[index].special = i;
 							break;
 						}
 					}
 				}
-				else
-					letter[index].special = atoi(zz[8]);
+				else letter[index].special = atoi(zz[8]);
 			}
 #else	// 0
-			if (num > 8)
-			{
+			if (num > 8) {
 				/* Quests can be defined by name only */
-				if (zz[8][0] == '"')
-				{
+				if (zz[8][0] == '"') {
 #if 0	// later for quest
 					int i;
 
@@ -9292,25 +9233,20 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 					i = strlen(zz[8]) - 1;
 					if (zz[8][i] == '"') zz[8][i] = '\0';
 					letter[index].special = 0;
-					for (i = 0; i < max_xo_idx; i++)
-					{
-						if (!strcmp(&zz[8][1], quest[i].name))
-						{
+					for (i = 0; i < max_xo_idx; i++) {
+						if (!strcmp(&zz[8][1], quest[i].name)) {
 							letter[index].special = i;
 							break;
 						}
 					}
 #endif	// 0
 				}
-				else
-					letter[index].special = atoi(zz[8]);
+				else letter[index].special = atoi(zz[8]);
 			}
 #endif	// 0
 
 			if (num > 9)
-			{
 				letter[index].mimic = atoi(zz[9]);
-			}
 
 			return (0);
 		}
@@ -9555,7 +9491,6 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				if (letter[idx].feature == FEAT_SHOP) {
 					if ((cs_ptr = AddCS(c_ptr, CS_SHOP))) {
 						/* MEGAHACK till st_info is implemented */
-						// int y1, x1;
 						int store = letter[idx].special;
 						// if (store > 8) store = 8;
 
@@ -9564,18 +9499,6 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 							store += STORE_GENERAL_DUN;
 
 						cs_ptr->sc.omni = store;
-
- #if 0	// not here
-						for (y1 = y - 1; y1 <= y + 1; y1++) {
-							for (x1 = x - 1; x1 <= x + 1; x1++) {
-								/* Get the grid */
-								c_ptr = &zcave[y1][x1];
-
-								/* Illuminate the store */
-								c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
-							}
-						}
- #endif	// 0
 					}
 				}
 //				c_ptr->special = letter[idx].special;
