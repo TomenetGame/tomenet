@@ -3855,6 +3855,8 @@
 #define CAVE_GUILD_SUS	0x00040000	/* floor of a suspended guild hall, due to the guild's leaderlessnes */
 #define CAVE_WATERY	0x00080000	/* For doors/stairs: Are they adjacent to water grids? */
 
+#define CAVE_SWITCH	0x00100000	/* Players can always switch position here, like on staircase grids (for grids around stores) */
+
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
  * we'll do 'smells of carrot' thingie? :) */

@@ -11428,7 +11428,7 @@ static void town_gen_hack(struct worldpos *wpos) {
  */
 
 static void town_gen(struct worldpos *wpos) {
-	int y, x, type = -1, i;
+	int y, x, type = -1, i, x2, y2;
 	int xstart = 0, ystart = 0;	/* dummy, for now */
 
 	cave_type	*c_ptr;
@@ -11604,6 +11604,19 @@ static void town_gen(struct worldpos *wpos) {
 	process_dungeon_file("t_info.txt", wpos, &ystart, &xstart,
 				MAX_HGT, MAX_WID, TRUE);
 #endif
+
+	/* apply player-switchability so noone cannot block the store too badly */
+	for (x = 1; x < MAX_WID - 1; x++) {
+		for (y = 1; y < MAX_HGT - 1; y++) {
+			if (zcave[y][x].feat != FEAT_SHOP) continue;
+			for (x2 = x - 1; x2 <= x + 1; x2++) {
+				for (y2 = y - 1; y2 <= y + 1; y2++) {
+					if (!in_bounds(y2, x2)) continue;
+					zcave[y2][x2].info |= CAVE_SWITCH;
+				}
+			}
+		}
+	}
 }
 
 

@@ -5665,30 +5665,28 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		 * this can allow one to pass through walls... :(
 		 */
 		else if ( (!p_ptr->ghost && !q_ptr->ghost &&
-				((ddy[q_ptr->last_dir] == -(ddy[dir]) &&
-				ddx[q_ptr->last_dir] == (-ddx[dir]))) ||
-				(player_in_party(p_ptr->party, Ind2) &&
-				 !q_ptr->store_num) )||
-				(q_ptr->admin_dm) )
+		    ((ddy[q_ptr->last_dir] == -(ddy[dir]) &&
+		    ddx[q_ptr->last_dir] == (-ddx[dir]))) ||
+		    (player_in_party(p_ptr->party, Ind2) &&
+		    !q_ptr->store_num) )||
+		    (q_ptr->admin_dm) )
 #else
 		else if (((!p_ptr->ghost && !q_ptr->ghost &&
-			 (ddy[q_ptr->last_dir] == -(ddy[dir])) &&
-			 (ddx[q_ptr->last_dir] == (-ddx[dir])) &&
-			 !p_ptr->afk && !q_ptr->afk) ||
-			q_ptr->admin_dm || blocks_important_feat)
-			/* don't switch someone 'out' of a shop, except for the Inn */
-			&& (!(cs_ptr = GetCS(c_ptr, CS_SHOP)) || cs_ptr->sc.omni == 7)
-//moved above		&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
-			&& (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
-#endif	// 0
-
+		    (ddy[q_ptr->last_dir] == -(ddy[dir])) &&
+		    (ddx[q_ptr->last_dir] == (-ddx[dir])) &&
+		    !p_ptr->afk && !q_ptr->afk) ||
+		    q_ptr->admin_dm || blocks_important_feat || (c_ptr->info & CAVE_SWITCH))
+		    /* don't switch someone 'out' of a shop, except for the Inn */
+		    && (!(cs_ptr = GetCS(c_ptr, CS_SHOP)) || cs_ptr->sc.omni == 7)
+//moved above	    && !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
+		    && (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
+#endif
 		{
 /*		    	if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
 			/* switch places only if BOTH have WRAITHFORM or NONE has it, well or if target is a DM */
 			if ((!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players into trees to kill them */
 			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
-			    || blocks_important_feat || q_ptr->admin_dm)
-			{
+			    || q_ptr->admin_dm || blocks_important_feat || (c_ptr->info & CAVE_SWITCH)) {
 				store_exit(Ind);
 				store_exit(Ind2);
 
