@@ -7051,9 +7051,9 @@ There are five main types of teleportation:
   over the world map or into or out of a dungeon.
 
 Further rules that determine the target location:
--Neither monsters nor players can teleport into vaults or houses.
--Monsters cannot land on grids that have a glyph or rune on it, in shops, or
- on 'protected' grids (the inns and the arena event corners and edges).
+-Neither monsters nor players can teleport into vaults or houses or into shops.
+-Monsters cannot land on grids that have a glyph or rune on it, or on
+ 'protected' grids (the inns and the arena event corners and edges).
 -Players cannot land on grids that are inside monster nests/pits, including the
  outer corridor around them (pits/nests are rectangular rooms surrounded by a
  one-space-wide outer passage, that are filled to the brim with monsters).
