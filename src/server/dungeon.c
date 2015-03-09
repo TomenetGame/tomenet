@@ -8981,7 +8981,9 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 				    5 : 8;
 				w_ptr->weather_speed =
 #if 1 /* correct! (this is a different principle than 'weather_intensity' above) */
-				    (w_ptr->weather_type == 2) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
+				    (w_ptr->weather_type == 2) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS :
+				    /* hack: for non-windy rainfall, accelerate raindrop falling speed by 1: */
+				    (w_ptr->weather_wind ? 1 * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS - 1);
 #else /* just for testing stuff */
 				    (w_ptr->weather_type == 2 && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
 				    WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
