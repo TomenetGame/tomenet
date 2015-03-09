@@ -9523,7 +9523,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 				/* Drop the artifact */
 				drop_near(q_ptr, -1, y, x);
-#endif	// 0
+#endif
 			}
 
 #if 0
@@ -9538,10 +9538,10 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				}
 			} else
 				c_ptr->special = letter[idx].special;
-#else	// 0
+#else
 			/* Terrain special */
 			if (letter[idx].special == -1) {
-#if 0
+ #if 0
 				if (!letter[idx].bx) {
 					letter[idx].bx = x;
 					letter[idx].by = y;
@@ -9549,7 +9549,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 					c_ptr->special = (letter[idx].by << 8) + letter[idx].bx;
 					cave[letter[idx].by][letter[idx].bx].special = (y << 8) + x;
 				}
-#endif	// 0
+ #endif
 			} else {
 				/* MEGAHACK -- let's just make stores available */
 				if (letter[idx].feature == FEAT_SHOP) {
@@ -9565,7 +9565,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 						cs_ptr->sc.omni = store;
 
-#if 0	// not here
+ #if 0	// not here
 						for (y1 = y - 1; y1 <= y + 1; y1++) {
 							for (x1 = x - 1; x1 <= x + 1; x1++) {
 								/* Get the grid */
@@ -9575,12 +9575,12 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 								c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
 							}
 						}
-#endif	// 0
+ #endif	// 0
 					}
 				}
 //				c_ptr->special = letter[idx].special;
 			}
-#endif	// 0
+#endif
 		}
 		if ((process_dungeon_file_full) && (*xval < x)) *xval = x;
 		(*yval)++;
@@ -9589,24 +9589,20 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	}
 
 	/* Process "W:<command>: ..." -- info for the wilderness */
-	else if (buf[0] == 'W')
-	{
+	else if (buf[0] == 'W') {
 		return (0);
 #if 0
 		/* Process "W:D:<layout> */
 		/* Layout of the wilderness */
-		if (buf[2] == 'D')
-		{
+		if (buf[2] == 'D') {
 			int x;
 			char i;
 
 			/* Acquire the text */
 			char *s = buf+4;
-
 			int y = *yval;
 
-			for(x = 0; x < max_wild_x; x++)
-			{
+			for(x = 0; x < max_wild_x; x++) {
 				if (1 != sscanf(s + x, "%c", &i)) return (1);
 				wild_map[y][x].feat = wildc2i[(int)i];
 			}
@@ -9616,55 +9612,31 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			return (0);
 		}
 		/* Process "M:<plus>:<line>" -- move line lines */
-		else if (buf[2] == 'M')
-		{
-			if (tokenize(buf+4, 2, zz, ':', '/') == 2)
-			{
-				if (atoi(zz[0]))
-				{
-					(*yval) += atoi(zz[1]);
-				}
-				else
-				{
-					(*yval) -= atoi(zz[1]);
-				}
-			}
-			else
-			{
-				return (1);
-			}
+		else if (buf[2] == 'M') {
+			if (tokenize(buf+4, 2, zz, ':', '/') == 2) {
+				if (atoi(zz[0])) (*yval) += atoi(zz[1]);
+				else (*yval) -= atoi(zz[1]);
+			} else return (1);
 			return (0);
 		}
 		/* Process "W:P:<x>:<y> - starting position in the wilderness */
-		else if (buf[2] == 'P')
-		{
+		else if (buf[2] == 'P') {
 			if ((p_ptr->wilderness_x == 0) &&
-			    (p_ptr->wilderness_y == 0))
-			{
-				if (tokenize(buf+4, 2, zz, ':', '/') == 2)
-				{
+			    (p_ptr->wilderness_y == 0)) {
+				if (tokenize(buf+4, 2, zz, ':', '/') == 2) {
 					p_ptr->wilderness_x = atoi(zz[0]);
 					p_ptr->wilderness_y = atoi(zz[1]);
-				}
-				else
-				{
-					return (1);
-				}
+				} else return (1);
 			}
 
 			return (0);
 		}
 		/* Process "W:E:<dungeon>:<y>:<x> - entrance to the dungeon <dungeon> */
-		else if (buf[2] == 'E')
-		{
+		else if (buf[2] == 'E') {
 			if (tokenize(buf+4, 3, zz, ':', '/') == 3)
-			{
 				wild_map[atoi(zz[1])][atoi(zz[2])].entrance = 1000 + atoi(zz[0]);
-			}
 			else
-			{
 				return (1);
-			}
 
 			return (0);
 		}
@@ -9672,30 +9644,24 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	}
 
 	/* Process "P:<x>:<y>" -- player position */
-	else if (buf[0] == 'P')
-	{
+	else if (buf[0] == 'P') {
 #if 0	// It'll be needed very soon maybe
-		if (init_flags & INIT_CREATE_DUNGEON)
-		{
-			if (tokenize(buf + 2, 2, zz, ':', '/') == 2)
-			{
+		if (init_flags & INIT_CREATE_DUNGEON) {
+			if (tokenize(buf + 2, 2, zz, ':', '/') == 2) {
 				/* Place player in a quest level */
-				if (p_ptr->inside_quest || (init_flags & INIT_POSITION))
-				{
+				if (p_ptr->inside_quest || (init_flags & INIT_POSITION)) {
 					py = atoi(zz[0]);
 					px = atoi(zz[1]);
 				}
 				/* Place player in the town */
-				else if ((p_ptr->oldpx == 0) && (p_ptr->oldpy == 0))
-				{
+				else if ((p_ptr->oldpx == 0) && (p_ptr->oldpy == 0)) {
 					p_ptr->oldpy = atoi(zz[0]);
 					p_ptr->oldpx = atoi(zz[1]);
 				}
 			}
 		}
 #else	// 0.. quick Hack
-		if (tokenize(buf + 2, 2, zz, ':', '/') == 2)
-		{
+		if (tokenize(buf + 2, 2, zz, ':', '/') == 2) {
 			int yy = atoi(zz[0]);
 			int xx = atoi(zz[1]);
 			new_level_rand_y(wpos, yy);
@@ -9708,189 +9674,107 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				new_level_up_y(wpos, yy);
 				new_level_up_x(wpos, xx);
 			}
-
-#if 0
+ #if 0
 			new_level_down_y(wpos, yy);
 			new_level_down_x(wpos, xx);
 			new_level_up_y(wpos, yy);
 			new_level_up_x(wpos, xx);
-#endif	// 0
+ #endif	// 0
 		}
-
-
-#endif	// 0
+#endif
 		return (0);
 	}
 
 	/* Process "M:<type>:<maximum>" -- set maximum values */
-	else if (buf[0] == 'M')
-	{
+	else if (buf[0] == 'M') {
 		return (0);
 
-#if	0	// It's very nice code - this should be transmitted to the client, tho
-		if (tokenize(buf + 2, 3, zz, ':', '/') >= 2)
-		{
+#if 0	// It's very nice code - this should be transmitted to the client, tho
+		if (tokenize(buf + 2, 3, zz, ':', '/') >= 2) {
 			/* Maximum towns */
 			if (zz[0][0] == 'T')
-			{
 				max_towns = atoi(zz[1]);
-			}
-
 			/* Maximum real towns */
 			if (zz[0][0] == 't')
-			{
 				max_real_towns = atoi(zz[1]);
-			}
-
 			/* Maximum r_idx */
 			else if (zz[0][0] == 'R')
-			{
 				max_r_idx = atoi(zz[1]);
-			}
-
 			/* Maximum re_idx */
 			else if (zz[0][0] == 'r')
-			{
 				max_re_idx = atoi(zz[1]);
-			}
-
 			/* Maximum s_idx */
-			else if (zz[0][0] == 'k')
-			{
+			else if (zz[0][0] == 'k') {
 				max_s_idx = atoi(zz[1]);
 				if (max_s_idx > MAX_SKILLS) return (1);
 			}
-
 			/* Maximum k_idx */
 			else if (zz[0][0] == 'K')
-			{
 				max_k_idx = atoi(zz[1]);
-			}
-
 			/* Maximum v_idx */
 			else if (zz[0][0] == 'V')
-			{
 				max_v_idx = atoi(zz[1]);
-			}
-
 			/* Maximum f_idx */
 			else if (zz[0][0] == 'F')
-			{
 				max_f_idx = atoi(zz[1]);
-			}
-
 			/* Maximum a_idx */
 			else if (zz[0][0] == 'A')
-			{
 				max_a_idx = atoi(zz[1]);
-			}
-
 			/* Maximum e_idx */
 			else if (zz[0][0] == 'E')
-			{
 				max_e_idx = atoi(zz[1]);
-			}
-
 			/* Maximum ra_idx */
 			else if (zz[0][0] == 'Z')
-			{
 				max_ra_idx = atoi(zz[1]);
-			}
-
 			/* Maximum o_idx */
 			else if (zz[0][0] == 'O')
-			{
 				max_o_idx = atoi(zz[1]);
-			}
-
 			/* Maximum player types */
-			else if (zz[0][0] == 'P')
-			{
+			else if (zz[0][0] == 'P') {
 				if (zz[1][0] == 'R')
-				{
 					max_rp_idx = atoi(zz[2]);
-				}
 				else if (zz[1][0] == 'S')
-				{
 					max_rmp_idx = atoi(zz[2]);
-				}
 				else if (zz[1][0] == 'C')
-				{
 					max_c_idx = atoi(zz[2]);
-				}
 				else if (zz[1][0] == 'M')
-				{
 					max_mc_idx = atoi(zz[2]);
-				}
 				else if (zz[1][0] == 'H')
-				{
 					max_bg_idx = atoi(zz[2]);
-				}
 			}
-
 			/* Maximum m_idx */
 			else if (zz[0][0] == 'M')
-			{
 				max_m_idx = atoi(zz[1]);
-			}
-
 			/* Maximum tr_idx */
 			else if (zz[0][0] == 'U')
-			{
 				max_t_idx = atoi(zz[1]);
-			}
-
 			/* Maximum wf_idx */
 			else if (zz[0][0] == 'W')
-			{
 				max_wf_idx = atoi(zz[1]);
-			}
-
 			/* Maximum ba_idx */
 			else if (zz[0][0] == 'B')
-			{
 				max_ba_idx = atoi(zz[1]);
-			}
-
 			/* Maximum st_idx */
 			else if (zz[0][0] == 'S')
-			{
 				max_st_idx = atoi(zz[1]);
-			}
-
 			/* Maximum set_idx */
 			else if (zz[0][0] == 's')
-			{
 				max_set_idx = atoi(zz[1]);
-			}
-
 			/* Maximum ow_idx */
 			else if (zz[0][0] == 'N')
-			{
 				max_ow_idx = atoi(zz[1]);
-			}
-
 			/* Maximum wilderness x size */
 			else if (zz[0][0] == 'X')
-			{
 				max_wild_x = atoi(zz[1]);
-			}
-
 			/* Maximum wilderness y size */
 			else if (zz[0][0] == 'Y')
-			{
 				max_wild_y = atoi(zz[1]);
-			}
-
 			/* Maximum d_idx */
 			else if (zz[0][0] == 'D')
-			{
 				max_d_idx = atoi(zz[1]);
-			}
-
 			return (0);
 		}
-#endif	// 0
+#endif
 	}
 
 	/* Failure */
