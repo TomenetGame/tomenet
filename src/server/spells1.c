@@ -522,7 +522,7 @@ bool teleport_away(int m_idx, int dis) {
 	if (!(zcave = getcave(wpos))) return FALSE;
 	l_ptr = getfloor(wpos);
 
-	/* No teleporting within no-tele vaults and such */
+	/* No teleporting/blinking out of any vaults (!) */
 	if (zcave[oy][ox].info & CAVE_ICKY) return FALSE;
 
 	/* set distance according to map size, to avoid 'No empty field' failures for very small maps! */
@@ -564,8 +564,8 @@ bool teleport_away(int m_idx, int dis) {
 			if (zcave[ny][nx].info & CAVE_ICKY) continue;
 
 			/* No teleportation onto protected grid (8-town-houses) */
-		        if (zcave[ny][nx].info & CAVE_PROT) continue;
-		        if (f_info[zcave[ny][nx].feat].flags1 & FF1_PROTECTED) continue;
+			if (zcave[ny][nx].info & CAVE_PROT) continue;
+			if (f_info[zcave[ny][nx].feat].flags1 & FF1_PROTECTED) continue;
 			/* Not onto (dungeon) stores */
 			if (zcave[ny][nx].feat == FEAT_SHOP) continue;
 
@@ -698,6 +698,12 @@ void teleport_to_player(int Ind, int m_idx) {
 			/* No teleporting into vaults and such */
 			/* if (cave[ny][nx].info & (CAVE_ICKY)) continue; */
 			if (zcave[ny][nx].info & CAVE_ICKY) continue;
+
+			/* No teleportation onto protected grid (8-town-houses) */
+			if (zcave[ny][nx].info & CAVE_PROT) continue;
+			if (f_info[zcave[ny][nx].feat].flags1 & FF1_PROTECTED) continue;
+			/* Not onto (dungeon) stores */
+			if (zcave[ny][nx].feat == FEAT_SHOP) continue;
 
 			if (check_st_anchor(wpos, ny, nx)) return;
 

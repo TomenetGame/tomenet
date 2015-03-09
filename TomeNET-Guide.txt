@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. March 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. March 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9+ - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -7026,25 +7026,39 @@ There are five main types of teleportation:
   The spell available to players are usually called 'phase door' while the
   spell used by monsters is usually called 'blink', but again that's just a
   matter of naming.
+  Note that monsters cannot blink out of vaults.
 -Teleport self
   The normal 'teleportation' as provided by scrolls, staves or used by monsters
   which has a very long range and also tries to keep a certain minimum range to
   make sure you actually get away from trouble.
+  Note that monsters cannot teleport out of vaults.
 -Teleport other
   It's basically the same as normal teleportation, except it does teleport a
   targetted player/monster instead of the invoking player/monster himself.
   If you get teleported by someone you cannot see, instead of his name you will
   see this message: "Someone teleports you away!"
+  Note that monsters cannot teleport you away if you're within a no-teleport
+  area (no-tele vault).
 -Teleport-to
   Thes spell tries to move the targetted player or monster onto a grid next to
   the caster. This can be nasty when monsters with dangerous melee attacks cast
   teleport-to on a player who tried to keep his distance.
+  Note that teleport-to has no effect if the source grid or the destination
+  grid are in a no-teleport area (no-tele vault).
 -Word of recall
   The only non-instantaneous teleportation spell and the one with the longest
   range. After a certain 'charge' phase has elapsed it will teleport the player
   over the world map or into or out of a dungeon.
 
-However, under certain conditions, teleportation spells may fail!
+Further rules that determine the target location:
+-Neither monsters nor players can teleport into vaults or houses.
+-Monsters cannot land on grids that have a glyph or rune on it, in shops, or
+ on 'protected' grids (the inns and the arena event corners and edges).
+-Players cannot land on grids that are inside monster nests/pits, including the
+ outer corridor around them (pits/nests are rectangular rooms surrounded by a
+ one-space-wide outer passage, that are filled to the brim with monsters).
+
+However, under certain conditions, teleportation spells may still fail!
 In general for all teleportation attempts, these are:
 
 -Teleport spells cast onto others (teleport other, teleport-to) may get
