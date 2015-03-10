@@ -1085,7 +1085,7 @@ They all start with a slash '/' hence they're called slash commands:
 
 /guildmembers   Displays a list of all members of your guild.
 
-/hou        Displays your houses, same as ~6.
+/hou        Displays your houses, same as ~9.
  (/house)
 
 /ig <player name>
@@ -6168,7 +6168,7 @@ who wants to enter to be either winner or fallen winner.)
 -a dark grey door means that this house may only be accessed by no-ghost
  characters, that means either unworldly or hellish.
 
-If you forgot which houses you own, type ~6 or use the /houses command to see a
+If you forgot which houses you own, type ~9 or use the /houses command to see a
 list of your houses.
 The house owner can always access his house and cannot lock himself out by
 setting restrictions. The door will always be displayed light green to him.
