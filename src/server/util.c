@@ -1343,6 +1343,84 @@ void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alte
 #endif
 	}
 }
+/* Play sfx at full volume to everyone in a house, and at normal-distance volume to
+   everyone near the door (as sound_near_site() would). */
+void sound_house_knock(int h_idx, int dx, int dy) {
+	house_type *h_ptr = &houses[h_idx];
+
+	fill_house(h_ptr, FILL_SFX_KNOCK, NULL);
+
+	/* basically sound_near_site(), except we skip players on CAVE_ICKY grids, ie those who are in either this or other houses! */
+	int i, d;
+	player_type *p_ptr;
+	int val = -1, val2 = -1;
+
+	const char *name = "knock";
+	const char *alternative = "block_shield_projectile";
+	cave_type **zcave;
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
+		}
+	}
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, &h_ptr->wpos)) continue;
+
+		zcave = getcave(&p_ptr->wpos);
+		if (!zcave) continue;//paranoia
+		/* Specialty for sound_house(): Is player NOT in a house? */
+		if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)) continue;
+
+		/* within audible range? */
+		d = distance(dy, dx, Players[i]->py, Players[i]->px);
+		/* hack: if we knock on the door, assume distance 0 between us and door */
+		if (d > 0) d--;
+		/* NOTE: should be consistent with msg_print_near_site() */
+		if (d > MAX_SIGHT) continue;
+
+#if 0
+		/* limit for volume calc */
+		if (d > 20) d = 20;
+		d += 3;
+		d /= 3;
+		Send_sound(i, val, val2, SFX_TYPE_COMMAND, 100 / d, 0);
+#else
+		/* limit for volume calc */
+		Send_sound(i, val, val2, SFX_TYPE_COMMAND, 100 - (d * 50) / 11, 0);
+#endif
+	}
+
+}
 /* like msg_print_near_monster() just for sounds,
    basically same as sound_near_site() - C. Blue */
 void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {

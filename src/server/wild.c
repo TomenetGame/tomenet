@@ -3061,6 +3061,11 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) //obsolete check
  						c_ptr->info &= ~CAVE_GUILD_SUS;
 				}
+				else if (func == FILL_SFX_KNOCK) {
+					if (c_ptr->m_idx < 0) {
+						sound(-(c_ptr->m_idx), "knock", "block_shield_projectile", SFX_TYPE_COMMAND, FALSE);
+					}
+				}
 				else s_printf("rect fill house (func: %d\n", func);
 			}
 		}
@@ -3221,6 +3226,10 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						zcave[miny + (y - 1)][minx + (x - 1)].info &= ~CAVE_GUILD_SUS;
 						break;
 					}
+					else if (func == FILL_SFX_KNOCK) {
+						c_ptr = &zcave[miny + (y - 1)][minx + (x - 1)];
+						if (c_ptr->m_idx < 0) sound(-(c_ptr->m_idx), "knock", "block_shield_projectile", SFX_TYPE_COMMAND, FALSE);
+					}
 					s_printf("poly fill house (func: %d)\n", func);
 					break;
 				case 1:	/* Actual walls */
@@ -3255,6 +3264,10 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						break;
 					}
 #endif
+					else if (func == FILL_SFX_KNOCK) {
+						c_ptr = &zcave[miny + (y - 1)][minx + (x - 1)];
+						if (c_ptr->m_idx < 0) sound(-(c_ptr->m_idx), "knock", "block_shield_projectile", SFX_TYPE_COMMAND, FALSE);
+					}
 					break;
 			}
 		}
@@ -4609,7 +4622,8 @@ void knock_house(int Ind, int x, int y) {
 	msg_print(Ind, "\377sYou knock on the house door..");
 #ifdef USE_SOUND_2010
 	//item_magestaff, block_shield_projectile!, (tunnel_rubble)
-	sound_near_site(y, x, &p_ptr->wpos, 0, "knock", "block_shield_projectile", SFX_TYPE_COMMAND, FALSE);//don't require LOS
+	//sound_near_site(y, x, &p_ptr->wpos, 0, "knock", "block_shield_projectile", SFX_TYPE_COMMAND, FALSE);//don't require LOS
+	sound_house_knock(h_idx, x, y);
 #endif
 }
 

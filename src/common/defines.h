@@ -553,6 +553,7 @@
 #endif
 #define FILL_GUILD_SUS		7	/* for leaderless guild handling: no item/gold pickup possible */
 #define FILL_GUILD_SUS_UNDO	8
+#define FILL_SFX_KNOCK		9
 
 /*
  * Number of entries in the player name hash table.
