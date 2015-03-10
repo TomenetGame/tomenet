@@ -15952,6 +15952,10 @@ Players can create golems, mindless animated humanoids that will fight for
 them. As long as the golem is not in their way of moving, monsters won't
 attack golems, but instead the controlling player.
 
+Although golems can kill monsters, you don't get credit for it and they are
+more of a fun feature than a serious enhancement to your character, so don't
+be too hell-bent on creating a golem or you will be disappointed.
+
 To create a golem, you will need these parts:
 -A 'scroll of Golem Creation'
 -A massive piece of a specific material
