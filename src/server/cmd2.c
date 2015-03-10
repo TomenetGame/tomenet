@@ -6765,14 +6765,19 @@ void house_admin(int Ind, int dir, char *args){
 		if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
 			struct c_special *cs_ptr;
 			if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
-				/* Test if we just want to enter a player store: Doesn't require access. */
-				if (args[0] == 'S') {
+				/* Test for things that don't require access: */
+				switch (args[0]) {
+				case 'S': /* enter a player store */
 					disturb(Ind, 1, 0);
 					if (!do_cmd_player_store(Ind, x, y))
 						msg_print(Ind, "There is no player store there.");
 					return;
+				case 'H':
+					knock_house(Ind, x, y);
+					return;
 				}
 
+				/* Test for things that do require access: */
 				dna = cs_ptr->sc.ptr;
 				if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
 					switch (args[0]) {
@@ -6788,10 +6793,8 @@ void house_admin(int Ind, int dir, char *args){
 						case 'P':
 							paint_house(Ind, x, y, atoi(&args[1]));
 							return;
-						case 'H':
-							knock_house(Ind, x, y);
-							return;
 					}
+
 					if (success) {
 						msg_print(Ind,"\377gChange successful.");
 						/* take note of door colour change */
