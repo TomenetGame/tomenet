@@ -662,14 +662,18 @@ H:AQUATIC | EVIL
 S:1_IN_5 | BLINK | BLIND | SLOW | HOLD | SCARE | CURSE | DARKNESS
 
 #Heroic halflings, dark elves, lizard men etc. are faster and hit harder and have more hp.
-N:53:Hero
-G:*:*
-I:+10:%150d+10:+0:+0:=0
-W:+10:25:+0:%300:A
-B:*:*:%200d%200
-B:*:*:%150d%150
-F:R_CHAR_h
-M:NO_FEAR | DROP_1D2
+#N:53:Hero
+#G:*:*
+#I:+10:%150d+10:+0:+0:=0
+#W:+10:25:+0:%300:A
+#B:*:*:%200d%200
+#B:*:*:%150d%150
+#F:R_CHAR_h
+#M:NO_FEAR | DROP_1D2
+#disabled for now, since it only works well for a few h:
+#Nibelung, Dark-elf, Lizard Man, Nightblade, Bullywug (already has some r-versions), Aquatic elf (grammar!)
+#and maybe (could be silyl):
+#Sirene, Mermaid, Zog, Gnome mage, Mind flayer, Halfling slinger
 
 #Bats, shaman, mages, priests etc. that are reckless don't keep their distance in a fight.
 #Tested 21/09/2014
