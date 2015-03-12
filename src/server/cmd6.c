@@ -611,7 +611,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 		case SV_POTION_WATER:
 		case SV_POTION_APPLE_JUICE:
 		case SV_POTION_SLIME_MOLD:
-			msg_print(Ind, "\377GYou feel less thirsty.");
+			if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
 			ident = TRUE;
 			break;
 
@@ -1507,7 +1507,8 @@ void do_cmd_drink_fountain(int Ind) {
 				return;
 		}
 		/* lake/river: fresh water */
-		msg_print(Ind, "You quenched your thirst.");
+		if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
+		else msg_print(Ind, "You drink some.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 
 #ifdef FOUNTAIN_GUARDS
@@ -1539,7 +1540,7 @@ void do_cmd_drink_fountain(int Ind) {
 			if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
 			set_food(Ind, feed);
 		} else if (p_ptr->suscep_life) {
-			msg_print(Ind, "You quenched your thirst.");
+			msg_print(Ind, "You feel less thirsty.");
 			(void)set_food(Ind, p_ptr->food + 100);
 		} else {
 			switch (rand_int(3)) {
@@ -1574,7 +1575,8 @@ void do_cmd_drink_fountain(int Ind) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-		msg_print(Ind, "You quenched your thirst.");
+		if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
+		else msg_print(Ind, "You drink some.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 
 #ifdef FOUNTAIN_GUARDS
@@ -1605,7 +1607,8 @@ void do_cmd_drink_fountain(int Ind) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-		msg_print(Ind, "You quenched your thirst.");
+		if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
+		else msg_print(Ind, "You drink some.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 
 #ifdef FOUNTAIN_GUARDS
@@ -1628,7 +1631,8 @@ void do_cmd_drink_fountain(int Ind) {
 
 	ident = quaff_potion(Ind, tval, sval, pval);
 	if (ident) cs_ptr->sc.fountain.known = TRUE;
-	else msg_print(Ind, "You quenched your thirst.");
+	else if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
+	else msg_print(Ind, "You drink some.");
 
 	if (p_ptr->prace == RACE_ENT) {
 		if (sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
@@ -1697,10 +1701,7 @@ void do_cmd_fill_bottle(int Ind) {
 #endif
 
 	/* Oops! */
-	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN))) {
-//		msg_print(Ind, "You quenched the thirst.");
-		return;
-	}
+	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN))) return;
 
 	if (cs_ptr->sc.fountain.rest <= 0) {
 		msg_print(Ind, "The fountain is dried out.");
@@ -1724,7 +1725,7 @@ void do_cmd_fill_bottle(int Ind) {
 
 	/* Doh! */
 	if (!k_idx) {
-//		msg_print(Ind, "You quenched the thirst.");
+		k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
 		return;
 	}
 
