@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. March 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. March 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9+ - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -9087,6 +9087,10 @@ Chests              Chests may contain treasures or items. Usually, chests
                     or again use any sort of disarming magic.
                     The disarmed chest is finally safe to open with 'o' key.
                     Happy looting.
+                    Note that only the chest's level affects what kind of items
+                    you may find in it. It does not matter where you actually
+                    are when you open it. A player's 'Luck' value has no effect
+                    on what will come out of it either.
 
 
 (5.9a) Activatable items
