@@ -116,7 +116,7 @@ __races_diz = {
 "Dunadan",
     {"\255uDunadain\255U are a hardy race of men from the west.",
     "This elder race surpasses human abilities in every",
-    "field, especially constituion. However, being men",
+    "field, especially constitution. However, being men",
     "of the world, very little is new to them and expe-",
     "rience is harder for them to gain. Dunadain have",
     "their constitution sustained and receive boni on",
