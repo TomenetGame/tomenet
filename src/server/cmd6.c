@@ -1629,15 +1629,33 @@ void do_cmd_drink_fountain(int Ind) {
 
 	s_printf("FOUNTAIN: %s: %s\n", p_ptr->name, k_name + k_info[k_idx].name);
 
-	ident = quaff_potion(Ind, tval, sval, pval);
+	/* a little hack: avoid the extra less-thirsty-message for the 3 basic effectless potions.
+	   Idea: these potions do not give vampires a 'less thirsty' message, but when a vampire
+	   drinks from these fountains, he should still get a "you drink some" confirmation. */
+	if (tval == TV_POTION)
+		switch (sval) {
+		case SV_POTION_WATER:
+		case SV_POTION_APPLE_JUICE:
+		case SV_POTION_SLIME_MOLD:
+			ident = TRUE;
+			break;
+		default:
+			ident = quaff_potion(Ind, tval, sval, pval);
+		}
+	else ident = quaff_potion(Ind, tval, sval, pval);
+
 	if (ident) cs_ptr->sc.fountain.known = TRUE;
-	else if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
+	else if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "You feel less thirsty.");
 	else msg_print(Ind, "You drink some.");
 
-	if (p_ptr->prace == RACE_ENT) {
+	if (p_ptr->prace == RACE_VAMPIRE) ;
+	else if (p_ptr->prace == RACE_ENT) {
 		if (sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 		else (void)set_food(Ind, p_ptr->food + pval * 2);
-	}
+	} else if (p_ptr->suscep_life)
+		(void)set_food(Ind, p_ptr->food + (pval * 2) / 3);
+	else
+		(void)set_food(Ind, p_ptr->food + pval);
 
 	cs_ptr->sc.fountain.rest--;
 	if (cs_ptr->sc.fountain.rest <= 0) {
@@ -1724,10 +1742,7 @@ void do_cmd_fill_bottle(int Ind) {
 	k_idx = lookup_kind(tval, sval);
 
 	/* Doh! */
-	if (!k_idx) {
-		k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
-		return;
-	}
+	if (!k_idx) k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
 
 	if (!get_something_tval(Ind, TV_BOTTLE, &item)) {
 		msg_print(Ind, "You have no bottles to fill.");
