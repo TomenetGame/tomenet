@@ -141,7 +141,7 @@ G:,:d
 I:80:19:1000
 W:20:0:1:2000
 A:20/8:30/4:40/1
-D:Restores all drained stats.
+D:Restores all drained stats and experience.
 
 N:13:Stupidity
 G:,:d
