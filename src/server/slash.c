@@ -1959,10 +1959,10 @@ void do_slash_cmd(int Ind, char *message) {
 				/* draw it */
 				if (i < 13) {
 					msg_format(p, "\377%cYou draw the %s of %s from %s", COLOUR_GAMBLE, value, flower, p_ptr->name);
-					msg_format_near(p, "\377%c%s draws the %s of %s from %s", COLOUR_GAMBLE, p_ptr->name, value, flower, p_ptr->name);
+					msg_format_near(p, "\377%c%s draws the %s of %s from %s", COLOUR_GAMBLE, Players[p]->name, value, flower, p_ptr->name);
 				} else {
 					msg_format(p, "\377%cYou draw a %s from %s", COLOUR_GAMBLE, value, p_ptr->name);
-					msg_format_near(p, "\377%c%s draws a %s from %s", COLOUR_GAMBLE, p_ptr->name, value, p_ptr->name);
+					msg_format_near(p, "\377%c%s draws a %s from %s", COLOUR_GAMBLE, Players[p]->name, value, p_ptr->name);
 				}
 			} else {
 				/* deal it */
