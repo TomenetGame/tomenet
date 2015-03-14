@@ -60,7 +60,7 @@ void setupscreen() {
 	move(0, 0);
 	clrtoeol();
 	mvprintw(0, COLS / 2 - 18, "TomeNET account editor - 2002 Evileye");
-	mvprintw(1, COLS / 2 - 10, "(Updated by Mikaelh and C. Blue)");
+	mvprintw(1, COLS / 2 - 16, "(Updated by Mikaelh and C. Blue)");
 	attroff(A_STANDOUT);
 	mvprintw(LINES - 3, COLS / 2 - 19, "N: next      P: previous     D: Delete");
 	mvprintw(LINES - 4, COLS / 2 - 19, "V: Validate A: Admin S: Score M: Multi");
@@ -82,7 +82,7 @@ unsigned short recwrite(struct account *rec, long filepos) {
 	if ((flock(wfd, LOCK_EX)) != 0) return(0);
 #endif
 	lseek(wfd, filepos, SEEK_SET);
-	if (write(wfd, rec, sizeof(struct account) == -1))
+	if (write(wfd, rec, sizeof(struct account)) == -1)
 		fprintf(stderr, "write error occurred.");
 #ifndef NETBSD
 	while((flock(wfd, LOCK_UN)) != 0);
