@@ -518,6 +518,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	fp = fopen(buf, "rb");
 	if (!fp) {
 		KILL(c_acc, struct account);
+		s_printf("ERROR: COULDN'T ACCESS ACCOUNT FILE IN lookup_similar_account()!\n");
 		return FALSE; /* cannot access account file */
 	}
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
@@ -553,6 +554,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (min - 5) / 2 + 1) {
+				s_printf("lookup_similar_account (1): name '%s', aname '%s' (tmp '%s')\n", name, c_acc->name, tmpname);
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -570,6 +572,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (min - 5) / 2 + 1) {
+				s_printf("lookup_similar_account (2): name '%s', aname '%s' (tmp '%s')\n", name, c_acc->name, tmpname);
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -589,6 +592,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (min - 5) / 2 + 1) {
+				s_printf("lookup_similar_account (3): name '%s', aname '%s' (tmp '%s')\n", name, c_acc->name, tmpname);
 				KILL(c_acc, struct account);
 				return TRUE;
 			}
@@ -608,6 +612,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 		}
 
 		/* not identical but just too similar? forbidden! */
+		s_printf("lookup_similar_account (4): name '%s', aname '%s' (tmp '%s')\n", name, c_acc->name, tmpname);
 		KILL(c_acc, struct account);
 		return TRUE;
 	}
