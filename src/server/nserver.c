@@ -2956,6 +2956,27 @@ static int Handle_login(int ind)
 		msg_print(NumPlayers, "\374\377yA store of yours has sold something meanwhile!");
 	}
 
+#if 1 /* hm, too much spam? - but usually you'd get this notification anyway, if logged in a bit earlier.. */
+#define GE_FINAL_ANNOUNCEMENT 300 /* keep consistent with xtra1.c */
+	for (i = 0; i < MAX_GLOBAL_EVENTS; i++)
+		if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden == FALSE || is_admin(p_ptr))) {
+			int time_left = global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps);
+			/* Event is not in announcement phase anymore? */
+			if (time_left <= 0) continue;
+			/* Final announcement has not yet been made? */
+			if (global_event[i].announcement_time * cfg.fps -
+			    (turn - global_event[i].start_turn - global_event[i].paused_turns) //<- 'elapsed_time'
+			    >= GE_FINAL_ANNOUNCEMENT * cfg.fps)
+				continue;
+ #if 0
+			msg_format(Ind, "  \377U%d\377W) '%s' recruits for %d more minutes.",
+			    i + 1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
+ #else
+			if (time_left >= 120) msg_format(NumPlayers, "\374\377W[%s (\377U%d\377W) starts in %d minutes]", global_event[i].title, i + 1, time_left / 60);
+			else msg_format(NumPlayers, "\374\377W[%s (%d) starts in %d seconds!]", global_event[i].title, i + 1, time_left);
+ #endif
+		}
+#endif
 
 	/* display some warnings if an item will severely conflict with Martial Arts skill */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
