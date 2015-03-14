@@ -614,11 +614,9 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
 			ident = TRUE;
 			break;
-
 		case SV_POTION_SLOWNESS:
 			if (set_slow(Ind, p_ptr->slow + randint(25) + 15)) ident = TRUE;
 			break;
-
 		case SV_POTION_SALT_WATER:
 			if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
 				msg_print(Ind, "The salty potion makes you vomit!");
@@ -632,7 +630,6 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			}
 			ident = TRUE;
 			break;
-
 		case SV_POTION_POISON:
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
 				if (set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10, 0)) {
@@ -640,650 +637,468 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				}
 			}
 			break;
-
 		case SV_POTION_BLINDNESS:
-				{
-					if (!p_ptr->resist_blind)
-					{
-						if (set_blind(Ind, p_ptr->blind + rand_int(100) + 100))
-						{
-							ident = TRUE;
-						}
-					}
-					break;
-				}
-
-			case SV_POTION_CONFUSION:
-				{
-					if (!p_ptr->resist_conf)
-					{
-						if (set_confused(Ind, p_ptr->confused + rand_int(20) + 15))
-						{
-							ident = TRUE;
-						}
-					}
-					break;
-				}
+			if (!p_ptr->resist_blind) {
+				if (set_blind(Ind, p_ptr->blind + rand_int(100) + 100)) ident = TRUE;
+			}
+			break;
+		case SV_POTION_CONFUSION:
+			if (!p_ptr->resist_conf) {
+				if (set_confused(Ind, p_ptr->confused + rand_int(20) + 15)) ident = TRUE;
+			}
+			break;
 #if 0
-			case SV_POTION_MUTATION:
-				{
-					ident = TRUE;
-					break;
-				}
+		case SV_POTION_MUTATION:
+			ident = TRUE;
+			break;
 #endif
-			case SV_POTION_SLEEP:
-				{
-					if (!p_ptr->free_act)
-					{
-						if (set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4))
-						{
-							ident = TRUE;
-						}
-					}
-					break;
-				}
-
-			case SV_POTION_LOSE_MEMORIES:
-				{
-					if (!p_ptr->hold_life && (p_ptr->exp > 0))
-					{
-						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
-						else {
-							msg_print(Ind, "\377GYou feel your memories fade.");
-							lose_exp(Ind, p_ptr->exp / 4);
-							ident = TRUE;
-						}
-					}
-					break;
-				}
-
-			case SV_POTION_RUINATION:
-				{
-					msg_print(Ind, "Your nerves and muscles feel weak and lifeless!");
-					take_hit(Ind, damroll(10, 10), "a Potion of Ruination", 0);
-					(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_NORMAL);
-					(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_NORMAL);
-					(void)dec_stat(Ind, A_CON, 25, STAT_DEC_NORMAL);
-					(void)dec_stat(Ind, A_STR, 25, STAT_DEC_NORMAL);
-					(void)dec_stat(Ind, A_CHR, 25, STAT_DEC_NORMAL);
-					(void)dec_stat(Ind, A_INT, 25, STAT_DEC_NORMAL);
+		case SV_POTION_SLEEP:
+			if (!p_ptr->free_act) {
+				if (set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4)) ident = TRUE;
+			}
+			break;
+		case SV_POTION_LOSE_MEMORIES:
+			if (!p_ptr->hold_life && (p_ptr->exp > 0)) {
+				if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+				else {
+					msg_print(Ind, "\377GYou feel your memories fade.");
+					lose_exp(Ind, p_ptr->exp / 4);
 					ident = TRUE;
-					break;
 				}
-
-			case SV_POTION_DEC_STR:
-				{
-					if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_DEC_INT:
-				{
-					if (do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_DEC_WIS:
-				{
-					if (do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_DEC_DEX:
-				{
-					if (do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_DEC_CON:
-				{
-					if (do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_DEC_CHR:
-				{
-					if (do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_DETONATIONS:
-				{
+			}
+			break;
+		case SV_POTION_RUINATION:
+			msg_print(Ind, "Your nerves and muscles feel weak and lifeless!");
+			take_hit(Ind, damroll(10, 10), "a Potion of Ruination", 0);
+			(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_CON, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_STR, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_CHR, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_INT, 25, STAT_DEC_NORMAL);
+			ident = TRUE;
+			break;
+		case SV_POTION_DEC_STR:
+			if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) ident = TRUE;
+			break;
+		case SV_POTION_DEC_INT:
+			if (do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL)) ident = TRUE;
+			break;
+		case SV_POTION_DEC_WIS:
+			if (do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL)) ident = TRUE;
+			break;
+		case SV_POTION_DEC_DEX:
+			if (do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL)) ident = TRUE;
+			break;
+		case SV_POTION_DEC_CON:
+			if (do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL)) ident = TRUE;
+			break;
+		case SV_POTION_DEC_CHR:
+			if (do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL)) ident = TRUE;
+			break;
+		case SV_POTION_DETONATIONS:
 #ifdef USE_SOUND_2010
-					sound(Ind, "detonation", NULL, SFX_TYPE_MISC, TRUE);
+			sound(Ind, "detonation", NULL, SFX_TYPE_MISC, TRUE);
 #endif
-					msg_print(Ind, "Massive explosions rupture your body!");
-					msg_format_near(Ind, "%s blows up!", p_ptr->name);
-					take_hit(Ind, damroll(50, 20), "a Potion of Detonation", 0);
-					(void)set_stun(Ind, p_ptr->stun + 75);
-					(void)set_cut(Ind, p_ptr->cut + 5000, Ind);
-					ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_DEATH:
-				if (!p_ptr->suscep_life) {
-					msg_print(Ind, "A feeling of Death flows through your body.");
-					take_hit(Ind, 5000, "a Potion of Death", 0);
-					ident = TRUE;
-				} else {
-					msg_print(Ind, "You burp.");
-					msg_format_near(Ind, "%s burps.", p_ptr->name);
-					if (p_ptr->cst < p_ptr->mst && !p_ptr->shadow_running) {
-						msg_print(Ind, "You feel refreshed.");
-						p_ptr->cst = p_ptr->mst;
-						p_ptr->cst_frac = 0;
-						p_ptr->redraw |= PR_STAMINA;
-					}
-				}
-				break;
-
-			case SV_POTION_INFRAVISION:
-				{
-					if (set_tim_infra(Ind, 100 + randint(100))) /* removed stacking */
-					{
-						ident = TRUE;
-					}
-					break;
-				}
-
-			case SV_POTION_DETECT_INVIS:
-				{
-					if (set_tim_invis(Ind, 12 + randint(12))) /* removed stacking */
-					{
-						ident = TRUE;
-					}
-					break;
-				}
-			case SV_POTION_INVIS:
-				{
-					set_invis(Ind, 15 + randint(10), p_ptr->lev < 30 ? 24 : p_ptr->lev * 4 / 5);
-					ident = TRUE;
-				}
-
-			case SV_POTION_SLOW_POISON:
-				{
-#if 0
-					if (set_poisoned(Ind, p_ptr->poisoned / 2, p_ptr->poisoned_attacker)) ident = TRUE;
-#else /* back to traditional way */
-					if (p_ptr->poisoned && !p_ptr->slow_poison) {
-						p_ptr->slow_poison = 1;
-						ident = TRUE;
-					}
-#endif
-					break;
-				}
-
-			case SV_POTION_CURE_POISON:
-				{
-					if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_BOLDNESS:
-				{
-					/* Stay bold for some turns */
-					if (set_afraid(Ind, 0)) ident = TRUE;
-					set_res_fear(Ind, 5);
-					break;
-				}
-
-			case SV_POTION_SPEED:
-				{
-					if (!p_ptr->fast)
-					{
-						if (set_fast(Ind, randint(25) + 15, 10)) ident = TRUE;
-					}
-					else
-					{
-						/* not removed stacking due to interesting effect */
-						(void)set_fast(Ind, p_ptr->fast + 5, 10);
-					}
-					break;
-				}
-
-			case SV_POTION_RESIST_HEAT:
-				{
-					if (set_oppose_fire(Ind, randint(10) + 10)) /* removed stacking */
-					{
-						ident = TRUE;
-					}
-					break;
-				}
-
-			case SV_POTION_RESIST_COLD:
-				{
-					if (set_oppose_cold(Ind, randint(10) + 10)) /* removed stacking */
-					{
-						ident = TRUE;
-					}
-					break;
-				}
-
-			case SV_POTION_HEROISM:
-				{
-					if (hp_player(Ind, 10)) ident = TRUE;
-					if (set_afraid(Ind, 0)) ident = TRUE;
-					if (set_hero(Ind, randint(25) + 25)) ident = TRUE; /* removed stacking */
-					break;
-				}
-
-			case SV_POTION_BERSERK_STRENGTH:
-				{
-					if (hp_player(Ind, 30)) ident = TRUE;
-					if (set_afraid(Ind, 0)) ident = TRUE;
-					if (set_shero(Ind, randint(25) + 25)) ident = TRUE; /* removed stacking */
-					break;
-				}
-
-			case SV_POTION_CURE_LIGHT:
-				if (hp_player(Ind, damroll(3, 8))) ident = TRUE;
-				if (set_blind(Ind, 0)) ident = TRUE;
-				if (set_cut(Ind, p_ptr->cut - 10, p_ptr->cut_attacker)) ident = TRUE;
-				break;
-
-			case SV_POTION_CURE_SERIOUS:
-				if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
-				if (set_blind(Ind, 0)) ident = TRUE;
-				if (set_confused(Ind, 0)) ident = TRUE;
-				if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
-				break;
-
-			case SV_POTION_CURE_CRITICAL:
-				if (hp_player(Ind, damroll(14, 8))) ident = TRUE;
-				if (set_blind(Ind, 0)) ident = TRUE;
-				if (set_confused(Ind, 0)) ident = TRUE;
-				//			if (set_poisoned(Ind, 0, 0)) ident = TRUE;	/* use specialized pots */
-				if (set_stun(Ind, 0)) ident = TRUE;
-				if (set_cut(Ind, 0, 0)) ident = TRUE;
-				break;
-
-			case SV_POTION_HEALING:
-				if (hp_player(Ind, 300)) ident = TRUE;
-				if (set_blind(Ind, 0)) ident = TRUE;
-				if (set_confused(Ind, 0)) ident = TRUE;
-				if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-				if (set_stun(Ind, 0)) ident = TRUE;
-				if (set_cut(Ind, 0, 0)) ident = TRUE;
-				break;
-
-			case SV_POTION_STAR_HEALING:
-				if (hp_player(Ind, 700)) ident = TRUE;
-				if (set_blind(Ind, 0)) ident = TRUE;
-				if (set_confused(Ind, 0)) ident = TRUE;
-				if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-				if (set_stun(Ind, 0)) ident = TRUE;
-				if (set_cut(Ind, 0, 0)) ident = TRUE;
-				break;
-
-			case SV_POTION_LIFE:
-				msg_print(Ind, "\377GYou feel life flow through your body!");
-				restore_level(Ind);
-				if (p_ptr->suscep_life) take_hit(Ind, 500, "a Potion of Life", 0);
-				else hp_player(Ind, 700);
-				(void)set_poisoned(Ind, 0, 0);
-				(void)set_blind(Ind, 0);
-				(void)set_confused(Ind, 0);
-				(void)set_image(Ind, 0);
-				(void)set_stun(Ind, 0);
-				(void)set_cut(Ind, 0, 0);
-				(void)do_res_stat(Ind, A_STR);
-				(void)do_res_stat(Ind, A_CON);
-				(void)do_res_stat(Ind, A_DEX);
-				(void)do_res_stat(Ind, A_WIS);
-				(void)do_res_stat(Ind, A_INT);
-				(void)do_res_stat(Ind, A_CHR);
-				(void)restore_level(Ind);
-				if (p_ptr->black_breath) {
-					p_ptr->black_breath = FALSE;
-					msg_print(Ind, "The hold of the Black Breath on you is broken!");
-				}
-				if (!p_ptr->suscep_life &&
-				    p_ptr->cst < p_ptr->mst && !p_ptr->shadow_running) {
+			msg_print(Ind, "Massive explosions rupture your body!");
+			msg_format_near(Ind, "%s blows up!", p_ptr->name);
+			take_hit(Ind, damroll(50, 20), "a Potion of Detonation", 0);
+			(void)set_stun(Ind, p_ptr->stun + 75);
+			(void)set_cut(Ind, p_ptr->cut + 5000, Ind);
+			ident = TRUE;
+			break;
+		case SV_POTION_DEATH:
+			if (!p_ptr->suscep_life) {
+				msg_print(Ind, "A feeling of Death flows through your body.");
+				take_hit(Ind, 5000, "a Potion of Death", 0);
+				ident = TRUE;
+			} else {
+				msg_print(Ind, "You burp.");
+				msg_format_near(Ind, "%s burps.", p_ptr->name);
+				if (p_ptr->cst < p_ptr->mst && !p_ptr->shadow_running) {
 					msg_print(Ind, "You feel refreshed.");
 					p_ptr->cst = p_ptr->mst;
 					p_ptr->cst_frac = 0;
 					p_ptr->redraw |= PR_STAMINA;
 				}
+			}
+			break;
+		case SV_POTION_INFRAVISION:
+			if (set_tim_infra(Ind, 100 + randint(100))) /* removed stacking */
 				ident = TRUE;
-				break;
-
-			case SV_POTION_RESTORE_MANA:
-				{
-					if (p_ptr->csp < p_ptr->msp)
-					{
-						p_ptr->csp += 500;
-						if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
-						msg_print(Ind, "You feel your head clearing.");
-						p_ptr->redraw |= (PR_MANA);
-						p_ptr->window |= (PW_PLAYER);
-						ident = TRUE;
-					}
-					break;
-				}
-			case SV_POTION_STAR_RESTORE_MANA:
-				{
-					if (p_ptr->csp < p_ptr->msp)
-					{
-						p_ptr->csp += 1000;
-						if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
-						msg_print(Ind, "You feel your head clearing!");
-						p_ptr->redraw |= (PR_MANA);
-						p_ptr->window |= (PW_PLAYER);
-						ident = TRUE;
-					}
-					break;
-				}
-
-			case SV_POTION_RESTORE_EXP:
-				{
-					if (restore_level(Ind)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_RES_STR:
-				{
-					if (do_res_stat(Ind, A_STR)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_RES_INT:
-				{
-					if (do_res_stat(Ind, A_INT)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_RES_WIS:
-				{
-					if (do_res_stat(Ind, A_WIS)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_RES_DEX:
-				{
-					if (do_res_stat(Ind, A_DEX)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_RES_CON:
-				{
-					if (do_res_stat(Ind, A_CON)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_RES_CHR:
-				{
-					if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_INC_STR:
-				{
-					if (do_inc_stat(Ind, A_STR)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_INC_INT:
-				{
-					if (do_inc_stat(Ind, A_INT)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_INC_WIS:
-				{
-					if (do_inc_stat(Ind, A_WIS)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_INC_DEX:
-				{
-					if (do_inc_stat(Ind, A_DEX)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_INC_CON:
-				{
-					if (do_inc_stat(Ind, A_CON)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_INC_CHR:
-				{
-					if (do_inc_stat(Ind, A_CHR)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_AUGMENTATION:
-				{
-					if (do_inc_stat(Ind, A_STR)) ident = TRUE;
-					if (do_inc_stat(Ind, A_INT)) ident = TRUE;
-					if (do_inc_stat(Ind, A_WIS)) ident = TRUE;
-					if (do_inc_stat(Ind, A_DEX)) ident = TRUE;
-					if (do_inc_stat(Ind, A_CON)) ident = TRUE;
-					if (do_inc_stat(Ind, A_CHR)) ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_ENLIGHTENMENT:
-				{
-					identify_pack(Ind);
-					msg_print(Ind, "An image of your surroundings forms in your mind...");
-					wiz_lite(Ind);
-					ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_STAR_ENLIGHTENMENT:
-				{
+			break;
+		case SV_POTION_DETECT_INVIS:
+			if (set_tim_invis(Ind, 12 + randint(12))) /* removed stacking */
+				ident = TRUE;
+			break;
+		case SV_POTION_INVIS:
+			set_invis(Ind, 15 + randint(10), p_ptr->lev < 30 ? 24 : p_ptr->lev * 4 / 5);
+			ident = TRUE;
+		case SV_POTION_SLOW_POISON:
+#if 0
+			if (set_poisoned(Ind, p_ptr->poisoned / 2, p_ptr->poisoned_attacker)) ident = TRUE;
+#else /* back to traditional way */
+			if (p_ptr->poisoned && !p_ptr->slow_poison) {
+				p_ptr->slow_poison = 1;
+				ident = TRUE;
+			}
+#endif
+			break;
+		case SV_POTION_CURE_POISON:
+			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+			break;
+		case SV_POTION_BOLDNESS:
+			/* Stay bold for some turns */
+			if (set_afraid(Ind, 0)) ident = TRUE;
+			set_res_fear(Ind, 5);
+			break;
+		case SV_POTION_SPEED:
+			if (!p_ptr->fast) {
+				if (set_fast(Ind, randint(25) + 15, 10)) ident = TRUE;
+			} else {
+				/* not removed stacking due to interesting effect */
+				(void)set_fast(Ind, p_ptr->fast + 5, 10);
+			}
+			break;
+		case SV_POTION_RESIST_HEAT:
+			if (set_oppose_fire(Ind, randint(10) + 10)) /* removed stacking */
+				ident = TRUE;
+			break;
+		case SV_POTION_RESIST_COLD:
+			if (set_oppose_cold(Ind, randint(10) + 10)) /* removed stacking */
+				ident = TRUE;
+			break;
+		case SV_POTION_HEROISM:
+			if (hp_player(Ind, 10)) ident = TRUE;
+			if (set_afraid(Ind, 0)) ident = TRUE;
+			if (set_hero(Ind, randint(25) + 25)) ident = TRUE; /* removed stacking */
+			break;
+		case SV_POTION_BERSERK_STRENGTH:
+			if (hp_player(Ind, 30)) ident = TRUE;
+			if (set_afraid(Ind, 0)) ident = TRUE;
+			if (set_shero(Ind, randint(25) + 25)) ident = TRUE; /* removed stacking */
+			break;
+		case SV_POTION_CURE_LIGHT:
+			if (hp_player(Ind, damroll(3, 8))) ident = TRUE;
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, p_ptr->cut - 10, p_ptr->cut_attacker)) ident = TRUE;
+			break;
+		case SV_POTION_CURE_SERIOUS:
+			if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_confused(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
+			break;
+		case SV_POTION_CURE_CRITICAL:
+			if (hp_player(Ind, damroll(14, 8))) ident = TRUE;
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_confused(Ind, 0)) ident = TRUE;
+			//			if (set_poisoned(Ind, 0, 0)) ident = TRUE;	/* use specialized pots */
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
+			break;
+		case SV_POTION_HEALING:
+			if (hp_player(Ind, 300)) ident = TRUE;
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_confused(Ind, 0)) ident = TRUE;
+			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
+			break;
+		case SV_POTION_STAR_HEALING:
+			if (hp_player(Ind, 700)) ident = TRUE;
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_confused(Ind, 0)) ident = TRUE;
+			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
+			break;
+		case SV_POTION_LIFE:
+			msg_print(Ind, "\377GYou feel life flow through your body!");
+			restore_level(Ind);
+			if (p_ptr->suscep_life) take_hit(Ind, 500, "a Potion of Life", 0);
+			else hp_player(Ind, 700);
+			(void)set_poisoned(Ind, 0, 0);
+			(void)set_blind(Ind, 0);
+			(void)set_confused(Ind, 0);
+			(void)set_image(Ind, 0);
+			(void)set_stun(Ind, 0);
+			(void)set_cut(Ind, 0, 0);
+			(void)do_res_stat(Ind, A_STR);
+			(void)do_res_stat(Ind, A_CON);
+			(void)do_res_stat(Ind, A_DEX);
+			(void)do_res_stat(Ind, A_WIS);
+			(void)do_res_stat(Ind, A_INT);
+			(void)do_res_stat(Ind, A_CHR);
+			(void)restore_level(Ind);
+			if (p_ptr->black_breath) {
+				p_ptr->black_breath = FALSE;
+				msg_print(Ind, "The hold of the Black Breath on you is broken!");
+			}
+			if (!p_ptr->suscep_life &&
+			    p_ptr->cst < p_ptr->mst && !p_ptr->shadow_running) {
+				msg_print(Ind, "You feel refreshed.");
+				p_ptr->cst = p_ptr->mst;
+				p_ptr->cst_frac = 0;
+				p_ptr->redraw |= PR_STAMINA;
+			}
+			ident = TRUE;
+			break;
+		case SV_POTION_RESTORE_MANA:
+			if (p_ptr->csp < p_ptr->msp) {
+				p_ptr->csp += 500;
+				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+				msg_print(Ind, "You feel your head clearing.");
+				p_ptr->redraw |= (PR_MANA);
+				p_ptr->window |= (PW_PLAYER);
+				ident = TRUE;
+			}
+			break;
+		case SV_POTION_STAR_RESTORE_MANA:
+			if (p_ptr->csp < p_ptr->msp) {
+				p_ptr->csp += 1000;
+				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+				msg_print(Ind, "You feel your head clearing!");
+				p_ptr->redraw |= (PR_MANA);
+				p_ptr->window |= (PW_PLAYER);
+				ident = TRUE;
+			}
+			break;
+		case SV_POTION_RESTORE_EXP:
+			if (restore_level(Ind)) ident = TRUE;
+			break;
+		case SV_POTION_RES_STR:
+			if (do_res_stat(Ind, A_STR)) ident = TRUE;
+			break;
+		case SV_POTION_RES_INT:
+			if (do_res_stat(Ind, A_INT)) ident = TRUE;
+			break;
+		case SV_POTION_RES_WIS:
+			if (do_res_stat(Ind, A_WIS)) ident = TRUE;
+			break;
+		case SV_POTION_RES_DEX:
+			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
+			break;
+		case SV_POTION_RES_CON:
+			if (do_res_stat(Ind, A_CON)) ident = TRUE;
+			break;
+		case SV_POTION_RES_CHR:
+			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
+			break;
+		case SV_POTION_INC_STR:
+			if (do_inc_stat(Ind, A_STR)) ident = TRUE;
+			break;
+		case SV_POTION_INC_INT:
+			if (do_inc_stat(Ind, A_INT)) ident = TRUE;
+			break;
+		case SV_POTION_INC_WIS:
+			if (do_inc_stat(Ind, A_WIS)) ident = TRUE;
+			break;
+		case SV_POTION_INC_DEX:
+			if (do_inc_stat(Ind, A_DEX)) ident = TRUE;
+			break;
+		case SV_POTION_INC_CON:
+			if (do_inc_stat(Ind, A_CON)) ident = TRUE;
+			break;
+		case SV_POTION_INC_CHR:
+			if (do_inc_stat(Ind, A_CHR)) ident = TRUE;
+			break;
+		case SV_POTION_AUGMENTATION:
+			if (do_inc_stat(Ind, A_STR)) ident = TRUE;
+			if (do_inc_stat(Ind, A_INT)) ident = TRUE;
+			if (do_inc_stat(Ind, A_WIS)) ident = TRUE;
+			if (do_inc_stat(Ind, A_DEX)) ident = TRUE;
+			if (do_inc_stat(Ind, A_CON)) ident = TRUE;
+			if (do_inc_stat(Ind, A_CHR)) ident = TRUE;
+			break;
+		case SV_POTION_ENLIGHTENMENT:
+			identify_pack(Ind);
+			msg_print(Ind, "An image of your surroundings forms in your mind...");
+			wiz_lite(Ind);
+			ident = TRUE;
+			break;
+		case SV_POTION_STAR_ENLIGHTENMENT:
 #if 0 /* would need to increase price from 25k back to 80k ;) */
-					for (i = 0; i < INVEN_TOTAL; i++)
-						identify_fully_item_quiet(Ind, i);
+			for (i = 0; i < INVEN_TOTAL; i++)
+				identify_fully_item_quiet(Ind, i);
 #else
-					identify_pack(Ind);
+			identify_pack(Ind);
 #endif
-					msg_print(Ind, "You begin to feel more enlightened...");
-					msg_print(Ind, NULL);
-					wiz_lite(Ind);
-					(void)do_inc_stat(Ind, A_INT);
-					(void)do_inc_stat(Ind, A_WIS);
-					(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
-					(void)detect_object(Ind, DEFAULT_RADIUS * 2);
-					(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
-					(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
-					identify_pack(Ind);
-					self_knowledge(Ind);
-					ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_SELF_KNOWLEDGE:
-				{
-					msg_print(Ind, "You begin to know yourself a little better...");
-					msg_print(Ind, NULL);
-					self_knowledge(Ind);
-					ident = TRUE;
-					break;
-				}
-
-			case SV_POTION_EXPERIENCE:
-				{
-					if (p_ptr->exp < PY_MAX_EXP)
-					{
-						s32b ee = (p_ptr->exp / 2) + 10;
-						if (ee > 100000L) ee = 100000L;
+			msg_print(Ind, "You begin to feel more enlightened...");
+			msg_print(Ind, NULL);
+			wiz_lite(Ind);
+			(void)do_inc_stat(Ind, A_INT);
+			(void)do_inc_stat(Ind, A_WIS);
+			(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
+			(void)detect_object(Ind, DEFAULT_RADIUS * 2);
+			(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
+			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
+			identify_pack(Ind);
+			self_knowledge(Ind);
+			ident = TRUE;
+			break;
+		case SV_POTION_SELF_KNOWLEDGE:
+			msg_print(Ind, "You begin to know yourself a little better...");
+			msg_print(Ind, NULL);
+			self_knowledge(Ind);
+			ident = TRUE;
+			break;
+		case SV_POTION_EXPERIENCE:
+			if (p_ptr->exp < PY_MAX_EXP) {
+				s32b ee = (p_ptr->exp / 2) + 10;
+				if (ee > 100000L) ee = 100000L;
 #ifdef ALT_EXPRATIO
-						ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
+				ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
 #endif
-						if (!(p_ptr->mode & MODE_PVP)) {
-							msg_print(Ind, "\377GYou feel more experienced.");
-							gain_exp(Ind, ee);
-						}
-						ident = TRUE;
-					}
-					break;
+				if (!(p_ptr->mode & MODE_PVP)) {
+					msg_print(Ind, "\377GYou feel more experienced.");
+					gain_exp(Ind, ee);
 				}
-
-				/* additions from PernA */
-			case SV_POTION_CURING:
-				{
-					if (hp_player(Ind, 50)) ident = TRUE;
-					if (set_blind(Ind, 0)) ident = TRUE;
-					if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-					if (set_confused(Ind, 0)) ident = TRUE;
-					if (set_stun(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, 0, 0)) ident = TRUE;
-					if (set_image(Ind, 0)) ident = TRUE;
-					if (heal_insanity(Ind, 40)) ident = TRUE;
-		                        if (p_ptr->food >= PY_FOOD_MAX)
-		                        if (set_food(Ind, PY_FOOD_MAX - 1 - pval)) ident = TRUE;
-					(void)do_res_stat(Ind, A_STR);
-					(void)do_res_stat(Ind, A_CON);
-					(void)do_res_stat(Ind, A_DEX);
-					(void)do_res_stat(Ind, A_WIS);
-					(void)do_res_stat(Ind, A_INT);
-					(void)do_res_stat(Ind, A_CHR);
- 					break;
-				}
-
-			case SV_POTION_INVULNERABILITY:
-				{
-					ident = set_invuln(Ind, randint(7) + 7); /* removed stacking */
-					break;
-				}
-
-			case SV_POTION_RESISTANCE:
-				{
-					ident =
-						set_oppose_acid(Ind, randint(20) + 20) |
-						set_oppose_elec(Ind, randint(20) + 20) |
-						set_oppose_fire(Ind, randint(20) + 20) |
-						set_oppose_cold(Ind, randint(20) + 20) |
-						set_oppose_pois(Ind, randint(20) + 20); /* removed stacking */
-					break;
-				}
-#ifdef EXPAND_TV_POTION
-			//max sanity of a player can go up to around 900 later!
-			case SV_POTION_CURE_LIGHT_SANITY:
-				if (heal_insanity(Ind, damroll(4,8))) ident = TRUE;
-				(void)set_image(Ind, 0);
-				break;
-			case SV_POTION_CURE_SERIOUS_SANITY:
-//				if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
-				if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
-				(void)set_image(Ind, 0);
-				break;
-			case SV_POTION_CURE_CRITICAL_SANITY:
-//				if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
-				if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
-				(void)set_image(Ind, 0);
-				break;
-			case SV_POTION_CURE_SANITY:
-//				if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
-				if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
-				(void)set_image(Ind, 0);
-				break;
-			case SV_POTION_CHAUVE_SOURIS:
-//				apply_morph(Ind, 100, "Potion of Chauve-Souris");
-				if (!p_ptr->fruit_bat) {
-					/* FRUIT BAT!!!!!! */
-					if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
-					msg_print(Ind, "You have been turned into a fruit bat!");
-					strcpy(p_ptr->died_from,"a Potion of Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"a Potion of Chauve-Souris");
-					p_ptr->fruit_bat = -1;
-					p_ptr->deathblow = 0;
-					player_death(Ind);
-					ident = TRUE;
-				} else if(p_ptr->fruit_bat == 2) {
-					msg_print(Ind, "You have been restored!");
-					p_ptr->fruit_bat = 0;
-					p_ptr->update |= (PU_BONUS | PU_HP);
-					ident = TRUE;
-				}
-				else msg_print(Ind, "You feel certain you are a fruit bat!");
-
-				break;
-			case SV_POTION_LEARNING:
 				ident = TRUE;
-
-				/* gain skill points */
-				i = 1 + rand_int(3);
-				p_ptr->skill_points += i;
-				p_ptr->update |= PU_SKILL_MOD;
-				if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
-
-				msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
-
-				break;
+			}
+			break;
+			/* additions from PernA */
+		case SV_POTION_CURING:
+			if (hp_player(Ind, 50)) ident = TRUE;
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+			if (set_confused(Ind, 0)) ident = TRUE;
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
+			if (set_image(Ind, 0)) ident = TRUE;
+			if (heal_insanity(Ind, 40)) ident = TRUE;
+			if (p_ptr->food >= PY_FOOD_MAX)
+				if (set_food(Ind, PY_FOOD_MAX - 1 - pval)) ident = TRUE;
+			if (do_res_stat(Ind, A_STR)) ident = TRUE;
+			if (do_res_stat(Ind, A_CON)) ident = TRUE;
+			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
+			if (do_res_stat(Ind, A_WIS)) ident = TRUE;
+			if (do_res_stat(Ind, A_INT)) ident = TRUE;
+			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
+			break;
+		case SV_POTION_INVULNERABILITY:
+			ident = set_invuln(Ind, randint(7) + 7); /* removed stacking */
+			break;
+		case SV_POTION_RESISTANCE:
+			ident =
+				set_oppose_acid(Ind, randint(20) + 20) |
+				set_oppose_elec(Ind, randint(20) + 20) |
+				set_oppose_fire(Ind, randint(20) + 20) |
+				set_oppose_cold(Ind, randint(20) + 20) |
+				set_oppose_pois(Ind, randint(20) + 20); /* removed stacking */
+			break;
+#ifdef EXPAND_TV_POTION
+		//max sanity of a player can go up to around 900 later!
+		case SV_POTION_CURE_LIGHT_SANITY:
+			if (heal_insanity(Ind, damroll(4,8))) ident = TRUE;
+			(void)set_image(Ind, 0);
+			break;
+		case SV_POTION_CURE_SERIOUS_SANITY:
+//			if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
+			(void)set_image(Ind, 0);
+			break;
+		case SV_POTION_CURE_CRITICAL_SANITY:
+//			if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
+			(void)set_image(Ind, 0);
+			break;
+		case SV_POTION_CURE_SANITY:
+//			if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
+			(void)set_image(Ind, 0);
+			break;
+		case SV_POTION_CHAUVE_SOURIS:
+//			apply_morph(Ind, 100, "Potion of Chauve-Souris");
+			if (!p_ptr->fruit_bat) {
+				/* FRUIT BAT!!!!!! */
+				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
+				msg_print(Ind, "You have been turned into a fruit bat!");
+				strcpy(p_ptr->died_from,"a Potion of Chauve-Souris");
+				strcpy(p_ptr->really_died_from,"a Potion of Chauve-Souris");
+				p_ptr->fruit_bat = -1;
+				p_ptr->deathblow = 0;
+				player_death(Ind);
+				ident = TRUE;
+			} else if(p_ptr->fruit_bat == 2) {
+				msg_print(Ind, "You have been restored!");
+				p_ptr->fruit_bat = 0;
+				p_ptr->update |= (PU_BONUS | PU_HP);
+				ident = TRUE;
+			}
+			else msg_print(Ind, "You feel certain you are a fruit bat!");
+			break;
+		case SV_POTION_LEARNING:
+			ident = TRUE;
+			/* gain skill points */
+			i = 1 + rand_int(3);
+			p_ptr->skill_points += i;
+			p_ptr->update |= PU_SKILL_MOD;
+			if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
+			msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
+			break;
 #endif
 		}
-	}
-	else
-		/* POTION2 */
-	{
-		switch (sval)
-		{
-			//max sanity of a player can go up to around 900 later!
-			case SV_POTION2_CURE_LIGHT_SANITY:
-				if (heal_insanity(Ind, damroll(4,8))) ident = TRUE;
-				(void)set_image(Ind, 0);
-				break;
-			case SV_POTION2_CURE_SERIOUS_SANITY:
-//				if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
-				if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
-				(void)set_image(Ind, 0);
-				break;
-			case SV_POTION2_CURE_CRITICAL_SANITY:
-//				if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
-				if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
-				(void)set_image(Ind, 0);
-				break;
-			case SV_POTION2_CURE_SANITY:
-//				if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
-				if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
-				(void)set_image(Ind, 0);
-				break;
-			case SV_POTION2_CHAUVE_SOURIS:
-//				apply_morph(Ind, 100, "Potion of Chauve-Souris");
-				if (!p_ptr->fruit_bat) {
-					/* FRUIT BAT!!!!!! */
-					if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
-					msg_print(Ind, "You have been turned into a fruit bat!");
-					strcpy(p_ptr->died_from,"a Potion of Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"a Potion of Chauve-Souris");
-					p_ptr->fruit_bat = -1;
-					p_ptr->deathblow = 0;
-					player_death(Ind);
-					ident = TRUE;
-				} else if(p_ptr->fruit_bat == 2) {
-					msg_print(Ind, "You have been restored!");
-					p_ptr->fruit_bat = 0;
-					p_ptr->update |= (PU_BONUS | PU_HP);
-					ident = TRUE;
-				}
-				else msg_print(Ind, "You feel certain you are a fruit bat!");
-
-				break;
-			case SV_POTION2_LEARNING:
+	} else { /* POTION2 */
+		switch (sval) {
+		//max sanity of a player can go up to around 900 later!
+		case SV_POTION2_CURE_LIGHT_SANITY:
+			if (heal_insanity(Ind, damroll(4,8))) ident = TRUE;
+			(void)set_image(Ind, 0);
+			break;
+		case SV_POTION2_CURE_SERIOUS_SANITY:
+//			if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
+			(void)set_image(Ind, 0);
+			break;
+		case SV_POTION2_CURE_CRITICAL_SANITY:
+//			if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
+			(void)set_image(Ind, 0);
+			break;
+		case SV_POTION2_CURE_SANITY:
+//			if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
+			(void)set_image(Ind, 0);
+			break;
+		case SV_POTION2_CHAUVE_SOURIS:
+//			apply_morph(Ind, 100, "Potion of Chauve-Souris");
+			if (!p_ptr->fruit_bat) {
+				/* FRUIT BAT!!!!!! */
+				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
+				msg_print(Ind, "You have been turned into a fruit bat!");
+				strcpy(p_ptr->died_from,"a Potion of Chauve-Souris");
+				strcpy(p_ptr->really_died_from,"a Potion of Chauve-Souris");
+				p_ptr->fruit_bat = -1;
+				p_ptr->deathblow = 0;
+				player_death(Ind);
 				ident = TRUE;
-
-				/* gain skill points */
-				i = 1 + rand_int(3);
-				p_ptr->skill_points += i;
-				p_ptr->update |= PU_SKILL_MOD;
-				if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
-
-				msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
-
-				break;
-			case SV_POTION2_AMBER:
+			} else if(p_ptr->fruit_bat == 2) {
+				msg_print(Ind, "You have been restored!");
+				p_ptr->fruit_bat = 0;
+				p_ptr->update |= (PU_BONUS | PU_HP);
 				ident = TRUE;
-				msg_print(Ind, "Your muscles bulge, and your skin turns to amber!");
-				do_xtra_stats(Ind, 20, 20);
-				set_shero(Ind, 20); /* -AC cancelled by blessing below */
-				p_ptr->blessed_power = 35;
-				set_blessed(Ind, 20);
-				break;
+			}
+			else msg_print(Ind, "You feel certain you are a fruit bat!");
+
+			break;
+		case SV_POTION2_LEARNING:
+			ident = TRUE;
+			/* gain skill points */
+			i = 1 + rand_int(3);
+			p_ptr->skill_points += i;
+			p_ptr->update |= PU_SKILL_MOD;
+			if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
+			msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
+			break;
+		case SV_POTION2_AMBER:
+			ident = TRUE;
+			msg_print(Ind, "Your muscles bulge, and your skin turns to amber!");
+			do_xtra_stats(Ind, 20, 20);
+			set_shero(Ind, 20); /* -AC cancelled by blessing below */
+			p_ptr->blessed_power = 35;
+			set_blessed(Ind, 20);
+			break;
 		}
 	}
 
