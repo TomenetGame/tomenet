@@ -90,6 +90,12 @@
    max exp penalty of 472,5 %. Must be integer within 0..50. [25] */
 #define WEAK_SKILLBONUS 0	/* NOT RECOMMENDED to set this > 0! */
 
+/* Show real killer name even when hallucinating? */
+#define SHOW_REALLY_DIED_FROM
+/* In addition to above, show real killer instead of "insanity"? */
+#ifdef SHOW_REALLY_DIED_FROM
+ #define SHOW_REALLY_DIED_FROM_INSANITY
+#endif
 
 /* Do player-kill messages of "Morgoth, Lord of Darkness" get some
    special flavour? - C. Blue */
@@ -6497,13 +6503,27 @@ void player_death(int Ind) {
 #endif
 //	int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
-	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0), erase = FALSE;
+	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0), erase = FALSE, insanity = streq(p_ptr->died_from, "insanity");
 	cptr titlebuf;
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
 	bool world_broadcast = TRUE, just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
 	bool was_total_winner = p_ptr->total_winner, retire = FALSE;
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
 
+#ifdef SHOW_REALLY_DIED_FROM
+	if ((streq(p_ptr->died_from, "It") || p_ptr->image
+ #ifdef SHOW_REALLY_DIED_FROM_INSANITY
+	    || insanity
+ #endif
+	    ) && !(
+ #ifndef SHOW_REALLY_DIED_FROM_INSANITY
+	    insanity ||
+ #endif
+	    streq(p_ptr->died_from, "indecisiveness") ||
+	    streq(p_ptr->died_from, "indetermination"))
+	    && p_ptr->really_died_from[0]) //paranoia?
+		strcpy(p_ptr->died_from, p_ptr->really_died_from);
+#endif
 
 	/* character-intrinsic conditions violated -> unpreventable no-ghost death */
 	if (streq(p_ptr->died_from, "indecisiveness") ||
@@ -6861,7 +6881,7 @@ void player_death(int Ind) {
 			instant_res_possible = FALSE;
 
 		/* Insanity is a no-ghost death */
-		if (streq(p_ptr->died_from, "insanity"))
+		if (insanity)
 			instant_res_possible = FALSE;
 
 		/* Not on NO_GHOST levels */
@@ -6895,7 +6915,7 @@ void player_death(int Ind) {
 
 			/* Log it */
 			s_printf("INSTA_RES: %s (%d) was defeated by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
+			if (!strcmp(p_ptr->died_from, "It") || insanity || p_ptr->image)
 				s_printf("(%s was really defeated by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
 #ifdef USE_SOUND_2010
@@ -7244,16 +7264,17 @@ void player_death(int Ind) {
 
 	/* Get rid of him if he's a ghost or suffers a no-ghost death */
 	if ((p_ptr->ghost || (hell && p_ptr->alive)) ||
-	    (streq(p_ptr->died_from, "insanity")) ||
-	    (streq(p_ptr->died_from, "indecisiveness")) ||
-	    (streq(p_ptr->died_from, "indetermination")) ||
-	    ((p_ptr->lives == 1+1) && cfg.lifes && p_ptr->alive &&
+	    insanity ||
+	    streq(p_ptr->died_from, "indecisiveness") ||
+	    streq(p_ptr->died_from, "indetermination") ||
+	    ((p_ptr->lives == 1 + 1) && cfg.lifes && p_ptr->alive &&
 	    !(p_ptr->mode & MODE_EVERLASTING))) {
 		/* Tell players */
-		if (streq(p_ptr->died_from, "insanity")) {
+		if (insanity) {
 			/* Tell him */
 			msg_print(Ind, "\374\377RYou die.");
-	//		msg_print(Ind, NULL);
+			//msg_print(Ind, NULL);
+//todo: use 'died_from' (insanity-blinking-style):
 			msg_format(Ind, "\374\377%c**\377rYou have been destroyed by \377oI\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r.\377%c**", msg_layout, msg_layout);
 
 s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
@@ -7270,9 +7291,7 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
 				msg_broadcast(Ind, "Suddenly a thought comes to your mind:");
 				msg_broadcast(0, "Who let the dogs out?");
-			}
-			else if (p_ptr->last_words)
-			{
+			} else if (p_ptr->last_words) {
 				char death_message[80];
 
         			(void)get_rnd_line("death.txt", 0, death_message, 80);
@@ -7341,10 +7360,10 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 #endif
 				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
-				    || (streq(p_ptr->died_from, "indecisiveness"))
+				    || streq(p_ptr->died_from, "indecisiveness")
 #endif
-				    || (streq(p_ptr->died_from, "indetermination"))
-				    || (streq(p_ptr->died_from, "insanity"))) {
+				    || streq(p_ptr->died_from, "indetermination")
+				    || insanity) {
 					msg_format(Ind, "\374\377%c**\377rYou have been killed by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
 				} else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
 					msg_format(Ind, "\374\377%c**\377rYou have been annihilated by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
@@ -7355,10 +7374,10 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 				if (cfg.unikill_format) {
 					if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
-					    || (streq(p_ptr->died_from, "indecisiveness"))
+					    || streq(p_ptr->died_from, "indecisiveness")
 #endif
-					    || (streq(p_ptr->died_from, "indetermination"))
-					    || (streq(p_ptr->died_from, "insanity")))
+					    || streq(p_ptr->died_from, "indetermination")
+					    || insanity)
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was killed by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 					else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was annihilated by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
@@ -7367,10 +7386,10 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 				} else {
 					if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
-					    || (streq(p_ptr->died_from, "indecisiveness"))
+					    || streq(p_ptr->died_from, "indecisiveness")
 #endif
-					    || (streq(p_ptr->died_from, "indetermination"))
-					    || (streq(p_ptr->died_from, "insanity")))
+					    || streq(p_ptr->died_from, "indetermination")
+					    || insanity)
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was killed and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 					else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was annihilated and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
@@ -7554,10 +7573,10 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 		if (cfg.unikill_format) {
 			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
-			    || (streq(p_ptr->died_from, "indecisiveness"))
+			    || streq(p_ptr->died_from, "indecisiveness")
 #endif
-			    || (streq(p_ptr->died_from, "indetermination"))
-			    || (streq(p_ptr->died_from, "insanity"))) {
+			    || streq(p_ptr->died_from, "indetermination")
+			    || insanity) {
 				/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
 				/* Add the player lvl to the death message. the_sandman */
 				snprintf(buf, sizeof(buf), "\374\377r%s %s (%d) was killed by %s", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
@@ -7565,7 +7584,6 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
 				/* snprintf(buf, sizeof(buf), "\377r%s was annihilated by %s.", p_ptr->name, p_ptr->died_from); */
 				snprintf(buf, sizeof(buf), "\374\377r%s %s (%d) was annihilated by %s", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-
 			}
 			else {
 				snprintf(buf, sizeof(buf), "\374\377r%s %s (%d) was vaporized by %s.", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
@@ -7573,10 +7591,10 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 		} else {
 			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
-			    || (streq(p_ptr->died_from, "indecisiveness"))
+			    || streq(p_ptr->died_from, "indecisiveness")
 #endif
-			    || (streq(p_ptr->died_from, "indetermination"))
-			    || (streq(p_ptr->died_from, "insanity"))) {
+			    || streq(p_ptr->died_from, "indetermination")
+			    || insanity) {
 				/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
 				/* Add the player lvl to the death message. the_sandman */
 				snprintf(buf, sizeof(buf), "\374\377r%s (%d) was killed by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
@@ -7584,7 +7602,6 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
 				/* snprintf(buf, sizeof(buf), "\377r%s was annihilated by %s.", p_ptr->name, p_ptr->died_from); */
 				snprintf(buf, sizeof(buf), "\374\377r%s (%d) was annihilated by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
-
 			}
 			else {
 				snprintf(buf, sizeof(buf), "\374\377r%s (%d) was vaporized by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
@@ -7736,10 +7753,10 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 
 	if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
-	    || (streq(p_ptr->died_from, "indecisiveness"))
+	    || streq(p_ptr->died_from, "indecisiveness")
 #endif
-	    || (streq(p_ptr->died_from, "indetermination"))
-	    || (streq(p_ptr->died_from, "insanity"))) {
+	    || streq(p_ptr->died_from, "indetermination")
+	    || insanity) {
 		msg_format(Ind, "\374\377RYou have been killed by %s.", p_ptr->died_from);
 	}
 	else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
