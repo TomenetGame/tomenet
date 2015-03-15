@@ -820,7 +820,7 @@ static bool player_allowed(char *name) {
 	return(success);
 }
 
-/* blacklist of special nicknames unavailable to players (monster names, "Insanity",..) - C. Blue */
+/* blacklist of special nicknames unavailable to players (monster names, "insanity",..) - C. Blue */
 static bool forbidden_name(char *cname) {
 	FILE *sfp;
 	char path_buf[1024];
