@@ -970,8 +970,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			    /* fingers */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1)) {
-					if (info_val) strcat(info_tmp, format("\377%c, \377%cring%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
-					else strcat(info_tmp, format("Ring%s", atoi(p1) == 1 ? "" : "s"));
+					if (info_val) strcat(info_tmp, format("\377%c, \377%cfinger%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
+					else strcat(info_tmp, format("Finger%s", atoi(p1) == 1 ? "" : "s"));
 					info_val = 1;
 				}
 				p1 = p2;
