@@ -3405,7 +3405,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		else msg_print(Ind, "  you cannot wear cloaks.");
 		if (item_tester_hook_wear(Ind, INVEN_HEAD)) msg_print(Ind, "  you are able to wear head gear.");
 		else msg_print(Ind, "  you cannot wear head gear.");
-		if (item_tester_hook_wear(Ind, INVEN_HANDS)) msg_print(Ind, "  you are able to wear gloves.");
+		if (item_tester_hook_wear(Ind, INVEN_HANDS)
+		    && r_info[p_ptr->body_monster].d_char != '~')
+			msg_print(Ind, "  you are able to wear gloves.");
 		else msg_print(Ind, "  you cannot wear gloves.");
 		if (item_tester_hook_wear(Ind, INVEN_FEET)) msg_print(Ind, "  you are able to wear boots.");
 		else msg_print(Ind, "  you cannot wear boots.");
