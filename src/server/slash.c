@@ -4078,6 +4078,20 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			return;
 		}
+		else if (prefix(message, "/dun")) {//dungeon name
+			dungeon_type *d_ptr = NULL;
+
+			if (!p_ptr->wpos.wz) {
+				msg_print(Ind, "You are not in a dungeon or tower.");
+				return;
+			}
+
+			if (p_ptr->wpos.wz > 0) d_ptr = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower;
+			else d_ptr = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon;
+
+			msg_format(Ind, "\377uYou are currently in %s.", get_dun_name(p_ptr->wpos.wx, p_ptr->wpos.wy, (p_ptr->wpos.wz > 0), d_ptr, 0, TRUE));
+			return;
+		}
 
 
 
