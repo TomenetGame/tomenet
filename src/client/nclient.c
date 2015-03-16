@@ -2051,6 +2051,7 @@ int Receive_depth(void) {
 	p_ptr->wpos.wy = y;
 	p_ptr->wpos.wz = z;
 	strncpy(c_p_ptr->location_name, buf, 20);
+	c_p_ptr->location_name[19] = 0;
 	prt_depth(x, y, z, town, colour, colour_sector, buf);
 
 	/* HACK - Also draw AFK status now to fully redraw the entire row - mikaelh */
