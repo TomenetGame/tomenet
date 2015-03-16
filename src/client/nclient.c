@@ -2029,7 +2029,10 @@ int Receive_depth(void) {
 	char	buf[MAX_CHARS];
 
 	/* Compatibility with older servers */
-	if (is_newer_than(&server_version, 4, 4, 1, 6, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 5, 9, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%c%c%s%s", &ch, &x, &y, &z, &town, &colour, &colour_sector, buf, location_name2)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 1, 6, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%c%c%s", &ch, &x, &y, &z, &town, &colour, &colour_sector, buf)) <= 0)
 			return n;
 	} else {

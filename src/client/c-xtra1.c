@@ -2272,18 +2272,30 @@ if (hist != 2) {
 #endif
 
 	/* Show location (better description needed XXX) */
-	if (c_cfg.depth_in_feet)
-		put_str(format("You are at %s%d ft%s of world map sector %d,%d.", 
-					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz * 50,
-					p_ptr->wpos.wz ? "" : ")",
-					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, 10);//hist ? 10 : 1);
-	else
-		put_str(format("You are at %slevel %d%s of world map sector %d,%d.",
-					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz,
-					p_ptr->wpos.wz ? "" : ")",
-					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, 10);//hist ? 10 : 1);
+	if (c_cfg.depth_in_feet) {
+		if (location_name2[0])
+			put_str(format("You are at %s%d ft%s in %s.",
+				p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz * 50,
+				p_ptr->wpos.wz ? "" : ")",
+				location_name2), 20, 10);//hist ? 10 : 1);
+		else
+			put_str(format("You are at %s%d ft%s of world map sector %d,%d.", 
+				p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz * 50,
+				p_ptr->wpos.wz ? "" : ")",
+				p_ptr->wpos.wx, p_ptr->wpos.wy), 20, 10);//hist ? 10 : 1);
+	} else {
+		if (location_name2[0])
+			put_str(format("You are at %slevel %d%s in %s.",
+				p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz,
+				p_ptr->wpos.wz ? "" : ")",
+				location_name2), 20, 10);//hist ? 10 : 1);
+		else
+			put_str(format("You are at %slevel %d%s of world map sector %d,%d.",
+				p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz,
+				p_ptr->wpos.wz ? "" : ")",
+				p_ptr->wpos.wx, p_ptr->wpos.wy), 20, 10);//hist ? 10 : 1);
 	}
-else { //Character sheet boni page, finally! :) - Kurzel
+} else { //Character sheet boni page, finally! :) - Kurzel
 	/* Clear screen */
 	clear_from(0);
 	

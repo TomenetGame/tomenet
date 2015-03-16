@@ -65,6 +65,8 @@ player_type *p_ptr = &Players[1];
 c_player_extra c_player;
 c_player_extra *c_p_ptr = &c_player;
 
+char location_name2[MAX_CHARS];
+
 
 s32b exp_adv, exp_adv_prev;		/* Amount of experience required to advance a level */
 byte half_exp; //EXP_BAR_FINESCALE

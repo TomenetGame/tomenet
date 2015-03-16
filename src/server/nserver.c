@@ -5441,7 +5441,8 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	bool ville = istown(wpos) && !isdungeontown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
-	cptr desc = "";
+	cptr desc = "", loc_name = "";
+	dungeon_type *d_ptr = NULL;
 	int colour, colour_sector = TERM_L_GREEN, Ind2;
 	cave_type **zcave;
 	bool no_tele = FALSE;
@@ -5449,6 +5450,10 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
 
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
+	if (wpos->wz > 0) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+	else if (wpos->wz < 0) d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+	if (d_ptr) loc_name = get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0, TRUE);
 
 	/* XXX this kinda thing should be done *before* calling Send_*
 	 * in general, of course..	- Jir - */
@@ -5517,6 +5522,8 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		}
 	}
 
+	if (desc[0]) loc_name = desc;
+
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
 		/* pending recall? */
 		if (p_ptr->word_recall) colour = TERM_ORANGE;
@@ -5551,7 +5558,10 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 
 	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
+		if (is_newer_than(&p_ptr2->version, 4, 5, 9, 0, 0, 0)) {
+			if (no_tele) Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
+			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name);
+		} else if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
 			if (no_tele) Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
 		} else {
@@ -5559,7 +5569,9 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		}
 	}
 
-	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
+	if (is_newer_than(&p_ptr->version, 4, 5, 9, 0, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name);
+	} else if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
 	} else {
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
