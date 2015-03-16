@@ -5259,7 +5259,7 @@ cptr r_name_get(monster_type *m_ptr) {
 
 	if (m_ptr->questor) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
-			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].name) {
+			if (strlen(q_info[m_ptr->quest].questor[m_ptr->questor_idx].name)) {
 				snprintf(buf, sizeof(buf), "%s", q_info[m_ptr->quest].questor[m_ptr->questor_idx].name);
 				return buf;
 			} else return (r_name + m_ptr->r_ptr->name);

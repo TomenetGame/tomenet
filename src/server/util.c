@@ -4062,7 +4062,7 @@ static void player_talk_aux(int Ind, char *message) {
 #endif
 
 		/* Haven't received an initial private msg yet? */
-		if (!p_ptr->reply_name || !strlen(p_ptr->reply_name)) {
+		if (!strlen(p_ptr->reply_name)) {
 			msg_print(Ind, "You haven't received any private message to reply to yet.");
 			return;
 		}
@@ -4142,7 +4142,7 @@ static void player_talk_aux(int Ind, char *message) {
 				/* hack: assume that the target player will become the
 				   one we want to 'reply' to, afterwards, if we don't
 				   have a reply-to target yet. */
-				if ((!p_ptr->reply_name || !strlen(p_ptr->reply_name)))
+				if (!strlen(p_ptr->reply_name))
 					strcpy(p_ptr->reply_name, w_player->name);
 
 				return;
