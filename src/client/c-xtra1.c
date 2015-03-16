@@ -2276,12 +2276,12 @@ if (hist != 2) {
 		put_str(format("You are at %s%d ft%s of world map sector %d,%d.", 
 					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz * 50,
 					p_ptr->wpos.wz ? "" : ")",
-					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, hist ? 10 : 1);
+					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, 10);//hist ? 10 : 1);
 	else
 		put_str(format("You are at %slevel %d%s of world map sector %d,%d.",
 					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz,
 					p_ptr->wpos.wz ? "" : ")",
-					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, hist ? 10 : 1);
+					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, 10);//hist ? 10 : 1);
 	}
 else { //Character sheet boni page, finally! :) - Kurzel
 	/* Clear screen */
