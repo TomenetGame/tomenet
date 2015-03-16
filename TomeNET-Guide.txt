@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. March 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. March 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9+ - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -12664,12 +12664,16 @@ I: speed : hit points : vision : armor class : alertness
     Perception of the player =
     (player_perception / 2) + (monster_vision / 10)
 
-E: weapons : torso : arms : finger : head : leg
+E: hands : torso : arms : finger : head : leg
     These values indicate how many pieces of equipment the player can
     wear while using this form. For example snakes can only wear a helmet
     (E:0:0:0:0:1:0).
     NOTE: Mimics can never wear MORE items than in their normal form. So
     even a form with 8 legs would allow only 1 pair of boots to be equipped!
+    In the monster lore (~7) some monsters may show 'tentacles'. These count
+    for three limb-types together: Hands regarding wielding a weapon, fingers
+    (can wear rings) and arms (can wield shields). Tentacles are not fit for
+    wearing gloves though.
 
 B: attack method : attack effect : damage
   attack effect:

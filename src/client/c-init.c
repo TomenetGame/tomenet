@@ -756,6 +756,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	int f_col = 0; /* used for both, F flags and S flags */
 	const char a_key = 'u', a_val = 's', a_atk = 's', a_flag = 's'; /* 'Speed:', 'Normal', 4xmelee */
 	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE, ta_atk = TERM_SLATE, ta_flag = TERM_SLATE; /* 'Speed:', 'Normal', 4xmelee */
+	bool hands, fishy;
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
@@ -798,6 +799,11 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			monster_list_level[rlidx],
 			ridx));
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
+
+		/* specialty: tentacles count as finger-limbs (for rings) + hand-limbs (for weapon-wielding) + arm-limbs (shields)
+		   (but cannot wear gloves!). So we only need to mention them once (under 'hands' above) */
+		if (monster_list_symbol[rlidx][1] == '~') fishy = TRUE;
+		else fishy = FALSE;
 
 		/* fetch stats: I/W/E/O/B/F/S lines */
 		while (0 == my_fgets(fff, buf, 1024)) {
@@ -947,9 +953,12 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			    /* weapons */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1)) {
-					strcat(info_tmp, "Hands");
+					/* specialty: tentacles count as finger-limbs + hand-limbs (for weapon-wielding)*/
+					if (fishy) strcat(info_tmp, "Tentacles");
+					else strcat(info_tmp, "Hands");
 					info_val = 1;
-				}
+					hands = TRUE;
+				} else hands = FALSE;
 				p1 = p2;
 			    /* torso */
 				p2 = strchr(p1, ':') + 1;
@@ -961,17 +970,22 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				p1 = p2;
 			    /* arms */
 				p2 = strchr(p1, ':') + 1;
-				if (atoi(p1)) {
+				if (atoi(p1) && !fishy) {
 					if (info_val) strcat(info_tmp, format("\377%c, \377%carms", a_key, a_val));
 					else strcat(info_tmp, "Arms");
 					info_val = 1;
 				}
 				p1 = p2;
-			    /* fingers */
+			    /* fingers (or sometimes called claws/tentacles.. no functional difference) */
 				p2 = strchr(p1, ':') + 1;
-				if (atoi(p1)) {
-					if (info_val) strcat(info_tmp, format("\377%c, \377%cfinger%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
-					else strcat(info_tmp, format("Finger%s", atoi(p1) == 1 ? "" : "s"));
+				if (atoi(p1) && !fishy) {
+					if (hands) {
+						if (info_val) strcat(info_tmp, format("\377%c, \377%cfinger%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
+						else strcat(info_tmp, format("Finger%s", atoi(p1) == 1 ? "" : "s"));
+					} else {
+						if (info_val) strcat(info_tmp, format("\377%c, \377%cclaw%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
+						else strcat(info_tmp, format("Claw%s", atoi(p1) == 1 ? "" : "s"));
+					}
 					info_val = 1;
 				}
 				p1 = p2;

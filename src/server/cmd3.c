@@ -469,7 +469,11 @@ void inven_drop(int Ind, int item, int amt) {
 bool item_tester_hook_wear(int Ind, int slot) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = NULL;
-	if (p_ptr->body_monster) r_ptr = &r_info[p_ptr->body_monster];
+	bool fishy = FALSE;
+	if (p_ptr->body_monster) {
+		r_ptr = &r_info[p_ptr->body_monster];
+		if (r_ptr->d_char == '~') fishy = TRUE;
+	}
 
 	if (p_ptr->fruit_bat) {
 		switch(slot) {
@@ -542,6 +546,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			    r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
 			break;
 		case INVEN_HANDS:
+			if (fishy) return FALSE;
 //			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE); too silyl (and powerful)
 //			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE); was standard, but now:
 			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return (TRUE);
@@ -551,19 +556,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			break;
 		}
 	}
-#if 0
-	else if (r_info[p_ptr->body_monster].flags3 & RF3_DRAGON) {
-		switch(slot) {
-		case INVEN_WIELD:
-		case INVEN_RIGHT:
-		case INVEN_LEFT:
-		case INVEN_HEAD:
-		case INVEN_BODY:
-		case INVEN_LITE:
-		case INVEN_FEET: return TRUE;
-		}
-	}
-#endif	// 0
+
 	/* Check for a usable slot */
 	else if (slot >= INVEN_WIELD) return (TRUE);
 
@@ -576,7 +569,11 @@ bool item_tester_hook_wear(int Ind, int slot) {
 bool item_tester_hook_wear(int Ind, int slot) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = NULL;
-	if (p_ptr->body_monster) r_ptr = &r_info[p_ptr->body_monster];
+	bool fishy = FALSE;
+	if (p_ptr->body_monster) {
+		r_ptr = &r_info[p_ptr->body_monster];
+		if (r_ptr->d_char == '~') fishy = TRUE;
+	}
 
 	/*
 	 * Hack -- restrictions by forms
@@ -649,6 +646,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			    r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
 			break;
 		case INVEN_HANDS:
+			if (fishy) return FALSE;
 //			if (r_ptr->body_parts[BODY_FINGER]) return (TRUE); too silyl (and powerful)
 //			if (r_ptr->body_parts[BODY_ARMS]) return (TRUE); was standard, but now:
 			if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS]) return (TRUE);
