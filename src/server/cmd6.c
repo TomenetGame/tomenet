@@ -1453,12 +1453,13 @@ void do_cmd_drink_fountain(int Ind) {
 		case SV_POTION_APPLE_JUICE:
 		case SV_POTION_SLIME_MOLD:
 			ident = TRUE;
+			if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "You feel less thirsty.");
+			else msg_print(Ind, "You drink some.");
 			break;
 		default:
 			ident = quaff_potion(Ind, tval, sval, pval);
 		}
 	else ident = quaff_potion(Ind, tval, sval, pval);
-
 	if (ident) cs_ptr->sc.fountain.known = TRUE;
 	else if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "You feel less thirsty.");
 	else msg_print(Ind, "You drink some.");
