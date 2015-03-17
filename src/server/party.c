@@ -660,6 +660,17 @@ static char *t_crypt(char *inbuf, cptr salt) {
 		strcpy(out, (char*)crypt(inbuf, setting));
 	} else
  #endif
+ #if 1 /* SPACE _ ! - ' , and probably more as _2nd character_ cause crypt() to return a null pointer ('.' is ok) */
+	if (!((salt[1] >= 'A' && salt[1] <= 'Z') ||
+	    (salt[1] >= 'a' && salt[1] <= 'z') ||
+	    (salt[1] >= '0' && salt[1] <= '9') ||
+	    salt[1] == '.')) {
+		char fixed_name[ACCOUNTNAME_LEN];
+		strcpy(fixed_name, salt);
+		fixed_name[1] = '.';
+		strcpy(out, (char*)crypt(inbuf, fixed_name));
+	} else
+ #endif
 		strcpy(out, (char*)crypt(inbuf, salt));
 	return(out);
 #else
