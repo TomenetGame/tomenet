@@ -669,9 +669,33 @@ void getstring(const char *prompt, char *string, int max) {
 static char *t_crypt(char *inbuf, const char *salt) {
 #ifdef HAVE_CRYPT
 	static char out[64];
+ #if 0 /* doesn't do anything */
 	char setting[9];
 	setting[0] = '_';
 	strncpy(&setting[1], salt, 8);
+ #endif
+  #if 1 /* fix for len-1 names */
+	char setting[3];
+	/* only 1 character long salt? expand to 2 chars length */
+	if (!salt[1]) {
+		setting[0] = '.';
+		setting[1] = salt[0];
+		setting[2] = 0;
+		strcpy(out, (char*)crypt(inbuf, setting));
+	} else
+ #endif
+ #if 1 /* SPACE _ ! - ' , and probably more as _2nd character_ cause crypt() to return a null pointer ('.' is ok) */
+  #define ACCOUNTNAME_LEN 16
+	if (!((salt[1] >= 'A' && salt[1] <= 'Z') ||
+	    (salt[1] >= 'a' && salt[1] <= 'z') ||
+	    (salt[1] >= '0' && salt[1] <= '9') ||
+	    salt[1] == '.')) {
+		char fixed_name[ACCOUNTNAME_LEN];
+		strcpy(fixed_name, salt);
+		fixed_name[1] = '.';
+		strcpy(out, (char*)crypt(inbuf, fixed_name));
+	} else
+ #endif
 	strcpy(out, (char*)crypt(inbuf, salt));
 	return(out);
 #else
