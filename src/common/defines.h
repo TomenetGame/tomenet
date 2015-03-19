@@ -5229,7 +5229,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF5_BO_ELEC		0x00020000	/* Elec Bolt (unused) */
 #define RF5_BO_FIRE		0x00040000	/* Fire Bolt */
 #define RF5_BO_COLD		0x00080000	/* Cold Bolt */
-#define RF5_BO_POIS			0x00100000	/* Poison Bolt (unused) */
+#define RF5_BO_POIS			0x00100000	/* Poison Bolt (unused/not implemented for monsters) */
 #define RF5_BO_NETH			0x00200000	/* Nether Bolt */
 #define RF5_BO_WATE			0x00400000	/* Water Bolt */
 #define RF5_BO_MANA			0x00800000	/* Mana Bolt */
