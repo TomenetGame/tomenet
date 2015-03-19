@@ -1308,6 +1308,14 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				   (for when two lines are merged -> the space would be missing) */
 				if (info[strlen(info) - 1] != ' ') strcat(info, " ");
 
+				/* Strip flags that are useless to know */
+				if ((p2 = strstr(info, "RAISE_DEAD"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 11);
+					strcpy(info, info_tmp);
+				}
+
 				if (!got_S_lines) {
 					got_S_lines = TRUE;
 					/* fix missing newline from 'B:' lines */

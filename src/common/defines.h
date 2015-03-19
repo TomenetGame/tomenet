@@ -5256,7 +5256,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF6_S_ANIMALS		0x00000008      /* Summon animals */
 #define RF6_BLINK			0x00000010	/* Teleport Short */
 #define RF6_TPORT			0x00000020	/* Teleport Long */
-#define RF6_RAISE_DEAD			0x00000040      /* Raise Dead */
+#define RF6_RAISE_DEAD			0x00000040      /* Raise Dead -- not implemented */
 #define RF6_S_BUG			0x00000080      /* Summon Software bug */
 #define RF6_TELE_TO		0x00000100	/* Move player to monster */
 #define RF6_TELE_AWAY		0x00000200	/* Move player far away */
