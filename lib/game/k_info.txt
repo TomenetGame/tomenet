@@ -1434,18 +1434,21 @@ G:?:d
 I:70:17:0
 W:15:0:5:125
 A:15/1
+D:May enchant weapons or ammunition. Higher fail chance on item stacks.
 
 N:174:Enchant Weapon To-Dam
 G:?:d
 I:70:18:0
 W:15:0:5:125
 A:15/1
+D:May enchant weapons or ammunition. Higher fail chance on item stacks.
 
 N:175:Enchant Armour
 G:?:d
 I:70:16:0
 W:15:0:5:125
 A:15/1
+D:May enchant armour. Higher fail chance on item stacks.
 
 N:176:Identify
 G:?:d
@@ -1711,7 +1714,7 @@ G:?:d
 I:70:21:0
 W:20:0:5:1250
 A:20/3:50/2
-D:May enchant a weapon's damage and hit chance up to +15.
+D:May enchant weapons or ammo up to +15/+15. Higher fail chance on item stacks.
 
 N:213:Curse Weapon
 G:?:d
@@ -1724,7 +1727,7 @@ G:?:d
 I:70:20:0
 W:20:0:5:1250
 A:20/3:50/2
-D:May enchant a piece of armour up to +15.
+D:May enchant armour up to +15. Higher fail chance on item stacks.
 
 N:215:Curse Armour
 G:?:d
