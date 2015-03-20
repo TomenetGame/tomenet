@@ -5720,13 +5720,30 @@ sometimes occur inside of so-called "pits" and very likely inside "vaults".
 
 Pits are large rooms, surrounded by a rectangle-shaped passage, containing
 monsters picked by a pit-specific criterium (troll pit, zoo pit...).
-Usually pits are very welcome means for gaining experience or items (like orc
-pits, troll pits, dragon pits), except for a few high-danger pits, such as
-jelly/mold/mimic pits, humanoid pits or undead pits (called 'graveyards').
-Zoos (animal pits) can sometimes also be relatively dangerous.
+
+Usually pits are very welcome means for gaining experience or items, like orc
+pits at low character levels, troll pits at low-medium character levels,
+dragon pits at high character levels and to an extent greater demon pits.
+
+Some pits have a rather bad threat/reward ratio though, such as treasure pits
+(containing jellies, molds and mimics that look like treasure, not actually
+real treasure), humanoid pits, undead pits (called 'graveyards' - the problem
+is that they contain a lot of wall-eaters, which is hard to handle sometimes),
+zoos (animal pits, that often contain multiple nasty quylthulgs) and chapels
+(lesser angels, but also knight templars which may summon more dangerous angels
+if unlucky).
+Kennels (canines and hounds) are usually safe, but at higher level you should
+watch out for aether hounds and gravity hounds which may breathe gravity for
+tele-to effect.
+Many rather mid-level demon pits may contain wall-eating lesser balrogs, but
+with some effort can be cleared without much hassle, especially if you have
+wraithform at your disposal.
 
 Vaults are (sometimes extremely large) fixed structures of rooms and passages,
-mostly surrounded by permanent walls that cannot be damaged.
+mostly surrounded by permanent walls that cannot be damaged except for a few
+entrance spots made of normal granite wall. However, some vaults are open and
+do not require special effort to get into, or are not even surrounded by
+permanent walls.
 They are usually filled to the brim with traps and nasty monsters. Using means
 of trap detection and monster sensing allows you to spot vaults easily, if its
 wall structure or permanent walls (not all vaults have those) doesn't already
