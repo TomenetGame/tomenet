@@ -51,6 +51,10 @@
    when player dies, in percent [10]. - C. Blue (limited to 1) */
 #define DEATH_EQ_ITEM_LOST	10
 
+/* Reduce chance of inventory item destruction, to balance death for
+   characters relying heavily on certain types of items? */
+#define DEATH_PACK_ITEM_NICE
+
 /* Loot item level is average of monster level and floor level - C. Blue
    Note: Imho the more floor level is taken into account, the more will
          melee chars who aim at high level weapons and armour be at a
@@ -6391,7 +6395,7 @@ static void inven_death_damage(int Ind, int verbose) {
 	char o_name[ONAME_LEN];
 	int shuffle[INVEN_PACK];
 	int inventory_loss = 0;
-	int i, j;
+	int i, j, k;
 
 	for (i = 0; i < INVEN_PACK; i++) shuffle[i] = i;
 	intshuffle(shuffle, INVEN_PACK);
@@ -6406,6 +6410,19 @@ static void inven_death_damage(int Ind, int verbose) {
 		if (o_ptr->tval == TV_GOLD) continue;
 		/* guild keys are supposedly indestructible, so whatever.. */
 		if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY) continue;
+#ifdef DEATH_PACK_ITEM_NICE
+		/* don't be too nasty to magic device users */
+		if (is_magic_device(o_ptr->tval)) {
+			k = object_value_real(0, o_ptr);
+			if (k >= 2000 && rand_int(2)) continue;//basic bolt rods
+			if (k >= 30000 && rand_int(2)) continue;//anni wand (rocket,havoc)
+		}
+		/* ..and to rare book carriers */
+		if (o_ptr->tval == TV_BOOK &&
+		    (o_ptr->sval == SV_CUSTOM_TOME_2 || o_ptr->sval == SV_CUSTOM_TOME_3)
+		    && rand_int(2))
+			continue;
+#endif
 
 		if (magik(DEATH_PACK_ITEM_LOST)) {
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
