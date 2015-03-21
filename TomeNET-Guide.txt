@@ -8928,7 +8928,7 @@ Talisman (Amulet)       Increases your luck, helping you finding better loot.
                         (See LUCK flag in (5.8) for details about luck.)
 Amulets of Adornment    They might be looking fancy, but they don't do
                         anything and have no effect on your character.
-Amulet of Anti-Magic    See '5.7 NO_MAGIC'
+Amulet of Anti-Magic    See (5.8), 'NO_MAGIC'
 Amulet of Anti-Teleportation    If worn it will suppress all attemps to
                                 teleport, phase or recall the wearer,
                                 regardless whether initiated by a monster or
