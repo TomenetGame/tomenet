@@ -2978,6 +2978,10 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		h_ptr->next = p_ptr->hostile;
 		p_ptr->hostile = h_ptr;
 
+		/* prevent anti-tele amulet instant recall into barrow-downs and crap */
+		if (p_ptr->word_recall) //&& istown(&p_ptr->wpos)
+			set_recall_timer(Ind, 0);
+
 		/* Message */
 		if (bb) {
 			msg_format(Ind, "\377yYou are now hostile toward %s.", q_ptr->name);
@@ -3011,6 +3015,10 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		/* Put this node at the beginning of the list */
 		h_ptr->next = p_ptr->hostile;
 		p_ptr->hostile = h_ptr;
+
+		/* prevent anti-tele amulet instant recall into barrow-downs and crap */
+		if (p_ptr->word_recall) //&& istown(&p_ptr->wpos)
+			set_recall_timer(Ind, 0);
 
 		/* Message */
 		msg_format(Ind, "\377RYou are now hostile toward party '%s'.", parties[i].name);
