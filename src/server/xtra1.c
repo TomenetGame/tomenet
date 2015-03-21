@@ -5766,11 +5766,11 @@ void calc_boni(int Ind) {
 		/* Message */
 		if (p_ptr->awkward_shoot) {
 			if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
-				msg_print(Ind, "\377oYou find it hard to aim while carrying your shield.");
+				msg_print(Ind, "\377yYou find it harder to aim your ranged weapon while wielding a shield.");
 			else /* maybe leave awkward_shoot at FALSE if secondary slot isn't a shield! */
-				msg_print(Ind, "\377oYou find it hard to aim while dual-wielding weapons.");
+				msg_print(Ind, "\377yYou find it harder to aim your ranged weapon while dual-wielding weapons.");
 		} else if (p_ptr->inventory[INVEN_BOW].k_idx)
-			msg_print(Ind, "\377gYou find it easy to aim.");
+			msg_print(Ind, "\377gYou find it easier to aim your ranged weapon.");
 
 		/* Save it */
 		p_ptr->old_awkward_shoot = p_ptr->awkward_shoot;
