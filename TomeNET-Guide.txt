@@ -7907,7 +7907,7 @@ Sound           Sound attacks do less damage but can stun you or even knock
                 you out so you will die as if you were paralyzed. Free Action
                 won't help you then.
                 Resistance will cut damage to 5/7..5/12.
-                Damage is be reduced by further 50% if bio-feedback is active.
+                Damage is reduced by further 50% if bio-feedback is active.
                 (Bio-feedback is activated if a Draconian eats a firestone and
                 gets the 'adrenaline' message. See (5.9) for firestone
                 details.)
@@ -7915,14 +7915,13 @@ Sound           Sound attacks do less damage but can stun you or even knock
                 Breath damage is monster HP/6. Sound breath caps at 400.
                 (Monsters that have the NO_STUN flag will resist somewhat and
                 suffer less damage.)
-Shards          Shard attacks can cause nasty cuts that makes you bleed
-                heavily if you don't resist them.
-                Resistance will cut damage to 6/7..6/12.
-                Damage is be reduced by further 50% if bio-feedback is active.
+Shards          Resistance will cut damage to 6/7..6/12.
+                Damage is reduced by further 50% if bio-feedback is active.
                 (Bio-feedback is activated if a Draconian eats a firestone and
                 gets the 'adrenaline' message. See (5.9) for firestone
                 details.)
-                Shard resistance will protect you from cuts.
+                Shard resistance will protect you from cuts. If you don't have
+                it you might get nasty cuts that make you bleed over time.
                 Breath damage is monster HP/6. Shard breath caps at 400.
 Nexus           Nexus attacks can have extremely nasty side-effects if you
                 don't resist them. Those are
