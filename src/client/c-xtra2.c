@@ -130,6 +130,9 @@ void do_cmd_messages(void) {
 
 		/* Hack -- go to a specific line */
 		if (k == '#') {
+			/* suppress hybrid macros */
+			bool inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
@@ -137,6 +140,7 @@ void do_cmd_messages(void) {
 				i = atoi(tmp);
 				i = i > 0 ? (i < n ? i : n - 1) : 0;
 			}
+			inkey_msg = inkey_msg_old;
 		}
 
 		/* Horizontal scroll */
@@ -159,11 +163,18 @@ void do_cmd_messages(void) {
 
 		/* Hack -- handle show */
 		if (k == '=') {
+			/* suppress hybrid macros */
+			bool inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
 			/* Prompt */
 			prt("Show: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "shower" string, or continue */
-			if (!askfor_aux(shower, 80, 0)) continue;
+			if (!askfor_aux(shower, 80, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue;
+			}
+			inkey_msg = inkey_msg_old;
 
 			/* Okay */
 			continue;
@@ -172,13 +183,20 @@ void do_cmd_messages(void) {
 		/* Hack -- handle find */
 		/* FIXME -- (x4) compressing seems to ruin it */
 		if (k == '/') {
+			/* suppress hybrid macros */
+			bool inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
 			int z;
 
 			/* Prompt */
 			prt("Find: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "finder" string, or continue */
-			if (!askfor_aux(finder, 80, 0)) continue;
+			if (!askfor_aux(finder, 80, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue;
+			}
+			inkey_msg = inkey_msg_old;
 
 			/* Scan messages */
 			for (z = i + 1; z < n; z++) {
@@ -370,6 +388,9 @@ void do_cmd_messages_chatonly(void) {
 
 		/* Hack -- go to a specific line */
 		if (k == '#') {
+			/* suppress hybrid macros */
+			bool inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
@@ -377,6 +398,7 @@ void do_cmd_messages_chatonly(void) {
 				i = atoi(tmp);
 				i = i > 0 ? (i < n ? i : n - 1) : 0;
 			}
+			inkey_msg = inkey_msg_old;
 		}
 
 		/* Horizontal scroll */
@@ -399,11 +421,19 @@ void do_cmd_messages_chatonly(void) {
 
 		/* Hack -- handle show */
 		if (k == '=') {
+			/* suppress hybrid macros */
+			bool inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+
 			/* Prompt */
 			prt("Show: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "shower" string, or continue */
-			if (!askfor_aux(shower, 80, 0)) continue;
+			if (!askfor_aux(shower, 80, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue;
+			}
+			inkey_msg = inkey_msg_old;
 
 			/* Okay */
 			continue;
@@ -411,13 +441,21 @@ void do_cmd_messages_chatonly(void) {
 
 		/* Hack -- handle find */
 		if (k == '/') {
+			/* suppress hybrid macros */
+			bool inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+
 			int z;
 
 			/* Prompt */
 			prt("Find: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "finder" string, or continue */
-			if (!askfor_aux(finder, 80, 0)) continue;
+			if (!askfor_aux(finder, 80, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue;
+			}
+			inkey_msg = inkey_msg_old;
 
 			/* Scan messages */
 			for (z = i + 1; z < n; z++) {

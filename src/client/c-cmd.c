@@ -2763,10 +2763,12 @@ static void cmd_guild_options() {
 	return;
 }
 
-void cmd_party(void)
-{
+void cmd_party(void) {
 	char i;
 	char buf[80];
+
+	/* suppress hybrid macros */
+	inkey_msg = TRUE;
 
 	/* We are now in party mode */
 	party_mode = TRUE;
@@ -2929,6 +2931,9 @@ void cmd_party(void)
 
 	/* No longer in party mode */
 	party_mode = FALSE;
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = FALSE;
 
 	/* Flush any events */
 	Flush_queue();

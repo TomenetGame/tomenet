@@ -5639,6 +5639,10 @@ static void do_cmd_options_acc(void) {
 	acc_opt_screen = TRUE;
 	acc_got_info = FALSE;
 
+	/* suppress hybrid macros */
+	bool inkey_msg_old = inkey_msg;
+	inkey_msg = TRUE;
+
 	/* Get the account info */
 	Send_account_info();
 
@@ -5738,6 +5742,9 @@ static void do_cmd_options_acc(void) {
 				break;
 		}
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 
 	acc_opt_screen = FALSE;
 }
@@ -6017,6 +6024,10 @@ static void do_cmd_options_fonts(void) {
 #endif
 
 
+	/* suppress hybrid macros */
+	bool inkey_msg_old = inkey_msg;
+	inkey_msg = TRUE;
+
 	/* Clear screen */
 	Term_clear();
 
@@ -6116,6 +6127,9 @@ static void do_cmd_options_fonts(void) {
 			if (!d) bell();
 		}
 	}
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 }
 #endif
 #endif
@@ -6565,6 +6579,9 @@ void do_cmd_options(void) {
 	/* Save the screen */
 	Term_save();
 
+	/* suppress hybrid macros */
+	bool inkey_msg_old = inkey_msg;
+	inkey_msg = TRUE;
 
 	/* Interact */
 	while (1) {
@@ -6646,7 +6663,8 @@ void do_cmd_options(void) {
 			sprintf(tmp, "%s.opt", cname);
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0)) continue;
+			if (!askfor_aux(tmp, 70, 0))
+				continue;
 
 			/* Dump the macros */
 			(void)options_dump(tmp);
@@ -6664,7 +6682,8 @@ void do_cmd_options(void) {
 			sprintf(tmp, "%s.opt", cname);
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0)) continue;
+			if (!askfor_aux(tmp, 70, 0))
+				continue;
 
 			/* Process the given filename */
 			(void)process_pref_file(tmp);
@@ -6711,6 +6730,8 @@ void do_cmd_options(void) {
 	/* for exp_need option changes: */
 	if (changed1 != c_cfg.exp_need || changed2 != c_cfg.exp_bar || changed3 != c_cfg.font_map_solid_walls)
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
+
+	inkey_msg = inkey_msg_old;
 
 	/* Resend options to server */
 	Send_options();
