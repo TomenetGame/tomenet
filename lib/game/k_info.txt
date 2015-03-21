@@ -5962,6 +5962,7 @@ W:20:0:5:1000
 A:20/1
 D:Resurrects the ghost of another player standing next to you.
 D:Does only work on solid ground and fails inside vaults.
+D:Also restores your own drained experience.
 
 N:813:Lightning Bolts
 G:-:d
