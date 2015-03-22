@@ -6890,8 +6890,16 @@ void process_player_change_wpos(int Ind) {
 
 	/* Brightly lit Arena Monster Challenge */
 	if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X &&
-	    p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)
+	    p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z) {
 		wiz_lite(Ind);
+		/* Also tell him about this place */
+		for (j = 0; j < MAX_GLOBAL_EVENTS; j++) {
+			if (global_event[j].getype != GE_ARENA_MONSTER) continue;
+			msg_print(Ind, "\377uYou enter the Arena Monster Challenge!");
+			msg_format(Ind, "\377uType '\377U/evinfo %d\377u' to learn more or '\377U/evsign %d\377u' to challenge.", j + 1, j + 1);
+			break;
+		}
+	}
 
 	if (p_ptr->wpos.wx == WPOS_PVPARENA_X && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) {
 		/* teleport after entering [the PvP arena],
