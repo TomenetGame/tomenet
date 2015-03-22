@@ -9299,11 +9299,19 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 /* Initiates forced shutdown with all players getting recalled automatically.
    Added this for use within LUA files, for automatic seasonal event updating. - C. Blue */
 void timed_shutdown(int k, bool terminate) {
+	int i;
+
 //	msg_admins(0, format("\377w* Shutting down in %d minutes *", k));
 	if (terminate)
 		msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server maintenance shutdown in %d minute%s. \377I***", k, (k == 1) ? "" : "s");
 	else
 		msg_broadcast_format(0, "\374\377I*** \377RAutomatic recall and server restart in %d minute%s. \377I***", k, (k == 1) ? "" : "s");
+
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (Players[i]->paging) continue;
+		Players[i]->paging = 2;
+	}
 
 	cfg.runlevel = terminate ? 2042 : 2043;
 	shutdown_recall_timer = k * 60;
