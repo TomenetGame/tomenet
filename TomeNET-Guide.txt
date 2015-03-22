@@ -9632,7 +9632,7 @@ SEDUCE          none. Makes you take off equipped items.
                 - drain half of current mana or hit points
                 - drain constitution or wisdom
                 - get a disease (equals poison effect)
-                - lose an item or gold (the monster steals it)
+                - lose an item or gold (monster steals it; tools won't help!)
                 - gain some experience
                 - regain some drained sanity, if any.
 SHATTER         hits & causes an earthquake - very dangerous, see (5.13).
