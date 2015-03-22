@@ -6933,14 +6933,14 @@ int start_global_event(int Ind, int getype, char *parm) {
 
 		strcpy(ge->title, "Arena Monster Challenge");
 		strcpy(ge->description[0], " During the duration of Bree's Arena Monster Challenge, you just type  ");
-		strcpy(ge->description[1], format(" '/evsign %d <Monster Name>' and you'll have a chance to challenge  ", n+1));
+		strcpy(ge->description[1], format(" '\377U/evsign %d <Monster Name>\377w' and you'll have a chance to challenge  ", n+1));
 		strcpy(ge->description[2], " it for an illusion death match in Bree's upper training tower floor.  ");
 		strcpy(ge->description[3], " Neither the monster nor you will really die in person, just illusions ");
 		strcpy(ge->description[4], " of you, created by the wizards of 'Arena Monster Challenge (tm)' will ");
 		strcpy(ge->description[5], " actually do the fighting. For the duration of the spell it will seem  ");
 		strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
 //		strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
-		strcpy(ge->description[7], format(" (Example: '/evsign %d black orc vet' gets you a veteran archer!)", n+1));
+		strcpy(ge->description[7], format(" (Example: '\377U/evsign %d black orc vet\377w' gets you a veteran archer!)", n+1));
 		strcpy(ge->description[8], "");
 		strcpy(ge->description[9], "");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
