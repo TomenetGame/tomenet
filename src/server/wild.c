@@ -3234,7 +3234,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 							msg_print(-(c_ptr->m_idx), "\377sYou hear someone knocking on the house door.");
 						}
 					}
-					s_printf("poly fill house (func: %d)\n", func);
+					else s_printf("poly fill house (func: %d)\n", func);
 					break;
 				case 1:	/* Actual walls */
 					if (func == FILL_CLEAR) break;
