@@ -1643,6 +1643,9 @@ bool access_door(int Ind, struct dna_type *dna, bool note) {
 int access_door_colour(int Ind, struct dna_type *dna){
 	player_type *p_ptr = Players[Ind];
 
+	/* paranoia: for when the poly-house door bug occurred */
+	if (!dna) return TERM_ACID;
+
 	/* house doesn't belong to anybody? */
 	if (!dna->owner) return(TERM_UMBER);
 
