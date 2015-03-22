@@ -7362,6 +7362,13 @@ void dungeon(void) {
 				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
 #endif
 
+				/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
+				if (in_irondeepdive(&p_ptr->wpos)
+				    //&& p_ptr->afk
+				    //&& p_ptr->idle_char > STARVE_KICK_TIMER) //reuse idle-starve-kick-timer for this
+				    && p_ptr->idle_char > 600) //just after 10 minutes flat
+					continue;
+
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
 

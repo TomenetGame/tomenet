@@ -584,6 +584,7 @@ struct player_type
 	bool teleport;		/* Random teleporting */
 
 	long int idle;		/* player's been idle for <idle> seconds */
+	long int idle_char;	/* character's been idle for <idle> seconds */
 	bool afk;		/* Player is afk */
 	byte drain_exp;		/* Experience draining */
 	byte drain_life;	/* HP draining */
