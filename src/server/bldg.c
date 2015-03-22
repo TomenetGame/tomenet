@@ -486,6 +486,9 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 				roll1 = randint(10);
 				roll2 = randint(10);
 				choice = randint(10);
+#ifdef USE_SOUND_2010
+				sound(Ind, "dice_roll", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+#endif
 				msg_format(Ind, "Black die: \377s%d\377w     Black Die: \377s%d",
 				    roll1, roll2);
 				msg_format(Ind, "          Red die: \377r%d", choice);
@@ -505,6 +508,9 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 				roll2 = randint(6);
 				roll3 = roll1 +  roll2;
 				choice = roll3;
+#ifdef USE_SOUND_2010
+				sound(Ind, "dice_roll", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+#endif
 				msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1,
 				    roll2, roll3);
 				if ((roll3 == 7) || (roll3 == 11))

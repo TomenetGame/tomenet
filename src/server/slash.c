@@ -1607,15 +1607,21 @@ void do_slash_cmd(int Ind, char *message) {
 			for (i = 0; i < k; i++) rn += randint(6);
 			msg_format(Ind, "\374\377%cYou throw %d dice and get a %d", COLOUR_GAMBLE, k, rn);
 			msg_format_near(Ind, "\374\377%c%s throws %d dice and gets a %d", COLOUR_GAMBLE, p_ptr->name, k, rn);
+#ifdef USE_SOUND_2010
+			sound(Ind, "dice_roll", NULL, SFX_TYPE_MISC, TRUE);
+#endif
 			return;
 		}
-		else if (prefix(message, "/coin")) {
+		else if (prefix(message, "/coin") || prefix(message, "/flip")) {
 			bool coin = (rand_int(2) == 0);
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			msg_format(Ind, "\374\377%cYou flip a coin and get %s.", COLOUR_GAMBLE, coin ? "heads" : "tails");
 			msg_format_near(Ind, "\374\377%c%s flips a coin and gets %s.", COLOUR_GAMBLE, p_ptr->name, coin ? "heads" : "tails");
+#ifdef USE_SOUND_2010
+			sound(Ind, "coin_flip", NULL, SFX_TYPE_MISC, TRUE);
+#endif
 			return;
 		}
 #ifdef RPG_SERVER /* too dangerous on the pm server right now - mikaelh */
@@ -1756,6 +1762,9 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_format_near(Ind, "\377%c%s shuffles a deck of %d cards and %d jokers", COLOUR_GAMBLE, p_ptr->name, k, j);
 				}
 			}
+#ifdef USE_SOUND_2010
+			sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
+#endif
 			return;
 		}
 		else if (prefix(message, "/dealer")) { /* hand own card stack to someone else, making him the "dealer" */
@@ -1788,6 +1797,9 @@ void do_slash_cmd(int Ind, char *message) {
 
 			msg_format(Ind, "\377%cYou hand your stack of cards over to %s.", COLOUR_GAMBLE, q_ptr->name);
 			msg_format_near(Ind, "\377%c%s hands his stack of cards over to %s.", COLOUR_GAMBLE, p_ptr->name, q_ptr->name);
+#ifdef USE_SOUND_2010
+			sound(Ind, "playing_cards_dealer", "item_rune", SFX_TYPE_MISC, TRUE);
+#endif
 
 			q_ptr->cards_diamonds = p_ptr->cards_diamonds;
 			q_ptr->cards_hearts = p_ptr->cards_hearts;
@@ -1989,6 +2001,9 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "\377%cThat was the final card of your stack of cards.", COLOUR_GAMBLE);
 				msg_format_near(Ind, "\377%cThat was the final card of the stack of cards.", COLOUR_GAMBLE);
 			}
+#endif
+#ifdef USE_SOUND_2010
+			sound(Ind, "playing_cards", NULL, SFX_TYPE_MISC, TRUE);//same for 'draw' and 'deal' actually
 #endif
                         return;
                 }

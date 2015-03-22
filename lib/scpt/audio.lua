@@ -154,13 +154,6 @@ audio_sfx = {
     "barrage_arrow",
     "barrage_bolt",
 
-    "playing_card",
-    "dice",
-    "coin_flip",
-    "go_stone",
-    "ball_pass",
-    "game_piece",
-
     "knock",
     "knock_castle",
 
@@ -168,6 +161,15 @@ audio_sfx = {
     "grow_trees",
     "insanity",
     "levelup",
+
+    "playing_cards",
+    "playing_cards_shuffle",
+    "playing_cards_dealer",
+    "dice_roll",
+    "coin_flip",
+    "go_stone",
+    "ball_pass",
+    "game_piece",
 
     --[monsters]
     "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..)
