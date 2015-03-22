@@ -3283,8 +3283,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 	return(success);
 }
 
-void wild_add_uhouse(house_type *h_ptr)
-{
+void wild_add_uhouse(house_type *h_ptr) {
  	int x,y;
  	cave_type *c_ptr;
 	struct worldpos *wpos = &h_ptr->wpos;
@@ -3318,13 +3317,13 @@ void wild_add_uhouse(house_type *h_ptr)
 		}
 	}
 	fill_house(h_ptr, FILL_BUILD, NULL);
-	if(h_ptr->flags & HF_MOAT){
+	if (h_ptr->flags & HF_MOAT) {
 		/* Draw a moat around our house */
 		/* It is already valid at this point */
 		if(h_ptr->flags & HF_RECT) {
 		}
 	}
-#if 0
+#if 1 /* actually correct? jails were broken at least, with #else branch */
 	//wrong: dx,dy are absolute cave grid coords, not offsets:
 	c_ptr = &zcave[h_ptr->y + h_ptr->dy][h_ptr->x + h_ptr->dx];
 #else
