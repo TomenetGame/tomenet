@@ -1117,7 +1117,7 @@ static void go_engine_move_CPU() {
 			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
 #endif
 #ifdef USE_SOUND_2010
-			sound(Ind, CLACK, NULL, SFX_TYPE_COMMAND, FALSE);
+			sound(Ind, "go_stone", CLACK, SFX_TYPE_COMMAND, FALSE);
 #endif
 			last_white_move[0] = 'a' + x;
 			last_white_move[1] = '1' + y;
@@ -1143,7 +1143,7 @@ static void go_engine_move_CPU() {
 			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
 #endif
 #ifdef USE_SOUND_2010
-			sound(Ind, CLACK, NULL, SFX_TYPE_COMMAND, FALSE);
+			sound(Ind, "go_stone", CLACK, SFX_TYPE_COMMAND, FALSE);
 #endif
 			last_black_move[0] = 'a' + x;
 			last_black_move[1] = '1' + y;
@@ -1240,7 +1240,7 @@ static int verify_move_human(void) {
 	} else if (!last_move_was_pass) {
 		pass_count = 0;
 #ifdef USE_SOUND_2010
-		sound(Ind, CLACK, NULL, SFX_TYPE_COMMAND, FALSE);
+		sound(Ind, "go_stone", CLACK, SFX_TYPE_COMMAND, FALSE);
 #endif
 	}
 	last_move_was_pass = FALSE;
@@ -1352,7 +1352,7 @@ static int verify_move_CPU(void) {
 		Send_store_special_str(Ind, 6, GO_BOARD_X - 1, TERM_YELLOW, tmp);
 #endif
 #ifdef USE_SOUND_2010
-		sound(Ind, CLACK, NULL, SFX_TYPE_COMMAND, FALSE);
+		sound(Ind, "go_stone", CLACK, SFX_TYPE_COMMAND, FALSE);
 #endif
 		pass_count = 0;
 

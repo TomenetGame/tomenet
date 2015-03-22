@@ -1355,7 +1355,7 @@ void sound_house_knock(int h_idx, int dx, int dy) {
 	player_type *p_ptr;
 	int val = -1, val2 = -1;
 
-	const char *name = "knock";
+	const char *name = (houses[h_idx].flags & HF_MOAT) ? "knock_castle" : "knock";
 	const char *alternative = "block_shield_projectile";
 	cave_type **zcave;
 
@@ -1399,7 +1399,11 @@ void sound_house_knock(int h_idx, int dx, int dy) {
 		zcave = getcave(&p_ptr->wpos);
 		if (!zcave) continue;//paranoia
 		/* Specialty for sound_house(): Is player NOT in a house? */
-		if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)) continue;
+		if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)
+		    /* however, exempt the moat! */
+		    && zcave[p_ptr->py][p_ptr->px].feat != FEAT_DRAWBRIDGE
+		    && zcave[p_ptr->py][p_ptr->px].feat != FEAT_DEEP_WATER)
+			continue;
 
 		/* within audible range? */
 		d = distance(dy, dx, Players[i]->py, Players[i]->px);

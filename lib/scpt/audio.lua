@@ -48,11 +48,6 @@ audio_sfx = {
     "death_male",
     "death_female",
 
-    "insanity",
-
-    "levelup",
-    "slap",
-
     --commands
     "activate",
     "aim_wand",
@@ -69,7 +64,6 @@ audio_sfx = {
     "cast_cloud",
     "cast_wall",
     "cast_wave",
-    "grow_trees",
     "stone_wall",
     "phase_door",
     "teleport",
@@ -135,13 +129,43 @@ audio_sfx = {
     "item_golem_misc",
     "item_seal",
 
+    "slap",
+
     "cough",
     "cough_male",
     "cough_female",
     "shout",
     "shout_male",
     "shout_female",
+    "scream",
+    "scream_male",
+    "scream_female",
+
+    "taunt_male",
+    "taunt_female",
     "flash_bomb",
+    "spin",
+    "berserk_male",
+    "berserk_female",
+    "shadow_run",
+
+    "flare_missile",
+    "barrage_shot",
+    "barrage_arrow",
+    "barrage_bolt",
+
+    "playing_card",
+    "dice",
+    "coin_flip",
+    "go_stone",
+
+    "knock",
+    "knock_castle",
+
+    --misc
+    "grow_trees",
+    "insanity",
+    "levelup",
 
     --[monsters]
     "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..)
