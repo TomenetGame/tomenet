@@ -158,6 +158,8 @@ audio_sfx = {
     "dice",
     "coin_flip",
     "go_stone",
+    "ball_pass",
+    "game_piece",
 
     "knock",
     "knock_castle",
