@@ -16144,10 +16144,11 @@ THE BASE ITEM MATTERS, ENCHANTMENTS DO NOT (except for jewelry, see below):
 
 -You will want to use the cheapest base item version you can find, because
 it will get rerolled randomly anyway. This means that you can even use cursed
-items, it doesn't matter. For example there is no difference between "arting" a
-ring of extra attacks (+3) and a ring of extra attacks (-1) {cursed}.
-In fact, you should art the cursed one, because you can still get money out of
-the (+3) one by selling it to a store.
+items, it doesn't matter (just make sure it's not ring that is actually called
+'A Cursed Ring of...' because that kind of curse is an ego-power!). For example
+there is no difference between "arting" a ring of extra attacks (+3) and
+a ring of extra attacks (-1) {cursed}. In fact, you should art the cursed one,
+because you can still get money out of the (+3) one by selling it to a store.
 However, jewelry that has +hit, +dam or +AC mods is a special case, read on:
 
 HOW IT WORKS ON JEWELRY:
