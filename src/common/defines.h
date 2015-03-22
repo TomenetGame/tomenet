@@ -2835,12 +2835,14 @@
 /* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
 #define is_enchantable(o_ptr) \
 	(is_weapon((o_ptr)->tval) || is_ranged_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
+	(o_ptr)->tval == TV_MSTAFF || \
 	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
 	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING)
 #else
 /* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
 #define is_enchantable(o_ptr) \
 	((is_weapon((o_ptr)->tval) || is_ranged_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
+	(o_ptr)->tval == TV_MSTAFF || \
 	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
 	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING) \
 	&& (o_ptr->tval != TV_SHIELD))
