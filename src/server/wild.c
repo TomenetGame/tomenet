@@ -3323,12 +3323,9 @@ void wild_add_uhouse(house_type *h_ptr) {
 		if(h_ptr->flags & HF_RECT) {
 		}
 	}
-#if 1 /* actually correct? jails were broken at least, with #else branch */
-	//wrong: dx,dy are absolute cave grid coords, not offsets:
-	c_ptr = &zcave[h_ptr->y + h_ptr->dy][h_ptr->x + h_ptr->dx];
-#else
+
+	/* get door */
 	c_ptr = &zcave[h_ptr->dy][h_ptr->dx];
-#endif
 
 	/*
 	 * usually, already done in poly_build..

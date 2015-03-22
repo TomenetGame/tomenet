@@ -6826,7 +6826,7 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 }
 
 /* multi builder stuff - move when complete */
-struct builder{
+struct builder {
 	int player;
 	int lx, ly, dx, dy, minx, miny, maxx, maxy;
 	int sx, sy;
@@ -6845,8 +6845,7 @@ struct builder{
 #define MAX_BUILDERS 4	/* Just so the builders can go on strike */
 /* end of move stuff */
 
-static bool poly_build(int Ind, char *args)
-{
+static bool poly_build(int Ind, char *args) {
 	static struct builder *builders = NULL;
 	static int num_build = 0;
 
@@ -6973,8 +6972,13 @@ static bool poly_build(int Ind, char *args)
 			houses[num_houses].y = curr->miny;
 			houses[num_houses].coords.rect.width = curr->maxx + 1 - curr->minx;
 			houses[num_houses].coords.rect.height = curr->maxy + 1 - curr->miny;
+#if 0 /* hm, isn't this buggy? should just be same as for HF_NONE? */
 			houses[num_houses].dx = curr->sx-curr->minx;
 			houses[num_houses].dy = curr->sy-curr->miny;
+#else
+			houses[num_houses].dx = curr->sx;
+			houses[num_houses].dy = curr->sy;
+#endif
 			C_KILL(curr->vert, MAXCOORD, char);
 		} else {
 			houses[num_houses].flags = HF_NONE;	/* polygonal */
