@@ -50,7 +50,7 @@ pern_dofile(Ind, "audio.lua")
 -- This doesn't work because not all sfx are actually available in even the most recent sfx pack:
 --__audio_sfx_max = getn(audio_sfx)
 -- So for now  hard-coded:
-__audio_sfx_max = 95
+__audio_sfx_max = 103
 __audio_mus_max = getn(audio_bgm)
 
 -- Initialize tables
