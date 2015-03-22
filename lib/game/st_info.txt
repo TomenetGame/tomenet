@@ -116,6 +116,7 @@ I:100:& Long Sword~
 I:100:& Scimitar~
 I:100:& Katana~
 I:100:& Bastard Sword~
+I:100:& Sickle~
 I:100:& Spear~
 I:100:& Awl-Pike~
 I:100:& Trident~
