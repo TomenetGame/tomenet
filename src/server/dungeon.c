@@ -71,6 +71,12 @@ static void process_weather_control(void);
  #endif
 #endif
 
+#define SHUTDOWN_IGNORE_IDDC(p_ptr) \
+    (in_irondeepdive(&(p_ptr)->wpos) \
+    && (p_ptr)->idle_char > 900) /* just after 15 minutes flat */
+    //&& p_ptr->afk
+    //&& p_ptr->idle_char > STARVE_KICK_TIMER) //reuse idle-starve-kick-timer for this
+
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
@@ -7332,6 +7338,9 @@ void dungeon(void) {
 				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
 #endif
 
+				/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
+				if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
+
 				/* Ignore characters that are not in a dungeon/tower */
 				if (p_ptr->wpos.wz == 0) {
 					/* Don't interrupt events though */
@@ -7363,11 +7372,7 @@ void dungeon(void) {
 #endif
 
 				/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
-				if (in_irondeepdive(&p_ptr->wpos)
-				    //&& p_ptr->afk
-				    //&& p_ptr->idle_char > STARVE_KICK_TIMER) //reuse idle-starve-kick-timer for this
-				    && p_ptr->idle_char > 600) //just after 10 minutes flat
-					continue;
+				if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
 
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
@@ -7402,6 +7407,9 @@ void dungeon(void) {
 				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
 #endif
 
+				/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
+				if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
+
 				/* Ignore characters that are not in a dungeon/tower */
 				if (p_ptr->wpos.wz == 0) {
 					/* Don't interrupt events though */
@@ -7432,6 +7440,9 @@ void dungeon(void) {
 				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
 #endif
 
+				/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
+				if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
+
 				/* Ignore characters that are not in a dungeon/tower */
 				if (p_ptr->wpos.wz == 0) {
 					/* Don't interrupt events though */
@@ -7446,9 +7457,9 @@ void dungeon(void) {
 		} else if (cfg.runlevel == 2045) {
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
-				if(Players[i]->conn == NOT_CONNECTED) continue;
+				if (Players[i]->conn == NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
-				if(admin_p(i)) continue;
+				if (admin_p(i)) continue;
 				/* count players */
 				n++;
 			}
