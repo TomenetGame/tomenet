@@ -923,7 +923,7 @@ They all start with a slash '/' hence they're called slash commands:
                      freeing up a generic character slot again.
 
 /coin       Flip a coin to get either heads or tails.
-            The result is random and can be seen by other players who stand
+ or /flip   The result is random and can be seen by other players who stand
             nearby.
 
 /shuffle [32|52 <jokers>]
