@@ -102,15 +102,18 @@ void dnaload(c_special *cs_ptr){
 }
 void dnasave(c_special *cs_ptr){
 }
-int dnahit(c_special *cs_ptr, int y, int x, int Ind){
+int dnahit(c_special *cs_ptr, int y, int x, int Ind) {
 	/* we have to know from where we are called! */
 	struct dna_type *dna = cs_ptr->sc.ptr;
-	{
-		if (access_door(Ind, dna, TRUE) || admin_p(Ind)) {
-			if (admin_p(Ind))
-				msg_format(Ind, "\377gThis house is owned by %s.", get_house_owner(cs_ptr));
-			return(TRUE);
-		}
+	/* paranoia: for when the poly-house door bug occurred */
+	if (!dna) {
+		msg_print(Ind, "\377D(Corrupt house dna on this grid)");
+		return FALSE;
+	}
+	if (access_door(Ind, dna, TRUE) || admin_p(Ind)) {
+		if (admin_p(Ind))
+			msg_format(Ind, "\377gThis house is owned by %s.", get_house_owner(cs_ptr));
+		return(TRUE);
 	}
 	return(FALSE);
 }
