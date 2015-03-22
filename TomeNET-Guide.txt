@@ -17027,6 +17027,9 @@ SOLUTION:   This can have several reasons. On disconnection a message box will
                     _because_ you already died.
             "Server closed the connection"
                     Maybe a firewall or bad network problem.
+            "No login reply received"
+                    The login process couldn't be completed. Probably a network
+                    problem, or really bad lag/timeout.
 
 PROBLEM 08: I am disconnected from the server with an error message, this
             happens before I can even start playing.
