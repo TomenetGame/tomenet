@@ -107,8 +107,10 @@ int dnahit(c_special *cs_ptr, int y, int x, int Ind) {
 	struct dna_type *dna = cs_ptr->sc.ptr;
 	/* paranoia: for when the poly-house door bug occurred */
 	if (!dna) {
-		msg_print(Ind, "\377D(Corrupt house dna on this grid)");
-		return FALSE;
+		if (admin_p(Ind)) {
+			msg_print(Ind, "\377D(Corrupt house dna on this grid)");
+			return TRUE;
+		} else return FALSE;
 	}
 	if (access_door(Ind, dna, TRUE) || admin_p(Ind)) {
 		if (admin_p(Ind))
