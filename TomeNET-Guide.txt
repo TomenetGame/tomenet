@@ -12407,7 +12407,7 @@ create a character!):
     Psionic Blast).
     Their spells also cannot be reflected by monsters for that same reason.
     Some of the mindcrafters' spells that interact with party members will
-    require them to prepare and open their mind for telepathic  contact. This
+    require them to prepare and open their mind for telepathic contact. This
     is done by the party members pressing the 'p' key. Pressing it again will
     close off their mind again, disabling further telepathic attempts.
     The effects of some necromancy skills are distracting to mindcrafters, so
@@ -16124,14 +16124,16 @@ ONLY WORKS ON STANDARD EQUIPMENT:
 -Artifact creation only works on items that can be equipped - with the
 exception of tool items like diggers, picklock, money belt, device of theft
 prevention, tarpaulin, flint, mummy wrapping, climbing set. These won't work!
+Also, it does not work on rings of polymorphing or amulets of telepathy!
 
 DOESN'T WORK ON EGOS / ARTS:
 
 -Don't use them on ego items or artifacts, or you will lose the scroll!
 
--Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
-'Amulets of Telepathic Awareness', 'Rings of Polymorphing' and
-Dragon Scale Mails 'of Defense'!
+ Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
+ 'Amulets of Telepathy' and Dragon Scale Mails 'of Defense', so you cannot
+ art these!
+ Also you cannot art 'Rings of Polymorphing'!
 
 -Ammo that is '(exploding)' is actually not an ego item! Contrary to intuition,
  it is technically just a pval. This means that you can artify basic ammo that
@@ -16169,6 +16171,10 @@ However... read on:
 of slaying (+10,+15) will keep the (+10,+15)).
 (Any dice (xdy) as well as _base_ AC [x,+0] on jewelry will always become 0,
 but there is currently no jewelry in the game that has damage dice or base AC.)
+
+-When arting jewelry, keep in mind that it does NOT work on
+amulets of telepathy, rings of polymorphing or on rings that are named
+'a Cursed Ring of..' (because that's not a normal curse but an ego-power)!
 
 HOW IT WORKS ON NON-JEWELRY:
 
