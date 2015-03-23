@@ -3121,7 +3121,7 @@ S:TELE_TO | HOLD |
 D:The ancient grey willow tree, ruler of the Old Forest. He despises 
 D:trespassers in his territory.  "...a huge willow-tree, old and hoary. 
 D:Enormous it looked, its sprawling branches going up like racing arms 
-D:with may long-fingered hands, its knotted and twisted trunk gaping in 
+D:with many long-fingered hands, its knotted and twisted trunk gaping in 
 D:wide fissures that creaked faintly as the boughs moved." 
 
 N:207:Hippocampus
