@@ -4377,7 +4377,7 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 		ptr->wpos.wy = wpos.wy;
 		ptr->wpos.wz = wpos.wz;
 	}
-	/* added in 4.5.9.1 */
+	/* --actually not needed-- */
 	if (!ptr->accountname) {
 		s_printf("hash_entry: fixing accountname of %s.\n", ptr->name);
 		ptr->accountname = strdup(lookup_accountname2(account));
