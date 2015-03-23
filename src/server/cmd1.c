@@ -1628,9 +1628,9 @@ void carry(int Ind, int pickup, int confirm) {
 	/* Pick it up */
 	else {
 		bool force_pickup = check_guard_inscription(o_ptr->note, '=')
-		    && p_ptr->id == o_ptr->owner;
+		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
 		bool auto_load = check_guard_inscription(o_ptr->note, 'L')
-		    && p_ptr->id == o_ptr->owner;
+		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
 
 		/* Hack -- disturb */
 		disturb(Ind, 0, 0);
