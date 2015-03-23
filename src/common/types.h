@@ -3592,6 +3592,7 @@ typedef struct hash_entry hash_entry;
 struct hash_entry {
 	int id;				/* The character ID */
 	u32b account;			/* account id */
+	cptr accountname;		/* NOTE: this value is NOT loaded/saved but fetched live on each server startup */
 	cptr name;			/* Player name */
 	byte race,class;		/* Race/class */
 	byte admin;

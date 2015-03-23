@@ -646,6 +646,28 @@ cptr lookup_accountname(int p_id) {
 	return(NULL);
 }
 
+/* Return account name of a specified account id */
+cptr lookup_accountname2(u32b acc_id) {
+	FILE *fp;
+	char buf[1024];
+	static struct account c_acc;
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb");
+	if (!fp) return(NULL); /* cannot access account file */
+	while (fread(&c_acc, sizeof(struct account), 1, fp)) {
+		if (c_acc.flags & ACC_DELD) continue;
+		if (c_acc.id == acc_id) {
+			fclose(fp);
+			memset(c_acc.pass, 0, sizeof(c_acc.pass));
+			return(c_acc.name);
+		}
+	}
+	memset(c_acc.pass, 0, sizeof(c_acc.pass));
+	fclose(fp);
+	return(NULL);
+}
+
 /* our password encryptor */
 static char *t_crypt(char *inbuf, cptr salt) {
 #ifdef HAVE_CRYPT
@@ -4296,6 +4318,8 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 
 	/* Make a copy of the player name in the entry */
 	ptr->name = strdup(name);
+	ptr->accountname = strdup(lookup_accountname2(account));
+s_printf("add_player_name: '%s' - accountname = '%s'\n", ptr->name, ptr->accountname);
 	ptr->laston = laston;
 	ptr->id = id;
 	ptr->account = account;
@@ -4353,6 +4377,12 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 		ptr->wpos.wx = wpos.wx;
 		ptr->wpos.wy = wpos.wy;
 		ptr->wpos.wz = wpos.wz;
+	}
+	/* added in 4.5.9.1 */
+	if (!ptr->accountname) {
+		s_printf("hash_entry: fixing accountname of %s.\n", ptr->name);
+		ptr->accountname = strdup(lookup_accountname2(account));
+s_printf(" (accountname = '%s')\n", ptr->accountname);
 	}
 }
 

@@ -1330,6 +1330,7 @@ extern bool add_ignore(int Ind, cptr name);
 extern bool check_ignore(int attacker, int target);
 extern bool check_hostile(int attacker, int target);
 extern cptr lookup_accountname(int p_id);
+extern cptr lookup_accountname2(u32b acc_id);
 extern cptr lookup_player_name(int id);
 extern bool fix_player_case(char *name);
 #ifdef AUCTION_SYSTEM

@@ -3942,12 +3942,12 @@ void do_slash_cmd(int Ind, char *message) {
 				while (ptr) {
 					if (ptr->party == p) {
 						if (ptr->admin == 1) {
-							if (is_admin(p_ptr)) msg_format(Ind, "    \377r%s", ptr->name);
+							if (is_admin(p_ptr)) msg_format(Ind, "    \377r%-20s (%s)", ptr->name, ptr->accountname);
 							else {
 								ptr = ptr->next;
 								continue;
 							}
-						} else msg_format(Ind, "    %s", ptr->name);
+						} else msg_format(Ind, "    %-20s (%s)", ptr->name, ptr->accountname);
 						members++;
 					}
 					ptr = ptr->next;
@@ -3970,12 +3970,12 @@ void do_slash_cmd(int Ind, char *message) {
 				while (ptr) {
 					if (ptr->guild == g) {
 						if (ptr->admin == 1) {
-							if (is_admin(p_ptr)) msg_format(Ind, "    \377r%s", ptr->name);
+							if (is_admin(p_ptr)) msg_format(Ind, "    \377r%-20s (%s)", ptr->name, ptr->accountname);
 							else {
 								ptr = ptr->next;
 								continue;
 							}
-						} else msg_format(Ind, "    %s", ptr->name);
+						} else msg_format(Ind, "    %-20s (%s)", ptr->name, ptr->accountname);
 						members++;
 					}
 					ptr = ptr->next;
