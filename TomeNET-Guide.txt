@@ -10444,6 +10444,8 @@ Charisma (CHR)
      Note that shop prices also depend on racial preferences of the
      shopkeepers vs their customers. It is said, that Half-Trolls have an
      especially hard time.
+     While prices of items and houses are affected by charisma, fees for shop
+     services are not.
     -Allows you to resist getting seduced.
 
 
