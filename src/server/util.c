@@ -3150,7 +3150,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 /* Censor swear words while keeping good words, and determining punishment level */
 //NOTE: EXEMPT_BROKEN_SWEARWORDS and HIGHLY_EFFECTIVE_CENSOR shouldn't really work togehter (because latter one kills spaces etc.)
 #define EXEMPT_BROKEN_SWEARWORDS	/* don't 'recognize' swear words that are broken up into 'innocent' parts */
-//#define HIGHLY_EFFECTIVE_CENSOR		/* strip all kinds of non-alpha chars too? ([disabled])*/
+#define HIGHLY_EFFECTIVE_CENSOR		/* strip all kinds of non-alpha chars too? ([disabled])*/
 #define CENSOR_PH_TO_F			/* (slightly picky) convert ph to f ?*/
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
 #define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
