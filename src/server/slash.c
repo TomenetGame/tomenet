@@ -5703,7 +5703,125 @@ void do_slash_cmd(int Ind, char *message) {
 				if(!tk) msg_print(Ind, "Dungeon/tower flags updated.");
 				return;
 			}
-			else if (prefix(message, "/debug-pos")){
+			else if (prefix(message, "/swap-dun")) {
+				/* Move a predefined dungeon (in d_info.txt) to our worldmap sector - C. Blue */
+				int type, x, y;
+				struct dungeon_type *d_ptr, *d_ptr_tmp;
+				wilderness_type *wild, *wild_new;
+				u32b flags;
+				bool done = FALSE;
+				cave_type **zcave;
+
+				if (!(zcave = getcave(&p_ptr->wpos))) {
+					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
+					return;
+				}
+
+				if (!tk) {
+					msg_print(Ind, "Usage: /swap-dun <index>");
+					return;
+				}
+				if (!k) {
+					msg_print(Ind, "Dungeon index cannot be 0.");
+					return;
+				}
+
+				wild_new = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+
+				for(x = 0; x < MAX_WILD_X; x++) {
+				for(y = 0; y < MAX_WILD_Y; y++) {
+					wild = &wild_info[y][x];
+
+					if ((d_ptr = wild->tower)) {
+						type = d_ptr->type;
+						if (type == k) {
+							/* simply swap the tower */
+							d_ptr_tmp = wild_new->dungeon;
+							wild_new->dungeon = wild->dungeon;
+							wild->dungeon = d_ptr_tmp;
+
+							flags = (wild_new->flags & WILD_F_UP);
+							wild->flags &= (~WILD_F_UP);
+							wild->flags |= (flags & WILD_F_UP);
+							wild_new->flags |= WILD_F_UP;
+
+							wild->dn_x = wild_new->dn_x;
+							wild->dn_y = wild_new->dn_y;
+							wild_new->dn_x = p_ptr->px;
+							wild_new->dn_y = p_ptr->py;
+							zcave[p_ptr->py][p_ptr->px].feat = FEAT_LESS;
+
+							if (d_ptr->id != 0) {
+								dungeon_x[d_ptr->id] = x;
+								dungeon_y[d_ptr->id] = y;
+							}
+							if (d_ptr->type == DI_NETHER_REALM) {
+								netherrealm_wpos_x = x;
+								netherrealm_wpos_y = y;
+							}
+							else if (d_ptr->type == DI_VALINOR) {
+								valinor_wpos_x = x;
+								valinor_wpos_y = y;
+							}
+							else if (d_ptr->type == DI_HALLS_OF_MANDOS) {
+								hallsofmandos_wpos_x = x;
+								hallsofmandos_wpos_y = y;
+							}
+
+							msg_format(Ind, "Tower states swapped (%d,%d).", x, y);
+							done = TRUE;
+							break;
+						}
+					}
+
+					if ((d_ptr = wild->dungeon)) {
+						type = d_ptr->type;
+						if (type == k) {
+							/* simply swap the dungeon */
+							d_ptr_tmp = wild_new->dungeon;
+							wild_new->dungeon = wild->dungeon;
+							wild->dungeon = d_ptr_tmp;
+
+							flags = (wild_new->flags & WILD_F_DOWN);
+							wild->flags &= (~WILD_F_DOWN);
+							wild->flags |= (flags & WILD_F_DOWN);
+							wild_new->flags |= WILD_F_DOWN;
+
+							wild->up_x = wild_new->up_x;
+							wild->up_y = wild_new->up_y;
+							wild_new->up_x = p_ptr->px;
+							wild_new->up_y = p_ptr->py;
+							zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
+
+							if (d_ptr->id != 0) {
+								dungeon_x[d_ptr->id] = x;
+								dungeon_y[d_ptr->id] = y;
+							}
+							if (d_ptr->type == DI_NETHER_REALM) {
+								netherrealm_wpos_x = x;
+								netherrealm_wpos_y = y;
+							}
+							else if (d_ptr->type == DI_VALINOR) {
+								valinor_wpos_x = x;
+								valinor_wpos_y = y;
+							}
+							else if (d_ptr->type == DI_HALLS_OF_MANDOS) {
+								hallsofmandos_wpos_x = x;
+								hallsofmandos_wpos_y = y;
+							}
+
+							msg_format(Ind, "Dungeon states swapped (%d,%d).", x, y);
+							done = TRUE;
+							break;
+						}
+					}
+				}
+				if (done) break;
+				}
+				msg_print(Ind, "Done.");
+				return;
+			}
+			else if (prefix(message, "/debug-pos")) {
 				/* C. Blue's mad debug code to change player @
 				   startup positions in Bree (px, py) */
 				new_level_rand_x(&p_ptr->wpos, atoi(token[1]));
@@ -5711,8 +5829,7 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "Set x=%d, y=%d for this wpos.", atoi(token[1]), atoi(token[2]));
 				return;
 			}
-			else if (prefix(message, "/anotes"))
-			{
+			else if (prefix(message, "/anotes")) {
 				int notes = 0;
 				for (i = 0; i < MAX_ADMINNOTES; i++) {
 					/* search for pending notes of this player */
@@ -5732,11 +5849,9 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				return;
 			}
-			else if (prefix(message, "/danote")) /* Delete a global admin note to everyone */
-			{
+			else if (prefix(message, "/danote")) { /* Delete a global admin note to everyone */
 				int notes = 0;
-				if ((tk < 1) || (strlen(message2) < 8)) /* Explain command usage */
-				{
+				if ((tk < 1) || (strlen(message2) < 8)) { /* Explain command usage */
 					msg_print(Ind, "\377oUse /danote <message index> to delete a message.");
 					msg_print(Ind, "\377oTo clear all pending notes of yours, type: /danote *");
 					return;
@@ -5757,11 +5872,9 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				return;
 			}
-			else if (prefix(message, "/anote")) /* Send a global admin note to everyone */
-			{
+			else if (prefix(message, "/anote")) { /* Send a global admin note to everyone */
 				j = 0;
-				if (tk < 1)	/* Explain command usage */
-				{
+				if (tk < 1) { /* Explain command usage */
 					msg_print(Ind, "\377oUsage: /anote <text>");
 					msg_print(Ind, "\377oUse /danote <message index> to delete a message.");
 					msg_print(Ind, "\377oTo clear all pending notes of yours, type: /danote *");
@@ -5793,15 +5906,13 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				return;
 			}
-			else if (prefix(message, "/broadcast-anotes")) /* Display all admin notes to all players NOW! :) */
-			{
+			else if (prefix(message, "/broadcast-anotes")) { /* Display all admin notes to all players NOW! :) */
 				for (i = 0; i < MAX_ADMINNOTES; i++)
 					if (strcmp(admin_note[i], ""))
 						msg_broadcast_format(0, "\377sGlobal Admin Note: %s", admin_note[i]);
 				return;
 			}
-			else if (prefix(message, "/swarn")) /* Send a global server warning everyone */
-			{
+			else if (prefix(message, "/swarn")) { /* Send a global server warning everyone */
 				j = 0;
 				if (tk < 1) {
 					strcpy(server_warning, "");
