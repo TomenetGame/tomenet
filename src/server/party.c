@@ -646,7 +646,8 @@ cptr lookup_accountname(int p_id) {
 	return(NULL);
 }
 
-/* Return account name of a specified account id */
+/* Return account name of a specified account id.
+   Does not return NULL but "" if account doesn't exist! */
 cptr lookup_accountname2(u32b acc_id) {
 	FILE *fp;
 	char buf[1024];
@@ -654,7 +655,7 @@ cptr lookup_accountname2(u32b acc_id) {
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb");
-	if (!fp) return(NULL); /* cannot access account file */
+	if (!fp) return(""); /* cannot access account file */
 	while (fread(&c_acc, sizeof(struct account), 1, fp)) {
 		if (c_acc.flags & ACC_DELD) continue;
 		if (c_acc.id == acc_id) {
@@ -665,7 +666,7 @@ cptr lookup_accountname2(u32b acc_id) {
 	}
 	memset(c_acc.pass, 0, sizeof(c_acc.pass));
 	fclose(fp);
-	return(NULL);
+	return("");
 }
 
 /* our password encryptor */
