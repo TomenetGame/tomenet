@@ -2064,6 +2064,8 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			csheet_boni->cb[4] |= CB5_RFALL;
 			/* Vampire bats are vampiric */
 			if (p_ptr->body_monster == 391) { p_ptr->vampiric_melee = 100; csheet_boni->cb[6] |= CB7_RVAMP; }
+			/* Fruit bats get some life leech */
+			if (p_ptr->body_monster == 37 && p_ptr->vampiric_melee < 25) { p_ptr->vampiric_melee = 25; csheet_boni->cb[6] |= CB7_RVAMP; }
 			break;
 
 		case 365: /* Vampiric mist is vampiric */
@@ -3150,6 +3152,7 @@ void calc_boni(int Ind) {
 				p_ptr->pspeed += 3;
 			p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV;
 			p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
+			if (p_ptr->vampiric_melee < 25) { p_ptr->vampiric_melee = 25; csheet_boni->cb[6] |= CB7_RVAMP; }
 		}
 		
 		csheet_boni[14].spd = p_ptr->pspeed - 110;

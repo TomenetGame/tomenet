@@ -3640,6 +3640,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				}
 			}
 
+#if 0 /* moved to xtra1.c */
 			/* Fruit bats get life stealing.
 			   Note: This is ok because fruit bats cannot wear weapons/gloves as a
 			   source of vampirism.
@@ -3650,7 +3651,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				leech /= 10;
 				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
-			
+#endif
 		}
 
 		/* Player misses */
@@ -4757,6 +4758,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				}
 			}
 
+#if 0 /* moved to xtra1.c */
 			/* Fruit bats get life stealing.
 			   Note: This is ok because fruit bats cannot wear weapons/gloves as a
 			   source of vampirism.
@@ -4767,6 +4769,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				leech /= 10;
 				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
+#endif
 		}
 
 		/* Player misses */
