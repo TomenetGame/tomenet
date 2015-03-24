@@ -1912,6 +1912,35 @@ int Receive_message(void) {
 
 	/* Highlight or beep on incoming chat messages containing our name? */
 	if (c_cfg.hilite_chat || c_cfg.hibeep_chat) { /* enabled? */
+		/* Test sender's name, if it is us */
+		int we_sent_offset;
+		char *we_sent_p = strchr(buf, '[');
+		if (we_sent_p) {
+			char we_sent_buf[NAME_LEN + 1 + 10];
+			strncpy(we_sent_buf, we_sent_p + 1, NAME_LEN + 1 + 10);
+			we_sent_buf[NAME_LEN + 10] = '\0';
+			if (strchr(we_sent_buf, ']')) {
+				char exact_name[NAME_LEN + 1], *en_p = exact_name;
+				/* we found SOME name, so don't test it again */
+				we_sent_offset = strchr(buf, ']') - buf;
+				/* and also check if name = us, strictly */
+				we_sent_p = we_sent_buf - 1;
+				while (*(++we_sent_p)) {
+					/* skip colour codes (occur in the beginning and end of name, possibly) */
+					if (*we_sent_p == '\\') {
+						we_sent_p++;
+						continue;
+					}
+					if (*we_sent_p == ']') break;
+					*en_p++ = *we_sent_p;
+				}
+				*en_p = '\0';
+				/* so, if it's not someone else talking, whose name _contains_ our name (eg 'Bat' vs 'FruitBat'),
+				   then we can allow highlighting the (our) name again: */
+				if (!strcmp(exact_name, cname)) we_sent_offset = 0;
+			} else we_sent_offset = 0;
+		} else we_sent_offset = 0; /* just paranoid initialization */
+
 		/* Is it non-private chat? */
 		if ((sptr = strchr(buf, '[')) /* a '[' occurs somewhere at the start? */
 		    && sptr <= buf + 7 + ((strstr(buf, "(IRC)") <= buf + 7) ? 9 : 0)
@@ -1929,7 +1958,7 @@ int Receive_message(void) {
 			ptr = l_nick;
 			while (*ptr) { *ptr = tolower(*ptr); ptr++; }
 			/* map location found onto original string -_- */
-			if ((bptr = strstr(l_buf, l_cname))) bptr = buf + (bptr - l_buf);
+			if ((bptr = strstr(l_buf + we_sent_offset, l_cname))) bptr = buf + (bptr - l_buf);
 			if ((bnptr = strstr(l_buf, l_nick))) bnptr = buf + (bnptr - l_buf);
 
 			/* Check which one it is (first), character name or account name */
