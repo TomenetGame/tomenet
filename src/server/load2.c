@@ -3226,6 +3226,7 @@ errr rd_server_savefile() {
 			/* Store the player name */
 			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin, wpos);
 		}
+		s_printf("Read %d player name records.\n", tmp32u);
 	}
 
 	rd_u32b(&seed_flavor);
