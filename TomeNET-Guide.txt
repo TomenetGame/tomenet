@@ -9841,7 +9841,8 @@ The best source overrides all weaker ones, which simply get ignored:
 | Vampire character race      50%     |                                     |
 | Other vampiric forms        50%     |                                     |
 | Non-weapons (gloves)        50%     | Non-weapons (gloves)        33%     |
-| Fruit bat (form or native)  25%     |                                     |
+| Fruit bat (native/cs-pot,   50%     |                                     |
+|           not in mimicked form)     |                                     |
 
 
 
