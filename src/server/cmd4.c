@@ -2123,7 +2123,7 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
 
 	if ((k = cfg.party_xp_boost))
-		fprintf(fff, "Party members get boosted exp(factor %d).\n", k);
+		fprintf(fff, "Party members get boosted exp (+%d internal modifier).\n", k);
 
 	switch (cfg.replace_hiscore & 0x7) {
 	case 0: fprintf(fff, "High-score entries are added to the high-score table.\n"); break;
