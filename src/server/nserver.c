@@ -2807,7 +2807,7 @@ static int Handle_login(int ind)
 	if (p_ptr->inval) for (i = 1; i < NumPlayers + 1; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (!is_admin(Players[i])) continue;
-		msg_format(i, "\374\377D(Admin) Invalid account \"%s\", host: \"%s\"", p_ptr->accountname, p_ptr->hostname);
+		msg_format(i, "\374\377R(Admin) Invalid account \"%s\", host: \"%s\"", p_ptr->accountname, p_ptr->hostname);
 		if (!Players[i]->paging) Players[i]->paging = 2;
 	}
 
