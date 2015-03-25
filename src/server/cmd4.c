@@ -2252,9 +2252,9 @@ void do_cmd_check_server_settings(int Ind)
 		
         /* Items */
 	if (cfg.anti_cheeze_pickup)
-		fprintf(fff, "Items cannot be transferred to a character of too low a level.\n");
+		fprintf(fff, "Items cannot be transferred to a character of too low level.\n");
 	if (cfg.anti_cheeze_telekinesis)
-		fprintf(fff, "Items cannot be sent via telekinesis to a character of too low a level.\n");
+		fprintf(fff, "Items cannot be sent via telekinesis to a character of too low level.\n");
 	if (cfg.surface_item_removal) {
 		fprintf(fff, "Items on the world surface will be removed after %d minutes.\n", cfg.surface_item_removal);
 		fprintf(fff, "(This timeout is tripled for artifacts and unlooted unique-monster drops.)\n");
