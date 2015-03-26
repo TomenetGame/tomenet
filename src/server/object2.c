@@ -6844,6 +6844,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	bool mha, rha; /* monk heavy armor, rogue heavy armor */
+	bool go_heavy = TRUE; /* new special thingy: don't pick super light cloth armour if we're not specifically light-armour oriented */
 
 	/* for analysis functions and afterwards for determining concrete reward */
 	int maxweight_melee = adj_str_hold[p_ptr->stat_ind[A_STR]] * 10;
@@ -6937,6 +6938,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case 7: maxweight_armor = 30; break;
 		case 8: maxweight_armor = 15; break;
 		}
+		go_heavy = FALSE;
 	}
 	if (mha) {
 		switch (armor_choice) {
@@ -6949,6 +6951,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case 7: maxweight_armor = 30; break;
 		case 8: maxweight_armor = 15; break;
 		}
+		go_heavy = FALSE;
 	}
 	if (spell_choice) {
 		/* no heavy boots/gauntlets/helmets for casters */
@@ -6957,6 +6960,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case 5: maxweight_armor = 15; break;//1.5 gloves don't exist, so it's just leather+elven here
 		case 6: maxweight_armor = 40; break;//4.0 helmets don't exist (jewel encrusted crown has it though, so we just pretend..)
 		}
+		go_heavy = FALSE;
 	}
 	if (p_ptr->s_info[SKILL_CRITS].value >= treshold) maxweight_melee = 100;
 
@@ -7158,20 +7162,20 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			else
 				k_idx = get_obj_num(base, resf);
 
-			/* HACK - Kollas won't pass RESF_LOWVALUE or RESF_MIDVALUE checks in apply_magic - mikaelh */
-			if ((k_info[k_idx].tval == TV_CLOAK) && (k_info[k_idx].sval == SV_KOLLA) && ((resf & (RESF_LOWVALUE | RESF_MIDVALUE)))) {
-				continue;
-			}
-
 			/* Prepare the object */
 			invcopy(o_ptr, k_idx);
 			reward_sval = o_ptr->sval;
+
+			/* HACK - Kollas won't pass RESF_LOWVALUE or RESF_MIDVALUE checks in apply_magic - mikaelh */
+			if ((reward_tval == TV_CLOAK) && (reward_sval == SV_KOLLA) && ((resf & (RESF_LOWVALUE | RESF_MIDVALUE)))) {
+				continue;
+			}
 
 			/* Note that in theory the item's weight might change depending on it's
 			   apply_magic_depth outcome, we're ignoring that here for now though. */
 
 			/* Check for weight limit! */
-			if (k_info[k_idx].weight > reward_maxweight) continue;
+			if (o_ptr->weight > reward_maxweight) continue;
 
 			/* No weapon that reduces bpr compared to what weapon the person currently holds! */
 			if (weapon_bpr) {
@@ -7187,10 +7191,23 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			}
 
 			if ((resf & RESF_NOHIDSM) &&
-			    (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
-			    !sv_dsm_low(k_info[k_idx].sval) && !sv_dsm_mid(k_info[k_idx].sval))
+			    (reward_tval == TV_DRAG_ARMOR) &&
+			    !sv_dsm_low(reward_sval) && !sv_dsm_mid(reward_sval))
 				continue;
 
+			/* avoid super light caster armour? */
+			if (go_heavy)
+				switch (reward_tval) {
+				case TV_HELM:
+					if (reward_sval == SV_CLOTH_CAP) continue;
+					break;
+				case TV_SOFT_ARMOR:
+					/* Note: we allow SV_ROBE because it could be permanence! always great to have.
+					   Could potentially add: SV_LEATHER_FROCK (3.0), SV_PAPER_ARMOR (4.0) */
+					if (reward_sval == SV_GOWN || reward_sval == SV_TUNIC || reward_sval == SV_FROCK) continue;
+				}
+
+			/* success! */
 			break;
 		} while (tries < 100); /* need more tries here than in place_object() because of additional weight limit check */
 
@@ -7211,9 +7228,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	}
 
 	/* debug log */
-	s_printf("REWARD_RAW: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d)\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight);
+	s_printf("REWARD_RAW: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d%s)\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, go_heavy ? " go_heavy" : "");
 	if (is_admin(p_ptr))
-		msg_format(Ind, "Reward: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d)", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight);
+		msg_format(Ind, "Reward: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d%s)", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, go_heavy ? " go_heavy" : "");
 
 	/* hack - fix the shit with an ugly workaround for now (shouldn't happen anymore) */
 	if (!o_ptr->sval) {
