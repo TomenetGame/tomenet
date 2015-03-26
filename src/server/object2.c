@@ -9232,6 +9232,9 @@ bool anti_undead(object_type *o_ptr) {
 
 	if (cursed_p(o_ptr)) return(FALSE);
 
+	/* hack: it's carried by the wight-king! */
+	if (o_ptr->name1 == ART_STONE_LORE) return FALSE;
+
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
         if (f3 & TR3_LITE1) l++;
         if (f4 & TR4_LITE2) l += 2;
