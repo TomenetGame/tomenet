@@ -126,7 +126,7 @@ void SGWHit(int read_fd, int arg) {
 	if (read_fd == SGWSocket) {
 		/* Accept it */
 		sock = SocketAccept(read_fd);
-			
+
 		if (sock == -1) {
 			s_printf("Failed to accept GW port connection (errno=%d)\n", errno);
 			return;
@@ -134,39 +134,37 @@ void SGWHit(int read_fd, int arg) {
 
 		/* Check if we have room for it */
 		if (gw_conns_num < MAX_GW_CONNS) {
-			
+
 			/* Find a free connection */
 			for (i = 0; i < MAX_GW_CONNS; i++) {
 				gw_conn = &gw_conns[i];
-				
+
 				if (gw_conn->state == CONN_FREE)
 					break;
 			}
-			
+
 			gw_conn->sock = sock;
 			gw_conn->state = CONN_CONNECTED;
 			gw_conn->last_activity = time(NULL);
 
 #if 0 /* prevents sending lots of data */
-			if (SetSocketNonBlocking(sock, 1) == -1)
-			{
+			if (SetSocketNonBlocking(sock, 1) == -1) {
 				plog("Cannot make GW client socket non-blocking");
 			}
 #endif
-			
+
 			/* Initialize socket buffers */
 			Sockbuf_init(&gw_conn->r, sock, 8192, SOCKBUF_READ);
 			Sockbuf_init(&gw_conn->w, sock, 8192, SOCKBUF_WRITE);
-			
+
 			install_input(SGWHit, sock, 2);
-			
+
 			gw_conns_num++;
-		}
-		else {
+		} else {
 			/* No room, close the connection */
 			DgramClose(sock);
 		}
-		
+
 		/* The connection has either been accepted or not, we're done */
 		return;
 	}
@@ -191,13 +189,11 @@ void SGWHit(int read_fd, int arg) {
 	bytes = DgramReceiveAny(read_fd, gw_conn->r.buf + gw_conn->r.len, gw_conn->r.size - gw_conn->r.len);
 
 	/* Check for errors or our TCP connection closing */
-	if (bytes <= 0)
-	{
+	if (bytes <= 0) {
 		/* If 0 bytes have been sent than the client has probably closed
 		 * the connection
 		 */
-		if (bytes == 0)
-		{
+		if (bytes == 0) {
 			gw_conn->state = CONN_FREE;
 			Sockbuf_cleanup(&gw_conn->r);
 			Sockbuf_cleanup(&gw_conn->w);
@@ -215,15 +211,15 @@ void SGWHit(int read_fd, int arg) {
 		}
 		return;
 	}
-	
+
 	/* Set length */
 	gw_conn->r.len = bytes;
-	
+
 	gw_conn->last_activity = time(NULL);
-	
+
 	/* Prepare to send a new reply */
 	Sockbuf_clear(&gw_conn->w);
-	
+
 	/* Try to read the request */
 	while (Packet_getln(&gw_conn->r, buf) > 0) {
 		/* Basic server info */
@@ -233,14 +229,14 @@ void SGWHit(int read_fd, int arg) {
 			int players = 0;
 			int day = bst(DAY, turn);
 			now = time(NULL);
-			
+
 			/* Count players */
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->admin_dm && cfg.secret_dungeon_master) continue;
 				players++;
 			}
-			
+
 			Packet_println(&gw_conn->w, "INFO REPLY");
 			Packet_println(&gw_conn->w, "uptime=%d", now - cfg.runtime);
 			Packet_println(&gw_conn->w, "turn=%d", turn);
@@ -249,7 +245,7 @@ void SGWHit(int read_fd, int arg) {
 			Packet_println(&gw_conn->w, "players=%d", players);
 			Packet_println(&gw_conn->w, "INFO REPLY END");
 		}
-		
+
 		/* List of players */
 		else if (!strcmp(buf, "PLAYERS")) {
 			player_type *p_ptr;
@@ -267,7 +263,7 @@ void SGWHit(int read_fd, int arg) {
 			}
 			Packet_println(&gw_conn->w, "PLAYERS REPLY END");
 		}
-		
+
 		/* Highscore list */
 		else if (!strcmp(buf, "SCORES")) {
 			char *buf2;
@@ -349,7 +345,51 @@ void SGWHit(int read_fd, int arg) {
 			Packet_println(&gw_conn->w, "HOUSES REPLY END");
 			C_KILL(buf2, alloc, char);
 		}
-		
+
+		/* Player stores list */
+		else if (!strcmp(buf, "PSTORES")) {
+			//MAX_HOUSES (65536), STORE_INVEN_MAX (120)
+#if 0 /* todo: implement (this is a copy/paste of above 'HOUSES') */
+			char *buf2;
+			int len, alloc = 128 * num_houses;
+			int amount, sent = 0, rval, fail = 0;
+
+			C_MAKE(buf2, alloc, char);
+			Packet_println(&gw_conn->w, "PSTORES REPLY");
+
+			len = pstores_send(buf2, alloc);
+
+			/* Send the contents of the socket buffer before sending buf2 */
+			Sockbuf_flush(&gw_conn->w);
+			Sockbuf_clear(&gw_conn->w);
+
+			/* Send buf2 in pieces */
+			/* XXX - Blocking send loop */
+			while (sent < len) {
+				/* Try to send a full socket buffer */
+				amount = MIN(8192, len - sent);
+				Sockbuf_write(&gw_conn->w, &buf2[sent], amount);
+				rval = Sockbuf_flush(&gw_conn->w);
+
+				if (rval <= 0) {
+					/* Failure */
+					if (++fail >= 3) {
+						/* Give up */
+						break;
+					}
+				}
+				else {
+					sent += rval;
+				}
+
+				Sockbuf_clear(&gw_conn->w);
+			}
+
+			Packet_println(&gw_conn->w, "PSTORES REPLY END");
+			C_KILL(buf2, alloc, char);
+#endif
+		}
+
 		/* Default reply */
 		else {
 			Packet_println(&gw_conn->w, "ERROR UNKNOWN REQUEST");
@@ -363,7 +403,7 @@ void SGWHit(int read_fd, int arg) {
 			Sockbuf_clear(&gw_conn->w);
 		}
 	}
-		
+
 	/* Advance the read buffer */
 	Sockbuf_advance(&gw_conn->r, gw_conn->r.ptr - gw_conn->r.buf);
 }
