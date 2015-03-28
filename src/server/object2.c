@@ -198,6 +198,20 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	/* uh, we abuse this */
 	if (unfound_art) questitem_d(o_ptr, o_ptr->number);
 
+#ifdef PLAYER_STORES
+	/* Log removal of player store items */
+	if (!(o_ptr->held_m_idx) && o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
+	    && inside_house(wpos, o_ptr->ix, o_ptr->iy)) {
+		char o_name[ONAME_LEN];//, p_name[NAME_LEN];
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		//s_printf("PLAYER_STORE_REMOVED: %s - %s (%d,%d,%d; %d,%d).\n",
+		s_printf("PLAYER_STORE_REMOVED: %s (%d,%d,%d; %d,%d).\n",
+		    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
+		    o_name, wpos->wx, wpos->wy, wpos->wz,
+		    o_ptr->ix, o_ptr->iy);
+	}
+#endif
+
 	/* Excise */
 	excise_object_idx(o_idx);
 
