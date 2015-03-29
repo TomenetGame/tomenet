@@ -8137,6 +8137,8 @@ void do_slash_cmd(int Ind, char *message) {
 				    //!((a_ptr->flags1 & TR1_SLAY_UNDEAD) || (a_ptr->flags1 & TR1_KILL_UNDEAD)) ||
 				    !(a_ptr->flags1 & TR1_BRAND_ELEC) ||
 
+				    !(a_ptr->flags3 & TR3_SEE_INVIS) ||
+
 				    //!(a_ptr->flags3 & TR3_SH_ELEC) ||
 
 				    //!(a_ptr->flags1 & TR1_CON) ||
