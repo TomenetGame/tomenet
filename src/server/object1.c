@@ -3010,168 +3010,6 @@ cptr item_activation(object_type *o_ptr) {
 	/* Require activation ability */
 	if (!(f3 & TR3_ACTIVATE)) return (NULL);
 
-	// -------------------- base items -------------------- //
-
-	/* Require activation ability */
-	if (o_ptr->tval == TV_DRAG_ARMOR) {
-		/* Branch on the sub-type */
-		switch (o_ptr->sval) {
-		case SV_DRAGON_BLUE:
-		    return "breathe lightning every 200+d100 turns";
-//		  return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
-		case SV_DRAGON_WHITE:
-		    return "breathe frost every 200+d100 turns";
-//		  return "polymorph into an Ancient White Dragon every 200+d100 turns";
-		case SV_DRAGON_BLACK:
-		    return "breathe acid every 200+d100 turns";
-//		  return "polymorph into an Ancient Black Dragon every 200+d100 turns";
-		case SV_DRAGON_GREEN:
-		    return "breathe poison every 200+d100 turns";
-//		  return "polymorph into an Ancient Green Dragon every 200+d100 turns";
-		case SV_DRAGON_RED:
-		    return "breathe fire every 200+d100 turns";
-//		  return "polymorph into an Ancient Red Dragon every 200+d100 turns";
-		case SV_DRAGON_MULTIHUED:
-		    return "breathe the elements every 200+d100 turns";
-//		  return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
-	    	case SV_DRAGON_PSEUDO:
-		    return "breathe light/dark every 200+d100 turns";
-//		  return "polymorph into an Ethereal Drake every 200+d100 turns";
-		  //return "polymorph into a Pseudo Dragon every 200+d100 turns";
-	    	case SV_DRAGON_BRONZE:
-		    return "breathe confusion every 200+d100 turns";
-//		  return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
-	    	case SV_DRAGON_GOLD:
-		    return "breathe sound every 200+d100 turns";
-//		  return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
-	    	case SV_DRAGON_CHAOS:
-		    return "breathe chaos every 200+d100 turns";
-//		  return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
-	    	case SV_DRAGON_LAW:
-		    return "breathe shards/sound every 200+d100 turns";
-//		  return "polymorph into a Great Wyrm of Law every 200+d100 turns";
-	    	case SV_DRAGON_BALANCE:
-		    return "breathe disenchantment every 200+d100 turns";
-//		  return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
-	    	case SV_DRAGON_SHINING:
-		    return "breathe light/dark every 200+d100 turns";
-//		  return "polymorph into an Ethereal Dragon every 200+d100 turns";
-	    	case SV_DRAGON_POWER:
-		    return "breathe havoc every 200+d100 turns";
-//		  return "polymorph into a Great Wyrm of Power every 200+d100 turns";
-	    	case SV_DRAGON_DEATH:
-		    return "breathe nether every 200+d100 turns";
-//		  return "polymorph into a death drake every 200+d100 turns";
-	    	case SV_DRAGON_CRYSTAL:
-		    return "breathe shards every 200+d100 turns";
-//		  return "polymorph into a great crystal drake every 200+d100 turns";
-	    	case SV_DRAGON_DRACOLICH:
-		    return "breathe nether/cold every 200+d100 turns";
-//		  return "polymorph into a dracolich every 200+d100 turns";
-	    	case SV_DRAGON_DRACOLISK:
-		    return "breathe fire/nexus every 200+d100 turns";
-//		  return "polymorph into a dracolisk every 200+d100 turns";
-	    	case SV_DRAGON_SKY:
-		    return "breathe electricity/light/gravity every 200+d100 turns";
-//		  return "polymorph into a sky drake every 200+d100 turns";
-	    	case SV_DRAGON_SILVER:
-		    return "breathe inertia/cold every 200+d100 turns";
-//		  return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
-		}
-	}
-
-	if (o_ptr->tval == TV_RING) {
-		switch(o_ptr->sval) {
-		case SV_RING_ELEC:
-			return "a ball of lightning and resist lightning every 25..50+d25 turns";
-		case SV_RING_FLAMES:
-			return "a ball of fire and resist fire every 25..50+d25 turns";
-		case SV_RING_ICE:
-			return "a ball of cold and resist cold every 25..50+d25 turns";
-		case SV_RING_ACID:
-			return "a ball of acid and resist acid every 25..50+d25 turns";
-		case SV_RING_TELEPORTATION:
-			return "teleportation and destruction of the ring";
-		case SV_RING_POLYMORPH:
-				if (o_ptr->pval) {
-					char m_name[MNAME_LEN];
-					m_name[0] = 0;
-					if (!(r_info[o_ptr->pval].flags8 & RF8_PLURAL)) {
-						if (is_a_vowel(*(r_info[o_ptr->pval].name + r_name)))
-							strcpy(m_name, "an ");
-						else strcpy(m_name, "a ");
-					}
-					strcat(m_name, r_info[o_ptr->pval].name + r_name);
-					return format("polymorphing into %s", m_name);
-				} else
-					return "memorizing the form you are mimicing";
-			default:
-				return NULL;
-		}
-	}
-
-	if (o_ptr->tval == TV_AMULET) {
-		switch(o_ptr->sval) {
-			/* The amulet of the moon can be activated for sleep */
-		case SV_AMULET_THE_MOON:
-			return "sleep monsters every 100+d100 turns";
-		case SV_AMULET_SERPENT:
-			return "breathing venom every 40+d60 turns";
-		case SV_AMULET_RAGE:
-			return "growing a fury every 150+d100 turns";
-		default:
-			return NULL;
-		}
-	}
-
-	if (o_ptr->tval == TV_GOLEM) {
-		switch (o_ptr->sval) {
-		case SV_GOLEM_ATTACK: return ("command your golem to attack your target or stop doing so.");
-		case SV_GOLEM_GUARD: return ("command your golem to stay and guard its position or stop doing so.");
-		case SV_GOLEM_FOLLOW: return ("command your golem to follow you or stop doing so.");
-		default: return NULL;
-		}
-	}
-
-#if 0
-	if (o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
-		return "Spiritual recall.");
-#endif
-
-	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
-		return "transcribing a spell scroll or spell crystal into it";
-	}
-
-	// -------------------- ego items -------------------- //
-
-	// requires some substitution..
-	/* Some ego items can be activated */
-	if (is_ego_p(o_ptr, EGO_AURA_FIRE2))
-		return "temporary fire resistance every 50..150+d40 turns";
-	if (is_ego_p(o_ptr, EGO_AURA_ELEC2))
-		return "temporary lighting resistance every 50..150+d40 turns";
-	if (is_ego_p(o_ptr, EGO_AURA_COLD2))
-		return "temporary frost resistance every 50..150+d40 turns";
-
-	if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
-		return "temporary resistance every 50..150+d40 turns";
-
-	/* divers */
-	if (is_ego_p(o_ptr, EGO_DRAGON))
-		return "teleportation every 25..50+d50 turns";
-	if (is_ego_p(o_ptr, EGO_JUMP))
-		return "phase-jump every 10+d10 turns";
-	if (is_ego_p(o_ptr, EGO_SPINNING))
-		return "spinning around every 50+d25 turns";
-	if (is_ego_p(o_ptr, EGO_FURY))
-		return "growing a fury every 50..100+d50 turns";
-	if (is_ego_p(o_ptr, EGO_NOLDOR))
-		return "detecting treasure every 10+d20 turns";
-	if (is_ego_p(o_ptr, EGO_SPECTRAL))
-		return "wraithform every 25..50+d50 turns";
-
-	//EGO_MUSIC_ELDAR, EGO_MUSIC_POWER
-
 	// -------------------- artifacts -------------------- //
 
 	/* Some artifacts can be activated */
@@ -3397,10 +3235,170 @@ cptr item_activation(object_type *o_ptr) {
 		return "singing a cheerful song every 30 turns";
 	case ART_HAVOC:
 		return "invoking a force bolt every 1+d2 turns";
-
+#if 0 /* no, eg randart serpent amulet should retain basic activation! */
 	/* For the moment ignore (non-ego) randarts */
 	case ART_RANDART: return "a crash ;-)";
+#endif
 	}
+
+	// -------------------- ego items -------------------- //
+
+	// requires some substitution..
+	/* Some ego items can be activated */
+	if (is_ego_p(o_ptr, EGO_AURA_FIRE2))
+		return "temporary fire resistance every 50..150+d40 turns";
+	if (is_ego_p(o_ptr, EGO_AURA_ELEC2))
+		return "temporary lighting resistance every 50..150+d40 turns";
+	if (is_ego_p(o_ptr, EGO_AURA_COLD2))
+		return "temporary frost resistance every 50..150+d40 turns";
+
+	if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
+		return "temporary resistance every 50..150+d40 turns";
+
+	/* divers */
+	if (is_ego_p(o_ptr, EGO_DRAGON))
+		return "teleportation every 25..50+d50 turns";
+	if (is_ego_p(o_ptr, EGO_JUMP))
+		return "phase-jump every 10+d10 turns";
+	if (is_ego_p(o_ptr, EGO_SPINNING))
+		return "spinning around every 50+d25 turns";
+	if (is_ego_p(o_ptr, EGO_FURY))
+		return "growing a fury every 50..100+d50 turns";
+	if (is_ego_p(o_ptr, EGO_NOLDOR))
+		return "detecting treasure every 10+d20 turns";
+	if (is_ego_p(o_ptr, EGO_SPECTRAL))
+		return "wraithform every 25..50+d50 turns";
+
+	//EGO_MUSIC_ELDAR, EGO_MUSIC_POWER
+
+	// -------------------- base items -------------------- //
+
+	/* Require activation ability */
+	if (o_ptr->tval == TV_DRAG_ARMOR) {
+		/* Branch on the sub-type */
+		switch (o_ptr->sval) {
+		case SV_DRAGON_BLUE:
+		    return "breathe lightning every 200+d100 turns";
+//		  return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
+		case SV_DRAGON_WHITE:
+		    return "breathe frost every 200+d100 turns";
+//		  return "polymorph into an Ancient White Dragon every 200+d100 turns";
+		case SV_DRAGON_BLACK:
+		    return "breathe acid every 200+d100 turns";
+//		  return "polymorph into an Ancient Black Dragon every 200+d100 turns";
+		case SV_DRAGON_GREEN:
+		    return "breathe poison every 200+d100 turns";
+//		  return "polymorph into an Ancient Green Dragon every 200+d100 turns";
+		case SV_DRAGON_RED:
+		    return "breathe fire every 200+d100 turns";
+//		  return "polymorph into an Ancient Red Dragon every 200+d100 turns";
+		case SV_DRAGON_MULTIHUED:
+		    return "breathe the elements every 200+d100 turns";
+//		  return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
+	    	case SV_DRAGON_PSEUDO:
+		    return "breathe light/dark every 200+d100 turns";
+//		  return "polymorph into an Ethereal Drake every 200+d100 turns";
+		  //return "polymorph into a Pseudo Dragon every 200+d100 turns";
+	    	case SV_DRAGON_BRONZE:
+		    return "breathe confusion every 200+d100 turns";
+//		  return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
+	    	case SV_DRAGON_GOLD:
+		    return "breathe sound every 200+d100 turns";
+//		  return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
+	    	case SV_DRAGON_CHAOS:
+		    return "breathe chaos every 200+d100 turns";
+//		  return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
+	    	case SV_DRAGON_LAW:
+		    return "breathe shards/sound every 200+d100 turns";
+//		  return "polymorph into a Great Wyrm of Law every 200+d100 turns";
+	    	case SV_DRAGON_BALANCE:
+		    return "breathe disenchantment every 200+d100 turns";
+//		  return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
+	    	case SV_DRAGON_SHINING:
+		    return "breathe light/dark every 200+d100 turns";
+//		  return "polymorph into an Ethereal Dragon every 200+d100 turns";
+	    	case SV_DRAGON_POWER:
+		    return "breathe havoc every 200+d100 turns";
+//		  return "polymorph into a Great Wyrm of Power every 200+d100 turns";
+	    	case SV_DRAGON_DEATH:
+		    return "breathe nether every 200+d100 turns";
+//		  return "polymorph into a death drake every 200+d100 turns";
+	    	case SV_DRAGON_CRYSTAL:
+		    return "breathe shards every 200+d100 turns";
+//		  return "polymorph into a great crystal drake every 200+d100 turns";
+	    	case SV_DRAGON_DRACOLICH:
+		    return "breathe nether/cold every 200+d100 turns";
+//		  return "polymorph into a dracolich every 200+d100 turns";
+	    	case SV_DRAGON_DRACOLISK:
+		    return "breathe fire/nexus every 200+d100 turns";
+//		  return "polymorph into a dracolisk every 200+d100 turns";
+	    	case SV_DRAGON_SKY:
+		    return "breathe electricity/light/gravity every 200+d100 turns";
+//		  return "polymorph into a sky drake every 200+d100 turns";
+	    	case SV_DRAGON_SILVER:
+		    return "breathe inertia/cold every 200+d100 turns";
+//		  return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
+		}
+	}
+
+	if (o_ptr->tval == TV_RING) {
+		switch(o_ptr->sval) {
+		case SV_RING_ELEC:
+			return "a ball of lightning and resist lightning every 25..50+d25 turns";
+		case SV_RING_FLAMES:
+			return "a ball of fire and resist fire every 25..50+d25 turns";
+		case SV_RING_ICE:
+			return "a ball of cold and resist cold every 25..50+d25 turns";
+		case SV_RING_ACID:
+			return "a ball of acid and resist acid every 25..50+d25 turns";
+		case SV_RING_TELEPORTATION:
+			return "teleportation and destruction of the ring";
+		case SV_RING_POLYMORPH:
+			if (o_ptr->pval) {
+				char m_name[MNAME_LEN];
+				m_name[0] = 0;
+				if (!(r_info[o_ptr->pval].flags8 & RF8_PLURAL)) {
+					if (is_a_vowel(*(r_info[o_ptr->pval].name + r_name)))
+						strcpy(m_name, "an ");
+					else strcpy(m_name, "a ");
+				}
+				strcat(m_name, r_info[o_ptr->pval].name + r_name);
+				return format("polymorphing into %s", m_name);
+			} else
+				return "memorizing the form you are mimicing";
+		}
+	}
+
+	if (o_ptr->tval == TV_AMULET) {
+		switch(o_ptr->sval) {
+			/* The amulet of the moon can be activated for sleep */
+		case SV_AMULET_THE_MOON:
+			return "sleep monsters every 100+d100 turns";
+		case SV_AMULET_SERPENT:
+			return "breathing venom every 40+d60 turns";
+		case SV_AMULET_RAGE:
+			return "growing a fury every 150+d100 turns";
+		}
+	}
+
+	if (o_ptr->tval == TV_GOLEM) {
+		switch (o_ptr->sval) {
+		case SV_GOLEM_ATTACK:
+			return ("command your golem to attack your target or stop doing so.");
+		case SV_GOLEM_GUARD:
+			return ("command your golem to stay and guard its position or stop doing so.");
+		case SV_GOLEM_FOLLOW:
+			return ("command your golem to follow you or stop doing so.");
+		}
+	}
+
+#if 0
+	if (o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
+		return "Spiritual recall.");
+#endif
+
+	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
+		return "transcribing a spell scroll or spell crystal into it";
 
 	/* Oops */
 	return NULL;

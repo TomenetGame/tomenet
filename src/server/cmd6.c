@@ -4857,6 +4857,7 @@ bool rod_requires_direction(int Ind, object_type *o_ptr) {
 void do_cmd_activate(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int         i, k;
+	bool done = FALSE;
 //	int md = get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 	object_type *o_ptr;
 
@@ -4978,15 +4979,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		}
 	}
 
-
-	/* Hack -- Dragon Scale Mail can be activated as well */
-	/* Yikes, hard-coded r_idx.. */
-	if (o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY) {
-		/* Breath activation */
-		p_ptr->current_activation = item;
-		get_aim_dir(Ind);
-		return;
-	}
+	// -------------------- special basic items that can't vary -------------------- //
+	//(could be moved down to 'base items' for less efficiency but better sort order)
 
 	/* Rune de/re-combination */
 	if (o_ptr->tval == TV_RUNE) {
@@ -5075,40 +5069,69 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			}
 
 			switch (o_ptr->sval) {
-				case SV_GOLEM_ATTACK:
-					if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
-						msg_print(Ind, "I wont attack your target anymore, master.");
-						m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
-					} else {
-						msg_print(Ind, "I will attack your target, master.");
-						m_ptr->mind |= (1 << (o_ptr->sval - 200));
-					}
-					break;
-				case SV_GOLEM_FOLLOW:
-					if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
-						msg_print(Ind, "I wont follow you, master.");
-						m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
-					} else {
-						msg_print(Ind, "I will follow you, master.");
-						m_ptr->mind |= (1 << (o_ptr->sval - 200));
-					}
-					break;
-				case SV_GOLEM_GUARD:
-					if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
-						msg_print(Ind, "I wont guard my position anymore, master.");
-						m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
-					} else {
-						msg_print(Ind, "I will guard my position, master.");
-						m_ptr->mind |= (1 << (o_ptr->sval - 200));
-					}
-					break;
+			case SV_GOLEM_ATTACK:
+				if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
+					msg_print(Ind, "I wont attack your target anymore, master.");
+					m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+				} else {
+					msg_print(Ind, "I will attack your target, master.");
+					m_ptr->mind |= (1 << (o_ptr->sval - 200));
+				}
+				break;
+			case SV_GOLEM_FOLLOW:
+				if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
+					msg_print(Ind, "I wont follow you, master.");
+					m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+				} else {
+					msg_print(Ind, "I will follow you, master.");
+					m_ptr->mind |= (1 << (o_ptr->sval - 200));
+				}
+				break;
+			case SV_GOLEM_GUARD:
+				if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
+					msg_print(Ind, "I wont guard my position anymore, master.");
+					m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+				} else {
+					msg_print(Ind, "I will guard my position, master.");
+					m_ptr->mind |= (1 << (o_ptr->sval - 200));
+				}
+				break;
 			}
 		}
 		return;
 	}
 
-	/* Artifacts */
-	if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART)) {
+	/* add a single spell to the player's customizable tome */
+	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
+	        /* free space left? */
+	        i = 1;
+		/* k_info-pval dependant */
+                switch (o_ptr->bpval) {
+		case 0: i = 0; break;
+		case 1: if (o_ptr->xtra1) i = 0; break;
+		case 2: if (o_ptr->xtra2) i = 0; break;
+		case 3: if (o_ptr->xtra3) i = 0; break;
+		case 4: if (o_ptr->xtra4) i = 0; break;
+		case 5: if (o_ptr->xtra5) i = 0; break;
+		case 6: if (o_ptr->xtra6) i = 0; break;
+		case 7: if (o_ptr->xtra7) i = 0; break;
+		case 8: if (o_ptr->xtra8) i = 0; break;
+		default: if (o_ptr->xtra9) i = 0; break;
+		}
+		if (!i) {
+			msg_print(Ind, "That book has no blank pages left!");
+			return;
+		}
+
+		tome_creation(Ind);
+		p_ptr->using_up_item = item; /* hack - gets swapped later */
+		return;
+	}
+
+	// -------------------- artifacts -------------------- //
+
+	if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) {
+		done = TRUE;
 		/* Choose effect */
 		switch (o_ptr->name1) {
 		case ART_NARTHANC:
@@ -5837,6 +5860,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "\377u ~con, je leur met bien profond: c'est moi le maitre du dongeon!~'");
 			o_ptr->timeout = 30;
 			break;
+		default: done = FALSE;
 		}
 
 		/* Window stuff */
@@ -5845,105 +5869,98 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		if (o_ptr->timeout) return;
 	}
 
-	/* ego activation etc */
-	else if (is_ego_p(o_ptr, EGO_DRAGON)) {
-		teleport_player(Ind, 100, FALSE);
-		o_ptr->timeout = 50 + randint(35) - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
+	// -------------------- ego items -------------------- //
 
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Done */
-		return;
+	if (!done) {
+		if (is_ego_p(o_ptr, EGO_DRAGON)) {
+			teleport_player(Ind, 100, FALSE);
+			o_ptr->timeout = 50 + randint(35) - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			/* Done */
+			return;
+		} else if (is_ego_p(o_ptr, EGO_JUMP)) {
+			teleport_player(Ind, 10, TRUE);
+			o_ptr->timeout = 10 + randint(10);
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			/* Done */
+			return;
+		} else if (is_ego_p(o_ptr, EGO_SPINNING)) {
+			//do_spin(Ind);
+			spin_attack(Ind); /* this one is nicer than do_spin */
+			o_ptr->timeout = 50 + randint(25);
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			/* Done */
+			return;
+		} else if (is_ego_p(o_ptr, EGO_FURY)) {
+			set_afraid(Ind, 0);
+			set_fury(Ind, rand_int(5) + 15); /* removed stacking */
+			hp_player(Ind, 40);
+			o_ptr->timeout = 100 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			/* Done */
+			return;
+		} else if (is_ego_p(o_ptr, EGO_NOLDOR)) {
+			detect_treasure(Ind, DEFAULT_RADIUS * 2);
+			o_ptr->timeout = 10 + randint(20);
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			/* Done */
+			return;
+		} else if (is_ego_p(o_ptr, EGO_SPECTRAL)) {
+			//set_shadow(Ind, 20 + randint(20));
+			set_tim_wraith(Ind, 15 + randint(10));
+			o_ptr->timeout = 50 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			/* Window stuff */
+			p_ptr->window |= PW_INVEN | PW_EQUIP;
+			/* Done */
+			return;
+		} else if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES)) {
+			msg_print(Ind, "Your cloak flashes many colors...");
+			(void)set_oppose_acid(Ind, randint(20) + 50); /* removed stacking */
+			(void)set_oppose_elec(Ind, randint(20) + 50);
+			(void)set_oppose_fire(Ind, randint(20) + 50);
+			(void)set_oppose_cold(Ind, randint(20) + 50);
+			(void)set_oppose_pois(Ind, randint(20) + 50);
+			o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			return;
+		} else if (is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
+		//else if (is_ego_p(o_ptr, EGO_AURA_FIRE) || is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
+			msg_print(Ind, "Your cloak flashes in flames...");
+			(void)set_oppose_fire(Ind, randint(40) + 40);
+			o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			return;
+		} else if (is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
+		//else if (is_ego_p(o_ptr, EGO_AURA_ELEC) || is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
+			msg_print(Ind, "Your cloak sparkles with lightning...");
+			(void)set_oppose_elec(Ind, randint(40) + 40);
+			o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			return;
+		} else if (is_ego_p(o_ptr, EGO_AURA_COLD2)) {
+		//else if (is_ego_p(o_ptr, EGO_AURA_COLD) || is_ego_p(o_ptr, EGO_AURA_COLD2)) {
+			msg_print(Ind, "Your cloak shines with frost...");
+			(void)set_oppose_cold(Ind, randint(40) + 40);
+			o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			return;
+		}
 	}
-	else if (is_ego_p(o_ptr, EGO_JUMP)) {
-		teleport_player(Ind, 10, TRUE);
-		o_ptr->timeout = 10 + randint(10);
 
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	// -------------------- base items -------------------- //
 
-		/* Done */
-		return;
-	}
-	else if (is_ego_p(o_ptr, EGO_SPINNING)) {
-//		do_spin(Ind);
-		spin_attack(Ind); /* this one is nicer than do_spin */
-		o_ptr->timeout = 50 + randint(25);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Done */
-		return;
-	}
-	else if (is_ego_p(o_ptr, EGO_FURY)) {
-		set_afraid(Ind, 0);
-		set_fury(Ind, rand_int(5) + 15); /* removed stacking */
-		hp_player(Ind, 40);
-		o_ptr->timeout = 100 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Done */
-		return;
-	}
-	else if (is_ego_p(o_ptr, EGO_NOLDOR)) {
-		detect_treasure(Ind, DEFAULT_RADIUS * 2);
-		o_ptr->timeout = 10 + randint(20);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Done */
-		return;
-	}
-	else if (is_ego_p(o_ptr, EGO_SPECTRAL)) {
-                //set_shadow(Ind, 20 + randint(20));
-		set_tim_wraith(Ind, 15 + randint(10));
-		o_ptr->timeout = 50 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-
-		/* Window stuff */
-		p_ptr->window |= PW_INVEN | PW_EQUIP;
-
-		/* Done */
-		return;
-	}
-	else if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES)) {
-		msg_print(Ind, "Your cloak flashes many colors...");
-		(void)set_oppose_acid(Ind, randint(20) + 50); /* removed stacking */
-		(void)set_oppose_elec(Ind, randint(20) + 50);
-		(void)set_oppose_fire(Ind, randint(20) + 50);
-		(void)set_oppose_cold(Ind, randint(20) + 50);
-		(void)set_oppose_pois(Ind, randint(20) + 50);
-		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
-		return;
-	}
-	else if (is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
-	//else if (is_ego_p(o_ptr, EGO_AURA_FIRE) || is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
-		msg_print(Ind, "Your cloak flashes in flames...");
-		(void)set_oppose_fire(Ind, randint(40) + 40);
-		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
-		return;
-	}
-	else if (is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
-	//else if (is_ego_p(o_ptr, EGO_AURA_ELEC) || is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
-		msg_print(Ind, "Your cloak sparkles with lightning...");
-		(void)set_oppose_elec(Ind, randint(40) + 40);
-		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
-		return;
-	}
-	else if (is_ego_p(o_ptr, EGO_AURA_COLD2)) {
-	//else if (is_ego_p(o_ptr, EGO_AURA_COLD) || is_ego_p(o_ptr, EGO_AURA_COLD2)) {
-		msg_print(Ind, "Your cloak shines with frost...");
-		(void)set_oppose_cold(Ind, randint(40) + 40);
-		o_ptr->timeout = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+	/* Hack -- Dragon Scale Mail can be activated as well */
+	/* Yikes, hard-coded r_idx.. */
+	if (!done && o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY) {
+		/* Breath activation */
+		p_ptr->current_activation = item;
+		get_aim_dir(Ind);
 		return;
 	}
 
 	/* Hack -- Amulet of the Serpents can be activated as well */
-	if (o_ptr->tval == TV_AMULET) {
+	if (!done && o_ptr->tval == TV_AMULET) {
 		switch (o_ptr->sval) {
 		case SV_AMULET_SERPENT:
 			/* Get a direction for breathing (or abort) */
@@ -5967,7 +5984,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		}
 	}
 
-	if (o_ptr->tval == TV_RING) {
+	if (!done && o_ptr->tval == TV_RING) {
 		switch (o_ptr->sval) {
 			case SV_RING_ELEC:
 			case SV_RING_ACID:
@@ -6091,33 +6108,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	}
 
-	/* add a single spell to the player's customizable tome */
-	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
-	        /* free space left? */
-	        i = 1;
-		/* k_info-pval dependant */
-                switch (o_ptr->bpval) {
-		case 0: i = 0; break;
-		case 1: if (o_ptr->xtra1) i = 0; break;
-		case 2: if (o_ptr->xtra2) i = 0; break;
-		case 3: if (o_ptr->xtra3) i = 0; break;
-		case 4: if (o_ptr->xtra4) i = 0; break;
-		case 5: if (o_ptr->xtra5) i = 0; break;
-		case 6: if (o_ptr->xtra6) i = 0; break;
-		case 7: if (o_ptr->xtra7) i = 0; break;
-		case 8: if (o_ptr->xtra8) i = 0; break;
-		default: if (o_ptr->xtra9) i = 0; break;
-		}
-		if (!i) {
-			msg_print(Ind, "That book has no blank pages left!");
-			return;
-		}
-
-		tome_creation(Ind);
-		p_ptr->using_up_item = item; /* hack - gets swapped later */
-		return;
-	}
-
 	/* Mistake */
 	msg_print(Ind, "That object cannot be activated.");
 }
@@ -6127,6 +6117,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	int item;
+	bool done = FALSE;
 
 	item = p_ptr->current_activation;
 
@@ -6168,7 +6159,213 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
-	if (o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY && !o_ptr->name1) {
+	// -------------------- artifacts -------------------- //
+
+	/* Artifacts activate by name */
+	if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) {
+		done = TRUE;
+		switch (o_ptr->name1) {
+		case ART_NARTHANC:
+			sprintf(p_ptr->attacker, " fires a fire bolt for");
+			fire_bolt(Ind, GF_FIRE, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
+			o_ptr->timeout = rand_int(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
+			break;
+		case ART_NIMTHANC:
+			sprintf(p_ptr->attacker, " fires a frost bolt for");
+			fire_bolt(Ind, GF_COLD, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
+			o_ptr->timeout = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			break;
+		case ART_DETHANC:
+			sprintf(p_ptr->attacker, " fires a lightning bolt for");
+			fire_bolt(Ind, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
+			o_ptr->timeout = rand_int(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
+			break;
+		case ART_RILIA:
+			sprintf(p_ptr->attacker, " casts a stinking cloud for");
+			//fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 3, p_ptr->attacker);
+			fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7), 3, 4, 9, p_ptr->attacker);
+			o_ptr->timeout = rand_int(2) + 4 - get_skill_scale(p_ptr, SKILL_DEVICE, 2);
+			break;
+		case ART_BELANGIL:
+			sprintf(p_ptr->attacker, " casts a cold ball for");
+			fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 2, p_ptr->attacker);
+			o_ptr->timeout = rand_int(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
+			break;
+		case ART_RINGIL:
+			sprintf(p_ptr->attacker, " casts a cold ball for");
+			fire_ball(Ind, GF_COLD, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 2, p_ptr->attacker);
+			o_ptr->timeout = 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
+			break;
+		case ART_ANDURIL:
+			sprintf(p_ptr->attacker, " casts a fire ball for");
+			fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
+			o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
+			break;
+		case ART_FIRESTAR:
+			sprintf(p_ptr->attacker, " casts a fire ball for");
+			fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 3, p_ptr->attacker);
+			o_ptr->timeout = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 75);
+			break;
+		case ART_THEODEN:
+			if (drain_life(Ind, dir, 25))
+				hp_player(Ind, p_ptr->ret_dam / 3);
+			p_ptr->ret_dam = 0;
+			o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
+			break;
+		case ART_TURMIL:
+			if (drain_life(Ind, dir, 15))
+				hp_player(Ind, p_ptr->ret_dam / 2);
+			p_ptr->ret_dam = 0;
+			o_ptr->timeout = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
+			break;
+		case ART_ARUNRUTH:
+			sprintf(p_ptr->attacker, " fires a frost bolt for");
+			fire_bolt(Ind, GF_COLD, dir, damroll(12 + get_skill_scale(p_ptr, SKILL_DEVICE, 15), 8), p_ptr->attacker);
+			o_ptr->timeout = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
+			break;
+		case ART_AEGLOS:
+			sprintf(p_ptr->attacker, " casts a cold ball for");
+			fire_ball(Ind, GF_COLD, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
+			o_ptr->timeout = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
+			break;
+		case ART_OROME:
+			wall_to_mud(Ind, dir);
+			o_ptr->timeout = 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
+			break;
+		case ART_ULMO:
+			teleport_monster(Ind, dir);
+			o_ptr->timeout = 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			break;
+		case ART_TOTILA:
+			confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+			o_ptr->timeout = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
+			break;
+		case ART_CAMMITHRIM:
+			sprintf(p_ptr->attacker, " fires a missile for");
+			fire_bolt(Ind, GF_MISSILE, dir, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 8), 6), p_ptr->attacker);
+			o_ptr->timeout = 2 - get_skill_scale(p_ptr, SKILL_DEVICE, 1);
+			break;
+		case ART_PAURHACH:
+			sprintf(p_ptr->attacker, " fires a fire bolt for");
+			fire_bolt(Ind, GF_FIRE, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
+			o_ptr->timeout = rand_int(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
+			break;
+		case ART_PAURNIMMEN:
+			sprintf(p_ptr->attacker, " fires a frost bolt for");
+			fire_bolt(Ind, GF_COLD, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
+			o_ptr->timeout = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			break;
+		case ART_PAURAEGEN:
+			sprintf(p_ptr->attacker, " fires a lightning bolt for");
+			fire_bolt(Ind, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
+			o_ptr->timeout = rand_int(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
+			break;
+		case ART_PAURNEN:
+			sprintf(p_ptr->attacker, " fires an acid bolt for");
+			fire_bolt(Ind, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
+			o_ptr->timeout = rand_int(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
+			break;
+		case ART_FINGOLFIN:
+			sprintf(p_ptr->attacker, " fires an arrow for");
+			fire_bolt(Ind, GF_ARROW, dir, 150, p_ptr->attacker);
+			o_ptr->timeout = rand_int(30) + 90 - get_skill_scale(p_ptr, SKILL_DEVICE, 75);
+			break;
+		case ART_NARYA:
+			sprintf(p_ptr->attacker, " casts a fire ball for");
+			fire_ball(Ind, GF_FIRE, dir, 120 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
+			o_ptr->timeout = rand_int(75) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
+			break;
+		case ART_NENYA:
+			sprintf(p_ptr->attacker, " casts a cold ball for");
+			fire_ball(Ind, GF_COLD, dir, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
+			o_ptr->timeout = rand_int(125) + 325 - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
+			break;
+		case ART_VILYA:
+			sprintf(p_ptr->attacker, " casts a lightning ball for");
+			fire_ball(Ind, GF_ELEC, dir, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
+			o_ptr->timeout = rand_int(175) + 425 - get_skill_scale(p_ptr, SKILL_DEVICE, 325);
+			break;
+		case ART_POWER:
+			ring_of_power(Ind, dir);
+			o_ptr->timeout = rand_int(450) + 450;
+			break;
+		case ART_MEDIATOR:
+			msg_print(Ind, "You breathe the elements.");
+			sprintf(p_ptr->attacker, " breathes the elements for");
+			fire_ball(Ind, GF_MISSILE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
+			msg_print(Ind, "Your armour glows in many colours...");
+			(void)set_afraid(Ind, 0);
+			(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
+			(void)hp_player(Ind, 30);
+			p_ptr->blessed_power = 20;
+			(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
+			(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
+			(void)set_oppose_elec(Ind, randint(50) + 50);
+			(void)set_oppose_fire(Ind, randint(50) + 50);
+			(void)set_oppose_cold(Ind, randint(50) + 50);
+			(void)set_oppose_pois(Ind, randint(50) + 50);
+			o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
+			break;
+		case ART_EREBOR:
+			if (do_prob_travel(Ind, dir)) {
+				msg_print(Ind, "You found a passage!");
+				o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
+			} else msg_print(Ind, "Nothing happens!");
+			break;
+		case ART_AXE_GOTHMOG:
+			sprintf(p_ptr->attacker, " casts a fireball for");
+			fire_ball(Ind, GF_FIRE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
+			o_ptr->timeout = 200 + rand_int(200) - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
+			break;
+		case ART_MELKOR:
+			sprintf(p_ptr->attacker, " casts a darkness storm for");
+			fire_ball(Ind, GF_DARK, dir, 150 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 3, p_ptr->attacker);
+			o_ptr->timeout = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
+			break;
+		case ART_NIGHT:
+		{
+			int i;
+			for (i = 0; i < 3; i++) {
+				if (drain_life(Ind, dir, 7))
+					hp_player(Ind, p_ptr->ret_dam / 2);
+				p_ptr->ret_dam = 0;
+			}
+			o_ptr->timeout = 250 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);
+			break;
+		}
+		case ART_NAIN:
+			wall_to_mud(Ind, dir);
+			o_ptr->timeout = rand_int(5) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
+			break;
+		case ART_EOL:
+			sprintf(p_ptr->attacker, " fires a mana bolt for");
+			fire_bolt(Ind, GF_MANA, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
+			o_ptr->timeout = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			break;
+		case ART_UMBAR:
+			sprintf(p_ptr->attacker, " fires a missile for");
+			fire_bolt(Ind, GF_MISSILE, dir, damroll(10 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 10), p_ptr->attacker);
+			o_ptr->timeout = rand_int(10) + 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+			break;
+		case ART_HELLFIRE:
+			sprintf(p_ptr->attacker, " conjures up hellfire for");
+			fire_ball(Ind, GF_HELL_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 3, p_ptr->attacker);
+			o_ptr->timeout = randint(10) + 30;
+			break;
+		case ART_HAVOC:
+			sprintf(p_ptr->attacker, " casts a force bolt for");
+			fire_bolt(Ind, GF_FORCE, dir, damroll(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 16), 8), p_ptr->attacker);
+			o_ptr->timeout = rand_int(2) + 1;
+			break;
+		default: done = FALSE;
+		}
+	}
+
+	// -------------------- ego items -------------------- //
+
+	// -------------------- base items -------------------- //
+
+	if (!done && o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY) {
 		switch (o_ptr->sval) {
 		case SV_DRAGON_BLACK:
 			msg_print(Ind, "You breathe acid.");
@@ -6345,242 +6542,43 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		o_ptr->timeout = 200 + rand_int(100);
 	}
 
-	/* Artifacts activate by name */
-	if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) {
-		/* This needs to be changed */
-		switch (o_ptr->name1) {
-			case ART_NARTHANC:
-				sprintf(p_ptr->attacker, " fires a fire bolt for");
-				fire_bolt(Ind, GF_FIRE, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
-				break;
-			case ART_NIMTHANC:
-				sprintf(p_ptr->attacker, " fires a frost bolt for");
-				fire_bolt(Ind, GF_COLD, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
-				break;
-			case ART_DETHANC:
-				sprintf(p_ptr->attacker, " fires a lightning bolt for");
-				fire_bolt(Ind, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
-				break;
-			case ART_RILIA:
-				sprintf(p_ptr->attacker, " casts a stinking cloud for");
-//				fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 3, p_ptr->attacker);
-				fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7), 3, 4, 9, p_ptr->attacker);
-				o_ptr->timeout = rand_int(2) + 4 - get_skill_scale(p_ptr, SKILL_DEVICE, 2);
-				break;
-			case ART_BELANGIL:
-				sprintf(p_ptr->attacker, " casts a cold ball for");
-				fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 2, p_ptr->attacker);
-				o_ptr->timeout = rand_int(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
-				break;
-			case ART_RINGIL:
-				sprintf(p_ptr->attacker, " casts a cold ball for");
-				fire_ball(Ind, GF_COLD, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 2, p_ptr->attacker);
-				o_ptr->timeout = 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
-				break;
-			case ART_ANDURIL:
-				sprintf(p_ptr->attacker, " casts a fire ball for");
-				fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
-				o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
-				break;
-			case ART_FIRESTAR:
-				sprintf(p_ptr->attacker, " casts a fire ball for");
-				fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 3, p_ptr->attacker);
-				o_ptr->timeout = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 75);
-				break;
-			case ART_THEODEN:
-				if (drain_life(Ind, dir, 25))
-					hp_player(Ind, p_ptr->ret_dam / 3);
-				p_ptr->ret_dam = 0;
-				o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
-				break;
-			case ART_TURMIL:
-				if (drain_life(Ind, dir, 15))
-					hp_player(Ind, p_ptr->ret_dam / 2);
-				p_ptr->ret_dam = 0;
-				o_ptr->timeout = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
-				break;
-			case ART_ARUNRUTH:
-				sprintf(p_ptr->attacker, " fires a frost bolt for");
-				fire_bolt(Ind, GF_COLD, dir, damroll(12 + get_skill_scale(p_ptr, SKILL_DEVICE, 15), 8), p_ptr->attacker);
-				o_ptr->timeout = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
-				break;
-			case ART_AEGLOS:
-				sprintf(p_ptr->attacker, " casts a cold ball for");
-				fire_ball(Ind, GF_COLD, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
-				o_ptr->timeout = 500 - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
-				break;
-			case ART_OROME:
-				wall_to_mud(Ind, dir);
-				o_ptr->timeout = 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
-				break;
-			case ART_ULMO:
-				teleport_monster(Ind, dir);
-				o_ptr->timeout = 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
-				break;
-			case ART_TOTILA:
-				confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
-				o_ptr->timeout = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
-				break;
-			case ART_CAMMITHRIM:
-				sprintf(p_ptr->attacker, " fires a missile for");
-				fire_bolt(Ind, GF_MISSILE, dir, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 8), 6), p_ptr->attacker);
-				o_ptr->timeout = 2 - get_skill_scale(p_ptr, SKILL_DEVICE, 1);
-				break;
-			case ART_PAURHACH:
-				sprintf(p_ptr->attacker, " fires a fire bolt for");
-				fire_bolt(Ind, GF_FIRE, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(4) + 8 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
-				break;
-			case ART_PAURNIMMEN:
-				sprintf(p_ptr->attacker, " fires a frost bolt for");
-				fire_bolt(Ind, GF_COLD, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
-				break;
-			case ART_PAURAEGEN:
-				sprintf(p_ptr->attacker, " fires a lightning bolt for");
-				fire_bolt(Ind, GF_ELEC, dir, damroll(4 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(3) + 6 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
-				break;
-			case ART_PAURNEN:
-				sprintf(p_ptr->attacker, " fires an acid bolt for");
-				fire_bolt(Ind, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(2) + 5 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
-				break;
-			case ART_FINGOLFIN:
-				sprintf(p_ptr->attacker, " fires an arrow for");
-				fire_bolt(Ind, GF_ARROW, dir, 150, p_ptr->attacker);
-				o_ptr->timeout = rand_int(30) + 90 - get_skill_scale(p_ptr, SKILL_DEVICE, 75);
-				break;
-			case ART_NARYA:
-				sprintf(p_ptr->attacker, " casts a fire ball for");
-				fire_ball(Ind, GF_FIRE, dir, 120 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
-				o_ptr->timeout = rand_int(75) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
-				break;
-			case ART_NENYA:
-				sprintf(p_ptr->attacker, " casts a cold ball for");
-				fire_ball(Ind, GF_COLD, dir, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
-				o_ptr->timeout = rand_int(125) + 325 - get_skill_scale(p_ptr, SKILL_DEVICE, 225);
-				break;
-			case ART_VILYA:
-				sprintf(p_ptr->attacker, " casts a lightning ball for");
-				fire_ball(Ind, GF_ELEC, dir, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
-				o_ptr->timeout = rand_int(175) + 425 - get_skill_scale(p_ptr, SKILL_DEVICE, 325);
-				break;
-			case ART_POWER:
-				ring_of_power(Ind, dir);
-				o_ptr->timeout = rand_int(450) + 450;
-				break;
-			case ART_MEDIATOR:
-				msg_print(Ind, "You breathe the elements.");
-				sprintf(p_ptr->attacker, " breathes the elements for");
-				fire_ball(Ind, GF_MISSILE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
-				msg_print(Ind, "Your armour glows in many colours...");
-				(void)set_afraid(Ind, 0);
-				(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
-				(void)hp_player(Ind, 30);
-				p_ptr->blessed_power = 20;
-				(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
-				(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
-				(void)set_oppose_elec(Ind, randint(50) + 50);
-				(void)set_oppose_fire(Ind, randint(50) + 50);
-				(void)set_oppose_cold(Ind, randint(50) + 50);
-				(void)set_oppose_pois(Ind, randint(50) + 50);
-				o_ptr->timeout = 400 - get_skill_scale(p_ptr, SKILL_DEVICE, 300);
-				break;
-			case ART_EREBOR:
-				if (do_prob_travel(Ind, dir)) {
-					msg_print(Ind, "You found a passage!");
-					o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
-				} else msg_print(Ind, "Nothing happens!");
-				break;
-			case ART_AXE_GOTHMOG:
-				sprintf(p_ptr->attacker, " casts a fireball for");
-				fire_ball(Ind, GF_FIRE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
-				o_ptr->timeout = 200 + rand_int(200) - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
-				break;
-			case ART_MELKOR:
-				sprintf(p_ptr->attacker, " casts a darkness storm for");
-				fire_ball(Ind, GF_DARK, dir, 150 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 3, p_ptr->attacker);
-				o_ptr->timeout = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
-				break;
-			case ART_NIGHT:
-			{
-				int i;
-				for (i = 0; i < 3; i++) {
-					if (drain_life(Ind, dir, 7))
-						hp_player(Ind, p_ptr->ret_dam / 2);
-					p_ptr->ret_dam = 0;
-				}
-				o_ptr->timeout = 250 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);
-				break;
-			}
-			case ART_NAIN:
-				wall_to_mud(Ind, dir);
-				o_ptr->timeout = rand_int(5) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 3);
-				break;
-			case ART_EOL:
-				sprintf(p_ptr->attacker, " fires a mana bolt for");
-				fire_bolt(Ind, GF_MANA, dir, damroll(9 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(3) + 7 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
-				break;
-			case ART_UMBAR:
-				sprintf(p_ptr->attacker, " fires a missile for");
-				fire_bolt(Ind, GF_MISSILE, dir, damroll(10 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 10), p_ptr->attacker);
-				o_ptr->timeout = rand_int(10) + 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
-				break;
-			case ART_HELLFIRE:
-				sprintf(p_ptr->attacker, " conjures up hellfire for");
-				fire_ball(Ind, GF_HELL_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 3, p_ptr->attacker);
-				o_ptr->timeout = randint(10) + 30;
-				break;
-			case ART_HAVOC:
-				sprintf(p_ptr->attacker, " casts a force bolt for");
-				fire_bolt(Ind, GF_FORCE, dir, damroll(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 16), 8), p_ptr->attacker);
-				o_ptr->timeout = rand_int(2) + 1;
-				break;
-		}
-	}
-
-        /* Hack -- Amulet of the Serpents can be activated as well */
-	else if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_SERPENT)) {
+	/* Hack -- Amulet of the Serpents can be activated as well */
+	if (!done && o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_SERPENT) {
 		msg_print(Ind, "You breathe venom...");
 		sprintf(p_ptr->attacker, " breathes venom for");
 		fire_ball(Ind, GF_POIS, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
 		o_ptr->timeout = rand_int(60) + 40;
 	}
-	else if (o_ptr->tval == TV_RING) {
+	else if (!done && o_ptr->tval == TV_RING) {
 		switch (o_ptr->sval) {
-			case SV_RING_ELEC:
-				/* Get a direction for breathing (or abort) */
-				sprintf(p_ptr->attacker, " casts a lightning ball for");
-				fire_ball(Ind, GF_ELEC, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
-				(void)set_oppose_elec(Ind, randint(20) + 20); /* removed stacking */
-				o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-				break;
-			case SV_RING_ACID:
-				/* Get a direction for breathing (or abort) */
-				sprintf(p_ptr->attacker, " casts an acid ball for");
-				fire_ball(Ind, GF_ACID, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
-				(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
-				o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-				break;
-			case SV_RING_ICE:
-				/* Get a direction for breathing (or abort) */
-				sprintf(p_ptr->attacker, " casts a frost ball for");
-				fire_ball(Ind, GF_COLD, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
-				(void)set_oppose_cold(Ind, randint(20) + 20); /* removed stacking */
-				o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-				break;
-			case SV_RING_FLAMES:
-				/* Get a direction for breathing (or abort) */
-				sprintf(p_ptr->attacker, " casts a fire ball for");
-				fire_ball(Ind, GF_FIRE, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
-				(void)set_oppose_fire(Ind, randint(20) + 20); /* removed stacking */
-				o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-				break;
+		case SV_RING_ELEC:
+			/* Get a direction for breathing (or abort) */
+			sprintf(p_ptr->attacker, " casts a lightning ball for");
+			fire_ball(Ind, GF_ELEC, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
+			(void)set_oppose_elec(Ind, randint(20) + 20); /* removed stacking */
+			o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			break;
+		case SV_RING_ACID:
+			/* Get a direction for breathing (or abort) */
+			sprintf(p_ptr->attacker, " casts an acid ball for");
+			fire_ball(Ind, GF_ACID, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
+			(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
+			o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			break;
+		case SV_RING_ICE:
+			/* Get a direction for breathing (or abort) */
+			sprintf(p_ptr->attacker, " casts a frost ball for");
+			fire_ball(Ind, GF_COLD, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
+			(void)set_oppose_cold(Ind, randint(20) + 20); /* removed stacking */
+			o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			break;
+		case SV_RING_FLAMES:
+			/* Get a direction for breathing (or abort) */
+			sprintf(p_ptr->attacker, " casts a fire ball for");
+			fire_ball(Ind, GF_FIRE, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), 2, p_ptr->attacker);
+			(void)set_oppose_fire(Ind, randint(20) + 20); /* removed stacking */
+			o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			break;
 		}
         }
 
