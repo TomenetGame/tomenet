@@ -1800,7 +1800,7 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 
 	/* Calculation */
 	d1 = r_types[type].d1min + rget_level(r_types[type].d1max - r_types[type].d1min) * dice / S_WEIGHT_HI;
-	d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * dice / S_WEIGHT_HI;
+	d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
 	damage = r_types[type].dbmin + rget_level(r_types[type].dbmax - r_types[type].dbmin) * damage / S_WEIGHT_HI;
 
 	/* Return */
