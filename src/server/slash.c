@@ -8129,12 +8129,13 @@ void do_slash_cmd(int Ind, char *message) {
 				    //o_ptr->to_h < 30 ||
 				    //o_ptr->to_d < 30 ||
 				    //o_ptr->to_a < 30 ||
-				    //o_ptr->pval < 6 ||
+				    o_ptr->pval < 9 ||
 
 				    //o_ptr->dd < 3 ||
 				    //!((a_ptr->flags1 & TR1_SLAY_DRAGON) || (a_ptr->flags1 & TR1_KILL_DRAGON)) ||
 				    //!((a_ptr->flags1 & TR1_SLAY_DEMON) || (a_ptr->flags1 & TR1_KILL_DEMON)) ||
 				    //!((a_ptr->flags1 & TR1_SLAY_UNDEAD) || (a_ptr->flags1 & TR1_KILL_UNDEAD)) ||
+				    !((a_ptr->flags1 & TR3_SH_ELEC) ||
 
 				    //!(a_ptr->flags1 & TR1_CON) ||
 				    //!(a_ptr->flags1 & TR1_STEALTH) ||
@@ -8154,8 +8155,8 @@ void do_slash_cmd(int Ind, char *message) {
 				    //!(a_ptr->flags3 & TR3_XTRA_MIGHT) ||
 				    //!(a_ptr->flags3 & TR3_XTRA_SHOTS) ||
 				    //!(a_ptr->flags1 & TR1_BLOWS) ||
-				    //!(a_ptr->flags1 & TR1_VAMPIRIC) ||
-				    //!(a_ptr->flags5 & TR5_CRIT) ||
+				    !(a_ptr->flags1 & TR1_VAMPIRIC) ||
+				    !(a_ptr->flags5 & TR5_CRIT) ||
 
 				    //!(a_ptr->esp & ESP_ALL) ||
 
