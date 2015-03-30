@@ -1339,7 +1339,15 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 		}
 	}
 #else /* simple (risky?) way.. */
-	cave_type *c_ptr = &(getcave(wpos)[y][x]);
+	cave_type *c_ptr, **zcave = getcave(wpos);
+
+	/* This check was added so inside_house() can be used for player stores in delete_object_idx(),
+	   otherwise segfault when objects are erased from non-allocated areas (cleanup routines).
+	   So kill_house_contents() will no longer trigger PLAYER_STORE_REMOVED log entries. :|
+	   (It seems too inefficient to allocate+generate+deallocate the floor for each item, need a better solution..) */
+	if (!zcave) return FALSE;
+
+	c_ptr = &zcave[y][x];
 	/* assume all houses are on the world surface (and vaults aren't) */
 	if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY) &&
 	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
