@@ -3274,6 +3274,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 		i++;
 		j++;
 	}
+	/* ensure the reduced string is possibly terminated earlier */
 	lcopy[i] = '\0';
 	cc[i] = 0;
 
@@ -3303,6 +3304,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 		i++;
 		j++;
 	}
+	/* ensure the reduced string is possibly terminated earlier */
 	lcopy[i] = '\0';
 	cc[i] = 0;
 #endif
@@ -3323,7 +3325,9 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 		i++;
 		j++;
 	}
+	/* ensure the reduced string is possibly terminated earlier */
 	lcopy[i] = '\0';
+	cc[i] = 0;
 #endif
 
 	/* reduce repeated chars (>3 for consonants, >2 for vowel) */
@@ -3367,6 +3371,9 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 		i++;
 		j++;
 	}
+	/* ensure the reduced string is possibly terminated earlier */
+	lcopy[i] = '\0';
+	cc[i] = 0;
 
 	/* check for swear words and censor them */
 	for (i = 0; swear[i].word[0]; i++) {
