@@ -15591,9 +15591,10 @@ to manage it.
             #  #    surround you anyways. Phase door scrolls will help you out
                     then.
 
--Sometimes packs of monsters, usually animals, retreat if you chase them in
- hallways, and will only attack if you enter a room. You might want to just
- take them out with a bow or another ranged weapon instead of chasing them.
+-Usually, animal packs will retreat if you chase them in hallways, and will
+ only attack if you enter a room or if your hit points are around 50% or worse.
+ You might want to just take them out with a bow or another ranged weapon
+ instead of chasing them.
  If you decide to chase them to the next room make sure you have enough phase
  door scrolls and healing pots to win a fight where you are attacked from all
  sides at once.
@@ -15894,7 +15895,8 @@ Movement:
 Rather mindless monsters might just try to get to the player straight away
 while more clever monsters might try to avoid being kited, depending on their
 hit points or if there are buddies around. Also, some pack animals might avoid
-to encounter you in hallways but jump you all at once when you enter a room.
+to encounter you in hallways but jump you all at once when you enter a room or
+when your hit points drop to around 50% or worse.
 
 Target selection:
 -----------------
