@@ -9596,6 +9596,22 @@ void erase_artifact(int a_idx) {
 			}
 		}
 
+#ifdef PLAYER_STORES
+		/* Log removal of player store items - this code only applies if server rules allow dropping true artifacts in houses.
+		   In case the cave wasn't allocated, the delete_object_idx() call below won't remove it from pstore lists, so we have to do it now.
+		   Note: This can be a false alarm in case the item is inscribed '@S' but is not actually inside a player house. */
+		if (!getcave(&o_ptr->wpos) &&
+		    o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
+			//char o_name[ONAME_LEN];//, p_name[NAME_LEN];
+			//object_desc(0, o_name, o_ptr, TRUE, 3);
+			//s_printf("PLAYER_STORE_REMOVED (maybe): %s - %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_REMOVED (maybe): %s (%d,%d,%d; %d,%d).\n",
+			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
+			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
+			    o_ptr->ix, o_ptr->iy);
+		}
+#endif
+
 		s_printf("FLUENT_ARTIFACT_RESETS: %d - floor '%s'\n", a_idx, o_name);
 		delete_object_idx(i, TRUE);
 		msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);

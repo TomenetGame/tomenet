@@ -5141,7 +5141,7 @@ void home_sell(int Ind, int item, int amt)
 
 #ifdef PLAYER_STORES
 		o_ptr = &sold_obj;
-		if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
+		if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S") && !o_ptr->questor) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_printf("PLAYER_STORE_OFFER: %s - %s (%d,%d,%d; %d,%d).\n",
 			    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
@@ -5383,6 +5383,20 @@ void home_purchase(int Ind, int item, int amt)
 
 		/* Take note if we take the last one */
 		i = h_ptr->stock_num;
+
+#ifdef PLAYER_STORES
+		/* Log (complete) removal of player store items */
+		if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
+		    && amt == i) {
+			//char o_name[ONAME_LEN];//, p_name[NAME_LEN];
+			//object_desc(0, o_name, o_ptr, TRUE, 3);
+			//s_printf("PLAYER_STORE_REMOVED: %s - %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_REMOVED: %s (%d,%d,%d; %d,%d).\n",
+			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
+			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
+			    o_ptr->ix, o_ptr->iy);
+		}
+#endif
 
 		/* Remove the items from the home */
 		home_item_increase(h_ptr, item, -amt);

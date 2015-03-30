@@ -430,7 +430,7 @@ void inven_drop(int Ind, int item, int amt) {
 
 #ifdef PLAYER_STORES
 	o_ptr = &o_list[o_idx];
-	if (o_idx > 0 && o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
+	if (o_idx > 0 && o_ptr->note && strstr(quark_str(o_ptr->note), "@S") && !o_ptr->questor
 	    && inside_house(&p_ptr->wpos, o_ptr->ix, o_ptr->iy)) {
 		object_desc(0, o_name, o_ptr, TRUE, 3);
 		s_printf("PLAYER_STORE_OFFER: %s - %s (%d,%d,%d; %d,%d).\n",

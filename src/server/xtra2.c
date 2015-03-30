@@ -6183,6 +6183,14 @@ void kill_house_contents(house_type *h_ptr) {
 	object_type *o_ptr;
 	int i;
 
+	/* hack: for PLAYER_STORES actually allocate the cave temporarily,
+	   just for delete_object()->delete_object_idx() to find any offered items and log their removal. */
+	bool must_alloc = (getcave(wpos) == NULL);
+	if (must_alloc) {
+		alloc_dungeon_level(wpos);
+		generate_cave(wpos, NULL);
+	}
+
 #ifdef USE_MANG_HOUSE
 	if (h_ptr->flags & HF_RECT) {
 		int sy, sx, ey, ex, x, y;
@@ -6191,9 +6199,8 @@ void kill_house_contents(house_type *h_ptr) {
 		ey = h_ptr->y + h_ptr->coords.rect.height - 1;
 		ex = h_ptr->x + h_ptr->coords.rect.width - 1;
 		for (y = sy; y < ey; y++) {
-			for (x = sx; x < ex; x++) {
+			for (x = sx; x < ex; x++)
 				delete_object(wpos, y, x, TRUE);
-			}
 		}
 
 		/* make sure no player gets stuck by being inside while it's sold - C. Blue */
@@ -6206,6 +6213,8 @@ void kill_house_contents(house_type *h_ptr) {
 	} else {
 		fill_house(h_ptr, FILL_CLEAR, NULL);
 		/* Polygonal house */
+
+		//todo: teleport any players inside out */
 	}
 #endif	// USE_MANG_HOUSE
 
@@ -6215,6 +6224,20 @@ void kill_house_contents(house_type *h_ptr) {
 		if (o_ptr->k_idx && true_artifact_p(o_ptr))
 			handle_art_d(o_ptr->name1);
 		questitem_d(o_ptr, o_ptr->number);
+
+#ifdef PLAYER_STORES
+		/* Log removal of player store items */
+		if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
+			char o_name[ONAME_LEN];//, p_name[NAME_LEN];
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			//s_printf("PLAYER_STORE_REMOVED: %s - %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_REMOVED: %s (%d,%d,%d; %d,%d).\n",
+			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
+			    o_name, wpos->wx, wpos->wy, wpos->wz,
+			    o_ptr->ix, o_ptr->iy);
+		}
+#endif
+
 		invwipe(o_ptr);
 	}
 	h_ptr->stock_num = 0;
@@ -6226,16 +6249,18 @@ void kill_house_contents(house_type *h_ptr) {
 	fill_house(h_ptr, FILL_UNPAINT, NULL);
 #endif
 
-        /* hack: reset size/price of extendable (trad) houses */
-        if ((h_ptr->flags & HF_TRAD)) {
-                int area = (h_ptr->coords.rect.width - 2) * (h_ptr->coords.rect.height - 2);
-        	h_ptr->stock_size = (area >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : area;
+	/* hack: reset size/price of extendable (trad) houses */
+	if ((h_ptr->flags & HF_TRAD)) {
+		int area = (h_ptr->coords.rect.width - 2) * (h_ptr->coords.rect.height - 2);
+		h_ptr->stock_size = (area >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : area;
 
-        	/* note: trad houses currently can't have sizes > 30 (compare wild.c),
-        	   so it's sufficient to add term for medium houses + term for small houses,
-        	   ignoring the term for large houses. */
-                h_ptr->dna->price = initial_house_price(h_ptr);
-        }
+		/* note: trad houses currently can't have sizes > 30 (compare wild.c),
+		   so it's sufficient to add term for medium houses + term for small houses,
+		   ignoring the term for large houses. */
+		h_ptr->dna->price = initial_house_price(h_ptr);
+	}
+
+	if (must_alloc) dealloc_dungeon_level(wpos);
 }
 
 void kill_houses(int id, byte type) {
