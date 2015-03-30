@@ -5387,7 +5387,7 @@ void home_purchase(int Ind, int item, int amt)
 #ifdef PLAYER_STORES
 		/* Log (complete) removal of player store items */
 		if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
-		    && amt == i) {
+		    && amt == o_ptr->number) {
 			//char o_name[ONAME_LEN];//, p_name[NAME_LEN];
 			//object_desc(0, o_name, o_ptr, TRUE, 3);
 			//s_printf("PLAYER_STORE_REMOVED: %s - %s (%d,%d,%d; %d,%d).\n",
