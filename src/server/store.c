@@ -6555,6 +6555,17 @@ s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buye
 		/* normal cheques replace the item they were created for,
 		   easy as that. */
 		if (h_ptr->flags & HF_TRAD) {
+#ifdef PLAYER_STORES
+			/* Log removal of player store items */
+			//char o_name[ONAME_LEN];//, p_name[NAME_LEN];
+			//object_desc(0, o_name, o_ptr, TRUE, 3);
+			//s_printf("PLAYER_STORE_REMOVED: %s - %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_REMOVED: %s (%d,%d,%d; %d,%d).\n",
+			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
+			    o_name, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->wpos.wz,
+			    o_ptr->ix, o_ptr->iy);
+#endif
+
 			/* For list house, overwriting is enough */
 			object_copy(ho_ptr, cheque_ptr);
 s_printf("PLAYER_STORE_HANDLE: complete, trad, owner %s (%d), %s, value %d, buyer %s)\n",
