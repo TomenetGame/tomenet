@@ -194,9 +194,10 @@ server_opts cfg =
 	/* bool */
 	TRUE,TRUE,	// report_to_meta, secret_dungeon_master
 
-	// anti_arts_hoard, anti_arts_house, anti_arts_wild, anti_arts_shop, anti_arts_pickup, 
+	// anti_arts_hoard, anti_arts_house, anti_arts_wild, anti_arts_shop, anti_arts_pickup, anti_arts_send
 	FALSE,TRUE,TRUE,FALSE,TRUE,TRUE,
-	FALSE,TRUE, //anti_arts_send, anti_cheeze_pickup, anti_cheeze_telekinesis
+	FALSE,		// persistent_artifacts
+	FALSE,TRUE, 	// anti_cheeze_pickup, anti_cheeze_telekinesis
 	20,		// surface_item_removal (minutes for scan_objs)
 	45,		// dungeon_item_removal (minutes for scan_objs)
 	1440,		// death_wild_item_removal

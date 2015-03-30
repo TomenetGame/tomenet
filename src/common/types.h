@@ -3165,6 +3165,7 @@ struct server_opts
 	bool anti_arts_shop;
 	bool anti_arts_pickup;
 	bool anti_arts_send;
+	bool persistent_artifacts;
 
 	bool anti_cheeze_pickup;
 	bool anti_cheeze_telekinesis;

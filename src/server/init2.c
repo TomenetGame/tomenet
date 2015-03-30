@@ -3261,6 +3261,8 @@ static void set_server_option(char * option, char * value)
 		cfg.anti_arts_pickup = str_to_boolean(value);
 	else if (!strcmp(option,"ANTI_ARTS_SEND"))
 		cfg.anti_arts_send = str_to_boolean(value);
+	else if (!strcmp(option,"PERSISTENT_ARTIFACTS"))
+		cfg.persistent_artifacts = str_to_boolean(value);
 	else if (!strcmp(option,"ANTI_CHEEZE_PICKUP"))
 		cfg.anti_cheeze_pickup = str_to_boolean(value);
 	else if (!strcmp(option,"ANTI_CHEEZE_TELEKINESIS"))

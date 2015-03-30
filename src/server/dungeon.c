@@ -7256,7 +7256,7 @@ void dungeon(void) {
 #ifdef FLUENT_ARTIFACT_RESETS
 	/* handle in 1-minute resolution - assume we have less artifacts than 60*cfg.fps */
 	i = turn % (cfg.fps * 60);
-	if (i < max_a_idx && a_info[i].timeout > 0) {
+	if (!cfg.persistent_artifacts && i < max_a_idx && a_info[i].timeout > 0) {
  #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
 		if (a_info[i].iddc) {
 			a_info[i].timeout -= 2;

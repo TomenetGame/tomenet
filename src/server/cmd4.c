@@ -244,7 +244,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 				long_timeout *= 2;
 #endif
 
-				if (timeout <= 0) sprintf(timeleft, "\377s  - ");
+				if (timeout <= 0 || cfg.persistent_artifacts) sprintf(timeleft, "\377s  - ");
 				else if (timeout < 60 * 2) sprintf(timeleft, "\377r%3dm", timeout);
 				else if (timeout < 60 * 24 * 2) sprintf(timeleft, "\377y%3dh", timeout / 60);
 				else if (timeout < long_timeout * 24 * (FLUENT_ARTIFACT_WEEKS * 7 - 1))
@@ -295,7 +295,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets with Zu-Aon)");
 					else
  #endif
-					if (timeout <= 0) ;
+					if (timeout <= 0 || cfg.persistent_artifacts) ;
 					else if (timeout < 60 * 2) fprintf(fff, " (\377R%d minutes\377U till reset)", timeout);
 					else if (timeout < 60 * 24 * 2) fprintf(fff, " (\377y%d hours\377U till reset)", timeout / 60);
 					else fprintf(fff, " (%d days till reset)", timeout / 60 / 24);
@@ -2272,10 +2272,20 @@ void do_cmd_check_server_settings(int Ind)
 
 	/* arts & winners */
 #ifdef FLUENT_ARTIFACT_RESETS
-	fprintf(fff, "True artifacts will disappear in %d weeks after are found ('I'nspect yours!).\n", FLUENT_ARTIFACT_WEEKS);
-	fprintf(fff, " (The time is doubled on Iron server and further doubled for winner-artifacts.)\n");
+	if (!cfg.persistent_artifacts) {
+		fprintf(fff, "True artifacts will disappear in %d weeks after being found. *Identify* it.\n", FLUENT_ARTIFACT_WEEKS);
+		fprintf(fff, " The time is doubled on Iron server and further doubled for winner-artifacts.\n");
+ #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+		fprintf(fff, " Within the Ironman Deep Dive Challenge the timeout speed is doubled.\n");
+ #endif
+ #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
+		fprintf(fff, " For artifacts held by winners the timeout speed is doubled.\n");
+ #endif
+	} else {
+		fprintf(fff, "True artifacts will not time out (while being held by a player).\n");
+	}
 #else
-	/*unknown, since it's done in LUA:
+	/*unknown, since it's done arbitrarily in lua files only (in custom.lua):
 	fprintf(fff, "True artifacts will be reset by static schedule.");*/
 #endif
 
