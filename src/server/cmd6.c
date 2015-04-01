@@ -2054,7 +2054,7 @@ static void do_lottery(int Ind, object_type *o_ptr)
 			object_wipe(j_ptr);
 
 			/* Prepare a gold object */
-			invcopy(j_ptr, gold_colour(drop, TRUE));
+			invcopy(j_ptr, gold_colour(drop, TRUE, FALSE));
 
 			/* Determine how much the treasure is "worth" */
 			//j_ptr->pval = (gold >= 15000) ? 15000 : gold;

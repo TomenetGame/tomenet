@@ -5688,12 +5688,13 @@ cptr get_day(int day)
 	return (buf);
 }
 
-/* Fuzzy: Will allow one-off colour */
-int gold_colour(int amt, bool fuzzy) {
+/* Fuzzy: Will allow one-off colour,
+   Compact: Will increase stack size by factor [100] for all particular colour ranges. */
+int gold_colour(int amt, bool fuzzy, bool compact) {
 	int i, unit = 1;
 
-	//for (i = amt; i > 99; i >>= 1, unit++) /* naught */;
-	for (i = amt; i > 39; i = (i * 2) / 3, unit++) /* naught */;
+	//for (i = amt; i > 99; i >>= 1, unit++) /* naught */; --old
+	for (i = (compact ? amt / 100 : amt); i > 39; i = (i * 2) / 3, unit++) /* naught */;
 	if (fuzzy) unit = unit - 1 + rand_int(3);
 	if (unit < 1) unit = 1;
 	if (unit > SV_GOLD_MAX) unit = SV_GOLD_MAX;

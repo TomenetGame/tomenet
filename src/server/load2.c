@@ -460,6 +460,18 @@ static void rd_item(object_type *o_ptr) {
 		rd_s32b(&o_ptr->sseed);
 	}
 
+#if 0 /* too bad hack ;) */
+	/* Update money pile colour in case the code determining those has been changed */
+	if (o_ptr->tval == TV_GOLD) {
+		/* Bad hack: Assume it's a pile dropped by a player in a house.
+		   This will turn all money piles in towns/wilderness to 'wrong' colour in turn though,
+		   since they'll all be 'compact=TRUE'. */
+		if (!o_ptr->wpos.wz) o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, TRUE);
+		else o_ptr->k_idx = gold_colour(o_ptr->pval);
+		o_ptr->sval = k_info[o_ptr->k_idx].sval;
+	}
+#endif
+
 	rd_byte(&o_ptr->discount);
 	rd_byte(&o_ptr->number);
 	rd_s16b(&o_ptr->weight);

@@ -9411,7 +9411,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				object_prep(o_ptr, object_index);
 				if (o_ptr->tval == TV_GOLD) {
 					o_ptr->pval = letter[idx].special; /* support for 'money' objects ^^ */
-					o_ptr->k_idx = gold_colour(o_ptr->pval, TRUE);
+					o_ptr->k_idx = gold_colour(o_ptr->pval, TRUE, FALSE);
 					o_ptr->sval = k_info[o_ptr->k_idx].sval;
 				}
 				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE, FALSE, RESF_NONE);

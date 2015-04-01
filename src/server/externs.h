@@ -1772,7 +1772,7 @@ extern void bracer_ff(char *buf);
 extern void check_banlist(void);
 extern void msg_broadcast_format(int Ind, cptr fmt, ...);
 extern byte count_bits(u32b array);
-extern int gold_colour(int amt, bool fuzzy);
+extern int gold_colour(int amt, bool fuzzy, bool compact);
 extern int test_item_name(cptr name);
 extern int in_banlist(char *acc, char *addr, int *time, char *reason);
 

@@ -3386,7 +3386,7 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 #else
 		o_ptr->pval += j_ptr->pval;
 		/* determine new 'colour' depending on the total amount */
-		o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE);//FALSE because player dropping one pile onto another calls this too
+		o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, FALSE);//fuzzy=FALSE because player dropping one pile onto another calls this too
 		o_ptr->sval = k_info[o_ptr->k_idx].sval;
 #endif
 	}
@@ -7602,7 +7602,7 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
 	forge.pval = (base + (8L * randint(base)) + randint(8)) + bonus;
 
 	/* hacking this mess of an outdated function: pick a 'colour' */
-	forge.k_idx = gold_colour(forge.pval, TRUE);
+	forge.k_idx = gold_colour(forge.pval, TRUE, FALSE);
 	forge.sval = k_info[forge.k_idx].sval;
 
 	if (opening_chest) {

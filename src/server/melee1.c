@@ -208,7 +208,7 @@ static bool do_eat_gold(int Ind, int m_idx) {
 		object_wipe(j_ptr);
 
 		/* Prepare a gold object */
-		invcopy(j_ptr, gold_colour(gold, FALSE));
+		invcopy(j_ptr, gold_colour(gold, FALSE, FALSE));
 
 		/* Determine how much the treasure is "worth" */
 #if 0

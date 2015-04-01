@@ -7191,7 +7191,7 @@ void player_death(int Ind) {
 			/* Set the amount */
 			p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
 			/* set fitting gold 'colour' */
-			p_ptr->inventory[INVEN_PACK].k_idx = gold_colour(p_ptr->au, FALSE);
+			p_ptr->inventory[INVEN_PACK].k_idx = gold_colour(p_ptr->au, FALSE, TRUE);
 			p_ptr->inventory[INVEN_PACK].sval = k_info[p_ptr->inventory[INVEN_PACK].k_idx].sval;
 			s_printf("%d.\n", p_ptr->au);
 		} else {
