@@ -3386,7 +3386,12 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 #else
 		o_ptr->pval += j_ptr->pval;
 		/* determine new 'colour' depending on the total amount */
-		o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, FALSE);//fuzzy=FALSE because player dropping one pile onto another calls this too
+		if (j_ptr->xtra1)
+			/* player-dropped piles are compact */
+			o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, TRUE);
+		else
+			/* standard piles */
+			o_ptr->k_idx = gold_colour(o_ptr->pval, TRUE, FALSE);
 		o_ptr->sval = k_info[o_ptr->k_idx].sval;
 #endif
 	}

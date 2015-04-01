@@ -1482,6 +1482,7 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 
 	/* Setup the "worth" */
 	tmp_obj.pval = amt;
+	tmp_obj.xtra1 = 1; //mark as 'compact' gold pile
 
 	/* Hack -- 'own' the gold */
 	tmp_obj.owner = p_ptr->id;
