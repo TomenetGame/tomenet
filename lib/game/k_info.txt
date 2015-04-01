@@ -3854,86 +3854,103 @@ G:$:u
 I:100:1:0
 W:1:0:0:3
 
-N:481:copper
-G:$:u
+#$20-30
+N:481:silver
+G:$:s
 I:100:2:0
 W:1:0:0:4
 
-N:482:copper
-G:$:u
+#$30
+N:482:citrines
+G:$:U
 I:100:3:0
 W:1:0:0:5
 
-N:483:silver
-G:$:s
+#$90
+N:483:amber
+G:$:U
 I:100:4:0
 W:1:0:0:6
 
-N:484:silver
-G:$:s
+#$100-150
+N:484:peridots
+G:$:G
 I:100:5:0
 W:1:0:0:7
 
-N:485:silver
-G:$:s
+#$20-1000
+N:485:topazes
+G:$:U
 I:100:6:0
 W:1:0:0:8
 
+#$180-400(3000?)
 N:486:garnets
 G:$:r
 I:100:7:0
 W:1:0:0:9
 
-N:487:garnets
-G:$:r
+#$300-1700
+N:487:aquamarines
+G:$:B
 I:100:8:0
 W:1:0:0:10
 
-N:488:gold
-G:$:y
+#$50-$2k(10k?)
+N:488:jade
+G:$:g
 I:100:9:0
 W:1:0:0:12
 
+#$1500-2500
 N:489:gold
 G:$:y
 I:100:10:0
 W:1:0:0:14
 
-N:490:gold
-G:$:y
+#$200-3800(110-30k?)
+N:490:tourmalines
+G:$:D
 I:100:11:0
 W:1:0:0:16
 
+#$17k?uhh(40-20k?)
 N:491:opals
 G:$:W
 I:100:12:0
 W:1:0:0:18
 
+#$10k-18k?
 N:492:sapphires
 G:$:b
 I:100:13:0
 W:1:0:0:20
 
+#$60k-90k?
 N:493:rubies
 G:$:r
 I:100:14:0
 W:1:0:0:24
 
-N:494:diamonds
-G:$:w
+#15k-300k?
+N:494:emeralds
+G:$:g
 I:100:15:0
 W:1:0:0:28
 
-N:495:emeralds
-G:$:g
+#10xAu (early), 'beyond price' (later)
+N:495:mithril
+G:$:B
 I:100:16:0
 W:1:0:0:32
 
-N:496:mithril
-G:$:B
+#500k+
+N:496:diamonds
+G:$:w
 I:100:17:0
 W:1:0:0:40
 
+#(=diamond? synonym?)
 N:497:adamantite
 G:$:v
 I:100:18:0

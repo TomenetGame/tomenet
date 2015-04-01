@@ -208,16 +208,21 @@ static bool do_eat_gold(int Ind, int m_idx) {
 		object_wipe(j_ptr);
 
 		/* Prepare a gold object */
-		invcopy(j_ptr, lookup_kind(TV_GOLD, 9));
+		invcopy(j_ptr, gold_colour(gold, FALSE));
 
 		/* Determine how much the treasure is "worth" */
-//		j_ptr->pval = (gold >= 15000) ? 15000 : gold;
+#if 0
+		j_ptr->pval = (gold >= 15000) ? 15000 : gold;
+		gold -= 15000;
+		/* fix gold 'colour' */
+		j_ptr->k_idx = gold_amount(j_ptr->pval);
+		j_ptr->sval = k_info[j_ptr->k_idx].sval;
+#else
 		j_ptr->pval = gold;
+		gold = 0;
+#endif
 
 		monster_carry(m_ptr, m_idx, j_ptr);
-
-//		gold -= 15000;
-		gold = 0;
 	}
 
 	/* Redraw gold */

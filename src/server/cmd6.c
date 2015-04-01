@@ -2054,10 +2054,10 @@ static void do_lottery(int Ind, object_type *o_ptr)
 			object_wipe(j_ptr);
 
 			/* Prepare a gold object */
-			invcopy(j_ptr, gold_colour(gold));
+			invcopy(j_ptr, gold_colour(drop, TRUE));
 
 			/* Determine how much the treasure is "worth" */
-			//		j_ptr->pval = (gold >= 15000) ? 15000 : gold;
+			//j_ptr->pval = (gold >= 15000) ? 15000 : gold;
 			j_ptr->pval = drop;
 
 			drop_near(j_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);

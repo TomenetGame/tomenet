@@ -3386,7 +3386,7 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 #else
 		o_ptr->pval += j_ptr->pval;
 		/* determine new 'colour' depending on the total amount */
-		o_ptr->k_idx = gold_colour(o_ptr->pval);
+		o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE);//FALSE because player dropping one pile onto another calls this too
 		o_ptr->sval = k_info[o_ptr->k_idx].sval;
 #endif
 	}
@@ -7559,17 +7559,14 @@ void give_reward(int Ind, u32b resf, cptr quark, int level, int discount) {
  * Places a treasure (Gold or Gems) at given location
  * The location must be a valid, empty, floor grid.
  */
-void place_gold(struct worldpos *wpos, int y, int x, int bonus)
-{
-	int		i;
-
-	s32b	base;
-
-	//cave_type	*c_ptr;
-	//object_type *o_ptr;
-	object_type	forge;
-
+/*note: This function uses completely bad values for picking a gold 'colour' at first and should be rewritten.
+  I added a hack that resets the colour to something feasible so not almost every high level pile is adamantite. */
+void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
+	int i;
+	s32b base;
+	object_type forge;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Paranoia -- check bounds */
@@ -7591,6 +7588,7 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 	/* Hack -- Creeping Coins only generate "themselves" */
 	if (coin_type) i = coin_type + 1;
 
+//s_printf("pg: ol=%d,i=%d,ct=%d\n", object_level, i, coin_type);
 	/* Do not create "illegal" Treasure Types */
 	if (i > SV_GOLD_MAX) i = SV_GOLD_MAX;
 
@@ -7602,6 +7600,10 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 
 	/* Determine how much the treasure is "worth" */
 	forge.pval = (base + (8L * randint(base)) + randint(8)) + bonus;
+
+	/* hacking this mess of an outdated function: pick a 'colour' */
+	forge.k_idx = gold_colour(forge.pval, TRUE);
+	forge.sval = k_info[forge.k_idx].sval;
 
 	if (opening_chest) {
 		forge.owner = opening_chest_owner;

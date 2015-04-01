@@ -5688,12 +5688,15 @@ cptr get_day(int day)
 	return (buf);
 }
 
-int gold_colour(int amt)
-{
+/* Fuzzy: Will allow one-off colour */
+int gold_colour(int amt, bool fuzzy) {
 	int i, unit = 1;
 
-	for (i = amt; i > 99 ; i >>= 1, unit++) /* naught */;
+	for (i = amt; i > 49; i >>= 1, unit++) /* naught */;
+	if (fuzzy) unit = unit - 1 + rand_int(3);
+	if (unit < 1) unit = 1;
 	if (unit > SV_GOLD_MAX) unit = SV_GOLD_MAX;
+
 	return (lookup_kind(TV_GOLD, unit));
 }
 

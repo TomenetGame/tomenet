@@ -1478,7 +1478,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	/* XXX Use "gold" object kind */
 //	invcopy(&tmp_obj, 488);
 
-	invcopy(&tmp_obj, gold_colour(amt));
+	invcopy(&tmp_obj, gold_colour(amt, FALSE));
 
 	/* Setup the "worth" */
 	tmp_obj.pval = amt;

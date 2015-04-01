@@ -5703,7 +5703,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 
 	/* drop gold too? */
 	if (q_questor->drops_gold) {
-		invcopy(o_ptr, gold_colour(q_questor->drops_gold));
+		invcopy(o_ptr, gold_colour(q_questor->drops_gold, TRUE));
 		o_ptr->pval = q_questor->drops_gold;
 		drop_near(o_ptr, 0, wpos, y, x);
 	}
