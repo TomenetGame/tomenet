@@ -5694,7 +5694,22 @@ int gold_colour(int amt, bool fuzzy, bool compact) {
 	int i, unit = 1;
 
 	//for (i = amt; i > 99; i >>= 1, unit++) /* naught */; --old
-	for (i = (compact ? amt / 100 : amt); i > 39; i = (i * 2) / 3, unit++) /* naught */;
+
+#if 1
+	/* special: perform pre-rounding, to achieve smoother looking transitions */
+	for (i = 1; i * 10 <= amt; i *= 10);
+	/* keep first 2 digits, discard the rest */
+	if (i >= 10) amt = (amt / (i / 10)) * (i / 10);
+#endif
+
+	if (compact)
+#if 0 /* scale? */
+		for (i = amt / 100; i >= 40; i = (i * 2) / 3, unit++) /* naught */;
+#else /* stretch? */
+		for (i = amt; i >= 60; i = (i * 2) / 4, unit++) /* naught */;
+#endif
+	else
+		for (i = amt; i > 39; i = (i * 2) / 3, unit++) /* naught */;
 	if (fuzzy) unit = unit - 1 + rand_int(3);
 	if (unit < 1) unit = 1;
 	if (unit > SV_GOLD_MAX) unit = SV_GOLD_MAX;
