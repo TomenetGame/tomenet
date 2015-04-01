@@ -1478,7 +1478,8 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	/* XXX Use "gold" object kind */
 //	invcopy(&tmp_obj, 488);
 
-	invcopy(&tmp_obj, gold_colour(amt, FALSE));
+	/* hack: player-dropped piles are bigger at same value, than normal money drops ;) */
+	invcopy(&tmp_obj, gold_colour(amt / 100, FALSE));
 
 	/* Setup the "worth" */
 	tmp_obj.pval = amt;
