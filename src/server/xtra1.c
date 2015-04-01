@@ -3088,10 +3088,8 @@ void calc_boni(int Ind) {
 	p_ptr->skill_sav = p_ptr->rp_ptr->r_sav + p_ptr->cp_ptr->c_sav;
 	/* Base skill -- stealth */
 	p_ptr->skill_stl = p_ptr->rp_ptr->r_stl + p_ptr->cp_ptr->c_stl;
-	//csheet_boni[14].slth = p_ptr->skill_stl;
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh = p_ptr->rp_ptr->r_srh + p_ptr->cp_ptr->c_srh;
-	//csheet_boni[14].srch = p_ptr->skill_srh;
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos = p_ptr->rp_ptr->r_fos + p_ptr->cp_ptr->c_fos;
 	/* Base skill -- combat (normal) */
@@ -3199,7 +3197,7 @@ void calc_boni(int Ind) {
 	/* Half-Troll */
 	else if (p_ptr->prace == RACE_HALF_TROLL) {
 		p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
-		p_ptr->regenerate = TRUE; csheet_boni->cb[5] |= CB6_RRGHP;
+		p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP;
 	}
 
 	/* Dunadan */
@@ -4414,6 +4412,7 @@ void calc_boni(int Ind) {
 		int stealth = get_skill(p_ptr, SKILL_STEALTH);
 		int sneakiness = get_skill(p_ptr, SKILL_SNEAKINESS);
 		p_ptr->pspeed -= 10 - sneakiness / 7;
+		csheet_boni[14].spd -= 10 - sneakiness / 7;
 #if 1
 		if (stealth >= 10) {
 			p_ptr->skill_stl = p_ptr->skill_stl + stealth / 10;
@@ -4438,11 +4437,14 @@ void calc_boni(int Ind) {
 	}
 	if (p_ptr->cloaked == 1) {
 		p_ptr->pspeed -= 10 - get_skill_scale(p_ptr, SKILL_SNEAKINESS, 3);
+		csheet_boni[14].spd -= 10 - get_skill_scale(p_ptr, SKILL_SNEAKINESS, 3);
 		p_ptr->skill_stl = p_ptr->skill_stl + 25;
+		csheet_boni[14].slth += 25;
 		p_ptr->skill_srh = p_ptr->skill_srh + 10;
+		csheet_boni[14].srch += 10;
 	}
 
-	if (p_ptr->shadow_running) p_ptr->pspeed += 10;
+	if (p_ptr->shadow_running) { p_ptr->pspeed += 10; csheet_boni[14].spd += 10; }
 
 	if (p_ptr->sh_fire_tim) p_ptr->sh_fire = TRUE;
 	if (p_ptr->sh_cold_tim) p_ptr->sh_cold = TRUE;
@@ -5224,8 +5226,13 @@ void calc_boni(int Ind) {
 	}
 
 //	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
-	if (p_ptr->cumber_armor) p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
-	else p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7);
+	if (p_ptr->cumber_armor) {
+		p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
+		csheet_boni[14].spd += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
+	} else {
+		p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7);
+		csheet_boni[14].spd += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7);
+	}
 
 	p_ptr->redraw |= (PR_SPEED | PR_EXTRA) ;
 
@@ -5612,6 +5619,7 @@ void calc_boni(int Ind) {
 
 	/* Affect Skill -- stealth (Level, by Class) */
 	p_ptr->skill_stl += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
+	csheet_boni[14].slth += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
 	
 	/* Affect Skill -- search ability (Level, by Class) */
 	p_ptr->skill_srh += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh * 2));// + get_skill(p_ptr, SKILL_SNEAKINESS);
