@@ -2007,8 +2007,14 @@ void do_slash_cmd(int Ind, char *message) {
 #endif
                         return;
                 }
-		else if (prefix(message, "/martyr") || prefix(message, "/mar"))
-		{
+		else if (prefix(message, "/martyr") || prefix(message, "/mar")) {
+			/* we cannot cast 'martyr' spell at all? */
+			//if (lua_get_level(Ind, exec_lua(0, "return HMARTYR"), s32b lvl, 50, 0, 0) < 1)
+			if (exec_lua(0, format("return get_level(%d, HMARTYR, 50, 0)", Ind)) < 1) {
+				msg_print(Ind, "You know not how to open the heavens.");
+				return;
+			}
+
 			if (Players[Ind]->martyr_timeout)
 				msg_print(Ind, "\377yThe heavens are not yet willing to accept your martyrium.");
 			else
