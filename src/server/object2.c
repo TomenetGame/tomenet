@@ -3023,7 +3023,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 
 	/* Hack -- gold always merge */
-//	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
+	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
+
 
 	/* Don't EVER stack questors oO */
 	if (o_ptr->questor) return FALSE;
@@ -3350,8 +3351,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 /*
  * Allow one item to "absorb" another, assuming they are similar
  */
-void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
-{
+void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	int total = o_ptr->number + j_ptr->number;
 
         /* Prepare ammo for possible combining */
@@ -3376,7 +3376,19 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 	 */
 	if (o_ptr->tval == TV_GOLD) {
 		o_ptr->number = 1;
+#if 0
+		/* use 'colour' of the bigger pile */
+		if (o_ptr->pval < j_ptr->pval) {
+			o_ptr->sval = j_ptr->sval;
+			o_ptr->k_idx = j_ptr->k_idx;
+		}
 		o_ptr->pval += j_ptr->pval;
+#else
+		o_ptr->pval += j_ptr->pval;
+		/* determine new 'colour' depending on the total amount */
+		o_ptr->k_idx = gold_colour(o_ptr->pval);
+		o_ptr->sval = k_info[o_ptr->k_idx].sval;
+#endif
 	}
 
 	/* Hack -- blend "known" status */
