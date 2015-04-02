@@ -5710,7 +5710,7 @@ int gold_colour(int amt, bool fuzzy, bool compact) {
 #endif
 	else
 		for (i = amt; i >= 40; i = (i * 2) / 3, unit++) /* naught */;
-	if (fuzzy) unit = unit - 1 + rand_int(3);
+	if (fuzzy) unit = unit - 1 + (rand_int(5) + 2) / 3;
 	if (unit < 1) unit = 1;
 	if (unit > SV_GOLD_MAX) unit = SV_GOLD_MAX;
 
