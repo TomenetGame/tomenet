@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. March 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. April 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9+ - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -14367,14 +14367,12 @@ failure instead causes elemental backlash against the caster, while the
 effects of the spell, if it is not a sigil type spell, resolve normally.
 Having a physical rune corresponding to the invoked element shields the
 runemaster from this backlash, at the cost of the physical rune. When
-lacking these physical runes (or if they are inscribed !R), the caster of
-may experience backlash. Keeping physical runes is especially important
-once the damaging effects of runespells begin to outpace the runemaster's
-intrinsic durability; resisting one's own spells can be an important factor
-for survival in critical situations. For this reason, beginner runemasters
-are advised to use basic elemental spells that they can easily acquire the
-according resistance for. Inscribing a rune with !R will prevent the rune
-from being consumed to shield the runemaster from a backlash, beware!
+lacking these physical runes, the caster of may experience backlash.
+Keeping physical runes is especially important once the damaging effects of
+runespells begin to outpace the runemaster's intrinsic durability; resisting
+one's own spells can be an important factor for survival in critical
+situations. For this reason, beginner runemasters are advised to use basic
+elemental spells that they can easily acquire the according resistance for.
 
 INTelligence, DEXterity, and skill level affect spell failure rates for
 runespells. Runespell type generally governs the level of a runespell,
@@ -14462,8 +14460,7 @@ Auto-retaliation:
 If you inscribe @O[a-g][a-g] on a rune in your inventory, you will retaliate
 with a spell of the selected modifier and type. For example, if you set the
 inscription to @Oac on a rune of light, the 'ball’ spell type will be
-selected, with a 'minimized' spell modifier. It is advised to use the !R
-inscription to prevent your last rune from being consumed in spell failure.
+selected, with a 'minimized' spell modifier.
 
 Although you can set most spells for retaliation, some spells may make poor
 choices for auto-retaliation. Retaliation defaults to a bolt spell if the

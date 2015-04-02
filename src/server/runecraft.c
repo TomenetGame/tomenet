@@ -24,6 +24,7 @@
 /* Class Options */
 //#define ENABLE_SKILLFUL_CASTING //Increases or decreases damage for individual spells slightly, based on fail rate margin. (Disabled currently, would mismatch INFO mkey/wizard displays.)
 //#define ENABLE_SUSCEPT //Extra backlash if the caster is susceptable to the projection element. (Disabled for now, until it can be completely implemented across classes; ie. Globe of Light hurts Dark-Elf casters.)
+//#define ENABLE_PROTECTION //Prevent backlash by consuming a rune in inventory, if missing a !R preservation inscription. (Just get 0% fail instead, too complex!)
 //#define ENABLE_LIFE_CASTING //Allows casting with HP if not enough MP. (Disabled due to simplified, damage only, backlash penalties. We don't want OP necro/blood (infinite mana) runies!)
 #ifdef ENABLE_LIFE_CASTING
  #define SAFE_RETALIATION //Disable retaliation/FTK when casting with HP.
@@ -350,6 +351,7 @@ object_type * rspell_trap(int Ind, byte projection) {
 	return NULL;
 }
 
+//Charge one rune from inventory, for Sigil, Glyph (and Backlash Protection)
 bool rspell_socket(int Ind, byte projection, bool sigil) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
@@ -359,7 +361,11 @@ bool rspell_socket(int Ind, byte projection, bool sigil) {
 		if (i >= INVEN_PACK) continue;		
 		o_ptr = &p_ptr->inventory[i];
 		if ((o_ptr->tval == TV_RUNE) && (o_ptr->level || o_ptr->owner == p_ptr->id)) { //Do we own it..?
-			if (o_ptr->sval == projection && (sigil || !check_guard_inscription(o_ptr->note, 'R'))) { //Element match, not protected?
+			if (o_ptr->sval == projection && (sigil 
+#ifdef ENABLE_PROTECTION
+			|| !check_guard_inscription(o_ptr->note, 'R')
+#endif
+			)) { //Element match, not protected?
 				byte amt = 1; //Always consume exactly one!
 				char o_name[ONAME_LEN];
 				object_desc(Ind, o_name, o_ptr, FALSE, 3);
@@ -994,7 +1000,10 @@ s_printf("Duration: %d\n", duration);
 
 	/* Failure */
 	if (failure)
-		if (!rspell_socket(Ind, projection, FALSE)) {
+#ifdef ENABLE_PROTECTION
+		if (!rspell_socket(Ind, projection, FALSE))
+#endif
+		{
 			if (dice > damage) damage = dice; //Get the highest damage part of the spell, could be reworked to match actual spell type (as modified by enhanced). TODO
 			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP | PROJECT_RNAF), "");
 		}
