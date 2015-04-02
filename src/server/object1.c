@@ -68,6 +68,7 @@ static cptr ring_adj[MAX_ROCKS] =
 	"Rusty", "Transparent", "Copper", "Black Opal", "Nickel",
         "Glass", "Fluorspar", "Agate",
 };
+//todo: make money pile colours (gems) consistent with these
 #if 1 /*more animated TERMs*/
 static byte ring_col[MAX_ROCKS] = {
 	TERM_GREEN, TERM_VIOLET, TERM_L_BLUE, TERM_L_BLUE, TERM_L_GREEN,
@@ -119,6 +120,7 @@ static cptr amulet_adj[MAX_AMULETS] = {
 	"Emerald", "Aquamarine", "Sapphire", "Glimmer-Stone", "Ebony",
 	"Meerschaum", "Jade", "Red Opal",
 };
+//todo: make money pile colours (gems) consistent with these
 #if 1 /*more animated TERMs*/
 static byte amulet_col[MAX_AMULETS] = {
 	TERM_YELLOW, TERM_L_UMBER, TERM_WHITE, TERM_L_WHITE, TERM_WHITE,
