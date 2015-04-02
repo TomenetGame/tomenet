@@ -689,10 +689,10 @@ bool set_brand(int Ind, int v, int t, int p)
 	bool notice = FALSE, plural = FALSE;
 	char weapons[20];
 
-	strcpy(weapons, "\377wYour weapon ");
+	strcpy(weapons, "\377wYour weapon");
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) {
-		strcpy(weapons, "\377wYour weapons ");
+		strcpy(weapons, "\377wYour weapons");
 		plural = TRUE;
 	}
 
