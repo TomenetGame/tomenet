@@ -4691,25 +4691,24 @@ void gain_exp_to_level(int Ind, int level) {
  *
  * XXX XXX XXX Note the use of actual "monster names"
  */
-static int get_coin_type(monster_race *r_ptr)
-{
+static int get_coin_type(monster_race *r_ptr) {
 	cptr name = (r_name + r_ptr->name);
 
 	/* Analyze "coin" monsters */
 	if (r_ptr->d_char == '$') {
 		/* Look for textual clues */
-		if (strstr(name, " copper ")) return (2);
-		if (strstr(name, " silver ")) return (5);
+		if (strstr(name, " copper ")) return (1);
+		if (strstr(name, " silver ")) return (2);
 		if (strstr(name, " gold ")) return (10);
 		if (strstr(name, " mithril ")) return (16);
-		if (strstr(name, " adamantite ")) return (17);
+		if (strstr(name, " adamantite ")) return (18);
 
 		/* Look for textual clues */
-		if (strstr(name, "Copper ")) return (2);
-		if (strstr(name, "Silver ")) return (5);
+		if (strstr(name, "Copper ")) return (1);
+		if (strstr(name, "Silver ")) return (2);
 		if (strstr(name, "Gold ")) return (10);
 		if (strstr(name, "Mithril ")) return (16);
-		if (strstr(name, "Adamantite ")) return (17);
+		if (strstr(name, "Adamantite ")) return (18);
 	}
 
 	/* Assume nothing */
