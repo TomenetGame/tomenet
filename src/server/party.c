@@ -2773,7 +2773,7 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 			continue;
 
 		/* Check for his existence in the party */
-                if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i)) {
+		if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i)) {
 			/* Increase the "divisor" */
 			average_lev += p_ptr->lev;
 			num_members++;
@@ -2824,19 +2824,19 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 			    (note: this formula also occurs in mon_take_hit) */
 			if (henc > p_ptr->max_lev) eff_henc = henc;
 			else eff_henc = p_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
- #ifdef ANTI_MAXPLV_EXPLOIT
-  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
+#ifdef ANTI_MAXPLV_EXPLOIT
+ #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 			soft_max_plv = Players[Ind]->max_plv - ((Players[Ind]->max_plv - Players[Ind]->max_lev) / 2);
 			if ((Ind != i) && (eff_henc < soft_max_plv)) eff_henc = soft_max_plv;
-  #else
-   #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
+ #else
+  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
 			if ((Ind != i) && (eff_henc < Players[Ind]->max_plv - 5))
 				new_amount = (new_amount * eff_henc) / (Players[Ind]->max_plv * 2);
-   #else
+  #else
 			if ((Ind != i) && (eff_henc < Players[Ind]->max_plv)) eff_henc = Players[Ind]->max_plv; /* 100% zonk, bam */
-   #endif
   #endif
  #endif
+#endif
 			/* dungeon floor specific reduction if too shallow */
 			if (not_in_iddc)
 				new_amount = det_exp_level(new_amount, eff_henc, dlev);
