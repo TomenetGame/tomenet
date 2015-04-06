@@ -694,8 +694,8 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 15) a_ptr->flags2 |= TR2_SUST_INT;
 			else if (r < 25) a_ptr->flags3 |= TR3_SEE_INVIS;
 			else if (r < 35) {
-				a_ptr->to_d += 2 + rand_int (10);
-				a_ptr->to_h += 2 + rand_int (10);
+				a_ptr->to_d += 2 + rand_int(10);
+				a_ptr->to_h += 2 + rand_int(10);
 			}
 			else if (r < 40) {
 				int rr = rand_int (29);
@@ -1311,9 +1311,11 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 		a_ptr->flags3 &= ~TR3_NO_MAGIC;
 		if (a_ptr->pval) a_ptr->flags1 |= TR1_MANA;
 
+#if 0 /* these aren't counted into AP for mage staves actually */
 		/* keep it neutral for now, to keep AP unaffected */
 		a_ptr->to_h = 0;
 		a_ptr->to_d = 0;
+#endif
 	}
 	/* Dark Swords never add to MANA */
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;
@@ -1545,11 +1547,16 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	if (a_ptr->tval == TV_MSTAFF) {
 		a_ptr->flags3 &= ~TR3_NO_MAGIC;
 		if (a_ptr->pval) a_ptr->flags1 |= TR1_MANA;
+#if 0
 		/* reduce +hit/+dam depending on +MANA bonus */
 		a_ptr->to_h = -(a_ptr->pval + rand_int(5)) * 3;
 		a_ptr->to_d = -(a_ptr->pval + rand_int(5)) * 3;
 		if (a_ptr->to_h > 10) a_ptr->to_h = 10;
 		if (a_ptr->to_d > 10) a_ptr->to_d = 10;
+#else
+		if (a_ptr->to_h > 15) a_ptr->to_h = 15;
+		if (a_ptr->to_d > 15) a_ptr->to_d = 15;
+#endif
 	}
 	/* Dark Swords never add to MANA */
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;
