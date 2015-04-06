@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. April 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. April 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9+ - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -10568,6 +10568,11 @@ Note that not every skill is available to every profession (class).
                                 Critical-strike skill only helps light swords,
                                 not heavier than 10.0 lb., while critical-hits
                                 items will work with all weapons.
+                                (The skill effect does not depend on how heavy
+                                exactly the weapon is, as long as it's not
+                                above 10.0 lb, so that weight threshold is
+                                basically an on/off toggle for the skill to
+                                apply to your attacks.)
                                 Also, Critical-strike skill will not give you
                                 any benefits if your armour is so heavy that
                                 you get a flexibility warning (compare (5.5)).
@@ -10593,7 +10598,9 @@ Note that not every skill is available to every profession (class).
                                 affects their critical hits:
                                 If your weapon is lighter than 10.0 lb, your
                                 chances to score a critical hit will further
-                                increase.
+                                increase. (However, that increase is much
+                                smaller than the effects of this skill or of
+                                items that give 'Critical Hits' bonus.)
                                 Above 10.0 lb, the chance to hit your target
                                 critically won't be worse than with a 10.0 lb
                                 weapon.
@@ -10602,7 +10609,19 @@ Note that not every skill is available to every profession (class).
                                 your critical strike -IF you manage to execute
                                 one- is higher if your weapon is heavier
                                 (in detail: the crit class is more likely
-                                to be higher for heavier weapons).
+                                to be higher for heavier weapons). This effect
+                                of getting bigger crits in if the weapon is
+                                heavier has no upper weight boundary, so it is
+                                true for all weapons up to Grond.
+                                Although Critical-strike skill (if applied) and
+                                'Critical Hits' bonus from items will also
+                                (about equally) improve your chances to land a
+                                higher-class critical hit, the weapon weight
+                                has even somewhat more effect on average on the
+                                crit class than either of those two alone.
+                                However, for a good improvement in crit-class
+                                just from weapon weight alone, the weapon would
+                                need to be much heavier than 10.0 lb.
 
         .Axe-mastery            See Sword-mastery
 
