@@ -291,7 +291,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "target_history",		"Add target informations to the message history" },
 	{ &c_cfg.taciturn_messages,	FALSE,	4,	9, 39, TRUE,
 	    "taciturn_messages",	"Suppress server messages as far as possible" },
-	{ &c_cfg.always_show_lists,	FALSE,	4,	9, 40, TRUE,
+	{ &c_cfg.always_show_lists,	TRUE,	4,	9, 40, TRUE,
 	    "always_show_lists",	"Always show lists in item/skill selection" },
 
 	{ &c_cfg.no_weather,		FALSE,	4,	1, 41, TRUE,
