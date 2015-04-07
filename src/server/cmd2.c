@@ -5912,8 +5912,7 @@ void do_cmd_fire(int Ind, int dir) {
 /*
  * Check if neighboring monster(s) interferes with player's action.  - Jir -
  */
-bool interfere(int Ind, int chance)
-{
+bool interfere(int Ind, int chance) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	monster_race *r_ptr;
 	monster_type *m_ptr;
@@ -5926,11 +5925,16 @@ bool interfere(int Ind, int chance)
 	   (ignore cloak_neutralized for the time being) */
 	if (p_ptr->cloaked) return(FALSE);
 
+	/* too fast to get grabbed! */
+	if (p_ptr->shadow_running) return FALSE;
+
+	/* cannot interfere with ghosts */
+	if (p_ptr->ghost) return FALSE;
+
 	chance = chance * (100 - calmness) / 100;
 
 	/* Check if monsters around him/her hinder the action */
-	for (d = 1; d <= 9; d++)
-	{
+	for (d = 1; d <= 9; d++) {
 		if (d == 5) continue;
 
 		tx = x + ddx[d];
@@ -5939,8 +5943,7 @@ bool interfere(int Ind, int chance)
 		if (!in_bounds(ty, tx)) continue;
 
 		if (!(i = zcave[ty][tx].m_idx)) continue;
-		if (i > 0)
-		{
+		if (i > 0) {
 			m_ptr = &m_list[i];
 			r_ptr = race_inf(m_ptr);
 //			if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
@@ -5952,17 +5955,13 @@ bool interfere(int Ind, int chance)
 				continue;
 			/* Pet never interfere  - the_sandman */
 			if (m_ptr->pet) continue;
-		}
-		else
-		{
+		} else {
 			q_ptr = Players[-i];
 			/* hostile player? */
 			if (!check_hostile(Ind, -i) ||
-				q_ptr->paralyzed ||
-				q_ptr->stun > 100 ||
-				q_ptr->confused ||
-				q_ptr->afraid ||
-				(r_info[q_ptr->body_monster].flags1 & RF1_NEVER_MOVE))
+			    q_ptr->paralyzed || q_ptr->stun > 100 || q_ptr->confused || q_ptr->afraid ||
+			    (r_info[q_ptr->body_monster].flags1 & RF1_NEVER_MOVE) ||
+			    (r_info[q_ptr->body_monster].flags7 & RF7_NEVER_ACT))
 				continue;
 #ifdef ENABLE_STANCES
 			if (q_ptr->combat_stance == 1) switch(q_ptr->combat_stance_power) {
@@ -5980,16 +5979,16 @@ bool interfere(int Ind, int chance)
 			chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 50);
 		}
 
+		/* Cannot grab what you cannot see */
+		//todo: implement for monsters (if (!p_ptr->mon_vis[m_idx]) continue;)
+		//basically, we could try to use 'inv' flag that is set to player_invis() and save it in m_ptr, to access it here?
+
 		if (chance > 95) chance = 95;
-		if (rand_int(100) < chance)
-		{
+		if (rand_int(100) < chance) {
 			char m_name[MNAME_LEN];
-			if (i > 0)
-			{
+			if (i > 0) {
 				monster_desc(Ind, m_name, i, 0);
-			}
-			else
-			{
+			} else {
 				/* FIXME: even not visible... :( */
 //				strcpy(m_name, q_ptr->name);
 				/* fixed :) */
@@ -5999,46 +5998,6 @@ bool interfere(int Ind, int chance)
 			return TRUE;
 		}
 	}
-#if 0
-	for (tx = x - 1; tx <= x + 1; tx++)
-	{
-		for (ty = y - 1; ty <= y + 1; ty++)
-		{
-			if (!(i = cave[p_ptr->dun_depth][ty][tx].m_idx)) continue;
-			if (i > 0)
-			{
-				if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
-					continue;
-			}
-			else
-			{
-				/* hostile player? */
-				if (!check_hostile(Ind, -i) ||
-					Players[-i]->paralyzed ||
-					Players[-i]->stun > 100 ||
-					Players[-i]->confused ||
-					r_info[Players[-i]->body_monster].flags1 & RF1_NEVER_MOVE)
-					continue;
-			}
-
-			if (rand_int(100) < chance)
-			{
-				char m_name[MNAME_LEN];
-				if (i > 0)
-				{
-					monster_desc(Ind, m_name, i, 0);
-				}
-				else
-				{
-					/* even not visible... :( */
-					strcpy(m_name, Players[-i]->name);
-				}
-				msg_format(Ind, "\377%c%^s interferes with your attempt!", COLOUR_IC_MON, m_name);
-				return TRUE;
-			}
-		}
-	}
-#endif
 
 	return FALSE;
 }
