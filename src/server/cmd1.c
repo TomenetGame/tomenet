@@ -270,6 +270,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	monster_brand[4] = 0;
 	monster_brand[5] = 0;
 
+	bool melee = (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
+
+
 	if (Ind > 0) {
 		p_ptr = Players[Ind];
 		pr_ptr = &r_info[p_ptr->body_monster];
@@ -341,7 +344,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			if (o_ptr->k_idx) apply_monster_brands = FALSE;
 #endif
 		/* The player never gets brands on ranged attacks from a form */
-		if (is_ammo(o_ptr->tval))
+		if (!melee)
 			apply_monster_brands = FALSE;
 		/* The player doesn't get brands if he uses a weapon but the monster doesn't */
 		if ((o_ptr->k_idx) && (!pr_ptr->body_parts[BODY_WEAPON]))
@@ -420,7 +423,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	}
 
 	/* Extra melee branding */
-	if (p_ptr && !is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG) {
+	if (p_ptr && melee) {
 		/* Apply brands from (powerful) auras! */
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
@@ -607,7 +610,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Slay Undead */
-			if (((f1 & TR1_SLAY_UNDEAD) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 30)) &&
+			if (((f1 & TR1_SLAY_UNDEAD) ||
+			    (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 30) ||
+			    (p_ptr && get_skill(p_ptr, SKILL_HCURING) >= 50 && melee)) &&
 			    (r_ptr->flags3 & RF3_UNDEAD)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
@@ -813,7 +818,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	   to avoid insane damage. */
 	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
-	/* Ranged weapons get less benefit from brands */
+	/* Ranged weapons (except for boomerangs) get less benefit from brands */
 	if (is_ammo(o_ptr->tval))
 		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 //		return ((tdam * mult) / FACTOR_MULT);
@@ -850,6 +855,9 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	monster_brand[3] = 0;
 	monster_brand[4] = 0;
 	monster_brand[5] = 0;
+
+	bool melee = (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
+
 
 	if (Ind > 0) {
 		p_ptr = Players[Ind];
@@ -894,7 +902,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 			apply_monster_brands = FALSE;
 #endif
 		/* The player never gets brands on ranged attacks from a form */
-		if (is_ammo(o_ptr->tval))
+		if (!melee)
 			apply_monster_brands = FALSE;
 		/* The player doesn't get brands if he uses a weapon but the monster doesn't */
 		if ((o_ptr->k_idx) && (!pr_ptr->body_parts[BODY_WEAPON]))
@@ -965,7 +973,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	}
 
 	/* Extra melee branding */
-	if (p_ptr && !is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG) {
+	if (p_ptr && melee) {
 		/* Apply brands from (powerful) auras! */
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
@@ -1153,6 +1161,111 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		case TV_BOOMERANG:*/
 		default:
 		{
+			u32b q_flags3 = 0x0;
+
+			/* emulate slay-susceptibilities */
+			if (q_ptr->body_monster) q_flags3 |= r_info[q_ptr->body_monster].flags3;
+			if (q_ptr->suscep_good) q_flags3 |= RF3_EVIL;
+			//if (q_ptr->suscep_evil) q_flags3 |= RF3_GOOD; //unused (enlightened maia)
+			if (q_ptr->suscep_life) q_flags3 |= RF3_UNDEAD; //covers RACE_VAMPIRE
+			if (q_ptr->prace == RACE_DRACONIAN) q_flags3 |= RF3_DRAGON;
+			if (q_ptr->prace == RACE_YEEK) q_flags3 |= RF3_ANIMAL; // D:
+
+			/* Slay Animal */
+			if ((f1 & TR1_SLAY_ANIMAL) &&
+			    (q_flags3 & RF3_ANIMAL)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ANIMAL;*/
+
+				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
+				if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
+			}
+
+			/* Slay Evil */
+			if (((f1 & TR1_SLAY_EVIL) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
+#ifdef ENABLE_MAIA
+			    || (p_ptr && p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
+#endif
+			    ) && (q_flags3 & RF3_EVIL)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
+				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
+				if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
+			}
+
+			/* Slay Undead */
+			if (((f1 & TR1_SLAY_UNDEAD) ||
+			    (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 30) ||
+			    (p_ptr && get_skill(p_ptr, SKILL_HCURING) >= 50 && melee)) &&
+			    (q_flags3 & RF3_UNDEAD)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+			}
+
+			/* Slay Demon */
+			if (((f1 & TR1_SLAY_DEMON) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 40)) &&
+			    (q_flags3 & RF3_DEMON)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+			}
+
+			/* Slay Orc */
+			if ((f1 & TR1_SLAY_ORC) &&
+			    (q_flags3 & RF3_ORC)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ORC;*/
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+			}
+
+			/* Slay Troll */
+			if ((f1 & TR1_SLAY_TROLL) &&
+			    (q_flags3 & RF3_TROLL)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_TROLL;*/
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+			}
+
+			/* Slay Giant */
+			if ((f1 & TR1_SLAY_GIANT) &&
+			    (q_flags3 & RF3_GIANT)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_GIANT;*/
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+			}
+
+			/* Slay Dragon  */
+			if ((f1 & TR1_SLAY_DRAGON) &&
+			    (q_flags3 & RF3_DRAGON)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+			}
+
+			/* Execute Dragon */
+			if ((f1 & TR1_KILL_DRAGON) &&
+			    (q_flags3 & RF3_DRAGON)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
+				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
+			}
+
+			/* Execute Undead */
+			if ((f1 & TR1_KILL_UNDEAD) &&
+			    (q_flags3 & RF3_UNDEAD)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
+				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
+			}
+
+			/* Execute Undead */
+			if ((f1 & TR1_KILL_DEMON) &&
+			    (q_flags3 & RF3_DEMON)) {
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
+				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
+			}
+
+
 			/* Brand (Acid) */
 			if (f1 & TR1_BRAND_ACID)
 			{
@@ -1258,7 +1371,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	   to avoid insane damage. */
 	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
-	/* Ranged weapons get less benefit from brands */
+	/* Ranged weapons (except for boomerangs) get less benefit from brands */
 	if (is_ammo(o_ptr->tval))
 		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 

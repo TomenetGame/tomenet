@@ -7049,6 +7049,8 @@ void player_death(int Ind) {
 
 			/* Lose some experience */
 			loss_factor = INSTANT_RES_XP_LOST;
+			if (get_skill(p_ptr, SKILL_HCURING) >= 50) loss_factor -= 5;
+
 			reduce = p_ptr->max_exp;
 			reduce = reduce > 99999 ?
 			reduce / 100 * loss_factor : reduce * loss_factor / 100;
@@ -7961,9 +7963,9 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 
     loss_reduction tells by how much % the GHOST_XP_LOST is reduced (C. Blue).
  */
-void resurrect_player(int Ind, int loss_reduction) {
+void resurrect_player(int Ind, int loss_factor) {
 	player_type *p_ptr = Players[Ind];
-	int reduce, loss_factor;
+	int reduce;
 
 	/* Hack -- the dungeon master can not resurrect */
 	if (p_ptr->admin_dm) return;	// TRUE;
@@ -7973,17 +7975,16 @@ void resurrect_player(int Ind, int loss_reduction) {
 
 	disturb(Ind, 1, 0);
 
-	/* paranoia limits */
-	if (loss_reduction < 0) loss_reduction = 0;
-	if (loss_reduction > 100) loss_reduction = 100;
-
-	/* capping exp loss for resurrection prayer:
-	   exploss = 0 for life scroll,
-	   exploss = 0..17 for resurection prayer at 0..17 spell level. */
-	if (loss_reduction > 17) loss_reduction = 17;
+	/* limits - hack: '0' means use default value */
+	if (!loss_factor) loss_factor = GHOST_XP_LOST;
+	/* paranoia */
+	else if (loss_factor < 0) loss_factor = GHOST_XP_LOST;
+	else if (loss_factor > 100) loss_factor = GHOST_XP_LOST;
 
 	/* Lose some experience */
-	loss_factor = GHOST_XP_LOST * (100 - loss_reduction) / 100;
+	if (get_skill(p_ptr, SKILL_HCURING) >= 50) loss_factor -= 5;
+	if (loss_factor < 30) loss_factor = 30;//hardcoded mess
+
 	reduce = p_ptr->max_exp;
 	reduce = reduce > 99999 ?
 	    reduce / 100 * loss_factor : reduce * loss_factor / 100;

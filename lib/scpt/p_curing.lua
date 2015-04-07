@@ -41,7 +41,7 @@ function get_curewounds_power()
         return pow
 end
 
--- Keep consistent with GHOST_XP_LOST
+-- Keep consistent with GHOST_XP_LOST -- hardcoded mess
 function get_exp_loss()
 	local pow
 	--ENABLE_INSTANT_RES?
@@ -360,10 +360,10 @@ HRESURRECT = add_spell
 	["level"] =     30,
 	["mana"] =      200,
 	["mana_max"] =  500,
-	["fail"] =      70,
+	["fail"] =      50,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-			fire_ball(Ind, GF_RESURRECT_PLAYER, 0, get_level(Ind, HRESURRECT, 46*2), 1, " resurrects you!")
+			fire_ball(Ind, GF_RESURRECT_PLAYER, 0, get_exp_loss() * 2, 1, " resurrects you!")
 		        end,
 	["info"] =      function()
 		        return "exp -"..get_exp_loss().."%"

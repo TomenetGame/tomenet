@@ -546,6 +546,8 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYou feel strong against stun and cuts.");
 		} if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\374\377GYou feel strong against hallucination and black breath.");
+			msg_print(Ind, "\374\377GYour melee attacks inflict greater damage on undead.");
+			msg_print(Ind, "\374\377GYour soul escapes less quickly on death.");
 		}
 		/* + continuous effect */
                 break;

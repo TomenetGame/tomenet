@@ -13858,7 +13858,7 @@ Priest schools:
                     use the /martyr (or /mar) command.
                     Required skill level for first spell level: 40.
 
-    BONI:           Protects the player from undead at 30, from demons at 40,
+    BONI:           Protects the player from undead at 30, from demons at 40
                     and from evil in general at 50. Works similar to the
                     'protection from evil' spell, but has better effect on
                     monsters of higher level.
@@ -13924,11 +13924,14 @@ Priest schools:
                     Required skill level for first spell level: 25.
 
     BONI:           Improves HP regeneration rate extraordinarily the further
-                    it is trained above 30,
+                    it is trained above 30.
                     Reduces duration of various bad effects on the body at
                     30 (blindness, poison) / 40 (stun, cuts) / 50
-                    (hallucination),
-                    Less frequent suffering from black breath at 50.
+                    (hallucination).
+                    Less frequent suffering from black breath,
+                    adds slay undead to all melee attacks and
+                    -5% experience loss on getting revived (by whatever means,
+                    but never goes below 30% total exp loss) at 50.
 
 
 - Holy Support

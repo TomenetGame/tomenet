@@ -10001,7 +10001,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 	case GF_RESURRECT_PLAYER:
-			if (p_ptr->ghost) resurrect_player(Ind, dam);
+			//if (p_ptr->ghost)
+				resurrect_player(Ind, dam);
 			break;
 	case GF_SANITY_PLAYER:
 			msg_format(Ind, "%s waves over your eyes, murmuring some words..", killer);
