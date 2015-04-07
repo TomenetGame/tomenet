@@ -15111,6 +15111,9 @@ The techniques are as follows:
         keeping up your movement, as well as attacking someone will break
         shadow running - it will not wear off on its own but last indefinitely
         until broken.
+        Taking damage doesn't break it, but taking sanity damage can break it.
+        Suffering from status effects such as confusion/blindness/stun breaks
+        it too.
         Note that stamina does not regenerate while shadow running.
         Shadow running includes sprinting!
         (Starting to shadow-run does not cost energy.)
