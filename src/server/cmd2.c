@@ -300,6 +300,7 @@ void do_cmd_go_up(int Ind) {
 		p_ptr->warning_staircase = 1;
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (surface) {
+			dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
@@ -310,6 +311,12 @@ void do_cmd_go_up(int Ind) {
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
 			}
+#endif
+#ifdef ENABLE_INSTANT_RES
+ #ifdef INSTANT_RES_EXCEPTION
+			if (d_ptr->type == DI_NETHER_REALM && p_ptr->insta_res)
+				msg_print(Ind, "\374\377R*** Warning: Instant Resurrection is not possible in the Nether Realm! ***");
+ #endif
 #endif
 		}
 #if 0 /* Disable use of dungeon names */
@@ -924,6 +931,7 @@ void do_cmd_go_down(int Ind) {
 		p_ptr->warning_staircase = 1;
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (surface) {
+			dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
@@ -934,6 +942,12 @@ void do_cmd_go_down(int Ind) {
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
 			}
+#endif
+#ifdef ENABLE_INSTANT_RES
+ #ifdef INSTANT_RES_EXCEPTION
+			if (d_ptr->type == DI_NETHER_REALM && p_ptr->insta_res)
+				msg_print(Ind, "\374\377R*** Warning: Instant Resurrection is not possible in the Nether Realm! ***");
+ #endif
 #endif
 		}
 #if 0 /* Disable use of dungeon names */

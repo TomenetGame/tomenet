@@ -6933,9 +6933,11 @@ void player_death(int Ind) {
 		if (!p_ptr->alive)
 			instant_res_possible = FALSE;
 
+ #ifdef INSTANT_RES_EXCEPTION
 		/* Not in Nether Realm */
 		if (in_netherrealm(&p_ptr->wpos))
 			instant_res_possible = FALSE;
+ #endif
 
 		/* Divine wrath is meant to kill people */
 		if (streq(p_ptr->died_from, "divine wrath"))
@@ -6949,23 +6951,23 @@ void player_death(int Ind) {
 
 		if (instant_res_possible) {
 			int loss_factor, reduce;
-#ifndef FALLEN_WINNERSONLY
+ #ifndef FALLEN_WINNERSONLY
 			int i;
 			u32b dummy, f5;
-#endif
+ #endif
 
 			/* Log it */
 			s_printf("INSTA_RES: %s (%d) was defeated by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || insanity || p_ptr->image)
 				s_printf("(%s was really defeated by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 			/* Play the death sound */
 			if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC, TRUE);
 			else sound(Ind, "death_female", "death", SFX_TYPE_MISC, TRUE);
-#else
+ #else
 			sound(Ind, SOUND_DEATH);
-#endif
+ #endif
 
 			/* Message to other players */
 			if (cfg.unikill_format)
@@ -6974,9 +6976,9 @@ void player_death(int Ind) {
 				snprintf(buf, sizeof(buf), "\374\377D%s (%d) was defeated by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 
 			msg_broadcast(Ind, buf);
-#ifdef TOMENET_WORLDS
+ #ifdef TOMENET_WORLDS
 			if (cfg.worldd_pdeath) world_msg(buf);
-#endif
+ #endif
 
 			/* Add to legends log if he was a winner or very high level */
 			if (!is_admin(p_ptr)) {
@@ -7018,12 +7020,12 @@ void player_death(int Ind) {
 			p_ptr->chp_frac = 0;
 
 			/* Lose inventory and equipment items as per normal death */
-#ifdef DEATH_PACK_ITEM_LOST
+ #ifdef DEATH_PACK_ITEM_LOST
 			inven_death_damage(Ind, TRUE);
-#endif
-#ifdef DEATH_EQ_ITEM_LOST
+ #endif
+ #ifdef DEATH_EQ_ITEM_LOST
 			equip_death_damage(Ind, TRUE);
-#endif
+ #endif
 
 			/* Extract the cost */
 			p_ptr->au -= instant_res_cost;
@@ -7034,15 +7036,15 @@ void player_death(int Ind) {
 
 			/* Also lose some cash on death */
 			s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
-#if 0 /* lose 0 below 50k, up to 50% up to 500k, 50% after that */
+ #if 0 /* lose 0 below 50k, up to 50% up to 500k, 50% after that */
 			if (p_ptr->au <= 50000) ;
 			else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
 			else p_ptr->au /= 2;
-#else /* lose 5..33% */
+ #else /* lose 5..33% */
 			/* overflow handling */
 			if (p_ptr->au <= 20000000) p_ptr->au = (p_ptr->au * (rand_int(29) + 67)) / 100;
 			else p_ptr->au = (p_ptr->au / 100) * (rand_int(29) + 67);
-#endif
+ #endif
 			s_printf("%d.\n", p_ptr->au);
 
 			p_ptr->safe_sane = TRUE;
@@ -7098,21 +7100,21 @@ void player_death(int Ind) {
 			p_ptr->new_level_method = LEVEL_TO_TEMPLE;
 			recall_player(Ind, "");
 
-#if 0
+ #if 0
 			/* Unown land */
 			if (p_ptr->total_winner) {
- #ifdef NEW_DUNGEON
+  #ifdef NEW_DUNGEON
 /* FIXME */
 /*
 				msg_broadcast_format(Ind, "%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50);
 				wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
 */
- #else
+  #else
 				msg_broadcast_format(Ind, "%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50);
 				wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
- #endif
+  #endif
 			}
-#endif
+ #endif
 
 			/* No longer a winner */
 			p_ptr->total_winner = FALSE;
@@ -7125,7 +7127,7 @@ void player_death(int Ind) {
 						a_info[p_ptr->inventory[j].name1].winner = FALSE;
 			}
 
-#ifndef FALLEN_WINNERSONLY
+ #ifndef FALLEN_WINNERSONLY
 			/* Take off winner artifacts and winner-only items */
 			for (i = INVEN_WIELD; i <= INVEN_TOTAL; i++) {
 				o_ptr = &p_ptr->inventory[i];
@@ -7135,7 +7137,7 @@ void player_death(int Ind) {
 					inven_takeoff(Ind, i, 255, FALSE);
 				}
 			}
-#endif
+ #endif
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_BASIC);

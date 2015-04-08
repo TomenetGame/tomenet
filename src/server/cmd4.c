@@ -3261,7 +3261,16 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 
 	if (!(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP | MODE_NO_GHOST)))
 		msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives-1-1 > 1 ? "resurrections" : "resurrection");
+#ifdef ENABLE_INSTANT_RES
+ #ifdef INSTANT_RES_EXCEPTION
+	if (p_ptr->insta_res) {
+		if (in_netherrealm(&p_ptr->wpos)) msg_print(Ind, "Instant Resurrection does not work in the Nether Realm!");
+		else msg_print(Ind, "Instant Resurrection is active.");
+	}
+ #else
 	if (p_ptr->insta_res) msg_print(Ind, "Instant Resurrection is active.");
+ #endif
+#endif
 
 	if (p_ptr->castles_owned) {
 		if (p_ptr->houses_owned == 1) strcpy(buf, "You own a castle.");

@@ -876,6 +876,11 @@
 /* Set Sauron's boost factor (1/n chance to cast spells) [67,75] */
 #define SAURON_SPELL_BOOST	67
 
+
+/* Disallow instant resurrection in the Nether Realm */
+#define INSTANT_RES_EXCEPTION
+
+
 /* Auto-retaliation: */
 /* No class restriction; limit to non-escape mechanisms. */
 #define AUTO_RET_NEW
