@@ -363,7 +363,7 @@ HRESURRECT = add_spell
 	["fail"] =      50,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-			fire_ball(Ind, GF_RESURRECT_PLAYER, 0, get_exp_loss() * 2, 1, " resurrects you!")
+			fire_ball(Ind, GF_RESURRECT_PLAYER, 0, get_exp_loss(), 1, " resurrects you!")
 		        end,
 	["info"] =      function()
 		        return "exp -"..get_exp_loss().."%"

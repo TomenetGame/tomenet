@@ -3815,6 +3815,7 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_CURE_PLAYER:
 	case GF_RESTORE_PLAYER:
 	case GF_CURING:
+	case GF_RESURRECT_PLAYER:
 
 		return (dam);
 	}
