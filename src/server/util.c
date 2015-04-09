@@ -7133,6 +7133,8 @@ void grid_affects_player(int Ind) {
 
 /* Items that can be shared even between incompatible character modes or if level 0! */
 bool exceptionally_shareable_item(object_type *o_ptr) {
+	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return FALSE;
+
 	if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
 	    (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 	    (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) ||
@@ -7144,6 +7146,8 @@ bool exceptionally_shareable_item(object_type *o_ptr) {
 }
 /* Starter items that can be shared despite being level 0! */
 bool shareable_starter_item(object_type *o_ptr) {
+	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return FALSE;
+
 	if ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
 	    // "Why not share ale? -Molt" <- good idea, here too!
