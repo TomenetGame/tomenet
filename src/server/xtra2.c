@@ -138,10 +138,6 @@
 	#define TRAD_SCROLL_MARGIN_COL	SCROLL_MARGIN_COL
 #endif
 
-/* Pre-set owner for DROP_CHOSEN items, so you can't cheeze them to someone else
-   by ground-IDing them, then have someone else to pick them up! (especially for Nazgul rings) */
-#define PRE_OWN_DROP_CHOSEN
-
 /* death_type definitions */
 #define DEATH_PERMA	0
 #define DEATH_INSANITY	1
@@ -5462,7 +5458,7 @@ if (cfg.unikill_format) {
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
-			if (qq_ptr->name1) determine_artifact_timeout(qq_ptr->name1, wpos);
+			if (true_artifact_p(qq_ptr)) determine_artifact_timeout(qq_ptr->name1, wpos);
 #endif
 			drop_near(qq_ptr, -1, wpos, y, x);
 			s_printf("..dropped.\n");
