@@ -566,6 +566,11 @@
 #define SEAL_INVALID_OBJECTS
 
 
+/* Pre-set owner for DROP_CHOSEN items, so you can't cheeze them to someone else
+   by ground-IDing them, then have someone else to pick them up! (especially for Nazgul rings) */
+#define PRE_OWN_DROP_CHOSEN
+
+
 /*
  * Maximum array bounds for template based arrays
  */
