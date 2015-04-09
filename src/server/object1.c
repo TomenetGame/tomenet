@@ -5824,7 +5824,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 	}
 
 	/* we are the new owner */
-	if (!o_ptr->owner && true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, wpos); /* paranoia? */
+	if (!o_ptr->owner && true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 	o_ptr->owner = p_ptr->id;
 	o_ptr->mode = p_ptr->mode;
 
