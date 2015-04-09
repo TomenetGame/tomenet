@@ -5737,6 +5737,7 @@ bool can_use(int Ind, object_type *o_ptr) {
 	if (!o_ptr->owner && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
+		if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 	}
 
 	if (compat_pomode(Ind, o_ptr)) return FALSE;
@@ -5808,6 +5809,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 	/* Hack -- convert if available */
 	if ((p_ptr->lev >= o_ptr->level || in_irondeepdive(&p_ptr->wpos))
 	    && !p_ptr->admin_dm) {
+		if (!o_ptr->owner && true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 		o_ptr->owner = p_ptr->id;
 		return (TRUE);
 	} else {
@@ -5822,6 +5824,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 	}
 
 	/* we are the new owner */
+	if (!o_ptr->owner && true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, wpos); /* paranoia? */
 	o_ptr->owner = p_ptr->id;
 	o_ptr->mode = p_ptr->mode;
 

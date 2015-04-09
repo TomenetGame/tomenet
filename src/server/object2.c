@@ -6297,8 +6297,7 @@ u32b place_object_restrictor = RESF_NONE;
  * This routine requires a clean floor grid destination.
  */
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
-void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker)
-{
+void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker) {
 	int prob, base, tmp_luck, i, dlev;
 	int tries = 0, k_idx, debug_k_idx = 0;
 
@@ -6499,6 +6498,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	if (opening_chest) {
 		forge.owner = opening_chest_owner;
 		forge.mode = opening_chest_mode;
+		if (true_artifact_p(&forge)) determine_artifact_timeout(forge.name1, wpos);
 	}
 
 	forge.marked2 = removal_marker;
@@ -8783,6 +8783,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	if (!o_ptr->owner && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
+		if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 	}
 
 	/* Auto id ? */
