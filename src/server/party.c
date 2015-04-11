@@ -4292,9 +4292,9 @@ void account_checkexpiry(int Ind) {
 				expire = CHARACTER_EXPIRY_DAYS * 86400 - now + ptr->laston;
 
 				if (expire < 86400) {
-					msg_format(Ind, "\377yYour character %s will be removed \377rvery soon\377y!", ptr->name, expire / 86400);
+					msg_format(Ind, "\374\377yYour character %s will be removed \377rvery soon\377y!", ptr->name, expire / 86400);
 				} else if (expire < 60 * 86400) {
-					msg_format(Ind, "\377yYour character %s will be removed in %d days.", ptr->name, expire / 86400);
+					msg_format(Ind, "\374\377yYour character %s will be removed in %d days.", ptr->name, expire / 86400);
 				}
 			}
 			ptr = ptr->next;
