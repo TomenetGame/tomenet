@@ -6253,7 +6253,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc)
 		n = 1;
 
 		/* Count repetitions of this grid */
-		while (sc[x1] == c && sa[x1] == a && x1 < 80)
+		while (x1 < 80 && sc[x1] == c && sa[x1] == a)
 		{
 			/* Increment count and column */
 			n++;
