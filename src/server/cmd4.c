@@ -2114,8 +2114,16 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff, "This is a 'Fun' server: Players may use '/wish' command freely.\n");
 #endif
 
-	fprintf(fff, "Inactive characters will be deleted after %d days.\n", CHARACTER_EXPIRY_DAYS);
-	fprintf(fff, "Accounts without characters will be deleted after %d days.\n", ACCOUNT_EXPIRY_DAYS);
+#ifdef PLAYERS_NEVER_EXPIRE
+	if (TRUE) {
+#else
+	if (cfg.players_never_expire) {
+#endif
+		fprintf(fff, "Inactive characters or accounts will not be deleted.\n");
+	} else {
+		fprintf(fff, "Inactive characters will be deleted after %d days.\n", CHARACTER_EXPIRY_DAYS);
+		fprintf(fff, "Accounts without characters will be deleted after %d days.\n", ACCOUNT_EXPIRY_DAYS);
+	}
 	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, (cfg.fps-60)*100/60);
 	fprintf(fff,"\n");
 

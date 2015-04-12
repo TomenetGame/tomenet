@@ -151,33 +151,32 @@ char *sST = serverStartupTime;
  */
 
 
-server_opts cfg =
-{
+server_opts cfg = {
 	/* others */
 	6, 0, 0,	// runlevel, runtime, closetime (NOT config options)
 
 	/* char * */
-        "meta.tomenet.eu",		// meta_address
+        "meta.tomenet.eu",// meta_address
         8800,           // meta port
 
 	"",		// bind_name
-	"changeme",		// console_password
-	"DungeonWizard",		// admin_wizard
-	"DungeonMaster",	// dungeon_master
-	"", 	// wserver,
+	"changeme",	// console_password
+	"DungeonWizard",// admin_wizard
+	"DungeonMaster",// dungeon_master
+	"", 		// wserver,
 
-	"",	// pass
+	"",		// pass
 	/* s32b */
 	201,		// preserve_death_level
 	300,50000,	// unique_respawn_time, unique_max_respawn_time
 	2,		// level_unstatic_chance,
 
 	8,		// min_unstatic_level
-	-1,18348,18349,18400,	// retire_timer, game_port, console_port, gw_port
+	-1,18348,18349,18400,// retire_timer, game_port, console_port, gw_port
 
 	10,200,		// spell_interfere, spell_stack_limit
 	/* s16b */
-	60,3,5,		// fps, newbies_cannot_drop, running_speed,
+	60,FALSE,3,5,	// fps, players_never_expire, newbies_cannot_drop, running_speed,
 
 	25, 150,	// anti_scum, dun_unusual,
 	32,32,		// town_x, town_y

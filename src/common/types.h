@@ -3101,8 +3101,7 @@ struct town_extra
 
 typedef struct server_opts server_opts;
 
-struct server_opts
-{
+struct server_opts {
 	s16b runlevel;		/* Glorified shutdown mode */
 	time_t runtime;		/* Server start time */
 	time_t closetime;	/* Server closedown time */
@@ -3130,6 +3129,7 @@ struct server_opts
 	s32b spell_interfere;
 	s32b spell_stack_limit;
 	s16b fps;
+	bool players_never_expire;
 	s16b newbies_cannot_drop;
 	s16b running_speed;
 

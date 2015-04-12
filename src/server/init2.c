@@ -3177,8 +3177,7 @@ static bool str_to_boolean(char * str)
  * the handeling of this will be unified in the future with some sort of 
  * options structure.
  */
-static void set_server_option(char * option, char * value)
-{
+static void set_server_option(char * option, char * value) {
 	/* Due to the lame way that C handles strings, we can't use a switch statement */
 	if (!strcmp(option,"REPORT_TO_METASERVER"))
 		cfg.report_to_meta = str_to_boolean(value);
@@ -3205,6 +3204,8 @@ static void set_server_option(char * option, char * value)
 		/* Hack -- reinstall the timer handler to match the new FPS */
 		install_timer_tick(dungeon, cfg.fps);
 	}
+	else if (!strcmp(option,"PLAYERS_NEVER_EXPIRE"))
+		cfg.players_never_expire = str_to_boolean(value);
 	else if (!strcmp(option,"MAGE_HITPOINT_BONUS"))
 		cfg.mage_hp_bonus = str_to_boolean(value);
 	else if (!strcmp(option,"NEWBIES_CANNOT_DROP"))

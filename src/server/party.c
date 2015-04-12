@@ -3846,7 +3846,10 @@ void scan_players() {
 #endif
 
 #ifdef PLAYERS_NEVER_EXPIRE
-	s_printf("(scan_players() disabled due to PLAYERS_NEVER_EXPIRE.)\n");
+	s_printf("(scan_players() disabled due to PLAYERS_NEVER_EXPIRE (DEF).)\n");
+	return;
+#else
+	if (cfg.players_never_expire) s_printf("(scan_players() disabled due to PLAYERS_NEVER_EXPIRE (cfg).)\n");
 	return;
 #endif
 
@@ -3959,6 +3962,9 @@ void scan_accounts() {
 
 #ifdef PLAYERS_NEVER_EXPIRE
 	s_printf("(scan_accounts() disabled due to PLAYERS_NEVER_EXPIRE.)\n");
+	return;
+#else
+	if (cfg.players_never_expire) s_printf("(scan_accounts() disabled due to PLAYERS_NEVER_EXPIRE (cfg).)\n");
 	return;
 #endif
 
@@ -4282,6 +4288,8 @@ void account_checkexpiry(int Ind) {
 
 #ifdef PLAYERS_NEVER_EXPIRE
 	return;
+#else
+	if (cfg.players_never_expire) return;
 #endif
 	now = time(NULL);
 
