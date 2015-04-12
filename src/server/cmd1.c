@@ -1579,7 +1579,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 #if 0
     /* ok this is too harsh. also, it can be assumed that if you bow down to pick up items,
-       they enter your wraith sphere well enough to become accessible */	
+       they enter your wraith sphere well enough to become accessible */
 	/* not while in.. WRAITHFORM :D */
 	if (p_ptr->tim_wraith && !p_ptr->admin_dm) return;
 #endif
@@ -1636,7 +1636,7 @@ void carry(int Ind, int pickup, int confirm) {
 		if (in_bree(wpos) &&
 		    p_ptr->max_plv < cfg.newbies_cannot_drop && o_ptr->owner && p_ptr->id != o_ptr->owner) {
 			msg_format(Ind, "You cannot take gold from other people in Bree until you are level %d.", cfg.newbies_cannot_drop);
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 #endif
 
@@ -1800,7 +1800,7 @@ void carry(int Ind, int pickup, int confirm) {
 		if (in_bree(wpos) &&
 		    p_ptr->max_plv < cfg.newbies_cannot_drop && o_ptr->owner && p_ptr->id != o_ptr->owner) {
 			msg_format(Ind, "You cannot take items from other people in Bree until you are level %d.", cfg.newbies_cannot_drop);
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 #endif
 
@@ -1885,26 +1885,26 @@ void carry(int Ind, int pickup, int confirm) {
 			if (cfg.anti_cheeze_pickup) {
 				if (o_ptr->level) {
 					msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
-					return;
+					if (!is_admin(p_ptr)) return;
 				}
  #if 1 /* doesn't matter probably? Food exchange was already done above. */
 				else {
 					msg_print(Ind, "You cannot pick up a zero-level item.");
-					return;
+					if (!is_admin(p_ptr)) return;
 				}
  #endif
 			/* new: this is to prevent newbies to pick up all nearby stuff with their
 			   level 1 char aimlessly without being able to drop it again. */
 			} else if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
 				msg_format(Ind, "You must at least be level %d to pick up items above your level.", cfg.newbies_cannot_drop);
-				return;
+				if (!is_admin(p_ptr)) return;
 			}
 #if 1
 			/* this is for a similar purpose: in the inn, don't allow picking up items that we can't immediately use */
 			else if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && p_ptr->lev < o_ptr->level
 			    && !in_irondeepdive(&p_ptr->wpos)) {
 				msg_print(Ind, "Inside an inn you cannot pick up items that are higher level than you.");
-				return;
+				if (!is_admin(p_ptr)) return;
 			}
 #endif
 			else if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
@@ -1912,7 +1912,7 @@ void carry(int Ind, int pickup, int confirm) {
 			{
 				if (o_ptr->level == 0) msg_print(Ind, "You cannot pick up a zero-level artifact.");
 				else msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
-				return;
+				if (!is_admin(p_ptr)) return;
 			}
 
 		}
