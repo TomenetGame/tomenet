@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-static int MACRO_WAIT = 96;
+static int MACRO_WAIT = 96; //hack: ASCII 96 ("`") is unused in the game's key layout
 
 /*
  * Extract the first few "tokens" from a buffer
