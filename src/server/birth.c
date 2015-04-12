@@ -3266,6 +3266,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 //		p_ptr->noscore = 1;
 		/* permanent invulnerability */
 		p_ptr->total_winner = TRUE;
+		p_ptr->once_winner = TRUE; //just for consistency, eg when picking up WINNERS_ONLY items
 		p_ptr->max_dlv = 200;
 #ifdef SEPARATE_RECALL_DEPTHS
 		for (i = 0; i < MAX_D_IDX * 2; i++)
