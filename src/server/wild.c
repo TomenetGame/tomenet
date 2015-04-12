@@ -4543,7 +4543,7 @@ void paint_house(int Ind, int x, int y, int k) {
 		msg_print(Ind, "You must have access to the house.");
 		return;
 	}
-	if (!(access_door(Ind, cs_ptr->sc.ptr, FALSE) || Players[Ind]->admin_dm)) {
+	if (!(access_door(Ind, cs_ptr->sc.ptr, FALSE) || is_admin(p_ptr))) {
 		msg_print(Ind, "You must have access to the house.");
 		return;
 	}

@@ -1814,8 +1814,7 @@ cptr get_house_owner(struct c_special *cs_ptr)
  *
  * Note unlocking a locked door/chest is worth one experience point.
  */
-void do_cmd_open(int Ind, int dir)
-{
+void do_cmd_open(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -2068,7 +2067,7 @@ void do_cmd_open(int Ind, int dir)
 		else if (c_ptr->feat == FEAT_HOME) {
 			struct c_special *cs_ptr;
 			if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) { /* orig house failure */
-				if (access_door(Ind, cs_ptr->sc.ptr, TRUE) || Players[Ind]->admin_dm) {
+				if (access_door(Ind, cs_ptr->sc.ptr, TRUE) || is_admin(p_ptr)) {
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
 					c_ptr->feat = FEAT_HOME_OPEN;
