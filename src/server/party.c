@@ -1078,6 +1078,9 @@ static bool guild_name_legal(int Ind, char *name) {
 	condense_name(buf, name);
 	/* Check each guild */
 	for (index = 0; index < MAX_GUILDS; index++) {
+		/* for renaming a guild: skip similarity-check if it's our own guild! */
+		if (guilds[index].master == p_ptr->id) continue;
+
 		/* compare condensed names */
 		condense_name(buf2, guilds[index].name);
 		if (!strcmp(buf, buf2)) {
