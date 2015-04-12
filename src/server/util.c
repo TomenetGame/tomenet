@@ -7289,20 +7289,39 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
    new players from creating account names too similar to existing ones. - C. Blue */
 void condense_name(char *condensed, const char *name) {
 	char *bufptr = condensed, current, multiple = 0, *ptr;
+	bool space = TRUE;
 
 	for (ptr = (char*)name; *ptr; ptr++) {
+		/* skip spaces in the beginning */
+		if (space && *ptr == ' ') continue;
+		space = FALSE;
+
+		/* ignore lower/upper case */
 		current = tolower(*ptr);
+
 		//discard non-alphanumeric characters
 		if (!isalpha(current) && !isdigit(current)) continue;
+
 		//condense multiples of the same character
 		if (multiple == current) continue;
 		multiple = current;
+
 		//finally add the character
 		*bufptr++ = current;
 	}
-	*bufptr = 0;
+	*bufptr = 0; //terminate
+
+	//discard spaces at the end of the name
+	for (ptr = bufptr - 1; ptr >= condensed; ptr--)
+		if (*ptr == ' ') {
+			*ptr = 0;
+			bufptr--;
+		}
+		else break;
+
 	//extra strict: discard digits at the end of the name
 	for (ptr = bufptr - 1; ptr >= condensed; ptr--)
-		if (isdigit(*ptr)) *ptr = 0;
+		if (isdigit(*ptr))
+			*ptr = 0;
 		else break;
 }
