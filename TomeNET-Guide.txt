@@ -13893,7 +13893,7 @@ Priest schools:
                     Lv10: Also cures confusion.                (auto-project)
                     Lv24: Also cures stun.                     (auto-project)
 
-    Remove Curses   Removes curses.
+    Break Curses    Removes curses.
                     Lv30: Removes heavy curses.
                     Required skill level for first spell level: 10.
 
