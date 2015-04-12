@@ -3623,8 +3623,7 @@ int has_ball (player_type *p_ptr) {
  *
  * TODO: find a better way for timed spells(set_*).
  */
-static bool process_player_end_aux(int Ind)
-{
+static bool process_player_end_aux(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	cave_type		*c_ptr;
 	object_type		*o_ptr;
@@ -3671,11 +3670,22 @@ static bool process_player_end_aux(int Ind)
 
 		/* Drowning, but not ghosts */
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
+			bool carry_wood = FALSE;
+
+			for (i = 0; i < INVEN_PACK; i++) {
+				o_ptr = &p_ptr->inventory[i];
+				if (!o_ptr->k_idx) break;
+				if (o_ptr->tval == TV_GOLEM && o_ptr->sval == SV_GOLEM_WOOD) {
+					carry_wood = TRUE;
+					break;
+				}
+			}
 
 			/* note: TODO (bug): items should get damaged even if player can_swim,
 			   but this might devalue swimming too much compared to levitation. Dunno. */
-
-			if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim)) {
+			if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim)
+			    && !carry_wood
+			    ) {
 				/* Take damage */
 				if (!(p_ptr->body_monster) || (
 				    !(r_info[p_ptr->body_monster].flags7 &
@@ -4172,13 +4182,12 @@ static bool process_player_end_aux(int Ind)
 			/* eat his WoR scrolls as suggested? */
 			bool found = FALSE, one = TRUE;
 			for (j = 0; j < INVEN_WIELD; j++) {
-				object_type *j_ptr;
 				if (!p_ptr->inventory[j].k_idx) continue;
-				j_ptr = &p_ptr->inventory[j];
-				if ((j_ptr->tval == TV_ROD) && (j_ptr->sval == SV_ROD_RECALL)) {
+				o_ptr = &p_ptr->inventory[j];
+				if ((o_ptr->tval == TV_ROD) && (o_ptr->sval == SV_ROD_RECALL)) {
 					if (found) one = FALSE;
 					if (o_ptr->number > 1) one = FALSE;
-					j_ptr->pval = 300;
+					o_ptr->pval = 300;
 					found = TRUE;
 				}
 			}
