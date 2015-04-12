@@ -1342,8 +1342,7 @@ W:20:15:200:97000
 P:0:3d9:10:25:0
 F:INT | HIDE_TYPE | 
 F:BRAND_COLD | BRAND_FIRE | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT | ESP_GIANT |
-F:IM_FIRE | IM_COLD | SUST_INT | SLOW_DIGEST | SHOW_MODS |
-#F:SPECIAL_GENE <- currently no reference in the code, hence commenting out for now!
+F:IM_FIRE | IM_COLD | SUST_INT | SLOW_DIGEST | SHOW_MODS | SPECIAL_GENE
 D:Within this long thrusting spear lie the spirits of frost giants and fire 
 D:demons, who war forever, trapped by magely spells.  
 
