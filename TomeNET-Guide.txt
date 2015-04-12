@@ -1085,8 +1085,11 @@ They all start with a slash '/' hence they're called slash commands:
 
 /guildmembers   Displays a list of all members of your guild.
 
-/hou        Displays your houses, same as ~9.
- (/house)
+/hou        Displays your houses, same as ~9, but offers two optional
+ (/house)   parameters to refine the search results:
+            /hou o    will only show your own houses.
+            /hou l    will only show houses in your current worldmap sector.
+            /hou ol   both of the above.
 
 /ig <player name>
  (/ignore)  ignores all chat messages from the specified player. (Toggle)
