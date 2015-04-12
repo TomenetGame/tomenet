@@ -9466,6 +9466,17 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "done.");
 				return;
 			}
+			else if (prefix(message, "/ap") && !prefix(message, "/apat")) { /* set optional parameter (too hacky..) */
+				if (!tk) {
+					msg_print(Ind, "Admin parm cleared.");
+					p_ptr->admin_parm[0] = 0;
+					return;
+				}
+				strncpy(p_ptr->admin_parm, message3, MAX_CHARS);
+				p_ptr->admin_parm[MAX_CHARS - 1] = 0;
+				msg_print(Ind, "Admin parm set.");
+				return;
+			}
 		}
 	}
 

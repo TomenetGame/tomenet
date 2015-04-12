@@ -2683,8 +2683,23 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 		h_ptr = &houses[i];
 		dna = h_ptr->dna;
 
-		if (!access_door(Ind, h_ptr->dna, FALSE) && (!admin_p(Ind) || own)) continue;
+		if (!access_door(Ind, h_ptr->dna, FALSE) && (
+#if 0 /* show unowned houses to admins? spammy */
+		    !admin_p(Ind) ||
+#else /* hide unowned houses even for admins */
+		    TRUE ||
+#endif
+		    own))
+			continue;
 		if (local && !inarea(&h_ptr->wpos, &p_ptr->wpos)) continue;
+
+		/* filter: only show houses of a specific player? */
+		if (admin && p_ptr->admin_parm[0]) {
+			//name = lookup_player_name(houses[i].dna->creator);
+			name = lookup_player_name(houses[i].dna->owner);
+			if (!name) continue;
+			if (strcmp(name, p_ptr->admin_parm)) continue;
+		}
 
 		shown = TRUE;
 		total++;

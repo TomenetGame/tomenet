@@ -2866,6 +2866,7 @@ struct player_type {
 	/* more admin fooling around (give a 1-hit-kill attack to the player, or let him die in 1 hit) */
 	int admin_godly_strike, admin_set_defeat;
 	bool admin_invuln, admin_invinc; /* Amulets of Invulnerability/Invincibility */
+	char admin_parm[MAX_CHARS];	/* optional special admin command parameter (hacky o_O) */
 
 	u32b test_count, test_dam, test_heal, test_turn;
 #ifdef TEST_SERVER
