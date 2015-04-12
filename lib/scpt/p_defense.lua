@@ -45,7 +45,7 @@ HBLESSING = add_spell
 		end
 	end,
 	["desc"] =	{
-			"Protects you with a shield of righterousness",
+			"Protects you with a shield of righteousness",
 			"At level 15 it turns into a holy chant",
 			"At level 30 becomes a holy prayer",
 			"***Automatically projecting***",
