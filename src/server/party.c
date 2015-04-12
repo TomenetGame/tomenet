@@ -1006,6 +1006,10 @@ static bool guild_name_legal(int Ind, char *name) {
 	player_type *p_ptr = Players[Ind];
 	object_type forge, *o_ptr = &forge;
 
+	char buf2[NAME_LEN], *ptr2;
+	int diff, min;
+
+
 	if (strlen(name) >= NAME_LEN) {
 		msg_format(Ind, "\377yGuild name must not exceed %d characters!", NAME_LEN - 1);
 		return FALSE;
@@ -1036,16 +1040,19 @@ static bool guild_name_legal(int Ind, char *name) {
 		msg_print(Ind, "\377ySorry, that name contains illegal characters or symbols.");
 		return FALSE;
 	}
+
 	/* Prevent abuse */
 	if (ILLEGAL_GROUP_NAME(name)) {
 		msg_print(Ind, "\377yThat's not a legal guild name, please try again.");
 		return FALSE;
 	}
+
 	/* Check for already existing party by that name */
 	if (party_lookup(name) != -1) {
 		msg_print(Ind, "\377yThere's already a party using that name.");
 		return FALSE;
 	}
+
 	/* Check for already existing guild by that name */
 	if ((index = guild_lookup(name) != -1)) {
 		/* Admin can actually create a duplicate 'spare' key this way */
@@ -1065,6 +1072,91 @@ static bool guild_name_legal(int Ind, char *name) {
 		}
 		msg_print(Ind, "\377yA guild by that name already exists.");
 		return FALSE;
+	}
+
+	/* Check for already existing guild with too similar name */
+	condense_name(buf, name);
+	/* Check each guild */
+	for (index = 0; index < MAX_GUILDS; index++) {
+		/* compare condensed names */
+		condense_name(buf2, guilds[index].name);
+		if (!strcmp(buf, buf2)) {
+			msg_print(Ind, "\377yA guild by a too similar name already exists.");
+			return FALSE;
+		}
+
+//#ifdef STRICT_SIMILAR_NAMES
+#if 1
+		/* Super-strict mode? Disallow (non-trivial) names that only have 1+ letter inserted somewhere */
+		if (
+ #if 1
+		    TRUE &&
+ #else
+ //#ifdef SIMILAR_CHARNAMES_OK
+		    FALSE &&
+ #endif
+		    strlen(buf) >= 5 && strlen(buf2) >= 5) { //non-trivial length
+			/* don't exaggerate */
+			if (strlen(buf) > strlen(buf2)) min = strlen(buf2);
+			else min = strlen(buf);
+
+			/* '->' */
+			diff = 0;
+			ptr2 = buf;
+			for (ptr = buf2; *ptr && *ptr2; ) {
+				if (tolower(*ptr) != tolower(*ptr2)) diff++;
+				else ptr++;
+				ptr2++;
+			}
+			//all remaining characters that couldn't be matched are also "different"
+			while (*ptr++) diff++;
+			while (*ptr2++) diff++;
+			//too little difference between account name and this character name? forbidden!
+			if (diff <= (min - 5) / 2 + 1) {
+				s_printf("similar guild? (1): ngname '%s', ogname '%s'\n", buf, buf2);
+				msg_print(Ind, "\377yA guild by a too similar name already exists.");
+				return FALSE;
+			}
+
+			/* '<-' */
+			diff = 0;
+			ptr2 = buf2;
+			for (ptr = buf; *ptr && *ptr2; ) {
+				if (tolower(*ptr) != tolower(*ptr2)) diff++;
+				else ptr++;
+				ptr2++;
+			}
+			//all remaining characters that couldn't be matched are also "different"
+			while (*ptr++) diff++;
+			while (*ptr2++) diff++;
+			//too little difference between account name and this character name? forbidden!
+			if (diff <= (min - 5) / 2 + 1) {
+				s_printf("similar guild? (2): ngname '%s', ogname '%s'\n", buf, buf2);
+				msg_print(Ind, "\377yA guild by a too similar name already exists.");
+				return FALSE;
+			}
+
+			/* '='  -- note: weakness here is, the first 2 methods don't combine with this one ;).
+			   So the checks could be tricked by combining one 'replaced char' with one 'too many char'
+			   to circumvent the limitations for longer names that usually would require a 3+ difference.. =P */
+			diff = 0;
+			ptr2 = buf2;
+			for (ptr = buf; *ptr && *ptr2; ) {
+				if (tolower(*ptr) != tolower(*ptr2)) diff++;
+				ptr++;
+				ptr2++;
+			}
+			//all remaining characters that couldn't be matched are also "different"
+			while (*ptr++) diff++;
+			while (*ptr2++) diff++;
+			//too little difference between account name and this character name? forbidden!
+			if (diff <= (min - 5) / 2 + 1) {
+				s_printf("similar guild? (3): ngname '%s', ogname '%s'\n", buf, buf2);
+				msg_print(Ind, "\377yA guild by a too similar name already exists.");
+				return FALSE;
+			}
+		}
+#endif
 	}
 
 	return TRUE;
