@@ -7,7 +7,7 @@
 # You should manually write the total # of rumours (lines - 10).
 
 N:*:Default
-949
+950
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -957,3 +957,4 @@ This is what I was afraid of.
 Give me liberty or give me death!
 Men are more apt to believe what they least understand.
 Doubt is the midwife of curiosity, and curiosity breeds wisdom.
+The One Ring can only be destroyed in the fires of Mount Doom.
