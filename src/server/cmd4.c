@@ -2687,7 +2687,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 #if 0 /* show unowned houses to admins? spammy */
 		    !admin_p(Ind) ||
 #else /* hide unowned houses even for admins */
-		    TRUE ||
+		    !h_ptr->dna->owner ||
 #endif
 		    own))
 			continue;
