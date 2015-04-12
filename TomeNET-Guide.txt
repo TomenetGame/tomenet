@@ -11260,10 +11260,10 @@ Note that not every skill is available to every profession (class).
                                 pretty much half as high at 25.000 dodging as
                                 at 50.000 dodging.
 
-                                As a rule of thumb, your dodge chance will
-                                usually cap at 67% for monsters of equal level
-                                and at 50% chance for monsters of twice your
-                                level.
+                                As a rule of thumb, your dodge chance (at maxed
+                                dodging skill) will usually cap at 67% for
+                                monsters of equal level and at 50% chance for
+                                monsters of twice your level.
 
     .Calmness                   Ability to not get hindered by enemies.
                                 Adjacent foes can interfere if you try to..
