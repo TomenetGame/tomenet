@@ -11857,7 +11857,8 @@ create a character!):
     creatures. This means that you need to kill monsters in melee range (though
     not necessarily by using melee attacks - spells or arrows work fine too) in
     order to satisfy your hunger, which might be quite easy for melee classes
-    but sometimes a hassle for ranged/caster classes.
+    but sometimes a hassle for ranged/caster classes. On the plus side, a
+    vampire won't get gorged by drinking too many potions.
     At level 40 they will need less and less food to sustain themselves.
     Vampire royalties will require the least amount of food, independant of
     their level, enabling them to survive a very long time without feeding -
