@@ -1571,10 +1571,10 @@ void carry(int Ind, int pickup, int confirm) {
 	if (!(c_ptr->o_idx)) return;
 
 	/* Ghosts cannot pick things up */
-	if ((p_ptr->ghost && pickup && !p_ptr->admin_dm)) {
+	if ((p_ptr->ghost && pickup)) {
 		//anti-spam? p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 		msg_print(Ind, "\377yGhosts cannot pick up things. You need to get resurrected first.");
-		return;
+		if (!is_admin(p_ptr)) return;
 	}
 
 #if 0
