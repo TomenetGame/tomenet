@@ -78,7 +78,7 @@ int usleep(long microSeconds)
 
 
 
-static int MACRO_WAIT = 96;
+static int MACRO_WAIT = 96; //hack: ASCII 96 ("`") is unused in the game's key layout
 
 static void ascii_to_text(char *buf, cptr str);
 
@@ -317,13 +317,21 @@ static int diff_ms(struct timeval *begin, struct timeval *end) {
 	return diff;
 }
 
-static void sync_sleep(int milliseconds)
-{
+/* This should be disabled or it'd cause the part labelled
+    "Hack -- flush the output once no key is ready"
+   in inkey() to trigger, flush the input and thereby clearing an
+   ongoing macro, making it impossible to use \wXX constructs for
+   macros that work with item-requests sent by the server
+   (recharge, enchant, identify). */
+//#define ACCEPT_KEYS
+static void sync_sleep(int milliseconds) {
 	static char animation[4] = { '-', '\\', '|', '/' };
 	int result, net_fd;
 	struct timeval begin, now;
 	int time_spent;
+#ifdef ACCEPT_KEYS
 	char ch;
+#endif
 
 #ifdef WINDOWS
 	/* Use the multimedia timer function */
@@ -335,6 +343,7 @@ static void sync_sleep(int milliseconds)
 #endif
 	net_fd = Net_fd();
 
+#ifdef ACCEPT_KEYS
 	/* HACK - Create a new key queue so we can receive fresh key presses */
 	Term->keys_old = Term->keys;
 
@@ -342,8 +351,10 @@ static void sync_sleep(int milliseconds)
 	C_MAKE(Term->keys->queue, Term->key_size_orig, char);
 
 	Term->keys->size = Term->key_size_orig;
+#endif
 
 	while (TRUE) {
+#ifdef ACCEPT_KEYS
 		/* Check for fresh key presses */
 		while (Term_inkey(&ch, FALSE, TRUE) == 0) {
 			if (ch == ESCAPE) {
@@ -370,6 +381,7 @@ static void sync_sleep(int milliseconds)
 				}
 			}
 		}
+#endif
 
 #ifdef WINDOWS
 		/* Use the multimedia timer function */
@@ -383,6 +395,7 @@ static void sync_sleep(int milliseconds)
 		/* Check if we have waited long enough */
 		time_spent = diff_ms(&begin, &now);
 		if (time_spent >= milliseconds) {
+#ifdef ACCEPT_KEYS
 			if (Term->keys_old) {
 				/* Destroy the temporary key queue */
 				C_KILL(Term->keys->queue, Term->keys->size, char);
@@ -392,6 +405,7 @@ static void sync_sleep(int milliseconds)
 				Term->keys = Term->keys_old;
 				Term->keys_old = NULL;
 			}
+#endif
 
 			/* Erase the spinner */
 			Term_erase(Term->wid - 1, 0, 1);
@@ -421,25 +435,18 @@ static void sync_sleep(int milliseconds)
 		/* Update the screen */
 		Term_fresh();
 
-		if(c_quit) {
+		if (c_quit) {
 			usleep(1000);
 			continue;
 		}
 
 		/* Parse net input if we got any */
-		if (SocketReadable(net_fd))
-		{
-			if ((result = Net_input()) == -1)
-			{
-				quit("Net_input failed.");
-			}
+		if (SocketReadable(net_fd)) {
+			if ((result = Net_input()) == -1) quit("Net_input failed.");
 		}
 
 		/* Redraw windows if necessary */
-		if (p_ptr->window)
-		{
-			window_stuff();
-		}
+		if (p_ptr->window) window_stuff();
 	}
 }
 
@@ -466,8 +473,7 @@ static void sync_sleep(int milliseconds)
  * for incoming packets.  This stops annoying "timeouts" and also lets
  * the screen get redrawn if need be while we are waiting for a key. --KLJ--
  */
-static char inkey_aux(void)
-{
+static char inkey_aux(void) {
 	int	k = 0, n, p = 0, w = 0;
 	char	ch = 0;
 	cptr	pat, act;
@@ -485,6 +491,23 @@ static char inkey_aux(void)
 	if (net_fd == -1) {
 		/* Wait for a keypress */
                 (void)(Term_inkey(&ch, TRUE, TRUE));
+
+		if (parse_macro && (ch == MACRO_WAIT)) {
+			buf_atoi[0] = '0';
+			buf_atoi[1] = '0';
+			buf_atoi[2] = '\0';
+			(void)(Term_inkey(&ch, TRUE, TRUE));
+			if (ch) buf_atoi[0] = ch;
+			(void)(Term_inkey(&ch, TRUE, TRUE));
+			if (ch) buf_atoi[1] = ch;
+			w = atoi(buf_atoi);
+			sync_sleep(w * 100L); /* w 1/10th seconds */
+			ch = 0;
+			w = 0;
+
+			/* continue with the next 'real' key */
+			(void)(Term_inkey(&ch, TRUE, TRUE));
+		}
 	} else {
 		/* Wait for keypress, while also checking for net input */
 		do {
@@ -503,6 +526,23 @@ static char inkey_aux(void)
 
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
+
+			if (parse_macro && (ch == MACRO_WAIT)) {
+				buf_atoi[0] = '0';
+				buf_atoi[1] = '0';
+				buf_atoi[2] = '\0';
+				(void)(Term_inkey(&ch, FALSE, TRUE));
+				if (ch) buf_atoi[0] = ch;
+				(void)(Term_inkey(&ch, FALSE, TRUE));
+				if (ch) buf_atoi[1] = ch;
+				w = atoi(buf_atoi);
+				sync_sleep(w * 100L); /* w 1/10th seconds */
+				ch = 0;
+				w = 0;
+
+				/* continue with the next 'real' key */
+				continue;
+			}
 
 			/* If we got a key, break */
 			if (ch) break;
@@ -535,7 +575,7 @@ static char inkey_aux(void)
 			/* Update the screen */
 			Term_fresh();
 
-			if(c_quit) {
+			if (c_quit) {
 				usleep(1000);
 				continue;
 			}
@@ -560,7 +600,6 @@ static char inkey_aux(void)
 		} while (!ch);
 	}
 
-
 	/* End of internal macro */
 	if (ch == 29) {
 //#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
@@ -577,20 +616,6 @@ if (c_cfg.keep_topline)
 
 	/* Do not check "ascii 29" */
 	if (ch == 29) return (ch);
-
-	if (parse_macro && (ch == MACRO_WAIT)) {
-		buf_atoi[0] = '0';
-		buf_atoi[1] = '0';
-		buf_atoi[2] = '\0';
-		(void)(Term_inkey(&ch, FALSE, TRUE));
-		if (ch) buf_atoi[0] = ch;
-		(void)(Term_inkey(&ch, FALSE, TRUE));
-		if (ch) buf_atoi[1] = ch;
-		w = atoi(buf_atoi);
-		sync_sleep(w * 100L); /* w 1/10th seconds */
-		ch = 0;
-		w = 0;
-	}
 
 	/* Do not check macro actions */
 	if (parse_macro) {
