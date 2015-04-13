@@ -5145,6 +5145,13 @@ staircase colours (also visible on the world map):
  back to town! They still lose about 20% experience (and gold) though.
  No-death dungeons/towers are marked by a green < or > symbol.
 
+-Unescapable dungeons. There is usually only one such dungeon and that is the
+ 'Death Fate'. Its entrance is a dark-flickering staircase. You should avoid
+ this dungeon at all costs since once you enter you can never get out.
+ If it's indeed the 'Death Fate' one then it's only one floor in size, so you
+ will just starve to death without anything interesting happening in there.
+ (The 'Death Fate' dungeon is actually not an ironman dungeon.)
+
 -Experimental dungeons. There might be an experimental dungeon available, which
  has special flags that are very unusual:
  NO_TELE, NO_ESP, LIMIT_ESP, NO_SUMMON.
@@ -5163,8 +5170,9 @@ Sometimes you might find ruins of old staircases that don't lead to any
 dungeon or tower. Those have no further functionality and are coloured grey
 (make sure you don't confuse them with an ironman dungeon accidentally).
 
-There are rumours about a dungeon that will never let anyone escape from it
-again, ever. A death fate with a dark, flashing staircase of no return.
+If you're looking for a challenge dungeon regarding deep diving without
+recalling in between, you might want to check out 'The Halls of Mandos'
+or the 'Ironman Deep Dive Challenge' (see (4.13) for details).
 
 
 Overview:
