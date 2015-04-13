@@ -539,7 +539,7 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp)
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_cast_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	/* Target the player with a bolt attack */
@@ -624,6 +624,9 @@ static void beam(int Ind, int m_idx, int typ, int dam_hp)
 
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
+#ifdef USE_SOUND_2010
+	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_cast_beam", NULL, SFX_TYPE_MON_SPELL, TRUE);
+#endif
 	/* Target the player with a bolt attack */
 	(void)project(m_idx, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
@@ -641,6 +644,9 @@ static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad
 	project_time = duration;
 	project_interval = interval;
 
+#ifdef USE_SOUND_2010
+	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_cast_cloud", NULL, SFX_TYPE_MON_SPELL, TRUE);
+#endif
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
 }
