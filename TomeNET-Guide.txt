@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. April 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. April 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.9+ - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -5144,6 +5144,16 @@ staircase colours (also visible on the world map):
  no-death dungeon won't turn into a ghost if they 'die' but just be teleported
  back to town! They still lose about 20% experience (and gold) though.
  No-death dungeons/towers are marked by a green < or > symbol.
+
+-Experimental dungeons. There might be an experimental dungeon available, which
+ has special flags that are very unusual:
+ NO_TELE, NO_ESP, LIMIT_ESP, NO_SUMMON.
+ These can prevent teleportation, ESP, limit ESP vision to radius 10, prevent
+ all kind of summoning (especially monsters summoning more monsters!).
+ Such experimental dungeons have light umber coloured staircases (same colour
+ as is used for maxed stats/abilities, ie light brown).
+ Experimental dungeons do not belong to the canon game and you enter on your
+ own risk! (Well, you actually enter any dungeon at your own risk, so..)
 
 If a dungeon has several of these flags, the latter ones will override the
 staircase colour. So a hellish NO_RECALL_INTO dungeon has hellish-looking
