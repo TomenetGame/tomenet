@@ -425,7 +425,8 @@ void do_cmd_go_up(int Ind) {
 		}
 		p_ptr->new_level_method = LEVEL_UP;
 #ifdef USE_SOUND_2010
-		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
+		if (p_ptr->fruit_bat) sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
+		else sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 	} else {
 		if (p_ptr->safe_float_turns) {
@@ -1056,7 +1057,8 @@ void do_cmd_go_down(int Ind) {
 		}
 		p_ptr->new_level_method = LEVEL_DOWN;
 #ifdef USE_SOUND_2010
-		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
+		if (p_ptr->fruit_bat) sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
+		else sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 	} else {
 		if (p_ptr->safe_float_turns) {

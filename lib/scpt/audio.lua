@@ -80,6 +80,7 @@ audio_sfx = {
     "quaff_potion",
     "read_scroll",
     "staircase",
+    "staircase_fly",
     "use_staff",
     "throw",
     "tunnel_rock",
