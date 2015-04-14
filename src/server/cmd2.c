@@ -425,7 +425,13 @@ void do_cmd_go_up(int Ind) {
 		}
 		p_ptr->new_level_method = LEVEL_UP;
 #ifdef USE_SOUND_2010
-		if (p_ptr->fruit_bat) sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
+		if (p_ptr->fruit_bat ||
+		    (p_ptr->body_monster &&
+		    (r_info[p_ptr->body_monster].d_char == 'b' ||
+		    r_info[p_ptr->body_monster].d_char == 'B' ||
+		    r_info[p_ptr->body_monster].d_char == 'F' ||
+		    r_info[p_ptr->body_monster].d_char == 'I')))
+			sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
 		else sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 	} else {
@@ -1057,7 +1063,13 @@ void do_cmd_go_down(int Ind) {
 		}
 		p_ptr->new_level_method = LEVEL_DOWN;
 #ifdef USE_SOUND_2010
-		if (p_ptr->fruit_bat) sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
+		if (p_ptr->fruit_bat ||
+		    (p_ptr->body_monster &&
+		    (r_info[p_ptr->body_monster].d_char == 'b' ||
+		    r_info[p_ptr->body_monster].d_char == 'B' ||
+		    r_info[p_ptr->body_monster].d_char == 'F' ||
+		    r_info[p_ptr->body_monster].d_char == 'I')))
+			sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
 		else sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 	} else {

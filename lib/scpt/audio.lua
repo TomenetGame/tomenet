@@ -81,6 +81,8 @@ audio_sfx = {
     "read_scroll",
     "staircase",
     "staircase_fly",
+    "staircase_glide",
+    "staircase_crawl",
     "use_staff",
     "throw",
     "tunnel_rock",
