@@ -575,6 +575,7 @@ extern int bell_sound_idx, page_sound_idx, warning_sound_idx, rain1_sound_idx, r
 #endif
 extern errr options_dump(cptr fname);
 extern bool parse_macro;
+extern bool inkey_sleep, inkey_sleep_semaphore;
 extern bool abort_prompt;
 extern int macro_missing_item;
 extern void Send_paste_msg(char *msg);

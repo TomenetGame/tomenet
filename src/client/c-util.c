@@ -84,6 +84,7 @@ static void ascii_to_text(char *buf, cptr str);
 
 static bool after_macro = FALSE;
 bool parse_macro = FALSE; /* are we inside the process of executing a macro */
+bool inkey_sleep = FALSE, inkey_sleep_semaphore = FALSE;
 int macro_missing_item = 0;
 static bool parse_under = FALSE;
 static bool parse_slash = FALSE;
@@ -317,13 +318,14 @@ static int diff_ms(struct timeval *begin, struct timeval *end) {
 	return diff;
 }
 
-/* This should be disabled or it'd cause the part labelled
+/* ACCEPT_KEYS should be disabled or it'd cause the part labelled
     "Hack -- flush the output once no key is ready"
    in inkey() to trigger, flush the input and thereby clearing an
    ongoing macro, making it impossible to use \wXX constructs for
    macros that work with item-requests sent by the server
    (recharge, enchant, identify). */
 //#define ACCEPT_KEYS
+//#define PEEK_ONLY_KEYS /* only check for ESC key but don't touch/process key queue yet; currently broken! */
 static void sync_sleep(int milliseconds) {
 	static char animation[4] = { '-', '\\', '|', '/' };
 	int result, net_fd;
@@ -332,6 +334,9 @@ static void sync_sleep(int milliseconds) {
 #ifdef ACCEPT_KEYS
 	char ch;
 #endif
+
+
+	inkey_sleep = TRUE;
 
 #ifdef WINDOWS
 	/* Use the multimedia timer function */
@@ -356,7 +361,11 @@ static void sync_sleep(int milliseconds) {
 	while (TRUE) {
 #ifdef ACCEPT_KEYS
 		/* Check for fresh key presses */
+ #ifndef PEEK_ONLY_KEYS
 		while (Term_inkey(&ch, FALSE, TRUE) == 0) {
+ #else
+		if (Term_inkey(&ch, FALSE, FALSE) == 0) {
+ #endif
 			if (ch == ESCAPE) {
 				/* Forget key presses */
 				Term->keys->head = 0;
@@ -373,13 +382,17 @@ static void sync_sleep(int milliseconds) {
 				Term_erase(Term->wid - 1, 0, 1);
 
 				/* Abort */
+				inkey_sleep = FALSE;
 				return;
-			} else {
+			}
+ #ifndef PEEK_ONLY_KEYS
+			else {
 				if (Term->keys_old) {
 					/* Add it to the old queue */
 					Term_keypress_aux(Term->keys_old, ch);
 				}
 			}
+ #endif
 		}
 #endif
 
@@ -394,8 +407,17 @@ static void sync_sleep(int milliseconds) {
 
 		/* Check if we have waited long enough */
 		time_spent = diff_ms(&begin, &now);
-		if (time_spent >= milliseconds) {
+		if (time_spent >= milliseconds
+		    /* hack: Net_input() might've caused command-processing that in turn calls inkey(),
+		       then we'd already be continuing processing the part of the macro that comes after
+		       a \wXX directive that we're still waiting for to complete here,
+		       causing a inkey->sync_sleep->Net_input->inkey.. recursion from macros.
+		       So in that case if a server-reply came in before we're done waiting, we can just
+		       stop waiting now, because usually the purpose of \wXX is to actually wait for an
+		       (item) input request from the server. - C. Blue */
+		    || inkey_sleep_semaphore) {
 #ifdef ACCEPT_KEYS
+ #ifndef PEEK_ONLY_KEYS
 			if (Term->keys_old) {
 				/* Destroy the temporary key queue */
 				C_KILL(Term->keys->queue, Term->keys->size, char);
@@ -405,10 +427,12 @@ static void sync_sleep(int milliseconds) {
 				Term->keys = Term->keys_old;
 				Term->keys_old = NULL;
 			}
+ #endif
 #endif
 
 			/* Erase the spinner */
 			Term_erase(Term->wid - 1, 0, 1);
+			inkey_sleep = FALSE;
 			return;
 		}
 
@@ -421,7 +445,7 @@ static void sync_sleep(int milliseconds) {
 		/* Update our timer and if neccecary send a keepalive packet
 		 */
 		update_ticks();
-		if(!c_quit) {
+		if (!c_quit) {
 			do_keepalive();
 			do_ping();
 		}
@@ -531,9 +555,9 @@ static char inkey_aux(void) {
 				buf_atoi[0] = '0';
 				buf_atoi[1] = '0';
 				buf_atoi[2] = '\0';
-				(void)(Term_inkey(&ch, FALSE, TRUE));
+				(void)(Term_inkey(&ch, TRUE, TRUE));
 				if (ch) buf_atoi[0] = ch;
-				(void)(Term_inkey(&ch, FALSE, TRUE));
+				(void)(Term_inkey(&ch, TRUE, TRUE));
 				if (ch) buf_atoi[1] = ch;
 				w = atoi(buf_atoi);
 				sync_sleep(w * 100L); /* w 1/10th seconds */
@@ -749,6 +773,7 @@ if (c_cfg.keep_topline)
 
 	/* We are now inside a macro */
 	parse_macro = TRUE;
+	inkey_sleep_semaphore = FALSE; //init semaphore for macros containing \wXX
 	/* Assume that the macro has no problems with possibly missing items so far */
 	macro_missing_item = 0;
 
@@ -844,8 +869,7 @@ if (c_cfg.keep_topline)
  * be stripped, and then the "ascii 28" symbols will be stripped as well, leaving
  * the "default action" keys in the "key queue".  Again, this may not work.
  */
-char inkey(void)
-{
+char inkey(void) {
 	int v;
 	char kk, ch;
 	bool done = FALSE;
@@ -854,27 +878,27 @@ char inkey(void)
 	int skipping = FALSE;
 
 
-        /* Hack -- handle delayed "flush()" */
-        if (flush_later) {
-                /* Done */
-                flush_later = FALSE;
+	/* Hack -- handle delayed "flush()" */
+	if (flush_later) {
+		/* Done */
+		flush_later = FALSE;
 
-                /* Cancel "macro" info */
+		/* Cancel "macro" info */
 //#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 if (c_cfg.keep_topline)
 		restore_prompt();
 //#endif
-                parse_macro = after_macro = FALSE;
+		parse_macro = after_macro = FALSE;
 
-                /* Cancel "sequence" info */
-                parse_under = parse_slash = FALSE;
+		/* Cancel "sequence" info */
+		parse_under = parse_slash = FALSE;
 
-                /* Cancel "strip" mode */
-                strip_chars = FALSE;
+		/* Cancel "strip" mode */
+		strip_chars = FALSE;
 
-                /* Forget old keypresses */
-                Term_flush();
-        }
+		/* Forget old keypresses */
+		Term_flush();
+	}
 
 
 	/* Access cursor state */
@@ -976,6 +1000,7 @@ if (c_cfg.keep_topline)
  #if 0 /* probably not needed - assumption: we're ONLY called for get_macro_trigger() */
 				/* Hack - Leave a store */
 				if (shopping && leave_store) {
+					if (inkey_sleep) inkey_sleep_semaphore = TRUE;
 					return ESCAPE;
 				}
  #endif
@@ -1134,6 +1159,7 @@ if (c_cfg.keep_topline)
 	inkey_base = inkey_scan = inkey_flag = inkey_max_line = FALSE;
 
 	/* Return the keypress */
+	if (inkey_sleep) inkey_sleep_semaphore = TRUE;
 	return (ch);
 }
 
