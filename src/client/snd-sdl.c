@@ -762,6 +762,52 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 
 	return TRUE;
 }
+/* play the 'bell' sound */
+extern bool sound_bell(void) {
+	Mix_Chunk *wave = NULL;
+	int s;
+
+	if (bell_sound_idx == -1) return FALSE;
+	if (samples[bell_sound_idx].disabled) return TRUE; /* claim that it 'succeeded' */
+	if (!samples[bell_sound_idx].num) return FALSE;
+
+	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
+	if (samples[bell_sound_idx].current_channel != -1) return TRUE;
+
+	/* Choose a random event */
+	s = rand_int(samples[bell_sound_idx].num);
+	wave = samples[bell_sound_idx].wavs[s];
+
+	/* Try loading it, if it's not cached */
+	if (!wave) {
+		if (on_demand_loading || no_cache_audio) {
+			if (!(wave = load_sample(bell_sound_idx, s))) {
+				/* we really failed to load it */
+				plog(format("SDL sound load failed (%d, %d).", bell_sound_idx, s));
+				return FALSE;
+			}
+		} else {
+			/* Fail silently */
+			return TRUE;
+		}
+	}
+
+	/* Actually play the thing */
+	/* remember, for efficiency management */
+	s = Mix_PlayChannel(-1, wave, 0);
+	if (s != -1) {
+		channel_sample[s] = bell_sound_idx;
+		channel_type[s] = SFX_TYPE_AMBIENT; /* whatever (just so overlapping is possible) */
+		if (c_cfg.paging_max_volume) {
+			Mix_Volume(s, MIX_MAX_VOLUME);
+		} else if (c_cfg.paging_master_volume) {
+			Mix_Volume(s, CALC_MIX_VOLUME(1, 100));
+		}
+	}
+	samples[bell_sound_idx].current_channel = s;
+
+	return TRUE;
+}
 /* play the 'page' sound */
 extern bool sound_page(void) {
 	Mix_Chunk *wave = NULL;

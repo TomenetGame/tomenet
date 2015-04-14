@@ -2,6 +2,7 @@
 #include "angband.h"
 
 bool verified_item = FALSE;
+bool abort_prompt = FALSE;
 
 s16b index_to_label(int i)
 {
@@ -266,19 +267,21 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	//char	n1, n2;
 	char which = ' ';
 
-	int	k, i1, i2, e1, e2, ver;
-	bool	done;
-	byte	item;
+	int k, i1, i2, e1, e2, ver;
+	bool done;
+	byte item;
 
-	char	tmp_val[160];
-	char	out_val[160];
+	char tmp_val[160];
+	char out_val[160];
 
-	bool	equip = FALSE;
-	bool	inven = FALSE;
-	//bool	floor = FALSE;
-	bool	extra = FALSE;
-	bool	inven_first = FALSE;
-	bool	special_req = FALSE;
+	bool equip = FALSE;
+	bool inven = FALSE;
+	//bool floor = FALSE;
+	bool extra = FALSE;
+	bool inven_first = FALSE;
+	bool special_req = FALSE;
+
+	bool safe_input = FALSE;
 
 	/* The top line is icky */
 	topline_icky = TRUE;
@@ -397,6 +400,26 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	/* Hack -- start out in "display" mode */
 	if (command_see) Term_save();
 
+#if 1
+	/* If we can't find a specified item, there are two ways to proceed:
+	   1) repeat item-request, this will result in any macro being continued
+	    after an input to the pending, unfulfilled (item-)request has been made
+	    manually. However, this scenario is more unlikely to be desired.
+	   2) Clear the prompt and cancel the macro, so the remaining macro part is
+	    discarded. This is usually wanted, because the usual scenario for this is
+	    having run out of an important item (eg healing potions) and getting
+	    'stuck' in the item-request prompt.
+	    So a hack will be added to this hack: safe_macros should clear the prompt
+	    and abort the macro. - C. Blue */
+	/* safe_macros avoids getting stuck in an unfulfilled (item-)prompt */
+	if (parse_macro && c_cfg.safe_macros) safe_input = TRUE;
+#if 0
+c_message_add("cancelling");
+		flush_now();//Term_flush();
+		ch = ESCAPE;
+	}
+#endif
+#endif
 
 	/* Repeat while done */
 	while (!done) {
@@ -599,7 +622,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				(*cp) = i;
 				item = TRUE;
 				done = TRUE;
-			}
+			} else bell();
 			break;
 		}
 

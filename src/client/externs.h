@@ -568,12 +568,14 @@ extern bool is_newer_than(version_type *version, int major, int minor, int patch
 extern void interact_audio(void);
 extern void toggle_music(void);
 extern void toggle_audio(void);
+extern bool sound_bell(void);
 extern bool sound_page(void);
 extern bool sound_warning(void);
-extern int page_sound_idx, warning_sound_idx, rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, snow2_sound_idx, browse_sound_idx, browsebook_sound_idx;
+extern int bell_sound_idx, page_sound_idx, warning_sound_idx, rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, snow2_sound_idx, browse_sound_idx, browsebook_sound_idx;
 #endif
 extern errr options_dump(cptr fname);
 extern bool parse_macro;
+extern bool abort_prompt;
 extern int macro_missing_item;
 extern void Send_paste_msg(char *msg);
 extern void check_immediate_options(int i, bool yes, bool playing);

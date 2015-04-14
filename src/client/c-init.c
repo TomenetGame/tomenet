@@ -2685,6 +2685,7 @@ static void init_sound() {
 	set_mixing();
 
 	/* remember indices of sounds that are hardcoded on client-side anyway, for efficiency */
+	bell_sound_idx = exec_lua(0, "return get_sound_index(\"bell\")");
 	page_sound_idx = exec_lua(0, "return get_sound_index(\"page\")");
 	warning_sound_idx = exec_lua(0, "return get_sound_index(\"warning\")");
 	rain1_sound_idx = exec_lua(0, "return get_sound_index(\"rain_soft\")");

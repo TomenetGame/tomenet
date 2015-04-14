@@ -8,6 +8,7 @@
 -- Sound FX
 audio_sfx = {
     --[misc]
+    "bell",
     "page",
     "greeting",
     "warning",

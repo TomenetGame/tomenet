@@ -1352,16 +1352,28 @@ void keymap_init(void)
 /*
  * Flush the screen, make a noise
  */
-void bell(void)
-{
+void bell(void) {
 	/* Mega-Hack -- Flush the output */
 	Term_fresh();
 
 	/* Make a bell noise (if allowed) */
-	if (c_cfg.ring_bell) Term_xtra(TERM_XTRA_NOISE, 0);
+	if (c_cfg.ring_bell) {
+#ifdef USE_SOUND_2010
+#ifdef SOUND_SDL
+		/* Try to beep via bell sfx of the SDL audio system first */
+		if (!sound_bell()
+		    //&& !(c_cfg.audio_paging && sound_page())
+		    )
+#endif
+#endif
+		Term_xtra(TERM_XTRA_NOISE, 0);
+	}
 
 	/* Flush the input (later!) */
 	flush();
+
+	/* hack for safe_macros item prompts */
+	abort_prompt = TRUE;
 }
 
 /* Generate a page sfx (beep) */
@@ -1384,9 +1396,9 @@ int page(void) {
 int warning_page(void) {
 #ifdef USE_SOUND_2010
 #ifdef SOUND_SDL
-	/* Try to beep via page sfx of the SDL audio system first */
+	/* Try to beep via warning sfx of the SDL audio system first */
 	if (sound_warning()) return 1;
-	if (c_cfg.audio_paging && sound_page()) return 1;
+	//if (c_cfg.audio_paging && sound_page()) return 1;
 #endif
 #endif
 
