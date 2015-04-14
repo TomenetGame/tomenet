@@ -262,8 +262,7 @@ printf("comparing '%s','%s'\n", buf1, buf2);
 }
 
 bool (*get_item_extra_hook)(int *cp, bool inven_first);
-bool c_get_item(int *cp, cptr pmt, int mode)
-{
+bool c_get_item(int *cp, cptr pmt, int mode) {
 	//char	n1, n2;
 	char which = ' ';
 
@@ -343,8 +342,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 	command_see = c_cfg.always_show_lists;
 	command_wrk = FALSE;
 
-	if ((i1 > i2) && (e1 > e2))
-	{
+	if ((i1 > i2) && (e1 > e2)) {
 		/* Cancel command_see */
 		command_see = FALSE;
 
@@ -380,28 +378,16 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 	}
 
 	/* Analyze choices */
-	else
-	{
+	else {
 		/* Hack -- reset display width */
 		if (!command_see) command_gap = 50;
 
 		/* Hack -- Start on equipment if requested */
-		if (command_see && command_wrk && equip)
-		{
-			command_wrk = TRUE;
-		}
-
+		if (command_see && command_wrk && equip) command_wrk = TRUE;
 		/* Use inventory if allowed */
-		else if (inven)
-		{
-			command_wrk = FALSE;
-		}
-
+		else if (inven) command_wrk = FALSE;
 		/* Use equipment if allowed */
-		else if (equip)
-		{
-			command_wrk = TRUE;
-		}
+		else if (equip) command_wrk = TRUE;
 	}
 
 	/* Redraw inventory */
@@ -409,17 +395,12 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 	window_stuff();
 
 	/* Hack -- start out in "display" mode */
-	if (command_see)
-	{
-		Term_save();
-	}
+	if (command_see) Term_save();
 
 
 	/* Repeat while done */
-	while (!done)
-	{
-		if (!command_wrk)
-		{
+	while (!done) {
+		if (!command_wrk) {
 			/* Extract the legal requests */
 			//n1 = I2A(i1);
 			//n2 = I2A(i2);
@@ -429,8 +410,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		}
 
 		/* Equipment screen */
-		else
-		{
+		else {
 			/* Extract the legal requests */
 			//n1 = I2A(e1 - INVEN_WIELD);
 			//n2 = I2A(e2 - INVEN_WIELD);
@@ -440,14 +420,12 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		}
 
 		/* Viewing inventory */
-		if (!command_wrk)
-		{
+		if (!command_wrk) {
 			/* Begin the prompt */
 			sprintf(out_val, "Inven:");
 
 			/* Some legal items */
-			if (i1 <= i2)
-			{
+			if (i1 <= i2) {
 				/* Build the prompt */
 				sprintf(tmp_val, " %c-%c,",
 					index_to_label(i1), index_to_label(i2));
@@ -462,16 +440,13 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 			/* Append */
 			if (equip) strcat(out_val, " / for Equip,");
 		}
-
 		/* Viewing equipment */
-		else
-		{
+		else {
 			/* Begin the prompt */
 			sprintf(out_val, "Equip:");
 
 			/* Some legal items */
-			if (e1 <= e2)
-			{
+			if (e1 <= e2) {
 				/* Build the prompt */
 				sprintf(tmp_val, " %c-%c",
 					index_to_label(e1), index_to_label(e2));
@@ -507,219 +482,175 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		which = inkey();
 
 		/* Parse it */
-		switch (which)
+		switch (which) {
+		case ESCAPE:
+			command_gap = 50;
+			done = TRUE;
+			break;
+
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			break;
+
+		case '*':
+		case '?':
+		case ' ':
+			/* Show/hide the list */
+			if (!command_see) {
+				Term_save();
+				command_see = TRUE;
+			} else {
+				Term_load();
+				command_see = FALSE;
+
+				/* Flush any events */
+				Flush_queue();
+			}
+			break;
+
+		case '/':
+			/* Verify legality */
+			if (!inven || !equip) {
+				bell();
+				break;
+			}
+
+			/* Fix screen */
+			if (command_see) {
+				Term_load();
+				Flush_queue();
+				Term_save();
+			}
+
+			/* Switch inven/equip */
+			command_wrk = !command_wrk;
+
+			/* Need to redraw */
+			break;
+
+		case '0':
+		case '1': case '2': case '3':
+		case '4': case '5': case '6':
+		case '7': case '8': case '9':
+			/* XXX XXX Look up that tag */
+			if (!get_tag(&k, which, inven, equip, inven_first)) {
+				bell();
+				break;
+			}
+
+			/* Hack -- verify item */
+			if ((k < INVEN_WIELD) ? !inven : !equip) {
+				bell();
+				break;
+			}
+
+			/* Validate the item */
+			if (!get_item_okay(k)) {
+				bell();
+				break;
+			}
+
+#if 0
+			if (!get_item_allow(k)) {
+				done = TRUE;
+				break;
+			}
+#endif
+
+			/* Use that item */
+			(*cp) = k;
+			item = TRUE;
+			done = TRUE;
+			break;
+
+		case '\n':
+		case '\r':
+			/* Choose "default" inventory item */
+			if (!command_wrk) k = ((i1 == i2) ? i1 : -1);
+			/* Choose "default" equipment item */
+			else k = ((e1 == e2) ? e1 : -1);
+
+			/* Validate the item */
+			if (!get_item_okay(k)) {
+				bell();
+				break;
+			}
+
+#if 0
+			/* Allow player to "refuse" certain actions */
+			if (!get_item_allow(k)) {
+				done = TRUE;
+				break;
+			}
+#endif
+
+			/* Accept that choice */
+			(*cp) = k;
+			item = TRUE;
+			done = TRUE;
+			break;
+
+		case '@':
 		{
-			case ESCAPE:
-			{
+			int i;
+
+			if (extra && get_item_extra_hook(&i, inven_first)) {
+				(*cp) = i;
+				item = TRUE;
+				done = TRUE;
+			}
+			break;
+		}
+
+		case '-':
+			if (special_req) {
 				command_gap = 50;
 				done = TRUE;
+				item = FALSE;
+				*cp = -3;
+				break;
+			}
+			/* fall through */
+
+		default:
+			/* Extract "query" setting */
+			ver = isupper(which);
+			if (ver) which = tolower(which);
+
+			/* Convert letter to inventory index */
+			if (!command_wrk) k = c_label_to_inven(which);
+			/* Convert letter to equipment index */
+			else k = c_label_to_equip(which);
+
+			/* Validate the item */
+			if (!get_item_okay(k)) {
+				bell();
 				break;
 			}
 
-			case KTRL('T'):
-			{
-				/* Take a screenshot */
-				xhtml_screenshot("screenshot????");
-				break;
-			}
-
-			case '*':
-			case '?':
-			case ' ':
-			{
-				/* Show/hide the list */
-				if (!command_see)
-				{
-					Term_save();
-					command_see = TRUE;
-				}
-				else
-				{
-					Term_load();
-					command_see = FALSE;
-
-					/* Flush any events */
-					Flush_queue();
-				}
-				break;
-			}
-
-			case '/':
-			{
-				/* Verify legality */
-				if (!inven || !equip)
-				{
-					bell();
-					break;
-				}
-
-				/* Fix screen */
-				if (command_see)
-				{
-					Term_load();
-					Flush_queue();
-					Term_save();
-				}
-
-				/* Switch inven/equip */
-				command_wrk = !command_wrk;
-
-				/* Need to redraw */
-				break;
-			}
-
-			case '0':
-			case '1': case '2': case '3':
-			case '4': case '5': case '6':
-			case '7': case '8': case '9':
-			{
-				/* XXX XXX Look up that tag */
-				if (!get_tag(&k, which, inven, equip, inven_first))
-				{
-					bell();
-					break;
-				}
-
-				/* Hack -- verify item */
-				if ((k < INVEN_WIELD) ? !inven : !equip)
-				{
-					bell();
-					break;
-				}
-
-				/* Validate the item */
-				if (!get_item_okay(k))
-				{
-					bell();
-					break;
-				}
-
-#if 0
-				if (!get_item_allow(k))
-				{
-					done = TRUE;
-					break;
-				}
-#endif
-
-				/* Use that item */
-				(*cp) = k;
-				item = TRUE;
+			/* Verify, abort if requested */
+			if (ver && !verify("Try", k)) {
 				done = TRUE;
 				break;
 			}
 
-			case '\n':
-			case '\r':
-			{
-				/* Choose "default" inventory item */
-				if (!command_wrk)
-				{
-					k = ((i1 == i2) ? i1 : -1);
-				}
-
-				/* Choose "default" equipment item */
-				else
-				{
-					k = ((e1 == e2) ? e1 : -1);
-				}
-
-				/* Validate the item */
-				if (!get_item_okay(k))
-				{
-					bell();
-					break;
-				}
-
 #if 0
-				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(k))
-				{
-					done = TRUE;
-					break;
-				}
-#endif
-
-				/* Accept that choice */
-				(*cp) = k;
-				item = TRUE;
+			/* Allow player to "refuse" certain actions */
+			if (!get_item_allow(k)) {
 				done = TRUE;
 				break;
 			}
-
-			case '@':
-			{
-				int i;
-
-				if (extra && get_item_extra_hook(&i, inven_first))
-				{
-					(*cp) = i;
-					item = TRUE;
-					done = TRUE;
-				}
-				break;
-			}
-
-			case '-':
-				if (special_req) {
-					command_gap = 50;
-					done = TRUE;
-					item = FALSE;
-					*cp = -3;
-					break;
-				}
-				/* fall through */
-
-			default:
-			{
-				/* Extract "query" setting */
-				ver = isupper(which);
-				if (ver) which = tolower(which);
-
-				/* Convert letter to inventory index */
-				if (!command_wrk)
-				{
-					k = c_label_to_inven(which);
-				}
-
-				/* Convert letter to equipment index */
-				else
-				{
-					k = c_label_to_equip(which);
-				}
-
-				/* Validate the item */
-				if (!get_item_okay(k))
-				{
-					bell();
-					break;
-				}
-
-				/* Verify, abort if requested */
-				if (ver && !verify("Try", k))
-				{
-					done = TRUE;
-					break;
-				}
-
-#if 0
-				/* Allow player to "refuse" certain actions */
-				if (!get_item_allow(k))
-				{
-					done = TRUE;
-					break;
-				}
 #endif
 
-				/* Accept that choice */
-				(*cp) = k;
-				item = TRUE;
-				done = TRUE;
+			/* Accept that choice */
+			(*cp) = k;
+			item = TRUE;
+			done = TRUE;
 
-				/* Remember that we hit SHIFT+slot to override whole_ammo_stack */
-				if (ver) verified_item = TRUE;
-				break;
-			}
+			/* Remember that we hit SHIFT+slot to override whole_ammo_stack */
+			if (ver) verified_item = TRUE;
+			break;
 		}
 	}
 
