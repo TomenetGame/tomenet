@@ -400,7 +400,6 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	/* Hack -- start out in "display" mode */
 	if (command_see) Term_save();
 
-#if 1
 	/* If we can't find a specified item, there are two ways to proceed:
 	   1) repeat item-request, this will result in any macro being continued
 	    after an input to the pending, unfulfilled (item-)request has been made
@@ -413,16 +412,15 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	    and abort the macro. - C. Blue */
 	/* safe_macros avoids getting stuck in an unfulfilled (item-)prompt */
 	if (parse_macro && c_cfg.safe_macros) safe_input = TRUE;
-#if 0
-c_message_add("cancelling");
-		flush_now();//Term_flush();
-		ch = ESCAPE;
-	}
-#endif
-#endif
 
 	/* Repeat while done */
 	while (!done) {
+		/* hack - cancel prompt if we're in a failed macro execution */
+		if (safe_input && abort_prompt) {
+			command_gap = 50;
+			break;
+		}
+
 		if (!command_wrk) {
 			/* Extract the legal requests */
 			//n1 = I2A(i1);
@@ -711,8 +709,9 @@ c_message_add("cancelling");
 	/* Cease command macro exception */
 //	inkey_get_item = FALSE;
 
+	/* restore macro handling hack to default state */
+	abort_prompt = FALSE;
+
 	/* Return TRUE if something was picked */
 	return (item);
 }
-
-
