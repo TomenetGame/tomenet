@@ -1274,6 +1274,20 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x)
 }
 #else
 static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
+	/*
+	 * HACK: There's a bug below where negative indices were accessed in ddx_cyc and ddy_cyc.
+	 * The result is undefined and depends on which compiler is used.
+	 * In order to preserve housing layout on the official server, we're going to emulate negative indices.
+	 * If we decide to do a worldmap reset, this hack can be removed.
+	 * - mikaelh
+	 */
+#define EMULATE_NEGATIVE_INDICES
+#ifdef EMULATE_NEGATIVE_INDICES
+	static s16b ddx_cyc_emul[10] = { -1, 0, -1, 0, 1, 1, 1, 0, -1, -1 };
+	static s16b ddy_cyc_emul[10] = { -1, -1, -1, -1, -1, 0, 1, 1, 1, 0 };
+	static s16b *ddx_cyc = &ddx_cyc_emul[2];
+	static s16b *ddy_cyc = &ddy_cyc_emul[2];
+#endif
 	int i;
 	cave_type *c_ptr;
 	cave_type **zcave;
@@ -1283,7 +1297,11 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
 	/* corners: 5 adjacent grids to check */
 	case 0: case 2: case 4: case 6:
 		for (i = -2; i <= 2; i++) {
-    		        c_ptr = &zcave[y + ddy_cyc[(dir + i) % 8]][x + ddx_cyc[(dir + i) % 8]];
+#ifdef EMULATE_NEGATIVE_INDICES
+		        c_ptr = &zcave[y + ddy_cyc[(dir + i) % 8]][x + ddx_cyc[(dir + i) % 8]];
+#else
+		        c_ptr = &zcave[y + ddy_cyc[(dir + i + 8) % 8]][x + ddx_cyc[(dir + i + 8) % 8]];
+#endif
 
 			/* Inside a house */
 			if (c_ptr->info & CAVE_ICKY) continue;
