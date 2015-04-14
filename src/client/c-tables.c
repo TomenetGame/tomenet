@@ -327,7 +327,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.safe_float,		FALSE,	2,	1, 52, TRUE,
 	    "safe_float",		"Prevent floating for a short while after death" },
 	{ &c_cfg.safe_macros,		TRUE,	2,	1, 53, TRUE,
-	    "safe_macros",		"Abort macro execution if an action fails" },
+	    "safe_macros",		"Abort macro if item is missing or an action fails" },
 
 	{ &c_cfg.auto_untag,		FALSE,	2,	1, 54, TRUE,
 	    "auto_untag",		"Remove unique monster inscription on pick-up" },
