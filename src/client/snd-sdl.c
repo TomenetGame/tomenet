@@ -1918,7 +1918,7 @@ void do_cmd_options_sfx_sdl(void) {
 
 	/* Interact */
 	while (go) {
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 
 		/* Display the events */
@@ -2044,6 +2044,11 @@ void do_cmd_options_sfx_sdl(void) {
 			samples[y].disabled = TRUE;
 			break;
 
+		case '#':
+			y = c_get_quantity("Enter index number: ", audio_sfx) - 1;
+			if (y < 0) y = 0;
+			if (y >= audio_sfx) y = audio_sfx - 1;
+			break;
 		case '9':
 			y = (y - 10 + audio_sfx) % audio_sfx;
 			break;
@@ -2100,7 +2105,7 @@ void do_cmd_options_mus_sdl(void) {
 
 	/* Interact */
 	while (go) {
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 
 		/* Display the events */
@@ -2229,6 +2234,11 @@ void do_cmd_options_mus_sdl(void) {
 			play_music(y);
 			break;
 
+		case '#':
+			y = c_get_quantity("Enter index number: ", audio_music) - 1;
+			if (y < 0) y = 0;
+			if (y >= audio_music) y = audio_music - 1;
+			break;
 		case '9':
 			y = (y - 10 + audio_music) % audio_music;
 			break;
