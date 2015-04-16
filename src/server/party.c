@@ -2864,15 +2864,14 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
-		if (p_ptr->conn == NOT_CONNECTED)
-			continue;
+		if (p_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Check for his existence in the party */
-		if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i)) {
-			/* Increase the "divisor" */
-			average_lev += p_ptr->lev;
-			num_members++;
-		}
+		if (!(player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))) continue;
+
+		/* Increase the "divisor" */
+		average_lev += p_ptr->lev;
+		num_members++;
 	}
 	average_lev /= num_members;
 
@@ -2880,10 +2879,9 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
-		if (p_ptr->conn == NOT_CONNECTED)
-			continue;
-		if (p_ptr->ghost)	/* no exp, but take share */
-			continue;
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+		if (p_ptr->ghost) continue; /* no exp, but take share toll! */
+
 		/* Winners and non-winners don't share experience!
 		   This is actually important because winners get special features
 		   such as super heavy armour and royal stances which are aimed at
@@ -2893,96 +2891,96 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 			continue;
 
 		/* Check for existence in the party */
-                if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i)) {
-			/* Calculate this guy's experience */
+                if (!(player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))) continue;
 
-			if (p_ptr->lev < average_lev) { // below average
-				if ((average_lev - p_ptr->lev) > 2)
-					modified_level = p_ptr->lev + 2;
-				else	modified_level = average_lev;
-			} else {
-				if ((p_ptr->lev - average_lev) > 2)
-					modified_level = p_ptr->lev - 2;
-				else	modified_level = average_lev;
-			}
+		/* Calculate this guy's experience */
 
-			new_amount = amount;
+		if (p_ptr->lev < average_lev) { // below average
+			if ((average_lev - p_ptr->lev) > 2)
+				modified_level = p_ptr->lev + 2;
+			else	modified_level = average_lev;
+		} else {
+			if ((p_ptr->lev - average_lev) > 2)
+				modified_level = p_ptr->lev - 2;
+			else	modified_level = average_lev;
+		}
 
-			/*
-			new_exp = (amount * modified_level) / (average_lev * num_members * p_ptr->lev);
-			new_exp_frac = ((((amount * modified_level) % (average_lev * num_members * p_ptr->lev) )
-			                * 10000L) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
-			*/
+		new_amount = amount;
 
-			/* Higher characters who farm monsters on low levels compared to
-			    their clvl will gain less exp.
-			    (note: this formula also occurs in mon_take_hit) */
-			if (henc > p_ptr->max_lev) eff_henc = henc;
-			else eff_henc = p_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
+		/*
+		new_exp = (amount * modified_level) / (average_lev * num_members * p_ptr->lev);
+		new_exp_frac = ((((amount * modified_level) % (average_lev * num_members * p_ptr->lev) )
+		                * 10000L) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
+		*/
+
+		/* Higher characters who farm monsters on low levels compared to
+		    their clvl will gain less exp.
+		    (note: this formula also occurs in mon_take_hit) */
+		if (henc > p_ptr->max_lev) eff_henc = henc;
+		else eff_henc = p_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
 #ifdef ANTI_MAXPLV_EXPLOIT
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
-			soft_max_plv = Players[Ind]->max_plv - ((Players[Ind]->max_plv - Players[Ind]->max_lev) / 2);
-			if ((Ind != i) && (eff_henc < soft_max_plv)) eff_henc = soft_max_plv;
+		soft_max_plv = Players[Ind]->max_plv - ((Players[Ind]->max_plv - Players[Ind]->max_lev) / 2);
+		if ((Ind != i) && (eff_henc < soft_max_plv)) eff_henc = soft_max_plv;
  #else
   #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
-			if ((Ind != i) && (eff_henc < Players[Ind]->max_plv - 5))
-				new_amount = (new_amount * eff_henc) / (Players[Ind]->max_plv * 2);
+		if ((Ind != i) && (eff_henc < Players[Ind]->max_plv - 5))
+			new_amount = (new_amount * eff_henc) / (Players[Ind]->max_plv * 2);
   #else
-			if ((Ind != i) && (eff_henc < Players[Ind]->max_plv)) eff_henc = Players[Ind]->max_plv; /* 100% zonk, bam */
+		if ((Ind != i) && (eff_henc < Players[Ind]->max_plv)) eff_henc = Players[Ind]->max_plv; /* 100% zonk, bam */
   #endif
  #endif
 #endif
-			/* dungeon floor specific reduction if too shallow */
-			if (not_in_iddc)
-				new_amount = det_exp_level(new_amount, eff_henc, dlev);
+		/* dungeon floor specific reduction if too shallow */
+		if (not_in_iddc)
+			new_amount = det_exp_level(new_amount, eff_henc, dlev);
 
-			/* Don't allow cheap support from super-high level characters */
-			if (cfg.henc_strictness && !p_ptr->total_winner) {
-				if (eff_henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-			}
+		/* Don't allow cheap support from super-high level characters */
+		if (cfg.henc_strictness && !p_ptr->total_winner) {
+			if (eff_henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+			if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+		}
 
 
-			/* Never get too much exp off a monster
-			   due to high level difference,
-			   make exception for low exp boosts like "holy jackal" */
+		/* Never get too much exp off a monster
+		   due to high level difference,
+		   make exception for low exp boosts like "holy jackal" */
 #if 1 /* isn't this buggy? see below 'else' clause for assumingly correct version.. */
 /* no it's not buggy, new_amount gets divided by p_ptr->lev later - mikaelh */
-			if ((new_amount > base_amount * 4 * p_ptr->lev) && (new_amount > 200 * p_ptr->lev))
-				new_amount = base_amount * 4 * p_ptr->lev;
+		if ((new_amount > base_amount * 4 * p_ptr->lev) && (new_amount > 200 * p_ptr->lev))
+			new_amount = base_amount * 4 * p_ptr->lev;
 #else
-			if ((new_amount > base_amount * 4) && (new_amount > 200))
-				new_amount = base_amount * 4;
+		if ((new_amount > base_amount * 4) && (new_amount > 200))
+			new_amount = base_amount * 4;
 #endif
 
-			/* Especially high party xp boost in IDDC, or people might mostly prefer to solo to 2k */
-			if (!not_in_iddc)
-				new_boosted_amount = (new_amount * (IDDC_PARTY_XP_BOOST + 1)) / (num_members + IDDC_PARTY_XP_BOOST);
-			else
-				new_boosted_amount = (new_amount * (PARTY_XP_BOOST + 1)) / (num_members + PARTY_XP_BOOST);
-			new_boosted_amount = (new_boosted_amount * modified_level) / average_lev;
+		/* Especially high party xp boost in IDDC, or people might mostly prefer to solo to 2k */
+		if (!not_in_iddc)
+			new_boosted_amount = (new_amount * (IDDC_PARTY_XP_BOOST + 1)) / (num_members + IDDC_PARTY_XP_BOOST);
+		else
+			new_boosted_amount = (new_amount * (PARTY_XP_BOOST + 1)) / (num_members + PARTY_XP_BOOST);
+		new_boosted_amount = (new_boosted_amount * modified_level) / average_lev;
 
-			/* Some bonus is applied to encourage partying	- Jir - */
-			new_exp = new_boosted_amount / p_ptr->lev / 100;
-			new_exp_frac = ((new_boosted_amount - new_exp * p_ptr->lev * 100)
-			    * 100L) / p_ptr->lev + p_ptr->exp_frac;
+		/* Some bonus is applied to encourage partying	- Jir - */
+		new_exp = new_boosted_amount / p_ptr->lev / 100;
+		new_exp_frac = ((new_boosted_amount - new_exp * p_ptr->lev * 100)
+		    * 100L) / p_ptr->lev + p_ptr->exp_frac;
 
-			/* Keep track of experience */
-			if (new_exp_frac >= 10000L) {
-				new_exp++;
-				p_ptr->exp_frac = new_exp_frac - 10000L;
-			} else {
-				p_ptr->exp_frac = new_exp_frac;
-				p_ptr->redraw |= PR_EXP; //EXP_BAR_FINESCALE
-			}
+		/* Keep track of experience */
+		if (new_exp_frac >= 10000L) {
+			new_exp++;
+			p_ptr->exp_frac = new_exp_frac - 10000L;
+		} else {
+			p_ptr->exp_frac = new_exp_frac;
+			p_ptr->redraw |= PR_EXP; //EXP_BAR_FINESCALE
+		}
 
-			/* Gain experience */
-			if (new_exp) gain_exp(i, new_exp);
-			else if (!p_ptr->warning_fracexp && base_amount) {
-				msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
-				s_printf("warning_fracexp: %s\n", p_ptr->name);
-				p_ptr->warning_fracexp = 1;
-			}
+		/* Gain experience */
+		if (new_exp) gain_exp(i, new_exp);
+		else if (!p_ptr->warning_fracexp && base_amount) {
+			msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
+			s_printf("warning_fracexp: %s\n", p_ptr->name);
+			p_ptr->warning_fracexp = 1;
 		}
 	}
 }
