@@ -15,7 +15,7 @@
 #define MACRO_USE_STD	0x02
 #define MACRO_USE_HYB	0x04
 
-#define NR_OPTIONS_SHOWN	8 /*was 32 when there were 32 window_flag_desc[]*/
+#define NR_OPTIONS_SHOWN	8 /* apparently # of term windows (old comment: was 32 when there were 32 window_flag_desc[]) */
 
 /* Have the Macro Wizard generate target code in
    the form *tXXX- instead of XXX*t? - C. Blue */
@@ -6000,9 +6000,9 @@ static void do_cmd_options_win(void) {
 #if defined(WINDOWS) || defined(USE_X11)
 #define MAX_FONTS 50
 static int font_name_cmp(const void *a, const void *b) {
-#if 0 /* simple way */
+ #if 0 /* simple way */
 	return strcmp((const char*)a, (const char*)b);
-#else /* sort in single-digit numbers before double-digit ones */
+ #else /* sort in single-digit numbers before double-digit ones */
 	char at[256], bt[256];
 	at[0] = '0';
 	bt[0] = '0';
@@ -6011,7 +6011,7 @@ static int font_name_cmp(const void *a, const void *b) {
 	if (atoi((char*)b) < 10) strcpy(bt + 1, (char *)b);
 	else strcpy(bt, (char *)b);
 	return strcmp(at, bt);
-#endif
+ #endif
 }
 static void do_cmd_options_fonts(void) {
 	int j, d, vertikal_offset = 3;
@@ -6196,6 +6196,17 @@ static void do_cmd_options_fonts(void) {
 }
 #endif
 #endif
+
+static void do_cmd_options_sfx(void) {
+#if SOUND_SDL
+	do_cmd_options_sfx_sdl();
+#endif
+}
+static void do_cmd_options_mus(void) {
+#if SOUND_SDL
+	do_cmd_options_mus_sdl();
+#endif
+}
 
 errr options_dump(cptr fname)
 {
@@ -6671,14 +6682,16 @@ void do_cmd_options(void) {
 		else
 			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+U hotkey)");
 
+		Term_putstr(3,14, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
+
 #if defined(WINDOWS) || defined(USE_X11)
 		/* Font (and window) settings aren't available in command-line mode */
 		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
-			Term_putstr(3,14, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+			Term_putstr(3,15, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 			/* CHANGE_FONTS_X11 */
-			Term_putstr(3,15, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (can be tapped multiple times)");
+			Term_putstr(3,16, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (can be tapped multiple times)");
 		}
 #endif
 
@@ -6774,6 +6787,10 @@ void do_cmd_options(void) {
 		else if (k == 'x') interact_audio();
 
 		else if (k == 'I') do_cmd_options_install_audio_packs();
+
+		/* Toggle single sfx/song from a list of all */
+		else if (k == 'n') do_cmd_options_sfx();
+		else if (k == 'N') do_cmd_options_mus();
 
 		/* Unknown option */
 		else {

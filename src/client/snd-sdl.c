@@ -131,6 +131,7 @@ typedef struct {
 					   note that with 4.4.5.4+ this is deprecated - C. Blue */
 	int started_timer_tick;		/* global timer tick on which this sample was started (for efficiency) */
 	bool disabled;
+	bool config;
 } sample_list;
 
 /* background music */
@@ -139,6 +140,7 @@ typedef struct {
 	Mix_Music *wavs[MAX_SONGS];
 	const char *paths[MAX_SONGS];
 	bool disabled;
+	bool config;
 } song_list;
 
 /* Just need an array of SampInfos */
@@ -363,7 +365,9 @@ static bool sound_sdl_init(bool no_cache) {
 		/* Split the line into two: message name, and the rest */
 		search = strchr(buffer, ' ');
 		sample_list = strchr(search + 1, ' ');
+		/* no event name given? */
 		if (!search) continue;
+		/* no audio filenames listed? */
 		if (!sample_list) continue;
 
 		/* Set the message name, and terminate at first space */
@@ -436,6 +440,8 @@ static bool sound_sdl_init(bool no_cache) {
 			if (!events_loaded_semaphore) {
 				events_loaded_semaphore = TRUE;
 				audio_sfx++;
+				/* for do_cmd_options_...(): remember that this sample was mentioned in our config file */
+				samples[event].config = TRUE;
 			}
 
 			next_token_snd:
@@ -546,7 +552,9 @@ static bool sound_sdl_init(bool no_cache) {
 		/* Split the line into two: message name, and the rest */
 		search = strchr(buffer, ' ');
 		song_list = strchr(search + 1, ' ');
+		/* no event name given? */
 		if (!search) continue;
+		/* no audio filenames listed? */
 		if (!song_list) continue;
 
 		/* Set the message name, and terminate at first space */
@@ -626,6 +634,8 @@ static bool sound_sdl_init(bool no_cache) {
 			if (!events_loaded_semaphore) {
 				events_loaded_semaphore = TRUE;
 				audio_music++;
+				/* for do_cmd_options_...(): remember that this sample was mentioned in our config file */
+				songs[event].config = TRUE;
 			}
 
 			next_token_mus:
@@ -1873,6 +1883,373 @@ static Mix_Music* load_song(int idx, int subidx) {
 
 	SDL_UnlockMutex(load_song_mutex);
 	return (waveMUS);
+}
+
+/* Display options page UI that allows to comment out sounds easily */
+void do_cmd_options_sfx_sdl(void) {
+	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
+	int y = 0;
+	char ch;
+	byte a, a2;
+	cptr lua_name;
+	bool go = TRUE;
+	char buf[1024], buf2[1024], out_val[2048], out_val2[2048], *p, evname[2048];
+	FILE *fff, *fff2;
+
+	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
+	if (quiet_mode) {
+		c_msg_print("Client is running in quiet mode, sounds are not available.");
+		return;
+	}
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
+
+	/* Check if the file exists */
+	fff = my_fopen(buf, "r");
+	if (!fff) {
+		c_msg_print("Error: File 'sound.cfg' not found.");
+		return;
+	}
+	fclose(fff);
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Interact */
+	while (go) {
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
+		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
+
+		/* Display the events */
+		for (i = y - 10 ; i <= y + 10 ; i++) {
+			if (i < 0 || i >= audio_sfx) {
+				Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                        ");
+				continue;
+			}
+
+			/* Map events we've listed in our local config file onto audio.lua indices */
+			i2 = -1;
+			for (j = 0; j < SOUND_MAX_2010; j++) {
+				if (!samples[j].config) continue;
+				i2++;
+				if (i2 == i) break;
+			}
+			if (j != SOUND_MAX_2010) { //paranoia, should always be false
+				/* get event name */
+				sprintf(out_val, "return get_sound_name(%d)", j);
+				lua_name = string_exec_lua(0, out_val);
+			}
+
+			/* set colour depending on enabled/disabled state */
+			//todo - c_cfg.use_color D: yadayada
+			if (samples[i].disabled) {
+				a = TERM_L_DARK;
+				a2 = TERM_UMBER;
+			} else {
+				a = TERM_WHITE;
+				a2 = TERM_YELLOW;
+			}
+
+			Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, a2, format("%3d", i + 1));
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                              ");
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+		}
+
+		/* display static selector */
+		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_ORANGE, ">>>");
+		Term_putstr(horiz_offset + 1 + 12 + 40 + 1, vertikal_offset + 10, -1, TERM_ORANGE, "<<<");
+
+		/* Place Cursor */
+		//Term_gotoxy(20, vertikal_offset + y);
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
+		/* Get key */
+		ch = inkey();
+
+		/* Analyze */
+		switch (ch) {
+		case ESCAPE:
+			/* auto-save */
+			path_build(buf, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
+			path_build(buf2, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.$$$");
+			fff = my_fopen(buf, "r");
+			fff2 = my_fopen(buf2, "w");
+			if (!fff) {
+				c_msg_print("Error: File 'sound.cfg' not found.");
+				return;
+			}
+			while (!feof(fff)) {
+				fgets(out_val, 2048, fff);
+				if (feof(fff)) continue;
+
+				p = out_val;
+				/* remove comment-character */
+				if (*p == ';') p++;
+
+				/* ignores lines that don't start on a letter */
+				if (tolower(*p) < 'a' || tolower(*p) > 'z') {
+					fputs(out_val, fff2);
+					continue;
+				}
+
+				/* extract event name */
+				strcpy(evname, p);
+				*(strchr(evname, ' ')) = 0;
+
+				/* find out event state (disabled/enabled) */
+				j = exec_lua(0, format("return get_sound_index(\"%s\")", evname));
+				if (j == -1 || !samples[j].config) {
+					/* 'empty' event (no filenames specified), just copy it over same as misc lines */
+					fputs(out_val, fff2);
+					continue;
+				}
+
+				/* apply new state */
+				if (samples[j].disabled) {
+					strcpy(out_val2, ";");
+					strcat(out_val2, p);
+				} else {
+					strcpy(out_val2, p);
+				}
+
+				fputs(out_val2, fff2);
+			}
+			fclose(fff);
+			fclose(fff2);
+			rename(buf, format("%s.bak", buf));
+			rename(buf2, buf);
+
+			go = FALSE;
+			break;
+
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			break;
+		case ':':
+			/* specialty: allow chatting from within here */
+			cmd_message();
+			break;
+
+		case 't':
+			samples[y].disabled = !samples[y].disabled;
+			break;
+		case 'y':
+			samples[y].disabled = FALSE;
+			break;
+		case 'n':
+			samples[y].disabled = TRUE;
+			break;
+
+		case '9':
+			y = (y - 10 + audio_sfx) % audio_sfx;
+			break;
+		case '3':
+			y = (y + 10 + audio_sfx) % audio_sfx;
+			break;
+		case '1':
+			y = audio_sfx - 1;
+			break;
+		case '7':
+			y = 0;
+			break;
+		case '8':
+		case '2':
+			d = keymap_dirs[ch & 0x7F];
+			y = (y + ddy[d] + audio_sfx) % audio_sfx;
+			break;
+		default:
+			bell();
+		}
+	}
+}
+
+/* Display options page UI that allows to comment out music easily */
+void do_cmd_options_mus_sdl(void) {
+	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
+	int y = 0;//, max_events = 0;
+	char ch;
+	byte a, a2;
+	cptr lua_name;
+	bool go = TRUE;
+	char buf[1024], buf2[1024], out_val[2048], out_val2[2048], *p, evname[2048];
+	FILE *fff, *fff2;
+
+	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
+	if (quiet_mode) {
+		c_msg_print("Client is running in quiet mode, music is not available.");
+		return;
+	}
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
+
+	/* Check if the file exists */
+	fff = my_fopen(buf, "r");
+	if (!fff) {
+		c_msg_print("Error: File 'music.cfg' not found.");
+		return;
+	}
+	fclose(fff);
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Interact */
+	while (go) {
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
+		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
+
+		/* Display the events */
+		for (i = y - 10 ; i <= y + 10 ; i++) {
+			if (i < 0 || i >= audio_music) {
+				Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                        ");
+				continue;
+			}
+
+			/* Map events we've listed in our local config file onto audio.lua indices */
+			i2 = -1;
+			for (j = 0; j < MUSIC_MAX; j++) {
+				if (!songs[j].config) continue;
+				i2++;
+				if (i2 == i) break;
+			}
+			if (j != MUSIC_MAX) { //paranoia, should always be false
+				/* get event name */
+				sprintf(out_val, "return get_music_name(%d)", j);
+				lua_name = string_exec_lua(0, out_val);
+			}
+
+			/* set colour depending on enabled/disabled state */
+			//todo - c_cfg.use_color D: yadayada
+			if (songs[i].disabled) {
+				a = TERM_L_DARK;
+				a2 = TERM_UMBER;
+			} else {
+				a = TERM_WHITE;
+				a2 = TERM_YELLOW;
+			}
+
+			Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, a2, format("%3d", i + 1));
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                              ");
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+		}
+
+		/* display static selector */
+		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_ORANGE, ">>>");
+		Term_putstr(horiz_offset + 1 + 12 + 40 + 1, vertikal_offset + 10, -1, TERM_ORANGE, "<<<");
+
+		/* Place Cursor */
+		//Term_gotoxy(20, vertikal_offset + y);
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
+		/* Get key */
+		ch = inkey();
+
+		/* Analyze */
+		switch (ch) {
+		case ESCAPE:
+			/* auto-save */
+			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
+			path_build(buf2, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.$$$");
+			fff = my_fopen(buf, "r");
+			fff2 = my_fopen(buf2, "w");
+			if (!fff) {
+				c_msg_print("Error: File 'music.cfg' not found.");
+				return;
+			}
+			while (!feof(fff)) {
+				fgets(out_val, 2048, fff);
+				if (feof(fff)) continue;
+
+				p = out_val;
+				/* remove comment-character */
+				if (*p == ';') p++;
+
+				/* ignores lines that don't start on a letter */
+				if (tolower(*p) < 'a' || tolower(*p) > 'z') {
+					fputs(out_val, fff2);
+					continue;
+				}
+
+				/* extract event name */
+				strcpy(evname, p);
+				*(strchr(evname, ' ')) = 0;
+
+				/* find out event state (disabled/enabled) */
+				j = exec_lua(0, format("return get_music_index(\"%s\")", evname));
+				if (j == -1 || !songs[j].config) {
+					/* 'empty' event (no filenames specified), just copy it over same as misc lines */
+					fputs(out_val, fff2);
+					continue;
+				}
+
+				/* apply new state */
+				if (songs[j].disabled) {
+					strcpy(out_val2, ";");
+					strcat(out_val2, p);
+				} else {
+					strcpy(out_val2, p);
+				}
+
+				fputs(out_val2, fff2);
+			}
+			fclose(fff);
+			fclose(fff2);
+			rename(buf, format("%s.bak", buf));
+			rename(buf2, buf);
+
+			go = FALSE;
+			break;
+
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			break;
+		case ':':
+			/* specialty: allow chatting from within here */
+			cmd_message();
+			break;
+
+		case 't':
+			songs[y].disabled = !songs[y].disabled;
+			play_music(y);
+			break;
+		case 'y':
+			songs[y].disabled = FALSE;
+			play_music(y);
+			break;
+		case 'n':
+			songs[y].disabled = TRUE;
+			play_music(y);
+			break;
+
+		case '9':
+			y = (y - 10 + audio_music) % audio_music;
+			break;
+		case '3':
+			y = (y + 10 + audio_music) % audio_music;
+			break;
+		case '1':
+			y = audio_music - 1;
+			break;
+		case '7':
+			y = 0;
+			break;
+		case '8':
+		case '2':
+			d = keymap_dirs[ch & 0x7F];
+			y = (y + ddy[d] + audio_music) % audio_music;
+			break;
+		default:
+			bell();
+		}
+	}
 }
 
 #endif /* SOUND_SDL */

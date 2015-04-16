@@ -346,3 +346,12 @@ function get_music_name(idx)
 --    if getn(audio_bgm) < idx then return "" end
     return (audio_bgm[idx + 1])
 end
+--just or do_cmd_options_mus_sdl():
+function get_music_index(name)
+    for i = 1, getn(audio_bgm) do
+	if audio_bgm[i] == name then
+	    return(i - 1)
+	end
+    end
+    return (-1)
+end

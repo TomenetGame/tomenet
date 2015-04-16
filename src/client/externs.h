@@ -908,7 +908,12 @@ extern int grid_weather_volume, grid_ambient_volume, grid_weather_volume_goal, g
 extern bool sound_hint;
 
 extern const struct module sound_modules[];
-extern errr init_sound_sdl(int argc, char **argv);
+
+ #ifdef SOUND_SDL
+ extern errr init_sound_sdl(int argc, char **argv);
+ extern void do_cmd_options_sfx_sdl(void);
+ extern void do_cmd_options_mus_sdl(void);
+ #endif
 
 //z-files.h:
 //extern bool my_fexists(const char *fname);
