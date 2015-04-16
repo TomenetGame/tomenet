@@ -3905,7 +3905,7 @@ static int Receive_login(int ind) {
 			return -1;
 		}
 		if (!connp->pass[0]) {
-			Destroy_connection(ind, "You need to enter a password!");
+			Destroy_connection(ind, "You must enter a password too!");
 			return -1;
 		}
 
