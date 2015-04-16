@@ -377,7 +377,10 @@ static bool sound_sdl_init(bool no_cache) {
 			if (!strlen(lua_name)) continue;
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
-		if (event < 0) continue;
+		if (event < 0) {
+			fprintf(stderr, "Sample '%s' not in audio.lua\n", cfg_name);
+			continue;
+		}
 
 		/* Advance the sample list pointer so it's at the beginning of text */
 		sample_list++;
@@ -405,7 +408,10 @@ static bool sound_sdl_init(bool no_cache) {
 
 			/* Build the path to the sample */
 			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, cur_token);
-			if (!my_fexists(path)) goto next_token_snd;
+			if (!my_fexists(path)) {
+				fprintf(stderr, "Can't find sample '%s'\n", cur_token);
+				goto next_token_snd;
+			}
 
 			/* Don't load now if we're not caching */
 			if (no_cache) {
@@ -554,7 +560,10 @@ static bool sound_sdl_init(bool no_cache) {
 			if (!strlen(lua_name)) continue;
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
-		if (event < 0) continue;
+		if (event < 0) {
+			fprintf(stderr, "Song '%s' not in audio.lua\n", cfg_name);
+			continue;
+		}
 
 		/* Advance the sample list pointer so it's at the beginning of text */
 		song_list++;
@@ -591,7 +600,10 @@ static bool sound_sdl_init(bool no_cache) {
 
 			/* Build the path to the sample */
 			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, cur_token);
-			if (!my_fexists(path)) goto next_token_mus;
+			if (!my_fexists(path)) {
+				fprintf(stderr, "Can't find song '%s'\n", cur_token);
+				goto next_token_mus;
+			}
 
 			/* Don't load now if we're not caching */
 			if (no_cache) {

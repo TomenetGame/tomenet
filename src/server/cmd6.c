@@ -2186,7 +2186,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 			case SV_SCROLL_AGGRAVATE_MONSTER:
 #ifdef USE_SOUND_2010
-				sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+				sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
  				msg_print(Ind, "\377RThere is a high-pitched humming noise.");
  				msg_print_near(Ind, "\377RThere is a high-pitched humming noise.");

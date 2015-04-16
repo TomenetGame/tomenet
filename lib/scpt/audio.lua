@@ -7,12 +7,11 @@
 
 -- Sound FX
 audio_sfx = {
-    --[misc]
+    --[player/alert]
     "bell",
     "page",
     "greeting",
     "warning",
-    "error",
 
     --[weather]
     "rain_soft",
@@ -23,32 +22,6 @@ audio_sfx = {
     "thunder",
 
     --[player]
-    --combat
-    "hit",
-    "hit_weapon",
-    "hit_sword",
-    "hit_blunt",
-    "hit_whip",
-    "hit_axe",
-    "hit_polearm",
-    "miss",
-    "miss_weapon",
-    "miss_projectile",
-    "parry",
-    "parry_weapon",
-    "block_shield",
-    "block_shield_projectile",
-
-    "fire_shot",
-    "fire_arrow",
-    "fire_bolt",
-    "fire_missile",
-    "fire_boomerang",
-
-    "death", --everyone's favourite DOOM scream....
-    "death_male",
-    "death_female",
-
     --commands
     "activate",
     "aim_wand",
@@ -57,17 +30,8 @@ audio_sfx = {
     "bash_door_break",
     "browse",
     "browse_book",
-    "breath",
     "cast",
-    "cast_ball",
-    "cast_bolt",
-    "cast_beam",
-    "cast_cloud",
-    "cast_wall",
-    "cast_wave",
     "stone_wall",
-    "phase_door",
-    "teleport",
     "cloak",
     "close_door",
     "disarm",
@@ -93,48 +57,6 @@ audio_sfx = {
     "drop_gold",
     "pickup_gold",
 
-    "item_weapon",
-    "item_sword",
-    "item_blunt",
-    "item_whip",
-    "item_axe",
-    "item_polearm",
-    "item_magestaff",
-    "item_boomerang",
-    "item_bow",
-    "item_shot",
-    "item_arrow",
-    "item_bolt",
-    "item_ring",
-    "item_amulet",
-    "item_lightsource",
-    "item_armor_light",
-    "item_armor_heavy",
-    "item_tool",
-    "item_tool_digger",
-
-    "item_book",
-    "item_scroll",
-    "item_bottle",
-    "item_potion",
-    "item_rune",
-    "item_skeleton",
-    "item_firestone",
-    "item_spike",
-    "item_chest",
-    "item_junk",
-    "item_trapkit",
-    "item_staff",
-    "item_wand",
-    "item_rod",
-    "item_key",
-    "item_golem_wood",
-    "item_golem_metal",
-    "item_golem_misc",
-    "item_seal",
-
-    "slap",
-
     "cough",
     "cough_male",
     "cough_female",
@@ -158,14 +80,12 @@ audio_sfx = {
     "barrage_arrow",
     "barrage_bolt",
 
+    "slap",
+
     "knock",
     "knock_castle",
 
-    --misc
-    "grow_trees",
-    "insanity",
-    "levelup",
-
+    --game
     "playing_cards",
     "playing_cards_shuffle",
     "playing_cards_dealer",
@@ -174,6 +94,56 @@ audio_sfx = {
     "go_stone",
     "ball_pass",
     "game_piece",
+
+    --misc
+    "grow_trees",
+    "insanity",
+    "levelup",
+
+    "death", --everyone's favourite DOOM scream....
+    "death_male",
+    "death_female",
+
+    --[combat]
+    "hit",
+    "hit_weapon",
+    "hit_sword",
+    "hit_blunt",
+    "hit_whip",
+    "hit_axe",
+    "hit_polearm",
+
+    "miss",
+    "miss_weapon",
+    "miss_projectile",
+    "parry",
+    "parry_weapon",
+    "block_shield",
+    "block_shield_projectile",
+
+    "fire_shot",
+    "fire_arrow",
+    "fire_bolt",
+    "fire_boomerang",
+    "fire_missile",
+    "throw_boulder",
+
+    --[magic]
+    "breath",
+    "cast_ball",
+    "cast_bolt",
+    "cast_beam",
+    "cast_cloud",
+    "cast_wall",
+    "cast_wave",
+    "blink",
+    "phase_door",
+    "puff",
+    "teleport",
+    "curse",
+    "heal",
+    "summon",
+    "rocket",
 
     --[monsters]
     "death_monster", --smack/smash sound (floating eye, insects, molds, jellies, all other stuff..)
@@ -193,14 +163,6 @@ audio_sfx = {
     "death_monster_undead_high", --ghostly dissolve
     "death_monster_nonliving", --breakdown (construct)
     "death_monster_Ev", --swushsh (elementals and vortices dissolve)
-
-    "monster_hit",
-    "monster_hit_weapon",
-    "monster_hit_sword",
-    "monster_hit_blunt",
-    "monster_hit_whip",
-    "monster_hit_axe",
-    "monster_hit_polearm",
 
     "monster_beg",
     "monster_bite",
@@ -225,42 +187,63 @@ audio_sfx = {
     "monster_wail",
     "monster_whisper",
 
-    "monster_miss",
-    "monster_miss_weapon",
-    "monster_miss_projectile",
-    "monster_parry",
-    "monster_parry_weapon",
-    "monster_block_shield",
-    "monster_block_shield_projectile",
-
-    "monster_fire_shot",
-    "monster_fire_arrow",
-    "monster_fire_bolt",
-    "monster_fire_missile",
-
-    "monster_breath",
-    "monster_cast_bolt",
-    "monster_cast_ball",
-    "monster_cast_cloud",
-    "monster_curse",
-    "monster_heal",
-    "monster_shriek",
-    "monster_summon",
-    "monster_blink",
-    "monster_teleport",
-    "monster_puff",
-
     --[misc]
+    "shriek",
+    "earthquake",
+
     "destruction",
     "detonation",
-    "earthquake",
-    "rocket",
     "trap_setoff",
     "hollow_noise",
     "stirring",
     "shatter_potion",
     "store_doorbell_enter",
     "store_doorbell_leave",
+
+    "fireworks_big",
+    "fireworks_norm",
+    "fireworks_small",
+
+    --[item]
+    "item_weapon",
+    "item_sword",
+    "item_blunt",
+    "item_whip",
+    "item_axe",
+    "item_polearm",
+    "item_magestaff",
+    "item_boomerang",
+    "item_bow",
+    "item_shot",
+    "item_arrow",
+    "item_bolt",
+    "item_ring",
+    "item_amulet",
+    "item_lightsource",
+    "item_armour_light",
+    "item_armour_heavy",
+    "item_tool",
+    "item_tool_digger",
+
+    "item_book",
+    "item_scroll",
+    "item_bottle",
+    "item_potion",
+    "item_rune",
+    "item_skeleton",
+    "item_firestone",
+    "item_spike",
+    "item_chest",
+    "item_junk",
+    "item_trapkit",
+    "item_staff",
+    "item_wand",
+    "item_rod",
+    "item_key",
+    "item_golem_wood",
+    "item_golem_metal",
+    "item_golem_misc",
+    "item_seal",
 
     --[ambient]
     "ambient_fireplace",
@@ -272,10 +255,6 @@ audio_sfx = {
     "animal_seagull",
     "animal_toad",
     "animal_wolf",
-
-    "fireworks_big",
-    "fireworks_norm",
-    "fireworks_small",
 }
 function get_sound_name(idx)
     if audio_sfx[idx + 1] == nil then return "" end

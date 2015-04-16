@@ -607,8 +607,8 @@ bool teleport_away(int m_idx, int dis) {
 	everyone_lite_spot(wpos, ny, nx);
 
 #ifdef USE_SOUND_2010
-	if (org_dis <= 20 && org_dis >= 10) sound_near_monster(m_idx, "monster_blink", NULL, SFX_TYPE_COMMAND);
-	else if (org_dis > 20) sound_near_monster(m_idx, "monster_teleport", NULL, SFX_TYPE_COMMAND);
+	if (org_dis <= 20 && org_dis >= 10) sound_near_monster(m_idx, "blink", NULL, SFX_TYPE_COMMAND);
+	else if (org_dis > 20) sound_near_monster(m_idx, "teleport", NULL, SFX_TYPE_COMMAND);
 #endif
 
 	/* Succeeded. */
@@ -722,7 +722,7 @@ void teleport_to_player(int Ind, int m_idx) {
 	}
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "monster_blink", NULL, SFX_TYPE_COMMAND, FALSE);
+	sound(Ind, "blink", NULL, SFX_TYPE_COMMAND, FALSE);
 #else
 //	sound(SOUND_TPOTHER);
 #endif
@@ -1191,7 +1191,7 @@ void teleport_player_to(int Ind, int ny, int nx) {
 	handle_stuff(Ind);
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "monster_blink", NULL, SFX_TYPE_COMMAND, TRUE);
+	sound(Ind, "blink", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 }
 void teleport_player_to_force(int Ind, int ny, int nx) {

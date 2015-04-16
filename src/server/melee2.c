@@ -207,6 +207,16 @@
  */
 //#define		STUPID_Q
 
+/* For bolt() sfx */
+#ifdef USE_SOUND_2010
+ #define SFX_BOLT_MAGIC 0
+ #define SFX_BOLT_SHOT 1
+ #define SFX_BOLT_ARROW 2
+ #define SFX_BOLT_BOLT 3
+ #define SFX_BOLT_MISSILE 4
+ #define SFX_BOLT_BOULDER 5
+#endif
+
 /*
  * DRS_SMART_OPTIONS is not available for now.
  */
@@ -532,14 +542,32 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
  * Stop if we hit a monster
  * Affect monsters and the player
  */
-static void bolt(int Ind, int m_idx, int typ, int dam_hp)
-{
+static void bolt(int Ind, int m_idx, int typ, int dam_hp, int sfx_typ) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_cast_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (p_ptr->sfx_monsterattack)
+		switch (sfx_typ) {
+		case SFX_BOLT_MAGIC:
+			sound(Ind, "cast_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_SHOT:
+			sound(Ind, "fire_shot", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_ARROW:
+			sound(Ind, "fire_arrow", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_BOLT:
+			sound(Ind, "fire_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_MISSILE:
+			sound(Ind, "fire_missile", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		case SFX_BOLT_BOULDER:
+			sound(Ind, "throw_boulder", NULL, SFX_TYPE_MON_SPELL, TRUE);
+			break;
+		}
 #endif
 
 	/* Target the player with a bolt attack */
@@ -557,7 +585,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (p_ptr->sfx_monsterattack) sound(Ind, "breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -581,7 +609,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 	if (rad < 1) rad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (p_ptr->sfx_monsterattack) sound(Ind, "breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	/* Target the player with a ball attack */
@@ -604,7 +632,7 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
 		sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
-	else if (p_ptr->sfx_monsterattack) sound(Ind, "monster_cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	else if (p_ptr->sfx_monsterattack) sound(Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -625,7 +653,7 @@ static void beam(int Ind, int m_idx, int typ, int dam_hp)
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_cast_beam", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 	/* Target the player with a bolt attack */
 	(void)project(m_idx, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
@@ -645,7 +673,7 @@ static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad
 	project_interval = interval;
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_cast_cloud", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_cloud", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
@@ -2199,7 +2227,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			msg_format(Ind, "\377R%^s makes a high-pitched shriek.", m_name); 
 			msg_format_near(Ind, "\377R%^s makes a high-pitched shriek.", m_name);
 #ifdef USE_SOUND_2010
-			sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+			sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
 //can be spammy!	s_printf("SHRIEK: %s -> %s.\n", m_name, p_ptr->name);
 			aggravate_monsters(Ind, m_idx);
@@ -2272,7 +2300,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires an arrow.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%^s fires an arrow for", m_name);
-			bolt(Ind, m_idx, GF_ARROW, damroll(1, 6));
+			bolt(Ind, m_idx, GF_ARROW, damroll(1, 6), SFX_BOLT_ARROW);
 			break;
 		}
 
@@ -2283,7 +2311,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires an arrow!", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%^s fires an arrow for", m_name);
-			bolt(Ind, m_idx, GF_ARROW, damroll(3, 6));
+			bolt(Ind, m_idx, GF_ARROW, damroll(3, 6), SFX_BOLT_ARROW);
 			break;
 		}
 
@@ -2294,7 +2322,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s makes a strange noise.", m_name);
 //			else msg_format(Ind, "%^s fires a missile.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a missile for", m_name);
-			bolt(Ind, m_idx, GF_ARROW, damroll(5, 6));
+			bolt(Ind, m_idx, GF_ARROW, damroll(5, 6), SFX_BOLT_MISSILE);
 			break;
 		}
 
@@ -2305,7 +2333,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a missile!", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a missile for", m_name);
-			bolt(Ind, m_idx, GF_ARROW, damroll(7, 6));
+			bolt(Ind, m_idx, GF_ARROW, damroll(7, 6), SFX_BOLT_MISSILE);
 			break;
 		}
 
@@ -2330,7 +2358,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_print(Ind, "You hear a whizzing noise.");
 //				else msg_format(Ind, "%^s fires an arrow.", m_name);
 				snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires an arrow for", m_name);
-				bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
+				bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6), SFX_BOLT_ARROW);
 				if (p_ptr->death) break;
 			}
 			break;
@@ -2353,7 +2381,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a shot.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a shot for", m_name);
-			bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
+			bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6), SFX_BOLT_SHOT);
 			break;
 		}
 
@@ -2372,7 +2400,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a bolt for", m_name);
-			bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
+			bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6), SFX_BOLT_BOLT);
 			break;
 		}
 
@@ -2390,7 +2418,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a missile.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a missile for", m_name);
-			bolt(Ind, m_idx, GF_MISSILE, damroll(dice, 6));
+			bolt(Ind, m_idx, GF_MISSILE, damroll(dice, 6), SFX_BOLT_MISSILE);
 			break;
 		}
 
@@ -2684,12 +2712,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "You hear something grunt with exertion.");
 //			else msg_format(Ind, "%^s hurls a boulder at you!", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s hurls a boulder at you for", m_name);
-			bolt(Ind, m_idx, GF_ARROW, damroll(1 + r_ptr->level / 7, 12));
+			bolt(Ind, m_idx, GF_ARROW, damroll(1 + r_ptr->level / 7, 12), SFX_BOLT_BOULDER);
 			break;
 		}
-
-
-
 
 
 		/* RF5_BA_ACID */
@@ -2923,7 +2948,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses.", m_name);
 #ifdef USE_SOUND_2010
-				if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2939,7 +2964,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
 #ifdef USE_SOUND_2010
-				if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2955,7 +2980,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 				else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
 #ifdef USE_SOUND_2010
-				if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2971,7 +2996,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 				else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
 #ifdef USE_SOUND_2010
-				if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2992,7 +3017,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses.", m_name);
 #ifdef USE_SOUND_2010
-			if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -3011,7 +3036,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
 #ifdef USE_SOUND_2010
-			if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -3030,7 +3055,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
 #ifdef USE_SOUND_2010
-			if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -3049,7 +3074,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 			else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
 #ifdef USE_SOUND_2010
-			if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -3101,8 +3126,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a acid bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts an acid bolt of", m_name);
-			bolt(Ind, m_idx, GF_ACID,
-					damroll(7, 8) + (rlev / 3));
+			bolt(Ind, m_idx, GF_ACID, damroll(7, 8) + (rlev / 3), SFX_BOLT_MAGIC);
 			update_smart_learn(m_idx, DRS_ACID);
 			break;
 		}
@@ -3115,8 +3139,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a lightning bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a lightning bolt of", m_name);
-			bolt(Ind, m_idx, GF_ELEC,
-					damroll(4, 8) + (rlev / 3));
+			bolt(Ind, m_idx, GF_ELEC, damroll(4, 8) + (rlev / 3), SFX_BOLT_MAGIC);
 			update_smart_learn(m_idx, DRS_ELEC);
 			break;
 		}
@@ -3129,8 +3152,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a fire bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a fire bolt of", m_name);
-			bolt(Ind, m_idx, GF_FIRE,
-					damroll(9, 8) + (rlev / 3));
+			bolt(Ind, m_idx, GF_FIRE, damroll(9, 8) + (rlev / 3), SFX_BOLT_MAGIC);
 			update_smart_learn(m_idx, DRS_FIRE);
 			break;
 		}
@@ -3143,8 +3165,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a frost bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a frost bolt of", m_name);
-			bolt(Ind, m_idx, GF_COLD,
-					damroll(6, 8) + (rlev / 3));
+			bolt(Ind, m_idx, GF_COLD, damroll(6, 8) + (rlev / 3), SFX_BOLT_MAGIC);
 			update_smart_learn(m_idx, DRS_COLD);
 			break;
 		}
@@ -3164,8 +3185,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a nether bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a nether bolt of", m_name);
-			bolt(Ind, m_idx, GF_NETHER,
-					30 + damroll(5, 5) + (rlev * 3) / 2);
+			bolt(Ind, m_idx, GF_NETHER, 30 + damroll(5, 5) + (rlev * 3) / 2, SFX_BOLT_MAGIC);
 			update_smart_learn(m_idx, DRS_NETH);
 			break;
 		}
@@ -3178,8 +3198,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a water bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a water bolt of", m_name);
-			bolt(Ind, m_idx, GF_WATER,
-					damroll(10, 10) + (rlev));
+			bolt(Ind, m_idx, GF_WATER, damroll(10, 10) + (rlev), SFX_BOLT_MAGIC);
 			break;
 		}
 
@@ -3191,8 +3210,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a mana bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a mana bolt of", m_name);
-			bolt(Ind, m_idx, GF_MANA,
-					randint(rlev * 7 / 2) + 50);
+			bolt(Ind, m_idx, GF_MANA, randint(rlev * 7 / 2) + 50, SFX_BOLT_MAGIC);
 			break;
 		}
 
@@ -3204,8 +3222,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a plasma bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a plasma bolt of", m_name);
-			bolt(Ind, m_idx, GF_PLASMA,
-					10 + damroll(8, 7) + (rlev));
+			bolt(Ind, m_idx, GF_PLASMA, 10 + damroll(8, 7) + (rlev), SFX_BOLT_MAGIC);
 			break;
 		}
 
@@ -3217,8 +3234,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts an ice bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts an ice bolt of", m_name);
-			bolt(Ind, m_idx, GF_ICE,
-					damroll(6, 6) + (rlev));
+			bolt(Ind, m_idx, GF_ICE, damroll(6, 6) + (rlev), SFX_BOLT_MAGIC);
 			update_smart_learn(m_idx, DRS_COLD);
 			break;
 		}
@@ -3231,8 +3247,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a magic missile.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a magic missile of", m_name);
-			bolt(Ind, m_idx, GF_MISSILE,
-					damroll(2, 6) + (rlev / 3));
+			bolt(Ind, m_idx, GF_MISSILE, damroll(2, 6) + (rlev / 3), SFX_BOLT_MAGIC);
 			break;
 		}
 
@@ -3532,7 +3547,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_print(Ind, "You hear something blink away.");
 				else msg_format(Ind, "%^s blinks away.", m_name);
 #ifdef USE_SOUND_2010
-//redudant: already done in teleport_away()	sound(Ind, "monster_blink", NULL, SFX_TYPE_MON_SPELL, TRUE);
+//redudant: already done in teleport_away()	sound(Ind, "blink", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 			}
 			break;
@@ -3564,7 +3579,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_print(Ind, "You hear something teleport away.");
 				else msg_format(Ind, "%^s teleports away.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_teleport", NULL, SFX_TYPE_MON_SPELL, TRUE);
+				sound(Ind, "teleport", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 			}
 			break;
@@ -4113,7 +4128,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			disturb(Ind, 1, 0);
 			if (blind) msg_print(Ind, "Something mumbles.");
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a disenchantment bolt of", m_name);
-			bolt(Ind, m_idx, GF_DISENCHANT, 25 + damroll(4, 5) + (rlev * 3) / 2);
+			bolt(Ind, m_idx, GF_DISENCHANT, 25 + damroll(4, 5) + (rlev * 3) / 2, SFX_BOLT_MAGIC);
 			update_smart_learn(m_idx, DRS_DISEN);
 			break;
 		/* RF0_BA_DISE */

@@ -817,7 +817,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Aggravation Trap */
 		case TRAP_OF_AGGRAVATION:
 #ifdef USE_SOUND_2010
-			sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+			sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
 			msg_print(Ind, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
 			msg_print_near(Ind, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
 #else
@@ -3730,7 +3730,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 				identify_mon_trap_load(who, o_ptr);
 
 #ifdef USE_SOUND_2010
-				sound_near(who, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+				sound_near(who, "shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
 				msg_print(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
 				msg_print_near(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");

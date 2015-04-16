@@ -1266,10 +1266,10 @@ void sound_near(int Ind, cptr name, cptr alternative, int type) {
 		if (d > MAX_SIGHT) continue;
 
 #ifndef SFX_SHRIEK_VOLUME
-		if (strcmp(name, "monster_shriek") || Players[i]->sfx_shriek)
+		if (strcmp(name, "shriek") || Players[i]->sfx_shriek)
 			sound(i, name, alternative, type, FALSE);
 #else
-		if (strcmp(name, "monster_shriek"))
+		if (strcmp(name, "shriek"))
 			sound(i, name, alternative, type, FALSE);
 		else if (Players[i]->sfx_shriek)
 			sound_vol(i, name, alternative, type, FALSE, SFX_SHRIEK_VOLUME);
@@ -1887,9 +1887,9 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 		case TV_POLEARM: item = "polearm"; break;
 	} else if (is_armour(tval)) {
 		if (is_textile_armour(tval, sval))
-			item = "armor_light";
+			item = "armour_light";
 		else
-			item = "armor_heavy";
+			item = "armour_heavy";
 	} else switch(tval) {
 		/* equippable stuff */
 		case TV_LITE: item = "lightsource"; break;
@@ -1909,9 +1909,8 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 			item = "scroll"; break;
 /*		case TV_BOTTLE: item = "potion"; break;
 		case TV_POTION: case TV_POTION2: case TV_FLASK:
-			item = "potion"; break;*/
-		case TV_RUNE:
-			item = "rune"; break;
+			item = "potion"; break; */
+		case TV_RUNE: item = "rune"; break;
 //		case TV_SKELETON: item = ""; break;
 		case TV_FIRESTONE: item = "firestone"; break;
 /*		case TV_SPIKE: item = ""; break;
@@ -1923,11 +1922,15 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 		case TV_WAND: item = ""; break;
 		case TV_ROD: item = ""; break;
 		case TV_ROD_MAIN: item = ""; break;
-		case TV_FOOD: item = ""; break;
-		case TV_KEY: item = ""; break;
-		case TV_GOLEM: item = ""; break;
-		case TV_SPECIAL: item = ""; break;
-*/	}
+		case TV_FOOD: item = ""; break; */
+		case TV_KEY: item = "key"; break;
+//		case TV_GOLEM: item = ""; break;
+		case TV_SPECIAL:
+			switch (sval) {
+			case SV_SEAL: item = "seal"; break;
+			}
+			break;
+	}
 
 	/* no sound effect available? */
 	if (item == NULL) return;
