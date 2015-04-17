@@ -3471,8 +3471,7 @@ static void get_macro_trigger(char *buf)
 	Term_addstr(-1, TERM_WHITE, tmp);
 }
 
-void interact_macros(void)
-{
+void interact_macros(void) {
 	int i, j = 0, l;
 
 	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024];
@@ -3512,10 +3511,11 @@ void interact_macros(void)
 		/* Selections */
 		l = 2;
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ys\377w) Save macros to a pref file");
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ys\377B) Save macros to a pref file");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w) Load macros from a pref file");
 		l++;
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377yG\377s/\377yC\377s/\377yB\377s/\377yA\377w) Forget macros from global.prf / <character>.prf / both / all");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yt\377w) Test a key for an existing macro");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yi\377w) List all currently defined macros");
 		l++;
@@ -3529,7 +3529,6 @@ void interact_macros(void)
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s) Enter and create a 'quick & dirty' macro"),
 //		Term_putstr(5, l++, -1, TERM_SLATE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ur\377s) Record a macro");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uW\377s) Wipe all macros and (\377uw\377s) reload default macro files (use together!)");
 		l++;
 
 		/* Describe that action */
@@ -3714,9 +3713,24 @@ void interact_macros(void)
 			get_macro_trigger(buf);
 
 			/* Delete the macro */
-			if (macro_del(buf))
+			if (macro_del(buf)) {
 				c_msg_print("The macro was deleted.");
-			else
+
+				/* ..and actually restore the key from the predefined, non-custom macros: */
+				strcpy(macro_trigger_exclusive, buf); //hack
+
+				/* Access the "basic" pref file */
+				strcpy(buf, "pref.prf");
+				process_pref_file(buf);
+				/* Access the "basic" system pref file */
+				sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
+				process_pref_file(buf);
+				/* Access the "visual" system pref file (if any) */
+				sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
+				process_pref_file(buf);
+
+				macro_trigger_exclusive[0] = 0; //unhack
+			} else
 				c_msg_print("No macro was found.");
 		}
 #endif
@@ -4070,9 +4084,9 @@ void interact_macros(void)
 			/* TODO: implement */
 		}
 
-		else  if (i == 'W') {
-			/* Wipe all macros */
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Wipe all macros");
+		else  if (i == 'G') {
+			/* Forget macros loaded from global.prf */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget global macros");
 
 			for (i = 0; i < macro__num; i++) {
 				string_free(macro__pat[i]);
@@ -4084,14 +4098,180 @@ void interact_macros(void)
 			}
 			macro__num = 0;
 			for (i = 0; i < 256; i++) macro__use[i] = 0;
+
+			//initialize_main_pref_files();
+			//initialize_player_pref_files();
+
+			/* Access the "basic" pref file */
+			strcpy(buf, "pref.prf");
+			process_pref_file(buf);
+			/* Access the "basic" system pref file */
+			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
+			process_pref_file(buf);
+			/* Access the "visual" system pref file (if any) */
+			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
+			process_pref_file(buf);
+#if 0 /* skip exactly these here */
+			/* Access the "global" macro file */
+			sprintf(buf, "global.prf");
+			process_pref_file(buf);
+#endif
+			/* Access the "race" pref file */
+			if (race < Setup.max_race) {
+				sprintf(buf, "%s.prf", race_info[race].title);
+				process_pref_file(buf);
+			}
+			/* Access the "class" pref file */
+			if (class < Setup.max_class) {
+				sprintf(buf, "%s.prf", class_info[class].title);
+				process_pref_file(buf);
+			}
+			/* Access the "character" pref file */
+			sprintf(buf, "%s.prf", cname);
+			process_pref_file(buf);
 		}
 
-		else if (i == 'w') {
-			/* Reload default macro files */
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Reload default macro files");
+		else if (i == 'C') {
+			/* Forget macros loaded from character.prf */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget character-specific macros");
 
-			initialize_main_pref_files();
-			initialize_player_pref_files();
+			for (i = 0; i < macro__num; i++) {
+				string_free(macro__pat[i]);
+				macro__pat[i] = NULL;
+				string_free(macro__act[i]);
+				macro__act[i] = NULL;
+				macro__cmd[i] = FALSE;
+				macro__hyb[i] = FALSE;
+			}
+			macro__num = 0;
+			for (i = 0; i < 256; i++) macro__use[i] = 0;
+
+			//initialize_main_pref_files();
+			//initialize_player_pref_files();
+
+			/* Access the "basic" pref file */
+			strcpy(buf, "pref.prf");
+			process_pref_file(buf);
+			/* Access the "basic" system pref file */
+			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
+			process_pref_file(buf);
+			/* Access the "visual" system pref file (if any) */
+			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
+			process_pref_file(buf);
+			/* Access the "global" macro file */
+			sprintf(buf, "global.prf");
+			process_pref_file(buf);
+			/* Access the "race" pref file */
+			if (race < Setup.max_race) {
+				sprintf(buf, "%s.prf", race_info[race].title);
+				process_pref_file(buf);
+			}
+			/* Access the "class" pref file */
+			if (class < Setup.max_class) {
+				sprintf(buf, "%s.prf", class_info[class].title);
+				process_pref_file(buf);
+			}
+#if 0 /* skip exactly these here */
+			/* Access the "character" pref file */
+			sprintf(buf, "%s.prf", cname);
+			process_pref_file(buf);
+#endif
+		}
+
+		else if (i == 'B') {
+			/* Forget macros loaded from character.prf */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget character-specific macros");
+
+			for (i = 0; i < macro__num; i++) {
+				string_free(macro__pat[i]);
+				macro__pat[i] = NULL;
+				string_free(macro__act[i]);
+				macro__act[i] = NULL;
+				macro__cmd[i] = FALSE;
+				macro__hyb[i] = FALSE;
+			}
+			macro__num = 0;
+			for (i = 0; i < 256; i++) macro__use[i] = 0;
+
+			//initialize_main_pref_files();
+			//initialize_player_pref_files();
+
+			/* Access the "basic" pref file */
+			strcpy(buf, "pref.prf");
+			process_pref_file(buf);
+			/* Access the "basic" system pref file */
+			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
+			process_pref_file(buf);
+			/* Access the "visual" system pref file (if any) */
+			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
+			process_pref_file(buf);
+#if 0 /* skip these here */
+			/* Access the "global" macro file */
+			sprintf(buf, "global.prf");
+			process_pref_file(buf);
+#endif
+			/* Access the "race" pref file */
+			if (race < Setup.max_race) {
+				sprintf(buf, "%s.prf", race_info[race].title);
+				process_pref_file(buf);
+			}
+			/* Access the "class" pref file */
+			if (class < Setup.max_class) {
+				sprintf(buf, "%s.prf", class_info[class].title);
+				process_pref_file(buf);
+			}
+#if 0 /* skip these here */
+			/* Access the "character" pref file */
+			sprintf(buf, "%s.prf", cname);
+			process_pref_file(buf);
+#endif
+		}
+
+		else if (i == 'A') {
+			/* Forget macros loaded from character.prf */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget character-specific macros");
+
+			for (i = 0; i < macro__num; i++) {
+				string_free(macro__pat[i]);
+				macro__pat[i] = NULL;
+				string_free(macro__act[i]);
+				macro__act[i] = NULL;
+				macro__cmd[i] = FALSE;
+				macro__hyb[i] = FALSE;
+			}
+			macro__num = 0;
+			for (i = 0; i < 256; i++) macro__use[i] = 0;
+
+			//initialize_main_pref_files();
+			//initialize_player_pref_files();
+
+			/* Access the "basic" pref file */
+			strcpy(buf, "pref.prf");
+			process_pref_file(buf);
+			/* Access the "basic" system pref file */
+			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
+			process_pref_file(buf);
+			/* Access the "visual" system pref file (if any) */
+			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
+			process_pref_file(buf);
+#if 0 /* skip these here */
+			/* Access the "global" macro file */
+			sprintf(buf, "global.prf");
+			process_pref_file(buf);
+			/* Access the "race" pref file */
+			if (race < Setup.max_race) {
+				sprintf(buf, "%s.prf", race_info[race].title);
+				process_pref_file(buf);
+			}
+			/* Access the "class" pref file */
+			if (class < Setup.max_class) {
+				sprintf(buf, "%s.prf", class_info[class].title);
+				process_pref_file(buf);
+			}
+			/* Access the "character" pref file */
+			sprintf(buf, "%s.prf", cname);
+			process_pref_file(buf);
+#endif
 		}
 
 		else if (i == 'z') {

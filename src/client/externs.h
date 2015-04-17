@@ -947,3 +947,4 @@ extern bool silent_dump;
 extern bool equip_no_weapon;
 extern bool enabled_readability_blue;
 extern bool auto_reincarnation;
+extern char macro_trigger_exclusive[MAX_CHARS];

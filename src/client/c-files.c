@@ -808,8 +808,7 @@ void init_file_paths(char *path)
  * Specify a use for a subwindow
  *   W:<num>:<use>
  */
-errr process_pref_file_aux(char *buf)
-{
+errr process_pref_file_aux(char *buf) {
         int i, j, k;
 	int n1, n2;
 
@@ -944,6 +943,10 @@ errr process_pref_file_aux(char *buf)
         {
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
+
+		//hack
+		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
+
                 macro_add(tmp, macro__buf, FALSE, FALSE);
                 return (0);
         }
@@ -953,6 +956,10 @@ errr process_pref_file_aux(char *buf)
         {
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
+
+		//hack
+		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
+
                 macro_add(tmp, macro__buf, FALSE, TRUE);
                 return (0);
         }
@@ -962,6 +969,10 @@ errr process_pref_file_aux(char *buf)
         {
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
+
+		//hack
+		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
+
                 macro_add(tmp, macro__buf, TRUE, FALSE);
                 return (0);
         }
@@ -971,6 +982,10 @@ errr process_pref_file_aux(char *buf)
 	{
 		char tmp[1024];
 		text_to_ascii(tmp, buf+2);
+
+		//hack
+		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
+
 		macro_del(tmp);
 		return 0;
 	}
