@@ -175,6 +175,7 @@ extern bool shopping, perusing;
 extern s16b last_line_info;
 extern s32b cur_line;
 extern s32b max_line;
+extern s16b last_line_y;
 
 extern player_type Players[2];
 extern player_type *p_ptr;

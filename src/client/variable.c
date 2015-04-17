@@ -58,6 +58,7 @@ bool perusing;				/* Are we browinsg a help file or similar? */
 s16b last_line_info;			/* Last line of info we've received */
 s32b max_line;				/* Maximum amount of "special" info */
 s32b cur_line;				/* Current displayed line of "special" info */
+s16b last_line_y = 0;			/* for big_map mindlink differences */
 
 player_type Players[2];			/* The client-side copy of some of the player information */
 player_type *p_ptr = &Players[1];
