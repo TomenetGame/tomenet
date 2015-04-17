@@ -2801,133 +2801,146 @@ void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...)
     -APD-
     */
 
-/* This helper function doesn't care about whether winners, fallen winners and non-winners
-   are actually allowed to share exp or not. That is handled in party_gain_exp().
-   This should maybe be changed. */
+/* This helper function checks if two players are allowed to share experience,
+   based on a) level difference and b) royal status.
+   Note a quirk here:
+   Winners and non-winners don't share exp, but winners and once-winners do. */
 static bool players_in_level(int Ind, int Ind2) {
-	if (Players[Ind]->total_winner && Players[Ind2]->total_winner) {
-	        if (ABS(Players[Ind]->lev - Players[Ind2]->lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
-	} else {
-	        if (ABS(Players[Ind]->lev - Players[Ind2]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
+	player_type *p_ptr = Players[Ind], *p2_ptr = Players[Ind2];
+
+	/* Check for max allowed level difference */
+	if (p_ptr->total_winner && p2_ptr->total_winner) {
+	        if (ABS(p_ptr->lev - p2_ptr->lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
+	        return TRUE;
 	}
-        return TRUE;
+	if (ABS(p_ptr->lev - p2_ptr->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
+
+	/* Winners and non-winners don't share experience!
+	   This is actually important because winners get special features
+	   such as super heavy armour and royal stances which are aimed at
+	   nether realm, and are not meant to influence pre-king gameplay. */
+	if ((p_ptr->total_winner && !(p2_ptr->total_winner || p2_ptr->once_winner)) ||
+	    (p2_ptr->total_winner && !(p_ptr->total_winner || p_ptr->once_winner)))
+		return FALSE;
+
+	return TRUE;
 }
 
 /* Note: 'amount' is actually multiplied by 100 for extra decimal digits if we're very low level (Training Tower exp'ing).
    The same is done to 'base_amount' so it's *100 too. */
+#define PERFORM_IRON_TEAM_CHECKS
 void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc) {
-	player_type *p_ptr;
+	player_type *p_ptr = Players[Ind], *q_ptr;
 	int i, eff_henc;
-	struct worldpos *wpos = &Players[Ind]->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount, new_boosted_amount;
 	s64b modified_level;
 	int dlev = getlevel(wpos);
 	bool not_in_iddc = !in_irondeepdive(wpos);
 
+	int PInd[NumPlayers], pi = 0, Ind2; /* local working copy of player indices, for efficiency hopefully */
+	bool iron = (parties[party_id].mode == PA_IRONTEAM);
+#ifdef PERFORM_IRON_TEAM_CHECKS
+	int iron_team_members_here = 0;//temporarily here
+#endif
+
 #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 	int soft_max_plv;
 #endif
 
+
 #ifdef ALLOW_NR_CROSS_PARTIES
-	/* anti-cheeze (for if NR surface already allows partying up) */
+	/* quick and dirty anti-cheeze (for if NR surface already allows partying up) */
         if (at_netherrealm(wpos) && !wpos->wz) return;
 #endif
 
-#if 1
-/* will be moved to gain_exp() if decrease of party.experience is implemented, nasty though.
-until then, iron teams will just have to be re-formed as normal parties if a member falls
-behind too much in terms of exp and hence blocks the whole team from gaining exp. */
-	int iron_team_members_here = 0;
 
-	/* Iron Teams only get exp if the whole team is on the same floor! - C. Blue */
-	if (parties[party_id].mode == PA_IRONTEAM) {
-		for (i = 1; i <= NumPlayers; i++) {
-			p_ptr = Players[i];
-			if (p_ptr->conn == NOT_CONNECTED) continue;
-
-			/* note: this line means that iron teams must not add
-			   admins, or the members won't gain exp anymore */
-			if (is_admin(p_ptr)) continue;
-
-			/* player on the same dungeon level? */
-			if (!inarea(&p_ptr->wpos, wpos)) continue;
-
-			/* count party members on the same dlvl */
-			if (player_in_party(party_id, i)) iron_team_members_here++;
-		}
-		/* only gain exp if all members are here */
-		if (iron_team_members_here != parties[party_id].members) return;
-	}
-#endif
-
-	/* Calculate the average level */
+	/* Calculate the average level, average cheeze, and iron team presence */
 	for (i = 1; i <= NumPlayers; i++) {
-		p_ptr = Players[i];
+		q_ptr = Players[i];
 
-		if (p_ptr->conn == NOT_CONNECTED) continue;
+		if (q_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Check for his existence in the party */
-		if (!(player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))) continue;
+		if (!(player_in_party(party_id, i) && (inarea(&q_ptr->wpos, wpos)))) continue;
 
-		/* Increase the "divisor" */
-		average_lev += p_ptr->lev;
+		/* Create map for efficiency */
+		PInd[pi] = i;
+		pi++;
+
+#ifdef PERFORM_IRON_TEAM_CHECKS
+		/* will be moved to gain_exp() if decrease of party.experience is implemented, nasty though.
+		until then, iron teams will just have to be re-formed as normal parties if a member falls
+		behind too much in terms of exp and hence blocks the whole team from gaining exp. */
+
+		/* Iron Teams only get exp if the whole team is on the same floor! */
+		if (iron &&
+		    /* note: this line means that iron teams must not add
+		       admins, or the members won't gain exp anymore */
+		    !is_admin(q_ptr))
+			iron_team_members_here++;
+#endif
+
+		/* For exp-splitting: Increase the "divisor" */
+		average_lev += q_ptr->lev;
 		num_members++;
+
+		/* For HEnc-checks: Test for highest level */
 	}
+
+#ifdef PERFORM_IRON_TEAM_CHECKS
+	/* Iron team calc: nobody in an iron team can gain exp if not all members are present and in the same place! */
+	if (iron_team_members_here != parties[party_id].members) return;
+#endif
+
+	/* Exp share calc: */
 	average_lev /= num_members;
 
+
 	/* Now, distribute the experience */
-	for (i = 1; i <= NumPlayers; i++) {
-		p_ptr = Players[i];
+	for (i = 0; i < pi++; i++) {
+		Ind2 = PInd[i];
+		q_ptr = Players[Ind2];
 
-		if (p_ptr->conn == NOT_CONNECTED) continue;
-		if (p_ptr->ghost) continue; /* no exp, but take share toll! */
-
-		/* Winners and non-winners don't share experience!
-		   This is actually important because winners get special features
-		   such as super heavy armour and royal stances which are aimed at
-		   nether realm, and are not meant to influence pre-king gameplay. */
-		if ((Players[Ind]->total_winner && !(p_ptr->total_winner || p_ptr->once_winner)) ||
-		    (p_ptr->total_winner && !(Players[Ind]->total_winner || Players[Ind]->once_winner)))
-			continue;
-
-		/* Check for existence in the party */
-                if (!(player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))) continue;
+		/* players who exceed the restrictions to share exp with us don't get any,
+		   but still take share toll by increasing the divisor in the loop above. */
+		if (q_ptr->ghost || !players_in_level(Ind, Ind2)) continue;
 
 		/* Calculate this guy's experience */
 
-		if (p_ptr->lev < average_lev) { // below average
-			if ((average_lev - p_ptr->lev) > 2)
-				modified_level = p_ptr->lev + 2;
+		if (q_ptr->lev < average_lev) { // below average
+			if ((average_lev - q_ptr->lev) > 2)
+				modified_level = q_ptr->lev + 2;
 			else	modified_level = average_lev;
 		} else {
-			if ((p_ptr->lev - average_lev) > 2)
-				modified_level = p_ptr->lev - 2;
+			if ((q_ptr->lev - average_lev) > 2)
+				modified_level = q_ptr->lev - 2;
 			else	modified_level = average_lev;
 		}
 
 		new_amount = amount;
 
 		/*
-		new_exp = (amount * modified_level) / (average_lev * num_members * p_ptr->lev);
-		new_exp_frac = ((((amount * modified_level) % (average_lev * num_members * p_ptr->lev) )
-		                * 10000L) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
+		new_exp = (amount * modified_level) / (average_lev * num_members * q_ptr->lev);
+		new_exp_frac = ((((amount * modified_level) % (average_lev * num_members * q_ptr->lev) )
+		                * 10000L) / (average_lev * num_members * q_ptr->lev)) + q_ptr->exp_frac;
 		*/
 
 		/* Higher characters who farm monsters on low levels compared to
 		    their clvl will gain less exp.
 		    (note: this formula also occurs in mon_take_hit) */
-		if (henc > p_ptr->max_lev) eff_henc = henc;
-		else eff_henc = p_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
+		if (henc > q_ptr->max_lev) eff_henc = henc;
+		else eff_henc = q_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
 #ifdef ANTI_MAXPLV_EXPLOIT
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
-		soft_max_plv = Players[Ind]->max_plv - ((Players[Ind]->max_plv - Players[Ind]->max_lev) / 2);
-		if ((Ind != i) && (eff_henc < soft_max_plv)) eff_henc = soft_max_plv;
+		soft_max_plv = p_ptr->max_plv - ((p_ptr->max_plv - p_ptr->max_lev) / 2);
+		if ((Ind != Ind2) && (eff_henc < soft_max_plv)) eff_henc = soft_max_plv;
  #else
   #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
-		if ((Ind != i) && (eff_henc < Players[Ind]->max_plv - 5))
-			new_amount = (new_amount * eff_henc) / (Players[Ind]->max_plv * 2);
+		if ((Ind != Ind2) && (eff_henc < p_ptr->max_plv - 5))
+			new_amount = (new_amount * eff_henc) / (p_ptr->max_plv * 2);
   #else
-		if ((Ind != i) && (eff_henc < Players[Ind]->max_plv)) eff_henc = Players[Ind]->max_plv; /* 100% zonk, bam */
+		if ((Ind != Ind2) && (eff_henc < p_ptr->max_plv)) eff_henc = p_ptr->max_plv; /* 100% zonk, bam */
   #endif
  #endif
 #endif
@@ -2936,9 +2949,9 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 			new_amount = det_exp_level(new_amount, eff_henc, dlev);
 
 		/* Don't allow cheap support from super-high level characters */
-		if (cfg.henc_strictness && !p_ptr->total_winner) {
-			if (eff_henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-			if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+		if (cfg.henc_strictness && !q_ptr->total_winner) {
+			if (eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+			if (q_ptr->supported_by - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
 		}
 
 
@@ -2946,9 +2959,9 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 		   due to high level difference,
 		   make exception for low exp boosts like "holy jackal" */
 #if 1 /* isn't this buggy? see below 'else' clause for assumingly correct version.. */
-/* no it's not buggy, new_amount gets divided by p_ptr->lev later - mikaelh */
-		if ((new_amount > base_amount * 4 * p_ptr->lev) && (new_amount > 200 * p_ptr->lev))
-			new_amount = base_amount * 4 * p_ptr->lev;
+/* no it's not buggy, new_amount gets divided by q_ptr->lev later - mikaelh */
+		if ((new_amount > base_amount * 4 * q_ptr->lev) && (new_amount > 200 * q_ptr->lev))
+			new_amount = base_amount * 4 * q_ptr->lev;
 #else
 		if ((new_amount > base_amount * 4) && (new_amount > 200))
 			new_amount = base_amount * 4;
@@ -2962,25 +2975,25 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 		new_boosted_amount = (new_boosted_amount * modified_level) / average_lev;
 
 		/* Some bonus is applied to encourage partying	- Jir - */
-		new_exp = new_boosted_amount / p_ptr->lev / 100;
-		new_exp_frac = ((new_boosted_amount - new_exp * p_ptr->lev * 100)
-		    * 100L) / p_ptr->lev + p_ptr->exp_frac;
+		new_exp = new_boosted_amount / q_ptr->lev / 100;
+		new_exp_frac = ((new_boosted_amount - new_exp * q_ptr->lev * 100)
+		    * 100L) / q_ptr->lev + q_ptr->exp_frac;
 
 		/* Keep track of experience */
 		if (new_exp_frac >= 10000L) {
 			new_exp++;
-			p_ptr->exp_frac = new_exp_frac - 10000L;
+			q_ptr->exp_frac = new_exp_frac - 10000L;
 		} else {
-			p_ptr->exp_frac = new_exp_frac;
-			p_ptr->redraw |= PR_EXP; //EXP_BAR_FINESCALE
+			q_ptr->exp_frac = new_exp_frac;
+			q_ptr->redraw |= PR_EXP; //EXP_BAR_FINESCALE
 		}
 
 		/* Gain experience */
-		if (new_exp) gain_exp(i, new_exp);
-		else if (!p_ptr->warning_fracexp && base_amount) {
-			msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
-			s_printf("warning_fracexp: %s\n", p_ptr->name);
-			p_ptr->warning_fracexp = 1;
+		if (new_exp) gain_exp(Ind2, new_exp);
+		else if (!q_ptr->warning_fracexp && base_amount) {
+			msg_print(Ind2, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
+			s_printf("warning_fracexp: %s\n", q_ptr->name);
+			q_ptr->warning_fracexp = 1;
 		}
 	}
 }
