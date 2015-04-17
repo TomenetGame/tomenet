@@ -573,11 +573,15 @@ static void sense_inventory(int Ind)
 		if (!o_ptr->note) o_ptr->note = quark_add(feel);
 #endif
 		/* Still add an inscription, so unique loot doesn't cause major annoyances - C. Blue */
-		else {
+		/* for items that were already pseudo-id-inscribed but then forgotten:
+		   only add inscription if it doesn't exist on the item yet (*) - 2 checks */
+		else if (strcmp(quark_str(o_ptr->note), feel)) { // (*) check 1 of 2 (exact match)
 			strcpy(o_name, feel); /* just abusing o_name for this since it's not needed anymore anyway */
 			strcat(o_name, "-");
-			strcat(o_name, quark_str(o_ptr->note));
-			o_ptr->note = quark_add(o_name);
+			if (!strstr(quark_str(o_ptr->note), o_name)) { // (*) check 2 of 2 (partial match)
+				strcat(o_name, quark_str(o_ptr->note));
+				o_ptr->note = quark_add(o_name);
+			}
 		}
 
 		/* Combine / Reorder the pack (later) */
