@@ -16628,6 +16628,8 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   determine weapon (or mage staff) reward probabilities and armour weight if
   you happen to get an armour piece. Magic classes also have a somewhat higher
   chance to get a crown instead of helmet/cap.
+  Note: Critical-strike skill will aim at sword-type weapons, same as if you
+  skilled sword-mastery skill.
 - wear roughly the appropriate type of armour (ie light vs heavy) and..
 - wield the type of weapon (dual, 1-handed or 2-handed) that you prefer.
   This might affect three factors randomly: An actual weapon reward, whether or
