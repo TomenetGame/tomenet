@@ -2821,6 +2821,7 @@ void window_stuff(void) {
 #define SKY_ALTITUDE	20 /* assumed 'pseudo-isometric' cloud altitude */
 #define PANEL_X		(SCREEN_PAD_LEFT) /* physical top-left screen position of view panel */
 #define PANEL_Y		(SCREEN_PAD_TOP) /* physical top-left screen position of view panel */
+#define BIGMAP_MINDLINK_HACK
 void do_weather() {
 	int i, j, intensity;
 	static int weather_gen_ticks = 0, weather_ticks10 = 0;
@@ -2863,6 +2864,13 @@ void do_weather() {
 		if (screen_icky) Term_switch(0);
 
 		for (i = 0; i < weather_elements; i++) {
+#ifdef BIGMAP_MINDLINK_HACK
+			/* big_map mindlink visuals hack */
+			if (last_line_y <= SCREEN_HGT &&
+			    weather_element_y[i] >= weather_panel_y + SCREEN_HGT)
+				;
+			else
+#endif
 			/* only for elements within visible panel screen area */
 			if (weather_element_x[i] >= weather_panel_x &&
 			    weather_element_x[i] < weather_panel_x + screen_wid &&
@@ -2964,10 +2972,8 @@ void do_weather() {
 		if (weather_elements <= 1024 - intensity) {
 			for (i = 0; i < intensity; i++) {
 				/* generate random starting pos */
-				weather_element_type[weather_elements] = (weather_type == 3 ? (rand_int(2) ? 1 : 2) : weather_type);
 				x = rand_int(MAX_WID - 2) + 1;
 				y = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
-				weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + SKY_ALTITUDE;
 
 				/* test pos for validity in regards to cloud */
 				with_clouds = FALSE; /* assume no clouds exist */
@@ -3002,6 +3008,10 @@ void do_weather() {
 				/* (use pos) */
 				weather_element_x[weather_elements] = x;
 				weather_element_y[weather_elements] = y;
+
+				weather_element_type[weather_elements] = (weather_type == 3 ? (rand_int(2) ? 1 : 2) : weather_type);
+				weather_element_ydest[weather_elements] = y + SKY_ALTITUDE;
+
 				/* since pos passed any checks, increase counter to acknowledge */
 				weather_elements++;
 			}
@@ -3054,6 +3064,13 @@ void do_weather() {
 		/* restore old tile before moving the weather element */
 		/* if panel view was freshly updated from server then no need */
 		if (!weather_panel_changed) {
+#ifdef BIGMAP_MINDLINK_HACK
+			/* big_map mindlink visuals hack */
+			if (last_line_y <= SCREEN_HGT &&
+			    weather_element_y[i] >= weather_panel_y + SCREEN_HGT)
+				;
+			else
+#endif
 			/* only for elements within visible panel screen area */
 			if (weather_element_x[i] >= weather_panel_x &&
 			    weather_element_x[i] < weather_panel_x + screen_wid &&
@@ -3068,6 +3085,13 @@ void do_weather() {
 		}
 
 #ifdef USE_SOUND_2010
+ #ifdef BIGMAP_MINDLINK_HACK
+		/* big_map mindlink visuals hack */
+		if (last_line_y <= SCREEN_HGT &&
+		    weather_element_y[i] >= weather_panel_y + SCREEN_HGT)
+			;
+		else
+ #endif
 		/* register weather element, if it is currently supposed to be visible on screen */
 		if (weather_element_type[i] != 0 &&
 		    (weather_element_x[i] >= weather_panel_x &&
@@ -3101,6 +3125,12 @@ void do_weather() {
 				weather_elements--;
 				i--;
 			}
+#ifdef BIGMAP_MINDLINK_HACK
+			/* big_map mindlink visuals hack */
+			else if (last_line_y <= SCREEN_HGT &&
+			    weather_element_y[i] >= weather_panel_y + SCREEN_HGT)
+				;
+#endif
 			/* only for elements within visible panel screen area */
 			else if (weather_element_x[i] >= weather_panel_x &&
 			    weather_element_x[i] < weather_panel_x + screen_wid &&
@@ -3141,6 +3171,12 @@ void do_weather() {
 				weather_elements--;
 				i--;
 			}
+#ifdef BIGMAP_MINDLINK_HACK
+			/* big_map mindlink visuals hack */
+			else if (last_line_y <= SCREEN_HGT &&
+			    weather_element_y[i] >= weather_panel_y + SCREEN_HGT)
+				;
+#endif
 			/* only for elements within visible panel screen area */
 			else if (weather_element_x[i] >= weather_panel_x &&
 			    weather_element_x[i] < weather_panel_x + screen_wid &&
