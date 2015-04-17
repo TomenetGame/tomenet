@@ -4875,6 +4875,14 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "\377r%sMonsters on %s were killed.", full ? "ALL " : "", wpos_format(Ind, &p_ptr->wpos));
 				return;
 			}
+			else if (prefix(message, "/mgeno")) { /* remove the monster currently looked at (NOT the one targetted) - C. Blue */
+				if (p_ptr->health_who <= 0) {//target_who
+					msg_print(Ind, "No monster looked at.");
+					return; /* no monster targetted */
+				}
+				delete_monster_idx(p_ptr->health_who, TRUE);
+				return;
+			}
 			else if (prefix(message, "/game")){
 				if (!tk) {
 					msg_print(Ind, "Usage: /game stop   or   /game rugby");
