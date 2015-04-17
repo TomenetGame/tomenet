@@ -988,6 +988,8 @@ They all start with a slash '/' hence they're called slash commands:
             With tag it just equips all items that contain that tag in their
             name or inscription somewhere (even if they are cursed).
 
+/dun        Displays the name of the dungeon you're currently in.
+
 (The /empty function is currently disabled)
 /empty <inventory slot>
             Empty a potion from your inventory, leaving an empty bottle.
