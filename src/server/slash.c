@@ -1588,6 +1588,15 @@ void do_slash_cmd(int Ind, char *message) {
 		else if (prefix(message, "/dice") || !strcmp(message, "/d")) {
 			int rn = 0;
 
+			if (p_ptr->body_monster) {
+				monster_race *r_ptr = &r_info[p_ptr->body_monster];
+				/* be nice to bats: they only have arms */
+				if (!(r_ptr->body_parts[BODY_WEAPON] || r_ptr->body_parts[BODY_FINGER] || r_ptr->body_parts[BODY_ARMS])) {
+					msg_print(Ind, "You cannot roll dice in your current form.");
+					return;
+				}
+			}
+
 			if (!strcmp(message, "/d")) k = 2;
 			else {
 				if (tk < 1) {
@@ -1618,6 +1627,14 @@ void do_slash_cmd(int Ind, char *message) {
 			if (!p_ptr->au) {
 				msg_print(Ind, "You don't have any coins.");
 				return;
+			}
+			if (p_ptr->body_monster) {
+				monster_race *r_ptr = &r_info[p_ptr->body_monster];
+				/* be nice to bats: they only have arms */
+				if (!(r_ptr->body_parts[BODY_WEAPON] || r_ptr->body_parts[BODY_FINGER] || r_ptr->body_parts[BODY_ARMS])) {
+					msg_print(Ind, "You cannot catch coins in your current form.");
+					return;
+				}
 			}
 
 			coin = (rand_int(2) == 0);
@@ -1699,6 +1716,15 @@ void do_slash_cmd(int Ind, char *message) {
 			      13 cards each, and 1/2/3 jokers in addition to that.
 			     0xFFFF for one flower, 0x3FFF for another flower and 0x1FFF for the
 			      remaining two flowers -> 52 cards deck with 4 jokers. */
+
+			if (p_ptr->body_monster) {
+				monster_race *r_ptr = &r_info[p_ptr->body_monster];
+				/* be nice to bats: they only have arms */
+				if (!(r_ptr->body_parts[BODY_WEAPON] || r_ptr->body_parts[BODY_FINGER] || r_ptr->body_parts[BODY_ARMS])) {
+					msg_print(Ind, "You cannot shuffle cards in your current form.");
+					return;
+				}
+			}
 
 			if (!tk) {
 				msg_format(Ind, "\377%cYou shuffle a deck of 52 cards", COLOUR_GAMBLE);
@@ -1871,6 +1897,15 @@ void do_slash_cmd(int Ind, char *message) {
 			cptr value = "Naught", flower = "Void"; //compiler warnings
 			int p = 0;
 			bool draw = FALSE;
+
+			if (p_ptr->body_monster) {
+				monster_race *r_ptr = &r_info[p_ptr->body_monster];
+				/* be nice to bats: they only have arms */
+				if (!(r_ptr->body_parts[BODY_WEAPON] || r_ptr->body_parts[BODY_FINGER] || r_ptr->body_parts[BODY_ARMS])) {
+					msg_print(Ind, "You cannot fetch cards in your current form.");
+					return;
+				}
+			}
 
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
