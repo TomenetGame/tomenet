@@ -369,7 +369,7 @@ I:4:80:5:5:8:5d10:g:10
 D:A gush of water hits you!
 F:FLOOR | CHEST | DOOR | LEVEL2
 
-N:67:Lite Bolt Trap
+N:67:Light Bolt Trap
 I:4:80:5:5:8:5d10:g:10
 D:There is a sudden flash of light around you!
 F:FLOOR | CHEST | DOOR | LEVEL2
