@@ -2949,7 +2949,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			new_amount = det_exp_level(new_amount, eff_henc, dlev);
 
 		/* Don't allow cheap support from super-high level characters */
-		if (cfg.henc_strictness && !q_ptr->total_winner) {
+		if (cfg.henc_strictness && !q_ptr->total_winner) { //no KING-partydiff..?
 			if (eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
 			if (q_ptr->supported_by - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
 		}
