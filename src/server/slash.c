@@ -1613,7 +1613,14 @@ void do_slash_cmd(int Ind, char *message) {
 			return;
 		}
 		else if (prefix(message, "/coin") || prefix(message, "/flip")) {
-			bool coin = (rand_int(2) == 0);
+			bool coin;
+
+			if (!p_ptr->au) {
+				msg_print(Ind, "You don't have any coins.");
+				return;
+			}
+
+			coin = (rand_int(2) == 0);
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -3246,6 +3253,39 @@ void do_slash_cmd(int Ind, char *message) {
 			return;
 		}
 #endif
+		else if (prefix(message, "/knock")) { /* knock on a house door */
+			int x, y;
+			bool found = FALSE;
+			cave_type **zcave = getcave(&p_ptr->wpos);
+
+			if (tk) {
+				msg_print(Ind, "\377oUsage:     /knock");
+				return;
+			}
+
+			/* Check for a house door next to us */
+			for (x = p_ptr->px - 1; x <= p_ptr->px + 1; x++) {
+				for (y = p_ptr->py - 1; y <= p_ptr->py + 1; y++) {
+					if (!in_bounds(y, x)) continue;
+					if (zcave[y][x].feat != FEAT_HOME &&
+					    zcave[y][x].feat != FEAT_HOME_OPEN)
+					        continue;
+
+					/* found a home door, assume it is a house */
+					found = TRUE;
+					break;
+				}
+				if (found) break;
+			}
+			if (!found) {
+				msg_print(Ind, "There is no house next to you.");
+				return;
+			}
+
+			/* knock on the door */
+			knock_house(Ind, x, y);
+			return;
+		}
 		else if (prefix(message, "/slap")) { /* Slap someone around :-o */
 			cave_type **zcave = getcave(&p_ptr->wpos);
 			if (!tk) {
