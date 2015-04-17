@@ -3511,7 +3511,7 @@ void interact_macros(void) {
 		/* Selections */
 		l = 2;
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377ys\377B) Save macros to a pref file");
+		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B) Save macros to a pref file");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w) Load macros from a pref file");
 		l++;
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
