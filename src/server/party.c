@@ -2921,6 +2921,9 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		new_amount = amount;
 
 
+
+
+
 		if (henc > q_ptr->max_lev) eff_henc = henc;
 		else eff_henc = q_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
 #ifdef ANTI_MAXPLV_EXPLOIT
@@ -2936,16 +2939,19 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
   #endif
  #endif
 #endif
-		/* dungeon floor specific reduction if player dives too shallow */
-		if (not_in_iddc)
-			new_amount = det_exp_level(new_amount, eff_henc, dlev);
 
 		/* Don't allow cheap support from super-high level characters */
 		if (cfg.henc_strictness && !q_ptr->total_winner) { //no KING-partydiff..?
-			if (eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-			if (q_ptr->supp - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+			if (eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) continue; /* zonk */
+			if (q_ptr->supp - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) continue; /* zonk */
 		}
 
+
+
+
+
+		/* dungeon floor specific reduction if player dives too shallow */
+		if (not_in_iddc) new_amount = det_exp_level(new_amount, eff_henc, dlev);
 
 		/* Never get too much exp off a monster
 		   due to high level difference,
