@@ -8637,42 +8637,44 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 #endif
 				tmp_exp = 0; /* zonk */
 
-			/* Higher characters who farm monsters on low levels compared to
-			   their clvl will gain less exp. */
-			if (!in_irondeepdive(&p_ptr->wpos))
-				tmp_exp = det_exp_level(tmp_exp, p_ptr->lev, getlevel(&p_ptr->wpos));
+			else {
+				/* Higher characters who farm monsters on low levels compared to
+				   their clvl will gain less exp. */
+				if (!in_irondeepdive(&p_ptr->wpos))
+					tmp_exp = det_exp_level(tmp_exp, p_ptr->lev, getlevel(&p_ptr->wpos));
 
-			/* Give some experience, undo 2 extra digits */
-			new_exp = tmp_exp / p_ptr->lev / 100;
+				/* Give some experience, undo 2 extra digits */
+				new_exp = tmp_exp / p_ptr->lev / 100;
 
-			/* Give fractional experience, undo 2 extra digits (*100L instead of *10000L) */
-			new_exp_frac = ((tmp_exp - new_exp * p_ptr->lev * 100)
-					* 100L) / p_ptr->lev + p_ptr->exp_frac;
+				/* Give fractional experience, undo 2 extra digits (*100L instead of *10000L) */
+				new_exp_frac = ((tmp_exp - new_exp * p_ptr->lev * 100)
+						* 100L) / p_ptr->lev + p_ptr->exp_frac;
 
-			/* Never get too much exp off a monster
-			   due to high level difference,
-			   make exception for low exp boosts like "holy jackal" */
-			if ((new_exp > r_ptr->mexp * 4) && (new_exp > 200)) {
-				new_exp = r_ptr->mexp * 4;
-				new_exp_frac = 0;
-			}
+				/* Never get too much exp off a monster
+				   due to high level difference,
+				   make exception for low exp boosts like "holy jackal" */
+				if ((new_exp > r_ptr->mexp * 4) && (new_exp > 200)) {
+					new_exp = r_ptr->mexp * 4;
+					new_exp_frac = 0;
+				}
 
-			/* Keep track of experience */
-			if (new_exp_frac >= 10000L) {
-				new_exp++;
-				p_ptr->exp_frac = new_exp_frac - 10000L;
-			} else {
-				p_ptr->exp_frac = new_exp_frac;
-				p_ptr->redraw |= PR_EXP; //EXP_BAR_FINESCALE
-			}
+				/* Keep track of experience */
+				if (new_exp_frac >= 10000L) {
+					new_exp++;
+					p_ptr->exp_frac = new_exp_frac - 10000L;
+				} else {
+					p_ptr->exp_frac = new_exp_frac;
+					p_ptr->redraw |= PR_EXP; //EXP_BAR_FINESCALE
+				}
 
-			/* Gain experience */
-			if (new_exp) {
-				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, new_exp);
-			} else if (!p_ptr->warning_fracexp && tmp_exp) {
-				msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
-				s_printf("warning_fracexp: %s\n", p_ptr->name);
-				p_ptr->warning_fracexp = 1;
+				/* Gain experience */
+				if (new_exp) {
+					if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, new_exp);
+				} else if (!p_ptr->warning_fracexp && tmp_exp) {
+					msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
+					s_printf("warning_fracexp: %s\n", p_ptr->name);
+					p_ptr->warning_fracexp = 1;
+				}
 			}
 		} else {
 			/* Give experience to that party */

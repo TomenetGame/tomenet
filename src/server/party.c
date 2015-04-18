@@ -2808,12 +2808,13 @@ void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...)
 static bool players_in_level(int Ind, int Ind2) {
 	player_type *p_ptr = Players[Ind], *p2_ptr = Players[Ind2];
 
-	/* Check for max allowed level difference */
+	/* Check for max allowed level difference.
+	   (p_ptr->lev would be more logical but harsh) */
 	if (p_ptr->total_winner && p2_ptr->total_winner) {
-	        if (ABS(p_ptr->lev - p2_ptr->lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
+	        if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
 	        return TRUE;
 	}
-	if (ABS(p_ptr->lev - p2_ptr->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
+	if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
 
 	/* Winners and non-winners don't share experience!
 	   This is actually important because winners get special features
@@ -2831,21 +2832,19 @@ static bool players_in_level(int Ind, int Ind2) {
 #define PERFORM_IRON_TEAM_CHECKS
 void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
-	int i, eff_henc;
+	int PInd[NumPlayers], pi = 0, Ind2; /* local working copy of player indices, for efficiency hopefully */
+	int i, eff_henc, eff_henc_top;
+#ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
+	int soft_max_plv;
+#endif
 	struct worldpos *wpos = &p_ptr->wpos;
 	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount, new_boosted_amount;
 	s64b modified_level;
 	int dlev = getlevel(wpos);
 	bool not_in_iddc = !in_irondeepdive(wpos);
-
-	int PInd[NumPlayers], pi = 0, Ind2; /* local working copy of player indices, for efficiency hopefully */
-	bool iron = (parties[party_id].mode == PA_IRONTEAM);
 #ifdef PERFORM_IRON_TEAM_CHECKS
+	bool iron = (parties[party_id].mode == PA_IRONTEAM);
 	int iron_team_members_here = 0;//temporarily here
-#endif
-
-#ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
-	int soft_max_plv;
 #endif
 
 
@@ -2855,7 +2854,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 #endif
 
 
-	/* Calculate the average level, average cheeze, and iron team presence */
+	/* Calculate the average level and iron team presence */
 	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 
@@ -2884,8 +2883,6 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		/* For exp-splitting: Increase the "divisor" */
 		average_lev += q_ptr->lev;
 		num_members++;
-
-		/* For HEnc-checks: Test for highest level */
 	}
 
 #ifdef PERFORM_IRON_TEAM_CHECKS
@@ -2906,26 +2903,24 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		   but still take share toll by increasing the divisor in the loop above. */
 		if (q_ptr->ghost || !players_in_level(Ind, Ind2)) continue;
 
-		/* Calculate this guy's experience */
 
-		if (q_ptr->lev < average_lev) { // below average
-			if ((average_lev - q_ptr->lev) > 2)
-				modified_level = q_ptr->lev + 2;
-			else	modified_level = average_lev;
-		} else {
-			if ((q_ptr->lev - average_lev) > 2)
-				modified_level = q_ptr->lev - 2;
-			else	modified_level = average_lev;
-		}
+		/* Personal henc-checks: */
+		eff_henc = henc;
+		eff_henc_top = henc_top;
 
-		new_amount = amount;
+		/* Was player outside of monster's aware-radius when it was killed by teammate,
+		   but would exceed the monster's henc?
+		   Then we have to avoid him getting a full share of the exp (exploit): */
+		if (eff_henc < q_ptr->max_lev) henc = q_ptr->max_lev;
+		if (eff_henc_top < q_ptr->max_plv) henc_top = q_ptr->max_plv;
+		if (eff_henc < q_ptr->supp) henc = q_ptr->supp;
+		if (eff_henc_top < q_ptr->supp_top) henc_top = q_ptr->supp_top;
 
+		/* Don't allow cheap support from super-high level characters */
+		if (cfg.henc_strictness && !q_ptr->total_winner &&
+		    eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1)
+			continue; /* zonk */
 
-
-
-
-		if (henc > q_ptr->max_lev) eff_henc = henc;
-		else eff_henc = q_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
 #ifdef ANTI_MAXPLV_EXPLOIT
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 		soft_max_plv = p_ptr->max_plv - ((p_ptr->max_plv - p_ptr->max_lev) / 2);
@@ -2940,15 +2935,8 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
  #endif
 #endif
 
-		/* Don't allow cheap support from super-high level characters */
-		if (cfg.henc_strictness && !q_ptr->total_winner) { //no KING-partydiff..?
-			if (eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) continue; /* zonk */
-			if (q_ptr->supp - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) continue; /* zonk */
-		}
-
-
-
-
+		/* Calculate this guy's experience gain */
+		new_amount = amount;
 
 		/* dungeon floor specific reduction if player dives too shallow */
 		if (not_in_iddc) new_amount = det_exp_level(new_amount, eff_henc, dlev);
@@ -2970,6 +2958,18 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			new_boosted_amount = (new_amount * (IDDC_PARTY_XP_BOOST + 1)) / (num_members + IDDC_PARTY_XP_BOOST);
 		else
 			new_boosted_amount = (new_amount * (PARTY_XP_BOOST + 1)) / (num_members + PARTY_XP_BOOST);
+
+		/* get less or more exp depending on if we're above or below the party average */
+		if (q_ptr->lev < average_lev) { // below average
+			if ((average_lev - q_ptr->lev) > 2)
+				modified_level = q_ptr->lev + 2;
+			else	modified_level = average_lev;
+		} else {
+			if ((q_ptr->lev - average_lev) > 2)
+				modified_level = q_ptr->lev - 2;
+			else	modified_level = average_lev;
+		}
+
 		new_boosted_amount = (new_boosted_amount * modified_level) / average_lev;
 
 		/* Some bonus is applied to encourage partying	- Jir - */
