@@ -2833,7 +2833,7 @@ static bool players_in_level(int Ind, int Ind2) {
 void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int PInd[NumPlayers], pi = 0, Ind2; /* local working copy of player indices, for efficiency hopefully */
-	int i, eff_henc, eff_henc_top;
+	int i, eff_henc, eff_henc_top, hlev = 0;
 #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 	int soft_top;
 #endif
@@ -2886,6 +2886,9 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		/* For exp-splitting: Increase the "divisor" */
 		average_lev += q_ptr->lev;
 		num_members++;
+
+		/* Floor depth vs player level for efficient exp'ing always uses the highest-level team mate. */
+		if (q_ptr->lev > hlev) hlev = q_ptr->lev;
 	}
 
 #ifdef PERFORM_IRON_TEAM_CHECKS
@@ -2906,22 +2909,15 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		   but still take share toll by increasing the divisor in the loop above. */
 		if (q_ptr->ghost || !players_in_level(Ind, Ind2)) continue;
 
-		/* Personal HEnc-checks: */
+		/* HEnc-checks: */
 		if (cfg.henc_strictness && !q_ptr->total_winner) {
 			eff_henc = henc;
 			eff_henc_top = henc_top;
 
-			/* Was player outside of monster's aware-radius when it was killed by teammate,
-			   but would exceed the monster's henc?
-			   Then we have to avoid him getting a full share of the exp (exploit): */
-			if (eff_henc < q_ptr->max_lev) eff_henc = q_ptr->max_lev;
-			if (eff_henc_top < q_ptr->max_plv) eff_henc_top = q_ptr->max_plv;
-			if (eff_henc < q_ptr->supp) eff_henc = q_ptr->supp;
-			if (eff_henc_top < q_ptr->supp_top) eff_henc_top = q_ptr->supp_top;
-
 #ifdef ANTI_MAXPLV_EXPLOIT
-			/* Don't allow cheap support from super-high level characters.
-			   Two cases:
+			/* Don't allow cheap support from super-high level characters. */
+
+			/* Two cases:
 			   1) We're not the killer and the killer has too high max_plv/supp_top (= henc_top),
 			   2) We're the killer but we have too high supp_top
 			      (and optionally the monster maybe also has too high henc_top from the killer,
@@ -2929,29 +2925,10 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			   However, the problem is that we might actually be a 10(40) char and someone else too;
 			   now we cannot distinguish anymore, and we should definitely get full exp when this
 			   team of two kills a monster, right?
-			   So there is acutally no easy way except for disabling ANTI_MAXPLV_EXPLOIT completely :/. */
-			if (Ind != Ind2) { /* 1) */
-				//if (eff_henc_top - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) {
- #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
-				/* Hypothetical "Problem" here: someone who is like level 10(46) can't team up with anyone anymore :D
-				   he'd be eff_henc of 10 + 36/2 = 28 'effective' level for anyone, but the lowest
-				   level a team mate needs to share exp with 28 is 28 - (7+1) = 19.
-				   However, 19 is > than 10 + (7+1) so he won't be able to party until doing some solo-exp. */
-				soft_top = eff_henc_top - ((eff_henc_top - eff_henc) / 2);
-				if (eff_henc < soft_top) eff_henc = soft_top;
- #else
-  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
-				if (eff_henc < eff_henc_top) {
-					soft_diff = eff_henc_top - q_ptr->max_lev - (MAX_PARTY_LEVEL_DIFF + 1);
-					new_amount = (new_amount * 5) / (5 + soft_diff);
-				}
-  #else
-				 /* 100% zonk, bam: */
-				if (eff_henc < eff_henc_top) eff_henc = eff_henc_top;
-  #endif
- #endif
-			} else { /* 2) */
-				//if (eff_henc_top - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) {
+			   So there is probably no easy way except for disabling ANTI_MAXPLV_EXPLOIT completely :/. */
+
+			/* ..new attempt */
+			if (eff_henc_top - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) {
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 				/* Hypothetical "Problem" here: someone who is like level 10(46) can't team up with anyone anymore :D
 				   he'd be eff_henc of 10 + 36/2 = 28 'effective' level for anyone, but the lowest
@@ -2983,7 +2960,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		new_amount = amount;
 
 		/* dungeon floor specific reduction if player dives too shallow */
-		if (not_in_iddc) new_amount = det_exp_level(new_amount, eff_henc, dlev);
+		if (not_in_iddc) new_amount = det_exp_level(new_amount, hlev, dlev);
 
 		/* Never get too much exp off a monster
 		   due to high level difference,
