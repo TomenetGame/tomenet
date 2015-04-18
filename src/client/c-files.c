@@ -838,6 +838,17 @@ errr process_pref_file_aux(char *buf) {
                 return (process_pref_file(buf + 2));
         }
 
+	/* Necessary hack, otherwise 'options.prf' and 'window.prf' will also be
+	   loaded by 'pref.prf' and mess up the options and window flags. */
+	if (macro_processing_exclusive)
+		switch (buf[0]) {
+		case 'A':
+		case 'P':
+		case 'H':
+		case 'C':
+		case 'D': break;
+		default: return 0;
+		}
 
         /* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
         if (buf[0] == 'R')
