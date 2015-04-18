@@ -2684,13 +2684,12 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 		dna = h_ptr->dna;
 
 		if (!access_door(Ind, h_ptr->dna, FALSE) && (
-#if 0 /* show unowned houses to admins? spammy */
-		    !admin_p(Ind) ||
-#else /* hide unowned houses even for admins */
+#if 1 /* hide unowned houses even for admins? */
 		    !h_ptr->dna->owner ||
 #endif
-		    own))
+		    !admin_p(Ind) || own))
 			continue;
+
 		if (local && !inarea(&h_ptr->wpos, &p_ptr->wpos)) continue;
 
 		/* filter: only show houses of a specific player? */
