@@ -9489,7 +9489,10 @@ void process_monsters(void) {
 			if (cfg.henc_strictness == 3 && !m_ptr->csleep) {
 				if (j <= r_ptr->aaf) {
 					if (!in_bree(&m_ptr->wpos)) { /* not in Bree, because of Halloween :) */
-						if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
+						if (m_ptr->henc < p_ptr->max_lev) m_ptr->henc = p_ptr->max_lev;
+						if (m_ptr->henc_top < p_ptr->max_plv) m_ptr->henc_top = p_ptr->max_plv;
+						if (m_ptr->henc < p_ptr->supp) m_ptr->henc = p_ptr->supp;
+						if (m_ptr->henc_top < p_ptr->supp_top) m_ptr->henc_top = p_ptr->supp_top;
 					}
 				}
 			}
@@ -9708,7 +9711,10 @@ void process_monsters(void) {
 
 	        /* Change monster's highest player encounter (mode 1+ : monster actively targets a player) */
 		if (!m_ptr->csleep && !in_bree(&m_ptr->wpos)) { /* not in Bree, because of Halloween & Christmas (Santa Claus) :) */
-			if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
+			if (m_ptr->henc < p_ptr->max_lev) m_ptr->henc = p_ptr->max_lev;
+			if (m_ptr->henc_top < p_ptr->max_plv) m_ptr->henc_top = p_ptr->max_plv;
+			if (m_ptr->henc < p_ptr->supp) m_ptr->henc = p_ptr->supp;
+			if (m_ptr->henc_top < p_ptr->supp_top) m_ptr->henc_top = p_ptr->supp_top;
 		}
 
 		/* Process the monster */

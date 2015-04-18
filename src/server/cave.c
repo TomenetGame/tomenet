@@ -409,7 +409,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 	struct wilderness_type *w_ptr;
 	time_t now;
 
-	int henc_level = 0, i;
+	int henc = 0, henc_top = 0, i;
 	player_type *p_ptr;
 	monster_type *m_ptr;
 
@@ -509,7 +509,10 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		if (admin_p(i)) continue;
 
 		/* player on this depth? */
-		if (inarea(&p_ptr->wpos, wpos) && (henc_level < p_ptr->max_lev)) henc_level = p_ptr->max_lev;
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		if (henc < p_ptr->max_lev) henc = p_ptr->max_lev;
+		if (henc_top < p_ptr->max_plv) henc_top = p_ptr->max_plv;
 	}
 
 	/* Process the monsters, check against the highest player around */
@@ -518,8 +521,10 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		m_ptr = &m_list[m_fast[i]];
 
 		/* On this level? Test its highest encounter so far */
-		if (inarea(&m_ptr->wpos, wpos) && (m_ptr->highest_encounter < henc_level))
-			m_ptr->highest_encounter = henc_level;
+		if (!inarea(&m_ptr->wpos, wpos)) continue;
+
+		if (m_ptr->henc < henc) m_ptr->henc = henc;
+		if (m_ptr->henc_top < henc_top) m_ptr->henc_top = henc_top;
 	}
 }
 

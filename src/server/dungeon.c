@@ -4513,7 +4513,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Still possible effects from another player's support spell on this player? */
 	if (p_ptr->support_timer) {
 		p_ptr->support_timer--;
-		if (!p_ptr->support_timer) p_ptr->supported_by = 0;
+		if (!p_ptr->support_timer) p_ptr->supp = p_ptr->supp_top = 0;
 	}
 
 #if POLY_RING_METHOD == 0

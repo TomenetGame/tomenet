@@ -735,8 +735,9 @@ struct player_type
 	bool panic;
 
 	/* Anti-cheeze */
-	s16b supported_by;              /* level of the highest supporter */
-	s16b support_timer;             /* safe maximum possible duration of the support spells */
+	s16b supp;			/* level of the highest supporter */
+	s16b supp_top;			/* top-level of the highest supporter */
+	s16b support_timer;		/* safe maximum possible duration of the support spells */
 
 	/* C. Blue - any automatic savegame update to perform? (toggle) */
 	byte updated_savegame;

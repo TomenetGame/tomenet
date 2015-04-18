@@ -948,13 +948,12 @@ struct monster_type {
    s16b damage_dis;		/* Remember distance to epicenter */
    s16b p_tx, p_ty;		/* Coordinates from where the player cast the damaging projection */
 
-   s16b highest_encounter;	/* My final anti-cheeze strike I hope ;) - C. Blue
+   s16b henc, henc_top;	/* 'highest_encounter' - my final anti-cheeze strike I hope ;) - C. Blue
       This keeps track of the highest player which the monster
       has 'encountered' (might offer various definitions of this
       by different #defines) and adjusts its own experience value
       towards that player, so low players who get powerful help
       will get less exp out of it. */
-//   s16b highest_encounter_mlvl;	/* lol.. */
    byte backstabbed;		/* has this monster been backstabbed from cloaking mode already? prevent exploit */
    byte taunted;		/* has this monster been taunted (melee technique)? */
 
@@ -2713,7 +2712,7 @@ struct player_type {
 	bool panic;			/* C. Blue - was the last shutdown a panic save? */
 
 	/* Anti-cheeze */
-	s16b supported_by;		/* level of the highest supporter */
+	s16b supp, supp_top;		/* level of the highest supporter (who casted buffs/heals on us) */
 	s16b support_timer;		/* safe maximum possible duration of the support spells */
 
 	byte updated_savegame;		/* any automatic savegame update to perform? (toggle) */

@@ -8417,16 +8417,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 				return(FALSE);
 			}
-		/* If it's a support spell (friendly), remember the caster's level for highest_encounter anti-cheeze
+		/* If it's a support spell (friendly), remember the caster's level for henc anti-cheeze
 		   to prevent him from getting exp until the supporting effects surely have run out: */
 		} else if (typ != GF_OLD_POLY) {
-#if 0 /* more exploit */
-			if (p_ptr->supported_by < Players[0 - who]->max_lev)
-				p_ptr->supported_by = Players[0 - who]->max_lev;
-#else
-			if (p_ptr->supported_by < Players[0 - who]->max_plv)
-				p_ptr->supported_by = Players[0 - who]->max_plv;
-#endif
+			if (p_ptr->supp < Players[0 - who]->max_lev) p_ptr->supp = Players[0 - who]->max_lev;
+			if (p_ptr->supp_top < Players[0 - who]->max_plv) p_ptr->supp_top = Players[0 - who]->max_plv;
 			p_ptr->support_timer = cfg.spell_stack_limit ? cfg.spell_stack_limit : 200;
 
 			friendly_player = TRUE;

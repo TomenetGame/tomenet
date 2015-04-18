@@ -6592,8 +6592,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	return;
 }
 
-bool unmagic(int Ind)
-{
+bool unmagic(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	bool ident = FALSE;
 
@@ -6647,9 +6646,10 @@ bool unmagic(int Ind)
 
 	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);
 
-/*	p_ptr->supported_by = 0;
-	p_ptr->support_timer = 0; -- taken out because it circumvents the HEALING spell anti-cheeze */
-
+#if 0 /* taken out because it circumvents the HEALING spell anti-cheeze */
+	p_ptr->supp = 0;
+	p_ptr->support_timer = 0;
+#endif
 	return (ident);
 }
 

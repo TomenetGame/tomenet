@@ -4806,11 +4806,14 @@ void monster_death(int Ind, int m_idx) {
 	}
 #endif
 
-	if (cfg.henc_strictness && !p_ptr->total_winner) {
-		if (m_ptr->highest_encounter - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) henc_cheezed = TRUE; /* p_ptr->lev more logical but harsh */
-		if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) henc_cheezed = TRUE; /* p_ptr->lev more logical but harsh */
-	}
-
+	if (cfg.henc_strictness && !p_ptr->total_winner &&
+	    /* p_ptr->lev more logical but harsh: */
+#if 1 /* player should always seek not too high-level party members compared to player's current real level? */
+	    m_ptr->henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1)
+#else /* players may seek higher-level party members to team up with if he's died before? Weird combination so not recommended! */
+	    m_ptr->henc - p_ptr->max_plv > MAX_PARTY_LEVEL_DIFF + 1)
+#endif
+		henc_cheezed = TRUE;
 
 	/* Get the location */
 	y = m_ptr->fy;
@@ -8401,7 +8404,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	/* Change monster's highest player encounter - mode 1+ : a player targetted this monster */
 	if (!in_bree(&m_ptr->wpos)) { /* not in Bree, because of Halloween :) */
-		if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
+		if (m_ptr->henc < p_ptr->max_lev) m_ptr->henc = p_ptr->max_lev;
+		if (m_ptr->henc_top < p_ptr->max_plv) m_ptr->henc_top = p_ptr->max_plv;
+		if (m_ptr->henc < p_ptr->supp) m_ptr->henc = p_ptr->supp;
+		if (m_ptr->henc_top < p_ptr->supp_top) m_ptr->henc_top = p_ptr->supp_top;
 	}
 
 	/* Traumaturgy skill - C. Blue */
@@ -8622,10 +8628,14 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		/* Split experience if in a party */
 		if (p_ptr->party == 0 || p_ptr->ghost) {
 			/* Don't allow cheap support from super-high level characters */
-			if (cfg.henc_strictness && !p_ptr->total_winner) {
-				if (m_ptr->highest_encounter - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) tmp_exp = 0; /* zonk */
-				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) tmp_exp = 0; /* zonk */
-			}
+			if (cfg.henc_strictness && !p_ptr->total_winner &&
+			    /* p_ptr->lev more logical but harsh: */
+#if 1 /* player should always seek not too high-level party members compared to player's current real level? */
+			    m_ptr->henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1)
+#else /* players may seek higher-level party members to team up with if he's died before? Weird combination so not recommended! */
+			    m_ptr->henc - p_ptr->max_plv > MAX_PARTY_LEVEL_DIFF + 1)
+#endif
+				tmp_exp = 0; /* zonk */
 
 			/* Higher characters who farm monsters on low levels compared to
 			   their clvl will gain less exp. */
@@ -8673,7 +8683,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			   Otherwise Nether Realm parties are punished.. */
 //			if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, tmp_exp);
 			//add 2 extra digits to r_ptr->mexp too by multiplying by 100, to match tmp_exp shift
-			if (!(p_ptr->mode & MODE_PVP)) party_gain_exp(Ind, p_ptr->party, tmp_exp, r_ptr->mexp * 100, m_ptr->highest_encounter);
+			if (!(p_ptr->mode & MODE_PVP)) party_gain_exp(Ind, p_ptr->party, tmp_exp, r_ptr->mexp * 100, m_ptr->henc, m_ptr->henc_top);
 		}
 
 

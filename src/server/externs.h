@@ -1313,7 +1313,7 @@ extern void party_msg(int party_id, cptr msg);
 extern void party_msg_format(int party_id, cptr fmt, ...);
 extern void floor_msg_format(struct worldpos *wpos, cptr fmt, ...);
 extern void world_surface_msg(cptr msg);
-extern void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc);
+extern void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top);
 extern int guild_create(int Ind, cptr name);
 extern int guild_add(int adder, cptr name);
 extern int guild_add_self(int Ind, cptr guild);
