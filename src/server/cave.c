@@ -550,7 +550,7 @@ void check_Pumpkin(void) {
 
 		/* Players of too high level cannot participate in killing attemps (anti-cheeze) */
 		/* search for Great Pumpkins */
-		if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
+		if (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3) {
 			wpos = &m_ptr->wpos;
 
 			/* Exception for IDDC - just allow */

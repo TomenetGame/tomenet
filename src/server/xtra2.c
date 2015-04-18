@@ -4751,9 +4751,10 @@ void monster_death(int Ind, int m_idx) {
 	cave_type *c_ptr;
 
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = race_inf(m_ptr);
-        bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);
-        bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
+	monster_race *r_ptr = race_inf(m_ptr);
+	bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);
+	bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
+	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 //	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
 
@@ -4805,10 +4806,10 @@ void monster_death(int Ind, int m_idx) {
 	}
 #endif
 
-        if (cfg.henc_strictness && !p_ptr->total_winner) {
-                if (m_ptr->highest_encounter - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) henc_cheezed = TRUE; /* p_ptr->lev more logical but harsh */
-                if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) henc_cheezed = TRUE; /* p_ptr->lev more logical but harsh */
-        }
+	if (cfg.henc_strictness && !p_ptr->total_winner) {
+		if (m_ptr->highest_encounter - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) henc_cheezed = TRUE; /* p_ptr->lev more logical but harsh */
+		if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) henc_cheezed = TRUE; /* p_ptr->lev more logical but harsh */
+	}
 
 
 	/* Get the location */
@@ -4990,7 +4991,7 @@ void monster_death(int Ind, int m_idx) {
 	/* ..neither do cheezed kills */
 	if (henc_cheezed &&
 	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
-	    !streq(r_name_get(m_ptr), "Great Pumpkin")) /* allow a mixed hunting group */
+	    !is_Pumpkin) /* allow a mixed hunting group */
 		return;
 
 	/* Check whether a quest requested this monster dead */
