@@ -2821,7 +2821,6 @@ void window_stuff(void) {
 #define SKY_ALTITUDE	20 /* assumed 'pseudo-isometric' cloud altitude */
 #define PANEL_X		(SCREEN_PAD_LEFT) /* physical top-left screen position of view panel */
 #define PANEL_Y		(SCREEN_PAD_TOP) /* physical top-left screen position of view panel */
-#define BIGMAP_MINDLINK_HACK
 void do_weather() {
 	int i, j, intensity;
 	static int weather_gen_ticks = 0, weather_ticks10 = 0;

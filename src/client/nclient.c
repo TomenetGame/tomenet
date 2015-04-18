@@ -2036,6 +2036,7 @@ int Receive_title(void) {
 	char	ch;
 	char	buf[MAX_CHARS];
 
+#ifdef BIGMAP_MINDLINK_HACK
 	/* hack for big_map visuals: are we on a bigger display linked to a smaller display?
 	   hack explanation: mindlinking sends both PR_MAP and PR_TITLE, and title is sent
 	   _after_ map, so we can track the amount of map lines we received in Receive_line_info()
@@ -2045,6 +2046,7 @@ int Receive_title(void) {
 		for (n = 1 + SCREEN_HGT; n < 1 + SCREEN_HGT * 2; n++)
 			Term_erase(SCREEN_PAD_LEFT, n, 255);
 	}
+#endif
 
 	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0) return n;
 
@@ -2424,8 +2426,10 @@ int Receive_line_info(void) {
 	if (y > last_line_info)
 		last_line_info = y;
 
+#ifdef BIGMAP_MINDLINK_HACK
 	/* for big_map mind-link issues: keep track of last map line received */
 	last_line_y = y;
+#endif
 
 	for (x = 0; x < 80; x++) {
 		/* Read the char/attr pair */

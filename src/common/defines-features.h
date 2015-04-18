@@ -245,6 +245,10 @@
 
  /* Remove some hard-coding in the client options */
  #define CO_BIGMAP	7
+
+ #ifdef TEST_CLIENT
+  #define BIGMAP_MINDLINK_HACK
+ #endif
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/
