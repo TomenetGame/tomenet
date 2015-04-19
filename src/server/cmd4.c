@@ -601,12 +601,11 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	bool wont_get_exp;
 #ifdef ANTI_MAXPLV_EXPLOIT
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
-	int diff, soft;
-
-	diff = q_ptr->max_plv - p_ptr->max_plv - (MAX_PARTY_LEVEL_DIFF + 1);
-	soft = p_ptr->max_lev + diff / 2;
-	/* compensate for missing diff check between the two max_plvs */
-	if (soft < p_ptr->max_lev) soft = p_ptr->max_lev;
+	int diff = (q_ptr->max_lev + q_ptr->max_plv - p_ptr->max_lev - p_ptr->max_plv) / 2 - ((MAX_PARTY_LEVEL_DIFF + 1) * 3) / 2;
+ #else
+  #ifndef ANTI_MAXPLV_EXPLOIT_SOFTEXP
+	int diff = (q_ptr->max_lev + q_ptr->max_plv - p_ptr->max_lev - p_ptr->max_plv) / 2 - (MAX_PARTY_LEVEL_DIFF + 1);
+  #endif
  #endif
 #endif
 
@@ -617,15 +616,8 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	    ((p_ptr->total_winner && !(q_ptr->total_winner || q_ptr->once_winner)) ||
 	    (q_ptr->total_winner && !(p_ptr->total_winner || p_ptr->once_winner)) ||
 #ifdef ANTI_MAXPLV_EXPLOIT
- #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
-	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - (q_ptr->max_plv - (q_ptr->max_plv - q_ptr->max_lev) / 2)) > MAX_PARTY_LEVEL_DIFF) ||
- #else
-  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
-	    /* let's just have no actual effect on level here */
-	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF) ||
-  #else
-	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_plv) > MAX_PARTY_LEVEL_DIFF) ||
-  #endif
+ #if defined(ANTI_MAXPLV_EXPLOIT_SOFTLEV) || !defined(ANTI_MAXPLV_EXPLOIT_SOFTEXP)
+	    (!p_ptr->total_winner && diff > 0) ||
  #endif
 #endif
 	    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) ||
