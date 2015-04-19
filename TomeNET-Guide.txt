@@ -5508,6 +5508,8 @@ The 1..9 are standard shops, namely..
                         = 15, which is the maximum enchantment reachable by
                         using *enchant* scrolls.
                         Ammunition can never be enchanted above (+15,+15).
+
+                        Note that enchant services will not break curses.
         Mining Supply Store
                         In the hazardous city of Khazad-Dum is a store that
                         offers some goods found to be useful by the miners
@@ -8887,7 +8889,8 @@ Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 'You feel as if someone is watching over you.'.)
 *Remove Curse*  Breaks heavy curses. Note that curses (including heavy ones)
                 on weapons or armours can also be broken by enchanting one of
-                their boni some points above +0.
+                their boni some points above +0 manually. (The enchant service
+                of shops won't help!)
 Rune of Protection  Creates a warding glyph on the floor that stops monsters
                     from crossing the field or summoning on it.
 Rumour          Makes a random rumour come to your character's (and everyone
@@ -9812,7 +9815,8 @@ DG_CURSE        Rarely summons a random monster on you, even if uncursed.
                 ("It carries an ancient morgothian curse.")
 
 If 'CURSED' or 'HEAVY_CURSE' occurs on a weapon or armour piece, the curses
-can alternatively be broken by enchanting the item's stats above +0.
+can alternatively be broken by enchanting the item's stats above +0 manually.
+(The enchant service of shops won't help!)
 Each enchantment of any of their stats (to-hit, to-dam, to-ac) above +0 has
 a certain chance to break the curse. This can often be cheaper than buying a
 *Remove Curse* scroll for HEAVY_CURSE items.
