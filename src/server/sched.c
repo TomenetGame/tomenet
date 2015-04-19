@@ -70,7 +70,7 @@ void setup_timer(void) {
 	 * Install a signal handler for the alarm signal.
 	 */
 	act.sa_handler = catch_timer;
-	act.sa_flags = 0;
+	act.sa_flags = SA_RESTART;
 	sigemptyset(&act.sa_mask);
 	sigaddset(&act.sa_mask, SIGALRM);
 	if (sigaction(SIGALRM, &act, (struct sigaction *)NULL) == -1) {
