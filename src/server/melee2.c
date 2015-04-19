@@ -8475,7 +8475,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
  * - the_sandman
  */
 static void process_monster_pet(int Ind, int m_idx) {
-	player_type *p_ptr; 
+	//player_type *p_ptr; 
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 	struct worldpos *wpos = &m_ptr->wpos;
@@ -8485,12 +8485,12 @@ static void process_monster_pet(int Ind, int m_idx) {
 	int			mm[8];
 
 	cave_type    	*c_ptr;
-	object_type 	*o_ptr;
+	//object_type 	*o_ptr;
 	monster_type	*y_ptr;
 
 	bool		do_turn;
 	bool		do_move;
-	bool		do_view;
+	//bool		do_view;
 
 	bool		did_open_door;
 	bool		did_bash_door;
@@ -8510,8 +8510,10 @@ static void process_monster_pet(int Ind, int m_idx) {
    cave_type **zcave;
    if (!(zcave = getcave(wpos))) return;
 
+#if 0
    if (Ind > 0) p_ptr = Players[Ind];
    else p_ptr = NULL;
+#endif
    m_ptr->mind |= (GOLEM_ATTACK|GOLEM_GUARD|GOLEM_FOLLOW);
 
 	/* handle "stun" */
@@ -8583,7 +8585,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 	/* assume nothing */
 	do_turn = FALSE;
 	do_move = FALSE;
-	do_view = FALSE;
+	//do_view = FALSE;
 
 	/* assume nothing */
 	did_open_door = FALSE;
@@ -8613,7 +8615,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 		c_ptr = &zcave[ny][nx];
 
 		/* access that cave grid's contents */
-		o_ptr = &o_list[c_ptr->o_idx];
+		//o_ptr = &o_list[c_ptr->o_idx];
 
 		/* access that cave grid's contents */
 		y_ptr = &m_list[c_ptr->m_idx];
@@ -8696,7 +8698,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 			everyone_lite_spot(wpos, ny, nx);
 
 			/* Note changes to viewable region */
-			if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
+			//if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
 		}
 		/* Handle doors and secret doors */
 		else if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -8871,6 +8873,14 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 			break;
 		}
 	}
+
+#if 0
+	/* Notice changes in view */
+	if (do_view) {
+		/* Update some things */
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+	}
+#endif
 
 	/* hack -- get "bold" if out of options */
 	if (!do_turn && !do_move && m_ptr->monfear) {

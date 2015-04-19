@@ -2234,7 +2234,7 @@ static void quest_questor_hostility(int q_idx, int stage, int questor_idx) {
    moving when a quest stage starts */
 static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 	int j, k;
-	s16b ox, oy, nx, ny;
+	s16b ox, oy, nx = 0, ny = 0;
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];

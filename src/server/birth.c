@@ -1796,7 +1796,7 @@ static void player_outfit(int Ind) {
 		if (is_weapon(tv)) {
 			int wgt, sv2 = sv;
 			int sv_best = sv, bpr_best = 0, bpr;
-			int tv2 = tv, tv_best;
+			int tv2 = tv, tv_best = tv;
 
 			/* stat_ind has not been set so we have to hack it for calc_blows_obj().
 			   Side-effect: We ignore Hobbits' +2 DEX bonus for not wearing shoes */

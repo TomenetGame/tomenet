@@ -9810,6 +9810,8 @@ void hack_particular_item(void) {
 	int found = 0;
 
 	struct worldpos xwpos;
+
+	xwpos.wx = xwpos.wy = xwpos.wz = 0;
 	hack_particular_item_prepare_wpos(&xwpos);
 	if (!xwpos.wz) {
 		s_printf("hack_particular_item(): failed to prepare wpos!\n");

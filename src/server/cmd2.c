@@ -54,7 +54,9 @@ void do_cmd_go_up(int Ind) {
 	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
 	bool tower = FALSE, dungeon = FALSE, surface = FALSE;
 	cave_type **zcave;
+#ifndef RPG_SERVER
 	bool one_way = FALSE;
+#endif
 	int i;
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
@@ -75,12 +77,14 @@ void do_cmd_go_up(int Ind) {
 		return;
 	}
 
+#ifndef RPG_SERVER
 	/* Is this a one-way tower? */
 	if (tower) {
 		if (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
 		    wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))
 			one_way = TRUE;
 	}
+#endif
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
@@ -646,7 +650,9 @@ void do_cmd_go_down(int Ind) {
 	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
 	bool tower = FALSE, dungeon = FALSE, surface = FALSE;
 	cave_type **zcave;
+#ifndef RPG_SERVER
 	bool one_way = FALSE; //ironman, no_up, force_down
+#endif
 	int i;
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
@@ -667,12 +673,14 @@ void do_cmd_go_down(int Ind) {
 		return;
 	}
 
+#ifndef RPG_SERVER
 	/* Is this a one-way dungeon? */
 	if (dungeon) {
 		if (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
 		    wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))
 			one_way = TRUE;
 	}
+#endif
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)

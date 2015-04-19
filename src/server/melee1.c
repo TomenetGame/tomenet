@@ -3169,7 +3169,8 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 	/* Extract the effective monster level */
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 #ifdef RPG_SERVER
-	exp_gain = race_inf(tm_ptr)->level;
+	exp_gain = tr_ptr->mexp / 2;
+	//exp_gain = race_inf(tm_ptr)->level;
 #endif
 
 	/* Scan through all four blows */
@@ -3281,8 +3282,8 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 				monster_desc(find_player(m_ptr->owner), monster_name, tm_idx, 0x04&0x08);
 				msg_format(find_player(m_ptr->owner), "\377yYour pet killed %s.", monster_name);
 				if (!(Players[find_player(m_ptr->owner)]->mode & MODE_PVP))
-					gain_exp(find_player(m_ptr->owner), (unsigned int)(tr_ptr->mexp/2));
-				if (monster_gain_exp(m_idx,(unsigned int)(tr_ptr->mexp/2), FALSE) > 0) {
+					gain_exp(find_player(m_ptr->owner), (unsigned int)(exp_gain));
+				if (monster_gain_exp(m_idx,(unsigned int)(exp_gain), FALSE) > 0) {
 					msg_print(find_player(m_ptr->owner), "\377GYour pet looks more experienced!");
 				}
 			}

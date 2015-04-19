@@ -1141,7 +1141,9 @@ int auction_cancel(int Ind, int auction_id)
 int auction_place_bid(int Ind, int auction_id, cptr bid_string)
 {
 	player_type *p_ptr = Players[Ind];
+#ifndef RPG_SERVER
 	object_type *o_ptr;
+#endif
 	auction_type *auc_ptr;
 	bid_type *bid_ptr;
 	s32b bid;
@@ -1186,9 +1188,9 @@ int auction_place_bid(int Ind, int auction_id, cptr bid_string)
 		else return AUCTION_ERROR_EVERLASTING_ITEM;
 	}
 
+#ifndef RPG_SERVER
 	o_ptr = &auc_ptr->item;
 
-#ifndef RPG_SERVER
 	if (o_ptr->level > p_ptr->lev)
 	{
 		/* The player's level is too low */
@@ -1240,7 +1242,9 @@ int auction_place_bid(int Ind, int auction_id, cptr bid_string)
 int auction_buyout(int Ind, int auction_id)
 {
 	player_type *p_ptr = Players[Ind];
+#ifndef RPG_SERVER
 	object_type *o_ptr;
+#endif
 	s32b total_money = p_ptr->au + p_ptr->balance;
 	auction_type *auc_ptr;
 	int i;
@@ -1285,9 +1289,9 @@ int auction_buyout(int Ind, int auction_id)
 		else return AUCTION_ERROR_EVERLASTING_ITEM;
 	}
 
+#ifndef RPG_SERVER
 	o_ptr = &auc_ptr->item;
 
-#ifndef RPG_SERVER
 	if (o_ptr->level > p_ptr->lev)
 	{
 		/* The player's level is too low */
