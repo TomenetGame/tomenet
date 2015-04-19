@@ -919,10 +919,8 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 	connection_t *connp = NULL;
 	int i;
 
-	if (real_name[0] == 0 || host_name[0] == 0 ||
-	    nick_name[0] < 'A' || nick_name[0] > 'Z')
-		return E_INVAL;
-
+	if (real_name[0] == 0 || host_name[0] == 0) return E_INVAL;
+	if (nick_name[0] < 'A' || nick_name[0] > 'Z') return E_LETTER;
 	if (strchr(nick_name, ':')) return E_INVAL;
 
 	if (check_for_resume) {
@@ -3806,7 +3804,7 @@ static int Receive_quit(int ind) {
 static int Receive_login(int ind) {
 	connection_t *connp = Conn[ind], *connp2 = NULL;
 	//unsigned char ch;
-	int i, n;
+	int i, n, res;
 	char choice[MAX_CHARS], loc[MAX_CHARS];
 	struct account *l_acc;
 	struct worldpos wpos;
@@ -3909,8 +3907,11 @@ static int Receive_login(int ind) {
 			return -1;
 		}
 
-		if (Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE) != SUCCESS) {
-			Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
+		if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE)) != SUCCESS) {
+			if (res == E_LETTER)
+				Destroy_connection(ind, "Your accountname must start on a letter (A-Z).");
+			else
+				Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
 			return(-1);
 		}
 
@@ -4168,10 +4169,15 @@ static int Receive_login(int ind) {
 		}
 
 		/* Validate names/resume in proper place */
-		if (Check_names(choice, connp->real, connp->host, connp->addr, TRUE)) {
-/* connp->real is _always_ 'PLAYER' - connp->nick is the account name, choice the c_name */
+		if ((res = Check_names(choice, connp->real, connp->host, connp->addr, TRUE))) {
+			/* connp->real is _always_ 'PLAYER' - connp->nick is the account name, choice the c_name */
 			/* fail login here */
-			Destroy_connection(ind, "Security violation");
+			if (res == E_LETTER)
+				Destroy_connection(ind, "Your charactername must start on a letter (A-Z).");
+			else if (res == E_INVAL)
+				Destroy_connection(ind, "Your charactername contains invalid characters"); //user+host names have already been checked previously (on account login)
+			else
+				Destroy_connection(ind, "Security violation");
 			return(-1);
 		}
 		Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);

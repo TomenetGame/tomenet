@@ -243,7 +243,8 @@
 #define E_NEED_INFO	0x03
 #define E_TWO_PLAYERS	0x04
 #define E_PASSWORD	0x05
-//#define E_
+//#define E_		0x06
+#define E_LETTER	0x07
 #define E_IN_USE	0x08
 #define E_SOCKET	0x09
 #define E_INVAL		0x0A
