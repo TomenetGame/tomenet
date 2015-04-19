@@ -10983,9 +10983,13 @@ Note that not every skill is available to every profession (class).
                                 At 50, it will raise spell levels by 40%.
                                 (It won't raise the level of spells which you
                                 haven't learned yet.)
-                                Note that Spell-power does not affect magic of
-                                druids, mindcrafters, runemasters, or the
-                                astral school that maiar can learn.
+                                Note that Spell-power only affects spells of
+                                the 'Magic' and 'Prayer' school!
+                                It does not affect magic of druids,
+                                mindcrafters, runemasters, or the astral school
+                                that maiar can learn.
+                                It does not affect mimic powers or magic
+                                devices either.
 
     +Druidic Schools
         .Arcane Lore            Learn druid magic tought by arcane lore.
