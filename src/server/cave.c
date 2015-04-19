@@ -512,9 +512,9 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 		if (henc < p_ptr->max_lev) henc = p_ptr->max_lev;
-		if (henc_top < p_ptr->max_plv) henc_top = p_ptr->max_plv;
+		if (henc_top < (p_ptr->max_lev + p_ptr->max_plv) / 2) henc_top = (p_ptr->max_lev + p_ptr->max_plv) / 2;
 		if (henc < p_ptr->supp) henc = p_ptr->supp;
-		if (henc_top < p_ptr->supp_top) henc_top = p_ptr->supp_top;
+		if (henc_top < (p_ptr->max_lev + p_ptr->supp_top) / 2) henc_top = (p_ptr->max_lev + p_ptr->supp_top) / 2;
 	}
 
 	/* Process the monsters, check against the highest player around */
