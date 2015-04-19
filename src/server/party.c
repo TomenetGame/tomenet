@@ -24,7 +24,7 @@
 /* [7..10] 10-> 2:92%, 3:85%, 4:79%, 5:73%, 6:69%; 8-> 2:90%, 3:82%, 4:75%, 5:69%, 6:64%
    8 is maybe best, assuming that of a larger group one or two will quickly die anyway xD */
 
-/* KEEP CONSISTENT WITH cmd4.c */
+/* Keep these ANTI_MAXPLV_EXPLOIT..  defines consistent with cmd4.c:do_write_others_attributes()! */
 /* prevent exploit strategies */
 #define ANTI_MAXPLV_EXPLOIT	/* prevent exploiting by having a powerful char losing levels deliberately to get in range with lowbies to boost */
 // #define ANTI_MAXPLV_EXPLOIT_SOFTLEV	/* be somewhat less strict (average between max_plv and current max_lev) */
@@ -2833,7 +2833,7 @@ static bool players_in_level(int Ind, int Ind2) {
 void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int PInd[NumPlayers], pi = 0, Ind2; /* local working copy of player indices, for efficiency hopefully */
-	int i, eff_henc, hlev = 0;
+	int i, eff_henc, hlev = 0, hmaxplv = 0;
 #ifdef ANTI_MAXPLV_EXPLOIT
  #if defined(ANTI_MAXPLV_EXPLOIT_SOFTLEV) || defined(ANTI_MAXPLV_EXPLOIT_SOFTEXP)
 	int diff;
@@ -2852,12 +2852,10 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	int iron_team_members_here = 0;//temporarily here
 #endif
 
-
 #ifdef ALLOW_NR_CROSS_PARTIES
 	/* quick and dirty anti-cheeze (for if NR surface already allows partying up) */
         if (at_netherrealm(wpos) && !wpos->wz) return;
 #endif
-
 
 	/* Calculate the average level and iron team presence */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -2891,6 +2889,9 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 
 		/* Floor depth vs player level for efficient exp'ing always uses the highest-level team mate. */
 		if (q_ptr->lev > hlev) hlev = q_ptr->lev;
+
+		/* For keeping track of max-plv-exploits in case henc_strictness is actually disabled. */
+		if (q_ptr->max_plv > hmaxplv) hmaxplv = q_ptr->max_plv;
 	}
 
 #ifdef PERFORM_IRON_TEAM_CHECKS
@@ -2901,6 +2902,12 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	/* Exp share calc: */
 	average_lev /= num_members;
 
+	/* Replace top max_plv value taken from any party member on the floor
+	   simply by the henc_top value, if we use the 'henc' feature: */
+	if (cfg.henc_strictness) hmaxplv = henc_top;
+	/* paranoia (m_ptr->henc shouldn't actually get set if
+	   henc_strictness is disabled, but better safe than sorry: */
+	else henc = 0;
 
 	/* Now, distribute the experience */
 	for (i = 0; i < pi++; i++) {
@@ -2911,9 +2918,11 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		   but still take share toll by increasing the divisor in the loop above. */
 		if (q_ptr->ghost || !players_in_level(Ind, Ind2)) continue;
 
-		/* HEnc-checks: */
-		if (cfg.henc_strictness && !q_ptr->total_winner) {
-			eff_henc = henc;
+		/* HEnc-checks -
+		   in case henc_strictness is actually disabled, we abuse 'henc' here
+		   by calculating with max_plv values instead, using them as pseudo-henc values. */
+		if (!q_ptr->total_winner) {
+			eff_henc = henc; //(0 if henc_strictness is disabled)
 
 #ifdef ANTI_MAXPLV_EXPLOIT
 			/* Don't allow cheap support from super-high level characters whose max_plv
@@ -2933,29 +2942,27 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			/* ..instead of the above stuff, here a new, simpler attempt:
 			   If there's anyone whose max_plv is > ours and exceeds the allowed level diff,
 			   henc penalty (AMES-LEV) or exp penalty (AMES-EXP) applies to us. */
-			if (henc_top - q_ptr->max_plv > MAX_PARTY_LEVEL_DIFF + 1) {
+			if (hmaxplv - q_ptr->max_plv > MAX_PARTY_LEVEL_DIFF + 1) {
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 				/* Hypothetical "Problem" here: someone whose max_plv is 18+ levels above our
 				   max_plv can't team up with us anymore, no matter our actual max_levs. */
-				diff = henc_top - q_ptr->max_plv - (MAX_PARTY_LEVEL_DIFF + 1);
+				diff = hmaxplv - q_ptr->max_plv - (MAX_PARTY_LEVEL_DIFF + 1);
 				soft = q_ptr->max_lev + diff / 2;
 				if (eff_henc < soft) eff_henc = soft;
  #else
   #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
-				diff = henc_top - q_ptr->max_plv - (MAX_PARTY_LEVEL_DIFF + 1);
+				diff = hmaxplv - q_ptr->max_plv - (MAX_PARTY_LEVEL_DIFF + 1);
 				new_amount = (new_amount * 5) / (5 + diff);
   #else
 				 /* 100% zonk, bam: */
-				if (eff_henc < henc_top) eff_henc = henc_top;
+				if (eff_henc < hmaxplv) eff_henc = hmaxplv;
   #endif
  #endif
 			}
 #endif
 
 			/* Don't allow cheap support from super-high level characters */
-			if (cfg.henc_strictness && !q_ptr->total_winner &&
-			    eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1)
-				continue; /* zonk */
+			if (eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) continue; /* zonk */
 		}
 
 		/* Calculate this guy's experience gain */
