@@ -263,8 +263,12 @@ void set_server_features()
 #endif
 	lua_settop(L, oldtop);
 
-//	sflags_TEMP |= 0x00000002;
+#ifdef TELEKINESIS_GETITEM_SERVERSIDE
+	sflags_TEMP |= 0x00000002;
+	lua_dostring(L, "TEMP1 = 1");
+#else
 	lua_dostring(L, "TEMP1 = 0");
+#endif
 	lua_settop(L, oldtop);
 
 //	sflags_TEMP |= 0x00000004;

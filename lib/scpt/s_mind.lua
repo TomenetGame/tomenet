@@ -87,48 +87,63 @@ STUN = add_spell
         }
 }
 
-TELEKINESIS = add_spell
-{
+if (def_hack("TEMP1", nil) == 0) then
+TELEKINESIS = add_spell {
 	["name"] = 	"Telekinesis I",
-        ["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
-        ["level"] = 	30,
-        ["mana"] = 	25,
-        ["mana_max"] = 	25,
-        ["fail"] =      20,
---[[
-        ["get_item"] =  {
-                        ["prompt"] = 	"Teleport which object? ",
-                        ["inven"] = 	TRUE,
-                        ["get"] = 	function (obj)
-	                                if obj.weight * obj.number <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
-        	                        	return TRUE
-                	                end
-                        	        return FALSE
-                        end,
-        },
-]]
-        ["spell"] = 	function(args)
---[[
-                        if args.item == -1 then return end
-			if player.inventory[1 + args.item].weight * player.inventory[1 + args.item].number <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
-                        	player.current_telekinesis = player.inventory[1 + args.book]
-                                telekinesis_aux(Ind, args.item)
-                        else
-                                msg_print(Ind, "Pfft trying to hack your client ? pretty lame ...")
-                        end
-]]
-			--if (def_hack("TELEKINESIS_GETITEM_SERVERSIDE", nil)) then
+	["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
+	["level"] = 	30,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] =      20,
+	["get_item"] =  {
+		["prompt"] = 	"Teleport which object? ",
+		["inven"] = 	TRUE,
+		["get"] = 	function (obj)
+			if obj.weight * obj.number <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
+				return TRUE
+			end
+			return FALSE
+		end,
+	},
+	["spell"] = 	function(args)
+		if args.item == -1 then return end
+		if player.inventory[1 + args.item].weight * player.inventory[1 + args.item].number <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
+			player.current_telekinesis = player.inventory[1 + args.book]
+			telekinesis_aux(Ind, args.item)
+		else
+			msg_print(Ind, "Pfft trying to hack your client ? pretty lame ...")
+		end
+	end,
+	["info"] = 	function()
+			return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
+	end,
+	["desc"] =	{
+			"Inscribe your book with @Pplayername, cast it, select an item",
+			"and the item will be teleported to that player whereever he/she might",
+			"be in the Universe",
+	}
+}
+else
+TELEKINESIS = add_spell {
+	["name"] = 	"Telekinesis I",
+	["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
+	["level"] = 	30,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] =      20,
+	["spell"] = 	function(args)
 			telekinesis(Ind, player.inventory[1 + args.book], 4 + get_level(Ind, TELEKINESIS, 250, 0))
 	end,
 	["info"] = 	function()
 			return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
 	end,
-        ["desc"] =	{
-        		"Inscribe your book with @Pplayername, cast it, select an item",
-                        "and the item will be teleported to that player whereever he/she might",
-                        "be in the Universe",
-        }
+	["desc"] =	{
+			"Inscribe your book with @Pplayername, cast it, select an item",
+			"and the item will be teleported to that player whereever he/she might",
+			"be in the Universe",
+	}
 }
+end
 
 SENSEMONSTERS = add_spell
 {
