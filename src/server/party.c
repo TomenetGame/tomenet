@@ -2833,12 +2833,14 @@ static bool players_in_level(int Ind, int Ind2) {
 void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int PInd[NumPlayers], pi = 0, Ind2; /* local working copy of player indices, for efficiency hopefully */
-	int i, eff_henc, eff_henc_top, hlev = 0;
-#ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
-	int soft_top;
-#endif
-#ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
-	int soft_diff;
+	int i, eff_henc, hlev = 0;
+#ifdef ANTI_MAXPLV_EXPLOIT
+ #if defined(ANTI_MAXPLV_EXPLOIT_SOFTLEV) || defined(ANTI_MAXPLV_EXPLOIT_SOFTEXP)
+	int diff;
+ #endif
+ #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
+	int soft;
+ #endif
 #endif
 	struct worldpos *wpos = &p_ptr->wpos;
 	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount, new_boosted_amount;
@@ -2912,10 +2914,11 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		/* HEnc-checks: */
 		if (cfg.henc_strictness && !q_ptr->total_winner) {
 			eff_henc = henc;
-			eff_henc_top = henc_top;
 
 #ifdef ANTI_MAXPLV_EXPLOIT
-			/* Don't allow cheap support from super-high level characters. */
+			/* Don't allow cheap support from super-high level characters whose max_plv
+			   is considerably higher than their normal level, resulting in them being
+			   way more powerful than usual (because they have more skill points allocated). */
 
 			/* Two cases:
 			   1) We're not the killer and the killer has too high max_plv/supp_top (= henc_top),
@@ -2927,24 +2930,23 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			   team of two kills a monster, right?
 			   So there is probably no easy way except for disabling ANTI_MAXPLV_EXPLOIT completely :/. */
 
-			/* ..new attempt */
-			if (eff_henc_top - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) {
+			/* ..instead of the above stuff, here a new, simpler attempt:
+			   If there's anyone whose max_plv is > ours and exceeds the allowed level diff,
+			   henc penalty (AMES-LEV) or exp penalty (AMES-EXP) applies to us. */
+			if (henc_top - q_ptr->max_plv > MAX_PARTY_LEVEL_DIFF + 1) {
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
-				/* Hypothetical "Problem" here: someone who is like level 10(46) can't team up with anyone anymore :D
-				   he'd be eff_henc of 10 + 36/2 = 28 'effective' level for anyone, but the lowest
-				   level a team mate needs to share exp with 28 is 28 - (7+1) = 19.
-				   However, 19 is > than 10 + (7+1) so he won't be able to party until doing some solo-exp. */
-				soft_top = eff_henc_top - ((eff_henc_top - eff_henc) / 2);
-				if (eff_henc < soft_top) eff_henc = soft_top;
+				/* Hypothetical "Problem" here: someone whose max_plv is 18+ levels above our
+				   max_plv can't team up with us anymore, no matter our actual max_levs. */
+				diff = henc_top - q_ptr->max_plv - (MAX_PARTY_LEVEL_DIFF + 1);
+				soft = q_ptr->max_lev + diff / 2;
+				if (eff_henc < soft) eff_henc = soft;
  #else
   #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
-				if (eff_henc < eff_henc_top) {
-					soft_diff = eff_henc_top - q_ptr->max_lev - (MAX_PARTY_LEVEL_DIFF + 1);
-					new_amount = (new_amount * 5) / (5 + soft_diff);
-				}
+				diff = henc_top - q_ptr->max_plv - (MAX_PARTY_LEVEL_DIFF + 1);
+				new_amount = (new_amount * 5) / (5 + diff);
   #else
 				 /* 100% zonk, bam: */
-				if (eff_henc < eff_henc_top) eff_henc = eff_henc_top;
+				if (eff_henc < henc_top) eff_henc = henc_top;
   #endif
  #endif
 			}
@@ -2965,18 +2967,13 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		/* Never get too much exp off a monster
 		   due to high level difference,
 		   make exception for low exp boosts like "holy jackal" */
-#if 1 /* isn't this buggy? see below 'else' clause for assumingly correct version.. */
-/* no it's not buggy, new_amount gets divided by q_ptr->lev later - mikaelh */
 		if ((new_amount > base_amount * 4 * q_ptr->lev) && (new_amount > 200 * q_ptr->lev))
-			new_amount = base_amount * 4 * q_ptr->lev;
-#else
-		if ((new_amount > base_amount * 4) && (new_amount > 200))
-			new_amount = base_amount * 4;
-#endif
+			new_amount = base_amount * 4 * q_ptr->lev; /* new_amount gets divided by q_ptr->lev later - mikaelh */
 
 		/* Especially high party xp boost in IDDC, or people might mostly prefer to solo to 2k */
 		if (!not_in_iddc)
 			new_boosted_amount = (new_amount * (IDDC_PARTY_XP_BOOST + 1)) / (num_members + IDDC_PARTY_XP_BOOST);
+		/* Some bonus is applied to encourage partying - Jir - */
 		else
 			new_boosted_amount = (new_amount * (PARTY_XP_BOOST + 1)) / (num_members + PARTY_XP_BOOST);
 
@@ -2990,12 +2987,11 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 				modified_level = q_ptr->lev - 2;
 			else	modified_level = average_lev;
 		}
+		new_amount = (new_boosted_amount * modified_level) / average_lev;
 
-		new_boosted_amount = (new_boosted_amount * modified_level) / average_lev;
-
-		/* Some bonus is applied to encourage partying	- Jir - */
-		new_exp = new_boosted_amount / q_ptr->lev / 100;
-		new_exp_frac = ((new_boosted_amount - new_exp * q_ptr->lev * 100)
+		/* Calculate integer and fractional exp gain numbers */
+		new_exp = new_amount / q_ptr->lev / 100;
+		new_exp_frac = ((new_amount - new_exp * q_ptr->lev * 100)
 		    * 100L) / q_ptr->lev + q_ptr->exp_frac;
 
 		/* Keep track of experience */
