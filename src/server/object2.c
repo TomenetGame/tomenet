@@ -8681,6 +8681,9 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 			/* Success */
 			p_ptr->inventory[j].auto_insc = TRUE;
+#ifdef USE_SOUND_2010
+			sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
+#endif
 			return (j);
 		}
 	}
@@ -8839,6 +8842,10 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 	/* Return the slot */
 	p_ptr->inventory[i].auto_insc = TRUE;
+
+#ifdef USE_SOUND_2010
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
+#endif
 
 	return (i);
 }

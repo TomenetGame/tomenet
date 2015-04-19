@@ -10872,6 +10872,10 @@ void telekinesis_aux(int Ind, int item) {
 		msg_format(Ind2, "You are hit by a powerful magic wave from %s.", p_ptr->name);
 	}
 
+#ifdef USE_SOUND_2010
+	sound_item(Ind, q_ptr->tval, q_ptr->sval, "pickup_");
+#endif
+
 	/* Wipe it */
 	inven_item_increase(Ind, item, -99);
 	inven_item_describe(Ind, item);
