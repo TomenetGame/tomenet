@@ -217,9 +217,9 @@
 
 /* Startup equipment treatment: [3]
    0 = like any item
-   1 = level 0 (unusable by others), can be sold by anyone, not throwable/droppable till charlevel 5
-   2 = level 0 (unusable by others), can be sold by yourself only, dropped items turn {+,0} before charlevel 5
-   3 = level 0 (unusable by others), can't be sold at all, dropped items turn {+,0} before charlevel 5
+   1 = level 0 (unusable by others), can be sold by anyone, not throwable/droppable till charlevel cfg.newbies_cannot_drop
+   2 = level 0 (unusable by others), can be sold by yourself only, dropped items turn {+,0} before charlevel cfg.newbies_cannot_drop
+   3 = level 0 (unusable by others), can't be sold at all, dropped items turn {+,0} before charlevel cfg.newbies_cannot_drop
    Note: 2 and 3 imply that all level 0 items in the game can only be sold by their owners. */
 #define STARTEQ_TREATMENT 3
 

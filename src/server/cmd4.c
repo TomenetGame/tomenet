@@ -2156,7 +2156,15 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff,"\n");
 
 	if ((k = cfg.newbies_cannot_drop))
+#if STARTEQ_TREATMENT == 1
 		fprintf(fff, "Players under exp.level %d are not allowed to drop items/gold.\n", k);
+#elif STARTEQ_TREATMENT > 1
+		fprintf(fff, "Level of items dropped by players under exp.level %d will become 0,\n", k);
+		fprintf(fff, " making the item unusable by any other character than this player.\n");
+		fprintf(fff, "Players under exp.level %d are not allowed to drop gold.\n", k);
+#else
+		fprintf(fff, "Players under exp.level %d are not allowed to drop gold.\n", k);
+#endif
 
 	if ((k = cfg.spell_interfere))
 		fprintf(fff, "Monsters adjacent to you have %d%% chance of interfering your spellcasting.\n", k);
