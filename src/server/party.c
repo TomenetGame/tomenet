@@ -2893,7 +2893,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 
 #ifdef PERFORM_IRON_TEAM_CHECKS
 	/* Iron team calc: nobody in an iron team can gain exp if not all members are present and in the same place! */
-	if (iron_team_members_here != parties[party_id].members) return;
+	if (iron && iron_team_members_here != parties[party_id].members) return;
 #endif
 
 	/* Exp share calc: */
