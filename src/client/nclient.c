@@ -2253,6 +2253,12 @@ int Receive_item(void) {
 		switch (th) {
 		case ITH_NONE:
 		default:
+			if (th >= ITH_MAX_WEIGHT || th < 0) {
+				get_item_extra_hook = get_item_hook_find_obj;
+				item_tester_max_weight = th > 0 ? th - 50 : 256 + th - 50; //paranoia @ 'signed' char =-p
+				/* paranoia */
+				if (!item_tester_max_weight) item_tester_max_weight = 4; //guaranteed minimum: 0.4 lbs
+			}
 			break;
 		case ITH_RECHARGE:
 			get_item_extra_hook = get_item_hook_find_obj;

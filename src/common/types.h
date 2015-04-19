@@ -2256,6 +2256,9 @@ struct player_type {
 	s16b current_artifact;
 	bool current_artifact_nolife;
 	object_type *current_telekinesis;
+#ifdef TELEKINESIS_GETITEM_SERVERSIDE
+	s16b current_telekinesis_mw;
+#endif
 	s16b current_curse;
 	s16b current_tome_creation;	/* adding a spell scroll to a custom tome - C. Blue */
 	s16b current_rune;

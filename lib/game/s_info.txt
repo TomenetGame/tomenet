@@ -319,7 +319,7 @@ A:11:Cast a spell
 I:1000:111
 
 N:49:Spell-power
-D:Further increases the power (and cost) of known spells.
+D:Further boosts most (learned) spells of the 'Magic' and 'Prayer' schools.
 I:1000:0
 
 N:50:Mana

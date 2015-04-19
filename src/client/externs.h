@@ -196,6 +196,7 @@ extern s16b command_wrk;
 
 extern bool item_tester_full;
 extern byte item_tester_tval;
+extern s16b item_tester_max_weight;
 extern bool (*item_tester_hook)(object_type *o_ptr);
 extern bool item_tester_hook_device(object_type *o_ptr);
 extern bool item_tester_hook_armour(object_type *o_ptr);

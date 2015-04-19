@@ -8305,6 +8305,10 @@ void pack_overflow(int Ind) {
 		/* Message */
 		msg_format(Ind, "\376\377oYour pack overflows! You drop %s.", o_name);
 
+#ifdef USE_SOUND_2010
+		sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
+#endif
+
 		/* Drop it (carefully) near the player */
 		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 

@@ -180,6 +180,15 @@
 /* Warning beep on taking damage while off-panel via locate command */
 #define ALERT_OFFPANEL_DAM
 
+/* Telekinesis uses server-side get_item() request instead of the
+   client-side LUA script prompting for the item? (Recommended)
+   Advantage: We only ask for the item after the spell has been cast
+   successfully.
+   Disadvantage: Macros need \wXX to wait for the server-side request.
+   (Not a real 'feature', but needs to be in here to be recognized by player.pre.) */
+#define TELEKINESIS_GETITEM_SERVERSIDE
+
+
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER

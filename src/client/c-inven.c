@@ -14,8 +14,7 @@ s16b index_to_label(int i)
 }
 
 
-bool item_tester_okay(object_type *o_ptr)
-{
+bool item_tester_okay(object_type *o_ptr) {
 	/* Hack -- allow testing empty slots */
 	if (item_tester_full) return (TRUE);
 
@@ -26,14 +25,17 @@ bool item_tester_okay(object_type *o_ptr)
 	if (o_ptr->tval == TV_GOLD) return (FALSE);
 
 	/* Check the tval */
-	if (item_tester_tval)
-	{
+	if (item_tester_tval) {
 		if (!(item_tester_tval == o_ptr->tval)) return (FALSE);
 	}
 
+	/* Check the weight */
+	if (item_tester_max_weight) {
+		if (item_tester_max_weight < o_ptr->weight * o_ptr->number) return (FALSE);
+	}
+
 	/* Check the hook */
-	if (item_tester_hook)
-	{
+	if (item_tester_hook) {
 		if (!(*item_tester_hook)(o_ptr)) return (FALSE);
 	}
 
@@ -309,7 +311,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	if (!inven && !equip) {
 		/* Forget the item_tester_tval restriction */
 		item_tester_tval = 0;
-
+		/* Forget the item_tester_max_weight restriction */
+		item_tester_max_weight = 0;
 		/* Forget the item_tester_hook restriction */
 		item_tester_hook = 0;
 
@@ -369,7 +372,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 		/* Forget the item_tester_tval restriction */
 		item_tester_tval = 0;
-
+		/* Forget the item_tester_max_weight restriction */
+		item_tester_max_weight = 0;
 		/* Forget the item_tester_hook restriction */
 		item_tester_hook = 0;
 
@@ -692,7 +696,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	/* Forget the item_tester_tval restriction */
 	item_tester_tval = 0;
-
+	/* Forget the item_tester_max_weight restriction */
+	item_tester_max_weight = 0;
 	/* Forget the item_tester_hook restriction */
 	item_tester_hook = 0;
 

@@ -262,8 +262,8 @@ MIDENTIFY = add_spell
 	}
 }
 
-MTELEKINESIS = add_spell
-{
+if (def_hack("TEMP1", nil) == 0) then
+MTELEKINESIS = add_spell {
 	["name"] = 	"Telekinesis II",
 	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
 	["am"] =	50,
@@ -271,7 +271,7 @@ MTELEKINESIS = add_spell
 	["level"] = 	35,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] =      10,
+	["fail"] =      -5,
 	["get_item"] =  {
 			["prompt"] = 	"Teleport which object? ",
 			["inven"] = 	TRUE,
@@ -295,7 +295,7 @@ MTELEKINESIS = add_spell
 			end
 			end,
 	["info"] = 	function()
-			return "max wgt "..((4 + get_level(Ind, MTELEKINESIS, 350, 0)) / 10).."."..(imod(4 + get_level(Ind, MTELEKINESIS, 350, 0), 10))
+			return "max wgt "..((4 + get_level(Ind, MTELEKINESIS, 400, 0)) / 10).."."..(imod(4 + get_level(Ind, MTELEKINESIS, 400, 0), 10))
 			end,
 	["desc"] =	{
 			"Inscribe your book with @Pplayername, cast it, select an item",
@@ -303,3 +303,26 @@ MTELEKINESIS = add_spell
 			"be in the Universe",
 	}
 }
+else
+MTELEKINESIS = add_spell {
+	["name"] = 	"Telekinesis II",
+	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
+	["am"] =	50,
+	["spell_power"] = 0,
+	["level"] = 	35,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] =      -5,
+	["spell"] = 	function(args)
+			telekinesis(Ind, player.inventory[1 + args.book], 4 + get_level(Ind, MTELEKINESIS, 400, 0))
+			end,
+	["info"] = 	function()
+			return "max wgt "..((4 + get_level(Ind, MTELEKINESIS, 400, 0)) / 10).."."..(imod(4 + get_level(Ind, MTELEKINESIS, 400, 0), 10))
+			end,
+	["desc"] =	{
+			"Inscribe your book with @Pplayername, cast it, select an item",
+			"and the item will be teleported to that player whereever he/she might",
+			"be in the Universe",
+	}
+}
+end

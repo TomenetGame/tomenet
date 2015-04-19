@@ -1562,6 +1562,7 @@ void carry(int Ind, int pickup, int confirm) {
 	cave_type **zcave;
 
 	bool forbidden = FALSE; /* for leaderless guild halls */
+	bool inven_carried = FALSE; /* avoid duplicate sfx */
 
 
 	if (!(zcave = getcave(wpos))) return;
@@ -2586,6 +2587,7 @@ void carry(int Ind, int pickup, int confirm) {
 				/* Carry the item */
 				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
 				slot = inven_carry(Ind, o_ptr);
+				inven_carried = TRUE;
 				o_ptr->quest_credited = FALSE; //unhack.
 
 				/* Get the item again */
@@ -2702,7 +2704,8 @@ void carry(int Ind, int pickup, int confirm) {
 	}
 
 #ifdef USE_SOUND_2010
-	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
+	/* hack: inven_carry() also calls sound_item()! */
+	if (!inven_carried) sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
 
 	/* splash! harm equipments */

@@ -8251,7 +8251,9 @@ extern int PlayerUID;
 #define ITH_CUSTOM_TOME	4
 #define ITH_RUNE	5
 #define ITH_ENCH_AC_NO_SHIELD 6
-
+/* keen hack: 4.6.0+ clients use ITH_ codes >= 50 and in turn signed char overflow < 0
+   for transmitting max_weight for picking items for telekinesis. - C. Blue */
+#define ITH_MAX_WEIGHT	50
 
 /* Macros for less direct hard-coding of melee/ranged techniques */
 /* Melee techniques */
