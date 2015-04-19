@@ -1085,7 +1085,7 @@ extern int Send_message(int Ind, cptr msg);
 extern int Send_char(int Ind, int x, int y, byte a, char c);
 extern int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val);
 extern int Send_technique_info(int Ind); /* for MKEY_MELEE and MKEY_RANGED */
-extern int Send_item_request(int Ind, char tester_hook);
+extern int Send_item_request(int Ind, signed char tester_hook); //paranoia @ 'signed' char =-p
 extern int Send_spell_request(int Ind, int item);
 extern int Send_state(int Ind, bool paralyzed, bool searching, bool resting);
 extern int Send_flush(int Ind);
@@ -1979,10 +1979,12 @@ extern bool target_set(int Ind, int dir);
  extern bool target_set_friendly(int Ind, int dir);
 #endif
 extern bool get_aim_dir(int Ind/*, int *dp*/);
-extern bool get_item(int Ind, char tester_hook);
+extern bool get_item(int Ind, signed char tester_hook); //paranoia @ 'signed' char =-p
 extern bool do_scroll_life(int Ind);
 extern bool do_restoreXP_other(int Ind);
-extern bool telekinesis(int Ind, object_type *o_ptr);
+#ifdef TELEKINESIS_GETITEM_SERVERSIDE
+extern bool telekinesis(int Ind, object_type *o_ptr, int max_weight);
+#endif
 extern void telekinesis_aux(int Ind, int item);
 extern bool set_bow_brand(int Ind, int v, int t, int p);
 

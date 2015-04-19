@@ -6006,7 +6006,7 @@ int Send_technique_info(int Ind)
 	return Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, p_ptr->melee_techniques, p_ptr->ranged_techniques);
 }
 
-int Send_item_request(int Ind, char tester_hook) {
+int Send_item_request(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
 	connection_t *connp = Conn[Players[Ind]->conn];
 #if 0
 	connection_t *connp2;

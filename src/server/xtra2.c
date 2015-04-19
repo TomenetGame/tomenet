@@ -10525,7 +10525,7 @@ bool get_aim_dir(int Ind)
 }
 
 
-bool get_item(int Ind, char tester_hook) {
+bool get_item(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
 	Send_item_request(Ind, tester_hook);
 
 	return (TRUE);
@@ -10711,6 +10711,9 @@ void telekinesis_aux(int Ind, int item) {
 	object_type *q_ptr, *o_ptr = p_ptr->current_telekinesis;
 	int Ind2;
 	char *inscription, *scan;
+#ifdef TELEKINESIS_GETITEM_SERVERSIDE
+	int max_weight = p_ptr->current_telekinesis_mw;
+#endif
 
 	p_ptr->current_telekinesis = NULL;
 
@@ -10726,6 +10729,13 @@ void telekinesis_aux(int Ind, int item) {
 	if (!Ind2) return;
 	p2_ptr = Players[Ind2];
 
+#ifdef TELEKINESIS_GETITEM_SERVERSIDE
+	if (q_ptr->weight * q_ptr->number > max_weight) {
+		msg_format(Ind, "The item%s too heavy.", q_ptr->number > 1 ? "s are" : " is");
+		return;
+	}
+#endif
+
 	if (p2_ptr->ghost && !is_admin(p_ptr)) {
 		msg_print(Ind, "You cannot send items to ghosts!");
 		return;
@@ -10737,7 +10747,7 @@ void telekinesis_aux(int Ind, int item) {
 	}
 
 	/* prevent winners picking up true arts accidentally */
-	if (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
+	if (true_artifact_p(q_ptr) && !winner_artifact_p(q_ptr) &&
 	    p2_ptr->total_winner && cfg.kings_etiquette) {
 		msg_print(Ind, "Royalties may not own true artifacts!");
 		if (!is_admin(p2_ptr)) return;
@@ -10825,7 +10835,7 @@ void telekinesis_aux(int Ind, int item) {
 		object_desc_store(Ind, o_name, q_ptr, TRUE, 3);
 		s_printf("(Tele) Item transaction from %s(%d) to %s(%d):\n  %s\n", p_ptr->name, p_ptr->lev, Players[Ind2]->name, Players[Ind2]->lev, o_name);
 
-		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
+		if (true_artifact_p(q_ptr)) a_info[q_ptr->name1].carrier = p_ptr->id;
 
 		/* Highlander Tournament: Don't allow transactions before it begins */
 		if (!p2_ptr->max_exp) {
@@ -11097,15 +11107,21 @@ void remove_blood_bond(int Ind, int Ind2)
 		pl_ptr = pl_ptr->next;
 	}
 }
-
-bool telekinesis(int Ind, object_type *o_ptr) {
+#ifdef TELEKINESIS_GETITEM_SERVERSIDE
+bool telekinesis(int Ind, object_type *o_ptr, int max_weight) {
 	player_type *p_ptr = Players[Ind];
 
+	get_item(Ind, ITH_MAX_WEIGHT + max_weight);
+
+	/* Clear any other pending actions */
+	clear_current(Ind);
+
 	p_ptr->current_telekinesis = o_ptr;
-	get_item(Ind, ITH_NONE);
+	p_ptr->current_telekinesis_mw = max_weight;
 
 	return TRUE;
 }
+#endif
 
 /* this has finally earned its own function, to make it easy for restoration to do this also */
 bool do_scroll_life(int Ind)

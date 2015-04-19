@@ -401,6 +401,9 @@ struct player_type
 	s16b current_artifact;
 	bool current_artifact_nolife;
 	object_type *current_telekinesis;
+#ifdef TELEKINESIS_GETITEM_SERVERSIDE
+	s16b current_telekinesis_mw;
+#endif
 	s16b current_curse;
 
 	s16b current_selling;
@@ -856,6 +859,9 @@ extern bool can_use(int Ind, object_type *o_ptr);
 extern bool can_use_verbose(int Ind, object_type *o_ptr);
 extern bool interfere(int Ind, int chance);
 
+#ifdef TELEKINESIS_GETITEM_SERVERSIDE
+extern bool telekinesis(int Ind, object_type *o_ptr, int max_weight);
+#endif
 extern void telekinesis_aux(int Ind, int item);
 extern void recall_player(int Ind, char *message);
 extern int apply_dodge_chance(int Ind, int attack_level);

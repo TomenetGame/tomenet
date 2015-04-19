@@ -95,6 +95,7 @@ TELEKINESIS = add_spell
         ["mana"] = 	25,
         ["mana_max"] = 	25,
         ["fail"] =      20,
+--[[
         ["get_item"] =  {
                         ["prompt"] = 	"Teleport which object? ",
                         ["inven"] = 	TRUE,
@@ -105,7 +106,9 @@ TELEKINESIS = add_spell
                         	        return FALSE
                         end,
         },
+]]
         ["spell"] = 	function(args)
+--[[
                         if args.item == -1 then return end
 			if player.inventory[1 + args.item].weight * player.inventory[1 + args.item].number <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
                         	player.current_telekinesis = player.inventory[1 + args.book]
@@ -113,6 +116,9 @@ TELEKINESIS = add_spell
                         else
                                 msg_print(Ind, "Pfft trying to hack your client ? pretty lame ...")
                         end
+]]
+			--if (def_hack("TELEKINESIS_GETITEM_SERVERSIDE", nil)) then
+			telekinesis(Ind, player.inventory[1 + args.book], 4 + get_level(Ind, TELEKINESIS, 250, 0))
 	end,
 	["info"] = 	function()
 			return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))

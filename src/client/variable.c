@@ -80,6 +80,7 @@ s16b command_wrk;
 
 bool item_tester_full;
 byte item_tester_tval;
+s16b item_tester_max_weight;
 bool (*item_tester_hook)(object_type *o_ptr);
 
 int special_line_type;
