@@ -2907,7 +2907,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	else henc = 0;
 
 	/* Now, distribute the experience */
-	for (i = 0; i < pi++; i++) {
+	for (i = 0; i < pi; i++) {
 		Ind2 = PInd[i];
 		q_ptr = Players[Ind2];
 
