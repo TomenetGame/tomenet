@@ -95,7 +95,7 @@ function unimask(name)
 	if(i==-1) then return end;
 	--vict=players(i);
 	--evil=players(Ind);
-	while(j<MAX_R_IDX)
+	while(j<max_r_idx)
 	do
 		players(Ind).r_killed[j]=players(i).r_killed[j];
 		j=j+1;
