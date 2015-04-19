@@ -1401,7 +1401,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		{ TV_ARROW, SV_AMMO_MAGIC, 0 },
 		{ TV_SHOT, SV_AMMO_MAGIC, 0 },
 		{ TV_BOLT, SV_AMMO_MAGIC, 0 },
-		{ TV_BOW, SV_LONG_BOW, 0 },
+		{ TV_BOW, SV_LONG_BOW, 0 },//just doesn't work as fruit bat
 		{ TV_HELM, SV_METAL_CAP, 0 },
 	},
 
@@ -1419,7 +1419,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_BOOK, 50, 0 },
-		{ TV_BOW, SV_LONG_BOW, 0 },
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL, 0 },//instead of unusable bow. alternatives: invis-pot, id-all-scroll?, mapping, rll, csw/ccw?
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
 	},
 
