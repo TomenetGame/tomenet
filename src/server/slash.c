@@ -712,7 +712,7 @@ void do_slash_cmd(int Ind, char *message) {
 			if (tk && (token[1][0] != '*')) {
 				h = (token[1][0]) - 'a';
 				j = h;
-				if (h < 0 || h > 22 || token[1][1]) {
+				if (h < 0 || h >= INVEN_PACK || token[1][1]) {
 					msg_print(Ind, "\377oUsage: /tag [a..w|* [<inscription>]]");
 					return;
 				}
