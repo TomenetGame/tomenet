@@ -3817,6 +3817,7 @@ static void player_talk_aux(int Ind, char *message) {
 /* staircases, so cannot be used for smileys here ->		case '<':	case '>': */
 		case '\\':	case '|':
 		case 'p': case 'P': case 'o': case 'O':
+		case 'D': case '3':
 			if (message == colon || colon[-1] == ' ' || colon[-1] == '>' || /* >:) -> evil smiley */
 			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%') && (colon[-1] != '$') && (colon[-1] != '+'))) /* <- party names must be at least 2 chars then */
 				colon = NULL; /* the check is mostly important for '(' */
@@ -3854,7 +3855,8 @@ static void player_talk_aux(int Ind, char *message) {
 			case '{': case '}':
 			case '<': case '>':
 			case '-': case '|':
-			case 'p': case 'P': case 'o': case 'O': case 'D':
+			case 'p': case 'P': case 'o': case 'O':
+			case 'D': case '3':
 			smiley = !maybe_inside_inscription; break; }
 
 			/* check for smiley at end of the line */
@@ -3868,7 +3870,8 @@ static void player_talk_aux(int Ind, char *message) {
 			case '<': case '>':
 			case '-': case '/':
 			case '\\': case '|':
-			case 'p': case 'P': case 'o': case 'O': case 'D':
+			case 'p': case 'P': case 'o': case 'O':
+			case 'D': case '3':
 			smiley = !maybe_inside_inscription; break; }
 
 			if (smiley) break;
