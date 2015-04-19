@@ -582,11 +582,11 @@ void do_cmd_check_uniques(int Ind, int line)
 	fd_kill(file_name);
 }
 
-/* KEEP THESE ANTI_MAXPLV_ DEFINES CONSISTENT WITH party.c! */
+/* Keep these ANTI_MAXPLV_ defines consistent with party.c:party_gain_exp()! */
 #define ANTI_MAXPLV_EXPLOIT
-#define ANTI_MAXPLV_EXPLOIT_SOFTLEV
-static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, char attr, bool admin)
-{
+//#define ANTI_MAXPLV_EXPLOIT_SOFTLEV
+#define ANTI_MAXPLV_EXPLOIT_SOFTEXP
+static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, char attr, bool admin) {
 	player_type *p_ptr = Players[Ind];
 	int modify_number = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0);
 	cptr p = "";
@@ -597,33 +597,39 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	bool cant_iddc = !iddc && q_ptr->max_exp;
 	bool cant_iddc0 = !iddc0 && p_ptr->max_exp;
 	char attr_p[3];
-	bool wont_get_exp;
 
-	/* NOTE: This won't work well with ANTI_MAXPLV_EXPLOIT code except for
-	         ANTI_MAXPLV_EXPLOIT_SOFTLEV, which fortunately is the default.
+	bool wont_get_exp;
+#ifdef ANTI_MAXPLV_EXPLOIT
+ #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
+	int diff, soft;
+
+	diff = q_ptr->max_plv - p_ptr->max_plv - (MAX_PARTY_LEVEL_DIFF + 1);
+	soft = p_ptr->max_lev + diff / 2;
+	/* compensate for missing diff check between the two max_plvs */
+	if (soft < p_ptr->max_lev) soft = p_ptr->max_lev;
+ #endif
+#endif
+
+	/* NOTE: This won't work well with ANTI_MAXPLV_EXPLOIT_SOFTEXP code.
 	   NOTE2: Some of these rules might produce asymmetrical colouring,
 	          because they ask 'will _I_ get exp from _his_ kills'. */
-	wont_get_exp = 
+	wont_get_exp =
 	    ((p_ptr->total_winner && !(q_ptr->total_winner || q_ptr->once_winner)) ||
 	    (q_ptr->total_winner && !(p_ptr->total_winner || p_ptr->once_winner)) ||
 #ifdef ANTI_MAXPLV_EXPLOIT
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
-	    (p_ptr->total_winner && ABS(p_ptr->max_lev - (q_ptr->max_plv - (q_ptr->max_plv - q_ptr->max_lev) / 2)) > MAX_KING_PARTY_LEVEL_DIFF) ||
-	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - (q_ptr->max_plv - (q_ptr->max_plv - q_ptr->max_lev) / 2)) > MAX_PARTY_LEVEL_DIFF));
+	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - (q_ptr->max_plv - (q_ptr->max_plv - q_ptr->max_lev) / 2)) > MAX_PARTY_LEVEL_DIFF) ||
  #else
   #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
 	    /* let's just have no actual effect on level here */
-	    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) ||
-		    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF));
+	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF) ||
   #else
-	    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_plv) > MAX_KING_PARTY_LEVEL_DIFF) ||
-	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_plv) > MAX_PARTY_LEVEL_DIFF));
+	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_plv) > MAX_PARTY_LEVEL_DIFF) ||
   #endif
  #endif
-#else
+#endif
 	    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) ||
 	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF));
-#endif
 
 	attr_p[0] = 0;
 	if (attr == 'w') {
