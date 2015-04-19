@@ -10541,8 +10541,7 @@ bool get_item(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
  * for each dungeon, but this should be replaced by actual depths
  * a player has ever been.	- Jir -
  */
-void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
-{
+void set_recall_depth(player_type * p_ptr, object_type * o_ptr) {
 //	int recall_depth = 0;
 //	worldpos goal;
 
@@ -10635,8 +10634,7 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 	if (p_ptr->recall_pos.wy < 0) p_ptr->recall_pos.wy = 0;
 }
 
-bool set_recall_timer(int Ind, int v)
-{
+bool set_recall_timer(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -10685,8 +10683,7 @@ bool set_recall_timer(int Ind, int v)
 	return (TRUE);
 }
 
-bool set_recall(int Ind, int v, object_type * o_ptr)
-{
+bool set_recall(int Ind, int v, object_type * o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* don't accidentally recall players in Ironman Deep Dive Challenge
@@ -10787,7 +10784,7 @@ void telekinesis_aux(int Ind, int item) {
 
 	/* questor items cannot be 'dropped', only destroyed! */
 	if (q_ptr->questor) {
-		msg_print(Ind, "\377yThis item cannot be sent by telekinesis!");
+		msg_print(Ind, "This item cannot be sent by telekinesis!");
 		return;
 	}
 
@@ -10889,8 +10886,7 @@ void telekinesis_aux(int Ind, int item) {
 
 }
 
-int get_player(int Ind, object_type *o_ptr)
-{
+int get_player(int Ind, object_type *o_ptr) {
 	bool ok = FALSE;
 	int Ind2 = 0;
 	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
@@ -10899,7 +10895,7 @@ int get_player(int Ind, object_type *o_ptr)
 	/* check for a valid inscription */
 	if (inscription == NULL) {
 //		msg_print(Ind, "Nobody to use the power with.");
-		msg_print(Ind, "\377rNo target player specified.");
+		msg_print(Ind, "\377yNo target player specified.");
 		return 0;
 	}
 
@@ -10927,20 +10923,19 @@ int get_player(int Ind, object_type *o_ptr)
 	}
 
 	if (!ok) {
-		msg_print(Ind, "\377rCouldn't find the target.");
+		msg_print(Ind, "\377yCouldn't find the target.");
 		return 0;
 	}
 
 	if (Ind == Ind2) {
-		msg_print(Ind, "\377rYou cannot do that on yourself.");
+		msg_print(Ind, "\377yYou cannot do that on yourself.");
 		return 0;
 	}
 
 	return Ind2;
 }
 
-int get_monster(int Ind, object_type *o_ptr)
-{
+int get_monster(int Ind, object_type *o_ptr) {
         bool ok1 = TRUE, ok2 = TRUE;
 	int r_idx = 0;
 
@@ -10983,8 +10978,7 @@ int get_monster(int Ind, object_type *o_ptr)
 	return r_idx;
 }
 
-void blood_bond(int Ind, object_type *o_ptr)
-{
+void blood_bond(int Ind, object_type *o_ptr) {
         player_type *p_ptr = Players[Ind], *p2_ptr;
 //      bool ok = FALSE;
         int Ind2;
@@ -10999,7 +10993,7 @@ void blood_bond(int Ind, object_type *o_ptr)
 
 	Ind2 = get_player(Ind, o_ptr);
 	if (!Ind2) {
-		msg_print(Ind, "\377rCouldn't blood bond.");
+		msg_print(Ind, "\377oCouldn't blood bond because that player wasn't found.");
 		return;
 	}
 	p2_ptr = Players[Ind2];
