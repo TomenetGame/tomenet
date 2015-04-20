@@ -3529,16 +3529,17 @@ void interact_macros(void) {
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s) Enter and create a 'quick & dirty' macro"),
 //		Term_putstr(5, l++, -1, TERM_SLATE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ur\377s) Record a macro");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377up\377s) Paste currently shown macro action to chat");
 		l++;
 
 		/* Describe that action */
-		Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Current action (if any) shown below:");
+		Term_putstr(0, l + 2, -1, TERM_L_GREEN, "Current action (if any) shown below:");
 
 		/* Analyze the current action */
 		ascii_to_text(buf, macro__buf);
 
 		/* Display the current action */
-		Term_putstr(0, l + 4, -1, TERM_WHITE, buf);
+		Term_putstr(0, l + 3, -1, TERM_WHITE, buf);
 
 		/* Prompt */
 		Term_putstr(0, l, -1, TERM_L_GREEN, "Command: ");
@@ -3604,7 +3605,7 @@ void interact_macros(void) {
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Enter a new action");
 
 			/* Go to the correct location */
-			Term_gotoxy(0, l + 4);
+			Term_gotoxy(0, l + 3);
 
 			/* Get an encoded action */
 			if (!askfor_aux(buf, 159, 0)) continue;
@@ -3898,7 +3899,7 @@ void interact_macros(void) {
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Enter a new 'quick & dirty' macro");
 
 			/* Go to the correct location */
-			Term_gotoxy(0, l + 4);
+			Term_gotoxy(0, l + 3);
 
 			/* Get an encoded action */
 			if (!askfor_aux(buf, 159, 0)) continue;
@@ -3989,7 +3990,7 @@ void interact_macros(void) {
 			*b2ptr = '\0';
 
 			/* Display the current action */
-        		Term_putstr(0, l + 4, -1, TERM_WHITE, buf2);
+			Term_putstr(0, l + 3, -1, TERM_WHITE, buf2);
 
 			/* Extract an action */
 			text_to_ascii(macro__buf, buf2);
@@ -4315,6 +4316,20 @@ void interact_macros(void) {
 			for (i = 0; i < 256; i++) macro__use[i] = 0;
 
 			c_msg_print("Unloaded all macros");
+		}
+
+		else if (i == 'p') {
+			/* Paste macro as chat line */
+
+			/* Analyze the current action */
+			ascii_to_text(buf, macro__buf);
+
+			if (!buf[0]) {
+				c_msg_print("No macro action shown.");
+				continue;
+			}
+
+			Send_paste_msg(buf);
 		}
 
 		else if (i == 'z') {
