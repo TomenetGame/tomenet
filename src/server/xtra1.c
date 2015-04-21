@@ -2814,7 +2814,7 @@ void calc_boni(int Ind) {
 	}
 	
 	int kk, jj;
-	boni_col csheet_boni[15]; //Kurzel - If syncing here is not bad for bandwidth reasosns, this is ideal...
+	boni_col csheet_boni[15];
 	/* Wipe the boni column data */
 	for (kk = 0; kk < 15; kk++) {
 		csheet_boni[kk].i = kk;
@@ -3116,15 +3116,15 @@ void calc_boni(int Ind) {
 
 	/* Calc bonus body */
 	if (!p_ptr->body_monster) {
-		/* Show the '@' with class colour for the boni page - Kurzel */
+		/* Show the '@' with class colour for the boni page */
 		csheet_boni[14].symbol = (p_ptr->fruit_bat) ? 'b' : '@';
 		csheet_boni[14].color = class_info[p_ptr->pclass].color;
 	} else {
-		/* Show the monster! - Kurzel */
+		/* Show the monster form if the player is polymorphed */
 		csheet_boni[14].symbol = r_info[p_ptr->body_monster].d_char;
 		csheet_boni[14].color = r_info[p_ptr->body_monster].d_attr;
 	}
-	if (p_ptr->body_monster) calc_body_bonus(Ind, &csheet_boni[14]); //Kurzel - Mimicry form boni calc must be done here..?
+	if (p_ptr->body_monster) calc_body_bonus(Ind, &csheet_boni[14]);
 	else {	// if if or switch to switch, that is the problem :)
 			/* I vote for p_info ;) */
 		/* Update the innate spells */
@@ -3303,7 +3303,7 @@ void calc_boni(int Ind) {
 		p_ptr->telepathy |= ESP_GOOD; csheet_boni[14].cb[9] |= CB10_EGOOD;
 
 		if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
-			if (p_ptr->lev >= 20) csheet_boni[14].cb[5] |= CB6_IFOOD; //Kurzel - level 20 req?
+			if (p_ptr->lev >= 20) csheet_boni[14].cb[5] |= CB6_IFOOD;
 			if (p_ptr->lev >= 50)  csheet_boni[14].cb[9] |= CB10_SEVIL;
 			p_ptr->suscep_evil = TRUE;
 
@@ -3331,7 +3331,7 @@ void calc_boni(int Ind) {
 			if (p_ptr->divine_xtra_res_time > 0)
 				p_ptr->resist_time = TRUE;
 		} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
-			if (p_ptr->lev >= 20) csheet_boni[14].cb[5] |= CB6_IFOOD; //Kurzel
+			if (p_ptr->lev >= 20) csheet_boni[14].cb[5] |= CB6_IFOOD;
 			p_ptr->suscep_good = TRUE;
 
 			p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE;
@@ -3519,7 +3519,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->admin_dm) {
 		p_ptr->pspeed += 50; //csheet_boni[14].spd += 50; //Don't show these for the admin/tester
 		p_ptr->telepathy |= ESP_ALL;
-		/* Flag all the ESPs for ESP_ALL - Kurzel */
+		/* Flag all the ESPs for ESP_ALL */
 		//csheet_boni[14].cb[7] |= (CB8_ESPID | CB8_EANIM | CB8_EORCS | CB8_ETROL | CB8_EGIAN);
 		//csheet_boni[14].cb[8] |= (CB9_EDRGN | CB9_EDEMN | CB9_EUNDD);
 		//csheet_boni[14].cb[9] |= (CB10_EEVIL | CB10_EDGRI | CB10_EGOOD | CB10_ENONL | CB10_EUNIQ);
@@ -3554,11 +3554,11 @@ void calc_boni(int Ind) {
 
 		/* Skip missing items */
 		if (!o_ptr->k_idx) {
-			csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XNOEQ; //Nothing equipped, grey out the table column. - Kurzel
+			csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XNOEQ; //Nothing equipped, grey out the table column
 			continue;
 		}
 
-		/* Set item display info - Kurzel */
+		/* Set item display info */
 		csheet_boni[i-INVEN_WIELD].color = k_info[o_ptr->k_idx].d_attr;
 		csheet_boni[i-INVEN_WIELD].symbol = k_info[o_ptr->k_idx].d_char;
 
@@ -3629,7 +3629,7 @@ void calc_boni(int Ind) {
 		/* Extract the item flags */
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-		/* Kurzel - Note cursed/hidden status... */
+		/* Note cursed/hidden status... */
 		if ((f3 & TR3_CURSED) || (f3 & TR3_HEAVY_CURSE) || (f3 & TR3_PERMA_CURSE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XCRSE;
 		if (!object_fully_known_p(Ind, o_ptr)) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_XHIDD;
 		
@@ -3903,7 +3903,7 @@ void calc_boni(int Ind) {
 		if (f5 & TR5_REGEN_MANA) { p_ptr->regen_mana = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RRGMP; }
 		if (esp) {
 			p_ptr->telepathy |= esp;
-			/* Flag all the ESPs for ESP_ALL - Kurzel */
+			/* Flag all the ESPs for ESP_ALL */
 			if (esp & ESP_ALL) {
 				csheet_boni[i-INVEN_WIELD].cb[7] |= (CB8_ESPID | CB8_EANIM | CB8_EORCS | CB8_ETROL | CB8_EGIAN);
 				csheet_boni[i-INVEN_WIELD].cb[8] |= (CB9_EDRGN | CB9_EDEMN | CB9_EUNDD);
@@ -3944,7 +3944,7 @@ void calc_boni(int Ind) {
 			else lite_inc_norm += j;
 			if (j && !(f4 & TR4_FUEL_LITE)) p_ptr->lite = TRUE;
 			
-			/* Permanent lite gets the 'sustain' colour - Kurzel */
+			/* Permanent lite gets the 'sustain' colour */
 			csheet_boni[i-INVEN_WIELD].lite += j;
 			if (!(f4 & TR4_FUEL_LITE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XLITE;
 		}
@@ -4029,7 +4029,7 @@ void calc_boni(int Ind) {
 
 		/* Additional flags from PernAngband */
 
-		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE; //Kurzel - redundant line?
+		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
 
 		/* Limit use of disenchanted DarkSword for non-unbe */
 		minus = o_ptr->to_h + o_ptr->to_d; // + pval;// + (o_ptr->to_a / 4);
@@ -4101,59 +4101,33 @@ void calc_boni(int Ind) {
 #endif
 		}
 
+		/* Brands/slays */
+		if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM;
+		if (f1 & TR1_SLAY_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL;
+		if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD;
+		if (f1 & TR1_SLAY_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN;
+		if (f1 & TR1_SLAY_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS;
+		if (f1 & TR1_SLAY_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL;
+		if (f1 & TR1_SLAY_GIANT) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN;
+		if (f1 & TR1_SLAY_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN;
+		if (f1 & TR1_KILL_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN;
+		if (f1 & TR1_KILL_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN;
+		if (f1 & TR1_KILL_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD;
+		if (f1 & TR1_BRAND_POIS) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS;
+		if (f1 & TR1_BRAND_ACID) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID;
+		if (f1 & TR1_BRAND_ELEC) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC;
+		if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
+		if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
+		if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
 
 		/* Hack -- do not apply "weapon", "bow", "ammo", or "tool"  boni */
-		if (i == INVEN_WIELD) { 
-			/* Kurzel -- Brands/slays display */
-			if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM;
-			if (f1 & TR1_SLAY_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL;
-			if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD;
-			if (f1 & TR1_SLAY_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN;
-			if (f1 & TR1_SLAY_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS;
-			if (f1 & TR1_SLAY_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL;
-			if (f1 & TR1_SLAY_GIANT) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN;
-			if (f1 & TR1_SLAY_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN;
-			if (f1 & TR1_KILL_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN;
-			if (f1 & TR1_KILL_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN;
-			if (f1 & TR1_KILL_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD;
-			if (f1 & TR1_BRAND_POIS) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS;
-			if (f1 & TR1_BRAND_ACID) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID;
-			if (f1 & TR1_BRAND_ELEC) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC;
-			if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
-			if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
-			if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
-			
+		if ((i == INVEN_WIELD) || (i == INVEN_ARM && o_ptr->tval != TV_SHIELD)) { 
 			if (f1 & TR1_BLOWS) csheet_boni[i-INVEN_WIELD].blow += pval;
 			if (f5 & TR5_CRIT) csheet_boni[i-INVEN_WIELD].crit += pval;
 			if (f1 & TR1_VAMPIRIC) csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP;
 			continue;
 		}
-		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD) {
-			/* Kurzel -- Brands/slays display */
-			if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM;
-			if (f1 & TR1_SLAY_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL;
-			if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD;
-			if (f1 & TR1_SLAY_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN;
-			if (f1 & TR1_SLAY_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS;
-			if (f1 & TR1_SLAY_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL;
-			if (f1 & TR1_SLAY_GIANT) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN;
-			if (f1 & TR1_SLAY_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN;
-			if (f1 & TR1_KILL_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN;
-			if (f1 & TR1_KILL_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN;
-			if (f1 & TR1_KILL_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD;
-			if (f1 & TR1_BRAND_POIS) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS;
-			if (f1 & TR1_BRAND_ACID) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID;
-			if (f1 & TR1_BRAND_ELEC) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC;
-			if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
-			if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
-			if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
-			
-			if (f1 & TR1_BLOWS) csheet_boni[i-INVEN_WIELD].blow += pval;
-			if (f5 & TR5_CRIT) csheet_boni[i-INVEN_WIELD].crit += pval;
-			if (f1 & TR1_VAMPIRIC) csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP;
-			
-			continue; /*..and for dual-wield */
-		}
+
 		if (i == INVEN_AMMO || i == INVEN_BOW) {
 			if (f1 & TR1_VAMPIRIC) { p_ptr->vampiric_ranged = 100; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
 			continue;
@@ -4217,9 +4191,9 @@ void calc_boni(int Ind) {
 			equipment_set_bonus = equipment_set_amount[i];
 	}
 	if (equipment_set_bonus >= 2) {
-		/* Kurzel - Display the luck boni on each involved item */
+		/* Display the luck boni on each involved item */
 		//for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) //Mh, this doesn't really always work, needs better tracking in the luck calculation code?
-			//if (equipment_set_amount[i]) csheet_boni[i].luck += equipment_set_bonus; //Kurzel!! - Do multiple EQ sets stack or only take highest?
+			//if (equipment_set_amount[i]) csheet_boni[i].luck += equipment_set_bonus;
 //		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus) / 2;
 //		equipment_set_bonus = (equipment_set_bonus - 1) * 4;
 //		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus);
@@ -5146,7 +5120,7 @@ void calc_boni(int Ind) {
 
 		p_ptr->num_blow = calc_blows_weapons(Ind);
 
-		/* Kurzel - Get intrinsic blow boni for column display (so everything adds up) */
+		/* Get intrinsic blow boni for column display (so everything adds up) */
 		if (get_weaponmastery_skill(p_ptr, o_ptr) != -1)
 			csheet_boni[14].blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr, o_ptr), 2);
 		
@@ -5674,9 +5648,9 @@ void calc_boni(int Ind) {
 //	if (get_skill(p_ptr, SKILL_HCURING) >= 50) p_ptr->reduce_insanity = 1;
 	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
 	
-	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) csheet_boni[14].cb[5] |= CB6_IFOOD; //Kurzel
+	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) csheet_boni[14].cb[5] |= CB6_IFOOD;
 	
-	/* Kurzel - slay/brand boni check here... */
+	/* Slay/brand boni check here... */
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) csheet_boni[14].cb[9] |= CB10_SEVIL;
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) csheet_boni[14].cb[8] |= CB9_SDEMN;
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) csheet_boni[14].cb[9] |= CB10_SUNDD;
@@ -6010,11 +5984,11 @@ void calc_boni(int Ind) {
 		/* Redraw BpR */
 		p_ptr->redraw |= PR_BPR;
 
-	/* Send all the columns - Kurzel */
+	/* Send all the columns */
 	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0) && logged_in)
 		for (i = 0; i < 15; i++) {
 			f1 = f2 = f3 = f4 = f5 = f6 = esp = 0x0;
-			if (csheet_boni[i].cb[11] & CB12_XHIDD) { //hide the item data (for now, see part 2 below) - Kurzel
+			if (csheet_boni[i].cb[11] & CB12_XHIDD) {
 				/* Wipe the boni column data */
 				csheet_boni[i].i = i;
 				csheet_boni[i].spd = 0;
@@ -6043,7 +6017,7 @@ void calc_boni(int Ind) {
 				//csheet_boni[i].color = TERM_DARK;
 				//csheet_boni[i].symbol = ' '; //Empty item / form slot.
 				
-				 //Actually give the basic item data instead of hiding it all. See object1.c - Kurzel
+				 //Actually give the basic item data instead of hiding it all. See object1.c
 				bool can_have_hidden_powers = TRUE;
 #ifdef NEW_ID_SCREEN
 				can_have_hidden_powers = FALSE;
@@ -6064,7 +6038,7 @@ void calc_boni(int Ind) {
 						/* hack: granted pval-abilities */
 						if (o_ptr->tval == TV_MSTAFF && o_ptr->pval) f1 |= TR1_MANA;
 					} else can_have_hidden_powers = TRUE; //unknown jewelry type
-					/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
+					/* Assume we must *id* (just once) to learn sigil powers */
 					if (o_ptr->sigil && !object_fully_known_p(Ind, o_ptr)) can_have_hidden_powers = TRUE;
 					ego_item_type *e_ptr;
 					if (object_known_p(Ind, o_ptr)) {
@@ -6206,7 +6180,7 @@ void calc_boni(int Ind) {
 						if (f5 & TR5_REFLECT) csheet_boni[i].cb[6] |= CB7_RREFL;
 						if (f5 & TR5_INVIS) csheet_boni[i].cb[6] |= CB7_RINVS;
 						if (f1 & TR1_VAMPIRIC) csheet_boni[i].cb[6] |= CB7_RVAMP;
-						if (f4 & TR4_AUTO_ID) csheet_boni[i].cb[6] |= CB7_RIDNT; //no such thing, unless helm of knowledge gets glass type (obvious) - Kurzel
+						if (f4 & TR4_AUTO_ID) csheet_boni[i].cb[6] |= CB7_RIDNT;
 						if (f4 & TR4_LEVITATE) {
 							csheet_boni[i].cb[6] |= CB7_RRLEV;
 							csheet_boni[i].cb[4] |= CB5_RFALL;
@@ -6217,7 +6191,7 @@ void calc_boni(int Ind) {
 						
 						/* Table C */
 						if (object_known_p(Ind, o_ptr)) { //must be identified to see PVAL
-							pval = o_ptr->pval; //faster? - Kurzel
+							pval = o_ptr->pval;
 
 							/*todo: build a_ptr for ego/art powers and mask out k1/k5 pval mask from it,
 							  to get the -real- pvals (no more witans +8 stealth if +10 speed..) */
@@ -6268,7 +6242,7 @@ void calc_boni(int Ind) {
 							if (f2 & TR2_SUST_CON) csheet_boni[i].cb[11] |= CB12_RSCON;
 							if (f2 & TR2_SUST_CHR) csheet_boni[i].cb[11] |= CB12_RSCHR;
 							
-							/* And now the base PVAL of the item... semi-hard code, copy/sync above >_> - Kurzel */
+							/* And now the base PVAL of the item... */
 							if (k_ptr->flags1 & TR1_PVAL_MASK) {
 								if (k_ptr->flags1 & TR1_STR) csheet_boni[i].pstr += o_ptr->bpval;
 								if (k_ptr->flags1 & TR1_INT) csheet_boni[i].pint += o_ptr->bpval;
@@ -6302,7 +6276,7 @@ void calc_boni(int Ind) {
 						if (f1 & TR1_KILL_DRAGON) csheet_boni[i].cb[8] |= CB9_KDRGN;
 						if (f1 & TR1_KILL_DEMON) csheet_boni[i].cb[8] |= CB9_KDEMN;
 						if (f1 & TR1_KILL_UNDEAD) csheet_boni[i].cb[9] |= CB10_KUNDD;
-						if (esp & ESP_ALL) { //did we even need these? all ESP items are hidden, no? What of artifacts? - Kurzel
+						if (esp & ESP_ALL) {
 							csheet_boni[i].cb[7] |= (CB8_ESPID | CB8_EANIM | CB8_EORCS | CB8_ETROL | CB8_EGIAN);
 							csheet_boni[i].cb[8] |= (CB9_EDRGN | CB9_EDEMN | CB9_EUNDD);
 							csheet_boni[i].cb[9] |= (CB10_EEVIL | CB10_EDGRI | CB10_EGOOD | CB10_ENONL | CB10_EUNIQ);
@@ -6334,7 +6308,7 @@ void calc_boni(int Ind) {
 				}
 #endif
 				/* conclude hack: can *identifying* actually make a difference at all? */
-				if (can_have_hidden_powers) csheet_boni[i].cb[11] |= CB12_XHIDD; //could perhaps add R_TYPE boni flags for each class of random boni in the future for specific '?' grids - Kurzel!!
+				if (can_have_hidden_powers) csheet_boni[i].cb[11] |= CB12_XHIDD;
 			}
 			Send_boni_col(Ind, csheet_boni[i]);
 		}
