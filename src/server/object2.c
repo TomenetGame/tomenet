@@ -3023,7 +3023,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 
 	/* Hack -- gold always merge */
-	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
+	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) {
+		/* special exception: pile colour from coin-type monsters is immutable! */
+		if (o_ptr->sval != j_ptr->sval && (o_ptr->xtra2 || j_ptr->xtra2)) return FALSE;
+		return(TRUE);
+	}
 
 
 	/* Don't EVER stack questors oO */
@@ -3386,13 +3390,15 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 #else
 		o_ptr->pval += j_ptr->pval;
 		/* determine new 'colour' depending on the total amount */
-		if (j_ptr->xtra1)
+		if (j_ptr->xtra1) {
 			/* player-dropped piles are compact */
 			o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, TRUE);
-		else
+			o_ptr->sval = k_info[o_ptr->k_idx].sval;
+		} else if (!o_ptr->xtra2 && !j_ptr->xtra2) { /* coin-type monster piles don't change type to something else */
 			/* standard piles */
 			o_ptr->k_idx = gold_colour(o_ptr->pval, TRUE, FALSE);
-		o_ptr->sval = k_info[o_ptr->k_idx].sval;
+			o_ptr->sval = k_info[o_ptr->k_idx].sval;
+		}
 #endif
 	}
 
@@ -7567,7 +7573,7 @@ void give_reward(int Ind, u32b resf, cptr quark, int level, int discount) {
 /*note: This function uses completely bad values for picking a gold 'colour' at first and should be rewritten.
   I added a hack that resets the colour to something feasible so not almost every high level pile is adamantite. */
 void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
-	int i;
+	int i, k_idx;
 	s32b base;
 	object_type forge;
 	cave_type **zcave;
@@ -7591,24 +7597,31 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
 		i += randint(object_level + 1);
 
 	/* Hack -- Creeping Coins only generate "themselves" */
-	if (coin_type) i = coin_type + 1;
+	if (coin_type) i = coin_type;
 
 //s_printf("pg: ol=%d,i=%d,ct=%d\n", object_level, i, coin_type);
 	/* Do not create "illegal" Treasure Types */
 	if (i > SV_GOLD_MAX) i = SV_GOLD_MAX;
 
-	invcopy(&forge, lookup_kind(TV_GOLD, i));
+	k_idx = lookup_kind(TV_GOLD, i);
+	invcopy(&forge, k_idx);
 
 	/* Hack -- Base coin cost */
 //	base = k_info[OBJ_GOLD_LIST+i].cost;
-	base = k_info[lookup_kind(TV_GOLD, i)].cost;
+	base = k_info[k_idx].cost;
 
 	/* Determine how much the treasure is "worth" */
 	forge.pval = (base + (8L * randint(base)) + randint(8)) + bonus;
 
 	/* hacking this mess of an outdated function: pick a 'colour' */
-	forge.k_idx = gold_colour(forge.pval, TRUE, FALSE);
-	forge.sval = k_info[forge.k_idx].sval;
+	/* hack -- Creeping Coins only generate "themselves" */
+	if (coin_type) {
+		forge.sval = coin_type;
+		forge.xtra2 = 1; //mark as "don't change colour on stacking up"
+	} else {
+		forge.k_idx = gold_colour(forge.pval, TRUE, FALSE);
+		forge.sval = k_info[forge.k_idx].sval;
+	}
 
 	if (opening_chest) {
 		forge.owner = opening_chest_owner;
