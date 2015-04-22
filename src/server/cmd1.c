@@ -5764,8 +5764,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		case FEAT_WAY_LESS:
 		case FEAT_MORE:
 		case FEAT_LESS:
-//			if (q_ptr->afk || !q_ptr->wpos.wz) blocks_important_feat = TRUE; 
-			if (!q_ptr->wpos.wz) blocks_important_feat = TRUE; 
+//			if (q_ptr->afk || !q_ptr->wpos.wz) blocks_important_feat = TRUE;
+			if (!q_ptr->wpos.wz) blocks_important_feat = TRUE;
 			break;
 		default: break;
 		}
