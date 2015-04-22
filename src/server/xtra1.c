@@ -5985,9 +5985,15 @@ void calc_boni(int Ind) {
 		p_ptr->redraw |= PR_BPR;
 
 	/* Send all the columns */
-	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0) && logged_in)
+	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0) && logged_in) {
+#ifdef NEW_ID_SCREEN
+		bool am_unknown;
+#endif
 		for (i = 0; i < 15; i++) {
 			f1 = f2 = f3 = f4 = f5 = f6 = esp = 0x0;
+#ifdef NEW_ID_SCREEN
+			am_unknown = FALSE;
+#endif
 			if (csheet_boni[i].cb[11] & CB12_XHIDD) {
 				/* Wipe the boni column data */
 				csheet_boni[i].i = i;
@@ -6037,6 +6043,7 @@ void calc_boni(int Ind) {
 						esp = k_info[o_ptr->k_idx].esp;
 						/* hack: granted pval-abilities */
 						if (o_ptr->tval == TV_MSTAFF && o_ptr->pval) f1 |= TR1_MANA;
+						if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) am_unknown = TRUE;
 					} else can_have_hidden_powers = TRUE; //unknown jewelry type
 					/* Assume we must *id* (just once) to learn sigil powers */
 					if (o_ptr->sigil && !object_fully_known_p(Ind, o_ptr)) can_have_hidden_powers = TRUE;
@@ -6312,6 +6319,7 @@ void calc_boni(int Ind) {
 			}
 			Send_boni_col(Ind, csheet_boni[i]);
 		}
+	}
 
 	/* Don't kill warnings by inspecting weapons/armour in stores! */
 	if (!suppress_message) {
