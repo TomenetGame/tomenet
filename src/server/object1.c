@@ -4671,10 +4671,15 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	am = (am * 3) / 5;
 #endif
 
+#ifndef NEW_ID_SCREEN
 	if (am > 0) fprintf(fff, "It generates an antimagic field that has %d%% chance of supressing magic.\n", am);
 	else if (am < 0) fprintf(fff, "It generates a suppressed antimagic field.\n");
-#ifdef NEW_ID_SCREEN
-	else if (am_unknown) fprintf(fff, "It generates an antimagic field.\n");
+#else
+	if (full || (!o_ptr->name1 && id)) {
+		if (am > 0) fprintf(fff, "It generates an antimagic field that has %d%% chance of supressing magic.\n", am);
+		else if (am < 0) fprintf(fff, "It generates a suppressed antimagic field.\n");
+	}
+	else if (am_unknown) fprintf(fff, "It generates an unknown antimagic field.\n");
 #endif
 
 	/* And then describe it fully */
