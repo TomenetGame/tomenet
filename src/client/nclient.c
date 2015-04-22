@@ -2921,17 +2921,25 @@ int Receive_sfx_volume(void) {
 
 int Receive_boni_col(void) {
 	int	n, j;
-	
+
 	byte	ch, i;
-	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr; 
+	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr, amfi, sigl; 
 	byte cb[13];
 	char color, symbol;
-	
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, //1+20+13+2 bytes in total
-	&i, &spd, &slth, &srch, &infr, &lite, &dig, &blow, &crit, &shot, 
-	&migh, &mxhp, &mxmp, &luck, &pstr, &pint, &pwis, &pdex, &pcon, &pchr, 
-	&cb[0], &cb[1], &cb[2], &cb[3], &cb[4], &cb[5], &cb[6], &cb[7], &cb[8], &cb[9], 
-	&cb[10], &cb[11], &cb[12], &color, &symbol)) <= 0) return n;
+
+	if (is_newer_than(&server_version, 4, 5, 9, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, //1+22+13+2 bytes in total
+		&i, &spd, &slth, &srch, &infr, &lite, &dig, &blow, &crit, &shot,
+		&migh, &mxhp, &mxmp, &luck, &pstr, &pint, &pwis, &pdex, &pcon, &pchr, &amfi, &sigl,
+		&cb[0], &cb[1], &cb[2], &cb[3], &cb[4], &cb[5], &cb[6], &cb[7], &cb[8], &cb[9],
+		&cb[10], &cb[11], &cb[12], &color, &symbol)) <= 0) return n;
+	} else { //send the old info to old players
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, //1+20+13+2 bytes in total
+		&i, &spd, &slth, &srch, &infr, &lite, &dig, &blow, &crit, &shot,
+		&migh, &mxhp, &mxmp, &luck, &pstr, &pint, &pwis, &pdex, &pcon, &pchr,
+		&cb[0], &cb[1], &cb[2], &cb[3], &cb[4], &cb[5], &cb[6], &cb[7], &cb[8], &cb[9],
+		&cb[10], &cb[11], &cb[12], &color, &symbol)) <= 0) return n;
+	}
 
 	/* Store the boni global variables */
 	csheet_boni[i].spd = spd;
@@ -2953,13 +2961,15 @@ int Receive_boni_col(void) {
 	csheet_boni[i].pdex = pdex;
 	csheet_boni[i].pcon = pcon;
 	csheet_boni[i].pchr = pchr;
+	csheet_boni[i].amfi = amfi;
+	csheet_boni[i].sigl = sigl;
 	for (j = 0; j < 13; j++)
 	csheet_boni[i].cb[j] = cb[j];
 	csheet_boni[i].color = color;
 	csheet_boni[i].symbol = symbol;
-	
+
 	/* Window Display */
-	if (csheet_page == 2) { //Hardcode - Kurzel
+	if (csheet_page == 2) { //Hardcode
 		p_ptr->window |= PW_PLAYER;
 		window_stuff();
 	}
@@ -3231,7 +3241,7 @@ int Receive_guild_config(void) {
 
 int Receive_skills(void) {
 	int	n, i, bytes_read;
-	s16b	tmp[12];
+	s16b	tmp[14];
 	char	ch;
 
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
@@ -3239,7 +3249,7 @@ int Receive_skills(void) {
 	bytes_read = n;
 
 	/* Read into skills info */
-	for (i = 0; i < 12; i++) {
+	for (i = 0; i < 14; i++) {
 		if ((n = Packet_scanf(&rbuf, "%hd", &tmp[i])) <= 0) {
 			/* Rollback the socket buffer */
 			Sockbuf_rollback(&rbuf, bytes_read);
@@ -3263,6 +3273,8 @@ int Receive_skills(void) {
 	p_ptr->num_fire = tmp[9];
 	p_ptr->num_spell = tmp[10];
 	p_ptr->see_infra = tmp[11];
+	p_ptr->luck = tmp[12];
+	p_ptr->antimagic = tmp[13];
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);

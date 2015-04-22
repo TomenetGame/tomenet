@@ -2975,9 +2975,9 @@ struct boni_col
 	/* Index */
 	byte i;
 	/* Hack signed char/byte values */
-	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr; 
+	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr, amfi, sigl;
 	/* Flags in char/byte chunks for PKT transfer */
-	byte cb[13]; //13 so far, hardcode - Kurzel
+	byte cb[13]; //13 so far, hardcode
 	/* Attr + Char */
 	char color; char symbol;
 };

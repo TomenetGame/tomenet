@@ -6871,19 +6871,25 @@ int Send_boni_col(int Ind, boni_col c) {
 	}
 
 	if (!is_newer_than(&connp->version, 4, 5, 3, 2, 0, 0)) return(-1);
-	return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
-	c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot, 
-	c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, 
-	c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9], 
-	c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+	if (is_newer_than(&connp->version, 4, 5, 9, 0, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
+		c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+		c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
+		c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+		c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+	} else { //send old info to old players
+		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
+		c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+		c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr,
+		c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+		c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+	}
 }
 
-int Send_beep(int Ind)
-{
+int Send_beep(int Ind) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for beep (page) (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -6897,8 +6903,7 @@ int Send_warning_beep(int Ind)
 {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for beep (warning) (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -6916,8 +6921,7 @@ int Send_AFK(int Ind, byte afk)
 	connection_t *connp = Conn[Players[Ind]->conn];
 //	player_type *p_ptr = Players[Ind];
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for AFK (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -6958,8 +6962,7 @@ int Send_encumberment(int Ind, byte cumber_armor, byte awkward_armor, byte cumbe
 }
 
 
-int Send_special_line(int Ind, s32b max, s32b line, byte attr, cptr buf)
-{
+int Send_special_line(int Ind, s32b max, s32b line, byte attr, cptr buf) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 	char temp[ONAME_LEN - 3], xattr = 'w', temp2[ONAME_LEN];
 
@@ -7275,12 +7278,10 @@ int Send_guild_config(int id) {
 	return 1;
 }
 
-int Send_special_other(int Ind)
-{
+int Send_special_other(int Ind) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for special other (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -7290,11 +7291,10 @@ int Send_special_other(int Ind)
 	return Packet_printf(&connp->c, "%c", PKT_SPECIAL_OTHER);
 }
 
-int Send_skills(int Ind)
-{
+int Send_skills(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
-	s16b skills[12];
+	s16b skills[14];
 	int i, tmp = 0;
 	object_type *o_ptr;
 
@@ -7345,8 +7345,11 @@ int Send_skills(int Ind)
 	/* Infravision */
 	skills[11] = p_ptr->see_infra;
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	/* AM and Luck */
+	skills[12] = p_ptr->luck;
+	skills[13] = p_ptr->antimagic;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for skills (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -7355,21 +7358,16 @@ int Send_skills(int Ind)
 
 	Packet_printf(&connp->c, "%c", PKT_SKILLS);
 
-	for (i = 0; i < 12; i++)
-	{
-		Packet_printf(&connp->c, "%hd", skills[i]);
-	}
+	for (i = 0; i < 14; i++) Packet_printf(&connp->c, "%hd", skills[i]);
 
 	return 1;
 }
 
 
-int Send_pause(int Ind)
-{
+int Send_pause(int Ind) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for skills (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -7381,13 +7379,11 @@ int Send_pause(int Ind)
 
 
 
-int Send_monster_health(int Ind, int num, byte attr)
-{
+int Send_monster_health(int Ind, int num, byte attr) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for monster health bar (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -7446,8 +7442,7 @@ int Send_chardump(int Ind, cptr tag) {
 #endif
 }
 
-int Send_unique_monster(int Ind, int r_idx)
-{
+int Send_unique_monster(int Ind, int r_idx) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 	player_type *p_ptr = Players[Ind];
 
@@ -7463,8 +7458,7 @@ int Send_unique_monster(int Ind, int r_idx)
 	return Packet_printf(&connp->c, "%c%d%d%s", PKT_UNIQUE_MONSTER, r_info[r_idx].u_idx, p_ptr->r_killed[r_idx], r_name + r_info[r_idx].name);
 }
 
-int Send_weather(int Ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds)
-{
+int Send_weather(int Ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds) {
 	int n, i, c;
 	int cx1, cy1, cx2, cy2;
 
@@ -7577,15 +7571,13 @@ s_printf("sending local cloud %d (%d,%d - %d,%d)\n", i, cx1, cy1, cx2, cy2);
 	return n;
 }
 
-int Send_inventory_revision(int Ind)
-{
+int Send_inventory_revision(int Ind) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 	player_type *p_ptr = Players[Ind];
 
 	if (!is_newer_than(&connp->version, 4, 4, 2, 1, 0, 0)) return(0);
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for inventory revision (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -7595,16 +7587,14 @@ int Send_inventory_revision(int Ind)
 	return Packet_printf(&connp->c, "%c%d", PKT_INVENTORY_REV, p_ptr->inventory_revision);
 }
 
-int Send_account_info(int Ind)
-{
+int Send_account_info(int Ind) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 	struct account *l_acc;
 	u32b acc_flags = 0;
 
 	if (!is_newer_than(&connp->version, 4, 4, 2, 2, 0, 0)) return(0);
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for account info (%d.%d.%d)",
 			Ind, connp->state, connp->id));

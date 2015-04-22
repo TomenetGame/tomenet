@@ -2040,17 +2040,17 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		if (r_ptr->freq_innate > 30) {
 			p_ptr->num_spell++;	// 1_IN_3
 			p_ptr->stat_add[A_INT] += 1; csheet_boni->pint += 1;
-			p_ptr->to_m += 20; csheet_boni->mxmp += 2; //Kurzel - The values here don't match the guide, seem strange too!
+			p_ptr->to_m += 20; csheet_boni->mxmp += 2;
 		}
 		if (r_ptr->freq_innate >= 50) {
 			p_ptr->num_spell++;	// 1_IN_2
 			p_ptr->stat_add[A_INT] += 2; csheet_boni->pint += 2;
-			p_ptr->to_m += 15; csheet_boni->mxmp += 1; //'+1' MP? - Kurzel
+			p_ptr->to_m += 15; csheet_boni->mxmp += 1;
 		}
 		if (r_ptr->freq_innate == 100) { /* well, drujs and quylthulgs >_> */
 			p_ptr->num_spell++;	// 1_IN_1
 			p_ptr->stat_add[A_INT] += 1;  csheet_boni->pint += 1;
-			p_ptr->to_m += 15; csheet_boni->mxmp += 2; //This shoud be more, +1/2/3 for 1_in_x? - Kurzel
+			p_ptr->to_m += 15; csheet_boni->mxmp += 2;
 		}
 	}
 
@@ -2403,10 +2403,10 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if (r_ptr->flags2 & RF2_REFLECTING) { p_ptr->reflect = TRUE; csheet_boni->cb[6] |= CB7_RREFL; }
 	if (r_ptr->flags7 & RF7_DISBELIEVE) {
 #if 0
-		p_ptr->antimagic += r_ptr->level / 2 + 20;
+		p_ptr->antimagic += r_ptr->level / 2 + 20; csheet_boni->amfi += r_ptr->level / 2 + 20;
 		p_ptr->antimagic_dis += r_ptr->level / 15 + 3;
 #else /* a bit stricter for mimics.. */
-		p_ptr->antimagic += r_ptr->level / 2 + 10;
+		p_ptr->antimagic += r_ptr->level / 2 + 10; csheet_boni->amfi += r_ptr->level / 2 + 10;
 		p_ptr->antimagic_dis += r_ptr->level / 50 + 2;
 #endif
 	}
@@ -2837,6 +2837,8 @@ void calc_boni(int Ind) {
 		csheet_boni[kk].pdex = 0;
 		csheet_boni[kk].pcon = 0;
 		csheet_boni[kk].pchr = 0;
+		csheet_boni[kk].amfi = 0;
+		csheet_boni[kk].sigl = 0;
 		/* Clear the byte flags */
 		for (jj = 0; jj < 13; jj++)
 			csheet_boni[kk].cb[jj] = 0;
@@ -3464,10 +3466,10 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 //		p_ptr->anti_magic = TRUE;	/* it means 95% saving-throw!! */
 #ifdef NEW_ANTIMAGIC_RATIO
-		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 50);
+		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 50); csheet_boni[14].amfi += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 50);
 		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
 #else
-		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 30);
+		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 30); csheet_boni[14].amfi += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 30);
 		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
 #endif
 	}
@@ -3631,7 +3633,7 @@ void calc_boni(int Ind) {
 
 		/* Note cursed/hidden status... */
 		if ((f3 & TR3_CURSED) || (f3 & TR3_HEAVY_CURSE) || (f3 & TR3_PERMA_CURSE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XCRSE;
-		if (!object_fully_known_p(Ind, o_ptr)) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_XHIDD;
+		if (!object_fully_known_p(Ind, o_ptr) && !(o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_XHIDD;
 		
 		/* Not-burning light source does nothing, good or bad */
 		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) continue;
@@ -4046,6 +4048,7 @@ void calc_boni(int Ind) {
 		am_temp = (am_temp * 3) / 5;
 #endif
 		/* Choose item with biggest AM field we find */
+		if (am_temp > 0) csheet_boni[i-INVEN_WIELD].amfi = am_temp; //Track individual item boni, knowing they don't stack
 		if (am_temp > am_bonus) am_bonus = am_temp;
 
 		if (f4 & (TR4_BLACK_BREATH)) p_ptr->black_breath_tmp = TRUE;
@@ -5650,7 +5653,7 @@ void calc_boni(int Ind) {
 	
 	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) csheet_boni[14].cb[5] |= CB6_IFOOD;
 	
-	/* Slay/brand boni check here... */
+	/* slay/brand boni check here... */
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) csheet_boni[14].cb[9] |= CB10_SEVIL;
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) csheet_boni[14].cb[8] |= CB9_SDEMN;
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) csheet_boni[14].cb[9] |= CB10_SUNDD;
@@ -5985,15 +5988,9 @@ void calc_boni(int Ind) {
 		p_ptr->redraw |= PR_BPR;
 
 	/* Send all the columns */
-	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0) && logged_in) {
-#ifdef NEW_ID_SCREEN
-		bool am_unknown;
-#endif
+	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0) && logged_in)
 		for (i = 0; i < 15; i++) {
 			f1 = f2 = f3 = f4 = f5 = f6 = esp = 0x0;
-#ifdef NEW_ID_SCREEN
-			am_unknown = FALSE;
-#endif
 			if (csheet_boni[i].cb[11] & CB12_XHIDD) {
 				/* Wipe the boni column data */
 				csheet_boni[i].i = i;
@@ -6016,6 +6013,8 @@ void calc_boni(int Ind) {
 				csheet_boni[i].pdex = 0;
 				csheet_boni[i].pcon = 0;
 				csheet_boni[i].pchr = 0;
+				csheet_boni[i].amfi = 0;
+				csheet_boni[i].sigl = 0;
 				/* Clear the byte flags */
 				for (jj = 0; jj < 13; jj++)
 					csheet_boni[i].cb[jj] = 0;
@@ -6023,7 +6022,7 @@ void calc_boni(int Ind) {
 				//csheet_boni[i].color = TERM_DARK;
 				//csheet_boni[i].symbol = ' '; //Empty item / form slot.
 				
-				 //Actually give the basic item data instead of hiding it all. See object1.c
+				 //Actually give the basic item data instead of hiding it all. See object1.cf
 				bool can_have_hidden_powers = TRUE;
 #ifdef NEW_ID_SCREEN
 				can_have_hidden_powers = FALSE;
@@ -6043,7 +6042,7 @@ void calc_boni(int Ind) {
 						esp = k_info[o_ptr->k_idx].esp;
 						/* hack: granted pval-abilities */
 						if (o_ptr->tval == TV_MSTAFF && o_ptr->pval) f1 |= TR1_MANA;
-						if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) am_unknown = TRUE;
+						if (o_ptr->name1) can_have_hidden_powers = TRUE; //artifact
 					} else can_have_hidden_powers = TRUE; //unknown jewelry type
 					/* Assume we must *id* (just once) to learn sigil powers */
 					if (o_ptr->sigil && !object_fully_known_p(Ind, o_ptr)) can_have_hidden_powers = TRUE;
@@ -6319,7 +6318,6 @@ void calc_boni(int Ind) {
 			}
 			Send_boni_col(Ind, csheet_boni[i]);
 		}
-	}
 
 	/* Don't kill warnings by inspecting weapons/armour in stores! */
 	if (!suppress_message) {
