@@ -7294,7 +7294,7 @@ int Send_special_other(int Ind) {
 int Send_skills(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
-	s16b skills[14];
+	s16b skills[12];
 	int i, tmp = 0;
 	object_type *o_ptr;
 
@@ -7345,10 +7345,6 @@ int Send_skills(int Ind) {
 	/* Infravision */
 	skills[11] = p_ptr->see_infra;
 
-	/* AM and Luck */
-	skills[12] = p_ptr->luck;
-	skills[13] = p_ptr->antimagic;
-
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for skills (%d.%d.%d)",
@@ -7358,7 +7354,7 @@ int Send_skills(int Ind) {
 
 	Packet_printf(&connp->c, "%c", PKT_SKILLS);
 
-	for (i = 0; i < 14; i++) Packet_printf(&connp->c, "%hd", skills[i]);
+	for (i = 0; i < 12; i++) Packet_printf(&connp->c, "%hd", skills[i]);
 
 	return 1;
 }
