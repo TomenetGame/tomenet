@@ -3241,7 +3241,7 @@ int Receive_guild_config(void) {
 
 int Receive_skills(void) {
 	int	n, i, bytes_read;
-	s16b	tmp[14];
+	s16b	tmp[12];
 	char	ch;
 
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
@@ -3249,7 +3249,7 @@ int Receive_skills(void) {
 	bytes_read = n;
 
 	/* Read into skills info */
-	for (i = 0; i < 14; i++) {
+	for (i = 0; i < 12; i++) {
 		if ((n = Packet_scanf(&rbuf, "%hd", &tmp[i])) <= 0) {
 			/* Rollback the socket buffer */
 			Sockbuf_rollback(&rbuf, bytes_read);
@@ -3273,8 +3273,6 @@ int Receive_skills(void) {
 	p_ptr->num_fire = tmp[9];
 	p_ptr->num_spell = tmp[10];
 	p_ptr->see_infra = tmp[11];
-	p_ptr->luck = tmp[12];
-	p_ptr->antimagic = tmp[13];
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
