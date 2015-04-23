@@ -8004,7 +8004,7 @@ void resurrect_player(int Ind, int loss_factor) {
 	p_ptr->safe_sane = FALSE;
 
 	/* Message */
-	msg_print(Ind, "You feel life return to your body.");
+	msg_print(Ind, "\376\377GYou feel life force return to your body!");
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* (was in player_death: Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue)) */
@@ -8015,9 +8015,9 @@ void resurrect_player(int Ind, int loss_factor) {
 		if (p_ptr->lives > 1+1) p_ptr->lives--;
 		if (cfg.lifes) {
 			if (p_ptr->lives == 1+1)
-				msg_print(Ind, "\377GYou have no more resurrections left!");
+				msg_print(Ind, "\376\377GYou have no more resurrections left!");
 			else
-				msg_format(Ind, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+				msg_format(Ind, "\376\377GYou have %d resurrections left.", p_ptr->lives-1-1);
 		}
 	}
 
@@ -8048,7 +8048,7 @@ void check_xorders(){
 				for (j = 1; j <= NumPlayers; j++) {
 					q_ptr = Players[j];
 					if (q_ptr && q_ptr->xorder_id == xorders[i].id) {
-						msg_print(j, "\377oYou have failed your extermination order!");
+						msg_print(j, "\376\377oYou have failed your extermination order!");
 						q_ptr->xorder_id = 0;
 						q_ptr->xorder_num = 0;
 					}
@@ -8134,7 +8134,7 @@ void kill_xorder(int Ind) {
 			if (!p_ptr->guild) {
 				guild_msg_format(temphash->guild, "\374\377%c%s is now a guild member!", COLOUR_CHAT_GUILD, p_ptr->name);
 				guilds[temphash->guild].members++;
-				msg_format(Ind, "\374You've been added to '\377%c%s\377w'.", COLOUR_CHAT_GUILD, guilds[temphash->guild].name);
+				msg_format(Ind, "\374\377yYou've been added to '\377%c%s\377w'.", COLOUR_CHAT_GUILD, guilds[temphash->guild].name);
 				p_ptr->guild = temphash->guild;
 				p_ptr->guild_dna = guilds[p_ptr->guild].dna;
 				clockin(Ind, 3);	/* set in db */
@@ -8147,7 +8147,7 @@ void kill_xorder(int Ind) {
 		object_type forge, *o_ptr = &forge;
 		int avg;
 
-		msg_format(Ind, "\377yYou have carried out the %s extermination order!", r_name + r_info[xorders[pos].type].name);
+		msg_format(Ind, "\374\377yYou have carried out the %s extermination order!", r_name + r_info[xorders[pos].type].name);
 		s_printf("r_info quest: %s won the %s extermination order\n", p_ptr->name, r_name + r_info[xorders[pos].type].name);
 		strcpy(temp, r_name + r_info[xorders[pos].type].name);
 		strcat(temp, " extermination");
@@ -8237,12 +8237,12 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 	q_ptr->xorder_num = num;
 	clockin(j, 4); /* register that player */
 	if ((flags & QUEST_GUILD))
-		msg_print(j, "\377oYou have been given an extermination order from your guild\377y!");
+		msg_print(j, "\374\377oYou have been given an extermination order from your guild\377y!");
 	else
-		msg_print(j, "\377oYou have been given a extermination order\377y!");
+		msg_print(j, "\376\377oYou have been given a extermination order\377y!");
 //	msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
-	msg_format(j, "\377oFind and kill \377y%d \377g%s\377o (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
-	msg_format(Ind, "\377oThe remaining time to carry it out is \377y%d\377o minutes.", MAX_XORDER_TURNS / (cfg.fps * 60));
+	msg_format(j, "\376\377oFind and kill \377y%d \377g%s\377o (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
+	msg_format(Ind, "\376\377oThe remaining time to carry it out is \377y%d\377o minutes.", MAX_XORDER_TURNS / (cfg.fps * 60));
 	xorders[i].active++;
 
 	if (!xorders[i].active) {
@@ -8272,10 +8272,10 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 		for (i = 0; i < MAX_XORDERS; i++) {
 			if (xorders[i].id == Players[j]->xorder_id) {
 				if (j == Ind)
-					msg_format(Ind, "\377oYour %sorder is to exterminate \377y%d \377g%s\377o (level %d).",
+					msg_format(Ind, "\376\377oYour %sorder is to exterminate \377y%d \377g%s\377o (level %d).",
 					    (xorders[i].flags & QUEST_GUILD) ? "guild's " : "", Players[Ind]->xorder_num,
 					    r_name + r_info[xorders[i].type].name, r_info[xorders[i].type].level);
-					msg_format(Ind, "\377oThe remaining time to carry it out is \377y%d\377o minutes.", (MAX_XORDER_TURNS - (turn - xorders[i].turn)) / (cfg.fps * 60));
+					msg_format(Ind, "\376\377oThe remaining time to carry it out is \377y%d\377o minutes.", (MAX_XORDER_TURNS - (turn - xorders[i].turn)) / (cfg.fps * 60));
 				return FALSE;
 			}
 		}
