@@ -1910,7 +1910,9 @@ int Receive_message(void) {
 	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
 
-	/* Highlight or beep on incoming chat messages containing our name? */
+	/* Highlight or beep on incoming chat messages containing our name?
+	   Current weakness: Char 'Mim' (acc 'Test) won't get highlights from
+	   another char 'Test' (acc 'Test') writing 'Mim' in chat. - C. Blue */
 	if (c_cfg.hilite_chat || c_cfg.hibeep_chat) { /* enabled? */
 		/* Test sender's name, if it is us */
 		int we_sent_offset;
@@ -1961,12 +1963,13 @@ int Receive_message(void) {
 			if ((bptr = strstr(l_buf + we_sent_offset, l_cname))) bptr = buf + (bptr - l_buf);
 			if ((bnptr = strstr(l_buf, l_nick))) bnptr = buf + (bnptr - l_buf);
 
-			/* check that the name wasn't part of a different string (important for very short names) */
-			if (bptr && bptr > l_buf && *(bptr - 1) >= 'a' && *(bptr - 1) <= 'z') bptr = NULL;
+			/* check that our 'name' wasn't just part of a different string,
+			   eg 'Heya' if our name is 'Eya' (important for very short names): */
+			if (bptr && bptr > buf && *(bptr - 1) >= 'a' && *(bptr - 1) <= 'z') bptr = NULL;
 			if (bptr && *(bptr + strlen(l_cname)) && *(bptr + strlen(l_cname)) >= 'a' && *(bptr + strlen(l_cname)) <= 'z') bptr = NULL;
-			if (bnptr && bnptr > l_buf && *(bnptr - 1) >= 'a' && *(bnptr - 1) <= 'z') bnptr = NULL;
+			if (bnptr && bnptr > buf && *(bnptr - 1) >= 'a' && *(bnptr - 1) <= 'z') bnptr = NULL;
 			if (bnptr && *(bnptr + strlen(l_nick)) && *(bnptr + strlen(l_nick)) >= 'a' && *(bnptr + strlen(l_nick)) <= 'z') bnptr = NULL;
-c_msg_format("b '%s', bn '%s'", bptr, bnptr);
+
 			/* Check which one it is (first), character name or account name */
 			if (bptr) {
 				if (!bnptr || bptr <= bnptr) {
