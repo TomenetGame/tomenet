@@ -2055,8 +2055,7 @@ static errr top_twenty(int Ind) {
 /*
  * Predict the players location, and display it.
  */
-static errr predict_score(int Ind, int line)
-{
+static errr predict_score(int Ind, int line) {
 	player_type *p_ptr = Players[Ind];
 	int		j;
 	high_score	the_score;
@@ -2067,8 +2066,7 @@ static errr predict_score(int Ind, int line)
 #endif
 
 	/* No score file */
-	if (highscore_fd < 0)
-	{
+	if (highscore_fd < 0) {
 		s_printf("Score file unavailable.\n");
 		return (0);
 	}
@@ -2142,8 +2140,7 @@ static errr predict_score(int Ind, int line)
 /*
  * Change a player into a King!                 -RAK-
  */
-void kingly(int Ind, int type)
-{
+void kingly(int Ind, int type) {
 	player_type *p_ptr = Players[Ind];
 
 #if 0	// No, this makes Delete_player fail!
@@ -2156,10 +2153,10 @@ void kingly(int Ind, int type)
 	/* Fake death */
 	//(void)strcpy(p_ptr->died_from_list, "Ripe Old Age");
 	switch (type) {
-	case 1: strcpy(p_ptr->died_from_list, "winner"); break;
-	case 2: strcpy(p_ptr->died_from_list, "*winner*"); break;
-	case 3: strcpy(p_ptr->died_from_list, "iron champion"); break;
-	case 4: strcpy(p_ptr->died_from_list, "iron emperor"); break;
+	case 1: strcpy(p_ptr->died_from_list, "winner"); break; //retirement
+	case 2: strcpy(p_ptr->died_from_list, "*winner*"); break; //valinor retirement
+	case 3: strcpy(p_ptr->died_from_list, "iron champion"); break; //made it through IDDC
+	case 4: strcpy(p_ptr->died_from_list, "iron emperor"); break; //made it through IDDC and killed Morgoth
 	}
 
 	/* Restore the experience */
@@ -2176,8 +2173,7 @@ void kingly(int Ind, int type)
 /*
  * Add a player to the high score list.
  */
-void add_high_score(int Ind)
-{
+void add_high_score(int Ind) {
 	char buf[1024];
 
 	/* Build the filename */
@@ -2281,8 +2277,7 @@ void close_game(void) {
  * This function is only called from "main.c" when the user asks
  * to see the "high scores".
  */
-void display_scores(int Ind, int line)
-{
+void display_scores(int Ind, int line) {
 	char buf[1024];
 
 	/* Build the filename */
@@ -2292,8 +2287,7 @@ void display_scores(int Ind, int line)
 	highscore_fd = fd_open(buf, O_RDONLY);
 
 	/* Paranoia -- No score file */
-	if (highscore_fd < 0)
-	{
+	if (highscore_fd < 0) {
 		/* Message to server admin */
 		s_printf("Score file unavailable.\n");
 
@@ -2432,8 +2426,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 /* it also doesnt respect non existent world positions */
 /* rewrite */
 /* k rewritten.. but not so better?	- Jir - */
-void wipeout_needless_objects()
-{
+void wipeout_needless_objects() {
 #if 0	// exit_game_panic version
 	int i = 1;
 	int j,k;
@@ -2450,15 +2443,13 @@ void wipeout_needless_objects()
 			if(getcave(&wpos) && !players_on_depth(&wpos)) wipe_o_list(&wpos);
 
 			if (wild->flags&WILD_F_UP)
-				for (k = 0;k < wild->tower->maxdepth; k++)
-				{
+				for (k = 0;k < wild->tower->maxdepth; k++) {
 					wpos.wz = k;
 					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
 				}
 
 			if (wild->flags&WILD_F_DOWN)
-				for (k = 0;k < wild->dungeon->maxdepth; k++)
-				{
+				for (k = 0;k < wild->dungeon->maxdepth; k++) {
 					wpos.wz = -k;
 					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
 				}
@@ -2671,8 +2662,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER old_handler;
 /* Callback to be called by Windows when our term closes, the user 
  * logs off, the system is shutdown, etc.
  */
-BOOL ctrl_handler( DWORD fdwCtrlType ) 
-{
+BOOL ctrl_handler( DWORD fdwCtrlType ) {
 	/* Save everything and quit the game */
 	shutdown_server();
 
@@ -2682,8 +2672,7 @@ BOOL ctrl_handler( DWORD fdwCtrlType )
 /* Global unhandled exception handler */
 /* If the server crashes under Windows, this is where we end up */
 LONG WINAPI myUnhandledExceptionFilter(
-  struct _EXCEPTION_POINTERS* ExceptionInfo)
-{
+  struct _EXCEPTION_POINTERS* ExceptionInfo) {
 	/* We don't report to the meta server in this case, the meta
 	 * server will detect that we've gone anyway 
 	 */
@@ -2706,8 +2695,7 @@ LONG WINAPI myUnhandledExceptionFilter(
 }
 
 
-void setup_exit_handler(void)
-{
+void setup_exit_handler(void) {
 	/* Trap CTRL+C, Logoff, Shutdown, etc */
 	if( SetConsoleCtrlHandler( (PHANDLER_ROUTINE) ctrl_handler, TRUE ) ) 
 	{
@@ -2733,8 +2721,7 @@ void setup_exit_handler(void)
  * This will probably inflict much anger upon the suspender, but it is still
  * allowed (for now) --KLJ--
  */
-static void handle_signal_suspend(int sig)
-{
+static void handle_signal_suspend(int sig) {
 	/* Disable handler */
 	(void)signal(sig, SIG_IGN);
 
@@ -2772,8 +2759,7 @@ static void handle_signal_suspend(int sig)
  * everyone's character and the server info, which is probably nicer
  * than killing everybody. --KLJ--
  */
-static void handle_signal_simple(int sig)
-{
+static void handle_signal_simple(int sig) {
 	/* Disable handler */
 	(void)signal(sig, SIG_IGN);
 
@@ -2787,8 +2773,7 @@ static void handle_signal_simple(int sig)
 
 
 	/* Allow suicide (after 5) */
-	if (signal_count >= 5)
-	{
+	if (signal_count >= 5) {
 		/* Tell the metaserver that we've quit */
 		Report_to_meta(META_DIE);
 
@@ -2798,8 +2783,7 @@ static void handle_signal_simple(int sig)
 	}
 
 	/* Give warning (after 4) */
-	else if (signal_count >= 4)
-	{
+	else if (signal_count >= 4) {
 		s_printf("Warning: Next signal kills server!\n");
 	}
 
@@ -2818,8 +2802,7 @@ static void handle_signal_bpipe(int sig){
  *
  * This one also calls exit_game_panic() --KLJ--
  */
-static void handle_signal_abort(int sig)
-{
+static void handle_signal_abort(int sig) {
 	/* Disable handler */
 	(void)signal(sig, SIG_IGN);
 
@@ -2841,9 +2824,7 @@ static void handle_signal_abort(int sig)
 /*
  * Ignore SIGTSTP signals (keyboard suspend)
  */
-void signals_ignore_tstp(void)
-{
-
+void signals_ignore_tstp(void) {
 #ifdef SIGTSTP
 	(void)signal(SIGTSTP, SIG_IGN);
 #endif
@@ -2853,9 +2834,7 @@ void signals_ignore_tstp(void)
 /*
  * Handle SIGTSTP signals (keyboard suspend)
  */
-void signals_handle_tstp(void)
-{
-
+void signals_handle_tstp(void) {
 #ifdef SIGTSTP
 	(void)signal(SIGTSTP, handle_signal_suspend);
 #endif
@@ -2866,18 +2845,14 @@ void signals_handle_tstp(void)
 /*
  * Prepare to handle the relevant signals
  */
-void signals_init(void)
-{
-
+void signals_init(void) {
 #ifdef SIGHUP
 	(void)signal(SIGHUP, SIG_IGN);
 #endif
 
-
 #ifdef SIGTSTP
 	(void)signal(SIGTSTP, handle_signal_suspend);
 #endif
-
 
 #ifdef SIGINT
 	(void)signal(SIGINT, handle_signal_simple);
@@ -2886,7 +2861,6 @@ void signals_init(void)
 #ifdef SIGQUIT
 	(void)signal(SIGQUIT, handle_signal_simple);
 #endif
-
 
 #ifdef SIGFPE
 	(void)signal(SIGFPE, handle_signal_abort);
@@ -2943,7 +2917,6 @@ void signals_init(void)
 #ifdef SIGPWR
 	(void)signal(SIGPWR, handle_signal_abort);
 #endif
-
 }
 
 
@@ -2953,26 +2926,21 @@ void signals_init(void)
 /*
  * Do nothing
  */
-void signals_ignore_tstp(void)
-{
-}
+void signals_ignore_tstp(void) { }
 
 /*
  * Do nothing
  */
-void signals_handle_tstp(void)
-{
-}
+void signals_handle_tstp(void) { }
 
 /*
  * Do nothing
  */
-void signals_init(void)
-{
-}
+void signals_init(void) { }
 
 
 #endif  /* HANDLE_SIGNALS */
+
 
 #if 0
 
@@ -3302,8 +3270,7 @@ bool highscore_file_convert(int Ind) {
                 return(FALSE);
         }
 
-	for (i = 0; i < entries; i++)
-	{
+	for (i = 0; i < entries; i++) {
 		/* Skip to end */
 		if (highscore_seek(i)) return (-1);
 		/* add new entry */
