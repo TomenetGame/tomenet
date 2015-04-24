@@ -2309,6 +2309,8 @@ if (hist != 2) {
 	int color;
 	char symbol;
 	char tmp[10];
+	byte amfi_sum = 0;
+	byte luck_sum = 0;
 	for (i = 0; i < 15; i++) {
 		/* Header */
 		color = TERM_WHITE;
@@ -2554,8 +2556,9 @@ if (hist != 2) {
 			c_put_str(color, tmp, 12, 45+i);
 		}
 		if (csheet_boni[i].luck != 0) {
+			luck_sum += csheet_boni[i].luck;
 			header_color[2][12] = TERM_WHITE;
-			if (p_ptr->luck >= 40) header_color[2][12] = TERM_L_UMBER; //max
+			if (luck_sum >= 40) header_color[2][12] = TERM_L_UMBER; //max
 			color = TERM_L_GREEN;
 			if (csheet_boni[i].luck > 9) color = TERM_GREEN;
 			if (csheet_boni[i].luck > 19) color = TERM_L_UMBER; //high luck sets
@@ -2633,8 +2636,9 @@ if (hist != 2) {
 		} else if (csheet_boni[i].cb[11] & CB12_RSCHR) { c_put_str(TERM_L_UMBER, "s", 19, 45+i); header_color[2][18] = TERM_L_UMBER; }
 		/* Track AM Field in a similar fashion */
 		if (csheet_boni[i].amfi != 0) {
+			amfi_sum += csheet_boni[i].amfi;
 			header_color[1][17] = TERM_WHITE;
-			if (p_ptr->antimagic >= ANTIMAGIC_CAP) header_color[1][17] = TERM_L_UMBER;
+			if (amfi_sum >= ANTIMAGIC_CAP) header_color[1][17] = TERM_L_UMBER;
 			color = TERM_L_GREEN;
 			if ((csheet_boni[i].amfi / 5) > 9) color = TERM_GREEN; //max AM skill, or form+skill combo
 			if ((i != 14) && (csheet_boni[i].amfi > 29)) color = TERM_L_UMBER; //show max on darkswords, not on form/skill column though
