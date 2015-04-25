@@ -208,8 +208,7 @@ static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievem
 /*
  * Set "p_ptr->tim_thunder", notice observable changes
  */
-bool set_tim_thunder(int Ind, int v, int p1, int p2)
-{
+bool set_tim_thunder(int Ind, int v, int p1, int p2) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -260,8 +259,7 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2)
 /*
  * Set "p_ptr->tim_regen", notice observable changes
  */
-bool set_tim_regen(int Ind, int v, int p)
-{
+bool set_tim_regen(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -305,8 +303,7 @@ bool set_tim_regen(int Ind, int v, int p)
 /*
  * Set "p_ptr->tim_ffall"
  */
-bool set_tim_ffall(int Ind, int v)
-{
+bool set_tim_ffall(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -395,10 +392,8 @@ bool set_tim_lev(int Ind, int v) {
  * Set "p_ptr->adrenaline", notice observable changes
  * Note the interaction with biofeedback
  */
-bool set_adrenaline(int Ind, int v)
-{
+bool set_adrenaline(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
         int i;
@@ -471,10 +466,8 @@ bool set_adrenaline(int Ind, int v)
  * Set "p_ptr->biofeedback", notice observable changes
  * Note the interaction with adrenaline
  */
-bool set_biofeedback(int Ind, int v)
-{
+bool set_biofeedback(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -535,10 +528,8 @@ bool set_biofeedback(int Ind, int v)
 /*
  * Set "p_ptr->tim_esp", notice observable changes
  */
-bool set_tim_esp(int Ind, int v)
-{
+bool set_tim_esp(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -583,10 +574,8 @@ bool set_tim_esp(int Ind, int v)
 /*
  * Set "p_ptr->st_anchor", notice observable changes
  */
-bool set_st_anchor(int Ind, int v)
-{
+bool set_st_anchor(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -632,10 +621,8 @@ bool set_st_anchor(int Ind, int v)
 /*
  * Set "p_ptr->prob_travel", notice observable changes
  */
-bool set_prob_travel(int Ind, int v)
-{
+bool set_prob_travel(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -679,17 +666,27 @@ bool set_prob_travel(int Ind, int v)
 /*
  * Set "p_ptr->brand", notice observable changes
  */
-bool set_brand(int Ind, int v, int t, int p)
-{
+bool set_brand(int Ind, int v, int t, int p) {
 	player_type *p_ptr = Players[Ind];
-	bool notice = FALSE, plural = FALSE;
+	bool notice = FALSE, plural;
 	char weapons[20];
 
-	strcpy(weapons, "\377wYour weapon");
-	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && /* dual-wield */
 	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) {
 		strcpy(weapons, "\377wYour weapons");
 		plural = TRUE;
+	} else if (p_ptr->inventory[INVEN_WIELD].k_idx ||
+	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) {
+		strcpy(weapons, "\377wYour weapon");
+		plural = FALSE;
+	} else {
+		if (v) msg_print(Ind, "You are not wielding any melee weapons to brand."); /* failure */
+		else { /* Shut */
+			p_ptr->brand = 0;
+			p_ptr->brand_t = 0;
+			p_ptr->brand_d = 0;
+		}
+		return FALSE; /* don't notice anything */
 	}
 
 	/* Hack -- Force good values */
@@ -700,57 +697,57 @@ bool set_brand(int Ind, int v, int t, int p)
 		if (!p_ptr->brand &&
 		    (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield..*/
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
-		  switch (t) {
-		    case BRAND_ELEC:
-                    case BRAND_BALL_ELEC:
-                	if (plural) msg_format(Ind, "%s sparkle with lightning!", weapons);
-			else msg_format(Ind, "%s sparkles with lightning!", weapons);
-		      break;
-                    case BRAND_BALL_COLD:
-		    case BRAND_COLD:
-		        if (plural) msg_format(Ind, "%s freeze!", weapons);
-		        else msg_format(Ind, "%s freezes!", weapons);
-		      break;
-                    case BRAND_BALL_FIRE:
-		    case BRAND_FIRE:
-			if (plural) msg_format(Ind, "%s burn!", weapons);
-		        else msg_format(Ind, "%s burns!", weapons);
-		      break;
-                    case BRAND_BALL_ACID:
-		    case BRAND_ACID:
-		        if (plural) msg_format(Ind, "%s drip acid!", weapons);
-                        else msg_format(Ind, "%s drips acid!", weapons);
-		      break;
-		    case BRAND_POIS:
-		        if (plural) msg_format(Ind, "%s are covered with venom!", weapons);
-                        else msg_format(Ind, "%s is covered with venom!", weapons);
-		      break;
-		    case BRAND_BASE:
-		        if (plural) msg_format(Ind, "%s glow in many colours!", weapons);
-                        else msg_format(Ind, "%s glows in many colours!", weapons);
-		      break;
-		    case BRAND_CHAO:
-		        if (plural) msg_format(Ind, "%s seem to twist and warp!", weapons); //used experimentally
-                        else msg_format(Ind, "%s seems to twist and warp!", weapons); //used experimentally
-		      break;
-		    case BRAND_VORP:
-		        if (plural) msg_format(Ind, "%s sharpen!", weapons); //not used
-                        else msg_format(Ind, "%s sharpens!", weapons); //not used
-		      break;
-                    case BRAND_BALL_SOUN:
-                        if (plural) msg_format(Ind, "%s vibrate!", weapons); //not used
-                        else msg_format(Ind, "%s vibrates!", weapons); //not used
-		      break;
-		    }
-		  notice = TRUE;
+			switch (t) {
+			case BRAND_ELEC:
+			case BRAND_BALL_ELEC:
+				if (plural) msg_format(Ind, "%s sparkle with lightning!", weapons);
+				else msg_format(Ind, "%s sparkles with lightning!", weapons);
+				break;
+			case BRAND_BALL_COLD:
+			case BRAND_COLD:
+				if (plural) msg_format(Ind, "%s freeze!", weapons);
+				else msg_format(Ind, "%s freezes!", weapons);
+				break;
+			case BRAND_BALL_FIRE:
+			case BRAND_FIRE:
+				if (plural) msg_format(Ind, "%s burn!", weapons);
+				else msg_format(Ind, "%s burns!", weapons);
+				break;
+			case BRAND_BALL_ACID:
+			case BRAND_ACID:
+				if (plural) msg_format(Ind, "%s drip acid!", weapons);
+				else msg_format(Ind, "%s drips acid!", weapons);
+				break;
+			case BRAND_POIS:
+				if (plural) msg_format(Ind, "%s are covered with venom!", weapons);
+				else msg_format(Ind, "%s is covered with venom!", weapons);
+				break;
+			case BRAND_BASE:
+				if (plural) msg_format(Ind, "%s glow in many colours!", weapons);
+				else msg_format(Ind, "%s glows in many colours!", weapons);
+				break;
+			case BRAND_CHAO:
+				if (plural) msg_format(Ind, "%s seem to twist and warp!", weapons); //used experimentally
+				else msg_format(Ind, "%s seems to twist and warp!", weapons); //used experimentally
+				break;
+			case BRAND_VORP:
+				if (plural) msg_format(Ind, "%s sharpen!", weapons); //not used
+				else msg_format(Ind, "%s sharpens!", weapons); //not used
+				break;
+			case BRAND_BALL_SOUN:
+				if (plural) msg_format(Ind, "%s vibrate!", weapons); //not used
+				else msg_format(Ind, "%s vibrates!", weapons); //not used
+				break;
+			}
+			notice = TRUE;
 		}
 	}
 
 	/* Shut */
 	else {
-		if (p_ptr->brand && p_ptr->inventory[INVEN_WIELD].k_idx) {
-			//msg_print(Ind, "\377oYour weapon seems normal again.");
-			msg_format(Ind, "%s no longer branded.", weapons);
+		if (p_ptr->brand) {
+			if (plural) msg_print(Ind, "\377oThe branding magic on your weapons ceases again.");
+			else msg_print(Ind, "\377oThe branding magic on your weapon ceases again.");
 			notice = TRUE;
 			t = 0;
 			p = 0;
@@ -782,11 +779,19 @@ bool set_brand(int Ind, int v, int t, int p)
 /*
  * Set "p_ptr->bow_brand_xxx", notice observable changes
  */
-bool set_bow_brand(int Ind, int v, int t, int p)
-{
+bool set_bow_brand(int Ind, int v, int t, int p) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
+
+	if (!p_ptr->inventory[INVEN_AMMO].k_idx) {
+		if (v) msg_print(Ind, "Your quiver does not hold any ammunition to brand."); /* failure */
+		else { /* Shut */
+			p_ptr->bow_brand = 0;
+			p_ptr->bow_brand_t = 0;
+			p_ptr->bow_brand_d = 0;
+		}
+		return FALSE; /* don't notice anything */
+	}
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -794,47 +799,47 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 	/* Open */
 	if (v) {
 		if (!p_ptr->bow_brand) {
-		  switch (t) {
-		    case BRAND_ELEC:
-                    case BRAND_BALL_ELEC:
-		      msg_print(Ind, "\377oYour ammo sparkles with lightnings!");
-		      break;
-                    case BRAND_BALL_COLD:
-		    case BRAND_COLD:
-		      msg_print(Ind, "\377oYour ammo freezes!");
-		      break;
-                    case BRAND_BALL_FIRE:
-		    case BRAND_FIRE:
-		      msg_print(Ind, "\377oYour ammo burns!");
-		      break;
-                    case BRAND_BALL_ACID:
-		    case BRAND_ACID:
-		      msg_print(Ind, "\377oYour ammo drips acid!");
-		      break;
-		    case BRAND_POIS:
-		      msg_print(Ind, "\377oYour ammo is covered with venom!");
-		      break;
-		    case BRAND_BASE:
-		      msg_print(Ind, "\377oYour ammo glows in many colours!");
-		      break;
-		    case BRAND_CHAO:
-		      msg_print(Ind, "\377oYour ammo seems to twist and warp!");
-		      break;
-		    case BRAND_VORP:
-		      msg_print(Ind, "\377oYour ammo sharpens!");
-		      break;
-                    case BRAND_BALL_SOUN:
-                      msg_print(Ind, "\377oYour ammo vibrates!");
-		      break;
-		    }
-		  notice = TRUE;
+			switch (t) {
+			case BRAND_ELEC:
+			case BRAND_BALL_ELEC:
+				msg_print(Ind, "\377oYour ammunition sparkles with lightnings!");
+				break;
+			case BRAND_BALL_COLD:
+			case BRAND_COLD:
+				msg_print(Ind, "\377oYour ammunition freezes!");
+				break;
+			case BRAND_BALL_FIRE:
+			case BRAND_FIRE:
+				msg_print(Ind, "\377oYour ammunition burns!");
+				break;
+			case BRAND_BALL_ACID:
+			case BRAND_ACID:
+				msg_print(Ind, "\377oYour ammunition drips acid!");
+				break;
+			case BRAND_POIS:
+				msg_print(Ind, "\377oYour ammunition is covered with venom!");
+				break;
+			case BRAND_BASE:
+				msg_print(Ind, "\377oYour ammunition glows in many colours!");
+				break;
+			case BRAND_CHAO:
+				msg_print(Ind, "\377oYour ammunition seems to twist and warp!");
+				break;
+			case BRAND_VORP:
+				msg_print(Ind, "\377oYour ammunition sharpens!");
+				break;
+			case BRAND_BALL_SOUN:
+				msg_print(Ind, "\377oYour ammunition vibrates!");
+				break;
+			}
+			notice = TRUE;
 		}
 	}
 
 	/* Shut */
 	else {
 		if (p_ptr->bow_brand) {
-			msg_print(Ind, "\377oYour ammo seems normal again.");
+			msg_print(Ind, "\377oThe branding magic on your ammunition ceases again.");
 			notice = TRUE;
 			t = 0;
 			p = 0;
@@ -867,10 +872,8 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 /*
  * Set "p_ptr->tim_mimic", notice observable changes
  */
-bool set_mimic(int Ind, int v, int p)
-{
+bool set_mimic(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* force good values */
@@ -924,10 +927,8 @@ bool set_mimic(int Ind, int v, int p)
 /*
  * Set "p_ptr->tim_manashield", notice observable changes
  */
-bool set_tim_manashield(int Ind, int v)
-{
+bool set_tim_manashield(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -976,10 +977,8 @@ bool set_tim_manashield(int Ind, int v)
 /*
  * Set "p_ptr->tim_traps", notice observable changes
  */
-bool set_tim_traps(int Ind, int v)
-{
+bool set_tim_traps(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -1023,10 +1022,8 @@ bool set_tim_traps(int Ind, int v)
 /*
  * Set "p_ptr->tim_invis", notice observable changes
  */
-bool set_invis(int Ind, int v, int p)
-{
+bool set_invis(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -1074,10 +1071,8 @@ bool set_invis(int Ind, int v, int p)
 /*
  * Set "p_ptr->fury", notice observable changes
  */
-bool set_fury(int Ind, int v)
-{
+bool set_fury(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -1122,10 +1117,8 @@ bool set_fury(int Ind, int v)
 /*
  * Set "p_ptr->tim_meditation", notice observable changes
  */
-bool set_tim_meditation(int Ind, int v)
-{
+bool set_tim_meditation(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -1171,10 +1164,8 @@ bool set_tim_meditation(int Ind, int v)
 /*
  * Set "p_ptr->tim_wraith", notice observable changes
  */
-bool set_tim_wraith(int Ind, int v)
-{
+bool set_tim_wraith(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -1273,10 +1264,8 @@ bool set_tim_wraith(int Ind, int v)
  * Note that blindness is currently the only thing which can affect
  * "player_can_see_bold()".
  */
-bool set_blind(int Ind, int v)
-{
+bool set_blind(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
@@ -1348,10 +1337,8 @@ bool set_blind(int Ind, int v)
 /*
  * Set "p_ptr->confused", notice observable changes
  */
-bool set_confused(int Ind, int v)
-{
+bool set_confused(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
@@ -1419,10 +1406,8 @@ void set_pushed(int Ind, int dir) {
 /*
  * Set "p_ptr->poisoned", notice observable changes
  */
-bool set_poisoned(int Ind, int v, int attacker)
-{
+bool set_poisoned(int Ind, int v, int attacker) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
@@ -1478,10 +1463,8 @@ bool set_poisoned(int Ind, int v, int attacker)
 /*
  * Set "p_ptr->afraid", notice observable changes
  */
-bool set_afraid(int Ind, int v)
-{
+bool set_afraid(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
@@ -1530,10 +1513,8 @@ bool set_afraid(int Ind, int v)
 /*
  * Set "p_ptr->paralyzed", notice observable changes
  */
-bool set_paralyzed(int Ind, int v)
-{
+bool set_paralyzed(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
@@ -1587,10 +1568,8 @@ bool set_paralyzed(int Ind, int v)
  *
  * Note that we must redraw the map when hallucination changes.
  */
-bool set_image(int Ind, int v)
-{
+bool set_image(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -1647,8 +1626,7 @@ bool set_image(int Ind, int v)
 /*
  * Set "p_ptr->fast", notice observable changes
  */
-bool set_fast(int Ind, int v, int p)
-{
+bool set_fast(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -1709,10 +1687,8 @@ bool set_fast(int Ind, int v, int p)
 /*
  * Set "p_ptr->slow", notice observable changes
  */
-bool set_slow(int Ind, int v)
-{
+bool set_slow(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
@@ -1762,10 +1738,8 @@ bool set_slow(int Ind, int v)
 /*
  * Set "p_ptr->shield", notice observable changes
  */
-bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2)
-{
+bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -1815,10 +1789,8 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2)
 /*
  * Set "p_ptr->blessed", notice observable changes
  */
-bool set_blessed(int Ind, int v)
-{
+bool set_blessed(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -1862,8 +1834,7 @@ bool set_blessed(int Ind, int v)
 	return (TRUE);
 }
 
-bool set_res_fear(int Ind, int v)
-{
+bool set_res_fear(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -1906,10 +1877,8 @@ bool set_res_fear(int Ind, int v)
 /*
  * Set "p_ptr->hero", notice observable changes
  */
-bool set_hero(int Ind, int v)
-{
+bool set_hero(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -1956,10 +1925,8 @@ bool set_hero(int Ind, int v)
 /*
  * Set "p_ptr->shero", notice observable changes
  */
-bool set_shero(int Ind, int v)
-{
+bool set_shero(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2003,10 +1970,8 @@ bool set_shero(int Ind, int v)
 }
 
 
-bool set_berserk(int Ind, int v)
-{
+bool set_berserk(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2050,10 +2015,8 @@ bool set_berserk(int Ind, int v)
 }
 
 
-bool set_melee_sprint(int Ind, int v)
-{
+bool set_melee_sprint(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2103,10 +2066,8 @@ bool set_melee_sprint(int Ind, int v)
 /*
  * Set "p_ptr->protevil", notice observable changes
  */
-bool set_protevil(int Ind, int v)
-{
+bool set_protevil(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2148,10 +2109,8 @@ bool set_protevil(int Ind, int v)
 /*
  * Set "p_ptr->zeal", notice observable changes
  */
-bool set_zeal(int Ind, int p, int v)
-{
+bool set_zeal(int Ind, int p, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2195,10 +2154,8 @@ bool set_zeal(int Ind, int p, int v)
 	return (TRUE);
 }
 
-bool set_martyr(int Ind, int v)
-{
+bool set_martyr(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack: Negative v means initiate martyr */
@@ -2272,10 +2229,8 @@ bool set_martyr(int Ind, int v)
 /*
  * Set "p_ptr->invuln", notice observable changes
  */
-bool set_invuln(int Ind, int v)
-{
+bool set_invuln(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2329,8 +2284,7 @@ bool set_invuln(int Ind, int v)
  * Note: known also as 'stair-GoI' (globe of invulnerability),
  * supposed to shortly protect players when they enter a new level. -C. Blue
  */
-bool set_invuln_short(int Ind, int v)
-{
+bool set_invuln_short(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 
 	/* not cumulative */
@@ -2356,10 +2310,8 @@ bool set_invuln_short(int Ind, int v)
 /*
  * Set "p_ptr->tim_invis", notice observable changes
  */
-bool set_tim_invis(int Ind, int v)
-{
+bool set_tim_invis(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2407,10 +2359,8 @@ bool set_tim_invis(int Ind, int v)
 /*
  * Set "p_ptr->tim_infra", notice observable changes
  */
-bool set_tim_infra(int Ind, int v)
-{
+bool set_tim_infra(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2458,10 +2408,8 @@ bool set_tim_infra(int Ind, int v)
 /*
  * Set "p_ptr->oppose_acid", notice observable changes
  */
-bool set_oppose_acid(int Ind, int v)
-{
+bool set_oppose_acid(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2503,10 +2451,8 @@ bool set_oppose_acid(int Ind, int v)
 /*
  * Set "p_ptr->oppose_elec", notice observable changes
  */
-bool set_oppose_elec(int Ind, int v)
-{
+bool set_oppose_elec(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2548,10 +2494,8 @@ bool set_oppose_elec(int Ind, int v)
 /*
  * Set "p_ptr->oppose_fire", notice observable changes
  */
-bool set_oppose_fire(int Ind, int v)
-{
+bool set_oppose_fire(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2593,10 +2537,8 @@ bool set_oppose_fire(int Ind, int v)
 /*
  * Set "p_ptr->oppose_cold", notice observable changes
  */
-bool set_oppose_cold(int Ind, int v)
-{
+bool set_oppose_cold(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2638,10 +2580,8 @@ bool set_oppose_cold(int Ind, int v)
 /*
  * Set "p_ptr->oppose_pois", notice observable changes
  */
-bool set_oppose_pois(int Ind, int v)
-{
+bool set_oppose_pois(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -2685,12 +2625,9 @@ bool set_oppose_pois(int Ind, int v)
  *
  * Note the special code to only notice "range" changes.
  */
-bool set_stun(int Ind, int v)
-{
+bool set_stun(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	int old_aux, new_aux;
-
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
@@ -2799,12 +2736,9 @@ bool set_stun(int Ind, int v)
  *
  * Note the special code to only notice "range" changes.
  */
-bool set_cut(int Ind, int v, int attacker)
-{
+bool set_cut(int Ind, int v, int attacker) {
 	player_type *p_ptr = Players[Ind];
-
 	int old_aux, new_aux;
-
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
@@ -2941,10 +2875,8 @@ bool set_cut(int Ind, int v, int attacker)
 	return (TRUE);
 }
 
-bool set_mindboost(int Ind, int p, int v)
-{
+bool set_mindboost(int Ind, int p, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -3183,10 +3115,8 @@ bool do_divine_xtra_res_time(int Ind, int v) {
 /*
  * Set "p_ptr->tim_deflect", notice observable changes
  */
-bool set_tim_deflect(int Ind, int v)
-{
+bool set_tim_deflect(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
@@ -3231,8 +3161,7 @@ bool set_tim_deflect(int Ind, int v)
 /*
  * Set "p_ptr->sh_fire/cold/elec", notice observable changes
  */
-bool set_sh_fire_tim(int Ind, int v)
-{
+bool set_sh_fire_tim(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -3269,8 +3198,7 @@ bool set_sh_fire_tim(int Ind, int v)
 	/* Result */
 	return (TRUE);
 }
-bool set_sh_cold_tim(int Ind, int v)
-{
+bool set_sh_cold_tim(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -3307,8 +3235,7 @@ bool set_sh_cold_tim(int Ind, int v)
 	/* Result */
 	return (TRUE);
 }
-bool set_sh_elec_tim(int Ind, int v)
-{
+bool set_sh_elec_tim(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -3370,12 +3297,9 @@ bool set_sh_elec_tim(int Ind, int v)
  * game turns, or 500/(100/5) = 25 player turns (if nothing else is
  * affecting the player speed).
  */
-bool set_food(int Ind, int v)
-{
+bool set_food(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
-
 	int old_aux, new_aux;
-
 	bool notice = FALSE;
 
 	/* True Ghosts don't starve */
@@ -3547,8 +3471,7 @@ bool set_food(int Ind, int v)
 /*
  * Set "p_ptr->bless_temp_luck" - note: currently bless_temp_... aren't saved/loaded! (ie expire on logout)
  */
-bool bless_temp_luck(int Ind, int pow, int dur)
-{
+bool bless_temp_luck(int Ind, int pow, int dur) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -3680,8 +3603,7 @@ void shape_Maia_skills(int Ind) { }
 /*
  * Try to raise stats, esp. if low.		- Jir -
  */
-static void check_training(int Ind)
-{
+static void check_training(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int train = get_skill_scale(p_ptr, SKILL_TRAINING, 50);
 	int i, chance, value, value2;

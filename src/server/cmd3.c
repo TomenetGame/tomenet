@@ -27,17 +27,12 @@ bool bypass_inscrption = FALSE;
  * Note that taking off an item when "full" will cause that item
  * to fall to the ground.
  */
-void inven_takeoff(int Ind, int item, int amt, bool called_from_wield)
-{
-	player_type *p_ptr = Players[Ind];
-
-	int			posn; //, j;
-
-	object_type		*o_ptr;
-	object_type		tmp_obj;
-
+void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
+	player_type	*p_ptr = Players[Ind];
+	int		posn; //, j;
+	object_type	*o_ptr;
+	object_type	tmp_obj;
 	cptr		act;
-
 	char		o_name[ONAME_LEN];
 
 
@@ -47,10 +42,10 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield)
 	/* Paranoia */
 	if (amt <= 0) return;
 
-        if((!bypass_inscrption) && check_guard_inscription( o_ptr->note, 't' )) {
+        if ((!bypass_inscrption) && check_guard_inscription( o_ptr->note, 't' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
                 return;
-        };
+        }
         bypass_inscrption = FALSE;
 
 	/* Sigil (reset it) */
@@ -59,7 +54,13 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield)
 		o_ptr->sigil = 0;
 		o_ptr->sseed = 0;
 	}
-	
+
+	if (p_ptr->bow_brand && item == INVEN_AMMO) set_bow_brand(Ind, 0, 0, 0);
+	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
+	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
+	else if (p_ptr->brand && (item == INVEN_WIELD || /* dual-wield */
+	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_brand(Ind, 0, 0, 0);
+
 	/* Verify */
 	if (amt > o_ptr->number) amt = o_ptr->number;
 
@@ -1105,13 +1106,21 @@ return;
 		p_ptr->equip_cnt++;
 
 		/* Where is the item now */
-		if (slot == INVEN_WIELD) act = "You are wielding";
-		else if (slot == INVEN_ARM) act = "You are wielding";
-		else if (slot == INVEN_BOW) act = "You are shooting with";
-		else if (slot == INVEN_LITE) act = "Your light source is";
-		else if (slot == INVEN_AMMO) act = "In your quiver you have";
-		else if (slot == INVEN_TOOL) act = "You are using";
-		else act = "You are wearing";
+		switch (slot) {
+		case INVEN_WIELD:
+			act = "You are wielding";
+			if (p_ptr->brand) set_brand(Ind, 0, 0, 0); /* actually only applies for dual-wield */
+			break;
+		case INVEN_ARM:
+			act = "You are wielding";
+			if (p_ptr->brand && o_ptr->tval != TV_SHIELD) set_brand(Ind, 0, 0, 0); /* dual-wield */
+			break;
+		case INVEN_BOW: act = "You are shooting with"; break;
+		case INVEN_LITE: act = "Your light source is"; break;
+		case INVEN_AMMO: act = "In your quiver you have"; break;
+		case INVEN_TOOL: act = "You are using"; break;
+		default: act = "You are wearing";
+		}
 
 		/* Describe the result */
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -1248,8 +1257,7 @@ return;
 /*
  * Take off an item
  */
-void do_cmd_takeoff(int Ind, int item, int amt)
-{
+void do_cmd_takeoff(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 
@@ -1257,8 +1265,7 @@ void do_cmd_takeoff(int Ind, int item, int amt)
 
 #if 0
 	/* Verify potential overflow */
-	if (p_ptr->inven_cnt >= INVEN_PACK)
-	{
+	if (p_ptr->inven_cnt >= INVEN_PACK) {
 		/* Verify with the player */
 		if (other_query_flag &&
 		    !get_check(Ind, "Your pack may overflow.  Continue? ")) return;
@@ -1267,32 +1274,22 @@ void do_cmd_takeoff(int Ind, int item, int amt)
 
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-
+	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
-	else
-	{
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
+	else {
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
 
-	if( check_guard_inscription( o_ptr->note, 'T' )) {
+	if (check_guard_inscription( o_ptr->note, 'T' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
-	};
-
+	}
 
 	/* Item is cursed */
-	if (cursed_p(o_ptr) && !is_admin(p_ptr))
-	{
+	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
 		/* Oops */
 		msg_print(Ind, "Hmmm, it seems to be cursed.");
-
 		/* Nope */
 		return;
 	}

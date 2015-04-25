@@ -428,32 +428,29 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
 		/* Temporary weapon branding */
-		if ((p_ptr->inventory[INVEN_WIELD].k_idx || 
-		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
-			if (p_ptr->brand) {
-				switch (p_ptr->brand_t) {
-				case BRAND_ELEC:
-					f1 |= TR1_BRAND_ELEC;
-					break;
-				case BRAND_COLD:
-					f1 |= TR1_BRAND_COLD;
-					break;
-				case BRAND_FIRE:
-					f1 |= TR1_BRAND_FIRE;
-					break;
-				case BRAND_ACID:
-					f1 |= TR1_BRAND_ACID;
-					break;
-				case BRAND_POIS:
-					f1 |= TR1_BRAND_POIS;
-					break;
-				case BRAND_BASE:
-					f1 |= (TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID);
-					break;
-				case BRAND_CHAO:
-					f5 |= TR5_CHAOTIC;
-					break;
-				}
+		if (p_ptr->brand && o_ptr->k_idx) {
+			switch (p_ptr->brand_t) {
+			case BRAND_ELEC:
+				f1 |= TR1_BRAND_ELEC;
+				break;
+			case BRAND_COLD:
+				f1 |= TR1_BRAND_COLD;
+				break;
+			case BRAND_FIRE:
+				f1 |= TR1_BRAND_FIRE;
+				break;
+			case BRAND_ACID:
+				f1 |= TR1_BRAND_ACID;
+				break;
+			case BRAND_POIS:
+				f1 |= TR1_BRAND_POIS;
+				break;
+			case BRAND_BASE:
+				f1 |= (TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID);
+				break;
+			case BRAND_CHAO:
+				f5 |= TR5_CHAOTIC;
+				break;
 			}
 		}
 	}
@@ -978,32 +975,29 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
 		/* Temporary weapon branding */
-		if ((p_ptr->inventory[INVEN_WIELD].k_idx || 
-		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
-			if (p_ptr->brand) {
-				switch (p_ptr->brand_t) {
-				case BRAND_ELEC:
-					f1 |= TR1_BRAND_ELEC;
-					break;
-				case BRAND_COLD:
-					f1 |= TR1_BRAND_COLD;
-					break;
-				case BRAND_FIRE:
-					f1 |= TR1_BRAND_FIRE;
-					break;
-				case BRAND_ACID:
-					f1 |= TR1_BRAND_ACID;
-					break;
-				case BRAND_POIS:
-					f1 |= TR1_BRAND_POIS;
-					break;
-				case BRAND_BASE:
-					f1 |= (TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID);
-					break;
-				case BRAND_CHAO:
-					f5 |= TR5_CHAOTIC;
-					break;
-				}
+		if (p_ptr->brand && o_ptr->k_idx) {
+			switch (p_ptr->brand_t) {
+			case BRAND_ELEC:
+				f1 |= TR1_BRAND_ELEC;
+				break;
+			case BRAND_COLD:
+				f1 |= TR1_BRAND_COLD;
+				break;
+			case BRAND_FIRE:
+				f1 |= TR1_BRAND_FIRE;
+				break;
+			case BRAND_ACID:
+				f1 |= TR1_BRAND_ACID;
+				break;
+			case BRAND_POIS:
+				f1 |= TR1_BRAND_POIS;
+				break;
+			case BRAND_BASE:
+				f1 |= (TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID);
+				break;
+			case BRAND_CHAO:
+				f5 |= TR5_CHAOTIC;
+				break;
 			}
 		}
 	}
