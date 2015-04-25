@@ -137,6 +137,7 @@ extern char cname[MAX_CHARS];
 extern char message_history[MSG_HISTORY_MAX][MSG_LEN];
 extern char message_history_chat[MSG_HISTORY_MAX][MSG_LEN];
 extern char message_history_msgnochat[MSG_HISTORY_MAX][MSG_LEN];
+extern char message_history_impscroll[MSG_HISTORY_MAX][MSG_LEN];
 /*extern byte hist_start; */
 extern byte hist_end;
 extern bool hist_looped;
@@ -245,6 +246,12 @@ extern s32b message__head_msgnochat;
 extern s32b message__tail_msgnochat;
 extern s32b *message__ptr_msgnochat;
 extern char *message__buf_msgnochat;
+extern s32b message__next_impscroll;
+extern s32b message__last_impscroll;
+extern s32b message__head_impscroll;
+extern s32b message__tail_impscroll;
+extern s32b *message__ptr_impscroll;
+extern char *message__buf_impscroll;
 
 
 
@@ -548,12 +555,16 @@ extern byte get_3way(cptr prompt, bool default_no);
 extern s32b message_num(void);
 extern s32b message_num_chat(void);
 extern s32b message_num_msgnochat(void);
+extern s32b message_num_impscroll(void);
 extern cptr message_str(s32b age);
 extern cptr message_str_chat(s32b age);
 extern cptr message_str_msgnochat(s32b age);
+extern cptr message_str_impscroll(s32b age);
 extern void c_message_add(cptr msg);
+extern void c_message_add_scrollback(cptr msg);
 extern void c_message_add_chat(cptr msg);
 extern void c_message_add_msgnochat(cptr msg);
+extern void c_message_add_impscroll(cptr msg);
 extern void c_msg_print(cptr msg);
 extern void c_msg_format(cptr fmt, ...);
 extern s32b c_get_quantity(cptr prompt, int max);

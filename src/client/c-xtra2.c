@@ -320,6 +320,7 @@ void do_cmd_messages_chatonly(void) {
 
 	/* Display messages in different colors */
 
+#if 0 /* before 4.6.0: we filter all eligible messages from the generic 'message' buffer to display here */
 	/* Total messages */
 	n = message_num();
 	nn = 0;  /* number of new messages */
@@ -336,6 +337,18 @@ void do_cmd_messages_chatonly(void) {
 			nn++;
 		}
 	}
+#else /* we use a dedicated important-scrollback-buffer to allow longer scrollbacks after message buffer got flooded with lots of combat messages */
+	/* Total messages */
+	n = message_num_impscroll();
+	nn = 0;  /* number of new messages */
+
+	/* Filter message buffer for "important messages" add to message_chat*/
+//	for (i = 0; i < n; i++)
+	for (i = n - 1; i >= 0; i--) { /* traverse from oldest to newest message */
+		message_chat[nn] = message_str_impscroll(i);
+		nn++;
+	}
+#endif
 
 	/* Start on first message */
 	i = 0;
@@ -459,7 +472,11 @@ void do_cmd_messages_chatonly(void) {
 
 			/* Scan messages */
 			for (z = i + 1; z < n; z++) {
+#if 0
 				cptr str = message_str(z);
+#else
+				cptr str = message_str_impscroll(z);
+#endif
 
 				/* Handle "shower" */
 				if (strstr(str, finder)) {
