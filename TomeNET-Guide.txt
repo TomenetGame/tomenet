@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. April 2015 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.9+ - official websites are:
+| Latest update: 25. April 2015 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
 |
@@ -1482,6 +1482,8 @@ Weapons, devices and spells:
 
 Ammunition:
     !=          will make your character auto-pickup the ammo from the floor.
+    !g          will make your ammunition break. Rather disadvantageous but
+                maybe useful if you don't like littering the floor with it.
     !M          makes ammunition stacks of same base type and same ego power
                 stack even if +hit or +dam enchantments are not equal. Those
                 will be averaged and rounded downwards. (Doesn't work for
@@ -1493,7 +1495,7 @@ Ammunition:
                 Note that you can place ammo in your inventory in the desired
                 order for reloading by dropping it/picking it up again!
 
-Weapons that ricochet (sling ammo):
+Sling ammunition:
     !R          Prevents ricochetting.
 
 Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
