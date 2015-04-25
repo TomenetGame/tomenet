@@ -6351,7 +6351,7 @@ static void do_cmd_options_fonts(void) {
 	}
 
 	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
-#ifdef WINDOWS /* Windows supports graphic fonts for the mini map
+#ifdef WINDOWS /* Windows supports graphic fonts for the mini map */
 	qsort(graphic_font_name, graphic_fonts, sizeof(char[256]), font_name_cmp);
 #endif
 //	for (j = 0; j < fonts; j++) c_msg_format("'%s'", font_name[j]);
