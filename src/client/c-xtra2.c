@@ -345,14 +345,8 @@ void do_cmd_messages_chatonly(void) {
 	/* Filter message buffer for "important messages" add to message_chat*/
 //	for (i = 0; i < n; i++)
 	for (i = n - 1; i >= 0; i--) { /* traverse from oldest to newest message */
-		cptr msg = message_str_impscroll(i);
-
-		if (msg[0] == '\376') {
-			/* strip control code */
-			if (msg[0] == '\376') msg++;
-			message_chat[nn] = msg;
-			nn++;
-		}
+		message_chat[nn] = message_str_impscroll(i);
+		nn++;
 	}
 #endif
 
