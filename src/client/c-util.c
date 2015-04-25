@@ -2838,7 +2838,7 @@ void c_message_add_msgnochat(cptr str)
         if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
 
         /* Check the last few _msgnochatmessages (if any to count) */
-        for (i = message__next; k; k--)
+        for (i = message__next_msgnochat; k; k--)
         {
                 u32b q;
 
