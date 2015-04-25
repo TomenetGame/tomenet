@@ -163,8 +163,7 @@ cptr window_flag_desc[8] =
 	"Display non-chat messages",
 	"Display all messages",
 	"Display chat messages",
-//	"Display mini-map",//
-	NULL,
+	"Display mini-map",
 	"Display lag-o-meter",
 };
 #endif

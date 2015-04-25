@@ -2634,12 +2634,67 @@ errr Term_key_push_buf(cptr buf, int len)
 	return Term_key_push_buf_aux(Term->keys, buf, len);
 }
 
+/*
+ * Add support for minimap: copy of main window that
+ * is always active - Lightman
+ */
+errr refresh_minimap() {
+#ifdef WINDOWS
+	int i,j;
+	int w;
+	int h;
 
+	term_win *scr_a;
+	term_win *scr_b;
 
+	//Find the map in memory.
+	Term_activate(ang_term[0]);
+	if (screen_icky > 0) scr_a = Term->mem[0];
+	else scr_a = Term->scr;
 
+	//Find the dimensions of the map
+	w = Term->wid;
+	h = Term->hgt;
 
+	//Look for the first map screen
+	for(i = 0; i < ANGBAND_TERM_MAX; i++) {
+		if (window_flag[i] & PW_MINIMAP) {
+		    //Found a map screen. Activate and size it correctly.
+			Term_activate(ang_term[i]);
+			if (Term->wid!=w || Term->hgt!=h) {
+				Term_resize(w,h);
+				Term_redraw();
+			}
 
+			//Update the map
+			scr_b=Term->scr;
+			term_win_copy(scr_b, scr_a, w, h);
 
+			//Remove text, which is in the wrong font.
+			c_put_str(TERM_WHITE, "                              ", 0, 0);
+			c_put_str(TERM_WHITE, "                              ", 0, 30);
+			c_put_str(TERM_WHITE, "                              ", 0, 60);
+			for (j = 1; j < 22; j++) c_put_str(TERM_WHITE, "             ", j, 0);
+			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 0);
+			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 30);
+			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 60);
+
+			//Redraw it
+			memset(Term->x1, 0, h);
+			memset(Term->x2, w - 1, h);
+			Term_fresh();
+
+			//Get out of the loop. We don't support more than one extra map screen.
+			break;
+		}
+	}
+
+	//Reactivate the main window
+	Term_activate(ang_term[0]);
+
+#endif //WINDOWS
+	return (0);
+}
 
 /*
  * Check for a pending keypress on the key queue.
@@ -2668,6 +2723,10 @@ errr Term_inkey(char *ch, bool wait, bool take)
 	/* Hack -- get bored */
 	if (!Term->never_bored)
 	{
+		/* Update the minimap;
+		 * not sure where this best belongs to - Lightman */
+		refresh_minimap();
+
 		/* Process random events */
 		Term_xtra(TERM_XTRA_BORED, 0);
 	}

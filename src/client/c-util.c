@@ -6292,6 +6292,8 @@ static void do_cmd_options_fonts(void) {
 	char font_name[MAX_FONTS][256], path[1024];
 	int fonts = 0;
 	char tmp_name[256];
+	char graphic_font_name[MAX_FONTS][256];
+	int graphic_fonts=0;
 
 #ifdef WINDOWS /* Windows uses the .FON files */
 	DIR *dir;
@@ -6299,6 +6301,7 @@ static void do_cmd_options_fonts(void) {
 
 	/* read all locally available fonts */
 	memset(font_name, 0, sizeof(char) * (MAX_FONTS * 256));
+	memset(graphic_font_name, 0, sizeof(char) * (MAX_FONTS * 256));
 
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "font");
 	if (!(dir = opendir(path))) {
@@ -6311,8 +6314,13 @@ static void do_cmd_options_fonts(void) {
 		j = -1;
 		while(tmp_name[++j]) tmp_name[j] = tolower(tmp_name[j]);
 		if (strstr(tmp_name, ".fon")) {
-			strcpy(font_name[fonts], ent->d_name);
-			fonts++;
+			if (tmp_name[0] == 'g') {
+				strcpy(graphic_font_name[graphic_fonts], ent->d_name);
+				graphic_fonts++;
+			} else {
+				strcpy(font_name[fonts], ent->d_name);
+				fonts++;
+			}
 		}
 	}
 	closedir(dir);
@@ -6343,6 +6351,9 @@ static void do_cmd_options_fonts(void) {
 	}
 
 	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
+#ifdef WINDOWS /* Windows supports graphic fonts for the mini map
+	qsort(graphic_font_name, graphic_fonts, sizeof(char[256]), font_name_cmp);
+#endif
 //	for (j = 0; j < fonts; j++) c_msg_format("'%s'", font_name[j]);
 
 #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
@@ -6353,6 +6364,13 @@ static void do_cmd_options_fonts(void) {
 		strcat(font_name[j], path);
 		strcat(font_name[j], "\\");
 		strcat(font_name[j], tmp_name);
+	}
+	for (j = 0; j < graphic_fonts; j++) {
+		strcpy(tmp_name, graphic_font_name[j]);
+		strcpy(graphic_font_name[j], ".\\");
+		strcat(graphic_font_name[j], path);
+		strcat(graphic_font_name[j], "\\");
+		strcat(graphic_font_name[j], tmp_name);
 	}
 #endif
 
@@ -6421,22 +6439,46 @@ static void do_cmd_options_fonts(void) {
 
 		case '+':
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
-			for (j = 0; j < fonts - 1; j++) {
-				if (!strcmp(font_name[j], get_font_name(y))) {
-					/* advance to next font file in lib/xtra/font */
-					set_font_name(y, font_name[j + 1]);
-					break;
+			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0)
+			{
+				//Include the graphic fonts, because we are cycling the mini-map
+				for (j = 0; j < graphic_fonts - 1; j++) {
+					if (!strcmp(graphic_font_name[j], get_font_name(y))) {
+						/* advance to next font file in lib/xtra/font */
+						set_font_name(y, graphic_font_name[j + 1]);
+						break;
+					}
+				}
+			} else {
+				for (j = 0; j < fonts - 1; j++) {
+					if (!strcmp(font_name[j], get_font_name(y))) {
+						/* advance to next font file in lib/xtra/font */
+						set_font_name(y, font_name[j + 1]);
+						break;
+					}
 				}
 			}
 			break;
 
 		case '-':
 			/* find out which of the fonts in lib/xtra/fonts we're currently using */
-			for (j = 1; j < fonts; j++) {
-				if (!strcmp(font_name[j], get_font_name(y))) {
-					/* retreat to previous font file in lib/xtra/font */
-					set_font_name(y, font_name[j - 1]);
-					break;
+			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0)
+			{
+				//Include the graphic fonts, because we are cycling the mini-map
+				for (j = 0; j < graphic_fonts - 1; j++) {
+					if (!strcmp(graphic_font_name[j], get_font_name(y))) {
+						/* retreat to previous font file in lib/xtra/font */
+						set_font_name(y, graphic_font_name[j - 1]);
+						break;
+					}
+				}
+			} else {
+				for (j = 1; j < fonts; j++) {
+					if (!strcmp(font_name[j], get_font_name(y))) {
+						/* retreat to previous font file in lib/xtra/font */
+						set_font_name(y, font_name[j - 1]);
+						break;
+					}
 				}
 			}
 			break;
