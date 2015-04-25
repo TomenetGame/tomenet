@@ -19,6 +19,7 @@ s32b char_creation_flags = 1;	/* 0 = traditional stats rolling, 1 = player-defin
 char message_history[MSG_HISTORY_MAX][MSG_LEN];			/* history for chat, slash-cmd etc. */
 char message_history_chat[MSG_HISTORY_MAX][MSG_LEN];		/* history for chat, slash-cmd etc. */
 char message_history_msgnochat[MSG_HISTORY_MAX][MSG_LEN];	/* history for chat, slash-cmd etc. */
+char message_history_impscroll[MSG_HISTORY_MAX][MSG_LEN];	/* history for chat, slash-cmd etc. */
 byte hist_end = 0;
 bool hist_looped = FALSE;
 byte hist_chat_end = 0;
@@ -123,6 +124,12 @@ s32b message__head_msgnochat;
 s32b message__tail_msgnochat;
 s32b *message__ptr_msgnochat;
 char *message__buf_msgnochat;
+s32b message__next_impscroll;
+s32b message__last_impscroll;
+s32b message__head_impscroll;
+s32b message__tail_impscroll;
+s32b *message__ptr_impscroll;
+char *message__buf_impscroll;
 
 
 bool msg_flag;

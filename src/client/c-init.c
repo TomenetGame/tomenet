@@ -53,11 +53,14 @@ static void init_arrays(void) {
 	C_MAKE(message__buf_chat, MESSAGE_BUF, char);
 	C_MAKE(message__ptr_msgnochat, MESSAGE_MAX, s32b);
 	C_MAKE(message__buf_msgnochat, MESSAGE_BUF, char);
+	C_MAKE(message__ptr_impscroll, MESSAGE_MAX, s32b);
+	C_MAKE(message__buf_impscroll, MESSAGE_BUF, char);
 
 	/* Hack -- No messages yet */
 	message__tail = MESSAGE_BUF;
 	message__tail_chat = MESSAGE_BUF;
 	message__tail_msgnochat = MESSAGE_BUF;
+	message__tail_impscroll = MESSAGE_BUF;
 
 	/* Initialize room for the store's stock */
 	C_MAKE(store.stock, STORE_INVEN_MAX, object_type);

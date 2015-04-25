@@ -96,6 +96,7 @@ static byte macro__use[256];
 
 static bool was_chat_buffer = FALSE;
 static bool was_all_buffer = FALSE;
+static bool was_important_scrollback = FALSE;
 
 static char octify(uint i)
 {
@@ -2393,6 +2394,27 @@ cptr message_str_msgnochat(s32b age)
         /* Return the message text */
         return (s);
 }
+cptr message_str_impscroll(s32b age)
+{
+        s32b x;
+        s32b o;
+        cptr s;
+
+        /* Forgotten messages have no text */
+        if ((age < 0) || (age >= message_num_impscroll())) return ("");
+
+        /* Acquire the "logical" index */
+        x = (message__next_impscroll + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
+
+        /* Get the "offset" for the message */
+        o = message__ptr_impscroll[x];
+
+        /* Access the message text */
+        s = &message__buf_impscroll[o];
+
+        /* Return the message text */
+        return (s);
+}
 
 
 /*
@@ -2449,13 +2471,29 @@ s32b message_num_msgnochat(void)
         /* Return the result */
         return (n);
 }
+s32b message_num_impscroll(void)
+{
+        int last, next, n;
+
+        /* Extract the indexes */
+        last = message__last_impscroll;
+        next = message__next_impscroll;
+
+        /* Handle "wrap" */
+        if (next < last) next += MESSAGE_MAX;
+
+        /* Extract the space */
+        n = (next - last);
+
+        /* Return the result */
+        return (n);
+}
 
 
 /*
  * Add a new message, with great efficiency
  */
-void c_message_add(cptr str)
-{
+void c_message_add(cptr str) {
         int i, k, x, n;
 
 
@@ -2640,8 +2678,7 @@ void c_message_add(cptr str)
 	p_ptr->window |= PW_MESSAGE;
 #endif
 }
-void c_message_add_chat(cptr str)
-{
+void c_message_add_chat(cptr str) {
         int i, k, x, n;
 
 
@@ -2812,8 +2849,7 @@ void c_message_add_chat(cptr str)
         p_ptr->window |= (PW_CHAT);
 
 }
-void c_message_add_msgnochat(cptr str)
-{
+void c_message_add_msgnochat(cptr str) {
         int i, k, x, n;
 
 
@@ -2983,6 +3019,191 @@ void c_message_add_msgnochat(cptr str)
 	/* Window stuff - assume that all chat messages start with '[' */
         p_ptr->window |= (PW_MSGNOCHAT);
 }
+void c_message_add_impscroll(cptr str) {
+        int i, k, x, n;
+
+
+        /*** Step 1 -- Analyze the message ***/
+
+        /* Hack -- Ignore "non-messages" */
+        if (!str) return;
+
+        /* Message length */
+        n = strlen(str);
+
+        /* Important Hack -- Ignore "long" messages */
+        if (n >= MESSAGE_BUF / 4) return;
+
+
+        /*** Step 2 -- Attempt to optimize ***/
+
+        /* Limit number of messages to check */
+        k = message_num_impscroll() / 4;
+
+        /* Limit number of messages to check */
+        if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
+
+        /* Check the last few messages (if any to count) */
+        for (i = message__next_impscroll; k; k--)
+        {
+                u32b q;
+
+                cptr old;
+
+                /* Back up and wrap if needed */
+                if (i-- == 0) i = MESSAGE_MAX - 1;
+
+                /* Stop before oldest message */
+                if (i == message__last_impscroll) break;
+
+                /* Extract "distance" from "head" */
+                q = (message__head_impscroll + MESSAGE_BUF - message__ptr_impscroll[i]) % MESSAGE_BUF;
+
+                /* Do not optimize over large distance */
+                if (q > MESSAGE_BUF / 2) continue;
+
+                /* Access the old string */
+                old = &message__buf_impscroll[message__ptr_impscroll[i]];
+
+                /* Compare */
+                if (!streq(old, str)) continue;
+
+                /* Get the next message index, advance */
+                x = message__next_impscroll++;
+
+                /* Handle wrap */
+                if (message__next_impscroll == MESSAGE_MAX) message__next_impscroll = 0;
+
+                /* Kill last message if needed */
+                if (message__next_impscroll == message__last_impscroll) message__last_impscroll++;
+
+                /* Handle wrap */
+                if (message__last_impscroll == MESSAGE_MAX) message__last_impscroll = 0;
+
+                /* Assign the starting address */
+                message__ptr_impscroll[x] = message__ptr_impscroll[i];
+
+		/* Redraw - assume that all chat messages start with '[' */
+#if 0
+		if (str[0] == '[')
+	                p_ptr->window |= (PW_MESSAGE | PW_CHAT);
+                else
+		        p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
+#endif
+		p_ptr->window |= (PW_MESSAGE);
+
+                /* Success */
+                return;
+        }
+
+
+        /*** Step 3 -- Ensure space before end of buffer ***/
+
+        /* Kill messages and Wrap if needed */
+        if (message__head_impscroll + n + 1 >= MESSAGE_BUF)
+        {
+                /* Kill all "dead" messages */
+                for (i = message__last_impscroll; TRUE; i++)
+                {
+                        /* Wrap if needed */
+                        if (i == MESSAGE_MAX) i = 0;
+
+                        /* Stop before the new message */
+                        if (i == message__next_impscroll) break;
+
+                        /* Kill "dead" messages */
+                        if (message__ptr_impscroll[i] >= message__head_impscroll)
+                        {
+                                /* Track oldest message */
+                                message__last_impscroll = i + 1;
+                        }
+                }
+
+                /* Wrap "tail" if needed */
+                if (message__tail_impscroll >= message__head_impscroll) message__tail_impscroll = 0;
+
+                /* Start over */
+                message__head_impscroll = 0;
+        }
+
+
+        /*** Step 4 -- Ensure space before next message ***/
+
+        /* Kill messages if needed */
+        if (message__head_impscroll + n + 1 > message__tail_impscroll)
+        {
+                /* Grab new "tail" */
+                message__tail_impscroll = message__head_impscroll + n + 1;
+
+                /* Advance tail while possible past first "nul" */
+                while (message__buf_impscroll[message__tail_impscroll-1]) message__tail_impscroll++;
+
+                /* Kill all "dead" messages */
+                for (i = message__last_impscroll; TRUE; i++)
+                {
+                        /* Wrap if needed */
+                        if (i == MESSAGE_MAX) i = 0;
+
+                        /* Stop before the new message */
+                        if (i == message__next_impscroll) break;
+
+                        /* Kill "dead" messages */
+                        if ((message__ptr_impscroll[i] >= message__head_impscroll) &&
+                            (message__ptr_impscroll[i] < message__tail_impscroll))
+                        {
+                                /* Track oldest message */
+                                message__last_impscroll = i + 1;
+                        }
+                }
+        }
+
+
+        /*** Step 5 -- Grab a new message index ***/
+
+        /* Get the next message index, advance */
+        x = message__next_impscroll++;
+
+        /* Handle wrap */
+        if (message__next_impscroll == MESSAGE_MAX) message__next_impscroll = 0;
+
+        /* Kill last message if needed */
+        if (message__next_impscroll == message__last_impscroll) message__last_impscroll++;
+
+        /* Handle wrap */
+        if (message__last_impscroll == MESSAGE_MAX) message__last_impscroll = 0;
+
+
+
+        /*** Step 6 -- Insert the message text ***/
+
+        /* Assign the starting address */
+        message__ptr_impscroll[x] = message__head_impscroll;
+
+        /* Append the new part of the message */
+        for (i = 0; i < n; i++)
+        {
+                /* Copy the message */
+                message__buf_impscroll[message__head_impscroll + i] = str[i];
+        }
+
+        /* Terminate */
+        message__buf_impscroll[message__head_impscroll + i] = '\0';
+
+        /* Advance the "head" pointer */
+        message__head_impscroll += n + 1;
+
+#if 0
+//deprecated?:
+	/* Window stuff - assume that all chat messages start with '[' */
+        if (str[0] == '[')
+	        p_ptr->window |= (PW_MESSAGE | PW_CHAT);
+        else
+	        p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
+//      	p_ptr->window |= PW_MESSAGE;
+#else
+	p_ptr->window |= PW_MESSAGE;
+#endif
+}
 
 /*
  * Output a message to the top line of the screen.
@@ -3055,12 +3276,17 @@ void c_msg_print(cptr msg) {
 	c_message_add(t);
 
 	/* strip remaining control codes before displaying on screen */
-	if (*t == '\376') t++;
+	if (*t == '\376') {
+		t++;
+		was_important_scrollback = TRUE;
+	} else was_important_scrollback = FALSE;
 
 	if (was_chat_buffer || was_all_buffer)
 		c_message_add_chat(t);
 	if (!was_chat_buffer)
 		c_message_add_msgnochat(t);
+	if (was_chat_buffer || was_all_buffer || was_important_scrollback)
+		c_message_add_impscroll(t);
 
 	/* Small length limit */
 	if (n > 80) n = 80;
