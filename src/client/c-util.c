@@ -4349,8 +4349,10 @@ void interact_macros(void) {
 #define mw_fight 'i'
 #define mw_stance 'I'
 #define mw_shoot 'j'
-#define mw_trap 'k'
+#define mw_trap 'H'
 #define mw_device 'l'
+#define mw_anydir 'k'
+#define mw_any 'K'
 #define mw_abilitynt 'm'
 #define mw_abilityt 'M'
 #define mw_custom 'n'
@@ -4393,10 +4395,10 @@ Chain_Macro:
 					Term_putstr(8, 13, -1, TERM_L_GREEN, "e/E) Cast school/mimic spell with target");
 					Term_putstr(8, 14, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target)");
 					Term_putstr(8, 15, -1, TERM_L_GREEN, "g/G) Polymorph into monster/set preferred immunity (mimicry users)");
-					Term_putstr(8, 16, -1, TERM_L_GREEN, "h)   Draw runes to cast a runespell");
+					Term_putstr(8, 16, -1, TERM_L_GREEN, "h/H) Draw runes to cast a runespell / set up a monster trap");
 					Term_putstr(8, 17, -1, TERM_L_GREEN, "i/I) Use a fighting technique/switch combat stance (most melee classes)");
 					Term_putstr(8, 18, -1, TERM_L_GREEN, "j)   Use a shooting technique (archers and rangers)");
-					Term_putstr(8, 19, -1, TERM_L_GREEN, "k)   Set up a monster trap");
+					Term_putstr(8, 19, -1, TERM_L_GREEN, "k/K) Use any item with / without a target)");
 					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Use a magic device or activate an item");
 					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target");
 					Term_putstr(8, 22, -1, TERM_L_GREEN, "n)   Enter a custom action (same as pressing 'a' in macro screen)");
@@ -4415,7 +4417,9 @@ Chain_Macro:
 							continue;
 						default:
 							/* invalid action -> exit wizard */
-							if ((choice < 'a' || choice > mw_LAST) && choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' && choice != 'G' && choice != 'I') {
+							if ((choice < 'a' || choice > mw_LAST) &&
+							    choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' &&
+							    choice != 'G' && choice != 'I' && choice != 'K') {
 //								i = -1;
 								continue;
 							}
@@ -4443,6 +4447,20 @@ Chain_Macro:
 						Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
 						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial scroll name or inscription:");
+						break;
+					case mw_any:
+					case mw_anydir:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
+						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						if (choice == mw_any) {
+							Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377GRation");
+							Term_putstr(5, 12, -1, TERM_GREEN, "if you want to use (eat) a 'Ration of Food'.");
+						} else {
+							/* actually a bit silyl here, we're not really using inscriptions but instead treat them as text -_-.. */
+							Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377G@/0"); /* ..so 'correctly' this should just be '/0' :-p */
+							Term_putstr(5, 12, -1, TERM_GREEN, "if you want to use (fire) a wand or rod inscribed '@/0'.");
+						}
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
 						break;
 					case mw_schoolnt:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
@@ -5242,6 +5260,20 @@ Chain_Macro:
 						buf2[3] = 'r';
 						buf2[4] = '@';
 						strcpy(buf2 + 5, buf);
+						break;
+					case mw_any:
+						buf2[3] = '/';
+						buf2[4] = '@';
+						strcpy(buf2 + 5, buf);
+						break;
+					case mw_anydir:
+						buf2[3] = '/';
+						buf2[4] = '@';
+						strcpy(buf2 + 5, buf);
+						l = strlen(buf2);
+						buf2[l] = '*';
+						buf2[l + 1] = 't';
+						buf2[l + 2] = 0;
 						break;
 					case mw_fire:
 						if (c_cfg.rogue_like_commands) buf2[3] = 't';
