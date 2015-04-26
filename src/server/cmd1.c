@@ -73,6 +73,7 @@ bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x,
 		if (zcave) {
 			zcave[y][x].o_idx = 0;
 			everyone_lite_spot(wpos, y, x);
+			s_printf("NOTHINGHACK: cleared cave reference\n");
 		}
 #endif
 		return TRUE;
