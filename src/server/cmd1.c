@@ -33,15 +33,32 @@ static void run_init(int Ind, int dir);
 #ifdef BACKTRACE_NOTHINGS
  #include <execinfo.h>
 #endif
+/* Actually remove the invalid c_ptr->o_idx reference? */
+#define FIX_NOTHINGS
 bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y) {
 	char o_name[ONAME_LEN];
+	cave_type **zcave = getcave(wpos);
+	int idx = zcave ? zcave[y][x].o_idx : -1;
 
 	if ((o_ptr->wpos.wx != wpos->wx) || (o_ptr->wpos.wy != wpos->wy) || (o_ptr->wpos.wz != wpos->wz) ||
 	    (o_ptr->ix && (o_ptr->ix != x)) || (o_ptr->iy && (o_ptr->iy != y))) {
 		/* Item is not at the same (or similar) location as the player? Then he can't pick it up.. */
 		object_desc(0, o_name, o_ptr, TRUE, 3);
 		if (p_ptr != NULL) {
+#if 1
+			s_printf("NOTHINGHACK: item %s at %d,%d,%d (%d,%d) meets not target of %s at %d,%d,%d (%d,%d)(c-oi %d)\n",
+			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
+			    p_ptr->name, wpos->wx, wpos->wy, wpos->wz, x, y, idx);
+#endif
+		} else {
+#if 1
+			s_printf("NOTHINGHACK: item %s at %d,%d,%d (%d,%d) meets not target at %d,%d,%d (%d,%d) (c-oi %d)\n",
+			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
+			    wpos->wx, wpos->wy, wpos->wz, x, y, idx);
+#endif
+		}
 #ifdef BACKTRACE_NOTHINGS
+		{
 			int size, i;
 			void *buf[1000];
 			char **fnames;
@@ -52,13 +69,14 @@ bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x,
 			fnames = backtrace_symbols(buf, size);
 			for (i = 0; i < size; i++)
 				s_printf("%s\n", fnames[i]);
-#endif
-#if 1
-			s_printf("NOTHINGHACK: item %s at %d,%d,%d (%d,%d) meets not target of %s at %d,%d,%d (%d,%d)\n",
-			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
-			    p_ptr->name, wpos->wx, wpos->wy, wpos->wz, x, y);
-#endif
 		}
+#endif
+#ifdef FIX_NOTHINGS
+		if (zcave) {
+			zcave[y][x].o_idx = 0;
+			everyone_lite_spot(wpos, y, x);
+		}
+#endif
 		return TRUE;
 	}
 	return FALSE;
