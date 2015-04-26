@@ -13066,6 +13066,10 @@ Draconian:
     Intrinsic breath weapon - you can only use it if you're actually in dragon
     form (including dragonriders) or in any reptilian form (including Hydras).
 
+Abilities acquired from traits (such as 'enlightened' or 'corrupted' trait for
+Maiar) are also considered intrinsic abilities and therefore polymorph-proof if
+they aren't on the list above.
+
 
 (6.7a) Polymorph rings ('Ring of Polymorphing of <form>'):
 ----------------------------------------------------------
