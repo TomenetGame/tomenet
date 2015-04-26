@@ -4557,7 +4557,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	o_ptr = &o_list[this_o_idx];
 	k_ptr = &k_info[o_ptr->k_idx];
 	/* Check for (nothing), execute hack to protect such items */
-	if (nothing_test(o_ptr, NULL, wpos, x, y)) {
+	if (nothing_test(o_ptr, NULL, wpos, x, y, 3)) {
 //		s_printf("NOTHINGHACK: spell doesn't meet item at wpos %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return(FALSE);
 	}

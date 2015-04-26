@@ -33,9 +33,7 @@ static void run_init(int Ind, int dir);
 #ifdef BACKTRACE_NOTHINGS
  #include <execinfo.h>
 #endif
-/* Actually remove the invalid c_ptr->o_idx reference? */
-#define FIX_NOTHINGS
-bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y) {
+bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y, int loc) {
 	char o_name[ONAME_LEN];
 	cave_type **zcave = getcave(wpos);
 	int idx = zcave ? zcave[y][x].o_idx : -1;
@@ -46,14 +44,14 @@ bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x,
 		object_desc(0, o_name, o_ptr, TRUE, 3);
 		if (p_ptr != NULL) {
 #if 1
-			s_printf("NOTHINGHACK: item %s at %d,%d,%d (%d,%d) meets not target of %s at %d,%d,%d (%d,%d)(c-oi %d)\n",
-			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
+			s_printf("NOTHINGHACK (%d): item %s at %d,%d,%d (%d,%d) meets not target of %s at %d,%d,%d (%d,%d)(c-oi %d)\n",
+			    loc, o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
 			    p_ptr->name, wpos->wx, wpos->wy, wpos->wz, x, y, idx);
 #endif
 		} else {
 #if 1
-			s_printf("NOTHINGHACK: item %s at %d,%d,%d (%d,%d) meets not target at %d,%d,%d (%d,%d) (c-oi %d)\n",
-			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
+			s_printf("NOTHINGHACK (%d): item %s at %d,%d,%d (%d,%d) meets not target at %d,%d,%d (%d,%d) (c-oi %d)\n",
+			    loc, o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
 			    wpos->wx, wpos->wy, wpos->wz, x, y, idx);
 #endif
 		}
@@ -1600,7 +1598,7 @@ void carry(int Ind, int pickup, int confirm) {
 	/* Get the object */
 	o_ptr = &o_list[c_ptr->o_idx];
 
-	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py)) return;
+	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, 1)) return;
 
 	/* Cannot pick up stuff in leaderless guild halls */
 	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_GUILD_SUS) &&

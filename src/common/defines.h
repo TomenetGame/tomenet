@@ -7740,6 +7740,15 @@ extern int PlayerUID;
 #define ITEM_REMOVAL_MONTRAP	6	/* Item is part of a monster trap and hence should last quite a while */
 
 
+/* Invalid (Nothing) items: Enable backtracing if we're using glibc */
+#ifdef __GLIBC__
+ #define BACKTRACE_NOTHINGS
+#endif
+/* Actually remove the invalid c_ptr->o_idx reference? */
+#define FIX_NOTHINGS
+#define FIX_NOTHINGS_ON_SIGHT
+
+
 /* C. Blue - Automatic transport sequences for characters
    (kind of scripted transport for special situations) */
 #define AT_BLINK	1	/* teleport short range; used after panic-save auto-recalling */

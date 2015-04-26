@@ -8198,7 +8198,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				monster_desc(Ind, m_name_real, m_idx, 0x100 | 0x80);
 
 				/* Prevent monsters from 'exploiting' (nothing)s */
-				if (nothing_test(o_ptr, p_ptr, wpos, nx, ny)) {
+				if (nothing_test(o_ptr, p_ptr, wpos, nx, ny, 4)) {
 //					s_printf("NOTHINGHACK: monster %s doesn't meet item %s at wpos %d,%d,%d.\n", m_name_real, o_name, wpos->wx, wpos->wy, wpos->wz);
 				}
 

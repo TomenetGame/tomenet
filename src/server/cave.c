@@ -3175,7 +3175,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 
 
 	/* Objects */
-	if (c_ptr->o_idx) {
+	if (c_ptr->o_idx
+#ifdef FIX_NOTHINGS_ON_SIGHT
+	    && !nothing_test(&o_list[c_ptr->o_idx], p_ptr, &p_ptr->wpos, x, y, 5)
+#endif
+	    ) {
 		struct c_special *cs_ptr;
 
 		/* Hack - Traps override objects while searching - mikaelh */

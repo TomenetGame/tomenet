@@ -6936,7 +6936,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				o_ptr = &o_list[zcave[p_ptr->py][p_ptr->px].o_idx];
-				if (!nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+				if (!nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, 0)) {
 					msg_print(Ind, "\377yObject here is not a (nothing).");
 					return;
 				}
