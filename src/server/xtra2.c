@@ -5237,8 +5237,13 @@ if (cfg.unikill_format) {
 
 	/* If the dungeon where Morgoth is killed is Ironman/Forcedown/No-Recall
 	   allow recalling on this particular floor, since player will lose all true arts.
+	   Note: If strict_etiquette is false, the player can actualy keep his arts!
 	   Originally for RPG_SERVER, but atm enabled for all. - C. Blue */
-	if (is_Morgoth) {
+	if (is_Morgoth
+#if 1 /* hm */
+	    && cfg.strict_etiquette
+#endif
+	    ) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		if ((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN)
