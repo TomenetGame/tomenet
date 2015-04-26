@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. April 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. April 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -160,6 +160,7 @@ Contents
     (6.12)  Fighting/shooting techniques
     (6.13)  PvP mode
     (6.14)  Miscellaneous character properties
+    (6.15)  Character sheet boni page
 (7) Tactics & strategy
     (7.1)   Preparing the inventory for diving into the dungeon
     (7.2)   Preparing the equipment for diving into the dungeon
@@ -15312,6 +15313,47 @@ Characters also have the following miscellaneous properties:
 These currently have no effect in the game, and modifiying them has no effect
 either: Traps of aging, shrinking or growing may change these values but will
 not affect the gameplay in any way.
+
+
+
+(6.15) Character sheet boni page
+--------------------------------
+This page of the character overview displays equipment and intrinsic boni.
+The four tables list resistances, miscellaneous flags, numeric boni, and
+slays/brands/esp, complete with a header/footer to identify each column. Each
+worn item has a header based on equipment slot, notated [a-n]. Class/race/form
+boni use the @ header. A representation of any equipment worn and current form
+occupy the footer. The columns between each header/footer pair display boni,
+which correlate to the row title, shown to the left of each table.
+
+A dark grey row title or column header indicates no relevant modifications to
+that particular boni, or an empty equipment slot. An equipped column is
+highlighted grey by default, unless the item has hidden properties, in which
+case both the column header and unknown boni will be highlighted yellow. A
+column representing a cursed item will have a red header. When a particular
+boni is applied to your character, the row title will highlight white, unless
+the boni is detrimental, in which case the title may appear yellow or red. A
+gold row title indicates an improved boni, such as immunity, sustained stats or
+lite source, or a maximum value, such as for stealth, luck, or AM Field.
+
+Here is an explanation of the common glyphs which may occupy a row/column grid:
+- (red)         Susceptibility, HP/MP Drain, Random Teleportation
++ (red)         Aggravation
++ (white)       Resistance, Miscellaneous Flags, Slay+ESP, Brand+Aura
+* (gold)        Immunity, Anti-Teleportation (yellow), Kill/ESP (white)
+# (green)       A positive number, dark green adds 10, gold indicates sustained.
+# (red)         A negative number, dark red subtracts 10.
+s (gold)        A sustained ability without numerical modification.
+s (white)       Slay (2x)
+k (white)       Kill (3x)
+e (white)       ESP, Full ESP applies one to all the ESPs in that item's column
+a (white)       Aura
+b (white)       Brand
+
+Some row specific glyphs:
+s (gold)        Immunity to Cuts (shards row)
+~ (blue)        Swimming (levitation row)
+# (green)       Pass Forests (levitation row)
 
 
 
