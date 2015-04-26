@@ -7677,15 +7677,15 @@ void golem_creation(int Ind, int max) {
 }
 
 /* pernAngband Additions	- Jir - */
-void call_chaos(int Ind, int dir, int extra_damage)
-{
+void call_chaos(int Ind, int dir, int extra_damage) {
 	player_type *p_ptr = Players[Ind];
 	int Chaos_type, dummy;
 	int plev = p_ptr->lev;
 	bool line_chaos = FALSE;
 
-	int hurt_types[29] =	// 30
-	{
+	/* determine damage type */
+#if 0 /* traditional */
+	int hurt_types[29] = { // 30
 		GF_ELEC,      GF_POIS,    GF_ACID,    GF_COLD,
 		GF_FIRE,      GF_MISSILE, GF_ARROW,   GF_PLASMA,
 //		GF_HOLY_FIRE,
@@ -7697,8 +7697,32 @@ void call_chaos(int Ind, int dir, int extra_damage)
 		GF_DISINTEGRATE,
 		GF_HELL_FIRE,
 	};
+	Chaos_type = hurt_types[rand_int(29)];
+#endif
+#if 0 /* redux (blend out 'weaker' types that monsters may be immune to etc) */
+	int hurt_types[17] = {
+		/* not that much of chaos */
+		GF_MISSILE,	GF_SHARDS,	GF_INERTIA,	GF_SOUND,	GF_GRAVITY,
+		/* pretty chaossy */
+		GF_NEXUS,	GF_TIME,	GF_FORCE,	GF_MANA,
+		/* truly chaos */
+		GF_CHAOS,	GF_NUKE,	GF_METEOR,	GF_ROCKET,
+		GF_INFERNO,	GF_PLASMA,	GF_HELL_FIRE,	GF_DISINTEGRATE,
+	};
+	Chaos_type = hurt_types[rand_int(17)];
+#endif
+#if 1 /* redux^2 (only use damage types that deserve to be called chaos (hah)) */
+	int hurt_types[12] = {
+		/* pretty chaossy */
+		GF_NEXUS,	GF_TIME,	GF_FORCE,	GF_MANA,
+		/* truly chaos */
+		GF_CHAOS,	GF_NUKE,	GF_METEOR,	GF_ROCKET,
+		GF_INFERNO,	GF_PLASMA,	GF_HELL_FIRE,	GF_DISINTEGRATE,
+	};
+	Chaos_type = hurt_types[rand_int(12)];
+#endif
 
-	Chaos_type = hurt_types[randint(29) - 1];
+	/* determine shape */
 	if (randint(4) == 1) line_chaos = TRUE;
 
 #if 0
