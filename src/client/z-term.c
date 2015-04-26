@@ -2639,7 +2639,6 @@ errr Term_key_push_buf(cptr buf, int len)
  * is always active - Lightman
  */
 errr refresh_minimap() {
-#ifdef WINDOWS
 	int i,j;
 	int w;
 	int h;
@@ -2659,8 +2658,12 @@ errr refresh_minimap() {
 	//Look for the first map screen
 	for(i = 0; i < ANGBAND_TERM_MAX; i++) {
 		if (window_flag[i] & PW_MINIMAP) {
-		    //Found a map screen. Activate and size it correctly.
+			//Found a map screen. Activate and size it correctly.
 			Term_activate(ang_term[i]);
+
+			//Sometimes NULL on start up
+			if (Term == NULL) break; 
+
 			if (Term->wid!=w || Term->hgt!=h) {
 				Term_resize(w,h);
 				Term_redraw();
@@ -2692,7 +2695,6 @@ errr refresh_minimap() {
 	//Reactivate the main window
 	Term_activate(ang_term[0]);
 
-#endif //WINDOWS
 	return (0);
 }
 
