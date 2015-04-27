@@ -260,8 +260,7 @@
 /*
  * Internal probablility routine
  */
-static bool int_outof(monster_race *r_ptr, int prob)
-{
+static bool int_outof(monster_race *r_ptr, int prob) {
 	/* Non-Smart monsters are half as "smart" */
 	if (!(r_ptr->flags2 & RF2_SMART)) prob = prob / 2;
 
@@ -274,8 +273,7 @@ static bool int_outof(monster_race *r_ptr, int prob)
 /*
  * Remove the "bad" spells from a spell list
  */
-static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *f0p)
-{
+static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *f0p) {
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
 
@@ -290,14 +288,11 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 	/* Too stupid to know anything */
 	if (r_ptr->flags2 & RF2_STUPID) return;
 
-
 	/* Must be cheating or learning */
 	if (!smart_cheat && !smart_learn) return;
 
-
 	/* Update acquired knowledge */
-	if (smart_learn)
-	{
+	if (smart_learn) {
 		/* Hack -- Occasionally forget player status */
 		if (m_ptr->smart && (rand_int(100) < 1)) m_ptr->smart = 0L;
 
@@ -305,10 +300,8 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 		smart = m_ptr->smart;
 	}
 
-
 	/* Cheat if requested */
-	if (smart_cheat)
-	{
+	if (smart_cheat) {
 		/* Know basic info */
 		if (p_ptr->resist_acid) smart |= SM_RES_ACID;
 		if (p_ptr->oppose_acid) smart |= SM_OPP_ACID;
@@ -329,7 +322,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 
 		/* Know special resistances */
 		if (p_ptr->resist_neth) smart |= SM_RES_NETH;
-			if (p_ptr->immune_neth) smart |= SM_RES_NETH;
+		if (p_ptr->immune_neth) smart |= SM_RES_NETH;
 		if (p_ptr->resist_lite) smart |= SM_RES_LITE;
 		if (p_ptr->resist_dark) smart |= SM_RES_DARK;
 		if (p_ptr->resist_fear) smart |= SM_RES_FEAR;
@@ -346,186 +339,129 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 		if (!p_ptr->msp) smart |= SM_IMM_MANA;
 	}
 
-
 	/* Nothing known */
 	if (!smart) return;
 
 
-	if (smart & SM_IMM_ACID)
-	{
+	if (smart & SM_IMM_ACID) {
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_ACID;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BA_ACID;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_ACID;
-	}
-	else if ((smart & SM_OPP_ACID) && (smart & SM_RES_ACID))
-	{
+	} else if ((smart & SM_OPP_ACID) && (smart & SM_RES_ACID)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_ACID;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BA_ACID;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_ACID;
-	}
-	else if ((smart & SM_OPP_ACID) || (smart & SM_RES_ACID))
-	{
+	} else if ((smart & SM_OPP_ACID) || (smart & SM_RES_ACID)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_ACID;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_ACID;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_ACID;
 	}
 
-
-	if (smart & SM_IMM_ELEC)
-	{
+	if (smart & SM_IMM_ELEC) {
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_ELEC;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BA_ELEC;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_ELEC;
-	}
-	else if ((smart & SM_OPP_ELEC) && (smart & SM_RES_ELEC))
-	{
+	} else if ((smart & SM_OPP_ELEC) && (smart & SM_RES_ELEC)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_ELEC;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BA_ELEC;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_ELEC;
-	}
-	else if ((smart & SM_OPP_ELEC) || (smart & SM_RES_ELEC))
-	{
+	} else if ((smart & SM_OPP_ELEC) || (smart & SM_RES_ELEC)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_ELEC;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_ELEC;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_ELEC;
 	}
 
-
-	if (smart & SM_IMM_FIRE)
-	{
+	if (smart & SM_IMM_FIRE) {
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_FIRE;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_FIRE;
-	}
-	else if ((smart & SM_OPP_FIRE) && (smart & SM_RES_FIRE))
-	{
+	} else if ((smart & SM_OPP_FIRE) && (smart & SM_RES_FIRE)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_FIRE;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_FIRE;
-	}
-	else if ((smart & SM_OPP_FIRE) || (smart & SM_RES_FIRE))
-	{
+	} else if ((smart & SM_OPP_FIRE) || (smart & SM_RES_FIRE)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_FIRE;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_FIRE;
 	}
 
-
-	if (smart & SM_IMM_COLD)
-	{
+	if (smart & SM_IMM_COLD) {
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_COLD;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BA_COLD;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_COLD;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_ICEE;
-	}
-	else if ((smart & SM_OPP_COLD) && (smart & SM_RES_COLD))
-	{
+	} else if ((smart & SM_OPP_COLD) && (smart & SM_RES_COLD)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_COLD;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BA_COLD;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_COLD;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_ICEE;
-	}
-	else if ((smart & SM_OPP_COLD) || (smart & SM_RES_COLD))
-	{
+	} else if ((smart & SM_OPP_COLD) || (smart & SM_RES_COLD)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_COLD;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_COLD;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_COLD;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_ICEE;
 	}
 
-
-	if ((smart & SM_OPP_POIS) && (smart & SM_RES_POIS))
-	{
+	if ((smart & SM_OPP_POIS) && (smart & SM_RES_POIS)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_POIS;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BA_POIS;
-	}
-	else if ((smart & SM_OPP_POIS) || (smart & SM_RES_POIS))
-	{
+	} else if ((smart & SM_OPP_POIS) || (smart & SM_RES_POIS)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_POIS;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_POIS;
 	}
 
-
-	if (smart & SM_RES_NETH)
-	{
+	if (smart & SM_RES_NETH) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_NETH;
 		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BA_NETH;
 		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BO_NETH;
 	}
-
-	if (smart & SM_RES_LITE)
-	{
+	if (smart & SM_RES_LITE) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_LITE;
 	}
-
-	if (smart & SM_RES_DARK)
-	{
+	if (smart & SM_RES_DARK) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_DARK;
 		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BA_DARK;
 	}
-
-	if (smart & SM_RES_FEAR)
-	{
+	if (smart & SM_RES_FEAR) {
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_SCARE;
 	}
-
-	if (smart & SM_RES_CONF)
-	{
+	if (smart & SM_RES_CONF) {
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_CONF;
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_CONF;
 	}
-
-	if (smart & SM_RES_CHAOS)
-	{
+	if (smart & SM_RES_CHAOS) {
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_CONF;
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_CONF;
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_CHAO;
 	}
-
-	if (smart & SM_RES_DISEN)
-	{
+	if (smart & SM_RES_DISEN) {
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_DISE;
 		if (int_outof(r_ptr, 100)) f0 &= ~RF0_BO_DISE;
 		if (int_outof(r_ptr, 100)) f0 &= ~RF0_BA_DISE;
 	}
-
-	if (smart & SM_RES_BLIND)
-	{
+	if (smart & SM_RES_BLIND) {
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BLIND;
 	}
-
-	if (smart & SM_RES_NEXUS)
-	{
+	if (smart & SM_RES_NEXUS) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_NEXU;
 		if (int_outof(r_ptr, 50)) f6 &= ~RF6_TELE_LEVEL;
 	}
-
-	if (smart & SM_RES_SOUND)
-	{
+	if (smart & SM_RES_SOUND) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_SOUN;
 	}
-
-	if (smart & SM_RES_SHARD)
-	{
+	if (smart & SM_RES_SHARD) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_SHAR;
 	}
-
-
-	if (smart & SM_IMM_FREE)
-	{
+	if (smart & SM_IMM_FREE) {
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_HOLD;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_SLOW;
 	}
-
-	if (smart & SM_IMM_MANA)
-	{
+	if (smart & SM_IMM_MANA) {
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_DRAIN_MANA;
 	}
 
-
 	/* XXX XXX XXX No spells left? */
 	/* if (!f4 && !f5 && !f6) ... */
-
 
 	(*f4p) = f4;
 	(*f5p) = f5;
@@ -580,8 +516,7 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp, int sfx_typ) {
  * Pass over any monsters that may be in the way
  * Affect grids, objects, monsters, and the player
  */
-static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
-{
+static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010
@@ -594,12 +529,9 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
 }
 #if 0
-static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
-{
+static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad) {
 	player_type *p_ptr = Players[Ind];
-
 //	int rad;
-
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	monster_type *m_ptr = &m_list[m_idx];
@@ -616,8 +548,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 	(void)project(m_idx, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
 #endif	/*0*/
-static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
-{
+static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010
@@ -646,10 +577,8 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
  * Cast a beam at the player
  * Affect monsters, items?, and the player
  */
-static void beam(int Ind, int m_idx, int typ, int dam_hp)
-{
+static void beam(int Ind, int m_idx, int typ, int dam_hp) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
 #ifdef USE_SOUND_2010
@@ -664,11 +593,10 @@ static void beam(int Ind, int m_idx, int typ, int dam_hp)
  * Pass over any monsters that may be in the way
  * Affect grids, objects, monsters, and the player
  */
-static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad, int duration, int interval)
-{
+static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad, int duration, int interval) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+
 	project_time = duration;
 	project_interval = interval;
 
