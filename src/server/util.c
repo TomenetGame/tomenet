@@ -3263,14 +3263,13 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	/* replace certain non-alpha chars by alpha chars (leet speak detection)? */
 	if (leet) {
 #ifdef HIGHLY_EFFECTIVE_CENSOR
-		bool is_num = FALSE;
-		bool prev_num;
+		bool is_leet = FALSE, was_leet;
 #endif
 		i = 0;
 		while (lcopy[i]) {
 #ifdef HIGHLY_EFFECTIVE_CENSOR
-			prev_num = is_num;
-			is_num = FALSE;
+			was_leet = is_leet;
+			is_leet = TRUE;//(i != 0);//meaning 'i > 0', for efficiency
 #endif
 
 			switch (lcopy[i]) {
@@ -3285,13 +3284,13 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '$': lcopy[i] = 's'; break;
 			case '+': lcopy[i] = 't'; break;
 #ifdef HIGHLY_EFFECTIVE_CENSOR
-			case '1': lcopy[i] = 'i'; is_num = TRUE; break;
-			case '3': lcopy[i] = 'e'; is_num = TRUE; break;
-			case '4': lcopy[i] = 'a'; is_num = TRUE; break;
-			case '5': lcopy[i] = 's'; is_num = TRUE; break;
-			case '7': lcopy[i] = 't'; is_num = TRUE; break;
-			case '8': lcopy[i] = 'b'; is_num = TRUE; break;
-			case '0': lcopy[i] = 'o'; is_num = TRUE; break;
+			case '1': lcopy[i] = 'i'; break;
+			case '3': lcopy[i] = 'e'; break;
+			case '4': lcopy[i] = 'a'; break;
+			case '5': lcopy[i] = 's'; break;
+			case '7': lcopy[i] = 't'; break;
+			case '8': lcopy[i] = 'b'; break;
+			case '0': lcopy[i] = 'o'; break;
 #else
 			case '1': lcopy[i] = 'i'; break;
 			case '3': lcopy[i] = 'e'; break;
@@ -3305,14 +3304,13 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			/* hack: Actually _counter_ the capabilities of highly-effective
 			   censoring being done further below after this. Reason:
 			   Catch numerical expressions that probably aren't l33t sp34k,
-			   such as "4.5", "4,5" or "4/5" etc.
-			   Exact rule: <number><inconspicuous non-alphanum char><number> = allowed ->
-			               Replace <inc. non-alphanum char> by inconspicuous alpha char. */
+			   such as "4.5", "4,5" or "4/5" but also '4} (55'!
+			   Exact rule: <leet char><non-leet non-alphanum char> = allowed. */
 			default:
+				is_leet = FALSE; //this character wasn't one of the leet cases above
 				/* inconspicuous non-alphanum char? */
-				if (prev_num &&
-				    ((lcopy[i] < 'a' || lcopy[i] > 'z') && (lcopy[i] < '0' || lcopy[i] > '9')) &&
-				    lcopy[i + 1] >= '0' && lcopy[i + 1] <= '9')
+				if (was_leet &&
+				    (lcopy[i] < 'a' || lcopy[i] > 'z') && (lcopy[i] < '0' || lcopy[i] > '9'))
 					/* replace by, say 'x' (harmless^^) (Note: Capital character doesn't work, gets filtered out futher below */
 					lcopy[i] = 'x';
 				break;
@@ -3333,7 +3331,6 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			i++;
 		}
 	}
-
 #ifdef REDUCE_H_CONSONANT
 	/* reduce 'h' before consonant */
 	//TODO: do HIGHLY_EFFECTIVE_CENSOR first probably
@@ -3622,6 +3619,9 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 
 static int censor(char *line) {
 	int i, j, im, jm, cc[MSG_LEN], offset;
+#ifdef CENSOR_LEET
+	int j_pre = 0, cc_pre[MSG_LEN];
+#endif
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
 	char tmp1[MSG_LEN], tmp2[MSG_LEN], tmp3[MSG_LEN], tmp4[MSG_LEN];
 	char *word;
@@ -3697,6 +3697,43 @@ static int censor(char *line) {
 	cc[i] = 0;
 #endif
 
+#ifdef CENSOR_LEET
+	/* special hardcoded case: variants of '455hole' leet-speak */
+	j = 0;
+	for (i = 0; i < strlen(lcopy); i++) {
+		/* reduce duplicate chars (must do it this way instead of i==i+1, because we need full cc-mapped string) */
+		if (i && lcopy[i] == lcopy[i - 1]) continue;
+		/* build un-leeted, mapped string */
+		if ((lcopy[i] >= '0' && lcopy[i] <= '9') || (lcopy[i] >= 'a' && lcopy[i] <= 'z')) {
+			switch (lcopy[i]) {
+			case '4': lcopy2[j] = 'a'; break;
+			case '5': lcopy2[j] = 's'; break;
+			default: lcopy2[j] = lcopy[i];
+			}
+			cc_pre[j] = i;
+			j++;
+		}
+	}
+	lcopy2[j] = 0;
+	if ((word = strstr(lcopy2, "ashole"))) // <- 'ss' got reduced to 's' in above loop
+		/* use severity level of 'ass' for 'asshole' */
+		for (i = 0; swear[i].word[0]; i++) {
+			if (!strcmp(swear[i].word, "ass")) {
+				j_pre = swear[i].level;
+				/* if it was to get censored, do so */
+				if (j_pre) {
+ #if 0
+					for (offset = cc_pre[word - lcopy2]; offset <= cc_pre[(word - lcopy2) + 5]; offset++)
+						lcopy[offset] = '*';
+ #endif
+					for (offset = cc[cc_pre[word - lcopy2]]; offset <= cc[cc_pre[(word - lcopy2) + 5]]; offset++)
+						line[offset] = '*';
+				}
+				break;
+			}
+		}
+#endif
+
 	/* check for legal words first */
 	//TODO: could be moved into censor_aux and after leet speek conversion, to allow leet speeking of non-swear words (eg "c00k")
 	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words */
@@ -3733,6 +3770,7 @@ static int censor(char *line) {
 	strcpy(lcopy, lcopy2);
 #ifdef CENSOR_LEET
 	j = censor_aux(tmp2, lcopy, cc, TRUE, FALSE); /* continue with leet speek check */
+	if (j_pre > j) j = j_pre; //pre-calculated special case
 	strcpy(lcopy, lcopy2);
 #else
 	j = 0;
