@@ -1426,7 +1426,7 @@ void sound_house_knock(int h_idx, int dx, int dy) {
 
 }
 /* like msg_print_near_monster() just for sounds,
-   basically same as sound_near_site() - C. Blue */
+   basically same as sound_near_site() except no player can be exempt - C. Blue */
 void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {
 	int i, d;
 	player_type *p_ptr;
@@ -1471,6 +1471,88 @@ void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {
 
 		/* Make sure this player is in the game */
 		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Skip if not visible */
+//		if (!p_ptr->mon_vis[m_idx]) continue;
+
+		/* Can player see this monster via LOS? */
+//		if (!(p_ptr->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) continue;
+
+		/* within audible range? */
+		d = distance(m_ptr->fy, m_ptr->fx, Players[i]->py, Players[i]->px);
+
+		/* NOTE: should be consistent with msg_print_near_site() */
+		if (d > MAX_SIGHT) continue;
+
+#if 0
+		/* limit for volume calc */
+		if (d > 20) d = 20;
+		d += 3;
+		d /= 3;
+		Send_sound(i, val, val2, type, 100 / d, 0);
+#else
+		/* limit for volume calc */
+		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0);
+#endif
+	}
+}
+/* like msg_print_near_monster() just for sounds,
+   basically same as sound_near_site(). - C. Blue
+   NOTE: This function assumes that it's playing a MONSTER ATTACK type sound,
+         because it's checking p_ptr->sfx_monsterattack to mute it. */
+void sound_near_monster_atk(int m_idx, int Ind, cptr name, cptr alternative, int type) {
+	int i, d;
+	player_type *p_ptr;
+	cave_type **zcave;
+
+	monster_type *m_ptr = &m_list[m_idx];
+	worldpos *wpos = &m_ptr->wpos;
+	int val = -1, val2 = -1;
+
+	if (!(zcave = getcave(wpos))) return;
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
+		}
+	}
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Skip specified player, if any */
+		if (i == Ind) continue;
+
+		/* Skip players who don't want to hear attack sounds */
+		if (!p_ptr->sfx_monsterattack) continue;
 
 		/* Make sure this player is at this depth */
 		if (!inarea(&p_ptr->wpos, wpos)) continue;

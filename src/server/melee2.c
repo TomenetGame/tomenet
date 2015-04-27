@@ -207,14 +207,19 @@
  */
 //#define		STUPID_Q
 
-/* For bolt() sfx */
 #ifdef USE_SOUND_2010
+ /* For bolt() sfx */
  #define SFX_BOLT_MAGIC 0
  #define SFX_BOLT_SHOT 1
  #define SFX_BOLT_ARROW 2
  #define SFX_BOLT_BOLT 3
  #define SFX_BOLT_MISSILE 4
  #define SFX_BOLT_BOULDER 5
+
+ /* The way monster attack sfx are played:
+    0: Play it for the targetted player only, at max volume
+    1: Play it for everyone nearby, decreasing volume with distance to monster */
+ #define MONSTER_SFX_WAY 1
 #endif
 
 /*
@@ -483,6 +488,7 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp, int sfx_typ) {
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 	if (p_ptr->sfx_monsterattack)
 		switch (sfx_typ) {
 		case SFX_BOLT_MAGIC:
@@ -504,6 +510,28 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp, int sfx_typ) {
 			sound(Ind, "throw_boulder", NULL, SFX_TYPE_MON_SPELL, TRUE);
 			break;
 		}
+ #else
+	switch (sfx_typ) {
+	case SFX_BOLT_MAGIC:
+		sound_near_monster_atk(m_idx, 0, "cast_bolt", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_SHOT:
+		sound_near_monster_atk(m_idx, 0, "fire_shot", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_ARROW:
+		sound_near_monster_atk(m_idx, 0, "fire_arrow", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_BOLT:
+		sound_near_monster_atk(m_idx, 0, "fire_bolt", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_MISSILE:
+		sound_near_monster_atk(m_idx, 0, "fire_missile", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	case SFX_BOLT_BOULDER:
+		sound_near_monster_atk(m_idx, 0, "throw_boulder", NULL, SFX_TYPE_MON_SPELL);
+		break;
+	}
+ #endif
 #endif
 
 	/* Target the player with a bolt attack */
@@ -520,7 +548,14 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 	if (p_ptr->sfx_monsterattack) sound(Ind, "breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+ #else
+	/* hack: we play it at lower volume for non-targetted players but at full volume
+	   for the one targetted, since he's in the breath's "air stream" :) - C. Blue */
+	if (p_ptr->sfx_monsterattack) sound(Ind, "breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	sound_near_monster_atk(m_idx, Ind, "breath", NULL, SFX_TYPE_MON_SPELL);
+ #endif
 #endif
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -541,7 +576,12 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad) {
 	if (rad < 1) rad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 	if (p_ptr->sfx_monsterattack) sound(Ind, "breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+ #else
+	if (p_ptr->sfx_monsterattack) sound(Ind, "breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	sound_near_monster_atk(m_idx, Ind, "breath", NULL, SFX_TYPE_MON_SPELL);
+ #endif
 #endif
 
 	/* Target the player with a ball attack */
@@ -552,18 +592,43 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 	if (typ == GF_ROCKET) {
 		sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		/* everyone nearby the monster can hear it too, even if no LOS */
-		sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
+		sound_near_monster_atk(m_idx, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL);
+		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
 	else if (typ == GF_DETONATION) {
 		sound(Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, TRUE);
 		/* everyone nearby the monster can hear it too, even if no LOS */
-		sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
+		sound_near_monster_atk(m_idx, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL);
+		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
 	else if (p_ptr->sfx_monsterattack) sound(Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
+ #else
+	if (typ == GF_ROCKET) {
+		sound(Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, TRUE);
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		sound_near_monster_atk(m_idx, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL);
+		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "rocket", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
+	else if (typ == GF_DETONATION) {
+		sound(Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, TRUE);
+		/* everyone nearby the monster can hear it too, even if no LOS */
+		sound_near_monster_atk(m_idx, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL);
+		//sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
+	}
+	else if (typ == GF_STONE_WALL) {
+		sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
+		sound_near_monster_atk(m_idx, Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL);
+	}
+	else if (p_ptr->sfx_monsterattack) {
+		sound(Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
+		sound_near_monster_atk(m_idx, Ind, "cast_ball", NULL, SFX_TYPE_MON_SPELL);
+	}
+ #endif
 #endif
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -582,7 +647,12 @@ static void beam(int Ind, int m_idx, int typ, int dam_hp) {
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_MON_SPELL, TRUE);
+ #else
+	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	sound_near_monster_atk(m_idx, Ind, "cast_beam", NULL, SFX_TYPE_MON_SPELL);
+ #endif
 #endif
 	/* Target the player with a bolt attack */
 	(void)project(m_idx, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
@@ -601,7 +671,12 @@ static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad
 	project_interval = interval;
 
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_cloud", NULL, SFX_TYPE_MON_SPELL, TRUE);
+ #else
+	if (p_ptr->sfx_monsterattack) sound(Ind, "cast_cloud", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	sound_near_monster_atk(m_idx, Ind, "cast_cloud", NULL, SFX_TYPE_MON_SPELL);
+ #endif
 #endif
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
@@ -620,13 +695,12 @@ static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad
  * Determine if there is a space near the player in which
  * a summoned creature can appear
  */
-static bool summon_possible(worldpos *wpos, int y1, int x1)
-{
+static bool summon_possible(worldpos *wpos, int y1, int x1) {
 	int y, x, i;
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
-	
+
 	/* Start with adjacent locations, spread further */
 	for (i = 1; i <= tdi[2]; i++) {
 		y = y1 + tdy[i];
@@ -658,14 +732,13 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
 #endif
 	}
 
-#if 0	
+#if 0
 	/* Start at the player's location, and check 2 grids in each dir */
-	for (y= y1-2; y<= y1+2; y++)
-	{
+	for (y = y1 - 2; y<= y1 + 2; y++) {
 		for (x = x1 - 2; x <= x1 + 2; x++) {
 			/* Ignore illegal locations */
 			if (!in_bounds(y,x)) continue;
-			
+
 			/* Only check a circular area */
 			if (distance(y1,x1,y,x)>2) continue;
 			
@@ -715,13 +788,12 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
-	
+
 	/* Start at the initial location */
 	y = y1, x = x1;
-	
+
 	/* See "project()" and "projectable()" */
-	for (dist = 0; dist <= range; dist++)
-	{
+	for (dist = 0; dist <= range; dist++) {
 		/* Never pass through walls */
 		if (dist && !cave_contact(zcave, y, x)) break;
 		
@@ -741,7 +813,7 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 		/* Calculate the new location */
 		mmove2(&y, &x, y1, x1, y2, x2);
 	}
-	
+
 	/* Assume obstruction */
 	return (FALSE);
 }
@@ -794,14 +866,13 @@ static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int 
 /*
  * Return TRUE if a spell is good for hurting the player (directly).
  */
-static bool spell_attack(byte spell)
-{
+static bool spell_attack(byte spell) {
 	/* All RF4 spells hurt (except for shriek) */
 	if (spell < 128 && spell > 96) return (TRUE);
-	
+
 	/* Various "ball" spells */
 	if (spell >= 128 && spell <= 128 + 8) return (TRUE);
-	
+
 	/* Unmagic is not */
 	if (spell == 128 + 15) return (FALSE);
 
@@ -819,14 +890,13 @@ static bool spell_attack(byte spell)
 /*
  * Return TRUE if a spell is good for escaping.
  */
-static bool spell_escape(byte spell)
-{
+static bool spell_escape(byte spell) {
 	/* Blink or Teleport */
 	if (spell == 160 + 4 || spell == 160 + 5) return (TRUE);
-	
+
 	/* Teleport the player away */
 	if (spell == 160 + 9 || spell == 160 + 10) return (TRUE);
-	
+
 	/* Isn't good for escaping */
 	return (FALSE);
 }
@@ -834,30 +904,29 @@ static bool spell_escape(byte spell)
 /*
  * Return TRUE if a spell is good for annoying the player.
  */
-static bool spell_annoy(byte spell)
-{
+static bool spell_annoy(byte spell) {
 	/* Shriek */
 	if (spell == 96 + 0) return (TRUE);
-	
+
 	/* Brain smash, et al (added curses) */
 //	if (spell >= 128 + 9 && spell <= 128 + 14) return (TRUE);
 	/* and unmagic */
 	if (spell >= 128 + 9 && spell <= 128 + 15) return (TRUE);
-	
+
 	/* Scare, confuse, blind, slow, paralyze */
 	if (spell >= 128 + 27 && spell <= 128 + 31) return (TRUE);
-	
+
 	/* Teleport to */
 	if (spell == 160 + 8) return (TRUE);
-	
+
 #if 0
 	/* Hand of Doom */
 	if (spell == 160 + 1) return (TRUE);
 #endif
-	
+
 	/* Darkness, make traps, cause amnesia */
 	if (spell >= 160 + 12 && spell <= 160 + 14) return (TRUE);
-	
+
 	/* Doesn't annoy */
 	return (FALSE);
 }
@@ -865,8 +934,7 @@ static bool spell_annoy(byte spell)
 /*
  * Return TRUE if a spell summons help.
  */
-static bool spell_summon(byte spell)
-{
+static bool spell_summon(byte spell) {
 	/* All summon spells */
 //	if (spell >= 160 + 13) return (TRUE);
 	if (spell >= 160 + 15) return (TRUE);
@@ -877,7 +945,7 @@ static bool spell_summon(byte spell)
 	if (spell == 160 + 11) return (TRUE);
 	/* summon animal */
 //	if (spell = 96 + 2) return (TRUE);
-	
+
 	/* Doesn't summon */
 	return (FALSE);
 }
@@ -885,11 +953,10 @@ static bool spell_summon(byte spell)
 /*
  * Return TRUE if a spell is good in a tactical situation.
  */
-static bool spell_tactic(byte spell)
-{
+static bool spell_tactic(byte spell) {
 	/* Blink */
 	if (spell == 160 + 4) return (TRUE);
-	
+
 	/* Not good */
 	return (FALSE);
 }
@@ -898,11 +965,10 @@ static bool spell_tactic(byte spell)
 /*
  * Return TRUE if a spell hastes.
  */
-static bool spell_haste(byte spell)
-{
+static bool spell_haste(byte spell) {
 	/* Haste self */
 	if (spell == 160 + 0) return (TRUE);
-	
+
 	/* Not a haste spell */
 	return (FALSE);
 }
@@ -911,11 +977,10 @@ static bool spell_haste(byte spell)
 /*
  * Return TRUE if a spell is good for healing.
  */
-static bool spell_heal(byte spell)
-{
+static bool spell_heal(byte spell) {
 	/* Heal */
 	if (spell == 160 + 2) return (TRUE);
-	
+
 	/* No healing */
 	return (FALSE);
 }
@@ -946,12 +1011,11 @@ static bool spell_heal(byte spell)
  * This function may well be an efficiency bottleneck.
  */
 #if 0
-static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
-{
+static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num) {
 	player_type *p_ptr = Players[Ind];
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
-	
+
 	byte escape[96], escape_num = 0;
 	byte attack[96], attack_num = 0;
 	byte summon[96], summon_num = 0;
@@ -959,108 +1023,97 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 	byte annoy[96], annoy_num = 0;
 	byte haste[96], haste_num = 0;
 	byte heal[96], heal_num = 0;
-	
+
 	int i;
-	
+
  #if 0
 	/* Stupid monsters choose randomly */
-	if (r_ptr->flags2 & (RF2_STUPID))
-	{
+	if (r_ptr->flags2 & (RF2_STUPID)) {
 		/* Pick at random */
 		return (spells[rand_int(num)]);
 	}
  #endif	// 0
-	
+
 	/* Categorize spells */
-	for (i = 0; i < num; i++)
-	{
+	for (i = 0; i < num; i++) {
 		/* Escape spell? */
 		if (spell_escape(spells[i])) escape[escape_num++] = spells[i];
-		
+
 		/* Attack spell? */
 		if (spell_attack(spells[i])) attack[attack_num++] = spells[i];
-		
+
 		/* Summon spell? */
 		if (spell_summon(spells[i])) summon[summon_num++] = spells[i];
-		
+
 		/* Tactical spell? */
 		if (spell_tactic(spells[i])) tactic[tactic_num++] = spells[i];
-		
+
 		/* Annoyance spell? */
 		if (spell_annoy(spells[i])) annoy[annoy_num++] = spells[i];
-		
+
 		/* Haste spell? */
 		if (spell_haste(spells[i])) haste[haste_num++] = spells[i];
-		
+
 		/* Heal spell? */
 		if (spell_heal(spells[i])) heal[heal_num++] = spells[i];
 	}
-	
+
 	/*** Try to pick an appropriate spell type ***/
-	
+
 	/* Hurt badly or afraid, attempt to flee */
-	if ((m_ptr->hp < m_ptr->maxhp / 3) || m_ptr->monfear)
-	{
+	if ((m_ptr->hp < m_ptr->maxhp / 3) || m_ptr->monfear) {
 		/* Choose escape spell if possible */
 		if (escape_num) return (escape[rand_int(escape_num)]);
 	}
-	
+
 	/* Still hurt badly, couldn't flee, attempt to heal */
-	if (m_ptr->hp < m_ptr->maxhp / 3 || m_ptr->stunned)
-	{
+	if (m_ptr->hp < m_ptr->maxhp / 3 || m_ptr->stunned) {
 		/* Choose heal spell if possible */
 		if (heal_num) return (heal[rand_int(heal_num)]);
 	}
-	
+
 	/* Player is close and we have attack spells, blink away */
-	if ((distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) < 4) && attack_num && (rand_int(100) < 75))
-	{
+	if ((distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) < 4) && attack_num && (rand_int(100) < 75)) {
 		/* Choose tactical spell */
 		if (tactic_num) return (tactic[rand_int(tactic_num)]);
 	}
-	
+
 	/* We're hurt (not badly), try to heal */
-	if ((m_ptr->hp < m_ptr->maxhp * 3 / 4) && (rand_int(100) < 75))
-	{
+	if ((m_ptr->hp < m_ptr->maxhp * 3 / 4) && (rand_int(100) < 75)) {
 		/* Choose heal spell if possible */
 		if (heal_num) return (heal[rand_int(heal_num)]);
 	}
-	
+
 	/* Summon if possible (sometimes) */
-	if (summon_num && (rand_int(100) < 50))
-	{
+	if (summon_num && (rand_int(100) < 50)) {
 		/* Choose summon spell */
 		return (summon[rand_int(summon_num)]);
 	}
-	
+
 	/* Attack spell (most of the time) */
-	if (attack_num && (rand_int(100) < 85))
-	{
+	if (attack_num && (rand_int(100) < 85)) {
 		/* Choose attack spell */
 		return (attack[rand_int(attack_num)]);
 	}
-	
+
 	/* Try another tactical spell (sometimes) */
-	if (tactic_num && (rand_int(100) < 50))
-	{
+	if (tactic_num && (rand_int(100) < 50)) {
 		/* Choose tactic spell */
 		return (tactic[rand_int(tactic_num)]);
 	}
-	
+
 	/* Haste self if we aren't already somewhat hasted (rarely) */
-        if (haste_num && (rand_int(100) < (20 + m_ptr->speed - m_ptr->mspeed)))
-	{
+	if (haste_num && (rand_int(100) < (20 + m_ptr->speed - m_ptr->mspeed))) {
 		/* Choose haste spell */
 		return (haste[rand_int(haste_num)]);
 	}
-	
+
 	/* Annoy player (most of the time) */
-	if (annoy_num && (rand_int(100) < 85))
-	{
+	if (annoy_num && (rand_int(100) < 85)) {
 		/* Choose annoyance spell */
 		return (annoy[rand_int(annoy_num)]);
 	}
-	
+
 	/* Choose no spell */
 	return (0);
 }
@@ -2876,7 +2929,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses.", m_name);
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
+ #endif
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2892,7 +2950,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
+ #endif
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2908,7 +2971,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 				else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
+ #endif
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2924,7 +2992,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 				else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+				if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
+ #endif
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2945,7 +3018,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses.", m_name);
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #endif
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -2964,7 +3042,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #endif
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -2983,7 +3066,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #endif
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -3002,7 +3090,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 			else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
 #ifdef USE_SOUND_2010
+ #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #else
+			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #endif
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -3016,9 +3109,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 		/* RF5_XXX4X4? */
 		case RF5_OFFSET+13:
-		{
 			break;
-		}
 
 		/* RF5_BA_NUKE */
 		case RF5_OFFSET+14:
@@ -3475,7 +3566,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_print(Ind, "You hear something blink away.");
 				else msg_format(Ind, "%^s blinks away.", m_name);
 #ifdef USE_SOUND_2010
-//redudant: already done in teleport_away()	sound(Ind, "blink", NULL, SFX_TYPE_MON_SPELL, TRUE);
+				/* redudant: already done in teleport_away()
+				sound_near_monster(m_idx, "blink", NULL, SFX_TYPE_MON_SPELL);
+				*/
 #endif
 			}
 			break;
@@ -3507,7 +3600,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (blind) msg_print(Ind, "You hear something teleport away.");
 				else msg_format(Ind, "%^s teleports away.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "teleport", NULL, SFX_TYPE_MON_SPELL, TRUE);
+				sound_near_monster(m_idx, "teleport", NULL, SFX_TYPE_MON_SPELL);
 #endif
 			}
 			break;
@@ -3516,9 +3609,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		/* RF6_XXX3X6 */
 		/* RF6_RAISE_DEAD */
 		case RF6_OFFSET+6:
-		{
 			break;
-		}
 
 		/* RF6_XXX4X6 */
 		/* RF6_S_BUG */
@@ -3528,9 +3619,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically codes some software bugs.", m_name);
 			for (k = 0; k < 6; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_BUG, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3545,8 +3634,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 			/* No teleporting within no-tele vaults and such */
 			if (!(zcave = getcave(wpos))) break;
-			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK))
-			{
+			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK)) {
 				msg_format(Ind, "%^s fails to command you to return.", m_name);
 				break;
 			}
@@ -3562,8 +3650,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				if (p_ptr->res_tele) chance = 50;
 				/* Hack -- duplicated check to avoid silly message */
 				if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) ||
-				    magik(chance))
-				{
+				    magik(chance)) {
 					msg_format(Ind, "%^s commands you to return, but you don't care.", m_name);
 					break;
 				}
@@ -3585,8 +3672,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 			/* No teleporting within no-tele vaults and such */
 			if (!(zcave = getcave(wpos))) break;
-			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK))
-			{
+			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK)) {
 				msg_format(Ind, "%^s fails to teleport you away.", m_name);
 				break;
 			}
@@ -3617,8 +3703,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 			/* No teleporting within no-tele vaults and such */
 			if (!(zcave = getcave(wpos))) break;
-			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK))
-			{
+			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK)) {
 				msg_format(Ind, "%^s fails to teleport you away.", m_name);
 				break;
 			}
@@ -3651,9 +3736,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically codes some RNGs.", m_name);
 			for (k = 0; k < 6; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_RNG, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3694,13 +3777,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 			if (rand_int(100) < p_ptr->skill_sav ||
 			    (p_ptr->pclass == CLASS_MINDCRAFTER && magik(75)))
-			{
 				msg_print(Ind, "You resist the effects!");
-			}
 			else if (lose_all_info(Ind))
-			{
 				msg_print(Ind, "Your memories fade away.");
-			}
 			break;
 		}
 
@@ -3712,9 +3791,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons a Dragonrider!", m_name);
-			for (k = 0; k < 1; k++) {
+			for (k = 0; k < 1; k++)
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3735,9 +3813,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			summon_kin_type = r_ptr->d_char; /* Big hack */
 
 			for (k = 0; k < 6; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_KIN, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 
@@ -3776,9 +3852,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3792,9 +3866,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3808,9 +3880,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons ants.", m_name);
 			for (k = 0; k < 6; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANT, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3824,9 +3894,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons spiders.", m_name);
 			for (k = 0; k < 6; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_SPIDER, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3840,9 +3908,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons hounds.", m_name);
 			for (k = 0; k < 6; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HOUND, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3856,9 +3922,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons hydras.", m_name);
 			for (k = 0; k < 6; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HYDRA, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3872,9 +3936,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons an angel!", m_name);
 			for (k = 0; k < 1; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANGEL, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3888,9 +3950,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons a hellish adversary!", m_name);
 			for (k = 0; k < 1; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3904,9 +3964,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons an undead adversary!", m_name);
 			for (k = 0; k < 1; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_UNDEAD, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3920,9 +3978,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons a dragon!", m_name);
 			for (k = 0; k < 1; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3936,14 +3992,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons greater undead!", m_name);
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
-			{
 				msg_print(Ind, "You hear many creepy things appear nearby.");
-			}
 			break;
 		}
 
@@ -3955,14 +4007,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons ancient dragons!", m_name);
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DRAGON, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
-			{
 				msg_print(Ind, "You hear many powerful things appear nearby.");
-			}
 			break;
 		}
 
@@ -3974,19 +4022,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons mighty undead opponents!", m_name);
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_NAZGUL, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
-			{
 				msg_print(Ind, "You hear many creepy things appear nearby.");
-			}
 			break;
 		}
 
@@ -3998,19 +4040,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons special opponents!", m_name);
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_UNIQUE, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
-			{
 				msg_print(Ind, "You hear many powerful things appear nearby.");
-			}
 			break;
 		}
 
@@ -4073,25 +4109,19 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 #ifdef OLD_MONSTER_LORE
 	/* Remember what the monster did to us */
-	if (seen)
-	{
+	if (seen) {
 		/* Innate spell */
-		if (thrown_spell < 32*4)
-		{
+		if (thrown_spell < 32*4) {
 			r_ptr->r_flags4 |= (1L << (thrown_spell - 32*3));
 			if (r_ptr->r_cast_innate < MAX_UCHAR) r_ptr->r_cast_inate++;
 		}
-
 		/* Bolt or Ball */
-		else if (thrown_spell < 32*5)
-		{
+		else if (thrown_spell < 32*5) {
 			r_ptr->r_flags5 |= (1L << (thrown_spell - 32*4));
 			if (r_ptr->r_cast_spell < MAX_UCHAR) r_ptr->r_cast_spell++;
 		}
-
 		/* Special spell */
-		else if (thrown_spell < 32*6)
-		{
+		else if (thrown_spell < 32*6) {
 			r_ptr->r_flags6 |= (1L << (thrown_spell - 32*5));
 			if (r_ptr->r_cast_spell < MAX_UCHAR) r_ptr->r_cast_spell++;
 		}
@@ -4120,8 +4150,7 @@ bool make_attack_spell(int Ind, int m_idx) {
  * Note that this function is responsible for about one to five percent
  * of the processor use in normal conditions...
  */
-int mon_will_run(int Ind, int m_idx)
-{
+int mon_will_run(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	monster_type *m_ptr = &m_list[m_idx];
 	cave_type **zcave;
