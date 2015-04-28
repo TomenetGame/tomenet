@@ -7345,20 +7345,8 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	/* Hack -- use artifact level instead */
 	if (true_artifact_p(o_ptr)) lev = a_info[o_ptr->name1].level;
 
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
 	/* Extract object flags */
 	object_flags(o_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
-
-#if 1
-	/* equippable magic devices are especially easy to use? (ie no wands/staves/rods)
-	   eg tele rings, serpent amulets, true artifacts */
-	if (!is_magic_device(o_ptr->tval)) {
-		chance += 30;
-		chance = chance - lev / 10;
-	}
-#endif
 
 	/* Is it simple to use ? */
 	if (f4 & TR4_EASY_USE) {
@@ -7372,12 +7360,182 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 		chance = chance - lev;
 	}
 
-	/* Certain items are easy to use too */
-	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
-	    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH))
-	{
+	/* Hacks: Certain items are easier/harder to use in general: */
+
+	/* Runes */
+	if (o_ptr->tval == TV_RUNE) {
+		chance = chance / 10 - 20;
+		if (o_ptr->sval >= RCRAFT_MAX_ELEMENTS) chance -= 10;
+		switch (o_ptr->sval) {
+		/* basic tier */
+		case SV_R_LITE:
+			if (get_skill(p_ptr, SKILL_R_LITE))
+				chance += get_skill(p_ptr, SKILL_R_LITE) + 15;
+			break;
+		case SV_R_DARK:
+			if (get_skill(p_ptr, SKILL_R_DARK))
+				chance += get_skill(p_ptr, SKILL_R_DARK) + 15;
+			break;
+		case SV_R_NEXU:
+			if (get_skill(p_ptr, SKILL_R_NEXU))
+				chance += get_skill(p_ptr, SKILL_R_NEXU) + 15;
+			break;
+		case SV_R_NETH:
+			if (get_skill(p_ptr, SKILL_R_NETH))
+				chance += get_skill(p_ptr, SKILL_R_NETH) + 15;
+			break;
+		case SV_R_CHAO:
+			if (get_skill(p_ptr, SKILL_R_CHAO))
+				chance += get_skill(p_ptr, SKILL_R_CHAO) + 15;
+			break;
+		case SV_R_MANA:
+			if (get_skill(p_ptr, SKILL_R_MANA))
+				chance += get_skill(p_ptr, SKILL_R_MANA) + 15;
+			break;
+		/* high tier */
+		case SV_R_CONF:
+			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_DARK))
+				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_DARK)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_LITE))
+				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_DARK))
+				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
+			break;
+		case SV_R_INER:
+			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_NEXU))
+				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_NEXU)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_LITE))
+				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_NEXU))
+				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
+			break;
+		case SV_R_ELEC:
+			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_NETH))
+				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_NETH)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_LITE))
+				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_NETH))
+				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
+			break;
+		case SV_R_FIRE:
+			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_CHAO))
+				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_LITE))
+				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_CHAO))
+				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
+			break;
+		case SV_R_WATE:
+			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_MANA))
+				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_LITE))
+				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_MANA))
+				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
+			break;
+
+		case SV_R_GRAV:
+			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_NEXU))
+				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_NEXU)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_DARK))
+				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_NEXU))
+				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
+			break;
+		case SV_R_COLD:
+			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_NETH))
+				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_NETH)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_DARK))
+				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_NETH))
+				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
+			break;
+		case SV_R_ACID:
+			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_CHAO))
+				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_DARK))
+				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_CHAO))
+				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
+			break;
+		case SV_R_POIS:
+			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_MANA))
+				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_DARK))
+				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_MANA))
+				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
+			break;
+
+		case SV_R_TIME:
+			if (get_skill(p_ptr, SKILL_R_NEXU) && get_skill(p_ptr, SKILL_R_NETH))
+				chance += (get_skill(p_ptr, SKILL_R_NEXU) + get_skill(p_ptr, SKILL_R_NETH)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_NEXU))
+				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_NETH))
+				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
+			break;
+		case SV_R_SOUN:
+			if (get_skill(p_ptr, SKILL_R_NEXU) && get_skill(p_ptr, SKILL_R_CHAO))
+				chance += (get_skill(p_ptr, SKILL_R_NEXU) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_NEXU))
+				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_CHAO))
+				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
+			break;
+		case SV_R_SHAR:
+			if (get_skill(p_ptr, SKILL_R_NEXU) && get_skill(p_ptr, SKILL_R_MANA))
+				chance += (get_skill(p_ptr, SKILL_R_NEXU) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_NEXU))
+				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_MANA))
+				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
+			break;
+
+		case SV_R_DISE:
+			if (get_skill(p_ptr, SKILL_R_NETH) && get_skill(p_ptr, SKILL_R_CHAO))
+				chance += (get_skill(p_ptr, SKILL_R_NETH) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_NETH))
+				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_CHAO))
+				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
+			break;
+		case SV_R_FORC:
+			if (get_skill(p_ptr, SKILL_R_NETH) && get_skill(p_ptr, SKILL_R_MANA))
+				chance += (get_skill(p_ptr, SKILL_R_NETH) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_NETH))
+				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_MANA))
+				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
+			break;
+
+		case SV_R_PLAS:
+			if (get_skill(p_ptr, SKILL_R_CHAO) && get_skill(p_ptr, SKILL_R_MANA))
+				chance += (get_skill(p_ptr, SKILL_R_CHAO) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
+			else if (get_skill(p_ptr, SKILL_R_CHAO))
+				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
+			else if (get_skill(p_ptr, SKILL_R_MANA))
+				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
+			break;
+		}
+	}
+#if 1
+	/* equippable magic devices are especially easy to use? (ie no wands/staves/rods)
+	   eg tele rings, serpent amulets, true artifacts */
+	else if (!is_magic_device(o_ptr->tval)) {
+		chance += 30;
+		chance = chance - lev / 10;
+	}
+#else
+	/* Rings of polymorphing and the Ring of Phasing shouldn't require magic device skill really */
+	else if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
+	    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH)) {
 		if (chance < USE_DEVICE * 2) chance = USE_DEVICE * 2;
 	}
+#endif
+
+	/* Confusion makes it much harder (maybe TODO: blind/stun?) */
+	if (p_ptr->confused) chance = chance / 2;
 
 	return chance;
 }
