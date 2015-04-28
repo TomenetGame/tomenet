@@ -3914,6 +3914,8 @@ static void player_talk_aux(int Ind, char *message) {
 
 
 	colon = strchr(message, ':');
+	/* only assume targetted chat if the 'name' would acually be of acceptable length */
+	if (colon && (colon - message) > NAME_LEN) colon = NULL;
 
 	/* Ignore "smileys" or URL */
 //	if (colon && strchr(")(-/:", colon[1]))
