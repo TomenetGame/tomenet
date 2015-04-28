@@ -1389,8 +1389,8 @@ static cptr st_info_flags1[] =
 	"VHARD_STEAL",
 	"SPECIAL",
 	"BUY67",
-	"BUY50",
-	"NO_DISCOUNT3",
+	"NO_DISCOUNT1",
+	"XXX",
 	"ZEROLEVEL"
 };
 

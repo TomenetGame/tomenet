@@ -329,9 +329,8 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		/* Mega-Hack -- Black market sucks */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price /= 4;
 
-		/* Seasoned Tradesman doesn't pay very much either, he knows the customers can't disagree.. */
+		/* Seasoned Tradesman et al don't pay very much either, they know the customers can't disagree.. */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_BUY67) price = (price * 2) / 3;
-		if (st_info[st_ptr->st_idx].flags1 & SF1_BUY50) price /= 2;
 
 		/* You're not a welcomed customer.. */
 		if (p_ptr->tim_blacklist) price = price / 4;
@@ -1950,28 +1949,40 @@ static void store_create(store_type *st_ptr) {
 		/* Mass produce and/or Apply discount */
 		mass_produce(o_ptr, st_ptr);
 
-		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT3) {
-		    /* Reduce discount */
-		    if (o_ptr->discount == 10) o_ptr->discount = 10;
-		    if (o_ptr->discount == 25) o_ptr->discount = 20;
-		    if (o_ptr->discount == 50) o_ptr->discount = 30;
-		    if (o_ptr->discount == 75) o_ptr->discount = 40;
-		    if (o_ptr->discount == 90) o_ptr->discount = 50;
-		    if (o_ptr->discount == 100) o_ptr->discount = 50;
-		}
-		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2) {
-		    /* Reduce discount */
-		    if (o_ptr->discount == 10) o_ptr->discount = 0;
-		    if (o_ptr->discount == 25) o_ptr->discount = 10;
-		    if (o_ptr->discount == 50) o_ptr->discount = 15;
-		    if (o_ptr->discount == 75) o_ptr->discount = 20;
-		    if (o_ptr->discount == 90) o_ptr->discount = 25;
-		    if (o_ptr->discount == 100) o_ptr->discount = 25;
-		}
-		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT) {
+		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT)
 		    /* Reduce discount */
 		    o_ptr->discount = 0;
-		}
+		/* hack: SF1_NO_DISCOUNT3 removed and now emulated by actually specifying both 1 & 2, saving us a valuable flag slot */
+		else if ((st_info[st_ptr->st_idx].flags1 & (SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)) == (SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2))
+		    /* Reduce discount */
+		    switch (o_ptr->discount) {
+		    case 10: o_ptr->discount = 10; break;
+		    case 25: o_ptr->discount = 20; break;
+		    case 50: o_ptr->discount = 30; break;
+		    case 75: o_ptr->discount = 40; break;
+		    case 90: o_ptr->discount = 50; break;
+		    case 100: o_ptr->discount = 50; break;
+		    }
+		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2)
+		    /* Reduce discount */
+		    switch (o_ptr->discount) {
+		    case 10: o_ptr->discount = 0; break;
+		    case 25: o_ptr->discount = 10; break;
+		    case 50: o_ptr->discount = 15; break;
+		    case 75: o_ptr->discount = 20; break;
+		    case 90: o_ptr->discount = 25; break;
+		    case 100: o_ptr->discount = 25; break;
+		    }
+		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT1)
+		    /* Reduce discount */
+		    switch (o_ptr->discount) {
+		    case 10: o_ptr->discount = 0; break;
+		    case 25: o_ptr->discount = 5; break;
+		    case 50: o_ptr->discount = 10; break;
+		    case 75: o_ptr->discount = 15; break;
+		    case 90: o_ptr->discount = 15; break;
+		    case 100: o_ptr->discount = 15; break;
+		    }
 
 		if ((force_num) && !is_ammo(o_ptr->tval)) {
 			/* Only single items of these */
