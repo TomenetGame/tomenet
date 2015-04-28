@@ -3276,14 +3276,13 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '@': lcopy[i] = 'a'; break;
 			case '<': lcopy[i] = 'c'; break;
 			case '!': lcopy[i] = 'i'; break;
-			case '|': lcopy[i] = 'i'; break;
+			case '|': lcopy[i] = 'l'; break;//hm, could be i too :/
 //			case '(': lcopy[i] = 'c'; break;
 //			case ')': lcopy[i] = 'i'; break;
 //			case '/': lcopy[i] = 'i'; break;
 //			case '\\': lcopy[i] = 'i'; break;
 			case '$': lcopy[i] = 's'; break;
 			case '+': lcopy[i] = 't'; break;
-#ifdef HIGHLY_EFFECTIVE_CENSOR
 			case '1': lcopy[i] = 'i'; break;
 			case '3': lcopy[i] = 'e'; break;
 			case '4': lcopy[i] = 'a'; break;
@@ -3291,15 +3290,6 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '7': lcopy[i] = 't'; break;
 			case '8': lcopy[i] = 'b'; break;
 			case '0': lcopy[i] = 'o'; break;
-#else
-			case '1': lcopy[i] = 'i'; break;
-			case '3': lcopy[i] = 'e'; break;
-			case '4': lcopy[i] = 'a'; break;
-			case '5': lcopy[i] = 's'; break;
-			case '7': lcopy[i] = 't'; break;
-			case '8': lcopy[i] = 'b'; break;
-			case '0': lcopy[i] = 'o'; break;
-#endif
 #ifdef HIGHLY_EFFECTIVE_CENSOR
 			/* hack: Actually _counter_ the capabilities of highly-effective
 			   censoring being done further below after this. Reason:
@@ -3345,6 +3335,8 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 		    lcopy[j + 1] != 'u' &&
 		    lcopy[j + 1] != 'y'
 		    && lcopy[j + 1] >= 'a' && lcopy[j + 1] <= 'z' /*TODO drop this, see 'TODO' above*/
+		    /* detect 'shlt' as masked form of 'shit', without reducing it to 'slt' */
+		    && (!j || (lcopy[j - 1] != 'c' && lcopy[j - 1] != 's'))
 		    ) {
 			j++;
 		}
@@ -3704,10 +3696,18 @@ static int censor(char *line) {
 		/* reduce duplicate chars (must do it this way instead of i==i+1, because we need full cc-mapped string) */
 		if (i && lcopy[i] == lcopy[i - 1]) continue;
 		/* build un-leeted, mapped string */
-		if ((lcopy[i] >= '0' && lcopy[i] <= '9') || (lcopy[i] >= 'a' && lcopy[i] <= 'z')) {
+		if ((lcopy[i] >= '0' && lcopy[i] <= '9') || (lcopy[i] >= 'a' && lcopy[i] <= 'z')
+		    || lcopy[i] == '@' || lcopy[i] == '$' || lcopy[i] == '!' || lcopy[i] == '|'
+		    ) {
 			switch (lcopy[i]) {
+			case '@': lcopy2[j] = 'a'; break;
 			case '4': lcopy2[j] = 'a'; break;
+			case '$': lcopy2[j] = 's'; break;
 			case '5': lcopy2[j] = 's'; break;
+			case '0': lcopy2[j] = 'o'; break;
+			case '!': lcopy2[j] = 'i'; break;
+			case '|': lcopy2[j] = 'l'; break;
+			case '3': lcopy2[j] = 'e'; break;
 			default: lcopy2[j] = lcopy[i];
 			}
 			cc_pre[j] = i;
@@ -3715,10 +3715,11 @@ static int censor(char *line) {
 		}
 	}
 	lcopy2[j] = 0;
-	if ((word = strstr(lcopy2, "ashole"))) // <- 'ss' got reduced to 's' in above loop
-		/* use severity level of 'ass' for 'asshole' */
+	if ((word = strstr(lcopy2, "ashole")) ||
+	    (word = strstr(lcopy2, "ashoie")))
+		/* use severity level of 'ashole' (condensed) for 'asshole' */
 		for (i = 0; swear[i].word[0]; i++) {
-			if (!strcmp(swear[i].word, "ass")) {
+			if (!strcmp(swear[i].word, "ashole")) {
 				j_pre = swear[i].level;
 				/* if it was to get censored, do so */
 				if (j_pre) {
