@@ -227,7 +227,7 @@ MMAP = add_spell
         ["level"] =	20,
         ["mana"] =	30,
         ["mana_max"] =	30,
-        ["fail"] =	10,
+        ["fail"] =	0,
         ["direction"] = FALSE,
         ["spell"] =	function()
 			mind_map_level(Ind)
