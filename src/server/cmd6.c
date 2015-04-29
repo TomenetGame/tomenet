@@ -3042,13 +3042,14 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 
 		case SV_STAFF_CURING:
 		{
+			if (set_image(Ind, 0)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
-                        if (p_ptr->food >= PY_FOOD_MAX)
-                	if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+			if (p_ptr->food >= PY_FOOD_MAX)
+			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 			break;
 		}
 
