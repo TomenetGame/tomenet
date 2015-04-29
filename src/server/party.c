@@ -1724,6 +1724,9 @@ int guild_add_self(int Ind, cptr guild) {
 	struct account *acc;
 	bool member = FALSE;
 
+	/* no guild name specified? */
+	if (!guild[0]) return FALSE;
+
 	if (guild_id == -1) {
 		msg_print(Ind, "That guild does not exist.");
 		return FALSE;
