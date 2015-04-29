@@ -785,6 +785,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 	return TRUE;
 }
 /* play the 'bell' sound */
+#define BELL_REDUCTION 3 /* reduce volume of bell() sounds by this factor */
 extern bool sound_bell(void) {
 	Mix_Chunk *wave = NULL;
 	int s;
@@ -821,9 +822,9 @@ extern bool sound_bell(void) {
 		channel_sample[s] = bell_sound_idx;
 		channel_type[s] = SFX_TYPE_AMBIENT; /* whatever (just so overlapping is possible) */
 		if (c_cfg.paging_max_volume) {
-			Mix_Volume(s, MIX_MAX_VOLUME);
+			Mix_Volume(s, MIX_MAX_VOLUME / BELL_REDUCTION);
 		} else if (c_cfg.paging_master_volume) {
-			Mix_Volume(s, CALC_MIX_VOLUME(1, 100));
+			Mix_Volume(s, CALC_MIX_VOLUME(1, 100 / BELL_REDUCTION));
 		}
 	}
 	samples[bell_sound_idx].current_channel = s;

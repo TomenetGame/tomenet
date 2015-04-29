@@ -405,7 +405,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
     //page 6 - 87
 	{ &c_cfg.audio_paging,		TRUE,	5,	0, 88, TRUE,
-	    "audio_paging",		"Use audio system for paging sounds, if available" },
+	    "audio_paging",		"Use audio system for page/alert, if available" },
 	{ &c_cfg.paging_master_volume,	TRUE,	5,	0, 89, TRUE,
 	    "paging_master_vol",	"Play page/alert sounds at master volume" },
 	{ &c_cfg.paging_max_volume,	TRUE,	5,	0, 90, TRUE,
