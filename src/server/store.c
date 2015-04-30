@@ -540,8 +540,7 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
  * See "object_similar()" for the same function for the "player"
  */
 /* o_ptr is one in store, j_ptr is one in new. */
-static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
-{
+static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	/* Hack -- Identical items cannot be stacked */
 	if (o_ptr == j_ptr) return (0);
 
@@ -600,6 +599,9 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 
 	/* cheques may have different value, so they must not stack */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) return FALSE;
+
+	/* Don't stack potions of blood because of their timeout */
+	//if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return FALSE;
 
 	/* Require matching discounts */
 	if (o_ptr->discount != j_ptr->discount) return (0);
@@ -4541,6 +4543,13 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	    (o_ptr->level != j_ptr->level))
 		return (FALSE);
 
+	/* Don't EVER stack questors oO */
+	if (o_ptr->questor) return FALSE;
+	/* Don't ever stack special quest items */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return FALSE;
+	/* Don't stack quest items if not from same quest AND stage! */
+	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return FALSE;
+
 	/* Require same owner or convertable to same owner */
 //
 /*		if (o_ptr->owner != j_ptr->owner) return (FALSE); */
@@ -4583,6 +4592,9 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		/* Hack for ego foods :) */
 		if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 		if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
+
+		/* Don't stack potions of blood because of their timeout */
+		if (o_ptr->timeout) return FALSE;
 
 		/* Assume okay */
 		break;
