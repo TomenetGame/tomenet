@@ -121,7 +121,7 @@ SENSEHIDDEN = add_spell
 	end,
         ["desc"] =	{
         		"Detects the traps in a certain radius around you",
-                        "At level 15 it allows you to sense invisible for a while",
+                        "At level 15 it allows you to see invisible for a while",
                         "***Affected by the Meta spell: Project Spell***",
         }
 }
