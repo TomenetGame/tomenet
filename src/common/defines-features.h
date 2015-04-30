@@ -188,6 +188,8 @@
    (Not a real 'feature', but needs to be in here to be recognized by player.pre.) */
 #define TELEKINESIS_GETITEM_SERVERSIDE
 
+/* Wilderness mapping scrolls are special: They're actually pieces of the world map. */
+#define NEW_WILDERNESS_MAP_SCROLLS
 
 /* --------------------- Server-type dependant features -------------------- */
 

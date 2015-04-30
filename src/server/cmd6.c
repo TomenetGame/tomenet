@@ -2108,7 +2108,7 @@ static int check_self_summon(player_type *p_ptr){
 bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool *used_up, bool *keep) {
 	player_type *p_ptr = Players[Ind];
 	int ident = FALSE;
-	int k, x, y, d_tries, d_no;
+	int k;
 	char	m_name[MNAME_LEN];
         monster_type    *m_ptr;
         monster_race    *r_ptr;
@@ -2621,7 +2621,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 			case SV_SCROLL_WILDERNESS_MAP:
 			{
+#ifndef NEW_WILDERNESS_MAP_SCROLLS
 				/* Reveal a random dungeon location (C. Blue): */
+				int x, y, d_tries, d_no;
 				dungeon_type *d_ptr;
 				if (rand_int(100) < 50) {
 				    x = 0;
@@ -2670,6 +2672,30 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 						p_ptr->wpos.wy, p_ptr->wpos.wx, 0, 3);
 				//if (ident) wild_display_map(Ind);
 				if (ident) msg_print(Ind, "You seem to get a feel for the place.");
+#else
+				/* Reveal a random part of the world map, and give a message if it means we discovered a dungeon - C. Blue */
+				int x = rand_int(MAX_WILD_X), y = rand_int(MAX_WILD_Y);
+				wilderness_type *wild = &wild_info[y][x];
+				dungeon_type *d_ptr;
+
+				if (p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
+				    (1 << (x + y * MAX_WILD_X) % 8)) {
+					msg_format(Ind, "This world map piece shows the layout at (%d,%d) which you already know.", x, y);
+					break;
+				}
+
+				p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] |= (1 << ((x + y * MAX_WILD_X) % 8));
+				msg_format(Ind, "You learn the world map layout at sector (%d,%d).", x, y);
+
+				if ((d_ptr = wild->tower)) {
+					msg_print(Ind, "You learn that there is a tower at that location, called:");
+					msg_format(Ind, "  '%s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
+				}
+				if ((d_ptr = wild->dungeon)) {
+					msg_print(Ind, "You learn that there is a dungeon at that location, called:");
+					msg_format(Ind, "  '%s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
+				}
+#endif
 				break;
 			}
 

@@ -2082,6 +2082,15 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				basenm = "& Cheque~ worth $ Au";
 				break;
 			}
+
+#ifdef NEW_WILDERNESS_MAP_SCROLLS
+			/* For new wilderness mapping code, where it's actually a puzzle piece of the map */
+			if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) {
+				basenm = "& Wilderness map piece~";
+				break;
+			}
+#endif
+
 			/* Color the object */
 			modstr = scroll_adj[indexx];
 			if (aware) append_name = TRUE;

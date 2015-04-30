@@ -6482,8 +6482,11 @@ G:?:d
 I:70:63:0
 W:15:0:5:500
 A:15/2:30/1
-D:Reveals adjacent wilderness sectors to where you are standing.
-D:Might sometimes also carry an inscription revealing a dungeon location.
+#D:Reveals adjacent wilderness sectors to where you are standing.
+#D:Might sometimes also carry an inscription revealing a dungeon location.
+#NEW_WILDERNESS_MAP_SCROLLS:
+F:EASY_KNOW
+D:Reveals a random world map sector including any dungeon at that location.
 
 # from RFEs
 N:915:& Scourge~

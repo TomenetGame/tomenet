@@ -3065,11 +3065,12 @@ static int Handle_login(int ind)
 
 	if (p_ptr->IDDC_logscum) msg_print(NumPlayers, "\377RThis floor has become stale, take a staircase to move on!");
 
-	/* some one-time hints after char creation in player_birth() */
+	/* some one-time hints and other stuff after char creation in player_birth() */
 	if (p_ptr->newly_created) {
-		newly_created_msg = TRUE;
 		p_ptr->newly_created = FALSE;
 
+		/* hints */
+		newly_created_msg = TRUE;
 		if (p_ptr->mode & MODE_PVP) {
 			msg_print(NumPlayers, "\377yType \"/pvp\" into chat to enter the pvp arena, and again to leave it.");
 
@@ -3078,6 +3079,14 @@ static int Handle_login(int ind)
 				msg_print(NumPlayers, "\374\377R      If you didn't choose PvP mode on purpose, press \377oSHIFT+q\377R to start over.");
 			}
 		}
+
+		/* pre-know certain special items without need for ID */
+#ifdef PLAYER_STORES
+		p_ptr->obj_aware[lookup_kind(TV_SCROLL, SV_SCROLL_CHEQUE)] = TRUE;
+#endif
+#ifdef NEW_WILDERNESS_MAP_SCROLLS
+		p_ptr->obj_aware[lookup_kind(TV_SCROLL, SV_SCROLL_WILDERNESS_MAP)] = TRUE;
+#endif
 	}
 
 #ifdef ENABLE_DRACONIAN_TRAITS
