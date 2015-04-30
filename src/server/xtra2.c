@@ -8474,7 +8474,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		/* Death by physical attack -- invisible monster */
 		else if (!p_ptr->mon_vis[m_idx]) {
-			msg_format_near(Ind, "\377y%s has been killed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
+			msg_format_near(Ind, "\377y%^s has been killed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have killed %s.", m_name);
 		}
 
@@ -8483,13 +8483,13 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		         (r_ptr->flags3 & RF3_UNDEAD) ||
 		         (r_ptr->flags2 & RF2_STUPID) ||
 		         (strchr("Evg", r_ptr->d_char))) {
-			msg_format_near(Ind, "\377y%s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
+			msg_format_near(Ind, "\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have destroyed %s.", m_name);
 		}
 
 		/* Death by Physical attack -- living monster */
 		else {
-			msg_format_near(Ind, "\377y%s has been slain from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
+			msg_format_near(Ind, "\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have slain %s.", m_name);
 		}
 
