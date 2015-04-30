@@ -5835,7 +5835,11 @@ int gold_colour(int amt, bool fuzzy, bool compact) {
 #if 0 /* scale? */
 		for (i = amt / 100; i >= 40; i = (i * 2) / 3, unit++) /* naught */;
 #else /* stretch? */
-		for (i = amt; i >= 60; i = (i * 2) / 4, unit++) /* naught */;
+ #if 0 /* was ok, but due to natural income flow many lower tier colours are sort of skipped */
+		//for (i = amt; i >= 60; i = (i * 2) / 4, unit++) /* naught */;
+ #else /* seems to scale better, allowing all colours to shine */
+		for (i = amt; i >= 60; i = (i * 4) / 9, unit++) /* naught */;
+ #endif
 #endif
 	else
 		for (i = amt; i >= 40; i = (i * 2) / 3, unit++) /* naught */;
