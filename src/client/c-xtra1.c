@@ -164,6 +164,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 				(void)sprintf(tmp, "%9d", (int)(cur - adv));
 			}
 		}
+		strcat(tmp, " "); //hack to correctly clear line after player disabled 'exp_bar' option (it's 1 char 'too long')
 
 		if (cur >= max) {
 			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
