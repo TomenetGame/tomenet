@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. April 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. April 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -7409,7 +7409,7 @@ Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
 ------------|-----------------------------------------------------------------
 Melee Weapon|       1             1.5             2                   4
 Ranged Weap.|       1             1.2             1.4                 2.2
-Martial Arts|       1             1.17            1.33                2
+Martial Arts|       1             1.25            1.5                 2.5
 
 Slaying     | Dice multiplier | Description
 ------------|-----------------------------------------------------------------

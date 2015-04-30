@@ -830,7 +830,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 	/* If the object was thrown, reduce brand effect by 75%
 	   to avoid insane damage. */
-	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
+	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
 	/* Ranged weapons (except for boomerangs) get less benefit from brands */
 	if (is_ammo(o_ptr->tval))
@@ -839,7 +839,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 	/* Martial Arts styles get less benefit from brands */
 	if (!o_ptr->k_idx)
-		return ((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
+		return ((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 2 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
 
 	/* Return the total damage */
 	return (bonus + ((tdam * mult) / FACTOR_MULT));
