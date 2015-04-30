@@ -248,8 +248,8 @@ MIDENTIFY = add_spell
 	["spell_power"] = 0,
 	["blind"] =	0,
 	["level"] =     25,
-	["mana"] =      10,
-	["mana_max"] =  10,
+	["mana"] =      7,
+	["mana_max"] =  7,
 	["fail"] =      -10,
 	["spell"] =     function()
 			ident_spell(Ind)
