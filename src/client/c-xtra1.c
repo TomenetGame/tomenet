@@ -284,6 +284,7 @@ void prt_gold(int gold) {
 
 	put_str("AU ", ROW_GOLD, COL_GOLD);
 	sprintf(tmp, "%9d", gold);
+	if (p_ptr->au < 1000000000) strcat(tmp, " "); //hack to correctly clear line for players moving huge amounts
 	c_put_str(TERM_L_GREEN, tmp, ROW_GOLD, COL_GOLD + 3);
 
 	/* restore cursor position */

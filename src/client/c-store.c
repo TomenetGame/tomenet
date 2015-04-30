@@ -742,6 +742,7 @@ void c_store_prt_gold(void) {
 	prt("Gold Remaining: ", 19 + spacer, 53);
 
 	sprintf(out_val, "%9d", p_ptr->au);
+	if (p_ptr->au < 1000000000) strcat(out_val, " "); //hack to correctly clear line for players moving huge amounts
 	prt(out_val, 19 + spacer, 68);
 
 	/* Hack -- show balance (if not 0) */
@@ -749,6 +750,7 @@ void c_store_prt_gold(void) {
 		prt("Your balance  : ", 20 + spacer, 53);
 
 		sprintf(out_val, "%9d", p_ptr->balance);
+		if (p_ptr->au < 1000000000) strcat(out_val, " ");
 		prt(out_val, 20 + spacer, 68);
 	} else {
 		/* Erase part of the screen */
