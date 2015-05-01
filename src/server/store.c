@@ -1979,7 +1979,7 @@ static void store_create(store_type *st_ptr) {
 		    /* Reduce discount */
 		    switch (o_ptr->discount) {
 		    case 10: o_ptr->discount = 0; break;
-		    case 25: o_ptr->discount = 5; break;
+		    case 25: o_ptr->discount = 0; break;
 		    case 50: o_ptr->discount = 10; break;
 		    case 75: o_ptr->discount = 15; break;
 		    case 90: o_ptr->discount = 15; break;
