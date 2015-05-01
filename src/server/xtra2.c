@@ -4298,15 +4298,15 @@ void check_experience(int Ind) {
 		}
 	}
 
-
 	/* Make a new copy of the skills - mikaelh */
 	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
 	p_ptr->skill_points_old = p_ptr->skill_points;
 
-
 	/* Reskilling is now possible */
 	p_ptr->reskill_possible = TRUE;
 
+	/* Re-check house permissions, to display doors in correct colour (level-based door access!) */
+	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 	/* Handle stuff */
 	handle_stuff(Ind);

@@ -1373,8 +1373,7 @@ void account_check(int Ind) { /* Temporary Ind */
  * Create a new party, owned by "Ind", and called
  * "name".
  */
-int party_create(int Ind, cptr name)
-{
+int party_create(int Ind, cptr name) {
 	player_type *p_ptr = Players[Ind];
 	int index = 0, i, oldest = turn;
 
@@ -1484,8 +1483,7 @@ int party_create(int Ind, cptr name)
 	return TRUE;
 }
 
-int party_create_ironteam(int Ind, cptr name)
-{
+int party_create_ironteam(int Ind, cptr name) {
 	player_type *p_ptr = Players[Ind];
 	int index = 0, i, oldest = turn;
 
@@ -1715,6 +1713,9 @@ int guild_add(int adder, cptr name) {
 		}
 	}
 
+	/* Re-check house permissions, to display doors in correct colour */
+	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
+
 	/* Success */
 	return TRUE;
 }
@@ -1810,6 +1811,9 @@ int guild_add_self(int Ind, cptr guild) {
 			break;
 		}
 	}
+
+	/* Re-check house permissions, to display doors in correct colour */
+	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 	/* Success */
 	return TRUE;
@@ -1967,6 +1971,9 @@ int party_add(int adder, cptr name) {
 		}
 	}
 
+	/* Re-check house permissions, to display doors in correct colour */
+	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
+
 	/* Success */
 	return TRUE;
 }
@@ -2045,6 +2052,9 @@ int party_add_self(int Ind, cptr party) {
 			break;
 		}
 	}
+
+	/* Re-check house permissions, to display doors in correct colour */
+	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 	/* Success */
 	return TRUE;
@@ -2270,13 +2280,20 @@ void del_guild(int id) {
 }
 void guild_timeout(int id) {
 	int i;
-	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->guild && Players[i]->guild != id) continue;
+	player_type *p_ptr;
 
-		Players[i]->guild = 0;
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+		if (p_ptr->guild && p_ptr->guild != id) continue;
+
+		p_ptr->guild = 0;
 		clockin(i, 3);
 
-		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Re-check house permissions, to display doors in correct colour */
+		if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
+
 		msg_print(i, "\377oYour guild has been deleted from being leaderless for too long.");
 		Send_guild(i, TRUE, FALSE);
 	}
@@ -2322,6 +2339,10 @@ static void del_party(int id){
 			}
 			Players[i]->party = 0;
 			clockin(i, 2);
+
+			/* Re-check house permissions, to display doors in correct colour */
+			if (!Players[i]->wpos.wz) Players[i]->redraw |= PR_MAP;
+
 			if (parties[id].mode == PA_IRONTEAM)
 				msg_print(i, "\374\377yYour iron team has been disbanded.");
 			else
@@ -2339,7 +2360,7 @@ static void del_party(int id){
 /* 
  * Remove player from a guild
  */
-int guild_remove(int remover, cptr name){
+int guild_remove(int remover, cptr name) {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[remover];
 	int guild_id = q_ptr->guild, Ind = 0;
@@ -2397,10 +2418,16 @@ int guild_remove(int remover, cptr name){
 			p_ptr->guild = 0;
 			clockin(Ind, 3);
 			del_guild(guild_id);
+
+			/* Re-check house permissions, to display doors in correct colour */
+			if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 		} else {
 			Send_guild(Ind, TRUE, FALSE);
 			p_ptr->guild = 0;
 			clockin(Ind, 3);
+
+			/* Re-check house permissions, to display doors in correct colour */
+			if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 		}
 	}
 
@@ -2414,8 +2441,7 @@ int guild_remove(int remover, cptr name){
  * On RPG server, removing the owner will just promote someone else to owner,
  * provided (s)he's logged on. Better for RPG diving partys - C. Blue
  */
-int party_remove(int remover, cptr name)
-{
+int party_remove(int remover, cptr name) {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[remover];
 	int party_id = q_ptr->party, Ind = 0;
@@ -2483,6 +2509,9 @@ int party_remove(int remover, cptr name)
 	p_ptr->party = 0;
 	clockin(Ind, 2);
 
+	/* Re-check house permissions, to display doors in correct colour */
+	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
+
 	/* Messages */
 	if (parties[party_id].mode == PA_IRONTEAM) {
 		msg_print(Ind, "\374\377yYou have been removed from your iron team.");
@@ -2544,6 +2573,9 @@ void guild_leave(int Ind, bool voluntarily) {
 	p_ptr->guild = 0;
 	clockin(Ind, 3);
 
+	/* Re-check house permissions, to display doors in correct colour */
+	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
+
 	/* Last member deleted? */
 	if (guilds[guild_id].members == 0)
 		del_guild(guild_id);
@@ -2578,6 +2610,9 @@ void party_leave(int Ind, bool voluntarily) {
 	/* Set him back to "neutral" */
 	p_ptr->party = 0;
 	clockin(Ind, 2);
+
+	/* Re-check house permissions, to display doors in correct colour */
+	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
 
 	/* Inform people */
 	if (voluntarily) {
@@ -2653,8 +2688,7 @@ bool guild_rename(int Ind, char *new_name) {
 /*
  * Send a message to everyone in a party.
  */
-void guild_msg(int guild_id, cptr msg)
-{
+void guild_msg(int guild_id, cptr msg) {
 	int i;
 
 	/* Check for this guy */
@@ -2672,8 +2706,7 @@ void guild_msg(int guild_id, cptr msg)
 /*
  * Send a formatted message to a guild.
  */
-void guild_msg_format(int guild_id, cptr fmt, ...)
-{
+void guild_msg_format(int guild_id, cptr fmt, ...) {
 	va_list vp;
 	char buf[1024];
 
@@ -2693,8 +2726,7 @@ void guild_msg_format(int guild_id, cptr fmt, ...)
 /*
  * Send a message to everyone in a party.
  */
-void party_msg(int party_id, cptr msg)
-{
+void party_msg(int party_id, cptr msg) {
 	int i;
 
 	/* Check for this guy */
@@ -2711,8 +2743,7 @@ void party_msg(int party_id, cptr msg)
 /*
  * Send a formatted message to a party.
  */
-void party_msg_format(int party_id, cptr fmt, ...)
-{
+void party_msg_format(int party_id, cptr fmt, ...) {
 	va_list vp;
 	char buf[1024];
 
@@ -2732,8 +2763,7 @@ void party_msg_format(int party_id, cptr fmt, ...)
 /*
  * Send a message to everyone in a party, considering ignorance.
  */
-static void party_msg_ignoring(int sender, int party_id, cptr msg)
-{
+static void party_msg_ignoring(int sender, int party_id, cptr msg) {
 	int i;
 
 	/* Check for this guy */
@@ -2753,8 +2783,7 @@ static void party_msg_ignoring(int sender, int party_id, cptr msg)
 /*
  * Send a formatted message to a party.
  */
-void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...)
-{
+void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...) {
 	va_list vp;
 	char buf[1024];
 
