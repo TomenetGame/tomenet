@@ -2483,8 +2483,7 @@ void calc_body_spells(int Ind) {
 }
 
 #if 0	// moved to defines.h
-bool monk_heavy_armor(int Ind)
-{
+bool monk_heavy_armor(int Ind) {
  #if 1 // DGDGDGDG -- no more monks for the time being
 	player_type *p_ptr = Players[Ind];
 	u16b monk_arm_wgt = 0;
@@ -2540,8 +2539,7 @@ int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
 }
 
 /* Are all the ranged weapons wielded of the right type ? */
-int get_archery_skill(player_type *p_ptr)
-{
+int get_archery_skill(player_type *p_ptr) {
 	int skill = 0;
 	object_type *o_ptr;
 
@@ -2572,8 +2570,7 @@ int get_archery_skill(player_type *p_ptr)
 }
 
 
-int calc_blows_obj(int Ind, object_type *o_ptr)
-{
+int calc_blows_obj(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int str_index, dex_index, eff_weight = o_ptr->weight;
 	u32b f1;
@@ -2697,8 +2694,7 @@ otherwise, let's compromise for now: */
 	return (num_blow);
 }
 
-int calc_blows_weapons(int Ind)
-{
+int calc_blows_weapons(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int num_blow = 0, blows1 = 0, blows2 = 0;
 
@@ -2715,7 +2711,7 @@ int calc_blows_weapons(int Ind)
 	/* mediate for dual-wield */
 #if 0 /* round down? (see bpr bonus below too) (encourages bpr gloves/crit weapons - makes more sense?) */
 	if (p_ptr->dual_wield && p_ptr->dual_mode) num_blow = (blows1 + blows2) / 2;
-#elseif 0 /* round up? (see bpr bonus below too) (encounrages crit gloves/bpr weapons) */
+#elif 0 /* round up? (see bpr bonus below too) (encounrages crit gloves/bpr weapons) */
 	if (p_ptr->dual_wield && p_ptr->dual_mode) num_blow = (blows1 + blows2 + 1) / 2;
 #else /* round up, but only if we aren't anti-dual-wield-encumbered! */
 	if (p_ptr->dual_wield && p_ptr->dual_mode) {
@@ -2742,8 +2738,7 @@ int calc_blows_weapons(int Ind)
 	return num_blow;
 }
 
-int calc_crit_obj(int Ind, object_type *o_ptr)
-{
+int calc_crit_obj(int Ind, object_type *o_ptr) {
 	artifact_type *a_ptr;
 	int xcrit = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
