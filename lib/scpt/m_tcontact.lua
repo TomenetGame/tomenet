@@ -226,11 +226,11 @@ MSENSEMON = add_spell
 --			set_tim_invis(Ind, 10 + get_level(Ind, HSENSEMON, 50))
 --			detect_creatures(Ind) <- detecting empty-minded monsters isn't mindcrafter ability
 --			if get_level(Ind, MSENSEMON, 50) >= 20 then
-				set_tim_esp(Ind, 10 + randint(10) + get_level(Ind, MSENSEMON, 50))
+				set_tim_esp(Ind, 20 + randint(10) + get_level(Ind, MSENSEMON, 50))
 --			end
 			end,
 	["info"] =      function()
-			return "dur 10+d10+d"..get_level(Ind, MSENSEMON, 50)
+			return "dur 20+d10+d"..get_level(Ind, MSENSEMON, 50)
 			end,
 	["desc"] =      {
 --			"Detects all nearby non-invisible creatures once and also lets",
