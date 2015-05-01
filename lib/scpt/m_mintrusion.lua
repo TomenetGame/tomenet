@@ -8,8 +8,7 @@ function get_psiblast_dam()
 	return 2 + get_level(Ind, MMINDBLAST, 7), 3 + get_level(Ind, MMINDBLAST, 45), get_level(Ind, MMINDBLAST, 250)
 end
 
-MSCARE = add_spell
-{
+MSCARE = add_spell {
 	["name"] = 	"Scare",
         ["school"] = 	{SCHOOL_MINTRUSION},
         ["am"] = 	50,
@@ -43,8 +42,7 @@ MSCARE = add_spell
 }
 __lua_MSCARE = MSCARE
 
-MCONFUSE = add_spell
-{
+MCONFUSE = add_spell {
 	["name"] = 	"Confuse",
         ["school"] = 	{SCHOOL_MINTRUSION},
         ["am"] = 	50,
@@ -77,8 +75,7 @@ MCONFUSE = add_spell
         }
 }
 
-MSLEEP = add_spell
-{
+MSLEEP = add_spell {
 	["name"] =	"Hypnosis",
 	["school"] =	{SCHOOL_MINTRUSION},
         ["am"] = 	33,
@@ -105,8 +102,7 @@ MSLEEP = add_spell
 	}
 }
 
-MSLOWMONSTER = add_spell
-{
+MSLOWMONSTER = add_spell {
         ["name"] =	"Drain Strength",
         ["school"] =	{SCHOOL_MINTRUSION},
         ["am"] = 	50,
@@ -141,8 +137,7 @@ MSLOWMONSTER = add_spell
         }
 }
 
-MMINDBLAST = add_spell
-{
+MMINDBLAST = add_spell {
 	["name"] = 	"Psionic Blast",
         ["school"] = 	{SCHOOL_MINTRUSION},
         ["am"] = 	50,
@@ -168,8 +163,7 @@ MMINDBLAST = add_spell
         }
 }
 
-MPSISTORM = add_spell
-{
+MPSISTORM = add_spell {
 	["name"] = "Psi Storm",
 	["school"] = {SCHOOL_MINTRUSION},
 	["am"] = 50,
@@ -193,8 +187,7 @@ MPSISTORM = add_spell
         }
 }
 
-MSILENCE = add_spell
-{
+MSILENCE = add_spell {
 	["name"] = 	"Psychic Suppression",
         ["school"] = 	{SCHOOL_MINTRUSION},
         ["am"] = 	50,
@@ -217,30 +210,33 @@ MSILENCE = add_spell
         }
 }
 
-MMAP = add_spell
-{
-        ["name"] =	"Remote Vision",
-        ["school"] =	{SCHOOL_MINTRUSION},
+MMAP = add_spell {
+	["name"] =	"Remote Vision",
+	["school"] =	{SCHOOL_MINTRUSION},
 --	["school"] =	{SCHOOL_MINTRUSION, SCHOOL_TCONTACT}
-        ["am"] = 	50,
-        ["spell_power"] = 0,
-        ["level"] =	20,
-        ["mana"] =	30,
-        ["mana_max"] =	30,
-        ["fail"] =	0,
-        ["direction"] = FALSE,
-        ["spell"] =	function()
-			mind_map_level(Ind)
-                        end,
-        ["info"] =	function()
-			return ""
-                        end,
-        ["desc"] =	{
-                        "Forcefully uses the vision of sentient life forms around.",
-                        "*** Will be transferred to allied open",
-                        "    minds on the same floor if your",
-                        "    Attunement skill is at least 20. ***",
-        }
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] =	20,
+	["mana"] =	30,
+	["mana_max"] =	30,
+	["fail"] =	0,
+	["direction"] = FALSE,
+	["spell"] =	function()
+			local pow = get_level(Ind, MMAP)
+			if pow > 15 then pow = 15 end
+			mind_map_level(Ind, pow)
+			end,
+	["info"] =	function()
+			local pow = get_level(Ind, MMAP)
+			if pow > 15 then pow = 15 end
+			return "power "..pow
+			end,
+	["desc"] =	{
+			"Forcefully uses the vision of sentient life forms around.",
+			"*** Will be transferred to allied open",
+			"    minds on the same floor if your",
+			"    Attunement skill is at least 20. ***",
+	}
 }
 
 --[[ Old version, requiring pets. Not cool though. See new variant below!
@@ -277,8 +273,7 @@ MCHARM = add_spell
 ]]
 
 -- New idea: works like *invincibility*: monsters will ignore you (and often your party members too ;)
-MCHARM = add_spell
-{
+MCHARM = add_spell {
 	["name"] = 	"Charm",
         ["school"] = 	{SCHOOL_MINTRUSION},
         ["am"] = 	50,
@@ -310,8 +305,7 @@ MCHARM = add_spell
                         "At level 13 it affects all monsters in sight",
         }
 }
-MSTOPCHARM = add_spell
-{
+MSTOPCHARM = add_spell {
 	["name"] = 	"Stop Charm",
         ["school"] = 	{SCHOOL_MINTRUSION},
         ["am"] = 	0,

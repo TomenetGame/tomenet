@@ -6995,8 +6995,11 @@ void map_area(int Ind) {
 }
 
 /* Mindcrafter's magic mapping spell - C. Blue */
-void mind_map_level(int Ind)
-{
+/* This spell's behaviour:
+   easy, old: like magic mapping, combined with short-time esp
+   good, new: like magic mapping, without any esp */
+#define MML_NEW
+void mind_map_level(int Ind, int pow) {
 	player_type *p_ptr = Players[Ind];
 	int m, y, x, rad;
 	int i, j, plist[MAX_PLAYERS + 1], plist_size = 1;
@@ -7020,18 +7023,18 @@ void mind_map_level(int Ind)
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip self */
 		if (i == Ind) continue;
-                /* Skip disconnected players */
-                if (Players[i]->conn == NOT_CONNECTED) continue;
-                /* Skip DM if not DM himself */
-                if (Players[i]->admin_dm && !p_ptr->admin_dm) continue;
-                /* Skip Ghosts */
-                if (Players[i]->ghost && !Players[i]->admin_dm) continue;
-                /* Skip players not on this depth */
-                if (!inarea(&Players[i]->wpos, &p_ptr->wpos)) continue;
-                /* Skip players not in the same party */
-                if (Players[i]->party == 0 || p_ptr->party != Players[i]->party) continue;
-                /* Skip players who haven't opened their mind */
-                if (!(Players[i]->esp_link_flags & LINKF_OPEN)) continue;
+		/* Skip disconnected players */
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		/* Skip DM if not DM himself */
+		if (Players[i]->admin_dm && !p_ptr->admin_dm) continue;
+		/* Skip Ghosts */
+		if (Players[i]->ghost && !Players[i]->admin_dm) continue;
+		/* Skip players not on this depth */
+		if (!inarea(&Players[i]->wpos, &p_ptr->wpos)) continue;
+		/* Skip players not in the same party */
+		if (Players[i]->party == 0 || p_ptr->party != Players[i]->party) continue;
+		/* Skip players who haven't opened their mind */
+		if (!(Players[i]->esp_link_flags & LINKF_OPEN)) continue;
 
 		/* add him */
 		plist[plist_size++] = i;
@@ -7058,8 +7061,8 @@ void mind_map_level(int Ind)
 		if ((r_ptr->flags9 & RF9_RES_PSI) ||
 		    (r_ptr->flags2 & RF2_WEIRD_MIND) ||
 		    (r_ptr->flags3 & RF3_UNDEAD))
-			rad = 8;
-		else	rad = 15;
+			rad = (pow + 1) / 2;
+		else	rad = pow;
 
 		/* test nearby grids */
 		for (y = m_ptr->fy - rad; y < m_ptr->fy + rad; y++)
@@ -7114,12 +7117,14 @@ void mind_map_level(int Ind)
 //			if (c_ptr->feat < FEAT_SECRET)
 			if (!is_wall(c_ptr)) {
 				/* Memorize normal features */
-//				if (c_ptr->feat > FEAT_INVIS)
-				if (!cave_plain_floor_grid(c_ptr))
-				{
+//				if (c_ptr->feat > FEAT_INVIS) {
+				if (!cave_plain_floor_grid(c_ptr)) {
 					for (i = 0; i < plist_size; i++) {
-						/* Memorize the object */
+						/* Memorize the feature */
 						Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
+ #ifdef MML_NEW
+						lite_spot(plist[i], y, x);
+ #endif
 					}
 				}
 
@@ -7133,6 +7138,9 @@ void mind_map_level(int Ind)
 						for (i = 0; i < plist_size; i++) {
 							/* Memorize the walls */
 							Players[plist[i]]->cave_flag[y + ddy_ddd[j]][x + ddx_ddd[j]] |= CAVE_MARK;
+ #ifdef MML_NEW
+							lite_spot(plist[i], y + ddy_ddd[j], x + ddx_ddd[j]);
+ #endif
 						}
 					}
 				}
@@ -7151,6 +7159,14 @@ void mind_map_level(int Ind)
 			lite_spot(plist[i], m_ptr->fy, m_ptr->fx);
 			Players[plist[i]]->mon_vis[m_fast[m]] = FALSE; /* the usual hack: don't update screen after this */
 		}
+#elif defined(MML_NEW) /* new attempt */
+		/* like detect_creatures(), not excluding invisible monsters though */
+		for (i = 0; i < plist_size; i++) {
+			if (Players[plist[i]]->mon_vis[m_fast[m]]) continue;
+			Players[plist[i]]->mon_vis[m_fast[m]] = TRUE;
+			lite_spot(plist[i], m_ptr->fy, m_ptr->fx);
+			Players[plist[i]]->mon_vis[m_fast[m]] = FALSE; /* the usual hack: don't update screen after this */
+		}
 #endif
 	}
 
@@ -7159,16 +7175,19 @@ void mind_map_level(int Ind)
 	for (y = 0; y < MAX_HGT; y++)
 		for (x = 0; x < MAX_WID; x++) {
 			if (zcave[y][x].feat != FEAT_SHOP) continue;
-			for (i = 0; i < plist_size; i++)
+			for (i = 0; i < plist_size; i++) {
 				Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
+				lite_spot(plist[i], y, x);
+			}
 		}
 
+#ifndef MML_NEW
 	for (i = 0; i < plist_size; i++) {
-#if 1
+ #if 1
 		/* clean solution instead: give some temporary ESP (makes sense also).
 		 Note however: this is thereby becoming an auto-projectable ESP spell^^ */
 		set_tim_esp(plist[i], 10);
-#endif
+ #endif
 
 		/* Update the monsters */
 		Players[plist[i]]->update |= (PU_MONSTERS);
@@ -7177,6 +7196,7 @@ void mind_map_level(int Ind)
 		/* Window stuff */
 		Players[plist[i]]->window |= (PW_OVERHEAD);
 	}
+#endif
 }
 
 /*
