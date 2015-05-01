@@ -1282,6 +1282,7 @@ bool set_blind(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->blind) {
+			disturb(Ind, 1, 0); /* stop running and searching */
 			msg_format_near(Ind, "%s gropes around blindly!", p_ptr->name);
 			msg_print(Ind, "You are blind!");
 			notice = TRUE;
@@ -1351,6 +1352,7 @@ bool set_confused(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->confused) {
+			disturb(Ind, 1, 0); /* stop running and searching */
 			msg_format_near(Ind, "%s appears confused!", p_ptr->name);
 			msg_print(Ind, "You are confused!");
 			notice = TRUE;
