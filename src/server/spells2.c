@@ -3580,12 +3580,18 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 bool ident_spell(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
+#ifdef ENABLE_XID_SPELL
 	/* special hack for !X on ID spells */
 	if (p_ptr->current_item < -1) {
 		clear_current(Ind);
+ #ifndef XID_SPELL_AFTER_PICKUP
 		ident_spell_aux(Ind, p_ptr->current_item + 1);
+ #else
+		ident_spell_aux(Ind, -p_ptr->current_item - 1);
+ #endif
 		return TRUE;
 	}
+#endif
 
 	get_item(Ind, ITH_NONE);
 
@@ -3607,8 +3613,10 @@ bool ident_spell_aux(int Ind, int item) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
+#ifdef ENABLE_XID_SPELL
 	/* clean up special hack for !X on ID spells */
 	p_ptr->current_item = -1;
+#endif
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
@@ -3666,12 +3674,18 @@ bool ident_spell_aux(int Ind, int item) {
 bool identify_fully(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
+#ifdef ENABLE_XID_SPELL
 	/* special hack for !X on ID spells */
 	if (p_ptr->current_item < -1) {
 		clear_current(Ind);
+ #ifndef XID_SPELL_AFTER_PICKUP
 		identify_fully_item(Ind, p_ptr->current_item + 1);
+ #else
+		identify_fully_item(Ind, -p_ptr->current_item - 1);
+ #endif
 		return TRUE;
 	}
+#endif
 
 	get_item(Ind, ITH_NONE);
 
@@ -3693,8 +3707,10 @@ bool identify_fully_item(int Ind, int item) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
+#ifdef ENABLE_XID_SPELL
 	/* clean up special hack for !X on ID spells */
 	p_ptr->current_item = -1;
+#endif
 
 	/* Get the item (in the pack) */
 	if (item >= 0)

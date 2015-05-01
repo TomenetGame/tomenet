@@ -174,6 +174,14 @@
 /* Allow usage of /hilite command (todo: turn into client option) */
 #define ENABLE_SELF_FLASHING
 
+/* Allow !X pseudo-auto-identify inscription on spell books too - C. Blue
+   Note that this badly abuses the 'item-on-floor' (negative current_item value) feature,
+   which fortunately is unused in general.
+   Currently there's a harmless message inconsistency: !X from spells will output an
+   additional 'In your pack: xxxx (x)' message before the 'You have..' carry() message. */
+#define ENABLE_XID_SPELL
+#define XID_SPELL_AFTER_PICKUP /* this must be set to reflect 'inven_carry()' call position in 'carry()' routine! */
+
 /* Allow Martial Arts users to wield boomerangs? */
 #define ENABLE_MA_BOOMERANG
 

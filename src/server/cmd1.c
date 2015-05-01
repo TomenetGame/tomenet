@@ -1560,7 +1560,9 @@ void whats_under_your_feet(int Ind) {
 #define NEWBIES_CANT_GRAB_IN_BREE
 /* Allow BAGIDENTIFY spell to be used with !X inscription?
    This is currently not supported, because the spell is cast BEFORE the item is picked up. */
-//#define ALLOW_X_BAGID
+#ifdef ENABLE_XID_SPELL
+ //#define ALLOW_X_BAGID
+#endif
 void carry(int Ind, int pickup, int confirm) {
 	object_type *o_ptr;
 
@@ -2296,6 +2298,25 @@ void carry(int Ind, int pickup, int confirm) {
 				/* for Ironman Deep Dive Challenge cross-trading */
 				o_ptr->mode = p_ptr->mode;
 
+				/* Carry the item */
+				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
+				slot = inven_carry(Ind, o_ptr); //XID_SPELL_AFTER_PICKUP must be set accordingly to this inven_carry() call! (Before or after !X application)
+				inven_carried = TRUE;
+				o_ptr->quest_credited = FALSE; //unhack.
+
+				/* Get the item again */
+				o_ptr = &(p_ptr->inventory[slot]);
+				o_ptr->marked = 0;
+				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+
+#if 0
+				if (!o_ptr->level) {
+					if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
+					else o_ptr->level = -p_ptr->dun_depth;
+					if (o_ptr->level > 100) o_ptr->level = 100;
+				}
+#endif
+
 				/* the_sandman: attempt to id a newly picked up item if we have the means to do so.
  				 * Check that we don't know the item and can read a scroll - mikaelh */
 				if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) { /* was just object_known_p */
@@ -2376,6 +2397,7 @@ void carry(int Ind, int pickup, int confirm) {
 						int spell = -1, spell1, spell2, spell3, spell4;
 						bool spell1_found = FALSE, spell2_found = FALSE, spell3_found = FALSE, spell4_found = FALSE;
 
+						/* todo: make these predefined for efficiency instead of calling lua over and over.. */
 						spell1 = exec_lua(Ind, "return IDENTIFY");
 						spell2 = exec_lua(Ind, "return MIDENTIFY");
 						spell3 = exec_lua(Ind, "return STARIDENTIFY");
@@ -2498,15 +2520,16 @@ void carry(int Ind, int pickup, int confirm) {
 /* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
 								p_ptr->energy -= level_speed(&p_ptr->wpos);*/
 								break;
-							} else
+							}
+#ifdef ENABLE_XID_SPELL
 							/* ID spell -- IDENTIFY or MIDENTIFY or even STARIDENTIFY or BAGIDENTIFY. */
-							if (i_ptr->tval == TV_BOOK) {
+							else if (i_ptr->tval == TV_BOOK) {
 								if (i_ptr->sval == SV_SPELLBOOK) {
 									if (i_ptr->pval == spell1 || i_ptr->pval == spell2 ||
 									    i_ptr->pval == spell3
-#ifdef ALLOW_X_BAGID
+ #ifdef ALLOW_X_BAGID
 									    || i_ptr->pval == spell4
-#endif
+ #endif
 									    ) {
 										/* Have we learned this spell yet at all? */
 										if (!exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, i_ptr->pval))) {
@@ -2518,10 +2541,13 @@ void carry(int Ind, int pickup, int confirm) {
 										/* If so then use it */
 										spell = i_ptr->pval;
 										//wow-- use ground item! ;) (except for BAGIDENTIFY)
-										if (spell != spell4) p_ptr->current_item = -c_ptr->o_idx - 1;
+										if (spell != spell4)
+ #ifndef XID_SPELL_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
+											p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+											p_ptr->current_item = -slot - 1;
+ #endif
 									} else {
-										/* "No recall spell found in this book!" */
-										//continue;
 										/* Be severe and point out the wrong inscription: */
 										msg_print(Ind, "\377oThe inscribed spell scroll isn't an eligible identify spell.");
 										continue;
@@ -2532,9 +2558,9 @@ void carry(int Ind, int pickup, int confirm) {
 										spell1_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell1));//NO LONGER SUPPORTED
 										spell2_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell2));//NO LONGER SUPPORTED
 										spell3_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell3));//NO LONGER SUPPORTED
-#ifdef ALLOW_X_BAGID
+ #ifdef ALLOW_X_BAGID
 										spell4_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell4));//NO LONGER SUPPORTED
-#endif
+ #endif
 										if (!spell1_found && !spell2_found &&
 										    !spell3_found && !spell4_found) {
 											/* Be severe and point out the wrong inscription: */
@@ -2545,9 +2571,9 @@ void carry(int Ind, int pickup, int confirm) {
 										spell1_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell1));
 										spell2_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell2));
 										spell3_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell3));
-#ifdef ALLOW_X_BAGID
+ #ifdef ALLOW_X_BAGID
 										spell4_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell4));
-#endif
+ #endif
 										if (!spell1_found && !spell2_found &&
 										    !spell3_found && !spell4_found) {
 											/* Be severe and point out the wrong inscription: */
@@ -2560,19 +2586,31 @@ void carry(int Ind, int pickup, int confirm) {
 								//wow, first time use of '-item' ground access nowadays? :-p
 								if (spell1_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell1))) {
 									spell = spell1;
+ #ifndef XID_SPELL_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
 									p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+									p_ptr->current_item = -slot - 1;
+ #endif
 								}
 								else if (spell2_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell2))) {
 									spell = spell2;
+ #ifndef XID_SPELL_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
 									p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+									p_ptr->current_item = -slot - 1;
+ #endif
 								} else if (spell3_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell3))) {
 									spell = spell3;
+ #ifndef XID_SPELL_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
 									p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+									p_ptr->current_item = -slot - 1;
+ #endif
 								}
-#ifdef ALLOW_X_BAGID
+ #ifdef ALLOW_X_BAGID
 								else if (spell4_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell4)))
 									spell = spell4;
-#endif
+ #endif
 								/* Just continue&ignore instead of return, since we
 								   might just have picked up someone else's book! */
 								if (spell == -1) {
@@ -2591,28 +2629,10 @@ void carry(int Ind, int pickup, int confirm) {
 								p_ptr->energy -= level_speed(&p_ptr->wpos);*/
 								break;
 							}
+#endif
 						}
 					}
 				}
-
-				/* Carry the item */
-				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
-				slot = inven_carry(Ind, o_ptr);
-				inven_carried = TRUE;
-				o_ptr->quest_credited = FALSE; //unhack.
-
-				/* Get the item again */
-				o_ptr = &(p_ptr->inventory[slot]);
-				o_ptr->marked = 0;
-				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
-
-#if 0
-				if (!o_ptr->level) {
-					if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
-					else o_ptr->level = -p_ptr->dun_depth;
-					if (o_ptr->level > 100) o_ptr->level = 100;
-				}
-#endif
 
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
