@@ -1621,7 +1621,7 @@ void do_slash_cmd(int Ind, char *message) {
 #endif
 			return;
 		}
-		else if (prefix(message, "/coin") || prefix(message, "/flip")) {
+		else if (prefix(message, "/coin") || prefix(message, "/flip") || !strcmp(message, "/f")) {
 			bool coin;
 
 			if (!p_ptr->au) {
