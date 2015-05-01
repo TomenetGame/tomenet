@@ -1681,10 +1681,6 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	rd_u16b(&p_ptr->town_x);
 	rd_u16b(&p_ptr->town_y);
 
-	p_ptr->recall_pos.wx = p_ptr->wpos.wx;
-	p_ptr->recall_pos.wy = p_ptr->wpos.wy;
-	p_ptr->recall_pos.wz = p_ptr->max_dlv;
-
 	/* More info */
 
 	rd_s16b(&p_ptr->ghost);
@@ -1868,8 +1864,20 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	/* hack: no save file version increment for this one */
 	rd_byte(&p_ptr->IDDC_flags);
 
+	if (!older_than(4, 5, 33)) {
+		rd_s16b(&p_ptr->word_recall);
+		rd_s16b(&p_ptr->recall_pos.wx);
+		rd_s16b(&p_ptr->recall_pos.wy);
+		rd_s16b(&p_ptr->recall_pos.wz);
+	} else {
+		strip_bytes(8);
+		p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+		p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+		p_ptr->recall_pos.wz = p_ptr->max_dlv;
+	}
+
 	/* Future use */
-	strip_bytes(30);
+	strip_bytes(22);
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */

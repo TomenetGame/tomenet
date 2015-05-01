@@ -774,7 +774,7 @@ static void wr_extra(int Ind) {
 
 	wr_u16b(p_ptr->town_x);
 	wr_u16b(p_ptr->town_y);
-	
+
 	/* More info */
 	wr_s16b(p_ptr->ghost);
 	wr_s16b(p_ptr->sc);
@@ -875,8 +875,13 @@ static void wr_extra(int Ind) {
 	wr_byte(p_ptr->IDDC_logscum);
 	wr_byte(p_ptr->IDDC_flags);
 
+	wr_s16b(p_ptr->word_recall);
+	wr_s16b(p_ptr->recall_pos.wx);
+	wr_s16b(p_ptr->recall_pos.wy);
+	wr_s16b(p_ptr->recall_pos.wz);
+
 	/* Future use */
-	for (i = 0; i < 30; i++) wr_byte(0);
+	for (i = 0; i < 22; i++) wr_byte(0);
 
         /* Toggle for possible automatic save-game updates
            (done via script login-hook, eg custom.lua) - C. Blue */
