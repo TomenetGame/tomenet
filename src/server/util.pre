@@ -391,8 +391,9 @@ extern s16b quark__num;
 extern void swear_add(char *word, int level);
 extern char *swear_get_word(int i);
 extern int swear_get_level(int i);
-extern void nonswear_add(char *word);
+extern void nonswear_add(char *word, int affix);
 extern char *nonswear_get(int i);
+extern int nonswear_affix_get(int i);
 extern void init_swearing(void);
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 extern int scan_iddc(void);

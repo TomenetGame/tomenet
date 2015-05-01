@@ -1203,17 +1203,19 @@ void swear_add(char *word, int level) {
 char *swear_get_word(int i) { return swear[i].word; }
 int swear_get_level(int i) { return swear[i].level; }
 
-void nonswear_add(char *word) {
+void nonswear_add(char *word, int affix) {
 	int i;
 
 	for (i = 0; i < MAX_NONSWEAR; i++) {
 		if (nonswear[i][0]) continue;
 		strcpy(nonswear[i], word);
+		nonswear_affix[i] = affix;
 		return;
 	}
 	s_printf("FAILED to add non-swear word '%s'.\n", word);
 }
 char *nonswear_get(int i) { return nonswear[i]; }
+int nonswear_affix_get(int i) { return nonswear_affix[i]; }
 
 void lua_fix_max_depth(int Ind) {
 	player_type *p_ptr = Players[Ind];

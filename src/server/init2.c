@@ -2818,7 +2818,7 @@ int scan_iddc() {
 
 void init_swearing() {
 	char buf[1024];
-	int i = 0;
+	int i = 0, j;
 	FILE *fp;
 
 	path_build(buf, 1024, ANGBAND_DIR_CONFIG, "swearing.txt");
@@ -2860,7 +2860,23 @@ void init_swearing() {
 				s_printf("Failed to read nonswearing.txt: %s\n", strerror(ferror(fp)));
 		}
 		/* get rid of '\n' char */
-		else nonswear[i][strlen(nonswear[i]) - 1] = '\0';
+		else {
+			nonswear[i][strlen(nonswear[i]) - 1] = '\0';
+			/* translate 'affix' placeholder */
+			nonswear_affix[i] = 0;
+			if (nonswear[i][0] == '?') {
+				j = 0;
+				do {
+					j++;
+					nonswear[i][j - 1] = nonswear[i][j];
+				} while (nonswear[i][j]);
+				nonswear_affix[i] += 1;
+			}
+			if (nonswear[i][strlen(nonswear[i]) - 1] == '?') {
+				nonswear[i][strlen(nonswear[i]) - 1] = '\0';
+				nonswear_affix[i] += 2;
+			}
+		}
 
 		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;

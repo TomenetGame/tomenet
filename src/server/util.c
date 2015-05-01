@@ -3755,6 +3755,21 @@ static int censor(char *line) {
 			/* prevent checking the same occurance repeatedly */
 			offset = word - lcopy + strlen(nonswear[i]);
 
+			if ((nonswear_affix[i] & 0x1)) {
+				if (word == lcopy) continue; //beginning of lcopy string?
+				if (!((*(word - 1) >= 'a' && *(word - 1) <= 'z') ||
+				    (*(word - 1) >= '0' && *(word - 1) <= '1') ||
+				    *(word - 1) == '\''))
+					continue;
+			}
+			if ((nonswear_affix[i] & 0x2)) {
+				if (!word[strlen(nonswear[i])]) continue; //end of lcopy string?
+				if (!((lcopy[offset] >= 'a' && lcopy[offset] <= 'z') ||
+				    (lcopy[offset] >= '0' && lcopy[offset] <= '1') ||
+				    lcopy[offset] == '\''))
+					continue;
+			}
+
 			/* prevent it from getting tested for swear words */
 			for (j = 0; j < strlen(nonswear[i]); j++)
 				lcopy2[(word - lcopy) + j] = 'Z';
@@ -4083,7 +4098,7 @@ static void player_talk_aux(int Ind, char *message) {
 				return;
 			}
 		}
-		if (p_ptr->msg-last > 240 && p_ptr->spam) p_ptr->spam--;
+		if (p_ptr->msg - last > 240 && p_ptr->spam) p_ptr->spam--;
 		p_ptr->msgcnt = 0;
 	}
 	if (p_ptr->spam > 1 || p_ptr->muted) return;
@@ -4558,8 +4573,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 }
 /* Console talk is automatically sent by 'Server Admin' which is treated as an admin */
-static void console_talk_aux(char *message)
-{
+static void console_talk_aux(char *message) {
  	int i;
 	cptr sender = "Server Admin";
 	bool me = FALSE, log = TRUE;
@@ -4590,7 +4604,7 @@ static void console_talk_aux(char *message)
 		return;
 	}
 
-	if (message[0] == '/' ){
+	if (message[0] == '/' ) {
 		if (!strncmp(message, "/me ", 4)) me = TRUE;
 		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
 		else return;

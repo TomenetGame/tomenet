@@ -228,6 +228,7 @@ server_opts cfg = {
 struct combo_ban *banlist = NULL;
 struct swear_info swear[MAX_SWEAR];
 char nonswear[MAX_NONSWEAR][NAME_LEN];
+int nonswear_affix[MAX_NONSWEAR];
 
 /* Temporary server feature flags (for LUA files) */
 u32b sflags_TEMP = 0x0;
