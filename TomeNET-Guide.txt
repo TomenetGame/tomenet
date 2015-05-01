@@ -14240,8 +14240,9 @@ Mindcraft schools:
                     time if the attempt was actually unsuccessful.
                     Required skill level for first spell level: 10.
 
-    Remote Vision   Tries to forcibly enter all sentient creatures' minds on
-                    the level, in order to use their vision to make the
+    Remote Vision   Tries to forcibly enter all sentient creatures' minds
+                    (including invisible monsters, but never empty-minded ones)
+                    on the level, in order to use their vision to make the
                     dungeon structure known to yourself.
                     Required skill level for first spell level: 20.
                     If your proficiency in 'Attunement' school is at least 20,
