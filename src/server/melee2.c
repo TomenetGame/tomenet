@@ -1412,8 +1412,11 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 
 	/* hack: if we dont auto-retaliate vs a monster than we dont intercept either */
 	if (r_ptr->flags8 & RF8_NO_AUTORET) return FALSE;
+
 	/* this one just cannot be intercepted */
-	if (m_ptr->r_idx == RI_LIVING_LIGHTNING) return FALSE;
+	//if (m_ptr->r_idx == RI_LIVING_LIGHTNING) return FALSE;
+	/* cannot intercept elementals and vortices (not '#' at this time) */
+	if (strchr("Ev*", r_ptr->d_char)) return FALSE;
 
 	/* paranoia? */
 	if (!(zcave = getcave(wpos))) return(FALSE);
