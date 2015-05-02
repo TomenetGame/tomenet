@@ -14370,6 +14370,20 @@ Mimic powers use INT to determine fail rate, have a greater fail rate than
 other spells in general, and do not have a 'spell level'. Their effects are
 pretty much fixed.
 
+A spell failure rate of 0% means that you will always successfully cast the
+spell. However, certain status effects can increase your failure rate
+temporarily or even completely prevent spell-casting, even if your fail rate
+used to be 0%:
+
+-Blindness
+ Some spells can be cast while blind (will say so in the spell description)
+-Confusion
+ Some spells can be cast while confused (will say so in the spell description)
+-Stun
+ Stun will increase your fail chance by 15%, heavy stun even by 25%.
+ When you're knocked out you can of course not cast any spells (or do anything
+ at all).
+
 
 
 (6.8b) Runes & Runemastery
