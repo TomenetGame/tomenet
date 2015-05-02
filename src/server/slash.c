@@ -609,7 +609,8 @@ void do_slash_cmd(int Ind, char *message) {
 					if (baseonly && object_known_p(Ind, o_ptr) &&
 					    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
 					    /* let exploding ammo count as ego.. pft */
-					    (is_ammo(o_ptr->tval) && o_ptr->pval)))
+					    (is_ammo(o_ptr->tval) && o_ptr->pval))
+					    && !cursed_p(o_ptr))
 						return;
 
 					do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number);
@@ -659,7 +660,8 @@ void do_slash_cmd(int Ind, char *message) {
 				if (baseonly && object_known_p(Ind, o_ptr) &&
 				    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
 				    /* let exploding ammo count as ego.. pft */
-				    (is_ammo(o_ptr->tval) && o_ptr->pval)))
+				    (is_ammo(o_ptr->tval) && o_ptr->pval))
+				    && !cursed_p(o_ptr))
 					continue;
 
 				/* destroy non-inscribed items too? */

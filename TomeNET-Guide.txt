@@ -971,8 +971,10 @@ They all start with a slash '/' hence they're called slash commands:
             have no inscription at all.
             Also see /tag and /untag.
 
-/dis b      DESTROYS items like '/dis a' does, but skips identified ego items.
-            It also skips exploding ammo, although it isn't really an ego item.
+/dis b      DESTROYS items like '/dis a' does, but skips identified ego items,
+            provided they aren't cursed.
+            It also skips (non-cursed) exploding ammo, although it isn't really
+            an ego item.
 
 /dis f      DESTROYS the item on the floor you're standing on provided it is
             not inscribed in any way, and tells you about the next item below
@@ -980,8 +982,10 @@ They all start with a slash '/' hence they're called slash commands:
 
 /dis fa     DESTROYS an item like '/dis f', even if it has an inscription.
 
-/dis fb     DESTROYS an item like '/dis fa', but skips identified ego items.
-            It also skips exploding ammo, although it isn't really an ego item.
+/dis fb     DESTROYS an item like '/dis fa', but skips identified ego items,
+            provided they aren't cursed.
+            It also skips (non-cursed) exploding ammo, although it isn't really
+            an ego item.
 
 /dr [tag]   Without tag it equips all items in your inventory that are: not
 (/dress)    cursed, not {worthless}, not {broken}, not {terrible}, and that are
