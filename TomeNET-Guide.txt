@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. April 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. May 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -1505,6 +1505,8 @@ Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
                 This inscription also works on 'The Stone of Lore'.
                 It does not work for Arcane Lore, since that is purely a bag ID
                 spell.
+                Note that it will attempt to re-cast the ID spell until it
+                succeeds or you're out of mana. Use with care.
                 See (5.7) for more information about identification.
 
 An item that can be activated:
