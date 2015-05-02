@@ -175,12 +175,12 @@ MPSISTORM = add_spell {
 	["direction"] = TRUE,
 	["spell"] = function(args)
 --	["spell"] = function()
-		fire_cloud(Ind, GF_PSI, args.dir, (1 + get_level(Ind, MPSISTORM, 250)), 3 + get_level(Ind, MPSISTORM, 4), 6 + get_level(Ind, MPSISTORM, 4), 14, " releases a psi storm for")
+		fire_cloud(Ind, GF_PSI, args.dir, (33 + get_level(Ind, MPSISTORM, 200)), 3 + get_level(Ind, MPSISTORM, 4), 6 + get_level(Ind, MPSISTORM, 4), 14, " releases a psi storm for")
 --		fire_cloud(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, " releases a psi storm for")
 --                        fire_wave(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, EFF_STORM, " releases a psi storm for
 	end,
 	["info"] = function()
-		return "dam "..(1 + get_level(Ind, MPSISTORM, 250)).." rad "..(3 + get_level(Ind, MPSISTORM, 4)).." dur "..(6 + get_level(Ind, MPSISTORM, 4))
+		return "dam "..(33 + get_level(Ind, MPSISTORM, 200)).." rad "..(3 + get_level(Ind, MPSISTORM, 4)).." dur "..(6 + get_level(Ind, MPSISTORM, 4))
 	end,
 	["desc"] = {
 		"A psionic storm that damages and disturbs all minds within an area",
