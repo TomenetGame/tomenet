@@ -2680,20 +2680,20 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 				if (p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
 				    (1 << (x + y * MAX_WILD_X) % 8)) {
-					msg_format(Ind, "This world map piece shows the layout at (%d,%d) which you already know.", x, y);
+					msg_format(Ind, "\377sThis world map piece shows the layout at \377u(%d,%d)\377s which you already know.", x, y);
 					break;
 				}
 
 				p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] |= (1 << ((x + y * MAX_WILD_X) % 8));
-				msg_format(Ind, "You learn the world map layout at sector (%d,%d).", x, y);
+				msg_format(Ind, "\377sYou learn the world map layout at sector \377u(%d,%d)\377s.", x, y);
 
 				if ((d_ptr = wild->tower)) {
-					msg_print(Ind, "You learn that there is a tower at that location, called:");
-					msg_format(Ind, "  '%s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
+					msg_print(Ind, "\377sYou learn that there is a tower at that location, called:");
+					msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
 				}
 				if ((d_ptr = wild->dungeon)) {
-					msg_print(Ind, "You learn that there is a dungeon at that location, called:");
-					msg_format(Ind, "  '%s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
+					msg_print(Ind, "\377sYou learn that there is a dungeon at that location, called:");
+					msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
 				}
 #endif
 				break;
