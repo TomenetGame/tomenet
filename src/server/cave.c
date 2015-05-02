@@ -8196,8 +8196,7 @@ void recent_track(int r_idx)
  *
  * All disturbance cancels repeated commands, resting, and running.
  */
-void disturb(int Ind, int stop_search, int keep_resting)
-{
+void disturb(int Ind, int stop_search, int keep_resting) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Calm down from silly running */
@@ -8210,6 +8209,9 @@ void disturb(int Ind, int stop_search, int keep_resting)
 	if (p_ptr->command_rep) {
 		/* Cancel */
 		p_ptr->command_rep = 0;
+#ifdef ENABLE_XID_SPELL
+		//p_ptr->current_item = -1; //unnecessary?
+#endif
 
 		/* Hack -- Clear the buffer */
 		Handle_clear_buffer(Ind);

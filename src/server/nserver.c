@@ -8344,8 +8344,7 @@ static int Receive_look(int ind)
  * Possibly, most of Receive_* functions can be bandled into one function
  * like this; that'll make the client *MUCH* more generic.		- Jir -
  */
-static int Receive_activate_skill(int ind)
-{
+static int Receive_activate_skill(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch, mkey, dir;
@@ -10391,6 +10390,9 @@ static void Handle_clear_actions(int Ind) {
 
 	/* Stop automatically executed repeated actions */
 	p_ptr->command_rep = 0;
+#ifdef ENABLE_XID_SPELL
+	//p_ptr->current_item = -1; //unnecessary?
+#endif
 
 	/* Stop preparing shooting techniques */
 	stop_precision(Ind);
@@ -11816,4 +11818,8 @@ bool get_conn_state_ok(int Ind) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) return FALSE;
 	return TRUE;
+}
+
+sockbuf_t *get_conn_q(int Ind) {
+	return &Conn[Players[Ind]->conn]->q;
 }

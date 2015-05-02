@@ -1558,10 +1558,12 @@ void whats_under_your_feet(int Ind) {
 /* Prevent characters in Bree from taking gold/items while they cannot drop
    them again due to being lower level than cfg.newbies_cannot_drop? */
 #define NEWBIES_CANT_GRAB_IN_BREE
+#ifdef ENABLE_XID_SPELL
 /* Allow BAGIDENTIFY spell to be used with !X inscription?
    This is currently not supported, because the spell is cast BEFORE the item is picked up. */
-#ifdef ENABLE_XID_SPELL
  //#define ALLOW_X_BAGID
+/* Repeat spell until it succeeds */
+ #define XID_REPEAT
 #endif
 void carry(int Ind, int pickup, int confirm) {
 	object_type *o_ptr;
@@ -2318,7 +2320,7 @@ void carry(int Ind, int pickup, int confirm) {
 #endif
 
 				/* the_sandman: attempt to id a newly picked up item if we have the means to do so.
- 				 * Check that we don't know the item and can read a scroll - mikaelh */
+				 * Check that we don't know the item and can read a scroll - mikaelh */
 				if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) { /* was just object_known_p */
 					object_type *i_ptr;
 					int index;
@@ -2410,7 +2412,6 @@ void carry(int Ind, int pickup, int confirm) {
 							if (!check_guard_inscription(i_ptr->note, 'X')) continue;
 
 							if (!can_use(Ind, i_ptr)) continue;
-
 							/* ID rod && ID staff (no *perc*) */
 							if ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY && !i_ptr->pval) ||
 							    (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0)) {
@@ -2498,7 +2499,32 @@ void carry(int Ind, int pickup, int confirm) {
 								break;
 							} else
 							/* ID scroll */
-							if (i_ptr->tval == TV_SCROLL && i_ptr->sval == SV_SCROLL_IDENTIFY && i_ptr->number > 0) { 
+							if (i_ptr->tval == TV_SCROLL && i_ptr->sval == SV_SCROLL_IDENTIFY && i_ptr->number > 0) {
+								ID_item_found = TRUE;
+
+								if (p_ptr->blind || no_lite(Ind) || p_ptr->confused)
+									//Screw it. break!
+									break;
+
+								/* we id the newly picked up item */
+								object_aware(Ind, o_ptr);
+								object_known(o_ptr);
+
+								/* Destroy a scroll in the pack */
+								if (index >= 0) {
+									inven_item_increase(Ind, index, -1);
+									inven_item_describe(Ind, index);
+									inven_item_optimize(Ind, index);
+								}
+
+								/* consume a turn */
+/* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
+								p_ptr->energy -= level_speed(&p_ptr->wpos);*/
+								break;
+
+							} else
+							/* The decadence, *ID* scroll */
+							if (i_ptr->tval == TV_SCROLL && i_ptr->sval == SV_SCROLL_STAR_IDENTIFY && i_ptr->number > 0) { 
 								ID_item_found = TRUE;
 
 						 		if (p_ptr->blind || no_lite(Ind) || p_ptr->confused)
@@ -2508,6 +2534,8 @@ void carry(int Ind, int pickup, int confirm) {
 								/* we id the newly picked up item */
 								object_aware(Ind, o_ptr);
 								object_known(o_ptr);
+								/* Mark the item as fully known */
+								o_ptr->ident |= (ID_MENTAL);
 
 								/* Destroy a scroll in the pack */
 								if (index >= 0) {
@@ -2619,10 +2647,17 @@ void carry(int Ind, int pickup, int confirm) {
 								}
 
 								ID_item_found = TRUE;
+#ifdef XID_REPEAT
+								p_ptr->command_rep = PKT_ACTIVATE_SKILL;
+#endif
 								cast_school_spell(Ind, index, spell, -1, -1, 0);
 								/* clean up, in case a spell changed due to being higher level and
 								   skipped the individual-id part, so current_item didn't get cleared. */
+#ifndef XID_REPEAT
 								p_ptr->current_item = -1;
+#else
+								if (p_ptr->command_rep != PKT_ACTIVATE_SKILL) p_ptr->current_item = -1;
+#endif
 
 								/* consume a turn */
 /* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
