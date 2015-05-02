@@ -4217,6 +4217,8 @@ bool dispel_monsters(int Ind, int dam) {
  */
 void aggravate_monsters(int Ind, int who) {
 	player_type *p_ptr = Players[Ind];
+	monster_type * m_ptr;
+	monster_race *r_ptr;
 
 	int i;
 
@@ -4225,7 +4227,8 @@ void aggravate_monsters(int Ind, int who) {
 
 	/* Aggravate everyone nearby */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
+		r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -4237,7 +4240,7 @@ void aggravate_monsters(int Ind, int who) {
 		if (i == who) continue;
 
 		/* Wake up nearby sleeping monsters */
-		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
+		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) < MAX_SIGHT * 2)
 #if 0
 		if (m_ptr->cdis < MAX_SIGHT * 2)
 #endif
@@ -4249,6 +4252,9 @@ void aggravate_monsters(int Ind, int who) {
 				sleep = TRUE;
 			}
 		}
+
+		/* Don't speed up undead/nonliving monsters */
+		if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags2 & RF2_EMPTY_MIND)) continue;
 
 		/* Speed up monsters in line of sight */
 		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx)) {
