@@ -8210,7 +8210,7 @@ void disturb(int Ind, int stop_search, int keep_resting) {
 		/* Cancel */
 		p_ptr->command_rep = 0;
 #ifdef ENABLE_XID_SPELL
-		//p_ptr->current_item = -1; //unnecessary?
+		p_ptr->current_item = -1; //unnecessary?
 #endif
 
 		/* Hack -- Clear the buffer */

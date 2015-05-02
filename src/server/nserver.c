@@ -10391,7 +10391,7 @@ static void Handle_clear_actions(int Ind) {
 	/* Stop automatically executed repeated actions */
 	p_ptr->command_rep = 0;
 #ifdef ENABLE_XID_SPELL
-	//p_ptr->current_item = -1; //unnecessary?
+	p_ptr->current_item = -1; //unnecessary?
 #endif
 
 	/* Stop preparing shooting techniques */
