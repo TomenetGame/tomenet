@@ -2459,7 +2459,7 @@ static void display_store(int Ind)
 		} else
 #endif
 		/* Send the store info */
-#if 0 /* maybe not neccesary? */
+#if 0 /* maybe not necessary? */
 		if (is_newer_than(&p_ptr->version, 4, 4, 6, 1, 0, 0))
 			Send_store_info(Ind, p_ptr->store_num, store_name, owner_name,
 			    (st_info[st_ptr->st_idx].flags1 & SF1_SPECIAL) ? -1 : st_ptr->stock_num,
