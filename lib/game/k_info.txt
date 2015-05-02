@@ -6486,7 +6486,7 @@ A:15/2:30/1
 #D:Might sometimes also carry an inscription revealing a dungeon location.
 #NEW_WILDERNESS_MAP_SCROLLS:
 F:EASY_KNOW
-D:Reveals a random world map sector including any dungeon at that location.
+D:Read this to reveal a random world map sector and any dungeons there.
 
 # from RFEs
 N:915:& Scourge~
