@@ -199,6 +199,9 @@
 /* Wilderness mapping scrolls are special: They're actually pieces of the world map. */
 #define NEW_WILDERNESS_MAP_SCROLLS
 
+/* Disable manual declaration of hostility/peace */
+#define NO_PK
+
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER

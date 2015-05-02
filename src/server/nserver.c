@@ -3989,6 +3989,10 @@ static int Receive_login(int ind) {
 			sflags0 |= SFLG0_DED_PVP;
  #endif
 #endif
+#ifdef NO_PK
+			sflags0 |= SFLG0_NO_PK;
+#endif
+
 			/* Set available-feature / client mode flags */
 #ifdef BIG_MAP
 			sflags1 |= SFLG1_BIG_MAP;

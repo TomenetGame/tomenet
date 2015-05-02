@@ -364,13 +364,10 @@ extern bool acc_got_info;
 extern s16b acc_flags;
 
 /* Server detail flags */
-extern bool s_RPG;
-extern bool s_FUN;
-extern bool s_PARTY;
-extern bool s_ARCADE;
-extern bool s_TEST;
-extern bool s_RPG_ADMIN;
+extern bool s_RPG, s_FUN, s_ARCADE, s_TEST;
+extern bool s_RPG_ADMIN, s_PARTY;
 extern bool s_DED_IDDC, s_DED_PVP;
+extern bool s_NO_PK;
 
 /* Server's temporary features flags */
 extern u32b sflags_TEMP;

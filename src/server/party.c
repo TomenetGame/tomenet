@@ -3071,6 +3071,12 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		return FALSE;
 	}
 
+	/* If it's a blood bond, players may fight in safe zones and with party members np */
+	if (i > 0) bb = check_blood_bond(Ind, i);
+#ifdef NO_PK
+	if (i < 0 || !bb) return FALSE;
+#endif
+
 	/* log any attempts */
 	if (initiator) {
 		/* paranoia? shouldn't i always be > 0 here? */
@@ -3103,9 +3109,6 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		msg_print(Ind, "Your account needs to be validated in order to fight other players.");
 		return FALSE;
 	}
-
-	/* If it's a blood bond, players may fight in safe zones and with party members np */
-	if (i > 0) bb = check_blood_bond(Ind, i);
 
 #if 1
 	if (!bb && initiator && !istown(&p_ptr->wpos)) {
@@ -3226,6 +3229,12 @@ bool remove_hostility(int Ind, cptr name) {
 
 		return FALSE;
 	}
+
+#ifdef NO_PK
+	/* If it's a blood bond, players may fight in safe zones and with party members np */
+	if (i < 0) return FALSE;
+	else if (!check_blood_bond(Ind, i)) return FALSE;
+#endif
 
 	/* Forge name */
 	if (i > 0) q = Players[i]->name;

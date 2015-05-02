@@ -2808,8 +2808,10 @@ void cmd_party(void) {
 		if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0))
 			Term_putstr(5, 12, -1, TERM_WHITE, "(\377Ue\377w) Set/view guild options");
 
-		Term_putstr(5, 14, -1, TERM_WHITE, "(\377RA\377w) Declare war on player/party (not recommended!)");
-		Term_putstr(5, 15, -1, TERM_WHITE, "(\377gP\377w) Make peace with player");
+		if (!s_NO_PK) {
+			Term_putstr(5, 14, -1, TERM_WHITE, "(\377RA\377w) Declare war on player/party (not recommended!)");
+			Term_putstr(5, 15, -1, TERM_WHITE, "(\377gP\377w) Make peace with player");
+		}
 
 		/* Show current party status */
 		if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
@@ -2877,13 +2879,13 @@ void cmd_party(void) {
 		}
 
 		/* Attack player/party */
-		else if (i == 'A') {
+		else if (i == 'A' && !s_NO_PK) {
 			/* Get player name */
 			Term_putstr(0, 19, -1, TERM_L_RED, "Enter player/party to attack: ");
 			if (askfor_aux(buf, 79, 0)) Send_party(PARTY_HOSTILE, buf);
 		}
 		/* Make peace with player/party */
-		else if (i == 'P') {
+		else if (i == 'P' && !s_NO_PK) {
 			/* Get player/party name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Make peace with: ");
 			if (askfor_aux(buf, 79, 0)) Send_party(PARTY_PEACE, buf);

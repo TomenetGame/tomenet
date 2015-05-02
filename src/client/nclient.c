@@ -367,16 +367,17 @@ void Receive_login(void) {
 	if (sflags0 & SFLG0_RPG_ADMIN) s_RPG_ADMIN = TRUE;
 	if (sflags0 & SFLG0_DED_IDDC) s_DED_IDDC = TRUE;	/* probably unused */
 	if (sflags0 & SFLG0_DED_PVP) s_DED_PVP = TRUE;		/* probably unused */
+	if (sflags0 & SFLG0_NO_PK) s_NO_PK = TRUE;
 
 	/* Set client mode */
 	if (sflags1 & SFLG1_PARTY) client_mode = CLIENT_PARTY;
 	if (!(sflags1 & SFLG1_BIG_MAP) &&
-            (screen_wid != SCREEN_WID || screen_hgt != SCREEN_HGT)) {
+	    (screen_wid != SCREEN_WID || screen_hgt != SCREEN_HGT)) {
 		/* BIG_MAP_fallback sort of */
-                screen_wid = SCREEN_WID;
-                screen_hgt = SCREEN_HGT;
-                resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
-        }
+		screen_wid = SCREEN_WID;
+		screen_hgt = SCREEN_HGT;
+		resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+	}
 
 	/* Set temporary features */
 	sflags_TEMP = sflags2;
