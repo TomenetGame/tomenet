@@ -1940,7 +1940,7 @@ void do_cmd_options_sfx_sdl(void) {
 				/* get event name */
 				sprintf(out_val, "return get_sound_name(%d)", j);
 				lua_name = string_exec_lua(0, out_val);
-			}
+			} else lua_name = "<nothing>";
 
 			/* set colour depending on enabled/disabled state */
 			//todo - c_cfg.use_color D: yadayada
@@ -2127,7 +2127,7 @@ void do_cmd_options_mus_sdl(void) {
 				/* get event name */
 				sprintf(out_val, "return get_music_name(%d)", j);
 				lua_name = string_exec_lua(0, out_val);
-			}
+			} else lua_name = "<nothing>";
 
 			/* set colour depending on enabled/disabled state */
 			//todo - c_cfg.use_color D: yadayada
