@@ -1645,7 +1645,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 
 #ifdef ENABLE_XID_SPELL
 		/* hack: repeat ID-spell attempt until item is successfully identified */
-		if (rep && !object_known_p(Ind, &p_ptr->inventory[-p_ptr->current_item - 1])) {
+		if (rep && ftk_maybe && !object_known_p(Ind, &p_ptr->inventory[-p_ptr->current_item - 1])) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
 
 			p_ptr->command_rep = PKT_ACTIVATE_SKILL;
