@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. May 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. May 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -113,6 +113,7 @@ Contents
     (5.6)   Resistances & caps, Immunities, Susceptibilities
     (5.7)   Qualitative classification of items, identifying & selling items
     (5.7a)  Types of Identification
+    (5.7b)  The EASY_KNOW flag
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
     (5.9a)  Activatable items
@@ -8267,6 +8268,9 @@ Item has been identified and is a true artifact -> the shop will pay a fixed
                                                    price which is predefined
                                                    for each true artifact.
                                                    You don't need to *ID* it.
+                                                   Note that you can actually
+                                                   look up all true artifacts
+                                                   by pressing:  ~ 6
 
 Item has been identified and is a randart -> Shops will usually offer between
                                              10,000 and 15,000 Au for unknown
@@ -8363,6 +8367,41 @@ Note: There are certain effects that can make your character lose his knowledge
       of items, which corresponds to 'unindentification' of types a) and b)1)
       and also loses the additional knowledge gained from c) in the list above.
       The flavour knowledge as described in b)2) is always preserved though.
+
+
+(5.7b) The EASY_KNOW flag
+-------------------------
+Items that do not have any random mods, enchantments or abilities on their base
+version possess the EASY_KNOW flag.
+This flag means that the item will not need to be identified if it doesn't have
+any special powers (ego powers/artifact). Example:
+
+Most items don't have EASY_KNOW flag and look like this when you find them:
+Dagger {+,?}    <- the question mark, hiding its level requirements, indicates
+                   that you don't know if it's got special powers or not,
+                   until you identify it.
+
+Light sources are among those items that have EASY_KNOW flag and when you find
+one it will look like either one of these:
+Brass Lantern {+,3}   <- you know right away that this lantern has NO special
+                         powers, because it shows the level requirements.
+Brass Lantern {+,?}   <- you know right away that this one MUST have special
+                         powers, because it masks the level requirements.
+
+So whenever you find a light source with '?' for level requirements, make sure
+to pick it up and identify it, it will have special powers!
+
+More examples:
+-Rings of Resist Fire have EASY_KNOW flag, because they cannot have any random
+ properties.
+-Rings of Protection do not have EASY_KNOW, because they come with a random +AC
+ enchantment, so you need to identify it to find out.
+-Why do Amulets of Anti-Teleportation come with '?' for level requirements,
+ even though they do not have any enchantments or special powers? Because they
+ have one: They can actually be cursed sometimes, this counts as random special
+ power too!
+-Note that shields have EASY_KNOW flag too, so make sure to pick up any shield
+ that shows a '?' for level requirements, it might turn out very valuable.
 
 
 
