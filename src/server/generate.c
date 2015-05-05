@@ -10324,6 +10324,8 @@ for(mx = 1; mx < 131; mx++) {
 
 
 	/* Create secret dungeon shop entrances (never on Morgoth's depth) -C. Blue */
+	/* No stores in Valinor */
+	if (in_valinor(wpos)) return;
 	/* Nether Realm has an overriding shop creation routing. */
 	if (!netherrealm_level) {
 		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around */
