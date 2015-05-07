@@ -5091,6 +5091,18 @@ static void process_player_end(int Ind) {
 	/* calculate effective running speed */
 	eff_running_speed(&real_speed, p_ptr, c_ptr);
 
+#ifdef ENABLE_XID_SPELL
+ #ifdef XID_REPEAT
+	/* hack: inject the delayed ID-spell cast command */
+	if (p_ptr->delayed_spell) {
+		sockbuf_t *connpq = get_conn_q(Ind);
+		p_ptr->command_rep = PKT_ACTIVATE_SKILL;
+		Packet_printf(connpq, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, p_ptr->delayed_index, p_ptr->delayed_spell, -1, -1, 0);
+		p_ptr->delayed_spell = 0;
+	}
+ #endif
+#endif
+
 	/* Try to execute any commands on the command queue. */
 	process_pending_commands(p_ptr->conn);
 

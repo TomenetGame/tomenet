@@ -180,7 +180,11 @@
    Currently there's a harmless message inconsistency: !X from spells will output an
    additional 'In your pack: xxxx (x)' message before the 'You have..' carry() message. */
 #define ENABLE_XID_SPELL
-#define XID_SPELL_AFTER_PICKUP /* this must be set to reflect 'inven_carry()' call position in 'carry()' routine! */
+#ifdef ENABLE_XID_SPELL
+ #define XID_SPELL_AFTER_PICKUP /* this must be set to reflect 'inven_carry()' call position in 'carry()' routine! */
+ /* Repeat spell until it succeeds */
+ #define XID_REPEAT
+#endif
 
 /* Allow Martial Arts users to wield boomerangs? */
 #define ENABLE_MA_BOOMERANG

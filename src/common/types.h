@@ -2966,6 +2966,7 @@ struct player_type {
 	u16b cards_diamonds, cards_hearts, cards_spades, cards_clubs;	/* for /deal and /shuffle commands */
 
 	bool exp_bar;			//just for tracking popularity of this feature..
+	int delayed_index, delayed_spell; /* hack: write a spell to command queue, delayed */
 };
 
 typedef struct boni_col boni_col;

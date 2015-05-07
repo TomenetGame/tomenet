@@ -3246,8 +3246,7 @@ int is_inactive(int Ind) {
 }
 
 /* Actually execute commands from the client command queue */
-void process_pending_commands(int ind)
-{
+void process_pending_commands(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	int player = -1, type, result, (**receive_tbl)(int ind) = playing_receive, old_energy = 0;
@@ -3257,10 +3256,8 @@ void process_pending_commands(int ind)
 	// and move them to connp->r, where the Receive functions get their
 	// data from.
 	Sockbuf_clear(&connp->r);
-	if (connp->q.len > 0)
-	{
-		if (Sockbuf_write(&connp->r, connp->q.ptr, connp->q.len) != connp->q.len)
-		{
+	if (connp->q.len > 0) {
+		if (Sockbuf_write(&connp->r, connp->q.ptr, connp->q.len) != connp->q.len) {
 			errno = 0;
 			Destroy_connection(ind, "Can't copy queued data to buffer");
 			return;
@@ -3271,19 +3268,16 @@ void process_pending_commands(int ind)
 	}
 
 	// If we have no commands to execute return
-	if (connp->r.len <= 0)
-		return;
+	if (connp->r.len <= 0) return;
 
 	// Get the player pointer
-	if (connp->id != -1)
-	{
+	if (connp->id != -1) {
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
 	}
 	// Hack -- if our player id has not been set then assume that Receive_play
 	// should be called.
-	else
-	{
+	else {
 		Receive_play(ind);
 		return;
 	}
@@ -3295,12 +3289,10 @@ void process_pending_commands(int ind)
 	//while ( (p_ptr->energy >= level_speed(p_ptr->dun_depth)) && 
 	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
 	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
-	while ((connp->r.ptr < connp->r.buf + connp->r.len))
-	{
+	while ((connp->r.ptr < connp->r.buf + connp->r.len)) {
 		char *foo = connp->r.ptr;
 		type = (connp->r.ptr[0] & 0xFF);
-		if (type != PKT_KEEPALIVE && type != PKT_PING)
-		{
+		if (type != PKT_KEEPALIVE && type != PKT_PING) {
 			connp->inactive_keepalive = 0;
 			connp->inactive_ping = 0;
 			if (connp->id != -1) p_ptr->idle = 0;
@@ -3308,9 +3300,7 @@ void process_pending_commands(int ind)
 		result = (*receive_tbl[type])(ind);
 
 		/* Check that the player wasn't disconnected - mikaelh */
-		if (!Conn[ind]) {
-			return;
-		}
+		if (!Conn[ind]) return;
 
 		/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
 		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
@@ -3322,8 +3312,7 @@ void process_pending_commands(int ind)
 			if (result == 0) {
 				/* Move the remaining data to the queue buffer - mikaelh */
 				int len = connp->r.len - (connp->r.ptr - connp->r.buf);
-				if (Sockbuf_write(&connp->q, connp->r.ptr, len) != len)
-				{
+				if (Sockbuf_write(&connp->q, connp->r.ptr, len) != len) {
 					errno = 0;
 					Destroy_connection(ind, "Can't copy data to queue");
 					return;
@@ -3334,13 +3323,8 @@ void process_pending_commands(int ind)
 			Sockbuf_clear(&connp->r);
 			break;
 		}
-		if (connp->state == CONN_PLAYING)
-		{
-			connp->start = turn;
-		}
-		if (result == -1) {
-			return;
-		}
+		if (connp->state == CONN_PLAYING) connp->start = turn;
+		if (result == -1) return;
 
 		// We didn't have enough energy to execute an important command.
 		if (result == 0) {
@@ -3373,11 +3357,9 @@ void process_pending_commands(int ind)
 		}
 
 		/* Queue all remaining packets now */
-		if (result == 3)
-		{
+		if (result == 3) {
 			int len = connp->r.len - (connp->r.ptr - connp->r.buf);
-			if (Sockbuf_write(&connp->q, connp->r.ptr, len) != len)
-			{
+			if (Sockbuf_write(&connp->q, connp->r.ptr, len) != len) {
 				errno = 0;
 				Destroy_connection(ind, "Can't copy data to queue");
 				return;

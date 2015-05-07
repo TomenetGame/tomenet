@@ -1562,8 +1562,6 @@ void whats_under_your_feet(int Ind) {
 /* Allow BAGIDENTIFY spell to be used with !X inscription?
    This is currently not supported, because the spell is cast BEFORE the item is picked up. */
  //#define ALLOW_X_BAGID
-/* Repeat spell until it succeeds */
- #define XID_REPEAT
 #endif
 void carry(int Ind, int pickup, int confirm) {
 	object_type *o_ptr;
@@ -2648,15 +2646,14 @@ void carry(int Ind, int pickup, int confirm) {
 
 								ID_item_found = TRUE;
 #ifdef XID_REPEAT
-								p_ptr->command_rep = PKT_ACTIVATE_SKILL;
-#endif
+								/* cast it later, at a point where we can use p_ptr->command_rep */
+								p_ptr->delayed_index = index;
+								p_ptr->delayed_spell = spell;
+#else
 								cast_school_spell(Ind, index, spell, -1, -1, 0);
 								/* clean up, in case a spell changed due to being higher level and
 								   skipped the individual-id part, so current_item didn't get cleared. */
-#ifndef XID_REPEAT
 								p_ptr->current_item = -1;
-#else
-								if (p_ptr->command_rep != PKT_ACTIVATE_SKILL) p_ptr->current_item = -1;
 #endif
 
 								/* consume a turn */

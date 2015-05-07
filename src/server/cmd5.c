@@ -1551,10 +1551,12 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	int ftk_maybe;
 	int ftk_type;
 #ifdef ENABLE_XID_SPELL
+ #ifdef XID_REPEAT
 	bool rep = (p_ptr->command_rep == PKT_ACTIVATE_SKILL)
 	    && p_ptr->current_item < 0; //extra sanity check, superfluous?
 
 	p_ptr->command_rep = 0;
+ #endif
 #endif
 
 	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
@@ -1644,6 +1646,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		ftk_type = (exec_lua(Ind, format("return get_spell_ftk(%d)", spell)));
 
 #ifdef ENABLE_XID_SPELL
+ #ifdef XID_REPEAT
 		/* hack: repeat ID-spell attempt until item is successfully identified */
 		if (rep && ftk_maybe && !object_known_p(Ind, &p_ptr->inventory[-p_ptr->current_item - 1])) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
@@ -1651,6 +1654,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 			p_ptr->command_rep = PKT_ACTIVATE_SKILL;
 			Packet_printf(conn_q, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, book, spell, dir, item, aux);
 		} else p_ptr->current_item = -1;
+ #endif
 #endif
 
 		if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
