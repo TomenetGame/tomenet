@@ -2510,9 +2510,32 @@ void carry(int Ind, int pickup, int confirm) {
 
 								/* Destroy a scroll in the pack */
 								if (index >= 0) {
-									inven_item_increase(Ind, index, -1);
-									inven_item_describe(Ind, index);
-									inven_item_optimize(Ind, index);
+									if (slot <= INVEN_PACK) {
+										/* hack: remember item position for 'You have ..' message,
+										   in case it was our last scroll and items get reordered */
+										int i;
+
+										o_ptr->temp = 1;
+										inven_item_increase(Ind, index, -1);
+										inven_item_describe(Ind, index);
+										inven_item_optimize(Ind, index);
+
+										for (i = 0; i < INVEN_PACK; i++)
+											if (p_ptr->inventory[i].temp) {
+												o_ptr = &p_ptr->inventory[i];
+												o_ptr->temp = 0;
+												slot = i;
+												break;
+											}
+										/* paranoia clean up */
+										if (i == INVEN_PACK)
+											for (i = 0; i < INVEN_PACK; i++)
+												p_ptr->inventory[i].temp = 0;
+									} else {
+										inven_item_increase(Ind, index, -1);
+										inven_item_describe(Ind, index);
+										inven_item_optimize(Ind, index);
+									}
 								}
 
 								/* consume a turn */
@@ -2537,9 +2560,32 @@ void carry(int Ind, int pickup, int confirm) {
 
 								/* Destroy a scroll in the pack */
 								if (index >= 0) {
-									inven_item_increase(Ind, index, -1);
-									inven_item_describe(Ind, index);
-									inven_item_optimize(Ind, index);
+									if (slot <= INVEN_PACK) {
+										/* hack: remember item position for 'You have ..' message,
+										   in case it was our last scroll and items get reordered */
+										int i;
+
+										o_ptr->temp = 1;
+										inven_item_increase(Ind, index, -1);
+										inven_item_describe(Ind, index);
+										inven_item_optimize(Ind, index);
+
+										for (i = 0; i < INVEN_PACK; i++)
+											if (p_ptr->inventory[i].temp) {
+												o_ptr = &p_ptr->inventory[i];
+												o_ptr->temp = 0;
+												slot = i;
+												break;
+											}
+										/* paranoia clean up */
+										if (i == INVEN_PACK)
+											for (i = 0; i < INVEN_PACK; i++)
+												p_ptr->inventory[i].temp = 0;
+									} else {
+										inven_item_increase(Ind, index, -1);
+										inven_item_describe(Ind, index);
+										inven_item_optimize(Ind, index);
+									}
 								}
 
 								/* consume a turn */
