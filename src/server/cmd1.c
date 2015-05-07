@@ -2510,6 +2510,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 								/* Destroy a scroll in the pack */
 								if (index >= 0) {
+#ifdef XID_SPELL_AFTER_PICKUP /* important for scroll behaviour here! */
 									if (slot <= INVEN_PACK) {
 										/* hack: remember item position for 'You have ..' message,
 										   in case it was our last scroll and items get reordered */
@@ -2536,6 +2537,11 @@ void carry(int Ind, int pickup, int confirm) {
 										inven_item_describe(Ind, index);
 										inven_item_optimize(Ind, index);
 									}
+#else
+									inven_item_increase(Ind, index, -1);
+									inven_item_describe(Ind, index);
+									inven_item_optimize(Ind, index);
+#endif
 								}
 
 								/* consume a turn */
@@ -2560,6 +2566,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 								/* Destroy a scroll in the pack */
 								if (index >= 0) {
+#ifdef XID_SPELL_AFTER_PICKUP /* important for scroll behaviour here! */
 									if (slot <= INVEN_PACK) {
 										/* hack: remember item position for 'You have ..' message,
 										   in case it was our last scroll and items get reordered */
@@ -2586,6 +2593,11 @@ void carry(int Ind, int pickup, int confirm) {
 										inven_item_describe(Ind, index);
 										inven_item_optimize(Ind, index);
 									}
+#else
+									inven_item_increase(Ind, index, -1);
+									inven_item_describe(Ind, index);
+									inven_item_optimize(Ind, index);
+#endif
 								}
 
 								/* consume a turn */
