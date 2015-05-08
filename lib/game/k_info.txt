@@ -5503,7 +5503,7 @@ I:111:50:0
 W:5:0:30:1500
 A:5/50
 P:0:1d1:0:0:0
-F:IGNORE_WATER
+F:IGNORE_WATER | EASY_KNOW
 
 #N:739:& Book~ of Teleportation
 #G:?:w
@@ -7556,7 +7556,7 @@ I:111:56:0
 W:5:0:30:1500
 A:5/50
 P:0:1d1:0:0:0
-F:IGNORE_WATER
+F:IGNORE_WATER | EASY_KNOW
 
 N:1037:& Handbook~ of First Visions
 G:?:s
@@ -7564,7 +7564,7 @@ I:111:61:0
 W:5:0:30:1500
 A:5/50
 P:0:1d1:0:0:0
-F:IGNORE_WATER
+F:IGNORE_WATER | EASY_KNOW
 
 N:1038:Dungeon-fleeing Certificate
 G:?:v
