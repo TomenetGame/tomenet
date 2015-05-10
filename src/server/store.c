@@ -4139,8 +4139,7 @@ void store_shuffle(store_type *st_ptr) {
 
 
 	/* Hack -- discount all the items */
-	for (i = 0; i < st_ptr->stock_num; i++)
-	{
+	for (i = 0; i < st_ptr->stock_num; i++) {
 		object_type *o_ptr;
 
 		/* Get the item */
@@ -4149,20 +4148,21 @@ void store_shuffle(store_type *st_ptr) {
 		/* Hack -- Cheapest goods like spikes won't be 'on sale' */
 		if (object_value(0, o_ptr) < 5) continue;
 
-		/* Hack -- Sell all old items for "half price" */
-		o_ptr->discount = 50;
-
 		/* Hack -- Items are no longer "fixed price" */
 		o_ptr->ident &= ~ID_FIXED;
 
 		/* Some stores offer less or no discount */
-		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT) {
+		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT)
 		        o_ptr->discount = 0;
-		}
-		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2) {
+		else if ((st_info[st_ptr->st_idx].flags1 & (SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2)) == (SF1_NO_DISCOUNT1 | SF1_NO_DISCOUNT2))
+		        o_ptr->discount = 30;
+		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2)
 			o_ptr->discount = 15; /* 'on sale' */
-		}
+		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT1)
+			o_ptr->discount = 10; /* 'on sale' */
 		else {
+			/* Hack -- Sell all old items for "half price" */
+			o_ptr->discount = 50;
 			/* Mega-Hack -- Note that the item is "on sale" */
 			o_ptr->note = quark_add("on sale");
 		}
