@@ -2938,15 +2938,17 @@ bool set_kinetic_shield(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->kinetic_shield) {
-			msg_print(Ind, "You create a kinetic barrier.");
+			msg_print(Ind, "\376\377wYou create a kinetic barrier.");
 			notice = TRUE;
+		} else if (p_ptr->kinetic_shield > 10 && v <= 10) {
+			msg_print(Ind, "\376\377vThe kinetic barrier starts to destabilize...");
 		}
 	}
 
 	/* Shut */
 	else {
 		if (p_ptr->kinetic_shield) {
-			msg_print(Ind, "Your kinetic barrier destabilizes.");
+			msg_print(Ind, "\376\377vYour kinetic barrier destabilizes.");
 			notice = TRUE;
 		}
 	}
@@ -5054,6 +5056,24 @@ void monster_death(int Ind, int m_idx) {
 	}
 #endif
 
+	/* Maia traitage */
+	if (p_ptr->prace == RACE_MAIA && !p_ptr->ptrait) {
+		switch (m_ptr->r_idx) {
+		case RI_CANDLEBEARER:
+			if (p_ptr->r_killed[RI_DARKLING] != 0)
+				msg_print(Ind, "\377rYour presence in the realm is forfeit.");
+			else if (p_ptr->r_killed[RI_CANDLEBEARER] == 0)
+				msg_print(Ind, "\377yYou have stepped on the path to corruption..");
+			break;
+		case RI_DARKLING:
+			if (p_ptr->r_killed[RI_CANDLEBEARER] != 0)
+				msg_print(Ind, "\377rYour presence in the realm is forfeit.");
+			else if (p_ptr->r_killed[RI_DARKLING] == 0)
+				msg_print(Ind, "\377yYou have stepped on the path to enlightenment..");
+			break;
+		}
+	}
+
 	/* Get credit for unique monster kills */
 	if (r_ptr->flags1 & RF1_UNIQUE) {
 		/* Set unique monster to 'killed' for this player */
@@ -6064,11 +6084,9 @@ if (cfg.unikill_format) {
 
 
 	/* Need some stairs */
-	if (total)
-	{
+	if (total) {
 		/* Stagger around */
-		while (!cave_valid_bold(zcave, y, x))
-		{
+		while (!cave_valid_bold(zcave, y, x)) {
 			int d = 1;
 
 			/* Pick a location */

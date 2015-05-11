@@ -256,13 +256,14 @@ MSHIELD = add_spell {
 	["level"] = 	40,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	0,
+--	["fail"] = 	158,
+	["fail"] = 	-50,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			set_kinetic_shield(Ind, randint(25) + 3 * get_level(Ind, MSHIELD, 50))
+			set_kinetic_shield(Ind, 10 + 2 * get_level(Ind, MSHIELD, 50) + randint(10))
 			end,
 	["info"] = 	function()
-			return "dur "..1 + (get_level(Ind, MSHIELD, 50) * 3)..".."..25 + (3 * get_level(Ind, MSHIELD, 50))
+			return "dur "..10 + (2 * get_level(Ind, MSHIELD, 50)).."+d10"
 			end,
 	["desc"] =	{
 			"Uses telekinetic power as a shield that repels up to about",

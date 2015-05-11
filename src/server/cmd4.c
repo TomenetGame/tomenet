@@ -3557,6 +3557,18 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	}
 #endif
 
+	if (p_ptr->prace == RACE_MAIA && !p_ptr->ptrait) {
+		if (p_ptr->r_killed[RI_CANDLEBEARER] != 0 &&
+		    p_ptr->r_killed[RI_DARKLING] != 0)
+			msg_print(Ind, "\377rYour presence in the realm is forfeit.");
+		else if (p_ptr->r_killed[RI_CANDLEBEARER] != 0)
+			msg_print(Ind, "Your are treading on the path to corruption.");
+		else if (p_ptr->r_killed[RI_DARKLING] != 0)
+			msg_print(Ind, "Your are treading on the path to enlightenment.");
+		else
+			msg_print(Ind, "Your destiny in the realm is still undecided.");
+	}
+
 	/* display PvP kills */
 	if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills_own);
 
