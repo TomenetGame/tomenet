@@ -4930,7 +4930,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 			m_ptr->last_target = 0;
 
 			/* do we have sprint or taunt? */
-			if (p_ptr->warning_ai_annoy == 0) {
+			if (p_ptr->warning_ai_annoy == 0 && p_ptr->mon_vis[m_idx]) {
 				if ((p_ptr->melee_techniques & 0x0003)) {
 					p_ptr->warning_ai_annoy = 1;
 					msg_print(Ind, "\377yHINT: Use fighting techniques '\377osprint\377y' or '\377otaunt\377y' to catch monsters that try to");
