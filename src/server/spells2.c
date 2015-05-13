@@ -6433,8 +6433,7 @@ bool swap_position(int Ind, int lty, int ltx){
 /*
  * Hack -- apply a "projection()" in a direction (or at the target)
  */
-bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
-{
+bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
@@ -6479,8 +6478,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
  * Stop if we hit a monster, as a "bolt"
  * Affect monsters (not grids or objects)
  */
-bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
-{
+bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG;
 	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
@@ -6497,8 +6495,7 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
  * Pass through monsters, as a "beam"
  * Affect monsters (not grids or objects)
  */
-bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
-{
+bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker) {
         char pattacker[80];
 		//int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
 		//Actually, since beams affect the whole tile, don't deflect or reflect them (we don't have proper code for changing beam path anyway) - Kurzel
@@ -6518,8 +6515,7 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker)
-{
+bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
@@ -6552,8 +6548,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 /*
  * Cast a bolt spell, or rarely, a beam spell
  */
-bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker)
-{
+bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker) {
 	if (rand_int(100) < prob)
 		return (fire_beam(Ind, typ, dir, dam, attacker));
 	else
@@ -6640,124 +6635,105 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
  */
 /* TODO: the result should be affected by skills (and not plev) */
 
-bool lite_line(int Ind, int dir, int dam)
-{
+bool lite_line(int Ind, int dir, int dam) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_LITE_WEAK, dir, dam, flg, ""));
 }
 
-bool drain_life(int Ind, int dir, int dam)
-{
+bool drain_life(int Ind, int dir, int dam) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return(project_hook(Ind, GF_OLD_DRAIN, dir, dam, flg, ""));
 }
 
-bool annihilate(int Ind, int dir, int dam)
-{
+bool annihilate(int Ind, int dir, int dam) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return(project_hook(Ind, GF_ANNIHILATION, dir, dam, flg, ""));
 }
 
-bool wall_to_mud(int Ind, int dir)
-{
+bool wall_to_mud(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
 }
 
-bool destroy_door(int Ind, int dir)
-{
+bool destroy_door(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_KILL_DOOR, dir, 0, flg, ""));
 }
 
-bool disarm_trap(int Ind, int dir)
-{
+bool disarm_trap(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
 }
 
-bool heal_monster(int Ind, int dir)
-{
+bool heal_monster(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_OLD_HEAL, dir, damroll(4, 6), flg, Players[Ind]->attacker));
 }
 
-bool speed_monster(int Ind, int dir)
-{
+bool speed_monster(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_SPEED, dir, p_ptr->lev, flg, ""));
 }
 
-bool slow_monster(int Ind, int dir, int pow)
-{
+bool slow_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_SLOW, dir, pow, flg, ""));
 }
 
-bool sleep_monster(int Ind, int dir, int pow)
-{
+bool sleep_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_SLEEP, dir, pow, flg, ""));
 }
 
-bool confuse_monster(int Ind, int dir, int pow)
-{
+bool confuse_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_CONF, dir, pow, flg, ""));
 }
 
-bool poly_monster(int Ind, int dir)
-{
+bool poly_monster(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_SELF | PROJECT_PLAY | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_POLY, dir, p_ptr->lev, flg, ""));
 }
 
-bool clone_monster(int Ind, int dir)
-{
+bool clone_monster(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_CLONE, dir, 0, flg, ""));
 }
 
-bool fear_monster(int Ind, int dir, int pow)
-{
+bool fear_monster(int Ind, int dir, int pow) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_TURN_ALL, dir, pow, flg, ""));
 }
 
-bool teleport_monster(int Ind, int dir)
-{
+bool teleport_monster(int Ind, int dir) {
 	int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg, ""));
 }
 
-bool cure_light_wounds_proj(int Ind, int dir)
-{
+bool cure_light_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2, 10), flg, Players[Ind]->attacker));
 }
 
-bool cure_serious_wounds_proj(int Ind, int dir)
-{
+bool cure_serious_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4, 10), flg, Players[Ind]->attacker));
 }
 
-bool cure_critical_wounds_proj(int Ind, int dir)
-{
+bool cure_critical_wounds_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6, 10), flg, Players[Ind]->attacker));
 }
 
-bool heal_other_proj(int Ind, int dir)
-{
+bool heal_other_proj(int Ind, int dir) {
 	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, 100, flg, Players[Ind]->attacker));
@@ -6769,32 +6745,28 @@ bool heal_other_proj(int Ind, int dir)
  * Hooks -- affect adjacent grids (radius 1 ball attack)
  */
 
-bool door_creation(int Ind)
-{
+bool door_creation(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
 	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg, ""));
 }
 
-bool trap_creation(int Ind, int mod, int rad)
-{
+bool trap_creation(int Ind, int mod, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
 	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg, ""));
 }
 
-bool destroy_doors_touch(int Ind, int rad)
-{
+bool destroy_doors_touch(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
 	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg, ""));
 }
 
-bool sleep_monsters_touch(int Ind)
-{
+bool sleep_monsters_touch(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
@@ -6802,8 +6774,7 @@ bool sleep_monsters_touch(int Ind)
 }
 
 /* Scan magical powers for the golem */
-static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
-{
+static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Extract the flags */
