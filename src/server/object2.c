@@ -6923,6 +6923,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		    (armor_choice == 2 || armor_choice == 3))
 			armor_choice = 1;
 	} else { /* player didn't distribute ANY skill points, sigh */
+		s_printf("CREATE_REWARD: no skills\n");
 		melee_choice = 0;
 		mha = FALSE;
 		rha = FALSE;
@@ -7001,6 +7002,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	}
 	if (p_ptr->s_info[SKILL_CRITS].value >= treshold) maxweight_melee = 100;
 
+	/* Fruit bats/monster form hack for unwieldable mage staff */
+	if (spell_choice && /* aka TV_MSTAFF, exlusively */
+	    !item_tester_hook_wear(Ind, INVEN_WIELD))
+		spell_choice = 0;
+
 	/* Choose between possible rewards we gathered from analyzing so far */
 	/* Priority: Weapon -> Ranged -> Armor -> Misc */
 	if (!melee_choice && spell_choice && ((!armor_choice && !ranged_choice) || magik(50))) final_choice = 4;
@@ -7053,6 +7059,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		break;
 	case 4: reward_maxweight = 500;
 		reward_tval = TV_MSTAFF; reward_sval = SV_MSTAFF; break;
+	/* paranoia: */
 	case 5: reward_maxweight = 500; /* no use, so just use any high value.. */
 		switch (misc_choice) {
 		case 1: reward_tval = TV_LITE; break;
@@ -7073,6 +7080,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* for weapons and TV_SHIELD: this shouldn't happen */
 		if (is_weapon(tmp_obj.tval) || tmp_obj.tval == TV_MSTAFF || is_ranged_weapon(tmp_obj.tval)) {
 			/* shouldn't happen, but.. */
+			s_printf("CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+			    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
+			    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
+			    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
 			invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
 			o_ptr->note = quark_add("a Cake");
 			o_ptr->xtra1 = 15;
@@ -7103,6 +7114,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				/* we cannot wear ANY item? =P */
 				if (!wearables) {
 					/* this is silly, someone polymorphed into limbless form to turn in the reward deed?.. */
+					s_printf("CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+					    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
+					    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
+					    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
+#if 0
 					invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
 					o_ptr->note = quark_add("a Cake");
 					o_ptr->xtra1 = 15;
@@ -7110,12 +7126,19 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 					/* serious alternatives: digger, magic device, a set of consumables */
 					return;
 				}
-
-				i = randint(wearables);
-				if (i <= wearable[0]) reward_tval = TV_LITE;
-				else if (i <= wearable[0] + wearable[1]) reward_tval = TV_AMULET;
-				else if (i <= wearable[0] + wearable[1] + wearable[2]) reward_tval = TV_RING;
-				s_printf("REWARD_CANNOT_WEAR: changed to %d\n", reward_tval);
+#else
+					/* let's not make this 'exploitable' to obtain special things */
+					reward_tval = TV_CLOAK;
+					s_printf("REWARD_CANNOT_WEAR: default to TV_CLOAK.\n");
+				} else
+#endif
+				{
+					i = randint(wearables);
+					if (i <= wearable[0]) reward_tval = TV_LITE;
+					else if (i <= wearable[0] + wearable[1]) reward_tval = TV_AMULET;
+					else if (i <= wearable[0] + wearable[1] + wearable[2]) reward_tval = TV_RING;
+					s_printf("REWARD_CANNOT_WEAR: changed to %d\n", reward_tval);
+				}
 			} else { /* we can wear some sort of armour */
 				i = randint(wearables);
 				if (i <= wearable[0]) {
@@ -7143,6 +7166,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* for other items: */
 		else {
 			/* shouldn't happen, but.. */
+			s_printf("CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+			    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
+			    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
+			    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
 			invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
 			o_ptr->note = quark_add("a Cake");
 			o_ptr->xtra1 = 15;
