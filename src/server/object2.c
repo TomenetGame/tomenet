@@ -7078,7 +7078,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	/* we cannot equip the selected reward? */
 	if (!item_tester_hook_wear(Ind, i = wield_slot(Ind, &tmp_obj))) {
 		/* for weapons and TV_SHIELD: this shouldn't happen */
-		if (is_weapon(tmp_obj.tval) || tmp_obj.tval == TV_MSTAFF || is_ranged_weapon(tmp_obj.tval)) {
+		if (tmp_obj.tval == TV_MSTAFF
+#if 0 /* if someone on purpose trains a skill that doesn't fit his form (bat/mimicry), still give him the desired item */
+		    || is_weapon(tmp_obj.tval) || is_ranged_weapon(tmp_obj.tval)
+#endif
+		    ) {
 			/* shouldn't happen, but.. */
 			s_printf("CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
 			    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
