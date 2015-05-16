@@ -1510,7 +1510,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 	int l = 0; /* Is the cursor location on line */
 	int j = 0; /* Loop iterator */
 
-	bool tail = FALSE, double_separator = FALSE;
+	bool tail = FALSE;
 	int l_old = l;
 	bool modify_ok = TRUE;
 
@@ -1603,7 +1603,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case 0x7F: /* DEL or ASCII 127 removes the char under cursor */
 #endif
 		case KTRL('D'):
-			if (k > l){
+			if (k > l) {
 			  /* Move the rest of the line one back */
 			  for (j = l + 1; j < k; j++) buf[j - 1] = buf[j];
 			  k--;
@@ -1612,11 +1612,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 		case 0x7F: /* well...not DEL but Backspace too it seems =P */
 		case '\010': /* Backspace removes char before cursor */
-			if (k == l && k > 0){
+			if (k == l && k > 0) {
 			  k--;
 			  l--;
 			}
-			if (k > l && l > 0){
+			if (k > l && l > 0) {
 			  /* Move the rest of the line one back, including
 			     char under cursor and cursor) */
 			  for (j = l; j < k; j++) buf[j - 1] = buf[j];
@@ -1845,6 +1845,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			k = l = strlen(buf);
 			break;
 
+		/* word-size backspace */
 		case KTRL('E'): {
 			/* hack: CTRL+E is also the designated 'edit' key to edit a predefined default string */
 			if (modify_ok) k = strlen(buf);
@@ -1852,22 +1853,16 @@ bool askfor_aux(char *buf, int len, char mode) {
 			/* actual 'real' CTRL+E functionality following now */
 
 			if (!l) break;
-
-			tail = FALSE;
-			double_separator = FALSE;
 			l_old = l;
 
-			if (buf[l] && !((buf[l] >= 'a' && buf[l] <= 'z') || (buf[l] >= 'A' && buf[l] <= 'Z') || (buf[l] >= '0' && buf[l] <= '9'))) double_separator = TRUE;
-			for (--l; l >= 0; l--) {
-				//if ((buf[l] == ' ' || buf[l] == ':' || buf[l] == ',' || buf[l] == '.') && tail) {
-				if (!((buf[l] >= 'a' && buf[l] <= 'z') || (buf[l] >= 'A' && buf[l] <= 'Z') || (buf[l] >= '0' && buf[l] <= '9')) && tail) {
-					/* leave the last separator? */
-					if (!double_separator) l++;
-					break;
-				}
-				tail = TRUE;
+			tail = TRUE;
+			for (; l > 0; l--) {
+				if (((buf[l - 1] >= 'a' && buf[l - 1] <= 'z') || (buf[l - 1] >= 'A' && buf[l - 1] <= 'Z') || (buf[l - 1] >= '0' && buf[l - 1] <= '9')) != tail) continue;
+				if (tail) tail = FALSE;
+				else break;
 			}
-			for (j = 0; j < l_old - l; j++) buf[l + j] = buf[l_old + j];
+
+			for (j = 0; j < strlen(buf) - l_old; j++) buf[l + j] = buf[l_old + j];
 			k -= l_old - l;
 			if (k < 0) k = l = 0;
 			break;
