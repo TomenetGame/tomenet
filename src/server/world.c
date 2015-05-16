@@ -275,7 +275,7 @@ void world_comm(int fd, int arg) {
 						msg_to_irc(buf);
 						break;
 					}
-					else if (!strncmp(p, "?who", 5)) {
+					else if (!strncmp(p, "?who", 4)) {
 						u32b p_id;
 						cptr acc;
 
