@@ -279,6 +279,11 @@ void world_comm(int fd, int arg) {
 						u32b p_id;
 						cptr acc;
 
+						if (strlen(p) < 6) {
+							msg_to_irc("You must specify a character name.");
+							break;
+						}
+
 						/* char names always start on upper-case */
 						p[5] = toupper(p[5]);
 
