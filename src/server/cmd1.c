@@ -2150,8 +2150,14 @@ void carry(int Ind, int pickup, int confirm) {
 			/* Recalculate boni */
 			p_ptr->update |= (PU_BONUS);
 
+			/* Recalculate mana */
+			p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+
+			/* Redraw */
+			p_ptr->redraw |= (PR_PLUSSES | PR_ARMOR);
+
 			/* Window stuff */
-			p_ptr->window |= (PW_EQUIP);
+			p_ptr->window |= (PW_EQUIP | PW_PLAYER);
 		}
 
 		/* Note that the pack is too full */
