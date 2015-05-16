@@ -1512,6 +1512,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 	bool tail = FALSE, double_separator = FALSE;
 	int l_old = l;
+	bool modify_ok = TRUE;
 
 	/* Terminal width */
 	int wid = 80;
@@ -1554,8 +1555,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 	/* Display the default answer */
 	Term_erase(x, y, len);
-	if (mode & ASKFOR_PRIVATE) c_prt_last(TERM_YELLOW, buf[0] ? "(default)" : "", y, x, vis_len);
-	else c_prt_last(TERM_YELLOW, buf, y, x, vis_len);
+	if (mode & ASKFOR_PRIVATE) {
+		c_prt_last(TERM_YELLOW, buf[0] ? "(default)" : "", y, x, vis_len);
+		modify_ok = FALSE;
+	} else c_prt_last(TERM_YELLOW, buf, y, x, vis_len);
 
 	if (mode & ASKFOR_CHATTING) {
 		strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat) - 1);
@@ -1602,7 +1605,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case KTRL('D'):
 			if (k > l){
 			  /* Move the rest of the line one back */
-			  for (j = l + 1; j < k; j++) buf[j - 1] = buf[j]; 
+			  for (j = l + 1; j < k; j++) buf[j - 1] = buf[j];
 			  k--;
 			}
 			break;
@@ -1843,6 +1846,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 			break;
 
 		case KTRL('E'): {
+			/* hack: CTRL+E is also the designated 'edit' key to edit a predefined default string */
+			if (modify_ok) k = strlen(buf);
+
+			/* actual 'real' CTRL+E functionality following now */
+
 			if (!l) break;
 
 			tail = FALSE;
@@ -1892,6 +1900,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 			else bell();
 			break;
 		}
+
+		/* can only edit the default string with first key press being the designated 'edit' key */
+		modify_ok = FALSE;
 
 		/* Terminate */
 		buf[k] = '\0';
