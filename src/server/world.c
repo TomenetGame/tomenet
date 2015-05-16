@@ -302,10 +302,10 @@ void world_comm(int fd, int arg) {
 							break;
 						}
 						if (lookup_player_admin(p_id))
-							msg_to_irc(format("That administrative character belongs to: \377s%s", acc));
+							msg_to_irc(format("That administrative character belongs to: %s", acc));
 						else {
 							u16b ptype = lookup_player_type(p_id);
-							msg_to_irc(format("That %s %s belongs to: \377s%s",
+							msg_to_irc(format("That %s %s belongs to: %s",
 							    //race_info[ptype & 0xff].title,
 							    special_prace_lookup[ptype & 0xff],
 							    class_info[ptype >> 8].title, acc));
