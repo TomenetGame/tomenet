@@ -275,6 +275,38 @@ void world_comm(int fd, int arg) {
 						msg_to_irc(buf);
 						break;
 					}
+					else if (!strncmp(p, "?who", 5)) {
+						u32b p_id;
+						cptr acc;
+
+						/* char names always start on upper-case */
+						p[5] = toupper(p[5]);
+
+						if (!(p_id = lookup_player_id(p + 5))) {
+#if 0 /* don't check for account name */
+							msg_to_irc("That character name does not exist.");
+#else /* check for account name */
+							if (!GetAccount(p + 5, NULL, FALSE)) msg_to_irc("That character or account name does not exist.");
+							else msg_to_irc("There is no such character, but there is an account of that name.");
+#endif
+							break;
+						}
+						acc = lookup_accountname(p_id);
+						if (!acc) {
+							msg_to_irc("***ERROR: No account found.");
+							break;
+						}
+						if (lookup_player_admin(p_id))
+							msg_to_irc(format("That administrative character belongs to: \377s%s", acc));
+						else {
+							u16b ptype = lookup_player_type(p_id);
+							msg_to_irc(format("That %s %s belongs to: \377s%s",
+							    //race_info[ptype & 0xff].title,
+							    special_prace_lookup[ptype & 0xff],
+							    class_info[ptype >> 8].title, acc));
+						}
+						break;
+					}
 				}
 #endif
 
