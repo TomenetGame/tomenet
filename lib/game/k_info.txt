@@ -4417,7 +4417,7 @@ I:46:4:0
 W:2:0:10:50
 A:3/2:30/2
 F:EASY_KNOW | IGNORE_FIRE | IGNORE_WATER
-D:This trap kit uses potions.
+D:This trap kit uses potions or flasks.
 
 N:561:Stone and Hide Armour~
 G:(:U
