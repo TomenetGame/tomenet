@@ -3668,8 +3668,7 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	player_type *p_ptr = Players[Ind];
 	int dam;
 	object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
-	int tmul = get_shooter_mult(b_ptr);
-	tmul += p_ptr->xtra_might;
+	int tmul = get_shooter_mult(b_ptr) + p_ptr->xtra_might;
 
 	dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
 	dam += (o_ptr->to_d + b_ptr->to_d) * 10;
@@ -3712,12 +3711,33 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 /* TODO: tell something about boomerangs */
 static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1, u32b bow_f1) {
 	player_type *p_ptr = Players[Ind];
-	object_type forge, *old_ptr = &forge;
+	object_type forge, *old_ptr = &forge, *ob_ptr = &p_ptr->inventory[INVEN_BOW];
 	bool first = TRUE;
 	// int i;
 
 	/* save timed effects that might be changed on ammo switching - C. Blue */
 	long tim_wraith = p_ptr->tim_wraith;
+
+	switch (o_ptr->tval) {
+	case TV_SHOT:
+		if (ob_ptr->tval != TV_BOW || ob_ptr->sval != SV_SLING) {
+			fprintf(fff, "\n\377s(You need to have a sling equipped to calculate ammunition damage.)\n");
+			return;
+		}
+		break;
+	case TV_ARROW:
+		if (ob_ptr->tval != TV_BOW || (ob_ptr->sval != SV_SHORT_BOW && ob_ptr->sval != SV_LONG_BOW)) {
+			fprintf(fff, "\n\377s(You need to have a bow equipped to calculate ammunition damage.)\n");
+			return;
+		}
+		break;
+	case TV_BOLT:
+		if (ob_ptr->tval != TV_BOW || (ob_ptr->sval != SV_LIGHT_XBOW && ob_ptr->sval != SV_HEAVY_XBOW)) {
+			fprintf(fff, "\n\377s(You need to have a crossbow equipped to calculate ammunition damage.)\n");
+			return;
+		}
+		break;
+	}
 
 	/* swap hack */
 	object_copy(old_ptr, &p_ptr->inventory[INVEN_AMMO]);
@@ -3779,6 +3799,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1,
 	suppress_boni = FALSE;
 }
 
+/* Note: We assume that we're only called if o_ptr->tval is TV_BOW */
 static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1, u32b ammo_f1) {
 	player_type *p_ptr = Players[Ind];
 	object_type forge, *old_ptr = &forge, *oa_ptr = &p_ptr->inventory[INVEN_AMMO];
@@ -3787,6 +3808,29 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b 
 
 	/* save timed effects that might be changed on ammo switching - C. Blue */
 	long tim_wraith = p_ptr->tim_wraith;
+
+	switch (o_ptr->sval) {
+	case SV_SLING:
+		if (oa_ptr->tval != TV_SHOT) {
+			fprintf(fff, "\n\377s(You need to have pebbles or shots in your quiver to calculate sling damage.)\n");
+			return;
+		}
+		break;
+	case SV_SHORT_BOW:
+	case SV_LONG_BOW:
+		if (oa_ptr->tval != TV_ARROW) {
+			fprintf(fff, "\n\377s(You need to have arrows equipped to calculate bow damage.)\n");
+			return;
+		}
+		break;
+	case SV_LIGHT_XBOW:
+	case SV_HEAVY_XBOW:
+		if (oa_ptr->tval != TV_BOLT) {
+			fprintf(fff, "\n\377s(You need to have bolts equipped to calculate crossbow damage.)\n");
+			return;
+		}
+		break;
+	}
 
 	/* swap hack */
 	object_copy(old_ptr, &p_ptr->inventory[INVEN_BOW]);
