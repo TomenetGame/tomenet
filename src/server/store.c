@@ -3192,11 +3192,11 @@ void store_purchase(int Ind, int item, int amt) {
 	}
 
 
-        if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
-            && o_ptr->owner && o_ptr->owner != p_ptr->id) {
-                msg_print(Ind, "\377yYou cannot purchase used goods or your life would be forfeit.");
-                return;
-        }
+	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+	    && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+		msg_print(Ind, "\377yYou cannot purchase used goods or your life would be forfeit.");
+		return;
+	}
 
 	/* Assume the player wants just one of them */
 	/*amt = 1;*/
@@ -3424,8 +3424,8 @@ void store_sell(int Ind, int item, int amt) {
 	s64b		price;
 	//int		choice;
 
-	object_type		sold_obj;
-	object_type		*o_ptr;
+	object_type	sold_obj;
+	object_type	*o_ptr;
 
 	char		o_name[ONAME_LEN];
 
@@ -3693,14 +3693,14 @@ void store_confirm(int Ind) {
 
 	/* Get some money */
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
-        /* If we are still below the limit but this gold pile would exceed it
-           then only pick up as much of it as is allowed! - C. Blue */
-        if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos) &&
-    	    !p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1 &&
-            p_ptr->gold_picked_up < EVENT_TOWNIE_GOLD_LIMIT && price > EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up) {
-                price = EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;
-                msg_format(Ind, "\377yYou accept only %d gold, or your life would be forfeit.", price);
-        }
+	/* If we are still below the limit but this gold pile would exceed it
+	   then only pick up as much of it as is allowed! - C. Blue */
+	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos) &&
+	    !p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1 &&
+	    p_ptr->gold_picked_up < EVENT_TOWNIE_GOLD_LIMIT && price > EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up) {
+		price = EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;
+		msg_format(Ind, "\377yYou accept only %d gold, or your life would be forfeit.", price);
+	}
 #endif
 	if (!gain_au(Ind, price, FALSE, FALSE)) return;
 
@@ -3723,6 +3723,20 @@ void store_confirm(int Ind) {
 	if (p_ptr->store_num > -2) { /* Never become aware of player store items */
 		/* Become "aware" of the item */
 		object_aware(Ind, o_ptr);
+	}
+
+	/* fun stuff - log sold unidentified ego items :-p (could make nice statistics from this) */
+	if (!object_known_p(Ind, o_ptr)) {
+		if (o_ptr->name1 == ART_RANDART) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("SOLD_UNID_RANDART: '%s' (%d) sold '%s'\n", p_ptr->name, p_ptr->max_lev, o_name);
+		} else if (o_ptr->name1) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("SOLD_UNID_TRUEART: '%s' (%d) sold '%s'\n", p_ptr->name, p_ptr->max_lev, o_name);
+		} else if (o_ptr->name2 || o_ptr->name2b) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("SOLD_UNID_EGO: '%s' (%d) sold '%s'\n", p_ptr->name, p_ptr->max_lev, o_name);
+		}
 	}
 
 	/* Know the item fully */
