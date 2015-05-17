@@ -12424,10 +12424,12 @@ create a character!):
     Druids can shapechange into several forms (mostly animals) without having
     to fight or kill them in order to learn those forms. Instead they learn
     one or more new forms automatically every five character levels.
-    Druids are able to always use their full equipment, even while transformed
-    into a monster that usually cannot wield certain items. Because of this,
-    going with a 'fruit bat' body modification in character creation would be
-    especially ineffective for druids.
+    Even while transformed, druids can still equip all items they could equip
+    in untransformed form, even if the monster form usually cannot use them.
+    Because of this, going with a 'fruit bat' body modification in character
+    creation would be especially ineffective for druids, because the fruit bat
+    item restrictions would carry over to the druid forms, making otherwise
+    usable slots unavailable.
     Despising the use of weapons they aren't as superb at close combat as
     warriors, but their Martial Arts training will make up for that and allow
     them quite a respectable performance.
