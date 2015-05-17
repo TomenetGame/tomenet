@@ -3930,7 +3930,16 @@ static void player_talk_aux(int Ind, char *message) {
 
 	colon = strchr(message, ':');
 	/* only assume targetted chat if the 'name' would acually be of acceptable length */
-	if (colon && (colon - message) > NAME_LEN) colon = NULL;
+	if (colon && (colon - message) > NAME_LEN) {
+		/* in case the player actually used double-colon, not knowing of this clever mechanism here, fix it for him ;) */
+		if (colon[1] == ':') {
+			i = (int) (colon - message);
+			do message[i] = message[i + 1];
+			while (message[i++] != '\0');
+		}
+
+		colon = NULL;
+	}
 
 	/* Ignore "smileys" or URL */
 //	if (colon && strchr(")(-/:", colon[1]))
@@ -3977,7 +3986,7 @@ static void player_talk_aux(int Ind, char *message) {
 			/* always if there's no chat-target in front of the double-colon: */
 			if (message == colon || colon[-1] == ' ') {
 				i = (int) (colon - message);
-				do message[i] = message[i+1];
+				do message[i] = message[i + 1];
 				while (message[i++] != '\0');
 				colon = NULL;
 				break;
@@ -4016,7 +4025,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 			/* Pretend colon wasn't there */
 			i = (int) (colon - message);
-			do message[i] = message[i+1];
+			do message[i] = message[i + 1];
 			while (message[i++] != '\0');
 			colon = NULL;
 			break;
