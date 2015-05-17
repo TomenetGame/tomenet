@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. May 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 17. May 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -11382,6 +11382,9 @@ Note that not every skill is available to every profession (class).
                                 Last but not least Trapping gives you a chance
                                 to salvage a trap kit from any trap when you
                                 disarm it!
+
+                                Hint: Inscribe all your trapping components
+                                      '!=' for easy auto-pickup.
 
 +Health                         Increases your hit point regeneration rate:
                                 (skill_level * 2)% chance to regenerate 1.5x
