@@ -131,7 +131,8 @@ I:1000:0
 #F:HIDDEN
 
 N:16:Mimicry
-D:Ability to polymorph into slain monsters.
+D:Ability to polymorph into monster forms of a level of up to twice the skill.
+D:Unless you are vampire or druid you need to slay monsters to learn their form.
 A:3:Use innate power
 F:MKEY_HARDCODE
 I:1000:0
