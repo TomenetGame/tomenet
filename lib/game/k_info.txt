@@ -7615,6 +7615,7 @@ D:(This is a quest item)
 #A:(depth)/(chance[1/value])   [multiple definitions are possible]
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC?)
 #F:(Flag) |...
+# Note that W and A lines are not in effect for INSTA_ARTs. Only a_info counts for those.
 
 #T:55:8  [btval:bsval]  "arTifact Info"
 #Z:(Power)

@@ -3746,7 +3746,8 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		/* Find the base object */
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
 
-#if 0 /* although this makes level in k_info pointless, it just doesn't make sense to check an insta-art's level twice */
+#if 0 /* although this makes level in k_info pointless, it just doesn't make sense to check an insta-art's level twice. \
+         NOTE: This also fixes the problem of the k-level differring from the a-level, which is true for a lot of top-levle insta-art jewelry! (ew) */
 		/* XXX XXX Enforce minimum "object" level (loosely) */
 		if (k_info[k_idx].level > object_level) {
 			/* Acquire the "out-of-depth factor" */
