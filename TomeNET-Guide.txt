@@ -8425,13 +8425,16 @@ The type, level, quality and use-level of an item may depend on these factors:
  treasure classes: Treasure, combat, magic, tools, junk (see further below).
 
  Small chests have a higher chance of dropping gold instead of items, while
- larger chests drop more items than gold.
+ larger chests drop more items than gold. Note that items found in chests have
+ a high chance of being 'good' aka enchanted (same as DROP_GOOD monster flag).
 
  Monsters may have DROP_xxx flags that determine if they drop gold, items, how
  many of them, and whether the items have a higher chance to be enchanted or to
  possess ego powers or turn out to be an artifact than usual (those are the
  DROP_GOOD flag for enchantments and especially important the DROP_GREAT flag
  for it becoming and ego item or artifact).
+ Note that unique monsters have a higher chance of dropping enchanted items
+ (similar to the effect of the player having more 'Luck').
 
 -The player's 'Digging' skill, if it's money mined from terrain features (also
  depends on dungeon floor depth).
