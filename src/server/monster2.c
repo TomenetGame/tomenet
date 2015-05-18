@@ -3701,15 +3701,15 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 
 	/* Handle floor feelings */
 	/* Special events don't necessarily influence floor feelings */
-	if ((r_idx != RI_PUMPKIN1 && r_idx != RI_PUMPKIN2 && r_idx != RI_PUMPKIN3) &&
+	if (l_ptr && (r_idx != RI_PUMPKIN1 && r_idx != RI_PUMPKIN2 && r_idx != RI_PUMPKIN3)
 	    /* for now ignore live-spawns. maybe change that?: */
-	    (level_generation_time)) {
-		if ((r_ptr->flags1 & RF1_UNIQUE) && l_ptr) l_ptr->flags2 |= LF2_UNIQUE;
+	    && level_generation_time) {
+		if ((r_ptr->flags1 & RF1_UNIQUE)) l_ptr->flags2 |= LF2_UNIQUE;
 		/* note: actually it could be "un-free" ie in vault :/
 		   however, checking for that distinction wouldnt pay off really,
 		   because a feeling message about vaults takes precedence over
 		   one about a single 'freely roaming ood monster' anyway: */
-		if ((r_ptr->level >= dlev + 10) && l_ptr) {
+		if (r_ptr->level >= dlev + 10) {
 			l_ptr->flags2 |= LF2_OOD;
 			if (!(zcave[y][x].info & CAVE_ICKY)) l_ptr->flags2 |= LF2_OOD_FREE;
 			if (r_ptr->level >= dlev + 20) l_ptr->flags2 |= LF2_OOD_HI;
