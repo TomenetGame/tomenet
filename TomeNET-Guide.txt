@@ -8423,6 +8423,14 @@ The type, level, quality and use-level of an item may depend on these factors:
 -The level of the entity it is dropped by (monster or chest).
  Monsters have a loot table that you can review by pressing ~7. It knows five
  treasure classes: Treasure, combat, magic, tools, junk (see further below).
+ Small chests have a higher chance of dropping gold instead of items, while
+ larger chests drop more items than gold.
+
+ Monsters may have DROP_xxx flags that determine if they drop gold, items, how
+ many of them, and whether the items have a higher chance to be enchanted or to
+ possess ego powers or turn out to be an artifact than usual (those are the
+ DROP_GOOD flag for enchantments and especially important the DROP_GREAT flag
+ for it becoming and ego item or artifact).
 
 -The player's 'Digging' skill, if it's money mined from terrain features (also
  depends on dungeon floor depth).
