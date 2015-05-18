@@ -8457,7 +8457,7 @@ The type, level, quality and use-level of an item may depend on these factors:
  item's power for certain types of items). For example the use-level of speed
  rings directly and only depends on their +SPEED bonus.
 
--Whether the item is stolen or not: Stealing a valuable item has a chance to
+-Whether the item is stolen: Stealing a valuable item has a chance to
  set its level to zero, making it untradable.
 
 
