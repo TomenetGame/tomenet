@@ -8423,6 +8423,7 @@ The type, level, quality and use-level of an item may depend on these factors:
 -The level of the entity it is dropped by (monster or chest).
  Monsters have a loot table that you can review by pressing ~7. It knows five
  treasure classes: Treasure, combat, magic, tools, junk (see further below).
+
  Small chests have a higher chance of dropping gold instead of items, while
  larger chests drop more items than gold.
 
