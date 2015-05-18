@@ -114,6 +114,7 @@ Contents
     (5.7)   Qualitative classification of items, identifying & selling items
     (5.7a)  Types of Identification
     (5.7b)  The EASY_KNOW flag
+    (5.7c)  Loot tables
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
     (5.9a)  Activatable items
@@ -8413,6 +8414,123 @@ More examples:
  power too!
 -Note that shields have EASY_KNOW flag too, so make sure to pick up any shield
  that shows a '?' for level requirements, it might turn out very valuable.
+
+
+(5.7c) Loot tables
+------------------
+The type, level, quality and use-level of an item may depend on these factors:
+
+-The level of the entity it is dropped by (monster or chest).
+ Monsters have a loot table that you can review by pressing ~7. It knows five
+ treasure classes: Treasure, combat, magic, tools, junk (see further below).
+
+-The player's 'Digging' skill, if it's money mined from terrain features (also
+ depends on dungeon floor depth).
+
+-The floor level (depth) and in the case of acquirement scrolls whether it's
+ read on the world surface or not (reading it in a high-level town CAN produce
+ the same results as reading it on a dungeon floor of similar level, but will
+ not GRANT a high quality, which it does when you read it in a dungeon).
+
+-The event type if it's a reward for some kind of event (for events other than
+ extermination orders the use-level is usually zeroed, binding the item to you)
+
+-The player's 'winner' state (whether the player has beaten Morgoth or not) and
+ the player's 'fallen winner' state (whether the player has died after having
+ beaten Morgoth and hence lost the royal title).
+ These states are used to determine whether an item is dropped that can only be
+ used by winners (WINNERS_ONLY flag) or a random artifact being created
+ receives +LIFE bonus (increases hit points) or not. LIFE bonus can also be
+ influenced with '!L' inscription on Artifact Creation scrolls.
+ The only WINNERS_ONLY items existing in the game are a couple of different
+ types of royal armour which melee-oriented characters can utilize to improve
+ their tankiness.
+
+-The player's amount of 'Luck' for monster drops and items found by digging,
+ see 'LUCK' in (5.8) for details.
+
+-The item's ego powers will increase the item's use-level. If it's an artifact
+ it will influence the item's use-level depending on the predefined artifact
+ level (for true artifacts) or the artifact's power (for random artifacts).
+
+-The item base type in some special cases (the level may be tied to the
+ item's power for certain types of items). For example the use-level of speed
+ rings directly and only depends on their +SPEED bonus.
+
+-Whether the item is stolen or not: Stealing a valuable item has a chance to
+ set its level to zero, making it untradable.
+
+
+The most common case by far are items that are dropped by monsters when you
+kill them. Neglecting the 'winner' state (that toggles WINNERS_ONLY items and
++LIFE randarts) for now, we are left with three factors which determine the
+item that you will find on the floor:
+
+1) The dungeon floor depth (aka dungeon level).
+2) The monster race level (the level given in the ~7 monster lore. The actual
+   monster level can be higher depending on the depth where you encounter it,
+   since monsters get their level boosted if they appear on floors of much
+   higher level than their race level).
+3) The monster's treasure class table. Each monster type (race) has a table
+   of percentage values for these five treasure types, which you can again see
+   in the ~7 monster lore:
+   Treasure (chests, crowns, dragon scale mail, amulets, rings),
+   Combat (weapons, ammunition and armour),
+   Magic (books, potions, scrolls, magic devices and runes),
+   Tools (light sources, cloaks, boots, food, trapkits, oil, spikes and actual
+    tool-slot items),
+   Junk (including golem parts). This class is actually special in that it is
+    calculated from being the remainder of the other four treasure classes.
+    For example if a monster has 22% chance in each of the other four classes
+    that would add up to 88%, which makes the 'Junk' class have a 12% chance.
+
+
+The formula for determining the item's level (the item base type level which
+determines what kind of item you might get to see; not the actual use-level
+that you will see on the item and that affects trading it between characters)
+depends on the server configuration but is usually:
+
+(dungeon floor depth + monster race level) / 2
+to which (for each item anew) a random tolerance of 0..diff is added, where
+'diff' is the difference of above's calculation result to the higher value of
+the two 'dungeon floor depth' and 'monster race level'. 'diff' caps at 20.
+
+Note that the highest level items in the game at this time are these two level
+115 items: 'Massive Piece of Adamantite' and 'Heavy Ribbed Adamantite Armour'.
+
+
+Example:
+
+You kill a great wyrm of power on the deepest floor of Angband (-3050 ft), so
+floor level is 127, race level is 85.
+(floor + race) / 2 = (127 + 85) / 2 = 106.
+Now the higher of the two (floor and race) is 127. The difference of the result
+(106) to 127 is 21. This gets capped at 20 and is the random 'tolerance' for
+each item dropped by the wyrm.
+The treasure class of the wyrm is 50% treasure and 50% combat.
+
+Let's look at 3 items it drops:
+
+1) 106 + random(0..20) = 106. An unlucky tolerance roll added 0 to the level
+   average.
+   The item level 106 is still quite high though: The One Ring might actually
+   drop since it's level 100 (provided we're not a winner yet, who cannot find
+   true artifacts) or a power dragon scale mail (level 100 too) could drop as
+   well.
+   What cannot drop on this attempt is a Heavy Ribbed Mithril Armour, for
+   example, because it is level 110 (see in k_info.txt spoiler file).
+
+2) 106 + random(0..20) = 126. A lucky tolerance roll, we got the full 20 added
+   to the level cap of the second item that the wyrm dropped.
+   This means that this item could be anything that can possibly drop (from the
+   treasure classes 'treasure' and 'combat' that is). So if we have beaten
+   Morgoth and hence acquired a royal title, we might see any piece of royal
+   armour drop.
+
+3) 106 + random(0..20) = 114. The random tolerance roll of 0..20 turned out to
+   be an 8 for this item, closely ruling out Heavy Ribbed Adamantite Armour
+   which is level 115, but allowing all other items of the appropriate treasure
+   classes of this monster.
 
 
 
