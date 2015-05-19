@@ -305,10 +305,13 @@ void world_comm(int fd, int arg) {
 							msg_to_irc(format("That administrative character belongs to: %s", acc));
 						else {
 							u16b ptype = lookup_player_type(p_id);
-							msg_to_irc(format("That %s %s belongs to: %s",
+							int lev = lookup_player_level(p_id);
+							msg_to_irc(format("That level %d %s %s belongs to: %s",
+							    lev,
 							    //race_info[ptype & 0xff].title,
 							    special_prace_lookup[ptype & 0xff],
-							    class_info[ptype >> 8].title, acc));
+							    class_info[ptype >> 8].title,
+							    acc));
 						}
 						break;
 					}

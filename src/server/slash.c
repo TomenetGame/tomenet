@@ -4169,10 +4169,13 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "That administrative character belongs to: \377s%s", acc);
 			else {
 				u16b ptype = lookup_player_type(p_id);
-				msg_format(Ind, "That %s %s belongs to: \377s%s",
+				int lev = lookup_player_level(p_id);
+				msg_format(Ind, "That level %d %s %s belongs to: \377s%s",
+				    lev,
 				    //race_info[ptype & 0xff].title,
 				    special_prace_lookup[ptype & 0xff],
-				    class_info[ptype >> 8].title, acc);
+				    class_info[ptype >> 8].title,
+				    acc);
 			}
 			return;
 		}
