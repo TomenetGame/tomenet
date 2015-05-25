@@ -10134,7 +10134,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* Force a pair of darkling and candlebearer when there is at least
 	 * one divine on level that needs it.
 	 */
-	if (dun_lev >= 12 && dun_lev <= 20 &&
+	if (dun_lev >= (in_irondeepdive(wpos) ? 10 : 12) && dun_lev <= 20 &&
 	    p_ptr && p_ptr->prace == RACE_MAIA && !p_ptr->ptrait) {
 		//5 + randint(dun->row_rooms - 5), x1 = randint(dun->col_rooms - 5);
 		int x, y, x1, y1, tries = 2000;

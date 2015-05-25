@@ -6853,6 +6853,10 @@ Ironman Deep Dive Challenge (IDDC)
     withdraw from the challenge at a static town, it loses 2/3 of those extra
     kill credits again, still not a bad deal.)
 
+    Darklings and Candlebearers for Maiar spawn slightly earlier, from dungeon
+    level 10 to 20 in the IDDC, instead of from 12 to 20 anywhere else in the
+    world.
+
     After the first fixed town at -2000 ft, Menegroth, all further floors you
     enter will give you a progressively increasing (with floor depth) luck
     bonus, making it more and more likely to obtain better items.
@@ -12123,9 +12127,9 @@ create a character!):
     may just kill all of them indiscriminately, same as any other monster.
     Using but their mind they can easily perceive both good and demonkind
     telepathically. The servants and harbingers of those factions that Maiar
-    need to slay occur between dungeon level 12 and 20 (which correspond to
+    need to slay occur from dungeon level 12 to 20 (which correspond to
     -600..-1000 ft in dungeon 'Barrow-Downs' for example, since that dungeon
-    starts at level 1).
+    starts at level 1). In the IDDC, they appear from level 10 to 20.
     If a Maia generates the dungeon level, there will be a guaranteed spawn, so
     if you are in a party with non-Maiar, make sure you are the first one
     taking the staircase so you generate the level.
