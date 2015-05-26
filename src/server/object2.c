@@ -1693,8 +1693,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	}
 
 	/* Analyze pval bonus */
-	switch (o_ptr->tval)
-	{
+	switch (o_ptr->tval) {
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
@@ -1732,23 +1731,20 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 			}
 
 			/* Don't use bpval of costumes - mikaelh */
-			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
+			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME))
 				pval = 0;
-			}
 
 //			int boost = 1 << pval;
 
 			/* Hack -- Negative "pval" is always bad */
 //			if (pval < 0) return (0L);
 
-			for (i = 0; i < 2; i++)
-			{
+			for (i = 0; i < 2; i++) {
 				int count = 0;
 
 				/* No pval */
 //				if (!pval)
-				if (pval <= 0)
-				{
+				if (pval <= 0) {
 					pval = o_ptr->pval;
 					continue;
 				}
@@ -1762,8 +1758,8 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				}
 
 				/* Give credit for stat bonuses */
-				//			if (f1 & TR1_STR) value += (pval * 200L);
-				//			if (f1 & TR1_STR) value += (boost * 200L);
+				//if (f1 & TR1_STR) value += (pval * 200L);
+				//if (f1 & TR1_STR) value += (boost * 200L);
 				if (f1 & TR1_STR) count++;
 				if (f1 & TR1_INT) count++;
 				if ((f1 & TR1_WIS) && !(f1 & TR1_INT)) count++; /* slightly useless combination */
@@ -1783,7 +1779,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				    (o_ptr->sval == SV_RING_READYWIT) ||
 				    (o_ptr->sval == SV_RING_TOUGHNESS) ||
 				    (o_ptr->sval == SV_RING_CUNNINGNESS))
-				    )	{
+				    ) {
 					count /= 2;
 					if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 300L;
 				} else {
@@ -1861,171 +1857,171 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 
 	/* Analyze the item */
 	switch (o_ptr->tval) {
-		case TV_BOOK:
-			if (o_ptr->sval == SV_SPELLBOOK) {
-				/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
-				/*  */
-				int sl = school_spells[o_ptr->pval].skill_level + 5,
-				    ego_value = value - k_ptr->cost,
-				    ev = ego_value > 700 ? 700 : ego_value;
-				/* override k_info.txt to have easier handling of possible changes here */
-				value = 4;
-				/* Pay extra for the spell */
-				value = value * (sl * sl);
-				/* Add up 'fireproof' etc cost, but related it to the actual scroll cost. */
-				value += value < ego_value ? (value < ev ? ev : value) : ego_value;
-			}
-			/* Done */
-			break;
+	case TV_BOOK:
+		if (o_ptr->sval == SV_SPELLBOOK) {
+			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
+			/*  */
+			int sl = school_spells[o_ptr->pval].skill_level + 5,
+			    ego_value = value - k_ptr->cost,
+			    ev = ego_value > 700 ? 700 : ego_value;
+			/* override k_info.txt to have easier handling of possible changes here */
+			value = 4;
+			/* Pay extra for the spell */
+			value = value * (sl * sl);
+			/* Add up 'fireproof' etc cost, but related it to the actual scroll cost. */
+			value += value < ego_value ? (value < ev ? ev : value) : ego_value;
+		}
+		/* Done */
+		break;
 
-		/* Wands/Staffs */
-		case TV_WAND:
-			/* Pay extra for charges */
-			value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+	/* Wands/Staffs */
+	case TV_WAND:
+		/* Pay extra for charges */
+		value += ((value / 20) * o_ptr->pval) / o_ptr->number;
 
-			/* Done */
-			break;
+		/* Done */
+		break;
 
-		case TV_STAFF:
-			/* Pay extra for charges */
-			value += ((value / 20) * o_ptr->pval);
+	case TV_STAFF:
+		/* Pay extra for charges */
+		value += ((value / 20) * o_ptr->pval);
 
-			/* Done */
-			break;
+		/* Done */
+		break;
 
-		/* Rings/Amulets */
-		case TV_RING:
-		case TV_AMULET:
+	/* Rings/Amulets */
+	case TV_RING:
+	case TV_AMULET:
 #if 0
-			/* Hack -- negative bonuses are bad */
-			if (o_ptr->to_a < 0) return (0L);
-			if (o_ptr->to_h < 0) return (0L);
-			if (o_ptr->to_d < 0) return (0L);
+		/* Hack -- negative bonuses are bad */
+		if (o_ptr->to_a < 0) return (0L);
+		if (o_ptr->to_h < 0) return (0L);
+		if (o_ptr->to_d < 0) return (0L);
 #endif
 
-			/* keep consistent with store.c: price_item():
-			   This price will be the store-sells price so it must be higher than the store-buys price there. */
-			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
-				if (o_ptr->pval != 0)
-					value += (r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp >= r_info[o_ptr->pval].level * 100) ?
-					    r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp :
-					    r_info[o_ptr->pval].level * 100;
-			}
-
-			/* Give credit for bonuses */
-//			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) + 
-				PRICE_BOOST(o_ptr->to_d, 7, 3) + 
-				PRICE_BOOST(o_ptr->to_a, 11, 4)) * 100L);
-
-			/* Done */
-			break;
-
-		/* Armor */
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CLOAK:
-		case TV_CROWN:
-		case TV_HELM:
-		case TV_SHIELD:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-#if 0
-			/* Hack -- negative armor bonus */
-			if (o_ptr->to_a < 0) return (0L);
-#endif
-			/* Give credit for bonuses */
-//			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 : 
-				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5): 
-				    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
-				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
-				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
-				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
-	    
-			/* Costumes */
-			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
-				value += r_info[o_ptr->bpval].mexp / 10;
-			}
-
-			/* Done */
-			break;
-
-		/* Bows/Weapons */
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_AXE:
-		case TV_DIGGING:
-		case TV_BLUNT:
-		case TV_SWORD:
-		case TV_POLEARM:
-		case TV_MSTAFF:
-		case TV_TRAPKIT:
-#if 0
-			/* Hack -- negative hit/damage bonuses */
-			if (o_ptr->to_h + o_ptr->to_d < 0)
-			{
-				/* Hack -- negative hit/damage are of no importance */
-				if (o_ptr->tval == TV_MSTAFF) break;
-				if (o_ptr->name2 == EGO_STAR_DF) break;
-				else return (0L);
-			}
-#endif
-			/* Factor in the bonuses */
-//			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-				    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
-				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
-				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
-				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
-
-			/* Hack -- Factor in extra damage dice */
-			if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
-				value += i * i * i;
-
-			/* Done */
-			break;
-
-		/* Ammo */
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-			/* Hack -- negative hit/damage bonuses */
-//			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
-
-			/* Factor in the bonuses */
-//			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
-			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-				    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
-				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
-
-			/* Hack -- Factor in extra damage dice */
-			if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
-				value += i * 5000L;
-
-			/* Special attack (exploding arrow) */
+		/* keep consistent with store.c: price_item():
+		   This price will be the store-sells price so it must be higher than the store-buys price there. */
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
 			if (o_ptr->pval != 0) {
-				if (o_ptr->name1 != ART_RANDART) value *= 8;
-				else value *= 2;
-			}
+				monster_race *r_ptr = &r_info[o_ptr->pval];
+				int r_val = (r_ptr->level * r_ptr->mexp + (120 + (r_ptr->speed - 90) * 4) * (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside)) + 20))) / 3; /* mimic-like HP calc */
 
-			/* Done */
-			break;
+				value += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
+			}
+		}
+
+		/* Give credit for bonuses */
+//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+		value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) + 
+			PRICE_BOOST(o_ptr->to_d, 7, 3) + 
+			PRICE_BOOST(o_ptr->to_a, 11, 4)) * 100L);
+
+		/* Done */
+		break;
+
+	/* Armor */
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_CLOAK:
+	case TV_CROWN:
+	case TV_HELM:
+	case TV_SHIELD:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+#if 0
+		/* Hack -- negative armor bonus */
+		if (o_ptr->to_a < 0) return (0L);
+#endif
+		/* Give credit for bonuses */
+//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 : 
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5): 
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
+			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
+			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
+			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+
+		/* Costumes */
+		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME))
+			value += r_info[o_ptr->bpval].mexp / 10;
+
+		/* Done */
+		break;
+
+	/* Bows/Weapons */
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_AXE:
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_SWORD:
+	case TV_POLEARM:
+	case TV_MSTAFF:
+	case TV_TRAPKIT:
+#if 0
+		/* Hack -- negative hit/damage bonuses */
+		if (o_ptr->to_h + o_ptr->to_d < 0) {
+			/* Hack -- negative hit/damage are of no importance */
+			if (o_ptr->tval == TV_MSTAFF) break;
+			if (o_ptr->name2 == EGO_STAR_DF) break;
+			else return (0L);
+		}
+#endif
+		/* Factor in the bonuses */
+//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
+			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
+			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
+			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+
+		/* Hack -- Factor in extra damage dice */
+		if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
+			value += i * i * i;
+
+		/* Done */
+		break;
+
+	/* Ammo */
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+		/* Hack -- negative hit/damage bonuses */
+//		if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
+
+		/* Factor in the bonuses */
+//		value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
+		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
+
+		/* Hack -- Factor in extra damage dice */
+		if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
+			value += i * 5000L;
+
+		/* Special attack (exploding arrow) */
+		if (o_ptr->pval != 0) {
+			if (o_ptr->name1 != ART_RANDART) value *= 8;
+			else value *= 2;
+		}
+
+		/* Done */
+		break;
 	}
 
 	/* hack against those 500k randarts */
@@ -2068,10 +2064,8 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	}
 
 	if (f4 & TR4_AUTO_ID) {
-		if (o_ptr->tval == TV_GLOVES)
-			total += 100000;
-		else
-			total += 65000;
+		if (o_ptr->tval == TV_GLOVES) total += 100000;
+		else total += 65000;
 	}
 	if (f3 & TR3_WRAITH) total += 100000;
 	if (f5 & TR5_INVIS) total += 10000;
@@ -2103,11 +2097,10 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f1 & TR1_BRAND_COLD) slay += 2500;
 
 	/* slay value depends on weapon dice :-o */
-	if (f4 & (TR4_MUST2H | TR4_SHOULD2H)) {
+	if (f4 & (TR4_MUST2H | TR4_SHOULD2H))
 		total += (slay * ((o_ptr->dd * (o_ptr->ds + 1)) + 80)) / 100;
-	} else {
+	else
 		total += (slay * ((5 * o_ptr->dd * (o_ptr->ds + 1)) + 50)) / 100;
-	}
 
 	if (f5 & TR5_VORPAL) total += 20000;
 	if (f5 & TR5_IMPACT) total += 5000;
@@ -2244,10 +2237,8 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f3 & TR3_ACTIVATE) total += 100;
 	if (f3 & TR3_DRAIN_EXP) total -= 20000;
 	if (f3 & TR3_TELEPORT) {
-		if (o_ptr->ident & ID_CURSED)
-			total -= 7500;
-		else
-			total += 500;
+		if (o_ptr->ident & ID_CURSED) total -= 7500;
+		else total += 500;
 	}
 //	if (f3 & TR3_AGGRAVATE) total -= 10000; /* penalty 1 of 2 */
 	if (f3 & TR3_BLESSED) total += 750;
@@ -2433,11 +2424,10 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 		else if (slay <= 2) slay += 1;
 	}
 	/* slay value depends on weapon dice :-o */
-	if (f4 & (TR4_MUST2H | TR4_SHOULD2H)) {
+	if (f4 & (TR4_MUST2H | TR4_SHOULD2H))
 		total += (slay * ((o_ptr->dd * (o_ptr->ds + 1)) + 70)) / 80;
-	} else {
+	else
 		total += (slay * ((o_ptr->dd * (o_ptr->ds + 1)) + 30)) / 35;
-	}
 
 	/* for randart Dark Swords */
 	if (f4 & TR4_ANTIMAGIC_50) {
@@ -2567,303 +2557,304 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 
 	/* Analyze pval bonus */
 	switch (o_ptr->tval) {
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_AXE:
-		case TV_MSTAFF:
-		case TV_DIGGING:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_LITE:
-		case TV_AMULET:
-		case TV_RING:
-		case TV_TRAPKIT:
-		{
-			/* they should be of bpval.. hopefully. */
-			int pval = o_ptr->bpval, kpval = k_ptr->pval;
-			/* If the bpval has been set to the k_info pval,
-			   don't increase the item's value for this
-			   granted pval, since it's already included in
-			   the k_info price! */
-			if (pval >= kpval) {
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_AXE:
+	case TV_MSTAFF:
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_LITE:
+	case TV_AMULET:
+	case TV_RING:
+	case TV_TRAPKIT:
+	{
+		/* they should be of bpval.. hopefully. */
+		int pval = o_ptr->bpval, kpval = k_ptr->pval;
+		/* If the bpval has been set to the k_info pval,
+		   don't increase the item's value for this
+		   granted pval, since it's already included in
+		   the k_info price! */
+		if (pval >= kpval) {
+			pval -= kpval;
+			kpval = 0;
+		}
+
+//		int boost = 1 << pval;
+
+		/* Hack -- Negative "pval" is always bad */
+//		if (pval < 0) return (0L);
+
+		for (i = 0; i < 2; i++) {
+			int count = 0;
+
+			/* No pval */
+//			if (!pval)
+			if (pval <= 0) {
+				pval = o_ptr->pval;
+				continue;
+			}
+			/* If the k_info pval became the object's
+			   pval instead of bpval (shouldn't happen)
+			   then take care of it and again don't
+			   increase the value for this granted pval: */
+			else if (pval >= kpval) {
 				pval -= kpval;
 				kpval = 0;
 			}
 
-//			int boost = 1 << pval;
+			/* Give credit for stat bonuses */
+			//if (f1 & TR1_STR) value += (pval * 200L);
+			//if (f1 & TR1_STR) value += (boost * 200L);
+			if (f1 & TR1_STR) count++;
+			if (f1 & TR1_INT) count++;
+			if ((f1 & TR1_WIS) && !(f1 & TR1_INT)) count++; /* slightly useless combination */
+			if (f1 & TR1_DEX) count++;
+			if (f1 & TR1_CON) count++;
+			if (f1 & TR1_CHR) value += pval * 1000;
 
-			/* Hack -- Negative "pval" is always bad */
-//			if (pval < 0) return (0L);
-
-			for (i = 0; i < 2; i++) {
-				int count = 0;
-
-				/* No pval */
-//				if (!pval)
-				if (pval <= 0) {
-					pval = o_ptr->pval;
-					continue;
-				}
-				/* If the k_info pval became the object's
-				   pval instead of bpval (shouldn't happen)
-				   then take care of it and again don't
-				   increase the value for this granted pval: */
-				else if (pval >= kpval) {
-					pval -= kpval;
-					kpval = 0;
-				}
-
-				/* Give credit for stat bonuses */
-				//			if (f1 & TR1_STR) value += (pval * 200L);
-				//			if (f1 & TR1_STR) value += (boost * 200L);
-				if (f1 & TR1_STR) count++;
-				if (f1 & TR1_INT) count++;
-				if ((f1 & TR1_WIS) && !(f1 & TR1_INT)) count++; /* slightly useless combination */
-				if (f1 & TR1_DEX) count++;
-				if (f1 & TR1_CON) count++;
-				if (f1 & TR1_CHR) value += pval * 1000;
-
-				/* hack for double-stat rings - C. Blue */
-				if ((o_ptr->tval == TV_RING) && (
-				    (o_ptr->sval == SV_RING_MIGHT) ||
-				    (o_ptr->sval == SV_RING_READYWIT) ||
-				    (o_ptr->sval == SV_RING_TOUGHNESS) ||
-				    (o_ptr->sval == SV_RING_CUNNINGNESS))
-				    ) {
-					count /= 2;
-					if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 300L;
-				} else {
-					if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
-				}
-
-//				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
-//				if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
-				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1500L;/* was 20k, but speed is only 10k */
-				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
-
-				/* Give credit for stealth and searching */
-//				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
-				if (f1 & TR1_STEALTH) value += (pval + 1) * (pval + 1) * 400L;//100
-				if (f1 & TR1_SEARCH) value += pval * pval * 200L;//200
-				if (f5 & TR5_DISARM) value += pval * pval * 100L;
-
-				/* Give credit for infra-vision and tunneling */
-				if (f1 & TR1_INFRA) value += pval * pval * 150L;//100
-				if (f1 & TR1_TUNNEL) value += pval * pval * 175L;//50
-
-				/* Give credit for extra attacks */
-				if (o_ptr->tval == TV_RING) {
-					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 2000L);//1500
-				} else {
-//					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
-					if (f1 & TR1_BLOWS) value += pval * (pval + 2) * 5000L;
-				}
-
-				/* Give credit for extra casting */
-				if (f1 & TR1_SPELL) value += (PRICE_BOOST(pval, 0, 1) * 4000L);
-
-				/* Give credit for extra HP bonus */
-				if (f1 & TR1_LIFE) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
-
-
-				/* Flags moved here exclusively from flag_cost */
-				if (f1 & TR1_MANA) value += (700 * pval * pval);
-				/* End of flags, moved here from flag_cost */
-
-
-				/* Hack -- amulets of speed and rings of speed are
-				 * cheaper than other items of speed.
-				 */
-				if (o_ptr->tval == TV_AMULET) {
-					/* Give credit for speed bonus */
-					//if (f1 & TR1_SPEED) value += (boost * 25000L);
-					if (f1 & TR1_SPEED) value += pval * pval * 5000L;
-				} else if (o_ptr->tval == TV_RING) {
-					/* Give credit for speed bonus */
-					//if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
-					if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-//					if (f1 & TR1_SPEED) value += pval * pval * 7000L;
-				}
-				/* randarts and speed boots */
-//				else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
-//				else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 6000L;//7000 -> //5000
-
-				pval = o_ptr->pval;
-
-				if (o_ptr->name2) {
-					artifact_type *a_ptr;
-
-					a_ptr = ego_make(o_ptr);
-					f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
-					f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
-				}
+			/* hack for double-stat rings - C. Blue */
+			if ((o_ptr->tval == TV_RING) && (
+			    (o_ptr->sval == SV_RING_MIGHT) ||
+			    (o_ptr->sval == SV_RING_READYWIT) ||
+			    (o_ptr->sval == SV_RING_TOUGHNESS) ||
+			    (o_ptr->sval == SV_RING_CUNNINGNESS))) {
+				count /= 2;
+				if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 300L;
+			} else {
+				if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 200L;
 			}
-			break;
+
+//			if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
+//			if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
+			if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1500L;/* was 20k, but speed is only 10k */
+			if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
+
+			/* Give credit for stealth and searching */
+//			if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
+			if (f1 & TR1_STEALTH) value += (pval + 1) * (pval + 1) * 400L;//100
+			if (f1 & TR1_SEARCH) value += pval * pval * 200L;//200
+			if (f5 & TR5_DISARM) value += pval * pval * 100L;
+
+			/* Give credit for infra-vision and tunneling */
+			if (f1 & TR1_INFRA) value += pval * pval * 150L;//100
+			if (f1 & TR1_TUNNEL) value += pval * pval * 175L;//50
+
+			/* Give credit for extra attacks */
+			if (o_ptr->tval == TV_RING) {
+				if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 2000L);//1500
+			} else {
+//				if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+				if (f1 & TR1_BLOWS) value += pval * (pval + 2) * 5000L;
+			}
+
+			/* Give credit for extra casting */
+			if (f1 & TR1_SPELL) value += (PRICE_BOOST(pval, 0, 1) * 4000L);
+
+			/* Give credit for extra HP bonus */
+			if (f1 & TR1_LIFE) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+
+
+			/* Flags moved here exclusively from flag_cost */
+			if (f1 & TR1_MANA) value += (700 * pval * pval);
+			/* End of flags, moved here from flag_cost */
+
+
+			/* Hack -- amulets of speed and rings of speed are
+			 * cheaper than other items of speed.
+			 */
+			if (o_ptr->tval == TV_AMULET) {
+				/* Give credit for speed bonus */
+				//if (f1 & TR1_SPEED) value += (boost * 25000L);
+				if (f1 & TR1_SPEED) value += pval * pval * 5000L;
+			} else if (o_ptr->tval == TV_RING) {
+				/* Give credit for speed bonus */
+				//if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
+				if (f1 & TR1_SPEED) value += pval * pval * 10000L;
+//				if (f1 & TR1_SPEED) value += pval * pval * 7000L;
+			}
+			/* randarts and speed boots */
+//			else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
+//			else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
+			else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 6000L;//7000 -> //5000
+
+			pval = o_ptr->pval;
+
+			if (o_ptr->name2) {
+				artifact_type *a_ptr;
+
+				a_ptr = ego_make(o_ptr);
+				f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+				f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+			}
 		}
+		break;
+	}
 	}
 
 
 	/* Analyze the item */
 	switch (o_ptr->tval) {
-		case TV_BOOK:
-			if (o_ptr->sval == SV_SPELLBOOK) {
-				/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
-				int sl = school_spells[o_ptr->pval].skill_level + 5;
-				/* override k_info.txt to have easier handling of possible changes here */
-				value = 4;
-				/* Pay extra for the spell */
-				value = value * (sl * sl);
-			}
-			/* Done */
-			break;
+	case TV_BOOK:
+		if (o_ptr->sval == SV_SPELLBOOK) {
+			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
+			int sl = school_spells[o_ptr->pval].skill_level + 5;
+			/* override k_info.txt to have easier handling of possible changes here */
+			value = 4;
+			/* Pay extra for the spell */
+			value = value * (sl * sl);
+		}
+		/* Done */
+		break;
 
-		/* Wands/Staffs */
-		case TV_WAND:
-			/* Pay extra for charges */
-			value += ((value / 20) * o_ptr->pval) / o_ptr->number;
-			/* Done */
-			break;
+	/* Wands/Staffs */
+	case TV_WAND:
+		/* Pay extra for charges */
+		value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+		/* Done */
+		break;
 
-		case TV_STAFF:
-			/* Pay extra for charges */
-			value += ((value / 20) * o_ptr->pval);
-			/* Done */
-			break;
+	case TV_STAFF:
+		/* Pay extra for charges */
+		value += ((value / 20) * o_ptr->pval);
+		/* Done */
+		break;
 
-		/* Rings/Amulets */
-		case TV_RING:
-		case TV_AMULET:
+	/* Rings/Amulets */
+	case TV_RING:
+	case TV_AMULET:
 #if 0
-			/* Hack -- negative bonuses are bad */
-			if (o_ptr->to_a < 0) return (0L);
-			if (o_ptr->to_h < 0) return (0L);
-			if (o_ptr->to_d < 0) return (0L);
+		/* Hack -- negative bonuses are bad */
+		if (o_ptr->to_a < 0) return (0L);
+		if (o_ptr->to_h < 0) return (0L);
+		if (o_ptr->to_d < 0) return (0L);
 #endif
-			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
-				value += r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp;
-			}
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
+			monster_race *r_ptr = &r_info[o_ptr->pval];
+			int r_val = (r_ptr->level * r_ptr->mexp + (120 + (r_ptr->speed - 90) * 4) * (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside)) + 20))) / 3; /* mimic-like HP calc */
 
-			/* Give credit for bonuses */
-//			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) + 
-				PRICE_BOOST(o_ptr->to_d, 7, 3) + 
-				PRICE_BOOST(o_ptr->to_a, 11, 4)) * 100L);
+			value += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
+		}
 
-			/* Done */
-			break;
+		/* Give credit for bonuses */
+//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+		value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) + 
+			PRICE_BOOST(o_ptr->to_d, 7, 3) + 
+			PRICE_BOOST(o_ptr->to_a, 11, 4)) * 100L);
 
-		/* Armor */
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CLOAK:
-		case TV_CROWN:
-		case TV_HELM:
-		case TV_SHIELD:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
+		/* Done */
+		break;
+
+	/* Armor */
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_CLOAK:
+	case TV_CROWN:
+	case TV_HELM:
+	case TV_SHIELD:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
 #if 0
-			/* Hack -- negative armor bonus */
-			if (o_ptr->to_a < 0) return (0L);
+		/* Hack -- negative armor bonus */
+		if (o_ptr->to_a < 0) return (0L);
 #endif
-			/* Give credit for bonuses */
-//			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 : 
-				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5): 
-				    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
-				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
-				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
-				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+		/* Give credit for bonuses */
+//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 : 
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5): 
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
+			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
+			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
+			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
 
-			/* Costumes */
-			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
-				value += r_info[o_ptr->bpval].mexp;
-			}
+		/* Costumes */
+		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME))
+			value += r_info[o_ptr->bpval].mexp;
 
-			/* Done */
-			break;
+		/* Done */
+		break;
 
-		/* Bows/Weapons */
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_AXE:
-		case TV_DIGGING:
-		case TV_BLUNT:
-		case TV_SWORD:
-		case TV_POLEARM:
-		case TV_MSTAFF:
-		case TV_TRAPKIT:
+	/* Bows/Weapons */
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_AXE:
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_SWORD:
+	case TV_POLEARM:
+	case TV_MSTAFF:
+	case TV_TRAPKIT:
 #if 0
-			/* Hack -- negative hit/damage bonuses */
-			if (o_ptr->to_h + o_ptr->to_d < 0) {
-				/* Hack -- negative hit/damage are of no importance */
-				if (o_ptr->tval == TV_MSTAFF) break;
-				if (o_ptr->name2 == EGO_STAR_DF) break;
-				else return (0L);
-			}
+		/* Hack -- negative hit/damage bonuses */
+		if (o_ptr->to_h + o_ptr->to_d < 0) {
+			/* Hack -- negative hit/damage are of no importance */
+			if (o_ptr->tval == TV_MSTAFF) break;
+			if (o_ptr->name2 == EGO_STAR_DF) break;
+			else return (0L);
+		}
 #endif
-			/* Factor in the bonuses */
-//			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-				    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
-				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
-				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
-				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+		/* Factor in the bonuses */
+//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
+			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
+			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
+			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
 
-			/* Hack -- Factor in extra damage dice */
-			if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
-				value += i * i * i;
+		/* Hack -- Factor in extra damage dice */
+		if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
+			value += i * i * i;
 
-			/* Done */
-			break;
+		/* Done */
+		break;
 
-		/* Ammo */
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-			/* Hack -- negative hit/damage bonuses */
-//			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
+	/* Ammo */
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+		/* Hack -- negative hit/damage bonuses */
+//		if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
 
-			/* Factor in the bonuses */
-//			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
-			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-				    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
-				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
+		/* Factor in the bonuses */
+//		value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
+		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
 
-			/* Hack -- Factor in extra damage dice */
-			if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
-				value += i * 5000L;
+		/* Hack -- Factor in extra damage dice */
+		if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
+			value += i * 5000L;
 
-			/* Done */
-			break;
+		/* Done */
+		break;
 	}
 
 #ifdef RANDART_PRICE_BONUS /* just disable in case some randarts end up with outrageous value */

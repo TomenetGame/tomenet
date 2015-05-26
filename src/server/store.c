@@ -267,8 +267,7 @@ void dealloc_stores(int townval)
  * to adjust (by 200) to extract a usable multiplier.  Note that the
  * "greed" value is always something (?).
  */
-static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
-{
+static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	player_type *p_ptr = Players[Ind];
 	owner_type *ot_ptr;
 	store_type *st_ptr;
@@ -291,13 +290,12 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	if (price <= 0) return (0L);
 
 	/* Compute the racial factor */
-	if (is_state(Ind, st_ptr, STORE_LIKED)) {
+	if (is_state(Ind, st_ptr, STORE_LIKED))
 		factor = ot_ptr->costs[STORE_LIKED];
-	} else if (is_state(Ind, st_ptr, STORE_HATED)) {
+	else if (is_state(Ind, st_ptr, STORE_HATED))
 		factor = ot_ptr->costs[STORE_HATED];
-	} else {
+	else
 		factor = ot_ptr->costs[STORE_NORMAL];
-	}
 
 	/* Add in the charisma factor */
 	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
@@ -346,13 +344,22 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 
 		/* some shops are extra expensive */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE16) {
-			/* hack - keep price on XBM niveau for consumables */
+			/* hack - keep price in SBM on XBM niveau for consumables */
 			if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_POTION) price *= 8;
+			/* hack - make speed/poly rings 'affordable' (1/2) */
+			else if (o_ptr->tval == TV_RING && (o_ptr->sval == SV_RING_SPEED || o_ptr->sval == SV_RING_POLYMORPH)) price *= 4;
+			/* normal */
 			else price *= 16;
 		}
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE4) price *= 4;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE2) price *= 2;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 3) / 2;
+		/* hack - make speed/poly rings 'affordable' (2/2) */
+		if ((o_ptr->tval == TV_RING && (o_ptr->sval == SV_RING_SPEED || o_ptr->sval == SV_RING_POLYMORPH)) &&
+		    (st_info[st_ptr->st_idx].flags1 & (SF1_PRICE4 | SF1_PRICE16))) {
+			if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE2) price /= 2;
+			if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 2) / 3;
+		}
 
 		/* You're not a welcomed customer.. */
 		if (p_ptr->tim_blacklist) price = price * 4;
