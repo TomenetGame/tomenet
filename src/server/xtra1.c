@@ -1386,6 +1386,11 @@ void calc_mana(int Ind) {
 
 	if (Ind2) new_mana += p_ptr2->msp / 2;
 
+	/* Istari being purely mana-based thanks to mana shield don't need @ form at all,
+	   so vampire istari could get free permanent +5 speed from vampire bat form.
+	   Prevent that here: */
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRE_BAT) new_mana /= 2;
+
 	/* Mana can never be negative */
 	if (new_mana < 0) new_mana = 0;
 
