@@ -706,8 +706,9 @@
 /*
  * OPTION: Maximum number of "quarks" (see "io.c")
  * Default: assume at most 512 different inscriptions are used
+ * Hm, 8k worked well for the past 10 years :) but now not anymore..
  */
-#define QUARK_MAX	8192 /* 4096 still wasn't enough - mikaelh */
+#define QUARK_MAX	16384
 
 /*
  * OPTION: Maximum number of messages to remember (see "io.c")
