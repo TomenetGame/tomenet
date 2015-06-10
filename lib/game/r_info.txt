@@ -19151,7 +19151,7 @@ F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | NO_CONF | HAS_LITE | BLUEBAND
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI | IM_PSI
 S:1_IN_3
 S:TELE_TO | BA_MANA | BR_DISE | S_ANGEL
-D:An undeviable presence, designated to watch the stars and the void  and maintain
+D:An undeviable presence, designated to watch the stars and the void and maintain
 D:their balance. Its aura is pure beyond expression, its eyes reflect supreme
 D:laws beyond comprehension, daring to look at it will drive you insane,
 D:let alone fighting it!
