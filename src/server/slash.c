@@ -2300,6 +2300,9 @@ void do_slash_cmd(int Ind, char *message) {
 			message2[MAX_SLASH_LINE_LEN - 15] = 0;
 			message3[MAX_SLASH_LINE_LEN - 15] = 0;
 
+			/* char/acc names always start on upper-case, so forgive the player if he slacked.. */
+			message2[6] = toupper(message2[6]);
+
 			/* translate character name to account name */
 			if (!(tpname = strchr(message2 + 6, ':'))) {
 				/* no text given */
