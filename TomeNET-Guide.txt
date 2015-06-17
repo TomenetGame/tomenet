@@ -15358,6 +15358,8 @@ The techniques are as follows:
         must be standing next to you and also next to the monster, instead of
         you. Not all monsters can be fooled though. Some monsters might resist,
         but probably fall for it if you give it another try.
+        This skill is useless if there is no team mate next to you (and the
+        monster).
         (Distracting costs half a turn of energy.)
     Flash bomb          4 stamina
         You throw down a flash bomb that causes a flash of light, blinding
