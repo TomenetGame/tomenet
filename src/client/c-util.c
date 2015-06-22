@@ -3351,10 +3351,9 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 		max = -max;
 		/* Default to all */
 		amt = max;
-	} else {
-		/* Default to one */
-		amt = 1;
-	}
+	} else if (!max) amt = 0; /* max is 0 */
+	else amt = 1; /* Default to one */
+
 	/* Build the default */
 	sprintf(buf, "%d", amt);
 

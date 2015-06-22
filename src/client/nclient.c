@@ -3852,13 +3852,13 @@ int Receive_request_key(void) {
 }
 /* Request number */
 int Receive_request_num(void) {
-	int n, id, std;
+	int n, id, max;
 	char ch, prompt[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%s%d", &ch, &id, prompt, &std)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%d%s%d", &ch, &id, prompt, &max)) <= 0) return n;
 
 	request_pending = TRUE;
-	Send_request_num(id, c_get_quantity(prompt, std));
+	Send_request_num(id, c_get_quantity(prompt, max));
 	request_pending = FALSE;
 	return 1;
 }
