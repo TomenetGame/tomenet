@@ -7392,17 +7392,19 @@ int Send_monster_health(int Ind, int num, byte attr) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
-		errno = 0;
-		plog(format("Connection not ready for monster health bar (%d.%d.%d)",
-			Ind, connp->state, connp->id));
-		return 0;
-	}
-	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
+	/* mind-linked? */
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr);
 	}
 
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for monster health bar (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return 0;
+	}
 	return Packet_printf(&connp->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr);
 }
 

@@ -750,10 +750,8 @@ static void prt_extra_status(int Ind)
  * Auto-track current target monster when bored.  Note that the
  * health-bar stops tracking any monster that "disappears".
  */
- 
- 
-static void health_redraw(int Ind)
-{
+
+static void health_redraw(int Ind){
 	player_type *p_ptr = Players[Ind];
 
 #ifdef DRS_SHOW_HEALTH_BAR
@@ -781,14 +779,14 @@ static void health_redraw(int Ind)
 
 		if (0 - p_ptr->health_who < NumPlayers) {
 			if(Players[0-p_ptr->health_who]->conn == NOT_CONNECTED ) {
-				Send_monster_health(Ind, 0, 0); 
+				Send_monster_health(Ind, 0, 0);
 				return;
 			};
 		} else {
-			Send_monster_health(Ind, 0, 0); 
+			Send_monster_health(Ind, 0, 0);
 			return;
 		}
-			
+
 
 		/* Tracking a bad player (?) */
 		if (!q_ptr) {
