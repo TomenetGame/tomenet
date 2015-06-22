@@ -6556,6 +6556,7 @@ void process_player_change_wpos(int Ind) {
 		for (y = 0; y < MAX_HGT; y++) {
 			for (x = 0; x < MAX_WID; x++) {
 				cave_type* c_ptr = &zcave[y][x];
+#if 0 /* old method: actually find the temple shop door */
 				if (c_ptr->feat == FEAT_SHOP) {
 					struct c_special *cs_ptr = GetCS(c_ptr, CS_SHOP);
 					if (cs_ptr) {
@@ -6568,6 +6569,14 @@ void process_player_change_wpos(int Ind) {
 						}
 					}
 				}
+#else /* new: find the sickbay door instead and place him into the sickbay */
+				if (c_ptr->feat == FEAT_SICKBAY_DOOR) {
+					/* Found the temple's sickbay area */
+					startx = x;
+					starty = y;
+					break;
+				}
+#endif
 			}
 			if (startx) break;
 		}
@@ -6594,8 +6603,8 @@ void process_player_change_wpos(int Ind) {
 		/* make sure we aren't in an "icky" location */
 		emergency_x = 0; emergency_y = 0; tries = 0;
 		do {
-			starty = rand_int(l_ptr->hgt-3)+1;
-			startx = rand_int(l_ptr->wid-3)+1;
+			starty = rand_int(l_ptr->hgt - 3) + 1;
+			startx = rand_int(l_ptr->wid - 3) + 1;
 			if (cave_floor_bold(zcave, starty, startx)) {
 				emergency_x = startx;
 				emergency_y = starty;
@@ -6639,6 +6648,10 @@ void process_player_change_wpos(int Ind) {
 
 		/* Prevent landing onto a store entrance */
 		if (zcave[y][x].feat == FEAT_SHOP) continue;
+
+		/* for new sickbay area: */
+		if (p_ptr->new_level_method == LEVEL_TO_TEMPLE
+		    && zcave[y][x].feat != FEAT_PROTECTED) continue;
 
 		/* Must be inside the level borders - mikaelh */
 		if (x < 1 || y < 1 || x > p_ptr->cur_wid - 2 || y > p_ptr->cur_hgt - 2)

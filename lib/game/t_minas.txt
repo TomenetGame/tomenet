@@ -63,8 +63,9 @@ F:m:74:3:0:0:0:0:0:56
 # Expensive Black Market
 F:v:74:3:0:0:0:0:0:48
 
-############### Town Layout ###############
+F:+:231:3
 
+############### Town Layout ###############
 D:######################################################################################################################################################################################################
 D:#^^########------------------                                                                     @@@@@@@                   @@@@@@@@@                                                                #
 D:#^^^------############----------             ^                                                   @@VVVVV@@                 @@VVVVVVV@@@@@@@                                       ,,,                #
@@ -86,7 +87,7 @@ D:#^^-----------###-#s#--OOOOOO-##-#sssss--OOOOOO,#####---     -----------      
 D:#^^-------------##-#--OOO-OOO--#--ssssss--OOOOO,,,,,#----  ---ssssssss---                                                   @VVV@@                 -OO                                               #
 D:#^^--------------#---OOO-c-OOO-##-#SScSS--OOOOOO,##,#---------ssssssss----                                                  @VV@@                --OO-                                               #
 D:#^^^--#----------##-OOO-sssOOO--#--ssssss-OOOOOO--#,#####-----SScSSSSS-----                                                @@VV@                --OO-                                                #
-D:#^^^--#-----------#OOO-##4##OOO-##-ssssss--OOOOOO-#,,######---ssssssss--O---                                              @@VVV@                -OO--                                                #
+D:#^^^--#-----------#OOO-#####OOO-##-ssssss--OOOOOO-#,,######---ssssssss--O---                                              @@VVV@                -OO--                                                #
 D:#^^--###----------OOO-------OOO--#-####2#--OOOOOO-##,#k#,,##--ssssssss--O----                                             @VVV@@               --O--                                                 #
 D:#^^^-###---------OOO#--SSScS-OOO-#---------OOOOO---#,,,,,,,#--ssssssss--O-----                                           @@VV@@               --OO-                                                  #
 D:#^^-#####-------OOO-#--sssss-OOO-#--ssss--OOOOO--T-#,-----,#--#####d##--O------                                          @VVV@               --OO--                                                  #
@@ -102,10 +103,10 @@ D:#^ #######bOOOOOOO############III############^OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO--
 D:#^ #######bOOOOOOOO-^^^^^^^^^^MMM^^^^^^^^^^^^OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-------                            @VVV@@      ------OOOO------                                                        #
 D:#^^^######Z-----OOO---#-sSss--OOO-#---------OOOOOOOOOOOOOOOOO-----------OOOOOOO------                 ---------##@VVV@## --------OOOOO-----                                                          #
 D:#^^#########----OOO---#-sSss--OOO-#-sssss--OOOOOO--#######--------sssss-O-OOOOO-----                 --OOOO-----#######--------OOOOOO-----                                                           #
-D:#^^##########---OOO---#-scss--OOO-#-SScSS-OOOOOO---####,,##-------SScSS-O-OOOOO----                 --OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-----                                                            #
-D:#^^############-OOO--##-sSss--OOO-#-sssss-OOOOO--t-##k#,,,##------sssss-O--OOOOO---                --OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-----                                                             #
-D:#^^#########----OOO--#--####-OOO--#-sssss-OOOOO-TT-#,,,,-,,#------sssss-O---OOOO---               --OOOOO-OOOOOOOOOOOOOOOOOOOOOOO-------                                                             #
-D:#^^#######------OOO-##-------OOO-##-###3#-OOOOO-Tt-#,-----,#------###0#-O---OOOOO---             --OOOO---------#######---------------                                                               #
+D:#^^##########---OOO---#-scss--OOO-#-SScSS-OOOOOO---##pp####-------SScSS-O-OOOOO----                 --OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-----                                                            #
+D:#^^############-OOO--##-sSss--OOO-#-sssss-OOOOO--t-##pp+,,##------sssss-O--OOOOO---                --OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-----                                                             #
+D:#^^#########----OOO--#--####-OOO--#-sssss-OOOOO-TT-#####-,,#------sssss-O---OOOO---               --OOOOO-OOOOOOOOOOOOOOOOOOOOOOO-------                                                             #
+D:#^^#######------OOO-##-------OOO-##-###3#-OOOOO-Tt-##4#---,#------###0#-O---OOOOO---             --OOOO---------#######---------------                                                               #
 D:#^^-#####-------OOO-#--Ssss--OOO-#--------OOOOO--T-#,-----,#------------O----OOOO----           --OOOO---------##@VVV@##-----------                                                                  #
 D:#^^^-###---------OOO#-#scss--OOO-#-ssssss--OOOOO---#,----,,#----ssssss--O-----OOOO----        ---OOOO---         @VVV@@                                                                              #
 D:#^^--###----------OOO--#sSs-OOO--#-ScSSSS--OOOOOO-##,-,,,,##----SScSSS--O------OOOO----      --OOOOO----         @VVV@@                                                                              #

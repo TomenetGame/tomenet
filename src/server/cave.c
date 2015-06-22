@@ -4033,6 +4033,7 @@ static byte priority_table[][2] = {
 
 	/* Shops */
 	{ FEAT_SHOP, 23 },
+	//{ FEAT_SICKBAY_DOOR, 23 }, /* always near the temple, and not actively usable anyway */
 
 	/* Void Jump Gates */
 	{ FEAT_BETWEEN_TEMP, 24 },

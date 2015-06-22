@@ -5576,8 +5576,9 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 		return (TRUE);
 
 	/* Special one-way doors for quests: Allow traversing if we're on a CAVE_ICKY grid. */
-	if (feature == FEAT_ESCAPE_DOOR) {
-		if ((getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_ICKY))
+	if (feature == FEAT_ESCAPE_DOOR || feature == FEAT_SICKBAY_DOOR) {
+		cave_type cave = getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px];
+		if ((cave.info & CAVE_ICKY) || (f_info[cave.feat].flags1 & FF1_PROTECTED))
 			return TRUE;
 		return FALSE;
 	}

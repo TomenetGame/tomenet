@@ -1203,6 +1203,13 @@ F:DONT_NOTICE_RUNNING | NOTICE
 D:1:You bash the door but it doesn't seem to move.
 D:2:A hideous looking ornate door is blocking your way.
 
+N:231:sickbay exit
+G:+:g
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | NOTICE
+D:1:Please do not disturb the patients!
+D:2:You are not allowed to enter the temple's sickbay.
+
 
 # NOTE: 255 is reserved for special purpose ('not done yet' indicator)
 

@@ -565,6 +565,7 @@ bool teleport_away(int m_idx, int dis) {
 
 			/* No teleportation onto protected grid (8-town-houses) */
 			if (zcave[ny][nx].info & CAVE_PROT) continue;
+			/* For instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
 			if (f_info[zcave[ny][nx].feat].flags1 & FF1_PROTECTED) continue;
 			/* Not onto (dungeon) stores */
 			if (zcave[ny][nx].feat == FEAT_SHOP) continue;
@@ -700,6 +701,7 @@ void teleport_to_player(int Ind, int m_idx) {
 			if (zcave[ny][nx].info & CAVE_ICKY) continue;
 
 			/* No teleportation onto protected grid (8-town-houses) */
+			/* For instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
 			if (zcave[ny][nx].info & CAVE_PROT) continue;
 			if (f_info[zcave[ny][nx].feat].flags1 & FF1_PROTECTED) continue;
 			/* Not onto (dungeon) stores */
@@ -877,6 +879,9 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			if (zcave[y][x].info & CAVE_STCK) continue;
 			/* No teleporting into monster nests (experimental, 2008-05-26) */
 			if (zcave[y][x].info & CAVE_NEST_PIT) continue;
+			/* For instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
+			if (zcave[y][x].info & CAVE_PROT) continue;
+			if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) continue;
 
 			/* Prevent landing onto a store entrance */
 			if (zcave[y][x].feat == FEAT_SHOP) continue;
@@ -1115,8 +1120,9 @@ void teleport_player_to(int Ind, int ny, int nx) {
 				}
 		}
 
-		/* Cant telep in houses */
-		if (((wpos->wz == 0) && !(zcave[y][x].info & CAVE_ICKY)) || (wpos->wz)) {
+		/* Cant telep into houses on world surface..*/
+		/* ..and for instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
+		if (wpos->wz || (!(zcave[y][x].info & (CAVE_ICKY | CAVE_PROT)) && !(f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED))) {
 			/* No tele-to into no-tele vaults */
 			if (cave_naked_bold(zcave, y, x) &&
 			    !(zcave[y][x].info & CAVE_STCK)) {

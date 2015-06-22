@@ -59,6 +59,8 @@ F:m:163:3
 # Merchant Guild
 F:o:74:3:0:0:0:0:0:56
 
+F:+:231:3
+
 # Town Layout
 D:######################################################################################################################################################################################################
 D:#tTTTTTTTTTTTTTTTTtTTTTTTTTTTTTTTTTTtTTTTTTTTTTTTTTTTTTTTTTTTtTT                                   .              ,    ,                ,,                         , ,             ,                 #
@@ -78,12 +80,12 @@ D:#tTTTTt                      ,                                                
 D:#               ,              ,                                                 ###   ,,,,,,###1,,,,,h###TTTTTTTTTTTTTTTTTTTTTTTTT                                                                  #
 D:#                           ,                            ,              ###  ,, #####,,,,,,,,####,-,-,####TTTTTTTTTTTTTTTTTTTTTTTT          ,      ,                                               , #
 D:#                   ,,     ,                                           #####,,,,#####---------##---,---##tTTTTTTTTTTTTTTTTTT        ,,          ,              ,               , ,              ,    #
-D:#           ,                            ,    ,                     ,,,#####,,,,#####TtTT###--##---,---##TTTTTTTTtTT                              ,                                                  #
-D:#           ,                  ,                   #              #,---#####TTTT##o##TTT#########,-,-,####TTTTTTTTTTTT                         ,                                 ,                   #
-D:#               ,,     ,                          ###            ###----#g#-TTtT-,.,-TTT########c,,,,,4###TTTTTTTTTTT                       ,                              ,                ,        #
-D:#                           ,                      ####  ,     ####TTTT-,,,-TTTT--,,-tTT#########,-,-,####TTttTTTTTT                        ,      ,                                               , #
-D:#                   ,,     ,                        ##############TTttT--,-TTTTTT-,-TTTTT#9#--##T--,---##TTTTTTtTTTTTT              ,,          ,              ,               , ,              ,    #
-D:#           ,                            ,    ,     ##############,------,-tTTTTT-,-TTTt-,,,--TTTT-,---##TTTTTTTtTTTTTT                           ,                                                  #
+D:#           ,                            ,    ,                     ,,,#####,,,,#####TtT#####-##---,---##TTTTTTTTtTT                              ,                                                  #
+D:#           ,                  ,                   #              #,---#####TTTT##o##TTT#pp######,-,-,####TTTTTTTTTTTT                         ,                                 ,                   #
+D:#               ,,     ,                          ###            ###----#g#-TTtT-,.,-TT-+ppp####c,,,,,9###TTTTTTTTTTT                       ,                              ,                ,        #
+D:#                           ,                      ####  ,     ####TTTT-,,,-TTTT--,,-tT-#########,-,-,####TTttTTTTTT                        ,      ,                                               , #
+D:#                   ,,     ,                        ##############TTttT--,-TTTTTT-,-TTT-T#4#--##T--,---##TTTTTTtTTTTTT              ,,          ,              ,               , ,              ,    #
+D:#           ,                            ,    ,     ##############,------,-tTTTTT-,-TTT--,,,--TTTT-,---##TTTTTTTtTTTTTT                           ,                                                  #
 D:#           ,                  ,                     ###########j,,,,,,,,,,,,,,---,--TT---,--TTtTT-,--####TTT---TTTTTTT                        ,                                 ,                   #
 D:#          ,            ,                           #####B########,------,----,,,,,,,,,,,,,,,,,,,,,,,,d###TTT-y-tTTTTTt    ,                                                                         #
 D:#                         ,  ,                      ##############TTTTt--,--t----------------------,-,####--,,--TTTTTT ,                ,,                         , ,             ,                 #
