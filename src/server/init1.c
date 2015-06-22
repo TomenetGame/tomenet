@@ -2250,7 +2250,6 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			/* Default "mimic" */
 			f_ptr->mimic = i;
 			f_ptr->text = default_desc;
-			f_ptr->block = default_desc;
 			f_ptr->tunnel = default_tunnel;
 			f_ptr->block = default_block;
 
@@ -2263,16 +2262,14 @@ errr init_f_info_txt(FILE *fp, char *buf)
 
 
 		/* Process 'D' for "Descriptions" */
-		if (buf[0] == 'D')
-		{
+		if (buf[0] == 'D') {
 			/* Acquire the text */
-			s = buf+4;
+			s = buf + 4;
 
 			/* Hack -- Verify space */
 			if (f_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
 
-			switch (buf[2])
-			{
+			switch (buf[2]) {
 				case '0':
 					/* Advance and Save the text index */
 					f_ptr->text = ++f_head->text_size;

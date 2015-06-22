@@ -1827,7 +1827,7 @@ void world_surface_night(struct worldpos *wpos) {
 			c_ptr->info |= CAVE_DARKEN;
 		}
 
-		if (c_ptr->feat == FEAT_SHOP && stores < 254) {
+		if ((c_ptr->feat == FEAT_SHOP || c_ptr->feat == FEAT_SICKBAY_DOOR) && stores < 254) {
 			sx[stores] = x;
 			sy[stores] = y;
 			stores++;

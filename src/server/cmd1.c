@@ -6268,9 +6268,15 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				msg_print(Ind, "There is an endless depth below the clouds, blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
+			} else if (c_ptr->feat == FEAT_SICKBAY_DOOR) {
+				msg_print(Ind, "You feel a door blocking your way.");
+				*w_ptr |= CAVE_MARK;
+				everyone_lite_spot(wpos, y, x);
 			/* Wall (or secret door) */
 			} else {
 				msg_print(Ind, "You feel a wall blocking your way.");
+				//msg_format(Ind, "You feel %s.", f_text + f_info[c_ptr->feat].block);
+
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
 			}
@@ -6332,10 +6338,12 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					msg_print(Ind, "There is an endless abyss blocking your way.");
 				} else if (c_ptr->feat == FEAT_CLOUDYSKY) {
 					msg_print(Ind, "There is an endless depth below the clouds, blocking your way.");
-				}
+				} else if (c_ptr->feat == FEAT_SICKBAY_DOOR) {
+					msg_print(Ind, "You are not allowed to enter the sickbay.");
 				/* Wall (or secret door) */
-				else if (c_ptr->feat != FEAT_SIGN) {
+				} else if (c_ptr->feat != FEAT_SIGN) {
 					msg_print(Ind, "There is a wall blocking your way.");
+					//msg_format(Ind, "There is %s.", f_text + f_info[c_ptr->feat].block);
 				}
 			}
 		}
