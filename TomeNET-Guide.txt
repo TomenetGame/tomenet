@@ -5588,7 +5588,7 @@ The 1..9 are standard shops, namely..
                         b) pay 5M, wait for about 2 weeks.
                         c) pay 2M, wait for about a week, gain 2.5M raw exp,
                            pay 3M more.
-                        d) gain 5M raw exp, pay 5M gold.
+                        d) gain 4M raw exp, pay 6M gold.
 
         ..and various miscellaneous store services, of which some currently may
         not have an actual effect.
