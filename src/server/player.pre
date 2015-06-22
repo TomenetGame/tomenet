@@ -843,6 +843,12 @@ struct player_type
 
 	bool dummy_option_7;
 	bool dummy_option_8;
+
+#ifdef SOLO_REKING
+	int solo_reking;
+	int solo_reking_au;
+	time_t solo_reking_laston;
+#endif
 };
 
 extern bool imprison(int Ind, int time, char *reason);

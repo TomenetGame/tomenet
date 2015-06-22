@@ -1877,7 +1877,18 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	}
 
 	/* Future use */
-	strip_bytes(22);
+	strip_bytes(6);
+
+#ifdef SOLO_REKING
+	rd_s32b(&p_ptr->solo_reking);
+	rd_s32b(&p_ptr->solo_reking_au);
+	rd_u32b(&tmp32u);
+	p_ptr->solo_reking_laston |= tmp32u;
+	rd_u32b(&tmp32u);
+	if (sizeof(time_t) == 8) p_ptr->solo_reking_laston |= ((time_t)tmp32u) << 32;
+#else
+	strip_bytes(16);
+#endif
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */

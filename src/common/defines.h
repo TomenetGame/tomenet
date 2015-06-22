@@ -7648,6 +7648,9 @@ extern int PlayerUID;
 #define BACT_EXPLORATIONS		62
 #define BACT_RENAME_GUILD		63
 #define BACT_STATIC			64
+#ifdef SOLO_REKING
+ #define BACT_SR_DONATE			65
+#endif
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 
@@ -8104,6 +8107,9 @@ extern int PlayerUID;
 #endif
 #define RID_GUILD_RENAME	4
 #define RID_GUILD_CREATE	5
+#ifdef SOLO_REKING
+ #define RID_SR_DONATE		6
+#endif
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 

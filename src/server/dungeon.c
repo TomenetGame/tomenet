@@ -7105,8 +7105,18 @@ void dungeon(void) {
 	process_lite_later();
 
 
-	/* Process quest (de)activation every minute */
-	if (!(turn % (cfg.fps * 60))) process_quests();
+	if (!(turn % (cfg.fps * 60))) {
+#ifdef SOLO_REKING
+		/* Process fallen winners */
+		for (i = 1; i <= NumPlayers; i++) {
+			if (!Players[i]->solo_reking) continue;
+			Players[i]->solo_reking -= 250; // 1 min = 250 au
+		}
+#endif
+
+		/* Process quest (de)activation every minute */
+		process_quests();
+	}
 
 	/* process some things once each second.
 	   NOTE: Some of these (global events) mustn't

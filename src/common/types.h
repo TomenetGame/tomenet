@@ -2967,6 +2967,11 @@ struct player_type {
 
 	bool exp_bar;			//just for tracking popularity of this feature..
 	int delayed_index, delayed_spell; /* hack: write a spell to command queue, delayed */
+
+#ifdef SOLO_REKING
+	int solo_reking, solo_reking_au; /* 1min = 100xp = 250au, up to 5M au, and then another 5M au that cannot be paid off in xp or minutes. */
+	time_t solo_reking_laston;	/* since Au is the finest unit, solo_reking vars are measured in Au (0..5M) */
+#endif
 };
 
 typedef struct boni_col boni_col;

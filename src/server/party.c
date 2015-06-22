@@ -4440,6 +4440,7 @@ void checkexpiry(int Ind, int days)
 /*
  * Warn the player if other characters on his/her account will expire soon
  *  - mikaelh
+ * Now also abused to check solo-reking timer. - C. Blue
  */
 void account_checkexpiry(int Ind) {
 	player_type *p_ptr = Players[Ind];

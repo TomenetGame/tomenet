@@ -865,7 +865,17 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->recall_pos.wz);
 
 	/* Future use */
-	for (i = 0; i < 22; i++) wr_byte(0);
+	for (i = 0; i < 6; i++) wr_byte(0);
+
+#ifdef SOLO_REKING
+	wr_s32b(p_ptr->solo_reking);
+	wr_s32b(p_ptr->solo_reking_au);
+	wr_u32b(p_ptr->solo_reking_laston & 0xFFFFFFFF);
+	if (sizeof(time_t) == 8) wr_u32b((p_ptr->solo_reking_laston & 0xFFFFFFFF00000000) >> 32);
+	else wr_u32b(0);
+#else
+	for (i = 0; i < 16; i++) wr_byte(0);
+#endif
 
         /* Toggle for possible automatic save-game updates
            (done via script login-hook, eg custom.lua) - C. Blue */

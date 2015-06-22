@@ -1133,7 +1133,7 @@ extern int Send_inventory_revision(int ind);
 extern int Send_account_info(int ind);
 
 extern int Send_request_key(int Ind, int id, char *prompt);
-extern int Send_request_num(int Ind, int id, char *prompt, int std);
+extern int Send_request_num(int Ind, int id, char *prompt, int max);
 extern int Send_request_str(int Ind, int id, char *prompt, char *std);
 extern int Send_request_cfr(int Ind, int id, char *prompt, bool default_yes);
 extern int Send_request_abort(int Ind);

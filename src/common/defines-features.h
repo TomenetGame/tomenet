@@ -206,6 +206,9 @@
 /* Disable manual declaration of hostility/peace */
 #define NO_PK
 
+/* Allow players to solo-reking fallen winner characters without help of anyone else (experimental) */
+#define SOLO_REKING 5000000
+
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER

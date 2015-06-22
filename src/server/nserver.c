@@ -1618,6 +1618,13 @@ bool Destroy_connection(int ind, char *reason_orig)
 		p_ptr = Players[player];
 	}
 	if (p_ptr) {
+#ifdef SOLO_REKING
+		if (p_ptr->solo_reking) {
+			time_t now = time(&now);
+			p_ptr->solo_reking_laston = now;
+		}
+#endif
+
 		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=%d,%d,%d;xy=%d,%d)\n",
 		    showtime(),
 		    connp->c_name ? connp->c_name : "",
@@ -2773,6 +2780,17 @@ static int Handle_login(int ind)
 
 	/* Warn the player if some of his/her characters are about to expire */
 	account_checkexpiry(NumPlayers);
+
+#ifdef SOLO_REKING
+	/* Check time passed, subtract it from solo-rekinging-timer accordingly */
+	if (p_ptr->solo_reking) {
+		time_t now = time(&now);
+		/* rounding down to minutes, could also do *250/60 for finer res, but actually
+		we use minute-ticks in-game, so this is more consistent in its inaccuracy =P */
+		p_ptr->solo_reking -= ((now - p_ptr->solo_reking_laston) / 60) * 250; // 1 min = 250 au
+		if (p_ptr->solo_reking < 0) p_ptr->solo_reking = 0;
+	}
+#endif
 
 #ifndef ARCADE_SERVER
 	/* Brand-new players get super-short instructions presented here: */
@@ -7617,7 +7635,7 @@ int Send_request_key(int Ind, int id, char *prompt) {
 	Players[Ind]->request_type = RTYPE_KEY;
 	return Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_KEY, id, prompt);
 }
-int Send_request_num(int Ind, int id, char *prompt, int std) {
+int Send_request_num(int Ind, int id, char *prompt, int max) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
 	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return(0);
@@ -7630,7 +7648,7 @@ int Send_request_num(int Ind, int id, char *prompt, int std) {
 
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_NUM;
-	return Packet_printf(&connp->c, "%c%d%s%d", PKT_REQUEST_NUM, id, prompt, std);
+	return Packet_printf(&connp->c, "%c%d%s%d", PKT_REQUEST_NUM, id, prompt, max);
 }
 void Send_delayed_request_str(int Ind, int id, char *prompt, char *std) {
 	player_type *p_ptr = Players[Ind];

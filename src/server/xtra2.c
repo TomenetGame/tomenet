@@ -7561,8 +7561,12 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 
 	/* --- non-noghost-death: everlasting or more lives left --- */
 	/* Add to legends log if he was a winner */
-	if (p_ptr->total_winner && !is_admin(p_ptr) && p_ptr->alive)
+	if (p_ptr->total_winner && !is_admin(p_ptr) && p_ptr->alive) {
 		l_printf("%s \\{r%s (%d) lost %s royal title by death\n", showdate(), p_ptr->name, p_ptr->lev, p_ptr->male ? "his" : "her");
+#ifdef SOLO_REKING
+		p_ptr->solo_reking = p_ptr->solo_reking_au = SOLO_REKING;
+#endif
+	}
 
 	/* Tell everyone he died */
 	if (p_ptr->alive) {
@@ -8520,6 +8524,15 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		/* Generate treasure and give kill credit */
 		monster_death(Ind, m_idx);
 
+
+#ifdef SOLO_REKING
+		/* note: only our own killing blows count, not party exp! */
+		if (p_ptr->solo_reking) {
+			int raw_exp = r_ptr->mexp * (100 - m_ptr->clone) / 100;
+			p_ptr->solo_reking -= (raw_exp * 5) / 1; // 1 xp = 1 au (2.5?)
+			if (p_ptr->solo_reking < 0) p_ptr->solo_reking = 0;
+		}
+#endif
 
 		/* experience calculation: gain 2 decimal digits (for low-level exp'ing) */
 		tmp_exp *= 100;

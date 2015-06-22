@@ -8637,6 +8637,44 @@ void handle_request_return_num(int Ind, int id, int num) {
 	if (RTYPE_NUM != p_ptr->request_type) return;
 
 	switch (id) {
+#ifdef SOLO_REKING
+	case RID_SR_DONATE: /* added for SOLO_REKING */
+		if (num > p_ptr->au) {
+			msg_print(Ind, "You do not have that much gold with you!");
+			return;
+		}
+		if (num <= 0) {
+			msg_print(Ind, "You decide not to donate at this time.");
+			msg_print(Ind, "You pray to the gods.");
+			return;
+		}
+
+		p_ptr->au -= num;
+		p_ptr->redraw |= PR_GOLD;
+		if (num == 1)
+			msg_format(Ind, "Your donation of %d gold piece is well received.", num);
+		else
+			msg_format(Ind, "Your donation of %d gold pieces is well received.", num);
+		msg_print(Ind, "You pray to the gods.");
+
+		/* no fallen winner yet or already donated enough and changed our fate? */
+		if (!p_ptr->once_winner || p_ptr->total_winner) return;
+
+		/* count donation, enough to change fate? */
+		p_ptr->solo_reking_au -= num;
+		if (p_ptr->solo_reking_au < 0) {
+			p_ptr->solo_reking += p_ptr->solo_reking_au;
+			p_ptr->solo_reking_au = 0;
+			if (p_ptr->solo_reking < 0) p_ptr->solo_reking = 0;
+		}
+		if (p_ptr->solo_reking + p_ptr->solo_reking_au == 0) {
+			msg_print(Ind, "\377GYou feel your fate has been changed!");
+			// .. revive Sauron too? =P .. */
+			p_ptr->once_winner = 0;
+			p_ptr->r_killed[RI_MORGOTH] = 0;
+		}
+		return;
+#endif
 	default:;
 	}
 }
