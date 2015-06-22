@@ -1894,6 +1894,18 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	   (done via script login-hook, eg custom.lua) - C. Blue */
 	rd_byte(&p_ptr->updated_savegame);
 
+#if 1 /* temporary, until all chars are converted */
+ #ifdef SOLO_REKING
+	/* hack already existing fallen winners (due to lack of time() in custom.lua we need to do that here) */
+	if (p_ptr->updated_savegame < 10) {
+		time_t now;
+		p_ptr->solo_reking = p_ptr->solo_reking_au = 5000000;
+		p_ptr->solo_reking_laston = time(&now);
+		p_ptr->updated_savegame = 10;
+	}
+ #endif
+#endif
+
 #if 0 /* ALT_EXPRATIO conversion: */
 if (p_ptr->updated_savegame == 0) {
     s64b i, i100, ief;
