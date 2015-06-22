@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. May 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. June 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -1665,6 +1665,9 @@ kinging     The process of beating Morgoth, the game boss, and thereby
             on the same floor will gain winner status again, even fallen kings.
             A player must be at least level 40 to get credit for beating
             Morgoth.
+            A new (experimental) way to obtain a lost royal title again is to
+            donate and pray in 'The Mirror' in Lothlorien, see (4.5a) for
+            details.
 
 klevel, olevel
             Somewhat more technical terms, these stand for the exact type of
@@ -2114,6 +2117,8 @@ who have beaten Morgoth already but lost their royal title to death) can
 regain their title this way - by teaming up with someone who hasn't defeated
 Morgoth yet and making sure that that player lands the killing blow.
 Each player must be at least level 40 to get credit for beating Morgoth.
+A new (experimental) way to obtain a lost royal title again is to donate and
+pray in 'The Mirror' in Lothlorien, see (4.5a) for details.
 
 Morgoth always drops his crown and hammer. If he is defeated by a party, those
 two items will drop multiple times so that everyone can actually pick up one of
@@ -5536,6 +5541,54 @@ The 1..9 are standard shops, namely..
                         In the hazardous city of Khazad-Dum is a store that
                         offers some goods found to be useful by the miners
                         in the mountain depths.
+        Donate gold and pray to the gods  (EXPERIMENTAL)
+                        This is a special option in The Mirror in Lothlorien
+                        which allows fallen kings and queens to get their fate
+                        changed by the gods: Their Morgoth kill will be undone
+                        so they may challenge him once more, to regain their
+                        royal title!
+                        This service is useful if you do not have any team mate
+                        who still hasn't killed Morgoth yet, to kill Morgoth in
+                        a party together with him, which is the traditional way
+                        of obtaining a lost royal title again.
+
+                        To gain the favour of the gods and have your fate
+                        changed you will need to donate at least 5 million gold
+                        pieces.
+                        In addition to this you can either donate another 5
+                        million or you can wait for about 2 weeks or you can
+                        gain about 5 million raw experience points or a mix of
+                        all these, up to your personal preference.
+                        'Raw' experience means that it's simply the amount of
+                        experience shown in the monster spoiler (~7) and the
+                        only other factor is the monster's clone state. Your
+                        race and class which may usually diminish your
+                        experience gain (worst for Maiar) do NOT factor in, so
+                        the amount of monster slaying is exactly the same for
+                        everyone. However, YOU will need to kill the monster!
+                        Kills done by party members will not count for you.
+                        So even if your character is at the exp cap at level 50
+                        and does not seem to gain any more experience, this
+                        'raw experience' will still accumulate and count for
+                        obtaining the favour of the gods.
+
+                        If you are sure that you have already donated at least
+                        5 million gold pieces and are now working on killing
+                        monsters or alternatively just sitting it out, you can
+                        check back in The Mirror anytime without donating any
+                        more gold (just choose to donate 0 gold pieces) until
+                        it tells you in a bright green message that your fate
+                        has finally been changed.
+                        ("You feel your fate has been changed!")
+
+                        The conversion rates are, as mentioned above:
+                        1 minute of time passed = 250 Xp = 250 Au.
+                        Some random examples to gain the gods' favour:
+                        a) pay 10M straight.
+                        b) pay 5M, wait for about 2 weeks.
+                        c) pay 2M, wait for about a week, gain 2.5M raw exp,
+                           pay 3M more.
+                        d) gain 5M raw exp, pay 5M gold.
 
         ..and various miscellaneous store services, of which some currently may
         not have an actual effect.
