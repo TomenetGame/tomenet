@@ -43,8 +43,7 @@ static u32b	x_stamp = 0L;	/* A simple "checksum" on the encoded bytes */
  * These functions place information into a savefile a byte at a time
  */
 
-static void sf_put(byte v)
-{
+static void sf_put(byte v) {
 	/* Encode the value, write a character */
 	xor_byte ^= v;
 #if 0
@@ -66,47 +65,39 @@ static void sf_put(byte v)
 	x_stamp += xor_byte;
 }
 
-void wr_byte(byte v)
-{
+void wr_byte(byte v) {
 	sf_put(v);
 }
 
-void wr_u16b(u16b v)
-{
+void wr_u16b(u16b v) {
 	sf_put(v & 0xFF);
 	sf_put((v >> 8) & 0xFF);
 }
 
-void wr_s16b(s16b v)
-{
+void wr_s16b(s16b v) {
 	wr_u16b((u16b)v);
 }
 
-void wr_u32b(u32b v)
-{
+void wr_u32b(u32b v) {
 	sf_put(v & 0xFF);
 	sf_put((v >> 8) & 0xFF);
 	sf_put((v >> 16) & 0xFF);
 	sf_put((v >> 24) & 0xFF);
 }
 
-void wr_s32b(s32b v)
-{
+void wr_s32b(s32b v) {
 	wr_u32b((u32b)v);
 }
 
-void wr_string(cptr str)
-{
-	while (*str)
-	{
+void wr_string(cptr str) {
+	while (*str) {
 		wr_byte(*str);
 		str++;
 	}
 	wr_byte(*str);
 }
 
-static void write_buffer()
-{
+static void write_buffer() {
 	if (fff_buf_pos > 0) {
 		if (fwrite(fff_buf, 1, fff_buf_pos, fff) < fff_buf_pos) {
 			s_printf("Writing to savefile failed: %s\n", feof(fff) ? "EOF" : strerror(ferror(fff)));
@@ -124,8 +115,7 @@ static void write_buffer()
 /*
  * Write an "item" record
  */
-static void wr_item(object_type *o_ptr)
-{
+static void wr_item(object_type *o_ptr) {
 	wr_s32b(o_ptr->owner);
 	wr_s16b(o_ptr->level);
 	wr_byte(o_ptr->mode);
@@ -322,8 +312,7 @@ static void wr_monster(monster_type *m_ptr) {
 /*
  * Write a "lore" record
  */
-static void wr_global_lore(int r_idx)
-{
+static void wr_global_lore(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Count sights/deaths/kills */
@@ -341,8 +330,7 @@ static void wr_global_lore(int r_idx)
 /*
  * Write an "xtra" record
  */
-static void wr_xtra(int Ind, int k_idx)
-{
+static void wr_xtra(int Ind, int k_idx) {
 	player_type *p_ptr = Players[Ind];
 	byte tmp8u = 0;
 
@@ -359,8 +347,7 @@ static void wr_xtra(int Ind, int k_idx)
  *
  * Of course, we should be able to compress this into 1/8..	- Jir -
  */
-static void wr_trap_memory(int Ind, int t_idx)
-{
+static void wr_trap_memory(int Ind, int t_idx) {
 	player_type *p_ptr = Players[Ind];
 	byte tmp8u = 0;
 
@@ -373,8 +360,7 @@ static void wr_trap_memory(int Ind, int t_idx)
 /*
  * Write a "store" record
  */
-static void wr_store(store_type *st_ptr)
-{
+static void wr_store(store_type *st_ptr) {
 	int j;
 
 	/* Save the "open" counter */
@@ -564,8 +550,7 @@ static void wr_party(party_type *party_ptr) {
 
 }
 
-static void wr_wild(wilderness_type *w_ptr)
-{
+static void wr_wild(wilderness_type *w_ptr) {
 	/* Reserved for future use */
 	wr_u32b(0);
 	/* level flags */
@@ -582,8 +567,7 @@ static void wr_wild(wilderness_type *w_ptr)
 /*
  * Write the information about a house
  */
-static void wr_house(house_type *house)
-{
+static void wr_house(house_type *house) {
 	int i;
 
 	wr_byte(house->x);
@@ -996,16 +980,14 @@ static void wr_extra(int Ind) {
 /*
  * Write the list of players a player is hostile toward
  */
-static void wr_hostilities(int Ind)
-{
+static void wr_hostilities(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	hostile_type *h_ptr;
 	int i;
 	u16b tmp16u = 0;
 
 	/* Count hostilities */
-	for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)
-	{
+	for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next) {
 		/* One more */
 		tmp16u++;
 	}
@@ -1017,8 +999,7 @@ static void wr_hostilities(int Ind)
 	h_ptr = p_ptr->hostile;
 
 	/* Save each record */
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		/* Write ID */
 		wr_s32b(h_ptr->id);
 
@@ -1049,8 +1030,7 @@ static void wr_hostilities(int Ind)
  * -APD
  */
 
-static void wr_floor(struct worldpos *wpos)
-{
+static void wr_floor(struct worldpos *wpos) {
 	int y, x, i;
 	byte prev_feature = 0xff, n;
 	u16b prev_info = 0xffff;
@@ -1193,8 +1173,7 @@ static void wr_floor(struct worldpos *wpos)
 }
 
 /* Write a players memory of a cave, simmilar to the above function. */
-static void wr_cave_memory(int Ind)
-{
+static void wr_cave_memory(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int y,x;
 	char prev_flag = -1;	/* just for definedness. */
@@ -1329,8 +1308,7 @@ static bool wr_savefile_new(int Ind) {
 	/* Hack -- Dump the quests */
 	tmp16u = MAX_XO_IDX;
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		wr_byte(xo_list[i].level);
 		wr_byte(0);
 		wr_byte(0);
@@ -1340,8 +1318,7 @@ static bool wr_savefile_new(int Ind) {
 	/* Hack -- Dump the artifacts */
 	tmp16u = MAX_A_IDX;
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		artifact_type *a_ptr = &a_info[i];
 		wr_byte(a_ptr->cur_num);
 		wr_byte(0);
@@ -1360,15 +1337,11 @@ static bool wr_savefile_new(int Ind) {
 	tmp16u = PY_MAX_LEVEL;
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++)
-	{
 		wr_s16b(p_ptr->player_hp[i]);
-	}
 
 	/* Write the inventory */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
-		if (p_ptr->inventory[i].k_idx)
-		{
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		if (p_ptr->inventory[i].k_idx) {
 			wr_u16b(i);
 			wr_item(&p_ptr->inventory[i]);
 		}
@@ -1445,14 +1418,12 @@ static bool wr_savefile_new(int Ind) {
 	}
 
 
-        wr_byte(p_ptr->spell_project);
+	wr_byte(p_ptr->spell_project);
 
-        /* Special powers */
-        wr_s16b(p_ptr->power_num);
-        for (i = 0; i < MAX_POWERS; i++)
-        {
-                wr_s16b(p_ptr->powers[i]);
-        }
+	/* Special powers */
+	wr_s16b(p_ptr->power_num);
+	for (i = 0; i < MAX_POWERS; i++)
+		wr_s16b(p_ptr->powers[i]);
 
 	/* Write the "value check-sum" */
 	wr_u32b(v_stamp);
@@ -1476,13 +1447,10 @@ static bool wr_savefile_new(int Ind) {
  *
  * XXX XXX XXX Angband 2.8.0 will use "fd" instead of "fff" if possible
  */
-static bool save_player_aux(int Ind, char *name)
-{
-	bool	ok = FALSE;
-
-	int		fd = -1;
-
-	int		mode = 0644;
+static bool save_player_aux(int Ind, char *name) {
+	bool ok = FALSE;
+	int fd = -1;
+	int mode = 0644;
 
 
 	/* No file yet */
@@ -1497,8 +1465,7 @@ static bool save_player_aux(int Ind, char *name)
 	fd = fd_make(name, mode);
 
 	/* File is okay */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 		/* Close the "fd" */
 		(void)fd_close(fd);
 
@@ -1506,8 +1473,7 @@ static bool save_player_aux(int Ind, char *name)
 		fff = my_fopen(name, "wb");
 
 		/* Successful open */
-		if (fff)
-		{
+		if (fff) {
 			/* Allocate a buffer */
 			fff_buf = C_NEW(MAX_BUF_SIZE, char);
 			fff_buf_pos = 0;
@@ -1542,13 +1508,10 @@ static bool save_player_aux(int Ind, char *name)
 /*
  * Attempt to save the player in a savefile
  */
-bool save_player(int Ind)
-{
+bool save_player(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
-	int		result = FALSE;
-
-	char	safe[1024];
+	int result = FALSE;
+	char safe[1024];
 
 
 #ifdef SET_UID
@@ -1577,8 +1540,7 @@ bool save_player(int Ind)
 	fd_kill(safe);
 
 	/* Attempt to save the player */
-	if (save_player_aux(Ind, safe))
-	{
+	if (save_player_aux(Ind, safe)) {
 		char temp[1024];
 
 		/* Old savefile */
@@ -1639,13 +1601,11 @@ bool save_player(int Ind)
 }
 
 
-static bool file_exist(char *buf)
-{
+static bool file_exist(char *buf) {
 	int fd;
 
 	fd = fd_open(buf, O_RDONLY);
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 		fd_close(fd);
 		return (TRUE);
 	}
@@ -1676,8 +1636,7 @@ static bool file_exist(char *buf)
  * Note that we always try to load the "current" savefile, even if
  * there is no such file, so we must check for "empty" savefile names.
  */
-bool load_player(int Ind)
-{
+bool load_player(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int		fd = -1;
@@ -1702,10 +1661,8 @@ bool load_player(int Ind)
 
 
 	/* Allow empty savefile name */
-	if (!p_ptr->savefile[0])
-	{
-		if (edit)
-		{
+	if (!p_ptr->savefile[0]) {
+		if (edit) {
 			what = "Server is closed for login now";
 			err = 1;
 		}
@@ -1716,8 +1673,7 @@ bool load_player(int Ind)
 	/* XXX XXX XXX Fix this */
 
 	/* Verify the existence of the savefile */
-	if (!err && !file_exist(p_ptr->savefile))
-	{
+	if (!err && !file_exist(p_ptr->savefile)) {
 		/* Give a message */
 		s_printf("Savefile does not exist for player %s.\n", p_ptr->name);
 		s_printf("(%s) %d\n", p_ptr->savefile, errno);
@@ -1732,8 +1688,7 @@ bool load_player(int Ind)
 		}
 
 		/* Allow this */
-		if (edit)
-		{
+		if (edit) {
 			what = "Server is closed for login now";
 			err = 1;
 		}
@@ -1742,10 +1697,8 @@ bool load_player(int Ind)
 
 
 #ifdef VERIFY_SAVEFILE
-
 	/* Verify savefile usage */
-	if (!err)
-	{
+	if (!err) {
 		FILE *fkk;
 
 		char temp[MAX_PATH_LENGTH];
@@ -1780,13 +1733,11 @@ bool load_player(int Ind)
 		/* Close the lock file */
 		my_fclose(fkk);
 	}
-
 #endif
 
 
 	/* Okay */
-	if (!err)
-	{
+	if (!err) {
 		/* Open the savefile */
 		fd = fd_open(p_ptr->savefile, O_RDONLY);
 
@@ -1798,9 +1749,7 @@ bool load_player(int Ind)
 	}
 
 	/* Process file */
-	if (!err)
-	{
-
+	if (!err) {
 #ifdef VERIFY_TIMESTAMP
 		/* Get the timestamp */
 		(void)fstat(fd, &statbuf);
@@ -1817,8 +1766,7 @@ bool load_player(int Ind)
 	}
 
 	/* Process file */
-	if (!err)
-	{
+	if (!err) {
 		/* Extract version */
 		sf_major = vvv[0];
 		sf_minor = vvv[1];
@@ -1842,8 +1790,7 @@ bool load_player(int Ind)
 	}
 
 	/* Paranoia */
-	if (!err)
-	{
+	if (!err) {
 		/* Invalid turn */
 		/* if (!turn) err = -1; */
 
@@ -1853,12 +1800,10 @@ bool load_player(int Ind)
 
 #ifdef VERIFY_TIMESTAMP
 	/* Verify timestamp */
-	if (!err)
-	{
+	if (!err) {
 		/* Hack -- Verify the timestamp */
 		if (sf_when > (statbuf.st_ctime + 100) ||
-				sf_when < (statbuf.st_ctime - 100))
-		{
+		    sf_when < (statbuf.st_ctime - 100)) {
 			/* Message */
 			what = "Invalid timestamp";
 
@@ -1870,21 +1815,18 @@ bool load_player(int Ind)
 
 
 	/* Okay */
-	if (!err)
-	{
+	if (!err) {
 		/* Give a conversion warning */
 		if ((version_major != sf_major) ||
-				(version_minor != sf_minor) ||
-				(version_patch != sf_patch))
-		{
+		    (version_minor != sf_minor) ||
+		    (version_patch != sf_patch)) {
 			/* Message */
 			printf("Converted a %d.%d.%d savefile.\n",
 					sf_major, sf_minor, sf_patch);
 		}
 
 		/* Player is dead */
-		if (p_ptr->death)
-		{
+		if (p_ptr->death) {
 			/* Player is no longer "dead" */
 			p_ptr->death = FALSE;
 
@@ -1899,8 +1841,7 @@ bool load_player(int Ind)
 		character_loaded = TRUE;
 
 		/* Still alive */
-		if (p_ptr->chp >= 0)
-		{
+		if (p_ptr->chp >= 0) {
 			/* Reset cause of death */
 			(void)strcpy(p_ptr->died_from, "(alive and well)");
 		}
@@ -1915,8 +1856,7 @@ bool load_player(int Ind)
 #ifdef VERIFY_SAVEFILE
 
 	/* Verify savefile usage */
-	if (TRUE)
-	{
+	if (TRUE) {
 		char temp[MAX_PATH_LENGTH];
 
 		/* Extract name of lock file */
@@ -2025,8 +1965,7 @@ static void wr_auctions()
 	}
 }
 
-static bool wr_server_savefile()
-{
+static bool wr_server_savefile() {
         int        i;
 	u32b              now;
 
@@ -2194,7 +2133,7 @@ static bool wr_server_savefile()
 }
 
 /* write the wilderness and dungeon structure */
-static void new_wr_wild(){
+static void new_wr_wild() {
 	wilderness_type *w_ptr;
 	int x, y, i;
 	u32b temp;
@@ -2270,7 +2209,7 @@ static void new_wr_wild(){
 }
 
 /* write the actual dungeons */
-static void new_wr_floors(){
+static void new_wr_floors() {
 	struct worldpos cwpos;
 	wilderness_type *w_ptr;
 	int x, y, z;
