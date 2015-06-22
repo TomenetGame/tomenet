@@ -649,6 +649,7 @@ B:*:*:%200d%200
 B:*:*:%200d%200
 B:*:*:%200d%200
 F:R_CHAR_C | R_CHAR_Z
+H:UNDEAD
 M:FORCE_MAXHP
 
 #Eyes that are under devilry. They do extra spells. All the big ones are EVIL and excluded.
