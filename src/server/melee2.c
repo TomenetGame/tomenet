@@ -775,6 +775,11 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
  * This is exactly like "projectable", but it will return FALSE if a monster
  * is in the way.
  */
+/* Potential high-profile BUG: bool los() 'Travel horiz/vert..' probably differs from
+   bool clean_shot() 'mmove()' so that monsters can fire at you without you seeing them.
+   Fixing it via bad hack: just adding an extra los() check here for now. */
+#define CRUDE_TARGETTING_LOS_FIX
+
 #ifdef DOUBLE_LOS_SAFETY
 static bool clean_shot_DLS(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx);
 static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range, int m_idx) {
@@ -788,6 +793,11 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
+
+#ifdef CRUDE_TARGETTING_LOS_FIX
+	/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
+	if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+#endif
 
 	/* Start at the initial location */
 	y = y1, x = x1;
@@ -831,6 +841,11 @@ static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int 
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
+
+#ifdef CRUDE_TARGETTING_LOS_FIX
+	/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
+	if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+#endif
 
 	/* Start at the initial location */
 	y = y1, x = x1;

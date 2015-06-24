@@ -1014,22 +1014,16 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 #endif
 	/* Delta */
 	int dx, dy;
-
 	/* Absolute */
 	int ax, ay;
-
 	/* Signs */
 	int sx, sy;
-
 	/* Fractions */
 	int qx, qy;
-
 	/* Scanners */
 	int tx, ty;
-
 	/* Scale factors */
 	int f1, f2;
-
 	/* Slope, or 1/Slope, of LOS */
 	int m;
 
@@ -1054,51 +1048,31 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 
 
 	/* Directly South/North */
-	if (!dx)
-	{
+	if (!dx) {
 		/* South -- check for walls */
-		if (dy > 0)
-		{
+		if (dy > 0) {
 			for (ty = y1 + 1; ty < y2; ty++)
-			{
 				if (!cave_los(zcave, ty, x1)) return (FALSE);
-			}
-		}
-
 		/* North -- check for walls */
-		else
-		{
+		} else {
 			for (ty = y1 - 1; ty > y2; ty--)
-			{
 				if (!cave_los(zcave, ty, x1)) return (FALSE);
-			}
 		}
-
 		/* Assume los */
 		return (TRUE);
 	}
 
 	/* Directly East/West */
-	if (!dy)
-	{
+	if (!dy) {
 		/* East -- check for walls */
-		if (dx > 0)
-		{
+		if (dx > 0) {
 			for (tx = x1 + 1; tx < x2; tx++)
-			{
 				if (!cave_los(zcave, y1, tx)) return (FALSE);
-			}
-		}
-
 		/* West -- check for walls */
-		else
-		{
+		} else {
 			for (tx = x1 - 1; tx > x2; tx--)
-			{
 				if (!cave_los(zcave, y1, tx)) return (FALSE);
-			}
 		}
-
 		/* Assume los */
 		return (TRUE);
 	}
@@ -1110,19 +1084,14 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 
 
 	/* Vertical "knights" */
-	if (ax == 1)
-	{
-		if (ay == 2)
-		{
+	if (ax == 1) {
+		if (ay == 2) {
 			if (cave_los(zcave, y1 + sy, x1)) return (TRUE);
 		}
 	}
-
 	/* Horizontal "knights" */
-	else if (ay == 1)
-	{
-		if (ax == 2)
-		{
+	else if (ay == 1) {
+		if (ax == 2) {
 			if (cave_los(zcave, y1, x1 + sx)) return (TRUE);
 		}
 	}
@@ -1136,8 +1105,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 
 
 	/* Travel horizontally */
-	if (ax >= ay)
-	{
+	if (ax >= ay) {
 		/* Let m = dy / dx * 2 * (dy * dx) = 2 * dy * dy */
 		qy = ay * ay;
 		m = qy << 1;
@@ -1145,37 +1113,28 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		tx = x1 + sx;
 
 		/* Consider the special case where slope == 1. */
-		if (qy == f2)
-		{
+		if (qy == f2) {
 			ty = y1 + sy;
 			qy -= f1;
-		}
-		else
-		{
+		} else {
 			ty = y1;
 		}
 
 		/* Note (below) the case (qy == f2), where */
 		/* the LOS exactly meets the corner of a tile. */
-		while (x2 - tx)
-		{
+		while (x2 - tx) {
 			if (!cave_los(zcave, ty, tx)) return (FALSE);
 
 			qy += m;
 
-			if (qy < f2)
-			{
+			if (qy < f2) {
 				tx += sx;
-			}
-			else if (qy > f2)
-			{
+			} else if (qy > f2) {
 				ty += sy;
 				if (!cave_los(zcave, ty, tx)) return (FALSE);
 				qy -= f1;
 				tx += sx;
-			}
-			else
-			{
+			} else {
 				ty += sy;
 				qy -= f1;
 				tx += sx;
@@ -1184,45 +1143,35 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	}
 
 	/* Travel vertically */
-	else
-	{
+	else {
 		/* Let m = dx / dy * 2 * (dx * dy) = 2 * dx * dx */
 		qx = ax * ax;
 		m = qx << 1;
 
 		ty = y1 + sy;
 
-		if (qx == f2)
-		{
+		if (qx == f2) {
 			tx = x1 + sx;
 			qx -= f1;
-		}
-		else
-		{
+		} else {
 			tx = x1;
 		}
 
 		/* Note (below) the case (qx == f2), where */
 		/* the LOS exactly meets the corner of a tile. */
-		while (y2 - ty)
-		{
+		while (y2 - ty) {
 			if (!cave_los(zcave, ty, tx)) return (FALSE);
 
 			qx += m;
 
-			if (qx < f2)
-			{
+			if (qx < f2) {
 				ty += sy;
-			}
-			else if (qx > f2)
-			{
+			} else if (qx > f2) {
 				tx += sx;
 				if (!cave_los(zcave, ty, tx)) return (FALSE);
 				qx -= f1;
 				ty += sy;
-			}
-			else
-			{
+			} else {
 				tx += sx;
 				qx -= f1;
 				ty += sy;
@@ -1246,22 +1195,16 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 #endif
 	/* Delta */
 	int dx, dy;
-
 	/* Absolute */
 	int ax, ay;
-
 	/* Signs */
 	int sx, sy;
-
 	/* Fractions */
 	int qx, qy;
-
 	/* Scanners */
 	int tx, ty;
-
 	/* Scale factors */
 	int f1, f2;
-
 	/* Slope, or 1/Slope, of LOS */
 	int m;
 
@@ -1286,51 +1229,31 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 
 
 	/* Directly South/North */
-	if (!dx)
-	{
+	if (!dx) {
 		/* South -- check for walls */
-		if (dy > 0)
-		{
+		if (dy > 0) {
 			for (ty = y1 + 1; ty < y2; ty++)
-			{
 				if (!cave_los_wall(zcave, ty, x1)) return (FALSE);
-			}
-		}
-
 		/* North -- check for walls */
-		else
-		{
+		} else {
 			for (ty = y1 - 1; ty > y2; ty--)
-			{
 				if (!cave_los_wall(zcave, ty, x1)) return (FALSE);
-			}
 		}
-
 		/* Assume los */
 		return (TRUE);
 	}
 
 	/* Directly East/West */
-	if (!dy)
-	{
+	if (!dy) {
 		/* East -- check for walls */
-		if (dx > 0)
-		{
+		if (dx > 0) {
 			for (tx = x1 + 1; tx < x2; tx++)
-			{
 				if (!cave_los_wall(zcave, y1, tx)) return (FALSE);
-			}
-		}
-
 		/* West -- check for walls */
-		else
-		{
+		} else {
 			for (tx = x1 - 1; tx > x2; tx--)
-			{
 				if (!cave_los_wall(zcave, y1, tx)) return (FALSE);
-			}
 		}
-
 		/* Assume los */
 		return (TRUE);
 	}
@@ -1342,21 +1265,13 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 
 
 	/* Vertical "knights" */
-	if (ax == 1)
-	{
+	if (ax == 1) {
 		if (ay == 2)
-		{
 			if (cave_los_wall(zcave, y1 + sy, x1)) return (TRUE);
-		}
-	}
-
 	/* Horizontal "knights" */
-	else if (ay == 1)
-	{
+	} else if (ay == 1) {
 		if (ax == 2)
-		{
 			if (cave_los_wall(zcave, y1, x1 + sx)) return (TRUE);
-		}
 	}
 
 
@@ -1368,8 +1283,7 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 
 
 	/* Travel horizontally */
-	if (ax >= ay)
-	{
+	if (ax >= ay) {
 		/* Let m = dy / dx * 2 * (dy * dx) = 2 * dy * dy */
 		qy = ay * ay;
 		m = qy << 1;
@@ -1377,37 +1291,28 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 		tx = x1 + sx;
 
 		/* Consider the special case where slope == 1. */
-		if (qy == f2)
-		{
+		if (qy == f2) {
 			ty = y1 + sy;
 			qy -= f1;
-		}
-		else
-		{
+		} else {
 			ty = y1;
 		}
 
 		/* Note (below) the case (qy == f2), where */
 		/* the LOS exactly meets the corner of a tile. */
-		while (x2 - tx)
-		{
+		while (x2 - tx) {
 			if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
 
 			qy += m;
 
-			if (qy < f2)
-			{
+			if (qy < f2) {
 				tx += sx;
-			}
-			else if (qy > f2)
-			{
+			} else if (qy > f2) {
 				ty += sy;
 				if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
 				qy -= f1;
 				tx += sx;
-			}
-			else
-			{
+			} else {
 				ty += sy;
 				qy -= f1;
 				tx += sx;
@@ -1416,45 +1321,35 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	}
 
 	/* Travel vertically */
-	else
-	{
+	else {
 		/* Let m = dx / dy * 2 * (dx * dy) = 2 * dx * dx */
 		qx = ax * ax;
 		m = qx << 1;
 
 		ty = y1 + sy;
 
-		if (qx == f2)
-		{
+		if (qx == f2) {
 			tx = x1 + sx;
 			qx -= f1;
-		}
-		else
-		{
+		} else {
 			tx = x1;
 		}
 
 		/* Note (below) the case (qx == f2), where */
 		/* the LOS exactly meets the corner of a tile. */
-		while (y2 - ty)
-		{
+		while (y2 - ty) {
 			if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
 
 			qx += m;
 
-			if (qx < f2)
-			{
+			if (qx < f2) {
 				ty += sy;
-			}
-			else if (qx > f2)
-			{
+			} else if (qx > f2) {
 				tx += sx;
 				if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
 				qx -= f1;
 				ty += sy;
-			}
-			else
-			{
+			} else {
 				tx += sx;
 				qx -= f1;
 				ty += sy;
@@ -7789,6 +7684,11 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
  *
  * This is slightly (but significantly) different from "los(y1,x1,y2,x2)".
  */
+/* Potential high-profile BUG: bool los() 'Travel horiz/vert..' probably differs from
+   bool clean_shot() 'mmove()' so that monsters can fire at you without you seeing them.
+   Fixing it via bad hack: just adding an extra los() check here for now. */
+#define CRUDE_TARGETTING_LOS_FIX
+
 #ifdef DOUBLE_LOS_SAFETY
 static bool projectable_DLS(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
 bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range) {
@@ -7801,6 +7701,11 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 	int dist, y, x;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return FALSE;
+
+#ifdef CRUDE_TARGETTING_LOS_FIX
+	/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
+	if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+#endif
 
 #ifdef DOUBLE_LOS_SAFETY
 	/* catch ball-spell related call in project() which adds '+ dir * 99' aka distance of 99 */
@@ -7842,6 +7747,11 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 	int dist, y, x;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
+
+#ifdef CRUDE_TARGETTING_LOS_FIX
+	/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
+	if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+#endif
 
 #ifdef DOUBLE_LOS_SAFETY
 	/* catch ball-spell related call in project() which adds '+ dir * 99' aka distance of 99 */
