@@ -7702,11 +7702,6 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return FALSE;
 
-#ifdef CRUDE_TARGETTING_LOS_FIX
-	/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
-	if (!los(wpos, y1, x1, y2, x2)) return FALSE;
-#endif
-
 #ifdef DOUBLE_LOS_SAFETY
 	/* catch ball-spell related call in project() which adds '+ dir * 99' aka distance of 99 */
 	if (!in_bounds(y1, x1)) return(FALSE);
@@ -7724,7 +7719,13 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
                 if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
 		/* Check for arrival at "final target" */
-		if ((x == x2) && (y == y2)) return (TRUE);
+		if ((x == x2) && (y == y2)) {
+#ifdef CRUDE_TARGETTING_LOS_FIX
+			/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
+			if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+#endif
+			return (TRUE);
+		}
 
 		/* Calculate the new location */
 		mmove2(&y, &x, y1, x1, y2, x2);
@@ -7748,11 +7749,6 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
-#ifdef CRUDE_TARGETTING_LOS_FIX
-	/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
-	if (!los(wpos, y1, x1, y2, x2)) return FALSE;
-#endif
-
 #ifdef DOUBLE_LOS_SAFETY
 	/* catch ball-spell related call in project() which adds '+ dir * 99' aka distance of 99 */
 	if (!in_bounds(y1, x1)) return(FALSE);
@@ -7767,7 +7763,13 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 		if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
 		/* Check for arrival at "final target" */
-		if ((x == x2) && (y == y2)) return (TRUE);
+		if ((x == x2) && (y == y2)) {
+#ifdef CRUDE_TARGETTING_LOS_FIX
+			/* (bugfix via bad hack) ensure monsters cant snipe us from out of LoS */
+			if (!los(wpos, y1, x1, y2, x2)) return FALSE;
+#endif
+			return (TRUE);
+		}
 
 		/* Never go through walls */
 		if (dist && !cave_los(zcave, y, x)) break;
