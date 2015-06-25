@@ -13626,6 +13626,7 @@ Tengu           10  High HP, good AC, can blink/teleport and more, resists fear
                     kind of Yeek can cast some interesting magic spells.
                     And as a plus it's actually immune to acid.
 *Air spirit     12  Useful only for shamans because it has no limbs!
+                    Since this is an 'E' form, shamans learn it very quickly.
                     An insanely powerful early shaman form, since it gives a
                     big speed bonus, levitation and invisibility!
                     It also gives free action and resists fear, confusion,
@@ -13654,8 +13655,7 @@ Lizard man      16  High HP, can swim easily, resists water, immune to acid.
 Uruk            16  Good HP, good melee damage, good AC, +1 extra shot w/
                     slings or bows, poison immunity.
 *Umber hulk     16  Shamans can use full equipment in this form, others cannot.
-                    Since this is an 'X' form, shamans learn it especially
-                    quickly!
+                    Since this is an 'X' form, shamans learn it very quickly.
                     It's not really strong but it destroys walls just by moving
                     into them, allowing you to tunnel easily without any
                     digging tool.
@@ -13666,6 +13666,7 @@ Uruk            16  Good HP, good melee damage, good AC, +1 extra shot w/
                     (Does not occur in packs.)
 *Forest troll   17  High HP, good AC, can pass trees, gives 'HP regeneration'.
 *Earth spirit   17  Useful only for shamans because it has no limbs!
+                    Since this is an 'E' form, shamans learn it very quickly.
                     Similar to Air spirit (see further above) this form comes
                     with very useful abilities (and more hit points), even
                     though it is less speedy than Air spirits.
