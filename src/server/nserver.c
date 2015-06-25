@@ -2822,9 +2822,14 @@ static int Handle_login(int ind)
 	/* Notify all online admins about an invalid player having joined, so they may validate him */
 	if (p_ptr->inval) for (i = 1; i < NumPlayers + 1; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (!is_admin(Players[i])) continue;
-		msg_format(i, "\374\377R(Admin) Invalid account \"%s\", host: \"%s\"", p_ptr->accountname, p_ptr->hostname);
-		if (!Players[i]->paging) Players[i]->paging = 2;
+		if (is_admin(Players[i])) {
+			msg_format(i, "\374\377R(Admin) Invalid account \"%s\", host: \"%s\"", p_ptr->accountname, p_ptr->hostname);
+			if (!Players[i]->paging) Players[i]->paging = 2;
+		} else if (Players[i]->privileged &&
+		    !(strcasecmp(p_ptr->accountname, "the_sandman")
+		    && strcasecmp(p_ptr->accountname, "mikaelh")
+		    && strcasecmp(p_ptr->accountname, "c. blue")))
+			msg_format(i, "\374\377y(System) Invalid account \"%s\", host: \"%s\"", p_ptr->accountname, p_ptr->hostname);
 	}
 
 	/* warning_rest only occurs once per account */
