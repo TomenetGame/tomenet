@@ -13669,9 +13669,8 @@ Uruk            16  Good HP, good melee damage, good AC, +1 extra shot w/
                     Since this is an 'E' form, shamans learn it very quickly.
                     Similar to Air spirit (see further above) this form comes
                     with very useful abilities (and more hit points), even
-                    though it is less speedy than Air spirits.
-                    Earth spirit allows you to pass solid walls and even
-                    mountain terrain while also able to fly, giving it ultimate
+                    though it is less speedy than Air spirits. Earth spirits
+                    can pass solid walls and also fly, giving them ultimate
                     mobility. It gives free action and resists fear, confusion,
                     light, dark, bleeding (cannot be cut), shards, fire, cold,
                     electricity and poison, and gives immunity to one of
