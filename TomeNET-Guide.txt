@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. June 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. June 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -13568,6 +13568,8 @@ rules out animal forms. To make form-hunting a bit easier in the beginning here
 is a list of useful low-level forms that are humanoid and allow the player to
 wear/wield full equipment:
 
+ -- Note: Forms usable by shamans are marked with an asterisk '*'. --
+
 Forms you can already get in Bree town:
 ---------------------------------------
 Village idiot    1  Its pretty weak and has slightly erratic movement which can
@@ -13593,6 +13595,14 @@ Novice mage      2  Sort of weak but has 'blink' spell (aka phase door) and
                     It occurs solo at depth 2, but in packs at depth 6!
 Novice priest    2  Sort of weak but can cast fear/curse and self-heal spells.
                     It occurs solo at depth 2, but in packs at depth 6!
+*Poltergeist     3  Useful only for shamans because it has no limbs!
+                    This form can pass solid walls and makes you invisible!
+                    Also gives fear/confusion/cold/sound/insanity/time
+                    resistance, free action, poison immunity, and you won't
+                    bleed from cuts.
+                    However, since Poltergeister are invisible, finding them
+                    might prove troublesome. An easier to spot ghost form is
+                    the 'Phantom warrior' (see further below).
 Novice ranger    4  Can pass trees easily. Gives an extra shot with slings or
                     bows. This can be pretty powerful early on if the
                     character has a decent 'bows/throws' ability or has a bow
@@ -13605,16 +13615,23 @@ Large kobold     5  As all kobolds it has poison resistance. It also has a lot
                     of hit points and very good AC for its level.
 Rotting corpse   8  Free action, resists confusion/fear/cold, poison immunity,
                     brands melee attacks with poison, decent AC.
-Phantom warrior  8  Useful only for shamans because it has no limbs:
+*Phantom warrior 8  Useful only for shamans because it has no limbs!
                     This form can pass solid walls!
                     Also gives fear/sound/insanity resistance, free action,
                     poison immunity, and you won't bleed from cuts.
 Tengu           10  High HP, good AC, can blink/teleport and more, resists fear
                     and fire, can levitate. A secret tip for form hunters!
                     (Does not occur in packs.)
-Master yeek     12  Although everyone knows that Yeek = weak, this particular
+*Master yeek    12  Although everyone knows that Yeek = weak, this particular
                     kind of Yeek can cast some interesting magic spells.
                     And as a plus it's actually immune to acid.
+*Air spirit     12  Useful only for shamans because it has no limbs!
+                    An insanely powerful early shaman form, since it gives a
+                    big speed bonus, levitation and invisibility!
+                    It also gives free action and resists fear, confusion,
+                    light, dark, bleeding (cannot be cut), insanity,
+                    electricity and poison and immunity to either electricity
+                    or poison.
 Illusionist and Druid
                 13  These two have an array of spells at their disposal, one of
                     them being 'Haste' which speeds themselves up temporarily,
@@ -13623,20 +13640,22 @@ Illusionist and Druid
                     (Later on, 'Mage' is a mid-level form that also provides
                     haste spell and is actually more common to find.)
                     (These two do not occur in packs.)
-Ogre            13  This form can cross thick woods and mountain terrain.
+*Ogre           13  This form can cross thick woods and mountain terrain.
                     Note that Ogres also count as giants which means that
                     shamans can use this form too.
                     (This monster occurs somewhat more rarely than the others.)
 Black orc       13  Good HP, good melee damage, +1 extra shot w/ slings/bows.
 Lizard man      16  High HP, can swim easily, resists water, immune to acid.
                     (This monster occurs somewhat more rarely than the others.)
-Ogrillon        16  Very high HP for its level, good melee damage.
+*Ogrillon       16  Very high HP for its level, good melee damage.
                     Note that Ogrillons also count as giants which means that
                     shamans can use this form too.
                     (This monster occurs somewhat more rarely than the others.)
 Uruk            16  Good HP, good melee damage, good AC, +1 extra shot w/
                     slings or bows, poison immunity.
-Umber hulk      16  Shamans can use full equipment in this form, others cannot.
+*Umber hulk     16  Shamans can use full equipment in this form, others cannot.
+                    Since this is an 'X' form, shamans learn it especially
+                    quickly!
                     It's not really strong but it destroys walls just by moving
                     into them, allowing you to tunnel easily without any
                     digging tool.
@@ -13645,7 +13664,17 @@ Umber hulk      16  Shamans can use full equipment in this form, others cannot.
                     a confusion effect (which makes fighting it in close combat
                     a bit dangerous).
                     (Does not occur in packs.)
-Forest troll    17  High HP, good AC, can pass trees, gives 'HP regeneration'.
+*Forest troll   17  High HP, good AC, can pass trees, gives 'HP regeneration'.
+*Earth spirit   17  Useful only for shamans because it has no limbs!
+                    Similar to Air spirit (see further above) this form comes
+                    with very useful abilities (and more hit points), even
+                    though it is less speedy than Air spirits.
+                    Earth spirit allows you to pass solid walls and even
+                    mountain terrain while also able to fly, giving it ultimate
+                    mobility. It gives free action and resists fear, confusion,
+                    light, dark, bleeding (cannot be cut), shards, fire, cold,
+                    electricity and poison, and gives immunity to one of
+                    fire, cold, electricity and poison.
 Elite uruk      20  Good HP, very high melee damage, good AC, +1 extra shot w/
                     slings or bows, poison immunity.
 Dark-elven Lord 20  Good HP, resists darkness but is susceptible to light-based
