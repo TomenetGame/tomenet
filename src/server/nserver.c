@@ -2828,8 +2828,10 @@ static int Handle_login(int ind)
 		} else if (Players[i]->privileged &&
 		    !(strcasecmp(p_ptr->accountname, "the_sandman")
 		    && strcasecmp(p_ptr->accountname, "mikaelh")
-		    && strcasecmp(p_ptr->accountname, "c. blue")))
+		    && strcasecmp(p_ptr->accountname, "c. blue"))) {
 			msg_format(i, "\374\377y(System) Invalid account \"%s\", host: \"%s\"", p_ptr->accountname, p_ptr->hostname);
+			//if (!Players[i]->paging) Players[i]->paging = 1;
+		}
 	}
 
 	/* warning_rest only occurs once per account */
