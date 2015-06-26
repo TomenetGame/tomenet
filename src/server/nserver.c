@@ -1563,7 +1563,7 @@ static void Delete_player(int Ind)
 bool Destroy_connection(int ind, char *reason_orig)
 {
 	connection_t	*connp = Conn[ind];
-	int		id, len, sock;
+	int		id = -1, len, sock;
 	char		pkt[MAX_CHARS];
 	char		*reason;
 	int		i, player = 0;
@@ -1655,8 +1655,8 @@ bool Destroy_connection(int ind, char *reason_orig)
 		Delete_player(GetInd[id]);
 	}
 
-	exec_lua(0, format("player_has_left(%d, %d, \"%/s\", \"%s\")", player, connp->id == -1 ? -1 - id : connp->id, connp->c_name, showtime()));
-	if (NumPlayers == 0) exec_lua(0, format("last_player_has_left(%d, %d, \"%/s\", \"%s\")", player, connp->id == -1 ? -1 - id : connp->id, connp->c_name, showtime()));
+	exec_lua(0, format("player_has_left(%d, %d, \"%/s\", \"%s\")", player, id == -1 ? connp->id : -1 - id, connp->c_name, showtime()));
+	if (NumPlayers == 0) exec_lua(0, format("last_player_has_left(%d, %d, \"%/s\", \"%s\")", player, id == -1 ? connp->id : -1 - id, connp->c_name, showtime()));
 	strcpy(traffic, "");
 	for (i = 1; (i <= NumPlayers) && (i < 50); i++)
 		if (!(i % 5)) strcat(traffic, "* "); else strcat(traffic, "*");
