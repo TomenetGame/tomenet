@@ -7066,12 +7066,18 @@ void player_death(int Ind) {
 			/* No longer a winner */
 			p_ptr->total_winner = FALSE;
 
-			/* Set all his artifacts back to normal-speed timeout */
-			if (was_total_winner && !cfg.fallenkings_etiquette) {
-				for (j = 0; j < INVEN_TOTAL; j++)
-					if (p_ptr->inventory[j].name1 &&
-					    p_ptr->inventory[j].name1 != ART_RANDART)
-						a_info[p_ptr->inventory[j].name1].winner = FALSE;
+			if (was_total_winner) {
+				/* Set all his artifacts back to normal-speed timeout */
+				if (!cfg.fallenkings_etiquette) {
+					for (j = 0; j < INVEN_TOTAL; j++)
+						if (p_ptr->inventory[j].name1 &&
+						    p_ptr->inventory[j].name1 != ART_RANDART)
+							a_info[p_ptr->inventory[j].name1].winner = FALSE;
+				}
+
+#ifdef SOLO_REKING
+				p_ptr->solo_reking = p_ptr->solo_reking_au = SOLO_REKING;
+#endif
 			}
 
  #ifndef FALLEN_WINNERSONLY
