@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. June 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. June 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -4416,7 +4416,7 @@ F11 eat something.                                  \e)E1           @E1
     boost their powers if needed.)
 F12 use a magic device on the closest target        \e)*t/1-        @/1
     (Magic devices are wands, staves or rods.
-    Your magic device skill must be high enough
+    Your magic device ability must be good enough
     or you will keep failing; also see (6.10))
 
 As you can see this fighter is supposed to be able to use quite some magic
@@ -4479,7 +4479,7 @@ F11                                  \e)m@11\r@Globe of Light\r    -none-
     Cast Globe Of Light spell.
 F12 use a magic device on the closest target        \e)*t/1-        @/1
     (Magic devices are wands, staves or rods.
-    Your magic device skill must be high enough
+    Your magic device ability must be good enough
     or you will keep failing; also see (6.10))
 +                                  \e)*tm@11\r@Noxious Cloud\r-    -none-
     Cast noxious cloud spell on nearest target
@@ -9424,7 +9424,9 @@ Many items can be activated (press 'A' to try). These items are generally
 called 'Magic Devices'.
 The chance of successful activation may or may not depend on various factors,
 such as..
--your magic device skill vs the item type base level
+-your magic device ability vs the item type base level, your magic device
+ ability consists mainly of your 'Magic Device' skill and also somewhat of your
+ intelligence.
  See (6.10) for more information about the Magic Device skill.
 -whether you have trained your Antimagic skill
 -if you have the item equipped
@@ -10700,7 +10702,7 @@ Strength (STR)
 Intelligence (INT)
     -Has influence on your mana pool size. (class-dependant)
     -How well can you cast spells that use INT to determine failure rate?
-    -Has influence on your magic device handling skill.
+    -Has influence on your ability to activate magic devices.
     -Has influence on your trap-disarming ability.
     -Do you notice if someone tries to steal from you?
     Also see (6.10) for more information about the 'Magic Device' skill.
@@ -13377,7 +13379,7 @@ form level              ring level
 Polymorph rings contain a certain amount of energy that cannot be changed,
 which determined for how long the player will keep the form until he polymorphs
 back to normal.
-If a player forges a ring, his magic device skill helps to obtain a high
+If a player forges a ring, his 'Magic device' skill helps to obtain a high
 amount of energy in the ring.
 
 
@@ -15246,9 +15248,10 @@ installed or changed by the current guild master.
 (6.10) Magic Device skill/ability details
 ------------------------------------------
 The player's "Magic Device" ability in the character overview screen is
-calculated from a base ability depending on race/class, and the magic device
-skill in the skill screen ('G'). It determines how well a character can make
-use of magical devices such as wands, staves, rods and activatable items.
+calculated from a base ability depending on race/class, your intelligence, and
+to the largest part from the 'Magic device' skill in the skill screen ('G').
+It determines how well a character can make use of magical devices such as
+wands, staves, rods and activatable items.
 
 The Magic Device ability is not limited to a maximum value, although the
 player won't be able to increase it infinitely.
@@ -15271,7 +15274,7 @@ In detail, the magic device ability does this...
   Skill in percent is added to the recharge rate; caps at skill 100,
   which means +100% recharge rate (approximately).
 
-The magic device skill does the following...
+The 'Magic device' skill does the following...
 -helps to reduce effects of UN_POWER attacks (does not protect the remaining
  duration of a form gained from a ring of polymorphing).
 -helps to increase the duration on polymorph-rings when they are forged.
@@ -15282,12 +15285,13 @@ The magic device skill does the following...
 Magic device skill and ability have no effect on the damage output of traps
 loaded with a magic device.
 
-Rods, equippable items and true artifacts have more high level item types and
-are therefore on average harder to use. (For true artifacts their base level
-from a_info.txt counts, ie what is displayed at 'Found around depth:' in ~6.)
-Although there are also many low level true artifacts which accordingly will be
-much easier to activate.
-Staves and wands have more lower level types available in comparison.
+Rods have more high level item types and hence are harder to use on average,
+staves and wands have more lower level types available in comparison.
+
+Equippable items and true artifacts may have higher levels in general, but are
+actually much easier to activate than normal magic devices. (For true artifacts
+their base level from a_info.txt counts, ie what is displayed at
+'Found around depth:' in ~6.)
 
 
 
