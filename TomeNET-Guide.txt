@@ -6837,6 +6837,13 @@ Ironman Deep Dive Challenge (IDDC)
     all floors that give a "terrifying" feeling - if he clears out all other
     floors completely. This number is an average and may therefore vary.
 
+    To further bring your character up to snuff on deeper levels, when you hit
+    -3000 ft you will have a very high chance to find one very useful ring of
+    speed. This high chance will stay in effect until you actually find it.
+    This does not have to happen on -3000 ft, it can be on deeper levels too.
+    As soon as you find it, your chance to find further rings of speed will
+    revert back to normal.
+
     Since you cannot recall out aside from these two towns, except if you reach
     the 127th floor of the dungeon, it is extremely likely that you will die
     before making it through all those floors. So this dungeon serves as a
