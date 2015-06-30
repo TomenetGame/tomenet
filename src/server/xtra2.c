@@ -6046,7 +6046,7 @@ if (cfg.unikill_format) {
 		qq_ptr->note_utag = strlen(quark_str(local_quark));
 		apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
-		qq_ptr->bpval = 7 + rand_int(4); //make it decent
+		qq_ptr->bpval = 8 + rand_int(3); //make it decent
 		qq_ptr->ident &= ~ID_CURSED; //paranoia
 
 		drop_near(qq_ptr, -1, wpos, y, x);
