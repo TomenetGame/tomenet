@@ -246,7 +246,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.alert_offpanel_dam,	FALSE,	1,	0, 20, TRUE,
 	    "alert_offpanel_dam",	"Beep when taking damage while off-panel" },
 
-	{ &c_cfg.exp_bar,		FALSE,	1,	9, 21, TRUE,
+	{ &c_cfg.exp_bar,		TRUE,	1,	9, 21, TRUE,
 	    "exp_bar",			"Show experience bar instead of a number" },
 
     //page 2 - 22

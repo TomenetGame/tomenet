@@ -122,7 +122,7 @@ X:no_weather
 X:keep_topline
 X:hilite_player
 X:alert_mana
-X:exp_bar
+Y:exp_bar
 X:consistent_players
 X:flash_player
 X:alert_offpanel_dam
