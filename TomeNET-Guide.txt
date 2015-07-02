@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. June 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. July 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -5556,7 +5556,8 @@ The 1..9 are standard shops, namely..
                         changed you will need to donate at least 5 million gold
                         pieces.
                         In addition to this you can either donate another 5
-                        million or you can wait for about 2 weeks or you can
+                        million or you can wait for about 2 weeks (real time,
+                        you don't even need to be logged on!) or you can
                         gain about 5 million raw experience points or a mix of
                         all these, up to your personal preference.
                         'Raw' experience means that it's simply the amount of
