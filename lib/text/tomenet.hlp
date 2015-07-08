@@ -1,4 +1,5 @@
 ==============================================================================
+
                             Welcome to TomeNET
 
 If you are new to TomeNET, read the 'TomeNET-Guide.txt' in your TomeNET
@@ -10,11 +11,43 @@ If you are new to TomeNET, you will die..... a lot. But, as you get more
 experienced, you will become better at surviving. Have fun!
 
 [super-quick-how-to-start]
-0. open up the guide, it's in your TomeNET folder.
-1. chat with ':' (colon) key as soon as you log on and say hi.
-2. check your inventory ('i') and equipment ('e').
-3. equip your startup items with 'w', mostly armour and weapon.
-4. the training tower is a good place to start. It's a green '<'.
-   Press SHIFT+m to see a map of town which shows you the staircases.
-9. press ctrl-x to save and quit, but do it in town to be safe!
-=============================================================================
+1. open up the guide, it's in your TomeNET folder.
+2. chat with ':' (colon) key as soon as you log on and say hi.
+3. check your inventory ('i') and equipment ('e').
+4. equip your startup items with 'w', mostly armour, weapon, wooden torch.
+5. the training tower is a good place to start. It's a green '<' symbol.
+   Press SHIFT+m to see a map of town to see where it is located.
+6. press CTRL+x to save and quit the game, but do it in town to be safe!
+==============================================================================
+                        ESCAPE TO EXIT THIS HELP
+==============================================================================
+            USE ARROWS TO MOVE - press SHIFT + ARROW KEY to run!
+==============================================================================
+                              DEFAULT KEYS
+ (non-rogue-like, you can find the rogue-like key set in the guide in (0.2))
+==============================================================================
+a  Aim wand    A  Activate      !  Show BBS        SPACE  Autorepeat stop
+b  Browse book B  Bash door     #  Highscores
+c  Close door  C  Character     $  Drop gold       CTRL+C  Toggle music
+d  Drop        D  Disarm        %  Macro menu      CTRL+N  Toggle audio
+e  Equip       E  Eat           &  Auto inscribe   CTRL+U  Audio mixer
+f  Fire        F  Refill        (  Friendly target
+g  Get item    G  Skills        )  Clear buffer
+h  Houses      H  Auto inscribe *  Target/look
+i  Inventory   I  Examine       .  Run             CTRL+I  Lagometer or
+j  Steal                        /  Use item                switch chat mode
+k  Destroy     K  Force-stack   :  Chat            CTRL+U  Switch chat mode
+l  Look        L  Locate (map)  ;  Walk
+m  Use skill   M  Show minimap  ?  Help            CTRL+O  Chat messages
+o  Open door                    @  Player list     CTRL+P  All Messages
+p  Open mind   P  Party menu    '  Inspect other nearby players
+q  Quaff       Q  Suicide       _  Sip from fountain/show item on the floor
+r  Read scroll R  Rest          {  Inscribe
+s  Search      S  Searching     |  Uniques         CTRL+R  Redraw
+t  Take off       mode toggle   }  Uninscribe      CTRL+S  Spike
+u  Use staff                    ~  Knowledge menu  CTRL+T  Screenshot
+v  Throw       V  Cloak         +  Dig
+w  Wield       W  Wield         <  Go up
+x  Swap        X  (macro 'x0')  =  Options
+z  Zap rod                      >  Go down         CTRL+X  Exit
+==============================================================================

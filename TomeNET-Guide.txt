@@ -698,7 +698,7 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         Note that in the spell book example above, you could of course just use
         call-by-name instead so you won't need any inscriptions at all (3.9b) !
 
-~       display further information of your character.
+~       display further information of your (character's) knowledge.
         Point (2) and (7) here are especially helpful for mimics:
         In ~2, the number shown in round brackets before each monster name is
         the same they have to enter for their 'Polymorph self into..' ability!
