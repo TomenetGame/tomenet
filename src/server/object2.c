@@ -9997,7 +9997,8 @@ void reverse_cursed(object_type *o_ptr) {
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (!(f3 & TR3_HEAVY_CURSE)) return;
 
-	/* actually a bit special: account for (dis)enchantments that might have happened meanwhile or at some point */
+	/* actually a bit special: account for (dis)enchantments that might have happened meanwhile or at some point.
+	   !!! NOTE: enchanting/discharging this way (the .._org vars too) has not yet been implemented! */
  #if (VAMPIRES_INV_CURSED == 0) /* this way, enchant would actually further increase the bonus, while it's equipped! (not so consistent) */
 	if (o_ptr->to_h > 0 && o_ptr->to_h_org < 0) {
 		o_ptr->to_h += o_ptr->to_h_org * 2;
