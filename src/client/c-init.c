@@ -2072,7 +2072,10 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					/* no boni? move rarity info to the next line (W:) then. */
 					break;
 				}
-				sprintf(info_tmp, "%s. Magical bonus (to stats and/or abilities): \377%c(%s%d)\377%c.", s_rarity, a_val, info_val < 0 ? "" : "+", info_val, a_key);
+				if (tval == TV_FOOD)
+					sprintf(info_tmp, "%s.", s_rarity); /* hide saturation bonus */
+				else
+					sprintf(info_tmp, "%s. Magical bonus (to stats and/or abilities): \377%c(%s%d)\377%c.", s_rarity, a_val, info_val < 0 ? "" : "+", info_val, a_key);
 				s_rarity = NULL;
 				strcpy(info, info_tmp);
 			    /* all done, display: */
