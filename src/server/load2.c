@@ -1038,17 +1038,17 @@ static errr rd_store(store_type *st_ptr) {
 }
 
 static void rd_bbs() {
-        int i, j;
+	int i, j;
 	s16b saved_lines, parties, guilds;
 	char dummy[MAX_CHARS_WIDE];
 
-        rd_s16b(&saved_lines);
+	rd_s16b(&saved_lines);
 
 #if 0
-        for (i = 0; ((i < BBS_LINES) && (i < saved_lines)); i++)
-                rd_string(bbs_line[i], MAX_CHARS_WIDE);
+	for (i = 0; ((i < BBS_LINES) && (i < saved_lines)); i++)
+		rd_string(bbs_line[i], MAX_CHARS_WIDE);
 #else
-        for (i = 0; i < saved_lines; i++)
+	for (i = 0; i < saved_lines; i++)
 		if (i >= BBS_LINES) rd_string(dummy, MAX_CHARS_WIDE);
 		else rd_string(bbs_line[i], MAX_CHARS_WIDE);
 #endif
@@ -1081,44 +1081,44 @@ static void rd_bbs() {
 }
 
 static void rd_notes() {
-        int i;
-        s16b j;
-        char dummy[MAX_CHARS_WIDE];
+	int i;
+	s16b j;
+	char dummy[MAX_CHARS_WIDE];
 
-        rd_s16b(&j);
-        for (i = 0; i < j; i++) {
-	        if (i >= MAX_NOTES) {
+	rd_s16b(&j);
+	for (i = 0; i < j; i++) {
+		if (i >= MAX_NOTES) {
 			rd_string(dummy, MAX_CHARS_WIDE);
 			rd_string(dummy, NAME_LEN);
 			rd_string(dummy, NAME_LEN);
 			continue;
-	        }
-                rd_string(priv_note[i], MAX_CHARS_WIDE);
-                rd_string(priv_note_sender[i], NAME_LEN);
-                rd_string(priv_note_target[i], NAME_LEN);
-        }
+		}
+		rd_string(priv_note[i], MAX_CHARS_WIDE);
+		rd_string(priv_note_sender[i], NAME_LEN);
+		rd_string(priv_note_target[i], NAME_LEN);
+	}
 
-        rd_s16b(&j);
-        for (i = 0; i < j; i++) {
-	        if (i >= MAX_PARTYNOTES) {
+	rd_s16b(&j);
+	for (i = 0; i < j; i++) {
+		if (i >= MAX_PARTYNOTES) {
 			rd_string(dummy, MAX_CHARS_WIDE);
 			rd_string(dummy, NAME_LEN);
 			continue;
-	        }
-                rd_string(party_note[i], MAX_CHARS_WIDE);
-                rd_string(party_note_target[i], NAME_LEN);
-        }
+		}
+		rd_string(party_note[i], MAX_CHARS_WIDE);
+		rd_string(party_note_target[i], NAME_LEN);
+	}
 
-        rd_s16b(&j);
-        for (i = 0; i < j; i++) {
-	        if (i >= MAX_GUILDNOTES) {
+	rd_s16b(&j);
+	for (i = 0; i < j; i++) {
+		if (i >= MAX_GUILDNOTES) {
 			rd_string(dummy, MAX_CHARS_WIDE);
 			rd_string(dummy, NAME_LEN);
 			continue;
-	        }
-                rd_string(guild_note[i], MAX_CHARS_WIDE);
-                rd_string(guild_note_target[i], NAME_LEN);
-        }
+		}
+		rd_string(guild_note[i], MAX_CHARS_WIDE);
+		rd_string(guild_note_target[i], NAME_LEN);
+	}
         //omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
@@ -1253,13 +1253,13 @@ static void rd_guilds() {
 			if (i == 0) guilds[0].cmode = 0;
 			else if (guilds[i].master && (name = lookup_player_name(guilds[i].master)) != NULL) {
 				guilds[i].cmode = lookup_player_mode(guilds[i].master);
-	                        s_printf("Guild '%s' (%d): Mode has been fixed to master's ('%s',%d) mode %d.\n",
-                                    guilds[i].name, i, name, guilds[i].master, guilds[i].cmode);
-                        } else { /* leaderless guild, ow */
-                                s_printf("Guild '%s' (%d): Fixing lost guild, master (%d) is '%s'.\n",
-                                    guilds[i].name, i, guilds[i].master, name ? name : "(null)");
-                                fix_lost_guild_mode(i);
-                        }
+				s_printf("Guild '%s' (%d): Mode has been fixed to master's ('%s',%d) mode %d.\n",
+				    guilds[i].name, i, name, guilds[i].master, guilds[i].cmode);
+			} else { /* leaderless guild, ow */
+				s_printf("Guild '%s' (%d): Fixing lost guild, master (%d) is '%s'.\n",
+				    guilds[i].name, i, guilds[i].master, name ? name : "(null)");
+				fix_lost_guild_mode(i);
+			}
 		}
 		rd_u32b(&guilds[i].flags);
 		rd_s16b(&guilds[i].minlev);
@@ -1305,14 +1305,14 @@ static void rd_party(int n) {
 		if (n == 0 || !party_ptr->members) party_ptr->cmode = 0;
 		else {
 			u32b p_id = lookup_player_id(party_ptr->owner);
-                        if (p_id) {
-                                parties[n].cmode = lookup_player_mode(p_id);
-                                s_printf("Party '%s' (%d): Mode has been fixed to %d ('%s',%d).\n",
-                                    parties[n].name, n, parties[n].cmode, parties[n].owner, p_id);
-                        }
-                        /* paranoia - a party without owner shouldn't exist */
-                        else s_printf("Party '%s' (%d): Mode couldn't be fixed ('%s',%d).\n",
-                            parties[n].name, n, parties[n].owner, p_id);
+			if (p_id) {
+				parties[n].cmode = lookup_player_mode(p_id);
+				s_printf("Party '%s' (%d): Mode has been fixed to %d ('%s',%d).\n",
+				    parties[n].name, n, parties[n].cmode, parties[n].owner, p_id);
+			}
+			/* paranoia - a party without owner shouldn't exist */
+			else s_printf("Party '%s' (%d): Mode couldn't be fixed ('%s',%d).\n",
+			    parties[n].name, n, parties[n].owner, p_id);
 		}
 	}
 
@@ -1499,8 +1499,8 @@ static bool rd_extra(int Ind)
 #ifdef ENABLE_KOBOLD /* Kobold was inserted in the middle, instead of added to the end of the races array */
         if (older_than(4, 4, 28) && p_ptr->prace >= RACE_KOBOLD) p_ptr->prace++;
 #endif
-        rd_byte(&p_ptr->pclass);
-        if (!older_than(4, 4, 11)) rd_byte(&p_ptr->ptrait);
+	rd_byte(&p_ptr->pclass);
+	if (!older_than(4, 4, 11)) rd_byte(&p_ptr->ptrait);
 	if (older_than(4, 3, 5)) { /* class order changed: warrior now first class, so newbies won't choose adventurer */
 		if (p_ptr->pclass == CLASS_WARRIOR) p_ptr->pclass = CLASS_ADVENTURER;
 		else if (p_ptr->pclass < CLASS_DRUID) p_ptr->pclass--;
@@ -1537,12 +1537,8 @@ static bool rd_extra(int Ind)
         /* Read the skills */
 	{
 		rd_u16b(&tmp16u);
-		if (tmp16u > MAX_SKILLS)
-		{
-			quit("Too many skills!");
-		}
-		for (i = 0; i < tmp16u; ++i)
-		{
+		if (tmp16u > MAX_SKILLS) quit("Too many skills!");
+		for (i = 0; i < tmp16u; ++i) {
 			rd_s32b(&p_ptr->s_info[i].value);
 			rd_u16b(&p_ptr->s_info[i].mod);
 			rd_byte(&tmp8u);
@@ -1694,7 +1690,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	/* If the server's life amount was reduced, apply it to players */
 	if (cfg.lifes && (p_ptr->lives > cfg.lifes+1)) p_ptr->lives = cfg.lifes+1;
 
-        if (!older_than(4, 2, 0)) {
+	if (!older_than(4, 2, 0)) {
 		rd_byte(&p_ptr->houses_owned);
 	} else {
 		for (i = 0; i < num_houses; i++) {
@@ -1712,9 +1708,8 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	rd_s16b(&p_ptr->food);
 	strip_bytes(4);	/* Old "food_digested" / "protection" */
 	rd_s16b(&p_ptr->energy);
-        rd_s16b(&p_ptr->fast);
-        if (!older_than(4, 0, 3))
-                rd_s16b(&p_ptr->fast_mod);
+	rd_s16b(&p_ptr->fast);
+	if (!older_than(4, 0, 3)) rd_s16b(&p_ptr->fast_mod);
 	rd_s16b(&p_ptr->slow);
 	rd_s16b(&p_ptr->afraid);
 	rd_s16b(&p_ptr->cut);
@@ -1727,19 +1722,19 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	rd_s16b(&p_ptr->shero);
 	if (!older_than(4, 3, 7)) rd_s16b(&p_ptr->berserk);
 	rd_s16b(&p_ptr->shield);
-        if (!older_than(4, 0, 4)) {
-                rd_s16b(&p_ptr->shield_power);
-                rd_s16b(&p_ptr->shield_opt);
-                rd_s16b(&p_ptr->shield_power_opt);
-                rd_s16b(&p_ptr->shield_power_opt2);
-                rd_s16b(&p_ptr->tim_thunder);
-                rd_s16b(&p_ptr->tim_thunder_p1);
-                rd_s16b(&p_ptr->tim_thunder_p2);
-                rd_s16b(&p_ptr->tim_lev);
-                rd_s16b(&p_ptr->tim_ffall);
-                rd_s16b(&p_ptr->tim_regen);
-                rd_s16b(&p_ptr->tim_regen_pow);
-        }
+	if (!older_than(4, 0, 4)) {
+		rd_s16b(&p_ptr->shield_power);
+		rd_s16b(&p_ptr->shield_opt);
+		rd_s16b(&p_ptr->shield_power_opt);
+		rd_s16b(&p_ptr->shield_power_opt2);
+		rd_s16b(&p_ptr->tim_thunder);
+		rd_s16b(&p_ptr->tim_thunder_p1);
+		rd_s16b(&p_ptr->tim_thunder_p2);
+		rd_s16b(&p_ptr->tim_lev);
+		rd_s16b(&p_ptr->tim_ffall);
+		rd_s16b(&p_ptr->tim_regen);
+		rd_s16b(&p_ptr->tim_regen_pow);
+	}
 	rd_s16b(&p_ptr->blessed);
 	rd_s16b(&p_ptr->tim_invis);
 	rd_s16b(&p_ptr->word_recall);
@@ -1810,16 +1805,16 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		}
 	}
 
-        if (!older_than(4, 4, 24)) rd_u32b(&p_ptr->gold_picked_up);
-        else strip_bytes(4);
+	if (!older_than(4, 4, 24)) rd_u32b(&p_ptr->gold_picked_up);
+	else strip_bytes(4);
 
-        if (!older_than(4, 4, 24)) {
+	if (!older_than(4, 4, 24)) {
 		rd_byte(&tmp8u);
 		p_ptr->insta_res = tmp8u;
-    	}
-        else strip_bytes(1);
-        if (!older_than(4, 4, 25)) rd_byte(&p_ptr->castles_owned);
-        else strip_bytes(1);
+	}
+	else strip_bytes(1);
+	if (!older_than(4, 4, 25)) rd_byte(&p_ptr->castles_owned);
+	else strip_bytes(1);
 
 	if (!older_than(4, 5, 6)) rd_s16b(&p_ptr->flash_self);
 	else {
@@ -1937,11 +1932,11 @@ if (p_ptr->updated_savegame == 0) {
 	/* Hack -- the two "special seeds" */
 	/*rd_u32b(&seed_flavor);
 	  rd_u32b(&seed_town);*/
-        if (!older_than(4, 0, 5)) rd_s32b(&p_ptr->mimic_seed);
-        if (!older_than(4, 4, 27)) {
-        	rd_byte(&tmp8u);
+	if (!older_than(4, 0, 5)) rd_s32b(&p_ptr->mimic_seed);
+	if (!older_than(4, 4, 27)) {
+		rd_byte(&tmp8u);
 		p_ptr->mimic_immunity = tmp8u;
-    	}
+	}
 
 	if (!older_than(4, 5, 4)) {
 		rd_u16b(&tmp16u);
@@ -1954,10 +1949,10 @@ if (p_ptr->updated_savegame == 0) {
 
 	/* Special stuff */
 	rd_u16b(&panic);
-        if (panic) {
-                Players[Ind]->panic = TRUE;
-                s_printf("loaded a panic-saved player %s\n", Players[Ind]->name);
-        }
+	if (panic) {
+		Players[Ind]->panic = TRUE;
+		s_printf("loaded a panic-saved player %s\n", Players[Ind]->name);
+	}
 
 	rd_u16b(&p_ptr->total_winner);
 	if (!older_than(4, 3, 0)) rd_u16b(&p_ptr->once_winner);
@@ -1997,7 +1992,7 @@ if (p_ptr->updated_savegame == 0) {
 	if (!older_than(4, 2, 9)) rd_s32b(&p_ptr->pstealing);
 	else p_ptr->pstealing = 0;
 
-        if (!older_than(4, 2, 8)) {
+	if (!older_than(4, 2, 8)) {
 		for (i = 0; i <	MAX_GLOBAL_EVENTS; i++) {
 			rd_s16b(&tmp16s);
 			p_ptr->global_event_type[i] = tmp16s;
@@ -2059,15 +2054,15 @@ if (p_ptr->updated_savegame == 0) {
 	if (older_than(4, 4, 30) &&
 	    /* Runecraft */
 	    !older_than(4, 3, 26)) {
-    		rd_s16b(&tmp16s);
-	    	rd_s16b(&tmp16s);
-    		rd_s16b(&tmp16s);
-    		rd_s16b(&tmp16s);
-        	rd_s16b(&tmp16s);
+		rd_s16b(&tmp16s);
+		rd_s16b(&tmp16s);
+		rd_s16b(&tmp16s);
+		rd_s16b(&tmp16s);
+		rd_s16b(&tmp16s);
 
-	    	rd_u16b(&tmp16u);
-    		rd_u16b(&tmp16u);
-    		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
 	}
 
 	if (!older_than(4, 4, 1)) {
@@ -2112,72 +2107,72 @@ if (p_ptr->updated_savegame == 0) {
 	if (older_than(4, 4, 30) &&
 	    /* Read obselete Runecraft variables into dummy variables - Kurzel */
 	    !older_than(4, 4, 25)) {
-	        rd_s16b(&tmp16s);
+		rd_s16b(&tmp16s);
 
-	        rd_byte(&tmp8u);
-	        rd_s16b(&tmp16s);
-	        rd_s16b(&tmp16s);
-	        rd_u16b(&tmp16u);
+		rd_byte(&tmp8u);
+		rd_s16b(&tmp16s);
+		rd_s16b(&tmp16s);
+		rd_u16b(&tmp16u);
 
-	        rd_u16b(&tmp16u);
-	        rd_byte(&tmp8u);
-	        rd_byte(&tmp8u);
-	        rd_u32b(&tmp32u);
+		rd_u16b(&tmp16u);
+		rd_byte(&tmp8u);
+		rd_byte(&tmp8u);
+		rd_u32b(&tmp32u);
 
-	        rd_byte(&tmp8u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_byte(&tmp8u);
+		rd_byte(&tmp8u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_byte(&tmp8u);
 
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
 
 #if 0
-	        rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
 #endif
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
 
-	        rd_byte(&tmp8u);
-	        rd_byte(&tmp8u);
+		rd_byte(&tmp8u);
+		rd_byte(&tmp8u);
 
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        //rd_u16b(&tmp16u);
-	        //rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		//rd_u16b(&tmp16u);
+		//rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
 
 #if 1
-	        if (!older_than(4, 4, 26)) {
-	                rd_u16b(&tmp16u);
-	                rd_byte(&tmp8u);
-	                rd_u32b(&tmp32u);
-	                rd_u16b(&tmp16u);
-	                rd_byte(&tmp8u);
-	                rd_u32b(&tmp32u);
-	        }
+		if (!older_than(4, 4, 26)) {
+			rd_u16b(&tmp16u);
+			rd_byte(&tmp8u);
+			rd_u32b(&tmp32u);
+			rd_u16b(&tmp16u);
+			rd_byte(&tmp8u);
+			rd_u32b(&tmp32u);
+		}
 #endif
 
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
 
 #if 0
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
-	        rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
+		rd_u16b(&tmp16u);
 #endif
 
-	        rd_u16b(&tmp16u);
-	        rd_byte(&tmp8u);
+		rd_u16b(&tmp16u);
+		rd_byte(&tmp8u);
 	}
 
 	if (!older_than(4, 5, 3)) rd_u16b(&p_ptr->tim_deflect);
@@ -2901,22 +2896,21 @@ static errr rd_savefile_new_aux(int Ind) {
 		}
 
 
-        if (!older_than(4, 0, 1)) {
-                rd_byte(&p_ptr->spell_project);
-        } else {
-                p_ptr->spell_project = 0;
-        }
+	if (!older_than(4, 0, 1)) {
+		rd_byte(&p_ptr->spell_project);
+	} else {
+		p_ptr->spell_project = 0;
+	}
 
-        /* Special powers */
-        if (!older_than(4, 0, 2)) {
-                rd_s16b(&p_ptr->power_num);
-
-                for (i = 0; i < MAX_POWERS; i++) {
-                        rd_s16b(&p_ptr->powers[i]);
-                }
-        } else {
-                p_ptr->power_num = 0;
-        }
+	/* Special powers */
+	if (!older_than(4, 0, 2)) {
+		rd_s16b(&p_ptr->power_num);
+		for (i = 0; i < MAX_POWERS; i++) {
+			rd_s16b(&p_ptr->powers[i]);
+		}
+	} else {
+		p_ptr->power_num = 0;
+	}
 
 #ifdef VERIFY_CHECKSUMS
 
