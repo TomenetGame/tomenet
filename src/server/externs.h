@@ -1279,6 +1279,10 @@ void determine_artifact_timeout(int a_idx, struct worldpos *wpos);
 void erase_artifact(int a_idx);
 void hack_particular_item(void);
 
+#ifdef VAMPIRES_INV_CURSED
+void inverse_cursed(object_type *o_ptr);
+void reverse_cursed(object_type *o_ptr);
+#endif
 
 /* party.c */
 extern void account_check(int Ind);

@@ -2032,6 +2032,10 @@ void carry(int Ind, int pickup, int confirm) {
 				/* Warn the player */
 				msg_print(Ind, "Oops! It feels deathly cold!");
 
+#ifdef VAMPIRES_INV_CURSED
+				inverse_cursed(o_ptr);
+#endif
+
 				/* Note the curse */
 				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 
@@ -2103,6 +2107,10 @@ void carry(int Ind, int pickup, int confirm) {
 			if (cursed_p(o_ptr)) {
 				/* Warn the player */
 				msg_print(Ind, "Oops! It feels deathly cold!");
+
+#ifdef VAMPIRES_INV_CURSED
+				inverse_cursed(o_ptr);
+#endif
 
 				/* Note the curse */
 				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;

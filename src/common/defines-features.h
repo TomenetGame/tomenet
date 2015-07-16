@@ -213,9 +213,10 @@
 #define SOLO_REKING 5000000
 
 /* Do vampires not suffer Black Breath at all? */
-//#define VAMPIRES_BB_IMMUNE
-/* Will negative boni on cursed items become (scaled) positive ones when wielded by vampires? */
-//#define VAMPIRES_INV_CURSED //not implemented!
+#define VAMPIRES_BB_IMMUNE
+/* Will negative boni on cursed items become (scaled) positive ones when wielded by vampires?
+   (0 = rather inconsistent method, 1 = recommended method) */
+#define VAMPIRES_INV_CURSED 1
 
 
 /* --------------------- Server-type dependant features -------------------- */

@@ -736,6 +736,10 @@ struct object_type {
 	s32b pval3;			/* Item extra-parameter for some special items */
 #endif
 
+	/* VAMPIRES_INV_CURSED */
+	s32b pval_org;
+	s16b to_h_org, to_d_org, to_a_org;
+
 	/* Used for temporarily augmented equipment. (Runecraft) */
 	s32b sigil;			/* Element index (+1) for r_projection (common/tables.c) boni lookup. Zero if no sigil. */
 	s32b sseed;			/* RNG Seed used to determine the boni (if random). Zero if not randomized. */
@@ -774,11 +778,9 @@ struct object_type {
 	s16b to_a;			/* Plusses to AC */
 
 	s16b ac;			/* Normal AC */
-
 	byte dd, ds;			/* Damage dice/sides */
 
 	s32b timeout;			/* Timeout Counter */
-
 	u16b ident;			/* Special flags  */
 
 	s32b marked;			/* Object is marked (for deletion after a certain time) */

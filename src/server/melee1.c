@@ -2585,8 +2585,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					
 					/* riposte */
 					if (rand_int(p_ptr->skill_thn) * (p_ptr->heavy_wield ? 1 : 3)
-							< (rlev + damage + UNAWARENESS(p_ptr)))
-					{
+					    < (rlev + damage + UNAWARENESS(p_ptr))) {
 						if (!p_ptr->dual_wield || magik(90)) {
 							msg_print(Ind, "\376\377rYou lose the grip of your weapon!");
 //							msg_format(Ind, "\377r%^s disarms you!", m_name);
@@ -2595,7 +2594,6 @@ bool make_attack_melee(int Ind, int m_idx)
 								inven_takeoff(Ind, slot, 1, FALSE);
 								s_printf("%s EFFECT: Disarmed (takeoff) %s.\n", showtime(), p_ptr->name);
 							} else {
-								inven_drop(Ind, slot, 1);
 								s_printf("%s EFFECT: Disarmed (drop) %s.\n", showtime(), p_ptr->name);
 #if 0
 								/* Drop it (carefully) near the player */
@@ -2603,6 +2601,8 @@ bool make_attack_melee(int Ind, int m_idx)
 								/* Decrease the item, optimize. */
 								inven_item_increase(Ind, slot, -p_ptr->inventory[slot].number);
 								inven_item_optimize(Ind, slot);
+#else
+								inven_drop(Ind, slot, 1);
 #endif
 								if (slot == INVEN_ARM) dis_sec = TRUE;
 							}
@@ -2629,7 +2629,6 @@ bool make_attack_melee(int Ind, int m_idx)
 							dis_sec = TRUE;
 						}
 
-						p_ptr->update |= (PU_BONUS | PU_HP | PU_SANITY);
 						obvious = TRUE;
 #ifdef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
 						if ((p_ptr->combat_stance == 1 &&
@@ -2640,7 +2639,8 @@ bool make_attack_melee(int Ind, int m_idx)
 #endif
 							msg_print(Ind, "\377sYou return to balanced combat stance.");
 							p_ptr->combat_stance = 0;
-							p_ptr->redraw |= PR_STATE;
+							p_ptr->update |= (PU_BONUS);
+							p_ptr->redraw |= (PR_PLUSSES | PR_STATE);
 						}
 					}
 					break;

@@ -42,11 +42,15 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 	/* Paranoia */
 	if (amt <= 0) return;
 
-        if ((!bypass_inscrption) && check_guard_inscription( o_ptr->note, 't' )) {
+	if ((!bypass_inscrption) && check_guard_inscription( o_ptr->note, 't' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
-                return;
-        }
-        bypass_inscrption = FALSE;
+		return;
+	}
+	bypass_inscrption = FALSE;
+
+#ifdef VAMPIRES_INV_CURSED
+	reverse_cursed(o_ptr);
+#endif
 
 	/* Sigil (reset it) */
 	if (o_ptr->sigil) {
@@ -95,14 +99,12 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 #if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
-	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) 
-	{
+	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) {
 		/* Well, so we gotta check if the player, in case he is a
 		mimic, is using a form that can _only_ come from the armor */
 		//if (p_ptr->pclass == CLASS_MIMIC) //Adventurers can also have mimic skill
 		//{
-			switch (o_ptr->sval)
-			{
+			switch (o_ptr->sval) {
 			case SV_DRAGON_BLACK:
 			j = race_index("Ancient black dragon"); break;
 			case SV_DRAGON_BLUE:
@@ -133,27 +135,23 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 			case SV_DRAGON_POWER:
 			j = race_index("Great Wyrm of Power"); break;
 			}
-			if((p_ptr->body_monster == j) &&
+			if ((p_ptr->body_monster == j) &&
 			    ((p_ptr->r_killed[j] < r_info[j].level) || 
 			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
 				do_mimic_change(Ind, 0, TRUE);
 		/*}
-		else
-		{
-			do_mimic_change(Ind, 0, TRUE);
-		}*/
+		else do_mimic_change(Ind, 0, TRUE);
+		*/
 	}
 #endif
 
 #if POLY_RING_METHOD == 0
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
-	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
-	{
+	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
 		if ((p_ptr->body_monster == o_ptr->pval) && 
 		    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
-		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
-		{
+		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))) {
 			/* If player hasn't got high enough kill count anymore now, poly back to player form! */
 			msg_print(Ind, "You polymorph back to your normal form.");
 			do_mimic_change(Ind, 0, TRUE);
@@ -165,22 +163,14 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith)
 		p_ptr->tim_wraith = 1;
 
-	/* Sigil (reset it) */
-	if (o_ptr->sigil) {
-		msg_print(Ind, "The sigil fades away.");
-		o_ptr->sigil = 0;
-		o_ptr->sseed = 0;
-	}
-
 	/* Artifacts */
-	if (o_ptr->name1)
-	{
+	if (o_ptr->name1) {
 		artifact_type *a_ptr;
 		/* Obtain the artifact info */
 		if (o_ptr->name1 == ART_RANDART)
-    			a_ptr = randart_make(o_ptr);
+			a_ptr = randart_make(o_ptr);
 		else
-		        a_ptr = &a_info[o_ptr->name1];
+			a_ptr = &a_info[o_ptr->name1];
 
 		if ((a_ptr->flags3 & TR3_WRAITH) && p_ptr->tim_wraith) p_ptr->tim_wraith = 1;
 	}
@@ -219,22 +209,19 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
  #endif
 		msg_print(Ind, "\377sYou return to balanced combat stance.");
 		p_ptr->combat_stance = 0;
-		p_ptr->redraw |= PR_STATE;
+		p_ptr->update |= (PU_BONUS);
+		p_ptr->redraw |= (PR_PLUSSES | PR_STATE);
 	}
 #endif
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
-
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
-
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
-
 	/* Redraw */
 	p_ptr->redraw |= (PR_PLUSSES);
-
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }
@@ -257,20 +244,18 @@ void inven_drop(int Ind, int item, int amt) {
 
 	quest_info *q_ptr;
 
+
 	/* Access the slot to be dropped */
 	o_ptr = &(p_ptr->inventory[item]);
 
 	/* Error check */
 	if (amt <= 0) return;
-
 	/* Not too many */
 	if (amt > o_ptr->number) amt = o_ptr->number;
-
 	/* Nothing done? */
 	if (amt <= 0) return;
 
 	/* check for !d  or !* in inscriptions */
-
 	if (!bypass_inscrption && check_guard_inscription(o_ptr->note, 'd')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
@@ -279,6 +264,10 @@ void inven_drop(int Ind, int item, int amt) {
 
 #ifdef USE_SOUND_2010
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+#endif
+
+#ifdef VAMPIRES_INV_CURSED
+	reverse_cursed(o_ptr);
 #endif
 
 	/* Make a "fake" object */
@@ -419,7 +408,8 @@ void inven_drop(int Ind, int item, int amt) {
  #endif
 		msg_print(Ind, "\377sYou return to balanced combat stance.");
 		p_ptr->combat_stance = 0;
-		p_ptr->redraw |= PR_STATE;
+		p_ptr->update |= (PU_BONUS);
+		p_ptr->redraw |= (PR_PLUSSES | PR_STATE);
 	}
 #endif
 
@@ -453,7 +443,7 @@ void inven_drop(int Ind, int item, int amt) {
 	}
 
 	/* Decrease the item, optimize. */
-	inven_item_increase(Ind, item, -amt);
+	inven_item_increase(Ind, item, -amt); /* note that this calls the required boni-updating et al */
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
 
@@ -1144,6 +1134,10 @@ return;
 			/* Note the curse */
 			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 
+#ifdef VAMPIRES_INV_CURSED
+			inverse_cursed(o_ptr);
+#endif
+
 			note_toggle_cursed(o_ptr, TRUE);
 		}
 
@@ -1157,7 +1151,8 @@ return;
 	if (slot == INVEN_ARM && p_ptr->combat_stance == 2) {
 		msg_print(Ind, "\377sYou return to balanced combat stance.");
 		p_ptr->combat_stance = 0;
-		p_ptr->redraw |= PR_STATE;
+		p_ptr->update |= (PU_BONUS);
+		p_ptr->redraw |= (PR_PLUSSES | PR_STATE);
 	}
 #endif
 
@@ -1431,7 +1426,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < 2 && !is_admin(p_ptr) &&
 	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL)
 		o_ptr->level = 0;
-#endif 
+#endif
 #endif
 
 	/* Take a partial turn */

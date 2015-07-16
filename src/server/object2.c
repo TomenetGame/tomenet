@@ -8376,13 +8376,15 @@ void inven_item_increase(int Ind, int item, int num) {
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
-
-		/* Recalculate mana XXX */
-		p_ptr->update |= (PU_MANA);
+		/* Recalculate torch */
+		p_ptr->update |= (PU_TORCH);
+		/* Recalculate mana */
+		p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+		/* Redraw */
+		p_ptr->redraw |= (PR_PLUSSES | PR_ARMOR);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);
-
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	}
@@ -9962,3 +9964,59 @@ void hack_particular_item(void) {
 
 	s_printf("hack_particular_item: found+replaced %d occurances\n", found);
 }
+
+#ifdef VAMPIRES_INV_CURSED
+/* Reverse negative boni on a cursed item while equipped by a true undead (RACE_VAMPIRE) player,
+   provided the item is eligible (HEAVY_CURSE). - C. Blue */
+void inverse_cursed(object_type *o_ptr) {
+	u32b f1, f2, f3, f4, f5, f6, esp;
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	if (!(f3 & TR3_HEAVY_CURSE)) return;
+
+	if (o_ptr->to_h < 0) {
+		o_ptr->to_h_org = o_ptr->to_h;
+		o_ptr->to_h = -o_ptr->to_h;
+	}
+	if (o_ptr->to_d < 0) {
+		o_ptr->to_d_org = o_ptr->to_d;
+		o_ptr->to_d = -o_ptr->to_d;
+	}
+	if (o_ptr->to_a < 0) {
+		o_ptr->to_a_org = o_ptr->to_a;
+		o_ptr->to_a = -o_ptr->to_a;
+	}
+	if (o_ptr->pval < 0) {
+		o_ptr->pval_org = o_ptr->pval;
+		o_ptr->pval = -o_ptr->pval / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
+	}
+}
+void reverse_cursed(object_type *o_ptr) {
+	u32b f1, f2, f3, f4, f5, f6, esp;
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	if (!(f3 & TR3_HEAVY_CURSE)) return;
+
+	/* actually a bit special: account for (dis)enchantments that might have happened meanwhile or at some point */
+ #if (VAMPIRES_INV_CURSED == 0) /* this way, enchant would actually further increase the bonus, while it's equipped! (not so consistent) */
+	if (o_ptr->to_h > 0 && o_ptr->to_h_org < 0) {
+		o_ptr->to_h += o_ptr->to_h_org * 2;
+		if (o_ptr->to_h < o_ptr->to_h_org) o_ptr->to_h = o_ptr->to_h_org;
+	}
+	if (o_ptr->to_d > 0 && o_ptr->to_d_org < 0) {
+		o_ptr->to_d += o_ptr->to_d_org * 2;
+		if (o_ptr->to_h < o_ptr->to_h_org) o_ptr->to_h = o_ptr->to_h_org;
+	}
+	if (o_ptr->to_a > 0 && o_ptr->to_a_org < 0) {
+		o_ptr->to_a += o_ptr->to_a_org * 2;
+		if (o_ptr->to_h < o_ptr->to_h_org) o_ptr->to_h = o_ptr->to_h_org;
+	}
+	if (o_ptr->pval > 0 && o_ptr->pval_org < 0) o_ptr->pval = -o_ptr->pval;
+ #else /* this way, enchant and disenchant would BOTH reduce the boni! (recommended, more consistent) */
+	if (o_ptr->to_h > 0 && o_ptr->to_h_org < 0) o_ptr->to_h = -o_ptr->to_h;
+	if (o_ptr->to_d > 0 && o_ptr->to_d_org < 0) o_ptr->to_d = -o_ptr->to_d;
+	if (o_ptr->to_a > 0 && o_ptr->to_a_org < 0) o_ptr->to_a = -o_ptr->to_a;
+	if (o_ptr->pval > 0 && o_ptr->pval < 0) o_ptr->pval = -o_ptr->pval;
+ #endif
+}
+#endif

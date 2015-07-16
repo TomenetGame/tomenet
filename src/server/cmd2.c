@@ -5689,16 +5689,12 @@ void do_cmd_fire(int Ind, int dir) {
 
 				/* Recalculate bonuses */
 				p_ptr->update |= (PU_BONUS);
-
 				/* Recalculate torch */
 				p_ptr->update |= (PU_TORCH);
-
 				/* Recalculate mana */
 				p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
-
 				/* Redraw */
 				p_ptr->redraw |= (PR_PLUSSES | PR_ARMOR);
-
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 			}
