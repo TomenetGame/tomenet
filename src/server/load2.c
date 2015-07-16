@@ -490,7 +490,7 @@ static void rd_item(object_type *o_ptr) {
 		o_ptr->name2 = old_name2;
 	}
 	rd_s32b(&o_ptr->name3);
-        if (!older_than(4, 2, 1))
+	if (!older_than(4, 2, 1))
 		rd_s32b(&o_ptr->timeout);
 	else {
 		/* Increase portability with pointers to correct type - mikaelh */
@@ -502,6 +502,14 @@ static void rd_item(object_type *o_ptr) {
 	rd_s16b(&o_ptr->to_h);
 	rd_s16b(&o_ptr->to_d);
 	rd_s16b(&o_ptr->to_a);
+
+	/* VAMPIRES_INV_CURSED */
+	if (!older_than(4, 6, 0)) {
+		rd_s16b(&o_ptr->to_h_org);
+		rd_s16b(&o_ptr->to_d_org);
+		rd_s16b(&o_ptr->to_a_org);
+		rd_s32b(&o_ptr->pval_org);
+	}
 
 
 	/* -------------------- Fix erroneus item parameters -------------------- */
