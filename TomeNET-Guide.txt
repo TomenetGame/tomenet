@@ -246,9 +246,11 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 
  ---- PLEASE NOTE: ----
  If you are new to the game, it is NOT recommended to choose one of these:
- Istar, Priest, Shaman, Adventurer.
+ Istar, Priest, Shaman, Adventurer, Runemaster.
  The reason is that these classes are hard to play in the beginning -
  compare introductory explanation in (6.5)!
+ Recommended for new players are:
+ Warrior, Rogue, Paladin, Druid and maybe Archer.
 
 
 -Make sure you DO NOT chose 'PvP' mode. It's a restricted special thing that
