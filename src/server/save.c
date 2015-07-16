@@ -666,15 +666,15 @@ static void wr_extra(int Ind) {
 	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_cnt[i]);
 	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_los[i]);
 
-        /* Dump the skills */
-        wr_u16b(MAX_SKILLS);
-        for (i = 0; i < MAX_SKILLS; ++i) {
-                wr_s32b(p_ptr->s_info[i].value);
-                wr_u16b(p_ptr->s_info[i].mod);
-                wr_byte(p_ptr->s_info[i].dev);
+	/* Dump the skills */
+	wr_u16b(MAX_SKILLS);
+	for (i = 0; i < MAX_SKILLS; ++i) {
+		wr_s32b(p_ptr->s_info[i].value);
+		wr_u16b(p_ptr->s_info[i].mod);
+		wr_byte(p_ptr->s_info[i].dev);
 #if 0 //SMOOTHSKILLS
-                wr_byte(p_ptr->s_info[i].hidden);
-                wr_byte(p_ptr->s_info[i].dummy);
+		wr_byte(p_ptr->s_info[i].hidden);
+		wr_byte(p_ptr->s_info[i].dummy);
 #else
 		wr_byte(p_ptr->s_info[i].flags1);
 		wr_s32b(p_ptr->s_info[i].base_value);
@@ -794,18 +794,18 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->hero);
 	wr_s16b(p_ptr->shero);
 	wr_s16b(p_ptr->berserk);
-        wr_s16b(p_ptr->shield);
-        wr_s16b(p_ptr->shield_power);
-        wr_s16b(p_ptr->shield_opt);
-        wr_s16b(p_ptr->shield_power_opt);
-        wr_s16b(p_ptr->shield_power_opt2);
-        wr_s16b(p_ptr->tim_thunder);
-        wr_s16b(p_ptr->tim_thunder_p1);
-        wr_s16b(p_ptr->tim_thunder_p2);
-        wr_s16b(p_ptr->tim_lev);
-        wr_s16b(p_ptr->tim_ffall);
-        wr_s16b(p_ptr->tim_regen);
-        wr_s16b(p_ptr->tim_regen_pow);
+	wr_s16b(p_ptr->shield);
+	wr_s16b(p_ptr->shield_power);
+	wr_s16b(p_ptr->shield_opt);
+	wr_s16b(p_ptr->shield_power_opt);
+	wr_s16b(p_ptr->shield_power_opt2);
+	wr_s16b(p_ptr->tim_thunder);
+	wr_s16b(p_ptr->tim_thunder_p1);
+	wr_s16b(p_ptr->tim_thunder_p2);
+	wr_s16b(p_ptr->tim_lev);
+	wr_s16b(p_ptr->tim_ffall);
+	wr_s16b(p_ptr->tim_regen);
+	wr_s16b(p_ptr->tim_regen_pow);
 	wr_s16b(p_ptr->blessed);
 	wr_s16b(p_ptr->tim_invis);
 	wr_s16b(p_ptr->word_recall);
@@ -883,8 +883,8 @@ static void wr_extra(int Ind) {
 	for (i = 0; i < 16; i++) wr_byte(0);
 #endif
 
-        /* Toggle for possible automatic save-game updates
-           (done via script login-hook, eg custom.lua) - C. Blue */
+	/* Toggle for possible automatic save-game updates
+	   (done via script login-hook, eg custom.lua) - C. Blue */
 	wr_byte(p_ptr->updated_savegame);
 
 	/* for automatic artifact resets */
@@ -935,29 +935,29 @@ static void wr_extra(int Ind) {
 	wr_s32b(p_ptr->tim_watchlist);
 	wr_s32b(p_ptr->pstealing);
 
-        for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
-                wr_s16b(p_ptr->global_event_type[i]);
-                wr_s32b(p_ptr->global_event_signup[i]);
-                wr_s32b(p_ptr->global_event_started[i]);
-                for (j = 0; j < 4; j++) wr_u32b(p_ptr->global_event_progress[i][j]);
-        }
+	for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
+		wr_s16b(p_ptr->global_event_type[i]);
+		wr_s32b(p_ptr->global_event_signup[i]);
+		wr_s32b(p_ptr->global_event_started[i]);
+		for (j = 0; j < 4; j++) wr_u32b(p_ptr->global_event_progress[i][j]);
+	}
 
 	for (i = 0; i < MAX_GLOBAL_EVENT_TYPES; i++)
 		wr_s16b(p_ptr->global_event_participated[i]);
 
-        wr_s16b(p_ptr->combat_stance);
-        wr_s16b(p_ptr->combat_stance_power);
+	wr_s16b(p_ptr->combat_stance);
+	wr_s16b(p_ptr->combat_stance_power);
 	wr_byte(p_ptr->cloaked);
 	wr_byte(p_ptr->shadow_running);
 	wr_byte(p_ptr->shoot_till_kill);
 	wr_byte(p_ptr->dual_mode);
 
-        wr_s16b(p_ptr->kills);
-        wr_s16b(p_ptr->kills_own);
-        wr_s16b(p_ptr->kills_lower);
-        wr_s16b(p_ptr->kills_higher);
-        wr_s16b(p_ptr->kills_equal);
-        wr_s16b(p_ptr->free_mimic);
+	wr_s16b(p_ptr->kills);
+	wr_s16b(p_ptr->kills_own);
+	wr_s16b(p_ptr->kills_lower);
+	wr_s16b(p_ptr->kills_higher);
+	wr_s16b(p_ptr->kills_equal);
+	wr_s16b(p_ptr->free_mimic);
 
 	if (p_ptr->aura[0]) tmp8u |= 0x1;
 	if (p_ptr->aura[1]) tmp8u |= 0x2;
