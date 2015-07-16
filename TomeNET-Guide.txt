@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. July 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. July 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -12144,7 +12144,9 @@ create a character!):
     mimicry techniques or holy spells. They are unable to try and suppress
     magic, but can make use of items that provide antimagic effects.
     Aside from darkness they also resist sanity-draining effects (somewhat),
-    time, nether, poison, and it's hard to drain their life force.
+    time, nether, poison, and it's hard to drain their life force - as a
+    specialty this is also true for life force drained by items a vampire has
+    equipped: Those will drain exp at half the normal rate.
     They also have partially life leeching (vampiric) attacks (see '(5.15)
     Vampirism' for more information).
     Being undead, vampires don't drown as easily as other races, but the water
