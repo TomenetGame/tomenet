@@ -9988,7 +9988,7 @@ void inverse_cursed(object_type *o_ptr) {
 	}
 	if (o_ptr->pval < 0) {
 		o_ptr->pval_org = o_ptr->pval;
-		o_ptr->pval = -o_ptr->pval / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
+		o_ptr->pval = -(o_ptr->pval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
 	}
 }
 void reverse_cursed(object_type *o_ptr) {
@@ -10011,12 +10011,15 @@ void reverse_cursed(object_type *o_ptr) {
 		o_ptr->to_a += o_ptr->to_a_org * 2;
 		if (o_ptr->to_h < o_ptr->to_h_org) o_ptr->to_h = o_ptr->to_h_org;
 	}
-	if (o_ptr->pval > 0 && o_ptr->pval_org < 0) o_ptr->pval = -o_ptr->pval;
+	if (o_ptr->pval > -o_ptr->pval_org / 4 && o_ptr->pval_org < 0) o_ptr->pval = -o_ptr->pval;
  #else /* this way, enchant and disenchant would BOTH reduce the boni! (recommended, more consistent) */
 	if (o_ptr->to_h > 0 && o_ptr->to_h_org < 0) o_ptr->to_h = -o_ptr->to_h;
 	if (o_ptr->to_d > 0 && o_ptr->to_d_org < 0) o_ptr->to_d = -o_ptr->to_d;
 	if (o_ptr->to_a > 0 && o_ptr->to_a_org < 0) o_ptr->to_a = -o_ptr->to_a;
-	if (o_ptr->pval > 0 && o_ptr->pval < 0) o_ptr->pval = -o_ptr->pval;
+	if (o_ptr->pval > 0 && o_ptr->pval_org < 0) {
+		o_ptr->pval = -o_ptr->pval * 4;
+		if (o_ptr->pval < o_ptr->pval_org) o_ptr->pval = o_ptr->pval_org;
+	}
  #endif
 }
 #endif
