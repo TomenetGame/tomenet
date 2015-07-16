@@ -1063,16 +1063,21 @@ bool make_attack_melee(int Ind, int m_idx)
 			if (!p_ptr->inventory[INVEN_WIELD].k_idx &&
 			    !p_ptr->inventory[INVEN_ARM].k_idx) player_vulnerable = TRUE;
 
-			if ((!p_ptr->suscep_life || !rand_int(3)) && (
-			    (r_ptr->flags7 & RF7_NAZGUL && magik(player_vulnerable ? 10 : 25)) || (
-			    (r_ptr->flags3 & (RF3_UNDEAD)) && (
-				(m_ptr->level >= 35 && (r_ptr->flags1 & RF1_UNIQUE) && randint(300 - m_ptr->level) == 1) ||
-				(m_ptr->level >= 40 && randint(400 - m_ptr->level - (player_vulnerable ? 75 : 0)) == 1)
+			if (
+#ifdef VAMPIRES_BB_IMMUNE
+			    p_ptr->prace != RACE_VAMPIRE &&
+#endif
+			    !p_ptr->black_breath &&
+			    !safe_area(Ind) && /* just for Arena Monster Challenge! */
+			    (!p_ptr->suscep_life || !rand_int(3)) && (
+			     (r_ptr->flags7 & RF7_NAZGUL && magik(player_vulnerable ? 10 : 25)) || (
+			     (r_ptr->flags3 & (RF3_UNDEAD)) && (
+			      (m_ptr->level >= 35 && (r_ptr->flags1 & RF1_UNIQUE) && randint(300 - m_ptr->level) == 1) ||
+			      (m_ptr->level >= 40 && randint(400 - m_ptr->level - (player_vulnerable ? 75 : 0)) == 1)
 			    ))))
 			{
 				/* The Great Pumpkin of Halloween event shouldn't give BB, lol. -C. Blue */
-				if (((m_ptr->r_idx != RI_PUMPKIN1) && (m_ptr->r_idx != RI_PUMPKIN2) && (m_ptr->r_idx != RI_PUMPKIN3)) &&
-				    !safe_area(Ind) && !p_ptr->black_breath) {
+				if (((m_ptr->r_idx != RI_PUMPKIN1) && (m_ptr->r_idx != RI_PUMPKIN2) && (m_ptr->r_idx != RI_PUMPKIN3))) {
 					s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, m_name);
 					set_black_breath(Ind);
 				}

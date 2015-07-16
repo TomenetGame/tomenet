@@ -5318,9 +5318,9 @@ void py_touch_zap_player(int Ind, int Ind2)
 /* Mega Hack -- Hitting Nazgul is REALY dangerous
  * (ideas from Akhronath) */
 //void do_nazgul(int *k, int *num, int num_blow, int weap, monster_race *r_ptr, object_type *o_ptr)
-void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
-{
-	object_type *o_ptr = &Players[Ind]->inventory[slot];
+void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[slot];
 	char o_name[ONAME_LEN];
 
 	if (r_ptr->flags7 & RF7_NAZGUL) {
@@ -5338,7 +5338,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 			/* Dark Swords resist somewhat */
 			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(15) : magik(100)) {
 				object_desc(0, o_name, o_ptr, TRUE, 3);
-				s_printf("NAZGUL_DISI_NORM: %s : %s.\n", Players[Ind]->name, o_name);
+				s_printf("NAZGUL_DISI_NORM: %s : %s.\n", p_ptr->name, o_name);
 
 #ifdef USE_SOUND_2010
         			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
@@ -5364,7 +5364,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 			   Exploit-fix here for permacursed items. (Grond only) */
 			if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE)) {
 				object_desc(0, o_name, o_ptr, TRUE, 3);
-				s_printf("NAZGUL_DISI_ARTLIKE: %s : %s.\n", Players[Ind]->name, o_name);
+				s_printf("NAZGUL_DISI_ARTLIKE: %s : %s.\n", p_ptr->name, o_name);
 
 #ifdef USE_SOUND_2010
         			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
@@ -5393,7 +5393,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 			    ) ? magik(3) : magik(20))
 			{
 				object_desc(0, o_name, o_ptr, TRUE, 3);
-				s_printf("NAZGUL_DISI_EGO: %s : %s.\n", Players[Ind]->name, o_name);
+				s_printf("NAZGUL_DISI_EGO: %s : %s.\n", p_ptr->name, o_name);
 #ifdef USE_SOUND_2010
         			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
 #endif
@@ -5410,20 +5410,22 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 		}
 
 		/* If any damage is done, then 25% chance of getting the Black Breath */
-//		if ((*k) && magik(25) && !Players[Ind]->black_breath) {
-		if (magik(Players[Ind]->suscep_life ? 5 : 15) && !Players[Ind]->black_breath) {
-			s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", Players[Ind]->name);
+//		if ((*k) && magik(25) && !p_ptr->black_breath) {
+		if (
+#ifdef VAMPIRES_BB_IMMUNE
+		    p_ptr->prace != RACE_VAMPIRE &&
+#endif
+		    !p_ptr->black_breath &&
+		    magik(p_ptr->suscep_life ? 5 : 15)) {
+			s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", p_ptr->name);
 			set_black_breath(Ind);
 		}
 	}
 }
 
-void set_black_breath(int Ind)
-{
+void set_black_breath(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	/* deja */
-	if (p_ptr->black_breath) return;
 	if (p_ptr->ghost) return;
 
 	msg_print(Ind, "\376\377DYour foe calls upon your soul!");
@@ -6569,18 +6571,25 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	}
 }
 
-void black_breath_infection(int Ind, int Ind2)
-{
+void black_breath_infection(int Ind, int Ind2) {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr = Players[Ind2];
 
 	/* Prevent players who are AFK from getting infected in towns - mikaelh */
-	if (p_ptr->black_breath && !q_ptr->black_breath && magik(q_ptr->suscep_life ? 10 : 25) &&
+	if (p_ptr->black_breath && !q_ptr->black_breath &&
+#ifdef VAMPIRES_BB_IMMUNE
+	    q_ptr->prace != RACE_VAMPIRE &&
+#endif
+	    magik(q_ptr->suscep_life ? 10 : 25) &&
 	    !(q_ptr->afk && istown(&q_ptr->wpos)) && q_ptr->lev > cfg.newbies_cannot_drop && q_ptr->lev >= BB_INFECT_MINLEV) {
 		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", q_ptr->name, p_ptr->name);
 		set_black_breath(Ind2);
 	}
-	if (q_ptr->black_breath && !p_ptr->black_breath && magik(p_ptr->suscep_life ? 10 : 25) &&
+	if (q_ptr->black_breath && !p_ptr->black_breath &&
+#ifdef VAMPIRES_BB_IMMUNE
+	    p_ptr->prace != RACE_VAMPIRE &&
+#endif
+	    magik(p_ptr->suscep_life ? 10 : 25) &&
 	    !(p_ptr->afk && istown(&p_ptr->wpos)) && p_ptr->lev > cfg.newbies_cannot_drop && p_ptr->lev >= BB_INFECT_MINLEV) {
 		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, q_ptr->name);
 		set_black_breath(Ind);

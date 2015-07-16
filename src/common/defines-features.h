@@ -103,7 +103,8 @@
    Let's just use same as for MONSTER_FLOW_BY_SOUND, so we don't need more fields for cave_type.. - C. Blue */
 //#define MONSTER_FLOW_BY_ESP
 
-/* Allow use of '!E' inscription to prevent earthquakes from TR5_IMPACT items? */
+/* Allow use of '!E' inscription on any item to prevent earthquakes from TR5_IMPACT items?
+   If disabled, it's still allowed to be used on Grond (exclusively)! */
 //#define ALLOW_NO_QUAKE_INSCRIPTION
 
 /* Allow only a limited amount of guild adders, in turn maintain an always
@@ -143,7 +144,7 @@
 /* Use newly reworked spell system: Discrete stages for each component of
    compound spells, and fixed mana cost to go with it. */
 #define DISCRETE_SPELL_SYSTEM
-//#define DSS_EXPANDED_SCROLLS /* spell scrolls to carry all versions of a spell instead of just one specific? (Implementation not yet done) */
+//#define DSS_EXPANDED_SCROLLS /* spell scrolls to carry all versions of a spell (I,II,III..) instead of just one specific? (Implementation not yet done) */
 
 /* Draconians get to pick a 'lineage trait' on birth,
    giving specific resistances and a breath weapon. - C. Blue */
@@ -164,7 +165,7 @@
 /* Special extended colours that make use of background colouring - C. Blue
    Note: This is highly EXPERIMENTAL and not even implemented atm.,
          the only thing that works is proof of concept code that displays
-         rain in alternating colours, TERM_ORANGE and TERM2_BLUE. */
+         rain in alternating colours, TERM_ORANGE and (newly added for this) TERM2_BLUE. */
 //#define EXTENDED_BG_COLOURS
 
 
@@ -206,8 +207,16 @@
 /* Disable manual declaration of hostility/peace */
 #define NO_PK
 
-/* Allow players to solo-reking fallen winner characters without help of anyone else (experimental) */
+/* Allow players to solo-reking fallen winner characters without help of anyone else (experimental).
+   If != 0, then it's enabled and both, the amount of pure money to be paid and the amount of shared money/time, to be 'paid' on top,
+   so twice this has to be 'paid' in total. */
 #define SOLO_REKING 5000000
+
+/* Do vampires not suffer Black Breath at all? */
+//#define VAMPIRES_BB_IMMUNE
+/* Will negative boni on cursed items become (scaled) positive ones when wielded by vampires? */
+//#define VAMPIRES_INV_CURSED //not implemented!
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
