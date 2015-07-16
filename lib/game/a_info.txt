@@ -536,9 +536,9 @@ N:35:of Beruthiel
 I:33:10:-4
 W:40:12:20:50000
 P:0:1d1:0:0:20
-F:STR | DEX | CON | HIDE_TYPE | RES_BLIND | RES_DARK | 
-F:FREE_ACT | SEE_INVIS | ESP_ALL | RES_DISEN | 
-F:CURSED | AUTO_CURSE
+F:STR | DEX | CON | HIDE_TYPE | RES_BLIND | RES_DARK |
+F:FREE_ACT | SEE_INVIS | ESP_ALL | RES_DISEN |
+F:CURSED | AUTO_CURSE | HEAVY_CURSE
 D:The midnight-hued steel circlet of the sorceress-queen Beruthiel, which 
 D:grants extraordinary powers of sight and awareness at a terrible physical 
 D:cost.
@@ -2440,7 +2440,7 @@ W:20:10:10:0
 P:0:1d1:0:0:0
 F:CURSED | INT | WIS | CON | DEX | CHR | STR | ACTIVATE |
 F:LITE3 | LITE2 | LUCK | HIDE_TYPE | WHITE_LIGHT
-F:INSTA_ART | DG_CURSE | ESP_UNDEAD
+F:INSTA_ART | DG_CURSE | ESP_UNDEAD | HEAVY_CURSE
 # | BREATHE_WATER
 D:It appears like the Phial of Galadriel at first - but wait! It 
 D:is a cursed phial created by an evil wizard to lure adventurers 
