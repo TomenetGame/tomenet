@@ -9973,22 +9973,31 @@ void inverse_cursed(object_type *o_ptr) {
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (!(f3 & TR3_HEAVY_CURSE)) return;
+	if ((f4 & TR4_NEVER_BLOW)) return; /* Weapons of Nothingness */
 
 	if (o_ptr->to_h < 0) {
 		o_ptr->to_h_org = o_ptr->to_h;
 		o_ptr->to_h = -o_ptr->to_h;
+		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
 	}
 	if (o_ptr->to_d < 0) {
 		o_ptr->to_d_org = o_ptr->to_d;
 		o_ptr->to_d = -o_ptr->to_d;
+		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
 	}
 	if (o_ptr->to_a < 0) {
 		o_ptr->to_a_org = o_ptr->to_a;
 		o_ptr->to_a = -o_ptr->to_a;
+#ifndef TO_AC_CAP_30
+		if (o_ptr->to_a > 35) o_ptr->to_a = 35;
+#else
+		if (o_ptr->to_a > 30) o_ptr->to_a = 30;
+#endif
 	}
 	if (o_ptr->pval < 0) {
 		o_ptr->pval_org = o_ptr->pval;
 		o_ptr->pval = -(o_ptr->pval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
+		if (o_ptr->pval > 3) o_ptr->pval = 3; //thinking EA/Life, but just paranoia really..
 	}
 }
 void reverse_cursed(object_type *o_ptr) {
@@ -9996,6 +10005,7 @@ void reverse_cursed(object_type *o_ptr) {
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (!(f3 & TR3_HEAVY_CURSE)) return;
+	if ((f4 & TR4_NEVER_BLOW)) return; /* Weapons of Nothingness */
 
 	/* actually a bit special: account for (dis)enchantments that might have happened meanwhile or at some point.
 	   !!! NOTE: enchanting/discharging this way (the .._org vars too) has not yet been implemented! */
