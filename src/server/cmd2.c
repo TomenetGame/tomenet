@@ -1330,8 +1330,7 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 	if (o_ptr && ident && !p_ptr->trap_ident[o_ptr->pval])
 	{
 		p_ptr->trap_ident[o_ptr->pval] = TRUE;
-		msg_format(Ind, "You identified the trap as %s.",
-			   t_name + t_info[trap].name);
+		msg_format(Ind, "You identified the trap as %s.", t_name + t_info[trap].name);
 	}
 }
 

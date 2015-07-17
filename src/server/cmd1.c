@@ -2931,8 +2931,7 @@ void hit_trap(int Ind)
 		ident = player_activate_trap_type(Ind, p_ptr->py, p_ptr->px, NULL, -1);
 		if (ident && !p_ptr->trap_ident[t_idx]) {
 			p_ptr->trap_ident[t_idx] = TRUE;
-			msg_format(Ind, "You identified the trap as %s.",
-				   t_name + t_info[t_idx].name);
+			msg_format(Ind, "You identified the trap as %s.", t_name + t_info[t_idx].name);
 		}
 	}
 }

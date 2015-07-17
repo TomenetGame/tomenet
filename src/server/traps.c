@@ -488,8 +488,8 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap) {
 	dam = damroll(my_dd, my_ds);
 
 	ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type,
-			PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, t_name + t_ptr->name);
-			// | PROJECT_KILL | PROJECT_JUMP
+	    PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, t_name + t_ptr->name);
+	    // | PROJECT_KILL | PROJECT_JUMP
 	return (ident);
 }
 
@@ -497,12 +497,11 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap) {
  * This function damages the player by a trap
  */
 static void trap_hit(int Ind, s16b trap) {
-   s16b dam;
-   trap_kind *t_ptr = &t_info[trap];
+	s16b dam;
+	trap_kind *t_ptr = &t_info[trap];
 
-   dam = damroll(t_ptr->dd, t_ptr->ds);
-
-   take_hit(Ind, dam, format("a %s", t_name + t_ptr->name), 0);
+	dam = damroll(t_ptr->dd, t_ptr->ds);
+	take_hit(Ind, dam, format("%s %s", is_a_vowel(*(t_name + t_ptr->name)) ? "an" : "a", t_name + t_ptr->name), 0);
 }
 
 /*
@@ -2632,8 +2631,7 @@ void player_activate_door_trap(int Ind, s16b y, s16b x)
 	ident = player_activate_trap_type(Ind, y, x, NULL, -1);
 	if (ident && !p_ptr->trap_ident[t_idx]) {
 		p_ptr->trap_ident[t_idx] = TRUE;
-		msg_format(Ind, "You identified that trap as %s.",
-				t_name + t_info[t_idx].name);
+		msg_format(Ind, "You identified that trap as %s.", t_name + t_info[t_idx].name);
 	}
 }
 
