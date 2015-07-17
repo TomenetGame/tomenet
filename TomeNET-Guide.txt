@@ -1920,10 +1920,10 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 -If you press CTRL+X to save&exit the game, you should do that in a safe town.
  Dungeons might change while you are logged off, and the next time you log on
  you might find yourself in a nasty place if unlucky.
- Another problem is that if you don't leave in a town, your character will
- stay for another 20-30 seconds in the game before it finally disappears from
- the dungeon! If monsters were around, you might get killed easily during that
- time.
+ Another problem is that if you don't leave in a town (or the housing area
+ around a town), your character will stay for another 20-30 seconds in the game
+ before it finally disappears from the dungeon (or world surface)! If monsters
+ were around, you might get killed easily during that time.
 
 -The items you find don't depend on your race or class but on monster level
  and depth and luck.
@@ -6944,7 +6944,8 @@ Ironman Deep Dive Challenge (IDDC)
     In case you need to go offline you'll just have to log out inside the
     dungeon. Keep in mind that your character will stay in the game for about
     30 more seconds during which it could be killed if in an unsafe place.
-    Dungeon towns in general are free of any monster spawns.
+    Dungeon towns in general however are free of any monster spawns, so they
+    are safe.
 
     If you log out in the IDDC and log back on before the level has changed,
     you can continue business as usual. However, if you log off and wait until
@@ -17719,8 +17720,9 @@ PROBLEM 23: I just quit the game, and tried to log in again with another
             character of mine, but I get an error message saying
             "Multiple logins on the same account aren't allowed".
 SOLUTION:   When you quit the game while you are still inside a dungeon or a
-            tower, your character will stay in the game for around 20..30 more
-            seconds.
+            tower or on the world surface but not within a town or housing area
+            around a town, your character will stay in the game for around
+            20..30 more seconds.
             This prevents cheating by just quitting when a dangerous situation
             occurs in gameplay.
             During this time, if you try to login again, you can only use the
