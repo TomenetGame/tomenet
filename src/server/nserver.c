@@ -3931,6 +3931,28 @@ static int Receive_login(int ind) {
 			return(-1);
 		}
 
+		/* Forbid certain special characters for newly created accounts */
+		if (!Admin_GetAccount(connp->nick)) {
+			char *cp;
+
+			if (strchr(connp->nick, '|')) {
+				Destroy_connection(ind, "Invalid character '|' in your account name.");
+				return(-1);
+			}
+			if ((cp = strchr(connp->nick, '$')) && strchr(cp + 1, '$')) {
+				Destroy_connection(ind, "There may only be up to one occurance of the '$' character in your account name.");
+				return(-1);
+			}
+			if ((cp = strchr(connp->nick, '#')) && strchr(cp + 1, '#')) {
+				Destroy_connection(ind, "There may only be up to one occurance of the '#' character in your account name.");
+				return(-1);
+			}
+			if ((cp = strchr(connp->nick, '%')) && strchr(cp + 1, '%')) {
+				Destroy_connection(ind, "There may only be up to one occurance of the '%' character in your account name.");
+				return(-1);
+			}
+		}
+
 		/* Check for forbidden names (swearing).
 		   Note: This overrides 'censor_swearing' and is always on! */
 		censor_swearing = censor_swearing_identity;
@@ -4113,6 +4135,28 @@ static int Receive_login(int ind) {
 
 			Destroy_connection(ind, "Name already in use by another player.");
 			return(-1);
+		}
+
+		/* Forbid certain special characters for newly created characters */
+		if (!lookup_player_id(choice)) {
+			char *cp;
+
+			if (strchr(choice, '|')) {
+				Destroy_connection(ind, "Invalid character '|' in your name.");
+				return(-1);
+			}
+			if ((cp = strchr(choice, '$')) && strchr(cp + 1, '$')) {
+				Destroy_connection(ind, "There may only be up to one occurance of the '$' character in your name.");
+				return(-1);
+			}
+			if ((cp = strchr(choice, '#')) && strchr(cp + 1, '#')) {
+				Destroy_connection(ind, "There may only be up to one occurance of the '#' character in your name.");
+				return(-1);
+			}
+			if ((cp = strchr(choice, '%')) && strchr(cp + 1, '%')) {
+				Destroy_connection(ind, "There may only be up to one occurance of the '%' character in your name.");
+				return(-1);
+			}
 		}
 
 		/* Check if a too similar account name already exists.
