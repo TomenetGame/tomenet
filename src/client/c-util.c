@@ -2014,7 +2014,7 @@ bool get_string(cptr prompt, char *buf, int len)
 				c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
 				break;
 			case CHAT_MODE_LEVEL:
-				c_prt(C_COLOUR_CHAT_LEVEL, "Level: ", 0, 0);
+				c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
 				break;
 			case CHAT_MODE_GUILD:
 				c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
