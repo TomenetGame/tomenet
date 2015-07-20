@@ -10810,7 +10810,10 @@ static int Receive_party(int ind) {
 		else return 1;
 
 	/* pvp-mode characters don't get a choice */
-	if (Players[player]->mode & MODE_PVP) return 1;
+	if (Players[player]->mode & MODE_PVP) {
+		msg_print(player, "\377oAs pvp-mode character you cannot use the party menu.");
+		return 1;
+	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
