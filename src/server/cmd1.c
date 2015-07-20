@@ -5388,17 +5388,18 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 //				*num = num_blow;
 			}
 		} else if (o_ptr->name2) {
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
+			    && !(f4 & TR4_BLACK_BREATH)) { /* :-O (for VAMPIRES_INV_CURSED, but makes sense in general!) */
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;
 			}
 
 			/* Dark Swords and *Slay Undead* weapons resist the Nazgul,
 			   other (ego) weapons have a high chance of getting destroyed */
-			if (((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)
+			if ((f4 & TR4_BLACK_BREATH) ? (!rand_int(1000)) : ( /* see explanation above */
+			    ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)
 			    || o_ptr->name2 == EGO_KILL_UNDEAD || o_ptr->name2b == EGO_KILL_UNDEAD
-			    ) ? magik(3) : magik(20))
-			{
+			    ) ? magik(3) : magik(20))) {
 				object_desc(0, o_name, o_ptr, TRUE, 3);
 				s_printf("NAZGUL_DISI_EGO: %s : %s.\n", p_ptr->name, o_name);
 #ifdef USE_SOUND_2010
