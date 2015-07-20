@@ -10809,6 +10809,9 @@ static int Receive_party(int ind) {
 	if (connp->id != -1) player = GetInd[connp->id];
 		else return 1;
 
+	/* pvp-mode characters don't get a choice */
+	if (Players[player]->mode & MODE_PVP) return 1;
+
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
