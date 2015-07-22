@@ -2932,18 +2932,14 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what) {
 /*
  * Initialize the "a_info" array, by parsing an ascii "template" file
  */
-errr init_a_info_txt(FILE *fp, char *buf)
-{
+errr init_a_info_txt(FILE *fp, char *buf) {
 	int i;
-
 	char *s, *t;
 #ifdef ART_DIZ
 	char tmp[MSG_LEN];
 #endif
-
 	/* Not ready yet */
 	bool okay = FALSE;
-
 	/* Current entry */
 	artifact_type *a_ptr = NULL;
 
@@ -2956,8 +2952,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024, FALSE))
-	{
+	while (0 == my_fgets(fp, buf, 1024, FALSE)) {
 		/* Advance the line number */
 		error_line++;
 
@@ -2972,16 +2967,14 @@ errr init_a_info_txt(FILE *fp, char *buf)
 
 
 		/* Hack -- Process 'V' for "Version" */
-		if (buf[0] == 'V')
-		{
+		if (buf[0] == 'V') {
 			int v1, v2, v3;
 
 			/* Scan for the values */
 			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
 			    (v1 != a_head->v_major) ||
 			    (v2 != a_head->v_minor) ||
-			    (v3 != a_head->v_patch))
-			{
+			    (v3 != a_head->v_patch)) {
 				/* It only annoying -- DG */
 //				return (2);
 //				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
@@ -2999,8 +2992,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 
 
 		/* Process 'N' for "New/Number/Name" */
-		if (buf[0] == 'N')
-		{
+		if (buf[0] == 'N') {
 			/* Find the colon before the name */
 			s = strchr(buf + 2, ':');
 
@@ -3083,8 +3075,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 
 
 		/* Process 'I' for "Info" (one line only) */
-		if (buf[0] == 'I')
-		{
+		if (buf[0] == 'I') {
 			int tval, sval, pval;
 
 			/* Scan for the values */
@@ -3101,8 +3092,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 		}
 
 		/* Process 'W' for "More Info" (one line only) */
-		if (buf[0] == 'W')
-		{
+		if (buf[0] == 'W') {
 			int level, rarity, wgt;
 			int cost;
 
@@ -3121,8 +3111,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 		}
 
 		/* Hack -- Process 'P' for "power" and such */
-		if (buf[0] == 'P')
-		{
+		if (buf[0] == 'P') {
 			int ac, hd1, hd2, th, td, ta;
 
 			/* Scan for the values */
@@ -3134,48 +3123,46 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			a_ptr->ds = hd2;
 			a_ptr->to_h = th;
 			a_ptr->to_d = td;
-			a_ptr->to_a =  ta;
+#ifndef NEW_SHIELDS_NO_AC
+			a_ptr->to_a = ta;
+#else
+			if (a_ptr->tval != TV_SHIELD) a_ptr->to_a = ta;
+			else a_ptr->to_a = 0;
+#endif
 
 			/* Next... */
 			continue;
 		}
 
-                /* Process 'Z' for "Granted power" */
-                if (buf[0] == 'Z')
-		{
+		/* Process 'Z' for "Granted power" */
+		if (buf[0] == 'Z') {
 #if 0
-                        int i;
+			int i;
 
 			/* Acquire the text */
 			s = buf + 2;
 
-                        /* Find it in the list */
-                        for (i = 0; i < power_max; i++)
-                        {
-                                if (!stricmp(s, powers_type[i].name)) break;
-                        }
+			/* Find it in the list */
+			for (i = 0; i < power_max; i++)
+				if (!stricmp(s, powers_type[i].name)) break;
 
-                        if (i == power_max) return (6);
+			if (i == power_max) return (6);
 
-                        a_ptr->power = i;
-
+			a_ptr->power = i;
 #endif	// 0
 			/* Next... */
 			continue;
 		}
 
 		/* Hack -- Process 'F' for flags */
-		if (buf[0] == 'F')
-		{
+		if (buf[0] == 'F') {
 			/* Parse every entry textually */
-			for (s = buf + 2; *s; )
-			{
+			for (s = buf + 2; *s; ) {
 				/* Find the end of this entry */
 				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
 
 				/* Nuke and skip any dividers */
-				if (*t)
-				{
+				if (*t) {
 					*t++ = '\0';
 					while ((*t == ' ') || (*t == '|')) t++;
 				}

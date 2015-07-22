@@ -4087,7 +4087,7 @@ void calc_boni(int Ind) {
 		else
 			p_ptr->to_a += o_ptr->to_a;
 #else
-		p_ptr->to_a += o_ptr->to_a;
+		if (o_ptr->tval != TV_SHIELD) p_ptr->to_a += o_ptr->to_a;
 #endif
 
 		/* Apply the mental bonuses to armor class, if known */
@@ -4098,7 +4098,7 @@ void calc_boni(int Ind) {
 			else
 				p_ptr->dis_to_a += o_ptr->to_a;
 #else
-			p_ptr->dis_to_a += o_ptr->to_a;
+			if (o_ptr->tval != TV_SHIELD) p_ptr->dis_to_a += o_ptr->to_a;
 #endif
 		}
 
