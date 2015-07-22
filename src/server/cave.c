@@ -6240,7 +6240,7 @@ void update_view(int Ind)
 	int full, over;
 	int o, n;
 	int y, x;
-	u16b info;
+	u32b info;
 
 #if 0
 	int y_max = p_ptr->cur_hgt - 1;

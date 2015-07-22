@@ -1049,7 +1049,7 @@ static void wr_hostilities(int Ind) {
 static void wr_floor(struct worldpos *wpos) {
 	int y, x, i;
 	byte prev_feature = 0xff, n;
-	u16b prev_info = 0xffff;
+	u32b prev_info = 0xffffffff;
 	unsigned char runlength;
 	struct c_special *cs_ptr;
 
@@ -1114,7 +1114,7 @@ static void wr_floor(struct worldpos *wpos) {
 					/* if we just finished a run, write it */
 					wr_byte(runlength);
 					wr_byte(prev_feature);
-					wr_u16b(prev_info);
+					wr_u32b(prev_info);
 				}
 
 				/* start a new run */
@@ -1128,7 +1128,7 @@ static void wr_floor(struct worldpos *wpos) {
 		/* hack -- write the final run of this row */
 		wr_byte(runlength);
 		wr_byte(prev_feature);
-		wr_u16b(prev_info);
+		wr_u32b(prev_info);
 	}
 
 	/*** another scan for c_special ***/

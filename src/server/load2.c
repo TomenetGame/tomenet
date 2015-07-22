@@ -2364,8 +2364,7 @@ static errr rd_hostilities(int Ind)
  *
  */
 
-static errr rd_floor(void)
-{
+static errr rd_floor(void) {
 	struct worldpos wpos;
 	s16b tmp16b;
 	byte tmp;
@@ -2378,7 +2377,8 @@ static errr rd_floor(void)
 	dun_level *l_ptr;
 
 	unsigned char runlength, feature;
-	u16b flags;
+	u16b tmpinfo;
+	u32b info;
 
 
 	/*** Depth info ***/
@@ -2440,7 +2440,11 @@ static errr rd_floor(void)
 		/* Grab RLE info */
 		rd_byte(&runlength);
 		rd_byte(&feature);
-		rd_u16b(&flags);
+		if (!s_older_than(4, 6, 1)) rd_u32b(&info);
+		else {
+			rd_u16b(&tmpinfo);
+			info = (u32b)tmpinfo;
+		}
 
 		/* Apply the RLE info */
 		for (i = 0; i < runlength; i++) {
@@ -2486,7 +2490,7 @@ static errr rd_floor(void)
 #endif
 
 			/* set flags */
-			c_ptr->info = flags;
+			c_ptr->info = info;
 
 			/* increment our position */
 			x++;
