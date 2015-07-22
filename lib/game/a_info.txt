@@ -3139,7 +3139,7 @@ N:254:'Stormshield'
 I:34:6:3
 W:70:30:130:90000
 $USE_NEW_SHIELDS!P:8:1d3:0:0:40
-$USE_NEW_SHIELDS$P:23:1d3:0:0:15
+$USE_NEW_SHIELDS$P:28:1d3:0:0:15
 F:STR | CON | RES_SOUND | RES_COLD | IM_ELEC
 D:Gleaming steel, brass-shod with flashes of light running over its surface,
 D:this shield is astonishingly heavy and not easy to handle.
