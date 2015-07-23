@@ -71,6 +71,8 @@
    array each time, sorta defeats the speed advantage.. or actually pre-sort in
    init*.c already instead of repeating it everytime here ^^- C. Blue */
 #define ARTS_PRE_SORT
+/* colour art list depending on item type? (non-admins only) */
+#define COLOURED_ARTS
 void do_cmd_check_artifacts(int Ind, int line)
 {
 	int i, j, k, z;
@@ -91,6 +93,9 @@ void do_cmd_check_artifacts(int Ind, int line)
 	object_type forge, *o_ptr;
 	artifact_type *a_ptr;
 	char fmt[10];
+#ifdef COLOURED_ARTS
+	char cattr;
+#endif
 
 
 	/* Temporary file */
@@ -226,6 +231,10 @@ void do_cmd_check_artifacts(int Ind, int line)
 			j = strlen(base_name);
 			base_name[j - 4] = '\0';
 
+#ifdef COLOURED_ARTS
+			cattr = color_attr_to_char(get_attr_from_tval(&forge));
+#endif
+
 			/* Hack -- Build the artifact name */
 			if (admin) {
 				char timeleft[10], c = 'w';
@@ -267,8 +276,16 @@ void do_cmd_check_artifacts(int Ind, int line)
 #else
 				fprintf(fff, "%3d/%d %s\377%c", radix_idx[i], a_ptr->cur_num, timeleft, c);
 #endif
-			} else fprintf(fff, "\377%c", (!multiple_artifact_p(&forge) && a_ptr->carrier == p_ptr->id) ? 'U' : 'w');
+			}
+#ifndef COLOURED_ARTS
+			else fprintf(fff, "\377%c", (!multiple_artifact_p(&forge) && a_ptr->carrier == p_ptr->id) ? 'U' : 'w');
 			fprintf(fff, "%sThe %s", admin ? " " : "     ", base_name);
+#else
+			else fprintf(fff, "\377%c", cattr);
+			fprintf(fff, "%sThe %s", admin ? " " :
+			    ((!multiple_artifact_p(&forge) && a_ptr->carrier == p_ptr->id) ? "  *  " : "     "),
+			    base_name);
+#endif
 			if (admin) {
 				sprintf(fmt, "%%%ds\377w%%s\n", (int)(45 - strlen(base_name)));
 				if (!a_ptr->known) fprintf(fff, fmt, "", "(unknown)");
@@ -281,24 +298,36 @@ void do_cmd_check_artifacts(int Ind, int line)
 				   Todo: Should only show timeout if *ID*ed (ID_MENTAL), but not practical :/ */
 				if (p_ptr->id == a_ptr->carrier) {
 					int timeout = FALSE
-#ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+ #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
 					    || a_ptr->iddc
-#endif
-#ifdef WINNER_ARTIFACT_FAST_TIMEOUT
+ #endif
+ #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
 					    || a_ptr->winner
-#endif
+ #endif
 					     ? a_ptr->timeout / 2 : a_ptr->timeout;
-
+ #ifndef COLOURED_ARTS
 					sprintf(fmt, "%%%ds\377U", (int)(45 - strlen(base_name)));
 					fprintf(fff, fmt, "");
- #ifdef RING_OF_PHASING_NO_TIMEOUT
+  #ifdef RING_OF_PHASING_NO_TIMEOUT
 					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets with Zu-Aon)");
 					else
- #endif
+  #endif
 					if (timeout <= 0 || cfg.persistent_artifacts) ;
 					else if (timeout < 60 * 2) fprintf(fff, " (\377R%d minutes\377U till reset)", timeout);
 					else if (timeout < 60 * 24 * 2) fprintf(fff, " (\377y%d hours\377U till reset)", timeout / 60);
 					else fprintf(fff, " (%d days till reset)", timeout / 60 / 24);
+ #else
+					sprintf(fmt, "%%%ds", (int)(45 - strlen(base_name)));
+					fprintf(fff, fmt, "");
+  #ifdef RING_OF_PHASING_NO_TIMEOUT
+					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets with Zu-Aon)");
+					else
+  #endif
+					if (timeout <= 0 || cfg.persistent_artifacts) ;
+					else if (timeout < 60 * 2) fprintf(fff, " (\377R%d minutes\377%c till reset)", timeout, cattr);
+					else if (timeout < 60 * 24 * 2) fprintf(fff, " (\377y%d hours\377%c till reset)", timeout / 60, cattr);
+					else fprintf(fff, " (%d days till reset)", timeout / 60 / 24);
+ #endif
 				}
 #endif
 				fprintf(fff, "\n");
