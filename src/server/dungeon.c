@@ -6544,6 +6544,7 @@ void process_player_change_wpos(int Ind) {
 		}
 		while (  ((zcave[starty][startx].info & CAVE_ICKY)
 			|| (zcave[starty][startx].feat == FEAT_DEEP_WATER)
+			|| (zcave[starty][startx].feat == FEAT_PROTECTED) /* don't recall him into sickbay areas */
 			|| (!cave_floor_bold(zcave, starty, startx)))
 			&& (++tries < 10000) );
 		if (tries == 10000 && emergency_x) {
