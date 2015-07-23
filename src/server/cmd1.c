@@ -2033,7 +2033,7 @@ void carry(int Ind, int pickup, int confirm) {
 				msg_print(Ind, "Oops! It feels deathly cold!");
 
 #ifdef VAMPIRES_INV_CURSED
-				inverse_cursed(o_ptr);
+				if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
 #endif
 
 				/* Note the curse */
@@ -2109,7 +2109,7 @@ void carry(int Ind, int pickup, int confirm) {
 				msg_print(Ind, "Oops! It feels deathly cold!");
 
 #ifdef VAMPIRES_INV_CURSED
-				inverse_cursed(o_ptr);
+				if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
 #endif
 
 				/* Note the curse */

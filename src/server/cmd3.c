@@ -49,7 +49,7 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 	bypass_inscrption = FALSE;
 
 #ifdef VAMPIRES_INV_CURSED
-	reverse_cursed(o_ptr);
+	if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
 #endif
 
 	/* Sigil (reset it) */
@@ -267,7 +267,7 @@ void inven_drop(int Ind, int item, int amt) {
 #endif
 
 #ifdef VAMPIRES_INV_CURSED
-	reverse_cursed(o_ptr);
+	if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
 #endif
 
 	/* Make a "fake" object */
@@ -1135,7 +1135,7 @@ return;
 			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 
 #ifdef VAMPIRES_INV_CURSED
-			inverse_cursed(o_ptr);
+			if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
 #endif
 
 			note_toggle_cursed(o_ptr, TRUE);
