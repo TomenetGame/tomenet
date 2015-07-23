@@ -1173,6 +1173,8 @@ F:LUCK |
 F:SEE_INVIS | AGGRAVATE | HEAVY_CURSE | CURSED | BLACK_BREATH | DRAIN_EXP | 
 F:AUTO_CURSE | CURSE_NO_DROP
 #currently no effect | WOUNDING
+#for VAMPIRES_INV_CURSED, a small anti-cheeze ;)
+F:IGNORE_DISEN
 
 # They are more common now, since they can relatively 'lessen' the chance
 # for Morgul wep.
