@@ -737,7 +737,7 @@ struct object_type {
 #endif
 
 	/* VAMPIRES_INV_CURSED */
-	s32b pval_org;
+	s32b pval_org, bpval_org;
 	s16b to_h_org, to_d_org, to_a_org;
 
 	/* Used for temporarily augmented equipment. (Runecraft) */

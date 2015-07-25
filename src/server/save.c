@@ -158,6 +158,7 @@ static void wr_item(object_type *o_ptr) {
 	wr_s16b(o_ptr->to_d_org);
 	wr_s16b(o_ptr->to_a_org);
 	wr_s32b(o_ptr->pval_org);
+	wr_s32b(o_ptr->bpval_org);
 
 /* DEBUGGING PURPOSES - the_sandman */
 #if 0

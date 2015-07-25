@@ -509,6 +509,7 @@ static void rd_item(object_type *o_ptr) {
 		rd_s16b(&o_ptr->to_d_org);
 		rd_s16b(&o_ptr->to_a_org);
 		rd_s32b(&o_ptr->pval_org);
+		if (!older_than(4, 6, 2)) rd_s32b(&o_ptr->bpval_org);
 	}
 
 
