@@ -863,6 +863,13 @@ CTRL+V/B    Move cursor to beginning/end of line.
 
 CTRL+Q/W    Move cursor back/forward by one word.
 CTRL+E      Delete word before the cursor.
+    ..and a special function:
+    Whenever a text input prompt appears which suggests a default text, you may
+    press CTRL+E as the first key you hit. Then the default text will actually
+    be used as if you entered it and it becomes editable.
+    The main purpose of this functionality is in the macro menu when manually
+    editing macro actions: You can edit a previously defined action without
+    having to completely retype it.
 
 CTRL+A/S    Move cursor back/forward by one character.
 CTRL+D      Delete character under the cursor.
