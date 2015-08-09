@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. July 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. August 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -12154,9 +12154,9 @@ create a character!):
     Vampirism' for more information).
     Being undead, vampires don't drown as easily as other races, but the water
     still has a somewhat damaging effect if they cannot swim at all.
-    At level 20 they become able to turn into a bat. Vampire bats are fast, can
-    fly (basically as effective as 'levitation'), and are more resistant to sun
-    burn than the humanoid vampire form,
+    At level 20 they become able to turn into a bat (mimicry code 391).
+    Vampire bats are fast, can fly (basically as effective as 'levitation')
+    and are more resistant to sun burn than the humanoid vampire form,
     making them useful for travelling, although they move slightly erratically.
     Vampires cannot eat normal food, instead they need to feed off living
     creatures. This means that you need to kill monsters in melee range (though
