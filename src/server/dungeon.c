@@ -6088,8 +6088,8 @@ static void process_various(void)
 			if (!p_ptr->total_winner) continue;
 			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) continue; /* allow kings idling instead of having to switch chars */
 
-			/* Hack -- never Maggot and his dogs :) */
-			i = rand_range(60, MAX_R_IDX - 2);
+			/* Hack -- never Maggot and his dogs :) (also includes joke monsters Martti Ihrasaari and The Greater hell-beast) */
+			i = rand_range(57, max_r_idx - 1);
 			r_ptr = &r_info[i];
 
 			/* Make sure we are looking at a dead unique */
