@@ -552,7 +552,7 @@ static void add_ability (artifact_type *a_ptr) {
 				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
 				/* chaotic and blessed are exclusive atm */
 				if (!(a_ptr->flags5 & TR5_CHAOTIC) &&
-				    is_weapon(a_ptr->tval))
+				    (is_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG))
 					a_ptr->flags3 |= TR3_BLESSED;
 			} else if (r < 7) {
 				a_ptr->flags1 |= TR1_BRAND_ACID;
@@ -1928,7 +1928,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		a_ptr->to_d = o_ptr->to_d;
 		a_ptr->to_a = o_ptr->to_a;
 #ifdef RANDART_WEAPON_BUFF
-	} else if (is_weapon(a_ptr->tval)) {
+	} else if (is_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG) {
 		/* normalise +hit,+dam to somewhat more buffed values for all art weapons */
 		a_ptr->to_h = 0;//k_ptr->to_h / 2;
 		a_ptr->to_d = 0;//k_ptr->to_d / 2;
