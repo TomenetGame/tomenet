@@ -5770,7 +5770,7 @@ void view_exploration_records(int Ind) {
 
 	fprintf(fff,"\377U  Dungeons that are not on this list will give a large experience point bonus\n"
 		    "\377Ufor killing monsters there: An exploration bonus for venturing into the unknown.\n"
-		    "\377UDungeons that have seen only a few explorations will still give a smaller bonus.\n"
+		    "\377UDungeons that have seen several explorations will still give a smaller bonus.\n"
 		    "\377U Dungeons that have seen many explorations will not give an exploration bonus.\n\n");
 
 	/* output the actual list */
