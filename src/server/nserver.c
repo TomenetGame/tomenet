@@ -3204,7 +3204,7 @@ static int Handle_login(int ind)
 		} else {
 			title = (p_ptr->male) ? "King " : "Queen ";
 		}
-	}
+	} else if (p_ptr->mode & MODE_PVP) title = "Gladiator ";
 
 	/* Handle the cfg_secret_dungeon_master option: Only tell other admins. */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
