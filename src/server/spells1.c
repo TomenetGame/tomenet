@@ -7051,6 +7051,20 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			break;
 
+		case GF_STOP: /* prevent monster from moving */
+			dam = (dam - r_ptr->level - rand_int(10)) / 6;
+			if (dam <= 0) {
+				dam = 0;
+				//note: we don't differentiate between 'unaffected' and 'resists' here, a dilemma added by the random factor above.
+				note = " is unaffected";
+			} else {
+				note = " is frozen to the ground";
+				m_ptr->no_move = dam;
+				dam = 0;
+			}
+			quiet_dam = TRUE;
+			break;
+
 		/* Sleep (Use "dam" as "power") */
 		case GF_STASIS:
 			if (seen) obvious = TRUE;
@@ -12073,6 +12087,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_DOMINATE:
 		case GF_TELE_TO:
 		case GF_HAND_DOOM:
+		case GF_STOP:
 		case GF_STASIS:
 		case GF_DEC_STR:
 		case GF_DEC_DEX:

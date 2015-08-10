@@ -178,9 +178,9 @@
 #define GF_EXTRA_SPR		158
 
 #define GF_PUSH			159 /* Moltor */
-
 #define GF_SILENCE		160 /* for new mindcrafters */
 #define GF_CHARMIGNORE		161
+#define GF_STOP			162 /* special fx: scroll of rune of protection in a monster trap - C. Blue */
 
 #define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
 #define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands */

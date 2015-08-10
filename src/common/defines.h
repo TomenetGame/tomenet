@@ -4258,29 +4258,29 @@
 #define GF_BLIND		111
 #define GF_HOLD			112	/* hold */
 #define GF_DOMINATE		113	/* dominate */
-#define GF_BLESS_PLAYER  	114
-#define GF_REMFEAR_PLAYER  	115
-#define GF_SATHUNGER_PLAYER  	116
-#define GF_RESFIRE_PLAYER  	117
-#define GF_RESCOLD_PLAYER  	118
-#define GF_CUREPOISON_PLAYER  	119
-#define GF_SEEINVIS_PLAYER  	120
-#define GF_SEEMAP_PLAYER  	121
-#define GF_CURECUT_PLAYER  	122
-#define GF_CURESTUN_PLAYER  	123
+#define GF_BLESS_PLAYER		114
+#define GF_REMFEAR_PLAYER	115
+#define GF_SATHUNGER_PLAYER	116
+#define GF_RESFIRE_PLAYER	117
+#define GF_RESCOLD_PLAYER	118
+#define GF_CUREPOISON_PLAYER	119
+#define GF_SEEINVIS_PLAYER	120
+#define GF_SEEMAP_PLAYER	121
+#define GF_CURECUT_PLAYER	122
+#define GF_CURESTUN_PLAYER	123
 #define GF_DETECTCREATURE_PLAYER	124
-#define GF_DETECTDOOR_PLAYER  	125
-#define GF_DETECTTRAP_PLAYER  	126
-#define GF_TELEPORTLVL_PLAYER  	127
-#define GF_RESPOIS_PLAYER  	128
-#define GF_RESELEC_PLAYER  	129
-#define GF_RESACID_PLAYER  	130
-#define GF_HPINCREASE_PLAYER  	131
-#define GF_HERO_PLAYER  	132
-#define GF_SHERO_PLAYER  	133
+#define GF_DETECTDOOR_PLAYER	125
+#define GF_DETECTTRAP_PLAYER	126
+#define GF_TELEPORTLVL_PLAYER	127
+#define GF_RESPOIS_PLAYER	128
+#define GF_RESELEC_PLAYER	129
+#define GF_RESACID_PLAYER	130
+#define GF_HPINCREASE_PLAYER	131
+#define GF_HERO_PLAYER		132
+#define GF_SHERO_PLAYER		133
 
-#define GF_UNBREATH     	134
-#define GF_WAVE         	135
+#define GF_UNBREATH		134
+#define GF_WAVE			135
 
 #define GF_TELEPORT_PLAYER 	136	/* UNUSED actually: only s_convey used it once */
 
@@ -4290,13 +4290,13 @@
 #define GF_RESURRECT_PLAYER 	140
 #define GF_SANITY_PLAYER 	141
 #define GF_ZEAL_PLAYER 		142
-#define GF_DISP_DEMON   	143
+#define GF_DISP_DEMON		143
 #define GF_SOULCURE_PLAYER	144
 #define GF_MINDBOOST_PLAYER	145
 #define GF_REMCONF_PLAYER	146
 #define GF_REMIMAGE_PLAYER	147
 #define GF_SLOWPOISON_PLAYER 	148
-#define GF_CURING 		149
+#define GF_CURING		149
 
 /* Zangband changes */
 #define GF_TELE_TO		150
@@ -4313,9 +4313,9 @@
 #define GF_EXTRA_SPR		158
 
 #define GF_PUSH 		159 /* Moltor */
-
 #define GF_SILENCE		160 /* for new mindcrafters */
 #define GF_CHARMIGNORE		161
+#define GF_STOP			162 /* special fx: scroll of rune of protection in a monster trap - C. Blue */
 
 #define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
 #define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands */
@@ -4338,7 +4338,7 @@
 // #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
 #define GF_SHOW_LIGHTNING	211
 
-#define GF_CROSSHAIR 		250 /* what's this for? appearently unused; moved it to 250 */
+#define GF_CROSSHAIR		250 /* what's this for? appearently unused; moved it to 250 */
 
 
 #if 0	/* Let's implement one by one.. */

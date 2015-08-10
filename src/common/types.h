@@ -884,6 +884,7 @@ struct monster_type {
    s16b csleep;		/* Inactive counter */
 
    s16b energy;		/* Monster "energy" */
+   byte no_move;	/* special effect GF_STOP */
 
    byte monfear;		/* Monster is afraid */
    byte monfear_gone;		/* Monster is no longer afraid because it has no other options or is temporarily immune */

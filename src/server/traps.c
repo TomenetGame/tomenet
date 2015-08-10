@@ -3092,8 +3092,7 @@ static s16b pop_montrap(int Ind, object_type *j_ptr, u16b next_o_idx) {
  * Also, it will fail or give weird results if the tvals are resorted!
  */
 //void do_cmd_set_trap(int Ind, int item_kit, int item_load, int num)
-void do_cmd_set_trap(int Ind, int item_kit, int item_load)
-{
+void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	player_type *p_ptr = Players[Ind];
 	//worldpos *wpos = &p_ptr->wpos;
 	int py = p_ptr->py, px = p_ptr->px, i;
@@ -3245,7 +3244,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	i_ptr->number = 1;
 
 	/* Set difficulty */
-	cs_ptr->sc.montrap.difficulty = get_skill(p_ptr, SKILL_TRAPPING);
+	cs_ptr->sc.montrap.difficulty = get_skill(p_ptr, SKILL_TRAPPING) + 5;
 
 	/* Drop it here */
 //	cave[py][px].special2 = floor_carry(py, px, i_ptr);
@@ -3399,9 +3398,9 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 //		m_ptr->smart |= SM_NOTE_TRAP;
 		break;
 	case SV_ROD_ILLUMINATION:
-		typ = GF_LITE_WEAK;
-		dam = damroll(2, 15);
-		rad = 3;
+		typ = GF_LITE;//GF_LITE_WEAK;
+		dam = damroll(4, 6);
+		rad = 2;
 //		lite_room(y, x);
 		break;
 	case SV_ROD_CURING:
@@ -3423,7 +3422,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	case SV_ROD_DISARMING:
 		break;
 	case SV_ROD_LITE:
-		typ = GF_LITE_WEAK;
+		typ = GF_LITE;//GF_LITE_WEAK;
 		dam = damroll(6, 8);
 		break;
 	case SV_ROD_SLEEP_MONSTER:
@@ -3542,6 +3541,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		case SV_STAFF_PROBING:
 		case SV_STAFF_THE_MAGI:
 			return (FALSE);
+
 		case SV_STAFF_REMOVE_CURSE:
 			typ = GF_DISP_EVIL;
 			rad = 2;
@@ -3549,7 +3549,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_STAFF_DARKNESS:
 //			unlite_room(y, x);
-			typ = GF_DARK_WEAK;
+			typ = GF_DARK;//GF_DARK_WEAK
 			dam = 10;
 			rad = 4;
 			break;
@@ -3576,14 +3576,14 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_STAFF_STARLITE:
 			/* Hack */
-			typ = GF_LITE_WEAK;
+			typ = GF_LITE;//GF_LITE_WEAK;
 			dam = damroll(6, 8);
 			rad = 3;
 			break;
 		case SV_STAFF_LITE:
 //			lite_room(y, x);
-			typ = GF_LITE_WEAK;
-			dam = damroll(2, 8);
+			typ = GF_LITE;//GF_LITE_WEAK;
+			dam = damroll(3, 8);
 			rad = 2;
 			break;
 		case SV_STAFF_DETECT_TRAP:
@@ -3604,12 +3604,12 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		case SV_STAFF_SLEEP_MONSTERS:
 			typ = GF_OLD_SLEEP;
 			dam = damroll(5, 10);
-			rad = 5;
+			rad = 4;
 			break;
 		case SV_STAFF_SLOW_MONSTERS:
 			typ = GF_OLD_SLOW;
 			dam = damroll(5, 10);
-			rad = 5;
+			rad = 4;
 			break;
 		case SV_STAFF_SPEED:
 			typ = GF_OLD_SPEED;
@@ -3644,7 +3644,8 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			monster_race    *r_ptr = race_inf(m_ptr);
 			genocide_aux(0, &wpos, r_ptr->d_char);
 			identify_mon_trap_load(who, o_ptr);
-			/* although there's no point in a multiple genocide trap... */
+			/* although there's no point in a multiple genocide trap...
+			   ..monsters could resist at 1st attempt maybe? */
 			return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 		}
 		case SV_STAFF_EARTHQUAKES:
@@ -3677,8 +3678,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
  *
  * Return TRUE if the monster died
  */
-static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
-{
+static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 	worldpos wpos = m_ptr->wpos;
@@ -3713,13 +3713,19 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 		case SV_SCROLL_DETECT_DOOR:
 		case SV_SCROLL_DETECT_INVIS:
 		case SV_SCROLL_SATISFY_HUNGER:
-		case SV_SCROLL_RUNE_OF_PROTECTION:
 		case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
-		case SV_SCROLL_PROTECTION_FROM_EVIL:
 			return (FALSE);
+
+		case SV_SCROLL_RUNE_OF_PROTECTION:
+			typ = GF_STOP;
+			dam = 100;
+		case SV_SCROLL_PROTECTION_FROM_EVIL:
+			typ = GF_DISP_EVIL;
+			dam = 150;
+			rad = 3;
 		case SV_SCROLL_DARKNESS:
 //			unlite_room(y, x);
-			typ = GF_DARK_WEAK;
+			typ = GF_DARK;//GF_DARK_WEAK;
 			dam = 10;
 			rad = 3;
 			break;
@@ -3763,8 +3769,8 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 			return (TRUE);
 		case SV_SCROLL_LIGHT:
 //			lite_room(y, x);
-			typ = GF_LITE_WEAK;
-			dam = damroll(2, 8);
+			typ = GF_LITE;//GF_LITE_WEAK;
+			dam = damroll(3, 6);
 			rad = 2;
 			break;
 		case SV_SCROLL_DETECT_TRAP:
@@ -3866,8 +3872,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
  *
  * Return TRUE if the monster died
  */
-static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
-{
+static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 	int dam = 0, typ = 0, rad = 0;//, cloud = 0, cloudi = 0;
 	int y = m_ptr->fy;
@@ -3887,11 +3892,11 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 			dam = damroll(5, 10);
 			break;
 		case SV_WAND_CLONE_MONSTER:
-		        typ = GF_OLD_CLONE;
-		        break;
+			typ = GF_OLD_CLONE;
+			break;
 		case SV_WAND_TELEPORT_AWAY:
-		        typ = GF_AWAY_ALL;
-		        dam = MAX_SIGHT * 5;
+			typ = GF_AWAY_ALL;
+			dam = MAX_SIGHT * 5;
 		        break;
 		case SV_WAND_DISARMING:
 			return (FALSE);
@@ -3902,7 +3907,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 			dam = 20 + randint(30);
 			break;
 		case SV_WAND_LITE:
-			typ = GF_LITE_WEAK;
+			typ = GF_LITE;//GF_LITE_WEAK;
 			dam = damroll(6, 8);
 			break;
 		case SV_WAND_SLEEP_MONSTER:
@@ -3931,7 +3936,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 			break;
 		case SV_WAND_STINKING_CLOUD:
 			typ = GF_POIS;
-			dam = 4;
+			dam = 20;//4 (if cloud)
 			rad = 2;
 			//cloud = 4;
 			//cloudi = 9;
@@ -4434,8 +4439,7 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
  *
  * XXX: should we allow 'Magic Arrow' monster traps? :)
  */
-bool mon_hit_trap(int m_idx)
-{
+bool mon_hit_trap(int m_idx) {
 	player_type *p_ptr = (player_type*)NULL;
 	monster_type *m_ptr = &m_list[m_idx];
 	//	monster_race *r_ptr = &r_info[m_ptr->r_idx];

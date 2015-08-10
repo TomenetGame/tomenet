@@ -4216,6 +4216,7 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		case GF_WAVE:
 		case GF_DISP_DEMON:
 //		case GF_HAND_DOOM:
+		case GF_STOP:
 		case GF_STASIS:
 		/* To remove some hacks? */
 		case GF_THUNDER:
@@ -4816,15 +4817,13 @@ bool mon_allowed_pickup(int tval) {
 /*
  * TODO: Aquatic out of water should rush for one
  */
-static void get_moves(int Ind, int m_idx, int *mm)
-{
+static void get_moves(int Ind, int m_idx, int *mm){
 	player_type *p_ptr = Players[Ind];
 
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
 
 	int y, ay, x, ax, mwr;
-
 	int move_val = 0;
 
 	int y2 = p_ptr->py;
@@ -4864,7 +4863,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	y = m_ptr->fy - y2;
 	x = m_ptr->fx - x2;
 
-	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
+	if ((r_ptr->flags1 & RF1_NEVER_MOVE) || m_ptr->no_move) {
 		done = TRUE;
 		m_ptr->last_target = 0;
 	}
@@ -5383,14 +5382,12 @@ static void get_moves(int Ind, int m_idx, int *mm)
 }
 
 #ifdef ARCADE_SERVER
-static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
-{
+static void get_moves_arc(int targy, int targx, int m_idx, int *mm) {
 
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
 
 	int y, ay, x, ax;
-
 	int move_val = 0;
 
         int y2 = targy;
@@ -5402,7 +5399,7 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 	y = m_ptr->fy - y2;
 	x = m_ptr->fx - x2;
 
-	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
+	if ((r_ptr->flags1 & RF1_NEVER_MOVE) || m_ptr->no_move) {
 		//done = TRUE;
 		m_ptr->last_target = 0;
 	}
@@ -5418,30 +5415,23 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 	if (x > 0) move_val += 4;
 
 	/* Prevent the diamond maneuvre */
-	if (ay > (ax << 1))
-	{
+	if (ay > (ax << 1)) {
 		move_val++;
 		move_val++;
-	}
-	else if (ax > (ay << 1))
-	{
+	} else if (ax > (ay << 1)) {
 		move_val++;
 	}
 
 	/* Extract some directions */
-	switch (move_val)
-	{
+	switch (move_val) {
 		case 0:
 		mm[0] = 9;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 8;
 			mm[2] = 6;
 			mm[3] = 7;
 			mm[4] = 3;
-		}
-		else
-		{
+		} else {
 			mm[1] = 6;
 			mm[2] = 8;
 			mm[3] = 3;
@@ -5451,15 +5441,12 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 		case 1:
 		case 9:
 		mm[0] = 6;
-		if (y < 0)
-		{
+		if (y < 0) {
 			mm[1] = 3;
 			mm[2] = 9;
 			mm[3] = 2;
 			mm[4] = 8;
-		}
-		else
-		{
+		} else {
 			mm[1] = 9;
 			mm[2] = 3;
 			mm[3] = 8;
@@ -5469,15 +5456,12 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 		case 2:
 		case 6:
 		mm[0] = 8;
-		if (x < 0)
-		{
+		if (x < 0) {
 			mm[1] = 9;
 			mm[2] = 7;
 			mm[3] = 6;
 			mm[4] = 4;
-		}
-		else
-		{
+		} else {
 			mm[1] = 7;
 			mm[2] = 9;
 			mm[3] = 4;
@@ -5486,15 +5470,12 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 		break;
 		case 4:
 		mm[0] = 7;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 8;
 			mm[2] = 4;
 			mm[3] = 9;
 			mm[4] = 1;
-		}
-		else
-		{
+		} else {
 			mm[1] = 4;
 			mm[2] = 8;
 			mm[3] = 1;
@@ -5504,15 +5485,12 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 		case 5:
 		case 13:
 		mm[0] = 4;
-		if (y < 0)
-		{
+		if (y < 0) {
 			mm[1] = 1;
 			mm[2] = 7;
 			mm[3] = 2;
 			mm[4] = 8;
-		}
-		else
-		{
+		} else {
 			mm[1] = 7;
 			mm[2] = 1;
 			mm[3] = 8;
@@ -5521,15 +5499,12 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 		break;
 		case 8:
 		mm[0] = 3;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 2;
 			mm[2] = 6;
 			mm[3] = 1;
 			mm[4] = 9;
-		}
-		else
-		{
+		} else {
 			mm[1] = 6;
 			mm[2] = 2;
 			mm[3] = 9;
@@ -5539,15 +5514,12 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 		case 10:
 		case 14:
 		mm[0] = 2;
-		if (x < 0)
-		{
+		if (x < 0) {
 			mm[1] = 3;
 			mm[2] = 1;
 			mm[3] = 6;
 			mm[4] = 4;
-		}
-		else
-		{
+		} else {
 			mm[1] = 1;
 			mm[2] = 3;
 			mm[3] = 4;
@@ -5556,15 +5528,12 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 		break;
 		case 12:
 		mm[0] = 1;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 2;
 			mm[2] = 4;
 			mm[3] = 3;
 			mm[4] = 7;
-		}
-		else
-		{
+		} else {
 			mm[1] = 4;
 			mm[2] = 2;
 			mm[3] = 7;
@@ -5580,30 +5549,24 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
  * Choose "logical" directions for pet movement
  * Returns TRUE to move, FALSE to stand still
  */
-static bool get_moves_pet(int Ind, int m_idx, int *mm)
-{
-        player_type *p_ptr;
-
+static bool get_moves_pet(int Ind, int m_idx, int *mm) {
+	player_type *p_ptr;
 	monster_type *m_ptr = &m_list[m_idx];
 
 	int y, ay, x, ax;
-
 	int move_val = 0;
 
-        int tm_idx = 0;
+	int tm_idx = 0;
+	int y2, x2;
 
-        int y2, x2;
-
-        if (Ind > 0) p_ptr = Players[Ind];
-        else p_ptr = NULL;
+	if (Ind > 0) p_ptr = Players[Ind];
+	else p_ptr = NULL;
 
         /* Lets find a target */
 
-        if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && p_ptr->target_who && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who)))
-        {
+        if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && p_ptr->target_who && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who))) {
                 tm_idx = p_ptr->target_who;
-        }
-        else// if (m_ptr->mind & GOLEM_GUARD)
+        } else// if (m_ptr->mind & GOLEM_GUARD)
         {
                 int sx, sy;
                 s32b max_hp = 0;
@@ -5834,16 +5797,12 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm)
  * Choose "logical" directions for monster golem movement
  * Returns TRUE to move, FALSE to stand still
  */
-static bool get_moves_golem(int Ind, int m_idx, int *mm)
-{
+static bool get_moves_golem(int Ind, int m_idx, int *mm) {
         player_type *p_ptr;
-
 	monster_type *m_ptr = &m_list[m_idx];
 
 	int y, ay, x, ax;
-
 	int move_val = 0;
-
         int tm_idx = 0;
 
         int y2, x2;
@@ -6236,8 +6195,7 @@ static bool get_moves_questor(int Ind, int m_idx, int *mm) {
 
 /* Determine whether the player is invisible to a monster */
 /* Maybe we'd better add SEE_INVIS flags to the monsters.. */
-static bool player_invis(int Ind, monster_type *m_ptr, int dist)
-{
+static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = race_inf(m_ptr);
 	s16b inv, mlv;
@@ -6953,6 +6911,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	if (m_ptr->silenced > 0) m_ptr->silenced--;
 	else if (m_ptr->silenced < 0) m_ptr->silenced++;
 
+	/* Handle "stopped" */
+	if (m_ptr->no_move) {
+		m_ptr->no_move--;
+		//m_ptr->monfear = 0; }
+		if (!m_ptr->no_move) msg_print_near_monster(m_idx, "is no longer frozen to the ground.");
+	}
+
 	/* Get the origin */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
@@ -7651,7 +7616,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 
 		/* Some monsters never move */
-		if (do_move && (r_ptr->flags1 & RF1_NEVER_MOVE)) {
+		if (do_move && ((r_ptr->flags1 & RF1_NEVER_MOVE) || m_ptr->no_move)) {
 #ifdef OLD_MONSTER_LORE
 			/* Hack -- memorize lack of attacks */
 			/* if (m_ptr->ml) r_ptr->r_flags1 |= RF1_NEVER_MOVE; */
