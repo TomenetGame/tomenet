@@ -4049,7 +4049,12 @@ void calc_boni(int Ind) {
 		if (am_temp > 0) csheet_boni[i-INVEN_WIELD].amfi = am_temp; //Track individual item boni, knowing they don't stack
 		if (am_temp > am_bonus) am_bonus = am_temp;
 
-		if (f4 & (TR4_BLACK_BREATH)) p_ptr->black_breath_tmp = TRUE;
+		if ((f4 & (TR4_BLACK_BREATH))
+#ifdef VAMPIRES_BB_IMMUNE
+		    && p_ptr->prace != RACE_VAMPIRE
+#endif
+		    )
+			p_ptr->black_breath_tmp = TRUE;
 
 //		if (f5 & (TR5_IMMOVABLE)) p_ptr->immovable = TRUE;
 
