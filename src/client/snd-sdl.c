@@ -1514,8 +1514,19 @@ static bool play_music(int event) {
 		return FALSE;
 	}
 
-
 	music_next = event;
+	music_next_song = rand_int(songs[music_next].num);
+
+	/* new: if upcoming music file is same as currently playing one, don't do anything */
+	if (songs[music_next].num /* Check there are samples for this event */
+	    && !strcmp(
+	     songs[music_next].paths[music_next_song], /* Choose a random event and pretend it's the one that would've gotten picked */
+	     songs[music_cur].paths[music_cur_song]
+	     )) {
+		music_next = event;
+		music_next_song = music_cur_song;
+		return TRUE;
+	}
 
 	/* check if music is already running, if so, fade it out first! */
 	if (Mix_PlayingMusic()) {
@@ -1530,7 +1541,6 @@ static bool play_music(int event) {
 
 static void fadein_next_music(void) {
 	Mix_Music *wave = NULL;
-	int s;
 
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_music) return;
@@ -1542,25 +1552,24 @@ static void fadein_next_music(void) {
 	if (songs[music_next].disabled) return;
 
 	/* Check there are samples for this event */
-	if (!songs[music_next].num) return;
+	if (songs[music_next].num < music_next_song + 1) return;
 
-	/* Choose a random event */
-	s = rand_int(songs[music_next].num);
-	wave = songs[music_next].wavs[s];
+	/* Choose the predetermined random event */
+	wave = songs[music_next].wavs[music_next_song];
 
 	/* Try loading it, if it's not cached */
-	if (!wave && !(wave = load_song(music_next, s))) {
+	if (!wave && !(wave = load_song(music_next, music_next_song))) {
 		/* we really failed to load it */
-		plog(format("SDL music load failed (%d, %d).", music_next, s));
-		puts(format("SDL music load failed (%d, %d).", music_next, s));
+		plog(format("SDL music load failed (%d, %d).", music_next, music_next_song));
+		puts(format("SDL music load failed (%d, %d).", music_next, music_next_song));
 		return;
 	}
 
 	/* Actually play the thing */
-#ifdef DISABLE_MUTED_AUDIO
+//#ifdef DISABLE_MUTED_AUDIO /* now these vars are also used for 'continous' music across music events */
 	music_cur = music_next;
-	music_cur_song = s;
-#endif
+	music_cur_song = music_next_song;
+//#endif
 	music_next = -1;
 //	Mix_PlayMusic(wave, -1);//-1 infinite, 0 once, or n times
 	Mix_FadeInMusic(wave, -1, 1000);
