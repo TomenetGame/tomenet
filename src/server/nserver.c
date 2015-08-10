@@ -3909,7 +3909,8 @@ static int Receive_login(int ind) {
 		   imprints the condensed name onto a newly created account.
 		   Don't prevent already existing accounts from logging in though. */
 		if (!(acc = Admin_GetAccount(connp->nick)) && lookup_similar_account(connp->nick, NULL)) {
-			Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case.");
+			//Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case."); //<- if not doing any 'similar' checks, it makes sense to point out case-sensitivity
+			Destroy_connection(ind, "A too similar name is already in use. Please choose a different name.");
 			return -1;
 		}
 		KILL(acc, struct account);
