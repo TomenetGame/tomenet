@@ -2048,7 +2048,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	artifact_type *a_ptr;
 	s32b total = 0, am, minus, slay = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
-	int res_amass = 0, res_base;
+	int res_amass = 0, res_base, imms = 0;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -2131,21 +2131,25 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		total += 30000;
 		res_amass += 2;
 		f2 |= TR2_RES_ACID;
+		imms++;
 	} else if (f2 & TR2_RES_ACID) total += 1250;
 	if (f2 & TR2_IM_ELEC) {
 		total += 20000;
 		res_amass += 2;
 		f2 |= TR2_RES_ELEC;
+		imms++;
 	} else if (f2 & TR2_RES_ELEC) total += 1250;
 	if (f2 & TR2_IM_FIRE) {
 		total += 30000;
 		res_amass += 2;
 		f2 |= TR2_RES_FIRE;
+		imms++;
 	} else if (f2 & TR2_RES_FIRE) total += 1250;
 	if (f2 & TR2_IM_COLD) {
 		total += 20000;
 		res_amass += 2;
 		f2 |= TR2_RES_COLD;
+		imms++;
 	} else if (f2 & TR2_RES_COLD) total += 1250;
 	/* count (semi)complete base res as 1up too */
 	res_base =
@@ -2155,6 +2159,13 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	    (f2 & (TR2_RES_COLD)) ? 1 : 0;
 	if (res_base == 3) res_amass++;
 	else if (res_base == 4) res_amass += 2;
+
+	/* immunities on armour are worth more than on weapons */
+	/* also, double-immunity is especially valuable */
+	if (is_armour(o_ptr->tval)) {
+		total += imms * 10000;
+		if (imms >= 2) total += 40000; /* can't have more than 2 immunities on a randart anyway */
+	} else if (imms >= 2) total += 40000; /* can't have more than 2 immunities on a randart anyway */
 
 	if (f2 & TR2_RES_POIS) {
 		total += 5000;
@@ -2290,6 +2301,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 static int artifact_flag_rating_armour(object_type *o_ptr) {
 	s32b total = 0, slay = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
+	int imms = 0;
 
 	/* this routine treats armour only */
 	if ((o_ptr->name1 != ART_RANDART) || !is_armour(o_ptr->tval)) return 0;
@@ -2305,27 +2317,33 @@ static int artifact_flag_rating_armour(object_type *o_ptr) {
 	if (f2 & TR2_IM_ACID) {
 		total += 6;
 		f2 |= TR2_RES_ACID;
+		imms++;
 	}
 	else if (f2 & TR2_RES_ACID) total++;
 	if (f2 & TR2_IM_ELEC) {
 		total += 6;
 		f2 |= TR2_RES_ELEC;
+		imms++;
 	}
 	else if (f2 & TR2_RES_ELEC) total++;
 	if (f2 & TR2_IM_FIRE) {
 		total += 6;
 		f2 |= TR2_RES_FIRE;
+		imms++;
 	}
 	else if (f2 & TR2_RES_FIRE) total++;
 	if (f2 & TR2_IM_COLD) {
 		total += 6;
 		f2 |= TR2_RES_COLD;
+		imms++;
 	}
 	else if (f2 & TR2_RES_COLD) total++;
 	/* count complete base res as 1up too */
 	if ((f2 & (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
 	    == (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
 		total += 4;
+	/* double-immunity is especially great */
+	if (imms >= 2) total += 6;
 	if (f2 & TR2_RES_POIS) total += 4;
 	if (f2 & TR2_RES_LITE) total += 2;
 	if (f2 & TR2_RES_DARK) total += 2;
@@ -2380,7 +2398,7 @@ static int artifact_flag_rating_armour(object_type *o_ptr) {
 static int artifact_flag_rating_weapon(object_type *o_ptr) {
 	s32b total = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
-	int slay = 0;
+	int slay = 0, imms = 0;
 
 	/* this routine treats armour only */
 	if ((o_ptr->name1 != ART_RANDART) || !is_weapon(o_ptr->tval)) return 0;
@@ -2395,10 +2413,12 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 
 
 	/* Too useful to ignore, but not really helping damage */
-	if (f2 & TR2_IM_ACID) total++;
-	if (f2 & TR2_IM_ELEC) total++;
-	if (f2 & TR2_IM_FIRE) total++;
-	if (f2 & TR2_IM_COLD) total++;
+	if (f2 & TR2_IM_ACID) { imms++; total++; }
+	if (f2 & TR2_IM_ELEC) { imms++; total++; }
+	if (f2 & TR2_IM_FIRE) { imms++; total++; }
+	if (f2 & TR2_IM_COLD) { imms++; total++; }
+	/* double-immunity is very useful for some characters */
+	if (imms >= 2) total += 6;
 	if (esp & ESP_ALL) total++;
 
 	/* 'The' weapon mods */
