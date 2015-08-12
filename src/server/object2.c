@@ -2342,8 +2342,11 @@ static int artifact_flag_rating_armour(object_type *o_ptr) {
 	if ((f2 & (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
 	    == (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD))
 		total += 4;
+
+	/* already done in artifact_value_real, but ALSO here, since immunities are even much more essential on armour than on weapons: */
 	/* double-immunity is especially great */
 	if (imms >= 2) total += 6;
+
 	if (f2 & TR2_RES_POIS) total += 4;
 	if (f2 & TR2_RES_LITE) total += 2;
 	if (f2 & TR2_RES_DARK) total += 2;
@@ -2398,7 +2401,7 @@ static int artifact_flag_rating_armour(object_type *o_ptr) {
 static int artifact_flag_rating_weapon(object_type *o_ptr) {
 	s32b total = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
-	int slay = 0, imms = 0;
+	int slay = 0;
 
 	/* this routine treats armour only */
 	if ((o_ptr->name1 != ART_RANDART) || !is_weapon(o_ptr->tval)) return 0;
@@ -2413,12 +2416,10 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 
 
 	/* Too useful to ignore, but not really helping damage */
-	if (f2 & TR2_IM_ACID) { imms++; total++; }
-	if (f2 & TR2_IM_ELEC) { imms++; total++; }
-	if (f2 & TR2_IM_FIRE) { imms++; total++; }
-	if (f2 & TR2_IM_COLD) { imms++; total++; }
-	/* double-immunity is very useful for some characters */
-	if (imms >= 2) total += 6;
+	if (f2 & TR2_IM_ACID) total++;
+	if (f2 & TR2_IM_ELEC) total++;
+	if (f2 & TR2_IM_FIRE) total++;
+	if (f2 & TR2_IM_COLD) total++;
 	if (esp & ESP_ALL) total++;
 
 	/* 'The' weapon mods */
