@@ -1518,7 +1518,8 @@ static bool play_music(int event) {
 	music_next_song = rand_int(songs[music_next].num);
 
 	/* new: if upcoming music file is same as currently playing one, don't do anything */
-	if (songs[music_next].num /* Check there are samples for this event */
+	if (music_cur != -1 && music_cur_song != -1 &&
+	    songs[music_next].num /* Check there are samples for this event */
 	    && !strcmp(
 	     songs[music_next].paths[music_next_song], /* Choose a random event and pretend it's the one that would've gotten picked */
 	     songs[music_cur].paths[music_cur_song]
