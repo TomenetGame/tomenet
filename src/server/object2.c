@@ -7473,6 +7473,32 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			default: break;
 		}
 
+#ifdef TRAPKIT_EGO_ALL
+		/* actually prevent restrictive ego powers! would be too useless in early game stages! */
+		if (k_info[k_idx].tval == TV_TRAPKIT) {
+			/* note about this hack:
+			   we assume that the stat-changes done to the base item by ego'ing it
+			   are the same for TEVIL as for the others, so we don't have to adjust
+			   them and can just hack the ego type here simply. */
+			switch (o_ptr->name2) {
+			case EGO_TDRAGON:
+			case EGO_TDEMON:
+			case EGO_TANIMAL:
+			case EGO_TUNDEAD:
+				o_ptr->name2 = EGO_TEVIL;
+				break;
+			default:
+				switch (o_ptr->name2b) {
+				case EGO_TDRAGON:
+				case EGO_TDEMON:
+				case EGO_TANIMAL:
+				case EGO_TUNDEAD:
+					o_ptr->name2b = EGO_TEVIL;
+				}
+			}
+		}
+#endif
+
 		/* a reward should have some value: */
 		if (object_value_real(0, o_ptr) < 5000) continue;
 		if (o_ptr->name2) { /* should always be true actually! just paranoia */
