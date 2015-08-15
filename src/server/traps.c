@@ -3467,27 +3467,27 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 		break;
 	case SV_ROD_ACID_BALL:
 		typ = GF_ACID;
-		dam = 320;
+		dam = 100;
 		rad = 2;
 		break;
 	case SV_ROD_ELEC_BALL:
 		typ = GF_ELEC;
-		dam = 250;
+		dam = 90;
 		rad = 2;
 		break;
 	case SV_ROD_FIRE_BALL:
 		typ = GF_FIRE;
-		dam = 350;
+		dam = 105;
 		rad = 2;
 		break;
 	case SV_ROD_COLD_BALL:
 		typ = GF_COLD;
-		dam = 300;
+		dam = 95;
 		rad = 2;
 		break;
 	case SV_ROD_HAVOC:
 		typ = GF_CHAOS;
-		dam = 500;
+		dam = 200;
 		rad = 5;
 		break;
 	default:
@@ -3498,7 +3498,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 
 	/* Trapping skill influences damage - C. Blue */
 	if (typ != GF_CURING) {
-		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
+		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 	}
 
@@ -3621,12 +3621,12 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_STAFF_POWER:
 			typ = GF_DISP_ALL;
-			dam = 120;
+			dam = 80;
 			rad = 3;
 			break;
 		case SV_STAFF_HOLINESS:
 			typ = GF_DISP_EVIL;
-			dam = 180;
+			dam = 100;
 			rad = 3;
 			break;
 #if 0
@@ -3663,8 +3663,8 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 
 	/* Trapping skill influences damage - C. Blue */
 	if (typ != GF_CURING) {
-		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
-		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
+		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3;
 	}
 	/* ..and new, also radius (if any, and if not kind of stone-prison like effect (rad 1) - which is paranoia since we don't have that atm) */
 	if (rad >= 2) rad += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty / 15;
@@ -3722,12 +3722,12 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			dam = 100;
 		case SV_SCROLL_PROTECTION_FROM_EVIL:
 			typ = GF_DISP_EVIL;
-			dam = 150;
+			dam = 100;
 			rad = 3;
 		case SV_SCROLL_DARKNESS:
 //			unlite_room(y, x);
 			typ = GF_DARK;//GF_DARK_WEAK;
-			dam = 10;
+			dam = 15;
 			rad = 3;
 			break;
 		case SV_SCROLL_AGGRAVATE_MONSTER:
@@ -3788,7 +3788,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_SCROLL_HOLY_PRAYER:
                         typ = GF_HOLY_FIRE;
-			dam = damroll(50, 4);
+			dam = damroll(30, 4);
 			break;
 		case SV_SCROLL_MONSTER_CONFUSION:
 			typ = GF_OLD_CONF;
@@ -3801,7 +3801,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 		case SV_SCROLL_DISPEL_UNDEAD:
 			typ = GF_DISP_UNDEAD;
 			rad = 5;
-			dam = 200;
+			dam = 100;
 			break;
 		case SV_SCROLL_GENOCIDE:
 			genocide_aux(0, &wpos, r_ptr->d_char);
@@ -3822,12 +3822,12 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_REMOVE_CURSE:
-			typ = GF_DISP_EVIL;
+			typ = GF_DISP_UNDEAD;
 			rad = 5;
 			dam = 30;
 			break;
 		case SV_SCROLL_STAR_REMOVE_CURSE:
-			typ = GF_DISP_EVIL;
+			typ = GF_DISP_UNDEAD;
 			rad = 5;
 			dam = 200;
 			break;
@@ -3840,18 +3840,18 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 		case SV_SCROLL_FIRE:
 			typ = GF_FIRE;
 			rad = 3;
-			dam = 250;
+			dam = 100;
 			break;
 		case SV_SCROLL_ICE:
 			typ = GF_ICE;
 			rad = 3;
 //			dam = 200;
-			dam = 250;
+			dam = 90;
 			break;
 		case SV_SCROLL_CHAOS:
 			typ = GF_CHAOS;
 			rad = 3;
-			dam = 300;
+			dam = 110;
 			break;
 		default:
 			return (FALSE);
@@ -3860,7 +3860,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	identify_mon_trap_load(who, o_ptr);
 
 	/* Trapping skill influences damage - C. Blue */
-	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
+	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 
 	/* Actually hit the monster */
@@ -3905,7 +3905,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			return (FALSE);
 		case SV_WAND_STONE_TO_MUD:
 			typ = GF_KILL_WALL;
-			dam = 20 + randint(30);
+			dam = 50 + randint(30);
 			break;
 		case SV_WAND_LITE:
 			typ = GF_LITE;//GF_LITE_WEAK;
@@ -3944,12 +3944,12 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_WAND_MAGIC_MISSILE:
 			typ = GF_MISSILE;
-			dam = damroll(2, 6);
+			dam = damroll(3, 6);
 			flg &= ~PROJECT_NORF;
 			break;
 		case SV_WAND_ACID_BOLT:
 			typ = GF_ACID;
-			dam = damroll(5, 8);
+			dam = damroll(6, 8);
 			flg &= ~PROJECT_NORF;
 			flg |= PROJECT_EVSG;
 			break;
@@ -3961,13 +3961,13 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_WAND_ELEC_BOLT:
 			typ = GF_ELEC;
-			dam = damroll(4, 8);
+			dam = damroll(5, 8);
 			flg &= ~PROJECT_NORF;
 			flg |= PROJECT_EVSG;
 			break;
 		case SV_WAND_COLD_BOLT:
 			typ = GF_COLD;
-			dam = damroll(4, 8);
+			dam = damroll(5, 8);
 			flg &= ~PROJECT_NORF;
 			flg |= PROJECT_EVSG;
 			break;
@@ -3979,16 +3979,16 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 		case SV_WAND_ELEC_BALL:
 			typ = GF_ELEC;
 			rad = 2;
-			dam = 42;
+			dam = 52;
 			break;
 		case SV_WAND_FIRE_BALL:
 			typ = GF_FIRE;
 			rad = 2;
-			dam = 72;
+			dam = 68;
 			break;
 		case SV_WAND_COLD_BALL:
 			typ = GF_COLD;
-			dam = 50;
+			dam = 60;
 			rad = 2;
 			break;
 		case SV_WAND_ANNIHILATION:
@@ -4003,7 +4003,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_WAND_DRAGON_COLD:
 			typ = GF_COLD;
-			dam = 150;
+			dam = 170;
 			rad = 3;
 			break;
 		case SV_WAND_DRAGON_BREATH:
@@ -4014,7 +4014,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 				case 4: typ = GF_COLD; break;
 				case 5: typ = GF_POIS; break;
 			}
-			dam = 175;
+			dam = 250;
 			rad = 3;
 			break;
 		case SV_WAND_TELEPORT_TO:
@@ -4022,7 +4022,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_WAND_ROCKETS:
 			typ = GF_ROCKET;
-			dam = 500;
+			dam = 300;
 			rad = 3;
 			break;
 		case SV_WAND_WALL_CREATION:
@@ -4039,8 +4039,8 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	identify_mon_trap_load(who, o_ptr);
 
 	/* Trapping skill influences damage - C. Blue */
-	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
-	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2); dam /= 50;
+	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
 
 #ifdef USE_SOUND_2010
 	if (rad && who > 0) { /* TODO: make it audible for ALL players in LOS maybe? probably too much */
@@ -4213,7 +4213,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			case SV_POTION_DEATH:
 				rad = 3;
 				typ = GF_NETHER;
-				dam = damroll(100, 20);
+				dam = damroll(60, 20);
 				break;
 			case SV_POTION_BOLDNESS:
 /*				if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
@@ -4290,8 +4290,8 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 
 	/* Trapping skill influences damage - C. Blue */
 	if (typ != GF_CURING) {
-		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
-		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+		dam *= (150 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
+		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1;
 	}
 
 	/* Actually hit the monster */
@@ -4313,107 +4313,107 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 	switch (o_ptr->sval) {
 	case SV_R_LITE:
 		typ = GF_LITE;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_DARK:
 		typ = GF_DARK;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_NEXU:
 		typ = GF_NEXUS;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_NETH:
 		typ = GF_NETHER;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_CHAO:
 		typ = GF_CHAOS;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_MANA:
 		typ = GF_MANA;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_CONF:
 		typ = GF_CONFUSION;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_INER:
 		typ = GF_INERTIA;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_ELEC:
 		typ = GF_ELEC;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_FIRE:
 		typ = GF_FIRE;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_WATE:
 		typ = GF_WAVE;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_GRAV:
 		typ = GF_GRAVITY;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_COLD:
 		typ = GF_COLD;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_ACID:
 		typ = GF_ACID;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_POIS:
 		typ = GF_POIS;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_TIME:
 		typ = GF_TIME;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_SOUN:
 		typ = GF_SOUND;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_SHAR:
 		typ = GF_SHARDS;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_DISE:
 		typ = GF_DISENCHANT;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_FORC:
 		typ = GF_FORCE;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	case SV_R_PLAS:
 		typ = GF_PLASMA;
-		dam = damroll(10, 30);
+		dam = damroll(10, 20);
 		rad = 2;
 	break;
 	default:
@@ -4421,8 +4421,8 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 	}
 
 	/* Trapping skill influences damage - C. Blue */
-	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
-	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
+	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
@@ -4675,9 +4675,9 @@ bool mon_hit_trap(int m_idx) {
 				chance = (kit_o_ptr->to_h + load_o_ptr->to_h + 20) * BTH_PLUS_ADJ;
 
 				/* Damage multiplier */
-				if (kit_o_ptr->sval == SV_TRAPKIT_SLING) mul = 25;
-				if (kit_o_ptr->sval == SV_TRAPKIT_BOW) mul = 30;
-				if (kit_o_ptr->sval == SV_TRAPKIT_XBOW) mul = 35;
+				if (kit_o_ptr->sval == SV_TRAPKIT_SLING) mul = 30;
+				if (kit_o_ptr->sval == SV_TRAPKIT_BOW) mul = 35;
+				if (kit_o_ptr->sval == SV_TRAPKIT_XBOW) mul = 40;
 				if (f3 & TR3_XTRA_MIGHT) mul += (kit_o_ptr->pval * 10);
 				if (mul < 0) mul = 0;
 
@@ -4685,8 +4685,8 @@ bool mon_hit_trap(int m_idx) {
 				dam = (dam * mul) / 10;
 
 				/* Trapping skill influences damage - C. Blue */
-//a little bit toned down here O_o	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
-				dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1;
+				//dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1); dam /= 50;
+				dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
 
 				/* Check if we hit the monster */
 				if (test_hit_fire(chance, m_ptr->ac, TRUE)) {
