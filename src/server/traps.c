@@ -3562,7 +3562,6 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			typ = GF_OLD_SPEED;
 			dam = damroll(5, 10);
 			rad = 2;
-			rad = 5;	/* hack */
 			break;
 		case SV_STAFF_SUMMONING:
 			for (k = 0; k < randint(4) ; k++)
