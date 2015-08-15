@@ -4700,7 +4700,7 @@ Chain_Macro:
 							/* invalid action -> exit wizard */
 							if ((choice < 'a' || choice > mw_LAST) &&
 							    choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' &&
-							    choice != 'G' && choice != 'I' && choice != 'K') {
+							    choice != 'G' && choice != 'I' && choice != 'K' && choice != 'H') {
 //								i = -1;
 								continue;
 							}
