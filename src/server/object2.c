@@ -6920,6 +6920,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 	/* concrete reward */
 	int reward_tval = 0, reward_sval = 0, k_idx = 0, reward_maxweight = 500;
+	int force_tval = o_ptr->tval;
 
 	invwipe(o_ptr);
 
@@ -7092,6 +7093,12 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	case 6: reward_maxweight = 500;
 		reward_tval = TV_TRAPKIT;
 		break;
+	}
+
+	/* admin-hacked? */
+	if (force_tval) {
+		s_printf("CREATE_REWARD: forced tval %d.\n", force_tval);
+		reward_tval = force_tval;
 	}
 
 	/* respect unusuable slots depending on monster form */
@@ -7630,7 +7637,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 /* shorten the process of creating a standard-parm reward */
 void give_reward(int Ind, u32b resf, cptr quark, int level, int discount) {
 	object_type forge, *o_ptr = &forge;
-        create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, resf, 3000);
+	create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, resf, 3000);
 	object_aware(Ind, o_ptr);
 	object_known(o_ptr);
 	if (o_ptr->tval != TV_SPECIAL) o_ptr->discount = discount;

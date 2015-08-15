@@ -5799,8 +5799,7 @@ void view_exploration_records(int Ind) {
 	do_cmd_check_other_prepare(Ind, file_name, "Recent Dungeon Exploration Reports");
 }
 
-void reward_deed_item(int Ind, int item)
-{
+void reward_deed_item(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type forge, *o_ptr = &forge;
 	object_type *o2_ptr = &p_ptr->inventory[item];
@@ -5817,6 +5816,10 @@ void reward_deed_item(int Ind, int item)
 		msg_print(Ind, "\377oYou can only redeem your own deeds for items.");
 		return;
 	}
+
+	/* admin-megahack: may set the deed's xtra9 to force a specific reward-tval.
+	   This is useful for reimbursing a player who lost/bugged out his reward item. */
+	o_ptr->tval = o2_ptr->xtra9;
 
 	switch (o2_ptr->sval) {
 	case SV_DEED_HIGHLANDER: /* winner's deed */
