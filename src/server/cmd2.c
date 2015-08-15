@@ -3402,7 +3402,7 @@ void do_cmd_disarm(int Ind, int dir) {
 
 			/* XXX hrm it's ugly */
 			if ((!t_idx || !cs_ptr->sc.trap.found) &&
-					!(cs_ptr = GetCS(c_ptr, CS_MON_TRAP)))
+			    !(cs_ptr = GetCS(c_ptr, CS_MON_TRAP)))
 				done = TRUE;
 		}
 
@@ -3412,8 +3412,11 @@ void do_cmd_disarm(int Ind, int dir) {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
-			/* Take a turn */
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			/* Take half a turn, otherwise it gets a bit tedious game-flow wise.. */
+			if (get_skill(p_ptr, SKILL_TRAPPING) >= cs_ptr->sc.montrap.difficulty)
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+			else
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			break_shadow_running(Ind);
 			stop_precision(Ind);

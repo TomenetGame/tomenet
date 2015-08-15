@@ -3204,8 +3204,8 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
 
-	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	/* Take half a turn (otherwise it gets a bit tedious game-flow wise..) */
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 	/* Check interference */
 	/* Basically it's not so good idea to set traps next to the enemy */
