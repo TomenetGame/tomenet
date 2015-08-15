@@ -2015,6 +2015,7 @@ W:0:0:4:0
 A:0/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
+#aka potion of confusion
 
 N:248:Poison
 G:!:d
