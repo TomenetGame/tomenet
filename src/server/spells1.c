@@ -9889,7 +9889,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_OLD_SPEED:
 			if (fuzzy) msg_print(Ind, "You are hit by something!");
-			(void)set_fast(Ind, p_ptr->fast + randint(5), 10); /* not removed stacking */
+			(void)set_fast(Ind, randint(5), 10);
 			dam = 0;
 			break;
 
