@@ -398,7 +398,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.easy_open,		TRUE,	3,	9, 85, TRUE,
 	    "easy_open",		"Automatically open doors" },
 	{ &c_cfg.easy_disarm,		FALSE,	3,	9, 86, TRUE,
-	    "easy_disarm",		"Automatically disarm traps" },
+	    "easy_disarm",		"Automatically disarm traps (except under items)" },
 	{ &c_cfg.easy_tunnel,		FALSE,	3,	9, 87, TRUE,
 	    "easy_tunnel",		"Automatically tunnel walls" },
 	//HOLE: 5
