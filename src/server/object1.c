@@ -5398,7 +5398,8 @@ s16b label_to_equip(int Ind, int c)
  * Determine which equipment slot (if any) an item likes
  */
 s16b wield_slot(int Ind, object_type *o_ptr) {
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr;
+	if (Ind) p_ptr = Players[Ind];
 
 	/* Slot for equipment */
 	switch (o_ptr->tval) {
@@ -5420,7 +5421,7 @@ s16b wield_slot(int Ind, object_type *o_ptr) {
 
 		case TV_RING:
 			/* Use the right hand first */
-			if (!p_ptr->inventory[INVEN_RIGHT].k_idx) return (INVEN_RIGHT);
+			if (Ind && !p_ptr->inventory[INVEN_RIGHT].k_idx) return (INVEN_RIGHT);
 
 			/* Use the left hand for swapping (by default) */
 			return (INVEN_LEFT);
