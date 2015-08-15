@@ -35,7 +35,7 @@
 #define NO_MORGUL_IN_IDDC
 
 /* Allow ego-trapkits that aren't bolt/arrow/shot type? */
-//#define TRAPKIT_EGO_ALL
+#define TRAPKIT_EGO_ALL
 
 
 /*
