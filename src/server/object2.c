@@ -7661,6 +7661,8 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
 	object_type forge;
 	cave_type **zcave;
 
+	if (!bonus) return;
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Paranoia -- check bounds */
