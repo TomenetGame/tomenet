@@ -5566,8 +5566,8 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			resf_fallback = FALSE;
 		} else continue;
 
-		s_printf("dpt %d, dptval %d, egoval %d / %d, realval %d, flags %d (%s)\n", 
-		    depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name);
+		s_printf("dpt %d, dptval %d, egoval %d / %d, realval %d, flags %d (%s), resf %d\n",
+		    depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name, resf);
 
 		if (!is_ammo(o_ptr->tval)) {
 			if ((ego_value1 >= depth_value) || (ego_value2 >= depth_value) ||
@@ -7099,6 +7099,112 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	if (force_tval) {
 		s_printf("CREATE_REWARD: forced tval %d.\n", force_tval);
 		reward_tval = force_tval;
+
+		/* reverse-hack choice parms just for cleanliness */
+		melee_choice = ranged_choice = armor_choice = spell_choice = misc_choice = 0;
+		switch (reward_tval) {
+		case TV_SWORD:
+			if (get_skill(p_ptr, SKILL_ANTIMAGIC)) reward_sval = SV_DARK_SWORD;
+			reward_maxweight = maxweight_melee;
+			final_choice = 1;
+			melee_choice = 1;
+			break;
+		case TV_BLUNT:
+			reward_maxweight = maxweight_melee;
+			final_choice = 1;
+			melee_choice = 2;
+			break;
+		case TV_AXE:
+			reward_maxweight = maxweight_melee;
+			final_choice = 1;
+			melee_choice = 3;
+			break;
+		case TV_POLEARM:
+			reward_maxweight = maxweight_melee;
+			final_choice = 1;
+			melee_choice = 4;
+			break;
+		case TV_SHIELD:
+			reward_maxweight = maxweight_shield;
+			final_choice = 1;
+			melee_choice = 6;
+			break;
+		case TV_BOW:
+			reward_maxweight = maxweight_ranged;
+			final_choice = 2;
+			ranged_choice = 0;
+			break;
+		case TV_BOOMERANG:
+			reward_maxweight = maxweight_ranged;
+			final_choice = 2;
+			ranged_choice = 4;
+			break;
+		case TV_MSTAFF:
+			reward_maxweight = 500;
+			reward_sval = SV_MSTAFF;
+			final_choice = 4;
+			spell_choice = 1;
+			break;
+		case TV_SOFT_ARMOR:
+			reward_maxweight = maxweight_armor;
+			final_choice = 3;
+			armor_choice = 1;
+			break;
+		case TV_HARD_ARMOR:
+			reward_maxweight = maxweight_armor;
+			final_choice = 3;
+			armor_choice = 2;
+			break;
+		case TV_DRAG_ARMOR:
+			reward_maxweight = maxweight_armor;
+			final_choice = 3;
+			armor_choice = 3;
+			break;
+		case TV_BOOTS:
+			reward_maxweight = maxweight_armor;
+			final_choice = 3;
+			armor_choice = 4;
+			break;
+		case TV_GLOVES:
+			reward_maxweight = maxweight_armor;
+			final_choice = 3;
+			armor_choice = 5;
+			break;
+		case TV_HELM:
+			reward_maxweight = maxweight_armor;
+			final_choice = 3;
+			armor_choice = 6;
+			break;
+		case TV_CROWN:
+			reward_maxweight = maxweight_armor;
+			final_choice = 3;
+			armor_choice = 7;
+			break;
+		case TV_CLOAK:
+			reward_maxweight = maxweight_armor;
+			final_choice = 3;
+			armor_choice = 8;
+			break;
+		case TV_LITE:
+			reward_maxweight = 500;
+			final_choice = 5;
+			misc_choice = 1;
+			break;
+		case TV_AMULET:
+			reward_maxweight = 500;
+			final_choice = 5;
+			misc_choice = 2;
+			break;
+		case TV_RING:
+			reward_maxweight = 500;
+			final_choice = 5;
+			misc_choice = 3;
+			break;
+		case TV_TRAPKIT:
+			reward_maxweight = 500;
+			final_choice = 6;
+			break;
+		}
 	}
 
 	/* respect unusuable slots depending on monster form */
@@ -7212,7 +7318,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 	}
 
-	/* In case no SVAL has been defined yet: 
+	/* In case no SVAL has been defined yet:
 	   Choose a random SVAL while paying attention to maxweight limit! */
 	if (!reward_sval) {
 		int weapon_bpr = 0; /* try that the reward weapon does not reduce bpr compared to current bpr */
@@ -7325,7 +7431,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 	} else {
 		/* Prepare the object */
-		invcopy(o_ptr, lookup_kind(reward_tval, reward_sval));
+		invcopy(o_ptr, k_idx = lookup_kind(reward_tval, reward_sval));
 	}
 
 	/* debug log */
@@ -7354,7 +7460,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 		/* Apply magic (allow artifacts) */
 		apply_magic_depth(base, o_ptr, base, TRUE, good, great, verygreat, resf);
-		s_printf("REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d)\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight);
+		s_printf("REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d), resf %d\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, resf);
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* This should have already been checked in apply_magic_depth above itself,
@@ -7417,7 +7523,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (o_ptr->name2 == EGO_INTELLIGENCE && !o_ptr->name2b) continue;
 			break;
 		}
-		
+
 		/* analyze race */
 		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr)) continue;
 
@@ -7476,13 +7582,13 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case EGO_CONCENTRATION:
 			case EGO_INFRAVISION:
 			case EGO_BEAUTY:
-			case EGO_CHARMING: continue;
-			default: break;
+			case EGO_CHARMING:
+				continue;
 		}
 
 #ifdef TRAPKIT_EGO_ALL
 		/* actually prevent restrictive ego powers! would be too useless in early game stages! */
-		if (k_info[k_idx].tval == TV_TRAPKIT) {
+		if (o_ptr->tval == TV_TRAPKIT) {
 			/* note about this hack:
 			   we assume that the stat-changes done to the base item by ego'ing it
 			   are the same for TEVIL as for the others, so we don't have to adjust
@@ -7508,6 +7614,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 		/* a reward should have some value: */
 		if (object_value_real(0, o_ptr) < 5000) continue;
+#if 0 /* these no-weak-ego checks are basically already covered by above EGO_ checks. Here they actually hinder trap kit generation badly, so these should just remain disabled. */
 		if (o_ptr->name2) { /* should always be true actually! just paranoia */
 			if (e_info[o_ptr->name2].cost <= 2000) {
 				if (o_ptr->name2b) {
@@ -7515,6 +7622,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				} else continue;
 			}
 		}
+#endif
 
 		/* a reward should have some use - prevent +1 speed boots! */
 		if ((o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) && o_ptr->pval == 1) continue;
@@ -9395,15 +9503,18 @@ bool anti_undead(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
 
+	/* only concerns wearable items */
+	if (wield_slot(0, o_ptr) == -1) return FALSE;
+
 	if (cursed_p(o_ptr)) return(FALSE);
 
 	/* hack: it's carried by the wight-king! */
 	if (o_ptr->name1 == ART_STONE_LORE) return FALSE;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-        if (f3 & TR3_LITE1) l++;
-        if (f4 & TR4_LITE2) l += 2;
-        if (f4 & TR4_LITE3) l += 3;
+	if (f3 & TR3_LITE1) l++;
+	if (f4 & TR4_LITE2) l += 2;
+	if (f4 & TR4_LITE3) l += 3;
 	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
 
 	/* powerful lights and anti-undead/evil items damage vampires */
