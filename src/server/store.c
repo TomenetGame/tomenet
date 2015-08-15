@@ -5812,7 +5812,7 @@ void reward_deed_item(int Ind, int item) {
 		return;
 	}
 //	if (!o2_ptr->level && o2_ptr->owner != p_ptr->id) {
-	if (o2_ptr->owner != p_ptr->id) {
+	if (o2_ptr->owner && o2_ptr->owner != p_ptr->id) {
 		msg_print(Ind, "\377oYou can only redeem your own deeds for items.");
 		return;
 	}
