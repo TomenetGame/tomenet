@@ -3489,7 +3489,7 @@ void do_cmd_disarm(int Ind, int dir) {
 					   more so the better you are at trapping (from 1% ... 6%). 
 					   Since the trap appears ~50% of the time at max trapping, 
 					   the total chance for this is about 3% */
-					if (magik((sdis/10)+1)) {
+					if (magik((sdis / 10) + 1)) {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 						drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 						msg_print(Ind, "You have created a wonderful trapkit using pieces of the disarmed trap.");
@@ -3499,6 +3499,10 @@ void do_cmd_disarm(int Ind, int dir) {
 						msg_print(Ind, "You have fashioned a trapkit of a sort from the disarmed trap.");
 					}
 				}
+
+				/* Traps of missing money can drop some of their stolen cash ;) */
+				if (t_idx == TRAP_OF_MISSING_MONEY && rand_int(4))
+					place_gold(&p_ptr->wpos, y, x, rand_int(5) + rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos)));
 
 				/* Reward */
 				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
