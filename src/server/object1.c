@@ -4859,7 +4859,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		if (f2 & (TRAP2_AUTOMATIC_99))
 			fprintf(fff, "It rearms itself.\n");
 		if (f2 & (TRAP2_KILL_GHOST))
-			fprintf(fff, "It is effective against Ghosts.\n");
+			fprintf(fff, "It can affect wraithed creatures too.\n");
 		if (f2 & (TRAP2_TELEPORT_TO))
 			fprintf(fff, "It can teleport monsters to you.\n");
 		if (f2 & (TRAP2_ONLY_DRAGON))
