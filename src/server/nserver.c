@@ -6613,8 +6613,7 @@ int Send_store_special_clr(int Ind, char line_start, char line_end) {
  * This function is supposed to handle 'store actions' too,
  * like 'buy' 'identify' 'heal' 'bid to an auction'		- Jir -
  */
-int Send_store_info(int Ind, int num, cptr store, cptr owner, int items, int purse, byte attr, char c)
-{
+int Send_store_info(int Ind, int num, cptr store, cptr owner, int items, int purse, byte attr, char c) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 #ifdef MINDLINK_STORE
 	connection_t *connp2;

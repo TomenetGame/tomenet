@@ -2462,7 +2462,7 @@ static void display_store(int Ind)
 			owner_name = owner_name_ps;
 
 			/* Send modified private store info */
-			Send_store_info(Ind, p_ptr->store_num, store_name, owner_name, st_ptr->stock_num, 0, TERM_SLATE, '+');
+			Send_store_info(Ind, p_ptr->store_num, store_name, owner_name, st_ptr->stock_num, 0, p_ptr->tmp_x ? p_ptr->tmp_x - 1 : TERM_SLATE, '+');
 		} else
 #endif
 		/* Send the store info */
@@ -5517,8 +5517,7 @@ void home_examine(int Ind, int item) {
  * - remove some dirty hacks
  * - tell players of the cost in advance
  */
-void home_extend(int Ind)
-{
+void home_extend(int Ind) {
 	player_type *p_ptr = Players[Ind];
 //	int st = p_ptr->store_num;
 	int h_idx, cost = 0;
@@ -5567,8 +5566,7 @@ void home_extend(int Ind)
 }
 
 
-static void display_house_entry(int Ind, int pos, house_type *h_ptr)
-{
+static void display_house_entry(int Ind, int pos, house_type *h_ptr) {
 	player_type *p_ptr = Players[Ind];
 	object_type		*o_ptr;
 
@@ -5619,8 +5617,7 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr)
  *
  * The inventory is "sent" not "displayed". -KLJ-
  */
-static void display_house_inventory(int Ind, house_type *h_ptr)
-{
+static void display_house_inventory(int Ind, house_type *h_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int k;
 
@@ -5643,6 +5640,7 @@ static void display_house_inventory(int Ind, house_type *h_ptr)
  */
 static void display_trad_house(int Ind, house_type *h_ptr) {
 	player_type *p_ptr = Players[Ind];
+	int c = h_ptr->colour >= 100 ? h_ptr->colour - 100 : h_ptr->colour;
 
 	/* This should never happen */
 	if (p_ptr->store_num != STORE_HOME) return;
@@ -5650,7 +5648,7 @@ static void display_trad_house(int Ind, house_type *h_ptr) {
 	/* Send the house info */
 	/* our own house */
 	if (!h_ptr->dna->owner || (h_ptr->dna->owner_type == OT_PLAYER && h_ptr->dna->owner == p_ptr->id))
-		Send_store_info(Ind, p_ptr->store_num, "Your House", "", h_ptr->stock_num, h_ptr->stock_size, TERM_L_UMBER, '+');
+		Send_store_info(Ind, p_ptr->store_num, "Your House", "", h_ptr->stock_num, h_ptr->stock_size, c ? c - 1 : TERM_L_UMBER, '+');
 	/* someone else's house (can't happen at the moment) */
 	else {
 		char owner[40];
@@ -5666,7 +5664,7 @@ static void display_trad_house(int Ind, house_type *h_ptr) {
 		} else strcpy(owner, "nobody's home"); /* paranoia */
 
 		/* Don't display capacity, since with long owner names it could be too wide */
-		Send_store_info(Ind, p_ptr->store_num, owner, "", h_ptr->stock_num, 0, TERM_L_UMBER, '+');
+		Send_store_info(Ind, p_ptr->store_num, owner, "", h_ptr->stock_num, 0, c ? c : TERM_L_UMBER, '+');
 	}
 
 	/* Display the current gold */
@@ -5682,8 +5680,7 @@ static void display_trad_house(int Ind, house_type *h_ptr) {
 }
 
 /* Enter a house, and interact with it.	- Jir - */
-void do_cmd_trad_house(int Ind)
-{
+void do_cmd_trad_house(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	cave_type *c_ptr;
@@ -6276,6 +6273,9 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 
 	/* Set the timer (30000 used for homes aka "don't" kick out) */
 	p_ptr->tim_store = STORE_TURNOUT * 2; /* extra long duration for player stores */
+
+	/* Hack: display house colour when pasting items to chat */
+	p_ptr->tmp_x = h_ptr->colour >= 100 ? h_ptr->colour - 100 : h_ptr->colour;
 
 	/* Display the store */
 	display_store(Ind);
