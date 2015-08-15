@@ -5398,7 +5398,7 @@ s16b label_to_equip(int Ind, int c)
  * Determine which equipment slot (if any) an item likes
  */
 s16b wield_slot(int Ind, object_type *o_ptr) {
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 	if (Ind) p_ptr = Players[Ind];
 
 	/* Slot for equipment */
