@@ -5084,7 +5084,7 @@ G:{:y
 I:15:1:0
 W:5:0:60:30
 A:5/1
-P:0:1d4:0:0:0
+P:0:2d2:0:0:0
 F:IGNORE_WATER
 
 N:649:& Wooden Boomerang~
@@ -5092,7 +5092,7 @@ G:{:y
 I:15:2:0
 W:10:0:60:45
 A:10/1
-P:0:1d9:0:0:0
+P:0:2d4:0:0:0
 F:IGNORE_WATER
 
 N:650:& Small Metal Boomerang~
@@ -5100,14 +5100,14 @@ G:{:y
 I:15:3:0
 W:15:0:60:40
 A:15/1
-P:0:1d8:0:0:0
+P:0:2d3:0:0:0
 
 N:651:& Metal Boomerang~
 G:{:y
 I:15:4:0
 W:20:0:60:60
 A:20/1
-P:0:2d4:0:0:0
+P:0:2d5:0:0:0
 
 # The Space-Time Anchor -- see artifact list
 N:652:& Anchor~

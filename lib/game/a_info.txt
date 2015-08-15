@@ -1794,7 +1794,7 @@ D:except that it pulses with overwhelming power.
 N:128:of Beor
 I:15:4:4
 W:20:10:20:100000
-P:0:4d5:8:12:0
+P:0:3d4:8:12:0
 F:DEX | SPEED | HIDE_TYPE
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SPECIAL_GENE
 D:Beor's boomerang makes its wielder as agile as the winds, 
@@ -1806,7 +1806,7 @@ D:and as hard to harm.
 N:129:'Glimdrir'
 I:15:4:3
 W:40:25:20:50000
-P:0:5d5:15:16:0
+P:0:3d5:15:16:0
 F:DEX | SPEED | FREE_ACT | BRAND_POIS | SLAY_EVIL | SLAY_UNDEAD | REGEN | HIDE_TYPE
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_SOUND | NO_TELE | CURSED
 D:A powerful boomerang that makes one agile and fast, with a thirst for
