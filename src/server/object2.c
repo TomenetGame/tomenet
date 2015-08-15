@@ -34,6 +34,9 @@
 /* Prevent Weapons of Morgul from dropping in Ironman Deep Dive Challenge? - C. Blue */
 #define NO_MORGUL_IN_IDDC
 
+/* Allow ego-trapkits that aren't bolt/arrow/shot type? */
+//#define TRAPKIT_EGO_ALL
+
 
 /*
  * Excise a dungeon object from any stacks
@@ -5412,7 +5415,13 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Apply magic */
 		switch (o_ptr->tval) {
 		case TV_TRAPKIT:
-			if (!is_firearm_trapkit(o_ptr->sval)) break;
+			if (!is_firearm_trapkit(o_ptr->sval)) {
+#ifdef TRAPKIT_EGO_ALL
+				/* 'boring' trapkit types (ie no +hit/+dam) */
+				a_m_aux_4(o_ptr, lev, power, resf);
+#endif
+				break;
+			}
 		case TV_DIGGING:
 		case TV_BLUNT:
 		case TV_POLEARM:
@@ -7238,6 +7247,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				for (i = 0; i < 20; i++) {
 					k_idx = get_obj_num(base, resf);
 					if (is_ammo(k_info[k_idx].tval) && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+#ifndef TRAPKIT_EGO_ALL
+					/* only generate bolt/arrow/shot type trapkits because others cannot gain ego powers? */
+					if (k_info[k_idx].tval == TV_TRAPKIT && !is_firearm_trapkit(k_info[k_idx].sval)) continue;
+#endif
 					break;
 				}
 			else
