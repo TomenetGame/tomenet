@@ -3063,8 +3063,7 @@ void stair_creation(int Ind) {
  */
 static bool item_tester_hook_weapon(object_type *o_ptr) {
 	switch (o_ptr->tval) {
-	/* and now new.. :) */
-	case TV_TRAPKIT:
+	case TV_TRAPKIT:/* <- and now new.. :) this allows cursing/enchanting shot/arrow/bolt trap kits! */
 		if (!is_firearm_trapkit(o_ptr->sval)) return FALSE;
 	case TV_SWORD:
 	case TV_BLUNT:
