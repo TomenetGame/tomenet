@@ -4324,7 +4324,7 @@ F:SHOW_MODS | MUST2H
 N:549:Arrow
 G:`:r
 I:46:2:0
-W:10:0:25:50
+W:10:0:15:50
 A:5/2:10/2:50/2
 F:SHOW_MODS
 D:This trap kit uses arrows.
@@ -4332,7 +4332,7 @@ D:This trap kit uses arrows.
 N:550:Bolt
 G:`:R
 I:46:3:0
-W:20:0:30:70
+W:20:0:20:70
 A:10/2:20/2:50/2
 F:SHOW_MODS
 D:This trap kit uses bolts.
@@ -4374,7 +4374,7 @@ F:SHOW_MODS
 N:555:Catapult
 G:`:o
 I:46:1:0
-W:1:0:20:40
+W:1:0:10:40
 A:1/2:20/2
 F:SHOW_MODS
 D:This trap kit uses pebbles or shots.
