@@ -5640,7 +5640,11 @@ static void display_house_inventory(int Ind, house_type *h_ptr) {
  */
 static void display_trad_house(int Ind, house_type *h_ptr) {
 	player_type *p_ptr = Players[Ind];
-	int c = h_ptr->colour >= 100 ? h_ptr->colour - 100 : h_ptr->colour;
+	int c = h_ptr->colour; //note: p_ptr->tmp_x is used for non-tradhouses
+
+	if (c >= 100 && !(p_ptr->mode & MODE_EVERLASTING)) c = 0;
+	else if (c < 100 && (p_ptr->mode & MODE_EVERLASTING)) c = 0;
+	else c = c >= 100 ? c - 100 : c;
 
 	/* This should never happen */
 	if (p_ptr->store_num != STORE_HOME) return;
@@ -6275,7 +6279,9 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	p_ptr->tim_store = STORE_TURNOUT * 2; /* extra long duration for player stores */
 
 	/* Hack: display house colour when pasting items to chat */
-	p_ptr->tmp_x = h_ptr->colour >= 100 ? h_ptr->colour - 100 : h_ptr->colour;
+	if (h_ptr->colour >= 100 && !(p_ptr->mode & MODE_EVERLASTING)) p_ptr->tmp_x = 0;
+	else if (h_ptr->colour < 100 && (p_ptr->mode & MODE_EVERLASTING)) p_ptr->tmp_x = 0;
+	else p_ptr->tmp_x = h_ptr->colour >= 100 ? h_ptr->colour - 100 : h_ptr->colour;
 
 	/* Display the store */
 	display_store(Ind);
