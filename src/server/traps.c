@@ -3244,7 +3244,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	i_ptr->number = 1;
 
 	/* Set difficulty */
-	cs_ptr->sc.montrap.difficulty = get_skill(p_ptr, SKILL_TRAPPING) + 5;
+	cs_ptr->sc.montrap.difficulty = get_skill(p_ptr, SKILL_TRAPPING);
 
 	/* Drop it here */
 //	cave[py][px].special2 = floor_carry(py, px, i_ptr);
@@ -3543,20 +3543,20 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			return (FALSE);
 
 		case SV_STAFF_REMOVE_CURSE:
-			typ = GF_DISP_EVIL;
-			rad = 2;
-			dam = 30;
+			typ = GF_DISP_UNDEAD;
+			rad = 3;
+			dam = 50;
 			break;
 		case SV_STAFF_DARKNESS:
 //			unlite_room(y, x);
 			typ = GF_DARK;//GF_DARK_WEAK
-			dam = 10;
-			rad = 4;
+			dam = 20;
+			rad = 3;
 			break;
 		case SV_STAFF_SLOWNESS:
 			typ = GF_OLD_SLOW;
 			dam = damroll(5, 10);
-			rad = 2;
+			rad = 3;
 			break;
 		case SV_STAFF_HASTE_MONSTERS:
 			typ = GF_OLD_SPEED;
@@ -3604,12 +3604,12 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		case SV_STAFF_SLEEP_MONSTERS:
 			typ = GF_OLD_SLEEP;
 			dam = damroll(5, 10);
-			rad = 4;
+			rad = 3;
 			break;
 		case SV_STAFF_SLOW_MONSTERS:
 			typ = GF_OLD_SLOW;
 			dam = damroll(5, 10);
-			rad = 4;
+			rad = 3;
 			break;
 		case SV_STAFF_SPEED:
 			typ = GF_OLD_SPEED;
@@ -3618,17 +3618,17 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		case SV_STAFF_DISPEL_EVIL:
 			typ = GF_DISP_EVIL;
 			dam = 60;
-			rad = 5;
+			rad = 3;
 			break;
 		case SV_STAFF_POWER:
 			typ = GF_DISP_ALL;
 			dam = 120;
-			rad = 5;
+			rad = 3;
 			break;
 		case SV_STAFF_HOLINESS:
 			typ = GF_DISP_EVIL;
 			dam = 180;
-			rad = 5;
+			rad = 3;
 			break;
 #if 0
 		case SV_STAFF_GENOCIDE:
@@ -3667,6 +3667,8 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 	}
+	/* ..and new, also radius (if any, and if not kind of stone-prison like effect (rad 1) - which is paranoia since we don't have that atm) */
+	if (rad >= 2) rad += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty / 15;
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
@@ -3992,9 +3994,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_WAND_ANNIHILATION:
 			typ = GF_ANNIHILATION;
-//			dam = 300; //lol
-// Ooops, no p_ptr :(
-//			dam = 15 + get_skill_scale(p_ptr, SKILL_TRAPPING, 15);
+//			dam = 15 + get_skill_scale(...who > 0.., SKILL_TRAPPING, 15); --hmm, maybe not, trap is the caster after all
 			dam = 20 + randint(20); //raise the base a bit.. for now.
 			break;
 		case SV_WAND_DRAGON_FIRE:
@@ -4015,7 +4015,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 				case 4: typ = GF_COLD; break;
 				case 5: typ = GF_POIS; break;
 			}
-			dam = 175; /* hack */
+			dam = 175;
 			rad = 3;
 			break;
 		case SV_WAND_TELEPORT_TO:
@@ -4530,7 +4530,7 @@ bool mon_hit_trap(int m_idx) {
 
 	/* Get detection difficulty */
 	/* High level players hide traps better */
-	trapping = cs_ptr->sc.montrap.difficulty;
+	trapping = cs_ptr->sc.montrap.difficulty + 5;
 	difficulty = (trapping * 3) / 2;	/* somewhat boosted than ToME */
 
 	/* Darkness helps */
