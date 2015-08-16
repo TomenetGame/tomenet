@@ -1489,7 +1489,8 @@ G:?:d
 I:70:14:0
 W:10:0:5:100
 A:10/1:20/2:40/2
-D:Breaks a light curse.
+D:Breaks at least one light curse on any of your items,
+D:prioritizing your equipment.
 
 N:181:Light
 G:?:d
@@ -1565,7 +1566,7 @@ G:?:d
 I:70:15:0
 W:50:0:5:8000
 A:50/2:75/2:85/2:95/1
-D:Removes all light and heavy curses.
+D:Breaks all light and heavy curses on all your items.
 
 N:192:Treasure Detection
 G:?:d
@@ -2588,7 +2589,8 @@ I:55:6:0
 W:40:0:50:500
 A:40/1
 P:0:1d2:0:0:0
-D:Removes a light curse.
+D:Breaks at least one light curse on any of your items,
+D:prioritizing your equipment.
 
 N:318:Detect Evil
 G:_:d
