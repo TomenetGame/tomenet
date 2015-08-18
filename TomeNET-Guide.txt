@@ -5572,8 +5572,10 @@ The 1..9 are standard shops, namely..
                         all these, up to your personal preference.
                         'Raw' experience means that it's simply the amount of
                         experience shown in the monster spoiler (~7) and the
-                        only other factor is the monster's clone state and you
-                        being on appropriate depth (no grey depth indicator).
+                        only other factors are the monster's clone state and
+                        you being on appropriate depth (grey depth indicator
+                        will prevent gain completely and a yellow one will
+                        reduce gain accordingly).
                         Your race and class which may usually diminish your
                         experience gain (worst for Maiar) do NOT factor in, so
                         the amount of monster slaying is exactly the same for

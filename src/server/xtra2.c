@@ -8534,6 +8534,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		/* note: only our own killing blows count, not party exp! */
 		    p_ptr->solo_reking) {
 			int raw_exp = r_ptr->mexp * (100 - m_ptr->clone) / 100;
+
+			/* appropriate depth still factors in! */
+			raw_exp = det_exp_level(raw_exp, p_ptr->lev, getlevel(&p_ptr->wpos));
+
 			p_ptr->solo_reking -= (raw_exp * 1) / 1; // 1 xp = 1 au (2.5?)
 			if (p_ptr->solo_reking < 0) p_ptr->solo_reking = 0;
 		}
