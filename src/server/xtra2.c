@@ -4658,7 +4658,7 @@ static int get_coin_type(monster_race *r_ptr) {
  *  UxU is too flashy, lcl is possible, xcx maybe best (Nether Realm floor look preserved in msg ;) */
 #define ZU_AON_FLASHY_MSG
 
-void monster_death(int Ind, int m_idx) {
+bool monster_death(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr = Players[Ind];
 
@@ -4726,7 +4726,7 @@ void monster_death(int Ind, int m_idx) {
 				msg_format(Ind, "\374\377RYou have killed %s's pet!", Players[i]->name);
 				Players[i]->has_pet = 0;
 				FREE(m_ptr->r_ptr, monster_race); //no drop, no exp.
-				return;
+				return FALSE;
 			}
 		}
 	}
@@ -4745,7 +4745,7 @@ void monster_death(int Ind, int m_idx) {
 	y = m_ptr->fy;
 	x = m_ptr->fx;
 	wpos = &m_ptr->wpos;
-	if (!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return FALSE;
 
 	if (ge_special_sector && /* training tower event running? and we are there? */
 	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
@@ -4896,11 +4896,11 @@ void monster_death(int Ind, int m_idx) {
 	}
 
 	/* Log-scumming in IDDC is like fighting clones */
-	if (p_ptr->IDDC_logscum) return;
+	if (p_ptr->IDDC_logscum) return FALSE;
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
 	    && r_ptr->mexp) /* Allow kills in Bree */
-		return;
+		return FALSE;
 	/* clones don't drop treasure or complete quests.. */
 	if (m_ptr->clone) {
 		/* Specialty - even for non-creditable Sauron:
@@ -4915,13 +4915,13 @@ void monster_death(int Ind, int m_idx) {
 		}
 
 		/* no credit/loot for clones */
-		return;
+		return FALSE;
 	}
 	/* ..neither do cheezed kills */
 	if (henc_cheezed &&
 	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
 	    !is_Pumpkin) /* allow a mixed hunting group */
-		return;
+		return FALSE;
 
 	/* Check whether a quest requested this monster dead */
 	if (p_ptr->quest_any_k_within_target) quest_check_goal_k(Ind, m_ptr);
@@ -5567,7 +5567,7 @@ if (cfg.unikill_format) {
 			}
 
 			FREE(m_ptr->r_ptr, monster_race);
-			return;
+			return TRUE;
 
 		} else if (strstr((r_name + r_ptr->name),"Smeagol")) {
 			/* Get local object */
@@ -6070,11 +6070,10 @@ if (cfg.unikill_format) {
 //        if((!force_coin)&&(randint(100)<50)) place_corpse(m_ptr);
 
 	/* Only process "Quest Monsters" */
-	if (!(r_ptr->flags1 & RF1_QUESTOR)) return;
+	if (!(r_ptr->flags1 & RF1_QUESTOR)) return TRUE;
 
 	/* Hack -- Mark quests as complete */
-	for (i = 0; i < MAX_XO_IDX; i++)
-	{
+	for (i = 0; i < MAX_XO_IDX; i++) {
 		/* Hack -- note completed quests */
 		if (xo_list[i].level == r_ptr->level) xo_list[i].level = 0;
 
@@ -6118,7 +6117,9 @@ if (cfg.unikill_format) {
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 	}
 
-        FREE(m_ptr->r_ptr, monster_race);
+	FREE(m_ptr->r_ptr, monster_race);
+
+	return TRUE;
 }
 
 /* FIXME: this function is known to be bypassable by nominally
@@ -8527,17 +8528,18 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
 			m_ptr->clone = 90; /* still allow some experience to be gained */
 
-		/* Generate treasure and give kill credit */
-		monster_death(Ind, m_idx);
-
-
 #ifdef SOLO_REKING
+		/* Generate treasure and give kill credit */
+		if (monster_death(Ind, m_idx) &&
 		/* note: only our own killing blows count, not party exp! */
-		if (p_ptr->solo_reking) {
+		    p_ptr->solo_reking) {
 			int raw_exp = r_ptr->mexp * (100 - m_ptr->clone) / 100;
 			p_ptr->solo_reking -= (raw_exp * 1) / 1; // 1 xp = 1 au (2.5?)
 			if (p_ptr->solo_reking < 0) p_ptr->solo_reking = 0;
 		}
+#else
+		/* Generate treasure and give kill credit */
+		monster_death(Ind, m_idx);
 #endif
 
 		/* experience calculation: gain 2 decimal digits (for low-level exp'ing) */
@@ -8831,8 +8833,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	return (FALSE);
 }
 
-void monster_death_mon(int am_idx, int m_idx)
-{
+void monster_death_mon(int am_idx, int m_idx) {
 	int			i, j, y, x, ny, nx;
 	int			number = 0;
 	cave_type		*c_ptr;

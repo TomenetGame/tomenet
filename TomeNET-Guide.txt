@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. August 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. August 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -5556,6 +5556,7 @@ The 1..9 are standard shops, namely..
                         changed by the gods: Their Morgoth kill will be undone
                         so they may challenge him once more, to regain their
                         royal title!
+                        (In game slang, this is called 'solo-rekinging'.)
                         This service is useful if you do not have any team mate
                         who still hasn't killed Morgoth yet, to kill Morgoth in
                         a party together with him, which is the traditional way
@@ -5571,8 +5572,9 @@ The 1..9 are standard shops, namely..
                         all these, up to your personal preference.
                         'Raw' experience means that it's simply the amount of
                         experience shown in the monster spoiler (~7) and the
-                        only other factor is the monster's clone state. Your
-                        race and class which may usually diminish your
+                        only other factor is the monster's clone state and you
+                        being on appropriate depth (no grey depth indicator).
+                        Your race and class which may usually diminish your
                         experience gain (worst for Maiar) do NOT factor in, so
                         the amount of monster slaying is exactly the same for
                         everyone. However, YOU will need to kill the monster!

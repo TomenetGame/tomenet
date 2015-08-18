@@ -1945,7 +1945,7 @@ extern void lose_exp(int Ind, s32b amount);
 extern void gain_exp_to_level(int Ind, int level);
 extern bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note);
 extern void monster_death_mon(int am_idx, int m_idx);
-extern void monster_death(int Ind, int m_idx);
+extern bool monster_death(int Ind, int m_idx);
 extern void player_death(int Ind);
 extern void resurrect_player(int Ind, int exploss);
 extern void del_xorder(int id);
