@@ -3505,7 +3505,7 @@ void do_cmd_disarm(int Ind, int dir) {
 
 				/* Traps of missing money can drop some of their stolen cash ;) */
 				if (t_idx == TRAP_OF_MISSING_MONEY && rand_int(4))
-					place_gold(&p_ptr->wpos, y, x, rand_int(5) + rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos)));
+					place_gold(&p_ptr->wpos, y, x, 0);//rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos) / 2));
 
 				/* Reward */
 				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
