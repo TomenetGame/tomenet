@@ -2217,8 +2217,21 @@ void do_cmd_options_mus_sdl(void) {
 			}
 			fclose(fff);
 			fclose(fff2);
+
+#if 0 /* cannot overwrite the cfg files in Programs (x86) folder on Windows 7 (+?) */
 			rename(buf, format("%s.bak", buf));
 			rename(buf2, buf);
+#endif
+#if 1 /* delete target file first instead of 'over-renaming'? Seems to work on my Win 7 box at least. */
+			rename(buf, format("%s.bak", buf));
+			//fd_kill(file_name);
+			remove(buf);
+			rename(buf2, buf);
+#endif
+#if 0 /* use a separate file instead? */
+			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music-override.cfg");
+			rename(buf2, buf);
+#endif
 
 			go = FALSE;
 			break;
