@@ -237,17 +237,17 @@ POWERBALL_I = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 10), 2 + get_level(Ind, POWERBALL, 2), " casts a mana ball for")
+				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 10), 2 + get_level(Ind, POWERBALL_I, 2), " casts a mana ball for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 10), 2 + get_level(Ind, POWERBALL, 2), " casts a dispelling ball for")
+				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 10), 2 + get_level(Ind, POWERBALL_I, 2), " casts a dispelling ball for")
 			else
-				fire_ball(Ind, GF_ELEC, args.dir, get_astral_ball_dam(Ind, 10), 2 + get_level(Ind, POWERBALL, 2), " casts a lightning ball for")
+				fire_ball(Ind, GF_ELEC, args.dir, get_astral_ball_dam(Ind, 10), 2 + get_level(Ind, POWERBALL_I, 2), " casts a lightning ball for")
 			end
 	end,
 	["info"] = 	function()
 			local dam
 			dam = get_astral_ball_dam(Ind, 10)
-			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL, 2)
+			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
 	["desc"] =	{
 			"Enlightened: conjures up a powerful ball of mana",
@@ -268,15 +268,15 @@ POWERBALL_II = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 25), 2 + get_level(Ind, POWERBALL, 2), " casts a mana ball for")
+				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 25), 2 + get_level(Ind, POWERBALL_I, 2), " casts a mana ball for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 25), 2 + get_level(Ind, POWERBALL, 2), " casts a dispelling ball for")
+				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 25), 2 + get_level(Ind, POWERBALL_I, 2), " casts a dispelling ball for")
 			end
 	end,
 	["info"] = 	function()
 			local dam
 			dam = get_astral_ball_dam(Ind, 25)
-			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL, 2)
+			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
 	["desc"] =	{
 			"Enlightened: conjures up a powerful ball of mana",
@@ -296,15 +296,15 @@ POWERBALL_III = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 0), 2 + get_level(Ind, POWERBALL, 2), " casts a mana ball for")
+				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 0), 2 + get_level(Ind, POWERBALL_I, 2), " casts a mana ball for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 0), 2 + get_level(Ind, POWERBALL, 2), " casts a dispelling ball for")
+				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 0), 2 + get_level(Ind, POWERBALL_I, 2), " casts a dispelling ball for")
 			end
 	end,
 	["info"] = 	function()
 			local dam
 			dam = get_astral_ball_dam(Ind, 0)
-			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL, 2)
+			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
 	["desc"] =	{
 			"Enlightened: conjures up a powerful ball of mana",

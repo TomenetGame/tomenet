@@ -51,10 +51,10 @@ WATERPOISON_II = add_spell {
         ["stat"] =      A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			fire_cloud(Ind, GF_WATERPOISON, args.dir, (2 + 60 + get_level(Ind, WATERPOISON_II, 60)), 3, (5 + get_level(Ind, WATERPOISON_II, 14)), 9, " fires toxic vapour of")
+			fire_cloud(Ind, GF_WATERPOISON, args.dir, (2 + 60 + get_level(Ind, WATERPOISON_II, 60)), 3, (5 + get_level(Ind, WATERPOISON_I, 14)), 9, " fires toxic vapour of")
 			end,
 	["info"] = 	function()
-			return "dam " .. (2 + 60 + get_level(Ind, WATERPOISON_II, 60)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON_II, 14))
+			return "dam " .. (2 + 60 + get_level(Ind, WATERPOISON_II, 60)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON_I, 14))
 			end,
 	["desc"] = 	{ "Creates a mixed cloud of toxic moisture and hot vapour.", }
 }
@@ -69,10 +69,10 @@ WATERPOISON_III = add_spell {
         ["stat"] =      A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			fire_cloud(Ind, GF_ICEPOISON, args.dir, (2 + 106 + get_level(Ind, WATERPOISON_III, 60)), 3, (5 + get_level(Ind, WATERPOISON_III, 14)), 9, " fires icy toxic moisture of")
+			fire_cloud(Ind, GF_ICEPOISON, args.dir, (2 + 106 + get_level(Ind, WATERPOISON_III, 60)), 3, (5 + get_level(Ind, WATERPOISON_I, 14)), 9, " fires icy toxic moisture of")
 			end,
 	["info"] = 	function()
-			return "dam " .. (2 + 106 + get_level(Ind, WATERPOISON_III, 60)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON_III, 14))
+			return "dam " .. (2 + 106 + get_level(Ind, WATERPOISON_III, 60)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON_I, 14))
 			end,
 	["desc"] = 	{ "Creates a mixed cloud of toxic moisture and ice shards.", }
 }
