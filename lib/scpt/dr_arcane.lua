@@ -1,13 +1,12 @@
 -- Similar to Nature's 'Grow Trees'
--- radius is {1 .. 10}, cost {5 .. 45}
-NATURESCALL = add_spell
-{
+-- radius is {1 .. 10}, cost {5 .. 40}
+NATURESCALL = add_spell {
 	["name"] = 	"Nature's Call",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	10,
-	["mana"] = 	5,
-	["mana_max"] = 	40,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
 	["fail"] = 	20,
         ["stat"] =      A_WIS,
 	["direction"] = FALSE,
@@ -18,46 +17,68 @@ NATURESCALL = add_spell
 			return "rad " .. (get_level(Ind, NATURESCALL, 8) + 1)
 			end,
 	["desc"] = 	{ "Boosts the growth of the saplings around you.",
-			  "Surrounding you with green-goodness!",}
+			  "Surrounding you with green-goodness!", }
 }
 
 -- Finally, a second nox? :-)
 -- This one is water/poison (_not_ unbreath) which will eventually turn into ice(water/shards)/poison (not unbreath)
-WATERPOISON = add_spell
-{
-	["name"] = 	"Toxic Moisture",
+WATERPOISON_I = add_spell {
+	["name"] = 	"Toxic Moisture I",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	3,
-	["mana"] = 	1,
-	["mana_max"] = 	40,
+	["mana"] = 	5,
+	["mana_max"] = 	5,
 	["fail"] = 	20,
         ["stat"] =      A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			local type
-			type = GF_POIS
-			if get_level(Ind, WATERPOISON, 50) >= 30 then
-				type = GF_ICEPOISON
-			elseif get_level(Ind, WATERPOISON, 50) >= 20 then
-				type = GF_WATERPOISON
-			end
---			fire_cloud(Ind, type, args.dir, (2 + get_level(Ind, WATERPOISON, 100)), 3, (5 + get_level(Ind, WATERPOISON, 40)), 10, " fires a toxic moisture of")
---1.5			fire_cloud(Ind, type, args.dir, (2 + get_level(Ind, WATERPOISON, 136)), 3, (5 + get_level(Ind, WATERPOISON, 14)), 9, " fires a toxic moisture of")
-			fire_cloud(Ind, type, args.dir, (2 + get_level(Ind, WATERPOISON, 182)), 3, (5 + get_level(Ind, WATERPOISON, 14)), 9, " fires a toxic moisture of")
+			fire_cloud(Ind, GF_POIS, args.dir, (2 + get_level(Ind, WATERPOISON_I, 60)), 3, (5 + get_level(Ind, WATERPOISON_I, 14)), 9, " fires a toxic moisture of")
 			end,
 	["info"] = 	function()
---			return "dam " .. (2 + get_level(Ind, WATERPOISON, 136)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON, 14))
-			return "dam " .. (2 + get_level(Ind, WATERPOISON, 182)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON, 14))
+			return "dam " .. (2 + get_level(Ind, WATERPOISON_I, 60)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON_I, 14))
 			end,
-	["desc"] = 	{ "Creates a cloud of toxic moisture.",
-			  "At level 20 it combines the surrounding air into the attack.",
-			  "At level 30 it condenses the water into ice.",}
+	["desc"] = 	{ "Creates a cloud of toxic moisture.", }
+}
+WATERPOISON_II = add_spell {
+	["name"] = 	"Toxic Moisture II",
+	["school"] = 	{SCHOOL_DRUID_ARCANE},
+	["spell_power"] = 0,
+	["level"] = 	20,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	10,
+        ["stat"] =      A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			fire_cloud(Ind, GF_WATERPOISON, args.dir, (2 + 60 + get_level(Ind, WATERPOISON_II, 60)), 3, (5 + get_level(Ind, WATERPOISON_II, 14)), 9, " fires toxic vapour of")
+			end,
+	["info"] = 	function()
+			return "dam " .. (2 + 60 + get_level(Ind, WATERPOISON_II, 60)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON_II, 14))
+			end,
+	["desc"] = 	{ "Creates a mixed cloud of toxic moisture and hot vapour.", }
+}
+WATERPOISON_III = add_spell {
+	["name"] = 	"Toxic Moisture III",
+	["school"] = 	{SCHOOL_DRUID_ARCANE},
+	["spell_power"] = 0,
+	["level"] = 	30,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
+	["fail"] = 	5,
+        ["stat"] =      A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			fire_cloud(Ind, GF_ICEPOISON, args.dir, (2 + 106 + get_level(Ind, WATERPOISON_III, 60)), 3, (5 + get_level(Ind, WATERPOISON_III, 14)), 9, " fires icy toxic moisture of")
+			end,
+	["info"] = 	function()
+			return "dam " .. (2 + 106 + get_level(Ind, WATERPOISON_III, 60)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON_III, 14))
+			end,
+	["desc"] = 	{ "Creates a mixed cloud of toxic moisture and ice shards.", }
 }
 
 -- Do we want druids to have an id spell? I do =) he he. remove if otherwise
-BAGIDENTIFY = add_spell
-{
+BAGIDENTIFY = add_spell {
 	["name"] = 	"Ancient Lore",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
@@ -78,14 +99,13 @@ BAGIDENTIFY = add_spell
 
 -- The best spell yet!
 -- For each wall on level: (spell_lvl)% chance for it to get turned to a tree!
-REPLACEWALL = add_spell
-{
+REPLACEWALL = add_spell {
 	["name"] = 	"Garden of the Gods",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	35,
 	["mana"] = 	150,
-	["mana_max"] = 	250,
+	["mana_max"] = 	150,
 	["fail"] = 	-98,
         ["stat"] =      A_WIS,
 	["direction"] = FALSE,
@@ -104,14 +124,13 @@ REPLACEWALL = add_spell
 -- ((druid_lvl*2 - monster_lvl) > randint(100)) ? banished! : aggravated!
 -- We're talking about aggravating a pack of lvl 80+ Aether Zs here. :)
 -- Muahaha
-BANISHANIMALS = add_spell
-{
+BANISHANIMALS = add_spell {
 	["name"] = 	"Call of the Forest",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	40,
 	["mana"] = 	250,
-	["mana_max"] = 	300,
+	["mana_max"] = 	250,
 	["fail"] = 	-98,
         ["stat"] =      A_WIS,
 	["direction"] = FALSE,
