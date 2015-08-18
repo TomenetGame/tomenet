@@ -33,12 +33,6 @@ function get_astral_bonus_hp(Ind)
 	return 0
 end
 
-function pfft()
-	local xx, yy
-	xx, yy = get_astral_dam(Ind)
-	return ""..xx..", "..yy
-
-end
 POWERBOLT = add_spell
 {
 	["name"] = 	"Power Bolt",
