@@ -3173,13 +3173,14 @@ static int Handle_login(int ind)
 	p_ptr->count_cut_sfx_attack = 500;
 #endif
 
-	/* Note: p_ptr->sound_ambient must be initialised to -1 before calling this. */
-	grid_affects_player(NumPlayers);
-
 #ifdef USE_SOUND_2010
 	/* Note: This must come after grid_affects_players() has been called initially. */
 	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
 #endif
+
+	/* Note: p_ptr->sound_ambient must be initialised to -1 before calling this. */
+	/* Note2: This should be called after handle_ambient_sfx() to correctly apply no_house_sfx/quiet_house_sfx to it. */
+	grid_affects_player(NumPlayers);
 
 	/* Initialize the client's unique list;
 	it will become further updated each time he kills another unique */
