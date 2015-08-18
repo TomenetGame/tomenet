@@ -61,7 +61,7 @@ POWERBOLT = add_spell
 	end,
 	["desc"] = 	{
 			"Enlightened: conjures up a powerful bolt of mana",
-			"Corrupted: conjures up a powerful bolt of power",
+			"Corrupted: conjures up a powerful dispelling bolt",
 			"Neutral: conjures up a bolt of lightning"
 		}
 }
@@ -274,7 +274,7 @@ GATEWAY = add_spell
 				if (players(Ind).lev >= 62 and get_astral_lev(Ind) >= 50) then
 					divine_gateway(Ind);
 				else
-					msg_print(Ind, "\255BYou need Astral Knowledge level of 50 and character level of 62 or higher.");
+					msg_print(Ind, "\255yYou need Astral Knowledge level of 50 and character level of 62 or higher.");
 				end
 	end,
 	["info"] = 	function()
