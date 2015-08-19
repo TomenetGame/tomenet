@@ -4,150 +4,124 @@
 
 -- Create the schools --
 
-SCHOOL_CONVEYANCE = add_school
-{
+-- Istari primarily
+
+SCHOOL_CONVEYANCE = add_school {
 	["name"] = "Conveyance",
-        ["skill"] = SKILL_CONVEYANCE,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_CONVEYANCE,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_MANA = add_school
-{
+SCHOOL_MANA = add_school {
 	["name"] = "Mana",
-        ["skill"] = SKILL_MANA,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_MANA,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_FIRE = add_school
-{
+SCHOOL_FIRE = add_school {
 	["name"] = "Fire",
-        ["skill"] = SKILL_FIRE,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_FIRE,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_AIR = add_school
-{
+SCHOOL_AIR = add_school {
 	["name"] = "Air",
-        ["skill"] = SKILL_AIR,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_AIR,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_WATER = add_school
-{
+SCHOOL_WATER = add_school {
 	["name"] = "Water",
-        ["skill"] = SKILL_WATER,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_WATER,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_EARTH = add_school
-{
+SCHOOL_EARTH = add_school {
 	["name"] = "Earth",
-        ["skill"] = SKILL_EARTH,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_EARTH,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_TEMPORAL = add_school
-{
+SCHOOL_TEMPORAL = add_school {
 	["name"] = "Temporal",
-        ["skill"] = SKILL_TEMPORAL,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_TEMPORAL,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_NATURE = add_school
-{
+SCHOOL_NATURE = add_school {
 	["name"] = "Nature",
-        ["skill"] = SKILL_NATURE,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_NATURE,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_META = add_school
-{
+SCHOOL_META = add_school {
 	["name"] = "Meta",
-        ["skill"] = SKILL_META,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_META,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_MIND = add_school
-{
+SCHOOL_MIND = add_school {
 	["name"] = "Mind",
-        ["skill"] = SKILL_MIND,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_MIND,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_DIVINATION = add_school
-{
+SCHOOL_DIVINATION = add_school {
 	["name"] = "Divination",
-        ["skill"] = SKILL_DIVINATION,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_DIVINATION,
+	["sorcery"] = TRUE,
 }
-
-SCHOOL_UDUN = add_school
-{
+SCHOOL_UDUN = add_school {
 	["name"] = "Udun",
-        ["skill"] = SKILL_UDUN,
-        ["sorcery"] = TRUE,
+	["skill"] = SKILL_UDUN,
+	["sorcery"] = TRUE,
 }
 
 -- Priests / Paladins
 
-SCHOOL_HOFFENSE = add_school
-{
+SCHOOL_HOFFENSE = add_school {
 	["name"] = "Holy Offense",
-        ["skill"] = SKILL_HOFFENSE,
+	["skill"] = SKILL_HOFFENSE,
 }
-SCHOOL_HDEFENSE = add_school
-{
+SCHOOL_HDEFENSE = add_school {
 	["name"] = "Holy Defense",
-        ["skill"] = SKILL_HDEFENSE,
+	["skill"] = SKILL_HDEFENSE,
 }
-SCHOOL_HCURING = add_school
-{
+SCHOOL_HCURING = add_school {
 	["name"] = "Holy Curing",
-        ["skill"] = SKILL_HCURING,
+	["skill"] = SKILL_HCURING,
 }
-SCHOOL_HSUPPORT = add_school
-{
+SCHOOL_HSUPPORT = add_school {
 	["name"] = "Holy Support",
-        ["skill"] = SKILL_HSUPPORT,
+	["skill"] = SKILL_HSUPPORT,
 }
 
 -- Druids
-SCHOOL_DRUID_ARCANE = add_school
-{
+
+SCHOOL_DRUID_ARCANE = add_school {
 	["name"] = "Arcane Lore",
 	["skill"] = SKILL_DRUID_ARCANE,
 }
-SCHOOL_DRUID_PHYSICAL = add_school
-{
+SCHOOL_DRUID_PHYSICAL = add_school {
 	["name"] = "Physical Lore",
 	["skill"] = SKILL_DRUID_PHYSICAL,
 }
 
-SCHOOL_ASTRAL = add_school
-{
+-- Maiar
+
+SCHOOL_ASTRAL = add_school {
 	["name"] = "Astral Knowledge",
 	["skill"] = SKILL_ASTRAL,
 }
 
-SCHOOL_PPOWER = add_school
-{
+-- Mindcrafters
+
+SCHOOL_PPOWER = add_school {
 	["name"] = "Psycho-power",
 	["skill"] = SKILL_PPOWER,
 }
-
-SCHOOL_TCONTACT = add_school
-{
+SCHOOL_TCONTACT = add_school {
 	["name"] = "Attunement",
 	["skill"] = SKILL_TCONTACT,
 }
-
-SCHOOL_MINTRUSION = add_school
-{
+SCHOOL_MINTRUSION = add_school {
 	["name"] = "Mental intrusion",
 	["skill"] = SKILL_MINTRUSION,
 }
 
+
 -- Put some spells
+
 pern_dofile(Ind, "s_mana.lua")
 pern_dofile(Ind, "s_fire.lua")
 pern_dofile(Ind, "s_air.lua")
@@ -177,193 +151,118 @@ __lua_M_LAST = __tmp_spells_num - 1
 
 pern_dofile(Ind, "d_astral.lua")
 
+
+-- Tomes / Greater crystals
+
 -- Create the crystal of mana (1-4)
-school_book[0] = {
-	MANATHRUST, DELCURSES, RESISTS, MANASHIELD,
-}
-
+school_book[0] = { MANATHRUST, DELCURSES, RESISTS, MANASHIELD, }
 -- The book of the eternal flame (5-8)
-school_book[1] = {
-	GLOBELIGHT, FIREBOLT, FIREFLASH, FIERYAURA, FIREWALL,
-}
-
+school_book[1] = { GLOBELIGHT, FIREBOLT, FIREFLASH, FIERYAURA, FIREWALL, }
 -- The book of the blowing winds (9-13)
-school_book[2] = {
-        NOXIOUSCLOUD, LIGHTNINGBOLT, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM,
-}
-
+school_book[2] = { NOXIOUSCLOUD, LIGHTNINGBOLT, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM, }
 -- The book of the impenetrable earth (14-17)
 school_book[3] = {
---        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
-        DIG, ACIDBOLT, STONEPRISON, SHAKE, STRIKE,
+--	STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
+	DIG, ACIDBOLT, STONEPRISON, SHAKE, STRIKE,
 }
-
 -- The book of the everrunning wave (18-21)
-school_book[4] = {
-        VAPOR, FROSTBOLT, ENTPOTION, TIDALWAVE, ICESTORM,
-}
-
+school_book[4] = { VAPOR, FROSTBOLT, ENTPOTION, TIDALWAVE, ICESTORM, }
 -- Create the book of translocation (22-27)
-school_book[5] = {
-        DISARM, BLINK, TELEPORT, TELEAWAY, RECALL, PROBABILITY_TRAVEL,
-}
-
+school_book[5] = { DISARM, BLINK, TELEPORT, TELEAWAY, RECALL, PROBABILITY_TRAVEL, }
 -- Create the book of the tree * SUMMONANIMAL requires pets first (28-32)
-school_book[6] = {
-        GROWTREE, HEALING, RECOVERY, REGENERATION, VERMINCONTROL,
-}
-
+school_book[6] = { GROWTREE, HEALING, RECOVERY, REGENERATION, VERMINCONTROL, }
 -- Create the book of Knowledge (33-38)
-school_book[7] = {
-        DETECTMONSTERS, SENSEHIDDEN, REVEALWAYS, IDENTIFY, VISION, STARIDENTIFY,
-}
-
+school_book[7] = { DETECTMONSTERS, SENSEHIDDEN, REVEALWAYS, IDENTIFY, VISION, STARIDENTIFY, }
 -- Create the book of the Time (39-42)
-school_book[8] = {
-        MAGELOCK, SLOWMONSTER, ESSENSESPEED, MASSWARP,
-}
-
+school_book[8] = { MAGELOCK, SLOWMONSTER, ESSENSESPEED, MASSWARP, }
 -- Create the book of meta spells (43-45)
-school_book[9] = {
-        RECHARGE, PROJECT_SPELLS, DISPERSEMAGIC,
-}
-
+school_book[9] = { RECHARGE, PROJECT_SPELLS, DISPERSEMAGIC, }
 -- Create the book of the mind * CHARM requires pets first (46-48)
-school_book[10] = {
-        CONFUSE, STUN, TELEKINESIS, SENSEMONSTERS,
-}
-
+school_book[10] = { CONFUSE, STUN, TELEKINESIS, SENSEMONSTERS, }
 -- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (49-53)
-school_book[11] = {
-        GENOCIDE, WRAITHFORM, DISEBOLT, HELLFIRE, STOPWRAITH,
-}
+school_book[11] = { GENOCIDE, WRAITHFORM, DISEBOLT, HELLFIRE, STOPWRAITH, }
 
 -- Priests / Paladins:
 
 -- Create the book of Holy Offense (54-60)
 if (def_hack("TEST_SERVER", nil)) then
-school_book[12] = {HCURSE, HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, HDRAINCLOUD, HCURSEDD,}
+school_book[12] = { HCURSE, HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, HDRAINCLOUD, HCURSEDD, }
 else
-school_book[12] = {
-        HCURSE, HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, HDRAINCLOUD,
-}
+school_book[12] = { HCURSE, HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, HDRAINCLOUD, }
 end
-
 -- Create the book of Holy Defense (61-65)
-school_book[13] = {
-	HBLESSING, HRESISTS, HPROTEVIL, HRUNEPROT, HMARTYR,
-}
-
+school_book[13] = { HBLESSING, HRESISTS, HPROTEVIL, HRUNEPROT, HMARTYR, }
 -- Create the book of Holy Curing (66-72)
-school_book[14] = {
-	HCUREWOUNDS, HHEALING, HDELCURSES, HHEALING2, HCURING, HRESTORING, HSANITY, HRESURRECT, HDELBB,
-}
-
+school_book[14] = { HCUREWOUNDS, HHEALING, HDELCURSES, HHEALING2, HCURING, HRESTORING, HSANITY, HRESURRECT, HDELBB, }
 -- Create the book of Holy Support (73-79)
-school_book[15] = {
-	HDELFEAR, HGLOBELIGHT, HSENSEMON, HSANCTUARY, HSATISFYHUNGER, HSENSE,  HZEAL,
-}
+school_book[15] = { HDELFEAR, HGLOBELIGHT, HSENSEMON, HSANCTUARY, HSATISFYHUNGER, HSENSE,  HZEAL, }
+
+-- Druids:
 
 -- Create the book of druidism: Arcane Lore (80-84)
-school_book[16] = {
-	WATERPOISON_III, NATURESCALL, BAGIDENTIFY, REPLACEWALL, BANISHANIMALS,
-}
-
+school_book[16] = { WATERPOISON_III, NATURESCALL, BAGIDENTIFY, REPLACEWALL, BANISHANIMALS, }
 -- Create the book of druidism: Physical Lore (85-89)
-school_book[17] = {
-	FOCUSSHOT, HERBALTEA, QUICKFEET, EXTRASTATS_II, HEALINGCLOUD,
-}
+school_book[17] = { FOCUSSHOT, HERBALTEA, QUICKFEET, EXTRASTATS_II, HEALINGCLOUD, }
+
+-- Maiar:
 
 -- Divine Race Tome
-school_book[18] = {
-	POWERBOLT_III, POWERBEAM_III, POWERBALL_III, RELOCATION, VENGEANCE, EMPOWERMENT, INTENSIFY, POWERCLOUD, GATEWAY
-}
+school_book[18] = { POWERBOLT_III, POWERBEAM_III, POWERBALL_III, RELOCATION, VENGEANCE, EMPOWERMENT, INTENSIFY, POWERCLOUD, GATEWAY }
+
+-- Mindcraft:
 
 if (def_hack("TEST_SERVER", nil)) then
 school_book[19] = {MBASH, MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MFEEDBACK, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY, MTELEKINESIS, MSHIELD, MFUSION,}
 school_book[20] = {MCURE, MBOOST, MSELFKNOW, MHASTE, MSENSEMON, MIDENTIFY, MSANITY, MTELEKINESIS, MFUSION,}
 else
 -- Create the book of mindcrafting: Psycho-power (-)
-school_book[19] = {
-	MBASH, MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MFEEDBACK, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY, MTELEKINESIS, MSHIELD,
-}
-
+school_book[19] = { MBASH, MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MFEEDBACK, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY, MTELEKINESIS, MSHIELD, }
 -- Create the book of mindcrafting: Thought contact (aka Attunement)
-school_book[20] = {
-	MCURE, MBOOST, MSELFKNOW, MHASTE, MSENSEMON, MIDENTIFY, MSANITY, MTELEKINESIS,
-}
+school_book[20] = { MCURE, MBOOST, MSELFKNOW, MHASTE, MSENSEMON, MIDENTIFY, MSANITY, MTELEKINESIS, }
 end
-
 -- Create the book of mindcrafting: Mental intrusion (-)
-school_book[21] = {
-	MMINDBLAST, MPSISTORM, MSCARE, MCONFUSE, MSLEEP, MSLOWMONSTER, MSILENCE, MMAP, MCHARM, MSTOPCHARM,
-}
+school_book[21] = { MMINDBLAST, MPSISTORM, MSCARE, MCONFUSE, MSLEEP, MSLOWMONSTER, MSILENCE, MMAP, MCHARM, MSTOPCHARM, }
+
+
+-- Handbooks:
 
 -- Create the book of beginner's cantrip
-school_book[50] = {
-        MANATHRUST, GLOBELIGHT, BLINK, DETECTMONSTERS, SENSEHIDDEN, ENTPOTION
-}
-
+school_book[50] = { MANATHRUST, GLOBELIGHT, BLINK, DETECTMONSTERS, SENSEHIDDEN, ENTPOTION }
 -- Create the elementalist's handbook
 school_book[51] = {
 --	NOXIOUSCLOUD, AIRWINGS, THUNDERSTORM, FIREFLASH, FIREWALL, TIDALWAVE, ICESTORM, SHAKE
 	NOXIOUSCLOUD, AIRWINGS, THUNDERSTORM, FIREFLASH, FIERYAURA, VAPOR, ICESTORM, SHAKE
 }
-
 -- Create the handbook for treasure hunting
-school_book[52] = {
-	SENSEHIDDEN, REVEALWAYS, DIG, DISARM, IDENTIFY, GLOBELIGHT, DELCURSES
-}
-
+school_book[52] = { SENSEHIDDEN, REVEALWAYS, DIG, DISARM, IDENTIFY, GLOBELIGHT, DELCURSES }
 -- Create the handbook of piety
-school_book[53] = {
-	HBLESSING, HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HPROTEVIL, HEXORCISM, HRELSOULS
-}
-
+school_book[53] = { HBLESSING, HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HPROTEVIL, HEXORCISM, HRELSOULS }
 -- Create the naturalist's handbook
 school_book[54] = {
 --	NATURESCALL, REPLACEWALL, HERBALTEA, VAPOR, GROWTREE, RECOVERY, REGENERATION, POISONBLOOD
 	NATURESCALL, REPLACEWALL, HERBALTEA, GROWTREE, RECOVERY, REGENERATION, POISONBLOOD
 }
-
 -- Create the destroyer's handbook
 school_book[55] = {
 --	ICESTORM, HELLFIRE, FIREFLASH, SHAKE, DISEBOLT, THUNDERSTORM, HORBDRAIN, HDRAINCLOUD
 	TIDALWAVE, HELLFIRE, FIREFLASH, STRIKE, DISEBOLT, THUNDERSTORM, HORBDRAIN, HDRAINCLOUD
 }
-
 ---- Create the handbook to the underworld
 --school_book[55] = {
 --	HELLFIRE, GENOCIDE, MASSWARP, CONFUSE, FIERYAURA
 --}
-
 -- Create the handbook of novice etiquette
-school_book[56] = {
-        HDELFEAR, HBLESSING, HGLOBELIGHT, HSENSEMON, HHEALING, HCURING
-}
-
+school_book[56] = { HDELFEAR, HBLESSING, HGLOBELIGHT, HSENSEMON, HHEALING, HCURING }
 ---- Create the handbook for rogues (of shadows)
-school_book[57] = {
-	BLINK, DISARM, NOXIOUSCLOUD, SENSEHIDDEN, REVEALWAYS, VISION, INVISIBILITY
-}
-
+school_book[57] = { BLINK, DISARM, NOXIOUSCLOUD, SENSEHIDDEN, REVEALWAYS, VISION, INVISIBILITY }
 ---- Create the handbook for dungeon masters & wizads (of dungeon keeping)
-school_book[58] = {
-        TELEKINESIS, DIG, STONEPRISON, GROWTREE, DISARM, VISION, STARIDENTIFY, MANATHRUST, DISEBOLT, FIREFLASH, RECHARGE, MAGELOCK
-}
-
+school_book[58] = { TELEKINESIS, DIG, STONEPRISON, GROWTREE, DISARM, VISION, STARIDENTIFY, MANATHRUST, DISEBOLT, FIREFLASH, RECHARGE, MAGELOCK }
 -- Create the handbook of revelation
-school_book[59] = {
-	IDENTIFY, STARIDENTIFY, SENSEHIDDEN, DETECTMONSTERS, SENSEMONSTERS, MSELFKNOW, MSANITY, MSENSEMON, MIDENTIFY
-}
-
+school_book[59] = { IDENTIFY, STARIDENTIFY, SENSEHIDDEN, DETECTMONSTERS, SENSEMONSTERS, MSELFKNOW, MSANITY, MSENSEMON, MIDENTIFY }
 -- Create the handbook of transportation
 school_book[60] = {
 	--TELEAWAY, MTELEAWAY
 	BLINK, TELEPORT, RECALL, TELEKINESIS, MBLINK, MTELEPORT, MTELETOWARDS, MTELEKINESIS, RELOCATION, GATEWAY
 }
-
 -- Create the handbook of first visions
-school_book[61] = {
-        HDELFEAR, MANATHRUST, HCURSE, GLOBELIGHT, DETECTMONSTERS, HSENSEMON, HSANCTUARY, SENSEHIDDEN
-}
+school_book[61] = { HDELFEAR, MANATHRUST, HCURSE, GLOBELIGHT, DETECTMONSTERS, HSENSEMON, HSANCTUARY, SENSEHIDDEN }
