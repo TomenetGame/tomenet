@@ -8,37 +8,35 @@ function get_cryo_dam()
 	return get_level(Ind, MPYROKINESIS, 750), 150
 end
 
-MBASH = add_spell
-{
-	["name"] =	"Psychic Hammer",
-	["school"] =	{SCHOOL_PPOWER},
-	["am"] =	50,
+MBASH = add_spell {
+	["name"] = 	"Psychic Hammer",
+	["school"] = 	{SCHOOL_PPOWER},
+	["am"] = 	50,
 	["spell_power"] = 0,
-	["level"] =	1,
-	["mana"] =	1,
+	["level"] = 	1,
+	["mana"] = 	1,
 	["mana_max"] =	15,
-	["fail"] =	5,
+	["fail"] = 	5,
 	["direction"] = TRUE,
-	["spell"] =	function(args)
+	["spell"] = 	function(args)
 			fire_grid_bolt(Ind, GF_FORCE, args.dir, get_level(Ind, MBASH, 100), " releases a psychic hammer for")
 			end,
 	["info"] = 	function()
 			return "dam "..(get_level(Ind, MBASH, 100))
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Telekinetic power focussed to bash your opponent",
 	}
 }
 
-MBLINK = add_spell
-{
+MBLINK = add_spell {
 	["name"] = 	"Autokinesis I",
 	["school"] = 	{SCHOOL_PPOWER},
-	["am"] =	50,
+	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	5,
 	["mana"] = 	3,
-	["mana_max"] =  3,
+	["mana_max"] = 	3,
 	["fail"] = 	10,
 	["spell"] = 	function()
 			local dist = 6 + get_level(Ind, MBLINK, 6)
@@ -47,20 +45,19 @@ MBLINK = add_spell
 	["info"] = 	function()
 			return "distance "..(6 + get_level(Ind, MBLINK, 6))
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Teleports you on a small scale range",
 	}
 }
 
-MTELEPORT = add_spell
-{
+MTELEPORT = add_spell {
 	["name"] = 	"Autokinesis II",
 	["school"] = 	{SCHOOL_PPOWER},
-	["am"] =	50,
+	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	16,
-	["mana"] = 	8,
-	["mana_max"] = 	14,
+	["mana"] = 	12,
+	["mana_max"] = 	12,
 	["fail"] = 	20,
 	["spell"] = 	function()
 			local dist = 100 + get_level(Ind, MTELEPORT, 100)
@@ -69,21 +66,20 @@ MTELEPORT = add_spell
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Teleports you around the level.",
 	}
 }
 
-MTELETOWARDS = add_spell
-{
+MTELETOWARDS = add_spell {
 	["name"] = 	"Autokinesis III",
 	["school"] = 	{SCHOOL_PPOWER},
-	["am"] =	50,
+	["am"] = 	50,
 	["spell_power"] = 0,
 	["blind"] = 	0,
 	["level"] = 	24,
-	["mana"] = 	20,
-	["mana_max"] = 	30,
+	["mana"] = 	26,
+	["mana_max"] = 	26,
 	["fail"] = 	10,
 	["spell"] = 	function()
 			do_autokinesis_to(Ind, 20 + get_level(Ind, MTELETOWARDS, 150))
@@ -91,20 +87,19 @@ MTELETOWARDS = add_spell
 	["info"] = 	function()
 			return "range "..(20 + get_level(Ind, MTELETOWARDS, 150))
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Teleports you to the nearest friendly opened mind.",
 	}
 }
 
-MTELEAWAY = add_spell
-{
+MTELEAWAY = add_spell {
 	["name"] = 	"Psychic Warp",
 	["school"] = 	{SCHOOL_PPOWER},
-	["am"] =	50,
+	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	30,
-	["mana"] = 	40,
-	["mana_max"] = 	50,
+	["mana"] = 	45,
+	["mana_max"] = 	45,
 	["fail"] = 	10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
@@ -113,49 +108,47 @@ MTELEAWAY = add_spell
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Attempts to teleport your opponent away.",
 	}
 }
 
-MDISARM = add_spell
-{
-	["name"] =	"Psychokinesis",
-	["school"] =	{SCHOOL_PPOWER},
-	["am"] =	50,
+MDISARM = add_spell {
+	["name"] = 	"Psychokinesis",
+	["school"] = 	{SCHOOL_PPOWER},
+	["am"] = 	50,
 	["spell_power"] = 0,
-	["level"] =	3,
-	["mana"] =	5,
+	["level"] = 	3,
+	["mana"] = 	5,
 	["mana_max"] =	5,
 	["fail"] =	10,
 	["direction"] = TRUE,
-	["spell"] =	function(args)
+	["spell"] = 	function(args)
 --			destroy_doors_touch(Ind, 1)
 			fire_grid_beam(Ind, GF_KILL_TRAP, args.dir, 0, "")
 			end,
-	["info"] =	function()
+	["info"] = 	function()
 			return ""
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Destroys traps and locks by psychokinetic manipulation,",
 			"also revealing secret doors in the process.",
 	}
 }
 
 --[[ --moved to mintrusion, to make room for ff/lev spells here..
-MPSISTORM = add_spell
-{
-	["name"] =	"Psi Storm",
-	["school"] =	{SCHOOL_PPOWER},
-	["am"] =	50,
+MPSISTORM = add_spell {
+	["name"] = 	"Psi Storm",
+	["school"] = 	{SCHOOL_PPOWER},
+	["am"] = 	50,
 	["spell_power"] = 0,
-	["level"] =	18,
-	["mana"] =	15,
-	["mana_max"] =	40,
-	["fail"] =	25,
+	["level"] = 	18,
+	["mana"] = 	15,
+	["mana_max"] = 	40,
+	["fail"] = 	25,
 	["direction"] = TRUE,
-	["spell"] =	function(args)
---	["spell"] =	function()
+	["spell"] = 	function(args)
+--	["spell"] = 	function()
 			fire_cloud(Ind, GF_PSI, args.dir, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 2), 5 + get_level(Ind, MPSISTORM, 5), 14, " releases a psi storm for")
 --			fire_cloud(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, " releases a psi storm for")
 --			fire_wave(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, EFF_STORM, " releases a psi storm for")
@@ -163,22 +156,21 @@ MPSISTORM = add_spell
 	["info"] = 	function()
 			return "dam "..(1 + get_level(Ind, MPSISTORM, 76)).." rad "..(2 + get_level(Ind, MPSISTORM, 2)).." dur "..(5 + get_level(Ind, MPSISTORM, 5))
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"A psionic storm that damages and disturbs all minds within an area",
 	}
 }
 ]]
 
-MFEEDBACK = add_spell
-{
-	["name"] =	"Feedback",
-	["school"] =	{SCHOOL_PPOWER},
-	["am"] =	50,
+MFEEDBACK = add_spell {
+	["name"] = 	"Feedback",
+	["school"] = 	{SCHOOL_PPOWER},
+	["am"] = 	50,
 	["spell_power"] = 0,
-	["level"] =	18,
-	["mana"] =	10,
-	["mana_max"] =	20,
-	["fail"] =	15,
+	["level"] = 	18,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	15,
 	["direction"] = FALSE,
 	["spell"] = function()
 		if get_level(Ind, MFEEDBACK, 50) >= 15 then set_tim_lev(Ind, randint(5) + 5 + get_level(Ind, MFEEDBACK, 15))
@@ -195,18 +187,17 @@ MFEEDBACK = add_spell
 	}
 }
 
-MPYROKINESIS = add_spell
-{
-	["name"] =	"Pyrokinesis",
-	["school"] =	{SCHOOL_PPOWER},
-	["am"] =	50,
+MPYROKINESIS = add_spell {
+	["name"] = 	"Pyrokinesis",
+	["school"] = 	{SCHOOL_PPOWER},
+	["am"] = 	50,
 	["spell_power"] = 0,
-	["level"] =	20,
-	["mana"] =	5,
-	["mana_max"] =	22,
-	["fail"] =	15,
+	["level"] = 	20,
+	["mana"] = 	5,
+	["mana_max"] = 	22,
+	["fail"] = 	15,
 	["direction"] = TRUE,
-	["ftk"] = 2,
+	["ftk"] = 	2,
 	["spell"] =	function(args)
 			local n, p
 			n, p = get_pyro_dam()
@@ -216,23 +207,22 @@ MPYROKINESIS = add_spell
 			n, p = get_pyro_dam()
 			return "dam "..(n + p)
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Causes a severe inflammation to burn your opponent",
 	}
 }
 
-MCRYOKINESIS = add_spell
-{
-	["name"] =	"Cryokinesis",
-	["school"] =	{SCHOOL_PPOWER},
-	["am"] =	50,
+MCRYOKINESIS = add_spell {
+	["name"] = 	"Cryokinesis",
+	["school"] = 	{SCHOOL_PPOWER},
+	["am"] = 	50,
 	["spell_power"] = 0,
-	["level"] =	24,
-	["mana"] =	6,
-	["mana_max"] =	23,
-	["fail"] =	15,
+	["level"] = 	24,
+	["mana"] = 	6,
+	["mana_max"] = 	23,
+	["fail"] = 	15,
 	["direction"] = TRUE,
-	["ftk"] = 2,
+	["ftk"] = 	2,
 	["spell"] =	function(args)
 			local n, p
 			n, p = get_cryo_dam()
@@ -243,7 +233,7 @@ MCRYOKINESIS = add_spell
 			n, p = get_cryo_dam()
 			return "dam "..(n + p)
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Causes a dramatic temperature drop on your opponent",
 	}
 }
@@ -251,7 +241,7 @@ MCRYOKINESIS = add_spell
 MSHIELD = add_spell {
 	["name"] = 	"Kinetic Shield",
 	["school"] = 	{SCHOOL_PPOWER},
-	["am"] =	50,
+	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	40,
 	["mana"] = 	30,
@@ -265,32 +255,31 @@ MSHIELD = add_spell {
 	["info"] = 	function()
 			return "dur "..10 + (2 * get_level(Ind, MSHIELD, 50)).."+d10"
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Uses telekinetic power as a shield that repels up to about",
 			"half of all incoming melee attacks and physical projectiles.",
 	}
 }
 
 if (def_hack("TEST_SERVER", nil)) then
-MFUSION = add_spell
-{
-	["name"] =	"Mental Fusion",
---	["name"] =	"Corporeal Fusion",
---	["school"] =	{SCHOOL_TCONTACT, SCHOOL_PPOWER, SCHOOL_MINTRUSION},
-	["school"] =	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
-	["am"] =	50,
+MFUSION = add_spell {
+	["name"] = 	"Mental Fusion",
+--	["name"] = 	"Corporeal Fusion",
+--	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER, SCHOOL_MINTRUSION},
+	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
+	["am"] = 	50,
 	["spell_power"] = 0,
-	["level"] =	40,
-	["mana"] =	200,
-	["mana_max"] =	200,
-	["fail"] =	20,
-	["spell"] =	function()
+	["level"] = 	40,
+	["mana"] = 	200,
+	["mana_max"] = 	200,
+	["fail"] = 	20,
+	["spell"] = 	function()
 			do_cmd_fusion(Ind)
 			end,
-	["info"] =      function()
+	["info"] = 	function()
 			return ""
 			end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Fuses your mind with a friendly target with open mind nearby,",
 			"allowing you spell-casting but giving up control over your body.",
 --			"Fuses your mind and body with a friendly target with open mind nearby,",
