@@ -14,15 +14,15 @@ MBASH = add_spell {
 	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	1,
-	["mana"] = 	1,
-	["mana_max"] =	15,
+	["mana"] = 	8,
+	["mana_max"] =	8,
 	["fail"] = 	5,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			fire_grid_bolt(Ind, GF_FORCE, args.dir, get_level(Ind, MBASH, 100), " releases a psychic hammer for")
+			fire_grid_bolt(Ind, GF_FORCE, args.dir, get_level(Ind, MBASH, 50), " releases a psychic hammer for")
 			end,
 	["info"] = 	function()
-			return "dam "..(get_level(Ind, MBASH, 100))
+			return "dam "..(get_level(Ind, MBASH, 50))
 			end,
 	["desc"] = 	{
 			"Telekinetic power focussed to bash your opponent",
