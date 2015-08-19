@@ -2,10 +2,10 @@
 --((static: +saving throw))
 
 function get_pyro_dam()
-	return get_level(Ind, MPYROKINESIS, 700), 200
+	return get_level(Ind, MPYROKINESIS_I, 700), 200
 end
 function get_cryo_dam()
-	return get_level(Ind, MPYROKINESIS, 750), 150
+	return get_level(Ind, MCRYOKINESIS_I, 750), 150
 end
 
 MBASH = add_spell {
@@ -187,14 +187,14 @@ MFEEDBACK = add_spell {
 	}
 }
 
-MPYROKINESIS = add_spell {
-	["name"] = 	"Pyrokinesis",
+MPYROKINESIS_I = add_spell {
+	["name"] = 	"Pyrokinesis I",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	20,
-	["mana"] = 	5,
-	["mana_max"] = 	22,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
 	["fail"] = 	15,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
@@ -211,16 +211,65 @@ MPYROKINESIS = add_spell {
 			"Causes a severe inflammation to burn your opponent",
 	}
 }
+MPYROKINESIS_II = add_spell {
+	["name"] = 	"Pyrokinesis II",
+	["school"] = 	{SCHOOL_PPOWER},
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] = 	20,
+	["mana"] = 	22,
+	["mana_max"] = 	22,
+	["fail"] = 	-30,
+	["direction"] = TRUE,
+	["ftk"] = 	2,
+	["spell"] =	function(args)
+			local n, p
+			n, p = get_pyro_dam()
+			fire_grid_bolt(Ind, GF_FIRE, args.dir, n + p, " causes an inflammation for")
+			end,
+	["info"] = 	function()
+			n, p = get_pyro_dam()
+			return "dam "..(n + p)
+			end,
+	["desc"] = 	{
+			"Causes a severe inflammation to burn your opponent",
+	}
+}
 
-MCRYOKINESIS = add_spell {
-	["name"] = 	"Cryokinesis",
+MCRYOKINESIS_I = add_spell {
+	["name"] = 	"Cryokinesis I",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	24,
-	["mana"] = 	6,
-	["mana_max"] = 	23,
+	["mana"] = 	11,
+	["mana_max"] = 	11,
 	["fail"] = 	15,
+	["direction"] = TRUE,
+	["ftk"] = 	2,
+	["spell"] =	function(args)
+			local n, p
+			n, p = get_cryo_dam()
+			fire_grid_bolt(Ind, GF_COLD, args.dir, n + p, " causes freezing for")
+			end,
+	["info"] = 	function()
+			local n, p
+			n, p = get_cryo_dam()
+			return "dam "..(n + p)
+			end,
+	["desc"] = 	{
+			"Causes a dramatic temperature drop on your opponent",
+	}
+}
+MCRYOKINESIS_II = add_spell {
+	["name"] = 	"Cryokinesis II",
+	["school"] = 	{SCHOOL_PPOWER},
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] = 	39,
+	["mana"] = 	23,
+	["mana_max"] = 	23,
+	["fail"] = 	-30,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] =	function(args)
