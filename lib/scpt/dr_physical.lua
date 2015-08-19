@@ -1,33 +1,33 @@
 function get_speed()
-        local spd
+	local spd
 --  22->35skill+10, 19->39skill+10, 17->42skill+10
 	spd = get_level(Ind, QUICKFEET, 17)
 	if spd > 10 then
 		spd = 10
 	end
-        return spd
+	return spd
 end
 
 -- The original 'healing cloud' for priests (which never happened)
 -- Basically a nox that heals you. Not targettable; casts the cloud around the caster
 
 HEALINGCLOUD = add_spell {
-        ["name"] =      "Forest's Embrace",
-        ["school"] =    {SCHOOL_DRUID_PHYSICAL},
+	["name"] = 	"Forest's Embrace",
+	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
-        ["level"] =     18,
-        ["mana"] =      25,
-        ["mana_max"] =  25,
-        ["fail"] =      30,
-        ["stat"] =      A_WIS,
-        ["direction"] = FALSE,
-        ["spell"] =     function()
+	["level"] = 	18,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	30,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
 			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD, 25)), (1 + get_level(Ind, HEALINGCLOUD, 2)), (5 + get_level(Ind, HEALINGCLOUD, 5)), 10, " calls the spirits")
-                        end,
-        ["info"] =      function()
-                        return "heals " .. (get_level(Ind, HEALINGCLOUD, 25) + 1) .. " rad " .. (1 + get_level(Ind,HEALINGCLOUD,2)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD, 5))
-                        end,
-        ["desc"] =      { "Continuously heals you and those around you. (Auto-projecting)", }
+			end,
+	["info"] = 	function()
+			return "heals " .. (get_level(Ind, HEALINGCLOUD, 25) + 1) .. " rad " .. (1 + get_level(Ind,HEALINGCLOUD,2)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD, 5))
+			end,
+	["desc"] =      { "Continuously heals you and those around you. (Auto-projecting)", }
 }
 
 -- Similar to Temporal's 'Essence of Speed'
@@ -40,7 +40,7 @@ QUICKFEET = add_spell {
 	["mana"] = 	25,
 	["mana_max"] = 	25,
 	["fail"] = 	40,
-        ["stat"] =      A_WIS,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			set_fast(Ind, 30 + randint(10) + get_level(Ind, QUICKFEET, 30), get_speed())
@@ -61,7 +61,7 @@ HERBALTEA = add_spell {
 	["mana"] = 	50,
 	["mana_max"] = 	50,
 	["fail"] = 	20,
-        ["stat"] =      A_WIS,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			local lvl
@@ -72,25 +72,25 @@ HERBALTEA = add_spell {
 
 			if lvl >= 35 then
 				restore_level(Ind)
-                                do_res_stat(Ind, A_STR)
-                                do_res_stat(Ind, A_CON)
-                                do_res_stat(Ind, A_DEX)
-                                do_res_stat(Ind, A_WIS)
-                                do_res_stat(Ind, A_INT)
-                                do_res_stat(Ind, A_CHR)
-	                        if (player.black_breath == TRUE) then
-    		                        msg_print(Ind, "The hold of the Black Breath on you is broken!");
-            		                player.black_breath = FALSE
-                    		end
+				do_res_stat(Ind, A_STR)
+				do_res_stat(Ind, A_CON)
+				do_res_stat(Ind, A_DEX)
+				do_res_stat(Ind, A_WIS)
+				do_res_stat(Ind, A_INT)
+				do_res_stat(Ind, A_CHR)
+				if (player.black_breath == TRUE) then
+					msg_print(Ind, "The hold of the Black Breath on you is broken!");
+					player.black_breath = FALSE
+				end
 				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 4 + 8, 1, " gives you something bitter to drink.")
 			elseif lvl >= 25 then
 				restore_level(Ind)
-                                do_res_stat(Ind, A_STR)
-                                do_res_stat(Ind, A_CON)
-                                do_res_stat(Ind, A_DEX)
-                                do_res_stat(Ind, A_WIS)
-                                do_res_stat(Ind, A_INT)
-                                do_res_stat(Ind, A_CHR)
+				do_res_stat(Ind, A_STR)
+				do_res_stat(Ind, A_CON)
+				do_res_stat(Ind, A_DEX)
+				do_res_stat(Ind, A_WIS)
+				do_res_stat(Ind, A_INT)
+				do_res_stat(Ind, A_CHR)
 				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 4, 1, " gives you something bitter to drink.")
 			elseif lvl >= 20 then
 				restore_level(Ind)
