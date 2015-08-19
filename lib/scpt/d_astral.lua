@@ -21,10 +21,10 @@ end
 function get_veng_power(Ind)
 	local l = get_astral_lev(Ind)
 	if (l > 50) then
-        	return (500)
+		return (500)
 	else
-        	return ((l * l) / 5)
-        end
+		return ((l * l) / 5)
+	end
 end
 
 function get_astral_bonus_hp(Ind)
