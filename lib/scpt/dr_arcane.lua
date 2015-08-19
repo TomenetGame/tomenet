@@ -8,7 +8,7 @@ NATURESCALL = add_spell {
 	["mana"] = 	20,
 	["mana_max"] = 	20,
 	["fail"] = 	20,
-        ["stat"] =      A_WIS,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			grow_trees(Ind, 1 + get_level(Ind, NATURESCALL, 8))
@@ -30,7 +30,7 @@ WATERPOISON_I = add_spell {
 	["mana"] = 	5,
 	["mana_max"] = 	5,
 	["fail"] = 	20,
-        ["stat"] =      A_WIS,
+	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			fire_cloud(Ind, GF_POIS, args.dir, (2 + get_level(Ind, WATERPOISON_I, 60)), 3, (5 + get_level(Ind, WATERPOISON_I, 14)), 9, " fires a toxic moisture of")
@@ -47,8 +47,8 @@ WATERPOISON_II = add_spell {
 	["level"] = 	20,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	10,
-        ["stat"] =      A_WIS,
+	["fail"] = 	-40,
+	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			fire_cloud(Ind, GF_WATERPOISON, args.dir, (2 + 60 + get_level(Ind, WATERPOISON_II, 60)), 3, (5 + get_level(Ind, WATERPOISON_I, 14)), 9, " fires toxic vapour of")
@@ -65,8 +65,8 @@ WATERPOISON_III = add_spell {
 	["level"] = 	30,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	5,
-        ["stat"] =      A_WIS,
+	["fail"] = 	-70,
+	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			fire_cloud(Ind, GF_ICEPOISON, args.dir, (2 + 106 + get_level(Ind, WATERPOISON_III, 60)), 3, (5 + get_level(Ind, WATERPOISON_I, 14)), 9, " fires icy toxic moisture of")
@@ -86,7 +86,7 @@ BAGIDENTIFY = add_spell {
 	["mana"] = 	30,
 	["mana_max"] = 	30,
 	["fail"] = 	10,
-        ["stat"] =      A_WIS,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			identify_pack(Ind);
@@ -106,8 +106,8 @@ REPLACEWALL = add_spell {
 	["level"] = 	35,
 	["mana"] = 	150,
 	["mana_max"] = 	150,
-	["fail"] = 	-98,
-        ["stat"] =      A_WIS,
+	["fail"] = 	102,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			create_garden(Ind, get_level(Ind, REPLACEWALL, 50))
@@ -131,8 +131,8 @@ BANISHANIMALS = add_spell {
 	["level"] = 	40,
 	["mana"] = 	250,
 	["mana_max"] = 	250,
-	["fail"] = 	-98,
-        ["stat"] =      A_WIS,
+	["fail"] = 	102,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			do_banish_animals(Ind, get_level(Ind, BANISHANIMALS, 100))

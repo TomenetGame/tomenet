@@ -194,7 +194,7 @@ STOPWRAITH = add_spell
 	["level"] = 	20,
 	["mana"] = 	0,
 	["mana_max"] = 	0,
-	["fail"] = 	-99,
+	["fail"] = 	101,
 	["spell"] = 	function()
 			set_tim_wraith(Ind, 0)
 			if player.spell_project > 0 then

@@ -313,7 +313,7 @@ MSTOPCHARM = add_spell {
         ["level"] = 	33,
         ["mana"] = 	0,
         ["mana_max"] = 	0,
-        ["fail"] = 	-99,
+        ["fail"] = 	101,
         ["direction"] = FALSE,
         ["spell"] = 	function()
 			do_mstopcharm(Ind)

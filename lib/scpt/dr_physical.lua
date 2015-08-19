@@ -116,8 +116,8 @@ EXTRASTATS_I = add_spell {
 	["level"] = 	15,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	40,
-        ["stat"] =      A_WIS,
+	["fail"] = 	20,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			local x
@@ -139,8 +139,8 @@ EXTRASTATS_II = add_spell {
 	["level"] = 	25,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	20,
-        ["stat"] =      A_WIS,
+	["fail"] = 	-30,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			do_xtra_stats(Ind, 20 + get_level(Ind, EXTRASTATS_I, 50), get_level(Ind, EXTRASTATS_I, 50))
@@ -163,7 +163,7 @@ FOCUSSHOT = add_spell {
 	["mana"] = 	35,
 	["mana_max"] = 	35,
 	["fail"] = 	30,
-        ["stat"] =      A_WIS,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			do_focus_shot(Ind, get_level(Ind, FOCUSSHOT, 100), get_level(Ind, FOCUSSHOT, 25))

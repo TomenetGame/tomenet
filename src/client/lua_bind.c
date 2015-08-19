@@ -95,33 +95,31 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
 }
 
 /* adj_mag_stat? stat_ind??  pfft */
-s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
-{
-        int             minfail;
+s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat) {
+	int minfail;
 
-        /* correct LUA overflow bug */
-        if (chance >= 156) chance -= 256;
+	/* correct LUA overflow bug */
+	if (chance > 100) chance -= 256;
 
 	/* Reduce failure rate by "effective" level adjustment */
-        chance -= 3 * (level - skill_level);
+	chance -= 3 * (level - skill_level);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-        chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[stat]] - 1);
+	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[stat]] - 1);
 
 	 /* Not enough mana to cast */
-        if (chance < 0) chance = 0;
+	if (chance < 0) chance = 0;
 #if 0 /* just confuses and casting without mana is disabled anyway */
-        if (mana > cur_mana) chance += 15 * (mana - cur_mana);
+	if (mana > cur_mana) chance += 15 * (mana - cur_mana);
 #endif
 	/* Extract the minimum failure rate */
-        minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
+	minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
 
 #if 0	/* disabled for the time being */
 	/*
-         * Non mage characters never get too good
+	 * Non mage characters never get too good
 	 */
-	if (!(PRACE_FLAG(PR1_ZERO_FAIL)))
-	{
+	if (!(PRACE_FLAG(PR1_ZERO_FAIL))) {
 		if (minfail < 5) minfail = 5;
 	}
 
