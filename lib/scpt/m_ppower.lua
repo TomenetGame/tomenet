@@ -1,11 +1,25 @@
 -- handle the psycho-power school
 --((static: +saving throw))
 
-function get_pyro_dam()
-	return get_level(Ind, MPYROKINESIS_I, 700), 200
+function get_pyro_dam(Ind, limit_lev)
+	local lev, llev, lev2
+	lev = get_level(Ind, MPYROKINESIS_I, 700)
+	llev = limit_lev * 14
+	if limit_lev ~= 0 and lev > llev then lev = llev + (lev - llev) / 2 end
+	lev2 = 200
+	--if limit_lev ~= 0 and lev2 - 100 > limit_lev * 2 then lev2 = 100 + limit_lev * 2 + (lev2 - 100 - limit_lev * 2) / 2 end
+	if limit_lev ~= 0 and lev2 > limit_lev * 4 then lev2 = limit_lev * 4 + (lev2 - limit_lev * 4) / 2 end
+	return lev, lev2
 end
-function get_cryo_dam()
-	return get_level(Ind, MCRYOKINESIS_I, 750), 150
+function get_cryo_dam(Ind, limit_lev)
+	local lev, llev, lev2
+	lev = get_level(Ind, MCRYOKINESIS_I, 750)
+	llev = limit_lev * 15
+	if limit_lev ~= 0 and lev > llev then lev = llev + (lev - llev) / 2 end
+	lev2 = 150
+	--if limit_lev ~= 0 and lev2 - 100 > limit_lev * 2 then lev2 = 100 + limit_lev * 2 + (lev2 - 100 - limit_lev * 2) / 2 end
+	if limit_lev ~= 0 and lev2 > limit_lev * 4 then lev2 = limit_lev * 4 + (lev2 - limit_lev * 4) / 2 end
+	return lev, lev2
 end
 
 MBASH = add_spell {
@@ -195,16 +209,16 @@ MPYROKINESIS_I = add_spell {
 	["level"] = 	20,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
-	["fail"] = 	15,
+	["fail"] = 	-25,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] =	function(args)
 			local n, p
-			n, p = get_pyro_dam()
+			n, p = get_pyro_dam(Ind, 1)
 			fire_grid_bolt(Ind, GF_FIRE, args.dir, n + p, " causes an inflammation for")
 			end,
 	["info"] = 	function()
-			n, p = get_pyro_dam()
+			n, p = get_pyro_dam(Ind, 1)
 			return "dam "..(n + p)
 			end,
 	["desc"] = 	{
@@ -219,16 +233,16 @@ MPYROKINESIS_II = add_spell {
 	["level"] = 	37,
 	["mana"] = 	22,
 	["mana_max"] = 	22,
-	["fail"] = 	-65,
+	["fail"] = 	-85,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] =	function(args)
 			local n, p
-			n, p = get_pyro_dam()
+			n, p = get_pyro_dam(Ind, 0)
 			fire_grid_bolt(Ind, GF_FIRE, args.dir, n + p, " causes an inflammation for")
 			end,
 	["info"] = 	function()
-			n, p = get_pyro_dam()
+			n, p = get_pyro_dam(Ind, 0)
 			return "dam "..(n + p)
 			end,
 	["desc"] = 	{
@@ -244,17 +258,17 @@ MCRYOKINESIS_I = add_spell {
 	["level"] = 	24,
 	["mana"] = 	11,
 	["mana_max"] = 	11,
-	["fail"] = 	15,
+	["fail"] = 	-25,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] =	function(args)
 			local n, p
-			n, p = get_cryo_dam()
+			n, p = get_cryo_dam(Ind, 1)
 			fire_grid_bolt(Ind, GF_COLD, args.dir, n + p, " causes freezing for")
 			end,
 	["info"] = 	function()
 			local n, p
-			n, p = get_cryo_dam()
+			n, p = get_cryo_dam(Ind, 1)
 			return "dam "..(n + p)
 			end,
 	["desc"] = 	{
@@ -269,17 +283,17 @@ MCRYOKINESIS_II = add_spell {
 	["level"] = 	39,
 	["mana"] = 	23,
 	["mana_max"] = 	23,
-	["fail"] = 	-65,
+	["fail"] = 	-90,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] =	function(args)
 			local n, p
-			n, p = get_cryo_dam()
+			n, p = get_cryo_dam(Ind, 0)
 			fire_grid_bolt(Ind, GF_COLD, args.dir, n + p, " causes freezing for")
 			end,
 	["info"] = 	function()
 			local n, p
-			n, p = get_cryo_dam()
+			n, p = get_cryo_dam(Ind, 0)
 			return "dam "..(n + p)
 			end,
 	["desc"] = 	{

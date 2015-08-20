@@ -146,16 +146,16 @@ POWERBEAM_I = add_spell {
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				fire_beam(Ind, GF_LITE, args.dir, damroll(get_astral_dam(Ind, 5)), " casts a beam of light for")
+				fire_beam(Ind, GF_LITE, args.dir, damroll(get_astral_dam(Ind, 1)), " casts a beam of light for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_beam(Ind, GF_DARK, args.dir, damroll(get_astral_dam(Ind, 5)), " casts a beam of unlight for")
+				fire_beam(Ind, GF_DARK, args.dir, damroll(get_astral_dam(Ind, 1)), " casts a beam of unlight for")
 			else
-				fire_beam(Ind, GF_ELEC, args.dir, damroll(get_astral_dam(Ind, 5)), " casts a lightning beam for")
+				fire_beam(Ind, GF_ELEC, args.dir, damroll(get_astral_dam(Ind, 1)), " casts a lightning beam for")
 			end
 	end,
 	["info"] = 	function()
 			local xx, yy
-			xx, yy = get_astral_dam(Ind, 5)
+			xx, yy = get_astral_dam(Ind, 1)
 			return "dam "..xx.."d"..yy
 	end,
 	["desc"] =	{
@@ -177,16 +177,16 @@ POWERBEAM_II = add_spell {
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				fire_beam(Ind, GF_LITE, args.dir, damroll(get_astral_dam(Ind, 20)), " casts a beam of light for")
+				fire_beam(Ind, GF_LITE, args.dir, damroll(get_astral_dam(Ind, 15)), " casts a beam of light for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_beam(Ind, GF_DARK, args.dir, damroll(get_astral_dam(Ind, 20)), " casts a beam of unlight for")
+				fire_beam(Ind, GF_DARK, args.dir, damroll(get_astral_dam(Ind, 15)), " casts a beam of unlight for")
 			else
-				fire_beam(Ind, GF_ELEC, args.dir, damroll(get_astral_dam(Ind, 20)), " casts a lightning beam for")
+				fire_beam(Ind, GF_ELEC, args.dir, damroll(get_astral_dam(Ind, 15)), " casts a lightning beam for")
 			end
 	end,
 	["info"] = 	function()
 			local xx, yy
-			xx, yy = get_astral_dam(Ind, 20)
+			xx, yy = get_astral_dam(Ind, 15)
 			return "dam "..xx.."d"..yy
 	end,
 	["desc"] =	{
@@ -237,16 +237,16 @@ POWERBALL_I = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 10), 2 + get_level(Ind, POWERBALL_I, 2), " casts a mana ball for")
+				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 1), 2 + get_level(Ind, POWERBALL_I, 2), " casts a mana ball for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 10), 2 + get_level(Ind, POWERBALL_I, 2), " casts a dispelling ball for")
+				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 1), 2 + get_level(Ind, POWERBALL_I, 2), " casts a dispelling ball for")
 			else
-				fire_ball(Ind, GF_ELEC, args.dir, get_astral_ball_dam(Ind, 10), 2 + get_level(Ind, POWERBALL_I, 2), " casts a lightning ball for")
+				fire_ball(Ind, GF_ELEC, args.dir, get_astral_ball_dam(Ind, 1), 2 + get_level(Ind, POWERBALL_I, 2), " casts a lightning ball for")
 			end
 	end,
 	["info"] = 	function()
 			local dam
-			dam = get_astral_ball_dam(Ind, 10)
+			dam = get_astral_ball_dam(Ind, 1)
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
 	["desc"] =	{
@@ -268,14 +268,14 @@ POWERBALL_II = add_spell {
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 25), 2 + get_level(Ind, POWERBALL_I, 2), " casts a mana ball for")
+				fire_ball(Ind, GF_MANA, args.dir, get_astral_ball_dam(Ind, 15), 2 + get_level(Ind, POWERBALL_I, 2), " casts a mana ball for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 25), 2 + get_level(Ind, POWERBALL_I, 2), " casts a dispelling ball for")
+				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_ball_dam(Ind, 15), 2 + get_level(Ind, POWERBALL_I, 2), " casts a dispelling ball for")
 			end
 	end,
 	["info"] = 	function()
 			local dam
-			dam = get_astral_ball_dam(Ind, 25)
+			dam = get_astral_ball_dam(Ind, 15)
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
 	["desc"] =	{
