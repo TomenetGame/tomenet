@@ -1,7 +1,7 @@
 -- handle the udun school
 
 function get_disebolt_dam()
-        return 40, 15 + get_level(Ind, DISEBOLT, 50)
+        return 30, 9 + get_level(Ind, DISEBOLT, 50)
 end
 
 --[[
@@ -141,16 +141,16 @@ FLAMEOFUDUN = add_spell
 
 DISEBOLT = add_spell
 {
-	["name"] =      "Disenchantment Bolt",
+	["name"] =      "Disenchantment Ray",
 	["school"] =    {SCHOOL_UDUN},
 	["level"] =     40,
 	["mana"] =      30,
-	["mana_max"] =  140,
+	["mana_max"] =  50,
         ["fail"] =      -40,
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] =     function(args)
-		fire_bolt(Ind, GF_DISENCHANT, args.dir, damroll(get_disebolt_dam()), " casts a disenchantment bolt for")
+		fire_beam(Ind, GF_DISENCHANT, args.dir, damroll(get_disebolt_dam()), " casts a disenchantment ray for")
 	end,
 	["info"] =      function()
 		local x, y
@@ -159,7 +159,7 @@ DISEBOLT = add_spell
 		return "dam "..x.."d"..y
 	end,
 	["desc"] =      {
-		"Conjures a powerful disenchantment bolt",
+		"Conjures a powerful disenchantment beam",
 		"The damage is nearly irresistible and will increase with level"
 	}
 }
