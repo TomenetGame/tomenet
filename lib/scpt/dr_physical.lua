@@ -27,7 +27,7 @@ HEALINGCLOUD = add_spell {
 	["info"] = 	function()
 			return "heals " .. (get_level(Ind, HEALINGCLOUD, 25) + 1) .. " rad " .. (1 + get_level(Ind,HEALINGCLOUD,2)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD, 5))
 			end,
-	["desc"] =      { "Continuously heals you and those around you. (Auto-projecting)", }
+	["desc"] = 	{ "Continuously heals you and those around you. (Auto-projecting)", }
 }
 
 -- Similar to Temporal's 'Essence of Speed'

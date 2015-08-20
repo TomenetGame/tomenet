@@ -17,9 +17,7 @@ MTAUNT = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{
-			"Causes a monster to charge and attack you in melee",
-	}
+	["desc"] = 	{ "Causes a monster to charge and attack you in melee", }
 }
 
 MDISTRACT = add_spell {
@@ -61,9 +59,7 @@ MSELFKNOW = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] =	{
-			"Find out more about yourself",
-	}
+	["desc"] = 	{ "Find out more about yourself", }
 }
 
 MBOOST = add_spell {
@@ -248,9 +244,7 @@ MIDENTIFY = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{
-			"Recognizes magic, allowing you to identify an item.",
-	}
+	["desc"] = 	{ "Recognizes magic, allowing you to identify an item.", }
 }
 
 if (def_hack("TEMP1", nil) == 0) then

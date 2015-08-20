@@ -41,9 +41,7 @@ MSCARE_I = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSCARE_I, 80))
 			end,
-	["desc"] = 	{
-			"Tries to manipulate the mind of a monster to scare it",
-	}
+	["desc"] = 	{ "Tries to manipulate the mind of a monster to scare it", }
 }
 __lua_MSCARE = MSCARE_I
 MSCARE_II = add_spell {
@@ -62,9 +60,7 @@ MSCARE_II = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSCARE_I, 80))
 			end,
-	["desc"] = 	{
-			"Tries to manipulate the minds of all monster in sight to scare them",
-	}
+	["desc"] = 	{ "Tries to manipulate the minds of all monster in sight to scare them", }
 }
 
 MCONFUSE_I = add_spell {
@@ -83,9 +79,7 @@ MCONFUSE_I = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MCONFUSE_I, 100))
 			end,
-	["desc"] = 	{
-			"Tries to manipulate the mind of a monster to confuse it",
-	}
+	["desc"] = 	{ "Tries to manipulate the mind of a monster to confuse it", }
 }
 MCONFUSE_II = add_spell {
 	["name"] = 	"Confuse II",
@@ -103,9 +97,7 @@ MCONFUSE_II = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MCONFUSE_I, 100))
 			end,
-	["desc"] = 	{
-			"Tries to manipulate the minds of all monsters in sight to confuse them",
-	}
+	["desc"] = 	{ "Tries to manipulate the minds of all monsters in sight to confuse them", }
 }
 
 MSLEEP_I = add_spell {
@@ -124,9 +116,7 @@ MSLEEP_I = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSLEEP_I, 80))
 			end,
-	["desc"] = 	{
-			"Causes the target to fall asleep instantly",
-	}
+	["desc"] = 	{ "Causes the target to fall asleep instantly", }
 }
 MSLEEP_II = add_spell {
 	["name"] = 	"Hypnosis II",
@@ -135,7 +125,7 @@ MSLEEP_II = add_spell {
 	["spell_power"] = 0,
 	["level"] = 	20,
 	["mana"] = 	16,
-	["mana_max"] =	16,
+	["mana_max"] = 	16,
 	["fail"] = 	-20,
 	["direction"] = FALSE,
 	["spell"] = 	function()
@@ -144,9 +134,7 @@ MSLEEP_II = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSLEEP_I, 80))
 			end,
-	["desc"] = 	{
-			"Causes all monsters in sight to fall asleep instantly",
-	}
+	["desc"] = 	{ "Causes all monsters in sight to fall asleep instantly", }
 }
 
 MSLOWMONSTER_I = add_spell {
@@ -165,9 +153,7 @@ MSLOWMONSTER_I = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSLOWMONSTER_I, 100))
 			end,
-	["desc"] = 	{
-			"Drains power from the muscles of your opponent, slowing it down",
-	}
+	["desc"] = 	{ "Drains power from the muscles of your opponent, slowing it down", }
 }
 MSLOWMONSTER_II = add_spell {
 	["name"] = 	"Drain Strength II",
@@ -185,9 +171,7 @@ MSLOWMONSTER_II = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSLOWMONSTER_I, 100))
 			end,
-	["desc"] = 	{
-			"Drains power from the muscles of all opponents in sight, slowing them down",
-	}
+	["desc"] = 	{ "Drains power from the muscles of all opponents in sight, slowing them down", }
 }
 
 MMINDBLAST_I = add_spell {
@@ -211,9 +195,7 @@ MMINDBLAST_I = add_spell {
 			d, s, p = get_psiblast_dam(Ind, 1)
 			return "power "..d.."d"..s.."+"..p
 			end,
-	["desc"] = 	{
-			"Blasts the target's mind with psionic energy",
-	}
+	["desc"] = 	{ "Blasts the target's mind with psionic energy", }
 }
 MMINDBLAST_II = add_spell {
 	["name"] = 	"Psionic Blast II",
@@ -236,9 +218,7 @@ MMINDBLAST_II = add_spell {
 			d, s, p = get_psiblast_dam(Ind, 20)
 			return "power "..d.."d"..s.."+"..p
 			end,
-	["desc"] = 	{
-			"Blasts the target's mind with psionic energy",
-	}
+	["desc"] = 	{ "Blasts the target's mind with psionic energy", }
 }
 MMINDBLAST_III = add_spell {
 	["name"] = 	"Psionic Blast III",
@@ -261,9 +241,7 @@ MMINDBLAST_III = add_spell {
 			d, s, p = get_psiblast_dam(Ind, 0)
 			return "power "..d.."d"..s.."+"..p
 			end,
-	["desc"] = 	{
-			"Blasts the target's mind with psionic energy",
-	}
+	["desc"] = 	{ "Blasts the target's mind with psionic energy", }
 }
 
 MPSISTORM_I = add_spell {
@@ -289,9 +267,7 @@ MPSISTORM_I = add_spell {
 		d = get_psistorm_dam(Ind, 1)
 		return "dam "..d.." rad "..(3 + get_level(Ind, MPSISTORM_I, 4)).." dur "..(6 + get_level(Ind, MPSISTORM_I, 4))
 	end,
-	["desc"] = {
-		"A psionic storm that damages and disturbs all minds within an area",
-	}
+	["desc"] = { "A psionic storm that damages and disturbs all minds within an area", }
 }
 MPSISTORM_II = add_spell {
 	["name"] = 	"Psi Storm II",
@@ -316,9 +292,7 @@ MPSISTORM_II = add_spell {
 		d = get_psistorm_dam(Ind, 0)
 		return "dam "..d.." rad "..(3 + get_level(Ind, MPSISTORM_I, 4)).." dur "..(6 + get_level(Ind, MPSISTORM_I, 4))
 	end,
-	["desc"] = {
-		"A psionic storm that damages and disturbs all minds within an area",
-	}
+	["desc"] = { "A psionic storm that damages and disturbs all minds within an area", }
 }
 
 MSILENCE = add_spell {
@@ -339,9 +313,7 @@ MSILENCE = add_spell {
 	["info"] = 	function()
 			return "power "..(get_level(Ind, MSILENCE, 63)).." dur "..(4 + get_level(Ind, MSILENCE, 4))
 			end,
-	["desc"] = 	{
-			"Drains the target's psychic energy, impacting its ability to cast spells",
-	}
+	["desc"] = 	{ "Drains the target's psychic energy, impacting its ability to cast spells", }
 }
 
 MMAP = add_spell {
@@ -455,7 +427,5 @@ MSTOPCHARM = add_spell {
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{
-			"Cancel charming of any monsters",
-	}
+	["desc"] = 	{ "Cancel charming of any monsters", }
 }

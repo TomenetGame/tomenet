@@ -38,9 +38,7 @@ MBASH = add_spell {
 	["info"] = 	function()
 			return "dam "..(get_level(Ind, MBASH, 50))
 			end,
-	["desc"] = 	{
-			"Telekinetic power focussed to bash your opponent",
-	}
+	["desc"] = 	{ "Telekinetic power focussed to bash your opponent", }
 }
 
 MBLINK = add_spell {
@@ -59,9 +57,7 @@ MBLINK = add_spell {
 	["info"] = 	function()
 			return "distance "..(6 + get_level(Ind, MBLINK, 6))
 			end,
-	["desc"] = 	{
-			"Teleports you on a small scale range",
-	}
+	["desc"] = 	{ "Teleports you on a small scale range", }
 }
 
 MTELEPORT = add_spell {
@@ -80,9 +76,7 @@ MTELEPORT = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{
-			"Teleports you around the level.",
-	}
+	["desc"] = 	{ "Teleports you around the level.", }
 }
 
 MTELETOWARDS = add_spell {
@@ -101,9 +95,7 @@ MTELETOWARDS = add_spell {
 	["info"] = 	function()
 			return "range "..(20 + get_level(Ind, MTELETOWARDS, 150))
 			end,
-	["desc"] = 	{
-			"Teleports you to the nearest friendly opened mind.",
-	}
+	["desc"] = 	{ "Teleports you to the nearest friendly opened mind.", }
 }
 
 MTELEAWAY = add_spell {
@@ -122,9 +114,7 @@ MTELEAWAY = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{
-			"Attempts to teleport your opponent away.",
-	}
+	["desc"] = 	{ "Attempts to teleport your opponent away.", }
 }
 
 MDISARM = add_spell {
@@ -170,9 +160,7 @@ MPSISTORM = add_spell {
 	["info"] = 	function()
 			return "dam "..(1 + get_level(Ind, MPSISTORM, 76)).." rad "..(2 + get_level(Ind, MPSISTORM, 2)).." dur "..(5 + get_level(Ind, MPSISTORM, 5))
 			end,
-	["desc"] = 	{
-			"A psionic storm that damages and disturbs all minds within an area",
-	}
+	["desc"] = 	{ "A psionic storm that damages and disturbs all minds within an area", }
 }
 ]]
 
@@ -221,9 +209,7 @@ MPYROKINESIS_I = add_spell {
 			n, p = get_pyro_dam(Ind, 1)
 			return "dam "..(n + p)
 			end,
-	["desc"] = 	{
-			"Causes a severe inflammation to burn your opponent",
-	}
+	["desc"] = 	{ "Causes a severe inflammation to burn your opponent", }
 }
 MPYROKINESIS_II = add_spell {
 	["name"] = 	"Pyrokinesis II",
@@ -245,9 +231,7 @@ MPYROKINESIS_II = add_spell {
 			n, p = get_pyro_dam(Ind, 0)
 			return "dam "..(n + p)
 			end,
-	["desc"] = 	{
-			"Causes a severe inflammation to burn your opponent",
-	}
+	["desc"] = 	{ "Causes a severe inflammation to burn your opponent", }
 }
 
 MCRYOKINESIS_I = add_spell {
@@ -271,9 +255,7 @@ MCRYOKINESIS_I = add_spell {
 			n, p = get_cryo_dam(Ind, 1)
 			return "dam "..(n + p)
 			end,
-	["desc"] = 	{
-			"Causes a dramatic temperature drop on your opponent",
-	}
+	["desc"] = 	{ "Causes a dramatic temperature drop on your opponent", }
 }
 MCRYOKINESIS_II = add_spell {
 	["name"] = 	"Cryokinesis II",
@@ -296,9 +278,7 @@ MCRYOKINESIS_II = add_spell {
 			n, p = get_cryo_dam(Ind, 0)
 			return "dam "..(n + p)
 			end,
-	["desc"] = 	{
-			"Causes a dramatic temperature drop on your opponent",
-	}
+	["desc"] = 	{ "Causes a dramatic temperature drop on your opponent", }
 }
 
 MSHIELD = add_spell {

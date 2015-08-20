@@ -1,10 +1,9 @@
 -- handle the holy defense school
 
-HBLESSING = add_spell
-{
+HBLESSING = add_spell {
 	["name"] = 	"Blessing",
 	["school"] = 	{SCHOOL_HDEFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	1,
 	["mana"] = 	4,
 	["mana_max"] = 	25,
@@ -44,7 +43,7 @@ HBLESSING = add_spell
 			return "AC+20  dur 32.."..get_level(Ind, HBLESSING, 25)+32
 		end
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Protects you with a shield of righteousness",
 			"At level 15 it turns into a holy chant",
 			"At level 30 becomes a holy prayer",
@@ -53,11 +52,10 @@ HBLESSING = add_spell
 }
 __lua_HBLESSING = HBLESSING
 
-HRESISTS = add_spell
-{
+HRESISTS = add_spell {
 	["name"] = 	"Holy Resistance",
 	["school"] = 	{SCHOOL_HDEFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	11,
 	["mana"] = 	4,
 	["mana_max"] = 	45,
@@ -99,7 +97,7 @@ HRESISTS = add_spell
 			return "Base+poison res., dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
 		end
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Lets you resist heat.",
 			"At level 5 you also resist cold.",
 			"At level 10 you resist lightning too.",
@@ -109,11 +107,10 @@ HRESISTS = add_spell
 	}
 }
 
-HPROTEVIL = add_spell
-{
+HPROTEVIL = add_spell {
 	["name"] = 	"Protection from Evil",
 	["school"] = 	{SCHOOL_HDEFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	12,
 	["mana"] = 	20,
 	["mana_max"] = 	60,
@@ -125,16 +122,13 @@ HPROTEVIL = add_spell
 	["info"] = 	function()
 			return "dur "..1+(get_level(Ind, HPROTEVIL, 50)*3)..".."..25+(3*get_level(Ind, HPROTEVIL, 50))
 	end,
-	["desc"] =	{
-			"Repels evil that tries to lay hand at you.",
-	}
+	["desc"] = 	{ "Repels evil that tries to lay hand at you.", }
 }
 
-HRUNEPROT = add_spell
-{
-	["name"] =	"Glyph of Warding",
+HRUNEPROT = add_spell {
+	["name"] = 	"Glyph of Warding",
 	["school"] = 	{SCHOOL_HDEFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] =	35,
 	["mana"]=	20,
 	["mana_max"] =	20,
@@ -149,19 +143,16 @@ HRUNEPROT = add_spell
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{
-			"Creates a rune of protection on the ground.",
-	}
+	["desc"] = 	{ "Creates a rune of protection on the ground.", }
 }
 
-HMARTYR = add_spell
-{
-	["name"] =	"Martyrdom",
+HMARTYR = add_spell {
+	["name"] = 	"Martyrdom",
 	["school"] = 	{SCHOOL_HDEFENSE},
-	["am"] =	75,
-	["level"] =	40,
-	["mana"]=	50,
-	["mana_max"] =	50,
+	["am"] = 	75,
+	["level"] = 	40,
+	["mana"]= 	50,
+	["mana_max"] = 	50,
 	["fail"] = 	-30,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()

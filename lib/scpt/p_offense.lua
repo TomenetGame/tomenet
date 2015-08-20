@@ -1,10 +1,9 @@
 -- handle the holy offense school
 
-HCURSE = add_spell
-{
+HCURSE = add_spell {
 	["name"] = 	"Curse",
 	["school"] = 	{SCHOOL_HOFFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	1,
 	["mana"] = 	2,
 	["mana_max"] = 	30,
@@ -23,18 +22,17 @@ HCURSE = add_spell
 	["info"] = 	function()
 			return "power "..(10 + get_level(Ind, HCURSE, 150))
 	end,
-	["desc"] = {
+	["desc"] = 	{
 			"Randomly causes confusion damage, slowness or blindness.",
 			"At level 15 it passes through monsters, affecting those behind as well",
 			"At level 25 it affects all monsters in sight",
 	}
 }
 
-HGLOBELIGHT = add_spell
-{
+HGLOBELIGHT = add_spell {
 	["name"] = 	"Holy Light",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	2,
 	["mana"] = 	2,
 	["mana_max"] = 	30,
@@ -59,7 +57,7 @@ HGLOBELIGHT = add_spell
 			return ""
 		end
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Creates a globe of pure light",
 			"At level 3 it hurts monsters that are susceptible to light",
 			"At level 8 it becomes more powerful and hurts all monsters"
@@ -67,16 +65,15 @@ HGLOBELIGHT = add_spell
 }
 
 if (def_hack("TEST_SERVER", nil)) then
-HCURSEDD = add_spell
-{
+HCURSEDD = add_spell {
 	["name"] = 	"Cause wounds",
 	["school"] = 	{SCHOOL_HOFFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	5,
 	["mana"] = 	1,
 	["mana_max"] = 	20,
 	["fail"] = 	15,
-	["stat"] =	A_WIS,
+	["stat"] = 	A_WIS,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
 			fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + get_level(Ind, HCURSEDD, 300), "points and curses for")
@@ -84,17 +81,14 @@ HCURSEDD = add_spell
 	["info"] = 	function()
 			return "power "..(10 + get_level(Ind, HCURSEDD, 300))
 	end,
-	["desc"] = 	{
-			"Curse an enemy, causing wounds.",
-	}
+	["desc"] = 	{ "Curse an enemy, causing wounds.", }
 }
 end
 
-HORBDRAIN = add_spell
-{
+HORBDRAIN = add_spell {
 	["name"] = 	"Orb of Draining",
 	["school"] = 	{SCHOOL_HOFFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	20,
 	["mana"] = 	5,
 	["mana_max"] = 	25,
@@ -110,16 +104,15 @@ HORBDRAIN = add_spell
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, HORBDRAIN, 475)).." rad "..(2 + get_level(Ind, HORBDRAIN, 3))
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Calls an holy orb to devour the evil",
 	}
 }
 
-HEXORCISM = add_spell
-{
+HEXORCISM = add_spell {
 	["name"] = 	"Exorcism",
 	["school"] = 	{SCHOOL_HOFFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	11,
 	["mana"] = 	15,
 	["mana_max"] = 	50,
@@ -139,18 +132,17 @@ HEXORCISM = add_spell
 	["info"] = 	function()
 		return "dam "..(10 + get_level(Ind, HEXORCISM, 400))
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Dispels nearby undead",
 			"At level 20 it dispels all demons",
 			"At level 30 it dispels all evil",
         }
 }
 
-HDRAINLIFE = add_spell
-{
+HDRAINLIFE = add_spell {
 	["name"] = 	"Drain Life",
 	["school"] = 	{SCHOOL_HOFFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	20,
 	["mana"] = 	10,
 	["mana_max"] = 	80,
@@ -165,44 +157,38 @@ HDRAINLIFE = add_spell
 	["info"] = 	function()
 		return "drains "..(10 + get_level(Ind, HDRAINLIFE, 10)).."% life"
 	end,
-	["desc"] =	{
-			"Drains life from a target, which must not be non-living or undead.",
-	}
+	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
 
-HRELSOULS = add_spell
-{
+HRELSOULS = add_spell {
 	["name"] = 	"Release Souls",
-	["school"] =	{SCHOOL_HOFFENSE},
-	["am"] =	75,
-	["level"] =	10,
+	["school"] = 	{SCHOOL_HOFFENSE},
+	["am"] = 	75,
+	["level"] = 	10,
 	["mana"] = 	20,
-	["mana_max"] =	80,
-	["fail"] =	25,
+	["mana_max"] = 	80,
+	["fail"] = 	25,
 	["stat"] = 	A_WIS,
-	["spell"] =	function(args)
+	["spell"] = 	function(args)
 			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS, 1000))
 			end,
 	["info"] = 	function()
 		return "dam "..(10 + get_level(Ind, HRELSOULS, 1000))
 	end,
-	["desc"] =	{
-			"Banishes nearby undead.",
-			}
+	["desc"] = 	{ "Banishes nearby undead.", }
 }
 
-HDRAINCLOUD = add_spell
-{
+HDRAINCLOUD = add_spell {
 	["name"] = 	"Doomed Grounds",
 	["school"] = 	{SCHOOL_HOFFENSE},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	30,     -- pointless for crap with low lvl anyway
 	["mana"] = 	40,
 	["mana_max"] = 	100,
 	["fail"] = 	-30,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
-	["spell"] =     function(args)
+	["spell"] = 	function(args)
 --			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), 10, " drains for")
 			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 4 + get_level(Ind, HDRAINCLOUD, 39) / 4, 10, " drains for")
 			-- dmgs a Power D for 2050 (307 goes to hp), Balance D for 1286 (192 goes to hp) from full hp
@@ -226,27 +212,24 @@ HDRAINCLOUD = add_spell
 }
 
 --[[
-HHOLYWORD = add_spell
-{
+HHOLYWORD = add_spell {
 	["name"] = 	"Holy Word",
-	["school"] =	{SCHOOL_HOFFENSE, SCHOOL_HCURING},
-	["am"] =	75,
-	["level"] =	45,
+	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	45,
 	["mana"] = 	500,
-	["fail"] =	30,
-	["stat"] =      A_WIS,
-	["spell"] =	function(args)
+	["fail"] = 	30,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function(args)
 			hp_player(Ind, 1000)
 			set_afraid(Ind, 0)
 			set_poisoned(Ind, 0, 0)
 			set_stun(Ind, 0, 0)
 			set_cut(Ind, 0, 0)
 			end,
-	["info"] =	function()
+	["info"] = 	function()
 			return "Dispels & heals."
 			end,
-	["desc"] =	{
-			"Dispels evil, heals and cures you."
-			}
+	["desc"] = 	{ "Dispels evil, heals and cures you." }
 }
 ]]

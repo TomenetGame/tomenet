@@ -158,7 +158,7 @@ POWERBEAM_I = add_spell {
 			xx, yy = get_astral_dam(Ind, 1)
 			return "dam "..xx.."d"..yy
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: conjures up a powerful beam of light",
 			"Corrupted: conjures up a powerful darkness beam",
 			"Neutral: conjures up a beam of lightning"
@@ -189,7 +189,7 @@ POWERBEAM_II = add_spell {
 			xx, yy = get_astral_dam(Ind, 15)
 			return "dam "..xx.."d"..yy
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: conjures up a powerful beam of light",
 			"Corrupted: conjures up a powerful darkness beam",
 			"Neutral: conjures up a beam of lightning"
@@ -218,7 +218,7 @@ POWERBEAM_III = add_spell {
 			xx, yy = get_astral_dam(Ind, 0)
 			return "dam "..xx.."d"..yy
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: conjures up a powerful beam of light",
 			"Corrupted: conjures up a powerful darkness beam",
 		}
@@ -249,7 +249,7 @@ POWERBALL_I = add_spell {
 			dam = get_astral_ball_dam(Ind, 1)
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: conjures up a powerful ball of mana",
 			"Corrupted: conjures up a powerful dispelling ball",
 			"Neutral: conjures up a ball of lightning"
@@ -278,7 +278,7 @@ POWERBALL_II = add_spell {
 			dam = get_astral_ball_dam(Ind, 15)
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: conjures up a powerful ball of mana",
 			"Corrupted: conjures up a powerful dispelling ball",
 		}
@@ -306,31 +306,31 @@ POWERBALL_III = add_spell {
 			dam = get_astral_ball_dam(Ind, 0)
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: conjures up a powerful ball of mana",
 			"Corrupted: conjures up a powerful dispelling ball",
 		}
 }
 
 RELOCATION = add_spell {
-	["name"] =	"Relocation",
-	["school"] =	SCHOOL_ASTRAL,
-	["level"] =	22, --the same level that one gets initiated (!) (ie 20 + 2)
-	["mana"] =	20,
-	["mana_max"] =	20,
-	["fail"] =	10,
+	["name"] = 	"Relocation",
+	["school"] = 	SCHOOL_ASTRAL,
+	["level"] = 	22, --the same level that one gets initiated (!) (ie 20 + 2)
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	10,
 	["spell_power"] = 0,
-	["am"] =	67,
-	["blind"] =	0,
-	["spell"] =	function(args)
+	["am"] = 	67,
+	["blind"] = 	0,
+	["spell"] = 	function(args)
 			local dur = randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10)
 			if args.book < 0 then return end
 			set_recall(Ind, dur, player.inventory[1 + args.book])
 	end,
-	["info"] =	function()
+	["info"] = 	function()
 			return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Recalls into the dungeon, back to the surface or across the world.",
 	}
 }
@@ -351,7 +351,7 @@ VENGEANCE = add_spell {
 	["info"] = 	function()
 			return "power "..get_veng_power(Ind);
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: summons party member on the same area to you",
 			"             (Also will teleport monsters in sight to you,",
 			"             as well as summoning additional monsters per ",
@@ -369,7 +369,7 @@ EMPOWERMENT = add_spell {
 	["fail"] = 	102,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
-	["am"] =	33,
+	["am"] = 	33,
 	["blind"] =	0,
 	["spell"] = 	function(args)
 				divine_empowerment(Ind, get_astral_lev(Ind));
@@ -377,7 +377,7 @@ EMPOWERMENT = add_spell {
 	["info"] = 	function()
 				return "dur "..(20 + get_astral_lev(Ind) / 10)
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: incite self fury",
 			"Corrupted: increases your hit points"
 		}
@@ -392,14 +392,14 @@ INTENSIFY = add_spell {
 	["fail"] = 	102,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
-	["am"] =	67,
+	["am"] = 	67,
 	["spell"] = 	function(args)
 				divine_intensify(Ind, get_astral_lev(Ind));
 	end,
 	["info"] = 	function()
 				return "dur "..(20 + get_astral_lev(Ind) / 10)
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: slows down monsters in sight and",
 			"             grants temporary time resistance",
 			"Corrupted: increases your critical chance (+2 base",
@@ -429,7 +429,7 @@ POWERCLOUD = add_spell {
 			local lev = get_astral_lev(Ind)
 			return "dam "..(1 + lev * 2).." rad 3 dur "..(5 + (lev / 5))
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Enlightened: conjures up a storm of mana",
 			"Corrupted: conjures up a raging inferno"
 		}
@@ -455,7 +455,7 @@ GATEWAY = add_spell {
 	["info"] = 	function()
 			return "";
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Requires level 50 Astral Knowledge and at least character level 62",
 			"Enlightened: nigh-instantaneous wor for every party member on the level",
 			"Corrupted: creates a void jump gate",
