@@ -1,6 +1,6 @@
 -- The astral school ///update-dummy-bytes
 
-function get_astral_lev(Ind, limit_lev)
+function get_astral_lev(Ind)
 	return ((players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000 + players(Ind).lev / 2)
 end
 
