@@ -7217,9 +7217,11 @@ void player_death(int Ind) {
 			}
 		}
 
-		if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
+		if (!is_admin(p_ptr) && !p_ptr->inval &&
+		    /* actually do drop the untradable starter items, to reduce newbie frustration */
+		    (p_ptr->max_plv >= cfg.newbies_cannot_drop || !o_ptr->level)
 		    /* Don't drop Morgoth's crown or Grond */
-		    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND)
+		    && !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND)
 #ifdef IDDC_NO_TRADE_CHEEZE
 		    && !(in_iddc && o_ptr->NR_tradable)
 #endif
@@ -7865,7 +7867,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 
 #if 1 /* Enable, iff newbies-level leading to perma-death is disabled above. */
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
-		msg_format(Ind, "\374\377oYou died below level %d, which means that your items didn't drop.", cfg.newbies_cannot_drop);
+		msg_format(Ind, "\374\377oYou died below level %d, which means that most items didn't drop.", cfg.newbies_cannot_drop);
 		msg_print(Ind, "\374\377oTherefore, it's recommended to press '\377RQ\377o' to suicide and start over.");
 		if (p_ptr->wpos.wz < 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R<\377o' to float back to town,");
 		else if (p_ptr->wpos.wz > 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '\377R>\377o' to float back to town,");
