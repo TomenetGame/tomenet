@@ -75,23 +75,24 @@ school_type *grab_school_type(s16b num)
 }
 
 /* Change this fct if I want to switch to learnable spells */
-s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
-{
-        s32b tmp;
+s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
+	s32b tmp;
 
-        tmp = lvl - ((school_spells[s].skill_level - 1) * (SKILL_STEP / 10));
-        lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
-        if (lvl < min) lvl = min;
-        else if (lvl > 0)
-        {
-                tmp += bonus;
-                lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
+	tmp = lvl - ((school_spells[s].skill_level - 1) * (SKILL_STEP / 10));
+	lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
+	if (lvl < min) lvl = min;
+	else if (lvl > 0) {
+		tmp += bonus;
+		lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
 		if (school_spells[s].spell_power) {
 			lvl *= (100 + get_skill_scale(p_ptr, SKILL_SPELL, 40));
 			lvl /= 100;
 		}
-        }
-        return lvl;
+	}
+#ifdef LIMIT_SPELLS
+	if (hack_force_spell_level && lvl > hack_force_spell_level) lvl = hack_force_spell_level;
+#endif
+	return lvl;
 }
 
 /* adj_mag_stat? stat_ind??  pfft */

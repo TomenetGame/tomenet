@@ -262,6 +262,8 @@
  #define OPTIMIZED_ANIMATIONS	/* testing */
 
  #define TELEPORT_SURPRISES	/* monsters are surprised for a short moment if a player long-range teleported next to them */
+
+ #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
 #endif
 
 #ifdef ARCADE_SERVER

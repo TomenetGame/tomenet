@@ -783,8 +783,7 @@ static void do_trap(int item_kit)
  * Handle the mkey according to the types.
  * if item is less than zero, ask for an item if needed.
  */
-void do_activate_skill(int x_idx, int item)
-{
+void do_activate_skill(int x_idx, int item) {
 	char out_val[160];
 	int dir = 0;
 	s32b spell = 0L;
@@ -825,21 +824,27 @@ void do_activate_skill(int x_idx, int item)
 			return;
 		}
 
+		/* LIMIT_SPELLS - unhack */
+		if (spell >= 1000) {
+			aux = spell / 1000;
+			spell = spell % 1000;
+		}
+
 		/* Ask for a direction? */
 		dir = -1;
 		sprintf(out_val, "return pre_exec_spell_dir(%d)", spell);
 		if (exec_lua(0, out_val))
 			if (!get_dir(&dir)) return;
 
-                /* Ask for something? */
-                sprintf(out_val, "return pre_exec_spell_extra(%d)", spell);
-                if (exec_lua(0, out_val))
-                        aux = exec_lua(0, "return __pre_exec_extra");
+		/* Ask for something? */
+		sprintf(out_val, "return pre_exec_spell_extra(%d)", spell);
+		if (exec_lua(0, out_val))
+			aux = exec_lua(0, "return __pre_exec_extra");
 
-                /* Ask for an item? */
-                sprintf(out_val, "return pre_exec_spell_item(%d)", spell);
-                if (exec_lua(0, out_val))
-                        item_obj = exec_lua(0, "return __pre_exec_item");
+		/* Ask for an item? */
+		sprintf(out_val, "return pre_exec_spell_item(%d)", spell);
+		if (exec_lua(0, out_val))
+			item_obj = exec_lua(0, "return __pre_exec_item");
 
 		/* Send it */
 		Send_activate_skill(MKEY_SCHOOL, item, spell, dir, item_obj, aux);

@@ -1559,6 +1559,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
  #endif
 #endif
 
+
 	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
 		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
 		if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
@@ -1640,10 +1641,18 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	if (exec_lua(0, format("return pre_exec_spell_dir(%d)", spell)) && (dir == -1)) return;
 #endif
 
+#ifdef LIMIT_SPELLS
+	p_ptr->limit_spells = aux;
+#endif
+
 	/* Actualy cast the choice */
 	if (spell != -1) {
 		ftk_maybe = (exec_lua(Ind, format("return cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, book = %d, item = %d, aux = %d})", Ind, spell, spell, dir, book, item, aux)));
 		ftk_type = (exec_lua(Ind, format("return get_spell_ftk(%d)", spell)));
+
+#ifdef LIMIT_SPELLS
+	p_ptr->limit_spells = 0; //paranoia?
+#endif
 
 #ifdef ENABLE_XID_SPELL
  #ifdef XID_REPEAT
@@ -1690,4 +1699,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		}
 #endif
 	}
+#ifdef LIMIT_SPELLS
+	else p_ptr->limit_spells = aux; //paranoia?
+#endif
 }

@@ -784,6 +784,7 @@ void do_ghost(void)
  * get_item_extra_hook; it's unused here though - C. Blue
  */
 static int hack_force_spell = -1;
+int hack_force_spell_level = -1;
 #ifndef DISCRETE_SPELL_SYSTEM /* good method before the big spell system rework */
 bool get_item_hook_find_spell(int *item, bool inven_first) {
 	int i, spell;
@@ -924,8 +925,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 /*
  * Get a spell from a book
  */
-s32b get_school_spell(cptr do_what, int *item_book)
-{
+s32b get_school_spell(cptr do_what, int *item_book) {
 	int i, item;
 	u32b spell = -1;
 	int num = 0, where = 1;
@@ -939,32 +939,33 @@ s32b get_school_spell(cptr do_what, int *item_book)
 	int sval, pval;
 
 	hack_force_spell = -1;
+	hack_force_spell_level = 0;
 
-	if (*item_book < 0)
-	{
+	if (*item_book < 0) {
 		get_item_extra_hook = get_item_hook_find_spell;
 		item_tester_tval = TV_BOOK;
 		sprintf(buf2, "You have no book to %s from.", do_what);
 		sprintf(out_val, "%s from which book?", do_what);
 		out_val[0] = toupper(out_val[0]);
-		if (!c_get_item(&item, out_val, (USE_INVEN | USE_EXTRA) )) {
-			if (item == -2) c_msg_format("%s", buf2);
-			return -1;
+		if (sflags1 & SFLG1_LIMIT_SPELLS) {
+			if (!c_get_item(&item, out_val, (USE_INVEN | USE_EXTRA | USE_LIMIT) )) {
+				if (item == -2) c_msg_format("%s", buf2);
+				return -1;
+			}
+		} else {
+			if (!c_get_item(&item, out_val, (USE_INVEN | USE_EXTRA) )) {
+				if (item == -2) c_msg_format("%s", buf2);
+				return -1;
+			}
 		}
-	}
-	else
-	{
+	} else {
 		/* Already given */
 		item = *item_book;
 	}
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &inventory[item];
-	}
-	else
-		return(-1);
+	if (item >= 0) o_ptr = &inventory[item];
+	else return(-1);
 
 	/* Nothing chosen yet */
 	flag = FALSE;
@@ -976,19 +977,15 @@ s32b get_school_spell(cptr do_what, int *item_book)
 	spell = -1;
 
 	/* Is it a random book, or something else ? */
-	if (o_ptr->tval == TV_BOOK)
-	{
+	if (o_ptr->tval == TV_BOOK) {
 		sval = o_ptr->sval;
 		pval = o_ptr->pval;
-	}
-	else
-	{
+	} else {
 		/* Only books allowed */
 		return -1;
 	}
 
-	if (hack_force_spell == -1)
-	{
+	if (hack_force_spell == -1) {
 		sprintf(out_val, "return book_spells_num2(%d, %d)", item, sval);
 		num = exec_lua(0, out_val);
 
@@ -999,8 +996,7 @@ s32b get_school_spell(cptr do_what, int *item_book)
 		else
 			strnfmt(out_val2, 78, "No spells available - ESC=exit");
 
-		if (c_cfg.always_show_lists)
-		{
+		if (c_cfg.always_show_lists) {
 			/* Show list */
 			redraw = TRUE;
 
@@ -1013,14 +1009,11 @@ s32b get_school_spell(cptr do_what, int *item_book)
 		}
 
 		/* Get a spell from the user */
-		while (!flag && get_com(out_val2, &choice))
-		{
+		while (!flag && get_com(out_val2, &choice)) {
 			/* Request redraw */
-			if (((choice == ' ') || (choice == '*') || (choice == '?')))
-			{
+			if (((choice == ' ') || (choice == '*') || (choice == '?'))) {
 				/* Show the list */
-				if (!redraw)
-				{
+				if (!redraw) {
 					/* Show list */
 					redraw = TRUE;
 
@@ -1033,8 +1026,7 @@ s32b get_school_spell(cptr do_what, int *item_book)
 				}
 
 				/* Hide the list */
-				else
-				{
+				else {
 					/* Hide list */
 					redraw = FALSE;
 					where = 1;
@@ -1057,18 +1049,15 @@ s32b get_school_spell(cptr do_what, int *item_book)
 			i = (islower(choice) ? A2I(choice) : -1);
 
 			/* Totally Illegal */
-			if ((i < 0) || (i >= num))
-			{
+			if ((i < 0) || (i >= num)) {
 				bell();
 				continue;
 			}
 
 			/* Verify it */
-			if (ask)
-			{
+			if (ask) {
 				/* Show the list */
-				if (!redraw)
-				{
+				if (!redraw) {
 					/* Show list */
 					redraw = TRUE;
 
@@ -1082,17 +1071,14 @@ s32b get_school_spell(cptr do_what, int *item_book)
 				where = exec_lua(0, out_val);
 				sprintf(out_val, "print_spell_desc(spell_x2(%d, %d, %d, %d), %d)", item, sval, pval, i, where);
 				exec_lua(0, out_val);
-			}
-			else
-			{
+			} else {
 				/* Save the spell index */
 				sprintf(out_val, "return spell_x2(%d, %d, %d, %d)", item, sval, pval, i);
 				spell = exec_lua(0, out_val);
 
 				/* Require "okay" spells */
 				sprintf(out_val, "return is_ok_spell(0, %d)", spell);
-				if (!exec_lua(0, out_val))
-				{
+				if (!exec_lua(0, out_val)) {
 					bell();
 					c_msg_format("You may not %s that spell.", do_what);
 					spell = -1;
@@ -1103,18 +1089,13 @@ s32b get_school_spell(cptr do_what, int *item_book)
 				flag = TRUE;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		/* Require "okay" spells */
 		sprintf(out_val, "return is_ok_spell(0, %d)", hack_force_spell);
-		if (exec_lua(0, out_val))
-		{
+		if (exec_lua(0, out_val)) {
 			flag = TRUE;
 			spell = hack_force_spell;
-		}
-		else
-		{
+		} else {
 			bell();
 			c_msg_format("You may not %s that spell.", do_what);
 			spell = -1;
@@ -1122,17 +1103,14 @@ s32b get_school_spell(cptr do_what, int *item_book)
 	}
 
 	/* Restore the screen */
-	if (redraw)
-	{
-		Term_load();
-	}
+	if (redraw) Term_load();
 
 	/* Abort if needed */
 	if (!flag) return -1;
 
 	//tmp = spell;
 	*item_book = item;
-	return(spell);
+	return (spell + 1000 * hack_force_spell_level);
 }
 
 /* TODO: handle blindness */

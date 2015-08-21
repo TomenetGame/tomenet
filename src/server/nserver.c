@@ -4028,9 +4028,11 @@ static int Receive_login(int ind) {
 #ifdef BIG_MAP
 			sflags1 |= SFLG1_BIG_MAP;
 #endif
-
 #ifdef NEW_SHIELDS_NO_AC
 			sflags1 |= SFLG1_NEW_SHIELDS_NO_AC;
+#endif
+#ifdef LIMIT_SPELLS
+			sflags1 |= SFLG1_LIMIT_SPELLS;
 #endif
 
 			/* Set temporary flags */
@@ -11040,9 +11042,10 @@ void Handle_direction(int Ind, int dir) {
 			do_cmd_ghost_power_aux(Ind, dir);
 		else if (p_ptr->current_realm == REALM_MIMIC)
 			do_mimic_power_aux(Ind, dir);
-		else if (p_ptr->current_realm == REALM_SCHOOL)
+		else if (p_ptr->current_realm == REALM_SCHOOL) {
 			cast_school_spell(Ind, p_ptr->current_book, p_ptr->current_spell,
 			    dir, p_ptr->current_item, p_ptr->current_aux);
+		}
 		else p_ptr->current_spell = -1;
 	}
 	else if (p_ptr->current_rcraft != -1)

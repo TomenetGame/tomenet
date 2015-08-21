@@ -152,10 +152,12 @@
 #define SFLG0_DED_PVP	0x00000080
 #define SFLG0_NO_PK	0x00000100
 
+/* Feature flags */
 #define SFLG1_NORMAL	0x00000000
 #define SFLG1_PARTY	0x00000001
 #define SFLG1_BIG_MAP	0x00000002
 #define SFLG1_NEW_SHIELDS_NO_AC	0x00000004
+#define SFLG1_LIMIT_SPELLS	0x00000008
 
 
 
@@ -3983,6 +3985,7 @@
 #define USE_EXTRA	0x08	/* Allow extra items */
 #define INVEN_FIRST	0x10	/* Seach for inscription tag in inventory first */
 #define SPECIAL_REQ	0x20	/* Allow pressing '-' key to switch the request in a special way */
+#define USE_LIMIT	0x40	/* Allow spell level limit */
 
 /*
  * Bit flags for the "p_ptr->notice" variable

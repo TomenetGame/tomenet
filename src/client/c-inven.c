@@ -279,7 +279,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	bool equip = FALSE;
 	bool inven = FALSE;
 	//bool floor = FALSE;
-	bool extra = FALSE;
+	bool extra = FALSE, limit = FALSE;
 	bool inven_first = FALSE;
 	bool special_req = FALSE;
 
@@ -306,6 +306,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	if (mode & (USE_EXTRA)) extra = TRUE;
 	if (mode & (INVEN_FIRST)) inven_first = TRUE;
 	if (mode & (SPECIAL_REQ)) special_req = TRUE;
+	if (mode & (USE_LIMIT)) limit = TRUE;
 
 	/* Paranoia */
 	if (!inven && !equip) {
@@ -490,6 +491,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		/* Extra? */
 		if (extra) strcat(out_val, " @ to name,");
 
+		/* Limit? */
+		if (limit) strcat(out_val, " # to limit,");
+
 		/* Special request toggle? */
 		if (special_req) strcat(out_val, " - to switch,");
 
@@ -627,6 +631,13 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			} else bell();
 			break;
 		}
+
+		case '#':
+			if (!limit) break;
+			hack_force_spell_level = c_get_quantity("Limit spell level (0 for unlimited)? ", -1);
+			if (hack_force_spell_level < 0) hack_force_spell_level = 0;
+			if (hack_force_spell_level > 99) hack_force_spell_level = 99;
+			break;
 
 		case '-':
 			if (special_req) {

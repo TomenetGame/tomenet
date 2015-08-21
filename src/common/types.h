@@ -2970,6 +2970,7 @@ struct player_type {
 
 	bool exp_bar;			//just for tracking popularity of this feature..
 	int delayed_index, delayed_spell; /* hack: write a spell to command queue, delayed */
+	int limit_spells;		/* Limit next spell to a lower level than we could use at best */
 
 #ifdef SOLO_REKING
 	int solo_reking, solo_reking_au; /* 1min = 100xp = 250au, up to 5M au, and then another 5M au that cannot be paid off in xp or minutes. */

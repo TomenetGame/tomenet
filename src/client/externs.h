@@ -527,6 +527,7 @@ extern bool get_item_hook_find_obj(int *item, bool inven_first);
 extern bool (*get_item_extra_hook)(int *cp, bool inven_first);
 extern bool c_get_item(int *cp, cptr pmt, int mode);
 extern bool verified_item;
+extern int hack_force_spell_level;
 
 /* c-util.c */
 extern void move_cursor(int row, int col);

@@ -271,8 +271,7 @@ school_type *grab_school_type(s16b num)
 }
 
 /* Change this fct if I want to switch to learnable spells */
-s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
-{
+s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 	player_type *p_ptr = Players[Ind];
 	s32b tmp;
 
@@ -290,6 +289,11 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
 			lvl /= 100;
 		}
 	}
+
+#ifdef LIMIT_SPELLS
+	if (p_ptr->limit_spells > 0 && lvl > p_ptr->limit_spells) lvl = p_ptr->limit_spells;
+#endif
+
 	return lvl;
 }
 
