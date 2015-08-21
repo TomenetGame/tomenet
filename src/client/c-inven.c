@@ -637,6 +637,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			hack_force_spell_level = c_get_quantity("Limit spell level (0 for unlimited)? ", -1);
 			if (hack_force_spell_level < 0) hack_force_spell_level = 0;
 			if (hack_force_spell_level > 99) hack_force_spell_level = 99;
+			limit = FALSE; //just for visuals: don't offer to re-enter level limit over and over since it's pointless
 			break;
 
 		case '-':
