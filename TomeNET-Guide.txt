@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. August 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. August 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -12143,16 +12143,22 @@ create a character!):
     on items such as scrolls, on magic devices, or on equipment such as weapons
     and light sources (which may drain their hit points if equipped, even if
     the vampire acquired resistance to light).
-    They fear the sun light and any other kind of blessed light source, since
-    it burns them, draining their hit points.
+    Vampires fear the sun light and any other kind of blessed light source,
+    since it burns them, draining their hit points. They start with a mummy
+    wrapping, because it can protect them from the sunlight (press 'w' to wear
+    it). If they are moving on the world surface (meaning not in a dungeon or
+    tower) while it's day, the sun will burn them if they don't resist light
+    or wear a mummy wrapping.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness. This ability grows
-    when the vampire rises in character-levels.
-    Vampires start with a mummy wrapping, because it can protect them from the
-    sunlight (press 'w' to wear it). If they are moving on the world surface
-    (meaning not in a dungeon/tower) while it's day, the sun will burn them if
-    they don't resist light or wear a mummy wrapping. On the plus side they
-    suffer less often from black breath infection and consequences.
+    when the vampire rises in character-levels, starting at torch-wide radius
+    and growing to lantern-wide radius already when reaching level 10.
+    On the other hand Vampires do not suffer hit point drain from purely
+    spectral weapons. They are even able to wear or wield heavily cursed items
+    such as Morgul weapons and benefit from them, turning their negative boni
+    into positive ones! Since they are immune to Black Breath, using a Morgul
+    weapon will not pose any problem to them. The only exception are weapons
+    of Nothingness, which won't do them any good either.
     Vampires are good fighters and decent mages. However, they are unable to
     utilize magic of water or nature school. Neither can they make use of
     mimicry techniques or holy spells. They are unable to try and suppress
