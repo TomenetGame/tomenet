@@ -570,7 +570,8 @@ function spell_chance(i, s)
 		player = players(i)
 		ls = player.limit_spells
 		player.limit_spells = 0
-	else
+	--client version recent enough to even know 'hack_force_spell_level'? (otherwise we'd get a lua error)
+	elseif (def_hack("hack_force_spell_level", nil)) then
 		ls = hack_force_spell_level
 		hack_force_spell_level = 0
 	end
@@ -591,7 +592,8 @@ function spell_chance(i, s)
 	if i ~= 0 then
 		player = players(i)
 		player.limit_spells = ls
-	else
+	--client version recent enough to even know 'hack_force_spell_level'? (otherwise we'd get a lua error)
+	elseif (def_hack("hack_force_spell_level", nil)) then
 		hack_force_spell_level = ls
 	end
 
