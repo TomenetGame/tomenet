@@ -151,14 +151,15 @@ POSSESS = add_spell {
 			return ""
 	end,
 	["desc"] 	{
-			"Tries to manipulate the mind of an animal to become your pet.",
+			--"Tries to manipulate the mind of an animal to become your pet.",
+			"Tries to manipulate the mind of a monster to make it ignore you.",
 --			"At level 7 it turns into a ball",
 --			"At level 13 it affects all monsters in sight",
 	}
 }
 
 STOPPOSSESS = add_spell {
-	["name"] = 	"Stop Charm",
+	["name"] = 	"Stop Possess",
 	["school"] = 	{SCHOOL_SPIRIT},
 	["am"] = 	0,
 	["spell_power"] = 0,

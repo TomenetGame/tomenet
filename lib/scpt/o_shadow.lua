@@ -54,8 +54,8 @@ OCURSEDD = add_spell {
 end
 ]]
 
-DRAINLIFE = add_spell {
-	["name"] = 	"Drain Life",
+ODRAINLIFE = add_spell {
+	["name"] = 	"Sap Life",
 	["school"] = 	{SCHOOL_SHADOW},
 	["am"] =	75,
 	["level"] = 	20,
