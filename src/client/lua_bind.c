@@ -89,8 +89,10 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 			lvl /= 100;
 		}
 	}
+
+	return lvl;
 #ifdef LIMIT_SPELLS
-	if (hack_force_spell_level && lvl > hack_force_spell_level) lvl = hack_force_spell_level;
+	if (hack_force_spell_level > 0 && lvl > hack_force_spell_level) lvl = hack_force_spell_level;
 #endif
 	return lvl;
 }

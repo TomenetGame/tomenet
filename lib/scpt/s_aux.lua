@@ -560,8 +560,20 @@ end
 -- Returns spell chance of failure for spell
 function spell_chance(i, s)
 	local chance, s_ptr
+	local player, ls
 
 	s_ptr = spell(s)
+
+	--hack: LIMIT_SPELLS uses top-level failrate here instead of worse one we had at lower level!
+	-- client-side (0) or server-side (>=1) ?
+	if i ~= 0 then
+		player = players(i)
+		ls = player.limit_spells
+		player.limit_spells = 0
+	else
+		ls = hack_force_spell_level
+		hack_force_spell_level = 0
+	end
 
 	-- Hack: "101" means 100% chance to succeed ('fail' is unsigned byte, so it'll be 157) - C. Blue
 	if (s_ptr.fail == 101) then
@@ -572,6 +584,15 @@ function spell_chance(i, s)
 	else
 		-- Extract the base spell failure rate
 		chance = lua_spell_chance(i, s_ptr.fail, get_level(i, s, 50), s_ptr.skill_level, get_mana(i, s), get_power(i, s), get_spell_stat(s))
+	end
+
+	--unhack: LIMIT_SPELLS
+	-- client-side (0) or server-side (>=1) ?
+	if i ~= 0 then
+		player = players(i)
+		player.limit_spells = ls
+	else
+		hack_force_spell_level = ls
 	end
 
 	-- Return the chance

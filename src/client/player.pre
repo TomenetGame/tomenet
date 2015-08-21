@@ -537,8 +537,10 @@ struct player_type
         s16b csane;                   /* Cur sanity */
         u16b csane_frac;              /* Cur sanity frac */
 
-
+	int limit_spells; /* LIMIT_SPELLS server-side */
 };
+
+extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */
 
 extern player_type Players[2] @ Players_real;
 

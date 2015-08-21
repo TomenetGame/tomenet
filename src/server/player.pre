@@ -840,6 +840,7 @@ struct player_type
 #endif
 	bool distinct_floor_feeling;
 	bool exp_bar;
+	int limit_spells; /* LIMIT_SPELLS server-side */
 
 	bool dummy_option_7;
 	bool dummy_option_8;
@@ -850,6 +851,8 @@ struct player_type
 	time_t solo_reking_laston;
 #endif
 };
+
+//extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */
 
 extern bool imprison(int Ind, int time, char *reason);
 bool check_antimagic(int Ind, int percentage);

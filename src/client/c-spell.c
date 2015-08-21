@@ -784,7 +784,7 @@ void do_ghost(void)
  * get_item_extra_hook; it's unused here though - C. Blue
  */
 static int hack_force_spell = -1;
-int hack_force_spell_level = -1;
+int hack_force_spell_level = 0;
 #ifndef DISCRETE_SPELL_SYSTEM /* good method before the big spell system rework */
 bool get_item_hook_find_spell(int *item, bool inven_first) {
 	int i, spell;
