@@ -2933,7 +2933,7 @@ int Receive_boni_col(void) {
 	int	n, j;
 
 	byte	ch, i;
-	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr, amfi, sigl; 
+	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr, amfi = 0, sigl = 0;
 	byte cb[13];
 	char color, symbol;
 
