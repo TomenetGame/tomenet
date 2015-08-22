@@ -24,6 +24,10 @@
  #include <execinfo.h>
 #endif
 
+/* Max # of notes a player may have pending at a time [5] */
+#define MAX_NOTES_PLAYER 6
+
+
 static void do_slash_brief_help(int Ind);
 char pet_creation(int Ind);
 //static int lInd = 0;
@@ -2423,8 +2427,8 @@ void do_slash_cmd(int Ind, char *message) {
 				if (!strcmp(priv_note_sender[i], p_ptr->name) ||
 				    !strcmp(priv_note_sender[i], p_ptr->accountname)) notes++;
 			}
-			if ((notes >= 5) && !is_admin(p_ptr)) {
-				msg_print(Ind, "\377oYou have already reached the maximum of 5 pending notes per player.");
+			if ((notes >= MAX_NOTES_PLAYER) && !is_admin(p_ptr)) {
+				msg_format(Ind, "\377oYou have already reached the maximum of %d pending notes per player.", MAX_NOTES_PLAYER);
 				return;
 			}
 
