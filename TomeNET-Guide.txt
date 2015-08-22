@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. August 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. August 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -16566,6 +16566,12 @@ always determined randomly and cannot be influenced by the player,
 except for hit point bonus available for characters that have 'winner' status
 (defeated Morgoth), which can be suppressed by inscribing the artifact creation
 scroll '!L' (also see 'type-dependant mods' list further below).
+
+Note that randarts created by scrolls of artifact creation do not differ in any
+way from randarts that are found instead of created. (With the only difference
+that scrolls offer you the '!L' option.) The artifacts' power, price, stats,
+abilities and curses are generated exactly the same way, by the same program
+code, using the same probabilities.
 
 
 Here is some advice how to use these most valuable scrolls wisely:
