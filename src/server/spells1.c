@@ -5500,7 +5500,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
 #endif
 			} else if (r_ptr->flags9 & RF9_RES_POIS) {
-				note = " resists slightly";
+				note = " resists somewhat";
 				dam = (dam * 3) / 4;
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
@@ -5557,28 +5557,29 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
-				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
-					note = " resists";
+				}
+#if 1
+				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+					note = " is hit hard";
+					dam *= 2;
+ #ifdef OLD_MONSTER_LORE
+					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+ #endif
+				}
+#endif
+				else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON)) {
+					note = " resists somewhat";
 					dam = (dam * 3) / 4;
 #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
 #endif
 				}
-#if 0
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
-					note = " resists slightly";
-					dam /= 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
-#endif
-				}
-#endif
 				else {
-					note = " is hit";
+//					note = " is hit";
 					//dam *= 5; dam /= (randint(3)+4);
 				}
 			}
-			if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
+//			if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
 			break;
 
 		/* Holy Orb -- hurts Evil */
@@ -5600,7 +5601,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			break;
 
-		/* Holy Fire -- hurts Evil, Good are immune, others _resist_ */
+		/* Holy Fire -- hurts Evil, Good are immune, others _resist_ --
+		   note: the holy component strongly outweighs the fire component */
 		case GF_HOLY_FIRE:
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & (RF3_GOOD)) {
@@ -5612,13 +5614,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else if (r_ptr->flags3 & (RF3_EVIL)) {
 				if (r_ptr->flags3 & RF3_IM_FIRE) {
 					note = " resists";
-					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
+					dam = (dam * 4) / 3;//(randint(4)+3);
 #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
 				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
 					note = " is hit";
-					dam = (dam * 6) / 4;
+					dam = (dam * 3) / 2;
 #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
 #endif
@@ -5643,7 +5645,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else {
 				if (r_ptr->flags3 & RF3_IM_FIRE) {
 					note = " resists a lot";
-					dam *= 2; dam /= 3;//(randint(6)+10);
+					dam *= 2; dam /= 4;//(randint(6)+10);
 #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
@@ -5654,17 +5656,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
 #endif
 				}
-#if 0
+#if 1
 				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
-					note = " resists slightly";
-					dam /= 2;
-#ifdef OLD_MONSTER_LORE
+					note = " is hit hard";
+					dam = (dam * 3) / 2;
+ #ifdef OLD_MONSTER_LORE
 					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
-#endif
+ #endif
 				}
 #endif
 				else {
-					note = " resists somewhat";
+//					note = " resists somewhat";
 //					dam *= 5; dam /= (randint(3)+4);
 				}
 			}
