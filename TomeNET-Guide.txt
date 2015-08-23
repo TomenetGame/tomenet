@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. August 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. August 2015 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -16736,6 +16736,10 @@ So basically for armour, you want to use the base item type with the highest
 pre-enchantment and with the highest base level. Usually you won't need to pay
 attention to this though, because the higher level items are automatically the
 better items anyway and hence you will pick them without much thinking. :-p
+
+The base Item's weight, price or rarity (not to be confused with the item's
+base level, which however only matters for armour pieces as explained above)
+do not have any influence on the randart creation process.
 
 Possible mods that randarts may get depend on its base type.
 Further, there are general mods that may appear on all items regardless of its
