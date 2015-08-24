@@ -19864,8 +19864,8 @@ F:EVIL | DRAGON | NO_SLEEP | BASEANGBAND | IM_COLD | IM_ACID | IM_POIS
 #| ATTR_MULTI
 S:1_IN_6 |
 S:BLIND | CONF | SCARE | BR_COLD | BR_INER
-D:A huge draconic form wreathed in a radiance of silver. Its roar stuns and
-D:deafens you.
+D:A huge draconic form wreathed in a radiance of silver. The emanating cold air
+D:makes it unusually hard for you to move.
 
 N:1110:Great Wyrm of Radiance
 G:D:s
