@@ -17033,6 +17033,9 @@ what you must actively do BEFORE turning in a deed for a reward item is:
 - spend skill points! Never get a reward item without having spent any skill
   points. Make sure that you have at least 3.000 in your vital skill(s) so the
   reward-creating algorithm notices it.
+  If you have increased your 'Magic' skill even just a little bit  (note that
+  increasing Mimicry will also increase Magic skill slightly!) you will have a
+  chance to receive caster items (eg some hat of intelligence).
   Especially important: Magic skills, weapon skills, martial arts skill. These
   determine weapon (or mage staff) reward probabilities and armour weight if
   you happen to get an armour piece. Magic classes also have a somewhat higher
