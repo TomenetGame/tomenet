@@ -13144,6 +13144,9 @@ F: flag list
     KILL_WALL   The mimic will dig *easily* through walls.
     REGENERATE  Faster hit point regeneration.
     REFLECTING  Gives 'reflect' ability to the player, see (5.8) for details.
+                (Side note about monster reflection in general:
+                The 'REFLECTING' flag on monsters gives them a flat 50% chance
+                to reflect physical or magical projectiles.)
     CAN_SWIM    The player can pass water fields without problems.
     CAN_FLY     The player can levitate.
     STUPID      -2 intelligence.
