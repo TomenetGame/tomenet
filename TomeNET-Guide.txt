@@ -13867,7 +13867,7 @@ Istar schools:
     Tidal Wave      Summons a monstrous tidal wave.
                     Required skill level for first spell level: 16.
 
-    Ice Storm       Engulfs you in a storm of roaring cold.
+    Frost Barrier   Engulfs you in a storm of roaring cold.
                     Lv15: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
 

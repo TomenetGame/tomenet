@@ -46,7 +46,7 @@ TIDALWAVE = add_spell {
 }
 
 ICESTORM = add_spell {
-	["name"] = 	"Ice Storm",
+	["name"] = 	"Frost Barrier",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	22,
 	["mana"] = 	30,
@@ -59,13 +59,13 @@ ICESTORM = add_spell {
 			else type = GF_COLD end
 --			fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 70), 10, EFF_STORM, " summons an ice storm for")
 --1.5			fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 150), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 47), 5, EFF_STORM, " summons an ice storm for")
-			fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 47), 5, EFF_STORM, " summons an ice storm for")
+			fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1, 20 + get_level(Ind, ICESTORM, 47), 5, EFF_STORM, " summons an icy  for")
 	end,
 	["info"] = 	function()
-			return "dam "..(80 + get_level(Ind, ICESTORM, 200)).." rad "..(1 + get_level(Ind, ICESTORM, 3, 0)).." dur "..(20 + get_level(Ind, ICESTORM, 47))
+			return "dam "..(80 + get_level(Ind, ICESTORM, 200)).." rad 1 dur "..(20 + get_level(Ind, ICESTORM, 47))
 	end,
 	["desc"] =	{
-			"Engulfs you in a storm of roaring cold that strikes your foes",
+			"Engulfs you in a whirl of roaring cold that strikes all foes at close range",
 			"At level 15 it turns into shards of ice"
 	}
 }
