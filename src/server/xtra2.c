@@ -4123,6 +4123,9 @@ void check_experience(int Ind) {
 			msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
 			msg_print(Ind, "\374\377G(Press '\377gm\377G' key and choose '\377guse innate power\377G' to polymorph.)");
 		}
+#ifdef VAMPIRIC_MIST
+		if (old_lev < 35 && p_ptr->lev >= 35) msg_print(Ind, "\374\377GYou are now able to turn into vampiric mist (#365)!");
+#endif
 		break;
 #ifdef ENABLE_MAIA
 	case RACE_MAIA:
@@ -12053,8 +12056,7 @@ bool master_generate(int Ind, char * parms)
 }
 
 #if 0 /* some new esp link stuff - mikaelh */
-bool establish_esp_link(int Ind, int Ind2, byte type, u16b flags, u16b end)
-{
+bool establish_esp_link(int Ind, int Ind2, byte type, u16b flags, u16b end) {
 	player_type *p_ptr, *p2_ptr;
 	esp_link_type *esp_ptr;
 
@@ -12099,8 +12101,7 @@ bool establish_esp_link(int Ind, int Ind2, byte type, u16b flags, u16b end)
 	return TRUE;
 }
 
-void break_esp_link(int Ind, int Ind2)
-{
+void break_esp_link(int Ind, int Ind2) {
 	player_type *p_ptr, *p2_ptr;
 	esp_link_type *esp_ptr, *pest_link;
 
@@ -12110,23 +12111,15 @@ void break_esp_link(int Ind, int Ind2)
 
 	pesp_ptr = NULL;
 	esp_ptr = p_ptr->esp_link;
-	while (esp_ptr)
-	{
-		if (esp_ptr->id == p2_ptr->id)
-		{
+	while (esp_ptr) {
+		if (esp_ptr->id == p2_ptr->id) {
 			if (!(esp_ptr->flags & LINKF_HIDDEN)) {
 				msg_format(Ind, "\377RYou break the mind link with %s.", p2_ptr->name);
 				msg_format(Ind2, "\377R%s breaks the mind link with you.", p_ptr->name);
 			}
 
-			if (pesp_ptr)
-			{
-				pest_ptr->next = esp_ptr->next;
-			}
-			else
-			{
-				p_ptr->esp_link = esp_ptr->next;
-			}
+			if (pesp_ptr) pest_ptr->next = esp_ptr->next;
+			else p_ptr->esp_link = esp_ptr->next;
 			KILL(esp_ptr, esp_link_type);
 
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -12141,8 +12134,7 @@ void break_esp_link(int Ind, int Ind2)
 	}
 }
 
-esp_link_type *check_esp_link(ind Ind, int Ind2)
-{
+esp_link_type *check_esp_link(ind Ind, int Ind2) {
 	player_type *p_ptr, *p2_ptr;
 	esp_link_type *esp_ptr;
 
@@ -12151,16 +12143,14 @@ esp_link_type *check_esp_link(ind Ind, int Ind2)
 	if (!p2_ptr) return NULL;
 
 	esp_ptr = p_ptr->esp_link;
-	while (esp_ptr)
-	{
+	while (esp_ptr) {
 		if (esp_ptr->id == p2_ptr->id) return esp_ptr;
 		esp_ptr = esp_ptr->next;
 	}
 	return NULL;
 }
 
-bool check_esp_link_type(int Ind, int Ind2, u16b flags)
-{
+bool check_esp_link_type(int Ind, int Ind2, u16b flags) {
 	esp_link_type* esp_ptr;
 	esp_ptr = check_esp_link(Ind, Ind2);
 
@@ -12171,7 +12161,16 @@ bool check_esp_link_type(int Ind, int Ind2, u16b flags)
 
 void toggle_aura(int Ind, int aura) {
 	char buf[80];
-	Players[Ind]->aura[aura] = !Players[Ind]->aura[aura];
+	player_type *p_ptr = Players[Ind];
+
+	p_ptr->aura[aura] = !p_ptr->aura[aura];
+
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST
+	    && aura == 1) {
+		msg_print(Ind, "You cannot turn off your shivering aura granted by mist form.");
+		return;
+	}
+
 	strcpy(buf, "\377sYour ");
 	switch (aura) { /* up to MAX_AURAS */
 	case 0: strcat(buf, "aura of fear"); break;
@@ -12179,13 +12178,21 @@ void toggle_aura(int Ind, int aura) {
 	case 2: strcat(buf, "aura of death"); break;
 	}
 	strcat(buf, " is now ");
-	if (Players[Ind]->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");
+	if (p_ptr->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");
 	strcat(buf, "!");
 	msg_print(Ind, buf);
 }
 
 void check_aura(int Ind, int aura) {
 	char buf[80];
+	player_type *p_ptr = Players[Ind];
+
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST
+	    && aura == 1) {
+		msg_print(Ind, "\377sYour shivering aura is currently unleashed.");
+		return;
+	}
+
 	strcpy(buf, "\377sYour ");
 	switch (aura) { /* up to MAX_AURAS */
 	case 0: strcat(buf, "aura of fear"); break;
@@ -12193,7 +12200,7 @@ void check_aura(int Ind, int aura) {
 	case 2: strcat(buf, "aura of death"); break;
 	}
 	strcat(buf, " is currently ");
-	if (Players[Ind]->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");
+	if (p_ptr->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");
 	strcat(buf, ".");
 	msg_print(Ind, buf);
 }
@@ -12202,11 +12209,11 @@ void check_aura(int Ind, int aura) {
    character level to obtain optimum experience. */
 int det_req_level(int plev) {
 	if (plev < 20) return (0);
-        else if (plev < 30) return (375 / (45 - plev));
-        else if (plev < 50) return (650 / (56 - plev));
-        else if (plev < 65) return (plev * 2);
-        else if (plev < 75) return ((plev - 65) * 4 + 130);
-        else return ((plev - 75) + 170);
+	else if (plev < 30) return (375 / (45 - plev));
+	else if (plev < 50) return (650 / (56 - plev));
+	else if (plev < 65) return (plev * 2);
+	else if (plev < 75) return ((plev - 65) * 4 + 130);
+	else return ((plev - 75) + 170);
 }
 /* calculate actual experience gain based on det_req_level */
 s64b det_exp_level(s64b exp, int plev, int dlev) {

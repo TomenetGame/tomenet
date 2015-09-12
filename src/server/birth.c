@@ -2147,10 +2147,10 @@ static void player_setup(int Ind, bool new) {
 					/* impossible, because the owner always has the same mode as the party's cmode */
 					/* party_remove(Ind, p_ptr->name); */
 			        } else {
-				        parties[p_ptr->party].members--;
-				        Send_party(Ind, TRUE, FALSE);
-				        p_ptr->party = 0;
-				        clockin(Ind, 2);
+					parties[p_ptr->party].members--;
+					Send_party(Ind, TRUE, FALSE);
+					p_ptr->party = 0;
+					clockin(Ind, 2);
 			        }
 			}
  #endif
@@ -2178,6 +2178,11 @@ static void player_setup(int Ind, bool new) {
 	/* Don't accidentally recall into nirvana.. */
 	/* p_ptr->recall_pos isn't saved so we really need this always, not just for panics - mikaelh */
 	p_ptr->word_recall = 0;
+
+#ifndef VAMPIRIC_MIST
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)
+		do_mimic_change(Ind, 0, TRUE);
+#endif
 
 	/* anti spammer code */
 	p_ptr->msgcnt = 0;

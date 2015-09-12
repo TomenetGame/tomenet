@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. August 2015 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. September 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -12180,16 +12180,23 @@ create a character!):
     Vampire bats are fast, can fly (basically as effective as 'levitation')
     and are more resistant to sun burn than the humanoid vampire form,
     making them useful for travelling, although they move slightly erratically.
+    At level 35 they can become able to turn into vampiric mist (mimicry 365).
+    In mist form, they can pass closed doors, traps without triggering them,
+    have maximum stealth and be granted a shivering aura (or have their
+    existing shivering aura boosted). However, Vampires cannot perform a lot of
+    physical actions in mist form, such as fighting, and the creeping mist
+    moves slower than they would in their normal form.
     Vampires cannot eat normal food, instead they need to feed off living
     creatures. This means that you need to kill monsters in melee range (though
     not necessarily by using melee attacks - spells or arrows work fine too) in
     order to satisfy your hunger, which might be quite easy for melee classes
     but sometimes a hassle for ranged/caster classes. On the plus side, a
     vampire won't get gorged by drinking too many potions.
-    At level 40 they will need less and less food to sustain themselves.
-    Vampire royalties will require the least amount of food, independant of
-    their level, enabling them to survive a very long time without feeding -
-    even an item granting 'Slow Digestion' will not improve this any further.
+    At level 40 they will also start to need less and less food to sustain
+    themselves. Vampire royalties will require the least amount of food,
+    independant of their level, enabling them to survive a very long time
+    without feeding - even an item granting 'Slow Digestion' will not improve
+    this any further.
     Vampires hate 'Blunt' weapons, are bad at 'Swimming', get a penalty on
     'Divination' magic school, but receive a bonus on 'Mental Intrusion' and a
     large bonus on 'Necromancy' and all aura skills and a small bonus on
@@ -13297,6 +13304,7 @@ All angels      Resist light, blindness and poison (usually immunity, see
                 ~7 flags), resist fear, resist confusion, see invisible,
                 strong resistance to insanity-inducing attacks.
                 Note: 'Fallen Angel' doesn't get light/confusion resistances.
+Mist and fume   Feather falling.
 
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.

@@ -519,7 +519,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			   funnily, native fruit bat players do NOT have one without this option o_O. */
 			switch (p_ptr->body_monster) {
 			case 37: case 114: case 187: case 235: case 351:
-			case 377: case 391: case 406: case 484: case 968:
+			case 377: case RI_VAMPIRE_BAT: case 406: case 484: case 968:
 				return TRUE;
 			}
 #endif
@@ -619,7 +619,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			   funnily, native fruit bat players do NOT have one without this option o_O. */
 			switch (p_ptr->body_monster) {
 			case 37: case 114: case 187: case 235: case 351:
-			case 377: case 391: case 406: case 484: case 968:
+			case 377: case RI_VAMPIRE_BAT: case 406: case 484: case 968:
 				return TRUE;
 			}
 #endif
@@ -1921,8 +1921,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
  * you'll meet him again and again... so I stop implementing this.
  * - Jir -
  */
-void do_cmd_steal_from_monster(int Ind, int dir)
-{
+void do_cmd_steal_from_monster(int Ind, int dir) {
 #if 0
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	cave_type **zcave;
@@ -1936,12 +1935,11 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 
 	if(!(zcave = getcave(&p_ptr->wpos))) return;
 
-        /* Ghosts cannot steal ; not in WRAITHFORM */
-        if (p_ptr->ghost || p_ptr->tim_wraith) {
-                msg_print(Ind, "You cannot steal things!");
-                return;
-        }
-
+	/* Ghosts cannot steal ; not in WRAITHFORM */
+	if (p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+		msg_print(Ind, "You cannot steal things!");
+		return;
+	}
 
 	/* Only works on adjacent monsters */
 	if (!get_rep_dir(&dir)) return;
@@ -2129,9 +2127,9 @@ void do_cmd_steal(int Ind, int dir) {
 
 	/* Ghosts cannot steal */
 	/* not in WRAITHFORM either */
-	if (p_ptr->ghost || p_ptr->tim_wraith) {
-	        msg_print(Ind, "You cannot steal things!");
-	        return;
+	if (p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+		msg_print(Ind, "You cannot steal things!");
+		return;
 	}
 
 	/* Make sure we have enough room */

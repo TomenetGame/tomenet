@@ -1115,6 +1115,7 @@
    (mimic_shaman_E, mimic_druid, mimic_vampire, check_experience(), do_cmd_check_extra_info()).) */
 #define RI_UFTHAK		260
 #define RI_DOOR_MIMIC		311
+#define RI_VAMPIRIC_MIST	365
 #define RI_VAMPIRE_BAT		391
 #define RI_BLOODLETTER		523
 #define RI_SANTA1		733	/* terror santa from hell */
@@ -7812,10 +7813,16 @@ extern int PlayerUID;
 	   fire immunity for NR; very maybe pass wall for comfort.
 	    1127 firebird, 739 ethereal hound? */
 /* for vampires, who learn to transform into a vampire bat and back for transportation - C. Blue */
-#define mimic_vampire(ridx, plv)	\
+#ifndef VAMPIRIC_MIST
+ #define mimic_vampire(ridx, plv)	\
 	((ridx == 0) || \
-	(plv >= 20 && ridx == 391))
-//	add vampiric mist at higher level or something
+	(plv >= 20 && ridx == RI_VAMPIRE_BAT))
+#else
+ #define mimic_vampire(ridx, plv)	\
+	((ridx == 0) || \
+	(plv >= 20 && ridx == RI_VAMPIRE_BAT) || \
+	(plv >= 35 && ridx == RI_VAMPIRIC_MIST))
+#endif
 
 #define mimic_hatchling(ridx)	\
 	((ridx == 0) || \

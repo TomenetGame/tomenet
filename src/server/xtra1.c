@@ -1387,7 +1387,7 @@ void calc_mana(int Ind) {
 	/* Istari being purely mana-based thanks to mana shield don't need @ form at all,
 	   so vampire istari could get free permanent +5 speed from vampire bat form.
 	   Prevent that here: */
-	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRE_BAT) new_mana /= 2;
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) new_mana /= 2; //for both, RI_VAMPIRE_BAT and RI_VAMPIRIC_MIST
 
 	/* Mana can never be negative */
 	if (new_mana < 0) new_mana = 0;
@@ -1975,6 +1975,8 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
 		p_ptr->pspeed = (((r_ptr->speed - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 	}
+	/* VAMPIRIC_MIST speed specialty: slowish */
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST && p_ptr->pspeed > 100) p_ptr->pspeed = 100 + (p_ptr->pspeed - 100) / 2;
 	csheet_boni->spd = p_ptr->pspeed - 110;
 
 #if 0 /* Should forms affect your searching/perception skills? Probably not. */
@@ -2062,19 +2064,31 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	switch(p_ptr->body_monster) {
 		/* Bats get feather falling */
 		case 37:	case 114:	case 187:	case 235:	case 351:
-		case 377:	case 391:	case 406:	case 484:	case 968:
+		case 377:	case RI_VAMPIRE_BAT:	case 406:	case 484:	case 968:
 			p_ptr->feather_fall = TRUE;
 			csheet_boni->cb[4] |= CB5_RFALL;
 			/* Vampire bats are vampiric */
-			if (p_ptr->body_monster == 391) { p_ptr->vampiric_melee = 100; csheet_boni->cb[6] |= CB7_RVAMP; }
+			if (p_ptr->body_monster == RI_VAMPIRE_BAT) { p_ptr->vampiric_melee = 100; csheet_boni->cb[6] |= CB7_RVAMP; }
 #if 0 /* only real/chauvesouris ones for now, or spider/crow/wild cat forms would be obsolete! */
 			/* Fruit bats get some life leech */
 			if (p_ptr->body_monster == 37 && p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
 #endif
 			break;
 
-		case 365: /* Vampiric mist is vampiric */
+		case RI_VAMPIRIC_MIST: /* Vampiric mist is vampiric */
 			p_ptr->vampiric_melee = 100; csheet_boni->cb[6] |= CB7_RVAMP;
+
+			/* as all mists/fumes: FF */
+			p_ptr->feather_fall = TRUE; csheet_boni->cb[4] |= CB5_RFALL;
+
+			/* only for true vampires: obtain special form boni: */
+			if (p_ptr->prace == RACE_VAMPIRE) {
+				/* max stealth */
+				p_ptr->skill_stl = p_ptr->skill_stl + 25;
+				csheet_boni->slth += 25;
+				/* acquire shivering aura, NOT cold aura, for now -- done via hack in melee2.c */
+				//p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni->cb[10] |= CB11_ACOLD;
+			}
 			break;
 		case 927: /* Vampiric ixitxachitl is vampiric */
 			if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50;
@@ -2156,6 +2170,11 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		/* Fallen Angel */
 		case 652:
 			p_ptr->resist_blind = TRUE; csheet_boni->cb[4] |= CB5_RBLND;
+			break;
+		/* Mist/fume has feather falling */
+		//(note: mist giant and weird fume already have CAN_FLY)
+		case 1064:
+			p_ptr->feather_fall = TRUE; csheet_boni->cb[4] |= CB5_RFALL;
 			break;
 	}
 
@@ -4242,7 +4261,7 @@ void calc_boni(int Ind) {
 				i = 5 - ABS(i - (SUNRISE + (NIGHTFALL - SUNRISE) / 2)) / 2; /* for calculate day time distance to noon -> max burn!: 2..5*/
 				if (p_ptr->total_winner) i = (i + 1) / 2;//1..3
 				p_ptr->drain_life += i;
-			} else p_ptr->drain_life++;
+			} else p_ptr->drain_life++; /* currently, vampiric mist suffers same as normal vampire form (VAMPIRIC_MIST) */
 		}
 	}
 

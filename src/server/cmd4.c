@@ -3575,6 +3575,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 
 	if (p_ptr->prace == RACE_VAMPIRE) {
 		if (lev >= 20) msg_print(Ind, "\377GYou are able to turn into a vampire bat (#391).");
+#ifdef VAMPIRIC_MIST
+		if (lev >= 35) msg_print(Ind, "\377GYou are able to turn into vampiric mist (#365).");
+#endif
 	}
 
 #ifdef EVENT_TOWNIE_GOLD_LIMIT

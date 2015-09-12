@@ -1144,8 +1144,7 @@ void do_cmd_go_down(int Ind) {
 /*
  * Simple command to "search" for one turn
  */
-void do_cmd_search(int Ind)
-{
+void do_cmd_search(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* S(he) is no longer afk */
@@ -1163,25 +1162,23 @@ void do_cmd_search(int Ind)
 	if (p_ptr->always_repeat) p_ptr->command_rep = PKT_SEARCH;
 
 	/* Search */
-        if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) {
-                //Radius of 5 ... 15 squares
-                detect_bounty(Ind, (p_ptr->lev/5) + 5);
-        } else {
-                search(Ind);
-        }
+	if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) {
+		//Radius of 5 ... 15 squares
+		detect_bounty(Ind, (p_ptr->lev/5) + 5);
+	} else {
+		search(Ind);
+	}
 }
 
 
 /*
  * Hack -- toggle search mode
  */
-void do_cmd_toggle_search(int Ind)
-{
+void do_cmd_toggle_search(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Stop searching */
-	if (p_ptr->searching)
-	{
+	if (p_ptr->searching) {
 		/* Clear the searching flag */
 		p_ptr->searching = FALSE;
 
@@ -1193,8 +1190,7 @@ void do_cmd_toggle_search(int Ind)
 	}
 
 	/* Start searching */
-	else
-	{
+	else {
 		/* S(he) is no longer afk */
 		un_afk_idle(Ind);
 
@@ -1224,8 +1220,7 @@ void do_cmd_toggle_search(int Ind)
  * chest is based on the "power" of the chest, which is in turn based
  * on the level on which the chest is generated.
  */
-static void chest_death(int Ind, int y, int x, object_type *o_ptr)
-{
+static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -1850,9 +1845,8 @@ void do_cmd_open(int Ind, int dir) {
 	bool more = FALSE;
 	if (!(zcave = getcave(wpos))) return;
 
-
 	/* Ghosts cannot open doors ; not in WRAITHFORM */
-	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
+	if (((p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) && !is_admin(p_ptr)) ||
 	    (p_ptr->body_monster && !((r_ptr->flags2 & RF2_OPEN_DOOR) || (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_WEAPON])))) {
 	    //&& !strchr("thpkng", r_info[p_ptr->body_monster].d_char))) {
 #ifdef PLAYER_STORES
@@ -2228,8 +2222,7 @@ void do_cmd_open(int Ind, int dir) {
 /*
  * Close an open door.
  */
-void do_cmd_close(int Ind, int dir)
-{
+void do_cmd_close(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -2241,9 +2234,8 @@ void do_cmd_close(int Ind, int dir)
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
-
 	/* Ghosts cannot close ; not in WRAITHFORM */
-	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
+	if (((p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) && !is_admin(p_ptr)) ||
 	    (p_ptr->body_monster && !((r_ptr->flags2 & RF2_OPEN_DOOR) || (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_WEAPON]))))
 	    //&& !strchr("thpkng", r_info[p_ptr->body_monster].d_char)))
 	{
@@ -2501,6 +2493,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	if (!(zcave = getcave(wpos))) return;
 
+	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
+	if (((p_ptr->ghost) || (p_ptr->tim_wraith) || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
+	    && !p_ptr->admin_dm) {
+		/* Message */
+		msg_print(Ind, "You cannot tunnel.");
+		return;
+	}
+
 	/* check if our weapons can help hacking down wood etc */
 	if (o2_ptr->k_idx && !p_ptr->heavy_wield) {
 		switch (o2_ptr->tval) {
@@ -2535,14 +2535,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	object_level = find_level;
 	if (mining > find_level * 2) mining = find_level * 2;
 	find_level += mining / 2;
-
-	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
-	if (((p_ptr->ghost) || (p_ptr->tim_wraith))
-	    && !p_ptr->admin_dm) {
-		/* Message */
-		msg_print(Ind, "You cannot tunnel.");
-		return;
-	}
 
 	/* Must be have something to dig with, or power gets halved */
 	if (!p_ptr->inventory[INVEN_TOOL].k_idx ||
@@ -3263,11 +3255,10 @@ void do_cmd_disarm(int Ind, int dir) {
 	bool more = FALSE, done = FALSE;
 	cave_type **zcave;
 
-
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot disarm ; not in WRAITHFORM */
-	if ((p_ptr->ghost) || (p_ptr->tim_wraith)) {
+	if ((p_ptr->ghost) || (p_ptr->tim_wraith) || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
 		msg_print(Ind, "You cannot disarm things!");
 		if (!is_admin(p_ptr)) return;
 	}
@@ -3614,11 +3605,10 @@ void do_cmd_bash(int Ind, int dir) {
 	char bash_type = 1;
 	cave_type **zcave;
 
-
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot bash ; not in WRAITHFORM */
-	if (p_ptr->ghost || p_ptr->tim_wraith) {
+	if (p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
 		/* Message */
 		msg_print(Ind, "You cannot bash things!");
 		if (!is_admin(p_ptr)) return;
@@ -3899,8 +3889,7 @@ bool get_something_tval(int Ind, int tval, int *ip) {
  *
  * This command may NOT be repeated
  */
-void do_cmd_spike(int Ind, int dir)
-{
+void do_cmd_spike(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 
@@ -3911,7 +3900,7 @@ void do_cmd_spike(int Ind, int dir)
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot spike ; not in WRAITHFORM */
-	if ((p_ptr->ghost) || (p_ptr->tim_wraith)) {
+	if ((p_ptr->ghost) || (p_ptr->tim_wraith) || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
 		/* Message */
 		msg_print(Ind, "You cannot spike doors!");
 
@@ -3986,8 +3975,7 @@ void do_cmd_spike(int Ind, int dir)
 /*
  * Support code for the "Walk" and "Jump" commands
  */
-void do_cmd_walk(int Ind, int dir, int pickup)
-{
+void do_cmd_walk(int Ind, int dir, int pickup) {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr;
 
@@ -4037,9 +4025,9 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
 				p_ptr->easy_open &&
-				(c_ptr->feat >= FEAT_DOOR_HEAD) && 
+				(c_ptr->feat >= FEAT_DOOR_HEAD) &&
 				(c_ptr->feat <= FEAT_DOOR_TAIL) &&
-				!p_ptr->ghost && !p_ptr->tim_wraith) /* players in WRAITHFORM can't open doors - mikaelh */
+				!p_ptr->ghost && !p_ptr->tim_wraith && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
 				do_cmd_open(Ind, dir);
 				return;
@@ -4048,7 +4036,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
 				p_ptr->easy_open &&
 				(c_ptr->feat == FEAT_HOME_HEAD) &&
-				!p_ptr->ghost && !p_ptr->tim_wraith) /* players in WRAITHFORM can't open doors - mikaelh */
+				!p_ptr->ghost && !p_ptr->tim_wraith && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
 				if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
 					if ((!(cfg.door_bump_open & BUMP_OPEN_HOUSE) ||
@@ -4097,8 +4085,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
  * is said and done we want to queue the command, we return a 0.  If we don't,
  * we return a 2.
  */
-int do_cmd_run(int Ind, int dir)
-{
+int do_cmd_run(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr, **zcave;
 
@@ -4122,8 +4109,8 @@ int do_cmd_run(int Ind, int dir)
 		/* Make sure we have an empty space to run into */
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px)) {
 			/* Handle the cfg_door_bump option */
-			if (cfg.door_bump_open && p_ptr->easy_open && !p_ptr->ghost && !p_ptr->tim_wraith) /* players in WRAITHFORM can't open doors - mikaelh */
-			{
+			if (cfg.door_bump_open && p_ptr->easy_open && !p_ptr->ghost && !p_ptr->tim_wraith /* players in WRAITHFORM can't open doors - mikaelh */
+			    && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
 				/* Get requested grid */
 				c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
@@ -4185,8 +4172,7 @@ int do_cmd_run(int Ind, int dir)
  * Stay still.  Search.  Enter stores.
  * Pick up treasure if "pickup" is true.
  */
-void do_cmd_stay(int Ind, int pickup)
-{
+void do_cmd_stay(int Ind, int pickup) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type *c_ptr;
@@ -4491,9 +4477,9 @@ void do_cmd_fire(int Ind, int dir) {
 	
 	char brand_msg[MAX_CHARS_WIDE] = { '\0' };
 
-        bool            drain_msg = TRUE;
-        int             drain_result = 0, drain_heal = 0;
-        int             drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
+	bool            drain_msg = TRUE;
+	int             drain_result = 0, drain_heal = 0;
+	int             drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
 	bool		drainable = TRUE;
 	bool		ranged_double_real = FALSE, ranged_flare_body = FALSE;
 	
@@ -4512,15 +4498,19 @@ void do_cmd_fire(int Ind, int dir) {
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRE_BAT) {
+		msg_print(Ind, "You cannot use ranged weapons in bat form.");
+		return;
+	}
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
+		msg_print(Ind, "You cannot use ranged weapons in mist form.");
+		return;
+	}
+
 	/* New '+' feat in 4.4.6.2 */
 	if (dir == 11) {
 		get_aim_dir(Ind);
 		p_ptr->current_fire = 1;
-		return;
-	}
-
-	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRE_BAT) {
-		msg_print(Ind, "You cannot use ranged weapons in bat form.");
 		return;
 	}
 
@@ -6084,6 +6074,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
+		msg_print(Ind, "You cannot throw things in mist form.");
+		return;
+	}
+
 	/* New '+' feat in 4.4.6.2 */
 	if (dir == 11) {
 		get_aim_dir(Ind);
@@ -7140,7 +7135,7 @@ return;
 		return;
 	}
 	if (p_ptr->body_monster) { /* in case of vampire bat, for vampire rogue! */
-		msg_print(Ind, "\377yYou cannot cloak yourself while in bat form.");
+		msg_print(Ind, "\377yYou cannot cloak yourself while you are transformed.");
 		return;
 	}
 	if (p_ptr->rogue_heavyarmor) {
@@ -7288,6 +7283,10 @@ void shadow_run(int Ind) {
 		return;
         }
 
+	if (p_ptr->body_monster) { /* in case of vampire bat, for vampire rogue! */
+		msg_print(Ind, "\377yYou cannot shadow run while you are transformed.");
+		return;
+	}
 	if (p_ptr->rogue_heavyarmor) {
 		msg_print(Ind, "\377yYour armour is too heavy for effective shadow running.");
 		return;
@@ -7347,12 +7346,12 @@ void shadow_run(int Ind) {
 /* break shadow running */
 void break_shadow_running(int Ind) {
 	if (Players[Ind]->shadow_running) {
-	        msg_print(Ind, "Your silhouette stabilizes and your movements return to normal.");
-    		msg_format_near(Ind, "%s silhouette stabilizes and %s movements return to normal.", Players[Ind]->name, Players[Ind]->male ? "his" : "her");
+		msg_print(Ind, "Your silhouette stabilizes and your movements return to normal.");
+		msg_format_near(Ind, "%s silhouette stabilizes and %s movements return to normal.", Players[Ind]->name, Players[Ind]->male ? "his" : "her");
 		Players[Ind]->shadow_running = FALSE;
-	        Players[Ind]->update |= (PU_BONUS | PU_VIEW);
-    		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
+		Players[Ind]->update |= (PU_BONUS | PU_VIEW);
+		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
 		/* update so everyone sees the colour animation */
-                everyone_lite_spot(&Players[Ind]->wpos, Players[Ind]->py, Players[Ind]->px);
+		everyone_lite_spot(&Players[Ind]->wpos, Players[Ind]->py, Players[Ind]->px);
 	}
 }

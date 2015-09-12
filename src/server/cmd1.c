@@ -2904,18 +2904,17 @@ static int check_hit(int Ind, int power)
 /*
  * Handle player hitting a real trap
  */
-void hit_trap(int Ind)
-{
+void hit_trap(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int t_idx;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
-	cave_type               *c_ptr;
+	cave_type *c_ptr;
 	bool ident = FALSE;
 
 	/* Ghosts ignore traps */
-	if ((p_ptr->ghost) || (p_ptr->tim_traps)) return;
+	if ((p_ptr->ghost) || (p_ptr->tim_traps) || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) return;
 
 	/* Disturb the player */
 	disturb(Ind, 0, 0);
@@ -2951,8 +2950,7 @@ void hit_trap(int Ind)
  *       (important for dual-backstab treatment) - C. Blue
  */ 
 /* TODO: q_ptr/p_ptr->name should be replaced by strings made by player_desc */
-static void py_attack_player(int Ind, int y, int x, bool old)
-{
+static void py_attack_player(int Ind, int y, int x, bool old) {
 	player_type *p_ptr = Players[Ind];
 	int num = 0, bonus, chance, slot;
 	int k, k2, k3, bs_multiplier;
@@ -5114,12 +5112,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
  * If FALSE, player attacks only once, no matter what num_blow is,
  * and (1/num_blow) turn is consumed.   - Jir -
  */
-void py_attack(int Ind, int y, int x, bool old)
-{
+void py_attack(int Ind, int y, int x, bool old) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	cave_type *c_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
+
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) return;
+
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
@@ -5148,8 +5148,7 @@ void py_attack(int Ind, int y, int x, bool old)
 	}
 }
 
-void spin_attack(int Ind)
-{
+void spin_attack(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -5162,9 +5161,15 @@ void spin_attack(int Ind)
 
 	if (!p_ptr->num_blow) return; /* paranoia */
 
-        msg_print(Ind, "You spin around in a mighty sweep!");
-        msg_format_near(Ind, "%s spins around in a mighty sweep!", p_ptr->name);
-				
+	/* In case we got here by weapon activation: */
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
+		msg_print(Ind, "You cannot spin while in mist form.");
+		return;
+	}
+
+	msg_print(Ind, "You spin around in a mighty sweep!");
+	msg_format_near(Ind, "%s spins around in a mighty sweep!", p_ptr->name);
+
 	/* Break goi/manashield */
 #if 0
 	if (p_ptr->invuln) set_invuln(Ind, 0);
@@ -5173,11 +5178,11 @@ void spin_attack(int Ind)
 #endif	// 0
 
 	j = rand_int(8);
-        for (i = 1; i <= p_ptr->num_blow + 8; i++) {
-	        if ((j + i) % 9 + 1 == 5) continue;
-                x = p_ptr->px + ddx[(j + i) % 9 + 1];
-                y = p_ptr->py + ddy[(j + i) % 9 + 1];
-	        if (!in_bounds(y, x)) continue;
+	for (i = 1; i <= p_ptr->num_blow + 8; i++) {
+		if ((j + i) % 9 + 1 == 5) continue;
+		x = p_ptr->px + ddx[(j + i) % 9 + 1];
+		y = p_ptr->py + ddy[(j + i) % 9 + 1];
+		if (!in_bounds(y, x)) continue;
 		c_ptr = &zcave[y][x];
 
 		/* Check for monster */
@@ -5193,8 +5198,7 @@ void spin_attack(int Ind)
 
 /* PernAngband addition */
 // void touch_zap_player(int Ind, monster_type *m_ptr)
-void touch_zap_player(int Ind, int m_idx)
-{
+void touch_zap_player(int Ind, int m_idx) {
 	monster_type	*m_ptr = &m_list[m_idx];
 
 	player_type *p_ptr = Players[Ind];
@@ -5269,8 +5273,7 @@ void touch_zap_player(int Ind, int m_idx)
 		}
 	}
 }
-void py_touch_zap_player(int Ind, int Ind2)
-{
+void py_touch_zap_player(int Ind, int Ind2) {
 	player_type *q_ptr = Players[Ind2], *p_ptr = Players[Ind];
 	int aura_damage = 0;
 
@@ -5595,10 +5598,16 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 
 	/* Player can not walk through "walls" unless in Shadow Form */
 //        if (p_ptr->wraith_form || (PRACE_FLAG(PR1_SEMI_WRAITH)))
-	if (/*p_ptr->wraith_form ||*/ p_ptr->ghost || p_ptr->tim_wraith)
-		pass_wall = TRUE;
-	else
-		pass_wall = FALSE;
+	if (/*p_ptr->wraith_form ||*/ p_ptr->ghost || p_ptr->tim_wraith) pass_wall = TRUE;
+	else pass_wall = FALSE;
+
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
+		if (feature == FEAT_HOME || (feature >= FEAT_DOOR_HEAD && feature <= FEAT_DOOR_TAIL)
+		    || feature == FEAT_BUSH || feature == FEAT_TREE || feature == FEAT_DEAD_TREE)
+			return TRUE;
+		//use natural drown/damage code for this stuff instead:
+		//if (feature == FEAT_DEEP_WATER || feature == FEAT_DEEP_LAVA) return FALSE;
+	}
 
 #if 0	// it's interesting.. hope we can have similar feature :)
 	/* Wall mimicry force the player to stay in walls */
@@ -6536,7 +6545,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 		/* Discover invisible traps */
 //		else if (c_ptr->feat == FEAT_INVIS)
-		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost) {
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
 			bool hit = TRUE;
 
 			/* Disturb */
@@ -6906,8 +6915,7 @@ static bool find_breakleft;*/
  *       #x#                 @x#
  *       @p.                  p
  */
-static void run_init(int Ind, int dir)
-{
+static void run_init(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	int             row, col, deepleft, deepright;
@@ -7033,8 +7041,7 @@ static void run_init(int Ind, int dir)
  * Return TRUE if the running should be stopped
  */
 /* TODO: aquatics should stop when next to non-water */
-static bool run_test(int Ind)
-{
+static bool run_test(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 

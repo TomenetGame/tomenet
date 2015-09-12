@@ -2957,30 +2957,38 @@ bool make_attack_melee(int Ind, int m_idx)
 				/*
 				 * Apply the necromantic auras
 				 */
-				/* Aura of fear is NOT affected by the monster level */
+				/* Aura of fear is now affected by the monster level too */
 				if (get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[0] &&
 				    (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING))
 				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
 				    && (!(r_ptr->flags2 & RF2_POWERFUL))
 				    && (!(r_ptr->flags1 & RF1_UNIQUE))
 				    ) {
-					int chance = get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 1;
-
-					if (!(r_ptr->flags3 & RF3_NO_FEAR) && magik(chance)) {
+					if (magik(get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 5) &&
+					    r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_FEAR, 99)) {
 						msg_format(Ind, "%^s appears afraid.", m_name);
-						m_ptr->monfear = 3;//get_skill_scale(p_ptr, SKILL_AURA_POWER, 10) + 2;
+						//short 'shock' effect ;) it's cooler than just running away
+						m_ptr->monfear = 2 + get_skill_scale(p_ptr, SKILL_AURA_FEAR, 2);//get_skill_scale(p_ptr, SKILL_AURA_POWER, 10) + 2;
 						m_ptr->monfear_gone = 0;
 					}
 				}
 				/* Shivering Aura is affected by the monster level */
-				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && p_ptr->aura[1]
+				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (p_ptr->aura[1] || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
 				    && (!(r_ptr->flags3 & RF3_NO_STUN)) && (!(r_ptr->flags3 & RF3_IM_COLD))
 				    && (!(r_ptr->flags1 & RF1_UNIQUE))
 				    ) {
-					int chance = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 20) + 1;
+					int chance_trigger = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 25);
+					int threshold_effect = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99);
 
-					if (magik(chance) && (r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99))) {
-						m_ptr->stunned += 5;//get_skill_scale(p_ptr, SKILL_AURA_POWER, 30) + 10;
+					if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
+						chance_trigger = 25; //max
+						threshold_effect = p_ptr->lev * 2; //80..99
+						if (threshold_effect > 99) threshold_effect = 99;
+					}
+					chance_trigger += 25;
+
+					if (magik(chance_trigger) && (r_ptr->level < threshold_effect)) {
+						m_ptr->stunned += 10;//get_skill_scale(p_ptr, SKILL_AURA_POWER, 30) + 10;
 						if (m_ptr->stunned > 100)
 							msg_format(Ind, "\377o%^s appears frozen.", m_name);
 						else if (m_ptr->stunned > 50)
