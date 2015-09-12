@@ -7654,8 +7654,8 @@ Flying Kick             41              35          5d8             -
 Dragon Fist             45              35          6d8         Stunning
 Crushing Blow           48              35          8d7         Stunning
 For winners, ie kings/queens only:
-Titan's Fist            48              50          8d5         Stunning
-Phoenix Claw            48              50          5d9         Slowing (PvM)
+Titan's Fist            48              45          8d5         Stunning
+Phoenix Claw            48              45          5d9         Slowing (PvM)
 
 
 Depending on your MA skill, you have a fixed number of barehanded attacks
