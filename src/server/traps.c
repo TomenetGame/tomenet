@@ -1895,6 +1895,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			object_type *o_ptr;
 			int i, j;
+			bool iddc = in_irondeepdive(wpos);
 
 			for (i = 0; i < INVEN_PACK; i++) {
 				if (!p_ptr->inventory[i].k_idx) continue;
@@ -1910,18 +1911,18 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				//cure crits cost 100, WoR 150, so it still poses a decent threat.
 				if (is_ammo(o_ptr->tval)) continue; /* ammo is too important for archers, and hard to collect! */
 
-				if (j > 8) j -= j >> 3;
+				if (j > 8) j = iddc ? j >> 2 : j - (j >> 3);
 
 				/* Hack -- If a wand, allocate total
 				 * maximum timeouts or charges between those
 				 * stolen and those missed. -LM-
 				 */
-				if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, j-1); /* The charge goes to .. void ;) */
+				if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, j - 1); /* The charge goes to .. void ;) */
 
-				inven_item_increase(Ind, i, 1-j);
+				inven_item_increase(Ind, i, 1 - j);
 				inven_item_optimize(Ind, i);
 				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-				if (!ident && magik(15)) {
+				if (!ident && magik(j - 1)) {
 					msg_print(Ind, "You suddenly feel nimble and light.");
 					ident = TRUE;
 				}
