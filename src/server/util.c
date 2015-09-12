@@ -1775,7 +1775,9 @@ void handle_music(int Ind) {
 		case 0:
 			if (d_ptr->flags2 & DF2_NO_DEATH) Send_music(Ind, 12, 11);//note: music file is identical to the one of the Training Tower
 			else if (d_ptr->flags2 & DF2_IRON) Send_music(Ind, 14, 11);//note: switched from 13 to 14, which is actually forcedown/hellish
-			else if ((d_ptr->flags2 & DF2_HELL) || (d_ptr->flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 13, 11);//note: switched from 14 to 13, which is actually iron
+			else if ((d_ptr->flags2 & DF2_HELL) || (d_ptr->flags1 & DF1_FORCE_DOWN))
+				//Send_music(Ind, 13, 11);//note: switched from 14 to 13, which is actually iron
+				Send_music(Ind, 18, 11);//use 'The Paths of the Dead' dungeon music for a change >:) (and vice versa)
 			else Send_music(Ind, 11, 0);
 			return;
 		case 1: Send_music(Ind, 32, 11); return; //Mirkwood
@@ -1788,7 +1790,9 @@ void handle_music(int Ind) {
 		case 8: Send_music(Ind, 26, 11); return; //Halls of Mandos
 		case 9: Send_music(Ind, 30, 11); return; //Cirith Ungol
 		case 10: Send_music(Ind, 28, 11); return; //The Heart of the Earth
-		case 16: Send_music(Ind, 18, 11); return; //The Paths of the Dead
+		case 16:
+			//Send_music(Ind, 18, 11); return; //The Paths of the Dead
+			Send_music(Ind, 13, 11); return; //The Paths of the Dead - use 'generic iron' dungeon music for a change >:) (and vice versa)
 		case 17: Send_music(Ind, 37, 11); return; //The Illusory Castle
 		case 18: Send_music(Ind, 39, 11); return; //The Maze
 		case 19: Send_music(Ind, 20, 11); return; //The Orc Cave
