@@ -1825,7 +1825,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_CLIMB,
                                 '+', 0,
-                                '+', 40,
+                                '+', 30,
                         },
                         {
                                 SKILL_SWIM,
@@ -2077,7 +2077,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_CLIMB,
                                 '+', 0,
-                                '+', 40,
+                                '+', 0,
                         },
                         {
                                 SKILL_SWIM,
@@ -2177,7 +2177,7 @@ player_race race_info[MAX_RACE] =
                         },
                         {
                                 SKILL_SWIM,
-                                '+', 0,
+                                '+', 150,
                                 '+', 70,
                         },
                         {
@@ -2367,7 +2367,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_SWIM,
                                 '+', 0,
-                                '+', 40,
+                                '+', 30,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
