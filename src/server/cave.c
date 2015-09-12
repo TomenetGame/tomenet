@@ -3869,11 +3869,17 @@ static byte priority_table[][2] = {
 	{ FEAT_DIRT, 3 },
 	{ FEAT_SAND, 3},
 	{ FEAT_MUD, 3},
+	{ FEAT_SNOW, 3},
+
+	{ FEAT_FLOWER, 3},//3 or 4?
 
 	/* Grass */
 	{ FEAT_GRASS, 4 },
 	{ FEAT_ASH, 4},
 	{ FEAT_ICE, 4},
+
+	{ FEAT_LOOSE_DIRT, 4},//4 because it's used for gardens same as FEAT_CROP
+	{ FEAT_CROP, 4},
 
 	/* Tree */
 	{ FEAT_BUSH, 5 },
@@ -7345,8 +7351,7 @@ extern int check_feat(worldpos *wpos, int y, int x)
  * (Adapted from PernAngband)
  */
 bool level_generation_time = FALSE;
-void cave_set_feat(worldpos *wpos, int y, int x, int feat)
-{
+void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	player_type *p_ptr;
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -7372,15 +7377,16 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 		case FEAT_IVY:
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
-    		case FEAT_ICE:
-	    	case FEAT_FLOOR:
-    		case FEAT_DIRT:
-	        case FEAT_GRASS:
-    		case FEAT_SAND:
-	        case FEAT_ASH:
-	        case FEAT_MUD:
+		case FEAT_SNOW:
+		case FEAT_ICE:
+		case FEAT_FLOOR:
+		case FEAT_DIRT:
+		case FEAT_GRASS:
+		case FEAT_SAND:
+		case FEAT_ASH:
+		case FEAT_MUD:
 	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-	        case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
+		case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
 	}
 	/* todo: submerged ruins/small water cave only water floor, grinding ice only ice floor.
 	   maybe add d_info flags for this stuff instead of hard-coding here */
@@ -7489,6 +7495,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	    (c_ptr->feat == FEAT_LOOSE_DIRT) || /* used for gardens (fields) in wild.c */
 	    (c_ptr->feat == FEAT_CROP) || /* used for gardens (fields) in wild.c */
 	    (c_ptr->feat == FEAT_GRASS) ||
+	    (c_ptr->feat == FEAT_SNOW) ||
 	    (c_ptr->feat == FEAT_ICE) ||
 	    (c_ptr->feat == FEAT_SAND) ||
 	    (c_ptr->feat == FEAT_ASH) ||
@@ -7518,15 +7525,16 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		case FEAT_IVY:
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
-    		case FEAT_ICE:
-	    	case FEAT_FLOOR:
-    		case FEAT_DIRT:
-	        case FEAT_GRASS:
-    		case FEAT_SAND:
-	        case FEAT_ASH:
-	        case FEAT_MUD:
+		case FEAT_SNOW:
+		case FEAT_ICE:
+		case FEAT_FLOOR:
+		case FEAT_DIRT:
+		case FEAT_GRASS:
+		case FEAT_SAND:
+		case FEAT_ASH:
+		case FEAT_MUD:
 	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-	        case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
+		case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
 	}
 
 	/* todo: submerged ruins/small water cave only water floor, grinding ice only ice floor.
