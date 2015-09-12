@@ -1057,24 +1057,20 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	c_ptr = &zcave[y][x];
 	
 	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
-	if (!(cave_clean_bold(zcave, y, x))
-		&& /* cave_clean_bold also checks for object absence */
+	if (!(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
 	    ((c_ptr->feat == FEAT_NONE) ||
 	    (c_ptr->feat == FEAT_FLOOR) ||
 	    (c_ptr->feat == FEAT_DIRT) ||
 	    (c_ptr->feat == FEAT_LOOSE_DIRT) || /* used for gardens (fields) in wild.c */
 	    (c_ptr->feat == FEAT_CROP) || /* used for gardens (fields) in wild.c */
 	    (c_ptr->feat == FEAT_GRASS) ||
+	    (c_ptr->feat == FEAT_SNOW) ||
 	    (c_ptr->feat == FEAT_ICE) ||
 	    (c_ptr->feat == FEAT_SAND) ||
 	    (c_ptr->feat == FEAT_ASH) ||
 	    (c_ptr->feat == FEAT_MUD) ||
 	    (c_ptr->feat == FEAT_FLOWER) ||
-	    (c_ptr->feat == FEAT_NETHER_MIST))
-		|| /* not on these tiles (see cave.c) - Kurzel */
-		((c_ptr->feat == FEAT_DEEP_LAVA) ||
-		(c_ptr->feat == FEAT_DEEP_WATER) ||
-	    (c_ptr->feat == FEAT_SHAL_LAVA)))
+	    (c_ptr->feat == FEAT_NETHER_MIST))))
 		return;
 	
 	/* Don't mess with inns please! */
