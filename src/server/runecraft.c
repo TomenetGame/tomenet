@@ -1021,7 +1021,7 @@ s_printf("Duration: %d\n", duration);
 		msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to cast a spell with a single keypress!");
 		msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
 		p_ptr->warning_macros = 1;
-		s_printf("warning_macros: %s\n", p_ptr->name);
+		s_printf("warning_macros (rune): %s\n", p_ptr->name);
 	}
 
 	return 1;

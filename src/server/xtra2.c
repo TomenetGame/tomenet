@@ -3937,7 +3937,7 @@ void check_experience(int Ind) {
 		if (!found_macroishness) {
 			msg_print(Ind, "\374\377oHINT: Create '\377Rmacros\377o' aka hotkeys to ensure survival in critical situations!");
 			msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to start the macro wizard.");
-			s_printf("warning_macros: %s\n", p_ptr->name);
+			s_printf("warning_macros (levup): %s\n", p_ptr->name);
 		}
 	}
 

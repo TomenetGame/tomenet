@@ -1670,7 +1670,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 			msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to cast a spell with a single keypress!");
 			msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
 			p_ptr->warning_macros = 1;
-			s_printf("warning_macros: %s\n", p_ptr->name);
+			s_printf("warning_macros (spell): %s\n", p_ptr->name);
 		}
 
 #if 1 /* Fire-Till-Kill */
