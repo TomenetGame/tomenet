@@ -11921,7 +11921,8 @@ create a character!):
     Humans have no experience penalties and tend to go up levels faster than
     most other races. No racial adjustments or intrinsics occur to characters
     choosing human.
-    Humans get a bonus on 'Climbing' and a large bonus on 'Interception'.
+    Humans get a bonus on 'Climbing', a slight bonus on 'Climbing' and a large
+    bonus on 'Interception'.
 
 - Half-Elf
     Half-elves tend to be smarter and faster than humans, but not as strong.
@@ -11978,8 +11979,8 @@ create a character!):
     drawback, though. Dwarves are loudmouthed and proud, singing in loud
     voices, arguing with themselves for no good reason, and screaming out
     challenges at nearby foes. In other words, dwarves have a miserable
-    stealth.
-    They receive a bonus on 'Axe-Mastery' and a huge bonus on 'Digging'.
+    stealth. They receive a bonus on 'Axe-Mastery' and 'Climbing' and a huge
+    bonus on 'Digging'.
 
 - Half-Orc
     Because of their preference to living underground to on the surface,
@@ -11990,7 +11991,8 @@ create a character!):
     good warriors and rogues, for the simple reason that Half-Orcs tend to
     have great constitutions and lots of hit points.
     They get a slight bonus on 'Backstabbing', a large bonus on 'Weaponmastery'
-    and a bonus on 'Necromancy' and receive penalties on 'Magic' and 'Sorcery'.
+    and a bonus on 'Necromancy' and receive penalties on 'Magic' and 'Sorcery'
+    and a slight penalty on 'Swimming'.
 
 - Half-Troll
     Half-trolls have their strength sustained. They are very strong, but also
@@ -11998,9 +12000,9 @@ create a character!):
     bad at searching, disarming, perception, and stealth. They are so ugly
     that a Half-Orc grimaces in their presence. They need to eat often but
     they also regenerate hit point especially quickly.
-    Half-Trolls get bonus on 'Blunt-Mastery', 'Health' and 'Swimming'. They
-    receive a penalty on 'Critical-Strike' and large penalties on 'Archery',
-    'Magic' and 'Sorcery'.
+    Half-Trolls get bonus on 'Blunt-Mastery', 'Health'. They receive a penalty
+    on 'Critical-Strike' and 'Swimming' and large penalties on 'Climbing',
+    'Swimming', 'Archery', 'Magic' and 'Sorcery'.
 
 - Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
@@ -12008,7 +12010,7 @@ create a character!):
     field, especially constitution. However, being men of the world, very
     little is new to them, and levels are very hard for them to gain.
     A Dunadan gets bonus on 'Combat', 'Archery' and 'Interception' and a small
-    bonus to 'Magic'.
+    bonus to 'Magic' and 'Swimming'.
 
 - High-Elf
     High-Elves can see the invisible and resist light and the flow of time
@@ -12017,8 +12019,8 @@ create a character!):
     their wisdom is sometimes suspect. They do very well in all professions.
     There are few things that they have not seen already, and experience is
     hard for them to gain.
-    High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging'
-    and a large bonus on 'Calmness'.
+    High-Elves receive boni on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging',
+    a large bonus on 'Calmness' and a slight bonus on 'Swimming'.
 
 - Yeek
     Being weak and losing many childhood fights, they have learned the
@@ -12029,7 +12031,8 @@ create a character!):
     Yeeks are the least powerful of all the races. They suffer disadvantages
     in all stats and have attributes similar to humans. However, to
     compensate Yeeks learn, and thus gain levels, extremely quickly.
-    Yeeks don't receive boni or mali on any skills.
+    Yeeks don't receive boni or mali on any skills except that they are good at
+    'Swimming'.
 
     Note:
     Since yeeks have low hit points you might consider training the skill
@@ -12064,7 +12067,8 @@ create a character!):
     Ents intrinsically resist the force of unleashed water.
     They get bonus to 'Health' and a large bonus on 'Calmness' and on the magic
     schools 'Earth' and 'Water'. They receive a large penalty on 'Fire' school,
-    a penalty on 'Axe-mastery' and a small penalty on 'Sword-mastery'.
+    a penalty on 'Axe-mastery' and a small penalty on 'Sword-mastery'. They
+    cannot train 'Climbing' at all.
 
 - Draconian
     These humanoid half-breeds of dragon and man surpass common humans in all
@@ -12088,7 +12092,7 @@ create a character!):
     actual dragon (including dragonriders). The resistances and other abilities
     obtained from a trait remain active even while polymorphed.
     Draconians receive a bonus on 'Attunement', 'Polearm-Mastery' and
-    'Magic devices'.
+    'Magic devices' and a slight bonus on 'Swimming'.
 
     Table of their traits:
     Lineage     Breath          Resistances/abilities
@@ -12121,8 +12125,8 @@ create a character!):
     They can see in the dark thanks to infra-vision, have extraordinarily sharp
     senses, and can move very silently, making them hard to spot. They are also
     good at disarming traps.
-    Kobolds receive a bonus on 'Swimming' and 'Trapping' and a slight bonus on
-    'Sneakiness'.
+    Kobolds receive a bonus on 'Trapping', a large bonus on 'Swimming' and a
+    slight bonus on 'Sneakiness'.
 
 - Dark-Elf
     Dark-Elves dwell below the surface in huge caverns of their underground
@@ -12185,12 +12189,12 @@ create a character!):
     Vampire royalties will require the least amount of food, independant of
     their level, enabling them to survive a very long time without feeding -
     even an item granting 'Slow Digestion' will not improve this any further.
-    Vampires hate 'Blunt' weapons, get a penalty on 'Divination' magic school,
-    but receive a bonus on 'Mental Intrusion' and a large bonus on 'Necromancy'
-    and all aura skills and a small bonus on 'Traumaturgy'. They cannot use
-    certain magic schools at all as described above. As undead, Vampires gain
-    a moderate skill bonus for 'Nether' runes but in turn find it hard to
-    improve in 'Light' runes.
+    Vampires hate 'Blunt' weapons, are bad at 'Swimming', get a penalty on
+    'Divination' magic school, but receive a bonus on 'Mental Intrusion' and a
+    large bonus on 'Necromancy' and all aura skills and a small bonus on
+    'Traumaturgy'. They cannot use certain magic schools at all as described
+    above. As undead, Vampires gain a moderate skill bonus for 'Nether' runes
+    but in turn find it hard to improve in 'Light' runes.
 
 - Maia
     The Maiar are lesser spirits who are associated with one or more Valar, the
