@@ -1770,9 +1770,9 @@ void do_cmd_check_player_equip(int Ind, int line)
 			if (o_ptr->tval) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3 + (i < INVEN_WIELD ? 0 : 0x10));
 				if (admin && i < INVEN_WIELD)
-					fprintf(fff, "\377%c%c) %s\n", i < INVEN_WIELD? 'u' : 'w', 97 + i, o_name);
+					fprintf(fff, "\377%c%c) %s\n", i < INVEN_WIELD ? 'u' : (!o_ptr->level && admin ? 's' : 'w'), 97 + i, o_name);
 				else
-					fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'u' : 'w', o_name);
+					fprintf(fff, "\377%c %s\n", i < INVEN_WIELD ? 'u' : (!o_ptr->level && admin ? 's' : 'w'), o_name);
 				hidden_diz = FALSE;
 			}
 		}
@@ -1793,14 +1793,14 @@ void do_cmd_check_player_equip(int Ind, int line)
 #endif
 	}
 
-       /* Close the file */
-       my_fclose(fff);
+	/* Close the file */
+	my_fclose(fff);
 
-       /* Display the file contents */
-       show_file(Ind, file_name, "Equipment of Inspectable Players", line, 0, 0);
+	/* Display the file contents */
+	show_file(Ind, file_name, "Equipment of Inspectable Players", line, 0, 0);
 
-       /* Remove the file */
-       fd_kill(file_name);
+	/* Remove the file */
+	fd_kill(file_name);
 }
 
 
