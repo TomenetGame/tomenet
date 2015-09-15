@@ -2231,7 +2231,7 @@ I:65:19:0
 W:20:0:10:800
 A:20/1
 P:0:1d1:0:0:0
-D:Casts a frost bolt for 5..40d8 damage.
+D:Casts a frost bolt for 5..50d8 damage.
 
 N:272:Fire Bolts
 G:-:d
@@ -2239,7 +2239,7 @@ I:65:18:0
 W:30:0:10:1000
 A:30/1
 P:0:1d1:0:0:0
-D:Casts a fire bolt for 7..42d8 damage.
+D:Casts a fire bolt for 7..52d8 damage.
 
 # More common now...
 N:273:Stone to Mud
@@ -2417,7 +2417,7 @@ I:65:16:0
 W:30:0:10:950
 A:30/1
 P:0:1d1:0:0:0
-D:Casts an acid bolt for 6..41d8 damage.
+D:Casts an acid bolt for 6..51d8 damage.
 
 N:295:Dragon's Flame
 G:-:d
@@ -2941,7 +2941,7 @@ I:66:21:30
 W:20:0:15:2000
 A:20/1
 P:0:1d1:0:0:0
-D:Casts a lightning bolt for 4..39d8 damage.
+D:Casts a lightning bolt for 4..49d8 damage.
 
 N:358:Frost Bolts
 G:-:d
@@ -2949,7 +2949,7 @@ I:66:23:35
 W:25:0:15:2500
 A:25/1
 P:0:1d1:0:0:0
-D:Casts a frost bolt for 5..40d8 damage.
+D:Casts a frost bolt for 5..50d8 damage.
 
 N:359:Fire Bolts
 G:-:d
@@ -2957,7 +2957,7 @@ I:66:22:40
 W:30:0:15:3000
 A:30/1
 P:0:1d1:0:0:0
-D:Casts a fire bolt for 7..42d8 damage.
+D:Casts a fire bolt for 7..52d8 damage.
 
 N:360:Polymorph
 G:-:d
@@ -3042,7 +3042,7 @@ I:66:20:40
 W:40:0:15:3500
 A:40/1
 P:0:1d1:0:0:0
-D:Casts an acid bolt for 6..41d8 damage.
+D:Casts an acid bolt for 6..51d8 damage.
 
 N:371:Enlightenment
 G:-:d
@@ -6028,7 +6028,7 @@ I:65:33:0
 W:15:0:10:600
 A:15/1
 P:0:1d1:0:0:0
-D:Casts a lightning bolt for 5..16d8 damage.
+D:Casts a lightning bolt for 4..49d8 damage.
 
 ##Now Norcocth can go wild :) ##
 
