@@ -1138,12 +1138,12 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	}
 
 
-        if (check_guard_inscription(o_ptr->note, 'q')) {
-                msg_print(Ind, "The item's inscription prevents it.");
-                return;
-        };
+	if (check_guard_inscription(o_ptr->note, 'q')) {
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	};
 
-        if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 
 	if ((o_ptr->tval != TV_POTION) &&
@@ -1829,8 +1829,7 @@ bool curse_weapon(int Ind) {
  * Curse the players equipment in general	- Jir -
  */
 #if 0	// let's use this for Hand-o-Doom :)
-bool curse_an_item(int Ind, int slot)
-{
+bool curse_an_item(int Ind, int slot) {
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
@@ -1985,8 +1984,7 @@ bool do_cancellation(int Ind, int flags) {
 
 /* Pfft, it's silly long */
 #define LOTTERY_MAX_PRIZE	7
-static void do_lottery(int Ind, object_type *o_ptr)
-{
+static void do_lottery(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int i = k_info[o_ptr->k_idx].cost, j, k = 0, i_drop = i, gold;
 
@@ -1994,21 +1992,17 @@ static void do_lottery(int Ind, object_type *o_ptr)
 
 	/* 30 * 4^7 = 30 * 16384 =   491,520 */
 	/* 30 * 5^7 = 30 * 78125 = 2,343,750 */
-	for (j = 0; j < LOTTERY_MAX_PRIZE; j++)
-	{
+	for (j = 0; j < LOTTERY_MAX_PRIZE; j++) {
 /* was this really intended to be magik() !? - C. Blue -		if (!magik(5)) break; */
 		if (rand_int(4)) break;
 		if (k) i *= 5;
 		k++;
 	}
 
-	if (!j)
-	{
+	if (!j) {
 		msg_print(Ind, "\377WYou draw a blank :-P");
 		s_printf("Lottery results: %s drew a blank.\n", p_ptr->name);
-	}
-	else
-	{
+	} else {
 		cptr p = "th";
 
 		k = LOTTERY_MAX_PRIZE + 1 - k;
@@ -2036,8 +2030,7 @@ static void do_lottery(int Ind, object_type *o_ptr)
 			i_drop *= 3;
 		}
 
-		while (gold > 0)
-		{
+		while (gold > 0) {
 			object_type forge, *j_ptr = &forge;
 			int drop;
 
@@ -2110,8 +2103,8 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 	int ident = FALSE;
 	int k;
 	char	m_name[MNAME_LEN];
-        monster_type    *m_ptr;
-        monster_race    *r_ptr;
+	monster_type    *m_ptr;
+	monster_race    *r_ptr;
 
 	/* Analyze the scroll */
 	if (tval == TV_SCROLL) {
@@ -2222,7 +2215,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				if (r_info[k].flags1 & RF1_UNIQUE) break;
 
 				monster_race_desc(Ind, m_name, k, 0x188);
-		                msg_format(Ind, "\377oYou conjure %s!", m_name);
+				msg_format(Ind, "\377oYou conjure %s!", m_name);
 				msg_format_near(Ind, "\377o%s conjures %s", p_ptr->name, m_name);
 				if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, k, 100, 1))
 					ident = TRUE;
@@ -2230,16 +2223,16 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 			case SV_SCROLL_SLEEPING:
 				msg_print(Ind, "A veil of sleep falls down over the wide surroundings..");
-			        for (k = m_top - 1; k >= 0; k--) {
-			                /* Access the monster */
-			                m_ptr = &m_list[m_fast[k]];
+				for (k = m_top - 1; k >= 0; k--) {
+					/* Access the monster */
+					m_ptr = &m_list[m_fast[k]];
 					r_ptr = race_inf(m_ptr);
-	    			        /* On this level? Test its highest encounter so far */
-			                if (inarea(&m_ptr->wpos, &p_ptr->wpos) &&
+					/* On this level? Test its highest encounter so far */
+					if (inarea(&m_ptr->wpos, &p_ptr->wpos) &&
 					    !((r_ptr->flags1 & RF1_UNIQUE) ||
-			                    (r_ptr->flags3 & RF3_NO_SLEEP)))
+					    (r_ptr->flags3 & RF3_NO_SLEEP)))
 						m_ptr->csleep = 1000;
-			        }
+				}
 				break;
 
 			/* not adding bounds checking now... because of perma walls
@@ -2924,275 +2917,212 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 
 	/* Analyze the staff */
 	switch (sval) {
-		case SV_STAFF_DARKNESS:
-		{
-			if (unlite_area(Ind, 10, 3)) ident = TRUE;
-			if (!p_ptr->resist_blind && !p_ptr->resist_dark)
-			{
-				if (set_blind(Ind, p_ptr->blind + 3 + randint(5) - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 3))) ident = TRUE;
-			}
-			break;
+	case SV_STAFF_DARKNESS:
+		if (unlite_area(Ind, 10, 3)) ident = TRUE;
+		if (!p_ptr->resist_blind && !p_ptr->resist_dark) {
+			if (set_blind(Ind, p_ptr->blind + 3 + randint(5) - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 3))) ident = TRUE;
 		}
+		break;
 
-		case SV_STAFF_SLOWNESS:
-		{
-			if (set_slow(Ind, p_ptr->slow + randint(30) + 15 - get_skill_scale(p_ptr, SKILL_DEVICE, 15))) ident = TRUE;
-			break;
+	case SV_STAFF_SLOWNESS:
+		if (set_slow(Ind, p_ptr->slow + randint(30) + 15 - get_skill_scale(p_ptr, SKILL_DEVICE, 15))) ident = TRUE;
+		break;
+
+	case SV_STAFF_HASTE_MONSTERS:
+		if (speed_monsters(Ind)) ident = TRUE;
+		break;
+
+	case SV_STAFF_SUMMONING:
+		if (!check_self_summon(p_ptr)) break;
+		//logfile spam- s_printf("SUMMON_SPECIFIC: %s\n", p_ptr->name);
+		summon_override_checks = SO_IDDC | SO_PLAYER_SUMMON;
+		for (k = 0; k < randint(4); k++) {
+			if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_ALL_U98, 1, 0))
+				ident = TRUE;
 		}
+		summon_override_checks = SO_NONE;
+		break;
 
-		case SV_STAFF_HASTE_MONSTERS:
-		{
-			if (speed_monsters(Ind)) ident = TRUE;
-			break;
-		}
+	case SV_STAFF_TELEPORTATION:
+		if (teleport_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), FALSE))
+			msg_format_near(Ind, msg ? "%s teleports away!" : "%s is teleported away!", p_ptr->name);
+		ident = TRUE;
+		break;
 
-		case SV_STAFF_SUMMONING:
-		{
-			if(!check_self_summon(p_ptr)) break;
-			//logfile spam- s_printf("SUMMON_SPECIFIC: %s\n", p_ptr->name);
-			summon_override_checks = SO_IDDC | SO_PLAYER_SUMMON;
-			for (k = 0; k < randint(4); k++) {
-				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_ALL_U98, 1, 0))
-					ident = TRUE;
-			}
-			summon_override_checks = SO_NONE;
-			break;
-		}
+	case SV_STAFF_IDENTIFY:
+		if (!ident_spell(Ind)) *use_charge = FALSE;
+		ident = TRUE;
+		break;
 
-		case SV_STAFF_TELEPORTATION:
-		{
-			if (teleport_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), FALSE))
-				msg_format_near(Ind, msg ? "%s teleports away!" : "%s is teleported away!", p_ptr->name);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_IDENTIFY:
-		{
-			if (!ident_spell(Ind)) *use_charge = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_REMOVE_CURSE:
+	case SV_STAFF_REMOVE_CURSE:
 #ifndef NEW_REMOVE_CURSE
-			if (remove_curse(Ind)) {
-				if (!p_ptr->blind) {
-					if (msg) msg_print(Ind, "The staff glows blue for a moment...");
-					msg_print(Ind, "There is a blue glow for a moment...");
-				}
+		if (remove_curse(Ind)) {
+			if (!p_ptr->blind) {
+				if (msg) msg_print(Ind, "The staff glows blue for a moment...");
+				msg_print(Ind, "There is a blue glow for a moment...");
+			}
 #else
-			if (remove_curse_aux(Ind, 0x0, 0)) {
+		if (remove_curse_aux(Ind, 0x0, 0)) {
 #endif
-				ident = TRUE;
-			}
-			break;
-
-		case SV_STAFF_STARLITE:
-		{
-			if (!p_ptr->blind)
-			{
-				if (msg) msg_print(Ind, "The end of the staff glows brightly...");
-				else msg_print(Ind, "A bright light appear...");
-			}
-			for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], damroll(9, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 100));
-			if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), msg ? "a staff of starlight" : "starlight", 0);
-                    	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			ident = TRUE;
-			break;
 		}
+		break;
 
-		case SV_STAFF_LITE:
-		{
-			if (msg) msg_format_near(Ind, "%s calls light.", p_ptr->name);
-			else msg_format_near(Ind, "A light appears.", p_ptr->name);
-			if (lite_area(Ind, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), 2)) ident = TRUE;
-			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), msg ? "a staff of Light" : "light", 0);
-                    	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-			break;
+	case SV_STAFF_STARLITE:
+		if (!p_ptr->blind) {
+			if (msg) msg_print(Ind, "The end of the staff glows brightly...");
+			else msg_print(Ind, "A bright light appear...");
 		}
+		for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], damroll(9, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 100));
+		if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), msg ? "a staff of starlight" : "starlight", 0);
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		ident = TRUE;
+		break;
 
-		case SV_STAFF_MAPPING:
-		{
-			map_area(Ind);
+	case SV_STAFF_LITE:
+		if (msg) msg_format_near(Ind, "%s calls light.", p_ptr->name);
+		else msg_format_near(Ind, "A light appears.", p_ptr->name);
+		if (lite_area(Ind, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), 2)) ident = TRUE;
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), msg ? "a staff of Light" : "light", 0);
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		break;
+
+	case SV_STAFF_MAPPING:
+		map_area(Ind);
+		ident = TRUE;
+		break;
+
+	case SV_STAFF_DETECT_GOLD:
+		if (detect_treasure(Ind, rad * 2)) ident = TRUE;
+		break;
+
+	case SV_STAFF_DETECT_ITEM:
+		if (detect_object(Ind, rad * 3)) ident = TRUE;
+		break;
+
+	case SV_STAFF_DETECT_TRAP:
+		if (detect_trap(Ind, rad)) ident = TRUE;
+		break;
+
+	case SV_STAFF_DETECT_DOOR:
+		if (detect_sdoor(Ind, rad)) ident = TRUE;
+		break;
+
+	case SV_STAFF_DETECT_INVIS:
+		if (detect_invisible(Ind)) ident = TRUE;
+		break;
+
+	case SV_STAFF_DETECT_EVIL:
+		if (detect_evil(Ind)) ident = TRUE;
+		break;
+
+	case SV_STAFF_CURE_SERIOUS:
+//		if (hp_player(Ind, randint(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))) ident = TRUE;
+		/* Turned it into 'Cure Serious Wounds' - C. Blue */
+		if (set_blind(Ind, 0)) ident = TRUE;
+		if (set_confused(Ind, 0)) ident = TRUE;
+		if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
+		if (hp_player(Ind, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8))) ident = TRUE;
+		break;
+
+	case SV_STAFF_CURING:
+		if (set_image(Ind, 0)) ident = TRUE;
+		if (set_blind(Ind, 0)) ident = TRUE;
+		if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+		if (set_confused(Ind, 0)) ident = TRUE;
+		if (set_stun(Ind, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0)) ident = TRUE;
+		if (p_ptr->food >= PY_FOOD_MAX)
+		if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+		break;
+
+	case SV_STAFF_HEALING:
+		if (hp_player(Ind, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 150))) ident = TRUE;
+		if (set_stun(Ind, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0)) ident = TRUE;
+		break;
+
+	case SV_STAFF_THE_MAGI:
+		if (do_res_stat(Ind, A_INT)) ident = TRUE;
+		if (p_ptr->csp < p_ptr->msp) {
+			p_ptr->csp += 500;
+			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+			p_ptr->csp_frac = 0;
 			ident = TRUE;
-			break;
+			msg_print(Ind, "You feel your head clearing.");
+			p_ptr->redraw |= (PR_MANA);
+			p_ptr->window |= (PW_PLAYER);
 		}
+		break;
 
-		case SV_STAFF_DETECT_GOLD:
-		{
-			if (detect_treasure(Ind, rad * 2)) ident = TRUE;
-			break;
+	case SV_STAFF_SLEEP_MONSTERS:
+		if (sleep_monsters(Ind, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+		break;
+
+	case SV_STAFF_SLOW_MONSTERS:
+		if (slow_monsters(Ind, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+		break;
+
+	case SV_STAFF_SPEED:
+		if (set_fast(Ind, randint(30) + 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 10)) ident = TRUE; /* removed stacking */
+		break;
+
+	case SV_STAFF_PROBING:
+		probing(Ind);
+		ident = TRUE;
+		break;
+
+	case SV_STAFF_DISPEL_EVIL:
+		if (dispel_evil(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300) + p_ptr->lev * 2)) ident = TRUE;
+		if (p_ptr->suscep_good) {
+			take_hit(Ind, damroll(30, 3), msg ? "a staff of dispel evil" : "evil-dispelling magic", 0);
+			ident = TRUE;
 		}
+		break;
 
-		case SV_STAFF_DETECT_ITEM:
-		{
-			if (detect_object(Ind, rad * 3)) ident = TRUE;
-			break;
-		}
+	case SV_STAFF_POWER:
+		if (dispel_monsters(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
+		break;
 
-		case SV_STAFF_DETECT_TRAP:
-		{
-			if (detect_trap(Ind, rad)) ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_DETECT_DOOR:
-		{
-			if (detect_sdoor(Ind, rad)) ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_DETECT_INVIS:
-		{
-			if (detect_invisible(Ind)) ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_DETECT_EVIL:
-		{
-			if (detect_evil(Ind)) ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_CURE_SERIOUS:
-		{
-//			if (hp_player(Ind, randint(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))) ident = TRUE;
-			/* Turned it into 'Cure Serious Wounds' - C. Blue */
-			if (set_blind(Ind, 0)) ident = TRUE;
-			if (set_confused(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
-			if (hp_player(Ind, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8))) ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_CURING:
-		{
-			if (set_image(Ind, 0)) ident = TRUE;
-			if (set_blind(Ind, 0)) ident = TRUE;
+	case SV_STAFF_HOLINESS:
+		if (dispel_evil(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
+		if (p_ptr->suscep_good || p_ptr->suscep_life) {
+			take_hit(Ind, damroll(50, 3), msg ? "a staff of holiness" : "holy aura", 0);
+			ident = TRUE;
+		} else {
+			k = get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			if (set_protevil(Ind, randint(15) + 30 + k)) ident = TRUE; /* removed stacking */
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-			if (set_confused(Ind, 0)) ident = TRUE;
+			if (set_afraid(Ind, 0)) ident = TRUE;
+			if (hp_player(Ind, 50)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			if (p_ptr->food >= PY_FOOD_MAX)
-			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-			break;
 		}
+		break;
 
-		case SV_STAFF_HEALING:
-		{
-			if (hp_player(Ind, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 150))) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			break;
-		}
+	case SV_STAFF_GENOCIDE:
+		(void)genocide(Ind);
+		ident = TRUE;
+		break;
 
-		case SV_STAFF_THE_MAGI:
-		{
-			if (do_res_stat(Ind, A_INT)) ident = TRUE;
-			if (p_ptr->csp < p_ptr->msp)
-			{
-				p_ptr->csp += 500;
-				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
-				p_ptr->csp_frac = 0;
-				ident = TRUE;
-				msg_print(Ind, "You feel your head clearing.");
-				p_ptr->redraw |= (PR_MANA);
-				p_ptr->window |= (PW_PLAYER);
-			}
-			break;
-		}
+	case SV_STAFF_EARTHQUAKES:
+		if (msg) msg_format_near(Ind, "%s causes the ground to shake!", p_ptr->name);
+		else msg_print_near(Ind, "The ground starts to shake!");
+		earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+		ident = TRUE;
+		break;
 
-		case SV_STAFF_SLEEP_MONSTERS:
-		{
-			if (sleep_monsters(Ind, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			break;
-		}
+	case SV_STAFF_DESTRUCTION:
+		if (msg) msg_format_near(Ind, "%s unleashes great power!", p_ptr->name);
+		else msg_print_near(Ind, "Great power is unleashed!");
+		destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
+		ident = TRUE;
+		break;
 
-		case SV_STAFF_SLOW_MONSTERS:
-		{
-			if (slow_monsters(Ind, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_SPEED:
-		{
-			if (set_fast(Ind, randint(30) + 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 10)) ident = TRUE; /* removed stacking */
-			break;
-		}
-
-		case SV_STAFF_PROBING:
-		{
-			probing(Ind);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_DISPEL_EVIL:
-		{
-			if (dispel_evil(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300) + p_ptr->lev * 2)) ident = TRUE;
-			if (p_ptr->suscep_good) {
-				take_hit(Ind, damroll(30, 3), msg ? "a staff of dispel evil" : "evil-dispelling magic", 0);
-				ident = TRUE;
-			}
-			break;
-		}
-
-		case SV_STAFF_POWER:
-		{
-			if (dispel_monsters(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_HOLINESS:
-		{
-			if (dispel_evil(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
-			if (p_ptr->suscep_good || p_ptr->suscep_life) {
-				take_hit(Ind, damroll(50, 3), msg ? "a staff of holiness" : "holy aura", 0);
-				ident = TRUE;
-			} else {
-				k = get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-				if (set_protevil(Ind, randint(15) + 30 + k)) ident = TRUE; /* removed stacking */
-				if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-				if (set_afraid(Ind, 0)) ident = TRUE;
-				if (hp_player(Ind, 50)) ident = TRUE;
-				if (set_stun(Ind, 0)) ident = TRUE;
-				if (set_cut(Ind, 0, 0)) ident = TRUE;
-			}
-			break;
-		}
-
-		case SV_STAFF_GENOCIDE:
-		{
-			(void)genocide(Ind);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_EARTHQUAKES:
-		{
-			if (msg) msg_format_near(Ind, "%s causes the ground to shake!", p_ptr->name);
-			else msg_print_near(Ind, "The ground starts to shake!");
-			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_DESTRUCTION:
-		{
-			if (msg) msg_format_near(Ind, "%s unleashes great power!", p_ptr->name);
-			else msg_print_near(Ind, "Great power is unleashed!");
-			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_STAFF_STAR_IDENTIFY:
-		{
-			if (!identify_fully(Ind)) *use_charge = FALSE;
-			ident = TRUE;
-			break;
-		}
+	case SV_STAFF_STAR_IDENTIFY:
+		if (!identify_fully(Ind)) *use_charge = FALSE;
+		ident = TRUE;
+		break;
 	}
 
 	return ident;
@@ -3205,8 +3135,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
  *
  * Hack -- staffs of identify can be "cancelled".
  */
-void do_cmd_use_staff(int Ind, int item)
-{
+void do_cmd_use_staff(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	int lev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr);
 	object_type *o_ptr;
@@ -3235,10 +3164,10 @@ void do_cmd_use_staff(int Ind, int item)
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
-        if (magik((p_ptr->antimagic * 8) / 5)) {
-                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-                return;
-        }
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
 
 	/* Restrict choices to wands */
 	item_tester_tval = TV_STAFF;
@@ -3254,16 +3183,16 @@ void do_cmd_use_staff(int Ind, int item)
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'u' )) {
-                msg_print(Ind, "The item's inscription prevents it.");
-                return;
-        };
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	};
 
 	if (o_ptr->tval != TV_STAFF) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-staff!");
 		return;
 	}
 
-        if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
@@ -3339,8 +3268,7 @@ void do_cmd_use_staff(int Ind, int item)
 	o_ptr->pval--;
 
 	/* XXX Hack -- unstack if necessary */
-	if ((item >= 0) && (o_ptr->number > 1))
-	{
+	if ((item >= 0) && (o_ptr->number > 1)) {
 		/* Make a fake item */
 		object_type tmp_obj;
 		tmp_obj = *o_ptr;
@@ -3360,15 +3288,10 @@ void do_cmd_use_staff(int Ind, int item)
 
 	/* Describe charges in the pack */
 	if (item >= 0)
-	{
 		inven_item_charges(Ind, item);
-	}
-
 	/* Describe charges on the floor */
 	else
-	{
 		floor_item_charges(0 - item);
-	}
 }
 
 
@@ -3392,8 +3315,7 @@ void do_cmd_use_staff(int Ind, int item)
  * basic "bolt" rods, but the basic "ball" wands do the same damage
  * as the basic "ball" rods.
  */
-void do_cmd_aim_wand(int Ind, int item, int dir)
-{
+void do_cmd_aim_wand(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int lev, ident, sval;
 	object_type *o_ptr;
@@ -3416,10 +3338,10 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
-        if (magik((p_ptr->antimagic * 8) / 5)) {
-                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-                return;
-        }
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
 
 	/* Restrict choices to wands */
 	item_tester_tval = TV_WAND;
@@ -3432,16 +3354,16 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		o_ptr = &o_list[0 - item];
 	}
 	if( check_guard_inscription( o_ptr->note, 'a' )) {
-                msg_print(Ind, "The item's inscription prevents it.");
-                return;
-        };
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	};
 
 	if (o_ptr->tval != TV_WAND) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
 		return;
 	}
 
-        if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Mega-Hack -- refuse to aim a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
@@ -3510,304 +3432,218 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	}
 
 	/* Analyze the wand */
-	switch (sval % 1000)
-	{
-		case SV_WAND_HEAL_MONSTER:
-		{
-			if (heal_monster(Ind, dir)) ident = TRUE;
-			break;
-		}
+	switch (sval % 1000) {
+	case SV_WAND_HEAL_MONSTER:
+		if (heal_monster(Ind, dir)) ident = TRUE;
+		break;
 
-		case SV_WAND_HASTE_MONSTER:
-		{
-			if (speed_monster(Ind, dir)) ident = TRUE;
-			break;
-		}
+	case SV_WAND_HASTE_MONSTER:
+		if (speed_monster(Ind, dir)) ident = TRUE;
+		break;
 
-		case SV_WAND_CLONE_MONSTER:
-		{
-			if (clone_monster(Ind, dir)) ident = TRUE;
-			break;
-		}
+	case SV_WAND_CLONE_MONSTER:
+		if (clone_monster(Ind, dir)) ident = TRUE;
+		break;
 
-		case SV_WAND_TELEPORT_AWAY:
-		{
-			if (teleport_monster(Ind, dir)) ident = TRUE;
-			break;
-		}
+	case SV_WAND_TELEPORT_AWAY:
+		if (teleport_monster(Ind, dir)) ident = TRUE;
+		break;
 
-		case SV_WAND_DISARMING:
-		{
-			if (disarm_trap(Ind, dir)) ident = TRUE;
-			break;
-		}
+	case SV_WAND_DISARMING:
+		if (disarm_trap(Ind, dir)) ident = TRUE;
+		break;
 
-		case SV_WAND_TRAP_DOOR_DEST:
-		{
-			if (destroy_door(Ind, dir)) ident = TRUE;
-			break;
-		}
+	case SV_WAND_TRAP_DOOR_DEST:
+		if (destroy_door(Ind, dir)) ident = TRUE;
+		break;
 
-		case SV_WAND_STONE_TO_MUD:
-		{
-			if (wall_to_mud(Ind, dir)) ident = TRUE;
-			break;
-		}
+	case SV_WAND_STONE_TO_MUD:
+		if (wall_to_mud(Ind, dir)) ident = TRUE;
+		break;
 
-		case SV_WAND_LITE:
-		{
-			msg_print(Ind, "A line of blue shimmering light appears.");
-			lite_line(Ind, dir, damroll(6, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+	case SV_WAND_LITE:
+		msg_print(Ind, "A line of blue shimmering light appears.");
+		lite_line(Ind, dir, damroll(6, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+		ident = TRUE;
+		break;
+
+	case SV_WAND_SLEEP_MONSTER:
+		if (sleep_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+		break;
+
+	case SV_WAND_SLOW_MONSTER:
+		if (slow_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+		break;
+
+	case SV_WAND_CONFUSE_MONSTER:
+		if (confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+		break;
+
+	case SV_WAND_FEAR_MONSTER:
+		if (fear_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+		break;
+
+	case SV_WAND_DRAIN_LIFE:
+		if (drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
 			ident = TRUE;
-			break;
+			hp_player(Ind, p_ptr->ret_dam / 4);
+			p_ptr->ret_dam = 0;
 		}
+		break;
 
-		case SV_WAND_SLEEP_MONSTER:
-		{
-			if (sleep_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+	case SV_WAND_POLYMORPH:
+		if (poly_monster(Ind, dir)) ident = TRUE;
+		break;
+
+	case SV_WAND_STINKING_CLOUD:
+		msg_format_near(Ind, "%s fires a stinking cloud.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a stinking cloud for");
+//		fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
+		fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale(p_ptr, SKILL_DEVICE, 17), 2, 4, 9, p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_MAGIC_MISSILE:
+		msg_format_near(Ind, "%s fires a magic missile.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a magic missile for");
+		fire_bolt_or_beam(Ind, 20, GF_MISSILE, dir, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 6), p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_ACID_BOLT:
+		msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires an acid bolt for");
+		fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 13), 8), p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_ELEC_BOLT:
+		msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a lightning bolt for");
+		fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 11), 8), p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_FIRE_BOLT:
+		msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a fire bolt for");
+		fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 14), 8), p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_COLD_BOLT:
+		msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a frost bolt for");
+		fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 12), 8), p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_ACID_BALL:
+		msg_format_near(Ind, "%s fires a ball of acid.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a ball of acid for");
+		fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_ELEC_BALL:
+		msg_format_near(Ind, "%s fires a ball of electricity.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a ball of electricity for");
+		fire_ball(Ind, GF_ELEC, dir, 40 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_FIRE_BALL:
+		msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a fire ball for");
+		fire_ball(Ind, GF_FIRE, dir, 70 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_COLD_BALL:
+		msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a frost ball for");
+		fire_ball(Ind, GF_COLD, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_WONDER:
+		msg_print(Ind, "SERVER ERROR: Oops.  Wand of wonder activated.");
+		break;
+
+	case SV_WAND_DRAGON_FIRE:
+		msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
+		sprintf(p_ptr->attacker, " shoots dragon fire for");
+		fire_ball(Ind, GF_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_DRAGON_COLD:
+		msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
+		sprintf(p_ptr->attacker, " shoots dragon frost for");
+		fire_ball(Ind, GF_COLD, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 320), 3, p_ptr->attacker);
+		ident = TRUE;
+		break;
+
+	case SV_WAND_DRAGON_BREATH:
+		switch (randint(5)) {
+		case 1:
+			msg_format_near(Ind, "%s shoots dragon acid!", p_ptr->name);
+			sprintf(p_ptr->attacker, " shoots dragon acid for");
+			fire_ball(Ind, GF_ACID, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
 			break;
-		}
-
-		case SV_WAND_SLOW_MONSTER:
-		{
-			if (slow_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+		case 2:
+			msg_format_near(Ind, "%s shoots dragon lightning!", p_ptr->name);
+			sprintf(p_ptr->attacker, " shoots dragon lightning for");
+			fire_ball(Ind, GF_ELEC, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
 			break;
-		}
-
-		case SV_WAND_CONFUSE_MONSTER:
-		{
-			if (confuse_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_FEAR_MONSTER:
-		{
-			if (fear_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_DRAIN_LIFE:
-		{
-			if (drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
-				ident = TRUE;
-				hp_player(Ind, p_ptr->ret_dam / 4);
-				p_ptr->ret_dam = 0;
-			}
-			break;
-		}
-
-		case SV_WAND_POLYMORPH:
-		{
-			if (poly_monster(Ind, dir)) ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_STINKING_CLOUD:
-		{
-			msg_format_near(Ind, "%s fires a stinking cloud.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a stinking cloud for");
-//			fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
-			fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale(p_ptr, SKILL_DEVICE, 17), 2, 4, 9, p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_MAGIC_MISSILE:
-		{
-			msg_format_near(Ind, "%s fires a magic missile.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a magic missile for");
-			fire_bolt_or_beam(Ind, 20, GF_MISSILE, dir, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 6), p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_ACID_BOLT:
-		{
-			msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires an acid bolt for");
-			fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 13), 8), p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_ELEC_BOLT:
-		{
-			msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a lightning bolt for");
-			fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 11), 8), p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_FIRE_BOLT:
-		{
-			msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a fire bolt for");
-			fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 14), 8), p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_COLD_BOLT:
-		{
-			msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a frost bolt for");
-			fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 12), 8), p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_ACID_BALL:
-		{
-			msg_format_near(Ind, "%s fires a ball of acid.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a ball of acid for");
-			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_ELEC_BALL:
-		{
-			msg_format_near(Ind, "%s fires a ball of electricity.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a ball of electricity for");
-			fire_ball(Ind, GF_ELEC, dir, 40 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_FIRE_BALL:
-		{
-			msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a fire ball for");
-			fire_ball(Ind, GF_FIRE, dir, 70 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_COLD_BALL:
-		{
-			msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a frost ball for");
-			fire_ball(Ind, GF_COLD, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_WONDER:
-		{
-			msg_print(Ind, "SERVER ERROR: Oops.  Wand of wonder activated.");
-			break;
-		}
-
-		case SV_WAND_DRAGON_FIRE:
-		{
+		case 3:
 			msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
 			sprintf(p_ptr->attacker, " shoots dragon fire for");
 			fire_ball(Ind, GF_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
-			ident = TRUE;
 			break;
-		}
-
-		case SV_WAND_DRAGON_COLD:
-		{
+		case 4:
 			msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
 			sprintf(p_ptr->attacker, " shoots dragon frost for");
-			fire_ball(Ind, GF_COLD, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 320), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_COLD, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
+			break;
+		default:
+			msg_format_near(Ind, "%s shoots dragon poison!", p_ptr->name);
+			sprintf(p_ptr->attacker, " shoots dragon poison for");
+			fire_ball(Ind, GF_POIS, dir, 240 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
+			break;
+		}
+		ident = TRUE;
+		break;
+
+	case SV_WAND_ANNIHILATION:
+		if (annihilate(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))
 			ident = TRUE;
-			break;
-		}
+		break;
 
-		case SV_WAND_DRAGON_BREATH:
-		{
-			switch (randint(5))
-			{
-				case 1:
-					{
-						msg_format_near(Ind, "%s shoots dragon acid!", p_ptr->name);
-						sprintf(p_ptr->attacker, " shoots dragon acid for");
-						fire_ball(Ind, GF_ACID, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
-						break;
-					}
-
-				case 2:
-					{
-						msg_format_near(Ind, "%s shoots dragon lightning!", p_ptr->name);
-						sprintf(p_ptr->attacker, " shoots dragon lightning for");
-						fire_ball(Ind, GF_ELEC, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
-						break;
-					}
-
-				case 3:
-					{
-						msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
-						sprintf(p_ptr->attacker, " shoots dragon fire for");
-						fire_ball(Ind, GF_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
-						break;
-					}
-
-				case 4:
-					{
-						msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
-						sprintf(p_ptr->attacker, " shoots dragon frost for");
-						fire_ball(Ind, GF_COLD, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
-						break;
-					}
-
-				default:
-					{
-						msg_format_near(Ind, "%s shoots dragon poison!", p_ptr->name);
-						sprintf(p_ptr->attacker, " shoots dragon poison for");
-						fire_ball(Ind, GF_POIS, dir, 240 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
-						break;
-					}
-			}
-
-			ident = TRUE;
-			break;
-		}
-
-		case SV_WAND_ANNIHILATION:
-		{
-			if (annihilate(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
-				ident = TRUE;
-			}
-			break;
-		}
-
-		/* Additions from PernAngband	- Jir - */
-		case SV_WAND_ROCKETS:
-		{
-			msg_print(Ind, "You launch a rocket!");
-			sprintf(p_ptr->attacker, " launches a rocket for");
-			fire_ball(Ind, GF_ROCKET, dir, 600 + (randint(100) + get_skill_scale(p_ptr, SKILL_DEVICE, 600)), 2, p_ptr->attacker);
-			ident = TRUE;
-			break;
-		}
+	/* Additions from PernAngband	- Jir - */
+	case SV_WAND_ROCKETS:
+		msg_print(Ind, "You launch a rocket!");
+		sprintf(p_ptr->attacker, " launches a rocket for");
+		fire_ball(Ind, GF_ROCKET, dir, 600 + (randint(100) + get_skill_scale(p_ptr, SKILL_DEVICE, 600)), 2, p_ptr->attacker);
+		ident = TRUE;
+		break;
 #if 0
-		/* Hope we can port this someday.. */
-		case SV_WAND_CHARM_MONSTER:
-		{
-			if (charm_monster(dir, 45))
-				ident = TRUE;
-			break;
-		}
-
+	/* Hope we can port this someday.. */
+	case SV_WAND_CHARM_MONSTER:
+		if (charm_monster(dir, 45))
+			ident = TRUE;
+		break;
 #endif	// 0
 
-		case SV_WAND_WALL_CREATION:
-		{
-			project_hook(Ind, GF_STONE_WALL, dir, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID, "");
-			ident = TRUE;
-			break;
-		}
+	case SV_WAND_WALL_CREATION:
+		project_hook(Ind, GF_STONE_WALL, dir, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID, "");
+		ident = TRUE;
+		break;
 
-		/* TomeNET addition */
-		case SV_WAND_TELEPORT_TO:
-		{
-			ident = project_hook(Ind, GF_TELE_TO, dir, 1, PROJECT_STOP | PROJECT_KILL, "");
-			break;
-		}
-
+	/* TomeNET addition */
+	case SV_WAND_TELEPORT_TO:
+		ident = project_hook(Ind, GF_TELE_TO, dir, 1, PROJECT_STOP | PROJECT_KILL, "");
+		break;
 	}
 
 
@@ -3823,8 +3659,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	lev = k_info[o_ptr->k_idx].level;
 
 	/* Apply identification */
-	if (ident && !object_aware_p(Ind, o_ptr))
-	{
+	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
@@ -3841,15 +3676,10 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	/* Describe the charges in the pack */
 	if (item >= 0)
-	{
 		inven_item_charges(Ind, item);
-	}
-
 	/* Describe the charges on the floor */
 	else
-	{
 		floor_item_charges(0 - item);
-	}
 }
 
 
@@ -3859,145 +3689,117 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 
 	/* Analyze the rod */
 	switch (sval) {
-		case SV_ROD_DETECT_TRAP:
-		{
-			if (detect_trap(Ind, rad)) ident = TRUE;
-			//if (o_ptr) o_ptr->pval = 50;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-			break;
-		}
+	case SV_ROD_DETECT_TRAP:
+		if (detect_trap(Ind, rad)) ident = TRUE;
+		//if (o_ptr) o_ptr->pval = 50;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+		break;
 
-		case SV_ROD_DETECT_DOOR:
-		{
-			if (detect_sdoor(Ind, rad)) ident = TRUE;
-			//if (o_ptr) o_ptr->pval = 70;
-			/* up to 50% faster with maxed MD - the_sandman */
-			if (o_ptr) o_ptr->pval = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
-			break;
-		}
+	case SV_ROD_DETECT_DOOR:
+		if (detect_sdoor(Ind, rad)) ident = TRUE;
+		//if (o_ptr) o_ptr->pval = 70;
+		/* up to 50% faster with maxed MD - the_sandman */
+		if (o_ptr) o_ptr->pval = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
+		break;
 
-		case SV_ROD_IDENTIFY:
-		{
-			ident = TRUE;
-			if (!ident_spell(Ind)) use_charge = FALSE;
-			//if (o_ptr) o_ptr->pval = 10;
-			/* up to 50% faster with maxed MD - the_sandman */
+	case SV_ROD_IDENTIFY:
+		ident = TRUE;
+		if (!ident_spell(Ind)) use_charge = FALSE;
+		//if (o_ptr) o_ptr->pval = 10;
+		/* up to 50% faster with maxed MD - the_sandman */
 //at 0 skill, this is like auto-id	if (o_ptr) o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
-			if (o_ptr) o_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
-			break;
-		}
+		if (o_ptr) o_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
+		break;
 
-		case SV_ROD_RECALL:
-		{
-			if (!o_ptr) break;
+	case SV_ROD_RECALL:
+		if (!o_ptr) break;
 
-			set_recall(Ind, rand_int(20) + 15, o_ptr);
-			ident = TRUE;
-			//o_ptr->pval = 60;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
-			break;
-		}
+		set_recall(Ind, rand_int(20) + 15, o_ptr);
+		ident = TRUE;
+		//o_ptr->pval = 60;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
+		break;
 
-		case SV_ROD_ILLUMINATION:
-		{
-			if (o_ptr) msg_format_near(Ind, "%s calls light.", p_ptr->name);
-			else msg_print_near(Ind, "A light appears.");
-			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
-			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
-			if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-			//if (o_ptr) o_ptr->pval = 30;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			if (o_ptr) o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
-			break;
-		}
+	case SV_ROD_ILLUMINATION:
+		if (o_ptr) msg_format_near(Ind, "%s calls light.", p_ptr->name);
+		else msg_print_near(Ind, "A light appears.");
+		if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		//if (o_ptr) o_ptr->pval = 30;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		if (o_ptr) o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+		break;
 
-		case SV_ROD_MAPPING:
-		{
-			map_area(Ind);
-			ident = TRUE;
-			//if (o_ptr) o_ptr->pval = 99;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			if (o_ptr) o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
-			break;
-		}
+	case SV_ROD_MAPPING:
+		map_area(Ind);
+		ident = TRUE;
+		//if (o_ptr) o_ptr->pval = 99;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		if (o_ptr) o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
+		break;
 
-		case SV_ROD_DETECTION:
-		{
-			detection(Ind, rad);
-			ident = TRUE;
-			//if (o_ptr) o_ptr->pval = 99;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			if (o_ptr) o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
-			break;
-		}
+	case SV_ROD_DETECTION:
+		detection(Ind, rad);
+		ident = TRUE;
+		//if (o_ptr) o_ptr->pval = 99;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		if (o_ptr) o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
+		break;
 
-		case SV_ROD_PROBING:
-		{
-			probing(Ind);
-			ident = TRUE;
-			//if (o_ptr) o_ptr->pval = 50;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			if (o_ptr) o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-			break;
-		}
+	case SV_ROD_PROBING:
+		probing(Ind);
+		ident = TRUE;
+		//if (o_ptr) o_ptr->pval = 50;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		if (o_ptr) o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+		break;
 
-		case SV_ROD_CURING:
-		{
-			if (set_image(Ind, 0)) ident = TRUE;
-			if (set_blind(Ind, 0)) ident = TRUE;
-			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-			if (set_confused(Ind, 0)) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			if (p_ptr->food >= PY_FOOD_MAX)
-			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-			if (o_ptr) o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
-			break;
-		}
+	case SV_ROD_CURING:
+		if (set_image(Ind, 0)) ident = TRUE;
+		if (set_blind(Ind, 0)) ident = TRUE;
+		if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+		if (set_confused(Ind, 0)) ident = TRUE;
+		if (set_stun(Ind, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0)) ident = TRUE;
+		if (p_ptr->food >= PY_FOOD_MAX)
+		if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+		if (o_ptr) o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
+		break;
 
-		case SV_ROD_HEALING:
-		{
+	case SV_ROD_HEALING:
 //scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
+		if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
+		if (set_stun(Ind, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0)) ident = TRUE;
 //a bit too much?	if (o_ptr) o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
-			if (o_ptr) o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
-			break;
-		}
+		if (o_ptr) o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+		break;
 
-		case SV_ROD_RESTORATION:
-		{
-			if (restore_level(Ind)) ident = TRUE;
-			if (do_res_stat(Ind, A_STR)) ident = TRUE;
-			if (do_res_stat(Ind, A_INT)) ident = TRUE;
-			if (do_res_stat(Ind, A_WIS)) ident = TRUE;
-			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
-			if (do_res_stat(Ind, A_CON)) ident = TRUE;
-			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-			if (o_ptr) o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);//adjusted it here too..
-			break;
-		}
+	case SV_ROD_RESTORATION:
+		if (restore_level(Ind)) ident = TRUE;
+		if (do_res_stat(Ind, A_STR)) ident = TRUE;
+		if (do_res_stat(Ind, A_INT)) ident = TRUE;
+		if (do_res_stat(Ind, A_WIS)) ident = TRUE;
+		if (do_res_stat(Ind, A_DEX)) ident = TRUE;
+		if (do_res_stat(Ind, A_CON)) ident = TRUE;
+		if (do_res_stat(Ind, A_CHR)) ident = TRUE;
+		if (o_ptr) o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);//adjusted it here too..
+		break;
 
-		case SV_ROD_SPEED:
-		{
-			if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE; /* removed stacking */
-			if (o_ptr) o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
-			break;
-		}
+	case SV_ROD_SPEED:
+		if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE; /* removed stacking */
+		if (o_ptr) o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
+		break;
 
-		case SV_ROD_NOTHING:
-		{
-			break;
-		}
+	case SV_ROD_NOTHING:
+		break;
 
-		default:
-		{
-			msg_print(Ind, "SERVER ERROR: Directional rod zapped in non-directional function!");
-			return FALSE;
-		}
+	default:
+		msg_print(Ind, "SERVER ERROR: Directional rod zapped in non-directional function!");
+		return FALSE;
 	}
 
 	return ident;
@@ -4041,10 +3843,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
-        if (magik((p_ptr->antimagic * 8) / 5)) {
-                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-                return;
-        }
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
 
 	/* Restrict choices to rods */
 	item_tester_tval = TV_ROD;
@@ -4060,9 +3862,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		o_ptr = &o_list[0 - item];
 	}
 	if (check_guard_inscription(o_ptr->note, 'z')) {
-                msg_print(Ind, "The item's inscription prevents it.");
-                return;
-        };
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	};
 
 
 	if (o_ptr->tval != TV_ROD) {
@@ -4136,8 +3938,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	lev = k_info[o_ptr->k_idx].level;
 
 	/* Successfully determined the object function */
-	if (ident && !object_aware_p(Ind, o_ptr))
-	{
+	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
@@ -4149,16 +3950,14 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Hack -- deal with cancelled zap */
-	if (!use_charge)
-	{
+	if (!use_charge) {
 		o_ptr->pval = 0;
 		return;
 	}
 
 
 	/* XXX Hack -- unstack if necessary */
-	if ((item >= 0) && (o_ptr->number > 1))
-	{
+	if ((item >= 0) && (o_ptr->number > 1)) {
 		/* Make a fake item */
 		object_type tmp_obj;
 		tmp_obj = *o_ptr;
@@ -4187,8 +3986,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
  * Hack -- rods of perception/genocide can be "cancelled"
  * All rods can be cancelled at the "Direction?" prompt
  */
-void do_cmd_zap_rod_dir(int Ind, int dir)
-{
+void do_cmd_zap_rod_dir(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int lev, item, ident, rad = DEFAULT_RADIUS_DEV(p_ptr);
 	object_type *o_ptr;
@@ -4210,9 +4008,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		o_ptr = &o_list[0 - item];
 	}
 	if (check_guard_inscription( o_ptr->note, 'z')) {
-                msg_print(Ind, "The item's inscription prevents it.");
-                return;
-        };
+		msg_print(Ind, "The item's inscription prevents it.");
+		return;
+	};
 
 	if (o_ptr->tval != TV_ROD) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
@@ -4225,7 +4023,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		return;
 	}
 
-        if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Hack -- verify potential overflow */
 	/*if ((inven_cnt >= INVEN_PACK) &&
@@ -4266,327 +4064,267 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 	/* Analyze the rod */
 	switch (o_ptr->sval) {
-		case SV_ROD_TELEPORT_AWAY:
-		{
-			if (teleport_monster(Ind, dir)) ident = TRUE;
-			//o_ptr->pval = 25;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
-			break;
-		}
+	case SV_ROD_TELEPORT_AWAY:
+		if (teleport_monster(Ind, dir)) ident = TRUE;
+		//o_ptr->pval = 25;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
+		break;
 
-		case SV_ROD_DISARMING:
-		{
-			if (disarm_trap(Ind, dir)) ident = TRUE;
-			//o_ptr->pval = 30;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
-			break;
-		}
+	case SV_ROD_DISARMING:
+		if (disarm_trap(Ind, dir)) ident = TRUE;
+		//o_ptr->pval = 30;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+		break;
 
-		case SV_ROD_LITE:
-		{
-			msg_print(Ind, "A line of blue shimmering light appears.");
-			lite_line(Ind, dir, damroll(6, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+	case SV_ROD_LITE:
+		msg_print(Ind, "A line of blue shimmering light appears.");
+		lite_line(Ind, dir, damroll(6, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+		ident = TRUE;
+		//o_ptr->pval = 9;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 9 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 4);
+		break;
+
+	case SV_ROD_SLEEP_MONSTER:
+		if (sleep_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+		//o_ptr->pval = 18;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 18 - get_skill_scale(p_ptr, SKILL_DEVICE, 9);
+		break;
+
+	case SV_ROD_SLOW_MONSTER:
+		if (slow_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+		//o_ptr->pval = 20;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
+		break;
+
+	case SV_ROD_DRAIN_LIFE:
+		if (drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
 			ident = TRUE;
-			//o_ptr->pval = 9;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 9 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 4);
-			break;
+			hp_player(Ind, p_ptr->ret_dam / 4);
+			p_ptr->ret_dam = 0;
 		}
+		//o_ptr->pval = 23;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 23 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
+		break;
 
-		case SV_ROD_SLEEP_MONSTER:
-		{
-			if (sleep_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			//o_ptr->pval = 18;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 18 - get_skill_scale(p_ptr, SKILL_DEVICE, 9);
-			break;
-		}
+	case SV_ROD_POLYMORPH:
+		//todo for IDDC maybe: change all rods to wands (disallow rod drops), if poly should be enabled
+		if (poly_monster(Ind, dir)) ident = TRUE;
+		//o_ptr->pval = 25;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
+		break;
 
-		case SV_ROD_SLOW_MONSTER:
-		{
-			if (slow_monster(Ind, dir, 10 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			//o_ptr->pval = 20;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
-			break;
-		}
+	case SV_ROD_ACID_BOLT:
+		msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires an acid bolt for");
+		fire_bolt_or_beam(Ind, 10, GF_ACID, dir, damroll(6, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
+		ident = TRUE;
+		//o_ptr->pval = 12;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 12 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 6);
+		break;
 
-		case SV_ROD_DRAIN_LIFE:
-		{
-			if (drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
-				ident = TRUE;
-				hp_player(Ind, p_ptr->ret_dam / 4);
-				p_ptr->ret_dam = 0;
-			}
-			//o_ptr->pval = 23;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 23 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
-			break;
-		}
+	case SV_ROD_ELEC_BOLT:
+		msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a lightning bolt for");
+		fire_bolt_or_beam(Ind, 10, GF_ELEC, dir, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 120), p_ptr->attacker);
+		ident = TRUE;
+		//o_ptr->pval = 11;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 11 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+		break;
 
-		case SV_ROD_POLYMORPH:
-		{
-			//todo for IDDC maybe: change all rods to wands (disallow rod drops), if poly should be enabled
-			if (poly_monster(Ind, dir)) ident = TRUE;
-			//o_ptr->pval = 25;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
-			break;
-		}
+	case SV_ROD_FIRE_BOLT:
+		msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a fire bolt for");
+		fire_bolt_or_beam(Ind, 10, GF_FIRE, dir, damroll(8, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 210), p_ptr->attacker);
+		ident = TRUE;
+		//o_ptr->pval = 15;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
+		break;
 
-		case SV_ROD_ACID_BOLT:
-		{
-			msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires an acid bolt for");
-			fire_bolt_or_beam(Ind, 10, GF_ACID, dir, damroll(6, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
-			ident = TRUE;
-			//o_ptr->pval = 12;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 12 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 6);
-			break;
-		}
+	case SV_ROD_COLD_BOLT:
+		msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a frost bolt for");
+		fire_bolt_or_beam(Ind, 10, GF_COLD, dir, damroll(5, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
+		ident = TRUE;
+		//o_ptr->pval = 13;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 13 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 6);
+		break;
 
-		case SV_ROD_ELEC_BOLT:
-		{
-			msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a lightning bolt for");
-			fire_bolt_or_beam(Ind, 10, GF_ELEC, dir, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 120), p_ptr->attacker);
-			ident = TRUE;
-			//o_ptr->pval = 11;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 11 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
-			break;
-		}
+	case SV_ROD_ACID_BALL:
+		msg_format_near(Ind, "%s fires an acid ball.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires an acid ball for");
+		fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 2, p_ptr->attacker);
+		ident = TRUE;
+		//o_ptr->pval = 27;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 27 - get_skill_scale(p_ptr, SKILL_DEVICE, 13);
+		break;
 
-		case SV_ROD_FIRE_BOLT:
-		{
-			msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a fire bolt for");
-			fire_bolt_or_beam(Ind, 10, GF_FIRE, dir, damroll(8, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 210), p_ptr->attacker);
-			ident = TRUE;
-			//o_ptr->pval = 15;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
-			break;
-		}
+	case SV_ROD_ELEC_BALL:
+		msg_format_near(Ind, "%s fires a lightning ball.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a lightning ball for");
+		fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, 160), 2, p_ptr->attacker);
+		ident = TRUE;
+		//o_ptr->pval = 23;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 23 - get_skill_scale(p_ptr, SKILL_DEVICE, 11);
+		break;
 
-		case SV_ROD_COLD_BOLT:
-		{
-			msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a frost bolt for");
-			fire_bolt_or_beam(Ind, 10, GF_COLD, dir, damroll(5, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
-			ident = TRUE;
-			//o_ptr->pval = 13;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 13 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 6);
-			break;
-		}
+	case SV_ROD_FIRE_BALL:
+		msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a fire ball for");
+		fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 360), 2, p_ptr->attacker);
+		ident = TRUE;
+		//o_ptr->pval = 30;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+		break;
 
-		case SV_ROD_ACID_BALL:
-		{
-			msg_format_near(Ind, "%s fires an acid ball.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires an acid ball for");
-			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 2, p_ptr->attacker);
-			ident = TRUE;
-			//o_ptr->pval = 27;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 27 - get_skill_scale(p_ptr, SKILL_DEVICE, 13);
-			break;
-		}
+	case SV_ROD_COLD_BALL:
+		msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
+		sprintf(p_ptr->attacker, " fires a frost ball for");
+		fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 240), 2, p_ptr->attacker);
+		ident = TRUE;
+		//o_ptr->pval = 25;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
+		break;
 
-		case SV_ROD_ELEC_BALL:
-		{
-			msg_format_near(Ind, "%s fires a lightning ball.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a lightning ball for");
-			fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, 160), 2, p_ptr->attacker);
-			ident = TRUE;
-			//o_ptr->pval = 23;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 23 - get_skill_scale(p_ptr, SKILL_DEVICE, 11);
-			break;
-		}
+	/* All of the following are needed if we tried zapping one of */
+	/* these but we didn't know what it was. */
+	case SV_ROD_DETECT_TRAP:
+		if (detect_trap(Ind, rad)) ident = TRUE;
+		//o_ptr->pval = 50;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+		break;
 
-		case SV_ROD_FIRE_BALL:
-		{
-			msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a fire ball for");
-			fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 360), 2, p_ptr->attacker);
-			ident = TRUE;
-			//o_ptr->pval = 30;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
-			break;
-		}
+	case SV_ROD_DETECT_DOOR:
+		if (detect_sdoor(Ind, rad)) ident = TRUE;
+		//o_ptr->pval = 70;
+		/* up to 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
+		break;
 
-		case SV_ROD_COLD_BALL:
-		{
-			msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
-			sprintf(p_ptr->attacker, " fires a frost ball for");
-			fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 240), 2, p_ptr->attacker);
-			ident = TRUE;
-			//o_ptr->pval = 25;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
-			break;
-		}
-
-		/* All of the following are needed if we tried zapping one of */
-		/* these but we didn't know what it was. */
-		case SV_ROD_DETECT_TRAP:
-		{
-			if (detect_trap(Ind, rad)) ident = TRUE;
-			//o_ptr->pval = 50;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-			break;
-		}
-
-		case SV_ROD_DETECT_DOOR:
-		{
-			if (detect_sdoor(Ind, rad)) ident = TRUE;
-			//o_ptr->pval = 70;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
-			break;
-		}
-
-		case SV_ROD_IDENTIFY:
-		{
-			ident = TRUE;
-			if (!ident_spell(Ind)) use_charge = FALSE;
-			//o_ptr->pval = 10;
-			/* up to 50% faster with maxed MD - the_sandman */
+	case SV_ROD_IDENTIFY:
+		ident = TRUE;
+		if (!ident_spell(Ind)) use_charge = FALSE;
+		//o_ptr->pval = 10;
+		/* up to 50% faster with maxed MD - the_sandman */
 //at 0 skill, this is like auto-id	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
-			o_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
-			break;
-		}
+		o_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
+		break;
 
-		case SV_ROD_RECALL:
-		{
-			set_recall(Ind, rand_int(20) + 15, o_ptr);
-			ident = TRUE;
-			//o_ptr->pval = 60;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
-			break;
-		}
+	case SV_ROD_RECALL:
+		set_recall(Ind, rand_int(20) + 15, o_ptr);
+		ident = TRUE;
+		//o_ptr->pval = 60;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
+		break;
 
-		case SV_ROD_ILLUMINATION:
-		{
-			msg_format_near(Ind, "%s calls light.", p_ptr->name);
-			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
-			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
-                    	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-			//o_ptr->pval = 30;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
-			break;
-		}
+	case SV_ROD_ILLUMINATION:
+		msg_format_near(Ind, "%s calls light.", p_ptr->name);
+		if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		//o_ptr->pval = 30;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+		break;
 
-		case SV_ROD_MAPPING:
-		{
-			map_area(Ind);
-			ident = TRUE;
-			//o_ptr->pval = 99;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
-			break;
-		}
+	case SV_ROD_MAPPING:
+		map_area(Ind);
+		ident = TRUE;
+		//o_ptr->pval = 99;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
+		break;
 
-		case SV_ROD_DETECTION:
-		{
-			detection(Ind, rad);
-			ident = TRUE;
-			//o_ptr->pval = 99;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
-			break;
-		}
+	case SV_ROD_DETECTION:
+		detection(Ind, rad);
+		ident = TRUE;
+		//o_ptr->pval = 99;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
+		break;
 
-		case SV_ROD_PROBING:
-		{
-			probing(Ind);
-			ident = TRUE;
-			//o_ptr->pval = 50;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-			break;
-		}
+	case SV_ROD_PROBING:
+		probing(Ind);
+		ident = TRUE;
+		//o_ptr->pval = 50;
+		/* up to a 50% faster with maxed MD - the_sandman */
+		o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+		break;
 
-		case SV_ROD_CURING:
-		{
-			if (set_image(Ind, 0)) ident = TRUE;
-			if (set_blind(Ind, 0)) ident = TRUE;
-			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-			if (set_confused(Ind, 0)) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			if (p_ptr->food >= PY_FOOD_MAX)
-			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
-			break;
-		}
+	case SV_ROD_CURING:
+		if (set_image(Ind, 0)) ident = TRUE;
+		if (set_blind(Ind, 0)) ident = TRUE;
+		if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+		if (set_confused(Ind, 0)) ident = TRUE;
+		if (set_stun(Ind, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0)) ident = TRUE;
+		if (p_ptr->food >= PY_FOOD_MAX)
+		if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+		o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
+		break;
 
-		case SV_ROD_HEALING:
-		{
+	case SV_ROD_HEALING:
 //scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
+		if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
+		if (set_stun(Ind, 0)) ident = TRUE;
+		if (set_cut(Ind, 0, 0)) ident = TRUE;
 //a bit too much?	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
-			o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
-			break;
-		}
+		o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+		break;
 
-		case SV_ROD_RESTORATION:
-		{
-			if (restore_level(Ind)) ident = TRUE;
-			if (do_res_stat(Ind, A_STR)) ident = TRUE;
-			if (do_res_stat(Ind, A_INT)) ident = TRUE;
-			if (do_res_stat(Ind, A_WIS)) ident = TRUE;
-			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
-			if (do_res_stat(Ind, A_CON)) ident = TRUE;
-			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);//adjusted it here too..
-			break;
-		}
+	case SV_ROD_RESTORATION:
+		if (restore_level(Ind)) ident = TRUE;
+		if (do_res_stat(Ind, A_STR)) ident = TRUE;
+		if (do_res_stat(Ind, A_INT)) ident = TRUE;
+		if (do_res_stat(Ind, A_WIS)) ident = TRUE;
+		if (do_res_stat(Ind, A_DEX)) ident = TRUE;
+		if (do_res_stat(Ind, A_CON)) ident = TRUE;
+		if (do_res_stat(Ind, A_CHR)) ident = TRUE;
+		o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);//adjusted it here too..
+		break;
 
-		case SV_ROD_SPEED:
-		{
-			if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE; /* removed stacking */
-			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
-			break;
-		}
+	case SV_ROD_SPEED:
+		if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE; /* removed stacking */
+		o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
+		break;
 
-		case SV_ROD_HAVOC:
-		{
+	case SV_ROD_HAVOC:
 #if 0
-			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
-			ident = TRUE;
-			o_ptr->pval = 90; //50% faster recharge here -> too powerful, perhaps?
-			break;
-
+		call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
+		ident = TRUE;
+		o_ptr->pval = 90; //50% faster recharge here -> too powerful, perhaps?
+		break;
 #else			//Nerf the initial damage spam.
-			//pfft. the third argument here is the extra damage.
-			sprintf(p_ptr->attacker, " invokes havoc for");
-			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 675));
-			ident = TRUE;
-			o_ptr->pval = 45 - get_skill_scale(p_ptr, SKILL_DEVICE, 23);
-			break;
+		//pfft. the third argument here is the extra damage.
+		sprintf(p_ptr->attacker, " invokes havoc for");
+		call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 675));
+		ident = TRUE;
+		o_ptr->pval = 45 - get_skill_scale(p_ptr, SKILL_DEVICE, 23);
+		break;
 #endif
-		}
-		case SV_ROD_NOTHING: //lol?
-		{
-			break;
-		}
 
-		default:
-		{
-			msg_print(Ind, "SERVER ERROR: Tried to zap non-directional rod in directional function!");
-			return;
-		}
+	case SV_ROD_NOTHING:
+		break;
+
+	default:
+		msg_print(Ind, "SERVER ERROR: Tried to zap non-directional rod in directional function!");
+		return;
 	}
 
 	break_cloaking(Ind, 3);
@@ -4647,8 +4385,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 /*
  * Hook to determine if an object is activatable
  */
-static bool item_tester_hook_activate(int Ind, object_type *o_ptr)
-{
+static bool item_tester_hook_activate(int Ind, object_type *o_ptr) {
 	u32b f3, dummy;
 
 	/* Not known */
@@ -4669,71 +4406,61 @@ static bool item_tester_hook_activate(int Ind, object_type *o_ptr)
 /*
  * Hack -- activate the ring of power
  */
-static void ring_of_power(int Ind, int dir)
-{
+static void ring_of_power(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Pick a random effect */
-	switch (randint(10))
-	{
-		case 1:
-		case 2:
-		{
-			/* Message */
-			msg_print(Ind, "You are surrounded by a malignant aura.");
+	switch (randint(10)) {
+	case 1:
+	case 2:
+		/* Message */
+		msg_print(Ind, "You are surrounded by a malignant aura.");
 
-			/* Decrease all stats (permanently) */
-			(void)dec_stat(Ind, A_STR, 50, STAT_DEC_NORMAL);
-			(void)dec_stat(Ind, A_INT, 50, STAT_DEC_NORMAL);
-			(void)dec_stat(Ind, A_WIS, 50, STAT_DEC_NORMAL);
-			(void)dec_stat(Ind, A_DEX, 50, STAT_DEC_NORMAL);
-			(void)dec_stat(Ind, A_CON, 50, STAT_DEC_NORMAL);
-			(void)dec_stat(Ind, A_CHR, 50, STAT_DEC_NORMAL);
+		/* Decrease all stats (permanently) */
+		(void)dec_stat(Ind, A_STR, 50, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_INT, 50, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_WIS, 50, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_DEX, 50, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_CON, 50, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_CHR, 50, STAT_DEC_NORMAL);
 
-			/* Lose some experience (permanently) */
-			take_xp_hit(Ind, p_ptr->exp / 4, "Ring of Power", TRUE, FALSE, TRUE);
+		/* Lose some experience (permanently) */
+		take_xp_hit(Ind, p_ptr->exp / 4, "Ring of Power", TRUE, FALSE, TRUE);
 #if 0
-			p_ptr->exp -= (p_ptr->exp / 4);
-			p_ptr->max_exp -= (p_ptr->exp / 4);
-			check_experience(Ind);
+		p_ptr->exp -= (p_ptr->exp / 4);
+		p_ptr->max_exp -= (p_ptr->exp / 4);
+		check_experience(Ind);
 #endif	// 0
 
-			break;
-		}
+		break;
 
-		case 3:
-		{
-			/* Message */
-			msg_print(Ind, "You are surrounded by a powerful aura.");
+	case 3:
+		/* Message */
+		msg_print(Ind, "You are surrounded by a powerful aura.");
 
-			/* Dispel monsters */
-			dispel_monsters(Ind, 1000);
+		/* Dispel monsters */
+		dispel_monsters(Ind, 1000);
 
-			break;
-		}
+		break;
 
-		case 4:
-		case 5:
-		case 6:
-		{
-			/* Mana Ball */
-			sprintf(p_ptr->attacker, " invokes a mana storm for");
-			fire_ball(Ind, GF_MANA, dir, 500, 3, p_ptr->attacker);
+	case 4:
+	case 5:
+	case 6:
+		/* Mana Ball */
+		sprintf(p_ptr->attacker, " invokes a mana storm for");
+		fire_ball(Ind, GF_MANA, dir, 500, 3, p_ptr->attacker);
 
-			break;
-		}
+		break;
 
-		case 7:
-		case 8:
-		case 9:
-		case 10:
-		{
-			/* Mana Bolt */
-			sprintf(p_ptr->attacker, " fires a mana bolt for");
-			fire_bolt(Ind, GF_MANA, dir, 250, p_ptr->attacker);
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+		/* Mana Bolt */
+		sprintf(p_ptr->attacker, " fires a mana bolt for");
+		fire_bolt(Ind, GF_MANA, dir, 250, p_ptr->attacker);
 
-			break;
-		}
+		break;
 	}
 }
 
@@ -4743,14 +4470,12 @@ static void ring_of_power(int Ind, int dir)
 /*
  * Enchant some bolts
  */
-static bool brand_bolts(int Ind)
-{
+static bool brand_bolts(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
 	/* Use the first (XXX) acceptable bolts */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
 
 		/* Skip non-bolts */
@@ -4841,7 +4566,7 @@ bool activation_requires_direction(object_type *o_ptr) {
         /* Hack -- Amulet of the Serpents can be activated as well */
 	else if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_SERPENT)) {
 		return TRUE;
-        }
+	}
 
 	else if (o_ptr->tval == TV_RING) {
 		switch (o_ptr->sval) {
@@ -4851,7 +4576,7 @@ bool activation_requires_direction(object_type *o_ptr) {
 		case SV_RING_FLAMES:
 			return TRUE;
 		}
-        }
+	}
 
 	/* All other items aren't activatable */
 	return FALSE;
@@ -5130,8 +4855,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	/* add a single spell to the player's customizable tome */
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
-	        /* free space left? */
-	        i = 1;
+		/* free space left? */
+		i = 1;
 		/* k_info-pval dependant */
                 switch (o_ptr->bpval) {
 		case 0: i = 0; break;
@@ -6003,9 +5728,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		/* Amulets of rage can be activated for berserk strength */
 		case SV_AMULET_RAGE:
 			msg_print(Ind, "Your amulet sparkles bright red...");
-    	                set_afraid(Ind, 0);
-		        set_fury(Ind, randint(10) + 15); /* removed stacking */
-	                hp_player(Ind, 40);
+			set_afraid(Ind, 0);
+			set_fury(Ind, randint(10) + 15); /* removed stacking */
+			hp_player(Ind, 40);
 			o_ptr->timeout = rand_int(150) + 250;
 			return;
 		}
@@ -6119,8 +5844,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 					    o_ptr->level, r_info[o_ptr->pval].level,
 					    o_ptr->timeout);
 
-				        inven_item_increase(Ind, item, -1);
-		    		        inven_item_optimize(Ind, item);
+					inven_item_increase(Ind, item, -1);
+					inven_item_optimize(Ind, item);
 #endif
 
 				}
@@ -6607,7 +6332,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			o_ptr->timeout = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		}
-        }
+	}
 
 	/* Clear current activation */
 	p_ptr->current_activation = -1;
@@ -6684,34 +6409,33 @@ bool unmagic(int Ind) {
  * Displays random fortune/rumour.
  * Thanks Mihi!		- Jir -
  */
-void fortune(int Ind, bool broadcast)
-{
+void fortune(int Ind, bool broadcast) {
 	char Rumor[MAX_CHARS_WIDE], Broadcast[MAX_CHARS];
 
 	strcpy(Broadcast, "Suddenly a thought comes to your mind:");
 	msg_print(Ind, NULL);
 
 //	switch(randint(20))
-	switch(randint(80))
-	{
-		case 1:
-			get_rnd_line("chainswd.txt",0 , Rumor, MAX_CHARS_WIDE);
-			break;
-		case 2:
-			get_rnd_line("error.txt",0 , Rumor, MAX_CHARS_WIDE);
-			break;
-		case 3:
-		case 4:
-		case 5:
-			get_rnd_line("death.txt",0 , Rumor, MAX_CHARS_WIDE);
-			break;
-		default:
-			if (magik(95)) get_rnd_line("rumors.txt",0 , Rumor, MAX_CHARS_WIDE);
-			else {
-				strcpy(Broadcast, "Suddenly an important thought comes to your mind:");
-				get_rnd_line("hints.txt",0 , Rumor, MAX_CHARS_WIDE);
-			}
+	switch(randint(80)) {
+	case 1:
+		get_rnd_line("chainswd.txt",0 , Rumor, MAX_CHARS_WIDE);
+		break;
+	case 2:
+		get_rnd_line("error.txt",0 , Rumor, MAX_CHARS_WIDE);
+		break;
+	case 3:
+	case 4:
+	case 5:
+		get_rnd_line("death.txt",0 , Rumor, MAX_CHARS_WIDE);
+		break;
+	default:
+		if (magik(95)) get_rnd_line("rumors.txt",0 , Rumor, MAX_CHARS_WIDE);
+		else {
+			strcpy(Broadcast, "Suddenly an important thought comes to your mind:");
+			get_rnd_line("hints.txt",0 , Rumor, MAX_CHARS_WIDE);
+		}
 	}
+
 	bracer_ff(Rumor);
 //	msg_format(Ind, "%s", Rumor);
 	msg_print(Ind, Rumor);
@@ -6724,8 +6448,7 @@ void fortune(int Ind, bool broadcast)
 
 }
 
-char random_colour()
-{
+char random_colour() {
 //	char tmp[] = "wWrRbBgGdDuUoyvs";
 	char tmp[] = "dwsorgbuDWvyRGBU";
 
@@ -7571,8 +7294,8 @@ void do_cmd_breathe(int Ind) {
 	return;
 #endif
 
-        p_ptr->current_breath = 1;
-        get_aim_dir(Ind);
+	p_ptr->current_breath = 1;
+	get_aim_dir(Ind);
 }
 void do_cmd_breathe_aux(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
