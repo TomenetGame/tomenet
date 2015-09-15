@@ -1835,6 +1835,7 @@ const char *obj_flags2highlight[] = {"SPECIAL_GENE", ""};
 const char *obj_flags2highlight2[] = {"WINNERS_ONLY", ""};
 const char *obj_flags2highlight3[] = {"STR", "INT", "WIS", "DEX", "CON", "CHR", "STEALTH", "BLOWS", "CRIT", "MANA", "SEARCH", "INFRA", "TUNNEL", "SPEED", "LIFE", "LUCK", "DISARM", ""};//flags affected by (b)pval
 const char *obj_flags2highlight4[] = {"NO_TELE", "DRAIN_MANA", "DRAIN_HP", "DRAIN_EXP", "AGGRAVATE", "NEVER_BLOW", "BLACK_BREATH", "CLONE", "PERMA_CURSE", "HEAVY_CURSE", "TY_CURSE", "DG_CURSE", "CURSE_NO_DROP", "AUTO_CURSE", "CURSED", ""};
+const char *obj_flags2highlight5[] = {"ACTIVATE", ""};
 static int obj_highlit_flags(char *line) {
 	const char **f = obj_flags2highlight;
 	char *p2;
@@ -1864,6 +1865,14 @@ static int obj_highlit_flags(char *line) {
 	}
 
 	f = obj_flags2highlight4;
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
+		f++;
+	}
+
+	f = obj_flags2highlight5;
 	while (*f[0]) {
 		if ((p2 = strstr(line, *f)) &&
 		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
@@ -1924,6 +1933,17 @@ static void obj_highlight_flags(char *info, bool minus) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
 			strcpy(info_tmp, info);
 			sprintf(info_tmp + (p2 - info), "\377D%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+
+	f = obj_flags2highlight5;
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377B%s\377%c", *f, a_flag);
 			strcat(info_tmp, p2 + strlen(*f));
 			strcpy(info, info_tmp);
 		}
