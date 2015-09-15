@@ -4681,15 +4681,15 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
 	/* Mega-Hack -- describe activation */
 	if (f3 & TR3_ACTIVATE) {
-		cptr activation;
-		if (!(activation = item_activation(o_ptr))) {
+		cptr activation = item_activation(o_ptr);
+		if (!activation) {
 			/* Mysterious message for items missing description (eg. golem command scrolls) - mikaelh */
 			if (wearable_p(o_ptr)) fprintf(fff, "When equipped, it can be activated.\n");
 			else fprintf(fff, "It can be activated.\n");
 		} else {
 			if (wearable_p(o_ptr)) fprintf(fff, "When equipped, it can be activated for...\n");
 			else fprintf(fff, "It can be activated for...\n");
-			fprintf(fff, " %s.\n", item_activation(o_ptr));
+			fprintf(fff, " %s.\n", activation);
 			//fprintf(fff, "...if it is being worn.\n");
 		}
 	}
