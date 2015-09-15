@@ -5119,7 +5119,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "The phial wells with clear light...");
 			lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
 			if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "the phial of galadriel", 0);
-                        	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+				if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			o_ptr->timeout = rand_int(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_ELENDIL:
@@ -5172,7 +5172,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_GILGALAD:
 			for (k = 1; k < 10; k++)
 				if (k - 5) fire_beam(Ind, GF_LITE, k, 75 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), " emits a beam of light for");
-
 			o_ptr->timeout = rand_int(50) + 75 - get_skill_scale(p_ptr, SKILL_DEVICE, 60);
 			break;
 		case ART_CELEBRIMBOR:

@@ -1855,7 +1855,7 @@ static char *object_desc_per(char *t, sint v)
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
  */
 void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
-        player_type     *p_ptr = NULL;
+	player_type     *p_ptr = NULL;
 	cptr		basenm, modstr;
 	int		power, indexx;
 
@@ -1934,9 +1934,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		case TV_KEY:
 		case TV_FLASK:
 		case TV_CHEST:
-                case TV_FIRESTONE:
-                case TV_INSTRUMENT:
-                case TV_TOOL:
+		case TV_FIRESTONE:
+		case TV_INSTRUMENT:
+		case TV_TOOL:
 			break;
 
 
@@ -1949,9 +1949,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
-                case TV_BOOMERANG:
-                case TV_AXE:
-                case TV_MSTAFF:
+		case TV_BOOMERANG:
+		case TV_AXE:
+		case TV_MSTAFF:
 			show_weapon = TRUE;
 			break;
 
@@ -1979,7 +1979,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			break;
 
 
-                case TV_GOLEM:
+		case TV_GOLEM:
 			break;
 
 			/* Lites (including a few "Specials") */
@@ -2064,10 +2064,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			else basenm = "& # Rod~";
 			break;
 
-                case TV_ROD_MAIN:
+		case TV_ROD_MAIN:
 		{
-                        object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
-                        modstr = k_name + tip_ptr->name;
+			object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
+			modstr = k_name + tip_ptr->name;
 			break;
 		}
 
@@ -2365,16 +2365,16 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 		/* Modifier */
 		else if (*s == '#') {
-                        /* Grab any ego-item name */
-                        if (o_ptr->tval == TV_ROD_MAIN) {
-                                t = object_desc_chr(t, ' ');
+			/* Grab any ego-item name */
+			if (o_ptr->tval == TV_ROD_MAIN) {
+				t = object_desc_chr(t, ' ');
 
-                                if (known && o_ptr->name2) {
-                                        ego_item_type *e_ptr = &e_info[o_ptr->name2];
+				if (known && o_ptr->name2) {
+					ego_item_type *e_ptr = &e_info[o_ptr->name2];
 
-                                        t = object_desc_str(t, (e_name + e_ptr->name));
-                                }
-                        }
+					t = object_desc_str(t, (e_name + e_ptr->name));
+				}
+			}
 
 			/* Insert the modifier */
 			for (u = modstr; *u; u++) *t++ = *u;
@@ -2420,29 +2420,27 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN) &&
 		    !(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT)
 //		    && o_ptr->tval != TV_SPECIAL
-		    )
-		{
+		    ) {
 			ego_item_type *e_ptr = &e_info[o_ptr->name2];
 			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
 
-                        if (!e_ptr->before && o_ptr->name2) {
+			if (!e_ptr->before && o_ptr->name2) {
 				if (strlen(e_name + e_ptr->name)) t = object_desc_chr(t, ' ');
-                                t = object_desc_str(t, (e_name + e_ptr->name));
+				t = object_desc_str(t, (e_name + e_ptr->name));
 
-                        }
+			}
 #if 1
-                        else if (!e2_ptr->before && o_ptr->name2b)
-                        {
+			else if (!e2_ptr->before && o_ptr->name2b) {
 				if (strlen(e_name + e2_ptr->name)) t = object_desc_chr(t, ' ');
-                                t = object_desc_str(t, (e_name + e2_ptr->name));
-//                                ego = e2_ptr->name + e_name;
-						}
+				t = object_desc_str(t, (e_name + e2_ptr->name));
+//				ego = e2_ptr->name + e_name;
+			}
 #endif	// 0
 
 		}
 
 		/* Grab any randart name */
-                if (o_ptr->name1 == ART_RANDART) {
+		if (o_ptr->name1 == ART_RANDART) {
 			t = object_desc_chr(t, ' ');
 
 			if(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL){
@@ -2627,9 +2625,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
-                case TV_BOOMERANG:
-                case TV_AXE:
-                case TV_MSTAFF:
+		case TV_BOOMERANG:
+		case TV_AXE:
+		case TV_MSTAFF:
 
 		/* Append a "damage" string */
 		if (!(mode & 8)) t = object_desc_chr(t, ' ');
@@ -2906,8 +2904,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	tmp_val[0] = '\0';
 
 	/* Use the standard inscription if available */
-        if (o_ptr->note && !(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
-                char *u = tmp_val;
+	if (o_ptr->note && !(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
+		char *u = tmp_val;
 
 		strcpy(tmp_val, quark_str(o_ptr->note));
                 for (; *u && (*u != '#'); u++);
@@ -2963,8 +2961,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
  * Hack -- describe an item currently in a store's inventory
  * This allows an item to *look* like the player is "aware" of it
  */
-void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
-{
+void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	player_type *p_ptr = Players[Ind];
 
 	bool hack_aware = FALSE;
@@ -3012,8 +3009,8 @@ void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mod
 cptr item_activation(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-        /* Needed hacks */
-        //static char rspell[2][80];
+	/* Needed hacks */
+	//static char rspell[2][80];
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -3026,48 +3023,48 @@ cptr item_activation(object_type *o_ptr) {
 	/* Some artifacts can be activated */
 	switch (o_ptr->name1) {
 	case ART_EOL:
-		return "a mana bolt (9d8) 2..7+d3 turns";
+		return "a mana bolt (9..29d8) 2..7+d3 turns";
 	case ART_SKULLCLEAVER:
 		return "destruction every 100..200+d200 turns";
 	case ART_HARADRIM:
 		return "berserk strength every 15..50+d40 turns";
 	case ART_FUNDIN:
-		return "dispelling evil (x4) every 20..100+d50 turns";
+		return "dispelling evil (lev x8 +0..400) every 20..100+d50 turns";
 	case ART_NAIN:
 		return "stone-to-mud every 4..7+d5 turns";
 	case ART_CELEBRIMBOR:
 		return "temporary ESP (dur 20+d20) every 25..50+d25 turns";
 	case ART_UMBAR:
-		return "a magic arrow (10d10) every 5..20+d10 turns";
+		return "a magic arrow (10..30d10) every 5..20+d10 turns";
 	case ART_GILGALAD:
-		return "starlight (75) every 15..75+d50 turns";
+		return "starlight (75..225) every 15..75+d50 turns";
 	case ART_HIMRING:
 		return "protection from evil (dur 30+d15) every 75..225+d125 turns";
 	case ART_NUMENOR:
 		return "analyzing monsters every 50..300+d200 turns";
 	case ART_NARTHANC:
-		return "a fire bolt (9d8) every 2..8+d8 turns";
+		return "a fire bolt (9..29d8) every 2..8+d8 turns";
 	case ART_NIMTHANC:
-		return "a frost bolt (6d8) every 2..7+d7 turns";
+		return "a frost bolt (6..26d8) every 2..7+d7 turns";
 	case ART_DETHANC:
-		return "a lightning bolt (4d8) every 2..6+d6 turns";
+		return "a lightning bolt (4..24d8) every 2..6+d6 turns";
 	case ART_RILIA:
-		return "a stinking cloud (16) every 2..4+d4 turns";
+		return "a stinking cloud (4..11) every 2..4+d4 turns";
 	case ART_BELANGIL:
-		return "a frost ball (48) every 2..5+d5 turns";
+		return "a frost ball (48..108) every 2..5+d5 turns";
 	case ART_DAL:
 		return "removing fear and curing poison every 5 turns";
 	case ART_RINGIL:
-		return "a frost ball (100) every 75..300 turns";
+		return "a frost ball (100..400) every 75..300 turns";
 	case ART_ERU:
 		return "healing (1000), curing every 250..500 turns";
 	case ART_DAWN:
 		//return "summon the Legion of the Dawn every 500+d500 turns";
-		return "banishing undead every 100..500+d100 turns";
+		return "banishing undead (100..130) every 100..500+d100 turns";
 	case ART_ANDURIL:
-		return "a fire ball (72) every 100..400 turns";
+		return "a fire ball (72..222) every 100..400 turns";
 	case ART_FIRESTAR:
-		return "a large fire ball (72) every 25..100 turns";
+		return "a large fire ball (72..222) every 25..100 turns";
 	case ART_FEANOR:
 		return "haste self (20+d20 turns) every 50..200 turns";
 	case ART_THEODEN:
@@ -3075,7 +3072,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_TURMIL:
 		return "draining life (15%) every 20..70 turns";
 	case ART_ARUNRUTH:
-		return "a frost bolt (12d8) every 100..500 turns";
+		return "a frost bolt (12..27d8) every 100..500 turns";
 	case ART_CASPANION:
 		return "door and trap destruction every 4..10 turns";
 	case ART_AVAVIR:
@@ -3090,13 +3087,13 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_EONWE:
 		return "obliteration every 500..1000 turns";
 	case ART_LOTHARANG:
-		return "curing wounds (4d7) every 1..3+d3 turns";
+		return "curing wounds (4d8..4d28) every 1..3+d3 turns";
 	case ART_CUBRAGOL:
 		return "fire branding of bolts every 222..999 turns";
 	case ART_ANGUIREL:
 		return "a getaway every 15..35 turns";
 	case ART_AEGLOS:
-		return "a lightning ball (100) every 100..500 turns";
+		return "a lightning ball (100..250) every 100..500 turns";
 	case ART_OROME:
 		return "stone-to-mud every 2..5 turns";
 	case ART_SOULKEEPER:
@@ -3115,21 +3112,21 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_HOLCOLLETH:
 		return "sleep every 15..55 turns";
 	case ART_THINGOL:
-		return "recharging (60) an item every 20..70 turns";
+		return "recharging (60..100) an item every 20..70 turns";
 	case ART_COLANNON:
 		return "teleportation every 10..45 turns";
 	case ART_TOTILA:
-		return "confusing a monster every 10..50 turns";
+		return "confusing a monster (lev +10..60) every 10..50 turns";
 	case ART_CAMMITHRIM:
-		return "a magic missile (2d6) every 1..2 turns";
+		return "a magic missile (2..10d6) every 1..2 turns";
 	case ART_PAURHACH:
-		return "a fire bolt (9d8) every 2..8+d4 turns";
+		return "a fire bolt (9..29d8) every 2..8+d4 turns";
 	case ART_PAURNIMMEN:
-		return "a frost bolt (6d8) every 2..7+d3 turns";
+		return "a frost bolt (6..26d8) every 2..7+d3 turns";
 	case ART_PAURAEGEN:
-		return "a lightning bolt (4d8) every 2..6+d3 turns";
+		return "a lightning bolt (4..24d8) every 2..6+d3 turns";
 	case ART_PAURNEN:
-		return "an acid bolt (5d8) every 2..5+d2 turns";
+		return "an acid bolt (5..25d8) every 2..5+d2 turns";
 	case ART_FINGOLFIN:
 		return "a magical arrow (150) every 15..90+d30 turns";
 	case ART_HOLHENNETH:
@@ -3137,40 +3134,40 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_GONDOR:
 		return "healing (500) every 100..500 turns";
 	case ART_RAZORBACK:
-		return "lightning balls (8x150) every 300..1000 turns";
+		return "lightning balls (8x150..600) every 300..1000 turns";
 	case ART_BLADETURNER:
 		//return "invulnerability (4+d8) every 800 turns";
 		return "Berserk rage, chant and resistance every 200..400 turns";
 	case ART_MEDIATOR:
-		return "breathing elements (300), berserk, bless, resistance every 100..400 turns";
+		return "breathing elements (300..600), berserk, bless, resistance every 100..400 turns";
 	case ART_KNOWLEDGE:
 		return "whispers from beyond 100..200+d100 turns";
 	case ART_GALADRIEL:
-		return "illumination every 5..10+d10 turns";
+		return "illumination every 5..10+d10 turns";//damage details omitted
 	case ART_UNDEATH:
-		return "ruination every 5..10+d10 turns";
+		return "darkness and ruination every 5..10+d10 turns";
 	case ART_ELENDIL:
 		return "magic mapping and light every 10..50+d25 turns";
 	case ART_THRAIN:
 		//return "detection every 30+d30 turns";
 		return "clairvoyance every 200..1000+d150 turns";
 	case ART_INGWE:
-		return "dispelling evil (lev x10) every 50..300+d150 turns";
+		return "dispelling evil (lev x10 +0..500) every 50..300+d150 turns";
 	case ART_CARLAMMAS:
 		return "protection from evil every 25..225+d125 turns";
 	case ART_FLAR:
 		//return "dimension door every 100 turns";
 		return "creating a gateway every 500..1000 turns";
 	case ART_BARAHIR:
-		return "dispelling small life every 15..55+d55 turns";
+		return "dispelling small life (100..400) every 15..55+d55 turns";
 	case ART_TULKAS:
 		return "haste self (75+d50 turns) every 50..150+d100 turns";
 	case ART_NARYA:
-		return "a large fire ball (120) every 75..225+d75 turns";
+		return "a large fire ball (120..370) every 75..225+d75 turns";
 	case ART_NENYA:
-		return "a large frost ball (200) every 100..325+d125 turns";
+		return "a large frost ball (200..450) every 100..325+d125 turns";
 	case ART_VILYA:
-		return "a large lightning ball (250) every 100..425+d175 turns";
+		return "a large lightning ball (250..500) every 100..425+d175 turns";
 #if 0	// implement me!
 	case ART_NARYA:
 		return "healing (500) every 200+d100 turns";
@@ -3193,7 +3190,7 @@ cptr item_activation(object_type *o_ptr) {
 		return "healing and curing black breath every 100..200 turns";
 	case ART_MARDRA:
 		//return "summon a dragonrider every 1000 turns";
-		return "banishing dragons every 500..1000 turns";
+		return "banishing dragons (100..130) every 500..1000 turns";
 	case ART_PALANTIR_ITHIL:
 	case ART_PALANTIR:
 		return "clairvoyance every 200..1000+d150 turns";
@@ -3212,16 +3209,16 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_ROHAN:
 		return "heroism, berserker, haste every 100..250+d50 turns";
 	case ART_HELM:
-		return "sound ball (300) every 400 turns";
+		return "sound ball (300..600) every 300 turns";
 	case ART_BOROMIR:
 		return "mass human summoning every 500..1000 turns";
 
 	case ART_HURIN:
 		return "berserker and +10 to speed (50) every 75..175+d75 turns";
 	case ART_AXE_GOTHMOG:
-		return "fire ball (300) every 50..200+d200 turns";
+		return "fire ball (300..600) every 50..200+d200 turns";
 	case ART_MELKOR:
-		return "darkness ball (150) every 20..100 turns";
+		return "darkness storm (150..300) every 20..100 turns";
 	case ART_GROND:
 		return "alter reality every 20000 turns";
 	case ART_ORCHAST:
@@ -3237,7 +3234,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_AMUGROM:
 		return "temporary resistance boost every 50..150+d50 turns";
 	case ART_HELLFIRE:
-		return "invoking hellfire every 30+d10 turns";
+		return "invoking hellfire (400..600) every 30+d10 turns";
 	case ART_SPIRITSHARD:
 		return "turning into a wraith every 50..100+d50 turns";
 	case ART_PHASING:
@@ -3245,7 +3242,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_LEBOHAUM:
 		return "singing a cheerful song every 30 turns";
 	case ART_HAVOC:
-		return "invoking a force bolt every 1+d2 turns";
+		return "invoking a force bolt (8..24d8) every 1+d2 turns";
 #if 0 /* no, eg randart serpent amulet should retain basic activation! */
 	/* For the moment ignore (non-ego) randarts */
 	case ART_RANDART: return "a crash ;-)";
@@ -3289,79 +3286,79 @@ cptr item_activation(object_type *o_ptr) {
 		/* Branch on the sub-type */
 		switch (o_ptr->sval) {
 		case SV_DRAGON_BLUE:
-		    return "breathe lightning every 200+d100 turns";
-//		  return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
+			return "breathe lightning (400..800) every 200+d100 turns";
+//			return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
 		case SV_DRAGON_WHITE:
-		    return "breathe frost every 200+d100 turns";
-//		  return "polymorph into an Ancient White Dragon every 200+d100 turns";
+			return "breathe frost (400..800) every 200+d100 turns";
+//			return "polymorph into an Ancient White Dragon every 200+d100 turns";
 		case SV_DRAGON_BLACK:
-		    return "breathe acid every 200+d100 turns";
-//		  return "polymorph into an Ancient Black Dragon every 200+d100 turns";
+			return "breathe acid (400..800) every 200+d100 turns";
+//			return "polymorph into an Ancient Black Dragon every 200+d100 turns";
 		case SV_DRAGON_GREEN:
-		    return "breathe poison every 200+d100 turns";
-//		  return "polymorph into an Ancient Green Dragon every 200+d100 turns";
+			return "breathe poison (400..800) every 200+d100 turns";
+//			return "polymorph into an Ancient Green Dragon every 200+d100 turns";
 		case SV_DRAGON_RED:
-		    return "breathe fire every 200+d100 turns";
-//		  return "polymorph into an Ancient Red Dragon every 200+d100 turns";
+			return "breathe fire (400..800) every 200+d100 turns";
+//			return "polymorph into an Ancient Red Dragon every 200+d100 turns";
 		case SV_DRAGON_MULTIHUED:
-		    return "breathe the elements every 200+d100 turns";
-//		  return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
-	    	case SV_DRAGON_PSEUDO:
-		    return "breathe light/dark every 200+d100 turns";
-//		  return "polymorph into an Ethereal Drake every 200+d100 turns";
-		  //return "polymorph into a Pseudo Dragon every 200+d100 turns";
-	    	case SV_DRAGON_BRONZE:
-		    return "breathe confusion every 200+d100 turns";
-//		  return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
-	    	case SV_DRAGON_GOLD:
-		    return "breathe sound every 200+d100 turns";
-//		  return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
-	    	case SV_DRAGON_CHAOS:
-		    return "breathe chaos every 200+d100 turns";
-//		  return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
-	    	case SV_DRAGON_LAW:
-		    return "breathe shards/sound every 200+d100 turns";
-//		  return "polymorph into a Great Wyrm of Law every 200+d100 turns";
-	    	case SV_DRAGON_BALANCE:
-		    return "breathe disenchantment every 200+d100 turns";
-//		  return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
-	    	case SV_DRAGON_SHINING:
-		    return "breathe light/dark every 200+d100 turns";
-//		  return "polymorph into an Ethereal Dragon every 200+d100 turns";
-	    	case SV_DRAGON_POWER:
-		    return "breathe havoc every 200+d100 turns";
-//		  return "polymorph into a Great Wyrm of Power every 200+d100 turns";
-	    	case SV_DRAGON_DEATH:
-		    return "breathe nether every 200+d100 turns";
-//		  return "polymorph into a death drake every 200+d100 turns";
-	    	case SV_DRAGON_CRYSTAL:
-		    return "breathe shards every 200+d100 turns";
-//		  return "polymorph into a great crystal drake every 200+d100 turns";
-	    	case SV_DRAGON_DRACOLICH:
-		    return "breathe nether/cold every 200+d100 turns";
-//		  return "polymorph into a dracolich every 200+d100 turns";
-	    	case SV_DRAGON_DRACOLISK:
-		    return "breathe fire/nexus every 200+d100 turns";
-//		  return "polymorph into a dracolisk every 200+d100 turns";
-	    	case SV_DRAGON_SKY:
-		    return "breathe electricity/light/gravity every 200+d100 turns";
-//		  return "polymorph into a sky drake every 200+d100 turns";
-	    	case SV_DRAGON_SILVER:
-		    return "breathe inertia/cold every 200+d100 turns";
-//		  return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
+			return "breathe the elements (600..1200) every 200+d100 turns";
+//			return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
+		case SV_DRAGON_PSEUDO:
+			return "breathe light/dark (200..400) every 200+d100 turns";
+//			return "polymorph into an Ethereal Drake every 200+d100 turns";
+			//return "polymorph into a Pseudo Dragon every 200+d100 turns";
+		case SV_DRAGON_BRONZE:
+			return "breathe confusion (300..600) every 200+d100 turns";
+//			return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
+		case SV_DRAGON_GOLD:
+			return "breathe sound (400..800) every 200+d100 turns";
+//			return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
+		case SV_DRAGON_CHAOS:
+			return "breathe chaos (600..1200) every 200+d100 turns";
+//			return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
+		case SV_DRAGON_LAW:
+			return "breathe shards/sound (400..800) every 200+d100 turns";
+//			return "polymorph into a Great Wyrm of Law every 200+d100 turns";
+		case SV_DRAGON_BALANCE:
+			return "breathe disenchantment (500..1000) every 200+d100 turns";
+//			return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
+		case SV_DRAGON_SHINING:
+			return "breathe light/dark (400..800) every 200+d100 turns";
+//			return "polymorph into an Ethereal Dragon every 200+d100 turns";
+		case SV_DRAGON_POWER:
+			return "breathe havoc (675..1675) every 200+d100 turns";
+//			return "polymorph into a Great Wyrm of Power every 200+d100 turns";
+		case SV_DRAGON_DEATH:
+			return "breathe nether (550..1050) every 200+d100 turns";
+//			return "polymorph into a death drake every 200+d100 turns";
+		case SV_DRAGON_CRYSTAL:
+			return "breathe shards (400..800) every 200+d100 turns";
+//			return "polymorph into a great crystal drake every 200+d100 turns";
+		case SV_DRAGON_DRACOLICH:
+			return "breathe nether/cold (400..1050) every 200+d100 turns";
+//			return "polymorph into a dracolich every 200+d100 turns";
+		case SV_DRAGON_DRACOLISK:
+			return "breathe fire/nexus (250..1200) every 200+d100 turns";
+//			return "polymorph into a dracolisk every 200+d100 turns";
+		case SV_DRAGON_SKY:
+			return "breathe electricity/light/gravity (300..1200) every 200+d100 turns";
+//			return "polymorph into a sky drake every 200+d100 turns";
+		case SV_DRAGON_SILVER:
+			return "breathe inertia/cold (250..800) every 200+d100 turns";
+//			return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
 		}
 	}
 
 	if (o_ptr->tval == TV_RING) {
 		switch(o_ptr->sval) {
 		case SV_RING_ELEC:
-			return "a ball of lightning and resist lightning every 25..50+d25 turns";
+			return "a ball of lightning (50..200) and resist lightning every 25..50+d25 turns";
 		case SV_RING_FLAMES:
-			return "a ball of fire and resist fire every 25..50+d25 turns";
+			return "a ball of fire (50..200) and resist fire every 25..50+d25 turns";
 		case SV_RING_ICE:
-			return "a ball of cold and resist cold every 25..50+d25 turns";
+			return "a ball of cold (50..200) and resist cold every 25..50+d25 turns";
 		case SV_RING_ACID:
-			return "a ball of acid and resist acid every 25..50+d25 turns";
+			return "a ball of acid (50..200) and resist acid every 25..50+d25 turns";
 		case SV_RING_TELEPORTATION:
 			return "teleportation and destruction of the ring";
 		case SV_RING_POLYMORPH:
@@ -3384,9 +3381,9 @@ cptr item_activation(object_type *o_ptr) {
 		switch(o_ptr->sval) {
 			/* The amulet of the moon can be activated for sleep */
 		case SV_AMULET_THE_MOON:
-			return "sleep monsters every 100+d100 turns";
+			return "sleep monsters (lev +20..100) every 100+d100 turns";
 		case SV_AMULET_SERPENT:
-			return "breathing venom every 40+d60 turns";
+			return "breathing venom (100..300) every 40+d60 turns";
 		case SV_AMULET_RAGE:
 			return "growing a fury every 150+d100 turns";
 		}
