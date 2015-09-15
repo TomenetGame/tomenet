@@ -2231,7 +2231,7 @@ I:65:19:0
 W:20:0:10:800
 A:20/1
 P:0:1d1:0:0:0
-D:Casts a frost bolt for 5..17d8 damage.
+D:Casts a frost bolt for 5..40d8 damage.
 
 N:272:Fire Bolts
 G:-:d
@@ -2239,7 +2239,7 @@ I:65:18:0
 W:30:0:10:1000
 A:30/1
 P:0:1d1:0:0:0
-D:Casts a fire bolt for 5..19d8 damage.
+D:Casts a fire bolt for 7..42d8 damage.
 
 # More common now...
 N:273:Stone to Mud
@@ -2315,7 +2315,7 @@ I:65:15:0
 W:2:0:10:200
 A:2/1
 P:0:1d1:0:0:0
-D:Casts a magic missile for 2..12d6 damage.
+D:Casts a magic missile for 2..25d6 damage.
 
 N:283:Clone Monster
 G:-:d
@@ -2354,7 +2354,7 @@ W:35:0:10:1200
 A:35/1
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
-D:Casts a lightning ball for 40..240 damage.
+D:Casts a lightning ball for 40..370 damage.
 
 N:288:Cold Balls
 G:-:d
@@ -2362,7 +2362,7 @@ I:65:23:0
 W:40:0:10:1500
 A:40/1
 P:0:1d1:0:0:0
-D:Casts a frost ball for 50..250 damage.
+D:Casts a frost ball for 50..380 damage.
 
 N:289:Fire Balls
 G:-:d
@@ -2370,7 +2370,7 @@ I:65:22:0
 W:50:0:10:1800
 A:50/1
 P:0:1d1:0:0:0
-D:Casts a fire ball for 70..270 damage.
+D:Casts a fire ball for 70..400 damage.
 
 N:290:Stinking Cloud
 G:-:d
@@ -2386,7 +2386,7 @@ I:65:20:0
 W:50:0:10:1650
 A:50/1
 P:0:1d1:0:0:0
-D:Casts an acid ball for 60..260 damage.
+D:Casts an acid ball for 60..390 damage.
 
 N:292:Wonder
 G:-:d
@@ -2417,7 +2417,7 @@ I:65:16:0
 W:30:0:10:950
 A:30/1
 P:0:1d1:0:0:0
-D:Casts an acid bolt for 5..18d8 damage.
+D:Casts an acid bolt for 6..41d8 damage.
 
 N:295:Dragon's Flame
 G:-:d
@@ -2426,7 +2426,7 @@ W:50:0:10:2400
 A:50/4
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
-D:Casts dragonfire for 400..800 damage.
+D:Casts dragonfire for 300..600 damage.
 
 N:296:Dragon's Frost
 G:-:d
@@ -2435,7 +2435,7 @@ W:50:0:10:2400
 A:50/4
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
-D:Casts dragonfrost for 320..640 damage.
+D:Casts dragonfrost for 260..520 damage.
 
 N:297:Dragon's Breath
 G:-:d
@@ -2444,7 +2444,7 @@ W:60:0:10:2400
 A:60/4
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
-D:Casts a random dragon odem for 240..800 damage.
+D:Casts a random dragon odem for 240..700 damage.
 
 N:298:Annihilation
 G:-:d
@@ -2941,7 +2941,7 @@ I:66:21:30
 W:20:0:15:2000
 A:20/1
 P:0:1d1:0:0:0
-D:Casts a lightning bolt for 4d8..28+20..140 damage.
+D:Casts a lightning bolt for 4..39d8 damage.
 
 N:358:Frost Bolts
 G:-:d
@@ -2949,7 +2949,7 @@ I:66:23:35
 W:25:0:15:2500
 A:25/1
 P:0:1d1:0:0:0
-D:Casts a frost bolt for 5d8..28+20..200 damage.
+D:Casts a frost bolt for 5..40d8 damage.
 
 N:359:Fire Bolts
 G:-:d
@@ -2957,7 +2957,7 @@ I:66:22:40
 W:30:0:15:3000
 A:30/1
 P:0:1d1:0:0:0
-D:Casts a fire bolt for 8d8..28+20..230 damage.
+D:Casts a fire bolt for 7..42d8 damage.
 
 N:360:Polymorph
 G:-:d
@@ -3010,7 +3010,7 @@ I:66:25:50
 W:55:0:15:4000
 A:55/1
 P:0:1d1:0:0:0
-D:Casts a lightning ball for 32..192 damage.
+D:Casts a lightning ball for 32..302 damage.
 
 N:367:Cold Balls
 G:-:d
@@ -3018,7 +3018,7 @@ I:66:27:55
 W:60:0:15:4500
 A:60/1
 P:0:1d1:0:0:0
-D:Casts a frost ball for 48..288 damage.
+D:Casts a frost ball for 48..318 damage.
 
 N:368:Fire Balls
 G:-:d
@@ -3026,7 +3026,7 @@ I:66:26:60
 W:75:0:15:5000
 A:75/1
 P:0:1d1:0:0:0
-D:Casts a fire ball for 72..432 damage.
+D:Casts a fire ball for 72..342 damage.
 
 N:369:Acid Balls
 G:-:d
@@ -3034,7 +3034,7 @@ I:66:24:60
 W:70:0:15:5500
 A:70/1
 P:0:1d1:0:0:0
-D:Casts an acid ball for 60..360 damage.
+D:Casts an acid ball for 60..330 damage.
 
 N:370:Acid Bolts
 G:-:d
@@ -3042,7 +3042,7 @@ I:66:20:40
 W:40:0:15:3500
 A:40/1
 P:0:1d1:0:0:0
-D:Casts an acid bolt for 6d8..28+20..200 damage.
+D:Casts an acid bolt for 6..41d8 damage.
 
 N:371:Enlightenment
 G:-:d
