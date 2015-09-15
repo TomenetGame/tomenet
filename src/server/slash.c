@@ -9668,8 +9668,8 @@ void get_laston(char *name, char *response, bool admin) {
 
 	now = time(&now);
 	s = now - sl;
-	if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s %s was last seen %ld days ago.", acc ? "The player using account" : "The character", nameproc, s / (60 * 60 * 24));
-	else if (s >= 60 * 60 * 3) sprintf(response, "%s %s was last seen %ld hours ago.", acc ? "The player using account" : "The character", nameproc, s / (60 * 60));
-	else if (s >= 60 * 3) sprintf(response, "%s %s was last seen %ld minutes ago.", acc ? "The player using account" : "The character", nameproc, s / 60);
-	else sprintf(response, "%s %s was last seen %ld seconds ago.", acc ? "The player using Account" : "The character", nameproc, s);
+	if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld days ago.", acc ? "The player using account" : "The character", nameproc, s / (60 * 60 * 24));
+	else if (s >= 60 * 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld hours ago.", acc ? "The player using account" : "The character", nameproc, s / (60 * 60));
+	else if (s >= 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld minutes ago.", acc ? "The player using account" : "The character", nameproc, s / 60);
+	else sprintf(response, "%s \377s%s\377w was last seen %ld seconds ago.", acc ? "The player using Account" : "The character", nameproc, s);
 }
