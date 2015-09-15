@@ -2216,6 +2216,7 @@ I:65:7:0
 W:3:0:10:200
 A:3/1
 P:0:1d1:0:0:0
+D:Casts a line of light.
 
 #N:270:Tame Monster
 #G:-:d
@@ -2230,6 +2231,7 @@ I:65:19:0
 W:20:0:10:800
 A:20/1
 P:0:1d1:0:0:0
+D:Casts a frost bolt for 5..17d8 damage.
 
 N:272:Fire Bolts
 G:-:d
@@ -2237,6 +2239,7 @@ I:65:18:0
 W:30:0:10:1000
 A:30/1
 P:0:1d1:0:0:0
+D:Casts a fire bolt for 5..19d8 damage.
 
 # More common now...
 N:273:Stone to Mud
@@ -2259,6 +2262,7 @@ I:65:0:0
 W:2:0:10:0
 A:2/1
 P:0:1d1:0:0:0
+D:Heals a creature for 4d6 hit points.
 
 N:276:Haste Monster
 G:-:d
@@ -2294,7 +2298,7 @@ I:65:12:0
 W:50:0:10:15000
 A:50/5
 P:0:1d1:0:0:0
-D:Damages a monster for a percentage of its current hit points
+D:Damages a monster for 10..20% of its current hit points
 D:and returns some of the life force to you, replenishing your hit points.
 
 N:281:Trap/Door Destruction
@@ -2311,6 +2315,7 @@ I:65:15:0
 W:2:0:10:200
 A:2/1
 P:0:1d1:0:0:0
+D:Casts a magic missile for 2..12d6 damage.
 
 N:283:Clone Monster
 G:-:d
@@ -2349,6 +2354,7 @@ W:35:0:10:1200
 A:35/1
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
+D:Casts a lightning ball for 40..240 damage.
 
 N:288:Cold Balls
 G:-:d
@@ -2356,6 +2362,7 @@ I:65:23:0
 W:40:0:10:1500
 A:40/1
 P:0:1d1:0:0:0
+D:Casts a frost ball for 50..250 damage.
 
 N:289:Fire Balls
 G:-:d
@@ -2363,6 +2370,7 @@ I:65:22:0
 W:50:0:10:1800
 A:50/1
 P:0:1d1:0:0:0
+D:Casts a fire ball for 70..270 damage.
 
 N:290:Stinking Cloud
 G:-:d
@@ -2370,6 +2378,7 @@ I:65:14:0
 W:5:0:10:400
 A:5/1
 P:0:1d1:0:0:0
+D:Casts a stinking cloud for 4..21 damage.
 
 N:291:Acid Balls
 G:-:d
@@ -2377,6 +2386,7 @@ I:65:20:0
 W:50:0:10:1650
 A:50/1
 P:0:1d1:0:0:0
+D:Casts an acid ball for 60..260 damage.
 
 N:292:Wonder
 G:-:d
@@ -2407,6 +2417,7 @@ I:65:16:0
 W:30:0:10:950
 A:30/1
 P:0:1d1:0:0:0
+D:Casts an acid bolt for 5..18d8 damage.
 
 N:295:Dragon's Flame
 G:-:d
@@ -2415,6 +2426,7 @@ W:50:0:10:2400
 A:50/4
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
+D:Casts dragonfire for 400..800 damage.
 
 N:296:Dragon's Frost
 G:-:d
@@ -2423,6 +2435,7 @@ W:50:0:10:2400
 A:50/4
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
+D:Casts dragonfrost for 320..640 damage.
 
 N:297:Dragon's Breath
 G:-:d
@@ -2431,6 +2444,7 @@ W:60:0:10:2400
 A:60/4
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
+D:Casts a random dragon odem for 240..800 damage.
 
 N:298:Annihilation
 G:-:d
@@ -2439,7 +2453,7 @@ W:60:0:10:30000
 A:60/5
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
-D:Damages a monster by a percentage of its current hit points.
+D:Damages a monster by a 15..25% of its current hit points.
 
 N:299:Rockets
 G:-:d
@@ -2448,6 +2462,7 @@ W:75:0:10:95000
 A:75/4
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
+D:Fires a rocket for 600..1200+d100 damage.
 
 
 ##### Staves #####
@@ -2482,6 +2497,7 @@ I:55:4:0
 W:20:0:50:2000
 A:20/1
 P:0:1d2:0:0:0
+D:Teleports you within a radius of up to 100..200.
 
 N:304:Earthquakes
 G:_:d
@@ -2521,7 +2537,7 @@ I:55:7:0
 W:10:0:50:500
 A:10/1
 P:0:1d2:0:0:0
-D:Fires multiple beams of light in a star-shaped pattern.
+D:Fires multiple beams of light in a star-shaped pattern for 9d8+0..100 damage.
 
 N:309:Haste Monsters
 G:_:d
@@ -2614,6 +2630,7 @@ I:55:24:0
 W:50:0:50:1200
 A:50/1
 P:0:1d2:0:0:0
+D:Dispels evil creatures for your level * 2 + 100..400 damage.
 
 N:321:Probing
 G:_:d
@@ -2646,7 +2663,7 @@ I:55:25:0
 W:70:0:50:4000
 A:70/2
 P:0:1d2:0:0:0
-D:Dispels nearby foes.
+D:Dispels foes for 200..500 damage, depending on your magic device skill.
 
 N:325:the Magi
 G:_:d
@@ -2670,7 +2687,7 @@ I:55:26:0
 W:70:0:50:4500
 A:70/2
 P:0:1d2:0:0:0
-D:Dispels nearby evil. Also protects you from evil for a while.
+D:Dispels evil for 200..500 damage. Also protects you from evil for a while.
 D:Cures poison, cuts, and stun. Removes fear and heals you somewhat.
 
 N:328:Enlightenment
@@ -2866,7 +2883,7 @@ I:66:28:90
 W:95:0:15:150000
 A:100/16
 P:0:1d1:0:0:0
-D:Fires powerful balls or beams of random type,
+D:Fires powerful balls or beams of random type for 675..1350 damage,
 D:either at your target, on yourself, or in all directions.
 
 N:351:Door/Stair Location
@@ -2916,6 +2933,7 @@ I:66:15:15
 W:10:0:15:500
 A:10/1
 P:0:1d1:0:0:0
+D:Casts a line of light.
 
 N:357:Lightning Bolts
 G:-:d
@@ -2923,6 +2941,7 @@ I:66:21:30
 W:20:0:15:2000
 A:20/1
 P:0:1d1:0:0:0
+D:Casts a lightning bolt for 4d8..28+20..140 damage.
 
 N:358:Frost Bolts
 G:-:d
@@ -2930,6 +2949,7 @@ I:66:23:35
 W:25:0:15:2500
 A:25/1
 P:0:1d1:0:0:0
+D:Casts a frost bolt for 5d8..28+20..200 damage.
 
 N:359:Fire Bolts
 G:-:d
@@ -2937,6 +2957,7 @@ I:66:22:40
 W:30:0:15:3000
 A:30/1
 P:0:1d1:0:0:0
+D:Casts a fire bolt for 8d8..28+20..230 damage.
 
 N:360:Polymorph
 G:-:d
@@ -2965,7 +2986,7 @@ I:66:18:30
 W:75:0:15:25000
 A:75/4
 P:0:1d1:0:0:0
-D:Damages a monster for a percentage of its current hit points
+D:Damages a monster for 10..20% of its current hit points
 D:and returns some of the life force to you, replenishing your hit points.
 
 N:364:Teleport Other
@@ -2989,6 +3010,7 @@ I:66:25:50
 W:55:0:15:4000
 A:55/1
 P:0:1d1:0:0:0
+D:Casts a lightning ball for 32..192 damage.
 
 N:367:Cold Balls
 G:-:d
@@ -2996,6 +3018,7 @@ I:66:27:55
 W:60:0:15:4500
 A:60/1
 P:0:1d1:0:0:0
+D:Casts a frost ball for 48..288 damage.
 
 N:368:Fire Balls
 G:-:d
@@ -3003,6 +3026,7 @@ I:66:26:60
 W:75:0:15:5000
 A:75/1
 P:0:1d1:0:0:0
+D:Casts a fire ball for 72..432 damage.
 
 N:369:Acid Balls
 G:-:d
@@ -3010,6 +3034,7 @@ I:66:24:60
 W:70:0:15:5500
 A:70/1
 P:0:1d1:0:0:0
+D:Casts an acid ball for 60..360 damage.
 
 N:370:Acid Bolts
 G:-:d
@@ -3017,6 +3042,7 @@ I:66:20:40
 W:40:0:15:3500
 A:40/1
 P:0:1d1:0:0:0
+D:Casts an acid bolt for 6d8..28+20..200 damage.
 
 N:371:Enlightenment
 G:-:d
@@ -6002,6 +6028,7 @@ I:65:33:0
 W:15:0:10:600
 A:15/1
 P:0:1d1:0:0:0
+D:Casts a lightning bolt for 5..16d8 damage.
 
 ##Now Norcocth can go wild :) ##
 

@@ -4676,6 +4676,18 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LIFE_SAVING)
 		fprintf(fff, "It will save your life from perilous scene once.\n");
 
+#if 0 /* instead using the 'D:' diz lines in k_info */
+	/* Magic device information */
+	switch (o_ptr->tval) {
+	case TV_WAND:
+		break;
+	case TV_STAFF:
+		break;
+	case TV_ROD:
+		break;
+	}
+#endif
+
 	/* Mega-Hack -- describe activation */
 	if (f3 & TR3_ACTIVATE) {
 		cptr activation = item_activation(o_ptr);

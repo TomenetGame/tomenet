@@ -3571,15 +3571,15 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		break;
 
 	case SV_WAND_DRAGON_FIRE:
-		msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
-		sprintf(p_ptr->attacker, " shoots dragon fire for");
+		msg_format_near(Ind, "%s shoots dragonfire!", p_ptr->name);
+		sprintf(p_ptr->attacker, " shoots dragonfire for");
 		fire_ball(Ind, GF_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
 		ident = TRUE;
 		break;
 
 	case SV_WAND_DRAGON_COLD:
-		msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
-		sprintf(p_ptr->attacker, " shoots dragon frost for");
+		msg_format_near(Ind, "%s shoots dragonfrost!", p_ptr->name);
+		sprintf(p_ptr->attacker, " shoots dragonfrost for");
 		fire_ball(Ind, GF_COLD, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 320), 3, p_ptr->attacker);
 		ident = TRUE;
 		break;
