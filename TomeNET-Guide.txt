@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. September 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 15. September 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -8515,8 +8515,17 @@ The type, level, quality and use-level of an item may depend on these factors:
  Note that unique monsters have a higher chance of dropping enchanted items
  (similar to the effect of the player having more 'Luck').
 
--The player's 'Digging' skill, if it's money mined from terrain features (also
- depends on dungeon floor depth).
+ A higher chance to turn out 'good' (by luck or by the DROP_GOOD flag or
+ equivalent means as described above) will also carry over to become a somewhat
+ higher chance to turn out 'great' (ego item or artifact), so for example
+ unique monsters and chests don't just have an especially high chance to drop
+ enchanted items but will also drop ego/artifact (great) items somewhat more
+ often.
+
+-The player's 'Digging' skill, for money mined from terrain features and for
+ items discovered from mining - will affect potential item level and quality.
+ Amount of gems mined and the level of items discovered will at the same time
+ also depend on dungeon floor depth and get limited by it somewhat.
 
 -The floor level (depth) and in the case of acquirement scrolls whether it's
  read on the world surface or not (reading it in a high-level town CAN produce
@@ -8524,7 +8533,8 @@ The type, level, quality and use-level of an item may depend on these factors:
  not GRANT a high quality, which it does when you read it in a dungeon).
 
 -The event type if it's a reward for some kind of event (for events other than
- extermination orders the use-level is usually zeroed, binding the item to you)
+ extermination orders the use-level is usually zeroed, binding the item to your
+ character so it cannot be traded).
 
 -The player's 'winner' state (whether the player has beaten Morgoth or not) and
  the player's 'fallen winner' state (whether the player has died after having
@@ -8538,7 +8548,9 @@ The type, level, quality and use-level of an item may depend on these factors:
  their tankiness.
 
 -The player's amount of 'Luck' for monster drops and items found by digging,
- see 'LUCK' in (5.8) for details.
+ see 'LUCK' in (5.8) for details. Luck will increase chances of those items to
+ turn out good (enchanted) or even great (ego power or artifact) somewhat more
+ often.
 
 -The item's ego powers will increase the item's use-level. If it's an artifact
  it will influence the item's use-level depending on the predefined artifact
@@ -8549,7 +8561,9 @@ The type, level, quality and use-level of an item may depend on these factors:
  rings directly and only depends on their +SPEED bonus.
 
 -Whether the item is stolen: Stealing a valuable item has a chance to
- set its level to zero, making it untradable.
+ set its level to zero, making it untradable. (There is always a chance for it
+ to not get zero'ed though, keeping it tradable, even for the most expensive
+ items.)
 
 
 The most common case by far are items that are dropped by monsters when you
