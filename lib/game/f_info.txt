@@ -132,7 +132,7 @@ F:FLOOR | NOTICE | REMEMBER
 # So we'll use them for Mangband oriented ones
 
 
-# 0x04 --> crops  
+# 0x04 --> crops
 N:18:crops
 G:%:g
 F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER | NO_ARTICLE
@@ -157,7 +157,7 @@ N:21:signpost
 #possible: %:U, %:o, &:y, &:o, &:U, +:y, +:u, +:o
 G:+:u
 F:WALL | NO_WALK | CAN_PASS | NOTICE | SUPPORT_LIGHT
-#NO_VISION | 
+#NO_VISION |
 
 # 0x28 --> home door (strength 1)
 # (strength 2- omitted)
@@ -502,7 +502,7 @@ N:63:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | BOUNDARY
-F:SPECIAL_LITE 
+F:SPECIAL_LITE
 # | NO_SHADE <- in case ice walls need to be distinguished
 
 N:64:rune of warding
@@ -665,7 +665,7 @@ G:.:B
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | NO_SHADE
 F:NO_ARTICLE
 #keep it light blue instead of white when using white-light lamp
-#| LAMP_LITE | 
+#| LAMP_LITE |
 
 N:91:sand
 G:.:y

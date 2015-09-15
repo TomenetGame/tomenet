@@ -241,7 +241,7 @@ F:FILL_METHOD_2
 F:MANY_MONSTERS | SHORT_IDDC | EMPTY
 R:2:0
 R:49:3
-M:SPIDER | R_CHAR_c | R_CHAR_a | R_CHAR_I | 
+M:SPIDER | R_CHAR_c | R_CHAR_a | R_CHAR_I |
 R:49:3
 M:ORC | R_CHAR_w | R_CHAR_m | R_CHAR_j
 
@@ -402,7 +402,7 @@ F:RANDOM_TOWNS | FINAL_GUARDIAN_206 | FINAL_ARTIFACT_128
 F:FILL_METHOD_3
 R:30:0
 R:40:3
-M:ANIMAL 
+M:ANIMAL
 R:30:3
 M:UNDEAD | R_CHAR_h
 
@@ -488,7 +488,7 @@ R:40:3
 M:IM_COLD
 
 # The Land of Mountains
-# T'ron the rebel Dragonrider is hiding here, with his suit of 
+# T'ron the rebel Dragonrider is hiding here, with his suit of
 # dragonrider armour.
 # Levels 45-70
 N:25:The Sacred Land of Mountains
@@ -554,7 +554,7 @@ F:NO_DOORS | SAND_VEIN |
 F:FINAL_GUARDIAN_1030 | FINAL_ARTIFACT_153
 F:FILL_METHOD_0
 F:SHORT_IDDC | MANY_MONSTERS | VMANY_MONSTERS
-#DERARE_MONSTERS | 
+#DERARE_MONSTERS |
 R:90:3
 M:R_CHAR_w
 R:10:3

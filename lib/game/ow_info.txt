@@ -143,14 +143,14 @@ H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 N:20:Hjolgar(Barbarian)
 I:15000:210:115:6:6
 C:120:100:80
-#L:Warrior | 
+#L:Warrior |
 H:Vampire
 
 N:21:Tanistil(Elf)
 I:5000:210:115:6:6
 C:120:100:80
 #L:Mage | Sorceror | Thaumaturgist
-#H:Warrior | 
+#H:Warrior |
 H:Vampire
 
 N:22:Eldore(Human)
@@ -355,7 +355,7 @@ H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 N:53:Aulendil(Elf)
 I:30000:140:105:6:12
 C:120:100:80
-#L:Warrior | 
+#L:Warrior |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:54:Valceronwe(Elf)
@@ -398,13 +398,13 @@ N:60:Celebrimbor(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
 L:Maia | High-Elf | Half-Elf | Elf
-#L:Warrior | 
+#L:Warrior |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:61:Lomelosse(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:Maia | High-Elf | Half-Elf | Elf | 
+L:Maia | High-Elf | Half-Elf | Elf |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:62:Arlindel(High-Elf)
@@ -424,7 +424,7 @@ H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 N:64:Firiel(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
-L:Maia | High-Elf | Half-Elf | Elf | 
+L:Maia | High-Elf | Half-Elf | Elf |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:65:Earendur(High-Elf)

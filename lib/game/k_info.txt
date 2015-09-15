@@ -1418,8 +1418,8 @@ I:40:8:0
 W:70:0:3:30000
 A:70/8
 P:0:0d0:-4:-4:0
-F:INT | SUST_INT | SEARCH | 
-F:FREE_ACT | RES_BLIND | RES_CONF | 
+F:INT | SUST_INT | SEARCH |
+F:FREE_ACT | RES_BLIND | RES_CONF |
 F:IGNORE_ELEC | IGNORE_MANA | IGNORE_DISEN
 F:SPEED | REGEN_MANA | HIDE_TYPE
 #experimental(2009-06): added speed
@@ -3252,7 +3252,7 @@ I:38:2:3
 W:55:0:200:40000
 A:55/8
 P:30:2d4:-2:0:20
-F:IM_ELEC | LEVITATE | 
+F:IM_ELEC | LEVITATE |
 F:ACTIVATE | IGNORE_ACID
 F:SH_ELEC | BRAND_ELEC
 F:CON
@@ -3263,7 +3263,7 @@ I:38:3:3
 W:60:0:200:40000
 A:60/8
 P:30:2d4:-2:0:20
-F:IM_COLD | LEVITATE | 
+F:IM_COLD | LEVITATE |
 F:ACTIVATE | IGNORE_ACID
 F:SLOW_DIGEST | BRAND_COLD | SH_COLD
 F:CON
@@ -3391,7 +3391,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_MANA
 #W:95:0:200:300000
 #A:100/64
 #P:30:2d4:-2:0:20
-#F:RES_NETHER | LEVITATE | WRAITH | RES_POIS | 
+#F:RES_NETHER | LEVITATE | WRAITH | RES_POIS |
 #F:ACTIVATE | IGNORE_ACID
 # | DRAIN_HP | DRAIN_EXP //removed since wraithform is nerfed (can't attack)
 
@@ -3401,7 +3401,7 @@ I:38:41:0
 W:85:0:200:180000
 A:90/64
 P:30:2d4:-2:0:20
-F:RES_SHARDS | LEVITATE | REFLECT | RES_MANA | 
+F:RES_SHARDS | LEVITATE | REFLECT | RES_MANA |
 F:ACTIVATE | IGNORE_ACID | IGNORE_MANA
 
 N:930:Dracolich Bone Armour~
@@ -3410,7 +3410,7 @@ I:38:42:0
 W:85:0:200:150000
 A:90/64
 P:30:2d4:-2:0:20
-F:HOLD_LIFE | LEVITATE | RES_NETHER | RES_COLD | IM_POISON | 
+F:HOLD_LIFE | LEVITATE | RES_NETHER | RES_COLD | IM_POISON |
 F:ACTIVATE | IGNORE_ACID
 
 N:931:Dracolisk Scale Mail~
@@ -3419,7 +3419,7 @@ I:38:43:1
 W:90:0:200:100000
 A:90/48
 P:30:2d4:-2:0:20
-F:RES_NEXUS | LEVITATE | IM_FIRE | RES_ACID | 
+F:RES_NEXUS | LEVITATE | IM_FIRE | RES_ACID |
 F:ACTIVATE | IGNORE_ACID
 F:CON
 #note possibility of poison res if desired
@@ -3555,7 +3555,7 @@ D:Identifies all your items and tells you about yourself.
 N:425:Fear Resistance
 G:=:d
 I:45:38:0
-W:6:0:2:300 
+W:6:0:2:300
 A:6/2
 F:RES_FEAR | EASY_KNOW
 
@@ -3828,14 +3828,14 @@ I:40:24:0
 W:50:0:3:30000
 A:50/6
 F:STR | DEX | SUST_STR | SUST_DEX | FREE_ACT | HIDE_TYPE |
-F:RES_FEAR | RES_DISEN |  
+F:RES_FEAR | RES_DISEN |
 
 N:473:Trickery
 G:":d
 I:40:23:0
 W:70:0:3:30000
 A:70/8
-F:DEX | SUST_DEX | SPEED | INFRA | HIDE_TYPE | 
+F:DEX | SUST_DEX | SPEED | INFRA | HIDE_TYPE |
 F:RES_NEXUS | RES_POIS
 
 N:474:Telepathy
@@ -3850,8 +3850,8 @@ G:":d
 I:40:21:0
 W:40:0:3:12000
 A:40/4
-F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR | 
-F:HOLD_LIFE | SLOW_DIGEST | EASY_KNOW | 
+F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR |
+F:HOLD_LIFE | SLOW_DIGEST | EASY_KNOW |
 
 # The Palantir of Minas Ithil -- see artifact list
 
@@ -4348,7 +4348,7 @@ A:40/3
 P:0:5d5:0:0:0
 F:SHOW_MODS | MUST2H
 
-### Trapping Kits 
+### Trapping Kits
 
 N:549:Arrow
 G:`:r
@@ -4398,7 +4398,7 @@ A:10/2
 P:0:1d8:0:0:0
 F:SHOW_MODS
 
-### Trapping Kits 
+### Trapping Kits
 
 N:555:Catapult
 G:`:o
@@ -4438,7 +4438,7 @@ A:2/1
 P:4:1d1:0:0:0
 F:IGNORE_WATER
 
-### Trapping Kits 
+### Trapping Kits
 
 N:560:Fumes
 G:`:b
@@ -4455,7 +4455,7 @@ W:20:0:170:900
 A:20/5
 P:15:1d1:-1:0:0
 
-### Trapping Kits 
+### Trapping Kits
 
 N:562:Magic
 G:`:v
@@ -5088,7 +5088,7 @@ F:INVIS | HIDE_TYPE
 #P:0:1d1:0:0:0
 #F:DECAY
 
-# New armour: Dragonrider Coat. (With two low resists, it shouldn't be 
+# New armour: Dragonrider Coat. (With two low resists, it shouldn't be
 # at only 5th level. Make it 25th. -JLE...)
 
 N:646:& Dragonrider Coat~
@@ -5175,7 +5175,7 @@ F:INSTA_ART
 # This is used as a template -- the sval will be chosen later
 # on in the game to be an index to the random_artifacts array,
 # which in turn determines:
-#  
+#
 #  Name
 #  Color
 #  Level
@@ -5442,7 +5442,7 @@ F:ACTIVATE
 #W:90:0:2:300000
 #A:90/100
 #T:45:23
-#F:PRECOGNITION | 
+#F:PRECOGNITION |
 #F:NORM_ART | FULL_NAME
 #F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 
@@ -5465,7 +5465,7 @@ D:Food that also cures poison, stun, cuts and even Black Breath.
 #T:70:51
 #F:NORM_ART | FULL_NAME
 #F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
-#D:It allows you to leave your body to reincarnate into 
+#D:It allows you to leave your body to reincarnate into
 #D:an other one, howver your current body is lost in the process.
 
 N:721:& Dark Sword~
@@ -5957,8 +5957,8 @@ F:CRIT | HIDE_TYPE
 #P:0:10d10:0:0:0
 #T:65:6
 #F:RECHARGE | SPECIAL_GENE | EASY_USE | RECHARGED | NORM_ART | FULL_NAME
-#D:The miner's friend.  This wand was used by Thrain to dig into the 
-#D:walls of the dungeon and is quite useful because it will never 
+#D:The miner's friend.  This wand was used by Thrain to dig into the
+#D:walls of the dungeon and is quite useful because it will never
 #D:be destroyed.
 
 # The Staff of Holy Fire of Mithrandir
@@ -5970,8 +5970,8 @@ F:CRIT | HIDE_TYPE
 #A:50/200
 #T:55:8
 #F:RECHARGE | EASY_USE | RECHARGED | NORM_ART | FULL_NAME
-#D:Mithrandir's staff that throws powerful fire attacks at all enemies.  It 
-#D:can be recharged without blowing up, for it is built to hold 
+#D:Mithrandir's staff that throws powerful fire attacks at all enemies.  It
+#D:can be recharged without blowing up, for it is built to hold
 #D:much magical energy.
 
 # Summoner totem
@@ -6305,7 +6305,7 @@ I:40:33:5
 W:18:0:3:2500
 A:18/4:28/4:50/4
 P:0:0d0:5:5:0
-F:SEE_INVIS | INFRA | ACTIVATE | 
+F:SEE_INVIS | INFRA | ACTIVATE |
 
 # Smeagol drops this in place of =inv. (idea of Mihi)
 N:890:Stealth
@@ -6571,7 +6571,7 @@ F:INSTA_ART
 #W:50:0:3:40000
 #A:50/8:70/4
 #P:0:0d0:0:0:3
-#F:FREE_ACT | SEE_INVIS | SEARCH | 
+#F:FREE_ACT | SEE_INVIS | SEARCH |
 #F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 #
 #N:172:DOOM

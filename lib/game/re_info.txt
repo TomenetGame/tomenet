@@ -21,8 +21,8 @@ V:4.0.0
 # W:lev:rarity:weight:xp:place('B'efore or 'A'fter)
 # E:weapon:torso:arms:finger:head:legs
 # B:method:effect:(dice)d(side) (up to x4 lines)
-# F:flags that the standard monster MUST have - at least ONE of the R_CHAR_x 
-#    flags (if present, to determine which monster letters can have this ego 
+# F:flags that the standard monster MUST have - at least ONE of the R_CHAR_x
+#    flags (if present, to determine which monster letters can have this ego
 #    type), plus ALL of the rest
 # H:flags that the standard monster MUST NOT have
 # M:monster flags to add for the ego-type
@@ -42,9 +42,9 @@ I:%100:+1d+1:+0:+5:=0
 W:+5:13:%30:%95:B
 F:DROP_SKELETON
 H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
-M:DROP_SKELETON | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF | 
+M:DROP_SKELETON | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF |
 M:NO_SLEEP | EMPTY_MIND | COLD_BLOOD | STUPID | EVIL
-O:GOOD | DROP_CORPSE | FRIEND | FRIENDS | ESCORT | ESCORTS | SMART | 
+O:GOOD | DROP_CORPSE | FRIEND | FRIENDS | ESCORT | ESCORTS | SMART |
 O:DROP_GREAT | DROP_GOOD | RAND_25 | RAND_50 | MORTAL
 T:MF_ALL
 
@@ -72,10 +72,10 @@ F:DROP_SKELETON | SMART | R_CHAR_h | R_CHAR_p | R_CHAR_P | R_CHAR_O
 H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
 M:DROP_SKELETON | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
 M:NO_SLEEP | SMART | EVIL | COLD_BLOOD
-O:GOOD | DROP_CORPSE | FRIEND | FRIENDS | ESCORT | ESCORTS | 
+O:GOOD | DROP_CORPSE | FRIEND | FRIENDS | ESCORT | ESCORTS |
 O:DROP_GREAT | RAND_25 | RAND_50 | MORTAL
-S:1_IN_4 | 
-S:BLINK | TELE_TO | TELE_AWAY | BRAIN_SMASH | DRAIN_MANA | CURSE | 
+S:1_IN_4 |
+S:BLINK | TELE_TO | TELE_AWAY | BRAIN_SMASH | DRAIN_MANA | CURSE |
 S:BLIND | HOLD | SLOW | SCARE
 
 N:4:Spectral
@@ -88,7 +88,7 @@ F:DROP_CORPSE
 H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
 M:DROP_CORPSE | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
 M:NO_SLEEP | PASS_WALL | EVIL | COLD_BLOOD
-O:GOOD | DROP_CORPSE | FRIEND | FRIENDS | ESCORT | ESCORTS | 
+O:GOOD | DROP_CORPSE | FRIEND | FRIENDS | ESCORT | ESCORTS |
 O:DROP_GREAT | EMPTY_MIND | RAND_50 | MORTAL | KILL_WALL
 S:1_IN_5 | BLIND | HOLD | SCARE
 T:MF_ALL
@@ -169,7 +169,7 @@ O:HAS_LITE
 
 #
 # PernMangband original egos
-# 
+#
 # Please note that not all the features are available for now,
 # such as weight, E: and some new flags.	- Jir -
 #
@@ -299,7 +299,7 @@ I:+0:+0d+0:+0:+0:+0
 W:+10:50:+0:%200:B
 F:ANIMAL
 H:WEIRD_MIND | EMPTY_MIND | EVIL | R_CHAR_C | R_CHAR_S
-# | R_CHAR_Z 
+# | R_CHAR_Z
 M:NO_FEAR | NO_SLEEP
 S:1_IN_5 | BLINK | TELE_TO
 #T:MF_ALL
@@ -381,7 +381,7 @@ B:*:EAT_ITEM:+2d+2
 B:*:EAT_GOLD:+2d+2
 B:*:POISON:+2d+2
 F:R_CHAR_y | R_CHAR_k | R_CHAR_o | R_CHAR_T | R_CHAR_O
-H:DROP_90 | DROP_1D2 
+H:DROP_90 | DROP_1D2
 M:TAKE_ITEM | DROP_1D2 | INVISIBLE | NO_BLOCK
 O:HAS_LITE
 S:1_IN_10 | CONF | DARKNESS | TRAPS
@@ -438,7 +438,7 @@ B:*:EAT_ITEM:+2d+2
 B:*:EAT_GOLD:+2d+2
 B:*:POISON:+5d+5
 F:R_CHAR_y | R_CHAR_k | R_CHAR_o
-H:DROP_90 | DROP_1D2 
+H:DROP_90 | DROP_1D2
 M:TAKE_ITEM | DROP_2D2 | INVISIBLE | FORCE_MAXHP |
 M:IM_ACID | IM_FIRE | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_FEAR
 M:CHAR_CLEAR | ATTR_CLEAR | NO_BLOCK
@@ -452,7 +452,7 @@ G:*:B
 I:+0:+0d+0:+50:+0:+0
 W:+10:6:+0:%120:B
 F:ANIMAL | FRIENDS
-H:EMPTY_MIND | EVIL | R_CHAR_Z 
+H:EMPTY_MIND | EVIL | R_CHAR_Z
 M:NO_FEAR | NO_SLEEP
 M:AI_ANNOY
 S:1_IN_2 | SHRIEK
@@ -601,7 +601,7 @@ W:+10:8:%90:%140:A
 F:R_CHAR_y | R_CHAR_k | R_CHAR_n | R_CHAR_o | BASEANGBAND
 M:FRIENDS | SMART | FORCE_MAXHP | DROP_1D2
 M:AI_ANNOY | NO_BLOCK
-S:1_IN_5 | 
+S:1_IN_5 |
 S:HASTE | BLINK | BLIND | SLOW | BO_FIRE | BO_ELEC | S_ANIMAL
 #S:HASTE | BLINK | BLIND | HOLD | SLOW | BO_FIRE | BO_ELEC | S_ANIMAL
 

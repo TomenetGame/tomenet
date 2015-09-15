@@ -1,7 +1,7 @@
 # $Id$
 # File: st_info.txt
 
-# Fixed Potions of Cure Light/Serious Wounds in the Temple, Potions of 
+# Fixed Potions of Cure Light/Serious Wounds in the Temple, Potions of
 # Restore Str/Con in the Alchemist
 # Magic Shop - Amulet of Slow Digestion, Wand of Light, Staffs of Enlightenment,
 # Door/Stair Location, Detect Invis/Evil, and Remove Curse
@@ -457,7 +457,7 @@ I:100:Restore Mana
 A:0:0:2:4:8:0
 O:3:3:3:3:3:3
 G:+:B
-F:RANDOM | 
+F:RANDOM |
 F:PRICE4 | PRICE1 | NO_DISCOUNT2
 W:4
 
@@ -702,7 +702,7 @@ O:8:9:10:11:38:20
 G:2:r
 F:RANDOM | MEDIUM_LEVEL
 F:VHARD_STEAL
-#COMMON | 
+#COMMON |
 W:0
 #UNUSED W:12
 
@@ -851,7 +851,7 @@ A:33:0:1:2:3:0
 O:67:64:61:58:57:56
 G:+:b
 F:RANDOM | HARD_STEAL
-#COMMON | 
+#COMMON |
 W:2
 
 N:55:Master Archer
@@ -957,7 +957,7 @@ A:0:0:1:2:3:4
 #O:34:35:36:37:46:49
 O:19:24:25:45:54:67
 G:1:y
-F:RANDOM | DEEP_LEVEL | NO_DISCOUNT | ZEROLEVEL | 
+F:RANDOM | DEEP_LEVEL | NO_DISCOUNT | ZEROLEVEL |
 F:GOOD | GREAT | PRICE4 | PRICE2 | VHARD_STEAL
 W:48
 

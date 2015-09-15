@@ -803,7 +803,7 @@ F:FLOOR | CHEST | DOOR | LEVEL3
 
 # Ball Traps
 
-### this one *ought* to be a Nuke Ball trap, not plasma ball, as trap 87 
+### this one *ought* to be a Nuke Ball trap, not plasma ball, as trap 87
 ### is also plasma ball. I've put the description right in advance.
 
 #N:168:Plasma Ball Trap

@@ -545,7 +545,7 @@ A:12:Draw a rune
 I:1000:105
 F:MKEY_HARDCODE
 
-N:101:Mana 
+N:101:Mana
 D:Ability to evoke runes of mana.
 A:12:Draw a rune
 I:1000:105
@@ -798,7 +798,7 @@ T:Runecraft:Darkness
 T:Runecraft:Nexus
 T:Runecraft:Nether
 T:Runecraft:Chaos
-T:Runecraft:Mana 
+T:Runecraft:Mana
 
 #T:Main:Spirituality
 #T:Spirituality:Prayer
