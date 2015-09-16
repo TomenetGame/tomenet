@@ -10153,25 +10153,38 @@ void inverse_cursed(object_type *o_ptr) {
 	if (!(f3 & TR3_HEAVY_CURSE)) return;
 	if ((f4 & TR4_NEVER_BLOW)) return; /* Weapons of Nothingness */
 
-	if (o_ptr->to_h < 0) {
+	/* reverse to-hit, but body armour reverts to its normal "bulkiness" to-hit penalty */
+	if (o_ptr->tval == TV_DRAG_ARMOR || o_ptr->tval == TV_HARD_ARMOR || o_ptr->tval == TV_SOFT_ARMOR) {
+		o_ptr->to_h_org = o_ptr->to_h;
+		o_ptr->to_h = k_info[o_ptr->k_idx].to_h;
+	}
+	else if (o_ptr->to_h < 0) {
 		o_ptr->to_h_org = o_ptr->to_h;
 		o_ptr->to_h = -o_ptr->to_h;
 		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
 	}
+	/* reverse to-dam */
 	if (o_ptr->to_d < 0) {
 		o_ptr->to_d_org = o_ptr->to_d;
 		o_ptr->to_d = -o_ptr->to_d;
 		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
 	}
+	/* gloves don't get exaggerating hit/dam boni */
+	if (o_ptr->tval == TV_GLOVES) {
+		if (o_ptr->to_h > 10) o_ptr->to_h = 10;
+		if (o_ptr->to_d > 10) o_ptr->to_d = 10;
+	}
+	/* reverse AC */
 	if (o_ptr->to_a < 0) {
 		o_ptr->to_a_org = o_ptr->to_a;
 		o_ptr->to_a = -o_ptr->to_a;
-#ifndef TO_AC_CAP_30
+ #ifndef TO_AC_CAP_30
 		if (o_ptr->to_a > 35) o_ptr->to_a = 35;
-#else
+ #else
 		if (o_ptr->to_a > 30) o_ptr->to_a = 30;
-#endif
+ #endif
 	}
+	/* reverse +pval/bpval */
 	if (o_ptr->pval < 0) {
 		o_ptr->pval_org = o_ptr->pval;
 		o_ptr->pval = -(o_ptr->pval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
@@ -10183,6 +10196,8 @@ void inverse_cursed(object_type *o_ptr) {
 		if (o_ptr->bpval > 3) o_ptr->bpval = 3; //thinking EA/Life, but just paranoia really..
 	}
 }
+/* Reverse the boni back to negative when a vampire takes off a heavily cursed item (or its curse gets broken),
+   counterpart function to inverse_cursed(). */
 void reverse_cursed(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
@@ -10208,6 +10223,9 @@ void reverse_cursed(object_type *o_ptr) {
 	if (o_ptr->pval > -o_ptr->pval_org / 4 && o_ptr->pval_org < 0) o_ptr->pval = -o_ptr->pval;
 	if (o_ptr->bpval > -o_ptr->bpval_org / 4 && o_ptr->bpval_org < 0) o_ptr->bpval = -o_ptr->bpval;
  #else /* this way, enchant and disenchant would BOTH reduce the boni! (recommended, more consistent) */
+	/* ..the drawback here (that we accept for now) is that you can actually 'disenchant' negative boni up to 0,
+	   thereby improving the item that way, which usually isn't possible.. However, usually items that resist
+	   enchantment do also ignore disenchantment, so probably we're not opening a loophole here. */
 	if (o_ptr->to_h > 0 && o_ptr->to_h_org < 0) o_ptr->to_h = -o_ptr->to_h;
 	if (o_ptr->to_d > 0 && o_ptr->to_d_org < 0) o_ptr->to_d = -o_ptr->to_d;
 	if (o_ptr->to_a > 0 && o_ptr->to_a_org < 0) o_ptr->to_a = -o_ptr->to_a;
@@ -10220,5 +10238,8 @@ void reverse_cursed(object_type *o_ptr) {
 		if (o_ptr->bpval < o_ptr->bpval_org) o_ptr->bpval = o_ptr->bpval_org;
 	}
  #endif
+	/* body armour hack: we can ignore possible to-hit disenchantment here, since on body armour it's always negative (bulkiness) */
+	if (o_ptr->tval == TV_DRAG_ARMOR || o_ptr->tval == TV_HARD_ARMOR || o_ptr->tval == TV_SOFT_ARMOR)
+		o_ptr->to_h = o_ptr->to_h_org;
 }
 #endif
