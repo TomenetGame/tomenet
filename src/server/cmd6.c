@@ -2463,9 +2463,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			case SV_SCROLL_MONSTER_CONFUSION:
 				if (p_ptr->confusing == 0) {
 					msg_print(Ind, "Your hands begin to glow.");
-					p_ptr->confusing = TRUE;
 					ident = TRUE;
 				}
+				p_ptr->confusing = randint(5);
 				break;
 
 			case SV_SCROLL_PROTECTION_FROM_EVIL:

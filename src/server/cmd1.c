@@ -3843,7 +3843,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 			/* Confusion attack */
 			if (p_ptr->confusing) {
 				/* Cancel glowing hands */
-				p_ptr->confusing = FALSE;
+				p_ptr->confusing--;
 
 				/* Message */
 				msg_print(Ind, "Your hands stop glowing.");
@@ -4894,7 +4894,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 			/* Confusion attack */
 			if ((p_ptr->confusing) || (chaos_effect == 3)) {
 				/* Cancel glowing hands */
-				p_ptr->confusing = FALSE;
+				if (p_ptr->confusing) p_ptr->confusing--;
 
 				/* Message */
 				msg_print(Ind, "Your hands stop glowing.");

@@ -844,7 +844,7 @@ s_printf("Duration: %d\n", duration);
 				case SV_R_CONF: {
 					if (r_imperatives[imperative].flag != I_ENHA) { //monster confusion
 						msg_print(Ind, "Your hands begin to glow.");
-						p_ptr->confusing = TRUE;
+						p_ptr->confusing = randint(3);
 					} else (void)ident_spell(Ind); //identify
 				break; }
 				
