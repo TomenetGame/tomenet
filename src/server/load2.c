@@ -353,7 +353,6 @@ static void rd_item(object_type *o_ptr) {
 	s32b tmp32s;
 
 	/* VAMPIRES_INV_CURSED */
-//	int tmp_to_h, tmp_to_d, tmp_to_a, tmp_bpval, tmp_pval;
 	bool flipped = FALSE;
 
 
