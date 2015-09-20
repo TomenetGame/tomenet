@@ -2474,7 +2474,7 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
                         {
                                 SKILL_SWIM,
                                 '+', 0,
-                                '%', 0,
+                                '%', 50,
                         },
                         {
                                 SKILL_SHOOT_TILL_KILL,
