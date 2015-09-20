@@ -834,7 +834,8 @@ W:10:20:25:0
 P:2:1d1:-19:-14:-10
 F:STR | DEX | HIDE_TYPE | DRAIN_MANA |
 F:IM_POISON | RES_FIRE | RES_COLD | RES_DISEN | RES_NETHER | FREE_ACT |
-F:AGGRAVATE | SHOW_MODS | HEAVY_CURSE | TY_CURSE | TELEPORT | CURSED
+F:AGGRAVATE | SHOW_MODS | HEAVY_CURSE | TY_CURSE | CURSED
+#TELEPORT - make it useful for Vampires
 D:A pair of gauntlets that sap combat ability, named after the empty hand
 D:of Beren that once clasped a Silmaril.
 
