@@ -17110,8 +17110,7 @@ If you qualify for multiple reward classes, which are 'specific melee weapon',
 Aside from these, randomness is always a factor so the result may vary.
 The final quality of the item is therefore pretty random, except that certain
 bad or very cheap item types or unfitting ego powers (depending on your
-character) are banned and on the other hand the item value will never exceed
-100000 Au.
+character) are banned.
 
 
 
