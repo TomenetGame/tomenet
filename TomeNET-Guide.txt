@@ -17065,7 +17065,7 @@ what you must actively do BEFORE turning in a deed for a reward item is:
 - spend skill points! Never get a reward item without having spent any skill
   points. Make sure that you have at least 3.000 in your vital skill(s) so the
   reward-creating algorithm notices it.
-  If you have increased your 'Magic' skill even just a little bit  (note that
+  If you have increased your 'Magic' skill even just a little bit (note that
   increasing Mimicry will also increase Magic skill slightly!) you will have a
   chance to receive caster items (eg some hat of intelligence).
   Especially important: Magic skills, weapon skills, martial arts skill. These
@@ -17092,7 +17092,26 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   the item, so it will not end up redundant with Draconian resistances for
   example.
 
+It does not matter if a skill is trained further above 3.000 or what your
+character level is. Skills are used to 'unlock' item classes such as
+'mage staff' or 'specific melee weapon' but for example you won't have a higher
+chance to get a sword if you increase sword-mastery to 5.000 than if you only
+had it at the minimum threshold value of 3.000.
+
+If you qualify for multiple reward classes, which are 'specific melee weapon',
+'specific ranged weapon', 'mage staff', 'trap', the following priorities apply:
+-A melee weapon will override a mage staff.
+-A melee weapon vs ranged weapon will have about equal chance to get picked.
+-A mage staff will have somewhat better chances vs a ranged weapon.
+-Traps have about 75% chance to override any other reward class.
+-Aside from the reward class picked, there is still about a 50% chance to
+ receive an armour piece instead (even true for trap class).
+
 Aside from these, randomness is always a factor so the result may vary.
+The final quality of the item is therefore pretty random, except that certain
+bad or very cheap item types or unfitting ego powers (depending on your
+character) are banned and on the other hand the item value will never exceed
+100000 Au.
 
 
 
