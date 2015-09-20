@@ -352,6 +352,10 @@ static void rd_item(object_type *o_ptr) {
 	byte tmpbyte;
 	s32b tmp32s;
 
+	/* VAMPIRES_INV_CURSED */
+//	int tmp_to_h, tmp_to_d, tmp_to_a, tmp_bpval, tmp_pval;
+	bool flipped = FALSE;
+
 
 	/* Hack -- wipe */
 	WIPE(o_ptr, object_type);
@@ -510,6 +514,9 @@ static void rd_item(object_type *o_ptr) {
 		rd_s16b(&o_ptr->to_a_org);
 		rd_s32b(&o_ptr->pval_org);
 		if (!older_than(4, 6, 2)) rd_s32b(&o_ptr->bpval_org);
+
+		/* hack: is item currently reversed? Required for artifact updating code, further below. */
+		if (o_ptr->pval_org < 0) flipped = TRUE;
 	}
 
 
@@ -754,7 +761,8 @@ static void rd_item(object_type *o_ptr) {
 			//o_ptr->pval = 0;
 		} else {
 			/* Acquire new artifact "pval" */
-			o_ptr->pval = a_ptr->pval;
+			if (flipped) o_ptr->pval_org = a_ptr->pval; /* don't accidentally unflip a vampire-reversed bonus */
+			else o_ptr->pval = a_ptr->pval;
 
 			/* Acquire new artifact fields */
 			o_ptr->ac = a_ptr->ac;
