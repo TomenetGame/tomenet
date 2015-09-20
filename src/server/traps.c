@@ -1526,6 +1526,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 
 		case TRAP_OF_AGING:
+			if (p_ptr->prace == RACE_VAMPIRE || p_ptr->resist_time || p_ptr->prace == RACE_MAIA) {
+				msg_print(Ind, "Colours are scintillating around you but you seem unaffected.");
+				break;
+			}
 			msg_print(Ind, "Colors are scintillating around you, you see your past running before your eyes.");
 			//         p_ptr->age += randint((rp_ptr->b_age + rmp_ptr->b_age) / 2);
 			p_ptr->age += randint((p_ptr->rp_ptr->b_age));
