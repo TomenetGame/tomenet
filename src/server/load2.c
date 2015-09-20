@@ -1768,10 +1768,10 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	rd_s16b(&p_ptr->biofeedback);
 
 	rd_byte(&p_ptr->confusing);
-		rd_u16b(&p_ptr->tim_jail);
-		rd_u16b(&p_ptr->tim_susp);
-		rd_u16b(&p_ptr->pkill);
-		rd_u16b(&p_ptr->tim_pkill);
+	rd_u16b(&p_ptr->tim_jail);
+	rd_u16b(&p_ptr->tim_susp);
+	rd_u16b(&p_ptr->pkill);
+	rd_u16b(&p_ptr->tim_pkill);
 	rd_s16b(&p_ptr->tim_wraith);
 	rd_byte((byte *)&p_ptr->wraith_in_wall);
 	rd_byte(&p_ptr->searching);
