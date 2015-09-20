@@ -963,6 +963,7 @@ extern void process_monsters(void);
 extern void curse_equipment(int Ind, int chance, int heavy_chance);
 extern void process_npcs(void);
 extern bool mon_allowed_pickup(int tval);
+extern int world_check_antimagic(int Ind);
 
 /* monster.c */
 /* monster1.c monster2.c */

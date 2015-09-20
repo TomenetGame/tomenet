@@ -1545,6 +1545,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 }
 
 
+/* (Note that AM fields of players other than <Ind> will actually have only halved effect.) */
 static bool monst_check_antimagic(int Ind, int m_idx) {
 //	player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
@@ -1568,13 +1569,11 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 	}
 
 	/* Multiple AM fields don't stack; only the strongest has effect - C. Blue */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
 
 		/* Skip disconnected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
-
 		/* Skip players not on this depth */
 		if (!inarea(&q_ptr->wpos, wpos)) continue;
 
@@ -1602,8 +1601,7 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 
 
 	/* Got disrupted ? */
-	if (magik(highest_antichance))
-	{
+	if (magik(highest_antichance)) {
 		char		m_name[MNAME_LEN];
 		/* Get the monster name (or "it") */
 		monster_desc(Ind, m_name, m_idx, 0x00);
@@ -1626,13 +1624,10 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 	 * casting.
 	 */
 	/* Scan the maximal area of radius "MONSTER_ANTIDIS" */
-	for (y = y2 - MONSTER_ANTIDIS; y <= y2 + MONSTER_ANTIDIS; y++)
-	{
-		for (x = x2 - MONSTER_ANTIDIS; x <= x2 + MONSTER_ANTIDIS; x++)
-		{
+	for (y = y2 - MONSTER_ANTIDIS; y <= y2 + MONSTER_ANTIDIS; y++) {
+		for (x = x2 - MONSTER_ANTIDIS; x <= x2 + MONSTER_ANTIDIS; x++) {
 			/* Ignore "illegal" locations */
 			if (!in_bounds2(wpos, y, x)) continue;
-
 			if ((m_idx = zcave[y][x].m_idx) <= 0) continue;
 
 			/* Enforce a "circular" explosion */
@@ -1654,26 +1649,65 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 			if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
 
 			/* Got disrupted ? */
-			if (magik(antichance))
-			{
-				if (p_ptr->mon_vis[m_idx])
-				{
-					char m_name[MNAME_LEN];
-					monster_desc(Ind, m_name, m_idx, 0);
-					msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
-				}
-				else
-				{
-					msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
-				}
-				return TRUE;
-			}
+			if (!magik(antichance)) continue;
+
+			if (p_ptr->mon_vis[m_idx]) {
+				char m_name[MNAME_LEN];
+				monster_desc(Ind, m_name, m_idx, 0);
+				msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
+			} else
+				msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
+
+			return TRUE;
 		}
 	}
 #endif	// 0
 
 	/* Assume no antimagic */
 	return FALSE;
+}
+
+/* (Note that AM fields of players other than <Ind> will actually have only halved effect.) */
+int world_check_antimagic(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	worldpos *wpos = &p_ptr->wpos;
+
+	cave_type **zcave;
+	int i, x2 = p_ptr->px, y2 = p_ptr->py;
+	int antichance = 0, highest_antichance = 0, anti_Ind = 0;
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
+
+	/* Multiple AM fields don't stack; only the strongest has effect - C. Blue */
+	for (i = 1; i <= NumPlayers; i++) {
+		player_type *q_ptr = Players[i];
+
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Skip players not on this depth */
+		if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+		/* Compute distance */
+		if (distance(y2, x2, q_ptr->py, q_ptr->px) > q_ptr->antimagic_dis) continue;
+		antichance = q_ptr->antimagic;
+
+		if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
+
+		/* Reduce chance by 50% if monster isn't casting on yourself: */
+		if (i != Ind) antichance >>= 1;
+
+		if (antichance > highest_antichance) {
+			highest_antichance = antichance;
+			anti_Ind = i;
+		}
+	}
+
+	/* Got disrupted ? */
+	if (magik(highest_antichance)) return anti_Ind;
+
+	/* Assume no antimagic effect */
+	return 0;
 }
 
 /*

@@ -4735,22 +4735,32 @@ static bool process_player_end_aux(int Ind) {
 	/* let's say TY_CURSE lowers stats (occurs often) */
 	if (p_ptr->ty_curse &&
 	    (rand_int(p_ptr->wpos.wz != 0 ? 100 : (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos) ? 0 : 300)) == 1) &&
-	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && magik(100 - p_ptr->antimagic)) {
-		msg_print(Ind, "An ancient foul curse shakes your body!");
+	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50)) {
+		if (magik(105 - p_ptr->skill_sav)) {
+			msg_print(Ind, "An ancient foul curse touches you but you resist!");
+		} else {
+			msg_print(Ind, "An ancient foul curse shakes your body!");
 #if 0
-		if (rand_int(2))
-		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
-		else if (p_ptr->lev != 99) lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE);
-		/* take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "an ancient foul curse", TRUE, TRUE, TRUE); */
+			if (rand_int(2))
+			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+			else if (p_ptr->lev != 99) lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+			/* take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "an ancient foul curse", TRUE, TRUE, TRUE); */
 #else
-		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
 #endif
+		}
 	}
 	/* and DG_CURSE randomly summons a monster (non-unique) */
 	if (p_ptr->dg_curse && (rand_int(200) == 0) && !istown(&p_ptr->wpos) && !isdungeontown(&p_ptr->wpos) &&
-	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && magik(100 - p_ptr->antimagic)) {
-		msg_print(Ind, "An ancient morgothian curse calls out!");
-		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, SUMMON_MONSTER, 0, 0);
+	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50)) {
+		int anti_Ind = world_check_antimagic(Ind);
+		if (anti_Ind) {
+			msg_format(anti_Ind, "\377%cA curse builds up but dissipates in your anti-magic field.", COLOUR_AM_GOOD);
+			msg_format_near(anti_Ind, "\377%cA curse builds up but dissipates in %s's anti-magic field.", COLOUR_AM_NEAR, Players[anti_Ind]->name);
+		} else {
+			msg_print(Ind, "An ancient morgothian curse calls out!");
+			summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, SUMMON_MONSTER, 0, 0);
+		}
 	}
 
 	/* Handle experience draining.  In Oangband, the effect
