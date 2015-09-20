@@ -7371,6 +7371,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 				    || streq(p_ptr->died_from, "indecisiveness")
 #endif
 				    || streq(p_ptr->died_from, "indetermination")
+				    || streq(p_ptr->died_from, "starvation")
 				    || insanity) {
 					msg_format(Ind, "\374\377%c**\377rYou have been killed by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
 				} else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
@@ -7385,6 +7386,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 					    || streq(p_ptr->died_from, "indecisiveness")
 #endif
 					    || streq(p_ptr->died_from, "indetermination")
+					    || streq(p_ptr->died_from, "starvation")
 					    || insanity)
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was killed by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 					else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
@@ -7397,6 +7399,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 					    || streq(p_ptr->died_from, "indecisiveness")
 #endif
 					    || streq(p_ptr->died_from, "indetermination")
+					    || streq(p_ptr->died_from, "starvation")
 					    || insanity)
 						snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was killed and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 					else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
@@ -7588,6 +7591,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 			    || streq(p_ptr->died_from, "indecisiveness")
 #endif
 			    || streq(p_ptr->died_from, "indetermination")
+			    || streq(p_ptr->died_from, "starvation")
 			    || insanity) {
 				/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
 				/* Add the player lvl to the death message. the_sandman */
@@ -7606,6 +7610,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 			    || streq(p_ptr->died_from, "indecisiveness")
 #endif
 			    || streq(p_ptr->died_from, "indetermination")
+			    || streq(p_ptr->died_from, "starvation")
 			    || insanity) {
 				/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
 				/* Add the player lvl to the death message. the_sandman */
@@ -7768,6 +7773,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	    || streq(p_ptr->died_from, "indecisiveness")
 #endif
 	    || streq(p_ptr->died_from, "indetermination")
+	    || streq(p_ptr->died_from, "starvation")
 	    || insanity) {
 		msg_format(Ind, "\374\377RYou have been killed by %s.", p_ptr->died_from);
 	}
