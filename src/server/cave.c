@@ -3795,8 +3795,7 @@ void clear_ovl(int Ind)
  * "lite_spot()" function to display the player grid, if needed.
  */
 
-void prt_map(int Ind)
-{
+void prt_map(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int x, y;
@@ -3814,8 +3813,7 @@ void prt_map(int Ind)
 	memset(p_ptr->ovl_info, 0, sizeof(p_ptr->ovl_info));
 
 	/* Dump the map */
-	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
-	{
+	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++) {
 		dispy = y - p_ptr->panel_row_prt;
 
 		/* Scan the columns of row "y" */
@@ -3840,6 +3838,32 @@ void prt_map(int Ind)
 
 	/* Display player */
 	lite_spot(Ind, p_ptr->py, p_ptr->px);
+}
+
+/* Print someone's map to his mindlinker. */
+void prt_map_forward(int Ind) {
+	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
+	int Ind2, y, dispy;
+
+
+	/* safety checks: */
+
+	/* We're mindlink source, not destination? Oops, we shouldn't have been called really. */
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return;
+	/* no mindlink exists? Oops, we shouldn't have been called really. */
+	if (!(Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) return;
+
+
+	/* Dump the target's map into our view */
+	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++) {
+		dispy = y - p_ptr->panel_row_prt;
+
+		/* Send that line of info */
+		Send_line_info_forward(Ind2, Ind, dispy);
+	}
+
+	/* Display player */
+	//lite_spot(Ind, p_ptr->py, p_ptr->px);
 }
 
 

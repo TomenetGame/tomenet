@@ -6900,18 +6900,19 @@ extern int PlayerUID;
 #define LINK_DOMINANT 1
 #define LINK_DOMINATED 2
 
-#define LINKF_VIEW      0x0001 /* Share view */
-#define LINKF_MOV       0x0002 /* Share movments */
-#define LINKF_PAIN      0x0004 /* Share hp & xp */
-#define LINKF_OBJ       0x0008 /* Share obj things */
-#define LINKF_MISC      0x0010 /* Share misc things */
-#define LINKF_OPEN      0x0020 /* Mind Open */
+#define LINKF_VIEW	0x0001 /* Share view */
+#define LINKF_MOV	0x0002 /* Share movments */
+#define LINKF_PAIN	0x0004 /* Share hp & xp */
+#define LINKF_OBJ	0x0008 /* Share obj things */
+#define LINKF_MISC	0x0010 /* Share misc things */
+#define LINKF_OPEN	0x0020 /* Mind Open */
 /* Ready to receive items via telekinesis - 
    to prevent exploiting this for PK! - C. Blue: */
 #define LINKF_TELEKIN	0x0040
 /* Additional link flags */
 #define LINKF_HIDDEN	0x0080 /* No link status messages */
 #define LINKF_VIEW_DEDICATED	0x0100 /* View dedicated for watching other player */
+#define LINKF_TMP_FMAP	0x0200 /* Hack: Forward map once (temporary helper flag for PR_MAP) - We need this because PR_... has no more capacity for further flags. */
 
 /* Monster gaining levels */
 #define MONSTER_LEVEL_MAX       500

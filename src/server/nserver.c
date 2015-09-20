@@ -6139,8 +6139,7 @@ int Send_flush(int Ind)
  * repeated at least twice, then bit 0x40 of the attribute is set, and
  * the next byte contains the number of repetitions of the previous grid.
  */
-int Send_line_info(int Ind, int y)
-{
+int Send_line_info(int Ind, int y) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
@@ -6152,8 +6151,7 @@ int Send_line_info(int Ind, int y)
 	int a_c;
 #endif
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for line info (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -6170,8 +6168,7 @@ int Send_line_info(int Ind, int y)
 	if (Ind2) Packet_printf(&(Conn[p_ptr2->conn]->c), "%c%hd", PKT_LINE_INFO, y);
 
 	/* Each column */
-	for (x = 0; x < 80; x++)
-	{
+	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */
 		c = p_ptr->scr_info[y][x].c;
 		a = p_ptr->scr_info[y][x].a;
@@ -6192,37 +6189,29 @@ int Send_line_info(int Ind, int y)
 
 		/* Count repetitions of this grid */
 		while (p_ptr->scr_info[y][x1].c == c &&
-			p_ptr->scr_info[y][x1].a == a && x1 < 80) //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
-		{
+		    p_ptr->scr_info[y][x1].a == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
 			/* Increment count and column */
 			n++;
 			x1++;
 		}
 
 		/* RLE if there at least 2 similar grids in a row */
-		if (n >= 2)
-		{
+		if (n >= 2) {
 			/* 4.4.3.1 clients support new RLE */
-			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5))
-			{
+			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* New RLE */
 				Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, n);
-			}
-			else
-			{
+			} else {
 				/* Old RLE */
 				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
 			}
 
-			if (Ind2)
-			{
+			if (Ind2) {
 				/* 4.4.3.1 clients support new RLE */
-				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5))
-				{
+				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* New RLE */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, n);
-				}
-				else {
+				} else {
 					/* Old RLE */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", c, a | 0x40, n);
 				}
@@ -6230,43 +6219,30 @@ int Send_line_info(int Ind, int y)
 
 			/* Start again after the run */
 			x = x1 - 1;
-		}
-		else
-		{
+		} else {
 			/* Normal, single grid */
 			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
 				Packet_printf(&connp->c, "%c%c", c, a & ~0xC0);
-			}
-			else
-			{
-				if (a == 0xFF)
-				{
+			} else {
+				if (a == 0xFF) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
 					Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, 1);
-				}
-				else
-				{
+				} else {
 					/* Normal output */
 					Packet_printf(&connp->c, "%c%c", c, a);
 				}
 			}
 
-			if (Ind2)
-			{
+			if (Ind2) {
 				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0xC0);
-				}
-				else
-				{
-					if (a == 0xFF)
-					{
+				} else {
+					if (a == 0xFF) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
 						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, 1);
-					}
-					else
-					{
+					} else {
 						/* Normal output */
 						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a);
 					}
@@ -6281,8 +6257,92 @@ int Send_line_info(int Ind, int y)
 	return 1;
 }
 
-int Send_mini_map(int Ind, int y, byte *sa, char *sc)
-{
+int Send_line_info_forward(int Ind, int Ind_src, int y) {
+	player_type *p_ptr = Players[Ind], *p_ptr2 = Players[Ind_src];
+	connection_t *connp = Conn[p_ptr->conn];
+	int x, x1, n;
+	char c;
+	byte a;
+#ifdef EXTENDED_TERM_COLOURS
+	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
+	int a_c;
+#endif
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for line info (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	/* Put a header on the packet */
+	Packet_printf(&connp->c, "%c%hd", PKT_LINE_INFO, y);
+
+	/* Each column */
+	for (x = 0; x < 80; x++) {
+		/* Obtain the char/attr pair */
+		c = p_ptr2->scr_info[y][x].c;
+		a = p_ptr2->scr_info[y][x].a;
+
+#ifdef EXTENDED_TERM_COLOURS
+		if (old_colours) {
+		    a_c = a & ~(TERM_BNW | TERM_PVP);
+		    if (a_c == 29 || a_c == 30 || a_c >= 32)
+			a = TERM_WHITE; /* use white to indicate that client needs updating */
+		}
+#endif
+
+		/* Start looking here */
+		x1 = x + 1;
+
+		/* Start with count of 1 */
+		n = 1;
+
+		/* Count repetitions of this grid */
+		while (p_ptr2->scr_info[y][x1].c == c &&
+		    p_ptr2->scr_info[y][x1].a == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
+			/* Increment count and column */
+			n++;
+			x1++;
+		}
+
+		/* RLE if there at least 2 similar grids in a row */
+		if (n >= 2) {
+			/* 4.4.3.1 clients support new RLE */
+			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
+				/* New RLE */
+				Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, n);
+			} else {
+				/* Old RLE */
+				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
+			}
+
+			/* Start again after the run */
+			x = x1 - 1;
+		} else {
+			/* Normal, single grid */
+			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
+				/* Remove 0x40 (TERM_PVP) if the client is old */
+				Packet_printf(&connp->c, "%c%c", c, a & ~0xC0);
+			} else {
+				if (a == 0xFF) {
+					/* Use RLE format as an escape sequence for 0xFF as attr */
+					Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, 1);
+				} else {
+					/* Normal output */
+					Packet_printf(&connp->c, "%c%c", c, a);
+				}
+			}
+		}
+	}
+
+	/* Hack -- Prevent buffer overruns by flushing after each line sent */
+	/* Send_reliable(Players[Ind]->conn); */
+
+	return 1;
+}
+
+int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
@@ -6293,8 +6353,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc)
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for minimap (%d.%d.%d)",
 			Ind, connp->state, connp->id));
@@ -6311,11 +6370,10 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc)
 
 	/* Packet header */
 	Packet_printf(&connp->c, "%c%hd", PKT_MINI_MAP, y);
-     	if (Ind2) Packet_printf(&connp2->c, "%c%hd", PKT_MINI_MAP, y);
+	if (Ind2) Packet_printf(&connp2->c, "%c%hd", PKT_MINI_MAP, y);
 
 	/* Each column */
-	for (x = 0; x < 80; x++)
-	{
+	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */
 		c = sc[x];
 		a = sa[x];
@@ -6327,37 +6385,29 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc)
 		n = 1;
 
 		/* Count repetitions of this grid */
-		while (x1 < 80 && sc[x1] == c && sa[x1] == a)
-		{
+		while (x1 < 80 && sc[x1] == c && sa[x1] == a) {
 			/* Increment count and column */
 			n++;
 			x1++;
 		}
 
 		/* RLE if there at least 2 similar grids in a row */
-		if (n >= 2)
-		{
+		if (n >= 2) {
 			/* 4.4.3.1 clients support new RLE */
-			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5))
-			{
+			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* New RLE */
 				Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, n);
-			}
-			else
-			{
+			} else {
 				/* Old RLE */
 				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
 			}
 
-			if (Ind2)
-			{
+			if (Ind2) {
 				/* 4.4.3.1 clients support new RLE */
-				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5))
-				{
+				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* New RLE */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, n);
-				}
-				else {
+				} else {
 					/* Old RLE */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", c, a | 0x40, n);
 				}
@@ -6365,43 +6415,30 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc)
 
 			/* Start again after the run */
 			x = x1 - 1;
-		}
-		else
-		{
+		} else {
 			/* Normal, single grid */
 			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
 				Packet_printf(&connp->c, "%c%c", c, a & ~0xD0);
-			}
-			else
-			{
-				if (a == 0xFF)
-				{
+			} else {
+				if (a == 0xFF) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
 					Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, 1);
-				}
-				else
-				{
+				} else {
 					/* Normal output */
 					Packet_printf(&connp->c, "%c%c", c, a);
 				}
 			}
 
-			if (Ind2)
-			{
+			if (Ind2) {
 				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0xD0);
-				}
-				else
-				{
-					if (a == 0xFF)
-					{
+				} else {
+					if (a == 0xFF) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
 						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, 1);
-					}
-					else
-					{
+					} else {
 						/* Normal output */
 						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a);
 					}

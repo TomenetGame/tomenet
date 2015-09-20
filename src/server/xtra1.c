@@ -6597,18 +6597,26 @@ void redraw_stuff(int Ind)
 
 	if (p_ptr->redraw & PR_MAP) {
 		p_ptr->redraw &= ~(PR_MAP);
-		prt_map(Ind);
+
+		/* hack */
+		if (p_ptr->esp_link_flags & LINKF_TMP_FMAP) {
+			p_ptr->esp_link_flags &= ~LINKF_TMP_FMAP;
+			prt_map_forward(Ind);
+
+		/* normal */
+		} else {
+			prt_map(Ind);
 
 #ifdef CLIENT_SIDE_WEATHER
-		/* hack: update weather if it was just a panel-change
-		   (ie level-sector) and not a level-change.
-		   Note: this could become like PR_WEATHER_PANEL,
-		   however, PR_ flags are already in use completely atm. */
-		if (p_ptr->panel_changed) player_weather(Ind, FALSE, FALSE, TRUE);
+			/* hack: update weather if it was just a panel-change
+			   (ie level-sector) and not a level-change.
+			   Note: this could become like PR_WEATHER_PANEL,
+			   however, PR_ flags are already in use completely atm. */
+			if (p_ptr->panel_changed) player_weather(Ind, FALSE, FALSE, TRUE);
 #endif
-		p_ptr->panel_changed = FALSE;
+			p_ptr->panel_changed = FALSE;
+		}
 	}
-
 
 	if (p_ptr->redraw & PR_BASIC) {
 		p_ptr->redraw &= ~(PR_BASIC);
