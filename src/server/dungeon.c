@@ -1930,8 +1930,7 @@ static void init_day_and_night() {
  * Handle certain things once every 50 game turns
  */
 
-static void process_world(int Ind)
-{
+static void process_world(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int	i;
 //	int	regen_amount, NumPlayers_old = NumPlayers;
@@ -1961,17 +1960,18 @@ static void process_world(int Ind)
 	    (season_halloween && (istown(&p_ptr->wpos) && (rand_int((in_bree(&p_ptr->wpos) ?
 		HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) * ((3 / NumPlayers) + 1)) == 0))))
 #else /* ..so no longer depending on amount of players in town: */
-	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
+	if (((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
 	    (!season_halloween && istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE) == 0)) ||
 	    (season_halloween && istown(&p_ptr->wpos) &&
 	    (rand_int(in_bree(&p_ptr->wpos) ?
 	    HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) == 0)))
+	    /* avoid admins spawning stuff */
+	    && !(p_ptr->admin_dm || p_ptr->admin_wiz))
 #endif
 	{
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		/* Should we disallow those with MULTIPLY flags to spawn on surface? */
-		if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER))
-		{
+		if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER)) {
 			/* Set the monster generation depth */
 			monster_level = getlevel(&p_ptr->wpos);
 
@@ -1984,8 +1984,7 @@ static void process_world(int Ind)
 	 * object, and stop any resting. -LM-
 	 */
 	/* Probably better done in process_player_end?	- Jir - */
-	if (!(turn % 3000) && (p_ptr->black_breath))
-	{
+	if (!(turn % 3000) && (p_ptr->black_breath)) {
 		msg_print(Ind, "\377WThe Black Breath saps your soul!");
 
 		/* alert to the neighbors also */
@@ -1996,8 +1995,7 @@ static void process_world(int Ind)
 
 	/* Cold Turkey  */
 	i = (p_ptr->csane << 7) / p_ptr->msane;
-	if (!(turn % 4200) && !magik(i))
-	{
+	if (!(turn % 4200) && !magik(i)) {
 		msg_print(Ind, "\377rA flashback storms your head!");
 
 		/* alert to the neighbors also */
@@ -2008,12 +2006,12 @@ static void process_world(int Ind)
 	}
 
 #ifdef GHOST_FADING
-		if (p_ptr->ghost && !p_ptr->admin_dm &&
-//			!(turn % GHOST_FADING))
-//			!(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
-			!(turn % (GHOST_FADING / p_ptr->lev * 50)))
-//			(rand_int(10000) < p_ptr->lev * p_ptr->lev))
-			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L, "fading", TRUE, TRUE, FALSE);
+	if (p_ptr->ghost && !p_ptr->admin_dm &&
+//	    !(turn % GHOST_FADING))
+//	    !(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
+	    !(turn % (GHOST_FADING / p_ptr->lev * 50)))
+//		(rand_int(10000) < p_ptr->lev * p_ptr->lev))
+		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L, "fading", TRUE, TRUE, FALSE);
 #endif	// GHOST_FADING
 
 }
@@ -2022,8 +2020,7 @@ static void process_world(int Ind)
  * Quick hack to allow mimics to retaliate with innate powers	- Jir -
  * It's high time we redesign auto-retaliator	XXX
  */
-static int retaliate_mimic_power(int Ind, int choice)
-{
+static int retaliate_mimic_power(int Ind, int choice) {
 	player_type *p_ptr = Players[Ind];
 	int i, k, num = 3;
 
