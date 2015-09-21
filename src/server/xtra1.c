@@ -2092,8 +2092,9 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		case 652:
 			p_ptr->resist_blind = TRUE; csheet_boni->cb[4] |= CB5_RBLND;
 			break;
-		/* Mist/fume has feather falling */
-		//(note: mist giant and weird fume already have CAN_FLY)
+		/* Mists/fumes have feather falling */
+		//(note: mist giant and weird fume already have CAN_FLY even, covering FF)
+		/* Dark mist */
 		case 1064:
 			p_ptr->feather_fall = TRUE; csheet_boni->cb[4] |= CB5_RFALL;
 			break;
