@@ -430,7 +430,7 @@ F:EVIL
 O:EVIL
 
 N:33:Master Thief
-G:.:b
+G:*:b
 I:+20:%150d%150:+0:+50:=0
 W:+15:8:%90:%250:A
 B:*:EAT_ITEM:+2d+2
