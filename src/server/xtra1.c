@@ -2001,6 +2001,8 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 
 			/* as all mists/fumes: FF */
 			p_ptr->feather_fall = TRUE; csheet_boni->cb[4] |= CB5_RFALL;
+			p_ptr->pass_trees = TRUE; csheet_boni->cb[12] |= CB13_XTREE;
+			//note: we use ff+pt combo instead of lev, so they can't easily pass water!
 
 			/* only for true vampires: obtain special form boni: */
 			if (p_ptr->prace == RACE_VAMPIRE) {
@@ -2097,6 +2099,8 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		/* Dark mist */
 		case 1064:
 			p_ptr->feather_fall = TRUE; csheet_boni->cb[4] |= CB5_RFALL;
+			p_ptr->pass_trees = TRUE; csheet_boni->cb[12] |= CB13_XTREE;
+			//note: we use ff+pt combo instead of lev, so they can't easily pass water!
 			break;
 	}
 
@@ -6320,11 +6324,13 @@ void calc_boni(int Ind) {
 		}
 	} /* suppress_message */
 
-	/* hack: 0 bpr */
+	/* hack: no physical attacks */
 	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
 	    (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW) ||
 	    never_blow)
 		p_ptr->num_blow = 0;
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)
+		p_ptr->num_fire = 0;
 }
 
 

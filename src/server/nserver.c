@@ -7443,7 +7443,7 @@ int Send_skills(int Ind) {
 	skills[7] = p_ptr->skill_dev;
 
 	/* Number of blows */
-	skills[8] = (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ? 0 : p_ptr->num_blow;
+	skills[8] = p_ptr->num_blow;
 	skills[9] = p_ptr->num_fire;
 	skills[10] = p_ptr->num_spell;
 
