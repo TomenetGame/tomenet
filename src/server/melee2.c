@@ -1453,6 +1453,9 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		/* Ghosts cannot intercept */
 		if (q_ptr->ghost) continue;
 
+		/* Vampire in mist form cannot intercept */
+		if (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST) continue;
+
 		/* can't intercept while in wraithform if monster isn't */
 		if (q_ptr->tim_wraith &&
 		    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
