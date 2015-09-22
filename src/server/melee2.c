@@ -7895,11 +7895,6 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					did_take_item = TRUE;
 #endif
 
-					/* the_sandman - logs monsters pick_up? :S (to track items going poof
-					 * without any explanation(s)... To reduce the amount of spammage, lets
-					 * just log the owned items... All the housed items are owned anyway */
-					if (o_ptr->owner) s_printf("ITEM_TAKEN: %s by %s\n", o_name, m_name_real);
-
 					/* Describe observable situations */
 					if (player_has_los_bold(Ind, ny, nx)) {
 						/* Dump a message */
@@ -7911,11 +7906,21 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
  #ifdef MONSTER_ITEM_CONSUME
 					if (magik(MONSTER_ITEM_CONSUME)) {
+						/* the_sandman - logs monsters pick_up? :S (to track items going poof
+						 * without any explanation(s)... To reduce the amount of spammage, lets
+						 * just log the owned items... All the housed items are owned anyway */
+						if (o_ptr->owner) s_printf("ITEM_TAKEN_DELETE: %s by %s\n", o_name, m_name_real);
+
 						/* Delete the object */
 						delete_object_idx(this_o_idx, TRUE);
 					} else
  #endif	// MONSTER_ITEM_CONSUME
 					{
+						/* the_sandman - logs monsters pick_up? :S (to track items going poof
+						 * without any explanation(s)... To reduce the amount of spammage, lets
+						 * just log the owned items... All the housed items are owned anyway */
+						if (o_ptr->owner) s_printf("ITEM_TAKEN: %s by %s\n", o_name, m_name_real);
+
 						/* paranoia */
 						o_ptr->held_m_idx = 0;
 
@@ -7938,6 +7943,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 						m_ptr->hold_o_idx = this_o_idx;
 					}
 #else
+					/* the_sandman - logs monsters pick_up? :S (to track items going poof
+					 * without any explanation(s)... To reduce the amount of spammage, lets
+					 * just log the owned items... All the housed items are owned anyway */
+					if (o_ptr->owner) s_printf("ITEM_TAKEN_DELETE: %s by %s\n", o_name, m_name_real);
+
 					/* Delete the object */
 					delete_object(wpos, ny, nx, TRUE);
 #endif	// MONSTER_INVENTORY
