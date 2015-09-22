@@ -14072,6 +14072,9 @@ Istar schools:
 
     Essence of Speed
                     Hastes you for a while.                         (project)
+                    While istari can gain up to +19 speed from it and even up
+                    to +24 if they have maxed 'Spell-power', for all other
+                    classes the effect will cap at +10.
                     Required skill level for first spell level: 15.
 
     Mass Warp       Teleports away all monsters within sight.
