@@ -1952,6 +1952,17 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 -Some item abilities are currently not available/implemented:
  LEVELS.
 
+-Monsters that pick up an item have a 30% chance to NOT drop it again on death.
+
+-The dungeon floor/world sector you are in, be it on the world surface, in town
+ or in the dungeon, has a chance of slowly spawning new monsters over time.
+ Those will always be awake.
+ The rules are the same as for when a dungeon level gets generated:
+ Everything that fits the dungeon's theme (if any) is allowed, the monster
+ level might occasionally spike out-of-depth, up to 40 levels above the floor
+ level. This can be especially nasty because these spawns will not change the
+ floor feeling, so you won't notice it except when you spot the monster.
+
 
 
 (1) Introduction
