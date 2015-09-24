@@ -2026,8 +2026,9 @@ W:20:40:140:0
 P:0:4d6:-22:-25:0
 F:SPEED | STR | WIS | CHR | ESP_UNDEAD | HIDE_TYPE
 F:BRAND_FIRE | SEE_INVIS | SLOW_DIGEST | FREE_ACT |
-F:VAMPIRIC | NO_TELE | AGGRAVATE | WRAITH | INVIS |
+F:VAMPIRIC | NO_TELE | AGGRAVATE | INVIS |
 F:CURSED | HEAVY_CURSE | DG_CURSE | SHOW_MODS | CLONE |
+#WRAITH | -- disabled for VAMPIRES_INV_CURSED feature
 D:Dark flames wreath the naked steel of the Witch-King of Angmar.
 D:A mighty curse to all those who wield it apart from its master,
 D:the torture of the wraithworld awaits those who dare.
