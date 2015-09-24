@@ -8684,7 +8684,7 @@ MANA ('It affects your mana capacity.')
         of praying.
         MANA affects your complete mana pool, including the additional MP
         (mana points) a character gained from 'Magic' skill.
-LIFE ('It affects your hit points')
+LIFE ('It affects your hit points.')
         Will increase your total hit points by +x0%. Example:
         Sword of life (+2) increases your HP by 20%.
         LIFE items _add_ to each other, they aren't multiplied.
@@ -8696,10 +8696,10 @@ LIFE ('It affects your hit points')
         HP a character gained from 'Health' skill.
         +LIFE on randarts will only affect player characters if they meet
         certain conditions, see server options in-game via ~d for details.
-AGGRAVATE ('It aggravates nearby creatures')
+AGGRAVATE ('It aggravates nearby creatures.')
         Wakes up all monsters in whose radius of awareness you are.
         (Does not haste them as scrolls do, compare to (5.9)).
-LUCK ('It affects your luck')
+LUCK ('It affects your luck.')
         If you are lucky, your chance to find better items increases.
         Luck caps at 40, having higher bonus won't help any more.
         The higher your luck is, the more diminishing is the effect of
@@ -8752,7 +8752,7 @@ CRIT    ('It affects your ability to score critical hits.')
         will affect all of your physical attacks, including throwing items.
         For more information about critical strikes and attacks, see the
         description of the "Critical-strike" skill in (6.2).
-CHAOTIC ('It produces chaotic effects')
+CHAOTIC ('It produces chaotic effects.')
         On hitting, you have a 50% chance to do one of the following:
         a) drain life (VAMPIRIC, see (5.15)) (very likely).
         b) earthquake (see (5.13) for details).
@@ -8767,7 +8767,9 @@ CHAOTIC ('It produces chaotic effects')
            mimicry users.
         Note that most of these have an *extremely* low chance to occur.
         Most of the time the vampirism or confusion effect is chosen.
-IMPACT ('It can cause earthquakes')
+CLONE ('It can clone monsters.')
+        Has a 1 in 1000 chance to clone the monster it hits.
+IMPACT ('It can cause earthquakes.')
         Causes earthquakes if the damage is > 50. See (5.13) for details about
         earthquakes.
         (If enabled in the server settings, it can be suppressed with
@@ -8775,7 +8777,7 @@ IMPACT ('It can cause earthquakes')
         Usually, !E only works on the artifact "Grond".)
 WOUNDING ('It is very sharp and makes your foes bleed.')
         Has additional to-hit/to-dam bonus.
-FUEL_LITE ('It provides light when fueled')
+FUEL_LITE ('It provides light when fueled.')
         A light source that needs to be fueled, otherwise it runs out.
         WARNING:
         If this item provides other abilities besides emitting light, be aware
