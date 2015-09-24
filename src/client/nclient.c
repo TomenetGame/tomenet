@@ -3786,11 +3786,11 @@ void apply_auto_inscriptions(int slot, bool force) {
 		do {
 			ex = strstr(ex_buf, "?");
 			if (ex == NULL) {
-			if (strstr(ex2, ex_buf)) found = TRUE;
+				if (strstr(ex2, ex_buf)) found = TRUE;
 				break;
-		} else {
-			/* get partial string up to before the '?' */
-			strncpy(ex_buf2, ex_buf, ex - ex_buf);
+			} else {
+				/* get partial string up to before the '?' */
+				strncpy(ex_buf2, ex_buf, ex - ex_buf);
 				ex_buf2[ex - ex_buf] = '\0';
 				/* test partial string for match */
 				ex2 = strstr(ex2, ex_buf2);
