@@ -81,8 +81,7 @@ static void process_weather_control(void);
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
-cptr value_check_aux1(object_type *o_ptr)
-{
+cptr value_check_aux1(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Artifacts */
@@ -166,8 +165,7 @@ cptr value_check_aux1(object_type *o_ptr)
 	return "average";
 }
 
-cptr value_check_aux1_magic(object_type *o_ptr)
-{
+cptr value_check_aux1_magic(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 
@@ -230,8 +228,7 @@ cptr value_check_aux1_magic(object_type *o_ptr)
 /*
  * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
  */
-cptr value_check_aux2(object_type *o_ptr)
-{
+cptr value_check_aux2(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Cursed items (all of them) */
@@ -287,8 +284,7 @@ cptr value_check_aux2(object_type *o_ptr)
 	return (NULL);
 }
 
-cptr value_check_aux2_magic(object_type *o_ptr)
-{
+cptr value_check_aux2_magic(object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 
@@ -350,18 +346,17 @@ cptr value_check_aux2_magic(object_type *o_ptr)
 /*
  * Sense the inventory
  */
-static void sense_inventory(int Ind)
-{
+static void sense_inventory(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	int		i;
+	int i;
 
 	bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE;
 	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE;
 	bool ok_curse = FALSE;
 
-	cptr	feel;
-	bool	felt_heavy;
+	cptr feel;
+	bool felt_heavy;
 
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
@@ -589,6 +584,11 @@ static void sense_inventory(int Ind)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		/* in case the pseudo-id inscription triggers a forced auto-inscription! :)
+		   Added to allow inscribing 'good' ammo !k or so (ethereal ammo) */
+		handle_stuff(Ind);
+		Send_apply_auto_insc(Ind, i);
 	}
 }
 
