@@ -1376,6 +1376,7 @@ void do_cmd_drink_fountain(int Ind) {
 		if (cs_ptr->sc.fountain.rest <= 0) {
 			cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
 			cs_erase(c_ptr, cs_ptr);
+			msg_print(Ind, "The fountain is dried out.");
 		}
 		return;
 	}
@@ -1477,6 +1478,7 @@ void do_cmd_drink_fountain(int Ind) {
 	if (cs_ptr->sc.fountain.rest <= 0) {
 		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
 		cs_erase(c_ptr, cs_ptr);
+		msg_print(Ind, "The fountain is dried out.");
 	}
 
 #ifdef FOUNTAIN_GUARDS
