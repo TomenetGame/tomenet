@@ -111,8 +111,13 @@ cptr value_check_aux1(object_type *o_ptr) {
 
 		/* Normal */
 
-		/* All exploding or ego-ammo is excellent */
-		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) return "excellent";
+		/* All exploding or ego-ammo is excellent.. */
+		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) {
+			/* ..except for zero-money ego: Backbiting ammo! */
+			if (o_ptr->name2 && !e_info[o_ptr->name2].cost) return "worthless";
+			if (o_ptr->name2b && !e_info[o_ptr->name2b].cost) return "worthless";
+			return "excellent";
+		}
 
 		if (!object_value(0, o_ptr)) return "worthless";
 		if (object_value(0, o_ptr) < 4000) return "good";
