@@ -6117,6 +6117,8 @@ static void process_various(void)
 			if (r_ptr->flags1 & RF1_QUESTOR) continue;
 			/* ..hardcoding them instead: */
 			if (r_ptr->level >= 98) continue; /* Not Michael either */
+			/* Redundant, since he's a dungeon boss, but anyway: (He's linked to Sauron) */
+			if (i == RI_DOL_GULDUR) continue;
 
 			if (r_ptr->flags7 & RF7_NAZGUL) continue; /* No nazguls */
 
