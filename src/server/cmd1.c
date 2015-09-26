@@ -226,7 +226,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 		/* _If_ a critical hit is scored then it will deal
 		more damage if the weapon is heavier */
 		k = weight + randint(700) + 500 - (10000 / (BOOST_CRIT(p_ptr->xtra_crit + o_crit) + 20));
-                if (allow_skill_crit) k += randint(get_skill_scale(p_ptr, SKILL_CRITS, 900));
+		if (allow_skill_crit) k += randint(get_skill_scale(p_ptr, SKILL_CRITS, 900));
 
 		if (k < 400) {
 			msg_print(Ind, "It was a good hit!");
@@ -331,7 +331,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 
 	/* Apply brands from mimic monster forms */
-        if (p_ptr && p_ptr->body_monster) {
+	if (p_ptr && p_ptr->body_monster) {
 #if 0
 		switch (pr_ptr->r_ptr->d_char) {
 			/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
@@ -352,7 +352,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		if ((!pr_ptr->flags4 & RF4_ARROW_1) && is_ammo(o_ptr->tval))
 			apply_monster_brands = FALSE;
 		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
-        	/* If monster is fighting without weapons, the player gets the brand(s) only if
+		/* If monster is fighting without weapons, the player gets the brand(s) only if
 		he fights with bare hands/martial arts */
 		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
 		gets the brand(s) on ranged attacks */
@@ -907,7 +907,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		if ((!pr_ptr->flags4 & RF4_ARROW_1) && is_ammo(o_ptr->tval))
 			apply_monster_brands = FALSE;
 		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
-        	/* If monster is fighting without weapons, the player gets the brand(s) only if
+		/* If monster is fighting without weapons, the player gets the brand(s) only if
 		he fights with bare hands/martial arts */
 		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
 		gets the brand(s) on ranged attacks */
@@ -924,7 +924,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 		/* Get monster brands. If monster has several, choose one randomly */
 		for (i = 0; i < 4; i++) {
-		        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
+			if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
 				switch (pr_ptr->blow[i].effect) {
 				case RBE_ACID:
 					monster_brands++;
@@ -961,14 +961,14 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	}
 
 	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
-        for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-                e_ptr = &p_ptr->inventory[i];
-                /* k_ptr = &k_info[e_ptr->k_idx];
-                pval = e_ptr->pval; not needed */
-	        /* Skip missing items */
-        	if (!e_ptr->k_idx) continue;
-	        /* Extract the item flags */
-                object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		e_ptr = &p_ptr->inventory[i];
+		/* k_ptr = &k_info[e_ptr->k_idx];
+		pval = e_ptr->pval; not needed */
+		/* Skip missing items */
+		if (!e_ptr->k_idx) continue;
+		/* Extract the item flags */
+		object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
 
 		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
@@ -1029,13 +1029,13 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	if (f1 & TR1_BRAND_COLD) brands_total++;
 	if (f1 & TR1_BRAND_POIS) brands_total++;
 
-        /* Avoid contradictionary brands,
-           let one of them randomly 'flicker up' on striking, suppressing the other */
+	/* Avoid contradictionary brands,
+	   let one of them randomly 'flicker up' on striking, suppressing the other */
 	if ((f1 & TR1_BRAND_FIRE) && (f1 & TR1_BRAND_COLD)) {
-                if (magik(50)) f1 &= ~TR1_BRAND_FIRE;
-                else f1 &= ~TR1_BRAND_COLD;
-                /* Hack - Make it still say 'blabla is hit by THE ELEMENTS' */
-                if (brands_total != 5) brands_total--;
+		if (magik(50)) f1 &= ~TR1_BRAND_FIRE;
+		else f1 &= ~TR1_BRAND_COLD;
+		/* Hack - Make it still say 'blabla is hit by THE ELEMENTS' */
+		if (brands_total != 5) brands_total--;
 	}
 
 	strcpy(brand_msg,q_ptr->name);
@@ -1051,46 +1051,37 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		break;
 		/* fully combined messages for 2 brands */
 		case 2:
-		if (f1 & TR1_BRAND_ACID)
-		{
+		if (f1 & TR1_BRAND_ACID) {
 			strcat(brand_msg,"covered in acid");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_COLD)
-		{
+		if (f1 & TR1_BRAND_COLD) {
 			/* cold is grammatically combined with acid since the verbum 'covered' is identical */
-			if (brand_msgs_added > 0)
-			{
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and frost");
 			    else strcat(brand_msg,", frost");
 			}
 			else strcat(brand_msg,"covered with frost");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_ELEC)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_ELEC) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"struck by electricity");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_FIRE)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_FIRE) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"enveloped in flames");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_POIS)
-		{
-			if (brand_msgs_added > 0)
-			{
+		if (f1 & TR1_BRAND_POIS) {
+			if (brand_msgs_added > 0) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
@@ -1101,45 +1092,36 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		/* shorter messages if more brands have to fit in the message-line */
 		case 3:		case 4:
 		strcat(brand_msg,"hit by ");
-		if (f1 & TR1_BRAND_ACID)
-		{
+		if (f1 & TR1_BRAND_ACID) {
 			strcat(brand_msg,"acid");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_COLD)
-		{
-			if (brand_msg[0])
-			{
+		if (f1 & TR1_BRAND_COLD) {
+			if (brand_msg[0]) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"frost");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_ELEC)
-		{
-			if (brand_msg[0])
-			{
+		if (f1 & TR1_BRAND_ELEC) {
+			if (brand_msg[0]) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"electricity");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_FIRE)
-		{
-			if (brand_msg[0])
-			{
+		if (f1 & TR1_BRAND_FIRE) {
+			if (brand_msg[0]) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
 			strcat(brand_msg,"flames");
 			brand_msgs_added++;
 		}
-		if (f1 & TR1_BRAND_POIS)
-		{
-			if (brand_msg[0])
-			{
+		if (f1 & TR1_BRAND_POIS) {
+			if (brand_msg[0]) {
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
 			}
@@ -1153,15 +1135,13 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		break;
 	}
 	strcat(brand_msg,"!");
-	if (brands_total > 0)
-	{
+	if (brands_total > 0) {
 		//msg_format(Ind, brand_msg, q_ptr->name);
 	}
 	else strcpy(brand_msg,"");
 #endif
 	/* Some "weapons" and "ammo" do extra damage */
-	switch (o_ptr->tval)
-	{
+	switch (o_ptr->tval) {
 /*		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
@@ -1278,98 +1258,70 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 
 			/* Brand (Acid) */
-			if (f1 & TR1_BRAND_ACID)
-			{
+			if (f1 & TR1_BRAND_ACID) {
 				/* Notice immunity */
-				if (q_ptr->immune_acid)
-				{
-				}
-
-				else if (q_ptr->resist_acid)
-				{
+				if (q_ptr->immune_acid) ;
+				else if (q_ptr->resist_acid) {
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else
-				{
+				else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
 
 			/* Brand (Elec) */
-			if (f1 & TR1_BRAND_ELEC)
-			{
+			if (f1 & TR1_BRAND_ELEC) {
 				/* Notice immunity */
-				if (q_ptr->immune_elec)
-				{
-				}
-
-				else if (q_ptr->resist_elec)
-				{
+				if (q_ptr->immune_elec) ;
+				else if (q_ptr->resist_elec) {
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else
-				{
+				else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
 
 			/* Brand (Fire) */
-			if (f1 & TR1_BRAND_FIRE)
-			{
+			if (f1 & TR1_BRAND_FIRE) {
 				/* Notice immunity */
-				if (q_ptr->immune_fire)
-				{
-				}
-
-				else if (q_ptr->resist_fire)
-				{
+				if (q_ptr->immune_fire) ;
+				else if (q_ptr->resist_fire) {
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else
-				{
+				else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
 
 			/* Brand (Cold) */
-			if (f1 & TR1_BRAND_COLD)
-			{
+			if (f1 & TR1_BRAND_COLD) {
 				/* Notice immunity */
-				if (q_ptr->immune_cold)
-				{
-				}
-
-				else if (q_ptr->resist_cold)
-				{
+				if (q_ptr->immune_cold) ;
+				else if (q_ptr->resist_cold) {
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else
-				{
+				else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
 
 			/* Brand (Poison) */
-			if (f1 & TR1_BRAND_POIS)
-			{
+			if (f1 & TR1_BRAND_POIS) {
 				/* Notice immunity */
-				if (q_ptr->immune_poison)
-				{
-				}
-				else if (q_ptr->resist_pois)
-				{
+				if (q_ptr->immune_poison) ;
+				else if (q_ptr->resist_pois) {
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				{
+				else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
@@ -1398,8 +1350,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
  * Searches for hidden things.                  -RAK-
  */
  
-void search(int Ind)
-{
+void search(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int           y, x, chance;
 
@@ -1422,13 +1373,10 @@ void search(int Ind)
 
 	/* Search the nearby grids, which are always in bounds */
 	
-	for (y = (p_ptr->py - 1); y <= (p_ptr->py + 1); y++)
-	{
-		for (x = (p_ptr->px - 1); x <= (p_ptr->px + 1); x++)
-		{
+	for (y = (p_ptr->py - 1); y <= (p_ptr->py + 1); y++) {
+		for (x = (p_ptr->px - 1); x <= (p_ptr->px + 1); x++) {
 			/* Sometimes, notice things */
-			if (rand_int(100) < chance)
-			{
+			if (rand_int(100) < chance) {
 				/* Access the grid */
 				c_ptr = &zcave[y][x];
 
@@ -1436,8 +1384,7 @@ void search(int Ind)
 				o_ptr = &o_list[c_ptr->o_idx];
 
 				/* Secret door */
-				if (c_ptr->feat == FEAT_SECRET)
-				{
+				if (c_ptr->feat == FEAT_SECRET) {
 					struct c_special *cs_ptr;
 
 					/* Message */
@@ -1462,8 +1409,7 @@ void search(int Ind)
 				/* Invisible trap */
 //				if (c_ptr->feat == FEAT_INVIS)
 				if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
-					if (!cs_ptr->sc.trap.found)
-					{
+					if (!cs_ptr->sc.trap.found) {
 						/* Pick a trap */
 						pick_trap(wpos, y, x);
 
@@ -1486,12 +1432,10 @@ void search(int Ind)
 				}
 
 				/* Search chests */
-				else if (o_ptr->tval == TV_CHEST)
-				{
+				else if (o_ptr->tval == TV_CHEST) {
 					/* Examine chests for traps */
 //					if (!object_known_p(Ind, o_ptr) && (t_info[o_ptr->pval]))
-					if (!object_known_p(Ind, o_ptr) && (o_ptr->pval))
-					{
+					if (!object_known_p(Ind, o_ptr) && (o_ptr->pval)) {
 						/* Message */
 						msg_print(Ind, "You have discovered a trap on the chest!");
 
@@ -1847,9 +1791,9 @@ void carry(int Ind, int pickup, int confirm) {
 //					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 				}
-		        /* exception for amulet of the highlands for tournaments */
-    			} else if (o_ptr->tval == TV_AMULET &&
-    			    (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2)) {
+			/* exception for amulet of the highlands for tournaments */
+			} else if (o_ptr->tval == TV_AMULET &&
+			    (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2)) {
 				o_ptr->mode = p_ptr->mode;
 			} else {
 				msg_format(Ind, "You cannot take items of %s players.", compat_pomode(Ind, o_ptr));
@@ -2000,11 +1944,11 @@ void carry(int Ind, int pickup, int confirm) {
 			/* Tell the client */
 			//Send_floor(Ind, 0);
 
-                        /* Note the spot */
-                        note_spot_depth(wpos, p_ptr->py, p_ptr->px);
+			/* Note the spot */
+			note_spot_depth(wpos, p_ptr->py, p_ptr->px);
 
-	                /* Draw the spot */
-                        everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+			/* Draw the spot */
+			everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
 
 			/* Refresh */
 			p_ptr->window |= PW_EQUIP;
@@ -2388,17 +2332,17 @@ void carry(int Ind, int pickup, int confirm) {
 						case ART_STONE_LORE:
 							i_ptr->timeout = 10;
 
-		                                        if (20 <= p_ptr->csp) {
-		                                                p_ptr->csp -= 20;
-		                                                if (rand_int(5) == 0) (void)set_confused(Ind, p_ptr->confused + randint(5));
-		                                        } else {
+							if (20 <= p_ptr->csp) {
+								p_ptr->csp -= 20;
+								if (rand_int(5) == 0) (void)set_confused(Ind, p_ptr->confused + randint(5));
+							} else {
 								p_ptr->csp = 0;
 								p_ptr->csp_frac = 0;
 								msg_print(Ind, "You do not have enough mana to control the stone!");
 								(void)set_confused(Ind, p_ptr->confused + 5 + randint(5));
-			                                }
-                    			            	p_ptr->redraw |= (PR_MANA);
-			                                take_hit(Ind, damroll(1, 12), "perilous secrets", 0);
+							}
+							p_ptr->redraw |= (PR_MANA);
+							take_hit(Ind, damroll(1, 12), "perilous secrets", 0);
 							break;
 						}
 
@@ -2847,7 +2791,7 @@ void carry(int Ind, int pickup, int confirm) {
 	if (c_ptr->feat == FEAT_DEEP_WATER &&
 	    TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
 //			magik(WATER_ITEM_DAMAGE_CHANCE))
-	    magik(3) && !p_ptr->levitate && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50)))
+	    magik(3) && !p_ptr->levitate && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50))) 
 	{
 		if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
 			inven_damage(Ind, set_water_destroy, 1);
@@ -2875,10 +2819,8 @@ void do_cmd_force_stack(int Ind, int item) {
  * Always miss 5% of the time, Always hit 5% of the time.
  * Otherwise, match trap power against player armor.
  */
-static int check_hit(int Ind, int power)
-{
+static int check_hit(int Ind, int power) {
 	player_type *p_ptr = Players[Ind];
-
 	int k, ac;
 
 	/* Percentile dice */
@@ -4915,9 +4857,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 
 			else if (chaos_effect == 4) {
 				if (!(r_ptr->flags9 & RF9_IM_TELE) &&
-	                            !(r_ptr->flags3 & RF3_RES_TELE) &&
-    	    	                    !(r_ptr->flags1 & RF1_UNIQUE)) {
-    	    	                	if (m_ptr->level > randint(100)) {
+				    !(r_ptr->flags3 & RF3_RES_TELE) &&
+				    !(r_ptr->flags1 & RF1_UNIQUE)) {
+					if (m_ptr->level > randint(100)) {
 						if (teleport_away(c_ptr->m_idx, 50)) {
 							msg_format(Ind, "%^s disappears!", m_name);
 							num = p_ptr->num_blow + 1; /* Can't hit it anymore! */
@@ -7525,8 +7467,7 @@ static bool run_test(int Ind) {
 /*
  * Take one step along the current "run" path
  */
-void run_step(int Ind, int dir, char *consume_full_energy)
-{
+void run_step(int Ind, int dir, char *consume_full_energy) {
 	player_type *p_ptr = Players[Ind];
 	int prev_dir;
 
