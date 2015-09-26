@@ -10174,6 +10174,7 @@ void inverse_cursed(object_type *o_ptr) {
 		if (o_ptr->to_h > 10) o_ptr->to_h = 10;
 		if (o_ptr->to_d > 10) o_ptr->to_d = 10;
 	}
+
 	/* reverse AC */
 	if (o_ptr->to_a < 0) {
 		o_ptr->to_a_org = o_ptr->to_a;
@@ -10184,6 +10185,9 @@ void inverse_cursed(object_type *o_ptr) {
 		if (o_ptr->to_a > 30) o_ptr->to_a = 30;
  #endif
 	}
+	/* non-armour doesn't get exaggerating ac boni */
+	if (!is_armour(o_ptr->tval) && o_ptr->to_a > 15) o_ptr->to_a = 15;
+
 	/* reverse +pval/bpval */
 	if (o_ptr->pval < 0) {
 		o_ptr->pval_org = o_ptr->pval;
