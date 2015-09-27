@@ -1022,7 +1022,7 @@ static void load_prefs(void)
 	GetPrivateProfileString("Online", "meta", "", meta_address, MAX_CHARS - 1, ini_file);
 
 	/* Pull nick/pass */
-	GetPrivateProfileString("Online", "nick", "PLAYER", nick, 70, ini_file);
+	GetPrivateProfileString("Online", "nick", "", nick, 70, ini_file);
 	GetPrivateProfileString("Online", "pass", "", pass, 19, ini_file); //default was 'passwd', but players should really be forced to make up different passwords
 	cfg_game_port = GetPrivateProfileInt("Online", "port", 18348, ini_file);
 	cfg_client_fps = GetPrivateProfileInt("Online", "fps", 100, ini_file);
