@@ -2208,6 +2208,21 @@ void do_slash_cmd(int Ind, char *message) {
 					c_acc = GetAccount(message2 + 6, NULL, FALSE);
 					if (!c_acc) {
 						msg_print(Ind, "\377oNo character or account of that name exists.");
+						/* automatically delete old messages that we have written to this receipient which no longer exists */
+						strcpy(tname, message2 + 6);
+						for (i = 0; i < MAX_NOTES; i++) {
+							/* search for pending notes of this player */
+							if ((!strcmp(priv_note_sender[i], p_ptr->name) ||
+							    !strcmp(priv_note_sender[i], p_ptr->accountname)) &&
+							    !strcmp(priv_note_target[i], tname)) {
+								/* found a matching note */
+								notes++;
+								strcpy(priv_note_sender[i], "");
+								strcpy(priv_note_target[i], "");
+								strcpy(priv_note[i], "");
+							}
+						}
+						if (notes) msg_format(Ind, "\377oAutomatically deleted %d notes adressed to this receipient.", notes);
 						return;
 					}
 					KILL(c_acc, struct account);
