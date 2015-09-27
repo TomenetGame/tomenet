@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. September 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 27. September 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -1443,13 +1443,13 @@ The # inscription:
 
 Items that induce random teleportation, like a 'ring of teleportation' or
 'weapon of the thunderlords':
-    If the item is _not cursed_ then you may inscribe it with two dots '..' to
+..  If the item is _not cursed_ then you may inscribe it with two dots '..' to
     prevent it from teleporting you! In order for the inscription to take
     effect in case you already have it equipped you will need to take it off
     and wield it again.
     The two dots can appear anywhere in the inscription, as long as they are
     not separated from each other. Example:
-    A Long Sword Of The Thunderlords (2d5) (+10,+15) {NxFAReg..}
+    A Long Sword Of The Thunderlords (2d5) (+10,+15) {NxCaFALevReg..}
 
 Items that 'can cause Earthquakes':
     !E          Prevents the item from causing an earthquake. This usually
