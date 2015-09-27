@@ -3918,7 +3918,7 @@ static int Receive_login(int ind) {
 		KILL(acc, struct account);
 
 		if (!connp->nick[0]) {
-			Destroy_connection(ind, "You need to enter an account name and password!");
+			Destroy_connection(ind, "You need to enter a name and password! If you're a new player, just enter a name and password of your choice!");
 			return -1;
 		}
 		if (!connp->pass[0]) {
