@@ -4238,9 +4238,9 @@ void rename_character(char *pnames){
 
 	Ind = ++NumPlayers;
 
-        /* Allocate memory for him */
-        MAKE(Players[Ind], player_type);
-        C_MAKE(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+	/* Allocate memory for him */
+	MAKE(Players[Ind], player_type);
+	C_MAKE(Players[Ind]->inventory, INVEN_TOTAL, object_type);
 	p_ptr = Players[Ind];
 
 	/* extract old+new name from 'pnames' */
@@ -4266,8 +4266,8 @@ void rename_character(char *pnames){
 			if (!load_player(Ind)) {
 				/* bad fail */
 				s_printf("rename_character: load_player '%s' failed\n", pname);
-			        C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
-			        KILL(Players[Ind], player_type);
+				C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+				KILL(Players[Ind], player_type);
 				NumPlayers--;
 				return;
 			}
@@ -4277,8 +4277,8 @@ void rename_character(char *pnames){
 			if (!process_player_name(Ind, TRUE)) {
 				/* done (failure) */
 				s_printf("rename_character: bad new name '%s'\n", nname);
-			        C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
-			        KILL(Players[Ind], player_type);
+				C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+				KILL(Players[Ind], player_type);
 				NumPlayers--;
 				return;
 			}
@@ -4302,8 +4302,8 @@ void rename_character(char *pnames){
 
 			/* done (success) */
 			s_printf("rename_character: success '%s' -> '%s'\n", pname, nname);
-		        C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
-		        KILL(Players[Ind], player_type);
+			C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+			KILL(Players[Ind], player_type);
 			NumPlayers--;
 
 			/* update live player */
@@ -4329,15 +4329,15 @@ void rename_character(char *pnames){
 
 	/* free temporary player */
 	s_printf("rename_character: name not found\n");
-        C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
-        KILL(Players[Ind], player_type);
+	C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+	KILL(Players[Ind], player_type);
 	NumPlayers--;
 }
 
 /*
  *  Erase a player by charfile-name - C. Blue
  */
-void erase_player_name(char *pname){
+void erase_player_name(char *pname) {
 	int slot;
 	hash_entry *ptr, *pptr = NULL;
 	object_type *o_ptr;
@@ -4359,13 +4359,13 @@ void erase_player_name(char *pname){
 					if (streq(parties[i].owner, ptr->name)) {
 						s_printf("Disbanding party: %s\n",parties[i].name);
 						del_party(i);
-	        				/* remove pending notes to his party -C. Blue */
-					        for (j = 0; j < MAX_PARTYNOTES; j++) {
-					                if (!strcmp(party_note_target[j], parties[i].name)) {
-			                		        strcpy(party_note_target[j], "");
-					                        strcpy(party_note[j], "");
-					                }
-					        }
+						/* remove pending notes to his party -C. Blue */
+						for (j = 0; j < MAX_PARTYNOTES; j++) {
+							if (!strcmp(party_note_target[j], parties[i].name)) {
+								strcpy(party_note_target[j], "");
+								strcpy(party_note[j], "");
+							}
+						}
 						break;
 					}
 				}
@@ -4386,10 +4386,8 @@ void erase_player_name(char *pname){
 				}
 
 				sf_delete(ptr->name);	/* a sad day ;( */
-				if (!pptr)
-					hash_table[slot] = ptr->next;
-				else
-					pptr->next = ptr->next;
+				if (!pptr) hash_table[slot] = ptr->next;
+				else pptr->next = ptr->next;
 				/* Free the memory in the player name */
 				free((char *)(ptr->name));
 
@@ -4410,8 +4408,7 @@ void erase_player_name(char *pname){
 /*
  * List of players about to expire - mikaelh
  */
-void checkexpiry(int Ind, int days)
-{
+void checkexpiry(int Ind, int days) {
 	int slot, expire;
 	hash_entry *ptr;
 	time_t now;
@@ -4422,15 +4419,12 @@ void checkexpiry(int Ind, int days)
 		while (ptr) {
 			expire = CHARACTER_EXPIRY_DAYS * 86400 - now + ptr->laston;
 			if (ptr->laston && expire < days * 86400) {
-				if (expire < 86400) {
+				if (expire < 86400)
 					msg_format(Ind, "\377rPlayer %s (accid %d) will expire in less than a day!", ptr->name, ptr->account);
-				}
-				else if (expire < 7 * 86400) {
+				else if (expire < 7 * 86400)
 					msg_format(Ind, "\377yPlayer %s (accid %d) will expire in %d days!", ptr->name, ptr->account, (expire / 86400));
-				}
-				else {
+				else
 					msg_format(Ind, "\377gPlayer %s (accid %d) will expire in %d days.", ptr->name, ptr->account, (expire / 86400));
-				}
 			}
 			ptr = ptr->next;
 		}
@@ -4461,11 +4455,10 @@ void account_checkexpiry(int Ind) {
 			if (p_ptr->id != ptr->id && p_ptr->account == ptr->account && ptr->laston) {
 				expire = CHARACTER_EXPIRY_DAYS * 86400 - now + ptr->laston;
 
-				if (expire < 86400) {
+				if (expire < 86400)
 					msg_format(Ind, "\374\377yYour character %s will be removed \377rvery soon\377y!", ptr->name, expire / 86400);
-				} else if (expire < 60 * 86400) {
+				else if (expire < 60 * 86400)
 					msg_format(Ind, "\374\377yYour character %s will be removed in %d days.", ptr->name, expire / 86400);
-				}
 			}
 			ptr = ptr->next;
 		}

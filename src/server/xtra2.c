@@ -6351,7 +6351,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	delete_player_name(p_ptr->name);
 
 	/* Put him on the high score list */
-	if(!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
+	if (!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
 		add_high_score(Ind);
 
 	/* Format string for death reason */
