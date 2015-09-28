@@ -12014,7 +12014,7 @@ create a character!):
 - Half-Orc
     Because of their preference to living underground to on the surface,
     Half-orcs resist darkness intrinsically. They make excellent warriors and
-    decent priests, but are terrible at magic. They are as bad as dwarves at
+    decent priests, but aren't good at magic. They are as bad as dwarves at
     stealth, and horrible at searching, disarming, and perception. Half-Orcs
     are quite ugly, and tend to pay more for goods in town. Half-Orcs do make
     good warriors and rogues, for the simple reason that Half-Orcs tend to

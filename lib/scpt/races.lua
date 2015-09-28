@@ -91,7 +91,7 @@ __races_diz = {
 "Half-Orc",
     {"\255uHalf-Orcs\255U resist darkness because of their",
     "preference to living underground. They make great",
-    "warriors and rogues, but are terrible at magic.",
+    "warriors and rogues, but aren't good at magic.",
     "Their stealth isn't great either, and they are bad",
     "at disarming, searching and perception. Half-orcs",
     "are quite ugly and tend to pay more for goods in",
