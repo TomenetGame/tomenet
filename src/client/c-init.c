@@ -440,6 +440,8 @@ static void init_monster_list() {
 		if (buf[0] == 'F' && strstr(buf, "ATTR_ANY")) multihued = TRUE;
 		if (buf[0] == 'F' && strstr(buf, "ATTR_MULTI")) breathhued = TRUE;
 
+		if (buf[0] == 'N' && strstr(buf, "Test Blob")) discard = TRUE;
+
 		p1 = buf + 2; /* monster code */
 		p2 = strchr(p1, ':'); /* 1 before monster name */
 		if (!p2) continue; /* paranoia (broken file) */
@@ -486,6 +488,8 @@ static void init_monster_list() {
 			if (buf[0] == 'F' && strstr(buf, "NEUTRAL")) discard = TRUE;
 			if (buf[0] == 'F' && strstr(buf, "ATTR_ANY")) multihued = TRUE;
 			if (buf[0] == 'F' && strstr(buf, "ATTR_MULTI")) breathhued = TRUE;
+
+			if (buf[0] == 'N' && strstr(buf, "Test Blob")) discard = TRUE;
 
 			if (strlen(buf) < 5 || buf[0] != 'G') continue;
 
@@ -2625,6 +2629,9 @@ static void quit_hook(cptr s) {
 
 	c_quit = 1;
 
+	/* automatically store name+password to ini file if we're a new player? */
+	
+
 	/* Display the quit reason */
 	if (s && *s) display_message(s, "Quitting");
 
@@ -2668,8 +2675,7 @@ static void quit_hook(cptr s) {
 #endif
 
 	/* Nuke each term */
-	for (j = ANGBAND_TERM_MAX - 1; j >= 0; j--)
-	{
+	for (j = ANGBAND_TERM_MAX - 1; j >= 0; j--) {
 		/* Unused */
 		if (!ang_term[j]) continue;
 
