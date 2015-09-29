@@ -6255,8 +6255,17 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 	    (r_ptr->flags7 & RF7_NAZGUL))
 		return(FALSE);
 
-
 	inv = p_ptr->invis;
+
+#ifdef VAMPIRIC_MIST
+	/* mistform gives invisibility vs monsters */
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
+		/* using same formula as for invis granted by items */
+		int j = (p_ptr->lev > 50 ? 50 : p_ptr->lev) * 4 / 5;
+
+		if (j > inv) inv = j;
+	}
+#endif
 
 	if (p_ptr->ghost) inv += 10;
 
@@ -6270,45 +6279,25 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 
 #if 0	// PernMangband one
 	if (r_ptr->flags3 & RF3_NO_SLEEP)
-	{
 		mlv += 5;
-	}
 	if (r_ptr->flags3 & RF3_DRAGON)
-	{
 		mlv += 10;
-	}
 	if (r_ptr->flags3 & RF3_UNDEAD)
-	{
 		mlv += 12;
-	}
 	if (r_ptr->flags3 & RF3_DEMON)
-	{
 		mlv += 10;
-	}
 	if (r_ptr->flags3 & RF3_ANIMAL)
-	{
 		mlv += 3;
-	}
 	if (r_ptr->flags3 & RF3_ORC)
-	{
 		mlv -= 15;
-	}
 	if (r_ptr->flags3 & RF3_TROLL)
-	{
 		mlv -= 10;
-	}
 	if (r_ptr->flags2 & RF2_STUPID)
-	{
 		mlv /= 2;
-	}
 	if (r_ptr->flags2 & RF2_SMART)
-	{
 		mlv = (mlv * 5) / 4;
-	}
 	if (mlv < 1)
-	{
 		mlv = 1;
-	}
 #else	// ToME one
 	if (r_ptr->flags3 & RF3_NO_SLEEP)
 		mlv += 10;

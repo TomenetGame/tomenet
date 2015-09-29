@@ -12235,9 +12235,13 @@ create a character!):
     At level 35 they can become able to turn into vampiric mist (mimicry 365).
     In mist form, they can pass closed doors, traps without triggering them,
     have maximum stealth and be granted a shivering aura (or have their
-    existing shivering aura boosted). However, Vampires cannot perform a lot of
-    physical actions in mist form, such as fighting, and the creeping mist
-    moves slower than they would in their normal form.
+    existing shivering aura boosted). They will also gain the 'invisibility'
+    effect (as from items) against monsters, but not against other players.
+    (Note: This invisibility effect will not result in the usual purple colour
+    of the player's symbol, it's still there though.)
+    However, Vampires cannot perform a lot of physical actions in mist form,
+    such as fighting, and the creeping mist moves slower than they would in
+    their normal form.
     Vampires cannot eat normal food, instead they need to feed off living
     creatures. This means that you need to kill monsters in melee range (though
     not necessarily by using melee attacks - spells or arrows work fine too) in
