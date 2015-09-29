@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. September 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 29. September 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -31,7 +31,7 @@ Contents
     (0.1)   Start & play
     (0.2)   Command reference & key sets
     (0.2a)  IRC bot commands
-    (0.3)   Important inscriptions
+    (0.3)   Important inscriptions, Word of Recall
     (0.3a)  The auto-inscription feature
     (0.4)   Typical slang/abbreviations
     (0.5)   Some hints and warnings (READ!)
@@ -895,7 +895,7 @@ They all start with a slash '/' hence they're called slash commands:
             wear off, _except_ for blacklist timer from being caught by a shop
             owner on attempting to steal.
             Also, other players cannot switch places with you by moving into
-            you, use teleportation or word-of-recall on you, infect you with
+            you, use teleportation or Word of Recall on you, infect you with
             black breath by bumping into you, steal from you, form a blood bond
             with you or attempt to polymorph you while you are afk.
 
@@ -1225,10 +1225,15 @@ They all start with a slash '/' hence they're called slash commands:
 /quit       Leaves the game, same as pressing CTRL+X.
  (/exit, /leave)
 
-/rec -550   recalls you to -550ft, using an item inscribed {@R}.
-/rec 32 32  recalls you to Bree (Town at 32,32 world map coordinates),
- (/recall)  using an item inscribed {@R}. See "(0.3) Important Inscriptions"
-            for more info about Word of Recall.
+/rec        Uses an item inscribed "@R" that provides 'Word of Recall' to
+ (/recall)  teleport you over a long distance, either into a dungeon, out of a
+            dungeon or across the worldmap.
+            See "(0.3) Important Inscriptions, Word of Recall" for more info
+            about Word of Recall. Examples:
+ /rec -550  recalls you to -550ft, provided there is such a dungeon at your
+            current worldmap location and you are not already inside.
+ /rec 32 32 recalls you to Bree (the town at (32,32) world map coordinates),
+            provided you are on the world surface and not already in Bree.
 
 /ref        redraw the screen (do this if it's messed up for some reason).
  (/refresh, or simply hit CTRL+R)
@@ -1380,9 +1385,11 @@ game server, you may enter these IRC commands:
 
 
 
-(0.3) Important inscriptions
-----------------------------
+(0.3) Important inscriptions, Word of Recall
+--------------------------------------------
 To inscribe an item, press the { key. To uninscribe, press }.
+You can also mass-inscribe/uninscribe items by using the commands /tag or /t
+and /untag or /ut respectively (see 0.2 for command details).
 
 All items:
     Inscribing an item with an '!' followed by a key will cause that key to
@@ -1457,39 +1464,6 @@ Items that 'can cause Earthquakes':
                 (Press keys  ~d  in the game to check server settings.)
                 See (5.13) for more information about earthquakes.
 
-Word-of-Recall scrolls:
-    @R500       will teleport you to depth 500ft (tower).
-    @R-350      will teleport you to depth -350ft (dungeon).
-    @RW32,32    will teleport you to sector 32,32 on the worldmap (Bree).
-                World map ranges from 0,0 to 63,63.
-    or even better..
-    @R          This inscription makes the above versions sort of obsolete.
-                If you have inscribed a word-of-recall item like this then you
-                can just type the command    /rec    into chat to invoke the
-                word-of-recall. Examples replacing above inscriptions:
-                /rec 500
-                /rec -350
-                /rec 32 32        <- notice: No komma between the coordinates!
-
-    NOTES:
-    1) You must've already been at that depth or deeper in order to teleport
-       there via WoR!
-    2) In order to recall to a place on the world map, you need to have been
-       there before, NOT while you were dead (ghost), but while you were
-       alive! So don't try to travel to Gondolin as a ghost, the priest over
-       there will reject you and you won't remember the place when you return
-       and revive in Bree.
-
-    EXAMPLE:
-    A player is in Bree (32,32) and wants to recall to Orc Cave -300ft which we
-    assume is located at (31,25) and he has already been at 31,25 before, so he
-    can use Word-of-recall to get there. He has his WoR scrolls inscribed '@R'
-    and now types the following chat commands in order:
-        /rec 31 25
-        (he waits until that kicked in and transported him to Orc Cave surface)
-        /rec -300
-        (this will bring him to the desired depth, from the surface).
-
 Weapons, devices and spells:
     @O and its variants control the 'auto-retaliator' which is a mechanism
        designed to make your character automatically attack targets that are
@@ -1551,6 +1525,60 @@ Newly added in 4.5.7:
 
     !U          This item will be displayed in dark grey colour in your
                 inventory. Can be useful for sorting loot.
+
+"Word of Recall", provided by items (scrolls and rods) or spells:
+-----------------------------------------------------------------
+If you use these without inscription, they will just teleport you back into the
+dungeon you came from, to the deepest possible floor. If you use them on the
+world surface without inscription and there is no dungeon at your location that
+you have previously visited, they will instead teleport you back to the last
+town you visited.
+    @R500       will teleport you to depth 500ft (tower).
+    @R-350      will teleport you to depth -350ft (dungeon).
+    @RW32,32    will teleport you to sector 32,32 on the worldmap (Bree).
+                World map ranges from 0,0 to 63,63.
+    or even better..
+    @R          This inscription makes the above versions sort of obsolete.
+                If you have inscribed a Word of Recall item like this then you
+                can just type the command    /rec    into chat to invoke the
+                Word of Recall. Examples replacing above inscriptions:
+                /rec 500
+                /rec -350
+                /rec 32 32        <- notice: No komma between the coordinates!
+
+    NOTES:
+    1) You must've already been at that depth or deeper in order to teleport
+       there via WoR!
+    2) In order to recall to a place on the world map, you need to have been
+       there before, NOT while you were dead (ghost), but while you were
+       alive! Temple priests actually won't revive ghosts either who have not
+       been to this place alive previously. So don't try to travel to Gondolin
+       as a ghost, the priest over there will reject you and you won't remember
+       the place when you return and revive in Bree.
+    3) You can recall either across the world map or into/out of a dungeon, but
+       not both at once. So if you want to go from Bree into the Orc Cave, you
+       need two scrolls, first to go from Bree to the Orc Cave entrance located
+       on the world surface, second to teleport down into the Orc Caves.
+    4) Note that Word of Recall has a maximum range when used to travel across
+       the world map. So if you want to recall from town A to town B you might
+       require more than one recall spell depending on the distance.
+    5) If you cast another Word of Recall while you're still waiting for one to
+       kick in, the effect will be cancelled! That way you can change your mind
+       if you suddenly spot a monster you want to go and kill after you already
+       read a scroll of WoR.
+    6) After being recalled the player will receive 'stair goi' (a temporary
+       extra protection from taking damage) for a short amount of time, see
+       (0.4) for details.
+
+    EXAMPLE:
+    A player is in Bree (32,32) and wants to recall to Orc Cave -300ft which we
+    assume is located at (31,25) and he has already been there before, so he
+    can use Word of Recall to get there. He has his WoR scrolls inscribed '@R'
+    and now types the following chat commands in order:
+        /rec 31 25
+        (he waits until that kicked in and transported him to Orc Cave surface)
+        /rec -300
+        (this will bring him to the desired depth, from the surface).
 
 
 (0.3a) The auto-inscription feature
@@ -1838,7 +1866,7 @@ Static Art  See 'Art' at the top of this section.
 
 Stair GoI   Stair-Goi is a very short-lasting globe of invulnerability (usually
             2 to 3 turns). It is a magical protection effect that any player
-            who takes a staircase up or down or uses word-of-recall will
+            who takes a staircase up or down or uses Word of Recall will
             automatically receive: A temporary buff of +100 armour class
             and 40% chance to deflect any attacks that hit him. Attacks that
             aren't deflected still get their damage halved.
@@ -1891,8 +1919,9 @@ Unique      A monster that is named and exists only once. Although it can
             on with your winner character, except while you're in town or in
             the area around a town (housing zone).
 
-WoR         Word-of-Recall (teleports you into the dungeon and back or on the
-            world map). See "(0.3) Important inscriptions" for more info.
+WoR         Word of Recall (teleports you into the dungeon and back or on the
+            world map). See "(0.3) Important inscriptions, Word of Recall" for
+            more info.
 
 Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
@@ -2948,13 +2977,13 @@ self-explaining or that are especially important are listed in detail here:
     Use additional predefined auto-inscriptions (auto_inscribe)
         Will provide a predefined (on server-side) set of item-inscriptions
         that will be applied automatically to some selected items, which are
-        word-of-Recall items, various scrolls and a few potions.
+        Word of Recall items, various scrolls and a few potions.
         (These inscriptions are applied independantly of the custom auto
         inscription feature you can access with '&' key.)
         The server-side auto-inscriptions are currently:
             Scrolls of Phase Door:      @r1
             Scrolls of Teleportation:   @r2
-            Scrolls of Word-of-Recall:  @r3@R
+            Scrolls of Word of Recall:  @r3@R
             Rods of Recall:             @z3@R
             Scrolls of Identify:        @r5!X
             Scrolls of Trap Detection:  @r8
@@ -3223,7 +3252,7 @@ Create an everlasting character for an infinite amount of resurrections (with
 the exception that they too are completely destroyed if they die to insanity.)
 Everlasting characters can become king/queen, but cannot enter the high-score.
 Other character types cannot use items that belong to everlasting
-characters. Exception: Word-of-recall scrolls can be exchanged between an
+characters. Exception: Word of Recall scrolls can be exchanged between an
 everlasting and a non-everlasting player!
 Non-everlasting and everlasting characters can't be in the same party.
 If an everlasting King/Queen dies, he won't be destroyed but lose the
@@ -3375,7 +3404,7 @@ window, you find:
  and enter a dungeon, you'd end up at -50 ft.
  This number can also have different colour, indicating some things:
  -A white number means no special effect.
- -An orange number means that word-of-recall magic is pending.
+ -An orange number means that Word of Recall magic is pending.
  -A yellow number means that your character's level is somewhat too high
   compared to the dungeon/tower level you are on, and therefore you will get
   greatly reduced amounts of experience points.
@@ -3801,10 +3830,11 @@ So to prepare for hunting in the dungeon, buy:
 -Potion of Heroism (maybe just one, for when you encounter a unique monster)
 -Potion of Cure Light/Serious Wounds
 -Scroll of Phase Door
-The more you can buy of those the better. At least buy one potion of Heroism
-and Cure Serious Wounds.
+ The more you can buy of those the better. At least buy one potion of Heroism
+ and Cure Serious Wounds.
 And if you still have spare money (this one costs a lot) a
--Scroll of Word-of-Recall. (See "(0.3) Important inscriptions" for more info.)
+-Scroll of Word of Recall. (See "(0.3) Important inscriptions, Word of Recall"
+ for more info.)
 
 
 
@@ -3967,7 +3997,7 @@ Hybrid macros:
 Use 'create hybrid macro' instead of 'create normal macro' in case you don't
 want the macro to appear on hitting the corresponding key in a normal chat
 message (for example useful for '-' key so it won't prevent you from
-inscribing your word-of-recall scrolls).
+inscribing your Word of Recall scrolls).
 Hybrid macros still work within input requests such as "quaff which potion?",
 just not in STRING INPUT such as chat lines, polymorph-codes or money amounts.
 Hybrid macros don't work in shops.
@@ -4698,8 +4728,8 @@ If you're on a slightly easier depth, it'll turn yellow, to tell you that
 you're getting closer to the depth required for normal experience gain, but
 there is still a penalty.
 On the minimum required depth for normal experience gain or deeper, it's white.
-(On a side note, while word-of-recall is pending, it'll turn orange, since
-it's also used as a word-of-recall indicator this way.)
+(On a side note, while Word of Recall is pending, it'll turn orange, since
+it's also used as a Word of Recall indicator this way.)
 
 Here is a list of this relation between character level and minimum dungeon
 level required for normal, non-penalised experience gain:
@@ -5103,7 +5133,7 @@ An experience penalty might be applied for killing monsters in the tower
 there is a newbie tower (also called 'Training Tower'), or you might search for
 it yourself. It's usually in Bree, to the lower right of the town centre.
 
-In general, when you take a staircase or use word-of-recall, your character
+In general, when you take a staircase or use Word of Recall, your character
 will temporarily get a high Armour bonus (+100) and a chance to deflect enemy
 attacks and to reduce their damage, for a very short duration.
 This is an extra protection (called 'stair GoI', compare (0.4)) to help
@@ -5160,10 +5190,10 @@ staircase colours (also visible on the world map):
 
 -NO_UP. These dungeons won't allow you to go upwards, similar to ironman,
  just without the penalty of permanent ghost-death. You are allowed to use
- Word-of-Recall as well! Ghosts of dead players can float upwards.
+ Word of Recall as well! Ghosts of dead players can float upwards.
  No-up dungeons/towers are marked by an orange < or > symbol.
 
--NO_RECALL. These dungeons don't allow you to use Word-of-Recall nor
+-NO_RECALL. These dungeons don't allow you to use Word of Recall nor
  probability travel to change the level. The staircases are the only way.
  Sending items via telekinesis to a player who is currently in a no-recall
  dungeon/tower will only work if both players are on the same dungeon floor.
@@ -5186,7 +5216,7 @@ staircase colours (also visible on the world map):
  Sending items via telekinesis to a player who is currently in an ironman
  dungeon/tower will only work if both players are on the same dungeon floor.
  To leave an ironman dungeon/tower you'll have to get to it's bottom or top
- respectively. There might be possibilities to use Word-of-Recall even if
+ respectively. There might be possibilities to use Word of Recall even if
  you're not at bottom/top yet, depending on the server/dungeon type.
  In general you will recognize levels which allow recalling by a green message,
  saying "You don't sense a magic barrier here..." (compare (4.8)).
@@ -5411,7 +5441,7 @@ Icy waste       white '.'
     Note that levitation also allows you to pass trees easily.
 (**) You might get stuck in there if you enter such a sector without being
      able to climb. Especially nasty in case of volcanos, since the fiery
-     ground might burn your items. Use word-of-recall to get out of here.
+     ground might burn your items. Use Word of Recall to get out of here.
 (***) If your backpack is too heavy for you to swim then it'll be a big hassle
       to try and cross deep water without drowning. In that case just get an
       item that allows you to levitate and you'll be fine. (See (4.15) for
@@ -5747,7 +5777,7 @@ die to monsters (unlikely) or starvation (very likely).
  flags.)
  To any floor experience boni that might occur, an additional 5% bonus is added
  because the whole dungeon is flagged NO_RECALL_INTO, meaning it cannot be
- entered via word-of-recall (you may recall out of it though).
+ entered via Word of Recall (you may recall out of it though).
 -Note that the amount of experience is already very high even without this
  depth-bonus, since creatures in the Nether Realm are of a very high level.
 -Instant resurrection does not work in the Nether Realm.
@@ -5834,7 +5864,7 @@ Also, Morgoth, the Lord of Darkness is encountered in Angband at -1700 ft or
 deeper. See (1.3), (1.3a) and (1.3b) for more information.
 
 (**) A space-time anchor is an anti-teleportation field of radius 12 that will
-prevent all teleportation and stall all word-of-recall attempts within.
+prevent all teleportation and stall all Word of Recall attempts within.
 
 (***) While Sauron, the Sorceror, boss of Mount Doom, does not drop any
 specific artifact, he is still a required kill before you are able to encounter
@@ -6118,7 +6148,7 @@ These feelings are as follows:
   "You don't sense a magic barrier here..." ->   This message only occurs in
                                         Ironman or no-recall dungeons/towers.
                                         It lets you know that you may use
-                                        word-of-recall on this floor!
+                                        Word of Recall on this floor!
                                         (This message is displayed in green
                                         colour, not orange.)
 
@@ -6204,8 +6234,8 @@ Vaults can also bear a very dangerous feature that is displayed as dark grey
 feeling as soon as you are about to enter the vault:
 
   "The air in here feels very still." ->  Means that you cannot use any type of
-                                        teleportation, including word-of-
-                                        recall while inside the vault. Beware!
+                                        teleportation, including Word of Recall
+                                        while inside the vault. Beware!
                                         Further, Wraith Form and probability
                                         travel won't work either!
                                         The fact that you are standing within
@@ -6674,9 +6704,9 @@ Note: Item rewards depend on your character, see (8.5) for more information
       about item rewards.
 
 Make sure that you aren't inside a dungeon that does not allow normal usage of
-word-of-recall when an event begins that you signed up for, or you will fail to
+Word of Recall when an event begins that you signed up for, or you will fail to
 join the event! (Eg ironman, forcedown, no-recall dungeons, even if you're on
-the final floor and could use word-of-recall.)
+the final floor and could use Word of Recall.)
 
 Highlander Tournament (pvp, only one can win, 2+ participants)
     When you see a message, announcing a Highlander Tournament, type "/evinfo"
@@ -6917,7 +6947,7 @@ Ironman Deep Dive Challenge (IDDC)
 
     For servers running 'strict_etiquette', meaning that a player will lose all
     true artifacts after winning: If Morgoth is defeated, players on his floor
-    will be allowed to use Word-of-Recall to leave the dungeon if they wish!
+    will be allowed to use Word of Recall to leave the dungeon if they wish!
     (Alternatively they may go on and recall at the final floor, which is
     level 127 aka -6350 ft.) 'Strict_etiquette' is usually turned off though.
 
@@ -9200,17 +9230,10 @@ Wilderness Mapping  Maps the wilderness area around the worldmap sector you
 Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 dungeon or tower within your current sector.
                 It can also be used to travel between towns or on the worldmap
-                in general. See "(0.3) Important Inscriptions" for more info
-                about Word of Recall! ("Word-of-Recall", "WoR")
-                If you read another Word of Recall while you're still waiting
-                for one to kick in, the effect will be cancelled again!
-                That way you can change your mind, for example if you suddenly
-                spot a monster you want to kill just after you read a WoR.
-                Word-of-Recall scrolls can be exchanged between an everlasting
+                in general. See "(0.3) Important Inscriptions, Word of Recall"
+                for more info about Word of Recall! ("Word of Recall", "WoR")
+                Word of Recall scrolls can be exchanged between an everlasting
                 and a non-everlasting player!
-                After being recalled the player will receive 'stair goi' (a
-                temporary extra protection from taking damage) for a short
-                amount of time, see (0.4) for details.
 Vermin Control  Stops breeders on the map from multiplying. Doesn't have effect
                 on certain non-natural breeders such as Unmakers.
 
@@ -9274,7 +9297,7 @@ Amulet of Anti-Teleportation    If worn it will suppress all attemps to
                                 regardless whether initiated by a monster or
                                 by himself. It will also prevent certain
                                 effects of unresisted nexus attacks.
-                                Any word-of-recall that is cast while
+                                Any Word of Recall that is cast while
                                 teleportation is supressed will be suspended
                                 and then immediately kick in as soon as the
                                 amulet is taken off. This allows for some
@@ -10659,7 +10682,7 @@ Exceptions for emergency cases
 ------------------------------
 Certain items can be exchanged freely between incompatible modes to make rescue
 missions easier:
-Torches, food, scrolls of satisfy hunger, oil flasks, word-of-recall scrolls.
+Torches, food, scrolls of satisfy hunger, oil flasks, Word of Recall scrolls.
 These items will get a 100% discount when they are exchanged between modes.
 
 An exception for level 0 items are the following starter items:
@@ -14033,8 +14056,8 @@ Istar schools:
                     a scroll, in order to specify a destination.
                     Required skill level for first spell level: 30.
                     Projecting this spell does not work on players who are AFK.
-                    See "(0.3) Important inscriptions" for more info about
-                    Word of Recall!
+                    See "(0.3) Important inscriptions, Word of Recall" for more
+                    info about Word of Recall!
 
     Probability Travel
                     Renders you instable, allowing to pass walls and to
@@ -14651,7 +14674,7 @@ though, as all other magic schools do, not the astral level.)
                     your alignment (see Power Bolt spell above).
                     Required skill level for first spell level: 10.
 
-    Relocation      Same as word-of-recall.
+    Relocation      Same as Word of Recall.
                     You may inscribe book '@R' etc. for the usual results.
                     Required skill level for first spell level: 22.
 
@@ -14682,7 +14705,7 @@ though, as all other magic schools do, not the astral level.)
                                damage as rockets do.
                     Required skill level for first spell level: 50.
 
-    Gateway         Enlightened: Nigh-instantaneous word-of-recall for all
+    Gateway         Enlightened: Nigh-instantaneous Word of Recall for all
                                  party members on your dungeon level.
                     Corrupted: Creates a pair of connected void jump gates.
                     (This spell uses WISDOM to determine fail-rates!)
@@ -14987,7 +15010,7 @@ Nether   | Mana     | Force          | Mystic Shield (**)  | Reflection
 Chaos    | Mana     | Plasma         | Base Resistance     | Elemental Brand
 
 (*) A space-time anchor is an anti-teleportation field of radius 12 that will
-    prevent all teleportation and stall all word-of-recall attempts within.
+    prevent all teleportation and stall all Word of Recall attempts within.
 (**) A Mystic Shield is a magical armour class boost.
 
 Spell Modifiers
@@ -15772,10 +15795,10 @@ Beginners (level 1)
   to shoot him on distance using a ranged weapon. Since Phase Door teleports
   randomly, you might have to read several of them quickly after each other
   until you come out in a good position.
-+ Maybe a scroll of Word-of-Recall
++ Maybe a scroll of Word of Recall
   If read in the dungeon it will far-distance teleport you back to the town.
   This allows you to quickly "dive" deep and gain levels and find items that
-  can be sold for good cash, then read Word-of-Recall to quickly get back home
+  can be sold for good cash, then read Word of Recall to quickly get back home
   with all the loot without having to start an annoying search for the
   staircases leading upwards back to town.
 
@@ -15788,7 +15811,7 @@ Low level character (up to 15)
   Note that Potions of Cure Wounds also remove certain effects like blindness
   and confusion, depending on the exact potion type (light/serious/critical).
 + Several Scrolls of Phase Door
-+ Some Scrolls of Word-of-Recall
++ Some Scrolls of Word of Recall
 + Some Scrolls of Identify
   These will allow you to identify unknown items that you may find!
 
@@ -15804,7 +15827,7 @@ Medium level character (up to 25)
   of your hit chance, allowing you to deal very extreme damage. Unfortunately
   they are quite rare. If they are used together with potions of speed the
   result can be devastating.
-+ Several Scrolls of Word-of-Recall
++ Several Scrolls of Word of Recall
 + Several scrolls of Identify
   Since you will encounter the more nice (or more dangerous..) loot the deeper
   you descend, you will need a bunch of identification scrolls to find out
@@ -15818,7 +15841,7 @@ Medium level character (up to 25)
   This neat baby is your ticket out of most hazard situations where Phase Door
   wouldn't help at all. However keep in mind that staves can be destroyed. So
   if you consider a situation very dangerous and your staff of teleportation
-  is suddenly burned to ashes, you should think about reading Word-of-Recall!
+  is suddenly burned to ashes, you should think about reading Word of Recall!
   Unfortunately staves of teleportation are very expensive. Staves can be
   used even while blind or confused!
   It's not a good idea to use staves if your character isn't quite good at
@@ -16167,7 +16190,7 @@ Some monsters that people often get killed by are:
     See (7.1) and (7.2) how to equip yourself to minimize risks.
 
 -If you recognize that you cannot win a fight and it will likely end deadly
- it might be a good idea to read a scroll of word-of-recall as early as
+ it might be a good idea to read a scroll of Word of Recall as early as
  possible and then try to survive until it kicks in and carries you to safety.
 
 -Druid monsters, for example druid snotlings or druid kobolds. They can appear
