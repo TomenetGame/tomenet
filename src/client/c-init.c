@@ -2629,9 +2629,6 @@ static void quit_hook(cptr s) {
 
 	c_quit = 1;
 
-	/* automatically store name+password to ini file if we're a new player? */
-	
-
 	/* Display the quit reason */
 	if (s && *s) display_message(s, "Quitting");
 

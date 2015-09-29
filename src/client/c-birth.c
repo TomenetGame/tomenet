@@ -1467,6 +1467,12 @@ void get_char_name(void) {
 	/* Enter password */
 	enter_password();
 
+#ifdef WINDOWS
+	/* erase crecedentials? */
+	if (!strlen(nick) || !strlen(pass))
+		store_crecedentials();
+#endif
+
 	/* Message */
 	put_str("Connecting to server....", 21, 1);
 

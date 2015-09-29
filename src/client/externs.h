@@ -886,6 +886,7 @@ extern bool term_get_visibility(int term_idx);
 extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
 extern void enable_readability_blue_win(void);
+extern void store_crecedentials(void);
 #endif
 
 extern const cptr angband_sound_name[SOUND_MAX];

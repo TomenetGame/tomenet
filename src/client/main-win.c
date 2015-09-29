@@ -4143,4 +4143,16 @@ bool term_get_visibility(int term_idx) {
 	return data[term_idx].visible;
 }
 
+/* automatically store name+password to ini file if we're a new player? */
+void store_crecedentials(void) {
+	char tmp[MAX_CHARS];
+
+	strcpy(tmp, pass);
+	my_memfrob(tmp, strlen(tmp));
+
+	WritePrivateProfileString("Online", "nick", nick, ini_file);
+	WritePrivateProfileString("Online", "pass", tmp, ini_file);
+
+	memset(tmp, 0, MAX_CHARS);
+}
 #endif /* _Windows */
