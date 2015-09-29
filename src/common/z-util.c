@@ -69,8 +69,7 @@ cptr argv0 = NULL;
 /*
  * A routine that does nothing
  */
-void func_nothing(void)
-{
+void func_nothing(void) {
 	/* Do nothing */
 }
 
@@ -78,8 +77,7 @@ void func_nothing(void)
 /*
  * A routine that always returns "success"
  */
-errr func_success(void)
-{
+errr func_success(void) {
 	return (0);
 }
 
@@ -87,8 +85,7 @@ errr func_success(void)
 /*
  * A routine that always returns a simple "problem code"
  */
-errr func_problem(void)
-{
+errr func_problem(void) {
 	return (1);
 }
 
@@ -96,8 +93,7 @@ errr func_problem(void)
 /*
  * A routine that always returns a simple "failure code"
  */
-errr func_failure(void)
-{
+errr func_failure(void) {
 	return (-1);
 }
 
@@ -106,8 +102,7 @@ errr func_failure(void)
 /*
  * A routine that always returns "true"
  */
-bool func_true(void)
-{
+bool func_true(void) {
 	return (1);
 }
 
@@ -115,8 +110,7 @@ bool func_true(void)
 /*
  * A routine that always returns "false"
  */
-bool func_false(void)
-{
+bool func_false(void) {
 	return (0);
 }
 
@@ -130,8 +124,7 @@ bool func_false(void)
  *
  * This code contributed by Hao Chen <hao@mit.edu>
  */
-char *strdup(cptr s)
-{
+char *strdup(cptr s) {
 	char *dup;
 	dup = (char *)malloc(sizeof(char) * (strlen(s) + 1));
 	strcpy(dup, s);
@@ -144,8 +137,7 @@ char *strdup(cptr s)
 /*
  * Determine if string "t" is a suffix of string "s"
  */
-bool suffix(cptr s, cptr t)
-{
+bool suffix(cptr s, cptr t) {
 	int tlen = strlen(t);
 	int slen = strlen(s);
 
@@ -160,11 +152,9 @@ bool suffix(cptr s, cptr t)
 /*
  * Determine if string "t" is a prefix of string "s"
  */
-bool prefix(cptr s, cptr t)
-{
+bool prefix(cptr s, cptr t) {
 	/* Scan "t" */
-	while (*t)
-	{
+	while (*t) {
 		/* Compare content and length */
 		if (*t++ != *s++) return (FALSE);
 	}
@@ -184,8 +174,7 @@ void (*plog_aux)(cptr) = NULL;
  * Print (or log) a "warning" message (ala "perror()")
  * Note the use of the (optional) "plog_aux" hook.
  */
-void plog(cptr str)
-{
+void plog(cptr str) {
 	/* Use the "alternative" function if possible */
 	if (plog_aux) (*plog_aux)(str);
 
@@ -206,8 +195,7 @@ void (*quit_aux)(cptr) = NULL;
  * Otherwise, plog() 'str' and exit with an error code of -1.
  * But always use 'quit_aux', if set, before anything else.
  */
-void quit(cptr str)
-{
+void quit(cptr str) {
 	char buf[1024];
 
 	/* Save exit string */
@@ -249,8 +237,7 @@ void (*core_aux)(cptr) = NULL;
  * Dump a core file, after printing a warning message
  * As with "quit()", try to use the "core_aux()" hook first.
  */
-void core(cptr str)
-{
+void core(cptr str) {
 	char *crash = NULL;
 
 	/* Use the aux function */
@@ -265,7 +252,3 @@ void core(cptr str)
 	/* Be sure we exited */
 	quit("core() failed");
 }
-
-
-
-
