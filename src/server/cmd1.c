@@ -5889,7 +5889,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		    /* don't switch someone 'out' of a shop, except for the Inn */
 		    && (!(cs_ptr = GetCS(c_ptr, CS_SHOP)) || cs_ptr->sc.omni == 7)
 //moved above	    && !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
-		    && (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
+		    && (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK) /* never swich places into perma wall */
+		    && !(p_ptr->admin_dm && !(q_ptr->admin_dm || q_ptr->admin_wiz))) /* dm shouldn't switch with non-dms ever */
 #endif
 		{
 /*		    	if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
