@@ -34,20 +34,21 @@ V:4.0.0
 #
 
 N:1:Combat
-D:General ability to fight and to pseudo-id unknown items.
+D:Somewhat improves fighting in general and speeds up pseudo-identification.
 D:Allows wearing heavier armour without penalties (Martial Arts excepted).
 A:14:Check parry/block chance
 I:1000:0
 
 N:2:Weaponmastery
-D:Improves your abilities with melee weapons.
-D:Increases your chance to parry attacks.
+D:Improves fighting abilities with melee weapons and increases parry chance.
+D:This skill is secondary to the specific weapon class mastery skills.
 #A:5:Fighting techniques
 I:1000:0
 #F:MKEY_HARDCODE
 
 N:3:Sword-mastery
 D:Allows more skillful use of sword-type weapons.
+D:This is a primary skill for melee fighters.
 I:1000:0
 
 N:4:Critical-strike
@@ -57,10 +58,12 @@ I:1000:0
 
 N:5:Polearm-mastery
 D:Allows more skillful use of polearm-type weapons.
+D:This is a primary skill for melee fighters.
 I:1000:0
 
 N:6:Blunt-mastery
 D:Allows more skillful use of weapons regarded as blunt.
+D:This is a primary skill for melee fighters.
 I:1000:0
 
 N:7:Archery
@@ -255,8 +258,9 @@ I:1000:0
 F:MAX_1
 
 N:37:Martial Arts
-D:Ability to fight bare-handed. Also provides various special abilities.
+D:Ability to fight bare-handed. Also provides some special abilities.
 D:You mustn't use weapons or heavy armour, or various penalties may apply.
+#D:This is a primary skill for melee fighters.
 I:1000:0
 
 ## DELETEME
