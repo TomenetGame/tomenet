@@ -7786,47 +7786,47 @@ extern int PlayerUID;
 	No undead/nonliving material beings; no Invisible Stalker/Unmaker/Death Orb. */
 /*	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING)) && !(r_info[ridx].d_char == 'O')) || \ */
 #define mimic_shaman(ridx)	\
-	((ridx == 0) || \
+	(((ridx) == 0) || \
 	(((r_info[ridx].flags3 & (RF3_ANIMAL | RF3_DRAGON | RF3_GIANT | RF3_DRAGONRIDER)) || \
 	(r_info[ridx].d_char == 'H') || (r_info[ridx].d_char == 'T')) && \
  	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING))) || \
 	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx) || (r_info[ridx].d_char == 'X') || \
 	(r_info[ridx].d_char == 'g') || (r_info[ridx].d_char == 'A'))
 #define mimic_shaman_E(ridx)	\
-	((r_info[ridx].d_char == 'E') && !(ridx == 514 || ridx == 815 || ridx == 975))
+	((r_info[ridx].d_char == 'E') && !((ridx) == 514 || (ridx) == 815 || (ridx) == 975))
 #define mimic_shaman_fulleq(c)	(strchr("EGX", c))
 /*	Druid: Selected Animals and animal-similar creatures. */
 #define mimic_druid(ridx, plv)	\
-	((ridx == 0) || \
-	(plv >= 5 && (ridx == 160 || ridx == 198)) || \
-	(plv >= 10 && (ridx == 191 || ridx == 154)) || \
-	(plv >= 15 && (ridx == 279 || ridx == 343)) || \
-	(plv >= 20 && (ridx == 414 || ridx == 335 || ridx == 898 || ridx == 963)) || \
-	(plv >= 25 && (ridx == 334 || ridx == 513)) || \
-	(plv >= 30 && (ridx == 440 || ridx == 641 || ridx == 482)) || \
-	(plv >= 35 && (ridx == 614 || ridx == 726 || ridx == 964)) || \
-	(plv >= 40 && (ridx == 688 || ridx == 640 || ridx == 740)) || \
-	(plv >= 45 && (ridx == 723 || ridx == 704)) || /* || ridx == 716 || \ */ \
-	(plv >= 50 && (ridx == 705 || ridx == 778 || ridx == 775)) || /* 782 */ \
-	(plv >= 55 && (ridx == 1131)) || \
-	(plv >= 60 && (ridx == 1127)))
+	(((ridx) == 0) || \
+	((plv) >= 5 && ((ridx) == 160 || (ridx) == 198)) || \
+	((plv) >= 10 && ((ridx) == 191 || (ridx) == 154)) || \
+	((plv) >= 15 && ((ridx) == 279 || (ridx) == 343)) || \
+	((plv) >= 20 && ((ridx) == 414 || (ridx) == 335 || (ridx) == 898 || (ridx) == 963)) || \
+	((plv) >= 25 && ((ridx) == 334 || (ridx) == 513)) || \
+	((plv) >= 30 && ((ridx) == 440 || (ridx) == 641 || (ridx) == 482)) || \
+	((plv) >= 35 && ((ridx) == 614 || (ridx) == 726 || (ridx) == 964)) || \
+	((plv) >= 40 && ((ridx) == 688 || (ridx) == 640 || (ridx) == 740)) || \
+	((plv) >= 45 && ((ridx) == 723 || (ridx) == 704)) || /* || (ridx) == 716 || \ */ \
+	((plv) >= 50 && ((ridx) == 705 || (ridx) == 778 || (ridx) == 775)) || /* 782 */ \
+	((plv) >= 55 && ((ridx) == 1131)) || \
+	((plv) >= 60 && ((ridx) == 1127)))
 	/* possible postking additions - guiding ideas:
 	   fire immunity for NR; very maybe pass wall for comfort.
 	    1127 firebird, 739 ethereal hound? */
 /* for vampires, who learn to transform into a vampire bat and back for transportation - C. Blue */
 #ifndef VAMPIRIC_MIST
  #define mimic_vampire(ridx, plv)	\
-	((ridx == 0) || \
-	(plv >= 20 && ridx == RI_VAMPIRE_BAT))
+	(((ridx) == 0) || \
+	((plv) >= 20 && (ridx) == RI_VAMPIRE_BAT))
 #else
  #define mimic_vampire(ridx, plv)	\
-	((ridx == 0) || \
-	(plv >= 20 && ridx == RI_VAMPIRE_BAT) || \
-	(plv >= 35 && ridx == RI_VAMPIRIC_MIST))
+	(((ridx) == 0) || \
+	((plv) >= 20 && (ridx) == RI_VAMPIRE_BAT) || \
+	((plv) >= 35 && (ridx) == RI_VAMPIRIC_MIST))
 #endif
 
 #define mimic_hatchling(ridx)	\
-	((ridx == 0) || \
+	(((ridx) == 0) || \
 	(r_info[ridx].flags3 & RF3_DRAGON))
 
 
