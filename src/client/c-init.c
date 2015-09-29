@@ -2445,28 +2445,24 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 /*
  * Loop, looking for net input and responding to keypresses.
  */
-static void Input_loop(void)
-{
+static void Input_loop(void) {
 	int	netfd, result;
 
-	if (Net_flush() == -1)
-		return;
+	if (Net_flush() == -1) return;
 
-	if ((netfd = Net_fd()) == -1)
-	{
+	if ((netfd = Net_fd()) == -1) {
 		plog("Bad socket filedescriptor");
 		return;
 	}
 
-        /* In case we loaded .prf files that modified our screen dimensions,
-           we have to resend them. - C. Blue */
-        Send_screen_dimensions();
+	/* In case we loaded .prf files that modified our screen dimensions,
+	   we have to resend them. - C. Blue */
+	Send_screen_dimensions();
 
 	/* For term-resizing hacks */
 	in_game = TRUE;
 
-	for (;;)
-	{
+	for (;;) {
 		/* Send out a keepalive packet if need be */
 		do_keepalive();
 		do_mail();
@@ -2474,8 +2470,7 @@ static void Input_loop(void)
 		do_xfers();
 		do_ping();
 
-		if (Net_flush() == -1)
-		{
+		if (Net_flush() == -1) {
 			plog("Bad net flush");
 			return;
 		}
@@ -2494,10 +2489,8 @@ static void Input_loop(void)
 		Term_fresh();
 
 		/* Only take input if we got some */
-		if (SocketReadable(netfd))
-		{
-			if ((result = Net_input()) == -1)
-			{
+		if (SocketReadable(netfd)) {
+			if ((result = Net_input()) == -1) {
 				/*plog("Bad net input");*/
 				return;
 			}
@@ -2509,8 +2502,7 @@ static void Input_loop(void)
 		request_command();
 
 		/* Process any commands we got */
-		while (command_cmd)
-		{
+		while (command_cmd) {
 			/* Process it */
 			process_command();
 
@@ -2531,11 +2523,7 @@ static void Input_loop(void)
 		flush_now();
 
 		/* Redraw windows if necessary */
-		if (p_ptr->window)
-		{
-			window_stuff();
-		}
-
+		if (p_ptr->window) window_stuff();
 	}
 }
 
@@ -2543,8 +2531,7 @@ static void Input_loop(void)
 /*
  * Display a message on screen.
  */
-static void display_message(cptr msg, cptr title)
-{
+static void display_message(cptr msg, cptr title) {
 	char buf[80];
 	cptr tmp, newline;
 	int i, len, prt_len, row = 0;
