@@ -693,13 +693,15 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 */			case SV_POTION_INC_STR:	case SV_POTION_INC_INT:
 			case SV_POTION_INC_WIS:	case SV_POTION_INC_DEX:
 			case SV_POTION_INC_CON:	case SV_POTION_INC_CHR:
-			case SV_POTION_STAR_ENLIGHTENMENT:
 			case SV_POTION_STAR_RESTORE_MANA:
+				cs_ptr->sc.fountain.rest = damroll(1, 2);
+				break;
 			case SV_POTION_STAR_HEALING:
-			case SV_POTION_LIFE:
 			case SV_POTION_SELF_KNOWLEDGE:
 				cs_ptr->sc.fountain.rest = damroll(1, 3);
 				break;
+			case SV_POTION_STAR_ENLIGHTENMENT:
+			case SV_POTION_LIFE:
 			case SV_POTION_AUGMENTATION:
 			case SV_POTION_EXPERIENCE:
 			case SV_POTION_INVULNERABILITY:
@@ -708,8 +710,10 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 #ifdef EXPAND_TV_POTION
 			case SV_POTION2_CHAUVE_SOURIS:
 			case SV_POTION2_CURE_SANITY:
-			case SV_POTION_LEARNING:
 				cs_ptr->sc.fountain.rest = damroll(1, 2);
+				break;
+			case SV_POTION_LEARNING:
+				cs_ptr->sc.fountain.rest = 1;//disabled anyway
 				break;
 #endif
 			}
@@ -718,8 +722,10 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 			/* make it hard to polymorph back at a bat fountain by sipping again */
 			case SV_POTION2_CHAUVE_SOURIS:
 			case SV_POTION2_CURE_SANITY:
-			case SV_POTION2_LEARNING:
 				cs_ptr->sc.fountain.rest = damroll(1, 2);
+				break;
+			case SV_POTION2_LEARNING:
+				cs_ptr->sc.fountain.rest = 1;//disabled anyway
 				break;
 			}
 
