@@ -2805,7 +2805,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 					else if (f1 & TR1_SEARCH) t = object_desc_str(t, !(mode & 8) ? " to searching" : "srch");
 					else if (f1 & TR1_INFRA) t = object_desc_str(t, !(mode & 8) ? " to infravision" : "infr");
 					else if (f5 & TR5_LUCK) t = object_desc_str(t, !(mode & 8) ? " to luck" : "luck");
-					else if (f1 & TR1_TUNNEL) ;
+					else if (f1 & TR1_TUNNEL) {}
 				}
 #endif
 				/* finish with closing bracket ')' */
