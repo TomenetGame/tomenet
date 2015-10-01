@@ -3029,6 +3029,7 @@ static bool file_exist(char *buf) {
 
 errr rd_server_savefile() {
 	unsigned int i;
+	u32b hashes;
 
 	errr err = 0;
 
@@ -3280,10 +3281,16 @@ errr rd_server_savefile() {
 			/* Read the player name */
 			rd_string(name, 80);
 
+			// ACC_HOUSE_LIMIT
+			//see further below. We need to close the server save file first, to load player savefiles, so we can't do this here!
+			if (!s_older_than(4, 6, 3)) rd_byte(&tmp8u);
+			else tmp8u = -1;
+
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin, wpos);
+			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin, wpos, (char)tmp8u);
 		}
 		s_printf("Read %d player name records.\n", tmp32u);
+		hashes = tmp32u;
 	}
 
 	rd_u32b(&seed_flavor);
@@ -3377,6 +3384,54 @@ errr rd_server_savefile() {
 
 	/* Close the file */
 	my_fclose(fff);
+
+
+	//ACC_HOUSE_LIMIT:
+	/* Search in each array slot */
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		hash_entry *ptr;
+
+		/* Acquire pointer to this chain */
+		ptr = hash_table[i];
+		/* Check all entries in this chain */
+		while (ptr) {
+			if (ptr->houses == -1) {
+				/* hack */
+				player_type *p_ptr;
+				time_t ttime;
+
+				NumPlayers++;
+				MAKE(Players[NumPlayers], player_type);
+				p_ptr = Players[NumPlayers];
+				WIPE(p_ptr, player_type);
+				p_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
+				C_WIPE(p_ptr->inventory, INVEN_TOTAL, object_type);
+				p_ptr->Ind = NumPlayers;
+
+				/* set his supposed name */
+				strcpy(p_ptr->name, ptr->name);
+				/* generate savefile name */
+				process_player_name(NumPlayers, TRUE);
+				/* try to load him! */
+				if (!load_player(NumPlayers))
+					s_printf("INIT_ACC_HOUSE_LIMIT_ERROR: load_player '%s' failed\n", ptr->name);
+				else {
+					tmp8u = p_ptr->houses_owned;
+					s_printf("INIT_ACC_HOUSE_LIMIT_OK: '%s' has %d houses\n", ptr->name, tmp8u);
+				}
+
+				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), p_ptr->wpos, (char)tmp8u);
+
+				/* unhack */
+				C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(p_ptr, player_type);
+				NumPlayers--;
+			}
+
+			/* Next entry in chain */
+			ptr = ptr->next;
+		}
+	}
 
 	/* Result */
 	return (err);

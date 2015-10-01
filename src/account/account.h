@@ -39,4 +39,6 @@ struct account{
 	char deed_achievement;  /* receive a deed for a (currently PvP) achievement? */
 	s32b guild_id;  /* auto-rejoin its guild after a char perma-died */
 	u32b guild_dna;	/* auto-rejoin its guild after a char perma-died */
+
+	char houses; /* for account-wide house limit (installed after increasing the # of generic character slots above 8) */
 };

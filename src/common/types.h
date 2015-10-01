@@ -1828,12 +1828,15 @@ struct account {
 	char deed_achievement;	/* receive a deed for a (currently PvP) achievement? */
 	s32b guild_id;	/* auto-rejoin its guild after a char perma-died */
 	u32b guild_dna;	/* auto-rejoin its guild after a char perma-died */
+
+	char houses; /* for account-wide house limit (installed after increasing the # of generic character slots above 8) */
 };
 /* Used for updating tomenet.acc structure: */
 struct account_old {
 	u32b id;	/* account id */
 	u32b flags;	/* account flags */
 	char name[30];	/* login */
+	char name_normalised[30];	/* login name, but in a simplified form, used for preventing creation of too similar account names */
 	char pass[20];	/* some crypts are not 13 */
 #ifdef ACC32
 	int acc_laston, acc_laston_real;
@@ -3630,6 +3633,8 @@ struct hash_entry {
 	s32b au;
 	s32b balance;
 #endif
+
+	char houses; // ACC_HOUSE_LIMIT
 
 	struct hash_entry *next;	/* Next entry in the chain */
 };

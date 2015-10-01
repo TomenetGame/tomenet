@@ -126,7 +126,6 @@ int validate(char *name) {
 		c_acc->flags &= ~(ACC_TRIAL | ACC_NOSCORE);
 	}
 	WriteAccount(c_acc, FALSE);
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->account == c_acc->id) {
 			if (Players[i]->inval) effect = TRUE;
@@ -134,7 +133,9 @@ int validate(char *name) {
 		}
 	}
 
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
+
 	if (effect) return(-1);
 	return(1);
 }
@@ -158,7 +159,6 @@ int invalidate(char *name, bool admin) {
 		c_acc->flags |= (ACC_TRIAL | ACC_NOSCORE);
 	}
 	WriteAccount(c_acc, FALSE);
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->account == c_acc->id) {
 			if (!Players[i]->inval) effect = TRUE;
@@ -166,6 +166,7 @@ int invalidate(char *name, bool admin) {
 		}
 	}
 
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	if (effect) return(-1);
 	return(1);
@@ -189,6 +190,8 @@ int makeadmin(char *name) {
 				Players[i]->admin_wiz = 1;
 		}
 	}
+
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return(TRUE);
 }
@@ -204,8 +207,8 @@ int acc_set_flags(char *name, u32b flags, bool set) {
 	else c_acc->flags &= ~(flags);
 
 	WriteAccount(c_acc, FALSE);
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return(1);
 }
@@ -219,6 +222,8 @@ u32b acc_get_flags(char *name) {
 	if (!c_acc) return(0);
 
 	flags = c_acc->flags;
+
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return flags;
 }
@@ -239,8 +244,8 @@ int acc_set_flags_id(u32b id, u32b flags, bool set) {
 	else c_acc->flags &= ~(flags);
 
 	WriteAccount(c_acc, FALSE);
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return(1);
 }
@@ -255,8 +260,8 @@ int acc_set_guild(char *name, s32b id) {
 	c_acc->guild_id = id;
 
 	WriteAccount(c_acc, FALSE);
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return(1);
 }
@@ -269,8 +274,8 @@ int acc_set_guild_dna(char *name, u32b dna) {
 	c_acc->guild_dna = dna;
 
 	WriteAccount(c_acc, FALSE);
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return(1);
 }
@@ -284,6 +289,8 @@ s32b acc_get_guild(char *name) {
 	if (!c_acc) return(0);
 
 	guild_id = c_acc->guild_id;
+
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return guild_id;
 }
@@ -295,6 +302,8 @@ u32b acc_get_guild_dna(char *name) {
 	if (!c_acc) return(0);
 
 	dna = c_acc->guild_dna;
+
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return dna;
 }
@@ -308,8 +317,8 @@ int acc_set_deed_event(char *name, char deed_sval) {
 	c_acc->deed_event = deed_sval;
 
 	WriteAccount(c_acc, FALSE);
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return(1);
 }
@@ -321,6 +330,8 @@ char acc_get_deed_event(char *name) {
 	if (!c_acc) return(0);
 
 	deed_sval = c_acc->deed_event;
+
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return deed_sval;
 }
@@ -333,8 +344,8 @@ int acc_set_deed_achievement(char *name, char deed_sval) {
 	c_acc->deed_achievement = deed_sval;
 
 	WriteAccount(c_acc, FALSE);
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return(1);
 }
@@ -346,8 +357,38 @@ char acc_get_deed_achievement(char *name) {
 	if (!c_acc) return(0);
 
 	deed_sval = c_acc->deed_achievement;
+
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	KILL(c_acc, struct account);
 	return deed_sval;
+}
+/* get account houses //ACC_HOUSE_LIMIT */
+char acc_get_houses(const char *name) {
+	struct account *c_acc;
+	char houses;
+
+	c_acc = GetAccount(name, NULL, FALSE);
+	if (!c_acc) return(0);
+
+	houses = c_acc->houses;
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
+	KILL(c_acc, struct account);
+	return houses;
+}
+
+/* set account houses */
+int acc_set_houses(const char *name, char houses) {
+	struct account *c_acc;
+
+	c_acc = GetAccount(name, NULL, TRUE);
+	if (!c_acc) return(0);
+
+	c_acc->houses = houses;
+	WriteAccount(c_acc, FALSE);
+
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
+	KILL(c_acc, struct account);
+	return(1);
 }
 
 /*
@@ -4468,7 +4509,7 @@ void account_checkexpiry(int Ind) {
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos) {
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses) {
 	int slot;
 	hash_entry *ptr;
 
@@ -4498,6 +4539,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 	ptr->wpos.wx = wpos.wx;
 	ptr->wpos.wy = wpos.wy;
 	ptr->wpos.wz = wpos.wz;
+	ptr->houses = houses;
 
 	/* Add the rest of the chain to this entry */
 	ptr->next = hash_table[slot];
@@ -4509,7 +4551,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 /*
  * Verify a player's data against the hash table. - C. Blue
  */
-void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos) {
+void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses) {
 	hash_entry *ptr = lookup_player(id);
 
 	/* For savegame conversion 4.2.0 -> 4.2.2: */
@@ -4545,6 +4587,10 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 	if (!ptr->accountname) {
 		s_printf("hash_entry: fixing accountname of %s.\n", ptr->name);
 		ptr->accountname = strdup(lookup_accountname2(account));
+	}
+	if (ptr->houses != houses) {
+		s_printf("hash_entry: fixing houses of %s.\n", ptr->name);
+		ptr->houses = houses;
 	}
 }
 
@@ -5000,7 +5046,7 @@ void restore_acclists(void) {
 			time_t ttime;
 			//s_printf("  adding: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
 			/* Add backed-up entry again */
-			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, 0, time(&ttime), ptr->admin, ptr->wpos);
+			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, 0, time(&ttime), ptr->admin, ptr->wpos, ptr->houses);
 		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", name_forge, ptr->id, ptr->account);
 	}
 
@@ -5030,3 +5076,24 @@ void fix_lost_guild_mode(int g_id) {
 		s_printf("Guild '%s' (%d): Has been erased!\n", guilds[g_id].name, g_id);
         }
 }
+
+//ACC_HOUSE_LIMIT:
+char acc_sum_houses(struct account *acc) {
+	int i;
+	char j = 0;
+	int *id_list, ids;
+	hash_entry *ptr;
+
+	ids = player_id_list(&id_list, acc->id);
+	for (i = 0; i < ids; i++) {
+		if (!(ptr = lookup_player(id_list[i]))) {
+			s_printf("ACC_SUM_HOUSES_ERROR: cannot lookup_player id %d.\n", id_list[i]);
+			continue;
+		}
+		j += ptr->houses;
+	}
+
+	if (ids) C_KILL(id_list, ids, int);
+	return(TRUE);
+}
+

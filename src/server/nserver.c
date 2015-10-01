@@ -506,8 +506,8 @@ static bool update_acc_file_version(void) {
 		return(FALSE);
 	}
 
-	/* helper vars */
-	char *ptr;
+	/* helper vars if needed */
+	//char *ptr;
 
 	while (!feof(fp_old)) {
 		retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
@@ -518,6 +518,8 @@ static bool update_acc_file_version(void) {
 		c_acc.id = c_acc_old.id;
 		c_acc.flags = c_acc_old.flags;
 		//strcpy(c_acc.name, c_acc_old.name);
+		strcpy(c_acc.name, c_acc_old.name);
+		strcpy(c_acc.name_normalised, c_acc_old.name_normalised);
 		strcpy(c_acc.pass, c_acc_old.pass);
 		c_acc.acc_laston = c_acc_old.acc_laston;
 		c_acc.acc_laston_real = c_acc_old.acc_laston_real;
@@ -528,15 +530,8 @@ static bool update_acc_file_version(void) {
 		c_acc.guild_id = c_acc_old.guild_id;
 		c_acc.guild_dna = c_acc.guild_id ? guilds[c_acc.guild_id].dna : 0;
 
-		/* changes/additions - cumulative since 4.5.8a release time, to not break non-official servers: */
-		//1: disallow spaces at the end of account names
-		for (ptr = &c_acc_old.name[strlen(c_acc_old.name)]; ptr-- > c_acc_old.name; ) {
-			if (*ptr == ' ') *ptr = '\0';
-			else break;
-		}
-		strcpy(c_acc.name, c_acc_old.name);
-		//2: add 'name_normalised'
-		condense_name(c_acc.name_normalised, c_acc_old.name);
+		/* changes/additions */
+		c_acc.houses = -1; //init value, means "please count me" // ACC_HOUSE_LIMIT
 
 		/* write it back */
 		if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1)

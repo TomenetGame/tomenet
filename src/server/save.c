@@ -1935,6 +1935,7 @@ static void wr_player_names(void) {
 			wr_s16b(ptr->wpos.wz);
 			/* Store the player name */
 			wr_string(ptr->name);
+			wr_byte(ptr->houses);
 		}
 	}
 
@@ -2352,7 +2353,7 @@ static bool load_server_info_classic(void) {
 		if (fd < 0) err = -1;
 
 		/* Message (below) */
-		if (err) what = "Cannot open savefile";
+		if (err) what = "Cannot open server savefile";
 	}
 
 	/* Process file */
@@ -2361,7 +2362,7 @@ static bool load_server_info_classic(void) {
 		if (fd_read(fd, (char*)(vvv), 4)) err = -1;
 
 		/* What */
-		if (err) what = "Cannot read savefile";
+		if (err) what = "Cannot read server savefile";
 
 		/* Close the file */
 		(void)fd_close(fd);
@@ -2390,7 +2391,7 @@ static bool load_server_info_classic(void) {
 		   (void)sprintf (what,"Cannot parse savefile error %d",err);
 		   };
 		   */
-		if (err) what ="Cannot parse savefile error %d";
+		if (err) what ="Cannot parse server savefile error %d";
 	}
 
 	/* Okay */
@@ -2400,7 +2401,7 @@ static bool load_server_info_classic(void) {
 		    (version_minor != sf_minor) ||
 		    (version_patch != sf_patch)) {
 			/* Message */
-			printf("Converted a %d.%d.%d savefile.\n",
+			printf("Converted a %d.%d.%d server savefile.\n",
 					sf_major, sf_minor, sf_patch);
 		}
 

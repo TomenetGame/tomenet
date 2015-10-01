@@ -2466,13 +2466,13 @@ static void player_setup(int Ind, bool new) {
 	if (!lookup_player_name(p_ptr->id)) {
 		time_t ttime;
 		/* Add */
-		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos);
+		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, p_ptr->houses_owned);
 	} else {
 	/* Verify his data - only needed for 4.2.0 -> 4.2.2 savegame conversion :) - C. Blue */
 	/* Now also needed for 4.5.2 -> 4.5.3 again ^^ To stamp guild info into hash table, for self-adding */
 		time_t ttime;
 		/* Verify mode */
-		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos);
+		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, (char)p_ptr->houses_owned);
 	}
 
 	/* Set his "current activities" variables */
@@ -2928,6 +2928,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	int i;
 	struct account *c_acc;
 	bool acc_banned = FALSE;
+	char acc_houses = 0;
 
 	cptr accname = connp->nick, name = connp->c_name;
 	int race = connp->race, class = connp->class, trait = connp->trait, sex = connp->sex;
@@ -3001,6 +3002,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->mutedchat = (c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
 		s_printf("(%s) ACC1:Player %s has flags %d\n", showtime(), accname, c_acc->flags);
+		acc_houses = c_acc->houses;
 		KILL(c_acc, struct account);
 	}
 
@@ -3020,6 +3022,14 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if (!load_player(Ind)) {
 		/* Loading failed badly */
 		return FALSE;
+	}
+
+	/* init account-wide houses limit? // ACC_HOUSE_LIMIT */
+	if (acc_houses == -1) {
+		/* grab sum from hash table entries */
+		acc_houses = acc_sum_houses(c_acc);
+		acc_set_houses(accname, acc_houses);
+		s_printf("ACC_HOUSE_LIMIT: initialised %s(%s) with %d.\n", p_ptr->name, accname, acc_houses);
 	}
 
 	/* Did loading succeed? */

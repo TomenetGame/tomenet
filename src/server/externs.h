@@ -1349,7 +1349,7 @@ extern s32b lookup_player_balance(int id);
 extern int lookup_player_id(cptr name);
 extern int lookup_player_id_messy(cptr name);
 /* another arg, and its getting a struct... pfft. */
-extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos);
+extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list, u32b account);
@@ -1378,7 +1378,7 @@ extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...);
 extern u16b lookup_player_type(int id);
 extern int check_account(char *accname, char *c_name);
 extern void strip_true_arts_from_hashed_players(void);
-extern void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos);
+extern void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses);
 extern void account_change_password(int Ind, char *old_pass, char *new_pass);
 
 extern int lookup_player_ind(u32b id);
@@ -1391,6 +1391,9 @@ extern hash_entry *hash_table[NUM_HASH_ENTRIES];
 extern bool guild_rename(int Ind, char *new_name);
 extern void get_laston(char *name, char *response, bool admin);
 extern bool lookup_similar_account(cptr name, cptr accname);
+extern char acc_sum_houses(struct account *acc);
+extern char acc_get_houses(const char *name);
+extern int acc_set_houses(const char *name, char houses);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);
