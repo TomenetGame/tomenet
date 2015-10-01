@@ -11729,7 +11729,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 		case GF_STUN:
 			//do_stun = 18;
-			if (r_ptr->flags9 & RF9_RES_SOUND) ;//do_stun /= 4;
+			if (r_ptr->flags9 & RF9_RES_SOUND) {}//do_stun /= 4;
 			break;
 
 		case GF_SOUND:
@@ -11954,7 +11954,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->level > ((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) / 2 + 10)) /* RES_OLD */
 				;//do_blind = do_conf = 0;
-			if (r_ptr->flags3 & RF3_NO_CONF) ;//do_conf = 0;
+			if (r_ptr->flags3 & RF3_NO_CONF) {}//do_conf = 0;
 			dam /= 3;
 			break;
 
