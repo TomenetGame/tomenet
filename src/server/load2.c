@@ -3029,7 +3029,6 @@ static bool file_exist(char *buf) {
 
 errr rd_server_savefile() {
 	unsigned int i;
-	u32b hashes;
 
 	errr err = 0;
 
@@ -3290,7 +3289,6 @@ errr rd_server_savefile() {
 			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin, wpos, (char)tmp8u);
 		}
 		s_printf("Read %d player name records.\n", tmp32u);
-		hashes = tmp32u;
 	}
 
 	rd_u32b(&seed_flavor);
