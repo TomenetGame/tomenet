@@ -6942,7 +6942,8 @@ void do_cmd_purchase_house(int Ind, int dir) {
 		if (cfg.acc_house_limit) { //ACC_HOUSE_LIMIT
 			if (acc_get_houses(p_ptr->accountname) >= cfg.acc_house_limit) {
 				//msg_format(Ind, "The number of houses is limited to %d across all characters of an account.", cfg.acc_house_limit);
-				msg_format(Ind, "You already own the sum of %d houses across all of your characters, which is the total house limit per account.", cfg.acc_house_limit);
+				msg_format(Ind, "You already own the sum of %d houses across all of your characters,", cfg.acc_house_limit);
+				msg_print(Ind, " which is the total house limit per account.");
 				return;
 			}
 		}
