@@ -14,6 +14,8 @@ char server_name[MAX_CHARS] = "";
 s32b server_port;
 char cname[MAX_CHARS] = "";
 
+int max_chars_per_account = 9;
+
 s32b char_creation_flags = 1;	/* 0 = traditional stats rolling, 1 = player-definable stats - C. Blue */
 
 char message_history[MSG_HISTORY_MAX][MSG_LEN];			/* history for chat, slash-cmd etc. */

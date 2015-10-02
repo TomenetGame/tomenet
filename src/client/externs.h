@@ -962,3 +962,5 @@ extern bool enabled_readability_blue;
 extern bool auto_reincarnation;
 extern char macro_trigger_exclusive[MAX_CHARS];
 extern bool macro_processing_exclusive;
+
+extern int max_chars_per_account;

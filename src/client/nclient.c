@@ -337,7 +337,8 @@ int Send_file_end(int ind, unsigned short id) {
 void Receive_login(void) {
 	int n;
 	char ch;
-	int i = 0, max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, mode = 0;
+	//assume that 60 is always more than we will need for max_cpa under all circumstances in the future:
+	int i = 0, max_cpa = 60, max_cpa_plus = 0, mode = 0;
 	char names[max_cpa + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS + 1][MAX_CHARS], colour_sequence[3];
 	char tmp[MAX_CHARS + 3];	/* like we'll need it... */
 	int ded_pvp = 0, ded_iddc = 0, ded_pvp_shown, ded_iddc_shown;
@@ -388,7 +389,11 @@ void Receive_login(void) {
 	/* Set temporary features */
 	sflags_TEMP = sflags2;
 
-	/* Set XXX */
+	/* Abuse flag array #3 for different stuff instead */
+	if (!(sflags3 & 0xFF))
+		max_cpa = max_chars_per_account = 8; //backward compatibility, no need for version check ;)
+	else
+		max_cpa = max_chars_per_account = (sflags3 & 0xFF);
 
 	/* Now that we have the server flags, we can finish setting up Lua - mikaelh */
 	open_lua();
