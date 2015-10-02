@@ -6296,6 +6296,11 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	char buf[1024];
 	int i;
 
+	//ACC_HOUSE_LIMIT
+	i = acc_get_houses(p_ptr->accountname);
+	i -= p_ptr->houses_owned;
+	acc_set_houses(p_ptr->accountname, i);
+
 	kill_houses(p_ptr->id, OT_PLAYER);
 	rem_xorder(p_ptr->xorder_id);
 	kill_objs(p_ptr->id);

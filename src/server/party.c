@@ -4394,6 +4394,12 @@ void erase_player_name(char *pname) {
 
 				acc = lookup_accountname(ptr->id);
 				if (!acc) acc = "(no account)";
+				else {
+					//ACC_HOUSE_LIMIT
+					i = acc_get_houses(acc);
+					i -= ptr->houses;
+					acc_set_houses(acc, i);
+				}
 				s_printf("Removing player: %s (%s)\n", ptr->name, acc);
 
 				for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
@@ -4410,6 +4416,7 @@ void erase_player_name(char *pname) {
 						break;
 					}
 				}
+
 				kill_houses(ptr->id, OT_PLAYER);
 				rem_xorder(ptr->xorder);
 				/* Added this one.. should work well? */
