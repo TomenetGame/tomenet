@@ -1832,6 +1832,14 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	if (!older_than(4, 4, 25)) rd_byte(&p_ptr->castles_owned);
 	else strip_bytes(1);
 
+	/* catch old bugs ;) */
+	if (p_ptr->houses_owned < 0 || p_ptr->houses_owned > 10 ||
+	    p_ptr->castles_owned < 0 || p_ptr->castles_owned > 1) {
+		s_printf("INIT_ACC_HOUSE_LIMIT_WARNING: '%s' has %d houses (%d castles)\n", p_ptr->name, p_ptr->houses_owned, p_ptr->castles_owned);
+		/* we can do this since houses were already loaded further above: */
+		lua_count_houses(NumPlayers);
+	}
+
 	if (!older_than(4, 5, 6)) rd_s16b(&p_ptr->flash_self);
 	else {
 		strip_bytes(2);
@@ -3415,8 +3423,9 @@ errr rd_server_savefile() {
 					s_printf("INIT_ACC_HOUSE_LIMIT_ERROR: load_player '%s' failed\n", ptr->name);
 				else {
 					/* catch old bugs ;) */
-					if (p_ptr->houses_owned < 0 || p_ptr->houses_owned > 10) {
-						s_printf("INIT_ACC_HOUSE_LIMIT_WARNING: '%s' has %d houses\n", ptr->name, p_ptr->houses_owned);
+					if (p_ptr->houses_owned < 0 || p_ptr->houses_owned > 10 ||
+					    p_ptr->castles_owned < 0 || p_ptr->castles_owned > 1) {
+						s_printf("INIT_ACC_HOUSE_LIMIT_WARNING: '%s' has %d houses (%d castles)\n", ptr->name, p_ptr->houses_owned, p_ptr->castles_owned);
 						/* we can do this since houses were already loaded further above: */
 						lua_count_houses(NumPlayers);
 					}
