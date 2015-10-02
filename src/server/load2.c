@@ -3416,7 +3416,7 @@ errr rd_server_savefile() {
 				else {
 					/* catch old bugs ;) */
 					if (p_ptr->houses_owned < 0 || p_ptr->houses_owned > 10) {
-						s_printf("INIT_ACC_HOUSE_LIMIT_WARNING: '%s' has %d houses\n", ptr->name, tmp8u);
+						s_printf("INIT_ACC_HOUSE_LIMIT_WARNING: '%s' has %d houses\n", ptr->name, p_ptr->houses_owned);
 						/* we can do this since houses were already loaded further above: */
 						lua_count_houses(NumPlayers);
 					}
