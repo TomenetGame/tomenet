@@ -37,11 +37,11 @@
 
 
 
-/* MAJOR/MINOR/PATCH version should be 0-15. */
+/* MAJOR/MINOR/PATCH version should be 0-15. BUILD == 1 means 'test build' */
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		6
 #define VERSION_PATCH		0
-#define VERSION_EXTRA		0
+#define VERSION_EXTRA		1
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -229,7 +229,7 @@
 
 
 /* Maximum number of different characters one player account may hold - C. Blue */
-#define MAX_CHARS_PER_ACCOUNT	8
+#define MAX_CHARS_PER_ACCOUNT	10
 #define MAX_DED_IDDC_CHARS	2	/* additional iddc-only characters (needs ALLOW_DED_IDDC_MODE) */
 #define MAX_DED_PVP_CHARS	1	/* additional pvp-only characters (needs ALLOW_DED_PVP_MODE) */
 
