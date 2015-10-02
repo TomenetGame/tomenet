@@ -9305,6 +9305,29 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "Admin parm set.");
 				return;
 			}
+			else if (prefix(message, "/acchouselimitfix")) { /* just in case anything goes wrong.. */
+				int i;
+				struct account *acc;
+
+				if (!tk) {
+					msg_print(Ind, "Usage: /acchouselimitfix <account name>");
+					return;
+				}
+
+				acc = GetAccount(message3, NULL, FALSE);
+				if (!acc) {
+					msg_print(Ind, "Couldn't find that account.");
+					return;
+				}
+
+				i = acc_sum_houses(acc);
+				msg_format(Ind, "Account '%s' got sum of houses of %d.", message3, i);
+				acc_set_houses(message3, i);
+				s_printf("ACC_HOUSE_LIMIT_INIT_MANUAL: initialised %s with %d.\n", message3, i);
+
+				KILL(acc, struct account);
+				return;
+			}
 		}
 	}
 
