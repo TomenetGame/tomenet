@@ -5090,6 +5090,7 @@ char acc_sum_houses(struct account *acc) {
 			s_printf("ACC_SUM_HOUSES_ERROR: cannot lookup_player id %d.\n", id_list[i]);
 			continue;
 		}
+		s_printf("ACC_SUM_HOUSES: character %s adds %d houses.\n", ptr->name, ptr->houses);
 		j += ptr->houses;
 	}
 
