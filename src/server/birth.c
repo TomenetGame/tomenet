@@ -3026,10 +3026,14 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* init account-wide houses limit? // ACC_HOUSE_LIMIT */
 	if (acc_houses == -1) {
-		/* grab sum from hash table entries */
-		acc_houses = acc_sum_houses(c_acc);
-		acc_set_houses(accname, acc_houses);
-		s_printf("ACC_HOUSE_LIMIT_INIT: initialised %s(%s) with %d.\n", p_ptr->name, accname, acc_houses);
+		c_acc = GetAccount(accname, NULL, FALSE);
+		if (c_acc) {
+			/* grab sum from hash table entries */
+			acc_houses = acc_sum_houses(c_acc);
+			acc_set_houses(accname, acc_houses);
+			s_printf("ACC_HOUSE_LIMIT_INIT: initialised %s(%s) with %d.\n", p_ptr->name, accname, acc_houses);
+			KILL(c_acc, struct account);
+		} else s_printf("ACC_HOUSE_LIMIT_INIT_ERROR: couldn't get account %s.\n", accname);
 	} else s_printf("ACC_HOUSE_LIMIT: read %s(%s) with %d.\n", p_ptr->name, accname, acc_houses);
 
 	/* Did loading succeed? */
