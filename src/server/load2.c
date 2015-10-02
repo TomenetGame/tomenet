@@ -1835,7 +1835,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	/* catch old bugs ;) */
 	if (p_ptr->houses_owned < 0 || p_ptr->houses_owned > 10 ||
 	    p_ptr->castles_owned < 0 || p_ptr->castles_owned > 1) {
-		s_printf("INIT_ACC_HOUSE_LIMIT_WARNING: '%s' has %d houses (%d castles)\n", p_ptr->name, p_ptr->houses_owned, p_ptr->castles_owned);
+		s_printf("HOUSES_OWNED_GLITCH_FIX: '%s' has %d houses (%d castles)\n", p_ptr->name, p_ptr->houses_owned, p_ptr->castles_owned);
 		/* we can do this since houses were already loaded further above: */
 		lua_count_houses(NumPlayers);
 	}
@@ -3427,8 +3427,11 @@ errr rd_server_savefile() {
 					    p_ptr->castles_owned < 0 || p_ptr->castles_owned > 1) {
 						s_printf("INIT_ACC_HOUSE_LIMIT_WARNING: '%s' has %d houses (%d castles)\n", ptr->name, p_ptr->houses_owned, p_ptr->castles_owned);
 						/* we can do this since houses were already loaded further above: */
-						lua_count_houses(NumPlayers);
+						//lua_count_houses(NumPlayers);
 					}
+					/* actually, just let's ALWAYS recount houses - Jailer character had an even weirder glitch that wasn't covered by above check =P */
+					lua_count_houses(NumPlayers);
+
 					tmp8u = p_ptr->houses_owned;
 					s_printf("INIT_ACC_HOUSE_LIMIT_OK: '%s' has %d houses\n", ptr->name, tmp8u);
 					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), p_ptr->wpos, (char)tmp8u);
