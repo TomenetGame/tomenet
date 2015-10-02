@@ -1428,6 +1428,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 	player_type *p_ptr = Players[Ind];
 	int newowner = -1;
 	int i, h_idx;
+	int acc_houses = acc_get_houses(p_ptr->accountname), acc_houses2;
 
 	/* to prevent house amount cheeze (houses_owned)
 	   let's just say house ownership can't be transferred.
@@ -1467,6 +1468,13 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 				msg_print(Ind, "At his current level, that player cannot own more houses!");
 			return (FALSE);
 		}
+
+		//ACC_HOUSE_LIMIT
+		if (acc_get_houses(Players[i]->accountname) >= cfg.acc_house_limit) {
+			msg_print(Ind, "That player cannot own more houses on his account!");
+			return FALSE;
+		}
+
 		h_idx = pick_house(&p_ptr->wpos, y, x);
 		/* paranoia */
 		if (h_idx == -1) {
@@ -1495,6 +1503,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 			if (dna->owner_type == OT_PLAYER) {
 				p_ptr->houses_owned--;
 				if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
+
+				//ACC_HOUSE_LIMIT
+				acc_houses--;
+				acc_set_houses(p_ptr->accountname, acc_houses);
 			} else if (dna->owner_type == OT_GUILD) {
 				guilds[dna->owner].h_idx = 0;
 				Send_guild_config(dna->owner);
@@ -1530,6 +1542,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 		if (dna->owner_type == OT_PLAYER) {
 			p_ptr->houses_owned--;
 			if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
+
+			//ACC_HOUSE_LIMIT
+			acc_houses--;
+			acc_set_houses(p_ptr->accountname, acc_houses);
 		}
 		newowner = p_ptr->guild;
 		msg_format(Ind, "This house is now owned by %s.", guilds[p_ptr->guild].name);
@@ -1566,6 +1582,12 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 						//if (dna->owner_type == OT_PLAYER) p_ptr->castles_owned--;
 						Players[i]->castles_owned++;
 					}
+
+					//ACC_HOUSE_LIMIT
+					acc_houses2 = acc_get_houses(Players[i]->accountname);
+					acc_houses2++;
+					acc_set_houses(Players[i]->accountname, acc_houses2);
+
 					dna->creator = Players[i]->dna;
 					dna->owner = newowner;
 					dna->owner_type = args[1] - '0';
@@ -1576,6 +1598,11 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 			//hard paranoia: undo!
 			p_ptr->houses_owned++;
 			if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned++;
+
+			//ACC_HOUSE_LIMIT
+			acc_houses++;
+			acc_set_houses(p_ptr->accountname, acc_houses);
+
 			return(FALSE);
 		}
 
@@ -6845,11 +6872,13 @@ void do_cmd_purchase_house(int Ind, int dir) {
 	}
 
 
-	if(dir > 9) dir = 0;	/* temp hack */
+	if (dir > 9) dir = 0;	/* temp hack */
 
 	/* Be sure we have a direction */
 	if (dir > 0) {
 		struct c_special *cs_ptr;
+		int acc_houses = acc_get_houses(p_ptr->accountname);
+
 		/* Get requested direction */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
@@ -6892,6 +6921,10 @@ void do_cmd_purchase_house(int Ind, int dir) {
 					if (dna->owner_type != OT_GUILD) {
 						p_ptr->houses_owned--;
 						if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
+
+						//ACC_HOUSE_LIMIT
+						acc_houses--;
+						acc_set_houses(p_ptr->accountname, acc_houses);
 					}
 
 					/* make sure we don't get stuck by selling it while inside - C. Blue */
@@ -6901,9 +6934,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 					if (!is_admin(p_ptr)) {
 						msg_print(Ind,"You cannot sell that house");
 						return;
-					}
-					else
-						msg_print(Ind,"The house is reset");
+					} else msg_print(Ind,"The house is reset");
 				}
 				if (dna->owner_type == OT_GUILD) {
 					guilds[dna->owner].h_idx = 0;
@@ -6940,7 +6971,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 		}
 
 		if (cfg.acc_house_limit) { //ACC_HOUSE_LIMIT
-			if (acc_get_houses(p_ptr->accountname) >= cfg.acc_house_limit) {
+			if (acc_houses >= cfg.acc_house_limit) {
 				//msg_format(Ind, "The number of houses is limited to %d across all characters of an account.", cfg.acc_house_limit);
 				msg_format(Ind, "You already own the sum of %d houses across all of your characters,", cfg.acc_house_limit);
 				msg_print(Ind, " which is the total house limit per account.");
@@ -6983,6 +7014,11 @@ void do_cmd_purchase_house(int Ind, int dir) {
 		p_ptr->au -= price;
 		p_ptr->houses_owned++;
 		if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned++;
+
+		//ACC_HOUSE_LIMIT
+		acc_houses++;
+		acc_set_houses(p_ptr->accountname, acc_houses);
+
 		dna->creator = p_ptr->dna;
 		dna->mode = p_ptr->mode;
 		dna->owner = p_ptr->id;
