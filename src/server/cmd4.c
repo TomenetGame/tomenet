@@ -2154,12 +2154,11 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, (cfg.fps-60)*100/60);
 	fprintf(fff,"\n");
 
-	fprintf(fff, "Players' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
-	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
-
-	if ((k = cfg.party_xp_boost))
-		fprintf(fff, "Party members get boosted exp (+%d internal modifier).\n", k);
-
+	/* level preservation */
+	if (cfg.lifes)
+		fprintf(fff, "Normal mode players can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
+	if (cfg.no_ghost)
+		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
 	switch (cfg.replace_hiscore & 0x7) {
 	case 0: fprintf(fff, "High-score entries are added to the high-score table.\n"); break;
 	case 1: fprintf(fff, "Instead of getting added, newer score replaces older entries.\n"); break;
@@ -2175,14 +2174,18 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "..if ALSO the character is of same class.\n");
 	if (cfg.replace_hiscore & 0x40)
 		fprintf(fff, "..if ALSO the character is of same race.\n");
-
 	/* Several restrictions */
 #if 0 /* obsolete/unused */
-	if (!cfg.maximize)
-		fprintf(fff, "This server is *NOT* maximized!\n");
+	if (!cfg.maximize) fprintf(fff, "This server is *NOT* maximized!\n");
 #endif
 
 	fprintf(fff,"\n");
+
+	fprintf(fff, "Players' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
+	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
+
+	if ((k = cfg.party_xp_boost))
+		fprintf(fff, "Party members get boosted exp (+%d internal modifier).\n", k);
 
 	if ((k = cfg.newbies_cannot_drop))
 #if STARTEQ_TREATMENT == 1
@@ -2210,7 +2213,6 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff, "You may use !E inscription to suppress earthquakes on Grond only.\n");
 #endif
 
-	fprintf(fff,"\n");
 	k = cfg.use_pk_rules;
 	switch (k) {
 		case PK_RULES_DECLARE:
@@ -2227,11 +2229,8 @@ void do_cmd_check_server_settings(int Ind)
 			break;
 	}
 
-	/* level preservation */
-	if (cfg.no_ghost)
-		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
-	if (cfg.lifes)
-		fprintf(fff, "Normal mode players can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
+	fprintf(fff,"\n");
+
 	if (cfg.houses_per_player) {
 		//fprintf(fff, "Players may own up to level/%d houses (caps at level 50) at once", cfg.houses_per_player);
 		fprintf(fff, "Players may own up to level/%d houses (caps at level %d) at once", cfg.houses_per_player, (50 / cfg.houses_per_player) * cfg.houses_per_player);
@@ -2264,7 +2263,7 @@ void do_cmd_check_server_settings(int Ind)
 		}
 	}
 	if (cfg.acc_house_limit) //ACC_HOUSE_LIMIT
-		fprintf(fff, "Players may only own up to %d total houses across all characters of their account.\n This account-wide limit takes priority over the house limit per character.", cfg.acc_house_limit);
+		fprintf(fff, "Players may own up to %d total houses across all characters of their account.\n This account-wide limit takes priority over the house limit per character.\n", cfg.acc_house_limit);
 
 	fprintf(fff,"\n");
 
