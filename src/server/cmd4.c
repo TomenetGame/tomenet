@@ -3345,6 +3345,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 			if (cfg.acc_house_limit) {
 				int alim = cfg.acc_house_limit;
 				int ahou = acc_get_houses(p_ptr->accountname);
+
 				if (ahou >= alim) {
 					free = FALSE;
 					strcat(buf, format(" You are owning the maximum amount of %d houses allowed per account.", cfg.acc_house_limit));
