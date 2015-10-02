@@ -3241,6 +3241,8 @@ static void set_server_option(char * option, char * value) {
 		cfg.castles_per_player = atoi(value);
 	else if (!strcmp(option,"CASTLES_FOR_KINGS"))
 		cfg.castles_for_kings = str_to_boolean(value);
+	else if (!strcmp(option,"ACC_HOUSE_LIMIT"))
+		cfg.acc_house_limit = atoi(value);
 	else if (!strcmp(option,"DOOR_BUMP_OPEN"))
 		cfg.door_bump_open = atoi(value);
 	else if (!strcmp(option,"BASE_UNIQUE_RESPAWN_TIME"))

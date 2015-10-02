@@ -2248,7 +2248,8 @@ void do_cmd_check_server_settings(int Ind)
 			else fprintf(fff, ".\n");
 		}
 	} else {
-		fprintf(fff, "Players may own as many houses as they like");
+		if (!cfg.acc_house_limit) fprintf(fff, "Players may own as many houses as they like");
+		else fprintf(fff, "Players may as many houses as they like unless hitting the account-wide limit");
 		if (cfg.castles_per_player == 1) {
 			fprintf(fff, "\n of which one may be a castle (house with moat)");
 			if (cfg.castles_for_kings) fprintf(fff, "\n provided the player is a king, queen, emperor or empress.\n");
@@ -2262,6 +2263,8 @@ void do_cmd_check_server_settings(int Ind)
 			else fprintf(fff, ".\n");
 		}
 	}
+	if (cfg.acc_house_limit) //ACC_HOUSE_LIMIT
+		fprintf(fff, "Players may only own up to %d total houses across all characters of their account.\n This account-wide limit takes priority over the house limit per character.", cfg.acc_house_limit);
 
 	fprintf(fff,"\n");
 

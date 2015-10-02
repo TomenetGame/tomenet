@@ -3201,6 +3201,7 @@ struct server_opts {
 				    it's: max_houses = (player_level / houses_per_player). */
 	int castles_per_player; /* absolute # of castles a character may own (0 for infinite) */
 	bool castles_for_kings;
+	int acc_house_limit;
 	bool maximize;
 	bool kings_etiquette;
 	bool fallenkings_etiquette;
