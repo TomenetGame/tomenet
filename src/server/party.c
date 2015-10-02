@@ -5095,6 +5095,6 @@ char acc_sum_houses(struct account *acc) {
 	}
 
 	if (ids) C_KILL(id_list, ids, int);
-	return(TRUE);
+	return j;
 }
 
