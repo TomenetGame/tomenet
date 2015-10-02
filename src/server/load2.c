@@ -3414,6 +3414,12 @@ errr rd_server_savefile() {
 				if (!load_player(NumPlayers))
 					s_printf("INIT_ACC_HOUSE_LIMIT_ERROR: load_player '%s' failed\n", ptr->name);
 				else {
+					/* catch old bugs ;) */
+					if (p_ptr->houses_owned < 0 || p_ptr->houses_owned > 10) {
+						s_printf("INIT_ACC_HOUSE_LIMIT_WARNING: '%s' has %d houses\n", ptr->name, tmp8u);
+						/* we can do this since houses were already loaded further above: */
+						lua_count_houses(NumPlayers);
+					}
 					tmp8u = p_ptr->houses_owned;
 					s_printf("INIT_ACC_HOUSE_LIMIT_OK: '%s' has %d houses\n", ptr->name, tmp8u);
 					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), p_ptr->wpos, (char)tmp8u);
