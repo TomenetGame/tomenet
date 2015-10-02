@@ -3348,10 +3348,12 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 
 				if (ahou >= alim) {
 					free = FALSE;
+					msg_print(Ind, buf);
 					strcat(buf, format(" You are owning the maximum amount of %d houses allowed per account.", cfg.acc_house_limit));
 				} else if (alim - ahou < max_houses - p_ptr->houses_owned) {
 					free = FALSE;
-					strcat(buf, format(" You are close to the account-wide limit of %d houses, so you can only buy %s%d more house%s.",
+					msg_print(Ind, buf);
+					strcat(buf, format(" The account-wide limit of %d houses allows you to buy %s%d more house%s.",
 					    cfg.acc_house_limit,
 					    alim - ahou == 1 ? "" : "up to ",
 					    alim - ahou,
