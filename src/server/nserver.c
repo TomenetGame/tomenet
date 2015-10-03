@@ -4035,7 +4035,7 @@ static int Receive_login(int ind) {
 			sflags2 = sflags_TEMP;
 
 			/* Abuse flags #3 for actual char limit, so it's no longer hardcoded in the client */
-			sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF);
+			sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
 
 			/* Send all flags! */
 			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, sflags3, sflags2, sflags1, sflags0);
