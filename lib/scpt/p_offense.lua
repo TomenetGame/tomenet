@@ -1,49 +1,79 @@
 -- handle the holy offense school
 
-HCURSE = add_spell {
-	["name"] = 	"Curse",
+HCURSE_I = add_spell {
+	["name"] = 	"Curse I",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["am"] = 	75,
 	["level"] = 	1,
 	["mana"] = 	2,
-	["mana_max"] = 	30,
+	["mana_max"] = 	2,
 	["fail"] = 	10,
 	["stat"] = 	A_WIS,
-	["direction"] = function () if get_level(Ind, HCURSE, 50) >= 25 then return FALSE else return TRUE end end,
+	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			if get_level(Ind, HCURSE, 50) >= 25 then
-				project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
-			elseif get_level(Ind, HCURSE, 50) >= 15 then
-				fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
-			else
-				fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
-			end
+			fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE_I, 150), "points and curses for")
+	end,
+	["info"] = 	function()
+			return "power "..(10 + get_level(Ind, HCURSE_I, 150))
+	end,
+	["desc"] = 	{
+			"Randomly causes confusion damage, slowness or blindness.",
+	}
+}
+HCURSE_II = add_spell {
+	["name"] = 	"Curse II",
+	["school"] = 	{SCHOOL_HOFFENSE},
+	["am"] = 	75,
+	["level"] = 	16,
+	["mana"] = 	8,
+	["mana_max"] = 	8,
+	["fail"] = 	-5,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
 	end,
 	["info"] = 	function()
 			return "power "..(10 + get_level(Ind, HCURSE, 150))
 	end,
 	["desc"] = 	{
-			"Randomly causes confusion damage, slowness or blindness.",
-			"At level 15 it passes through monsters, affecting those behind as well",
-			"At level 25 it affects all monsters in sight",
+			"Randomly causes confusion damage, slowness or blindness",
+			"in a line, passing through monsters.",
+	}
+}
+HCURSE_III = add_spell {
+	["name"] = 	"Curse III",
+	["school"] = 	{SCHOOL_HOFFENSE},
+	["am"] = 	75,
+	["level"] = 	26,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	-20,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function(args)
+			project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
+	end,
+	["info"] = 	function()
+			return "power "..(10 + get_level(Ind, HCURSE, 150))
+	end,
+	["desc"] = 	{
+			"Randomly causes confusion damage, slowness or blindness",
+			"on all monsters within your field of view.",
 	}
 }
 
-HGLOBELIGHT = add_spell {
-	["name"] = 	"Holy Light",
+HGLOBELIGHT_I = add_spell {
+	["name"] = 	"Holy Light I",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
 	["am"] = 	75,
 	["level"] = 	2,
-	["mana"] = 	2,
-	["mana_max"] = 	30,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
 	["fail"] = 	10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		if get_level(Ind, HGLOBELIGHT, 50) >= 8 then
-			msg_print(Ind, "You are surrounded by a white light")
-			lite_room(Ind, player.wpos, player.py, player.px)
-			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT, 6), " calls light for")
-		elseif get_level(Ind, HGLOBELIGHT, 50) >= 3 then
+		if get_level(Ind, HGLOBELIGHT_I, 50) >= 3 then
 			lite_area(Ind, 10, 4)
 		else
 			msg_print(Ind, "You are surrounded by a white light")
@@ -51,16 +81,32 @@ HGLOBELIGHT = add_spell {
 		end
 	end,
 	["info"] = 	function()
-		if get_level(Ind, HGLOBELIGHT, 50) >= 8 then
-			return "dam "..(10 + get_level(Ind, HGLOBELIGHT, 100)).." rad "..(5 + get_level(Ind, HGLOBELIGHT, 6))
-		else
 			return ""
-		end
 	end,
 	["desc"] = 	{
 			"Creates a globe of pure light",
 			"At level 3 it hurts monsters that are susceptible to light",
-			"At level 8 it becomes more powerful and hurts all monsters"
+	}
+}
+HGLOBELIGHT_II = add_spell {
+	["name"] = 	"Holy Light II",
+	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
+	["am"] = 	75,
+	["level"] = 	20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	-5,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			msg_print(Ind, "You are surrounded by a white light")
+			lite_room(Ind, player.wpos, player.py, player.px)
+			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT, 6), " calls light for")
+	end,
+	["info"] = 	function()
+			return "dam "..(10 + get_level(Ind, HGLOBELIGHT, 100)).." rad "..(5 + get_level(Ind, HGLOBELIGHT, 6))
+	end,
+	["desc"] = 	{
+			"Creates a powerful globe of pure light that hurts all foes.",
 	}
 }
 
@@ -85,95 +131,161 @@ HCURSEDD = add_spell {
 }
 end
 
-HORBDRAIN = add_spell {
-	["name"] = 	"Orb of Draining",
+HORBDRAIN_I = add_spell {
+	["name"] = 	"Orb of Draining I",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["am"] = 	75,
 	["level"] = 	20,
-	["mana"] = 	5,
-	["mana_max"] = 	25,
-	["fail"] = 	30,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
+	["fail"] = 	20,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["ftk"] = 2,
 	["spell"] = 	function(args)
-		local type
-		type = GF_HOLY_ORB
-		fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HORBDRAIN, 475), 2 + get_level(Ind, HORBDRAIN, 3), " casts a holy orb for")
+		local typ
+		typ = GF_HOLY_ORB
+		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 300), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, HORBDRAIN, 475)).." rad "..(2 + get_level(Ind, HORBDRAIN, 3))
+		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 300)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
+	end,
+	["desc"] = 	{
+			"Calls an holy orb to devour the evil",
+	}
+}
+HORBDRAIN_II = add_spell {
+	["name"] = 	"Orb of Draining II",
+	["school"] = 	{SCHOOL_HOFFENSE},
+	["am"] = 	75,
+	["level"] = 	40,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	0,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["ftk"] = 2,
+	["spell"] = 	function(args)
+		local typ
+		typ = GF_HOLY_ORB
+		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 475), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
+	end,
+	["info"] = 	function()
+		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 475)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
 	end,
 	["desc"] = 	{
 			"Calls an holy orb to devour the evil",
 	}
 }
 
-HEXORCISM = add_spell {
-	["name"] = 	"Exorcism",
+HEXORCISM_I = add_spell {
+	["name"] = 	"Exorcism I",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["am"] = 	75,
-	["level"] = 	11,
+	["level"] = 	20,
 	["mana"] = 	15,
-	["mana_max"] = 	50,
-	["fail"] = 	30,
+	["mana_max"] = 	15,
+	["fail"] = 	15,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-		local type
-		if get_level(Ind, HEXORCISM, 50) < 20 then
-		    dispel_undead(Ind, 10 + get_level(Ind, HEXORCISM, 400))
-		elseif get_level(Ind, HEXORCISM, 50) < 30 then
-		    dispel_undead(Ind, 10 + get_level(Ind, HEXORCISM, 400))
-		    dispel_demons(Ind, 10 + get_level(Ind, HEXORCISM, 400))
-		else
-		    dispel_evil(Ind, 10 + get_level(Ind, HEXORCISM, 400))
-		end
+			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 250))
 	end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HEXORCISM, 400))
+		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 250))
 	end,
 	["desc"] = 	{
-			"Dispels nearby undead",
-			"At level 20 it dispels all demons",
-			"At level 30 it dispels all evil",
-        }
+			"Dispels nearby demons",
+	}
+}
+HEXORCISM_II = add_spell {
+	["name"] = 	"Exorcism II",
+	["school"] = 	{SCHOOL_HOFFENSE},
+	["am"] = 	75,
+	["level"] = 	40,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["fail"] = 	0,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function(args)
+			--dispel_evil(Ind, 10 + get_level(Ind, HEXORCISM, 400))
+			dispel_demons(Ind, 350 + get_level(Ind, HEXORCISM_II, 1000))
+	end,
+	["info"] = 	function()
+		return "dam "..(350 + get_level(Ind, HEXORCISM_II, 1000))
+	end,
+	["desc"] = 	{
+			"Dispels nearby demons",
+	}
 }
 
 HDRAINLIFE = add_spell {
 	["name"] = 	"Drain Life",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["am"] = 	75,
-	["level"] = 	20,
-	["mana"] = 	10,
-	["mana_max"] = 	80,
-	["fail"] = 	30,
+	["level"] = 	37,
+	["mana"] = 	70,
+	["mana_max"] = 	70,
+	["fail"] = 	10,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		local type
-		drain_life(Ind, args.dir, 10 + get_level(Ind, HDRAINLIFE, 10))
+		drain_life(Ind, args.dir, 15)
 		hp_player(Ind, player.ret_dam / 4)
 	end,
 	["info"] = 	function()
-		return "drains "..(10 + get_level(Ind, HDRAINLIFE, 10)).."% life"
+		return "drain 15%, heal for 25%"
 	end,
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
 
-HRELSOULS = add_spell {
-	["name"] = 	"Release Souls",
+HRELSOULS_I = add_spell {
+	["name"] = 	"Redemption I",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["am"] = 	75,
 	["level"] = 	10,
 	["mana"] = 	20,
-	["mana_max"] = 	80,
+	["mana_max"] = 	20,
 	["fail"] = 	25,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS, 1000))
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 200))
 			end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HRELSOULS, 1000))
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 1000))
+	end,
+	["desc"] = 	{ "Banishes nearby undead.", }
+}
+HRELSOULS_II = add_spell {
+	["name"] = 	"Redemption II",
+	["school"] = 	{SCHOOL_HOFFENSE},
+	["am"] = 	75,
+	["level"] = 	25,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
+	["fail"] = 	10,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function(args)
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 500))
+			end,
+	["info"] = 	function()
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 500))
+	end,
+	["desc"] = 	{ "Banishes nearby undead.", }
+}
+HRELSOULS_III = add_spell {
+	["name"] = 	"Redemption III",
+	["school"] = 	{SCHOOL_HOFFENSE},
+	["am"] = 	75,
+	["level"] = 	40,
+	["mana"] = 	80,
+	["mana_max"] = 	80,
+	["fail"] = 	-5,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function(args)
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 1000))
+			end,
+	["info"] = 	function()
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 1000))
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
@@ -182,10 +294,10 @@ HDRAINCLOUD = add_spell {
 	["name"] = 	"Doomed Grounds",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["am"] = 	75,
-	["level"] = 	30,     -- pointless for crap with low lvl anyway
-	["mana"] = 	40,
+	["level"] = 	40,     -- pointless for crap with low lvl anyway
+	["mana"] = 	100,
 	["mana_max"] = 	100,
-	["fail"] = 	-30,
+	["fail"] = 	-35,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)

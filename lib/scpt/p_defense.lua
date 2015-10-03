@@ -1,65 +1,93 @@
 -- handle the holy defense school
 
-HBLESSING = add_spell {
-	["name"] = 	"Blessing",
+HBLESSING_I = add_spell {
+	["name"] = 	"Blessing I",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["am"] = 	75,
 	["level"] = 	1,
 	["mana"] = 	4,
-	["mana_max"] = 	25,
+	["mana_max"] = 	4,
 	["fail"] = 	10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		local dur
-		if get_level(Ind, HBLESSING, 50) < 15 then
 			if player.blessed_power <= 8 then
+				local dur
 				player.blessed_power = 8
-				dur = 9 + randint(get_level(Ind, HBLESSING, 25))
+				dur = 9 + randint(get_level(Ind, HBLESSING_I, 25))
 				set_blessed(Ind, dur)
 				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " recites a blessing.")
 			end
-		elseif get_level(Ind, HBLESSING, 50) < 30 then
-			if player.blessed_power <= 14 then
-				player.blessed_power = 14
-				dur = 17 + randint(get_level(Ind, HBLESSING, 25))
-				set_blessed(Ind, dur)
-				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " chants.")
-			end
-		else
-			if player.blessed_power <= 20 then
-				player.blessed_power = 20
-				dur = 32 + randint(get_level(Ind, HBLESSING, 25))
-				set_blessed(Ind, dur)
-				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " speaks a holy prayer.")
-			end
-		end
 	end,
 	["info"] = 	function()
-		if get_level(Ind, HBLESSING, 50) < 15 then
-			return "AC+8  dur 9.."..get_level(Ind, HBLESSING, 25)+9
-		elseif get_level(Ind, HBLESSING, 50) < 30 then
-			return "AC+14  dur 17.."..get_level(Ind, HBLESSING, 25)+17
-		else
-			return "AC+20  dur 32.."..get_level(Ind, HBLESSING, 25)+32
-		end
+			return "AC+8  dur 9.."..get_level(Ind, HBLESSING_I, 25) + 9
 	end,
 	["desc"] = 	{
 			"Protects you with a shield of righteousness",
-			"At level 15 it turns into a holy chant",
-			"At level 30 becomes a holy prayer",
 			"***Automatically projecting***",
 	}
 }
-__lua_HBLESSING = HBLESSING
-
-HRESISTS = add_spell {
-	["name"] = 	"Holy Resistance",
+__lua_HBLESSING = HBLESSING_I
+HBLESSING_II = add_spell {
+	["name"] = 	"Blessing II",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["am"] = 	75,
-	["level"] = 	11,
-	["mana"] = 	4,
-	["mana_max"] = 	45,
-	["fail"] = 	15,
+	["level"] = 	15,
+	["mana"] = 	11,
+	["mana_max"] = 	11,
+	["fail"] = 	0,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			if player.blessed_power <= 14 then
+				local dur
+				player.blessed_power = 14
+				dur = 17 + randint(get_level(Ind, HBLESSING_I, 25))
+				set_blessed(Ind, dur)
+				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " chants.")
+			end
+	end,
+	["info"] = 	function()
+			return "AC+14  dur 17.."..get_level(Ind, HBLESSING_I, 25) + 17
+	end,
+	["desc"] = 	{
+			"Protects you with a shield of righteousness",
+			"***Automatically projecting***",
+	}
+}
+HBLESSING_III = add_spell {
+	["name"] = 	"Blessing III",
+	["school"] = 	{SCHOOL_HDEFENSE},
+	["am"] = 	75,
+	["level"] = 	30,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	-10,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			if player.blessed_power <= 20 then
+				local dur
+				player.blessed_power = 20
+				dur = 32 + randint(get_level(Ind, HBLESSING_I, 25))
+				set_blessed(Ind, dur)
+				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " speaks a holy prayer.")
+			end
+	end,
+	["info"] = 	function()
+			return "AC+20  dur 32.."..get_level(Ind, HBLESSING_I, 25) + 32
+	end,
+	["desc"] = 	{
+			"Protects you with a shield of righteousness",
+			"***Automatically projecting***",
+	}
+}
+
+HRESISTS_I = add_spell {
+	["name"] = 	"Holy Resistance I",
+	["school"] = 	{SCHOOL_HDEFENSE},
+	["am"] = 	75,
+	["level"] = 	20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	25,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		local dur
@@ -67,42 +95,74 @@ HRESISTS = add_spell {
 
 		set_oppose_fire(Ind, dur)
 		fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, 1, " calls to the heavens for protection from the elements.")
-		if get_level(Ind, HRESISTS, 50) >= 5 then
-			set_oppose_cold(Ind, dur)
-			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, 1, "")
-		end
-		if get_level(Ind, HRESISTS, 50) >= 10 then
-			set_oppose_elec(Ind, dur)
-			fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, 1, "")
-		end
-		if get_level(Ind, HRESISTS, 50) >= 15 then
-			set_oppose_acid(Ind, dur)
-			fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, 1, "")
-		end
-		if get_level(Ind, HRESISTS, 50) >= 25 then
-			set_oppose_pois(Ind, dur)
-			fire_ball(Ind, GF_RESPOIS_PLAYER, 0, dur, 1, "")
-		end
 	end,
 	["info"] = 	function()
-		if get_level(Ind, HRESISTS, 50) < 5 then
-			return "Res heat dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
-		elseif get_level(Ind, HRESISTS, 50) < 10 then
-			return "Res heat/cold, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
-		elseif get_level(Ind, HRESISTS, 50) < 15 then
-			return "Res heat/cold/elec, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
-		elseif get_level(Ind, HRESISTS, 50) < 25 then
-			return "Base resistance, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
-		else
-			return "Base+poison res., dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
-		end
+			return "Res heat/cold dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
 	end,
 	["desc"] = 	{
-			"Lets you resist heat.",
-			"At level 5 you also resist cold.",
-			"At level 10 you resist lightning too.",
-			"At level 15 it gives acid resistance as well.",
-			"At level 25 lets you resist poison too.",
+			"Lets you resist heat and cold.",
+			"***Automatically projecting***",
+	}
+}
+HRESISTS_II = add_spell {
+	["name"] = 	"Holy Resistance II",
+	["school"] = 	{SCHOOL_HDEFENSE},
+	["am"] = 	75,
+	["level"] = 	30,
+	["mana"] = 	35,
+	["mana_max"] = 	35,
+	["fail"] = 	10,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+		local dur
+		dur = randint(10) + 15 + get_level(Ind, HRESISTS, 50)
+
+		set_oppose_fire(Ind, dur)
+		fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, 1, " calls to the heavens for protection from the elements.")
+		set_oppose_cold(Ind, dur)
+		fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, 1, "")
+		set_oppose_elec(Ind, dur)
+		fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, 1, "")
+		set_oppose_acid(Ind, dur)
+		fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, 1, "")
+	end,
+	["info"] = 	function()
+			return "Res heat/cold/elec/acid, dur "..(get_level(Ind, HRESISTS, 50) + 15)..".."..(get_level(Ind, HRESISTS, 50) + 25)
+	end,
+	["desc"] = 	{
+			"Lets you resist heat, cold, lightning and acid.",
+			"***Automatically projecting***",
+	}
+}
+HRESISTS_III = add_spell {
+	["name"] = 	"Holy Resistance III",
+	["school"] = 	{SCHOOL_HDEFENSE},
+	["am"] = 	75,
+	["level"] = 	40,
+	["mana"] = 	45,
+	["mana_max"] = 	45,
+	["fail"] = 	-5,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+		local dur
+		dur = randint(10) + 15 + get_level(Ind, HRESISTS, 50)
+
+		set_oppose_fire(Ind, dur)
+		fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, 1, " calls to the heavens for protection from the elements.")
+		set_oppose_cold(Ind, dur)
+		fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, 1, "")
+		set_oppose_elec(Ind, dur)
+		fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, 1, "")
+		set_oppose_acid(Ind, dur)
+		fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, 1, "")
+		set_oppose_pois(Ind, dur)
+		fire_ball(Ind, GF_RESPOIS_PLAYER, 0, dur, 1, "")
+	end,
+	["info"] = 	function()
+			return "Base+poison res., dur "..(get_level(Ind, HRESISTS, 50) + 15)..".."..(get_level(Ind, HRESISTS, 50) + 25)
+	end,
+	["desc"] = 	{
+			"Lets you resist heat, cold, lightning, acid and poison.",
 			"***Automatically projecting***",
 	}
 }
@@ -113,16 +173,16 @@ HPROTEVIL = add_spell {
 	["am"] = 	75,
 	["level"] = 	12,
 	["mana"] = 	20,
-	["mana_max"] = 	60,
+	["mana_max"] = 	20,
 	["fail"] = 	20,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			set_protevil(Ind, randint(25) + 3*get_level(Ind, HPROTEVIL, 50))
+			set_protevil(Ind, 20 + randint(10) + get_level(Ind, HPROTEVIL, 50))
 	end,
 	["info"] = 	function()
-			return "dur "..1+(get_level(Ind, HPROTEVIL, 50)*3)..".."..25+(3*get_level(Ind, HPROTEVIL, 50))
+			return "dur "..20 + get_level(Ind, HPROTEVIL, 50)..".."..30 + get_level(Ind, HPROTEVIL, 50)
 	end,
-	["desc"] = 	{ "Repels evil that tries to lay hand at you.", }
+	["desc"] = 	{ "Repels evil that tries to lay hand on you.", }
 }
 
 HRUNEPROT = add_spell {

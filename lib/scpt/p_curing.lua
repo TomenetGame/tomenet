@@ -1,35 +1,56 @@
 -- handle the holy curing school
 
-function get_healing_percents()
-	return 25 + get_level(Ind, HHEALING, 31)
+function get_healing_percents(limit_lev)
+	local perc
+	perc = get_level(Ind, HHEALING_I, 31)
+	if limit_lev ~= 0 then
+		if perc > (limit_lev * 3) / 5 then
+			perc = (limit_lev * 3) / 5 + (perc - (limit_lev * 3) / 5) / 3
+		end
+	end
+	return 25 + perc
 end
 
-function get_healing_cap()
+function get_healing_cap(limit_lev)
 	local pow
-	pow = get_level(Ind, HHEALING, 417)
+	pow = get_level(Ind, HHEALING_I, 417)
+	if limit_lev ~= 0 then
+		if pow > limit_lev * 8 then
+			pow = limit_lev * 8 + (pow - limit_lev * 8) / 3
+		end
+	end
 	if pow > 400 then
 		pow = 400
 	end
 	return pow
 end
 
-function get_healing_power2()
+function get_healing_power2(limit_lev)
 	local pow, cap
-	pow = player.mhp * get_healing_percents() / 100
-	cap = get_healing_cap()
+	pow = player.mhp * get_healing_percents(limit_lev) / 100
+	cap = get_healing_cap(limit_lev)
 	if pow > cap then
 		pow = cap
 	end
 	return pow
 end
 
-function get_curewounds_dice()
+function get_curewounds_dice(limit_lev)
 	local hd
-	hd = get_level(Ind, HCUREWOUNDS, 27) + 1
+	local lev
+
+	hd = get_level(Ind, HCUREWOUNDS_I, 27) + 1
+
+	if limit_lev ~= 0 then
+		if hd > limit_lev / 2 + 2 then
+			hd = limit_lev / 2 + 2 + (hd - (limit_lev / 2 + 2)) / 3
+		end
+	end
+
 	if (hd > 14) then hd = 14 end
 	return hd
 end
-function get_curewounds_power()
+function get_curewounds_power(limit_lev)
 	local pow
 --[[
 	pow = get_level(Ind, HCUREWOUNDS, 200)
@@ -37,7 +58,7 @@ function get_curewounds_power()
 		pow = 112
 	end
 ]]
-	pow = damroll(get_curewounds_dice(), 8)
+	pow = damroll(get_curewounds_dice(limit_lev), 8)
 	return pow
 end
 
@@ -59,13 +80,13 @@ function get_exp_loss()
 	return pow
 end
 
-HCUREWOUNDS = add_spell {
-	["name"] = 	"Cure Wounds",
+HCUREWOUNDS_I = add_spell {
+	["name"] = 	"Cure Wounds I",
 	["school"] = 	{SCHOOL_HCURING},
 	["am"] = 	75,
 	["level"] = 	3,
-	["mana"] = 	3,
-	["mana_max"] = 	30,
+	["mana"] = 	5,
+	["mana_max"] = 	5,
 	["fail"] = 	15,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
@@ -73,14 +94,10 @@ HCUREWOUNDS = add_spell {
 			local status_ailments
 			status_ailments = 0
 			--hacks to cure effects same as potions would
-			if get_level(Ind, HCUREWOUNDS, 50) >= 24 then
-				status_ailments = status_ailments + 8192 + 4096 + 2048
-			elseif get_level(Ind, HCUREWOUNDS, 50) >= 10 then
-				status_ailments = status_ailments + 4096 + 2048
-			elseif get_level(Ind, HCUREWOUNDS, 50) >= 4 then
+			if get_level(Ind, HCUREWOUNDS_I, 50) >= 9 then
 				status_ailments = status_ailments + 2048
 			end
-			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(), " points at your wounds.")
+			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(13), " points at your wounds.")
 	end,
 	["info"] = 	function()
 --			return "heal "..get_curewounds_power()
@@ -89,150 +106,304 @@ HCUREWOUNDS = add_spell {
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target",
 		"Caps at 14d8 (same as potion of cure critical wounds)",
-		"Also cures blindness and cuts at level 4",
-		"Also cures confusion at level 10",
-		"Also cures stun at level 24",
+		"Also cures blindness and cuts at level 9",
+	}
+}
+HCUREWOUNDS_II = add_spell {
+	["name"] = 	"Cure Wounds II",
+	["school"] = 	{SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	23,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	0,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			local status_ailments
+			status_ailments = 0
+			--hacks to cure effects same as potions would
+			if get_level(Ind, HCUREWOUNDS_II, 50) >= 9 then
+				status_ailments = status_ailments + 8192 + 4096 + 2048
+			else
+				status_ailments = status_ailments + 4096 + 2048
+			end
+			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(0), " points at your wounds.")
+	end,
+	["info"] = 	function()
+--			return "heal "..get_curewounds_power()
+			return "heal "..get_curewounds_dice().."d8"
+	end,
+	["desc"] = 	{
+		"Heals a certain amount of hitpoints of a friendly target",
+		"Caps at 14d8 (same as potion of cure critical wounds)",
+		"Also cures blindness, cuts and confusion",
+		"Also cures stun at level 9",
 	}
 }
 
-HHEALING = add_spell {
-	["name"] = 	"Heal",
+HHEALING_I = add_spell {
+	["name"] = 	"Heal I",
 	["school"] = 	{SCHOOL_HCURING},
 	["am"] = 	75,
 	["level"] = 	3,
-	["mana"] = 	3,
-	["mana_max"] = 	70,
+	["mana"] = 	5,
+	["mana_max"] = 	5,
 	["fail"] = 	25,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local status_ailments
 			status_ailments = 1024
 			--hacks to cure effects same as potions would
-			if get_level(Ind, HHEALING, 50) >= 24 then
-				status_ailments = status_ailments + 8192 + 4096 + 2048
-			elseif get_level(Ind, HHEALING, 50) >= 10 then
+			if get_level(Ind, HHEALING_I, 50) >= 10 then
 				status_ailments = status_ailments + 4096 + 2048
-			elseif get_level(Ind, HHEALING, 50) >= 4 then
+			elseif get_level(Ind, HHEALING_I, 50) >= 4 then
 				status_ailments = status_ailments + 2048
 			end
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(), 1, " points at your wounds.")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(15), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
-			return "heal "..get_healing_percents().."% (max "..get_healing_cap()..") = "..get_healing_power2()
+			return "heal "..get_healing_percents(15).."% (max "..get_healing_cap(15)..") = "..get_healing_power2(15)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
-		"Also cures blindness and cuts at level 4",
-		"Also cures confusion at level 10",
-		"Also cures stun at level 24",
+		"Also cures blindness and cuts at level 4 and confusion at level 10.",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
 		"***Automatically projecting***",
 	}
 }
-__lua_HHEALING = HHEALING
+__lua_HHEALING = HHEALING_I
+HHEALING_II = add_spell {
+	["name"] = 	"Heal II",
+	["school"] = 	{SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	23,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	10,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			local status_ailments
+			status_ailments = 1024 + 2048 + 4096
+			--hacks to cure effects same as potions would
+			if get_level(Ind, HHEALING_II, 50) >= 8 then
+				status_ailments = status_ailments + 8192 + 4096 + 2048
+			end
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(35), 1, " points at your wounds.")
+	end,
+	["info"] = 	function()
+			return "heal "..get_healing_percents(35).."% (max "..get_healing_cap(35)..") = "..get_healing_power2(35)
+	end,
+	["desc"] = 	{
+		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
+		"Also cures blindness, cuts and confusion and at level 8 stun too.",
+		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
+		"***Automatically projecting***",
+	}
+}
+HHEALING_III = add_spell {
+	["name"] = 	"Heal III",
+	["school"] = 	{SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	40,
+	["mana"] = 	70,
+	["mana_max"] = 	70,
+	["fail"] = 	-5,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			local status_ailments
+			--hacks to cure effects same as potions would
+			status_ailments = 1024 + 2048 + 4096 + 8192
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(0), 1, " points at your wounds.")
+	end,
+	["info"] = 	function()
+			return "heal "..get_healing_percents(0).."% (max "..get_healing_cap(0)..") = "..get_healing_power2(0)
+	end,
+	["desc"] = 	{
+		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
+		"Also cures blindness, cuts, confusion and stun-",
+		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
+		"***Automatically projecting***",
+	}
+}
 
-HDELCURSES = add_spell {
-	["name"] = 	"Break Curses",
+HDELCURSES_I = add_spell {
+	["name"] = 	"Break Curses I",
 	["school"] = 	SCHOOL_HCURING,
 	["am"] =	75,
 	["level"] = 	10,
 	["mana"] = 	20,
-	["mana_max"] = 	40,
+	["mana_max"] = 	20,
 	["fail"] = 	40,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local done
-			if get_level(Ind, HDELCURSES, 50) >= 30 then done = remove_all_curse(Ind)
-			else done = remove_curse(Ind) end
+			done = remove_curse(Ind)
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 			end,
 	["info"] = 	function()
 			return ""
 			end,
 	["desc"] = 	{
-		"Remove curses of worn objects",
-		"At level 30 switches to *remove curses*"
+			"Removes curses",
 	}
 }
-
-HHEALING2 = add_spell {
-	["name"] = 	"Cleansing Light",
-	["school"] = 	{SCHOOL_HCURING},
-	["am"] = 	75,
-	["level"] = 	18,
-	["mana"] = 	1,
-	["mana_max"] = 	100,
-	["fail"] = 	30,
-	["stat"] = 	A_WIS,
-	["direction"] = FALSE,
-	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2, 42)), (1 + get_level(Ind, HHEALING2, 10)), (5 + get_level(Ind, HHEALING2, 16)), 10, " calls the spirits")
-			end,
-	["info"] = 	function()
-			return "heals " .. (get_level(Ind, HHEALING2, 42) + 1) .. " rad " .. (1 + get_level(Ind,HHEALING2,10)) .. " dur " .. (5 + get_level(Ind, HHEALING2, 16))
-			end,
-	["desc"] = 	{ "Continuously heals you and those around you.", }
-}
-
-HCURING = add_spell {
-	["name"] = 	"Curing",
-	["school"] = 	{SCHOOL_HCURING},
-	["am"] = 	75,
-	["level"] = 	3,
-	["mana"] = 	2,
-	["mana_max"] = 	10,
-	["fail"] = 	20,
+HDELCURSES_II = add_spell {
+	["name"] = 	"Break Curses II",
+	["school"] = 	SCHOOL_HCURING,
+	["am"] =	75,
+	["level"] = 	40,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
+	["fail"] = 	0,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			if get_level(Ind, HCURING, 50) >= 20 then
-				if (player.food >= PY_FOOD_MAX) then
-					set_food(Ind, PY_FOOD_MAX - 1)
-				end
-				set_confused(Ind, 0)
-				set_blind(Ind, 0)
-				set_stun(Ind, 0)
-				set_poisoned(Ind, 0, 0)
-				set_image(Ind, 0)
-				fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 10 + 20, 1, " concentrates on your maladies.")
-			elseif get_level(Ind, HCURING, 50) >= 15 then
-				if (player.food >= PY_FOOD_MAX) then
-					set_food(Ind, PY_FOOD_MAX - 1)
-				end
-				set_confused(Ind, 0)
-				set_blind(Ind, 0)
-				set_stun(Ind, 0)
-				set_poisoned(Ind, 0, 0)
-				fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 10, 1, " concentrates on your maladies.")
-			elseif get_level(Ind, HCURING, 50) >= 10 then
-				if (player.food >= PY_FOOD_MAX) then
-					set_food(Ind, PY_FOOD_MAX - 1)
-				end
-				set_poisoned(Ind, 0, 0)
-				fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4, 1, " concentrates on your maladies.")
-			elseif get_level(Ind, HCURING, 50) >= 5 then
-				if (player.food >= PY_FOOD_MAX) then
-					set_food(Ind, PY_FOOD_MAX - 1)
-				end
-				if (player.poisoned ~= 0 and player.slow_poison == 0) then
-					player.slow_poison = 1
-				end
-				fire_ball(Ind, GF_CURE_PLAYER, 0, 1 + 4, 1, " concentrates on your maladies.")
-			else
-				if (player.poisoned ~= 0 and player.slow_poison == 0) then
-					player.slow_poison = 1
-				end
-				fire_ball(Ind, GF_SLOWPOISON_PLAYER, 0, 1, 1, " concentrates on your maladies.")
-			end
+			local done
+			done = remove_all_curse(Ind)
+			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 			end,
 	["info"] = 	function()
 			return ""
 			end,
 	["desc"] = 	{
-			"Slows down the effect of poison",
-			"At level 5 it cures being gorged",
-			"At level 10 it neutralizes poison",
-			"At level 15 it cures confusion, blindness and stun",
-			"At level 20 it cures hallucinations",
+			"Removes curses and heavy curses",
+	}
+}
+
+HHEALING2_I = add_spell {
+	["name"] = 	"Cleansing Light I",
+	["school"] = 	{SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	18,
+	["mana"] = 	12,
+	["mana_max"] = 	12,
+	["fail"] = 	30,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 12)), (1 + get_level(Ind, HHEALING2_I, 10)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " calls the spirits")
+			end,
+	["info"] = 	function()
+			return "heals " .. (get_level(Ind, HHEALING2_I, 12) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 10)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
+			end,
+	["desc"] = 	{ "Continuously heals you and those around you.", }
+}
+HHEALING2_II = add_spell {
+	["name"] = 	"Cleansing Light II",
+	["school"] = 	{SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	29,
+	["mana"] = 	35,
+	["mana_max"] = 	35,
+	["fail"] = 	15,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 22)), (1 + get_level(Ind, HHEALING2_I, 10)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " calls the spirits")
+			end,
+	["info"] = 	function()
+			return "heals " .. (get_level(Ind, HHEALING2_I, 22) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 10)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
+			end,
+	["desc"] = 	{ "Continuously heals you and those around you.", }
+}
+HHEALING2_III = add_spell {
+	["name"] = 	"Cleansing Light III",
+	["school"] = 	{SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	40,
+	["mana"] = 	100,
+	["mana_max"] = 	100,
+	["fail"] = 	0,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 42)), (1 + get_level(Ind, HHEALING2_I, 10)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " calls the spirits")
+			end,
+	["info"] = 	function()
+			return "heals " .. (get_level(Ind, HHEALING2_I, 42) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 10)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
+			end,
+	["desc"] = 	{ "Continuously heals you and those around you.", }
+}
+
+HCURING_I = add_spell {
+	["name"] = 	"Curing I",
+	["school"] = 	{SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	3,
+	["mana"] = 	4,
+	["mana_max"] = 	4,
+	["fail"] = 	20,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			if (player.food >= PY_FOOD_MAX) then
+				set_food(Ind, PY_FOOD_MAX - 1)
+			end
+			if (player.poisoned ~= 0 and player.slow_poison == 0) then
+				player.slow_poison = 1
+			end
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 1 + 2, 1, " concentrates on your maladies.")
+			end,
+	["info"] = 	function()
+			return ""
+			end,
+	["desc"] = 	{
+			"Slows down the effect of poison and treats stomach ache",
+			"***Automatically projecting***",
+	}
+}
+HCURING_II = add_spell {
+	["name"] = 	"Curing II",
+	["school"] = 	{SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	12,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
+	["fail"] = 	20,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			if (player.food >= PY_FOOD_MAX) then
+				set_food(Ind, PY_FOOD_MAX - 1)
+			end
+			set_poisoned(Ind, 0, 0)
+			set_image(Ind, 0)
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 20, 1, " concentrates on your maladies.")
+			end,
+	["info"] = 	function()
+			return ""
+			end,
+	["desc"] = 	{
+			"Slows down the effect of poison, treats stomach ache,",
+			"neutralizes poison and cures hallucinations",
+			"***Automatically projecting***",
+	}
+}
+HCURING_III = add_spell {
+	["name"] = 	"Curing III",
+	["school"] = 	{SCHOOL_HCURING},
+	["am"] = 	75,
+	["level"] = 	21,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	20,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			if (player.food >= PY_FOOD_MAX) then
+				set_food(Ind, PY_FOOD_MAX - 1)
+			end
+			set_confused(Ind, 0)
+			set_blind(Ind, 0)
+			set_stun(Ind, 0)
+			set_poisoned(Ind, 0, 0)
+			set_image(Ind, 0)
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 10 + 20, 1, " concentrates on your maladies.")
+			end,
+	["info"] = 	function()
+			return ""
+			end,
+	["desc"] = 	{
+			"Slows down the effect of poison, treats stomach ache,",
+			"neutralizes poison and cures hallucinations,",
+			"cures confusion, blindness and stun.",
 			"***Automatically projecting***",
 	}
 }
@@ -241,10 +412,10 @@ HRESTORING = add_spell {
 	["name"] = 	"Restoration",
 	["school"] = 	{SCHOOL_HCURING},
 	["am"] = 	75,
-	["level"] = 	26,
-	["mana"] = 	20,
+	["level"] = 	31,
+	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	20,
+	["fail"] = 	15,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			do_res_stat(Ind, A_STR)
@@ -253,19 +424,14 @@ HRESTORING = add_spell {
 			do_res_stat(Ind, A_WIS)
 			do_res_stat(Ind, A_INT)
 			do_res_stat(Ind, A_CHR)
-			if get_level(Ind, HRESTORING, 50) >= 5 then
-				restore_level(Ind)
-				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 2 + 4, 1, " recites a prayer.")
-			else
-				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 4, 1, " recites a prayer.")
-			end
+			restore_level(Ind)
+			fire_ball(Ind, GF_RESTORE_PLAYER, 0, 2 + 4, 1, " recites a prayer.")
 			end,
 	["info"] = 	function()
 			return ""
 			end,
 	["desc"] = 	{
-			"Restores drained stats",
-			"At level 5 it restores lost experience",
+			"Restores drained stats and lost experience",
 			"***Automatically projecting***",
 	}
 }
@@ -317,7 +483,7 @@ HSANITY = add_spell {
 	["am"] = 	75,
 	["level"] = 	21,
 	["mana"] = 	50,
-	["mana_max"] = 	150,
+	["mana_max"] = 	50,
 	["fail"] = 	50,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
@@ -349,7 +515,7 @@ HRESURRECT = add_spell {
 	["am"] = 	100,
 	["level"] = 	30,
 	["mana"] = 	200,
-	["mana_max"] = 	500,
+	["mana_max"] = 	200,
 	["fail"] = 	50,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
@@ -371,7 +537,7 @@ HDELBB = add_spell {
 	["level"] = 	25,	-- 45 the_sandman: too high lvl and this spell doesn't seem to be useful then. Asked around,
 				-- and ppl say their first encounter with RW is about pvp 25-32ish.
 	["mana"] = 	150,	-- was 200. Only chat/hope has priests with >200 mana at lvl ~25+ =)
-	["mana_max"] = 	200,
+	["mana_max"] = 	150,
 	["fail"] = 	0,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()

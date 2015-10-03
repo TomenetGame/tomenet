@@ -51,7 +51,6 @@ OCURSEDD = add_spell {
 			"Curse an enemy, causing wounds.",
 	}
 }
-end
 
 function get_litebolt_dam()
 	return 5 + get_level(Ind, LITEBOLT, 25), 7 + get_level(Ind, LITEBOLT, 25) + 1
