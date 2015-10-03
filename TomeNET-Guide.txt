@@ -350,7 +350,7 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  SHIFT+L  look around the map. Very useful to locate team mates ;).
  CTRL+U  the audio mixer menu (the hotkeys for toggling master/music work
          outside of this menu too).
- CTRL+X  quit the game. Safest way is to quit in a town, not in the dungeon!
+ CTRL+Q  quit the game. Safest way is to quit in a town, not in the dungeon!
 
 
 -Note that your character's "speed" may change. Speed is the factor telling you
@@ -629,7 +629,7 @@ H       CTRL+G  re-apply client-side and (if 'auto_inscribe' option is enabled)
 
 CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.1a).)
                 Note: Mixer settings are saved automatically, provided you use
-                CTRL+X to quit.
+                CTRL+Q to quit.
                 (Compare troubleshooting section (8.8), problem 21.)
 
                 Here you can set audio volume for sound effects and music or
@@ -1078,7 +1078,7 @@ They all start with a slash '/' hence they're called slash commands:
               of cash you can pick up before participating in certain events,
               such as Highlander Tournament or Ironman Deep Dive Challenge).
 
-/exit       Leaves the game, same as pressing CTRL+X.
+/exit       Leaves the game, same as pressing CTRL+Q.
  (/leave,/quit)
 
 /fe         Repeat the level feeling. See (4.8) for more information.
@@ -1137,7 +1137,7 @@ They all start with a slash '/' hence they're called slash commands:
             For example do:  /info Want to team up for Mordor!
             If you type /info without a message, it clears your info message.
 
-/leave      Leaves the game, same as pressing CTRL+X.
+/leave      Leaves the game, same as pressing CTRL+Q.
  (/exit, /quit)
 
 /lite a..w  Refills your light source with an item from your inventory.
@@ -1233,7 +1233,7 @@ They all start with a slash '/' hence they're called slash commands:
             be able to acquire it again, depending on the quest and your quest
             progress.
 
-/quit       Leaves the game, same as pressing CTRL+X.
+/quit       Leaves the game, same as pressing CTRL+Q.
  (/exit, /leave)
 
 /rec        Uses an item inscribed "@R" that provides 'Word of Recall' to
@@ -1964,7 +1964,7 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  If you don't own any houses, you can use public houses that are accessible to
  everyone. Risk is of course that someone takes your items.
 
--If you press CTRL+X to save&exit the game, you should do that in a safe town.
+-If you press CTRL+Q to save&exit the game, you should do that in a safe town.
  Dungeons might change while you are logged off, and the next time you log on
  you might find yourself in a nasty place if unlucky.
  Another problem is that if you don't leave in a town (or the housing area
@@ -2705,7 +2705,7 @@ You can control mixer settings with CTRL+U key on normal keymap and CTRL+F on
 rogue-like key map (or use CTRL+C to toggle music and CTRL+N to toggle the
 master mixer on/off, CTRL+V instead of CTRL+N on rogue-like key map).
 
-Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
+Note: Mixer settings are saved automatically, provided you use CTRL+Q to quit.
 (Compare troubleshooting section (8.8), problem 21.)
 
 Also be sure to press '=' key to have a look at the audio options.
@@ -4571,7 +4571,7 @@ key to emulate some special keys in your macros:
 )               clears the keyboard buffer (all previous key presses that
                 still have to be processed will be forgotten).
 ^               Prefixed to any key this will lead to a CTRL + <thatkey>
-                combination. For example a macro '^x' will exit the game.
+                combination. For example a macro '^q' will exit the game.
 
 Example:
 :Hi all!\r      This macro writes 'Hi all!' to everyone.
@@ -17839,7 +17839,7 @@ PROBLEM 21: My (mixer) settings or window positions (MS Windows only) aren't
 SOLUTION:   Don't use ALT+F4 or the 'x' button in the title bar of the game
             window to quit the game. It will result in skipping the normal exit
             routine, which asks you to save chat and which also saves certain
-            settings. Instead, use CTRL+X for 'save & quit' (compare 0.2).
+            settings. Instead, use CTRL+Q for 'save & quit' (compare 0.2).
 
 PROBLEM 22: When I try to login, I get a 'security violation'.
 SOLUTION:   Either your host name (that's your PC's network name you can set in
@@ -17893,7 +17893,7 @@ SOLUTION:   -If you're on Wifi (WLAN) plug in an ethernet cable instead!
 PROBLEM 26: I resized some TomeNET windows by dragging them with the mouse,
             but it seems it doesn't have the desired effect.
 SOLUTION:   After having resized windows via mouse, restart the game once
-            by exiting with CTRL+X key.
+            by exiting with CTRL+Q key.
 
 PROBLEM 27: While I am creating a new character, I got disconnected with a
             "Timeout 04" error message.
@@ -17970,10 +17970,10 @@ PROBLEM 33: On OSX when entering the game (right after picking a character) in
             As of the time of writing this, the exact cause is still unknown.
             A workaround is to perform the following steps:
             -turn off big_map mode (= key for options, page 5) and save options
-            -exit client with CTRL+X (so it will save the main window height)
+            -exit client with CTRL+Q (so it will save the main window height)
             -log on again, turn on big_map mode, save the options again.
             -from now on, always exit the game via the window close button in
-             the window's titlebar, never via CTRL+X. That way, your .tomenetrc
+             the window's titlebar, never via CTRL+Q. That way, your .tomenetrc
              config file is never overwritten and hence your client will always
              start with only 24 lines, switching back to correct big_map mode
              only when you actually log in with a character, thus circumventing
