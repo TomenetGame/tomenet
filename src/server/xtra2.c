@@ -9499,7 +9499,7 @@ void ang_sort_extra(int Ind, vptr u, vptr v, vptr w, int n)
 static int player_wounded(s16b ind)
 {
 	player_type *p_ptr = Players[ind];
-	int wounded = (p_ptr->mhp * 100) / p_ptr->chp;
+	int wounded = ((p_ptr->mhp + 1) * 100) / (p_ptr->chp + 1); //prevent div/0
 
 	/* allow targetting healed up players that suffer from status ailments
 	   curable by Cure Wounds spell - C. Blue */
