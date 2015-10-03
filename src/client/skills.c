@@ -334,7 +334,7 @@ void do_cmd_skill() {
 		c = inkey();
 
 		/* Leave the skill screen */
-		if (c == ESCAPE || c == KTRL('X')) break;
+		if (c == ESCAPE || c == KTRL('Q')) break;
 
 		/* Take a screenshot */
 		else if (c == KTRL('T')) xhtml_screenshot("screenshot????");

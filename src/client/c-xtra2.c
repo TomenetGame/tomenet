@@ -123,7 +123,7 @@ void do_cmd_messages(void) {
 		k = inkey();
 
 		/* Exit on Escape */
-		if (k == ESCAPE || k == KTRL('X')) break;
+		if (k == ESCAPE || k == KTRL('Q')) break;
 
 		/* Hack -- Save the old index */
 		j = i;
@@ -394,7 +394,7 @@ void do_cmd_messages_chatonly(void) {
 		k = inkey();
 
 		/* Exit on Escape */
-		if (k == ESCAPE || k == KTRL('X')) break;
+		if (k == ESCAPE || k == KTRL('Q')) break;
 
 		/* Hack -- Save the old index */
 		j = i;

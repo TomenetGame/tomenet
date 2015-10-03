@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. September 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 3. October 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -405,6 +405,8 @@ SHIFT+<direction key>
         usually indicates whether it is on or off.)
         You can also run by pressing the dot '.' followed by a direction key.
 
+.       .       Allows you to run (same as SHIFT+direction key).
+
 ;       ;       The 'walk' command, it allows you to walk one step. This is not
                 really needed for anything usually, since you can just press
                 the directional keys given above instead for walking.
@@ -640,7 +642,7 @@ CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.1a).)
                 TomeNET homepage for official packs, or look in the forum for
                 user-made packs).
 
-CTRL+C  CTRL+Q  Toggles music. (Shortcut for toggling it in the mixer settings.)
+CTRL+C  CTRL+X  Toggles music. (Shortcut for toggling it in the mixer settings.)
                 This hotkey works outside of the mixer screen too.
 
 CTRL+N  CTRL+V  Toggles audio. (Shortcut for master toggle in the mixer settings).
@@ -782,8 +784,17 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 
 |       displays the unique monster list (same as ~1).
 
-X       quickly swap between two equippable items. They must be inscribed
+X       this key carries a predefined macro:
+        Quickly swap between two equippable items. They must be inscribed
         '@x0'. (It's basically just the macro 'x0' bound to shift+x key.)
+        You can remove this macro in the macro menu, just like any other macro,
+        if you don't like it.
+
+,       This key carries a predefined macro:
+        Reply to the last private message you received. It's simply the macro
+        ':+:' bound to a key.
+        You can remove this macro in the macro menu, just like any other macro,
+        if you don't like it.
 
 _       Two uses, regarding a) fountains or b) item piles:
 
@@ -813,7 +824,7 @@ CTRL+P  view previous messages.
 
 CTRL+O  view previous chat messages.
 
-CTRL+X  save your character & quit the game. (You should do this in town!)
+CTRL+Q  save your character & quit the game. (You should do this in town!)
         This also automatically saves some settings, like window positions on
         MS-Windows, or mixer settings (CTRL+U to change, CTRL+F on rogue-like
         key map), and you will be asked to save a chat log.

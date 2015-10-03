@@ -520,7 +520,7 @@ void process_command()
 			do_cmd_messages();
 			break;
 
-		case KTRL('X'):
+		case KTRL('Q'):
 			Net_cleanup();
 			quit(NULL);
 
@@ -712,7 +712,7 @@ void cmd_map(char mode)
 #ifdef USE_SOUND_2010
 			else if (ch == KTRL('C')) toggle_music();
 			else if (ch == KTRL('N')) toggle_audio();
-			else if (ch == KTRL('Q')) toggle_music();//rl
+			else if (ch == KTRL('X')) toggle_music();//rl
 			else if (ch == KTRL('V')) toggle_audio();//rl
 #endif
 
@@ -2475,7 +2475,7 @@ void cmd_check_misc(void) {
 				cmd_help();
 				break;
 			case ESCAPE:
-			case KTRL('X'):
+			case KTRL('Q'):
 				break;
 			case KTRL('T'):
 				xhtml_screenshot("screenshot????");
@@ -2713,7 +2713,7 @@ static void cmd_guild_options() {
 		i = inkey();
 
 		/* Leave */
-		if (i == ESCAPE || i == KTRL('X')) break;
+		if (i == ESCAPE || i == KTRL('Q')) break;
 
 		/* Take a screenshot */
 		else if (i == KTRL('T'))
@@ -2832,7 +2832,7 @@ void cmd_party(void) {
 		i = inkey();
 
 		/* Leave */
-		if (i == ESCAPE || i == KTRL('X')) break;
+		if (i == ESCAPE || i == KTRL('Q')) break;
 
 		/* Take a screenshot */
 		else if (i == KTRL('T'))
@@ -3078,7 +3078,7 @@ static void cmd_house_chown(int dir)
 			Send_admin_house(dir, buf);
 			return;
 		case ESCAPE:
-		case KTRL('X'):
+		case KTRL('Q'):
 			break;
 		case KTRL('T'):
 			xhtml_screenshot("screenshot????");
@@ -3198,7 +3198,7 @@ void cmd_purchase_house(void) {
 				i = ESCAPE;
 				break;
 			case ESCAPE:
-			case KTRL('X'):
+			case KTRL('Q'):
 				break;
 			case KTRL('T'):
 				xhtml_screenshot("screenshot????");
@@ -4161,7 +4161,7 @@ static void cmd_master_aux_system()
 				cmd_script_exec_local();
 				break;
 			case ESCAPE:
-			case KTRL('X'):
+			case KTRL('Q'):
 				break;
 			default:
 				bell();
@@ -4226,7 +4226,7 @@ static void cmd_master(void) {
 				cmd_master_aux_system();
 				break;
 			case ESCAPE:
-			case KTRL('X'):
+			case KTRL('Q'):
 				break;
 			default:
 				bell();
@@ -4309,7 +4309,7 @@ void cmd_lagometer(void)
 		k = inkey();
 
 		/* Exit */
-		if (k == ESCAPE || k == KTRL('X') || k == KTRL('I')) break;
+		if (k == ESCAPE || k == KTRL('Q') || k == KTRL('I')) break;
 
 		switch (k) {
 			/* Take a screenshot */

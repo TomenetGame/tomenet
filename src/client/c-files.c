@@ -1296,7 +1296,7 @@ void peruse_file(void)
 		if (k == '}') cmd_uninscribe();
 
 		/* Exit on escape */
-		if (k == ESCAPE || k == KTRL('X')) break;
+		if (k == ESCAPE || k == KTRL('Q')) break;
 
 		/* Check maximum line */
 #if 1 /* don't allow 'empty lines' at end of list but wrap around immediately */

@@ -592,7 +592,7 @@ static void store_process_command(int cmd) {
 	switch (cmd) {
 		/* Leave */
 		case ESCAPE:
-		case KTRL('X'):
+		case KTRL('Q'):
 			leave_store = TRUE;
 			break;
 
@@ -689,7 +689,7 @@ static void store_process_command(int cmd) {
 
 #ifdef USE_SOUND_2010
 		case KTRL('C'):
-		case KTRL('Q')://rl
+		case KTRL('X')://rl
 			toggle_music();
 			break;
 		case KTRL('N'):

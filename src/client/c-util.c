@@ -1210,7 +1210,7 @@ static char roguelike_commands(char command)
 		/* Oops, audio mixer */
 		case KTRL('F'): return (KTRL('U'));
 		case KTRL('V'): return (KTRL('N'));
-		case KTRL('Q'): return (KTRL('C'));
+		case KTRL('X'): return (KTRL('C'));
 
 		/* Force-stack items */
 		case KTRL('C'): return ('K');
@@ -1586,7 +1586,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 		/* Analyze the key */
 		switch (i) {
 		case ESCAPE:
-		case KTRL('X'):
+		//case KTRL('Q'):
 			k = 0;
 			done = TRUE;
 			break;
@@ -6158,7 +6158,7 @@ static void do_cmd_options_aux(int page, cptr info) {
 		/* Analyze */
 		switch (ch) {
 			case ESCAPE:
-			case KTRL('X'):
+			case KTRL('Q'):
 				return;
 
 			case KTRL('T'):
@@ -7298,7 +7298,7 @@ void do_cmd_options(void) {
 		k = inkey();
 
 		/* Exit */
-		if (k == ESCAPE || k == KTRL('X')) break;
+		if (k == ESCAPE || k == KTRL('Q')) break;
 
 		/* Take a screenshot */
 		if (k == KTRL('T')) xhtml_screenshot("screenshot????");
@@ -7574,7 +7574,7 @@ void c_close_game(cptr reason)
 		k = inkey();
 
 		/* Exit */
-		if (k == ESCAPE || k == KTRL('X') || k == 'q' || k == 'Q') return;
+		if (k == ESCAPE || k == KTRL('Q') || k == 'q' || k == 'Q') return;
 
 		else if (k == KTRL('T'))
 		{
@@ -7627,7 +7627,7 @@ void c_close_game(cptr reason)
 		k = inkey();
 
 		/* Exit */
-		if (k == ESCAPE || k == KTRL('X')) break;
+		if (k == ESCAPE || k == KTRL('Q')) break;
 
 		/* Take a screenshot */
 		if (k == KTRL('T'))
@@ -7952,13 +7952,13 @@ void interact_audio(void) {
 			set_mixing();
 			break;
 		case KTRL('N'):
-		case KTRL('V'):
+		case KTRL('V'): //rl
 		case 'a':
 			cfg_audio_master = !cfg_audio_master;
 			set_mixing();
 			break;
 		case KTRL('C'):
-		case KTRL('Q'):
+		case KTRL('X'): //rl
 		case 'c':
 		case 'm':
 			cfg_audio_music = !cfg_audio_music;

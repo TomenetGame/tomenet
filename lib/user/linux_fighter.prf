@@ -3,7 +3,10 @@
 # Macro '0'
 
 A:x0
-H:X
+C:X
+
+A::+:
+C:,
 
 
 # Macro '113'
