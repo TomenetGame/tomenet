@@ -123,8 +123,8 @@ TRANCE = add_spell {
 			end,
 	["desc"] = {
 			"Causes all ghosts, spirits and elementals that see you",
-			"to fall into a deep, spiritual asleep instantly.",
---			"Lets monsters next to you fall asleep",
+			"to fall into a deep, spiritual sleep instantly.",
+--			"Lets monsters next to you fall sleep",
 --			"At level 20 it lets all nearby monsters fall asleep",
 	}
 }
