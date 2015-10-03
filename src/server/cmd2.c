@@ -1507,6 +1507,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 				//ACC_HOUSE_LIMIT
 				acc_houses--;
 				acc_set_houses(p_ptr->accountname, acc_houses);
+				clockin(Ind, 8);
 			} else if (dna->owner_type == OT_GUILD) {
 				guilds[dna->owner].h_idx = 0;
 				Send_guild_config(dna->owner);
@@ -1546,6 +1547,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 			//ACC_HOUSE_LIMIT
 			acc_houses--;
 			acc_set_houses(p_ptr->accountname, acc_houses);
+			clockin(Ind, 8);
 		}
 		newowner = p_ptr->guild;
 		msg_format(Ind, "This house is now owned by %s.", guilds[p_ptr->guild].name);
@@ -1587,6 +1589,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 					acc_houses2 = acc_get_houses(Players[i]->accountname);
 					acc_houses2++;
 					acc_set_houses(Players[i]->accountname, acc_houses2);
+					clockin(i, 8);
 
 					dna->creator = Players[i]->dna;
 					dna->owner = newowner;
@@ -1602,6 +1605,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 			//ACC_HOUSE_LIMIT
 			acc_houses++;
 			acc_set_houses(p_ptr->accountname, acc_houses);
+			clockin(Ind, 8);
 
 			return(FALSE);
 		}
@@ -6925,6 +6929,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 						//ACC_HOUSE_LIMIT
 						acc_houses--;
 						acc_set_houses(p_ptr->accountname, acc_houses);
+						clockin(Ind, 8);
 					}
 
 					/* make sure we don't get stuck by selling it while inside - C. Blue */
@@ -7018,6 +7023,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 		//ACC_HOUSE_LIMIT
 		acc_houses++;
 		acc_set_houses(p_ptr->accountname, acc_houses);
+		clockin(Ind, 8);
 
 		dna->creator = p_ptr->dna;
 		dna->mode = p_ptr->mode;

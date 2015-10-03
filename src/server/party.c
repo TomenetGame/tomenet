@@ -3969,6 +3969,9 @@ void clockin(int Ind, int type) {
 			case 7:
 				ptr->wpos = p_ptr->wpos;
 				break;
+			case 8:
+				ptr->houses = p_ptr->houses_owned;
+				break;
 			}
 			break;
 		}
