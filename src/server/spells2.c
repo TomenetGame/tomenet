@@ -2368,19 +2368,19 @@ bool detect_evil(int Ind) {
 		msg_print(Ind, "You sense the presence of evil!");
 		msg_print(Ind, NULL);
 
-#if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
+ #if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
 		/* Wait */
 		Send_pause(Ind);
 
 		/* Mega-Hack -- Fix the monsters */
 		update_monsters(FALSE);
-#endif
+ #endif
 	}
     else {
-#ifdef DETECT_ABSENCE
+ #ifdef DETECT_ABSENCE
 	msg_print(Ind, "You sense the absence of evil.");
 	msg_print(Ind, NULL);
-#endif
+ #endif
     }
 
 	/* Result */
