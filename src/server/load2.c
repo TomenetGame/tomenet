@@ -665,6 +665,11 @@ static void rd_item(object_type *o_ptr) {
 	}
 	rd_u16b(&o_ptr->held_m_idx);
 
+	if (!older_than(4, 6, 4)) { //HOME_APPRAISAL
+		rd_s32b(&tmp32s);
+		o_ptr->appraised_value = (s64b)tmp32s;
+	}
+
 	/* hack: remove (due to bug) created explodingness from magic ammo */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr->pval = 0;
 

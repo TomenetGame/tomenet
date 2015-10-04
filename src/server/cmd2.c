@@ -1823,8 +1823,7 @@ int access_door_colour(int Ind, struct dna_type *dna){
 //	if (dna->a_flags & ACF_STORE) return(TERM_MULTI); /* older idea. Instead, see PLAYER_STORE - C. Blue */
 }
 
-cptr get_house_owner(struct c_special *cs_ptr)
-{
+cptr get_house_owner(struct c_special *cs_ptr) {
 	static char string[80];
 	struct dna_type *dna = cs_ptr->sc.ptr;
 	strcpy(string,"nobody.");

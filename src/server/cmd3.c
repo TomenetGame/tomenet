@@ -427,6 +427,8 @@ void inven_drop(int Ind, int item, int amt) {
 		s_printf("PLAYER_STORE_OFFER: %s - %s (%d,%d,%d; %d,%d).\n",
 		    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 		    o_ptr->ix, o_ptr->iy);
+		/* appraise the item! */
+		(void)price_item_player_store(Ind, o_ptr);
 	}
 #endif
 

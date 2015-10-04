@@ -77,9 +77,10 @@
 
 #define PLAYER_STORES		/* Enable player-run shops - C. Blue */
 #define HOUSE_PAINTING		/* Allow players to paint their entrance area or house (for PLAYER_STORES) - C. Blue */
+#define HOME_APPRAISAL		/* Displays player store price when inspecting an item at home */
 
 #ifndef WIN32
-#define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
+ #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
 #endif
 #define ENABLE_MAIA		/* enable RACE_MAIA (formerly 'DIVINE' race) */
 #define ENABLE_KOBOLD		/* enable RACE_KOBOLD */

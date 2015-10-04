@@ -4658,6 +4658,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		}
 #endif
 
+#ifdef PLAYER_STORES
+ #ifdef HOME_APPRAISAL
+		if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py))
+			fprintf(fff, "This item would be appraised at \377y%ld\377w Au if put up for sale in your store.\n", price_item_player_store(Ind, o_ptr));
+ #endif
+#endif
+
 		fprintf(fff, "\n\377y(This item has not been *identified* yet.)\n");
 		my_fclose(fff);
 		fff = my_fopen(p_ptr->infofile, "rb");
@@ -5278,6 +5285,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	if ((eff_full && (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE)))
 	    && o_ptr->tval != TV_BOOK)
 		fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", activate_magic_device_chance(Ind, o_ptr));
+#endif
+
+#ifdef PLAYER_STORES
+ #ifdef HOME_APPRAISAL
+	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py))
+		fprintf(fff, "This item would be appraised at \377y%ld\377w Au if put up for sale in your store.\n", price_item_player_store(Ind, o_ptr));
+ #endif
 #endif
 
 #ifdef NEW_ID_SCREEN

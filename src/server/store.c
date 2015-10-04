@@ -50,7 +50,7 @@ static void display_house_inventory(int Ind, house_type *h_ptr);
 static void display_trad_house(int Ind, house_type *h_ptr);
 void home_extend(int Ind);
 #ifdef PLAYER_STORES
-static s64b player_store_inscribed(object_type *o_ptr, u32b price);
+static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise);
 static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_type *s_ptr, u32b value);
 #endif
 
@@ -377,9 +377,11 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 }
 
 #ifdef PLAYER_STORES
-static s64b price_item_player_store(object_type *o_ptr) {
+/* new hack: specify Ind to set the item's value; Ind == 0 -> retrieve it! */
+s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	s64b price, final_price;
 
+#if 0 /* without 'int Ind' parm, old cheezy way that could reveal true item price w/o *id* */
  #if 0 /* exempt speed rings? might make everything too easy though */
 	/* Player stores have an increased minimum price */
 	if (!o_ptr->name1 && o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->bpval >= 0) {
@@ -397,9 +399,23 @@ static s64b price_item_player_store(object_type *o_ptr) {
  #endif
 	/* Get the value of one of the items */
 	price = object_value_real(0, o_ptr) * 2; /* default: 2x base price */
+#else
+	/* Appraise an item */
+	if (Ind) {
+		price = object_value(Ind, o_ptr) * 2; /* default: 2x base price */
+		o_ptr->appraised_value = price + 1;
+	}
+	/* Backward compatibility - converted old, unappraised items: */
+	else if (!o_ptr->appraised_value) {
+		price = object_value_real(0, o_ptr) * 2; /* default: 2x base price */
+		o_ptr->appraised_value = price + 1;
+	}
+	/* Retrieve stored value: */
+	else price = o_ptr->appraised_value - 1;
+#endif
 
 	/* Add to this any extra price the player inscribed */
-	final_price = player_store_inscribed(o_ptr, price);
+	final_price = player_store_inscribed(o_ptr, price, Ind ? TRUE : FALSE);
 
 	/* Return the price */
 	return (final_price);
@@ -2306,7 +2322,7 @@ static void display_entry(int Ind, int pos)
 			/* Extract the "minimum" price */
 #ifdef PLAYER_STORES
 			if (p_ptr->store_num <= -2) {
-				x = price_item_player_store(o_ptr);
+				x = price_item_player_store(0, o_ptr);
 
 				/* just to make it look slightly less odd on older clients */
 				if (x == -2) x = -1;
@@ -2386,8 +2402,7 @@ static void store_prt_gold(int Ind)
 /*
  * Displays store (after clearing screen)		-RAK-
  */
-static void display_store(int Ind)
-{
+static void display_store(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
 	owner_type *ot_ptr;
@@ -2571,7 +2586,7 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price, bool quiet) {
 	/* Obtain the starting offer and the final offer */
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2)
-		final_ask = price_item_player_store(o_ptr);
+		final_ask = price_item_player_store(0, o_ptr);
 		//cur_ask = final_ask;
 	else
 #endif
@@ -3233,7 +3248,7 @@ void store_purchase(int Ind, int item, int amt) {
 	/* Determine the "best" price (per item) */
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2)
-		best = price_item_player_store(&sell_obj);
+		best = price_item_player_store(0, &sell_obj);
 	else
 #endif
 	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
@@ -5190,6 +5205,8 @@ void home_sell(int Ind, int item, int amt)
 			s_printf("PLAYER_STORE_OFFER: %s - %s (%d,%d,%d; %d,%d).\n",
 			    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 			    p_ptr->px, p_ptr->py);
+			/* appraise the item! */
+			(void)price_item_player_store(Ind, o_ptr);
 		}
  /* TODO: implement for home_purchase too, and for dropping/picking up in mang-style houses! */
  #ifdef HOUSE_PAINTING_HIDE_UNSELLABLE
@@ -6022,7 +6039,7 @@ void store_debug_stock()
    Returns price or -2 if not for sale. Return -1 if not for display/not available.
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination.
    Expects 'price' to be the minimum allowed price (2x base price). */
-static s64b player_store_inscribed(object_type *o_ptr, u32b price) {
+static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise) {
 	char buf[10], *p, *pos_dot;
 	u32b final_price;
 	bool increase = FALSE, mult = FALSE;
@@ -6030,14 +6047,25 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price) {
 	/* no item? */
 	if (!o_ptr->k_idx) return -1;
 
-	/* does it carry an inscription? */
-	if (!o_ptr->note) return -1;
+	if (!appraise) { //HOME_APPRAISAL
+		/* does it carry an inscription? */
+		if (!o_ptr->note) return -1;
 
-	/* is it just a 'museum' item, ie not for sale? */
-	if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return -2;
+		/* is it just a 'museum' item, ie not for sale? */
+		if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return -2;
 
-	/* is it a player-store inscription? */
-	if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return -1;
+		/* is it a player-store inscription? */
+		if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return -1;
+	} else {
+		/* does it carry an inscription? */
+		if (!o_ptr->note) return price;
+
+		/* is it just a 'museum' item, ie not for sale? */
+		if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return price;
+
+		/* is it a player-store inscription? */
+		if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return price;
+	}
 
 	/* is it an increase of the default price instead of a fixed price? */
 	if (p[2] == '+') {
@@ -6140,6 +6168,8 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	if (h_idx == -1) return FALSE;
 	h_ptr = &houses[h_idx];
 
+	/* prevent panic save if trying to access an unowned house with a pstore-inscribed item inside! */
+	if (!h_ptr->dna->owner) return FALSE;
 
 	disturb(Ind, 0, 0);
 
@@ -6189,7 +6219,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 			}
 
 			/* test item for being for sale */
-			if (player_store_inscribed(o_ptr, 0) == -1) continue;
+			if (player_store_inscribed(o_ptr, 0, FALSE) == -1) continue;
 
 			/* found an item for sale */
 			is_store = TRUE;
@@ -6235,7 +6265,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 					}
 
 					/* test it for being for sale */
-					if (player_store_inscribed(o_ptr, 0) == -1) continue;
+					if (player_store_inscribed(o_ptr, 0, FALSE) == -1) continue;
 
 					/* found an item for sale */
 					is_store = TRUE;

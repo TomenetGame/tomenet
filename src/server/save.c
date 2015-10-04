@@ -207,6 +207,8 @@ static void wr_item(object_type *o_ptr) {
 	wr_u16b(o_ptr->next_o_idx);
 	wr_byte(o_ptr->stack_pos);
 	wr_u16b(o_ptr->held_m_idx);
+
+	wr_s32b((s32b)o_ptr->appraised_value); //HOME_APPRAISAL
 }
 
 /*

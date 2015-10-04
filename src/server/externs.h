@@ -1670,6 +1670,7 @@ extern void view_cheeze_list(int Ind);
 extern void view_exploration_records(int Ind);
 extern void reward_deed_item(int Ind, int item);
 extern void reward_deed_blessing(int Ind, int item);
+extern s64b price_item_player_store(int Ind, object_type *o_ptr);
 
 #ifdef AUCTION_SYSTEM
 extern void process_auctions();

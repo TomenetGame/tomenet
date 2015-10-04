@@ -771,6 +771,7 @@ struct object_type {
 #ifdef PLAYER_STORES
 	byte ps_idx_x;			/* Index or x-coordinate of player store item in the original house */
 	byte ps_idx_y;			/* y-coordinate of player store item in the original house */
+	s64b appraised_value;		/* HOME_APPRAISAL: object_value(Ind_seller, o_ptr); */
 #endif
 
 	s16b to_h;			/* Plusses to hit */
