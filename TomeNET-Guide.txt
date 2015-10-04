@@ -5833,6 +5833,9 @@ known artifacts ie if noone else is currently in possession of it.
 Even if you don't get an artifact, some of the dungeon bosses have 'DROP_GREAT'
 flag, which means you will usually get especially good loot from them.
 
+Dungeon bosses will bump the floor feeling up to at least 'special', same as
+any other unique monsters do (see (4.8) for more info about floor feelings).
+
 Here is a list of all dungeon bosses and the artifacts they are guarding:
 (Some names have been shortened to fit.)
 
