@@ -402,7 +402,13 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 #else
 	/* Appraise an item */
 	if (Ind) {
+		/* hack: npc shop discount plays no role in player stores.
+		   (object_value() takes discount into calculation.) */
+		int discount = o_ptr->discount;
+
+		o_ptr->discount = 0;
 		price = object_value(Ind, o_ptr) * 2; /* default: 2x base price */
+		o_ptr->discount = discount;
 		o_ptr->appraised_value = price + 1;
 	}
 	/* Backward compatibility - converted old, unappraised items: */
