@@ -183,7 +183,7 @@ HZEAL_I = add_spell {
 		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
 	end,
 	["info"] = 	function()
-			return "dur 9+d5, "..(get_zeal_power() / 10).." EA"
+			return "dur 9+d5, +1 EA"
 	end,
 	["desc"] = 	{
 		"Increases your melee attacks per round by up to +3 for 9+d5 turns.",
@@ -207,7 +207,7 @@ HZEAL_II = add_spell {
 		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
 	end,
 	["info"] = 	function()
-			return "dur 9+d5, "..(get_zeal_power() / 10).." EA"
+			return "dur 9+d5, +2 EA (+1 proj)"
 	end,
 	["desc"] = 	{
 		"Increases your melee attacks per round by up to +3 for 9+d5 turns.",
@@ -231,7 +231,7 @@ HZEAL_III = add_spell {
 		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
 	end,
 	["info"] = 	function()
-			return "dur 9+d5, "..(get_zeal_power() / 10).." EA"
+			return "dur 9+d5, +3 EA (+2 proj)"
 	end,
 	["desc"] = 	{
 		"Increases your melee attacks per round by up to +3 for 9+d5 turns.",

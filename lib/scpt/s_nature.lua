@@ -1,10 +1,34 @@
 -- handle the nature school
 
-function get_healing_power()
+function get_healing_percents(limit_lev)
+	local perc
+	perc = get_level(Ind, HEALING, 31)
+	if limit_lev ~= 0 then
+		if perc > (limit_lev * 3) / 5 then
+			perc = (limit_lev * 3) / 5 + (perc - (limit_lev * 3) / 5) / 3
+		end
+	end
+	return 25 + perc
+end
+function get_healing_cap(limit_lev)
 	local pow
-	pow = player.mhp * (25 + get_level(Ind, HEALING, 31)) / 100
+	pow = get_level(Ind, HEALING, 417)
+	if limit_lev ~= 0 then
+		if pow > limit_lev * 8 then
+			pow = limit_lev * 8 + (pow - limit_lev * 8) / 3
+		end
+	end
 	if pow > 400 then
 		pow = 400
+	end
+	return pow
+end
+function get_healing_power(limit_lev)
+	local pow, cap
+	pow = player.mhp * get_healing_percents(limit_lev) / 100
+	cap = get_healing_cap(limit_lev)
+	if pow > cap then
+		pow = cap
 	end
 	return pow
 end
@@ -33,7 +57,7 @@ HEALING = add_spell {
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	10,
 	["mana"] = 	15,
-	["mana_max"] = 	180,
+	["mana_max"] = 	120,
 	["fail"] = 	30,
 	["spell"] = 	function()
 			local status_ailments
@@ -48,14 +72,14 @@ HEALING = add_spell {
 			end
 
 			if player.spell_project > 0 then
-				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(), player.spell_project, "")
+				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(0), player.spell_project, "")
 			else
-				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(), 0, "")
---				hp_player(Ind, get_healing_power()) <- doesn't give a neat msg with numbers
+				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(0), 0, "")
+--				hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
 	                end
 	end,
 	["info"] = 	function()
-			return "heal "..(15 + get_level(Ind, HEALING, 43)).."%="..get_healing_power().."/"..(get_healing_power() / 2).." hp"
+			return "heal "..get_healing_percents(0).."% (max "..get_healing_cap(0)..") = "..get_healing_power(0)
 	end,
 	["desc"] = 	{
 			"Heals a percent of hitpoints up to a maximum of 400 points healed",

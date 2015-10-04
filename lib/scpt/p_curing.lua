@@ -1,6 +1,6 @@
 -- handle the holy curing school
 
-function get_healing_percents(limit_lev)
+function get_healing_percents2(limit_lev)
 	local perc
 	perc = get_level(Ind, HHEALING_I, 31)
 	if limit_lev ~= 0 then
@@ -10,8 +10,7 @@ function get_healing_percents(limit_lev)
 	end
 	return 25 + perc
 end
-
-function get_healing_cap(limit_lev)
+function get_healing_cap2(limit_lev)
 	local pow
 	pow = get_level(Ind, HHEALING_I, 417)
 	if limit_lev ~= 0 then
@@ -24,11 +23,10 @@ function get_healing_cap(limit_lev)
 	end
 	return pow
 end
-
 function get_healing_power2(limit_lev)
 	local pow, cap
-	pow = player.mhp * get_healing_percents(limit_lev) / 100
-	cap = get_healing_cap(limit_lev)
+	pow = player.mhp * get_healing_percents2(limit_lev) / 100
+	cap = get_healing_cap2(limit_lev)
 	if pow > cap then
 		pow = cap
 	end
@@ -100,8 +98,8 @@ HCUREWOUNDS_I = add_spell {
 			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(13), " points at your wounds.")
 	end,
 	["info"] = 	function()
---			return "heal "..get_curewounds_power()
-			return "heal "..get_curewounds_dice().."d8"
+--			return "heal "..get_curewounds_power(13)
+			return "heal "..get_curewounds_dice(13).."d8"
 	end,
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target",
@@ -131,8 +129,8 @@ HCUREWOUNDS_II = add_spell {
 			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(0), " points at your wounds.")
 	end,
 	["info"] = 	function()
---			return "heal "..get_curewounds_power()
-			return "heal "..get_curewounds_dice().."d8"
+--			return "heal "..get_curewounds_power(0)
+			return "heal "..get_curewounds_dice(0).."d8"
 	end,
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target",
@@ -163,7 +161,7 @@ HHEALING_I = add_spell {
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(15), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
-			return "heal "..get_healing_percents(15).."% (max "..get_healing_cap(15)..") = "..get_healing_power2(15)
+			return "heal "..get_healing_percents2(15).."% (max "..get_healing_cap2(15)..") = "..get_healing_power2(15)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
@@ -192,7 +190,7 @@ HHEALING_II = add_spell {
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(35), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
-			return "heal "..get_healing_percents(35).."% (max "..get_healing_cap(35)..") = "..get_healing_power2(35)
+			return "heal "..get_healing_percents2(35).."% (max "..get_healing_cap2(35)..") = "..get_healing_power2(35)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
@@ -217,7 +215,7 @@ HHEALING_III = add_spell {
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(0), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
-			return "heal "..get_healing_percents(0).."% (max "..get_healing_cap(0)..") = "..get_healing_power2(0)
+			return "heal "..get_healing_percents2(0).."% (max "..get_healing_cap2(0)..") = "..get_healing_power2(0)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
