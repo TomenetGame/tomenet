@@ -1560,6 +1560,8 @@ I:70:38:0
 W:50:0:5:1000
 A:50/2:90/4
 D:Creates a rune on the floor that monsters must break first to cross it.
+D:Monsters cannot attack anyone standing on this rune in melee combat
+D:and they cannot use summon spells on the runed area either.
 
 N:191:*Remove Curse*
 G:?:d
