@@ -2647,12 +2647,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #if 1 /* maybe todo: use get_obj_num_prep_tval() instead of this hardcoding chances.. */
 					sval = rand_int(mining) * rand_int(50);
 					/* 1,2,3, 5,6,7 - according to k_info.txt */
-					if (sval > 1600) sval = 7;
-					else if (sval > 1100) sval = 6;
-					else if (sval > 700) sval = 5;
-					else if (sval > 300) sval = 3;
-					else if (sval > 100) sval = 2;
-					else sval = 1;
+					if (sval > 1600) sval = SV_CHEST_LARGE_STEEL;
+					else if (sval > 1100) sval = SV_CHEST_LARGE_IRON;
+					else if (sval > 700) sval = SV_CHEST_LARGE_WOODEN;
+					else if (sval > 300) sval = SV_CHEST_SMALL_STEEL;
+					else if (sval > 100) sval = SV_CHEST_SMALL_IRON;
+					else sval = SV_CHEST_SMALL_WOODEN;
 #endif
 					special_k_idx = lookup_kind(tval, sval);
 
@@ -2660,16 +2660,16 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				    if (!rand_int(5)) {
 					tval = TV_GOLEM;
 #if 1 /* maybe todo: use get_obj_num_prep_tval() instead of this hardcoding chances.. */
-					sval = rand_int(mining) * rand_int(50);
+					sval = rand_int(mining) * rand_int(40);
 					/* 0..7 - according to k_info.txt */
-					if (sval > 2000) sval = 7;
-					else if (sval > 1600) sval = 6;
-					else if (sval > 1300) sval = 5;
-					else if (sval > 1000) sval = 4;
-					else if (sval > 900) sval = 3;
-					else if (sval > 600) sval = 2;
-					else if (sval > 300) sval = 1;
-					else sval = 0;
+					if (sval >= 1900) sval = SV_GOLEM_ADAM;
+					else if (sval >= 1800) sval = SV_GOLEM_MITHRIL;
+					else if (sval >= 1600) sval = SV_GOLEM_GOLD;
+					else if (sval >= 1300) sval = SV_GOLEM_SILVER;
+					else if (sval >= 900) sval = SV_GOLEM_ALUM;
+					else if (sval >= 500) sval = SV_GOLEM_IRON;
+					else sval = SV_GOLEM_COPPER;
+					//else sval = SV_GOLEM_WOOD; -- no wood from mining stone, reserve for tree-hacking
 #endif
 					special_k_idx = lookup_kind(tval, sval);
 				    }
@@ -2739,6 +2739,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							} else {
 //								s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 							}
+						//no golem materials from rubble */
 						} else if (special_k_idx && tval != TV_GOLEM) {
 							invcopy(&forge, special_k_idx);
 							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
@@ -2799,7 +2800,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
-					if (special_k_idx && tval == TV_GOLEM && sval == SV_GOLEM_WOOD) {
+					if (special_k_idx && tval == TV_GOLEM) {
+						/* trees can only give wood for golem material: */
+						sval = SV_GOLEM_WOOD;
+						special_k_idx = lookup_kind(tval, sval);
+
 						invcopy(&forge, special_k_idx);
 						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 						forge.number = 1;
@@ -2937,7 +2942,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 					/* Found treasure */
 					if (gold) {
-						if (special_k_idx && tval == TV_GOLEM && sval != SV_GOLEM_WOOD) {
+						if (special_k_idx && tval == TV_GOLEM) {
 							invcopy(&forge, special_k_idx);
 							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
@@ -3032,11 +3037,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #else
 				struct c_special *cs_ptr;
 				int featm = c_ptr->feat; /* just to kill compiler warning */
-				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) {
+				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 					featm = cs_ptr->sc.omni;
-				} else { /* Apply "mimic" field */
+				else /* Apply "mimic" field */
 					featm = f_info[featm].mimic;
-				}
 
 				/* Is the mimicked feat un-tunnelable? */
 				if (!(f_info[featm].flags1 & FF1_TUNNELABLE) ||
@@ -3048,16 +3052,16 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 
 				/* hack: 'successful' tunnelling reveals the secret door */
-			    	if (power > 40 + rand_int(1600)) { /* just assume 1600 as for Granite Wall */
-                                        struct c_special *cs_ptr;
-                                        msg_print(Ind, "You have found a secret door!");
-                                        c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
-                                        /* Clear mimic feature */
-                                        if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
+				if (power > 40 + rand_int(1600)) { /* just assume 1600 as for Granite Wall */
+					struct c_special *cs_ptr;
+					msg_print(Ind, "You have found a secret door!");
+					c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+					/* Clear mimic feature */
+					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 
-                                        note_spot_depth(wpos, y, x);
-                                        everyone_lite_spot(wpos, y, x);
-			    	} else {
+					note_spot_depth(wpos, y, x);
+					everyone_lite_spot(wpos, y, x);
+				} else {
 					msg_print(Ind, f_text + f_info[featm].tunnel);
 					more = TRUE;
 				}
