@@ -4661,7 +4661,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
 		if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py))
-			fprintf(fff, "This item would be appraised at \377y%ld\377w Au if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
+			fprintf(fff, "This item would be appraised at %ld Au if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
  #endif
 #endif
 
@@ -5290,7 +5290,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
 	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py))
-		fprintf(fff, "This item would be appraised at \377y%ld\377w Au if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
+		fprintf(fff, "This item would be appraised at %ld Au if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
  #endif
 #endif
 
