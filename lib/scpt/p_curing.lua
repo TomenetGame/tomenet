@@ -167,7 +167,7 @@ HHEALING_I = add_spell {
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
-		"Also cures blindness and cuts at level 4 and confusion at level 10.",
+		"Also cures blindness and cuts at level 4 and confusion at level 10",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
 		"***Automatically projecting***",
 	}
@@ -196,7 +196,7 @@ HHEALING_II = add_spell {
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
-		"Also cures blindness, cuts and confusion and at level 8 stun too.",
+		"Also cures blindness, cuts and confusion and at level 8 stun too",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
 		"***Automatically projecting***",
 	}
@@ -221,7 +221,7 @@ HHEALING_III = add_spell {
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
-		"Also cures blindness, cuts, confusion and stun-",
+		"Also cures blindness, cuts, confusion and stun",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
 		"***Automatically projecting***",
 	}
@@ -372,7 +372,7 @@ HCURING_II = add_spell {
 			return ""
 			end,
 	["desc"] = 	{
-			"Slows down the effect of poison, treats stomach ache,",
+			"Treats stomach ache,",
 			"neutralizes poison and cures hallucinations",
 			"***Automatically projecting***",
 	}
@@ -401,7 +401,7 @@ HCURING_III = add_spell {
 			return ""
 			end,
 	["desc"] = 	{
-			"Slows down the effect of poison, treats stomach ache,",
+			"Treats stomach ache,",
 			"neutralizes poison and cures hallucinations,",
 			"cures confusion, blindness and stun.",
 			"***Automatically projecting***",

@@ -14238,19 +14238,17 @@ Priest schools:
                     Required skill level for first spell level: 1.
 
     Holy Light      Creates a globe of pure light.
-                    Lv3: Hurts monsters that are susceptible to light.
-                    Lv8: Calls a more powerful kind of light. This light
+                    Lv3:  Hurts monsters that are susceptible to light.
+                    Lv18: Calls a more powerful kind of light. This light
                          hurts all types of monsters.
                          Radius and damage will further increase.
                     Required skill level for first spell level: 2.
                     Shared spell (see above): H.Offense, H.Support.
 
-    Exorcism        Dispels nearby undead.
-                    Lv20: Dispels nearby demons.
-                    Lv30: Dispels nearby evil.
-                    Required skill level for first spell level: 11.
+    Exorcism        *Dispels demons* in your field of view.
+                    Required skill level for first spell level: 20.
 
-    Release Souls   *Dispels undead*.
+    Redemption      *Dispels undead* in your field of view.
                     Required skill level for first spell level: 10.
 
     Orb of Draining Summons a holy orb, devouring monsters.
@@ -14259,7 +14257,7 @@ Priest schools:
 
     Drain Life      Drains life from a non-undead and non-nonliving creature
                     and returns a part of it to your hit points.
-                    Required skill level for first spell level: 20.
+                    Required skill level for first spell level: 37.
 
     Doomed Grounds  Similar to 'Drain Life', weaker, but affects a whole area.
                     Required skill level for first spell level: 30.
@@ -14275,12 +14273,10 @@ Priest schools:
                     Lv30: Same effect as scroll of Holy Prayer.(auto-project)
                     Required skill level for first spell level: 1.
 
-    Holy Resistance Lets you resist heat.                      (auto-project)
-                    Lv5: Lets you also resist cold.            (auto-project)
-                    Lv10: Lets you also resist lightning.      (auto-project)
-                    Lv15: Lets you also resist acid.           (auto-project)
-                    Lv25: Lets you also resist poison.         (auto-project)
-                    Required skill level for first spell level: 11.
+    Holy Resistance Lets you resist heat and cold.             (auto-project)
+                    Lv10: Also resist lightning and acid.      (auto-project)
+                    Lv20: Also resist poison.                  (auto-project)
+                    Required skill level for first spell level: 20.
 
     Protection from evil.
                     Evil creatures that try to attack you in melee might get
@@ -14322,12 +14318,12 @@ Priest schools:
     Cure Wounds     Heals a fixed amount of hit points of a friendly target,
                     which is capped at 14d8, the same amount a potion of cure
                     critical wounds actually heals.
-                    Required skill level for first spell level: 3.
                     In addition to healing hit points, it will start curing
-                    status ailments at higher spell levels:
-                    Lv4: Cures cuts and blindness.
-                    Lv10: Also cures confusion.
-                    Lv24: Also cures stun.
+                    status ailments at higher spell levels, similar to potions:
+                    Lv9: Cures cuts and blindness.
+                    Lv20: Also cures confusion.
+                    Lv29: Also cures stun.
+                    Required skill level for first spell level: 3.
                     (Since this is a bolt spell, use the 'target friendly' key,
                     which is '('. See command reference section (0.2) for
                     details about this key.
@@ -14341,7 +14337,7 @@ Priest schools:
                     status ailments at higher spell levels:
                     Lv4: Cures cuts and blindness.             (auto-project)
                     Lv10: Also cures confusion.                (auto-project)
-                    Lv24: Also cures stun.                     (auto-project)
+                    Lv28: Also cures stun.                     (auto-project)
 
     Break Curses    Removes curses.
                     Lv30: Removes heavy curses.
@@ -14350,16 +14346,14 @@ Priest schools:
     Cleansing Light Continuously heals every player who steps inside.
                     Required skill level for first spell level: 18.
 
-    Curing          Slows down the effect of poison.
-                    Lv5: Cures being gorged.                   (auto-project)
-                    Lv10: Neutralize poison.                   (auto-project)
-                    Lv15: Cure confusion/blindness/stun.       (auto-project)
-                    Lv20: Cures hallucinations.                (auto-project)
+    Curing          Slows down the effect of poison            (auto-project)
+                    and cures being gorged.                                ^
+                    Lv9: Neutralizes poison and cures hallucinations.      ^
+                    Lv18: Cures confusion, blindness and stun.             ^
                     Required skill level for first spell level: 3.
 
-    Restoration     Restores stats.                            (auto-project)
-                    Lv5: Restores experience.                  (auto-project)
-                    Required skill level for first spell level: 26.
+    Restoration     Restores draind stats and experience.      (auto-project)
+                    Required skill level for first spell level: 31.
 
     Faithful Focus  Cure hallucinations and insanity.          (auto-project)
                     Required skill level for first spell level: 21.
@@ -14413,19 +14407,18 @@ Priest schools:
 
     Sense Surroundings
                     Detect non-invisible monsters, see invisible for a while.
-                    Lv15: Maps the dungeon around you.
-                    Lv30: Gives clairvoyance (full enlightened map).
-                          Gives full temporary ESP.
-                    Required skill level for first spell level: 10.
+                    Maps the dungeon around you.
+                    Lv20: Gives clairvoyance (full enlightened map).
+                    Required skill level for first spell level: 20.
 
     Zeal            Gives +1 extra attack per round for a while.    (auto-p.)
-                    Lv10: Gives +2 EA.                         (auto-project)
-                    Lv20: Gives +3 EA.                         (auto-project)
+                    Lv9:  Gives +2 EA.                         (auto-project)
+                    Lv18: Gives +3 EA.                         (auto-project)
                     Friendly players around the caster that are affected by the
                     spell will receive up to +2 EA depending on spell level.
                     Note: The EA effect won't be applied to barehanded players
                     if they don't have Martial Arts skill of at least 01.000.
-                    Required skill level for first spell level: 31.
+                    Required skill level for first spell level: 32.
 
     BONI:           Keeps the hunger satisfied all the time at 40,
                     Suppresses effects of DG_CURSE and TY_CURSE at 50.

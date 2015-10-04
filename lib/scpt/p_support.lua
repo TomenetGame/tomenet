@@ -103,25 +103,23 @@ HSENSE_I = add_spell {
 	end,
 	["desc"] = 	{
 			"Maps the dungeon around you.",
-			"At level 30 it grants you clairvoyance and lets you",
-			"sense the presence of creatures for a while.",
 	}
 }
 HSENSE_II = add_spell {
 	["name"] = 	"Sense Surroundings II",
 	["school"] = 	SCHOOL_HSUPPORT,
 	["am"] = 	75,
-	["level"] = 	20,
+	["level"] = 	40,
 	["mana"] = 	80,
 	["mana_max"] = 	80,
 	["fail"] = 	5,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			wiz_lite_extra(Ind)
-			end,
+	end,
 	["info"] = 	function()
 			return ""
-			end,
+	end,
 	["desc"] = 	{
 			"Gives clairvoyance, mapping and lighting up the whole dungeon.",
 	}
