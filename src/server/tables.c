@@ -3621,7 +3621,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HOFFENSE,
                                 '+', 0,
-                                '+', 800,
+                                '+', 700,
                         },
                         {
                                 SKILL_HDEFENSE,
