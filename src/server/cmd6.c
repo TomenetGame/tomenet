@@ -6352,7 +6352,7 @@ bool unmagic(int Ind) {
 	/* Unmagic has no effect when the player is invulnerable. This prevents
 	 * stair-GoI from being canceled prematurely by unmagic mushrooms etc.
 	 */
-	if (p_ptr->invuln) return FALSE;
+	if (p_ptr->invuln || p_ptr->martyr) return FALSE;
 
 	if (
 		set_adrenaline(Ind, 0) |
