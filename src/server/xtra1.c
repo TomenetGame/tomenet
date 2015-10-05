@@ -3024,6 +3024,7 @@ void calc_boni(int Ind) {
 
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = p_ptr->rp_ptr->infra;
+	csheet_boni[14].infr = p_ptr->rp_ptr->infra;
 	//csheet_boni[14].infr = p_ptr->see_infra;
 
 	/* Base skill -- disarming */
