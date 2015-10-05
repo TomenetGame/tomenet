@@ -234,7 +234,8 @@ G:,:B
 I:80:37:0
 W:5:0:3:50
 A:5/1:10/1:20/1
-D:This food also cures poisoning.
+D:This blessed food perfectly satisfies your hunger,
+D:cures poison and removes hallucinations.
 
 N:26:& Pint~ of Fine Ale
 G:,:y
