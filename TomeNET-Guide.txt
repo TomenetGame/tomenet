@@ -15947,6 +15947,8 @@ Higher characters (up to 35)
   devices, maybe get a Rod of Perception. It does the same thing as a scroll of
   Identify, but you might want one 'of charging' or 'of the istari'.
 + Several Potions of Speed
++ Some Potions of Resistance, since they stack with resistance from items.
+  Always quaff these when fighting dragons, demons or hounds.
 + Potions of Healing
   These potions heal you way more than pots of cure critical wounds. However,
   they are more expensive.
@@ -15973,7 +15975,8 @@ Very high characters (36 and above)
 -----------------------------------
 + Satisfy Hunger scrolls or Lembas
 + Potions of Healing
-+ Potions of Speed
++ Potions of Speed, if you don't have magic providing this
++ Potions of Resistance, if you don't have magic providing this
 + Scrolls of Teleportation
 + a Rod of Recall (mainly for travelling between towns).
 + Support rods, such as Trap Location, Detection or Disarming (especially
