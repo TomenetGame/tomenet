@@ -896,20 +896,19 @@ They all start with a slash '/' hence they're called slash commands:
 /help       get a help about slash-commands.
 
 /afk        toggle AFK (away from keyboard) mode if you have to take a
-            quick break from playing. If your character is currently on the
-            blacklist of merchants (because you got caught stealing from a
-            shop!) your blacklist timer won't decrease while you're AFK!
+            quick break from playing.
             Note that your character won't need to consume food while afk _IF_
             you are not already 'hungry' or even 'weak' from a lack of food!
             All other timed effects will continue to be processed (like
             magical effects such as haste/slowness/hallucination, pseudo-ID or
             wearing off of temporary stat drain from traps) and eventually
-            wear off, _except_ for blacklist timer from being caught by a shop
-            owner on attempting to steal.
+            wear off.
             Also, other players cannot switch places with you by moving into
             you, use teleportation or Word of Recall on you, infect you with
             black breath by bumping into you, steal from you, form a blood bond
             with you or attempt to polymorph you while you are afk.
+            An exception are grids in front of stores: If you block those,
+            other players can switch places with you even when you're afk.
 
 /afk <msg>  You can specify a reason that will be displayed to the other
             players, so they know why you are currently AFK or when you will
@@ -2952,8 +2951,6 @@ self-explaining or that are especially important are listed in detail here:
         (ie closer) target if the previously acquired target is still okay.
 
     Set 'AFK mode' automatically (auto_afk)
-        Rogues might want to turn this off in order to sit out their blacklist
-        timer in town.
 
     Prevent floating for a short while after death (safe_float)
         For a few turns after your character dies you cannot float up or down
@@ -11528,13 +11525,11 @@ Note that not every skill is available to every profession (class).
                                 steal from a shop. During this time it's
                                 impossible to steal, and you will get BAD
                                 prices (blackmarket-like) in shops.
-                                Note that your blacklist timer won't decrease
-                                while you are 'AFK'!
                                 You'll also be on the 'watchlist', meaning
                                 that you can shop normally, but are unable to
                                 steal until the shopkeepers stop to watch you
                                 so intensely. The watchlist runs out slower
-                                than the blacklist, but allows you to be AFK.
+                                than the blacklist.
                                 The time period you'll be on these lists solely
                                 depends on the item's _base_ value (so it does
                                 not matter whether you got caught in a normal

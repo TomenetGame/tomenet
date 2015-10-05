@@ -4945,7 +4945,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
-	if (p_ptr->tim_blacklist && !p_ptr->afk) {
+	if (p_ptr->tim_blacklist) {// && !p_ptr->afk) {
 		/* Count down towards turnout */
 		p_ptr->tim_blacklist--;
 	}
