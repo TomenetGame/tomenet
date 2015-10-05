@@ -6871,6 +6871,9 @@ static int reward_spell_check(player_type *p_ptr, long int treshold) {
 	int selection = 0;
 	s32b value = 0, mod = 0;
 
+	/* actually exempt for mimics! Increasing mimicry will increase Magic skill too! */
+	if (p_ptr->pclass == CLASS_MIMIC) return 0;
+
 	/* get base value of MAGIC skill */
 	compute_skills(p_ptr, &value, &mod, SKILL_MAGIC);
 	/* check whether player increased magic skill above its base value */
