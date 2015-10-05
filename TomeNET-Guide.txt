@@ -123,6 +123,7 @@ Contents
     (5.10a) Equipment damage from elemental attacks
     (5.11)  Monster attack mechanism, Armour Class, damage caps
     (5.12)  Monster attack types and brands
+    (5.12a) Monster flags
     (5.13)  Earthquakes
     (5.14)  Curses
     (5.15)  Vampirism
@@ -6635,7 +6636,8 @@ Sleep is especially nice if it's cast as an area effect. Gets you out of
         trouble, although most higher monsters are immune to it.
         Monsters will wake up after a while, depending on your stealth.
         Sleep effects are NOT cumulative.
-        Monsters that have NO_SLEEP flag cannot be slept.
+        Monsters that have NO_SLEEP flag cannot be slept. Note that they may
+        still be asleep when you meet them though.
 Slowing on monsters is currently a permanent effect. Very effective, although
         many higher monsters are immune to it. Also, it is currently
         cumulative (subject to change) and can be applied several times,
@@ -9992,7 +9994,7 @@ EAT_xxx         DEX, stealing skill.
                 Won't help against EAT_FOOD/EAT_LITE.
 UN_BONUS        disenchantment.
                 The damage can partially be mitigated by having the resistance.
-UN_POWER        none.(drains charges/energy from your items)
+UN_POWER        no resistance. It drains charges/energy from your items.
                 Magic Device skill helps to prevent draining though.
                 See (6.10) for more information about the Magic Device skill.
                 Also drains the duration of a polymorph ring form the player is
@@ -10067,6 +10069,64 @@ HOLD            Although not so special and already mentioned in the text above
                 Ghouls can do this for example, so make sure that you get
                 Free Action as early as possible, definitely before venturing
                 into Mordor though.
+
+
+(5.12a) Monster flags
+---------------------
+Most monster flags you find in the spoiler files (press ~7 in-game or open the
+actual file r_info.txt with a text editor or use Mikael's monster search) are
+self-explanatory. Here is an explanation of some flags that are important but
+might not be obvious:
+
+FORCE_MAXHP     The monster always gets rolled at maximum hit points.
+                For example if the monster has 3d6 hit points aka 3 dice with
+                6 sides each, it could have anything between 3 and 18 hp.
+                But if it has this flag, when you encounter this type of
+                monster it will always have 18 hp.
+FORCE_DEPTH     You cannot meet this monster out of depth. It will never appear
+                on a floor of lesser level that itself.
+OOD_xx          The monster cannot occur more than xx levels out of depth.
+                All unique monsters actually have an intrinsic OOD_20 flag even
+                if it's not shown in the monster lore spoilers.
+FRIENDS         This monster comes in a pack. Makes life easier for mimics.
+
+RAND_xxx        This monster has random movement. The xxx number is the chance
+                in percent. Several of these flags will stack.
+NO_SLEEP        This does not mean that the monster cannot be asleep when you
+                meet it, but that you cannot use sleep spells (et al) on it.
+                (Compare (4.12).)
+NEVER_BLOW      This monster will never attack in melee.
+NEVER_ACT       This monster will never move or perform any action at all.
+                So this means it is completely harmless.
+
+NO_TARGET       This monster cannot be targetted with target command.
+NO_DEATH        This entity can never die.
+NO_AUTORET      You won't use auto-retaliation against this entity.
+
+REFLECTING      The monster can deflect bolts and arrows, physical and magical
+                projectiles, prolonging the fight.
+HURT_LITE       This monster is susceptible to light attacks.
+HURT_ROCK       This monster is susceptible to stone-to-mud attacks.
+
+COLD_BLOOD      You cannot spot this monster with infra-vision.
+WEIRD_MIND      The monster flickers on ESP.
+EMPTY_MIND      The monster does not show up on ESP.
+
+SHAPECHANGER    The monster changes its appearance randomly and quickly.
+CHAR_CLEAR      The monster has no visible appearance, not even if you can see
+                invisible.
+
+UNMAGIC         Will cancel all temporary magical effects on the player,
+                except for mimic form (from polymorph ring) and martyr.
+HOLD            Paralyses you from afar.
+FORGET          Blanks your mind, makes you forget the dungeon map and details
+                of your items (unidentifies items).
+TRAPS           Can place traps around you (from afar).
+DISBELIEVE      Monster has an antimagic field, the strength depending on its
+                level.
+
+DROP_GOOD       The monster usually drops enchanted items.
+DROP_GREAT      The monster usually drops items with ego powers or artifacts.
 
 
 
