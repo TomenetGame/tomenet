@@ -10494,6 +10494,8 @@ static void Handle_clear_actions(int Ind) {
 		msg_print(Ind, "You cancel preparations for barrage.");
 		p_ptr->ranged_barrage = FALSE;
 	}
+	/* Stop trying to cloak */
+	stop_cloaking(Ind);
 
 	/* Stop resting */
 	disturb(Ind, 0, 0);
