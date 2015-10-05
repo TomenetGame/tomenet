@@ -8839,13 +8839,13 @@ INVIS   ('It makes you invisible.')
         extra stealth bonus. See '(5.16) Invisibility' for details.
 BLOWS   ('It affects your attack speed.')
         This item adds EA (extra attacks) to your number of blows per round.
-SH_ELEC ('It produces an electric sheath.')
+SH_ELEC ('It produces an electric aura.')
         Surrounds you with a lightning aura, damaging monsters each time they
         hit you in close combat.
-SH_COLD ('It produces an icy sheath.')
+SH_COLD ('It produces an icy aura.')
         Surrounds you with a frost aura, damaging monsters each time they
         hit you in close combat.
-SH_FIRE ('It produces a fiery sheath.')
+SH_FIRE ('It produces a fiery aura.')
         Surrounds you with a fire aura, damaging monsters each time they
         hit you in close combat.
 REFLECT ('It reflects bolts and arrows.')

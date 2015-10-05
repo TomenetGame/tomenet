@@ -5015,11 +5015,11 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	if (f5 & (TR5_REFLECT))
 		fprintf(fff, "It reflects bolts and arrows.\n");
 	if (f3 & (TR3_SH_FIRE))
-		fprintf(fff, "It produces a fiery sheath.\n");
+		fprintf(fff, "It produces a fiery aura.\n");
 	if (f5 & (TR5_SH_COLD))
-		fprintf(fff, "It produces an icy sheath.\n");
+		fprintf(fff, "It produces an icy aura.\n");
 	if (f3 & (TR3_SH_ELEC))
-		fprintf(fff, "It produces an electric sheath.\n");
+		fprintf(fff, "It produces an electric aura.\n");
 	if (f3 & (TR3_NO_MAGIC))
 		fprintf(fff, "It produces an anti-magic shell.\n");
 
