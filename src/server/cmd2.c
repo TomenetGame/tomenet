@@ -4968,6 +4968,7 @@ void do_cmd_fire(int Ind, int dir) {
 				floor_item_optimize(0 - item);
 			}
 		} else {
+#if 0 /* magic ammo (non-cursed) isn't decreased from shooting! */
 			if (item >= 0) {
 				inven_item_describe(Ind, item);
 				inven_item_optimize(Ind, item);
@@ -4976,6 +4977,7 @@ void do_cmd_fire(int Ind, int dir) {
 			else {
 				floor_item_optimize(0 - item);
 			}
+#endif
 		}
 	}
 
