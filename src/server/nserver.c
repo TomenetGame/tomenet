@@ -2810,7 +2810,7 @@ static int Handle_login(int ind)
 		/* Play audio greeting too! - C. Blue */
 		if (greeting) { /* only the very 1st time, might become annoying */
 			s_printf("GREETING_AUDIO: %s\n", p_ptr->name);
-			sound(NumPlayers, "greeting", NULL, SFX_TYPE_MISC, FALSE);
+			//sound(NumPlayers, "greeting", NULL, SFX_TYPE_MISC, FALSE);
 
 			acc_set_flags(p_ptr->accountname, ACC_GREETED, TRUE);
 		}
