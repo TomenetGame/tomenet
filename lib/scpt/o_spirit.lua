@@ -52,29 +52,31 @@ OCURSEDD = add_spell {
 	}
 }
 
-function get_litebolt_dam()
-	return 5 + get_level(Ind, LITEBOLT, 25), 7 + get_level(Ind, LITEBOLT, 25) + 1
+function get_litebeam_dam()
+	return 5 + get_level(Ind, LITEBEAM, 25), 7 + get_level(Ind, LITEBEAM, 25) + 1
 end
-LITEBOLT = add_spell {
-	["name"] = 	"Flash",
+LITEBEAM = add_spell {
+	["name"] = 	"Spear of Light",
 	["school"] = 	SCHOOL_SPIRIT,
 	["level"] = 	10,
-	["mana"] = 	3,
-	["mana_max"] = 	12,
+--	["mana"] = 	3,
+--	["mana_max"] = 	12,
+	["mana"] = 	5,
+	["mana_max"] = 	20,
 	["fail"] = 	-10,
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
-			fire_bolt(Ind, GF_LITE, args.dir, damroll(get_litebolt_dam()), " casts a light bolt for")
+			fire_beam(Ind, GF_LITE, args.dir, damroll(get_litebeam_dam()), " casts a spear of light for")
 	end,
 	["info"] = 	function()
 			local x, y
 
-			x, y = get_litebolt_dam()
+			x, y = get_litebeam_dam()
 			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{
-			"Conjures up spiritual light into a powerful bolt",
+			"Conjures up spiritual light into a powerful beam",
 		}
 }
 
