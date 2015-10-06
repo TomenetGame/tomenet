@@ -50,7 +50,7 @@ HSANCTUARY_II = add_spell {
 	["level"] = 	23,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	-5,
+	["fail"] = 	-35,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 --			project_los(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, HSANCTUARY, 25), "mumbles softly")
@@ -93,7 +93,7 @@ HSENSE_I = add_spell {
 	["level"] = 	20,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	25,
+	["fail"] = 	-20,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			map_area(Ind)
@@ -112,7 +112,7 @@ HSENSE_II = add_spell {
 	["level"] = 	40,
 	["mana"] = 	80,
 	["mana_max"] = 	80,
-	["fail"] = 	5,
+	["fail"] = 	-65,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			wiz_lite_extra(Ind)
@@ -151,7 +151,7 @@ HSENSEMON = add_spell {
 	["level"] = 	33,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	15,
+	["fail"] = 	-55,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			set_tim_esp(Ind, 10 + randint(10) + 30 + get_level(Ind, HSENSEMON, 20))
@@ -171,7 +171,7 @@ HZEAL_I = add_spell {
 	["level"] = 	32,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	5,
+	["fail"] = 	-35,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		local d, p
@@ -195,7 +195,7 @@ HZEAL_II = add_spell {
 	["level"] = 	41,
 	["mana"] = 	100,
 	["mana_max"] = 	100,
-	["fail"] = 	-10,
+	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		local d, p
@@ -219,7 +219,7 @@ HZEAL_III = add_spell {
 	["level"] = 	50,
 	["mana"] = 	150,
 	["mana_max"] = 	150,
-	["fail"] = 	-25,
+	["fail"] = 	-110,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		local d, p
