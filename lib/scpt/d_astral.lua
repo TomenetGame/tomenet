@@ -68,9 +68,9 @@ POWERBOLT_I = add_spell {
 			return "dam "..xx.."d"..yy
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a powerful bolt of mana",
-			"Corrupted: conjures up a powerful dispelling bolt",
-			"Neutral: conjures up a bolt of lightning"
+			"Enlightened: conjures up a powerful bolt of mana.",
+			"Corrupted: conjures up a powerful dispelling bolt.",
+			"Neutral: conjures up a bolt of lightning."
 		}
 }
 POWERBOLT_II = add_spell {
@@ -99,9 +99,9 @@ POWERBOLT_II = add_spell {
 			return "dam "..xx.."d"..yy
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a powerful bolt of mana",
-			"Corrupted: conjures up a powerful dispelling bolt",
-			"Neutral: conjures up a bolt of lightning"
+			"Enlightened: conjures up a powerful bolt of mana.",
+			"Corrupted: conjures up a powerful dispelling bolt.",
+			"Neutral: conjures up a bolt of lightning."
 		}
 }
 POWERBOLT_III = add_spell {
@@ -128,8 +128,8 @@ POWERBOLT_III = add_spell {
 			return "dam "..xx.."d"..yy
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a powerful bolt of mana",
-			"Corrupted: conjures up a powerful dispelling bolt",
+			"Enlightened: conjures up a powerful bolt of mana.",
+			"Corrupted: conjures up a powerful dispelling bolt.",
 		}
 }
 
@@ -159,9 +159,9 @@ POWERBEAM_I = add_spell {
 			return "dam "..xx.."d"..yy
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a powerful beam of light",
-			"Corrupted: conjures up a powerful darkness beam",
-			"Neutral: conjures up a beam of lightning"
+			"Enlightened: conjures up a powerful beam of light.",
+			"Corrupted: conjures up a powerful darkness beam.",
+			"Neutral: conjures up a beam of lightning."
 		}
 }
 POWERBEAM_II = add_spell {
@@ -190,9 +190,9 @@ POWERBEAM_II = add_spell {
 			return "dam "..xx.."d"..yy
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a powerful beam of light",
-			"Corrupted: conjures up a powerful darkness beam",
-			"Neutral: conjures up a beam of lightning"
+			"Enlightened: conjures up a powerful beam of light.",
+			"Corrupted: conjures up a powerful darkness beam.",
+			"Neutral: conjures up a beam of lightning."
 		}
 }
 POWERBEAM_III = add_spell {
@@ -219,8 +219,8 @@ POWERBEAM_III = add_spell {
 			return "dam "..xx.."d"..yy
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a powerful beam of light",
-			"Corrupted: conjures up a powerful darkness beam",
+			"Enlightened: conjures up a powerful beam of light.",
+			"Corrupted: conjures up a powerful darkness beam.",
 		}
 }
 
@@ -250,9 +250,9 @@ POWERBALL_I = add_spell {
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a powerful ball of mana",
-			"Corrupted: conjures up a powerful dispelling ball",
-			"Neutral: conjures up a ball of lightning"
+			"Enlightened: conjures up a powerful ball of mana.",
+			"Corrupted: conjures up a powerful dispelling ball.",
+			"Neutral: conjures up a ball of lightning."
 		}
 }
 POWERBALL_II = add_spell {
@@ -279,8 +279,8 @@ POWERBALL_II = add_spell {
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a powerful ball of mana",
-			"Corrupted: conjures up a powerful dispelling ball",
+			"Enlightened: conjures up a powerful ball of mana.",
+			"Corrupted: conjures up a powerful dispelling ball.",
 		}
 }
 POWERBALL_III = add_spell {
@@ -307,8 +307,8 @@ POWERBALL_III = add_spell {
 			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL_I, 2)
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a powerful ball of mana",
-			"Corrupted: conjures up a powerful dispelling ball",
+			"Enlightened: conjures up a powerful ball of mana.",
+			"Corrupted: conjures up a powerful dispelling ball.",
 		}
 }
 
@@ -352,11 +352,11 @@ VENGEANCE = add_spell {
 			return "power "..get_veng_power(Ind);
 	end,
 	["desc"] = 	{
-			"Enlightened: summons party member on the same area to you",
+			"Enlightened: summons party member on the same area to you.",
 			"             (Also will teleport monsters in sight to you,",
 			"             as well as summoning additional monsters per ",
 			"             player you pull towards you.)",
-			"Corrupted: damages all monsters in sight"
+			"Corrupted: damages all monsters in sight."
 		}
 }
 EMPOWERMENT = add_spell {
@@ -378,8 +378,8 @@ EMPOWERMENT = add_spell {
 				return "dur "..(20 + get_astral_lev(Ind) / 10)
 	end,
 	["desc"] = 	{
-			"Enlightened: incite self fury",
-			"Corrupted: increases your hit points"
+			"Enlightened: incite self fury.",
+			"Corrupted: increases your hit points."
 		}
 }
 INTENSIFY = add_spell {
@@ -401,9 +401,9 @@ INTENSIFY = add_spell {
 	end,
 	["desc"] = 	{
 			"Enlightened: slows down monsters in sight and",
-			"             grants temporary time resistance",
+			"             grants temporary time resistance.",
 			"Corrupted: increases your critical chance (+2 base",
-			"           +2 per 5 astral levels thereafter)"
+			"           +2 per 5 astral levels thereafter)."
 		}
 }
 
@@ -430,8 +430,8 @@ POWERCLOUD = add_spell {
 			return "dam "..(1 + lev * 2).." rad 3 dur "..(5 + (lev / 5))
 	end,
 	["desc"] = 	{
-			"Enlightened: conjures up a storm of mana",
-			"Corrupted: conjures up a raging inferno"
+			"Enlightened: conjures up a storm of mana.",
+			"Corrupted: conjures up a raging inferno."
 		}
 }
 
@@ -456,9 +456,9 @@ GATEWAY = add_spell {
 			return "";
 	end,
 	["desc"] = 	{
-			"Requires level 50 Astral Knowledge and at least character level 62",
-			"Enlightened: nigh-instantaneous wor for every party member on the level",
+			"Requires level 50 Astral Knowledge and at least character level 62.",
+			"Enlightened: nigh-instantaneous wor for every party member on the level.",
 			"Corrupted: creates a void jump gate",
-			"           (cast once to set the first location and the second for the target)"
+			"           (cast once to set first location and then second for the target)."
 		}
 }

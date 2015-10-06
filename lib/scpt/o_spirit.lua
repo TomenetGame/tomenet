@@ -76,7 +76,7 @@ LITEBEAM = add_spell {
 			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{
-			"Conjures up spiritual light into a powerful beam",
+			"Conjures up spiritual light into a powerful beam.",
 		}
 }
 
@@ -99,7 +99,7 @@ OLIGHTNINGBOLT = add_spell {
 			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{
-			"Conjures up spiritual power into a lightning bolt",
+			"Conjures up spiritual power into a lightning bolt.",
 		}
 }
 
@@ -126,8 +126,8 @@ TRANCE = add_spell {
 	["desc"] = {
 			"Causes all ghosts, spirits and elementals that see you",
 			"to fall into a deep, spiritual sleep instantly.",
---			"Lets monsters next to you fall sleep",
---			"At level 20 it lets all nearby monsters fall asleep",
+--			"Lets monsters next to you fall sleep.",
+--			"At level 20 it lets all nearby monsters fall asleep.",
 	}
 }
 
@@ -154,8 +154,8 @@ POSSESS = add_spell {
 	["desc"] 	{
 			--"Tries to manipulate the mind of an animal to become your pet.",
 			"Tries to manipulate the mind of a monster to make it ignore you.",
---			"At level 7 it turns into a ball",
---			"At level 13 it affects all monsters in sight",
+--			"At level 7 it turns into a ball.",
+--			"At level 13 it affects all monsters in sight.",
 	}
 }
 
@@ -176,7 +176,7 @@ STOPPOSSESS = add_spell {
 			return ""
 	end,
 	["desc"] 	{
-			"Cancel charming of any monsters",
+			"Cancel charming of any monsters.",
 	}
 }
 
@@ -207,9 +207,9 @@ STARLIGHT = add_spell {
 		end
 	end,
 	["desc"] = 	{
-			"Creates a globe of starlight",
-			"At level 10 it damages monsters that are susceptible to light",
-			"At level 25 it becomes more powerful and hurts all monsters",
+			"Creates a globe of starlight.",
+			"At level 10 it damages monsters that are susceptible to light.",
+			"At level 25 it becomes more powerful and hurts all monsters.",
 	}
 }
 

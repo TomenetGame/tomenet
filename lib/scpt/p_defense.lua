@@ -22,7 +22,7 @@ HBLESSING_I = add_spell {
 			return "AC+8  dur 9.."..get_level(Ind, HBLESSING_I, 25) + 9
 	end,
 	["desc"] = 	{
-			"Protects you with a shield of righteousness",
+			"Protects you with a shield of righteousness.",
 			"***Automatically projecting***",
 	}
 }
@@ -49,7 +49,7 @@ HBLESSING_II = add_spell {
 			return "AC+14  dur 17.."..get_level(Ind, HBLESSING_I, 25) + 17
 	end,
 	["desc"] = 	{
-			"Protects you with a shield of righteousness",
+			"Protects you with a shield of righteousness.",
 			"***Automatically projecting***",
 	}
 }
@@ -75,7 +75,7 @@ HBLESSING_III = add_spell {
 			return "AC+20  dur 32.."..get_level(Ind, HBLESSING_I, 25) + 32
 	end,
 	["desc"] = 	{
-			"Protects you with a shield of righteousness",
+			"Protects you with a shield of righteousness.",
 			"***Automatically projecting***",
 	}
 }

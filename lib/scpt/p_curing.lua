@@ -102,9 +102,9 @@ HCUREWOUNDS_I = add_spell {
 			return "heal "..get_curewounds_dice(13).."d8"
 	end,
 	["desc"] = 	{
-		"Heals a certain amount of hitpoints of a friendly target",
-		"Caps at 14d8 (same as potion of cure critical wounds)",
-		"Also cures blindness and cuts at level 9",
+		"Heals a certain amount of hitpoints of a friendly target.",
+		"Caps at 14d8 (same as potion of cure critical wounds).",
+		"Also cures blindness and cuts at level 9.",
 	}
 }
 HCUREWOUNDS_II = add_spell {
@@ -133,10 +133,10 @@ HCUREWOUNDS_II = add_spell {
 			return "heal "..get_curewounds_dice(0).."d8"
 	end,
 	["desc"] = 	{
-		"Heals a certain amount of hitpoints of a friendly target",
-		"Caps at 14d8 (same as potion of cure critical wounds)",
-		"Also cures blindness, cuts and confusion",
-		"Also cures stun at level 9",
+		"Heals a certain amount of hitpoints of a friendly target.",
+		"Caps at 14d8 (same as potion of cure critical wounds).",
+		"Also cures blindness, cuts and confusion.",
+		"Also cures stun at level 9.",
 	}
 }
 
@@ -164,9 +164,9 @@ HHEALING_I = add_spell {
 			return "heal "..get_healing_percents2(15).."% (max "..get_healing_cap2(15)..") = "..get_healing_power2(15)
 	end,
 	["desc"] = 	{
-		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
-		"Also cures blindness and cuts at level 4 and confusion at level 10",
-		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
+		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
+		"Also cures blindness and cuts at level 4 and confusion at level 10.",
+		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.",
 		"***Automatically projecting***",
 	}
 }
@@ -193,9 +193,9 @@ HHEALING_II = add_spell {
 			return "heal "..get_healing_percents2(35).."% (max "..get_healing_cap2(35)..") = "..get_healing_power2(35)
 	end,
 	["desc"] = 	{
-		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
-		"Also cures blindness, cuts and confusion and at level 8 stun too",
-		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
+		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
+		"Also cures blindness, cuts and confusion and at level 8 stun too.",
+		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.",
 		"***Automatically projecting***",
 	}
 }
@@ -218,9 +218,9 @@ HHEALING_III = add_spell {
 			return "heal "..get_healing_percents2(0).."% (max "..get_healing_cap2(0)..") = "..get_healing_power2(0)
 	end,
 	["desc"] = 	{
-		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
-		"Also cures blindness, cuts, confusion and stun",
-		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
+		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
+		"Also cures blindness, cuts, confusion and stun.",
+		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.",
 		"***Automatically projecting***",
 	}
 }
@@ -243,7 +243,7 @@ HDELCURSES_I = add_spell {
 			return ""
 			end,
 	["desc"] = 	{
-			"Removes curses",
+			"Removes curses.",
 	}
 }
 HDELCURSES_II = add_spell {
@@ -264,7 +264,7 @@ HDELCURSES_II = add_spell {
 			return ""
 			end,
 	["desc"] = 	{
-			"Removes curses and heavy curses",
+			"Removes curses and heavy curses.",
 	}
 }
 
@@ -345,7 +345,7 @@ HCURING_I = add_spell {
 			return ""
 			end,
 	["desc"] = 	{
-			"Slows down the effect of poison and treats stomach ache",
+			"Slows down the effect of poison and treats stomach ache.",
 			"***Automatically projecting***",
 	}
 }
@@ -371,7 +371,7 @@ HCURING_II = add_spell {
 			end,
 	["desc"] = 	{
 			"Treats stomach ache,",
-			"neutralizes poison and cures hallucinations",
+			"neutralizes poison and cures hallucinations.",
 			"***Automatically projecting***",
 	}
 }
@@ -429,7 +429,7 @@ HRESTORING = add_spell {
 			return ""
 			end,
 	["desc"] = 	{
-			"Restores drained stats and lost experience",
+			"Restores drained stats and lost experience.",
 			"***Automatically projecting***",
 	}
 }

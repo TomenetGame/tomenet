@@ -25,8 +25,8 @@ OCURSE = add_spell {
 	end,
 	["desc"] = {
 			"Randomly causes confusion damage, slowness or blindness.",
-			"At level 15 it passes through monsters, affecting those behind as well",
-			"At level 25 it affects all monsters in sight",
+			"At level 15 it passes through monsters, affecting those behind as well.",
+			"At level 25 it affects all monsters in sight.",
 	}
 }
 
@@ -101,9 +101,9 @@ POISONFOG = add_spell {
 			return "dam "..(1 + (get_level(Ind, NOXIOUSCLOUD, 156))).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 14))
 	end,
 	["desc"] 	{
-			"Creates a cloud of poison",
-			"The cloud will persist for some turns, damaging all monsters passing by",
-			"At level 30 it turns into a thick gas preventing living beings from breathing"
+			"Creates a cloud of poison.",
+			"The cloud will persist for some turns, damaging all monsters passing by.",
+			"At level 30 it turns into a thick gas preventing living beings from breathing.",
 	}
 }
 
@@ -150,7 +150,7 @@ DARKBOLT = add_spell {
 			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{
-			"Conjures up shadows into a powerful bolt",
+			"Conjures up shadows into a powerful bolt.",
 		}
 }
 
@@ -169,7 +169,7 @@ OINVIS = add_spell {
 			return "dur "..(15 + get_level(Ind, OINVIS, 50)).."+d20 power "..(20 + get_level(Ind, OINVIS, 50))
 	end,
 	["desc"] = 	{
-			"Grants invisibility"
+			"Grants invisibility.",
 	}
 }
 
@@ -211,7 +211,7 @@ POISONRES = add_spell {
 			return "dur "..(25 + get_level(Ind, POISONRES, 25)).."+d30"
 	end,
 	["desc"] = 	{
-			"Grants poison resistance",
+			"Grants poison resistance.",
 --			"At level 10 it provides poison branding to wielded weapon"
 	}
 }
@@ -237,8 +237,8 @@ OSLEEP = add_spell {
 				return "power "..(5 + get_level(Ind, OSLEEP, 80))
 			end,
 	["desc"] = {
-			"Causes the target to fall asleep instantly",
---			"Lets monsters next to you fall asleep",
-			"At level 20 it lets all nearby monsters fall asleep",
+			"Causes the target to fall asleep instantly.",
+--			"Lets monsters next to you fall asleep.",
+			"At level 20 it lets all nearby monsters fall asleep.",
 	}
 }

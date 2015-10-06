@@ -40,7 +40,7 @@ HSANCTUARY_I = add_spell {
 			return "power "..(5 + get_level(Ind, HSANCTUARY_I, 80)).." rad "..get_level(Ind, HSANCTUARY_I, 10)
 	end,
 	["desc"] = 	{
-			"Lets monsters next to you fall asleep",
+			"Lets monsters next to you fall asleep.",
 	}
 }
 HSANCTUARY_II = add_spell {
@@ -60,7 +60,7 @@ HSANCTUARY_II = add_spell {
 			return "power "..(5 + get_level(Ind, HSANCTUARY_I, 80))
 	end,
 	["desc"] = 	{
-			"Lets nearby monsters fall asleep",
+			"Lets nearby monsters fall asleep.",
 	}
 }
 
@@ -141,9 +141,7 @@ HDETECTEVIL = add_spell {
 			return ""
 			end,
 	["desc"] = 	{
-			"Detects all nearby non-invisible creatures once and also lets",
-			"you see invisible creatures for a while.",
-			"At level 30 it lets you sense the presence creatures for a while.",
+			"Detects all nearby evil creatures.",
 	}
 }
 HSENSEMON = add_spell {

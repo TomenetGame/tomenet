@@ -84,8 +84,8 @@ HGLOBELIGHT_I = add_spell {
 			return ""
 	end,
 	["desc"] = 	{
-			"Creates a globe of pure light",
-			"At level 3 it hurts monsters that are susceptible to light",
+			"Creates a globe of pure light.",
+			"At level 3 it hurts monsters that are susceptible to light.",
 	}
 }
 HGLOBELIGHT_II = add_spell {
@@ -151,7 +151,7 @@ HORBDRAIN_I = add_spell {
 		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 300)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
 	end,
 	["desc"] = 	{
-			"Calls an holy orb to devour the evil",
+			"Calls an holy orb to devour the evil.",
 	}
 }
 HORBDRAIN_II = add_spell {
@@ -174,7 +174,7 @@ HORBDRAIN_II = add_spell {
 		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 475)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
 	end,
 	["desc"] = 	{
-			"Calls an holy orb to devour the evil",
+			"Calls an holy orb to devour the evil.",
 	}
 }
 
@@ -194,7 +194,7 @@ HEXORCISM_I = add_spell {
 		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 350))
 	end,
 	["desc"] = 	{
-			"Dispels nearby demons",
+			"Dispels nearby demons.",
 	}
 }
 HEXORCISM_II = add_spell {
@@ -213,7 +213,7 @@ HEXORCISM_II = add_spell {
 		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 700))
 	end,
 	["desc"] = 	{
-			"Dispels nearby demons",
+			"Dispels nearby demons.",
 	}
 }
 

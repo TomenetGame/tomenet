@@ -59,7 +59,7 @@ MSELFKNOW = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{ "Find out more about yourself", }
+	["desc"] = 	{ "Find out more about yourself.", }
 }
 
 MBOOST = add_spell {
@@ -82,8 +82,8 @@ MBOOST = add_spell {
 	["desc"] = 	{
 			"Boosts your willpower to unleash hidden potential,",
 --			"improving both your performance and resilience",
-			"improving your performance and resilience to various effects",
-			"at level 25 it will also allow you to attack slightly faster.",
+			"improving your performance and resilience to various effects.",
+			"At level 25 it will also allow you to attack slightly faster.",
 			"***Automatically projecting***",
 -- what it infact does: tohit, res.fear, %res.conf, %res.para, %res.slow, +1 ea (later)
 	}
@@ -117,7 +117,7 @@ MHASTE = add_spell {
 			end,
 	["desc"] = 	{
 			"Accelerates your nerve functions and metabolism",
-			"by direct mental infusion, speeding you up",
+			"by direct mental infusion, speeding you up.",
 	}
 }
 
@@ -160,7 +160,7 @@ MCURE = add_spell {
 			end,
 	["desc"] = 	{
 			"Frees your mind from fear, confusion (level 5)",
-			"and hallucinations (level 10)",
+			"and hallucinations (level 10).",
 			"***Automatically projecting***",
 	}
 }
@@ -193,7 +193,7 @@ MSANITY = add_spell {
 			return "cures "..(15 + get_level(Ind, MSANITY, 55)).." SN"
 			end,
 	["desc"] = 	{
-			"Cures some insanity and removes malicious effects",
+			"Cures some insanity and removes malicious effects.",
 			"***Automatically projecting***",
 	}
 }
@@ -285,7 +285,7 @@ MTELEKINESIS = add_spell {
 	["desc"] =	{
 			"Inscribe your book with @Pplayername, cast it, select an item",
 			"and the item will be teleported to that player whereever he/she might",
-			"be in the Universe",
+			"be in the Universe.",
 	}
 }
 else
@@ -307,7 +307,7 @@ MTELEKINESIS = add_spell {
 	["desc"] = 	{
 			"Inscribe your book with @Pplayername, cast it, select an item",
 			"and the item will be teleported to that player whereever he/she might",
-			"be in the Universe",
+			"be in the Universe.",
 	}
 }
 end
