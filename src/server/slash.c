@@ -2226,7 +2226,6 @@ void do_slash_cmd(int Ind, char *message) {
 						return;
 					}
 					KILL(c_acc, struct account);
-					tpname[0] = ':';
 				} else {
 					strcpy(tname, "/note ");
 					strcat(tname, lookup_accountname(lookup_player_id(message2 + 6)));
@@ -2315,7 +2314,7 @@ void do_slash_cmd(int Ind, char *message) {
 						strcpy(priv_note[i], "");
 					}
 				}
-				msg_format(Ind, "\377oDeleted %d notes.", notes);
+				msg_format(Ind, "\377oDeleted %d notes to player %s.", notes, tname);
 				return;
 			}
 
