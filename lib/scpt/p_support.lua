@@ -33,11 +33,11 @@ HSANCTUARY_I = add_spell {
 	["fail"] = 	10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
---			project(0 - Ind, get_level(Ind, HSANCTUARY, 10), player.wpos, player.py, player.px, (3 + get_level(Ind, HSANCTUARY, 30)) * 2, GF_OLD_SLEEP, 64+16+8, "mumbles softly")
-			project(0 - Ind, get_level(Ind, HSANCTUARY, 10), player.wpos, player.py, player.px, 10 + get_level(Ind, HSANCTUARY, 80), GF_OLD_SLEEP, 64+16+8, "mumbles softly")
+--			project(0 - Ind, get_level(Ind, HSANCTUARY, 10), player.wpos, player.py, player.px, (3 + get_level(Ind, HSANCTUARY, 30)) * 2, GF_OLD_SLEEP, 64 + 16 + 8, "mumbles softly")
+			project(0 - Ind, get_level(Ind, HSANCTUARY_I, 10), player.wpos, player.py, player.px, 10 + get_level(Ind, HSANCTUARY_I, 80), GF_OLD_SLEEP, 64 + 16 + 8, "mumbles softly")
 	end,
 	["info"] = 	function()
-			return "power "..(5 + get_level(Ind, HSANCTUARY, 80)).." rad "..get_level(Ind, HSANCTUARY, 10)
+			return "power "..(5 + get_level(Ind, HSANCTUARY_I, 80)).." rad "..get_level(Ind, HSANCTUARY_I, 10)
 	end,
 	["desc"] = 	{
 			"Lets monsters next to you fall asleep",
@@ -54,10 +54,10 @@ HSANCTUARY_II = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 --			project_los(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, HSANCTUARY, 25), "mumbles softly")
-			project_los(Ind, GF_OLD_SLEEP, 5 + get_level(Ind, HSANCTUARY, 80), "mumbles softly")
+			project_los(Ind, GF_OLD_SLEEP, 5 + get_level(Ind, HSANCTUARY_I, 80), "mumbles softly")
 	end,
 	["info"] = 	function()
-			return "power "..(5 + get_level(Ind, HSANCTUARY, 80))
+			return "power "..(5 + get_level(Ind, HSANCTUARY_I, 80))
 	end,
 	["desc"] = 	{
 			"Lets nearby monsters fall asleep",
@@ -207,7 +207,7 @@ HZEAL_II = add_spell {
 		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
 	end,
 	["info"] = 	function()
-			return "dur 9+d5, +2 EA (+1 proj)"
+			return "dur 9+d5, +2 EA"
 	end,
 	["desc"] = 	{
 		"Increases your melee attacks per round by up to +3 for 9+d5 turns.",
@@ -231,7 +231,7 @@ HZEAL_III = add_spell {
 		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
 	end,
 	["info"] = 	function()
-			return "dur 9+d5, +3 EA (+2 proj)"
+			return "dur 9+d5, +3 EA"
 	end,
 	["desc"] = 	{
 		"Increases your melee attacks per round by up to +3 for 9+d5 turns.",

@@ -91,13 +91,13 @@ HRESISTS_I = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		local dur
-		dur = randint(10) + 15 + get_level(Ind, HRESISTS, 50)
+		dur = randint(10) + 15 + get_level(Ind, HRESISTS_I, 50)
 
 		set_oppose_fire(Ind, dur)
 		fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, 1, " calls to the heavens for protection from the elements.")
 	end,
 	["info"] = 	function()
-			return "Res heat/cold dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
+			return "Res heat/cold dur "..(get_level(Ind, HRESISTS_I, 50) + 15)..".."..(get_level(Ind, HRESISTS_I, 50) + 25)
 	end,
 	["desc"] = 	{
 			"Lets you resist heat and cold.",
@@ -115,7 +115,7 @@ HRESISTS_II = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		local dur
-		dur = randint(10) + 15 + get_level(Ind, HRESISTS, 50)
+		dur = randint(10) + 15 + get_level(Ind, HRESISTS_I, 50)
 
 		set_oppose_fire(Ind, dur)
 		fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, 1, " calls to the heavens for protection from the elements.")
@@ -127,7 +127,7 @@ HRESISTS_II = add_spell {
 		fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, 1, "")
 	end,
 	["info"] = 	function()
-			return "Res heat/cold/elec/acid, dur "..(get_level(Ind, HRESISTS, 50) + 15)..".."..(get_level(Ind, HRESISTS, 50) + 25)
+			return "Res heat/cold/elec/acid, dur "..(get_level(Ind, HRESISTS_I, 50) + 15)..".."..(get_level(Ind, HRESISTS_I, 50) + 25)
 	end,
 	["desc"] = 	{
 			"Lets you resist heat, cold, lightning and acid.",
@@ -145,7 +145,7 @@ HRESISTS_III = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		local dur
-		dur = randint(10) + 15 + get_level(Ind, HRESISTS, 50)
+		dur = randint(10) + 15 + get_level(Ind, HRESISTS_I, 50)
 
 		set_oppose_fire(Ind, dur)
 		fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, 1, " calls to the heavens for protection from the elements.")
@@ -159,7 +159,7 @@ HRESISTS_III = add_spell {
 		fire_ball(Ind, GF_RESPOIS_PLAYER, 0, dur, 1, "")
 	end,
 	["info"] = 	function()
-			return "Base+poison res., dur "..(get_level(Ind, HRESISTS, 50) + 15)..".."..(get_level(Ind, HRESISTS, 50) + 25)
+			return "Base+poison res., dur "..(get_level(Ind, HRESISTS_I, 50) + 15)..".."..(get_level(Ind, HRESISTS_I, 50) + 25)
 	end,
 	["desc"] = 	{
 			"Lets you resist heat, cold, lightning, acid and poison.",
@@ -219,11 +219,13 @@ HMARTYR = add_spell {
 			if player.martyr_timeout > 0 then
 				msg_print(Ind, "\255yThe heavens are not yet willing to accept your martyrdom.")
 			else
-				set_martyr(Ind, -15)
+				if (player.pclass == CLASS_PRIEST) then set_martyr(Ind, -15)
+				else set_martyr(Ind, -8) end
 			end
 			end,
 	["info"] = 	function()
-			return "dur 15  timeout 1000"
+			if (player.pclass == CLASS_PRIEST) then return "dur 15  timeout 1000"
+			else return "dur 8  timeout 1000" end
 			end,
 	["desc"] = 	{
 			"Turns you into an holy martyr, blessed with immortality to fulfil",

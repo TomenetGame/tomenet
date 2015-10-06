@@ -31,10 +31,10 @@ HCURSE_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
+			fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE_I, 150), "points and curses for")
 	end,
 	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, HCURSE, 150))
+			return "power "..(10 + get_level(Ind, HCURSE_I, 150))
 	end,
 	["desc"] = 	{
 			"Randomly causes confusion damage, slowness or blindness",
@@ -52,10 +52,10 @@ HCURSE_III = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function(args)
-			project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
+			project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE_I, 150), "points and curses for")
 	end,
 	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, HCURSE, 150))
+			return "power "..(10 + get_level(Ind, HCURSE_I, 150))
 	end,
 	["desc"] = 	{
 			"Randomly causes confusion damage, slowness or blindness",
@@ -100,10 +100,10 @@ HGLOBELIGHT_II = add_spell {
 	["spell"] = 	function()
 			msg_print(Ind, "You are surrounded by a white light")
 			lite_room(Ind, player.wpos, player.py, player.px)
-			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT, 6), " calls light for")
+			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT_I, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT_I, 6), " calls light for")
 	end,
 	["info"] = 	function()
-			return "dam "..(10 + get_level(Ind, HGLOBELIGHT, 100)).." rad "..(5 + get_level(Ind, HGLOBELIGHT, 6))
+			return "dam "..(10 + get_level(Ind, HGLOBELIGHT_I, 100)).." rad "..(5 + get_level(Ind, HGLOBELIGHT_I, 6))
 	end,
 	["desc"] = 	{
 			"Creates a powerful globe of pure light that hurts all foes.",
