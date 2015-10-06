@@ -2296,7 +2296,8 @@ void do_slash_cmd(int Ind, char *message) {
 						strcpy(priv_note[i], "");
 					}
 				}
-				msg_format(Ind, "\377oDeleted %d notes.", notes);
+				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes.");
+				else msg_format(Ind, "\377oDeleted %d notes.", notes);
 				return;
 			}
 
@@ -2314,7 +2315,8 @@ void do_slash_cmd(int Ind, char *message) {
 						strcpy(priv_note[i], "");
 					}
 				}
-				msg_format(Ind, "\377oDeleted %d notes to player %s.", notes, tname);
+				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes to player %s.", tname);
+				else msg_format(Ind, "\377oDeleted %d notes to player %s.", notes, tname);
 				return;
 			}
 
