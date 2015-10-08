@@ -14350,8 +14350,9 @@ Priest schools:
                     nor summon on. Powerful monsters may break it.
                     Required skill level for first spell level: 35.
 
-    Martyrdom       You burn in holy fire making you invincible for 15 turns
-                    if used by a priest, for 8 turns if used by another class.
+    Martyrdom       You burn in holy fire making you invincible for 15 seconds
+                    if used by a priest, for 8 seconds if used by any other
+                    class.
                     When your martyrium ends, you will be left close to death
                     with a fraction of your hit points, at least 30 HP though.
                     Note that you cannot be healed in any way during martyr.

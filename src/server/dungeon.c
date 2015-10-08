@@ -4310,8 +4310,10 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_res_fear(Ind, p_ptr->res_fear_temp - 1);
 
 	/* Holy Martyr */
+#if 0 /* moved to process_player_end() */
 	if (p_ptr->martyr)
 		(void)set_martyr(Ind, p_ptr->martyr - 1);
+#endif
 	if (p_ptr->martyr_timeout) {
 		p_ptr->martyr_timeout--;
 		if (!p_ptr->martyr_timeout) msg_print(Ind, "The heavens are ready to accept your martyrium.");
@@ -5256,6 +5258,11 @@ static void process_player_end(int Ind) {
 
 	process_games(Ind);
 
+	/* Added for Holy Martyr, which was previously in process_player_end_aux():
+	   Process it independantly of level speed, in real time instead.
+	   Otherwise it gives the player too much action time on deep levels at high speeds. */
+	if (p_ptr->martyr && !(turn % cfg.fps)) (void)set_martyr(Ind, p_ptr->martyr - 1);
+
 	/* Process things such as regeneration. */
 	/* This used to be processed every 10 turns, but I am changing it to be
 	 * processed once every 5/6 of a "dungeon turn". This will make healing
@@ -5265,7 +5272,6 @@ static void process_player_end(int Ind) {
 	if (!(turn % (level_speed(&p_ptr->wpos) / 120))) {
 		if (!process_player_end_aux(Ind)) return;
 	}
-
 
 	/* HACK -- redraw stuff a lot, this should reduce perceived latency. */
 	/* This might not do anything, I may have been silly when I added this. -APD */

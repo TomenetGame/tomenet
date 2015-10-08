@@ -224,8 +224,8 @@ HMARTYR = add_spell {
 			end
 			end,
 	["info"] = 	function()
-			if (player.pclass == CLASS_PRIEST) then return "dur 15  timeout 1000"
-			else return "dur 8  timeout 1000" end
+			if (player.pclass == CLASS_PRIEST) then return "dur 15s  timeout 1000"
+			else return "dur 8s  timeout 1000" end
 			end,
 	["desc"] = 	{
 			"Turns you into an holy martyr, blessed with immortality to fulfil",
