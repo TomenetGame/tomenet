@@ -1525,16 +1525,71 @@ void do_cmd_fill_bottle(int Ind) {
 		return;
 	}
 
+	/* don't fill from fountain but from liquid of the floor feature? */
 	if (c_ptr->feat != FEAT_FOUNTAIN) {
-		msg_print(Ind, "You see no fountain here.");
-		return;
-	}
 #else
 	if (c_ptr->feat != FEAT_FOUNTAIN && c_ptr->feat != FEAT_FOUNTAIN_BLOOD) {
+#endif
+		if (c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_DEEP_WATER) {
+			if (p_ptr->tim_wraith) { /* not in WRAITHFORM */
+				msg_print(Ind, "The water seems to pass through the bottle!");
+				return;
+			}
+
+#if 0 /* problem: WILD_COAST is used for both oceans and lakes */
+			switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
+			case WILD_SHORE1:
+			case WILD_SHORE2:
+			case WILD_OCEANBED1:
+			case WILD_OCEANBED2:
+			case WILD_OCEAN:
+			case WILD_COAST:
+#else /* abuse ambient-sfx logic - it works pretty well ^^ */
+			if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE)
+#endif
+				/* salt water */
+				k_idx = lookup_kind(TV_POTION, SV_POTION_SALT_WATER);
+			else
+				/* normal water */
+				k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
+
+			if (!get_something_tval(Ind, TV_BOTTLE, &item)) {
+				msg_print(Ind, "You have no bottles to fill.");
+				return;
+			}
+
+			un_afk_idle(Ind);
+
+			/* Destroy a bottle in the pack */
+			if (item >= 0) {
+				inven_item_increase(Ind, item, -1);
+				inven_item_describe(Ind, item);
+				inven_item_optimize(Ind, item);
+			}
+			/* Destroy a potion on the floor */
+			else {
+				floor_item_increase(0 - item, -1);
+				floor_item_describe(0 - item);
+				floor_item_optimize(0 - item);
+			}
+
+			/* Create the potion */
+			q_ptr = &forge;
+			object_prep(q_ptr, k_idx);
+			q_ptr->number = 1;
+			//q_ptr->owner = p_ptr->id;
+			determine_level_req(getlevel(&p_ptr->wpos), q_ptr);
+
+			object_aware(Ind, q_ptr);
+			object_known(q_ptr);
+			inven_carry(Ind, q_ptr);
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			return;
+		}
+
 		msg_print(Ind, "You see no fountain here.");
 		return;
 	}
-#endif
 
 	/* Oops! */
 	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN))) return;
@@ -1545,7 +1600,7 @@ void do_cmd_fill_bottle(int Ind) {
 	}
 
 	if (p_ptr->tim_wraith) { /* not in WRAITHFORM */
-		    msg_print(Ind, "The water seems to pass through the bottle!");
+		msg_print(Ind, "The water seems to pass through the bottle!");
 		return;
 	}
 
@@ -1566,6 +1621,9 @@ void do_cmd_fill_bottle(int Ind) {
 		msg_print(Ind, "You have no bottles to fill.");
 		return;
 	}
+
+	/* S(he) is no longer afk */
+	un_afk_idle(Ind);
 
 	/* Destroy a bottle in the pack */
 	if (item >= 0) {
@@ -1604,9 +1662,6 @@ void do_cmd_fill_bottle(int Ind) {
 		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
 		cs_erase(c_ptr, cs_ptr);
 	}
-
-	/* S(he) is no longer afk */
-	un_afk_idle(Ind);
 
 #ifdef FOUNTAIN_GUARDS
 	item = 0;
