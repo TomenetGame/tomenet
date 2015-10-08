@@ -1490,7 +1490,9 @@ void do_slash_cmd(int Ind, char *message) {
 			do_cmd_empty_potion(Ind, slot - 65);
 			return;
 		}
-		else if (prefix(message, "/dice") || !strcmp(message, "/d")) {
+		else if (prefix(message, "/dice") || !strcmp(message, "/d") ||
+		    prefix(message, "/roll") || prefix(message, "/r")
+		    || prefix(message, "/die")) {
 			int rn = 0;
 
 			if (p_ptr->body_monster) {
@@ -1502,7 +1504,8 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 			}
 
-			if (!strcmp(message, "/d")) k = 2;
+			if (!strcmp(message, "/d") || !strcmp(message, "/r")) k = 2;
+			else if (!strcmp(message, "/die")) k = 1;
 			else {
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage:  /dice <number of dice>");

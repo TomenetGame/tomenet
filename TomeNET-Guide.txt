@@ -979,6 +979,8 @@ They all start with a slash '/' hence they're called slash commands:
             The result is random and can be seen by other players who stand
             nearby.
 /d          Rolls two dice, shortcut for "/dice 2".
+/die        Rolls one dice, shortcut for "/dice 1".
+/roll and /r are same as /dice and /d respectively.
 
 /dis        DESTROYS every item in your inventory that has one of these
  (/dispose) inscriptions: terrible, cursed, uncursed, broken, worthless,
@@ -1221,6 +1223,8 @@ They all start with a slash '/' hence they're called slash commands:
 
 /pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
             chars. See (6.13) for details about PvP mode.
+
+/roll and /r are same as /dice and /d respectively (roll some dice).
 
 /xo         gives you an extermination order! It needs to be carried out before
             a certain period of time passes (continues to expire even while not
