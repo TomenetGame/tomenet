@@ -11482,6 +11482,11 @@ Note that not every skill is available to every profession (class).
                                 affected by your antimagic field.
                                 Each point in Antimagic adds 1% to your
                                 AM chance, so the max gain is +50% from skill.
+                                If you use a dark sword that gives the maximum
+                                amount of anti-magic they can give (+30%) then
+                                you only need Antimagic skill at 45 instead of
+                                50 to reach the antimagic cap value of 75%
+                                (30% from dark sword + 45% from skill = 75%).
                                 Note: While ball/bolt attacks are spells,
                                       breathing is NOT.
                                 Warriors that specialize in Antimagic are
