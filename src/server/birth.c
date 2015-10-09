@@ -33,8 +33,7 @@ typedef struct birther birther;
 /*
  * A structure to hold "rolled" information
  */
-struct birther
-{
+struct birther {
 	s16b age;
 	s16b wt;
 	s16b ht;
@@ -57,8 +56,7 @@ typedef struct hist_type hist_type;
 /*
  * Player background information
  */
-struct hist_type
-{
+struct hist_type {
 	cptr info;			/* Textual History */
 
 	byte roll;			/* Frequency of this entry */
@@ -83,8 +81,7 @@ struct hist_type
  *
  * XXX XXX XXX This table *must* be correct or drastic errors may occur!
  */
-static hist_type bg[] =
-{
+static hist_type bg[] = {
 	{"You are the illegitimate and unacknowledged child ",	10, 1, 2, 25},
 	{"You are the illegitimate but acknowledged child ",	20, 1, 2, 35},
 	{"You are one of several children ",			95, 1, 2, 45},
@@ -259,61 +256,61 @@ static hist_type bg[] =
 
 
 	/* Draconian (text inspired by Hengband -- hey, they had Draconians too?) */
-        {"You are ",						100, 89, 90, 50 },
+	{"You are ",						100, 89, 90, 50 },
 
-        {"the oldest child of a Draconian ",			30, 90, 91, 55 },
-        {"the youngest child of a Draconian ",			50, 90, 91, 50 },
-        {"the adopted child of a Draconian ",			55, 90, 91, 50 },
-        {"an orphaned child of a Draconian ",			60, 90, 91, 45 },
-        {"one of several children of a Draconian ",		85, 90, 91, 50 },
-        {"the only child of a Draconian ",			100, 90, 91, 55 },
+	{"the oldest child of a Draconian ",			30, 90, 91, 55 },
+	{"the youngest child of a Draconian ",			50, 90, 91, 50 },
+	{"the adopted child of a Draconian ",			55, 90, 91, 50 },
+	{"an orphaned child of a Draconian ",			60, 90, 91, 45 },
+	{"one of several children of a Draconian ",		85, 90, 91, 50 },
+	{"the only child of a Draconian ",			100, 90, 91, 55 },
 
-        //{"Beggar. ", 10, 90, 91, 20 },
-        {"Thief. ",						16, 91, 92, 30 },
-        {"Sailor. ",						24, 91, 92, 45 },
-        {"Mercenary. ",						42, 91, 92, 45 },
-        {"Warrior. ",						73, 91, 92, 50 },
-        {"Merchant. ",						78, 91, 92, 50 },
-        {"Artisan. ",						86, 91, 92, 55 },
-        {"Healer. ",						91, 91, 92, 60 },
-        {"Priest. ",						96, 91, 92, 65 },
-        {"Mage. ",						100, 91, 92, 70 },
-        //{"Scholar. ", 99, 90, 91, 80 },
-        //{"Noble. ", 100, 90, 91, 100 },
+	//{"Beggar. ", 10, 90, 91, 20 },
+	{"Thief. ",						16, 91, 92, 30 },
+	{"Sailor. ",						24, 91, 92, 45 },
+	{"Mercenary. ",						42, 91, 92, 45 },
+	{"Warrior. ",						73, 91, 92, 50 },
+	{"Merchant. ",						78, 91, 92, 50 },
+	{"Artisan. ",						86, 91, 92, 55 },
+	{"Healer. ",						91, 91, 92, 60 },
+	{"Priest. ",						96, 91, 92, 65 },
+	{"Mage. ",						100, 91, 92, 70 },
+	//{"Scholar. ", 99, 90, 91, 80 },
+	//{"Noble. ", 100, 90, 91, 100 },
 
-        {"You have ",						100, 92, 93, 50 },
+	{"You have ",						100, 92, 93, 50 },
 
 #ifndef ENABLE_DRACONIAN_TRAITS
-        {"charcoal wings, charcoal skin and a smoke-gray belly. ",11, 93, 94, 50 },
-        {"bronze wings, bronze skin, and a copper belly. ",	16, 93, 94, 50 },
-        {"golden wings, and golden skin. ",			24, 93, 94, 50 },
-        {"white wings, and white skin. ",			26, 93, 94, 60 },
-        {"blue wings, blue skin, and a cyan belly. ",		32, 93, 94, 50 },
-        {"multi-hued wings, and multi-hued skin. ",		33, 93, 94, 70 },
-        {"brown wings, and brown skin. ",			37, 93, 94, 45 },
-        {"black wings, black skin, and a white belly. ",	41, 93, 94, 50 },
-        {"lavender wings, lavender skin, and a white belly. ",	48, 93, 94, 50 },
-        {"green wings, green skin and yellow belly. ",		65, 93, 94, 50 },
-        {"green wings, and green skin. ",			75, 93, 94, 50 },
-        {"red wings, and red skin. ",				88, 93, 94, 50 },
-        {"black wings, and black skin. ",			94, 93, 94, 50 },
-        {"metallic skin, and shining wings. ",			100, 93, 94, 55},
+	{"charcoal wings, charcoal skin and a smoke-gray belly. ",11, 93, 94, 50 },
+	{"bronze wings, bronze skin, and a copper belly. ",	16, 93, 94, 50 },
+	{"golden wings, and golden skin. ",			24, 93, 94, 50 },
+	{"white wings, and white skin. ",			26, 93, 94, 60 },
+	{"blue wings, blue skin, and a cyan belly. ",		32, 93, 94, 50 },
+	{"multi-hued wings, and multi-hued skin. ",		33, 93, 94, 70 },
+	{"brown wings, and brown skin. ",			37, 93, 94, 45 },
+	{"black wings, black skin, and a white belly. ",	41, 93, 94, 50 },
+	{"lavender wings, lavender skin, and a white belly. ",	48, 93, 94, 50 },
+	{"green wings, green skin and yellow belly. ",		65, 93, 94, 50 },
+	{"green wings, and green skin. ",			75, 93, 94, 50 },
+	{"red wings, and red skin. ",				88, 93, 94, 50 },
+	{"black wings, and black skin. ",			94, 93, 94, 50 },
+	{"metallic skin, and shining wings. ",			100, 93, 94, 55},
 #else
 	//changed social class values for draconian trait implementation
-        {"blue wings, blue skin, and a cyan belly. ",		6, 93, 94, 50 },
-        {"white wings, and white skin. ",			8, 93, 94, 50 },
-        {"red wings, and red skin. ",				21, 93, 94, 50 },
-        {"charcoal wings, charcoal skin and a smoke-gray belly. ",32, 93, 94, 50 },
-        {"black wings, black skin, and a white belly. ",	36, 93, 94, 55 },
-        {"black wings, and black skin. ",			42, 93, 94, 50 },
-        {"green wings, green skin and yellow belly. ",		59, 93, 94, 50 },
-        {"green wings, and green skin. ",			69, 93, 94, 50 },
-        {"multi-hued wings, and multi-hued skin. ",		70, 93, 94, 60 },
-        {"bronze wings, bronze skin, and a copper belly. ",	75, 93, 94, 50 },
-        {"metallic skin, and shining wings. ",			81, 93, 94, 55},
-        {"golden wings, and golden skin. ",			89, 93, 94, 60 },
-        {"brown wings, and brown skin. ",			93, 93, 94, 50 },
-        {"lavender wings, lavender skin, and a white belly. ",	100, 93, 94, 60 },
+	{"blue wings, blue skin, and a cyan belly. ",		6, 93, 94, 50 },
+	{"white wings, and white skin. ",			8, 93, 94, 50 },
+	{"red wings, and red skin. ",				21, 93, 94, 50 },
+	{"charcoal wings, charcoal skin and a smoke-gray belly. ",32, 93, 94, 50 },
+	{"black wings, black skin, and a white belly. ",	36, 93, 94, 55 },
+	{"black wings, and black skin. ",			42, 93, 94, 50 },
+	{"green wings, green skin and yellow belly. ",		59, 93, 94, 50 },
+	{"green wings, and green skin. ",			69, 93, 94, 50 },
+	{"multi-hued wings, and multi-hued skin. ",		70, 93, 94, 60 },
+	{"bronze wings, bronze skin, and a copper belly. ",	75, 93, 94, 50 },
+	{"metallic skin, and shining wings. ",			81, 93, 94, 55},
+	{"golden wings, and golden skin. ",			89, 93, 94, 60 },
+	{"brown wings, and brown skin. ",			93, 93, 94, 50 },
+	{"lavender wings, lavender skin, and a white belly. ",	100, 93, 94, 60 },
 #endif
 #if 0
 	{"You have a Green Eagle.",				30, 94, 0, 40},
@@ -332,26 +329,26 @@ static hist_type bg[] =
 	{"You are of the second generation of the Ents. ",	60, 95, 96, 60},
 	{"You are of the first beings who awoke on Arda. ",	100, 95, 96, 80},
 
-        {"You have ",						100, 96, 98, 50},
+	{"You have ",						100, 96, 98, 50},
 
-        {"three fingers and toes, and are covered in ",		5, 98, 99, 50},
-        {"four fingers and toes, and are covered in ",		20, 98, 99, 50},
-        {"five fingers and toes, and are covered in ",		40, 98, 99, 50},
-        {"six fingers and toes, and are covered in ",		60, 98, 99, 50},
-        {"seven fingers and toes, and are covered in ",		80, 98, 99, 50},
-        {"eight fingers and toes, and are covered in ",		95, 98, 99, 50},
-        {"nine fingers and toes, and are covered in ",		100, 98, 99, 50},
+	{"three fingers and toes, and are covered in ",		5, 98, 99, 50},
+	{"four fingers and toes, and are covered in ",		20, 98, 99, 50},
+	{"five fingers and toes, and are covered in ",		40, 98, 99, 50},
+	{"six fingers and toes, and are covered in ",		60, 98, 99, 50},
+	{"seven fingers and toes, and are covered in ",		80, 98, 99, 50},
+	{"eight fingers and toes, and are covered in ",		95, 98, 99, 50},
+	{"nine fingers and toes, and are covered in ",		100, 98, 99, 50},
 
-        {"scaly brown skin.",					10, 99, 0, 50},
-        {"rough brown skin.",					20, 99, 0, 50},
-        {"smooth grey skin.",					30, 99, 0, 50},
-        {"dark green skin.",					40, 99, 0, 50},
-        {"mossy skin.",						50, 99, 0, 50},
-        {"deep brown skin.",					60, 99, 0, 50},
-        {"pale brown, flaky skin.",				70, 99, 0, 50},
-        {"rich chocolate-colored skin.",			80, 99, 0, 50},
-        {"ridged black skin.",					90, 99, 0, 50},
-        {"thick, almost corky skin.",				100, 99, 0, 50},
+	{"scaly brown skin.",					10, 99, 0, 50},
+	{"rough brown skin.",					20, 99, 0, 50},
+	{"smooth grey skin.",					30, 99, 0, 50},
+	{"dark green skin.",					40, 99, 0, 50},
+	{"mossy skin.",						50, 99, 0, 50},
+	{"deep brown skin.",					60, 99, 0, 50},
+	{"pale brown, flaky skin.",				70, 99, 0, 50},
+	{"rich chocolate-colored skin.",			80, 99, 0, 50},
+	{"ridged black skin.",					90, 99, 0, 50},
+	{"thick, almost corky skin.",				100, 99, 0, 50},
 
 
 	/* Maiar background */
@@ -377,16 +374,16 @@ static hist_type bg[] =
 	{"Your ambition compels your physical manifestation in Arda. ",	63,102,50,0},
 	{"Your ambition compels your physical manifestation in Arda. ",	75,102,54,0},
 	{"You were ordered to assist the humans and elves ",		100,102,105,0},
-	    {"that stayed in the East. ",				100,103,54,0},
-	    {"to spend time in the mortal land. ",			100,104,50,0},
-	    {"in the West. ",						50,105,50,0},
-	    {"in the West. ",						100,105,54,0},
+	{"that stayed in the East. ",				100,103,54,0},
+	{"to spend time in the mortal land. ",			100,104,50,0},
+	{"in the West. ",						50,105,50,0},
+	{"in the West. ",						100,105,54,0},
 	//{"Your physical form is Elven in feature. ", 		50, 102, 54, 70},
 	//{"You manifest as a Human to casual observers. ", 	100, 102, 50, 70},
 #else /* for testing max len */
 	{"Orome Aldaron, the Great Rider and Hunter of Valinor. ",	100,101,102,120},
 	{"You suspend your pilgrimage in Aman ",			100,102,104,0},
-	    {"to spend time in the mortal land. ",			100,104,50,0},
+	{"to spend time in the mortal land. ",			100,104,50,0},
 #endif
 
 	/* Kobold background */
@@ -428,36 +425,36 @@ static hist_type bg[] =
 
 
 	/* Dark-Elf (text inspired by Hengband) */
-        {"You are one of several children of a Dark Elven ",	85, 120, 121, 45},
-        {"You are the only child of a Dark Elven ",		100, 120, 121, 55},
+	{"You are one of several children of a Dark Elven ",	85, 120, 121, 45},
+	{"You are the only child of a Dark Elven ",		100, 120, 121, 55},
 
-        {"Warrior. ",						50, 121, 122, 60},
-        {"Warlock. ",						80, 121, 122, 75},
-        {"Noble. ",						100, 121, 122, 95},
+	{"Warrior. ",						50, 121, 122, 60},
+	{"Warlock. ",						80, 121, 122, 75},
+	{"Noble. ",						100, 121, 122, 95},
 
-        {"You have black eyes, ",				60, 122, 123, 50},
-        {"You have red eyes, ",					85, 122, 123, 50},
-        {"You have purple eyes, ",				100, 122, 123, 50},
+	{"You have black eyes, ",				60, 122, 123, 50},
+	{"You have red eyes, ",					85, 122, 123, 50},
+	{"You have purple eyes, ",				100, 122, 123, 50},
 
-        {"straight ",						70, 123, 124, 50},
-        {"wavy ",						90, 123, 124, 50},
-        {"curly ",						100, 123, 124, 50},
+	{"straight ",						70, 123, 124, 50},
+	{"wavy ",						90, 123, 124, 50},
+	{"curly ",						100, 123, 124, 50},
 
-        {"black hair ",						50, 124, 125, 50 },
-        {"white hair ",						100, 124, 125, 50 },
+	{"black hair ",						50, 124, 125, 50 },
+	{"white hair ",						100, 124, 125, 50 },
 
-        {"and a very dark complexion.",				100, 125, 0, 0},
+	{"and a very dark complexion.",				100, 125, 0, 0},
 
 
 	/* Vampire (text inspired by Hengband) */
-        {"You arose from an unmarked grave. ", 			20,130,132,30},
-        {"In life you were a simple peasant. ",			50,130,132,40},
-        {"In life you were a decent citizen. ",			70,130,132,50},
-//    	    {"the victim of a powerful Vampire Lord. ",		100,131,132,0},
-        {"In life you were a Vampire Hunter, but they got you. ",75,130,132,55},
-        {"In life you were a Necromancer. ",			80,130,132,60},
-        {"In life you were a powerful noble. ",			95,130,132,70},
-        {"In life you were a powerful and cruel tyrant. ",	100,130,132,75},
+	{"You arose from an unmarked grave. ", 			20,130,132,30},
+	{"In life you were a simple peasant. ",			50,130,132,40},
+	{"In life you were a decent citizen. ",			70,130,132,50},
+//	{"the victim of a powerful Vampire Lord. ",		100,131,132,0},
+	{"In life you were a Vampire Hunter, but they got you. ",75,130,132,55},
+	{"In life you were a Necromancer. ",			80,130,132,60},
+	{"In life you were a powerful noble. ",			95,130,132,70},
+	{"In life you were a powerful and cruel tyrant. ",	100,130,132,75},
 
 	{"You were bitten by ",					100,132,133,50},
 
@@ -467,19 +464,19 @@ static hist_type bg[] =
 	{"an actual vampire noble. ",				95,133,134,55},
 	{"a powerful vampire lord himself. ",			100,133,134,60},
 
-        {"You have ",						100,134,135,50},
+	{"You have ",						100,134,135,50},
 
-        {"jet-black hair, ",					25,135,136,50},
-        {"matted brown hair, ",					50,135,136,50},
-        {"white hair, ",					75,135,136,50},
-        {"a hairless head, ",					100,135,136,50},
+	{"jet-black hair, ",					25,135,136,50},
+	{"matted brown hair, ",					50,135,136,50},
+	{"white hair, ",					75,135,136,50},
+	{"a hairless head, ",					100,135,136,50},
 
-        {"eyes like red coals, ",				25,136,137,50},
-        {"blank white eyes, ",					50,136,137,50},
-        {"feral yellow eyes, ",					75,136,137,50},
-        {"bloodshot red eyes, ",				100,136,137,50},
+	{"eyes like red coals, ",				25,136,137,50},
+	{"blank white eyes, ",					50,136,137,50},
+	{"feral yellow eyes, ",					75,136,137,50},
+	{"bloodshot red eyes, ",				100,136,137,50},
 
-        {"and a deathly pale complexion.",			100,137,0,50},
+	{"and a deathly pale complexion.",			100,137,0,50},
 };
 
 
@@ -500,58 +497,37 @@ static s16b             stat_use[6];
  *
  * The "p_ptr->maximize" code is important      -BEN-
  */
-static int adjust_stat(int Ind, int value, s16b amount, int auto_roll)
-{
+static int adjust_stat(int Ind, int value, s16b amount, int auto_roll) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
 	/* Negative amounts */
-	if (amount < 0)
-	{
+	if (amount < 0) {
 		/* Apply penalty */
-		for (i = 0; i < (0 - amount); i++)
-		{
+		for (i = 0; i < (0 - amount); i++) {
 			if (value >= 18+10)
-			{
 				value -= 10;
-			}
 			else if (value > 18)
-			{
 				value = 18;
-			}
 			else if (value > 3)
-			{
 				value--;
-			}
 		}
 	}
 
 	/* Positive amounts */
-	else if (amount > 0)
-	{
+	else if (amount > 0) {
 		/* Apply reward */
-		for (i = 0; i < amount; i++)
-		{
+		for (i = 0; i < amount; i++) {
 			if (value < 18)
-			{
 				value++;
-			}
 			else if (p_ptr->maximize)
-			{
 				value += 10;
-			}
 			else if (value < 18+70)
-			{
 				value += ((auto_roll ? 15 : randint(15)) + 5);
-			}
 			else if (value < 18+90)
-			{
 				value += ((auto_roll ? 6 : randint(6)) + 2);
-			}
 			else if (value < 18+100)
-			{
 				value++;
-			}
 		}
 	}
 
@@ -567,17 +543,16 @@ static int adjust_stat(int Ind, int value, s16b amount, int auto_roll)
  *
  * For efficiency, we include a chunk of "calc_boni()".
  */
-static bool get_stats(int Ind, int stat_order[6])
-{
+static bool get_stats(int Ind, int stat_order[6]) {
 	player_type *p_ptr = Players[Ind];
-	int             i, j, tries = 1000;
+	int i, j, tries = 1000;
 
-	int             bonus;
+	int bonus;
 
-	int             dice[18];
-	int             stats[6];
+	int dice[18];
+	int stats[6];
 
-	int		free_points = 30, maxed_stats = 0;
+	int free_points = 30, maxed_stats = 0;
 
 	/* Clear "stats" array */
 	for (i = 0; i < 6; i++)
@@ -587,23 +562,16 @@ static bool get_stats(int Ind, int stat_order[6])
 	if (CHAR_CREATION_FLAGS == 0) {
 
 		/* Check over the given stat order, to prevent cheating */
-		for (i = 0; i < 6; i++)
-	    	{
-    			/* Check range */
-	    		if (stat_order[i] < 0 || stat_order[i] > 5)
-			{
+		for (i = 0; i < 6; i++) {
+			/* Check range */
+			if (stat_order[i] < 0 || stat_order[i] > 5)
 				stat_order[i] = 1;
-			}
 
 			/* Check for duplicated entries */
-    			if (stats[stat_order[i]] == 1)
-			{
+			if (stats[stat_order[i]] == 1) {
 				/* Find a stat that hasn't been specified yet */
-				for (j = 0; j < 6; j++)
-				{
-					if (stats[j])
-						continue;
-
+				for (j = 0; j < 6; j++) {
+					if (stats[j]) continue;
 					stat_order[i] = j;
 				}
 			}
@@ -613,11 +581,9 @@ static bool get_stats(int Ind, int stat_order[6])
 		}
 
 		/* Roll and verify some stats */
-		while (--tries)
-		{
+		while (--tries) {
 			/* Roll some dice */
-			for (j = i = 0; i < 18; i++)
-			{
+			for (j = i = 0; i < 18; i++) {
 				/* Roll the dice */
 				dice[i] = randint(3 + i % 3);
 
@@ -634,8 +600,7 @@ static bool get_stats(int Ind, int stat_order[6])
 		}
 
 		/* Acquire the stats */
-		for (i = 0; i < 6; i++)
-		{
+		for (i = 0; i < 6; i++) {
 			/* Extract 5 + 1d3 + 1d4 + 1d5 */
 			j = 5 + dice[3*i] + dice[3*i+1] + dice[3*i+2];
 
@@ -645,13 +610,10 @@ static bool get_stats(int Ind, int stat_order[6])
 
 		/* Now sort the stats */
 		/* I use a bubble sort because I'm lazy at the moment */
-		for (i = 0; i < 6; i++)
-        	{
-			for (j = 0; j < 5; j++)
-			{
-				if (stats[j] < stats[j + 1])
-				{
-    					int t;
+		for (i = 0; i < 6; i++) {
+			for (j = 0; j < 5; j++) {
+				if (stats[j] < stats[j + 1]) {
+					int t;
 
 					t = stats[j];
 					stats[j] = stats[j + 1];
@@ -662,19 +624,15 @@ static bool get_stats(int Ind, int stat_order[6])
 
 		/* Now, put them in the correct order */
 		for (i = 0; i < 6; i++)
-		{
 			p_ptr->stat_max[stat_order[i]] = stats[i];
-		}
 
 		/* Adjust the stats */
-		for (i = 0; i < 6; i++)
-		{
-    			/* Obtain a "bonus" for "race" and "class" */
+		for (i = 0; i < 6; i++) {
+			/* Obtain a "bonus" for "race" and "class" */
 			bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
 
 			/* Variable stat maxes */
-			if (p_ptr->maximize)
-			{
+			if (p_ptr->maximize) {
 #ifdef STARTING_STAT_LIMIT
 				if (!is_fighter(p_ptr))
 					while (modify_stat_value(p_ptr->stat_max[i], bonus) > 18 + 40)
@@ -689,8 +647,7 @@ static bool get_stats(int Ind, int stat_order[6])
 			}
 
 			/* Fixed stat maxes */
-			else
-			{
+			else {
 				/* Apply the bonus to the stat (somewhat randomly) */
 				stat_use[i] = adjust_stat(Ind, p_ptr->stat_max[i], bonus, FALSE);
 
@@ -748,8 +705,7 @@ static bool get_stats(int Ind, int stat_order[6])
  * Roll for some info that the auto-roller ignores
  * NOTE: Keep lua_recalc_char() in sync with this if you use it.
  */
-static void get_extra(int Ind)
-{
+static void get_extra(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, min_value, max_value, min_value_king = 0, max_value_king = 9999;
 	int tries = 500;
@@ -841,15 +797,12 @@ static void get_extra(int Ind)
 /*
  * Get the racial history, and social class, using the "history charts".
  */
-void get_history(int Ind)
-{
+void get_history(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int             i, n, chart, roll, social_class;
 	int tries = 500;
 	char    *s, *t;
-
 	char    buf[240];
-
 
 
 	/* Clear the previous history strings */
@@ -1020,23 +973,20 @@ void get_history(int Ind)
 /*
  * Computes character's age, height, and weight
  */
-static void get_ahw(int Ind)
-{
+static void get_ahw(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Calculate the age */
 	p_ptr->age = p_ptr->rp_ptr->b_age + randint(p_ptr->rp_ptr->m_age);
 
 	/* Calculate the height/weight for males */
-	if (p_ptr->male)
-	{
+	if (p_ptr->male) {
 		p_ptr->ht = randnor(p_ptr->rp_ptr->m_b_ht, p_ptr->rp_ptr->m_m_ht);
 		p_ptr->wt = randnor(p_ptr->rp_ptr->m_b_wt, p_ptr->rp_ptr->m_m_wt);
 	}
 
 	/* Calculate the height/weight for females */
-	else
-	{
+	else {
 		p_ptr->ht = randnor(p_ptr->rp_ptr->f_b_ht, p_ptr->rp_ptr->f_m_ht);
 		p_ptr->wt = randnor(p_ptr->rp_ptr->f_b_wt, p_ptr->rp_ptr->f_m_wt);
 	}
@@ -1048,8 +998,7 @@ static void get_ahw(int Ind)
 /*
  * Get the player's starting money
  */
-static void get_money(int Ind)
-{
+static void get_money(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int        i, gold;
 
@@ -1058,8 +1007,7 @@ static void get_money(int Ind)
 	gold = randint(20) + 350;
 
 	/* Process the stats */
-	for (i = 0; i < 6; i++)
-	{
+	for (i = 0; i < 6; i++) {
 		/* Mega-Hack -- reduce gold for high stats */
 		if (stat_use[i] >= 18+50) gold -= 150;
 		else if (stat_use[i] >= 18+20) gold -= 100;
@@ -1086,39 +1034,39 @@ static void get_money(int Ind)
 	p_ptr->au = 1000;
  #else
   #if STARTEQ_TREATMENT < 3
-        switch(p_ptr->pclass){
-        case CLASS_MAGE:        p_ptr->au += 850; break;
-        case CLASS_PRIEST:      p_ptr->au += 600; break;
+	switch(p_ptr->pclass){
+	case CLASS_MAGE:        p_ptr->au += 850; break;
+	case CLASS_PRIEST:      p_ptr->au += 600; break;
 	case CLASS_SHAMAN:	p_ptr->au += 550; break;
 	case CLASS_RUNEMASTER:  p_ptr->au += 500; break;
 	case CLASS_MINDCRAFTER:	p_ptr->au += 500; break;
 	case CLASS_ROGUE:	p_ptr->au += 400; break;
 	case CLASS_ARCHER:	p_ptr->au += 400; break;
 	case CLASS_ADVENTURER:	p_ptr->au += 300; break;
-        case CLASS_RANGER:      p_ptr->au += 200; break;
-        case CLASS_PALADIN:     p_ptr->au += 200; break;
+	case CLASS_RANGER:      p_ptr->au += 200; break;
+	case CLASS_PALADIN:     p_ptr->au += 200; break;
 	case CLASS_DRUID:	p_ptr->au += 200; break;
 	case CLASS_MIMIC:	p_ptr->au += 100; break;
 	case CLASS_WARRIOR:	p_ptr->au += 0; break;// they can sell their eq.
-        default:                ;
-        }
+	default:                ;
+	}
   #else
-        switch(p_ptr->pclass){
-        case CLASS_MAGE:        p_ptr->au += 1000; break;
+	switch(p_ptr->pclass){
+	case CLASS_MAGE:        p_ptr->au += 1000; break;
 	case CLASS_SHAMAN:	p_ptr->au += 1000; break;
 	case CLASS_MINDCRAFTER:	p_ptr->au += 900; break;
-        case CLASS_PRIEST:      p_ptr->au += 800; break;
+	case CLASS_PRIEST:      p_ptr->au += 800; break;
 	case CLASS_RUNEMASTER:  p_ptr->au += 800; break;
 	case CLASS_ADVENTURER:	p_ptr->au += 700; break;
 	case CLASS_DRUID:	p_ptr->au += 600; break;
-        case CLASS_RANGER:      p_ptr->au += 600; break;
-        case CLASS_PALADIN:     p_ptr->au += 600; break;
+	case CLASS_RANGER:      p_ptr->au += 600; break;
+	case CLASS_PALADIN:     p_ptr->au += 600; break;
 	case CLASS_ROGUE:	p_ptr->au += 600; break;
 	case CLASS_MIMIC:	p_ptr->au += 600; break;
 	case CLASS_WARRIOR:	p_ptr->au += 600; break;
 	case CLASS_ARCHER:	p_ptr->au += 400; break; /* gets ammo, bow, lantern, extra phases! */
-        default:                ;
-        }
+	default:                ;
+	}
   #endif
  #endif
 #else
@@ -1223,8 +1171,7 @@ static void player_wipe(int Ind)
  * If { 0, 0} or other 'illigal' item, one random item from bard_init
  * will be given instead.	- Jir -
  */
-static byte player_init[2][MAX_CLASS][5][3] =
-{
+static byte player_init[2][MAX_CLASS][5][3] = {
     { /* Normal body */
 	{
 		/* Warrior */
@@ -1471,8 +1418,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 
 
 #define BARD_INIT_NUM	15
-static byte bard_init[BARD_INIT_NUM][2] =
-{
+static byte bard_init[BARD_INIT_NUM][2] = {
 	{ TV_RING, SV_RING_SEE_INVIS },
 	{ TV_BOOK, 50 },
 	{ TV_BOW, SV_LONG_BOW },
@@ -1506,8 +1452,7 @@ static byte bard_init[BARD_INIT_NUM][2] =
  * Give the cfg_admin_wizard some interesting stuff.
  */
 /* XXX 'realm' is not used */
-void admin_outfit(int Ind, int realm)
-{
+void admin_outfit(int Ind, int realm) {
 	player_type *p_ptr = Players[Ind];
 	int             i;
 
@@ -1523,8 +1468,7 @@ void admin_outfit(int Ind, int realm)
 	for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
 
 #if 0 /* book spam stopped for now -_-  -C. Blue */
-	for (i = 0; i < 255; i++)
-	{
+	for (i = 0; i < 255; i++) {
 		int k_idx = lookup_kind(TV_BOOK, i);
 
 		if (!k_idx) continue;
@@ -2001,17 +1945,13 @@ static void player_outfit(int Ind) {
 	do_player_outfit();
 }
 
-static void player_create_tmpfile(int Ind)
-{
+static void player_create_tmpfile(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	//FILE *fff;
-
 	char file_name[MAX_PATH_LENGTH];
 
 	/* Temporary file */
-	if (path_temp(file_name, MAX_PATH_LENGTH))
-	{
+	if (path_temp(file_name, MAX_PATH_LENGTH)) {
 		s_printf("failed to generate tmpfile for %s!\n", p_ptr->name);
 		return;
 	}
@@ -2979,9 +2919,9 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Clear old information */
 	player_wipe(Ind);
 
-        /* Receive info found in PKT_SCREEN_DIM otherwise */
-        p_ptr->screen_wid = connp->Client_setup.screen_wid;
-        p_ptr->screen_hgt = connp->Client_setup.screen_hgt;
+	/* Receive info found in PKT_SCREEN_DIM otherwise */
+	p_ptr->screen_wid = connp->Client_setup.screen_wid;
+	p_ptr->screen_hgt = connp->Client_setup.screen_hgt;
 
 	/* Copy his name and connection info */
 	strcpy(p_ptr->name, name);
@@ -3075,9 +3015,9 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Hack -- rewipe the player info if load failed */
 	player_wipe(Ind);
 
-        /* Receive info found in PKT_SCREEN_DIM otherwise */
-        p_ptr->screen_wid = connp->Client_setup.screen_wid;
-        p_ptr->screen_hgt = connp->Client_setup.screen_hgt;
+	/* Receive info found in PKT_SCREEN_DIM otherwise */
+	p_ptr->screen_wid = connp->Client_setup.screen_wid;
+	p_ptr->screen_hgt = connp->Client_setup.screen_hgt;
 
 	/* Copy his name and connection info */
 	strcpy(p_ptr->name, name);
@@ -3155,7 +3095,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
 	p_ptr->dna |= (randint(65535) << 16);
 	p_ptr->male = sex & 1;
-        p_ptr->pclass = class;
+	p_ptr->pclass = class;
 	p_ptr->align_good = 0x7fff;	/* start neutral */
 	p_ptr->align_law = 0x7fff;
 	p_ptr->prace = race;
@@ -3211,7 +3151,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 #ifndef ALT_EXPRATIO
 		p_ptr->exp = ((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact) / 100L;
 #else
-                p_ptr->exp = (s64b)player_exp[p_ptr->lev - 2];
+		p_ptr->exp = (s64b)player_exp[p_ptr->lev - 2];
 #endif
 		p_ptr->skill_points = (p_ptr->lev - 1) * SKILL_NB_BASE;
 		p_ptr->au = 9950 + rand_int(101);
@@ -3495,13 +3435,11 @@ bool confirm_admin(int Ind)
  * info, so that they will be created.  This function is only called if the
  * server state savefile could not be loaded.
  */
-void server_birth(void)
-{
+void server_birth(void) {
 	int i;
 
 	/* Initialize uniques */
-	for (i = 0; i < MAX_R_IDX; i++)
-	{
+	for (i = 0; i < MAX_R_IDX; i++) {
 		/* Make sure we have a unique */
 		if (!(r_info[i].flags1 & RF1_UNIQUE))
 			continue;
