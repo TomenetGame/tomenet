@@ -5261,10 +5261,12 @@ static void process_player_end(int Ind) {
 	/* Added for Holy Martyr, which was previously in process_player_end_aux():
 	   Process it independantly of level speed, in real time instead.
 	   Otherwise it gives the player too much action time on deep levels at high speeds. */
-	if (p_ptr->martyr && !(turn % cfg.fps)) (void)set_martyr(Ind, p_ptr->martyr - 1);
-	if (p_ptr->martyr_timeout) {
-		p_ptr->martyr_timeout--;
-		if (!p_ptr->martyr_timeout) msg_print(Ind, "\376The heavens are ready to accept your martyrium.");
+	if (!(turn % cfg.fps)) {
+		if (p_ptr->martyr) (void)set_martyr(Ind, p_ptr->martyr - 1);
+		if (p_ptr->martyr_timeout) {
+			p_ptr->martyr_timeout--;
+			if (!p_ptr->martyr_timeout) msg_print(Ind, "\376The heavens are ready to accept your martyrium.");
+		}
 	}
 
 	/* Process things such as regeneration. */
