@@ -2186,7 +2186,7 @@ bool set_martyr(int Ind, int v) {
 			/* Redraw */
 			p_ptr->redraw |= (PR_HP);
 
-		    	/* update so everyone sees the colour animation */
+			/* update so everyone sees the colour animation */
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 	}
@@ -2199,10 +2199,10 @@ bool set_martyr(int Ind, int v) {
 			   assumes that martyr starts at -15 turns! : */
 //			p_ptr->chp = (p_ptr->mhp >= 30 * 15) ? 30 : p_ptr->mhp / 15;
 			p_ptr->chp = (p_ptr->mhp <= 30 * p_ptr->martyr_dur) ? 30 : p_ptr->mhp / p_ptr->martyr_dur;
-    		        /* Update health bars */
-	                update_health(0 - Ind);
-	                /* Redraw */
-	                p_ptr->redraw |= (PR_HP);
+			/* Update health bars */
+			update_health(0 - Ind);
+			/* Redraw */
+			p_ptr->redraw |= (PR_HP);
 
 			msg_print(Ind, "\377vYou collapse as your martyrium ends!");
 			notice = TRUE;
@@ -2218,10 +2218,11 @@ bool set_martyr(int Ind, int v) {
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-    	/* update so everyone sees the colour animation */
+	/* update so everyone sees the colour animation */
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Handle stuff */
+	Send_martyr(Ind);
 	handle_stuff(Ind);
 
 	/* Result */
@@ -8405,7 +8406,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		if (gain > m_ptr->hp) gain = m_ptr->hp;
 		if (!gain && magik(dam * 5)) gain = 1; /* no perma-supply for level 1 mana bolts for now */
 
-		if (gain && (p_ptr->csp < p_ptr->msp)) {
+		if (gain && (p_ptr->csp < p_ptr->msp) && !p_ptr->martyr) {
 			msg_print(Ind, "You draw energy from the pain of your opponent.");
 			p_ptr->csp += gain;
 	                if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
@@ -8720,7 +8721,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			if (!gain_sp) gain_sp = 1; /* level 0 monsters give energy */
 #endif
 
-			if ((p_ptr->chp < p_ptr->mhp) || (p_ptr->csp < p_ptr->msp)) {
+			if (((p_ptr->chp < p_ptr->mhp) || (p_ptr->csp < p_ptr->msp)) && !p_ptr->martyr) {
 				msg_print(Ind, "You absorb the energy of the dying soul.");
 				hp_player_quiet(Ind, gain, TRUE);
 				p_ptr->csp += gain_sp;

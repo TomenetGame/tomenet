@@ -777,6 +777,8 @@ static void regenmana(int Ind, int percent) {
 	s32b        new_mana, new_mana_frac;
 	int                   old_csp;
 
+	if (p_ptr->martyr) return;
+
 	old_csp = p_ptr->csp;
 	new_mana = ((s32b)p_ptr->msp) * percent + PY_REGEN_MNBASE;
 

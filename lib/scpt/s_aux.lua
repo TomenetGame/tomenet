@@ -207,15 +207,12 @@ end
 function get_mana(i, s)
 	local mana
 	mana = spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
-	-- client-side (0) or server-side (>=1) ?
-	if i ~= 0 then
-		player = players(i)
-	end
 
-	if player.martyr < 0 then mana = mana * 4
-	else
-		mana = mana * 2
-	end
+	--under influence of Martyrdom, spells cost more mana:
+	if i ~= 0 then player = players(i) end
+	--exempt Martyrdom itself from its double mana cost
+	if player.martyr > 0 and s ~= HMARTYR then mana = mana * 2 end
+
 	return mana
 end
 

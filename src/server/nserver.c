@@ -7818,6 +7818,20 @@ int Send_apply_auto_insc(int Ind, int slot) {
 	return Packet_printf(&connp->c, "%c%c", PKT_AUTOINSCRIBE, (char)slot);
 }
 
+int Send_martyr(int Ind) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) return(0);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for martyr (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c%c", PKT_MARTYR, (char)Players[Ind]->martyr);
+}
+
 /*
  * Return codes for the "Receive_XXX" functions are as follows:
  *

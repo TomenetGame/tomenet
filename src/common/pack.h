@@ -156,8 +156,10 @@
 #define PKT_BONI_COL		133	/* client csheet boni tracking */
 #define PKT_MINI_MAP_POS	134
 #define PKT_AUTOINSCRIBE	135
+#define PKT_MARTYR		136	/* client lua notification client for updating spell mana costs */
 
-//XXX 136-149
+//XXX 137-149
+
 #define PKT_SFX_VOLUME		148	/* Tell client to modify volume level of ambient and/or weather sfx  */
 #define PKT_SFX_AMBIENT		149	/* background ambient sfx */
 

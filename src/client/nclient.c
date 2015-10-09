@@ -158,6 +158,8 @@ static void Receive_init(void) {
 	receive_tbl[PKT_STORE_SPECIAL_STR]	= Receive_store_special_str;
 	receive_tbl[PKT_STORE_SPECIAL_CHAR]	= Receive_store_special_char;
 	receive_tbl[PKT_STORE_SPECIAL_CLR]	= Receive_store_special_clr;
+
+	receive_tbl[PKT_MARTYR]			= Receive_martyr;
 }
 
 
@@ -3951,6 +3953,18 @@ int Receive_request_abort(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 	if (request_pending) request_abort = TRUE;
+	return 1;
+}
+
+int Receive_martyr(void) {
+	int	n;
+	char	ch, martyr;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &martyr)) <= 0) return n;
+
+	p_ptr->martyr = (s16b)martyr;
+	c_msg_print(format("martyr %d", (s16b)martyr));
+
 	return 1;
 }
 

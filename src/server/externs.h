@@ -1161,6 +1161,8 @@ extern int fake_Receive_tunnel(int Ind, int dir);
 extern bool purge_acc_file(void);
 extern sockbuf_t *get_conn_q(int Ind);
 
+extern int Send_martyr(int ind);
+
 
 /* object1.c */
 /* object2.c */
