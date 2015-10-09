@@ -4313,11 +4313,11 @@ static bool process_player_end_aux(int Ind) {
 #if 0 /* moved to process_player_end() */
 	if (p_ptr->martyr)
 		(void)set_martyr(Ind, p_ptr->martyr - 1);
-#endif
 	if (p_ptr->martyr_timeout) {
 		p_ptr->martyr_timeout--;
-		if (!p_ptr->martyr_timeout) msg_print(Ind, "The heavens are ready to accept your martyrium.");
+		if (!p_ptr->martyr_timeout) msg_print(Ind, "\376The heavens are ready to accept your martyrium.");
 	}
+#endif
 
 	/* Mindcrafters' Willpower */
 	if (p_ptr->mindboost)
@@ -5262,6 +5262,10 @@ static void process_player_end(int Ind) {
 	   Process it independantly of level speed, in real time instead.
 	   Otherwise it gives the player too much action time on deep levels at high speeds. */
 	if (p_ptr->martyr && !(turn % cfg.fps)) (void)set_martyr(Ind, p_ptr->martyr - 1);
+	if (p_ptr->martyr_timeout) {
+		p_ptr->martyr_timeout--;
+		if (!p_ptr->martyr_timeout) msg_print(Ind, "\376The heavens are ready to accept your martyrium.");
+	}
 
 	/* Process things such as regeneration. */
 	/* This used to be processed every 10 turns, but I am changing it to be
