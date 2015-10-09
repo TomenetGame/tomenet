@@ -2970,7 +2970,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_HDEFENSE,
-                                '+', 1000, /* be able to use the startup eq spellbook of blessing */
+                                '+', 0,
                                 '+', 1500,
                         },
                         {
@@ -3629,7 +3629,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_HDEFENSE,
-                                '+', 1000,
+                                '+', 1000, /* be able to use the startup eq spellbook of blessing */
                                 '+', 800,
                         },
                         {
