@@ -2222,7 +2222,7 @@ bool set_martyr(int Ind, int v) {
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Handle stuff */
-	Send_martyr(Ind);
+	//Send_martyr(Ind); -- we're using halved output damage of all DISP damage types instead of this mana-doubling
 	handle_stuff(Ind);
 
 	/* Result */

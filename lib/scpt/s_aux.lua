@@ -205,15 +205,17 @@ end
 
 -- Get the amount of mana(or power) needed
 function get_mana(i, s)
-	local mana
-	mana = spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
+--	local mana
+--	mana = spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
 
-	--under influence of Martyrdom, spells cost more mana:
-	if i ~= 0 then player = players(i) end
-	--exempt Martyrdom itself from its double mana cost
-	if player.martyr > 0 and s ~= HMARTYR then mana = mana * 2 end
+--	--under influence of Martyrdom, spells cost more mana:
+--	if i ~= 0 then player = players(i) end
+--	--exempt Martyrdom itself from its double mana cost
+--	if player.martyr > 0 and s ~= HMARTYR then mana = mana * 2 end
 
-	return mana
+--	return mana
+
+	return spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
 end
 
 -- Return the amount of power(mana, piety, whatever) for the spell
