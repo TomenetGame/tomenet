@@ -148,10 +148,10 @@ HORBDRAIN_I = add_spell {
 	["spell"] = 	function(args)
 		local typ
 		typ = GF_HOLY_ORB
-		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 300), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
+		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 350), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 300)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
+		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 350)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
 	end,
 	["desc"] = 	{ "Calls an holy orb to devour the evil.", }
 }
@@ -170,10 +170,10 @@ HORBDRAIN_II = add_spell {
 	["spell"] = 	function(args)
 		local typ
 		typ = GF_HOLY_ORB
-		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 475), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
+		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 660), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 475)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
+		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 660)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
 	end,
 	["desc"] = 	{ "Calls an holy orb to devour the evil.", }
 }
@@ -184,8 +184,8 @@ HEXORCISM_I = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	20,
-	["mana"] = 	15,
-	["mana_max"] = 	15,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
 	["fail"] = 	15,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
@@ -202,8 +202,8 @@ HEXORCISM_II = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
-	["mana"] = 	40,
-	["mana_max"] = 	40,
+	["mana"] = 	60,
+	["mana_max"] = 	60,
 	["fail"] = 	-90,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
@@ -242,8 +242,8 @@ HRELSOULS_I = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	10,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
 	["fail"] = 	25,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
@@ -260,15 +260,15 @@ HRELSOULS_II = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	25,
-	["mana"] = 	40,
-	["mana_max"] = 	40,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
 	["fail"] = 	-40,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 500))
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 400))
 			end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 500))
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 400))
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
@@ -283,10 +283,10 @@ HRELSOULS_III = add_spell {
 	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 1000))
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 700))
 			end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 1000))
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 700))
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
