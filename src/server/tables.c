@@ -2946,11 +2946,13 @@ player_class class_info[MAX_CLASS] =
                                 '+', 2000,
                                 '+', 900,
                         },
+#if 0
                         {
                                 SKILL_SPELL,
                                 '+', 0,
                                 '+', 500,
                         },
+#endif
 /*                        {
                                 SKILL_DIVINATION,
                                 '+', 1000,
@@ -3603,11 +3605,13 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 600,
                         },
+#if 0
                         {
                                 SKILL_SPELL,
                                 '+', 0,
                                 '+', 350,
                         },
+#endif
 /*                        {
                                 SKILL_DIVINATION,
                                 '+', 1000,

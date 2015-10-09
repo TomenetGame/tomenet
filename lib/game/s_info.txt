@@ -324,7 +324,8 @@ A:11:Cast a spell
 I:1000:111
 
 N:49:Spell-power
-D:Further boosts most (learned) spells of the 'Magic' and 'Prayer' schools.
+#D:Further boosts most (learned) spells of the 'Magic' and 'Prayer' schools.
+D:Further boosts most (learned) spells of the 'Magic' schools.
 I:1000:0
 
 N:50:Mana
@@ -754,9 +755,9 @@ T:Combat:Boomerang-mastery
 T:Main:Magic
 
 T:Magic:Magic Schools
-T:Magic:Prayer Schools
 #T:Magic:Spell-learning
-T:Magic:Spell-power
+#T:Magic:Spell-power
+T:Magic:Prayer Schools
 T:Magic:Druidic Schools
 $ENABLE_MCRAFT$T:Magic:Mindcraft Schools
 T:Magic:Runecraft
@@ -777,6 +778,7 @@ T:Magic Schools:Temporal
 T:Magic Schools:Udun
 T:Magic Schools:Mind
 T:Magic Schools:Meta
+T:Magic Schools:Spell-power
 
 #T:Magic:Demonology
 #T:Magic:Necromancy
