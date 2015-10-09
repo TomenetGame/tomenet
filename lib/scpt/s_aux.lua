@@ -205,7 +205,18 @@ end
 
 -- Get the amount of mana(or power) needed
 function get_mana(i, s)
-	return spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
+	local mana
+	mana = spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
+	-- client-side (0) or server-side (>=1) ?
+	if i ~= 0 then
+		player = players(i)
+	end
+
+	if player.martyr < 0 then mana = mana * 4
+	else
+		mana = mana * 2
+	end
+	return mana
 end
 
 -- Return the amount of power(mana, piety, whatever) for the spell
