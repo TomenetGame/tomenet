@@ -6680,9 +6680,14 @@ s_printf("PLAYER_STORE_HANDLE: full, mang, owner %s (%d), %s, value %d, buyer %s
 
 	/* Notify the store owner about the sale now or next time he logs in */
 	if (h_ptr->dna->owner_type == OT_PLAYER) {
+		cptr acc_name = lookup_accountname(lookup_player_id(owner_name));
+		if (!acc_name) { //paranoia
+			s_printf("PLAYER_STORE_UNOWNED!\n");
+			return TRUE;
+		}
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
-			if (strcmp(owner_name, Players[i]->name)) continue;
+			if (strcmp(acc_name, Players[i]->accountname)) continue;
 
 			/* Notify the owner now that he's online */
 			msg_format(i, "\374\377yYour store at (%d,%d) just sold something!", p_ptr->wpos.wx, p_ptr->wpos.wy);
