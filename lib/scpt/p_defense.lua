@@ -99,6 +99,8 @@ HRESISTS_I = add_spell {
 
 		set_oppose_fire(Ind, dur)
 		fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, 1, " calls to the heavens for protection from the elements.")
+		set_oppose_cold(Ind, dur)
+		fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, 1, "")
 	end,
 	["info"] = 	function()
 			return "Res heat/cold dur "..(get_level(Ind, HRESISTS_I, 50) + 15)..".."..(get_level(Ind, HRESISTS_I, 50) + 25)
