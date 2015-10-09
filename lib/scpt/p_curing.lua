@@ -81,6 +81,7 @@ end
 HCUREWOUNDS_I = add_spell {
 	["name"] = 	"Cure Wounds I",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	3,
 	["mana"] = 	5,
@@ -110,6 +111,7 @@ HCUREWOUNDS_I = add_spell {
 HCUREWOUNDS_II = add_spell {
 	["name"] = 	"Cure Wounds II",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	23,
 	["mana"] = 	20,
@@ -143,6 +145,7 @@ HCUREWOUNDS_II = add_spell {
 HHEALING_I = add_spell {
 	["name"] = 	"Heal I",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	3,
 	["mana"] = 	5,
@@ -174,6 +177,7 @@ __lua_HHEALING = HHEALING_I
 HHEALING_II = add_spell {
 	["name"] = 	"Heal II",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	23,
 	["mana"] = 	20,
@@ -202,6 +206,7 @@ HHEALING_II = add_spell {
 HHEALING_III = add_spell {
 	["name"] = 	"Heal III",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
 	["mana"] = 	70,
@@ -228,6 +233,7 @@ HHEALING_III = add_spell {
 HDELCURSES_I = add_spell {
 	["name"] = 	"Break Curses I",
 	["school"] = 	SCHOOL_HCURING,
+	["spell_power"] = 0,
 	["am"] =	75,
 	["level"] = 	10,
 	["mana"] = 	20,
@@ -242,13 +248,12 @@ HDELCURSES_I = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{
-			"Removes curses.",
-	}
+	["desc"] = 	{ "Removes curses.", }
 }
 HDELCURSES_II = add_spell {
 	["name"] = 	"Break Curses II",
 	["school"] = 	SCHOOL_HCURING,
+	["spell_power"] = 0,
 	["am"] =	75,
 	["level"] = 	40,
 	["mana"] = 	40,
@@ -263,14 +268,13 @@ HDELCURSES_II = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{
-			"Removes curses and heavy curses.",
-	}
+	["desc"] = 	{ "Removes curses and heavy curses.", }
 }
 
 HHEALING2_I = add_spell {
 	["name"] = 	"Cleansing Light I",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	18,
 	["mana"] = 	12,
@@ -289,6 +293,7 @@ HHEALING2_I = add_spell {
 HHEALING2_II = add_spell {
 	["name"] = 	"Cleansing Light II",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	29,
 	["mana"] = 	27,
@@ -307,6 +312,7 @@ HHEALING2_II = add_spell {
 HHEALING2_III = add_spell {
 	["name"] = 	"Cleansing Light III",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
 	["mana"] = 	65,
@@ -326,6 +332,7 @@ HHEALING2_III = add_spell {
 HCURING_I = add_spell {
 	["name"] = 	"Curing I",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	3,
 	["mana"] = 	4,
@@ -352,6 +359,7 @@ HCURING_I = add_spell {
 HCURING_II = add_spell {
 	["name"] = 	"Curing II",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	12,
 	["mana"] = 	10,
@@ -378,6 +386,7 @@ HCURING_II = add_spell {
 HCURING_III = add_spell {
 	["name"] = 	"Curing III",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	21,
 	["mana"] = 	25,
@@ -409,6 +418,7 @@ HCURING_III = add_spell {
 HRESTORING = add_spell {
 	["name"] = 	"Restoration",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	31,
 	["mana"] = 	25,
@@ -438,6 +448,7 @@ HRESTORING = add_spell {
 HSANITY = add_spell {
 	["name"] = 	"Mind Focus",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	21,
 	["mana"] = 	50,
@@ -468,7 +479,7 @@ HSANITY = add_spell {
 			"At level 10 it slightly cures very bad insanity",
 			"At level 20 it fairly cures very bad insanity",
 			"***Automatically projecting***",
-		}
+	}
 }
 ]]
 
@@ -478,6 +489,7 @@ HSANITY = add_spell {
 HSANITY = add_spell {
 	["name"] = 	"Faithful Focus",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	21,
 	["mana"] = 	50,
@@ -504,12 +516,13 @@ HSANITY = add_spell {
 			"Frees your mind from fear, confusion, hallucinations",
 			"and also cures some insanity.",
 			"***Automatically projecting***",
-		}
+	}
 }
 
 HRESURRECT = add_spell {
 	["name"] = 	"Resurrection",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	100,
 	["level"] = 	30,
 	["mana"] = 	200,
@@ -525,12 +538,13 @@ HRESURRECT = add_spell {
 	["desc"] = 	{
 			"Resurrects another player's ghost back to life.",
 			"The higher the skill, the less experience he will lose.",
-		}
+	}
 }
 
 HDELBB = add_spell {
 	["name"] = 	"Soul Curing",
 	["school"] = 	{SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	25,	-- 45 the_sandman: too high lvl and this spell doesn't seem to be useful then. Asked around,
 				-- and ppl say their first encounter with RW is about pvp 25-32ish.
@@ -552,5 +566,5 @@ HDELBB = add_spell {
 	["desc"] = 	{
 			"Cures the Black Breath.",
 			"***Automatically projecting***",
-		}
+	}
 }

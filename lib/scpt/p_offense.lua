@@ -3,6 +3,7 @@
 HCURSE_I = add_spell {
 	["name"] = 	"Curse I",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	1,
 	["mana"] = 	2,
@@ -16,13 +17,12 @@ HCURSE_I = add_spell {
 	["info"] = 	function()
 			return "power "..(10 + get_level(Ind, HCURSE_I, 150))
 	end,
-	["desc"] = 	{
-			"Randomly causes confusion damage, slowness or blindness.",
-	}
+	["desc"] = 	{ "Randomly causes confusion damage, slowness or blindness.", }
 }
 HCURSE_II = add_spell {
 	["name"] = 	"Curse II",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	16,
 	["mana"] = 	8,
@@ -44,6 +44,7 @@ HCURSE_II = add_spell {
 HCURSE_III = add_spell {
 	["name"] = 	"Curse III",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	26,
 	["mana"] = 	30,
@@ -66,6 +67,7 @@ HCURSE_III = add_spell {
 HGLOBELIGHT_I = add_spell {
 	["name"] = 	"Holy Light I",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	2,
 	["mana"] = 	3,
@@ -91,6 +93,7 @@ HGLOBELIGHT_I = add_spell {
 HGLOBELIGHT_II = add_spell {
 	["name"] = 	"Holy Light II",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	20,
 	["mana"] = 	15,
@@ -105,15 +108,14 @@ HGLOBELIGHT_II = add_spell {
 	["info"] = 	function()
 			return "dam "..(10 + get_level(Ind, HGLOBELIGHT_I, 100)).." rad "..(5 + get_level(Ind, HGLOBELIGHT_I, 6))
 	end,
-	["desc"] = 	{
-			"Creates a powerful globe of pure light that hurts all foes.",
-	}
+	["desc"] = 	{ "Creates a powerful globe of pure light that hurts all foes.", }
 }
 
 if (def_hack("TEST_SERVER", nil)) then
 HCURSEDD = add_spell {
 	["name"] = 	"Cause wounds",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	5,
 	["mana"] = 	1,
@@ -134,6 +136,7 @@ end
 HORBDRAIN_I = add_spell {
 	["name"] = 	"Orb of Draining I",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	20,
 	["mana"] = 	7,
@@ -150,13 +153,12 @@ HORBDRAIN_I = add_spell {
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 300)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
 	end,
-	["desc"] = 	{
-			"Calls an holy orb to devour the evil.",
-	}
+	["desc"] = 	{ "Calls an holy orb to devour the evil.", }
 }
 HORBDRAIN_II = add_spell {
 	["name"] = 	"Orb of Draining II",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
 	["mana"] = 	16,
@@ -173,14 +175,13 @@ HORBDRAIN_II = add_spell {
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 475)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
 	end,
-	["desc"] = 	{
-			"Calls an holy orb to devour the evil.",
-	}
+	["desc"] = 	{ "Calls an holy orb to devour the evil.", }
 }
 
 HEXORCISM_I = add_spell {
 	["name"] = 	"Exorcism I",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	20,
 	["mana"] = 	15,
@@ -193,13 +194,12 @@ HEXORCISM_I = add_spell {
 	["info"] = 	function()
 		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 350))
 	end,
-	["desc"] = 	{
-			"Dispels nearby demons.",
-	}
+	["desc"] = 	{ "Dispels nearby demons.", }
 }
 HEXORCISM_II = add_spell {
 	["name"] = 	"Exorcism II",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
 	["mana"] = 	40,
@@ -212,14 +212,13 @@ HEXORCISM_II = add_spell {
 	["info"] = 	function()
 		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 700))
 	end,
-	["desc"] = 	{
-			"Dispels nearby demons.",
-	}
+	["desc"] = 	{ "Dispels nearby demons.", }
 }
 
 HDRAINLIFE = add_spell {
 	["name"] = 	"Drain Life",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	37,
 	["mana"] = 	45,
@@ -240,6 +239,7 @@ HDRAINLIFE = add_spell {
 HRELSOULS_I = add_spell {
 	["name"] = 	"Redemption I",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	10,
 	["mana"] = 	20,
@@ -257,6 +257,7 @@ HRELSOULS_I = add_spell {
 HRELSOULS_II = add_spell {
 	["name"] = 	"Redemption II",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	25,
 	["mana"] = 	40,
@@ -274,6 +275,7 @@ HRELSOULS_II = add_spell {
 HRELSOULS_III = add_spell {
 	["name"] = 	"Redemption III",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
 	["mana"] = 	70,
@@ -292,6 +294,7 @@ HRELSOULS_III = add_spell {
 HDRAINCLOUD = add_spell {
 	["name"] = 	"Doomed Grounds",
 	["school"] = 	{SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,     -- pointless for crap with low lvl anyway
 	["mana"] = 	65,
@@ -326,6 +329,7 @@ HDRAINCLOUD = add_spell {
 HHOLYWORD = add_spell {
 	["name"] = 	"Holy Word",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HCURING},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	45,
 	["mana"] = 	500,

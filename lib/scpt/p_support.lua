@@ -3,6 +3,7 @@
 HDELFEAR = add_spell {
 	["name"] = 	"Remove Fear",
 	["school"] = 	{SCHOOL_HSUPPORT},
+	["spell_power"] = 0,
 	["am"] = 	0,
 	["level"] = 	1,
 	["mana"] = 	3,
@@ -20,12 +21,13 @@ HDELFEAR = add_spell {
 	["desc"] = 	{
 			"Removes fear from your heart for a while.",
 			"***Automatically projecting***",
-		}
+	}
 }
 
 HSANCTUARY_I = add_spell {
 	["name"] = 	"Sanctuary I",
 	["school"] = 	{SCHOOL_HSUPPORT},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	3,
 	["mana"] = 	5,
@@ -39,13 +41,12 @@ HSANCTUARY_I = add_spell {
 	["info"] = 	function()
 			return "power "..(5 + get_level(Ind, HSANCTUARY_I, 80)).." rad "..get_level(Ind, HSANCTUARY_I, 10)
 	end,
-	["desc"] = 	{
-			"Lets monsters next to you fall asleep.",
-	}
+	["desc"] = 	{ "Lets monsters next to you fall asleep.", }
 }
 HSANCTUARY_II = add_spell {
 	["name"] = 	"Sanctuary II",
 	["school"] = 	{SCHOOL_HSUPPORT},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	23,
 	["mana"] = 	25,
@@ -59,14 +60,13 @@ HSANCTUARY_II = add_spell {
 	["info"] = 	function()
 			return "power "..(5 + get_level(Ind, HSANCTUARY_I, 80))
 	end,
-	["desc"] = 	{
-			"Lets nearby monsters fall asleep.",
-	}
+	["desc"] = 	{ "Lets nearby monsters fall asleep.", }
 }
 
 HSATISFYHUNGER = add_spell {
 	["name"] = 	"Satisfy Hunger",
 	["school"] = 	{SCHOOL_HSUPPORT},
+	["spell_power"] = 0,
 	["am"]  =	75,
 	["level"] = 	10,
 	["mana"] = 	20,
@@ -83,12 +83,13 @@ HSATISFYHUNGER = add_spell {
 	["desc"] = 	{
 			"Satisfies your hunger.",
 			"***Automatically projecting***",
-			}
+	}
 }
 
 HSENSE_I = add_spell {
 	["name"] = 	"Sense Surroundings I",
 	["school"] = 	SCHOOL_HSUPPORT,
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	20,
 	["mana"] = 	15,
@@ -101,13 +102,12 @@ HSENSE_I = add_spell {
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{
-			"Maps the dungeon around you.",
-	}
+	["desc"] = 	{ "Maps the dungeon around you.", }
 }
 HSENSE_II = add_spell {
 	["name"] = 	"Sense Surroundings II",
 	["school"] = 	SCHOOL_HSUPPORT,
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
 	["mana"] = 	80,
@@ -120,14 +120,13 @@ HSENSE_II = add_spell {
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{
-			"Gives clairvoyance, mapping and lighting up the whole dungeon.",
-	}
+	["desc"] = 	{ "Gives clairvoyance, mapping and lighting up the whole dungeon.", }
 }
 
 HDETECTEVIL = add_spell {
 	["name"] = 	"Detect Evil",
 	["school"] = 	SCHOOL_HSUPPORT,
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	3,
 	["mana"] = 	3,
@@ -140,13 +139,12 @@ HDETECTEVIL = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{
-			"Detects all nearby evil creatures.",
-	}
+	["desc"] = 	{ "Detects all nearby evil creatures.", }
 }
 HSENSEMON = add_spell {
 	["name"] = 	"Sense Monsters",
 	["school"] = 	SCHOOL_HSUPPORT,
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	33,
 	["mana"] = 	15,
@@ -159,14 +157,13 @@ HSENSEMON = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{
-			"Lets you sense the minds of monsters for a while.",
-	}
+	["desc"] = 	{ "Lets you sense the minds of monsters for a while.", }
 }
 
 HZEAL_I = add_spell {
 	["name"] = 	"Zeal I",
 	["school"] = 	SCHOOL_HSUPPORT,
+	["spell_power"] = 0,
 	["am"] = 	50,
 	["level"] = 	32,
 	["mana"] = 	50,
@@ -191,6 +188,7 @@ HZEAL_I = add_spell {
 HZEAL_II = add_spell {
 	["name"] = 	"Zeal II",
 	["school"] = 	SCHOOL_HSUPPORT,
+	["spell_power"] = 0,
 	["am"] = 	50,
 	["level"] = 	41,
 	["mana"] = 	70,
@@ -215,6 +213,7 @@ HZEAL_II = add_spell {
 HZEAL_III = add_spell {
 	["name"] = 	"Zeal III",
 	["school"] = 	SCHOOL_HSUPPORT,
+	["spell_power"] = 0,
 	["am"] = 	50,
 	["level"] = 	50,
 	["mana"] = 	90,
