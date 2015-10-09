@@ -148,10 +148,10 @@ HORBDRAIN_I = add_spell {
 	["spell"] = 	function(args)
 		local typ
 		typ = GF_HOLY_ORB
-		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 350), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
+		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 300), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 350)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
+		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 300)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
 	end,
 	["desc"] = 	{ "Calls an holy orb to devour the evil.", }
 }
@@ -170,10 +170,12 @@ HORBDRAIN_II = add_spell {
 	["spell"] = 	function(args)
 		local typ
 		typ = GF_HOLY_ORB
-		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 660), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
+		--fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 475), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
+		--fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 660), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
+		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 560), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 660)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
+		return "dam "..(20 + get_level(Ind, HORBDRAIN_I, 560)).." rad "..(2 + get_level(Ind, HORBDRAIN_I, 3))
 	end,
 	["desc"] = 	{ "Calls an holy orb to devour the evil.", }
 }
