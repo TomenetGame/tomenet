@@ -8406,7 +8406,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		if (gain > m_ptr->hp) gain = m_ptr->hp;
 		if (!gain && magik(dam * 5)) gain = 1; /* no perma-supply for level 1 mana bolts for now */
 
-		if (gain && (p_ptr->csp < p_ptr->msp) && !p_ptr->martyr) {
+		if (gain && (p_ptr->csp < p_ptr->msp)
+#ifdef MARTYR_NO_MANA
+		    && !p_ptr->martyr
+#endif
+		    ) {
 			msg_print(Ind, "You draw energy from the pain of your opponent.");
 			p_ptr->csp += gain;
 	                if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
@@ -8721,9 +8725,16 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			if (!gain_sp) gain_sp = 1; /* level 0 monsters give energy */
 #endif
 
-			if (((p_ptr->chp < p_ptr->mhp) || (p_ptr->csp < p_ptr->msp)) && !p_ptr->martyr) {
+			if (((p_ptr->chp < p_ptr->mhp) || (p_ptr->csp < p_ptr->msp))
+#ifdef MARTYR_NO_MANA
+			    && !p_ptr->martyr
+#endif
+			    ) {
 				msg_print(Ind, "You absorb the energy of the dying soul.");
-				hp_player_quiet(Ind, gain, TRUE);
+#ifndef MARTYR_NO_MANA
+				if (!p_ptr->martyr)
+#endif
+					hp_player_quiet(Ind, gain, TRUE);
 				p_ptr->csp += gain_sp;
 				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 				p_ptr->redraw |= (PR_MANA);

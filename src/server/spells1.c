@@ -1907,8 +1907,13 @@ destined_defeat:
 				player_type *p2_ptr = Players[Ind_attacker];
 				p_ptr->chp = p_ptr->mhp;
 				p2_ptr->chp = p2_ptr->mhp;
+#ifdef MARTYR_NO_MANA
 				if (!p_ptr->martyr) p_ptr->csp = p_ptr->msp;
 				if (!p2_ptr->martyr) p2_ptr->csp = p2_ptr->msp;
+#else
+				p_ptr->csp = p_ptr->msp;
+				p2_ptr->csp = p2_ptr->msp;
+#endif
 				p_ptr->redraw |= PR_HP | PR_MANA;
 				p2_ptr->redraw |= PR_HP | PR_MANA;
 

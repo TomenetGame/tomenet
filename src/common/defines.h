@@ -1048,6 +1048,13 @@
 #define TURN_CHAR_INTO_NUMBER 7
 
 
+/* Martyrdom doesn't allow to restore mana? (deprecated, we use half damage
+   output for GF_DISP_xxx damage types instead of this penalty) */
+//#define MARTYR_NO_MANA
+/* Martyrdom reduces damage output of all GF_DISP_xxx to anti-cheeze pit sweeping? */
+#define MARTYR_CUT_DISP
+
+
 /* for PvP mode: */
 #define MIN_PVP_LEVEL	10
 #define MID_PVP_LEVEL	20

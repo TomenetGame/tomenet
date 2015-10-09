@@ -4088,6 +4088,7 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 	if (Ind) snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 	else snprintf(pattacker, 80, "Something%s", attacker);
 
+#ifdef MARTYR_CUT_DISP
 	/* hack for Martyrdom, to avoid easy deep pit sweeping */
 	if (p_ptr->martyr)
 		switch (typ) {
@@ -4098,6 +4099,7 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 			dam /= 2;
 			break;
 		}
+#endif
 
 	/* Affect all (nearby) monsters */
 	for (i = 1; i < m_max; i++) {

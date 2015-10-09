@@ -529,7 +529,11 @@ void do_cmd_eat_food(int Ind, int item) {
 			msg_print(Ind, "That tastes weird..");
 			switch (o_ptr->sval) {
 			case SV_FIRE_SMALL:
-				if (p_ptr->csp < p_ptr->msp && !p_ptr->martyr) {
+				if (p_ptr->csp < p_ptr->msp
+#ifdef MARTYR_NO_MANA
+				    && !p_ptr->martyr
+#endif
+				    ) {
 					p_ptr->csp += 30;
 					if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 					msg_print(Ind, "You feel your head clearing.");
@@ -540,7 +544,11 @@ void do_cmd_eat_food(int Ind, int item) {
 				break;
 
 			case SV_FIRESTONE:
-				if (p_ptr->csp < p_ptr->msp && !p_ptr->martyr) {
+				if (p_ptr->csp < p_ptr->msp
+#ifdef MARTYR_NO_MANA
+				    && !p_ptr->martyr
+#endif
+				    ) {
 					p_ptr->csp += 100;
 					if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 					msg_print(Ind, "You feel your head clearing.");
@@ -845,7 +853,11 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			ident = TRUE;
 			break;
 		case SV_POTION_RESTORE_MANA:
-			if (p_ptr->csp < p_ptr->msp && !p_ptr->martyr) {
+			if (p_ptr->csp < p_ptr->msp
+#ifdef MARTYR_NO_MANA
+			    && !p_ptr->martyr
+#endif
+			    ) {
 				p_ptr->csp += 500;
 				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 				msg_print(Ind, "You feel your head clearing.");
@@ -855,7 +867,11 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			}
 			break;
 		case SV_POTION_STAR_RESTORE_MANA:
-			if (p_ptr->csp < p_ptr->msp && !p_ptr->martyr) {
+			if (p_ptr->csp < p_ptr->msp
+#ifdef MARTYR_NO_MANA
+			    && !p_ptr->martyr
+#endif
+			    ) {
 				p_ptr->csp += 1000;
 				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 				msg_print(Ind, "You feel your head clearing!");
@@ -3101,7 +3117,11 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 
 	case SV_STAFF_THE_MAGI:
 		if (do_res_stat(Ind, A_INT)) ident = TRUE;
-		if (p_ptr->csp < p_ptr->msp && !p_ptr->martyr) {
+		if (p_ptr->csp < p_ptr->msp
+#ifdef MARTYR_NO_MANA
+		    && !p_ptr->martyr
+#endif
+		    ) {
 			p_ptr->csp += 500;
 			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 			p_ptr->csp_frac = 0;
@@ -5493,7 +5513,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 		case ART_GANDALF:
 			msg_print(Ind, "Your mage staff glows deep blue...");
-			if (p_ptr->csp < p_ptr->msp && !p_ptr->martyr) {
+			if (p_ptr->csp < p_ptr->msp
+#ifdef MARTYR_NO_MANA
+			     && !p_ptr->martyr
+#endif
+			     ) {
 				p_ptr->csp = p_ptr->msp;
 				p_ptr->csp_frac = 0;
 				msg_print(Ind, "You feel your head clearing.");
