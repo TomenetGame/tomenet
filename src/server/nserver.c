@@ -11725,6 +11725,13 @@ static int Receive_inventory_revision(int ind) {
 		return n;
 	}
 	if (p_ptr) {
+		/* NOTE:
+		 * There is conflict between this function and Receive_search
+		 * which automatically queues itself again. The code below would
+		 * detect that something is queued and then this command would
+		 * block the command queue forever.
+		 */
+		if (p_ptr->command_rep) p_ptr->command_rep = -1;
 		if (connp->q.len) {
 			/* There are some queued packets, block any further
 			 * packets until the queue is empty
