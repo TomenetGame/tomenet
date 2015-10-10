@@ -4305,6 +4305,7 @@ void store_maint(store_type *st_ptr)
 	}
 
 
+
 	/* Choose the number of slots to keep */
 	j = st_ptr->stock_num;
 
@@ -4324,11 +4325,22 @@ void store_maint(store_type *st_ptr)
 #else
 	if (j < st_ptr->stock_size / 4) j = st_ptr->stock_size / 4;
 #endif
+
+	/* Hack for Libraries: fluctuate books more often.
+	   Reason: It's probably a bit too annoying to wait for specific books. - C. Blue */
+	if (st_ptr->st_idx == STORE_BOOK ||
+	    st_ptr->st_idx == STORE_BOOK_DUN ||
+	    st_ptr->st_idx == STORE_LIBRARY ||
+	    st_ptr->st_idx == STORE_HIDDENLIBRARY ||
+	    st_ptr->st_idx == STORE_FORBIDDENLIBRARY)
+		j = st_ptr->stock_size / 2;
+
 	/* Hack -- prevent "underflow" */
 	if (j < 0) j = 0;
 
 	/* Destroy objects until only "j" slots are left */
 	while (st_ptr->stock_num > j) store_delete(st_ptr);
+
 
 
 	/* Choose the number of slots to fill */
@@ -4361,7 +4373,7 @@ void store_maint(store_type *st_ptr)
 	    st_ptr->st_idx == STORE_LIBRARY ||
 	    st_ptr->st_idx == STORE_HIDDENLIBRARY ||
 	    st_ptr->st_idx == STORE_FORBIDDENLIBRARY)
-		j = st_ptr->stock_size - rand_int((st_ptr->stock_size * 3) / 8);
+		j = st_ptr->stock_size - rand_int((st_ptr->stock_size * 1) / 16);
 
 	/* Acquire some new items */
 	/* We want speed & healing & mana pots in the BM */
