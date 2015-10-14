@@ -4266,9 +4266,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 
 				/* Hack -- place an object */
-				if (rand_int(100) < 10) {
+				if (rand_int(100) < 10 && !quiet) {
 					/* Found something */
-					if (!quiet && player_can_see_bold(Ind, y, x) && !istown(wpos)) {
+					if (player_can_see_bold(Ind, y, x) && !istown(wpos)) {
 						msg_print(Ind, "There was something buried in the rubble!");
 						obvious = TRUE;
 					}
@@ -4423,7 +4423,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Require a "naked" floor grid */
 			if (!cave_clean_bold(zcave, y, x)) break;
 			if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
-			cave_set_feat_live(&p_ptr->wpos, y, x, FEAT_GLYPH);
+			cave_set_feat_live(wpos, y, x, FEAT_GLYPH);
 			break;
 #endif
 
@@ -5318,7 +5318,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			quiet_dam = TRUE;
 
 			/* paranoia */
-			if (Ind < 1) break;
+			if (quiet) break;
 
 			/* don't affect sleeping targets maybe */
 			if (m_ptr->csleep) break;
@@ -5937,11 +5937,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " loses precious seconds to you";
 				m_ptr->energy -= m_ptr->energy / 4;
 
-				if (t > dam) t = dam;
-				if (t > tp) t = tp;
-				p_ptr->energy += (t * level_speed(&p_ptr->wpos)) / 500;
-				/* Prevent too much energy, preventing overflow too. */
-				limit_energy(p_ptr);
+				if (!quiet) {
+					if (t > dam) t = dam;
+					if (t > tp) t = tp;
+					p_ptr->energy += (t * level_speed(&p_ptr->wpos)) / 500;
+					/* Prevent too much energy, preventing overflow too. */
+					limit_energy(p_ptr);
+				}
 			}
 #endif
 			break;
@@ -6104,8 +6106,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Make it have an effect on low-HP monsters such as townies */
 			if (!dam) dam = 1;
 
-			if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
-			else p_ptr->ret_dam = 0; /* paranoia */
+			if (!quiet) {
+				if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
+				else p_ptr->ret_dam = 0; /* paranoia */
+			}
 
 			if ((r_ptr->flags3 & RF3_UNDEAD) ||
 //			    (r_ptr->flags3 & RF3_DEMON) ||
@@ -6131,7 +6135,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				obvious = FALSE;
 				dam = 0;
 				quiet_dam = TRUE;
-				p_ptr->ret_dam = 0;
+				if (!quiet) p_ptr->ret_dam = 0;
 			}
 
 			/* the_sandman: return 15% of the damage to player. This is special
@@ -6139,7 +6143,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			   (drain cloud) it will be too much) we aim for balance 
 			   HACK: the priest_spell variable is defined above. 
 			*/
-			if (priest_spell) {
+			if (priest_spell && !quiet) {
 				//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
 				if (dam) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
 				p_ptr->ret_dam = 0;
@@ -7504,7 +7508,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
 
 			/* XXX XXX XXX Hack -- Assume success */
-			if(!quiet && c_ptr->m_idx == 0) {
+			if (!quiet && c_ptr->m_idx == 0) {
 				msg_format(Ind, "%^s disappears!", m_name);
 				return(FALSE);
 			}
@@ -7726,8 +7730,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		/* Hurt the monster, check for fear and death */
-		if (!quiet && mon_take_hit(Ind, c_ptr->m_idx, dam, &fear, note_dies))
-		{
+		if (!quiet && mon_take_hit(Ind, c_ptr->m_idx, dam, &fear, note_dies)) {
 			/* Dead monster */
 #ifdef DAMAGE_BEFORE_POLY
 			do_poly = FALSE;
