@@ -495,7 +495,7 @@ r_type r_types[RCRAFT_MAX_TYPES] =
 r_projection r_projections[RCRAFT_MAX_PROJECTIONS] =
 {
 { R_LITE,		GF_LITE,	300,	"light", TR2_RES_LITE },
-{ R_DARK,		GF_DARK,	900,	"darkness", TR2_RES_DARK },
+{ R_DARK,		GF_DARK,	700,	"darkness", TR2_RES_DARK },
 { R_NEXU,		GF_NEXUS,	400,	"nexus", TR2_RES_NEXUS },
 { R_NETH,		GF_NETHER,	550,	"nether", TR2_RES_NETHER },
 { R_CHAO,		GF_CHAOS,	600,	"chaos", TR2_RES_CHAOS },
