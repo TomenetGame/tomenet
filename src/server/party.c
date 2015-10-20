@@ -1529,7 +1529,15 @@ int party_create_ironteam(int Ind, cptr name) {
 	int index = 0, i, oldest = turn;
 
 	char *ptr, buf[NAME_LEN];
-	strcpy(buf, name);
+
+	/* prevent buffer overflows by someone entering way too long names */
+	if (strlen(name) >= NAME_LEN) {
+		msg_format(Ind, "\377yParty name must not exceed %d characters!", NAME_LEN - 1);
+		return FALSE;
+	}
+	strncpy(buf, name, NAME_LEN);
+	buf[NAME_LEN - 1] = 0;
+
 	/* remove spaces at the beginning */
 	for (ptr = buf; ptr < buf + strlen(buf); ) {
 		if (isspace(*ptr)) ptr++;
