@@ -7073,21 +7073,25 @@ Halloween
     "wails and seems to fade".
 
     The Pumpkin is aiming at intermediate-level characters. It can spawn on any
-    dungeon floor shallower than dungeon level 40 (or 50 on Ironman server),
+    dungeon floor shallower than dungeon level 40 (or 50 on Ironman server*),
     except it won't show up on the first 19 floors in the Ironman Deep Dive
     Challenge.
-    Players who are too high level (above 35 on main, above 40 on Ironman) will
-    not be able to hunt him, for the others he will still be tough and might
-    require teamwork.
+    Players who are too high level (above 35 on main, above 40 on Ironman*)
+    will not be able to hunt him, for the others he will still be tough and
+    might require teamwork.
 
     The Great Pumpkin does not cause any damage but still has a few annoying
-    spells at its disposal. It is level 127 and therefore can drop any item in
-    the game, and usually drops very good. Please share fairly. ;)
+    spells at its disposal. It is level 127 and therefore can drop quite high-
+    level items and usually drops very good stuff. Please share fairly. ;)
     When a player defeats the Great Pumpkin, everyone will get a message about
     it. The Great Pumpkin will randomly respawn again some time later.
 
     During Halloween, it will stay deep night on the world's surface and magic
     that lights up the world surface won't work.
+
+    (* the 'Ironman' server, also called 'RPG' server, is currently not
+    available. Instead, try the IDDC or Halls of Mandos, if you want to play
+    ironman-style.)
 
 Christmas
     Running from 23th December to 27th December.
