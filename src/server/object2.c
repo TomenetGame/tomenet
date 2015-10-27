@@ -7627,8 +7627,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 #endif
 
-		/* a reward should have some use - prevent +1 speed boots! */
+		/* prevent rewards that pass the min price check but are still not useful enough: */
+		/* - prevent +1 speed boots! */
 		if ((o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) && o_ptr->pval == 1) continue;
+		/* - prevent shields of reflection */
+		if ((o_ptr->name2 == EGO_REFLECT || o_ptr->name2b == EGO_REFLECT)) continue;
 
 		/* specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
 		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
