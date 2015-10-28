@@ -3995,9 +3995,9 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 	player_type *p_ptr;
 	int lev = getlevel(wpos); /* HALLOWEEN; and 
 	new: anti-double-OOD */
-#ifdef RPG_SERVER
+//#ifdef RPG_SERVER
 	struct dungeon_type *d_ptr = getdungeon(wpos);
-#endif
+//#endif
 	struct dun_level *l_ptr = getfloor(wpos);
 
 
@@ -4026,14 +4026,20 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 
 		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
 #ifndef RPG_SERVER
-		if (no_high_level_players && (lev < 40)) {
+		if (no_high_level_players && (lev < 40)
+ #if 1 /* not in Training Tower? */
+		    && !(d_ptr->flags2 & DF2_NO_DEATH)
+ #endif
+		    ) {
 			if (lev > 20) r_idx = RI_PUMPKIN3;//10k HP
 			else {
 				if (lev > 10) r_idx = RI_PUMPKIN2;//6k HP
 				else r_idx = RI_PUMPKIN1;//3k HP, smallest version
 
+ #if 0 /* sometimes tougher? */
 				if (magik(15)) r_idx = RI_PUMPKIN2; /* sometimes tougher */
 				else if (magik(15)) r_idx = RI_PUMPKIN3; /* sometimes tougher */
+ #endif
 			}
 #else
 		if (no_high_level_players && (lev < 50) && !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
@@ -4042,8 +4048,10 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 				if (lev > 15) r_idx = RI_PUMPKIN2;//4k HP
 				else r_idx = RI_PUMPKIN1;//2k HP, smallest version
 
+ #if 0 /* sometimes tougher? */
 				if (magik(15)) r_idx = RI_PUMPKIN2; /* sometimes tougher */
 				else if (magik(15)) r_idx = RI_PUMPKIN3; /* sometimes tougher */
+ #endif
 			}
 #endif
 
