@@ -11237,6 +11237,8 @@ Note that not every skill is available to every profession (class).
     .Interception               Ability to interfere with adjacent enemies.
                                 Can prevent them from teleporting, casting,
                                 summoning, running away.
+                                The monster must be standing right beside you
+                                (horizontally, vertically or diagonally).
 
                                 The chance to intercept an enemy is
                                 (2 * interception) + (martial_arts_skill / 2)
