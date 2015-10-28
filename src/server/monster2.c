@@ -678,11 +678,12 @@ void wipe_m_list(struct worldpos *wpos) {
 		monster_type *m_ptr = &m_list[i];
 
 		if (inarea(&m_ptr->wpos,wpos)) {
-                        if (season_halloween &&
-                	    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
-                        	great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
+			if (season_halloween &&
+			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+				great_pumpkin_duration = 0;
+				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
-                        }
+			}
 			delete_monster_idx(i, TRUE);
 		}
 	}
@@ -703,6 +704,7 @@ void wipe_m_list_admin(struct worldpos *wpos) {
 		if (inarea(&m_ptr->wpos,wpos)) {
 			if (season_halloween &&
 			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+				great_pumpkin_duration = 0;
 				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 			}
@@ -728,6 +730,7 @@ void wipe_m_list_special(struct worldpos *wpos) {
 		if (inarea(&m_ptr->wpos,wpos)) {
 			if (season_halloween &&
 			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+				great_pumpkin_duration = 0;
 				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 			}
@@ -775,6 +778,7 @@ void thin_surface_spawns() {
 		/* if we erase the Great Pumpkin then reset its timer */
 		if (season_halloween &&
 		    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+			great_pumpkin_duration = 0;
 			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 			//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 		}
@@ -802,6 +806,7 @@ void geno_towns() {
 		    !(r_info[m_ptr->r_idx].flags8 & RF8_GENO_PERSIST)) {
 			if (season_halloween && /* hardcoded -_- */
 			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+				great_pumpkin_duration = 0;
 				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 			}
@@ -4045,7 +4050,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0) == 0) {
 //spam				s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);
 				great_pumpkin_timer = -1; /* put generation on hold */
-				great_pumpkin_duration = 60;
+				great_pumpkin_duration = 60; /* last for 60 minutes till it despawns on its own, to give other players a chance to find it */
 
 				/* This seems to be crashing the server - mikaelh */
 				// check_Pumpkin(); /* recall high-level players off this floor! */

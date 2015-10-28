@@ -530,7 +530,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 	}
 }
 
-
+/* Recall out players of too high level to be eligible to fight the Great Pumpkin */
 void check_Pumpkin(void) {
 	int k, i, m_idx;
 	struct worldpos *wpos;
@@ -605,8 +605,7 @@ void check_Pumpkin(void) {
  * a King/Queen joins his level or if a player enters it who hasn't killed
  * Sauron, the Sorceror yet - C. Blue
  */
-void check_Morgoth(int Ind)
-{
+void check_Morgoth(int Ind) {
 	int k, i, x, y, num_on_depth = 0, m_idx;
 	s32b tmphp;
 	struct worldpos *wpos;
@@ -630,7 +629,7 @@ void check_Morgoth(int Ind)
 		/* Excise "dead" monsters */
 		if (!m_ptr->r_idx) {
 		        /* Excise the monster */
-	    		m_fast[k] = m_fast[--m_top];
+			m_fast[k] = m_fast[--m_top];
 		        /* Skip */
 		        continue;
 		}
@@ -706,10 +705,10 @@ void check_Morgoth(int Ind)
 						place_monster_one(&p_ptr->wpos, y, x, RI_SAURON, FALSE, FALSE, FALSE, 0, 0);
 						summon_override_checks = SO_NONE;
 
-	                        	    	/* Notice */
-	    		        	        note_spot_depth(&p_ptr->wpos, y, x);
-			                        /* Display */
-		                                everyone_lite_spot(&p_ptr->wpos, y, x);
+						/* Notice */
+						note_spot_depth(&p_ptr->wpos, y, x);
+					/* Display */
+						everyone_lite_spot(&p_ptr->wpos, y, x);
 					}
 					/* the rest is allowed..
 					   -PvP chars can't enter IDDC anyway
@@ -761,10 +760,10 @@ void check_Morgoth(int Ind)
 					place_monster_one(&p_ptr->wpos, y, x, 847, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//GWoP (best maybe)
 					summon_override_checks = SO_NONE;
 
-	                                /* Notice */
-	    		                note_spot_depth(&p_ptr->wpos, y, x);
-		                        /* Display */
-	                                everyone_lite_spot(&p_ptr->wpos, y, x);
+					/* Notice */
+					note_spot_depth(&p_ptr->wpos, y, x);
+					/* Display */
+					everyone_lite_spot(&p_ptr->wpos, y, x);
 				}
 				return;
 			}
@@ -788,7 +787,7 @@ void check_Morgoth(int Ind)
 			return;
 		}
 		/* Less players here than Morgy has power for? */
-    		else if (m_ptr->maxhp > tmphp) {
+		else if (m_ptr->maxhp > tmphp) {
 			/* anti-cheeze */
 			if (m_ptr->hp == m_ptr->maxhp) {
 				m_ptr->hp -= (tmphp - m_ptr->maxhp);
@@ -807,8 +806,7 @@ void check_Morgoth(int Ind)
 	}
 }
 
-int players_on_depth(struct worldpos *wpos)
-{
+int players_on_depth(struct worldpos *wpos) {
 	if (wpos->wx>MAX_WILD_X || wpos->wx<0 || wpos->wy>MAX_WILD_Y || wpos->wy<0) return(0);
 	if (wpos->wz == 0)
 		return(wild_info[wpos->wy][wpos->wx].ondepth);
