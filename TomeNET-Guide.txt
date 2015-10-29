@@ -17143,7 +17143,7 @@ Items cannot give more than +6 luck.
 Items cannot have more than +5 stealth, except for cloaks which can have +6.
 Items cannot give more than +5 to stats (STR/INT/WIS/DEX/CON/CHR).
 Items cannot have more than +4 searching.
-Items cannot give more than +3 extra attacks.
+Items cannot give more than +3 extra attacks. Gloves can only give up to +2.
 Items cannot give more than +3 life (+30% base hit points).
 Items that give both extra attacks and life are capped at +1.
 Items that add mana, give mana regeneration or are blessed will never have an
@@ -17164,6 +17164,10 @@ Amulets cannot give more than +3 to stats.
 
 Shields cannot gain +speed mod.
 Boomerangs cannot gain +speed mod.
+
++Hit points mod (LIFE) caps at +3 and can only spawn on..
+ melee weapons (caps at +2 if the weapon can be dual-wielded),
+ hats, gloves and body armour.
 
 
 Technical internals
