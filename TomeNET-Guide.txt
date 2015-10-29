@@ -5609,7 +5609,7 @@ The 1..9 are standard shops, namely..
                         In the hazardous city of Khazad-Dum is a store that
                         offers some goods found to be useful by the miners
                         in the mountain depths.
-        Donate gold and pray to the gods  (EXPERIMENTAL)
+        Donate gold and pray to the gods  (EXPERIMENTAL: allows to solo reking)
                         This is a special option in The Mirror in Lothlorien
                         which allows fallen kings and queens to get their fate
                         changed by the gods: Their Morgoth kill will be undone
