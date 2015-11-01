@@ -3788,7 +3788,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 				p_ptr->confusing--;
 
 				/* Message */
-				msg_print(Ind, "Your hands stop glowing.");
+				if (!p_ptr->confusing) msg_print(Ind, "Your hands stop glowing.");
 
 				/* Confuse the monster */
 				if (q_ptr->resist_conf) {
@@ -4839,7 +4839,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				if (p_ptr->confusing) p_ptr->confusing--;
 
 				/* Message */
-				msg_print(Ind, "Your hands stop glowing.");
+				if (!p_ptr->confusing) msg_print(Ind, "Your hands stop glowing.");
 
 				/* Confuse the monster */
 				if (r_ptr->flags3 & RF3_NO_CONF) {
