@@ -6351,9 +6351,11 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			handle_music(Ind);
 #endif
 
-			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
+			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his" : "her");
 			msg_print(Ind, "You lose your wraith powers.");
+
 			/* Automatically disable permanent wraith form (set_tim_wraith) */
+			p_ptr->tim_wraith = 0; //avoid duplicate message
 			p_ptr->update |= PU_BONUS;
 		}
 		if (zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK)) {
