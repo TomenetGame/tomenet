@@ -4993,16 +4993,13 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Evileye, please tell me if it's right */
 	if (p_ptr->tim_wraith) {
-		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
+		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
 			p_ptr->tim_wraith = 0;
 			msg_print(Ind, "You lose your wraith powers.");
 			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 		}
-	}
-
-	/* No wraithform on NO_MAGIC levels - C. Blue */
-	if (p_ptr->tim_wraith) {
-		if (p_ptr->wpos.wz && l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/* No wraithform on NO_MAGIC levels - C. Blue */
+		else if (p_ptr->wpos.wz && l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			p_ptr->tim_wraith = 0;
 			msg_print(Ind, "You lose your wraith powers.");
 			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");

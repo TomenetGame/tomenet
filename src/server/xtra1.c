@@ -2205,10 +2205,9 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	/* Immaterial forms (WRAITH / PASS_WALL) drain the mimic's HP! */
 	if (r_ptr->flags2 & RF2_PASS_WALL) {
 		if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
-		    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
-		{
-//BAD!(recursion)			set_tim_wraith(Ind, 30000);
-			p_ptr->tim_wraith = 30000; csheet_boni->cb[5] |= CB6_RWRTH;
+		    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
+			//BAD!(recursion)	set_tim_wraith(Ind, 10000);
+			p_ptr->tim_wraith = 10000; csheet_boni->cb[5] |= CB6_RWRTH;
 		}
 		p_ptr->drain_life++; csheet_boni->cb[5] |= CB6_SRGHP;
 	}
@@ -3436,7 +3435,7 @@ void calc_boni(int Ind) {
 		p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND;
 		p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV; /* redundant */
 		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
-		/*p_ptr->tim_wraith = 30000; redundant*/
+		/*p_ptr->tim_wraith = 10000; redundant*/
 //		p_ptr->invis += 5; */ /* No. */
 	}
 
@@ -3949,8 +3948,8 @@ void calc_boni(int Ind) {
 			//p_ptr->wraith_form = TRUE;
 			if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
 			    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
-//BAD!(recursion)				set_tim_wraith(Ind, 30000);
-				p_ptr->tim_wraith = 30000; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RWRTH;
+				//BAD!(recursion)	set_tim_wraith(Ind, 10000);
+				p_ptr->tim_wraith = 10000; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RWRTH;
 			}
 		}
 		if (f4 & (TR4_LEVITATE)) {
