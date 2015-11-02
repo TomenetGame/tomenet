@@ -1523,6 +1523,13 @@ static void init_kind_list() {
 				/* complete certain names that are treated in a special way */
 				if (kind_list_tval[kind_list_idx] == TV_TRAPKIT)
 					strcat(kind_list_name[kind_list_idx], " Trap Kit");
+			} else if (buf[0] == 'G') {
+				p1 = buf + 2; /* char */
+				p2 = strchr(p1, ':') + 1; /* attr */
+				if (!p2) continue; /* paranoia (broken file) */
+
+				kind_list_char[kind_list_idx] = *p1;
+				kind_list_attr[kind_list_idx] = *p2;
 			}
 			continue;
 		}
@@ -1678,6 +1685,20 @@ static void init_artifact_list() {
 		}
 		/* complete the artifact name */
 		strcat(artifact_list_name[artifact_list_idx], art_name);
+		/* new: add coloured symbol to indicate item type (sometimes impossible to recognize otherwise) */
+		if (i < MAX_K_IDX) { //paranoia?
+#if 0 /* we cannot predict the attr for flavoured items! (rings, amulets) */
+			strcpy(buf, format(" <\377%c%c\377->", kind_list_attr[i], kind_list_char[i]));
+#else
+			strcpy(buf, format("%c  ", kind_list_char[i]));
+#endif
+			strcat(buf, artifact_list_name[artifact_list_idx]);
+			strcpy(artifact_list_name[artifact_list_idx], buf);
+		} else {
+			strcpy(buf, "     ");
+			strcat(buf, artifact_list_name[artifact_list_idx]);
+			strcpy(artifact_list_name[artifact_list_idx], buf);
+		}
 
 		/* remember if it's a dungeon boss drop */
 		artifact_list_specialgene[artifact_list_idx] = special_gene;

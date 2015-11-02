@@ -373,6 +373,7 @@ bool artifact_list_specialgene[MAX_A_IDX];
 /* For artifact lore */
 char kind_list_name[MAX_K_IDX][80];
 int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx = 0;
+char kind_list_char[MAX_K_IDX], kind_list_attr[MAX_K_IDX];
 
 /* for DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
 char last_prompt[MSG_LEN] = { 0 };

@@ -943,6 +943,7 @@ extern bool artifact_list_specialgene[MAX_A_IDX];
 
 extern char kind_list_name[MAX_K_IDX][80];
 extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx;
+extern char kind_list_char[MAX_K_IDX], kind_list_attr[MAX_K_IDX];
 
 extern int screen_wid, screen_hgt;
 extern void (*resize_main_window)(int cols, int rows);
