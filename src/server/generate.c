@@ -9194,6 +9194,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	dun->l_ptr->flags2 = 0;
 	dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
 
+	/* For Halloween: prevent someone 'DDOS-generating' the Pumpkin */
+	if (season_halloween && p_ptr && (p_ptr->prob_travel || p_ptr->ghost)) dun->l_ptr->flags1 |= LF1_FAST_DIVE;
+
 	/* Random seed for checking if a player logs back in on the same
 	   [static] floor that he logged out, or if it has changed. - C. Blue */
 	dun->l_ptr->id = rand_int(0xFFFF) << 16;
