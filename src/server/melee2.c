@@ -1139,8 +1139,7 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num) {
  * Faster and smarter code, borrowed from (Vanilla) Angband 3.0.0.
  */
 /* Hack -- borrowing 'direct' flag for los check */
-static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u32b f0, bool direct)
-{
+static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u32b f0, bool direct) {
 	//player_type *p_ptr = Players[Ind];
 
 	int i, num = 0;
@@ -1162,8 +1161,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 
 
 	/* Smart monsters restrict their spell choices. */
-	if (!(r_ptr->flags2 & (RF2_STUPID)))
-	{
+	if (!(r_ptr->flags2 & (RF2_STUPID))) {
 		/* What have we got? */
 		has_escape = ((f4 & (RF4_ESCAPE_MASK)) ||
 		              (f5 & (RF5_ESCAPE_MASK)) ||
@@ -1199,10 +1197,9 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 		/* Hurt badly or afraid, attempt to flee */
 		/* If too far, attempt to change position */
 		if (has_escape && (
-			((m_ptr->hp < m_ptr->maxhp / 4 || m_ptr->monfear) && direct) ||
-			m_ptr->cdis > MAX_RANGE ||
-			m_ptr->ai_state & AI_STATE_EFFECT))
-		{
+		    ((m_ptr->hp < m_ptr->maxhp / 4 || m_ptr->monfear) && direct) ||
+		    m_ptr->cdis > MAX_RANGE ||
+		    m_ptr->ai_state & AI_STATE_EFFECT)) {
 			/* Choose escape spell */
 			f4_mask = (RF4_ESCAPE_MASK);
 			f5_mask = (RF5_ESCAPE_MASK);
@@ -1211,8 +1208,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 		}
 
 		/* Still hurt badly, couldn't flee, attempt to heal */
-		else if (has_heal && (m_ptr->hp < m_ptr->maxhp / 4 || m_ptr->stunned))
-		{
+		else if (has_heal && (m_ptr->hp < m_ptr->maxhp / 4 || m_ptr->stunned)) {
 			/* Choose heal spell */
 			f4_mask = (RF4_HEAL_MASK);
 			f5_mask = (RF5_HEAL_MASK);
@@ -1223,8 +1219,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 		/* Player is close and we have attack spells, blink away */
 //		else if (has_tactic && (distance(py, px, m_ptr->fy, m_ptr->fx) < 4) &&
 		else if (has_tactic && (m_ptr->cdis < 4) &&
-		         (has_attack || has_summon) && (rand_int(100) < 75))
-		{
+		    (has_attack || has_summon) && (rand_int(100) < 75)) {
 			/* Choose tactical spell */
 			f4_mask = (RF4_TACTIC_MASK);
 			f5_mask = (RF5_TACTIC_MASK);
@@ -1234,8 +1229,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 
 		/* We're hurt (not badly), try to heal */
 		else if (has_heal && (m_ptr->hp < m_ptr->maxhp * 3 / 4) &&
-		         (rand_int(100) < 60))
-		{
+		    (rand_int(100) < 60)) {
 			/* Choose heal spell */
 			f4_mask = (RF4_HEAL_MASK);
 			f5_mask = (RF5_HEAL_MASK);
@@ -1244,8 +1238,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 		}
 
 		/* Summon if possible (sometimes) */
-		else if (has_summon && (rand_int(100) < 50))
-		{
+		else if (has_summon && (rand_int(100) < 50)) {
 			/* Choose summon spell */
 			f4_mask = (RF4_SUMMON_MASK);
 			f5_mask = (RF5_SUMMON_MASK);
@@ -1254,8 +1247,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 		}
 
 		/* Attack spell (most of the time) */
-		else if (has_attack && (rand_int(100) < 85))
-		{
+		else if (has_attack && (rand_int(100) < 85)) {
 			/* Choose attack spell */
 			f4_mask = (RF4_ATTACK_MASK);
 			f5_mask = (RF5_ATTACK_MASK);
@@ -1264,8 +1256,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 		}
 
 		/* Try another tactical spell (sometimes) */
-		else if (has_tactic && (rand_int(100) < 50))
-		{
+		else if (has_tactic && (rand_int(100) < 50)) {
 			/* Choose tactic spell */
 			f4_mask = (RF4_TACTIC_MASK);
 			f5_mask = (RF5_TACTIC_MASK);
@@ -1275,8 +1266,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 
 		/* Haste self if we aren't already somewhat hasted (rarely) */
 		/* XXX check it */
-		else if (has_haste && (rand_int(100) < (20 + r_ptr->speed - m_ptr->mspeed)))
-		{
+		else if (has_haste && (rand_int(100) < (20 + r_ptr->speed - m_ptr->mspeed))) {
 			/* Choose haste spell */
 			f4_mask = (RF4_HASTE_MASK);
 			f5_mask = (RF5_HASTE_MASK);
@@ -1285,8 +1275,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 		}
 
 		/* Annoy player (most of the time) */
-		else if (has_annoy && (rand_int(100) < 85))
-		{
+		else if (has_annoy && (rand_int(100) < 85)) {
 			/* Choose annoyance spell */
 			f4_mask = (RF4_ANNOY_MASK);
 			f5_mask = (RF5_ANNOY_MASK);
@@ -1309,49 +1298,43 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 #endif /* STUPID_MONSTER_SPELLS */
 
 	/* Extract the "innate" spells */
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		if (f4 & (1L << i)) spells[num++] = i + RF4_OFFSET;
 	}
 
 	/* Extract the "normal" spells */
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		if (f5 & (1L << i)) spells[num++] = i + RF5_OFFSET;
 	}
 
 	/* Extract the "bizarre" spells */
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		if (f6 & (1L << i)) spells[num++] = i + RF6_OFFSET;
 	}
 
 	/* Extract the "extra" spells */
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		if (f0 & (1L << i)) spells[num++] = i + RF0_OFFSET;
 	}
 
 if (season_halloween) {
 	/* Halloween event hack: The Great Pumpkin -C. Blue */
 	//if (!strcmp(r_ptr->name,"The Great Pumpkin"))
-	if ((m_ptr->r_idx == RI_PUMPKIN1) || (m_ptr->r_idx == RI_PUMPKIN2) || (m_ptr->r_idx == RI_PUMPKIN3))
-	{
+	if ((m_ptr->r_idx == RI_PUMPKIN1) || (m_ptr->r_idx == RI_PUMPKIN2) || (m_ptr->r_idx == RI_PUMPKIN3)) {
 		/* more than 1/3 HP: Moan much, tele rarely */
 		if (m_ptr->hp > (m_ptr->maxhp / 3))
-		switch(rand_int(17))
-		{
+		switch(rand_int(17)) {
 		case 0:	case 1:
 			if(f5 & (1L << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
 			break;
-		case 2:	case 3: case 4:
+		case 2:	case 3: case 4: case 5:
 			if(f5 & (1L << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
-			break;	
-		case 5:	case 6:	case 7:	case 8:
+			break;
+		case 6:	case 7:	case 8:
 			if(f5 & (1L << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
 			break;
 		case 9: case 10:
-			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);		//RF6_TPORT
+			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
 			break;
 		default:
 			if(f4 & (1L << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
@@ -1359,19 +1342,18 @@ if (season_halloween) {
 		}
 		/* Just more than 1/6 HP: Moan less, tele more often */
 		else if (m_ptr->hp > (m_ptr->maxhp / 6))
-		switch(rand_int(17))
-		{
+		switch(rand_int(17)) {
 		case 0:	case 1:
 			if(f5 & (1L << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
 			break;
-		case 2:	case 3: case 4:
+		case 2:	case 3: case 4: case 5:
 			if(f5 & (1L << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
 			break;
-		case 5:	case 6:	case 7:	case 8:
+		case 6:	case 7:	case 8:
 			if(f5 & (1L << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
 			break;
-		case 9: case 10: case 11: case 12:
-			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);		//RF6_TPORT
+		case 9: case 10: case 11:// case 12:
+			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
 			break;
 		default:
 			if(f4 & (1L << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
@@ -1379,19 +1361,18 @@ if (season_halloween) {
 		}
 		/* Nearly dead: Moan rarely, tele often */
 		else
-		switch(rand_int(17))
-		{
+		switch(rand_int(17)) {
 		case 0:	case 1:
 			if(f5 & (1L << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
 			break;
-		case 2:	case 3: case 4:
+		case 2:	case 3: case 4: case 5:
 			if(f5 & (1L << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
 			break;
-		case 5:	case 6:	case 7:	case 8:
+		case 6:	case 7:	case 8:
 			if(f5 & (1L << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
 			break;
-		case 9: case 10: case 11: case 12: case 13: case 14:
-			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);		//RF6_TPORT
+		case 9: case 10: case 11: case 12:// case 13: case 14:
+			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
 			break;
 		default:
 			if(f4 & (1L << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN

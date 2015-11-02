@@ -575,18 +575,18 @@ void check_Pumpkin(void) {
  #endif
 #else
  #ifndef RPG_SERVER
-				    (p_ptr->max_lev > 35))
+				    (p_ptr->max_lev > 30))
  #else
-				    (p_ptr->max_lev > 40))
+				    (p_ptr->max_lev > 35))
  #endif
 #endif
 				{
 					sprintf(msg, "\377oA ghostly force drives you out of this dungeon!");
 					/* log */
 #ifndef RPG_SERVER
-					s_printf("HALLOWEEN: Recalled>35: %s\n", p_ptr->name);
+					s_printf("HALLOWEEN: Recalled>30: %s\n", p_ptr->name);
 #else
-					s_printf("HALLOWEEN: Recalled>40: %s\n", p_ptr->name);
+					s_printf("HALLOWEEN: Recalled>35: %s\n", p_ptr->name);
 #endif
 					/* get him out of here */
 					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);

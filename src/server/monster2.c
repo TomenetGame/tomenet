@@ -4004,7 +4004,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 	if (season_halloween && great_pumpkin_timer == 0 && wpos->wz != 0 &&
 	    level_generation_time && /* spawn it only on level generation time? yes, because of high-lev camping TT while lowbies frequent it, spawning it for him */
 	    /* Don't waste Great Pumpkins on low-level IDDC floors */
-	    (!in_irondeepdive(wpos) || wpos->wz >= 20)) {
+	    (!in_irondeepdive(wpos) || wpos->wz >= 10)) {
 		bool no_high_level_players = TRUE;
 
 		/* Verify that no high-level player is on this level! */
@@ -4014,10 +4014,10 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 			if (p_ptr->admin_dm) continue;
 			if (!inarea(&p_ptr->wpos, wpos)) continue;
 #ifndef RPG_SERVER
-			if (p_ptr->max_lev <= 35) continue;
+			if (p_ptr->max_lev <= 30) continue;
 //spam				s_printf("Great Pumpkin spawn prevented by player>35 %s\n", p_ptr->name);
 #else
-			if (p_ptr->max_lev <= 40) continue;
+			if (p_ptr->max_lev <= 35) continue;
 //spam				s_printf("Great Pumpkin spawn prevented by player>40 %s\n", p_ptr->name);
 #endif
 			no_high_level_players = FALSE;
@@ -4026,7 +4026,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 
 		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
 #ifndef RPG_SERVER
-		if (no_high_level_players && (lev < 40)
+		if (no_high_level_players && (lev <= 35)
  #if 1 /* not in Training Tower? */
 		    && !(d_ptr->flags2 & DF2_NO_DEATH)
  #endif
@@ -4042,7 +4042,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
  #endif
 			}
 #else
-		if (no_high_level_players && (lev < 50) && !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
+		if (no_high_level_players && (lev <= 40) && !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
 			if (lev > 30) r_idx = RI_PUMPKIN3;//6.6k HP
 			else {
 				if (lev > 15) r_idx = RI_PUMPKIN2;//4k HP
@@ -4083,25 +4083,23 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 
 	struct dungeon_type *d_ptr = getdungeon(wpos);
 
-	if(d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])){
+	if (d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])) {
 		int i, j = 0;
 		monster_race *r_ptr;
-		while((r_idx = get_mon_num(monster_level, lev))){
-			if(j++ > 250) break;
+		while ((r_idx = get_mon_num(monster_level, lev))) {
+			if (j++ > 250) break;
 			r_ptr = &r_info[r_idx];
-			if(d_ptr->r_char[0]){
-                		for (i = 0; i < 10; i++)
-                		{
-                        		if (r_ptr->d_char == d_ptr->r_char[i]) break;
-                		}
+			if (d_ptr->r_char[0]) {
+				for (i = 0; i < 10; i++) {
+					if (r_ptr->d_char == d_ptr->r_char[i]) break;
+				}
 				if(i < 10) break;
 				continue;
 			}
-			if(d_ptr->nr_char[0]){
-                		for (i = 0; i < 10; i++)
-                		{
-                        		if (r_ptr->d_char == d_ptr->r_char[i]) continue;
-                		}
+			if (d_ptr->nr_char[0]) {
+				for (i = 0; i < 10; i++) {
+					if (r_ptr->d_char == d_ptr->r_char[i]) continue;
+				}
 				break;
 			}
 		}

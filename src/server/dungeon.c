@@ -6003,10 +6003,10 @@ static void process_various(void)
 					m_ptr = &m_list[m_idx];
 					/* Excise "dead" monsters */
 					if (!m_ptr->r_idx) {
-					        /* Excise the monster */
+						/* Excise the monster */
 						m_fast[k] = m_fast[--m_top];
-					        /* Skip */
-					        continue;
+						/* Skip */
+						continue;
 					}
 					/* Players of too high level cannot participate in killing attemps (anti-cheeze) */
 					/* search for Great Pumpkins */
@@ -6030,10 +6030,10 @@ static void process_various(void)
 					m_ptr = &m_list[m_idx];
 					/* Excise "dead" monsters */
 					if (!m_ptr->r_idx) {
-					        /* Excise the monster */
+						/* Excise the monster */
 						m_fast[k] = m_fast[--m_top];
-					        /* Skip */
-					        continue;
+						/* Skip */
+						continue;
 					}
 					/* Players of too high level cannot participate in killing attemps (anti-cheeze) */
 					/* search for Great Pumpkins */

@@ -7075,10 +7075,10 @@ Halloween
     "wails and seems to fade".
 
     The Pumpkin is aiming at intermediate-level characters. It can spawn on any
-    dungeon floor shallower than dungeon level 40 (or 50 on Ironman server*),
+    dungeon floor shallower than dungeon level 35 (or 40 on Ironman server*),
     except it won't show up on the first 19 floors in the Ironman Deep Dive
     Challenge.
-    Players who are too high level (above 35 on main, above 40 on Ironman*)
+    Players who are too high level (above 30 on main, above 35 on Ironman*)
     will not be able to hunt him, for the others he will still be tough and
     might require teamwork.
 
