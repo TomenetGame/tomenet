@@ -4499,6 +4499,10 @@ void calc_boni(int Ind) {
 			}
 		}
 		p_ptr->old_rogue_heavyarmor = p_ptr->rogue_heavyarmor;
+
+		/* for 'greying out' the secondary weapon hack: */
+		p_ptr->inventory[INVEN_ARM].changed = !p_ptr->inventory[INVEN_ARM].changed;
+		p_ptr->window |= PW_EQUIP;
 	}
 
 	if (p_ptr->stormbringer && !suppress_boni) {

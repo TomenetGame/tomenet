@@ -1132,11 +1132,8 @@ static void display_inven(void) {
 static void display_equip(void) {
 	int	i, n;
 	long int	wgt;
-
 	object_type *o_ptr;
-
 	char	o_name[ONAME_LEN];
-
 	char	tmp_val[80];
 
 	/* Find the "final" slot */
@@ -1168,7 +1165,7 @@ static void display_equip(void) {
 		Term_putstr(3, i - INVEN_WIELD, n, o_ptr->attr, o_name);
 
 		/* Erase the rest of the line */
-		Term_erase(3+n, i - INVEN_WIELD, 255);
+		Term_erase(3 + n, i - INVEN_WIELD, 255);
 
 		/* Display the weight if needed */
 		if (c_cfg.show_weights && o_ptr->weight) {
@@ -1177,7 +1174,12 @@ static void display_equip(void) {
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
 			else
 				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
-			Term_putstr(71, i - INVEN_WIELD, -1, TERM_WHITE, tmp_val);
+
+			/* for 'greyed out' flexibility hack */
+			if (o_ptr->attr == TERM_L_DARK)
+				Term_putstr(71, i - INVEN_WIELD, -1, TERM_L_DARK, tmp_val);
+			else
+				Term_putstr(71, i - INVEN_WIELD, -1, TERM_WHITE, tmp_val);
 		}
 	}
 
@@ -1407,7 +1409,13 @@ void show_equip(void) {
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
 			else
 				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
-			put_str(tmp_val, j + 1, 71);
+
+			/* for 'greyed out' flexibility hack */
+			if (o_ptr->attr == TERM_L_DARK)
+				c_put_str(TERM_L_DARK, tmp_val, j + 1, 71);
+			else
+				put_str(tmp_val, j + 1, 71);
+
 			totalwgt += wgt;
 			if (is_armour(o_ptr->tval)) armourwgt += wgt;
 		}

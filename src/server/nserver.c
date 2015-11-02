@@ -5391,6 +5391,13 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		//name = "(occupied)";
 		name = "-";
 	}
+	/* hack: display secondary weapon 'greyed out' if flexibility is encumbered */
+	else if (slot == INVEN_ARM &&
+	    Players[Ind]->inventory[INVEN_WIELD].k_idx &&
+	    Players[Ind]->inventory[INVEN_ARM].k_idx && k_info[Players[Ind]->inventory[INVEN_ARM].k_idx].tval != TV_SHIELD &&
+	    Players[Ind]->rogue_heavyarmor) {
+		attr = TERM_L_DARK;
+	}
 
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
