@@ -2336,7 +2336,7 @@ player_race race_info[MAX_RACE] =
 
                         {
                                 SKILL_NECROMANCY,
-                                '+', 5000,
+                                '+', 0,
                                 '%', 115,
                         },
                         {
