@@ -2037,11 +2037,9 @@ errr Term_putstr(int x, int y, int n, byte a, char *s)
 	int b;
 	int count = 0;
 
-#if 0 //server side
-	/* remember old colour, for new {- feature - C. Blue */
-	byte prev_a = a, first_a = a;
-	bool first_colour_code_set = TRUE;
-#endif
+	/* remember old colour, client-side version of "{-" feature - C. Blue */
+	byte prev_a = a;//, first_a = a;
+	//bool first_colour_code_set = TRUE;
 
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
@@ -2068,7 +2066,7 @@ errr Term_putstr(int x, int y, int n, byte a, char *s)
 			Term_addch(a, '{');
 			ptr++;
 		} else {
-#if 0 //server side
+#if 1 /* enable {- for local client-side messages that don't pass through the server's {- feature filter already */
 			if (*ptr == '-') {
 				/* restore previous colour */
 				a = prev_a;
@@ -2076,10 +2074,8 @@ errr Term_putstr(int x, int y, int n, byte a, char *s)
 			} else
 #endif
 			if ((b = color_char_to_attr(*ptr)) != -1) {
-#if 0 //server side
 				/* remember old colour */
 				prev_a = a;
-#endif
 
 				/* Change the attr */
 				a = b;
