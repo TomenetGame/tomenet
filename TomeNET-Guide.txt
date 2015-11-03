@@ -11074,6 +11074,16 @@ Note that not every skill is available to every profession (class).
                                 just from weapon weight alone, the weapon would
                                 need to be much heavier than 10.0 lb.
 
+                                Note that 'critical hit' stacks. 'Critical hit'
+                                bonus from items will be actually be somewhat
+                                subject to diminishing returns (while the skill
+                                won't!) but if we neglect this we can roughly
+                                say that +2.500 skill results in +1 crit hit.
+                                So for example if you have a ring of critical
+                                hits (+7) and gloves that give (+4) and also
+                                trained this skill to 10.000 (+4) you'll have a
+                                total of roughly +15 critical hit bonus.
+
         .Axe-mastery            See Sword-mastery
 
         .Blunt-mastery          See Sword-mastery
