@@ -6768,7 +6768,8 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 	if (p_ptr->s_info[SKILL_SWORD].value >= treshold
 	    /* hack: critical-hits skill only affects swords! */
 	    || p_ptr->s_info[SKILL_CRITS].value >= treshold)
-		choice1 = p_ptr->s_info[SKILL_SWORD].value;
+		choice1 = p_ptr->s_info[SKILL_SWORD].value > p_ptr->s_info[SKILL_CRITS].value ?
+		    p_ptr->s_info[SKILL_SWORD].value : p_ptr->s_info[SKILL_CRITS].value;
 	if (p_ptr->s_info[SKILL_BLUNT].value >= treshold) choice2 = p_ptr->s_info[SKILL_BLUNT].value;
 	if (p_ptr->s_info[SKILL_AXE].value >= treshold) choice3 = p_ptr->s_info[SKILL_AXE].value;
 	if (p_ptr->s_info[SKILL_POLEARM].value >= treshold) choice4 = p_ptr->s_info[SKILL_POLEARM].value;
@@ -6800,9 +6801,9 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 	if (!item_tester_hook_wear(p_ptr->Ind, INVEN_ARM)) return selection;
 //Nope, they can!	if (p_ptr->pclass == CLASS_SHAMAN) return(selection); /* shamans cannot cast magic well with shield. */
 	switch (selection) {
-	case 1: if magik(50) selection = 6; break;
-	case 2: if magik(35) selection = 6; break;
-	case 3: if magik(15) selection = 6; break;
+	case 1: if magik(35) selection = 6; break;
+	case 2: if magik(30) selection = 6; break;
+	case 3: if magik(20) selection = 6; break;
 	case 4: if magik(10) selection = 6; break;
 	}
 	return (selection);
