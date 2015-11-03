@@ -20411,7 +20411,10 @@ F:RES_MANA | RES_NEXU | RES_DARK | RES_DISE | RES_NETH | RES_TIME | POWERFUL
 F:NO_FEAR | NO_CONF | NO_SLEEP | NO_CUT | NO_STUN | UNIQUE | BLUEBAND
 S:1_IN_4
 S:BO_MANA | BA_ELEC | BLINK
-D:A huge, crackling ball of energy, zapping around at blinding speed.
+D:On the top-most shreds of the highest clouds in the bright seas of sky there
+D:is an untamed, huge, crackling ball of energy, zapping around at blinding
+D:speed, showing no signs of depletion but continuously firing powerful magical
+D:and electrical discharges into all directions.
 
 
 
