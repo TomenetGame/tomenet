@@ -8580,7 +8580,8 @@ The type, level, quality and use-level of an item may depend on these factors:
  many of them, and whether the items have a higher chance to be enchanted or to
  possess ego powers or turn out to be an artifact than usual (those are the
  DROP_GOOD flag for enchantments and especially important the DROP_GREAT flag
- for it becoming and ego item or artifact).
+ for it becoming and ego item or artifact - also see (5.12a) for some tips on
+ hunting lower level monsters that have the DROP_GREAT flag).
  Note that unique monsters have a higher chance of dropping enchanted items
  (similar to the effect of the player having more 'Luck').
 
@@ -10139,6 +10140,18 @@ DISBELIEVE      Monster has an antimagic field, the strength depending on its
 
 DROP_GOOD       The monster usually drops enchanted items.
 DROP_GREAT      The monster usually drops items with ego powers or artifacts.
+                Hint: Usually monsters that have this flag are pretty powerful,
+                but there are actually some low-to-mid-level monsters that have
+                it too, so make sure to kill these when you see them:
+                Smeagol (level 3), Wormtongue (level 9), Robin Hood (level 10),
+                Boldor (level 15), Azog (level 23), It (level 24, but actually
+                impossible to seek out, you'll rather just meet It by chance),
+                Sandworm Queen (level 30), The Wight-King of the Barrow-Downs
+                (level 35). Azog, the Sandworm Queen and the Wight-King are
+                dungeon bosses, so you will only find them on the final floor
+                of their respective dungeon.
+                (For details on monster stats and flags, press ~ 7 in the game
+                to invoke the monster lore browser.)
 
 
 
