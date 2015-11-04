@@ -243,8 +243,12 @@ void world_comm(int fd, int arg) {
 #if 1
 				/* Allow certain status commands from IRC to TomeNET server */
 				if ((p = strchr(wpk->d.chat.ctxt, ']')) && *(p += 2) == '?') {
+					if (!strncmp(p, "?help", 5)) {
+						msg_to_irc("Bot commands are: ?players, ?who, ?seen.");
+						break;
+					}
 					/* list number + character names of players online */
-					if (!strncmp(p, "?players", 8)) {
+					else if (!strncmp(p, "?players", 8)) {
 						char buf[MSG_LEN];
 						strcpy(buf, " 0 Players: ");
 						x = 0;
