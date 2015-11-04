@@ -1742,7 +1742,10 @@ static void artifact_lore(void) {
 			else Term_putstr(5, 5 + selected_line, -1, TERM_L_UMBER, artifact_list_name[list_idx[selected_line]]);
 		}
 
-		Term_putstr(2,  23, -1, TERM_WHITE, "Press ESC to exit, ENTER for lore/stats, Up/Down/PgUp/PgDn/Home to navigate");
+		if (!s[0])
+			Term_putstr(2,  23, -1, TERM_WHITE, "Press ESC to exit, ENTER for lore/stats, Up/Down/PgUp/PgDn/Home to navigate");
+		else
+			Term_putstr(2,  23, -1, TERM_WHITE, "Press ESC to clear, ENTER for lore/stats, Up/Down/PgUp/PgDn/Home to navigate");
 		/* hack: place cursor at pseudo input prompt */
 		Term->scr->cx = 54 + strlen(s);
 		Term->scr->cy = 2;
@@ -1817,7 +1820,10 @@ static void artifact_lore(void) {
 			break;
 		}
 		/* escape */
-		if (c == ESCAPE) break;
+		if (c == ESCAPE) {
+			if (!s[0]) break;
+			else s[0] = '\0';
+		}
 		/* illegal char */
 		if (c < 32 || c > 127) continue;
 		/* name too long? */
@@ -2156,7 +2162,10 @@ static void monster_lore(void) {
 #endif
 		}
 
-		Term_putstr(2,  23, -1, TERM_WHITE, "Press ESC to exit, ENTER for lore/stats, Up/Down/PgUp/PgDn/Home to navigate");
+		if (!s[0])
+			Term_putstr(2,  23, -1, TERM_WHITE, "Press ESC to exit, ENTER for lore/stats, Up/Down/PgUp/PgDn/Home to navigate");
+		else
+			Term_putstr(2,  23, -1, TERM_WHITE, "Press ESC to clear, ENTER for lore/stats, Up/Down/PgUp/PgDn/Home to navigate");
 		/* hack: place cursor at pseudo input prompt */
 		Term->scr->cx = 53 + strlen(s);
 		Term->scr->cy = 2;
@@ -2231,7 +2240,10 @@ static void monster_lore(void) {
 			break;
 		}
 		/* escape */
-		if (c == ESCAPE) break;
+		if (c == ESCAPE) {
+			if (!s[0]) break;
+			else s[0] = '\0';
+		}
 		/* illegal char */
 		if (c < 32 || c > 127) continue;
 		/* name too long? */
