@@ -5469,8 +5469,8 @@ void home_purchase(int Ind, int item, int amt)
 		    && amt == o_ptr->number) {
 			//char o_name[ONAME_LEN];//, p_name[NAME_LEN];
 			//object_desc(0, o_name, o_ptr, TRUE, 3);
-			//s_printf("PLAYER_STORE_REMOVED: %s - %s (%d,%d,%d; %d,%d).\n",
-			s_printf("PLAYER_STORE_REMOVED: %s (%d,%d,%d; %d,%d).\n",
+			//s_printf("PLAYER_STORE_REMOVED (hpurch): %s - %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_REMOVED (hpurch): %s (%d,%d,%d; %d,%d).\n",
 			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
 			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
 			    o_ptr->ix, o_ptr->iy);
@@ -6660,8 +6660,8 @@ s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buye
 			/* Log removal of player store items */
 			//char o_name[ONAME_LEN];//, p_name[NAME_LEN];
 			//object_desc(0, o_name, o_ptr, TRUE, 3);
-			//s_printf("PLAYER_STORE_REMOVED: %s - %s (%d,%d,%d; %d,%d).\n",
-			s_printf("PLAYER_STORE_REMOVED: %s (%d,%d,%d; %d,%d).\n",
+			//s_printf("PLAYER_STORE_REMOVED (handle): %s - %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_REMOVED (handle): %s (%d,%d,%d; %d,%d).\n",
 			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
 			    o_name, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->wpos.wz,
 			    o_ptr->ix, o_ptr->iy);
