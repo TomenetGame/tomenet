@@ -2450,10 +2450,10 @@
 
 /*** Ego-Item indices (see "lib/edit/e_info.txt") ***/
 
-#define EGO_MANA		1
-#define EGO_MSTAFF_POWER	2
-#define EGO_MANA_POWER		3
-#define EGO_MSTAFF_SPELL	4
+#define EGO_MMANA		1
+#define EGO_MPOWER		2
+#define EGO_MWIZARDRY		3
+#define EGO_MSPELL		4
 #define EGO_RESIST_ACID		5
 #define EGO_RESIST_ELEC         6
 #define EGO_RESIST_FIRE         7

@@ -7633,6 +7633,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		if ((o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) && o_ptr->pval == 1) continue;
 		/* - prevent shields of reflection */
 		if ((o_ptr->name2 == EGO_REFLECT || o_ptr->name2b == EGO_REFLECT)) continue;
+		/* - it's a bit sad to get super-low mage staves (of Mana, +1..4) */
+		if ((o_ptr->name2 == EGO_MMANA || o_ptr->name2b == EGO_MMANA)) continue;
 
 		/* specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
 		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
