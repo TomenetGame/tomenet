@@ -1339,41 +1339,45 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				if (!((*f2) & TR2_SUST_DEX)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_DEX; flag_count++; }
 				if (!((*f2) & TR2_SUST_CON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CON; flag_count++; }
 				if (!((*f2) & TR2_SUST_CHR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CHR; flag_count++; }
-				if (!((*f1) & TR1_SPEED) && pval && (((!((*f5) & TR5_CRIT) || !((*f1) & TR1_MANA)) || pval < 8) ||
-				    (!(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA)) || pval < 6)))
-					//Obey speed laws! ie. max 7 or 5 if you have crit/mana already in addition to speed! Hardcoded - Kurzel
+				if (!((*f1) & TR1_SPEED) && pval
+				&& !(is_weapon(o_ptr->tval) && !(((*f4) & TR4_SHOULD2H) || ((*f4) & TR4_MUST2H)) && (pval > 3))
+				&& !((((*f4) & TR4_SHOULD2H) || ((*f4) & TR4_MUST2H)) && (pval > 5))
+				&& !((((*f5) & TR5_CRIT) || ((*f1) & TR1_MANA)) && (pval > 7))
+				&& !(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA) && (pval > 5)))
 					{ flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
 					case TV_POLEARM:
 					case TV_SWORD:
 					case TV_AXE:
-						if (!((*f1) & TR1_BLOWS) && pval < 4) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BLOWS; flag_count++; }
+						if (!((*f1) & TR1_BLOWS) && (pval < 4)
+						&& !(((*f1) & TR1_LIFE) && (pval > 1)))
+							{ flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BLOWS; flag_count++; }
 					break;
 					case TV_GLOVES:
-						if (!((*f1) & TR1_BLOWS) && pval < 3) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BLOWS; flag_count++; }
+						if (!((*f1) & TR1_BLOWS) && (pval < 3)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BLOWS; flag_count++; }
 					break;
 					case TV_BOOMERANG:
 						if (!((*f3) & TR3_XTRA_SHOTS)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_XTRA_SHOTS; flag_count++; }
 					break;
 					case TV_BOOTS:
-						if (!((*f1) & TR1_SPEED) && pval && (((!((*f5) & TR5_CRIT) || !((*f1) & TR1_MANA)) || pval < 8) ||
-						    (!(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA)) || pval < 6)))
-							//Obey speed laws! ie. max 7 or 5 if you have crit/mana already in addition to speed! - Kurzel
+						if (!((*f1) & TR1_SPEED) && pval
+						&& !((((*f5) & TR5_CRIT) || ((*f1) & TR1_MANA)) && (pval > 7))
+						&& !(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA) && (pval > 5)))
 							{ flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; }
 					break;
 					default:
 					break;
 				}
 			} else if (sigil == SV_R_SOUN) {
-				if (!((*f1) & TR1_STEALTH) && pval < 6) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
+				if (!((*f1) & TR1_STEALTH) && (pval < 6)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BOOTS:
 					case TV_CLOAK:
 					case TV_SOFT_ARMOR:
 					case TV_HARD_ARMOR:
 					case TV_DRAG_ARMOR:
-						if (!((*f1) & TR1_STEALTH) && pval < 6) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
+						if (!((*f1) & TR1_STEALTH) && (pval < 6)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
 					break;
 					case TV_HELM:
 					case TV_CROWN:
@@ -1386,20 +1390,16 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
 						if (!((*f5) & TR5_IMPACT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IMPACT; flag_count++; }
-						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8))
-							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
-					break;
 					case TV_POLEARM:
 					case TV_SWORD:
 					case TV_AXE:
 					case TV_BOOMERANG:
 						if (!((*f5) & TR5_VORPAL))
 							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_VORPAL; flag_count++; }
-						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8))
-							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
-					break;
 					case TV_GLOVES:
-						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8))
+						if (!((*f5) & TR5_CRIT) && pval
+						&& !((((*f1) & TR1_SPEED) || ((*f1) & TR1_MANA)) && (pval > 7))
+						&& !(((*f1) & TR1_SPEED) && ((*f1) & TR1_MANA) && (pval > 5)))
 							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
 					break;
 					default:
@@ -1458,7 +1458,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			if (flag_count) {
 				byte flag_pick = randint(flag_count) - 1; //0 to flag_count-1
 				byte category = flag_category[flag_pick];
-				if (category == 1) { 
+				if (category == 1) {
 					switch (flag_pool[flag_pick]) { //Hack -- Stats may also sustain! (50% chance)
 						case TR1_STR: { if (!((*f2) & TR2_SUST_STR) && randint(2) == 1) (*f2) |= TR2_SUST_STR; break; }
 						case TR1_DEX: { if (!((*f2) & TR2_SUST_DEX) && randint(2) == 1) (*f2) |= TR2_SUST_DEX; break; }
@@ -1488,7 +1488,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					}
 				} else if (category == 3) (*f3) |= flag_pool[flag_pick];
 				else if (category == 4) (*f4) |= flag_pool[flag_pick];
-				else if (category == 5) { 
+				else if (category == 5) {
 					switch (flag_pool[flag_pick]) {
 						case TR5_IM_POISON: { if ((*f2) & TR2_RES_POIS) (*f2) &= ~(TR2_RES_POIS); (*f5) |= flag_pool[flag_pick]; break; }
 						case TR5_IM_WATER: { if ((*f5) & TR5_RES_WATER) (*f5) &= ~(TR5_RES_WATER); (*f5) |= flag_pool[flag_pick]; break; }
@@ -1507,7 +1507,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			/* Add the resist, handle conflicts */
 			switch (o_ptr->sigil-1) {
 				/* (*f2) with no conflicts */
-				case SV_R_LITE: 
+				case SV_R_LITE:
 				case SV_R_DARK:
 				case SV_R_NEXU:
 				case SV_R_NETH:

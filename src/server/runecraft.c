@@ -7,11 +7,11 @@
  * Currently as a combination of 1-2 elements, an imperative and a type.
  * More elements, imperatives, and types could be supported in theory.
  * Eventually to be luaized for smoother maintainance once final.
- * 
+ *
  * By Relsiet/Andy Dubbeld (andy@foisdin.com)
  * Maintained by Kurzel (kurzel.tomenet@gmail.com)
  */
- 
+
  /* Runecraft Credits: Mark, Adam, Relsiet, C.Blue, Kurzel */
 
 /* added this for consistency in some (unrelated) header-inclusion,
@@ -22,26 +22,30 @@
 /** Options **/
 
 /* Class Options */
-//#define ENABLE_SKILLFUL_CASTING //Increases or decreases damage for individual spells slightly, based on fail rate margin. (Disabled currently, would mismatch INFO mkey/wizard displays.)
-//#define ENABLE_SUSCEPT //Extra backlash if the caster is susceptable to the projection element. (Disabled for now, until it can be completely implemented across classes; ie. Globe of Light hurts Dark-Elf casters.)
-//#define ENABLE_PROTECTION //Prevent backlash by consuming a rune in inventory, if missing a !R preservation inscription. (Just get 0% fail instead, too complex!)
-//#define ENABLE_LIFE_CASTING //Allows casting with HP if not enough MP. (Disabled due to simplified, damage only, backlash penalties. We don't want OP necro/blood (infinite mana) runies!)
-#ifdef ENABLE_LIFE_CASTING
- #define SAFE_RETALIATION //Disable retaliation/FTK when casting with HP.
+//#define SKILLFUL_CASTING /* Increases or decreases damage for individual spells slightly, based on fail rate margin. (Disabled currently, would mismatch INFO mkey/wizard displays.) */
+//#define AVERAGE_SKILL /* Take the average skill level, rather than the lowest. (Disabled to prevent one skill granting half-access to all others.) */
+//#define BACKLASH_SUSCEPT /* Extra backlash if the caster is susceptable to the projection element. (Disabled for now, until it can be completely implemented across classes; ie. Globe of Light hurts Dark-Elf casters.) */
+//#define BACKLASH_PROTECTION /* Prevent backlash by consuming a rune in inventory, if missing a !R preservation inscription. (Just get 0% fail instead, too complex!) */
+//#define LIFE_CASTING /* Allows casting with HP if not enough MP. (Disabled due to simplified, damage only, backlash penalties. We don't want OP necro/blood (infinite mana) runies!) */
+#ifdef LIFE_CASTING
+ #define SAFE_RETALIATION /* Disable retaliation/FTK when casting with HP. */
 #endif
 
 /* Spell Options */
-//#define ENABLE_AVERAGE_SKILL //Take the average skill level, rather than the lowest. (Disabled to prevent one skill granting half-access to all others.)
-#define ENABLE_BLIND_CASTING //Blinding increases fail chance instead of preventing the cast. (No 'reading' aka 'no_lite(Ind)' check as with books.)
-//#define ENABLE_CONFUSED_CASTING //Confusion increases fail chance instead of preventing the cast. (Runecraft tends toward magic rather than something like archery, so this remains disabled.)
-#define ENABLE_SHELL_ENCHANT //Allow the T_ENCH (enchanting) spell type to be cast under an antimagic shell. (Allows equipment to be targetted, all other 'projection' types still fail.)
+#define BLIND_CASTING /* Blinding increases fail chance instead of preventing the cast. (No 'reading' aka 'no_lite(Ind)' check as with books.) */
+//#define CONFUSED_CASTING /* Confusion increases fail chance instead of preventing the cast. (Runecraft tends toward magic rather than something like archery, so this remains disabled.) */
+#define SHELL_ENCHANT /* Allow the T_ENCH (enchanting) spell type to be cast under an antimagic shell. (Allows equipment to be targetted, all other 'projection' types still fail.) */
+#define RUNE_REQUIREMENT /* Require the appropriate rune to cast, as regular spells require a book / spell scroll. (Erm, this would be a drastic change for caster runies, IDDC especially, so add failure instead...) */
+#ifdef RUNE_REQUIREMENT
+ #define RISK_CHANCE 50 /* +X% extra failure (chance to backlash) when casting without a rune. (100% seems too harsh at low level, but 50% seems significantly dangerous to encourage runes ASAP.) */
+#endif
 
 /* Spell Constants */
-#define RCRAFT_PJ_RADIUS 2 //What radius do friendly projecting spells project outward to? (Default: 2; This matches auto-magically projecting spells of other classes.)
+#define RCRAFT_PJ_RADIUS 2 /* What radius do friendly projecting spells project outward to? (Default: 2; This matches auto-magically projecting spells of other classes.) */
 
 /* Interface */
-//#define FEEDBACK_MESSAGE //Gives the caster a feedback message if penalized. (Disabled under the pretext that we want to reduce messages. The guide is now more explicit about failure of runespells.)
-//#define RCRAFT_DEBUG //Enables debugging messages for the server.
+//#define FEEDBACK_MESSAGE /* Gives the caster a feedback message if penalized. (Disabled under the pretext that we want to reduce messages. The guide is now more explicit about failure of runespells.) */
+//#define RCRAFT_DEBUG /* Enables debugging messages for the server. */
 
 /** Internal Headers **/
 
@@ -111,7 +115,7 @@ byte rspell_skill(int Ind, byte element[], byte elements) {
 	player_type *p_ptr = Players[Ind];
 	u16b skill = 0;
 	byte i;
-#ifdef ENABLE_AVERAGE_SKILL //calculate an average
+#ifdef AVERAGE_SKILL //calculate an average
 	for (i = 0; i < elements; i++) {
 		skill += get_skill(p_ptr, r_elements[element[i]].skill);
 	}
@@ -333,6 +337,7 @@ byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u1
 	return (byte)duration;
 }
 
+//Checks for rune from inventory, for Glyph (and Rune Requirement) 
 object_type * rspell_trap(int Ind, byte projection) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
@@ -362,7 +367,7 @@ bool rspell_socket(int Ind, byte projection, bool sigil) {
 		o_ptr = &p_ptr->inventory[i];
 		if ((o_ptr->tval == TV_RUNE) && (o_ptr->level || o_ptr->owner == p_ptr->id)) { //Do we own it..?
 			if (o_ptr->sval == projection && (sigil 
-#ifdef ENABLE_PROTECTION
+#ifdef BACKLASH_PROTECTION
 			|| !check_guard_inscription(o_ptr->note, 'R')
 #endif
 			)) { //Element match, not protected?
@@ -596,7 +601,7 @@ s_printf("Type: %s\n", r_types[type].name);
 
 	/* Blind */
 	if (p_ptr->blind) {
-#ifdef ENABLE_BLIND_CASTING
+#ifdef BLIND_CASTING
 		penalty += 10;
  #ifdef FEEDBACK_MESSAGE
 		msg_2 = " struggle to";
@@ -610,7 +615,7 @@ s_printf("Type: %s\n", r_types[type].name);
 	
 	/* Confused */
 	if (p_ptr->confused) {
-#ifdef	ENABLE_CONFUSED_CASTING
+#ifdef	CONFUSED_CASTING
 		penalty += 10;
  #ifdef FEEDBACK_MESSAGE
 		msg_2 = " struggle to";
@@ -624,7 +629,7 @@ s_printf("Type: %s\n", r_types[type].name);
 	
 	/* AM-Shell */
 	if (p_ptr->anti_magic) {
-#ifdef ENABLE_SHELL_ENCHANT
+#ifdef SHELL_ENCHANT
 		if (r_types[type].flag != T_ENCH) {
 			msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell. (%s %s %s)", COLOUR_AM_OWN, r_imperatives[imperative].name, r_projections[projection].name, r_types[type].name);
 			p_ptr->energy -= energy;
@@ -655,7 +660,7 @@ s_printf("Type: %s\n", r_types[type].name);
 	
 	/* Not enough MP */
 	if (p_ptr->csp < cost) {
-#ifdef ENABLE_LIFE_CASTING
+#ifdef LIFE_CASTING
  #ifdef SAFE_RETALIATION
 		if (retaliate) return 2;
  #endif
@@ -719,15 +724,15 @@ s_printf("Type: %s\n", r_types[type].name);
 	bool failure = 0;
 	s16b margin = randint(100) - fail;
 	if (margin < 1) {
-		msg_q = "\377rincompetently\377w";
-#ifdef ENABLE_SKILLFUL_CASTING
+		msg_q = "\377Rincompetently\377w";
+#ifdef SKILLFUL_CASTING
 		damage = damage * 8 / 10 + 1;
 #endif
 		failure = 1;
 	}
 	else if (margin < 10) { 
 		msg_q = "clumsily";
-#ifdef ENABLE_SKILLFUL_CASTING
+#ifdef SKILLFUL_CASTING
 		damage = damage * 9 / 10 + 1;
 #endif
 	}
@@ -736,13 +741,13 @@ s_printf("Type: %s\n", r_types[type].name);
 	}
 	else if (margin < 50) {
 		msg_q = "effectively";
-#ifdef ENABLE_SKILLFUL_CASTING
+#ifdef SKILLFUL_CASTING
 		damage = damage * 11 / 10 + 1;
 #endif
 	}
 	else {
 		msg_q = "elegantly";
-#ifdef ENABLE_SKILLFUL_CASTING
+#ifdef SKILLFUL_CASTING
 		damage = damage * 12 / 10 + 1;
 #endif
 	}
@@ -769,6 +774,12 @@ s_printf("Duration: %d\n", duration);
 	byte gf_type = r_projections[projection].gf_type;
 	
 	/* Generic spell message */
+#ifdef RUNE_REQUIREMENT
+	bool has_rune = rspell_trap(Ind, projection) ? 1 : 0;
+	if (!has_rune)
+		msg_format(Ind, "You \377Rrisk\377w drawing %s %s %s of %s.", ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
+	else
+#endif
 	msg_format(Ind, "You %s trace %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 	
 	switch (r_types[type].flag) {
@@ -999,8 +1010,12 @@ s_printf("Duration: %d\n", duration);
 	/** Backlash **/
 
 	/* Failure */
+#ifdef RUNE_REQUIREMENT
+	if (failure || (!has_rune && magik(RISK_CHANCE)))
+#else
 	if (failure)
-#ifdef ENABLE_PROTECTION
+#endif
+#ifdef BACKLASH_PROTECTION
 		if (!rspell_socket(Ind, projection, FALSE))
 #endif
 		{
@@ -1008,7 +1023,7 @@ s_printf("Duration: %d\n", duration);
 			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP | PROJECT_RNAF), "");
 		}
 
-#ifdef ENABLE_SUSCEPT
+#ifdef BACKLASH_SUSCEPT
 	/* Lite Susceptability Check -- Add other suscept checks? ie. Fire for Ents? Disabled for consistancy until this is done. */
 	if (!failure && (gf_type == GF_LITE)) {
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 4 + randint(10));
