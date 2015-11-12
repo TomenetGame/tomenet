@@ -6933,7 +6933,7 @@ void process_player_change_wpos(int Ind) {
 	    && istownarea(&p_ptr->wpos, MAX_TOWNAREA)
 #endif
 	    )
-		imprison(Ind, 0, "old crimes");
+		imprison(Ind, JAIL_OLD_CRIMES, "old crimes");
 
 	/* daylight problems for vampires */
 	if (!p_ptr->wpos.wz && p_ptr->prace == RACE_VAMPIRE) calc_boni(Ind);

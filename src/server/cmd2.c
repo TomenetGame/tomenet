@@ -5184,7 +5184,7 @@ void do_cmd_fire(int Ind, int dir) {
 								if (visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))) {
 									p_ptr->target_who = 0;
 									do_player_drop_items(Ind, 40, FALSE);
-									imprison(Ind, 100, "attempted murder");
+									imprison(Ind, JAIL_MURDER, "attempted murder");
 								}
 							}
 						}
@@ -5215,7 +5215,7 @@ void do_cmd_fire(int Ind, int dir) {
 								int chance = (q_ptr->dodge_level - p_ptr->lev - get_skill(p_ptr, archery)) / 3;
 
 								if ((chance > 0) && magik(chance)) {
-									//				msg_print(Ind, "You dodge a magical attack!");
+									//msg_print(Ind, "You dodge a magical attack!");
 									msg_format(0 - c_ptr->m_idx, "\377%cYou dodge the projectile!", COLOUR_DODGE_GOOD);
 									if (visible) msg_format(Ind, "\377%c%s dodges %s.", COLOUR_DODGE_NEAR, p_name, o_name);
 									dodged = TRUE;
@@ -5233,16 +5233,16 @@ void do_cmd_fire(int Ind, int dir) {
 #endif
 
 #ifdef USE_BLOCKING /* Parry/Block - belongs to new-NR-viability changes */
-				                        /* choose whether to attempt to block or to parry (can't do both at once),
-				                           50% chance each, except for if weapon is missing (anti-retaliate-inscription
-				                    	   has been left out, since if you want max block, you'll have to take off your weapon!) */
-				                	if (q_ptr->shield_deflect &&
+							/* choose whether to attempt to block or to parry (can't do both at once),
+							   50% chance each, except for if weapon is missing (anti-retaliate-inscription
+							   has been left out, since if you want max block, you'll have to take off your weapon!) */
+							if (q_ptr->shield_deflect &&
 							    (!q_ptr->inventory[INVEN_WIELD].k_idx || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
 								if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 15))) { /* boost for PvP! */
 									if (visible) msg_format(Ind, "\377%c%s blocks %s!", COLOUR_BLOCK_PLY, p_name, o_name);
 									msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
 #ifdef USE_SOUND_2010
-					                                if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
+									if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
 #endif
 									continue;
 								}
@@ -5256,7 +5256,7 @@ void do_cmd_fire(int Ind, int dir) {
 									msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
 									if (visible) msg_format(Ind, "\377%c%s parries %s!", COLOUR_PARRY_PLY, p_name, o_name);
 #ifdef USE_SOUND_2010
-					                                if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
+									if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
 #endif
 									continue;
 								}
@@ -5275,7 +5275,7 @@ void do_cmd_fire(int Ind, int dir) {
 									tdam += j_ptr->to_d + p_ptr->to_d_ranged;
 								} else {
 									 /* Base damage from thrown object */
-								        tdam = damroll(o_ptr->dd, o_ptr->ds);
+									tdam = damroll(o_ptr->dd, o_ptr->ds);
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, FALSE);
 									tdam += o_ptr->to_d;
 									tdam += p_ptr->to_d_ranged;
@@ -5305,8 +5305,8 @@ void do_cmd_fire(int Ind, int dir) {
 								/* No negative damage */
 								if (tdam < 0) tdam = 0;
 
-						                /* can't attack while in WRAITHFORM (explosion still works) */
-							        if (p_ptr->tim_wraith && !q_ptr->tim_wraith) tdam = 0;
+								/* can't attack while in WRAITHFORM (explosion still works) */
+								if (p_ptr->tim_wraith && !q_ptr->tim_wraith) tdam = 0;
 
 								/* Handle unseen player */
 								if (!visible) {
@@ -5344,11 +5344,10 @@ void do_cmd_fire(int Ind, int dir) {
 								}
 //less spam for now - C. Blue					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CHAO)) && !q_ptr->resist_conf && !boomerang)
-								{
+								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CHAO)) && !q_ptr->resist_conf && !boomerang) {
 									(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + 5);
 								}
-								
+
 								if (p_ptr->ranged_barrage) {
 									set_stun(0 - c_ptr->m_idx, q_ptr->stun + 35 + get_skill_scale(p_ptr, SKILL_COMBAT, 5));
 								}
@@ -5439,21 +5438,21 @@ void do_cmd_fire(int Ind, int dir) {
 					}
 
 #ifdef USE_BLOCKING
-				        /* handle blocking (deflection) */
-				        if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
-				            !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) && !m_ptr->csleep && m_ptr->stunned <= 100 && !m_ptr->confused
-				            && !rand_int(24 - r_ptr->level / 10)) { /* small chance to block arrows */
-				                if (visible) {
-				                        char hit_desc[MAX_CHARS];
-				                        sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
-				                        hit_desc[0] = toupper(hit_desc[0]);
-				                        msg_print(Ind, hit_desc);
-				                }
+					/* handle blocking (deflection) */
+					if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+					    !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) && !m_ptr->csleep && m_ptr->stunned <= 100 && !m_ptr->confused
+					    && !rand_int(24 - r_ptr->level / 10)) { /* small chance to block arrows */
+						if (visible) {
+							char hit_desc[MAX_CHARS];
+							sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+							hit_desc[0] = toupper(hit_desc[0]);
+							msg_print(Ind, hit_desc);
+						}
 						hit_body = 1;
 						if (!boomerang && !magic && o_ptr->pval)
 							do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
-				                break;
-				        }
+						break;
+					}
 #endif
 
 					/* Handle unseen monster */
@@ -5508,7 +5507,7 @@ void do_cmd_fire(int Ind, int dir) {
 					}
 					if (p_ptr->ranged_barrage) tdam *= 2; // maybe 3 even
 
-			                /* can't attack while in WRAITHFORM (explosion still works) */
+					/* can't attack while in WRAITHFORM (explosion still works) */
 					/* wraithed players can attack wraithed monsters - mikaelh */
 					if (p_ptr->tim_wraith && 
 					    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL))) tdam = 0;

@@ -2436,7 +2436,7 @@ void do_cmd_steal(int Ind, int dir) {
 		msg_print(Ind, "\377oYou have been seized by the guards!");
 		msg_format_near(Ind, "%s is seized by the guards and thrown into jail!", p_ptr->name);
 		jails_enabled = TRUE; //hack, in case it's disabled for swearing
-		imprison(Ind, 500, "stealing");
+		imprison(Ind, JAIL_STEALING, "stealing");
 		jails_enabled = je;
 	}
 #endif

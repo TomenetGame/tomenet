@@ -4119,7 +4119,7 @@ static void player_talk_aux(int Ind, char *message) {
 	process_hooks(HOOK_CHAT, "d", Ind);
 
 	if (++p_ptr->talk > 10) {
-		imprison(Ind, 30, "talking too much.");
+		imprison(Ind, JAIL_SPAM, "talking too much.");
 		return;
 	}
 
@@ -4694,7 +4694,7 @@ void handle_punish(int Ind, int level) {
 		msg_print(Ind, "Please do not swear.");
 		break;
 	default:
-		imprison(Ind, level * 20, "swearing");
+		imprison(Ind, level * JAIL_SWEARING, "swearing");
 	}
 }
 

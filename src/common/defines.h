@@ -757,12 +757,18 @@
 /* Max amount of legal words that override swear words */
 #define MAX_NONSWEAR 200
 
+
 /* only imprison within town area? Otherwise it can be exploited for world travel. */
 #define JAIL_TOWN_AREA
-
 /* does the Jailer remove WoR scrolls and discharge WoR rods? */
 //#define JAILER_KILLS_WOR
-
+/* crime sentences */
+#define JAIL_MURDER 100
+#define JAIL_MURDER_KPK 500
+#define JAIL_STEALING 500
+#define JAIL_SWEARING 20
+#define JAIL_SPAM 30
+#define JAIL_OLD_CRIMES 0
 
 /* Maximum armour class value that yields in a reduction of damage.
    Note: The chance to get hit still goes down further above this value.

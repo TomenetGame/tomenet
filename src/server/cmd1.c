@@ -3021,7 +3021,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 			char string[30];
 			snprintf(string, 30, "attacking %s", q_ptr->name);
 			s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
-			if (!imprison(Ind, 500, string)) {
+			if (!imprison(Ind, JAIL_MURDER_KPK, string)) {
 				/* This wrath can be too much */
 				//take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods", 0);
 				/* It's prison here :) */
