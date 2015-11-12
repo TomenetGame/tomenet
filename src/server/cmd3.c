@@ -2184,16 +2184,16 @@ void do_cmd_steal(int Ind, int dir) {
 		return;
 	}
 
-        /* Small delay to prevent crazy steal-spam */
-        if (p_ptr->pstealing) {
-                msg_print(Ind, "You're still not calm enough to steal again..");
-                return;
-        }
+	/* Small delay to prevent crazy steal-spam */
+	if (p_ptr->pstealing) {
+		msg_print(Ind, "You're still not calm enough to steal again..");
+		return;
+	}
 
 #ifdef TOWN_NO_STEALING
-	/* no stealing in town since town-pvp is diabled */
-	if (istown(&p_ptr->wpos)) {
-		msg_print(Ind, "\377oYou may not steal in town.");
+	/* no stealing in town since town-pvp is diabled - except if in same party (for fun :-p) */
+	if (istown(&p_ptr->wpos) && !player_in_party(q_ptr->party, Ind)) {
+		msg_print(Ind, "\377oYou may not steal from strangers in town.");
 		return;
 	}
 #endif
@@ -2209,9 +2209,9 @@ void do_cmd_steal(int Ind, int dir) {
 		msg_print(Ind, "You may not steal from players who are AFK.");
 		return;
 	}
-	
-	if (is_admin(q_ptr)) {
-		msg_print(Ind, "Really? You should not steal from admins.");
+
+	if (is_admin(q_ptr) && !is_admin(p_ptr)) {
+		msg_print(Ind, "Really? Darwin award protection prevents stealing from admins.");
 		return;
 	}
 
@@ -2312,8 +2312,7 @@ void do_cmd_steal(int Ind, int dir) {
 			/* Check for target noticing */
 			if (rand_int(100) < notice) {
 				/* Message */
-				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %d gold!",
-						p_ptr->name, amt);
+				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %d gold!", p_ptr->name, amt);
 				caught = TRUE;
 			}
 		} else {
@@ -2406,8 +2405,7 @@ void do_cmd_steal(int Ind, int dir) {
 			/* Check for target noticing */
 			if (rand_int(100) < notice) {
 				/* Message */
-				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %s!",
-				           p_ptr->name, o_name);
+				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %s!", p_ptr->name, o_name);
 				caught = TRUE;
 			}
 		}
@@ -2420,15 +2418,29 @@ void do_cmd_steal(int Ind, int dir) {
 
 		/* Easier to notice a failed attempt */
 		if (rand_int(100) < notice + 50) {
-			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s try to steal from you!", p_ptr->name);
+			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s trying to steal from you!", p_ptr->name);
 			caught = TRUE;
 		}
 	}
 
 	if (caught) break_cloaking(Ind, 0);
 
-#if 0 /* now turned off */
-	/* Counter blow! */
+#if 1 /* Send him to jail! Only if not in party maybe? :) */
+	if (caught
+ #if 0
+	    && !player_in_party(q_ptr->party, Ind)
+ #endif
+	    ) {
+		bool je = jails_enabled;
+
+		msg_print(Ind, "\377oYou have been seized by the guards!");
+		msg_format_near(Ind, "%s is seized by the guards and thrown into jail!", p_ptr->name);
+		jails_enabled = TRUE; //hack, in case it's disabled for swearing
+		imprison(Ind, 500, "stealing");
+		jails_enabled = je;
+	}
+#endif
+#if 0 /* Counter blow! (now turned off) */
 	if (caught) {
 		int i, j;
 		object_type *o_ptr;
@@ -2441,8 +2453,8 @@ void do_cmd_steal(int Ind, int dir) {
 			p_ptr->party = 0;
 
 			/* Messages */
-			msg_print(Ind, "You have been purged from your party.");
-			party_msg_format(q_ptr->party, "%s has betrayed your party!", p_ptr->name);
+			msg_print(Ind, "\377oYou have been purged from your party.");
+			party_msg_format(q_ptr->party, "\377R%s has betrayed your party!", p_ptr->name);
 
 			p_ptr->party = party;
 			party_leave(Ind, FALSE);
@@ -2486,10 +2498,10 @@ void do_cmd_steal(int Ind, int dir) {
 		set_fury(0 - c_ptr->m_idx, q_ptr->fury + 15 + randint(15));
 
 	}
-#else
+#endif
+
 	/* set timeout before attempting to pvp-steal again */
 	p_ptr->pstealing = 15; /* 15 turns aka ~10 seconds */
-#endif
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);

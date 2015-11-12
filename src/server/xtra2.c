@@ -11794,16 +11794,16 @@ bool imprison(int Ind, u16b time, char *reason) {
 
 	if (!jails_enabled) {
 		p_ptr->tim_susp = 0;
-		s_printf("IMPRISON: %s DISABLED.\n", p_ptr->name);
+		s_printf("IMPRISON: '%s' DISABLED.\n", p_ptr->name);
 		return FALSE;
 	}
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return (FALSE);
 
-	s_printf("IMPRISON: %s ", p_ptr->name);
+	s_printf("IMPRISON: '%s' ", p_ptr->name);
 
 	if (!p_ptr || !(id = lookup_player_id("Jailer"))) {
-		s_printf("JAILER\n");
+		s_printf("NO_JAILER.\n");
 		return (FALSE);
 	}
 
@@ -11847,13 +11847,13 @@ bool imprison(int Ind, u16b time, char *reason) {
 #ifndef FIND_CLOSEST_JAIL
 	if (i == num_houses) {
 		p_ptr->tim_susp = 0;
-		s_printf("FAILED.\n");
+		s_printf("NO_JAIL.\n");
 		return (FALSE);
 	}
 #else
 	if (picked == -1) {
 		p_ptr->tim_susp = 0;
-		s_printf("FAILED.\n");
+		s_printf("NO_JAIL.\n");
 		return (FALSE);
 	}
 	i = picked;
