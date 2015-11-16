@@ -1317,8 +1317,8 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
  *
  * The player's name, race, class, and experience level are shown.
  */
-void do_cmd_check_players(int Ind, int line)
-{
+#define ADMIN_EXTRA_STATISTICS /* display some extra marker(s) for admins to check certain statistics (eg client options) */
+void do_cmd_check_players(int Ind, int line) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int k, lines = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0) ;
 	FILE *fff;
@@ -1401,7 +1401,17 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #endif
 		    ) {
   #if 1
-			if (admin) fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname); else
+			if (admin)
+#ifdef ADMIN_EXTRA_STATISTICS
+				fprintf(fff, "%s [%d,%d] (%s)%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname,
+				    !q_ptr->exp_bar ?
+				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+" : "")) :
+				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*" : ""))
+				    );
+#else
+				fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname);
+#endif
+			else
   #endif
 			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
@@ -1474,7 +1484,17 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		    || iddc
 #endif
 		    ) {
-			if (admin) fprintf(fff, "%s [%d,%d]", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col); else
+			if (admin)
+#ifdef ADMIN_EXTRA_STATISTICS
+				fprintf(fff, "%s [%d,%d]%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col,
+				    !q_ptr->exp_bar ?
+				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+" : "")) :
+				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*" : ""))
+				    );
+#else
+				fprintf(fff, "%s [%d,%d]", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
+#endif
+			else
 			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
 			/* Print questing flag */
@@ -1510,6 +1530,13 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #endif
 
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
+#ifdef ADMIN_EXTRA_STATISTICS
+		if (admin) fprintf(fff, "%s",
+		    !q_ptr->exp_bar ?
+		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+" : "")) :
+		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*" : ""))
+		    );
+#endif
 		fprintf(fff, "\n");
 
 		lines += 2;
@@ -1584,6 +1611,13 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			else fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 
 			fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
+#ifdef ADMIN_EXTRA_STATISTICS
+			if (admin) fprintf(fff, "%s",
+			    !q_ptr->exp_bar ?
+			    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+" : "")) :
+			    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*" : ""))
+			    );
+#endif
 		}
 
 		/* Quest flag */
