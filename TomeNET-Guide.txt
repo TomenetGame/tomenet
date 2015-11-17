@@ -15959,8 +15959,8 @@ Medium level character (up to 25)
   (Note that scrolls of Life also restore experience, same as this potion.)
   Most monsters that drain experience are undead and the first ones you will
   probably encounter are liches and vampires. Bloodletter demons drain too.
-  A notable low-level monster is the grape jelly. But you shouldn't fight
-  most stationary monsters in melee anyway..
+  A notable low-level monster is the grape jelly. But then again you shouldn't
+  fight stationary melee-specialist monsters in melee in the first place..
 + Some Potions of Speed
   These will temporatily boost your global speed (movement/attack/cast) by
   +10. In case you are moving at normal speed this means that your speed is
