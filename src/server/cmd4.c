@@ -1405,8 +1405,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #ifdef ADMIN_EXTRA_STATISTICS
 				fprintf(fff, "%s [%d,%d] (%s)%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname,
 				    !q_ptr->exp_bar ?
-				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+" : "")) :
-				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*" : "\377B-"))
+				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
+				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
 				    );
 #else
 				fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname);
@@ -1488,8 +1488,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #ifdef ADMIN_EXTRA_STATISTICS
 				fprintf(fff, "%s [%d,%d]%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col,
 				    !q_ptr->exp_bar ?
-				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+" : "")) :
-				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*" : "\377B-"))
+				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
+				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
 				    );
 #else
 				fprintf(fff, "%s [%d,%d]", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
@@ -1533,8 +1533,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #ifdef ADMIN_EXTRA_STATISTICS
 		if (admin) fprintf(fff, "%s",
 		    !q_ptr->exp_bar ?
-		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+" : "")) :
-		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*" : "\377B-"))
+		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
+		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
 		    );
 #endif
 		fprintf(fff, "\n");
@@ -1614,8 +1614,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #ifdef ADMIN_EXTRA_STATISTICS
 			if (admin) fprintf(fff, "%s",
 			    !q_ptr->exp_bar ?
-			    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+" : "")) :
-			    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*" : "\377B-"))
+			    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
+			    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
 			    );
 #endif
 		}
