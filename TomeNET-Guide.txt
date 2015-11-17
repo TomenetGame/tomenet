@@ -6872,6 +6872,8 @@ Dungeon Keeper (everyone can win, 1+ participants)
     -Players usually do not start next to rooms that have escape beacons.
     -Don't OCD this dungeon. Your goal is to pass through as many rooms as
      possible, not to cover areas "cleanly".
+    -It is known that in a world of squares, moving diagonally has a certain
+     advantage.
 
 
 Asides from extermination orders and events, there is another, permanently
