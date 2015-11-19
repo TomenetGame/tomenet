@@ -759,6 +759,9 @@ static void health_redraw(int Ind) {
 			/* Asleep (?) */
 			if (q_ptr->paralyzed) attr = TERM_BLUE;
 
+			/* Administrative invulnerability? */
+			if (q_ptr->admin_invinc || q_ptr->admin_invuln) attr = TERM_L_UMBER;
+
 			/* Convert percent into "health" */
 			len = (pct < 10) ? 1 : (pct < 90) ? (pct / 10 + 1) : 10;
 
@@ -822,6 +825,9 @@ static void health_redraw(int Ind) {
 
 		/* Asleep */
 		if (m_ptr->csleep) attr = TERM_BLUE;
+
+		/* Monster never dies? */
+		if ((r_info[m_ptr->r_idx].flags7 & RF7_NO_DEATH)) attr = TERM_L_UMBER;
 
 		/* Convert percent into "health" */
 		len = (pct < 10) ? 1 : (pct < 90) ? (pct / 10 + 1) : 10;
