@@ -1848,7 +1848,9 @@ cptr get_house_owner(struct c_special *cs_ptr) {
 			strcat(string, "s");
 			break;
 		case OT_GUILD:
-			strcpy(string, guilds[dna->owner].name);
+			strcpy(string, "the guild '");
+			strcat(string, guilds[dna->owner].name);
+			strcat(string, "'");
 			break;
 		}
 	}
