@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. November 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 22. November 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -11747,7 +11747,11 @@ Note that not every skill is available to every profession (class).
                                 monsters of twice your level.
 
     .Calmness                   Ability to not get hindered by enemies.
-                                Adjacent foes can interfere if you try to..
+                                Monsters can try to intercept some of your
+                                actions, the Calmness skill counters these
+                                interception attempts. In detail: Monsters can
+                                interfere if they are standing on an adjacent
+                                grid (ie right next to you) and if you try to..
                                 -shoot with ranged weapons,
                                 -use a void jumpgate,
                                 -invoke a mimic spell,
