@@ -5811,6 +5811,7 @@ I:12:0:0
 W:40:0:80:50000
 A:40/3
 F:CLIMB | EASY_KNOW
+D:Arms and fingers are required to use this tool.
 
 # Parchment to help beginners
 N:787:Adventurer's Guide to Middle Earth ['r' to read]
