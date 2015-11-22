@@ -673,6 +673,9 @@ byte flick_colour(byte attr){
 			return (rand_term_lamp ? TERM_YELLOW : TERM_ORANGE);
 		case TERM_LAMP_DARK:
 			return (rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
+
+		case TERM_EMBER:
+			return (rand_int(6) ? TERM_RED : (rand_int(2) ? TERM_ORANGE : TERM_L_RED));
 #endif
 		default:
 			return(attr);

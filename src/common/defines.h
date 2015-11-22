@@ -6762,6 +6762,8 @@ extern int PlayerUID;
  #define TERM_LAMP	53
  #define TERM_LAMP_DARK	54
 
+ #define TERM_EMBER	55
+
  #ifdef EXTENDED_BG_COLOURS
   #define TERM2_BLUE	63
  #endif
