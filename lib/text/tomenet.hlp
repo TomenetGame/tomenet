@@ -1,4 +1,4 @@
-==============================================================================
+===============================================================================
 
                             Welcome to TomeNET
 
@@ -17,29 +17,29 @@ experienced, you will become better at surviving. Have fun!
 4. equip your startup items with 'w', mostly armour, weapon, wooden torch.
 5. the training tower is a good place to start. It's a green '<' symbol.
    Press SHIFT+m to see a map of town to see where it is located.
-6. press CTRL+x to save and quit the game, but do it in town to be safe!
-==============================================================================
+6. press CTRL+q to save and quit the game, but do it in town to be safe!
+===============================================================================
            PRESS SPACEBAR TO SCROLL DOWN OR ESCAPE TO EXIT THIS HELP
-==============================================================================
+===============================================================================
        USE NUMBER PAD (or arrows) TO MOVE - press with SHIFT key to run!
-==============================================================================
+===============================================================================
                               DEFAULT KEYS
  (non-rogue-like, you can find the rogue-like key set in the guide in (0.2))
-==============================================================================
+===============================================================================
 a  Aim wand    A  Activate      !  Show BBS        SPACE  Autorepeat stop
 b  Browse book B  Bash door     #  Highscores
 c  Close door  C  Character     $  Drop gold       CTRL+C  Toggle music
 d  Drop        D  Disarm        %  Macro menu      CTRL+N  Toggle audio
-e  Equip       E  Eat           &  Auto inscribe   CTRL+U  Audio mixer
-f  Fire        F  Refill        (  Friendly target
-g  Get item    G  Skills        )  Clear buffer
-h  Houses      H  Auto inscribe *  Target/look
-i  Inventory   I  Examine       .  Run             CTRL+I  Lagometer or
-j  Steal                        /  Use item                switch chat mode
-k  Destroy     K  Force-stack   :  Chat            CTRL+U  Switch chat mode
+e  Equip       E  Eat           &  Auto inscribe   CTRL+U  Audio mixer or
+f  Fire        F  Refill        (  Friendly target         switch chat mode
+g  Get item    G  Skills        )  Clear buffer    CTRL+I  Lagometer or
+h  Houses      H  Auto inscribe *  Target/look             switch chat mode
+i  Inventory   I  Examine       .  Run
+j  Steal                        /  Use item        CTRL+O  Chat messages
+k  Destroy     K  Force-stack   :  Chat            CTRL+P  All Messages
 l  Look        L  Locate (map)  ;  Walk
-m  Use skill   M  Show minimap  ?  Help            CTRL+O  Chat messages
-o  Open door                    @  Player list     CTRL+P  All Messages
+m  Use skill   M  Show minimap  ?  Help            CTRL+Q  Quit the game
+o  Open door                    @  Player list
 p  Open mind   P  Party menu    '  Inspect other nearby players
 q  Quaff       Q  Suicide       _  Sip from fountain/show item on the floor
 r  Read scroll R  Rest          {  Inscribe
@@ -48,6 +48,6 @@ t  Take off       mode toggle   }  Uninscribe      CTRL+S  Spike
 u  Use staff                    ~  Knowledge menu  CTRL+T  Screenshot
 v  Throw       V  Cloak         +  Dig
 w  Wield       W  Wield         <  Go up
-x  Swap        X  (macro 'x0')  =  Options
-z  Zap rod                      >  Go down         CTRL+X  Exit
-==============================================================================
+x  Swap        X  predefined    =  Options         (*) Use X to quickly switch
+z  Zap rod        x0-macro (*)  >  Go down         equipment inscribed @x0.
+===============================================================================

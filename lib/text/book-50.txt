@@ -27,7 +27,7 @@ Shift+P key: Create a party and add him to it.
 A full list of all keys and commands is in the TomeNET Guide in chapter (0.2).
 
 You can access character knowledge with '~' and program options with '=' key.
-The audio mixer is available with CTRL+U/F. To quit the game, press CTRL+X.
+The audio mixer is available with CTRL+U/F. To quit the game, press CTRL+Q.
 To pick up items, press 'g'. To run, hold Shift key when pressing a directional
 key. It is recommended to use the numpad keys rather than the arrow keys for
 movemenet, so you can actually move diagonally too.
