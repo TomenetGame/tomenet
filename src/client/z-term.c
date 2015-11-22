@@ -643,8 +643,8 @@ byte flick_colour(byte attr){
 			return (randint(3) == 1 ? TERM_L_GREEN : TERM_L_BLUE);
 		case TERM_METEOR:
 			return (randint(3) == 1 ? TERM_RED : TERM_UMBER);
-                case TERM_MANA:
-            		return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
+		case TERM_MANA:
+			return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
 		case TERM_WATE:
 			return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
 		case TERM_ICE:
