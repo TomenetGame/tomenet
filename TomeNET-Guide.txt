@@ -14454,6 +14454,7 @@ Priest schools:
                     Required skill level for first spell level: 10.
 
     Cleansing Light Continuously heals every player who steps inside.
+                    It also damages undead creatures.
                     Required skill level for first spell level: 18.
 
     Curing          Slows down the effect of poison            (auto-project)
