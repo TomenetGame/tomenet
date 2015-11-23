@@ -68,6 +68,7 @@ MBOOST = add_spell {
 	["am"] = 	33,
 	["spell_power"] = 0,
 	["blind"] = 	0,
+	["confusion"] = 0,
 	["level"] = 	3,
 	["mana"] = 	7,
 	["mana_max"] = 	7,

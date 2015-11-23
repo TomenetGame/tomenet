@@ -14662,7 +14662,7 @@ Mindcraft schools:
                     confusion and slowness. Also gives heroism-like +hit bonus.
                     At level 25 gives +1 extra attack.         (auto-project)
                     Required skill level for first spell level: 3.
-                    This spell can be used even while blind.
+                    This spell can be used even while confused or blind.
 
     Self-Reflection Find out more about yourself.
                     Required skill level for first spell level: 15.
