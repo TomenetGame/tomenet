@@ -233,7 +233,6 @@ MIDENTIFY = add_spell {
 	["school"] = 	{SCHOOL_TCONTACT},
 	["am"] = 	33,
 	["spell_power"] = 0,
-	["blind"] = 	0,
 	["level"] = 	25,
 	["mana"] = 	7,
 	["mana_max"] = 	7,

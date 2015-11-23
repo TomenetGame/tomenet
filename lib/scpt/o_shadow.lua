@@ -115,7 +115,6 @@ SHADOWJUMP = add_spell {
 	["school"] = 	{SCHOOL_SHADOW},
 	["am"] =	75,
 	["spell_power"] = 0,
-	["blind"] = 	0,
 	["level"] = 	24,
 	["mana"] = 	20,
 	["mana_max"] = 	30,

@@ -321,7 +321,6 @@ RELOCATION = add_spell {
 	["fail"] = 	10,
 	["spell_power"] = 0,
 	["am"] = 	67,
-	["blind"] = 	0,
 	["spell"] = 	function(args)
 			local dur = randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10)
 			if args.book < 0 then return end

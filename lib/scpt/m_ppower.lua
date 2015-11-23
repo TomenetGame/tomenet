@@ -84,7 +84,6 @@ MTELETOWARDS = add_spell {
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
-	["blind"] = 	0,
 	["level"] = 	24,
 	["mana"] = 	26,
 	["mana_max"] = 	26,
