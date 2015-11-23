@@ -6477,7 +6477,8 @@ Please see (0.2) for more information about painting.
 The player can suffer from various effects caused by monsters, traps or
 himself. Against several of these effects the 'Saving Throw' ability helps
 to decide whether it will be resisted or not (especially true for effects
-that are cast by monsters on the player).
+that are cast by monsters on the player - see (6.3) for more details on
+Saving Throw).
 The various effects are:
 
 For 'Fear', 'Blindness', 'Confusion' and 'Paralysis' - please see (5.6).
@@ -8780,6 +8781,7 @@ NO_MAGIC ('Antimagic shell')
         malicious magical influence (like paralysation or slowness, but also to
         monsters cursing you). Also prevents you from using any magic device or
         casting spells. You can still use scrolls and potions though.
+        For more information about Saving Throw see (6.3).
 ANTIMAGIC ('Antimagic field')
         Prevents you from using any magic device or casting spells, also
         prevents nearby monsters and other players from casting spells (but
@@ -10888,7 +10890,8 @@ Wisdom (WIS)
      determine failure rate?
     -Has influence on your mana pool size. (class-dependant)
     -How well can you resist malicious influences like poison, paralyzation,
-     or confusion? (Means, your Saving Throw is depending on your WIS.)
+     or confusion? (Means, your Saving Throw is depending on your WIS. See
+     (6.3) for details about Saving Throw.)
     -Wisdom directly increases your sanity. Be careful! If you're very low on
      sanity taking off a +wisdom item can mean your death, in case your sanity
      drops to 0 by taking off the item.
@@ -11994,8 +11997,22 @@ Bows/Throw
     The displayed value is the sum of your actual ability and your hit boni.)
 Saving Throw
     How well you can resist attacks that have influence on your status
-    other than just hit points. For example poisoning, confusion or
-    paralyzation.
+    other than just hit points (except for monster curses, which can be
+    prevented too). Saving throw is rolled (possibly modified) against:
+    -Nexus effects
+    -Psi attacks of all sorts (damage and effects), including mind-blanking and
+     the terribly adverse effects of an encounter with an eldritch horror,
+     which can be: Confusion, hallucination, insanity, paralyzation, amnesia
+     and (sometimes permanent) loss of intelligence and wisdom.
+    -Suffering damage from dispelling effects
+    -Fear and paralysation melee attacks
+    -Confusion, fear, blindness, slowness, paralysation spell effects
+    -Teleportation effects cast onto you
+    -Weapon/armour getting cursed
+    -Unmagic effects
+    -Direct damage curses (the ones screamed by monsters at you)
+    -The draining effects of an ancient foul curse (TY_CURSE)
+    -Seasoned traveller trap effect.
 Stealth
     Determines if monsters will immediately wake up if you're nearby or if
     you are able to sneak past sleeping monsters without waking them.
@@ -12346,6 +12363,8 @@ create a character!):
     time, nether, poison, and it's hard to drain their life force - as a
     specialty this is also true for life force drained by items a vampire has
     equipped: Those will drain exp at half the normal rate.
+    Vampires have a good chance to resist the adverse effects of encountering
+    an eldritch horror (see (6.3) under 'Saving Throw' for details on those).
     They also have partially life leeching (vampiric) attacks (see '(5.15)
     Vampirism' for more information).
     Being undead, vampires don't drown as easily as other races, but the water
@@ -12948,7 +12967,10 @@ create a character!):
     Putting on heavy head gear (above 4.0 lb) will negatively impact their
     amount of psychic energy.
     Mindcrafters will learn to resist sanity-draining effects a bit at level
-    10, and somewhat better even at level 20.
+    10, and somewhat better even at level 20. They also have a good chance to
+    resist the adverse effects of encountering an eldritch horror (see (6.3)
+    under 'Saving Throw' for details on those), they also resist mind-blanking
+    attemps and psionic attacks in general much better than other classes.
     A lot of their spells can actually be cast while blinded (or even
     confused), and their targetted spells often do not require a clean line of
     sight, since they manifest whereever their mind is focussed on (e.g.
@@ -12964,8 +12986,6 @@ create a character!):
     able to conceal their presence telepathically versus all other classes.
     Similarly at level 30 they become able to pinpoint opponents that attempt
     to make use of cloaking or shadowing techniques (monsters only).
-    Mindcrafters are also able to resist malicious mind-affecting effects better
-    than others, for example, mind-blanking or psionic attacks.
     Mindcrafters learn to judge their own sanity much more accurately as they
     gain levels, getting a more detailed sanity display at level 10, 20 and 40
     (same as other characters get when they actually train 'Health' skill to
@@ -13372,8 +13392,14 @@ F: flag list
                 The player is susceptible against these attacks. Dangerous!
     WIERD_MIND/RES_PSI
                 Insanity attacks are reduced a little bit. (Overrides S-flags)
+                Also helps somewhat against the effects of encountering an
+                eldritch horror (see (6.3) under 'Saving Throw' for details on
+                those).
     EMPTY_MIND/IM_PSI
                 Insanity attacks are reduced somewhat. (Overrides S-flags)
+                Also helps somewhat against the effects of encountering an
+                eldritch horror (see (6.3) under 'Saving Throw' for details on
+                those).
     AQUATIC     Gives superb water resistance.
     NEVER_MOVE  Using this form, the player won't be able to move (except for
                 teleportation/phasing/recalling).
@@ -13453,6 +13479,9 @@ All undead creatures
                 on ~7 flags);
                 can't bleed (no_cut), infra-vision +1, insanity attacks are
                 reduced by a little bit.
+                Also helps somewhat against the effects of encountering an
+                eldritch horrors (see (6.3) under 'Saving Throw' for details
+                on those).
                 Drowning damage taken is halved.
                 Becomes susceptible to 'life', which concerns some healing or
                 cleansing effects mostly.
@@ -14330,6 +14359,7 @@ Istar schools:
                     This spell can be used even while confused or blind.
 
     BONI:           Improves saving throw, the further it's trained above 20.
+                    (See (6.3) for details on Saving Throw.)
 
 
 Priest schools:
@@ -14660,6 +14690,7 @@ Mindcraft schools:
                     Gives fear resistance, increases your saving throw and
                     gives especially increased chance to resist paralyzation,
                     confusion and slowness. Also gives heroism-like +hit bonus.
+                    (See (6.3) for details on Saving Throw.)
                     At level 25 gives +1 extra attack.         (auto-project)
                     Required skill level for first spell level: 3.
                     This spell can be used even while confused or blind.

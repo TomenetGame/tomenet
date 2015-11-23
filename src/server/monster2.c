@@ -2093,6 +2093,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 	if (!necro) {
 		char		m_name[MNAME_LEN];
 		monster_race	*r_ptr;
+		int res = p_ptr->reduce_insanity;
 
 		if (m_ptr != NULL) r_ptr = race_inf(m_ptr);
 		else return;
@@ -2106,22 +2107,23 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 		} else power *= 2;
 
 		/* No effect yet, just loaded... */
-		//		if (!hack_mind) return;
+		//if (!hack_mind) return;
 
-		//		if (!(m_ptr->ml))
+		//if (!(m_ptr->ml))
 		if (!p_ptr->mon_vis[m_idx])
 			return; /* Cannot see it for some reason */
 
 		if (!(r_ptr->flags2 & RF2_ELDRITCH_HORROR))
 			return; /* oops */
 
-
 		/* Pet eldritch horrors are safe most of the time */
-		//                if ((is_friend(m_ptr) > 0) && (randint(8) != 1)) return;
+		//if ((is_friend(m_ptr) > 0) && (randint(8) != 1)) return;
 
-
-		if (randint(power) < p_ptr->skill_sav)
-			return; /* Save, no adverse effects */
+		if (randint(power) < p_ptr->skill_sav) return; /* Save, no adverse effects */
+		/* extra ways to resist */
+		if (p_ptr->suscep_life) res = 2;
+		if (p_ptr->pclass == CLASS_MINDCRAFTER || p_ptr->prace == RACE_VAMPIRE) res = 4;
+		if (rand_int(6) < res) return;
 
 
 		if (p_ptr->image) {
