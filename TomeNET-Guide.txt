@@ -14327,12 +14327,14 @@ Istar schools:
                     Lv15: Stun/Cuts.
                     Lv20: Heroism/Berserk strength/Blessing/Shields/Fear.
                     Required skill level for first spell level: 15.
+                    This spell can be used even while confused or blind.
 
     BONI:           Improves saving throw, the further it's trained above 20.
 
 
 Priest schools:
 ---------------
+(In general, holy schools are somewhat less affected by anti-magic fields.)
 
 - Holy Offense
 
@@ -14597,6 +14599,7 @@ Druid schools:
 
 Mindcraft schools:
 ------------------
+(In general, mindcraft schools are less affected by anti-magic fields.)
 
 - Psycho-Power
 
@@ -14650,6 +14653,7 @@ Mindcraft schools:
 
     Clear Mind      Removes fear, confusion and hallucination. (auto-project)
                     Required skill level for first spell level: 3.
+                    This spell can be used even while confused or blind.
 
     Willpower       Boosts your willpower to unleash hidden potential,
                     improving both your performance and resilience.
@@ -14658,16 +14662,20 @@ Mindcraft schools:
                     confusion and slowness. Also gives heroism-like +hit bonus.
                     At level 25 gives +1 extra attack.         (auto-project)
                     Required skill level for first spell level: 3.
+                    This spell can be used even while blind.
 
     Self-Reflection Find out more about yourself.
                     Required skill level for first spell level: 15.
+                    This spell can be used even while blind.
 
     Accelerate Nerves
                     Speeds you up.
                     Required skill level for first spell level: 20.
+                    This spell can be used even while blind.
 
     Telepathy       Senses the minds of creatures.
                     Required skill level for first spell level: 20.
+                    This spell can be used even while blind.
 
     Recognition     Identifies an item.
                     Required skill level for first spell level: 25.
@@ -14677,6 +14685,7 @@ Mindcraft schools:
                     -Fear and confusion at level 5,
                     -Hallucinations at level 10.
                     Required skill level for first spell level: 25.
+                    This spell can be used even while confused or blind.
 
     Telekinesis II  Inscribe your book @P<Playername>, cast it, select an
                     item that you wish to teleport to the player's inventory.
@@ -14816,6 +14825,7 @@ though, as all other magic schools do, not the astral level.)
                     Corrupted: Increases own hit points temporarily.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 40.
+                    This spell can be used even while blind.
 
     The Silent Force
                     Enlightened: Slows down monsters within sight
