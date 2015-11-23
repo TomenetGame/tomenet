@@ -5805,7 +5805,7 @@ bool can_use(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* exception for Highlander Tournament amulets */
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS)) {
+	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2)) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
 		return TRUE;
@@ -5852,7 +5852,7 @@ bool can_use_admin(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* exception for Highlander Tournament amulets */
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS))
+	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2))
 		return TRUE;
 
 	/* Owner always can use */
@@ -5875,7 +5875,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* exception for Highlander Tournament amulets */
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS)) {
+	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS)) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
 		return TRUE;
