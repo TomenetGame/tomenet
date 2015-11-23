@@ -3900,7 +3900,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	/* Require the "group" flag */
 	if (!grp) return 0;
 #ifdef BLOODLETTER_SUMMON_NERF
-	if (r_idx == RI_BLOODLETTER) return 0;
+	if (r_idx == RI_BLOODLETTER && !level_generation_time) return 0;
 #endif
 
 	/* Friend for certain monsters */
