@@ -1280,23 +1280,24 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 
 	if (p_ptr->body_monster == r_idx) return;
 
+	/* Insufficient skill */
 	if (!force && r_info[r_idx].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) {
 		msg_print(Ind, "You do need a higher mimicry skill to use that shape.");
 		return;
 	}
 
-        /* No magic */
+	/* No magic */
 	if (p_ptr->anti_magic && !force) {
-	        msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
-	        return;
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+		return;
 	}
+	/* Antimagic */
 	if (p_ptr->antimagic && !force) {
-	        msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-	        return;
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
 	}
 	/* Not when confused */
-	if (p_ptr->confused && !force)
-	{
+	if (p_ptr->confused && !force) {
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
@@ -1357,12 +1358,13 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 	int j, k, offset = 3; /* offset: 3 polymorph powers */
 	bool using_free_mimic = FALSE;
 	bool admin = is_admin(p_ptr);
+	int skill_mimic = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
 
 	/* should it..? */
-//	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
-//(changed it to no_tele)	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
+	//dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	//(changed it to no_tele)	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
 
-	if (!get_skill(p_ptr, SKILL_MIMIC)) {
+	if (!skill_mimic) {
 		msg_print(Ind, "You are too solid.");
 		return;
 	}
@@ -1407,7 +1409,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				} else continue;
 			}
 
-			if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) continue;
+			if (r_info[j].level > skill_mimic) continue;
 			if (r_info[j].flags1 & RF1_UNIQUE) continue;
 			if (r_info[j].flags8 & RF8_PSEUDO_UNIQUE) continue;
 			if (p_ptr->r_killed[j] < r_info[j].level) continue;
@@ -1454,7 +1456,8 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 		un_afk_idle(Ind);
 
 		do_mimic_change(Ind, j, FALSE);
-		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		if (skill_mimic <= 70) p_ptr->energy -= level_speed(&p_ptr->wpos);
+		else p_ptr->energy -= (level_speed(&p_ptr->wpos) * (110 - skill_mimic)) / 40;
 	} else if (spell >= 20000) { /* hack: 20000 masks poly into.. */
 		k = p_ptr->body_monster;
 		//j = get_quantity("Which form (0 for player form)?", 0);
@@ -1516,7 +1519,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			} else if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))) {
 				msg_print(Ind, "You cannot use that form!");
 				return;
-			} else if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) {
+			} else if (r_info[j].level > skill_mimic) {
 				msg_print(Ind, "You are not powerful enough to change into that form!");
 				return;
 			}
@@ -1531,7 +1534,8 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 
 			/* Ok we found */
 			do_mimic_change(Ind, j, using_free_mimic);
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			if (skill_mimic <= 70) p_ptr->energy -= level_speed(&p_ptr->wpos);
+			else p_ptr->energy -= (level_speed(&p_ptr->wpos) * (110 - skill_mimic)) / 40;
 		}
 	} else {
 		/* (S)he is no longer afk */
