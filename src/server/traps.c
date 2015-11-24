@@ -33,9 +33,8 @@ static void destroy_chest(object_type *o_ptr);
 
 
 #if 0
-static bool do_trap_of_silliness(int Ind, int power)
-{
-//	return (FALSE);
+static bool do_trap_of_silliness(int Ind, int power) {
+	//return (FALSE);
 
 	player_type *p_ptr = Players[Ind];
 	int i, j;
@@ -56,14 +55,13 @@ static bool do_trap_of_silliness(int Ind, int power)
 }
 #endif // 0
 
-bool do_player_drop_items(int Ind, int chance, bool trap)
-{
+bool do_player_drop_items(int Ind, int chance, bool trap) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	s16b i;
 	bool message = FALSE, ident = FALSE;
 
-	if(p_ptr->inval) return (FALSE);
+	if (p_ptr->inval) return (FALSE);
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		object_type tmp_obj = p_ptr->inventory[i];
@@ -102,8 +100,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 	return (ident);
 }
 
-bool do_player_scatter_items(int Ind, int chance, int rad)
-{
+bool do_player_scatter_items(int Ind, int chance, int rad) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	s16b i,j;
@@ -165,15 +162,14 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 	return (message);
 }
 
-static bool do_player_trap_garbage(int Ind, int times)
-{
+static bool do_player_trap_garbage(int Ind, int times) {
 	player_type *p_ptr = Players[Ind];
 	int k, l, lv = getlevel(&p_ptr->wpos);
 	bool ident = FALSE;
 	object_type *o_ptr, forge;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	for(k = 0; k < times; k++) {
+	for (k = 0; k < times; k++) {
 		l = rand_int(max_k_idx);
 
 		/* hack -- !ruin, !death cannot be generated */
@@ -186,7 +182,7 @@ static bool do_player_trap_garbage(int Ind, int times)
 		if (f3 & TR3_INSTA_ART) continue;
 
 		o_ptr->owner = p_ptr->id;
-                o_ptr->mode = p_ptr->mode;
+		o_ptr->mode = p_ptr->mode;
 
 		ident = TRUE;
 		if (inven_carry(Ind, o_ptr) < 0)
@@ -198,8 +194,7 @@ static bool do_player_trap_garbage(int Ind, int times)
 /*
  * eg. if a player falls 250ft, set 'dis' to -5.
  */
-static void do_player_trap_change_depth(int Ind, int dis)
-{
+static void do_player_trap_change_depth(int Ind, int dis) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	struct worldpos old_wpos;
@@ -228,70 +223,67 @@ static void do_player_trap_change_depth(int Ind, int dis)
 	new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 }
 
-static bool do_player_trap_call_out(int Ind)
-{
-        player_type *p_ptr = Players[Ind];
-        s16b          i,sn,cx,cy;
-        s16b          h_index = 0;
-        s16b          h_level = 0;
-        monster_type  *m_ptr;
-        monster_race  *r_ptr;
-        char          m_name[MNAME_LEN];
-        bool          ident = FALSE;
-        cave_type **zcave;
-        zcave = getcave(&p_ptr->wpos);
-	int           old_x, old_y;
+static bool do_player_trap_call_out(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	s16b i,sn,cx,cy;
+	s16b h_index = 0;
+	s16b h_level = 0;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
+	char m_name[MNAME_LEN];
+	bool ident = FALSE;
+	cave_type **zcave;
+	zcave = getcave(&p_ptr->wpos);
+	int old_x, old_y;
 
-        if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
+	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
 
-        for (i = 1; i < m_max; i++) {
-                m_ptr = &m_list[i];
-                r_ptr = race_inf(m_ptr);
+	for (i = 1; i < m_max; i++) {
+		m_ptr = &m_list[i];
+		r_ptr = race_inf(m_ptr);
 
-                /* Paranoia -- Skip dead monsters */
-                if (!m_ptr->r_idx) continue;
-
-                if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
 
-                if (m_ptr->level >= h_level) {
-                        h_level = m_ptr->level;
-                        h_index = i;
-                }
-        }
-        /* if the level is empty of monsters, h_index will be 0 */
-        if (!h_index) return(FALSE);
+		if (m_ptr->level >= h_level) {
+			h_level = m_ptr->level;
+			h_index = i;
+		}
+	}
+	/* if the level is empty of monsters, h_index will be 0 */
+	if (!h_index) return(FALSE);
 
-        m_ptr = &m_list[h_index];
+	m_ptr = &m_list[h_index];
 
-        sn = 0;
-        for (i = 1; i <= 9; i++) {
-                cx = p_ptr->px + ddx[i];
-                cy = p_ptr->py + ddy[i];
+	sn = 0;
+	for (i = 1; i <= 9; i++) {
+		cx = p_ptr->px + ddx[i];
+		cy = p_ptr->py + ddy[i];
 		if (!in_bounds(cy, cx)) continue;
-                /* Skip non-empty grids */
-                if (!cave_valid_bold(zcave, cy, cx)) continue; /* This wasn't really enough.. */
+		/* Skip non-empty grids */
+		if (!cave_valid_bold(zcave, cy, cx)) continue; /* This wasn't really enough.. */
 		if (!cave_empty_bold(zcave, cy, cx)) continue; /* better added this one;) -C. Blue */
-                if (zcave[cy][cx].feat == FEAT_GLYPH) continue;
+		if (zcave[cy][cx].feat == FEAT_GLYPH) continue;
 		if (zcave[cy][cx].feat == FEAT_RUNE) continue;
-                if ((cx == p_ptr->px) && (cy == p_ptr->py)) continue;
-                sn++;
-                /* Randomize choice */
-                if (rand_int(sn) > 0) continue;
-                zcave[cy][cx].m_idx = h_index;
-                zcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
+		if ((cx == p_ptr->px) && (cy == p_ptr->py)) continue;
+		sn++;
+		/* Randomize choice */
+		if (rand_int(sn) > 0) continue;
+		zcave[cy][cx].m_idx = h_index;
+		zcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
 		old_x = m_ptr->fx;
 		old_y = m_ptr->fy;
-                m_ptr->fx = cx;
-                m_ptr->fy = cy;
-                /* we do not change the sublevel! */
-                ident = TRUE;
+		m_ptr->fx = cx;
+		m_ptr->fy = cy;
+		/* we do not change the sublevel! */
+		ident = TRUE;
 
 		/* Gone from previous location - mikaelh */
 		everyone_lite_spot(&p_ptr->wpos, old_y, old_x);
 
-                update_mon(h_index, TRUE);
+		update_mon(h_index, TRUE);
 
 		/* Make sure everyone sees it now - mikaelh */
 		everyone_lite_spot(&p_ptr->wpos, cy, cx);
@@ -299,21 +291,20 @@ static bool do_player_trap_call_out(int Ind)
 		/* Actually wake it up... */
 		m_ptr->csleep = 0;
 
-                monster_desc(Ind, m_name, h_index, 0x08);
-                msg_format(Ind, "You hear a rapid-shifting wail, and %s appears!",m_name);
-                break;
-        }
-        return (ident);
+		monster_desc(Ind, m_name, h_index, 0x08);
+		msg_format(Ind, "You hear a rapid-shifting wail, and %s appears!",m_name);
+		break;
+	}
+	return (ident);
 }
 
 /* done */
-static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
-{
+static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 	player_type *p_ptr = Players[Ind];
 	bool ident = FALSE;
 	char o_name[ONAME_LEN];
 
-        s16b  o_idx = 0;
+	s16b  o_idx = 0;
 	object_type *o_ptr;
 	//cave_type *c_ptr;
 
@@ -364,12 +355,8 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 			lite_spot(Ind, y1, x1);
 			msg_format(Ind, "The %s suddenly stands elsewhere", o_name);
 
-		} else {
-			msg_format(Ind, "You suddenly don't see the %s anymore!", o_name);
-		}
-	} else {
-		msg_print(Ind, "You hear something move");
-	}
+		} else msg_format(Ind, "You suddenly don't see the %s anymore!", o_name);
+	} else msg_print(Ind, "You hear something move");
 	return (ident);
 }
 
@@ -384,8 +371,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
  * return value = ident (always TRUE)
  */
 static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
-		s16b sval, s16b dd, s16b ds, s16b pdam, cptr name)
-{
+    s16b sval, s16b dd, s16b ds, s16b pdam, cptr name) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr, forge;
 	s16b        i, dam, k_idx = lookup_kind(tval, sval);
@@ -411,9 +397,9 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
         /* Reverse good bonuses */
 	if (o_ptr->bpval > 0) o_ptr->bpval = 0;
 	if (o_ptr->pval > 0) o_ptr->pval = 0;
-        if (o_ptr->to_a > 0) o_ptr->to_a = 0;
-        if (o_ptr->to_h > 0) o_ptr->to_h = -o_ptr->to_h;
-        if (o_ptr->to_d > 0) o_ptr->to_d = -o_ptr->to_d;
+	if (o_ptr->to_a > 0) o_ptr->to_a = 0;
+	if (o_ptr->to_h > 0) o_ptr->to_h = -o_ptr->to_h;
+	if (o_ptr->to_d > 0) o_ptr->to_d = -o_ptr->to_d;
 
 	object_desc(Ind, i_name, o_ptr, TRUE, 0);
 	dd = dd * MISSILE_TRAP_FACTOR / 100;
@@ -443,7 +429,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect + 15))) {
 			msg_print(Ind, "You deflect the attack!");
 #ifdef USE_SOUND_2010
-                        if (p_ptr->sfx_defense) sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
+			if (p_ptr->sfx_defense) sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
 #endif
 
 			continue;
@@ -474,8 +460,8 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap) {
 	player_type *p_ptr = Players[Ind];
 	trap_kind *t_ptr = &t_info[trap];
-	bool       ident;
-	s16b       my_dd, my_ds, dam;
+	bool ident;
+	s16b my_dd, my_ds, dam;
 
 	my_dd = t_ptr->dd;
 	my_ds = t_ptr->ds;
@@ -513,7 +499,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	worldpos *wpos = &p_ptr->wpos;
 	bool ident = FALSE, never_id = FALSE;
 	s16b trap = 0, vanish;
-	//   dungeon_info_type *d_ptr = &d_info[dungeon_type];
+	//dungeon_info_type *d_ptr = &d_info[dungeon_type];
 
 	s16b k, l, glev = getlevel(wpos);
 	cave_type *c_ptr;
@@ -695,8 +681,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Teleport Trap */
 		case TRAP_OF_TELEPORT:
 		{
-                        int chance = (195 - p_ptr->skill_sav) / 2;
-                        if (p_ptr->res_tele) chance = 50;
+			int chance = (195 - p_ptr->skill_sav) / 2;
+			if (p_ptr->res_tele) chance = 50;
 
 			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x) || magik(chance)) break;
 			msg_print(Ind, "The world whirls around you.");
@@ -1372,9 +1358,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 #endif
 
-      /*
-       * single missile traps
-       */
+		/*
+		 * single missile traps
+		*/
 
 		case TRAP_OF_ARROW_I:
 			ident = player_handle_missile_trap(Ind, 1, TV_ARROW, SV_AMMO_NORMAL, 4, 8, 0, "Arrow Trap"); break;
@@ -1638,11 +1624,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_HELL_FIRE: ident = player_handle_breath_trap(Ind, 1, GF_HELL_FIRE, trap); destroy_chest(i_ptr); break;
 #endif	// 0
 		case TRAP_OF_PSI_BOLT: ident = player_handle_breath_trap(Ind, 1, GF_PSI, trap); break;
-//      case TRAP_OF_PSI_DRAIN: ident = player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
+		//case TRAP_OF_PSI_DRAIN: ident = player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
 
 		/* Ball Trap */
 		case TRAP_OF_NUKE_BALL: ident = player_handle_breath_trap(Ind, 3, GF_NUKE, TRAP_OF_NUKE_BALL); destroy_chest(i_ptr); break;
-//      case TRAP_OF_PSI_BALL: ident = player_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
+		//case TRAP_OF_PSI_BALL: ident = player_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
 
 		/* PernMangband additions */
 		/* Trap? of Ale vendor */
@@ -2556,7 +2542,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (ident) msg_print(Ind, "There's something strange in the neighbourhood.");
 			break;
 
-
 		default:
 			/* XXX LUA hook here maybe? */
 			s_printf("Executing unknown trap %d\n", trap);
@@ -2594,13 +2579,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	if (never_id || p_ptr->image || p_ptr->confused || p_ptr->blind ||
 	    no_lite(Ind) || !inarea(&p_ptr->wpos, wpos) ||
 	    !los(wpos, p_ptr->py, p_ptr->px, y, x))
-//	    !player_has_los_bold(Ind, y, x))
+	    //!player_has_los_bold(Ind, y, x))
 		return (FALSE);
 	else return ident;
 }
 
-void player_activate_door_trap(int Ind, s16b y, s16b x)
-{
+void player_activate_door_trap(int Ind, s16b y, s16b x) {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr;
 	bool ident = FALSE;
@@ -2646,16 +2630,15 @@ void player_activate_door_trap(int Ind, s16b y, s16b x)
  * mod: -1 means no multiplication trap allowed.
  */
 // FEAT_DOOR stuffs should be revised after f_info reform	- Jir -
-void place_trap(struct worldpos *wpos, int y, int x, int mod)
-{
-	bool           more       = TRUE;
-	s16b           trap, lv;
-	trap_kind	*t_ptr;
+void place_trap(struct worldpos *wpos, int y, int x, int mod) {
+	bool more = TRUE;
+	s16b trap, lv;
+	trap_kind *t_ptr;
 
-	s16b           cnt        = 0;
+	s16b cnt = 0;
 	u32b flags;
 	cave_type *c_ptr;
-	//	dungeon_info_type *d_ptr = &d_info[dungeon_type];
+	//dungeon_info_type *d_ptr = &d_info[dungeon_type];
 	struct c_special *cs_ptr;
 
 	/* Paranoia -- verify location */
@@ -2704,21 +2687,21 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	    c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K)
 		return;
 
-//	if (!cave_naked_bold(zcave, y, x)) return;
-//	if (!cave_floor_bold(zcave, y, x)) return;
+	//if (!cave_naked_bold(zcave, y, x)) return;
+	//if (!cave_floor_bold(zcave, y, x)) return;
 
 
 	/* no traps in town or on first level */
-	//   if (dlev <= 1) return;
+	//if (dlev <= 1) return;
 
 	/* traps only appears on empty floor */
-	//   if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
+	//if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
 
 	/* set flags */
 	/*
-	   if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+	if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
 	   (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-	   */
+	*/
 #if 0
 	if (f_info[c_ptr->feat].flags1 & FF1_DOOR)
 		flags = FTRAP_DOOR;
@@ -2767,13 +2750,13 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 
 /* Unused appearently */
 void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found) {
-	s16b           trap;//, lv;
-	//trap_kind	*t_ptr;
+	s16b trap;//, lv;
+	//trap_kind *t_ptr;
 
-//	s16b           cnt        = 0;
+	//s16b cnt = 0;
 	//u32b flags;
 	cave_type *c_ptr;
-	//	dungeon_info_type *d_ptr = &d_info[dungeon_type];
+	//dungeon_info_type *d_ptr = &d_info[dungeon_type];
 	struct c_special *cs_ptr;
 
 	/* Paranoia -- verify location */
@@ -2811,36 +2794,34 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 	    c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K)
 		return;
 
-//	if (!cave_naked_bold(zcave, y, x)) return;
-//	if (!cave_floor_bold(zcave, y, x)) return;
+	//if (!cave_naked_bold(zcave, y, x)) return;
+	//if (!cave_floor_bold(zcave, y, x)) return;
 
 
 	/* no traps in town or on first level */
-	//   if (dlev <= 1) return;
+	//if (dlev <= 1) return;
 
 	/* traps only appears on empty floor */
-	//   if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
+	//if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
 
 	/* set flags */
 	/*
-	   if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
-	   (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-	   */
+	if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+	    (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
+	*/
 #if 0
-	if (f_info[c_ptr->feat].flags1 & FF1_DOOR)
-		flags = FTRAP_DOOR;
+	if (f_info[c_ptr->feat].flags1 & FF1_DOOR) flags = FTRAP_DOOR;
 	else flags = FTRAP_FLOOR;
 #endif	// 0
 
 	//lv = getlevel(wpos);
-        trap = mod;
-        //t_ptr = &t_info[trap];
-        if (!(cs_ptr = AddCS(c_ptr, CS_TRAPS))) return;
-        cs_ptr->sc.trap.t_idx = trap;
-        cs_ptr->sc.trap.found = FALSE;
-        if(found)
-        cs_ptr->sc.trap.found = TRUE;
-        everyone_lite_spot(wpos, y, x);
+	trap = mod;
+	//t_ptr = &t_info[trap];
+	if (!(cs_ptr = AddCS(c_ptr, CS_TRAPS))) return;
+	cs_ptr->sc.trap.t_idx = trap;
+	cs_ptr->sc.trap.found = FALSE;
+	if(found) cs_ptr->sc.trap.found = TRUE;
+	everyone_lite_spot(wpos, y, x);
 
 	return;
 }
@@ -2852,56 +2833,55 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
  * The object must be a valid chest.
  */
 void place_trap_object(object_type *o_ptr) {
-        bool           more       = TRUE;
-        s16b           trap;
-        trap_kind	*t_ptr;
-        s16b           cnt        = 0;
+	bool more = TRUE;
+	s16b trap;
+	trap_kind *t_ptr;
+	s16b cnt = 0;
 
-        /* no traps in town or on first level */
-        //   if (dlev <= 1) return;
+	/* no traps in town or on first level */
+	//if (dlev <= 1) return;
 
-        /* try 100 times */
-        while ((more) && (cnt++) < 100) {
-                trap = randint(MAX_T_IDX - 1);
-                t_ptr = &t_info[trap];
+	/* try 100 times */
+	while ((more) && (cnt++) < 100) {
+		trap = randint(MAX_T_IDX - 1);
+		t_ptr = &t_info[trap];
 
-                /* no traps below their minlevel */
-                /* o_ptr->wpos is not set yet */
-                //      if (t_ptr->minlevel>getlevel(&o_ptr->wpos)) continue;
-                if (t_ptr->minlevel * 3 > o_ptr->level * 4) continue;
+		/* no traps below their minlevel */
+		/* o_ptr->wpos is not set yet */
+		//if (t_ptr->minlevel>getlevel(&o_ptr->wpos)) continue;
+		if (t_ptr->minlevel * 3 > o_ptr->level * 4) continue;
 
-                /* is this a correct trap now?   */
-                if (!(t_ptr->flags & FTRAP_CHEST)) continue;
+		/* is this a correct trap now?   */
+		if (!(t_ptr->flags & FTRAP_CHEST)) continue;
 
-                /* No special_gene traps */
-                if (t_ptr->flags & FTRAP_SPECIAL_GENE) continue;
+		/* No special_gene traps */
+		if (t_ptr->flags & FTRAP_SPECIAL_GENE) continue;
 
-                /* how probable is this trap   */
-                if (rand_int(100) < t_ptr->probability) {
-                        o_ptr->pval = trap;
-                        more = FALSE;
-                }
-        }
+		/* how probable is this trap   */
+		if (rand_int(100) < t_ptr->probability) {
+			o_ptr->pval = trap;
+			more = FALSE;
+		}
+	}
 
-        return;
+	return;
 }
 
 /* Dangerous trap placing function */
 /* (Not so dangerous as was once	- Jir -) */
 //void wiz_place_trap(int y, int x, int idx)
-void wiz_place_trap(int Ind, int trap)
-{
+void wiz_place_trap(int Ind, int trap) {
 	player_type *p_ptr = Players[Ind];
 	int x = p_ptr->px, y = p_ptr->py;
 	worldpos *wpos = &p_ptr->wpos;
-	//s16b           t_idx;
-	trap_kind	*t_ptr;
+	//s16b t_idx;
+	trap_kind *t_ptr;
 	struct c_special *cs_ptr;
 
-	//s16b           cnt        = 0;
+	//s16b cnt = 0;
 	u32b flags;
 	cave_type *c_ptr;
-	//	dungeon_info_type *d_ptr = &d_info[dungeon_type];
+	//dungeon_info_type *d_ptr = &d_info[dungeon_type];
 
 	/* Paranoia -- verify location */
 	cave_type **zcave;
@@ -2934,21 +2914,21 @@ void wiz_place_trap(int Ind, int trap)
 	}
 
 
-	//	if (!cave_naked_bold(zcave, y, x)) return;
-	//	if (!cave_floor_bold(zcave, y, x)) return;
+	//if (!cave_naked_bold(zcave, y, x)) return;
+	//if (!cave_floor_bold(zcave, y, x)) return;
 
 
 	/* no traps in town or on first level */
-	//   if (dlev <= 1) return;
+	//if (dlev <= 1) return;
 
 	/* traps only appears on empty floor */
-	//   if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
+	//if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
 
 	/* set flags */
 	/*
-	   if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+	if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
 	   (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-	   */
+	*/
 #if 0
 	if (f_info[c_ptr->feat].flags1 & FF1_DOOR)
 		flags = FTRAP_DOOR;
@@ -2987,15 +2967,15 @@ void wiz_place_trap(int Ind, int trap)
 	}
 
 	/* hack, no trap door at the bottom of dungeon or in flat(non dungeon) places */
-	//      if (((d_ptr->maxdepth == dlev) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
+	//if (((d_ptr->maxdepth == dlev) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
 
-	//	 c_ptr->t_idx = trap;
+	//c_ptr->t_idx = trap;
 
 	if (!(cs_ptr = AddCS(c_ptr, CS_TRAPS))) return;
-//	cs_ptr->type = CS_TRAPS;
+	//cs_ptr->type = CS_TRAPS;
 	cs_ptr->sc.trap.t_idx = trap;
 	cs_ptr->sc.trap.found = FALSE;
-	//				c_ptr = &zcave[y][x];
+	//c_ptr = &zcave[y][x];
 
 	return;
 
@@ -3014,35 +2994,24 @@ void wiz_place_trap(int Ind, int trap)
  * Here begin monster traps code
  */
 
-/*
- * Hook to determine if an object is a device
- */
-static bool item_tester_hook_device(object_type *o_ptr)
-{
-        if (is_magic_device(o_ptr->tval)) return (TRUE);
-
+/* Hook to determine if an object is a device */
+static bool item_tester_hook_device(object_type *o_ptr) {
+	if (is_magic_device(o_ptr->tval)) return (TRUE);
 	/* Assume not */
 	return (FALSE);
 }
-
-/*
- * Hook to determine if an object is a potion
- */
-static bool item_tester_hook_potion(object_type *o_ptr)
-{
-        if ((o_ptr->tval == TV_POTION) ||
-            (o_ptr->tval == TV_POTION2) ||
+/* Hook to determine if an object is a potion */
+static bool item_tester_hook_potion(object_type *o_ptr) {
+	if ((o_ptr->tval == TV_POTION) ||
+	    (o_ptr->tval == TV_POTION2) ||
 	    (o_ptr->tval == TV_FLASK)) return (TRUE);
-
 	/* Assume not */
 	return (FALSE);
 }
-
-static bool item_tester_hook_scroll_rune(object_type *o_ptr)
-{
-        if ((o_ptr->tval == TV_SCROLL) ||
-            (o_ptr->tval == TV_RUNE)) return (TRUE);
-
+/* Hook to determine if an object is a scroll or rune */
+static bool item_tester_hook_scroll_rune(object_type *o_ptr) {
+	if ((o_ptr->tval == TV_SCROLL) ||
+	    (o_ptr->tval == TV_RUNE)) return (TRUE);
 	/* Assume not */
 	return (FALSE);
 }
@@ -3514,7 +3483,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 //	o_ptr->timeout -= (f4 & TR4_CHEAPNESS) ? tip_ptr->pval / 2 : tip_ptr->pval;
 	o_ptr->pval = (f4 & TR4_CHEAPNESS) ? k_ptr->level / 2 + 5 : k_ptr->level + 10;
 
-        return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /* 
@@ -3676,7 +3645,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
-	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
+	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /* 
@@ -3774,13 +3743,13 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			identify_mon_trap_load(who, o_ptr);
 			return (TRUE);
 		case SV_SCROLL_LIGHT:
-//			lite_room(y, x);
+			//lite_room(y, x);
 			typ = GF_LITE;//GF_LITE_WEAK;
 			dam = damroll(3, 6);
 			rad = 2;
 			break;
 		case SV_SCROLL_DETECT_TRAP:
-//                        m_ptr->smart |= SM_NOTE_TRAP;
+			//m_ptr->smart |= SM_NOTE_TRAP;
 			return (FALSE);
 		/* Hrm aren't they too small..? */
 		case SV_SCROLL_BLESSING:
@@ -3788,11 +3757,11 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			dam = damroll(3, 4);
 			break;
 		case SV_SCROLL_HOLY_CHANT:
-                        typ = GF_HOLY_FIRE;
+			typ = GF_HOLY_FIRE;
 			dam = damroll(10, 4);
 			break;
 		case SV_SCROLL_HOLY_PRAYER:
-                        typ = GF_HOLY_FIRE;
+			typ = GF_HOLY_FIRE;
 			dam = damroll(30, 4);
 			break;
 		case SV_SCROLL_MONSTER_CONFUSION:
@@ -3870,7 +3839,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
-        return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
+	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /*
@@ -4058,18 +4027,18 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
-        return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
-/* 
+/*
  * Monster hitting a potions trap -MWK-
  *
  * Return TRUE if the monster died
- */ 
+ */
 static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 //	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-        int dam = 0, typ = 0, rad = 1;//, cloud = 0, cloudi = 0;
+	int dam = 0, typ = 0, rad = 1;//, cloud = 0, cloudi = 0;
 //	int i;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
@@ -4079,207 +4048,206 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 	/* Depend on potion type */
 	if (o_ptr->tval == TV_POTION) {
 		switch (o_ptr->sval) {
-			/* Nothing happens */
-			case SV_POTION_WATER:
-			case SV_POTION_APPLE_JUICE:
-			case SV_POTION_SLIME_MOLD:
-			case SV_POTION_INFRAVISION:
-			case SV_POTION_DETECT_INVIS:
-			case SV_POTION_SLOW_POISON:
-			case SV_POTION_CURE_POISON:
-			case SV_POTION_RESIST_HEAT:
-			case SV_POTION_RESIST_COLD:
-			case SV_POTION_RESTORE_MANA:
-			case SV_POTION_STAR_RESTORE_MANA:
-			case SV_POTION_RESTORE_EXP:
-			case SV_POTION_ENLIGHTENMENT:
-			case SV_POTION_STAR_ENLIGHTENMENT:
-			case SV_POTION_SELF_KNOWLEDGE:
-				return (FALSE);
+		/* Nothing happens */
+		case SV_POTION_WATER:
+		case SV_POTION_APPLE_JUICE:
+		case SV_POTION_SLIME_MOLD:
+		case SV_POTION_INFRAVISION:
+		case SV_POTION_DETECT_INVIS:
+		case SV_POTION_SLOW_POISON:
+		case SV_POTION_CURE_POISON:
+		case SV_POTION_RESIST_HEAT:
+		case SV_POTION_RESIST_COLD:
+		case SV_POTION_RESTORE_MANA:
+		case SV_POTION_STAR_RESTORE_MANA:
+		case SV_POTION_RESTORE_EXP:
+		case SV_POTION_ENLIGHTENMENT:
+		case SV_POTION_STAR_ENLIGHTENMENT:
+		case SV_POTION_SELF_KNOWLEDGE:
+			return (FALSE);
 
-			case SV_POTION_SALT_WATER:
-/*				if (!r_ptr->flags3 & RF3_NO_STUN) {
-					m_ptr->stunned += 5;
-					msg_print_near_monster(m_idx, "appears stunned");
-				}
-				return (FALSE);*/
-				typ = GF_BLIND;
-				dam = damroll(3, 2);
-				break;
-			case SV_POTION_DEC_STR:
-				typ = GF_DEC_STR;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_DEC_INT:	
-//				m_ptr->aaf--;
-			case SV_POTION_DEC_WIS:
-				return (FALSE);
-			case SV_POTION_DEC_DEX:
-				typ = GF_DEC_DEX;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_DEC_CON:
-				typ = GF_DEC_CON;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_DEC_CHR:
-				return (FALSE);
-			case SV_POTION_RES_STR:
-				typ = GF_RES_STR;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_RES_INT:
-			case SV_POTION_RES_WIS:
-				return (FALSE);
-			case SV_POTION_RES_DEX:
-				typ = GF_RES_DEX;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_RES_CON:
-				typ = GF_RES_CON;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_RES_CHR:
-				return (FALSE);
-			case SV_POTION_INC_STR:
-				typ = GF_INC_STR;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_INC_INT:
-			case SV_POTION_INC_WIS:
-				return (FALSE);
-			case SV_POTION_INC_DEX:
-				typ = GF_INC_DEX;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_INC_CON:
-				typ = GF_INC_CON;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_INC_CHR:
-				return (FALSE);
-			case SV_POTION_AUGMENTATION:
-				typ = GF_AUGMENTATION;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_RUINATION:	/* ??? */
-				typ = GF_RUINATION;
-				dam = 1; /*dummmy*/
-				break;
-			case SV_POTION_EXPERIENCE:
-				typ = GF_EXP;
-				dam = 1; /* level */
-				break;
-			case SV_POTION_SLOWNESS:
-				rad = 2;
-				typ = GF_OLD_SLOW;
-				dam = damroll(4, 6);
-				break;
-			case SV_POTION_POISON:
-				typ = GF_POIS;
-				dam = damroll(8, 6);
-				rad = 3;
-				//cloud = 3;
-				//cloudi = 5;
-				break;
-			case SV_POTION_CONFUSION:
-				rad = 3;
-				typ = GF_CONFUSION;
-				dam = damroll(5, 4);
-				break;
-			case SV_POTION_BLINDNESS:
-				rad = 3;
-//				typ = GF_DARK;
-				typ = GF_BLIND;
-				dam = 10;
-				break;
-			case SV_POTION_SLEEP:
-				rad = 3;
-				typ = GF_OLD_SLEEP;
-				dam = damroll (4, 6);
-				break;
-			case SV_POTION_LOSE_MEMORIES:
-				rad = 2;
-				typ = GF_OLD_CONF;
-				dam = damroll(10, 5);
-				break;
-			case SV_POTION_DETONATIONS:
-//				typ = GF_DISINTEGRATE;
-				typ = GF_DETONATION;
-				dam = damroll(40, 20);
-				rad = 3;
+		case SV_POTION_SALT_WATER:
+/*			if (!r_ptr->flags3 & RF3_NO_STUN) {
+				m_ptr->stunned += 5;
+				msg_print_near_monster(m_idx, "appears stunned");
+			}
+			return (FALSE);*/
+			typ = GF_BLIND;
+			dam = damroll(3, 2);
+			break;
+		case SV_POTION_DEC_STR:
+			typ = GF_DEC_STR;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_DEC_INT:	
+//			m_ptr->aaf--;
+		case SV_POTION_DEC_WIS:
+			return (FALSE);
+		case SV_POTION_DEC_DEX:
+			typ = GF_DEC_DEX;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_DEC_CON:
+			typ = GF_DEC_CON;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_DEC_CHR:
+			return (FALSE);
+		case SV_POTION_RES_STR:
+			typ = GF_RES_STR;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_RES_INT:
+		case SV_POTION_RES_WIS:
+			return (FALSE);
+		case SV_POTION_RES_DEX:
+			typ = GF_RES_DEX;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_RES_CON:
+			typ = GF_RES_CON;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_RES_CHR:
+			return (FALSE);
+		case SV_POTION_INC_STR:
+			typ = GF_INC_STR;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_INC_INT:
+		case SV_POTION_INC_WIS:
+			return (FALSE);
+		case SV_POTION_INC_DEX:
+			typ = GF_INC_DEX;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_INC_CON:
+			typ = GF_INC_CON;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_INC_CHR:
+			return (FALSE);
+		case SV_POTION_AUGMENTATION:
+			typ = GF_AUGMENTATION;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_RUINATION:	/* ??? */
+			typ = GF_RUINATION;
+			dam = 1; /*dummmy*/
+			break;
+		case SV_POTION_EXPERIENCE:
+			typ = GF_EXP;
+			dam = 1; /* level */
+			break;
+		case SV_POTION_SLOWNESS:
+			rad = 2;
+			typ = GF_OLD_SLOW;
+			dam = damroll(4, 6);
+			break;
+		case SV_POTION_POISON:
+			typ = GF_POIS;
+			dam = damroll(8, 6);
+			rad = 3;
+			//cloud = 3;
+			//cloudi = 5;
+			break;
+		case SV_POTION_CONFUSION:
+			rad = 3;
+			typ = GF_CONFUSION;
+			dam = damroll(5, 4);
+			break;
+		case SV_POTION_BLINDNESS:
+			rad = 3;
+//			typ = GF_DARK;
+			typ = GF_BLIND;
+			dam = 10;
+			break;
+		case SV_POTION_SLEEP:
+			rad = 3;
+			typ = GF_OLD_SLEEP;
+			dam = damroll (4, 6);
+			break;
+		case SV_POTION_LOSE_MEMORIES:
+			rad = 2;
+			typ = GF_OLD_CONF;
+			dam = damroll(10, 5);
+			break;
+		case SV_POTION_DETONATIONS:
+//			typ = GF_DISINTEGRATE;
+			typ = GF_DETONATION;
+			dam = damroll(40, 20);
+			rad = 3;
 #ifdef USE_SOUND_2010
-				/* sound only if we can see the trap detonate */
-				if (who > 0 && los(&m_ptr->wpos, Players[who]->py, Players[who]->px, y, x)) {
-					sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
-				}
+			/* sound only if we can see the trap detonate */
+			if (who > 0 && los(&m_ptr->wpos, Players[who]->py, Players[who]->px, y, x)) {
+				sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
+			}
 #endif
-				break;
-			case SV_POTION_DEATH:
-				rad = 3;
-				typ = GF_NETHER;
-				dam = damroll(60, 20);
-				break;
-			case SV_POTION_BOLDNESS:
-/*				if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
-				m_ptr->monfear = 0;
-				return (FALSE);*/
-				rad = 4;
-				typ = GF_REMFEAR;
-				dam = 1; /*dummy*/
-				break;
-			case SV_POTION_SPEED:
-				rad = 2;
-				typ = GF_OLD_SPEED;
-				dam = damroll(5, 10);
-				break;
-			case SV_POTION_HEROISM:
-			case SV_POTION_BERSERK_STRENGTH:
-/*				if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
-				m_ptr->monfear = 0;
-				typ = GF_OLD_HEAL;*/
-				typ = GF_HERO_MONSTER;
-				dam = damroll(2, 10);
-				rad = 2;
-				break;
-			case SV_POTION_CURE_LIGHT:
-				typ = GF_OLD_HEAL;
-				dam = damroll(3, 4);
-				rad = 2;
-				break;
-			case SV_POTION_CURE_SERIOUS:
-				typ = GF_OLD_HEAL;
-				dam = damroll(4, 6);
-				rad = 2;
-				break;
-			case SV_POTION_CURE_CRITICAL:
-				typ = GF_OLD_HEAL;
-				dam = damroll(6, 8);
-				rad = 2;
-				break;
-			case SV_POTION_CURING:
-				typ = GF_CURING; //GF_OLD_HEAL;
-				dam = 0x4 + 0x8 + 0x10 + 0x20; //300;
-				rad = 3;
-				break;
-			case SV_POTION_HEALING:
-				typ = GF_OLD_HEAL;
-				dam = 300;
-				rad = 3;
-				break;
-			case SV_POTION_STAR_HEALING:
-				typ = GF_OLD_HEAL;
-				dam = 700;
-				rad = 4;
-				break;
-			case SV_POTION_LIFE:
-				typ = GF_LIFEHEAL;
-				dam = damroll(30, 20);
-				rad = 3;
-				break;
-			default:
-				return (FALSE);
-
+			break;
+		case SV_POTION_DEATH:
+			rad = 3;
+			typ = GF_NETHER;
+			dam = damroll(60, 20);
+			break;
+		case SV_POTION_BOLDNESS:
+/*			if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
+			m_ptr->monfear = 0;
+			return (FALSE);*/
+			rad = 4;
+			typ = GF_REMFEAR;
+			dam = 1; /*dummy*/
+			break;
+		case SV_POTION_SPEED:
+			rad = 2;
+			typ = GF_OLD_SPEED;
+			dam = damroll(5, 10);
+			break;
+		case SV_POTION_HEROISM:
+		case SV_POTION_BERSERK_STRENGTH:
+/*			if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
+			m_ptr->monfear = 0;
+			typ = GF_OLD_HEAL;*/
+			typ = GF_HERO_MONSTER;
+			dam = damroll(2, 10);
+			rad = 2;
+			break;
+		case SV_POTION_CURE_LIGHT:
+			typ = GF_OLD_HEAL;
+			dam = damroll(3, 4);
+			rad = 2;
+			break;
+		case SV_POTION_CURE_SERIOUS:
+			typ = GF_OLD_HEAL;
+			dam = damroll(4, 6);
+			rad = 2;
+			break;
+		case SV_POTION_CURE_CRITICAL:
+			typ = GF_OLD_HEAL;
+			dam = damroll(6, 8);
+			rad = 2;
+			break;
+		case SV_POTION_CURING:
+			typ = GF_CURING; //GF_OLD_HEAL;
+			dam = 0x4 + 0x8 + 0x10 + 0x20; //300;
+			rad = 3;
+			break;
+		case SV_POTION_HEALING:
+			typ = GF_OLD_HEAL;
+			dam = 300;
+			rad = 3;
+			break;
+		case SV_POTION_STAR_HEALING:
+			typ = GF_OLD_HEAL;
+			dam = 700;
+			rad = 4;
+			break;
+		case SV_POTION_LIFE:
+			typ = GF_LIFEHEAL;
+			dam = damroll(30, 20);
+			rad = 3;
+			break;
+		default:
+			return (FALSE);
 		}
 	}
 	else if (o_ptr->tval == TV_FLASK) {
@@ -4302,8 +4270,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 	/* Actually hit the monster */
 //	(void) project_m(who, y, x, 0, y, x, dam, typ);
 	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
-
-        return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
@@ -4431,7 +4398,7 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
-        return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
+	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /*
@@ -4545,9 +4512,7 @@ bool mon_hit_trap(int m_idx) {
 		difficulty += 20;
 
 	/* Some traps are well-hidden */
-	if (f1 & TR1_STEALTH) {
-		difficulty += 10 * (kit_o_ptr->pval);
-	}
+	if (f1 & TR1_STEALTH) difficulty += 10 * (kit_o_ptr->pval);
 
 	/* Get monster smartness for trap detection */
 	/* Higher level monsters are smarter */
