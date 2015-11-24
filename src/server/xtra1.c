@@ -7500,7 +7500,7 @@ static void process_global_event(int ge_id) {
 				} else {
 					s_printf("%s EVENT_STARTS: %d (%s) has %d participants.\n", showtime(), ge_id + 1, ge->title, participants);
 					msg_broadcast_format(0, "\374\377U[>>\377C%s (\377U%d\377C) starts now!\377U<<]", ge->title, ge_id + 1);
-					
+
 					/* memorize each character's participation */
 					for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 						if (!ge->participant[j]) continue;
@@ -7508,6 +7508,10 @@ static void process_global_event(int ge_id) {
 						for (i = 1; i <= NumPlayers; i++) {
 							if (Players[i]->id != ge->participant[j]) continue;
 							Players[i]->global_event_participated[ge->getype]++;
+							/* play warning sfx in case they were afk waiting for it to begin? ;) */
+#ifdef USE_SOUND_2010
+							sound(i, "gong", "bell", SFX_TYPE_MISC, FALSE);
+#endif
 						}
 					}
 				}
