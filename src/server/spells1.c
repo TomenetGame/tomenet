@@ -2262,8 +2262,7 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
  * Does a given class of objects (usually) hate acid?
  * Note that acid can either melt or corrode something.
  */
-static bool hates_acid(object_type *o_ptr)
-{
+static bool hates_acid(object_type *o_ptr) {
 	/* Analyze the type */
 	switch (o_ptr->tval) {
 	/* Wearable items */
@@ -2311,8 +2310,7 @@ static bool hates_acid(object_type *o_ptr)
 /*
  * Does a given object (usually) hate electricity?
  */
-static bool hates_elec(object_type *o_ptr)
-{
+static bool hates_elec(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_RING:
 	case TV_WAND:
@@ -2327,8 +2325,7 @@ static bool hates_elec(object_type *o_ptr)
  * Blunt/Polearm weapons have wooden shafts.
  * Arrows/Bows are mostly wooden.
  */
-bool hates_fire(object_type *o_ptr)
-{
+bool hates_fire(object_type *o_ptr) {
 	/* Analyze the type */
 	switch (o_ptr->tval) {
 	/* Wearable */
@@ -2381,8 +2378,7 @@ bool hates_fire(object_type *o_ptr)
 /*
  * Does a given object (usually) hate cold?
  */
-static bool hates_cold(object_type *o_ptr)
-{
+static bool hates_cold(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_POTION:
 	case TV_POTION2:
@@ -2397,8 +2393,7 @@ static bool hates_cold(object_type *o_ptr)
 /*
  * Does a given object (usually) hate impact?
  */
-static bool hates_impact(object_type *o_ptr)
-{
+static bool hates_impact(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_POTION:
 	case TV_POTION2:
@@ -2414,8 +2409,7 @@ static bool hates_impact(object_type *o_ptr)
 /*
  * Does a given object (usually) hate water?
  */
-bool hates_water(object_type *o_ptr)
-{
+bool hates_water(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 //	case TV_POTION:		/* dilutes */
 //	case TV_POTION2:	/* dilutes */
@@ -2430,8 +2424,7 @@ bool hates_water(object_type *o_ptr)
 /*
  * Does a given object rust from water? (for equip_damage()) - C. Blue
  */
-static bool can_rust(object_type *o_ptr)
-{
+static bool can_rust(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 #if 0
 	case TV_GLOVES: if (o_ptr->sval == SV_LEATHER_GLOVES || o_ptr->sval == SV_SET_OF_ELVEN_GLOVES) return FALSE;
@@ -2463,8 +2456,7 @@ static bool can_rust(object_type *o_ptr)
 /*
  * Melt something
  */
-static int set_acid_destroy(object_type *o_ptr)
-{
+static int set_acid_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_acid(o_ptr)) return (FALSE);
@@ -2477,8 +2469,7 @@ static int set_acid_destroy(object_type *o_ptr)
 /*
  * Electrical damage
  */
-static int set_elec_destroy(object_type *o_ptr)
-{
+static int set_elec_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_elec(o_ptr)) return (FALSE);
@@ -2491,8 +2482,7 @@ static int set_elec_destroy(object_type *o_ptr)
 /*
  * Burn something
  */
-static int set_fire_destroy(object_type *o_ptr)
-{
+static int set_fire_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_fire(o_ptr)) return (FALSE);
@@ -2505,8 +2495,7 @@ static int set_fire_destroy(object_type *o_ptr)
 /*
  * Freeze things
  */
-int set_cold_destroy(object_type *o_ptr)
-{
+int set_cold_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_cold(o_ptr)) return (FALSE);
@@ -2519,8 +2508,7 @@ int set_cold_destroy(object_type *o_ptr)
 /*
  * Crash things
  */
-int set_impact_destroy(object_type *o_ptr)
-{
+int set_impact_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_impact(o_ptr)) return (FALSE);
@@ -2534,8 +2522,7 @@ int set_impact_destroy(object_type *o_ptr)
 /*
  * Soak something
  */
-int set_water_destroy(object_type *o_ptr)
-{
+int set_water_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_water(o_ptr)) return (FALSE);
@@ -2548,8 +2535,7 @@ int set_water_destroy(object_type *o_ptr)
 /*
  * Rust
  */
-static int set_rust_destroy(object_type *o_ptr)
-{
+static int set_rust_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!can_rust(o_ptr)) return (FALSE);
@@ -2567,8 +2553,7 @@ static int set_rust_destroy(object_type *o_ptr)
  * ie hates_fire() or hates_impact()?
  * (Note: Add shards too in case hates_shards() is ever added to the game)
  */
-int set_rocket_destroy(object_type *o_ptr)
-{
+int set_rocket_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_impact(o_ptr)) {
@@ -2583,8 +2568,7 @@ int set_rocket_destroy(object_type *o_ptr)
 /*
  * Every things
  */
-int set_all_destroy(object_type *o_ptr)
-{
+int set_all_destroy(object_type *o_ptr) {
 	if (artifact_p(o_ptr)) return (FALSE);
 //	if (is_realm_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return (FALSE);
 	if (is_realm_book(o_ptr)) {
@@ -2889,14 +2873,11 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 /*
  * Hurt the player with Acid
  */
-int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
-{
+int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
-
 	int inv, hurt_eq;
 
 	dam -= p_ptr->reduc_acid * dam / 100;
-
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* this is SO much softer than MAngband, heh. I think it's good tho - C. Blue */
@@ -2945,14 +2926,11 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 /*
  * Hurt the player with electricity
  */
-int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
-{
+int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
-
 	int inv;
 
 	dam -= p_ptr->reduc_elec * dam / 100;
-
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total immunity */
@@ -2988,14 +2966,11 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 /*
  * Hurt the player with Fire
  */
-int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
-{
+int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
-
 	int inv, hurt_eq;
 
 	dam -= p_ptr->reduc_fire * dam / 100;
-
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	hurt_eq = (dam < 30) ? 15 : (dam < 60) ? 33 : 100;
@@ -3037,14 +3012,11 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 /*
  * Hurt the player with Cold
  */
-int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
-{
+int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
-
 	int inv;
 
 	dam -= p_ptr->reduc_cold * dam / 100;
-
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total immunity */
@@ -3087,10 +3059,8 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
  * Note that this function (used by stat potions) now restores
  * the stat BEFORE increasing it.
  */
-bool inc_stat(int Ind, int stat)
-{
+bool inc_stat(int Ind, int stat) {
 	player_type *p_ptr = Players[Ind];
-
 	int value, gain;
 
 	/* Then augment the current/max stat */
@@ -3156,10 +3126,8 @@ bool inc_stat(int Ind, int stat)
  * if your stat is already drained, the "max" value will not drop all
  * the way down to the "cur" value.
  */
-bool dec_stat(int Ind, int stat, int amount, int mode)
-{
+bool dec_stat(int Ind, int stat, int amount, int mode) {
 	player_type *p_ptr = Players[Ind];
-
 	int cur, max, loss = 0, same, res = FALSE;
 
 	if (safe_area(Ind)) return(FALSE);
@@ -3284,8 +3252,7 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 /*
  * Restore a stat.  Return TRUE only if this actually makes a difference.
  */
-bool res_stat(int Ind, int stat)
-{
+bool res_stat(int Ind, int stat) {
 	player_type *p_ptr = Players[Ind];
 
 	/* temporary drain is gone */
@@ -3293,8 +3260,7 @@ bool res_stat(int Ind, int stat)
 	p_ptr->stat_cnt[stat] = 0;
 
 	/* Restore if needed */
-	if (p_ptr->stat_cur[stat] != p_ptr->stat_max[stat])
-	{
+	if (p_ptr->stat_cur[stat] != p_ptr->stat_max[stat]) {
 		/* Restore */
 		p_ptr->stat_cur[stat] = p_ptr->stat_max[stat];
 
@@ -3324,8 +3290,7 @@ bool res_stat(int Ind, int stat)
  *
  * Return "TRUE" if the player notices anything
  */
-bool apply_disenchant(int Ind, int mode)
-{
+bool apply_disenchant(int Ind, int mode) {
 	player_type *p_ptr = Players[Ind];
 	int			t = mode;
 	object_type		*o_ptr;
@@ -3451,8 +3416,7 @@ bool apply_disenchant(int Ind, int mode)
  *
  * Return "TRUE" if the player notices anything
  */
-bool apply_discharge(int Ind, int dam)
-{
+bool apply_discharge(int Ind, int dam) {
 	player_type *p_ptr = Players[Ind];
 
 	int	i, chance = 95;
@@ -3472,8 +3436,7 @@ bool apply_discharge(int Ind, int dam)
 
 	/* Scan through the slots backwards */
 //	for (i = 0; i < INVEN_PACK; i++)
-	for (i = 0; i < INVEN_TOTAL; i++)	/* Let's see what will happen.. */
-	{
+	for (i = 0; i < INVEN_TOTAL; i++) { /* Let's see what will happen.. */
 		/* Hack -- equipments are harder to be harmed */
 		if (i >= INVEN_PACK && i != INVEN_AMMO && !magik(HARM_EQUIP_CHANCE))
 			continue;
@@ -3553,8 +3516,7 @@ bool apply_discharge(int Ind, int dam)
 
 	return (damaged_any);
 }
-bool apply_discharge_item(int o_idx, int dam)
-{
+bool apply_discharge_item(int o_idx, int dam) {
 	int	chance = 95;
 	bool	damaged = FALSE;
 	object_type *o_ptr = &o_list[o_idx];
@@ -3618,13 +3580,12 @@ bool apply_discharge_item(int o_idx, int dam)
 /*
  * Apply Nexus
  */
-static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker)
-{
+static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int max1, cur1, max2, cur2, ii, jj;
 
-        int chance = (195 - p_ptr->skill_sav) / 2;
-        if (p_ptr->res_tele) chance = 50;
+	int chance = (195 - p_ptr->skill_sav) / 2;
+	if (p_ptr->res_tele) chance = 50; //equal to 95% saving throw (max)
 
 	if (p_ptr->martyr) return;
 
@@ -3632,98 +3593,64 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker)
 		s_printf("APPLY_NEXUS_PY: %s by %s\n", p_ptr->name, Players[Ind_attacker]->name);
 
 	switch (randint((safe_area(Ind) || (p_ptr->mode & MODE_PVP)) ? 5 : 8)) { /* don't do baaad things in Monster Arena Challenge */
-		case 4: case 5:
-		{
-			if (p_ptr->anti_tele || magik(chance))
-			{
-				msg_print(Ind, "You resist the effects!");
-				break;
-			}
-
-			if (m_ptr)
-				teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
-			else
-				teleport_player(Ind, 200, TRUE);
+	case 4: case 5:
+		if (p_ptr->anti_tele || magik(chance)) {
+			msg_print(Ind, "You resist the effects!");
 			break;
 		}
-
-		case 1: case 2: case 3:
-		{
-			if (p_ptr->anti_tele || magik(chance))
-			{
-				msg_print(Ind, "You resist the effects!");
-				break;
-			}
-
-			teleport_player(Ind, 200, TRUE);
+		if (m_ptr) teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
+		else teleport_player(Ind, 200, TRUE);
+		break;
+	case 1: case 2: case 3:
+		if (p_ptr->anti_tele || magik(chance)) {
+			msg_print(Ind, "You resist the effects!");
 			break;
 		}
-
-		case 6:
-		{
-			if (rand_int(100) < p_ptr->skill_sav || magik(chance))
-			{
-				msg_print(Ind, "You resist the effects!");
-				break;
-			}
-
-			/* Teleport Level */
-			teleport_player_level(Ind, FALSE);
+		teleport_player(Ind, 200, TRUE);
+		break;
+	case 6:
+		if (magik(chance)) {
+			msg_print(Ind, "You resist the effects!");
 			break;
 		}
-
-		case 7:
-		{
-			if (rand_int(100) < p_ptr->skill_sav)
-			{
-				msg_print(Ind, "You resist the effects!");
-				break;
-			}
-
-			msg_print(Ind, "\376\377oYour body starts to scramble...");
-			s_printf("NEXUS_SCRAMBLE: %s\n", p_ptr->name);
-
-			/* Pick a pair of stats */
-			ii = rand_int(6);
-			for (jj = ii; jj == ii; jj = rand_int(6)) /* loop */;
-
-			max1 = p_ptr->stat_max[ii];
-			cur1 = p_ptr->stat_cur[ii];
-			max2 = p_ptr->stat_max[jj];
-			cur2 = p_ptr->stat_cur[jj];
-
-			p_ptr->stat_max[ii] = max2;
-			p_ptr->stat_cur[ii] = cur2;
-			p_ptr->stat_max[jj] = max1;
-			p_ptr->stat_cur[jj] = cur1;
-
-			p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
-
+		/* Teleport Level */
+		teleport_player_level(Ind, FALSE);
+		break;
+	case 7:
+		/* for now full saving throw for this one, since it's especially nasty */
+		if (rand_int(100) < p_ptr->skill_sav) {
+			msg_print(Ind, "You resist the effects!");
 			break;
 		}
+		msg_print(Ind, "\376\377oYour body starts to scramble...");
+		s_printf("NEXUS_SCRAMBLE: %s\n", p_ptr->name);
 
-		case 8:
-		{
-			if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
-			if (p_ptr->anti_tele || magik(chance))
-			{
-				msg_print(Ind, "You resist the effects!");
-				break;
-			}
-
-			msg_print(Ind, "\376\377oYour backpack starts to scramble...");
-
-			if(m_ptr){
-				ii = 10 + m_ptr->level / 3;
-				if (ii > 50) ii = 50;
-			}
-			else
-				ii = 25;
-
-			do_player_scatter_items(Ind, 5, ii);
-
+		/* Pick a pair of stats */
+		ii = rand_int(6);
+		for (jj = ii; jj == ii; jj = rand_int(6)) /* loop */;
+		max1 = p_ptr->stat_max[ii];
+		cur1 = p_ptr->stat_cur[ii];
+		max2 = p_ptr->stat_max[jj];
+		cur2 = p_ptr->stat_cur[jj];
+		p_ptr->stat_max[ii] = max2;
+		p_ptr->stat_cur[ii] = cur2;
+		p_ptr->stat_max[jj] = max1;
+		p_ptr->stat_cur[jj] = cur1;
+		p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
+		break;
+	case 8:
+		if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
+		if (p_ptr->anti_tele || magik(chance)) {
+			msg_print(Ind, "You resist the effects!");
 			break;
 		}
+		msg_print(Ind, "\376\377oYour backpack starts to scramble...");
+		if (m_ptr) {
+			ii = 10 + m_ptr->level / 3;
+			if (ii > 50) ii = 50;
+		} else ii = 25;
+		do_player_scatter_items(Ind, 5, ii);
+		break;
 	}
 }
 
@@ -3738,25 +3665,24 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker)
    I CANT WAIT. DOING FRUIT BAT RIGHT NOW!!! 
    -APD-
 */
-static void apply_morph(int Ind, int power, char * killer, int Ind_attacker)
-{
+/* note: apply_morph() is only called by polymorph-rod usage.
+   disable body-scrambling, to make it more usable for un-bat'ing someone? */
+#define DISABLE_MORPH_SCRAMBLE
+static void apply_morph(int Ind, int power, char * killer, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
-#if 0
+#ifndef DISABLE_MORPH_SCRAMBLE
 	int max1, cur1, max2, cur2, ii, jj;
 #endif
 
 	if (p_ptr->martyr) return;
 
-        if (IS_PLAYER(Ind_attacker))
-    		s_printf("APPLY_MORPH_PY: %s by %s\n", p_ptr->name, Players[Ind_attacker]->name);
+	if (IS_PLAYER(Ind_attacker))
+		s_printf("APPLY_MORPH_PY: %s by %s\n", p_ptr->name, Players[Ind_attacker]->name);
 
+#ifndef DISABLE_MORPH_SCRAMBLE
 	switch (randint(2)) {
-#if 1
-	case 1: msg_print(Ind, "You resist the effects!");
-		break;
-#else
 	case 1:
-		if (rand_int(40 + power*2) < p_ptr->skill_sav) {
+		if (rand_int(40 + power * 2) < p_ptr->skill_sav) {
 			msg_print(Ind, "You resist the effects!");
 			break;
 		}
@@ -3781,8 +3707,8 @@ static void apply_morph(int Ind, int power, char * killer, int Ind_attacker)
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
 
 		break;
-#endif
 	case 2:
+#endif
 		if (!p_ptr->fruit_bat) {
 			if (rand_int(10 + power * 4) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -3805,7 +3731,9 @@ static void apply_morph(int Ind, int power, char * killer, int Ind_attacker)
 		} else {
 			msg_print(Ind, "You feel certain you are a fruit bat!");
 		}
+#ifndef DISABLE_MORPH_SCRAMBLE
 	}
+#endif
 }
 
 

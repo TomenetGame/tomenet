@@ -11999,18 +11999,17 @@ Saving Throw
     How well you can resist attacks that have influence on your status
     other than just hit points (except for monster curses, which can be
     prevented too). Saving throw is rolled (possibly modified) against:
-    -Nexus effects
+    -Fear and paralysation melee attacks
+    -Confusion, fear, blindness, slowness, paralysation spell effects
+    -Non-friendly teleportation effects
+    -All nexus/morph effects (except polymorphing from bat form back to normal)
+    -Unmagic effects
+    -Direct damage curses (the ones screamed by monsters at you)
+    -Suffering damage from dispelling effects
     -Psi attacks of all sorts (damage and effects), including mind-blanking and
      the terribly adverse effects of an encounter with an eldritch horror,
      which can be: Confusion, hallucination, insanity, paralyzation, amnesia
      and (sometimes permanent) loss of intelligence and wisdom.
-    -Suffering damage from dispelling effects
-    -Fear and paralysation melee attacks
-    -Confusion, fear, blindness, slowness, paralysation spell effects
-    -Teleportation effects cast onto you
-    -Weapon/armour getting cursed
-    -Unmagic effects
-    -Direct damage curses (the ones screamed by monsters at you)
     -The draining effects of an ancient foul curse (TY_CURSE)
     -Seasoned traveller trap effect.
 Stealth
