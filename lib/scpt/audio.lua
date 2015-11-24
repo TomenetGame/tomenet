@@ -12,6 +12,7 @@ audio_sfx = {
     "page",
     "greeting",
     "warning",
+    "gong",
 
     --[weather]
     "rain_soft",
