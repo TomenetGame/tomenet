@@ -1457,7 +1457,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 
 		do_mimic_change(Ind, j, FALSE);
 		if (skill_mimic <= 70) p_ptr->energy -= level_speed(&p_ptr->wpos);
-		else p_ptr->energy -= (level_speed(&p_ptr->wpos) * (110 - skill_mimic)) / 40;
+		else p_ptr->energy -= (level_speed(&p_ptr->wpos) * (55 - skill_mimic / 2)) / 20;//1-pt resolution
 	} else if (spell >= 20000) { /* hack: 20000 masks poly into.. */
 		k = p_ptr->body_monster;
 		//j = get_quantity("Which form (0 for player form)?", 0);
@@ -1535,7 +1535,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			/* Ok we found */
 			do_mimic_change(Ind, j, using_free_mimic);
 			if (skill_mimic <= 70) p_ptr->energy -= level_speed(&p_ptr->wpos);
-			else p_ptr->energy -= (level_speed(&p_ptr->wpos) * (110 - skill_mimic)) / 40;
+			else p_ptr->energy -= (level_speed(&p_ptr->wpos) * (55 - skill_mimic / 2)) / 20;//1-pt resolution
 		}
 	} else {
 		/* (S)he is no longer afk */

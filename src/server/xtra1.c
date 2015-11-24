@@ -1206,7 +1206,7 @@ void calc_mana(int Ind) {
 
 	/* EXPERIMENTAL: high mimicry skill further adds to mana pool */
 	if (get_skill(p_ptr, SKILL_MIMIC) > 30)
-		new_mana += get_skill_scale(p_ptr, SKILL_MIMIC, 250) - 150;
+		new_mana += (get_skill(p_ptr, SKILL_MIMIC) - 30) * 5;//1-pt resolution
 
 	/* Meditation increase mana at the cost of hp */
 	if (p_ptr->tim_meditation) new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 100;
