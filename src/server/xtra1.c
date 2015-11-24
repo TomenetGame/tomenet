@@ -1053,7 +1053,7 @@ static void calc_sanity(int Ind) {
 void calc_mana(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	player_type *p_ptr2 = NULL; /* silence the warning */
-	int Ind2;
+	int Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2);
 
 	int levels, cur_wgt, max_wgt, tmp_lev;
 	s32b new_mana = 0;
@@ -1061,8 +1061,6 @@ void calc_mana(int Ind) {
 	object_type *o_ptr;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
-	}
 
 	/* Extract "effective" player level */
 	tmp_lev = p_ptr->lev * 10;
@@ -1160,12 +1158,70 @@ void calc_mana(int Ind) {
 		break;
 	}
 
+
+	/* --- apply +MANA --- */
+
+	/* adjustment so paladins won't become OoD sentry guns and
+	   rangers won't become invulnerable manashield tanks, and
+	   priests won't become OoD wizards.. (C. Blue)
+	   Removed ranger mana penalty here, added handicap in spells1.c
+	   where disruption shield is calculated. (C. Blue) */
+	switch(p_ptr->pclass) {
+	case CLASS_MAGE:
+	case CLASS_RANGER:
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
+		break;
+	case CLASS_ADVENTURER:
+	case CLASS_SHAMAN:
+	case CLASS_DRUID:
+	/* in theory these actually don't use 'magic mana' at all?: */
+	case CLASS_PRIEST: /* maybe Shamans are treated too good in comparison here */
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 130;
+		break;
+	case CLASS_PALADIN:
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
+		break;
+	/* non-holy again: -- hm not sure if they still need to get reduced effect*/
+	case CLASS_MIMIC:
+	case CLASS_ROGUE:
+#if 0
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 150;
+#else /* why not.. */
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
+#endif
+		break;
+	/* hybrids & more */
+	case CLASS_MINDCRAFTER:
+	case CLASS_RUNEMASTER:
+	default:
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
+		break;
+	}
+
+
+	/* --- apply flat MP boni --- */
+
+	/* Hack -- usually add one mana */
+	if (new_mana) new_mana++;
+
 	/* EXPERIMENTAL: high mimicry skill further adds to mana pool */
 	if (get_skill(p_ptr, SKILL_MIMIC) > 30)
 		new_mana += get_skill_scale(p_ptr, SKILL_MIMIC, 250) - 150;
 
-	/* Hack -- usually add one mana */
-	if (new_mana) new_mana++;
+	/* Meditation increase mana at the cost of hp */
+	if (p_ptr->tim_meditation) new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 100;
+
+
+	/* --- apply flat mali --- */
+
+	/* Disruption Shield now increases hp at the cost of mana */
+	if (p_ptr->tim_manashield) {
+		/* commented out (evileye for power) */
+		/*new_mana -= new_mana / 2; */
+	}
+
+
+	/* --- apply mali (encumberment/awkward) --- */
 
 	/* Get the gloves */
 	o_ptr = &p_ptr->inventory[INVEN_HANDS];
@@ -1214,53 +1270,6 @@ void calc_mana(int Ind) {
 		}
 	}
 
-	if (new_mana <= 0) new_mana = 1;
-
-	/* adjustment so paladins won't become OoD sentry guns and
-	   rangers won't become invulnerable manashield tanks, and
-	   priests won't become OoD wizards.. (C. Blue)
-	   Removed ranger mana penalty here, added handicap in spells1.c
-	   where disruption shield is calculated. (C. Blue) */
-	switch(p_ptr->pclass) {
-	case CLASS_MAGE:
-	case CLASS_RANGER:
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
-		break;
-	case CLASS_ADVENTURER:
-	case CLASS_SHAMAN:
-	case CLASS_DRUID:
-	/* in theory these actually don't use 'magic mana' at all?: */
-	case CLASS_PRIEST: /* maybe Shamans are treated too good in comparison here */
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 130;
-		break;
-	case CLASS_PALADIN:
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
-		break;
-	/* non-holy again: -- hm not sure if they still need to get reduced effect*/
-	case CLASS_MIMIC:
-	case CLASS_ROGUE:
-#if 0
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 150;
-#else /* why not.. */
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
-#endif
-		break;
-	/* hybrids & more */
-	case CLASS_MINDCRAFTER:
-	case CLASS_RUNEMASTER:
-	default:
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
-		break;
-	}
-
-	/* Meditation increase mana at the cost of hp */
-	if (p_ptr->tim_meditation) new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 100;
-
-	/* Disruption Shield now increases hp at the cost of mana */
-	if (p_ptr->tim_manashield) {
-		/* commented out (evileye for power) */
-		/*new_mana -= new_mana / 2; */
-	}
 
 #if 1 /* now not anymore done in calc_boni (which is called before calc_mana) */
 	/* Assume player not encumbered by armor */
@@ -1315,15 +1324,18 @@ void calc_mana(int Ind) {
 	}
 #endif
 
+
+	/* --- finalize --- */
+
+	/* give at least 1 MP under normal circumstances */
+	if (new_mana <= 0) new_mana = 1;
+
 	if (Ind2) new_mana += p_ptr2->msp / 2;
 
 	/* Istari being purely mana-based thanks to mana shield don't need @ form at all,
 	   so vampire istari could get free permanent +5 speed from vampire bat form.
 	   Prevent that here: */
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) new_mana /= 2; //for both, RI_VAMPIRE_BAT and RI_VAMPIRIC_MIST
-
-	/* Mana can never be negative */
-	if (new_mana < 0) new_mana = 0;
 
 	/* Some classes dont use mana */
 	if ((p_ptr->pclass == CLASS_WARRIOR) ||
