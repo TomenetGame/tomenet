@@ -1160,6 +1160,10 @@ void calc_mana(int Ind) {
 		break;
 	}
 
+	/* EXPERIMENTAL: high mimicry skill further adds to mana pool */
+	if (get_skill(p_ptr, SKILL_MIMIC) > 35)
+		new_mana += get_skill_scale(p_ptr, SKILL_MIMIC, 350) - 245;
+
 	/* Hack -- usually add one mana */
 	if (new_mana) new_mana++;
 
@@ -1254,8 +1258,8 @@ void calc_mana(int Ind) {
 
 	/* Disruption Shield now increases hp at the cost of mana */
 	if (p_ptr->tim_manashield) {
-	/* commented out (evileye for power) */
-	/*	new_mana -= new_mana / 2; */
+		/* commented out (evileye for power) */
+		/*new_mana -= new_mana / 2; */
 	}
 
 #if 1 /* now not anymore done in calc_boni (which is called before calc_mana) */

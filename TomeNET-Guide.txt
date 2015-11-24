@@ -11468,6 +11468,8 @@ Note that not every skill is available to every profession (class).
                                 (or back to player form), but each point above
                                 35.000 will cut this down by 5%, so at 50.000
                                 Mimicry shapechanging will only take 1/4 turn.
+                                Additionally, for each point above 35.000 the
+                                character's mana pool will expand by +7 MP.
 
     .Magic device               Ability to use magic devices (wands, staves,
                                 rods, activatable items) without failing.
