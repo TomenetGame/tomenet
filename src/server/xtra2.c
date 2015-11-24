@@ -8410,7 +8410,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	{
 		/* difficult to balance, due to the different damage effects of spells- might need some changes */
 		long gain = scale_trauma;
-		gain = (dam/20 > gain ? gain : dam/20);//50
+		gain = (dam / 20 > gain ? gain : dam / 20);//50
 		if (gain > m_ptr->hp) gain = m_ptr->hp;
 		if (!gain && magik(dam * 5)) gain = 1; /* no perma-supply for level 1 mana bolts for now */
 
