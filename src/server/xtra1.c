@@ -1161,8 +1161,8 @@ void calc_mana(int Ind) {
 	}
 
 	/* EXPERIMENTAL: high mimicry skill further adds to mana pool */
-	if (get_skill(p_ptr, SKILL_MIMIC) > 35)
-		new_mana += get_skill_scale(p_ptr, SKILL_MIMIC, 350) - 245;
+	if (get_skill(p_ptr, SKILL_MIMIC) > 30)
+		new_mana += get_skill_scale(p_ptr, SKILL_MIMIC, 250) - 150;
 
 	/* Hack -- usually add one mana */
 	if (new_mana) new_mana++;
