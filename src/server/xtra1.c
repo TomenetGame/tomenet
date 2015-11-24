@@ -5235,7 +5235,7 @@ void calc_boni(int Ind) {
 	    (!r_info[p_ptr->body_monster].body_parts[BODY_WEAPON]) &&
 	    (p_ptr->num_blow > 1)) p_ptr->num_blow = 1;
 
-	/* Weaponmastery bonus to damage - not for MA!- C. Blue */
+	/* Weaponmastery bonus to hit and damage - not for MA!- C. Blue */
 	if (get_skill(p_ptr, SKILL_MASTERY) && o_ptr->k_idx) {
 		int lev = get_skill(p_ptr, SKILL_MASTERY);
 		p_ptr->to_h_melee += lev / 3;
