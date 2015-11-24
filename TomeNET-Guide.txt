@@ -7854,10 +7854,11 @@ on head (helmet), body, hands, feet, and your cloak. Note that the weight of
 a possibly equipped shield does not matter here (experimental).
 
 
-Armour weight (concerning sneakiness boni)
-------------------------------------------
+Armour weight (concerning sneakiness/to-hit boni)
+-------------------------------------------------
 Wearing armour which is too heavy for you will reduce speed bonus from
-'Sneakiness' skill and your to-hit bonus.
+'Sneakiness' skill and your to-hit boni received from your dexterity and weapon
+class' mastery skill (eg Sword-Mastery).
 You will receieve a warning message, telling you:
 "The weight of your armour encumbers your movement."
 To move freely, you may wear 10.0 lb of armoury plus a strength-factor plus
@@ -7865,6 +7866,9 @@ To move freely, you may wear 10.0 lb of armoury plus a strength-factor plus
 find your str_hold). So the top weight limit is
 
 10.0 + 0.6 * 50 (combat) + 0.6 * 100 (str_hold) = 100.0 lb.
+
+(Inspecting an item causing this type of encumberment would display that it
+encumbers "your movement" accordingly.)
 
 
 Armour weight (concerning flexibility boni and abilities)
