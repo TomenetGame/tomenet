@@ -387,6 +387,7 @@ MCHARM = add_spell {
 	["mana"] = 	10,
 	["mana_max"] = 	10,
 	["fail"] = 	10,
+	["stat"] = 	A_CHR,
 	["direction"] = function () if get_level(Ind, MCHARM, 50) >= 13 then return FALSE else return TRUE end end,
 	["spell"] = 	function(args)
 			--reset previous charm spell first:

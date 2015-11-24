@@ -14808,6 +14808,7 @@ Mindcraft schools:
                     Monsters may have a chance to resist the attack, the higher
                     the more of the following abilities they possess:
                     Being smart, resisting confusion, being powerful.
+                    (This spell uses CHARISMA to determine fail-rates!)
                     Required skill level for first spell level: 33.
 
 
@@ -14895,7 +14896,8 @@ Magic schools:
 Prayer schools:
     All holy spells depend on the spell level and your WISdom.
 Mindcraft schools:
-    All mind spells depend on the spell level and your INTelligence.
+    All mind spells depend on the spell level and your INTelligence,
+    except for 'Charm' which uses CHaRisma.
 Druidic schools:
     All druidic spells depend on the spell level and your WISdom.
 Astral school:
