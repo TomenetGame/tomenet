@@ -6961,7 +6961,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_MIMIC:
 		case CLASS_PALADIN:
 		case CLASS_MINDCRAFTER:
-			if (!rand_int(4) && !p_ptr->fruit_bat) melee_choice = 6;
+			if (item_tester_hook_wear(Ind, INVEN_WIELD) && !rand_int(4)) melee_choice = 6;
 			break;
 		case CLASS_ADVENTURER:
 		case CLASS_PRIEST:
@@ -6969,17 +6969,17 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			mha = TRUE;
 			break;
 		case CLASS_ROGUE:
-			if (!p_ptr->fruit_bat) melee_choice = 1;
+			if (item_tester_hook_wear(Ind, INVEN_WIELD)) melee_choice = 1;
 			rha = TRUE;
 			break;
 		case CLASS_ARCHER:
 		case CLASS_RANGER:
-			if (!p_ptr->fruit_bat) ranged_choice = 1;
+			if (item_tester_hook_wear(Ind, INVEN_WIELD)) ranged_choice = 1;
 			break;
 		case CLASS_MAGE:
 		case CLASS_RUNEMASTER:
 		case CLASS_SHAMAN:
-			if (!p_ptr->fruit_bat) spell_choice = 1;
+			if (item_tester_hook_wear(Ind, INVEN_WIELD)) spell_choice = 1;
 			break;
 		}
 		/* analyze current setup (for reward_armor_check) */
@@ -7033,6 +7033,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	if (spell_choice && /* aka TV_MSTAFF, exlusively */
 	    !item_tester_hook_wear(Ind, INVEN_WIELD))
 		spell_choice = 0;
+	/* Someone deliberately trained a melee/ranged skill even though he cannot equip that item type? Give him armour instead.
+	   Note that this might also happen if someone just temporarily changed form even though his skill choice would've been correct later on;
+	   we need to be strict though since he might be a fruit bat who spent skill points erroneously ;-p. */
+	if (!item_tester_hook_wear(Ind, INVEN_WIELD) && melee_choice && melee_choice != 5) melee_choice = 0;
+	if (!item_tester_hook_wear(Ind, INVEN_BOW) && ranged_choice) ranged_choice = 0;
 
 	/* Choose between possible rewards we gathered from analyzing so far */
 	/* Priority: Weapon -> Ranged -> Armor -> Misc */
