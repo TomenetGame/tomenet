@@ -6961,7 +6961,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_MIMIC:
 		case CLASS_PALADIN:
 		case CLASS_MINDCRAFTER:
-			if (!rand_int(4)) melee_choice = 6;
+			if (!rand_int(4) && !p_ptr->fruit_bat) melee_choice = 6;
 			break;
 		case CLASS_ADVENTURER:
 		case CLASS_PRIEST:
@@ -6969,17 +6969,17 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			mha = TRUE;
 			break;
 		case CLASS_ROGUE:
-			melee_choice = 1;
+			if (!p_ptr->fruit_bat) melee_choice = 1;
 			rha = TRUE;
 			break;
 		case CLASS_ARCHER:
 		case CLASS_RANGER:
-			ranged_choice = 1;
+			if (!p_ptr->fruit_bat) ranged_choice = 1;
 			break;
 		case CLASS_MAGE:
 		case CLASS_RUNEMASTER:
 		case CLASS_SHAMAN:
-			spell_choice = 1;
+			if (!p_ptr->fruit_bat) spell_choice = 1;
 			break;
 		}
 		/* analyze current setup (for reward_armor_check) */
