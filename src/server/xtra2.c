@@ -3488,11 +3488,11 @@ bool bless_temp_luck(int Ind, int pow, int dur) {
 	bool notice = FALSE;
 
 	if (!p_ptr->bless_temp_luck) {
-		msg_print(Ind, "You feel luck is on your side.");
+		msg_print(Ind, "\376\377gYou feel luck is on your side.");
 		notice = TRUE;
 	}
 	if (!dur) {
-		msg_print(Ind, "Your lucky streak fades.");
+		msg_print(Ind, "\376\377gYour lucky streak fades.");
 		notice = TRUE;
 	}
 
