@@ -16435,7 +16435,7 @@ Some monsters that people often get killed by are:
  so powerful that it can knockout its enemies with ease. Defeating it,
  however, will make it usable to its defeater!
 
--Ulik, the Troll. He is so strong that his hits cause earthquakes and he cannot
+-Ulik the Troll. He is so strong that his hits cause earthquakes and he cannot
  be stopped by (non-permanent) walls. Beware his prowess in melee combat!
  Also he moves surprisingly swiftly!
 
