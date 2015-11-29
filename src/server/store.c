@@ -6079,7 +6079,7 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 		if (!o_ptr->note) return price;
 
 		/* is it just a 'museum' item, ie not for sale? */
-		if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return price;
+		if ((p = strstr(quark_str(o_ptr->note), "@S-"))) return 0;
 
 		/* is it a player-store inscription? */
 		if (!(p = strstr(quark_str(o_ptr->note), "@S"))) return price;
