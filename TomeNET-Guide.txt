@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. November 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 29. November 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -10552,7 +10552,7 @@ Your chance to successfully tunnel through an obstacle depends on the obstacle
 and your 'digging power'.
 
 If you're not interested in the exact formula, skip down to (5.21b) which has a
-table  with example values for certain scenarios.
+table with example values for certain scenarios.
 
 
 (5.21a) Digging - Exact calculation
@@ -11394,7 +11394,7 @@ Note that not every skill is available to every profession (class).
    Most spells will increase in power in one way or the other when you increase
    their school skill. Often their failure rate decreases, too. >>
 
-+Magic                          Increases your mana capacity.
++Magic                          Increases your base mana by +4 per point.
 
                                 Lets you pseudo-id magic items, potions and
                                 scrolls faster the higher your skill is.
@@ -16435,12 +16435,22 @@ Some monsters that people often get killed by are:
  so powerful that it can knockout its enemies with ease. Defeating it,
  however, will make it usable to its defeater!
 
+-Ulik, the Troll. He is so strong that his hits cause earthquakes and he cannot
+ be stopped by (non-permanent) walls. Beware his prowess in melee combat!
+ Also he moves surprisingly swiftly!
+
 -Dracolichs and Spectral Tyrannosaurs. They have high hit points and are able
  to breathe nether, which means their damage will be maxed out.
  A dark/light green blinking D is actually a Death Drake, and although it can
  also breathe nether it is much less dangeours than a Dracolich because of its
  low hit points. Dracolichs and especially Spectral Tyrannosaurs can occur on
  fairly low levels (usually 55 and 46) which makes them a very nasty surprise.
+
+-Wyrms. The base element variations of these (hell, ice, storm, bile and swamp)
+ as well as the multi-hued one do look exactly like ancient dragons, but are a
+ magnitude stronger. So make sure to 'l'ook at that "dragon" before waking it
+ up or it might be too late. In particular you *need* potions of resistance,
+ of speed and of healing to take on a wyrm.
 
 The most powerful representant of each class:
 -Ranger chieftains are tough opponents who can nail you on the spot and
@@ -17074,7 +17084,7 @@ Mage staves
         Sustain wisdom
         Sustain intelligence
         See invisible
-        Random ESP
+        All possible ESP mods (including ESP_ALL)
         Extra +mana capacity bonus
 Boomerangs (also see 'Weapons' above)
         Extra shots
