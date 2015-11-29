@@ -16404,6 +16404,10 @@ Some monsters that people often get killed by are:
  someone being killed by a hill troll monk or forest troll chieftain for
  example.. Prepare to hit your phase door macro if you spot a shimmering
  extraordinarily fast moving monster within a potentially dangerous mob.
+ Especially dangerous are such ego versions of a base monster type that has
+ elementally branded melee attacks. You should quaff a potion of resistance
+ when fighting those to reduce the elemental damage part of their melee
+ attacks.
 
 -Veteran archer/Master archer monsters of any kind can pose a very high
  threat. Better get reflection ability if you are planning to fight these in
