@@ -11025,7 +11025,9 @@ Note that not every skill is available to every profession (class).
                                 'Critical-Strike' has much more effect.)
 
                                 Weaponmastery will also increase your parry
-                                chance a good deal (see (6.11) for details).
+                                chance a good deal (see (6.11) for details):
+                                Up to +10% for 1-handers, +15% for 1.5-handers,
+                                +20% for 2-handers.
 
         +Sword-mastery          Greatly improves to-hit/to-dam with swords.
                                 At 25 and 50 you will get +1 blow per round
