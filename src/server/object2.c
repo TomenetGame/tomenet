@@ -7228,7 +7228,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 #endif
 		    ) {
 			/* shouldn't happen, but.. */
-			s_printf("CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+			s_printf("CREATE_REWARD_PARANOIA: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
 			    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
 			    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
 			    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
@@ -7314,7 +7314,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* for other items: */
 		else {
 			/* shouldn't happen, but.. */
-			s_printf("CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+			s_printf("CREATE_REWARD_PARANOIA: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
 			    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
 			    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
 			    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
@@ -7325,7 +7325,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			/* serious alternatives: digger, magic device, a set of consumables */
 			return;
 		}
-	}
+	} else
+		s_printf("CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+		    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
+		    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
+		    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
 
 	/* In case no SVAL has been defined yet:
 	   Choose a random SVAL while paying attention to maxweight limit! */
