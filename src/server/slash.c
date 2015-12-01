@@ -639,7 +639,10 @@ void do_slash_cmd(int Ind, char *message) {
 				    !(cursed_p(o_ptr) &&
 				    (object_known_p(Ind, o_ptr) ||
 				    (o_ptr->ident & ID_SENSE))))
-					continue;
+					/* special extra hack: destroy cheap EASY_KNOW shields even if not called with 'a' or 'b'! */
+					if ((o_ptr->tval != TV_SHIELD || o_ptr->sval > SV_LARGE_METAL_SHIELD)
+					    || o_ptr->name1 || o_ptr->name2 || o_ptr->name3)
+						continue;
 
 				/* Player might wish to identify it first */
 				if (k_info[o_ptr->k_idx].has_flavor &&
