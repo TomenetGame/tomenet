@@ -1714,7 +1714,9 @@ static void artifact_lore(void) {
 			strcpy(tmp, artifact_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
-			if (artifact_list_code[i] && strstr(tmp, s)) {
+			if (artifact_list_code[i] &&
+			    ((s[0] == '!' && s[1] && artifact_list_name[i][0] == s[1]) /* also allow typing in !<char> aka the artifact symbol! */
+			    || strstr(tmp, s))) { /* partial string match anywhere in the name */
 				/* hack - found more results than fit on currently displayed page? */
 				if (n == ARTIFACT_LORE_LIST_SIZE) {
 					more_results = TRUE;
