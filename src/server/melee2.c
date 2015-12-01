@@ -1531,15 +1531,15 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 
 /* (Note that AM fields of players other than <Ind> will actually have only halved effect.) */
 static bool monst_check_antimagic(int Ind, int m_idx) {
-//	player_type *p_ptr;
+	//player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
-//	monster_race    *r_ptr = race_inf(m_ptr);
+	//monster_race    *r_ptr = race_inf(m_ptr);
 
 	worldpos *wpos = &m_ptr->wpos;
 
 	cave_type **zcave;
 	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
-	int antichance = 0, highest_antichance = 0, anti_Ind = 0;	// , dis, antidis;
+	int antichance = 0, highest_antichance = 0, anti_Ind = 0;// , dis, antidis;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -1563,19 +1563,18 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 
 		/* Compute distance */
 		if (distance(y2, x2, q_ptr->py, q_ptr->px) > q_ptr->antimagic_dis) continue;
-//		antidis = q_ptr->antimagic_dis;
-//		if (dis > antidis) antichance = 0;
+		//antidis = q_ptr->antimagic_dis;
+		//if (dis > antidis) antichance = 0;
 		antichance = q_ptr->antimagic;
-//		antichance -= r_ptr->level;
+		//antichance -= r_ptr->level;
 
 		if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
 
 		/* Reduction for party */
-/*		if ((i != Ind) && player_in_party(p_ptr->party, i))
-			antichance >>= 1;		*/
+		//if ((i != Ind) && player_in_party(p_ptr->party, i)) antichance >>= 1;
 
 		/* Reduce chance by 50% if monster isn't casting on yourself: */
-		if (i != Ind) antichance >>= 1;	
+		if (i != Ind) antichance >>= 1;
 
 		if (antichance > highest_antichance) {
 			highest_antichance = antichance;
@@ -1586,20 +1585,21 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 
 	/* Got disrupted ? */
 	if (magik(highest_antichance)) {
-		char		m_name[MNAME_LEN];
-		/* Get the monster name (or "it") */
-		monster_desc(Ind, m_name, m_idx, 0x00);
+		if ((Players[anti_Ind]->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) {//got LOS?
+			char m_name[MNAME_LEN];
+			/* Get the monster name (or "it") */
+			monster_desc(Ind, m_name, m_idx, 0x00);
 
-//		    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
+			//msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
 #if 0
-		if (i == anti_Ind) msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
-		else msg_format(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
-#else	// 0
-		if (Players[anti_Ind]->mon_vis[m_idx])
-			msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
-		msg_format_near(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
-#endif	// 0
-
+			if (i == anti_Ind) msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
+			else msg_format(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
+#else
+			if (Players[anti_Ind]->mon_vis[m_idx])
+				msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
+			msg_format_near(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
+#endif
+		}
 		return TRUE;
 	}
 
