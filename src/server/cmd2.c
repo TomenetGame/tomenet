@@ -4680,7 +4680,7 @@ void do_cmd_fire(int Ind, int dir) {
 			+ o_ptr->to_h + j_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
-    		tmul = get_shooter_mult(j_ptr);
+		tmul = get_shooter_mult(j_ptr);
 	} else {
 		/* Actually "fire" the object */
 		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h);
@@ -4695,7 +4695,7 @@ void do_cmd_fire(int Ind, int dir) {
 //s_printf("R chance %d, skill_thb %d, bonus %d\n", chance, p_ptr->skill_thb, bonus); //DEBUG hit chance
 	/* Is this magic Arrow or magic shots or magic bolts? */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) {
-	        magic = TRUE;
+		magic = TRUE;
 		if (!cursed_p(o_ptr)) returning = TRUE;
 	}
 	/* Artifact ammo doesn't drop to floor */
@@ -4747,7 +4747,10 @@ void do_cmd_fire(int Ind, int dir) {
 //  if (interfere(Ind, cfg.spell_interfere * 3)) return;
 	/* boomerang is harder to intercept since it can just be swung as weapon :> - C. Blue */
 	if (boomerang) {
-		if (interfere(Ind, 25)) return; /* boomerang interference chance */
+		if (interfere(Ind, 25)) {
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / thits;
+			return; /* boomerang interference chance */
+		}
 	} else {
 		if (interfere(Ind, p_ptr->ranged_precision ? 80 : 50)) {
 			if (p_ptr->ranged_barrage &&
@@ -4787,7 +4790,7 @@ void do_cmd_fire(int Ind, int dir) {
 			p_ptr->ranged_precision = FALSE;
 		} else p_ptr->cst -= 7;
 	}
-        if (p_ptr->ranged_double) {
+	if (p_ptr->ranged_double) {
 		if (boomerang) {
 			msg_print(Ind, "You cannot use shooting techniques with a boomerang!");
 			p_ptr->ranged_double = FALSE;
@@ -4923,8 +4926,8 @@ void do_cmd_fire(int Ind, int dir) {
 	/* Start at the player */
 	y = p_ptr->py;
 	x = p_ptr->px;
-        by = y;
-        bx = x;
+	by = y;
+	bx = x;
 
 	/* Predict the "target" location */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -5098,8 +5101,7 @@ void do_cmd_fire(int Ind, int dir) {
 			q_ptr = p_ptr;
 
 			/* Display it for each player */
-			for (i = 1; i < NumPlayers + 1; i++)
-			{
+			for (i = 1; i < NumPlayers + 1; i++) {
 				int dispx, dispy;
 
 				/* Use this player */

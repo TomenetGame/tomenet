@@ -1635,7 +1635,10 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	}
 
 	/* Disruption shield prevents interfering! */
-	if (!p_ptr->tim_manashield && interfere(Ind, cfg.spell_interfere)) return; /* school spell casting interference chance */
+	if (!p_ptr->tim_manashield && interfere(Ind, cfg.spell_interfere)) {
+		p_ptr->energy -= level_speed(&p_ptr->wpos); //full turn lost
+		return; /* school spell casting interference chance */
+	}
 
 	/* TODO: use energy */
 
