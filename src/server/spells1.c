@@ -2414,6 +2414,7 @@ bool hates_water(object_type *o_ptr) {
 //	case TV_POTION:		/* dilutes */
 //	case TV_POTION2:	/* dilutes */
 	case TV_SCROLL:		/* fades */
+	case TV_PARCHMENT:	/* fades */
 	case TV_BOOK:
 		return (TRUE);
 	}
@@ -4676,6 +4677,13 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				do_kill = TRUE;
 #ifdef USE_SOUND_2010
 				if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+			} else if (typ == GF_SHARDS &&
+			    (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_PARCHMENT)) { /* not TV_BOOK atm.. */
+				note_kill = (plural ? " are shredded!" : " is shredded!");
+				do_kill = TRUE;
+#ifdef USE_SOUND_2010
+				if (!quiet) sound(Ind, "item_scroll", NULL, SFX_TYPE_MISC, FALSE); //todo maybe: new sfx?
 #endif
 			}
 			break;
@@ -11140,7 +11148,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			y = gy[i];
 			x = gx[i];
 
-			if(!in_bounds(y,x)) continue;
+			if (!in_bounds(y,x)) continue;
 			/* Affect the object */
 			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
 			if (project_i(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
