@@ -580,6 +580,11 @@ static void rd_item(object_type *o_ptr) {
 	}
 #endif
 
+	/* slightly increased */
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->level
+	    && o_ptr->level < 31 + o_ptr->bpval)
+		o_ptr->level = 31 + o_ptr->bpval;
+
 	/* ---------------------------------------------------------------------- */
 
 
