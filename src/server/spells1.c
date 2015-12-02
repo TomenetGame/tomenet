@@ -4805,7 +4805,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_GRAVITY:
 		{
 			int j, dist = (typ == GF_NEXUS ? 80 : 15);
+			s16b cx, cy;
 			object_type tmp_obj = *o_ptr;
+
 			if (check_st_anchor(wpos, y, x)) break;
 //			if (seen) obvious = TRUE;
 
@@ -4817,11 +4819,12 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			note_kill = (plural ? " disappear!" : " disappears!");
 
 			for (j = 0; j < 10; j++) {
-				s16b cx = x + dist - rand_int(dist * 2);
-				s16b cy = y + dist - rand_int(dist * 2);
+				cx = x + dist - rand_int(dist * 2);
+				cy = y + dist - rand_int(dist * 2);
+
 				if (!in_bounds(cy, cx)) continue;
 				if (!cave_floor_bold(zcave, cy, cx) ||
-					cave_perma_bold(zcave, cy, cx)) continue;
+				    cave_perma_bold(zcave, cy, cx)) continue;
 
 //				(void)floor_carry(cy, cx, &tmp_obj);
 				drop_near(&tmp_obj, 0, wpos, cy, cx);
