@@ -305,13 +305,13 @@ yR:-:You can also buy lights and lamp oil in the general store in this town.
 
 Y:0:0:-:light:-:255
 y:-1:-1:-:light
-yR:-:You should have some torches or a lantern, except if you're a vampire I guess.
+yR:-:Except for vampires everyone usually brings a light source along.
 yR:-:You can also buy lights and lamp oil in the general store in this town.
 Y:0:0:-:lightsource:-:255
 y:-1:-1:-:lightsource
-yR:-:You should have some torches or a lantern, except if you're a vampire I guess.
+yR:-:Except for vampires everyone usually brings a light source along.
 yR:-:You can also buy lights and lamp oil in the general store in this town.
 Y:0:0:-:light source:-:255
 y:-1:-1:-:light source
-yR:-:You should have some torches or a lantern, except if you're a vampire I guess.
+yR:-:Except for vampires everyone usually brings a light source along.
 yR:-:You can also buy lights and lamp oil in the general store in this town.
