@@ -7387,6 +7387,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'N' for "New/Number/Name" */
 		if (buf[0] == 'N') {
+			int aa;
+
 			/* Find the colon before the name */
 			s = strchr(buf + 2, ':');
 			/* Verify that colon */
@@ -7426,11 +7428,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 
 			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
-			if (3 > (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%8[^:]",
-			    codename, creator, questname, tmpbuf))) return (1);
-
-			if (j == 4 && tolower(tmpbuf[strlen(tmpbuf) - 1]) == 'x') disabled = TRUE;
-			else disabled = FALSE;
+			if (5 != (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%8[^:]:%d",
+			    codename, creator, questname, tmpbuf, &aa))) return (1);
 
 			/* initialise prequest codenames */
 			for (k = 0; k < QI_PREREQUISITES; k++) q_ptr->prerequisites[k][0] = 0;
@@ -7447,6 +7446,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			strcpy(q_ptr->codename, codename);
 			strcpy(q_ptr->creator, creator);
 
+			if (tolower(tmpbuf[strlen(tmpbuf) - 1]) == 'x') disabled = TRUE;
+			else disabled = FALSE;
+			q_ptr->repeatable = atoi(tmpbuf); /* this defaults to 0 if just 'x' is specified without a number */
+			q_ptr->auto_accept = (byte)aa;
+
 
 			/* ---------- initialise default values, because some flag lines/values are optional) ---------- */
 
@@ -7455,17 +7459,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->individual = 1;
 			q_ptr->minlev = 0;
 			q_ptr->maxlev = 100;
-			/* optional parm: is quest repeatable? */
-			if (j == 4) {
-				/* hack: disable quest? */
-				if (disabled) {
-					q_ptr->active = FALSE;
-					q_ptr->disabled = TRUE;
-					s_printf("QUEST: Disabling '%s' (%d, %s)\n", q_name + q_ptr->name, error_idx, q_ptr->codename);
-				}
-				q_ptr->repeatable = atoi(tmpbuf); /* this defaults to 0 if just 'x' is specified without a number */
+			/* hack: disable quest? */
+			if (disabled) {
+				q_ptr->active = FALSE;
+				q_ptr->disabled = TRUE;
+				s_printf("QUEST: Disabling '%s' (%d, %s)\n", q_name + q_ptr->name, error_idx, q_ptr->codename);
 			}
-			else q_ptr->repeatable = 0; /* could also default to infinitely repeatable maybe, -1 */
 			q_ptr->quest_done_credit_stage = 1; /* after first stage change, quest "cannot" be cancelled anymore */
 			q_ptr->races = 0xFFFFF;
 			q_ptr->classes = 0xFFFF;

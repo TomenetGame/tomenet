@@ -1717,8 +1717,10 @@ static void quest_terminate_individual(int Ind, int q_idx) {
 	/* he is no longer on the quest, since the quest has finished */
 	p_ptr->quest_idx[j] = -1;
 	//good colours for '***': C-confusion (yay), q-inertia (pft, extended), E-meteor (mh, extended)
-	msg_format(Ind, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
-	//msg_print(Ind, "\374 ");
+	if (q_ptr->auto_accept != 3) {
+		msg_format(Ind, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
+		//msg_print(Ind, "\374 ");
+	}
 
 	/* erase all of this player's quest items for this quest */
 	quest_erase_objects(q_idx, TRUE, p_ptr->id);
@@ -1819,8 +1821,10 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 
 		/* he is no longer on the quest, since the quest has finished */
 		p_ptr->quest_idx[j] = -1;
-		msg_format(i, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
-		//msg_print(i, "\374 ");
+		if (q_ptr->auto_accept != 3) {
+			msg_format(i, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
+			//msg_print(i, "\374 ");
+		}
 
 		/* clean up temporary tracking data,
 		   or it would continue spamming quest checks eg on delivery_xy locs. */
@@ -3487,7 +3491,11 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	quest_dialogue(Ind, q_idx, questor_idx, FALSE, may_acquire, TRUE);
 
 	/* prompt him to acquire this quest if he hasn't yet */
-	if (may_acquire) Send_delayed_request_cfr(Ind, RID_QUEST_ACQUIRE + q_idx, format("Accept the quest \"%s\"?", q_name + q_ptr->name), TRUE);
+	if (may_acquire) {
+		/* auto-acquire? */
+		if (q_ptr->auto_accept) quest_acquire_confirmed(Ind, q_idx, q_ptr->auto_accept >= 2);
+		else Send_delayed_request_cfr(Ind, RID_QUEST_ACQUIRE + q_idx, format("Accept the quest \"%s\"?", q_name + q_ptr->name), TRUE);
+	}
 }
 
 /* Talk vs keyword dialogue between questor and player.

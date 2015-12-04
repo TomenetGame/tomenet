@@ -546,6 +546,7 @@ typedef struct quest_info {
 	char creator[NAME_LEN];				/* credits -- who thought up and created this quest :) */
 	//char name[MAX_CHARS];				/* readable title of this quest */
 	u16b name;					/* readable title of this quest - offset */
+	byte auto_accept;				/* automatically accept this quest? (0=no (default), 1=yes, 2=yes quietly, 3=yes quietly and no ending notification) */
 
     /* QUESTOR (quest giver) RESTRICTIONS: */
 	/* player restrictions */
