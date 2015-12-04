@@ -7972,7 +7972,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				q_stage->activate_quest = aq;
 				q_stage->auto_accept = (aa != 0);
-				q_stage->auto_accept_quiet = (aq == 2);
+				q_stage->auto_accept_quiet = (aa == 2);
 
 				q_stage->change_stage = cs;
 #if 0
