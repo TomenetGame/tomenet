@@ -2162,7 +2162,7 @@ static int gettown_dun(int Ind) {
 
 /* Display a non-shop store (newly added SPECIAL flag) - C. Blue
    (Note: Must not be a player store - illegal) */
-static void display_special_store(Ind) {
+static void display_special_store(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
 	//owner_type *ot_ptr;

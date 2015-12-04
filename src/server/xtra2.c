@@ -9080,7 +9080,7 @@ case SV_GOLEM_ADAM:
 }
 
 /* Initialises the panel, when newly entering a level */
-void panel_calculate(Ind) {
+void panel_calculate(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	p_ptr->panel_row = ((p_ptr->py - p_ptr->screen_hgt / 4) / (p_ptr->screen_hgt / 2));
@@ -9103,7 +9103,7 @@ void panel_calculate(Ind) {
 }
 /* for functions of fixed size of effect that therefore require the
    'traditional' panel dimensions, such as Magic Mapping: */
-void tradpanel_calculate(Ind) {
+void tradpanel_calculate(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	p_ptr->tradpanel_row = ((p_ptr->py - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
