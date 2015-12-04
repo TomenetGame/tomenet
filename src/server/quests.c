@@ -2461,7 +2461,7 @@ static s16b quest_mspawn_pick(qi_monsterspawn *q_mspawn) {
 	return get_mon_num(lev, lev - 10);//-10 : reduce OOD;
 }
 /* Spawn monsters on stage startup */
-static void quest_spawn_monsters(q_idx, stage) {
+static void quest_spawn_monsters(int q_idx, int stage) {
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_monsterspawn *q_mspawn;
 	struct worldpos wpos;
