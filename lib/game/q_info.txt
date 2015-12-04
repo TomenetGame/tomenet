@@ -268,3 +268,35 @@ $TEST_SERVER$rI:3:1:80:38:80:39
 $TEST_SERVER$M:3:1:2:-1:-1:-1:0:0:0:0:-:0:0
 $TEST_SERVER$G:3:4:1
 $TEST_SERVER$W:2:4:0:-:Ohhdshankyou! Watshout that Nexus won't arresht you! Hic..
+
+$TEST_SERVER$N:4:towneltalk:C. Blue:Town Elder Talk:-1
+$TEST_SERVER$C:0
+$TEST_SERVER$I:0:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
+$TEST_SERVER$T:1:1:1:1:1:1:1:1:1:-1:-1
+$TEST_SERVER$Q:1:15:t:v:-1:-1:Town Elder
+$TEST_SERVER$L:0:0:0:32:32:0:0:95:35:0:-:0:0
+$TEST_SERVER$F:0:1:1:0:1:0:0
+$TEST_SERVER$U:0:0:0
+$TEST_SERVER$W:0:0:0:-:Hello, $$T!
+$TEST_SERVER$W:0:0:0:-:Would you like to visit the training [[tower]] first or venture into this
+$TEST_SERVER$W:0:0:0:-:town's [[dungeon]], named Barrow-Downs, right away?
+$TEST_SERVER$W:0:0:0:-:The training tower is a safe place where you won't die for real,
+$TEST_SERVER$W:0:0:0:-:Experience gain is pretty limited however, and it only has two floors.
+$TEST_SERVER$W:0:0:0:-:If you go to the dungeon, don't forget to bring a light source!
+$TEST_SERVER$Y:0:0:-:training:-:1
+$TEST_SERVER$Y:0:0:-:tower:-:1
+$TEST_SERVER$Y:0:0:-:training tower:-:1
+$TEST_SERVER$Y:0:0:-:dungeon:-:2
+$TEST_SERVER$Y:0:0:-:barrow:-:2
+$TEST_SERVER$Y:0:0:-:barrow-downs:-:2
+$TEST_SERVER$Y:0:0:-:barrowdowns:-:2
+$TEST_SERVER$Y:0:0:-:barrow downs:-:2
+$TEST_SERVER$Y:0:0:-:light:-:3
+$TEST_SERVER$Y:0:0:-:light source:-:3
+$TEST_SERVER$W:0:1:0:-:Take the south-eastern path out of the town centre,
+$TEST_SERVER$W:0:1:0:-:it leads to the training tower. The entrance is a green '<' symbol.
+$TEST_SERVER$W:0:2:0:-:Take the western path out of the town centre,
+$TEST_SERVER$W:0:2:0:-:it leads to the somewhat hidden entrance to barrow-downs.
+$TEST_SERVER$W:0:2:0:-:The entrance is a white '>' symbol.
+$TEST_SERVER$W:0:3:0:-:You should have some torches or a lantern, except if you're a vampire I guess.
+$TEST_SERVER$W:0:3:0:-:You can also buy lights and lamp oil in the general store in this town.
