@@ -5160,10 +5160,10 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 	case TV_GOLEM:
 		switch (o_ptr->sval) {
 		case SV_GOLEM_ARM:
-			o_ptr->pval = 1 + m_bonus(15, level);
+			o_ptr->pval = 5 + m_bonus(10, level);
 			break;
 		case SV_GOLEM_LEG:
-			o_ptr->pval = 1 + m_bonus(8, level);
+			o_ptr->pval = 5 + m_bonus(10, level);
 			break;
 		}
 		break;

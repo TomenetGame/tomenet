@@ -585,6 +585,13 @@ static void rd_item(object_type *o_ptr) {
 	    && o_ptr->level < 31 + o_ptr->bpval)
 		o_ptr->level = 31 + o_ptr->bpval;
 
+	/* modified arms/legs for more transparency and less tediousness */
+	if (o_ptr->tval == TV_GOLEM &&
+	    (o_ptr->sval == SV_GOLEM_ARM || o_ptr->sval == SV_GOLEM_LEG)) {
+		if (o_ptr->pval < 5) o_ptr->pval = 5;
+		if (o_ptr->pval > 15) o_ptr->pval = 15;
+	}
+
 	/* ---------------------------------------------------------------------- */
 
 

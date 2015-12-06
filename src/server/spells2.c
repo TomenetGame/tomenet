@@ -7519,7 +7519,7 @@ void golem_creation(int Ind, int max) {
 			}
 			if (o_ptr->sval == SV_GOLEM_LEG) {
 				while (o_ptr->number) {
-					if (golem_m_legs == 30) break;
+					if (golem_m_legs == 2) break;//30 is too ridiculous for SPEED..
 					golem_legs[golem_m_legs++] = o_ptr->pval;
 					inven_item_increase(Ind, i, -1);
 				}
@@ -7552,10 +7552,9 @@ void golem_creation(int Ind, int max) {
 		r_ptr->speed += golem_legs[i];
 	r_ptr->mexp = 1;
 
-	r_ptr->d_attr = TERM_YELLOW;
-	r_ptr->d_char = 'g';
-	r_ptr->x_attr = TERM_YELLOW;
-	r_ptr->x_char = 'g';
+	/* default colour, new: will be reset depending on base material */
+	r_ptr->d_attr = r_ptr->x_attr = TERM_YELLOW;
+	r_ptr->d_char = r_ptr->x_char = 'g';
 
 	r_ptr->freq_innate = 0;
 	r_ptr->freq_spell = 0;
@@ -7569,46 +7568,55 @@ void golem_creation(int Ind, int max) {
 			r_ptr->hdice = 10;
 			r_ptr->hside = 10;
 			r_ptr->ac = 20;
+			r_ptr->d_attr = r_ptr->x_attr = TERM_UMBER;
 			break;
 		case SV_GOLEM_COPPER:
 			r_ptr->hdice = 10;
 			r_ptr->hside = 20;
 			r_ptr->ac = 40;
+			r_ptr->d_attr = r_ptr->x_attr = TERM_ORANGE;
 			break;
 		case SV_GOLEM_IRON:
 			r_ptr->hdice = 10;
 			r_ptr->hside = 40;
 			r_ptr->ac = 70;
+			r_ptr->d_attr = r_ptr->x_attr = TERM_L_DARK;
 			break;
 		case SV_GOLEM_ALUM:
 			r_ptr->hdice = 10;
 			r_ptr->hside = 60;
 			r_ptr->ac = 90;
+			r_ptr->d_attr = r_ptr->x_attr = TERM_SLATE;
 			break;
 		case SV_GOLEM_SILVER:
 			r_ptr->hdice = 10;
 			r_ptr->hside = 70;
 			r_ptr->ac = 100;
+			r_ptr->d_attr = r_ptr->x_attr = TERM_L_WHITE;
 			break;
 		case SV_GOLEM_GOLD:
 			r_ptr->hdice = 10;
 			r_ptr->hside = 80;
 			r_ptr->ac = 130;
+			r_ptr->d_attr = r_ptr->x_attr = TERM_YELLOW;
 			break;
 		case SV_GOLEM_MITHRIL:
 			r_ptr->hdice = 10;
 			r_ptr->hside = 100;
 			r_ptr->ac = 160;
+			r_ptr->d_attr = r_ptr->x_attr = TERM_L_BLUE;
 			break;
 		case SV_GOLEM_ADAM:
 			r_ptr->hdice = 10;
 			r_ptr->hside = 150;
 			r_ptr->ac = 210;
+			r_ptr->d_attr = r_ptr->x_attr = TERM_VIOLET;
 			break;
-			//		default:
+		//default:
 	}
+
 	r_ptr->extra = golem_flags;
-	//#if 0
+#if 1
 	/* Find items used for "golemification" */
 	for (i = 0; i < INVEN_WIELD; i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
@@ -7637,7 +7645,8 @@ void golem_creation(int Ind, int max) {
 			}
 		}
 	}
-	//#endif
+#endif
+
 	/* extract base speed */
 	m_ptr->speed = r_ptr->speed;
 	/* set cur speed to base speed */
@@ -7650,8 +7659,8 @@ void golem_creation(int Ind, int max) {
 	for (i = 0; i < golem_m_arms; i++) {
 		m_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
 		m_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
-		m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = (golem_type + 1) * 3;
-		m_ptr->blow[i].d_side = r_ptr->blow[i].d_side = 3 + golem_arms[i];
+		m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = (golem_type + 1) * 2; //(golem types start at 0, hence +1)
+		m_ptr->blow[i].d_side = r_ptr->blow[i].d_side = golem_arms[i];
 	}
 
 	m_ptr->owner = p_ptr->id;

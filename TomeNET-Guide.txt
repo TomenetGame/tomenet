@@ -16753,15 +16753,21 @@ be too hell-bent on creating a golem or you will be disappointed.
 To create a golem, you will need these parts:
 -A 'scroll of Golem Creation'
 -A massive piece of a specific material
--Arms, up to 4.
--Legs, at least 2, can be up to 30 (a centipede-style golem!)
+-Arms, up to 4. (Arms are optional, but without arms it cannot attack!)
+-Legs, must be exactly 2.
 
-To control the golem, you will need 3 controlling scrolls. These won't be
-read, but activated! On activation ('A') they toggle the golem's behaviour.
-The scrolls are:
+To control the golem, you will need 3 controlling scrolls. These aren't read
+but activated, meaning you don't use 'r' key but 'Shift+a' to toggle them.
+On activation they toggle the golem's behaviour. The scrolls are:
 -A 'Golem Scroll of Guard'
+ When activated, the golem will stay in place and attack any monster that moves
+ up next to it.
 -A 'Golem Scroll of Following'
+ When activated, the golem will follow you around. It will still attack any
+ monster that moves up next to it.
 -A 'Golem Scroll of Attack'
+ When activated, the golem will seek out the closest monster and move up to
+ attack it.
 
 If you have gathered all these items in your inventory, read the scroll of
 golem creation! The golem will only listen to commands of a scroll which
