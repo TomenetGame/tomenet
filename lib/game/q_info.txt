@@ -278,7 +278,7 @@ Q:1:15:t:v:-1:-1:Town Elder
 L:0:0:0:32:32:0:0:95:35:0:-:0:0
 F:0:1:1:0:1:0:0
 U:0:0:0
-W:0:0:0:-:Hello, $$T!
+W:0:0:0:-:Stay awhile and listen, $$T!
 W:0:0:0:-:Would you like to visit the training [[tower]] first or venture into this
 W:0:0:0:-:town's [[dungeon]], named Barrow-Downs, right away?
 W:0:0:0:-:The training tower is a safe place where you won't die for real,
