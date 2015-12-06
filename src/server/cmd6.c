@@ -4893,35 +4893,35 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			m_ptr = &m_list[m_idx];
 
 			if (!(m_ptr->r_ptr->extra & (1 << (o_ptr->sval - 200)))) {
-				msg_print(Ind, "I do not understand, master.");
+				msg_print(Ind, "The golem appears indifferent to your command.");
 				continue;
 			}
 
 			switch (o_ptr->sval) {
 			case SV_GOLEM_ATTACK:
 				if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
-					msg_print(Ind, "I wont attack your target anymore, master.");
+					msg_print(Ind, "The golem stops going for your target.");
 					m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
 				} else {
-					msg_print(Ind, "I will attack your target, master.");
+					msg_print(Ind, "The golem approaches your target!");
 					m_ptr->mind |= (1 << (o_ptr->sval - 200));
 				}
 				break;
 			case SV_GOLEM_FOLLOW:
 				if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
-					msg_print(Ind, "I wont follow you, master.");
+					msg_print(Ind, "The golem stops following you around.");
 					m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
 				} else {
-					msg_print(Ind, "I will follow you, master.");
+					msg_print(Ind, "The golem starts following you around!");
 					m_ptr->mind |= (1 << (o_ptr->sval - 200));
 				}
 				break;
 			case SV_GOLEM_GUARD:
 				if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
-					msg_print(Ind, "I wont guard my position anymore, master.");
+					msg_print(Ind, "The golem stops being on guard.");
 					m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
 				} else {
-					msg_print(Ind, "I will guard my position, master.");
+					msg_print(Ind, "The golem seems to be on guard now!");
 					m_ptr->mind |= (1 << (o_ptr->sval - 200));
 				}
 				break;

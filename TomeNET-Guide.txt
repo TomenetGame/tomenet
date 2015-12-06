@@ -16755,45 +16755,55 @@ To create a golem, you will need these parts:
 -A massive piece of a specific material
 -Arms, up to 4. (Arms are optional, but without arms it cannot attack!)
 -Legs, must be exactly 2.
+-Command scrolls (see below). If a command scroll is not in your inventory when
+ you create the golem, it will not understand that command later on even if you
+ acquire that type of scroll afterwards! So make sure you carry all 3 command
+ scrolls before creating it.
+ (Command scrolls are not consumed upon golem creation.)
 
-To control the golem, you will need 3 controlling scrolls. These aren't read
+After the golem has been created it will start out passively, not following any
+particular command. It will just sit there doing nothing. To actually control
+it and make it do something you will need 3 command scrolls. These aren't read
 but activated, meaning you don't use 'r' key but 'Shift+a' to toggle them.
-On activation they toggle the golem's behaviour. The scrolls are:
--A 'Golem Scroll of Guard'
- When activated, the golem will stay in place and attack any monster that moves
- up next to it.
--A 'Golem Scroll of Following'
- When activated, the golem will follow you around. It will still attack any
- monster that moves up next to it.
+On activation they toggle the golem's behaviour. They are infinitely reusable.
+If you toggle a scroll a second time, the golem will return to sitting around
+idly, doing nothing.
+The scrolls are:
+
 -A 'Golem Scroll of Attack'
- When activated, the golem will seek out the closest monster and move up to
- attack it.
+ When activated, the golem will move towards your current target (provided it
+ is actually hostile) to attack it.
+-A 'Golem Scroll of Guard'
+ When activated, the golem will automatically attack any hostile creature
+ that moves up next to it.
+-A 'Golem Scroll of Following'
+ When activated, the golem will follow you around as long as it has nothing
+ else to do (no guard/attack command being executed), see below:
+
+These three command stack. For example you can activate both 'attack' and
+'following' command, in which case the golem will follow you around, but as
+soon as you target any hostile creature it will go to attack it!
 
 If you have gathered all these items in your inventory, read the scroll of
-golem creation! The golem will only listen to commands of a scroll which
-was in your inventory when you read the scroll of golem creation, so make
-sure you carry all 3 controlling scrolls before creating it.
+golem creation!
 
-Each arm will inflict (x)d(3 + arm value) damage on a target.
+Each arm will inflict (x)d(arm value) damage on a target.
 The arm value is displayed in brackets, part of the item name.
 The 'x' are listed in the materials table below.
-Example: A 'Golem Arm (+8)' of an 'Iron Golem' will do 9d(3+8) damage, so
-9d11, which means the damage per hit varies randomly from 9 up to 99.
+Example: A 'Golem Arm (+8)' of an 'Iron Golem' will do 6d8 damage which means
+that each hit will inflict between 6 and 48 damage (27 on average).
 Each leg will increase the golem's speed by the number displayed on the leg.
-A golem with 30 legs can be *FAST*, but keep in mind that more than 40..50
-speed won't do much of a difference since speed effect in general decreases at
-very high values.
 
 The material determines armour class, hit points and the damage dice count of
 the golem. Materials are:
-    Wood             20 AC,  10d10 hit dice,  3 damage dice.
-    Copper           40 AC,  10d20 hit dice,  6 damage dice.
-    Iron             70 AC,  10d40 hit dice,  9 damage dice.
-    Aluminium        90 AC,  10d60 hit dice, 12 damage dice.
-    Silver          100 AC,  10d70 hit dice, 15 damage dice.
-    Gold            130 AC,  10d80 hit dice, 18 damage dice.
-    Mithril         160 AC, 10d100 hit dice, 21 damage dice.
-    Adamantite      210 AC, 10d150 hit dice, 24 damage dice.
+    Wood             20 AC,  10d10 hit dice,  2 damage dice.
+    Copper           40 AC,  10d20 hit dice,  4 damage dice.
+    Iron             70 AC,  10d40 hit dice,  6 damage dice.
+    Aluminium        90 AC,  10d60 hit dice,  8 damage dice.
+    Silver          100 AC,  10d70 hit dice, 10 damage dice.
+    Gold            130 AC,  10d80 hit dice, 12 damage dice.
+    Mithril         160 AC, 10d100 hit dice, 14 damage dice.
+    Adamantite      210 AC, 10d150 hit dice, 16 damage dice.
 Some rumours say that the highest materials can only be found on even deeper
 dungeons than where Morgoth, Lord of Darkness resides.
 
