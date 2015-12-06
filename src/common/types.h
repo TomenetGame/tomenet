@@ -2773,6 +2773,8 @@ struct player_type {
 	bool quest_retrieve[MAX_CONCURRENT_QUESTS];
 	bool quest_deliver_pos[MAX_CONCURRENT_QUESTS], quest_deliver_xy[MAX_CONCURRENT_QUESTS];
 	byte quest_eligible;		/* temporary, just for efficiency */
+	u16b questor_dialogue_hack_xy; /* keep track of player's exact position */
+	u32b questor_dialogue_hack_wpos;
 
 #ifdef ENABLE_MAIA
 	int voidx; int voidy;		//for the void jumpgate creation spell; reset on every recall/levelchange/relogins

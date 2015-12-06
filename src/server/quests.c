@@ -3615,6 +3615,10 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 			else /* normal prompt for keyword input */
 				Send_delayed_request_str(Ind, RID_QUEST + q_idx, "?> ", "");
 		}
+
+		/* for cancelling the dialogue in case player gets moved away from the questor: */
+		p_ptr->questor_dialogue_hack_xy = p_ptr->px + (p_ptr->py << 8);
+		p_ptr->questor_dialogue_hack_wpos = p_ptr->wpos.wx + (p_ptr->wpos.wy << 8) + (p_ptr->wpos.wz << 16);
 	}
 }
 
@@ -3627,6 +3631,11 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	qi_keyword *q_key;
 	qi_kwreply *q_kwr;
 	int password_hack;
+
+	/* if player got teleported/moved (switched places? :-p)
+	   away from the questor, stop the dialogue */
+	if (p_ptr->questor_dialogue_hack_xy != p_ptr->px + (p_ptr->py << 8)) return;
+	if (p_ptr->questor_dialogue_hack_wpos != p_ptr->wpos.wx + (p_ptr->wpos.wy << 8) + (p_ptr->wpos.wz << 16)) return;
 
 	/* trim leading/trailing spaces */
 	while (*str == ' ') str++;
