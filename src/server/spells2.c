@@ -7406,7 +7406,7 @@ void golem_creation(int Ind, int max) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
 	monster_type *m_ptr;
-	int i;
+	int i, tmp_dam = 0;
 	int golem_type = -1;
 	int golem_arms[4], golem_m_arms = 0;
 	int golem_legs[30], golem_m_legs = 0;
@@ -7414,6 +7414,9 @@ void golem_creation(int Ind, int max) {
 	cave_type *c_ptr;
 	int x, y, k, g_cnt = 0;
 	bool okay = FALSE;
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
+	unsigned char *inscription;
 	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
@@ -7463,6 +7466,8 @@ void golem_creation(int Ind, int max) {
 	}
 
 
+	s_printf("GOLEM_CREATION: '%s' initiated.\n", p_ptr->name);
+
 	/* Access the location */
 	c_ptr = &zcave[y][x];
 
@@ -7497,10 +7502,15 @@ void golem_creation(int Ind, int max) {
 
 	/* Find items used for "golemification" */
 	for (i = 0; i < INVEN_WIELD; i++) {
-		object_type *o_ptr = &p_ptr->inventory[i];
+		o_ptr = &p_ptr->inventory[i];
 
 		if (o_ptr->tval == TV_GOLEM) {
 			if (o_ptr->sval <= SV_GOLEM_ADAM) {
+				if (golem_type != -1) break;
+
+				object_desc(0, o_name, o_ptr, FALSE, 0);
+				s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
+
 				golem_type = o_ptr->sval;
 				inven_item_increase(Ind, i, -1);
 				inven_item_optimize(Ind, i);
@@ -7510,6 +7520,10 @@ void golem_creation(int Ind, int max) {
 			if (o_ptr->sval == SV_GOLEM_ARM) {
 				while (o_ptr->number) {
 					if (golem_m_arms == 4) break;
+
+					object_desc(0, o_name, o_ptr, FALSE, 0);
+					s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
+
 					golem_arms[golem_m_arms++] = o_ptr->pval;
 					inven_item_increase(Ind, i, -1);
 				}
@@ -7520,6 +7534,10 @@ void golem_creation(int Ind, int max) {
 			if (o_ptr->sval == SV_GOLEM_LEG) {
 				while (o_ptr->number) {
 					if (golem_m_legs == 2) break;//30 is too ridiculous for SPEED..
+
+					object_desc(0, o_name, o_ptr, FALSE, 0);
+					s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
+
 					golem_legs[golem_m_legs++] = o_ptr->pval;
 					inven_item_increase(Ind, i, -1);
 				}
@@ -7538,6 +7556,7 @@ void golem_creation(int Ind, int max) {
 
 	/* Ahah FAIL !!! */
 	if ((golem_type == -1) || (golem_m_legs < 2)) {
+		s_printf("GOLEM_CREATION: failed! type %d, legs %d.\n", golem_type, golem_m_legs);
 		msg_print(Ind, "The spell fails! You lose all your material.");
 		delete_monster_idx(c_ptr->m_idx, TRUE);
 		return;
@@ -7619,8 +7638,8 @@ void golem_creation(int Ind, int max) {
 #if 1
 	/* Find items used for "golemification" */
 	for (i = 0; i < INVEN_WIELD; i++) {
-		object_type *o_ptr = &p_ptr->inventory[i];
-		unsigned char *inscription = (unsigned char *) quark_str(o_ptr->note);
+		o_ptr = &p_ptr->inventory[i];
+		inscription = (unsigned char *) quark_str(o_ptr->note);
 
 		/* Additionnal items ? */
 		if (inscription != NULL) {
@@ -7632,6 +7651,9 @@ void golem_creation(int Ind, int max) {
 					/* a valid @G has been located */
 					if (*inscription == 'G') {
 						inscription++;
+
+						object_desc(0, o_name, o_ptr, FALSE, 0);
+						s_printf("GOLEM_CREATION: extra consumed %s.\n", o_name);
 
 						scan_golem_flags(o_ptr, r_ptr);
 						/* scan_golem_flags uses only one item */
@@ -7661,6 +7683,7 @@ void golem_creation(int Ind, int max) {
 		m_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
 		m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = (golem_type + 1) * 2; //(golem types start at 0, hence +1)
 		m_ptr->blow[i].d_side = r_ptr->blow[i].d_side = golem_arms[i];
+		tmp_dam += (m_ptr->blow[i].d_dice + 1) * m_ptr->blow[i].d_side;
 	}
 
 	m_ptr->owner = p_ptr->id;
@@ -7688,6 +7711,8 @@ void golem_creation(int Ind, int max) {
 
 	/* Update the monster */
 	update_mon(c_ptr->m_idx, TRUE);
+
+	s_printf("GOLEM_CREATION: succeeded! type %d, speed %d, damage %d, commands %d\n", golem_type, m_ptr->speed, tmp_dam / 2, r_ptr->extra);
 }
 
 /* pernAngband Additions	- Jir - */
