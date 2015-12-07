@@ -17379,7 +17379,7 @@ had it at the minimum threshold value of 3.000.
 
 If you qualify for multiple reward classes, which are 'specific melee weapon',
 'specific ranged weapon', 'mage staff', 'trap', the following priorities apply:
--A melee weapon will override a mage staff.
+-A melee weapon chance will nullify a mage staff chance.
 -A melee weapon vs ranged weapon will have about equal chance to get picked.
 -A mage staff will have somewhat better chances vs a ranged weapon.
 -Traps have about 75% chance to override any other reward class.

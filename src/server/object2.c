@@ -7090,7 +7090,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 		break;
 	case 4: reward_maxweight = 500;
-		reward_tval = TV_MSTAFF; reward_sval = SV_MSTAFF; break;
+		reward_tval = TV_MSTAFF; reward_sval = SV_MSTAFF;
+		break;
 	/* paranoia: */
 	case 5: reward_maxweight = 500; /* no use, so just use any high value.. */
 		switch (misc_choice) {
