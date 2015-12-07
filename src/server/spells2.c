@@ -7499,54 +7499,50 @@ void golem_creation(int Ind, int max) {
 	for (i = 0; i < INVEN_WIELD; i++) {
 		o_ptr = &p_ptr->inventory[i];
 
-		if (o_ptr->tval == TV_GOLEM) {
-			if (o_ptr->sval <= SV_GOLEM_ADAM) {
-				if (golem_type != -1) break;
+		if (o_ptr->tval != TV_GOLEM)  continue;
+
+		if (o_ptr->sval <= SV_GOLEM_ADAM) {
+			if (golem_type != -1) continue;
+
+			object_desc(0, o_name, o_ptr, FALSE, 0);
+			s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
+
+			golem_type = o_ptr->sval;
+			inven_item_increase(Ind, i, -1);
+			inven_item_optimize(Ind, i);
+			i--;
+			continue;
+		}
+		else if (o_ptr->sval == SV_GOLEM_ARM && golem_m_arms < 4) {
+			while (o_ptr->number) {
+				if (golem_m_arms == 4) break;
 
 				object_desc(0, o_name, o_ptr, FALSE, 0);
 				s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
 
-				golem_type = o_ptr->sval;
+				golem_arms[golem_m_arms++] = o_ptr->pval;
 				inven_item_increase(Ind, i, -1);
-				inven_item_optimize(Ind, i);
-				i--;
-				continue;
 			}
-			if (o_ptr->sval == SV_GOLEM_ARM) {
-				while (o_ptr->number) {
-					if (golem_m_arms == 4) break;
-
-					object_desc(0, o_name, o_ptr, FALSE, 0);
-					s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
-
-					golem_arms[golem_m_arms++] = o_ptr->pval;
-					inven_item_increase(Ind, i, -1);
-				}
-				inven_item_optimize(Ind, i);
-				i--;
-				continue;
-			}
-			if (o_ptr->sval == SV_GOLEM_LEG) {
-				while (o_ptr->number) {
-					if (golem_m_legs == 2) break;//30 is too ridiculous for SPEED..
-
-					object_desc(0, o_name, o_ptr, FALSE, 0);
-					s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
-
-					golem_legs[golem_m_legs++] = o_ptr->pval;
-					inven_item_increase(Ind, i, -1);
-				}
-				inven_item_optimize(Ind, i);
-				i--;
-				continue;
-			}
-			else golem_flags |= 1 << (o_ptr->sval - 200);
+			inven_item_optimize(Ind, i);
+			i--;
+			continue;
 		}
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		else if (o_ptr->sval == SV_GOLEM_LEG && golem_m_legs < 2) {
+			while (o_ptr->number) {
+				if (golem_m_legs == 2) break;//30 is too ridiculous for SPEED..
 
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+				object_desc(0, o_name, o_ptr, FALSE, 0);
+				s_printf("GOLEM_CREATION: consumed %s.\n", o_name);
+
+				golem_legs[golem_m_legs++] = o_ptr->pval;
+				inven_item_increase(Ind, i, -1);
+			}
+			inven_item_optimize(Ind, i);
+			i--;
+			continue;
+		}
+		/* golem command scrolls */
+		else golem_flags |= 1 << (o_ptr->sval - 200);
 	}
 
 	/* Ahah FAIL !!! */
@@ -7708,6 +7704,11 @@ void golem_creation(int Ind, int max) {
 	update_mon(c_ptr->m_idx, TRUE);
 
 	s_printf("GOLEM_CREATION: succeeded! type %d, speed %d, damage %d, commands %d\n", golem_type, m_ptr->speed, tmp_dam / 2, r_ptr->extra);
+
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN);
 }
 
 /* pernAngband Additions	- Jir - */

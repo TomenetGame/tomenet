@@ -2912,8 +2912,8 @@
 #define SV_GOLEM_GOLD			5
 #define SV_GOLEM_MITHRIL		6
 #define SV_GOLEM_ADAM			7
-#define SV_GOLEM_LEG			8
-#define SV_GOLEM_ARM			9
+#define SV_GOLEM_ARM			8
+#define SV_GOLEM_LEG			9
 #define SV_GOLEM_ATTACK			200
 #define SV_GOLEM_FOLLOW			201
 #define SV_GOLEM_GUARD			202
