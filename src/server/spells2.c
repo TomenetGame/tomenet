@@ -56,7 +56,6 @@
  * actually stores their functionality. - C. Blue
  */
 static void proj_dam_wraith(int typ, int *dam) {
-
 	switch (typ) {
 	case GF_RECALL_PLAYER: /* <- dam is timeout! */
 	case GF_RESTORE_PLAYER:
@@ -231,14 +230,14 @@ void divine_gateway(int Ind) {
 
 		int i;
 		for (i = 1; i <= NumPlayers; i++) {
-                        if (i == Ind) continue;
-                        if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (i == Ind) continue;
+			if (Players[i]->conn == NOT_CONNECTED) continue;
 
-                        /* on the same dungeon floor */
-                        if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
+			/* on the same dungeon floor */
+			if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
 
-                        /* must be in the same party */
-                        if (!Players[i]->party || p_ptr->party != Players[i]->party) continue;
+			/* must be in the same party */
+			if (!Players[i]->party || p_ptr->party != Players[i]->party) continue;
 
 			set_recall_timer(i, 1);
 		}
@@ -340,14 +339,14 @@ void grow_trees(int Ind, int rad)
 bool create_garden(int Ind, int chance) {
 	int y, x;
 	player_type *p_ptr;	//Who(and where)?
-        cave_type *c_ptr;
+	cave_type *c_ptr;
 	p_ptr = Players[Ind];
 
-        struct c_special *cs_ptr;       /* for special key doors */
+	struct c_special *cs_ptr;       /* for special key doors */
 	struct worldpos *wpos = &(p_ptr->wpos);
 
-        cave_type **zcave;
-        if(!(zcave = getcave(wpos))) return (FALSE);
+	cave_type **zcave;
+	if(!(zcave = getcave(wpos))) return (FALSE);
 
 	if (!allow_terraforming(wpos, FEAT_TREE)) return(FALSE);
 
@@ -384,7 +383,7 @@ bool create_garden(int Ind, int chance) {
 //				&& !cave_floor_bold(zcave, y, x) /* don't convert empty floor! */
 //				&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)
 			    )
-            		{
+			{
 				if (randint(100) < chance) {
 					/* Delete the object (if any) */
 					delete_object(wpos, y, x, TRUE);
@@ -407,38 +406,34 @@ bool create_garden(int Ind, int chance) {
  * Yep. More druidry. - the_sandman
  */
 bool do_focus_shot(int Ind, int v, int p) {
-    player_type *p_ptr = Players[Ind];
-    bool notice = FALSE;
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
 
-    /* Hack -- Force good values */
-    v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
-    /* Open */
-    if (v)
-    {
-            if (!p_ptr->focus_time)
-            {
-                    msg_format_near(Ind, "%s's arm movements turn blurry!", p_ptr->name);
-                    msg_print(Ind, "Your arms feel... dexterous!");
-                    notice = TRUE;
-            }
-            p_ptr->focus_time = v;
-            p_ptr->focus_val = p;
-            calc_boni(Ind);
-    }
+	/* Open */
+	if (v) {
+		if (!p_ptr->focus_time) {
+			msg_format_near(Ind, "%s's arm movements turn blurry!", p_ptr->name);
+			msg_print(Ind, "Your arms feel... dexterous!");
+			notice = TRUE;
+		}
+		p_ptr->focus_time = v;
+		p_ptr->focus_val = p;
+		calc_boni(Ind);
+	}
 
-    /* Shut */
-    else
-    {
-            if (p_ptr->focus_time)
-            {
-                    msg_format_near(Ind, "You can see %s's arms again.", p_ptr->name);
-                    msg_print(Ind, "Your feel your arms turn into lead.");
-                    notice = TRUE;
-                    p_ptr->focus_time = 0;
-            }
-            p_ptr->focus_val = 0;
-    }
+	/* Shut */
+	else {
+		if (p_ptr->focus_time) {
+			msg_format_near(Ind, "You can see %s's arms again.", p_ptr->name);
+			msg_print(Ind, "Your feel your arms turn into lead.");
+			notice = TRUE;
+			p_ptr->focus_time = 0;
+		}
+		p_ptr->focus_val = 0;
+	}
 
 #if 0
 //Buggy with another set_fast
@@ -446,20 +441,20 @@ bool do_focus_shot(int Ind, int v, int p) {
 	if (p_ptr->focus_time != 0) set_fast(Ind, v, -(p/5));
 #endif
 
-    /* Nothing to notice */
-    if (!notice) return (FALSE);
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
 
-    /* Disturb */
-    if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-    /* Recalculate bonuses */
-    p_ptr->update |= (PU_BONUS);
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
 
-    /* Handle stuff */
-    handle_stuff(Ind);
+	/* Handle stuff */
+	handle_stuff(Ind);
 
-    /* Result */
-    return (TRUE);
+	/* Result */
+	return (TRUE);
 }//focus shot
 
 /*
@@ -468,17 +463,17 @@ bool do_focus_shot(int Ind, int v, int p) {
  * Druidry. - the_sandman
  */
 bool do_xtra_stats(int Ind, int v, int p) {
-        player_type *p_ptr = Players[Ind];
-        bool notice = (FALSE);
+	player_type *p_ptr = Players[Ind];
+	bool notice = (FALSE);
 
-        /* Hack -- Force good values */
-        v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
-        /* Open */
-        if (v) {
-                if (!p_ptr->xtrastat || p_ptr->statval < p) {
-                        msg_format_near(Ind, "%s seems to be more powerful!", p_ptr->name);
-                        msg_print(Ind, "You feel... powerful!");
+	/* Open */
+	if (v) {
+		if (!p_ptr->xtrastat || p_ptr->statval < p) {
+			msg_format_near(Ind, "%s seems to be more powerful!", p_ptr->name);
+			msg_print(Ind, "You feel... powerful!");
 
 			p_ptr->xstr = 0;
 			p_ptr->xint = 0;
@@ -495,39 +490,39 @@ bool do_xtra_stats(int Ind, int v, int p) {
 				case 0: p_ptr->xstr = p;
 			}
 
-                        notice = TRUE;
-                }
-        }
+			notice = TRUE;
+		}
+	}
 
-        /* Shut */
-        else {	//v = 0;
-                if (p_ptr->xtrastat) {
-                        msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
-                        msg_print(Ind, "You somehow feel weak.");
+	/* Shut */
+	else {	//v = 0;
+		if (p_ptr->xtrastat) {
+			msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
+			msg_print(Ind, "You somehow feel weak.");
 
 			p_ptr->xtrastat = 0;
 			p_ptr->statval = 0;
 
-                        notice = TRUE;
-                }
-        }
+			notice = TRUE;
+		}
+	}
 
-        p_ptr->xtrastat = v;
+	p_ptr->xtrastat = v;
 
-        /* Nothing to notice */
-        if (!notice) return (FALSE);
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
 
-        /* Disturb */
-        if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
-        /* Recalculate bonuses */
-        p_ptr->update |= (PU_BONUS);
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
 
-        /* Handle stuff */
-        handle_stuff(Ind);
+	/* Handle stuff */
+	handle_stuff(Ind);
 
-        /* Result */
-        return (TRUE);
+	/* Result */
+	return (TRUE);
 }//xtra stats
 
 /*
@@ -2846,8 +2841,8 @@ bool detect_trap(int Ind, int rad) {
 /*			if (c_ptr->feat == FEAT_DOOR_TAIL + 1) continue;	--hmm why not */
 
 			/* Detect traps on chests */
-                        o_ptr = &o_list[c_ptr->o_idx];
-                        if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST) && (o_ptr->pval) && (!object_known_p(Ind, o_ptr))) {
+			o_ptr = &o_list[c_ptr->o_idx];
+			if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST) && (o_ptr->pval) && (!object_known_p(Ind, o_ptr))) {
 				object_known(o_ptr);
 
 				/* New trap detected */
@@ -3542,18 +3537,18 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 		}
 	}
 #else
-        /* Anti-cheeze: Prevent stealers from making infinite money in IDDC towns.
-           It doesn't matter that much in other places, since there are usually
-           better/equal ways to make money.
-           For items probably >= 12k it doesn't matter anymore though. */
-        if (okay && (flags & ENCH_STOLEN) &&
-    	    object_value_real(0, o_ptr) < 15000 && o_ptr->discount != 100 &&
-    	    isdungeontown(&p_ptr->wpos) && in_irondeepdive(&p_ptr->wpos)) {
+	/* Anti-cheeze: Prevent stealers from making infinite money in IDDC towns.
+	   It doesn't matter that much in other places, since there are usually
+	   better/equal ways to make money.
+	   For items probably >= 12k it doesn't matter anymore though. */
+	if (okay && (flags & ENCH_STOLEN) &&
+	    object_value_real(0, o_ptr) < 15000 && o_ptr->discount != 100 &&
+	    isdungeontown(&p_ptr->wpos) && in_irondeepdive(&p_ptr->wpos)) {
 		msg_format(Ind, "The stolen enchantment scroll spoiled the appearence of %s %s!",
 		    ((item >= 0) ? "your" : "the"), o_name);
-                o_ptr->discount = 100;
-                if (!o_ptr->note) o_ptr->note = quark_add("devalued");
-        }
+		o_ptr->discount = 100;
+		if (!o_ptr->note) o_ptr->note = quark_add("devalued");
+	}
 #endif
 
 	/* Did we use up an item? */
@@ -3912,8 +3907,8 @@ bool recharge(int Ind, int num) {
  */
 bool recharge_aux(int Ind, int item, int pow) {
 	player_type *p_ptr = Players[Ind];
-	int                 i, t, lev, dr;
-	object_type		*o_ptr;
+	int i, t, lev, dr;
+	object_type *o_ptr;
 
 
 	/* Only accept legal items */
@@ -4134,19 +4129,19 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 
 	/* Affect all (nearby) non-partied players */
 	for (i = 1; i < NumPlayers + 1; i++) {
-                /* If he's not playing, skip him */
-                if (Players[i]->conn == NOT_CONNECTED)
-                        continue;
+		/* If he's not playing, skip him */
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
 
-                /* If he's not here, skip him */
-                if (!inarea(wpos, &Players[i]->wpos))
-                        continue;
+		/* If he's not here, skip him */
+		if (!inarea(wpos, &Players[i]->wpos))
+			continue;
 
-                /* Ignore players we aren't hostile to */
-//                if (!check_hostile(Ind, i)) continue;
+		/* Ignore players we aren't hostile to */
+//		if (!check_hostile(Ind, i)) continue;
 
-	        /* if we are in the same party, don't affect target player */
-	        if (p_ptr->party && (player_in_party(p_ptr->party, i)))
+		/* if we are in the same party, don't affect target player */
+		if (p_ptr->party && (player_in_party(p_ptr->party, i)))
 			continue;
 
 		/* Location */
@@ -4388,8 +4383,8 @@ void distract_monsters(int Ind) {
 	int i;
 	bool tauntable;
 
-        msg_print(Ind, "You make yourself look less threatening than your team mates.");
-        msg_format_near(Ind, "%s pretends you're more threatening than him.", p_ptr->name);
+	msg_print(Ind, "You make yourself look less threatening than your team mates.");
+	msg_format_near(Ind, "%s pretends you're more threatening than him.", p_ptr->name);
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
@@ -4404,7 +4399,7 @@ void distract_monsters(int Ind) {
 		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
-            	    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
+		    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
 		else tauntable = FALSE;
 
 		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
@@ -4453,8 +4448,8 @@ void taunt_monsters(int Ind)
 	int i;
 	bool sleep = FALSE, tauntable;
 
-        msg_print(Ind, "You call out a taunt!");
-        msg_format_near(Ind, "%s calls out a taunt!", p_ptr->name);
+	msg_print(Ind, "You call out a taunt!");
+	msg_format_near(Ind, "%s calls out a taunt!", p_ptr->name);
 	break_cloaking(Ind, 0);
 	stop_precision(Ind);
 
@@ -4467,7 +4462,7 @@ void taunt_monsters(int Ind)
 		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
-            	    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
+		    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
 		else tauntable = FALSE;
 
 		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
@@ -4681,15 +4676,15 @@ void wake_minions(int Ind, int who) {
  */
 bool genocide_aux(int Ind, worldpos *wpos, char typ) {
 	player_type *p_ptr = Players[Ind];
-	int		i;
-	bool	result = FALSE;
+	int i;
+	bool result = FALSE;
 	int tmp;	// , d = 999;
 
-	dun_level		*l_ptr = getfloor(wpos);
+	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
-	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
+	if (l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	bypass_invuln = TRUE;
 
@@ -4793,7 +4788,7 @@ bool genocide(int Ind) {
 	/* Search all monsters and find the closest */
 	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = race_inf(m_ptr);
+		monster_race *r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -5119,11 +5114,11 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			if ((y == y1) && (x == x1)) continue;
 
 			/* Delete the monster (if any) */
-                        if (c_ptr->m_idx > 0) {
-                                monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
-                                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, y, x, TRUE);
-                                else continue;
-                        }
+			if (c_ptr->m_idx > 0) {
+				monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
+				if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, y, x, TRUE);
+				else continue;
+			}
 
 			/* Destroy "valid" grids */
 //			if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info&CAVE_ICKY))
@@ -6118,12 +6113,12 @@ bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	}
 #endif
 #endif
-       /* Analyze the "dir" and the "target".  Hurt items on floor. */
-       snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
+	/* Analyze the "dir" and the "target".  Hurt items on floor. */
+	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 
-       /* affect self + players + monsters AND give credit on kill */
-       flg = mod_ball_spell_flags(typ, flg);
-       return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+	/* affect self + players + monsters AND give credit on kill */
+	flg = mod_ball_spell_flags(typ, flg);
+	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -6185,7 +6180,7 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interv
 	char pattacker[80];
 
 	project_time_effect = eff;
-        snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
+	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 	return (fire_cloud(Ind, typ, dir, dam, rad, time, interval, pattacker));
 }
 
@@ -6194,8 +6189,8 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interv
  */
 bool cast_raindrop(worldpos *wpos, int x) {
 	char pattacker[80];
-        strcpy(pattacker, "");
-        int pseudo_y_start;
+	strcpy(pattacker, "");
+	int pseudo_y_start;
 
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
@@ -6218,7 +6213,7 @@ bool cast_raindrop(worldpos *wpos, int x) {
  */
 bool cast_snowflake(worldpos *wpos, int x, int interval) {
 	char pattacker[80];
-        strcpy(pattacker, "");
+	strcpy(pattacker, "");
 
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
@@ -6234,7 +6229,7 @@ bool cast_snowflake(worldpos *wpos, int x, int interval) {
  */
 bool cast_fireworks(worldpos *wpos, int x, int y) {
 	char pattacker[80];
-        strcpy(pattacker, "");
+	strcpy(pattacker, "");
 
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
@@ -6277,7 +6272,7 @@ bool cast_lightning(worldpos *wpos, int x, int y) {
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 	int typ = rand_int(3 * 2); /* style / mirrored direction? */
 
-        strcpy(pattacker, "");
+	strcpy(pattacker, "");
 
 	if (typ < 2) {
 		project_time_effect = EFF_LIGHTNING1;
@@ -7186,8 +7181,8 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 
 	/* clone value */
 
-        m_ptr->owner = 0;
-        m_ptr->pet = 0;
+	m_ptr->owner = 0;
+	m_ptr->pet = 0;
 
 	for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
 		if (Players[Ind]->conn == NOT_CONNECTED)
@@ -7341,8 +7336,8 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	m_ptr->cdis = 0;
 
 	/* special pet value */
-        m_ptr->owner = Players[owner_id]->id;
-        m_ptr->pet = 1;
+	m_ptr->owner = Players[owner_id]->id;
+	m_ptr->pet = 1;
 
 	for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
 		if (Players[Ind]->conn == NOT_CONNECTED)
@@ -7409,7 +7404,7 @@ void golem_creation(int Ind, int max) {
 	int i, tmp_dam = 0;
 	int golem_type = -1;
 	int golem_arms[4], golem_m_arms = 0;
-	int golem_legs[30], golem_m_legs = 0;
+	int golem_legs[2], golem_m_legs = 0;
 	s16b golem_flags = 0;
 	cave_type *c_ptr;
 	int x, y, k, g_cnt = 0;
@@ -7555,7 +7550,7 @@ void golem_creation(int Ind, int max) {
 	}
 
 	/* Ahah FAIL !!! */
-	if ((golem_type == -1) || (golem_m_legs < 2)) {
+	if (golem_type == -1 || golem_m_legs < 2) {
 		s_printf("GOLEM_CREATION: failed! type %d, legs %d.\n", golem_type, golem_m_legs);
 		msg_print(Ind, "The spell fails! You lose all your material.");
 		delete_monster_idx(c_ptr->m_idx, TRUE);
@@ -7842,13 +7837,13 @@ bool heal_insanity(int Ind, int val)
 }
 
 bool do_vermin_control(int Ind) {
-        dun_level *l_ptr = getfloor(&Players[Ind]->wpos);
-        if (l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY)) {
-                l_ptr->flags1 |= LF1_NO_MULTIPLY;
-                msg_print(Ind, "You feel less itchy.");
-                return TRUE;
-        }
-        return FALSE;
+	dun_level *l_ptr = getfloor(&Players[Ind]->wpos);
+	if (l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY)) {
+		l_ptr->flags1 |= LF1_NO_MULTIPLY;
+		msg_print(Ind, "You feel less itchy.");
+		return TRUE;
+	}
+	return FALSE;
 }
 
 void rune_combine(int Ind) {
@@ -8066,12 +8061,11 @@ void tome_creation_aux(int Ind, int item) {
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 	/* Describe */
 	msg_format(Ind, "%s %s glow%s brightly!",
-	           ((item >= 0) ? "Your" : "The"), o_name,
-	           ((o_ptr->number > 1) ? "" : "s"));
+	    ((item >= 0) ? "Your" : "The"), o_name,
+	    ((o_ptr->number > 1) ? "" : "s"));
 
 	/* Did we use up an item? */
-	if (p_ptr->using_up_item >= 0)
-	{
+	if (p_ptr->using_up_item >= 0) {
 		inven_item_increase(Ind, p_ptr->using_up_item, -1);
 		inven_item_describe(Ind, p_ptr->using_up_item);
 		inven_item_optimize(Ind, p_ptr->using_up_item);
@@ -8079,24 +8073,23 @@ void tome_creation_aux(int Ind, int item) {
 	}
 
 	/* unstack if our custom book was originally in a pile */
-        if ((item >= 0) && (o_ptr->number > 1))
-        {
-                /* Make a fake item */
-                object_type tmp_obj;
-                tmp_obj = *o_ptr;
-                tmp_obj.number = 1;
+	if ((item >= 0) && (o_ptr->number > 1)) {
+		/* Make a fake item */
+		object_type tmp_obj;
+		tmp_obj = *o_ptr;
+		tmp_obj.number = 1;
 
 		/* Restore remaining 'untouched' stack of books */
 		*xtra = 0;
 
-                /* Message */
-                msg_print(Ind, "You unstack your book.");
+		/* Message */
+		msg_print(Ind, "You unstack your book.");
 
-                /* Unstack the used item */
-                o_ptr->number--;
-                p_ptr->total_weight -= tmp_obj.weight;
-                item = inven_carry(Ind, &tmp_obj);
-        }
+		/* Unstack the used item */
+		o_ptr->number--;
+		p_ptr->total_weight -= tmp_obj.weight;
+		item = inven_carry(Ind, &tmp_obj);
+	}
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
