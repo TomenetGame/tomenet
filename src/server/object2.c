@@ -5956,8 +5956,10 @@ void determine_level_req(int level, object_type *o_ptr) {
 	/* Slightly reduce high levels */
 	if (o_ptr->level > 55) o_ptr->level--;
 	if (o_ptr->level > 50) o_ptr->level--;
-	if (o_ptr->level > 45) o_ptr->level--;
-	if (o_ptr->level > 40) o_ptr->level--;
+	if (o_ptr->tval != TV_RING || o_ptr->sval != SV_RING_SPEED) {
+		if (o_ptr->level > 45) o_ptr->level--;
+		if (o_ptr->level > 40) o_ptr->level--;
+	}
 
 #if 0
 	/* tone down deep randarts a bit to allow winner-trading */
