@@ -346,7 +346,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Artifacts Seen", line, 0, 0);
+	show_file(Ind, file_name, "Artifacts Owned", line, 0, 0);
 
 	/* Remove the file */
 	fd_kill(file_name);
