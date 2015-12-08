@@ -1243,6 +1243,7 @@ They all start with a slash '/' hence they're called slash commands:
  (/quest)   Specify a quest number to drop a quest -- warning! You might not
             be able to acquire it again, depending on the quest and your quest
             progress.
+            If you specify '*' instead of a number, you will drop ALL quests.
 
 /quit       Leaves the game, same as pressing CTRL+Q.
  (/exit, /leave)
