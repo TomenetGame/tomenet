@@ -37,6 +37,14 @@
  */
 
 
+/* highlight quest keywords enclosed in [[..]] brackets in this colour */
+#if 0
+ #define QUEST_KEYWORD_HIGHLIGHT	'y'
+#else
+ #define QUEST_KEYWORD_HIGHLIGHT	'o'
+#endif
+
+
 #ifdef ALLOW_TEMPLATES
 
 
@@ -8239,7 +8247,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				/* replace '{' by \377 */
 				while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
 #else /* just allow highlighting */
-				while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = 'y'; }
+				while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = QUEST_KEYWORD_HIGHLIGHT; }
 				while ((cc = strstr(tmpbuf, "]]"))) { *cc = '\377'; *(cc + 1) = '-'; }
 #endif
 
@@ -8278,7 +8286,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				/* replace '{' by \377 */
 				while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
 #else /* just allow highlighting */
-				while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = 'y'; }
+				while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = QUEST_KEYWORD_HIGHLIGHT; }
 				while ((cc = strstr(tmpbuf, "]]"))) { *cc = '\377'; *(cc + 1) = '-'; }
 #endif
 
@@ -8512,7 +8520,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				/* replace '{' by \377 */
 				while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
 #else /* just allow highlighting */
-				while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = 'y'; }
+				while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = QUEST_KEYWORD_HIGHLIGHT; }
 				while ((cc = strstr(tmpbuf, "]]"))) { *cc = '\377'; *(cc + 1) = '-'; }
 #endif
 				c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
