@@ -6516,6 +6516,13 @@ void player_death(int Ind) {
 	bool was_total_winner = p_ptr->total_winner, retire = FALSE;
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
 
+
+	/* Get him out of any pending request input prompts :-p */
+	if (p_ptr->request_id != RID_NONE) {
+		Send_request_abort(Ind);
+		p_ptr->request_id = RID_NONE;
+	}
+
 #ifdef SHOW_REALLY_DIED_FROM
 	if ((streq(p_ptr->died_from, "It") || p_ptr->image
  #ifdef SHOW_REALLY_DIED_FROM_INSANITY

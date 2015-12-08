@@ -51,7 +51,8 @@ V:1.0.0
 # (for each 'm'-line) ml:stage:locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # (optional, for each 'm'-line) mh:hurtplayers?:hurtquestors?:invincplayers?:invincquestors?:targetplayers?:targetquestors? (completely NI: will always behave like normal monsters)
 
-# (optional, up to 50x - automatic narration) X:stage:flags:narration text
+# (optional, up to 15x - automatic narration) X:stage:flags:narration text
+# (optional, up to 15x - quest log status narration) x:stage:flags:quest status log text
 # (optional? - up to 15x - questor dialogue) W:questor:stage:examine? (0=normal talk,1=examine, negative = copy another stage):flags:convo line
 #   if a negative examine-argument is specified, the line ends after that. The remaining arguments are not to be specified. Only one W-line is required in this case!
 #   this is a hack: This stage's dialogue will actually mimic the stage dialogue from the stage of the absolute value of 'examine' argument. NOTE: You must not refer to another cloned dialogue!
@@ -145,8 +146,11 @@ W:0:0:0:-:Would you like some [[ale]] or rather a [[solid ration]]?
 Y:0:0:-:ale:-:1
 Y:0:0:-:ration:-:2
 Y:0:0:-:solid ration:-:2
+x:0:-:You haven't decided upon the request yet..
 W:0:1:0:-:Well then, visit the shop keeper of the general store!
+x:1:-:You accepted the request to get some ale.
 W:0:2:0:-:Well then, visit the shop keeper of the general store..
+x:2:-:You accepted the request to get some food.
 #position 105:40 for actual Bree's general store entrance:
 M:1:1:-1:32:32:0:0:105:40:0:-:0:0
 M:2:1:-1:32:32:0:0:105:40:0:-:0:0

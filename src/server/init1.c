@@ -8179,6 +8179,33 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+		/* Process 'x' for quest log status narration text */
+		if (buf[0] == 'x') {
+			s = buf + 2;
+			if (3 != sscanf(s, "%d:%16[^:]:%79[^:]",//QI_FLAGS
+			    &stage, flagbuf, tmpbuf)) return (1);
+
+			if (stage < 0 || stage >= QI_STAGES) return 1;
+			q_stage = init_quest_stage(error_idx, stage);
+			if ((lc = q_stage->log_lines) == QI_LOG_LINES) return 1;
+
+			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
+			strcpy(c, tmpbuf);
+			q_stage->log[lc] = c;
+
+			cc = flagbuf;
+			if (*cc == '-') *cc = 0;
+			while (*cc) {
+				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+					q_stage->log_flags[lc] |= (0x1 << (*cc - 'A')); /* set flag */
+				} else return 1;
+				cc++;
+			}
+
+			q_stage->log_lines++;
+			continue;
+		}
+
 		/* Process 'W' for conversation */
 		if (buf[0] == 'W') {
 			/* we have 2 sub-types of 'X' lines */

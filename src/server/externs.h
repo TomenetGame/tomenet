@@ -2223,6 +2223,7 @@ extern void quest_check_goal_k(int Ind, monster_type *m_ptr);
 extern void quest_check_goal_r(int Ind, object_type *o_ptr);
 extern void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num);
 extern void quest_abandon(int Ind, int py_q_idx);
+extern void quest_log(int Ind, int py_q_idx);
 /* for initialising the quest_info structures and sub-structures in init1.c */
 extern qi_stage *quest_cur_qi_stage(int q_idx);
 extern qi_stage *quest_qi_stage(int q_idx, int stage);

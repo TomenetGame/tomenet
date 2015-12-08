@@ -8,6 +8,7 @@
 #define QI_QUESTORS		30	/* amount of questor(NPC)s, there can be more than one! */
 #define QI_STAGES		50	/* a quest can have these # of different stages */
 #define QI_TALK_LINES		15	/* amount of text lines per talk dialogue */
+#define QI_LOG_LINES		15	/* amount of text lines shown in a "quest log" screen */
 #define QI_KEYWORDS		100	/* for dialogue with the questor */
 #define QI_KEYWORD_LEN		30	/* length of a keyword, for dialogue with the questor */
 #define QI_PASSWORDS		5	/* special keywords that are actually passwords that are randomly regenerated each session */
@@ -56,7 +57,7 @@
 #define QI_SPAWN_PACK_NEAR	4	/* spawn as pack nearby questor */
 #define QI_SPAWN_PACK_NEAR_P	5	/* spawn as pack nearby player */
 #define QI_SPAWN_PACK		6	/* spawn as pack further away */
-#define QI_SPAWN_PACK_FAR_P	7	/* spawn as pack far away */
+#define QI_SPAWN_PACK_FAR	7	/* spawn as pack far away */
 
 
 /* calculate an internal quest goal index from a quest goal number specified in q_info.txt */

@@ -4481,8 +4481,8 @@ void store_exit(int Ind) {
 	}
 #endif
 
-        handle_store_leave(Ind);
-        Send_store_kick(Ind);
+	handle_store_leave(Ind);
+	Send_store_kick(Ind);
 }
 
 void store_exec_command(int Ind, int action, int item, int item2, int amt, int gold)

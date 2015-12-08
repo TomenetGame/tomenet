@@ -5085,6 +5085,48 @@ void quest_abandon(int Ind, int py_q_idx) {
 		p_ptr->quest_done[q_idx]++;
 }
 
+/* Display quest status log of a current quest stage to a player. */
+void quest_log(int Ind, int py_q_idx) {
+	player_type *p_ptr = Players[Ind];
+	int q_idx = p_ptr->quest_idx[py_q_idx];
+	quest_info *q_ptr = &q_info[q_idx];
+	int pInd = q_ptr->individual ? Ind : 0;
+	int k, stage = quest_get_stage(Ind, q_idx);
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+	char text[MAX_CHARS * 2];
+	bool anything = FALSE;
+
+	/* pre-scan narration if any line at all exists and passes the flag check */
+	for (k = 0; k < QI_LOG_LINES; k++) {
+		if (q_stage->log[k] &&
+		    ((q_stage->log_flags[k] & quest_get_flags(pInd, q_idx)) == q_stage->log_flags[k])) {
+			anything = TRUE;
+			break;
+		}
+	}
+
+	if (!anything) {
+		msg_print(Ind, " ");
+		msg_format(Ind, "\377uThere is currently no log for quest <\377U%s\377u>", q_name + q_ptr->name);
+		msg_print(Ind, " ");
+		return;
+	}
+
+	msg_print(Ind, " ");
+	msg_format(Ind, "\377uLog for quest <\377U%s\377u>:", q_name + q_ptr->name);
+	for (k = 0; k < QI_LOG_LINES; k++) {
+		if (!q_stage->log[k]) break;
+		if ((q_stage->log_flags[k] & quest_get_flags(pInd, q_idx)) != q_stage->log_flags[k]) continue;
+#if 0 /* simple way */
+		msg_format(Ind, "\377U%s", q_stage->log[k]);
+#else /* allow placeholders */
+		quest_text_replace(text, q_stage->log[k], p_ptr);
+		msg_format(Ind, "\377U%s", text);
+#endif
+	}
+	msg_print(Ind, " ");
+}
+
 
 /* ---------- Helper functions for initialisation of q_info[] from q_info.txt in init.c ---------- */
 

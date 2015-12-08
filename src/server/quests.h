@@ -434,6 +434,10 @@ typedef struct qi_stage {
 	cptr narration[QI_TALK_LINES];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
 	u16b narration_flags[QI_TALK_LINES];		/* required flags configuration to display this narrative line */
 
+	byte log_lines;
+	cptr log[QI_LOG_LINES];				/* display a current quest state overview in a "quest log screen", a 10 lines a 79 characters, aka "You accepted her request!" */
+	u16b log_flags[QI_LOG_LINES];			/* required flags configuration to display this status log line */
+
 
 	/* the rewards for this stage, if any */
 	byte rewards;					/* up to QI_STAGE_REWARDS */

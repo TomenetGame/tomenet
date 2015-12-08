@@ -3098,6 +3098,12 @@ void recall_player(int Ind, char *message) {
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
+	/* Get him out of any pending quest input prompts */
+	if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) {
+		Send_request_abort(Ind);
+		p_ptr->request_id = RID_NONE;
+	}
+
 #ifdef USE_SOUND_2010
 	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
