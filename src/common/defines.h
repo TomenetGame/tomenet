@@ -638,6 +638,8 @@
 
 /* Maximum number of concurrent quests (quest_info type) */
 #define MAX_CONCURRENT_QUESTS 5
+#define LOCAL_QUEST (MAX_CONCURRENT_QUESTS) /* hack: reserve a special slot index for a 'local' type quest */
+#define MAX_PQUESTS (MAX_CONCURRENT_QUESTS + 1) /* maximum number of quests a player can have: concurrently running quests plus the special 'local' quest */ 
 
 /*
  * Maximum number of high scores in the high score file

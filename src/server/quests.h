@@ -547,6 +547,7 @@ typedef struct quest_info {
 	//char name[MAX_CHARS];				/* readable title of this quest */
 	u16b name;					/* readable title of this quest - offset */
 	byte auto_accept;				/* automatically accept this quest? (0=no (default), 1=yes, 2=yes quietly, 3=yes quietly and no ending notification) */
+	bool local;					/* quest is 'local' (usually aka 'talk to questor') type, ie cancelled on any movement attempt; does not occupy one of the normal quest slots */
 
     /* QUESTOR (quest giver) RESTRICTIONS: */
 	/* player restrictions */

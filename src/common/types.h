@@ -2750,17 +2750,17 @@ struct player_type {
 	/* Had a quest running when he logged out or something? ->respawn/reactivate quest? todo//unclear yet..
 	   THIS IS NEW STUFF: quest_info. Don't confuse it with older quest_type/quest[]/plots[] code sketches in bldg.c. */
 	int interact_questor_idx;	/* id in QI_QUESTORS, which questor we just interacted with (bumped into) */
-	s16b quest_idx[MAX_CONCURRENT_QUESTS];
-	char quest_codename[MAX_CONCURRENT_QUESTS][10 + 1]; /* track up to 5 quests by their codename and roughly the current stage and goals */
-	s32b quest_acquired[MAX_CONCURRENT_QUESTS]; /* the turn when it was acquired */
-	s32b quest_timed_stage_change[MAX_CONCURRENT_QUESTS]; /* turn tracker for automatically timed stage change */
-	s16b quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
-	s16b quest_stage_timer[MAX_CONCURRENT_QUESTS]; /* stage automatics started a timer leading to stage completion */
-	u16b quest_flags[MAX_CONCURRENT_QUESTS]; /* our personal quest flags configuration */
-	bool quest_goals[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */
-	bool quest_goals_nisi[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */
-	s16b quest_kill_number[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */
-	s16b quest_retrieve_number[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */
+	s16b quest_idx[MAX_PQUESTS];
+	char quest_codename[MAX_PQUESTS][10 + 1]; /* track up to 5 quests by their codename and roughly the current stage and goals */
+	s32b quest_acquired[MAX_PQUESTS]; /* the turn when it was acquired */
+	s32b quest_timed_stage_change[MAX_PQUESTS]; /* turn tracker for automatically timed stage change */
+	s16b quest_stage[MAX_PQUESTS]; /* in which stage is a quest? */
+	s16b quest_stage_timer[MAX_PQUESTS]; /* stage automatics started a timer leading to stage completion */
+	u16b quest_flags[MAX_PQUESTS]; /* our personal quest flags configuration */
+	bool quest_goals[MAX_PQUESTS][QI_GOALS]; /* which goals have we completed so far? */
+	bool quest_goals_nisi[MAX_PQUESTS][QI_GOALS]; /* which goals have we completed so far? */
+	s16b quest_kill_number[MAX_PQUESTS][QI_GOALS]; /* which goals have we completed so far? */
+	s16b quest_retrieve_number[MAX_PQUESTS][QI_GOALS]; /* which goals have we completed so far? */
 	/* permanent quest info */
 	s16b quest_done[MAX_Q_IDX];	/* player has completed a quest (n times) */
 	s16b quest_cooldown[MAX_Q_IDX];	/* player has to wait n minutes till picking up the quest again */
@@ -2769,9 +2769,9 @@ struct player_type {
 	bool quest_any_k, quest_any_k_target, quest_any_k_within_target; /* just roughly remember in general whether ANY of our quests needs killing/retrieving (and maybe only in a particular location) */
 	bool quest_any_r, quest_any_r_target, quest_any_r_within_target; /* just roughly remember in general whether ANY of our quests needs killing/retrieving (and maybe only in a particular location) */
 	bool quest_any_deliver_xy, quest_any_deliver_xy_within_target;
-	bool quest_kill[MAX_CONCURRENT_QUESTS];
-	bool quest_retrieve[MAX_CONCURRENT_QUESTS];
-	bool quest_deliver_pos[MAX_CONCURRENT_QUESTS], quest_deliver_xy[MAX_CONCURRENT_QUESTS];
+	bool quest_kill[MAX_PQUESTS];
+	bool quest_retrieve[MAX_PQUESTS];
+	bool quest_deliver_pos[MAX_PQUESTS], quest_deliver_xy[MAX_PQUESTS];
 	byte quest_eligible;		/* temporary, just for efficiency */
 	u16b questor_dialogue_hack_xy; /* keep track of player's exact position */
 	u32b questor_dialogue_hack_wpos;

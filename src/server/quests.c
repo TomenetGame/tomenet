@@ -304,9 +304,9 @@ void process_quests(void) {
 				p_ptr->quest_cooldown[i]--;
 
 			/* handle automatically timed stage actions for individual quests */
-			for (k = 0; k < MAX_CONCURRENT_QUESTS; k++)
+			for (k = 0; k < MAX_PQUESTS; k++)
 				if (p_ptr->quest_idx[k] == i) break;
-			if (k == MAX_CONCURRENT_QUESTS) continue;
+			if (k == MAX_PQUESTS) continue;
 
 			if (p_ptr->quest_stage_timer[k] < 0) {
 				if (hour == 1 - p_ptr->quest_stage_timer[k]) {
@@ -1677,7 +1677,7 @@ static void quest_initialise_player_tracking(int Ind, int py_q_idx) {
 	p_ptr->quest_any_deliver_xy = FALSE;
 	p_ptr->quest_any_deliver_xy_within_target = FALSE;
 
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = 0; i < MAX_PQUESTS; i++) {
 		/* skip this quest (and unused quests, checked in quest_imprint_tracking_information()) */
 		if (i == py_q_idx) continue;
 		/* expensive mechanism, sort of */
@@ -1708,9 +1708,9 @@ static void quest_terminate_individual(int Ind, int q_idx) {
 	s_printf("%s QUEST_TERMINATE_INDIVIDUAL: %s(%d) completes '%s'(%d,%s)\n", showtime(), p_ptr->name, Ind, q_name + q_ptr->name, q_idx, q_ptr->codename);
 #endif
 
-	for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+	for (j = 0; j < MAX_PQUESTS; j++)
 		if (p_ptr->quest_idx[j] == q_idx) break;
-	if (j == MAX_CONCURRENT_QUESTS) return; //oops?
+	if (j == MAX_PQUESTS) return; //oops?
 
 	if (p_ptr->quest_done[q_idx] < 10000) p_ptr->quest_done[q_idx]++;
 
@@ -1810,9 +1810,9 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+		for (j = 0; j < MAX_PQUESTS; j++)
 			if (p_ptr->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) continue;
+		if (j == MAX_PQUESTS) continue;
 
 #if QDEBUG > 0
 		s_printf(" %s(%d)", q_name + q_ptr->name, q_ptr->codename);
@@ -1858,9 +1858,9 @@ static bool quest_get_goal(int pInd, int q_idx, int goal, bool nisi) {
 	}
 
 	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) {
+	if (i == MAX_PQUESTS) {
 		if (nisi && q_goal->nisi) return FALSE;
 		return q_goal->cleared; /* player isn't on this quest. return global goal. */
 	}
@@ -1883,9 +1883,9 @@ static bool quest_get_goal_nisi(int pInd, int q_idx, int goal) {
 	if (!pInd || !q_ptr->individual) return q_goal->nisi; /* global quest */
 
 	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) return q_goal->nisi;  /* player isn't on this quest. return global goal. */
+	if (i == MAX_PQUESTS) return q_goal->nisi;  /* player isn't on this quest. return global goal. */
 
 	if (q_ptr->individual) return p_ptr->quest_goals_nisi[i][goal]; /* individual quest */
 
@@ -1910,9 +1910,9 @@ s16b quest_get_stage(int pInd, int q_idx) {
 	if (!pInd || !q_ptr->individual) return q_ptr->cur_stage; /* no player? global stage */
 
 	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) return 0; /* player isn't on this quest: pick stage 0, the entry stage */
+	if (i == MAX_PQUESTS) return 0; /* player isn't on this quest: pick stage 0, the entry stage */
 
 	if (q_ptr->individual) return p_ptr->quest_stage[i]; /* individual quest */
 	return q_ptr->cur_stage; /* global quest */
@@ -1928,9 +1928,9 @@ static u16b quest_get_flags(int pInd, int q_idx) {
 	if (!pInd || !q_ptr->individual) return q_ptr->flags; /* no player? global goal */
 
 	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->flags; /* player isn't on this quest. return global goal. */
+	if (i == MAX_PQUESTS) return q_ptr->flags; /* player isn't on this quest. return global goal. */
 
 	if (q_ptr->individual) return p_ptr->quest_flags[i]; /* individual quest */
 	return q_ptr->flags; /* global quest */
@@ -1948,9 +1948,9 @@ static void quest_set_flags(int pInd, int q_idx, u16b set_mask, u16b clear_mask)
 	}
 
 	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) {
+	if (i == MAX_PQUESTS) {
 		q_ptr->flags |= set_mask; /* player isn't on this quest. return global flags. */
 		q_ptr->flags &= ~clear_mask;
 		return;
@@ -1999,9 +1999,9 @@ static void quest_set_goal(int pInd, int q_idx, int goal, bool nisi) {
 	}
 
 	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) {
+	if (i == MAX_PQUESTS) {
 		if (!q_goal->cleared || !nisi) q_goal->nisi = nisi;
 		q_goal->cleared = TRUE; /* player isn't on this quest. return global goal. */
 
@@ -2048,9 +2048,9 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 	}
 
 	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+	for (i = 0; i < MAX_PQUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) {
+	if (i == MAX_PQUESTS) {
 		q_goal->cleared = FALSE; /* player isn't on this quest. return global goal. */
 		return;
 	}
@@ -2287,9 +2287,9 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 		for (j = 1; j <= NumPlayers; j++) {
 			p_ptr = Players[j];
 			if (!inarea(&p_ptr->wpos, &m_list[q_questor->mo_idx].wpos)) continue;
-			for (k = 0; k < MAX_CONCURRENT_QUESTS; k++)
+			for (k = 0; k < MAX_PQUESTS; k++)
 				if (p_ptr->quest_idx[k] == q_idx) break;
-			if (k == MAX_CONCURRENT_QUESTS) continue;
+			if (k == MAX_PQUESTS) continue;
 
 			/* tele players to new location? */
 			if (q_qact->tppy_wpos.wx != -1) {
@@ -2797,9 +2797,9 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 	qi_goal *q_goal;
 	qi_deliver *q_del;
 
-	for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+	for (j = 0; j < MAX_PQUESTS; j++)
 		if (p_ptr->quest_idx[j] == q_idx) break;
-	if (j == MAX_CONCURRENT_QUESTS) return j; //paranoia, shouldn't happen
+	if (j == MAX_PQUESTS) return j; //paranoia, shouldn't happen
 
 	/* clear any pending RIDs */
 	if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) p_ptr->request_id = 0;
@@ -2959,9 +2959,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 			p_ptr->quest_eligible = 0;
-			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			for (j = 0; j < MAX_PQUESTS; j++)
 				if (p_ptr->quest_idx[j] == q_idx) break;
-			if (j == MAX_CONCURRENT_QUESTS) continue;
+			if (j == MAX_PQUESTS) continue;
 			p_ptr->quest_eligible = j + 1;
 
 			/* clear any pending RIDs */
@@ -3041,9 +3041,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 			for (i = 1; i <= NumPlayers; i++) {
 				if (wpos != NULL && !inarea(&Players[i]->wpos, wpos)) continue;
 
-				for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+				for (j = 0; j < MAX_PQUESTS; j++)
 					if (Players[i]->quest_idx[j] == q_idx) break;
-				if (j == MAX_CONCURRENT_QUESTS) continue;
+				if (j == MAX_PQUESTS) continue;
 
 				py_Ind[++py - 1] = i;
 				py_qidx[py - 1] = j;
@@ -3130,9 +3130,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 	   check if we already auto-completed the quest stage this quickly just by standing there! */
 	if (py_q_idx == -1) { //global quest
 		for (i = 1; i <= NumPlayers; i++) {
-			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			for (j = 0; j < MAX_PQUESTS; j++)
 				if (Players[i]->quest_idx[j] == q_idx) break;
-			if (j == MAX_CONCURRENT_QUESTS) continue;
+			if (j == MAX_PQUESTS) continue;
 
 			quest_instacheck_retrieval(i, q_idx, j);
 		}
@@ -3141,7 +3141,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 			/* reattach all eligible players.. */
 			for (i = 0; i < py; i++)
 				quest_instacheck_retrieval(py_Ind[i], q_idx, py_qidx[i]);
-		else if (py_q_idx != MAX_CONCURRENT_QUESTS) //paranoia
+		else if (py_q_idx != MAX_PQUESTS) //paranoia
 			quest_instacheck_retrieval(pInd, q_idx, py_q_idx);
 	}
 #endif
@@ -3152,23 +3152,27 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	int i, j;
 
-	/* re-check (this was done in quest_acquire() before,
-	   but we cannot carry over this information. :/
-	   Also, it might have changed meanwhile by some very odd means that we don't want to think about --
-	   does the player have capacity to pick up one more quest? */
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		if (p_ptr->quest_idx[i] == -1) break;
-	if (i == MAX_CONCURRENT_QUESTS) { /* paranoia - this should not be possible to happen */
-		//if (!quiet)
-			msg_print(Ind, "\377RYou cannot pick up this quest - please tell an admin about this!");
-		return;
+	/* specialty: 'local' quest. This goes into a special slot that isn't displayed in /quest list */
+	if (q_ptr->local) i = LOCAL_QUEST;
+	else {
+		/* re-check (this was done in quest_acquire() before,
+		   but we cannot carry over this information. :/
+		   Also, it might have changed meanwhile by some very odd means that we don't want to think about --
+		   does the player have capacity to pick up one more quest? */
+		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+			if (p_ptr->quest_idx[i] == -1) break;
+		if (i == MAX_CONCURRENT_QUESTS) { /* paranoia - this should not be possible to happen */
+			//if (!quiet)
+				msg_print(Ind, "\377RYou cannot pick up this quest - please tell an admin about this!");
+			return;
+		}
 	}
 
 	p_ptr->quest_idx[i] = q_idx;
 	strcpy(p_ptr->quest_codename[i], q_ptr->codename);
 #if QDEBUG > 1
-	s_printf("%s QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest '%s'(%d,%s).\n",
-	    showtime(), p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py, p_ptr->name, Ind, q_name + q_ptr->name, q_idx, q_ptr->codename);
+	s_printf("%s QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest '%s'(%d,%s) (slot %d).\n",
+	    showtime(), p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py, p_ptr->name, Ind, q_name + q_ptr->name, q_idx, q_ptr->codename, i);
 #endif
 
 	/* for 'individual' quests, reset temporary quest data or it might get carried over from previous quest */
@@ -3300,11 +3304,14 @@ static bool quest_acquire(int Ind, int q_idx, bool quiet) {
 	}
 
 	/* does the player have capacity to pick up one more quest? */
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		if (p_ptr->quest_idx[i] == -1) break;
-	if (i == MAX_CONCURRENT_QUESTS) {
-		if (!quiet) msg_print(Ind, qi_msg_max);
-		return FALSE;
+	if (q_ptr->local) i = LOCAL_QUEST;
+	else {
+		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+			if (p_ptr->quest_idx[i] == -1) break;
+		if (i == MAX_CONCURRENT_QUESTS) {
+			if (!quiet) msg_print(Ind, qi_msg_max);
+			return FALSE;
+		}
 	}
 
 	/* voila, player may acquire this quest! */
@@ -4116,7 +4123,7 @@ void quest_check_goal_k(int Ind, monster_type *m_ptr) {
 #if QDEBUG > 3
 	s_printf("QUEST_CHECK_GOAL_k: by %d,%s\n", Ind, p_ptr->name);
 #endif
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = 0; i < MAX_PQUESTS; i++) {
 #if 0
 		/* player actually pursuing a quest? -- paranoia (quest_kill should be FALSE then) */
 		if (p_ptr->quest_idx[i] == -1) continue;
@@ -4138,7 +4145,7 @@ void quest_check_goal_k(int Ind, monster_type *m_ptr) {
 				   matches other quests of his too. This is covered by the first
 				   for loop over the original player's further quests. */
 				if (!p2_ptr->quest_any_k_within_target) continue;//uh, efficiency maybe? (this check is redundant with next for loop)
-				for (k = 0; k < MAX_CONCURRENT_QUESTS; k++)
+				for (k = 0; k < MAX_PQUESTS; k++)
 					if (p_ptr->quest_idx[i] == p2_ptr->quest_idx[k]) {
 						quest_check_goal_kr(j, p2_ptr->quest_idx[k], k, m_ptr, NULL);
 						break;
@@ -4154,7 +4161,7 @@ void quest_check_goal_r(int Ind, object_type *o_ptr) {
 #if QDEBUG > 3
 	s_printf("QUEST_CHECK_GOAL_r: by %d,%s\n", Ind, p_ptr->name);
 #endif
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = 0; i < MAX_PQUESTS; i++) {
 #if 0
 		/* player actually pursuing a quest? -- paranoia (quest_retrieve should be FALSE then) */
 		if (p_ptr->quest_idx[i] == -1) continue;
@@ -4182,7 +4189,7 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 #if QDEBUG > 3
 	s_printf("QUEST_CHECK_UNGOAL_r: by %d,%s\n", Ind, p_ptr->name);
 #endif
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = 0; i < MAX_PQUESTS; i++) {
 #if 0
 		/* player actually pursuing a quest? -- paranoia (quest_retrieve should be FALSE then) */
 		if (p_ptr->quest_idx[i] == -1) continue;
@@ -4456,7 +4463,7 @@ void quest_check_goal_deliver(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = 0; i < MAX_PQUESTS; i++) {
 #if 0
 		/* player actually pursuing a quest? -- paranoia (quest_retrieve should be FALSE then) */
 		if (p_ptr->quest_idx[i] == -1) continue;
@@ -4548,9 +4555,9 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* is the player on this quest? */
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+		for (j = 0; j < MAX_PQUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) continue;
+		if (j == MAX_PQUESTS) continue;
 
 		/* must be around a questor to receive the rewards,
 		   so you can't afk-quest in a pack of people with one person doing it all. */
@@ -4582,9 +4589,9 @@ static void quest_reward_create(int pInd, int q_idx, u32b resf) {
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* is the player on this quest? */
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+		for (j = 0; j < MAX_PQUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) continue;
+		if (j == MAX_PQUESTS) continue;
 
 		/* must be around a questor to receive the rewards,
 		   so you can't afk-quest in a pack of people with one person doing it all. */
@@ -4616,9 +4623,9 @@ static void quest_reward_gold(int pInd, int q_idx, int au) {
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* is the player on this quest? */
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+		for (j = 0; j < MAX_PQUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) continue;
+		if (j == MAX_PQUESTS) continue;
 
 		/* must be around a questor to receive the rewards,
 		   so you can't afk-quest in a pack of people with one person doing it all. */
@@ -4650,9 +4657,9 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* is the player on this quest? */
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+		for (j = 0; j < MAX_PQUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) continue;
+		if (j == MAX_PQUESTS) continue;
 
 		/* must be around a questor to receive the rewards,
 		   so you can't afk-quest in a pack of people with one person doing it all. */
@@ -4684,9 +4691,9 @@ static void quest_reward_statuseffect(int pInd, int q_idx, int fx) {
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
 		/* is the player on this quest? */
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+		for (j = 0; j < MAX_PQUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) continue;
+		if (j == MAX_PQUESTS) continue;
 
 		/* must be around a questor to receive the rewards,
 		   so you can't afk-quest in a pack of people with one person doing it all. */
@@ -4853,9 +4860,9 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		if (r_exp) msg_format(pInd, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
 	} else for (i = 1; i <= NumPlayers; i++) {
 		/* is the player on this quest? */
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+		for (j = 0; j < MAX_PQUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) continue;
+		if (j == MAX_PQUESTS) continue;
 
 		/* must be around a questor to receive the rewards,
 		   so you can't afk-quest in a pack of people with one person doing it all. */
@@ -4910,7 +4917,7 @@ void quest_check_player_location(int Ind) {
 	p_ptr->quest_any_deliver_xy_within_target = FALSE; /* deliveries are of course intrinsically not 'global' but have a target location^^ */
 
 	/* Quests: Is this wpos a target location or a delivery location for any of our quests? */
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = 0; i < MAX_PQUESTS; i++) {
 		/* player actually pursuing a quest? */
 		if (p_ptr->quest_idx[i] == -1) continue;
 

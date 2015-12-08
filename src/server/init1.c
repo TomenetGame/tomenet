@@ -7387,7 +7387,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'N' for "New/Number/Name" */
 		if (buf[0] == 'N') {
-			int aa;
+			int aa, local;
 
 			/* Find the colon before the name */
 			s = strchr(buf + 2, ':');
@@ -7428,8 +7428,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 
 			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
-			if (5 != (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%8[^:]:%d",
-			    codename, creator, questname, tmpbuf, &aa))) return (1);
+			if (6 != (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%8[^:]:%d:%d",
+			    codename, creator, questname, tmpbuf, &aa, &local))) return (1);
 
 			/* initialise prequest codenames */
 			for (k = 0; k < QI_PREREQUISITES; k++) q_ptr->prerequisites[k][0] = 0;
@@ -7450,6 +7450,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			else disabled = FALSE;
 			q_ptr->repeatable = atoi(tmpbuf); /* this defaults to 0 if just 'x' is specified without a number */
 			q_ptr->auto_accept = (byte)aa;
+			q_ptr->local = (local != 0);
 
 
 			/* ---------- initialise default values, because some flag lines/values are optional) ---------- */
