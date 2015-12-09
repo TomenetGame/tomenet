@@ -2156,6 +2156,9 @@ void do_cmd_open(int Ind, int dir) {
 #endif
 						msg_format(Ind,"\377sThat house is owned by %s.",get_house_owner(cs_ptr));
 					}
+#ifdef USE_SOUND_2010
+					sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
 				}
 				return;
 			}
