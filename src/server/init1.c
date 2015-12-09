@@ -7598,7 +7598,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		//--------------------------------------------------------------------------------------------
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
-			int q, ridx, minlv, maxlv, tval, sval;
+			int q, ridx, reidx, minlv, maxlv, tval, sval;
 			char ch, attr;
 			int good, great, vgreat;
 			int pval, bpval, name1, name2, name2b;
@@ -7613,11 +7613,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			switch (q) {
 			case QI_QUESTOR_NPC:
-				if (7 != sscanf(s, "%d:%d:%c:%c:%d:%d:%[^:]",
-				    &q, &ridx, &ch, &attr, &minlv, &maxlv,
+				if (8 != sscanf(s, "%d:%d:%d:%c:%c:%d:%d:%[^:]",
+				    &q, &ridx, &reidx, &ch, &attr, &minlv, &maxlv,
 				    tmpbuf)) return (1);
 				q_questor->type = q;
 				q_questor->ridx = ridx;
+				q_questor->reidx = reidx;
 				q_questor->rchar = ch;
 				q_questor->rattr = color_char_to_attr(attr);
 				q_questor->rlevmin = minlv;
@@ -7880,12 +7881,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'm') {
 			/* we have 3 sub-types of 'm' lines */
 			if (buf[1] == ':') { /* init */
-				int amt, grp, scat, clo, ridx, lvmin, lvmax;
+				int amt, grp, scat, clo, ridx, reidx, lvmin, lvmax;
 				char rchar, rattr;
 
 				s = buf + 2;
-				if (11 > (j = sscanf(s, "%d:%d:%d:%d:%d:%d:%c:%c:%d:%d%79[^:]",
-				    &stage, &amt, &grp, &scat, &clo, &ridx, &rchar, &rattr, &lvmin, &lvmax, tmpbuf)))
+				if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%c:%c:%d:%d%79[^:]",
+				    &stage, &amt, &grp, &scat, &clo, &ridx, &reidx, &rchar, &rattr, &lvmin, &lvmax, tmpbuf))
 					return (1);
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -7898,6 +7899,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_mspawn->scatter = (scat != 0);
 				q_mspawn->clones = clo;
 				q_mspawn->ridx = ridx;
+				q_mspawn->reidx = reidx;
 				q_mspawn->rchar = rchar == '-' ? 255 : rchar;
 				q_mspawn->rattr = rattr == '-' ? 255 : color_char_to_attr(rattr);
 				q_mspawn->rlevmin = lvmin;
@@ -8048,12 +8050,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'S' for questor changes/polymorphing/hostility */
 		if (buf[0] == 'S') {
-			int q, talk, despawn, invinc, dfail, ridx, lev;
+			int q, talk, despawn, invinc, dfail, ridx, reidx, lev;
 			char rchar, rattr;
 
 			s = buf + 2;
-			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%d:%c:%c:%d",
-			    &stage, &q, &talk, &despawn, &invinc, &dfail, tmpbuf, &ridx, &rchar, &rattr, &lev)) return (1);
+			if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d:%c:%c:%d",
+			    &stage, &q, &talk, &despawn, &invinc, &dfail, tmpbuf, &ridx, &reidx, &rchar, &rattr, &lev)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (q < 0 || q > q_ptr->questors) return 1;
@@ -8068,6 +8070,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_qmorph->name = c;
 			}
 			if (ridx) q_qmorph->ridx = ridx;
+			q_qmorph->reidx = reidx;
 			if (rchar == '-') q_qmorph->rchar = 255; /* keep */
 			else q_qmorph->rchar = rchar;
 			if (rattr == '-') q_qmorph->rattr = 255; /* keep */
@@ -8576,6 +8579,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				for (j = 0; j < k; j++) q_kill->ridx[j] = ridx[j];
 				/* disable the unused criteria */
 				for (j = k; j < 10; j++) q_kill->ridx[j] = 0;
+				continue;
+			} else if (buf[1] == 'E') { /* specify ego-indices */
+				int reidx[10];
+
+				s = buf + 3;
+				if (3 > (k = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				    &stage, &goal, &reidx[0], &reidx[1], &reidx[2], &reidx[3], &reidx[4], &reidx[5], &reidx[6], &reidx[7], &reidx[8], &reidx[9])))
+					return (1);
+				k = k - 2;
+
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (ABS(goal) > QI_GOALS) return 1;
+				q_kill = init_quest_kill(error_idx, stage, goal);
+				for (j = 0; j < k; j++) q_kill->reidx[j] = reidx[j];
+				/* disable the unused criteria */
+				for (j = k; j < 10; j++) q_kill->reidx[j] = -1;
 				continue;
 			} else if (buf[1] == 'V') { /* specify visuals */
 				char rchar[5], rattr[5];

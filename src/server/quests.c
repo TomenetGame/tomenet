@@ -896,6 +896,8 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	m_ptr->questor_idx = questor_idx;
 	m_ptr->quest = q_idx;
 	m_ptr->r_idx = q_questor->ridx;
+	m_ptr->ego = q_questor->reidx;
+	if (m_ptr->ego) r_ptr = race_info_idx(m_ptr->r_idx, m_ptr->ego, 0);
 	/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
 	   Need code cleanup!! Maybe rename it to m_ptr->golem and add a new m_ptr->special. */
 	r_ptr->extra = 0;
@@ -929,12 +931,12 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	r_ptr->d_char = q_questor->rchar;
 	r_ptr->x_attr = q_questor->rattr;
 	r_ptr->x_char = q_questor->rchar;
-	
+
 	r_ptr->aaf = rbase_ptr->aaf;
 	r_ptr->mexp = rbase_ptr->mexp;
 	r_ptr->hdice = rbase_ptr->hdice;
 	r_ptr->hside = rbase_ptr->hside;
-	
+
 	m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
 	m_ptr->hp = m_ptr->maxhp;
 	m_ptr->org_maxhp = m_ptr->maxhp; /* CON */
@@ -2185,6 +2187,7 @@ static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 	q_questor->death_fail = q_qmorph->death_fail;
 	if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);
 	if (q_qmorph->ridx) q_questor->ridx = q_qmorph->ridx;
+	if (q_qmorph->reidx != -1) q_questor->reidx = q_qmorph->reidx;
 	if (q_qmorph->rchar != 127) q_questor->rchar = q_qmorph->rchar;
 	if (q_qmorph->rattr != 255) q_questor->rattr = q_qmorph->rattr;
 	if (q_qmorph->rlev) m_list[q_questor->mo_idx].level = q_qmorph->rlev;
@@ -2501,12 +2504,14 @@ static void quest_spawn_monsters(int q_idx, int stage) {
 					s_printf("QUEST_MSPAWN_PICK: Monster criteria not matchable for spawn #%d.\n", i);
 					continue;
 				}
+				//todo: implement reidx specification
 				(void)summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1);
 			} else {
 				if (!(r_idx = quest_mspawn_pick(q_mspawn))) {
 					s_printf("QUEST_MSPAWN_PICK: Monster criteria not matchable for spawn #%d.\n", i);
 					continue;
 				}
+				//todo: implement reidx specification
 				(void)summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1);
 			}
 		}
@@ -3801,9 +3806,15 @@ static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type
 		/* no monster specified? */
 		if (q_kill->ridx[i] == 0) continue;
 		/* accept any monster? */
-		if (q_kill->ridx[i] == -1) return TRUE;
+		else if (q_kill->ridx[i] == -1) {
+			if (q_kill->reidx[i] == -1) return TRUE;
+			else if (q_kill->reidx[i] == m_ptr->ego) return TRUE;
+		}
 		/* specified an r_idx */
-		if (q_kill->ridx[i] == m_ptr->r_idx) return TRUE;
+		else if (q_kill->ridx[i] == m_ptr->r_idx) {
+			if (q_kill->reidx[i] == -1) return TRUE;
+			else if (q_kill->reidx[i] == m_ptr->ego) return TRUE;
+		}
 	}
 
 	/* check for char/attr/level combination - treated in pairs (AND'ed) over the index */
@@ -5371,7 +5382,11 @@ qi_kill *init_quest_kill(int q_idx, int stage, int q_info_goal) {
 
 		p->rchar[i] = 254;
 		p->rattr[i] = 254;
+
 	}
+
+	for (i = 0; i < 10; i++)
+		p->reidx[i] = -1;//accept all egos (incl. 0)
 
 	/* done, return the new, requested one */
 	return p;

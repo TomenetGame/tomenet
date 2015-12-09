@@ -1024,6 +1024,7 @@ extern void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr);
 extern void player_desc(int Ind, char *desc, int Ind2, int mode);
 extern int monster_check_experience(int m_idx, bool silent);
 extern bool mego_ok(int r_idx, int ego);
+extern monster_race* race_info_idx(int r_idx, int ego, int randuni);
 
 /* netserver.c (nserver.c) */
 /* XXX those entries are duplicated with those in netserver.h

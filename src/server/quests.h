@@ -87,6 +87,7 @@ typedef struct qi_questor {
 
 	/* QI_QUESTOR_NPC */
 	s16b ridx;
+	s16b reidx;
 	char rchar;
 	byte rattr;
 	byte rlevmin, rlevmax;
@@ -149,6 +150,7 @@ typedef struct qi_questor_morph {
 							   -1 = quest fails completely, 255 = no effect */
 	cptr name;					/* questor changes optional pseudo-unique name during this stage? */
 	s16b ridx; 					/* questor changes to this base monster type */
+	s16b reidx; 					/* questor changes to this ego monster type */
 	char rchar;
 	byte rattr;
 	byte rlev;
@@ -206,6 +208,7 @@ typedef struct qi_kill {
 	bool player_picks;				/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
 #endif
 	s16b ridx[10];					/* kill certain monster(s), 0 for none, -1 for any. */
+	s16b reidx[10];					/* kill certain ego monster(s), -1 for any (default for non-specified values). */
 
 	cptr name[5];					/* partial name that can match. AND's with char/attr/lev */
 	char rchar[5];					/*  ..certain types, 126 for any, 127 for none. AND's with name/attr/lev. */
@@ -333,6 +336,7 @@ typedef struct qi_feature {
 
 typedef struct qi_monsterspawn {
 	s16b ridx;					/* exact ridx, ORs with block of partial criteria below */
+	s16b reidx;					/* exact reidx, ANDs with block of partial criteria below, -1 for any */
 
 	cptr name;					/* partial name that can match. AND's with char/attr/lev */
 	char rchar;
