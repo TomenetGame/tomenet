@@ -888,16 +888,18 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	c_ptr->m_idx = m_idx;
 
 	m_ptr = &m_list[m_idx];
-	MAKE(m_ptr->r_ptr, monster_race);
-	r_ptr = m_ptr->r_ptr;
-	rbase_ptr = &r_info[q_questor->ridx];
 
 	m_ptr->questor = TRUE;
 	m_ptr->questor_idx = questor_idx;
 	m_ptr->quest = q_idx;
+
 	m_ptr->r_idx = q_questor->ridx;
 	m_ptr->ego = q_questor->reidx;
-	if (m_ptr->ego) r_ptr = race_info_idx(m_ptr->r_idx, m_ptr->ego, 0);
+	MAKE(m_ptr->r_ptr, monster_race);
+	r_ptr = m_ptr->r_ptr;
+	if (m_ptr->ego) rbase_ptr = race_info_idx(m_ptr->r_idx, m_ptr->ego, 0);
+	else rbase_ptr = &r_info[q_questor->ridx];
+
 	/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
 	   Need code cleanup!! Maybe rename it to m_ptr->golem and add a new m_ptr->special. */
 	r_ptr->extra = 0;
