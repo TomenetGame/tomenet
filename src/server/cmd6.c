@@ -2715,17 +2715,17 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				    for (x = 0; x < MAX_WILD_X; x++) {
 					if (d_tries == 0) {
 					    if ((d_ptr = wild_info[y][x].tower)) {
-				    		if (d_ptr->type == d_no) {
-					    	    d_tries = 1;
-						    if (o_ptr) msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
-						}
-				    	    }
-					    if ((d_ptr = wild_info[y][x].dungeon)) {
-				    		if (d_ptr->type == d_no) {
+						if (d_ptr->type == d_no) {
 						    d_tries = 1;
 						    if (o_ptr) msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
 						}
-				    	    }
+					    }
+					    if ((d_ptr = wild_info[y][x].dungeon)) {
+						if (d_ptr->type == d_no) {
+						    d_tries = 1;
+						    if (o_ptr) msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
+						}
+					    }
 					}
 				    }
 				}
@@ -2739,27 +2739,38 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				//if (ident) wild_display_map(Ind);
 				if (ident) msg_print(Ind, "You seem to get a feel for the place.");
 #else
-				/* Reveal a random part of the world map, and give a message if it means we discovered a dungeon - C. Blue */
+				/* Reveal a random 3x3 patch of the world map, and give a message if it means we discovered a dungeon - C. Blue */
 				int x = rand_int(MAX_WILD_X), y = rand_int(MAX_WILD_Y);
-				wilderness_type *wild = &wild_info[y][x];
+				int xs = (x >= 1) ? x - 1 : x, xe = (x < MAX_WILD_X - 1) ? x + 1 : x;
+				int ys = (y >= 1) ? y - 1 : y, ye = (y < MAX_WILD_Y - 1) ? y + 1 : y;
+
+				wilderness_type *wild;
 				dungeon_type *d_ptr;
 
-				if (p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
-				    (1 << (x + y * MAX_WILD_X) % 8)) {
-					msg_format(Ind, "\377sThis world map piece shows the layout at \377u(%d,%d)\377s which you already know.", x, y);
-					break;
-				}
+				msg_format(Ind, "\377sYou learn the world map layout around sector \377u(%d,%d)\377s.", (xs + xe) / 2, (ys + ye) / 2); //for patch area revelation
 
-				p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] |= (1 << ((x + y * MAX_WILD_X) % 8));
-				msg_format(Ind, "\377sYou learn the world map layout at sector \377u(%d,%d)\377s.", x, y);
+				for (x = xs; x <= xe; x++) for (y = ys; y <= ye; y++) {
+					wild = &wild_info[y][x];
 
-				if ((d_ptr = wild->tower) && d_ptr->type != DI_VALINOR) {
-					msg_print(Ind, "\377sYou learn that there is a tower at that location, called:");
-					msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
-				}
-				if ((d_ptr = wild->dungeon) && d_ptr->type != DI_VALINOR) {
-					msg_print(Ind, "\377sYou learn that there is a dungeon at that location, called:");
-					msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
+ #if 0 /* this only makes sense for single (x,y) revelation, not for patch area */
+					if (p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
+					    (1 << (x + y * MAX_WILD_X) % 8)) {
+						msg_format(Ind, "\377sThis world map piece shows the layout at \377u(%d,%d)\377s which you already know.", x, y);
+						break;
+					}
+ #endif
+
+					//msg_format(Ind, "\377sYou learn the world map layout at sector \377u(%d,%d)\377s.", x, y); //for single (x,y) revelation
+					p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] |= (1 << ((x + y * MAX_WILD_X) % 8));
+
+					if ((d_ptr = wild->tower) && d_ptr->type != DI_VALINOR) {
+						msg_print(Ind, "\377sYou learn that there is a tower at that location, called:");
+						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, TRUE, d_ptr, 0, TRUE));
+					}
+					if ((d_ptr = wild->dungeon) && d_ptr->type != DI_VALINOR) {
+						msg_print(Ind, "\377sYou learn that there is a dungeon at that location, called:");
+						msg_format(Ind, "\377s  '\377u%s\377s'", get_dun_name(x, y, FALSE, d_ptr, 0, TRUE));
+					}
 				}
 #endif
 				break;
