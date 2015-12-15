@@ -5316,7 +5316,13 @@ if (cfg.unikill_format) {
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 
-		msg_format(Ind, "\374\377UYou have conquered %s!", d_name + d_info[d_ptr->type].name);
+		msg_format(Ind, "\374\377UYou have conquered %s!", d_name +
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		    d_info[in_irondeepdive(wpos) ? iddc[ABS(wpos->wz)].type : d_ptr->type].name
+#else
+		    d_info[d_ptr->type].name
+#endif
+		    );
 
 		if ((
 #ifdef IRONDEEPDIVE_MIXED_TYPES
