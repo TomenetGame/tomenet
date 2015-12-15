@@ -42,8 +42,7 @@
  * Excise a dungeon object from any stacks
  * Borrowed from ToME.
  */
-void excise_object_idx(int o_idx)
-{
+void excise_object_idx(int o_idx) {
 	object_type *j_ptr, *o_ptr;
 	u16b this_o_idx, next_o_idx = 0;
 	u16b prev_o_idx = 0;
@@ -54,16 +53,14 @@ void excise_object_idx(int o_idx)
 
 #ifdef MONSTER_INVENTORY
 	/* Monster */
-	if (j_ptr->held_m_idx)
-	{
+	if (j_ptr->held_m_idx) {
 		monster_type *m_ptr;
 
 		/* Monster */
 		m_ptr = &m_list[j_ptr->held_m_idx];
 
 		/* Scan all objects the monster has */
-		for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
-		{
+		for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
 			/* Acquire object */
 			o_ptr = &o_list[this_o_idx];
 
@@ -71,18 +68,15 @@ void excise_object_idx(int o_idx)
 			next_o_idx = o_ptr->next_o_idx;
 
 			/* Done */
-			if (this_o_idx == o_idx)
-			{
+			if (this_o_idx == o_idx) {
 				/* No previous */
-				if (prev_o_idx == 0)
-				{
+				if (prev_o_idx == 0) {
 					/* Remove from list */
 					m_ptr->hold_o_idx = next_o_idx;
 				}
 
 				/* Real previous */
-				else
-				{
+				else {
 					object_type *k_ptr;
 
 					/* Previous object */
@@ -124,8 +118,7 @@ void excise_object_idx(int o_idx)
 		c_ptr = &zcave[y][x];
 
 		/* Scan all objects in the grid */
-		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-		{
+		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
 			/* Acquire object */
 			o_ptr = &o_list[this_o_idx];
 
@@ -133,18 +126,14 @@ void excise_object_idx(int o_idx)
 			next_o_idx = o_ptr->next_o_idx;
 
 			/* Done */
-			if (this_o_idx == o_idx)
-			{
+			if (this_o_idx == o_idx) {
 				/* No previous */
-				if (prev_o_idx == 0)
-				{
+				if (prev_o_idx == 0) {
 					/* Remove from list */
 					if (c_ptr) c_ptr->o_idx = next_o_idx;
 				}
-
 				/* Real previous */
-				else
-				{
+				else {
 					object_type *k_ptr;
 
 					/* Previous object */
@@ -233,11 +222,10 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 /*
  * Deletes object from given location
  */
-void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* maybe */
-{
+void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* maybe */
 	cave_type *c_ptr;
-
 	cave_type **zcave;
+
 	/* Refuse "illegal" locations */
 	if (!in_bounds(y, x)) return;
 
@@ -249,7 +237,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* may
 	/* Refuse "illegal" locations */
 	if (!in_bounds(Depth, y, x)) return;
 
-	if(cave[Depth]){	/* This is fast indexing method first */
+	if (cave[Depth]){	/* This is fast indexing method first */
 		/* Find where it was */
 		c_ptr = &cave[Depth][y][x];
 #endif	// 0
@@ -258,8 +246,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* may
 //		if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx, unfound_art);
 
 		/* Scan all objects in the grid */
-		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-		{
+		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
 			object_type *o_ptr;
 
 			/* Acquire object */
@@ -277,15 +264,13 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* may
 
 //		everyone_lite_spot(wpos, y, x);
 	}
-	else{			/* Cave depth not static (houses etc) - do slow method */
+	else {			/* Cave depth not static (houses etc) - do slow method */
 		int i;
 		for (i = 0; i < o_max; i++) {
 			object_type *o_ptr = &o_list[i];
-			if (o_ptr->k_idx && inarea(wpos, &o_ptr->wpos))
-			{
-				if (y == o_ptr->iy && x == o_ptr->ix) {
+			if (o_ptr->k_idx && inarea(wpos, &o_ptr->wpos)) {
+				if (y == o_ptr->iy && x == o_ptr->ix)
 					delete_object_idx(i, unfound_art);
-				}
 			}
 		}
 	}
@@ -486,9 +471,8 @@ void compact_objects(int size, bool purge) {
 		}
 
 		/* wipe any cleared spaces */
-		for (i = tmp_max; i < o_max; i++) {
+		for (i = tmp_max; i < o_max; i++)
 			WIPE(&o_list[i], object_type);
-		}
 
 		/* now, we can fix o_max */
 		o_max = tmp_max;
@@ -526,7 +510,7 @@ void compact_objects(int size, bool purge) {
 						c_ptr->o_idx = i;
 					}
 				}
-				else{
+				else {
 					y = 255 - y;
 					if (in_bounds2(wpos, y, x)) {
 						c_ptr = &zcave[y][x];
@@ -590,8 +574,7 @@ void wipe_o_list(struct worldpos *wpos) {
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
 		/* We now preserve ALL artifacts, known or not */
-		if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
-		{
+		if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/) {
 			/* Info */
 			/* s_printf("Preserving artifact %d.\n", o_ptr->name1); */
 
@@ -653,7 +636,7 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 			continue;
 
 		/* Skip objects not on this depth */
-		if(!(inarea(wpos, &o_ptr->wpos)))
+		if (!(inarea(wpos, &o_ptr->wpos)))
 			continue;
 
 /* DEBUG -after getting weird crashes today 2007-12-21 in bree from /clv, and multiplying townies, I added this inbound check- C. Blue */
@@ -666,8 +649,7 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
 		/* We now preserve ALL artifacts, known or not */
-		if (artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
-		{
+		if (artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/) {
 			/* Info */
 			/* s_printf("Preserving artifact %d.\n", o_ptr->name1); */
 
@@ -727,8 +709,7 @@ void wipe_o_list_special(struct worldpos *wpos) {
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
 		/* We now preserve ALL artifacts, known or not */
-		if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
-		{
+		if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/) {
 			/* Info */
 			/* s_printf("Preserving artifact %d.\n", o_ptr->name1); */
 
@@ -772,13 +753,11 @@ void wipe_o_list_special(struct worldpos *wpos) {
  * Note that this function must maintain the special "o_fast"
  * array of pointers to "live" objects.
  */
-s16b o_pop(void)
-{
+s16b o_pop(void) {
 	int i, n, k;
 
 	/* Initial allocation */
-	if (o_max < MAX_O_IDX)
-	{
+	if (o_max < MAX_O_IDX) {
 		/* Get next space */
 		i = o_max;
 
@@ -794,8 +773,7 @@ s16b o_pop(void)
 
 
 	/* Check for some space */
-	for (n = 1; n < MAX_O_IDX; n++)
-	{
+	for (n = 1; n < MAX_O_IDX; n++) {
 		/* Get next space */
 		i = o_nxt;
 
@@ -809,8 +787,7 @@ s16b o_pop(void)
 		if (o_top >= MAX_O_IDX) continue;
 
 		/* Verify not allocated */
-		for (k = 0; k < o_top; k++)
-		{
+		for (k = 0; k < o_top; k++) {
 			/* Hack -- Prevent errors */
 			if (o_fast[k] == i) i = 0;
 		}
@@ -1125,11 +1102,6 @@ s16b get_obj_num(int max_level, u32b resf) {
 
 
 
-
-
-
-
-
 /*
  * Known is true when the "attributes" of an object are "known".
  * These include tohit, todam, toac, cost, and pval (charges).
@@ -1145,8 +1117,7 @@ s16b get_obj_num(int max_level, u32b resf) {
  *
  * This routine also removes any inscriptions generated by "feelings".
  */
-void object_known(object_type *o_ptr)
-{
+void object_known(object_type *o_ptr) {
 	/* Remove "default inscriptions" */
 	if (o_ptr->note && (o_ptr->ident & ID_SENSE)) {
 		/* Access the inscription */
@@ -1231,8 +1202,7 @@ void object_tried(int Ind, object_type *o_ptr, bool flipped) {
  * Return the "value" of an "unknown" item
  * Make a guess at the value of non-aware items
  */
-static s64b object_value_base(int Ind, object_type *o_ptr)
-{
+static s64b object_value_base(int Ind, object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Aware item -- use template cost */
@@ -3067,25 +3037,34 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		return (FALSE);
 
 	/* Require same owner or convertable to same owner */
-//
-/*	if (o_ptr->owner != j_ptr->owner) return (FALSE); */
+	/*if (o_ptr->owner != j_ptr->owner) return (FALSE); */
 	if (Ind) {
 		p_ptr = Players[Ind];
 		if (((o_ptr->owner != j_ptr->owner)
-			&& ((p_ptr->lev < j_ptr->level)
-			|| (j_ptr->level < 1)))
-			&& (j_ptr->owner)) return (FALSE);
+		    && ((p_ptr->lev < j_ptr->level)
+		    || (j_ptr->level < 1)))
+		    && (j_ptr->owner))
+			return (FALSE);
 		if ((o_ptr->owner != p_ptr->id)
-			&& (o_ptr->owner != j_ptr->owner)) return (FALSE);
+		    && (o_ptr->owner != j_ptr->owner))
+			return (FALSE);
 
 		/* Require objects from the same modus! */
 		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
-		if (compat_pomode(Ind, j_ptr)) return(FALSE);
+		if (compat_pomode(Ind, j_ptr)) return (FALSE);
 	} else {
-		if (o_ptr->owner != j_ptr->owner) return (FALSE);
 		/* no stacks of unowned everlasting items in shops after a now-dead
 		   everlasting player sold an item to the shop before he died :) */
-		if (compat_omode(o_ptr, j_ptr)) return(FALSE);
+		if (compat_omode(o_ptr, j_ptr)) return (FALSE);
+
+		/* Hack: Dead owner? Allow to convert to us as owner if our level is high enough */
+		if (j_ptr->owner == 65537) {
+			if (j_ptr->level > lookup_player_level(o_ptr->owner))
+				return (FALSE);
+			/* else fall through */
+		}
+		/* Normal check */
+		else if (o_ptr->owner != j_ptr->owner) return (FALSE);
 	}
 
 	/* Analyze the items */
@@ -3336,14 +3315,17 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		    && strcmp(quark_str(j_ptr->note), "stolen")
 		    && !is_realm_book(o_ptr)
 		    && !check_guard_inscription(o_ptr->note, 'M')
-		    && !check_guard_inscription(j_ptr->note, 'M')) return (FALSE);
+		    && !check_guard_inscription(j_ptr->note, 'M'))
+			return (FALSE);
 
 		/* Hack -- normally require matching "inscriptions" */
-		if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (FALSE);
+		if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note))
+			return (FALSE);
 	}
 
 	/* Hack -- normally require matching "discounts" */
-	if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return (FALSE);
+	if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount))
+		return (FALSE);
 
 
 	/* Maximal "stacking" limit */
@@ -3373,8 +3355,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	int total = o_ptr->number + j_ptr->number;
 
-        /* Prepare ammo for possible combining */
-//	int o_to_h, o_to_d;
+	/* Prepare ammo for possible combining */
+	//int o_to_h, o_to_d;
 	bool merge_inscriptions = check_guard_inscription(o_ptr->note, 'M') || check_guard_inscription(j_ptr->note, 'M');
 	bool merge_ammo = (is_ammo(o_ptr->tval) && merge_inscriptions);
 
@@ -3465,6 +3447,9 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 		o_ptr->pval = (o_ptr->number) * (o_ptr->pval) + (j_ptr->pval);
 		o_ptr->pval = (o_ptr->pval) / (o_ptr->number + 1);
 	}
+
+	/* Hack for dropping items onto stacks that have dead owner */
+	if (o_ptr->owner == 65537) o_ptr->owner = j_ptr->owner;
 }
 
 
@@ -3472,13 +3457,11 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 /*
  * Find the index of the object_kind with the given tval and sval
  */
-s16b lookup_kind(int tval, int sval)
-{
+s16b lookup_kind(int tval, int sval) {
 	int k;
 
 	/* Look for it */
-	for (k = 1; k < max_k_idx; k++)
-	{
+	for (k = 1; k < max_k_idx; k++) {
 		object_kind *k_ptr = &k_info[k];
 
 		/* Found a match */
@@ -3498,8 +3481,7 @@ s16b lookup_kind(int tval, int sval)
 /*
  * Clear an item
  */
-void invwipe(object_type *o_ptr)
-{
+void invwipe(object_type *o_ptr) {
 	/* Clear the record */
 	WIPE(o_ptr, object_type);
 }
@@ -3508,8 +3490,7 @@ void invwipe(object_type *o_ptr)
 /*
  * Make "o_ptr" a "clean" copy of the given "kind" of object
  */
-void invcopy(object_type *o_ptr, int k_idx)
-{
+void invcopy(object_type *o_ptr, int k_idx) {
 	object_kind *k_ptr = &k_info[k_idx];
 
 	/* Clear the record */
@@ -3601,8 +3582,7 @@ void invcopy(object_type *o_ptr, int k_idx)
  * 120    0.03  0.11  0.31  0.46  1.31  2.48  4.60  7.78 11.67 25.53 45.72
  * 128    0.02  0.01  0.13  0.33  0.83  1.41  3.24  6.17  9.57 14.22 64.07
  */
-s16b m_bonus(int max, int level)
-{
+s16b m_bonus(int max, int level) {
 	int bonus, stand, extra, value;
 
 
@@ -3724,12 +3704,12 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		/* Cannot make an artifact twice */
 		if (a_ptr->cur_num) continue;
 
-                /* Cannot generate non special ones */
-                if (!(a_ptr->flags3 & TR3_INSTA_ART)) continue;
+		/* Cannot generate non special ones */
+		if (!(a_ptr->flags3 & TR3_INSTA_ART)) continue;
 
-                /* Cannot generate some artifacts because they can only exists in special dungeons/quests/... */
-//                if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
-                if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
+		/* Cannot generate some artifacts because they can only exists in special dungeons/quests/... */
+		//if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
+		if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
 
 		/* Allow non-dropchosen/specialgene winner arts */
 		if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY))
@@ -3947,8 +3927,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
  *
  * This routine should only be called by "apply_magic()"
  */
-static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
-{
+static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 	int i = 0, j, n;
 	int *ok_ego, ok_num = 0;
 	bool ret = FALSE, double_ok = !(resf & RESF_NODOUBLEEGO);
@@ -3969,7 +3948,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		ego_item_type *e_ptr = &e_info[e_tval[tval][i]];
 		bool ok = FALSE;
 #if 0 /* done in e_info */
-                bool cursed = FALSE;
+		bool cursed = FALSE;
 #endif
 
 		/* Must have the correct fields */
@@ -3977,13 +3956,13 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 			if ((e_ptr->tval[j] == o_ptr->tval) && (e_ptr->min_sval[j] <= o_ptr->sval) && (e_ptr->max_sval[j] >= o_ptr->sval)) ok = TRUE;
 
 #if 0 /* done in e_info */
-                        for (k = 0; k < 5-4; k++) if (e_ptr->flags3[k] & TR3_CURSED) cursed = TRUE;
+			for (k = 0; k < 5-4; k++) if (e_ptr->flags3[k] & TR3_CURSED) cursed = TRUE;
 #endif
 			if (ok) break;
 		}
 #if 0 /* done in e_info */
-                /* No curse-free ego powers on broken or rusty items; no elven filthy rags */
-                if (!cursed && (o_ptr->k_idx == 30 || o_ptr->k_idx == 47 || o_ptr->k_idx == 110 || (o_ptr->k_idx == 102 && i == EGO_ELVENKIND))) ok = FALSE;
+		/* No curse-free ego powers on broken or rusty items; no elven filthy rags */
+		if (!cursed && (o_ptr->k_idx == 30 || o_ptr->k_idx == 47 || o_ptr->k_idx == 110 || (o_ptr->k_idx == 102 && i == EGO_ELVENKIND))) ok = FALSE;
 #endif
 		if (!ok) {
 			/* Doesnt count as a try*/
@@ -4220,8 +4199,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 /*
  * Charge a new wand.
  */
-static void charge_wand(object_type *o_ptr)
-{
+static void charge_wand(object_type *o_ptr) {
 	switch (o_ptr->sval) {
 	case SV_WAND_HEAL_MONSTER:              o_ptr->pval = randint(20) + 8; break;
 	case SV_WAND_HASTE_MONSTER:             o_ptr->pval = randint(20) + 8; break;
@@ -4264,8 +4242,7 @@ static void charge_wand(object_type *o_ptr)
 /*
  * Charge a new staff.
  */
-static void charge_staff(object_type *o_ptr)
-{
+static void charge_staff(object_type *o_ptr) {
 	switch (o_ptr->sval) {
 	case SV_STAFF_DARKNESS:			o_ptr->pval = randint(8)  + 8; break;
 	case SV_STAFF_SLOWNESS:			o_ptr->pval = randint(8)  + 8; break;
@@ -8152,7 +8129,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	if (o_ptr->name1 == ART_POWER && dropped_the_one_ring(wpos, c_ptr)) return -1;
 
 	/* some objects get destroyed by falling on certain floor type - C. Blue */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 #ifdef DROP_KILL_NOTE
 	if (o_ptr->tval == TV_POTION) is_potion = TRUE;
 	if (o_ptr->number > 1) plural = TRUE;
@@ -8234,7 +8211,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		next_o_idx = q_ptr->next_o_idx;
 
 		/* Check for combination */
-		if (object_similar(0, q_ptr, o_ptr, 0x4)) {
+		if (object_similar(0, o_ptr, q_ptr, 0x4)) {
 			/* Combine the items */
 			object_absorb(0, q_ptr, o_ptr);
 
@@ -8257,7 +8234,9 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 //		c_ptr = &zcave[ny][nx];
 
 		/* Crush anything under us (for artifacts) */
-		if (flag == 3) delete_object(wpos, ny, nx, TRUE);
+		if (flag == 3) {
+			delete_object(wpos, ny, nx, TRUE);
+		}
 
 
 #ifdef MAX_ITEMS_STACKING
@@ -8304,7 +8283,6 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			}
 		}
 #endif
-
 
 		/* Make a new object */
 		o_idx = o_pop();

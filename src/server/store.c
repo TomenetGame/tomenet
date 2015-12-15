@@ -57,8 +57,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 
 #define MAX_COMMENT_1	6
 
-static cptr comment_1[MAX_COMMENT_1] =
-{
+static cptr comment_1[MAX_COMMENT_1] = {
 	"Okay.",
 	"Fine.",
 	"Accepted!",
@@ -71,16 +70,14 @@ static cptr comment_1[MAX_COMMENT_1] =
 
 #define MAX_COMMENT_2A	2
 
-static cptr comment_2a[MAX_COMMENT_2A] =
-{
+static cptr comment_2a[MAX_COMMENT_2A] = {
 	"You try my patience.  %s is final.",
 	"My patience grows thin.  %s is final."
 };
 
 #define MAX_COMMENT_2B	12
 
-static cptr comment_2b[MAX_COMMENT_2B] =
-{
+static cptr comment_2b[MAX_COMMENT_2B] = {
 	"I can take no less than %s gold pieces.",
 	"I will accept no less than %s gold pieces.",
 	"Ha!  No less than %s gold pieces.",
@@ -97,8 +94,7 @@ static cptr comment_2b[MAX_COMMENT_2B] =
 
 #define MAX_COMMENT_3A	2
 
-static cptr comment_3a[MAX_COMMENT_3A] =
-{
+static cptr comment_3a[MAX_COMMENT_3A] = {
 	"You try my patience.  %s is final.",
 	"My patience grows thin.  %s is final."
 };
@@ -106,8 +102,7 @@ static cptr comment_3a[MAX_COMMENT_3A] =
 
 #define MAX_COMMENT_3B	12
 
-static cptr comment_3b[MAX_COMMENT_3B] =
-{
+static cptr comment_3b[MAX_COMMENT_3B] = {
 	"Perhaps %s gold pieces?",
 	"How about %s gold pieces?",
 	"I will pay no more than %s gold pieces.",
@@ -124,8 +119,7 @@ static cptr comment_3b[MAX_COMMENT_3B] =
 
 #define MAX_COMMENT_4A	4
 
-static cptr comment_4a[MAX_COMMENT_4A] =
-{
+static cptr comment_4a[MAX_COMMENT_4A] = {
 	"Enough!  You have abused me once too often!",
 	"Arghhh!  I have had enough abuse for one day!",
 	"That does it!  You shall waste my time no more!",
@@ -134,8 +128,7 @@ static cptr comment_4a[MAX_COMMENT_4A] =
 
 #define MAX_COMMENT_4B	4
 
-static cptr comment_4b[MAX_COMMENT_4B] =
-{
+static cptr comment_4b[MAX_COMMENT_4B] = {
 	"Leave my store!",
 	"Get out of my sight!",
 	"Begone, you scoundrel!",
@@ -144,8 +137,7 @@ static cptr comment_4b[MAX_COMMENT_4B] =
 
 #define MAX_COMMENT_5	8
 
-static cptr comment_5[MAX_COMMENT_5] =
-{
+static cptr comment_5[MAX_COMMENT_5] = {
 	"Try again.",
 	"Ridiculous!",
 	"You will have to do better than that!",
@@ -158,8 +150,7 @@ static cptr comment_5[MAX_COMMENT_5] =
 
 #define MAX_COMMENT_6	4
 
-static cptr comment_6[MAX_COMMENT_6] =
-{
+static cptr comment_6[MAX_COMMENT_6] = {
 	"I must have heard you wrong.",
 	"I'm sorry, I missed that.",
 	"I'm sorry, what was that?",
@@ -172,8 +163,7 @@ static cptr comment_6[MAX_COMMENT_6] =
 /*
  * Successful haggle.
  */
-static void say_comment_1(int Ind)
-{
+static void say_comment_1(int Ind) {
 	msg_print(Ind, comment_1[rand_int(MAX_COMMENT_1)]);
 }
 
@@ -197,8 +187,7 @@ static void say_comment_1(int Ind)
  */
 /*static owner_type *ot_ptr = NULL;*/
 
-void alloc_stores(int townval)
-{
+void alloc_stores(int townval) {
 	int i;
 
 	/* Allocate the stores */
@@ -208,8 +197,7 @@ void alloc_stores(int townval)
 	C_MAKE(town[townval].townstore, max_st_idx, store_type);
 
 	/* Fill in each store */
-	for (i = 0; i < max_st_idx; i++)
-	{       
+	for (i = 0; i < max_st_idx; i++) {
 		/* Access the store */
 		store_type *st_ptr = &town[townval].townstore[i];
 		store_info_type *sti_ptr = &st_info[i];
@@ -229,15 +217,13 @@ void alloc_stores(int townval)
 }
 
 /* For containing memory leaks - mikaelh */
-void dealloc_stores(int townval)
-{
+void dealloc_stores(int townval) {
 	int i;
 
 	/* Check that stores exist */
 	if (!town[townval].townstore) return;
 
-	for (i = 0; i < max_st_idx; i++)
-	{
+	for (i = 0; i < max_st_idx; i++) {
 		store_type *st_ptr = &town[townval].townstore[i];
 
 		/* Free stock */
@@ -431,9 +417,9 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 /*
  * Special "mass production" computation
  */
-static int mass_roll(int num, int max)
-{
+static int mass_roll(int num, int max) {
 	int i, t = 0;
+
 	for (i = 0; i < num; i++) t += rand_int(max);
 	return (t);
 }
@@ -443,31 +429,25 @@ static int mass_roll(int num, int max)
  * Certain "cheap" objects should be created in "piles"
  * Some objects can be sold at a "discount" (in small piles)
  */
-static void mass_produce(object_type *o_ptr, store_type *st_ptr)
-{
+static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 	int size = 1;
 	int discount = 0;
 
 	s64b cost = object_value(0, o_ptr);
 
-
 	/* Analyze the type */
-	switch (o_ptr->tval)
-	{
+	switch (o_ptr->tval) {
 		/* Food, Flasks, and Lites */
 		case TV_FOOD:
 		case TV_FLASK:
 		case TV_LITE:
 		case TV_PARCHMENT:
-		{
 			if (cost <= 5L) size += mass_roll(3, 5);
 			if (cost <= 20L) size += mass_roll(3, 5);
 			break;
-		}
 
 		case TV_POTION:
 		case TV_SCROLL:
-		{
 			if (cost <= 60L) size += mass_roll(3, 5);
 			if (cost <= 240L) size += mass_roll(1, 5);
 			if (st_ptr->st_idx == STORE_BTSUPPLY &&
@@ -476,14 +456,11 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 			    ))
 				size += mass_roll(3, 5);
 			break;
-		}
 
 		case TV_BOOK:
-		{
 			if (cost <= 50L) size += mass_roll(2, 3);
 			if (cost <= 500L) size += mass_roll(1, 3);
 			break;
-		}
 
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
@@ -504,14 +481,12 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 		case TV_TRAPKIT:
 		case TV_INSTRUMENT:
 		case TV_ROD: case TV_ROD_MAIN: case TV_STAFF: case TV_WAND:
-		{
 			/* No ego-stacks */
 			if (o_ptr->name2) break;
 
 			if (cost <= 10L) size += mass_roll(3, 5);
 			if (cost <= 100L) size += mass_roll(3, 5);
 			break;
-		}
 		case TV_DRAG_ARMOR:
 			/* Only single items of these */
 			break;
@@ -520,40 +495,26 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
-		{
 			if (cost <= 10L) size += damroll(10, 2);
 			if (cost <= 100L) size += damroll(5, 3);
 			size += damroll(20, 2);
 			break;
-		}
 	}
 
 
 	/* Pick a discount */
 	if (cost < 5)
-	{
 		discount = 0;
-	}
 	else if (rand_int(25) == 0 && cost > 9)
-	{
 		discount = 10;
-	}
 	else if (rand_int(50) == 0)
-	{
 		discount = 25;
-	}
 	else if (rand_int(150) == 0)
-	{
 		discount = 50;
-	}
 	else if (rand_int(300) == 0)
-	{
 		discount = 75;
-	}
 	else if (rand_int(500) == 0)
-	{
 		discount = 90;
-	}
 
 
 	/* Save the discount */
@@ -572,6 +533,19 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	/* Hack -- Identical items cannot be stacked */
 	if (o_ptr == j_ptr) return (0);
+
+
+	/* Don't EVER stack questors oO */
+	if (o_ptr->questor) return FALSE;
+	/* Don't ever stack special quest items */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return FALSE;
+	/* Don't stack quest items if not from same quest AND stage! */
+	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return FALSE;
+
+
+	/* Don't stack potions of blood because of their timeout */
+	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return FALSE;
+
 
 	/* Different objects cannot be stacked */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
@@ -681,8 +655,7 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
  * Note that the shop, just like a player, will not accept things
  * it cannot hold.  Before, one could "nuke" potions this way.
  */
-static bool store_check_num(store_type *st_ptr, object_type *o_ptr)
-{
+static bool store_check_num(store_type *st_ptr, object_type *o_ptr) {
 	int        i;
 	object_type *j_ptr;
 
@@ -690,11 +663,9 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr)
 	if (st_ptr->stock_num < st_ptr->stock_size) return TRUE;
 
 	/* Normal stores do special stuff */
-	else
-	{
+	else {
 		/* Check all the items */
-		for (i = 0; i < st_ptr->stock_num; i++)
-		{
+		for (i = 0; i < st_ptr->stock_num; i++) {
 			/* Get the existing item */
 			j_ptr = &st_ptr->stock[i];
 
@@ -1100,8 +1071,7 @@ static int get_spellbook_store_order(int pval) {
  *
  * In all cases, return the slot (or -1) where the object was placed
  */
-static int store_carry(store_type *st_ptr, object_type *o_ptr)
-{
+static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	int		i, slot;
 	s64b	value, j_value;
 	object_type	*j_ptr;
@@ -1216,10 +1186,9 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 /*
  * Increase, by a given amount, the number of a certain item
  * in a certain store.  This can result in zero items.
- * 
+ *
  */
-static void store_item_increase(store_type *st_ptr, int item, int num)
-{
+static void store_item_increase(store_type *st_ptr, int item, int num) {
 	int         cnt;
 	object_type *o_ptr;
 
@@ -1240,8 +1209,7 @@ static void store_item_increase(store_type *st_ptr, int item, int num)
 /*
  * Remove a slot if it is empty
  */
-static void store_item_optimize(store_type *st_ptr, int item)
-{
+static void store_item_optimize(store_type *st_ptr, int item) {
 	int j;
 	object_type *o_ptr;
 
@@ -1387,8 +1355,7 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
  * Hack -- we attempt to "maintain" piles of items when possible.
  */
 
-static void store_delete(store_type *st_ptr)
-{
+static void store_delete(store_type *st_ptr) {
 	int what, num;
 	object_type *o_ptr;
 
@@ -1431,8 +1398,7 @@ static void store_delete(store_type *st_ptr)
 
 
 /* Analyze store flags and return a level */
-static int return_level(store_type *st_ptr, int town_base_level)
-{
+static int return_level(store_type *st_ptr, int town_base_level) {
 	store_info_type *sti_ptr = &st_info[st_ptr->st_idx];
 	int level;
 
@@ -1462,8 +1428,7 @@ static int store_tval = 0, store_level = 0;
 /*
  * Hack -- determine if a template is "good"
  */
-static int kind_is_storeok(int k_idx, u32b resf)
-{
+static int kind_is_storeok(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
 
 	int p;
@@ -2064,8 +2029,7 @@ static void store_create(store_type *st_ptr) {
  * Update the bargain info
  */
 #if 0
-static void updatebargain(s64b price, s64b minprice)
-{
+static void updatebargain(s64b price, s64b minprice) {
 	/* Hack -- auto-haggle */
 	if (auto_haggle) return;
 
@@ -2080,13 +2044,10 @@ static void updatebargain(s64b price, s64b minprice)
 	}
 
 	/* Count the failed haggles */
-	else
-	{
+	else {
 		/* Just count the bad haggles */
 		if (st_ptr->bad_buy < MAX_SHORT)
-		{
 			st_ptr->bad_buy++;
-		}
 	}
 }
 #endif
@@ -2192,8 +2153,7 @@ static void display_special_store(int Ind) {
  *
  * Actually re-sends a single store entry --KLJ--
  */
-static void display_entry(int Ind, int pos)
-{
+static void display_entry(int Ind, int pos) {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
 	owner_type *ot_ptr;
@@ -2364,8 +2324,7 @@ static void display_entry(int Ind, int pos)
  *
  * The inventory is "sent" not "displayed". -KLJ-
  */
-static void display_inventory(int Ind)
-{
+static void display_inventory(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
 	int k;
@@ -2397,8 +2356,7 @@ static void display_inventory(int Ind)
 /*
  * Displays players gold					-RAK-
  */
-static void store_prt_gold(int Ind)
-{
+static void store_prt_gold(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	Send_gold(Ind, p_ptr->au, p_ptr->balance);
@@ -2636,24 +2594,19 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price, bool quiet) {
 /*
  * Will the owner retire?
  */
-static bool retire_owner_p(store_type *st_ptr)
-{
+static bool retire_owner_p(store_type *st_ptr) {
 	store_info_type *sti_ptr = &st_info[st_ptr->st_idx];
 
 	if ((sti_ptr->owners[0] == sti_ptr->owners[1]) &&
 	    (sti_ptr->owners[0] == sti_ptr->owners[2]) &&
 	    (sti_ptr->owners[0] == sti_ptr->owners[3]) &&
 	    (sti_ptr->owners[0] == sti_ptr->owners[4]) &&
-	    (sti_ptr->owners[0] == sti_ptr->owners[5])) /* MAX_STORE_OWNERS */
-	{
+	    (sti_ptr->owners[0] == sti_ptr->owners[5])) { /* MAX_STORE_OWNERS */
 		/* there is no other owner */
 		return FALSE;
 	}
 
-	if (rand_int(STORE_SHUFFLE) != 0)
-	{
-		return FALSE;
-	}
+	if (rand_int(STORE_SHUFFLE) != 0) return FALSE;
 
 	return TRUE;
 }
@@ -2661,8 +2614,7 @@ static bool retire_owner_p(store_type *st_ptr)
 
 
 /* Is the command legal?	- Jir - */
-static bool store_attest_command(int store, int bact)
-{
+static bool store_attest_command(int store, int bact) {
 	int i;
 
 #ifdef PLAYER_STORES
@@ -4599,8 +4551,8 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	int qlev = 100;
 	if (o_ptr->owner) qlev = lookup_player_level(j_ptr->owner);
 
-/* Hack -- gold always merge */
-//	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
+	/* Hack -- gold always merge */
+	//if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
 
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
@@ -4611,6 +4563,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	    (o_ptr->level != j_ptr->level))
 		return (FALSE);
 
+
 	/* Don't EVER stack questors oO */
 	if (o_ptr->questor) return FALSE;
 	/* Don't ever stack special quest items */
@@ -4618,9 +4571,13 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	/* Don't stack quest items if not from same quest AND stage! */
 	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return FALSE;
 
+
+	/* Don't stack potions of blood because of their timeout */
+	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return FALSE;
+
+
 	/* Require same owner or convertable to same owner */
-//
-/*		if (o_ptr->owner != j_ptr->owner) return (FALSE); */
+	/*if (o_ptr->owner != j_ptr->owner) return (FALSE); */
 	if (Ind) {
 		p_ptr = Players[Ind];
 		if (((o_ptr->owner != j_ptr->owner)
@@ -4906,8 +4863,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	return (TRUE);
 }
 
-static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr)
-{
+static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	int slot;
 	s64b value, j_value;
 	int i;
@@ -5007,8 +4963,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr)
  * Increase, by a given amount, the number of a certain item
  * in a certain store.  This can result in zero items.
  */
-static void home_item_increase(house_type *h_ptr, int item, int num)
-{
+static void home_item_increase(house_type *h_ptr, int item, int num) {
 	int         cnt;
 	object_type *o_ptr;
 
@@ -5029,8 +4984,7 @@ static void home_item_increase(house_type *h_ptr, int item, int num)
 /*
  * Remove a slot if it is empty
  */
-static void home_item_optimize(house_type *h_ptr, int item)
-{
+static void home_item_optimize(house_type *h_ptr, int item) {
 	int         j;
 	object_type *o_ptr;
 
@@ -5060,8 +5014,7 @@ static void home_item_optimize(house_type *h_ptr, int item)
  * Actually re-sends a single store entry --KLJ--
  */
 //static bool store_check_num_house(store_type *st_ptr, object_type *o_ptr)
-static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr)
-{
+static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	int        i;
 	object_type *j_ptr;
 
@@ -5085,8 +5038,7 @@ static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr)
 /*
  * Sell an item to the store (or home)
  */
-void home_sell(int Ind, int item, int amt)
-{
+void home_sell(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 	int			h_idx, item_pos;
 	object_type		sold_obj;
@@ -5269,8 +5221,7 @@ void home_sell(int Ind, int item, int amt)
 /*
  * Buy an item from a store				-RAK-
  */
-void home_purchase(int Ind, int item, int amt)
-{
+void home_purchase(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 
 	int			i;
@@ -5939,8 +5890,7 @@ void reward_deed_item(int Ind, int item) {
 	handle_stuff(Ind);
 }
 
-void reward_deed_blessing(int Ind, int item)
-{
+void reward_deed_blessing(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o2_ptr = &p_ptr->inventory[item];
 	bool traded_deed = FALSE;
@@ -5958,7 +5908,7 @@ void reward_deed_blessing(int Ind, int item)
 			msg_print(Ind, "\377oYou can only redeem your own contender's deeds.");
 			return;
 		/* not a contender's deed, but a winner's deed! */
-		default: 
+		default:
 			msg_print(Ind, "\377yThe mayor frowns at the deed, but accepts it.");
 			traded_deed = TRUE;
 		}
@@ -6003,8 +5953,7 @@ void reward_deed_blessing(int Ind, int item)
 
 /* Set store_debugging_mode and put stores into a special mode that helps debugging their stocks - C. Blue
    note: may be called every 10 turns (since cfg.store_turns is multiplied by 10). */
-void store_debug_stock()
-{
+void store_debug_stock() {
 	int i, j, n, maintain_num, what;
 	store_type *st_ptr;
 	object_type *o_ptr;
