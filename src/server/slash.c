@@ -4006,13 +4006,13 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "***ERROR: No account found.");
 				return;
 			}
-			//msg_format(Ind, "That character belongs to: \377s%s", acc);
+			//msg_format(Ind, "That character belongs to account: \377s%s", acc);
 			if (lookup_player_admin(p_id))
-				msg_format(Ind, "That administrative character belongs to: \377s%s", acc);
+				msg_format(Ind, "That administrative character belongs to account: \377s%s", acc);
 			else {
 				u16b ptype = lookup_player_type(p_id);
 				int lev = lookup_player_level(p_id);
-				msg_format(Ind, "That level %d %s %s belongs to: \377s%s",
+				msg_format(Ind, "That level %d %s %s belongs to account: \377s%s",
 				    lev,
 				    //race_info[ptype & 0xff].title,
 				    special_prace_lookup[ptype & 0xff],
