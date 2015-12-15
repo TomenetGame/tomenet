@@ -2147,18 +2147,22 @@ void do_cmd_open(int Ind, int dir) {
 						price = dna->price / 100 * factor;
 						if (price < 100) price = 100;
 						msg_format(Ind, "\377oThat house costs %d gold.", price);
+#ifdef USE_SOUND_2010
+						sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
 					} else {
 #ifdef PLAYER_STORES
 						/* We don't have house access, but if it's set up as
 						   a player-run store, we may enter it to buy things - C. Blue */
 						disturb(Ind, 1, 0);
-						if (!do_cmd_player_store(Ind, x, y))
+						if (!do_cmd_player_store(Ind, x, y)) {
 #endif
-						msg_format(Ind,"\377sThat house is owned by %s.",get_house_owner(cs_ptr));
-					}
+							msg_format(Ind,"\377sThat house is owned by %s.",get_house_owner(cs_ptr));
 #ifdef USE_SOUND_2010
-					sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
+							sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
+						}
+					}
 				}
 				return;
 			}
