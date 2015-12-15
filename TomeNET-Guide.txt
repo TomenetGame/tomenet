@@ -14508,7 +14508,7 @@ Priest schools:
                     Lv28: Also cures stun.                     (auto-project)
 
     Break Curses    Removes curses.
-                    Lv30: Removes heavy curses.
+                    Lv25: Removes heavy curses.
                     Required skill level for first spell level: 10.
 
     Cleansing Light Continuously heals every player who steps inside.
@@ -14563,9 +14563,11 @@ Priest schools:
                     support school, meaning that increases in one of those
                     school will increase the spell level by only half as much.
 
-    Sense Monsters  Detect non-invisible monsters, see invisible for a while.
-                    Lv30: Gives full temporary ESP.
+    Detect Evil     Detects evil monsters.
                     Required skill level for first spell level: 3.
+
+    Sense Monsters  Gives full temporary ESP.
+                    Required skill level for first spell level: 33.
 
     Sanctuary       Puts nearby monsters asleep.
                     Lv20: Lets all monsters in line of sight fall asleep.
@@ -14575,7 +14577,6 @@ Priest schools:
                     Required skill level for first spell level: 10.
 
     Sense Surroundings
-                    Detect non-invisible monsters, see invisible for a while.
                     Maps the dungeon around you.
                     Lv20: Gives clairvoyance (full enlightened map).
                     Required skill level for first spell level: 20.
