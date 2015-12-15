@@ -2919,6 +2919,9 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP;/* AM cap */
 	/* Got disrupted ? */
 	if (magik(antichance)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 		msg_print(Ind, "Your anti-magic field disrupts the scroll.");
 	        return;
 	}
@@ -3253,6 +3256,9 @@ void do_cmd_use_staff(int Ind, int item) {
 		return;
 	}
 	if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
@@ -3427,6 +3433,9 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		return;
 	}
 	if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
@@ -3932,6 +3941,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		return;
 	}
 	if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
@@ -4741,6 +4753,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		}
 		if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+			sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 			return;
 		}
@@ -5973,6 +5988,9 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		return;
 	}
 	if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}

@@ -1595,8 +1595,12 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 			if (i == anti_Ind) msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
 			else msg_format(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
 #else
-			if (Players[anti_Ind]->mon_vis[m_idx])
+			if (Players[anti_Ind]->mon_vis[m_idx]) {
+#ifdef USE_SOUND_2010
+				sound(anti_Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 				msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
+			}
 			msg_format_near(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
 #endif
 		}
@@ -1637,10 +1641,14 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 
 			if (p_ptr->mon_vis[m_idx]) {
 				char m_name[MNAME_LEN];
+
 				monster_desc(Ind, m_name, m_idx, 0);
 				msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
 			} else
 				msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
+#ifdef USE_SOUND_2010
+			sound_near_monster(m_idx, "am_field", NULL, SFX_TYPE_MONSTER_MISC, FALSE);
+#endif
 
 			return TRUE;
 		}

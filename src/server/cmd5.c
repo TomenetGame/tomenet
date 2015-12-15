@@ -152,8 +152,18 @@ bool check_antimagic(int Ind, int percentage) {
 
 		/* Got disrupted ? */
 		if (magik((antichance * percentage) / 100)) {
-			if (i == Ind) msg_format(Ind, "\377%cYour own anti-magic field disrupts your attempts.", COLOUR_AM_OWN);
-			else msg_format(Ind, "\377%c%s's anti-magic field disrupts your attempts.", COLOUR_AM_PLY, q_ptr->name);
+			if (i == Ind) {
+#ifdef USE_SOUND_2010
+				sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+				msg_format(Ind, "\377%cYour own anti-magic field disrupts your attempts.", COLOUR_AM_OWN);
+			} else {
+#ifdef USE_SOUND_2010
+				sound_pair(Ind, i, "am_field", NULL, SFX_TYPE_MISC);
+#endif
+				msg_format(Ind, "\377%c%s's anti-magic field disrupts your attempts.", COLOUR_AM_PLY, q_ptr->name);
+				msg_format(i, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_PLY, p_ptr->name);
+			}
 			return TRUE;
 		}
 	}
@@ -190,11 +200,15 @@ bool check_antimagic(int Ind, int percentage) {
 		if (magik((antichance * percentage) / 100)) {
 			if (p_ptr->mon_vis[m_idx]) {
 				char m_name[MNAME_LEN];
+
 				monster_desc(Ind, m_name, m_idx, 0);
 				msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
 			} else {
 				msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
 			}
+#ifdef USE_SOUND_2010
+			sound(Ind, "am_field", NULL, SFX_TYPE_MON_MISC, FALSE);
+#endif
 			return TRUE;
 		}
 	}
@@ -394,18 +408,21 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	int j, chance;
 	magic_type *s_ptr = &innate_powers[power];
 
-//	j = power;
+	//j = power;
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-        /* No magic */
+	/* No magic */
 	if (p_ptr->anti_magic) {
-	        msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
-	        return;
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+		return;
 	}
 	if (p_ptr->antimagic) {
-	        msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-	        return;
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
 	}
 
 	/* Not when confused */
@@ -1190,7 +1207,7 @@ void do_mimic_power_aux(int Ind, int dir)
 		return;
 	}
 
-//	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	//p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	if (s_ptr->smana <= p_ptr->csp) {
 		/* Use some mana */
@@ -1293,6 +1310,9 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 	}
 	/* Antimagic */
 	if (p_ptr->antimagic && !force) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
@@ -1630,6 +1650,9 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		return;
 	}
 	if (p_ptr->antimagic) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 		msg_format(Ind, "\377%cYour anti-magic field disrupts any magic attempts.", COLOUR_AM_OWN);
 		return;
 	}

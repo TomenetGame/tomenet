@@ -99,6 +99,7 @@ audio_sfx = {
     "grow_trees",
     "insanity",
     "levelup",
+    "am_field",
 
     "death", --everyone's favourite DOOM scream....
     "death_male",
@@ -206,6 +207,7 @@ audio_sfx = {
     "fireworks_small",
 
     --[item]
+    "item_food",
     "item_weapon",
     "item_sword",
     "item_blunt",

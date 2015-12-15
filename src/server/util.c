@@ -1213,6 +1213,50 @@ void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int 
 	}
 	Send_sound(Ind, val, val2, type, vol, Players[Ind]->id);
 }
+/* Send sound to origin player and destination player,
+   with destination player getting reduced volume depending on distance */
+void sound_pair(int Ind_org, int Ind_dest, cptr name, cptr alternative, int type) {
+	int val = -1, val2 = -1, i, d;
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
+		}
+	}
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	if (Players[Ind_dest]->conn != NOT_CONNECTED &&
+	    inarea(&Players[Ind_dest]->wpos, &Players[Ind_org]->wpos) &&
+	    Ind_dest != Ind_org) {
+		d = distance(Players[Ind_org]->py, Players[Ind_org]->px, Players[Ind_dest]->py, Players[Ind_dest]->px);
+		if (d <= MAX_SIGHT) {
+			d += 3;
+			d /= 2;
+			Send_sound(Ind_dest, val, val2, type, 100 / d, Players[Ind_org]->id);
+		}
+	}
+
+	Send_sound(Ind_org, val, val2, type, 100, Players[Ind_org]->id);
+}
 /* Send sound to everyone on a particular wpos sector/dungeon floor */
 void sound_floor_vol(struct worldpos *wpos, cptr name, cptr alternative, int type, int vol) {
 	int val = -1, val2 = -1, i;
@@ -1984,33 +2028,45 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 		case TV_TOOL: item = "tool"; break;
 		case TV_DIGGING: item = "tool_digger"; break;
 		case TV_MSTAFF: item = "magestaff"; break;
-//		case TV_BOOMERANG: item = ""; break;
-//		case TV_BOW: item = ""; break;
-//		case TV_SHOT: item = ""; break;
-//		case TV_ARROW: item = ""; break;
-//		case TV_BOLT: item = ""; break;
+		case TV_BOOMERANG: item = "boomerang"; break;
+		case TV_BOW: item = "bow"; break;
+		case TV_SHOT: item = "shot"; break;
+		case TV_ARROW: item = "arrow"; break;
+		case TV_BOLT: item = "bolt"; break;
 		/* other items */
-//		case TV_BOOK: item = "book"; break;
+		case TV_BOOK: item = "book"; break;
 		case TV_SCROLL: case TV_PARCHMENT:
 			item = "scroll"; break;
-/*		case TV_BOTTLE: item = "potion"; break;
+		case TV_BOTTLE: item = "potion"; break;
 		case TV_POTION: case TV_POTION2: case TV_FLASK:
-			item = "potion"; break; */
+			item = "potion"; break;
 		case TV_RUNE: item = "rune"; break;
-//		case TV_SKELETON: item = ""; break;
+		case TV_SKELETON: item = "skeleton"; break;
 		case TV_FIRESTONE: item = "firestone"; break;
-/*		case TV_SPIKE: item = ""; break;
-		case TV_CHEST: item = ""; break;
-		case TV_JUNK: item = ""; break;
-		case TV_GAME: item = ""; break;
-		case TV_TRAPKIT: item = ""; break;
-		case TV_STAFF: item = ""; break;
-		case TV_WAND: item = ""; break;
-		case TV_ROD: item = ""; break;
-		case TV_ROD_MAIN: item = ""; break;
-		case TV_FOOD: item = ""; break; */
+		case TV_SPIKE: item = "spike"; break;
+		case TV_CHEST: item = "chest"; break;
+		case TV_JUNK: item = "junk"; break;
+		case TV_GAME:
+			if (sval == SV_GAME_BALL) {
+				item = "ball_pass"; break; }
+			else if (sval <= SV_BLACK_PIECE) {
+				item = "go_stone"; break; }
+			item = "game_piece"; break;
+		case TV_TRAPKIT: item = "trapkit"; break;
+		case TV_STAFF: item = "staff"; break;
+		case TV_WAND: item = "wand"; break;
+		case TV_ROD: item = "rod"; break;
+		case TV_ROD_MAIN: item = "rod"; break;
+		case TV_FOOD: item = "food"; break;
 		case TV_KEY: item = "key"; break;
-//		case TV_GOLEM: item = ""; break;
+		case TV_GOLEM:
+			if (sval == SV_GOLEM_WOOD) {
+				item = "golem_wood"; break; }
+			else if (sval <= SV_GOLEM_ADAM) {
+				item = "golem_metal"; break; }
+			else if (sval >= SV_GOLEM_ATTACK) {
+				item = "scroll"; break; }
+			item = "golem_misc"; break;
 		case TV_SPECIAL:
 			switch (sval) {
 			case SV_SEAL: item = "seal"; break;

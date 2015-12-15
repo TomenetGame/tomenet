@@ -1738,6 +1738,7 @@ extern void bell(void);
 #ifdef USE_SOUND_2010
 extern void sound(int Ind, cptr name, cptr alternative, int type, bool nearby);
 extern void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int vol);
+extern void sound_pair(int Ind_org, int Ind_dest, cptr name, cptr alternative, int type);
 extern void sound_floor_vol(struct worldpos *wpos, cptr name, cptr alternative, int type, int vol);
 extern void sound_near(int Ind, cptr name, cptr alternative, int type);
 extern void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable);

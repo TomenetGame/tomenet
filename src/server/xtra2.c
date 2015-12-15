@@ -4901,6 +4901,10 @@ bool monster_death(int Ind, int m_idx) {
 			case RBE_SANITY:    typ = GF_MISSILE; break;
 			}
 
+#ifdef USE_SOUND_2010
+			sound_near_monster(m_idx, "monster_explode", NULL, SFX_TYPE_MON_MISC);
+#endif
+
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s inflicts", m_name);
 			project(m_idx, 3, wpos, y, x, damage > base_damage ? base_damage : damage, typ, flg, p_ptr->attacker);
 			break;
