@@ -13,8 +13,7 @@ int store_top = 0;
 /*
  * ToME show_building, ripped for client	- Jir -
  */
-void display_store_action()
-{
+void display_store_action() {
 	int i;
 	/* BIG_MAP leads to big shops */
 	int spacer = (screen_hgt > SCREEN_HGT) ? 14 : 0;
@@ -38,50 +37,50 @@ static void display_entry(int pos, int entries) {
 	/* Get the item */
 	o_ptr = &store.stock[pos];
 
-        /* Get the "offset" */
-        i = (pos % entries);
+	/* Get the "offset" */
+	i = (pos % entries);
 
-        /* Label it, clear the line --(-- */
-        (void)sprintf(out_val, "%c) ", I2A(i));
-        prt(out_val, i + 6, 0);
+	/* Label it, clear the line --(-- */
+	(void)sprintf(out_val, "%c) ", I2A(i));
+	prt(out_val, i + 6, 0);
 
-        /* Describe an item in the home */
-        if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
-                maxwid = 75;
+	/* Describe an item in the home */
+	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
+		maxwid = 75;
 
-                /* Leave room for weights, if necessary -DRS- */
-                if (c_cfg.show_weights) maxwid -= 10;
+		/* Leave room for weights, if necessary -DRS- */
+		if (c_cfg.show_weights) maxwid -= 10;
 
-                /* Describe the object */
+		/* Describe the object */
 		strcpy(o_name, store_names[pos]);
-                o_name[maxwid] = '\0';
-                c_put_str(o_ptr->attr, o_name, i + 6, 3);
+		o_name[maxwid] = '\0';
+		c_put_str(o_ptr->attr, o_name, i + 6, 3);
 
-                /* Show weights */
-                if (c_cfg.show_weights) {
-                        /* Only show the weight of an individual item */
-                        int wgt = o_ptr->weight;
-                        (void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
-                        put_str(out_val, i + 6, 68);
-                }
-        } else {
-                /* Must leave room for the "price" */
-                maxwid = 65;
+		/* Show weights */
+		if (c_cfg.show_weights) {
+			/* Only show the weight of an individual item */
+			int wgt = o_ptr->weight;
+			(void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
+			put_str(out_val, i + 6, 68);
+		}
+	} else {
+		/* Must leave room for the "price" */
+		maxwid = 65;
 
-                /* Leave room for weights, if necessary -DRS- */
-                if (c_cfg.show_weights) maxwid -= 7;
+		/* Leave room for weights, if necessary -DRS- */
+		if (c_cfg.show_weights) maxwid -= 7;
 
-                /* Describe the object (fully) */
+		/* Describe the object (fully) */
 		strcpy(o_name, store_names[pos]);
-                o_name[maxwid] = '\0';
-                c_put_str(o_ptr->attr, o_name, i + 6, 3);
+	        o_name[maxwid] = '\0';
+	        c_put_str(o_ptr->attr, o_name, i + 6, 3);
 
-                /* Show weights */
-                if (c_cfg.show_weights) {
-                        /* Only show the weight of an individual item */
-                        int wgt = o_ptr->weight;
-                        (void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
-                        put_str(out_val, i + 6, 61);
+	        /* Show weights */
+	        if (c_cfg.show_weights) {
+	                /* Only show the weight of an individual item */
+	                int wgt = o_ptr->weight;
+	                (void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
+	                put_str(out_val, i + 6, 61);
 		}
 
 		x = store_prices[pos];
@@ -90,7 +89,7 @@ static void display_entry(int pos, int entries) {
 			(void)sprintf(out_val, "%9d  ", x);
 			c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i + 6, 68);
 		}
-        }
+	}
 }
 
 
@@ -135,59 +134,54 @@ void display_inventory(void) {
 /*
  * Get the ID of a store item and return its value      -RAK-
  */
-static int get_stock(int *com_val, cptr pmt, int i, int j)
-{
-        char    command;
-        char    out_val[160];
+static int get_stock(int *com_val, cptr pmt, int i, int j) {
+	char    command;
+	char    out_val[160];
 
-        /* Paranoia XXX XXX XXX */
-        clear_topline_forced();
+	/* Paranoia XXX XXX XXX */
+	clear_topline_forced();
 
-        /* Assume failure */
-        *com_val = (-1);
+	/* Assume failure */
+	*com_val = (-1);
 
-        /* Build the prompt */
-        (void)sprintf(out_val, "(Items %c-%c, ESC to exit) %s",
-                      I2A(i), I2A(j), pmt);
+	/* Build the prompt */
+	(void)sprintf(out_val, "(Items %c-%c, ESC to exit) %s", I2A(i), I2A(j), pmt);
 
-        /* Ask until done */
-        while (TRUE)
-        {
-                int k;
+	/* Ask until done */
+	while (TRUE) {
+	        int k;
 
-                /* Escape */
-                if (!get_com(out_val, &command)) break;
+		/* Escape */
+		if (!get_com(out_val, &command)) break;
 
-                /* Convert */
-                k = (islower(command) ? A2I(command) : -1);
+		/* Convert */
+		k = (islower(command) ? A2I(command) : -1);
 
-                /* Legal responses */
-                if ((k >= i) && (k <= j))
-                {
-                        *com_val = k;
-                        break;
-                }
+		/* Legal responses */
+		if ((k >= i) && (k <= j)) {
+			*com_val = k;
+			break;
+		}
 
-                /* Oops */
-                bell();
-        }
+		/* Oops */
+		bell();
+	}
 
-        /* Clear the prompt */
-        clear_topline();
+	/* Clear the prompt */
+	clear_topline();
 
-        /* Cancel */
-        if (command == ESCAPE) return (FALSE);
+	/* Cancel */
+	if (command == ESCAPE) return (FALSE);
 
-        /* Success */
-        return (TRUE);
+	/* Success */
+	return (TRUE);
 }
 
 
 
 
 /* XXX Bad design.. store code really should be rewritten.	- Jir - */
-static void store_examine(void)
-{
+static void store_examine(void) {
 	int                     i;
 	int                     item;
 
@@ -237,45 +231,45 @@ static void store_examine(void)
 
 
 static void store_purchase(void) {
-        int                     i, amt, amt_afford;
-        int                     item;
+	int                     i, amt, amt_afford;
+	int                     item;
 
-        object_type             *o_ptr;
-        char            out_val[160];
+	object_type             *o_ptr;
+	char            out_val[160];
 
 	/* BIG_MAP leads to big shops */
 	int entries = (screen_hgt > SCREEN_HGT) ? 26 : 12;
 
 
-        /* Empty? */
-        if (store.stock_num <= 0) {
-                if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
-            		c_msg_print("Your home is empty.");
-                else c_msg_print("I am currently out of stock.");
-                return;
-        }
+	/* Empty? */
+	if (store.stock_num <= 0) {
+		if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
+			c_msg_print("Your home is empty.");
+		else c_msg_print("I am currently out of stock.");
+		return;
+	}
 
 
-        /* Find the number of objects on this and following pages */
-        i = (store.stock_num - store_top);
+	/* Find the number of objects on this and following pages */
+	i = (store.stock_num - store_top);
 
-        /* And then restrict it to the current page */
-        if (i > entries) i = entries;
+	/* And then restrict it to the current page */
+	if (i > entries) i = entries;
 
-        /* Prompt */
-        if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
-                sprintf(out_val, "Which item do you want to take? ");
-        else
-                sprintf(out_val, "Which item are you interested in? ");
+	/* Prompt */
+	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
+		sprintf(out_val, "Which item do you want to take? ");
+	else
+		sprintf(out_val, "Which item are you interested in? ");
 
-        /* Get the item number to be bought */
-        if (!get_stock(&item, out_val, 0, i-1)) return;
+	/* Get the item number to be bought */
+	if (!get_stock(&item, out_val, 0, i-1)) return;
 
-        /* Get the actual index */
-        item = item + store_top;
+	/* Get the actual index */
+	item = item + store_top;
 
-        /* Get the actual item */
-        o_ptr = &store.stock[item];
+	/* Get the actual item */
+	o_ptr = &store.stock[item];
 
 	/* Client-side check already, for item stacks: Too expensive? */
 	if (store_prices[item] > p_ptr->au) {
@@ -283,14 +277,14 @@ static void store_purchase(void) {
 		return;
 	}
 
-        /* Assume the player wants just one of them */
-        amt = 1;
+	/* Assume the player wants just one of them */
+	amt = 1;
 
-        /* Find out how many the player wants */
-        if (o_ptr->number > 1) {
-                /* Hack -- note cost of "fixed" items */
-                if (store_num != STORE_HOME || store_num == STORE_HOME_DUN) {
-                        c_msg_print(format("That costs %d gold per item.", store_prices[item]));
+	/* Find out how many the player wants */
+	if (o_ptr->number > 1) {
+		/* Hack -- note cost of "fixed" items */
+		if (store_num != STORE_HOME || store_num == STORE_HOME_DUN) {
+			c_msg_print(format("That costs %d gold per item.", store_prices[item]));
 
 			if (store_prices[item] > 0) amt_afford = p_ptr->au / store_prices[item];
 			else amt_afford = o_ptr->number;
@@ -311,9 +305,9 @@ static void store_purchase(void) {
 			amt = c_get_quantity(NULL, o_ptr->number);
 		}
 
-                /* Allow user abort */
-                if (amt <= 0) return;
-        }
+		/* Allow user abort */
+		if (amt <= 0) return;
+	}
 
 	/* Tell the server */
 	Send_store_purchase(item, amt);
