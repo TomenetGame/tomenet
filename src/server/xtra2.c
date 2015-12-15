@@ -6523,6 +6523,9 @@ void player_death(int Ind) {
 	bool in_iddc = in_irondeepdive(&p_ptr->wpos);
 
 
+	/* Cancel any pending Word of Recall, of course. */
+	p_ptr->word_recall = 0;
+
 	/* Get him out of any pending request input prompts :-p */
 	if (p_ptr->request_id != RID_NONE) {
 		Send_request_abort(Ind);
