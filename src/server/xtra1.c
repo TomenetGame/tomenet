@@ -4165,7 +4165,8 @@ void calc_boni(int Ind) {
 	}
 
 #ifdef EQUIPMENT_SET_BONUS
-	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) { 
+	/* Don't stack boni, instead, the highest counts */
+	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) {
 		if (!equipment_set[i]) continue;
 		if (equipment_set_amount[i] > equipment_set_bonus)
 			equipment_set_bonus = equipment_set_amount[i];
