@@ -2363,12 +2363,12 @@ static void monster_lore(void) {
 void cmd_check_misc(void) {
 	char i = 0, choice;
 	int second = 10;
-        /* suppress hybrid macros in some submenus */
+	/* suppress hybrid macros in some submenus */
 	bool inkey_msg_old;
 
 	Term_save();
 	Term_clear();
-//	Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
+	//Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
 
 	Term_putstr( 5,  3, -1, TERM_WHITE, "(\377y1\377w) Artifacts");
 	Term_putstr( 5,  4, -1, TERM_WHITE, "(\377y2\377w) Monsters");
@@ -2412,10 +2412,10 @@ void cmd_check_misc(void) {
 				cmd_artifacts();
 				break;
 			case '2':
-			        inkey_msg_old = inkey_msg;
-			        inkey_msg = TRUE;
+				inkey_msg_old = inkey_msg;
+				inkey_msg = TRUE;
 				get_com("What kind of monsters? (ESC for all):", &choice);
-			        inkey_msg = inkey_msg_old;
+				inkey_msg = inkey_msg_old;
 				if (choice <= ESCAPE) choice = 0;
 
 				/* allow specifying minlev? */
@@ -2426,10 +2426,10 @@ void cmd_check_misc(void) {
 					Send_special_line(SPECIAL_FILE_MONSTER, choice);
 				break;
 			case '4':
-			        inkey_msg_old = inkey_msg;
-			        inkey_msg = TRUE;
+				inkey_msg_old = inkey_msg;
+				inkey_msg = TRUE;
 				get_com("What type of objects? (ESC for all):", &choice);
-			        inkey_msg = inkey_msg_old;
+				inkey_msg = inkey_msg_old;
 				if (choice <= ESCAPE) choice = 0;
 				Send_special_line(SPECIAL_FILE_OBJECT, choice);
 				break;
