@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. December 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 15. December 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -9719,10 +9719,15 @@ is offline.
 Trading artifacts between characters has no effect on the timeout.
 
 Grond and Morgoth's crown do not time out.
+
 Artifacts that can only be found by winners (kings/queens/emperors/empresses)
 have twice the timeout delay (10 weeks).
+
 All artifact timeout delays are further doubled on the Ironman server (5 weeks
 for regular true artifacts, 20 weeks for winners-only true artifacts).
+
+The Ring of Phasing has no timeout (!) but will instead immediately reset when
+someone else kills Zu-Aon. Until then its owner can keep it indefinitely.
 
 
 
