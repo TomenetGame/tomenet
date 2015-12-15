@@ -8288,6 +8288,10 @@ extern int PlayerUID;
 #define irondeepdive_bottom(wpos) \
 	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z == 127)
 
+/* quickly check if a given wpos is inside the highlander dungeon */
+#define in_highlander(wpos) \
+	((wpos)->wx == WPOS_HIGHLANDER_DUN_X && (wpos)->wy == WPOS_HIGHLANDER_DUN_Y && (wpos)->wz * WPOS_HIGHLANDER_DUN_Z > 0)
+
 
 /* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */
 #define ITH_NONE	0

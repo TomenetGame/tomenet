@@ -6626,11 +6626,7 @@ void process_player_change_wpos(int Ind) {
 
 	/* Highlander Tournament hack: pseudo-teleport the player
 	   after he took a staircase inside the highlander dungeon */
-	if (sector00separation &&
-	    p_ptr->wpos.wx == WPOS_HIGHLANDER_DUN_X &&
-	    p_ptr->wpos.wy == WPOS_HIGHLANDER_DUN_Y &&
-	    (p_ptr->wpos.wz * WPOS_HIGHLANDER_DUN_Z) > 0
-	    && l_ptr)
+	if (sector00separation && in_highlander(&p_ptr->wpos) && l_ptr)
 		starty = l_ptr->hgt + 1; /* for the code right below :) ("Hack -- handle smaller floors") */
 
 	/* Hack -- handle smaller floors */

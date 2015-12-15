@@ -5442,7 +5442,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 			desc = "Highlands";
 		}
 		/* Hack for Highlander (dungeon) */
-		else if (wpos->wx == WPOS_HIGHLANDER_DUN_X && wpos->wy == WPOS_HIGHLANDER_DUN_Y && wpos->wz * WPOS_HIGHLANDER_DUN_Z > 0) {
+		else if (in_highlander(wpos)) {
 			ville = TRUE;
 			desc = "Underground";
 		}
