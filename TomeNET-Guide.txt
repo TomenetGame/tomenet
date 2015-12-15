@@ -995,8 +995,10 @@ They all start with a slash '/' hence they're called slash commands:
             Skips items which inscription contains more than a pseudo-ID tag.
             Also see /tag and /untag. Note that artifacts cannot be destroyed
             this way.
-            As a specialty, /dis will also destroy cheap (leather/metal) shield
-            types that do not posses any special powers.
+            As a specialty, /dis (without parameters) will also destroy cheap
+            (leather/metal) shield types that do not posses any special powers.
+            As another specialty, /dis (without parameters) will skip dragon
+            scale mails, leaving them intact.
 
 /dis a      DESTROYS items like '/dis', and additionally destroys all items that
             have no inscription at all.

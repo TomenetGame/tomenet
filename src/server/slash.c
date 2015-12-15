@@ -660,6 +660,9 @@ void do_slash_cmd(int Ind, char *message) {
 					continue;
 #endif
 
+				/* Hack: basic /dis doesn't kill DSMs */
+				if (!nontag && o_ptr->tval == TV_DRAG_ARMOR) continue;
+
 				/* Avoid being somewhat spammy, since arts can't be destroyed */
 				if (like_artifact_p(o_ptr)) continue;
 
