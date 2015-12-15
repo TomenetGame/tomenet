@@ -984,7 +984,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					combine_pack(Ind);
 					reorder_pack(Ind);
 					if (!ident)
-						msg_print(Ind, "A small fire works it's way through your backpack. Some scrolls are burnt.");
+						msg_print(Ind, "A small fire works its way through your backpack. Some scrolls are burnt.");
 					else
 						msg_print(Ind, "The fire hasn't finished.");
 					ident = TRUE;
@@ -1218,7 +1218,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				//				place_trap(wpos, y , x, 0);
 				place_trap_object(i_ptr);
 			}
-			msg_print(Ind, "You hear a noise, and then it's echo.");
+			msg_print(Ind, "You hear a noise, and then its echo.");
 			ident = FALSE;
 
 			break;
@@ -1247,7 +1247,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				//				 place_trap(wpos, y , x, 0);
 				place_trap_object(i_ptr);
 			}
-			msg_print(Ind, "You hear a noise, and then it's echo.");
+			msg_print(Ind, "You hear a noise, and then its echo.");
 			/* Never known */
 			ident = FALSE;
 

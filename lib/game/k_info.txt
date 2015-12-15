@@ -1172,7 +1172,7 @@ W:5:0:2:250
 A:5/1
 F:SEARCH | HIDE_TYPE
 
-# New : It can be activated but at the cost of it's destruction
+# New : It can be activated but at the cost of its destruction
 N:138:Teleportation
 G:=:d
 I:45:4:0
