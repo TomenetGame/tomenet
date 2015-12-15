@@ -4215,8 +4215,7 @@ void store_shuffle(store_type *st_ptr) {
 /*
  * Maintain the inventory at the stores.
  */
-void store_maint(store_type *st_ptr)
-{
+void store_maint(store_type *st_ptr) {
 //	int         i, j;
 	int j;
 	//owner_type *ot_ptr;
@@ -4388,8 +4387,7 @@ void store_maint(store_type *st_ptr)
 /*
  * Initialize the stores
  */
-void store_init(store_type *st_ptr)
-{
+void store_init(store_type *st_ptr) {
 	int         k;
 	//owner_type *ot_ptr;
 
@@ -4425,8 +4423,7 @@ void store_init(store_type *st_ptr)
 }
 
 /* Assumes we ARE in a store. Get kicked out of it and teleported. */
-void store_kick(int Ind, bool say)
-{
+void store_kick(int Ind, bool say) {
 #if defined(PLAYER_STORES) || defined(USE_SOUND_2010)
 	int i;
 #endif
@@ -4436,7 +4433,13 @@ void store_kick(int Ind, bool say)
 
 #ifdef USE_SOUND_2010
 	if (Players[Ind]->sfx_store) {
+ #ifdef PLAYER_STORES
+		if (Players[Ind]->store_num <= -2)
+			sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+		else {
+ #endif
 		store_info_type *st_ptr;
+
 		i = gettown(Ind);
 		/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
 		if (i == -1) i = gettown_dun(Ind);
@@ -4446,6 +4449,9 @@ void store_kick(int Ind, bool say)
 				sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
 				break;
 			}
+ #ifdef PLAYER_STORES
+		}
+ #endif
 	}
 #endif
 
@@ -4467,8 +4473,14 @@ void store_exit(int Ind) {
 
 #ifdef USE_SOUND_2010
 	if (Players[Ind]->sfx_store) {
+ #ifdef PLAYER_STORES
+		if (Players[Ind]->store_num <= -2)
+			sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+		else {
+ #endif
 		int i;
 		store_info_type *st_ptr;
+
 		i = gettown(Ind);
 		/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
 		if (i == -1) i = gettown_dun(Ind);
@@ -4478,6 +4490,9 @@ void store_exit(int Ind) {
 				sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
 				break;
 			}
+ #ifdef PLAYER_STORES
+		}
+ #endif
 	}
 #endif
 
@@ -4485,8 +4500,7 @@ void store_exit(int Ind) {
 	Send_store_kick(Ind);
 }
 
-void store_exec_command(int Ind, int action, int item, int item2, int amt, int gold)
-{
+void store_exec_command(int Ind, int action, int item, int item2, int amt, int gold) {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
 	int i;
@@ -6334,6 +6348,11 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	else if (h_ptr->colour < 100 && (p_ptr->mode & MODE_EVERLASTING)) p_ptr->tmp_x = 0;
 	else p_ptr->tmp_x = h_ptr->colour >= 100 ? h_ptr->colour - 100 : h_ptr->colour;
 
+#ifdef USE_SOUND_2010
+	if (p_ptr->sfx_store)
+		sound(Ind, "store_doorbell_enter", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+
 	/* Display the store */
 	display_store(Ind);
 
@@ -6728,8 +6747,13 @@ void handle_store_leave(int Ind) {
 	if (p_ptr->store_num <= -2) { /* it's a player's private store! */
 		st_ptr = &fake_store[-2 - p_ptr->store_num];
 
-                /* unlock the fake store again which we had occupied */
-                fake_store_visited[-2 - p_ptr->store_num] = 0;
+		/* unlock the fake store again which we had occupied */
+		fake_store_visited[-2 - p_ptr->store_num] = 0;
+
+ #ifdef USE_SOUND_2010
+		/* pstore-players don't get force-teleported, so we have to call this sfx manually */
+		if (p_ptr->sfx_store) sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
 	} else
 #endif
 	/* Make a pointer only if store_num is valid - mikaelh */
