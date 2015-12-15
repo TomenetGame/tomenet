@@ -2582,16 +2582,17 @@ void do_cmd_check_server_settings(int Ind)
 
 /*
  * Tell players of the # of monsters killed, using temporary file. - Jir -
+ * New hack: @ results in learned form list (Arjen's suggestion) - C. Blue
  */
 void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 	player_type *p_ptr = Players[Ind];
 
-	int		i, j, num, total = 0, forms = 0, forms_learnt = 0;
-	monster_race	*r_ptr;
-	bool	shown = FALSE, all = FALSE;
-	byte	mimic = (get_skill_scale(p_ptr, SKILL_MIMIC, 100));
-//	bool	admin = is_admin(p_ptr);
-	bool	druid_form, vampire_form, uniq;
+	int i, j, num, total = 0, forms = 0, forms_learnt = 0;
+	monster_race *r_ptr;
+	bool shown = FALSE, all = FALSE;
+	byte mimic = (get_skill_scale(p_ptr, SKILL_MIMIC, 100));
+	//bool admin = is_admin(p_ptr);
+	bool druid_form, vampire_form, uniq, learnt = FALSE;
 
 	FILE *fff;
 
@@ -2611,8 +2612,13 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 	/* Output color byte */
 	fprintf(fff, "\377D");
 
-	if (letter && *letter) fprintf(fff, "======== Killed List for Monster Group '%c' ========\n", *letter);
-	else {
+	if (letter && *letter) {
+		if (*letter == '@') {
+			fprintf(fff, "======== Killed List for learnt forms ========\n");
+			learnt = all = TRUE;
+		}
+		else fprintf(fff, "======== Killed List for Monster Group '%c' ========\n", *letter);
+	} else {
 		all = TRUE;
 		fprintf(fff, "======== Killed List ========\n");
 	}
@@ -2658,20 +2664,40 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 #endif
 		}
 
+		if (learnt) {
+			/* not learnable for us at this point (or at all)? */
+			if (uniq ||
+			    !(((mimic && (mimic >= r_ptr->level)) || druid_form || vampire_form) &&
+			    !((p_ptr->pclass == CLASS_DRUID) && !mimic_druid(i, p_ptr->lev)) &&
+			    !((p_ptr->prace == RACE_VAMPIRE) && !mimic_vampire(i, p_ptr->lev)) &&
+			    !(p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(i)))
+			    )
+				continue;
+
+			/* check if we have learned or infused it */
+			j = r_ptr->level - num;
+			if (!r_ptr->level) j++; //fix it for townies
+			/* not learnt? then infusable-only at this time */
+			if ((j > 0) && !druid_form && !vampire_form) {
+				/* not infused? then it's not available at all at this time */
+				if (!p_ptr->tim_mimic || i != p_ptr->tim_mimic_what) continue;
+			}
+			/* we have learnt it, fall through */
+		}
+
 
 		if (!uniq) fprintf(fff, "\377s(%4d,L%3d) \377%c%c\377s  ", i, r_ptr->level, color_attr_to_char(r_ptr->d_attr), r_ptr->d_char); /* mimics need that number for Polymorph Self Into.. */
 		else fprintf(fff, "\377U     (L%3d) \377%c%c\377s  ", r_ptr->level, color_attr_to_char(r_ptr->d_attr), r_ptr->d_char);
 
-		if (uniq) {
-			fprintf(fff, "\377U%-30s\n", r_name + r_ptr->name);
-		}
-		else if (((mimic && (mimic >= r_ptr->level)) || druid_form) &&
+		if (uniq) fprintf(fff, "\377U%-30s\n", r_name + r_ptr->name);
+		else if (((mimic && (mimic >= r_ptr->level)) || druid_form || vampire_form) &&
 		    !((p_ptr->pclass == CLASS_DRUID) && !mimic_druid(i, p_ptr->lev)) &&
 		    !((p_ptr->prace == RACE_VAMPIRE) && !mimic_vampire(i, p_ptr->lev)) &&
 		    !(p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(i)))
 		{
 			forms++;
 			j = r_ptr->level - num;
+			if (!r_ptr->level) j++; //fix it for townies
 
 			if ((j > 0) && !druid_form && !vampire_form) {
 				/* via polymorph ring */

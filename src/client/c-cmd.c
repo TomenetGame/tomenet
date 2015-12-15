@@ -2414,7 +2414,7 @@ void cmd_check_misc(void) {
 			case '2':
 				inkey_msg_old = inkey_msg;
 				inkey_msg = TRUE;
-				get_com("What kind of monsters? (ESC for all):", &choice);
+				get_com("What kind of monsters? (ESC for all, @ for learnt):", &choice);
 				inkey_msg = inkey_msg_old;
 				if (choice <= ESCAPE) choice = 0;
 
