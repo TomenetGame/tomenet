@@ -2715,7 +2715,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 			} else {
 				forms_learnt++;
 				if (p_ptr->body_monster == i)
-					fprintf(fff, "\377B%-30s : %4d slain ** Your current form **\n",
+					fprintf(fff, "\377B%-30s : %4d slain (Your current form)\n",
 							r_name + r_ptr->name, num);
 				else fprintf(fff, "\377G%-30s : %4d slain (learnt)\n",
 						r_name + r_ptr->name, num);
