@@ -1450,12 +1450,12 @@ D:The twin blades of this weapon were forged in Belegost, and powerful forces
 D:to resist and endure lie ready for he who shall wield it once more.
 
 
-# The Battle Axe 'Lotharang'
+# The Tomahawk 'Lotharang'
 
 N:104:'Lotharang'
-I:24:22:1
-W:10:15:170:31000
-P:0:3d6:4:9:0
+I:24:3:1
+W:15:15:80:31000
+P:0:3d4:4:9:0
 F:STR | DEX | HIDE_TYPE | BLOWS | REGEN | RES_SHARDS |
 F:SLAY_TROLL | SLAY_ORC | ACTIVATE | SHOW_MODS
 D:A superbly crafted double-bladed axe that slays the creatures of earth and
@@ -2114,7 +2114,7 @@ D:Forged by the dwarves of Khazad-dum in a time of desperation,
 D:this axe turned many a battle against the invading orcs.
 
 
-# The Hatchet of the Night
+# The Cleaver of the Night
 
 N:157:of the Night
 I:24:1:4
@@ -3074,9 +3074,9 @@ F:SLAY_EVIL | KILL_UNDEAD | SLAY_DEMON
 D:This spear never misses when it comes to giving the final blow.
 
 
-# Thunder Axe 'Twilight of Hope'
+# Thunder Axe 'Twilight'
 
-N:248:'Dawn of Hope'
+N:248:'Twilight'
 I:24:33:4
 W:75:60:390:170000
 P:0:7d10:25:30:0
