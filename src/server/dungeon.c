@@ -4768,6 +4768,7 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->dg_curse && (rand_int(300) == 0) && !istown(&p_ptr->wpos) && !isdungeontown(&p_ptr->wpos) &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50)) {
 		int anti_Ind = world_check_antimagic(Ind);
+
 		if (anti_Ind) {
 			msg_format(anti_Ind, "\377%cA curse builds up but dissipates in your anti-magic field.", COLOUR_AM_GOOD);
 			msg_format_near(anti_Ind, "\377%cA curse builds up but dissipates in %s's anti-magic field.", COLOUR_AM_NEAR, Players[anti_Ind]->name);

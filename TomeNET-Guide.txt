@@ -14591,7 +14591,7 @@ Priest schools:
                     Required skill level for first spell level: 32.
 
     BONI:           Keeps the hunger satisfied all the time at 40,
-                    Suppresses effects of DG_CURSE and TY_CURSE at 50.
+                    Completely Suppresses DG_CURSE and TY_CURSE at 50.
 
 
 Druid schools:
