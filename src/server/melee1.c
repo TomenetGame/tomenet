@@ -2540,6 +2540,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					object_type *o_ptr;
 					bool shield = FALSE, secondary = FALSE;
 					bool dis_sec = FALSE;
+					char o_name[ONAME_LEN];
 
 					if (p_ptr->inventory[INVEN_ARM].k_idx) {
 						shield = p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD ? TRUE : FALSE;
@@ -2590,11 +2591,12 @@ bool make_attack_melee(int Ind, int m_idx)
 							msg_print(Ind, "\376\377rYou lose the grip of your weapon!");
 //							msg_format(Ind, "\377r%^s disarms you!", m_name);
 							bypass_inscrption = TRUE;
+							object_desc(0, o_name, o_ptr, FALSE, 3);
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
 								inven_takeoff(Ind, slot, 1, FALSE);
-								s_printf("%s EFFECT: Disarmed (takeoff) %s.\n", showtime(), p_ptr->name);
+								s_printf("%s EFFECT: Disarmed (takeoff) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							} else {
-								s_printf("%s EFFECT: Disarmed (drop) %s.\n", showtime(), p_ptr->name);
+								s_printf("%s EFFECT: Disarmed (drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
 #if 0
 								/* Drop it (carefully) near the player */
 								drop_near_severe(Ind, &p_ptr->inventory[slot], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -2611,20 +2613,22 @@ bool make_attack_melee(int Ind, int m_idx)
 //							msg_format(Ind, "\377r%^s disarms you!", m_name);
 							bypass_inscrption = TRUE;
 							o_ptr = &p_ptr->inventory[INVEN_WIELD];
+							object_desc(0, o_name, o_ptr, FALSE, 3);
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
 								inven_takeoff(Ind, INVEN_WIELD, 1, FALSE);
-								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s.\n", showtime(), p_ptr->name);
+								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							} else {
 								inven_drop(Ind, INVEN_WIELD, 1);
-								s_printf("%s EFFECT: Disarmed (dual, drop) %s.\n", showtime(), p_ptr->name);
+								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							}
 							o_ptr = &p_ptr->inventory[INVEN_ARM];
+							object_desc(0, o_name, o_ptr, FALSE, 3);
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
 								inven_takeoff(Ind, INVEN_ARM, 1, FALSE);
-								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s.\n", showtime(), p_ptr->name);
+								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							} else {
 								inven_drop(Ind, INVEN_ARM, 1);
-								s_printf("%s EFFECT: Disarmed (dual, drop) %s.\n", showtime(), p_ptr->name);
+								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							}
 							dis_sec = TRUE;
 						}
