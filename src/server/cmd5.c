@@ -154,7 +154,7 @@ bool check_antimagic(int Ind, int percentage) {
 		if (magik((antichance * percentage) / 100)) {
 			if (i == Ind) {
 #ifdef USE_SOUND_2010
-				sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+				if (p_ptr->sfx_am) sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 				msg_format(Ind, "\377%cYour own anti-magic field disrupts your attempts.", COLOUR_AM_OWN);
 			} else {

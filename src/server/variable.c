@@ -1004,6 +1004,7 @@ int nrc_x, nrc_y, netherrealm_end_wz;
 
 bool sauron_weakened = FALSE, sauron_weakened_iddc = FALSE;
 int __audio_sfx_max, __audio_mus_max;
+int __sfx_am = -1;
 
 /* character names temporarily reserved for specific accounts */
 char reserved_name_character[MAX_RESERVED_NAMES][NAME_LEN];

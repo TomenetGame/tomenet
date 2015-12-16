@@ -2183,6 +2183,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->sfx_store = FALSE;
 		p_ptr->sfx_house_quiet = TRUE;
 		p_ptr->sfx_house = TRUE;
+		p_ptr->sfx_am = TRUE;
 		p_ptr->no_weather = FALSE;
 		p_ptr->hilite_player = FALSE;
 		p_ptr->alert_mana = FALSE;
@@ -2207,6 +2208,7 @@ static void sync_options(int Ind, bool *options) {
 				else Send_sfx_volume(Ind, 100, 100);
 			}
 		}
+		p_ptr->sfx_am = TRUE;
 #ifdef CLIENT_SIDE_WEATHER
 		if (options[99] && !p_ptr->no_weather) {
 			/* update his client-side weather */
@@ -2382,6 +2384,7 @@ static void sync_options(int Ind, bool *options) {
 	p_ptr->sfx_store = !options[105];
 	p_ptr->sfx_house_quiet = options[106];
 	p_ptr->sfx_house = !options[107];
+	p_ptr->sfx_am = !options[108];
 
 	if (p_ptr->sfx_house != sfx_house ||
 	    p_ptr->sfx_house_quiet != sfx_house_quiet) {
@@ -6606,6 +6609,11 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 	/* Mind-linked to someone? Send him our sound too! */
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
+
+s_printf("sfx %d (am is %d)\n", sound, __sfx_am);
+	if (sound == __sfx_am && !Players[Ind]->sfx_am) return 0;
+s_printf(" ok.\n");
+
 	/* If we're the target, we still hear our own sounds! */
 //	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) ;//nothing
 	/* Get target player */

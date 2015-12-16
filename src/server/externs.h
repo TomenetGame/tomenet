@@ -2377,6 +2377,7 @@ extern int nrc_x, nrc_y, netherrealm_end_wz;
 
 extern bool sauron_weakened, sauron_weakened_iddc;
 extern int __audio_sfx_max, __audio_mus_max;
+extern int __sfx_am;
 
 /* character names temporarily reserved for specific accounts */
 extern char reserved_name_character[MAX_RESERVED_NAMES][NAME_LEN];

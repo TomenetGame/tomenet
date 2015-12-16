@@ -444,7 +444,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },
 	{ &c_cfg.no_house_sfx,		FALSE,	5,	1, 107, TRUE,
 	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
-	//HOLE: 2
+	{ &c_cfg.no_am_sfx,		FALSE,	5,	1, 108, TRUE,
+	    "no_am_sfx",		"Don't play anti-magic disruption sound effect" },
+	//HOLE: 1
 
     /* unmutable options, pfft -- these are never shown in any options menu (-> FALSE) */
 	{ &c_cfg.use_color,		TRUE,	1,	0, 152, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
