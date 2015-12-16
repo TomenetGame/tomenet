@@ -1861,7 +1861,7 @@ const char *obj_flags2highlight2[] = {"WINNERS_ONLY", ""};
 const char *obj_flags2highlight3[] = {"STR", "INT", "WIS", "DEX", "CON", "CHR", "STEALTH", "BLOWS", "CRIT", "MANA", "SEARCH", "INFRA", "TUNNEL", "SPEED", "LIFE", "LUCK", "DISARM", ""};//flags affected by (b)pval
 const char *obj_flags2highlight4[] = {"NO_TELE", "DRAIN_MANA", "DRAIN_HP", "DRAIN_EXP", "AGGRAVATE", "NEVER_BLOW", "BLACK_BREATH", "CLONE", "PERMA_CURSE", "HEAVY_CURSE", "TY_CURSE", "DG_CURSE", "CURSE_NO_DROP", "AUTO_CURSE", "CURSED", ""};
 const char *obj_flags2highlight5[] = {"ACTIVATE", ""};
-const char *obj_flags2highlight6[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", "IM_NETHER", ""};
+const char *obj_flags2highlight6[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POISON", "IM_WATER", "IM_NETHER", ""};
 static int obj_highlit_flags(char *line) {
 	const char **f = obj_flags2highlight;
 	char *p2;
