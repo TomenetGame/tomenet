@@ -16,8 +16,8 @@ NATURESCALL = add_spell {
 	["info"] = 	function()
 			return "rad " .. (get_level(Ind, NATURESCALL, 8) + 1)
 			end,
-	["desc"] = 	{ "Boosts the growth of the saplings around you.",
-			  "Surrounding you with green-goodness!", }
+	["desc"] = 	{ "Boosts the growth of the saplings around you,",
+			  "surrounding you with green-goodness!", }
 }
 
 -- Finally, a second nox? :-)
@@ -115,7 +115,7 @@ REPLACEWALL = add_spell {
 	["info"] = 	function()
 			return "chance per wall: "..get_level(Ind, REPLACEWALL, 50).."%"
 			end,
-	["desc"] = 	{ "Transform walls into trees.",}
+	["desc"] = 	{ "Transforms walls into trees.",}
 }
 
 -- _The_Master_ Druid Spell!
@@ -140,5 +140,5 @@ BANISHANIMALS = add_spell {
 	["info"] = 	function()
 			return "chance: (" .. get_level(Ind, BANISHANIMALS, 100).."-mlvl)%"
 			end,
-	["desc"] = 	{ "Bashish animals to where they belong!",}
+	["desc"] = 	{ "Banishes animals to where they belong!",}
 }
