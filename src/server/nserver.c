@@ -6610,9 +6610,7 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
 
-s_printf("sfx %d (am is %d)\n", sound, __sfx_am);
 	if (sound == __sfx_am && !Players[Ind]->sfx_am) return 0;
-s_printf(" ok.\n");
 
 	/* If we're the target, we still hear our own sounds! */
 //	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) ;//nothing
