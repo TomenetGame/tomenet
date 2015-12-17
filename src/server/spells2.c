@@ -4064,11 +4064,6 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 
 
-
-
-
-
-
 /*
  * Apply a "project()" directly to all viewable monsters
  */
@@ -4083,9 +4078,11 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 	if (Ind) snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 	else snprintf(pattacker, 80, "Something%s", attacker);
 
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
 #ifdef MARTYR_CUT_DISP
 	/* hack for Martyrdom, to avoid easy deep pit sweeping */
-	if (p_ptr->martyr)
+	else if (p_ptr->martyr)
 		switch (typ) {
 		case GF_DISP_UNDEAD:
 		case GF_DISP_DEMON:
