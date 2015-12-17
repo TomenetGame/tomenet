@@ -2172,7 +2172,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK;
 		p_ptr->resist_blind = TRUE; csheet_boni->cb[4] |= CB5_RBLND;
 		p_ptr->no_cut = TRUE; csheet_boni->cb[12] |= CB13_XNCUT;
-		p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND;
+		if (!p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
 		p_ptr->see_infra += 1; csheet_boni->infr += 1;
 
 		if (strchr("GWLV", r_ptr->d_char)) {
@@ -2238,7 +2238,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if (r_ptr->flags2 & RF2_AURA_ELEC) { p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE; csheet_boni->cb[10] |= CB11_AELEC; }
 	if (r_ptr->flags3 & RF3_AURA_COLD) { p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni->cb[10] |= CB11_ACOLD; }
 
-	if (r_ptr->flags5 & RF5_MIND_BLAST) { p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
+	if ((r_ptr->flags5 & RF5_MIND_BLAST) && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
 	if (r_ptr->flags5 & RF5_BRAIN_SMASH) { p_ptr->reduce_insanity = 2; csheet_boni->cb[3] |= CB4_RMIND; }
 
 	if (r_ptr->flags3 & RF3_SUSCEP_FIRE) { p_ptr->suscep_fire = TRUE; csheet_boni->cb[0] |= CB1_SFIRE; }
@@ -2380,8 +2380,9 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 #endif
 	}
 
-	if ((r_ptr->flags2 & RF2_WEIRD_MIND) ||
+	if (((r_ptr->flags2 & RF2_WEIRD_MIND) ||
 	    (r_ptr->flags9 & RF9_RES_PSI))
+	    && !p_ptr->reduce_insanity)
 		{ p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
 	if ((r_ptr->flags2 & RF2_EMPTY_MIND) ||
 	    (r_ptr->flags9 & RF9_IM_PSI))
@@ -3272,7 +3273,7 @@ void calc_boni(int Ind) {
 
 		if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
 			if (p_ptr->lev >= 20) csheet_boni[14].cb[5] |= CB6_IFOOD;
-			if (p_ptr->lev >= 50)  csheet_boni[14].cb[9] |= CB10_SEVIL;
+			if (p_ptr->lev >= 50) csheet_boni[14].cb[9] |= CB10_SEVIL;
 			p_ptr->suscep_evil = TRUE;
 
 			p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV;
@@ -3414,7 +3415,7 @@ void calc_boni(int Ind) {
 
 	if (p_ptr->pclass == CLASS_MINDCRAFTER) {
 		if (p_ptr->lev >= 20) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[3] |= CB4_RMIND; }
-		else if (p_ptr->lev >= 10) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
+		else if (p_ptr->lev >= 10 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
 	}
 
 
@@ -3454,7 +3455,7 @@ void calc_boni(int Ind) {
 		p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR;
 		p_ptr->resist_conf = TRUE; csheet_boni[14].cb[2] |= CB3_RCONF;
 		p_ptr->no_cut = TRUE; csheet_boni[14].cb[12] |= CB13_XNCUT;
-		p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND;
+		if (!p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
 		p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV; /* redundant */
 		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
 		/*p_ptr->tim_wraith = 10000; redundant*/
@@ -5630,7 +5631,7 @@ void calc_boni(int Ind) {
 	/* - SKILL_HDEFENSE gives auto protection-from-evil */
 //	if (get_skill(p_ptr, SKILL_HDEFENSE) >= 40) { p_ptr->resist_lite = TRUE; p_ptr->resist_dark = TRUE; }
 	/* - SKILL_HCURING gives extra high regeneration in regen function, and reduces various effects */
-//	if (get_skill(p_ptr, SKILL_HCURING) >= 50) p_ptr->reduce_insanity = 1;
+//	if (get_skill(p_ptr, SKILL_HCURING) >= 50 && !p_ptr->reduce_insanity) p_ptr->reduce_insanity = 1;
 	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
 	
 	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) csheet_boni[14].cb[5] |= CB6_IFOOD;

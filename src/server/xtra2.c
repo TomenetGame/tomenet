@@ -4176,10 +4176,12 @@ void check_experience(int Ind) {
 				//A demon appears!
 				msg_print(Ind, "\374\377p*** \377GYour corruption grows well within you. \377p***");
 				p_ptr->ptrait = TRAIT_CORRUPTED;
+				msg_print(Ind, "\374\377GYou resist attacks based on fire or darkness!");
 			} else {
 				//An angel appears!
 				msg_print(Ind, "\374\377p*** \377sYou have been ordained to be order in presence of chaos. \377p***");
 				p_ptr->ptrait = TRAIT_ENLIGHTENED;
+				msg_print(Ind, "\374\377GYou resist light-based attacks and you can now see the invisible!");
 			}
 
 			shape_Maia_skills(Ind);
@@ -4187,6 +4189,19 @@ void check_experience(int Ind) {
 
 			p_ptr->redraw |= PR_SKILLS | PR_MISC;
 			p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
+		}
+		if (old_lev < 20 && p_ptr->lev >= 20)
+			msg_print(Ind, "\374\377GYou don't require worldly food anymore to sustain your body.");
+		if (old_lev < 50 && p_ptr->lev >= 50)
+			//todo maybe?: aura msgs
+			switch (p_ptr->ptrait) {
+			case TRAIT_ENLIGHTENED:
+				msg_print(Ind, "\374\377GYou become intrinsically resistant to poison, lightning and frost!");
+				msg_print(Ind, "\374\377GYou gain intrinsic levitation powers.");
+				break;
+			case TRAIT_CORRUPTED:
+				msg_print(Ind, "\374\377GYou become intrinsically resistant to poison and completely immune to fire!");
+				break;
 		}
 		break;
 #endif
@@ -4229,10 +4244,15 @@ void check_experience(int Ind) {
 		if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYou learn how to change into a Firebird (#1127)");
 		break;
 	case CLASS_SHAMAN:
-		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
+		if (old_lev < 20 && p_ptr->lev >= 20
+		    && p_ptr->prace != RACE_ENT && p_ptr->prace != RACE_DARK_ELF
+		    && (p_ptr->prace != RACE_MAIA || p_ptr->ptrait != TRAIT_ENLIGHTENED))
+			msg_print(Ind, "\374\377GYou learn to see the invisible!");
 		break;
 	case CLASS_MINDCRAFTER:
-		if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to keep hold of your sanity!");
+		if (old_lev < 10 && p_ptr->lev >= 10
+		    && p_ptr->prace != RACE_VAMPIRE)
+			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity!");
 		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity!");
 		break;
 	}
