@@ -1149,7 +1149,7 @@ static bool choose_mode(void) {
 		}
 
 		while (1) {
-			if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
+			if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
 			else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to quit, BACKSPACE to go back): ", 15, 2);
 
 		        Term->scr->cx = Term->wid;
@@ -1249,7 +1249,7 @@ static bool choose_mode(void) {
 	}
 
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
 		else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to quit, BACKSPACE to go back): ", 15, 2);
 
 	        Term->scr->cx = Term->wid;
@@ -1375,7 +1375,7 @@ static bool choose_body_modification(void)
 	}
 
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose body modification (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back): ", 19, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose body modification (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 19, 2);
 		else c_put_str(TERM_SLATE, "Choose body modification (* for random, Q to quit, BACKSPACE to go back): ", 19, 2);
 
 	        Term->scr->cx = Term->wid;
