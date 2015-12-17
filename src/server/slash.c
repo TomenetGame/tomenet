@@ -402,7 +402,22 @@ void do_slash_cmd(int Ind, char *message) {
 		return;
 	}
 	/* RPG-style talking to people who are nearby, instead of global chat. - C. Blue */
-	else if (prefix(message, "/say")) {
+	else if (prefix(message, "/sayme") || prefix(message, "/sme")) {
+		if (!colon++) {
+			msg_format_near(Ind, "\377%c%s clears %s throat.", COLOUR_CHAT, p_ptr->name, p_ptr->male ? "his" : "her");
+			msg_format(Ind, "\377%cYou clear your throat.", COLOUR_CHAT);
+			return;
+		}
+		censor_message = TRUE;
+		censor_length = strlen(colon);
+		msg_format_near(Ind, "\377%c[%^s %s]", COLOUR_CHAT, p_ptr->name, colon);
+		msg_format(Ind, "\377%c[%^s %s]", COLOUR_CHAT, p_ptr->name, colon);
+		censor_message = FALSE;
+		handle_punish(Ind, censor_punish);
+		return;
+// :)		break_cloaking(Ind, 3);
+	}
+	else if (prefix(message, "/say") || prefix(message, "/s")) {
 		if (colon++) {
 			censor_message = TRUE;
 			censor_length = strlen(colon);
