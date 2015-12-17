@@ -1868,18 +1868,21 @@ void do_cmd_open(int Ind, int dir) {
 	cave_type **zcave;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
-	int                             y, x, i, j;
-	int                             flag;
+	int y, x, i, j;
+	int flag;
 
-	cave_type               *c_ptr;
-	object_type             *o_ptr;
+	cave_type *c_ptr;
+	object_type *o_ptr;
 
 	bool more = FALSE;
+	bool cannot_spectral = p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST);
+	bool cannot_form = p_ptr->body_monster && !((r_ptr->flags2 & RF2_OPEN_DOOR) || (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_WEAPON]));
+
 	if (!(zcave = getcave(wpos))) return;
 
+
 	/* Ghosts cannot open doors ; not in WRAITHFORM */
-	if (((p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) && !is_admin(p_ptr)) ||
-	    (p_ptr->body_monster && !((r_ptr->flags2 & RF2_OPEN_DOOR) || (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_WEAPON])))) {
+	if ((cannot_spectral && !is_admin(p_ptr)) || cannot_form) {
 	    //&& !strchr("thpkng", r_info[p_ptr->body_monster].d_char))) {
 #ifdef PLAYER_STORES
 		struct c_special *cs_ptr;
@@ -1889,7 +1892,18 @@ void do_cmd_open(int Ind, int dir) {
 
 		/* allow entering player stores in wraithform/no-OPEN_DOOR-form */
 		if (p_ptr->ghost || c_ptr->feat != FEAT_HOME || !dir) {
-			msg_print(Ind, "You cannot open things!");
+			if (cannot_spectral) msg_print(Ind, "Without a material body you cannot open things!");
+			else {
+				msg_print(Ind, "In your current form you cannot open things!");
+				if (!p_ptr->warning_bash) {
+					if (p_ptr->rogue_like_commands)
+						msg_print(Ind, "\374\377yHINT: You can press '\377of\377y' to try to force (bash) a door open.");
+					else
+						msg_print(Ind, "\374\377yHINT: You can press '\377oB\377y' to try to bash a door open.");
+					s_printf("warning_bash: %s\n", p_ptr->name);
+					p_ptr->warning_bash = 1;
+				}
+			}
 			return;
 		}
 
@@ -1899,7 +1913,18 @@ void do_cmd_open(int Ind, int dir) {
 			return;
 		}
 #else
-		msg_print(Ind, "You cannot open things!");
+		if (cannot_spectral) msg_print(Ind, "Without a material body you cannot open things!");
+		else {
+			msg_print(Ind, "In your current form you cannot open things!");
+			if (!p_ptr->warning_bash) {
+				if (p_ptr->rogue_like_commands)
+					msg_print(Ind, "\374\377yHINT: You can press '\377of\377y' to try to force (bash) a door open.");
+				else
+					msg_print(Ind, "\374\377yHINT: You can press '\377oB\377y' to try to bash a door open.");
+				s_printf("warning_bash: %s\n", p_ptr->name);
+				p_ptr->warning_bash = 1;
+			}
+		}
 		return;
 #endif
 	}
@@ -2041,6 +2066,16 @@ void do_cmd_open(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			/* Stuck */
 			msg_print(Ind, "The door appears to be stuck.");
+
+			if (!p_ptr->warning_bash) {
+				if (p_ptr->rogue_like_commands)
+					msg_print(Ind, "\374\377yHINT: You can press '\377of\377y' to try to force (bash) a door open.");
+				else
+					msg_print(Ind, "\374\377yHINT: You can press '\377oB\377y' to try to bash a door open.");
+				s_printf("warning_bash: %s\n", p_ptr->name);
+				p_ptr->warning_bash = 1;
+			}
+
 #ifdef USE_SOUND_2010
 			sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
