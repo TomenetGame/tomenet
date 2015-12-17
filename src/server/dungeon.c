@@ -4774,7 +4774,12 @@ static bool process_player_end_aux(int Ind) {
 			msg_format_near(anti_Ind, "\377%cA curse builds up but dissipates in %s's anti-magic field.", COLOUR_AM_NEAR, Players[anti_Ind]->name);
 		} else {
 			msg_print(Ind, "An ancient morgothian curse calls out!");
-			summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, SUMMON_MONSTER, 0, 0);
+#ifdef USE_SOUND_2010
+			if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, SUMMON_MONSTER, 0, 0))
+				sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "summon", NULL, SFX_TYPE_MISC, FALSE);
+#else
+			(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, SUMMON_MONSTER, 0, 0);
+#endif
 		}
 	}
 

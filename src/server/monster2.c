@@ -4755,6 +4755,10 @@ bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clon
 		break;
 	}
 
+#ifdef USE_SOUND_2010
+	sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+
 	/* Attempt to place the monster */
 	if (summon_specific_race(wpos, y, x, r_idx, s_clone, size)) return TRUE;
 	return (FALSE);
@@ -4796,6 +4800,10 @@ int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, boo
 		/* We have a valid location */
 		break;
 	}
+
+#ifdef USE_SOUND_2010
+	sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	if (place_monster_one(wpos, y, x, r_idx, ego, FALSE, slp, s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0) != 0)
 		return (FALSE);

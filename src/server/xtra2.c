@@ -4823,15 +4823,18 @@ bool monster_death(int Ind, int m_idx) {
 			int attempts = 100;
 
 			do {
-				scatter(wpos, &wy, &wx,p_ptr->py,p_ptr->px, 20, 0);
-			} while (!(in_bounds(wy,wx) && cave_floor_bold(zcave, wy,wx)) && --attempts);
+				scatter(wpos, &wy, &wx, p_ptr->py, p_ptr->px, 20, 0);
+			} while (!(in_bounds(wy, wx) && cave_floor_bold(zcave, wy, wx)) && --attempts);
 
 			if (attempts > 0) {
 #if 0
-                                if (is_friend(m_ptr) > 0) {
+				if (is_friend(m_ptr) > 0) {
 					if (summon_specific_friendly(wy, wx, 100, SUMMON_DAWN, FALSE)) {
 						if (player_can_see_bold(wy, wx))
 							msg_print ("A new warrior steps forth!");
+ #ifdef USE_SOUND_2010
+						//sound_near_site(wy, wx, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #endif
 					}
 				}
 				else
@@ -4840,6 +4843,9 @@ bool monster_death(int Ind, int m_idx) {
 					if (summon_specific(wpos, wy, wx, 100, m_ptr->clone + 20, SUMMON_DAWN, 1, 0)) {
 						if (player_can_see_bold(Ind, wy, wx))
 							msg_print (Ind, "A new warrior steps forth!");
+#ifdef USE_SOUND_2010
+						//sound_near_site(wy, wx, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 					}
 				}
 			}
@@ -4867,6 +4873,9 @@ bool monster_death(int Ind, int m_idx) {
 				if (summon_specific(wpos, wy, wx, 100, 0, SUMMON_BLUE_HORROR, 1, 0)) { /* that's _not_ 2, lol */
 					if (player_can_see_bold(Ind, wy, wx))
 						msg_print (Ind, "A blue horror appears!");
+#ifdef USE_SOUND_2010
+					sound_near_site(wy, wx, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 				}
 				summon_override_checks = SO_NONE;
 			}

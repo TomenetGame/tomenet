@@ -2277,6 +2277,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			m_ptr->clone_summoning = clone_summoning;
 		}
 		if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF4_ROCKET */
@@ -3327,6 +3330,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_BLINK */
@@ -3403,6 +3409,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_BUG, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_TELE_TO */
@@ -3511,6 +3520,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_RNG, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_DARKNESS */
@@ -3558,6 +3570,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_XXX7X6 */
@@ -3576,7 +3591,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_KIN, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
-
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_XXX8X6 */
@@ -3599,6 +3616,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You feel hellish auras appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_MONSTER */
@@ -3611,6 +3631,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_MONSTERS */
@@ -3623,6 +3646,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_ANT */
@@ -3635,6 +3661,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANT, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_SPIDER */
@@ -3647,6 +3676,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_SPIDER, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_HOUND */
@@ -3659,6 +3691,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HOUND, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_HYDRA */
@@ -3671,6 +3706,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HYDRA, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_ANGEL */
@@ -3683,6 +3721,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANGEL, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_DEMON */
@@ -3695,6 +3736,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_UNDEAD */
@@ -3707,6 +3751,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_UNDEAD, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_DRAGON */
@@ -3719,6 +3766,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_HI_UNDEAD */
@@ -3730,8 +3780,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 		for (k = 0; k < 8; k++)
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
-		if (blind && count)
-			msg_print(Ind, "You hear many creepy things appear nearby.");
+		if (blind && count) msg_print(Ind, "You hear many creepy things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_HI_DRAGON */
@@ -3743,8 +3795,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 		for (k = 0; k < 8; k++)
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DRAGON, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
-		if (blind && count)
-			msg_print(Ind, "You hear many powerful things appear nearby.");
+		if (blind && count) msg_print(Ind, "You hear many powerful things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_NAZGUL */
@@ -3759,8 +3813,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 		for (k = 0; k < 8; k++)
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
-		if (blind && count)
-			msg_print(Ind, "You hear many creepy things appear nearby.");
+		if (blind && count) msg_print(Ind, "You hear many creepy things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF6_S_UNIQUE */
@@ -3775,8 +3831,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 		for (k = 0; k < 8; k++)
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
-		if (blind && count)
-			msg_print(Ind, "You hear many powerful things appear nearby.");
+		if (blind && count) msg_print(Ind, "You hear many powerful things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
 
 	/* RF0_S_HI_MONSTER */
@@ -3789,7 +3847,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
+
 	/* RF0_S_HI_MONSTERS */
 	case RF0_OFFSET+1:
 		if (monst_check_antimagic(Ind, m_idx)) break;
@@ -3800,7 +3862,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
+
 	/* RF0_S_HI_UNIQUE */
 	case RF0_OFFSET+2:
 		if (monst_check_antimagic(Ind, m_idx)) break;
@@ -3814,7 +3880,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
 		m_ptr->clone_summoning = clone_summoning;
 		if (blind && count) msg_print(Ind, "You hear many powerful things appear nearby.");
+#ifdef USE_SOUND_2010
+		if (count) sound_near_site(ys, xs, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 		break;
+
 	/* RF0_BO_DISE */
 	case RF0_OFFSET+3:
 		if (monst_check_antimagic(Ind, m_idx)) break;
@@ -3824,6 +3894,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		bolt(Ind, m_idx, GF_DISENCHANT, 25 + damroll(4, 5) + (rlev * 3) / 2, SFX_BOLT_MAGIC);
 		update_smart_learn(m_idx, DRS_DISEN);
 		break;
+
 	/* RF0_BA_DISE */
 	case RF0_OFFSET+4:
 		if (monst_check_antimagic(Ind, m_idx)) break;

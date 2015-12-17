@@ -2507,14 +2507,24 @@ static void quest_spawn_monsters(int q_idx, int stage) {
 					continue;
 				}
 				//todo: implement reidx specification
+#ifdef USE_SOUND_2010
+				if (summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1))
+					sound_near_site(y, x, &wpos, 0, "summon", NULL, SFX_TYPE_MISC, FALSE);
+#else
 				(void)summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1);
+#endif
 			} else {
 				if (!(r_idx = quest_mspawn_pick(q_mspawn))) {
 					s_printf("QUEST_MSPAWN_PICK: Monster criteria not matchable for spawn #%d.\n", i);
 					continue;
 				}
 				//todo: implement reidx specification
+#ifdef USE_SOUND_2010
+				if (summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1))
+					sound_near_site(y, x, &wpos, 0, "summon", NULL, SFX_TYPE_MISC, FALSE);
+#else
 				(void)summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1);
+#endif
 			}
 		}
 	}

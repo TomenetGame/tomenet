@@ -197,14 +197,20 @@ bool summon_lua_okay(int r_idx)
 	return (ret);
 }
 
-bool lua_summon_monster(int y, int x, int lev, bool friend, char *fct)
-{
+bool lua_summon_monster(int y, int x, int lev, bool friend, char *fct) {
 	summon_lua_okay_fct = fct;
+	bool ok;
 
 	if (!friend)
-		return summon_specific(y, x, lev, SUMMON_LUA, 1, 0);
+		ok = summon_specific(y, x, lev, SUMMON_LUA, 1, 0);
 	else
-		return summon_specific_friendly(y, x, lev, SUMMON_LUA, TRUE);
+		ok = summon_specific_friendly(y, x, lev, SUMMON_LUA, TRUE);
+
+#ifdef USE_SOUND_2010
+//	if (ok) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+
+	return ok;
 }
 
 /*

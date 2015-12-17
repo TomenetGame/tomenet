@@ -2269,7 +2269,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				break;
 
 			case SV_SCROLL_SUMMON_MONSTER:
-				if(!check_self_summon(p_ptr)) break;
+				if (!check_self_summon(p_ptr)) break;
 				s_printf("SUMMON_MONSTER: %s\n", p_ptr->name);
 				summon_override_checks = SO_IDDC | SO_PLAYER_SUMMON;
 				for (k = 0; k < randint(3); k++) {
@@ -2277,12 +2277,15 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 						ident = TRUE;
 				}
 				summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+				if (ident) sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 				break;
 
 			case SV_SCROLL_CONJURE_MONSTER: /* clone to avoid heavy mimic cheeze (and maybe exp cheeze) */
 				if (!o_ptr) break;
 
-				if(!check_self_summon(p_ptr)) break;
+				if (!check_self_summon(p_ptr)) break;
 				k = get_monster(Ind, o_ptr);
 				if(!k) break;
 				if (r_info[k].flags1 & RF1_UNIQUE) break;
@@ -2292,6 +2295,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				msg_format_near(Ind, "\377o%s conjures %s", p_ptr->name, m_name);
 				if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, k, 100, 1))
 					ident = TRUE;
+#ifdef USE_SOUND_2010
+				if (ident) sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 				break;
 
 			case SV_SCROLL_SLEEPING:
@@ -2322,7 +2328,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 
 			case SV_SCROLL_SUMMON_UNDEAD:
-				if(!check_self_summon(p_ptr)) break;
+				if (!check_self_summon(p_ptr)) break;
 				s_printf("SUMMON_UNDEAD: %s\n", p_ptr->name);
 				summon_override_checks = SO_IDDC | SO_PLAYER_SUMMON;
 				for (k = 0; k < randint(3); k++) {
@@ -2330,6 +2336,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 						ident = TRUE;
 				}
 				summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+				if (ident) sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 				break;
 
 			case SV_SCROLL_TRAP_CREATION:
@@ -3027,6 +3036,9 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 			if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_ALL_U98, 1, 0))
 				ident = TRUE;
 		}
+#ifdef USE_SOUND_2010
+		if (ident) sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 		summon_override_checks = SO_NONE;
 		break;
 
@@ -5495,6 +5507,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #if 0 /* needs pet code */
 			msg_print(Ind, "You summon the Legion of the Dawn.");
 			(void)summon_specific_friendly(py, px, dlev, SUMMON_DAWN, TRUE, 0);
+ #ifdef USE_SOUND_2010
+			sound_near_site(py, px, wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
 #else
 			do_banish_undead(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
 #endif
@@ -5558,12 +5573,18 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_DRAGONRIDER, 0, 1)) {
 					msg_print(Ind, "A DragonRider comes from the BETWEEN !");
 					msg_print(Ind, "'I will burn you!'");
+ #ifdef USE_SOUND_2010
+					sound_near_site(py, px, wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
 				}
 			} else {
 				if (summon_specific_friendly(py, px, ((plev * 3) / 2),
 				    SUMMON_DRAGONRIDER, (bool)(plev == 50 ? TRUE : FALSE))) {
 					msg_print(Ind, "A DragonRider comes from the BETWEEN !");
 					msg_print(Ind, "'I will help you in your difficult task.'");
+ #ifdef USE_SOUND_2010
+					sound_near_site(py, px, wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
 				}
 			}
 #else
@@ -5629,6 +5650,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "Your horn calls for help.");
 			for(i = 0; i < 15; i++)
 				summon_specific_friendly(py, px, ((plev * 3) / 2), SUMMON_HUMAN, TRUE);
+ #ifdef USE_SOUND_2010
+			sound_near_site(py, px, wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
 			o_ptr->timeout = 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 500);
 			break;
 #endif	// 0

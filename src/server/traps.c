@@ -654,9 +654,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "A spell hangs in the air.");
 			if (no_summon) break;
 			summon_override_checks = SO_IDDC;
-			//            for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], 0, SUMMON_UNDEAD, 1);	// max?
+			//for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], 0, SUMMON_UNDEAD, 1);	// max?
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 100, SUMMON_ALL_U98, 1, 0);
 			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 			break;
 
 		/* Summon Undead Trap */
@@ -666,6 +669,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_UNDEAD, 1, 0);
 			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 			break;
 
 		/* Summon Greater Undead Trap */
@@ -675,6 +681,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_HI_UNDEAD, 1, 0);
 			summon_override_checks = SO_NONE;
+#ifdef USE_SOUND_2010
+			if (ident) sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 			destroy_chest(i_ptr);
 			break;
 
@@ -890,6 +899,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				msg_print(Ind, "You suddenly have company.");
 				if (!(p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 					(void)set_slow(Ind, p_ptr->slow + randint(25) + 15);
+#ifdef USE_SOUND_2010
+				sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 			}
 			break;
 
@@ -1716,7 +1728,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				ident |= summon_specific(wpos, cy, cx, glev, 0, SUMMON_VERMIN, 1, 0);
 				summon_override_checks = SO_NONE;
 			}
-			if (ident) msg_print(Ind, "You suddenly feel itchy.");
+			if (ident) {
+				msg_print(Ind, "You suddenly feel itchy.");
+#ifdef USE_SOUND_2010
+				//sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			}
 			break;
 
 		/* Trap of amnesia (and not lose_memory) */
@@ -2221,7 +2238,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 			if (!c_ptr) break;
 			if (!p_ptr->blind) msg_print(Ind, "A pool of water appears under you!");
-			//			c_ptr->feat = FEAT_WATER;
+			//c_ptr->feat = FEAT_WATER;
 			cave_set_feat_live(wpos, y, x, FEAT_DEEP_WATER);
 			break;
 
@@ -2242,7 +2259,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_ALL_U98, 1, 0);
 			summon_override_checks = SO_NONE;
-			if (ident) msg_print(Ind, "You hear drums of battle!");
+			if (ident) {
+				msg_print(Ind, "You hear drums of battle!");
+#ifdef USE_SOUND_2010
+				//sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			}
 			break;
 
 		/* Death Molds Trap */
@@ -2401,6 +2423,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				msg_print(Ind, "Your purse suddenly squirms!");
 				p_ptr->redraw |= PR_GOLD;
 				destroy_chest(i_ptr);
+#ifdef USE_SOUND_2010
+				//sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 			}
 			else msg_print(Ind, "Your purse tickles.");
 
@@ -2507,6 +2532,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (ident) {
 				msg_print(Ind, "Doh!!");
 				set_stun(Ind, p_ptr->stun + randint(50));
+#ifdef USE_SOUND_2010
+				sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
 			}
 #endif	// 0
 			break;
@@ -2539,7 +2567,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				ident |= summon_specific(wpos, cy, cx, glev, 0, SUMMON_SPOOK, 1, 0);
 				summon_override_checks = SO_NONE;
 			}
-			if (ident) msg_print(Ind, "There's something strange in the neighbourhood.");
+			if (ident) {
+				msg_print(Ind, "There's something strange in the neighbourhood.");
+#ifdef USE_SOUND_2010
+				sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			}
 			break;
 
 		default:
@@ -3539,9 +3572,13 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_STAFF_SUMMONING:
 			for (k = 0; k < randint(4) ; k++)
-				if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0))
-					id = TRUE;
-			if (id) identify_mon_trap_load(who, o_ptr);
+				id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0);
+			if (id) {
+				identify_mon_trap_load(who, o_ptr);
+#ifdef USE_SOUND_2010
+				sound_near_site(y, x, &wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			}
 			return (FALSE);
 		case SV_STAFF_TELEPORTATION:
 			typ = GF_AWAY_ALL;
@@ -3719,16 +3756,26 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 		case SV_SCROLL_SUMMON_MONSTER:
 			if (no_summon) return FALSE;
 			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0)) id = TRUE;
+			for (k = 0; k < randint(3) ; k++) id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0);
 			summon_override_checks = SO_NONE;
-			if (id) identify_mon_trap_load(who, o_ptr);
+			if (id) {
+				identify_mon_trap_load(who, o_ptr);
+#ifdef USE_SOUND_2010
+				sound_near_site(y, x, &wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			}
 			return (FALSE);
 		case SV_SCROLL_SUMMON_UNDEAD:
 			if (no_summon) return FALSE;
 			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD, 1, 0)) id = TRUE;
+			for (k = 0; k < randint(3) ; k++) id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD, 1, 0);
 			summon_override_checks = SO_NONE;
-			if (id) identify_mon_trap_load(who, o_ptr);
+			if (id) {
+				identify_mon_trap_load(who, o_ptr);
+#ifdef USE_SOUND_2010
+				sound_near_site(y, x, &wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+#endif
+			}
 			return (FALSE);
 		case SV_SCROLL_PHASE_DOOR:
 			typ = GF_AWAY_ALL;
