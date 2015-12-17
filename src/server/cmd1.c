@@ -6471,9 +6471,31 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		if (!p_ptr->warning_staircase &&
 		    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE ||
 		    c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
-			msg_print(Ind, "\374\377yHINT: You found a staircase. Press the according key '\377o<\377y' or '\377o>\377y' to enter!");
-			s_printf("warning_staircase: %s\n", p_ptr->name);
-			//p_ptr->warning_staircase = 1;
+			dungeon_type *d_ptr = NULL;
+
+			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE) d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+			if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+
+			/* paranoia - maybe it's a broken staircase ^^ */
+			if (d_ptr) {
+				msg_print(Ind, "\374\377yHINT: You found a staircase. Press the according key '\377o<\377y' or '\377o>\377y' to enter!");
+				s_printf("warning_staircase: %s\n", p_ptr->name);
+				//p_ptr->warning_staircase = 1;
+
+				if (d_ptr->flags2 & DF2_IRON) {
+					msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon!");
+					msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
+					msg_print(Ind, "\374\377y         read a scroll of word-of-recall there! Also, death is \377opermanent\377y!");
+				} else if (d_ptr->flags1 & DF1_NO_UP) {
+					msg_print(Ind, "\374\377oWARNING: \377yThe orange staircase indicates a 'No-up' dungeon!");
+					msg_print(Ind, "\374\377y         That means that you cannot take a staircase back up. You can");
+					msg_print(Ind, "\374\377y         only escape by reading a scroll of word-of-recall!");
+				} else if (d_ptr->flags1 & DF1_FORCE_DOWN) {
+					msg_print(Ind, "\374\377oWARNING: \377yThe light red staircase indicates a 'Force-down' dungeon!");
+					msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
+					msg_print(Ind, "\374\377y         read a scroll of word-of-recall there!");
+				}
+			}
 		}
 
 		if (!p_ptr->warning_voidjumpgate && c_ptr->feat == FEAT_BETWEEN) {
