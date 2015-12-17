@@ -2721,6 +2721,16 @@ void carry(int Ind, int pickup, int confirm) {
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 				}
 
+				if (!p_ptr->warning_inspect &&
+				    (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET || o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF || o_ptr->tval == TV_ROD)
+				    && object_known_p(Ind, o_ptr)
+				    //&& *(k_text + k_info[o_ptr->k_idx].text) /* not this, it disables all 'basic' items such as sustain rings or example */
+				    ) {
+					msg_print(Ind, "\374\377yHINT: You can press '\377oShift+i\377y' to try and inspect an unknown item!");
+					s_printf("warning_inspect: %s\n", p_ptr->name);
+					p_ptr->warning_inspect = 1;
+				}
+
 				/* guild key? */
 				if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY) {
 					if (o_ptr->pval == p_ptr->guild && !lookup_player_name(guilds[p_ptr->guild].master)) {
