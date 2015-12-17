@@ -6993,8 +6993,25 @@ void process_player_change_wpos(int Ind) {
 	}
 
 	/* Hack: Allow players to pass trees always, while in town */
-	if (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
-	else p_ptr->town_pass_trees = FALSE;
+	if (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos)) {
+		p_ptr->town_pass_trees = TRUE;
+
+		if (!p_ptr->warning_drained) {
+			if (p_ptr->exp < p_ptr->max_exp ||
+			    p_ptr->stat_cur[A_STR] != p_ptr->stat_max[A_STR] ||
+			    p_ptr->stat_cur[A_INT] != p_ptr->stat_max[A_INT] ||
+			    p_ptr->stat_cur[A_WIS] != p_ptr->stat_max[A_WIS] ||
+			    p_ptr->stat_cur[A_DEX] != p_ptr->stat_max[A_DEX] ||
+			    p_ptr->stat_cur[A_CON] != p_ptr->stat_max[A_CON] ||
+			    p_ptr->stat_cur[A_CHR] != p_ptr->stat_max[A_CHR]) {
+				msg_print(Ind, "\374\377yHINT: When your attributes (STR/INT/WIS/DEX/CON/CHR) or experience (XP) are");
+				msg_print(Ind, "\374\377y      drained they are displayed in yellow colour. Buy a potion in town to");
+				msg_print(Ind, "\374\377y      restore them! The alchemist sells potions for stats, the temple for xp.");
+				s_printf("warning_drained: %s\n", p_ptr->name);
+				p_ptr->warning_drained = 1;
+			}
+		}
+	} else p_ptr->town_pass_trees = FALSE;
 
 #if 0 /* since digging is pretty awesome now, this is too much, and we should be glad that treasure detection items have some use now actually! */
 	/* High digging results in auto-treasure detection */

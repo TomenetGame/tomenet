@@ -2672,6 +2672,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_tele = 1;
 		p_ptr->warning_fracexp = 1;
 		p_ptr->warning_death = 1;
+		p_ptr->warning_drained = 1;
 		return;
 	}
 
@@ -2835,6 +2836,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	if (p_ptr->max_plv > 30) {
 		p_ptr->warning_instares = 1;
 		p_ptr->warning_death = 1;
+		p_ptr->warning_drained = 1;
 	}
 }
 
