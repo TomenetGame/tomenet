@@ -5391,8 +5391,7 @@ static void do_unstat(struct worldpos *wpos, bool fast_unstat) {
  * 24 hourly scan of houses - should the odd house be owned by
  * a non player. Hopefully never, but best to save admin work.
  */
-static void scan_houses()
-{
+static void scan_houses() {
 	int i;
 	//int lval;
 	s_printf("Doing house maintenance\n");
@@ -5429,8 +5428,7 @@ static void scan_houses()
 /*
  * Deallocate all non static levels. (evileye)
  */
-static void purge_old()
-{
+static void purge_old() {
 	int x, y, i;
 
 //	if (cfg.level_unstatic_chance > 0)
@@ -5530,8 +5528,7 @@ void cheeze(object_type *o_ptr){
 
 /* Traditional (Vanilla) houses version of cheeze()	- Jir - */
 #ifndef USE_MANG_HOUSE_ONLY
-void cheeze_trad_house()
-{
+void cheeze_trad_house() {
 #if CHEEZELOG_LEVEL > 3
 	int i, j;
 	house_type *h_ptr;
@@ -5838,11 +5835,10 @@ static void scan_objs() {
  *
  * (However, this function can be called by admin characters)
  */
-void store_turnover()
-{
+void store_turnover() {
 	int i, n;
 
-	for(i = 0; i < numtowns; i++) {
+	for (i = 0; i < numtowns; i++) {
 		/* Maintain each shop (except home and auction house) */
 //		for (n = 0; n < MAX_BASE_STORES - 2; n++)
 		for (n = 0; n < max_st_idx; n++) {
@@ -5873,8 +5869,7 @@ void store_turnover()
    is only called every 10 turns as stated above, otherwise
    depending on cfg.fps it might be skipped sometimes, which may or
    may not be critical depending on what it does! - C. Blue */
-static void process_various(void)
-{
+static void process_various(void) {
 	int i, j;
 	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
 #ifndef ARCADE_SERVER
@@ -6219,8 +6214,7 @@ static void process_various(void)
 #endif /* if 0 */
 }
 
-int find_player(s32b id)
-{
+int find_player(s32b id) {
 	int i;
 
 	for (i = 1; i < NumPlayers + 1; i++) {
@@ -6233,8 +6227,7 @@ int find_player(s32b id)
 	return 0;
 }
 
-int find_player_name(char *name)
-{
+int find_player_name(char *name) {
 	int i;
 
 	for (i = 1; i < NumPlayers + 1; i++) {
@@ -6384,8 +6377,8 @@ void process_player_change_wpos(int Ind) {
 #if 0 /* arena monster challenge - paranoia (should be generated in xtra1.c, and permanently static really) */
 //copy/pasted code, non-functional as is, just put it here for later maybe
 		new_players_on_depth(&wpos, 1, TRUE); /* make it static */
-	        s_printf("EVENT_LAYOUT: Generating arena_tt at %d,%d,%d\n", wpos.wx, wpos.wy, wpos.wz);
-	        process_dungeon_file("t_arena_tt.txt", &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+		s_printf("EVENT_LAYOUT: Generating arena_tt at %d,%d,%d\n", wpos.wx, wpos.wy, wpos.wz);
+		process_dungeon_file("t_arena_tt.txt", &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 #endif
 
 		/* allow non-normal (interval-timed) ambient sfx, but depend on our own fast-travel-induced rythm */
@@ -6474,19 +6467,19 @@ void process_player_change_wpos(int Ind) {
 	}
 
 #ifdef BIG_MAP
-        if (p_ptr->max_panel_rows < 0) p_ptr->max_panel_rows = 0;
-        if (p_ptr->max_panel_cols < 0) p_ptr->max_panel_cols = 0;
+	if (p_ptr->max_panel_rows < 0) p_ptr->max_panel_rows = 0;
+	if (p_ptr->max_panel_cols < 0) p_ptr->max_panel_cols = 0;
 #endif
 
 #ifdef ALLOW_NR_CROSS_PARTIES
-        if (p_ptr->party && at_netherrealm(&p_ptr->wpos_old) && !at_netherrealm(&p_ptr->wpos)
-    	    && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)
-            /* actually preserve his nether realm cross party for this,
-               so he can tell everyone involved about Valinor in party chat: */
-    	    && p_ptr->auto_transport != AT_VALINOR
-    	    && !p_ptr->admin_dm)
-                /* need to leave party, since we might be teamed up with incompatible char mode players! */
-                party_leave(Ind, FALSE);
+	if (p_ptr->party && at_netherrealm(&p_ptr->wpos_old) && !at_netherrealm(&p_ptr->wpos)
+	    && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)
+	    /* actually preserve his nether realm cross party for this,
+	       so he can tell everyone involved about Valinor in party chat: */
+	    && p_ptr->auto_transport != AT_VALINOR
+	    && !p_ptr->admin_dm)
+		/* need to leave party, since we might be teamed up with incompatible char mode players! */
+		party_leave(Ind, FALSE);
 #endif
 #ifdef ALLOW_NR_CROSS_ITEMS
 	if (in_netherrealm(&p_ptr->wpos_old) && !in_netherrealm(&p_ptr->wpos))
@@ -6670,7 +6663,7 @@ void process_player_change_wpos(int Ind) {
 		}
 
 		/* Prevent recalling or prob-travelling into no-tele vaults and monster nests! - C. Blue */
-	        if ((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) &&
+		if ((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) &&
 		    (p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
 		    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND ||
 		    p_ptr->new_level_method == LEVEL_PROB_TRAVEL)
@@ -6992,7 +6985,7 @@ void process_player_change_wpos(int Ind) {
 				p_ptr->recall_pos.wz = 0;
 				p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 				p_ptr->recall_pos.wy = p_ptr->wpos.wy;
-//				set_recall_timer(Ind, 1);
+				//set_recall_timer(Ind, 1);
 				p_ptr->word_recall = 1;
 				msg_print(Ind, "\377yYou have sudden visions of a bawking chicken while being recalled!");
 			}
