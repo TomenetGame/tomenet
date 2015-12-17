@@ -2722,7 +2722,7 @@ void carry(int Ind, int pickup, int confirm) {
 				}
 
 				if (!p_ptr->warning_inspect &&
-				    (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET || o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF || o_ptr->tval == TV_ROD)
+				    (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET)// || o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF || o_ptr->tval == TV_ROD)
 				    && object_known_p(Ind, o_ptr)
 				    //&& *(k_text + k_info[o_ptr->k_idx].text) /* not this, it disables all 'basic' items such as sustain rings or example */
 				    ) {
