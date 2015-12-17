@@ -1255,12 +1255,14 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 	/* No Talismans in the BM (can only be found! >:) */
 	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LUCK) return (TRUE);
 
+	/* No Wilderness map pieces, now that they reveal a 3x3 patch.. */
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) return (TRUE);
+
 	/* No magic ammos either =) the_sandman */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) return (TRUE);
 
 	/* No runes at all, actually... */
-	if (o_ptr->tval == TV_RUNE)
-		return (TRUE);
+	if (o_ptr->tval == TV_RUNE) return (TRUE);
 
 	/* No "Handbook"s in the BM (can only be found) - C. Blue */
 	if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_BOOK_COMBO && o_ptr->sval < SV_CUSTOM_TOME_1) return (TRUE);
@@ -1270,6 +1272,7 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 
 	/* No items that can be used by WINNERS_ONLY in the BM - C. Blue */
 	if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) return (TRUE);
+
 
 	/* Ego items are never crap */
 	if (o_ptr->name2) return (FALSE);
