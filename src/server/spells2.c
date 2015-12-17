@@ -825,8 +825,7 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 }
 
 
-void flash_bomb(int Ind)
-{
+void flash_bomb(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	msg_print(Ind, "You throw down a blinding flash bomb!");
 	msg_format_near(Ind, "%s throws a blinding flash bomb!", p_ptr->name);
@@ -843,8 +842,7 @@ void flash_bomb(int Ind)
 /*
  * Leave a "glyph of warding" which prevents monster movement
  */
-void warding_glyph(int Ind)
-{
+void warding_glyph(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	cave_type **zcave;
@@ -859,8 +857,7 @@ void warding_glyph(int Ind)
 /*
  * Array of stat "descriptions"
  */
-static cptr desc_stat_pos[] =
-{
+static cptr desc_stat_pos[] = {
 	"strong",
 	"smart",
 	"wise",
@@ -884,8 +881,7 @@ static cptr desc_stat_pos[] =
 /*
  * Array of stat "descriptions"
  */
-static cptr desc_stat_neg[] =
-{
+static cptr desc_stat_neg[] = {
 	"weak",
 	"stupid",
 	"naive",
@@ -894,8 +890,7 @@ static cptr desc_stat_neg[] =
 	"ugly"
 };
 
-static cptr desc_stat_neg2[] =
-{
+static cptr desc_stat_neg2[] = {
 	"strong",
 	"bright",
 	"wise",
@@ -919,15 +914,13 @@ static cptr desc_stat_neg2[] =
 /*
  * Lose a "point"
  */
-bool do_dec_stat(int Ind, int stat, int mode)
-{
+bool do_dec_stat(int Ind, int stat, int mode) {
 	player_type *p_ptr = Players[Ind];
 
 	bool sust = FALSE;
 
 	/* Access the "sustain" */
-	switch (stat)
-	{
+	switch (stat) {
 		case A_STR: if (p_ptr->sustain_str) sust = TRUE; break;
 		case A_INT: if (p_ptr->sustain_int) sust = TRUE; break;
 		case A_WIS: if (p_ptr->sustain_wis) sust = TRUE; break;
@@ -937,8 +930,7 @@ bool do_dec_stat(int Ind, int stat, int mode)
 	}
 
 	/* Sustain */
-	if (sust || safe_area(Ind))
-	{
+	if (sust || safe_area(Ind)) {
 		/* Message */
 		msg_format(Ind, "You feel %s for a moment, but the feeling passes.",
 		           desc_stat_neg[stat]);
@@ -948,8 +940,7 @@ bool do_dec_stat(int Ind, int stat, int mode)
 	}
 
 	/* Attempt to reduce the stat */
-	if (dec_stat(Ind, stat, 10, mode))
-	{
+	if (dec_stat(Ind, stat, 10, mode)) {
 		/* Message */
 		msg_format(Ind, "You feel very %s.", desc_stat_neg[stat]);
 
@@ -965,15 +956,13 @@ bool do_dec_stat(int Ind, int stat, int mode)
 /*
  * Lose a "point" by a TIME attack (or Black Breath)
  */
-bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reduction_mode, bool msg)
-{
+bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reduction_mode, bool msg) {
 	player_type *p_ptr = Players[Ind];
 
 	bool sust = FALSE;
 
 	/* Access the "sustain" */
-	switch (stat)
-	{
+	switch (stat) {
 		case A_STR: if (p_ptr->sustain_str) sust = TRUE; break;
 		case A_INT: if (p_ptr->sustain_int) sust = TRUE; break;
 		case A_WIS: if (p_ptr->sustain_wis) sust = TRUE; break;
@@ -1000,8 +989,7 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 	/* Attempt to reduce the stat */
 	switch (reduction_mode) {
 	case 0:
-		if (dec_stat(Ind, stat, 10, mode))
-		{
+		if (dec_stat(Ind, stat, 10, mode)) {
 			/* Notice effect */
 			return (TRUE);
 		}
@@ -1030,11 +1018,9 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 /*
  * Restore lost "points" in a stat
  */
-bool do_res_stat(int Ind, int stat)
-{
+bool do_res_stat(int Ind, int stat) {
 	/* Attempt to increase */
-	if (res_stat(Ind, stat))
-	{
+	if (res_stat(Ind, stat)) {
 		/* Message */
 		msg_format(Ind, "You feel less %s.", desc_stat_neg[stat]);
 
@@ -1049,13 +1035,11 @@ bool do_res_stat(int Ind, int stat)
 /*
  * Restore temporary-lost "points" in a stat
  */
-bool do_res_stat_temp(int Ind, int stat)
-{
+bool do_res_stat_temp(int Ind, int stat) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Restore if needed */
-	if (p_ptr->stat_cur[stat] != p_ptr->stat_max[stat])
-	{
+	if (p_ptr->stat_cur[stat] != p_ptr->stat_max[stat]) {
 		/* Restore */
 		p_ptr->stat_cur[stat] += p_ptr->stat_los[stat];
 
@@ -1081,16 +1065,14 @@ bool do_res_stat_temp(int Ind, int stat)
 /*
  * Gain a "point" in a stat
  */
-bool do_inc_stat(int Ind, int stat)
-{
+bool do_inc_stat(int Ind, int stat) {
 	bool res;
 
 	/* Restore strength */
 	res = res_stat(Ind, stat);
 
 	/* Attempt to increase */
-	if (inc_stat(Ind, stat))
-	{
+	if (inc_stat(Ind, stat)) {
 		/* Message */
 		msg_format(Ind, "Wow!  You feel very %s!", desc_stat_pos[stat]);
 
@@ -1099,8 +1081,7 @@ bool do_inc_stat(int Ind, int stat)
 	}
 
 	/* Restoration worked */
-	if (res)
-	{
+	if (res) {
 		/* Message */
 		msg_format(Ind, "You feel less %s.", desc_stat_neg[stat]);
 
@@ -1171,8 +1152,7 @@ void identify_pack(int Ind) {
 /*
  * Used by the "enchant" function (chance of failure)
  */
-static int enchant_table[16] =
-{
+static int enchant_table[16] = {
 	0, 10,  50, 100, 200,
 	300, 400, 500, 700, 875,
 	960, 980, 990, 996, 999,
@@ -1365,8 +1345,7 @@ bool remove_all_curse(int Ind) {
 /*
  * Restores any drained experience
  */
-bool restore_level(int Ind)
-{
+bool restore_level(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Restore experience */
