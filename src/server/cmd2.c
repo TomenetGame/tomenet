@@ -5695,27 +5695,33 @@ void do_cmd_fire(int Ind, int dir) {
 		if (archery == SKILL_BOOMERANG) {
 			/* finer resolution to match reduced break rate of boomerangs - C. Blue */
 			j = (hit_body ? break_chance : 0) * 100;
-//			j = (j * (1000 - get_skill_scale(p_ptr, archery, 950))) / 1000;
+			//j = (j * (1000 - get_skill_scale(p_ptr, archery, 950))) / 1000;
 			j = (j * (2500 - get_skill_scale(p_ptr, archery, 2450))) / 5000;
 		} else {
 			j = (hit_body ? break_chance : break_chance / 3) * 100;
-//			j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100; <- for when base ammo break chance was 50% in breakage_chance
+			//j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100; <- for when base ammo break chance was 50% in breakage_chance
 			j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 		}
 
 		/* Break ? */
-		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j))
+		if ((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j))
 		    && !magic && !ethereal && !artifact_p(o_ptr)) {
 			breakage = 100;
-			if (boomerang) /* change a large part of the break chance to actually
+			if (boomerang) { /* change a large part of the break chance to actually
 					  result in not returning instead of real breaking - C. Blue */
-			{
 #ifdef INDESTRUCTIBLE_BOOMERANGS
 				if (TRUE) {
 #else
 				if (magik(90)) {
 #endif
 					msg_format(Ind, "\377oYour %s drops to the ground.",o_name);
+
+					if (!p_ptr->warning_boomerang) {
+						msg_print(Ind, "\374\377yHINT: Press '\377o{\377y' key and inscribe your boomerang '\377o!=L\377y'");
+						msg_print(Ind, "\374\377y      to automatically pick it up and equip it just by moving over it.");
+						s_printf("warning_boomerang: %s\n", p_ptr->name);
+						p_ptr->warning_boomerang = 1;
+					}
 #if 1 /* hope this works */
 					inven_item_increase(Ind, item, -1);
 					inven_item_optimize(Ind, item);
@@ -5975,8 +5981,8 @@ void do_cmd_fire(int Ind, int dir) {
 #endif
 
 	if (warn) {
-		msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to fire your bow with a single keypress!");
-		msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
+		msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to fire your ranged weapon with a single");
+		msg_print(Ind, "\374\377o      keypress: Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard!");
 		p_ptr->warning_macros = 1;
 		s_printf("warning_macros (fire): %s\n", p_ptr->name);
 	}

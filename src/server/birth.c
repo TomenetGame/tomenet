@@ -2673,6 +2673,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_fracexp = 1;
 		p_ptr->warning_death = 1;
 		p_ptr->warning_drained = 1;
+		p_ptr->warning_boomerang = 1;
 		return;
 	}
 
@@ -2823,6 +2824,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_rest = 3;
 		p_ptr->warning_hungry = 1;
 		p_ptr->warning_macros = 1;
+		p_ptr->warning_boomerang = 1;
 	}
 	if (p_ptr->max_plv > 20) {
 		p_ptr->warning_dual_mode = 1;

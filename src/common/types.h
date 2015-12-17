@@ -2905,7 +2905,7 @@ struct player_type {
 	char warning_lua_update, warning_lua_count;
 	char warning_tunnel, warning_tunnel2, warning_trap, warning_tele, warning_fracexp;
 	char warning_death;
-	char warning_drained;
+	char warning_drained, warning_boomerang;
 
 #ifdef USE_SOUND_2010
 	int music_current, musicalt_current, music_monster; //background music currently playing for him/her; an overriding monster music
