@@ -1724,6 +1724,10 @@ static void quest_terminate_individual(int Ind, int q_idx) {
 	if (q_ptr->auto_accept != 3) {
 		msg_format(Ind, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
 		//msg_print(Ind, "\374 ");
+
+#ifdef USE_SOUND_2010
+		sound(Ind, "success", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 	}
 
 	/* erase all of this player's quest items for this quest */
@@ -1828,6 +1832,10 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 		if (q_ptr->auto_accept != 3) {
 			msg_format(i, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
 			//msg_print(i, "\374 ");
+
+#ifdef USE_SOUND_2010
+			sound(i, "success", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 		}
 
 		/* clean up temporary tracking data,
@@ -4881,6 +4889,9 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		else if (r_obj) msg_format(pInd, "You have received %d items.", r_obj);
 		if (r_gold) msg_format(pInd, "You have received %d gold piece%s.", r_gold, r_gold == 1 ? "" : "s");
 		if (r_exp) msg_format(pInd, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
+#ifdef USE_SOUND_2010
+		sound(pInd, "success", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 	} else for (i = 1; i <= NumPlayers; i++) {
 		/* is the player on this quest? */
 		for (j = 0; j < MAX_PQUESTS; j++)
@@ -4897,6 +4908,10 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		else if (r_obj) msg_format(i, "You have received %d items.", r_obj);
 		if (r_gold) msg_format(i, "You have received %d gold piece%s.", r_gold, r_gold == 1 ? "" : "s");
 		if (r_exp) msg_format(i, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
+
+#ifdef USE_SOUND_2010
+		sound(i, "success", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 	}
 
 	return; /* goals are not complete yet */
@@ -5106,6 +5121,10 @@ void quest_abandon(int Ind, int py_q_idx) {
 	if (q_info[q_idx].quest_done_credit_stage <= quest_get_stage(Ind, q_idx)
 	    && p_ptr->quest_done[q_idx] < 10000) //limit
 		p_ptr->quest_done[q_idx]++;
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "failure", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 }
 
 /* Display quest status log of a current quest stage to a player. */
