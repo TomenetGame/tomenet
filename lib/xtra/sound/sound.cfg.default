@@ -21,22 +21,12 @@
 # hit_weapon = player/combat/hit.wav "player/combat/hit steel.ogg"
 #
 
-[weather]
-
 
 [player]
 
-[player/combat]
+[player/alert]
 
-[player/commands]
-
-[player/misc]
-
-
-[monsters]
-
-
-[misc]
+greeting = misc/paging/greeting.ogg
 page = misc/paging/ding.ogg
 warning = misc/paging/warning.ogg
-greeting = misc/paging/greeting.ogg
+
