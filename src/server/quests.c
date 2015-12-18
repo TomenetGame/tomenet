@@ -4890,7 +4890,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		if (r_gold) msg_format(pInd, "You have received %d gold piece%s.", r_gold, r_gold == 1 ? "" : "s");
 		if (r_exp) msg_format(pInd, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
 #ifdef USE_SOUND_2010
-		sound(pInd, "success", NULL, SFX_TYPE_MISC, FALSE);
+		if (r_obj || r_gold || r_exp) sound(pInd, "success", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 	} else for (i = 1; i <= NumPlayers; i++) {
 		/* is the player on this quest? */
@@ -4910,7 +4910,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		if (r_exp) msg_format(i, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
 
 #ifdef USE_SOUND_2010
-		sound(i, "success", NULL, SFX_TYPE_MISC, FALSE);
+		if (r_obj || r_gold || r_exp) sound(i, "success", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 	}
 
