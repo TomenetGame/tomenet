@@ -13,6 +13,8 @@ audio_sfx = {
     "greeting",
     "warning",
     "gong",
+    "success",
+    "failure",
 
     --[weather]
     "rain_soft",

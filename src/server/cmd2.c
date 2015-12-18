@@ -599,6 +599,12 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 				/* tell everyone + himself that he won */
 				sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
 				msg_broadcast_format(0, buf);
+#ifdef TOMENET_WORLDS
+				if (cfg.worldd_events) world_msg(buf);
+#endif
+#ifdef USE_SOUND_2010
+				sound(Ind, "success", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, d + 1, ge->title);
 				//l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
 

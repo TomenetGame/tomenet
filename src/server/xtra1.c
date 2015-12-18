@@ -622,7 +622,7 @@ static void prt_encumberment(int Ind) {
 	}
 
 	Send_encumberment(Ind, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot, heavy_swim);
+	    icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot, heavy_swim);
 }
 
 static void prt_extra_status(int Ind) {
@@ -7470,6 +7470,9 @@ static void process_global_event(int ge_id) {
 						if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
+#ifdef USE_SOUND_2010
+							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 							p_ptr->global_event_type[ge_id] = GE_NONE;
 							ge->participant[i] = 0;
 							continue;
@@ -7477,6 +7480,9 @@ static void process_global_event(int ge_id) {
 						if (d_ptr && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_RECALL)) || (d_ptr->flags2 & (DF2_IRON | DF2_NO_EXIT_WOR)))) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
+#ifdef USE_SOUND_2010
+							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 							p_ptr->global_event_type[ge_id] = GE_NONE;
 							ge->participant[i] = 0;
 							continue;
@@ -7486,6 +7492,9 @@ static void process_global_event(int ge_id) {
 						if ((p_ptr->max_plv > 14) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
+#ifdef USE_SOUND_2010
+							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 							p_ptr->global_event_type[ge_id] = GE_NONE;
 							ge->participant[i] = 0;
 							continue;
@@ -7493,6 +7502,9 @@ static void process_global_event(int ge_id) {
 						if (d_ptr && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_RECALL)) || (d_ptr->flags2 & (DF2_IRON | DF2_NO_EXIT_WOR)))) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
+#ifdef USE_SOUND_2010
+							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 							p_ptr->global_event_type[ge_id] = GE_NONE;
 							ge->participant[i] = 0;
 							continue;
@@ -7510,8 +7522,12 @@ static void process_global_event(int ge_id) {
 					s_printf("%s EVENT_NOPLAYERS: %d (%s) has only %d/%d participants.\n", showtime(), ge_id + 1, ge->title, participants, ge->min_participants);
 					/* remove players who DID sign up from being 'participants' */
 					for (j = 1; j <= NumPlayers; j++)
-						if (Players[j]->global_event_type[ge_id] == ge->getype)
+						if (Players[j]->global_event_type[ge_id] == ge->getype) {
 							Players[j]->global_event_type[ge_id] = GE_NONE;
+#ifdef USE_SOUND_2010
+							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+						}
 					ge->getype = GE_NONE;
 
 				/* Participants are ok, event now starts! */
@@ -7863,7 +7879,10 @@ static void process_global_event(int ge_id) {
 			sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
 			msg_broadcast_format(0, buf);
 #ifdef TOMENET_WORLDS
-                        if (cfg.worldd_events) world_msg(buf);
+			if (cfg.worldd_events) world_msg(buf);
+#endif
+#ifdef USE_SOUND_2010
+			sound(j, "success", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 			if (!p_ptr->max_exp) gain_exp(j, 1); /* may only take part in one tournament per char */
 
@@ -8039,6 +8058,9 @@ static void process_global_event(int ge_id) {
 						Players[i]->recall_pos.wy = wpos.wy;
 						Players[i]->recall_pos.wz = 0;
 						recall_player(i, "\377yThe arena wizards teleport you out of here!");
+#ifdef USE_SOUND_2010
+						sound(i, "failure", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 					}
 				if (getcave(&wpos)) { /* check that the level is allocated - mikaelh */
 					dealloc_dungeon_level(&wpos);
