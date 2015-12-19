@@ -520,22 +520,24 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 #endif
-#if 0 /* no need to tell him, same as for chat messages.. */
 			if (check_ignore(p, Ind)) {
-				msg_print(Ind, "\377yThat player is currently ignoring you.");
+#if 1 /* keep consistent with chat messages */
+				/* Tell the sender */
+				msg_print(Ind, "(That player is currently ignoring you.)");
+#else
+				/* pretend to */
+				msg_format(Ind, "\376\377yPaged %s.", Players[p]->name);
+#endif
 				return;
 			}
-#endif
 			if (Players[p]->paging) {
 				/* already paging, I hope this can prevent floods too - mikaelh */
 				return;
 			}
 
 			msg_format(Ind, "\376\377yPaged %s.", Players[p]->name);
-			if (!check_ignore(p, Ind)) {
-				Players[p]->paging = 3; /* Play 3 beeps quickly */
-				msg_format(p, "\376\377y%s is paging you.", Players[Ind]->name);
-			}
+			Players[p]->paging = 3; /* Play 3 beeps quickly */
+			msg_format(p, "\376\377y%s is paging you.", Players[Ind]->name);
 			return;
 		}
 

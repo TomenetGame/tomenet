@@ -1134,6 +1134,9 @@ They all start with a slash '/' hence they're called slash commands:
 /ig <player name>
  (/ignore)  ignores all chat messages from the specified player. (Toggle)
             Also silences all paging attempts from that player.
+            To un-mute the target again, retype the command with its name.
+            The blocked player will see a message about you ignoring him when
+            he tries to send you any private message or page you.
 
 /ic         ignore all normal chat messages which are neither private messages
  (/ignchat) nor party messages. ('Private mode' will be displayed after the

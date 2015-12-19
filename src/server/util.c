@@ -4448,8 +4448,10 @@ static void player_talk_aux(int Ind, char *message) {
 			exec_lua(0, "chat_handler()");
 			return;
 		} else {
+#if 1 /* keep consistent with paging */
 			/* Tell the sender */
-			msg_print(Ind, "(That player has ignored you)");
+			msg_print(Ind, "(That player is currently ignoring you.)");
+#endif
 			return;
 		}
 	}
