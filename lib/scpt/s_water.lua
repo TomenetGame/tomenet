@@ -24,6 +24,30 @@ FROSTBOLT = add_spell {
 	["desc"] = 	{ "Conjures up icy moisture into a powerful frost bolt", }
 }
 
+function get_waterbolt_dam()
+	return 4 + get_level(Ind, WATERBOLT, 25), 6 + get_level(Ind, WATERBOLT, 25) + 0
+end
+WATERBOLT = add_spell {
+	["name"] = 	"Water Bolt",
+	["school"] = 	SCHOOL_WATER,
+	["level"] = 	14,
+	["mana"] = 	3,
+	["mana_max"] = 	17,
+	["fail"] = 	-10,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_bolt(Ind, GF_WATER, args.dir, damroll(get_frostbolt_dam()), " casts a water bolt for")
+		end,
+	["info"] = 	function()
+			local x, y
+
+			x, y = get_waterbolt_dam()
+			return "dam "..x.."d"..y
+		end,
+	["desc"] = 	{ "Conjures up water into a powerful bolt", }
+}
+
 TIDALWAVE = add_spell {
 	["name"] = 	"Tidal Wave",
 	["school"] = 	{SCHOOL_WATER},
@@ -32,8 +56,6 @@ TIDALWAVE = add_spell {
 	["mana_max"] = 	40,
 	["fail"] = 	20,
 	["spell"] = 	function()
---			fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 0, 6 + get_level(Ind, TIDALWAVE, 10), 10, EFF_WAVE, " casts a tidal wave for")
---1.5			fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 140), 0, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
 			fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 1, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
 	end,
 	["info"] = 	function()
@@ -57,14 +79,12 @@ ICESTORM = add_spell {
 
 			if get_level(Ind, ICESTORM, 50) >= 15 then type = GF_ICE
 			else type = GF_COLD end
---			fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 70), 10, EFF_STORM, " summons an ice storm for")
---1.5			fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 150), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 47), 5, EFF_STORM, " summons an ice storm for")
 			fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1, 20 + get_level(Ind, ICESTORM, 47), 5, EFF_STORM, " summons an icy  for")
 	end,
 	["info"] = 	function()
 			return "dam "..(80 + get_level(Ind, ICESTORM, 200)).." rad 1 dur "..(20 + get_level(Ind, ICESTORM, 47))
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Engulfs you in a whirl of roaring cold that strikes all foes at close range",
 			"At level 15 it turns into shards of ice"
 	}
@@ -98,13 +118,6 @@ ENTPOTION = add_spell {
 					fire_ball(Ind, GF_HERO_PLAYER, 0, randint(25) + 25 + get_level(Ind, ENTPOTION, 40), player.spell_project, "")
 				end
 			end
---berserk can be negative (AC loss), so until downscaling is implemented, comment out. (berserk is too much anyway!)
---			if get_level(Ind, ENTPOTION, 50) >= 28 then
---				set_shero(Ind, randint(15) + 15 + get_level(Ind, ENTPOTION, 40))
---				if player.spell_project > 0 then
---					fire_ball(Ind, GF_SHERO_PLAYER, 0, randint(15) + 15 + get_level(Ind, ENTPOTION, 40), player.spell_project, "")
---				end
---			end
 	end,
 	["info"] = 	function()
 			if get_level(Ind, ENTPOTION, 50) >= 12 then
@@ -117,7 +130,6 @@ ENTPOTION = add_spell {
 			"Fills up your stomach",
 			"At level 5 it boldens your heart",
 			"At level 12 it make you heroic",
---			"At level 28 it gives you berserk strength",
 			"***Affected by the Meta spell: Project Spell***",
 	}
 }
@@ -130,12 +142,6 @@ VAPOR = add_spell {
 	["mana_max"] = 	12,
 	["fail"] = 	20,
 	["spell"] = 	function()
---			fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 20), 3 + get_level(Ind, VAPOR, 9, 0), 5, 10, " fires a cloud of vapor for")
---dur should strictly calculating be 3, but that'd be too short feeling-wise, so leaving it at 5, buffing the spell a bit.
---1.5			fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 24), 3 + get_level(Ind, VAPOR, 9, 0), 5, 8, " fires a cloud of vapor for")
---USUAL:		fire_cloud(Ind, GF_VAPOUR, 0, 3 + get_level(Ind, VAPOR, 34), 3 + get_level(Ind, VAPOR, 4, 0), 5, 8, " fires a cloud of vapor for")
---MAX:			fire_cloud(Ind, GF_VAPOUR, 0, 3 + get_level(Ind, VAPOR, 90), 3 + get_level(Ind, VAPOR, 4, 0), 5, 8, " fires a cloud of vapor for")
---still going with the "critter eradication" diz:
 			fire_cloud(Ind, GF_VAPOUR, 0, 3 + get_level(Ind, VAPOR, 60), 3 + get_level(Ind, VAPOR, 4, 0), 5, 8, " fires a cloud of vapor for")
 	end,
 	["info"] = 	function()

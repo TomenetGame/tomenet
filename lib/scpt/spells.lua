@@ -166,7 +166,7 @@ school_book[3] = {
 	DIG, ACIDBOLT, STONEPRISON, SHAKE, STRIKE,
 }
 -- The book of the everrunning wave (18-21)
-school_book[4] = { VAPOR, FROSTBOLT, ENTPOTION, TIDALWAVE, ICESTORM, }
+school_book[4] = { VAPOR, FROSTBOLT, WATERBOLT, ENTPOTION, TIDALWAVE, ICESTORM, }
 -- Create the book of translocation (22-27)
 school_book[5] = { DISARM, BLINK, TELEPORT, TELEAWAY, RECALL, PROBABILITY_TRAVEL, }
 -- Create the book of the tree * SUMMONANIMAL requires pets first (28-32)
