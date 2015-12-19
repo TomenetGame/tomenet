@@ -5659,7 +5659,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 
 		/* Plasma -- Fire/Elec/Force */
-		case GF_PLASMA:
+		case GF_PLASMA: {
+			bool res_plas = prefix(name, "Plasma") || (r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS);
+
 			if (seen) obvious = TRUE;
 			do_stun = randint(15) / div;
 
@@ -5670,11 +5672,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (r_ptr->flags3 & RF3_IM_FIRE) {
 					note = " resists a lot";
 					dam /= 4;
-				} else if (prefix(name, "Plasma") ||
-				    (r_ptr->flags4 & RF4_BR_PLAS) ||
-				    (r_ptr->flags3 & RF3_RES_PLAS)) {
+				} else if (res_plas) {
 					note = " resists";
 					dam *= 3; dam /= (randint(6) + 6);
+					do_stun = 0;
 				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
 					note = " resists somewhat";
 					dam *= 3;
@@ -5684,14 +5685,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					dam = (dam * 3) / 2;
 				}
 
-				if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags3 & RF3_IM_ELEC)) {
+				if (((r_ptr->flags9 & RF9_RES_ELEC) && !res_plas) || (r_ptr->flags3 & RF3_IM_ELEC)) {
 					dam *= 4;
 					dam /= 5;
-				} else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) dam = (dam * 4) / 3;
+				} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && !res_plas)
+					dam = (dam * 4) / 3;
 			}
-
-			//todo maybe: stun effect? might be op?
 			break;
+		}
 
 		/* Nether -- see above */
 		case GF_NETHER_WEAK:
@@ -11621,16 +11622,28 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_ARROW:
 			break;
 
-		case GF_PLASMA:
-			if (r_ptr->flags3 & RF3_IM_FIRE)
-				dam /= 5;
-			else if (prefix(name, "Plasma") ||
-			    (r_ptr->flags4 & RF4_BR_PLAS) ||
-			    (r_ptr->flags3 & RF3_RES_PLAS))
-				dam /= 3;
-			else if (r_ptr->flags9 & RF9_RES_FIRE)
-				dam = (dam * 3) / 5;
+		case GF_PLASMA: {
+			bool res_plas = prefix(name, "Plasma") || (r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS);
+
+			if ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags3 & RF3_IM_ELEC))
+				dam /= 9;
+			else {
+				if (r_ptr->flags3 & RF3_IM_FIRE)
+					dam /= 4;
+				else if (res_plas)
+					dam /= 3;
+				else if (r_ptr->flags9 & RF9_RES_FIRE)
+					dam = (dam * 3) / 5;
+				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
+					dam = (dam * 3) / 2;
+
+				if (((r_ptr->flags9 & RF9_RES_ELEC) && !res_plas) || (r_ptr->flags3 & RF3_IM_ELEC))
+					dam = (dam * 4) / 5;
+				else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && !res_plas)
+					dam = (dam * 4) / 3;
+			}
 			break;
+		}
 
 		case GF_NETHER_WEAK:
 		case GF_NETHER:

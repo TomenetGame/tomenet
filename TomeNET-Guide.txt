@@ -8259,19 +8259,25 @@ Ice             Ice attacks combine shard and cold damage.
                 Ice damage consists of 60% cold damage and 40% shards damage.
 Plasma          Plasma attacks combine raw force, electricity and immense heat.
                 Being immune to both, fire and lightning will cut damage to
-                1/9. If that's not the case, two checks are applied for fire
-                and for lightning, whose results stack with each other,
-                as follows:
+                1/9. If that's not the case two checks are applied, for fire
+                and for lightning, whose results stack with each other as
+                follows:
                 1) Fire check:
-                -Fire immunity will cut damage to 1/4.
+                -Fire immunity will cut damage to 1/4. If you don't have this..
+                -Plasma resistance (very rare) will cut damage to 3/7..3/12
+                 and protect from stun effect. If you don't have this..
                 -Fire resistance will cut damage to 3/5.
-                -Plasma resistance (only mimics that use a plasma-breathing
-                form) will cut damage to 3/7..3/12.
                 -Fire susceptibility will increase damage by 1/2.
+                (Note that having fire immunity and plasma resistance will give
+                the damage reduction of fire immunity and the stun protection
+                of plasma resistance accordingly.)
                 2) Lightning check:
                 -Lightning resistance or immunity will cut damage to 4/5.
                 -Lightning susceptibility will increase damage by 1/3.
-                Plasma also has stun effect if sound resistance is missing.
+                (Note that lightning resistance and susceptibility only have
+                any effect if you don't have plasma resistance.)
+                Plasma also has stun effect if sound resistance (or plasma
+                resistance) is missing.
                 Breath damage is monster HP/6. Plasma breath caps at 150.
                 Plasma bolts do 10+level+(8d7) damage.
 Radiation/Nuke/ This is a poisonous attack (player suffers pure poison damage)
