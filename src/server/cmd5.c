@@ -1595,14 +1595,14 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 
 	if (o_ptr->tval != TV_BOOK) {
 		/* log for debugging */
-		s_printf("CAST_SCHOOL_SPELL_ERROR: TV_BOOK != %d\n", o_ptr->tval);
+		s_printf("CAST_SCHOOL_SPELL_ERROR: TV_BOOK != %d ('%s')\n", o_ptr->tval, p_ptr->name);
 
 		//msg_print(Ind, "Ahah dont try to hack your client please :) :: tval");
 		return;
 	} else if (o_ptr->sval == SV_SPELLBOOK) {
 		if (o_ptr->pval != spell) {
 			/* log for debugging */
-			s_printf("CAST_SCHOOL_SPELL_ERROR: SV_SPELLBOOK - %d != %d\n", o_ptr->pval, spell);
+			s_printf("CAST_SCHOOL_SPELL_ERROR: SV_SPELLBOOK - %d != %d ('%s')\n", o_ptr->pval, spell, p_ptr->name);
 
 			//msg_print(Ind, "Ahah dont try to hack your client please :) :: sval 255");
 			return;
@@ -1612,7 +1612,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 			if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
 			/* no longer supported! to make s_aux.lua slimmer */
 				/* log for debugging */
-				s_printf("CAST_SCHOOL_SPELL_ERROR: MY_VERSION < - %d, %d\n", o_ptr->sval, spell);
+				s_printf("CAST_SCHOOL_SPELL_ERROR: MY_VERSION < - %d, %d ('%s')\n", o_ptr->sval, spell, p_ptr->name);
 
 				//msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
 				return;
@@ -1620,7 +1620,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		} else {
 			if (exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", book, o_ptr->sval, spell)) == FALSE) {
 				/* log for debugging */
-				s_printf("CAST_SCHOOL_SPELL_ERROR: MY_VERSION >= - %d, %d, %d\n", book, o_ptr->sval, spell);
+				s_printf("CAST_SCHOOL_SPELL_ERROR: MY_VERSION >= - %d, %d, %d ('%s')\n", book, o_ptr->sval, spell, p_ptr->name);
 
 				//msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
 				return;
