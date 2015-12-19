@@ -4671,6 +4671,18 @@ errr init_r_info_txt(FILE *fp, char *buf)
 
 		/* As we know, chaos resistance implies confusion resistance.. */
 		if ((r_info[i].flags9 & RF9_RES_CHAOS)) r_info[i].flags3 |= RF3_NO_CONF;
+		/* Newer fix, plasma implies fire/elec/sound - but actually we should just get rid of the dedicated RES_PLAS flag. */
+		if ((r_info[i].flags3 & RF3_RES_PLAS) || (r_info[i].flags4 & RF4_BR_PLAS)) {
+			r_info[i].flags3 |= RF3_RES_PLAS; //in case of BR_ only
+			r_info[i].flags9 |= RF9_RES_FIRE;
+			r_info[i].flags9 |= RF9_RES_ELEC;
+			r_info[i].flags9 |= RF9_RES_SOUND;
+		}
+		/* ..and toxic waste = poison + acid */
+		if (r_info[i].flags4 & RF4_BR_NUKE) {
+			r_info[i].flags9 |= RF9_RES_ACID;
+			r_info[i].flags9 |= RF9_RES_POIS;
+		}
 
 		/* For d_info rules: Formally an immunity implies the according resistance. */
 		if ((r_info[i].flags9 & RF9_IM_PSI)) r_info[i].flags9 |= RF9_RES_PSI;
