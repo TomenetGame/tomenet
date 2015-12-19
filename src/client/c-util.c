@@ -5174,7 +5174,7 @@ Chain_Macro:
 												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2);
 											break; }
 
-											case SV_R_ICEY:
+											case SV_R_ICEE:
 											case SV_R_PLAS: { //Shield
 													damage = rget_level(20) * r_imperatives[imperative].damage / 10;
 													if (damage < 1) damage = 1; if (damage > 20) damage = 20;

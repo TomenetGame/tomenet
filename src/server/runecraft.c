@@ -839,7 +839,7 @@ s_printf("Duration: %d\n", duration);
 						}
 					break; }
 
-					case SV_R_ICEY: { //Ice Shield
+					case SV_R_ICEE: { //Ice Shield
 						damage = rget_level(20) * r_imperatives[imperative].damage / 10;
 						if (damage < 1) damage = 1; if (damage > 20) damage = 20;
 						set_shield(Ind, duration/2+randint(duration/2), damage, SHIELD_ICE, dx, dy);

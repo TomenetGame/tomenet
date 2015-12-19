@@ -8254,10 +8254,9 @@ Disintegration  This is an irresistible attack of raw destruction.
 
 Combined damage types:
 ----------------------
-Ice             Ice attacks combine shard & sound effects with cold damage.
+Ice             Ice attacks combine shard and cold damage.
                 Ice damage (bolt only) is (6d6)+monsterlevel.
                 Ice damage consists of 60% cold damage and 40% shards damage.
-                Missing sound resistance will result in additional stunning.
 Plasma          Plasma attacks combine raw force, electricity and immense heat.
                 Being immune to both, fire and lightning will cut damage to
                 1/9. If that's not the case, two checks are applied for fire
@@ -15193,7 +15192,7 @@ Nexus    | Nether   | Shards         |   400  | Cuts           | Potion/Scrolls
 Nexus    | Chaos    | Sound          |   400  | Stun           | Potions
 Nexus    | Mana     | Time           |   150  | Stat/Lvl Drain |
 Nether   | Chaos    | Disenchantment |   500  |                | Magical Items
-Nether   | Mana     | Ice            |   933  | Stun, Cuts     | Potion/Scrolls
+Nether   | Mana     | Ice            |   933  | Cuts           | Potion/Scrolls
 Chaos    | Mana     | Plasma         |   933  | Stun           | Many Items
 
 Spell Modifiers

@@ -7582,7 +7582,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 			else if (get_skill(p_ptr, SKILL_R_CHAO))
 				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
 		break;
-		case SV_R_ICEY:
+		case SV_R_ICEE:
 			if (get_skill(p_ptr, SKILL_R_NETH) && get_skill(p_ptr, SKILL_R_MANA))
 				chance += (get_skill(p_ptr, SKILL_R_NETH) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
 			else if (get_skill(p_ptr, SKILL_R_NETH))

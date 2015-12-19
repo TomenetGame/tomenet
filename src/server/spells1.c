@@ -4696,8 +4696,13 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #ifdef USE_SOUND_2010
 				if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+			} else if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_PARCHMENT) { /* not TV_BOOK atm.. */
+				note_kill = (plural ? " are shredded!" : " is shredded!");
+				do_kill = TRUE;
+#ifdef USE_SOUND_2010
+				if (!quiet) sound(Ind, "item_scroll", NULL, SFX_TYPE_MISC, FALSE); //todo maybe: new sfx?
+#endif
 			}
-			//todo maybe: add 'shredded' effect vs scrolls/parchments
 			break;
 
 		case GF_SHARDS:
@@ -5979,7 +5984,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Ice -- Cold + Cuts + Stun */
 		case GF_ICE:
 			if (seen) obvious = TRUE;
-			do_stun = randint(15) / div;
+			//do_stun = randint(15) / div;
 			k = dam;
 
 			dam = (k * 3) / 5;/* 60% COLD damage */
@@ -9109,13 +9114,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->resist_shard) k *= 6; k /= (randint(6) + 6);
 			dam = cold_dam(Ind, dam, killer, -who);
 			dam = dam + k;
-			if (fuzzy) msg_format(Ind, "You are hit by something sharp for \377%c%d \377wdamage!", damcol, dam);
+			if (fuzzy) msg_format(Ind, "You are hit by something cold and sharp for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who);
 			if ((!p_ptr->resist_shard) && (!p_ptr->no_cut))
 				(void)set_cut(Ind, p_ptr->cut + damroll(5, 8), -who);
-			if (!p_ptr->resist_sound)
-				(void)set_stun(Ind, p_ptr->stun + randint(15));
+			/* if (!p_ptr->resist_sound)
+				(void)set_stun(Ind, p_ptr->stun + randint(15)); */
 			break;
 
 		/* Thunder -- elec plus sound plus light */

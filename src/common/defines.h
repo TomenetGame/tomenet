@@ -7981,7 +7981,7 @@ extern int PlayerUID;
 #define SV_R_SOUN			16
 #define SV_R_TIME			17
 #define SV_R_DISE			18
-#define SV_R_ICEY			19
+#define SV_R_ICEE			19
 #define SV_R_PLAS			20
 
 #define RSPELL_MAX_ELEMENTS 2

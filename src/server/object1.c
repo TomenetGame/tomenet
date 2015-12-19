@@ -1457,7 +1457,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				}
 			}
 
-			else if (sigil == SV_R_ICEY) { //Ice            | Im     | BrVo |        |       |       |       | Br    |
+			else if (sigil == SV_R_ICEE) { //Ice            | Im     | BrVo |        |       |       |       | Br    |
 				if (!((*f2) & TR2_IM_COLD)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_COLD; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
@@ -1588,10 +1588,10 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					if ((*f5) & TR5_IM_WATER) { failed = 1; break; }
 					(*f5) |= r_projections[o_ptr->sigil-1].resist;
 				break;
-				case SV_R_ICEY: //Hack, manually add.. - Kurzel
+				case SV_R_ICEE: //Hack, manually add.. - Kurzel
 					if (!((*f2) & TR2_IM_COLD)) (*f2) |= TR2_RES_COLD;
 					(*f2) |= TR2_RES_SHARDS;
-					(*f2) |= TR2_RES_SOUND;
+					//(*f2) |= TR2_RES_SOUND;
 				break;
 				case SV_R_PLAS: //Hack, manually add.. - Kurzel
 					if (!((*f2) & TR2_IM_ELEC)) (*f2) |= TR2_RES_ELEC;

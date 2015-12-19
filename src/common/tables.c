@@ -516,7 +516,8 @@ r_projection r_projections[RCRAFT_MAX_PROJECTIONS] =
 { R_NEXU | R_MANA, GF_TIME,       150, "time",            TR5_RES_TIME },
 
 { R_NETH | R_CHAO, GF_DISENCHANT, 500, "disenchantment",  TR2_RES_DISEN },
-{ R_NETH | R_MANA, GF_ICE,        933, "ice",             TR2_RES_COLD | TR2_RES_SOUND | TR2_RES_SHARDS }, //Two high resists, too much? - Kurzel
+//{ R_NETH | R_MANA, GF_ICE,        933, "ice",             TR2_RES_COLD | TR2_RES_SOUND | TR2_RES_SHARDS }, //Two high resists, too much? - Kurzel
+{ R_NETH | R_MANA, GF_ICE,        933, "ice",             TR2_RES_COLD | TR2_RES_SHARDS },
 
 { R_CHAO | R_MANA, GF_PLASMA,     933, "plasma",          TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND }, //Competitive weighting for base/high elements. - Kurzel
 };
