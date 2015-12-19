@@ -6854,8 +6854,11 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr) {
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-	if (f1 & TR1_LIFE) r_ptr->hdice += o_ptr->pval;
-	if (f1 & TR1_SPEED) r_ptr->speed += o_ptr->pval * 2 / 3;
+	if (f1 & TR1_LIFE) {
+		r_ptr->hdice += o_ptr->pval;
+		if (r_ptr->hdice > 13) r_ptr->hdice = 13;
+	}
+	//if (f1 & TR1_SPEED) r_ptr->speed += o_ptr->pval * 2 / 3;
 	if (f1 & TR1_TUNNEL) r_ptr->flags2 |= RF2_KILL_WALL;
 	if (f2 & TR2_RES_FIRE) r_ptr->flags3 |= RF3_IM_FIRE;
 	if (f2 & TR2_RES_ACID) r_ptr->flags3 |= RF3_IM_ACID;
@@ -6865,35 +6868,49 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr) {
 
 	/* Allow use of runes - some are redundant (for completeness) */
 	if (o_ptr->tval == TV_RUNE) switch(o_ptr->sval) {
+#if 0
 	case SV_R_LITE: r_ptr->flags9 |= RF9_RES_LITE; break;
 	case SV_R_DARK: r_ptr->flags9 |= RF9_RES_DARK; break;
+#endif
 	case SV_R_NEXU: r_ptr->flags3 |= RF3_RES_NEXU; break;
 	case SV_R_NETH: r_ptr->flags3 |= RF3_RES_NETH; break;
+#if 0
 	case SV_R_CHAO: r_ptr->flags9 |= RF9_RES_CHAOS; break;
 	case SV_R_MANA: r_ptr->flags9 |= RF9_RES_MANA; break;
 
 	case SV_R_CONF: r_ptr->flags3 |= RF3_NO_CONF; break;
 //	case SV_R_INER: r_ptr->flags4 |= RF4_BR_INER; break; //Inertia has no resist; alt: RF3_NO_TELE!
 	case SV_R_ELEC: r_ptr->flags3 |= RF3_IM_ELEC; break;
+#endif
 	case SV_R_FIRE: r_ptr->flags3 |= RF3_IM_FIRE; break;
+#if 0
 	case SV_R_WATE: r_ptr->flags3 |= RF3_RES_WATE; break;
 //	case SV_R_GRAV: r_ptr->flags4 |= RF4_BR_GRAV; break; //Gravity has no resist (for mobs)!
 	case SV_R_COLD: r_ptr->flags3 |= RF3_IM_COLD; break;
+#endif
 	case SV_R_ACID: r_ptr->flags3 |= RF3_IM_ACID; break;
+#if 0
 	case SV_R_POIS: r_ptr->flags3 |= RF3_IM_POIS; break;
 	case SV_R_TIME: r_ptr->flags9 |= RF9_RES_TIME; break;
 	case SV_R_SOUN: r_ptr->flags9 |= RF9_RES_SOUND; break;
 	case SV_R_SHAR: r_ptr->flags9 |= RF9_RES_SHARDS; break;
+#endif
 	case SV_R_DISE: r_ptr->flags3 |= RF3_RES_DISE; break;
+#if 0
 	//Hack, gestalt elements add mixture.. - Kurzel
 	//case SV_R_ICEE: r_ptr->flags3 |= RF3_IM_COLD; r_ptr->flags9 |= RF9_RES_SHARDS; r_ptr->flags9 |= RF9_RES_SOUND; break; //See common/tables.c - Kurzel
 	case SV_R_ICEE: r_ptr->flags3 |= RF3_IM_COLD; r_ptr->flags9 |= RF9_RES_SHARDS; break; //See common/tables.c - Kurzel
 	//case SV_R_PLAS: r_ptr->flags9 |= RF9_RES_ELEC; r_ptr->flags9 |= RF9_RES_FIRE; r_ptr->flags9 |= RF9_RES_SOUND; break; //r_ptr->flags3 |= RF3_RES_PLAS;
+#endif
 	case SV_R_PLAS:
+#if 0
 		r_ptr->flags3 |= RF3_RES_PLAS;
 		r_ptr->flags9 |= RF9_RES_FIRE;
 		r_ptr->flags9 |= RF9_RES_ELEC;
 		r_ptr->flags9 |= RF9_RES_SOUND;
+#else
+		r_ptr->flags3 |= RF3_IM_FIRE; break;
+#endif
 		break;
 
 	default: break;
