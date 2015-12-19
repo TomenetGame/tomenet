@@ -3874,6 +3874,8 @@ void calc_boni(int Ind) {
 		if (f5 & TR5_RES_PLASMA) {
 			p_ptr->resist_plasma = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RPLAS;
 			p_ptr->resist_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_RFIRE;
+			p_ptr->resist_elec = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_RELEC;
+			p_ptr->resist_sound = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RSOUN;
 		}
 		if (f5 & TR5_RES_TIME) { p_ptr->resist_time = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RTIME; }
 		if (f5 & TR5_RES_MANA) { p_ptr->resist_mana = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RMANA; }
