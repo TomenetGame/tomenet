@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. December 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 19. December 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -9410,6 +9410,9 @@ Chests              Chests may contain treasures or items. Usually, chests
                     you may find in it. It does not matter where you actually
                     are when you open it. A player's 'Luck' value has no effect
                     on what will come out of it either.
+                    On average, large chests tend to contain items rather than
+                    money while small chests mostly contain money.
+                    Also see (5.7c) for more information.
 Climbing set        Allows you to travel over mountain fields.
                     Info for mimics & co: In order to be able to use it, your
                     appearance form must have arms and fingers. (Equip it!)
