@@ -42,11 +42,11 @@ m  Use skill   M  Show minimap  ?  Help            CTRL+Q  Quit the game
 o  Open door                    @  Player list
 p  Open mind   P  Party menu    '  Inspect other nearby players
 q  Quaff       Q  Suicide       _  Sip from fountain/show item on the floor
-r  Read scroll R  Rest          {  Inscribe
-s  Search      S  Searching     |  Uniques         CTRL+R  Redraw
-t  Take off       mode toggle   }  Uninscribe      CTRL+S  Spike
-u  Use staff                    ~  Knowledge menu  CTRL+T  Screenshot
-v  Throw       V  Cloak         +  Dig
+r  Read scroll R  Rest          {  Inscribe        CTRL+R  Redraw
+s  Search      S  Searching     |  Uniques         CTRL+S  Spike
+t  Take off       mode toggle   }  Uninscribe      CTRL+T  Screenshot
+u  Use staff                    ~  Knowledge menu
+v  Throw       V  Cloak         +  Dig             ,  predefined 'reply' macro
 w  Wield       W  Wield         <  Go up
 x  Swap        X  predefined    =  Options         (*) Use X to quickly switch
 z  Zap rod        x0-macro (*)  >  Go down         equipment inscribed @x0.
