@@ -7477,7 +7477,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 			if (get_skill(p_ptr, SKILL_R_MANA))
 				chance += get_skill(p_ptr, SKILL_R_MANA) + 15;
 			break;
-		/* high tier */
+		/* high tier - Ew, hardcoded (but nice job). - Kurzel */
 		case SV_R_CONF:
 			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_DARK))
 				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_DARK)) / 2 + 25;
@@ -7485,7 +7485,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_DARK))
 				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
-			break;
+		break;
 		case SV_R_INER:
 			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_NEXU))
 				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_NEXU)) / 2 + 25;
@@ -7493,7 +7493,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_NEXU))
 				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
-			break;
+		break;
 		case SV_R_ELEC:
 			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_NETH))
 				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_NETH)) / 2 + 25;
@@ -7501,7 +7501,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_NETH))
 				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
-			break;
+		break;
 		case SV_R_FIRE:
 			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_CHAO))
 				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
@@ -7509,7 +7509,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_CHAO))
 				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
-			break;
+		break;
 		case SV_R_WATE:
 			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_MANA))
 				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
@@ -7517,8 +7517,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_MANA))
 				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-			break;
-
+		break;
 		case SV_R_GRAV:
 			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_NEXU))
 				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_NEXU)) / 2 + 25;
@@ -7526,7 +7525,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_NEXU))
 				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
-			break;
+		break;
 		case SV_R_COLD:
 			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_NETH))
 				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_NETH)) / 2 + 25;
@@ -7534,7 +7533,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_NETH))
 				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
-			break;
+		break;
 		case SV_R_ACID:
 			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_CHAO))
 				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
@@ -7542,7 +7541,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_CHAO))
 				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
-			break;
+		break;
 		case SV_R_POIS:
 			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_MANA))
 				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
@@ -7550,16 +7549,15 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_MANA))
 				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-			break;
-
-		case SV_R_TIME:
+		break;
+		case SV_R_SHAR:
 			if (get_skill(p_ptr, SKILL_R_NEXU) && get_skill(p_ptr, SKILL_R_NETH))
 				chance += (get_skill(p_ptr, SKILL_R_NEXU) + get_skill(p_ptr, SKILL_R_NETH)) / 2 + 25;
 			else if (get_skill(p_ptr, SKILL_R_NEXU))
 				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_NETH))
 				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
-			break;
+		break;
 		case SV_R_SOUN:
 			if (get_skill(p_ptr, SKILL_R_NEXU) && get_skill(p_ptr, SKILL_R_CHAO))
 				chance += (get_skill(p_ptr, SKILL_R_NEXU) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
@@ -7567,16 +7565,15 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_CHAO))
 				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
-			break;
-		case SV_R_SHAR:
+		break;
+		case SV_R_TIME:
 			if (get_skill(p_ptr, SKILL_R_NEXU) && get_skill(p_ptr, SKILL_R_MANA))
 				chance += (get_skill(p_ptr, SKILL_R_NEXU) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
 			else if (get_skill(p_ptr, SKILL_R_NEXU))
 				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_MANA))
 				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-			break;
-
+		break;
 		case SV_R_DISE:
 			if (get_skill(p_ptr, SKILL_R_NETH) && get_skill(p_ptr, SKILL_R_CHAO))
 				chance += (get_skill(p_ptr, SKILL_R_NETH) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
@@ -7584,16 +7581,15 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_CHAO))
 				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
-			break;
-		case SV_R_FORC:
+		break;
+		case SV_R_ICEY:
 			if (get_skill(p_ptr, SKILL_R_NETH) && get_skill(p_ptr, SKILL_R_MANA))
 				chance += (get_skill(p_ptr, SKILL_R_NETH) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
 			else if (get_skill(p_ptr, SKILL_R_NETH))
 				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_MANA))
 				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-			break;
-
+		break;
 		case SV_R_PLAS:
 			if (get_skill(p_ptr, SKILL_R_CHAO) && get_skill(p_ptr, SKILL_R_MANA))
 				chance += (get_skill(p_ptr, SKILL_R_CHAO) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
@@ -7601,7 +7597,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
 			else if (get_skill(p_ptr, SKILL_R_MANA))
 				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-			break;
+		break;
 		}
 	}
 #if 1

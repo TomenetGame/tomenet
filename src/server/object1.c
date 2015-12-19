@@ -1064,16 +1064,21 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			/* Save RNG */
 			bool old_rand = Rand_quick;
 			u32b tmp_seed = Rand_value;
-			
+
 			/* Use the stored/quick RNG */
 			Rand_quick = TRUE;
 			Rand_value = o_ptr->sseed;
-			
+
 			/* Build the flag pool */
 			u32b flag_pool[192]; byte flag_category[192]; byte flag_count = 0; //192 is 32*6, aka max # of flags - Kurzel
 			s16b pval = o_ptr->pval; //PVAL for discrimination of flags
 			byte sigil = o_ptr->sigil-1;
-			if (sigil == SV_R_LITE) {
+
+			//-------------------------------------------------------------------------------
+			//Element        | Any    | Weap | Shield | Armor | Cloak | Crown | Glove | Boot
+			//-------------------------------------------------------------------------------
+
+			if (sigil == SV_R_LITE) {      //Light          | PlBlSI | SI   |        |       |       | BlIf  |       |
 				if (!((*f3) & TR3_LITE1)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_LITE1; flag_count++; }
 				if (!((*f2) & TR2_RES_BLIND)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_BLIND; flag_count++; }
 				if (!((*f3) & TR3_SEE_INVIS)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SEE_INVIS; flag_count++; }
@@ -1094,7 +1099,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_DARK) {
+			}
+
+			else if (sigil == SV_R_DARK) { //Darkness       | BlSI   | SI   |        |       | In    | BlIf  |       |
 				if (!((*f2) & TR2_RES_BLIND)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_BLIND; flag_count++; }
 				if (!((*f3) & TR3_SEE_INVIS)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SEE_INVIS; flag_count++; }
 				switch (o_ptr->tval) {
@@ -1117,7 +1124,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_NEXU) {
+			}
+
+			else if (sigil == SV_R_NEXU) { //Nexus          | Su     | SK   |        |       |       |       | SK    |
 				if (!((*f2) & TR2_SUST_STR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_STR; flag_count++; }
 				if (!((*f2) & TR2_SUST_INT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_INT; flag_count++; }
 				if (!((*f2) & TR2_SUST_WIS)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_WIS; flag_count++; }
@@ -1145,7 +1154,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_NETH) {
+			}
+
+			else if (sigil == SV_R_NETH) { //Nether         | HL     | Va   |        | HL    | HL    |       | Va    |
 				if (!((*f2) & TR2_HOLD_LIFE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_HOLD_LIFE; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
@@ -1165,7 +1176,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_CHAO) {
+			}
+
+			else if (sigil == SV_R_CHAO) { //Chaos          | RR     | Ch   |        |       |       |       |       |
 				if (!((*f2) & TR2_RES_ACID) && !((*f2) & TR2_IM_ACID)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_ACID; flag_count++; }
 				if (!((*f2) & TR2_RES_ELEC) && !((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_ELEC; flag_count++; }
 				if (!((*f2) & TR2_RES_FIRE) && !((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_FIRE; flag_count++; }
@@ -1191,32 +1204,36 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_MANA) {
+			}
+
+			else if (sigil == SV_R_MANA) { //Mana           | Rm     |      |        |       |       | MPRm  | MP    |
 				if (!((*f5) & TR5_REGEN_MANA)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REGEN_MANA; flag_count++; }
 				switch (o_ptr->tval) {
-					case TV_MSTAFF:
-						/* mhhh */
-					break;
-					case TV_GLOVES:
-						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
-					break;
-					case TV_HELM:
-						/* mhhh */
-					break;
 					case TV_CROWN:
 						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
 						if (!((*f5) & TR5_REGEN_MANA)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REGEN_MANA; flag_count++; }
 					break;
+					case TV_GLOVES:
+						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
+					break;
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_CONF) {
+			}
+
+			else if (sigil == SV_R_CONF) { //Confusion      | FA     |      | Re     | Re    |       | W+I+  | FA    |
 				if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
 				switch (o_ptr->tval) {
-					case TV_MSTAFF:
 					case TV_CROWN:
 						if (!((*f1) & TR1_INT) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_INT; flag_count++; }
 						if (!((*f1) & TR1_WIS) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_WIS; flag_count++; }
+					case TV_HELM:
+						if (!((*f2) & TR2_RES_FEAR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_FEAR; flag_count++; }
+					break;
+					case TV_SHIELD:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
+						if (!((*f5) & TR5_REFLECT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REFLECT; flag_count++; }
 					break;
 					case TV_GLOVES:
 						if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
@@ -1224,11 +1241,13 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_INER) {
-				if (!((*f1) & TR1_SPEED) && (pval < 0)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; } //slow down :)
-				if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
+			}
+
+			else if (sigil == SV_R_INER) { //Inertia        | NT     |      |        |       |       |       |       |
 				if (!((*f3) & TR3_NO_TELE)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_NO_TELE; flag_count++; }
-			} else if (sigil == SV_R_ELEC) {
+			}
+
+			else if (sigil == SV_R_ELEC) { //Lightning      | Im     | Br   |        |       | Au    |       | BrD+  |
 				if (!((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
 				if (!((*f1) & TR1_DEX) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_DEX; flag_count++; }
 				switch (o_ptr->tval) {
@@ -1246,7 +1265,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_FIRE) {
+			}
+
+			else if (sigil == SV_R_FIRE) { //Fire           | Im     | Br   |        |       | Au    |       | BrS+  |
 				if (!((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
 				if (!((*f1) & TR1_STR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STR; flag_count++; }
 				switch (o_ptr->tval) {
@@ -1264,22 +1285,26 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_WATE) {
+			}
+
+			else if (sigil == SV_R_WATE) { //Water          | ImSD   |      |        |       |       |       |       |
 				if (!((*f5) & TR5_IM_WATER)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_WATER; flag_count++; }
-				if (!((*f3) & TR3_REGEN)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_REGEN; flag_count++; }
 				if (!((*f3) & TR3_SLOW_DIGEST)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SLOW_DIGEST; flag_count++; }
-			} else if (sigil == SV_R_GRAV) {
-				if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
+			}
+
+			else if (sigil == SV_R_GRAV) { //Gravity        | NT     |      |        |       | Lv    |       |       | Lv
+				if (!((*f3) & TR3_NO_TELE)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_NO_TELE; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BOOTS:
-						//if (!((*f4) & TR4_CLIMB)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_CLIMB; flag_count++; }
 					case TV_CLOAK:
 						if (!((*f4) & TR4_LEVITATE)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_LEVITATE; flag_count++; }
 					break;
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_COLD) {
+			}
+
+			else if (sigil == SV_R_COLD) { //Frost          | Im     | Br   |        |       | Au    |       | BrS+  |
 				if (!((*f2) & TR2_IM_COLD)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_COLD; flag_count++; }
 				if (!((*f1) & TR1_STR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STR; flag_count++; }
 				switch (o_ptr->tval) {
@@ -1297,7 +1322,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_ACID) {
+			}
+
+			else if (sigil == SV_R_ACID) { //Acid           | Im     | Br   |        |       |       |       | Brc+  |
 				if (!((*f2) & TR2_IM_ACID)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ACID; flag_count++; }
 				if (!((*f1) & TR1_CHR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_CHR; flag_count++; }
 				switch (o_ptr->tval) {
@@ -1312,7 +1339,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_POIS) {
+			}
+
+			else if (sigil == SV_R_POIS) { //Poison         | Im     | Br   |        | C+    |       |       | BrC+  |
 				if (!((*f5) & TR5_IM_POISON)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_POISON; flag_count++; }
 				if (!((*f1) & TR1_CON) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_CON; flag_count++; }
 				switch (o_ptr->tval) {
@@ -1332,13 +1361,53 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_TIME) {
-				if (!((*f2) & TR2_SUST_STR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_STR; flag_count++; }
-				if (!((*f2) & TR2_SUST_INT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_INT; flag_count++; }
-				if (!((*f2) & TR2_SUST_WIS)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_WIS; flag_count++; }
-				if (!((*f2) & TR2_SUST_DEX)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_DEX; flag_count++; }
-				if (!((*f2) & TR2_SUST_CON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CON; flag_count++; }
-				if (!((*f2) & TR2_SUST_CHR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CHR; flag_count++; }
+			}
+
+			else if (sigil == SV_R_SHAR) { //Shards         | Rh     | CrVo |        |       |       |       | Cr    |
+				if (!((*f3) & TR3_REGEN)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_REGEN; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+						if (!((*f5) & TR5_IMPACT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IMPACT; flag_count++; }
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+						if (!((*f5) & TR5_VORPAL))
+							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_VORPAL; flag_count++; }
+					case TV_GLOVES:
+						if (!((*f5) & TR5_CRIT) && pval
+						&& !((((*f1) & TR1_SPEED) || ((*f1) & TR1_MANA)) && (pval > 7))
+						&& !(((*f1) & TR1_SPEED) && ((*f1) & TR1_MANA) && (pval > 5)))
+							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
+					break;
+					case TV_BOOTS:
+						//if (!((*f4) & TR4_CLIMB)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_CLIMB; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			}
+
+			else if (sigil == SV_R_SOUN) { //Sound          | Sl     |      |        | Sl    | Sl    | Fe    |       | Sl
+				if (!((*f1) & TR1_STEALTH) && (pval < 6)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_HELM:
+					case TV_CROWN:
+						if (!((*f2) & TR2_RES_FEAR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_FEAR; flag_count++; }
+					break;
+					case TV_BOOTS:
+					case TV_CLOAK:
+					case TV_SOFT_ARMOR:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
+						if (!((*f1) & TR1_STEALTH) && (pval < 6)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			}
+
+			else if (sigil == SV_R_TIME) { //Time           | Sp     | EA   |        |       |       |       | EA    | Sp
 				if (!((*f1) & TR1_SPEED) && pval
 				&& !(is_weapon(o_ptr->tval) && !(((*f4) & TR4_SHOULD2H) || ((*f4) & TR4_MUST2H)) && (pval > 3))
 				&& !((((*f4) & TR4_SHOULD2H) || ((*f4) & TR4_MUST2H)) && (pval > 5))
@@ -1369,77 +1438,11 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else if (sigil == SV_R_SOUN) {
-				if (!((*f1) & TR1_STEALTH) && (pval < 6)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
-				switch (o_ptr->tval) {
-					case TV_BOOTS:
-					case TV_CLOAK:
-					case TV_SOFT_ARMOR:
-					case TV_HARD_ARMOR:
-					case TV_DRAG_ARMOR:
-						if (!((*f1) & TR1_STEALTH) && (pval < 6)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
-					break;
-					case TV_HELM:
-					case TV_CROWN:
-						if (!((*f2) & TR2_RES_FEAR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_FEAR; flag_count++; }
-					break;
-					default:
-					break;
-				}
-			} else if (sigil == SV_R_SHAR) {
-				switch (o_ptr->tval) {
-					case TV_BLUNT:
-						if (!((*f5) & TR5_IMPACT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IMPACT; flag_count++; }
-					case TV_POLEARM:
-					case TV_SWORD:
-					case TV_AXE:
-					case TV_BOOMERANG:
-						if (!((*f5) & TR5_VORPAL))
-							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_VORPAL; flag_count++; }
-					case TV_GLOVES:
-						if (!((*f5) & TR5_CRIT) && pval
-						&& !((((*f1) & TR1_SPEED) || ((*f1) & TR1_MANA)) && (pval > 7))
-						&& !(((*f1) & TR1_SPEED) && ((*f1) & TR1_MANA) && (pval > 5)))
-							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
-					break;
-					default:
-					break;
-				}
-			} else if (sigil == SV_R_DISE) {
+			}
+
+			else if (sigil == SV_R_DISE) { //Disenchantment | AM     |      | Ba     | Ba    | Ba    |       |       |
 				if (!((*f3) & TR3_NO_MAGIC)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_NO_MAGIC; flag_count++; }
-			} else if (sigil == SV_R_FORC) { //not much to put here, also time uses these as a deterrent - Kurzel
-				if (!((*f2) & TR2_SUST_STR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_STR; flag_count++; }
-				if (!((*f2) & TR2_SUST_INT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_INT; flag_count++; }
-				if (!((*f2) & TR2_SUST_WIS)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_WIS; flag_count++; }
-				if (!((*f2) & TR2_SUST_DEX)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_DEX; flag_count++; }
-				if (!((*f2) & TR2_SUST_CON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CON; flag_count++; }
-				if (!((*f2) & TR2_SUST_CHR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CHR; flag_count++; }
 				switch (o_ptr->tval) {
-					case TV_SHIELD:
-					case TV_HARD_ARMOR:
-					case TV_DRAG_ARMOR:
-						if (!((*f5) & TR5_REFLECT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REFLECT; flag_count++; }
-					break;
-					default:
-					break;
-				}
-			} else if (sigil == SV_R_PLAS) { //now full base resist rather than immunes
-				//if (!((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
-				//if (!((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
-				if (!((*f1) & TR1_DEX) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_DEX; flag_count++; }
-				if (!((*f1) & TR1_STR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STR; flag_count++; }
-				switch (o_ptr->tval) {
-					// case TV_BLUNT:
-					// case TV_POLEARM:
-					// case TV_SWORD:
-					// case TV_AXE:
-					// case TV_BOOMERANG:
-					// case TV_GLOVES:
-						// if (!((*f1) & TR1_BRAND_ELEC)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ELEC; flag_count++; }
-						// if (!((*f1) & TR1_BRAND_FIRE)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_FIRE; flag_count++; }
-						// if (!((*f1) & TR1_BRAND_COLD)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_COLD; flag_count++; }
-						// if (!((*f1) & TR1_BRAND_ACID)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ACID; flag_count++; }
-					// break;
 					case TV_SHIELD:
 					case TV_CLOAK:
 					case TV_SOFT_ARMOR:
@@ -1452,8 +1455,48 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					default:
 					break;
 				}
-			} else failed = 1;
-			
+			}
+
+			else if (sigil == SV_R_ICEY) { //Ice            | Im     | BrVo |        |       |       |       | Br    |
+				if (!((*f2) & TR2_IM_COLD)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_COLD; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+						if (!((*f5) & TR5_IMPACT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IMPACT; flag_count++; }
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+						if (!((*f5) & TR5_VORPAL))
+							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_VORPAL; flag_count++; }
+					case TV_GLOVES:
+						if (!((*f1) & TR1_BRAND_COLD)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_COLD; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			}
+
+			else if (sigil == SV_R_PLAS) { //Plasma         | ImIm   | Br   |        |       |       |       | Br    |
+				if (!((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
+				if (!((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+					case TV_GLOVES:
+						if (!((*f1) & TR1_BRAND_ELEC)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ELEC; flag_count++; }
+						if (!((*f1) & TR1_BRAND_FIRE)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_FIRE; flag_count++; }
+					break;
+					break;
+					default:
+					break;
+				}
+			}
+
+			else failed = 1;
+
 			/* Assign a flag from the pool */
 			if (flag_count) {
 				byte flag_pick = randint(flag_count) - 1; //0 to flag_count-1
@@ -1516,11 +1559,10 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				case SV_R_SOUN:
 				case SV_R_SHAR:
 				case SV_R_DISE:
-				case SV_R_FORC:
 					if (!((*f2) & r_projections[o_ptr->sigil-1].resist)) (*f2) |= r_projections[o_ptr->sigil-1].resist;
 					else failed = 1;
 				break;
-				
+
 				/* (*f2) with conflicts (base/immunes) */
 				case SV_R_ELEC:
 					if ((*f2) & TR2_IM_ELEC) { failed = 1; break; }
@@ -1546,27 +1588,36 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					if ((*f5) & TR5_IM_WATER) { failed = 1; break; }
 					(*f5) |= r_projections[o_ptr->sigil-1].resist;
 				break;
-				
+				case SV_R_ICEY: //Hack, manually add.. - Kurzel
+					if (!((*f2) & TR2_IM_COLD)) (*f2) |= TR2_RES_COLD;
+					(*f2) |= TR2_RES_SHARDS;
+					(*f2) |= TR2_RES_SOUND;
+				break;
+				case SV_R_PLAS: //Hack, manually add.. - Kurzel
+					if (!((*f2) & TR2_IM_ELEC)) (*f2) |= TR2_RES_ELEC;
+					if (!((*f2) & TR2_IM_FIRE)) (*f2) |= TR2_RES_FIRE;
+					(*f2) |= TR2_RES_SOUND;
+				break;
+
 				/* (*f3) with no conflicts */
 				case SV_R_GRAV:
 					if (!((*f3) & r_projections[o_ptr->sigil-1].resist)) (*f3) |= r_projections[o_ptr->sigil-1].resist;
 					else failed = 1;
 				break;
-				
+
 				/* (*f5) with no conflicts */
 				case SV_R_MANA:
 				case SV_R_INER:
 				case SV_R_TIME:
-				case SV_R_PLAS:
 					if (!((*f5) & r_projections[o_ptr->sigil-1].resist)) (*f5) |= r_projections[o_ptr->sigil-1].resist;
 					else failed = 1;
 				break;
-				
+
 				default:
 				break;
 			}
 		}
-		
+
 #if 0 //How to make a_ptr or edit it? - Kurzel
 		/* Really powerful items should aggravate. */
 		s32b power = artifact_power(a_ptr);
@@ -1580,7 +1631,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 		}
 #endif
-		
+
 		/* Sigil (reset it) */
 		if (failed) {
 			//msg_print(Ind, "The sigil is ineffective.");
@@ -1588,7 +1639,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			o_ptr->sseed = 0;
 		}
 	}
-	
+
 	/* Hack for mindcrafter spell scrolls:
 	   Since they're called 'crystals', add water+fire immunity.
 	   Acid immunity is only for the greater crystals.
@@ -4232,7 +4283,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 
 	/* Sigil */
 	if (o_ptr->sigil) msg_format(Ind, "\377B  It is emblazoned with a sigil of %s.", r_projections[o_ptr->sigil-1].name);
-	
+
 	switch (o_ptr->tval) {
 	case TV_BLUNT:
 		msg_print(Ind, "\377s  It's a blunt weapon."); break;

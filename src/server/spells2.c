@@ -112,7 +112,7 @@ void divine_vengeance(int Ind, int power) {
 				/* Skip players not in the same party */
 				if (q_ptr->party == 0 || p_ptr->party == 0) continue;
 				if (p_ptr->party != q_ptr->party) continue;
-				
+
 				/* Have a present from the nether world for each player you teleport! */
 				if (summon)
 #ifdef USE_SOUND_2010
@@ -225,7 +225,7 @@ void divine_gateway(int Ind) {
 
 		//XXX call set_recall ?
 		if (istown(&p_ptr->wpos) || !p_ptr->wpos.wz) {
-			msg_format(Ind, "\377wThis spell has no effect here."); 
+			msg_format(Ind, "\377wThis spell has no effect here.");
 			return;
 		}
 
@@ -6104,6 +6104,93 @@ bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 }
 
 /*
+ * Cast N radius 1 ball spells, don't pass over target
+ * In "target" mode, ball centers have a radius 1 spread
+ * In "direction" mode, ball centers deal half damage
+ * This preserves the intended damage range of the spell type - Kurzel
+ */
+bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker) {
+	player_type *p_ptr = Players[Ind];
+	char pattacker[80];
+	int tx, ty;
+
+	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
+	//flg &= ~PROJECT_STOP; //Never pass over monsters, actually increases the chance of a direct hit to about 3 in 9. - Kurzel
+
+	/* Prepare to loop */
+	byte i;
+	int spread[3] = {-1, 0, 1};
+
+
+	/* WRAITHFORM reduces damage/effect */
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+
+	/* Use the given direction */
+	tx = p_ptr->px + 99 * ddx[dir];
+	ty = p_ptr->py + 99 * ddy[dir];
+
+	/* affect self + players + monsters AND give credit on kill */
+	flg = mod_ball_spell_flags(typ, flg);
+
+	if (!((dir == 5) && target_okay(Ind))) { //Enforce minimum main target damage if the swarm doesn't spread. - Kurzel
+		dam /= 2;
+		flg |= PROJECT_FULL;
+	}
+
+	for (i = 0; i < num; i++) {
+		/* Hack -- Use an actual "target", but modify tx/ty such that each ball likely falls 'off-target' - Kurzel */
+		// For monsters surrounded by walls or if the player is adjacent to walls, some balls may miss completely:
+		// ###x... or ###x#.. or even ###x###
+		// xD...@.    xD.....         .D...@.
+		// ###x...    #.x..@.         x.x....
+		if ((dir == 5) && target_okay(Ind)) {
+			tx = p_ptr->target_col + spread[rand_int(3)]; //rand_int() gives 0-2
+			ty = p_ptr->target_row + spread[rand_int(3)]; //randint() gives 1-3 (sheesh, rename these? - Kurzel)
+		}
+	#if 1
+	#ifdef USE_SOUND_2010
+		if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
+		else if (typ == GF_DETONATION) sound(Ind, "detonation", NULL, SFX_TYPE_COMMAND, FALSE);
+		else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+		else {
+			/* The 'cast_ball' sound is only for attack spells */
+			if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) &&
+			    (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
+			    (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
+			    (typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
+			    (typ != GF_REMCONF_PLAYER) && (typ != GF_REMIMAGE_PLAYER) &&
+			    (typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
+			    (typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
+			    (typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) &&
+			    (typ != GF_CURECUT_PLAYER) && (typ != GF_CURESTUN_PLAYER) &&
+			    (typ != GF_DETECTCREATURE_PLAYER) && (typ != GF_DETECTDOOR_PLAYER) &&
+			    (typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) &&
+			    (typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
+			    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
+			    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) &&
+			    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
+			    (typ != GF_RESTORE_PLAYER) && (typ != GF_REMCURSE_PLAYER) &&
+			    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
+			    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
+			    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
+			    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
+			    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
+			    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
+			    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
+				if (p_ptr->sfx_magicattack) sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
+		}
+	#endif
+	#endif
+		/* Analyze the "dir" and the "target".  Hurt items on floor. */
+		snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
+
+		project(0 - Ind, 1, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker); //Always radius 1, probably don't want to spam project() with larger. - Kurzel
+	}
+
+	return (TRUE); //mh
+}
+
+/*
  * Cast a cloud spell
  * Stop if we hit a monster, act as a "ball"
  * Allow "target" mode to pass over monsters
@@ -6125,8 +6212,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay(Ind))
-	{
+	if ((dir == 5) && target_okay(Ind)) {
 		flg &= ~(PROJECT_STOP);
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
@@ -6157,8 +6243,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker)
-{
+bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker) {
 	char pattacker[80];
 
 	project_time_effect = eff;
@@ -6800,8 +6885,9 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr) {
 	case SV_R_SOUN: r_ptr->flags9 |= RF9_RES_SOUND; break;
 	case SV_R_SHAR: r_ptr->flags9 |= RF9_RES_SHARDS; break;
 	case SV_R_DISE: r_ptr->flags3 |= RF3_RES_DISE; break;
-//	case SV_R_FORC: r_ptr->flags4 |= RF4_BR_WALL; break; //Force has no resist (for mobs); alt: RF3_NO_SLEEP!
-	case SV_R_PLAS: r_ptr->flags3 |= RF3_RES_PLAS; break;
+	//Hack, gestalt elements add mixture.. - Kurzel
+	case SV_R_ICEY: { r_ptr->flags3 |= RF3_IM_COLD; r_ptr->flags9 |= RF9_RES_SHARDS; r_ptr->flags9 |= RF9_RES_SOUND; break; } //See common/tables.c - Kurzel
+	case SV_R_PLAS: { r_ptr->flags3 |= RF3_IM_ELEC; r_ptr->flags3 |= RF3_IM_FIRE; r_ptr->flags9 |= RF9_RES_SOUND; break; } //r_ptr->flags3 |= RF3_RES_PLAS;
 
 	default: break;
 	}
@@ -7847,7 +7933,7 @@ void rune_combine_aux(int Ind, int item) {
 
 	/* Recall the first rune */
 	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation];
-	
+
 	/* Store the combining flag */
 	s16b e_flags = r_elements[o_ptr->sval].flag;
 
@@ -7862,16 +7948,16 @@ void rune_combine_aux(int Ind, int item) {
 
 	/* Recall the second rune */
 	o_ptr = &p_ptr->inventory[item];
-	
+
 	/* Sanity */
 	if ((o_ptr->sval == sval) //same rune type
-	|| (o_ptr->tval != TV_RUNE) //not a rune (obselete)
-	|| (o_ptr->sval >= RCRAFT_MAX_ELEMENTS) //not a basic rune (obselete)
-	|| (!(o_ptr->level) && !(o_ptr->owner == p_ptr->id))) { //not owned
+	    || (o_ptr->tval != TV_RUNE) //not a rune (obselete)
+	    || (o_ptr->sval >= RCRAFT_MAX_ELEMENTS) //not a basic rune (obselete)
+	    || (!(o_ptr->level) && !(o_ptr->owner == p_ptr->id))) { //not owned
 		msg_format(Ind, "You cannot combine these runes!");
 		return;
 	}
-	
+
 	/* Store the combining flag */
 	e_flags |= r_elements[o_ptr->sval].flag;
 

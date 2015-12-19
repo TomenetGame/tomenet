@@ -1569,6 +1569,7 @@ extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
 extern bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
+extern bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker);
 extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
 extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker);
@@ -2326,7 +2327,7 @@ extern int shutdown_recall_timer, shutdown_recall_state;
 
 /* runecraft.c */
 extern byte cast_rune_spell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bool retaliate);
-extern void warding_rune(int Ind, byte typ, byte mod, byte lvl);
+extern bool warding_rune(int Ind, byte typ, byte mod, byte lvl);
 extern bool warding_rune_break(int m_idx);
 /* common/tables.c */
 extern r_element r_elements[RCRAFT_MAX_ELEMENTS];

@@ -3856,7 +3856,7 @@ void interact_macros(void) {
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
-			/* Some keys aren't allowed to prevent the user 
+			/* Some keys aren't allowed to prevent the user
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
 				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
@@ -3879,7 +3879,7 @@ void interact_macros(void) {
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
-			/* Some keys aren't allowed to prevent the user 
+			/* Some keys aren't allowed to prevent the user
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
 				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
@@ -3902,7 +3902,7 @@ void interact_macros(void) {
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
-			/* Some keys aren't allowed to prevent the user 
+			/* Some keys aren't allowed to prevent the user
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
 				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
@@ -3980,7 +3980,7 @@ void interact_macros(void) {
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
-			/* Some keys aren't allowed to prevent the user 
+			/* Some keys aren't allowed to prevent the user
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
 				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
@@ -4137,7 +4137,7 @@ void interact_macros(void) {
 
 			/* Fix it up quick and dirty: Ability code short-cutting */
 			buf2[0] = '\\'; //note: should in theory be ')e\',
-			buf2[1] = 'e'; //      but doesn't work due to prompt behaviour 
+			buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 			buf2[2] = ')'; //      (\e will then get ignored)
 			bptr = buf;
 			b2ptr = buf2 + 3;
@@ -4232,7 +4232,7 @@ void interact_macros(void) {
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
-			/* Some keys aren't allowed to prevent the user 
+			/* Some keys aren't allowed to prevent the user
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
 				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
@@ -4889,9 +4889,9 @@ Chain_Macro:
 
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the component runes of the spell.");
 						Term_putstr(10, 11, -1, TERM_GREEN, "ie. Select the spell runes to combine:");
-						
+
 						Term_putstr(4, 13, -1, TERM_GREEN, "(Select the \377Usame \377grune twice or press \377sENTER \377gto cast a single rune spell!)");
-						
+
 						i = 0;
 						for (j = 0; j < 2; j++) {
 							if (i == -1 || i == -2) continue; //invalid action -OR- drawing less than the maximum number of runes
@@ -4961,12 +4961,14 @@ Chain_Macro:
 						for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
 
 							/* Get the line color */
-							if (r_imperatives[i].level < skill) color = 'G';
+							if (r_imperatives[i].level+4 < skill) color = 'G'; //Ew, hardcode the 1st spell type level-1 - Kurzel
 							else color = 'D';
 
 							/* Fill a line */
-							sprintf(tmpbuf, "\377%c%c) %-10s %5d %3d%% %s%d%% %5d%% %5s%d %7d%% %5d%%",
-							    color, 'a' + i, r_imperatives[i].name, r_imperatives[i].level, r_imperatives[i].cost * 10,
+							sprintf(tmpbuf, "\377%c%c) %-10s %s%d %3d%% %s%d%% %5d%% %5s%d %7d%% %5d%%",
+							    color, 'a' + i, r_imperatives[i].name,
+								ABS(r_imperatives[i].level) >= 10 ? (r_imperatives[i].level >= 0 ? "  +" : "  ") : (r_imperatives[i].level >= 0 ? "   +" : "   "),
+								r_imperatives[i].level, r_imperatives[i].cost * 10,
 							    ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "),
 							    r_imperatives[i].fail, r_imperatives[i].damage * 10, r_imperatives[i].radius >= 0 ? "+" : "-", ABS(r_imperatives[i].radius),
 							    r_imperatives[i].duration * 10, r_imperatives[i].energy * 10);
@@ -5050,213 +5052,183 @@ Chain_Macro:
 								color = 'G';
 								if (penalty) color = 'y';
 								if (p_ptr->msp < cost) color = 'o';
-								if (p_ptr->anti_magic && r_types[i].flag != T_ENCH) color = 'r'; //#define ENABLE_SHELL_ENCHANT
+								//if (p_ptr->anti_magic && r_types[i].flag != T_SIGL) color = 'r'; //#define ENABLE_SHELL_ENCHANT
+								if (p_ptr->anti_magic) color = 'r';
 							}
 							else color = 'D';
 
 							/* Fill a line */
 							switch (r_types[i].flag) {
-							case T_BOLT:
-								if (r_imperatives[imperative].flag == I_ENHA) {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d beam", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
-								} else {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
-								}
-								break;
-							/*
-							case T_BEAM:
-								if (r_imperatives[imperative].flag == I_ENHA) {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
-								} else {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
-								}
-								break;
-							*/
-							case T_CLOU:
-								if (r_imperatives[imperative].flag != I_ENHA) {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius, duration);
-								} else { //Storm Hack
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*3/2, radius, duration*2);
-								}
-								break;
-							case T_BALL:
-								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
-								break;
-							case T_SIGN:
-								switch (projection) {
-								case SV_R_LITE:
+
+								case T_BOLT: { //Beam
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% call light dam %d rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% starlite dam %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
+										damage = rspell_damage(&dx, &dy, flags_to_imperative(I_MAXI), i, skill, projection);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
+										color, 'a' + i, "beam", sdiff, cost, fail, dx, dy);
 									}
-									break;
-								case SV_R_DARK:
+								break; }
+
+								case T_CLOU: { //Storm
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% call dark dam %d rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius, duration);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% invis dur %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
+										color, 'a' + i, "storm", sdiff, cost, fail, damage*2, radius, duration*2);
 									}
-									break;
-								case SV_R_NEXU:
+								break; }
+
+								case T_SIGN: { //Glyph
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+										switch (projection) {
+
+											case SV_R_LITE: { //Illumination
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d illumination",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2, radius+2);
+											break; }
+
+											case SV_R_DARK: { //Invisibility
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d pow %d invisibility",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, damage);
+											break; }
+
+											case SV_R_NEXU: { //Teleportation
+												switch (r_imperatives[imperative].flag) {
+													//Manual tuning; Phase Door (6-12), Blink (10), Teleport (100), Spell (100-200) - Kurzel
+													case I_MINI: { radius = 12 + rget_level(12); break; }
+													case I_LENG: { radius = 36 + rget_level(36); break; }
+													case I_COMP: { radius =  6 + rget_level( 6); break; }
+													case I_MODE: { radius = 25 + rget_level(25); break; }
+													case I_EXPA: { radius = 75 + rget_level(75); break; }
+													case I_BRIE: { radius = 12 + rget_level(12); break; }
+													case I_MAXI: { radius = 50 + rget_level(50); break; }
+												}
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d teleportation",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+											break; }
+
+											case SV_R_NETH: { //Annihilation
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d annihilation (bolt)",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, 1+damage/10);
+											break; }
+
+											case SV_R_CHAO: { //Polymorph Self
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph self",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+											break; }
+
+											case SV_R_MANA: { //Recharging
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d recharging",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage);
+											break; }
+
+											case SV_R_CONF: { //Reflection
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d reflection",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2);
+											break; }
+
+											case SV_R_INER: { //Mass Stasis
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d mass stasis",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*2);
+											break; }
+
+											case SV_R_ELEC:
+											case SV_R_FIRE:
+											case SV_R_COLD:
+											case SV_R_ACID:
+											case SV_R_POIS: { //Infusion
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d %s infusion",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, r_projections[projection].name);
+											break; }
+
+											case SV_R_WATE: { //Quench Thirst
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% quench thirst",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+											break; }
+
+											case SV_R_GRAV: { //Mass Teleport-To
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d mass teleport-to",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*2);
+											break; }
+
+											case SV_R_SHAR: { //Dig
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dig (bolt)",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+											break; }
+
+											case SV_R_SOUN: { //Disarm
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d disarm",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+											break; }
+
+											case SV_R_TIME: { //Haste
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d dur %d+1d%d haste",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration/2, duration/2);
+											break; }
+
+											case SV_R_DISE: { //Resistance
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d base resistance",
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2);
+											break; }
+
+											case SV_R_ICEY:
+											case SV_R_PLAS: { //Shield
+													damage = rget_level(20) * r_imperatives[imperative].damage / 10;
+													if (damage < 1) damage = 1; if (damage > 20) damage = 20;
+													sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d dur %d+1d%d +%d AC",
+													color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy, duration/2, duration/2, damage);
+											break; }
+
+										}
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% teleport", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
+										color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2);
 									}
-									break;
-								case SV_R_NETH:
+								break; }
+
+								case T_BALL: { //Swarm
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% obliteration", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% genocide", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d or %d (x%d)",
+										color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((2+(sdiff-1)/10) > 2) ? (2+(sdiff-1)/10) : 2));
 									}
-									break;
-								case SV_R_CHAO:
+								break; }
+
+								case T_WAVE: { //Dispel
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph self", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) dur %d",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% chaos brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
+										color, 'a' + i, "dispel", sdiff, cost, fail, damage*2);
 									}
-									break;
-								case SV_R_MANA:
+								break; }
+
+								case T_SIGL: { //Boon
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove curses", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% %s resistance",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, r_projections[projection].name);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove *curses*", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% miscellaneous boni",
+										color, 'a' + i, "boon", sdiff, cost, fail);
 									}
-									break;
-								case SV_R_CONF:
+								break; }
+
+								case T_BURS: { //Flare
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% monster confusion", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% identify", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d (33%% backlash)",
+										color, 'a' + i, "flare", sdiff, cost, fail, dx, dy);
 									}
-									break;
-								case SV_R_INER:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% anchor dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-									}
-									break;
-								case SV_R_ELEC:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res electricity dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% lightning brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									}
-									break;
-								case SV_R_FIRE:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% fire brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									}
-									break;
-								case SV_R_WATE:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% neutralize poison", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
-									}
-									break;
-								case SV_R_GRAV:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-to rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-									}
-									break;
-								case SV_R_COLD:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res cold dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% frost brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									}
-									break;
-								case SV_R_ACID:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res acid dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% acid brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									}
-									break;
-								case SV_R_POIS:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res poison dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% poison brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									}
-									break;
-								case SV_R_TIME:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d speed dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration, dx, dy);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage);
-									}
-									break;
-								case SV_R_SOUN:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarm rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarming", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-									}
-									break;
-								case SV_R_SHAR:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% earthquake rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dig", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-									}
-									break;
-								case SV_R_DISE:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% unmagic", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% cancellation", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-									}
-									break;
-								case SV_R_FORC:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d AC dur %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, dx, dy);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
-									}
-									break;
-								case SV_R_PLAS:
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% resistance dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% power brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
-									}
-									break;
-								default:
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%%", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-									break;
-								}
-								break;
-							case T_RUNE:
-								if (r_imperatives[imperative].flag != I_ENHA) {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
-								} else {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% warding", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-								}
-								break;
-							case T_WAVE:
-								if (r_imperatives[imperative].flag != I_ENHA) {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
-								} else {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage);
-								}
-								break;
-							case T_ENCH:
-								if (r_imperatives[imperative].flag != I_ENHA) {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune resist", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-								} else {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune misc", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-								}
-								break;
+								break; }
+
 							}
 							Term_putstr(10, 14 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
@@ -5294,15 +5266,11 @@ Chain_Macro:
 
 						/* Request the Direction -- Hardcoded - Kurzel */
 						if (((m_flags & T_BOLT) == T_BOLT)
-						 // || ((m_flags & T_BEAM) == T_BEAM)
-						 || (((m_flags & T_CLOU) == T_CLOU) && !((m_flags & I_ENHA) == I_ENHA))
+						 || (((m_flags & T_CLOU) == T_CLOU) && !((m_flags & I_ENHA) == I_ENHA)) //Until (if) Storm can be targeted! - Kurzel
+						 || (((m_flags & T_SIGN) == T_SIGN) && (((projection == SV_R_NETH) && ((m_flags & I_ENHA) != I_ENHA))))
+						 || (((m_flags & T_SIGN) == T_SIGN) && (((projection == SV_R_SHAR) && ((m_flags & I_ENHA) != I_ENHA))))
 						 || ((m_flags & T_BALL) == T_BALL)
-						 || (((m_flags & T_SIGN) == T_SIGN) && (
-						 ((projection == SV_R_INER) && ((m_flags & I_ENHA) == I_ENHA)) ||
-						 ((projection == SV_R_GRAV) && ((m_flags & I_ENHA) == I_ENHA)) ||
-						 ((projection == SV_R_SOUN) && ((m_flags & I_ENHA) == I_ENHA)) ||
-						 ((projection == SV_R_SHAR) && ((m_flags & I_ENHA) == I_ENHA))
-						 ))) 
+						 || ((m_flags & T_BURS) == T_BURS))
 							strcat(buf, "*t");
 
 						/* hack before we exit: remember menu choice 'runespell' */
@@ -6294,7 +6262,7 @@ static void do_cmd_options_acc(void) {
 			while (1) {
 				/* Ask for new password */
 				move_cursor(8, 16);
-				tmp[0] = '\0'; 
+				tmp[0] = '\0';
 				if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
 					change_pass = FALSE;
 					break;
@@ -6305,7 +6273,7 @@ static void do_cmd_options_acc(void) {
 
 				/* Ask for the confirmation */
 				move_cursor(10, 16);
-				tmp[0] = '\0'; 
+				tmp[0] = '\0';
 				if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
 					change_pass = FALSE;
 					break;

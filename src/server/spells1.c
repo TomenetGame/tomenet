@@ -623,7 +623,7 @@ bool teleport_away(int m_idx, int dis) {
 void teleport_to_player(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	int ny = 0, nx = 0, oy, ox, d, i, min;
-	int dis = 2, max_dis = 200;
+	int dis = 1, max_dis = 200; //If dis = 2, monsters don't appear next to the player. - Kurzel
 	bool look = TRUE;
 
 	monster_type *m_ptr = &m_list[m_idx];
@@ -4697,6 +4697,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 			}
+			//todo maybe: add 'shredded' effect vs scrolls/parchments
 			break;
 
 		case GF_SHARDS:

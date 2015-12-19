@@ -5,18 +5,14 @@
 #include "angband.h"
 
 /* NULL for ghost - FIXME */
-static void print_spells(object_type *o_ptr)
-{
+static void print_spells(object_type *o_ptr) {
 	int	i, col, realm, num;
 
 	/* Hack -- handle ghosts right */
-	if (p_ptr->ghost)
-	{
+	if (p_ptr->ghost) {
 		realm = REALM_GHOST;
 		num = 0;
-	}
-	else
-	{
+	} else {
 		realm = find_realm(o_ptr->tval);
 		num = o_ptr->sval;
 	}
@@ -31,8 +27,7 @@ static void print_spells(object_type *o_ptr)
 	put_str("Lv Mana Fail", 1, col + 35);
 
 	/* Dump the spells */
-	for (i = 0; i < 9; i++)
-	{
+	for (i = 0; i < 9; i++) {
 		/* Check for end of the book */
 		if (spell_info[realm][num][i][0] == '\0')
 			break;
@@ -45,8 +40,7 @@ static void print_spells(object_type *o_ptr)
 	prt("", 2 + i, col);
 }
 
-static void print_mimic_spells()
-{
+static void print_mimic_spells() {
 	int	i, col, j = 2, k, fail;
 	char buf[90];
 
@@ -75,7 +69,7 @@ static void print_mimic_spells()
 	/* Dump the spells */
 	for (i = 0; i < 32; i++) {
 		/* Check for end of the book */
-	        if (!(p_ptr->innate_spells[0] & (1L << i)))
+		if (!(p_ptr->innate_spells[0] & (1L << i)))
 		  continue;
 
 		fail = (innate_powers[i].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
@@ -98,7 +92,7 @@ static void print_mimic_spells()
 	}
 	for (i = 0; i < 32; i++) {
 		/* Check for end of the book */
-	        if (!(p_ptr->innate_spells[1] & (1L << i)))
+		if (!(p_ptr->innate_spells[1] & (1L << i)))
 			continue;
 
 		fail = (innate_powers[i + 32].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
@@ -121,7 +115,7 @@ static void print_mimic_spells()
 	}
 	for (i = 0; i < 32; i++) {
 		/* Check for end of the book */
-	        if (!(p_ptr->innate_spells[2] & (1L << i)))
+		if (!(p_ptr->innate_spells[2] & (1L << i)))
 			continue;
 
 		fail = (innate_powers[i + 64].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
@@ -155,8 +149,7 @@ static void print_mimic_spells()
 
 /* modified to accept certain capital letters for priest spells. -AD- */
 
-int get_spell(s32b *sn, cptr prompt, int book, bool known)
-{
+int get_spell(s32b *sn, cptr prompt, int book, bool known) {
 	int		i, num = 0;
 	bool		flag, redraw, okay;
 	char		choice;
@@ -170,8 +163,7 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 
 	p = "spell";
 
-	if (p_ptr->ghost)
-	{
+	if (p_ptr->ghost) {
 		p = "power";
 		realm = REALM_GHOST;
 		book = 0;
@@ -185,8 +177,7 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 	(*sn) = -2;
 
 	/* Check for "okay" spells */
-	for (i = 0; i < 9; i++)
-	{
+	for (i = 0; i < 9; i++) {
 		/* Look for "okay" spells */
 		if (spell_info[realm][sval][i][0] &&
 			/* Hack -- This presumes the spells are sorted by level */
@@ -217,8 +208,7 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 	else
 		strnfmt(out_val, 78, "No %^ss available - ESC=exit", p);
 
-	if (c_cfg.always_show_lists)
-	{
+	if (c_cfg.always_show_lists) {
 		/* Show list */
 		redraw = TRUE;
 
@@ -230,14 +220,11 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 	}
 
 	/* Get a spell from the user */
-	while (!flag && get_com(out_val, &choice))
-	{
+	while (!flag && get_com(out_val, &choice)) {
 		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
-		{
+		if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 			/* Show the list */
-			if (!redraw)
-			{
+			if (!redraw) {
 				/* Show list */
 				redraw = TRUE;
 
@@ -247,10 +234,8 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 				/* Display a list of spells */
 				print_spells(o_ptr);
 			}
-
 			/* Hide the list */
-			else
-			{
+			else {
 				/* Hide list */
 				redraw = FALSE;
 
@@ -267,24 +252,21 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 
 		/* hack for CAPITAL prayers (heal other) */
 		/* hack once more for possible expansion */
-                /* lowercase */
-                if (islower(choice))
-                {
-                        i = A2I(choice);
-                        if (i >= num) i = -1;
-                }
+		/* lowercase */
+		if (islower(choice)) {
+			i = A2I(choice);
+			if (i >= num) i = -1;
+		}
 
-                /* uppercase... hope this is portable. */
-                else if (isupper(choice))
-                {
-                        i = (choice - 'A') + 64;
-                        if (i-64 >= num) i = -1;
-                }
-                else i = -1;
+		/* uppercase... hope this is portable. */
+		else if (isupper(choice)) {
+			i = (choice - 'A') + 64;
+			if (i-64 >= num) i = -1;
+		}
+		else i = -1;
 
 		/* Totally Illegal */
-		if (i < 0)
-		{
+		if (i < 0) {
 			bell();
 			continue;
 		}
@@ -294,8 +276,7 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 	}
 
 	/* Restore the screen */
-	if (redraw)
-	{
+	if (redraw) {
 		Term_load();
 
 		/* Flush any events */
@@ -319,8 +300,7 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
  *
  * Note that *all* spells in the book are listed
  */
-void show_browse(object_type *o_ptr)
-{
+void show_browse(object_type *o_ptr) {
 	/* Save the screen */
 	Term_save();
 
@@ -343,8 +323,7 @@ void show_browse(object_type *o_ptr)
 	Flush_queue();
 }
 
-static int get_mimic_spell(int *sn)
-{
+static int get_mimic_spell(int *sn) {
 	int		i, num = 3 + 1; /* 3 polymorph self spells + set immunity */
 	bool		flag, redraw;
 	char		choice;
@@ -364,31 +343,25 @@ static int get_mimic_spell(int *sn)
 	corresp[3] = 3;
 
 	/* Check for "okay" spells */
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		/* Look for "okay" spells */
-		if (p_ptr->innate_spells[0] & (1L << i))
-		{
-		  corresp[num] = i + 4;
-		  num++;
+		if (p_ptr->innate_spells[0] & (1L << i)) {
+			corresp[num] = i + 4;
+			num++;
 		}
 	}
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		/* Look for "okay" spells */
-		if (p_ptr->innate_spells[1] & (1L << i))
-		{
-		  corresp[num] = i + 32 + 4;
-		  num++;
+		if (p_ptr->innate_spells[1] & (1L << i)) {
+			corresp[num] = i + 32 + 4;
+			num++;
 		}
 	}
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		/* Look for "okay" spells */
-		if (p_ptr->innate_spells[2] & (1L << i))
-		{
-		  corresp[num] = i + 64 + 4;
-		  num++;
+		if (p_ptr->innate_spells[2] & (1L << i)) {
+			corresp[num] = i + 64 + 4;
+			num++;
 		}
 	}
 
@@ -406,8 +379,7 @@ static int get_mimic_spell(int *sn)
 	strnfmt(out_val, 78, "(Powers %c-%c, *=List, @=Name, ESC=exit) use which power? ",
 		I2A(0), I2A(num - 1));
 
-	if (c_cfg.always_show_lists)
-	{
+	if (c_cfg.always_show_lists) {
 		/* Show list */
 		redraw = TRUE;
 
@@ -419,14 +391,11 @@ static int get_mimic_spell(int *sn)
 	}
 
 	/* Get a spell from the user */
-	while (!flag && get_com(out_val, &choice))
-	{
+	while (!flag && get_com(out_val, &choice)) {
 		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
-		{
+		if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 			/* Show the list */
-			if (!redraw)
-			{
+			if (!redraw) {
 				/* Show list */
 				redraw = TRUE;
 
@@ -436,10 +405,8 @@ static int get_mimic_spell(int *sn)
 				/* Display a list of spells */
 				print_mimic_spells();
 			}
-
 			/* Hide the list */
-			else
-			{
+			else {
 				/* Hide list */
 				redraw = FALSE;
 
@@ -452,12 +419,10 @@ static int get_mimic_spell(int *sn)
 
 			/* Ask again */
 			continue;
-		}
-		else if (choice == '@')
-		{
+		} else if (choice == '@') {
 			char buf[80];
 			int c;
-			strcpy(buf, ""); 
+			strcpy(buf, "");
 			if (!get_string("Power? ", buf, 79)) {
 				if (redraw) {
 					Term_load();
@@ -491,17 +456,14 @@ static int get_mimic_spell(int *sn)
 			/* illegal input */
 			bell();
 			continue;
-		}
-		else
-		{
+		} else {
 			/* extract request */
 			i = (islower(choice) ? A2I(choice) : -1);
 			if (i >= num) i = -1;
 		}
 
 		/* Totally Illegal */
-		if (i < 0)
-		{
+		if (i < 0) {
 			bell();
 			continue;
 		}
@@ -511,8 +473,7 @@ static int get_mimic_spell(int *sn)
 	}
 
 	/* Restore the screen */
-	if (redraw)
-	{
+	if (redraw) {
 		Term_load();
 
 		/* Flush any events */
@@ -523,8 +484,7 @@ static int get_mimic_spell(int *sn)
 	/* Abort if needed */
 	if (!flag) return (FALSE);
 
-	if (c_cfg.other_query_flag && !i)
-	{
+	if (c_cfg.other_query_flag && !i) {
 		sprintf(out_val, "Really change the form?");
 		if (!get_check2(out_val, FALSE)) return(FALSE);
 	}
@@ -537,8 +497,7 @@ static int get_mimic_spell(int *sn)
 }
 
 
-static void print_immunities()
-{
+static void print_immunities() {
 	int col, j = 2;
 
 	/* Print column */
@@ -578,8 +537,7 @@ static void print_immunities()
 /*
  * Mimic
  */
-void do_mimic()
-{
+void do_mimic() {
 	int spell, j, dir, c = 0;
 	char out_val[41];
 	bool uses_dir = FALSE;
@@ -694,7 +652,7 @@ void do_mimic()
 				continue;
 			} else if (choice == '@') {
 				char buf[80];
-				strcpy(buf, ""); 
+				strcpy(buf, "");
 				if (!get_string("Immunity? ", buf, 49)) {
 					if (redraw) {
 						Term_load();
@@ -759,8 +717,7 @@ void do_mimic()
  * Use a ghost ability
  */
 /* XXX XXX This doesn't work at all!! */
-void do_ghost(void)
-{
+void do_ghost(void) {
 	s32b j;
 
 	/* Ask for an ability, allow cancel */
@@ -1168,14 +1125,14 @@ void browse_school_spell(int item, int book, int pval) {
 			continue;
 		}
 
-                /* Restore the screen */
-                /* Term_load(); */
+		/* Restore the screen */
+		/* Term_load(); */
 
-                /* Display a list of spells */
-                sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
-                where = exec_lua(0, out_val);
-                sprintf(out_val, "print_spell_desc(spell_x2(%d, %d, %d, %d), %d)", item, sval, pval, i, where);
-                exec_lua(0, out_val);
+		/* Display a list of spells */
+		sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
+		where = exec_lua(0, out_val);
+		sprintf(out_val, "print_spell_desc(spell_x2(%d, %d, %d, %d), %d)", item, sval, pval, i, where);
+		exec_lua(0, out_val);
 	}
 
 
@@ -1183,8 +1140,7 @@ void browse_school_spell(int item, int book, int pval) {
 	Term_load();
 }
 
-static void print_combatstances()
-{
+static void print_combatstances() {
 	int col = 20, j = 2;
 
 	/* Title the list */
@@ -1204,8 +1160,7 @@ static void print_combatstances()
 	prt("", j++, col);
 }
 
-static int get_combatstance(int *cs)
-{
+static int get_combatstance(int *cs) {
 	int		i = 0, num = 3; /* number of pre-defined stances here in this function */
 	bool		flag, redraw;
 	char		choice;
@@ -1227,8 +1182,7 @@ static int get_combatstance(int *cs)
 	strnfmt(out_val, 78, "(Stances %c-%c, *=List, ESC=exit) enter which stance? ",
 		I2A(0), I2A(num - 1));
 
-	if (c_cfg.always_show_lists)
-	{
+	if (c_cfg.always_show_lists) {
 		/* Show list */
 		redraw = TRUE;
 		/* Save the screen */
@@ -1238,14 +1192,11 @@ static int get_combatstance(int *cs)
 	}
 
 	/* Get a stance from the user */
-	while (!flag && get_com(out_val, &choice))
-	{
+	while (!flag && get_com(out_val, &choice)) {
 		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
-		{
+		if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 			/* Show the list */
-			if (!redraw)
-			{
+			if (!redraw) {
 				/* Show list */
 				redraw = TRUE;
 				/* Save the screen */
@@ -1255,8 +1206,7 @@ static int get_combatstance(int *cs)
 			}
 
 			/* Hide the list */
-			else
-			{
+			else {
 				/* Hide list */
 				redraw = FALSE;
 				/* Restore the screen */
@@ -1269,13 +1219,12 @@ static int get_combatstance(int *cs)
 			continue;
 		}
 
-	       	/* extract request */
+		/* extract request */
 		i = (islower(choice) ? A2I(choice) : -1);
-	      	if (i >= num) i = -1;
+		if (i >= num) i = -1;
 
 		/* Totally Illegal */
-		if (i < 0)
-		{
+		if (i < 0) {
 			bell();
 			continue;
 		}
@@ -1285,8 +1234,7 @@ static int get_combatstance(int *cs)
 	}
 
 	/* Restore the screen */
-	if (redraw)
-	{
+	if (redraw) {
 		Term_load();
 		/* Flush any events */
 		Flush_queue();
@@ -1304,18 +1252,16 @@ static int get_combatstance(int *cs)
 /*
  * Enter a combat stance (warriors) - C. Blue
  */
-void do_stance()
-{
+void do_stance() {
 	int stance;
 	/* Ask for the stance */
-	if(!get_combatstance(&stance)) return;
+	if (!get_combatstance(&stance)) return;
 	Send_activate_skill(MKEY_STANCE, stance, 0, 0, 0, 0);
 }
 
 
-static void print_melee_techniques()
-{
-	int	i, col, j = 0;
+static void print_melee_techniques() {
+	int i, col, j = 0;
 	char buf[90];
 	/* Print column */
 	col = 20;
@@ -1323,10 +1269,9 @@ static void print_melee_techniques()
 	prt("", 1, col);
 	put_str("Name", 1, col + 5);
 	/* Dump the techniques */
-	for (i = 0; i < 16; i++)
-	{
+	for (i = 0; i < 16; i++) {
 		/* Check for accessible technique */
-	        if (!(p_ptr->melee_techniques & (1L << i)))
+		if (!(p_ptr->melee_techniques & (1L << i)))
 		  continue;
 		/* Dump the info */
 		sprintf(buf, "%c) %s", I2A(j), melee_techniques[i]);
@@ -1336,8 +1281,7 @@ static void print_melee_techniques()
 	prt("", 2 + j++, col);
 }
 
-static int get_melee_technique(int *sn)
-{
+static int get_melee_technique(int *sn) {
 	int		i, num = 0;
 	bool		flag, redraw;
 	char		choice;
@@ -1348,13 +1292,11 @@ static int get_melee_technique(int *sn)
 	(*sn) = -2;
 
 	/* Check for accessible techniques */
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		/* Look for accessible techniques */
-		if (p_ptr->melee_techniques & (1L << i))
-		{
-		  corresp[num] = i;
-		  num++;
+		if (p_ptr->melee_techniques & (1L << i)) {
+			corresp[num] = i;
+			num++;
 		}
 	}
 
@@ -1374,8 +1316,7 @@ static int get_melee_technique(int *sn)
 	else
 		strnfmt(out_val, 78, "No techniques available - ESC=exit");
 
-	if (c_cfg.always_show_lists)
-	{
+	if (c_cfg.always_show_lists) {
 		/* Show list */
 		redraw = TRUE;
 
@@ -1387,14 +1328,11 @@ static int get_melee_technique(int *sn)
 	}
 
 	/* Get a technique from the user */
-	while (!flag && get_com(out_val, &choice))
-	{
+	while (!flag && get_com(out_val, &choice)) {
 		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
-		{
+		if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 			/* Show the list */
-			if (!redraw)
-			{
+			if (!redraw) {
 				/* Show list */
 				redraw = TRUE;
 
@@ -1404,10 +1342,8 @@ static int get_melee_technique(int *sn)
 				/* Display a list of techniques */
 				print_melee_techniques();
 			}
-
 			/* Hide the list */
-			else
-			{
+			else {
 				/* Hide list */
 				redraw = FALSE;
 
@@ -1421,20 +1357,21 @@ static int get_melee_technique(int *sn)
 			/* Ask again */
 			continue;
 		}
-                else if (choice == '@') {
-	    		char buf[80];
-			strcpy(buf, "Sprint"); 
-                        if (!get_string("Technique? ", buf, 79)) {
-                    		if (redraw) {
-                    			Term_load();
-                    			Flush_queue();
-                    		}
-                    		return FALSE;
-                	}
+		else if (choice == '@') {
+			char buf[80];
 
-                        /* Find the skill it is related to */
-                        for (i = 0; i < num; i++) {
-                    		if (!strcasecmp(buf, melee_techniques[corresp[i]])) {
+			strcpy(buf, "Sprint");
+			if (!get_string("Technique? ", buf, 79)) {
+				if (redraw) {
+					Term_load();
+					Flush_queue();
+				}
+				return FALSE;
+			}
+
+			/* Find the skill it is related to */
+			for (i = 0; i < num; i++) {
+				if (!strcasecmp(buf, melee_techniques[corresp[i]])) {
 					flag = TRUE;
 					break;
 				}
@@ -1444,15 +1381,13 @@ static int get_melee_technique(int *sn)
 			/* illegal input */
 			bell();
 			continue;
-                }
-		else {
-		       	/* extract request */
+		} else {
+			/* extract request */
 			i = (islower(choice) ? A2I(choice) : -1);
-		      	if (i >= num) i = -1;
+			if (i >= num) i = -1;
 
 			/* Totally Illegal */
-			if (i < 0)
-			{
+			if (i < 0) {
 				bell();
 				continue;
 			}
@@ -1463,8 +1398,7 @@ static int get_melee_technique(int *sn)
 	}
 
 	/* Restore the screen */
-	if (redraw)
-	{
+	if (redraw) {
 		Term_load();
 
 		/* Flush any events */
@@ -1482,31 +1416,28 @@ static int get_melee_technique(int *sn)
 	return (TRUE);
 }
 
-void do_melee_technique()
-{
-  int technique;
+void do_melee_technique() {
+	int technique;
 
-  /* Ask for the technique */
-  if(!get_melee_technique(&technique)) return;
+	/* Ask for the technique */
+	if (!get_melee_technique(&technique)) return;
 
-  Send_activate_skill(MKEY_MELEE, 0, technique, 0, 0, 0);
+	Send_activate_skill(MKEY_MELEE, 0, technique, 0, 0, 0);
 }
 
-static void print_ranged_techniques()
-{
-	int	i, col, j = 0;
+static void print_ranged_techniques() {
+	int i, col, j = 0;
 	char buf[90];
+
 	/* Print column */
 	col = 20;
 	/* Title the list */
 	prt("", 1, col);
 	put_str("Name", 1, col + 5);
 	/* Dump the techniques */
-	for (i = 0; i < 16; i++)
-	{
+	for (i = 0; i < 16; i++) {
 		/* Check for accessible technique */
-	        if (!(p_ptr->ranged_techniques & (1L << i)))
-		  continue;
+		if (!(p_ptr->ranged_techniques & (1L << i))) continue;
 		/* Dump the info */
 		sprintf(buf, "%c) %s", I2A(j), ranged_techniques[i]);
 		prt(buf, 2 + j++, col);
@@ -1515,8 +1446,7 @@ static void print_ranged_techniques()
 	prt("", 2 + j++, col);
 }
 
-static int get_ranged_technique(int *sn)
-{
+static int get_ranged_technique(int *sn) {
 	int		i, num = 0;
 	bool		flag, redraw;
 	char		choice;
@@ -1527,13 +1457,11 @@ static int get_ranged_technique(int *sn)
 	(*sn) = -2;
 
 	/* Check for accessible techniques */
-	for (i = 0; i < 32; i++)
-	{
+	for (i = 0; i < 32; i++) {
 		/* Look for accessible techniques */
-		if (p_ptr->ranged_techniques & (1L << i))
-		{
-		  corresp[num] = i;
-		  num++;
+		if (p_ptr->ranged_techniques & (1L << i)) {
+			corresp[num] = i;
+			num++;
 		}
 	}
 
@@ -1553,8 +1481,7 @@ static int get_ranged_technique(int *sn)
 	else
 		strnfmt(out_val, 78, "No techniques available - ESC=exit");
 
-	if (c_cfg.always_show_lists)
-	{
+	if (c_cfg.always_show_lists) {
 		/* Show list */
 		redraw = TRUE;
 
@@ -1566,14 +1493,11 @@ static int get_ranged_technique(int *sn)
 	}
 
 	/* Get a technique from the user */
-	while (!flag && get_com(out_val, &choice))
-	{
+	while (!flag && get_com(out_val, &choice)) {
 		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
-		{
+		if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 			/* Show the list */
-			if (!redraw)
-			{
+			if (!redraw) {
 				/* Show list */
 				redraw = TRUE;
 
@@ -1585,8 +1509,7 @@ static int get_ranged_technique(int *sn)
 			}
 
 			/* Hide the list */
-			else
-			{
+			else {
 				/* Hide list */
 				redraw = FALSE;
 
@@ -1600,20 +1523,21 @@ static int get_ranged_technique(int *sn)
 			/* Ask again */
 			continue;
 		}
-                else if (choice == '@') {
-	    		char buf[80];
-			strcpy(buf, "Flare missile"); 
-                        if (!get_string("Technique? ", buf, 79)) {
-                    		if (redraw) {
-                    			Term_load();
-                    			Flush_queue();
-                    		}
-                    		return FALSE;
-                	}
+		else if (choice == '@') {
+			char buf[80];
 
-                        /* Find the skill it is related to */
-                        for (i = 0; i < num; i++) {
-                    		if (!strcasecmp(buf, ranged_techniques[corresp[i]])) {
+			strcpy(buf, "Flare missile");
+			if (!get_string("Technique? ", buf, 79)) {
+				if (redraw) {
+					Term_load();
+					Flush_queue();
+				}
+				return FALSE;
+			}
+
+			/* Find the skill it is related to */
+			for (i = 0; i < num; i++) {
+				if (!strcasecmp(buf, ranged_techniques[corresp[i]])) {
 					flag = TRUE;
 					break;
 				}
@@ -1623,15 +1547,13 @@ static int get_ranged_technique(int *sn)
 			/* illegal input */
 			bell();
 			continue;
-                }
-		else {
-		       	/* extract request */
+		} else {
+			/* extract request */
 			i = (islower(choice) ? A2I(choice) : -1);
-	      		if (i >= num) i = -1;
+			if (i >= num) i = -1;
 
 			/* Totally Illegal */
-			if (i < 0)
-			{
+			if (i < 0) {
 				bell();
 				continue;
 			}
@@ -1642,8 +1564,7 @@ static int get_ranged_technique(int *sn)
 	}
 
 	/* Restore the screen */
-	if (redraw)
-	{
+	if (redraw) {
 		Term_load();
 
 		/* Flush any events */
@@ -1661,14 +1582,13 @@ static int get_ranged_technique(int *sn)
 	return (TRUE);
 }
 
-void do_ranged_technique()
-{
-  int technique;
+void do_ranged_technique() {
+	int technique;
 
-  /* Ask for the technique */
-  if(!get_ranged_technique(&technique)) return;
+	/* Ask for the technique */
+	if (!get_ranged_technique(&technique)) return;
 
-  Send_activate_skill(MKEY_RANGED, 0, technique, 0, 0, 0);
+	Send_activate_skill(MKEY_RANGED, 0, technique, 0, 0, 0);
 }
 
 /** Duplicate Code (non-static for use in c-util.c) -- /server/runecraft.c  - Kurzel - To be LUAized! **/
@@ -1693,6 +1613,14 @@ byte flags_to_imperative(u16b m_flags) {
 	return -1;
 }
 
+byte flags_to_type(u16b m_flags) {
+	byte i;
+	for (i = 0; i < RCRAFT_MAX_TYPES; i++)
+		if ((m_flags & r_types[i].flag) == r_types[i].flag)
+			return i;
+	return -1;
+}
+
 byte flags_to_projection(u16b e_flags) {
 	byte i;
 	for (i = 0; i < RCRAFT_MAX_PROJECTIONS; i++) {
@@ -1705,24 +1633,27 @@ byte flags_to_projection(u16b e_flags) {
 byte rspell_skill(byte element[], byte elements) {
 	u16b skill = 0;
 	byte i;
+
 #ifdef ENABLE_AVERAGE_SKILL //calculate an average
 	for (i = 0; i < elements; i++) {
 		skill += get_skill(r_elements[element[i]].skill);
 	}
 	skill /= elements;
 #else //take the lowest value
-    u16b skill_compare;
-    skill = skill - 1; //overflow to largest u16b value
-    for (i = 0; i < elements; i++) {
-        skill_compare = get_skill(r_elements[element[i]].skill);
-        if (skill_compare < skill) skill = skill_compare;
-    }
+	u16b skill_compare;
+
+	skill = skill - 1; //overflow to largest u16b value
+	for (i = 0; i < elements; i++) {
+		skill_compare = get_skill(r_elements[element[i]].skill);
+		if (skill_compare < skill) skill = skill_compare;
+	}
 #endif
 	return (byte)skill;
 }
 
 byte rspell_level(byte imperative, byte type) {
 	byte level = 0;
+
 	level += r_imperatives[imperative].level;
 	level += r_types[type].level;
 	return level;
@@ -1730,12 +1661,14 @@ byte rspell_level(byte imperative, byte type) {
 
 s16b rspell_diff(byte skill, byte level) {
 	s16b diff = skill - level + 1;
+
 	if (diff > S_DIFF_MAX) return S_DIFF_MAX;
 	else return diff;
 }
 
 byte rspell_cost(byte imperative, byte type, byte skill) {
 	u16b cost = r_types[type].c_min + rget_level(r_types[type].c_max - r_types[type].c_min);
+
 	cost = cost * r_imperatives[imperative].cost / 10;
 	if (cost < S_COST_MIN) cost = S_COST_MIN;
 	if (cost > S_COST_MAX) cost = S_COST_MAX;
@@ -1743,7 +1676,6 @@ byte rspell_cost(byte imperative, byte type, byte skill) {
 }
 
 byte rspell_fail(byte imperative, byte type, s16b diff, u16b penalty) {
-
 	/* Set the base failure rate; currently 50% at equal skill to level such that the range is [5,95] over 30 levels */
 	s16b fail = 3 * (S_DIFF_MAX - diff) + 5;
 
@@ -1777,53 +1709,15 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 	damage = damage * r_imperatives[imperative].damage / 10;
 
 	/* Calculation */
-	d1 = r_types[type].d1min + rget_level(r_types[type].d1max - r_types[type].d1min) * dice / S_WEIGHT_HI;
-	d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
+	d1 = r_types[type].d1min + rget_level(r_types[type].d1max - r_types[type].d1min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
+	//d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
+	d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * 1200 * 14 / (10 * S_WEIGHT_HI); //Squarer scaling, linear for all modifiers. - Kurzel
 	damage = r_types[type].dbmin + rget_level(r_types[type].dbmax - r_types[type].dbmin) * damage / S_WEIGHT_HI;
 
 	/* Return */
 	*dx = (byte)d1;
 	*dy = (byte)d2;
-	
-	/* Further modify for individual spells */
-	if (r_imperatives[imperative].flag == I_ENHA) {
-		if (r_types[type].flag == T_SIGN) {
-			switch (projection) {
-				case SV_R_TIME: { //recharging
-					damage = (50 + rget_level(50)) * r_imperatives[imperative].damage / 10;
-					if (damage > 100) damage = 100;
-					if (damage < 50) damage = 50;
-				break; }
-			}
-		}
-	} else {
-		if (r_types[type].flag == T_SIGN) {
-			switch (projection) {
-				
-				case SV_R_WATE: { //regen
-					damage = rget_level(700) * r_imperatives[imperative].damage / 10;
-					if (damage > 700) damage = 700;
-					if (damage < 70) damage = 70;
-				break; }
 
-				case SV_R_TIME: { //speed
-					damage = rget_level(15) * r_imperatives[imperative].damage / 10;
-					if (damage > 10) damage = 10;
-					if (damage < 1) damage = 1;
-				break; }
-				
-				case SV_R_FORC: { //armor
-					damage = rget_level(20) * r_imperatives[imperative].damage / 10;
-					if (damage > 20) damage = 20;
-					if (damage < 1) damage = 1;
-				}
-
-				default: {
-				break; }
-			}
-		}
-	}
-	
 	return (u16b)damage;
 }
 
@@ -1832,90 +1726,14 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection) {
 	radius += r_imperatives[imperative].radius;
 	if (radius < S_RADIUS_MIN) radius = S_RADIUS_MIN;
 	if (radius > S_RADIUS_MAX) radius = S_RADIUS_MAX;
-	
-	/* Further modify for individual spells (not limited) */
-	if (r_types[type].flag == T_SIGN) {
-		switch (projection) {
-			case SV_R_NEXU: { //blink
-				//radius = rget_level(150) * radius / S_RADIUS_MAX;
-				radius = rget_level(25) * radius / S_RADIUS_MAX;
-				if (radius > 25) radius = 25;
-				if (radius < 5) radius = 5;
-			break; }
-
-			case SV_R_GRAV: { //tele_to
-				radius = rget_level(10) * radius / S_RADIUS_MAX;
-			break; }
-
-			case SV_R_SHAR: { //earthquake
-				radius = rget_level(10) * radius / S_RADIUS_MAX;
-			break; }
-			
-			default: {
-			break; }
-		}
-	}
-	
 	return (byte)radius;
 }
 
 byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u16b dice) {
 	s16b duration = r_types[type].d_min + rget_level(r_types[type].d_max - r_types[type].d_min);
 	duration = duration * r_imperatives[imperative].duration / 10;
-	
-	/* Further modify for individual spells (limited) */
-	if (r_imperatives[imperative].flag == I_ENHA) {
-		if (r_types[type].flag == T_SIGN) {
-			switch (projection) {
-				
-				case SV_R_DARK: //invis
-				case SV_R_FORC: //reflect
-					duration = dice;
-				break;
-				
-				case SV_R_CHAO: //brand
-				case SV_R_ELEC:
-				case SV_R_FIRE:
-				case SV_R_WATE: //regen
-				case SV_R_COLD:
-				case SV_R_ACID:	
-				case SV_R_POIS:
-				case SV_R_PLAS:
-					duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
-				break;
-				
-				default: {
-				break; }
-			}
-		}
-	} else {
-		if (r_types[type].flag == T_SIGN) {
-			switch (projection) {
-
-				case SV_R_INER: //anchor
-				case SV_R_FORC: //armor
-					duration = dice;
-				break;
-				
-				case SV_R_ELEC: //resist
-				case SV_R_FIRE:
-				case SV_R_COLD:
-				case SV_R_ACID:	
-				case SV_R_POIS:
-				case SV_R_TIME: //haste
-				case SV_R_PLAS:
-					duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
-				break;
-				
-				default: {
-				break; }
-			}
-		}
-	}
-	
 	if (duration < S_DURATION_MIN) duration = S_DURATION_MIN;
 	if (duration > S_DURATION_MAX) duration = S_DURATION_MAX;
-	
 	return (byte)duration;
 }
 
@@ -1933,16 +1751,16 @@ bool item_tester_hook_rune(object_type *o_ptr) {
 static bool item_tester_hook_sigil(object_type *o_ptr) {
 	/* Store tval for comparison speed */
 	byte tval = o_ptr->tval;
-	
+
 	/* Weapons */
 	if ((tval == TV_MSTAFF)
 	 || (tval == TV_BLUNT)
 	 || (tval == TV_POLEARM)
 	 || (tval == TV_SWORD)
 	 || (tval == TV_AXE)
-	 || (tval == TV_BOOMERANG)) 
+	 || (tval == TV_BOOMERANG))
 		return TRUE;
-		
+
 	/* Armours */
 	if ((tval == TV_BOOTS)
 	 || (tval == TV_GLOVES)
@@ -1952,7 +1770,7 @@ static bool item_tester_hook_sigil(object_type *o_ptr) {
 	 || (tval == TV_CLOAK)
 	 || (tval == TV_SOFT_ARMOR)
 	 || (tval == TV_HARD_ARMOR)
-	 || (tval == TV_DRAG_ARMOR)) 
+	 || (tval == TV_DRAG_ARMOR))
 		return TRUE;
 
 	return FALSE;
@@ -1965,14 +1783,14 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 	/* Print the header */
 	prt("", 1, col);
 	put_str("   Form    Level Cost Fail Info", 1, col);
-	
+
 	/* Check for a penalty due to status */
 	u16b penalty = 0;
 	if (p_ptr->blind) penalty += 10;
 	//if (p_ptr->confused) penalty += 10; //#ifdef ENABLE_CONFUSED_CASTING
 	if (p_ptr->stun > 50) penalty += 25;
 	else if (p_ptr->stun) penalty += 15;
-	
+
 	/* Analyze parameters */
 	byte element[RCRAFT_MAX_ELEMENTS];
 	byte elements = flags_to_elements(element, e_flags);
@@ -1981,7 +1799,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 	byte imperative = flags_to_imperative(m_flags);
 	byte level, cost, fail;
 	s16b diff, sdiff;
-	
+
 	/* Print the list */
 	for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
 
@@ -1995,7 +1813,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 		u16b dice = damroll(dx, dy);
 		byte radius = rspell_radius(imperative, i, skill, projection);
 		byte duration = rspell_duration(imperative, i, skill, projection, dice);
-		
+
 		/* Extra parameters */
 		sdiff = skill - level + 1; //For a real 'level difference' display.
 
@@ -2004,725 +1822,190 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 			color = 'G';
 			if (penalty) color = 'y';
 			if (p_ptr->csp < cost) color = 'o';
-			if (p_ptr->anti_magic && r_types[i].flag != T_ENCH) color = 'r'; //#define ENABLE_SHELL_ENCHANT
+			//if (p_ptr->anti_magic && r_types[i].flag != T_SIGL) color = 'r'; //#define ENABLE_SHELL_ENCHANT
+			if (p_ptr->anti_magic) color = 'r';
 		}
 		else color = 'D';
 
 		/* Fill a line */
 		switch (r_types[i].flag) {
-		
-			case T_BOLT: {
+
+			case T_BOLT: { //Beam
 				if (r_imperatives[imperative].flag != I_ENHA) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail,
-					dx,
-					dy
-					);
+					color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
 				} else {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d beam",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail,
-					dx,
-					dy
-					);
-				}
-			break; }
-			/*
-			case T_BEAM: {
-				if (r_imperatives[imperative].flag == I_ENHA) {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail,
-					damage,
-					duration
-					);
-				} else {
+					damage = rspell_damage(&dx, &dy, flags_to_imperative(I_MAXI), i, skill, projection);
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail,
-					dx,
-					dy
-					);
+					color, 'a' + i, "beam", sdiff, cost, fail, dx, dy);
 				}
 			break; }
-			*/
-			case T_CLOU: {
+
+			case T_CLOU: { //Storm
 				if (r_imperatives[imperative].flag != I_ENHA) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail,
-					damage,
-					radius,
-					duration
-					);
-				} else { //Storm Hack
+					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius, duration);
+				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail,
-					damage*3/2,
-					radius,
-					duration*2
-					);
+					color, 'a' + i, "storm", sdiff, cost, fail, damage*2, radius, duration*2);
 				}
 			break; }
-			
-			case T_BALL: {
-				sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
-				color,
-				'a' + i,
-				r_types[i].name,
-				sdiff,
-				cost,
-				fail,
-				damage,
-				radius
-				);
-			break; }
-			
-			case T_SIGN: {
-				switch (projection) {
-				
-					case SV_R_LITE: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% call light dam %d rad %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							damage,
-							radius
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% starlite dam %dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					case SV_R_DARK: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% call dark dam %d rad %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							damage,
-							radius
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% invis dur %dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					case SV_R_NEXU: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							radius
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% teleport",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						}
-					break; }
-					
-					case SV_R_NETH: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% obliteration",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% genocide",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						}
-					break; }
-					
-					case SV_R_CHAO: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
+
+			case T_SIGN: { //Glyph
+				if (r_imperatives[imperative].flag != I_ENHA) {
+					switch (projection) {
+
+						case SV_R_LITE: { //Illumination
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d illumination",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2, radius+2);
+						break; }
+
+						case SV_R_DARK: { //Invisibility
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d pow %d invisibility",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, damage);
+						break; }
+
+						case SV_R_NEXU: { //Teleportation
+							switch (r_imperatives[imperative].flag) {
+								//Manual tuning; Phase Door (6-12), Blink (10), Teleport (100), Spell (100-200) - Kurzel
+								case I_MINI: { radius = 12 + rget_level(12); break; }
+								case I_LENG: { radius = 36 + rget_level(36); break; }
+								case I_COMP: { radius =  6 + rget_level( 6); break; }
+								case I_MODE: { radius = 25 + rget_level(25); break; }
+								case I_EXPA: { radius = 75 + rget_level(75); break; }
+								case I_BRIE: { radius = 12 + rget_level(12); break; }
+								case I_MAXI: { radius = 50 + rget_level(50); break; }
+							}
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d teleportation",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+						break; }
+
+						case SV_R_NETH: { //Annihilation
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d annihilation (bolt)",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, 1+damage/10);
+						break; }
+
+						case SV_R_CHAO: { //Polymorph Self
 							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph self",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% chaotic brand dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					case SV_R_MANA: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove curses",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove *curses*",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						}
-					break; }
-					
-					case SV_R_CONF: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% monster confusion",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% identify",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						}
-					break; }
-					
-					case SV_R_INER: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% anchor dur %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						}
-					break; }
-					
-					case SV_R_ELEC: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res electricity dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% lightning brand dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					case SV_R_FIRE: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% fire brand dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					case SV_R_WATE: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% neutralize poison",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							damage,
-							duration
-							);
-						}
-					break; }
-					
-					case SV_R_GRAV: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-to rad %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							radius
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						}
-					break; }
-					
-					case SV_R_COLD: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res cold dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% frost brand dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					case SV_R_ACID: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res acid dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% acid brand dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					case SV_R_POIS: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res poison dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% poison brand dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					case SV_R_TIME: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d speed dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							damage,
-							duration,
-							dx,
-							dy
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							damage
-							);
-						}
-					break; }
-					
-					case SV_R_SOUN: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarm rad %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							radius
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarming",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						}
-					break; }
-					
-					case SV_R_SHAR: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% earthquake rad %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							radius
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dig",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						}
-					break; }
-					
-					case SV_R_DISE: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% unmagic",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% cancellation",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail
-							);
-						}
-					break; }
-					
-					case SV_R_FORC: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d AC dur %dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							damage,
-							dx,
-							dy
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					case SV_R_PLAS: {
-						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% resistance dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% power brand dur %d+%dd%d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							duration,
-							dx,
-							dy
-							);
-						}
-					break; }
-					
-					default: {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%%",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail
-					);
-					break; }
-				}
-			break; }
-			
-			case T_RUNE: {
-				if (r_imperatives[imperative].flag != I_ENHA) {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail,
-					damage,
-					radius
-					);
-				} else {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% warding",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail
-					);
-				}
-			break; }
-			
-			case T_WAVE: {
-				if (r_imperatives[imperative].flag != I_ENHA) {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail,
-					damage,
-					duration
-					);
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+						break; }
+
+						case SV_R_MANA: { //Recharging
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d recharging",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage);
+						break; }
+
+						case SV_R_CONF: { //Reflection
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d reflection",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2);
+						break; }
+
+						case SV_R_INER: { //Mass Stasis
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d mass stasis",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*2);
+						break; }
+
+						case SV_R_ELEC:
+						case SV_R_FIRE:
+						case SV_R_COLD:
+						case SV_R_ACID:
+						case SV_R_POIS: { //Infusion
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d %s infusion",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, r_projections[projection].name);
+						break; }
+
+						case SV_R_WATE: { //Quench Thirst
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% quench thirst",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+						break; }
+
+						case SV_R_GRAV: { //Mass Teleport-To
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d mass teleport-to",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*2);
+						break; }
+
+						case SV_R_SHAR: { //Dig
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dig (bolt)",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+						break; }
+
+						case SV_R_SOUN: { //Disarm
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d disarm",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+						break; }
+
+						case SV_R_TIME: { //Haste
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d dur %d+1d%d haste",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration/2, duration/2);
+						break; }
+
+						case SV_R_DISE: { //Resistance
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d base resistance",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2);
+						break; }
+
+						case SV_R_ICEY:
+						case SV_R_PLAS: { //Shield
+								damage = rget_level(20) * r_imperatives[imperative].damage / 10;
+								if (damage < 1) damage = 1; if (damage > 20) damage = 20;
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d dur %d+1d%d +%d AC",
+								color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy, duration/2, duration/2, damage);
+						break; }
+
+					}
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail,
-					damage
-					);
+					color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2);
 				}
 			break; }
-			
-			case T_ENCH: {
+
+			case T_BALL: { //Swarm
 				if (r_imperatives[imperative].flag != I_ENHA) {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune resist",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail
-					);
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
+					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 				} else {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune misc",
-					color,
-					'a' + i,
-					r_types[i].name,
-					sdiff,
-					cost,
-					fail
-					);
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d or %d (x%d)",
+					color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((2+(sdiff-1)/10) > 2) ? (2+(sdiff-1)/10) : 2));
 				}
 			break; }
+
+			case T_WAVE: { //Dispel
+				if (r_imperatives[imperative].flag != I_ENHA) {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) dur %d",
+					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
+				} else {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
+					color, 'a' + i, "dispel", sdiff, cost, fail, damage*2);
+				}
+			break; }
+
+			case T_SIGL: { //Boon
+				if (r_imperatives[imperative].flag != I_ENHA) {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% %s resistance",
+					color, 'a' + i, r_types[i].name, sdiff, cost, fail, r_projections[projection].name);
+				} else {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% miscellaneous boni",
+					color, 'a' + i, "boon", sdiff, cost, fail);
+				}
+			break; }
+
+			case T_BURS: { //Flare
+				if (r_imperatives[imperative].flag != I_ENHA) {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
+					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
+				} else {
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d (33%% backlash)",
+					color, 'a' + i, "flare", sdiff, cost, fail, dx, dy);
+				}
+			break; }
+
 		}
 
 		/* Print the line */
 		prt("", j, col);
 		put_str(tmpbuf, j++, col);
 	}
-	
+
 	/* Clear the bottom line */
 	prt("", j, col);
 }
@@ -2742,8 +2025,7 @@ static bool rcraft_get_type(u16b e_flags, u16b m_flags, u16b *tempflag) {
 	else
 		strnfmt(out_val, 78, "No options available - ESC=exit");
 
-	if (c_cfg.always_show_lists)
-	{
+	if (c_cfg.always_show_lists) {
 		/* Show list */
 		redraw = TRUE;
 
@@ -2755,14 +2037,11 @@ static bool rcraft_get_type(u16b e_flags, u16b m_flags, u16b *tempflag) {
 	}
 
 	/* Get a technique from the user */
-	while (!done && get_com(out_val, &choice))
-	{
+	while (!done && get_com(out_val, &choice)) {
 		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
-		{
+		if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 			/* Show the list */
-			if (!redraw)
-			{
+			if (!redraw) {
 				/* Show list */
 				redraw = TRUE;
 
@@ -2772,10 +2051,8 @@ static bool rcraft_get_type(u16b e_flags, u16b m_flags, u16b *tempflag) {
 				/* Display a list of techniques */
 				rcraft_print_types(e_flags, m_flags);
 			}
-
 			/* Hide the list */
-			else
-			{
+			else {
 				/* Hide list */
 				redraw = FALSE;
 
@@ -2790,13 +2067,12 @@ static bool rcraft_get_type(u16b e_flags, u16b m_flags, u16b *tempflag) {
 			continue;
 		}
 
-	       	/* Extract choice */
+		/* Extract choice */
 		i = (islower(choice) ? A2I(choice) : RCRAFT_MAX_TYPES);
-	      	if (i < 0) return FALSE;
+		if (i < 0) return FALSE;
 
 		/* Totally illegal */
-		if (i > RCRAFT_MAX_TYPES)
-		{
+		if (i > RCRAFT_MAX_TYPES) {
 			bell();
 			continue;
 		}
@@ -2806,8 +2082,7 @@ static bool rcraft_get_type(u16b e_flags, u16b m_flags, u16b *tempflag) {
 	}
 
 	/* Restore the screen */
-	if (redraw)
-	{
+	if (redraw) {
 		Term_load();
 
 		/* Flush any events */
@@ -2824,7 +2099,7 @@ static bool rcraft_get_type(u16b e_flags, u16b m_flags, u16b *tempflag) {
 		*tempflag = 0;
 		return FALSE;
 	}
-	
+
 	/* Success */
 	return (TRUE);
 }
@@ -2846,28 +2121,23 @@ static void rcraft_print_imperatives(u16b e_flags, u16b m_flags) {
 	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
 
 		/* Get the line color */
-		if (r_imperatives[i].level < skill) color = 'G';
+		if (r_imperatives[i].level+4 < skill) color = 'G'; //Ew, hardcode the 1st spell type level-1 - Kurzel
 		else color = 'D';
 
 		/* Fill a line */
-		sprintf(tmpbuf, "\377%c%c) %-10s %5d %3d%% %s%d%% %5d%% %5s%d %7d%% %5d%%",
-			color,
-			'a' + i,
-			r_imperatives[i].name,
-			r_imperatives[i].level,
-			r_imperatives[i].cost * 10,
-			ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail,
-			r_imperatives[i].damage * 10,
-			r_imperatives[i].radius >= 0 ? "+" : "-", ABS(r_imperatives[i].radius),
-			r_imperatives[i].duration * 10,
-			r_imperatives[i].energy * 10
-			);
+		sprintf(tmpbuf, "\377%c%c) %-10s %s%d %3d%% %s%d%% %5d%% %5s%d %7d%% %5d%%",
+			color, 'a' + i, r_imperatives[i].name,
+			ABS(r_imperatives[i].level) >= 10 ? (r_imperatives[i].level >= 0 ? "  +" : "  ") : (r_imperatives[i].level >= 0 ? "   +" : "   "),
+			r_imperatives[i].level, r_imperatives[i].cost * 10,
+			ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "),
+			r_imperatives[i].fail, r_imperatives[i].damage * 10, r_imperatives[i].radius >= 0 ? "+" : "-", ABS(r_imperatives[i].radius),
+			r_imperatives[i].duration * 10, r_imperatives[i].energy * 10);
 
 		/* Print the line */
 		prt("", j, col);
 		put_str(tmpbuf, j++, col);
 	}
-	
+
 	/* Clear the bottom line */
 	prt("", j, col);
 }
@@ -2887,8 +2157,7 @@ static bool rcraft_get_imperative(u16b e_flags, u16b m_flags, u16b *tempflag) {
 	else
 		strnfmt(out_val, 78, "No options available - ESC=exit");
 
-	if (c_cfg.always_show_lists)
-	{
+	if (c_cfg.always_show_lists) {
 		/* Show list */
 		redraw = TRUE;
 
@@ -2900,14 +2169,11 @@ static bool rcraft_get_imperative(u16b e_flags, u16b m_flags, u16b *tempflag) {
 	}
 
 	/* Get a technique from the user */
-	while (!done && get_com(out_val, &choice))
-	{
+	while (!done && get_com(out_val, &choice)) {
 		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
-		{
+		if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 			/* Show the list */
-			if (!redraw)
-			{
+			if (!redraw) {
 				/* Show list */
 				redraw = TRUE;
 
@@ -2917,10 +2183,8 @@ static bool rcraft_get_imperative(u16b e_flags, u16b m_flags, u16b *tempflag) {
 				/* Display a list of techniques */
 				rcraft_print_imperatives(e_flags, m_flags);
 			}
-
 			/* Hide the list */
-			else
-			{
+			else {
 				/* Hide list */
 				redraw = FALSE;
 
@@ -2935,13 +2199,12 @@ static bool rcraft_get_imperative(u16b e_flags, u16b m_flags, u16b *tempflag) {
 			continue;
 		}
 
-	       	/* Extract choice */
+		/* Extract choice */
 		i = (islower(choice) ? A2I(choice) : RCRAFT_MAX_IMPERATIVES);
-	      	if (i < 0) return FALSE;
+		if (i < 0) return FALSE;
 
 		/* Totally illegal */
-		if (i > RCRAFT_MAX_IMPERATIVES)
-		{
+		if (i > RCRAFT_MAX_IMPERATIVES) {
 			bell();
 			continue;
 		}
@@ -2951,8 +2214,7 @@ static bool rcraft_get_imperative(u16b e_flags, u16b m_flags, u16b *tempflag) {
 	}
 
 	/* Restore the screen */
-	if (redraw)
-	{
+	if (redraw) {
 		Term_load();
 
 		/* Flush any events */
@@ -2977,7 +2239,7 @@ static bool rcraft_get_imperative(u16b e_flags, u16b m_flags, u16b *tempflag) {
 static void rcraft_print_elements(u16b e_flags) {
 	int col = 13, j = 2, i;
 	char tmpbuf[80];
-	
+
 	/* Print the header */
 	prt("", 1, col);
 	put_str("   Element", 1, col);
@@ -2989,7 +2251,7 @@ static void rcraft_print_elements(u16b e_flags) {
 			sprintf(tmpbuf, "\377%c%c) %-11s",
 				'G',
 				'a' + i,
-				r_elements[i].name);		
+				r_elements[i].name);
 			/* Print the line */
 			prt("", j, col);
 			put_str(tmpbuf, j++, col);
@@ -2998,7 +2260,7 @@ static void rcraft_print_elements(u16b e_flags) {
 			sprintf(tmpbuf, "\377%c%c) %-11s",
 				'U',
 				'a' + i,
-				r_elements[i].name);		
+				r_elements[i].name);
 			/* Print the line */
 			prt("", j, col);
 			put_str(tmpbuf, j++, col);
@@ -3009,7 +2271,7 @@ static void rcraft_print_elements(u16b e_flags) {
 	// sprintf(tmpbuf, "Select up to %d elements.", RSPELL_MAX_ELEMENTS);
 	// prt("", j, col);
 	// put_str(tmpbuf, j++, col);
-	
+
 	/* Clear the bottom line */
 	prt("", j, col);
 }
@@ -3029,8 +2291,7 @@ static bool rcraft_get_element(u16b e_flags, u16b *tempflag) {
 	else
 		strnfmt(out_val, 78, "No options available - ESC=exit");
 
-	if (c_cfg.always_show_lists)
-	{
+	if (c_cfg.always_show_lists) {
 		/* Show list */
 		redraw = TRUE;
 
@@ -3042,15 +2303,12 @@ static bool rcraft_get_element(u16b e_flags, u16b *tempflag) {
 	}
 
 	/* Get a technique from the user */
-	while (!done && get_com(out_val, &choice))
-	{
+	while (!done && get_com(out_val, &choice)) {
 
 		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
-		{
+		if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 			/* Show the list */
-			if (!redraw)
-			{
+			if (!redraw) {
 				/* Show list */
 				redraw = TRUE;
 
@@ -3060,10 +2318,8 @@ static bool rcraft_get_element(u16b e_flags, u16b *tempflag) {
 				/* Display a list of techniques */
 				rcraft_print_elements(e_flags);
 			}
-
 			/* Hide the list */
-			else
-			{
+			else {
 				/* Hide list */
 				redraw = FALSE;
 
@@ -3091,13 +2347,12 @@ static bool rcraft_get_element(u16b e_flags, u16b *tempflag) {
 			return FALSE;
 		}
 
-	       	/* Extract choice */
+		/* Extract choice */
 		i = (islower(choice) ? A2I(choice) : (RCRAFT_MAX_ELEMENTS + 1));
-	      	if (i < 0) return FALSE;
+		if (i < 0) return FALSE;
 
 		/* Totally illegal */
-		if (i > RCRAFT_MAX_ELEMENTS)
-		{
+		if (i > RCRAFT_MAX_ELEMENTS) {
 			bell();
 			continue;
 		}
@@ -3107,8 +2362,7 @@ static bool rcraft_get_element(u16b e_flags, u16b *tempflag) {
 	}
 
 	/* Restore the screen */
-	if (redraw)
-	{
+	if (redraw) {
 		Term_load();
 
 		/* Flush any events */
@@ -3120,7 +2374,7 @@ static bool rcraft_get_element(u16b e_flags, u16b *tempflag) {
 	if (!done) return (FALSE);
 
 	/* Save the choice */
-	if(i >= 0 && i < RCRAFT_MAX_ELEMENTS) *tempflag = r_elements[i].flag;
+	if (i >= 0 && i < RCRAFT_MAX_ELEMENTS) *tempflag = r_elements[i].flag;
 	else {
 		*tempflag = 0;
 		return FALSE;
@@ -3134,7 +2388,7 @@ void do_runespell() {
 	Term_load();
 	u16b e_flags = 0, m_flags = 0, tempflag = 0;
 	int dir = 0, item = 0;
-	
+
 	/* Request the Elements */
 	byte i;
 	for(i = 0; i < RSPELL_MAX_ELEMENTS; i++) {
@@ -3151,22 +2405,18 @@ void do_runespell() {
 	if(rcraft_get_type(e_flags, m_flags, &tempflag)) m_flags |= tempflag;
 	else { Term_load(); return; }
 
-	/* Request the Direction -- Hardcoded */
+	/* Request the Direction -- Hardcoded - Kurzel */
 	byte projection = flags_to_projection(e_flags);
 	if (((m_flags & T_BOLT) == T_BOLT)
-	 // || ((m_flags & T_BEAM) == T_BEAM)
-	 || (((m_flags & T_CLOU) == T_CLOU) && !((m_flags & I_ENHA) == I_ENHA))
+	 || (((m_flags & T_CLOU) == T_CLOU) && !((m_flags & I_ENHA) == I_ENHA)) //Until (if) Storm can be targeted! - Kurzel
+	 || (((m_flags & T_SIGN) == T_SIGN) && (((projection == SV_R_NETH) && ((m_flags & I_ENHA) != I_ENHA))))
+	 || (((m_flags & T_SIGN) == T_SIGN) && (((projection == SV_R_SHAR) && ((m_flags & I_ENHA) != I_ENHA))))
 	 || ((m_flags & T_BALL) == T_BALL)
-	 || (((m_flags & T_SIGN) == T_SIGN) && (
-	 ((projection == SV_R_INER) && ((m_flags & I_ENHA) == I_ENHA)) ||
-	 ((projection == SV_R_GRAV) && ((m_flags & I_ENHA) == I_ENHA)) ||
-	 ((projection == SV_R_SOUN) && ((m_flags & I_ENHA) == I_ENHA)) ||
-	 ((projection == SV_R_SHAR) && ((m_flags & I_ENHA) == I_ENHA))
-	 )))
+	 || ((m_flags & T_BURS) == T_BURS))
 		if (!get_dir(&dir)) return;
-	
+
 	/* Request the Item */
-	if ((m_flags & T_ENCH) == T_ENCH) {
+	if ((m_flags & T_SIGL) == T_SIGL) {
 		item_tester_hook = item_tester_hook_sigil;
 		if (!c_get_item(&item, "Place a rune on which item? ", (USE_EQUIP))) return;
 	}

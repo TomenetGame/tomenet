@@ -89,6 +89,7 @@ extern void do_ranged_technique(void);
 extern bool get_item_hook_find_spell(int *item, bool inven_first);
 extern byte flags_to_elements(byte element[], u16b e_flags);
 extern byte flags_to_imperative(u16b m_flags);
+extern byte flags_to_type(u16b m_flags);
 extern byte flags_to_projection(u16b e_flags);
 extern byte rspell_skill(byte element[], byte elements);
 extern byte rspell_level(byte imperative, byte type);

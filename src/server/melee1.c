@@ -1019,14 +1019,14 @@ bool make_attack_melee(int Ind, int m_idx)
 			damage_org = damage; /* as a special service, we allow the invuln reduction above to factor in first, to prevent getting ko'ed on stairs :-p */
 #endif
 
-#if 0			
+#if 0
 			/* to prevent cloaking mode from breaking (break_cloaking) if an attack didn't do damage */
 			if (!d_dice && !d_side) no_dam = TRUE;
 #endif
 
 			/* Message */
 			/* DEG Modified to give damage number */
-			
+
 			if ((act) && (damage < 1)) {
 				if (method == RBM_MOAN) { /* no trailing dot */
 					/* Colour change for ranged MOAN for Halloween event -C. Blue */
@@ -1512,7 +1512,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 						/* Only eat food */
 						if (o_ptr->tval != TV_FOOD) continue;
-						
+
 						/* Get a description */
 						object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
@@ -2520,7 +2520,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					obvious = TRUE;
 					msg_print(Ind, "\377RYou shiver in madness..");
-					
+
 					/* Since sanity hits can become too powerful
 					   by the normal melee-boosting formula for
 					   monsters that gained levels, limit it - C. Blue */
@@ -2583,7 +2583,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					    (!(f4 & (TR4_MUST2H | TR4_SHOULD2H | TR4_COULD2H)) && magik(15)) /* we catch it with our spare hand ;) */
 					    ))
 						break;
-					
+
 					/* riposte */
 					if (rand_int(p_ptr->skill_thn) * (p_ptr->heavy_wield ? 1 : 3)
 					    < (rlev + damage + UNAWARENESS(p_ptr))) {
@@ -2927,7 +2927,25 @@ bool make_attack_melee(int Ind, int m_idx)
 						}
 					}
 				}
+
+				/* ice shield, functionally similar to aura of death - Kurzel */
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_ICE) && alive) {
+					if (magik(25)) {
+						sprintf(p_ptr->attacker, " is enveloped in ice for");
+						fire_ball(Ind, GF_ICE, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
+					}
+				}
+
+				/* plasma shield, functionally similar to aura of death - Kurzel */
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_PLASMA) && alive) {
+					if (magik(25)) {
+						sprintf(p_ptr->attacker, " is enveloped in plasma for");
+						fire_ball(Ind, GF_PLASMA, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
+					}
+				}
+
 				/* lightning shield */
+				/*
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_ELEC) && alive) {
 					if (!(r_ptr->flags3 & RF3_IM_ELEC)) {
 						int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
@@ -2940,23 +2958,24 @@ bool make_attack_melee(int Ind, int m_idx)
 						}
 					}
 				}
+				*/
 				/* fear shield */
-				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FEAR) && alive
-				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
-				    && (!(r_ptr->flags2 & RF2_POWERFUL))
-				    && (!(r_ptr->flags1 & RF1_UNIQUE))
-				    ) {
-					int tmp, d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2) - m_ptr->level;
-					if (d > 0) {
-						msg_format(Ind, "%^s gets scared away!", m_name);
-						/* Increase fear */
-						tmp = m_ptr->monfear + p_ptr->shield_power_opt;
-						fear = TRUE;
-						/* Set fear */
-						m_ptr->monfear = (tmp < 200) ? tmp : 200;
-						m_ptr->monfear_gone = 0;
-					}
-				}
+//				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FEAR) && alive
+//				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
+//				    && (!(r_ptr->flags2 & RF2_POWERFUL))
+//				    && (!(r_ptr->flags1 & RF1_UNIQUE))
+//				    ) {
+//					int tmp, d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2) - m_ptr->level;
+//					if (d > 0) {
+//						msg_format(Ind, "%^s gets scared away!", m_name);
+//						/* Increase fear */
+//						tmp = m_ptr->monfear + p_ptr->shield_power_opt;
+//						fear = TRUE;
+//						/* Set fear */
+//						m_ptr->monfear = (tmp < 200) ? tmp : 200;
+//						m_ptr->monfear_gone = 0;
+//					}
+//				}
 
 				/*
 				 * Apply the necromantic auras
@@ -3128,8 +3147,7 @@ bool make_attack_melee(int Ind, int m_idx)
  * Always miss 5% of the time, Always hit 5% of the time.
  * Otherwise, match monster power against player armor.
  */
-static int mon_check_hit(int m_idx, int power, int level)
-{
+static int mon_check_hit(int m_idx, int power, int level) {
 	monster_type *m_ptr = &m_list[m_idx];
 
 	int i, k, ac;
@@ -3157,8 +3175,7 @@ static int mon_check_hit(int m_idx, int power, int level)
 /*
  * Attack a monster via physical attacks.
  */
-bool monster_attack_normal(int tm_idx, int m_idx)
-{
+bool monster_attack_normal(int tm_idx, int m_idx) {
 	/* Targer */
 	monster_type    *tm_ptr = &m_list[tm_idx];
 #ifdef RPG_SERVER
@@ -3167,7 +3184,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 #endif
 	/* Attacker */
 	monster_type    *m_ptr = &m_list[m_idx]; 
-        monster_race    *r_ptr = race_inf(m_ptr);
+	monster_race    *r_ptr = race_inf(m_ptr);
 
 	int                     ap_cnt;
 
@@ -3213,22 +3230,18 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 		if (dead) break;
 
 		/* Extract the attack "power" */
-		switch (effect)
-		{
+		switch (effect) {
 			case RBE_HURT:  power = 60; break;
 		}
 
 		/* Monster hits player */
-		if (!effect || mon_check_hit(tm_idx, power, rlev))
-		{
+		if (!effect || mon_check_hit(tm_idx, power, rlev)) {
 			/* Assume no cut or stun */
 			do_cut = do_stun = 0;
 
 			/* Describe the attack method */
-			switch (method)
-			{
-				case RBM_HIT:
-				{
+			switch (method) {
+				case RBM_HIT: {
 #ifdef NORMAL_HIT_NO_STUN
 					do_cut = 1;
 #else
@@ -3248,10 +3261,8 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 //#endif
 
 			/* Apply appropriate damage */
-			switch (effect)
-			{
+			switch (effect) {
 				case 0:
-				{
 					/* Hack -- Assume obvious */
 					//obvious = TRUE;
 
@@ -3259,7 +3270,6 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 					damage = 0;
 
 					break;
-				}
 
 				case RBE_HURT:
 				{
@@ -3279,19 +3289,11 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 
 			/* Hack -- only one of cut or stun */
-			if (do_cut && do_stun)
-			{
+			if (do_cut && do_stun) {
 				/* Cancel cut */
-				if (rand_int(100) < 50)
-				{
-					do_cut = 0;
-				}
-
+				if (rand_int(100) < 50) do_cut = 0;
 				/* Cancel stun */
-				else
-				{
-					do_stun = 0;
-				}
+				else do_stun = 0;
 			}
 #ifdef RPG_SERVER
 			if (dead && m_ptr->pet) {
@@ -3304,11 +3306,10 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 					msg_print(find_player(m_ptr->owner), "\377GYour pet looks more experienced!");
 				}
 			}
-#endif			
+#endif
 #if 0//todo:implement
 			/* Handle cut */
-			if (do_cut)
-			{
+			if (do_cut) {
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
@@ -3319,16 +3320,15 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 //#endif
 
 				/* Roll for damage */
-				switch (tmp)
-				{
-					case 0: k = 0; break;
-					case 1: k = randint(5); break;
-					case 2: k = randint(5) + 5; break;
-					case 3: k = randint(20) + 20; break;
-					case 4: k = randint(50) + 50; break;
-					case 5: k = randint(100) + 100; break;
-					case 6: k = 300; break;
-					default: k = 500; break;
+				switch (tmp) {
+				case 0: k = 0; break;
+				case 1: k = randint(5); break;
+				case 2: k = randint(5) + 5; break;
+				case 3: k = randint(20) + 20; break;
+				case 4: k = randint(50) + 50; break;
+				case 5: k = randint(100) + 100; break;
+				case 6: k = 300; break;
+				default: k = 500; break;
 				}
 #if 0//todo:implement
 				/* Apply the cut */
@@ -3338,8 +3338,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 #endif
 #if 0//todo:implement
 			/* Handle stun */
-			if (do_stun)
-			{
+			if (do_stun) {
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
@@ -3350,14 +3349,14 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 //#endif
 				/* Roll for damage */
 				switch (tmp) {
-					case 0: k = 0; break;
-					case 1: k = randint(5); break;
-					case 2: k = randint(10) + 10; break;
-					case 3: k = randint(20) + 20; break;
-					case 4: k = randint(30) + 30; break;
-					case 5: k = randint(40) + 40; break;
-					case 6: k = 80; break;
-					default: k = 100; break;
+				case 0: k = 0; break;
+				case 1: k = randint(5); break;
+				case 2: k = randint(10) + 10; break;
+				case 3: k = randint(20) + 20; break;
+				case 4: k = randint(30) + 30; break;
+				case 5: k = randint(40) + 40; break;
+				case 6: k = 80; break;
+				default: k = 100; break;
 				}
 
 				/* Apply the stun */

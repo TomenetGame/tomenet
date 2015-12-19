@@ -460,65 +460,64 @@ monster_spell_type monster_spells6[32] =
 
 r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 {
-{ R_LITE, "Light", 	SKILL_R_LITE },
-{ R_DARK, "Darkness",	SKILL_R_DARK },
-{ R_NEXU, "Nexus", 	SKILL_R_NEXU },
-{ R_NETH, "Nether", 	SKILL_R_NETH },
-{ R_CHAO, "Chaos", 	SKILL_R_CHAO },
-{ R_MANA, "Mana", 	SKILL_R_MANA },
+{ R_LITE, "Light",    SKILL_R_LITE },
+{ R_DARK, "Darkness", SKILL_R_DARK },
+{ R_NEXU, "Nexus",    SKILL_R_NEXU },
+{ R_NETH, "Nether",   SKILL_R_NETH },
+{ R_CHAO, "Chaos",    SKILL_R_CHAO },
+{ R_MANA, "Mana",     SKILL_R_MANA },
 };
 
 r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES] =
 {
-{ I_MINI, "minimized",	 0,  6, -10,  6, -1,  8, 10 },
-{ I_LENG, "lengthened",	 2,  8,  +5,  9,  0, 15, 10 },
-{ I_COMP, "compressed",	 3, 12,  -5, 13, -2,  8, 10 },
-{ I_MODE, "moderate",	 5, 10,   0, 10,  0, 10, 10 },
-{ I_EXPA, "expanded",	 7, 13,  +5, 11, +2, 13, 10 },
-{ I_BRIE, "brief",	 8,  9,  -5,  8,  0,  6,  5 },
-{ I_MAXI, "maximized",	10, 14, +10, 14, +1, 13, 10 },
-{ I_ENHA, "enhanced",	10, 15,   0, 10,  0, 10, 10 },
+{ I_MINI, "minimized",   0,  6, -10,  6, -1,  8, 10 }, //best for sigils, some signs, lower levels
+{ I_LENG, "lengthened",  2,  8,  +5,  9,  0, 15, 10 }, //best efficiency, best for some signs, waves
+{ I_COMP, "compressed",  3, 12,  -5, 13, -2,  8, 10 }, //worst area damage, high single target efficiency
+{ I_MODE, "moderate",    5, 10,   0, 10,  0, 10, 10 }, //good for heavier weight elements with area damage
+{ I_EXPA, "expanded",    7, 13,  +5, 11, +2, 13, 10 }, //best area damage, low single target efficiency
+{ I_BRIE, "brief",       8,  8,  -5,  8,  0,  6,  5 }, //worst efficiency, sometimes best damage, flexible
+{ I_MAXI, "maximized",  10, 14, +10, 14, +1, 13, 10 }, //usually best damage, good ball efficiency
+{ I_ENHA, "enhanced",   10, 15, +15, 10,  0, 10, 10 }, //per-case damage / efficiency / area trade-offs
 };
 
-r_type r_types[RCRAFT_MAX_TYPES] =
-{
-{ T_BOLT, "bolt",	 1,  1, 15, 3,  4, 25, 41,  0,   0, 0, 0,  0,  0 },
-//{ T_BEAM, "beam",	 5,  5, 25, 3,  9, 53, 46, 16, 256, 0, 0,  3,  7 },
-{ T_CLOU, "cloud",	 5,  3, 30, 0,  0,  0,  0,  9, 121, 1, 4,  6, 14 },
-{ T_BALL, "ball",	10,  5, 30, 0,  0,  0,  0, 25, 770, 2, 4,  0,  0 },
-{ T_SIGN, "sign",	15, 10, 20, 4,  5,  7, 10, 10, 100, 2, 4, 10, 35 },
-{ T_RUNE, "glyph",	20, 20, 30, 0,  0,  0,  0, 16, 625, 1, 2,  3,  7 },
-{ T_WAVE, "wave",	25, 40, 50, 0,  0,  0,  0, 25, 441, 0, 0,  6, 10 },
-{ T_ENCH, "sigil",	30, 30, 40, 0,  0,  0,  0, 10, 100, 0, 0,  0,  0 },
-};
+r_type r_types[RCRAFT_MAX_TYPES] =                                     //Max Avg Base Damage/Turn; [] Dice/Damage Limit
+{                                                                      // | ENHA | MAXI | BRIE | Enha | Maxi | Brie |
+{ T_BOLT, "bolt",   5,  1, 30, 3,  1, 40, 22,  0,   0, 0, 0,  0,  0 }, // |  915 |  915 | 1080 [  705 ]  705 |  840 | * Compare 900:1059 mana (bolt), beam is non-relecting, compare burst.
+{ T_CLOU, "cloud", 10,  5, 30, 0,  0,  0,  0,  2, 196, 1, 3,  6, 14 }, // |  440 |  307 |      |  232 |  162 |      | * Compare 370:360 ice (s), 234:219 poison (c), 162:168 shards (c).
+{ T_SIGN, "sign",  15, 10, 20, 7, 10, 13, 20, 10, 100, 2, 4, 10, 35 }, // |  403 |      |      [  216 ]      |      | * Glyph uses half a moderate ball damage, should be relatively small.
+{ T_BALL, "ball",  20, 15, 30, 0,  0,  0,  0, 20, 720, 2, 4,  0,  0 }, // | 1230 | 1122 | 1300 [  666 ]  598 [  700 ] * Swarm with one direct hit of four balls shown, a (x2.5) multiplier.
+{ T_WAVE, "wave",  25, 20, 40, 0,  0,  0,  0, 30, 334, 0, 0,  6, 10 }, // |  744 | 1524 |      [  418 ]  843 |      | * Weight 600 (mana) caps at 500; consecutive regular waves don't stack.
+{ T_SIGL, "sigil", 30, 50, 50, 0,  0,  0,  0, 10, 100, 0, 0,  0,  0 }, // |      |   S_WEIGHT_INFLUENCE 70   |      |
+{ T_BURS, "burst", 35, 15, 30, 3,  1, 53, 29, 20, 720, 1, 2,  0,  0 }, // | 1180 | 1122 | 1300 [  900 ]  598 [  700 ] * Dice actually scale better for lower weight elements! - Kurzel
+};                                                                     // ---- 1200 Weights -------- 400 Weights ----
 
 r_projection r_projections[RCRAFT_MAX_PROJECTIONS] =
 {
-{ R_LITE,		GF_LITE,	300,	"light", TR2_RES_LITE },
-{ R_DARK,		GF_DARK,	700,	"darkness", TR2_RES_DARK },
-{ R_NEXU,		GF_NEXUS,	400,	"nexus", TR2_RES_NEXUS },
-{ R_NETH,		GF_NETHER,	550,	"nether", TR2_RES_NETHER },
-{ R_CHAO,		GF_CHAOS,	600,	"chaos", TR2_RES_CHAOS },
-{ R_MANA,		GF_MANA,	550,	"mana", TR5_RES_MANA },
+{ R_LITE,          GF_LITE,       400, "light",           TR2_RES_LITE },
+{ R_DARK,          GF_DARK,       550, "darkness",        TR2_RES_DARK },
+{ R_NEXU,          GF_NEXUS,      250, "nexus",           TR2_RES_NEXUS },
+{ R_NETH,          GF_NETHER,     550, "nether",          TR2_RES_NETHER },
+{ R_CHAO,          GF_CHAOS,      600, "chaos",           TR2_RES_CHAOS },
+{ R_MANA,          GF_MANA,       600, "mana",            TR5_RES_MANA },
 
-{ R_LITE | R_DARK,	GF_CONFUSION,	600,	"confusion", TR2_RES_CONF },
-{ R_LITE | R_NEXU,	GF_INERTIA,	350,	"inertia", TR5_RES_TELE },
-{ R_LITE | R_NETH,	GF_ELEC,	1200,	"lightning", TR2_RES_ELEC },
-{ R_LITE | R_CHAO,	GF_FIRE,	1200,	"fire", TR2_RES_FIRE },
-{ R_LITE | R_MANA,	GF_WAVE,	450,	"water", TR5_RES_WATER },
+{ R_LITE | R_DARK, GF_CONFUSION,  400, "confusion",       TR2_RES_CONF },
+{ R_LITE | R_NEXU, GF_INERTIA,    200, "inertia",         TR2_FREE_ACT },
+{ R_LITE | R_NETH, GF_ELEC,      1200, "lightning",       TR2_RES_ELEC },
+{ R_LITE | R_CHAO, GF_FIRE,      1200, "fire",            TR2_RES_FIRE },
+{ R_LITE | R_MANA, GF_WAVE,       300, "water",           TR5_RES_WATER },
 
-{ R_DARK | R_NEXU,	GF_GRAVITY,	350,	"gravity", TR3_FEATHER },
-{ R_DARK | R_NETH,	GF_COLD,	1200,	"frost", TR2_RES_COLD },
-{ R_DARK | R_CHAO,	GF_ACID,	1200,	"acid", TR2_RES_ACID },
-{ R_DARK | R_MANA,	GF_POIS,	800,	"poison", TR2_RES_POIS },
+{ R_DARK | R_NEXU, GF_GRAVITY,    150, "gravity",         TR3_FEATHER },
+{ R_DARK | R_NETH, GF_COLD,      1200, "frost",           TR2_RES_COLD },
+{ R_DARK | R_CHAO, GF_ACID,      1200, "acid",            TR2_RES_ACID },
+{ R_DARK | R_MANA, GF_POIS,       800, "poison",          TR2_RES_POIS },
 
-{ R_NEXU | R_NETH,	GF_TIME,	250,	"time", TR5_RES_TIME },
-{ R_NEXU | R_CHAO,	GF_SOUND,	500,	"sound", TR2_RES_SOUND },
-{ R_NEXU | R_MANA,	GF_SHARDS,	500,	"shards", TR2_RES_SHARDS },
+{ R_NEXU | R_NETH, GF_SHARDS,     400, "shards",          TR2_RES_SHARDS },
+{ R_NEXU | R_CHAO, GF_SOUND,      400, "sound",           TR2_RES_SOUND },
+{ R_NEXU | R_MANA, GF_TIME,       150, "time",            TR5_RES_TIME },
 
-{ R_NETH | R_CHAO,	GF_DISENCHANT,	600,	"disenchantment", TR2_RES_DISEN },
-{ R_NETH | R_MANA,	GF_FORCE,	300,	"force", TR2_RES_SOUND },
+{ R_NETH | R_CHAO, GF_DISENCHANT, 500, "disenchantment",  TR2_RES_DISEN },
+{ R_NETH | R_MANA, GF_ICE,        933, "ice",             TR2_RES_COLD | TR2_RES_SOUND | TR2_RES_SHARDS }, //Two high resists, too much? - Kurzel
 
-{ R_CHAO | R_MANA,	GF_PLASMA,	600,	"plasma", TR5_RES_PLASMA },
+{ R_CHAO | R_MANA, GF_PLASMA,     933, "plasma",          TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND }, //Competitive weighting for base/high elements. - Kurzel
 };
 

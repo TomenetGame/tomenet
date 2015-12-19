@@ -698,45 +698,45 @@ bool set_brand(int Ind, int v, int t, int p) {
 		    (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield..*/
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
 			switch (t) {
-			case BRAND_ELEC:
-			case BRAND_BALL_ELEC:
-				if (plural) msg_format(Ind, "%s sparkle with lightning!", weapons);
-				else msg_format(Ind, "%s sparkles with lightning!", weapons);
+				case BRAND_BALL_ACID: //not used
+				case BRAND_ACID:
+					if (plural) msg_format(Ind, "%s are branded with acid!", weapons);
+					else msg_format(Ind, "%s is branded with acid!", weapons);
 				break;
-			case BRAND_BALL_COLD:
-			case BRAND_COLD:
-				if (plural) msg_format(Ind, "%s freeze!", weapons);
-				else msg_format(Ind, "%s freezes!", weapons);
+				case BRAND_BALL_ELEC: //not used
+				case BRAND_ELEC:
+					if (plural) msg_format(Ind, "%s are branded with lightning!", weapons);
+					else msg_format(Ind, "%s is branded with lightning!", weapons);
 				break;
-			case BRAND_BALL_FIRE:
-			case BRAND_FIRE:
-				if (plural) msg_format(Ind, "%s burn!", weapons);
-				else msg_format(Ind, "%s burns!", weapons);
+				case BRAND_BALL_FIRE: //not used
+				case BRAND_FIRE:
+					if (plural) msg_format(Ind, "%s are branded with fire!", weapons);
+					else msg_format(Ind, "%s is branded with fire!", weapons);
 				break;
-			case BRAND_BALL_ACID:
-			case BRAND_ACID:
-				if (plural) msg_format(Ind, "%s drip acid!", weapons);
-				else msg_format(Ind, "%s drips acid!", weapons);
+				case BRAND_BALL_COLD: //not used
+				case BRAND_COLD:
+					if (plural) msg_format(Ind, "%s are branded with frost!", weapons);
+					else msg_format(Ind, "%s is branded with frost!", weapons);
 				break;
-			case BRAND_POIS:
-				if (plural) msg_format(Ind, "%s are covered with venom!", weapons);
-				else msg_format(Ind, "%s is covered with venom!", weapons);
+				case BRAND_POIS:
+					if (plural) msg_format(Ind, "%s are branded with poison!", weapons);
+					else msg_format(Ind, "%s is branded with poison!", weapons);
 				break;
-			case BRAND_BASE:
-				if (plural) msg_format(Ind, "%s glow in many colours!", weapons);
-				else msg_format(Ind, "%s glows in many colours!", weapons);
+				case BRAND_BASE:
+					if (plural) msg_format(Ind, "%s glow in many colours!", weapons); //not used
+					else msg_format(Ind, "%s glows in many colours!", weapons); //not used
 				break;
-			case BRAND_CHAO:
-				if (plural) msg_format(Ind, "%s seem to twist and warp!", weapons); //used experimentally
-				else msg_format(Ind, "%s seems to twist and warp!", weapons); //used experimentally
+				case BRAND_CHAO:
+					if (plural) msg_format(Ind, "%s seem to twist and warp!", weapons); //not used
+					else msg_format(Ind, "%s seems to twist and warp!", weapons); //not used
 				break;
-			case BRAND_VORP:
-				if (plural) msg_format(Ind, "%s sharpen!", weapons); //not used
-				else msg_format(Ind, "%s sharpens!", weapons); //not used
+				case BRAND_VORP:
+					if (plural) msg_format(Ind, "%s sharpen!", weapons); //not used
+					else msg_format(Ind, "%s sharpens!", weapons); //not used
 				break;
-			case BRAND_BALL_SOUN:
-				if (plural) msg_format(Ind, "%s vibrate!", weapons); //not used
-				else msg_format(Ind, "%s vibrates!", weapons); //not used
+				case BRAND_BALL_SOUN:
+					if (plural) msg_format(Ind, "%s vibrate!", weapons); //not used
+					else msg_format(Ind, "%s vibrates!", weapons); //not used
 				break;
 			}
 			notice = TRUE;
@@ -746,8 +746,32 @@ bool set_brand(int Ind, int v, int t, int p) {
 	/* Shut */
 	else {
 		if (p_ptr->brand) {
-			if (plural) msg_print(Ind, "\377oThe branding magic on your weapons ceases again.");
-			else msg_print(Ind, "\377oThe branding magic on your weapon ceases again.");
+			switch (t) {
+				case BRAND_ACID:
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377sacid.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377sacid.");
+				break;
+				case BRAND_ELEC:
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377blightning.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377blightning.");
+				break;
+				case BRAND_FIRE:
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rfire.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377rfire.");
+				break;
+				case BRAND_COLD:
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377wfrost.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377wfrost.");
+				break;
+				case BRAND_POIS:
+					if (plural) msg_format(Ind, "\377WYour weapons are branded with \377gpoison.");
+					else msg_format(Ind, "\377WYour weapon is branded with \377gpoison.");
+				break;
+				default:
+					if (plural) msg_print(Ind, "\377WYour weapons are no longer branded.");
+					else msg_print(Ind, "\377WYour weapon is no longer branded.");
+				break;
+			}
 			notice = TRUE;
 			t = 0;
 			p = 0;
@@ -1757,7 +1781,17 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->shield) {
-			msg_print(Ind, "A mystic shield forms around your body!");
+			switch (o) {
+				case SHIELD_ICE:
+					msg_print(Ind, "You are shielded by grinding ice!");
+				break;
+				case SHIELD_PLASMA:
+					msg_print(Ind, "You are shielded by searing plasma!");
+				break;
+				default:
+					msg_print(Ind, "A mystic shield forms around your body!");
+				break;
+			}
 			notice = TRUE;
 		}
 	}
@@ -1765,7 +1799,17 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	/* Shut */
 	else {
 		if (p_ptr->shield) {
-			msg_print(Ind, "Your mystic shield crumbles away.");
+			switch (o) {
+				case SHIELD_ICE:
+					msg_print(Ind, "\377WYou are no longer shielded by \377Bice.");
+				break;
+				case SHIELD_PLASMA:
+					msg_print(Ind, "\377WYou are no longer shielded by \377Rplasma.");
+				break;
+				default:
+					msg_print(Ind, "Your mystic shield crumbles away.");
+				break;
+			}
 			notice = TRUE;
 		}
 	}

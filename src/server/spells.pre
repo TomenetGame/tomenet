@@ -258,7 +258,7 @@ extern void do_mstopcharm(int Ind);
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);
 
 /* runecraft.c */
-extern void warding_rune(int Ind, byte typ, byte mod, byte lvl);
+extern bool warding_rune(int Ind, byte typ, byte mod, byte lvl);
 extern bool warding_rune_break(int m_idx);
 
 /* Druidry */

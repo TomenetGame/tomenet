@@ -7227,11 +7227,14 @@ extern int PlayerUID;
 /*
  * Shield effect options
  */
-#define SHIELD_NONE		0x0000
-#define SHIELD_COUNTER		0x0001
+#define SHIELD_NONE     0x0000
+#define SHIELD_COUNTER  0x0001
 #define SHIELD_FIRE		0x0002
-#define SHIELD_ELEC		0x0004
-#define SHIELD_FEAR		0x0008
+//Runie Shields
+#define SHIELD_ICE      0x0004 //Cold/Shards/Sound
+#define SHIELD_PLASMA   0x0008 //Elec/Fire/Sound
+//#define SHIELD_ELEC   0x0004
+//#define SHIELD_FEAR   0x0008
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
@@ -7974,11 +7977,11 @@ extern int PlayerUID;
 #define SV_R_COLD			12
 #define SV_R_ACID			13
 #define SV_R_POIS			14
-#define SV_R_TIME			15
+#define SV_R_SHAR			15
 #define SV_R_SOUN			16
-#define SV_R_SHAR			17
+#define SV_R_TIME			17
 #define SV_R_DISE			18
-#define SV_R_FORC			19
+#define SV_R_ICEY			19
 #define SV_R_PLAS			20
 
 #define RSPELL_MAX_ELEMENTS 2
@@ -8004,14 +8007,14 @@ extern int PlayerUID;
 #define RCRAFT_MAX_TYPES 7
 
 #define T_BOLT 0x0001
-//#define T_BEAM 0x0002
 #define T_CLOU 0x0002
-#define T_BALL 0x0004
+#define T_SIGN 0x0004
+#define T_BALL 0x0008
 
-#define T_SIGN 0x0008
-#define T_RUNE 0x0010
-#define T_WAVE 0x0020
-#define T_ENCH 0x0040
+#define T_WAVE 0x0010
+#define T_SIGL 0x0020
+#define T_BURS 0x0040
+
 
 /* Imperatives */
 /* Order matches the index in common/tables.c; ascending by level. */
@@ -8038,7 +8041,7 @@ extern int PlayerUID;
 #define S_DURATION_MAX 50
 #define S_WEIGHT_LO 150 //refer common/tables.c
 #define S_WEIGHT_HI 1200 //refer common/tables.c
-#define S_WEIGHT_INFLUENCE 80 //0 to S_WEIGHT_INFLUENCE_MAX; directly proportional to the spread of element damage caps.
+#define S_WEIGHT_INFLUENCE 70 //0 to S_WEIGHT_INFLUENCE_MAX; directly proportional to the spread of element damage caps.
 #define S_WEIGHT_INFLUENCE_MAX 100 //Used to be 10, now one more significant figure!
 
 /* Macros */

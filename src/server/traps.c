@@ -4425,8 +4425,8 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 		dam = damroll(10, 20);
 		rad = 2;
 	break;
-	case SV_R_FORC:
-		typ = GF_FORCE;
+	case SV_R_ICEY:
+		typ = GF_ICE;
 		dam = damroll(10, 20);
 		rad = 2;
 	break;

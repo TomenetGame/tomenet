@@ -26,6 +26,7 @@
 //#define AVERAGE_SKILL /* Take the average skill level, rather than the lowest. (Disabled to prevent one skill granting half-access to all others.) */
 //#define BACKLASH_SUSCEPT /* Extra backlash if the caster is susceptable to the projection element. (Disabled for now, until it can be completely implemented across classes; ie. Globe of Light hurts Dark-Elf casters.) */
 //#define BACKLASH_PROTECTION /* Prevent backlash by consuming a rune in inventory, if missing a !R preservation inscription. (Just get 0% fail instead, too complex!) */
+#define BACKLASH_CUT 5 /* Spell damage is divided by this number before dealt back to the runemaster as backlash. */
 //#define LIFE_CASTING /* Allows casting with HP if not enough MP. (Disabled due to simplified, damage only, backlash penalties. We don't want OP necro/blood (infinite mana) runies!) */
 #ifdef LIFE_CASTING
  #define SAFE_RETALIATION /* Disable retaliation/FTK when casting with HP. */
@@ -34,9 +35,10 @@
 /* Spell Options */
 #define BLIND_CASTING /* Blinding increases fail chance instead of preventing the cast. (No 'reading' aka 'no_lite(Ind)' check as with books.) */
 //#define CONFUSED_CASTING /* Confusion increases fail chance instead of preventing the cast. (Runecraft tends toward magic rather than something like archery, so this remains disabled.) */
-#define SHELL_ENCHANT /* Allow the T_ENCH (enchanting) spell type to be cast under an antimagic shell. (Allows equipment to be targetted, all other 'projection' types still fail.) */
-#define RUNE_REQUIREMENT /* Require the appropriate rune to cast, as regular spells require a book / spell scroll. (Erm, this would be a drastic change for caster runies, IDDC especially, so add failure instead...) */
-#ifdef RUNE_REQUIREMENT
+#define RUNE_REQUIRED /* Require the appropriate rune to cast Sign and Enhanced spells. (Retrieving a Sigil (Enhanced Sign) is an exception. - Kurzel) */
+//#define SHELL_ENCHANT /* Allow the T_SIGL (non-projecting) spell type to be cast under an antimagic shell. (Seems a bit inconsistent, will just disable for now.) */
+//#define DRAW_RISK /* Missing the appropriate rune adds some flat failure chance, defined below. (Disabled for now, see RUNE_REQUIRED option.) */
+#ifdef DRAW_RISK
  #define RISK_CHANCE 50 /* +X% extra failure (chance to backlash) when casting without a rune. (100% seems too harsh at low level, but 50% seems significantly dangerous to encourage runes ASAP.) */
 #endif
 
@@ -69,7 +71,7 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection);
 byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u16b dice);
 
 /* Item Handling */
-object_type * rspell_trap(int Ind, byte projection);
+object_type * has_rune(int Ind, byte projection);
 bool rspell_socket(int Ind, byte projection, bool sigil);
 bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item);
 
@@ -89,7 +91,7 @@ byte flags_to_elements(byte element[], u16b e_flags) {
 byte flags_to_imperative(u16b m_flags) {
 	byte i;
 	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++)
-		if ((m_flags & r_imperatives[i].flag) == r_imperatives[i].flag) 
+		if ((m_flags & r_imperatives[i].flag) == r_imperatives[i].flag)
 			return i;
 	return -1;
 }
@@ -97,7 +99,7 @@ byte flags_to_imperative(u16b m_flags) {
 byte flags_to_type(u16b m_flags) {
 	byte i;
 	for (i = 0; i < RCRAFT_MAX_TYPES; i++)
-		if ((m_flags & r_types[i].flag) == r_types[i].flag) 
+		if ((m_flags & r_types[i].flag) == r_types[i].flag)
 			return i;
 	return -1;
 }
@@ -195,53 +197,15 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 	damage = damage * r_imperatives[imperative].damage / 10;
 
 	/* Calculation */
-	d1 = r_types[type].d1min + rget_level(r_types[type].d1max - r_types[type].d1min) * dice / S_WEIGHT_HI;
-	d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
+	d1 = r_types[type].d1min + rget_level(r_types[type].d1max - r_types[type].d1min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
+	//d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
+	d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * 1200 * 14 / (10 * S_WEIGHT_HI); //Squarer scaling, linear for all modifiers. - Kurzel
 	damage = r_types[type].dbmin + rget_level(r_types[type].dbmax - r_types[type].dbmin) * damage / S_WEIGHT_HI;
 
 	/* Return */
 	*dx = (byte)d1;
 	*dy = (byte)d2;
-	
-	/* Further modify for individual spells */
-	if (r_imperatives[imperative].flag == I_ENHA) {
-		if (r_types[type].flag == T_SIGN) {
-			switch (projection) {
-				case SV_R_TIME: { //recharging
-					damage = (50 + rget_level(50)) * r_imperatives[imperative].damage / 10;
-					if (damage > 100) damage = 100;
-					if (damage < 50) damage = 50;
-				break; }
-			}
-		}
-	} else {
-		if (r_types[type].flag == T_SIGN) {
-			switch (projection) {
-				
-				case SV_R_WATE: { //regen
-					damage = rget_level(700) * r_imperatives[imperative].damage / 10;
-					if (damage > 700) damage = 700;
-					if (damage < 70) damage = 70;
-				break; }
 
-				case SV_R_TIME: { //speed
-					damage = rget_level(15) * r_imperatives[imperative].damage / 10;
-					if (damage > 10) damage = 10;
-					if (damage < 1) damage = 1;
-				break; }
-				
-				case SV_R_FORC: { //armor
-					damage = rget_level(20) * r_imperatives[imperative].damage / 10;
-					if (damage > 20) damage = 20;
-					if (damage < 1) damage = 1;
-				}
-
-				default: {
-				break; }
-			}
-		}
-	}
-	
 	return (u16b)damage;
 }
 
@@ -250,101 +214,25 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection) {
 	radius += r_imperatives[imperative].radius;
 	if (radius < S_RADIUS_MIN) radius = S_RADIUS_MIN;
 	if (radius > S_RADIUS_MAX) radius = S_RADIUS_MAX;
-	
-	/* Further modify for individual spells (not limited) */
-	if (r_types[type].flag == T_SIGN) {
-		switch (projection) {
-			case SV_R_NEXU: { //blink
-				//radius = rget_level(150) * radius / S_RADIUS_MAX;
-				radius = rget_level(25) * radius / S_RADIUS_MAX;
-				if (radius > 25) radius = 25;
-				if (radius < 5) radius = 5;
-			break; }
 
-			case SV_R_GRAV: { //tele_to
-				radius = rget_level(10) * radius / S_RADIUS_MAX;
-			break; }
-
-			case SV_R_SHAR: { //earthquake
-				radius = rget_level(10) * radius / S_RADIUS_MAX;
-			break; }
-			
-			default: {
-			break; }
-		}
-	}
-	
 	return (byte)radius;
 }
 
 byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u16b dice) {
 	s16b duration = r_types[type].d_min + rget_level(r_types[type].d_max - r_types[type].d_min);
 	duration = duration * r_imperatives[imperative].duration / 10;
-	
-	/* Further modify for individual spells (limited) */
-	if (r_imperatives[imperative].flag == I_ENHA) {
-		if (r_types[type].flag == T_SIGN) {
-			switch (projection) {
-				
-				case SV_R_DARK: //invis
-				case SV_R_FORC: //reflect
-					duration = dice;
-				break;
-				
-				case SV_R_CHAO: //brand
-				case SV_R_ELEC:
-				case SV_R_FIRE:
-				case SV_R_WATE: //regen
-				case SV_R_COLD:
-				case SV_R_ACID:	
-				case SV_R_POIS:
-				case SV_R_PLAS:
-					duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
-				break;
-				
-				default: {
-				break; }
-			}
-		}
-	} else {
-		if (r_types[type].flag == T_SIGN) {
-			switch (projection) {
-
-				case SV_R_INER: //anchor
-				case SV_R_FORC: //armor
-					duration = dice;
-				break;
-				
-				case SV_R_ELEC: //resist
-				case SV_R_FIRE:
-				case SV_R_COLD:
-				case SV_R_ACID:	
-				case SV_R_POIS:
-				case SV_R_TIME: //haste
-				case SV_R_PLAS:
-					duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
-				break;
-				
-				default: {
-				break; }
-			}
-		}
-	}
-		
 	if (duration < S_DURATION_MIN) duration = S_DURATION_MIN;
 	if (duration > S_DURATION_MAX) duration = S_DURATION_MAX;
-	
 	return (byte)duration;
 }
 
-//Checks for rune from inventory, for Glyph (and Rune Requirement) 
-object_type * rspell_trap(int Ind, byte projection) {
+object_type * has_rune(int Ind, byte projection) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	
+
 	byte i;
 	for (i = 0; i < INVEN_TOTAL; i++) {
-		if (i >= INVEN_PACK) continue;		
+		if (i >= INVEN_PACK) continue;
 		o_ptr = &p_ptr->inventory[i];
 		if ((o_ptr->tval == TV_RUNE) && (o_ptr->level || o_ptr->owner == p_ptr->id)) { //Do we own it..?
 			if (o_ptr->sval == projection) { //Element match
@@ -352,25 +240,33 @@ object_type * rspell_trap(int Ind, byte projection) {
 			}
 		}
 	}
-	
+
 	return NULL;
 }
 
-//Charge one rune from inventory, for Sigil, Glyph (and Backlash Protection)
+//Charge one rune from inventory, for Sigil and Enhanced Sign spells (and Backlash Protection)
 bool rspell_socket(int Ind, byte projection, bool sigil) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	
+#ifdef RUNE_REQUIRED
+	bool last_rune = 0;
+#endif
 	byte i;
 	for (i = 0; i < INVEN_TOTAL; i++) {
-		if (i >= INVEN_PACK) continue;		
+		if (i >= INVEN_PACK) continue;
 		o_ptr = &p_ptr->inventory[i];
 		if ((o_ptr->tval == TV_RUNE) && (o_ptr->level || o_ptr->owner == p_ptr->id)) { //Do we own it..?
-			if (o_ptr->sval == projection && (sigil 
+			if (o_ptr->sval == projection && (sigil
 #ifdef BACKLASH_PROTECTION
 			|| !check_guard_inscription(o_ptr->note, 'R')
 #endif
 			)) { //Element match, not protected?
+#ifdef RUNE_REQUIRED
+				//Save the last one, we need it now for Signs and Enhanced spells! - Kurzel
+				if (o_ptr->number == 1 && check_guard_inscription(o_ptr->note, 'R')) {
+					last_rune = 1; continue; //Note the stack, but keep searching...
+				}
+#endif
 				byte amt = 1; //Always consume exactly one!
 				char o_name[ONAME_LEN];
 				object_desc(Ind, o_name, o_ptr, FALSE, 3);
@@ -381,7 +277,7 @@ bool rspell_socket(int Ind, byte projection, bool sigil) {
 
 				/* Erase a rune from inventory */
 				inven_item_increase(Ind, i, -1);
-				
+
 				/* Play a sound! */
 				sound(Ind, "item_rune", NULL, SFX_TYPE_COMMAND, FALSE);
 
@@ -392,14 +288,16 @@ bool rspell_socket(int Ind, byte projection, bool sigil) {
 			}
 		}
 	}
-	
+#ifdef RUNE_REQUIRED
+	if (last_rune) msg_format(Ind, "\377yYou choose to preserve your rune. (%s)", r_projections[projection].name);
+#endif
 	return FALSE;
 }
 
 bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[item];
-	
+
 	/* Restrict new sigils to one per category */
 	if (!o_ptr->sigil) {
 		/* Store tval for comparison speed */
@@ -422,7 +320,7 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 				return FALSE;
 			}
 		}
-		
+
 		/* Armor */
 		if ((tval == TV_BOOTS)
 		 || (tval == TV_GLOVES)
@@ -439,27 +337,26 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 			 || (p_ptr->inventory[INVEN_HEAD].sigil)
 			 || (p_ptr->inventory[INVEN_HANDS].sigil)
 			 || (p_ptr->inventory[INVEN_FEET].sigil)) {
-			 
 				/* Give a message */
 				msg_format(Ind, "\377yYou can only maintain a single armor sigil.");
-			
+
 				return FALSE;
 			}
 		}
 	}
-	
+
 	/* Do we have a rune? */
 	if (!rspell_socket(Ind, projection, TRUE)) {
 		msg_format(Ind, "\377yYou do not have the required rune. (%s)", r_projections[projection].name);
 		return FALSE;
 	}
-	
+
 	/* Artifact? */
 	if (o_ptr->name1) {
 		msg_print(Ind, "The artifact is unaffected by your attempts!");
 		return FALSE;
 	}
-	
+
 	/* Store the info */
 	o_ptr = &p_ptr->inventory[item];
 	o_ptr->sigil = projection + 1; //Hack -- 0 is an item WITHOUT a sigil. Subtract 1 later...
@@ -468,7 +365,8 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 	/* Give a message */
 	char o_name[ONAME_LEN];
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
-	msg_format(Ind, "\377BYour %s is emblazoned with %s!", o_name, r_projections[projection].name);
+	//Actually we may be unsuccessful, but don't know yet. - Kurzel
+	//msg_format(Ind, "\377BYour %s is emblazoned with %s!", o_name, r_projections[projection].name);
 
 	return TRUE;
 }
@@ -480,35 +378,35 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
  */
 byte cast_rune_spell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bool retaliate) {
 	player_type *p_ptr = Players[Ind];
-	
+
 	/** Activity Update **/
-	
+
 	/* Break AFK */
 	un_afk_idle(Ind);
-	
+
 	/* Break FTK */
 	p_ptr->shooting_till_kill = FALSE;
-	
+
 	/* Paranoia; toggle states that require inactivity */
 	/* Move checks like this into their generating functions please? >_>" */
 	/* Or actually leave it in, in case this never happens and adventurers/runies get both features somehow... oO */
 	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
-	
+
 	/** Decode Runespell **/
-	
+
 	/* Elements */
 	byte element[RCRAFT_MAX_ELEMENTS];
 	byte elements = flags_to_elements(element, e_flags);
-	
+
 	/* Projection Element */
 	byte projection = flags_to_projection(e_flags);
 
 	/* Imperative and Type */
 	byte imperative = flags_to_imperative(m_flags);
 	byte type = flags_to_type(m_flags);
-	
+
 #ifdef RCRAFT_DEBUG
 s_printf("RCRAFT_DEBUG: Runespell attempted... \n");
 byte ii;
@@ -518,13 +416,13 @@ s_printf("Rune %d: %s\n", ii, r_elements[element[ii]].name);
 s_printf("Imperative: %s\n", r_imperatives[imperative].name);
 s_printf("Type: %s\n", r_types[type].name);
 #endif
-	
+
 	/** Skill Validation **/
-	
+
 	/* Level Requirement */
 	byte skill = rspell_skill(Ind, element, elements);
 	byte level = rspell_level(imperative, type);
-	
+
 	/* Check it! */
 	s16b diff = rspell_diff(skill, level);
 	if (diff < 1) {
@@ -532,9 +430,9 @@ s_printf("Type: %s\n", r_types[type].name);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return 0;
 	}
-	
+
 	/** Target Validation **/
-	
+
 	/* Energy Requirement */
 	s16b energy = rspell_energy(Ind, imperative, type);
 
@@ -547,27 +445,25 @@ s_printf("Type: %s\n", r_types[type].name);
 		return 1;
 	}
 	p_ptr->current_rcraft = -1;
-	
+
 	/* Handle FTK targetting mode */
 	if (p_ptr->shoot_till_kill) {
-	
 		/* Assume failure */
 		p_ptr->shoot_till_kill_rcraft = FALSE;
-		
+
 		/* If the spell targets and is instant */
 		//if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BEAM) || (r_types[type].flag == T_BALL)) {
-		if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BALL)) {
-			
+		if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BALL) || (r_types[type].flag == T_BURS)) {
 			/* If a new spell, update FTK */
 			if (p_ptr->FTK_e_flags != e_flags || p_ptr->FTK_m_flags != m_flags) {
 				p_ptr->FTK_e_flags = e_flags;
 				p_ptr->FTK_m_flags = m_flags;
 				p_ptr->FTK_energy = energy;
 			}
-			
+
 			/* Cancel if we've lost our target */
 			if (!target_okay(Ind)) return 0;
-			
+
 			/* Cancel if we're going to automatically wake new monsters */
 #ifndef PY_PROJ_ON_WALL
 			if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
@@ -575,7 +471,7 @@ s_printf("Type: %s\n", r_types[type].name);
 			if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
 #endif
 				return 0;
-			
+
 			/* Don't FTK if not targetting a monster in FTK mode; but continue and fire the spell! */
 			if (dir == 5) {
 				p_ptr->shooting_till_kill = TRUE;
@@ -586,12 +482,12 @@ s_printf("Type: %s\n", r_types[type].name);
 			}
 		}
 	}
-	
+
 	/** Caster Validation **/
-	
+
 	/* Examine Status */
 	byte penalty = 0;
-	
+
 #ifdef FEEDBACK_MESSAGE
 	/* Prepare a feedback message */
 	char * msg_1 = NULL;
@@ -612,10 +508,10 @@ s_printf("Type: %s\n", r_types[type].name);
 		return 0;
 #endif
 	}
-	
+
 	/* Confused */
 	if (p_ptr->confused) {
-#ifdef	CONFUSED_CASTING
+#ifdef CONFUSED_CASTING
 		penalty += 10;
  #ifdef FEEDBACK_MESSAGE
 		msg_2 = " struggle to";
@@ -626,11 +522,24 @@ s_printf("Type: %s\n", r_types[type].name);
 		return 0;
 #endif
 	}
-	
+
+	/* Rune */
+	object_type *r_ptr = has_rune(Ind, projection);
+#ifdef RUNE_REQUIRED // Sign or Sigil or Enhanced but not Enhanced Sign (Glyph handled later! - Kurzel)
+	if (((r_types[type].flag == T_SIGN) || (r_types[type].flag == T_SIGL) || (r_imperatives[imperative].flag == I_ENHA))
+		&& !((r_types[type].flag == T_SIGN) && (r_imperatives[imperative].flag == I_ENHA))) {
+		if (!r_ptr) {
+			msg_format(Ind, "\377yYou do not have the required rune. (%s)", r_projections[projection].name);
+			p_ptr->energy -= energy;
+			return 0;
+		}
+	}
+#endif
+
 	/* AM-Shell */
 	if (p_ptr->anti_magic) {
 #ifdef SHELL_ENCHANT
-		if (r_types[type].flag != T_ENCH) {
+		if (r_types[type].flag != T_SIGL) {
 			msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell. (%s %s %s)", COLOUR_AM_OWN, r_imperatives[imperative].name, r_projections[projection].name, r_types[type].name);
 			p_ptr->energy -= energy;
 			return 0;
@@ -641,23 +550,22 @@ s_printf("Type: %s\n", r_types[type].name);
 		return 0;
 #endif
 	}
-	
+
 	/* AM-Field */
 	if (check_antimagic(Ind, 100)) {
 		p_ptr->energy -= energy;
 		return 0;
 	}
-	
+
 	/* Interception */
-	if ((r_types[type].flag != T_ENCH) && (interfere(Ind, cfg.spell_interfere))) { //Ignore intercept for now (don't waste a rune?)
+	if ((r_types[type].flag != T_SIGL) && (interfere(Ind, cfg.spell_interfere))) { //Ignore intercept for now (don't waste a rune?)
 		p_ptr->energy -= energy;
 		return 0;
 	}
-	
-	
+
 	/* Calculate the Cost */
 	byte cost = rspell_cost(imperative, type, skill);
-	
+
 	/* Not enough MP */
 	if (p_ptr->csp < cost) {
 #ifdef LIFE_CASTING
@@ -679,9 +587,9 @@ s_printf("Type: %s\n", r_types[type].name);
 		msg_1 = "\377sYou";
 #endif
 	}
-	
+
 	/** Attempt the Runespell **/
-	
+
 	/* Stunned */
 	if (p_ptr->stun > 50) {
 		penalty += 25;
@@ -699,12 +607,12 @@ s_printf("Type: %s\n", r_types[type].name);
 #ifdef FEEDBACK_MESSAGE
 	msg_3 = " trace the rune-forms.";
 #endif
-	
+
 #ifdef FEEDBACK_MESSAGE
 	/* Resolve the Feedback Message */
 	if (penalty) msg_format(Ind, "%s%s%s", msg_1, msg_2, msg_3);
-#endif	
-	
+#endif
+
 	/* Calculate Failure Chance */
 	byte fail = rspell_fail(Ind, imperative, type, diff, penalty);
 
@@ -712,13 +620,14 @@ s_printf("Type: %s\n", r_types[type].name);
 	u32b dx, dy;
 	u16b damage = rspell_damage(&dx, &dy, imperative, type, skill, projection);
 	u16b dice = damroll(dx, dy);
+	u16b backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Default
 
 	/* Calculate the Remaining Parameters */
 	byte radius = rspell_radius(imperative, type, skill, projection);
 	byte duration = rspell_duration(imperative, type, skill, projection, dice);
-	
+
 	/** Cast the Runespell **/
-	
+
 	/* Success? Store an indicator of the spell fail margin. (Additionally boost or reduce damage, if the option is enabled). */
 	char * msg_q = NULL;
 	bool failure = 0;
@@ -730,7 +639,7 @@ s_printf("Type: %s\n", r_types[type].name);
 #endif
 		failure = 1;
 	}
-	else if (margin < 10) { 
+	else if (margin < 10) {
 		msg_q = "clumsily";
 #ifdef SKILLFUL_CASTING
 		damage = damage * 9 / 10 + 1;
@@ -751,7 +660,7 @@ s_printf("Type: %s\n", r_types[type].name);
 		damage = damage * 12 / 10 + 1;
 #endif
 	}
-	
+
 #ifdef RCRAFT_DEBUG
 s_printf("RCRAFT_DEBUG: Runespell parameters: \n");
 s_printf("Skill:    %d\n", skill);
@@ -769,234 +678,226 @@ s_printf("Duration: %d\n", duration);
 #endif
 
 	/** Resolve the Runespell **/
-	
+
 	/* Set the projection type */
 	byte gf_type = r_projections[projection].gf_type;
-	
+
 	/* Generic spell message */
-#ifdef RUNE_REQUIREMENT
-	bool has_rune = rspell_trap(Ind, projection) ? 1 : 0;
-	if (!has_rune)
+#ifdef DRAW_RISK
+	if (!r_ptr)
 		msg_format(Ind, "You \377Rrisk\377w drawing %s %s %s of %s.", ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 	else
 #endif
 	msg_format(Ind, "You %s trace %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-	
+
 	switch (r_types[type].flag) {
-		
-		case T_BOLT: {
-			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
+		case T_BOLT: { //Beam
+			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 			if (r_imperatives[imperative].flag != I_ENHA) fire_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
-			else fire_beam(Ind, gf_type, dir, dice, p_ptr->attacker); //fire_grid_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
-		break; }
-		/*
-		case T_BEAM: {
-			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
-			if (r_imperatives[imperative].flag != I_ENHA) fire_beam(Ind, gf_type, dir, dice, p_ptr->attacker);
-			else fire_wall(Ind, gf_type, dir, damage, duration, 9, p_ptr->attacker);
-		break; }
-		*/
-		case T_CLOU: {
-			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
-			if (r_imperatives[imperative].flag != I_ENHA) fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
-			else fire_wave(Ind, gf_type, 0, damage*3/2, radius, duration*2, 10, EFF_STORM, p_ptr->attacker);
-		break; }
-		
-		case T_BALL: {
-			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
-			if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
-			else fire_full_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
-		break; }
-		
-		case T_SIGN: {
-			switch (projection) {
-			
-				case SV_R_LITE: {
-					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
-					if (r_imperatives[imperative].flag != I_ENHA) lite_area(Ind, damage, radius); 
-					else { byte k; for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], dice); } //actually GF_LITE_WEAK
-				break; }
-				
-				case SV_R_DARK: {
-					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
-					if (r_imperatives[imperative].flag != I_ENHA) unlite_area(Ind, damage, radius); 
-					else set_invis(Ind, duration, damage);
-				break; }
-				
-				case SV_R_NEXU: {
-					if (r_imperatives[imperative].flag != I_ENHA) teleport_player(Ind, radius, FALSE); //FALSE -> reduced effect in pvp
-					else teleport_player(Ind, 200, FALSE); //A full-range, standard-issue teleport.
-				break; }
-				
-				case SV_R_NETH: {
-					if (r_imperatives[imperative].flag != I_ENHA) (void)obliteration(Ind); //Use a radius in the future?
-					else (void)genocide(Ind); //Maybe resist/power in the future as well?
-				break; }
-				
-				case SV_R_CHAO: {
-					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_OLD_POLY, 0, 0, 0, ""); //poly self
-					else set_brand(Ind, duration, BRAND_CHAO, 0); //chaos brand
-				break; }
-				
-				case SV_R_MANA: {
-					if (r_imperatives[imperative].flag != I_ENHA) {
-#ifndef NEW_REMOVE_CURSE
-						if (remove_curse(Ind)) msg_print(Ind, "There is a purple glow for a moment.");
-					} else {
-						if (remove_all_curse(Ind)) msg_print(Ind, "There is a purple glow for a moment.");
-#else
-						remove_curse_aux(Ind, 0x0, 0);
-					} else {
-						remove_curse_aux(Ind, 0x1, 0);
-#endif
-					}
-				break; }
-				
-				case SV_R_CONF: {
-					if (r_imperatives[imperative].flag != I_ENHA) { //monster confusion
-						msg_print(Ind, "Your hands begin to glow.");
-						p_ptr->confusing = randint(3);
-					} else (void)ident_spell(Ind); //identify
-				break; }
-				
-				case SV_R_INER: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_st_anchor(Ind, duration); //Future -- expanded, a small area anchor?
-					else {
-						int ty, tx;//, py = p_ptr->py, px = p_ptr->px;
-						if ((dir == 5) && target_okay(Ind)) { /* Use a target -- Fix this in wizard/mkey!! - Kurzel */
-							tx = p_ptr->target_col;
-							ty = p_ptr->target_row;
-							if (player_has_los_bold(Ind, ty, tx)) teleport_player_to(Ind, ty, tx); //Require LoS. (No jumping through walls!)
-						}
-					}
-				break; }
-				
-				case SV_R_ELEC: {
-					if (r_imperatives[imperative].flag != I_ENHA) { 
-						set_oppose_elec(Ind, duration);
-						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-					} else set_brand(Ind, duration, BRAND_ELEC, 0);
-				break; }
-				
-				case SV_R_FIRE: {
-					if (r_imperatives[imperative].flag != I_ENHA) {
-						set_oppose_fire(Ind, duration);
-						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-					} else set_brand(Ind, duration, BRAND_FIRE, 0);
-				break; }
-				
-				case SV_R_WATE: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_poisoned(Ind, 0, 0);
-					else set_tim_regen(Ind, duration, damage);
-				break; }
-				
-				case SV_R_GRAV: {
-					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_TELE_TO, 0, damage, radius, "");
-					else {
-						int ty, tx;//, py = p_ptr->py, px = p_ptr->px;
-						if ((dir == 5) && target_okay(Ind)) { /* Use a target -- Fix this in wizard/mkey!! - Kurzel */
-							tx = p_ptr->target_col;
-							ty = p_ptr->target_row;
-							if (player_has_los_bold(Ind, ty, tx)) teleport_player_to(Ind, ty, tx); //Require LoS. (No jumping through walls!)
-						}
-					}
-				break; }
-				
-				case SV_R_COLD: {
-					if (r_imperatives[imperative].flag != I_ENHA) {
-						set_oppose_cold(Ind, duration);
-						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-					} else set_brand(Ind, duration, BRAND_COLD, 0);
-				break; }
-				
-				case SV_R_ACID: {
-					if (r_imperatives[imperative].flag != I_ENHA) {
-						set_oppose_acid(Ind, duration);
-						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESACID_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-					} else set_brand(Ind, duration, BRAND_ACID, 0);
-				break; }
-				
-				case SV_R_POIS: {
-					if (r_imperatives[imperative].flag != I_ENHA) {
-						set_oppose_pois(Ind, duration);
-						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-					} else set_brand(Ind, duration, BRAND_POIS, 0);
-					break; }
-				
-				case SV_R_TIME: {
-					if (r_imperatives[imperative].flag != I_ENHA) {
-						set_fast(Ind, duration, damage);
-						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_SPEED_PLAYER, 0, damage*2, RCRAFT_PJ_RADIUS, ""); //Hacked -- duration =P same for set_shield, full value when rad 1 (must not hit self!)
-					} else recharge(Ind, damage);
-				break; }
-				
-				case SV_R_SOUN: {
-					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_KILL_TRAP, 0, damage, radius, p_ptr->attacker);
-					else fire_beam(Ind, GF_KILL_TRAP, dir, dice, p_ptr->attacker);
-				break; }
-				
-				case SV_R_SHAR: {
-					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-					if (r_imperatives[imperative].flag != I_ENHA) earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, radius);
-					else fire_bolt(Ind, GF_KILL_WALL, dir, dice, p_ptr->attacker);
-				break; }
-				
-				case SV_R_DISE: {
-					if (r_imperatives[imperative].flag != I_ENHA) unmagic(Ind);
-					else do_cancellation(Ind, 0);
-				break; }
-				
-				case SV_R_FORC: {
-					if (r_imperatives[imperative].flag != I_ENHA) {
-						set_shield(Ind, duration, damage, SHIELD_NONE, 0, 0);
-						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_SHIELD_PLAYER, 0, damage, RCRAFT_PJ_RADIUS, "");
-					} else set_tim_deflect(Ind, duration);
-				break; }
-				
-				case SV_R_PLAS: {
-					if (r_imperatives[imperative].flag != I_ENHA) {
-						set_oppose_acid(Ind, duration);
-						set_oppose_elec(Ind, duration);
-						set_oppose_fire(Ind, duration);
-						set_oppose_cold(Ind, duration);
-						//set_oppose_pois(Ind, duration); //For Holy Resistance ONLY
-						if (r_imperatives[imperative].flag == I_EXPA) {
-							fire_ball(Ind, GF_RESACID_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-							fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-							fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-							fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-							//fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-						}
-					} else set_brand(Ind, duration, BRAND_BASE, 0);
-				break; }
-				
-				default: {
-				break; }
+			else {
+				damage = rspell_damage(&dx, &dy, flags_to_imperative(I_MAXI), type, skill, projection);
+				dice = damroll(dx, dy);
+				backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
+				fire_beam(Ind, gf_type, dir, dice, p_ptr->attacker);
 			}
 		break; }
-		
-		case T_RUNE: {
-			if (r_imperatives[imperative].flag != I_ENHA) warding_rune(Ind, projection, imperative, skill);
-			else warding_glyph(Ind);
+
+		case T_CLOU: { //Storm
+			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
+			if (r_imperatives[imperative].flag != I_ENHA) fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
+			else {
+				damage *= 2;
+				backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
+				fire_wave(Ind, gf_type, 0, damage, radius, duration*2, 10, EFF_STORM, p_ptr->attacker);
+			}
 		break; }
-		
-		case T_WAVE: {
+
+		case T_SIGN: { //Glyph
+			if (r_imperatives[imperative].flag != I_ENHA) {
+				switch (projection) {
+					case SV_R_LITE: { //Illumination
+						sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
+						damage = rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2;
+						backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
+						fire_ball(Ind, gf_type, 0, damage, radius+2, p_ptr->attacker);
+						lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+					break; }
+
+					case SV_R_DARK: { //Invisibility
+						set_invis(Ind, duration/2+randint(duration/2), damage);
+					break; }
+
+					case SV_R_NEXU: { //Teleportation
+						switch (r_imperatives[imperative].flag) {
+							//Phase Door (6-12), Blink (10), Teleport (100), Spell (100-200)
+							case I_MINI: { radius = 12 + rget_level(12); break; }
+							case I_LENG: { radius = 36 + rget_level(36); break; }
+							case I_COMP: { radius =  6 + rget_level( 6); break; }
+							case I_MODE: { radius = 25 + rget_level(25); break; }
+							case I_EXPA: { radius = 75 + rget_level(75); break; }
+							case I_BRIE: { radius = 12 + rget_level(12); break; }
+							case I_MAXI: { radius = 50 + rget_level(50); break; }
+						}
+						teleport_player(Ind, radius, FALSE); //FALSE -> reduced effect in pvp
+					break; }
+
+					case SV_R_NETH: { //Annihilation
+						fire_bolt(Ind, GF_ANNIHILATION, dir, 1+damage/10, p_ptr->attacker);
+					break; }
+
+					case SV_R_CHAO: { //Polymorph Self
+						fire_ball(Ind, GF_OLD_POLY, 0, 0, 0, "");
+					break; }
+
+					case SV_R_MANA: { //Recharging
+						recharge(Ind, damage);
+					break; }
+
+					case SV_R_CONF: { //Reflection
+						set_tim_deflect(Ind, duration/2+randint(duration/2));
+					break; }
+
+					case SV_R_INER: { //Mass Stasis
+						project_los(Ind, GF_STASIS, damage*2, "");
+					break; }
+
+					case SV_R_ELEC: { //Lightning Infusion
+						set_oppose_elec(Ind, duration/2+randint(duration/2));
+						if (r_imperatives[imperative].flag == I_EXPA)
+							fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
+						set_brand(Ind, duration/2+randint(duration/2), BRAND_ELEC, 0);
+					break; }
+
+					case SV_R_FIRE: { //Fire Infusion
+						set_oppose_fire(Ind, duration/2+randint(duration/2));
+						if (r_imperatives[imperative].flag == I_EXPA)
+							fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
+						set_brand(Ind, duration/2+randint(duration/2), BRAND_FIRE, 0);
+					break; }
+
+					case SV_R_WATE: { //Quench Thirst
+						if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
+						if (p_ptr->prace == RACE_ENT) {
+							(void)set_food(Ind, p_ptr->food + 1500); //Same as WATER_ENT_FOOD - Kurzel
+						} else if (p_ptr->suscep_life) {
+							(void)set_food(Ind, p_ptr->food + (200 * 2) / 3);
+						} else (void)set_food(Ind, p_ptr->food + 200); //Same as water in k_info.txt - Kurzel
+					break; }
+
+					case SV_R_GRAV: { //Mass Teleport-To
+						project_los(Ind, GF_TELE_TO, damage*2, "");
+					break; }
+
+					case SV_R_COLD: { //Frost Infusion
+						set_oppose_cold(Ind, duration/2+randint(duration/2));
+						if (r_imperatives[imperative].flag == I_EXPA)
+							fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
+						set_brand(Ind, duration/2+randint(duration/2), BRAND_COLD, 0);
+					break; }
+
+					case SV_R_ACID: { //Acid Infusion
+						set_oppose_acid(Ind, duration/2+randint(duration/2));
+						if (r_imperatives[imperative].flag == I_EXPA)
+							fire_ball(Ind, GF_RESACID_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
+						set_brand(Ind, duration/2+randint(duration/2), BRAND_ACID, 0);
+					break; }
+
+					case SV_R_POIS: { //Poison Infusion
+						set_oppose_pois(Ind, duration/2+randint(duration/2));
+						if (r_imperatives[imperative].flag == I_EXPA)
+							fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
+						set_brand(Ind, duration/2+randint(duration/2), BRAND_POIS, 0);
+						break; }
+
+					case SV_R_SHAR: { //Dig
+						sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
+						fire_bolt(Ind, GF_KILL_WALL, dir, dice, p_ptr->attacker);
+					break; }
+
+					case SV_R_SOUN: { //Disarm
+						fire_ball(Ind, GF_KILL_TRAP, 0, damage, radius, "");
+					break; }
+
+					case SV_R_TIME: { //Haste
+						damage = rget_level(15) * r_imperatives[imperative].damage / 10;
+						if (damage < 1) damage = 1; if (damage > 10) damage = 10;
+						set_fast(Ind, duration/2+randint(duration/2), damage);
+						if (r_imperatives[imperative].flag == I_EXPA)
+							fire_ball(Ind, GF_SPEED_PLAYER, 0, damage*2, RCRAFT_PJ_RADIUS, "");
+					break; }
+
+					case SV_R_DISE: { //Resistance (Base)
+						set_oppose_acid(Ind, duration/2+randint(duration/2));
+						set_oppose_elec(Ind, duration/2+randint(duration/2));
+						set_oppose_fire(Ind, duration/2+randint(duration/2));
+						set_oppose_cold(Ind, duration/2+randint(duration/2));
+						if (r_imperatives[imperative].flag == I_EXPA) {
+							fire_ball(Ind, GF_RESACID_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
+							fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
+							fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
+							fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
+						}
+					break; }
+
+					case SV_R_ICEY: { //Ice Shield
+						damage = rget_level(20) * r_imperatives[imperative].damage / 10;
+						if (damage < 1) damage = 1; if (damage > 20) damage = 20;
+						set_shield(Ind, duration/2+randint(duration/2), damage, SHIELD_ICE, dx, dy);
+					break; }
+
+					case SV_R_PLAS: { //Plasma Shield
+						damage = rget_level(20) * r_imperatives[imperative].damage / 10;
+						if (damage < 1) damage = 1; if (damage > 20) damage = 20;
+						set_shield(Ind, duration/2+randint(duration/2), damage, SHIELD_PLASMA, dx, dy);
+					break; }
+				}
+			} else {
+				damage = rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2;
+				backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
+				if (!warding_rune(Ind, projection, imperative, skill)) { //Retrieval or invalid placement.
+					cost = 0; failure = 0;
+				}
+			}
+		break; }
+
+		case T_BALL: { //Swarm
+			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
+			if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
+			else fire_swarm(Ind, gf_type, dir, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), type, skill, projection), (((2+(skill-level+1)/10) > 2) ? (2+(skill-level+1)/10) : 2), p_ptr->attacker);
+			//Juse use regular ball backlash, instead of 2-4 mini backlashes? Similar to clouds. - Kurzel
+			//2 at skill 30 (60%-120%), 3 at skill 40 (90%-180%), 4 at skill 50 (120%-240%); mostly skewed toward minimum damage (but chance to 'crit'). - Kurzel
+			//~165% avg damage for 4 balls when PROJECT_STOP is enabled; ~5% better than brief balls on average, when the target has no cover.
+		break; }
+
+		case T_WAVE: { //Dispel
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, damage, 1, duration, 2, EFF_WAVE, p_ptr->attacker);
-			else project_los(Ind, gf_type, damage, p_ptr->attacker);
+			else {
+				damage *= 2;
+				backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
+				project_los(Ind, gf_type, damage, p_ptr->attacker);
+			}
 		break; }
-		
-		case T_ENCH: {
+
+		case T_SIGL: { //Boni
 			rspell_sigil(Ind, projection, imperative, item);
 		break; }
+
+		case T_BURS: { //Flare
+			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
+			if (r_imperatives[imperative].flag != I_ENHA) fire_full_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
+			else {
+				if (!failure) { failure = 1; backlash /= 3; } //Always backlash, but reduce the damage to 33% on a "successful" cast; Note FTK is disabled by backlash. - Kurzel
+				fire_grid_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
+			}
+		break; }
 	}
-	
+
 	/** Expend Resources **/
-	
+
 	/* Energy */
 	p_ptr->energy -= energy;
-	
+
 	/* Mana */
 	calc_mana(Ind);
 	if (p_ptr->csp > cost) p_ptr->csp -= cost;
@@ -1010,18 +911,15 @@ s_printf("Duration: %d\n", duration);
 	/** Backlash **/
 
 	/* Failure */
-#ifdef RUNE_REQUIREMENT
-	if (failure || (!has_rune && magik(RISK_CHANCE)))
+#ifdef DRAW_RISK
+	if (failure || (!r_ptr && magik(RISK_CHANCE)))
 #else
 	if (failure)
 #endif
 #ifdef BACKLASH_PROTECTION
 		if (!rspell_socket(Ind, projection, FALSE))
 #endif
-		{
-			if (dice > damage) damage = dice; //Get the highest damage part of the spell, could be reworked to match actual spell type (as modified by enhanced). TODO
-			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP | PROJECT_RNAF), "");
-		}
+			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, backlash, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP | PROJECT_RNAF), "");
 
 #ifdef BACKLASH_SUSCEPT
 	/* Lite Susceptability Check -- Add other suscept checks? ie. Fire for Ents? Disabled for consistancy until this is done. */
@@ -1047,7 +945,7 @@ s_printf("Duration: %d\n", duration);
  * This otherwise behaves like a normal "glyph of warding".
  * Minimal runecraft parameters are stored.
  */
-void warding_rune(int Ind, byte projection, byte imperative, byte skill)
+bool warding_rune(int Ind, byte projection, byte imperative, byte skill)
 {
 	player_type *p_ptr = Players[Ind];
 	int y = p_ptr->py, x = p_ptr->px;
@@ -1056,21 +954,47 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	object_type *o_ptr = &forge;
 	object_type *r_ptr;
 
-	/* Allowed? */
-	if ((!allow_terraforming(wpos, FEAT_RUNE) || istown(wpos))
-	    && !is_admin(p_ptr))
-		return;
-	
 	/* Emulate cave_set_feat_live but handle cs_ptr too! */
 	cave_type **zcave = getcave(wpos);
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
-	
+
 	/* Boundary check */
-	if (!(zcave = getcave(wpos))) return;
-	if (!in_bounds(y, x)) return;
+	if (!(zcave = getcave(wpos))) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
+	if (!in_bounds(y, x)) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
 	c_ptr = &zcave[y][x];
-	
+
+	/* 'Disarm' old runes */
+	if ((cs_ptr = GetCS(c_ptr, CS_RUNE)))
+	{
+		/* Restore the original cave feature */
+		cave_set_feat_live(wpos, y, x, cs_ptr->sc.rune.feat);
+
+		/* Drop rune */
+		invcopy(o_ptr, lookup_kind(TV_RUNE, cs_ptr->sc.rune.typ));
+		o_ptr->discount = cs_ptr->sc.rune.discount;
+		o_ptr->level = cs_ptr->sc.rune.level;
+		o_ptr->owner = cs_ptr->sc.rune.id;
+		o_ptr->mode = p_ptr->mode;
+		o_ptr->note = cs_ptr->sc.rune.note;
+		//drop_near(o_ptr, -1, wpos, y, x);
+		inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
+		//refund cost too? - Kurzel
+
+		/* Combine and update the pack */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN);
+
+		/* Cleanup */
+		cs_erase(c_ptr, cs_ptr);
+		return FALSE;
+	}
+
+	/* Allowed? */
+	if ((!allow_terraforming(wpos, FEAT_RUNE) || istown(wpos)) && !is_admin(p_ptr)) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
+
 	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
 	if (!(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
 	    ((c_ptr->feat == FEAT_NONE) ||
@@ -1085,76 +1009,50 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	    (c_ptr->feat == FEAT_ASH) ||
 	    (c_ptr->feat == FEAT_MUD) ||
 	    (c_ptr->feat == FEAT_FLOWER) ||
-	    (c_ptr->feat == FEAT_NETHER_MIST))))
-		return;
-	
-	/* Don't mess with inns please! */
-	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
+	    (c_ptr->feat == FEAT_NETHER_MIST)))) {
+			msg_print(Ind, "You cannot place a glyph here."); return FALSE;
+		}
 
-	/* 'Disarm' old runes */
-	if ((cs_ptr = GetCS(c_ptr, CS_RUNE)))
-	{
-		/* Restore the original cave feature */
-		cave_set_feat_live(wpos, y, x, cs_ptr->sc.rune.feat);
-		
-		/* Drop rune */
-		invcopy(o_ptr, lookup_kind(TV_RUNE, cs_ptr->sc.rune.typ));
-		o_ptr->discount = cs_ptr->sc.rune.discount;
-		o_ptr->level = cs_ptr->sc.rune.level;
-		o_ptr->owner = cs_ptr->sc.rune.id;
-		o_ptr->mode = p_ptr->mode;
-		o_ptr->note = cs_ptr->sc.rune.note;
-		//drop_near(o_ptr, -1, wpos, y, x);
-		inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
-		
-		/* Combine and update the pack */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-		
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN);
-		
-		/* Cleanup */
-		cs_erase(c_ptr, cs_ptr);
-		return;
-	}
-	
+	/* Don't mess with inns please! */
+	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
+
 	/* Do we have a rune? */
-	r_ptr = rspell_trap(Ind, projection);
+	r_ptr = has_rune(Ind, projection);
 	if (!r_ptr) {
 		msg_format(Ind, "\377yYou do not have the required rune. (%s)", r_projections[projection].name);
-		return;
+		return FALSE;
 	}
-	
+
 	/* Store the rune */
 	byte discount = r_ptr->discount;
 	s16b item_level = r_ptr->level;
 	s16b note = r_ptr->note;
-	
+
 	/* Consume one rune */
-	(void)rspell_socket(Ind, projection, TRUE);
-	
+	if (!rspell_socket(Ind, projection, TRUE)) return FALSE;
+
 	/* Allocate memory for a new rune */
-	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE))) return;
-	
+	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE))) return FALSE;
+
 	/* Store the rune */
 	cs_ptr->sc.rune.discount = discount;
 	cs_ptr->sc.rune.level = item_level;
 	cs_ptr->sc.rune.note = note;
 	//cs_ptr->sc.rune.id = r_ptr->owner; //use trap setter, not rune owner
-	
+
 	/* Preserve Terrain Feature */
 	cs_ptr->sc.rune.feat = c_ptr->feat;
-	
+
 	/* Store minimal runecraft info */
 	cs_ptr->sc.rune.typ = projection;
 	cs_ptr->sc.rune.mod = imperative;
 	cs_ptr->sc.rune.lev = skill;
-	cs_ptr->sc.rune.id = p_ptr->id; 
-	
+	cs_ptr->sc.rune.id = p_ptr->id;
+
 	/* Change the feature */
 	if (c_ptr->feat != FEAT_RUNE) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
 	c_ptr->feat = FEAT_RUNE;
-	
+
 	int i;
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
@@ -1171,6 +1069,8 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_DISTANCE);
 	}
+
+	return TRUE;
 }
 
 /*
@@ -1183,7 +1083,7 @@ bool warding_rune_break(int m_idx)
 	monster_type *m_ptr = &m_list[m_idx];
 	object_type forge;
 	object_type *o_ptr = &forge;
-	
+
 	/* Location info */
 	int mx = m_ptr->fx;
 	int my = m_ptr->fy;
@@ -1221,7 +1121,6 @@ bool warding_rune_break(int m_idx)
 
 	/* Fire if ready */
 	if (who > 0) {
-	
 		/* Load rune data */
 		byte skill = cs_ptr->sc.rune.lev;
 		byte imperative = cs_ptr->sc.rune.mod;
@@ -1229,15 +1128,15 @@ bool warding_rune_break(int m_idx)
 
 		/* Calculate the Damage */
 		u32b dx, dy;
-		u16b damage = rspell_damage(&dx, &dy, imperative, 5, skill, projection); 
-		
+		u16b damage = rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2;
+
 		/* WRAITHFORM reduces damage/effect! */
 		//if (who > 0 && p_ptr->tim_wraith) damage /= 2;
 
 		/* Calculate the Remaining Parameters */
 		//byte radius = rspell_radius(imperative, 5, skill, projection);
 		byte radius = 0; //Be consistent with player traps, for now.
-		
+
 		/* Resolve the Effect */
 		byte gf_type = r_projections[projection].gf_type;
 
@@ -1252,7 +1151,7 @@ bool warding_rune_break(int m_idx)
 
 	/* Restore the original cave feature */
 	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.rune.feat);
-	
+
 	/* Drop rune */
 	invcopy(o_ptr, lookup_kind(TV_RUNE, cs_ptr->sc.rune.typ));
 	o_ptr->discount = cs_ptr->sc.rune.discount;
@@ -1261,7 +1160,7 @@ bool warding_rune_break(int m_idx)
 	o_ptr->mode = lookup_player_mode(cs_ptr->sc.rune.id);
 	o_ptr->note = cs_ptr->sc.rune.note;
 	drop_near(o_ptr, -1, wpos, my, mx);
-	
+
 	/* Cleanup */
 	cs_erase(c_ptr, cs_ptr);
 
