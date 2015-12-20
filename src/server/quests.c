@@ -2827,7 +2827,10 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 	if (j == MAX_PQUESTS) return j; //paranoia, shouldn't happen
 
 	/* clear any pending RIDs */
-	if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) p_ptr->request_id = 0;
+	if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) {
+		Send_request_abort(Ind);
+		p_ptr->request_id = RID_NONE;
+	}
 
 	/* play automatic narration if any */
 	if (!quiet) {
@@ -2990,7 +2993,10 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 			p_ptr->quest_eligible = j + 1;
 
 			/* clear any pending RIDs */
-			if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) p_ptr->request_id = 0;
+			if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) {
+				Send_request_abort(i);
+				p_ptr->request_id = RID_NONE;
+			}
 
 			/* play automatic narration if any */
 			if (!quiet) {
