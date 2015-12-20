@@ -2189,7 +2189,7 @@ void do_cmd_open(int Ind, int dir) {
 						if (price < 100) price = 100;
 						msg_format(Ind, "\377oThat house costs %d gold.", price);
 #ifdef USE_SOUND_2010
-						sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
+						//sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 					} else {
 #ifdef PLAYER_STORES
@@ -6981,6 +6981,9 @@ void do_cmd_purchase_house(int Ind, int dir) {
 			if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
 				if (p_ptr->dna == dna->creator) {
 					if (!gain_au(Ind, price / 2, FALSE, FALSE)) return;
+#ifdef USE_SOUND_2010
+					sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 					/* sell house */
 					msg_format(Ind, "You sell your house for %d gold.", price / 2);
@@ -7079,6 +7082,9 @@ void do_cmd_purchase_house(int Ind, int dir) {
 		}
 		msg_format(Ind, "You buy the house for %d gold.", price);
 		p_ptr->au -= price;
+#ifdef USE_SOUND_2010
+		sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 		p_ptr->houses_owned++;
 		if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned++;
 

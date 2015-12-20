@@ -2088,6 +2088,9 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 			p_ptr->balance += gold;
 			p_ptr->au -= gold;
+#ifdef USE_SOUND_2010
+			sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 			msg_format(Ind, "You deposit %i gold pieces.", gold);
 			s_printf("Deposit: %s - %d Au.\n", p_ptr->name, gold);
@@ -2106,6 +2109,9 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 			p_ptr->balance -= gold;
 			p_ptr->au += gold;
+#ifdef USE_SOUND_2010
+			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 			msg_format(Ind, "You withdraw %i gold pieces.", gold);
 			s_printf("Withdraw: %s - %d Au.\n", p_ptr->name, gold);
