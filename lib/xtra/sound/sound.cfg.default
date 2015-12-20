@@ -26,7 +26,7 @@
 
 [player/alert]
 
-greeting = misc/paging/greeting.ogg
-page = misc/paging/ding.ogg
-warning = misc/paging/warning.ogg
-
+bell = player/alert/error/bell.ogg
+greeting = player/alert/intro/greeting.ogg
+page = player/alert/page/ding.ogg
+warning = player/alert/warning/warning.ogg
