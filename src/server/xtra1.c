@@ -8624,12 +8624,18 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 	/* verify that the ID is actually valid */
 	if (id != p_ptr->request_id) return;
+
+	/* request done */
 	p_ptr->request_id = RID_NONE;
+
 	/* verify that a string had been requested */
 	if (RTYPE_STR != p_ptr->request_type) return;
 
 	/* quests occupy an id broadband */
 	if (id >= RID_QUEST) {
+		//DEBUG
+		s_printf("RID_QUEST: (%d) '%s' replied '%s'\n", id, p_ptr->name, str);
+
 		str[30] = '\0'; /* arbitrary buffer limit */
 		quest_reply(Ind, id - RID_QUEST, str);
 		return;
@@ -8658,7 +8664,10 @@ void handle_request_return_num(int Ind, int id, int num) {
 
 	/* verify that the ID is actually valid */
 	if (id != p_ptr->request_id) return;
+
+	/* request done */
 	p_ptr->request_id = RID_NONE;
+
 	/* verify that a number had been requested */
 	if (RTYPE_NUM != p_ptr->request_type) return;
 
@@ -8711,7 +8720,10 @@ void handle_request_return_key(int Ind, int id, char c) {
 
 	/* verify that the ID is actually valid */
 	if (id != p_ptr->request_id) return;
+
+	/* request done */
 	p_ptr->request_id = RID_NONE;
+
 	/* verify that a key had been requested */
 	if (RTYPE_KEY != p_ptr->request_type) return;
 
@@ -8736,7 +8748,10 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 
 	/* verify that the ID is actually valid */
 	if (id != p_ptr->request_id) return;
+
+	/* request done */
 	p_ptr->request_id = RID_NONE;
+
 	/* verify that a y/n confirmation had been requested */
 	if (RTYPE_CFR != p_ptr->request_type) return;
 
@@ -8751,6 +8766,10 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		if (cfr) str[0] = 'y';
 		else str[0] = 'n';
 		str[1] = 0;
+
+		//DEBUG
+		s_printf("RID_QUEST_CFR: (%d) '%s' replied '%s'\n", id, p_ptr->name, str);
+
 		quest_reply(Ind, id - RID_QUEST, str);
 		return;
 	}
