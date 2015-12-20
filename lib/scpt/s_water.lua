@@ -37,7 +37,7 @@ WATERBOLT = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-			fire_bolt(Ind, GF_WATER, args.dir, damroll(get_frostbolt_dam()), " casts a water bolt for")
+			fire_bolt(Ind, GF_WATER, args.dir, damroll(get_waterbolt_dam()), " casts a water bolt for")
 		end,
 	["info"] = 	function()
 			local x, y
