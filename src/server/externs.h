@@ -232,6 +232,7 @@ extern s32b opening_chest_owner;
 extern byte opening_chest_mode;
 extern bool scan_monsters;
 extern bool scan_objects;
+extern bool scan_do_dist;
 extern s32b o_nxt;
 extern s32b m_nxt;
 extern s32b o_max;

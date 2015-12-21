@@ -7512,6 +7512,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 //		teleport_away(c_ptr->m_idx, do_dist);
 		m_ptr->do_dist = do_dist;
+		scan_do_dist = TRUE;
 
 		/* Hack -- get new location */
 		y = m_ptr->fy;

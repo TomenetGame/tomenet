@@ -121,6 +121,7 @@ byte opening_chest_mode;
 
 bool scan_monsters;             /* Hack -- optimize multi-hued code, etc */
 bool scan_objects;              /* Hack -- optimize multi-hued code, etc */
+bool scan_do_dist;		/* Hack -- optimize teleport away code */
 
 s32b o_nxt = 1;                 /* Object free scanner */
 s32b m_nxt = 1;                 /* Monster free scanner */

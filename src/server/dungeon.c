@@ -7346,11 +7346,15 @@ void dungeon(void) {
 	process_effects();
 
 	/* Process projections' teleportation effects on monsters */
-	for (i = 0; i < m_top; i++)
-		if (m_list[m_fast[i]].do_dist) {
-			teleport_away(m_fast[i], m_list[m_fast[i]].do_dist);
-			m_list[m_fast[i]].do_dist = FALSE;
+	if (scan_do_dist) { /* Optimization: Only check all monsters when needed */
+		for (i = 0; i < m_top; i++) {
+			if (m_list[m_fast[i]].do_dist) {
+				teleport_away(m_fast[i], m_list[m_fast[i]].do_dist);
+				m_list[m_fast[i]].do_dist = FALSE;
+			}
 		}
+		scan_do_dist = FALSE;
+	}
 
 #ifdef FLUENT_ARTIFACT_RESETS
 	/* handle in 1-minute resolution - assume we have less artifacts than 60*cfg.fps */
