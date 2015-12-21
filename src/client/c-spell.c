@@ -1935,8 +1935,10 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 						break; }
 
 						case SV_R_TIME: { //Haste
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d dur %d+1d%d haste",
-							color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration/2, duration/2);
+							damage = rget_level(15) * r_imperatives[imperative].damage / 10;
+							if (damage < 1) damage = 1; if (damage > 10) damage = 10;
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d +%d speed",
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, damage);
 						break; }
 
 						case SV_R_DISE: { //Resistance
