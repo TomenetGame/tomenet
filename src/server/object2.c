@@ -820,53 +820,35 @@ errr get_obj_num_prep(u32b resf) {
 	long	k_idx;
 
 	/* Get the entry */
-	alloc_entry *table = alloc_kind_table;
+	alloc_entry *restrict table = alloc_kind_table;
 
 	/* Copy the hook into a local variable for speed */
 	int (*hook)(int k_idx, u32b resf) = get_obj_num_hook;
 
-	if (hook) {
-		/* Scan the allocation table */
-		for (i = 0, n = alloc_kind_size; i < n; i++) {
-			/* Get the entry */
-			alloc_entry *entry = &table[i];
+	/* Scan the allocation table */
+	for (i = 0, n = alloc_kind_size; i < n; i++) {
+		/* Get the entry */
+		alloc_entry *entry = &table[i];
 
-			/* Obtain the base probability */
-			p = entry->prob1;
+		/* Obtain the base probability */
+		p = entry->prob1;
 
-			/* Default probability for this pass */
-			entry->prob2 = 0;
+		/* Default probability for this pass */
+		entry->prob2 = 0;
 
-			/* Access the index */
-			k_idx = entry->index;
+		/* Access the index */
+		k_idx = entry->index;
 
-			/* Call the hook and adjust the probability */
+		/* Call the hook and adjust the probability */
+		if (hook) {
 			adj = (*hook)(k_idx, resf);
 			p = adj * p / 100;
-
-			if (p && (resf & RESF_STOREFLAT)) p = 100;
-
-			/* Save the probability */
-			entry->prob2 = p;
 		}
-	} else {
-		/* Scan the allocation table */
-		for (i = 0, n = alloc_kind_size; i < n; i++)
-		{
-			/* Get the entry */
-			alloc_entry *entry = &table[i];
 
-			/* Obtain the base probability */
-			p = entry->prob1;
+		if (p && (resf & RESF_STOREFLAT)) p = 100;
 
-			if (p && (resf & RESF_STOREFLAT)) p = 100;
-
-			/* Default probability for this pass */
-			entry->prob2 = 0;
-
-			/* Save the probability */
-			entry->prob2 = p;
-		}
+		/* Save the probability */
+		entry->prob2 = p;
 	}
 
 	/* Success */
@@ -886,63 +868,39 @@ errr get_obj_num_prep_tval(int tval, u32b resf) {
 	long k_idx;
 
 	/* Get the entry */
-	alloc_entry *table = alloc_kind_table;
+	alloc_entry *restrict table = alloc_kind_table;
 
 	/* Copy the hook into a local variable for speed */
 	int (*hook)(int k_idx, u32b resf) = get_obj_num_hook;
 
-	if (hook) {
-		/* Scan the allocation table */
-		for (i = 0, n = alloc_kind_size; i < n; i++) {
-			/* Get the entry */
-			alloc_entry *entry = &table[i];
+	/* Scan the allocation table */
+	for (i = 0, n = alloc_kind_size; i < n; i++) {
+		/* Get the entry */
+		alloc_entry *entry = &table[i];
 
-			/* Obtain the base probability */
-			p = entry->prob1;
+		/* Obtain the base probability */
+		p = entry->prob1;
 
-			/* Default probability for this pass */
-			entry->prob2 = 0;
+		/* Default probability for this pass */
+		entry->prob2 = 0;
 
-			/* Access the index */
-			k_idx = entry->index;
+		/* Access the index */
+		k_idx = entry->index;
 
-			/* Call the hook and adjust the probability */
+		/* Call the hook and adjust the probability */
+		if (hook) {
 			adj = (*hook)(k_idx, resf);
 			p = adj * p / 100;
-
-			if (p && (resf & RESF_STOREFLAT)) p = 100;
-
-			/* Only accept a specific tval */
-			if (k_info[table[i].index].tval != tval)
-				continue;
-
-			/* Save the probability */
-			entry->prob2 = p;
 		}
-	} else {
-		/* Scan the allocation table */
-		for (i = 0, n = alloc_kind_size; i < n; i++) {
-			/* Get the entry */
-			alloc_entry *entry = &table[i];
 
-			/* Obtain the base probability */
-			p = entry->prob1;
+		if (p && (resf & RESF_STOREFLAT)) p = 100;
 
-			/* Default probability for this pass */
-			entry->prob2 = 0;
+		/* Only accept a specific tval */
+		if (k_info[table[i].index].tval != tval)
+			continue;
 
-			/* Access the index */
-			k_idx = entry->index;
-
-			if (p && (resf & RESF_STOREFLAT)) p = 100;
-
-			/* Only accept a specific tval */
-			if (k_info[table[i].index].tval != tval)
-				continue;
-
-			/* Save the probability */
-			entry->prob2 = p;
-		}
+		/* Save the probability */
+		entry->prob2 = p;
 	}
 
 	/* Success */
@@ -972,7 +930,7 @@ s16b get_obj_num(int max_level, u32b resf) {
 	long		k_idx;
 
 	object_kind	*k_ptr;
-	alloc_entry	*table = alloc_kind_table;
+	alloc_entry	*restrict table = alloc_kind_table;
 
 
 	/* Boost level */
@@ -1061,7 +1019,7 @@ s16b get_obj_num(int max_level, u32b resf) {
 		/* Pick a object */
 		value = rand_int(total);
 
-		/* Find the monster */
+		/* Find the object */
 		for (i = 0; i < n; i++) {
 			/* Found the entry */
 			if (value < table[i].prob3) break;

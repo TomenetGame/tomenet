@@ -1054,7 +1054,7 @@ int restrict_monster_to_dungeon(int r_idx, int dun_type) {
  * Apply a "monster restriction function" to the "monster allocation table"
  */
 errr get_mon_num_prep(int dun_type, char *reject_monsters) {
-	alloc_entry	*table = alloc_race_table_dun[dun_type];
+	alloc_entry	*restrict table = alloc_race_table_dun[dun_type];
 	long		i, n, r_idx;
 
 	/* Select the table based on dungeon type */
@@ -1064,75 +1064,31 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters) {
 	bool (*hook)(int r_idx) = get_mon_num_hook;
 	bool (*hook2)(int r_idx) = get_mon_num2_hook;
 
-	if (hook && hook2) {
-		/* Most of the time both hooks are set */
+	/* Scan the allocation table */
+	for (i = 0, n = alloc_race_size; i < n; i++) {
+		/* Get the entry */
+		alloc_entry *entry = &table[i];
 
-		/* Scan the allocation table */
-		for (i = 0, n = alloc_race_size; i < n; i++) {
-			/* Get the entry */
-			alloc_entry *entry = &table[i];
+		/* Default probability for this pass */
+		entry->prob2 = 0;
 
-			/* Default probability for this pass */
-			entry->prob2 = 0;
+		/* Access the "r_idx" of the chosen monster */
+		r_idx = entry->index;
 
-			/* Access the "r_idx" of the chosen monster */
-			r_idx = entry->index;
+		/* Check the monster rejection array provided */
+		if (reject_monsters && reject_monsters[entry->index])
+			continue;
 
-			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
-			if (r_info[r_idx].flags0 & RF0_FINAL_GUARDIAN) {
-				/* exception: Sauron in the IDDC (real check is done in place_monster_one() anyway..) */
-				if (r_idx != RI_SAURON) continue;
-			}
-
-			/* Check the monster rejection array provided */
-			if (reject_monsters && reject_monsters[entry->index])
-				continue;
-
-			/* Accept monsters which pass the restriction, if any */
-			if ((*hook)(r_idx) && (*hook2)(r_idx)) {
-				/* Accept this monster */
-				entry->prob2 = entry->prob1;
-			}
-
-			/* Do not use this monster */
-			else {
-				/* Decline this monster */
-				continue;
-			}
+		/* Accept monsters which pass the restriction, if any */
+		if ((!hook || (*hook)(r_idx)) && (!hook2 || (*hook2)(r_idx))) {
+			/* Accept this monster */
+			entry->prob2 = entry->prob1;
 		}
-	} else {
-		/* Scan the allocation table */
-		for (i = 0, n = alloc_race_size; i < n; i++) {
-			/* Get the entry */
-			alloc_entry *entry = &table[i];
 
-			/* Default probability for this pass */
-			entry->prob2 = 0;
-
-			/* Access the "r_idx" of the chosen monster */
-			r_idx = entry->index;
-
-			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
-			if (r_info[r_idx].flags0 & RF0_FINAL_GUARDIAN) {
-				/* exception: Sauron in the IDDC (real check is done in place_monster_one() anyway..) */
-				if (r_idx != RI_SAURON) continue;
-			}
-
-			/* Check the monster rejection array provided */
-			if (reject_monsters && reject_monsters[entry->index])
-				continue;
-
-			/* Accept monsters which pass the restriction, if any */
-			if ((!hook || (*hook)(r_idx)) && (!hook2 || (*hook2)(r_idx))) {
-				/* Accept this monster */
-				entry->prob2 = entry->prob1;
-			}
-
-			/* Do not use this monster */
-			else {
-				/* Decline this monster */
-				continue;
-			}
+		/* Do not use this monster */
+		else {
+			/* Decline this monster */
+			continue;
 		}
 	}
 
@@ -1282,7 +1238,7 @@ s16b get_mon_num(int level, int dlevel) {
 	long		r_idx, monster_level_min_int = 0;
 	long		value, total;
 	monster_race	*r_ptr;
-	alloc_entry	*table = alloc_race_table;
+	alloc_entry	*restrict table = alloc_race_table;
 
 #if 0	// removed, but not disabled.. please see place_monster_one
 	/* Warp level around */

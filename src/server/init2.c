@@ -3079,6 +3079,12 @@ static errr init_alloc(void) {
 			/* Adjust based on server settings - mikaelh */
 			p = p * mon_allowed_chance(r_ptr) / 100;
 
+			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
+			if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) {
+				/* exception: Sauron in the IDDC (real check is done in place_monster_one() anyway..) */
+				if (i != RI_SAURON) p = 0;
+			}
+
 			/* Hack - Don't include zero probability entries in the table */
 			if (p == 0) continue;
 

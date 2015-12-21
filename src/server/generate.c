@@ -12032,6 +12032,10 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 	int i, num;
 	cave_type **zcave;
 	struct worldpos twpos;
+	struct timeval time_begin, time_end, time_delta;
+
+	/* For measuring performance */
+	gettimeofday(&time_begin, NULL);
 
 	wpcopy(&twpos, wpos);
 	zcave = getcave(wpos);
@@ -12189,6 +12193,17 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 
 	/* Dungeon level ready */
 	server_dungeon = TRUE;
+
+	/* Calculate the amount of time spent */
+	gettimeofday(&time_end, NULL);
+	time_delta.tv_sec = time_end.tv_sec - time_begin.tv_sec;
+	time_delta.tv_usec = time_end.tv_usec - time_begin.tv_usec;
+	if (time_delta.tv_usec < 0) {
+		time_delta.tv_sec--;
+		time_delta.tv_usec += 1000000;
+	}
+	// Disabled to prevent log spam on live server
+	//s_printf("Level generation took %d.%06d seconds.\n", (int)time_delta.tv_sec, (int)time_delta.tv_usec);
 }
 
 /* (Can ONLY be used on surface worldmap sectors.)
