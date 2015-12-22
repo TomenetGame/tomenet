@@ -8634,7 +8634,10 @@ void handle_request_return_str(int Ind, int id, char *str) {
 	/* quests occupy an id broadband */
 	if (id >= RID_QUEST) {
 		//DEBUG
-		s_printf("RID_QUEST: (%d) '%s' replied '%s'\n", id, p_ptr->name, str);
+		if (str[0] == '\e')
+			s_printf("RID_QUEST: (%d) '%s' replied <ESC>\n", id, p_ptr->name);
+		else
+			s_printf("RID_QUEST: (%d) '%s' replied '%s'\n", id, p_ptr->name, str);
 
 		str[30] = '\0'; /* arbitrary buffer limit */
 		quest_reply(Ind, id - RID_QUEST, str);
