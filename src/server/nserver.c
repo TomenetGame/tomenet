@@ -968,6 +968,16 @@ bool check_multi_exploit(char *acc, char *nick) {
 		if (!strcasecmp(connp->c_name, nick)) continue; //this case is instead handled by part 1/2: resume connection!
 		if (strcasecmp(connp->nick, acc)) continue;
 		s_printf("check_multi_exploit=TRUE\n");
+
+#if 1
+		/* instead of disallowing the new 'duplicate' connection,
+		kill the old one, which should be in the login process atm
+		(otherwise we woudln't be here? not sure - or does it have to check for CONN_LOGIN above?) */
+		if (connp->state == CONN_LOGIN) {
+			Destroy_connection(i, "new connection");
+			continue;
+		}
+#endif
 		return TRUE;
 	}
 	return FALSE;
