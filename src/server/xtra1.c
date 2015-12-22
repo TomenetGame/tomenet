@@ -5024,7 +5024,7 @@ void calc_boni(int Ind) {
 		switch (p_ptr->pclass) {
 		case CLASS_ADVENTURER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
 		case CLASS_WARRIOR: p_ptr->shield_deflect = p_ptr->shield_deflect; break;
-		case CLASS_PRIEST: p_ptr->shield_deflect = (p_ptr->shield_deflect * 3 + 3) / 6; break;
+		case CLASS_PRIEST: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
 		case CLASS_MAGE: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 4) / 6; break;
 		case CLASS_ARCHER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
 		case CLASS_ROGUE: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
@@ -5032,8 +5032,8 @@ void calc_boni(int Ind) {
 		case CLASS_RANGER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
 		case CLASS_PALADIN: p_ptr->shield_deflect = p_ptr->shield_deflect; break;
 		case CLASS_SHAMAN: p_ptr->shield_deflect = (p_ptr->shield_deflect * 3 + 3) / 6; break;
-		case CLASS_DRUID: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
-		case CLASS_RUNEMASTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
+		case CLASS_DRUID: p_ptr->shield_deflect = (p_ptr->shield_deflect * 3 + 3) / 6; break;
+		case CLASS_RUNEMASTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 3 + 3) / 6; break;
 		case CLASS_MINDCRAFTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
 		}
 	}
@@ -5074,7 +5074,7 @@ void calc_boni(int Ind) {
 		switch (p_ptr->pclass) {
 		case CLASS_ADVENTURER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4 + 2) / 6; break;
 		case CLASS_WARRIOR: p_ptr->weapon_parry = p_ptr->weapon_parry; break;
-		case CLASS_PRIEST: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3 + 3) / 6; break;
+		case CLASS_PRIEST: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4 + 2) / 6; break;
 		case CLASS_MAGE: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 4) / 6; break;
 		case CLASS_ARCHER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4 + 2) / 6; break;
 		case CLASS_ROGUE: p_ptr->weapon_parry = p_ptr->weapon_parry; break;
@@ -5082,7 +5082,7 @@ void calc_boni(int Ind) {
 		case CLASS_RANGER: p_ptr->weapon_parry = p_ptr->weapon_parry; break;
 		case CLASS_PALADIN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 5 + 1) / 6; break;
 		case CLASS_SHAMAN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3 + 3) / 6; break;
-		case CLASS_DRUID: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4 + 2) / 6; break;
+		case CLASS_DRUID: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3 + 3) / 6; break;
 		case CLASS_RUNEMASTER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4 + 2) / 6; break;
 		case CLASS_MINDCRAFTER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 5 + 1) / 6; break;
 		}
