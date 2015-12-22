@@ -234,11 +234,11 @@ X11BASE = /usr/X11R6
 # "CFLAGS", if your machine places files in a weird location.
 #
 ## With SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm
 
 ##
@@ -256,11 +256,11 @@ X11BASE = /usr/X11R6
 # attempt to "guess" at many of these flags based on your system.
 #
 ## With SDL
-CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32
+CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32
 LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 
 
@@ -269,11 +269,11 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config -
 ## This is a command-line client that relies on ncurses.
 ##
 ## With SDL
-#CFLAGS = -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+#CFLAGS = -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
 #LIBS = -L/usr/pkg/lib -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#CFLAGS = -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L/usr/pkg/lib -lncurses -lcrypt -lm
 
 
@@ -296,7 +296,7 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config -
 ## CFLAGS and -lX11 from LIBS
 ##
 ## With SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags`
 #tomenet.test: CFLAGS += -DTEST_CLIENT
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 #-lXtst (for numlock - obsolete)
@@ -304,7 +304,7 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config -
 #LDFLAGS = -Wl,-rpath,\$$ORIGIN
 ##
 ## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 
 
