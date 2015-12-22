@@ -1477,15 +1477,8 @@ The # inscription:
     It can be especially convenient if the item has a very long name.
     Sometimes you can also use this to confuse your fellow players :-p
 
-Items that induce random teleportation, like a 'ring of teleportation' or
-'weapon of the thunderlords':
-..  If the item is _not cursed_ then you may inscribe it with two dots '..' to
-    prevent it from teleporting you! In order for the inscription to take
-    effect in case you already have it equipped you will need to take it off
-    and wield it again.
-    The two dots can appear anywhere in the inscription, as long as they are
-    not separated from each other. Example:
-    A Long Sword Of The Thunderlords (2d5) (+10,+15) {NxCaFALevReg..}
+(The '..' inscription is no longer available since 'Thunderlord' ego weapons
+no longer have the TELEPORT flag.)
 
 Items that 'can cause Earthquakes':
     !E          Prevents the item from causing an earthquake. This usually
