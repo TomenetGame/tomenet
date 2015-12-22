@@ -5763,7 +5763,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		} else if (is_ego_p(o_ptr, EGO_JUMP)) {
 			teleport_player(Ind, 10, TRUE);
-			o_ptr->timeout = 10 + randint(10);
+			o_ptr->timeout = 15 + randint(10) - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			/* Done */
@@ -5771,7 +5771,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		} else if (is_ego_p(o_ptr, EGO_SPINNING)) {
 			//do_spin(Ind);
 			spin_attack(Ind); /* this one is nicer than do_spin */
-			o_ptr->timeout = 50 + randint(25);
+			o_ptr->timeout = 50 + randint(25) - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			/* Done */
@@ -5787,7 +5787,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		} else if (is_ego_p(o_ptr, EGO_NOLDOR)) {
 			detect_treasure(Ind, DEFAULT_RADIUS * 2);
-			o_ptr->timeout = 10 + randint(20);
+			o_ptr->timeout = 20 + randint(10) - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			/* Done */
@@ -5861,7 +5861,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			set_afraid(Ind, 0);
 			set_fury(Ind, randint(10) + 15); /* removed stacking */
 			hp_player(Ind, 40);
-			o_ptr->timeout = rand_int(150) + 250;
+			o_ptr->timeout = rand_int(150) + 250 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			return;
 		}
 	}
@@ -6424,7 +6424,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			}
 			break;
 		}
-		o_ptr->timeout = 200 + rand_int(100);
+		o_ptr->timeout = 250 + rand_int(20) - get_skill_scale(p_ptr, SKILL_DEVICE, 230);//pretty big effect^^
 	}
 
 	/* Hack -- Amulet of the Serpents can be activated as well */
@@ -6432,7 +6432,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		msg_print(Ind, "You breathe venom...");
 		sprintf(p_ptr->attacker, " breathes venom for");
 		fire_ball(Ind, GF_POIS, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
-		o_ptr->timeout = rand_int(60) + 40;
+		o_ptr->timeout = rand_int(60) + 40 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
 	}
 	else if (!done && o_ptr->tval == TV_RING) {
 		switch (o_ptr->sval) {
