@@ -1287,9 +1287,8 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				}
 			}
 
-			else if (sigil == SV_R_WATE) { //Water          | ImSD   |      |        |       |       |       |       |
+			else if (sigil == SV_R_WATE) { //Water          | Im     |      |        |       |       |       |       |
 				if (!((*f5) & TR5_IM_WATER)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_WATER; flag_count++; }
-				if (!((*f3) & TR3_SLOW_DIGEST)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SLOW_DIGEST; flag_count++; }
 			}
 
 			else if (sigil == SV_R_GRAV) { //Gravity        | NT     |      |        |       | Lv    |       |       | Lv
@@ -1457,8 +1456,8 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				}
 			}
 
-			else if (sigil == SV_R_ICEE) { //Ice            | Im     | BrVo |        |       |       |       | Br    |
-				if (!((*f2) & TR2_IM_COLD)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_COLD; flag_count++; }
+			else if (sigil == SV_R_ICEE) { //Ice            | SD     | BrVo |        |       |       |       | Br    |
+				if (!((*f3) & TR3_SLOW_DIGEST)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SLOW_DIGEST; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
 						if (!((*f5) & TR5_IMPACT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IMPACT; flag_count++; }
@@ -1476,9 +1475,8 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				}
 			}
 
-			else if (sigil == SV_R_PLAS) { //Plasma         | ImIm   | Br   |        |       |       |       | Br    |
-				if (!((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
-				if (!((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
+			else if (sigil == SV_R_PLAS) { //Plasma         | Pl     | Br   |        |       |       | Fe    | Br    |
+				if (!((*f3) & TR3_LITE1)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_LITE1; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
 					case TV_POLEARM:
@@ -1489,6 +1487,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 						if (!((*f1) & TR1_BRAND_ELEC)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ELEC; flag_count++; }
 						if (!((*f1) & TR1_BRAND_FIRE)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_FIRE; flag_count++; }
 					break;
+					case TV_HELM:
+					case TV_CROWN:
+						if (!((*f2) & TR2_RES_FEAR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_FEAR; flag_count++; }
 					break;
 					default:
 					break;

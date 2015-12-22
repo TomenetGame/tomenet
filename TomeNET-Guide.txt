@@ -15349,7 +15349,7 @@ Confusion      | FA     |      | Re     | Re    |       | W+I+  | FA    |
 Inertia        | NT     |      |        |       |       |       |       |
 Lightning      | Im     | Br   |        |       | Au    |       | BrD+  |
 Fire           | Im     | Br   |        |       | Au    |       | BrS+  |
-Water          | ImSD   |      |        |       |       |       |       |
+Water          | Im     |      |        |       |       |       |       |
 Gravity        | NT     |      |        |       | Lv    |       |       | Lv
 Frost          | Im     | Br   |        |       | Au    |       | BrS+  |
 Acid           | Im     | Br   |        |       |       |       | Brc+  |
@@ -15358,8 +15358,8 @@ Shards         | Rh     | CrVo |        |       |       |       | Cr    |
 Sound          | Sl     |      |        | Sl    | Sl    | Fe    |       | Sl
 Time           | Sp     | EA   |        |       |       |       | EA    | Sp
 Disenchantment | AM     |      | Ba     | Ba    | Ba    |       |       |
-Ice            | Im     | BrVo |        |       |       |       | Br    |
-Plasma         | ImIm   | Br   |        |       |       |       | Br    |
+Ice            | SD     | BrVo |        |       |       |       | Br    |
+Plasma         | Pl     | Br   |        |       |       | Fe    | Br    |
 
 
 
