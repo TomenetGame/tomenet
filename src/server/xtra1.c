@@ -50,6 +50,12 @@
    Could be extended onto to-dam and even Speed maybe. Shouldn't be extended onto AC. */
 #define MIMICRY_BOOST_WEAK_FORM
 
+/* Enable to allow '..' inscription, for suppressing TELEPORT flag on non-cursed items.
+   This is a bit ugly and there is no reason to have this enabled as long as the
+   'Thunderlords' ego doesn't have TELEPORT flag (which was just removed). */
+//#define TOGGLE_TELE
+
+
 
 /*
  * Converts stat num into a six-char (right justified) string
@@ -2762,8 +2768,9 @@ int calc_crit_obj(int Ind, object_type *o_ptr) {
  * This function induces various "status" messages.
  */
 void calc_boni(int Ind) {
+#ifdef TOGGLE_TELE
 	cptr inscription = NULL;
-//	char tmp[80];
+#endif
 
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -3836,9 +3843,9 @@ void calc_boni(int Ind) {
 			p_ptr->aggravate = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAGGR;
 			break_cloaking(Ind, 0);
 		}
-//		if (f3 & TR3_TELEPORT) p_ptr->teleport = TRUE;
 		if (f3 & TR3_TELEPORT) {
 			p_ptr->teleport = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_STELE;
+#ifdef TOGGLE_TELE /* disabled since TELEPORT flag was removed from Thunderlord ego, the only real reason to have this */
 			//inscription = (unsigned char *) quark_str(o_ptr->note);
 			inscription = quark_str(p_ptr->inventory[i].note);
 			/* check for a valid inscription */
@@ -3857,6 +3864,7 @@ void calc_boni(int Ind) {
 					inscription++;
 				}
 			}
+#endif
 		}
 		if (f3 & TR3_DRAIN_EXP) p_ptr->drain_exp++;
 		if (f5 & (TR5_DRAIN_MANA)) { p_ptr->drain_mana++; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_SRGMP; }
@@ -6148,6 +6156,7 @@ void calc_boni(int Ind) {
 						if (f2 & TR2_RES_BLIND) csheet_boni[i].cb[4] |= CB5_RBLND;
 						if (f3 & TR3_TELEPORT) {
 							csheet_boni[i].cb[4] |= CB5_STELE;
+#ifdef TOGGLE_TELE /* disabled since TELEPORT flag was removed from Thunderlord ego, the only real reason to have this */
 							//inscription = (unsigned char *) quark_str(o_ptr->note);
 							inscription = quark_str(p_ptr->inventory[i].note);
 							/* check for a valid inscription */
@@ -6166,6 +6175,7 @@ void calc_boni(int Ind) {
 									inscription++;
 								}
 							}
+#endif
 						}
 						if (f5 & TR5_RES_TELE) csheet_boni[i].cb[4] |= CB5_RTELE;
 						if (f3 & TR3_NO_TELE) csheet_boni[i].cb[4] |= CB5_ITELE;
