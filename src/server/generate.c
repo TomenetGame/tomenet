@@ -3269,7 +3269,7 @@ static int template_race;
 /*
  * Dungeon monster filter - not null
  */
-bool dungeon_aux(int r_idx){
+bool dungeon_aux(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	if (r_ptr->flags8 & RF8_DUNGEON)
@@ -3304,8 +3304,7 @@ bool xorder_aux(int r_idx) {
 /*
  * Helper function for "monster nest (jelly)"
  */
-static bool vault_aux_jelly(int r_idx)
-{
+static bool vault_aux_jelly(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3322,8 +3321,7 @@ static bool vault_aux_jelly(int r_idx)
 /*
  * Helper function for "monster nest (animal)"
  */
-static bool vault_aux_animal(int r_idx)
-{
+static bool vault_aux_animal(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* No aquatic life in the dungeon */
@@ -3343,8 +3341,7 @@ static bool vault_aux_animal(int r_idx)
 /*
  * Helper function for "monster nest (undead)"
  */
-static bool vault_aux_undead(int r_idx)
-{
+static bool vault_aux_undead(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3361,8 +3358,8 @@ static bool vault_aux_undead(int r_idx)
 /*
  * Helper function for "monster nest (chapel)"
  */
-static bool vault_aux_chapel(int r_idx)
-{
+//Currently unused! only vault_aux_lesser_chapel is in use! (This one would be BAD with Blade angels!)
+static bool vault_aux_chapel(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3370,34 +3367,30 @@ static bool vault_aux_chapel(int r_idx)
 
 	/* Require "priest" or Angel */
 	if (!((r_ptr->d_char == 'A') ||
-		strstr((r_name + r_ptr->name),"riest") || 
-		strstr((r_name + r_ptr->name),"aladin") ||
-		strstr((r_name + r_ptr->name),"emplar")))
-	{
+	    strstr((r_name + r_ptr->name),"riest") ||
+	    strstr((r_name + r_ptr->name),"aladin") ||
+	    strstr((r_name + r_ptr->name),"emplar")))
 		return (FALSE);
-	}
 
 	/* Okay */
 	return (TRUE);
 }
-static bool vault_aux_lesser_chapel(int r_idx)
-{
+static bool vault_aux_lesser_chapel(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
+	/* No Blade angels */
 	if (r_ptr->flags0 & RF0_NO_NEST) return (FALSE);
 
 	/* Require "priest" or Angel */
 //	if (!((r_ptr->d_char == 'A' && (r_ptr->level <= 70)) ||
 	if (!((r_ptr->d_char == 'A') ||
-		strstr((r_name + r_ptr->name),"riest") || 
-		strstr((r_name + r_ptr->name),"aladin") ||
-		strstr((r_name + r_ptr->name),"emplar")))
-	{
+	    strstr((r_name + r_ptr->name),"riest") ||
+	    strstr((r_name + r_ptr->name),"aladin") ||
+	    strstr((r_name + r_ptr->name),"emplar")))
 		return (FALSE);
-	}
 
 	/* Okay */
 	return (TRUE);
@@ -3407,8 +3400,7 @@ static bool vault_aux_lesser_chapel(int r_idx)
 /*
  * Helper function for "monster nest (kennel)"
  */
-static bool vault_aux_kennel(int r_idx)
-{
+static bool vault_aux_kennel(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3418,8 +3410,7 @@ static bool vault_aux_kennel(int r_idx)
 	return ((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
 
 }
-static bool vault_aux_lesser_kennel(int r_idx)
-{
+static bool vault_aux_lesser_kennel(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3437,8 +3428,7 @@ static bool vault_aux_lesser_kennel(int r_idx)
 /*
  * Helper function for "monster nest (treasure)"
  */
-static bool vault_aux_treasure(int r_idx)
-{
+static bool vault_aux_treasure(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3461,10 +3451,9 @@ static bool vault_aux_treasure(int r_idx)
 /*
  * Helper function for "monster nest (clone)"
  */
-static bool vault_aux_clone(int r_idx)
-{
-/* unsure - blades shouldn't happen, but should titans?
-if (r_info[r_idx].flags0 & RF0_NO_NEST) return (FALSE); */
+static bool vault_aux_clone(int r_idx) {
+	/* unsure - blades shouldn't happen, but should titans?
+	if (r_info[r_idx].flags0 & RF0_NO_NEST) return (FALSE); */
 
 	return (r_idx == template_race);
 }
@@ -3473,12 +3462,10 @@ if (r_info[r_idx].flags0 & RF0_NO_NEST) return (FALSE); */
 /*
  * Helper function for "monster nest (symbol clone)"
  */
-static bool vault_aux_symbol(int r_idx)
-{
+static bool vault_aux_symbol(int r_idx) {
 	return ((r_info[r_idx].d_char == (r_info[template_race].d_char))
-		&& !(r_info[r_idx].flags1 & RF1_UNIQUE)
-		&& !(r_info[r_idx].flags0 & RF0_NO_NEST)
-		&& !(r_info[r_idx].d_char == 'A' && r_info[r_idx].level > 70));
+	    && !(r_info[r_idx].flags1 & RF1_UNIQUE)
+	    && !(r_info[r_idx].flags0 & RF0_NO_NEST));
 }
 
 
@@ -3486,8 +3473,7 @@ static bool vault_aux_symbol(int r_idx)
 /*
  * Helper function for "monster pit (orc)"
  */
-static bool vault_aux_orc(int r_idx)
-{
+static bool vault_aux_orc(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3504,8 +3490,7 @@ static bool vault_aux_orc(int r_idx)
 /*
  * Helper function for "monster pit (orc and ogre)"
  */
-static bool vault_aux_orc_ogre(int r_idx)
-{
+static bool vault_aux_orc_ogre(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3522,8 +3507,7 @@ static bool vault_aux_orc_ogre(int r_idx)
 /*
  * Helper function for "monster pit (troll)"
  */
-static bool vault_aux_troll(int r_idx)
-{
+static bool vault_aux_troll(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3540,8 +3524,7 @@ static bool vault_aux_troll(int r_idx)
 /*
  * Helper function for "monster pit (mankind)"
  */
-static bool vault_aux_man(int r_idx)
-{
+static bool vault_aux_man(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3558,8 +3541,7 @@ static bool vault_aux_man(int r_idx)
 /*
  * Helper function for "monster pit (giant)"
  */
-static bool vault_aux_giant(int r_idx)
-{
+static bool vault_aux_giant(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3571,13 +3553,13 @@ static bool vault_aux_giant(int r_idx)
 	/* Okay */
 	return (TRUE);
 }
-static bool vault_aux_lesser_giant(int r_idx)
-{
+static bool vault_aux_lesser_giant(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
 
+	/* No Titans */
 	if (r_ptr->flags0 & RF0_NO_NEST) return (FALSE);
 
 	/* Hack -- Require "P" monsters */
@@ -3597,8 +3579,7 @@ static u32b vault_aux_dragon_mask4;
 /*
  * Helper function for "monster pit (dragon)"
  */
-static bool vault_aux_dragon(int r_idx)
-{
+static bool vault_aux_dragon(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
@@ -3621,8 +3602,7 @@ static bool vault_aux_dragon(int r_idx)
 /*
  * Helper function for "monster pit (demon)"
  */
-static bool vault_aux_demon(int r_idx)
-{
+static bool vault_aux_demon(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Decline unique monsters */
