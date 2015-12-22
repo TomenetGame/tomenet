@@ -11712,6 +11712,11 @@ Note that not every skill is available to every profession (class).
                                 Note: Weapon weight or whether it's 1-h, 1 1/2h
                                 or 2h weapon does not matter for backstabbing.
 
+                                Backstab hits and critical hits do not stack.
+                                If you roll a critical hit on backstabbing, the
+                                damage is compared to what the pure backstab
+                                would do and the higher one is used.
+
                                 Vampires will feed especially much from
                                 backstabbing a sleeping opponent to death.
 
