@@ -16,6 +16,7 @@
    it IS a server file, isn't it? */
 #define SERVER
 #include "angband.h"
+#include <sys/time.h>
 
 /* how many chars someone may enter (formerly used for /bbs, was an ugly hack) */
 #define MAX_SLASH_LINE_LEN	MSG_LEN

@@ -15,7 +15,7 @@
 
 #include "angband.h"
 #include "party.h"
-
+#include <sys/time.h>
 
 //#define IRON_TEAM_EXPERIENCE
 /* todo before enabling: implement way to decrease party.experience again! */

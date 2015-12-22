@@ -11,10 +11,8 @@
 #include "../world/world.h"
 #endif
 
-#ifdef MINGW
 /* For gettimeofday */
 #include <sys/time.h>
-#endif
 
 static void console_talk_aux(char *message);
 

@@ -15,6 +15,8 @@
 
 #include "angband.h"
 
+#include <sys/time.h>
+
 /* Avoid generating doors that are standing around in weird/pointless locations (eg without walls attached) -- todo: fix/complete */
 //#define ENABLE_DOOR_CHECK
 
