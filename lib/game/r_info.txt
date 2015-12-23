@@ -8674,7 +8674,7 @@ F:ANIMAL | NO_CONF | NO_SLEEP
 F:MORTAL | BASEANGBAND
 S:1_IN_5 |
 S:BR_WALL
-D:A deep brown shape is visible before you, its canine form strikes you with
+D:A milky shape is visible before you, its canine form strikes you with
 D:an almost physical force. The dungeon floor buckles as if struck by a
 D:powerful blow as it stalks towards you.
 
@@ -19908,7 +19908,7 @@ $ARCADE_SERVER$F:NO_CONF | NO_SLEEP
 $ARCADE_SERVER$F:MORTAL | BASEANGBAND
 $ARCADE_SERVER$S:1_IN_10 |
 $ARCADE_SERVER$S:BR_WALL
-$ARCADE_SERVER$D:A deep brown shape is visible before you, its canine form strikes you with
+$ARCADE_SERVER$D:A milky shape is visible before you, its canine form strikes you with
 $ARCADE_SERVER$D:an almost physical force. The dungeon floor buckles as if struck by a
 $ARCADE_SERVER$D:powerful blow as it stalks towards you.
 
