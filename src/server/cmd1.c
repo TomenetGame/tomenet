@@ -6478,7 +6478,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		}
 #endif	// USE_MANG_HOUSE_ONLY
 
-		if (!p_ptr->warning_staircase &&
+		if (!p_ptr->warning_staircase && !wpos->wz &&
 		    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE ||
 		    c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
 			dungeon_type *d_ptr = NULL;
@@ -6493,9 +6493,20 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				//p_ptr->warning_staircase = 1;
 
 				if (d_ptr->flags2 & DF2_IRON) {
-					msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon!");
-					msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
-					msg_print(Ind, "\374\377y         read a scroll of word-of-recall there! Also, death is \377opermanent\377y!");
+					if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+					    ((WPOS_IRONDEEPDIVE_Z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
+					    (WPOS_IRONDEEPDIVE_Z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
+						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon,");
+						msg_print(Ind, "\374\377y         this particular one being the 'Ironman Deep Dive Challenge'.");
+						if (p_ptr->mode & MODE_DED_IDDC)
+							msg_print(Ind, "\374\377y         If you enter, you cannot escape until you make it to the bottom!");
+						else
+							msg_print(Ind, "\374\377y         If you enter, you cannot escape until you reach Menegroth!");
+					} else {
+						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon!");
+						msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
+						msg_print(Ind, "\374\377y         read a scroll of word-of-recall there! Also, death is \377opermanent\377y!");
+					}
 				} else if (d_ptr->flags1 & DF1_NO_UP) {
 					msg_print(Ind, "\374\377oWARNING: \377yThe orange staircase indicates a 'No-up' dungeon!");
 					msg_print(Ind, "\374\377y         That means that you cannot take a staircase back up. You can");
