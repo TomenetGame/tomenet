@@ -12870,7 +12870,7 @@ create a character!):
     required for dual-wielding you might want to buy a secondary weapon right
     away, for example a cheap dagger, or even dispose of your starter weapon
     completely and go with two cheap, light weapons instead. (See (6.2) for
-    details on dual-wielding.)
+    details on dual-wielding.) This will increase your BpR by 1 or even 2!
     Note you can determine the order in which ammunition is listed in your
     backpack by simply dropping it and picking it up again in your preferred
     order.
