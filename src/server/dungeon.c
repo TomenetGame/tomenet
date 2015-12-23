@@ -6918,7 +6918,7 @@ void process_player_change_wpos(int Ind) {
 	if (!p_ptr->warning_worldmap && p_ptr->wpos.wz == 0 &&
 	    !in_sector00(&p_ptr->wpos) &&
 	    (ABS(p_ptr->wpos.wx - 32) >= 2 || ABS(p_ptr->wpos.wy - 32) >= 2)) {
-		msg_print(Ind, "\374\377yHINT: You can press '\377oM\377y' to browse a worldmap.");
+		msg_print(Ind, "\374\377yHINT: You can press '\377oM\377y' or '\377o~0\377y'to browse a worldmap.");
 		msg_print(Ind, "\374\377y      Towns, for example Bree, are denoted as yellow 'T'.");
 		s_printf("warning_worldmap: %s\n", p_ptr->name);
 		p_ptr->warning_worldmap = 1;
