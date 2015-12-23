@@ -12710,6 +12710,9 @@ create a character!):
     rogue be unable to avoid or disarm a trap. Rogues also have the unusual
     ability to train stealing from shops and their fellow men, a dangerous but
     sometimes very rewarding profession.
+    Searching (or entering searching mode) will actually search within a radius
+    instead of just the adjacent grids, another special trick of this class -
+    this way it becomes much easier to find staircases without mapping magic.
     Rogues are better than warriors or paladins with magical devices, but still
     can not rely on their performance. They can also learn a few magic spells.
     When searching for hidden traps, doors and stairs, they may spot them more
