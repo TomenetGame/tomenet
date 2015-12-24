@@ -292,10 +292,11 @@ void world_comm(int fd, int arg) {
 						p[5] = toupper(p[5]);
 
 						if (!(p_id = lookup_player_id(p + 5))) {
+							struct account acc;
 #if 0 /* don't check for account name */
 							msg_to_irc("That character name does not exist.");
 #else /* check for account name */
-							if (!GetAccount(p + 5, NULL, FALSE)) msg_to_irc("That character or account name does not exist.");
+							if (!GetAccount(&acc, p + 5, NULL, FALSE)) msg_to_irc("That character or account name does not exist.");
 							else msg_to_irc("There is no such character, but there is an account of that name.");
 #endif
 							break;

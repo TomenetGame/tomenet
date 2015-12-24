@@ -484,8 +484,8 @@ bool Report_to_meta(int flag) {
    Done by opening 'tomenet.acc_old' and (over)writing 'tomenet.acc'. */
 static bool update_acc_file_version(void) {
 	FILE *fp_old, *fp;
-	struct account_old c_acc_old;
-	struct account c_acc;
+	struct account_old acc_old;
+	struct account acc;
 	size_t retval;
 	char buf[1024];
 	int amt = 0, total = 0;
@@ -510,31 +510,31 @@ static bool update_acc_file_version(void) {
 	//char *ptr;
 
 	while (!feof(fp_old)) {
-		retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
-		if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
+		retval = fread(&acc_old, sizeof(struct account_old), 1, fp_old);
+		if (retval == 0) break; /* EOF reached, nothing read into 'acc' - mikaelh */
 		total++;
 
 		/* copy unchanged structure parts: */
-		c_acc.id = c_acc_old.id;
-		c_acc.flags = c_acc_old.flags;
-		//strcpy(c_acc.name, c_acc_old.name);
-		strcpy(c_acc.name, c_acc_old.name);
-		strcpy(c_acc.name_normalised, c_acc_old.name_normalised);
-		strcpy(c_acc.pass, c_acc_old.pass);
-		c_acc.acc_laston = c_acc_old.acc_laston;
-		c_acc.acc_laston_real = c_acc_old.acc_laston_real;
-		c_acc.cheeze = c_acc_old.cheeze;
-		c_acc.cheeze_self = c_acc_old.cheeze_self;
-		c_acc.deed_event = c_acc_old.deed_event;
-		c_acc.deed_achievement = c_acc_old.deed_achievement;
-		c_acc.guild_id = c_acc_old.guild_id;
-		c_acc.guild_dna = c_acc.guild_id ? guilds[c_acc.guild_id].dna : 0;
+		acc.id = acc_old.id;
+		acc.flags = acc_old.flags;
+		//strcpy(acc.name, acc_old.name);
+		strcpy(acc.name, acc_old.name);
+		strcpy(acc.name_normalised, acc_old.name_normalised);
+		strcpy(acc.pass, acc_old.pass);
+		acc.acc_laston = acc_old.acc_laston;
+		acc.acc_laston_real = acc_old.acc_laston_real;
+		acc.cheeze = acc_old.cheeze;
+		acc.cheeze_self = acc_old.cheeze_self;
+		acc.deed_event = acc_old.deed_event;
+		acc.deed_achievement = acc_old.deed_achievement;
+		acc.guild_id = acc_old.guild_id;
+		acc.guild_dna = acc.guild_id ? guilds[acc.guild_id].dna : 0;
 
 		/* changes/additions */
-		c_acc.houses = -1; //init value, means "please count me" // ACC_HOUSE_LIMIT
+		acc.houses = -1; //init value, means "please count me" // ACC_HOUSE_LIMIT
 
 		/* write it back */
-		if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1)
+		if (fwrite(&acc, sizeof(struct account), 1, fp) < 1)
 			s_printf("failure: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
 
 		amt++;
@@ -552,7 +552,7 @@ static bool update_acc_file_version(void) {
 /* Purge deleted accounts from tomenet.acc file by rewriting it. */
 bool purge_acc_file(void) {
 	FILE *fp_old, *fp;
-	struct account c_acc;
+	struct account acc;
         size_t retval;
 	char buf[1024], buf2[1024];
 	int amt = 0, total = 0;
@@ -576,18 +576,18 @@ bool purge_acc_file(void) {
 	}
 
 	while (!feof(fp_old)) {
-		retval = fread(&c_acc, sizeof(struct account), 1, fp_old);
-		if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
+		retval = fread(&acc, sizeof(struct account), 1, fp_old);
+		if (retval == 0) break; /* EOF reached, nothing read into acc - mikaelh */
 		total++;
 
 		/* Purge all deleted accounts */
-		if (c_acc.flags & ACC_DELD) {
+		if (acc.flags & ACC_DELD) {
 			amt++;
 			continue;
 		}
 
 		/* write it back */
-		if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1)
+		if (fwrite(&acc, sizeof(struct account), 1, fp) < 1)
 			s_printf("failure: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
 	}
 	s_printf("%d of %d records purged.\n", amt, total);
@@ -3734,7 +3734,7 @@ static int Receive_login(int ind) {
 	//unsigned char ch;
 	int i, n, res;
 	char choice[MAX_CHARS], loc[MAX_CHARS];
-	struct account *l_acc;
+	struct account acc;
 	struct worldpos wpos;
 
 	n = Sockbuf_read(&connp->r);
@@ -3760,7 +3760,6 @@ static int Receive_login(int ind) {
 		bool censor_swearing_tmp = censor_swearing;
 		char tmp_name[ACCOUNTNAME_LEN], tmp_name2[ACCOUNTNAME_LEN];
 		char tmp_name_wide[MAX_CHARS_WIDE];
-		struct account *acc;
 
 		/* security check: a bugged client might try to send the character name, but allows an 'empty' name!
 		   Here, the server would think that 'choice' being empty is signaling a different login stage.
@@ -3783,12 +3782,12 @@ static int Receive_login(int ind) {
 			if (lookup_accountname(p_id) && //<- avoid panic save if tomenet.acc file has been deleted for some reason. NOTE: Missing tomenet.acc still causes *problems*, so don't do that.
 			    strcmp(lookup_accountname(p_id), connp->nick)) {
 				/* However, if our account already exists then allow it to continue existing. */
-				if (!(acc = Admin_GetAccount(connp->nick))) {
+				if (!Admin_GetAccount(&acc, connp->nick)) {
 					Destroy_connection(ind, "Name already in use.");
 					Sockbuf_flush(&connp->w);
 					return(0);
 				}
-				KILL(acc, struct account);
+				WIPE(&acc, struct account);
 			}
 		}
 
@@ -3820,12 +3819,12 @@ static int Receive_login(int ind) {
 		   must be called before GetAccount() is called, because that function
 		   imprints the condensed name onto a newly created account.
 		   Don't prevent already existing accounts from logging in though. */
-		if (!(acc = Admin_GetAccount(connp->nick)) && lookup_similar_account(connp->nick, NULL)) {
+		if (!Admin_GetAccount(&acc, connp->nick) && lookup_similar_account(connp->nick, NULL)) {
 			//Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case."); //<- if not doing any 'similar' checks, it makes sense to point out case-sensitivity
 			Destroy_connection(ind, "A too similar name is already in use. Please choose a different name.");
 			return -1;
 		}
-		KILL(acc, struct account);
+		WIPE(&acc, struct account);
 
 		if (!connp->nick[0]) {
 			Destroy_connection(ind, "You need to enter a name and password! If you're a new player, just enter a name and password of your choice!");
@@ -3845,7 +3844,7 @@ static int Receive_login(int ind) {
 		}
 
 		/* Forbid certain special characters for newly created accounts */
-		if (!Admin_GetAccount(connp->nick)) {
+		if (!Admin_GetAccount(&acc, connp->nick)) {
 			char *cp;
 
 			if (strchr(connp->nick, '|')) {
@@ -3865,6 +3864,7 @@ static int Receive_login(int ind) {
 				return(-1);
 			}
 		}
+		WIPE(&acc, struct account);
 
 		/* Check for forbidden names (swearing).
 		   Note: This overrides 'censor_swearing' and is always on! */
@@ -3894,7 +3894,7 @@ static int Receive_login(int ind) {
 			my_memfrob(connp->pass, strlen(connp->pass));
 		}
 
-		if (connp->pass && (l_acc = GetAccount(connp->nick, connp->pass, FALSE))) {
+		if (connp->pass && GetAccount(&acc, connp->nick, connp->pass, FALSE)) {
 			int *id_list;
 			byte tmpm;
 			char colour_sequence[3];
@@ -3909,7 +3909,7 @@ static int Receive_login(int ind) {
 			/* Set server type flags */
 #ifdef RPG_SERVER
 			sflags0 |= SFLG0_RPG;
-			if (l_acc->flags & ACC_ADMIN) sflags0 |= SFLG0_RPG_ADMIN; /* Allow multiple chars per account for admins! */
+			if (acc.flags & ACC_ADMIN) sflags0 |= SFLG0_RPG_ADMIN; /* Allow multiple chars per account for admins! */
 #endif
 #ifdef FUN_SERVER
 			sflags0 |= SFLG0_FUN;
@@ -3958,7 +3958,7 @@ static int Receive_login(int ind) {
 			connp->password_verified = TRUE;
 			free(connp->pass);
 			connp->pass = NULL;
-			n = player_id_list(&id_list, l_acc->id);
+			n = player_id_list(&id_list, acc.id);
 			/* Display all account characters here */
 			for (i = 0; i < n; i++) {
 				u16b ptype = lookup_player_type(id_list[i]);
@@ -3992,7 +3992,6 @@ static int Receive_login(int ind) {
 			else
 				Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, "", "", 0, 0, 0);
 			if (n) C_KILL(id_list, n, int);
-			KILL(l_acc, struct account);
 		}
 		else{
 			/* fail login here */
@@ -7501,7 +7500,7 @@ int Send_inventory_revision(int Ind) {
 
 int Send_account_info(int Ind) {
 	connection_t *connp = Conn[Players[Ind]->conn];
-	struct account *l_acc;
+	struct account acc;
 	u32b acc_flags = 0;
 
 	if (!is_newer_than(&connp->version, 4, 4, 2, 2, 0, 0)) return(0);
@@ -7513,10 +7512,8 @@ int Send_account_info(int Ind) {
 		return 0;
 	}
 
-	l_acc = GetAccount(connp->nick, NULL, FALSE);
-	if (l_acc) {
-		acc_flags = l_acc->flags;
-		KILL(l_acc, struct account);
+	if (GetAccount(&acc, connp->nick, NULL, FALSE)) {
+		acc_flags = acc.flags;
 	}
 
 	return Packet_printf(&connp->c, "%c%hd", PKT_ACCOUNT_INFO, acc_flags);

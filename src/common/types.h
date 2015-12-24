@@ -1815,9 +1815,9 @@ struct skill_player
 struct account {
 	u32b id;	/* account id */
 	u32b flags;	/* account flags */
-	char name[30];	/* login */
-	char name_normalised[30];	/* login name, but in a simplified form, used for preventing creation of too similar account names */
-	char pass[20];	/* some crypts are not 13 */
+	char name[ACCFILE_NAME_LEN];	/* login */
+	char name_normalised[ACCFILE_NAME_LEN];	/* login name, but in a simplified form, used for preventing creation of too similar account names */
+	char pass[ACCFILE_PASSWD_LEN];	/* some crypts are not 13 */
 #ifdef ACC32
 	int acc_laston, acc_laston_real;
 #else
@@ -1836,9 +1836,9 @@ struct account {
 struct account_old {
 	u32b id;	/* account id */
 	u32b flags;	/* account flags */
-	char name[30];	/* login */
-	char name_normalised[30];	/* login name, but in a simplified form, used for preventing creation of too similar account names */
-	char pass[20];	/* some crypts are not 13 */
+	char name[ACCFILE_NAME_LEN];	/* login */
+	char name_normalised[ACCFILE_NAME_LEN];	/* login name, but in a simplified form, used for preventing creation of too similar account names */
+	char pass[ACCFILE_PASSWD_LEN];	/* some crypts are not 13 */
 #ifdef ACC32
 	int acc_laston, acc_laston_real;
 #else

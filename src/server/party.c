@@ -8,7 +8,6 @@
 #define SERVER
 
 #include "angband.h"
-#include "party.h"
 
 #ifdef TOMENET_WORLDS
 #include "../world/world.h"
@@ -107,82 +106,112 @@ bool WriteAccount(struct account *r_acc, bool new) {
 /*
  Get an existing account and set default valid flags on it
  That will be SCORE on only (hack it for MULTI)
- Modified to return TRUE on success and FALSE if account can't
- be found - mikaelh
- Makes the player valid now too - mikaelh
  Modified to return 0 if not found, 1 if found but already 100% validated,
  and -1 if found and there was still something invalid about it - C. Blue
  */
 int validate(char *name) {
-	struct account *c_acc;
+	struct account acc;
 	int i;
 	bool effect = FALSE;
 
-	c_acc = GetAccount(name, NULL, TRUE);
-	if (!c_acc) return(0);
-
-	if (c_acc->flags & ACC_TRIAL) {
-		effect = TRUE;
-		c_acc->flags &= ~(ACC_TRIAL | ACC_NOSCORE);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) {
+		return(0);
 	}
-	WriteAccount(c_acc, FALSE);
+
+	/* Modify account flags */
+	if (acc.flags & ACC_TRIAL) {
+		effect = TRUE;
+		acc.flags &= ~(ACC_TRIAL | ACC_NOSCORE);
+	}
+
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
+
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Validate the player too */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->account == c_acc->id) {
+		if (Players[i]->account == acc.id) {
 			if (Players[i]->inval) effect = TRUE;
 			Players[i]->inval = 0;
 		}
 	}
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
-
+	/* Return value of -1 indicates no effect */
 	if (effect) return(-1);
+
+	/* Success */
 	return(1);
 }
 
 /* invalidate - opposite to validate() */
 int invalidate(char *name, bool admin) {
-	struct account *c_acc;
+	struct account acc;
 	int i;
 	bool effect = FALSE;
 
-	c_acc = GetAccount(name, NULL, TRUE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) {
+		return(0);
+	}
 
-	if (!admin && (c_acc->flags & ACC_ADMIN)) {
-		KILL(c_acc, struct account);
+	/* Security check: Only admins can invalidate admin accounts */
+	if (!admin && (acc.flags & ACC_ADMIN)) {
+		WIPE(&acc, struct account);
 		return 2;
 	}
 
-	if (!(c_acc->flags & ACC_TRIAL)) {
+	/* Modify account flags */
+	if (!(acc.flags & ACC_TRIAL)) {
 		effect = TRUE;
-		c_acc->flags |= (ACC_TRIAL | ACC_NOSCORE);
+		acc.flags |= (ACC_TRIAL | ACC_NOSCORE);
 	}
-	WriteAccount(c_acc, FALSE);
+
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
+
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Invalidate the player too */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->account == c_acc->id) {
+		if (Players[i]->account == acc.id) {
 			if (!Players[i]->inval) effect = TRUE;
 			Players[i]->inval = 1;
 		}
 	}
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
+	/* Return value of -1 indicates no effect */
 	if (effect) return(-1);
+
+	/* Success */
 	return(1);
 }
 
 int makeadmin(char *name) {
-	struct account *c_acc;
+	struct account acc;
 	int i;
-	c_acc = GetAccount(name, NULL, TRUE);
-	if (!c_acc) return(FALSE);
-	c_acc->flags &= ~(ACC_TRIAL);
-	c_acc->flags |= (ACC_ADMIN | ACC_NOSCORE);
-	WriteAccount(c_acc, FALSE);
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
+
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) {
+		return(FALSE);
+	}
+
+	/* Modify account flags */
+	acc.flags &= ~(ACC_TRIAL);
+	acc.flags |= (ACC_ADMIN | ACC_NOSCORE);
+
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
+
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Make the player an admin too */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->account == c_acc->id) {
+		if (Players[i]->account == acc.id) {
 			Players[i]->inval = 0;
 			if (!strcmp(name, Players[i]->name))
 				Players[i]->admin_dm = 1;
@@ -191,203 +220,223 @@ int makeadmin(char *name) {
 		}
 	}
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
+	/* Success */
 	return(TRUE);
 }
 
 /* set or clear account flags */
 int acc_set_flags(char *name, u32b flags, bool set) {
-	struct account *c_acc;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, TRUE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) {
+		return(0);
+	}
 
-	if (set) c_acc->flags |= (flags);
-	else c_acc->flags &= ~(flags);
+	/* Modify account flags */
+	if (set) acc.flags |= (flags);
+	else acc.flags &= ~(flags);
 
-	WriteAccount(c_acc, FALSE);
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Success */
 	return(1);
 }
 
 /* get account flags */
 u32b acc_get_flags(char *name) {
-	struct account *c_acc;
-	u32b flags;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, FALSE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, FALSE)) {
+		return(0);
+	}
 
-	flags = c_acc->flags;
-
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
-	return flags;
+	return acc.flags;
 }
 
 /* set or clear account flags */
 int acc_set_flags_id(u32b id, u32b flags, bool set) {
-	struct account *c_acc;
-	char acc_name[MAX_CHARS];
+	struct account acc;
+	char acc_name[MAX_CHARS] = { '\0' };
 
-	acc_name[0] = 0;
-	strcpy(acc_name, lookup_accountname(id));
+	strncpy(acc_name, lookup_accountname(id), sizeof(acc_name));
+	acc_name[sizeof(acc_name) - 1] = '\0';
 
-	if (acc_name[0] == 0) return(0);
-	c_acc = GetAccount(acc_name, NULL, TRUE);
-	if (!c_acc) return(0);
+	/* Check that the name isn't empty */
+	if (acc_name[0] == '\0') return(0);
 
-	if (set) c_acc->flags |= (flags);
-	else c_acc->flags &= ~(flags);
+	/* Read from disk */
+	if (!GetAccount(&acc, acc_name, NULL, TRUE)) {
+		return(0);
+	}
 
-	WriteAccount(c_acc, FALSE);
+	/* Modify account flags */
+	if (set) acc.flags |= (flags);
+	else acc.flags &= ~(flags);
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
+
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Success */
 	return(1);
 }
 
 /* set account guild info */
 int acc_set_guild(char *name, s32b id) {
-	struct account *c_acc;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, TRUE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) {
+		return(0);
+	}
 
-	c_acc->guild_id = id;
+	acc.guild_id = id;
 
-	WriteAccount(c_acc, FALSE);
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Success */
 	return(1);
 }
 int acc_set_guild_dna(char *name, u32b dna) {
-	struct account *c_acc;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, TRUE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) {
+		return(0);
+	}
 
-	c_acc->guild_dna = dna;
+	acc.guild_dna = dna;
 
-	WriteAccount(c_acc, FALSE);
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Success */
 	return(1);
 }
 
 /* get account guild info */
 s32b acc_get_guild(char *name) {
-	struct account *c_acc;
-	s32b guild_id;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, FALSE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, FALSE)) {
+		return(0);
+	}
 
-	guild_id = c_acc->guild_id;
-
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
-	return guild_id;
+	return acc.guild_id;
 }
 u32b acc_get_guild_dna(char *name) {
-	struct account *c_acc;
-	u32b dna;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, FALSE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, FALSE)) {
+		return(0);
+	}
 
-	dna = c_acc->guild_dna;
-
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
-	return dna;
+	return acc.guild_dna;
 }
 
 int acc_set_deed_event(char *name, char deed_sval) {
-	struct account *c_acc;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, TRUE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) {
+		return(0);
+	}
 
-	c_acc->deed_event = deed_sval;
+	acc.deed_event = deed_sval;
 
-	WriteAccount(c_acc, FALSE);
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
+	/* Preven the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Success */
 	return(1);
 }
 char acc_get_deed_event(char *name) {
-	struct account *c_acc;
-	char deed_sval;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, FALSE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, FALSE)) {
+		return(0);
+	}
 
-	deed_sval = c_acc->deed_event;
-
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
-	return deed_sval;
+	return acc.deed_event;
 }
 int acc_set_deed_achievement(char *name, char deed_sval) {
-	struct account *c_acc;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, TRUE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) {
+		return(0);
+	}
 
-	c_acc->deed_achievement = deed_sval;
+	acc.deed_achievement = deed_sval;
 
-	WriteAccount(c_acc, FALSE);
+	/* Write to disk */
+	WriteAccount(&acc, FALSE);
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
+	/* Preven the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Success */
 	return(1);
 }
 char acc_get_deed_achievement(char *name) {
-	struct account *c_acc;
-	char deed_sval;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, FALSE);
-	if (!c_acc) return(0);
+	if (!GetAccount(&acc, name, NULL, FALSE)) {
+		return(0);
+	}
 
-	deed_sval = c_acc->deed_achievement;
-
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
-	return deed_sval;
+	return acc.deed_achievement;
 }
 /* get account houses //ACC_HOUSE_LIMIT */
 char acc_get_houses(const char *name) {
-	struct account *c_acc;
-	char houses;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, FALSE);
-	if (!c_acc) return(0);
+	if (!GetAccount(&acc, name, NULL, FALSE)) {
+		return(0);
+	}
 
-	houses = c_acc->houses;
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
-	return houses;
+	return acc.houses;
 }
 
 /* set account houses */
 int acc_set_houses(const char *name, char houses) {
-	struct account *c_acc;
+	struct account acc;
 
-	c_acc = GetAccount(name, NULL, TRUE);
-	if (!c_acc) return(0);
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) {
+		return(0);
+	}
 
-	c_acc->houses = houses;
-	WriteAccount(c_acc, FALSE);
+	acc.houses = houses;
 
-	memset(c_acc->pass, 0, sizeof(c_acc->pass));
-	KILL(c_acc, struct account);
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
+
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Success */
 	return(1);
 }
 
@@ -405,13 +454,11 @@ int acc_set_houses(const char *name, char houses) {
    They will not be subject to their own 90
    days timeout, but will be removed upon
    the removal of the last character. */
-struct account *GetAccount(cptr name, char *pass, bool leavepass) {
+/* The caller is responsible for allocating memory for 'c_acc'. */
+bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 	FILE *fp;
 	char buf[1024];
-	struct account *c_acc;
-
-	MAKE(c_acc, struct account);
-	if (!c_acc) return(NULL);
+	WIPE(c_acc, struct account);
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb+");
@@ -420,13 +467,13 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass) {
 			fp = fopen(buf, "wb+");
 			if (!fp) {
 				KILL(c_acc, struct account);
-				return(NULL);
+				return(FALSE);
 			}
 			s_printf("Generated new account file\n");
 		}
 		else {
 			KILL(c_acc, struct account);
-			return(NULL);	/* failed */
+			return(FALSE);	/* failed */
 		}
 	}
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
@@ -452,19 +499,19 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass) {
 			}
 			if (val != 0) {
 				fclose(fp);
-				KILL(c_acc, struct account);
-				return(NULL);
+				WIPE(c_acc, struct account);
+				return(FALSE);
 			} else {
 				fclose(fp);
-				return(c_acc);
+				return(TRUE);
 			}
 		}
 	}
 	/* New accounts always have pass */
 	if (!pass) {
-		KILL(c_acc, struct account);
+		WIPE(c_acc, struct account);
 		fclose(fp);
-		return(NULL);
+		return(FALSE);
 	}
 
 	/* No account found. Create trial account */ 
@@ -483,47 +530,45 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass) {
 		strncpy(c_acc->name_normalised, buf, 29);
 		c_acc->name_normalised[29] = '\0';
 
-		strcpy(c_acc->pass, t_crypt(pass, name));
+		strncpy(c_acc->pass, t_crypt(pass, name), sizeof(c_acc->pass));
+		c_acc->pass[sizeof(c_acc->pass) - 1] = '\0';
 		if (!(WriteAccount(c_acc, TRUE))) {
-			KILL(c_acc, struct account);
+			WIPE(c_acc, struct account);
 			fclose(fp);
-			return(NULL);
+			return(FALSE);
 		}
 	}
 	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	fclose(fp);
-	if(c_acc->id) {
-		return(c_acc);
+	if (c_acc->id) {
+		return(TRUE);
+	} else {
+		WIPE(c_acc, struct account);
+		return(FALSE);
 	}
-	KILL(c_acc, struct account);
-	return(NULL);
 }
 
 /* Return account structure of a specified account name */
-struct account *Admin_GetAccount(cptr name) {
+bool Admin_GetAccount(struct account *c_acc, cptr name) {
 	FILE *fp;
 	char buf[1024];
-	struct account *c_acc;
-
-	MAKE(c_acc, struct account);
-	if (!c_acc) return(NULL);
+	WIPE(c_acc, struct account);
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb");
 	if (!fp) {
-		KILL(c_acc, struct account);
-		return(NULL); /* cannot access account file */
+		return(FALSE); /* cannot access account file */
 	}
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if (c_acc->flags & ACC_DELD) continue;
 		if (!strcmp(c_acc->name, name)) {
 			fclose(fp);
-			return(c_acc);
+			return(TRUE);
 		}
 	}
 	fclose(fp);
-	KILL(c_acc, struct account);
-	return(NULL);
+	WIPE(c_acc, struct account);
+	return(FALSE);
 }
 
 /* Check for an account of similar name to 'name'. If one is found, the name
@@ -542,31 +587,28 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	FILE *fp;
 	char buf[1024], tmpname[ACCOUNTNAME_LEN > CHARACTERNAME_LEN ? ACCOUNTNAME_LEN : CHARACTERNAME_LEN];
 	const char *ptr, *ptr2;
-	struct account *c_acc;
+	struct account acc;
 	int diff, min;
 
-	MAKE(c_acc, struct account);
-	/* ew, cannot reserve memory! we abuse the return value to cause an
-	   'invalid account name' style error on purpose in this case, for paranoia */
-	if (!c_acc) {
-		s_printf("ERROR: COULDN'T ALLOCATE MEMORY IN lookup_similar_account()!\n");
-		return TRUE;
-	}
+	WIPE(&acc, struct account);
 
 	condense_name(tmpname, name);
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb");
 	if (!fp) {
-		KILL(c_acc, struct account);
 		s_printf("ERROR: COULDN'T ACCESS ACCOUNT FILE IN lookup_similar_account()!\n");
 		return FALSE; /* cannot access account file */
 	}
-	while (fread(c_acc, sizeof(struct account), 1, fp)) {
-		if (c_acc->flags & ACC_DELD) continue;
+	while (fread(&acc, sizeof(struct account), 1, fp)) {
+		/* Make sure passwords don't leak */
+		memset(acc.pass, 0, sizeof(acc.pass));
+
+		/* Skip deleted entries */
+		if (acc.flags & ACC_DELD) continue;
 
 		/* We may create character names similar to our own account name as we like */
-		if (accname && !strcmp(c_acc->name, accname)) {
+		if (accname && !strcmp(acc.name, accname)) {
 			continue;
 		}
 
@@ -577,15 +619,15 @@ bool lookup_similar_account(cptr name, cptr accname) {
 		    /*only apply this check to account names being created, be lenient for character names */
 		    !accname &&
  #endif
-		    strlen(name) >= 5 && strlen(c_acc->name) >= 5) { //non-trivial length
+		    strlen(name) >= 5 && strlen(acc.name) >= 5) { //non-trivial length
 			/* don't exaggerate */
-			if (strlen(name) > strlen(c_acc->name)) min = strlen(c_acc->name);
+			if (strlen(name) > strlen(acc.name)) min = strlen(acc.name);
 			else min = strlen(name);
 
 			/* '->' */
 			diff = 0;
 			ptr2 = name;
-			for (ptr = c_acc->name; *ptr && *ptr2; ) {
+			for (ptr = acc.name; *ptr && *ptr2; ) {
 				if (tolower(*ptr) != tolower(*ptr2)) diff++;
 				else ptr++;
 				ptr2++;
@@ -595,14 +637,13 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (min - 5) / 2 + 1) {
-				s_printf("lookup_similar_account (1): name '%s', aname '%s' (tmp '%s')\n", name, c_acc->name, tmpname);
-				KILL(c_acc, struct account);
+				s_printf("lookup_similar_account (1): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
 				return TRUE;
 			}
 
 			/* '<-' */
 			diff = 0;
-			ptr2 = c_acc->name;
+			ptr2 = acc.name;
 			for (ptr = name; *ptr && *ptr2; ) {
 				if (tolower(*ptr) != tolower(*ptr2)) diff++;
 				else ptr++;
@@ -613,8 +654,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (min - 5) / 2 + 1) {
-				s_printf("lookup_similar_account (2): name '%s', aname '%s' (tmp '%s')\n", name, c_acc->name, tmpname);
-				KILL(c_acc, struct account);
+				s_printf("lookup_similar_account (2): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
 				return TRUE;
 			}
 
@@ -622,7 +662,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			   So the checks could be tricked by combining one 'replaced char' with one 'too many char'
 			   to circumvent the limitations for longer names that usually would require a 3+ difference.. =P */
 			diff = 0;
-			ptr2 = c_acc->name;
+			ptr2 = acc.name;
 			for (ptr = name; *ptr && *ptr2; ) {
 				if (tolower(*ptr) != tolower(*ptr2)) diff++;
 				ptr++;
@@ -633,34 +673,30 @@ bool lookup_similar_account(cptr name, cptr accname) {
 			while (*ptr2++) diff++;
 			//too little difference between account name and this character name? forbidden!
 			if (diff <= (min - 5) / 2 + 1) {
-				s_printf("lookup_similar_account (3): name '%s', aname '%s' (tmp '%s')\n", name, c_acc->name, tmpname);
-				KILL(c_acc, struct account);
+				s_printf("lookup_similar_account (3): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
 				return TRUE;
 			}
 		}
 #endif
 
 		/* Differring normalised names? Skip. */
-		if (strcmp(c_acc->name_normalised, tmpname)) continue;
+		if (strcmp(acc.name_normalised, tmpname)) continue;
 
 		/* We found same normalised names. Check! */
 		fclose(fp);
 
 		/* Identical name (account vs character)? that's fine. */
-		if (!strcmp(c_acc->name, name)) {
-			KILL(c_acc, struct account);
+		if (!strcmp(acc.name, name)) {
 			return FALSE;
 		}
 
 		/* not identical but just too similar? forbidden! */
-		s_printf("lookup_similar_account (4): name '%s', aname '%s' (tmp '%s')\n", name, c_acc->name, tmpname);
-		KILL(c_acc, struct account);
+		s_printf("lookup_similar_account (4): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
 		return TRUE;
 	}
 	fclose(fp);
 
 	/* no identical/similar account found, all green! */
-	KILL(c_acc, struct account);
 	return FALSE;
 }
 
@@ -668,21 +704,26 @@ bool lookup_similar_account(cptr name, cptr accname) {
 cptr lookup_accountname(int p_id) {
 	FILE *fp;
 	char buf[1024];
-	static struct account c_acc;
+	/* Static memory used for the return value */
+	static struct account acc;
 	u32b acc_id = lookup_player_account(p_id);
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb");
 	if (!fp) return(NULL); /* cannot access account file */
-	while (fread(&c_acc, sizeof(struct account), 1, fp)) {
-		if (c_acc.flags & ACC_DELD) continue;
-		if (c_acc.id == acc_id) {
+	while (fread(&acc, sizeof(struct account), 1, fp)) {
+		/* Make sure passwords don't leak */
+		memset(acc.pass, 0, sizeof(acc.pass));
+
+		/* Skip deleted entries */
+		if (acc.flags & ACC_DELD) continue;
+
+		/* Check account id */
+		if (acc.id == acc_id) {
 			fclose(fp);
-			memset(c_acc.pass, 0, sizeof(c_acc.pass));
-			return(c_acc.name);
+			return(acc.name);
 		}
 	}
-	memset(c_acc.pass, 0, sizeof(c_acc.pass));
 	fclose(fp);
 	return(NULL);
 }
@@ -692,20 +733,25 @@ cptr lookup_accountname(int p_id) {
 cptr lookup_accountname2(u32b acc_id) {
 	FILE *fp;
 	char buf[1024];
-	static struct account c_acc;
+	/* Static memory used for the return value */
+	static struct account acc;
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb");
 	if (!fp) return(""); /* cannot access account file */
-	while (fread(&c_acc, sizeof(struct account), 1, fp)) {
-		if (c_acc.flags & ACC_DELD) continue;
-		if (c_acc.id == acc_id) {
+	while (fread(&acc, sizeof(struct account), 1, fp)) {
+		/* Prevent the password from leaking */
+		memset(acc.pass, 0, sizeof(acc.pass));
+
+		/* Skip deleted entries */
+		if (acc.flags & ACC_DELD) continue;
+
+		/* Check the account id */
+		if (acc.id == acc_id) {
 			fclose(fp);
-			memset(c_acc.pass, 0, sizeof(c_acc.pass));
-			return(c_acc.name);
+			return(acc.name);
 		}
 	}
-	memset(c_acc.pass, 0, sizeof(c_acc.pass));
 	fclose(fp);
 	return("");
 }
@@ -743,7 +789,7 @@ static char *t_crypt(char *inbuf, cptr salt) {
 }
 
 int check_account(char *accname, char *c_name) {
-	struct account *l_acc;
+	struct account acc, acc2;
 	u32b id, a_id;
 	u32b flags;
 	hash_entry *ptr;
@@ -754,47 +800,40 @@ int check_account(char *accname, char *c_name) {
 
 	/* Make sure noone creates a character of the same name as another player's accountname!
 	   This is important for new feat of messaging to an account instead of character name. - C. Blue */
-	struct account *l2_acc;
 	char c2_name[MAX_CHARS];
 	strcpy(c2_name, c_name);
 //	c2_name[0] = toupper(c2_name[0]);
-	l_acc = GetAccount(accname, NULL, FALSE);
-	l2_acc = GetAccount(c2_name, NULL, FALSE);
-	if (l_acc && l2_acc && l_acc->id != l2_acc->id) {
+	bool acc1_success = GetAccount(&acc, accname, NULL, FALSE);
+	bool acc2_success = GetAccount(&acc2, c2_name, NULL, FALSE);
+	if (acc1_success && acc2_success && acc.id != acc2.id) {
 		/* However, since ppl might have already created such characters, only apply this
 		   rule for newly created characters, to avoid someone being unable to login on
 		   an already existing character that unfortunately violates this rule :/ */
 		int *id_list, chars;
-                chars = player_id_list(&id_list, l_acc->id);
+                chars = player_id_list(&id_list, acc.id);
 		for (i = 0; i < chars; i++)
 			if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
 		if (chars) C_KILL(id_list, chars, int);
 		if (i == chars) {
-			if (l_acc) KILL(l_acc, struct account);
-			if (l2_acc) KILL(l2_acc, struct account);
 			return 0; /* 'name already in use' */
 		}
-	} else if (!l_acc && l2_acc) {
-		KILL(l2_acc, struct account);
+	} else if (!acc1_success && acc2_success) {
 		return 0; /* we don't even have an account yet? 'name already in use' for sure */
 	}
-	if (l_acc) KILL(l_acc, struct account);
-	if (l2_acc) KILL(l2_acc, struct account);
 
-	if ((l_acc = GetAccount(accname, NULL, FALSE))) {
+	if (acc1_success) {
 		int *id_list, chars;
 #ifndef RPG_SERVER
 		int max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, plus_free = 0;
 #endif
-                chars = player_id_list(&id_list, l_acc->id);
+                chars = player_id_list(&id_list, acc.id);
 #ifdef RPG_SERVER /* Allow only up to 1 character per account! */
 		/* If this account DOES have characters, but the chosen character name is
 		   NOT equal to the first character of this account, don't allow it!
 		   (To restrict players to only 1 character per account! - C. Blue) */
 		/* allow multiple chars for admins, even on RPG server */
-		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0])) && !(l_acc->flags & ACC_ADMIN)) {
+		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0])) && !(acc.flags & ACC_ADMIN)) {
 			C_KILL(id_list, chars, int);
-			KILL(l_acc, struct account);
 			return(-1);
 		}
 #else
@@ -835,7 +874,6 @@ int check_account(char *accname, char *c_name) {
 			/* We're out of free character slots: Char creation failed! */
 			if (i == chars) {
 				if (chars) C_KILL(id_list, chars, int);
-				KILL(l_acc, struct account);
 				return(-3);
 			}
 		/* only exclusive char slots left */
@@ -844,7 +882,6 @@ int check_account(char *accname, char *c_name) {
 			if (ded_iddc == MAX_DED_IDDC_CHARS && ded_pvp == MAX_DED_PVP_CHARS) {
 				/* out of character slots */
 				if (chars) C_KILL(id_list, chars, int);
-				KILL(l_acc, struct account);
 				return(-3);
 			}
 			if (ded_iddc == MAX_DED_IDDC_CHARS) success = -4; /* set char mode to MODE_DED_PVP */
@@ -863,11 +900,10 @@ int check_account(char *accname, char *c_name) {
  #endif
 		}
 #endif
-		a_id = l_acc->id;
-		flags = l_acc->flags;
+		a_id = acc.id;
+		flags = acc.flags;
 
 		if (chars) C_KILL(id_list, chars, int);
-		KILL(l_acc, struct account);
 
 		id = lookup_player_id(c_name);
 		ptr = lookup_player(id);
@@ -895,29 +931,27 @@ int check_account(char *accname, char *c_name) {
 	return(0);
 }
 
-struct account *GetAccountID(u32b id, bool leavepass){
+bool GetAccountID(struct account *c_acc, u32b id, bool leavepass) {
 	FILE *fp;
 	char buf[1024];
-	struct account *c_acc;
 
 	/* we may want to store a local index for fast
 	   id/name/filepos lookups in the future */
-	MAKE(c_acc, struct account);
-	if (!c_acc) return(NULL);
+	WIPE(c_acc, struct account);
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb");
-	if (!fp) return(NULL);	/* failed */
+	if (!fp) return(FALSE);	/* failed */
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if(id == c_acc->id && !(c_acc->flags & ACC_DELD)){
 			if (!leavepass) memset(c_acc->pass, 0, sizeof(c_acc->pass));
 			fclose(fp);
-			return(c_acc);
+			return(TRUE);
 		}
 	}
 	fclose(fp);
-	KILL(c_acc, struct account);
-	return(NULL);
+	WIPE(c_acc, struct account);
+	return(FALSE);
 }
 
 static u32b new_accid() {
@@ -1214,7 +1248,7 @@ int guild_create(int Ind, cptr name) {
 	int index = 0, i, j;
 	object_type forge, *o_ptr = &forge;
 	char temp[160];
-	struct account *acc;
+	struct account acc;
 	int *id_list, ids;
 
 	strcpy(temp, name);
@@ -1229,14 +1263,14 @@ int guild_create(int Ind, cptr name) {
 	/* anti-cheeze: People could get an extra house on each character.
 	   So we allow only one guild master per player account to at least
 	   reduce the nonsense to 1 extra house per Account.. */
-	acc = GetAccount(p_ptr->accountname, NULL, FALSE);
+	bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
 	/* paranoia */
-	if (!acc) {
+	if (!success) {
 		/* uhh.. */
 		msg_print(Ind, "Sorry, guild creation has failed.");
 		return FALSE;
 	}
-	ids = player_id_list(&id_list, acc->id);
+	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
 		if ((j = lookup_player_guild(id_list[i])) && /* one of his characters is in a guild.. */
 		    guilds[j].master == id_list[i]) { /* ..and he is actually the master of that guild? */
@@ -1245,7 +1279,6 @@ int guild_create(int Ind, cptr name) {
 		}
 	}
 	if (ids) C_KILL(id_list, ids, int);
-	KILL(acc, struct account);
 
 	/* Make sure this guy isn't in some other guild already */
 	if (p_ptr->guild != 0) {
@@ -1377,7 +1410,7 @@ void party_check(int Ind) {
 void account_check(int Ind) { /* Temporary Ind */
 	hash_entry *ptr;
 	int i, del;
-	struct account *c_acc;
+	struct account acc;
 //	player_type *p_ptr = Players[Ind];
 
 	/* Search in each array slot */
@@ -1388,24 +1421,15 @@ void account_check(int Ind) { /* Temporary Ind */
 		/* Check all entries in this chain */
 		while (ptr) {
 			/* Check this name */
-			if (!(c_acc = GetAccountID(ptr->account, FALSE))) {
+			if (!GetAccountID(&acc, ptr->account, FALSE)) {
 				s_printf("Lost player: %s\n", ptr->name);
 				msg_format(Ind, "Lost player: %s", ptr->name);
-#if 0 /* del might not always be initialized! */
-				del = ptr->id;
-			} else KILL(c_acc, struct account);
-
-			/* Next entry in chain */
-			ptr = ptr->next;
-			delete_player_id(del);
-#else /* isn't it supposed to be this way instead?: */
 				del = ptr->id;
 				delete_player_id(del);
-			} else KILL(c_acc, struct account);
+			}
 
 			/* Next entry in chain */
 			ptr = ptr->next;
-#endif
 		}
 	}
 }
@@ -1653,7 +1677,7 @@ int guild_add(int adder, cptr name) {
 	int guild_id = q_ptr->guild, Ind = 0, i;
 #ifdef GUILD_ELIGIBLE_ACCOUNT_CAN_ADD
 	int *id_list, ids;
-	struct account *acc;
+	struct account acc;
 	bool far_success = FALSE;
 #endif
 
@@ -1695,14 +1719,14 @@ int guild_add(int adder, cptr name) {
 
 #ifdef GUILD_ELIGIBLE_ACCOUNT_CAN_ADD
 	/* check if he has a character in there already, to be eligible to self-add */
-	acc = GetAccount(q_ptr->accountname, NULL, FALSE);
+	bool success = GetAccount(&acc, q_ptr->accountname, NULL, FALSE);
 	/* paranoia */
-	if (!acc) {
+	if (!success) {
 		/* uhh.. */
-		msg_print(Ind, "Sorry, self-adding has failed.");
+		msg_print(Ind, "Sorry, adding has failed.");
 		return FALSE;
 	}
-	ids = player_id_list(&id_list, acc->id);
+	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
                 if (lookup_player_guild(id_list[i]) != guild_id) continue;
 
@@ -1717,7 +1741,6 @@ int guild_add(int adder, cptr name) {
 		break;
         }
         if (ids) C_KILL(id_list, ids, int);
-        KILL(acc, struct account);
         /* failure? */
         if (!far_success)
 #endif
@@ -1771,7 +1794,7 @@ int guild_add(int adder, cptr name) {
 int guild_add_self(int Ind, cptr guild) {
 	player_type *p_ptr = Players[Ind];
 	int guild_id = guild_lookup(guild), i, *id_list, ids;
-	struct account *acc;
+	struct account acc;
 	bool member = FALSE;
 
 	/* no guild name specified? */
@@ -1788,14 +1811,14 @@ int guild_add_self(int Ind, cptr guild) {
 	}
 
 	/* check if he has a character in there already, to be eligible to self-add */
-	acc = GetAccount(p_ptr->accountname, NULL, FALSE);
+	bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
 	/* paranoia */
-	if (!acc) {
+	if (!success) {
 		/* uhh.. */
 		msg_print(Ind, "Sorry, self-adding has failed.");
 		return FALSE;
 	}
-	ids = player_id_list(&id_list, acc->id);
+	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
                 if (lookup_player_guild(id_list[i]) == guild_id) {
 			member = TRUE;
@@ -1803,7 +1826,6 @@ int guild_add_self(int Ind, cptr guild) {
 			/* Everlasting and other chars cannot be in the same guild */
 			if (compat_mode(p_ptr->mode, lookup_player_mode(id_list[i]))) {
 				msg_format(Ind, "\377yYou cannot join %s guilds.", compat_mode(p_ptr->mode, lookup_player_mode(id_list[i])));
-				KILL(acc, struct account);
 				return FALSE;
 			}
 
@@ -1827,7 +1849,6 @@ int guild_add_self(int Ind, cptr guild) {
                 }
         }
         if (ids) C_KILL(id_list, ids, int);
-        KILL(acc, struct account);
         /* failure? */
         if (i == ids) {
 		if (!member) msg_print(Ind, "You do not have any character that is member of that guild.");
@@ -2029,7 +2050,7 @@ int party_add(int adder, cptr name) {
 int party_add_self(int Ind, cptr party) {
 	player_type *p_ptr = Players[Ind];
 	int party_id = party_lookup(party), i, *id_list, ids;
-	struct account *acc;
+	struct account acc;
 
 	if (party_id == -1) {
 		msg_print(Ind, "That party does not exist.");
@@ -2049,14 +2070,14 @@ int party_add_self(int Ind, cptr party) {
 	}
 
 	/* check if he has a character in there already, to be eligible to self-add */
-	acc = GetAccount(p_ptr->accountname, NULL, FALSE);
+	bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
 	/* paranoia */
-	if (!acc) {
+	if (!success) {
 		/* uhh.. */
 		msg_print(Ind, "Sorry, self-adding has failed.");
 		return FALSE;
 	}
-	ids = player_id_list(&id_list, acc->id);
+	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
                 if (lookup_player_party(id_list[i]) == party_id) {
 			/* success */
@@ -2064,7 +2085,6 @@ int party_add_self(int Ind, cptr party) {
                 }
         }
         if (ids) C_KILL(id_list, ids, int);
-	KILL(acc, struct account);
         /* failure? */
         if (i == ids) {
 		msg_print(Ind, "You do not have any character that is member of that party.");
@@ -2120,7 +2140,7 @@ static void erase_guild_key(int id) {
         FILE *fp;
         char buf[1024];
         cptr cname;
-        struct account c_acc;
+        struct account acc;
 #else /* just hash-table (character) based */
 	int slot;
 	hash_entry *ptr;
@@ -2197,9 +2217,9 @@ static void erase_guild_key(int id) {
 		s_printf("GUILD_KEY_ERASE: failed to open tomenet.acc\n");
     		return;
         }
-        while (fread(&c_acc, sizeof(struct account), 1, fp)) {
+        while (fread(&acc, sizeof(struct account), 1, fp)) {
 		int *id_list, chars;
-                chars = player_id_list(&id_list, c_acc->id);
+                chars = player_id_list(&id_list, acc.id);
                 for (i = 0; i < chars; i++) {
 			cname = lookup_player_name(id_list[i]);
 			...//not implemented
@@ -2406,7 +2426,7 @@ static void del_party(int id){
 	strcpy(parties[id].name, "");
 }
 
-/* 
+/*
  * Remove player from a guild
  */
 int guild_remove(int remover, cptr name) {
@@ -4055,7 +4075,7 @@ void scan_players() {
 	object_type *o_ptr;
 
 #if 0 /* Low-performance version */
-	struct account *c_acc = NULL;
+	struct account acc;
 #endif
 
 #ifdef PLAYERS_NEVER_EXPIRE
@@ -4134,14 +4154,12 @@ void scan_players() {
 				/* if a character didn't timeout, timestamp his
 				   account here, to help the account-expiry routines,
 				   keeping the account 'active' - see scan_accounts() - C. Blue */
-				c_acc = GetAccountID(ptr->account, TRUE);
 				/* avoid tagging multi-char accounts again for each char - once is sufficient */
-				if (c_acc) {
-					if (c_acc->acc_laston != now) {
-						c_acc->acc_laston = now;
-						WriteAccount(c_acc, FALSE);
+				if (GetAccountID(&acc, ptr->account, TRUE)) {
+					if (acc.acc_laston != now) {
+						acc.acc_laston = now;
+						WriteAccount(&acc, FALSE);
 					}
-					KILL(c_acc, struct account);
 				}
 #else
 				/* If a character didn't timeout, mark his
@@ -4170,7 +4188,7 @@ void scan_accounts() {
 	bool modified;
 	FILE *fp;
 	char buf[1024];
-	struct account c_acc;
+	struct account acc;
 	time_t now;
 
 #ifdef PLAYERS_NEVER_EXPIRE
@@ -4194,49 +4212,49 @@ void scan_accounts() {
 	fp = fopen(buf, "rb+");
 	if (!fp) return;
 
-	while (fread(&c_acc, sizeof(struct account), 1, fp)) {
+	while (fread(&acc, sizeof(struct account), 1, fp)) {
 		modified = FALSE;
 
 		/* Count all accounts in the file */
 		total++;
 
-		if (c_acc.flags & ACC_DELD) continue;
+		if (acc.flags & ACC_DELD) continue;
 
 		/* Count non-deleted accounts */
 		nondel++;
 
-		if (c_acc.flags & ACC_ADMIN) {
+		if (acc.flags & ACC_ADMIN) {
 			/* Admin accounts always count as active */
 			active++;
 			continue;
 		}
 
-//		if (!c_acc.acc_laston) continue; /* not using this 'hack' for staticing here */
+//		if (!acc.acc_laston) continue; /* not using this 'hack' for staticing here */
 
 		/* fix old accounts that don't have a timestamp yet */
-		if (!c_acc.acc_laston) {
-			c_acc.acc_laston = c_acc.acc_laston_real = now; /* set new timestamp */
+		if (!acc.acc_laston) {
+			acc.acc_laston = acc.acc_laston_real = now; /* set new timestamp */
 			fixed++;
 			modified = TRUE;
 		}
 
 		/* Check for bad account id */
-		else if (c_acc.id >= MAX_ACCOUNTS) {
+		else if (acc.id >= MAX_ACCOUNTS) {
 			/* Log it */
-			s_printf("  Bad account ID: %d\n", c_acc.id);
+			s_printf("  Bad account ID: %d\n", acc.id);
 
 			/* Fix the id */
-			c_acc.id = MAX_ACCOUNTS - 1;
+			acc.id = MAX_ACCOUNTS - 1;
 
 			/* Mark as deleted */
-			c_acc.flags |= ACC_DELD;
+			acc.flags |= ACC_DELD;
 
 			modified = TRUE;
 		}
 
 		/* Was the account marked as active? */
-		else if (account_active[c_acc.id / 8] & (1 << (c_acc.id % 8))) {
-			c_acc.acc_laston = now;
+		else if (account_active[acc.id / 8] & (1 << (acc.id % 8))) {
+			acc.acc_laston = now;
 
 			/* Count active accounts */
 			active++;
@@ -4246,21 +4264,21 @@ void scan_accounts() {
 
 #if 1
 		/* test for expiry -> delete */
-		else if (now - c_acc.acc_laston >= 3600 * 24 * ACCOUNT_EXPIRY_DAYS) {
-			c_acc.flags |= ACC_DELD;
+		else if (now - acc.acc_laston >= 3600 * 24 * ACCOUNT_EXPIRY_DAYS) {
+			acc.flags |= ACC_DELD;
 
 			/* Count expired accounts */
 			expired++;
 
-			s_printf("  Account '%s' expired.\n", c_acc.name);
+			s_printf("  Account '%s' expired.\n", acc.name);
 			modified = TRUE;
 		}
 #endif
 
-//		if (modified) WriteAccount(&c_acc, FALSE);
+//		if (modified) WriteAccount(&acc, FALSE);
 		if (modified) {
 			fseek(fp, -sizeof(struct account), SEEK_CUR);
-			if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1) {
+			if (fwrite(&acc, sizeof(struct account), 1, fp) < 1) {
 				s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
 			}
 
@@ -4273,7 +4291,8 @@ void scan_accounts() {
 	s_printf("  %d accounts in total, %d non-deleted, %d active.\n", total, nondel, active);
 	s_printf("  %d accounts have expired.\n", expired);
 
-	memset(c_acc.pass, 0, sizeof(c_acc.pass));
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
 	fclose(fp);
 	s_printf("Finished account inactivity check.\n");
 
@@ -4677,6 +4696,8 @@ void delete_player_name(cptr name) {
 
 /*
  * Return a list of the player ID's stored in the table.
+ *
+ * If 'account' is zero, return the list of all player ID's on the server.
  */
 int player_id_list(int **list, u32b account) {
 	int i, j, len = 0, k = 0, tmp;
@@ -4742,8 +4763,7 @@ int player_id_list(int **list, u32b account) {
 	}
 
 	/* Limit number of characters per account - C. Blue */
-	/* This screwed up saving players in save.c, check that account is not 0 - mikaelh */
-	if (len > max_cpa && account) len = max_cpa;
+	if (account && len > max_cpa) len = max_cpa;
 
 	return len;
 }
@@ -4913,28 +4933,32 @@ void strip_true_arts_from_hashed_players(){
 
 void account_change_password(int Ind, char *old_pass, char *new_pass) {
 	player_type *p_ptr = Players[Ind];
-	struct account *c_acc;
+	struct account acc;
 
-	c_acc = GetAccount(p_ptr->accountname, old_pass, FALSE);
-
-	if (!c_acc) {
+	/* Read from disk */
+	if (!GetAccount(&acc, p_ptr->accountname, old_pass, FALSE)) {
 		msg_print(Ind, "Wrong password!");
 		return;
 	}
 
 	/* Change password */
-	strcpy(c_acc->pass, t_crypt(new_pass, c_acc->name));
+	strcpy(acc.pass, t_crypt(new_pass, acc.name));
 
-	if (!(WriteAccount(c_acc, FALSE))) {
-		KILL(c_acc, struct account);
+	/* Write account to disk */
+	bool success = WriteAccount(&acc, FALSE);
+
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Check for failure */
+	if (!success) {
 		msg_print(Ind, "Failed to write to account file!");
 		return;
 	}
 
-	s_printf("Changed password for account %s.\n", c_acc->name);
+	/* Success */
+	s_printf("Changed password for account %s.\n", acc.name);
 	msg_print(Ind, "Password changed.");
-
-	KILL(c_acc, struct account);
 }
 
 int lookup_player_ind(u32b id) {
@@ -4949,7 +4973,7 @@ void backup_acclists(void) {
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH];
 	hash_entry *ptr;
 	int del, i;
-	struct account *c_acc;
+	struct account acc;
 
 	s_printf("Backing up all accounts...\n");
 	/* create folder lib/save/estate if not existing */
@@ -4970,7 +4994,7 @@ void backup_acclists(void) {
 		/* Check all entries in this chain */
 		while (ptr) {
 			/* Check this name */
-			if ((c_acc = GetAccountID(ptr->account, FALSE))) {
+			if (GetAccountID(&acc, ptr->account, FALSE)) {
 				/* back him up */
 				fprintf(fp, "%d\n", (int)strlen(ptr->name));
 				(void)fwrite(ptr->name, sizeof(char), strlen(ptr->name), fp);
@@ -4985,9 +5009,6 @@ void backup_acclists(void) {
 #else
 				(void)fwrite(ptr, sizeof(hash_entry), 1, fp);
 #endif
-
-				/* cleanup (?) */
-				KILL(c_acc, struct account);
 			} else {
 				s_printf("Lost player: %s\n", ptr->name);
 #if 0 /* del might not always be initialized! */

@@ -2739,15 +2739,15 @@ void carry(int Ind, int pickup, int confirm) {
 							/* anti-cheeze: People could get an extra house on each character.
 							   So we allow only one guild master per player account to at least
 							   reduce the nonsense to 1 extra house per Account.. */
-							struct account *acc;
+							struct account acc;
 
-							acc = GetAccount(p_ptr->accountname, NULL, FALSE);
+							bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
 							/* paranoia */
-							if (acc) {
+							if (success) {
 								int *id_list, ids, i, j;
 								bool ok = TRUE;
 
-								ids = player_id_list(&id_list, acc->id);
+								ids = player_id_list(&id_list, acc.id);
 								for (i = 0; i < ids; i++) {
 									if ((j = lookup_player_guild(id_list[i])) && /* one of his characters is in a guild.. */
 									    guilds[j].master == id_list[i]) { /* ..and he is actually the master of that guild? */
@@ -2757,7 +2757,6 @@ void carry(int Ind, int pickup, int confirm) {
 									}
 								}
 								if (ids) C_KILL(id_list, ids, int);
-								KILL(acc, struct account);
 
 								if (ok) {
 									/* set guild hall to 'no longer suspended' */

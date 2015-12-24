@@ -8,7 +8,6 @@
 
 /* $Id$ */
 $#include "angband.h"
-$#include "party.h"
 
 #define TRUE
 #define FALSE

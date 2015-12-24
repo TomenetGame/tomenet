@@ -6,7 +6,6 @@
 #define SERVER
 
 #include "angband.h"
-#include "party.h"
 
 static void new_wr_wild();
 static void new_wr_floors();

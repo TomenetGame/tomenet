@@ -2210,7 +2210,7 @@ void do_slash_cmd(int Ind, char *message) {
 			j = 0;
 			bool colon = FALSE;
 			char tname[MAX_SLASH_LINE_LEN], *tpname; /* target's account name (must be *long* cause we temporarily store whole message2 in it..pft */
-			struct account *c_acc;
+			struct account acc;
 
 			if (tk < 1) { /* Explain command usage */
 				msg_print(Ind, "Usage:    /note <character or account name>:<text>");
@@ -2232,8 +2232,7 @@ void do_slash_cmd(int Ind, char *message) {
 				/* no text given */
 				if (!lookup_player_id(message2 + 6)) {
 					/* character name not found, try to match account name instead */
-					c_acc = GetAccount(message2 + 6, NULL, FALSE);
-					if (!c_acc) {
+					if (!GetAccount(&acc, message2 + 6, NULL, FALSE)) {
 						msg_print(Ind, "\377oNo character or account of that name exists.");
 						/* automatically delete old messages that we have written to this receipient which no longer exists */
 						strcpy(tname, message2 + 6);
@@ -2252,7 +2251,6 @@ void do_slash_cmd(int Ind, char *message) {
 						if (notes) msg_format(Ind, "\377oAutomatically deleted %d notes adressed to this receipient.", notes);
 						return;
 					}
-					KILL(c_acc, struct account);
 				} else {
 					strcpy(tname, "/note ");
 					strcat(tname, lookup_accountname(lookup_player_id(message2 + 6)));
@@ -2264,12 +2262,10 @@ void do_slash_cmd(int Ind, char *message) {
 				tpname[0] = 0;
 				if (!lookup_player_id(message2 + 6)) {
 					/* character name not found, try to match account name instead */
-					c_acc = GetAccount(message2 + 6, NULL, FALSE);
-					if (!c_acc) {
+					if (!GetAccount(&acc, message2 + 6, NULL, FALSE)) {
 						msg_print(Ind, "\377oNo character or account of that name exists.");
 						return;
 					}
-					KILL(c_acc, struct account);
 					tpname[0] = ':';
 				} else {
 					strcpy(tname, "/note ");
@@ -2351,12 +2347,10 @@ void do_slash_cmd(int Ind, char *message) {
 			/* Store a new note from this player to the specified player */
 
 			/* does target account exist? -- paranoia at this point! */
-			c_acc = GetAccount(tname, NULL, FALSE);
-			if (!c_acc) {
+			if (!GetAccount(&acc, tname, NULL, FALSE)) {
 				msg_print(Ind, "\377oError: Player's account not found.");
 				return;
 			}
-			KILL(c_acc, struct account);
 
 			/* Check whether player has his notes quota exceeded */
 			for (i = 0; i < MAX_NOTES; i++) {
@@ -4011,10 +4005,11 @@ void do_slash_cmd(int Ind, char *message) {
 			message3[0] = toupper(message3[0]);
 
 			if (!(p_id = lookup_player_id(message3))) {
+				struct account acc;
 #if 0 /* don't check for account name */
 				msg_print(Ind, "That character name does not exist.");
 #else /* check for account name */
-				if (!GetAccount(message3, NULL, FALSE)) msg_print(Ind, "That character or account name does not exist.");
+				if (!GetAccount(&acc, message3, NULL, FALSE)) msg_print(Ind, "That character or account name does not exist.");
 				else msg_print(Ind, "There is no such character, but there is an account of that name.");
 #endif
 				return;
@@ -4297,7 +4292,7 @@ void do_slash_cmd(int Ind, char *message) {
 				char ip_addr[MAX_CHARS] = { 0 };
 				char kickmsg[MAX_SLASH_LINE_LEN];
 				char tmp_buf[MSG_LEN], *tmp_buf_ptr = tmp_buf;
-				struct account *l_acc;
+				struct account acc;
 
 				if (!tk) {
 					if (combo) msg_print(Ind, "\377oUsage: /bancombo <account name>:<IP address> [time [reason]]");
@@ -4309,12 +4304,11 @@ void do_slash_cmd(int Ind, char *message) {
 				while (message3[strlen(message3) - 1] == ' ' || message3[strlen(message3) - 1] == ':') message3[strlen(message3) - 1] = 0;
 
 				if (!strchr(message3, ':')) {
-					l_acc = Admin_GetAccount(message3);
-					if (l_acc) KILL(l_acc, struct account);
-					else {
+					if (!Admin_GetAccount(&acc, message3)) {
 						msg_print(Ind, "Account not found.");
 						return;
 					}
+					WIPE(&acc, struct account);
 
 					if (combo) {
 						bool found = FALSE;
@@ -4357,12 +4351,11 @@ void do_slash_cmd(int Ind, char *message) {
 				strcpy(tmp_buf, strchr(message3, ':') + 1);
 				/* hack: terminate player name */
 				*(strchr(message3, ':')) = 0;
-				l_acc = Admin_GetAccount(message3);
-				if (l_acc) KILL(l_acc, struct account);
-				else {
+				if (!Admin_GetAccount(&acc, message3)) {
 					msg_print(Ind, "Account not found.");
 					return;
 				}
+				WIPE(&acc, struct account);
 
 				/* check if an IP was specified, otherwise take it from online account,
 				   if account isn't online, fallback to normal /ban. */
@@ -6614,7 +6607,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/acclist")) { /* list all living characters of a specified account name - C. Blue */
 				int *id_list, i, n;
-				struct account *l_acc;
+				struct account acc;
 				byte tmpm;
 				char colour_sequence[3 + 1]; /* colour + dedicated slot marker */
 
@@ -6623,10 +6616,9 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				msg_format(Ind, "Looking up account %s.", message3);
-				l_acc = Admin_GetAccount(message3);
-				if (l_acc) {
-					msg_format(Ind, " (Normalised name is <%s>)", l_acc->name_normalised);
-					n = player_id_list(&id_list, l_acc->id);
+				if (Admin_GetAccount(&acc, message3)) {
+					msg_format(Ind, " (Normalised name is <%s>)", acc.name_normalised);
+					n = player_id_list(&id_list, acc.id);
 					/* Display all account characters here */
 					for (i = 0; i < n; i++) {
 //unused huh					u16b ptype = lookup_player_type(id_list[i]);
@@ -6642,7 +6634,7 @@ void do_slash_cmd(int Ind, char *message) {
 						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
 					}
 					if (n) C_KILL(id_list, n, int);
-					KILL(l_acc, struct account);
+					WIPE(&acc, struct account);
 				} else {
 					msg_print(Ind, "Account not found.");
 				}
@@ -6650,8 +6642,8 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/characc")) { /* and /characcl; returns account name to which the given character name belongs -- extended version of /who */
 				u32b p_id;
-				cptr acc;
-				struct account *l_acc;
+				cptr accname;
+				struct account acc;
 
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /characc <character name>");
@@ -6661,13 +6653,13 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "That character name does not exist.");
 					return;
 				}
-				acc = lookup_accountname(p_id);
-				if (!acc) {
+				accname = lookup_accountname(p_id);
+				if (!accname) {
 					msg_print(Ind, "***ERROR: No account found.");
 					return;
 				}
-				msg_format(Ind, "Account name: \377s'%s'", acc);
-				if (!(l_acc = Admin_GetAccount(acc))) {
+				msg_format(Ind, "Account name: \377s'%s'", accname);
+				if (!Admin_GetAccount(&acc, accname)) {
 					msg_print(Ind, "***ERROR: Account does not exist.");
 					return;
 				}
@@ -6677,7 +6669,7 @@ void do_slash_cmd(int Ind, char *message) {
 					byte tmpm;
 					char colour_sequence[3 + 1]; /* colour + dedicated slot marker */
 
-					n = player_id_list(&id_list, l_acc->id);
+					n = player_id_list(&id_list, acc.id);
 					/* Display all account characters here */
 					for(i = 0; i < n; i++) {
 //unused huh					u16b ptype = lookup_player_type(id_list[i]);
@@ -6694,7 +6686,7 @@ void do_slash_cmd(int Ind, char *message) {
 					}
 					if (n) C_KILL(id_list, n, int);
 				}
-				KILL(l_acc, struct account);
+				WIPE(&acc, struct account);
 				return;
 
 			}
@@ -9358,46 +9350,42 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/ahl")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
 				int i;
-				struct account *acc;
+				struct account acc;
 
 				if (!tk) {
 					msg_print(Ind, "Usage: /ahl <account name>");
 					return;
 				}
 
-				acc = GetAccount(message3, NULL, FALSE);
-				if (!acc) {
+				if (!GetAccount(&acc, message3, NULL, FALSE)) {
 					msg_print(Ind, "Couldn't find that account.");
 					return;
 				}
 
-				i = acc_sum_houses(acc);
+				i = acc_sum_houses(&acc);
 				msg_format(Ind, "Account '%s' got sum of houses of %d.", message3, i);
 
-				KILL(acc, struct account);
 				return;
 			}
 			else if (prefix(message, "/ahlfix")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
 				int i;
-				struct account *acc;
+				struct account acc;
 
 				if (!tk) {
 					msg_print(Ind, "Usage: /ahlfix <account name>");
 					return;
 				}
 
-				acc = GetAccount(message3, NULL, FALSE);
-				if (!acc) {
+				if (!GetAccount(&acc, message3, NULL, FALSE)) {
 					msg_print(Ind, "Couldn't find that account.");
 					return;
 				}
 
-				i = acc_sum_houses(acc);
+				i = acc_sum_houses(&acc);
 				msg_format(Ind, "Account '%s' got sum of houses of %d.", message3, i);
 				acc_set_houses(message3, i);
 				s_printf("ACC_HOUSE_LIMIT_INIT_MANUAL: initialised %s with %d.\n", message3, i);
 
-				KILL(acc, struct account);
 				return;
 			}
 		}
@@ -9432,9 +9420,9 @@ void get_laston(char *name, char *response, bool admin) {
 	unsigned long int s, sl = 0;
 	time_t now;
 	u32b p_id;
-	bool acc = FALSE;
+	bool acc_found = FALSE;
 	int i;
-	struct account *l_acc;
+	struct account acc;
 	char name_tmp[MAX_CHARS_WIDE], *nameproc = name_tmp;
 
 	/* trim name */
@@ -9462,27 +9450,26 @@ void get_laston(char *name, char *response, bool admin) {
 	}
 
 	/* check if it's an acount name */
-	l_acc = Admin_GetAccount(nameproc);
-	if (l_acc) {
-		acc = TRUE;
-		if (admin || !(l_acc->flags & ACC_ADMIN)) sl = l_acc->acc_laston_real;
-		KILL(l_acc, struct account);
+	if (Admin_GetAccount(&acc, nameproc)) {
+		acc_found = TRUE;
+		if (admin || !(acc.flags & ACC_ADMIN)) sl = acc.acc_laston_real;
+		WIPE(&acc, struct account);
 	}
 
 	/* check if it's a character name (not really necessary if we found an account already) */
 	if ((p_id = lookup_player_id(nameproc))) {
 		if (!lookup_player_admin(p_id) || admin) {
-			if (!acc) sl = lookup_player_laston(p_id);
+			if (!acc_found) sl = lookup_player_laston(p_id);
 			else {
 				s = lookup_player_laston(p_id);
 				if (s >= sl) {
 					sl = s;
-					acc = FALSE; /* as I said, not necessary :-p */
+					acc_found = FALSE; /* as I said, not necessary :-p */
 				}
 			}
 		}
-	/* neither char nor acc? */
-	} else if (!acc) {
+	/* neither char nor acc_found? */
+	} else if (!acc_found) {
 		sprintf(response, "Sorry, couldn't find anyone named %s.", nameproc);
 		return;
 	}
@@ -9495,8 +9482,8 @@ void get_laston(char *name, char *response, bool admin) {
 
 	now = time(&now);
 	s = now - sl;
-	if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld days ago.", acc ? "The player using account" : "The character", nameproc, s / (60 * 60 * 24));
-	else if (s >= 60 * 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld hours ago.", acc ? "The player using account" : "The character", nameproc, s / (60 * 60));
-	else if (s >= 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld minutes ago.", acc ? "The player using account" : "The character", nameproc, s / 60);
-	else sprintf(response, "%s \377s%s\377w was last seen %ld seconds ago.", acc ? "The player using Account" : "The character", nameproc, s);
+	if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld days ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60 * 24));
+	else if (s >= 60 * 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld hours ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60));
+	else if (s >= 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld minutes ago.", acc_found ? "The player using account" : "The character", nameproc, s / 60);
+	else sprintf(response, "%s \377s%s\377w was last seen %ld seconds ago.", acc_found ? "The player using Account" : "The character", nameproc, s);
 }

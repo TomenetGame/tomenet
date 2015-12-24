@@ -266,6 +266,10 @@
 #define HOSTNAME_LEN		20
 #define CHARACTERNAME_LEN	16
 
+/* Lengths of fields used in tomenet.acc file */
+#define ACCFILE_NAME_LEN	30
+#define ACCFILE_PASSWD_LEN	20
+
 /*
  * Maximum message length
  */

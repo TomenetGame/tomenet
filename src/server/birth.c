@@ -2874,7 +2874,7 @@ static void do_trait_skill(int Ind, int s, int m) {
 bool player_birth(int Ind, int conn, connection_t *connp) {
 	player_type *p_ptr;
 	int i;
-	struct account *c_acc;
+	struct account acc;
 	bool acc_banned = FALSE;
 	char acc_houses = 0;
 
@@ -2938,20 +2938,18 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Verify his name and create a savefile name */
 	if (!process_player_name(Ind, TRUE)) return FALSE;
 
-	c_acc = GetAccount(accname, NULL, FALSE);
-	if (c_acc) {
-		p_ptr->account = c_acc->id;
-		p_ptr->noscore = (c_acc->flags & ACC_NOSCORE);
-		p_ptr->inval = (c_acc->flags & ACC_TRIAL);
+	if (GetAccount(&acc, accname, NULL, FALSE)) {
+		p_ptr->account = acc.id;
+		p_ptr->noscore = (acc.flags & ACC_NOSCORE);
+		p_ptr->inval = (acc.flags & ACC_TRIAL);
 		/* more flags - C. Blue */
-		p_ptr->restricted = (c_acc->flags & ACC_VRESTRICTED) ? 2 : (c_acc->flags & ACC_RESTRICTED) ? 1 : 0;
-		p_ptr->privileged = (c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
-		p_ptr->pvpexception = (c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
-		p_ptr->mutedchat = (c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
-		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
-		s_printf("(%s) ACC1:Player %s has flags %d\n", showtime(), accname, c_acc->flags);
-		acc_houses = c_acc->houses;
-		KILL(c_acc, struct account);
+		p_ptr->restricted = (acc.flags & ACC_VRESTRICTED) ? 2 : (acc.flags & ACC_RESTRICTED) ? 1 : 0;
+		p_ptr->privileged = (acc.flags & ACC_VPRIVILEGED) ? 2 : (acc.flags & ACC_PRIVILEGED) ? 1 : 0;
+		p_ptr->pvpexception = (acc.flags & ACC_PVP) ? 1 : (acc.flags & ACC_NOPVP) ? 2 : (acc.flags & ACC_ANOPVP) ? 3 : 0;
+		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
+		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
+		s_printf("(%s) ACC1:Player %s has flags %d\n", showtime(), accname, acc.flags);
+		acc_houses = acc.houses;
 	}
 
 	/* handle banned player 1/2 */
@@ -2974,11 +2972,9 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* init account-wide houses limit? // ACC_HOUSE_LIMIT */
 	if (acc_houses == -1) {
-		c_acc = GetAccount(accname, NULL, FALSE);
-		if (c_acc) {
+		if (GetAccount(&acc, accname, NULL, FALSE)) {
 			/* grab sum from hash table entries */
-			acc_houses = acc_sum_houses(c_acc);
-			KILL(c_acc, struct account);
+			acc_houses = acc_sum_houses(&acc);
 
 			acc_set_houses(accname, acc_houses);
 			s_printf("ACC_HOUSE_LIMIT_INIT: initialised %s(%s) with %d.\n", p_ptr->name, accname, acc_houses);
@@ -3032,21 +3028,19 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->conn = conn;
 
 	/* again ;( */
-	c_acc = GetAccount(accname, NULL, FALSE);
-	if (c_acc) {
-		p_ptr->account = c_acc->id;
-		p_ptr->noscore = (c_acc->flags & ACC_NOSCORE);
-		p_ptr->inval = (c_acc->flags & ACC_TRIAL);
+	if (GetAccount(&acc, accname, NULL, FALSE)) {
+		p_ptr->account = acc.id;
+		p_ptr->noscore = (acc.flags & ACC_NOSCORE);
+		p_ptr->inval = (acc.flags & ACC_TRIAL);
 		/* more flags - C. Blue */
-		p_ptr->restricted = (c_acc->flags & ACC_VRESTRICTED) ? 2 : (c_acc->flags & ACC_RESTRICTED) ? 1 : 0;
-		p_ptr->privileged = (c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
-		p_ptr->pvpexception = (c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
-		p_ptr->mutedchat = (c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
-		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
-//		s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, c_acc->flags);
-		s_printf("(%s) ACC2:Player %s has flags %d (%s)\n", showtime(), accname, c_acc->flags, get_conn_userhost(conn));
-//		s_printf("(%s) ACC2:Player %s has flags %d (%s@%s)\n", showtime(), accname, c_acc->flags, Conn[conn]->real, Conn[conn]->host);
-		KILL(c_acc, struct account);
+		p_ptr->restricted = (acc.flags & ACC_VRESTRICTED) ? 2 : (acc.flags & ACC_RESTRICTED) ? 1 : 0;
+		p_ptr->privileged = (acc.flags & ACC_VPRIVILEGED) ? 2 : (acc.flags & ACC_PRIVILEGED) ? 1 : 0;
+		p_ptr->pvpexception = (acc.flags & ACC_PVP) ? 1 : (acc.flags & ACC_NOPVP) ? 2 : (acc.flags & ACC_ANOPVP) ? 3 : 0;
+		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
+		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
+//		s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, acc.flags);
+		s_printf("(%s) ACC2:Player %s has flags %d (%s)\n", showtime(), accname, acc.flags, get_conn_userhost(conn));
+//		s_printf("(%s) ACC2:Player %s has flags %d (%s@%s)\n", showtime(), accname, acc.flags, Conn[conn]->real, Conn[conn]->host);
 	}
 	/* handle banned player 2/2 */
 	if (acc_banned) {
@@ -3421,19 +3415,17 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 /* returns FALSE if bogus admin - Jir - */
 bool confirm_admin(int Ind)
 {
-	struct account *c_acc;
+	struct account acc;
 	player_type *p_ptr = Players[Ind];
 	bool admin = FALSE;
 
-	c_acc = GetAccountID(p_ptr->account, FALSE);
-	if (!c_acc) return(FALSE);
-	if (c_acc->flags & ACC_ADMIN) admin = TRUE;
+	if (!GetAccountID(&acc, p_ptr->account, FALSE)) return(FALSE);
+	if (acc.flags & ACC_ADMIN) admin = TRUE;
 	/* sucks, but allows an admin wizard. i'll change - evileye */
 	/* one DM is enough - jir :) */
-//	if (!strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz = admin;
-	if (strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz = admin;
+//	if (!strcmp(p_ptr->name, acc.name)) p_ptr->admin_wiz = admin;
+	if (strcmp(p_ptr->name, acc.name)) p_ptr->admin_wiz = admin;
 	else p_ptr->admin_dm = admin;
-	KILL(c_acc, struct account);
 	return(admin);
 }
 

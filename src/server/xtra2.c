@@ -14,7 +14,7 @@
 #define SERVER
 
 #include "angband.h"
-#include "party.h"
+
 #include <sys/time.h>
 
 //#define IRON_TEAM_EXPERIENCE
@@ -11950,7 +11950,7 @@ bool master_player(int Ind, char *parms){
 	player_type *q_ptr;
 	int Ind2 = 0;
 	int i;
-	struct account *d_acc;
+	struct account acc;
 	int *id_list, n;
 	char buf[MSG_LEN];
 
@@ -12025,10 +12025,9 @@ bool master_player(int Ind, char *parms){
 
 	case 'r':	/* FULL ACCOUNT SCAN + RM */
 		/* Delete a player from the database/savefile */
-		d_acc = GetAccount(&parms[1], NULL, FALSE);
-		if (d_acc != (struct account*)NULL) {
+		if (GetAccount(&acc, &parms[1], NULL, FALSE)) {
 			char name[80];
-			n = player_id_list(&id_list, d_acc->id);
+			n = player_id_list(&id_list, acc.id);
 			for(i = 0; i < n; i++) {
 				strcpy(name, lookup_player_name(id_list[i]));
 				msg_format(Ind, "\377oDeleting %s", name);
@@ -12036,10 +12035,10 @@ bool master_player(int Ind, char *parms){
 				sf_delete(name);
 			}
 			if (n) C_KILL(id_list, n, int);
-			d_acc->flags |= ACC_DELD;
+			acc.flags |= ACC_DELD;
 			/* stamp in the deleted account */
-			WriteAccount(d_acc, FALSE);
-			KILL(d_acc, struct account);
+			WriteAccount(&acc, FALSE);
+			memset(acc.pass, 0, sizeof(acc.pass));
 		} else msg_print(Ind, "\377rCould not find account");
 		break;
 	}
