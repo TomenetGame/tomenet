@@ -327,3 +327,8 @@ Y:0:0:-:light source:-:255
 y:-1:-1:-:light source
 yR:-:Except for vampires everyone usually brings a light source along.
 yR:-:You can also buy lights and lamp oil in the general store in this town.
+
+
+
+#Talk to a roaming guard who patrols Menegroth
+#N5:menegguard:C. Blue:Menegroth Patrol:-1:3:1
