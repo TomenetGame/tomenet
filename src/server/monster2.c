@@ -4790,7 +4790,7 @@ bool multiply_monster(int m_idx) {
 	if (m_ptr->clone > 90) return(FALSE);
 
 	/* NO UNIQUES */
-	if (r_ptr->flags1 & RF1_UNIQUE) return FALSE;
+	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)) return FALSE;
 	/* Not in town -_- */
 	if (istown(wpos)) return FALSE;
 
