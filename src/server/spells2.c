@@ -3634,6 +3634,17 @@ bool ident_spell_aux(int Ind, int item) {
 		    o_name);
 	}
 
+#if 1
+	if (!p_ptr->warning_inspect &&
+	    (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET)// || o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF || o_ptr->tval == TV_ROD)
+	    //&& *(k_text + k_info[o_ptr->k_idx].text) /* not this, it disables all 'basic' items such as sustain rings or example */
+	    ) {
+		msg_print(Ind, "\374\377yHINT: You can press '\377oShift+i\377y' to try and inspect an unknown item!");
+		s_printf("warning_inspect: (id) %s\n", p_ptr->name);
+		p_ptr->warning_inspect = 1;
+	}
+#endif
+
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
 //		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not when IDing */
