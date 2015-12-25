@@ -19421,7 +19421,7 @@ D:slowly turning around and around forever.
 #search code for 'check_Pumpkin' (capital P) function to see details.
 
 #low HP version
-N:1086:Great Pumpkin
+N:1086:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:30d100:15:20:20
 $RPG_SERVER$I:120:20d100:15:20:20
@@ -19446,7 +19446,7 @@ D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
 #medium HP version
-N:1087:Great Pumpkin
+N:1087:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:60d100:15:20:20
 $RPG_SERVER$I:120:40d100:15:20:20
@@ -19471,7 +19471,7 @@ D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
 #high HP version
-N:1088:Great Pumpkin
+N:1088:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:100d100:15:20:20
 $RPG_SERVER$I:120:66d100:15:20:20
