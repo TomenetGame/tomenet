@@ -3022,7 +3022,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_INTERCEPT,
                                 '+', 1000,
-                                '+', 500,//400
+                                '+', 600,//400
                         },
                 }
 	},
@@ -3362,7 +3362,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_INTERCEPT,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700,
                         },
 			/* Health tree */
                         {
@@ -4882,7 +4882,7 @@ player_class class_info[MAX_CLASS] =
 			{
 				SKILL_INTERCEPT,
 				'+', 0,
-				'+', 1000,
+				'+', 800,
 			},
 			{
 				SKILL_R_LITE,
@@ -5101,7 +5101,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_INTERCEPT,
                                 '+', 0,
-                                '+', 500,
+                                '+', 650,
                         },
 
                         /* Necromancy tree - disturb the mindcrafter slightly maybe*/
