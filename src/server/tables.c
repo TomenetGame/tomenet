@@ -5101,7 +5101,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_INTERCEPT,
                                 '+', 0,
-                                '+', 650,
+                                '+', 600,
                         },
 
                         /* Necromancy tree - disturb the mindcrafter slightly maybe*/
