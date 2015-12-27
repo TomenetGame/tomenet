@@ -7448,7 +7448,7 @@ Swords, axes, blunt weapons (whips, hammers, morning stars etc.), polearms.
 
 You may wonder which one to choose and why. In general, if your character is
 especially skilled at one of the four masteries you might want to pick that one
-to save skill points.
+to save skill points (for example Half-Trolls get a bonus on Blunt-Mastery).
 
 Also, priests cannot use edged weapons that aren't 'blessed' (a special magical
 property, ie ego-power), so if the player wants to make a melee-oriented priest,
