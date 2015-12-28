@@ -1498,6 +1498,9 @@ void whats_under_your_feet(int Ind) {
  * Player "wants" to pick up an object or gold.
  * Note that we ONLY handle things that can be picked up.
  * See "move_player()" for handling of other things.
+ *
+ * 'one': Only pick up one piece from a stack of same item type
+ *        (currently not implemented for ammo)
  */
 /* Prevent characters in Bree from taking gold/items while they cannot drop
    them again due to being lower level than cfg.newbies_cannot_drop? */
@@ -1507,7 +1510,7 @@ void whats_under_your_feet(int Ind) {
    This is currently not supported, because the spell is cast BEFORE the item is picked up. */
  //#define ALLOW_X_BAGID
 #endif
-void carry(int Ind, int pickup, int confirm) {
+void carry(int Ind, int pickup, int confirm, bool one) {
 	object_type *o_ptr;
 
 	char    o_name[ONAME_LEN], o_name_real[ONAME_LEN];
@@ -1520,6 +1523,11 @@ void carry(int Ind, int pickup, int confirm) {
 
 	bool forbidden = FALSE; /* for leaderless guild halls */
 	bool inven_carried = FALSE; /* avoid duplicate sfx */
+
+	/* stuff for 'one' hack: */
+	int num_org;
+	bool try_pickup = TRUE;
+	bool delete_it;
 
 
 	if (!(zcave = getcave(wpos))) return;
@@ -1544,6 +1552,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 	/* Get the object */
 	o_ptr = &o_list[c_ptr->o_idx];
+	num_org = o_ptr->number;
 
 	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, 1)) return;
 
@@ -1561,8 +1570,17 @@ void carry(int Ind, int pickup, int confirm) {
 	}
 
 	/* Describe the object */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-	object_desc(0, o_name_real, o_ptr, TRUE, 3);
+	if (one && !is_ammo(o_ptr->tval)) { //hack the name, but 'one' is currently not implemeted for ammo
+		int num = o_ptr->number;
+
+		o_ptr->number = 1;
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		object_desc(0, o_name_real, o_ptr, TRUE, 3);
+		o_ptr->number = num;
+	} else {
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		object_desc(0, o_name_real, o_ptr, TRUE, 3);
+	}
 
 
 	/* Pick up gold */
@@ -1913,6 +1931,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 		/* Try to add to the quiver */
 		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0)) {
+			//note: 'one' is not implemented here!
 			int slot = INVEN_AMMO, num = o_ptr->number;
 
 			msg_print(Ind, "You add the ammo to your quiver.");
@@ -1952,10 +1971,13 @@ void carry(int Ind, int pickup, int confirm) {
 
 			/* Refresh */
 			p_ptr->window |= PW_EQUIP;
+
+			try_pickup = FALSE;
 		}
 		/* Try to add to the empty quiver (XXX rewrite me - too long!) */
 		else if (auto_load && is_ammo(o_ptr->tval) &&
 		    !p_ptr->inventory[INVEN_AMMO].k_idx) {
+			//note: 'one' is not implemented here!
 			int slot = INVEN_AMMO;
 			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 
@@ -2014,7 +2036,7 @@ void carry(int Ind, int pickup, int confirm) {
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 
 			/* Delete original */
-			//			delete_object(wpos, p_ptr->py, p_ptr->px);
+			//delete_object(wpos, p_ptr->py, p_ptr->px);
 			delete_object_idx(c_ptr->o_idx, FALSE);
 
 			/* Hack -- tell the player of the next object on the pile */
@@ -2028,6 +2050,8 @@ void carry(int Ind, int pickup, int confirm) {
 
 			/* Window stuff */
 			p_ptr->window |= (PW_EQUIP);
+
+			try_pickup = FALSE;
 		}
 		/* Boomerangs: */
 		else if (auto_load && o_ptr->tval == TV_BOOMERANG &&
@@ -2065,6 +2089,12 @@ void carry(int Ind, int pickup, int confirm) {
 			/* Structure copy to insert the new item */
 			p_ptr->inventory[slot] = (*o_ptr);
 
+			/* cannot equip more than one at once */
+			p_ptr->inventory[slot].number = 1;
+			o_ptr->number--;
+			if (!o_ptr->number) delete_it = TRUE;
+			else delete_it = FALSE;
+
 			/* Forget the old location */
 			p_ptr->inventory[slot].iy = p_ptr->inventory[slot].ix = 0;
 			p_ptr->inventory[slot].wpos.wx = 0;
@@ -2076,7 +2106,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 
 			/* Increase the weight, prepare to redraw */
-			p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
+			p_ptr->total_weight += o_ptr->weight;
 
 			/* Get the item again */
 			o_ptr = &(p_ptr->inventory[slot]);
@@ -2090,14 +2120,21 @@ void carry(int Ind, int pickup, int confirm) {
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 
 			/* Delete original */
-			//			delete_object(wpos, p_ptr->py, p_ptr->px);
-			delete_object_idx(c_ptr->o_idx, FALSE);
+			//delete_object(wpos, p_ptr->py, p_ptr->px);
+			if (delete_it) {
+				delete_object_idx(c_ptr->o_idx, FALSE);
 
-			/* Hack -- tell the player of the next object on the pile */
-			whats_under_your_feet(Ind);
+				/* Hack -- tell the player of the next object on the pile */
+				whats_under_your_feet(Ind);
 
-			/* Tell the client */
-			Send_floor(Ind, 0);
+				/* Tell the client */
+				Send_floor(Ind, 0);
+
+				try_pickup = FALSE;
+			} else if (!one) {
+				/* ^ if we didn't delete it, additionally try to pick up the rest of the pile */
+				o_ptr = &o_list[c_ptr->o_idx];
+			} else try_pickup = FALSE; //we only wanted to pick up one anyway, which we put into our bow slot now
 
 			/* Recalculate boni */
 			p_ptr->update |= (PU_BONUS);
@@ -2112,8 +2149,11 @@ void carry(int Ind, int pickup, int confirm) {
 			p_ptr->window |= (PW_EQUIP | PW_PLAYER);
 		}
 
+		/* hack for 'one' (needed for inven_carry_okay() too, or rather for the object_similar() check inside of it */
+		if (one) o_ptr->number = 1;
+
 		/* Note that the pack is too full */
-		else if (!inven_carry_okay(Ind, o_ptr, 0x0)) {
+		if (try_pickup && !inven_carry_okay(Ind, o_ptr, 0x0)) {
 			msg_format(Ind, "You have no room for %s.", o_name);
 			Send_floor(Ind, o_ptr->tval);
 
@@ -2121,12 +2161,29 @@ void carry(int Ind, int pickup, int confirm) {
 			o_ptr->note = old_note;
 			o_ptr->note_utag = old_note_utag;
 
+			/* unhack 'one' */
+			o_ptr->number = num_org;
+
 			return;
 		}
 
 		/* Pick up the item (if requested and allowed) */
-		else {
+		else if (try_pickup) {
 			int okay = TRUE;
+
+			object_type forge, *o_floor_ptr = o_ptr; //structure copy for hacking 'one'
+
+			/* hack 'one' */
+			if (one) {
+#if 0 /* redundant since o_ptr->number is already set to 1 above if 'one' is TRUE */
+				o_floor_ptr->number = 1; //a hack inside this hack, just for !XID_SPELL_AFTER_PICKUP (which performs a floor-id!), sigh */
+#endif
+				forge = (*o_floor_ptr);
+				if (num_org == 1) delete_it = TRUE;
+				else delete_it = FALSE;
+				/* use the new temporary forge object for reference */
+				o_ptr = &forge;
+			}
 
 #if 0
 			/* Hack -- query every item */
@@ -2134,6 +2191,9 @@ void carry(int Ind, int pickup, int confirm) {
 				char out_val[ONAME_LEN];
 				snprintf(out_val, ONAME_LEN, "Pick up %s? ", o_name);
 				Send_pickup_check(Ind, out_val);
+
+				/* unhack 'one' */
+				o_floor_ptr->number = num_org;
 				return;
 			}
 #endif	// 0
@@ -2780,13 +2840,19 @@ void carry(int Ind, int pickup, int confirm) {
 
 				/* Delete original */
 //				delete_object(wpos, p_ptr->py, p_ptr->px);
-				delete_object_idx(c_ptr->o_idx, FALSE);
+				if (delete_it) {
+					delete_object_idx(c_ptr->o_idx, FALSE);
 
-				/* Hack -- tell the player of the next object on the pile */
-				whats_under_your_feet(Ind);
+					/* Hack -- tell the player of the next object on the pile */
+					whats_under_your_feet(Ind);
 
-				/* Tell the client */
-				Send_floor(Ind, 0);
+					/* Tell the client */
+					Send_floor(Ind, 0);
+				} else if (one) /* unhack 'one' - we picked up one item off the pile */
+					o_floor_ptr->number = num_org - 1;
+			} else { /* not 'okay', currently dead code here, since it's always TRUE, but for paranoia's sake: */
+				/* unhack 'one' */
+				o_floor_ptr->number = num_org;
 			}
 		}
 	}
@@ -6422,7 +6488,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		}
 
 		/* Handle "objects" */
-		if (c_ptr->o_idx && !p_ptr->admin_dm) carry(Ind, do_pickup, 0);
+		if (c_ptr->o_idx && !p_ptr->admin_dm) carry(Ind, do_pickup, 0, FALSE);
 		else Send_floor(Ind, 0);
 
 		/* Handle "store doors" */

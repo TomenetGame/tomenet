@@ -154,6 +154,7 @@ static void cmd_all_in_one(void) {
 			break;
 		}
 	}
+	}
 }
 
 /* Handle all commands */
@@ -185,6 +186,7 @@ void process_command() {
 	case '.': cmd_run(); break;
 	case ',':
 	case 'g': cmd_stay(); break;
+	case KTRL('G'): cmd_stay_one(); break;
 
 	/* Get the mini-map */
 	case 'M': cmd_map(0); break;
@@ -369,6 +371,9 @@ void cmd_run(void) {
 
 void cmd_stay(void) {
 	Send_stay();
+}
+void cmd_stay_one(void) {
+	Send_stay_one();
 }
 
 void cmd_map(char mode) {

@@ -4256,33 +4256,29 @@ int do_cmd_run(int Ind, int dir) {
  * Stay still.  Search.  Enter stores.
  * Pick up treasure if "pickup" is true.
  */
-void do_cmd_stay(int Ind, int pickup) {
+void do_cmd_stay(int Ind, int pickup, bool one) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type *c_ptr;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
-	
 	if (p_ptr->new_level_flag) return;
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-/* We don't want any of this */
-#if 0
+
+#if 0 /* We don't want any of this */
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Spontaneous Searching */
 	if ((p_ptr->skill_fos >= 75) || (0 == rand_int(76 - p_ptr->skill_fos)))
-	{
 		search(Ind);
-	}
 
 	/* Continuous Searching */
 	if (p_ptr->searching)
-	{
 		search(Ind);
-	}
 #endif
 
 
@@ -4302,7 +4298,7 @@ void do_cmd_stay(int Ind, int pickup) {
 
 
 	/* Try to Pick up anything under us */
-	carry(Ind, pickup, 1);
+	carry(Ind, pickup, 1, one);
 }
 
 /*

@@ -287,6 +287,7 @@ static void Init_receive(void) {
 	playing_receive[PKT_DROP]		= Receive_drop;
 	playing_receive[PKT_FIRE]		= Receive_fire;
 	playing_receive[PKT_STAND]		= Receive_stand;
+	playing_receive[PKT_STAND_ONE]		= Receive_stand_one;
 	playing_receive[PKT_DESTROY]		= Receive_destroy;
 	playing_receive[PKT_LOOK]		= Receive_look;
 
@@ -8133,9 +8134,37 @@ static int Receive_stand(int ind) {
 		return n;
 	}
 
-//	if (p_ptr) { 		/* disallow picking up items while paralyzed: */
+	//if (p_ptr) { 		/* disallow picking up items while paralyzed: */
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-		do_cmd_stay(player, 1);
+		do_cmd_stay(player, 1, FALSE);
+		return 2;
+	} else if (p_ptr) {
+		Packet_printf(&connp->q, "%c", ch);
+		return 0;
+	}
+
+	return -1;
+}
+static int Receive_stand_one(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	//if (p_ptr) { 		/* disallow picking up items while paralyzed: */
+	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+		do_cmd_stay(player, 1, TRUE);
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);

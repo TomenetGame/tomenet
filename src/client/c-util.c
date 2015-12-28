@@ -1256,6 +1256,8 @@ static char roguelike_commands(char command) {
 	case KTRL('E'): return ('h');
 	/* Reapply auto-inscriptions */
 	case KTRL('G'): return ('H');
+	/* Pick up exactly one item from a stack of same type of items (ie from piles, containing up to 99 <number> of this item) */
+	case KTRL('Z'): return (KTRL('G'));
 
 	/* Run */
 	case ',': return ('.');

@@ -4009,6 +4009,11 @@ int Send_stay(void) {
 	if ((n = Packet_printf(&wbuf, "%c", PKT_STAND)) <= 0) return n;
 	return 1;
 }
+int Send_stay_one(void) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c", PKT_STAND_ONE)) <= 0) return n;
+	return 1;
+}
 
 static int Send_keepalive(void) {
 	int	n;
