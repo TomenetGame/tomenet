@@ -9,17 +9,15 @@ static void cmd_clear_actions(void) {
 	Send_clear_actions();
 }
 
-static void cmd_player_equip(void)
-{
-    /* Set the hook */
-    special_line_type = SPECIAL_FILE_PLAYER_EQUIP;
+static void cmd_player_equip(void) {
+	/* Set the hook */
+	special_line_type = SPECIAL_FILE_PLAYER_EQUIP;
 
-    /* Call the file perusal */
-    peruse_file();
+	/* Call the file perusal */
+	peruse_file();
 }
 
-static bool item_tester_edible(object_type *o_ptr)
-{
+static bool item_tester_edible(object_type *o_ptr) {
 	if (o_ptr->tval == TV_FOOD) return TRUE;
 	if (o_ptr->tval == TV_FIRESTONE) return TRUE;
 
@@ -27,28 +25,23 @@ static bool item_tester_edible(object_type *o_ptr)
 }
 
 /* XXX not fully functional */
-static bool item_tester_oils(object_type *o_ptr)
-{
+static bool item_tester_oils(object_type *o_ptr) {
 	if (o_ptr->tval == TV_LITE) return TRUE;
 	if (o_ptr->tval == TV_FLASK) return TRUE;
 
 	return FALSE;
 }
 
-static void cmd_all_in_one(void)
-{
+static void cmd_all_in_one(void) {
 	int item, dir;
 
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
-	if (INVEN_WIELD <= item)
-	{
+	if (INVEN_WIELD <= item) {
 		/* Does item require aiming? (Always does if not yet identified) */
 		if (inventory[item].uses_dir == 0) {
 			/* (also called if server is outdated, since uses_dir will be 0 then) */
@@ -60,135 +53,92 @@ static void cmd_all_in_one(void)
 		return;
 	}
 
-	switch (inventory[item].tval)
-	{
-		case TV_POTION:
-		case TV_POTION2:
-		{
-			Send_quaff(item);
-			break;
-		}
-
-		case TV_SCROLL:
-		case TV_PARCHMENT:
-		{
-			Send_read(item);
-			break;
-		}
-
-		case TV_WAND:
-		{
+	switch (inventory[item].tval) {
+	case TV_POTION:
+	case TV_POTION2:
+		Send_quaff(item);
+		break;
+	case TV_SCROLL:
+	case TV_PARCHMENT:
+		Send_read(item);
+		break;
+	case TV_WAND:
+		if (!get_dir(&dir)) return;
+		Send_aim(item, dir);
+		break;
+	case TV_STAFF:
+		Send_use(item);
+		break;
+	case TV_ROD:
+		/* Does rod require aiming? (Always does if not yet identified) */
+		if (inventory[item].uses_dir == 0) {
+			/* (also called if server is outdated, since uses_dir will be 0 then) */
+			Send_zap(item);
+		} else {
 			if (!get_dir(&dir)) return;
-			Send_aim(item, dir);
-			break;
+			Send_zap_dir(item, dir);
 		}
-
-		case TV_STAFF:
-		{
-			Send_use(item);
-			break;
-		}
-
-		case TV_ROD:
-		{
-			/* Does rod require aiming? (Always does if not yet identified) */
-			if (inventory[item].uses_dir == 0) {
-				/* (also called if server is outdated, since uses_dir will be 0 then) */
-				Send_zap(item);
-			} else {
-				if (!get_dir(&dir)) return;
-				Send_zap_dir(item, dir);
-			}
-			break;
-		}
-
-		case TV_LITE:
-		{
-			if (inventory[INVEN_LITE].tval)
-			{
-				Send_fill(item);
-			}
-			else
-			{
-				Send_wield(item);
-			}
-			break;
-		}
-
-		case TV_FLASK:
-		{
+		break;
+	case TV_LITE:
+		if (inventory[INVEN_LITE].tval)
 			Send_fill(item);
-			break;
-		}
-
-		case TV_FOOD:
-		case TV_FIRESTONE:
-		{
-			Send_eat(item);
-			break;
-		}
-
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		{
+		else
 			Send_wield(item);
-			break;
-		}
-
-		/* NOTE: 'item' isn't actually sent */
-		case TV_SPIKE:
-		{
-			if (!get_dir(&dir)) return;
-			Send_spike(dir);
-			break;
-		}
-
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_DIGGING:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_AXE:
-		case TV_MSTAFF:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_AMULET:
-		case TV_RING:
-		case TV_TOOL:
-		case TV_INSTRUMENT:
-		{
-			Send_wield(item);
-			break;
-		}
-
-		/* Presume it's sort of spellbook */
-		case TV_BOOK:
-		case TV_TRAPKIT:
-		default:
-		{
-			int i;
-			bool done = FALSE;
-			for (i = 1; i < MAX_SKILLS; i++)
-			{
-				if (s_info[i].tval == inventory[item].tval)
-				{
-					if (s_info[i].action_mkey && p_ptr->s_info[i].value)
-					{
-						do_activate_skill(i, item);
-						done = TRUE;
-						break;
-					}
-					/* Now a number of skills shares same mkey */
-				}
+		break;
+	case TV_FLASK:
+		Send_fill(item);
+		break;
+	case TV_FOOD:
+	case TV_FIRESTONE:
+		Send_eat(item);
+		break;
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+		Send_wield(item);
+		break;
+	/* NOTE: 'item' isn't actually sent */
+	case TV_SPIKE:
+		if (!get_dir(&dir)) return;
+		Send_spike(dir);
+		break;
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_AXE:
+	case TV_MSTAFF:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_AMULET:
+	case TV_RING:
+	case TV_TOOL:
+	case TV_INSTRUMENT:
+		Send_wield(item);
+		break;
+	/* Presume it's sort of spellbook */
+	case TV_BOOK:
+	case TV_TRAPKIT:
+	default:
+	{
+		int i;
+		bool done = FALSE;
+		for (i = 1; i < MAX_SKILLS; i++) {
+			if (s_info[i].tval == inventory[item].tval &&
+			    s_info[i].action_mkey && p_ptr->s_info[i].value) {
+				do_activate_skill(i, item);
+				done = TRUE;
+				break;
+				/* Now a number of skills shares same mkey */
 			}
 			if (!done) {
 				/* XXX there should be more generic 'use' command */
@@ -208,448 +158,220 @@ static void cmd_all_in_one(void)
 
 /* Handle all commands */
 
-void process_command()
-{
+void process_command() {
 	/* Parse the command */
-	switch (command_cmd)
-	{
-			/* Ignore */
-		case ESCAPE:
-		case '-': /* used for targetting since 4.4.6, so we ignore it to allow
-			     macros that hackily use it for both directional and non-
-			     directional things, so the 'key not in use' message is
-			     suppressed for non-directional actions, just to look better. */
-			break;
+	switch (command_cmd) {
+	/* Ignore */
+	case ESCAPE:
+	case '-': /* used for targetting since 4.4.6, so we ignore it to allow
+		     macros that hackily use it for both directional and non-
+		     directional things, so the 'key not in use' message is
+		     suppressed for non-directional actions, just to look better. */
+		break;
+	/* Ignore mostly, but also stop automatically repeated actions */
+	case ' ': cmd_clear_actions(); break;
+	/* Ignore return */
+	case '\r': break;
+	/* Clear buffer */
+	case ')': cmd_clear_buffer(); break;
 
-			/* Ignore mostly, but also stop automatically repeated actions */
-		case ' ':
-			cmd_clear_actions();
-			break;
+	/*** Movement Commands ***/
 
-			/* Ignore return */
-		case '\r':
-			break;
+	/* Dig a tunnel*/
+	case '+': cmd_tunnel(); break;
+	/* Move */
+	case ';': cmd_walk(); break;
+	/*** Running, Staying, Resting ***/
+	case '.': cmd_run(); break;
+	case ',':
+	case 'g': cmd_stay(); break;
 
-			/* Clear buffer */
-		case ')':
-			cmd_clear_buffer();
-			break;
+	/* Get the mini-map */
+	case 'M': cmd_map(0); break;
+	/* Recenter map */
+	case 'L': cmd_locate(); break;
+	/* Search */
+	case 's': cmd_search(); break;
+	/* Toggle Search Mode */
+	case 'S': cmd_toggle_search(); break;
+	/* Rest */
+	case 'R': cmd_rest(); break;
 
-			/*** Movement Commands ***/
+	/*** Stairs and doors and chests ***/
 
-			/* Dig a tunnel*/
-		case '+':
-			cmd_tunnel();
-			break;
+	/* Go up */
+	case '<': cmd_go_up(); break;
+	/* Go down */
+	case '>': cmd_go_down(); break;
 
-			/* Move */
-		case ';':
-			cmd_walk();
-			break;
+	/* Open a door */
+	case 'o': cmd_open(); break;
+	/* Close a door */
+	case 'c': cmd_close(); break;
+	/* Bash a door */
+	case 'B': cmd_bash(); break;
 
-			/*** Running, Staying, Resting ***/
-		case '.':
-			cmd_run();
-			break;
+	/* Disarm a trap or chest */
+	case 'D': cmd_disarm(); break;
 
-		case ',':
-		case 'g':
-			cmd_stay();
-			break;
+	/*** Inventory commands ***/
 
-			/* Get the mini-map */
-		case 'M':
-			cmd_map(0);
-			break;
-
-			/* Recenter map */
-		case 'L':
-			cmd_locate();
-			break;
-
-			/* Search */
-		case 's':
-			cmd_search();
-			break;
-
-			/* Toggle Search Mode */
-		case 'S':
-			cmd_toggle_search();
-			break;
-
-			/* Rest */
-		case 'R':
-			cmd_rest();
-			break;
-
-			/*** Stairs and doors and chests ***/
-
-			/* Go up */
-		case '<':
-			cmd_go_up();
-			break;
-
-			/* Go down */
-		case '>':
-			cmd_go_down();
-			break;
-
-			/* Open a door */
-		case 'o':
-			cmd_open();
-			break;
-
-			/* Close a door */
-		case 'c':
-			cmd_close();
-			break;
-
-			/* Bash a door */
-		case 'B':
-			cmd_bash();
-			break;
-
-			/* Disarm a trap or chest */
-		case 'D':
-			cmd_disarm();
-			break;
-
-			/*** Inventory commands ***/
-		case 'i':
-			cmd_inven();
-			break;
-
-		case 'e':
-			cmd_equip();
-			break;
-
-		case 'd':
-			cmd_drop();
-			break;
-
-		case '$':
-			cmd_drop_gold();
-			break;
-
-		case 'w':
-			cmd_wield();
-			break;
-
-		case 't':
-			cmd_take_off();
-			break;
-
-		case 'x':
-			cmd_swap();
-			break;
-
-		case 'k':
-			cmd_destroy();
-			break;
-
+	case 'i': cmd_inven(); break;
+	case 'e': cmd_equip(); break;
+	case 'd': cmd_drop(); break;
+	case '$': cmd_drop_gold(); break;
+	case 'w': cmd_wield(); break;
+	case 't': cmd_take_off(); break;
+	case 'x': cmd_swap(); break;
+	case 'k': cmd_destroy(); break;
 #if 0 /* currently no effect on server-side */
-		case 'K':
-			cmd_king();
-			break;
+	case 'K': cmd_king(); break;
 #endif
-		case 'K':
-			cmd_force_stack();
-			break;
+	case 'K': cmd_force_stack(); break;
+	case '{': cmd_inscribe(); break;
+	case '}': cmd_uninscribe(); break;
+	case 'H': cmd_apply_autoins(); break;
+	case 'j': cmd_steal(); break;
 
-		case '{':
-			cmd_inscribe();
-			break;
+	/*** Inventory "usage" commands ***/
 
-		case '}':
-			cmd_uninscribe();
-			break;
+	case 'q': cmd_quaff(); break;
+	case 'r': cmd_read_scroll(); break;
+	case 'a': cmd_aim_wand(); break;
+	case 'u': cmd_use_staff(); break;
+	case 'z': cmd_zap_rod(); break;
+	case 'F': cmd_refill(); break;
+	case 'E': cmd_eat(); break;
+	case 'A': cmd_activate(); break;
 
-		case 'H':
-			cmd_apply_autoins();
-			break;
+	/*** Firing and throwing ***/
 
-		case 'j':
-			cmd_steal();
-			break;
+	case 'f': cmd_fire(); break;
+	case 'v': cmd_throw(); break;
 
-			/*** Inventory "usage" commands ***/
-		case 'q':
-			cmd_quaff();
-			break;
+	/*** Spell casting ***/
 
-		case 'r':
-			cmd_read_scroll();
-			break;
+	case 'b': cmd_browse(); break;
+	case 'G': do_cmd_skill(); break;
+	case 'm': do_cmd_activate_skill(); break;
+	case 'U': cmd_ghost(); break;
 
-		case 'a':
-			cmd_aim_wand();
-			break;
+	/*** Looking/Targetting ***/
 
-		case 'u':
-			cmd_use_staff();
-			break;
+	case '*': cmd_target(); break;
+	case '(': cmd_target_friendly(); break;
+	case 'l': cmd_look(); break;
+	case 'I': cmd_observe(); break;
 
-		case 'z':
-			cmd_zap_rod();
-			break;
+	/*** Information ***/
 
-		case 'F':
-			cmd_refill();
-			break;
+	case 'C': cmd_character(); break;
+	case '~': cmd_check_misc(); break;
+	case '|': cmd_uniques(); break;
+	case '\'': cmd_player_equip(); break;
+	case '@': cmd_players(); break;
+	case '#': cmd_high_scores(); break;
+	case '?': cmd_help(); break;
 
-		case 'E':
-			cmd_eat();
-			break;
+	/*** Miscellaneous ***/
 
-		case 'A':
-			cmd_activate();
-			break;
+	case ':': cmd_message(); break;
+	case 'P': cmd_party(); break;
 
-			/*** Firing and throwing ***/
-		case 'f':
-			cmd_fire();
-			break;
+	/*** Additional/unsorted stuff */
 
-		case 'v':
-			cmd_throw();
-			break;
+	case '_': cmd_sip(); break;
+	case 'p': cmd_telekinesis(); break;
+	case 'W': cmd_wield2(); break;
+	case 'V': cmd_cloak(); break;
 
-			/*** Spell casting ***/
-		case 'b':
-			cmd_browse();
-			break;
-		case 'G':
-			do_cmd_skill();
-			break;
-		case 'm':
-			do_cmd_activate_skill();
-			break;
+	case ']':
+		/* Dungeon master commands, normally only accessible to
+		 * a valid dungeon master.  These commands only are
+		 * effective for a valid dungeon master.
+		 */
+		/*
+		   if (!strcmp(nick,DUNGEON_MASTER)) cmd_master();
+		   else prompt_topline("Hit '?' for help.");
+		   */
+		cmd_master();
+		break;
 
-		case 'U':
-			cmd_ghost();
-			break;
+	/* Add separate buffer for chat only review (good for afk) -Zz */
+	case KTRL('O'): do_cmd_messages_chatonly(); break;
+	case KTRL('P'): do_cmd_messages(); break;
 
-		case '*': /*** Looking/Targetting ***/
-			cmd_target();
-			break;
-
-		case '(':
-			cmd_target_friendly();
-			break;
-
-		case 'l':
-			cmd_look();
-			break;
-
-		case 'I':
-			cmd_observe();
-			break;
-
-		case '_':
-			cmd_sip();
-			break;
-
-		case 'p':
-			cmd_telekinesis();
-			break;
-
-		case 'W':
-			cmd_wield2();
-			break;
-
-		case 'V':
-			cmd_cloak();
-			break;
-
-			/*** Information ***/
-		case 'C':
-			cmd_character();
-			break;
-
-		case '~':
-			cmd_check_misc();
-			break;
-
-		case '|':
-			cmd_uniques();
-			break;
-
-		case '\'':
-			cmd_player_equip();
-			break;
-
-		case '@':
-			cmd_players();
-			break;
-
-		case '#':
-			cmd_high_scores();
-			break;
-
-		case '?':
-			cmd_help();
-			break;
-			/*** Miscellaneous ***/
-		case ':':
-			cmd_message();
-			break;
-
-		case 'P':
-			cmd_party();
-			break;
-
-		case ']':
-			/* Dungeon master commands, normally only accessible to
-			 * a valid dungeon master.  These commands only are
-			 * effective for a valid dungeon master.
-			 */
-
-			/*
-			   if (!strcmp(nick,DUNGEON_MASTER)) cmd_master();
-			   else prompt_topline("Hit '?' for help.");
-			   */
-			cmd_master();
-			break;
-
-			/* Add separate buffer for chat only review (good for afk) -Zz */
-		case KTRL('O'):
-			do_cmd_messages_chatonly();
-			break;
-
-		case KTRL('P'):
-			do_cmd_messages();
-			break;
-
-		case KTRL('Q'):
-			Net_cleanup();
-			quit(NULL);
-
-		case KTRL('R'):
-			cmd_redraw();
-			break;
-
-		case 'Q':
-			cmd_suicide();
-			break;
-
-		case '=':
-			do_cmd_options();
-			break;
-
-		case '\"':
-			cmd_load_pref();
-			/* Resend options to server */
-			Send_options();
-			break;
-
-		case '%':
-			interact_macros();
-			break;
-
-		case '&':
-			auto_inscriptions();
-			break;
-
-		case 'h':
-			cmd_purchase_house();
-			break;
-
-		case '/':
-			cmd_all_in_one();
-			break;
-
-		case KTRL('S'):
-			cmd_spike();
-			break;
-
-		case KTRL('T'):
-			xhtml_screenshot("screenshot????");
-			break;
-
-		case KTRL('I'):
-			cmd_lagometer();
-			break;
+	case KTRL('Q'): Net_cleanup(); quit(NULL);
+	case KTRL('R'): cmd_redraw(); break;
+	case 'Q': cmd_suicide(); break;
+	case '=': do_cmd_options(); break;
+	case '\"':
+		cmd_load_pref();
+		/* Resend options to server */
+		Send_options();
+		break;
+	case '%': interact_macros(); break;
+	case '&': auto_inscriptions(); break;
+	case 'h': cmd_purchase_house(); break;
+	case '/': cmd_all_in_one(); break;
+	case KTRL('S'): cmd_spike(); break;
+	case KTRL('T'): xhtml_screenshot("screenshot????"); break;
+	case KTRL('I'): cmd_lagometer(); break;
 
 #ifdef USE_SOUND_2010
-		case KTRL('U'):
-			interact_audio();
-			break;
-//		case KTRL('M'): //this is same as '\r' and hence doesn't work..
-		case KTRL('C'):
-			toggle_music();
-			break;
-		case KTRL('N'):
-			toggle_audio();
-			break;
+	case KTRL('U'): interact_audio(); break;
+	//case KTRL('M'): //this is same as '\r' and hence doesn't work..
+	case KTRL('C'): toggle_music(); break;
+	case KTRL('N'): toggle_audio(); break;
 #endif
 
-		case '!':
-			cmd_BBS();
-			break;
+	case '!': cmd_BBS(); break;
 #if 0 /* only for debugging purpose - dump some client-side special config */
-		case KTRL('C'):
-			c_msg_format("Client FPS: %d", cfg_client_fps);
-			break;
+	case KTRL('C'): c_msg_format("Client FPS: %d", cfg_client_fps); break;
 #endif
-		default:
-			cmd_raw_key(command_cmd);
-			break;
+	default: cmd_raw_key(command_cmd); break;
 	}
 }
 
 
 
 
-static void cmd_clear_buffer(void)
-{
+static void cmd_clear_buffer(void) {
 	/* Hack -- flush the key buffer */
-
 	Send_clear_buffer();
 }
 
 
 
-void cmd_tunnel(void)
-{
+void cmd_tunnel(void) {
 	int dir = command_dir;
 
-	if (!dir) {
-		if (!get_dir(&dir)) return;
-	}
+	if (!dir && !get_dir(&dir)) return;
 
 	Send_tunnel(dir);
 }
 
-void cmd_walk(void)
-{
+void cmd_walk(void) {
 	int dir = command_dir;
 
-	if (!dir) {
-		if (!get_dir(&dir)) return;
-	}
+	if (!dir && !get_dir(&dir)) return;
 
 	Send_walk(dir);
 }
 
-void cmd_run(void)
-{
+void cmd_run(void) {
 	int dir = command_dir;
 
-	if (!dir)
-	{
-		if (!get_dir(&dir)) return;
-	}
+	if (!dir && !get_dir(&dir)) return;
 
 	Send_run(dir);
 }
 
-void cmd_stay(void)
-{
+void cmd_stay(void) {
 	Send_stay();
 }
 
-void cmd_map(char mode)
-{
+void cmd_map(char mode) {
 	char ch, dir = 0;
 
 	/* Hack -- if the screen is already icky, ignore this command */
@@ -781,81 +503,59 @@ void cmd_locate(void) {
 	clear_topline_forced();
 }
 
-void cmd_search(void)
-{
+void cmd_search(void) {
 	Send_search();
 }
 
-void cmd_toggle_search(void)
-{
+void cmd_toggle_search(void) {
 	Send_toggle_search();
 }
 
-void cmd_rest(void)
-{
+void cmd_rest(void) {
 	Send_rest();
 }
 
-void cmd_go_up(void)
-{
+void cmd_go_up(void) {
 	Send_go_up();
 }
 
-void cmd_go_down(void)
-{
+void cmd_go_down(void) {
 	Send_go_down();
 }
 
-void cmd_open(void)
-{
+void cmd_open(void) {
 	int dir = command_dir;
 
-	if (!dir)
-	{
-		if (!get_dir(&dir)) return;
-	}
+	if (!dir && !get_dir(&dir)) return;
 
 	Send_open(dir);
 }
 
-void cmd_close(void)
-{
+void cmd_close(void) {
 	int dir = command_dir;
 
-	if (!dir)
-	{
-		if (!get_dir(&dir)) return;
-	}
+	if (!dir && !get_dir(&dir)) return;
 
 	Send_close(dir);
 }
 
-void cmd_bash(void)
-{
+void cmd_bash(void) {
 	int dir = command_dir;
 
-	if (!dir)
-	{
-		if (!get_dir(&dir)) return;
-	}
+	if (!dir && !get_dir(&dir)) return;
 
 	Send_bash(dir);
 }
 
-void cmd_disarm(void)
-{
+void cmd_disarm(void) {
 	int dir = command_dir;
 
-	if (!dir)
-	{
-		if (!get_dir(&dir)) return;
-	}
+	if (!dir && !get_dir(&dir)) return;
 
 	Send_disarm(dir);
 }
 
-void cmd_inven(void)
-{
+void cmd_inven(void) {
 	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
 	int c;
 	char buf[MSG_LEN];
@@ -878,16 +578,16 @@ void cmd_inven(void)
 
 		if (inventory[c].tval) {
 			snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[c]);
-                        buf[MSG_LEN - 1] = 0;
-                        /* if item inscriptions contains a colon we might need
-                           another colon to prevent confusing it with a private message */
-                        if (strchr(inventory_name[c], ':')) {
-                                buf[strchr(inventory_name[c], ':') - inventory_name[c] + strlen(buf) - strlen(inventory_name[c]) + 1] = '\0';
-	                        if (strchr(buf, ':') == &buf[strlen(buf) - 1])
-	        	                strcat(buf, ":");
-                	        strcat(buf, strchr(inventory_name[c], ':') + 1);
-                        }
-                        Send_paste_msg(buf);
+			buf[MSG_LEN - 1] = 0;
+			/* if item inscriptions contains a colon we might need
+			   another colon to prevent confusing it with a private message */
+			if (strchr(inventory_name[c], ':')) {
+				buf[strchr(inventory_name[c], ':') - inventory_name[c] + strlen(buf) - strlen(inventory_name[c]) + 1] = '\0';
+				if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+					strcat(buf, ":");
+				strcat(buf, strchr(inventory_name[c], ':') + 1);
+			}
+			Send_paste_msg(buf);
 		}
 	}
 
@@ -899,8 +599,7 @@ void cmd_inven(void)
 	Flush_queue();
 }
 
-void cmd_equip(void)
-{
+void cmd_equip(void) {
 	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
 	int c;
 	char buf[MSG_LEN];
@@ -926,15 +625,15 @@ void cmd_equip(void)
 		if (inventory[INVEN_WIELD + c].tval) {
 			snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[INVEN_WIELD + c]);
 			buf[MSG_LEN - 1] = 0;
-                        /* if item inscriptions contains a colon we might need
-                           another colon to prevent confusing it with a private message */
-                        if (strchr(inventory_name[INVEN_WIELD + c], ':')) {
-                                buf[strchr(inventory_name[INVEN_WIELD + c], ':') - inventory_name[INVEN_WIELD + c]
-                        	    + strlen(buf) - strlen(inventory_name[INVEN_WIELD + c]) + 1] = '\0';
-	                        if (strchr(buf, ':') == &buf[strlen(buf) - 1])
-			                strcat(buf, ":");
-                	        strcat(buf, strchr(inventory_name[INVEN_WIELD + c], ':') + 1);
-                        }
+			/* if item inscriptions contains a colon we might need
+			   another colon to prevent confusing it with a private message */
+			if (strchr(inventory_name[INVEN_WIELD + c], ':')) {
+				buf[strchr(inventory_name[INVEN_WIELD + c], ':') - inventory_name[INVEN_WIELD + c]
+				    + strlen(buf) - strlen(inventory_name[INVEN_WIELD + c]) + 1] = '\0';
+				if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+					strcat(buf, ":");
+				strcat(buf, strchr(inventory_name[INVEN_WIELD + c], ':') + 1);
+			}
 			Send_paste_msg(buf);
 		}
 	}
@@ -945,8 +644,7 @@ void cmd_equip(void)
 	Flush_queue();
 }
 
-void cmd_drop(void)
-{
+void cmd_drop(void) {
 	int item, amt;
 
 	item_tester_hook = NULL;
@@ -971,8 +669,7 @@ void cmd_drop(void)
 	Send_drop(item, amt);
 }
 
-void cmd_drop_gold(void)
-{
+void cmd_drop_gold(void) {
 	s32b amt;
 
 	/* Get how much */
@@ -980,29 +677,24 @@ void cmd_drop_gold(void)
 	amt = c_get_quantity("How much gold ('a' or spacebar for all)? ", -1);
 
 	/* Send it */
-	if (amt)
-		Send_drop_gold(amt);
+	if (amt) Send_drop_gold(amt);
 }
 
-void cmd_wield(void)
-{
+void cmd_wield(void) {
 	int item;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA)))
-	{
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA))) 
 		return;
-	}
 
 	/* Send it */
 	Send_wield(item);
 }
 
-void cmd_wield2(void)
-{
+void cmd_wield2(void) {
 	int item;
 
 	item_tester_hook = NULL;
@@ -1010,16 +702,13 @@ void cmd_wield2(void)
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
 	/* Send it */
 	Send_wield2(item);
 }
 
-void cmd_observe(void)
-{
+void cmd_observe(void) {
 	int item;
 
 	item_tester_hook = NULL;
@@ -1027,16 +716,13 @@ void cmd_observe(void)
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Examine which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
 	/* Send it */
 	Send_observe(item);
 }
 
-void cmd_take_off(void)
-{
+void cmd_take_off(void) {
 	int item, amt = 255;
 
 	item_tester_hook = NULL;
@@ -1051,9 +737,8 @@ void cmd_take_off(void)
 		inkey_letter_all = TRUE;
 		amt = c_get_quantity("How many ('a' or spacebar for all)? ", inventory[item].number);
 		Send_take_off_amt(item, amt);
-	} else {
+	} else
 		Send_take_off(item);
-	}
 }
 
 void cmd_swap(void) {
@@ -1070,8 +755,7 @@ void cmd_swap(void) {
 }
 
 
-void cmd_destroy(void)
-{
+void cmd_destroy(void) {
 	int item, amt;
 	char out_val[MSG_LEN];
 
@@ -1106,8 +790,7 @@ void cmd_destroy(void)
 }
 
 
-void cmd_inscribe(void)
-{
+void cmd_inscribe(void) {
 	int item;
 	char buf[1024];
 
@@ -1138,8 +821,7 @@ void cmd_inscribe(void)
 		Send_inscribe(item, buf);
 }
 
-void cmd_uninscribe(void)
-{
+void cmd_uninscribe(void) {
 	int item;
 
 	item_tester_hook = NULL;
@@ -1147,9 +829,7 @@ void cmd_uninscribe(void)
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Uninscribe what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
 	/* Send it */
 	Send_uninscribe(item);
@@ -1169,8 +849,7 @@ void cmd_apply_autoins(void) {
 	if (c_cfg.auto_inscribe) Send_autoinscribe(item);
 }
 
-void cmd_steal(void)
-{
+void cmd_steal(void) {
 	int dir;
 
 	if (!get_dir(&dir)) return;
@@ -1179,8 +858,7 @@ void cmd_steal(void)
 	Send_steal(dir);
 }
 
-static bool item_tester_quaffable(object_type *o_ptr)
-{
+static bool item_tester_quaffable(object_type *o_ptr) {
 	if (o_ptr->tval == TV_POTION) return TRUE;
 	if (o_ptr->tval == TV_POTION2) return TRUE;
 	if ((o_ptr->tval == TV_FOOD) &&
@@ -1191,8 +869,7 @@ static bool item_tester_quaffable(object_type *o_ptr)
 	return FALSE;
 }
 
-void cmd_quaff(void)
-{
+void cmd_quaff(void) {
 	int item;
 
 	item_tester_hook = item_tester_quaffable;
@@ -1200,24 +877,20 @@ void cmd_quaff(void)
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Quaff which potion? ", (USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
 	/* Send it */
 	Send_quaff(item);
 }
 
-static bool item_tester_readable(object_type *o_ptr)
-{
+static bool item_tester_readable(object_type *o_ptr) {
 	if (o_ptr->tval == TV_SCROLL) return TRUE;
 	if (o_ptr->tval == TV_PARCHMENT) return TRUE;
 
 	return FALSE;
 }
 
-void cmd_read_scroll(void)
-{
+void cmd_read_scroll(void) {
 	int item;
 
 	item_tester_hook = item_tester_readable;
@@ -1225,16 +898,13 @@ void cmd_read_scroll(void)
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Read which scroll? ", (USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
 	/* Send it */
 	Send_read(item);
 }
 
-void cmd_aim_wand(void)
-{
+void cmd_aim_wand(void) {
 	int item, dir;
 
 	item_tester_tval = TV_WAND;
@@ -1242,9 +912,7 @@ void cmd_aim_wand(void)
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
 	if (!get_dir(&dir)) return;
 
@@ -1252,8 +920,7 @@ void cmd_aim_wand(void)
 	Send_aim(item, dir);
 }
 
-void cmd_use_staff(void)
-{
+void cmd_use_staff(void) {
 	int item;
 
 	item_tester_tval = TV_STAFF;
@@ -1261,16 +928,13 @@ void cmd_use_staff(void)
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
 	/* Send it */
 	Send_use(item);
 }
 
-void cmd_zap_rod(void)
-{
+void cmd_zap_rod(void) {
 	int item, dir;
 
 	item_tester_tval = TV_ROD;
@@ -1278,9 +942,7 @@ void cmd_zap_rod(void)
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
 	/* Send it */
 	if (inventory[item].uses_dir == 0) {
@@ -1293,13 +955,11 @@ void cmd_zap_rod(void)
 }
 
 /* FIXME: filter doesn't work nicely */
-void cmd_refill(void)
-{
+void cmd_refill(void) {
 	int item;
 	cptr p;
 
-	if (!inventory[INVEN_LITE].tval)
-	{
+	if (!inventory[INVEN_LITE].tval) {
 		c_msg_print("You are not wielding a light source.");
 		return;
 	}
@@ -1308,16 +968,13 @@ void cmd_refill(void)
 	p = "Refill with which light? ";
 
 	if (!c_get_item(&item, p, (USE_INVEN)))
-	{
 		return;
-	}
 
 	/* Send it */
 	Send_fill(item);
 }
 
-void cmd_eat(void)
-{
+void cmd_eat(void) {
 	int item;
 
 	item_tester_hook = item_tester_edible;
@@ -1325,16 +982,13 @@ void cmd_eat(void)
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	if (!c_get_item(&item, "Eat what? ", (USE_INVEN | USE_EXTRA)))
-	{
 		return;
-	}
 
 	/* Send it */
 	Send_eat(item);
 }
 
-void cmd_activate(void)
-{
+void cmd_activate(void) {
 	int item, dir;
 
 	/* Allow all items */
@@ -1342,10 +996,8 @@ void cmd_activate(void)
 	get_item_hook_find_obj_what = "Activatable item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-        if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
-	{
+	if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
 		return;
-	}
 
 	/* Send it */
 	/* Does item require aiming? (Always does if not yet identified) */
@@ -1359,8 +1011,7 @@ void cmd_activate(void)
 }
 
 
-int cmd_target(void)
-{
+int cmd_target(void) {
 	bool done = FALSE;
 	bool position = FALSE;
 	int d;
@@ -1369,79 +1020,59 @@ int cmd_target(void)
 	/* Tell the server to init targetting */
 	Send_target(0);
 
-	while (!done)
-	{
+	while (!done) {
 		ch = inkey();
 
-		if (!ch)
-			continue;
+		if (!ch) continue;
 
-		switch (ch)
-		{
-			case ESCAPE:
-			case 'q':
-			{
-				/* Clear top line */
+		switch (ch) {
+		case ESCAPE:
+		case 'q':
+			/* Clear top line */
+			clear_topline();
+			return FALSE;
+		case 't':
+		case '5':
+			done = TRUE;
+			break;
+		case 'p':
+			/* Toggle */
+			position = !position;
+
+			/* Tell the server to reset */
+			Send_target(128 + 0);
+
+			break;
+		default:
+			d = keymap_dirs[ch & 0x7F];
+			if (!d) {
+				/* APD exit if not a direction, since
+				 * the player is probably trying to do
+				 * something else, like stay alive...
+				 */
+				/* Clear the top line */
 				clear_topline();
 				return FALSE;
+			} else {
+				if (position) Send_target(d + 128);
+				else Send_target(d);
 			}
-			case 't':
-			case '5':
-			{
-				done = TRUE;
-				break;
-			}
-			case 'p':
-			{
-				/* Toggle */
-				position = !position;
-
-				/* Tell the server to reset */
-				Send_target(128 + 0);
-
-				break;
-			}
-			default:
-			{
-				d = keymap_dirs[ch & 0x7F];
-				if (!d)
-				{
-					/* APD exit if not a direction, since
-					 * the player is probably trying to do
-					 * something else, like stay alive...
-					 */
-					/* Clear the top line */
-					clear_topline();
-					return FALSE;
-				}
-				else
-				{
-					if (position)
-						Send_target(d + 128);
-					else Send_target(d);
-				}
-				break;
-			}
+			break;
 		}
 	}
 
 	/* Send the affirmative */
-	if (position)
-		Send_target(128 + 5);
+	if (position) Send_target(128 + 5);
 	else Send_target(5);
 
 	/* Print the message */
-	if (!c_cfg.taciturn_messages)
-	{
-		prt("Target selected.", 0, 0);
-	}
+	if (!c_cfg.taciturn_messages) prt("Target selected.", 0, 0);
 
 	return TRUE;
 }
 
 
-int cmd_target_friendly(void)
-{
+int cmd_target_friendly(void) {
 	/* Tell the server to init targetting */
 	Send_target_friendly(0);
 	return TRUE;
@@ -1449,8 +1080,7 @@ int cmd_target_friendly(void)
 
 
 
-void cmd_look(void)
-{
+void cmd_look(void) {
 	bool done = FALSE;
 	bool position = FALSE;
 	int d;
@@ -1459,57 +1089,48 @@ void cmd_look(void)
 	/* Tell the server to init looking */
 	Send_look(0);
 
-	while (!done)
-	{
+	while (!done) {
 		ch = inkey();
 
 		if (!ch) continue;
 
-		switch (ch)
-		{
-			case ESCAPE:
-			case 'q':
-			{
-				/* Clear top line */
-				clear_topline();
-				return;
-			}
-			case KTRL('T'):
-			{
-				xhtml_screenshot("screenshot????");
-				break;
-			}
-			case 'p':
-				/* Toggle manual ground-targetting */
-				position = !position;
+		switch (ch) {
+		case ESCAPE:
+		case 'q':
+			/* Clear top line */
+			clear_topline();
+			return;
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case 'p':
+			/* Toggle manual ground-targetting */
+			position = !position;
 
-				/* Tell the server to reset ground-target */
-				Send_look(128 + 0);
-				break;
-			case 'l':
-				/* actually look at the ground-targetted grid */
-				if (position) Send_look(128 + 5);
-				break;
-			default:
-			{
-				d = keymap_dirs[ch & 0x7F];
-				if (!d) bell();
-				else {
-					if (position) Send_look(128 + d); /* do manual ground-targetting */
-					else Send_look(d); /* do normal looking */
-				}
-				break;
+			/* Tell the server to reset ground-target */
+			Send_look(128 + 0);
+			break;
+		case 'l':
+			/* actually look at the ground-targetted grid */
+			if (position) Send_look(128 + 5);
+			break;
+		default:
+			d = keymap_dirs[ch & 0x7F];
+			if (!d) bell();
+			else {
+				if (position) Send_look(128 + d); /* do manual ground-targetting */
+				else Send_look(d); /* do normal looking */
 			}
+			break;
 		}
 	}
 }
 
 
-void cmd_character(void)
-{
+void cmd_character(void) {
 	char ch = 0;
 	int done = 0;
-        char tmp[MAX_CHARS];
+	char tmp[MAX_CHARS];
 
 	/* Save screen */
 	Term_save();
@@ -1528,11 +1149,11 @@ void cmd_character(void)
 		/* Wait for key */
 		ch = inkey();
 
-                /* specialty: allow chatting from within here -- to tell others about your lineage ;) - C. Blue */
-                if (ch == ':') {
-                        cmd_message();
-                        continue;
-                }
+		/* specialty: allow chatting from within here -- to tell others about your lineage ;) - C. Blue */
+		if (ch == ':') {
+			cmd_message();
+			continue;
+		}
 
 		/* Check for "display history" */
 		if (ch == 'h' || ch == 'H') {
@@ -1569,8 +1190,7 @@ void cmd_character(void)
 
 
 
-void cmd_artifacts(void)
-{
+void cmd_artifacts(void) {
 	/* Set the hook */
 	special_line_type = SPECIAL_FILE_ARTIFACT;
 
@@ -1578,8 +1198,7 @@ void cmd_artifacts(void)
 	peruse_file();
 }
 
-void cmd_uniques(void)
-{
+void cmd_uniques(void) {
 	/* Set the hook */
 	special_line_type = SPECIAL_FILE_UNIQUE;
 
@@ -1587,8 +1206,7 @@ void cmd_uniques(void)
 	peruse_file();
 }
 
-void cmd_players(void)
-{
+void cmd_players(void) {
 	/* Set the hook */
 	special_line_type = SPECIAL_FILE_PLAYER;
 
@@ -1596,8 +1214,7 @@ void cmd_players(void)
 	peruse_file();
 }
 
-void cmd_high_scores(void)
-{
+void cmd_high_scores(void) {
 	/* Set the hook */
 	special_line_type = SPECIAL_FILE_SCORES;
 
@@ -1605,8 +1222,7 @@ void cmd_high_scores(void)
 	peruse_file();
 }
 
-void cmd_help(void)
-{
+void cmd_help(void) {
 	/* Set the hook */
 	special_line_type = SPECIAL_FILE_HELP;
 
@@ -2504,8 +2120,7 @@ void cmd_check_misc(void) {
 	Term_load();
 }
 
-void cmd_message(void)
-{
+void cmd_message(void) {
 	/* _hacky_: A note INCLUDES the sender name, the brackets, spaces/newlines? Ouch. - C. Blue
 	   Note: the -8 are additional world server tax (8 chars are used for world server line prefix etc.) */
 	char buf[MSG_LEN - strlen(cname) - 5 - 3 - 8];
@@ -2565,19 +2180,19 @@ void cmd_message(void)
 					strcpy(tmp, &buf[i + 3]);
 					strcpy(&buf[i], "\377s");
 
-            	        		/* if item inscriptions contains a colon we might need
-                	    		   another colon to prevent confusing it with a private message */
-                    			strcat(buf, inventory_name[j]);
-                    			if (strchr(inventory_name[j], ':')) {
+					/* if item inscriptions contains a colon we might need
+					   another colon to prevent confusing it with a private message */
+					strcat(buf, inventory_name[j]);
+					if (strchr(inventory_name[j], ':')) {
 						buf[strchr(inventory_name[j], ':') - inventory_name[j] + strlen(buf) - strlen(inventory_name[j]) + 1] = '\0';
-	                            		if (strchr(buf, ':') == &buf[strlen(buf) - 1])
-    	        	                		strcat(buf, ":");
-        	                        	strcat(buf, strchr(inventory_name[j], ':') + 1);
+						if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+							strcat(buf, ":");
+						strcat(buf, strchr(inventory_name[j], ':') + 1);
 					}
 
 					if (tmp[0]) {
-                				/* if someone just spams \\ shortcuts, at least add spaces */
-	                    			if (tmp[0] == '\\') strcat(buf, " ");
+						/* if someone just spams \\ shortcuts, at least add spaces */
+						if (tmp[0] == '\\') strcat(buf, " ");
 
 						strcat(buf, "\377-");
 						strncat(buf, tmp, sizeof(buf) - strlen(buf) - 1);
@@ -2595,39 +2210,39 @@ void cmd_message(void)
 			else if (buf[i] == '\\' && buf[i + 1] == '\\' && buf[i + 2] == '\\' &&
 			    buf[i + 3] >= 'a' && buf[i + 3] <= (big_shop ? 'z' : 'l')) {
 				j = buf[i + 3] - 'a' + store_top;
-    	                	store_paste_item(item, j);
-                        	store_paste_where(where);
+				store_paste_item(item, j);
+				store_paste_where(where);
 
 				/* just discard if we're not in a shop */
 				if (buf[i + 3] < 'a' + store.stock_num &&
 				    /* prevent buffer overflow */
 				    strlen(buf) - 4 + strlen(where) + 2 + 1 + 1 + strlen(item) + 1 < MSG_LEN) {
-                        		strcpy(tmp, &buf[i + 4]);
+					strcpy(tmp, &buf[i + 4]);
 
 					/* add store location/symbol, only once per chat message */
-    	        	                if (!store_item) {
-                            			store_item = TRUE;
-	                            		strcpy(&buf[i], where);
+					if (!store_item) {
+						store_item = TRUE;
+						strcpy(&buf[i], where);
 
-    	                        		/* need double-colon to prevent confusing it with a private message? */
-        	                    		if (strchr(buf, ':') >= &buf[i + strlen(where) - 1])
-                	                		strcat(buf, ":");
+						/* need double-colon to prevent confusing it with a private message? */
+						if (strchr(buf, ':') >= &buf[i + strlen(where) - 1])
+							strcat(buf, ":");
 
-	                                	strcat(buf, " ");
-    	                        	} else strcpy(&buf[i], "\377s");
+						strcat(buf, " ");
+					} else strcpy(&buf[i], "\377s");
 
 					/* add actual item */
-            	        		strcat(buf, item);
+					strcat(buf, item);
 
-                	    		/* any more string to append? */
-                    			if (tmp[0]) {
-                				/* if someone just spams \\\ shortcuts, at least add spaces */
-                    				if (tmp[0] == '\\') strcat(buf, " ");
+					/* any more string to append? */
+					if (tmp[0]) {
+						/* if someone just spams \\\ shortcuts, at least add spaces */
+						if (tmp[0] == '\\') strcat(buf, " ");
 
-	                        		strcat(buf, "\377-");
-		                		strncat(buf, tmp, sizeof(buf) - strlen(buf) - 1);
+						strcat(buf, "\377-");
+						strncat(buf, tmp, sizeof(buf) - strlen(buf) - 1);
 					}
-                    	        }
+				}
 				/* just discard */
 				else {
 					strcpy(tmp, &buf[i + 4]);
@@ -2639,8 +2254,7 @@ void cmd_message(void)
 		}
 
 		/* Handle messages to '%' (self) in the client - mikaelh */
-		if (prefix(buf, "%:") && !prefix(buf, "%::"))
-		{
+		if (prefix(buf, "%:") && !prefix(buf, "%::")) {
 			c_msg_format("\377o<%%>\377w %s", buf + 2);
 			inkey_msg = FALSE;
 			return;
@@ -2676,43 +2290,43 @@ static void cmd_guild_options() {
 		Term_putstr(0, 0, -1, TERM_L_UMBER, "============== Guild configuration ===============");
 
 		if (!guild_info_name[0]) {
-	                Term_putstr(5, 2, -1, TERM_L_UMBER, "You are not in a guild.");
+			Term_putstr(5, 2, -1, TERM_L_UMBER, "You are not in a guild.");
 		} else {
 			/* Selections */
-                        if (guildhall_wx == -1) Term_putstr(5, 2, -1, TERM_SLATE, "The guild does not own a guild hall.");
-	                else if (guildhall_wx >= 0) Term_putstr(5, 2, -1, TERM_L_UMBER, format("The guild hall is located in the %s area of (%d,%d).",
-    		            guildhall_pos, guildhall_wx, guildhall_wy));
+			if (guildhall_wx == -1) Term_putstr(5, 2, -1, TERM_SLATE, "The guild does not own a guild hall.");
+			else if (guildhall_wx >= 0) Term_putstr(5, 2, -1, TERM_L_UMBER, format("The guild hall is located in the %s area of (%d,%d).",
+			    guildhall_pos, guildhall_wx, guildhall_wy));
 			Term_putstr(5, 4, -1, TERM_WHITE,  format("adders     : %s", guild.flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno "));
 			Term_putstr(5, 5, -1, TERM_L_WHITE,       "    Allows players designated via /guild_adder command to add others.");
 			Term_putstr(5, 6, -1, TERM_WHITE,  format("autoreadd  : %s", guild.flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno "));
 			Term_putstr(5, 7, -1, TERM_L_WHITE,      "    If a guild mate ghost-dies then the next character he logs on with");
 			Term_putstr(5, 8, -1, TERM_L_WHITE,      "    - if it is newly created - is automatically added to the guild again.");
 			Term_putstr(5, 9, -1, TERM_WHITE, format("minlev     : \377%c%d   ", guild.minlev <= 1 ? 'w' : (guild.minlev <= 10 ? 'G' : (guild.minlev < 20 ? 'g' :
-		            (guild.minlev < 30 ? 'y' : (guild.minlev < 40 ? 'o' : (guild.minlev <= 50 ? 'r' : 'v'))))), guild.minlev));
+			    (guild.minlev < 30 ? 'y' : (guild.minlev < 40 ? 'o' : (guild.minlev <= 50 ? 'r' : 'v'))))), guild.minlev));
 			Term_putstr(5, 10, -1, TERM_L_WHITE,      "    Minimum character level required to get added to the guild.");
 
-            		Term_erase(5, 11, 69);
-                        Term_erase(5, 12, 69);
+			Term_erase(5, 11, 69);
+			Term_erase(5, 12, 69);
 
-		        for (i = 0; i < 5; i++) if (guild.adder[i][0] != '\0') {
-		                sprintf(buf, "Adders are: ");
-		                strcat(buf, guild.adder[i]);
-		                acnt++;
-		                for (i++; i < 5; i++) {
-	                    		if (guild.adder[i][0] == '\0') continue;
-		                        if (acnt != 3) strcat(buf, ", ");
-	    	                	strcat(buf, guild.adder[i]);
-	                                acnt++;
-    	                	        if (acnt == 3) {
-        	                                Term_putstr(5, 11, -1, TERM_SLATE, buf);
-                	                        buf[0] = 0;
-                            		}
-	        	        }
-	        	}
-	        	Term_putstr(5 + (acnt <= 3 ? 0 : 12), acnt <= 3 ? 11 : 12, -1, TERM_SLATE, buf);
+			for (i = 0; i < 5; i++) if (guild.adder[i][0] != '\0') {
+				sprintf(buf, "Adders are: ");
+				strcat(buf, guild.adder[i]);
+				acnt++;
+				for (i++; i < 5; i++) {
+					if (guild.adder[i][0] == '\0') continue;
+					if (acnt != 3) strcat(buf, ", ");
+					strcat(buf, guild.adder[i]);
+					acnt++;
+					if (acnt == 3) {
+						Term_putstr(5, 11, -1, TERM_SLATE, buf);
+						buf[0] = 0;
+					}
+				}
+			}
+			Term_putstr(5 + (acnt <= 3 ? 0 : 12), acnt <= 3 ? 11 : 12, -1, TERM_SLATE, buf);
 
 			/* Display commands for changing options */
-		        if (guild_master) {
+			if (guild_master) {
 				Term_putstr(5, 16, -1, TERM_WHITE, "(\377U1\377w) Toggle 'enable-adders' flag");
 				Term_putstr(5, 17, -1, TERM_WHITE, "(\377U2\377w) Toggle 'auto-re-add' flag");
 				Term_putstr(5, 18, -1, TERM_WHITE, "(\377U3\377w) Set minimum level required to join the guild");
@@ -2734,25 +2348,25 @@ static void cmd_guild_options() {
 			xhtml_screenshot("screenshot????");
 
 		else if (guild_master && i == '1') {
-                        if (guild.flags & GFLG_ALLOW_ADDERS) {
-	                        Send_guild_config(0, guild.flags & ~GFLG_ALLOW_ADDERS, "");
-                        } else {
-	                        Send_guild_config(0, guild.flags | GFLG_ALLOW_ADDERS, "");
-                        }
+			if (guild.flags & GFLG_ALLOW_ADDERS) {
+				Send_guild_config(0, guild.flags & ~GFLG_ALLOW_ADDERS, "");
+			} else {
+				Send_guild_config(0, guild.flags | GFLG_ALLOW_ADDERS, "");
+			}
 		} else if (guild_master && i == '2') {
-                        if (guild.flags & GFLG_AUTO_READD) {
-	                        Send_guild_config(0, guild.flags & ~GFLG_AUTO_READD, "");
-                        } else {
-	                        Send_guild_config(0, guild.flags | GFLG_AUTO_READD, "");
-                        }
+			if (guild.flags & GFLG_AUTO_READD) {
+				Send_guild_config(0, guild.flags & ~GFLG_AUTO_READD, "");
+			} else {
+				Send_guild_config(0, guild.flags | GFLG_AUTO_READD, "");
+			}
 		} else if (guild_master && i == '3') {
 			strcpy(buf0, "0");
 			if (!get_string("Specify new minimum level: ", buf0, 4)) continue;
 			i = atoi(buf0);
-                        Send_guild_config(1, i, "");
+			Send_guild_config(1, i, "");
 		} else if (guild_master && i == '4') {
 			if (!get_string("Specify player name: ", buf0, NAME_LEN)) continue;
-                        Send_guild_config(2, -1, buf0);
+			Send_guild_config(2, -1, buf0);
 		}
 
 		/* Oops */
@@ -2956,8 +2570,7 @@ void cmd_party(void) {
 }
 
 
-void cmd_fire(void)
-{
+void cmd_fire(void) {
 	int dir;
 
 	if (!get_dir(&dir))
@@ -2967,8 +2580,7 @@ void cmd_fire(void)
 	Send_fire(dir);
 }
 
-void cmd_throw(void)
-{
+void cmd_throw(void) {
 	int item, dir;
 
 	item_tester_hook = NULL;
@@ -2985,13 +2597,11 @@ void cmd_throw(void)
 	Send_throw(item, dir);
 }
 
-static bool item_tester_browsable(object_type *o_ptr)
-{
+static bool item_tester_browsable(object_type *o_ptr) {
 	return (is_realm_book(o_ptr) || o_ptr->tval == TV_BOOK);
 }
 
-void cmd_browse(void)
-{
+void cmd_browse(void) {
 	int item;
 	object_type *o_ptr;
 
@@ -2999,8 +2609,7 @@ void cmd_browse(void)
    second, we might want a 'ghost' tome or something later,
    kind of to bring back 'undead powers' :) - C. Blue */
 #if 0
-	if (p_ptr->ghost)
-	{
+	if (p_ptr->ghost) {
 		show_browse(NULL);
 		return;
 	}
@@ -3011,16 +2620,14 @@ void cmd_browse(void)
 
 	item_tester_hook = item_tester_browsable;
 
-	if (!c_get_item(&item, "Browse which book? ", (USE_INVEN | USE_EXTRA)))
-	{
+	if (!c_get_item(&item, "Browse which book? ", (USE_INVEN | USE_EXTRA))) {
 		if (item == -2) c_msg_print("You have no books that you can read.");
 		return;
 	}
 
 	o_ptr = &inventory[item];
 
-	if (o_ptr->tval == TV_BOOK)
-	{
+	if (o_ptr->tval == TV_BOOK) {
 		browse_school_spell(item, o_ptr->sval, o_ptr->pval);
 		return;
 	}
@@ -3029,25 +2636,18 @@ void cmd_browse(void)
 	show_browse(o_ptr);
 }
 
-void cmd_ghost(void)
-{
-	if (p_ptr->ghost)
-		do_ghost();
-	else
-	{
-		c_msg_print("You are not undead.");
-	}
+void cmd_ghost(void) {
+	if (p_ptr->ghost) do_ghost();
+	else c_msg_print("You are not undead.");
 }
 
 #if 0 /* done by cmd_telekinesis */
-void cmd_mind(void)
-{
+void cmd_mind(void) {
 	Send_mind();
 }
 #endif
 
-void cmd_load_pref(void)
-{
+void cmd_load_pref(void) {
 	char buf[80];
 
 	buf[0] = '\0';
@@ -3056,8 +2656,7 @@ void cmd_load_pref(void)
 		process_pref_file_aux(buf);
 }
 
-void cmd_redraw(void)
-{
+void cmd_redraw(void) {
 	Send_redraw(0);
 
 #if 0 /* I think this is useless here - mikaelh */
@@ -3065,8 +2664,7 @@ void cmd_redraw(void)
 #endif
 }
 
-static void cmd_house_chown(int dir)
-{
+static void cmd_house_chown(int dir) {
 	char i = 0;
 	char buf[80];
 
@@ -3179,54 +2777,53 @@ void cmd_purchase_house(void) {
 	while (i != ESCAPE) {
 		i = inkey();
 		switch (i) {
-			case '1':
-				/* Confirm */
-				if (get_check2("Are you sure you really want to buy or sell the house?", FALSE)) {
-					/* Send it */
-					Send_purchase_house(dir);
-					i = ESCAPE;
-				}
-				break;
-			case '2':
-				cmd_house_chown(dir);
+		case '1':
+			/* Confirm */
+			if (get_check2("Are you sure you really want to buy or sell the house?", FALSE)) {
+				/* Send it */
+				Send_purchase_house(dir);
 				i = ESCAPE;
-				break;
-			case '3':
-				cmd_house_chmod(dir);
-				i = ESCAPE;
-				break;
-			case '4':
-				cmd_house_paint(dir);
-				i = ESCAPE;
-				break;
-			case 'D':
-				cmd_house_kill(dir);
-				i = ESCAPE;
-				break;
-			case 's':
-				cmd_house_store(dir);
-				i = ESCAPE;
-				break;
-			case 'k':
-				cmd_house_knock(dir);
-				i = ESCAPE;
-				break;
-			case ESCAPE:
-			case KTRL('Q'):
-				break;
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
-			default:
-				bell();
+			}
+			break;
+		case '2':
+			cmd_house_chown(dir);
+			i = ESCAPE;
+			break;
+		case '3':
+			cmd_house_chmod(dir);
+			i = ESCAPE;
+			break;
+		case '4':
+			cmd_house_paint(dir);
+			i = ESCAPE;
+			break;
+		case 'D':
+			cmd_house_kill(dir);
+			i = ESCAPE;
+			break;
+		case 's':
+			cmd_house_store(dir);
+			i = ESCAPE;
+			break;
+		case 'k':
+			cmd_house_knock(dir);
+			i = ESCAPE;
+			break;
+		case ESCAPE:
+		case KTRL('Q'):
+			break;
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		default:
+			bell();
 		}
 		clear_topline_forced();
 	}
 	Term_load();
 }
 
-void cmd_suicide(void)
-{
+void cmd_suicide(void) {
 	int i;
 
 	/* Verify */
@@ -3243,14 +2840,12 @@ void cmd_suicide(void)
 	Send_suicide();
 }
 
-static void cmd_master_aux_level(void)
-{
+static void cmd_master_aux_level(void) {
 	char i;
 	char buf[80];
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -3266,7 +2861,6 @@ static void cmd_master_aux_level(void)
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Add dungeon");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Remove dungeon");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Town generation");
-
 
 
 		/* Prompt */
@@ -3348,8 +2942,7 @@ static void cmd_master_aux_level(void)
 		}
 
 		/* Oops */
-		else
-		{
+		else {
 			/* Ring bell */
 			bell();
 		}
@@ -3359,14 +2952,12 @@ static void cmd_master_aux_level(void)
 	}
 }
 
-static void cmd_master_aux_generate_vault(void)
-{
+static void cmd_master_aux_generate_vault(void) {
 	char i, redo_hack;
 	char buf[80];
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		redo_hack = 0;
 
 		/* Clear screen */
@@ -3392,14 +2983,10 @@ static void cmd_master_aux_generate_vault(void)
 		if (i == ESCAPE) break;
 
 		/* Take a screenshot */
-		if (i == KTRL('T'))
-		{
-			xhtml_screenshot("screenshot????");
-		}
+		if (i == KTRL('T')) xhtml_screenshot("screenshot????");
 
 		/* Generate by number */
-		else if (i == '1')
-		{
+		else if (i == '1') {
 			buf[1] = '#';
 			buf[2] = c_get_quantity("Vault number? ", 255) - 127;
 			if(!buf[2]) redo_hack = 1;
@@ -3407,18 +2994,17 @@ static void cmd_master_aux_generate_vault(void)
 		}
 
 		/* Generate by name */
-		else if (i == '2')
-		{
+		else if (i == '2') {
 			buf[1] = 'n';
 			get_string("Enter vault name: ", &buf[2], 77);
 			if(!buf[2]) redo_hack = 1;
 		}
 
 		/* Oops */
-		else
-		{
+		else {
 			/* Ring bell */
-			bell(); redo_hack = 1;
+			bell();
+			redo_hack = 1;
 		}
 
 		/* hack -- don't do this if we hit an invalid key previously */
@@ -3431,13 +3017,11 @@ static void cmd_master_aux_generate_vault(void)
 	}
 }
 
-static void cmd_master_aux_generate(void)
-{
+static void cmd_master_aux_generate(void) {
 	char i;
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -3457,23 +3041,15 @@ static void cmd_master_aux_generate(void)
 		if (i == ESCAPE) break;
 
 		/* Take a screenshot */
-		else if (i == KTRL('T'))
-		{
-			xhtml_screenshot("screenshot????");
-		}
+		else if (i == KTRL('T')) xhtml_screenshot("screenshot????");
 
 		/* Generate a vault */
-		else if (i == '1')
-		{
-			cmd_master_aux_generate_vault();
-		}
+		else if (i == '1') cmd_master_aux_generate_vault();
 
 		/* Oops */
 		else
-		{
 			/* Ring bell */
 			bell();
-		}
 
 		/* Flush messages */
 		clear_topline_forced();
@@ -3482,14 +3058,12 @@ static void cmd_master_aux_generate(void)
 
 
 
-static void cmd_master_aux_build(void)
-{
+static void cmd_master_aux_build(void) {
 	char i;
 	char buf[80];
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -3525,48 +3099,47 @@ static void cmd_master_aux_build(void)
 		buf[1] = 'T';
 		buf[2] = '\0';
 
-		switch (i)
-		{
-			/* Take a screenshot */
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
-			/* Granite mode on */
-			case '1': buf[0] = FEAT_WALL_EXTRA; break;
-			/* Perm mode on */
-			case '2': buf[0] = FEAT_PERM_EXTRA; break;
-			/* Tree mode on */
-			case '3': buf[0] = magik(80)?FEAT_TREE:FEAT_BUSH; break;
-			/* Evil tree mode on */
-			case '4': buf[0] = FEAT_DEAD_TREE; break;
-			/* Grass mode on */
-			case '5': buf[0] = FEAT_GRASS; break;
-			/* Dirt mode on */
-			case '6': buf[0] = FEAT_DIRT; break;
-			/* Floor mode on */
-			case '7': buf[0] = FEAT_FLOOR; break;
-			/* House door mode on */
-			case '8':
-				buf[0] = FEAT_HOME_HEAD;
-				{
-					u16b keyid;
-					keyid = c_get_quantity("Enter key pval:", 0xffff);
-					sprintf(&buf[2], "%d", keyid);
-				}
-				break;
-			/* Sign post */
-			case '9':
-				buf[0] = FEAT_SIGN;
-				get_string("Sign:", &buf[2], 77);
-				break;
-			/* Ask for feature */
-			case '0':
-				buf[0] = c_get_quantity("Enter feature value:",0xff);
-				break;
-			/* Build mode off */
-			case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
-			/* Oops */
-			default : bell(); break;
+		switch (i) {
+		/* Take a screenshot */
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		/* Granite mode on */
+		case '1': buf[0] = FEAT_WALL_EXTRA; break;
+		/* Perm mode on */
+		case '2': buf[0] = FEAT_PERM_EXTRA; break;
+		/* Tree mode on */
+		case '3': buf[0] = magik(80)?FEAT_TREE:FEAT_BUSH; break;
+		/* Evil tree mode on */
+		case '4': buf[0] = FEAT_DEAD_TREE; break;
+		/* Grass mode on */
+		case '5': buf[0] = FEAT_GRASS; break;
+		/* Dirt mode on */
+		case '6': buf[0] = FEAT_DIRT; break;
+		/* Floor mode on */
+		case '7': buf[0] = FEAT_FLOOR; break;
+		/* House door mode on */
+		case '8':
+			buf[0] = FEAT_HOME_HEAD;
+			{
+				u16b keyid;
+				keyid = c_get_quantity("Enter key pval:", 0xffff);
+				sprintf(&buf[2], "%d", keyid);
+			}
+			break;
+		/* Sign post */
+		case '9':
+			buf[0] = FEAT_SIGN;
+			get_string("Sign:", &buf[2], 77);
+			break;
+		/* Ask for feature */
+		case '0':
+			buf[0] = c_get_quantity("Enter feature value:",0xff);
+			break;
+		/* Build mode off */
+		case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
+		/* Oops */
+		default : bell(); break;
 		}
 
 		/* If we got a valid command, send it */
@@ -3577,14 +3150,12 @@ static void cmd_master_aux_build(void)
 	}
 }
 
-static char * cmd_master_aux_summon_orcs(void)
-{
+static char * cmd_master_aux_summon_orcs(void) {
 	char i;
 	static char buf[80];
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -3615,19 +3186,18 @@ static char * cmd_master_aux_summon_orcs(void)
 		buf[0] = '\0';
 
 		/* get the type of orc */
-		switch (i)
-		{
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
-			case '1': strcpy(buf,"Snaga"); break;
-			case '2': strcpy(buf,"Cave orc"); break;
-			case '3': strcpy(buf,"Hill orc"); break;
-			case '4': strcpy(buf,"Black orc"); break;
-			case '5': strcpy(buf,"Half-orc"); break;
-			case '6': strcpy(buf, "Uruk"); break;
-			case '7': strcpy(buf, "random"); break;
-			default : bell(); break;
+		switch (i) {
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case '1': strcpy(buf,"Snaga"); break;
+		case '2': strcpy(buf,"Cave orc"); break;
+		case '3': strcpy(buf,"Hill orc"); break;
+		case '4': strcpy(buf,"Black orc"); break;
+		case '5': strcpy(buf,"Half-orc"); break;
+		case '6': strcpy(buf, "Uruk"); break;
+		case '7': strcpy(buf, "random"); break;
+		default : bell(); break;
 		}
 
 		/* if we got an orc type, return it */
@@ -3641,14 +3211,12 @@ static char * cmd_master_aux_summon_orcs(void)
 	return NULL;
 }
 
-static char * cmd_master_aux_summon_undead_low(void)
-{
+static char * cmd_master_aux_summon_undead_low(void) {
 	char i;
 	static char buf[80];
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -3684,25 +3252,24 @@ static char * cmd_master_aux_summon_undead_low(void)
 		buf[0] = '\0';
 
 		/* get the type of undead */
-		switch (i)
-		{
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
-			case '1': strcpy(buf,"Poltergeist"); break;
-			case '2': strcpy(buf,"Green glutton ghost"); break;
-			case '3': strcpy(buf,"Loust soul"); break;
-			case '4': strcpy(buf,"Skeleton kobold"); break;
-			case '5': strcpy(buf,"Skeleton orc"); break;
-			case '6': strcpy(buf, "Skeleton human"); break;
-			case '7': strcpy(buf, "Zombified orc"); break;
-			case '8': strcpy(buf, "Zombified human"); break;
-			case '9': strcpy(buf, "Mummified orc"); break;
-			case 'a': strcpy(buf, "Moaning spirit"); break;
-			case 'b': strcpy(buf, "Vampire bat"); break;
-			case 'c': strcpy(buf, "random"); break;
+		switch (i) {
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case '1': strcpy(buf,"Poltergeist"); break;
+		case '2': strcpy(buf,"Green glutton ghost"); break;
+		case '3': strcpy(buf,"Loust soul"); break;
+		case '4': strcpy(buf,"Skeleton kobold"); break;
+		case '5': strcpy(buf,"Skeleton orc"); break;
+		case '6': strcpy(buf, "Skeleton human"); break;
+		case '7': strcpy(buf, "Zombified orc"); break;
+		case '8': strcpy(buf, "Zombified human"); break;
+		case '9': strcpy(buf, "Mummified orc"); break;
+		case 'a': strcpy(buf, "Moaning spirit"); break;
+		case 'b': strcpy(buf, "Vampire bat"); break;
+		case 'c': strcpy(buf, "random"); break;
 
-			default : bell(); break;
+		default : bell(); break;
 		}
 
 		/* if we got an undead type, return it */
@@ -3717,14 +3284,12 @@ static char * cmd_master_aux_summon_undead_low(void)
 }
 
 
-static char * cmd_master_aux_summon_undead_high(void)
-{
+static char * cmd_master_aux_summon_undead_high(void) {
 	char i;
 	static char buf[80];
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -3762,27 +3327,26 @@ static char * cmd_master_aux_summon_undead_high(void)
 		buf[0] = '\0';
 
 		/* get the type of undead */
-		switch (i)
-		{
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
-			case '1': strcpy(buf,"Vampire"); break;
-			case '2': strcpy(buf,"Giant skeleton troll"); break;
-			case '3': strcpy(buf,"Lich"); break;
-			case '4': strcpy(buf,"Master vampire"); break;
-			case '5': strcpy(buf,"Dread"); break;
-			case '6': strcpy(buf, "Nether wraith"); break;
-			case '7': strcpy(buf, "Night mare"); break;
-			case '8': strcpy(buf, "Vampire lord"); break;
-			case '9': strcpy(buf, "Archpriest"); break;
-			case 'a': strcpy(buf, "Undead beholder"); break;
-			case 'b': strcpy(buf, "Dreadmaster"); break;
-			case 'c': strcpy(buf, "Nightwing"); break;
-			case 'd': strcpy(buf, "Nightcrawler"); break;
-			case 'e': strcpy(buf, "random"); break;
+		switch (i) {
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case '1': strcpy(buf,"Vampire"); break;
+		case '2': strcpy(buf,"Giant skeleton troll"); break;
+		case '3': strcpy(buf,"Lich"); break;
+		case '4': strcpy(buf,"Master vampire"); break;
+		case '5': strcpy(buf,"Dread"); break;
+		case '6': strcpy(buf, "Nether wraith"); break;
+		case '7': strcpy(buf, "Night mare"); break;
+		case '8': strcpy(buf, "Vampire lord"); break;
+		case '9': strcpy(buf, "Archpriest"); break;
+		case 'a': strcpy(buf, "Undead beholder"); break;
+		case 'b': strcpy(buf, "Dreadmaster"); break;
+		case 'c': strcpy(buf, "Nightwing"); break;
+		case 'd': strcpy(buf, "Nightcrawler"); break;
+		case 'e': strcpy(buf, "random"); break;
 
-			default : bell(); break;
+		default : bell(); break;
 		}
 
 		/* if we got an undead type, return it */
@@ -3797,15 +3361,13 @@ static char * cmd_master_aux_summon_undead_high(void)
 }
 
 
-static void cmd_master_aux_summon(void)
-{
+static void cmd_master_aux_summon(void) {
 	char i, redo_hack;
 	char buf[80];
 	char * race_name;
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		redo_hack = 0;
 
 		/* Clear screen */
@@ -3835,103 +3397,85 @@ static void cmd_master_aux_summon(void)
 		if (i == ESCAPE) break;
 
 		/* get the type of monster to summon */
-		switch (i)
-		{
-			/* Take a screenshot */
-			case KTRL('T'):
-			{
-				xhtml_screenshot("screenshot????");
-				break;
-			}
-			/* orc menu */
-			case '1':
-			{
-				/* get the specific kind of orc */
-				race_name = cmd_master_aux_summon_orcs();
-				/* if no string was specified */
-				if (!race_name)
-				{
-					redo_hack = 1;
-					break;
-				}
-				buf[2] = 'o';
-				strcpy(&buf[3], race_name);
-				break;
-			}
-			/* low undead menu */
-			case '2':
-			{	/* get the specific kind of low undead */
-				race_name = cmd_master_aux_summon_undead_low();
-				/* if no string was specified */
-				if (!race_name)
-				{
-					redo_hack = 1;
-					break;
-				}
-				buf[2] = 'u';
-				strcpy(&buf[3], race_name);
-				break;
-			}/* high undead menu */
-			case '3':
-			{	/* get the specific kind of low undead */
-				race_name = cmd_master_aux_summon_undead_high();
-				/* if no string was specified */
-				if (!race_name)
-				{
-					redo_hack = 1;
-					break;
-				}
-				buf[2] = 'U';
-				strcpy(&buf[3], race_name);
-				break;
-			}
-			/* summon from a specific depth */
-			case '4':
-			{
-				buf[2] = 'd';
-				buf[3] = c_get_quantity("Summon from which depth? ", 127);
-				/* if (!buf[3]) redo_hack = 1; - Allow depth 0 hereby. */
-				buf[4] = 0; /* terminate the string */
-				break;
-			}
-			/* summon a specific monster or character */
-			case '5':
-			{
-				buf[2] = 's';
-				buf[3] = 0;
-				get_string("Summon which monster or character? ", &buf[3], 79 - 3);
-				if (!buf[3]) redo_hack = 1;
-				break;
-			}
-
-			case '6':
-			{
-				/* delete all the monsters near us */
-				/* turn summoning mode on */
-				buf[0] = 'T';
-				buf[1] = 1;
-				buf[2] = '0';
-				buf[3] = '\0'; /* null terminate the monster name */
-				Send_master(MASTER_SUMMON, buf);
-
+		switch (i) {
+		/* Take a screenshot */
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		/* orc menu */
+		case '1':
+			/* get the specific kind of orc */
+			race_name = cmd_master_aux_summon_orcs();
+			/* if no string was specified */
+			if (!race_name) {
 				redo_hack = 1;
 				break;
 			}
-
-			case '7':
-			{
-				/* disable summoning mode */
-				buf[0] = 'F';
-				buf[3] = '\0'; /* null terminate the monster name */
-				Send_master(MASTER_SUMMON, buf);
-
+			buf[2] = 'o';
+			strcpy(&buf[3], race_name);
+			break;
+		/* low undead menu */
+		case '2':
+			/* get the specific kind of low undead */
+			race_name = cmd_master_aux_summon_undead_low();
+			/* if no string was specified */
+			if (!race_name) {
 				redo_hack = 1;
 				break;
 			}
+			buf[2] = 'u';
+			strcpy(&buf[3], race_name);
+			break;
+		/* high undead menu */
+		case '3':
+			/* get the specific kind of low undead */
+			race_name = cmd_master_aux_summon_undead_high();
+			/* if no string was specified */
+			if (!race_name) {
+				redo_hack = 1;
+				break;
+			}
+			buf[2] = 'U';
+			strcpy(&buf[3], race_name);
+			break;
+		/* summon from a specific depth */
+		case '4':
+			buf[2] = 'd';
+			buf[3] = c_get_quantity("Summon from which depth? ", 127);
+			/* if (!buf[3]) redo_hack = 1; - Allow depth 0 hereby. */
+			buf[4] = 0; /* terminate the string */
+			break;
+		/* summon a specific monster or character */
+		case '5':
+			buf[2] = 's';
+			buf[3] = 0;
+			get_string("Summon which monster or character? ", &buf[3], 79 - 3);
+			if (!buf[3]) redo_hack = 1;
+			break;
 
+		case '6':
+			/* delete all the monsters near us */
+			/* turn summoning mode on */
+			buf[0] = 'T';
+			buf[1] = 1;
+			buf[2] = '0';
+			buf[3] = '\0'; /* null terminate the monster name */
+			Send_master(MASTER_SUMMON, buf);
 
-			/* Oops */
-			default : bell(); redo_hack = 1; break;
+			redo_hack = 1;
+			break;
+
+		case '7':
+			/* disable summoning mode */
+			buf[0] = 'F';
+			buf[3] = '\0'; /* null terminate the monster name */
+			Send_master(MASTER_SUMMON, buf);
+
+			redo_hack = 1;
+			break;
+
+		/* Oops */
+		default : bell(); redo_hack = 1; break;
 		}
 
 		/* get how it should be summoned */
@@ -3943,8 +3487,7 @@ static void cmd_master_aux_summon(void)
 		/* hack -- don't do this if we hit an invalid key previously */
 		if (redo_hack) continue;
 
-		while (1)
-		{
+		while (1) {
 			/* make sure we get a valid summoning type before summoning */
 			buf[0] = 0;
 
@@ -3971,37 +3514,36 @@ static void cmd_master_aux_summon(void)
 			if (i == ESCAPE) break;
 
 			/* get the type of summoning */
-			switch (i)
-			{
-				case KTRL('T'):
-					xhtml_screenshot("screenshot????");
-					break;
-				/* X here */
-				case '1':
-					buf[0] = 'x';
-					buf[1] = c_get_quantity("Summon how many? ", 127);
-					break;
-					/* X in different places */
-				case '2':
-					buf[0] = 'X';
-					buf[1] = c_get_quantity("Summon how many? ", 127);
-					break;
-					/* Group here */
-				case '3':
-					buf[0] = 'g';
-					break;
-					/* Group at random location */
-				case '4':
-					buf[0] = 'G';
-					break;
-					/* summoning mode on */
-				case '5':
-					buf[0] = 'T';
-					buf[1] = 1;
-					break;
+			switch (i) {
+			case KTRL('T'):
+				xhtml_screenshot("screenshot????");
+				break;
+			/* X here */
+			case '1':
+				buf[0] = 'x';
+				buf[1] = c_get_quantity("Summon how many? ", 127);
+				break;
+			/* X in different places */
+			case '2':
+				buf[0] = 'X';
+				buf[1] = c_get_quantity("Summon how many? ", 127);
+				break;
+			/* Group here */
+			case '3':
+				buf[0] = 'g';
+				break;
+			/* Group at random location */
+			case '4':
+				buf[0] = 'G';
+				break;
+			/* summoning mode on */
+			case '5':
+				buf[0] = 'T';
+				buf[1] = 1;
+				break;
 
-					/* Oops */
-				default : bell(); redo_hack = 1; break;
+			/* Oops */
+			default : bell(); redo_hack = 1; break;
 			}
 			/* if we have a valid summoning type (escape was not just pressed)
 			 * then summon the monster */
@@ -4013,8 +3555,7 @@ static void cmd_master_aux_summon(void)
 	}
 }
 
-static void cmd_master_aux_player()
-{
+static void cmd_master_aux_player() {
 	char i = 0;
 	static char buf[80];
 	Term_clear();
@@ -4035,51 +3576,51 @@ static void cmd_master_aux_player()
 		i = inkey();
 		buf[0] = '\0';
 		switch (i) {
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
-			case '1':
-				buf[0] = 'E';
-				get_string("Enter player name:", &buf[1], 15);
-				break;
-			case '2':
-				buf[0] = 'A';
-				get_string("Enter player name:", &buf[1], 15);
-				break;
-			case '3':
-				buf[0] = 'k';
-				get_string("Enter player name:", &buf[1], 15);
-				break;
-			case '4':
-				buf[0] = 'S';
-				get_string("Enter player name:", &buf[1], 15);
-				break;
-			case '5':
-				buf[0] = 'U';
-				get_string("Enter player name:", &buf[1], 15);
-				break;
-			case '6':
-				buf[0] = 'r';
-				get_string("Enter player name:", &buf[1], 15);
-				break;
-			case '7':
-				/* DM to player telekinesis */
-				buf[0] = 't';
-				get_string("Enter player name:", &buf[1], 15);
-				break;
-			case '8':
-				{
-					int j;
-					buf[0] = 'B';
-					get_string("Message:", &buf[1], 69);
-					for (j = 0; j < 60; j++)
-						if (buf[j] == '{') buf[j] = '\377';
-				}
-				break;
-			case ESCAPE:
-				break;
-			default:
-				bell();
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case '1':
+			buf[0] = 'E';
+			get_string("Enter player name:", &buf[1], 15);
+			break;
+		case '2':
+			buf[0] = 'A';
+			get_string("Enter player name:", &buf[1], 15);
+			break;
+		case '3':
+			buf[0] = 'k';
+			get_string("Enter player name:", &buf[1], 15);
+			break;
+		case '4':
+			buf[0] = 'S';
+			get_string("Enter player name:", &buf[1], 15);
+			break;
+		case '5':
+			buf[0] = 'U';
+			get_string("Enter player name:", &buf[1], 15);
+			break;
+		case '6':
+			buf[0] = 'r';
+			get_string("Enter player name:", &buf[1], 15);
+			break;
+		case '7':
+			/* DM to player telekinesis */
+			buf[0] = 't';
+			get_string("Enter player name:", &buf[1], 15);
+			break;
+		case '8':
+			{
+				int j;
+				buf[0] = 'B';
+				get_string("Message:", &buf[1], 69);
+				for (j = 0; j < 60; j++)
+					if (buf[j] == '{') buf[j] = '\377';
+			}
+			break;
+		case ESCAPE:
+			break;
+		default:
+			bell();
 		}
 		if (buf[0]) Send_master(MASTER_PLAYER, buf);
 
@@ -4092,8 +3633,7 @@ static void cmd_master_aux_player()
  * Upload/execute scripts
  */
 /* TODO: up-to-date check and download facility */
-static void cmd_script_upload()
-{
+static void cmd_script_upload() {
 	char name[81];
 
 	name[0] = '\0';
@@ -4106,8 +3646,7 @@ static void cmd_script_upload()
 /*
  * Upload/execute scripts
  */
-static void cmd_script_exec()
-{
+static void cmd_script_exec() {
 	char buf[81];
 
 	buf[0] = '\0';
@@ -4116,8 +3655,7 @@ static void cmd_script_exec()
 	Send_master(MASTER_SCRIPTS, buf);
 }
 
-static void cmd_script_exec_local()
-{
+static void cmd_script_exec_local() {
 	char buf[81];
 
 	buf[0] = '\0';
@@ -4128,8 +3666,7 @@ static void cmd_script_exec_local()
 
 
 /* Dirty implementation.. FIXME		- Jir - */
-static void cmd_master_aux_system()
-{
+static void cmd_master_aux_system() {
 	char i = 0;
 
 	while (i != ESCAPE) {
@@ -4146,39 +3683,39 @@ static void cmd_master_aux_system()
 		/* Get a key */
 		i = inkey();
 		switch (i) {
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
-			case '1':
-				/* Set the hook */
-				special_line_type = SPECIAL_FILE_LOG;
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case '1':
+			/* Set the hook */
+			special_line_type = SPECIAL_FILE_LOG;
 
-				/* Call the file perusal */
-				peruse_file();
+			/* Call the file perusal */
+			peruse_file();
 
-				break;
-			case '2':
-				/* Set the hook */
-				special_line_type = SPECIAL_FILE_RFE;
+			break;
+		case '2':
+			/* Set the hook */
+			special_line_type = SPECIAL_FILE_RFE;
 
-				/* Call the file perusal */
-				peruse_file();
+			/* Call the file perusal */
+			peruse_file();
 
-				break;
-			case 'e':
-				cmd_script_exec();
-				break;
-			case 'u':
-				cmd_script_upload();
-				break;
-			case 'c':
-				cmd_script_exec_local();
-				break;
-			case ESCAPE:
-			case KTRL('Q'):
-				break;
-			default:
-				bell();
+			break;
+		case 'e':
+			cmd_script_exec();
+			break;
+		case 'u':
+			cmd_script_upload();
+			break;
+		case 'c':
+			cmd_script_exec_local();
+			break;
+		case ESCAPE:
+		case KTRL('Q'):
+			break;
+		default:
+			bell();
 		}
 
 		/* Flush messages */
@@ -4217,33 +3754,33 @@ static void cmd_master(void) {
 		/* Get a key */
 		i = inkey();
 
-		switch(i){
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
-			case '1':
-				cmd_master_aux_level();
-				break;
-			case '2':
-				cmd_master_aux_build();
-				break;
-			case '3':
-				cmd_master_aux_summon();
-				break;
-			case '4':
-				cmd_master_aux_generate();
-				break;
-			case '5':
-				cmd_master_aux_player();
-				break;
-			case '6':
-				cmd_master_aux_system();
-				break;
-			case ESCAPE:
-			case KTRL('Q'):
-				break;
-			default:
-				bell();
+		switch(i) {
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case '1':
+			cmd_master_aux_level();
+			break;
+		case '2':
+			cmd_master_aux_build();
+			break;
+		case '3':
+			cmd_master_aux_summon();
+			break;
+		case '4':
+			cmd_master_aux_generate();
+			break;
+		case '5':
+			cmd_master_aux_player();
+			break;
+		case '6':
+			cmd_master_aux_system();
+			break;
+		case ESCAPE:
+		case KTRL('Q'):
+			break;
+		default:
+			bell();
 		}
 
 		/* Flush messages */
@@ -4260,21 +3797,16 @@ static void cmd_master(void) {
 	Flush_queue();
 }
 
-void cmd_king()
-{
+void cmd_king() {
 	if (!get_check2("Do you really want to own this land?", FALSE)) return;
 
 	Send_King(KING_OWN);
 }
 
-void cmd_spike()
-{
+void cmd_spike() {
 	int dir = command_dir;
 
-	if (!dir)
-	{
-		if (!get_dir(&dir)) return;
-	}
+	if (!dir && !get_dir(&dir)) return;
 
 	Send_spike(dir);
 }
@@ -4283,8 +3815,7 @@ void cmd_spike()
  * formality :)
  * Nice if we can use LUA hooks here..
  */
-void cmd_raw_key(int key)
-{
+void cmd_raw_key(int key) {
 	/* Send it */
 	Send_raw_key(key);
 }
@@ -4305,8 +3836,7 @@ void cmd_cloak() {
 	Send_cloak();
 }
 
-void cmd_lagometer(void)
-{
+void cmd_lagometer(void) {
 	int k;
 
 	/* Save the screen */
@@ -4315,8 +3845,7 @@ void cmd_lagometer(void)
 	lagometer_open = TRUE;
 
 	/* Interact */
-	while (1)
-	{
+	while (1) {
 		display_lagometer(TRUE);
 
 		/* Get command */
@@ -4326,28 +3855,25 @@ void cmd_lagometer(void)
 		if (k == ESCAPE || k == KTRL('Q') || k == KTRL('I')) break;
 
 		switch (k) {
-			/* Take a screenshot */
-			case KTRL('T'):
-				xhtml_screenshot("screenshot????");
-				break;
+		/* Take a screenshot */
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		/* Enable */
+		case '1':
+			lagometer_enabled = TRUE;
+			break;
+		/* Disable */
+		case '2':
+			/* disable mini lag-o-meter too */
+			prt_lagometer(-1);
 
-			/* Enable */
-			case '1':
-				lagometer_enabled = TRUE;
-				break;
-
-			/* Disable */
-			case '2':
-				/* disable mini lag-o-meter too */
-				prt_lagometer(-1);
-
-				lagometer_enabled = FALSE;
-				break;
-
-			/* Clear ping memory */
-			case 'c':
-				for (k = 0; k < 60; k++) ping_times[k] = 0;
-				break;
+			lagometer_enabled = FALSE;
+			break;
+		/* Clear ping memory */
+		case 'c':
+			for (k = 0; k < 60; k++) ping_times[k] = 0;
+			break;
 		}
 	}
 
@@ -4359,8 +3885,7 @@ void cmd_lagometer(void)
 	Flush_queue();
 }
 
-void cmd_force_stack()
-{
+void cmd_force_stack() {
 	int item;
 
 	item_tester_hook = NULL;
