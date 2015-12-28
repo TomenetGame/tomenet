@@ -2183,7 +2183,7 @@ void carry(int Ind, int pickup, int confirm, bool one) {
 				else delete_it = FALSE;
 				/* use the new temporary forge object for reference */
 				o_ptr = &forge;
-			}
+			} else delete_it = TRUE; //delete the object from the floor, sinc we fully picked it up (in case of stack of items)
 
 #if 0
 			/* Hack -- query every item */
