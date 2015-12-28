@@ -1172,111 +1172,111 @@ static int hack_dir = 0;
  *
  * Note that many "Rogue" keypresses encode a direction.
  */
-static char roguelike_commands(char command)
-{
-        /* Process the command */
-        switch (command)
-        {
-                /* Movement (rogue keys) */
-                case 'b': hack_dir = 1; return (';');
-                case 'j': hack_dir = 2; return (';');
-                case 'n': hack_dir = 3; return (';');
-                case 'h': hack_dir = 4; return (';');
-                case 'l': hack_dir = 6; return (';');
-                case 'y': hack_dir = 7; return (';');
-                case 'k': hack_dir = 8; return (';');
-                case 'u': hack_dir = 9; return (';');
+static char roguelike_commands(char command) {
+	/* Process the command */
+	switch (command) {
 
-                /* Running (shift + rogue keys) */
-                case 'B': hack_dir = 1; return ('.');
-                case 'J': hack_dir = 2; return ('.');
-                case 'N': hack_dir = 3; return ('.');
-                case 'H': hack_dir = 4; return ('.');
-                case 'L': hack_dir = 6; return ('.');
-                case 'Y': hack_dir = 7; return ('.');
-                case 'K': hack_dir = 8; return ('.');
-                case 'U': hack_dir = 9; return ('.');
+	/* Movement (rogue keys) */
+	case 'b': hack_dir = 1; return (';');
+	case 'j': hack_dir = 2; return (';');
+	case 'n': hack_dir = 3; return (';');
+	case 'h': hack_dir = 4; return (';');
+	case 'l': hack_dir = 6; return (';');
+	case 'y': hack_dir = 7; return (';');
+	case 'k': hack_dir = 8; return (';');
+	case 'u': hack_dir = 9; return (';');
 
-                /* Tunnelling (control + rogue keys) */
-                case KTRL('B'): hack_dir = 1; return ('+');
-                case KTRL('J'): hack_dir = 2; return ('+');
-                case KTRL('N'): hack_dir = 3; return ('+');
-                case KTRL('H'): hack_dir = 4; return ('+');
-                case KTRL('L'): hack_dir = 6; return ('+');
-                case KTRL('Y'): hack_dir = 7; return ('+');
-                case KTRL('K'): hack_dir = 8; return ('+');
-                case KTRL('U'): hack_dir = 9; return ('+');
+	/* Running (shift + rogue keys) */
+	case 'B': hack_dir = 1; return ('.');
+	case 'J': hack_dir = 2; return ('.');
+	case 'N': hack_dir = 3; return ('.');
+	case 'H': hack_dir = 4; return ('.');
+	case 'L': hack_dir = 6; return ('.');
+	case 'Y': hack_dir = 7; return ('.');
+	case 'K': hack_dir = 8; return ('.');
+	case 'U': hack_dir = 9; return ('.');
 
-		/* Oops, audio mixer */
-		case KTRL('F'): return (KTRL('U'));
-		case KTRL('V'): return (KTRL('N'));
-		case KTRL('X'): return (KTRL('C'));
+	/* Tunnelling (control + rogue keys) */
+	case KTRL('B'): hack_dir = 1; return ('+');
+	case KTRL('J'): hack_dir = 2; return ('+');
+	case KTRL('N'): hack_dir = 3; return ('+');
+	case KTRL('H'): hack_dir = 4; return ('+');
+	case KTRL('L'): hack_dir = 6; return ('+');
+	case KTRL('Y'): hack_dir = 7; return ('+');
+	case KTRL('K'): hack_dir = 8; return ('+');
+	case KTRL('U'): hack_dir = 9; return ('+');
 
-		/* Force-stack items */
-		case KTRL('C'): return ('K');
+	/* Oops, audio mixer */
+	case KTRL('F'): return (KTRL('U'));
+	case KTRL('V'): return (KTRL('N'));
+	case KTRL('X'): return (KTRL('C'));
 
-                /* Hack -- White-space */
-                case KTRL('M'): return ('\r');
+	/* Hack -- Commit suicide */
+	/* ..instead display fps */
+	//case KTRL('C'): return ('Q');
+	/* Force-stack items */
+	case KTRL('C'): return ('K');
 
-                /* Allow use of the "destroy" command */
-                case KTRL('D'): return ('k');
+	/* Hack -- White-space */
+	case KTRL('M'): return ('\r');
 
-                /* Hack -- Commit suicide */
-//(display fps) case KTRL('C'): return ('Q');
-                /* Locate player on map */
-                case 'W': return ('L');
-                /* Browse a book (Peruse) */
-                case 'P': return ('b');
-                /* Steal */
-                case 'S': return ('j');
-                /* Toggle search mode */
-                case '#': return ('S');
-                /* Use a staff (Zap) */
-                case 'Z': return ('u');
-                /* Take off equipment */
-                case 'T': return ('t');
-                /* Fire an item */
-                case 't': return ('f');
-                /* Bash a door (Force) */
-                case 'f': return ('B');
-                /* Look around (examine) */
-                case 'x': return ('l');
-                /* Aim a wand (Zap) */
-                case 'z': return ('a');
-                /* Zap a rod (Activate) */
-                case 'a': return ('z');
-		/* Party mode */
-		case 'O': return ('P');
+	/* Allow use of the "destroy" command */
+	case KTRL('D'): return ('k');
 
-		/* Secondary 'wear/wield' */
-		case KTRL('W'): return ('W');
-		/* Swap item */
-		case KTRL('A'): return ('x');
-		/* House commands */
-		case KTRL('E'): return ('h');
-		/* Reapply auto-inscriptions */
-		case KTRL('G'): return ('H');
+	/* Locate player on map */
+	case 'W': return ('L');
+	/* Browse a book (Peruse) */
+	case 'P': return ('b');
+	/* Steal */
+	case 'S': return ('j');
+	/* Toggle search mode */
+	case '#': return ('S');
+	/* Use a staff (Zap) */
+	case 'Z': return ('u');
+	/* Take off equipment */
+	case 'T': return ('t');
+	/* Fire an item */
+	case 't': return ('f');
+	/* Bash a door (Force) */
+	case 'f': return ('B');
+	/* Look around (examine) */
+	case 'x': return ('l');
+	/* Aim a wand (Zap) */
+	case 'z': return ('a');
+	/* Zap a rod (Activate) */
+	case 'a': return ('z');
+	/* Party mode */
+	case 'O': return ('P');
 
-                /* Run */
-                case ',': return ('.');
-                /* Stay still (fake direction) */
-                case '.': hack_dir = 5; return (',');
-                /* Stay still (fake direction) */
-                case '5': hack_dir = 5; return (',');
+	/* Secondary 'wear/wield' */
+	case KTRL('W'): return ('W');
+	/* Swap item */
+	case KTRL('A'): return ('x');
+	/* House commands */
+	case KTRL('E'): return ('h');
+	/* Reapply auto-inscriptions */
+	case KTRL('G'): return ('H');
 
-                /* Standard walking */
-                case '1': hack_dir = 1; return (';');
-                case '2': hack_dir = 2; return (';');
-                case '3': hack_dir = 3; return (';');
-                case '4': hack_dir = 4; return (';');
-                case '6': hack_dir = 6; return (';');
-                case '7': hack_dir = 7; return (';');
-                case '8': hack_dir = 8; return (';');
-                case '9': hack_dir = 9; return (';');
-        }
+	/* Run */
+	case ',': return ('.');
+	/* Stay still (fake direction) */
+	case '.': hack_dir = 5; return (',');
+	/* Stay still (fake direction) */
+	case '5': hack_dir = 5; return (',');
 
-        /* Default */
-        return (command);
+	/* Standard walking */
+	case '1': hack_dir = 1; return (';');
+	case '2': hack_dir = 2; return (';');
+	case '3': hack_dir = 3; return (';');
+	case '4': hack_dir = 4; return (';');
+	case '6': hack_dir = 6; return (';');
+	case '7': hack_dir = 7; return (';');
+	case '8': hack_dir = 8; return (';');
+	case '9': hack_dir = 9; return (';');
+	}
+
+	/* Default */
+	return (command);
 }
 
 
@@ -1287,40 +1287,39 @@ static char roguelike_commands(char command)
  *
  * Note that "Original" and "Angband" are very similar.
  */
-static char original_commands(char command)
-{
+static char original_commands(char command) {
 	/* Process the command */
-	switch(command)
-	{
-		/* Hack -- White space */
-		case KTRL('J'): return ('\r');
-		case KTRL('M'): return ('\r');
+	switch(command) {
 
-		/* Tunnel */
-		case 'T': return ('+');
+	/* Hack -- White space */
+	case KTRL('J'): return ('\r');
+	case KTRL('M'): return ('\r');
 
-		/* Run */
-		case '.': return ('.');
+	/* Tunnel */
+	case 'T': return ('+');
 
-		/* Stay still (fake direction) */
-		case ',': hack_dir = 5; return (',');
+	/* Run */
+	case '.': return ('.');
 
-		/* Stay still (fake direction) */
-		case '5': hack_dir = 5; return (',');
+	/* Stay still (fake direction) */
+	case ',': hack_dir = 5; return (',');
 
-		/* Standard walking */
-		case '1': hack_dir = 1; return (';');
-		case '2': hack_dir = 2; return (';');
-		case '3': hack_dir = 3; return (';');
-		case '4': hack_dir = 4; return (';');
-		case '6': hack_dir = 6; return (';');
-		case '7': hack_dir = 7; return (';');
-		case '8': hack_dir = 8; return (';');
-		case '9': hack_dir = 9; return (';');
+	/* Stay still (fake direction) */
+	case '5': hack_dir = 5; return (',');
 
-		/* Hack -- Commit suicide */
-		case KTRL('K'): return ('Q');
-//(display fps)	case KTRL('C'): return ('Q');
+	/* Standard walking */
+	case '1': hack_dir = 1; return (';');
+	case '2': hack_dir = 2; return (';');
+	case '3': hack_dir = 3; return (';');
+	case '4': hack_dir = 4; return (';');
+	case '6': hack_dir = 6; return (';');
+	case '7': hack_dir = 7; return (';');
+	case '8': hack_dir = 8; return (';');
+	case '9': hack_dir = 9; return (';');
+
+	//(display fps) case KTRL('C'): return ('Q');
+	/* Hack -- Commit suicide */
+	case KTRL('K'): return ('Q');
 	}
 
 	/* Default */
@@ -1347,25 +1346,19 @@ static char original_commands(char command)
  *
  * You can map a key to "tab" to make it "non-functional".
  */
-void keymap_init(void)
-{
+void keymap_init(void) {
 	int i, k;
 
 	/* Initialize every entry */
-	for (i = 0; i < 128; i++)
-	{
+	for (i = 0; i < 128; i++) {
 		/* Default to "no direction" */
 		hack_dir = 0;
 
 		/* Attempt to translate */
 		if (c_cfg.rogue_like_commands)
-		{
 			k = roguelike_commands(i);
-		}
 		else
-		{
 			k = original_commands(i);
-		}
 
 		/* Save the keypress */
 		keymap_cmds[i] = k;
@@ -1442,8 +1435,7 @@ int warning_page(void) {
  * Display a string on the screen using an attribute, and clear
  * to the end of the line.
  */
-void c_prt(byte attr, cptr str, int row, int col)
-{
+void c_prt(byte attr, cptr str, int row, int col) {
 	/* Hack -- fake monochrome */
 	/* if (!c_cfg.use_color) attr = TERM_WHITE; */
 
@@ -1457,8 +1449,7 @@ void c_prt(byte attr, cptr str, int row, int col)
 /*
  * As above, but in "white"
  */
-void prt(cptr str, int row, int col)
-{
+void prt(cptr str, int row, int col) {
 	/* Spawn */
 	c_prt(TERM_WHITE, str, row, col);
 }
