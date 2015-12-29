@@ -12388,7 +12388,11 @@ create a character!):
     on items such as scrolls, on magic devices, or on equipment such as weapons
     and light sources (which may drain their hit points if equipped, even if
     the vampire acquired resistance to light).
-    Vampires fear the sun light and any other kind of blessed light source,
+    Vampires fear the sun light and any kind of items giving off powerful light
+    such as of a radius of 3 or more, or artifacts or blessed, evil-slaying or
+    undead-slaying items. Light sources aside they fear all items that are
+    blessed or *slay* undead. Exceptions are cursed lights and items and the
+    Stone of Lore - these will not harm vampires.
     since it burns them, draining their hit points. They start with a mummy
     wrapping, because it can protect them from the sunlight (press 'w' to wear
     it). If they are moving on the world surface (meaning not in a dungeon or
