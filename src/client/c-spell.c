@@ -324,11 +324,12 @@ void show_browse(object_type *o_ptr) {
 }
 
 static int get_mimic_spell(int *sn) {
-	int		i, num = 3 + 1; /* 3 polymorph self spells + set immunity */
-	bool		flag, redraw;
-	char		choice;
-	char		out_val[160];
-	int             corresp[200];
+	int i, num = 3 + 1; /* 3 polymorph self spells + set immunity */
+	bool flag, redraw;
+	char choice;
+	char out_val[160];
+	int corresp[200];
+	bool safe_input = FALSE;
 
 	/* Assume no spells available */
 	(*sn) = -2;
@@ -389,6 +390,9 @@ static int get_mimic_spell(int *sn) {
 		/* Display a list of spells */
 		print_mimic_spells();
 	}
+
+	/* safe_macros avoids getting stuck in an unfulfilled (item-)prompt */
+	if (parse_macro && c_cfg.safe_macros) safe_input = TRUE;
 
 	/* Get a spell from the user */
 	while (!flag && get_com(out_val, &choice)) {
@@ -455,6 +459,11 @@ static int get_mimic_spell(int *sn) {
 
 			/* illegal input */
 			bell();
+			/* hack - cancel prompt if we're in a failed macro execution */
+			if (safe_input && abort_prompt) {
+				flush_now();
+				break;
+			}
 			continue;
 		} else {
 			/* extract request */
@@ -465,6 +474,11 @@ static int get_mimic_spell(int *sn) {
 		/* Totally Illegal */
 		if (i < 0) {
 			bell();
+			/* hack - cancel prompt if we're in a failed macro execution */
+			if (safe_input && abort_prompt) {
+				flush_now();
+				break;
+			}
 			continue;
 		}
 
@@ -479,6 +493,9 @@ static int get_mimic_spell(int *sn) {
 		/* Flush any events */
 		Flush_queue();
 	}
+
+	/* restore macro handling hack to default state */
+	abort_prompt = FALSE;
 
 
 	/* Abort if needed */
