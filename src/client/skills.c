@@ -20,16 +20,13 @@ static int get_idx(int i);
  * such skill is found
  */
 #if 0 /* not used - mikaelh */
-static s16b find_skill(cptr name)
-{
+static s16b find_skill(cptr name) {
 	u16b i;
 
 	/* Scan skill list */
 	for (i = 1; i < MAX_SKILLS; i++)
-	{
 		/* The name matches */
 		if (streq((char*)s_info[i].name, name)) return (i);
-	}
 
 	/* No match found */
 	return (-1);
@@ -40,8 +37,7 @@ static s16b find_skill(cptr name)
 /*
  *
  */
-s16b get_skill(int skill)
-{
+s16b get_skill(int skill) {
 	return (p_ptr->s_info[skill].value / SKILL_STEP);
 }
 
@@ -49,65 +45,51 @@ s16b get_skill(int skill)
 /*
  *
  */
-s16b get_skill_scale(player_type *pfft, int skill, u32b scale)
-{
+s16b get_skill_scale(player_type *pfft, int skill, u32b scale) {
 	/* XXX XXX XXX */
 	return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
-	         (SKILL_MAX / 10)) /
-	        (SKILL_STEP / 10));
+	    (SKILL_MAX / 10)) /
+	    (SKILL_STEP / 10));
 }
 
 /*
  *
  */
-static int get_idx(int i)
-{
+static int get_idx(int i) {
 	int j;
 
 	for (j = 1; j < MAX_SKILLS; j++)
-	{
-		if (s_info[j].order == i)
-			return (j);
-                        }
+		if (s_info[j].order == i) return (j);
 	return (0);
 }
 
 
-static bool has_child(int sel)
-{
+static bool has_child(int sel) {
 	int i;
 
 	for (i = 1; i < MAX_SKILLS; i++)
-	{
-		if (s_info[i].father == sel)
-			return (TRUE);
-	}
+		if (s_info[i].father == sel) return (TRUE);
 	return (FALSE);
 }
 
-static bool has_active_child(int sel)
-{
+static bool has_active_child(int sel) {
 	int i;
 
 	for (i = 1; i < MAX_SKILLS; i++)
-	{
 		if ((s_info[i].father == sel) &&
 		    ((p_ptr->s_info[i].mod) || (p_ptr->s_info[i].value) ||
 		    has_active_child(i)))
 			return (TRUE);
-	}
 	return (FALSE);
 }
 
 /*
  *
  */
-static void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev, bool full)
-{
+static void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev, bool full) {
 	int j, i;
 
-	for (j = 1; j < MAX_SKILLS; j++)
-	{
+	for (j = 1; j < MAX_SKILLS; j++) {
 		i = get_idx(j);
 
 		if (s_info[i].father != father) continue;
@@ -127,37 +109,27 @@ static void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int l
 }
 
 
-static void init_table(int table[MAX_SKILLS][2], int *max, bool full)
-{
+static void init_table(int table[MAX_SKILLS][2], int *max, bool full) {
 	*max = 0;
 	init_table_aux(table, max, -1, 0, full);
 }
 
 
-static void print_desc_aux(cptr txt, int y, int xx)
-{
+static void print_desc_aux(cptr txt, int y, int xx) {
 	int i = -1, x = xx;
 
-
-	while (txt[++i] != 0)
-	{
-		if (txt[i] == '\n')
-		{
+	while (txt[++i] != 0) {
+		if (txt[i] == '\n') {
 			x = xx;
 			y++;
-		}
-		else
-		{
-			Term_putch(x++, y, TERM_YELLOW, txt[i]);
-		}
+		} else Term_putch(x++, y, TERM_YELLOW, txt[i]);
 	}
 }
 
 /*
  * Dump the skill tree
  */
-void dump_skills(FILE *fff)
-{
+void dump_skills(FILE *fff) {
 	int i, j, max = 0;
 	int table[MAX_SKILLS][2];
 	char buf[80];
@@ -441,15 +413,13 @@ void do_cmd_skill() {
 /*
  * Print a batch of skills.
  */
-static void print_skill_batch(int *p, int start, int max, bool mode)
-{
+static void print_skill_batch(int *p, int start, int max, bool mode) {
 	char buff[80];
 	int i = start, j = 0;
 
 	if (mode) prt(format("         %-31s", "Name"), 1, 20);
 
-	for (i = start; i < (start + 20); i++)
-	{
+	for (i = start; i < (start + 20); i++) {
 		if (i >= max) break;
 
 		if (p[i] > 0)
@@ -464,8 +434,7 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
 	prompt_topline(format("Select a skill (a-%c), * to list, @ to select by name/No., +/- to scroll:", I2A(j - 1)));
 }
 
-static int do_cmd_activate_skill_aux()
-{
+static int do_cmd_activate_skill_aux() {
 	char which;
 	int max = 0, i, start = 0;
 	int ret;
@@ -475,18 +444,14 @@ static int do_cmd_activate_skill_aux()
 
 	C_MAKE(p, MAX_SKILLS, int);
 
-	for (i = 1; i < MAX_SKILLS; i++)
-	{
-		if (s_info[i].action_mkey && p_ptr->s_info[i].value)
-		{
+	for (i = 1; i < MAX_SKILLS; i++) {
+		if (s_info[i].action_mkey && p_ptr->s_info[i].value) {
 			int j;
 			bool next = FALSE;
 
 			/* Already got it ? */
-			for (j = 0; j < max; j++)
-			{
-				if (s_info[i].action_mkey == s_info[p[j]].action_mkey)
-				{
+			for (j = 0; j < max; j++) {
+				if (s_info[i].action_mkey == s_info[p[j]].action_mkey) {
 					next = TRUE;
 					break;
 				}
@@ -497,8 +462,7 @@ static int do_cmd_activate_skill_aux()
 		}
 	}
 
-	if (!max)
-	{
+	if (!max) {
 		c_msg_print("You don't have any activable skills.");
 		return -1;
 	}
@@ -509,67 +473,49 @@ static int do_cmd_activate_skill_aux()
 */
 
 	/* Save the terminal if c_cfg.always_show_lists was on */
-	if (mode && !term_saved)
-	{
+	if (mode && !term_saved) {
 		Term_save();
 		term_saved = TRUE;
 	}
 
 	topline_icky = TRUE;
 
-	while (1)
-	{
+	while (1) {
 		print_skill_batch(p, start, max, mode);
 		which = inkey();
 
-		if (which == ESCAPE)
-		{
+		if (which == ESCAPE) {
 			ret = -1;
 			break;
-		}
-		else if (which == KTRL('T'))
-		{
+		} else if (which == KTRL('T')) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
-		}
-		else if (which == '*' || which == '?' || which == ' ')
-		{
+		} else if (which == '*' || which == '?' || which == ' ') {
 			mode = (mode)?FALSE:TRUE;
-			if (!mode && term_saved)
-			{
+			if (!mode && term_saved) {
 				Term_load();
 				term_saved = FALSE;
-			}
-			else if (mode && !term_saved)
-			{
+			} else if (mode && !term_saved) {
 				Term_save();
 				term_saved = TRUE;
 			}
-		}
-		else if (which == '+')
-		{
+		} else if (which == '+') {
 			start += 20;
 			if (start >= max) start -= 20;
-			if (term_saved)
-			{
+			if (term_saved) {
 				/* Draw the new list on a fresh copy of the screen */
 				Term_load();
 				Term_save();
 			}
-		}
-		else if (which == '-')
-		{
+		} else if (which == '-') {
 			start -= 20;
 			if (start < 0) start += 20;
-			if (term_saved)
-			{
+			if (term_saved) {
 				/* Draw the new list on a fresh copy of the screen */
 				Term_load();
 				Term_save();
 			}
-		}
-		else if (which == '@')
-		{
+		} else if (which == '@') {
 			char buf[80];
 			int nb;
 
@@ -583,30 +529,24 @@ static int do_cmd_activate_skill_aux()
 			nb = atoi(buf) - 1;
 
 			/* Find the skill it is related to */
-			for (i = 1; i < MAX_SKILLS; i++)
-			{
+			for (i = 1; i < MAX_SKILLS; i++) {
 				if (s_info[i].action_desc && (!strcmp(buf, (char*)s_info[i].action_desc) && get_skill(i)))
 					break;
 				if ((s_info[i].action_mkey == nb + 1) && (nb != -1) && get_skill(i))
 					break;
 			}
-			if ((i < MAX_SKILLS))
-			{
+			if ((i < MAX_SKILLS)) {
 				ret = i;
 				break;
 			}
 
-		}
-		else
-		{
+		} else {
 			which = tolower(which);
-			if (start + A2I(which) >= max)
-			{
+			if (start + A2I(which) >= max) {
 				bell();
 				continue;
 			}
-			if (start + A2I(which) < 0)
-			{
+			if (start + A2I(which) < 0) {
 				bell();
 				continue;
 			}
@@ -630,8 +570,7 @@ static int do_cmd_activate_skill_aux()
 /*
  * Hook to determine if an object is a device
  */
-bool item_tester_hook_device(object_type *o_ptr)
-{
+bool item_tester_hook_device(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_ROD) ||
 	    (o_ptr->tval == TV_STAFF) ||
 	    (o_ptr->tval == TV_WAND)) return (TRUE);
@@ -643,8 +582,7 @@ bool item_tester_hook_device(object_type *o_ptr)
 /*
  * Hook to determine if an object is a potion
  */
-static bool item_tester_hook_potion(object_type *o_ptr)
-{
+static bool item_tester_hook_potion(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_POTION) ||
 	    (o_ptr->tval == TV_POTION2) ||
 	    (o_ptr->tval == TV_FLASK)) return (TRUE);
@@ -653,8 +591,7 @@ static bool item_tester_hook_potion(object_type *o_ptr)
 	return (FALSE);
 }
 
-static bool item_tester_hook_scroll_rune(object_type *o_ptr)
-{
+static bool item_tester_hook_scroll_rune(object_type *o_ptr) {
 	if ((o_ptr->tval == TV_SCROLL) ||
 	    (o_ptr->tval == TV_RUNE)) return (TRUE);
 
@@ -684,30 +621,30 @@ bool item_tester_hook_custom_tome(object_type *o_ptr) {
 #if 0
 	/* and even check for blank pages left */
  #if 0 /* we don't know bpval! */
-        switch (o_ptr->bpval) {
-        case 0: i = 0; break;
-        case 1: if (o_ptr->xtra1) i = 0; break;
-        case 2: if (o_ptr->xtra2) i = 0; break;
-        case 3: if (o_ptr->xtra3) i = 0; break;
-        case 4: if (o_ptr->xtra4) i = 0; break;
-        case 5: if (o_ptr->xtra5) i = 0; break;
-        case 6: if (o_ptr->xtra6) i = 0; break;
-        case 7: if (o_ptr->xtra7) i = 0; break;
-        case 8: if (o_ptr->xtra8) i = 0; break;
-        default: if (o_ptr->xtra9) i = 0; break;
-        }
+	switch (o_ptr->bpval) {
+	case 0: i = 0; break;
+	case 1: if (o_ptr->xtra1) i = 0; break;
+	case 2: if (o_ptr->xtra2) i = 0; break;
+	case 3: if (o_ptr->xtra3) i = 0; break;
+	case 4: if (o_ptr->xtra4) i = 0; break;
+	case 5: if (o_ptr->xtra5) i = 0; break;
+	case 6: if (o_ptr->xtra6) i = 0; break;
+	case 7: if (o_ptr->xtra7) i = 0; break;
+	case 8: if (o_ptr->xtra8) i = 0; break;
+	default: if (o_ptr->xtra9) i = 0; break;
+	}
  #else /* hard-code, ouch */
-        switch (o_ptr->sval) {
-        case 100:
-    		if (o_ptr->xtra3) free = FALSE;
-    		break;
-        case 101:
-    		if (o_ptr->xtra4) free = FALSE;
-    		break;
-        case 102:
-    		if (o_ptr->xtra5) free = FALSE;
-    		break;
-        }
+	switch (o_ptr->sval) {
+	case 100:
+		if (o_ptr->xtra3) free = FALSE;
+		break;
+	case 101:
+		if (o_ptr->xtra4) free = FALSE;
+		break;
+	case 102:
+		if (o_ptr->xtra5) free = FALSE;
+		break;
+	}
  #endif
 
 	return free;
@@ -720,8 +657,7 @@ bool item_tester_hook_armour_no_shield(object_type *o_ptr) {
 /*
  * set a trap .. it's out of place somewhat.	- Jir -
  */
-static void do_trap(int item_kit)
-{
+static void do_trap(int item_kit) {
 	int item_load;
 	object_type *o_ptr;
 
@@ -729,8 +665,7 @@ static void do_trap(int item_kit)
 		item_tester_tval = TV_TRAPKIT;
 		get_item_hook_find_obj_what = "Trap kit name? ";
 		get_item_extra_hook = get_item_hook_find_obj;
-		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN | USE_EXTRA)))
-		{
+		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN | USE_EXTRA))) {
 			if (item_kit == -2) c_msg_print("You have no trapping kits.");
 			if (c_cfg.safe_macros) flush_now();//Term_flush();
 			return;
@@ -741,34 +676,33 @@ static void do_trap(int item_kit)
 
 	/* Trap kits need a second object */
 	switch (o_ptr->sval) {
-		case SV_TRAPKIT_BOW:
-			item_tester_tval = TV_ARROW;
-			break;
-		case SV_TRAPKIT_XBOW:
-			item_tester_tval = TV_BOLT;
-			break;
-		case SV_TRAPKIT_SLING:
-			item_tester_tval = TV_SHOT;
-			break;
-		case SV_TRAPKIT_POTION:
-			item_tester_hook = item_tester_hook_potion;
-			break;
-		case SV_TRAPKIT_SCROLL_RUNE:
-			item_tester_hook = item_tester_hook_scroll_rune;
-			break;
-		case SV_TRAPKIT_DEVICE:
-			item_tester_hook = item_tester_hook_device;
-			break;
-		default:
-			c_msg_print("Unknown trapping kit type!");
-			if (c_cfg.safe_macros) flush_now();//Term_flush();
-			break;
+	case SV_TRAPKIT_BOW:
+		item_tester_tval = TV_ARROW;
+		break;
+	case SV_TRAPKIT_XBOW:
+		item_tester_tval = TV_BOLT;
+		break;
+	case SV_TRAPKIT_SLING:
+		item_tester_tval = TV_SHOT;
+		break;
+	case SV_TRAPKIT_POTION:
+		item_tester_hook = item_tester_hook_potion;
+		break;
+	case SV_TRAPKIT_SCROLL_RUNE:
+		item_tester_hook = item_tester_hook_scroll_rune;
+		break;
+	case SV_TRAPKIT_DEVICE:
+		item_tester_hook = item_tester_hook_device;
+		break;
+	default:
+		c_msg_print("Unknown trapping kit type!");
+		if (c_cfg.safe_macros) flush_now();//Term_flush();
+		break;
 	}
 
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
-	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
-	{
+	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) {
 		if (item_load == -2) c_msg_print("You have nothing to load that trap with.");
 		if (c_cfg.safe_macros) flush_now();//Term_flush();
 		return;
@@ -789,30 +723,30 @@ void do_activate_skill(int x_idx, int item) {
 	s32b spell = 0L;
 	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE) {
 		switch (s_info[x_idx].action_mkey) {
-			case MKEY_MIMICRY:
-				do_mimic();
-				break;
-			case MKEY_TRAP:
-				do_trap(item);
-				break;
-			case MKEY_RCRAFT:
-				do_runespell();
-				break;
-			case MKEY_STANCE:
-				do_stance();
-				break;
-			case MKEY_MELEE:
-				do_melee_technique();
-				break;
-			case MKEY_RANGED:
-				do_ranged_technique();
-				break;
-			case MKEY_BREATH:
-				do_breath();
-				break;
-			default:
-				c_msg_print("Very sorry, you need more recent client.");
-				break;
+		case MKEY_MIMICRY:
+			do_mimic();
+			break;
+		case MKEY_TRAP:
+			do_trap(item);
+			break;
+		case MKEY_RCRAFT:
+			do_runespell();
+			break;
+		case MKEY_STANCE:
+			do_stance();
+			break;
+		case MKEY_MELEE:
+			do_melee_technique();
+			break;
+		case MKEY_RANGED:
+			do_ranged_technique();
+			break;
+		case MKEY_BREATH:
+			do_breath();
+			break;
+		default:
+			c_msg_print("Very sorry, you need more recent client.");
+			break;
 		}
 		return;
 	} else if (s_info[x_idx].action_mkey == MKEY_SCHOOL) {
@@ -885,8 +819,7 @@ void do_activate_skill(int x_idx, int item) {
 }
 
 /* Ask & execute a skill */
-void do_cmd_activate_skill()
-{
+void do_cmd_activate_skill() {
 	int x_idx = -1;
 
 	/* Get the skill, if available */
