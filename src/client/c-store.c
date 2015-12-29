@@ -230,12 +230,12 @@ static void store_examine(void) {
 }
 
 
-static void store_purchase(void) {
-	int                     i, amt, amt_afford;
-	int                     item;
+static void store_purchase(bool one) {
+	int i, amt, amt_afford;
+	int item;
 
-	object_type             *o_ptr;
-	char            out_val[160];
+	object_type *o_ptr;
+	char out_val[160];
 
 	/* BIG_MAP leads to big shops */
 	int entries = (screen_hgt > SCREEN_HGT) ? 26 : 12;
@@ -281,7 +281,7 @@ static void store_purchase(void) {
 	amt = 1;
 
 	/* Find out how many the player wants */
-	if (o_ptr->number > 1) {
+	if (o_ptr->number > 1 && !one) {
 		/* Hack -- note cost of "fixed" items */
 		if (store_num != STORE_HOME || store_num == STORE_HOME_DUN) {
 			c_msg_print(format("That costs %d gold per item.", store_prices[item]));
@@ -392,8 +392,7 @@ static void store_chat(void) {
 	Send_paste_msg(buf);
 }
 
-static void store_sell(void)
-{
+static void store_sell(void) {
 	int item, amt;
 
 	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
@@ -417,8 +416,7 @@ static void store_sell(void)
 	} else amt = 1;
 
 	/* Hack -- verify for Museum(Mathom house) */
-	if (store_num == STORE_MATHOM_HOUSE)
-	{
+	if (store_num == STORE_MATHOM_HOUSE) {
 		char out_val[160];
 
 		if (inventory[item].number == amt)
@@ -432,7 +430,7 @@ static void store_sell(void)
 	Send_store_sell(item, amt);
 }
 
-static void store_do_command(int num) {
+static void store_do_command(int num, bool one) {
 	int                     i, amt, gold;
 	int                     item, item2;
 	u16b action = c_store.actions[num];
@@ -446,18 +444,18 @@ static void store_do_command(int num) {
 
 	/* lazy job for 'older' commands */
 	switch (bact) {
-		case BACT_SELL:
-			store_sell();
-			return;
-			break;
-		case BACT_BUY:
-			store_purchase();
-			return;
-			break;
-		case BACT_EXAMINE:
-			store_examine();
-			return;
-			break;
+	case BACT_SELL:
+		store_sell();
+		return;
+		break;
+	case BACT_BUY:
+		store_purchase(one);
+		return;
+		break;
+	case BACT_EXAMINE:
+		store_examine();
+		return;
+		break;
 	}
 
 	if (c_store.flags[num] & BACT_F_STORE_ITEM) {
@@ -480,7 +478,7 @@ static void store_do_command(int num) {
 		sprintf(out_val, "Which item? ");
 
 		/* Get the item number to be bought */
-		if (!get_stock(&item, out_val, 0, i-1)) return;
+		if (!get_stock(&item, out_val, 0, i - 1)) return;
 
 		/* Get the actual index */
 		item = item + store_top;
@@ -518,7 +516,7 @@ static void store_process_command(int cmd) {
 		if (!c_store.actions[i]) continue;
 
 		if (c_store.letter[i] == cmd) {
-			store_do_command(i);
+			store_do_command(i, FALSE);
 			return;
 		}
 
@@ -542,25 +540,41 @@ static void store_process_command(int cmd) {
 		switch (c_store.letter[i]) {
 		case 'p':
 			if (cmd == 'g') {
-				store_do_command(i);
+				store_do_command(i, FALSE);
+				return;
+			}
+			if (cmd == KTRL('G') && !c_cfg.rogue_like_commands) {
+				store_do_command(i, TRUE);
+				return;
+			}
+			if (cmd == KTRL('Z') && c_cfg.rogue_like_commands) {
+				store_do_command(i, TRUE);
 				return;
 			}
 			break;
 		case 's':
 			if (cmd == 'd') {
-				store_do_command(i);
+				store_do_command(i, FALSE);
 				return;
 			}
 			break;
 		case 'g':
 			if (cmd == 'p') {
-				store_do_command(i);
+				store_do_command(i, FALSE);
+				return;
+			}
+			if (cmd == KTRL('G') && !c_cfg.rogue_like_commands) {
+				store_do_command(i, TRUE);
+				return;
+			}
+			if (cmd == KTRL('Z') && c_cfg.rogue_like_commands) {
+				store_do_command(i, TRUE);
 				return;
 			}
 			break;
 		case 'd':
 			if (cmd == 's') {
-				store_do_command(i);
+				store_do_command(i, FALSE);
 				return;
 			}
 			break;
@@ -568,12 +582,12 @@ static void store_process_command(int cmd) {
 #if 0 /* nope, change of plans for future changes: use shift+I to inspect _own_ items instead! */
 		//(future change: replace x by I in ba_info, and I/s by D) -- case 'I':
 			if (cmd == 'I' || cmd == 'l' || cmd == 'x') {
-				store_do_command(i);
+				store_do_command(i, FALSE);
 				return;
 			}
 #else
 			if (cmd == 'l' || cmd == 'x') {
-				store_do_command(i);
+				store_do_command(i, FALSE);
 				return;
 			}
 #endif
