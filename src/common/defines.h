@@ -309,13 +309,13 @@
 
 /* Number of days after which an account without any characters on it will expire. */
 #ifdef RPG_SERVER
- #define ACCOUNT_EXPIRY_DAYS 184
+ #define ACCOUNT_EXPIRY_DAYS 185
 #else
- #define ACCOUNT_EXPIRY_DAYS 62
+ #define ACCOUNT_EXPIRY_DAYS 64
 #endif
 
 /* Number of days after which an unused character will expire. */
-#define CHARACTER_EXPIRY_DAYS 184
+#define CHARACTER_EXPIRY_DAYS 367
 
 
 /* maximum respawn time for uniques.... from japanese patch */

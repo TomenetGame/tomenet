@@ -1972,8 +1972,8 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  background music. To find out more, read (2.1a).
 
 -Usually characters expire (that means they are automatically deleted!)
- after 180 days of inactivity. Empty accounts (ie accounts that don't hold any
- characters) usually expire after 60 days.
+ after 366 days of inactivity. Empty accounts (ie accounts that don't hold any
+ characters) usually expire after 62 days.
 
 -Items on the ground (especially in towns) often disappear automatically after
  a while. So don't use the town or the wilderniss to 'store' loot.
@@ -17476,7 +17476,7 @@ In general, Ironman rules are stricter than normal server configurations.
 The differences between Ironman ruleset and normal servers are as follows:
   -Only one character is allowed per account.
   -All characters are no-ghost mode, so they have only 1 life (ie 'unworldly').
-  -Usually, accounts expire slower (180 days instead of 60 days).
+  -Usually, accounts expire slower (183 days instead of 62 days).
   -The Training Tower is empty, no monsters or items spawn in there
    (except for the Arena Monster Challenge event).
   -Certain extra stores may spawn in the dungeons
