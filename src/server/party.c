@@ -4195,8 +4195,10 @@ void scan_accounts() {
 	s_printf("(scan_accounts() disabled due to PLAYERS_NEVER_EXPIRE.)\n");
 	return;
 #else
-	if (cfg.players_never_expire) s_printf("(scan_accounts() disabled due to PLAYERS_NEVER_EXPIRE (cfg).)\n");
-	return;
+	if (cfg.players_never_expire) {
+		s_printf("(scan_accounts() disabled due to PLAYERS_NEVER_EXPIRE (cfg).)\n");
+		return;
+	}
 #endif
 
 	now = time(NULL);
