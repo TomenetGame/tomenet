@@ -687,7 +687,7 @@ static bool get_stats(int Ind, int stat_order[6]) {
 		if (free_points < 0) {
 			s_printf("EXPLOIT: %s allocates too many (+%d) stat points.\n", p_ptr->name, -free_points);
 			return FALSE;
-		}
+		} else if (free_points) s_printf("STATPOINTS: %s allocates not all (-%d) stat points.\n", p_ptr->name, free_points);
 
 		/* Apply selected stats */
 		for (i = 0; i < 6; i++) {
