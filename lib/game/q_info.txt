@@ -297,50 +297,43 @@ W:0:0:0:-:The training tower is a safe place where you won't die for real,
 W:0:0:0:-:Experience gain is pretty limited however, and it only has two floors.
 W:0:0:0:-:If you go to the dungeon, don't forget to bring a light source!
 
-Y:0:0:-:tower:-:255
-Y:0:0:-:training:-:255
-Y:0:0:-:training tower:-:255
-y:-1:-1:-:tower
-yY:training:training tower
+Y:0:0:-:*tower*:-:255
+Y:0:0:-:*training*:-:255
+y:-1:-1:-:*tower*
+yY:*training*
 yR:-:Take the south-eastern path out of the town centre,
 yR:-:it leads to the training tower. The entrance is a green '<' symbol.
 
-Y:0:0:-:dungeon:-:255
-Y:0:0:-:barrow-downs:-:255
-Y:0:0:-:barrowdowns:-:255
-Y:0:0:-:barrow downs:-:255
-y:-1:-1:-:dungeon
-yY:barrow-downs:barrowdowns:barrow downs
+Y:0:0:-:*dungeon*:-:255
+Y:0:0:-:*barrow*:-:255
+y:-1:-1:-:*dungeon*
+yY:*barrow*
 yR:-:Take the western path out of the town centre,
 yR:-:it leads to the somewhat hidden entrance to barrow-downs.
 yR:-:The entrance is a white '>' symbol.
 yR:-:You should have some torches or a lantern, except if you're a vampire I guess.
 yR:-:You can also buy lights and lamp oil in the general store in this town.
 
-Y:0:0:-:light:-:255
-Y:0:0:-:lightsource:-:255
-Y:0:0:-:light source:-:255
-y:-1:-1:-:light
-yY:lightsource:light source
+Y:0:0:-:*light*:-:255
+Y:0:0:-:*lamp*:-:255
+Y:0:0:-:*torch*:-:255
+y:-1:-1:-:*light*
+yY:*lamp*:*torch*
 yR:-:Except for vampires everyone usually brings a light source along.
 yR:-:You can also buy lights and lamp oil in the general store in this town.
 
-Y:0:0:-:thanks:-:1
-Y:0:0:-:thank you:-:1
-Y:0:0:-:thankyou:-:1
-Y:0:0:-:danke:-:1
-y:-1:-1:-:thanks
-yY:thanks:thank you:thankyou:danke
+Y:0:0:-:*thank*:-:1
+Y:0:0:-:*dank*:-:1
+y:-1:-1:-:*thank*
+yY:*dank*
 #bug: too many keywords apparently :/ but should accept up to 100 really..
 #yY:thanks:thank you:thankyou:thanks you:thx:merci:danke:gracias:grazie:arigato:arigatou:xiexie:xie xie:spacibo:spasibo
 yR:-:You are welcome!
 
-Y:0:0:-:bye:-:1
-Y:0:0:-:goodbye:-:1
-Y:0:0:-:good bye:-:1
-Y:0:0:-:see you:-:1
-y:-1:-1:-:bye
-yY:goodbye:good bye:see you
+Y:0:0:-:*bye*:-:1
+Y:0:0:-:*see*you*:-:1
+y:-1:-1:-:*bye*
+yY:*see you*
 yR:-:Take care.
 
 

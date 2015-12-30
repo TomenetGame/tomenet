@@ -3660,6 +3660,61 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	}
 }
 
+/* Custom strcmp() routine for checking input for quest keywords,
+   allowing wild cards: '*' */
+static bool qstrcmp(char *keyword, char *input) {
+	char *ck = keyword, *ci = input, *res, subkeyword[30];
+
+	while (*ck && ci) {
+		if (*ck == '*') {
+			ck++;
+
+			/* keyword ends on wildcard? done! */
+			if (!(*ck)) return FALSE; //matched successfully
+
+			/* do we have to terminate with exact ending (ie no wildcard at the end)? */
+			res = strchr(ck, '*');
+
+			/* yes, no further wild card coming up after this */
+			if (!res) {
+				res = strstr(ci, ck);
+				if (!res) return TRUE;
+				ci = res + strlen(ck);
+				if (*ci) return TRUE;
+				return FALSE; //matched successfully
+			}
+			/* no, we have another wildcard coming up after this */
+			else {
+				strncpy(subkeyword, ck, res - ck);
+				subkeyword[res - ck] = 0;
+				ck = res;
+				res = strstr(ci, subkeyword);
+				if (!res) return TRUE;
+				ci = res + strlen(subkeyword);
+			}
+		} else {
+			/* do we have to terminate with exact ending (ie no wildcard at the end)? */
+			res = strchr(ck, '*');
+
+			/* yes, no further wild card coming up after this */
+			if (!res) {
+				if (strlen(ci) > strlen(ck)) return TRUE;
+				if (!strncmp(ci, ck, strlen(ck))) return FALSE; //matched successfully
+				return TRUE;
+			}
+			/* no, we have another wildcard coming up after this */
+			else {
+				strncpy(subkeyword, ck, res - ck);
+				subkeyword[res - ck] = 0;
+				ck = res;
+				if (strncmp(ci, subkeyword, strlen(subkeyword))) return TRUE;
+				ci = res + strlen(subkeyword);
+			}
+		}
+	}
+	return FALSE; //matched successfully
+}
+
 /* Player replied in a questor dialogue by entering a keyword. */
 void quest_reply(int Ind, int q_idx, char *str) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -3719,7 +3774,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 			if (strcmp(q_ptr->password[password_hack - 1], str)) continue;
 		}
 		/* proceed normally (no password hack) */
-		else if (strcmp(q_key->keyword, str)) continue; /* not matching? */
+		else if (qstrcmp(q_key->keyword, str)) continue; /* not matching? */
 
 		/* reply? */
 		for (j = 0; j < q_ptr->kwreplies; j++) {
