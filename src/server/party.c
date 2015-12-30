@@ -4082,8 +4082,10 @@ void scan_players() {
 	s_printf("(scan_players() disabled due to PLAYERS_NEVER_EXPIRE (DEF).)\n");
 	return;
 #else
-	if (cfg.players_never_expire) s_printf("(scan_players() disabled due to PLAYERS_NEVER_EXPIRE (cfg).)\n");
-	return;
+	if (cfg.players_never_expire) {
+		s_printf("(scan_players() disabled due to PLAYERS_NEVER_EXPIRE (cfg).)\n");
+		return;
+	}
 #endif
 
 	/* Allocate an array for marking accounts as active */
