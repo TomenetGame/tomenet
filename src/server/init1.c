@@ -8469,10 +8469,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				k = 1; //counter
 				while (*s && k < QI_KEYWORDS_PER_REPLY) {
 					i = 0; //strlen
-					tmpbuf[0] = 0;
 					while (i < 29 && *s && *s != ':')//QI_KEYWORD_LEN
 						tmpbuf[i++] = *s++;
-					tmpbuf[29] = 0;
+					tmpbuf[i] = 0;
 
 					for (j = 0; j < q_ptr->keywords; j++)
 						if (!strcmp(q_ptr->keyword[j].keyword, tmpbuf))
