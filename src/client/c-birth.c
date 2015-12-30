@@ -144,7 +144,7 @@ static void enter_password(void) {
  * Choose the character's sex				-JWT-
  */
 static bool choose_sex(void) {
-	char        c = '\0';		/* pfft redesign while(1) */
+	char c = '\0';		/* pfft redesign while(1) */
 	bool hazard = FALSE;
 	bool parity = magik(50);
 
@@ -165,8 +165,8 @@ static bool choose_sex(void) {
 		if (valid_dna) c_put_str(TERM_SLATE, "Choose a sex (* for random, \377B#\377s/\377B%\377s to reincarnate, Q to quit): ", 20, 2);
 		else c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to quit): ", 20, 2);
 
-	        Term->scr->cx = Term->wid;
-	        Term->scr->cu = 1;
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
@@ -218,7 +218,7 @@ static bool choose_sex(void) {
 
 static void clear_diz(void) {
 	int i;
-//	c_put_str(TERM_UMBER, "                              ", DIZ_ROW, DIZ_COL);
+	//c_put_str(TERM_UMBER, "                              ", DIZ_ROW, DIZ_COL);
 	for (i = 0; i < 12; i++)
 		c_put_str(TERM_L_UMBER, "                                                  ", DIZ_ROW + i, DIZ_COL);
 }
@@ -292,8 +292,8 @@ race_redraw:
 		else c_put_str(TERM_SLATE, "Choose a race (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8): ", n, 2);
 		display_race_diz(sel);
 
-	        Term->scr->cx = Term->wid;
-	        Term->scr->cu = 1;
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
 
@@ -431,9 +431,9 @@ static bool choose_trait(void) {
 
 	/* Prepare to list, skip trait #0 'N/A' */
 	for (j = 1; j < Setup.max_trait; j++) {
-                tp_ptr = &trait_info[j];
-                if (!(tp_ptr->choice & BITS(race))) continue;
-            	shown_traits++;
+		tp_ptr = &trait_info[j];
+		if (!(tp_ptr->choice & BITS(race))) continue;
+		shown_traits++;
 	}
 	/* No traits available? */
 	if (shown_traits == 0) {
@@ -479,11 +479,11 @@ trait_redraw:
 	i = 0;
 	sel_offset = 0;
 	for (j = 0; j < Setup.max_trait; j++) {
-                tp_ptr = &trait_info[j];
-                if (!(tp_ptr->choice & BITS(race))) {
+		tp_ptr = &trait_info[j];
+		if (!(tp_ptr->choice & BITS(race))) {
 			sel_offset++;
-        		continue;
-            	}
+			continue;
+		}
 
 		sprintf(out_val, "%c) %s", I2A(i), tp_ptr->title);
 		if (j == sel + sel_offset) c_put_str(TERM_YELLOW, out_val, m, l);
@@ -508,8 +508,8 @@ trait_redraw:
 		else c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_trait_diz(sel);
 
-	        Term->scr->cx = Term->wid;
-	        Term->scr->cu = 1;
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
 
@@ -616,7 +616,7 @@ static void display_class_diz(int r) {
 	clear_diz();
 	if (!class_diz[r][i]) return; /* server !newer_than 4.5.1.2 */
 
-//	c_put_str(TERM_UMBER, format("--- %s ---", class_info[r].title), DIZ_ROW, DIZ_COL);
+	//c_put_str(TERM_UMBER, format("--- %s ---", class_info[r].title), DIZ_ROW, DIZ_COL);
 	while (i < 12 && class_diz[r][i][0]) {
 		c_put_str(TERM_L_UMBER, class_diz[r][i], DIZ_ROW + i, DIZ_COL);
 		i++;
@@ -626,8 +626,7 @@ static void display_class_diz(int r) {
 /*
  * Gets a character class				-JWT-
  */
-static bool choose_class(void)
-{
+static bool choose_class(void) {
 	player_class *cp_ptr;
 #ifndef CLASS_BEFORE_RACE
 	player_race *rp_ptr = &race_info[race];
@@ -657,7 +656,7 @@ class_redraw:
 
 	/* Display the legal choices */
 	for (j = 0; j < Setup.max_class; j++) {
-                cp_ptr = &class_info[j];
+		cp_ptr = &class_info[j];
 		sprintf(out_val, "%c) %s", I2A(j), cp_ptr->title);
 
 #ifndef CLASS_BEFORE_RACE
@@ -699,8 +698,8 @@ class_redraw:
 		else c_put_str(TERM_SLATE, "Choose a class (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_class_diz(sel);
 
-	        Term->scr->cx = Term->wid;
-	        Term->scr->cu = 1;
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
 
@@ -807,14 +806,14 @@ static bool choose_stat_order(void) {
 	bool hazard = FALSE;
 	s16b stat_order_tmp[6];
 
-        player_class *cp_ptr = &class_info[class];
-        player_race *rp_ptr = &race_info[race];
+	player_class *cp_ptr = &class_info[class];
+	player_race *rp_ptr = &race_info[race];
 
 	for (i = 0; i < 6; i++) stat_order_tmp[i] = stat_order[i];
 
 
-        /* Character stats are randomly rolled (1 time): */
-        if (char_creation_flags == 0) {
+	/* Character stats are randomly rolled (1 time): */
+	if (char_creation_flags == 0) {
 
 		put_str("Stat order  :", 11, 1);
 
@@ -849,8 +848,8 @@ static bool choose_stat_order(void) {
 				if (hazard) {
 					j = rand_int(6);
 				} else {
-			    	        Term->scr->cx = Term->wid;
-				        Term->scr->cu = 1;
+					Term->scr->cx = Term->wid;
+					Term->scr->cu = 1;
 
 					c = inkey();
 					if (c == 'Q') quit(NULL);
@@ -873,30 +872,30 @@ static bool choose_stat_order(void) {
 		clear_from(20);
 	}
 
-        /* player can define his stats completely manually: */
-        else if (char_creation_flags == 1) {
+	/* player can define his stats completely manually: */
+	else if (char_creation_flags == 1) {
 		int col1 = 3, col2 = 35, col3 = 54, tmp_stat;
 
-                j = 0; /* current stat to be modified */
-                k = 30; /* free points left */
+		j = 0; /* current stat to be modified */
+		k = 30; /* free points left */
 
-                clear_from(14);
+		clear_from(14);
 
-                c_put_str(TERM_SLATE, "Distribute your attribute points (\377ouse them all!\377s):", 13, col1);
-                c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
-                c_put_str(TERM_SLATE, "                         Min. recommended,", 14, col2);
+		c_put_str(TERM_SLATE, "Distribute your attribute points (\377ouse them all!\377s):", 13, col1);
+		c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
+		c_put_str(TERM_SLATE, "                         Min. recommended,", 14, col2);
 		if (valid_dna) c_put_str(TERM_SLATE, "Current:   (Base) (Prev) if possible:", 15, col2);
 		else c_put_str(TERM_SLATE, "Current:   (Base)        if possible:", 15, col2);
 
 		if (valid_dna) c_put_str(TERM_SLATE, "'\377B#\377s/\377B%\377s' to reincarnate.", 15, col1);
-                c_put_str(TERM_SLATE, "Use keys '+', '-', 'RETURN'", 16, col1);
-                c_put_str(TERM_SLATE, "or 8/2/4/6 or arrow keys to", 17, col1);
-                c_put_str(TERM_SLATE, "modify and navigate.", 18, col1);
-                c_put_str(TERM_SLATE, "After you distributed all", 19, col1);
-                c_put_str(TERM_SLATE, "points, press ESC to proceed.", 20, col1);
-                c_put_str(TERM_SLATE, "'Q' = quit, BACKSPACE = back.", 21, col1);
+		c_put_str(TERM_SLATE, "Use keys '+', '-', 'RETURN'", 16, col1);
+		c_put_str(TERM_SLATE, "or 8/2/4/6 or arrow keys to", 17, col1);
+		c_put_str(TERM_SLATE, "modify and navigate.", 18, col1);
+		c_put_str(TERM_SLATE, "After you distributed all", 19, col1);
+		c_put_str(TERM_SLATE, "points, press ESC to proceed.", 20, col1);
+		c_put_str(TERM_SLATE, "'Q' = quit, BACKSPACE = back.", 21, col1);
 
-                c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, col1);
+		c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, col1);
 
 		c_put_str(TERM_L_UMBER,"   - Strength -    ", 3, 30);
 		c_put_str(TERM_YELLOW, "   How quickly you can strike.", 4, 30);
@@ -905,8 +904,8 @@ static bool choose_stat_order(void) {
 		c_put_str(TERM_YELLOW, "   How easily you can bash, throw and dig.", 7, 30);
 		c_put_str(TERM_YELLOW, "   Slightly improves your swimming.", 8, 30);
 
-                for (i = 0; i < 6; i++) {
-                        stat_order[i] = 10;
+		for (i = 0; i < 6; i++) {
+			stat_order[i] = 10;
 			strncpy(stats[i], stat_names[i], 3);
 			stats[i][3] = '\0';
 			if (valid_dna) {
@@ -946,25 +945,25 @@ static bool choose_stat_order(void) {
 						c_put_str(TERM_GREEN, buf, 16 + i, col2 + 26);
 				}
 
-                        	if (j == i) {
-                        		if (stat_order[i] == 10-2)
-                        			c_put_str(TERM_L_RED, out_val, 16 + i, col2);
-                        		else if (stat_order[i] == 17)
-                        			c_put_str(TERM_L_BLUE, out_val, 16 + i, col2);
-                        		else
-                        			c_put_str(TERM_ORANGE, out_val, 16 + i, col2);
-                        	} else {
-                        		if (stat_order[i] == 10-2)
-		                        	c_put_str(TERM_RED, out_val, 16 + i, col2);
-                        		else if (stat_order[i] == 17)
-                        			c_put_str(TERM_VIOLET, out_val, 16 + i, col2);
-		                        else
-		                        	c_put_str(TERM_L_UMBER, out_val, 16 + i, col2);
-		                }
-                	}
+				if (j == i) {
+					if (stat_order[i] == 10-2)
+						c_put_str(TERM_L_RED, out_val, 16 + i, col2);
+					else if (stat_order[i] == 17)
+						c_put_str(TERM_L_BLUE, out_val, 16 + i, col2);
+					else
+						c_put_str(TERM_ORANGE, out_val, 16 + i, col2);
+				} else {
+					if (stat_order[i] == 10-2)
+						c_put_str(TERM_RED, out_val, 16 + i, col2);
+					else if (stat_order[i] == 17)
+						c_put_str(TERM_VIOLET, out_val, 16 + i, col2);
+					else
+						c_put_str(TERM_L_UMBER, out_val, 16 + i, col2);
+				}
+			}
 
-		        Term->scr->cx = Term->wid;
-		        Term->scr->cu = 1;
+			Term->scr->cx = Term->wid;
+			Term->scr->cu = 1;
 
 			if (!auto_reincarnation) c = inkey();
 			crb = cp_ptr->c_adj[j] + rp_ptr->r_adj[j];
@@ -1114,8 +1113,8 @@ static bool choose_stat_order(void) {
 
 		for (i = 3; i < 12; i++) Term_erase(30, i, 255);
 		clear_from(13);
-        }
-        return TRUE;
+	}
+	return TRUE;
 }
 
 /* Quick hack!		- Jir -
@@ -1152,8 +1151,8 @@ static bool choose_mode(void) {
 			if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
 			else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to quit, BACKSPACE to go back): ", 15, 2);
 
-		        Term->scr->cx = Term->wid;
-		        Term->scr->cu = 1;
+			Term->scr->cx = Term->wid;
+			Term->scr->cu = 1;
 
 			if (!hazard) c = inkey();
 			if (c == 'Q') quit(NULL);
@@ -1252,8 +1251,8 @@ static bool choose_mode(void) {
 		if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
 		else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to quit, BACKSPACE to go back): ", 15, 2);
 
-	        Term->scr->cx = Term->wid;
-	        Term->scr->cu = 1;
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
@@ -1348,8 +1347,7 @@ static bool choose_mode(void) {
 }
 
 /* Fruit bat is now a "body modification" that can be applied to all "modes" - C. Blue */
-static bool choose_body_modification(void)
-{
+static bool choose_body_modification(void) {
 	char c = '\0';
 	bool hazard = FALSE;
 
@@ -1378,8 +1376,8 @@ static bool choose_body_modification(void)
 		if (valid_dna) c_put_str(TERM_SLATE, "Choose body modification (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 19, 2);
 		else c_put_str(TERM_SLATE, "Choose body modification (* for random, Q to quit, BACKSPACE to go back): ", 19, 2);
 
-	        Term->scr->cx = Term->wid;
-	        Term->scr->cu = 1;
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
@@ -1670,8 +1668,7 @@ cstats:
 	/* Choose character mode */
 	if (!s_RPG || s_RPG_ADMIN) {
 		if (!choose_mode()) goto cstats;
-	}
-	else {
+	} else {
 		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 		c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 	}
@@ -1698,8 +1695,7 @@ cstats:
 	clear_from(20);
 }
 
-static bool enter_server_name(void)
-{
+static bool enter_server_name(void) {
 	/* Clear screen */
 	Term_clear();
 
@@ -1710,7 +1706,7 @@ static bool enter_server_name(void)
 	move_cursor(5, 1);
 
 	/* Default */
-        strcpy(server_name, "europe.tomenet.eu");
+	strcpy(server_name, "europe.tomenet.eu");
 
 	/* Ask for server name */
 	return askfor_aux(server_name, 80, 0);
@@ -1725,10 +1721,9 @@ static bool enter_server_name(void)
  * - allow to scroll the screen in case
  * */
 
-bool get_server_name(void)
-{
-        s32b i;
-        cptr tmp;
+bool get_server_name(void) {
+	s32b i;
+	cptr tmp;
 
 #ifdef EXPERIMENTAL_META
 	int j, bytes, socket = -1;
@@ -1738,8 +1733,8 @@ bool get_server_name(void)
 	char buf[80192], *ptr, c, out_val[260];
 #endif
 
-        /* We NEED lua here, so if it aint initialized yet, do it */
-        init_lua();
+	/* We NEED lua here, so if it aint initialized yet, do it */
+	init_lua();
 
 	/* Message */
 	prt("Connecting to metaserver for server list....", 1, 1);
@@ -1757,14 +1752,13 @@ bool get_server_name(void)
 		prt("Failed to connect to used-specified meta server.", 2, 1);
 		prt("Trying to connect to default metaserver instead....", 3, 1);
 
-	        /* Connect to metaserver */
+		/* Connect to metaserver */
 		socket = CreateClientSocket(META_ADDRESS, 8801);
 	}
 
 #ifdef META_ADDRESS_2
 	/* Check for failure */
-	if (socket == -1)
-	{
+	if (socket == -1) {
 		prt("Failed to connect to meta server.", 2, 1);
 		prt("Trying to connect to default alternate metaserver instead....", 3, 1);
 		/* Hack -- Connect to metaserver #2 */
@@ -1773,8 +1767,7 @@ bool get_server_name(void)
 #endif
 
 	/* Check for failure */
-	if (socket == -1)
-	{
+	if (socket == -1) {
 		prt("Failed to connect to meta server.", 2, 1);
 		return enter_server_name();
 	}
@@ -1789,15 +1782,12 @@ bool get_server_name(void)
 	SocketClose(socket);
 
 	/* Check for error while reading */
-	if (bytes <= 0)
-	{
-		return enter_server_name();
-	}
+	if (bytes <= 0) return enter_server_name();
 
-        Term_clear();
+	Term_clear();
 
 #ifdef EXPERIMENTAL_META
-        call_lua(0, "meta_display", "(s)", "d", buf, &i);
+	call_lua(0, "meta_display", "(s)", "d", buf, &i);
 #else
 
 	/* Start at the beginning */
@@ -1805,14 +1795,11 @@ bool get_server_name(void)
 	i = 0;
 
 	/* Print each server */
-	while (ptr - buf < bytes)
-	{
+	while (ptr - buf < bytes) {
 		/* Check for no entry */
-		if (strlen(ptr) <= 1)
-		{
+		if (strlen(ptr) <= 1) {
 			/* Increment */
 			ptr++;
-
 			/* Next */
 			continue;
 		}
@@ -1860,20 +1847,15 @@ bool get_server_name(void)
 #endif
 
 	/* Ask until happy */
-	while (1)
-	{
+	while (1) {
 		/* Get a key */
-	        Term->scr->cx = Term->wid;
-	        Term->scr->cu = 1;
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 		c = inkey();
 
 		/* Check for quit */
-		if (c == 'Q')
-		{
-			return enter_server_name();
-		}
-		else if (c == ESCAPE)
-		{
+		if (c == 'Q') return enter_server_name();
+		else if (c == ESCAPE) {
 			quit(NULL);
 			return FALSE;
 		}
@@ -1887,11 +1869,11 @@ bool get_server_name(void)
 	}
 
 #ifdef EXPERIMENTAL_META
-        call_lua(0, "meta_get", "(s,d)", "sd", buf, j, &tmp, &server_port);
-        strcpy(server_name, tmp);
+	call_lua(0, "meta_get", "(s,d)", "sd", buf, j, &tmp, &server_port);
+	strcpy(server_name, tmp);
 #else
 	/* Extract server name */
-        sscanf(buf + offsets[j], "%s", server_name);
+	sscanf(buf + offsets[j], "%s", server_name);
 #endif
 
 	/* Success */
@@ -1899,8 +1881,7 @@ bool get_server_name(void)
 }
 
 /* Human */
-static char *human_syllable1[] =
-{
+static char *human_syllable1[] = {
 	"Ab", "Ac", "Ad", "Af", "Agr", "Ast", "As", "Al", "Adw", "Adr", "Ar",
 	"B", "Br", "C", "Cr", "Ch", "Cad", "D", "Dr", "Dw", "Ed", "Eth", "Et",
 	"Er", "El", "Eow", "F", "Fr", "G", "Gr", "Gw", "Gal", "Gl", "H", "Ha",
@@ -1909,16 +1890,14 @@ static char *human_syllable1[] =
 	"Tr", "Th", "V", "Y", "Z", "W", "Wic",
 };
 
-static char *human_syllable2[] =
-{
+static char *human_syllable2[] = {
 	"a", "ae", "au", "ao", "are", "ale", "ali", "ay", "ardo", "e", "ei",
 	"ea", "eri", "era", "ela", "eli", "enda", "erra", "i", "ia", "ie",
 	"ire", "ira", "ila", "ili", "ira", "igo", "o", "oa", "oi", "oe",
 	"ore", "u", "y",
 };
 
-static char *human_syllable3[] =
-{
+static char *human_syllable3[] = {
 	"a", "and", "b", "bwyn", "baen", "bard", "c", "ctred", "cred", "ch",
 	"can", "d", "dan", "don", "der", "dric", "dfrid", "dus", "f", "g",
 	"gord", "gan", "l", "li", "lgrin", "lin", "lith", "lath", "loth",
@@ -1934,10 +1913,8 @@ static char *human_syllable3[] =
  * based on a Javascript by Michael Hensley
  * "http://geocities.com/timessquare/castle/6274/"
  */
-void create_random_name(int race, char *name)
-{
+void create_random_name(int race, char *name) {
 	char *syl1, *syl2, *syl3;
-
 	int idx;
 
 	/* Paranoia */
@@ -1953,4 +1930,3 @@ void create_random_name(int race, char *name)
 	/* Concatenate selected syllables */
 	strnfmt(name, 32, "%s%s%s", syl1, syl2, syl3);
 }
-
