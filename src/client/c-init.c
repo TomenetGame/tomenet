@@ -1550,7 +1550,7 @@ static void init_kind_list() {
 
 /* Init artifact list for displaying artifact lore - C. Blue */
 static void init_artifact_list() {
-	char buf[1024], *p1, *p2, art_name[MSG_LEN];
+	char buf[1024], *p1, *p2, art_name[MSG_LEN], buf2[1024];
 	FILE *fff;
 	int tval = 0, sval = 0, i, v1 = 0, v2 = 0, v3 = 0, rar;
 	bool discard, special_gene, flag_break_marker;
@@ -1565,7 +1565,10 @@ static void init_artifact_list() {
 	}
 
 	while (premature_next_art || 0 == my_fgets(fff, buf, 1024)) {
-		premature_next_art = FALSE;
+		if (premature_next_art) {
+			strcpy(buf, buf2); //for premature_next_art
+			premature_next_art = FALSE;
+		}
 		/* strip $/%..$/! conditions */
 		p1 = p2 = buf; /* dummy, != NULL */
 		while (buf[0] == '$' || buf[0] == '%') {
@@ -1615,6 +1618,7 @@ static void init_artifact_list() {
 		/* fetch tval,sval and lookup type name in k_info */
 		rar = 1; /* paranoia/kill compiler warning */
 		while (0 == my_fgets(fff, buf, 1024)) {
+			strcpy(buf2, buf); //for premature_next_art
 			/* strip $/%..$/! conditions */
 			p1 = p2 = buf; /* dummy, != NULL */
 			while (buf[0] == '$' || buf[0] == '%') {
@@ -1640,9 +1644,11 @@ static void init_artifact_list() {
 			/* HACK: done with scanning flags? -- note this is non-canonical (empty lines are actually allowed), ew */
 			if (flag_break_marker && buf[0] != 'F') break;
 			/* hack: Next artifact name? then we're done too */
-			if (buf[0] == 'N' && next_art_name_ok) break;
-			if (buf[0] == 'P') {
+			if (buf[0] == 'N' && next_art_name_ok) {
 				premature_next_art = TRUE;
+				break;
+			}
+			if (buf[0] == 'P') {
 				next_art_name_ok = TRUE;
 				continue;
 			}
