@@ -2593,8 +2593,36 @@ void do_slash_cmd(int Ind, char *message) {
 				    (global_event[k-1].signup_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0))
 				msg_print(Ind, "\377yThat event does not allow signing up anymore now.");
 			else {
-				if (tk < 2) global_event_signup(Ind, k-1, NULL);
-				else global_event_signup(Ind, k-1, message3 + 1 + strlen(format("%d", k)));
+				if (tk < 2) global_event_signup(Ind, k - 1, NULL);
+				else global_event_signup(Ind, k - 1, message3 + 1 + strlen(format("%d", k)));
+			}
+			return;
+		}
+		else if (prefix(message, "/evunsign")) {
+			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS))
+				msg_format(Ind, "Usage:    /evunsign 1..%d", MAX_GLOBAL_EVENTS);
+			else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden == FALSE || admin))
+				msg_print(Ind, "\377yThere is currently no event of that number.");
+			else if (global_event[k-1].signup_time == -1)
+				msg_print(Ind, "\377yThat event doesn't offer to sign up.");
+			else if (!global_event[k-1].signup_time &&
+				    (!global_event[k-1].announcement_time ||
+				    (global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0)))
+				msg_print(Ind, "\377yThat event has already started.");
+			else {
+				global_event_type *ge = &global_event[k - 1];
+
+				for (i = 0; i < MAX_GE_PARTICIPANTS; i++) {
+					if (ge->participant[i] != p_ptr->id) continue;
+
+					msg_format(Ind, "\374\377s>>You have signed off from %s!<<", ge->title);
+					msg_broadcast_format(Ind, "\374\377s%s signed off from %s.", p_ptr->name, ge->title);
+					ge->participant[i] = 0;
+					p_ptr->global_event_type[k - 1] = GE_NONE;
+
+					return;
+				}
+				msg_print(Ind, "You haven't signed up for that event.");
 			}
 			return;
 		}

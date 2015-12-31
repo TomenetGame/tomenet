@@ -1051,6 +1051,8 @@ They all start with a slash '/' hence they're called slash commands:
             a message telling you so and about which details what's missing.
             NOTE: If you log out, your sign-up is cancelled automatically,
                   so after logging back in you will have to sign up again.
+/evunsign <#>
+            Signs you off from that event number #.
 
 /ex or /examine or /extra
             Gives you detailed information about your character's status, such
