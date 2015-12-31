@@ -6155,9 +6155,9 @@ if (cfg.unikill_format) {
 	    (strchr("hHkpty", r_ptr->d_char))) &&
 #if 0
 	    ((r_ptr->flags1 & (RF1_DROP_60 | RF1_DROP_90 | RF1_DROP_1D2 | RF1_DROP_2D2 | RF1_DROP_3D2 | RF1_DROP_4D2))
-	    || (r_ptr->flags0 & RF0_DROP_1))
+	    || (r_ptr->flags0 & RF0_DROP_1)) &&
 #endif
-	    && (!rand_int(100)
+	    (!rand_int(100)
 	    || p_ptr->admin_dm || p_ptr->admin_wiz)) {
 		/* Get local object */
 		qq_ptr = &forge;
