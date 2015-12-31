@@ -4392,7 +4392,7 @@ void distract_monsters(int Ind) {
 		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
-		    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
+		    (strchr("hHkptny", r_ptr->d_char))) tauntable = TRUE;
 		else tauntable = FALSE;
 
 		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
@@ -4455,7 +4455,7 @@ void taunt_monsters(int Ind)
 		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
-		    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
+		    (strchr("hHkptny", r_ptr->d_char))) tauntable = TRUE;
 		else tauntable = FALSE;
 
 		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
@@ -6305,13 +6305,13 @@ bool cast_snowflake(worldpos *wpos, int x, int interval) {
 /*
  * Fireworks! (NEW_YEARS_EVE)
  */
-bool cast_fireworks(worldpos *wpos, int x, int y) {
+bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 	char pattacker[80];
 	strcpy(pattacker, "");
 
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
-	int typ = rand_int(7 * 3); /* colour & style */
+	if (typ == -1) typ = rand_int(7 * 3); /* colour & style */
 
 	if (typ < 7) project_time_effect = EFF_FIREWORKS1;
 	else if (typ < 7 * 2) {
@@ -6322,7 +6322,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y) {
 		typ -= 7 * 2;
 	}
 
-	switch(typ) {
+	switch (typ) {
 	case 0: typ = GF_FW_FIRE; break;
 	case 1: typ = GF_FW_ELEC; break;
 	case 2: typ = GF_FW_POIS; break;
