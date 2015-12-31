@@ -11601,7 +11601,10 @@ static void town_gen(struct worldpos *wpos) {
 	/* apply player-switchability so noone cannot block the store too badly */
 	for (x = 1; x < MAX_WID - 1; x++) {
 		for (y = 1; y < MAX_HGT - 1; y++) {
-			if (zcave[y][x].feat != FEAT_SHOP) continue;
+			if (zcave[y][x].feat != FEAT_SHOP
+			    /* let's not allow to chain-switch someone out of the inn.. o_o */
+			    || zcave[y][x].feat == FEAT_PROTECTED)
+				continue;
 			for (x2 = x - 1; x2 <= x + 1; x2++) {
 				for (y2 = y - 1; y2 <= y + 1; y2++) {
 					if (!in_bounds(y2, x2)) continue;
