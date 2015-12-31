@@ -3051,6 +3051,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_SCROLL:
 			/* cheques may have different value, so they must not stack */
 			if (o_ptr->sval == SV_SCROLL_CHEQUE) return FALSE;
+			/* fireworks of different type */
+			if (o_ptr->sval == SV_SCROLL_FIREWORK &&
+			    (o_ptr->xtra1 != j_ptr->xtra1 ||
+			    o_ptr->xtra2 != j_ptr->xtra2))
+				return FALSE;
 		case TV_FOOD:
 		case TV_POTION:
 		case TV_POTION2:
@@ -5108,6 +5113,13 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 		/* Hack -- charge rods */
 		o_ptr->pval = 0;
 		break;
+
+	case TV_SCROLL:
+		if (o_ptr->sval == SV_SCROLL_FIREWORK) {
+			o_ptr->xtra1 = rand_int(3); //size
+			o_ptr->xtra2 = rand_int(7); //colour
+		}
+		break;
 	}
 }
 
@@ -5393,8 +5405,8 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			break;
 
 		case TV_CHEST:
-	                /* Traps (placed in a_m_aux_4) won't be placed on a level 0 object */
-	                determine_level_req(lev, o_ptr); /* usually lev == dungeonlevel (+ x for vaults) */
+			/* Traps (placed in a_m_aux_4) won't be placed on a level 0 object */
+			determine_level_req(lev, o_ptr); /* usually lev == dungeonlevel (+ x for vaults) */
 			a_m_aux_4(o_ptr, lev, power, resf);
 			/* that's it already */
 			return;

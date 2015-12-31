@@ -6077,7 +6077,7 @@ if (cfg.unikill_format) {
 					qq_ptr->to_d = a_ptr->to_d;
 					qq_ptr->weight = a_ptr->weight;
 
-				    	object_desc(Ind, o_name, qq_ptr, TRUE, 3);
+					object_desc(Ind, o_name, qq_ptr, TRUE, 3);
 					s_printf("DROP_CHOSEN: '%s'\n", o_name);
 
 					if (local_quark) {
@@ -6148,6 +6148,26 @@ if (cfg.unikill_format) {
 	}
  #endif
 #endif
+
+	/* Hack - can find fireworks on new years eve */
+	if (season_newyearseve && do_item &&
+	    ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT)) || /*note: demons/undead don't do fireworks..*/
+	    (strchr("hHkpty", r_ptr->d_char))) &&
+	    ((r_ptr->flags1 & (RF1_DROP_60 | RF1_DROP_90 | RF1_DROP_1D2 | RF1_DROP_2D2 | RF1_DROP_3D2 | RF1_DROP_4D2))
+	    || (r_ptr->flags0 & RF0_DROP_1))
+	    && (!rand_int(100)
+	    || p_ptr->admin_dm || p_ptr->admin_wiz)) {
+		/* Get local object */
+		qq_ptr = &forge;
+
+		/* Prepare to make some Firestone */
+		invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_FIREWORK));
+		qq_ptr->number = 1;
+		apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
+
+		s_printf("NEWYEARSEVE: Dropped fireworks (%d,%d) for '%s'.\n", qq_ptr->xtra1, qq_ptr->xtra2, p_ptr->name);
+		drop_near(qq_ptr, -1, wpos, y, x);
+	}
 
 	/* for when a quest giver turned non-invincible */
 	if (m_ptr->questor) {

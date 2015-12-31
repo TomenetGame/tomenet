@@ -2898,7 +2898,7 @@
 #endif
 #define STATIC_COLORS	6	/* The first n colour flavours, which aren't randomised */
 #define MAX_SHROOM	20	/* Used with mushrooms (min 20) */ 
-#define MAX_TITLES	72	/* Used with scrolls (min 55) */ 
+#define MAX_TITLES	73	/* Used with scrolls (min 55) */ 
 #define MAX_SYLLABLES	164	/* Used with scrolls (see below) */ 
 
 
@@ -3577,6 +3577,7 @@
 #define SV_SCROLL_EMERGENCY_RECALL	69
 #define SV_SCROLL_EMERGENCY_PARTY_RECALL	70
 #define SV_SCROLL_CHEQUE		71 /* for player houses; read to redeem, easily. */
+#define SV_SCROLL_FIREWORK		72 /* new years eve */
 
 
 /* The "sval" codes for TV_POTION */

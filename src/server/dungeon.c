@@ -8567,7 +8567,7 @@ static void process_firework_creation() {
 		/* Launch multiple rockets ;) - mikaelh */
 		for (i = 0; i < fireworks; i++) {
 			/* "type" determines colour and explosion style */
-			cast_fireworks(&wpos, rand_int(MAX_WID - 120) + 60, rand_int(MAX_HGT - 40) + 20);
+			cast_fireworks(&wpos, rand_int(MAX_WID - 120) + 60, rand_int(MAX_HGT - 40) + 20, -1);
 		}
 	} else {
 		fireworks_delay--;

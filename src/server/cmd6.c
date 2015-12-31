@@ -2743,8 +2743,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 					msg_print(Ind, "You have a strange feeling of loss.");
 					break;
 				}
-				ident = reveal_wilderness_around_player(Ind,
-						p_ptr->wpos.wy, p_ptr->wpos.wx, 0, 3);
+				ident = reveal_wilderness_around_player(Ind, p_ptr->wpos.wy, p_ptr->wpos.wx, 0, 3);
 				//if (ident) wild_display_map(Ind);
 				if (ident) msg_print(Ind, "You seem to get a feel for the place.");
 #else
@@ -2784,7 +2783,17 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 #endif
 				break;
 			}
-
+			case SV_SCROLL_FIREWORK:
+				if (!season_newyearseve) {
+					msg_print(Ind, "The scroll buzzes for a moment but nothing happens.");
+					*keep = TRUE;
+					break;
+				}
+				msg_print(Ind, "You release a magical firework from the scroll!");
+				msg_format_near(Ind, "%s releases a magical firework from a scroll!", p_ptr->name);
+				cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * 7 + o_ptr->xtra2); //size, colour
+				ident = TRUE;
+				break;
 		}
 	} else if (tval == TV_PARCHMENT) {
 #if 0

@@ -849,6 +849,7 @@ void flavor_init(void) {
 		if (i == SV_SCROLL_CHEQUE) scroll_col[i] = TERM_L_UMBER;
 		else
 #endif
+		if (i == SV_SCROLL_FIREWORK) scroll_col[i] = TERM_L_RED; else
 		scroll_col[i] = TERM_WHITE;
 	}
 
@@ -1671,8 +1672,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
  * Print a char "c" into a string "t", as if by sprintf(t, "%c", c),
  * and return a pointer to the terminator (t + 1).
  */
-static char *object_desc_chr(char *t, char c)
-{
+static char *object_desc_chr(char *t, char c) {
 	/* Copy the char */
 	*t++ = c;
 
@@ -1683,13 +1683,11 @@ static char *object_desc_chr(char *t, char c)
 	return (t);
 }
 
-
 /*
  * Print a string "s" into a string "t", as if by strcpy(t, s),
  * and return a pointer to the terminator.
  */
-static char *object_desc_str(char *t, cptr s)
-{
+static char *object_desc_str(char *t, cptr s) {
 	/* Copy the string */
 	while (*s) *t++ = *s++;
 
@@ -1700,24 +1698,20 @@ static char *object_desc_str(char *t, cptr s)
 	return (t);
 }
 
-
-
 /*
  * Print an unsigned number "n" into a string "t", as if by
  * sprintf(t, "%u", n), and return a pointer to the terminator.
  */
-static char *object_desc_num(char *t, uint n)
-{
+static char *object_desc_num(char *t, uint n) {
 	uint p;
 
-        if (n > 99999) n = 99999;
+	if (n > 99999) n = 99999;
 
 	/* Find "size" of "n" */
 	for (p = 1; n >= p * 10; p = p * 10) /* loop */;
 
 	/* Dump each digit */
-	while (p >= 1)
-	{
+	while (p >= 1) {
 		/* Dump the digit */
 		*t++ = '0' + n / p;
 
@@ -1735,31 +1729,24 @@ static char *object_desc_num(char *t, uint n)
 	return (t);
 }
 
-
-
-
 /*
  * Print an signed number "v" into a string "t", as if by
  * sprintf(t, "%+d", n), and return a pointer to the terminator.
  * Note that we always print a sign, either "+" or "-".
  */
-static char *object_desc_int(char *t, sint v)
-{
+static char *object_desc_int(char *t, sint v) {
 	uint p, n;
 
 	/* Negative */
-	if (v < 0)
-	{
+	if (v < 0) {
 		/* Take the absolute value */
 		n = 0 - v;
 
 		/* Use a "minus" sign */
 		*t++ = '-';
 	}
-
 	/* Positive (or zero) */
-	else
-	{
+	else {
 		/* Use the actual number */
 		n = v;
 
@@ -1771,8 +1758,7 @@ static char *object_desc_int(char *t, sint v)
 	for (p = 1; n >= p * 10; p = p * 10) /* loop */;
 
 	/* Dump each digit */
-	while (p >= 1)
-	{
+	while (p >= 1) {
 		/* Dump the digit */
 		*t++ = '0' + n / p;
 
@@ -1790,29 +1776,23 @@ static char *object_desc_int(char *t, sint v)
 	return (t);
 }
 
-
-
 /*
  * Print an unsigned number "n" into a string "t", as if by
  * sprintf(t, "%u%%", n), and return a pointer to the terminator.
  */
-static char *object_desc_per(char *t, sint v)
-{
+static char *object_desc_per(char *t, sint v) {
 	uint p, n;
 
 	/* Negative */
-	if (v < 0)
-	{
+	if (v < 0) {
 		/* Take the absolute value */
 		n = 0 - v;
 
 		/* Use a "minus" sign */
 		*t++ = '-';
 	}
-
 	/* Positive (or zero) */
-	else
-	{
+	else {
 		/* Use the actual number */
 		n = v;
 	}
@@ -1821,8 +1801,7 @@ static char *object_desc_per(char *t, sint v)
 	for (p = 1; n >= p * 10; p = p * 10) /* loop */;
 
 	/* Dump each digit */
-	while (p >= 1)
-	{
+	while (p >= 1) {
 		/* Dump the digit */
 		*t++ = '0' + n / p;
 
@@ -2138,7 +2117,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 #ifdef NEW_WILDERNESS_MAP_SCROLLS
 			/* For new wilderness mapping code, where it's actually a puzzle piece of the map */
 			if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) {
-				basenm = "& Wilderness map piece~";
+				basenm = "& Wilderness Map Piece~";
 				break;
 			}
 #endif
@@ -2450,10 +2429,29 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* Append the "kind name" to the "base name" */
 	if (append_name) {
 		t = object_desc_str(t, !(mode & 8) ? " of " : " ");
-		if (!skip_base_article)
-			t = object_desc_str(t, (k_name + k_ptr->name));
-		else
-			t = object_desc_str(t, (k_name + k_ptr->name + 4));
+
+		if (o_ptr->sval == SV_SCROLL_FIREWORK) {
+			switch (o_ptr->xtra1) {
+			case 0: t = object_desc_str(t, "Small "); break;
+			case 1: t = object_desc_str(t, "Medium "); break;
+			case 2: t = object_desc_str(t, "Big "); break;
+			}
+			switch (o_ptr->xtra2) {
+			case 0: t = object_desc_str(t, "Red"); break;
+			case 1: t = object_desc_str(t, "Blue"); break;
+			case 2: t = object_desc_str(t, "Green"); break;
+			case 3: t = object_desc_str(t, "Golden"); break;
+			case 4: t = object_desc_str(t, "Mixed"); break;
+			case 5: t = object_desc_str(t, "Purple"); break;
+			case 6: t = object_desc_str(t, "Elemental"); break;
+			}
+			t = object_desc_str(t, " Firework");
+		} else {
+			if (!skip_base_article)
+				t = object_desc_str(t, (k_name + k_ptr->name));
+			else
+				t = object_desc_str(t, (k_name + k_ptr->name + 4));
+		}
 	}
 
 	if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY &&
