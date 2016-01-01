@@ -3739,7 +3739,7 @@ W:127:255:5:1
 A:127/255
 F:EASY_KNOW
 D:Releases a magical firework rocket.
-D:Can only be used during new years eve season.
+#D:Can only be used during new years eve season.
 
 
 ### Numbers 447-458 unused ###

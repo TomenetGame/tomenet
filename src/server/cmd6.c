@@ -2784,11 +2784,13 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				break;
 			}
 			case SV_SCROLL_FIREWORK:
+#if 0
 				if (!season_newyearseve) {
 					msg_print(Ind, "The scroll buzzes for a moment but nothing happens.");
 					*keep = TRUE;
 					break;
 				}
+#endif
 				msg_print(Ind, "You release a magical firework from the scroll!");
 				msg_format_near(Ind, "%s releases a magical firework from a scroll!", p_ptr->name);
 				cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * 7 + o_ptr->xtra2); //size, colour
