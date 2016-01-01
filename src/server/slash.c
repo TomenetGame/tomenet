@@ -1514,9 +1514,10 @@ void do_slash_cmd(int Ind, char *message) {
 			do_cmd_empty_potion(Ind, slot - 65);
 			return;
 		}
-		else if (prefix(message, "/dice") || !strcmp(message, "/d") ||
-		    prefix(message, "/roll") || prefix(message, "/r")
-		    || prefix(message, "/die")) {
+		else if ((prefix(message, "/dice") || !strcmp(message, "/d") ||
+		    prefix(message, "/roll") || !strcmp(message, "/r")
+		    || prefix(message, "/die"))
+		    && !prefix(message, "/rollchar")) {
 			int rn = 0;
 
 			if (p_ptr->body_monster) {
