@@ -4037,7 +4037,19 @@ void do_slash_cmd(int Ind, char *message) {
 #if 0 /* don't check for account name */
 				msg_print(Ind, "That character name does not exist.");
 #else /* check for account name */
-				if (!GetAccount(&acc, message3, NULL, FALSE)) msg_print(Ind, "That character or account name does not exist.");
+				if (!GetAccount(&acc, message3, NULL, FALSE)) {
+ #if 1 /* hack: also do a 'whowas' here by checking the reserved names list */
+					for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+						if (!reserved_name_character[i][0]) break;
+
+						if (!strcmp(reserved_name_character[i], message3)) {
+							msg_format(Ind, "That deceased character belonged to account: \377s%s", reserved_name_account[i]);
+							return;
+						}
+					}
+ #endif
+					msg_print(Ind, "That character or account name does not exist.");
+				}
 				else msg_print(Ind, "There is no such character, but there is an account of that name.");
 #endif
 				return;
