@@ -6153,6 +6153,7 @@ if (cfg.unikill_format) {
 	if (season_newyearseve &&
 	    ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT)) || /*note: demons/undead don't do fireworks..*/
 	    (strchr("hHkpty", r_ptr->d_char))) &&
+	    !(r_ptr->flags7 & RF7_AQUATIC) &&
 #if 0
 	    do_item &&
 	    ((r_ptr->flags1 & (RF1_DROP_60 | RF1_DROP_90 | RF1_DROP_1D2 | RF1_DROP_2D2 | RF1_DROP_3D2 | RF1_DROP_4D2))
