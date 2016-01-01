@@ -293,6 +293,21 @@ void world_comm(int fd, int arg) {
 
 						if (!(p_id = lookup_player_id(p + 5))) {
 							struct account acc;
+							bool done = FALSE;
+
+#if 1 /* hack: also do a 'whowas' here by checking the reserved names list */
+							for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+								if (!reserved_name_character[i][0]) break;
+
+								if (!strcmp(reserved_name_character[i], p + 5)) {
+									msg_to_irc(format("That deceased character belonged to account: %s", reserved_name_account[i]));
+									done = TRUE;
+									break;
+								}
+							}
+							if (done) break;
+#endif
+
 #if 0 /* don't check for account name */
 							msg_to_irc("That character name does not exist.");
 #else /* check for account name */
