@@ -3735,7 +3735,7 @@ G:?:R
 I:70:72:0
 #W:3:0:5:0
 #A:3/50:10/50
-W:127:0:5:0
+W:127:255:5:1
 A:127/255
 F:EASY_KNOW
 D:Releases a magical firework rocket.
