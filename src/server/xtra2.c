@@ -6143,6 +6143,7 @@ if (cfg.unikill_format) {
 
 		qq_ptr->bpval = 8 + rand_int(3); //make it decent
 		qq_ptr->ident &= ~ID_CURSED; //paranoia
+		determine_level_req(0, qq_ptr);
 
 		drop_near(qq_ptr, -1, wpos, y, x);
 	}
