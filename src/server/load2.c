@@ -592,6 +592,9 @@ static void rd_item(object_type *o_ptr) {
 		if (o_ptr->pval > 15) o_ptr->pval = 15;
 	}
 
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK)
+		o_ptr->level = 1;
+
 	/* ---------------------------------------------------------------------- */
 
 

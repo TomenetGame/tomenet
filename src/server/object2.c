@@ -4621,7 +4621,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 		/* Critical hits */
 		case SV_RING_CRIT:
 			/* Stat bonus */
-                                        o_ptr->bpval = m_bonus(10, level);
+			o_ptr->bpval = m_bonus(10, level);
 			if (o_ptr->bpval < 1) o_ptr->bpval = 1;
 
 			/* Cursed */
@@ -5118,6 +5118,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 		if (o_ptr->sval == SV_SCROLL_FIREWORK) {
 			o_ptr->xtra1 = rand_int(3); //size
 			o_ptr->xtra2 = rand_int(7); //colour
+			o_ptr->level = 1;
 		}
 		break;
 	}
@@ -5622,21 +5623,41 @@ void determine_level_req(int level, object_type *o_ptr) {
 	/* -------------------- Exceptions -------------------- */
 
 
-	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) {
-		o_ptr->level = ring_of_polymorph_level(r_info[o_ptr->pval].level);
+	switch (o_ptr->tval) {
+	case TV_RING:
+		if (o_ptr->sval == SV_RING_POLYMORPH) {
+			o_ptr->level = ring_of_polymorph_level(r_info[o_ptr->pval].level);
+			return;
+		}
+		break;
+	case TV_SOFT_ARMOR:
+		if (o_ptr->sval == SV_COSTUME) {
+			o_ptr->level = 1;
+			return;
+		}
+		break;
+	case TV_SCROLL:
+		switch (o_ptr->sval) {
+		case SV_SCROLL_CHEQUE:
+		case SV_SCROLL_FIREWORK:
+			o_ptr->level = 1;
+			return;
+		}
+		break;
+	case TV_CHEST:
+		/* chest level is base for calculating the item level,
+		   so it must be like a dungeon level - C. Blue
+		   (base = k_info level / 2, level = dungeonlevel usually) */
+		o_ptr->level = base + (level * 2) / 4;
 		return;
 	}
-	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_COSTUME) return;
-
-	/* Unowned yet */
-//	o_ptr->owner = 0;
 
 	/* artifact */
 	if (o_ptr->name1) {
 	 	/* Randart */
 		if (o_ptr->name1 == ART_RANDART) {
 			a_ptr = randart_make(o_ptr);
-			if (a_ptr == (artifact_type*)NULL){
+			if (a_ptr == (artifact_type*)NULL) {
 				o_ptr->name1 = 0;
 				o_ptr->level = 0;
 				return;
@@ -5651,14 +5672,6 @@ void determine_level_req(int level, object_type *o_ptr) {
 			base = a_ptr->level;
 			base += 30; /*general increase for artifacts! */
 		}
-	}
-
-
-	if (o_ptr->tval == TV_CHEST) {
-		o_ptr->level = base + (level * 2) / 4;	/* chest level is base for calculating the item level,
-							so it must be like a dungeon level - C. Blue
-							(base = k_info level / 2, level = dungeonlevel usually) */
-		return;
 	}
 
 
