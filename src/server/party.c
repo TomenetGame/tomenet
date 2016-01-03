@@ -590,6 +590,12 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	struct account acc;
 	int diff, min;
 
+
+	/* special exceptions (admins and their player accounts) */
+	if (!strcasecmp(name, "mikaelh") || /* vs 'mikael' */
+	    !strcasecmp(name, "c. blue")) /* vs 'c.blue' */
+		return FALSE; //allow!
+
 	WIPE(&acc, struct account);
 
 	condense_name(tmpname, name);
