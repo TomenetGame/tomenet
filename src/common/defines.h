@@ -572,10 +572,13 @@
 /* Turn currently invalid items into seals? Otherwise they are simply deleted. */
 #define SEAL_INVALID_OBJECTS
 
-
 /* Pre-set owner for DROP_CHOSEN items, so you can't cheeze them to someone else
    by ground-IDing them, then have someone else to pick them up! (especially for Nazgul rings) */
 #define PRE_OWN_DROP_CHOSEN
+
+/* Base level for speed rings of bpval >= 0 that gets added to their bpval. [31..35]
+   At 35 this results in level 50 for +15 speed rings, so that should be max. */
+#define SPEED_RING_BASE_LEVEL	35
 
 
 /*

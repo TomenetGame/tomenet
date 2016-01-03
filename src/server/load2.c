@@ -581,9 +581,10 @@ static void rd_item(object_type *o_ptr) {
 #endif
 
 	/* slightly increased */
-	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->level
-	    && o_ptr->level < 34 + o_ptr->bpval)
-		o_ptr->level = 34 + o_ptr->bpval;
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED
+	    && o_ptr->level && o_ptr->bpval > 0
+	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
+		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
 
 	/* modified arms/legs for more transparency and less tediousness */
 	if (o_ptr->tval == TV_GOLEM &&
