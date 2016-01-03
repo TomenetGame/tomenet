@@ -4442,6 +4442,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
 		if (o_ptr->sigil) can_have_hidden_powers = TRUE;
 
+		/* Multi-Hued DSMs need *id* to reveal their immunities */
+		if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) can_have_hidden_powers = TRUE;
+
 		/* Just add the fixed ego flags that we know to be on the item */
 		if (id) {
 			if (o_ptr->name2) {
@@ -4949,23 +4952,23 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
         if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
 		if (!(f2 & (TR2_IM_FIRE))) {
-		        if (o_ptr->xtra2 & 0x01) fprintf(fff, "It provides immunity to fire.\n");
+		        if (eff_full && (o_ptr->xtra2 & 0x01)) fprintf(fff, "It provides immunity to fire.\n");
 			else fprintf(fff, "It provides resistance to fire.\n");
 		}
 		if (!(f2 & (TR2_IM_COLD))) {
-		        if (o_ptr->xtra2 & 0x02) fprintf(fff, "It provides immunity to cold.\n");
+		        if (eff_full && (o_ptr->xtra2 & 0x02)) fprintf(fff, "It provides immunity to cold.\n");
 			else fprintf(fff, "It provides resistance to cold.\n");
 		}
 		if (!(f2 & (TR2_IM_ELEC))) {
-		        if (o_ptr->xtra2 & 0x04) fprintf(fff, "It provides immunity to electricity.\n");
+		        if (eff_full && (o_ptr->xtra2 & 0x04)) fprintf(fff, "It provides immunity to electricity.\n");
 		        else fprintf(fff, "It provides resistance to electricity.\n");
 		}
 		if (!(f2 & (TR2_IM_ACID))) {
-		        if (o_ptr->xtra2 & 0x08) fprintf(fff, "It provides immunity to acid.\n");
+		        if (eff_full && (o_ptr->xtra2 & 0x08)) fprintf(fff, "It provides immunity to acid.\n");
 			else fprintf(fff, "It provides resistance to acid.\n");
 		}
 		if (!(f5 & (TR5_IM_POISON))) {
-			if (o_ptr->xtra2 & 0x10) fprintf(fff, "It provides immunity to poison.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x10)) fprintf(fff, "It provides immunity to poison.\n");
 			else fprintf(fff, "It provides resistance to poison.\n");
 		}
 	} else {
