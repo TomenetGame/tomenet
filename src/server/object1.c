@@ -4616,17 +4616,26 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		if (full || is_admin(p_ptr)) {
 #endif
 			if (true_artifact_p(o_ptr)) {
-				ca_ptr = " true artifact";
 #ifdef FLUENT_ARTIFACT_RESETS
+				int timeout = FALSE
+ #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+				    || a_info[o_ptr->name1].iddc
+ #endif
+ #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
+				    || a_info[o_ptr->name1].winner
+ #endif
+				     ? a_info[o_ptr->name1].timeout / 2 : a_info[o_ptr->name1].timeout;
+
  #ifdef RING_OF_PHASING_NO_TIMEOUT
 				if (o_ptr->name1 == ART_PHASING) strcpy(timeleft, " (It will reset when Zu-Aon is defeated once more)");
 				else
  #endif
-				if (a_info[o_ptr->name1].timeout <= 0 || cfg.persistent_artifacts) ;
-				else if (a_info[o_ptr->name1].timeout < 60 * 2) sprintf(timeleft, " (\377r%d minutes\377%c till reset)", a_info[o_ptr->name1].timeout, a);
-				else if (a_info[o_ptr->name1].timeout < 60 * 24 * 2) sprintf(timeleft, " (\377y%d hours\377%c till reset)", a_info[o_ptr->name1].timeout / 60, a);
-				else sprintf(timeleft, " (%d days till reset)", a_info[o_ptr->name1].timeout / 60 / 24);
+				if (timeout <= 0 || cfg.persistent_artifacts) ;
+				else if (timeout < 60 * 2) sprintf(timeleft, " (\377r%d minutes\377%c till reset)", timeout, a);
+				else if (timeout < 60 * 24 * 2) sprintf(timeleft, " (\377y%d hours\377%c till reset)", timeout / 60, a);
+				else sprintf(timeleft, " (%d days till reset)", timeout / 60 / 24);
 #endif
+				ca_ptr = " true artifact";
 			} else {
 				if (!is_admin(p_ptr)) ca_ptr = " random artifact";
 				else ca_ptr = format(" random artifact (ap = %d, %d Au)", artifact_power(randart_make(o_ptr)), object_value_real(0, o_ptr));

@@ -7360,24 +7360,45 @@ void dungeon(void) {
 	/* handle in 1-minute resolution - assume we have less artifacts than 60*cfg.fps */
 	i = turn % (cfg.fps * 60);
 	if (!cfg.persistent_artifacts && i < max_a_idx && a_info[i].timeout > 0) {
+ #if defined(IDDC_ARTIFACT_FAST_TIMEOUT) || defined(WINNER_ARTIFACT_FAST_TIMEOUT)
+		bool double_speed = FALSE;
+ #endif
+
  #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
 		if (a_info[i].iddc) {
 			a_info[i].timeout -= 2;
+			double_speed = TRUE;
+
+			/* hack: don't accidentally skip erasure/warning */
 			if (a_info[i].timeout == -1) a_info[i].timeout = 0;
+			//Not required because of double_speed calc:
+			//else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING - 1) a_info[i].timeout = FLUENT_ARTIFACT_WARNING;
 		} else
  #endif
  #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
 		if (a_info[i].winner) {
 			a_info[i].timeout -= 2;
+			double_speed = TRUE;
+
+			/* hack: don't accidentally skip erasure/warning */
 			if (a_info[i].timeout == -1) a_info[i].timeout = 0;
+			//Not required because of double_speed calc:
+			//else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING - 1) a_info[i].timeout = FLUENT_ARTIFACT_WARNING;
 		} else
  #endif
 		a_info[i].timeout--;
 
+		/* erase? */
 		if (a_info[i].timeout == 0) erase_artifact(i);
+		/* just warn? */
+ #if defined(IDDC_ARTIFACT_FAST_TIMEOUT) || defined(WINNER_ARTIFACT_FAST_TIMEOUT)
+		else if ((double_speed ? a_info[i].timeout / 2 : a_info[i].timeout) == FLUENT_ARTIFACT_WARNING) {
+ #else
 		else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING) {
+ #endif
 			int j, k;
 			char o_name[ONAME_LEN];
+
 			for (j = 1; j <= NumPlayers; j++) {
 				p_ptr = Players[j];
 				if (p_ptr->id != a_info[i].carrier) continue;

@@ -2420,6 +2420,9 @@ static int Handle_login(int ind) {
 	player_type *p_ptr = NULL;
 	object_type forge, *o_ptr = &forge;
 	int i, j;
+#ifdef FLUENT_ARTIFACT_RESETS
+	int timeout;
+#endif
 	bool options[OPT_MAX], greeting;
 	char namebuf1[80], namebuf2[80], o_name[ONAME_LEN];
 	cptr title = "";
@@ -3060,7 +3063,17 @@ static int Handle_login(int ind) {
 		j = p_ptr->inventory[i].name1;
 		if (!j || j == ART_RANDART) continue;
 		if (!(p_ptr->inventory[i].ident & ID_MENTAL)) continue;
-		if (a_info[j].timeout <= 0 || a_info[j].timeout > FLUENT_ARTIFACT_WARNING || cfg.persistent_artifacts) continue;
+
+		timeout = FALSE
+ #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+		    || a_info[j].iddc
+ #endif
+ #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
+		    || a_info[j].winner
+ #endif
+		     ? a_info[j].timeout / 2 : a_info[j].timeout;
+
+		if (timeout <= 0 || timeout > FLUENT_ARTIFACT_WARNING || cfg.persistent_artifacts) continue;
 		object_desc(NumPlayers, o_name, &p_ptr->inventory[i], TRUE, 128);
 		msg_format(NumPlayers, "\374\377RYour %s will vanish soon!", o_name);
 	}
