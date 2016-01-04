@@ -3074,7 +3074,7 @@ static int Handle_login(int ind) {
 		     ? a_info[j].timeout / 2 : a_info[j].timeout;
 
 		if (timeout <= 0 || timeout > FLUENT_ARTIFACT_WARNING || cfg.persistent_artifacts) continue;
-		object_desc(NumPlayers, o_name, &p_ptr->inventory[i], TRUE, 128);
+		object_desc(NumPlayers, o_name, &p_ptr->inventory[i], TRUE, 128 + 256);
 		msg_format(NumPlayers, "\374\377RYour %s will vanish soon!", o_name);
 	}
 	if (p_ptr->fluent_artifact_reset == TRUE) {

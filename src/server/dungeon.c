@@ -7407,7 +7407,7 @@ void dungeon(void) {
 					if (!p_ptr->inventory[k].k_idx) continue;
 					if (p_ptr->inventory[k].name1 != i) continue;
 					if (!(p_ptr->inventory[k].ident & ID_MENTAL)) continue;
-					object_desc(j, o_name, &p_ptr->inventory[k], TRUE, 128);
+					object_desc(j, o_name, &p_ptr->inventory[k], TRUE, 128 + 256);
 					msg_format(j, "\374\377RYour %s will vanish soon!", o_name);
 					j = NumPlayers;
 					break;
