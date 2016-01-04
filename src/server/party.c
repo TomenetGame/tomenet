@@ -4727,7 +4727,7 @@ int player_id_list(int **list, u32b account) {
 		/* Check this chain */
 		while (ptr) {
 			/* One more entry */
-			if(!account || ptr->account == account)
+			if (!account || ptr->account == account)
 				len++;
 
 			/* Next entry in chain */
@@ -4774,6 +4774,34 @@ int player_id_list(int **list, u32b account) {
 	if (account && len > max_cpa) len = max_cpa;
 
 	return len;
+}
+
+/* Change account that a player belong to.
+   'Ind' is only for giving feedback msg. May be 0 to disable. */
+void player_change_account(int Ind, int id, u32b new_account) {
+	int i;
+	hash_entry *ptr;
+	cptr accname;
+
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		ptr = hash_table[i];
+		while (ptr) {
+			if (ptr->id == id) {
+				accname = lookup_accountname2(new_account);
+				if (!accname[0]) {
+					s_printf("player_change_account: '%s' from '%s' unchanged due to non-existant account #%d.\n", ptr->name, ptr->accountname, new_account);
+					if (Ind) msg_format(Ind, "player_change_account: '%s' from '%s' unchanged due to non-existant account #%d.", ptr->name, ptr->accountname, new_account);
+				} else {
+					s_printf("player_change_account: '%s' moved from '%s' to '%s'.\n", ptr->name, ptr->accountname, accname);
+					if (Ind) msg_format(Ind, "player_change_account: '%s' moved from '%s' to '%s'.", ptr->name, ptr->accountname, accname);
+				}
+				ptr->accountname = strdup(accname);
+				ptr->account = new_account;
+				return;
+			}
+			ptr = ptr->next;
+		}
+	}
 }
 
 /*

@@ -6715,7 +6715,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 					n = player_id_list(&id_list, acc.id);
 					/* Display all account characters here */
-					for(i = 0; i < n; i++) {
+					for (i = 0; i < n; i++) {
 //unused huh					u16b ptype = lookup_player_type(id_list[i]);
 						/* do not change protocol here */
 						tmpm = lookup_player_mode(id_list[i]);
@@ -6732,9 +6732,28 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				WIPE(&acc, struct account);
 				return;
+			} else if (prefix(message, "/changeacc")) { /* changes the accout a character belongs to! */
+				struct account acc;
+				int id;
+				char *colon;
 
-			}
-			else if (prefix(message, "/addnewdun")) {
+				if (!(colon = strchr(message3, ':'))) {
+					msg_print(Ind, "Usage: /changeacc <character name:new account name>");
+					return;
+				}
+				*colon = 0;
+				colon++;
+				if (!(id = lookup_player_id(message3))) {
+					msg_format(Ind, "Character name '%s' not found.", message3);
+					return;
+				}
+				if (!Admin_GetAccount(&acc, colon)) {
+					msg_format(Ind, "Account name '%s' not found.", colon);
+					return;
+				}
+				player_change_account(Ind, id, acc.id);
+				return;
+			} else if (prefix(message, "/addnewdun")) {
 				msg_print(Ind, "Trying to add new dungeons..");
 				wild_add_new_dungeons(tk ? Ind : 0);
 				msg_print(Ind, "done.");
