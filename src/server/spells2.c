@@ -1254,6 +1254,10 @@ int remove_curse_aux(int Ind, int all, int pInd) {
 		msg_format(Ind, "Your %s flash%s blue!", o_name, o_ptr->number == 1 ? "es" : "");
 #endif
 
+#ifdef VAMPIRES_INV_CURSED
+		if (i >= INVEN_WIELD) reverse_cursed(o_ptr);
+#endif
+
 		/* Uncurse it */
 		o_ptr->ident &= ~ID_CURSED;
 
