@@ -816,7 +816,7 @@ int check_account(char *accname, char *c_name) {
 		   rule for newly created characters, to avoid someone being unable to login on
 		   an already existing character that unfortunately violates this rule :/ */
 		int *id_list, chars;
-                chars = player_id_list(&id_list, acc.id);
+		chars = player_id_list(&id_list, acc.id);
 		for (i = 0; i < chars; i++)
 			if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
 		if (chars) C_KILL(id_list, chars, int);
@@ -832,7 +832,7 @@ int check_account(char *accname, char *c_name) {
 #ifndef RPG_SERVER
 		int max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, plus_free = 0;
 #endif
-                chars = player_id_list(&id_list, acc.id);
+		chars = player_id_list(&id_list, acc.id);
 #ifdef RPG_SERVER /* Allow only up to 1 character per account! */
 		/* If this account DOES have characters, but the chosen character name is
 		   NOT equal to the first character of this account, don't allow it!
@@ -1393,6 +1393,7 @@ int guild_create(int Ind, cptr name) {
  */
 void party_check(int Ind) {
 	int i, id;
+
 	for (i = 1; i < MAX_PARTIES; i++) {
 		if (parties[i].members != 0){
 			if (!(id = lookup_player_id(parties[i].owner))) {
@@ -1490,7 +1491,7 @@ int party_create(int Ind, cptr name) {
 		return FALSE;
 	}
 
-        /* If he's party owner, it's name change */
+	/* If he's party owner, it's name change */
 	if (streq(parties[p_ptr->party].owner, p_ptr->name)) {
 		if (parties[p_ptr->party].mode != PA_NORMAL) {
 			msg_print(Ind, "\377yYour party is an Iron Team. Choose '2) Create an Iron Team' instead.");
@@ -1604,7 +1605,7 @@ int party_create_ironteam(int Ind, cptr name) {
 		return FALSE;
 	}
 
-        /* If he's party owner, it's name change */
+	/* If he's party owner, it's name change */
 	if (streq(parties[p_ptr->party].owner, p_ptr->name)) {
 		if (parties[p_ptr->party].mode != PA_IRONTEAM) {
 			msg_print(Ind, "\377yYour party isn't an Iron Team. Choose '1) Create a party' instead.");
@@ -1734,7 +1735,7 @@ int guild_add(int adder, cptr name) {
 	}
 	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
-                if (lookup_player_guild(id_list[i]) != guild_id) continue;
+		if (lookup_player_guild(id_list[i]) != guild_id) continue;
 
 		if (id_list[i] != guilds[guild_id].master &&
 		    (!(guilds[guild_id].flags & GFLG_ALLOW_ADDERS) ||
@@ -1745,10 +1746,10 @@ int guild_add(int adder, cptr name) {
 		s_printf("GUILD_ADD_FAR: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
 		far_success = TRUE;
 		break;
-        }
-        if (ids) C_KILL(id_list, ids, int);
-        /* failure? */
-        if (!far_success)
+	}
+	if (ids) C_KILL(id_list, ids, int);
+	/* failure? */
+	if (!far_success)
 #endif
 
 	/* Make sure this isn't an impostor */
@@ -1826,7 +1827,7 @@ int guild_add_self(int Ind, cptr guild) {
 	}
 	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
-                if (lookup_player_guild(id_list[i]) == guild_id) {
+		if (lookup_player_guild(id_list[i]) == guild_id) {
 			member = TRUE;
 
 			/* Everlasting and other chars cannot be in the same guild */
@@ -1852,15 +1853,15 @@ int guild_add_self(int Ind, cptr guild) {
 
 			/* success */
 			break;
-                }
-        }
-        if (ids) C_KILL(id_list, ids, int);
-        /* failure? */
-        if (i == ids) {
+		}
+	}
+	if (ids) C_KILL(id_list, ids, int);
+	/* failure? */
+	if (i == ids) {
 		if (!member) msg_print(Ind, "You do not have any character that is member of that guild.");
 		else msg_print(Ind, "You have no character in that guild that is allowed to add others.");
 		return FALSE;
-        }
+	}
 
 	/* Tell the guild about its new member */
 	guild_msg_format(guild_id, "\374\377y%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
@@ -2085,17 +2086,17 @@ int party_add_self(int Ind, cptr party) {
 	}
 	ids = player_id_list(&id_list, acc.id);
 	for (i = 0; i < ids; i++) {
-                if (lookup_player_party(id_list[i]) == party_id) {
+		if (lookup_player_party(id_list[i]) == party_id) {
 			/* success */
 			break;
-                }
-        }
-        if (ids) C_KILL(id_list, ids, int);
-        /* failure? */
-        if (i == ids) {
+		}
+	}
+	if (ids) C_KILL(id_list, ids, int);
+	/* failure? */
+	if (i == ids) {
 		msg_print(Ind, "You do not have any character that is member of that party.");
 		return FALSE;
-        }
+	}
 
 	/* Log - security */
 	s_printf("PARTY_ADD_SELF: %s has been added to %s.\n", p_ptr->name, parties[party_id].name);
@@ -2143,10 +2144,10 @@ static void erase_guild_key(int id) {
 
 #if 0 /* account-based */
 	int j;
-        FILE *fp;
-        char buf[1024];
-        cptr cname;
-        struct account acc;
+	FILE *fp;
+	char buf[1024];
+	cptr cname;
+	struct account acc;
 #else /* just hash-table (character) based */
 	int slot;
 	hash_entry *ptr;
@@ -2155,17 +2156,17 @@ static void erase_guild_key(int id) {
 
 
 	/* objects on the floor/in monster inventories */
-        for (i = 0; i < o_max; i++) {
-                o_ptr = &o_list[i];
-                /* Skip dead objects */
-                if (!o_ptr->k_idx) continue;
-                /* skip non-guild keys */
-                if (o_ptr->tval != TV_KEY || o_ptr->sval != SV_GUILD_KEY) continue;
+	for (i = 0; i < o_max; i++) {
+		o_ptr = &o_list[i];
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+		/* skip non-guild keys */
+		if (o_ptr->tval != TV_KEY || o_ptr->sval != SV_GUILD_KEY) continue;
 		/* Skip wrong guild keys */
 		if (o_ptr->pval != id) continue;
 
 		/* in monster inventory */
-                if (o_ptr->held_m_idx) {
+		if (o_ptr->held_m_idx) {
 			m_ptr = &m_list[o_ptr->held_m_idx];
 			/* 1st object held is the key? */
 			if (m_ptr->hold_o_idx == i) {
@@ -2190,16 +2191,16 @@ static void erase_guild_key(int id) {
 					i++;
 				}
 			}
-                }
+		}
 
 		s_printf("GUILD_KEY_ERASE: floor\n");
-                delete_object_idx(i, TRUE);
-                return;
-        }
+		delete_object_idx(i, TRUE);
+		return;
+	}
 
 	/* Players online */
 	for (this_o_idx = 1; this_o_idx <= NumPlayers; this_o_idx++) {
-	        p_ptr = Players[this_o_idx];
+		p_ptr = Players[this_o_idx];
 		/* scan his inventory */
 		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &p_ptr->inventory[i];
@@ -2217,30 +2218,30 @@ static void erase_guild_key(int id) {
 
 #if 0 /* account-based */
 	/* objects in player inventories */
-        path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
-        fp = fopen(buf, "rb+");
-        if (!fp) {
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb+");
+	if (!fp) {
 		s_printf("GUILD_KEY_ERASE: failed to open tomenet.acc\n");
-    		return;
-        }
-        while (fread(&acc, sizeof(struct account), 1, fp)) {
+		return;
+	}
+	while (fread(&acc, sizeof(struct account), 1, fp)) {
 		int *id_list, chars;
-                chars = player_id_list(&id_list, acc.id);
-                for (i = 0; i < chars; i++) {
+		chars = player_id_list(&id_list, acc.id);
+		for (i = 0; i < chars; i++) {
 			cname = lookup_player_name(id_list[i]);
 			...//not implemented
-                }
-                if (chars) C_KILL(id_list, chars, int);
-        }
+		}
+		if (chars) C_KILL(id_list, chars, int);
+	}
 #else /* just hash-table (character) based */
 	/* hack */
 	NumPlayers++;
-        MAKE(Players[NumPlayers], player_type);
-        p_ptr = Players[NumPlayers];
-        p_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
-        for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
-                ptr = hash_table[slot];
-                while (ptr) {
+	MAKE(Players[NumPlayers], player_type);
+	p_ptr = Players[NumPlayers];
+	p_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+		ptr = hash_table[slot];
+		while (ptr) {
 			/* clear his data (especially inventory) */
 			o_ptr = p_ptr->inventory;
 			WIPE(p_ptr, player_type);
@@ -2256,8 +2257,8 @@ static void erase_guild_key(int id) {
 				/* bad fail */
 				s_printf("GUILD_KEY_ERASE: load_player '%s' failed\n", p_ptr->name);
 				/* unhack */
-			        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
-			        KILL(p_ptr, player_type);
+				C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(p_ptr, player_type);
 				NumPlayers--;
 				return;
 			}
@@ -2272,8 +2273,8 @@ static void erase_guild_key(int id) {
 					/* write savegame back */
 					save_player(NumPlayers);
 					/* unhack */
-				        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
-				        KILL(p_ptr, player_type);
+					C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+					KILL(p_ptr, player_type);
 					NumPlayers--;
 					return;
 				}
@@ -2283,8 +2284,8 @@ static void erase_guild_key(int id) {
 		}
 	}
 	/* unhack */
-        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
-        KILL(p_ptr, player_type);
+	C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+	KILL(p_ptr, player_type);
 	NumPlayers--;
 #endif
 
@@ -2337,9 +2338,9 @@ void del_guild(int id) {
 	if (guilds[id].h_idx) {
 		struct dna_type *dna = houses[guilds[id].h_idx - 1].dna;
 		dna->owner = 0L;
-	        dna->creator = 0L;
-	        dna->a_flags = ACF_NONE;
-	        kill_house_contents(&houses[guilds[id].h_idx - 1]);
+		dna->creator = 0L;
+		dna->a_flags = ACF_NONE;
+		kill_house_contents(&houses[guilds[id].h_idx - 1]);
 
 		/* and in case it was suspended due to leaderlessness,
 		   so the next guild buying this house won't get a surprise.. */
@@ -2383,7 +2384,7 @@ void guild_timeout(int id) {
  *
  * Design improvement
  */
-static void del_party(int id){
+static void del_party(int id) {
 	int i;
 	bool sent = FALSE;
 	/* Remove the party altogether */
@@ -2534,7 +2535,7 @@ int party_remove(int remover, cptr name) {
 	if (Ind <= 0) return FALSE;
 	p_ptr = Players[Ind];
 
-	if((!party_id || !streq(parties[party_id].owner, q_ptr->name)) && is_admin(q_ptr))
+	if ((!party_id || !streq(parties[party_id].owner, q_ptr->name)) && is_admin(q_ptr))
 		party_id = p_ptr->party;
 
 	/* Make sure they were in the party to begin with */
@@ -2918,8 +2919,8 @@ static bool players_in_level(int Ind, int Ind2) {
 	/* Check for max allowed level difference.
 	   (p_ptr->lev would be more logical but harsh) */
 	if (p_ptr->total_winner && p2_ptr->total_winner) {
-	        if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
-	        return TRUE;
+		if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
+		return TRUE;
 	}
 	if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
 
@@ -2958,7 +2959,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 
 #ifdef ALLOW_NR_CROSS_PARTIES
 	/* quick and dirty anti-cheeze (for if NR surface already allows partying up) */
-        if (at_netherrealm(wpos) && !wpos->wz) return;
+	if (at_netherrealm(wpos) && !wpos->wz) return;
 #endif
 
 	/* Calculate the average level and iron team presence */
@@ -3194,12 +3195,12 @@ s_printf("ADD_HOSTILITY: not found.\n");
 
 	if (p_ptr->pvpexception == 2) return FALSE;
 	if (p_ptr->pvpexception == 3) {
-                p_ptr->chp = -3;
-                strcpy(p_ptr->died_from, "adrenaline poisoning");
-                p_ptr->deathblow = 0;
+		p_ptr->chp = -3;
+		strcpy(p_ptr->died_from, "adrenaline poisoning");
+		p_ptr->deathblow = 0;
 		p_ptr->energy = -666;
-//		p_ptr->death = TRUE;
-                player_death(Ind);
+		//p_ptr->death = TRUE;
+		player_death(Ind);
 		return FALSE;
 	}
 
@@ -3890,20 +3891,17 @@ bool fix_player_case(char *name) {
 /* Messed up version of lookup_player_id for house ownership changes
    that involve messed up characters (in terms of their ID, for example
    if they were copied / restored instead of cleanly created..) mea culpa! */
-int lookup_player_id_messy(cptr name)
-{
+int lookup_player_id_messy(cptr name) {
 	hash_entry *ptr;
 	int i, tmp_id = 0;
 
 	/* Search in each array slot */
-	for (i = 0; i < NUM_HASH_ENTRIES; i++)
-	{
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
 		/* Acquire pointer to this chain */
 		ptr = hash_table[i];
 
 		/* Check all entries in this chain */
-		while (ptr)
-		{
+		while (ptr) {
 			/* Check this name
 			   The ' && (ptr->id > 0)' part is only needed for the hack below this while loop - C. Blue */
 			if (!strcmp(ptr->name, name) && (ptr->id > 0)) {
@@ -4140,7 +4138,7 @@ void scan_players() {
 				/* Wipe Artifacts (s)he had  -C. Blue */
 				for (i = 0; i < o_max; i++) {
 					o_ptr = &o_list[i];
-			                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
+					if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
 						delete_object_idx(i, TRUE);
 				}
 
@@ -4239,7 +4237,7 @@ void scan_accounts() {
 			continue;
 		}
 
-//		if (!acc.acc_laston) continue; /* not using this 'hack' for staticing here */
+		//if (!acc.acc_laston) continue; /* not using this 'hack' for staticing here */
 
 		/* fix old accounts that don't have a timestamp yet */
 		if (!acc.acc_laston) {
@@ -4912,12 +4910,12 @@ bool pilot_set(int Ind, cptr name)
 #endif	// 0
 
 void strip_true_arts_from_hashed_players(){
-        int slot, i, j = 0;
-        hash_entry *ptr;
-        object_type *o_ptr;
+	int slot, i, j = 0;
+	hash_entry *ptr;
+	object_type *o_ptr;
 
-        s_printf("Starting player true artifact stripping\n");
-        for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+	s_printf("Starting player true artifact stripping\n");
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		j++;
 //		if (j > 5) break;/*only check for 5 players right now */
 
@@ -4936,9 +4934,9 @@ void strip_true_arts_from_hashed_players(){
 				excise_object_idx(o_idx);
 				WIPE(o_ptr, object_type);
 #endif
-	        }
+		}
 	}
-        s_printf("Finished true artifact stripping for %d players.\n", j);
+	s_printf("Finished true artifact stripping for %d players.\n", j);
 }
 
 void account_change_password(int Ind, char *old_pass, char *new_pass) {
@@ -5011,7 +5009,7 @@ void backup_acclists(void) {
 #if 0
 				(void)fprintf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 				    ptr->laston, ptr->id, ptr->account,
-    				    ptr->level, ptr->party, ptr->guild,
+				    ptr->level, ptr->party, ptr->guild,
 				    ptr->xorder, ptr->race, ptr->class, ptr->mode);
  #ifdef AUCTION_SYSTEM
 				fprintf(fp, "%d%d", ptr->au, ptr->balance);
@@ -5105,25 +5103,26 @@ void restore_acclists(void) {
 
 /* search for any members of a guild, and set guild's mode to that first member found's mode */
 void fix_lost_guild_mode(int g_id) {
-        int slot;
-        hash_entry *ptr;
-        for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
-                ptr = hash_table[slot];
-                while (ptr) {
-                        if (ptr->guild && ptr->guild == g_id) {
-                                guilds[g_id].cmode = ptr->mode;
-                                s_printf("Guild '%s' (%d): Mode has been fixed to %d.\n", guilds[g_id].name, g_id, guilds[g_id].cmode);
-				return;
-                        }
-                        ptr = ptr->next;
-                }
+	int slot;
+	hash_entry *ptr;
 
-        }
-        /* paranoia: something went really wrong, such as savefile rollback or divine intervention */
-        if (slot == NUM_HASH_ENTRIES) {
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+		ptr = hash_table[slot];
+		while (ptr) {
+			if (ptr->guild && ptr->guild == g_id) {
+				guilds[g_id].cmode = ptr->mode;
+				s_printf("Guild '%s' (%d): Mode has been fixed to %d.\n", guilds[g_id].name, g_id, guilds[g_id].cmode);
+				return;
+			}
+			ptr = ptr->next;
+		}
+
+	}
+	/* paranoia: something went really wrong, such as savefile rollback or divine intervention */
+	if (slot == NUM_HASH_ENTRIES) {
 		guilds[g_id].members = 0;
 		s_printf("Guild '%s' (%d): Has been erased!\n", guilds[g_id].name, g_id);
-        }
+	}
 }
 
 //ACC_HOUSE_LIMIT:
