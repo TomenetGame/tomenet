@@ -5493,7 +5493,9 @@ bool do_prob_travel(int Ind, int dir) {
 		}
 
 		/* Still in rock ? continue */
-		if ((!cave_empty_bold(zcave, y, x)) || (zcave[y][x].info & CAVE_ICKY)) {
+		if ((!cave_empty_bold(zcave, y, x)) || (zcave[y][x].info & CAVE_ICKY)
+		    /* don't prob into sickbay area - drawback: also can't prob into inns */
+		     || (zcave[y][x].feat == FEAT_PROTECTED)) {
 			y += ddy[dir];
 			x += ddx[dir];
 			continue;
