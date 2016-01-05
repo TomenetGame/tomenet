@@ -9062,6 +9062,7 @@ void process_monsters(void) {
 	bool		reveal_cloaking, spot_cloaking;
 	int		may_move_Ind, may_move_dis;
 	char		m_name[MNAME_LEN];
+	cave_type	**zcave;
 
 	/* Local copies for speed - mikaelh */
 	s16b *_m_fast = m_fast;
@@ -9304,6 +9305,10 @@ void process_monsters(void) {
 			    || TELEPORT_SURPRISED(p_ptr, r_ptr)
 #endif
 			    ) && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
+				continue;
+
+			/* For Arena Monster Challenge: Skip observers in the corners */
+			if ((zcave = getcave(&p_ptr->wpos)) && zcave[p_ptr->py][p_ptr->px].feat == FEAT_HIGHLY_PROTECTED)
 				continue;
 
 			/* can spot/uncloak cloaked player? */
