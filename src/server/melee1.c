@@ -2927,7 +2927,6 @@ bool make_attack_melee(int Ind, int m_idx)
 						}
 					}
 				}
-
 				/* ice shield, functionally similar to aura of death - Kurzel */
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_ICE) && alive) {
 					if (magik(25)) {
@@ -2935,7 +2934,6 @@ bool make_attack_melee(int Ind, int m_idx)
 						fire_ball(Ind, GF_ICE, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
 					}
 				}
-
 				/* plasma shield, functionally similar to aura of death - Kurzel */
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_PLASMA) && alive) {
 					if (magik(25)) {
@@ -2943,7 +2941,6 @@ bool make_attack_melee(int Ind, int m_idx)
 						fire_ball(Ind, GF_PLASMA, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
 					}
 				}
-
 				/* lightning shield */
 				/*
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_ELEC) && alive) {
