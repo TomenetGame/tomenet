@@ -304,6 +304,7 @@ y:-1:-1:-:*tower*
 yY:*training*
 yR:-:Take the south-eastern path out of the town centre,
 yR:-:it leads to the training tower. The entrance is a green '<' symbol.
+yR:-:You can press SHIFT+L to locate it on the map.
 
 Y:0:0:-:*dungeon*:-:255
 Y:0:0:-:*barrow*:-:255
@@ -312,8 +313,9 @@ yY:*barrow*
 yR:-:Take the western path out of the town centre,
 yR:-:it leads to the somewhat hidden entrance to barrow-downs.
 yR:-:The entrance is a white '>' symbol.
-yR:-:You should have some torches or a lantern, except if you're a vampire I guess.
-yR:-:You can also buy lights and lamp oil in the general store in this town.
+yR:-:You can press SHIFT+L to locate it on the map.
+yR:-:You should bring some torches or a lantern, except if you're a vampire I guess.
+#yR:-:You can also buy lights and lamp oil in the general store in this town.
 
 Y:0:0:-:*light*:-:255
 Y:0:0:-:*lamp*:-:255
