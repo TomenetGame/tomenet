@@ -5214,7 +5214,6 @@ void spin_attack(int Ind) {
 }
 
 /* PernAngband addition */
-// void touch_zap_player(int Ind, monster_type *m_ptr)
 void touch_zap_player(int Ind, int m_idx) {
 	monster_type	*m_ptr = &m_list[m_idx];
 
@@ -5231,8 +5230,8 @@ void touch_zap_player(int Ind, int m_idx) {
 			/* Hack -- Get the "died from" name */
 			monster_desc(Ind, aura_dam, m_idx, 0x88);
 
-			if (p_ptr->oppose_fire) aura_damage = (aura_damage+2) / 3;
-			if (p_ptr->resist_fire) aura_damage = (aura_damage+2) / 3;
+			if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
@@ -5254,8 +5253,8 @@ void touch_zap_player(int Ind, int m_idx) {
 			/* Hack -- Get the "died from" name */
 			monster_desc(Ind, aura_dam, m_idx, 0x88);
 
-			if (p_ptr->oppose_elec) aura_damage = (aura_damage+2) / 3;
-			if (p_ptr->resist_elec) aura_damage = (aura_damage+2) / 3;
+			if (p_ptr->oppose_elec) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_elec) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->suscep_elec) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
@@ -5277,8 +5276,8 @@ void touch_zap_player(int Ind, int m_idx) {
 			/* Hack -- Get the "died from" name */
 			monster_desc(Ind, aura_dam, m_idx, 0x88);
 
-			if (p_ptr->oppose_cold) aura_damage = (aura_damage+2) / 3;
-			if (p_ptr->resist_cold) aura_damage = (aura_damage+2) / 3;
+			if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
@@ -5294,7 +5293,7 @@ void py_touch_zap_player(int Ind, int Ind2) {
 	player_type *q_ptr = Players[Ind2], *p_ptr = Players[Ind];
 	int aura_damage = 0;
 
-	if (q_ptr->sh_fire) {
+	if (!p_ptr->death && q_ptr->sh_fire) {
 		if (!(p_ptr->immune_fire)) {
 			aura_damage = damroll(2, 6);
 			if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
@@ -5302,32 +5301,121 @@ void py_touch_zap_player(int Ind, int Ind2) {
 			if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
+			msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
 			take_hit(Ind, aura_damage, "a fire aura", Ind2);
 			handle_stuff(Ind);
 		}
 	}
-	if (q_ptr->sh_cold) {
+	if (!p_ptr->death && q_ptr->sh_cold) {
 		if (!(p_ptr->immune_cold)) {
 			aura_damage = damroll(2, 6);
 			if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
 
-			msg_format(Ind, "You are chilled by frost for \377w%d\377w damage!", aura_damage);
+			msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
+			msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
 			take_hit(Ind, aura_damage, "a frost aura", Ind2);
 			handle_stuff(Ind);
 		}
 	}
-	if (q_ptr->sh_elec) {
+	if (!p_ptr->death && q_ptr->sh_elec) {
 		if (!(p_ptr->immune_elec)) {
 			aura_damage = damroll(2, 6);
 			if (p_ptr->oppose_elec) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->resist_elec) aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->suscep_elec) aura_damage = aura_damage * 2;
 
-			msg_format(Ind, "You are struck by lightning for \377w%d\377w damage!", aura_damage);
+			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
+			msg_format(Ind2, "%s gets zapped for \377w%d\377w damage!", p_ptr->name, aura_damage);
 			take_hit(Ind, aura_damage, "a lightning aura", Ind2);
 			handle_stuff(Ind);
+		}
+	}
+
+	/*
+	 *Apply the 'shield auras'
+	 */
+	if (q_ptr->shield) {
+		/* force shield */
+		if (!p_ptr->death && (q_ptr->shield_opt & SHIELD_COUNTER)) {
+			aura_damage = damroll(q_ptr->shield_power_opt, q_ptr->shield_power_opt2);
+			msg_format(Ind, "You get bashed by a mystic shield for \377w%d\377w!", aura_damage);
+			take_hit(Ind, aura_damage, "a mystic shield", Ind2);
+			handle_stuff(Ind);
+		}
+		/* fire shield */
+		if (!p_ptr->death && (q_ptr->shield_opt & SHIELD_FIRE)) {
+			if (!p_ptr->immune_fire) {
+				aura_damage = damroll(q_ptr->shield_power_opt, q_ptr->shield_power_opt2);
+				if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
+
+				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
+				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
+				take_hit(Ind, aura_damage, "a fire aura", Ind2);
+				handle_stuff(Ind);
+			}
+		}
+		/* ice shield, functionally similar to aura of death - Kurzel */
+		if (!p_ptr->death && (q_ptr->shield_opt & SHIELD_ICE)) {
+			if (magik(25)) {
+				sprintf(p_ptr->attacker, " is enveloped in ice for");
+				fire_ball(Ind2, GF_ICE, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
+			}
+		}
+		/* plasma shield, functionally similar to aura of death - Kurzel */
+		if (!p_ptr->death && (q_ptr->shield_opt & SHIELD_PLASMA)) {
+			if (magik(25)) {
+				sprintf(p_ptr->attacker, " is enveloped in plasma for");
+				fire_ball(Ind2, GF_PLASMA, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
+			}
+		}
+	}
+
+	/*
+	 * Apply the necromantic auras
+	 */
+	/* Aura of fear is now affected by the monster level too */
+	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_FEAR) && q_ptr->aura[0]
+	    && !p_ptr->resist_fear) {
+		if (magik(get_skill_scale(q_ptr, SKILL_AURA_FEAR, 30) + 5) &&
+		    p_ptr->lev < get_skill_scale(q_ptr, SKILL_AURA_FEAR, 100))
+			(void)set_afraid(Ind, p_ptr->afraid + 2 + get_skill_scale(p_ptr, SKILL_AURA_FEAR, 2));
+	}
+	/* Shivering Aura is affected by the monster level */
+	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_SHIVER) && (q_ptr->aura[1] || (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST))
+	    && !p_ptr->resist_sound && !p_ptr->immune_cold) {
+		int chance_trigger = get_skill_scale(q_ptr, SKILL_AURA_SHIVER, 25);
+		int threshold_effect = get_skill_scale(q_ptr, SKILL_AURA_SHIVER, 100);
+
+		if (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST) {
+			chance_trigger = 25; //max
+			threshold_effect = (q_ptr->lev < 50) ? q_ptr->lev * 2 : 100; //80..100 (max)
+		}
+
+		chance_trigger += 25; //generic boost
+
+		if (magik(chance_trigger) && (p_ptr->lev < threshold_effect))
+			(void)set_stun(Ind, p_ptr->stun + 5);
+	}
+	/* Aura of death is NOT affected by monster level*/
+	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_DEATH) && q_ptr->aura[2]) {
+		int chance = get_skill_scale(q_ptr, SKILL_AURA_DEATH, 50);
+
+		if (magik(chance)) {
+			int dam = 5 + chance * 3;
+
+			if (magik(50)) {
+				//msg_format(Ind2, "%s is engulfed by plasma for %d damage!", p_ptr->name, dam);
+				sprintf(q_ptr->attacker, " eradiates a wave of plasma for");
+				fire_ball(Ind2, GF_PLASMA, 0, dam, 1, q_ptr->attacker);
+			} else {
+				//msg_format(Ind2, "%s is hit by icy shards for %d damage!", p_ptr->name, dam);
+				sprintf(q_ptr->attacker, " eradiates a wave of ice for");
+				fire_ball(Ind2, GF_ICE, 0, dam, 1, q_ptr->attacker);
+			}
 		}
 	}
 }
@@ -5351,7 +5439,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 	char o_name[ONAME_LEN];
 
 	if (r_ptr->flags7 & RF7_NAZGUL) {
-//		int weap = 0;	// Hack!  <- ???
+		//int weap = 0;	// Hack!  <- ???
 		u32b f1, f2, f3, f4, f5, f6, esp;
 
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -5371,12 +5459,12 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
         			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
 #endif
 				msg_print(Ind, "\376\377rYour weapon *DISINTEGRATES*!");
-//				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-//				inven_item_optimize(Ind, INVEN_WIELD + weap);
+				//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+				//inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1); /* this way using slot we can handle dual-wield */
 				inven_item_optimize(Ind, slot);
 				/* To stop attacking */
-	//			*num = num_blow;
+				//*num = num_blow;
 			}
 		} else if (like_artifact_p(o_ptr)) {
 			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {
@@ -5384,8 +5472,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 				*k = 0;
 			}
 
-//			apply_disenchant(Ind, INVEN_WIELD + weap);
-//			apply_disenchant(Ind, weap);
+			//apply_disenchant(Ind, INVEN_WIELD + weap);
+			//apply_disenchant(Ind, weap);
 
 			/* 1/1000 chance of getting destroyed.
 			   Exploit-fix here for permacursed items. (Grond only) */
@@ -5394,18 +5482,18 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 				s_printf("NAZGUL_DISI_ARTLIKE: %s : %s.\n", p_ptr->name, o_name);
 
 #ifdef USE_SOUND_2010
-        			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
+				sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
 #endif
 
 				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 				msg_print(Ind, "\376\377rYour weapon is destroyed!");
-//				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-//				inven_item_optimize(Ind, INVEN_WIELD + weap);
+				//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+				//inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1);
 				inven_item_optimize(Ind, slot);
 
 				/* To stop attacking */
-//				*num = num_blow;
+				//*num = num_blow;
 			}
 		} else if (o_ptr->name2) {
 			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
@@ -5423,22 +5511,22 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 				object_desc(0, o_name, o_ptr, TRUE, 3);
 				s_printf("NAZGUL_DISI_EGO: %s : %s.\n", p_ptr->name, o_name);
 #ifdef USE_SOUND_2010
-        			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
+				sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
 #endif
 
 				msg_print(Ind, "\376\377rYour weapon is destroyed!");
-//				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-//				inven_item_optimize(Ind, INVEN_WIELD + weap);
+				//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+				//inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1);
 				inven_item_optimize(Ind, slot);
 
 				/* To stop attacking */
-//				*num = num_blow;
+				//*num = num_blow;
 			}
 		}
 
 		/* If any damage is done, then 25% chance of getting the Black Breath */
-//		if ((*k) && magik(25) && !p_ptr->black_breath) {
+		//if ((*k) && magik(25) && !p_ptr->black_breath) {
 		if (
 #ifdef VAMPIRES_BB_IMMUNE
 		    p_ptr->prace != RACE_VAMPIRE &&
