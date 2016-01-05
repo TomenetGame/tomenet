@@ -3793,7 +3793,10 @@ void quest_reply(int Ind, int q_idx, char *str) {
 #if 0
 	if (!str[0] || str[0] == '\e') return; /* player hit the ESC key.. */
 #else /* distinguish RETURN key, to allow empty "" keyword (to 'continue' a really long talk for example) */
-	if (str[0] == '\e') return; /* player hit the ESC key.. */
+	if (str[0] == '\e') {
+		msg_print(Ind, " "); //format it up a little bit?
+		return; /* player hit the ESC key.. */
+	}
 #endif
 
 	/* convert input to all lower-case */
