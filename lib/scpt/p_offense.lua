@@ -141,7 +141,7 @@ HORBDRAIN_I = add_spell {
 	["level"] = 	20,
 	["mana"] = 	7,
 	["mana_max"] = 	7,
-	["fail"] = 	20,
+	["fail"] = 	10,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["ftk"] = 2,
@@ -188,7 +188,7 @@ HEXORCISM_I = add_spell {
 	["level"] = 	20,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	15,
+	["fail"] = 	-15,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
 			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 400))
