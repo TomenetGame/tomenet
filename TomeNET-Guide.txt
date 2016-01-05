@@ -6596,7 +6596,7 @@ Experience drain ('Drains your life force')
     turn you invisible).
 
 Mana drain ('Drains your magic')
-    Drains your mana pool.
+    Drains your mana pool over time while you have this item equipped.
 
 Hit point drain ('Drains your hit points')
     Drains your hit points down to zero, then stops. This means that this
