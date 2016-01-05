@@ -288,7 +288,8 @@ HHEALING2_I = add_spell {
 	["info"] = 	function()
 			return "heals " .. (get_level(Ind, HHEALING2_I, 12) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 10)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
 			end,
-	["desc"] = 	{ "Continuously heals you and those around you.", }
+	["desc"] = 	{ "Continuously heals you and those around you.",
+			  "Damages undead creatures.", }
 }
 HHEALING2_II = add_spell {
 	["name"] = 	"Cleansing Light II",
@@ -307,7 +308,8 @@ HHEALING2_II = add_spell {
 	["info"] = 	function()
 			return "heals " .. (get_level(Ind, HHEALING2_I, 22) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 10)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
 			end,
-	["desc"] = 	{ "Continuously heals you and those around you.", }
+	["desc"] = 	{ "Continuously heals you and those around you.",
+			  "Damages undead creatures.", }
 }
 HHEALING2_III = add_spell {
 	["name"] = 	"Cleansing Light III",
@@ -326,7 +328,8 @@ HHEALING2_III = add_spell {
 	["info"] = 	function()
 			return "heals " .. (get_level(Ind, HHEALING2_I, 42) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 10)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
 			end,
-	["desc"] = 	{ "Continuously heals you and those around you.", }
+	["desc"] = 	{ "Continuously heals you and those around you.",
+			  "Damages undead creatures.", }
 }
 
 HCURING_I = add_spell {
