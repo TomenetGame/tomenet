@@ -2984,39 +2984,39 @@ bool make_attack_melee(int Ind, int m_idx)
 				if (get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[0] &&
 				    (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING))
 				    && (!(r_ptr->flags3 & RF3_NO_FEAR))
-				    && (!(r_ptr->flags2 & RF2_POWERFUL))
-				    && (!(r_ptr->flags1 & RF1_UNIQUE))
 				    ) {
+					int mod = ((r_ptr->flags2 & RF2_POWERFUL) ? 10 : 0) + ((r_ptr->flags1 & RF1_UNIQUE) ? 10 : 0);
+
 					if (magik(get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 5) &&
-					    r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_FEAR, 99)) {
+					    r_ptr->level + mod < get_skill_scale(p_ptr, SKILL_AURA_FEAR, 100)) {
 						msg_format(Ind, "%^s appears afraid.", m_name);
 						//short 'shock' effect ;) it's cooler than just running away
-						m_ptr->monfear = 2 + get_skill_scale(p_ptr, SKILL_AURA_FEAR, 2);//get_skill_scale(p_ptr, SKILL_AURA_POWER, 10) + 2;
+						m_ptr->monfear = 2 + get_skill_scale(p_ptr, SKILL_AURA_FEAR, 2);
 						m_ptr->monfear_gone = 0;
 					}
 				}
 				/* Shivering Aura is affected by the monster level */
 				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (p_ptr->aura[1] || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
 				    && (!(r_ptr->flags3 & RF3_NO_STUN)) && (!(r_ptr->flags3 & RF3_IM_COLD))
-				    && (!(r_ptr->flags1 & RF1_UNIQUE))
 				    ) {
+					int mod = ((r_ptr->flags1 & RF1_UNIQUE) ? 10 : 0);
 					int chance_trigger = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 25);
-					int threshold_effect = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99);
+					int threshold_effect = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 100);
 
 					if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
 						chance_trigger = 25; //max
-						threshold_effect = p_ptr->lev * 2; //80..99
-						if (threshold_effect > 99) threshold_effect = 99;
+						threshold_effect = (p_ptr->lev < 50) ? p_ptr->lev * 2 : 100; //80..100 (max)
 					}
-					chance_trigger += 25;
 
-					if (magik(chance_trigger) && (r_ptr->level < threshold_effect)) {
-						m_ptr->stunned += 10;//get_skill_scale(p_ptr, SKILL_AURA_POWER, 30) + 10;
+					chance_trigger += 25; //generic boost
+
+					if (magik(chance_trigger) && (r_ptr->level + mod < threshold_effect)) {
+						m_ptr->stunned += 10;
 						if (m_ptr->stunned > 100)
-							msg_format(Ind, "\377o%^s appears frozen.", m_name);
+							msg_format(Ind, "%^s appears frozen.", m_name);
 						else if (m_ptr->stunned > 50)
-							msg_format(Ind, "\377o%^s appears heavily shivering.", m_name);
-						else msg_format(Ind, "\377o%^s appears shivering.", m_name);
+							msg_format(Ind, "%^s appears heavily shivering.", m_name);
+						else msg_format(Ind, "%^s appears shivering.", m_name);
 					}
 				}
 				/* Aura of death is NOT affected by monster level*/
@@ -3024,21 +3024,16 @@ bool make_attack_melee(int Ind, int m_idx)
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_DEATH, 50);
 
 					if (magik(chance)) {
-//						msg_format(Ind, "%^s disrupts your aura of death..", m_name);
+						int dam = 5 + chance * 3;
+
 						if (magik(50)) {
-							/* Our client cannot handle message wrapping.. */
-							msg_format(Ind, "%^s gets hit by a wave of plasma.", m_name);
-//							msg_print(Ind, "It explodes into a wave of plasma!");
+							msg_format(Ind, "%^s is engulfed by plasma for %d damage!", m_name, dam);
 							sprintf(p_ptr->attacker, " eradiates a wave of plasma for");
-//							fire_ball(Ind, GF_PLASMA, 0, 5 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
-							fire_ball(Ind, GF_PLASMA, 0, 5 + chance * 3, 1, p_ptr->attacker);
+							fire_ball(Ind, GF_PLASMA, 0, dam, 1, p_ptr->attacker);
 						} else {
-//							msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of ice.", m_name);
-//							msg_print(Ind, "It explodes into a wave of ice!");
-							msg_format(Ind, "%^s gets hit by a wave of ice.", m_name);
+							msg_format(Ind, "%^s is hit by icy shards for %d damage!", m_name, dam);
 							sprintf(p_ptr->attacker, " eradiates a wave of ice for");
-//							fire_ball(Ind, GF_ICE, 0, 5 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
-							fire_ball(Ind, GF_ICE, 0, 5 + chance * 3, 1, p_ptr->attacker);
+							fire_ball(Ind, GF_ICE, 0, dam, 1, p_ptr->attacker);
 						}
 					}
 				}

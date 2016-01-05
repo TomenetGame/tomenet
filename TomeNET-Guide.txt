@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. December 2015 - written by C. Blue (c_blue@gmx.net)
-| for TomeNET version v4.6.1 - official websites are:
+| Latest update: 5. January 2015 - written by C. Blue (c_blue@gmx.net)
+| for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
 |
@@ -11543,23 +11543,39 @@ Note that not every skill is available to every profession (class).
                                 and nonliving monsters.
 
     .Aura of Fear               Monsters that hit you are stroke by fear.
-                                Is automatically enabled when you train the
+                                Undead and non-living monsters and those that
+                                resist fear (NO_FEAR) are not affected.
+                                The chance for the aura to trigger depends on
+                                your skill alone. Whether it has effect on your
+                                foe or not only depends on its rlevel compared
+                                to your skill - uniques and powerful monsters
+                                receive a small bonus in their favour.
+                                It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
 
     .Shivering Aura             Monsters that hit you are stunned.
+                                Monsters that are immune to cold and those that
+                                resist stun (NO_STUN) are not affected.
+                                The chance for the aura to trigger depends on
+                                your skill alone. Whether it has effect on your
+                                foe or not only depends on its rlevel compared
+                                to your skill - uniques receive a small bonus
+                                in their favour.
                                 At a skill of 30 the aura is so strong that
                                 your melee attacks (weapon as well as martial
-                                arts will be branded by it. (Cold brand.)
-                                Is automatically enabled when you train the
+                                arts will be branded by it (cold brand).
+                                It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
 
     .Aura of Death              Monsters that hit you are hit by waves
-                                of plasma and ice.
+                                of plasma and ice, alternating randomly.
+                                The chance for the aura to trigger depends on
+                                your skill alone.
                                 At a skill of 40 the aura is so strong that
                                 your melee attacks (weapon as well as martial
-                                arts) will be branded by it.
-                                (Alternating fire or cold brand.)
-                                Is automatically enabled when you train the
+                                arts) will be branded by it (alternating fire
+                                or cold brand).
+                                It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
 
 .Antimagic                      Generated from your strong disbelief in magic
