@@ -2601,6 +2601,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 	/* Access floor */
 	f_ptr = &f_info[feat];
 
+	/* hack for questor hard-coded lighting:
+	   Replace any permanent (daylight/townstore) light by 'fake' light source 'carried' by the questor */
+	if (c_ptr->info & CAVE_GLOW_HACK) {
+		c_ptr->info &= ~CAVE_GLOW;
+		c_ptr->info |= (CAVE_LITE | CAVE_LITE_WHITE);
+	}
+	else if (c_ptr->info & CAVE_GLOW_HACK_LAMP) {
+		c_ptr->info &= ~CAVE_GLOW;
+		c_ptr->info |= CAVE_LITE;
+	}
+
 	/* Floors (etc) */
 	/* XXX XXX Erm, it is DIRTY.  should be replaced soon */
 //	if (feat <= FEAT_INVIS)

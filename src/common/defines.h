@@ -3896,6 +3896,8 @@
 #define CAVE_WATERY	0x00080000	/* For doors/stairs: Are they adjacent to water grids? */
 
 #define CAVE_SWITCH	0x00100000	/* Players can always switch position here, like on staircase grids (for grids around stores) */
+#define CAVE_GLOW_HACK	0x00200000 	/* bad hack for hard-coded questor lights for now // self-illuminating */
+#define CAVE_GLOW_HACK_LAMP	0x00400000 	/* bad hack for hard-coded questor lights for now // self-illuminating, in fire-flickering style (TERM_LAMP) */
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?

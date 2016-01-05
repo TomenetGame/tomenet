@@ -85,6 +85,9 @@ typedef struct qi_questor {
 	/* type of questor */
 	byte type;					/* QI_QUESTOR_xxx */
 
+	/* light radius and type */
+	unsigned char lite;
+
 	/* QI_QUESTOR_NPC */
 	s16b ridx;
 	s16b reidx;

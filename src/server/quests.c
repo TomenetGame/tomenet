@@ -1012,6 +1012,34 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	s_printf(" QUEST_SPAWNED: Questor '%s' (m_idx %d) at %d,%d,%d - %d,%d.\n", q_questor->name, m_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
 #endif
 
+	/* bad hard-coded lite - TODO: treat like a real light source */
+	if (q_questor->lite) {
+		byte lite_rad = q_questor->lite % 100;
+		u32b lite_type = CAVE_LITE;
+		int cx, cy;
+
+		//hack: cave_glow does the persistent lighting for now, until it's un-hardcoded..
+#if 0 /* just allows white light */
+		lite_type |= CAVE_GLOW;
+#else /* mega hack added just to expand this hard-coding hack: allow TERM_LAMP light */
+		if (q_questor->lite < 100) lite_type |= CAVE_GLOW_HACK_LAMP;
+		else lite_type |= CAVE_GLOW_HACK;
+#endif
+
+		switch (q_questor->lite / 100) {
+		case 0: break; //fire light, torch style
+		case 1: lite_type |= CAVE_LITE_WHITE; break; //feanorian style
+		case 2: lite_type |= CAVE_LITE_VAMP; break; //o_O
+		}
+
+		for (cx = x - lite_rad; cx <= x + lite_rad; cx++)
+		for (cy = y - lite_rad; cy <= y + lite_rad; cy++) {
+			if (distance(cy, cx, y, x) > lite_rad) continue;
+			zcave[cy][cx].info |= lite_type;
+			everyone_lite_spot(&wpos, cy, cx);
+		}
+	}
+
 	q_questor->talk_focus = 0;
 	return TRUE;
 }
@@ -1182,6 +1210,34 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 #if QDEBUG > 1
 	s_printf(" QUEST_SPAWNED: Questor '%s' (o_idx %d) at %d,%d,%d - %d,%d.\n", q_questor->name, o_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
 #endif
+
+	/* bad hard-coded lite - TODO: treat like a real light source */
+	if (q_questor->lite) {
+		byte lite_rad = q_questor->lite % 100;
+		u32b lite_type = CAVE_GLOW | CAVE_LITE; //cave_glow does the persistent lighting for now, until it's un-hardcoded..
+		int cx, cy;
+
+		//hack: cave_glow does the persistent lighting for now, until it's un-hardcoded..
+#if 0 /* just allows white light */
+		lite_type |= CAVE_GLOW;
+#else /* mega hack added just to expand this hard-coding hack: allow TERM_LAMP light */
+		if (q_questor->lite < 100) lite_type |= CAVE_GLOW_HACK_LAMP;
+		else lite_type |= CAVE_GLOW_HACK;
+#endif
+
+		switch (q_questor->lite / 100) {
+		case 0: break; //fire light, torch style
+		case 1: lite_type |= CAVE_LITE_WHITE; break; //feanorian style
+		case 2: lite_type |= CAVE_LITE_VAMP; break; //o_O
+		}
+
+		for (cx = x - lite_rad; cx <= x + lite_rad; cx++)
+		for (cy = y - lite_rad; cy <= y + lite_rad; cy++) {
+			if (distance(cy, cx, y, x) > lite_rad) continue;
+			zcave[cy][cx].info |= lite_type;
+			everyone_lite_spot(&wpos, cy, cx);
+		}
+	}
 
 	q_questor->talk_focus = 0;
 	return TRUE;

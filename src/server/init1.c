@@ -7610,7 +7610,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		//--------------------------------------------------------------------------------------------
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
-			int q, ridx, reidx, minlv, maxlv, tval, sval;
+			int q, lite, ridx, reidx, minlv, maxlv, tval, sval;
 			char ch, attr;
 			int good, great, vgreat;
 			int pval, bpval, name1, name2, name2b;
@@ -7625,10 +7625,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			switch (q) {
 			case QI_QUESTOR_NPC:
-				if (8 != sscanf(s, "%d:%d:%d:%c:%c:%d:%d:%[^:]",
-				    &q, &ridx, &reidx, &ch, &attr, &minlv, &maxlv,
+				if (9 != sscanf(s, "%d:%d:%d:%d:%c:%c:%d:%d:%[^:]",
+				    &q, &lite, &ridx, &reidx, &ch, &attr, &minlv, &maxlv,
 				    tmpbuf)) return (1);
 				q_questor->type = q;
+				q_questor->lite = (unsigned char)lite;
 				q_questor->ridx = ridx;
 				q_questor->reidx = reidx;
 				q_questor->rchar = ch;
@@ -7638,20 +7639,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				strcpy(q_questor->name, tmpbuf);
 				break;
 			case QI_QUESTOR_PARCHMENT:
-				if (5 != sscanf(s, "%d:%d:%c:%d:%[^:]",
-				    &q, &sval, &attr,
+				if (6 != sscanf(s, "%d:%d:%d:%c:%d:%[^:]",
+				    &q, &lite, &sval, &attr,
 				    &minlv, tmpbuf)) return (1);
 				q_questor->type = q;
+				q_questor->lite = (unsigned char)lite;
 				q_questor->psval = sval;
 				q_questor->rattr = color_char_to_attr(attr);
 				q_questor->plev = minlv;
 				strcpy(q_questor->name, tmpbuf);
 				break;
 			case QI_QUESTOR_ITEM_PICKUP:
-				if (14 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%c:%d:%[^:]",
-				    &q, &tval, &sval, &pval, &bpval, &name1, &name2, &name2b,
+				if (15 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%c:%d:%[^:]",
+				    &q, &lite, &tval, &sval, &pval, &bpval, &name1, &name2, &name2b,
 				    &good, &great, &vgreat, &attr, &minlv, tmpbuf)) return (1);
 				q_questor->type = q;
+				q_questor->lite = (unsigned char)lite;
 				q_questor->otval = tval;
 				q_questor->osval = sval;
 				q_questor->opval = pval;
