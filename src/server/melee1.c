@@ -3024,11 +3024,11 @@ bool make_attack_melee(int Ind, int m_idx)
 						int dam = 5 + chance * 3;
 
 						if (magik(50)) {
-							msg_format(Ind, "%^s is engulfed by plasma for %d damage!", m_name, dam);
+							//msg_format(Ind, "%^s is engulfed by plasma for %d damage!", m_name, dam);
 							sprintf(p_ptr->attacker, " eradiates a wave of plasma for");
 							fire_ball(Ind, GF_PLASMA, 0, dam, 1, p_ptr->attacker);
 						} else {
-							msg_format(Ind, "%^s is hit by icy shards for %d damage!", m_name, dam);
+							//msg_format(Ind, "%^s is hit by icy shards for %d damage!", m_name, dam);
 							sprintf(p_ptr->attacker, " eradiates a wave of ice for");
 							fire_ball(Ind, GF_ICE, 0, dam, 1, p_ptr->attacker);
 						}
