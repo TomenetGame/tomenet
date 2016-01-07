@@ -74,8 +74,7 @@ s16b ddy_wide_cyc[16] =
  * Global array for converting numbers to uppercase hecidecimal digit
  * This array can also be used to convert a number to an octal digit
  */
-char hexsym[16] =
-{
+char hexsym[16] = {
 	'0', '1', '2', '3', '4', '5', '6', '7',
 	'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
@@ -91,8 +90,7 @@ char hexsym[16] =
 /*
  * Stat Table (INT/WIS) -- Number of half-spells per level
  */
-byte adj_mag_study[] =
-{
+byte adj_mag_study[] = {
 	0	/* 3 */,
 	0	/* 4 */,
 	0	/* 5 */,
@@ -137,8 +135,7 @@ byte adj_mag_study[] =
 /*
  * Stat Table (INT/WIS) -- extra half-mana-points per level
  */
-byte adj_mag_mana[] =
-{
+byte adj_mag_mana[] = {
 	0	/* 3 */,
 	0	/* 4 */,
 	0	/* 5 */,
@@ -183,8 +180,7 @@ byte adj_mag_mana[] =
 /*
  * Stat Table (CHR) -- payment percentages
  */
-byte adj_chr_gold[] =
-{
+byte adj_chr_gold[] = {
 	130	/* 3 */,
 	125	/* 4 */,
 	122	/* 5 */,
@@ -229,8 +225,7 @@ byte adj_chr_gold[] =
 /*
  * Stat Table (INT) -- Magic devices
  */
-byte adj_int_dev[] =
-{
+byte adj_int_dev[] = {
 	0	/* 3 */,
 	0	/* 4 */,
 	0	/* 5 */,
@@ -275,8 +270,7 @@ byte adj_int_dev[] =
 /*
  * Stat Table (WIS) -- Saving throw
  */
-byte adj_wis_sav[] =
-{
+byte adj_wis_sav[] = {
 	0	/* 3 */,
 	0	/* 4 */,
 	0	/* 5 */,
@@ -320,8 +314,7 @@ byte adj_wis_sav[] =
 /*
  * Stat Table (WIS) -- Max sanity points
  */
-byte adj_wis_msane[] =
-{
+byte adj_wis_msane[] = {
 	128 + -5	/* 3 */,
 	128 + -4	/* 4 */,
 	128 + -3	/* 5 */,
@@ -366,8 +359,7 @@ byte adj_wis_msane[] =
 /*
  * Stat Table (DEX) -- disarming
  */
-byte adj_dex_dis[] =
-{
+byte adj_dex_dis[] = {
 	0	/* 3 */,
 	0	/* 4 */,
 	0	/* 5 */,
@@ -412,8 +404,7 @@ byte adj_dex_dis[] =
 /*
  * Stat Table (INT) -- disarming
  */
-byte adj_int_dis[] =
-{
+byte adj_int_dis[] = {
 	0	/* 3 */,
 	0	/* 4 */,
 	0	/* 5 */,
@@ -458,8 +449,7 @@ byte adj_int_dis[] =
 /*
  * Stat Table (DEX) -- bonus to ac (plus 128)
  */
-byte adj_dex_ta[] =
-{
+byte adj_dex_ta[] = {
 	128 + -4	/* 3 */,
 	128 + -3	/* 4 */,
 	128 + -2	/* 5 */,
@@ -504,8 +494,7 @@ byte adj_dex_ta[] =
 /*
  * Stat Table (STR) -- bonus to dam (plus 128)
  */
-byte adj_str_td[] =
-{
+byte adj_str_td[] = {
 	128 + -2	/* 3 */,
 	128 + -2	/* 4 */,
 	128 + -1	/* 5 */,
@@ -551,8 +540,7 @@ byte adj_str_td[] =
  * Stat Table (DEX) -- bonus to hit (plus 128)
  */
 #if 0 /* this was used when adj_dex_th and adj_str_th both affect to_hit (vanilla) */
-byte adj_dex_th[] =
-{
+byte adj_dex_th[] = {
 	128 + -3/* 3 */,
 	128 + -2/* 4 */,
 	128 + -2/* 5 */,
@@ -593,8 +581,7 @@ byte adj_dex_th[] =
 	128 + 17/* 18/220+ */
 };
 #else /* this is used for when only adj_dex_th affects to-hit, to make DEX more important */
-byte adj_dex_th[] =
-{
+byte adj_dex_th[] = {
 	128 + -7/* 3 */,
 	128 + -6/* 4 */,
 	128 + -5/* 5 */,
@@ -639,8 +626,7 @@ byte adj_dex_th[] =
 /*
  * Stat Table (DEX) -- multiplicative bonus to hit (in percent)
  */
-byte adj_dex_th_mul[] =
-{
+byte adj_dex_th_mul[] = {
 	20	/* 3 */,
 	30	/* 4 */,
 	40	/* 5 */,
@@ -685,8 +671,7 @@ byte adj_dex_th_mul[] =
 /*
  * Stat Table (STR) -- bonus to hit (plus 128)
  */
-byte adj_str_th[] =
-{
+byte adj_str_th[] = {
 	128 + -3	/* 3 */,
 	128 + -2	/* 4 */,
 	128 + -1	/* 5 */,
@@ -731,8 +716,7 @@ byte adj_str_th[] =
 /*
  * Stat Table (STR) -- weight limit in deca-pounds
  */
-byte adj_str_wgt[] =
-{
+byte adj_str_wgt[] = {
 	5	/* 3 */,
 	6	/* 4 */,
 	7	/* 5 */,
@@ -777,8 +761,7 @@ byte adj_str_wgt[] =
 /*
  * Stat Table (STR) -- weapon weight limit in pounds
  */
-byte adj_str_hold[] =
-{
+byte adj_str_hold[] = {
 	4	/* 3 */,
 	5	/* 4 */,
 	6	/* 5 */,
@@ -823,8 +806,7 @@ byte adj_str_hold[] =
 /*
  * Stat Table (STR) -- digging value
  */
-byte adj_str_dig[] =
-{
+byte adj_str_dig[] = {
 	0	/* 3 */,
 	0	/* 4 */,
 	1	/* 5 */,
@@ -869,8 +851,7 @@ byte adj_str_dig[] =
 /*
  * Stat Table (STR) -- help index into the "blow" table
  */
-byte adj_str_blow[] =
-{
+byte adj_str_blow[] = {
 	3	/* 3 */,
 	4	/* 4 */,
 	5	/* 5 */,
@@ -916,8 +897,7 @@ byte adj_str_blow[] =
 /*
  * Stat Table (STR) -- orientation for create_reward, concerning armor weight
  */
-byte adj_str_armor[] =
-{
+byte adj_str_armor[] = {
 	2	/* 3 */,
 	2	/* 4 */,
 	2	/* 5 */,
@@ -962,8 +942,7 @@ byte adj_str_armor[] =
 /*
  * Stat Table (DEX) -- index into the "blow" table
  */
-byte adj_dex_blow[] =
-{
+byte adj_dex_blow[] = {
 	0	/* 3 */,
 	0	/* 4 */,
 	0	/* 5 */,
@@ -1008,8 +987,7 @@ byte adj_dex_blow[] =
 /*
  * Stat Table (DEX) -- chance of avoiding "theft" and "falling"
  */
-byte adj_dex_safe[] =
-{
+byte adj_dex_safe[] = {
 	0	/* 3 */,
 	1	/* 4 */,
 	2	/* 5 */,
@@ -1054,8 +1032,7 @@ byte adj_dex_safe[] =
 /*
  * Stat Table (CON) -- base regeneration rate
  */
-byte adj_con_fix[] =
-{
+byte adj_con_fix[] = {
 	0	/* 3 */,
 	0	/* 4 */,
 	0	/* 5 */,
@@ -1100,8 +1077,7 @@ byte adj_con_fix[] =
 /*
  * Stat Table (CON) -- extra half-hitpoints per level (plus 128)
  */
-byte adj_con_mhp[] =
-{
+byte adj_con_mhp[] = {
 	128 + -5	/* 3 */,
 	128 + -4	/* 4 */,
 	128 + -3	/* 5 */,
@@ -1170,8 +1146,7 @@ byte adj_con_mhp[] =
  * The player gets "blows_table[P][D]" blows/round, as shown below,
  * up to a maximum of "num" blows/round, plus any "bonus" blows/round.
  */
-byte blows_table[12][12] =
-{
+byte blows_table[12][12] = {
 	/* P/D */
 	/* 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11+ */
 
@@ -1306,8 +1281,7 @@ s16b level_speeds[256] = {
 /*
  * Base experience levels, may be adjusted up for race and/or class
  */
-s32b player_exp[PY_MAX_LEVEL + 1] =
-{
+s32b player_exp[PY_MAX_LEVEL + 1] = {
 	10,
 	25,
 	45,
@@ -1436,946 +1410,640 @@ s32b player_exp[PY_MAX_LEVEL + 1] =
  *    class-choices
  *    mana %  (<- obsolete)
  */
-player_race race_info[MAX_RACE] =
-{
-        {
-                "Human",
-                {  0,  0,  0,  0,  0,  0 },
-                0,  0,  0,  0,  0,  10,  0,  0,
-                10,  100,
-                14,  6,
-                72,  6, 180, 25,
-                66,  4, 150, 20,
-                0,
+player_race race_info[MAX_RACE] = {
+	{ "Human",
+		{  0,  0,  0,  0,  0,  0 },
+		0,  0,  0,  0,  0,  10,  0,  0,
+		10,  100,
+		14,  6,
+		72,  6, 180, 25,
+		66,  4, 150, 20,
+		0,
 		CF_ALL,
-                100,
-                {
-                        /* HUMAN POWER!! */
-                        {
-//                                SKILL_TRAINING,
-                                SKILL_INTERCEPT,
-                                '+', 1000,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 50,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 50,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		100,
 
-        {
-                "Half-Elf",
-                { -1,  1,  0,  1, -1,  1 },
-                2,  5,  3,  1, 6,  11, -1,  5,
-                10,  110,
-                24, 16,
-                66,  6, 130, 15,
-                62,  6, 100, 10,
-                2,
+		/* HUMAN POWER!! */
+		{{ SKILL_INTERCEPT, //SKILL_TRAINING,
+			'+', 1000,
+			'%', 115, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 50, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 50, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Half-Elf",
+		{ -1,  1,  0,  1, -1,  1 },
+		2,  5,  3,  1, 6,  11, -1,  5,
+		10,  110,
+		24, 16,
+		66,  6, 130, 15,
+		62,  6, 100, 10,
+		2,
 		CF_ALL,
-                110,
-                {
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-//                                SKILL_TRAINING,
-				SKILL_INTERCEPT,
-                                '+', 500,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 50,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		110,
 
-        {
-                "Elf",
-                { -1,  2,  1,  1, -2,  2 },
-                5,  9,  6,  2, 8,  12, -5, 15,
-                9,  120,
-                75, 75,
-                60,  4, 100,  6,
-                54,  4, 80,  6,
-                3,
+		{{ SKILL_BOW,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_INTERCEPT, //SKILL_TRAINING,
+			'+', 500,
+			'%', 110, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 50, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Elf",
+		{ -1,  2,  1,  1, -2,  2 },
+		5,  9,  6,  2, 8,  12, -5, 15,
+		9,  120,
+		75, 75,
+		60,  4, 100,  6,
+		54,  4, 80,  6,
+		3,
 		CF_ALL,
-                120,
-                {
-                        {
-                                SKILL_BOW,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000*/
-                                '%', 110,
-                        },
-                        {
-                                SKILL_AGILITY,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 50,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		120,
 
-        {
-                "Hobbit",
-                { -2,  2,  1,  3,  0,  1 },
-                15, 12, 18, 4, 12,  15, -10, 20,
-//                7,  110,
-                8,  115,
-                21, 12,
-                36,  3, 60,  3,
-                33,  3, 50,  3,
-                3,
+		{{ SKILL_BOW,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_MAGIC,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_STEALTH,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_DODGE,
+			'+', 0,/*1000*/
+			'%', 110, },
+		{ SKILL_AGILITY,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_CALMNESS,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_SNEAKINESS,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 50, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Hobbit",
+		{ -2,  2,  1,  3,  0,  1 },
+		15, 12, 18, 4, 12,  15, -10, 20,
+		//7,  110,
+		8,  115,
+		21, 12,
+		36,  3, 60,  3,
+		33,  3, 50,  3,
+		3,
 		CF_ALL,
-                90,
-                {
-                        {
-                                SKILL_SLING,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 1000,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 2000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000*/
-                                '%', 110,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 50,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		90,
 
-        {
-                "Gnome",
-                { -1,  2,  0,  2,  1, -2 },
-                10, 18, 12,  3, 6,  13, -8, 12,
-                9,  125,
-                50, 40,
-                42,  3, 90,  6,
-                39,  3, 75,  3,
-                4,
+		{{ SKILL_SLING,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_STEALTH,
+			'+', 1000,
+			'%', 115, },
+		{ SKILL_SNEAKINESS,
+			'+', 2000,
+			'%', 110, },
+		{ SKILL_DODGE,
+			'+', 0,/*1000*/
+			'%', 110, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 50, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Gnome",
+		{ -1,  2,  0,  2,  1, -2 },
+		10, 18, 12,  3, 6,  13, -8, 12,
+		9,  125,
+		50, 40,
+		42,  3, 90,  6,
+		39,  3, 75,  3,
+		4,
 		CF_ALL,
-                120,
-                {
-                        {
-                                SKILL_XBOW,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000*/
-                                '%', 115,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 50,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		120,
 
-        {
-                "Dwarf",
-                {  2, -2,  2, -2,  2, -3 },
-                2,  9,  9,  -1,  7,  10, 15,  0,
-                11,  130,
-                35, 15,
-                48,  3, 150, 10,
-                46,  3, 120, 10,
-                5,
+		{{ SKILL_XBOW,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_MAGIC,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_DIG,
+			'+', 1000,
+			'%', 115, },
+		{ SKILL_DODGE,
+			'+', 0,/*1000*/
+			'%', 115, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 50, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Dwarf",
+		{  2, -2,  2, -2,  2, -3 },
+		2,  9,  9,  -1,  7,  10, 15,  0,
+		11,  130,
+		35, 15,
+		48,  3, 150, 10,
+		46,  3, 120, 10,
+		5,
 		CF_ALL,
-                95,
-                {
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 5000,
-                                '%', 130,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 60,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		95,
 
-        {
-                "Half-Orc",
-                {  2, -1,  0,  0,  1, -4 },
-                -3, -3, -3,  -1,  0, 7, 12, -5,
-                11,  115, // lowered from 110 to 100
-                11,  4,
-                66,  1, 150,  5,
-                62,  1, 120,  5,
-                3,
+		{{ SKILL_AXE,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_DIG,
+			'+', 5000,
+			'%', 130, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 60, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Half-Orc",
+		{  2, -1,  0,  0,  1, -4 },
+		-3, -3, -3,  -1,  0, 7, 12, -5,
+		11,  115, // lowered from 110 to 100
+		11,  4,
+		66,  1, 150,  5,
+		62,  1, 120,  5,
+		3,
 		CF_ALL,
-                50,
-                {
-                        {
-                                SKILL_BACKSTAB,
-                                '+', 1000,
-                                '%', 105,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 0,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        /* Not banned, but hard */
-                        {
-                                SKILL_MAGIC,
-                                '+', 0,
-                                '%', 80,
-                        },
-                        {
-                                SKILL_SORCERY,
-                                '+', 0,
-                                '%', 80,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		50,
 
-        {
-                "Half-Troll",
-                { 4, -4, -2, -4,  3, -6 },
-                -5, -8, -8, -2,  -1, 5, 20, -10,
-                12,  135,
-                20, 10,
-                96, 10, 250, 50,
-                84,  8, 225, 40,
-                3,
+		{{ SKILL_BACKSTAB,
+			'+', 1000,
+			'%', 105, },
+		{ SKILL_MASTERY,
+			'+', 0,
+			'%', 115, },
+		{ SKILL_NECROMANCY,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_MAGIC, /* Not banned, but hard */
+			'+', 0,
+			'%', 80, },
+		{ SKILL_SORCERY,
+			'+', 0,
+			'%', 80, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Half-Troll",
+		{ 4, -4, -2, -4,  3, -6 },
+		-5, -8, -8, -2,  -1, 5, 20, -10,
+		12,  135,
+		20, 10,
+		96, 10, 250, 50,
+		84,  8, 225, 40,
+		3,
 		CF_ALL,
-                20,
-                {
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_HEALTH,
-                                '+', 3000,
-                                '%', 110,
-                        },
-                        /* Silly Half-Troll archers/rogues */
-                        {
-                                SKILL_ARCHERY,
-                                '+', 0,
-                                '%', 50,
-                        },
-                        {
-                                SKILL_CRITS,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        /* Not banned, but *hard* */
-                        {
-                                SKILL_MAGIC,
-                                '+', 0,
-                                '%', 50,
-                        },
-                        {
-                                SKILL_SORCERY,
-                                '+', 0,
-                                '%', 50,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 30,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 30,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		20,
 
-        {
-                "Dunadan",
-                {  1,  2,  2,  2,  3,  2 },
-                4,  3,  5,  0, 3, 13, 15, 10,
-                10,  170,
-                50, 20,
-                82, 5, 190, 20,
-                78,  6, 180, 15,
-                0,
+		{{ SKILL_BLUNT,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_HEALTH,
+			'+', 3000,
+			'%', 110, },
+		/* Silly Half-Troll archers/rogues */
+		{ SKILL_ARCHERY,
+			'+', 0,
+			'%', 50, },
+		{ SKILL_CRITS,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_MAGIC, /* Not banned, but *hard* */
+			'+', 0,
+			'%', 50, },
+		{ SKILL_SORCERY,
+			'+', 0,
+			'%', 50, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 30, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 30, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Dunadan",
+		{  1,  2,  2,  2,  3,  2 },
+		4,  3,  5,  0, 3, 13, 15, 10,
+		10,  170,
+		50, 20,
+		82, 5, 190, 20,
+		78,  6, 180, 15,
+		0,
 		CF_ALL,
-                105,
-                {
-                        /* Dunadan makes good generalist */
-                        {
-                                SKILL_COMBAT,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 0,
-                                '%', 105,
-                        },
-                        {
-                                SKILL_ARCHERY,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-//                                SKILL_TRAINING,
-                                SKILL_INTERCEPT,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 60,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		105,
 
-        {
-                "High-Elf",
-                {  1,  3, -1,  3,  1,  3 },
-                4,  20, 20,  3,  3, 14, 10, 25,
-                10,  250,
-                100, 30,
-                90, 10, 190, 20,
-                82, 10, 180, 15,
-                4,
+		{{ SKILL_COMBAT, /* Dunadan makes good generalist */
+			'+', 0,
+			'%', 110, },
+		{ SKILL_MAGIC,
+			'+', 0,
+			'%', 105, },
+		{ SKILL_ARCHERY,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_INTERCEPT, //SKILL_TRAINING,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 60, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "High-Elf",
+		{  1,  3, -1,  3,  1,  3 },
+		4,  20, 20,  3,  3, 14, 10, 25,
+		10,  250,
+		100, 30,
+		90, 10, 190, 20,
+		82, 10, 180, 15,
+		4,
 		CF_ALL,
-                125,
-                {
-                        {
-                                SKILL_BOW,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000*/
-                                '%', 110,
-                        },
-                        {
-                                SKILL_AGILITY,
-                                '+', 2000,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 2000,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 60,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		125,
 
-        {
-                "Yeek",
-                {  -5, -5, -5, -5, -5, -3 },
-                0,  0,  0,  0,  0,  10,  0,  0,
-                8,  80, /* 8, 35 */ /* 80% for the new RPG_SERVER originally */
-                14,  6,
-                72,  6, 180, 25,
-                66,  4, 150, 20,
-                0,
+		{{ SKILL_BOW,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_MAGIC,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_STEALTH,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_DODGE,
+			'+', 0,/*1000*/
+			'%', 110, },
+		{ SKILL_AGILITY,
+			'+', 2000,
+			'%', 115, },
+		{ SKILL_CALMNESS,
+			'+', 2000,
+			'%', 115, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 60, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Yeek",
+		{  -5, -5, -5, -5, -5, -3 },
+		0,  0,  0,  0,  0,  10,  0,  0,
+		8,  80, /* 8, 35 */ /* 80% for the new RPG_SERVER originally */
+		14,  6,
+		72,  6, 180, 25,
+		66,  4, 150, 20,
+		0,
 		CF_ALL,
-                50,
-		{
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 60,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-		},
-        },
+		50,
 
-        {
-                "Goblin",
-                {  0, -1, -4,  4,  2, -5 },
-                2, -3, -3,  0,  2, 8, 12, -5,
-                10,  120,//increased from 115 to 125 due to great starting abilities for fighters
-                11,  4,
-                66,  1, 150,  5,
-                62,  1, 120,  5,
-                3,
+		{{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 60, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Goblin",
+		{  0, -1, -4,  4,  2, -5 },
+		2, -3, -3,  0,  2, 8, 12, -5,
+		10,  120,//increased from 115 to 125 due to great starting abilities for fighters
+		11,  4,
+		66,  1, 150,  5,
+		62,  1, 120,  5,
+		3,
 		CF_ALL,
-                70,
-                {
-                        /* Never ask me the reason why, I love boomerang :) */
-                        /* DG - Why ? ;) */
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_STEALING,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 50,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		70,
 
-        {
-                "Ent",
-                { 8, -4, +2, -4,  8, -4 },
-                -4, 0, 20, -6, 5, 4, 5, -20,
-                14, 320,
-                255, 70,
-                72, 6, 100, 25,
-                66, 4, 100, 20,
-                0,
+		/* Never ask me the reason why, I love boomerang :) */
+		/* DG - Why ? ;) */
+		{{ SKILL_BOOMERANG,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_STEALING,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 50,},
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Ent",
+		{ 8, -4, +2, -4,  8, -4 },
+		-4, 0, 20, -6, 5, 4, 5, -20,
+		14, 320,
+		255, 70,
+		72, 6, 100, 25,
+		66, 4, 100, 20,
+		0,
 		//No archer, rogue
 		CF_ALL&~CFR&~CFA,
-                90,
-                {
-			{
-                                SKILL_AXE,
-                                '+', 0,
-                                '%', 80,
-			},
-			{
-                                SKILL_SWORD,
-                                '+', 0,
-                                '%', 90,
-			},
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 1000,
-                                '%', 115,
-                        },
-                        /* Ent loves water and the Earth */
-                        {
-                                SKILL_EARTH,
-                                '+', 0,
-                                '%', 120,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '%', 120,
-                        },
-                        /* But hates fire */
-                        {
-                                SKILL_FIRE,
-                                '+', 0,
-                                '%', 60,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 0,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
-        {
-                "Draconian",	// "Dragonrider", "Thunderlord"
-//                {  6,  3,  -10,  0,  5,  5 },
-//		  {  6,  2,  -2,  1,  3,  5 },
-//		  {  6,  2,  1,  1,  3,  5 },
-		  {  4,  2,  2,  1,  3,  2 },
-                0,  7,  10,  -5,  10,  10,  15,  5,
-                12,  350,
-                14,  6,
-                180,  6, 255, 25,
-                150,  4, 230, 20,
-                5,
-		CF_ALL,
-                95,
-                {
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 0,
-                                '%', 110,
-                        },
-			{
-                                SKILL_TCONTACT,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 60,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
+		90,
 
+		{{ SKILL_AXE,
+			'+', 0,
+			'%', 80, },
+		{ SKILL_SWORD,
+			'+', 0,
+			'%', 90, },
+		{ SKILL_HEALTH,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_CALMNESS,
+			'+', 1000,
+			'%', 115, },
+		/* Ent loves water and the Earth */
+		{ SKILL_EARTH,
+			'+', 0,
+			'%', 120, },
+		{ SKILL_WATER,
+			'+', 0,
+			'%', 120, },
+		{ SKILL_FIRE, /* But hates fire */
+			'+', 0,
+			'%', 60, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 0, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Draconian",	// "Dragonrider", "Thunderlord"
+		//{  6,  3,  -10,  0,  5,  5 },
+		//{  6,  2,  -2,  1,  3,  5 },
+		//{  6,  2,  1,  1,  3,  5 },
+		{  4,  2,  2,  1,  3,  2 },
+		0,  7,  10,  -5,  10,  10,  15,  5,
+		12,  350,
+		14,  6,
+		180,  6, 255, 25,
+		150,  4, 230, 20,
+		5,
+		CF_ALL,
+		95,
+
+		{{ SKILL_POLEARM,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_DEVICE,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_TCONTACT,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 60, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
 #ifdef ENABLE_DRACONIAN_TRAITS
-                        {
-                                SKILL_BREATH,
-                                '+', 1000,
-                                '+', 0,
-                        },
+		{ SKILL_BREATH,
+			'+', 1000,
+			'+', 0, },
 #endif
-                },
-        },
+		},},
 
 #ifdef ENABLE_KOBOLD
-        {
-                "Kobold",
-                { -1, -1,  0,  2,  2, -2 },
-                10,  5,  0,  4, 15,  15, -5, 10,
-                8,  115,
-                11,  4,
-                66,  1, 150,  5,
-                62,  1, 120,  5,
-                5,
+	{ "Kobold",
+		{ -1, -1,  0,  2,  2, -2 },
+		10,  5,  0,  4, 15,  15, -5, 10,
+		8,  115,
+		11,  4,
+		66,  1, 150,  5,
+		62,  1, 120,  5,
+		5,
 		CF_ALL,
-                120,
-                {
-                        {
-                                SKILL_TRAPPING,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 0,
-                                '%', 105,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 150,
-                                '+', 70,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		120,
+
+		{{ SKILL_TRAPPING,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_SNEAKINESS,
+			'+', 0,
+			'%', 105, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 150,
+			'+', 70, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
 #endif
 
-        {
-                "Dark-Elf",
-                {  0,  2, 1,  3,  1,  -6 },
-                7,  3, 6,  4, 10, 6, 15, 15,
-                10,  150,
-                100, 30,
-                90, 10, 180, 20,
-                82, 10, 180, 15,
-                8,
-                // no Paladins
+	{ "Dark-Elf",
+		{  0,  2, 1,  3,  1,  -6 },
+		7,  3, 6,  4, 10, 6, 15, 15,
+		10,  150,
+		100, 30,
+		90, 10, 180, 20,
+		82, 10, 180, 15,
+		8,
+		// no Paladins
 		CF_ALL&~CFL,
-                115,
-                {
-#if 0
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
-                                '%', 110,
-                        },
-#endif
-                        {
-                                SKILL_BACKSTAB,
-                                '+', 1000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000,*/
-                                '%', 110,
-                        },
-                        {
-                                SKILL_AGILITY,
-                                '+', 2000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 2000,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 50,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		115,
 
-        {
-                "Vampire",
-                {  2,  2,  -1,  2,  0,  3 },
-                -2,  3, 20,  2,  -4, 13, 10, -10,
-//                11,  240,
-                11,  220,
-                100, 30,
-                90, 10, 180, 20,
-                82, 10, 170, 15,
-                15,
+		{
+#if 0
+		{ SKILL_ARCHERY,
+			'+', 1000,
+			'%', 110, },
+#endif
+		{ SKILL_BACKSTAB,
+			'+', 1000,
+			'%', 110, },
+		{ SKILL_STEALTH,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_DODGE,
+			'+', 0,/*1000,*/
+			'%', 110, },
+		{ SKILL_AGILITY,
+			'+', 2000,
+			'%', 110, },
+		{ SKILL_SNEAKINESS,
+			'+', 2000,
+			'%', 110, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 50, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		},},
+
+	{ "Vampire",
+		{  2,  2,  -1,  2,  0,  3 },
+		-2,  3, 20,  2,  -4, 13, 10, -10,
+//		11,  240,
+		11,  220,
+		100, 30,
+		90, 10, 180, 20,
+		82, 10, 170, 15,
+		15,
 		//No paladin,druid,priest,shaman/mimic
 		CF_ALL&~CFL&~CFD&~CFP&~CFM&~CFS,
-                125,
-                {
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_DIVINATION,
-                                '+', 0,
-                                '%', 75,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_NATURE,
-                                '+', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_HOFFENSE,
-                                '+', 0,
-				'%', 0,
-			},
-			{
-                                SKILL_HDEFENSE,
-                                '+', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_HCURING,
-                                '+', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_HSUPPORT,
-                                '+', 0,
-                                '%', 0,
-                        },
-                        /* cannot train Light runecraft well */
-                        {
-				SKILL_R_LITE,
-                                '+', 0,
-                                '%', 50,
-			},
-			/* Moderate bonus to Nether, being the undead... */
-			{
-				SKILL_R_NETH,
-				'+', 0,
-				'%', 120,
-			},
-                        {
-                                SKILL_MIMIC, /* polymorph to vampire bat and maybe vampiric mist */
-                                '+', 1000,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_ANTIMAGIC, /* keep mimicry usable for bat form. vampires believe! for now at least... */
-                                '%', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_MINTRUSION,
-                                '+', 0,
-                                '%', 110,
-                        },
+		125,
 
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '%', 105,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '%', 115,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '+', 30,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		{{ SKILL_BLUNT,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_DIVINATION,
+			'+', 0,
+			'%', 75, },
+		{ SKILL_WATER,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_NATURE,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_HOFFENSE,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_HDEFENSE,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_HCURING,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_HSUPPORT,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_R_LITE, /* cannot train Light runecraft well */
+			'+', 0,
+			'%', 50, },
+		{ SKILL_R_NETH, /* Moderate bonus to Nether, being the undead... */
+			'+', 0,
+			'%', 120, },
+		{ SKILL_MIMIC, /* polymorph to vampire bat and maybe vampiric mist */
+			'+', 1000,
+			'%', 0, },
+		{ SKILL_ANTIMAGIC, /* keep mimicry usable for bat form. vampires believe! for now at least... */
+			'%', 0,
+			'%', 0, },
+		{ SKILL_MINTRUSION,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_NECROMANCY,
+			'+', 0,
+			'%', 115, },
+		{ SKILL_TRAUMATURGY,
+			'+', 0,
+			'%', 105, },
+		{ SKILL_AURA_FEAR,
+			'+', 0,
+			'%', 115, },
+		{ SKILL_AURA_SHIVER,
+			'+', 0,
+			'%', 115, },
+		{ SKILL_AURA_DEATH,
+			'+', 0,
+			'%', 115, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'+', 30, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		}, },
 #ifdef ENABLE_MAIA
 /*
  * Player Race Information:
@@ -2390,115 +2058,85 @@ player_race race_info[MAX_RACE] =
  *    class-choices
  *    mana %  (<- obsolete)
  */
-        {
-                "Maia",
-                { 1,  3, 3,  1,  0, 2 }, //boosted int/wisdom/dex
-                3, 20, 3, 0,  5, 1, 15, 5,
+	{ "Maia",
+		{ 1,  3, 3,  1,  0, 2 }, //boosted int/wisdom/dex
+		3, 20, 3, 0,  5, 1, 15, 5,
 		11, 400,//too low == bad since you need the quest mobs
 		255, 250,
-                72,  16, 150, 55,
-                66,  8, 130, 40,
-                10,
+		72,  16, 150, 55,
+		66,  8, 130, 40,
+		10,
 		/* Plan is to disable warrior and archer since they do not have SP */
 		CF_ALL&~CFW&~CFA,
-                125,
-                {
+		125,
+
+		{
 /* The plan is to have a skill tree that is updated as the player level.
 Only 70%-ify the skills that could potentially be updated when the player mutates!!
  */
-			{
-				SKILL_ASTRAL,
-				'+', 1250,
-				'+', 1250,
-			},
-                        {
-                                SKILL_HOFFENSE,
-                                '+', 0,
-				'%', 70,
-			},
-			{
-                                SKILL_HDEFENSE,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_HCURING,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_HSUPPORT,
-                                '+', 0,
-                                '%', 70,
-                        },
-			{
-				SKILL_SNEAKINESS,
-				'+', 0,
-				'%', 110,
-			},
-			{
-				SKILL_STEALTH,
-				'+', 0,
-				'%', 110,
-			},
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_CLIMB,
-                                '+', 0,
-                                '+', 40,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '%', 50,
-                        },
-                        {
-                                SKILL_SHOOT_TILL_KILL,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                },
-        },
+		{ SKILL_ASTRAL,
+			'+', 1250,
+			'+', 1250, },
+		{ SKILL_HOFFENSE,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_HDEFENSE,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_HCURING,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_HSUPPORT,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_SNEAKINESS,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_STEALTH,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_NECROMANCY,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_TRAUMATURGY,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_AURA_FEAR,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_AURA_SHIVER,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_AURA_DEATH,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_CLIMB,
+			'+', 0,
+			'+', 40, },
+		{ SKILL_SWIM,
+			'+', 0,
+			'%', 50, },
+		{ SKILL_SHOOT_TILL_KILL,
+			'+', 1000,
+			'+', 0, },
+		}, },
 #endif
 
 #if 0 // do not activate until I find a way to have a race in the server and not in the client
-        {
-                "Exp 626",
-                {  1,  2,  -3,  1,  2,  -3 },
-                4,  20, 20,  3,  3, 14, 10, 25,
-                11,  150,
-                14,  6,
-                180,  6, 255, 25,
-                150,  4, 230, 20,
-                0,
-                0xFFFFFFFF,
-                105,
-                { 0 },
-        },
+	{
+		"Exp 626",
+		{  1,  2,  -3,  1,  2,  -3 },
+		4,  20, 20,  3,  3, 14, 10, 25,
+		11,  150,
+		14,  6,
+		180,  6, 255, 25,
+		150,  4, 230, 20,
+		0,
+		0xFFFFFFFF,
+		105,
+
+		{ 0 },
+	},
 #endif
 };
 
@@ -2565,25 +2203,20 @@ char *special_prace_lookup[MAX_RACE] = {
  *   HD, Exp
  */
 /* TODO: let's move them to p_info.txt */
-player_class class_info[MAX_CLASS] =
-{
-	{
-                "Warrior",
-                TERM_UMBER,
+player_class class_info[MAX_CLASS] = {
+	{ "Warrior",
+		TERM_UMBER,
 		{ 5, -2, -2, 2, 2, -1},
 		{ 22+100, 0, 0, 0+100, 0, 0},
 		20, 18, 18, 1,  14, 2, 70, 55,
 		10, 8,  10, 0,  0,  0,  45, 40,
 		10, 0,//6,  10,//9, 10,
-//		11, 0,
-                {
-                        {
-                                SKILL_COMBAT,
-                                '+', 3000,
-                                '+', 2000,
-                        },
-                        {
-                                SKILL_MASTERY,
+		//11, 0,
+
+		{{ SKILL_COMBAT,
+			'+', 3000,
+			'+', 2000, },
+		{ SKILL_MASTERY,
                                 '+', 1000,
                                 '+', 1000,
                         },
