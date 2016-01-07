@@ -2217,326 +2217,326 @@ player_class class_info[MAX_CLASS] = {
 			'+', 3000,
 			'+', 2000, },
 		{ SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_TECHNIQUE,
-                                '+', 1000,
-                                '+', 0,
-                        },
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_TECHNIQUE,
+				'+', 1000,
+				'+', 0,
+			},
 #ifdef DUAL_WIELD /* warriors may too :) */
-                        { /* dual-wield */
-                                SKILL_DUAL,
-                                '+', 1000,
-                                '+', 0,
-                        },
+			{ /* dual-wield */
+				SKILL_DUAL,
+				'+', 1000,
+				'+', 0,
+			},
 #endif
 #ifdef ENABLE_STANCES /* was warrior-only, now also mimics/paladins/rangers */
-                        {
-                                SKILL_STANCE,
-                                '+', 1000,
-                                '+', 0,
-                        },
+			{
+				SKILL_STANCE,
+				'+', 1000,
+				'+', 0,
+			},
 #endif
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_SLING,
-                                '+', 0,
-                                '+', 300,
-                        },
-                        {
-                                /* let's keep it low for now - offbalancing */
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '+', 700,
-                        },
+			{
+				SKILL_SWORD,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_AXE,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_BLUNT,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_POLEARM,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_BOW,
+				'+', 0,
+				'+', 350,
+			},
+			{
+				SKILL_XBOW,
+				'+', 0,
+				'+', 350,
+			},
+			{
+				SKILL_BOOMERANG,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_SLING,
+				'+', 0,
+				'+', 300,
+			},
+			{
+				/* let's keep it low for now - offbalancing */
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+				'+', 700,
+			},
 
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 800,//900,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 1000,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000*/
-                                '+', 800,
-                        },
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 700,
+			},
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 800,//900,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 1000,
+				'+', 600,
+			},
+			{
+				SKILL_DISARM,
+				'+', 1000,
+				'+', 900,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,/*1000*/
+				'+', 800,
+			},
 
 			/* Necromancy for this class - experimental */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '%', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1000,
-                        },
+			{
+				SKILL_NECROMANCY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_TRAUMATURGY,
+				'%', 0,
+				'%', 0,
+			},
+			{
+				SKILL_AURA_FEAR,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_SHIVER,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_DEATH,
+				'+', 0,
+				'+', 1000,
+			},
 
-                        {
-                                SKILL_ANTIMAGIC,
-                                '+', 0,
-                                '+', 500,//700
-                        },
-						/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 2000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '%', 120,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '+', 1200,
-                        },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                }
+			{
+				SKILL_ANTIMAGIC,
+				'+', 0,
+				'+', 500,//700
+			},
+			/* Health tree */
+			{
+				SKILL_HEALTH,
+				'+', 2000,
+				'+', 1000,
+			},
+			{
+				SKILL_SWIM,
+				'+', 0,
+				'%', 120,
+			},
+			{
+				SKILL_DIG,
+				'+', 1000,
+				'+', 1200,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 1000,
+				'+', 800,
+			},
+		}
 	},
 
 	{
-                "Istar",
-                TERM_RED,
+		"Istar",
+		TERM_RED,
 		{-5, 3, 0, 1, -2, 1},
 		{0, 0+100, 0, 0, 0, 0},
 		30, 36, 30, 2,  16, 20, 34, 20,
 		7,  10, 9,  0,  0,  0,  15, 15,
 		0, 35,//0,30
-//		3, 35,
-                {
-                        {
-                                SKILL_COMBAT,
-                                '+', 0,
-                                '+', 300,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 0,
-                                '+', 150,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 4000,	/* 6000 */
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 1100,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 500,//700,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,
-                                '+', 450,
-                        },
-						/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 0,
-                                '+', 700,
-                        },
+		//3, 35,
+		{
+			{
+				SKILL_COMBAT,
+				'+', 0,
+				'+', 300,
+			},
+			{
+				SKILL_MASTERY,
+				'+', 0,
+				'+', 150,
+			},
+			{
+				SKILL_MAGIC,
+				'+', 4000,	/* 6000 */
+				'+', 1000,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 1100,
+			},
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 500,//700,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,
+				'+', 450,
+			},
+			/* Health tree */
+			{
+				SKILL_HEALTH,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_DIG,
+				'+', 0,
+				'+', 700,
+			},
 
-                        {
-                                SKILL_SORCERY,
-                                '+', 0,
-/*				'+', 500,//was 700 */
-/*				'+', 170,  1..9schools->schools,10..12->sorc */
-/*				'+', 185,  49*5.5 skill points -> sorcery ~maxed. */
+			{
+				SKILL_SORCERY,
+				'+', 0,
+				/* '+', 500,//was 700 */
+				/* '+', 170,  1..9schools->schools,10..12->sorc */
+				/* '+', 185,  49*5.5 skill points -> sorcery ~maxed. */
 				'+', 205,  /* 49*5 -> maxed at 50 */
-                        },
-                        {
-                                SKILL_SPELL,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_MANA,
-                                '+', 1000,	/* Allow to cast Manathrust */
-                                '+', 1900,
-                        },
-                        {
-                                SKILL_FIRE,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_EARTH,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_NATURE,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_DIVINATION,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_CONVEYANCE,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_META,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_MIND,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_TEMPORAL,
-                                '+', 0,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_UDUN,
-                                '+', 0,
-                                '+', 1600,
-                        },
+			},
+			{
+				SKILL_SPELL,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_MANA,
+				'+', 1000,	/* Allow to cast Manathrust */
+				'+', 1900,
+			},
+			{
+				SKILL_FIRE,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_AIR,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_EARTH,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_WATER,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_NATURE,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_DIVINATION,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_CONVEYANCE,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_META,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_MIND,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_TEMPORAL,
+				'+', 0,
+				'+', 1600,
+			},
+			{
+				SKILL_UDUN,
+				'+', 0,
+				'+', 1600,
+			},
 
 			/* Necromancy for this class - experimental */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                }
+			{
+				SKILL_NECROMANCY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_TRAUMATURGY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_FEAR,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_SHIVER,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_DEATH,
+				'+', 0,
+				'+', 1000,
+			},
+		}
 	},
 
 	{
 		"Priest",
-                TERM_GREEN,
-                {-1, -3, 3, -1, 0, 2},
+		TERM_GREEN,
+		{-1, -3, 3, -1, 0, 2},
 #if 0 /* disabled recommendations for STR/DEX because STR cannot even be reached by dwarven priests.. */
 		{19, 0, 0+100, 10, 0, 0},
 #else
@@ -2545,623 +2545,623 @@ player_class class_info[MAX_CLASS] = {
 		25, 25, 32, 2,  16, 8, 48, 35,
 		7,   9, 12, 0,  0,  0, 20, 15,
 		5, 20, //2, 20,//4,20
-//		7, 20,
-                {
-                        {
-                                SKILL_COMBAT,
-                                '+', 0,
-                                '+', 750,//x1.5
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 0,
-                                '+', 400,//800
-                        },
+		//7, 20,
+		{
+			{
+				SKILL_COMBAT,
+				'+', 0,
+				'+', 750,//x1.5
+			},
+			{
+				SKILL_MASTERY,
+				'+', 0,
+				'+', 400,//800
+			},
 #if 0 /* unusable: depends on BLESSED too much - just confuses newbies anyway */
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-                                '+', 500,
-                        },
+			{
+				SKILL_SWORD,
+				'+', 0,
+				'+', 500,
+			},
 #endif
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '+', 500,//450
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 2000,
-                                '+', 900,
-                        },
+			{
+				SKILL_BLUNT,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+				'+', 500,//450
+			},
+			{
+				SKILL_MAGIC,
+				'+', 2000,
+				'+', 900,
+			},
 #if 0
-                        {
-                                SKILL_SPELL,
-                                '+', 0,
-                                '+', 500,
-                        },
+			{
+				SKILL_SPELL,
+				'+', 0,
+				'+', 500,
+			},
 #endif
-/*                        {
-                                SKILL_DIVINATION,
-                                '+', 1000,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_CONVEYANCE,
-                                '+', 0,
-                                '+', 900,
-                        },,*/
-                        {
-                                SKILL_HOFFENSE,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_HDEFENSE,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_HCURING,
-                                '+', 1000,
-                                '+', 1700,
-                        },
-                        {
-                                SKILL_HSUPPORT,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 600,//770,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,
-                                '+', 550,
-                        },
-						/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 1000,
-                                '+', 600,//400
-                        },
-                }
+			/*{
+				SKILL_DIVINATION,
+				'+', 1000,
+				'+', 500,
+			},
+			{
+				SKILL_CONVEYANCE,
+				'+', 0,
+				'+', 900,
+			},,*/
+			{
+				SKILL_HOFFENSE,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_HDEFENSE,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_HCURING,
+				'+', 1000,
+				'+', 1700,
+			},
+			{
+				SKILL_HSUPPORT,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 900,
+			},
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 600,//770,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,
+				'+', 550,
+			},
+			/* Health tree */
+			{
+				SKILL_HEALTH,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_DIG,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 1000,
+				'+', 600,//400
+			},
+		}
 	},
 
 	{
-                "Rogue",
-                TERM_BLUE,
+		"Rogue",
+		TERM_BLUE,
 		{ 2, 1, -2, 3, 1, -1},
 		{15, 0, 0, 19+100, 0, 0},
 		45, 28, 28, 5, 32, 24, 60, 66,
 		15, 9, 10, 0, 10, 10, 40, 40,// ..0,0,40,30
 		5, 15, //3, 25,//5, 25
-//		8, 25,
-                {
-                        {
-                                SKILL_COMBAT,
-                                '+', 1000,
-                                '+', 1200,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 700,//650
-                        },
-                        {
-                                SKILL_TECHNIQUE,
-                                '+', 1000,
-                                '+', 0,
-                        },
+		//8, 25,
+		{
+			{
+				SKILL_COMBAT,
+				'+', 1000,
+				'+', 1200,
+			},
+			{
+				SKILL_MASTERY,
+				'+', 1000,
+				'+', 700,//650
+			},
+			{
+				SKILL_TECHNIQUE,
+				'+', 1000,
+				'+', 0,
+			},
 #ifdef DUAL_WIELD
-                        { /* dual-wield */
-                                SKILL_DUAL,
-                                '+', 1000,
-                                '+', 0,
-                        },
+			{ /* dual-wield */
+				SKILL_DUAL,
+				'+', 1000,
+				'+', 0,
+			},
 #endif
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_CRITS,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_SLING,
-                                '+', 0,
-                                '+', 450,
-                        },
-                        {
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 1000,
-                                '+', 600,
-                        },
-						/* They can be changed */
-                        {
-                                SKILL_CONVEYANCE,
-                                '+', 0,
-                                '+', 750,
-                        },
-                        {
-                                SKILL_DIVINATION,
-                                '+', 0,
-                                '+', 750,
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '+', 750,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 950,
-                        },
+			{
+				SKILL_SWORD,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_CRITS,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_BOW,
+				'+', 0,
+				'+', 350,
+			},
+			{
+				SKILL_XBOW,
+				'+', 0,
+				'+', 350,
+			},
+			{
+				SKILL_BOOMERANG,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_SLING,
+				'+', 0,
+				'+', 450,
+			},
+			{
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_MAGIC,
+				'+', 1000,
+				'+', 600,
+			},
+			/* They can be changed */
+			{
+				SKILL_CONVEYANCE,
+				'+', 0,
+				'+', 750,
+			},
+			{
+				SKILL_DIVINATION,
+				'+', 0,
+				'+', 750,
+			},
+			{
+				SKILL_AIR,
+				'+', 0,
+				'+', 750,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 950,
+			},
 
 			/* Necromancy for this class - experimental */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1000,
-                        },
+			{
+				SKILL_NECROMANCY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_TRAUMATURGY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_FEAR,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_SHIVER,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_DEATH,
+				'+', 0,
+				'+', 1000,
+			},
 
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 900,//1200,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 1000,
-                                '+', 1200,
-                        },
-                        {
-                                SKILL_TRAPPING,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_STEALING,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_BACKSTAB,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 1000,
-                                '+', 900,
-                        },
-						/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AGILITY,
-                                '+', 1000,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-//                                '+', 600,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '%', 120,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 0,
-                                '+', 1100,
-                        },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                }
-        },
-
-        {
-                "Mimic",
-                 TERM_L_WHITE, //confusing
-//		 TERM_ORANGE, <- more confusing since they're supposed to use a monster form
-		{ 1, 0, 0, 1, 1, -4},
-		{19+100, 0, 0, 10+100, 0, 0},//21,19
-		25, 34, 28, 1, 18, 18, 60, 46,
-	         9, 9, 10, 0,  0,  0, 40, 25,
-		6, 30,//3, 40,//4, 25
-//		8, 40,
-                {
-                        {
-                                SKILL_COMBAT,
-                                '+', 3000,
-                                '+', 1600,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 800,//750
-                        },
-                        {
-                                SKILL_TECHNIQUE,
-                                '+', 1000,
-                                '+', 0,
-                        },
-#ifdef ENABLE_STANCES
-                        {
-                                SKILL_STANCE,
-                                '+', 1000,
-                                '+', 0,
-                        },
-#endif
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-                                '+', 630,
-                        },
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '+', 630,
-                        },
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '+', 630,
-                        },
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '+', 630,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '+', 250,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 250,
-                        },
-                        {
-                                SKILL_SLING,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '+', 550,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_MIMIC,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 850,
-                        },
-
-			/* Necromancy for this class - experimental */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1000,
-                        },
-
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 0,
-                                '+', 650,//800,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 1000,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 0,
-                                '+', 700,
-                        },
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 900,//1200,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 1000,
+				'+', 700,
+			},
+			{
+				SKILL_DISARM,
+				'+', 1000,
+				'+', 1200,
+			},
+			{
+				SKILL_TRAPPING,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_STEALING,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_BACKSTAB,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_DODGE,
+				'+', 1000,
+				'+', 900,
+			},
 			/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 0,
-                                '+', 1200,
-                        },
-						/* Misc tree */
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 600,
-                        },
-                }
+			{
+				SKILL_HEALTH,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_AGILITY,
+				'+', 1000,
+				'+', 500,
+			},
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+//				'+', 600,
+				'+', 800,
+			},
+			{
+				SKILL_SWIM,
+				'+', 0,
+				'%', 120,
+			},
+			{
+				SKILL_DIG,
+				'+', 0,
+				'+', 1100,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 1000,
+				'+', 900,
+			},
+		}
 	},
 
 	{
-                "Archer",
-                TERM_ORANGE,
+		"Mimic",
+		 TERM_L_WHITE, //confusing
+		// TERM_ORANGE, <- more confusing since they're supposed to use a monster form
+		{ 1, 0, 0, 1, 1, -4},
+		{19+100, 0, 0, 10+100, 0, 0},//21,19
+		25, 34, 28, 1, 18, 18, 60, 46,
+		 9, 9, 10, 0,  0,  0, 40, 25,
+		6, 30,//3, 40,//4, 25
+		//8, 40,
+		{
+			{
+				SKILL_COMBAT,
+				'+', 3000,
+				'+', 1600,
+			},
+			{
+				SKILL_MASTERY,
+				'+', 1000,
+				'+', 800,//750
+			},
+			{
+				SKILL_TECHNIQUE,
+				'+', 1000,
+				'+', 0,
+			},
+#ifdef ENABLE_STANCES
+			{
+				SKILL_STANCE,
+				'+', 1000,
+				'+', 0,
+			},
+#endif
+			{
+				SKILL_SWORD,
+				'+', 0,
+				'+', 630,
+			},
+			{
+				SKILL_AXE,
+				'+', 0,
+				'+', 630,
+			},
+			{
+				SKILL_BLUNT,
+				'+', 0,
+				'+', 630,
+			},
+			{
+				SKILL_POLEARM,
+				'+', 0,
+				'+', 630,
+			},
+			{
+				SKILL_BOW,
+				'+', 0,
+				'+', 250,
+			},
+			{
+				SKILL_XBOW,
+				'+', 0,
+				'+', 250,
+			},
+			{
+				SKILL_SLING,
+				'+', 0,
+				'+', 350,
+			},
+			{
+				SKILL_BOOMERANG,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+				'+', 550,
+			},
+			{
+				SKILL_MAGIC,
+				'+', 1000,
+				'+', 700,
+			},
+			{
+				SKILL_MIMIC,
+				'+', 1000,
+				'+', 900,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 850,
+			},
+
+			/* Necromancy for this class - experimental */
+			{
+				SKILL_NECROMANCY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_TRAUMATURGY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_FEAR,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_SHIVER,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_DEATH,
+				'+', 0,
+				'+', 1000,
+			},
+
+			{
+				SKILL_SNEAKINESS,
+				'+', 0,
+				'+', 650,//800,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 1000,
+				'+', 500,
+			},
+			{
+				SKILL_DISARM,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 0,
+				'+', 700,
+			},
+			/* Health tree */
+			{
+				SKILL_HEALTH,
+				'+', 1000,
+				'+', 900,
+			},
+			{
+				SKILL_DIG,
+				'+', 0,
+				'+', 1200,
+			},
+			/* Misc tree */
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 600,
+			},
+		}
+	},
+
+	{
+		"Archer",
+		TERM_ORANGE,
 		{ 1, 0, 2, 3, 1, -1},
 		{0, 0, 0, 18+100, 0, 0},
 		30, 22, 28, 2,  24, 20, 56, 72,
 		8,  8, 10, 0,  0,  0,  30, 50,
 		5, 10,//3, 15,//5, 15
-//		8, 15,
-                {
-                        {
-                                SKILL_COMBAT,
-                                '+', 1000,
-                                '+', 1700,//buffed from 1300
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-                                '+', 400,
-                        },
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '+', 400,
-                        },
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '+', 400,
-                        },
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '+', 400,
-                        },
-                        {
-                                SKILL_ARCHERY,
-                                '+', 2000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_SLING,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 1000,
-                                '+', 850,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 700,
-                        },
+		//8, 15,
+		{
+			{
+				SKILL_COMBAT,
+				'+', 1000,
+				'+', 1700,//buffed from 1300
+			},
+			{
+				SKILL_MASTERY,
+				'+', 1000,
+				'+', 600,
+			},
+			{
+				SKILL_SWORD,
+				'+', 0,
+				'+', 400,
+			},
+			{
+				SKILL_AXE,
+				'+', 0,
+				'+', 400,
+			},
+			{
+				SKILL_BLUNT,
+				'+', 0,
+				'+', 400,
+			},
+			{
+				SKILL_POLEARM,
+				'+', 0,
+				'+', 400,
+			},
+			{
+				SKILL_ARCHERY,
+				'+', 2000,
+				'+', 1000,
+			},
+			{
+				SKILL_SLING,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_BOW,
+				'+', 1000,
+				'+', 850,
+			},
+			{
+				SKILL_XBOW,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_BOOMERANG,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 700,
+			},
 
 			/* Necromancy for this class - experimental */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '%', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1000,
-                        },
+			{
+				SKILL_NECROMANCY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_TRAUMATURGY,
+				'%', 0,
+				'%', 0,
+			},
+			{
+				SKILL_AURA_FEAR,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_SHIVER,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_DEATH,
+				'+', 0,
+				'+', 1000,
+			},
 
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 600,//600,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 1000,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 500,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000*/
-                                '+', 700, /*500, but motivating light armour hereby*/
-                        },
-                        {
-                                SKILL_ANTIMAGIC,
-                                '+', 0,
-                                '+', 350,//300
-                        },
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 600,//600,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 1000,
+				'+', 600,
+			},
+			{
+				SKILL_DISARM,
+				'+', 500,
+				'+', 500,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,/*1000*/
+				'+', 700, /*500, but motivating light armour hereby*/
+			},
+			{
+				SKILL_ANTIMAGIC,
+				'+', 0,
+				'+', 350,//300
+			},
 						/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 900,
-                        },
-                }
+			{
+				SKILL_HEALTH,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_DIG,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 900,
+			},
+		}
 	},
 
 	{
-                "Paladin",
-                TERM_YELLOW,
+		"Paladin",
+		TERM_YELLOW,
 		{ 3, -3, 1, 0, 2, 2},
 		{20+100, 0, 0+100, 10, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -3170,165 +3170,165 @@ player_class class_info[MAX_CLASS] = {
 		10, 21, 54, 1,  13, 16, 60, 40, //was c_thb 29
 		2, 8,  10, 0,  0,  2,  35, 10,
 		8, 30,//5, 30,//7,30
-//		10, 30,
-                {
-                        {
-                                SKILL_COMBAT,
-                                '+', 2700,
-                                '+', 1400,//nerfed from 1700
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1800,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_TECHNIQUE,
-                                '+', 1000,
-                                '+', 0,
-                        },
+		//10, 30,
+		{
+			{
+				SKILL_COMBAT,
+				'+', 2700,
+				'+', 1400,//nerfed from 1700
+			},
+			{
+				SKILL_MASTERY,
+				'+', 1800,
+				'+', 900,
+			},
+			{
+				SKILL_TECHNIQUE,
+				'+', 1000,
+				'+', 0,
+			},
 #ifdef ENABLE_STANCES
-                        {
-                                SKILL_STANCE,
-                                '+', 1000,
-                                '+', 0,
-                        },
+			{
+				SKILL_STANCE,
+				'+', 1000,
+				'+', 0,
+			},
 #endif
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-                                '+', 750,
-                        },
+			{
+				SKILL_SWORD,
+				'+', 0,
+				'+', 750,
+			},
 #if 1 /* offer it at all? */
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '+', 600,//savage^^
-                        },
+			{
+				SKILL_AXE,
+				'+', 0,
+				'+', 600,//savage^^
+			},
 #endif
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '+', 750,
-                        },
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '+', 750,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '+', 300,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 300,
-                        },
-                        {
-                                /* let's keep it low for now - offbalancing */
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '+', 500,
-                        },
+			{
+				SKILL_BLUNT,
+				'+', 0,
+				'+', 750,
+			},
+			{
+				SKILL_POLEARM,
+				'+', 0,
+				'+', 750,
+			},
+			{
+				SKILL_BOW,
+				'+', 0,
+				'+', 300,
+			},
+			{
+				SKILL_XBOW,
+				'+', 0,
+				'+', 300,
+			},
+			{
+				/* let's keep it low for now - offbalancing */
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+				'+', 500,
+			},
 
-                        {
-                                SKILL_MAGIC,
-                                '+', 1000,
-                                '+', 600,
-                        },
+			{
+				SKILL_MAGIC,
+				'+', 1000,
+				'+', 600,
+			},
 #if 0
-                        {
-                                SKILL_SPELL,
-                                '+', 0,
-                                '+', 350,
-                        },
+			{
+				SKILL_SPELL,
+				'+', 0,
+				'+', 350,
+			},
 #endif
-/*                        {
-                                SKILL_DIVINATION,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_CONVEYANCE,
-                                '+', 0,
-                                '+', 700,
-                        },*/
-                        {
-                                SKILL_HOFFENSE,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_HDEFENSE,
-                                '+', 1000, /* be able to use the startup eq spellbook of blessing */
-                                '+', 800,
-                        },
-                        {
-                                SKILL_HCURING,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_HSUPPORT,
-                                '+', 0,
-                                '+', 800,
-                        },
+/*			{
+				SKILL_DIVINATION,
+				'+', 1000,
+				'+', 900,
+			},
+			{
+				SKILL_CONVEYANCE,
+				'+', 0,
+				'+', 700,
+			},*/
+			{
+				SKILL_HOFFENSE,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_HDEFENSE,
+				'+', 1000, /* be able to use the startup eq spellbook of blessing */
+				'+', 800,
+			},
+			{
+				SKILL_HCURING,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_HSUPPORT,
+				'+', 0,
+				'+', 800,
+			},
 
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 500, //650,
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 1000,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000*/
-                                '+', 600,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 0,
-                                '+', 500,
-                        },
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 800,
+			},
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 500, //650,
+			},
+			{
+				SKILL_DISARM,
+				'+', 1000,
+				'+', 600,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,/*1000*/
+				'+', 600,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 0,
+				'+', 500,
+			},
 
 					/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 2000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                }
+			{
+				SKILL_HEALTH,
+				'+', 2000,
+				'+', 1000,
+			},
+			{
+				SKILL_DIG,
+				'+', 1000,
+				'+', 700,
+			},
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 1000,
+				'+', 800,
+			},
+		}
 	},
 
 	{
-                "Ranger",
-                TERM_L_UMBER,
+		"Ranger",
+		TERM_L_UMBER,
 		{ 2, 2, -1, 1, 2, 0},
 		{19+100, 0+100, 0, 10+100, 0, 0},//21,19
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -3337,418 +3337,418 @@ player_class class_info[MAX_CLASS] = {
 		34, 32, 30, 5, 30, 30, 50, 60,
 		10, 9, 10, 0, 15,  5, 30, 45,
 		7, 35,//4, 35,//6, 35
-//		9, 35,
-                {
-                        {
-                                SKILL_COMBAT,
-                                '+', 1500,
-                                '+', 1000,//nerfed from 1300
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 800,//700
-                        },
-                        {
-                                SKILL_TECHNIQUE,
-                                '+', 1000,
-                                '+', 0,
-                        },
+		//9, 35,
+		{
+			{
+				SKILL_COMBAT,
+				'+', 1500,
+				'+', 1000,//nerfed from 1300
+			},
+			{
+				SKILL_MASTERY,
+				'+', 1000,
+				'+', 800,//700
+			},
+			{
+				SKILL_TECHNIQUE,
+				'+', 1000,
+				'+', 0,
+			},
 #ifdef DUAL_WIELD /* rangers get an exception for now. hoping it'll balance out with giving them stances as well! */
-                        { /* dual-wield */
-                                SKILL_DUAL,
-                                '+', 1000,
-                                '+', 0,
-                        },
+			{ /* dual-wield */
+				SKILL_DUAL,
+				'+', 1000,
+				'+', 0,
+			},
 #endif
 #ifdef ENABLE_STANCES
-                        {
-                                SKILL_STANCE,
-                                '+', 1000,
-                                '+', 0,
-                        },
+			{
+				SKILL_STANCE,
+				'+', 1000,
+				'+', 0,
+			},
 #endif
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '+', 700,
-                        },
+			{
+				SKILL_SWORD,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_AXE,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_BLUNT,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_POLEARM,
+				'+', 0,
+				'+', 700,
+			},
 #if 1 /* allowed in combination with SKF1_MAX_10 restriction */
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
-                                '+', 700,//500
-                        },
+			{
+				SKILL_ARCHERY,
+				'+', 1000,
+				'+', 700,//500
+			},
 #endif
-                        {
-                                SKILL_SLING,
-                                '+', 0,
-                                '+', 450,//350
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 1000,
-                                '+', 450,//350
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 450,//350
-                        },
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                /* let's keep it low for now - offbalancing */
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_SPELL,
-                                '+', 0,
-                                '+', 450,
-                        },
-                        {
-                                SKILL_MANA,
-                                '+', 1000,	/* Allow to cast Manathrust */
-                                '+', 700,//was 600 hmm
-                        },
-                        {
-                                SKILL_FIRE,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_EARTH,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_NATURE,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_DIVINATION,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_CONVEYANCE,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_META,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_MIND,
-                                '+', 0,
-                                '+', 800,
-                        },
+			{
+				SKILL_SLING,
+				'+', 0,
+				'+', 450,//350
+			},
+			{
+				SKILL_BOW,
+				'+', 1000,
+				'+', 450,//350
+			},
+			{
+				SKILL_XBOW,
+				'+', 0,
+				'+', 450,//350
+			},
+			{
+				SKILL_BOOMERANG,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				/* let's keep it low for now - offbalancing */
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_MAGIC,
+				'+', 1000,
+				'+', 800,
+			},
+			{
+				SKILL_SPELL,
+				'+', 0,
+				'+', 450,
+			},
+			{
+				SKILL_MANA,
+				'+', 1000,	/* Allow to cast Manathrust */
+				'+', 700,//was 600 hmm
+			},
+			{
+				SKILL_FIRE,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_AIR,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_EARTH,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_WATER,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_NATURE,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_DIVINATION,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_CONVEYANCE,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_META,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_MIND,
+				'+', 0,
+				'+', 800,
+			},
 #if 1
-                        {
-                                SKILL_TEMPORAL,
-                                '+', 0,
-                                '+', 700,//600,//800
-                        },
+			{
+				SKILL_TEMPORAL,
+				'+', 0,
+				'+', 700,//600,//800
+			},
 #endif
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 750,//900,
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000*/
-                                '+', 700,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_TRAPPING,
-                                '+', 1000,
-                                '+', 1100,
-                        },
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 750,//900,
+			},
+			{
+				SKILL_DISARM,
+				'+', 1000,
+				'+', 900,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,/*1000*/
+				'+', 700,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_TRAPPING,
+				'+', 1000,
+				'+', 1100,
+			},
 
 					/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 2000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '%', 120,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '+', 1200,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                }
+			{
+				SKILL_HEALTH,
+				'+', 2000,
+				'+', 1000,
+			},
+			{
+				SKILL_SWIM,
+				'+', 0,
+				'%', 120,
+			},
+			{
+				SKILL_DIG,
+				'+', 1000,
+				'+', 1200,
+			},
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 1000,
+				'+', 800,
+			},
+		}
 	},
 
 	{
-                "Adventurer",
-                TERM_VIOLET,
+		"Adventurer",
+		TERM_VIOLET,
 		{ 0, 0, 0, 0, 0, 0},
 		{19, 0, 0, 10, 0, 0},//20,10
 		30, 22, 20, 3,  15, 15, 50, 50,
 		10, 8,  10, 0,  5,  5,  25, 25,//..,0,0,25,25
 		6, 25, //3,  0,//5,0,
-//		8, 10,
-                {
-                        /* Combat tree */
-                        {
-                                SKILL_COMBAT,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 0,//1000,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_TECHNIQUE,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-                                '+', 550,
-                        },
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_SLING,
-                                '+', 1000,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                /* let's keep it low for now - offbalancing */
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-//                                '+', 450,
-                                '+', 500,
-                        },
+		//8, 10,
+		{
+			/* Combat tree */
+			{
+				SKILL_COMBAT,
+				'+', 1000,
+				'+', 900,
+			},
+			{
+				SKILL_MASTERY,
+				'+', 0,//1000,
+				'+', 600,
+			},
+			{
+				SKILL_TECHNIQUE,
+				'+', 1000,
+				'+', 0,
+			},
+			{
+				SKILL_SWORD,
+				'+', 0,
+				'+', 550,
+			},
+			{
+				SKILL_AXE,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_BLUNT,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_POLEARM,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_SLING,
+				'+', 1000,
+				'+', 350,
+			},
+			{
+				SKILL_BOW,
+				'+', 0,
+				'+', 350,
+			},
+			{
+				SKILL_XBOW,
+				'+', 0,
+				'+', 350,
+			},
+			{
+				SKILL_BOOMERANG,
+				'+', 1000,
+				'+', 700,
+			},
+			{
+				/* let's keep it low for now - offbalancing */
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+//				'+', 450,
+				'+', 500,
+			},
 
-                        /* Magic tree */
-                        {
-                                SKILL_MAGIC,
-                                '+', 0,//2000,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_CONVEYANCE,
-                                '+', 0,//1000,
-                                '+', 650,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_SPELL,
-                                '+', 0,
-                                '+', 350,	/* reduced from 500, after
+			/* Magic tree */
+			{
+				SKILL_MAGIC,
+				'+', 0,//2000,
+				'+', 600,
+			},
+			{
+				SKILL_CONVEYANCE,
+				'+', 0,//1000,
+				'+', 650,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 900,
+			},
+			{
+				SKILL_SPELL,
+				'+', 0,
+				'+', 350,	/* reduced from 500, after
 						sorcery & mimicry got raised,
 						to avoid adv becoming best sorc */
-                        },
-                        {
-                                SKILL_MANA,
-                                '+', 0, //1000,
-                                '+', 500,//600, //500
-                        },
-                        {
-                                SKILL_FIRE,
-                                '+', 0,
-                                '+', 600,//700, //600..
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_EARTH,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_NATURE,
-                                '+', 0, //1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_DIVINATION,
-                                '+', 0,
-                                '+', 500,//600, //500
-                        },
-                        {
-                                SKILL_META,
-                                '+', 0,
-                                '+', 300,
-                        },
-                        {
-                                SKILL_MIND,
-                                '+', 0,
-                                '+', 500,//600, //500
-                        },
-#if 1
-                        {
-                                SKILL_TEMPORAL,
-                                '+', 0,
-                                '+', 400,//500, //400
-                        },
-#endif
-                        {
-                                SKILL_HOFFENSE,
-                                '+', 0,
+			},
+			{
+				SKILL_MANA,
+				'+', 0, //1000,
 				'+', 500,//600, //500
 			},
 			{
-                                SKILL_HDEFENSE,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_HCURING,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_HSUPPORT,
-                                '+', 0,
-                                '+', 600,
-                        },
+				SKILL_FIRE,
+				'+', 0,
+				'+', 600,//700, //600..
+			},
+			{
+				SKILL_AIR,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_EARTH,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_WATER,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_NATURE,
+				'+', 0, //1000,
+				'+', 700,
+			},
+			{
+				SKILL_DIVINATION,
+				'+', 0,
+				'+', 500,//600, //500
+			},
+			{
+				SKILL_META,
+				'+', 0,
+				'+', 300,
+			},
+			{
+				SKILL_MIND,
+				'+', 0,
+				'+', 500,//600, //500
+			},
+#if 1
+			{
+				SKILL_TEMPORAL,
+				'+', 0,
+				'+', 400,//500, //400
+			},
+#endif
+			{
+				SKILL_HOFFENSE,
+				'+', 0,
+				'+', 500,//600, //500
+			},
+			{
+				SKILL_HDEFENSE,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_HCURING,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_HSUPPORT,
+				'+', 0,
+				'+', 600,
+			},
 #if 1
 			{
 				SKILL_DRUID_ARCANE,
-				'+', 0, 
+				'+', 0,
 				'+', 500, //was formerly 300 for SKILL_DRUID (combined skill)
 			},
-	                {
-	                	SKILL_DRUID_PHYSICAL,
-	                	'+', 0, 
+			{
+				SKILL_DRUID_PHYSICAL,
+				'+', 0,
 				'+', 500,
-	                },
+			},
 #else
 			{
 				SKILL_DRUID,
 				'+', 0, '+', 300,
 			},
 #endif
-                        {
-                                SKILL_PPOWER,
-                                '+', 0,
+			{
+				SKILL_PPOWER,
+				'+', 0,
 				'+', 500,
 			},
 			{
-                                SKILL_TCONTACT,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_MINTRUSION,
-                                '+', 0,
-                                '+', 500,
-                        },
+				SKILL_TCONTACT,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_MINTRUSION,
+				'+', 0,
+				'+', 500,
+			},
 
 			{
 				SKILL_R_LITE,
@@ -3780,109 +3780,109 @@ player_class class_info[MAX_CLASS] = {
 				'+', 0,
 				'+', 500,
 			},
-                        {
-                                SKILL_MIMIC,
-                                '+', 0,
-                                '+', 400,	/* 300 was 'safer' */
-                        },
+			{
+				SKILL_MIMIC,
+				'+', 0,
+				'+', 400,	/* 300 was 'safer' */
+			},
 
-                        /* Sneakiness tree */
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 800,//700
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 1000,
-                                '+', 800,//700,
-                        },
-                        {
-                                SKILL_TRAPPING,
-                                '+', 1000,//0,
-                                '+', 900,//600,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 1000,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_STEALING,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,
-                                '+', 600,
-                        },
+			/* Sneakiness tree */
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 800,//700
+			},
+			{
+				SKILL_DISARM,
+				'+', 1000,
+				'+', 800,//700,
+			},
+			{
+				SKILL_TRAPPING,
+				'+', 1000,//0,
+				'+', 900,//600,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 1000,
+				'+', 600,
+			},
+			{
+				SKILL_STEALING,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,
+				'+', 600,
+			},
 
-                        /* Necromancy tree */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_ANTIMAGIC,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        /* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 1100,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '%', 140,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '+', 1400,
-                        },
+			/* Necromancy tree */
+			{
+				SKILL_NECROMANCY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_TRAUMATURGY,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_FEAR,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_SHIVER,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_DEATH,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_ANTIMAGIC,
+				'+', 0,
+				'+', 500,
+			},
+			/* Health tree */
+			{
+				SKILL_HEALTH,
+				'+', 1000,
+				'+', 1100,
+			},
+			{
+				SKILL_SWIM,
+				'+', 0,
+				'%', 140,
+			},
+			{
+				SKILL_DIG,
+				'+', 1000,
+				'+', 1400,
+			},
 						/* Misc tree */
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 0,
-                                '+', 700,
-                        },
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 0,
+				'+', 700,
+			},
 
-                }
+		}
 	},
 
 	{
-                "Druid",	/* by the_sandman -- w00t w00t -- a shapechanger+magical class */
-                TERM_L_GREEN,
+		"Druid",	/* by the_sandman -- w00t w00t -- a shapechanger+magical class */
+		TERM_L_GREEN,
 		{ 1, 0, 2, -2, -2, 1},
 		{0, 0, 0+100, 0, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -3891,143 +3891,143 @@ player_class class_info[MAX_CLASS] = {
 		30, 35, 30, 4, 25, 25, 50, 44,
 		8, 10, 10, 0, 10,  5, 20, 25,
 		5, 35,//5, 40
-                {
-                        {
-                                SKILL_COMBAT,
-                                '+', 1000,
-                                '+', 1000,//nerfed from 1300
-                        },
-                        {
-                                SKILL_TECHNIQUE,
-                                '+', 1000,
-                                '+', 0,
-                        },
+		{
+			{
+				SKILL_COMBAT,
+				'+', 1000,
+				'+', 1000,//nerfed from 1300
+			},
+			{
+				SKILL_TECHNIQUE,
+				'+', 1000,
+				'+', 0,
+			},
 #if 1 /* druids are martial artists, so no need for these */
-                        {
-                                SKILL_SLING,
-                                '+', 0,
-                                '+', 300,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 0,
-                                '+', 250,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 250,
-                        },
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 0,
-                                '+', 350,
-                        },
+			{
+				SKILL_SLING,
+				'+', 0,
+				'+', 300,
+			},
+			{
+				SKILL_BOW,
+				'+', 0,
+				'+', 250,
+			},
+			{
+				SKILL_XBOW,
+				'+', 0,
+				'+', 250,
+			},
+			{
+				SKILL_BOOMERANG,
+				'+', 0,
+				'+', 350,
+			},
 #endif
-                        {
-                                SKILL_MARTIAL_ARTS,
-                                '+', 1000, /* make newbies' lives easier */
-                                '+', 650,
-                        },
-                        /* Added nullifying of interception here, since some newbie
-                           trained it as a human druid (mad waste of points) */
-                        {
-                                SKILL_INTERCEPT,
-                                '%', 0,
-                                '%', 0,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '+', 1000, //900,
-                        },
-                        {
-                                SKILL_EARTH,
-                                '+', 0,
-                                '+', 1000, //900,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '+', 1000, //900,
-                        },
-                        {
-                                SKILL_NATURE,
-                                '+', 0,
-                                '+', 1100, //900,
-                        },
-                        {
+			{
+				SKILL_MARTIAL_ARTS,
+				'+', 1000, /* make newbies' lives easier */
+				'+', 650,
+			},
+			/* Added nullifying of interception here, since some newbie
+			   trained it as a human druid (mad waste of points) */
+			{
+				SKILL_INTERCEPT,
+				'%', 0,
+				'%', 0,
+			},
+			{
+				SKILL_MAGIC,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_AIR,
+				'+', 0,
+				'+', 1000, //900,
+			},
+			{
+				SKILL_EARTH,
+				'+', 0,
+				'+', 1000, //900,
+			},
+			{
+				SKILL_WATER,
+				'+', 0,
+				'+', 1000, //900,
+			},
+			{
+				SKILL_NATURE,
+				'+', 0,
+				'+', 1100, //900,
+			},
+			{
 				SKILL_DRUID_ARCANE,
-				'+', 1000, 
+				'+', 1000,
 				'+', 1200, //1500,
-                        },
-                        {
+			},
+			{
 				SKILL_DRUID_PHYSICAL,
-				'+', 1000, 
+				'+', 1000,
 				'+', 1200, //1500,
-                        },
-                        {
-                                SKILL_MIMIC,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 600,//750,
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 0,/*1000*/
-                                '+', 600,
-                        },
-                        {
-                                SKILL_DODGE,
-                                '+', 0,/*1000*/
-                                '+', 600,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 800,
-                        },
+			},
+			{
+				SKILL_MIMIC,
+				'+', 1000,
+				'+', 0,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 600,//750,
+			},
+			{
+				SKILL_DISARM,
+				'+', 0,/*1000*/
+				'+', 600,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,/*1000*/
+				'+', 600,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 0,
+				'+', 600,
+			},
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 800,
+			},
 			/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 2000,
-                                '+', 1100,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '%', 120,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '+', 1200,
-                        },
-                }
+			{
+				SKILL_HEALTH,
+				'+', 2000,
+				'+', 1100,
+			},
+			{
+				SKILL_SWIM,
+				'+', 0,
+				'%', 120,
+			},
+			{
+				SKILL_DIG,
+				'+', 1000,
+				'+', 1200,
+			},
+		}
 	},
 
 	{
-                "Shaman", /* by C. Blue -- Minor shapechange (restrictions), Necromancy/Praying/Magic */
-                TERM_L_RED,
+		"Shaman", /* by C. Blue -- Minor shapechange (restrictions), Necromancy/Praying/Magic */
+		TERM_L_RED,
 		{ 0, 1, 2, -2, 0, 0},
 		{0, 0, 0, 0, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -4036,369 +4036,369 @@ player_class class_info[MAX_CLASS] = {
 		10, 30, 30,  4, 20, 30, 45, 23,
 		 0, 10, 10,  0,  3,  5, 20, 12,
 		3, 40, //3, 45
-                {
+		{
 #if 0 /* mimicmage/mimicpriest/mimicmagepriest pure caster shaman as actually intended */
-                        {
-                                SKILL_COMBAT,
-                                '+', 0,
-                                '+', 300,//priests=750,istari=300
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 2000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_CONVEYANCE,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_SPELL,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_MANA,
-                                '+', 1000,
-                                '+', 700,//600
-                        },
-                        {
-                                SKILL_FIRE,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_EARTH,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_NATURE,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DIVINATION,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_UDUN,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_META,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_MIND,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_HOFFENSE,
-                                '+', 1000,
+			{
+				SKILL_COMBAT,
+				'+', 0,
+				'+', 300,//priests=750,istari=300
+			},
+			{
+				SKILL_MAGIC,
+				'+', 2000,
+				'+', 1000,
+			},
+			{
+				SKILL_CONVEYANCE,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_SPELL,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_MANA,
+				'+', 1000,
+				'+', 700,//600
+			},
+			{
+				SKILL_FIRE,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AIR,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_EARTH,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_WATER,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_NATURE,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_DIVINATION,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_UDUN,
+				'+', 0,
 				'+', 900,
 			},
 			{
-                                SKILL_HDEFENSE,
-                                '+', 0,
+				SKILL_META,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_MIND,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_HOFFENSE,
+				'+', 1000,
 				'+', 900,
-                        },
-                        {
-                                SKILL_HCURING,
-                                '+', 0,
+			},
+			{
+				SKILL_HDEFENSE,
+				'+', 0,
 				'+', 900,
-                        },
-                        {
-                                SKILL_HSUPPORT,
-                                '+', 0,
+			},
+			{
+				SKILL_HCURING,
+				'+', 0,
 				'+', 900,
-                        },
-                        {
-                                SKILL_MIMIC,
-                                '+', 1000,
-                                '+', 800,
+			},
+			{
+				SKILL_HSUPPORT,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_MIMIC,
+				'+', 1000,
+				'+', 800,
 				/* only: giant, dragon, animal, ghost, elemental, DR */
-                        },
-                        /* Sneakiness tree */
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 0,
-                                '+', 400,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 1000,
-                                '+', 600,
-                        },
+			},
+			/* Sneakiness tree */
+			{
+				SKILL_SNEAKINESS,
+				'+', 0,
+				'+', 400,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 1000,
+				'+', 600,
+			},
 
-                        /* Necromancy tree */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        /* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '+', 1000,
-                        },
+			/* Necromancy tree */
+			{
+				SKILL_NECROMANCY,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_TRAUMATURGY,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_AURA_FEAR,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_AURA_SHIVER,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_AURA_DEATH,
+				'+', 0,
+				'+', 1500,
+			},
+			/* Health tree */
+			{
+				SKILL_HEALTH,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_DIG,
+				'+', 1000,
+				'+', 1000,
+			},
 			/* Misc tree - let's keep it actually! */
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 900,
-                        },
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 900,
+			},
 #else /* fighting shamans, rivalling priests/paladins/rangers - currently enabled \
 	 since offensive spells are lacking, until spell system gets reworked */
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '+', 400,
-                        },
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '+', 400,
-                        },
+			{
+				SKILL_AXE,
+				'+', 0,
+				'+', 400,
+			},
+			{
+				SKILL_BLUNT,
+				'+', 0,
+				'+', 400,
+			},
 			{
 				SKILL_POLEARM,
 				'+', 0,
 				'+', 400,
 			},
-                        {
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '+', 400,
-                        },
-                        /* Combat tree */
-                        {
-                                SKILL_COMBAT,
-                                '+', 0,
-                                '+', 300,//priests=750,istari=300
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 0,
-                                '+', 150,
-                        },
-                        /* Magic tree */
-                        {
-                                SKILL_MAGIC,
-                                '+', 2000,
-                                '+', 600,//500
-                        },
-                        {
-                                SKILL_CONVEYANCE,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_SPELL,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_MANA,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_FIRE,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_EARTH,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_NATURE,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DIVINATION,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_UDUN,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_META,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_MIND,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_HOFFENSE,
-                                '+', 1000,
-				'+', 900,
-//				'+', 1000,
+			{
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+				'+', 400,
+			},
+			/* Combat tree */
+			{
+				SKILL_COMBAT,
+				'+', 0,
+				'+', 300,//priests=750,istari=300
 			},
 			{
-                                SKILL_HDEFENSE,
-                                '+', 0,
+				SKILL_MASTERY,
+				'+', 0,
+				'+', 150,
+			},
+			/* Magic tree */
+			{
+				SKILL_MAGIC,
+				'+', 2000,
+				'+', 600,//500
+			},
+			{
+				SKILL_CONVEYANCE,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_SPELL,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_MANA,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_FIRE,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AIR,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_EARTH,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_WATER,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_NATURE,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_DIVINATION,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_UDUN,
+				'+', 0,
 				'+', 900,
-//				'+', 1000,
-                        },
-                        {
-                                SKILL_HCURING,
-                                '+', 0,
-//				'+', 1100,
+			},
+			{
+				SKILL_META,
+				'+', 0,
+				'+', 500,
+			},
+			{
+				SKILL_MIND,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_HOFFENSE,
+				'+', 1000,
 				'+', 900,
-//				'+', 1000,
-                        },
-                        {
-                                SKILL_HSUPPORT,
-                                '+', 0,
+			//'+', 1000,
+			},
+			{
+				SKILL_HDEFENSE,
+				'+', 0,
 				'+', 900,
-//				'+', 1000,
-                        },
-                        {
-                                SKILL_MIMIC,
-                                '+', 1000,
-                                '+', 800,
+			//'+', 1000,
+			},
+			{
+				SKILL_HCURING,
+				'+', 0,
+			//'+', 1100,
+				'+', 900,
+			//'+', 1000,
+			},
+			{
+				SKILL_HSUPPORT,
+				'+', 0,
+				'+', 900,
+			//'+', 1000,
+			},
+			{
+				SKILL_MIMIC,
+				'+', 1000,
+				'+', 800,
 				/* only: giant, dragon, animal, ghost, elemental, DR */
-                        },
+			},
 
-                        /* Sneakiness tree */
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 0,
-                                '+', 400,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 1000,
-                                '+', 600,
-                        },
+			/* Sneakiness tree */
+			{
+				SKILL_SNEAKINESS,
+				'+', 0,
+				'+', 400,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 1000,
+				'+', 600,
+			},
 
-                        /* Necromancy tree */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        /* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '+', 1000,
-                        },
+			/* Necromancy tree */
+			{
+				SKILL_NECROMANCY,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_TRAUMATURGY,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_AURA_FEAR,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_AURA_SHIVER,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_AURA_DEATH,
+				'+', 0,
+				'+', 1500,
+			},
+			/* Health tree */
+			{
+				SKILL_HEALTH,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_DIG,
+				'+', 1000,
+				'+', 1000,
+			},
 			/* Misc tree - let's keep it actually! */
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 0,
-                                '+', 500,
-                        },
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 900,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 0,
+				'+', 500,
+			},
 #endif
-                }
+		}
 	},
 
 	{
-                "Runemaster",	/* A mage/rogue class, more caster than fighter, but with high spell damage / low durability.
+		"Runemaster",	/* A mage/rogue class, more caster than fighter, but with high spell damage / low durability.
 				 * Intended to be the 'warrior' of the magic classes, but with allowed hybridization.
 				 */
-                TERM_L_BLUE, 
+		TERM_L_BLUE,
 		{ 1, 2, -3, 3, -3, -3},
 		{15, 0+100, 0, 19+100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -4407,7 +4407,7 @@ player_class class_info[MAX_CLASS] = {
 		30, 23, 20,  2, 20, 30, 45, 40,
 		10, 10, 10,  0,  3,  5, 20, 20,
 		 5, 20,
-        {
+	{
 			{
 				SKILL_COMBAT,
 				'+', 0,
@@ -4439,7 +4439,7 @@ player_class class_info[MAX_CLASS] = {
 				SKILL_BLUNT,
 				'+', 0,
 				'+', 800,
-			}, 
+			},
 			{
 				SKILL_POLEARM,
 				'+', 0,
@@ -4588,134 +4588,134 @@ player_class class_info[MAX_CLASS] = {
 				SKILL_DIG,
 				'+', 1000,
 				'+', 1600,
-			}, 
+			},
 		}
 	},
 
 #ifdef ENABLE_MCRAFT
 	{
-                "Mindcrafter", /* old mindcrafter idea reincarnated in slightly different design - C. Blue:
+		"Mindcrafter", /* old mindcrafter idea reincarnated in slightly different design - C. Blue:
 				  At first made them a 'caster with melee ability', but now changed mind ;) to
 				  actually view them as 'fighters with psi abilities' instead, improving vitality. */
-                TERM_SLATE,
-//		{ -1, 3, 0, -1, -1, 1},
+		TERM_SLATE,
+		//{ -1, 3, 0, -1, -1, 1},
 		{ 2, 2, 0, 0, 0, 1},
-//		{21+100, 0+100, 0, 19+100, 0, 0}, 18/30;10 pretty unreachable with {0,2,0,0,0,1}
+		//{21+100, 0+100, 0, 19+100, 0, 0}, 18/30;10 pretty unreachable with {0,2,0,0,0,1}
 		{19+100, 0+100, 0, 10+100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
 		30, 28, 36,  3, 35, 14, 55, 45,
 		 0, 9,  5,  0,  3,  3, 26, 25,
-//		5, 25,
+		//5, 25,
 		6, 25,
-                {
-                        /* Combat tree */
-                        {
-                                SKILL_COMBAT,
-                                '+', 1000,
-//                                '+', 800,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1000,
-//                                '+', 400,
-//                                '+', 600,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_TECHNIQUE,
-                                '+', 1000,
-                                '+', 0,
-                        },
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-//                                '+', 650,
-                                '+', 750,
-                        },
+		{
+			/* Combat tree */
+			{
+				SKILL_COMBAT,
+				'+', 1000,
+			//'+', 800,
+				'+', 1000,
+			},
+			{
+				SKILL_MASTERY,
+				'+', 1000,
+			//'+', 400,
+			//'+', 600,
+				'+', 800,
+			},
+			{
+				SKILL_TECHNIQUE,
+				'+', 1000,
+				'+', 0,
+			},
+			{
+				SKILL_SWORD,
+				'+', 0,
+			//'+', 650,
+				'+', 750,
+			},
 #if 1 /* savage axes distract their mind..well, or maybe not? */
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-//                                '+', 600,
-                                '+', 700,
-                        },
+			{
+				SKILL_AXE,
+				'+', 0,
+			//'+', 600,
+				'+', 700,
+			},
 #endif
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-//                                '+', 650,
-                                '+', 750,
-                        },
+			{
+				SKILL_BLUNT,
+				'+', 0,
+			//'+', 650,
+				'+', 750,
+			},
 			{
 				SKILL_POLEARM,
 				'+', 0,
-//				'+', 650,
+			//'+', 650,
 				'+', 750,
 			},
-                        {
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-//                                '+', 600,
-                                '+', 700,
-                        },
+			{
+				SKILL_MARTIAL_ARTS,
+				'+', 0,
+			//'+', 600,
+				'+', 700,
+			},
 		/*ranged weapon skills shouldnt be better than "Mimic" class. more like "Istar" which has none at all.*/
-                        {
-                                SKILL_SLING,
-                                '+', 1000,
-                                '+', 250,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 300,
-                        },
-                        {
-                                SKILL_BOOMERANG,
-                                '+', 1000,
-                                '+', 500,
-                        },
+			{
+				SKILL_SLING,
+				'+', 1000,
+				'+', 250,
+			},
+			{
+				SKILL_XBOW,
+				'+', 0,
+				'+', 300,
+			},
+			{
+				SKILL_BOOMERANG,
+				'+', 1000,
+				'+', 500,
+			},
 
-                        /* Magic tree */
-                        {
-                                SKILL_MAGIC,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 0,
-                                '+', 850,
-                        },
-                        {
-                                SKILL_PPOWER,
-                                '+', 0,
+			/* Magic tree */
+			{
+				SKILL_MAGIC,
+				'+', 1000,
+				'+', 800,
+			},
+			{
+				SKILL_DEVICE,
+				'+', 0,
+				'+', 850,
+			},
+			{
+				SKILL_PPOWER,
+				'+', 0,
 				'+', 1500,
 			},
 			{
-                                SKILL_TCONTACT,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_MINTRUSION,
-                                '+', 1000,
-                                '+', 1500,
-                        },
+				SKILL_TCONTACT,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_MINTRUSION,
+				'+', 1000,
+				'+', 1500,
+			},
 
-                        /* Sneakiness tree */
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_STEALTH,
-                                '+', 1000,
-                                '+', 700, /* high stealth- jedi hand wave? */
-                        },
+			/* Sneakiness tree */
+			{
+				SKILL_SNEAKINESS,
+				'+', 1000,
+				'+', 700,
+			},
+			{
+				SKILL_STEALTH,
+				'+', 1000,
+				'+', 700, /* high stealth- jedi hand wave? */
+			},
 			{
 				SKILL_DISARM,
 				'+', 0,
@@ -4726,55 +4726,55 @@ player_class class_info[MAX_CLASS] = {
 				'+', 0,
 				'+', 600,
 			},
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_INTERCEPT,
-                                '+', 0,
-                                '+', 600,
-                        },
+			{
+				SKILL_CALMNESS,
+				'+', 0,
+				'+', 1500,
+			},
+			{
+				SKILL_INTERCEPT,
+				'+', 0,
+				'+', 600,
+			},
 
-                        /* Necromancy tree - disturb the mindcrafter slightly maybe*/
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 900,
-                        },
-                        /* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                }
+			/* Necromancy tree - disturb the mindcrafter slightly maybe*/
+			{
+				SKILL_NECROMANCY,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_TRAUMATURGY,
+				'+', 0,
+				'+', 800,
+			},
+			{
+				SKILL_AURA_FEAR,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_SHIVER,
+				'+', 0,
+				'+', 1000,
+			},
+			{
+				SKILL_AURA_DEATH,
+				'+', 0,
+				'+', 900,
+			},
+			/* Health tree */
+			{
+				SKILL_HEALTH,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_DIG,
+				'+', 1000,
+				'+', 900,
+			},
+		}
 	}
 #endif
 };
@@ -4846,8 +4846,7 @@ player_trait trait_info[MAX_TRAIT] = {
  *
  * Such a hack....
  */
-magic_type ghost_spells[64] =
-{
+magic_type ghost_spells[64] = {
 	{  1,   1, 0, 0},
 	{ 10,   2, 0, 0},
 	{ 15,   3, 0, 0},
@@ -4925,17 +4924,16 @@ magic_type ghost_spells[64] =
  * New: Fields x,2 and x,3 are for short titles sent to the client
  *      which must be 12 characters max in length  - C. Blue
  */
-cptr player_title[MAX_CLASS][11][4] =
-{
+cptr player_title[MAX_CLASS][11][4] = {
 	/* Warrior */
 	{
-	        {"Rookie", "Rookie", "Rookie", "Rookie", },
+		{"Rookie", "Rookie", "Rookie", "Rookie", },
 		{"Mercenary", "Mercenary", "Mercenary", "Mercenary", },
 		{"Soldier", "Soldier", "Soldier", "Soldier", },
 		{"Veteran", "Veteran", "Veteran", "Veteran", },
 		{"Captain", "Captain", "Captain", "Captain", },
 		{"Champion", "Champion", "Champion", "Champion", },
-	        {"Hero", "Heroine", "Hero", "Heroine", },//heh they are back :)
+		{"Hero", "Heroine", "Hero", "Heroine", },//heh they are back :)
 		{"General", "General", "General", "General", },
 		{"Baron", "Baroness", "Baron", "Baroness", },
 		{"Duke", "Duchess", "Duke", "Duchess", },
@@ -4960,7 +4958,7 @@ cptr player_title[MAX_CLASS][11][4] =
 
 	/* Priest */
 	{
-//		{"Believer", "Believer", "Believer", "Believer", },
+		//{"Believer", "Believer", "Believer", "Believer", },
 		{"Acolyte", "Acolyte", "Acolyte", "Acolyte", },
 		{"Adept", "Adept", "Adept", "Adept", },
 		{"Curate", "Curate", "Curate", "Curate", },
@@ -4971,7 +4969,7 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Arch-Bishop", "Arch-Bishop", "Arch-Bishop", "Arch-Bishop", },
 		{"Cardinal", "Cardinal", "Cardinal", "Cardinal", },
 		{"High Priest", "High Priestess", "High Priest", "H.Priestess", },
-//		{"Spiritual Guardian", "Spiritual Guardian", },
+		//{"Spiritual Guardian", "Spiritual Guardian", },
 		{"Patriarch", "Matriarch", "Patriarch", "Matriarch", },
 	},
 
@@ -4988,7 +4986,7 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Infiltrator", "Infiltratess", "Infiltrator", "Infiltratess", },
 		{"Grandmaster Thief", "Grandmaster Thief", "GM-Thief", "GM-Thief", },
 		{"Assassin", "Assassin", "Assassin", "Assassin", },
-        },
+	},
 
 	/* Mimic */
 	{
@@ -5020,7 +5018,7 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Grandmaster Archer", "Grandmistress Archer", "GM-Archer", "GM-Archer", },
 	},
 
-        /* Paladin */
+	/* Paladin */
 	{
 		{"Page", "Page", "Page", "Page", },
 		{"Squire", "Squiress", "Squire", "Squiress", },
@@ -5034,10 +5032,10 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Banneret", "Banneret", "Banneret", "Banneret", },//Knight Banneret
 		//{"Venerable Knight", "Venerable Knight", "V.Knight", "V.Knight", },
 		{"Paladin", "Paladin", "Paladin", "Paladin", },
-	        {"Knight Commander", "Knight Commander", "Knight Cmdr.", "Knight Cmdr.", },
-        },
+		{"Knight Commander", "Knight Commander", "Knight Cmdr.", "Knight Cmdr.", },
+	},
 
-        /* Ranger */
+	/* Ranger */
 	{
 		{"Rookie", "Rookie", "Rookie", "Rookie", },
 		{"Path Finder", "Path Finder", "Path Finder", "Path Finder", },
@@ -5049,11 +5047,11 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Guard Captain", "Guard Captain", "Guard Captain", "Guard Captain", },
 		//removed 'Ranger' and added 'Ranger Champion'
 		{"Supervisor", "Supervisor", "Supervisor", "Supervisor", },
-//		{"Ranger", "Ranger", "Ranger", "Ranger", },
+		//{"Ranger", "Ranger", "Ranger", "Ranger", },
 		{"High Ranger", "High Ranger", "High Ranger", "High Ranger", },
-//	 	{"Ranger Champion", "Ranger Champion", },
-        	{"Ranger Chieftain", "Ranger Chieftain", "Ranger Chief", "Ranger Chief", }, /* to check: Isn't it Chief Ranger rather? */
-        },
+		//{"Ranger Champion", "Ranger Champion", },
+		{"Ranger Chieftain", "Ranger Chieftain", "Ranger Chief", "Ranger Chief", }, /* to check: Isn't it Chief Ranger rather? */
+	},
 
 	/* Adventurer */
 	{
@@ -5096,7 +5094,7 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Cursed", "Cursed", "Cursed", "Cursed", },
 		{"Chanter", "Chantress", "Chanter", "Chantress", },
 		{"Elder Chanter", "Elder Chantress", "Eld.Chanter", "El.Chantress", },
-//		{"Spiritwatcher", "Spiritwatcher", },
+		//{"Spiritwatcher", "Spiritwatcher", },
 		{"Shaman", "Shaman", "Shaman", "Shaman", },
 		{"Elder Shaman", "Elder Shaman", "Elder Shaman", "Elder Shaman", },
 		{"Shaman King", "Shaman Queen", "Shaman King", "Shaman Queen", },
@@ -5106,23 +5104,23 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Digger", "Digger", "Digger", "Digger", },
 		{"Rune Tracer", "Rune Tracer", "Rune Tracer", "Rune Tracer", },
 		{"Rock Collector", "Rock Collector", "R.Collector", "R.Collector", },
-//		{"Rock Painter", "Rock Paintress", "Rock Painter", "Rock Paintrs", },
+		//{"Rock Painter", "Rock Paintress", "Rock Painter", "Rock Paintrs", },
 		{"Fire Starter", "Fire Starter", "Fire Starter", "Fire Starter", },
 		{"Treasure Hunter", "Treasure Hunter", "T.Hunter", "T.Hunter", },
-//		{"Archaeologist", "Archaeologist", "Professor", "Professor," }, //too cool for 12 letters? ^^
+		//{"Archaeologist", "Archaeologist", "Professor", "Professor," }, //too cool for 12 letters? ^^
 		{"Archaeologist", "Archaeologist", "Archaelgst.", "Archaelgst.", },
 		{"Earth Guard", "Earth Guard", "Earth Guard", "Earth Guard", },
 		{"Rune Knight", "Rune Knight", "Rune Knight", "Rune Knight", },
 		{"Rune Keeper", "Rune Keepress", "Rune Keeper", "Rune Keeprss", },
 		{"Runemaster", "Runemistress", "Runemaster", "Runemistress", },
 		{"Grand Runemaster", "Grand Runemistress", "G-Runemaster", "G-Runemstrss", },
-        },
+	},
 	/* Mindcrafter */
 	{
-//		{"Simple-minded", "Simple-minded", "Simple-mind", "Simple-mind", },
-//		{"Reflector", "Reflectress", "Reflector", "Reflectress", },
-//		{"Paranoid", "Paranoid", "Paranoid", "Paranoid", },
-//		{"Aware", "Aware", "Aware", "Aware", },
+		//{"Simple-minded", "Simple-minded", "Simple-mind", "Simple-mind", },
+		//{"Reflector", "Reflectress", "Reflector", "Reflectress", },
+		//{"Paranoid", "Paranoid", "Paranoid", "Paranoid", },
+		//{"Aware", "Aware", "Aware", "Aware", },
 		{"Wary", "Wary", "Wary", "Wary", },
 		{"Fathomer", "Fathomer", "Fathomer", "Fathomer", },
 		{"Thinker", "Thinker", "Thinker", "Thinker", },
@@ -5142,14 +5140,13 @@ cptr player_title[MAX_CLASS][11][4] =
  * 60 (usually no change I'd say =) wait, or maybe), 70, 80, 90, 99
  * It was time to add female titles too!
  */
-cptr player_title_special[MAX_CLASS][5][4] =
-{
+cptr player_title_special[MAX_CLASS][5][4] = {
 	/* Warrior */
 	{
 #if 1
 		{"Highlord", "Highlady", "Highlord", "Highlady", },
 		{"Overlord", "Overlord", "Overlord", "Overlord", },
-//  		{"Hero", "Hero", }, hero is back in the normal warrior ranks!
+		//{"Hero", "Hero", }, hero is back in the normal warrior ranks!
 		{"Destroyer", "Destroyess", "Destroyer", "Destroyess", },
 		{"Annihilator", "Annihilatress", "Annihilator", "Annihilatrss", },
 		{"Titan", "Titan", "Titan", "Titan", },
@@ -5165,8 +5162,9 @@ cptr player_title_special[MAX_CLASS][5][4] =
 	/* Istar */
 	{
 		{"Grand Wizard", "Grand Wizard", "Gr.Wizard", "Gr.Wizard", },
-		{"Dragon Lord", "Dragon Lady", "Dragon Lord", "Dragon Lady", },/* explanation about all the 'Dragon..' stuff: I was out of ideas and
-						    just thought of 'Earthsea Quartet' from Ursula LeGuin - C. Blue */
+		{"Dragon Lord", "Dragon Lady", "Dragon Lord", "Dragon Lady", },
+		/* explanation about all the 'Dragon..' stuff: I was out of ideas and
+		    just thought of 'Earthsea Quartet' from Ursula LeGuin - C. Blue */
 		{"Dragon Highlord", "Dragon Highlady", "Dragon HLord", "Dragon HLady", },//yolady
 		{"Dragon Overlord", "Dragon Overlady", "Dragon OLord", "Dragon OLady", },//I need some improvements here....
 		{"Dragon Arch-Mage", "Dragon Arch-Mage", "Drg.Archmage", "Drg.Archmage", },
@@ -5184,18 +5182,18 @@ cptr player_title_special[MAX_CLASS][5][4] =
 
 	/* Rogues */
 	{
-//		{"Grand Assassin", "Grand Assassin", },
-//		{"Master Assassin", "Master Assassin", },
-//commented out: first master, then hand = wrong order ^^	{"Death's Master", "Death's Mistress", "Dth.Master", "Dth.Mistress", },
+		//{"Grand Assassin", "Grand Assassin", },
+		//{"Master Assassin", "Master Assassin", },
+		//commented out: first master, then hand = wrong order ^^	{"Death's Master", "Death's Mistress", "Dth.Master", "Dth.Mistress", },
 		{"Phantom", "Phantom", "Phantom", "Phantom" },
-//		{"Legendary Assassin", "Legendary Assassin", "Lgd.Assassin", "Lgd.Assassin", },
+		//{"Legendary Assassin", "Legendary Assassin", "Lgd.Assassin", "Lgd.Assassin", },
 		{"Myth", "Myth", "Myth", "Myth", },
 		{"Terror", "Terror", "Terror", "Terror" },
-//		{"Mythical Assassin", "Mythical Assassin", "Myt.Assassin", "Myt.Assassin", },
+		//{"Mythical Assassin", "Mythical Assassin", "Myt.Assassin", "Myt.Assassin", },
 		{"Death's Hand", "Death's Hand", "Death's Hand", "Death's Hand", },
 		{"Death Fate", "Death Fate", "Death Fate", "Death Fate", },
-/* yeah it's fitting, but let's not make the game JOKEBAND anyway */
-//		{"RNG", "RNG", }, //LOL! Perfect, do you not think so? :) -adam 
+		/* yeah it's fitting, but let's not make the game JOKEBAND anyway */
+		//{"RNG", "RNG", }, //LOL! Perfect, do you not think so? :) -adam
 	},
 
 	/* Mimic */
@@ -5204,7 +5202,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Doppelganger", "Doppelganger", "Doppelganger", "Doppelganger", },
 		{"Transformer", "Transformer", "Transformer", "Transformer", },
 		{"Replicator", "Replicatress", "Replicator", "Replicatress", },
-//		{"Master Replicator", "Master Replicatress", "M-Replicator", "M-Replicatrs", },
+		//{"Master Replicator", "Master Replicatress", "M-Replicator", "M-Replicatrs", },
 		{"Unlimited", "Unlimited", "Unlimited", "Unlimited", },
 	},
 
@@ -5219,12 +5217,12 @@ cptr player_title_special[MAX_CLASS][5][4] =
 
 	/* Paladin */
 	{
-	        {"Sacred Defender", "Sacred Defender", "S.Defender", "S.Defender", },
-	        {"Venerable Templar", "Venerable Templar", "V.Templar", "V.Templar", },
-//		{"Avenger", "Avenger", "Avenger", "Avenger", },
+		{"Sacred Defender", "Sacred Defender", "S.Defender", "S.Defender", },
+		{"Venerable Templar", "Venerable Templar", "V.Templar", "V.Templar", },
+		//{"Avenger", "Avenger", "Avenger", "Avenger", },
 		{"Holy Avenger", "Holy Avenger", "Holy Avenger", "Holy Avenger", },
-//		{"Holy Defender", "Holy Defender", }, defender comes before avenger if at all;
-//							DF and HA are old 'good' ego mods from predecessors.
+		//{"Holy Defender", "Holy Defender", }, defender comes before avenger if at all;
+		//DF and HA are old 'good' ego mods from predecessors.
 		{"Holy King", "Holy Queen", "Holy King", "Holy Queen", },
 		{"God's Hand", "God's Hand", "God's Hand", "God's Hand", },
 	},
@@ -5232,10 +5230,10 @@ cptr player_title_special[MAX_CLASS][5][4] =
 	/* Ranger */
 	{
 		{"Elite Ranger", "Elite Ranger", "Elite Ranger", "Elite Ranger", },
-//		{"Ranger Supervisor", "Ranger Supervisor", "Ranger Svis.", "Ranger Svis.", },
+		//{"Ranger Supervisor", "Ranger Supervisor", "Ranger Svis.", "Ranger Svis.", },
 		{"Champion of Law", "Champion of Law", "Champ of Law", "Champ of Law", },
 		{"Lord of Law", "Lady of Law", "Lord of Law", "Lady of Law", },
-//		{"Ranger Commander", "Ranger Commander", "Ranger Cmdr.", "Ranger Cmdr.", },
+		//{"Ranger Commander", "Ranger Commander", "Ranger Cmdr.", "Ranger Cmdr.", },
 		{"Legend", "Legend", "Legend", "Legend", },
 		{"Justice", "Justice", "Justice", "Justice", },
 	},
@@ -5269,7 +5267,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 
 	/* Runemaster */
 	{
-//		{"Grand Runemaster", "Grand Runemistress", "G.Runemaster", "G.Runemstrss", },
+		//{"Grand Runemaster", "Grand Runemistress", "G.Runemaster", "G.Runemstrss", },
 		{"Force Master", "Force Mistress", "Force Master", "Force Mstrss", },
 		//{"Elemental Overlord", "Elemental Overlady", "E-Overlord", "E-Overlady", },
 		{"Elemental Channelist", "Elemental Channelist", "E-Channelist", "E-Channelist", },
@@ -5305,58 +5303,56 @@ cptr player_title_special[MAX_CLASS][5][4] =
 
 
 /* desc, min_lv, rchance, dd, ds, effect */
-martial_arts ma_blows[MAX_MA] =
-{
+martial_arts ma_blows[MAX_MA] = {
 #if 0
-	{ "You punch %s",                          1, 0, 1, 4, 0 },
-	{ "You kick %s",                           2, 0, 1, 6, 0 },
-	{ "You strike %s",                         3, 0, 1, 7, 0 },
-	{ "You ram %s with your knee",             5, 5, 2, 3, MA_KNEE },
-	{ "You strike %s with your elbow",            7, 5, 1, 8, 0 },
-	{ "You butt %s",                           9, 10, 2, 5, 0 },
-	{ "You kick %s",                           11, 10, 2, 5, MA_SLOW },
-	{ "You uppercut %s",                       13, 12, 4, 3, 4 },
-	{ "You double-kick %s",                    16, 15, 4, 4, 0 },
-	{ "You strike %s with a Cat's Claw",       20, 20, 6, 3, 0 },
-	{ "You hit %s with a jump kick",           25, 25, 3, 9, 6 },
-	{ "You strike %s with an Eagle's Claw",    29, 25, 7, 4, 0 },
-	{ "You hit %s with a circle kick",         33, 30, 4, 9, 0 },
-	{ "You punch %s with an Iron Fist",        37, 35, 6, 6, 8 },
-	{ "You hit %s with a flying kick",         41, 35, 5, 8, 0 },
-	{ "You punch %s with a Dragon Fist",       45, 35, 6, 8, 10 },
-	{ "You hit %s with a Crushing Blow",       48, 35, 8, 7, 12 },
+	{ "You punch %s",			 1, 0, 1, 4, 0 },
+	{ "You kick %s",			 2, 0, 1, 6, 0 },
+	{ "You strike %s",			 3, 0, 1, 7, 0 },
+	{ "You ram %s with your knee",		 5, 5, 2, 3, MA_KNEE },
+	{ "You strike %s with your elbow",	 7, 5, 1, 8, 0 },
+	{ "You butt %s",			 9, 10, 2, 5, 0 },
+	{ "You kick %s",			11, 10, 2, 5, MA_SLOW },
+	{ "You uppercut %s",			13, 12, 4, 3, 4 },
+	{ "You double-kick %s",			16, 15, 4, 4, 0 },
+	{ "You strike %s with a Cat's Claw",	20, 20, 6, 3, 0 },
+	{ "You hit %s with a jump kick",	25, 25, 3, 9, 6 },
+	{ "You strike %s with an Eagle's Claw",	29, 25, 7, 4, 0 },
+	{ "You hit %s with a circle kick",	33, 30, 4, 9, 0 },
+	{ "You punch %s with an Iron Fist",	37, 35, 6, 6, 8 },
+	{ "You hit %s with a flying kick",	41, 35, 5, 8, 0 },
+	{ "You punch %s with a Dragon Fist",	45, 35, 6, 8, 10 },
+	{ "You hit %s with a Crushing Blow",	48, 35, 8, 7, 12 },
 	/* Kings only (for NR:) */
-	{ "You bash %s with a Titan's Fist",       48, 45, 8, 5, 20 },
-	{ "You strike %s with a Phoenix Claw",     48, 45, 5, 9, MA_ROYAL_SLOW },
+	{ "You bash %s with a Titan's Fist",	48, 45, 8, 5, 20 },
+	{ "You strike %s with a Phoenix Claw",	48, 45, 5, 9, MA_ROYAL_SLOW },
 #else //let's align the text so monster names are readable even when the messages are passing by
-	{ "You damage %s with a punch",          1, 0, 1, 4, 0 },
-	{ "You damage %s with a kick",           2, 0, 1, 6, 0 },
-	{ "You damage %s with a strike",         3, 0, 1, 7, 0 },
-	{ "You damage %s with your knee",        5, 5, 2, 3, MA_KNEE },
-	{ "You strike %s with your elbow",       7, 5, 1, 8, 0 },
-	{ "You damage %s with a thrust",         9, 10, 2, 5, 0 },
-	{ "You damage %s with a kick",           11, 10, 2, 5, MA_SLOW },
-	{ "You strike %s with an uppercut",      13, 12, 4, 3, 4 },
-	{ "You damage %s with a double-kick",    16, 15, 4, 4, 0 },
-	{ "You strike %s with a Cat's Claw",     20, 20, 6, 3, 0 },
-	{ "You damage %s with a jump kick",      25, 25, 3, 9, 6 },
-	{ "You strike %s with an Eagle's Claw",  29, 25, 7, 4, 0 },
-	{ "You damage %s with a circle kick",    33, 30, 4, 9, 0 },
-	{ "You pummel %s with an Iron Fist",     37, 35, 6, 6, 8 },
-	{ "You damage %s with a flying kick",    41, 35, 5, 8, 0 },
-	{ "You pummel %s with a Dragon Fist",    45, 35, 6, 8, 10 },
-	{ "You damage %s with a Crushing Blow",  48, 35, 8, 7, 12 },
+	{ "You damage %s with a punch",	  1, 0, 1, 4, 0 },
+	{ "You damage %s with a kick",		 2, 0, 1, 6, 0 },
+	{ "You damage %s with a strike",	 3, 0, 1, 7, 0 },
+	{ "You damage %s with your knee",	 5, 5, 2, 3, MA_KNEE },
+	{ "You strike %s with your elbow",	 7, 5, 1, 8, 0 },
+	{ "You damage %s with a thrust",	 9, 10, 2, 5, 0 },
+	{ "You damage %s with a kick",		11, 10, 2, 5, MA_SLOW },
+	{ "You strike %s with an uppercut",	13, 12, 4, 3, 4 },
+	{ "You damage %s with a double-kick",	16, 15, 4, 4, 0 },
+	{ "You strike %s with a Cat's Claw",	20, 20, 6, 3, 0 },
+	{ "You damage %s with a jump kick",	25, 25, 3, 9, 6 },
+	{ "You strike %s with an Eagle's Claw",	29, 25, 7, 4, 0 },
+	{ "You damage %s with a circle kick",	33, 30, 4, 9, 0 },
+	{ "You pummel %s with an Iron Fist",	37, 35, 6, 6, 8 },
+	{ "You damage %s with a flying kick",	41, 35, 5, 8, 0 },
+	{ "You pummel %s with a Dragon Fist",	45, 35, 6, 8, 10 },
+	{ "You damage %s with a Crushing Blow",	48, 35, 8, 7, 12 },
 	/* Kings only (for NR:) */
-	{ "You pummel %s with a Titan's Fist",   48, 45, 8, 5, 20 },
-	{ "You strike %s with a Phoenix Claw",   48, 45, 5, 9, MA_ROYAL_SLOW },
+	{ "You pummel %s with a Titan's Fist",	48, 45, 8, 5, 20 },
+	{ "You strike %s with a Phoenix Claw",	48, 45, 5, 9, MA_ROYAL_SLOW },
 #endif
 };
 
 /*
  * Months
  */
-int month_day[9] =
-{
+int month_day[9] = {
 	0,      /* 1 day */
 
 	1,      /* 54 days */
@@ -5371,8 +5367,7 @@ int month_day[9] =
 
 	364,    /* 1 day */
 };
-cptr month_name[9] =
-{
+cptr month_name[9] = {
 	"Yestare",
 
 	"Tuile",
@@ -5393,10 +5388,9 @@ cptr month_name[9] =
  * Quick hack for towns -- this should die	- Jir -
  */
 /* FIXME: Dungeons don't match the Tolkien themes;
- * they're simply used to match the necessity 
+ * they're simply used to match the necessity
  */
-town_extra town_profile[6]=
-{
+town_extra town_profile[6]= {
 	/* Vanilla */
 	{
 		"Town",
