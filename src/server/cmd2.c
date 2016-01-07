@@ -3747,8 +3747,7 @@ void do_cmd_bash(int Ind, int dir) {
 		/* Nothing useful */
 		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 		    (c_ptr->feat <= FEAT_DOOR_TAIL)) &&
-		    c_ptr->feat != FEAT_HOME)
-		{
+		    c_ptr->feat != FEAT_HOME) {
 			int item;
 			/* Hack -- 'kick' an item ala NetHack */
 			if ((item = c_ptr->o_idx)) {
@@ -3780,10 +3779,9 @@ void do_cmd_bash(int Ind, int dir) {
 
 				/* Potions smash open */
 				if (o_ptr->tval == TV_POTION ||
-						o_ptr->tval == TV_POTION2 ||
-						o_ptr->tval == TV_FLASK ||
-						o_ptr->tval == TV_BOTTLE)
-				{
+				    o_ptr->tval == TV_POTION2 ||
+				    o_ptr->tval == TV_FLASK ||
+				    o_ptr->tval == TV_BOTTLE) {
 					char            o_name[ONAME_LEN];
 					object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
@@ -3800,7 +3798,7 @@ void do_cmd_bash(int Ind, int dir) {
 					sound_near_site(y, x, wpos, 0, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
-					//			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
+					//if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
 					if (k_info[o_ptr->k_idx].tval == TV_POTION)
 						/* This should harm the player too, but for now no way :/ */
 						potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval);
@@ -3832,8 +3830,7 @@ void do_cmd_bash(int Ind, int dir) {
 		/* Bash a closed door */
 		else {
 			if ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
-			    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)))
-			{
+			    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR))) {
 				msg_print(Ind, "You cannot bash doors!");
 				if (!is_admin(p_ptr)) return;
 			}
@@ -3895,9 +3892,7 @@ void do_cmd_bash(int Ind, int dir) {
 			}
 
 			/* Saving throw against stun */
-			else if (rand_int(100) < adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-				 p_ptr->lev)
-			{
+			else if (rand_int(100) < adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev) {
 				/* Message */
 				msg_print(Ind, "The door holds firm.");
 
@@ -3977,9 +3972,9 @@ void do_cmd_spike(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	int                  y, x, item;
+	int y, x, item;
 
-	cave_type               *c_ptr;
+	cave_type *c_ptr;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
@@ -4375,8 +4370,7 @@ int breakage_chance(object_type *o_ptr) {
 }
 
 /* Add a nice ball if needed */
-static void do_arrow_brand_effect(int Ind, int y, int x)
-{
+static void do_arrow_brand_effect(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 
 	switch (p_ptr->bow_brand_t) {
@@ -4407,23 +4401,21 @@ static void do_arrow_brand_effect(int Ind, int y, int x)
 
 /* Exploding arrow */
 //static void do_arrow_explode(int Ind, object_type *o_ptr, int y, int x)
-void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might)
-{
-//	player_type *p_ptr = Players[Ind];
+void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might) {
+	//player_type *p_ptr = Players[Ind];
 	int rad = 0;
-//	int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2 * ((might/3)+1);
-//	int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 4;
-//	int dam = (damroll(o_ptr->dd, o_ptr->ds) + 5) * 3 + o_ptr->to_d;
+	//int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2 * ((might/3)+1);
+	//int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 4;
+	//int dam = (damroll(o_ptr->dd, o_ptr->ds) + 5) * 3 + o_ptr->to_d;
 	int dam = (damroll(o_ptr->dd, o_ptr->ds) + 10) * 2 + o_ptr->to_d;
 	int flag = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
 
-	switch(o_ptr->sval)
-	{
-		case SV_AMMO_LIGHT: rad = 1; break;
-		case SV_AMMO_NORMAL: rad = 2; break;
-		case SV_AMMO_HEAVY: rad = 3; break;
-		//case SV_AMMO_MAGIC <- magic arrows only, don't explode
-		case SV_AMMO_SILVER: rad = 2; break;
+	switch(o_ptr->sval) {
+	case SV_AMMO_LIGHT: rad = 1; break;
+	case SV_AMMO_NORMAL: rad = 2; break;
+	case SV_AMMO_HEAVY: rad = 3; break;
+	//case SV_AMMO_MAGIC <- magic arrows only, don't explode
+	case SV_AMMO_SILVER: rad = 2; break;
 	}
 	
 	if ((rad > 2) && (
@@ -4443,48 +4435,32 @@ void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x,
 /*
  * Return multiplier of an object
  */
-int get_shooter_mult(object_type *o_ptr)
-{
+int get_shooter_mult(object_type *o_ptr) {
 	/* Assume a base multiplier */
 	int tmul = 1;
 
 	/* Analyze the launcher */
-	switch (o_ptr->sval)
-	{
-		case SV_SLING:
-		{
-			/* Sling and ammo */
-			tmul = 2;
-			break;
-		}
-
-		case SV_SHORT_BOW:
-		{
-			/* Short Bow and Arrow */
-			tmul = 2;
-			break;
-		}
-
-		case SV_LONG_BOW:
-		{
-			/* Long Bow and Arrow */		
-			tmul = 3;
-			break;
-		}
-
+	switch (o_ptr->sval) {
+	case SV_SLING:
+		/* Sling and ammo */
+		tmul = 2;
+		break;
+	case SV_SHORT_BOW:
+		/* Short Bow and Arrow */
+		tmul = 2;
+		break;
+	case SV_LONG_BOW:
+		/* Long Bow and Arrow */
+		tmul = 3;
+		break;
+	case SV_LIGHT_XBOW:
 		/* Light Crossbow and Bolt */
-		case SV_LIGHT_XBOW:
-		{
-			tmul = 3;
-			break;
-		}
-
+		tmul = 3;
+		break;
+	case SV_HEAVY_XBOW:
 		/* Heavy Crossbow and Bolt */
-		case SV_HEAVY_XBOW:
-		{
-			tmul = 4;
-			break;
-		}
+		tmul = 4;
+		break;
 	}
 	return tmul;
 }
@@ -4529,24 +4505,24 @@ void do_cmd_fire(int Ind, int dir) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	bool warn = FALSE;
 
-	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
+	int i, j, y, x, ny, nx, ty, tx, bx, by;
 #ifdef PY_FIRE_ON_WALL
-	int			prev_x, prev_y; /* for flare missile being able to light up a room under projectable_wall() conditions */
+	int prev_x, prev_y; /* for flare missile being able to light up a room under projectable_wall() conditions */
 #endif
-	int                     tdam, tdis, thits, tmul;
-	int                     bonus, chance, tries = 100;
-	int                     cur_dis, visible, real_dis;
+	int tdam, tdis, thits, tmul;
+	int bonus, chance, tries = 100;
+	int cur_dis, visible, real_dis;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
 	int item = INVEN_AMMO;
 	int archery = get_archery_skill(p_ptr);
 
-	object_type         throw_obj;
-	object_type             *o_ptr;
-	object_type             *j_ptr;
-	bool            hit_body = FALSE;
+	object_type throw_obj;
+	object_type *o_ptr;
+	object_type *j_ptr;
+	bool hit_body = FALSE;
 
-	int                     missile_attr;
-	int                     missile_char;
+	int missile_attr;
+	int missile_char;
 
 #ifdef OPTIMIZED_ANIMATIONS
 	/* Projectile path */
@@ -4554,20 +4530,20 @@ void do_cmd_fire(int Ind, int dir) {
 	int path_x[MAX_RANGE];
 	int path_num = 0;
 #endif
-	
+
 	char brand_msg[MAX_CHARS_WIDE] = { '\0' };
 
-	bool            drain_msg = TRUE;
-	int             drain_result = 0, drain_heal = 0;
-	int             drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
-	bool		drainable = TRUE;
-	bool		ranged_double_real = FALSE, ranged_flare_body = FALSE;
-	
+	bool drain_msg = TRUE;
+	int drain_result = 0, drain_heal = 0;
+	int drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
+	bool drainable = TRUE;
+	bool ranged_double_real = FALSE, ranged_flare_body = FALSE;
+
 	int		break_chance;
 	int		sfx = 0;
 	u32b f1, f1a, fx, esp;
 
-	char            o_name[ONAME_LEN];
+	char o_name[ONAME_LEN];
 	bool returning = FALSE, magic = FALSE, boomerang = FALSE, ethereal = FALSE;
 	bool target_ok = target_okay(Ind);
 #if 0 //DEBUG
@@ -4576,6 +4552,8 @@ void do_cmd_fire(int Ind, int dir) {
 #endif
 #endif
 	cave_type **zcave;
+
+
 	if (!(zcave = getcave(wpos))) return;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRE_BAT) {
@@ -4618,15 +4596,9 @@ void do_cmd_fire(int Ind, int dir) {
 
 	/* Break goi/manashield */
 #if 0
-	if (p_ptr->invuln) {
-		set_invuln(Ind, 0);
-	}
-	if (p_ptr->tim_manashield) {
-		set_tim_manashield(Ind, 0);
-	}
-	if (p_ptr->tim_wraith) {
-		set_tim_wraith(Ind, 0);
-	}
+	if (p_ptr->invuln) set_invuln(Ind, 0);
+	if (p_ptr->tim_manashield) set_tim_manashield(Ind, 0);
+	if (p_ptr->tim_wraith) set_tim_wraith(Ind, 0);
 #endif	// 0
 
 	/* Get the "bow" (if any) */
@@ -4686,7 +4658,7 @@ void do_cmd_fire(int Ind, int dir) {
 		ethereal = TRUE;
 	}
 
-	if( check_guard_inscription( o_ptr->note, 'f' )) {
+	if (check_guard_inscription( o_ptr->note, 'f' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
@@ -5098,7 +5070,7 @@ void do_cmd_fire(int Ind, int dir) {
 			if ((y == ty) && (x == tx)) break;
 
 			/* Calculate the new location (see "project()") */
-			//			mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
+			//mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 			mmove2(&ny, &nx, by, bx, ty, tx);
 
 #ifdef DOUBLE_LOS_SAFETY
@@ -5152,16 +5124,13 @@ void do_cmd_fire(int Ind, int dir) {
 				p_ptr = Players[i];
 
 				/* If he's not playing, skip him */
-				if (p_ptr->conn == NOT_CONNECTED)
-					continue;
+				if (p_ptr->conn == NOT_CONNECTED) continue;
 
 				/* If he's not here, skip him */
-				if(!inarea(&p_ptr->wpos, wpos))
-					continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				/* The player can see the (on screen) missile */
-				if (panel_contains(y, x) && player_can_see_bold(i, y, x))
-				{
+				if (panel_contains(y, x) && player_can_see_bold(i, y, x)) {
 					/* Draw, Hilite, Fresh, Pause, Erase */
 					dispy = y - p_ptr->panel_row_prt;
 					dispx = x - p_ptr->panel_col_prt;
@@ -5392,13 +5361,11 @@ void do_cmd_fire(int Ind, int dir) {
 								}
 //less spam for now - C. Blue					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CHAO)) && !q_ptr->resist_conf && !boomerang) {
+								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CHAO)) && !q_ptr->resist_conf && !boomerang)
 									(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + 5);
-								}
 
-								if (p_ptr->ranged_barrage) {
+								if (p_ptr->ranged_barrage)
 									set_stun(0 - c_ptr->m_idx, q_ptr->stun + 35 + get_skill_scale(p_ptr, SKILL_COMBAT, 5));
-								}
 
 
 								/* Take damage */
@@ -5444,7 +5411,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 				/* Note the collision */
 				/* Note the collision */
-				if(!(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL))
+				if (!(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL))
 					hit_body = TRUE;
 
 				/* Did we hit it (penalize range) */
@@ -5527,12 +5494,12 @@ void do_cmd_fire(int Ind, int dir) {
 						if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
 						if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 						tdam += o_ptr->to_d;
-//						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
+						//tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						tdam += j_ptr->to_d + p_ptr->to_d_ranged;
-//						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
+						//tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 					} else {
 						 /* Base damage from thrown object */
-					        tdam = damroll(o_ptr->dd, o_ptr->ds);
+						tdam = damroll(o_ptr->dd, o_ptr->ds);
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						tdam += o_ptr->to_d;
 						tdam += p_ptr->to_d_ranged;
@@ -5566,20 +5533,15 @@ void do_cmd_fire(int Ind, int dir) {
 #if 0
 					/* XXX consider using project() with GF_CONF */
 					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CHAO)) &&
-							!(r_ptr->flags3 & RF3_NO_CONF) &&
-							!(r_ptr->flags4 & RF4_BR_CONF) &&
-							!(r_ptr->flags4 & RF4_BR_CHAO) && !boomerang)
-					{
+					    !(r_ptr->flags3 & RF3_NO_CONF) &&
+					    !(r_ptr->flags4 & RF4_BR_CONF) &&
+					    !(r_ptr->flags4 & RF4_BR_CHAO) && !boomerang) {
 						int i;
 
 						/* Already partially confused */
-						if (m_ptr->confused) {
-							i = m_ptr->confused + p_ptr->lev;
-						}
+						if (m_ptr->confused) i = m_ptr->confused + p_ptr->lev;
 						/* Was not confused */
-						else {
-							i = p_ptr->lev;
-						}
+						else i = p_ptr->lev;
 						/* Apply confusion */
 						m_ptr->confused = (i < 200) ? i : 200;
 
@@ -5609,14 +5571,13 @@ void do_cmd_fire(int Ind, int dir) {
 					}
 
 					/* Hit the monster, check for death */
-					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
-					{
+					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies)) {
 						/* note: if the monster we hit wasn't the one targetted, then continue shooting.
-						         It can only mean that this monster was invisible to us, hence the
+							 It can only mean that this monster was invisible to us, hence the
 							 character couldn't have control over avoiding to target it. */
 						if ((dir == 5) && ((y == ty) && (x == tx))) {
 							/* Dead targetted monster */
-					    		p_ptr->shooting_till_kill = FALSE;
+							p_ptr->shooting_till_kill = FALSE;
 						}
 					}
 					/* No death */
@@ -5628,21 +5589,21 @@ void do_cmd_fire(int Ind, int dir) {
 						dead, the drain does not work... */
 						if (drain_result) {
 							drain_result -= m_ptr->hp;  /* Calculate the difference */
-						
+
 							if (drain_result > 0) { /* Did we really hurt it? */
 								drain_heal = randint(2) + damroll(2,(drain_result / 16));/* was 4,../6 -- was /8 for 50 max_drain */
 
 								if (drain_left) {
 									if (drain_heal < drain_left) {
-									        drain_left -= drain_heal;
+										drain_left -= drain_heal;
 									} else {
 										drain_heal = drain_left;
 										drain_left = 0;
 									}
 
 									if (drain_msg) {
-									        msg_format(Ind, "Your shot drains life from %s!", m_name);
-									        drain_msg = FALSE;
+										msg_format(Ind, "Your shot drains life from %s!", m_name);
+										drain_msg = FALSE;
 									}
 
 									hp_player_quiet(Ind, drain_heal, TRUE);
@@ -5681,7 +5642,7 @@ void do_cmd_fire(int Ind, int dir) {
 						}
 					}
 
-					if (!boomerang && p_ptr->bow_brand_t) 
+					if (!boomerang && p_ptr->bow_brand_t)
 						do_arrow_brand_effect(Ind, y, x);
 
 					if (!boomerang && !magic && o_ptr->pval)
@@ -5692,6 +5653,8 @@ void do_cmd_fire(int Ind, int dir) {
 				}
 			}
 
+		    /* server crashed further below when ny was 66, dir was 10 but then became 3, odd stuff.. */
+		    if (in_bounds_array(ny, nx))
 #ifdef DOUBLE_LOS_SAFETY
 		    /* skip checks if we already used projectable..() routines to test. */
 		    if (dir != 5) {
@@ -5709,13 +5672,16 @@ void do_cmd_fire(int Ind, int dir) {
 	    /* skip checks if we already used projectable..() routines to test. */
 	    if (dir != 5) {
 #endif
-		/* Extra (exploding) hack: */
-		if (!cave_contact(zcave, ny, nx)/* Stopped by walls/doors ?*/
-		    || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
-			if (!boomerang && !magic && o_ptr->pval) {
-				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+		/* server crashed here when ny was 66, dir was 10 but then became 3, odd stuff.. */
+		if (in_bounds_array(ny, nx))
+
+			/* Extra (exploding) hack: */
+			if (!cave_contact(zcave, ny, nx)/* Stopped by walls/doors ?*/
+			    || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
+				if (!boomerang && !magic && o_ptr->pval) {
+					do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+				}
 			}
-		}
 #ifdef DOUBLE_LOS_SAFETY
 	    } else {
 		if (!target_ok) { /* fired 'at oneself'? */
@@ -5829,22 +5795,18 @@ void do_cmd_fire(int Ind, int dir) {
 
 #ifndef OPTIMIZED_ANIMATIONS
 	/* Back in the U.S.S.R */
-	if (boomerang && !breakage)
-	{
+	if (boomerang && !breakage) {
 		/* Save the old "player pointer" */
 		q_ptr = p_ptr;
 
-		for (cur_dis = 0; cur_dis <= tdis; )
-		{
+		for (cur_dis = 0; cur_dis <= tdis; ) {
 			/* Hack -- Stop at the target */
-			if ((y == q_ptr->py) && (x == q_ptr->px)){
-				break;
-			}
+			if ((y == q_ptr->py) && (x == q_ptr->px)) break;
 
 			/* Calculate the new location (see "project()") */
 			ny = y;
 			nx = x;
-			//			mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
+			//mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 			mmove2(&ny, &nx, ty, tx, q_ptr->py, q_ptr->px);
 
 #ifdef DOUBLE_LOS_SAFETY
@@ -5865,24 +5827,20 @@ void do_cmd_fire(int Ind, int dir) {
 			y = ny;
 
 			/* Display it for each player */
-			for (i = 1; i < NumPlayers + 1; i++)
-			{
+			for (i = 1; i < NumPlayers + 1; i++) {
 				int dispx, dispy;
 
 				/* Use this player */
 				p_ptr = Players[i];
 
 				/* If he's not playing, skip him */
-				if (p_ptr->conn == NOT_CONNECTED)
-					continue;
+				if (p_ptr->conn == NOT_CONNECTED) continue;
 
 				/* If he's not here, skip him */
-				if(!inarea(&p_ptr->wpos, wpos))
-					continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				/* The player can see the (on screen) missile */
-				if (panel_contains(y, x) && player_can_see_bold(i, y, x))
-				{
+				if (panel_contains(y, x) && player_can_see_bold(i, y, x)) {
 					/* Draw, Hilite, Fresh, Pause, Erase */
 					dispy = y - p_ptr->panel_row_prt;
 					dispx = x - p_ptr->panel_col_prt;
@@ -5918,24 +5876,20 @@ void do_cmd_fire(int Ind, int dir) {
 		q_ptr = p_ptr;
 
 		/* Draw a projectile here for everyone */
-		for (i = 1; i < NumPlayers + 1; i++)
-		{
+		for (i = 1; i < NumPlayers + 1; i++) {
 			int dispx, dispy;
 
 			/* Use this player */
 			p_ptr = Players[i];
 
 			/* If he's not playing, skip him */
-			if (p_ptr->conn == NOT_CONNECTED)
-				continue;
+			if (p_ptr->conn == NOT_CONNECTED) continue;
 
 			/* If he's not here, skip him */
-			if(!inarea(&p_ptr->wpos, wpos))
-				continue;
+			if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 			/* The player can see the (on screen) missile */
-			if (panel_contains(ny, nx) && player_can_see_bold(i, ny, nx))
-			{
+			if (panel_contains(ny, nx) && player_can_see_bold(i, ny, nx)) {
 				/* Draw */
 				dispy = ny - p_ptr->panel_row_prt;
 				dispx = nx - p_ptr->panel_col_prt;
@@ -5961,11 +5915,9 @@ void do_cmd_fire(int Ind, int dir) {
 #endif /* OPTIMIZED_ANIMATIONS */
 
 	/* Hack -- "Never litter the floor" inscription {!g} */
-	if(check_guard_inscription(o_ptr->note, 'g') )
-//			|| p_ptr->max_plv < cfg.newbies_cannot_drop)
-	{
+	if (check_guard_inscription(o_ptr->note, 'g'))
+	    //|| p_ptr->max_plv < cfg.newbies_cannot_drop)
 		breakage = 101;
-	}
 
 	if (p_ptr->ranged_flare && !boomerang) {
 		if (!hit_body && !ranged_flare_body) {
