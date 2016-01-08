@@ -17449,6 +17449,8 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   chance to get a crown instead of helmet/cap.
   Note: Critical-strike skill will aim at sword-type weapons, same as if you
   skilled sword-mastery skill.
+  If you have Sword-Mastery and Antimagic skill, you will get a Dark Sword in
+  case you receive a weapon as reward.
 - wear roughly the appropriate type of armour (ie light vs heavy) and..
 - wield the type of weapon (dual, 1-handed or 2-handed) that you prefer.
   This might affect three factors randomly: An actual weapon reward, whether or
