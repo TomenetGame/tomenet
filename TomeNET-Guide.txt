@@ -18456,10 +18456,21 @@ SOLUTION:   This is suspected to be a problem with 'Awesome' window manager.
             has been reported to solve the problem.
 
 PROBLEM 50: I get an antivirus warning when I try to run the installer version
-            of TomeNET (the self-installing '.exe' file).
+            of TomeNET (the self-installing '.exe' file) or in general for the
+            'install_tomenet' executable/process.
             Installation also fails or fails partially.
 SOLUTION:   Avast and Trendmicro antivirus are known for causing trouble with
             the Nullsoft NSIS installer system that TomeNET utilises.
             Disable the antivirus program before you install TomeNET.
+            Also, some scanners like virustotal.com will detect 'killproc'
+            heuristics in the install_tomenet.exe helper process - which makes
+            sense since this installer indeed will attempt to kill any running
+            TomeNET process before it updates, this is the intended behaviour.
+
+PROBLEM 51: On Windows 10 (maybe 8 too), the self-installer freezes on startup.
+SOLUTION:   Why are you STILL using Windows.. Ok well, you can try to just sit
+            it out, some people have reported that the NSIS installer is known
+            to freeze for about 15 minutes on Windows 10. Maybe it will just
+            continue if you wait for a while.
 
 ==============================================================================
