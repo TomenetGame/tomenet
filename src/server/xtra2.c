@@ -6522,7 +6522,7 @@ static void inven_death_damage(int Ind, int verbose) {
 #endif
 
 		if (magik(DEATH_PACK_ITEM_LOST)) {
-			object_desc(Ind, o_name, o_ptr, FALSE, 3);
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			s_printf("item_lost: %s (slot %d)\n", o_name, j);
 
 			if (verbose) {
@@ -6566,7 +6566,7 @@ static void equip_death_damage(int Ind, int verbose) {
 		if (!o_ptr->k_idx) continue;
 
 		if (magik(DEATH_EQ_ITEM_LOST)) {
-			object_desc(Ind, o_name, o_ptr, FALSE, 3);
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			s_printf("item_lost: %s (slot %d)\n", o_name, j);
 
 			if (verbose) {

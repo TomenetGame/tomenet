@@ -1181,9 +1181,7 @@ static bool compare_weapons(void)
  * sharpen arrows, repair armor, repair weapon
  * -KMW-
  */
-static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
-                     int ireward, bool set_reward)
-{
+static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac, int ireward, bool set_reward) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
@@ -1253,7 +1251,8 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 			if (o_ptr->to_h >= maxenchant_eff && o_ptr->to_d >= maxenchant_eff) continue;
 			if (o_ptr->to_h < maxenchant_eff) o_ptr->to_h = maxenchant_eff;
 			if (o_ptr->to_d < maxenchant_eff) o_ptr->to_d = maxenchant_eff;
-			msg_format(Ind, "Your %s has been enchanted to (+%d,+%d).", tmp_str, o_ptr->to_h, o_ptr->to_d);
+			msg_format(Ind, "Your %s %s been enchanted to (+%d,+%d).",
+			    tmp_str, o_ptr->number == 1 ? "has" : "have", o_ptr->to_h, o_ptr->to_d);
 			break;
 		}
 	}

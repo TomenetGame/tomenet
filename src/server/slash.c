@@ -7597,7 +7597,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
-				object_desc(Ind, o_name, o_ptr, FALSE, 0);
+				object_desc(Ind, o_name, o_ptr, TRUE, 0);
 				msg_format(Ind, "Overview for item %s in slot %d:",
 				    o_name, atoi(token[1]));
 				msg_format(Ind, "Flag cost: %d; for artifact: %d.",
