@@ -7844,7 +7844,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 				/* Update the old monster */
 				update_player(0 - c_ptr->m_idx);
-				msg_format(0 - c_ptr->m_idx, "\377o%^s switches place with you!", m_name);
+				msg_format(0 - c_ptr->m_idx, "\377y%^s switches place with you!", m_name);
 
 				stop_precision(0 - c_ptr->m_idx);
 				stop_shooting_till_kill(0 - c_ptr->m_idx);
