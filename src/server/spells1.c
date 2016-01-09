@@ -7586,7 +7586,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Blindness (confusion): Not for uniques or powerful monsters */
 	if (do_blind &&
-	     !(r_ptr->flags2 & RF2_POWERFUL) &&
+	    !strchr("AEX|,.mj$?*", r_ptr->d_char) &&
+	    !(r_ptr->flags2 & RF2_POWERFUL) &&
 	    !(r_ptr->flags2 & RF2_PASS_WALL) && /* Ethereal monsters */
 	    !((r_ptr->flags4 & RF4_BR_LITE) && (r_ptr->flags4 & RF4_BR_DARK)) &&
 	    !(r_ptr->flags3 & RF3_UNDEAD) &&
@@ -7595,7 +7596,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	    !(r_ptr->flags3 & RF3_DRAGON) &&
 	    !(r_ptr->flags3 & RF3_DRAGONRIDER) &&
 	    !(r_ptr->flags1 & RF1_UNIQUE) &&
-	    (m_ptr->level < 45))
+	    (m_ptr->level < 50))
 /*	    !((r_ptr->flags3 & RF3_DEMON) && (m_ptr->level >= 40)) &&
 	    !((r_ptr->flags3 & RF3_DRAGON) && (m_ptr->level >= 40)) &&
 	    !((r_ptr->flags3 & RF3_DRAGONRIDER) && (m_ptr->level >= 40)) &&
