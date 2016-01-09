@@ -640,9 +640,6 @@ static void rd_item(object_type *o_ptr) {
 
 	/* -------------------- Fix erroneus item parameters -------------------- */
 
-/* HACKHACKHACK - C. Blue - Moved Khopesh to polearms */
-//if (o_ptr->tval == 23 && o_ptr->sval == 14) {o_ptr->tval = 22; o_ptr->sval = 9;}
-
 #ifdef EXPAND_TV_POTION
 	/* Convert outdated potions that still use TV_POTION2 to new TV_POTION values */
 	if (o_ptr->tval == TV_POTION2) {
@@ -703,23 +700,6 @@ static void rd_item(object_type *o_ptr) {
 		}
 	}
 
-#if 0 /* DEBUGGING PURPOSES - the_sandman */
-	if (o_ptr->tval == 46)
-	 {
-	  s_printf("TRAP_DEBUG: Trap with s_val:%d,to_h:%d,to_d:%d,to_a:%d loaded\n",
-				o_ptr->sval, o_ptr->to_h, o_ptr->to_d, o_ptr->to_a);
-	 }
-#endif
-
-#if 0 /* should all be fixed now hopefully - C. Blue */
-	/* Cap all old non-trueart bows - mikaelh */
-	if (o_ptr->tval == TV_BOW && (o_ptr->name1 == 0 || o_ptr->name1 == ART_RANDART))
-	{/* CAP_ITEM_BONI */
-		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
-		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
-	}
-#endif
-
 #ifdef USE_NEW_SHIELDS
 	/* Cap all old shields' +ac - C. Blue */
 	if (o_ptr->tval == TV_SHIELD)
@@ -732,34 +712,9 @@ static void rd_item(object_type *o_ptr) {
 	}
 #endif
 
-#if 0 /* should all be fixed by now */
-	/* Fix shields base AC or percentage, in case USE_NEW_SHIELDS has been toggled. */
-	if (o_ptr->tval == TV_SHIELD) {
-		o_ptr->ac = k_info[o_ptr->k_idx].ac;
-		/* Fix to_h being set on shields (see above) - mikaelh (removed above bad code - C. Blue) */
-		o_ptr->to_h = 0;
-	}
-#endif
-
 #ifdef TO_AC_CAP_30
 	/* CAP_ITEM_BONI */
 	if (o_ptr->to_a > 30 && !true_artifact_p(o_ptr)) o_ptr->to_a = 30;
-#endif
-
-#if 0 /* should all be fixed by now */
-	/* Fix rods that got 'double-timeout' by erroneous discharge function*/
-	if (o_ptr->tval == TV_ROD) o_ptr->timeout = 0;
-#endif
-
-#if 0 /* should all be fixed by now */
-	if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_FEANORIAN) {
-		if (o_ptr->level < 30) {
-			if (o_ptr->name2 || o_ptr->name2b)
-				o_ptr->level = 40;
-			else
-				o_ptr->level = 31;
-		}
-	}
 #endif
 
 	/* slightly increased */
@@ -780,18 +735,6 @@ static void rd_item(object_type *o_ptr) {
 
 	/* hack- fix trap kits with wrong enchantments */
 	if (o_ptr->tval == TV_TRAPKIT && !is_firearm_trapkit(o_ptr->sval)) o_ptr->to_h = o_ptr->to_d = 0;
-
-#if 0 /* too bad hack ;) */
-	/* Update money pile colour in case the code determining those has been changed */
-	if (o_ptr->tval == TV_GOLD) {
-		/* Bad hack: Assume it's a pile dropped by a player in a house.
-		   This will turn all money piles in towns/wilderness to 'wrong' colour in turn though,
-		   since they'll all be 'compact=TRUE'. */
-		if (!o_ptr->wpos.wz) o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, TRUE);
-		else o_ptr->k_idx = gold_colour(o_ptr->pval);
-		o_ptr->sval = k_info[o_ptr->k_idx].sval;
-	}
-#endif
 
 	/* hack: remove (due to bug) created explodingness from magic ammo */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr->pval = 0;
