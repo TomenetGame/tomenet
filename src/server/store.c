@@ -5453,14 +5453,14 @@ void home_purchase(int Ind, int item, int amt) {
 	if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
 		object_desc(0, o_name, o_ptr, TRUE, 3);
 		if (amt == o_ptr->number) {
-			s_printf("PLAYER_STORE_REMOVED (hpurch): %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_REMOVED (hpurch): %s (%d,%d,%d; %d,%d; %d).\n",
 			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
-			    o_ptr->ix, o_ptr->iy);
+			    o_ptr->ix, o_ptr->iy, item);
 		} else { /* 'mass-cheque' */
-			s_printf("PLAYER_STORE_UPDATED (hpurch): %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_UPDATED (hpurch): %s (%d,%d,%d; %d,%d; %d).\n",
 			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
 			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
-			    o_ptr->ix, o_ptr->iy);
+			    o_ptr->ix, o_ptr->iy, item);
 		}
 	}
 #endif
@@ -6528,9 +6528,9 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 #ifdef PLAYER_STORES
 			/* Log removal of player store items */
 			object_desc(0, ox_name, ho_ptr, TRUE, 3);
-			s_printf("PLAYER_STORE_UPDATED (mass,trad): %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_UPDATED (mass,trad): %s (%d,%d,%d; %d,%d; %d).\n",
 			    ox_name, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->wpos.wz,
-			    o_ptr->ix, o_ptr->iy);
+			    o_ptr->ix, o_ptr->iy, o_ptr->ps_idx_x);
 #endif
 		} else { //assume HF_RECT mang-style
 			/* Reduce amount of items in stock by how many were bought */
@@ -6661,9 +6661,9 @@ s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buye
 		if (h_ptr->flags & HF_TRAD) {
 #ifdef PLAYER_STORES
 			/* Log removal of player store items */
-			s_printf("PLAYER_STORE_REMOVED (complete,trad): %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_REMOVED (complete,trad): %s (%d,%d,%d; %d,%d; %d).\n",
 			    o_name, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->wpos.wz,
-			    o_ptr->ix, o_ptr->iy);
+			    o_ptr->ix, o_ptr->iy, o_ptr->ps_idx_x);
 #endif
 			/* For list house, overwriting is enough */
 			object_copy(ho_ptr, cheque_ptr);

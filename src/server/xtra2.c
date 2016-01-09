@@ -6298,10 +6298,10 @@ void kill_house_contents(house_type *h_ptr) {
 			char o_name[ONAME_LEN];//, p_name[NAME_LEN];
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			//s_printf("PLAYER_STORE_REMOVED (khouse): %s - %s (%d,%d,%d; %d,%d).\n",
-			s_printf("PLAYER_STORE_REMOVED (khouse): %s (%d,%d,%d; %d,%d).\n",
+			s_printf("PLAYER_STORE_REMOVED (khouse): %s (%d,%d,%d; %d,%d; %d).\n",
 			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
 			    o_name, wpos->wx, wpos->wy, wpos->wz,
-			    o_ptr->ix, o_ptr->iy);
+			    o_ptr->ix, o_ptr->iy, i);
 		}
 #endif
 
