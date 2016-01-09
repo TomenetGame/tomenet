@@ -709,20 +709,16 @@ struct effect_type
 typedef struct object_type object_type;
 
 struct object_type {
-        s32b owner;                     /* Player that found it */
-        byte mode;                	/* Mode of player who found it */
-        s16b level;                     /* Level req */
-			/* Hack -- ego-items use 'level' in a special way, and
-			 * altering this value will result in change of ego-item
-			 * powers themselves!	- Jir -
-			 */
+	s32b owner;			/* Player that found it */
+	byte mode;			/* Mode of player who found it */
+	s16b level;			/* Level req */
 
 	s16b k_idx;			/* Kind index (zero if "dead") */
 
+	struct worldpos wpos;		/* worldmap position */
 	byte iy;			/* Y-position on map, or zero */
 	byte ix;			/* X-position on map, or zero */
-
-	struct worldpos wpos;
+	s16b h_idx;			/* inside house? (-1 if not) */
 
 	byte tval;			/* Item type (from kind) */
 	byte sval;			/* Item sub-type (from kind) */
@@ -744,11 +740,9 @@ struct object_type {
 	s32b sigil;			/* Element index (+1) for r_projection (common/tables.c) boni lookup. Zero if no sigil. */
 	s32b sseed;			/* RNG Seed used to determine the boni (if random). Zero if not randomized. */
 
-	byte discount;		/* Discount (if any) */
-
-	byte number;		/* Number of items */
-
-	s16b weight;		/* Item weight */
+	byte discount;			/* Discount (if any) */
+	byte number;			/* Number of items */
+	s16b weight;			/* Item weight */
 
 	u16b name1;			/* Artifact type, if any */
 	u16b name2;			/* Ego-Item type, if any */
