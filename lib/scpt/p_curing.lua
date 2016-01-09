@@ -96,11 +96,11 @@ HCUREWOUNDS_I = add_spell {
 			if get_level(Ind, HCUREWOUNDS_I, 50) >= 9 then
 				status_ailments = status_ailments + 2048
 			end
-			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(13), " points at your wounds.")
+			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(10), " points at your wounds.")
 	end,
 	["info"] = 	function()
---			return "heal "..get_curewounds_power(13)
-			return "heal "..get_curewounds_dice(13).."d8"
+--			return "heal "..get_curewounds_power(10)
+			return "heal "..get_curewounds_dice(10).."d8"
 	end,
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target.",
@@ -114,8 +114,8 @@ HCUREWOUNDS_II = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	23,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
 	["fail"] = 	-38,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
@@ -180,8 +180,8 @@ HHEALING_II = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	23,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
 	["fail"] = 	-38,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
@@ -209,8 +209,8 @@ HHEALING_III = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
-	["mana"] = 	70,
-	["mana_max"] = 	70,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
 	["fail"] = 	-87,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
