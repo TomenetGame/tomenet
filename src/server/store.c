@@ -5371,115 +5371,113 @@ void home_purchase(int Ind, int item, int amt) {
 	}
 
 
-
 	/* Home is much easier */
-	{
-
 #if CHEEZELOG_LEVEL > 2
-		/* Take cheezelog
-		 */
-		if (p_ptr->id != o_ptr->owner
-		   //&& !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) /* Heavy ball */
-		   ) {
-			cptr 	name = lookup_player_name(o_ptr->owner);
-			int 	lev = lookup_player_level(o_ptr->owner);
-			cptr	acc_name = lookup_accountname(o_ptr->owner);
-			object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
-			/* If level diff. is too large, target player is too low,
-			   and items aren't loot of a dead player, this might be cheeze! */
+	/* Take cheezelog
+	 */
+	if (p_ptr->id != o_ptr->owner
+	   //&& !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) /* Heavy ball */
+	   ) {
+		cptr 	name = lookup_player_name(o_ptr->owner);
+		int 	lev = lookup_player_level(o_ptr->owner);
+		cptr	acc_name = lookup_accountname(o_ptr->owner);
+		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+		/* If level diff. is too large, target player is too low,
+		   and items aren't loot of a dead player, this might be cheeze! */
  #if 0
-			if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
-			s_printf("%s -CHEEZY- Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
-					showtime(), name ? name : "(Dead player)", lev,
-					p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-					o_name);
-			c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %lld(%d%%) %s\n",
-					showtime(), name ? name : "(---)", lev, acc_name,
-					p_ptr->name, p_ptr->lev, p_ptr->accountname,
-					object_value_real(0, o_ptr), o_ptr->discount, o_name);
-			} else {
-			s_printf("%s Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
-					showtime(), name ? name : "(Dead player)", lev,
-					p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-					o_name);
-			c_printf("%s item %s(%d,%s) %s(%d,%s) %lld(%d%%) %s\n",
-					showtime(), name ? name : "(---)", lev, acc_name,
-					p_ptr->name, p_ptr->lev, p_ptr->accountname,
-					object_value_real(0, o_ptr), o_ptr->discount, o_name);
-			}
+		if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
+		s_printf("%s -CHEEZY- Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
+				showtime(), name ? name : "(Dead player)", lev,
+				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+				o_name);
+		c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %lld(%d%%) %s\n",
+				showtime(), name ? name : "(---)", lev, acc_name,
+				p_ptr->name, p_ptr->lev, p_ptr->accountname,
+				object_value_real(0, o_ptr), o_ptr->discount, o_name);
+		} else {
+		s_printf("%s Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
+				showtime(), name ? name : "(Dead player)", lev,
+				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+				o_name);
+		c_printf("%s item %s(%d,%s) %s(%d,%s) %lld(%d%%) %s\n",
+				showtime(), name ? name : "(---)", lev, acc_name,
+				p_ptr->name, p_ptr->lev, p_ptr->accountname,
+				object_value_real(0, o_ptr), o_ptr->discount, o_name);
+		}
  #else
-			s_printf("%s Item transaction from %s(%d) to %s(%d%s) at (%d,%d,%d):\n  %s\n",
-					showtime(), name ? name : "(Dead player)", lev,
-					p_ptr->name, p_ptr->lev, p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
-					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-					o_name);
-			c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %lld(%d%%) : %s\n",
-					showtime(), name ? name : "(---)", lev, acc_name,
-					p_ptr->name, p_ptr->lev, p_ptr->accountname,
-					p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
-					object_value_real(0, o_ptr), o_ptr->discount, o_name);
+		s_printf("%s Item transaction from %s(%d) to %s(%d%s) at (%d,%d,%d):\n  %s\n",
+				showtime(), name ? name : "(Dead player)", lev,
+				p_ptr->name, p_ptr->lev, p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+				p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+				o_name);
+		c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %lld(%d%%) : %s\n",
+				showtime(), name ? name : "(---)", lev, acc_name,
+				p_ptr->name, p_ptr->lev, p_ptr->accountname,
+				p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+				object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
 
-			if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
+		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
 
-			/* Highlander Tournament: Don't allow transactions before it begins */
-			if (!p_ptr->max_exp) {
-				msg_print(Ind, "You gain a tiny bit of experience from trading a used item.");
-				gain_exp(Ind, 1);
-			}
+		/* Highlander Tournament: Don't allow transactions before it begins */
+		if (!p_ptr->max_exp) {
+			msg_print(Ind, "You gain a tiny bit of experience from trading a used item.");
+			gain_exp(Ind, 1);
 		}
+	}
 #endif  // CHEEZELOG_LEVEL
 
-		/* Carry the item */
-		can_use(Ind, &sell_obj);//##UNH correct?
-		item_new = inven_carry(Ind, &sell_obj);
+	/* Carry the item */
+	can_use(Ind, &sell_obj);//##UNH correct?
+	item_new = inven_carry(Ind, &sell_obj);
 
-		/* Describe just the result */
-		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+	/* Describe just the result */
+	object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
 
-		/* Message */
-		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
+	/* Message */
+	msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
 #ifdef USE_SOUND_2010
-		sound_item(Ind, sell_obj.tval, sell_obj.sval, "pickup_");
+	sound_item(Ind, sell_obj.tval, sell_obj.sval, "pickup_");
 #endif
 
-		/* Handle stuff */
-		handle_stuff(Ind);
+	/* Handle stuff */
+	handle_stuff(Ind);
 
-		/* Take note if we take the last one */
-		i = h_ptr->stock_num;
+	/* Take note if we take the last one */
+	i = h_ptr->stock_num;
 
+	/* Remove the items from the home */
+	home_item_increase(h_ptr, item, -amt);
 #ifdef PLAYER_STORES
-		/* Log (complete) removal of player store items */
-		if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
-		    && amt == o_ptr->number) {
-			//char o_name[ONAME_LEN];//, p_name[NAME_LEN];
-			//object_desc(0, o_name, o_ptr, TRUE, 3);
-			//s_printf("PLAYER_STORE_REMOVED (hpurch): %s - %s (%d,%d,%d; %d,%d).\n",
+	/* Log removal of player store items */
+	if (o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		if (amt == o_ptr->number) {
 			s_printf("PLAYER_STORE_REMOVED (hpurch): %s (%d,%d,%d; %d,%d).\n",
+			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
+			    o_ptr->ix, o_ptr->iy);
+		} else { /* 'mass-cheque' */
+			s_printf("PLAYER_STORE_UPDATED (hpurch): %s (%d,%d,%d; %d,%d).\n",
 			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
 			    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
 			    o_ptr->ix, o_ptr->iy);
 		}
+	}
 #endif
+	home_item_optimize(h_ptr, item);
 
-		/* Remove the items from the home */
-		home_item_increase(h_ptr, item, -amt);
-		home_item_optimize(h_ptr, item);
+	/* Resend the basic store info */
+	display_trad_house(Ind, h_ptr);
 
-		/* Resend the basic store info */
-		display_trad_house(Ind, h_ptr);
-
-		/* Hack -- Item is still here */
-		if (i == h_ptr->stock_num && i) {
-			/* Redraw the item */
-			display_house_entry(Ind, item, h_ptr);
-		}
-		/* The item is gone */
-		else {
-			/* Redraw everything */
-			display_house_inventory(Ind, h_ptr);
-		}
+	/* Hack -- Item is still here */
+	if (i == h_ptr->stock_num && i) {
+		/* Redraw the item */
+		display_house_entry(Ind, item, h_ptr);
+	}
+	/* The item is gone */
+	else {
+		/* Redraw everything */
+		display_house_inventory(Ind, h_ptr);
 	}
 
 	/* Not kicked out */
@@ -6522,13 +6520,29 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	/* We only need to reduce the items, if we're going to need a mass cheque,
 	   because normal cheques just replace the items completely. */
 	if (mass_cheque) {
+		char ox_name[ONAME_LEN];
+
 		if (h_ptr->flags & HF_TRAD) {
 			home_item_increase(h_ptr, o_ptr->ps_idx_x, -s_ptr->number);
 			home_item_optimize(h_ptr, o_ptr->ps_idx_x);
-		} else {
+#ifdef PLAYER_STORES
+			/* Log removal of player store items */
+			object_desc(0, ox_name, ho_ptr, TRUE, 3);
+			s_printf("PLAYER_STORE_UPDATED (mass,trad): %s (%d,%d,%d; %d,%d).\n",
+			    ox_name, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->wpos.wz,
+			    o_ptr->ix, o_ptr->iy);
+#endif
+		} else { //assume HF_RECT mang-style
 			/* Reduce amount of items in stock by how many were bought */
 			floor_item_increase(c_ptr->o_idx, -s_ptr->number);
 			floor_item_optimize(c_ptr->o_idx);
+#ifdef PLAYER_STORES
+			object_desc(0, ox_name, ho_ptr, TRUE, 3);
+			/* Log removal of player store items */
+			s_printf("PLAYER_STORE_UPDATED (mass,mang): %s (%d,%d,%d; %d,%d).\n",
+			    ox_name, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->wpos.wz,
+			    o_ptr->ix, o_ptr->iy);
+#endif
 		}
 	}
 
@@ -6647,20 +6661,21 @@ s_printf("PLAYER_STORE_HANDLE: new mass, mang, owner %s (%d), %s, value %d, buye
 		if (h_ptr->flags & HF_TRAD) {
 #ifdef PLAYER_STORES
 			/* Log removal of player store items */
-			//char o_name[ONAME_LEN];//, p_name[NAME_LEN];
-			//object_desc(0, o_name, o_ptr, TRUE, 3);
-			//s_printf("PLAYER_STORE_REMOVED (handle): %s - %s (%d,%d,%d; %d,%d).\n",
-			s_printf("PLAYER_STORE_REMOVED (handle): %s (%d,%d,%d; %d,%d).\n",
-			    //p_name, o_name, wpos->wx, wpos->wy, wpos->wz,
+			s_printf("PLAYER_STORE_REMOVED (complete,trad): %s (%d,%d,%d; %d,%d).\n",
 			    o_name, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->wpos.wz,
 			    o_ptr->ix, o_ptr->iy);
 #endif
-
 			/* For list house, overwriting is enough */
 			object_copy(ho_ptr, cheque_ptr);
 s_printf("PLAYER_STORE_HANDLE: complete, trad, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 		} else {
+#ifdef PLAYER_STORES
+			/* Log removal of player store items */
+			s_printf("PLAYER_STORE_REMOVED (complete,mang): %s (%d,%d,%d; %d,%d).\n",
+			    o_name, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->wpos.wz,
+			    o_ptr->ix, o_ptr->iy);
+#endif
 			if (h_ptr->flags & HF_RECT) {
 				/* Access free spot and verify its freeness.. */
 				x = o_ptr->ps_idx_x;
@@ -6671,7 +6686,7 @@ s_printf("PLAYER_STORE_HANDLE: complete, trad, owner %s (%d), %s, value %d, buye
 				floor_item_optimize(c_ptr->o_idx);
 				/* Drop the cheque there */
 				drop_near(cheque_ptr, -1, &p_ptr->wpos, y, x);
-s_printf("PLAYER_STORE_HANDLE: full, mang, owner %s (%d), %s, value %d, buyer %s)\n",
+s_printf("PLAYER_STORE_HANDLE: complete, mang, owner %s (%d), %s, value %d, buyer %s)\n",
     owner_name, h_ptr->dna->owner, o0_name, value, p_ptr->name);
 			}
 			//TODO: might require some everyone_lite_spot() etc stuff to redraw mang-houses..
