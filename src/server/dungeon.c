@@ -6163,7 +6163,7 @@ static void process_various(void) {
 
 			/* Tell the player */
 			/* the_sandman: added colour */
-			msg_format(j,"\377v%s rises from the dead!",(r_name + r_ptr->name));
+			msg_format(j,"\374\377v%s rises from the dead!",(r_name + r_ptr->name));
 		}
 
 		/* discard reserved character names that exceed their timeout */
