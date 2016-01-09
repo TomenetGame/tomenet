@@ -1380,7 +1380,8 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 	/* This check was added so inside_house() can be used for player stores in delete_object_idx(),
 	   otherwise segfault when objects are erased from non-allocated areas (cleanup routines).
 	   So kill_house_contents() will no longer trigger PLAYER_STORE_REMOVED log entries. :|
-	   (It seems too inefficient to allocate+generate+deallocate the floor for each item, need a better solution..) */
+	   (It seems too inefficient to allocate+generate+deallocate the floor for each item, need a better solution..)
+	   --- correction, kill_house_contents() WILL allocate the map and call delete_object->delete_object_idx which will trigger PLAYER_STORE_REMOVED. */
 	if (!zcave) return FALSE;
 
 	c_ptr = &zcave[y][x];
