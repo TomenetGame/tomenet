@@ -33,33 +33,6 @@ function get_healing_power2(limit_lev)
 	return pow
 end
 
-function get_curewounds_dice(limit_lev)
-	local hd
-	local lev
-
-	hd = get_level(Ind, HCUREWOUNDS_I, 27) + 1
-
-	if limit_lev ~= 0 then
-		if hd > limit_lev / 2 + 2 then
-			hd = limit_lev / 2 + 2 + (hd - (limit_lev / 2 + 2)) / 3
-		end
-	end
-
-	if (hd > 14) then hd = 14 end
-	return hd
-end
-function get_curewounds_power(limit_lev)
-	local pow
---[[
-	pow = get_level(Ind, HCUREWOUNDS, 200)
-	if pow > 112 then
-		pow = 112
-	end
-]]
-	pow = damroll(get_curewounds_dice(limit_lev), 8)
-	return pow
-end
-
 -- Keep consistent with GHOST_XP_LOST -- hardcoded mess
 function get_exp_loss()
 	local pow
@@ -78,6 +51,7 @@ function get_exp_loss()
 	return pow
 end
 
+--improved cure serious wounds
 HCUREWOUNDS_I = add_spell {
 	["name"] = 	"Cure Wounds I",
 	["school"] = 	{SCHOOL_HCURING},
@@ -90,17 +64,25 @@ HCUREWOUNDS_I = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			local status_ailments
+			local status_ailments, hd, pow
+
 			status_ailments = 0
 			--hacks to cure effects same as potions would
 			if get_level(Ind, HCUREWOUNDS_I, 50) >= 9 then
 				status_ailments = status_ailments + 2048
 			end
-			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(10), " points at your wounds.")
+
+			hd = get_level(Ind, HCUREWOUNDS_I, 18)
+			if (hd > 9) then hd = 9 end
+			pow = damroll(hd, 8)
+			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + pow, " points at your wounds.")
 	end,
 	["info"] = 	function()
---			return "heal "..get_curewounds_power(10)
-			return "heal "..get_curewounds_dice(10).."d8"
+			local hd
+
+			hd = get_level(Ind, HCUREWOUNDS_I, 18)
+			if (hd > 9) then hd = 9 end
+			return "heal "..hd.."d8"
 	end,
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target.",
@@ -108,6 +90,7 @@ HCUREWOUNDS_I = add_spell {
 		"Also cures blindness and cuts at level 9.",
 	}
 }
+--cure critical wounds
 HCUREWOUNDS_II = add_spell {
 	["name"] = 	"Cure Wounds II",
 	["school"] = 	{SCHOOL_HCURING},
@@ -121,18 +104,26 @@ HCUREWOUNDS_II = add_spell {
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			local status_ailments
-			status_ailments = 0
+			status_ailments = 0, hd
+
 			--hacks to cure effects same as potions would
 			if get_level(Ind, HCUREWOUNDS_II, 50) >= 9 then
 				status_ailments = status_ailments + 8192 + 4096 + 2048
 			else
 				status_ailments = status_ailments + 4096 + 2048
 			end
-			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(0), " points at your wounds.")
+
+			hd = get_level(Ind, HCUREWOUNDS_I, 27) + 1
+			if (hd > 14) then hd = 14 end
+			pow = damroll(hd, 8)
+			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + pow, " points at your wounds.")
 	end,
 	["info"] = 	function()
---			return "heal "..get_curewounds_power(0)
-			return "heal "..get_curewounds_dice(0).."d8"
+			local hd
+
+			hd = get_level(Ind, HCUREWOUNDS_I, 27) + 1
+			if (hd > 14) then hd = 14 end
+			return "heal "..hd.."d8"
 	end,
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target.",
