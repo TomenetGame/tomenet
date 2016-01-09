@@ -1916,7 +1916,7 @@ F:SPEED
 # Gauntlets and Cesti of Combat
 N:173:of Combat
 X:A:34:22
-W:50:1:15:7000
+W:30:1:15:7000
 C:10:10:0:2
 T:31:2:99
 R:100
