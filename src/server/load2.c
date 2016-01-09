@@ -388,68 +388,6 @@ static void rd_item(object_type *o_ptr) {
 		rd_byte(&o_ptr->sval2);
 	}
 
-/* HACKHACKHACK - C. Blue - Moved Khopesh to polearms */
-//if (o_ptr->tval == 23 && o_ptr->sval == 14) {o_ptr->tval = 22; o_ptr->sval = 9;}
-
-#ifdef EXPAND_TV_POTION
-	/* Convert outdated potions that still use TV_POTION2 to new TV_POTION values */
-	if (o_ptr->tval == TV_POTION2) {
-		o_ptr->tval = TV_POTION;
-		switch (o_ptr->sval) {
-		case SV_POTION2_CHAUVE_SOURIS: o_ptr->sval = SV_POTION_CHAUVE_SOURIS; break;
-		case SV_POTION2_LEARNING: o_ptr->sval = SV_POTION_LEARNING; break;
-		case SV_POTION2_CURE_SANITY: o_ptr->sval = SV_POTION_CURE_SANITY; break;
-		case SV_POTION2_CURE_LIGHT_SANITY: o_ptr->sval = SV_POTION_CURE_LIGHT_SANITY; break;
-		case SV_POTION2_CURE_SERIOUS_SANITY: o_ptr->sval = SV_POTION_CURE_SERIOUS_SANITY; break;
-		case SV_POTION2_CURE_CRITICAL_SANITY: o_ptr->sval = SV_POTION_CURE_CRITICAL_SANITY; break;
-		default:
-			/* failure? revert change! */
-			o_ptr->tval = TV_POTION2;
-		}
-	}
-#else
-	/* Convert already converted potions back if we reverted EXPAND_TV_POTION, which shouldn't happen :-p */
-	if (o_ptr->tval == TV_POTION) {
-		o_ptr->tval = TV_POTION2;
-		switch (o_ptr->sval) {
-		case SV_POTION_CHAUVE_SOURIS: o_ptr->sval = SV_POTION2_CHAUVE_SOURIS; break;
-		case SV_POTION_LEARNING: o_ptr->sval = SV_POTION2_LEARNING; break;
-		case SV_POTION_CURE_SANITY: o_ptr->sval = SV_POTION2_CURE_SANITY; break;
-		case SV_POTION_CURE_LIGHT_SANITY: o_ptr->sval = SV_POTION2_CURE_LIGHT_SANITY; break;
-		case SV_POTION_CURE_SERIOUS_SANITY: o_ptr->sval = SV_POTION2_CURE_SERIOUS_SANITY; break;
-		case SV_POTION_CURE_CRITICAL_SANITY: o_ptr->sval = SV_POTION2_CURE_CRITICAL_SANITY; break;
-		default:
-			/* failure? revert tval */
-			o_ptr->tval = TV_POTION;
-		}
-	}
-#endif
-
-	/* (4.5.8.2 testing) Convert potion svals, their order has been rearranged to optimise inventory sorting order */
-	if (o_ptr->tval == TV_POTION && older_than(4, 5, 32)) {
-		//10<->4,14->65,65->64,54<->62; 12->40,13->12,15-23->13-21,64->23,40->22
-		switch (o_ptr->sval) {
-		case 4: o_ptr->sval = 10; break;
-		case 10: o_ptr->sval = 4; break;
-		case 12: o_ptr->sval = 40; break;
-		case 13: o_ptr->sval = 12; break;
-		case 14: o_ptr->sval = 65; break;
-		case 15: o_ptr->sval = 13; break;
-		case 16: o_ptr->sval = 14; break;
-		case 17: o_ptr->sval = 15; break;
-		case 18: o_ptr->sval = 16; break;
-		case 19: o_ptr->sval = 17; break;
-		case 20: o_ptr->sval = 18; break;
-		case 21: o_ptr->sval = 19; break;
-		case 22: o_ptr->sval = 20; break;
-		case 23: o_ptr->sval = 21; break;
-		case 40: o_ptr->sval = 22; break;
-		case 54: o_ptr->sval = 62; break;
-		case 62: o_ptr->sval = 54; break;
-		case 64: o_ptr->sval = 23; break;
-		case 65: o_ptr->sval = 64; break;
-		}
-	}
 
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);
@@ -462,18 +400,6 @@ static void rd_item(object_type *o_ptr) {
 		rd_s32b(&o_ptr->sigil);
 		rd_s32b(&o_ptr->sseed);
 	}
-
-#if 0 /* too bad hack ;) */
-	/* Update money pile colour in case the code determining those has been changed */
-	if (o_ptr->tval == TV_GOLD) {
-		/* Bad hack: Assume it's a pile dropped by a player in a house.
-		   This will turn all money piles in towns/wilderness to 'wrong' colour in turn though,
-		   since they'll all be 'compact=TRUE'. */
-		if (!o_ptr->wpos.wz) o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, TRUE);
-		else o_ptr->k_idx = gold_colour(o_ptr->pval);
-		o_ptr->sval = k_info[o_ptr->k_idx].sval;
-	}
-#endif
 
 	rd_byte(&o_ptr->discount);
 	rd_byte(&o_ptr->number);
@@ -517,86 +443,6 @@ static void rd_item(object_type *o_ptr) {
 		/* hack: is item currently reversed? Required for artifact updating code, further below. */
 		if (o_ptr->pval_org < 0) flipped = TRUE;
 	}
-
-
-	/* -------------------- Fix erroneus item parameters -------------------- */
-
-#if 0 /* DEBUGGING PURPOSES - the_sandman */
-	if (o_ptr->tval == 46)
-	 {
-	  s_printf("TRAP_DEBUG: Trap with s_val:%d,to_h:%d,to_d:%d,to_a:%d loaded\n",
-				o_ptr->sval, o_ptr->to_h, o_ptr->to_d, o_ptr->to_a);
-	 }
-#endif
-
-#if 0 /* should all be fixed now hopefully - C. Blue */
-	/* Cap all old non-trueart bows - mikaelh */
-	if (o_ptr->tval == TV_BOW && (o_ptr->name1 == 0 || o_ptr->name1 == ART_RANDART))
-	{/* CAP_ITEM_BONI */
-		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
-		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
-	}
-#endif
-
-#ifdef USE_NEW_SHIELDS
-	/* Cap all old shields' +ac - C. Blue */
-	if (o_ptr->tval == TV_SHIELD)
-	{/* CAP_ITEM_BONI */
- #ifndef NEW_SHIELDS_NO_AC
-		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
- #else
-		o_ptr->to_a = 0;
- #endif
-	}
-#endif
-
-#if 0 /* should all be fixed by now */
-	/* Fix shields base AC or percentage, in case USE_NEW_SHIELDS has been toggled. */
-	if (o_ptr->tval == TV_SHIELD) {
-		o_ptr->ac = k_info[o_ptr->k_idx].ac;
-		/* Fix to_h being set on shields (see above) - mikaelh (removed above bad code - C. Blue) */
-		o_ptr->to_h = 0;
-	}
-#endif
-
-#ifdef TO_AC_CAP_30
-	/* CAP_ITEM_BONI */
-	if (o_ptr->to_a > 30 && !true_artifact_p(o_ptr)) o_ptr->to_a = 30;
-#endif
-
-#if 0 /* should all be fixed by now */
-	/* Fix rods that got 'double-timeout' by erroneous discharge function*/
-	if (o_ptr->tval == TV_ROD) o_ptr->timeout = 0;
-#endif
-
-#if 0 /* should all be fixed by now */
-	if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_FEANORIAN) {
-		if (o_ptr->level < 30) {
-			if (o_ptr->name2 || o_ptr->name2b)
-				o_ptr->level = 40;
-			else
-				o_ptr->level = 31;
-		}
-	}
-#endif
-
-	/* slightly increased */
-	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED
-	    && o_ptr->level && o_ptr->bpval > 0
-	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
-		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
-
-	/* modified arms/legs for more transparency and less tediousness */
-	if (o_ptr->tval == TV_GOLEM &&
-	    (o_ptr->sval == SV_GOLEM_ARM || o_ptr->sval == SV_GOLEM_LEG)) {
-		if (o_ptr->pval < 5) o_ptr->pval = 5;
-		if (o_ptr->pval > 15) o_ptr->pval = 15;
-	}
-
-	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK)
-		o_ptr->level = 1;
-
-	/* ---------------------------------------------------------------------- */
 
 
 	rd_s16b(&old_ac);
@@ -686,8 +532,6 @@ static void rd_item(object_type *o_ptr) {
 		o_ptr->appraised_value = (s64b)tmp32s;
 	}
 
-	/* hack: remove (due to bug) created explodingness from magic ammo */
-	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr->pval = 0;
 
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */
@@ -717,37 +561,8 @@ static void rd_item(object_type *o_ptr) {
 	/* Hack -- notice "broken" items */
 	if (k_ptr->cost <= 0) o_ptr->ident |= ID_BROKEN;
 
-
-	/* Repair non "wearable" items */
-	if ((o_ptr->tval != TV_TRAPKIT) && !wearable_p(o_ptr)) {
-		/* Acquire correct fields */
-		o_ptr->to_h = k_ptr->to_h;
-		o_ptr->to_d = k_ptr->to_d;
-		o_ptr->to_a = k_ptr->to_a;
-
-		/* Acquire correct fields */
-		o_ptr->ac = k_ptr->ac;
-		o_ptr->dd = k_ptr->dd;
-		o_ptr->ds = k_ptr->ds;
-
-		/* All done */
-		return;
-	}
-
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-
-	/* Paranoia */
-	if (o_ptr->name2) {
-		ego_item_type *e_ptr;
-
-		/* Obtain the ego-item info */
-		e_ptr = &e_info[o_ptr->name2];
-
-		/* Verify that ego-item */
-		if (!e_ptr->name) o_ptr->name2 = 0;
-	}
-
 
 	/* Acquire standard fields */
 	o_ptr->ac = k_ptr->ac;
@@ -757,11 +572,8 @@ static void rd_item(object_type *o_ptr) {
 	/* Acquire standard weight */
 	o_ptr->weight = k_ptr->weight;
 
-#if 0 /* what's the purpose of this? seems just wrong? maybe deprecated, ancient hack? */
 	/* Hack -- extract the "broken" flag */
-	if (o_ptr->pval < 0) o_ptr->ident |= ID_BROKEN;
-#endif
-
+	if (k_ptr->cost <= 0) o_ptr->ident |= ID_BROKEN;
 
 	/* Artifacts */
 	if (o_ptr->name1) {
@@ -798,12 +610,9 @@ static void rd_item(object_type *o_ptr) {
 	}
 
 	/* Ego items */
-	if (o_ptr->name2) {
+	if (o_ptr->name2 || o_ptr->name2b) {
 		ego_item_type *e_ptr;
 		artifact_type *a_ptr;
-
-		/* Obtain the ego-item info */
-		e_ptr = &e_info[o_ptr->name2];
 
 #if 0
 		/* UnHack. pffft! */
@@ -818,11 +627,174 @@ static void rd_item(object_type *o_ptr) {
 #endif
 
 		/* Hack -- extract the "broken" flag */
-		if (!e_ptr->cost) o_ptr->ident |= ID_BROKEN;
+		if (o_ptr->name2) {
+			e_ptr = &e_info[o_ptr->name2];
+			if (!e_ptr->cost) o_ptr->ident |= ID_BROKEN;
+		}
+		if (o_ptr->name2b) {
+			e_ptr = &e_info[o_ptr->name2b];
+			if (!e_ptr->cost) o_ptr->ident |= ID_BROKEN;
+		}
 	}
+
+
+	/* -------------------- Fix erroneus item parameters -------------------- */
+
+/* HACKHACKHACK - C. Blue - Moved Khopesh to polearms */
+//if (o_ptr->tval == 23 && o_ptr->sval == 14) {o_ptr->tval = 22; o_ptr->sval = 9;}
+
+#ifdef EXPAND_TV_POTION
+	/* Convert outdated potions that still use TV_POTION2 to new TV_POTION values */
+	if (o_ptr->tval == TV_POTION2) {
+		o_ptr->tval = TV_POTION;
+		switch (o_ptr->sval) {
+		case SV_POTION2_CHAUVE_SOURIS: o_ptr->sval = SV_POTION_CHAUVE_SOURIS; break;
+		case SV_POTION2_LEARNING: o_ptr->sval = SV_POTION_LEARNING; break;
+		case SV_POTION2_CURE_SANITY: o_ptr->sval = SV_POTION_CURE_SANITY; break;
+		case SV_POTION2_CURE_LIGHT_SANITY: o_ptr->sval = SV_POTION_CURE_LIGHT_SANITY; break;
+		case SV_POTION2_CURE_SERIOUS_SANITY: o_ptr->sval = SV_POTION_CURE_SERIOUS_SANITY; break;
+		case SV_POTION2_CURE_CRITICAL_SANITY: o_ptr->sval = SV_POTION_CURE_CRITICAL_SANITY; break;
+		default:
+			/* failure? revert change! */
+			o_ptr->tval = TV_POTION2;
+		}
+	}
+#else
+	/* Convert already converted potions back if we reverted EXPAND_TV_POTION, which shouldn't happen :-p */
+	if (o_ptr->tval == TV_POTION) {
+		o_ptr->tval = TV_POTION2;
+		switch (o_ptr->sval) {
+		case SV_POTION_CHAUVE_SOURIS: o_ptr->sval = SV_POTION2_CHAUVE_SOURIS; break;
+		case SV_POTION_LEARNING: o_ptr->sval = SV_POTION2_LEARNING; break;
+		case SV_POTION_CURE_SANITY: o_ptr->sval = SV_POTION2_CURE_SANITY; break;
+		case SV_POTION_CURE_LIGHT_SANITY: o_ptr->sval = SV_POTION2_CURE_LIGHT_SANITY; break;
+		case SV_POTION_CURE_SERIOUS_SANITY: o_ptr->sval = SV_POTION2_CURE_SERIOUS_SANITY; break;
+		case SV_POTION_CURE_CRITICAL_SANITY: o_ptr->sval = SV_POTION2_CURE_CRITICAL_SANITY; break;
+		default:
+			/* failure? revert tval */
+			o_ptr->tval = TV_POTION;
+		}
+	}
+#endif
+
+	/* (4.5.8.2 testing) Convert potion svals, their order has been rearranged to optimise inventory sorting order */
+	if (o_ptr->tval == TV_POTION && older_than(4, 5, 32)) {
+		//10<->4,14->65,65->64,54<->62; 12->40,13->12,15-23->13-21,64->23,40->22
+		switch (o_ptr->sval) {
+		case 4: o_ptr->sval = 10; break;
+		case 10: o_ptr->sval = 4; break;
+		case 12: o_ptr->sval = 40; break;
+		case 13: o_ptr->sval = 12; break;
+		case 14: o_ptr->sval = 65; break;
+		case 15: o_ptr->sval = 13; break;
+		case 16: o_ptr->sval = 14; break;
+		case 17: o_ptr->sval = 15; break;
+		case 18: o_ptr->sval = 16; break;
+		case 19: o_ptr->sval = 17; break;
+		case 20: o_ptr->sval = 18; break;
+		case 21: o_ptr->sval = 19; break;
+		case 22: o_ptr->sval = 20; break;
+		case 23: o_ptr->sval = 21; break;
+		case 40: o_ptr->sval = 22; break;
+		case 54: o_ptr->sval = 62; break;
+		case 62: o_ptr->sval = 54; break;
+		case 64: o_ptr->sval = 23; break;
+		case 65: o_ptr->sval = 64; break;
+		}
+	}
+
+#if 0 /* DEBUGGING PURPOSES - the_sandman */
+	if (o_ptr->tval == 46)
+	 {
+	  s_printf("TRAP_DEBUG: Trap with s_val:%d,to_h:%d,to_d:%d,to_a:%d loaded\n",
+				o_ptr->sval, o_ptr->to_h, o_ptr->to_d, o_ptr->to_a);
+	 }
+#endif
+
+#if 0 /* should all be fixed now hopefully - C. Blue */
+	/* Cap all old non-trueart bows - mikaelh */
+	if (o_ptr->tval == TV_BOW && (o_ptr->name1 == 0 || o_ptr->name1 == ART_RANDART))
+	{/* CAP_ITEM_BONI */
+		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
+		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
+	}
+#endif
+
+#ifdef USE_NEW_SHIELDS
+	/* Cap all old shields' +ac - C. Blue */
+	if (o_ptr->tval == TV_SHIELD)
+	{/* CAP_ITEM_BONI */
+ #ifndef NEW_SHIELDS_NO_AC
+		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
+ #else
+		o_ptr->to_a = 0;
+ #endif
+	}
+#endif
+
+#if 0 /* should all be fixed by now */
+	/* Fix shields base AC or percentage, in case USE_NEW_SHIELDS has been toggled. */
+	if (o_ptr->tval == TV_SHIELD) {
+		o_ptr->ac = k_info[o_ptr->k_idx].ac;
+		/* Fix to_h being set on shields (see above) - mikaelh (removed above bad code - C. Blue) */
+		o_ptr->to_h = 0;
+	}
+#endif
+
+#ifdef TO_AC_CAP_30
+	/* CAP_ITEM_BONI */
+	if (o_ptr->to_a > 30 && !true_artifact_p(o_ptr)) o_ptr->to_a = 30;
+#endif
+
+#if 0 /* should all be fixed by now */
+	/* Fix rods that got 'double-timeout' by erroneous discharge function*/
+	if (o_ptr->tval == TV_ROD) o_ptr->timeout = 0;
+#endif
+
+#if 0 /* should all be fixed by now */
+	if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_FEANORIAN) {
+		if (o_ptr->level < 30) {
+			if (o_ptr->name2 || o_ptr->name2b)
+				o_ptr->level = 40;
+			else
+				o_ptr->level = 31;
+		}
+	}
+#endif
+
+	/* slightly increased */
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED
+	    && o_ptr->level && o_ptr->bpval > 0
+	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
+		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
+
+	/* modified arms/legs for more transparency and less tediousness */
+	if (o_ptr->tval == TV_GOLEM &&
+	    (o_ptr->sval == SV_GOLEM_ARM || o_ptr->sval == SV_GOLEM_LEG)) {
+		if (o_ptr->pval < 5) o_ptr->pval = 5;
+		if (o_ptr->pval > 15) o_ptr->pval = 15;
+	}
+
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK)
+		o_ptr->level = 1;
 
 	/* hack- fix trap kits with wrong enchantments */
 	if (o_ptr->tval == TV_TRAPKIT && !is_firearm_trapkit(o_ptr->sval)) o_ptr->to_h = o_ptr->to_d = 0;
+
+#if 0 /* too bad hack ;) */
+	/* Update money pile colour in case the code determining those has been changed */
+	if (o_ptr->tval == TV_GOLD) {
+		/* Bad hack: Assume it's a pile dropped by a player in a house.
+		   This will turn all money piles in towns/wilderness to 'wrong' colour in turn though,
+		   since they'll all be 'compact=TRUE'. */
+		if (!o_ptr->wpos.wz) o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, TRUE);
+		else o_ptr->k_idx = gold_colour(o_ptr->pval);
+		o_ptr->sval = k_info[o_ptr->k_idx].sval;
+	}
+#endif
+
+	/* hack: remove (due to bug) created explodingness from magic ammo */
+	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr->pval = 0;
 }
 
 
