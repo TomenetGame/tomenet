@@ -1518,7 +1518,7 @@ void do_slash_cmd(int Ind, char *message) {
 		    prefix(message, "/roll") || !strcmp(message, "/r")
 		    || prefix(message, "/die"))
 		    && !prefix(message, "/rollchar")) {
-			int rn = 0;
+			int rn = 0, first;
 
 			if (p_ptr->body_monster) {
 				monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -1547,8 +1547,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			for (i = 0; i < k; i++) rn += randint(6);
-			msg_format(Ind, "\374\377%cYou throw %d dice and get a %d", COLOUR_GAMBLE, k, rn);
-			msg_format_near(Ind, "\374\377%c%s throws %d dice and gets a %d", COLOUR_GAMBLE, p_ptr->name, k, rn);
+			first = rn;
+			while (first >= 10) first /= 10;
+			msg_format(Ind, "\374\377%cYou throw %d dice and get a%s %d", COLOUR_GAMBLE, k, (first == 8 || rn == 11) ? "n" : "", rn);
+			msg_format_near(Ind, "\374\377%c%s throws %d dice and gets a%s %d", COLOUR_GAMBLE, p_ptr->name, k, (first == 8 || rn == 11) ? "n" : "", rn);
 #ifdef USE_SOUND_2010
 			sound(Ind, "dice_roll", NULL, SFX_TYPE_MISC, TRUE);
 #endif
