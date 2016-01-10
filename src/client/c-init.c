@@ -69,15 +69,13 @@ static void init_arrays(void) {
 	for (i = 0; i < INVEN_TOTAL; i++) inventory_name[i][0] = 0;
 }
 
-void init_schools(s16b new_size)
-{
+void init_schools(s16b new_size) {
 	/* allocate the extra memory */
 	C_MAKE(schools, new_size, school_type);
 	max_schools = new_size;
 }
 
-void init_spells(s16b new_size)
-{
+void init_spells(s16b new_size) {
 	/* allocate the extra memory */
 	C_MAKE(school_spells, new_size, spell_type);
 	max_spells = new_size;
@@ -97,9 +95,7 @@ static bool check_dir(cptr s) {
 static void validate_dir(cptr s) {
 	/* Verify or fail */
 	if (!check_dir(s))
-	{
 		quit_fmt("Cannot find required directory:\n%s", s);
-	}
 }
 
 /*
@@ -120,8 +116,7 @@ static void validate_dir(cptr s) {
  * Note that the "path" must be "Angband:" for the Amiga, and it
  * is ignored for "VM/ESA", so I just combined the two.
  */
-static void init_stuff(void)
-{
+static void init_stuff(void) {
 #if defined(AMIGA) || defined(VM)
 
 	/* Hack -- prepare "path" */
@@ -177,8 +172,7 @@ static void init_stuff(void)
 /*
  * Open all relevant pref files.
  */
-void initialize_main_pref_files(void)
-{
+void initialize_main_pref_files(void) {
 	char buf[1024];
 
 	int i;
@@ -398,7 +392,7 @@ static void init_monster_list() {
 				break;
 			}
 
-//			strcpy(buf, p1 + 1); // overlapping strings
+			//strcpy(buf, p1 + 1); // overlapping strings
 			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
 		if (!p1 && !p2) continue;
@@ -1185,7 +1179,9 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				/* add flags to existing paste_lines line */
 				/* 8 = 6 for colour codes etc around cname + 2 for paranoia + 4 for Party/Guild chat mode tag */
 				p1 = info;
-				if (p1) {//paranoia
+				while (*p1 == ' ') p1++;
+				if (*p1) {//paranoia
+
 					if (strlen(paste_lines[pl]) + strlen(p1) < MSG_LEN - 1 - strlen(cname) - 8 - 4 - 7) {//7 = world server tax (pure paranoia here)
 						strcat(paste_lines[pl], p1);
 					} else { /* split it up */
@@ -1202,7 +1198,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							p = strlen(paste_lines[pl]) + strlen(p1) - strlen(p3);
 							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3));
 							paste_lines[pl][p] = 0;
-							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p3 + 1));
+							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p3));
 						}
 					}
 				}
@@ -1210,7 +1206,9 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 
 				/* add flags to existing line */
 				p1 = info;
-				while (p1) {
+				while (*p1) {
+					while (*p1 == ' ') p1++;
+					if (*p1 == 0) break;
 
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
@@ -1341,7 +1339,10 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				}
 
 				/* add flags to existing line */
-				while (p1) {
+				while (*p1) {
+					while (*p1 == ' ') p1++;
+					if (*p1 == 0) break;
+
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
 						strcat(paste_lines[pl], p1);
@@ -1438,7 +1439,7 @@ static void init_kind_list() {
 			if (!p1 && !p2) break;
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
-//			strcpy(buf, p1 + 1); // overlapping strings
+			//strcpy(buf, p1 + 1); // overlapping strings
 			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
 		}
 		if (!p1 && !p2) continue;
@@ -1817,7 +1818,10 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 			Term_putstr(1, 7 + (l++), -1, TERM_UMBER, p1);
 
 			/* add to chat-paste buffer. */
-			while (p1) {
+			while (*p1) {
+				while (*p1 == ' ') p1++;
+				if (*p1 == 0) break;
+
 				/* diz line fits in pasteline? */
 				if (strlen(paste_lines[pl]) + strlen(p1) <= chars_per_pline) {
 					strcat(paste_lines[pl], p1);
@@ -2373,7 +2377,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				/* add flags to existing paste_lines line */
 				/* 8 = 6 for colour codes etc around cname + 2 for paranoia + 4 for Party/Guild chat mode tag */
 				p1 = info;
-				if (p1) {//paranoia
+				while (*p1 == ' ') p1++;
+				if (*p1) {//paranoia
 					if (strlen(paste_lines[pl]) + strlen(p1) < MSG_LEN - 1 - strlen(cname) - 8 - 4 - 7) {//7 = world server tax (pure paranoia here)
 						strcat(paste_lines[pl], p1);
 					} else { /* split it up */
@@ -2390,7 +2395,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 							p = strlen(paste_lines[pl]) + strlen(p1) - strlen(p3);
 							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3));
 							paste_lines[pl][p] = 0;
-							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p3 + 1));
+							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p3));
 						}
 					}
 				}
@@ -2398,7 +2403,10 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 				/* add flags to existing line */
 				p1 = info;
-				while (p1) {
+				while (*p1) {
+					while (*p1 == ' ') p1++;
+					if (*p1 == 0) break;
+
 					/* add complete flag line */
 					if (strlen(p1) + f_col < 80) {
 #ifndef NEW_PASTELINE_METHOD
