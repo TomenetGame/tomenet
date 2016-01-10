@@ -7601,7 +7601,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	    !strchr("AEX|,.mj$?*", r_ptr->d_char) &&
 	    !(r_ptr->flags2 & RF2_POWERFUL) &&
 	    !(r_ptr->flags2 & RF2_PASS_WALL) && /* Ethereal monsters */
-	    !((r_ptr->flags4 & RF4_BR_LITE) && (r_ptr->flags4 & RF4_BR_DARK)) &&
+	    !(r_ptr->flags4 & RF4_BR_LITE) && !(r_ptr->flags4 & RF4_BR_DARK) && /* light/dark hounds.. */
 	    !(r_ptr->flags3 & RF3_UNDEAD) &&
 	    !(r_ptr->flags3 & RF3_NONLIVING) &&
 	    !(r_ptr->flags3 & RF3_DEMON) &&
