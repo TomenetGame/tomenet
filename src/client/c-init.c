@@ -1198,6 +1198,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 							p = strlen(paste_lines[pl]) + strlen(p1) - strlen(p3);
 							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3));
 							paste_lines[pl][p] = 0;
+							while (*p3 == ' ') p3++;
 							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p3));
 						}
 					}
@@ -2395,6 +2396,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 							p = strlen(paste_lines[pl]) + strlen(p1) - strlen(p3);
 							strncat(paste_lines[pl], p1, strlen(p1) - strlen(p3));
 							paste_lines[pl][p] = 0;
+							while (*p3 == ' ') p3++;
 							strcpy(paste_lines[++pl], format("\377%c%s", a_flag, p3));
 						}
 					}
