@@ -4209,6 +4209,7 @@ void calc_boni(int Ind) {
 #endif
 
 	if (p_ptr->antimagic > ANTIMAGIC_CAP) p_ptr->antimagic = ANTIMAGIC_CAP; /* AM cap */
+	if (p_ptr->antimagic_dis > ANTIMAGIC_DIS_CAP) p_ptr->antimagic_dis = ANTIMAGIC_DIS_CAP; /* AM radius cap */
 	if (p_ptr->luck < -10) p_ptr->luck = -10; /* luck caps at -10 */
 	if (p_ptr->luck > 40) p_ptr->luck = 40; /* luck caps at 40 */
 

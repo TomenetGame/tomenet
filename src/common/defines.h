@@ -805,6 +805,11 @@
    Should range from 75..80%, maybe make skill & DS percentage
    multiply instead of sum up. - C. Blue */
 #define ANTIMAGIC_CAP		75
+/* Cap for AM field radius. 9 is implied by skill+darksword,
+   if monster form AM is added it could stack up to 12 though,
+   which seems out of line --
+    an unbeliever (warrior) should not be surpassed and 12 seems too much. */
+#define ANTIMAGIC_DIS_CAP	9
 
 /* Limit effectiveness of interception/martial arts,
    Should range from 75%..80%. - C. Blue */
