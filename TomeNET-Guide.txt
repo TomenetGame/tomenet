@@ -8818,6 +8818,7 @@ ANTIMAGIC ('Antimagic field')
         'Antimagic' skill. Make sure to read up on antimagic skill at (6.2).
         The chance to interrupt spells is quartered for your party members,
         so they are not affected much by your antimagic field.
+        The antimagic field's radius caps at range 9.
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
         without penalties, even if they are not blunt.
