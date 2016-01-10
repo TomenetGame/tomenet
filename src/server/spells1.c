@@ -2920,6 +2920,9 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	/* Total Immunity */
 	if (p_ptr->immune_acid || (dam <= 0)) return(0);
 
+	/* super leeway new in 2016 - cannot penetrate backpack: */
+	if (dam < 10) inv = 0;
+
 	/* Resist the damage */
 	if (p_ptr->suscep_acid) dam = dam * 2;
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
@@ -2968,6 +2971,9 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	/* Total immunity */
 	if (p_ptr->immune_elec || (dam <= 0)) return(0);
 
+	/* super leeway new in 2016 - cannot penetrate backpack: */
+	if (dam < 10) inv = 0;
+
 	/* Resist the damage */
 	if (p_ptr->suscep_elec) dam = dam * 2;
 	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
@@ -3012,6 +3018,9 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	/* Totally immune */
 	if (p_ptr->immune_fire || (dam <= 0)) return(0);
 
+	/* super leeway new in 2016 - cannot penetrate backpack: */
+	if (dam < 10) inv = 0;
+
 	/* Resist the damage */
 	if (p_ptr->suscep_fire) dam = dam * 2;
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
@@ -3053,6 +3062,9 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 
 	/* Total immunity */
 	if (p_ptr->immune_cold || (dam <= 0)) return(0);
+
+	/* super leeway new in 2016 - cannot penetrate backpack: */
+	if (dam < 10) inv = 0;
 
 	/* Resist the damage */
 	if (p_ptr->suscep_cold) dam = dam * 2;
