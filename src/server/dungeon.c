@@ -3653,12 +3653,19 @@ static bool process_player_end_aux(int Ind) {
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 
-	/* Unbelievers "resist" magic */
-	//		int minus = (p_ptr->anti_magic)?3:1;
 	int minus = 1;
-	int minus_magic = 1 + get_skill_scale_fine(p_ptr, SKILL_ANTIMAGIC, 2); /* was 3 before, trying slightly less harsh 2 now */
+	int minus_magic = 1;
 	int minus_health = get_skill_scale_fine(p_ptr, SKILL_HEALTH, 2); /* was 3, but then HEALTH didn't give HP.. */
 	int minus_combat = get_skill_scale_fine(p_ptr, SKILL_COMBAT, 3);
+
+	/* form-intrinsic AM (DISBELIEVE) must be punished in the same manner or it'd be a too inconsistent advantage */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].flags7 & RF7_DISBELIEVE) {
+		j = (2 * ANTIMAGIC_CAP) / 50; //scale factor: intrinsic AM could go above the max obtainable from pure skill
+		i = r_info[p_ptr->body_monster].level / 2 + 10;
+		i = i + get_skill(p_ptr, SKILL_ANTIMAGIC);
+		if (i > ANTIMAGIC_CAP) i = ANTIMAGIC_CAP;
+		minus_magic += (i * j) / ANTIMAGIC_CAP + (magik(((i * j * 100) / ANTIMAGIC_CAP) % 100) ? 1 : 0);
+	} else minus_magic += get_skill_scale_fine(p_ptr, SKILL_ANTIMAGIC, 2); /* was 3 before, trying slightly less harsh 2 now */
 
 	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);

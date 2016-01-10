@@ -10081,7 +10081,7 @@ Black Breath! (See 1.5 for more information about Black Breath.)
 
 Further, monsters may have one or more spells they can cast. Breathing elements
 and shooting or throwing boulders belong to those too (but aren't affected by
-anti-magic fields since they aren't 'real spells' but rather physical actions).
+antimagic fields since they aren't 'real spells' but rather physical actions).
 
 Among the monster spells, such as casting bolt or ball spells, teleporting,
 healing, trying to blind/scare/confuse/paralyze/slow the player, summoning
@@ -10173,6 +10173,13 @@ FORGET          Blanks your mind, makes you forget the dungeon map and details
 TRAPS           Can place traps around you (from afar).
 DISBELIEVE      Monster has an antimagic field, the strength depending on its
                 level.
+
+                Like training the 'Antimagic' skill, having intrinsic antimagic
+                from the DISBELIEVE flag will also shorten the duration of
+                certain magical temporary buffs and debuffs on your character!
+                To see which those are and to see more information about
+                antimagic, see 'Antimagic' skill in (6.2) and 'Dark Sword' in
+                (5.9).
 
 DROP_GOOD       The monster usually drops enchanted items.
 DROP_GREAT      The monster usually drops items with ego powers or artifacts.
@@ -11580,28 +11587,30 @@ Note that not every skill is available to every profession (class).
                                 skill; you can disable the aura in 'm' menu.
 
 .Antimagic                      Generated from your strong disbelief in magic
-                                an anti-magic field surrounds you, preventing
+                                an antimagic field surrounds you, preventing
                                 nearby monsters and players from casting
                                 spells (but does not prevent them from using
                                 magic devices).
-                                This effect is cumulative with the anti-magic
+                                This effect is cumulative with the antimagic
                                 field of a Dark Sword. (See 5.9 for more info
                                 about dark swords.)
                                 It's capped at 75% chance of interrupting
                                 enemy spells. The capped chance is further
                                 quartered for party members, so they are hardly
                                 affected by your antimagic field.
+                                The radius of your antimagic field is approx.
+                                the field's power / 9 and caps at range 9.
                                 Each point in Antimagic adds 1% to your
                                 AM chance, so the max gain is +50% from skill.
                                 If you use a dark sword that gives the maximum
-                                amount of anti-magic they can give (+30%) then
+                                amount of antimagic they can give (+30%) then
                                 you only need Antimagic skill at 45 instead of
                                 50 to reach the antimagic cap value of 75%
                                 (30% from dark sword + 45% from skill = 75%).
                                 Note: While ball/bolt attacks are spells,
                                       breathing is NOT.
                                 Warriors that specialize in Antimagic are
-                                called 'Unbelievers' (The Anti-magic powers
+                                called 'Unbelievers' (The antimagic powers
                                 result from their strong disbelief in magic).
 
                                 Note that as soon as you invest a point into
@@ -11980,10 +11989,10 @@ Take care on the following combinations:
         Weaponmastery   <->     Sorcery
         Archery         <->     Sorcery
         Martial Arts    <->     Sorcery
-        Anti-magic      <->     excludes any type of magic and magic devices,
+        Antimagic       <->     excludes any type of magic and magic devices,
                                 including mimicry.
                                 However, a mimicking player won't lose his
-                                current form on training in Anti-magic.
+                                current form on training in Antimagic.
                                 He just won't be able to transform ever again
                                 by using his mimic powers.
                                 His form CAN still change though, if he is
@@ -12646,7 +12655,7 @@ create a character!):
     heavy armour which dual-wielding doesn't.
     Warriors have more melee attacks per round than any other class.
     They may decide to become 'Unbelievers' by spending points irreversibly
-    into the 'Anti-magic' skill. As soon as they spend the first point here
+    into the 'Antimagic' skill. As soon as they spend the first point here
     they will immediately become unable to use any magic wand/staff/rod!
     The full opposite of sorcerers, unbelievers so strongly despise magic that
     not only do they refuse to use magic spells, they refuse all training in
@@ -12654,7 +12663,7 @@ create a character!):
     trying to use a magic item, although they can still quaff potions and read
     scrolls. Because they are so unattuned to magic, trained unbelievers will
     suppress any sort of magic from occurring around them at high probability,
-    which is dubbed 'anti-magic field'. They can further strengthen it by
+    which is dubbed 'antimagic field'. They can further strengthen it by
     wielding a Dark Sword (see (5.9)).
     Warriors can also choose to become monk-like fighters, by training the
     'Martial Arts' skill. This will require them to wear no armour or only very
@@ -13451,8 +13460,8 @@ F: flag list
     NO_STUN     Sound resistance.
     NO_CUT      The player can't be cut and won't bleed continously from
                 wounds.
-    DISBELIEVE  Will increase the player's anti-magic field by
-                ((monsterlevel / 2) + 10) percent. The range of the anti-magic
+    DISBELIEVE  Will increase the player's antimagic field by
+                ((monsterlevel / 2) + 10) percent. The range of the antimagic
                 field is increased by ((monsterlevel / 50) + 2) fields.
     ARROW_1, ARROW_2, ARROW_3
                 The player will receive an extra shot per round with slings or
@@ -14449,7 +14458,7 @@ Istar schools:
 
 Priest schools:
 ---------------
-(In general, holy schools are somewhat less affected by anti-magic fields.)
+(In general, holy schools are somewhat less affected by antimagic fields.)
 
 - Holy Offense
 
@@ -14715,7 +14724,7 @@ Druid schools:
 
 Mindcraft schools:
 ------------------
-(In general, mindcraft schools are less affected by anti-magic fields.)
+(In general, mindcraft schools are less affected by antimagic fields.)
 
 - Psycho-Power
 
@@ -15341,7 +15350,7 @@ staves, boomerangs, and crowns (see (8.4) Artifact Creation).
 Note: Non-enhanced sigils will always produce the element's according resist.
 
 Abbreviations (in alphabetical order):
-AM - Anti-magic shell
+AM - Antimagic shell
 Au - Aura
 Ba - Base resist (acid/elec/fire/cold)
 Bl - Blind resist
@@ -15477,7 +15486,7 @@ Parties:
     Be aware that his houses will be wiped too, so the party might lose quite
     an amount of items that way.
 
-    'Anti-magic fields' of fellow party members have greatly reduced effect
+    'Antimagic fields' of fellow party members have greatly reduced effect
     on spell-users in the same party, to allow the party to still be a vital
     combination.
 
@@ -17212,7 +17221,7 @@ Mage staves
 Boomerangs (also see 'Weapons' above)
         Extra shots
 Dark swords (also see 'Weapons' above)
-        Increased anti-magic (not over 30% in total, see (5.9)).
+        Increased antimagic (not over 30% in total, see (5.9)).
 Ammunition
         All elemental brands (acid/elec/fire/cold/poison)
         All SLAY mods
@@ -17361,7 +17370,7 @@ General mods:
         Slow digestion
         Faster mana regeneration
         Faster HP regeneration
-        Anti-magic shell
+        Antimagic shell
             (Legendary saving throw is raised to 95% cap)
 
 
@@ -17383,7 +17392,7 @@ Items cannot give more than +3 extra attacks. Gloves can only give up to +2.
 Items cannot give more than +3 life (+30% base hit points).
 Items that give both extra attacks and life are capped at +1.
 Items that add mana, give mana regeneration or are blessed will never have an
- anti-magic shell.
+ antimagic shell.
 
 Headgear cannot give more than +6 infra-vision.
 Headgear cannot give more than +3 speed.
