@@ -12,12 +12,27 @@ function get_healing_percents2(limit_lev)
 end
 function get_healing_cap2(limit_lev)
 	local pow
-	pow = get_level(Ind, HHEALING_I, 417)
+	--pow = get_level(Ind, HHEALING_I, 417)
+
+	--new method, part 1/2:
+	--pow = (get_level(Ind, HHEALING_I, 417) * (get_level(Ind, HHEALING_I, 417) + 209)) / 609
+	--pow = pow + 121 - ((get_level(Ind, HHEALING_I, 10) + 10) * (get_level(Ind, HHEALING_I, 10) + 10))
+
+	--pow = ((10 + get_level(Ind, HHEALING_I, 417)) * (get_level(Ind, HHEALING_I, 417) + 209)) / 1560
+	pow = ((10 + get_level(Ind, HHEALING_I, 417)) * (get_level(Ind, HHEALING_I, 417) + 209)) / 1562 + 1
+	--avoid cubics, the limit_lev stuff is already bad enough :-p kicks in around 60-70 in tier I
+	--pow = pow / (1 + (5 / (2 + get_level(Ind, HHEALING_I, 50))))
+	--pow = (2 + pow) / (1 + (5 / (2 + get_level(Ind, HHEALING_I, 50))))
+
 	if limit_lev ~= 0 then
-		if pow > limit_lev * 8 then
-			pow = limit_lev * 8 + (pow - limit_lev * 8) / 3
+		if pow > limit_lev * 3 then
+			pow = limit_lev * 3 + (pow - limit_lev * 3) / 3
 		end
 	end
+
+	--new method, part 2/2:
+	pow = (pow * 5) / 2
+
 	if pow > 400 then
 		pow = 400
 	end
@@ -152,10 +167,10 @@ HHEALING_I = add_spell {
 			elseif get_level(Ind, HHEALING_I, 50) >= 4 then
 				status_ailments = status_ailments + 2048
 			end
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(15), 1, " points at your wounds.")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(8), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
-			return "heal "..get_healing_percents2(15).."% (max "..get_healing_cap2(15)..") = "..get_healing_power2(15)
+			return "heal "..get_healing_percents2(8).."% (max "..get_healing_cap2(8)..") = "..get_healing_power2(8)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
@@ -182,10 +197,10 @@ HHEALING_II = add_spell {
 			if get_level(Ind, HHEALING_II, 50) >= 8 then
 				status_ailments = status_ailments + 8192 + 4096 + 2048
 			end
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(35), 1, " points at your wounds.")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(25), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
-			return "heal "..get_healing_percents2(35).."% (max "..get_healing_cap2(35)..") = "..get_healing_power2(35)
+			return "heal "..get_healing_percents2(25).."% (max "..get_healing_cap2(25)..") = "..get_healing_power2(25)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
