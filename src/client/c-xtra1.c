@@ -2651,10 +2651,18 @@ void display_player(int hist) {
 				amfi_sum += csheet_boni[i].amfi;
 				header_color[1][17] = TERM_WHITE;
 				if (amfi_sum >= ANTIMAGIC_CAP) header_color[1][17] = TERM_L_UMBER;
-				color = TERM_L_GREEN;
-				if ((csheet_boni[i].amfi / 5) > 9) color = TERM_GREEN; //max AM skill, or form+skill combo
-				if ((i != 14) && (csheet_boni[i].amfi > 29)) color = TERM_L_UMBER; //show max on darkswords, not on form/skill column though
-				if (abs(csheet_boni[i].amfi) / 5) sprintf(tmp, "%d", abs((csheet_boni[i].amfi) / 5) % 10);
+
+				/* item? (dark sword only) */
+				if (i != 14) {
+					if (csheet_boni[i].amfi >= 30) color = TERM_L_UMBER; //show max on darkswords, not on form/skill column though
+					else color = TERM_L_GREEN;
+				}
+				/* body? skill or monster form */
+				else if (csheet_boni[i].amfi >= ANTIMAGIC_CAP) color = TERM_L_UMBER; //max AM skill, or form+skill combo
+				else if ((csheet_boni[i].amfi / 10) >= 5) color = TERM_GREEN; //max AM skill, or form+skill combo
+				else color = TERM_L_GREEN;
+
+				if (abs(csheet_boni[i].amfi) / 10) sprintf(tmp, "%d", abs((csheet_boni[i].amfi) / 10) % 10);
 				c_put_str(color, tmp, 18, 25 + i);
 			}
 
