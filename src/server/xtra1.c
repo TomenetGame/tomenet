@@ -6326,7 +6326,7 @@ void calc_boni(int Ind) {
 		}
 
 	/* Don't kill warnings by inspecting weapons/armour in stores! */
-	if (!suppress_message) {
+	if (!suppress_message && !p_ptr->ghost) {
 		/* warning messages, mostly for newbies */
 		if (p_ptr->warning_bpr == 0 && /* limit, so it won't annoy priests anymore who use zeal spell */
 		    p_ptr->num_blow == 1 && old_num_blow > 1 &&

@@ -6865,63 +6865,63 @@ void process_player_change_wpos(int Ind) {
 	} else if (p_ptr->warning_run >= 10) p_ptr->warning_run -= 10;
 
 	/* warning messages, mostly for newbies */
-	if (p_ptr->ghost) ; /* don't warn ghosts */
-	else if (p_ptr->warning_bpr2 != 1 && p_ptr->num_blow == 1 && 
-	    /* and don't spam Martial Arts users or mage-staff wielders ;) */
-	    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
-		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
-		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
-		msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
-		msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
-		if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
-			if (p_ptr->rogue_like_commands)
-				msg_print(Ind, "\374\377y    Try taking off your shield (\377oSHIFT+t\377y) and see if that helps.");
-			else
-				msg_print(Ind, "\374\377y    Try taking off your shield ('\377ot\377y' key) and see if that helps.");
+	if (!p_ptr->ghost) { /* don't warn ghosts */
+		if (p_ptr->warning_bpr2 != 1 && p_ptr->num_blow == 1 &&
+		    /* and don't spam Martial Arts users or mage-staff wielders ;) */
+		    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
+			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
+			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
+			msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
+			msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
+			if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+				if (p_ptr->rogue_like_commands)
+					msg_print(Ind, "\374\377y    Try taking off your shield (\377oSHIFT+t\377y) and see if that helps.");
+				else
+					msg_print(Ind, "\374\377y    Try taking off your shield ('\377ot\377y' key) and see if that helps.");
+			}
+			switch (p_ptr->pclass) {
+			case CLASS_WARRIOR:
+				msg_print(Ind, "\374\377y    Warriors should try either a dagger, whip, spear or cleaver.");
+				break;
+			case CLASS_PALADIN:
+				msg_print(Ind, "\374\377y    Paladins should try either a dagger, whip, spear or cleaver.");
+				break;
+			case CLASS_MIMIC:
+				msg_print(Ind, "\374\377y    Mimics should try either a dagger, whip, spear or cleaver.");
+				break;
+			case CLASS_ROGUE:
+				msg_print(Ind, "\374\377y    Rogues should try dual-wielding two daggers or main gauches.");
+				break;
+			case CLASS_RANGER:
+				msg_print(Ind, "\374\377y    Rangers should try dual-wielding two daggers or sword & dagger.");
+				break;
+			}
+			s_printf("warning_bpr23: %s\n", p_ptr->name);
+		} else if (p_ptr->warning_wield == 0 &&
+		    p_ptr->num_blow == 1 && !p_ptr->inventory[INVEN_WIELD].k_idx) {
+			p_ptr->warning_wield = 1;
+			msg_print(Ind, "\374\377yWARNING: You don't wield a weapon at the moment!");
+			msg_print(Ind, "\374\377y    Press '\377Rw\377y' key. It lets you pick a weapon (as well as other items)");
+			msg_print(Ind, "\374\377y    from your inventory to wield!");
+			msg_print(Ind, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
+			s_printf("warning_wield: %s\n", p_ptr->name);
 		}
-		switch (p_ptr->pclass) {
-		case CLASS_WARRIOR:
-			msg_print(Ind, "\374\377y    Warriors should try either a dagger, whip, spear or cleaver.");
-			break;
-		case CLASS_PALADIN:
-			msg_print(Ind, "\374\377y    Paladins should try either a dagger, whip, spear or cleaver.");
-			break;
-		case CLASS_MIMIC:
-			msg_print(Ind, "\374\377y    Mimics should try either a dagger, whip, spear or cleaver.");
-			break;
-		case CLASS_ROGUE:
-			msg_print(Ind, "\374\377y    Rogues should try dual-wielding two daggers or main gauches.");
-			break;
-		case CLASS_RANGER:
-			msg_print(Ind, "\374\377y    Rangers should try dual-wielding two daggers or sword & dagger.");
-			break;
+		if (p_ptr->warning_lite == 0 && p_ptr->cur_lite == 0 &&
+		    (p_ptr->wpos.wz < 0 || (p_ptr->wpos.wz == 0 && night_surface))) { //Training Tower currently exempt
+			if (p_ptr->wpos.wz < 0) p_ptr->warning_lite = 1;
+			msg_print(Ind, "\374\377yHINT: You don't wield any light source at the moment!");
+			msg_print(Ind, "\374\377y      Press '\377ow\377y' to wield a torch or lantern (or other items).");
+			s_printf("warning_lite: %s\n", p_ptr->name);
 		}
-		s_printf("warning_bpr23: %s\n", p_ptr->name);
-	} else if (p_ptr->warning_wield == 0 &&
-	    p_ptr->num_blow == 1 && !p_ptr->inventory[INVEN_WIELD].k_idx) {
-		p_ptr->warning_wield = 1;
-		msg_print(Ind, "\374\377yWARNING: You don't wield a weapon at the moment!");
-		msg_print(Ind, "\374\377y    Press '\377Rw\377y' key. It lets you pick a weapon (as well as other items)");
-		msg_print(Ind, "\374\377y    from your inventory to wield!");
-		msg_print(Ind, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
-		s_printf("warning_wield: %s\n", p_ptr->name);
 	}
 #if 1
-	else if (p_ptr->warning_run < 3) {
+	if (p_ptr->warning_run < 3) {
 		p_ptr->warning_run++;
 		msg_print(Ind, "\374\377yHINT: To run fast, use \377oSHIFT+direction\377y keys.");
 		msg_print(Ind, "\374\377y      For that, \377oNUMLOCK\377y key must be OFF and no awake monster in sight!");
 		s_printf("warning_run: %s\n", p_ptr->name);
 	}
 #endif
-	if (p_ptr->warning_lite == 0 && p_ptr->cur_lite == 0 &&
-	    (p_ptr->wpos.wz < 0 || (p_ptr->wpos.wz == 0 && night_surface))) { //Training Tower currently exempt
-		if (p_ptr->wpos.wz < 0) p_ptr->warning_lite = 1;
-		msg_print(Ind, "\374\377yHINT: You don't wield any light source at the moment!");
-		msg_print(Ind, "\374\377y      Press '\377ow\377y' to wield a torch or lantern (or other items).");
-		s_printf("warning_lite: %s\n", p_ptr->name);
-	}
-
 	if (!p_ptr->warning_worldmap && p_ptr->wpos.wz == 0 &&
 	    !in_sector00(&p_ptr->wpos) &&
 	    (ABS(p_ptr->wpos.wx - 32) >= 2 || ABS(p_ptr->wpos.wy - 32) >= 2)) {
