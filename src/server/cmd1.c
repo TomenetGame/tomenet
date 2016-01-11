@@ -5086,7 +5086,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 	}
 
 	/* Hack -- delay fear messages */
-	if (fear && p_ptr->mon_vis[c_ptr->m_idx]) {
+	if (fear && p_ptr->mon_vis[c_ptr->m_idx] && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 #ifdef USE_SOUND_2010
 #else
 		sound(Ind, SOUND_FLEE);

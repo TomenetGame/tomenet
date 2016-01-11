@@ -5624,14 +5624,12 @@ void do_cmd_fire(int Ind, int dir) {
 						}
 
 						/* Take note */
-						if (fear && visible) {
+						if (fear && visible && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 							char m_name[MNAME_LEN];
-
 #ifdef USE_SOUND_2010
 #else
 							sound(Ind, SOUND_FLEE);
 #endif
-
 							/* Get the monster name (or "it") */
 							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 

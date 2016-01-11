@@ -4808,7 +4808,7 @@ bool mon_hit_trap(int m_idx) {
 //							if (special) attack_special(m_ptr, special, dam);
 
 							/* Take note */
-							if (fear) {
+							if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 //								msg_format(who, "%^s flees in terror!", m_name);
 								if (m_ptr->r_idx != RI_MORGOTH)
 									msg_print_near_monster(m_idx, "flees in terror!");

@@ -7730,6 +7730,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Damaged monster */
 		else {
+			/* Hack -- handle sleep */
+			if (do_sleep) m_ptr->csleep = do_sleep;
+
 			/* Give detailed messages if visible or destroyed */
 			/* DEG Changed for added damage message. */
 			if (!quiet && seen) {
@@ -7751,7 +7754,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				else if (dam > 0) message_pain(Ind, c_ptr->m_idx, dam);
 
 				/* Take note */
-				if (fear || do_fear) {
+				if ((fear || do_fear) && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 #ifdef USE_SOUND_2010
 #else
 					sound(Ind, SOUND_FLEE);
@@ -7763,13 +7766,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 						msg_format(Ind, "%^s retreats!", m_name);
 				}
 			}
+
 #if 0 /* see above */
 			/* Take note */
-			if (!quiet && (fear || do_fear) && (p_ptr->mon_vis[c_ptr->m_idx])) {
-#ifdef USE_SOUND_2010
-#else
+			if (!quiet && (fear || do_fear) && (p_ptr->mon_vis[c_ptr->m_idx]) && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+ #ifdef USE_SOUND_2010
+ #else
 				sound(Ind, SOUND_FLEE);
-#endif
+ #endif
 
 				/* Message */
 				if (m_ptr->r_idx != RI_MORGOTH)
@@ -7778,9 +7782,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					msg_format(Ind, "%^s retreats!", m_name);
 			}
 #endif
-
-			/* Hack -- handle sleep */
-			if (do_sleep) m_ptr->csleep = do_sleep;
 
 #ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster gets hit by a projection' */
 			/* isn't there any player in our casting-los? */
