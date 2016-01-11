@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. January 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 11. January 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -131,14 +131,13 @@ Contents
     (5.17)  How abilities, resistances and boni stack
     (5.18)  Monster auras
     (5.19)  Experience-draining items
-    (5.20)  Monster loot types
-    (5.21)  Digging
-    (5.21a) Digging - Exact calculation
-    (5.21b) Digging - Common example values
-    (5.21c) Digging - Further information
-    (5.22)  Recharging
-    (5.23)  Wraithform
-    (5.24)  Item sharing rules and exceptions
+    (5.20)  Digging
+    (5.20a) Digging - Exact calculation
+    (5.20b) Digging - Common example values
+    (5.20c) Digging - Further information
+    (5.21)  Recharging
+    (5.22)  Wraithform
+    (5.23)  Item sharing rules and exceptions
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -435,8 +434,8 @@ I       I       inspects an item, showing its special abilities in case it
                 (sword/blunt/axe/polearm) as well as if it's 1-, 2- or
                 1,5-handed.
 
-w       w       wear/wield an item from your inventory (weapons, armour,
-                ammunition, tools, rings, amulets, etc).
+w       w       wear/wield an item from your inventory (weapons, rings,
+                amulets, light sources, armour, ammunition, tools).
 
 W       CTRL+W  wear/wield an item, same as 'w', but tries to use the second
                 available slot in case two inventory slots are both egligible.
@@ -3814,7 +3813,7 @@ a Pick of Digging {+,9} (+5,+9) (+1) (+3)
     the end. This belongs to the 'of Digging' suffix and, same as the (+1),
     further increases the digging ability, in the same way the (+1) does.
     So overall you can just view it as if it was a Pick (+4) (1 plus 3).
-(See (5.21) for details about digging.)
+(See (5.20) for details about digging.)
 
 
 (3.4b) Items that are always tradable
@@ -8674,17 +8673,31 @@ item that you will find on the floor:
    higher level than their race level).
 3) The monster's treasure class table. Each monster type (race) has a table
    of percentage values for these five treasure types, which you can again see
-   in the ~7 monster lore:
-   Treasure (chests, crowns, dragon scale mail, amulets, rings),
-   Combat (weapons, ammunition and armour),
-   Magic (books, potions, scrolls, magic devices and runes),
-   Tools (light sources, cloaks, boots, food, trapkits, oil, spikes and actual
-    tool-slot items),
-   Junk (including golem parts). This class is actually special in that it is
-    calculated from being the remainder of the other four treasure classes.
-    For example if a monster has 22% chance in each of the other four classes
-    that would add up to 88%, which makes the 'Junk' class have a 12% chance.
+   in the ~7 monster lore. The lore displays the first four classes, while the
+   5th is 'hidden' and is the rest chance not covered by the first four:
 
+    -Combat:
+     Weapons, armour (except boots), shields, ammunition.
+
+    -Treasure:
+     Chests, rings, amulets, dragon scale mails, crowns.
+
+    -Magic:
+     Mage staves, wands, staves, rods, runes, potions, scrolls, books,
+     parchments.
+
+    -Tools:
+     Boots, cloaks, diggers, light sources, flints, food, flasks, trap kits,
+     spikes, climbing sets, picklocks, money belts,
+     devices of theft prevention, tarpaulins, mummy wrappings.
+
+    -Junk (rest chance, not covered by the above four categories):
+     Skeletons/skulls/bones, bottles, shards of pottery, broken sticks,
+     firestones, all golem parts (massive pieces, arms, legs, command scrolls).
+
+    Example: 'Green naga'.
+    A Green naga has 25% chance of dropping 'Combat' loot and 65% chance of
+    dropping 'Tools' loot. The remaining 10% chance translates to 'Junk' drops.
 
 The formula for determining the item's level (the item base type level which
 determines what kind of item you might get to see; not the actual use-level
@@ -8910,7 +8923,7 @@ CHARGING (of Charging) ('It regenerates its mana faster.')
         Combination of EASY_USE and CHARGING.
 'of Plenty' wands and staves.
         These have more charges than usual, and will also gain more charges
-        from recharging than their normal counterparts. (See (5.22) about
+        from recharging than their normal counterparts. (See (5.21) about
         recharging.)
 
 WINNERS_ONLY
@@ -9263,7 +9276,7 @@ Parchments      These contain informations about the game, they won't
                 disappear if you read them.
 Protection from evil    Repels evil creatures that try to attack you in melee.
                         See the prayer 'Protection from evil' in (6.8)!
-Recharging      Recharges a magical rod/wand/staff (see (5.22)).
+Recharging      Recharges a magical rod/wand/staff (see (5.21)).
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
                 as soon as they are uncursed!
@@ -9483,7 +9496,7 @@ Mattock/Pick/Shovel Diggers, improving your digging capabilities.
                     swords can help you hacking down trees or bushes. For
                     hacking away webs or ivy, certain polearms used for
                     slashing (scythes and sickles) may help too, just as much
-                    as swords or axes. (see 'Digging' skill in (6.2) and (5.21)
+                    as swords or axes. (see 'Digging' skill in (6.2) and (5.20)
                     for more information about digging).
 Money Belt          When equipped, greatly reduces chance of thieves succeeding
                     in stealing your money.
@@ -9580,7 +9593,7 @@ Weapons of the Thunderlords: Teleportation.
 Weapons of Spinning: Spin attack.
 Fury weapons: Berserk.
 Noldor caps: Treasure detection.
-Spectral weapons: Wraithform (see (5.23)).
+Spectral weapons: Wraithform (see (5.22)).
 
 Serpent amulets: Poison breath.
 Moon amulets: Sleep monsters.
@@ -10557,50 +10570,16 @@ experience points permanently. Here are some details about that process:
 
 
 
-(5.20) Monster loot types
--------------------------
-Different monsters drop different types of loot. For example mages will usually
-drop more potions and scrolls, while fighters tend to drop more weapons and
-armour.
-
-There are four loot classes for monsters:
-
- -Combat:
-  Weapons, armour (except boots), shields, ammunition.
-
- -Treasure:
-  Chests, rings, amulets, dragon scale mails, crowns.
-
- -Magic:
-  Mage staves, wands, staves, rods, runes, potions, scrolls, books, parchments.
-
- -Tools:
-  Boots, cloaks, diggers, light sources, flints, food, flasks, trap kits,
-  spikes, climbing sets, picklocks, money belts, devices of theft prevention,
-  tarpaulins, mummy wrappings.
-
-And a 'hidden' 5th class:
-
- -Junk (rest chance, not covered by the above four categories):
-  Skeletons/bones, bottles, shards of pottery, broken sticks, firestones,
-  golem parts.
-
-Example: 'Green naga'.
-A Green naga has 25% chance of dropping 'Combat' loot and 65% chance of
-dropping 'Tools' loot. The remaining 10% chance translates to 'Junk' drops.
-
-
-
-(5.21) Digging
+(5.20) Digging
 --------------
 Your chance to successfully tunnel through an obstacle depends on the obstacle
 and your 'digging power'.
 
-If you're not interested in the exact formula, skip down to (5.21b) which has a
+If you're not interested in the exact formula, skip down to (5.20b) which has a
 table with example values for certain scenarios.
 
 
-(5.21a) Digging - Exact calculation
+(5.20a) Digging - Exact calculation
 -----------------------------------
 Your digging power is calculated as follows:
 An equipped item that provides (+X) to digging will add 20*X.
@@ -10642,7 +10621,7 @@ digging power of 21. So on each turn of tunnelling your chance to succeed would
 be 1 in 800 in that case.
 
 
-(5.21b) Digging - Common example values
+(5.20b) Digging - Common example values
 ---------------------------------------
 Some example values, assuming 0.000 'Digging' skill
 and unenchanted (ie (+0,+0)) digging tools with (+1) to digging:
@@ -10677,7 +10656,7 @@ You can tunnel through all tunneable materials, no matter your strength, with..
 -any (+2) digging tool or better (except if it has negative +hit/+dam values).
 
 
-(5.21c) Digging - Further information
+(5.20c) Digging - Further information
 -------------------------------------
 For digging through granite wall without having to wait for ages to succeed,
 you will definitely want a better digging tool than basic shovels or picks.
@@ -10709,7 +10688,7 @@ though, so take off your shield for best results.)
 
 
 
-(5.22) Recharging
+(5.21) Recharging
 -----------------
 While electricity or disenchantment based attacks may deplete magic devices,
 they can usually also be magically recharged when necessary.
@@ -10777,7 +10756,7 @@ recharging, just don't go too crazy with the stacks size.
 
 
 
-(5.23) Wraithform
+(5.22) Wraithform
 -----------------
 Wraithform, or "pass wall" form is a character state obtained from the spell
 "Wraithform" (Udun school) or from certain items (either spectral weapons or
@@ -10805,7 +10784,7 @@ and to escape dangerous situations easily (just retreat into walls).
 
 
 
-(5.24) Item sharing rules and exceptions
+(5.23) Item sharing rules and exceptions
 ----------------------------------------
 The following item sharing rules apply to a standard server configuration.
 It is possible that a server runs certain alterations of some aspects.
@@ -11949,7 +11928,7 @@ Note that not every skill is available to every profession (class).
                                 used for slashing (scythes and sickles) may
                                 help too, just as well as swords or axes.
                                 See (3.4a) for more information on digging
-                                tools and (5.21) for technical details on
+                                tools and (5.20) for technical details on
                                 digging.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
