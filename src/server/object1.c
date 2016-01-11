@@ -4294,7 +4294,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		msg_print(Ind, "\377s  It's an axe-type weapon."); break;
 	}
 
-	if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It can be wielded-one-handed, but should be wielded two-handed.");
+	if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It can be wielded one-handed, but should be wielded two-handed.");
 	else if (f4 & TR4_MUST2H) msg_print(Ind, "\377s  It must be wielded two-handed.");
 	else if (f4 & TR4_COULD2H) {
 		if (o_ptr->weight <= DUAL_MAX_WEIGHT)
@@ -4664,7 +4664,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		break;
 	}
 
-	if (f4 & TR4_SHOULD2H) fprintf(fff, "It can be wielded-one-handed, but should be wielded two-handed.\n");
+	if (f4 & TR4_SHOULD2H) fprintf(fff, "It can be wielded one-handed, but should be wielded two-handed.\n");
 	else if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
 	else if (f4 & TR4_COULD2H) {
 		if (o_ptr->weight <= DUAL_MAX_WEIGHT)
