@@ -534,8 +534,8 @@ HRESURRECT = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	100,
 	["level"] = 	30,
-	["mana"] = 	200,
-	["mana_max"] = 	200,
+	["mana"] = 	100,
+	["mana_max"] = 	100,
 	["fail"] = 	50,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
@@ -557,9 +557,9 @@ HDELBB = add_spell {
 	["am"] = 	75,
 	["level"] = 	25,	-- 45 the_sandman: too high lvl and this spell doesn't seem to be useful then. Asked around,
 				-- and ppl say their first encounter with RW is about pvp 25-32ish.
-	["mana"] = 	150,	-- was 200. Only chat/hope has priests with >200 mana at lvl ~25+ =)
-	["mana_max"] = 	150,
-	["fail"] = 	0,
+	["mana"] = 	100,	-- was 200. Only chat/hope has priests with >200 mana at lvl ~25+ =)
+	["mana_max"] = 	100,
+	["fail"] = 	30,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			msg_print(Ind, "You feel a calming warmth touching your soul.");
