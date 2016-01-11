@@ -8683,7 +8683,8 @@ item that you will find on the floor:
      Chests, rings, amulets, dragon scale mails, crowns.
 
     -Magic:
-     Mage staves, wands, staves, rods, runes, potions, scrolls, books,
+     Mage staves, wands, staves, rods, runes, potions, scrolls (except for
+     golem command scrolls which fall under 'Junk' category), books,
      parchments.
 
     -Tools:
