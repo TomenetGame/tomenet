@@ -489,7 +489,10 @@ void do_cmd_eat_food(int Ind, int item) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "eat", NULL, SFX_TYPE_COMMAND, FALSE);
+	if (o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE)
+		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
+	else
+		sound(Ind, "eat", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	/* Identity not known yet */
