@@ -8832,7 +8832,6 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		Rand_quick = old_rand;
 		Rand_value = tmp_seed;
 
-
 		if (extra != -1) forge.pval = extra; //spellbooks
 		forge.number = num;
 		price = price_item(Ind, &forge, ot_ptr->min_inflate, FALSE);
