@@ -4081,7 +4081,7 @@ void do_cmd_store(int Ind) {
 	}
 
 #ifdef ENABLE_ITEM_ORDER
-s_printf("RID_ITEM_ORDER: store %d(%d), town %d(%d), t/s %d/%d\n", which, town_idx, p_ptr->item_order_forge.tval, p_ptr->item_order_forge.tval);
+s_printf("RID_ITEM_ORDER: store %d(%d), town %d(%d), t/s %d/%d\n", which, p_ptr->item_order_store, town_idx, p_ptr->item_order_town, p_ptr->item_order_forge.tval, p_ptr->item_order_forge.tval);
 	if (p_ptr->item_order_store && p_ptr->item_order_store - 1 == which &&
 	    p_ptr->item_order_town == town_idx && !p_ptr->tim_blacklist) {
 		if (p_ptr->item_order_turn > turn) {
@@ -4095,13 +4095,20 @@ s_printf("RID_ITEM_ORDER: store %d(%d), town %d(%d), t/s %d/%d\n", which, town_i
 			else msg_format(Ind, "About your order, it might take a long time to arrive, don't expect it today.");
 		} else {
 			object_type forge = p_ptr->item_order_forge;
+			char o_name[ONAME_LEN];
+			int slot;
 
 			/* deliver order! */
+			msg_print(Ind, "\377GYour order has arrived! Here, take it.");
 			object_aware(Ind, &forge);
 			object_known(&forge);
 			forge.ident |= ID_MENTAL;
 			forge.note = quark_add(format("%s Delivery", st_name + st_info[p_ptr->item_order_store - 1].name));
-			inven_carry(Ind, &forge);
+			slot = inven_carry(Ind, &forge);
+			if (slot != -1) {
+				object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);
+				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+			}
 
 			/* clear order */
 			p_ptr->item_order_store = 0;

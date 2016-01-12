@@ -8679,8 +8679,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		char o_name[ONAME_LEN];
 
 		if (p_ptr->item_order_store != 0) {
-			msg_format(Ind, "You still have an order open at the %s in %s!",
-			    st_name + st_info[p_ptr->item_order_store - 1].name, town_profile[town[p_ptr->item_order_town].type].name);
+			if (p_ptr->item_order_store - 1 == p_ptr->store_num && p_ptr->item_order_town == gettown(Ind))
+				msg_print(Ind, "\377yYou still have an order open at this store!");
+			else
+				msg_format(Ind, "\377yYou still have an order open at the %s in %s!",
+				    st_name + st_info[p_ptr->item_order_store - 1].name, town_profile[town[p_ptr->item_order_town].type].name);
 			return;
 		}
 
@@ -8770,13 +8773,14 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		else
 			j = st_info[st_ptr->st_idx].table[j][1];
 
-		/* calculate price based on item rarity */
+		/* create item and calculate price based on item rarity */
 		ot_ptr = &ow_info[st_ptr->owner];
 		apply_magic(&p_ptr->wpos, &forge, 0, FALSE, FALSE, FALSE, FALSE, RESF_NO_ENCHANT);
 		forge.number = num;
 		price = price_item(Ind, &forge, ot_ptr->min_inflate, FALSE);
 		/* make sure price doesn't beat BM for *id* / teleport (shop 5), *rc* (shop 4), which are all at 2% rarity */
 		price = (price * (180 - j) * (180 - j)) / 6400; //1x (100%) .. 5x (1%) -- so it's still above BM
+		price *= num;
 
 		p_ptr->item_order_forge = forge;
 		p_ptr->item_order_cost = price;
