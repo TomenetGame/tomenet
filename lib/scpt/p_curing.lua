@@ -118,7 +118,7 @@ HCUREWOUNDS_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			local status_ailments, hd
+			local status_ailments, hd, pow
 			status_ailments = 0
 
 			--hacks to cure effects same as potions would
