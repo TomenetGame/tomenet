@@ -3317,7 +3317,7 @@ cptr item_activation(object_type *o_ptr) {
 	if (is_ego_p(o_ptr, EGO_DRAGON))
 		return "teleportation every 25..50+d50 turns";
 	if (is_ego_p(o_ptr, EGO_JUMP))
-		return "phase-jump every 10+d10 turns";
+		return "phase jump every 10+d10 turns";
 	if (is_ego_p(o_ptr, EGO_SPINNING))
 		return "spinning around every 50+d25 turns";
 	if (is_ego_p(o_ptr, EGO_FURY))
