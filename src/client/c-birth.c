@@ -1398,7 +1398,9 @@ static bool choose_body_modification(void) {
 		} else if (c == '?') {
 			/*do_cmd_help("help.hlp");*/
 		} else if (c == '*') {
-			switch (rand_int(2)) {
+			/* hack: no fruit bat archers */
+			if (class == CLASS_ARCHER) c = 'n';
+			else switch (rand_int(2)) {
 				case 0:
 					c = 'n';
 					break;
