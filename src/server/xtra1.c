@@ -8698,7 +8698,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		*str2ptr = str[i];
 		*(str2ptr + 1) = 0;
 
-		/* allow specifying a number already */
+		/* allow specifying a number */
 		str2ptr = str2;
 		if (str2[0] == 'a') {
 			if (str2[1] == ' ') {
@@ -8718,6 +8718,10 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			while (*str2ptr >= '0' && *str2ptr <= '9') str2ptr++;
 			if (*str2ptr == ' ') str2ptr++;
 		} else num = 1;
+		if (num > 99) {
+			msg_print(Ind, "Sorry, you can order a stack of up to 99 items at most.");
+			return;
+		}
 
 		strcpy(str, str2ptr);
 
@@ -8775,19 +8779,20 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		p_ptr->item_order_kidx = forge.k_idx;
 		p_ptr->item_order_num = num;
 		p_ptr->item_order_cost = price * num;
+		p_ptr->item_order_rarity = j;
 
 		if (num == 1) {
-			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces! Accept?", price), FALSE);
-			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is somewhat less common, that will be %d gold pieces! Accept?", price), FALSE);
-			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is uncommon, I could promise you delivery for %d gold pieces! Accept?", price), FALSE);
-			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is rare, I'll try to get it for you for %d gold pieces! Accept?", price), FALSE);
-			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is very rare, I might be able to get hold of one for %d gold pieces! Accept?", price), FALSE);
+			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
+			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is somewhat less common, that will be %d Au!", price), FALSE);
+			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is uncommon, I could promise you delivery for %d Au!", price), FALSE);
+			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is rare, I'll try to get it for you for %d Au!", price), FALSE);
+			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That's very rare, I might be able to get hold of one for %d Au!", price), FALSE);
 		} else {
-			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces! Accept?", price * num), FALSE);
-			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are somewhat less common, that will be %d gold pieces! Accept?", price * num), FALSE);
-			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are uncommon, I could promise you delivery for %d gold pieces! Accept?", price * num), FALSE);
-			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is rare, I'll try to get those for you for %d gold pieces! Accept?", price * num), FALSE);
-			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is very rare, I might be able to get hold of them for %d gold pieces! Accept?", price * num), FALSE);
+			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price * num), FALSE);
+			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are somewhat less common, that will be %d Au!", price * num), FALSE);
+			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are uncommon, I could promise you delivery for %d Au!", price * num), FALSE);
+			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are rare, I'll try to get those for you for %d Au!", price * num), FALSE);
+			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are very rare, I might be able to obtain them for %d Au!", price * num), FALSE);
 		}
 		return;
 		}
@@ -8933,7 +8938,9 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		p_ptr->cur_file_title[0] = 0;//not really needed
 		return;
 #ifdef ENABLE_ITEM_ORDER
-	case RID_ITEM_ORDER:
+	case RID_ITEM_ORDER: {
+		s32b dur;
+
 		if (p_ptr->store_num == -1) return;
 		if (!cfr) return;
 		if (p_ptr->item_order_cost > p_ptr->au) {
@@ -8944,7 +8951,21 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		p_ptr->redraw |= PR_GOLD;
 		p_ptr->item_order_store = p_ptr->store_num + 1;
 		p_ptr->item_order_town = gettown(Ind);
+
+		/* calculate time, real-time minutes depending on store template rarity */
+		//dur = (cfg.fps * 60 * 5 * (113 - p_ptr->item_order_rarity)) / 13; //5..43 min
+		//dur = (cfg.fps * 60 * 5 * (115 - p_ptr->item_order_rarity)) / 15; //5..38 min
+		dur = (cfg.fps * 60 * 5 * (120 - p_ptr->item_order_rarity)) / 20; //5..30 min
+		p_ptr->item_order_turn = turn + dur;
+		/* give in-game-time message */
+		if (dur <= HOUR / 2) msg_format(Ind, "It should arrive shortly.");
+		else if (dur <= (HOUR * 3) / 2) msg_format(Ind, "Check back with me in an hour, give or take.");
+		else if (dur <= HOUR * 6) msg_format(Ind, "Deal, this will take a few hours though.");
+		else if (dur <= HOUR * 18) msg_format(Ind, "Deal, maybe it'll take half a day, give or take a couple hours.");
+		else if (dur <= DAY) msg_format(Ind, "Deal. I don't expect it to take longer than a day to arrive.");
+		else msg_format(Ind, "Deal. But this might take a long time to arrive, don't expect it today.");
 		return;
+		}
 #endif
 	default: ;
 	}
