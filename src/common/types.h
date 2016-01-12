@@ -2979,7 +2979,8 @@ struct player_type {
 #endif
 
 #ifdef ENABLE_ITEM_ORDER
-	int item_order_store, item_order_town, item_order_kidx, item_order_num, item_order_rarity;
+	int item_order_store, item_order_town, item_order_rarity;
+	object_type item_order_forge;
 	s64b item_order_cost;
 	s32b item_order_turn;
 #endif

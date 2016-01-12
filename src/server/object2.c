@@ -5199,6 +5199,12 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	if (chance2 > 20) chance2 = 20;
 
 
+	if (resf & RESF_NO_ENCHANT) {
+		okay = good = great = verygreat = FALSE;
+		chance1 = chance2 = 0;
+	}
+
+
 	/* Assume normal */
 	power = 0;
 

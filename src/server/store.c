@@ -3887,7 +3887,7 @@ static bool leave_store = FALSE;
 void do_cmd_store(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
-	int which;
+	int which, town_idx;
 	int i, j;
 	int maintain_num;
 
@@ -3899,7 +3899,7 @@ void do_cmd_store(int Ind) {
 	if(!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	i = gettown(Ind);
+	town_idx = i = gettown(Ind);
 	/* hack: non-town stores are borrowed from town #0 - C. Blue */
 	if (i == -1) i = gettown_dun(Ind);
 
@@ -4079,6 +4079,34 @@ void do_cmd_store(int Ind) {
 		/* Display the store */
 		display_store(Ind);
 	}
+
+#ifdef ENABLE_ITEM_ORDER
+	if (p_ptr->item_order_store && p_ptr->item_order_store == which &&
+	    p_ptr->item_order_town == town_idx &&!p_ptr->tim_blacklist) {
+		if (p_ptr->item_order_turn > turn) {
+			int dur = p_ptr->item_order_turn - turn;
+
+			if (dur <= HOUR / 2) msg_format(Ind, "Your order should arrive shortly.");
+			else if (dur <= (HOUR * 3) / 2) msg_format(Ind, "Regarding your order, check back with me in an hour, give or take.");
+			else if (dur <= HOUR * 6) msg_format(Ind, "Your order will take a few more hours to arrive.");
+			else if (dur <= HOUR * 18) msg_format(Ind, "Your order should arrive in half a day, give or take a couple hours.");
+			else if (dur <= DAY) msg_format(Ind, "I don't expect your order to take longer than a day to arrive.");
+			else msg_format(Ind, "About your order, it might take a long time to arrive, don't expect it today.");
+		} else {
+			object_type forge = p_ptr->item_order_forge;
+
+			/* deliver order! */
+			object_aware(Ind, &forge);
+			object_known(&forge);
+			forge.ident |= ID_MENTAL;
+			forge.note = quark_add(format("%s Delivery", st_name + st_info[p_ptr->item_order_store - 1].name));
+			inven_carry(Ind, &forge);
+
+			/* clear order */
+			p_ptr->item_order_store = 0;
+		}
+	}
+#endif
 
 	/* Do not leave */
 	leave_store = FALSE;

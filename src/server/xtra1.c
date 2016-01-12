@@ -8772,13 +8772,14 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 		/* calculate price based on item rarity */
 		ot_ptr = &ow_info[st_ptr->owner];
+		apply_magic(&p_ptr->wpos, &forge, 0, FALSE, FALSE, FALSE, FALSE, RESF_NO_ENCHANT);
+		forge.number = num;
 		price = price_item(Ind, &forge, ot_ptr->min_inflate, FALSE);
 		/* make sure price doesn't beat BM for *id* / teleport (shop 5), *rc* (shop 4), which are all at 2% rarity */
 		price = (price * (180 - j) * (180 - j)) / 6400; //1x (100%) .. 5x (1%) -- so it's still above BM
 
-		p_ptr->item_order_kidx = forge.k_idx;
-		p_ptr->item_order_num = num;
-		p_ptr->item_order_cost = price * num;
+		p_ptr->item_order_forge = forge;
+		p_ptr->item_order_cost = price;
 		p_ptr->item_order_rarity = j;
 
 		if (num == 1) {
@@ -8788,11 +8789,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is rare, I'll try to get it for you for %d Au!", price), FALSE);
 			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That's very rare, I might be able to get hold of one for %d Au!", price), FALSE);
 		} else {
-			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price * num), FALSE);
-			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are somewhat less common, that will be %d Au!", price * num), FALSE);
-			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are uncommon, I could promise you delivery for %d Au!", price * num), FALSE);
-			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are rare, I'll try to get those for you for %d Au!", price * num), FALSE);
-			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are very rare, I might be able to obtain them for %d Au!", price * num), FALSE);
+			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
+			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are somewhat less common, that will be %d Au!", price), FALSE);
+			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are uncommon, I could promise you delivery for %d Au!", price), FALSE);
+			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are rare, I'll try to get those for you for %d Au!", price), FALSE);
+			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are very rare, I might be able to obtain them for %d Au!", price), FALSE);
 		}
 		return;
 		}
