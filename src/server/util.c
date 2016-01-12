@@ -1096,7 +1096,11 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 	}
 
 #else /* optimized way... */
+	player_type *p_ptr = Players[Ind];
 	int val = -1, val2 = -1, i, d;
+
+	/* backward compatibility */
+	if (type == SFX_TYPE_STOP && !is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 0)) return;
 
 	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
 		if (!audio_sfx[i][0]) break;
@@ -1116,7 +1120,7 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 
 #endif
 
-//	if (is_admin(Players[Ind])) s_printf("USE_SOUND_2010: looking up sound %s -> %d.\n", name, val);
+//	if (is_admin(p_ptr)) s_printf("USE_SOUND_2010: looking up sound %s -> %d.\n", name, val);
 
 	if (val == -1) {
 		if (val2 != -1) {
@@ -1135,27 +1139,27 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 	if (nearby) {
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
-			if (!inarea(&Players[i]->wpos, &Players[Ind]->wpos)) continue;
+			if (!inarea(&Players[i]->wpos, &p_ptr->wpos)) continue;
 			if (Ind == i) continue;
 
-			d = distance(Players[Ind]->py, Players[Ind]->px, Players[i]->py, Players[i]->px);
+			d = distance(p_ptr->py, p_ptr->px, Players[i]->py, Players[i]->px);
 #if 0
 			if (d > 10) continue;
 			if (d == 0) d = 1; //paranoia oO
 
-			Send_sound(i, val, val2, type, 100 / d, Players[Ind]->id);
-//			Send_sound(i, val, val2, type, (6 - d) * 20, Players[Ind]->id);  hm or this?
+			Send_sound(i, val, val2, type, 100 / d, p_ptr->id);
+//			Send_sound(i, val, val2, type, (6 - d) * 20, p_ptr->id);  hm or this?
 #else
 			if (d > MAX_SIGHT) continue;
 			d += 3;
 			d /= 2;
 
-			Send_sound(i, val, val2, type, 100 / d, Players[Ind]->id);
+			Send_sound(i, val, val2, type, 100 / d, p_ptr->id);
 #endif
 		}
 	}
 
-	Send_sound(Ind, val, val2, type, 100, Players[Ind]->id);
+	Send_sound(Ind, val, val2, type, 100, p_ptr->id);
 }
 void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int vol) {
 	int val = -1, val2 = -1, i, d;
