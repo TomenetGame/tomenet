@@ -93,8 +93,7 @@ static u32b	x_check = 0L;
  * This function determines if the version of the savefile
  * currently being read is older than version "x.y.z".
  */
-static bool older_than(byte x, byte y, byte z)
-{
+static bool older_than(byte x, byte y, byte z) {
 	/* Much older, or much more recent */
 	if (sf_major < x) return (TRUE);
 	if (sf_major > x) return (FALSE);
@@ -156,37 +155,33 @@ static bool q_older_than(byte x, byte y, byte z) {
 /*
  * Hack -- determine if an item is "wearable" (or a missile)
  */
-bool wearable_p(object_type *o_ptr)
-{
+bool wearable_p(object_type *o_ptr) {
 	/* Valid "tval" codes */
-	switch (o_ptr->tval)
-	{
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_DIGGING:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_LITE:
-		case TV_AMULET:
-		case TV_RING:
-		case TV_AXE:
-		case TV_MSTAFF:
-			{
-				return (TRUE);
-			}
+	switch (o_ptr->tval) {
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_LITE:
+	case TV_AMULET:
+	case TV_RING:
+	case TV_AXE:
+	case TV_MSTAFF:
+		return (TRUE);
 	}
 
 	/* Nope */
@@ -199,8 +194,7 @@ bool wearable_p(object_type *o_ptr)
  * of savefiles.  They also maintain the "checksum" info for 2.7.0+
  */
 
-static byte sf_get(void)
-{
+static byte sf_get(void) {
 	byte c, v;
 
 #if 0
@@ -230,32 +224,23 @@ static byte sf_get(void)
 	return (v);
 }
 
-void rd_byte(byte *ip)
-{
+void rd_byte(byte *ip) {
 	*ip = sf_get();
 }
-
-void rd_u16b(u16b *ip)
-{
+void rd_u16b(u16b *ip) {
 	(*ip) = sf_get();
 	(*ip) |= ((u16b)(sf_get()) << 8);
 }
-
-void rd_s16b(s16b *ip)
-{
+void rd_s16b(s16b *ip) {
 	rd_u16b((u16b*)ip);
 }
-
-void rd_u32b(u32b *ip)
-{
+void rd_u32b(u32b *ip) {
 	(*ip) = sf_get();
 	(*ip) |= ((u32b)(sf_get()) << 8);
 	(*ip) |= ((u32b)(sf_get()) << 16);
 	(*ip) |= ((u32b)(sf_get()) << 24);
 }
-
-void rd_s32b(s32b *ip)
-{
+void rd_s32b(s32b *ip) {
 	rd_u32b((u32b*)ip);
 }
 
@@ -263,13 +248,11 @@ void rd_s32b(s32b *ip)
 /*
  * Hack -- read a string
  */
-void rd_string(char *str, int max)
-{
+void rd_string(char *str, int max) {
 	int i;
 
 	/* Read the string */
-	for (i = 0; TRUE; i++)
-	{
+	for (i = 0; TRUE; i++) {
 		byte tmp8u;
 
 		/* Read a byte */
@@ -290,8 +273,7 @@ void rd_string(char *str, int max)
 /*
  * Hack -- strip some bytes
  */
-static void strip_bytes(int n)
-{
+static void strip_bytes(int n) {
 	int i;
 
 	/* Strip the bytes */
@@ -392,11 +374,11 @@ static void rd_item(object_type *o_ptr) {
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);
 	rd_s32b(&o_ptr->pval);
-        if (!older_than(4, 2, 3)) {
+	if (!older_than(4, 2, 3)) {
 		rd_s32b(&o_ptr->pval2);
 		rd_s32b(&o_ptr->pval3);
 	}
-        if (!older_than(4, 2, 6)) {
+	if (!older_than(4, 2, 6)) {
 		rd_s32b(&o_ptr->sigil);
 		rd_s32b(&o_ptr->sseed);
 	}
@@ -408,7 +390,6 @@ static void rd_item(object_type *o_ptr) {
 	if (!older_than(4, 3, 1)) {
 		rd_u16b(&o_ptr->name1);
 		rd_u16b(&o_ptr->name2);
-
 	} else {
 		/* Increase portability with pointers to correct type - mikaelh */
 		byte old_name1, old_name2;
@@ -880,8 +861,7 @@ static void rd_monster(monster_type *m_ptr) {
 /*
  * Read the global server-wide monster lore
  */
-static void rd_global_lore(int r_idx)
-{
+static void rd_global_lore(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Count sights/deaths/kills */
@@ -1071,7 +1051,7 @@ static void rd_notes() {
 		rd_string(guild_note[i], MAX_CHARS_WIDE);
 		rd_string(guild_note_target[i], NAME_LEN);
 	}
-        //omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
+	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
 static void rd_xorders() {
@@ -1270,12 +1250,11 @@ static void rd_party(int n) {
 
 	if (!s_older_than(4, 4, 19)) rd_u32b(&party_ptr->flags);
 
-	/* Hack -- repair dead parties 
+	/* Hack -- repair dead parties
 	   I THINK this line was causing some problems....
 	   lets find out
 	   */
-	if (!lookup_player_id(party_ptr->owner))
-	{
+	if (!lookup_player_id(party_ptr->owner)) {
 		/*
 		   Set to no people in party
 		   party_ptr->members = 0;
@@ -1286,8 +1265,7 @@ static void rd_party(int n) {
 /*
  * Read some house info
  */
-static void rd_house(int n)
-{
+static void rd_house(int n) {
 	int i;
 	house_type *house_ptr = &houses[n];
 	cave_type **zcave;
@@ -1299,7 +1277,7 @@ static void rd_house(int n)
 	rd_byte(&house_ptr->dy);
 	MAKE(house_ptr->dna, struct dna_type);
 	rd_u32b(&house_ptr->dna->creator);
-        if (!s_older_than(4, 4, 14)) rd_byte(&house_ptr->dna->mode);
+	if (!s_older_than(4, 4, 14)) rd_byte(&house_ptr->dna->mode);
 	rd_s32b(&house_ptr->dna->owner);
 	rd_byte(&house_ptr->dna->owner_type);
 #if 0 /* player hash is read _AFTER_ houses! So this is done via /fix-house-modes instead- C. Blue */
@@ -1372,8 +1350,7 @@ static void rd_house(int n)
 #endif	/* USE_MANG_HOUSE_ONLY */
 }
 
-static void rd_wild(wilderness_type *w_ptr)
-{
+static void rd_wild(wilderness_type *w_ptr) {
 	/* future use */
 	strip_bytes(4);
 	/* terrain type */
@@ -1395,8 +1372,7 @@ static void rd_wild(wilderness_type *w_ptr)
  * Read/Write the "extra" information
  */
 
-static bool rd_extra(int Ind)
-{
+static bool rd_extra(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int i, j;
@@ -1449,7 +1425,7 @@ static bool rd_extra(int Ind)
 	/* Class/Race/Gender/Party */
 	rd_byte(&p_ptr->prace);
 #ifdef ENABLE_KOBOLD /* Kobold was inserted in the middle, instead of added to the end of the races array */
-        if (older_than(4, 4, 28) && p_ptr->prace >= RACE_KOBOLD) p_ptr->prace++;
+	if (older_than(4, 4, 28) && p_ptr->prace >= RACE_KOBOLD) p_ptr->prace++;
 #endif
 	rd_byte(&p_ptr->pclass);
 	if (!older_than(4, 4, 11)) rd_byte(&p_ptr->ptrait);
@@ -1486,7 +1462,7 @@ static bool rd_extra(int Ind)
 	for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_cnt[i]);
 	for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_los[i]);
 
-        /* Read the skills */
+	/* Read the skills */
 	{
 		rd_u16b(&tmp16u);
 		if (tmp16u > MAX_SKILLS) quit("Too many skills!");
@@ -1567,7 +1543,7 @@ static bool rd_extra(int Ind)
 	rd_s32b(&p_ptr->au);
 
 	rd_s32b(&p_ptr->max_exp);
-        /* Build maximum level (the one displayed if life levels were restored right now) */
+	/* Build maximum level (the one displayed if life levels were restored right now) */
 	p_ptr->max_lev = 1;
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
@@ -1594,8 +1570,9 @@ static bool rd_extra(int Ind)
 		rd_s16b(&p_ptr->cst);
 		rd_s16b(&p_ptr->cst_frac);
 	}
-/* hack for old chars */
-if (p_ptr->mst != 10) p_ptr->mst = 10;
+
+	/* hack for old chars */
+	if (p_ptr->mst != 10) p_ptr->mst = 10;
 
 	rd_s16b(&p_ptr->msp);
 	rd_s16b(&p_ptr->csp);
@@ -1603,7 +1580,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 
 	rd_s16b(&p_ptr->max_plv);
 	rd_s16b(&p_ptr->max_dlv);
-        if (!older_than(4, 4, 23)) {
+	if (!older_than(4, 4, 23)) {
 		for (i = 0; i < MAX_D_IDX * 2; i++) {
 			rd_byte(&tmp8u);
 			p_ptr->max_depth[i] = tmp8u;
@@ -2164,8 +2141,7 @@ if (p_ptr->updated_savegame == 0) {
  *
  * Note that the inventory is "re-sorted" later by "dungeon()".
  */
-static errr rd_inventory(int Ind)
-{
+static errr rd_inventory(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int slot = 0;
@@ -2224,8 +2200,7 @@ if (p_ptr->updated_savegame == 3) { // <- another megahack, see lua_arts_fix()
 #endif
 
 		/* Wield equipment */
-		if (n >= INVEN_WIELD)
-		{
+		if (n >= INVEN_WIELD) {
 			/* Structure copy */
 			p_ptr->inventory[n] = forge;
 
@@ -2237,8 +2212,7 @@ if (p_ptr->updated_savegame == 3) { // <- another megahack, see lua_arts_fix()
 		}
 
 		/* Warning -- backpack is full */
-		else if (p_ptr->inven_cnt == INVEN_PACK)
-		{
+		else if (p_ptr->inven_cnt == INVEN_PACK) {
 			s_printf("Too many items in the inventory!\n");
 
 			/* Fail */
@@ -2246,8 +2220,7 @@ if (p_ptr->updated_savegame == 3) { // <- another megahack, see lua_arts_fix()
 		}
 
 		/* Carry inventory */
-		else
-		{
+		else {
 			/* Get a slot */
 			n = slot++;
 
@@ -2271,8 +2244,7 @@ if (p_ptr->updated_savegame == 3) { // <- another megahack, see lua_arts_fix()
  *
  * Note that this function is responsible for deleting stale entries
  */
-static errr rd_hostilities(int Ind)
-{
+static errr rd_hostilities(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	hostile_type *h_ptr;
 	int i;
@@ -2283,8 +2255,7 @@ static errr rd_hostilities(int Ind)
 	rd_u16b(&tmp16u);
 
 	/* Read available ID's */
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		/* Read next ID */
 		rd_s32b(&id);
 
@@ -2312,7 +2283,7 @@ static errr rd_hostilities(int Ind)
 /*
  * Read the run-length encoded dungeon
  *
- * Note that this only reads the dungeon features and flags, 
+ * Note that this only reads the dungeon features and flags,
  * the objects and monsters will be read later.
  *
  */
@@ -2459,8 +2430,7 @@ static errr rd_floor(void) {
 	{
 		struct c_special *cs_ptr;
 		byte n;
-		while (TRUE)
-		{
+		while (TRUE) {
 			rd_byte(&x);
 			rd_byte(&y);
 			rd_byte(&n);	/* Number of c_special to add */
@@ -2504,8 +2474,7 @@ static errr rd_floor(void) {
  * format.  Simmilar to the above function.
  */
 
-static errr rd_cave_memory(int Ind)
-{
+static errr rd_cave_memory(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	u16b max_y, max_x;
 	int i, y, x;
@@ -2551,8 +2520,7 @@ static errr rd_cave_memory(int Ind)
 
 /* Reads auction data. */
 
-static void rd_auctions()
-{
+static void rd_auctions() {
 	int i, j;
 	u32b old_auction_alloc;
 	auction_type *auc_ptr;
@@ -2568,8 +2536,7 @@ static void rd_auctions()
 
 	GROW(auctions, old_auction_alloc, auction_alloc, auction_type);
 
-	for (i = 0; i < auction_alloc; i++)
-	{
+	for (i = 0; i < auction_alloc; i++) {
 		auc_ptr = &auctions[i];
 		rd_byte(&auc_ptr->status);
 		rd_byte(&auc_ptr->flags);
@@ -2578,8 +2545,7 @@ static void rd_auctions()
 		rd_item(&auc_ptr->item);
 		C_MAKE(auc_ptr->desc, 160, char);
 		rd_string(auc_ptr->desc, 160);
-		if (auc_ptr->desc[0] == '\0')
-		{
+		if (auc_ptr->desc[0] == '\0') {
 			/* Free an empty string */
 			C_FREE(auc_ptr->desc, 160, char);
 		}
@@ -2587,11 +2553,8 @@ static void rd_auctions()
 		rd_s32b(&auc_ptr->buyout_price);
 		rd_s32b(&auc_ptr->bids_cnt);
 		if (auc_ptr->bids_cnt)
-		{
 			C_MAKE(auc_ptr->bids, auc_ptr->bids_cnt, bid_type);
-		}
-		for (j = 0; j < auc_ptr->bids_cnt; j++)
-		{
+		for (j = 0; j < auc_ptr->bids_cnt; j++) {
 			bid_ptr = &auc_ptr->bids[j];
 			rd_s32b(&bid_ptr->bid);
 			rd_s32b(&bid_ptr->bidder);
@@ -2662,15 +2625,13 @@ static errr rd_savefile_new_aux(int Ind) {
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_K_IDX)
-	{
+	if (tmp16u > MAX_K_IDX) {
 		s_printf(format("Too many (%u) object kinds!\n", tmp16u));
 		return (22);
 	}
 
 	/* Read the object memory */
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		byte tmp8u;
 
 		rd_byte(&tmp8u);
@@ -2685,15 +2646,13 @@ static errr rd_savefile_new_aux(int Ind) {
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_T_IDX)
-	{
+	if (tmp16u > MAX_T_IDX) {
 		s_printf(format("Too many (%u) trap kinds!\n", tmp16u));
 		return (22);
 	}
 
 	/* Read the object memory */
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		byte tmp8u;
 
 		rd_byte(&tmp8u);
@@ -2713,27 +2672,20 @@ static errr rd_savefile_new_aux(int Ind) {
 
 	/* Read the player_hp array */
 	for (i = 0; i < tmp16u; i++)
-	{
 		rd_s16b(&p_ptr->player_hp[i]);
-	}
-
 
 	/* Important -- Initialize the race/class */
 	p_ptr->rp_ptr = &race_info[p_ptr->prace];
 	p_ptr->cp_ptr = &class_info[p_ptr->pclass];
 
 	/* Read the inventory */
-	if (rd_inventory(Ind))
-	{
+	if (rd_inventory(Ind)) {
 		s_printf("Unable to read inventory\n");
 		return (21);
 	}
 
 	/* Read hostility information if new enough */
-	if (rd_hostilities(Ind))
-	{
-		return (22);
-	}
+	if (rd_hostilities(Ind)) return (22);
 
 	/* read the dungeon memory if new enough */
 	rd_cave_memory(Ind);
@@ -2744,20 +2696,15 @@ static errr rd_savefile_new_aux(int Ind) {
 		rd_u32b(&tmp32u);
 
 		/* if too many map entries */
-		if (tmp32u > MAX_WILD_X*MAX_WILD_Y)
-		{
-			return 23;
-		}
+		if (tmp32u > MAX_WILD_X * MAX_WILD_Y) return 23;
 
 		/* read in the map */
 		for (i = 0; i < (int) tmp32u; i++)
-		{
 			rd_byte(&p_ptr->wild_map[i]);
-		}
 	}
 
 	/* continued 'else' branch from rd_extra(), now that we have wild_map[] array */
-        if (older_than(4, 4, 23) || p_ptr->dummy_option_8) {
+	if (older_than(4, 4, 23) || p_ptr->dummy_option_8) {
 		/* in case we're here by a fix-hack */
 		if (p_ptr->dummy_option_8) {
 			s_printf("fixing max_depth[] for '%s'\n", p_ptr->name);
@@ -2779,7 +2726,7 @@ static errr rd_savefile_new_aux(int Ind) {
 	if (!older_than(4, 5, 8)) rd_u32b(&p_ptr->guild_dna);
 	else if (p_ptr->guild) p_ptr->guild_dna = guilds[p_ptr->guild].dna;
 	rd_u16b(&p_ptr->xorder_id);
-        rd_s16b(&p_ptr->xorder_num);
+	rd_s16b(&p_ptr->xorder_num);
 
 
 	/* read personal quest data */
@@ -3309,7 +3256,7 @@ errr rd_server_savefile() {
 			deep_dive_name[i][0] = 0;
 		}
 	} else if (!s_older_than(4, 4, 18)) {
-	        for (i = 0; i < 20; i++) {
+		for (i = 0; i < 20; i++) {
 			rd_s16b(&tmp16s);
 			deep_dive_level[i] = tmp16s;
 			rd_string(deep_dive_name[i], MAX_CHARS);
@@ -3389,8 +3336,7 @@ errr rd_server_savefile() {
 	return (err);
 }
 
-void new_rd_wild()
-{
+void new_rd_wild() {
 	int x, y, i;
 #ifdef DUNGEON_VISIT_BONUS
 	int dungeons = 0;
@@ -3554,9 +3500,8 @@ void new_rd_wild()
 #endif
 }
 
-void new_rd_floors()
-{
-	while(!rd_floor());
+void new_rd_floors() {
+	while (!rd_floor());
 }
 
 void rd_towns() {
@@ -3657,7 +3602,7 @@ void fix_max_depth(player_type *p_ptr) {
 		/* exempt 0,0 */
 		if (!x && !y) continue;
 
-                wpos.wx = x; wpos.wy = y;
+		wpos.wx = x; wpos.wy = y;
 
 		/* skip if player has never visited this dungeon's worldmap sector even! */
 		if (!is_admin(p_ptr) &&
@@ -3783,7 +3728,7 @@ void condense_max_depth(player_type *p_ptr) {
 			p_ptr->max_depth[i] = 0;
 			continue;
 		}
-	
+
 		if (p_ptr->max_depth_wx[i] || p_ptr->max_depth_wy[i]) continue; /* entry is not empty? */
 		/* ..entry i is empty.. */
 		for (j = i + 1; j < MAX_D_IDX * 2; j++) {
@@ -4154,7 +4099,7 @@ static errr load_quests_file() {
 			if (load_goals > q_ptr->stage[j].goals)
 				s_printf("Warning! Goals in save file (%d) exceed goals in q_info.txt (%d).\n", load_goals, q_ptr->stage[j].goals);
 			for (k = 0; k < load_goals; k++) {
-	    			if (j >= q_ptr->stage[j].goals) {
+				if (j >= q_ptr->stage[j].goals) {
 					/* Discard goals that exceed our info */
 					strip_bytes(4);
 					continue;
