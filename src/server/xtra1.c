@@ -8677,6 +8677,8 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		s64b price;
 		object_type forge;
 		char o_name[ONAME_LEN];
+		bool old_rand;
+		u32b tmp_seed;
 
 		if (p_ptr->item_order_store != 0) {
 			if (p_ptr->item_order_store - 1 == p_ptr->store_num && p_ptr->item_order_town == gettown(Ind))
@@ -8818,7 +8820,19 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 		/* create item and calculate price based on item rarity */
 		ot_ptr = &ow_info[st_ptr->owner];
+
+		/* use fixed seed depending on town and in-game hour,
+		   so people won't spam offers for 'ring of protection'
+		   until they get the desired result */
+		old_rand = Rand_quick;
+		tmp_seed = Rand_value;
+		Rand_quick = TRUE;
+		Rand_value = (3623 * p_ptr->wpos.wy + 29753) * (2843 * p_ptr->wpos.wx + 48869) + p_ptr->wpos.wz + (379 * (turn / HOUR) + 41);
 		apply_magic(&p_ptr->wpos, &forge, 0, FALSE, FALSE, FALSE, FALSE, RESF_NO_ENCHANT);
+		Rand_quick = old_rand;
+		Rand_value = tmp_seed;
+
+
 		if (extra != -1) forge.pval = extra; //spellbooks
 		forge.number = num;
 		price = price_item(Ind, &forge, ot_ptr->min_inflate, FALSE);
