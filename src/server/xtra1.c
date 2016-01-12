@@ -9015,7 +9015,11 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		//dur = (cfg.fps * 60 * 5 * (113 - p_ptr->item_order_rarity)) / 13; //5..43 min
 		//dur = (cfg.fps * 60 * 5 * (115 - p_ptr->item_order_rarity)) / 15; //5..38 min
 		dur = (cfg.fps * 60 * 5 * (120 - p_ptr->item_order_rarity)) / 20; //5..30 min
+ #ifdef TEST_SERVER
+		p_ptr->item_order_turn = turn; //instant delivery for testing purpose
+ #else
 		p_ptr->item_order_turn = turn + dur;
+ #endif
 		/* give in-game-time message */
 		if (dur <= HOUR / 2) msg_format(Ind, "It should arrive shortly.");
 		else if (dur <= (HOUR * 3) / 2) msg_format(Ind, "Check back with me in an hour, give or take.");
