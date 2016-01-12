@@ -6838,6 +6838,7 @@ extern int PlayerUID;
     because they're one-time only: */
  #define SFX_TYPE_WEATHER	7	/* sfx uses 'weather' mixer settings instead of 'sound' */
  #define SFX_TYPE_AMBIENT	8
+ #define SFX_TYPE_STOP		9	/* stop playing this sfx, if it is. stop playing any SFX_TYPE_NO_OVERLAP sfx if no sfx is specified. */
 
  /* new in 2013: for ambient sound fx channel (inn fireplace!) */
  #define SFX_AMBIENT_NONE	-1

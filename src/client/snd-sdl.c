@@ -691,10 +691,37 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_sound) return TRUE; /* claim that it 'succeeded' */
 #endif
-	if (samples[event].disabled) return TRUE; /* claim that it 'succeeded' */
+
+	/* hack: */
+	if (type == SFX_TYPE_STOP) {
+		/* stop all SFX_TYPE_NO_OVERLAP type sounds? */
+		if (event == -1) {
+			bool found = FALSE;
+
+			for (s = 0; s < cfg_max_channels; s++) {
+				if (channel_type[s] == SFX_TYPE_NO_OVERLAP && channel_player_id[s] == player_id) {
+					Mix_FadeOutChannel(s, 250);
+					found = TRUE;
+				}
+			}
+			return found;
+		}
+		/* stop sound of this type? */
+		else {
+			for (s = 0; s < cfg_max_channels; s++) {
+				if (channel_sample[s] == event && channel_player_id[s] == player_id) {
+					Mix_FadeOutChannel(s, 250);
+					return TRUE;
+				}
+			}
+			return FALSE;
+		}
+	}
 
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return FALSE;
+
+	if (samples[event].disabled) return TRUE; /* claim that it 'succeeded' */
 
 	/* Check there are samples for this event */
 	if (!samples[event].num) return FALSE;

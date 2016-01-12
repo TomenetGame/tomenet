@@ -1124,6 +1124,9 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 			val = val2;
 			val2 = -1;
 		} else {
+			/* hack for SFX_TYPE_STOP */
+			if (name || alternative)
+
 			return;
 		}
 	}

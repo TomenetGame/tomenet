@@ -7741,7 +7741,12 @@ static int Receive_walk(int ind) {
 #endif
 	}
 
-	if (p_ptr->command_rep) p_ptr->command_rep = -1;
+	if (p_ptr->command_rep) {
+#ifdef USE_SOUND_2010
+		if (p_ptr->command_rep != PKT_BASH) sound(player, NULL, NULL, SFX_TYPE_STOP, TRUE);
+#endif
+		p_ptr->command_rep = -1;
+	}
 
 	if (player && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		if (p_ptr->warning_run < 3) {
@@ -7796,9 +7801,14 @@ static int Receive_run(int ind) {
 	}
 
 	/* paranoia? */
-//	if (player == -1) return;
+	//if (player == -1) return;
 
-	if (p_ptr->command_rep) p_ptr->command_rep = -1;
+	if (p_ptr->command_rep) {
+#ifdef USE_SOUND_2010
+		if (p_ptr->command_rep != PKT_BASH) sound(player, NULL, NULL, SFX_TYPE_STOP, TRUE);
+#endif
+		p_ptr->command_rep = -1;
+	}
 
 	/* If not the dungeon master, who can always run */
 	if (!p_ptr->admin_dm) {
@@ -10184,6 +10194,11 @@ static void Handle_clear_actions(int Ind) {
 
 	/* Stop ranged auto-retaliation (fire-till-kill) */
 	p_ptr->shooting_till_kill = FALSE;
+
+#ifdef USE_SOUND_2010
+	if (p_ptr->command_rep && p_ptr->command_rep != PKT_BASH)
+		sound(Ind, NULL, NULL, SFX_TYPE_STOP, TRUE);
+#endif
 
 	/* Stop automatically executed repeated actions */
 	p_ptr->command_rep = 0;

@@ -8161,6 +8161,10 @@ void disturb(int Ind, int stop_search, int keep_resting) {
 
 	/* Cancel repeated commands */
 	if (p_ptr->command_rep) {
+#ifdef USE_SOUND_2010
+		if (p_ptr->command_rep != PKT_BASH) sound(Ind, NULL, NULL, SFX_TYPE_STOP, TRUE);
+#endif
+
 		/* Cancel */
 		p_ptr->command_rep = 0;
 #ifdef ENABLE_XID_SPELL
