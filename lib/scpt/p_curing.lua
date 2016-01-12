@@ -118,8 +118,8 @@ HCUREWOUNDS_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			local status_ailments
-			status_ailments = 0, hd
+			local status_ailments, hd
+			status_ailments = 0
 
 			--hacks to cure effects same as potions would
 			if get_level(Ind, HCUREWOUNDS_II, 50) >= 9 then
