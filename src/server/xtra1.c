@@ -8952,6 +8952,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		p_ptr->redraw |= PR_GOLD;
 		p_ptr->item_order_store = p_ptr->store_num + 1;
 		p_ptr->item_order_town = gettown(Ind);
+s_printf("RID_ITEM_ORDER: store %d, town %d, t/s %d/%d\n", p_ptr->item_order_store, p_ptr->item_order_town, p_ptr->item_order_forge.tval, p_ptr->item_order_forge.tval);
 
 		/* calculate time, real-time minutes depending on store template rarity */
 		//dur = (cfg.fps * 60 * 5 * (113 - p_ptr->item_order_rarity)) / 13; //5..43 min

@@ -4081,8 +4081,9 @@ void do_cmd_store(int Ind) {
 	}
 
 #ifdef ENABLE_ITEM_ORDER
-	if (p_ptr->item_order_store && p_ptr->item_order_store == which &&
-	    p_ptr->item_order_town == town_idx &&!p_ptr->tim_blacklist) {
+s_printf("RID_ITEM_ORDER: store %d(%d), town %d(%d), t/s %d/%d\n", which, town_idx, p_ptr->item_order_forge.tval, p_ptr->item_order_forge.tval);
+	if (p_ptr->item_order_store && p_ptr->item_order_store - 1 == which &&
+	    p_ptr->item_order_town == town_idx && !p_ptr->tim_blacklist) {
 		if (p_ptr->item_order_turn > turn) {
 			int dur = p_ptr->item_order_turn - turn;
 
