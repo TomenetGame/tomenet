@@ -8670,7 +8670,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		return;
 #ifdef ENABLE_ITEM_ORDER
 	case RID_ITEM_ORDER: {
-		int i, j, num;
+		int i, j, num, extra = -1;
 		char str2[40], *str2ptr = str2;
 		store_type *st_ptr;
 		owner_type *ot_ptr;
@@ -8738,6 +8738,44 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			msg_print(Ind, "Sorry, I don't take orders.");
 			return;
 		}
+
+		/* hack: allow ordering very specific spell scrolls */
+		strncpy(str2, str, 40);
+		str2[13] = 0;
+		if (!strcasecmp(str2, "spell scrolls")) {
+			/* extract spell name, error if not speficied */
+			if (strlen(str) > 17) {
+				strcpy(str2, str + 17);
+				strcpy(str, "Spell Scrolls");
+			} else {
+				msg_print(Ind, "I need to know which spell you want in the spell scroll.");
+				return;
+				//*str2 = 0;
+			}
+		} else {
+			str2[12] = 0;
+			if (!strcasecmp(str2, "spell scroll")) {
+				/* extract spell name, error if not speficied */
+				if (strlen(str) > 16) {
+					strcpy(str2, str + 16);
+					strcpy(str, "Spell Scroll");
+				} else {
+					msg_print(Ind, "I need to know which spell you want in the spell scroll.");
+					return;
+					//*str2 = 0;
+				}
+			} else *str2 = 0;
+		}
+		if (*str2) {
+			for (i = 0; i < max_spells; i++)
+				if (!strcasecmp(school_spells[i].name, str2)) break;
+			if (i == max_spells) {
+				msg_print(Ind, "Sorry, I have never heard of such a spell.");
+				return;
+			}
+			extra = i;
+		}
+
 		/* failure, item does not exist in the game */
 		for (i = 1; i < max_k_idx; i++) {
 			invcopy(&forge, i);
@@ -8746,6 +8784,9 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			if (!o_name[0] || o_name[0] == ' ') continue;
 			if (!strcmp(o_name, "(nothing)")) continue;
 			if (!strcasecmp(o_name, str)) break;
+			/* generated scrolls always have pval 0 (MANATHRUST), so special check is needed.
+			   Also note that we omit the 'Spell scroll' part because we're not sure if it's singular or plural. */
+			if (strstr(o_name, " of Manathrust") && extra != -1) break;
 		}
 		if (i == max_k_idx) {
 			msg_print(Ind, "Sorry, I have never heard of an item like that.");
@@ -8776,6 +8817,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		/* create item and calculate price based on item rarity */
 		ot_ptr = &ow_info[st_ptr->owner];
 		apply_magic(&p_ptr->wpos, &forge, 0, FALSE, FALSE, FALSE, FALSE, RESF_NO_ENCHANT);
+		if (extra != -1) forge.pval = extra; //spellbooks
 		forge.number = num;
 		price = price_item(Ind, &forge, ot_ptr->min_inflate, FALSE);
 		/* make sure price doesn't beat BM for *id* / teleport (shop 5), *rc* (shop 4), which are all at 2% rarity */
@@ -8945,6 +8987,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 #ifdef ENABLE_ITEM_ORDER
 	case RID_ITEM_ORDER: {
 		s32b dur;
+		char o_name[ONAME_LEN];
 
 		if (p_ptr->store_num == -1) return;
 		if (!cfr) return;
@@ -8956,7 +8999,9 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		p_ptr->redraw |= PR_GOLD;
 		p_ptr->item_order_store = p_ptr->store_num + 1;
 		p_ptr->item_order_town = gettown(Ind);
-s_printf("RID_ITEM_ORDER: store %d, town %d, t/s %d/%d\n", p_ptr->item_order_store, p_ptr->item_order_town, p_ptr->item_order_forge.tval, p_ptr->item_order_forge.tval);
+
+		object_desc(0, o_name, &p_ptr->item_order_forge, FALSE, 256);
+		s_printf("RID_ITEM_ORDER: st %d, to %d: %d %s\n", p_ptr->item_order_store, p_ptr->item_order_town, p_ptr->item_order_forge.number, o_name);
 
 		/* calculate time, real-time minutes depending on store template rarity */
 		//dur = (cfg.fps * 60 * 5 * (113 - p_ptr->item_order_rarity)) / 13; //5..43 min
