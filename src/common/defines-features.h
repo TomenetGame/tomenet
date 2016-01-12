@@ -221,6 +221,9 @@
 /* Allow vampires to polymorph into vampiric mist at 40, obtaining some special feats? */
 #define VAMPIRIC_MIST
 
+/* Allow ordering a specific item in a store */
+#define ENABLE_ITEM_ORDER
+
 
 
 /* --------------------- Server-type dependant features -------------------- */
@@ -268,8 +271,6 @@
  #define TELEPORT_SURPRISES	/* monsters are surprised for a short moment if a player long-range teleported next to them */
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
-
- #define ENABLE_ITEM_ORDER	/* Allow ordering a specific item in a store */
 #endif
 
 #ifdef ARCADE_SERVER
