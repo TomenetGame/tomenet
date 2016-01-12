@@ -2042,6 +2042,7 @@ bool detect_magic(int Ind, int rad) {
 
 /*
  * A "generic" detect monsters routine, tagged to flags3
+ * NOTE: match_flag must be 0x0 or exactly one RF3_ flag or (hack) 0x3 for RF1_UNIQUE.
  */
 //bool detect_creatures_xxx(u32b match_flag, int rad)
 bool detect_creatures_xxx(int Ind, u32b match_flag) {
@@ -2136,6 +2137,15 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 		case RF3_ORC:
 			if (q_ptr->prace != RACE_HALF_ORC && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_ORC))) continue;
 			break;
+		case RF3_DRAGON:
+			if (q_ptr->prace != RACE_DRACONIAN && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & (RF3_DRAGON |  RF3_DRAGONRIDER)))) continue;
+			break;
+		case RF3_ANIMAL:
+			if (q_ptr->prace != RACE_YEEK && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_ANIMAL))) continue;
+			break;
+		case 0x3:
+			/* fun stuff (2): every player is unique (aw) */
+			break;
 		/* TODO: ...you know :) */
 		default: //allow 'all'
 			break;
@@ -2186,6 +2196,15 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 		break;
 	case RF3_ORC:
 		desc_monsters = "orcs";
+		break;
+	case RF3_DRAGON:
+		desc_monsters = "dragonkind";
+		break;
+	case RF3_ANIMAL:
+		desc_monsters = "animals";
+		break;
+	case 0x3: //hack
+		desc_monsters = "unique creatures";
 		break;
 	/* TODO: ...you know :) */
 	default: //allow 'all'
