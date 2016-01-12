@@ -1142,6 +1142,9 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 			if (!inarea(&Players[i]->wpos, &p_ptr->wpos)) continue;
 			if (Ind == i) continue;
 
+			/* backward compatibility */
+			if (type == SFX_TYPE_STOP && !is_newer_than(&Players[i]->version, 4, 6, 1, 1, 0, 0)) continue;
+
 			d = distance(p_ptr->py, p_ptr->px, Players[i]->py, Players[i]->px);
 #if 0
 			if (d > 10) continue;
