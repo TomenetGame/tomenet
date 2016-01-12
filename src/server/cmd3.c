@@ -2935,10 +2935,12 @@ static bool do_cmd_look_accept(int Ind, int y, int x) {
 
 	/* Player grids */
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[-c_ptr->m_idx]) {
+#if 0
 		player_type *q_ptr = Players[-c_ptr->m_idx];
 
 		if ((!q_ptr->admin_dm || player_sees_dm(Ind)) &&
 		    (player_has_los_bold(Ind, y, x) || p_ptr->telepathy))
+#endif
 			return (TRUE);
 	}
 
