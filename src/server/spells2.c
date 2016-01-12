@@ -2043,8 +2043,8 @@ bool detect_magic(int Ind, int rad) {
 /*
  * A "generic" detect monsters routine, tagged to flags3
  */
-//bool detect_monsters_xxx(u32b match_flag, int rad)
-bool detect_monsters_xxx(int Ind, u32b match_flag) {
+//bool detect_creatures_xxx(u32b match_flag, int rad)
+bool detect_creatures_xxx(int Ind, u32b match_flag) {
 	player_type *p_ptr = Players[Ind];
 	int  i, y, x;
 	bool flag = FALSE;
@@ -2086,7 +2086,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag) {
 		if (!panel_contains(y, x)) continue;
 
 		/* Detect evil monsters */
-		if (r_ptr->flags3 & (match_flag)) {
+		if (!match_flag || (r_ptr->flags3 & (match_flag))) {
 			byte a;
 			char c;
 
@@ -2124,17 +2124,17 @@ bool detect_monsters_xxx(int Ind, u32b match_flag) {
 		case RF3_EVIL:
 			if (!q_ptr->suscep_good) continue;
 			break;
-		case RF3_DEMON:
-			if (q_ptr->ptrait != TRAIT_CORRUPTED && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_DEMON))) continue;
-			break;
 		case RF3_GOOD:
 			if (!q_ptr->suscep_evil) continue;
+			break;
+		case RF3_DEMON:
+			if (q_ptr->ptrait != TRAIT_CORRUPTED && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_DEMON))) continue;
 			break;
 		case RF3_UNDEAD:
 			if (!q_ptr->suscep_life) continue;
 			break;
 		case RF3_ORC:
-			if (q_ptr->prace != RACE_HALF_ORC) continue;
+			if (q_ptr->prace != RACE_HALF_ORC && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_ORC))) continue;
 			break;
 		/* TODO: ...you know :) */
 		default: //allow 'all'
@@ -2175,14 +2175,14 @@ bool detect_monsters_xxx(int Ind, u32b match_flag) {
 	case RF3_EVIL:
 		desc_monsters = "evil";
 		break;
+	case RF3_GOOD:
+		desc_monsters = "good";
+		break;
 	case RF3_DEMON:
 		desc_monsters = "demons";
 		break;
 	case RF3_UNDEAD:
 		desc_monsters = "the undead";
-		break;
-	case RF3_GOOD:
-		desc_monsters = "good";
 		break;
 	case RF3_ORC:
 		desc_monsters = "orcs";
@@ -2217,7 +2217,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag) {
 	return (flag);
 }
 bool detect_evil(int Ind) {
-	return(detect_monsters_xxx(Ind, RF3_EVIL));
+	return(detect_creatures_xxx(Ind, RF3_EVIL));
 }
 
 /*
@@ -2476,58 +2476,6 @@ bool detect_creatures(int Ind) {
 	/* Result */
 	return (flag);
 }
-
-/*
- * Display all monsters on the current panel
- */
-void detect_monsters_forced(int Ind) {
-	player_type *p_ptr = Players[Ind];
-	int	i;
-
-	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
-	/* anti-exploit */
-	if (!local_panel(Ind)) return;
-
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return;
-
-	/* Clear previously detected stuff */
-	clear_ovl(Ind);
-
-	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
-//		monster_race *r_ptr = race_inf(m_ptr);
-
-		int fy = m_ptr->fy;
-		int fx = m_ptr->fx;
-
-		byte a;
-		char c;
-
-		/* Paranoia -- Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Skip visible monsters */
-		if (p_ptr->mon_vis[i]) continue;
-
-		/* Skip monsters not on this depth */
-		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
-
-		/* Hack - Temporarily visible */
-		p_ptr->mon_vis[i] = TRUE;
-
-		/* Get the look of the monster */
-		map_info(Ind, fy, fx, &a, &c);
-
-		/* No longer visible */
-		p_ptr->mon_vis[i] = FALSE;
-
-		/* Draw the monster on the screen */
-		draw_spot_ovl(Ind, fy, fx, a, c);
-	}
-}
-
 
 /*
  * Detect everything

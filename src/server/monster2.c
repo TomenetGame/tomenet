@@ -2617,7 +2617,7 @@ void update_player(int Ind) {
 		if (p_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Skip players not on this depth */
-		if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
 		/* Player can always see himself */
 		if (Ind == i) continue;
@@ -2646,8 +2646,9 @@ void update_player(int Ind) {
 			/* if ((*w_ptr & CAVE_VIEW) && (!p_ptr->blind)) */
 
 			if (!p_ptr->blind) {
-				if ((player_in_party(q_ptr->party, i)) && (q_ptr->party)) easy = flag = TRUE;
+				if (q_ptr->party && player_in_party(q_ptr->party, i)) easy = flag = TRUE;
 
+				/* in LoS? */
 				if (*w_ptr & CAVE_VIEW) {
 					/* Check infravision */
 					if (dis <= (byte)(p_ptr->see_infra)) {
@@ -2669,19 +2670,53 @@ void update_player(int Ind) {
 
 			/* Telepathy can see all players */
 			if ((p_ptr->telepathy & ESP_ALL) || (p_ptr->prace == RACE_DRACONIAN)) {
+				bool see = TRUE;
+
+				/* hard mode full ESP (range limit) */
+				if ((p_ptr->mode & MODE_HARD) && dis > MAX_SIGHT) see = FALSE;
+
+				/* Draconian ESP */
+				if (!(p_ptr->telepathy & ESP_ALL) &&
+				    (p_ptr->lev < 6 || (dis > (5 + p_ptr->lev / 2))))
+					see = FALSE;
+
+				/* Visible */
+				if (see) hard = flag = TRUE;
+			}
+			/* If we don't have ESP-vision yet and we don't have full ESP, check the lesser ESP variants */
+			if (!flag && !(p_ptr->telepathy & ESP_ALL)) {
 				bool see = FALSE;
 
-				if (!(p_ptr->mode & MODE_HARD)) see = TRUE;
-				if ((p_ptr->mode & MODE_HARD) && (dis < MAX_SIGHT)) see = TRUE;
-				/* Draconian ESP */
-				if (!(p_ptr->telepathy & ESP_ALL) && (p_ptr->prace == RACE_DRACONIAN) &&
-				    (p_ptr->lev < 6 || (dis > (5 + p_ptr->lev / 2)))) // 3+lev/3
-			
-				see = FALSE;
-				if (see) {
-					/* Visible */
-					hard = flag = TRUE;
-				}
+				if ((p_ptr->telepathy & ESP_EVIL) && q_ptr->suscep_good) see = TRUE;
+				else if ((p_ptr->telepathy & ESP_GOOD) && q_ptr->suscep_evil) see = TRUE;
+				else if ((p_ptr->telepathy & ESP_DEMON) &&
+				    (q_ptr->ptrait == TRAIT_CORRUPTED || (q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_DEMON)))) see = TRUE;
+				else if ((p_ptr->telepathy & ESP_UNDEAD) && q_ptr->suscep_life) see = TRUE;
+				else if ((p_ptr->telepathy & ESP_ORC) &&
+				    (q_ptr->prace == RACE_HALF_ORC || (q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_ORC)))) see = TRUE;
+				else if ((p_ptr->telepathy & ESP_TROLL) &&
+				    (q_ptr->prace == RACE_HALF_TROLL || (q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_TROLL)))) see = TRUE;
+				else if ((p_ptr->telepathy & ESP_GIANT) &&
+				    (q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_GIANT))) see = TRUE;
+				else if ((p_ptr->telepathy & ESP_DRAGON) &&
+				    (q_ptr->prace == RACE_DRACONIAN || (q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & (RF3_DRAGON | RF3_DRAGONRIDER))))) see = TRUE;
+				else if ((p_ptr->telepathy & ESP_DRAGONRIDER) &&
+				    (q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_DRAGONRIDER))) see = TRUE;
+				else if ((p_ptr->telepathy & ESP_ANIMAL) &&
+				    (q_ptr->prace == RACE_YEEK || (q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_ANIMAL)))) see = TRUE; // :3
+				else if ((p_ptr->telepathy & ESP_SPIDER) &&
+				    (q_ptr->body_monster && (r_info[q_ptr->body_monster].flags7 & RF7_SPIDER))) see = TRUE;
+				/* fun stuff (1): finally give any reason to esp-nonliving :-p */
+				else if ((p_ptr->telepathy & ESP_NONLIVING) &&
+				    (q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_NONLIVING))) see = TRUE;
+				/* fun stuff (2): every player is unique (aw) */
+				else if (p_ptr->telepathy & ESP_UNIQUE) see = TRUE;
+
+				/* hard mode full ESP (range limit) */
+				if ((p_ptr->mode & MODE_HARD) && dis > MAX_SIGHT) see = FALSE;
+
+				/* Visible */
+				if (see) hard = flag = TRUE;
 			}
 
 			/* Can we see invisible players ? */

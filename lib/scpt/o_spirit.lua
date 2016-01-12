@@ -226,7 +226,7 @@ DETECTCREATURES = add_spell {
 	["mana_max"] = 	3,
 	["fail"] = 	10,
 	["spell"] = 	function()
-			detect_monsters_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
+			detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
 --			if player.spell_project > 0 then
 --				fire_ball(Ind, GF_DETECTINVIS_PLAYER, 0, 1, player.spell_project, "")
 --			end

@@ -5708,7 +5708,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #if 1
 		case ART_ORCHAST:
 			msg_print(Ind, "Your weapon glows brightly...");
-			(void)detect_monsters_xxx(Ind, RF3_ORC);
+			(void)detect_creatures_xxx(Ind, RF3_ORC);
 			o_ptr->timeout = 10;
 			break;
 #endif	// 0
