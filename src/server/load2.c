@@ -1862,9 +1862,22 @@ if (p_ptr->updated_savegame == 0) {
 	/* for automatic artifact resets (similar to updated_savegame) */
 	if (!older_than(4, 3, 22)) rd_byte(&p_ptr->artifact_reset);
 
+#ifndef ENABLE_ITEM_ORDER
 	/* Skip the flags -- these are currently not written either */
 	strip_bytes(12);
+#else
+	rd_s16b(&tmp16s);
+	p_ptr->item_order_store = tmp16s;
+	rd_byte(&tmp8u);
+	p_ptr->item_order_town = tmp8u;
+	rd_byte(&tmp8u);
+	p_ptr->item_order_rarity = tmp8u;
+	rd_s32b(&p_ptr->item_order_turn);
+	rd_s32b(&tmp32s);
+	p_ptr->item_order_cost = (s64b)tmp32s;
 
+	if (!older_than(4, 6, 5)) rd_item(&p_ptr->item_order_forge);
+#endif
 
 	/* Hack -- the two "special seeds" */
 	/*rd_u32b(&seed_flavor);

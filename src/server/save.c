@@ -892,11 +892,19 @@ static void wr_extra(int Ind) {
 	/* for automatic artifact resets */
 	wr_byte(p_ptr->artifact_reset);
 
-	/* Ignore some flags */
-	wr_u32b(0L);	/* oops */
-	wr_u32b(0L);	/* oops */
-	wr_u32b(0L);	/* oops */
-
+#ifdef ENABLE_ITEM_ORDER
+	wr_s16b(p_ptr->item_order_store);
+	wr_byte(p_ptr->item_order_town);
+	wr_byte(p_ptr->item_order_rarity);
+	wr_s32b(p_ptr->item_order_turn);
+	wr_s32b(p_ptr->item_order_cost);
+	wr_item(&p_ptr->item_order_forge);
+#else
+	wr_s32b(0x0);
+	wr_s32b(0x0);
+	wr_s32b(0x0);
+	wr_item(&p_ptr->inventory[INVEN_PACK]); //dummy
+#endif
 
 	/* Write the "object seeds" */
 	/*wr_u32b(seed_flavor);*/
