@@ -595,7 +595,7 @@ static void wr_house(house_type *house) {
 	wr_s16b(house->wpos.wy);
 	wr_s16b(house->wpos.wz);
 
-	if(house->flags & HF_RECT){
+	if (house->flags & HF_RECT){
 		wr_byte(house->coords.rect.width);
 		wr_byte(house->coords.rect.height);
 	} else {
@@ -681,18 +681,18 @@ static void wr_extra(int Ind) {
 		wr_byte(p_ptr->s_info[i].flags1);
 		wr_s32b(p_ptr->s_info[i].base_value);
 #endif
-        }
+	}
 	wr_s16b(p_ptr->skill_points);
-//	wr_s16b(p_ptr->skill_last_level);
+	//wr_s16b(p_ptr->skill_last_level);
 
 	/* /undoskills - mikaelh */
 	for (i = 0; i < MAX_SKILLS; ++i) {
-                wr_s32b(p_ptr->s_info_old[i].value);
-                wr_u16b(p_ptr->s_info_old[i].mod);
-                wr_byte(p_ptr->s_info_old[i].dev);
+		wr_s32b(p_ptr->s_info_old[i].value);
+		wr_u16b(p_ptr->s_info_old[i].mod);
+		wr_byte(p_ptr->s_info_old[i].dev);
 #if 0 //SMOOTHSKILLS
-                wr_byte(p_ptr->s_info_old[i].hidden);
-                wr_byte(p_ptr->s_info_old[i].dummy);
+		wr_byte(p_ptr->s_info_old[i].hidden);
+		wr_byte(p_ptr->s_info_old[i].dummy);
 #else
 		wr_byte(p_ptr->s_info_old[i].flags1);
 		wr_s32b(p_ptr->s_info_old[i].base_value);
@@ -1031,7 +1031,7 @@ static void wr_hostilities(int Ind) {
 
 
 /*
- * Write a specified depth 
+ * Write a specified depth
  *
  * Each row is broken down into a series of run-length encoded runs.
  * Each run has a constant feature type, and flags.
@@ -1241,11 +1241,11 @@ static void wr_cave_memory(int Ind) {
  */
 static bool wr_savefile_new(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int        i, j;
+	int i, j;
 
-	u32b              now, tmp32u;
-	byte		tmp8u;
-	u16b		tmp16u;
+	u32b now, tmp32u;
+	byte tmp8u;
+	u16b tmp16u;
 
 
 	/* Guess at the current time */
@@ -1797,10 +1797,10 @@ bool load_player(int Ind) {
 
 		/* Message (below) */
 		/*
-		   if (err) { 
+		   if (err) {
 		   what = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 		   (void)sprintf (what,"Cannot parse savefile error %d",err);
-		   }; 
+		   };
 		   */
 		if (err) what = "Cannot parse savefile error";
 		if (err == 35) what = edit ? "Server is closed for login now" :
@@ -1986,12 +1986,12 @@ static void wr_auctions()
 }
 
 static bool wr_server_savefile() {
-        int        i;
-	u32b              now;
+	int i;
+	u32b now;
 
-	byte            tmp8u;
-	u16b            tmp16u;
-	u32b		tmp32u;
+	byte tmp8u;
+	u16b tmp16u;
+	u32b tmp32u;
 
 
 	/* Guess at the current time */
@@ -2040,9 +2040,9 @@ static bool wr_server_savefile() {
 	wr_u16b(sf_saves);
 
 	/* Is this a panic save? - C. Blue */
-        if (panic_save) wr_byte(1); else wr_byte(0);
+	if (panic_save) wr_byte(1); else wr_byte(0);
 
-        /* save server state regarding updates (lua) */
+	/* save server state regarding updates (lua) */
 	wr_s16b(updated_server);
 	/* save artifact-reset state (lua) */
 	wr_s16b(artifact_reset);
@@ -2099,15 +2099,15 @@ static bool wr_server_savefile() {
 
 	tmp32u = 0L;
 	for(i = 0; i < num_houses; i++)
-		if(!(houses[i].flags&HF_DELETED)) tmp32u++;
+		if (!(houses[i].flags&HF_DELETED)) tmp32u++;
 
 	/* Note the number of houses */
 	wr_s32b(tmp32u);
 
 	/* Dump the houses */
 	for (i = 0; i < num_houses; i++){
-		if(!(houses[i].flags&HF_DELETED))
-			wr_house(&houses[i]); 
+		if (!(houses[i].flags&HF_DELETED))
+			wr_house(&houses[i]);
 	}
 
 	/* Write the player name database */
@@ -2250,7 +2250,7 @@ static void new_wr_floors() {
 				struct dungeon_type *d_ptr = w_ptr->dungeon;
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = -z;
-					if(d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
+					if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
 						wr_floor(&cwpos);
 				}
 			}
@@ -2258,7 +2258,7 @@ static void new_wr_floors() {
 				struct dungeon_type *d_ptr = w_ptr->tower;
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = z;
-					if(d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
+					if (d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
 						wr_floor(&cwpos);
 				}
 			}
@@ -2388,7 +2388,7 @@ static bool load_server_info_classic(void) {
 
 		/* Message (below) */
 		/*
-		   if (err) { 
+		   if (err) {
 		   what = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx";
 		   (void)sprintf (what,"Cannot parse savefile error %d",err);
 		   };
