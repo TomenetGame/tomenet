@@ -2087,7 +2087,9 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 		if (!panel_contains(y, x)) continue;
 
 		/* Detect evil monsters */
-		if (!match_flag || (r_ptr->flags3 & (match_flag))) {
+		if (!match_flag || /* hack: all */
+		    (match_flag == 0x3 && (r_ptr->flags1 & RF1_UNIQUE)) || /* hack: uniques */
+		    (match_flag != 0x3 && (r_ptr->flags3 & (match_flag)))) {
 			byte a;
 			char c;
 
