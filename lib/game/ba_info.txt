@@ -335,3 +335,8 @@ I:64:0:f:0
 N:71:Donate gold and pray to the gods
 C:0:0:0
 I:65:0:d:0
+
+#ENABLE_ITEM_ORDER
+N:72:Order an item
+C:0:0:0
+I:66:0:o:0

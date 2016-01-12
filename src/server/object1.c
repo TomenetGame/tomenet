@@ -1936,6 +1936,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	}
 	/* Never use short item names in flavour knowledge list */
 	if ((mode & 512)) short_item_names = FALSE;
+#ifdef ENABLE_ITEM_ORDER
+	/* Usually this is only used for arts, but now also for item orders,
+	   so we need to strip the flavour really (way too annoying) */
+	else if ((mode & 256)) short_item_names = TRUE;
+#endif
 
 	/* Hack -- Extract the sub-type "indexx" */
 	indexx = o_ptr->sval;
@@ -2186,6 +2191,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		case TV_RUNE:
 			append_name = TRUE;
 			basenm = "& Rune~";
+			break;
+
+		case TV_MONSTER:
 			break;
 
 		/* Used in the "inventory" routine */

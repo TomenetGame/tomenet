@@ -1699,6 +1699,8 @@ extern int auction_examine(int Ind, int auction_id);
 
 extern void handle_store_leave(int Ind);
 extern void verify_store_owner(store_type *st_ptr);
+extern s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip);
+extern int gettown(int Ind);
 
 /* util.c */
 extern bool suppress_message, censor_message, suppress_boni;

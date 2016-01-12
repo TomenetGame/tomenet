@@ -2302,6 +2302,15 @@ if (is_admin(p_ptr))
 			Send_request_num(Ind, RID_SR_DONATE, "Donate how much gold to the temple? ", p_ptr->au);
 			break;
 #endif
+#ifdef ENABLE_ITEM_ORDER
+		case BACT_ITEM_ORDER:
+			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+				msg_print(Ind, "You need an up-to-date client to order an item.");
+				break;
+			}
+			Send_request_str(Ind, RID_ITEM_ORDER, "Which item would you like to order? ", "");
+			break;
+#endif
 		default:
 #if 0
 			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {

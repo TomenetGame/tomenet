@@ -39,7 +39,6 @@
 #define STORE_ROUNDS_SINGLE_WAND_CHARGES
 
 
-static int gettown(int Ind);
 static int gettown_dun(int Ind);
 
 void home_sell(int Ind, int item, int amt);
@@ -253,14 +252,12 @@ void dealloc_stores(int townval) {
  * to adjust (by 200) to extract a usable multiplier.  Note that the
  * "greed" value is always something (?).
  */
-static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
+s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	player_type *p_ptr = Players[Ind];
 	owner_type *ot_ptr;
 	store_type *st_ptr;
-	int     factor;
-	int     adjust;
-	s64b    price;
-	int i;
+	int i, factor, adjust;
+	s64b price;
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
@@ -2060,7 +2057,7 @@ static void updatebargain(s64b price, s64b minprice) {
  *
  * For multiple stores.
  */
-static int gettown(int Ind) {
+int gettown(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, retval =- 1;
 	if (p_ptr->wpos.wz) return(-1);

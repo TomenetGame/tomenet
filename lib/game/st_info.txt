@@ -67,7 +67,8 @@ T:12:46:5
 T:9:46:6
 #mummy wrapping
 T:5:12:7
-A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
+$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
 O:0:5:6:7:1:35
 G:1:U
 W:24
@@ -97,7 +98,8 @@ I:80:& Set~ of Gauntlets
 I:100:& Small Leather Shield~
 I:90:& Large Leather Shield~
 I:80:& Small Metal Shield~
-A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
+$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
 O:8:9:10:11:38:20
 G:2:s
 W:36
@@ -136,7 +138,8 @@ I:100:& Iron Shot~
 I:100:& Arrow~
 I:100:& Bolt~
 I:100:& Whip~
-A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
+$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
 O:12:13:14:15:44:68
 G:3:w
 W:36
@@ -192,7 +195,8 @@ I:100:Neutralize Poison
 #Scroll of Life
 T:100:70:56
 T:100:70:56
-A:67:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:67:72:1:2:3:4
+$ENABLE_ITEM_ORDER!A:67:0:1:2:3:4
 O:26:27:28:29:26:43
 G:4:g
 W:36
@@ -263,7 +267,8 @@ T:100:70:29
 T:100:70:29
 I:100:Resist Heat
 I:100:Resist Cold
-A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
+$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
 O:30:31:32:33:30:33
 G:5:b
 W:36
@@ -320,7 +325,8 @@ I:100:Probing
 T:100:111:50
 T:100:111:50
 T:100:111:50
-A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
+$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
 #O:34:35:36:37:31:44 need more keepers first in ow_info
 #O:34:35:36:37:36:37
 O:34:35:36:37:46:49
@@ -388,7 +394,8 @@ T:7:111:50
 T:7:111:56
 T:7:111:61
 T:100:111:255
-A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
+$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
 O:42:43:44:45:42:43
 G:9:o
 #W:84 --priest spells tiered=+24:
@@ -424,7 +431,8 @@ T:20:107:17
 T:20:107:18
 T:20:107:19
 T:20:107:20
-A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
+$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
 O:46:47:48:46:47:48
 G:+:B
 F:MEDIUM_LEVEL

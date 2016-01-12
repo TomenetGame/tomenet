@@ -2795,6 +2795,8 @@
 #define TV_SHADOW_BOOK	94
 #define TV_HUNT_BOOK	95
 
+#define TV_MONSTER	99	/* unused, just to get rid of the NOTHING_NOTICED */
+
 /* unused */
 #define is_realm_book(o_ptr) \
 	(89 <= (o_ptr)->tval && (o_ptr)->tval <= 95)
@@ -7693,6 +7695,9 @@ extern int PlayerUID;
 #ifdef SOLO_REKING
  #define BACT_SR_DONATE			65
 #endif
+#ifdef ENABLE_ITEM_ORDER
+ #define BACT_ITEM_ORDER		66
+#endif
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 
@@ -8157,6 +8162,9 @@ extern int PlayerUID;
 #define RID_GUILD_CREATE	5
 #ifdef SOLO_REKING
  #define RID_SR_DONATE		6
+#endif
+#ifdef ENABLE_ITEM_ORDER
+ #define RID_ITEM_ORDER		7
 #endif
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */

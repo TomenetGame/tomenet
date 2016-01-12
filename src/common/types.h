@@ -2977,6 +2977,11 @@ struct player_type {
 	int solo_reking, solo_reking_au; /* 1min = 100xp = 250au, up to 5M au, and then another 5M au that cannot be paid off in xp or minutes. */
 	time_t solo_reking_laston;	/* since Au is the finest unit, solo_reking vars are measured in Au (0..5M) */
 #endif
+
+#ifdef ENABLE_ITEM_ORDER
+	int item_order_store, item_order_town, item_order_kidx, item_order_num;
+	s64b item_order_cost;
+#endif
 };
 
 typedef struct boni_col boni_col;

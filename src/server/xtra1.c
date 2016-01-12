@@ -8668,6 +8668,130 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		if (str[0] == '\e' || !str[0]) return; /* user ESCaped */
 		guild_rename(Ind, str);
 		return;
+#ifdef ENABLE_ITEM_ORDER
+	case RID_ITEM_ORDER: {
+		int i, j, num;
+		char str2[40], *str2ptr = str2;
+		store_type *st_ptr;
+		owner_type *ot_ptr;
+		s64b price;
+		object_type forge;
+		char o_name[ONAME_LEN];
+
+		if (p_ptr->item_order_store != 0) {
+			msg_format(Ind, "You still have an order open at the %s in %s!",
+			    st_name + st_info[p_ptr->item_order_store - 1].name, town_profile[town[p_ptr->item_order_town].type].name);
+			return;
+		}
+
+		str[40] = '\0';
+
+		/* trim */
+		while (*str == ' ') str++;
+		while (str[strlen(str - 1)] == ' ') str[strlen(str - 1)] = 0;
+		if (!(*str)) return;
+		for (i = 0; i < strlen(str) - 1; i++) {
+			if (str[i] == ' ' && str[i + 1] == ' ') continue;
+			*str2ptr = str[i];
+			str2ptr++;
+		}
+		*str2ptr = str[i];
+		*(str2ptr + 1) = 0;
+
+		/* allow specifying a number already */
+		str2ptr = str2;
+		if (str2[0] == 'a') {
+			if (str2[1] == ' ') {
+				num = 1;
+				str2ptr += 2;
+			} else if (str2[1] == 'n' && str2[2] == ' ') {
+				num = 1;
+				str2ptr += 3;
+			} else num = 1;
+		} else if ((str2[0] == 'n' && str2[1] == 'o' && str2[2] == ' ') ||
+		    (str2[0] == '0' && str2[1] == ' ') ||
+		    (str2[0] == '0' && !i)) {
+			msg_print(Ind, "Very funny, friend. Now stop wasting my time!");
+			return;
+		} else if ((i = atoi(str2))) {
+			num = i;
+			while (*str2ptr >= '0' && *str2ptr <= '9') str2ptr++;
+			if (*str2ptr == ' ') str2ptr++;
+		} else num = 1;
+
+		strcpy(str, str2ptr);
+
+		/* failure, not in an npc-store */
+		if (p_ptr->store_num < 0) {
+			msg_print(Ind, "Sorry, I don't take orders.");
+			return;
+		}
+		/* failure, not a simple town store */
+		if (p_ptr->store_num > STORE_MAGIC && p_ptr->store_num != STORE_BOOK && p_ptr->store_num != STORE_RUNE) {
+			msg_print(Ind, "Sorry, I don't take orders.");
+			return;
+		}
+		/* failure, item does not exist in the game */
+		for (i = 1; i < max_k_idx; i++) {
+			invcopy(&forge, i);
+			forge.number = num; //hack: make item name match player input for plural (num > 1)
+			object_desc(0, o_name, &forge, FALSE, 256);
+			if (!o_name[0] || o_name[0] == ' ') continue;
+			if (!strcmp(o_name, "(nothing)")) continue;
+			if (!strcasecmp(o_name, str)) break;
+		}
+		if (i == max_k_idx) {
+			msg_print(Ind, "Sorry, I have never heard of an item like that.");
+			return;
+		}
+		forge.number = 1;
+
+		/* check store's template for this item */
+		st_ptr = &town[0].townstore[p_ptr->store_num];
+		for (j = 0; j < st_info[st_ptr->st_idx].table_num; j++) {
+			/* specific k_idx? */
+			if (i == st_info[st_ptr->st_idx].table[j][0]) break;
+			/* tval-hack? (all svals are allowed) */
+			else if (st_info[st_ptr->st_idx].table[j][0] > 10000 && forge.tval == st_info[st_ptr->st_idx].table[j][0] - 10000) break;
+		}
+		/* failure, this item is not part of this store's stock template */
+		if (j == st_info[st_ptr->st_idx].table_num) {
+			msg_print(Ind, "Sorry, I don't sell that kind of item.");
+			return;
+		}
+
+		/* extract item rarity, hack: any-tval causes greater rarity (eg book store!) */
+		if (st_info[st_ptr->st_idx].table[j][0] > 10000)
+			j = st_info[st_ptr->st_idx].table[j][1] / 2;
+		else
+			j = st_info[st_ptr->st_idx].table[j][1];
+
+		/* calculate price based on item rarity */
+		ot_ptr = &ow_info[st_ptr->owner];
+		price = price_item(Ind, &forge, ot_ptr->min_inflate, FALSE);
+		/* make sure price doesn't beat BM for *id* / teleport (shop 5), *rc* (shop 4), which are all at 2% rarity */
+		price = (price * (180 - j) * (180 - j)) / 6400; //1x (100%) .. 5x (1%) -- so it's still above BM
+
+		p_ptr->item_order_kidx = forge.k_idx;
+		p_ptr->item_order_num = num;
+		p_ptr->item_order_cost = price * num;
+
+		if (num == 1) {
+			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces! Accept?", price), FALSE);
+			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is somewhat less common, that will be %d gold pieces! Accept?", price), FALSE);
+			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is uncommon, I could promise you delivery for %d gold pieces! Accept?", price), FALSE);
+			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is rare, I'll try to get it for you for %d gold pieces! Accept?", price), FALSE);
+			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is very rare, I might be able to get hold of one for %d gold pieces! Accept?", price), FALSE);
+		} else {
+			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces! Accept?", price * num), FALSE);
+			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are somewhat less common, that will be %d gold pieces! Accept?", price * num), FALSE);
+			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are uncommon, I could promise you delivery for %d gold pieces! Accept?", price * num), FALSE);
+			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is rare, I'll try to get those for you for %d gold pieces! Accept?", price * num), FALSE);
+			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is very rare, I might be able to get hold of them for %d gold pieces! Accept?", price * num), FALSE);
+		}
+		return;
+		}
+#endif
 	default:;
 	}
 }
@@ -8808,6 +8932,20 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		if (cfr) guild_create(Ind, p_ptr->cur_file_title);
 		p_ptr->cur_file_title[0] = 0;//not really needed
 		return;
+#ifdef ENABLE_ITEM_ORDER
+	case RID_ITEM_ORDER:
+		if (p_ptr->store_num == -1) return;
+		if (!cfr) return;
+		if (p_ptr->item_order_cost > p_ptr->au) {
+			msg_print(Ind, "You do not have that much gold with you!");
+			return;
+		}
+		p_ptr->au -= p_ptr->item_order_cost;
+		p_ptr->redraw |= PR_GOLD;
+		p_ptr->item_order_store = p_ptr->store_num + 1;
+		p_ptr->item_order_town = gettown(Ind);
+		return;
+#endif
 	default: ;
 	}
 }

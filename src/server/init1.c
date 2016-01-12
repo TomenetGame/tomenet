@@ -1554,6 +1554,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "AC30") && negation) invalid = TRUE;
 #endif
+#ifndef ENABLE_ITEM_ORDER
+		if (streq(m, "ENABLE_ITEM_ORDER") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_ITEM_ORDER") && negation) invalid = TRUE;
+#endif
 
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
@@ -1573,6 +1578,7 @@ if (!season_newyearseve) {
 //		    strcmp(m, "PRECIOUS_STONES") &&
 		    strcmp(m, "EXPAND_TV_POTION") &&
 		    strcmp(m, "AC30") &&
+		    strcmp(m, "ENABLE_ITEM_ORDER") &&
 			TRUE)
 			invalid = TRUE;
 	}
