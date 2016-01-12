@@ -191,10 +191,10 @@ HEXORCISM_I = add_spell {
 	["fail"] = 	-15,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 400))
+			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 550))
 	end,
 	["info"] = 	function()
-		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 400))
+		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 550))
 	end,
 	["desc"] = 	{ "Dispels nearby demons.", }
 }
@@ -209,10 +209,10 @@ HEXORCISM_II = add_spell {
 	["fail"] = 	-90,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 800))
+			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 1100))
 	end,
 	["info"] = 	function()
-		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 800))
+		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 1100))
 	end,
 	["desc"] = 	{ "Dispels nearby demons.", }
 }
@@ -249,10 +249,10 @@ HRELSOULS_I = add_spell {
 	["fail"] = 	25,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 200))
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 275))
 			end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 200))
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 275))
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
@@ -267,10 +267,10 @@ HRELSOULS_II = add_spell {
 	["fail"] = 	-40,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 400))
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 500))
 			end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 400))
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 500))
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
@@ -285,10 +285,10 @@ HRELSOULS_III = add_spell {
 	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 700))
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 900))
 			end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 700))
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 900))
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
