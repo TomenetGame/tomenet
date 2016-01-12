@@ -8808,9 +8808,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 
-		/* extract item rarity, hack: any-tval causes greater rarity (eg book store!) */
-		if (st_info[st_ptr->st_idx].table[j][0] > 10000)
+		/* extract item rarity, hack: any-tval causes greater rarity, and so do spell scrolls (any pval) */
+		if (st_info[st_ptr->st_idx].table[j][0] > 10000) /* any tval */
 			j = st_info[st_ptr->st_idx].table[j][1] / 2;
+		else if (forge.tval == TV_BOOK && forge.sval == SV_SPELLBOOK) /* any pval (book stores only) */
+			j = (st_info[st_ptr->st_idx].table[j][1] * 2) / 3;
 		else
 			j = st_info[st_ptr->st_idx].table[j][1];
 
@@ -8829,13 +8831,19 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		p_ptr->item_order_rarity = j;
 
 		if (num == 1) {
-			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
+			/* special hack: spell scrolls get a unique message */
+			if (extra != -1) Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep that particular scroll for you, that will be %d Au!", price), FALSE);
+
+			else if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
 			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is somewhat less common, that will be %d Au!", price), FALSE);
 			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is uncommon, I could promise you delivery for %d Au!", price), FALSE);
 			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is rare, I'll try to get it for you for %d Au!", price), FALSE);
 			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That's very rare, I might be able to get hold of one for %d Au!", price), FALSE);
 		} else {
-			if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
+			/* special hack: spell scrolls get a unique message */
+			if (extra != -1) Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep those specific scrolls for you, that will be %d Au!", price), FALSE);
+
+			else if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
 			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are somewhat less common, that will be %d Au!", price), FALSE);
 			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are uncommon, I could promise you delivery for %d Au!", price), FALSE);
 			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are rare, I'll try to get those for you for %d Au!", price), FALSE);
