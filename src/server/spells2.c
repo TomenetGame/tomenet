@@ -1707,7 +1707,6 @@ void self_knowledge(int Ind) {
 	Send_special_other(Ind);
 }
 
-
 /*
  * Forget everything
  */
@@ -1780,7 +1779,6 @@ bool lose_all_info(int Ind) {
 	/* It worked */
 	return (TRUE);
 }
-
 
 /*
  * Detect any treasure on the current panel		-RAK-
@@ -1886,6 +1884,7 @@ bool detect_treasure(int Ind, int rad) {
 
 	return (detect);
 }
+
 /* detect treasures level-wide, for DIGGING skill */
 bool floor_detect_treasure(int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -1960,8 +1959,6 @@ bool floor_detect_treasure(int Ind) {
 	return (detect);
 }
 
-
-
 /*
  * Detect magic items.
  *
@@ -1996,9 +1993,9 @@ bool detect_magic(int Ind, int rad) {
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
 	/* Scan the current panel */
-//	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+	//for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
-//		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+		//for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds4(l_ptr, i, j)) continue;
@@ -2042,9 +2039,6 @@ bool detect_magic(int Ind, int rad) {
 	/* Return result */
 	return (detect);
 }
-
-
-
 
 /*
  * A "generic" detect monsters routine, tagged to flags3
@@ -2112,23 +2106,91 @@ bool detect_monsters_xxx(int Ind, u32b match_flag) {
 		}
 	}
 
-	switch (match_flag) {
+	/* Scan players */
+	for (i = 1; i <= NumPlayers; i++) {
+		player_type *q_ptr = Players[i];
+
+		int py = q_ptr->py;
+		int px = q_ptr->px;
+
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Skip ourself */
+		if (i == Ind) continue;
+
+		/* match flag */
+		switch (match_flag) {
 		case RF3_EVIL:
-			desc_monsters = "evil";
+			if (!q_ptr->suscep_good) continue;
 			break;
 		case RF3_DEMON:
-			desc_monsters = "demons";
-			break;
-		case RF3_UNDEAD:
-			desc_monsters = "the undead";
+			if (q_ptr->ptrait != TRAIT_CORRUPTED && !(q_ptr->body_monster && (r_info[q_ptr->body_monster].flags3 & RF3_DEMON))) continue;
 			break;
 		case RF3_GOOD:
-			desc_monsters = "good";
+			if (!q_ptr->suscep_evil) continue;
+			break;
+		case RF3_UNDEAD:
+			if (!q_ptr->suscep_life) continue;
 			break;
 		case RF3_ORC:
-			desc_monsters = "orcs";
+			if (q_ptr->prace != RACE_HALF_ORC) continue;
 			break;
-			/* TODO: ...you know :) */
+		/* TODO: ...you know :) */
+		default: //allow 'all'
+			break;
+		}
+
+		/* Skip players not on this depth */
+		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+
+		/* Never detect the dungeon master! */
+		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
+
+		/* Skip visible players */
+		if (p_ptr->play_vis[i]) continue;
+
+		/* Detect all xxx players */
+		if (panel_contains(py, px)) {
+			byte a;
+			char c;
+
+			/* Hack - Temporarily visible */
+			p_ptr->play_vis[i] = TRUE;
+
+			/* Get the look of the player */
+			map_info(Ind, py, px, &a, &c);
+
+			/* No longer visible */
+			p_ptr->play_vis[i] = FALSE;
+
+			/* Draw the player on the screen */
+			draw_spot_ovl(Ind, py, px, a, c);
+
+			flag = TRUE;
+		}
+	}
+
+	switch (match_flag) {
+	case RF3_EVIL:
+		desc_monsters = "evil";
+		break;
+	case RF3_DEMON:
+		desc_monsters = "demons";
+		break;
+	case RF3_UNDEAD:
+		desc_monsters = "the undead";
+		break;
+	case RF3_GOOD:
+		desc_monsters = "good";
+		break;
+	case RF3_ORC:
+		desc_monsters = "orcs";
+		break;
+	/* TODO: ...you know :) */
+	default: //allow 'all'
+		desc_monsters = "creatures";
+		break;
 	}
 
 	/* Describe */
@@ -2154,8 +2216,9 @@ bool detect_monsters_xxx(int Ind, u32b match_flag) {
 	/* Result */
 	return (flag);
 }
-
-
+bool detect_evil(int Ind) {
+	return(detect_monsters_xxx(Ind, RF3_EVIL));
+}
 
 /*
  * Locates and displays all invisible creatures on current panel -RAK-
@@ -2163,8 +2226,8 @@ bool detect_monsters_xxx(int Ind, u32b match_flag) {
 bool detect_invisible(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	int		i;
-	bool	flag = FALSE;
+	int i;
+	bool flag = FALSE;
 
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
@@ -2180,7 +2243,7 @@ bool detect_invisible(int Ind) {
 	/* Detect all invisible monsters */
 	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = race_inf(m_ptr);
+		monster_race *r_ptr = race_inf(m_ptr);
 
 		int fy = m_ptr->fy;
 		int fx = m_ptr->fx;
@@ -2234,13 +2297,16 @@ bool detect_invisible(int Ind) {
 		if (i == Ind) continue;
 
 		/* Skip visible players */
+		if (p_ptr->play_vis[i]) continue;
+
+		/* Skip players not on this depth */
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
 		/* Skip the dungeon master */
 		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
 
-		/* Detect all invisible players but not the dungeon master */
-		if (panel_contains(py, px) && q_ptr->ghost)  {
+		/* Detect all invisible players */
+		if (panel_contains(py, px) && q_ptr->invis)  {
 			byte a;
 			char c;
 
@@ -2251,7 +2317,7 @@ bool detect_invisible(int Ind) {
 			map_info(Ind, py, px, &a, &c);
 
 			/* No longer visible */
-			p_ptr->mon_vis[i] = FALSE;
+			p_ptr->play_vis[i] = FALSE;
 
 			/* Draw the player on the screen */
 			draw_spot_ovl(Ind, py, px, a, c);
@@ -2284,99 +2350,6 @@ bool detect_invisible(int Ind) {
 	/* Result */
 	return (flag);
 }
-
-
-
-/*
- * Display evil creatures on current panel		-RAK-
- */
-#if 0
-bool detect_evil(int Ind) {
-	player_type *p_ptr = Players[Ind];
-
-	int		i;
-	bool	flag = FALSE;
-
-	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
-	/* anti-exploit */
-	if (!local_panel(Ind)) return FALSE;
-
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
-
-	/* Clear previously detected stuff */
-	clear_ovl(Ind);
-
-	/* Display all the evil monsters */
-	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = race_inf(m_ptr);
-
-		int fy = m_ptr->fy;
-		int fx = m_ptr->fx;
-
-		/* Paranoia -- Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Skip visible monsters */
-		if (p_ptr->mon_vis[i]) continue;
-
-		/* Skip monsters not on this depth */
-		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
-
-		/* Detect evil monsters */
-		if (panel_contains(fy, fx) && (r_ptr->flags3 & RF3_EVIL)) {
-			byte a;
-			char c;
-
-			/* Hack - Temporarily visible */
-			p_ptr->mon_vis[i] = TRUE;
-
-			/* Get the look of the monster */
-			map_info(Ind, fy, fx, &a, &c);
-
-			/* No longer visible */
-			p_ptr->mon_vis[i] = FALSE;
-
-			/* Draw the monster on the screen */
-			draw_spot_ovl(Ind, fy, fx, a, c);
-
-			flag = TRUE;
-		}
-	}
-
-	/* Note effects and clean up */
-	if (flag) {
-		/* Describe, and wait for acknowledgement */
-		msg_print(Ind, "You sense the presence of evil!");
-		msg_print(Ind, NULL);
-
- #if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
-		/* Wait */
-		Send_pause(Ind);
-
-		/* Mega-Hack -- Fix the monsters */
-		update_monsters(FALSE);
- #endif
-	}
-    else {
- #ifdef DETECT_ABSENCE
-	msg_print(Ind, "You sense the absence of evil.");
-	msg_print(Ind, NULL);
- #endif
-    }
-
-	/* Result */
-	return (flag);
-}
-#else
-bool detect_evil(int Ind) {
-	return(detect_monsters_xxx(Ind, RF3_EVIL));
-}
-#endif	// 0
-
-
 
 /*
  * Display all non-invisible monsters/players on the current panel
@@ -2446,20 +2419,20 @@ bool detect_creatures(int Ind) {
 		/* Skip disconnected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 
+		/* Skip ourself */
+		if (i == Ind) continue;
+
+		/* Skip players not on this depth */
+		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+
 		/* Never detect the dungeon master! */
 		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
 
 		/* Skip visible players */
 		if (p_ptr->play_vis[i]) continue;
 
-		/* Skip players not on this depth */
-		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
-
-		/* Skip ourself */
-		if (i == Ind) continue;
-
 		/* Detect all non-invisible players */
-		if (panel_contains(py, px) && !q_ptr->ghost) {
+		if (panel_contains(py, px) && !q_ptr->invis) {
 			byte a;
 			char c;
 
@@ -2839,7 +2812,7 @@ bool detect_trap(int Ind, int rad) {
 			}
 
 			/* Detect invisible traps */
-			//			if (c_ptr->feat == FEAT_INVIS)
+			//if (c_ptr->feat == FEAT_INVIS)
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 				t_idx = cs_ptr->sc.trap.t_idx;
 
@@ -2879,8 +2852,23 @@ bool detect_trap(int Ind, int rad) {
 					/* Obvious */
 					detect = TRUE;
 				}
-#endif	// 0
+#endif
 			}
+#if 0
+			else if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+				/* New trap detected */
+				//hmm, how to do this? detect = TRUE;
+
+				/* Hack -- memorize it */
+				*w_ptr |= CAVE_MARK;
+
+				/* Redraw */
+				lite_spot(Ind, i, j);
+
+				/* Normal redraw */
+				lite_spot(Ind, i, j);
+			}
+#endif
 		}
 	}
 
