@@ -12344,11 +12344,11 @@ create a character!):
     Armour can help to mitigate this effect somewhat.
     Draconians possess a certain lineage trait from birth, providing them with
     intrinsic resistances and an elemental breath (learned at level 8) which
-    they can use if they have sufficient stamina (costs 3) and which is a
-    physical ability of theirs, not a magic spell. 'Breathe element' inflicts
-    damage equal your current hit points divided by 3 and capped between 350
-    and 500 depending on your element, with the basic element types doing the
-    most damage and shards and sound doing the least.
+    they can use if they have sufficient stamina (costs 3, accessible with 'm')
+    and which is a physical ability of theirs, not a magic spell.
+    'Breathe element' inflicts damage equal your current hit points divided by
+    3 and capped between 350 and 500 depending on your element, with the basic
+    element types doing the most damage and shards and sound doing the least.
     This breath weapon cannot be used while polymorphed, except if the form is
     a reptile (including Hydras) or an actual dragon (including dragonriders).
     The resistances and other abilities obtained from a trait remain active
