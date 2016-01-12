@@ -4549,7 +4549,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 	int tries = 0, i;
 	artifact_bias = 0;
 
-	if (!power && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
+	if (!power && !(resf & RESF_NO_ENCHANT) && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
 
 	/* Very good */
 	if (power > 1) {
