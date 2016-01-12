@@ -12521,12 +12521,14 @@ create a character!):
         At level 50 they will be able to levitate, become resistant to poison,
         electricity, cold and be enveloped in an aura of frost and lightning;
         also, their melee attacks will slay evil opponents intrinsically.
+        Able to instantly sense curses on items.
 
     Corrupted:
         Resist fire and darkness while being susceptible to good-based attacks.
         +2 bonus HP for each level above 20.
         At level 50 they will become resistant to poison, immune to fire, and
         be enveloped in a fiery aura.
+        Able to take off lightly cursed items.
 
     Maiar start with a low profile skill chart which gets boosted on initiation
     depending on their alignment. Their skills will be adjusted so that they
@@ -12711,7 +12713,8 @@ create a character!):
     weapons, and if they wield one that isn't blessed, they receive an
     additional severe penalty.
     Priests are especially adept at sensing curses on any sort of item, an
-    ability that grows with their character level.
+    ability that grows with their character level, perfecting this at level 35
+    at which they are able to notice curses instantly.
     Wisdom is the priest's primary stat and they get a bonus on 'Holy Curing'.
 
     Hint: Note that their spell Holy Light can be used to deal decent damage

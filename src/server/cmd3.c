@@ -1258,6 +1258,7 @@ return;
 void do_cmd_takeoff(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
+	u32b f3, dummy;
 
 	if (amt <= 0) return;
 
@@ -1285,11 +1286,15 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 	}
 
 	/* Item is cursed */
-	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
-		/* Oops */
-		msg_print(Ind, "Hmmm, it seems to be cursed.");
-		/* Nope */
-		return;
+	if (cursed_p(o_ptr)) {
+		object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
+		if (!(is_admin(p_ptr) ||
+		    (p_ptr->ptrait == TRAIT_CORRUPTED && !(f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE))))) {
+			/* Oops */
+			msg_print(Ind, "Hmmm, it seems to be cursed.");
+			/* Nope */
+			return;
+		}
 	}
 
 	/* Let's not end afk for this - C. Blue */

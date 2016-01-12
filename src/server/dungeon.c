@@ -416,8 +416,8 @@ static void sense_inventory(int Ind) {
 		ok_curse = TRUE;
 	}
 
-#if 1
 	/* extra class-specific boni */
+#if 0
 	i = 150 - ((p_ptr->lev <= 50) ? (p_ptr->lev * 2) : (p_ptr->lev + 50));
 	if ((p_ptr->pclass == CLASS_PRIEST) && !rand_int(i)) ok_curse = TRUE;
  #if 0 /* out of line? */
@@ -429,6 +429,13 @@ static void sense_inventory(int Ind) {
 		ok_combat = TRUE;
 	}
  #endif
+#endif
+#if 1
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) ok_curse = TRUE;
+	else if (p_ptr->pclass == CLASS_PRIEST) {
+		i = (p_ptr->lev < 35) ? (135 - (p_ptr->lev + 10) * 3) : 1;
+		if (!rand_int(i)) ok_curse = TRUE;
+	}
 #endif
 
 	/* nothing to feel? exit */

@@ -3608,10 +3608,24 @@ void shape_Maia_skills(int Ind) {
 	switch (p_ptr->ptrait) {
 	case TRAIT_CORRUPTED:
 		/* Doh! */
+#if 0
+		respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
+		respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
+		respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
+		respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
+#endif
 		p_ptr->s_info[SKILL_HOFFENSE].mod = 0;
 		p_ptr->s_info[SKILL_HCURING].mod = 0;
 		p_ptr->s_info[SKILL_HDEFENSE].mod = 0;
 		p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
+#if 0
+		respec_skill(Ind, SKILL_DRUID_ARCANE, FALSE, FALSE);
+		respec_skill(Ind, SKILL_DRUID_PHYSICAL, FALSE, FALSE);
+#endif
+#if 0
+		p_ptr->s_info[SKILL_DRUID_ARCANE].mod = 0;
+		p_ptr->s_info[SKILL_DRUID_PHYSICAL].mod = 0;
+#endif
 
 		/* Yay */
 		do_Maia_skill(Ind, SKILL_AXE, 13);
@@ -3631,6 +3645,11 @@ void shape_Maia_skills(int Ind) {
 
 	case TRAIT_ENLIGHTENED:
 		/* Doh! */
+#if 0
+		respec_skill(Ind, SKILL_TRAUMATURGY, FALSE, FALSE);
+		respec_skill(Ind, SKILL_NECROMANCY, FALSE, FALSE);
+		respec_skill(Ind, SKILL_AURA_DEATH, FALSE, FALSE);
+#endif
 		p_ptr->s_info[SKILL_TRAUMATURGY].mod = 0;
 		p_ptr->s_info[SKILL_NECROMANCY].mod = 0;
 		p_ptr->s_info[SKILL_AURA_DEATH].mod = 0;
