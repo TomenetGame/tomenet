@@ -433,7 +433,8 @@ static void sense_inventory(int Ind) {
 #if 1
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) ok_curse = TRUE;
 	else if (p_ptr->pclass == CLASS_PRIEST) {
-		i = (p_ptr->lev < 35) ? (135 - (p_ptr->lev + 10) * 3) : 1;
+		//i = (p_ptr->lev < 35) ? (135 - (p_ptr->lev + 10) * 3) : 1;
+		if (!rand_int(3000 / (p_ptr->lev + 30) - 29)) ok_combat = TRUE;
 		if (!rand_int(i)) ok_curse = TRUE;
 	}
 #endif
