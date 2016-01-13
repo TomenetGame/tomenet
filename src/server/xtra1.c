@@ -8743,8 +8743,17 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 		/* hack: allow ordering very specific spell scrolls */
 		strncpy(str2, str, 40);
-		str2[13] = 0;
-		if (!strcasecmp(str2, "spell scrolls")) {
+		if (!strncasecmp(str2, "spell crystals", 14)) {
+			/* extract spell name, error if not speficied */
+			if (strlen(str) > 18) {
+				strcpy(str2, str + 18);
+				strcpy(str, "Spell Crystals");
+			} else {
+				msg_print(Ind, "I need to know which spell you want in the spell crystal.");
+				return;
+				//*str2 = 0;
+			}
+		} else if (!strncasecmp(str2, "spell scrolls", 13)) {
 			/* extract spell name, error if not speficied */
 			if (strlen(str) > 17) {
 				strcpy(str2, str + 17);
@@ -8754,20 +8763,27 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				return;
 				//*str2 = 0;
 			}
-		} else {
-			str2[12] = 0;
-			if (!strcasecmp(str2, "spell scroll")) {
-				/* extract spell name, error if not speficied */
-				if (strlen(str) > 16) {
-					strcpy(str2, str + 16);
-					strcpy(str, "Spell Scroll");
-				} else {
-					msg_print(Ind, "I need to know which spell you want in the spell scroll.");
-					return;
-					//*str2 = 0;
-				}
-			} else *str2 = 0;
-		}
+		} else if (!strncasecmp(str2, "spell crystal", 12)) {
+			/* extract spell name, error if not speficied */
+			if (strlen(str) > 17) {
+				strcpy(str2, str + 17);
+				strcpy(str, "Spell Crystal");
+			} else {
+				msg_print(Ind, "I need to know which spell you want in the spell crystal.");
+				return;
+				//*str2 = 0;
+			}
+		} else if (!strncasecmp(str2, "spell scroll", 11)) {
+			/* extract spell name, error if not speficied */
+			if (strlen(str) > 16) {
+				strcpy(str2, str + 16);
+				strcpy(str, "Spell Scroll");
+			} else {
+				msg_print(Ind, "I need to know which spell you want in the spell scroll.");
+				return;
+				//*str2 = 0;
+			}
+		} else *str2 = 0;
 		if (*str2) {
 			for (i = 0; i < max_spells; i++)
 				if (!strcasecmp(school_spells[i].name, str2)) break;
@@ -8833,6 +8849,8 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		Rand_value = tmp_seed;
 
 		if (extra != -1) forge.pval = extra; //spellbooks
+		object_desc(0, o_name, &forge, FALSE, 256); //for checking if it's a scroll of crystal, namewise
+
 		forge.number = num;
 		price = price_item(Ind, &forge, ot_ptr->min_inflate, FALSE);
 		/* make sure price doesn't beat BM for *id* / teleport (shop 5), *rc* (shop 4), which are all at 2% rarity */
@@ -8845,8 +8863,12 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 		if (num == 1) {
 			/* special hack: spell scrolls get a unique message */
-			if (extra != -1) Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep that particular scroll for you, that will be %d Au!", price), FALSE);
-
+			if (extra != -1) {
+				if (strstr(o_name, "Scroll"))
+					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep that particular scroll for you, that will be %d Au!", price), FALSE);
+				else
+					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep that particular crystal for you, that will be %d Au!", price), FALSE);
+			}
 			else if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
 			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is somewhat less common, that will be %d Au!", price), FALSE);
 			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is uncommon, I could promise you delivery for %d Au!", price), FALSE);
@@ -8854,8 +8876,12 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That's very rare, I might be able to get hold of one for %d Au!", price), FALSE);
 		} else {
 			/* special hack: spell scrolls get a unique message */
-			if (extra != -1) Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep those specific scrolls for you, that will be %d Au!", price), FALSE);
-
+			if (extra != -1) {
+				if (strstr(o_name, "Scroll"))
+					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep those specific scrolls for you, that will be %d Au!", price), FALSE);
+				else
+					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep those specific crystals for you, that will be %d Au!", price), FALSE);
+			}
 			else if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
 			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are somewhat less common, that will be %d Au!", price), FALSE);
 			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are uncommon, I could promise you delivery for %d Au!", price), FALSE);
