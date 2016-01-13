@@ -195,7 +195,7 @@ HHEALING_II = add_spell {
 			status_ailments = 1024 + 2048 + 4096
 			--hacks to cure effects same as potions would
 			if get_level(Ind, HHEALING_II, 50) >= 8 then
-				status_ailments = status_ailments + 8192 + 4096 + 2048
+				status_ailments = status_ailments + 8192
 			end
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(25), 1, " points at your wounds.")
 	end,
