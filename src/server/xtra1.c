@@ -9028,6 +9028,9 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		//dur = (cfg.fps * 60 * 5 * (113 - p_ptr->item_order_rarity)) / 13; //5..43 min
 		//dur = (cfg.fps * 60 * 5 * (115 - p_ptr->item_order_rarity)) / 15; //5..38 min
 		dur = (cfg.fps * 60 * 5 * (120 - p_ptr->item_order_rarity)) / 20; //5..30 min
+		/* piles increase duration */
+		//dur = (dur * (97 + p_ptr->item_order_forge.number)) / 98; //x1..x2 linear
+		dur = (dur * (400 - (15000 / (49 + p_ptr->item_order_forge.number)))) / 100; //x1..x3 tang
  #ifdef TEST_SERVER
 		p_ptr->item_order_turn = turn; //instant delivery for testing purpose
  #else
