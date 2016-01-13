@@ -1160,7 +1160,9 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 			//if (q_ptr->suscep_evil) q_flags3 |= RF3_GOOD; //unused (enlightened maia)
 			if (q_ptr->suscep_life) q_flags3 |= RF3_UNDEAD; //covers RACE_VAMPIRE
 			if (q_ptr->prace == RACE_DRACONIAN) q_flags3 |= RF3_DRAGON;
+			if (q_ptr->ptrait == TRAIT_CORRUPTED) q_flags3 |= RF3_DEMON;
 			if (q_ptr->prace == RACE_YEEK) q_flags3 |= RF3_ANIMAL; // D:
+			if (q_ptr->prace == RACE_HALF_ORC) q_flags3 |= RF3_ORC;
 
 			/* Slay Animal */
 			if ((f1 & TR1_SLAY_ANIMAL) &&
