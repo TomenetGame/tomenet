@@ -49,15 +49,15 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 
 	if ((val = strstr(sec_name, "_Columns"))) {
 		term_prefs[t].columns = atoi(val + 8);
-	        if (t == 0) {
+		if (t == 0) {
 			if (term_prefs[t].columns != 80) term_prefs[t].columns = 80;
-	    		screen_wid = term_prefs[0].columns - SCREEN_PAD_X;
-	    	}
+			screen_wid = term_prefs[0].columns - SCREEN_PAD_X;
+		}
 	}
 	if ((val = strstr(sec_name, "_Lines"))) {
 		term_prefs[t].lines = atoi(val + 6);
-                if (t == 0) screen_hgt = term_prefs[0].lines - SCREEN_PAD_Y;
-        }
+		if (t == 0) screen_hgt = term_prefs[0].lines - SCREEN_PAD_Y;
+	}
 
 	if ((val = strstr(sec_name, "_Font"))) {
 #if 0 /* without tab/space stripping */
@@ -73,8 +73,7 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 #endif
 	}
 }
-static bool read_mangrc(cptr filename)
-{
+static bool read_mangrc(cptr filename) {
 	FILE *config;
 	char buf[1024];
 	bool skip = FALSE;
@@ -666,12 +665,13 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		/* rename temporary file to new ".tomenetrc" */
 		rename(config_name2, mangrc_filename);
 	    }
-	}
+	//shouldn't really happen, but Matfil had a weird bug where only 'hintBigMap' is left in his .tomenetrc as the only line, so maybe:
+	} else if (config) fclose(config);
+
 	return (FALSE); //failure
 }
 
-static void default_set(void)
-{
+static void default_set(void) {
 	char *temp;
 
 #ifdef SET_UID
@@ -716,8 +716,7 @@ static void default_set(void)
 #endif
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	int i, modus = 0;
 	bool done = FALSE, skip = FALSE, force_cui = FALSE;
 
