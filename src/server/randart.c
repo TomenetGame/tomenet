@@ -501,6 +501,7 @@ static void remove_redundant_esp(artifact_type *a_ptr)
 static void add_ability (artifact_type *a_ptr) {
 	int r = rand_int(100);
 	bool type_dependant_mod = FALSE;
+	object_kind *k_ptr = &k_info[lookup_kind(a_ptr->tval, a_ptr->sval)];
 
 	switch (a_ptr->tval) {
 	case TV_BOOMERANG:
@@ -1022,6 +1023,14 @@ static void add_ability (artifact_type *a_ptr) {
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
 			} else if (r < 80) a_ptr->weight = (a_ptr->weight * 9) / 10;
 			else a_ptr->to_a += 3 + rand_int (8);
+			break;
+		case TV_RING:
+			if (r < 5) {
+				if (k_ptr->flags2 & TR2_RES_ELEC) a_ptr->flags2 |= TR2_IM_ELEC;
+				else if (k_ptr->flags2 & TR2_RES_COLD) a_ptr->flags2 |= TR2_IM_COLD;
+				else if (k_ptr->flags2 & TR2_RES_FIRE) a_ptr->flags2 |= TR2_IM_FIRE;
+				else if (k_ptr->flags2 & TR2_RES_ACID) a_ptr->flags2 |= TR2_IM_ACID;
+			}
 			break;
 		case TV_LITE:
 			if (r < 50) a_ptr->flags3 |= TR3_LITE1;
@@ -1799,6 +1808,21 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 			if (magik(80)) a_ptr->flags4 |= TR4_ANTIMAGIC_10;
 		}
+	}
+
+	/* rings that give a base resistance in their base version should prioritize the
+	   according type of immunity over going with a different immunity _instead_.
+	   Note: we are a bit rough and kill the case of a ring having double-immunity that _both_
+	         didn't fit - instead of rearraging only one of them we just discard both.. */
+	if (a_ptr->tval == TV_RING && (a_ptr->flags2 & (TR2_IM_ELEC | TR2_IM_COLD | TR2_IM_FIRE | TR2_IM_ACID))) {
+		if ((k_ptr->flags2 & TR2_RES_ELEC) && !(a_ptr->flags2 & TR2_IM_ELEC))
+			a_ptr->flags2 = TR2_IM_ELEC;
+		else if ((k_ptr->flags2 & TR2_RES_COLD) && !(a_ptr->flags2 & TR2_IM_COLD))
+			a_ptr->flags2 = TR2_IM_COLD;
+		else if ((k_ptr->flags2 & TR2_RES_FIRE) && !(a_ptr->flags2 & TR2_IM_FIRE))
+			a_ptr->flags2 = TR2_IM_FIRE;
+		else if ((k_ptr->flags2 & TR2_RES_ACID) && !(a_ptr->flags2 & TR2_IM_ACID))
+			a_ptr->flags2 = TR2_IM_ACID;
 	}
 }
 
