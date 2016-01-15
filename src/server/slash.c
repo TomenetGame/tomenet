@@ -8113,6 +8113,59 @@ void do_slash_cmd(int Ind, char *message) {
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 				return;
 			}
+			else if (prefix(message, "/measureart")) { /* create a randart over and over, measuring frequency of an ability */
+				object_type *o_ptr;
+				artifact_type *a_ptr;
+				int tries = 10000;
+				int m1 = 0, m2 = 0, m3 = 0, m4 = 0;
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /measureart <slot>");
+					return;
+				}
+				o_ptr = &p_ptr->inventory[k];
+				if (!o_ptr->tval) {
+					msg_print(Ind, "\377oInventory slot empty.");
+					return;
+				}
+				if (o_ptr->name1 != ART_RANDART) {
+					msg_print(Ind, "\377oNot a randart. Aborting.");
+					return;
+				}
+				msg_print(Ind, "Measuring...");
+
+				handle_stuff(Ind);
+				while (tries--) {
+					/* Piece together a 32-bit random seed */
+					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 += rand_int(0xFFFF);
+					/* Check the tval is allowed */
+					if ((a_ptr = randart_make(o_ptr)) == NULL) {
+						/* If not, wipe seed. No randart today */
+						o_ptr->name1 = 0;
+						o_ptr->name3 = 0L;
+						msg_print(Ind, "Randart creation failed.");
+						return;
+					}
+					o_ptr->timeout = 0;
+					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
+
+					if (a_ptr->flags2 & TR2_IM_ELEC) m1++;
+					if (a_ptr->flags2 & TR2_IM_COLD) m2++;
+					if (a_ptr->flags2 & TR2_IM_FIRE) m3++;
+					if (a_ptr->flags2 & TR2_IM_ACID) m4++;
+				}
+				msg_print(Ind, "..done:");
+
+				msg_format(Ind, "e %d.%d%%", m1 / 100, m1 % 100);
+				msg_format(Ind, "c %d.%d%%", m2 / 100, m2 % 100);
+				msg_format(Ind, "f %d.%d%%", m3 / 100, m3 % 100);
+				msg_format(Ind, "a %d.%d%%", m4 / 100, m4 % 100);
+
+				o_ptr->ident |= ID_MENTAL; /* *id*ed */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+				return;
+			}
 			/* Display all information about the grid an admin-char is currently standing on - C. Blue */
 			else if (prefix(message, "/debug-grid")){
 				worldpos *tpos = &p_ptr->wpos;
