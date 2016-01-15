@@ -5844,6 +5844,10 @@ if (cfg.unikill_format) {
 					continue;
 				}
 
+				/* with the new TV_RING chance (higher imm chance) we may try */
+				if (!(a_ptr->flags2 & TR2_IM_ELEC)) continue;
+
+				/* keep best result for possible fallback */
 				if (qq_ptr->pval > forge_fallback.pval) object_copy(&forge_fallback, qq_ptr);
 			}
 			if (qq_ptr->pval < 6) object_copy(qq_ptr, &forge_fallback);
