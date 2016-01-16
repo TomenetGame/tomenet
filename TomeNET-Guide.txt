@@ -14513,7 +14513,9 @@ Priest schools:
                     if used by a priest, for 8 seconds if used by any other
                     class.
                     When your martyrium ends, you will be left close to death
-                    with a fraction of your hit points, at least 30 HP though.
+                    with a fraction of your hit points, at least 30 HP though
+                    (this amount should be sufficient to survive a hit from
+                    terrain damage, such as lava or nether).
                     Note that you cannot be healed in any way during martyr.
                     Invincible here in detail means that you won't take..
                     -any hit point decreasing damage (except genocide strain),
