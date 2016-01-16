@@ -910,7 +910,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			/* MEGAHACK: Ignore Wilderness trap doors. */
 			vanish = 100;
 			if (!can_go_down(wpos, 0xF)) {
-				msg_print(Ind, "\377GYou feel quite certain something really awful just happened..");
+				//msg_print(Ind, "\377GYou feel quite certain something really awful just happened..");
 				break;
 			}
 			ident = TRUE;
@@ -926,10 +926,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				/* Inventory damage (Hack - use 'cold' type) */
 				inven_damage(Ind, set_cold_destroy, damroll(2, 8));
 
-				//			 int dam = damroll(2, 8);
-				//			 take_hit(Ind, dam, name, 0);
+				//int dam = damroll(2, 8);
+				//take_hit(Ind, dam, name, 0);
 				take_hit(Ind, damroll(2, 8), "a trap door", 0);
-				take_sanity_hit(Ind, damroll(1, 2), "a trap door");
+				//take_sanity_hit(Ind, damroll(1, 2), "a trap door");
 			}
 			do_player_trap_change_depth(Ind, -1);
 			break;
@@ -1823,7 +1823,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			else if(ABS(wpos->wz) < wild->dungeon->maxdepth)
 				maxfall = wild->dungeon->maxdepth - ABS(wpos->wz);
 			else {
-				msg_print(Ind, "\377GYou feel quite certain something really awful just happened..");
+				//msg_print(Ind, "\377GYou feel quite certain something really awful just happened..");
 				break;
 			}
 
@@ -1843,14 +1843,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			else {
 				msg_print(Ind, "You fall head over heels!!");
 				l = damroll(2, 8) << k;	// max 512, avg 72
-				//			 take_hit(Ind, dam, name, 0);
+				//take_hit(Ind, dam, name, 0);
 
 				/* Inventory damage (Hack - use 'cold' type) */
 				inven_damage(Ind, set_cold_destroy, 15 * k);
 				inven_damage(Ind, set_all_destroy, 3 * k);
 
 				take_hit(Ind, l, "a chasm", 0);
-				take_sanity_hit(Ind, 1 << k, "a chasm");
+				//take_sanity_hit(Ind, 1 << k, "a chasm");
 			}
 
 			do_player_trap_change_depth(Ind, -k);
@@ -1860,7 +1860,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_PIT:
 			ident = TRUE;
 			vanish = 0;
-			if (p_ptr->levitate){
+			if (p_ptr->levitate) {
 				/* dont notice it */
 				break;
 			}
@@ -1873,9 +1873,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				/* Inventory damage */
 				inven_damage(Ind, set_impact_destroy, l);
 
-				//			 take_hit(Ind, dam, name, 0);
+				//take_hit(Ind, dam, name, 0);
 				take_hit(Ind, l, "a pit", 0);
-				take_sanity_hit(Ind, 1 , "a pit");
+				//take_sanity_hit(Ind, 1, "a pit");
 
 				/* Maybe better make them other types of traps? */
 				if (glev > 29) {
