@@ -6070,6 +6070,7 @@ static void do_cmd_options_aux(int page, cptr info) {
 	int	i, k = 0, n = 0;
 	int	opt[24];
 	char	buf[256];
+	bool	tmp;
 
 
 	/* Lookup the options */
@@ -6089,7 +6090,7 @@ static void do_cmd_options_aux(int page, cptr info) {
 	/* Interact with the player */
 	while (TRUE) {
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (\377yUp/Down\377w moves, \377yy\377w/\377yn\377w sets, \377yt\377w toggles, \377yESC\377w accepts)", info);
+		sprintf(buf, "%s (\377yUp/Down\377w, \377yy\377w/\377yn\377w/\377yLeft\377w/\377yRight\377w set, \377yt\377w/\377yA\377w-\377yZ\377w\377w toggle, \377yESC\377w accept)", info);
 		//prompt_topline(buf);
 		Term_putstr(0, 0, -1, TERM_WHITE, buf);
 
@@ -6149,7 +6150,7 @@ static void do_cmd_options_aux(int page, cptr info) {
 				break;
 
 			case 'y':
-			case 'Y':
+			//case 'Y':
 			case '6':
 			case 'l':
 				(*option_info[opt[k]].o_var) = TRUE;
@@ -6159,7 +6160,7 @@ static void do_cmd_options_aux(int page, cptr info) {
 				break;
 
 			case 'n':
-			case 'N':
+			//case 'N':
 			case '4':
 			case 'h':
 				(*option_info[opt[k]].o_var) = FALSE;
@@ -6169,18 +6170,25 @@ static void do_cmd_options_aux(int page, cptr info) {
 				break;
 
 			case 't':
-			case 'T':
+			//case 'T':
 			case '5':
 			case 's':
-			{
-				bool tmp = 1 - (*option_info[opt[k]].o_var);
+				tmp = 1 - (*option_info[opt[k]].o_var);
 				(*option_info[opt[k]].o_var) = tmp;
 				Client_setup.options[opt[k]] = tmp;
 				check_immediate_options(opt[k], tmp, TRUE);
 				k = (k + 1) % n;
 				break;
-			}
 			default:
+				/* directly toggle a specific option */
+				if (ch >= 'A' && ch <= 'A' + n - 1) {
+					k = ch - 'A';
+					tmp = 1 - (*option_info[opt[k]].o_var);
+					(*option_info[opt[k]].o_var) = tmp;
+					Client_setup.options[opt[k]] = tmp;
+					check_immediate_options(opt[k], tmp, TRUE);
+					break;
+				}
 				bell();
 				break;
 		}
