@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. January 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 17. January 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -83,7 +83,7 @@ Contents
     (4.3a)  The jail
     (4.4)   Terrain
     (4.5)   Towns, shops, the dungeons
-    (4.5a)  Shops
+    (4.5a)  Shops and their services
     (4.5b)  Towns & town dungeons
     (4.5c)  Dungeons
     (4.5c2) Eample dungeon depth relations
@@ -5514,8 +5514,8 @@ important for players wearing Nazgul Rings Of Power for example.
 Dungeon towns behave like normal towns in these regards.
 
 
-(4.5a) Shops
-------------
+(4.5a) Shops and their services
+-------------------------------
 Each town has several shops, displayed as numbers 1..9 and some '+'.
 The 1..9 are standard shops, namely..
 1       General Store   Sells food, lanterns, ammunition, cloaks and shrooms.
@@ -5682,6 +5682,33 @@ different shop. Shops in different towns are run by different owners although
 they may use the same number '1'..'9' and '+' for their entrance symbols.
 If the item is worth more than 300,000 Au maybe you can find a fellow player
 who is wealthy and in urgent need of your items.
+
+The basic town stores also allow you to order specific basic items that they
+usually offer in their store template. These items will come without any
+hit/damage/ac enchantments or ego powers, but in their plain versions.
+To order an item, enter a store that provides this option:
+  'o) Order an item'
+Then specify number and name of the item, examples:
+  potion of restore strength
+  20 scrolls of identify
+  spell crystal of psionic blast
+and you will be prompted with the price you'd have to pay upfront, then you
+can accept or decline. If you accept, the money will be deduced from your purse
+and the shopkeeper will let you know how long the delivery of your order will
+approximately take, in in-game time. So if it takes "about an hour" that will
+be much less in real world time for you to wait.
+Items that are very common in that store will cost about the same amount of
+money that you'd pay when buying them the regular way, while items that occur
+only very rarely in a shop can be much more expensive to order.
+Ordering a pile of items instead of just one will prolong the delivery time.
+You can only have one order in process at any time. If you want to order a
+different item you will have to wait until your order is delivered and fetch
+it.
+When you enter a shop where you had an order placed and the item has arrived
+then it will be automatically placed in your inventory. If you meanwhile
+purchase the same type of item in the shop's regular stock that will not affect
+your delivery in any way.
+The delivered item will carry an inscription containing the shop name.
 
 Shops regularly change their inventory on a random basis: Roughly every 33
 seconds there is a chance that some items might get dropped and/or some new
