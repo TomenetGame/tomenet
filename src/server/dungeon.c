@@ -6547,34 +6547,52 @@ void process_player_change_wpos(int Ind) {
 	switch (p_ptr->new_level_method) {
 	/* Climbed down */
 	case LEVEL_RECALL_DOWN:
-	case LEVEL_DOWN:  		starty = level_down_y(wpos);
-					startx = level_down_x(wpos);
-					break;
+	case LEVEL_DOWN:
+		starty = level_down_y(wpos);
+		startx = level_down_x(wpos);
+		break;
 
 	/* Climbed up */
 	case LEVEL_RECALL_UP:
-	case LEVEL_UP:    		starty = level_up_y(wpos);
-					startx = level_up_x(wpos);
-					break;
+	case LEVEL_UP:
+		starty = level_up_y(wpos);
+		startx = level_up_x(wpos);
+		break;
 
 	/* Teleported level */
-	case LEVEL_RAND:  		starty = level_rand_y(wpos);
-					startx = level_rand_x(wpos);
-					break;
+	case LEVEL_RAND:
+		starty = level_rand_y(wpos);
+		startx = level_rand_x(wpos);
+		break;
 
 	/* Used ghostly travel */
 	case LEVEL_PROB_TRAVEL:
-	case LEVEL_GHOST: 		starty = p_ptr->py;
-					startx = p_ptr->px;
-					break;
+	case LEVEL_GHOST:
+		starty = p_ptr->py;
+		startx = p_ptr->px;
+
+		/* don't prob into sickbay area (also can't prob into inns) */
+		if (zcave[starty][startx].feat == FEAT_PROTECTED) {
+			tries = 1000;
+			do {
+				if (!(--tries)) break;
+				starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT) - 3) + 1;
+				startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID) - 3) + 1;
+			} while (zcave[starty][startx].feat == FEAT_PROTECTED); /* don't recall him into sickbay areas */
+			if (!tries) { /* just this one time */
+				starty = p_ptr->py;
+				startx = p_ptr->px;
+			}
+		}
+		break;
 
 	/* Over the river and through the woods */
 	case LEVEL_OUTSIDE:
-					smooth_ambient = TRUE; /* normal wilderness running */
+		smooth_ambient = TRUE; /* normal wilderness running */
 	case LEVEL_HOUSE:
-					starty = p_ptr->py;
-					startx = p_ptr->px;
-					break;
+		starty = p_ptr->py;
+		startx = p_ptr->px;
+		break;
 
 		/* this is used instead of extending the level_rand_y/x
 		into the negative direction to prevent us from
