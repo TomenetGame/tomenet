@@ -7160,10 +7160,10 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		p2p = parm2;
 		while (*p2p) {*p2p = tolower(*p2p); p2p++;}
 
-		/* trim spaces */
+		/* trim spaces .. and also quotes */
 		p2p = parm2;
-		while (*p2p == ' ') p2p++;
-		while (p2p[strlen(p2p) - 1] == ' ') p2p[strlen(p2p) - 1] = 0;
+		while (*p2p == ' ' || *p2p == '"') p2p++;
+		while (p2p[strlen(p2p) - 1] == ' ' || p2p[strlen(p2p) - 1] == '"') p2p[strlen(p2p) - 1] = 0;
 
 		/* Scan the monster races */
 		for (i = 1; i < MAX_R_IDX - 1; i++) {
