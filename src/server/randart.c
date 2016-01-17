@@ -96,8 +96,7 @@ static int bow_multiplier (int sval) {
  * Make sure it's not zero.  If it's currently negative, leave
  * it negative (heh heh).
  */
-static void do_pval (artifact_type *a_ptr)
-{
+static void do_pval (artifact_type *a_ptr) {
 	/* Add some pval */
 	if (a_ptr->pval == 0)
 		a_ptr->pval = 1 + rand_int (3);
@@ -116,8 +115,7 @@ static void do_pval (artifact_type *a_ptr)
 /*
  * Make it bad, or if it's already bad, make it worse!
  */
-static void do_curse (artifact_type *a_ptr)
-{
+static void do_curse (artifact_type *a_ptr) {
 	/* Some chance of picking up these flags */
 	if (rand_int (3) == 0) a_ptr->flags3 |= TR3_AGGRAVATE;
 	if (!is_ammo(a_ptr->tval)) {
@@ -159,7 +157,6 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	object_kind *k_ptr = &k_info[lookup_kind(a_ptr->tval, a_ptr->sval)];
 	s32b p = 1;
 	int immunities = 0, i;//, mult;
-
 
 	/* Evaluate certain abilities based on type of object. */
 	switch (a_ptr->tval) {
@@ -331,20 +328,20 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->flags1 & TR1_INFRA) p += (a_ptr->pval + sign (a_ptr->pval)) / 2;
 
 	i = ((a_ptr->pval + 6) / 3);
-//	i = i * i;
-//	i = (i * 5) / 2;
+	//i = i * i;
+	//i = (i * 5) / 2;
 #if 0 /* although 62/133 looks reasonable on paper, it produced mostly verylow..low pvals, and alot aggr boots */
-        if (a_ptr->flags1 & TR1_SPEED) p += i * 12;
-        if (a_ptr->flags1 & TR1_MANA) p += i * 10;
-        if (a_ptr->flags5 & TR5_CRIT) p += i * 8;
+	if (a_ptr->flags1 & TR1_SPEED) p += i * 12;
+	if (a_ptr->flags1 & TR1_MANA) p += i * 10;
+	if (a_ptr->flags5 & TR5_CRIT) p += i * 8;
 #else
-        if (a_ptr->flags1 & TR1_SPEED) p += i * 10;
-        if (a_ptr->flags1 & TR1_MANA) p += i * 9;
-        if (a_ptr->flags5 & TR5_CRIT) p += i * 8;
+	if (a_ptr->flags1 & TR1_SPEED) p += i * 10;
+	if (a_ptr->flags1 & TR1_MANA) p += i * 9;
+	if (a_ptr->flags5 & TR5_CRIT) p += i * 8;
 #endif
 
 #if 0 //enable me? :/
-        if (a_ptr->flags5 & TR5_LUCK) p += a_ptr->pval + 5;
+	if (a_ptr->flags5 & TR5_LUCK) p += a_ptr->pval + 5;
 #endif
 
 	if (a_ptr->flags2 & TR2_SUST_STR) p += 5;
@@ -402,7 +399,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->flags4 & TR4_LITE3) p += 8;
 	if (a_ptr->flags4 & TR4_FUEL_LITE) p -= 10;//20
 	if (a_ptr->flags3 & TR3_SEE_INVIS) p += 8;
-//	if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
+	//if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
 	if (a_ptr->esp & (ESP_ORC)) p += 1;
 	if (a_ptr->esp & (ESP_TROLL)) p += 1;
 	if (a_ptr->esp & (ESP_DRAGON)) p += 4;
@@ -417,7 +414,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->esp & (ESP_UNIQUE)) p += 8;
 	if (a_ptr->esp & (ESP_SPIDER)) p += 2;
 	if (a_ptr->esp & ESP_ALL) p += 40; //note: this should probably be even higher, maybe 50
-        if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;//maybe even higher, like 30
+	if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;//maybe even higher, like 30
 	if (a_ptr->flags3 & TR3_SLOW_DIGEST) p += 4;
 	if (a_ptr->flags3 & TR3_REGEN) p += 8;
 	if (a_ptr->flags5 & TR5_REGEN_MANA) p += 8;
@@ -427,17 +424,17 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->flags3 & TR3_BLESSED) p += 4;
 	if (a_ptr->flags3 & TR3_CURSED) p -= 4;
 	if (a_ptr->flags3 & TR3_HEAVY_CURSE) p -= 20;
-/*	if (a_ptr->flags3 & TR3_PERMA_CURSE) p -= 40; */
-/*	if (a_ptr->flags4 & TR4_ANTIMAGIC_10) p += 8; */
+	/*if (a_ptr->flags3 & TR3_PERMA_CURSE) p -= 40; */
+	/*if (a_ptr->flags4 & TR4_ANTIMAGIC_10) p += 8; */
 	if (a_ptr->flags5 & TR5_INVIS) p += 20;
 
-        if (a_ptr->flags1 & TR1_VAMPIRIC) p += 15;
-        if (a_ptr->flags5 & TR5_REFLECT) p += 15;
-        if (a_ptr->flags4 & TR4_LEVITATE) p += 15;
-        if (a_ptr->flags4 & TR4_CLIMB) p += 15;
-        if (a_ptr->flags3 & TR3_SH_FIRE) p += 5;
-        if (a_ptr->flags5 & TR5_SH_COLD) p += 5;
-        if (a_ptr->flags3 & TR3_SH_ELEC) p += 5;
+	if (a_ptr->flags1 & TR1_VAMPIRIC) p += 15;
+	if (a_ptr->flags5 & TR5_REFLECT) p += 15;
+	if (a_ptr->flags4 & TR4_LEVITATE) p += 15;
+	if (a_ptr->flags4 & TR4_CLIMB) p += 15;
+	if (a_ptr->flags3 & TR3_SH_FIRE) p += 5;
+	if (a_ptr->flags5 & TR5_SH_COLD) p += 5;
+	if (a_ptr->flags3 & TR3_SH_ELEC) p += 5;
 
 	/* only for Ethereal DSM basically.. */
 	if (a_ptr->flags3 & TR3_WRAITH) p += 20;
@@ -447,14 +444,12 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 }
 
 
-
-static void remove_contradictory (artifact_type *a_ptr, bool aggravate_me) //Kurzel
-{
+static void remove_contradictory (artifact_type *a_ptr, bool aggravate_me) { //Kurzel
 	/* If the item is predestined to be aggravating, already get free
 	   its ap from useless mods that won't make it onto the final item */
 	if (aggravate_me) {
-	        a_ptr->flags1 &= ~(TR1_STEALTH);
-    		a_ptr->flags5 &= ~(TR5_INVIS);
+		a_ptr->flags1 &= ~(TR1_STEALTH);
+		a_ptr->flags5 &= ~(TR5_INVIS);
 	}
 
 	/* Remove redundante resistances */
@@ -485,8 +480,7 @@ static void remove_contradictory (artifact_type *a_ptr, bool aggravate_me) //Kur
 	if (a_ptr->flags3 & TR3_DRAIN_EXP) a_ptr->flags2 &= ~(TR2_HOLD_LIFE);
 }
 
-static void remove_redundant_esp(artifact_type *a_ptr)
-{
+static void remove_redundant_esp(artifact_type *a_ptr) {
 	if (a_ptr->esp & ESP_DRAGON) a_ptr->esp &= (~ESP_DRAGONRIDER);
 	if (a_ptr->esp & ESP_EVIL) a_ptr->esp &= (~(ESP_ORC | ESP_TROLL | ESP_GIANT | ESP_DEMON | ESP_UNDEAD));
 	if (a_ptr->esp & ESP_ALL) a_ptr->esp = ESP_ALL;
@@ -849,8 +843,8 @@ static void add_ability (artifact_type *a_ptr) {
 				a_ptr->flags1 |= TR1_WIS;
 				do_pval (a_ptr);
 			}
-//			else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
-//			else if (r < 45) a_ptr->esp |= (ESP_ALL);
+			//else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
+			//else if (r < 45) a_ptr->esp |= (ESP_ALL);
 			else if (r < 31) a_ptr->esp |= (ESP_ORC);
 			else if (r < 32) a_ptr->esp |= (ESP_TROLL);
 			else if (r < 33) a_ptr->esp |= (ESP_DRAGON);
@@ -888,8 +882,8 @@ static void add_ability (artifact_type *a_ptr) {
 				a_ptr->flags1 |= TR1_MANA;
 				if (a_ptr->pval == 0) a_ptr->pval = randint(5);
 			} else if (r < 30) a_ptr->flags4 |= TR4_AUTO_ID;
-//			else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
-//			else if (r < 45) a_ptr->esp |= (ESP_ALL);
+			//else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
+			//else if (r < 45) a_ptr->esp |= (ESP_ALL);
 			else if (r < 31) a_ptr->esp |= (ESP_ORC);
 			else if (r < 32) a_ptr->esp |= (ESP_TROLL);
 			else if (r < 33) a_ptr->esp |= (ESP_DRAGON);
@@ -966,7 +960,7 @@ static void add_ability (artifact_type *a_ptr) {
 			else a_ptr->to_a += 3 + rand_int(3);
 			break;
 		case TV_DRAG_ARMOR:
-/*			if (r < 55) ; --changed into 67% hack above */
+			/*if (r < 55) ; --changed into 67% hack above */
 			if (r < 15) a_ptr->flags2 |= TR2_HOLD_LIFE;
 			else if (r < 30) {
 				a_ptr->flags1 |= TR1_CON;
@@ -1036,7 +1030,7 @@ static void add_ability (artifact_type *a_ptr) {
 			if (r < 50) a_ptr->flags3 |= TR3_LITE1;
 			else if (r < 80) a_ptr->flags4 |= TR4_LITE2;
 			else a_ptr->flags4 |= TR4_LITE3;
-//			if (r % 2) a_ptr->flags4 &= ~TR4_FUEL_LITE;
+			//if (r % 2) a_ptr->flags4 &= ~TR4_FUEL_LITE;
 			if (!(r % 5)) a_ptr->flags4 &= ~TR4_FUEL_LITE;
 			break;
 		default:
@@ -1046,7 +1040,7 @@ static void add_ability (artifact_type *a_ptr) {
 		switch (a_ptr->tval) {
 		case TV_BOOMERANG:
 		case TV_BOW:
-/*			if (magik(33)) break;*/
+			/*if (magik(33)) break;*/
 		default:
 			r = rand_int(44);
 
@@ -1199,7 +1193,7 @@ static void add_ability (artifact_type *a_ptr) {
 		        case 40:
 #if 0
 				if (rand_int (3) == 0)
-//					a_ptr->flags3 |= TR3_TELEPATHY;
+					//a_ptr->flags3 |= TR3_TELEPATHY;
 					a_ptr->esp |= (ESP_ALL);
 #endif	// 0
 				{
@@ -1494,7 +1488,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 10d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
 	while (a_ptr->dd * (a_ptr->ds + 1) > slay_limit_randart(a_ptr, k_ptr)
-//	    || ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
+	    //|| ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
 	    ) {
 		if (a_ptr->dd <= k_ptr->dd) a_ptr->ds--;
 		else if (a_ptr->ds <= k_ptr->ds) a_ptr->dd--;
@@ -1669,16 +1663,16 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	}
 
 	/* Never more than +3 EA, +2 on gloves */
-        if (a_ptr->flags1 & TR1_BLOWS) {
+	if (a_ptr->flags1 & TR1_BLOWS) {
 		if (a_ptr->tval == TV_GLOVES) {
 			//if (a_ptr->pval > 2) a_ptr->pval /= 3;
-	                if (a_ptr->pval > 2) a_ptr->pval = 2;
+			if (a_ptr->pval > 2) a_ptr->pval = 2;
 		} else {
 			//if (a_ptr->pval > 3) a_ptr->pval /= 2;
-	                if (a_ptr->pval > 3) a_ptr->pval = 3;
+			if (a_ptr->pval > 3) a_ptr->pval = 3;
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
-        }
+	}
 
 	/* Never increase stats too greatly */
 	if (c) {
@@ -1711,15 +1705,15 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	}
 	
 	/* Limits for +MANA */
-        if (a_ptr->flags1 & TR1_MANA) {
+	if (a_ptr->flags1 & TR1_MANA) {
 		/* Randart mage staves may give up to +10 +1 bonus MANA */
 		if ((a_ptr->tval == TV_MSTAFF) && (a_ptr->pval >= 11)) a_ptr->pval = 11;
 		/* Helms and crowns may not give more than +3 MANA */
 		else if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN) &&
 		    (a_ptr->pval > 3)) a_ptr->pval = 3;
 		/* Usually +10 MANA is max */
-                else if (a_ptr->pval > 10) a_ptr->pval = 10;
-        }
+		else if (a_ptr->pval > 10) a_ptr->pval = 10;
+	}
 
 	/* Limit speed on 1-hand weapons and shields (balances both, dual-wiel and 2-handed weapons) */
 	/* Limit +LIFE to +2 under same circumstances */
@@ -1846,6 +1840,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 	/* Get pointer to object kind */
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
+
 	/* Set the RNG seed. */
 	Rand_value = o_ptr->name3;
 	Rand_quick = TRUE;
@@ -1860,9 +1855,9 @@ artifact_type *randart_make(object_type *o_ptr) {
 	    (k_ptr->tval != TV_LITE) &&
 	    (k_ptr->tval != TV_RING) &&
 	    (k_ptr->tval != TV_AMULET) &&
-//	    (k_ptr->tval != TV_DIGGING) &&	 /* better ban it? */
-//	    (k_ptr->tval != TV_TOOL) &&
-//	    (k_ptr->tval != TV_INSTRUMENT) &&
+	    //(k_ptr->tval != TV_DIGGING) &&	 /* better ban it? */
+	    //(k_ptr->tval != TV_TOOL) &&
+	    //(k_ptr->tval != TV_INSTRUMENT) &&
 	    (k_ptr->tval != TV_SPECIAL)) { /* <- forgot this one, else panic save if randart becomes seal, since a_ptr becomes NULL! - C. Blue */
 		/* Not an allowed type */
 		return(NULL);
@@ -1925,7 +1920,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 	if (is_ammo(k_ptr->tval) || /* ammo never aggravates */
 	    ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_SPECIAL))) { /* rings of power would lose their granted invisibility! */
 		aggravate_me = FALSE;
-//		power /= 3;
+		//power /= 3;
 	}
 
 	/* Default values */
@@ -1933,7 +1928,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 	a_ptr->max_num = 1;
 	a_ptr->tval = k_ptr->tval;
 	a_ptr->sval = k_ptr->sval;
-//	a_ptr->pval = k_ptr->pval;	/* unsure about this */
+	//a_ptr->pval = k_ptr->pval;	/* unsure about this */
 
 	/* 'Merge' pval and bpval into a single value, by just discarding
 	   o_ptr->bpval, and using only a_ptr->pval, which becomes o_ptr->pval,
@@ -1941,7 +1936,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 	   Some items that use bpval in a special way are exempt and need to
 	   keep their bpval: Rings of Power. */
 	if ((k_ptr->tval != TV_RING) || (k_ptr->sval != SV_RING_SPECIAL)) {
-//		if (o_ptr->bpval) a_ptr->pval = (o_ptr->pval < o_ptr->bpval)? o_ptr->bpval : o_ptr->pval;
+		//if (o_ptr->bpval) a_ptr->pval = (o_ptr->pval < o_ptr->bpval)? o_ptr->bpval : o_ptr->pval;
 		o_ptr->bpval = 0;
 	}
 
@@ -2231,8 +2226,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 /*
  * Make random artifact name.
  */
-void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer)
-{
+void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer) {
 	char tmp[80];
 
 	/* Set the RNG seed. It this correct. Should it be restored??? XXX */
@@ -2283,8 +2277,8 @@ void apply_enchantment_limits(object_type *o_ptr) {
 		return;
 
 	case TV_BOLT:
-        case TV_ARROW:
-        case TV_SHOT:
+	case TV_ARROW:
+	case TV_SHOT:
 		if (o_ptr->to_h > 15) o_ptr->to_h = 15;
 		if (o_ptr->to_d > 15) o_ptr->to_d = 15;
 		return;
@@ -2322,12 +2316,11 @@ void apply_enchantment_limits(object_type *o_ptr) {
  * o_ptr should contain the seed (in name3) plus a tval
  * and sval.
  */
-artifact_type *ego_make(object_type *o_ptr)
-{
+artifact_type *ego_make(object_type *o_ptr) {
 	ego_item_type *e_ptr;
 	int j, rr, granted_pval;
 	bool limit_blows = FALSE;
-//	u32b f1, f2, f3, f4, f5, f6, esp;
+	//u32b f1, f2, f3, f4, f5, f6, esp;
 	s16b e_idx;
 
 	/* Hack -- initialize bias */
@@ -2338,6 +2331,7 @@ artifact_type *ego_make(object_type *o_ptr)
 
 	/* Get pointer to object kind */
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
 
 	/* Set the RNG seed. */
 	Rand_value = o_ptr->name3;
@@ -2455,7 +2449,7 @@ try_an_other_ego:
 	remove_redundant_esp(a_ptr);
 
 	/* Hack -- apply rating bonus(it's done in apply_magic) */
-	//		rating += e_ptr->rating;
+	//rating += e_ptr->rating;
 
 #if 1	/* double-ego code.. future pleasure :) */
 	if (o_ptr->name2b && (o_ptr->name2b != e_idx)) {
@@ -2503,8 +2497,8 @@ try_an_other_ego:
 		if (!a_ptr->pval) a_ptr->pval = 1;
 	}
 	/* While +MANA is capped at 10 for randarts, it's 12 for egos(!) */
-        if ((a_ptr->flags1 & TR1_MANA) && a_ptr->pval > 12) a_ptr->pval = 12;
-        /* Stealth cap; stealth/speed cap on all items except boots (for 'of Swiftness') */
+	if ((a_ptr->flags1 & TR1_MANA) && a_ptr->pval > 12) a_ptr->pval = 12;
+	/* Stealth cap; stealth/speed cap on all items except boots (for 'of Swiftness') */
 	if (a_ptr->flags1 & TR1_STEALTH) {
 		/* Don't limit elvenkind boots */
 		if ((a_ptr->flags1 & TR1_SPEED) && o_ptr->tval != TV_BOOTS) {
@@ -2544,7 +2538,7 @@ try_an_other_ego:
 		}
 	}
 	/* +EA caps */
-        if (a_ptr->flags1 & TR1_BLOWS) {
+	if (a_ptr->flags1 & TR1_BLOWS) {
 		if (o_ptr->tval == TV_GLOVES) {
 			//if (a_ptr->pval > 2) a_ptr->pval /= 3;
 	                if (a_ptr->pval > 2) a_ptr->pval = 2;
@@ -2586,8 +2580,7 @@ try_an_other_ego:
 	/* Return a pointer to the artifact_type */
 	return (a_ptr);
 }
-static void add_random_esp(artifact_type *a_ptr, int all)
-{
+static void add_random_esp(artifact_type *a_ptr, int all) {
 	int rr = rand_int(25 + all);
 	if (rr < 1) a_ptr->esp |= (ESP_SPIDER);
 	else if (rr < 2) a_ptr->esp |= (ESP_ORC);
@@ -2651,7 +2644,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
 		case 2: a_ptr->flags3 |= (TR3_LITE1);        break;
 		case 3: a_ptr->flags3 |= (TR3_SEE_INVIS);   break;
-//		case 4: a_ptr->esp |= (ESP_ALL);   break;
+		//case 4: a_ptr->esp |= (ESP_ALL);   break;
 		case 4: add_random_esp(a_ptr, 5); break;
 		case 5: a_ptr->flags3 |= (TR3_SLOW_DIGEST); break;
 		case 6: a_ptr->flags3 |= (TR3_REGEN);       break;
@@ -2668,7 +2661,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
 		case 2: a_ptr->flags3 |= (TR3_LITE1);        break;
 		case 3: a_ptr->flags3 |= (TR3_SEE_INVIS);   break;
-//		case 4: a_ptr->esp |= (ESP_ALL);   break;
+		//case 4: a_ptr->esp |= (ESP_ALL);   break;
 		case 4: add_random_esp(a_ptr, -4); break;
 		case 5: a_ptr->flags3 |= (TR3_SLOW_DIGEST); break;
 		case 6: a_ptr->flags3 |= (TR3_REGEN);       break;
@@ -2739,7 +2732,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 
 		if (randint(5) == 1) a_ptr->flags1 |= TR1_BRAND_POIS;
 
-/*		if (k_ptr->tval == TV_SWORD && (randint(4) == 1))*/
+		/*if (k_ptr->tval == TV_SWORD && (randint(4) == 1))*/
 		if ((k_ptr->tval != TV_BLUNT) &&
 		    !(k_ptr->tval == TV_POLEARM &&
 			k_ptr->sval != 3 && k_ptr->sval != 6 && k_ptr->sval != 9 && k_ptr->sval != 13 && k_ptr->sval != 17 && k_ptr->sval != 30
@@ -2952,303 +2945,243 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
  */
 
 //void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
-void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
-{
-  if (!specific) /* To avoid a number of possible bugs */
-  {
-    if (artifact_bias == BIAS_ACID)
-    {
-	if (!(a_ptr->flags2 & TR2_RES_ACID))
-	{
-	    a_ptr->flags2 |= TR2_RES_ACID;
-	    if (randint(2) == 1) return;
+void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific) {
+	if (!specific) { /* To avoid a number of possible bugs */
+		if (artifact_bias == BIAS_ACID) {
+			if (!(a_ptr->flags2 & TR2_RES_ACID)) {
+				a_ptr->flags2 |= TR2_RES_ACID;
+				if (randint(2) == 1) return;
+			}
+			if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_ACID)) {
+				a_ptr->flags2 |= TR2_IM_ACID;
+				if (randint(2) == 1) return;
+			}
+		} else if (artifact_bias == BIAS_ELEC) {
+			if (!(a_ptr->flags2 & TR2_RES_ELEC)) {
+				a_ptr->flags2 |= TR2_RES_ELEC;
+				if (randint(2) == 1) return;
+			}
+			if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
+			    !(a_ptr->flags3 & TR3_SH_ELEC)) {
+				a_ptr->flags3 |= TR3_SH_ELEC;
+				if (randint(2) == 1) return;
+			}
+			if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_ELEC)) {
+				a_ptr->flags2 |= TR2_IM_ELEC;
+				if (randint(2) == 1) return;
+			}
+		} else if (artifact_bias == BIAS_FIRE) {
+			if (!(a_ptr->flags2 & TR2_RES_FIRE)) {
+				a_ptr->flags2 |= TR2_RES_FIRE;
+				if (randint(2) == 1) return;
+			}
+			if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
+			    !(a_ptr->flags3 & TR3_SH_FIRE)) {
+				a_ptr->flags3 |= TR3_SH_FIRE;
+				if (randint(2) == 1) return;
+			}
+			if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_FIRE)) {
+				a_ptr->flags2 |= TR2_IM_FIRE;
+				if (randint(2) == 1) return;
+			}
+		} else if (artifact_bias == BIAS_COLD) {
+			if (!(a_ptr->flags2 & TR2_RES_COLD)) {
+				a_ptr->flags2 |= TR2_RES_COLD;
+				if (randint(2) == 1) return;
+			}
+			if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
+			    !(a_ptr->flags5 & TR5_SH_COLD)) {
+				a_ptr->flags5 |= TR5_SH_COLD;
+				if (randint(2) == 1) return;
+			}
+			if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_COLD)) {
+				a_ptr->flags2 |= TR2_IM_COLD;
+				if (randint(2) == 1) return;
+			}
+		} else if (artifact_bias == BIAS_POIS) {
+			if (!(a_ptr->flags2 & TR2_RES_POIS)) {
+				a_ptr->flags2 |= TR2_RES_POIS;
+				if (randint(2) == 1) return;
+			}
+		} else if (artifact_bias == BIAS_WARRIOR) {
+			if (randint(3) != 1 && (!(a_ptr->flags2 & TR2_RES_FEAR))) {
+				a_ptr->flags2 |= TR2_RES_FEAR;
+				if (randint(2) == 1) return;
+			}
+			if ((randint(3) == 1) && (!(a_ptr->flags3 & TR3_NO_MAGIC))) {
+				a_ptr->flags3 |= TR3_NO_MAGIC;
+				if (randint(2) == 1) return;
+			}
+		} else if (artifact_bias == BIAS_NECROMANTIC) {
+			if (!(a_ptr->flags2 & TR2_RES_NETHER)) {
+				a_ptr->flags2 |= TR2_RES_NETHER;
+				if (randint(2) == 1) return;
+			}
+			if (!(a_ptr->flags2 & TR2_RES_POIS)) {
+				a_ptr->flags2 |= TR2_RES_POIS;
+				if (randint(2) == 1) return;
+			}
+			if (!(a_ptr->flags2 & TR2_RES_DARK)) {
+				a_ptr->flags2 |= TR2_RES_DARK;
+				if (randint(2) == 1) return;
+			}
+		} else if (artifact_bias == BIAS_CHAOS) {
+			if (!(a_ptr->flags2 & TR2_RES_CHAOS)) {
+				a_ptr->flags2 |= TR2_RES_CHAOS;
+				if (randint(2) == 1) return;
+			}
+			if (!(a_ptr->flags2 & TR2_RES_CONF)) {
+				a_ptr->flags2 |= TR2_RES_CONF;
+				if (randint(2) == 1) return;
+			}
+			if (!(a_ptr->flags2 & TR2_RES_DISEN)) {
+				a_ptr->flags2 |= TR2_RES_DISEN;
+				if (randint(2) == 1) return;
+			}
+		}
 	}
-    if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_ACID))
-	{
-	    a_ptr->flags2 |= TR2_IM_ACID;
-	    if (randint(2) == 1) return;
-	}
-    }
-    else if (artifact_bias == BIAS_ELEC)
-    {
-	if (!(a_ptr->flags2 & TR2_RES_ELEC))
-	{
-	    a_ptr->flags2 |= TR2_RES_ELEC;
-	    if (randint(2) == 1) return;
-	}
-	if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
-    	    ! (a_ptr->flags3 & TR3_SH_ELEC))
-        {
-            a_ptr->flags3 |= TR3_SH_ELEC;
-            if (randint(2) == 1) return;
-        }
-    if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_ELEC))
-	{
-	    a_ptr->flags2 |= TR2_IM_ELEC;
-	    if (randint(2) == 1) return;
-	}
-    }
-    else if (artifact_bias == BIAS_FIRE)
-    {
-	if (!(a_ptr->flags2 & TR2_RES_FIRE))
-	{
-	    a_ptr->flags2 |= TR2_RES_FIRE;
-	    if (randint(2) == 1) return;
-	}
-	if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
-    	    ! (a_ptr->flags3 & TR3_SH_FIRE))
-        {
-            a_ptr->flags3 |= TR3_SH_FIRE;
-            if (randint(2) == 1) return;
-        }
-    if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_FIRE))
-	{
-	    a_ptr->flags2 |= TR2_IM_FIRE;
-	    if (randint(2) == 1) return;
-	}
-    }
-    else if (artifact_bias == BIAS_COLD)
-    {
-	if (!(a_ptr->flags2 & TR2_RES_COLD))
-	{
-	    a_ptr->flags2 |= TR2_RES_COLD;
-	    if (randint(2) == 1) return;
-	}
-        if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
-    	    ! (a_ptr->flags5 & TR5_SH_COLD))
-        {
-            a_ptr->flags5 |= TR5_SH_COLD;
-            if (randint(2) == 1) return;
-        }
-    if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_COLD))
-	{
-	    a_ptr->flags2 |= TR2_IM_COLD;
-	    if (randint(2) == 1) return;
-	}
-    }
-    else if (artifact_bias == BIAS_POIS)
-    {
-	if (!(a_ptr->flags2 & TR2_RES_POIS))
-	{
-	    a_ptr->flags2 |= TR2_RES_POIS;
-	    if (randint(2) == 1) return;
-	}
-    }
-    else if (artifact_bias == BIAS_WARRIOR)
-    {
-	if (randint(3) != 1 && (!(a_ptr->flags2 & TR2_RES_FEAR)))
-	{
-	    a_ptr->flags2 |= TR2_RES_FEAR;
-	    if (randint(2) == 1) return;
-	}
-    if ((randint(3) == 1) && (!(a_ptr->flags3 & TR3_NO_MAGIC)))
-    {
-        a_ptr->flags3 |= TR3_NO_MAGIC;
-        if (randint(2) == 1) return;
-    }
-    }
-    else if (artifact_bias == BIAS_NECROMANTIC)
-    {
-	if (!(a_ptr->flags2 & TR2_RES_NETHER))
-	{
-	    a_ptr->flags2 |= TR2_RES_NETHER;
-	    if (randint(2) == 1) return;
-	}
-	if (!(a_ptr->flags2 & TR2_RES_POIS))
-	{
-	    a_ptr->flags2 |= TR2_RES_POIS;
-	    if (randint(2) == 1) return;
-	}
-	if (!(a_ptr->flags2 & TR2_RES_DARK))
-	{
-	    a_ptr->flags2 |= TR2_RES_DARK;
-	    if (randint(2) == 1) return;
-	}
-    }
-    else if (artifact_bias == BIAS_CHAOS)
-    {
-	if (!(a_ptr->flags2 & TR2_RES_CHAOS))
-	{
-	    a_ptr->flags2 |= TR2_RES_CHAOS;
-	    if (randint(2) == 1) return;
-	}
-	if (!(a_ptr->flags2 & TR2_RES_CONF))
-	{
-	    a_ptr->flags2 |= TR2_RES_CONF;
-	    if (randint(2) == 1) return;
-	}
-	if (!(a_ptr->flags2 & TR2_RES_DISEN))
-	{
-	    a_ptr->flags2 |= TR2_RES_DISEN;
-	    if (randint(2) == 1) return;
-	}
-    }
-  }
 
-    switch (specific ? specific : randint(41))
-    {
-    case 1:
-    if (randint(WEIRD_LUCK) != 1)
-        random_resistance(a_ptr, is_scroll, specific);
-	else
-	{
-	a_ptr->flags2 |= TR2_IM_ACID;
-/*  if (is_scroll) msg_print("It looks totally incorruptible."); */
-	if (!(artifact_bias))
-	    artifact_bias = BIAS_ACID;
+	switch (specific ? specific : randint(41)) {
+	case 1:
+		if (randint(WEIRD_LUCK) != 1)
+			random_resistance(a_ptr, is_scroll, specific);
+		else {
+			a_ptr->flags2 |= TR2_IM_ACID;
+			/*  if (is_scroll) msg_print("It looks totally incorruptible."); */
+			if (!(artifact_bias)) artifact_bias = BIAS_ACID;
+		}
+		break;
+	case 2:
+		if (randint(WEIRD_LUCK) != 1)
+			random_resistance(a_ptr, is_scroll, specific);
+		else {
+			a_ptr->flags2 |= TR2_IM_ELEC;
+			/*  if (is_scroll) msg_print("It looks completely grounded."); */
+			if (!(artifact_bias)) artifact_bias = BIAS_ELEC;
+		}
+		break;
+	case 3:
+		if (randint(WEIRD_LUCK) != 1)
+			random_resistance(a_ptr, is_scroll, specific);
+		else {
+			a_ptr->flags2 |= TR2_IM_COLD;
+			/*  if (is_scroll) msg_print("It feels very warm."); */
+			if (!(artifact_bias)) artifact_bias = BIAS_COLD;
+		}
+		break;
+	case 4:
+		if (randint(WEIRD_LUCK) != 1)
+			random_resistance(a_ptr, is_scroll, specific);
+		else {
+			a_ptr->flags2 |= TR2_IM_FIRE;
+			/*  if (is_scroll) msg_print("It feels very cool."); */
+			if (!(artifact_bias)) artifact_bias = BIAS_FIRE;
+		}
+		break;
+	case 5: case 6: case 13:
+		a_ptr->flags2 |= TR2_RES_ACID;
+		/*  if (is_scroll) msg_print("It makes your stomach rumble."); */
+		if (!(artifact_bias)) artifact_bias = BIAS_ACID;
+		break;
+	case 7: case 8: case 14:
+		a_ptr->flags2 |= TR2_RES_ELEC;
+		/*  if (is_scroll) msg_print("It makes you feel grounded."); */
+		if (!(artifact_bias)) artifact_bias = BIAS_ELEC;
+		break;
+	case 9: case 10: case 15:
+		a_ptr->flags2 |= TR2_RES_FIRE;
+		/*  if (is_scroll) msg_print("It makes you feel cool!");*/
+		if (!(artifact_bias)) artifact_bias = BIAS_FIRE;
+		break;
+	case 11: case 12: case 16:
+		a_ptr->flags2 |= TR2_RES_COLD;
+		/*  if (is_scroll) msg_print("It makes you feel full of hot air!");*/
+		if (!(artifact_bias)) artifact_bias = BIAS_COLD;
+		break;
+	case 17: case 18:
+		a_ptr->flags2 |= TR2_RES_POIS;
+		/*  if (is_scroll) msg_print("It makes breathing easier for you."); */
+		if (!(artifact_bias) && randint(4) != 1) artifact_bias = BIAS_POIS;
+		else if (!(artifact_bias) && randint(2) == 1) artifact_bias = BIAS_NECROMANTIC;
+		else if (!(artifact_bias) && randint(2) == 1) artifact_bias = BIAS_ROGUE;
+		break;
+	case 19: case 20:
+		a_ptr->flags2 |= TR2_RES_FEAR;
+		/*  if (is_scroll) msg_print("It makes you feel brave!"); */
+		if (!(artifact_bias) && randint(3) == 1) artifact_bias = BIAS_WARRIOR;
+		break;
+	case 21:
+		a_ptr->flags2 |= TR2_RES_LITE;
+		/*  if (is_scroll) msg_print("It makes everything look darker.");*/
+		break;
+	case 22:
+		a_ptr->flags2 |= TR2_RES_DARK;
+		/*  if (is_scroll) msg_print("It makes everything look brigher.");*/
+		break;
+	case 23: case 24:
+		a_ptr->flags2 |= TR2_RES_BLIND;
+		/*  if (is_scroll) msg_print("It makes you feel you are wearing glasses.");*/
+		break;
+	case 25: case 26:
+		a_ptr->flags2 |= TR2_RES_CONF;
+		/*  if (is_scroll) msg_print("It makes you feel very determined.");*/
+		if (!(artifact_bias) && randint(6) == 1) artifact_bias = BIAS_CHAOS;
+		break;
+	case 27: case 28:
+		a_ptr->flags2 |= TR2_RES_SOUND;
+		/*  if (is_scroll) msg_print("It makes you feel deaf!");*/
+		break;
+	case 29: case 30:
+		a_ptr->flags2 |= TR2_RES_SHARDS;
+		/*  if (is_scroll) msg_print("It makes your skin feel thicker.");*/
+		break;
+	case 31: case 32:
+		a_ptr->flags2 |= TR2_RES_NETHER;
+		/*  if (is_scroll) msg_print("It makes you feel like visiting a graveyard!");*/
+		if (!(artifact_bias) && randint(3) == 1) artifact_bias = BIAS_NECROMANTIC;
+		break;
+	case 33: case 34:
+		a_ptr->flags2 |= TR2_RES_NEXUS;
+		/*  if (is_scroll) msg_print("It makes you feel normal.");*/
+		break;
+	case 35: case 36:
+		a_ptr->flags2 |= TR2_RES_CHAOS;
+		/*  if (is_scroll) msg_print("It makes you feel very firm.");*/
+		if (!(artifact_bias) && randint(2) == 1) artifact_bias = BIAS_CHAOS;
+		break;
+	case 37: case 38:
+		a_ptr->flags2 |= TR2_RES_DISEN;
+		/*  if (is_scroll) msg_print("It is surrounded by a static feeling.");*/
+		break;
+	case 39:
+		if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR)
+			a_ptr->flags3 |= TR3_SH_ELEC;
+		else
+			random_resistance(a_ptr, is_scroll, specific);
+		if (!(artifact_bias)) artifact_bias = BIAS_ELEC;
+		break;
+	case 40:
+		if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR)
+			a_ptr->flags3 |= TR3_SH_FIRE;
+		else
+			random_resistance(a_ptr, is_scroll, specific);
+		if (!(artifact_bias)) artifact_bias = BIAS_FIRE;
+		break;
+	case 41:
+		if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR)
+			a_ptr->flags5 |= TR5_SH_COLD;
+		else
+			random_resistance(a_ptr, is_scroll, specific);
+		if (!(artifact_bias)) artifact_bias = BIAS_COLD;
+		break;
+	case 42: /* currently not possible since switch goes only up to 41. also buggy/wrong to give reflect to these items. */
+		if (a_ptr->tval == TV_SHIELD || a_ptr->tval == TV_CLOAK ||
+		    a_ptr->tval == TV_HELM || a_ptr->tval == TV_HARD_ARMOR)
+			a_ptr->flags5 |= TR5_REFLECT;
+		else
+			random_resistance(a_ptr, is_scroll, specific);
+		break;
 	}
-	break;
-    case 2:
-    if (randint(WEIRD_LUCK) != 1)
-	    random_resistance(a_ptr, is_scroll, specific);
-	else
-	{
-	a_ptr->flags2 |= TR2_IM_ELEC;
-/*  if (is_scroll) msg_print("It looks completely grounded."); */
-	if (!(artifact_bias))
-	    artifact_bias = BIAS_ELEC;
-	}
-	break;
-    case 3:
-    if (randint(WEIRD_LUCK) != 1)
-	    random_resistance(a_ptr, is_scroll, specific);
-	else
-	{
-	a_ptr->flags2 |= TR2_IM_COLD;
-/*  if (is_scroll) msg_print("It feels very warm."); */
-	if (!(artifact_bias))
-	    artifact_bias = BIAS_COLD;
-	}
-	break;
-    case 4:
-    if (randint(WEIRD_LUCK) != 1)
-	    random_resistance(a_ptr, is_scroll, specific);
-	else
-	{
-	a_ptr->flags2 |= TR2_IM_FIRE;
-/*  if (is_scroll) msg_print("It feels very cool."); */
-	if (!(artifact_bias))
-	    artifact_bias = BIAS_FIRE;
-	}
-	break;
-    case 5: case 6: case 13:
-	a_ptr->flags2 |= TR2_RES_ACID;
-/*  if (is_scroll) msg_print("It makes your stomach rumble."); */
-	if (!(artifact_bias))
-	    artifact_bias = BIAS_ACID;
-	break;
-    case 7: case 8: case 14:
-	a_ptr->flags2 |= TR2_RES_ELEC;
-/*  if (is_scroll) msg_print("It makes you feel grounded."); */
-    if (!(artifact_bias))
-	    artifact_bias = BIAS_ELEC;
-	break;
-    case 9: case 10: case 15:
-	a_ptr->flags2 |= TR2_RES_FIRE;
-/*  if (is_scroll) msg_print("It makes you feel cool!");*/
-	if (!(artifact_bias))
-	    artifact_bias = BIAS_FIRE;
-	break;
-    case 11: case 12: case 16:
-	a_ptr->flags2 |= TR2_RES_COLD;
-/*  if (is_scroll) msg_print("It makes you feel full of hot air!");*/
-	if (!(artifact_bias))
-	    artifact_bias = BIAS_COLD;
-	break;
-    case 17: case 18:
-	a_ptr->flags2 |= TR2_RES_POIS;
-/*  if (is_scroll) msg_print("It makes breathing easier for you."); */
-	if (!(artifact_bias) && randint(4) != 1)
-	    artifact_bias = BIAS_POIS;
-	else if (!(artifact_bias) && randint(2) == 1)
-	    artifact_bias = BIAS_NECROMANTIC;
-	else if (!(artifact_bias) && randint(2) == 1)
-	    artifact_bias = BIAS_ROGUE;
-	break;
-    case 19: case 20:
-	a_ptr->flags2 |= TR2_RES_FEAR;
-/*  if (is_scroll) msg_print("It makes you feel brave!"); */
-	if (!(artifact_bias) && randint(3) == 1)
-	    artifact_bias = BIAS_WARRIOR;
-	break;
-    case 21:
-	a_ptr->flags2 |= TR2_RES_LITE;
-/*  if (is_scroll) msg_print("It makes everything look darker.");*/
-	break;
-    case 22:
-	a_ptr->flags2 |= TR2_RES_DARK;
-/*  if (is_scroll) msg_print("It makes everything look brigher.");*/
-	break;
-    case 23: case 24:
-	a_ptr->flags2 |= TR2_RES_BLIND;
-/*  if (is_scroll) msg_print("It makes you feel you are wearing glasses.");*/
-	break;
-    case 25: case 26:
-	a_ptr->flags2 |= TR2_RES_CONF;
-/*  if (is_scroll) msg_print("It makes you feel very determined.");*/
-	if (!(artifact_bias) && randint(6) == 1)
-	    artifact_bias = BIAS_CHAOS;
-	break;
-    case 27: case 28:
-	a_ptr->flags2 |= TR2_RES_SOUND;
-/*  if (is_scroll) msg_print("It makes you feel deaf!");*/
-	break;
-    case 29: case 30:
-	a_ptr->flags2 |= TR2_RES_SHARDS;
-/*  if (is_scroll) msg_print("It makes your skin feel thicker.");*/
-	break;
-    case 31: case 32:
-	a_ptr->flags2 |= TR2_RES_NETHER;
-/*  if (is_scroll) msg_print("It makes you feel like visiting a graveyard!");*/
-	if (!(artifact_bias) && randint(3) == 1)
-	    artifact_bias = BIAS_NECROMANTIC;
-	break;
-    case 33: case 34:
-	a_ptr->flags2 |= TR2_RES_NEXUS;
-/*  if (is_scroll) msg_print("It makes you feel normal.");*/
-	break;
-    case 35: case 36:
-	a_ptr->flags2 |= TR2_RES_CHAOS;
-/*  if (is_scroll) msg_print("It makes you feel very firm.");*/
-	if (!(artifact_bias) && randint(2) == 1)
-	    artifact_bias = BIAS_CHAOS;
-	break;
-    case 37: case 38:
-	a_ptr->flags2 |= TR2_RES_DISEN;
-/*  if (is_scroll) msg_print("It is surrounded by a static feeling.");*/
-	break;
-    case 39:
-    if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR)
-        a_ptr->flags3 |= TR3_SH_ELEC;
-    else
-	    random_resistance(a_ptr, is_scroll, specific);
-    if (!(artifact_bias))
-	    artifact_bias = BIAS_ELEC;
-    break;
-    case 40:
-    if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR)
-        a_ptr->flags3 |= TR3_SH_FIRE;
-    else
-	    random_resistance(a_ptr, is_scroll, specific);
-    if (!(artifact_bias))
-        artifact_bias = BIAS_FIRE;
-    break;
-    case 41:
-    if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR)
-        a_ptr->flags5 |= TR5_SH_COLD;
-    else
-	    random_resistance(a_ptr, is_scroll, specific);
-    if (!(artifact_bias))
-        artifact_bias = BIAS_COLD;
-    break;
-    case 42: /* currently not possible since switch goes only up to 41. also buggy/wrong to give reflect to these items. */
-    if (a_ptr->tval == TV_SHIELD || a_ptr->tval == TV_CLOAK ||
-        a_ptr->tval == TV_HELM || a_ptr->tval == TV_HARD_ARMOR)
-        a_ptr->flags5 |= TR5_REFLECT;
-    else
-	    random_resistance(a_ptr, is_scroll, specific);
-    break;
-    }
 }
 
 /* Borrowed from object2.c of PernAngband w/o even knowing
