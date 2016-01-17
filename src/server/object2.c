@@ -160,11 +160,11 @@ void excise_object_idx(int o_idx) {
 			prev_o_idx = this_o_idx;
 		}
 
-	        /* Fix visibility of item pile - C. Blue
+		/* Fix visibility of item pile - C. Blue
 		   If object was visible to a player, then the top object of that pile becomes visible now! */
 		if (c_ptr->o_idx) /* any object left at all? */
-	    		for (i = 1; i <= NumPlayers; i++) /* FIX_PILE_VISIBILITY_DEBUG */
-	    			if (Players[i]->obj_vis[o_idx])
+			for (i = 1; i <= NumPlayers; i++) /* FIX_PILE_VISIBILITY_DEBUG */
+				if (Players[i]->obj_vis[o_idx])
 					Players[i]->obj_vis[c_ptr->o_idx] = TRUE;
 	}
 }
@@ -640,11 +640,11 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 			continue;
 
 /* DEBUG -after getting weird crashes today 2007-12-21 in bree from /clv, and multiplying townies, I added this inbound check- C. Blue */
-//		if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
+		//if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
 			/* Skip objects inside a house but not in a vault in dungeon/tower */
 			if (!wpos->wz && zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
 				continue;
-//		}
+		//}
 
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
@@ -1167,8 +1167,7 @@ static s64b object_value_base(int Ind, object_type *o_ptr) {
 	if (Ind == 0 || object_aware_p(Ind, o_ptr)) return (k_ptr->cost);
 
 	/* Analyze the type */
-	switch (o_ptr->tval)
-	{
+	switch (o_ptr->tval) {
 		/* Un-aware Food */
 		case TV_FOOD: return (5L);
 
@@ -1283,8 +1282,8 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (f1 & TR1_SLAY_TROLL) total += 3500;
 	if (f1 & TR1_SLAY_GIANT) total += 3500;
 	if (f1 & TR1_SLAY_DRAGON) total += 3500;
-        if (f1 & TR1_KILL_DEMON) total += 5500;
-        if (f1 & TR1_KILL_UNDEAD) total += 5500;
+	if (f1 & TR1_KILL_DEMON) total += 5500;
+	if (f1 & TR1_KILL_UNDEAD) total += 5500;
 	if (f1 & TR1_KILL_DRAGON) total += 5500;
 	if (f5 & TR5_VORPAL) total += 5000;
 	if (f5 & TR5_IMPACT) total += 5000;
@@ -1299,12 +1298,12 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (f2 & TR2_SUST_DEX) total += 850;
 	if (f2 & TR2_SUST_CON) total += 850;
 	if (f2 & TR2_SUST_CHR) total += 250;
-/* f6 Not yet implemented in object_flags/eliminate_common_ego_flags etc. Really needed??
-//        if (f5 & TR5_SENS_FIRE) total -= 100;
-        if (f6 & TR6_SENS_COLD) total -= 100;
-        if (f6 & TR6_SENS_ACID) total -= 100;
-        if (f6 & TR6_SENS_ELEC) total -= 100;
-        if (f6 & TR6_SENS_POIS) total -= 100; */
+	/* f6 Not yet implemented in object_flags/eliminate_common_ego_flags etc. Really needed??
+	//if (f5 & TR5_SENS_FIRE) total -= 100;
+	if (f6 & TR6_SENS_COLD) total -= 100;
+	if (f6 & TR6_SENS_ACID) total -= 100;
+	if (f6 & TR6_SENS_ELEC) total -= 100;
+	if (f6 & TR6_SENS_POIS) total -= 100; */
 	if (f5 & TR5_REFLECT) total += 10000;
 	if (f2 & TR2_FREE_ACT) total += 4500;
 	if (f2 & TR2_HOLD_LIFE) total += 8500;
@@ -1327,7 +1326,7 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (f3 & TR3_SH_FIRE) total += 3000;
 	if (f5 & TR5_SH_COLD) total += 3000;
 	if (f3 & TR3_SH_ELEC) total += 3000;
-        if (f3 & TR3_DECAY) total += 0;
+	if (f3 & TR3_DECAY) total += 0;
 	if (f3 & TR3_NO_TELE) total += 2500;
 	if (f3 & TR3_NO_MAGIC) total += 2500;
 	if (f3 & TR3_TY_CURSE) total -= 15000;
@@ -1349,8 +1348,8 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (esp & ESP_NONLIVING) total += 5000;
 	if (esp & ESP_UNIQUE) total += 4000;
 	if (esp & ESP_SPIDER) total += 2000;
-//        if (esp) total += (12500 * count_bits(esp));
-        if (esp & ESP_ALL) total += 150000;/* was 125k, but ESP crowns cost 150k */
+	//if (esp) total += (12500 * count_bits(esp));
+	if (esp & ESP_ALL) total += 150000;/* was 125k, but ESP crowns cost 150k */
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 2500;
 	if (f5 & TR5_REGEN_MANA) total += 2500;
@@ -1364,14 +1363,13 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (f3 & TR3_IGNORE_COLD) total += 100;
 	if (f3 & TR3_ACTIVATE) total += 100;
 	if (f3 & TR3_DRAIN_EXP) total -= 12500;
-	if (f3 & TR3_TELEPORT)
-	{
+	if (f3 & TR3_TELEPORT) {
 		if (o_ptr->ident & ID_CURSED)
 			total -= 7500;
 		else
 			total += 500;
 	}
-//	if (f3 & TR3_AGGRAVATE) total -= 10000; /* penalty 1 of 2 */
+	//if (f3 & TR3_AGGRAVATE) total -= 10000; /* penalty 1 of 2 */
 	if (f3 & TR3_BLESSED) total += 750;
 	if (f3 & TR3_CURSED) total -= 5000;
 	if (f3 & TR3_HEAVY_CURSE) total -= 12500;
@@ -1384,7 +1382,7 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (f4 & TR4_BLACK_BREATH) total -= 12500;
 	if (f4 & TR4_DG_CURSE) total -= 25000;
 	if (f4 & TR4_CLONE) total -= 10000;
-	//        if (f5 & TR5_LEVELS) total += o_ptr->elevel * 2000;
+	//if (f5 & TR5_LEVELS) total += o_ptr->elevel * 2000;
 
 #if 1 /* experimentally like this (see above for original position/code) */
  #if 1
@@ -2063,25 +2061,25 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 		res_amass += 2;
 		f2 |= TR2_RES_ACID;
 		imms++;
-	} else if (f2 & TR2_RES_ACID) total += 1250;
+	} else if (f2 & TR2_RES_ACID) total += 1500;
 	if (f2 & TR2_IM_ELEC) {
 		total += 20000;
 		res_amass += 2;
 		f2 |= TR2_RES_ELEC;
 		imms++;
-	} else if (f2 & TR2_RES_ELEC) total += 1250;
+	} else if (f2 & TR2_RES_ELEC) total += 1500;
 	if (f2 & TR2_IM_FIRE) {
-		total += 30000;
+		total += 27000;
 		res_amass += 2;
 		f2 |= TR2_RES_FIRE;
 		imms++;
-	} else if (f2 & TR2_RES_FIRE) total += 1250;
+	} else if (f2 & TR2_RES_FIRE) total += 1500;
 	if (f2 & TR2_IM_COLD) {
-		total += 20000;
+		total += 23000;
 		res_amass += 2;
 		f2 |= TR2_RES_COLD;
 		imms++;
-	} else if (f2 & TR2_RES_COLD) total += 1250;
+	} else if (f2 & TR2_RES_COLD) total += 1500;
 	/* count (semi)complete base res as 1up too */
 	res_base =
 	    (f2 & (TR2_RES_ACID)) ? 1 : 0 +
@@ -2099,39 +2097,39 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	} else if (imms >= 2) total += 40000; /* can't have more than 2 immunities on a randart anyway */
 
 	if (f2 & TR2_RES_POIS) {
-		total += 5000;
+		total += 9000;
 		res_amass++;
 	}
 	if (f2 & TR2_RES_FEAR) total += 2000;
-	if (f2 & TR2_RES_LITE) total += 2750;
+	if (f2 & TR2_RES_LITE) total += 3000;
 	if (f2 & TR2_RES_DARK) {
-		total += 2750;
+		total += 3000;
 		res_amass++;
 	}
-	if (f2 & TR2_RES_BLIND) total += 6000;
-	if (f2 & TR2_RES_CONF) total += 1500;
+	if (f2 & TR2_RES_BLIND) total += 5000;
+	if (f2 & TR2_RES_CONF) total += 3000;
 	if (f2 & TR2_RES_SOUND) {
-		total += 7000;
+		total += 10000;
 		res_amass += 2;
 	}
 	if (f2 & TR2_RES_SHARDS) {
-		total += 4000;
+		total += 6500;
 		res_amass++;
 	}
 	if (f2 & TR2_RES_NETHER) {
-		total += 10000;
+		total += 12000;
 		res_amass += 2;
 	}
 	if (f2 & TR2_RES_NEXUS) {
-		total += 7000;
+		total += 9000;
 		res_amass += 2;
 	}
 	if (f2 & TR2_RES_CHAOS) {
-		total += 10000;
+		total += 13000;
 		res_amass += 2;
 	}
 	if (f2 & TR2_RES_DISEN) {
-		total += 10000;
+		total += 15000;
 		res_amass += 2;
 	}
 	if (f5 & TR5_RES_MANA) {
@@ -2167,7 +2165,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (esp & ESP_ALL) total += 150000;// + 40000; /* hm, extra bonus */
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 3500;
-	if (f5 & TR5_REGEN_MANA) total += 2500;
+	if (f5 & TR5_REGEN_MANA) total += 3500;
 	if (f3 & TR3_XTRA_MIGHT) total += 10000;
 	if (f3 & TR3_XTRA_SHOTS) total += 10000;
 	if (f5 & TR5_IGNORE_WATER) total += 0;
@@ -2450,7 +2448,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		if (!value) return (0L);
 
 		/* Hack -- Use the artifact cost instead */
-//		value = a_ptr->cost;
+		//value = a_ptr->cost;
 	}
 
 	/* Bad items don't sell. Good items with some bad modifiers DO sell ((*defenders*)). -C. Blue */
@@ -2496,9 +2494,9 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		    ((o_ptr->to_d) < 0 && ((o_ptr->to_d - k_ptr->to_d) < 0 || k_ptr->to_d < 0)) ||
 		    ((o_ptr->to_a) < 0 && ((o_ptr->to_a - k_ptr->to_a) < 0 || k_ptr->to_a < 0)) ||
 /* to allow Mummy Wrappings in bm! - C. Blue */
-//		    (o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
-//		    (o_ptr->pval < 0) || (o_ptr->bpval < k_ptr->pval)) &&
-//		    (o_ptr->pval < 0) || (o_ptr->tval != TV_ROD && o_ptr->bpval < k_ptr->pval)) &&
+		    //(o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
+		    //(o_ptr->pval < 0) || (o_ptr->bpval < k_ptr->pval)) &&
+		    //(o_ptr->pval < 0) || (o_ptr->tval != TV_ROD && o_ptr->bpval < k_ptr->pval)) &&
 		    (o_ptr->pval < 0) || (o_ptr->bpval < 0 && o_ptr->bpval < k_ptr->pval)) &&
 		    !(((o_ptr->to_h) > 0) ||
 		    ((o_ptr->to_d) > 0) ||
@@ -2545,16 +2543,16 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 			kpval = 0;
 		}
 
-//		int boost = 1 << pval;
+		//int boost = 1 << pval;
 
 		/* Hack -- Negative "pval" is always bad */
-//		if (pval < 0) return (0L);
+		//if (pval < 0) return (0L);
 
 		for (i = 0; i < 2; i++) {
 			int count = 0;
 
 			/* No pval */
-//			if (!pval)
+			//if (!pval)
 			if (pval <= 0) {
 				pval = o_ptr->pval;
 				continue;
@@ -2590,13 +2588,13 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 				if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 200L;
 			}
 
-//			if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
-//			if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
+			//if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
+			//if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
 			if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1500L;/* was 20k, but speed is only 10k */
 			if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
 
 			/* Give credit for stealth and searching */
-//			if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
+			//if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
 			if (f1 & TR1_STEALTH) value += (pval + 1) * (pval + 1) * 400L;//100
 			if (f1 & TR1_SEARCH) value += pval * pval * 200L;//200
 			if (f5 & TR5_DISARM) value += pval * pval * 100L;
@@ -2609,7 +2607,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 			if (o_ptr->tval == TV_RING) {
 				if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 2000L);//1500
 			} else {
-//				if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+				//if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
 				if (f1 & TR1_BLOWS) value += pval * (pval + 2) * 5000L;
 			}
 
@@ -2636,11 +2634,11 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 				/* Give credit for speed bonus */
 				//if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
 				if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-//				if (f1 & TR1_SPEED) value += pval * pval * 7000L;
+				//if (f1 & TR1_SPEED) value += pval * pval * 7000L;
 			}
 			/* randarts and speed boots */
-//			else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
-//			else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
+			//else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
+			//else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
 			else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 6000L;//7000 -> //5000
 
 			pval = o_ptr->pval;
@@ -2726,7 +2724,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		if (o_ptr->to_a < 0) return (0L);
 #endif
 		/* Give credit for bonuses */
-//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 : 
 			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5): 
@@ -2765,7 +2763,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		}
 #endif
 		/* Factor in the bonuses */
-//		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
 			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
@@ -2789,10 +2787,10 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	case TV_ARROW:
 	case TV_BOLT:
 		/* Hack -- negative hit/damage bonuses */
-//		if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
+		//if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
 
 		/* Factor in the bonuses */
-//		value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
+		//value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
 			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
@@ -2833,6 +2831,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	else if (is_weapon(o_ptr->tval) && (o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
 		/* generate two different values, pick the higher one */
 		s64b v1 = 0, v2 = 0;
+		int kill = 0;
 
 		/* first bonus prefers weapons with high flag rating */
 		i = artifact_flag_rating_weapon(o_ptr) * 4;
@@ -2863,7 +2862,23 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		}
 
 		/* apply the more advantageous bonus */
-		if (v1 > v2) value += v1; else value += v2;
+		if (v2 > v1) v1 = v2;
+
+ #if 1 /* new: boost further by KILL flags? */
+		if (f1 & TR1_KILL_DEMON) kill++;
+		if (f1 & TR1_KILL_UNDEAD) kill++;
+		if (f1 & TR1_KILL_DRAGON) kill++;
+		switch (kill) {
+		case 1: v1 += (o_ptr->to_h * (o_ptr->to_d + 1)) * 600; //+0..~45k
+			break;
+		case 2: v1 += (o_ptr->to_h * (o_ptr->to_d + 1)) * 1300; //+0..~95k
+			break;
+		case 3: v1 += (o_ptr->to_h * (o_ptr->to_d + 1)) * 3000; //+0..~220k
+			break;
+		}
+ #endif
+
+		value += v1;
 	}
 #endif
 
