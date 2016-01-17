@@ -1461,19 +1461,31 @@ static void Delete_player(int Ind) {
 		if (Ind2) end_mind(Ind2, TRUE);
 	}
 
+	/* in the same manner as for Ind-swapping below, fix global_event[] array
+	   which for 'Arena Monster Challenge' event also relies on Ind */
+	for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
+		if (global_event[i].getype != GE_ARENA_MONSTER) continue;
+		if (global_event[i].extra[5] == Ind)
+			global_event[i].extra[1] = 0; //undo signup
+		else if (global_event[i].extra[5] == NumPlayers)
+			global_event[i].extra[5] = Ind;
+	}
 
 	/* Swap entry number 'Ind' with the last one */
 	/* Also, update the "player_index" on the cave grids */
 	if (Ind != NumPlayers) {
 		cave_type **zcave;
 		worldpos *wpos = &Players[NumPlayers]->wpos;
-		p_ptr			= Players[NumPlayers];
+
+		p_ptr = Players[NumPlayers];
+
 		if ((zcave = getcave(&p_ptr->wpos)))
 			zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
-		Players[NumPlayers]	= Players[Ind];
-		Players[Ind]		= p_ptr;
+		Players[NumPlayers] = Players[Ind];
+		Players[Ind] = p_ptr;
 		cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
-		p_ptr			= Players[NumPlayers];
+
+		p_ptr = Players[NumPlayers];
 	}
 
 	if (Conn[Players[Ind]->conn]->id != -1)
