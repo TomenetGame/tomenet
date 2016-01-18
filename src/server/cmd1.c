@@ -6233,7 +6233,15 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		/* Questor? Bump -> talk :D */
 		else if (m_list[c_ptr->m_idx].questor && !m_list[c_ptr->m_idx].questor_hostile) {
 			disturb(Ind, 1, 0);
-			quest_interact(Ind, m_list[c_ptr->m_idx].quest, m_list[c_ptr->m_idx].questor_idx, NULL);
+			/* hack: if we're already acquiring it, don't try to re-acquire it meaninglessly.
+			   This happens when someone is keeping the directional key pressed down, sending
+			   consecutive bump-into orders here, while the delayed input prompt has not yet
+			   shown up for him. */
+			if (!p_ptr->delay_str && !p_ptr->delay_cfr
+			    /* ..also account for the small latency moment between clearing delay_str
+			       and the prompt actually popping up on player's client-side: */
+			    && !p_ptr->request_id)
+				quest_interact(Ind, m_list[c_ptr->m_idx].quest, m_list[c_ptr->m_idx].questor_idx, NULL);
 		}
 		/* Attack */
 		else {

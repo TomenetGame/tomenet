@@ -8633,7 +8633,7 @@ void use_esp_link(int *Ind, u32b flags) {
 void handle_request_return_str(int Ind, int id, char *str) {
 	player_type *p_ptr = Players[Ind];
 
-	/* verify that the ID is actually valid */
+	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
 	if (id != p_ptr->request_id) return;
 
 	/* request done */
@@ -8899,7 +8899,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 void handle_request_return_num(int Ind, int id, int num) {
 	player_type *p_ptr = Players[Ind];
 
-	/* verify that the ID is actually valid */
+	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
 	if (id != p_ptr->request_id) return;
 
 	/* request done */
@@ -8955,7 +8955,7 @@ void handle_request_return_num(int Ind, int id, int num) {
 void handle_request_return_key(int Ind, int id, char c) {
 	player_type *p_ptr = Players[Ind];
 
-	/* verify that the ID is actually valid */
+	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
 	if (id != p_ptr->request_id) return;
 
 	/* request done */
@@ -8983,7 +8983,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	player_type *p_ptr = Players[Ind];
 
-	/* verify that the ID is actually valid */
+	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
 	if (id != p_ptr->request_id) return;
 
 	/* request done */
