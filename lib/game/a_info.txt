@@ -3353,7 +3353,7 @@ N:272:'Dreadnought'
 I:37:33:6
 W:100:25:450:300000
 P:100:4d4:-8:0:25
-F:WINNERS_ONLY | STR | CON | IM_ELEC | RES_MANA | RES_DISEN
+F:WINNERS_ONLY | STR | CON | IM_ELEC | RES_MANA | RES_DISEN | RES_FEAR
 D:An armor of thick gleaming layers of adamantite that appears utterly
 D:impenetrable. Powerful engraved runes ornate arm and leg protectors.
 
