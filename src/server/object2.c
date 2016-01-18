@@ -7502,21 +7502,25 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_WARRIOR:
 		case CLASS_ARCHER:
 			break;
-		case CLASS_ADVENTURER:
 		case CLASS_SHAMAN:
+			if (!melee_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue;
+		case CLASS_ADVENTURER:
 			if ((p_ptr->stat_max[A_INT] > p_ptr->stat_max[A_WIS]) &&
 			    (o_ptr->name2 == EGO_WISDOM && !o_ptr->name2b)) continue;
 			if ((p_ptr->stat_max[A_WIS] > p_ptr->stat_max[A_INT]) &&
 			    (o_ptr->name2 == EGO_INTELLIGENCE && !o_ptr->name2b)) continue;
 			break;
 		case CLASS_MAGE:
+			if ((o_ptr->name2 == EGO_MIGHT || o_ptr->name2 == EGO_LORDLINESS) && !o_ptr->name2b) continue;
+		case CLASS_RUNEMASTER:
+			if (!melee_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue;
 		case CLASS_RANGER:
 		case CLASS_ROGUE:
-		case CLASS_RUNEMASTER:
 		case CLASS_MINDCRAFTER:
 			if (o_ptr->name2 == EGO_WISDOM && !o_ptr->name2b) continue;
 			break;
 		case CLASS_PRIEST:
+			if (!melee_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue;
 		case CLASS_PALADIN:
 		case CLASS_DRUID:
 			if (o_ptr->name2 == EGO_INTELLIGENCE && !o_ptr->name2b) continue;
