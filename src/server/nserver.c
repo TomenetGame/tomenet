@@ -5859,23 +5859,26 @@ int Send_message(int Ind, cptr msg) {
 	strncpy(buf, msg, 158);
 	buf[158] = '\0';
 
-	if ((!hack_message) && p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC)) {
-		int Ind2 = find_player(p_ptr->esp_link);
-		player_type *p_ptr2;
-		connection_t *connp2;
+	if ((!hack_message) && p_ptr->esp_link_type && p_ptr->esp_link) {
+		if ((buf[0] != '\375' && (p_ptr->esp_link_flags & LINKF_MSG)) ||
+		    (buf[0] == '\375' && (p_ptr->esp_link_flags & LINKF_CHAT))) {
+			int Ind2 = find_player(p_ptr->esp_link);
+			player_type *p_ptr2;
+			connection_t *connp2;
 
-		if (!Ind2) {
-			hack_message = TRUE;
-			end_mind(Ind, TRUE);
-			hack_message = FALSE;
-		} else {
-			p_ptr2 = Players[Ind2];
-			connp2 = Conn[p_ptr2->conn];
+			if (!Ind2) {
+				hack_message = TRUE;
+				end_mind(Ind, TRUE);
+				hack_message = FALSE;
+			} else {
+				p_ptr2 = Players[Ind2];
+				connp2 = Conn[p_ptr2->conn];
 
-			if (!BIT(connp2->state, CONN_PLAYING | CONN_READY)) {
-				plog(format("Connection not ready for message (%d.%d.%d)",
-				Ind, connp2->state, connp2->id));
-			} else Packet_printf(&connp2->c, "%c%S", PKT_MESSAGE, buf);
+				if (!BIT(connp2->state, CONN_PLAYING | CONN_READY)) {
+					plog(format("Connection not ready for message (%d.%d.%d)",
+					    Ind, connp2->state, connp2->id));
+				} else Packet_printf(&connp2->c, "%c%S", PKT_MESSAGE, buf);
+			}
 		}
 	}
 	return Packet_printf(&connp->c, "%c%S", PKT_MESSAGE, buf);

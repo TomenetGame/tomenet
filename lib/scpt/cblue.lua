@@ -754,7 +754,7 @@ function vnc(name)
     players(p).esp_link = id
     players(p).esp_link_type = 1
     players(p).esp_link_end = 0
-    players(p).esp_link_flags = bor(players(p).esp_link_flags, 1 + 128)
+    players(p).esp_link_flags = bor(players(p).esp_link_flags, 1 + 16 + 128 + 512)
     player.esp_link_flags = bor(player.esp_link_flags, 256)
     players(p).redraw = bor(players(p).redraw, 67108864) -- 67108864 = PR_MAP
 
@@ -772,7 +772,7 @@ function vncoff(name)
     players(p).esp_link = 0
     players(p).esp_link_type = 0
     players(p).esp_link_end = 0
-    players(p).esp_link_flags = band(players(p).esp_link_flags, bnot(1 + 128))
+    players(p).esp_link_flags = band(players(p).esp_link_flags, bnot(1 + 16 + 128 + 512))
 
     player.esp_link_flags = band(player.esp_link_flags, bnot(256))
     player.redraw = bor(player.redraw, 67108864)

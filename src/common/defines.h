@@ -6932,6 +6932,7 @@ extern int PlayerUID;
 #define MA_SLOW			2
 #define MA_ROYAL_SLOW		3
 
+
 /* Mental links */
 #define LINK_NONE		0
 #define LINK_DOMINANT		1
@@ -6950,6 +6951,9 @@ extern int PlayerUID;
 #define LINKF_HIDDEN		0x0080 /* No link status messages */
 #define LINKF_VIEW_DEDICATED	0x0100 /* View dedicated for watching other player */
 #define LINKF_TMP_FMAP		0x0200 /* Hack: Forward map once (temporary helper flag for PR_MAP) - We need this because PR_... has no more capacity for further flags. */
+#define LINKF_MSG		0x0400 /* Share non-chat messages */
+#define LINKF_CHAT		0x0800 /* Share chat messages */
+
 
 /* Monster gaining levels */
 #define MONSTER_LEVEL_MAX	500
