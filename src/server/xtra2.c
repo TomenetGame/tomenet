@@ -8496,13 +8496,12 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	player_type *p_ptr = Players[Ind];
 
-	monster_type	*m_ptr = &m_list[m_idx];
-	monster_race    *r_ptr = race_inf(m_ptr);
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
 
-	s64b		new_exp, new_exp_frac;
-	s64b 		tmp_exp;
-	long skill_trauma = get_skill(p_ptr, SKILL_TRAUMATURGY) * SKILL_STEP;
-	long scale_trauma = 0;
+	s64b new_exp, new_exp_frac;
+	s64b tmp_exp;
+	int skill_trauma = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100);
 	bool old_tacit = suppress_message;
 
 //	int dun_level2 = getlevel(&p_ptr->wpos);
@@ -8538,18 +8537,20 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	/* Traumaturgy skill - C. Blue */
 	if (dam && skill_trauma &&
-/*	    los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) && */
-/*	    projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE) && */
+	    /*los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) && */
+	    /*projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE) && */
 	    target_able(Ind, m_idx) &&
 	    (!(r_ptr->flags3 & RF3_UNDEAD)) &&
 	    (!(r_ptr->flags3 & RF3_NONLIVING)) &&
-	    (!(strchr("AEgv", r_ptr->d_char))))
-	{
+	    (!(strchr("AEgv", r_ptr->d_char)))) {
 		/* difficult to balance, due to the different damage effects of spells- might need some changes */
-		long gain = scale_trauma;
-		gain = (dam / 20 > gain ? gain : dam / 20);//50
-		if (gain > m_ptr->hp) gain = m_ptr->hp;
-		if (!gain && magik(dam * 5)) gain = 1; /* no perma-supply for level 1 mana bolts for now */
+		int eff_dam = (dam <= m_ptr->hp) ? dam : m_ptr->hp; //paranoia?
+		long gain = (eff_dam * 100) / 50; //scale up by 100 for finer calc
+
+		/* need a trauma skill matching rlev/2 or it'll become much less effective */
+		if (skill_trauma < r_ptr->level) gain = (gain * skill_trauma * skill_trauma) / (r_ptr->level * r_ptr->level);
+		if (gain < 100 && magik(gain)) gain = 1; /* fine-scale for values between +0..+1 MP */
+		else gain /= 100; /* unscale back to actual MP points */
 
 		if (gain && (p_ptr->csp < p_ptr->msp)
 #ifdef MARTYR_NO_MANA

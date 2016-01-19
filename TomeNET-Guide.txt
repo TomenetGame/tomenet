@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. January 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 19. January 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://koti.mbnet.fi/mikaelh/tomenet/ (Mikael's TomeNET site)
@@ -9165,8 +9165,8 @@ Restore Life Levels
                 yellow colour instead of the usual light green.
                 Note that this potion does not restore experience you lost by
                 dying (there is no way to restore experience loss by death).
-Restore Mana    Restores 500 SP.
-*Restore Mana*  Restores 1000 SP.
+Restore Mana    Restores 500 MP.
+*Restore Mana*  Restores 1000 MP.
 Ruination       Take 10d10 damage. All stats are decreased by 25 (restorable).
 Self-Knowledge  Tells you everything about yourself :)
 
@@ -11538,7 +11538,7 @@ Note that not every skill is available to every profession (class).
                                 See (6.10) for more information.
 
 +Necromancy                     Drains life and mana from killed monsters,
-                                replenishing your HP and SP.
+                                replenishing your HP and MP.
                                 Only works if you are able to see the target,
                                 and if you are not a player-ghost.
                                 The amount of points gained depends on the
@@ -11549,13 +11549,19 @@ Note that not every skill is available to every profession (class).
                                 nonliving monsters.
 
     .Traumaturgy                Drains mana from monsters when you inflict
-                                damage on them, replenishing your SP.
+                                damage on them, replenishing your MP.
                                 Only works if you are able to see the target.
                                 The amount of points gained is a fraction of
                                 the damage points you inflicted and only
                                 depends on damage and skill.
+                                To be effective, your traumaturgy skill should
+                                not be much lower than half your target's base
+                                level (rlev).
+                                Even if your inflicted damage is rather low,
+                                each attack still has a chance of replenishing
+                                at least 1 MP.
                                 Traumaturgy has no effect on angels, undead,
-                                and nonliving monsters.
+                                and nonliving (constructs) monsters.
 
     .Aura of Fear               Monsters that hit you are stroke by fear.
                                 Undead and non-living monsters and those that
