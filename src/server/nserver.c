@@ -5861,7 +5861,9 @@ int Send_message(int Ind, cptr msg) {
 
 	if ((!hack_message) && p_ptr->esp_link_type && p_ptr->esp_link) {
 		if ((buf[0] != '\375' && (p_ptr->esp_link_flags & LINKF_MSG)) ||
-		    (buf[0] == '\375' && (p_ptr->esp_link_flags & LINKF_CHAT))) {
+		    (buf[0] == '\375' && (p_ptr->esp_link_flags & LINKF_CHAT)
+		    /* don't relay private messages */
+		    && !(buf[1] == '\377' && buf[2] == 'g'))) {
 			int Ind2 = find_player(p_ptr->esp_link);
 			player_type *p_ptr2;
 			connection_t *connp2;
