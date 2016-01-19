@@ -847,65 +847,96 @@ bool make_attack_melee(int Ind, int m_idx)
 				invuln_applied = TRUE;
 			}
 
+			/* Roll out the damage in advance, since it might be required in the avoidance-calcs below (Kinetic Shield) */
+			damage = damroll(d_dice, d_side);
+			if (invuln_applied) damage = (damage + 1) / 2;
+#ifdef EXPERIMENTAL_MITIGATION
+			damage_org = damage; /* as a special service, we allow the invuln reduction above to factor in first, to prevent getting ko'ed on stairs :-p */
+#endif
+#if 0
+			/* to prevent cloaking mode from breaking (break_cloaking) if an attack didn't do damage */
+			if (!d_dice && !d_side) no_dam = TRUE;
+#endif
+
 			/* Hack -- Apply "protection from evil" as well as "kinetic shield" */
 			if (touched) {
-			    /* kinetic shield: (requires mana to work) */
-			    prot = FALSE;
-			    if (p_ptr->kinetic_shield && p_ptr->csp >= r_ptr->level / 10) {
-				/* drains mana on hit */
-				p_ptr->csp -= r_ptr->level / 10;
-				p_ptr->redraw |= PR_MANA;
-				/* test if it repelled the blow */
-				int chance = (p_ptr->lev * ((r_ptr->flags2 & RF2_POWERFUL) ? 67 : 100)) / r_ptr->level;
-				if (magik(chance > 50 ? 50 : chance)) {
-					msg_format(Ind, "%^s is repelled.", m_name);
-					continue;
-				}
-				/* assume that if kinetic shield failed, pfe will also fail: ... */
-			    } else {
-				/* protection from evil, static and temporary: */
-#if 0
-				if (((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
-					(p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) ||
-				    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD) &&
-					(p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
-				    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON) &&
-					(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
-				    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL) &&
-					(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)))
-#else
+				bool done = FALSE;
+
 				prot = FALSE;
-				if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD)) {
-					if ((p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev))
-						prot = TRUE;
-				} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON)) {
-					if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
-						prot = TRUE;
-				} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL)) {
-					if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
-						prot = TRUE;
-				}
-				if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
-				    (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
-				     ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
-					prot = TRUE;
-				}
 
-				if (prot)
+				/* kinetic shield: (requires mana to work) */
+				if (p_ptr->kinetic_shield) {
+					int cost = m_ptr->level / 10, clog, clog_dam;
+
+					if (damage > 45) {
+						clog_dam = (damage * 100) / 38;
+						clog = 0;
+						while ((clog_dam = (clog_dam * 10) / 12) >= 100) clog++;
+						cost += clog;
+						//adds +0 (up to 45 damage) ..+3 (70 dam) ..+7 (150 dam) ..+13 (500 dam) ..+17 (1000 dam, hypothetically)
+					}
+					if (p_ptr->csp >= cost) {
+						/* test if it repelled the blow */
+						int chance = (p_ptr->lev * ((r_ptr->flags2 & RF2_POWERFUL) ? 67 : 100)) / r_ptr->level;
+						// ^= usually 50% chance vs all mobs you'd encounter at your level, 33% vs double-level POWERFUL
+
+						/* drains mana on hit */
+						p_ptr->csp -= cost;
+						p_ptr->redraw |= PR_MANA;
+
+						if (magik(chance > 50 ? 50 : chance)) {
+							msg_format(Ind, "%^s is repelled.", m_name);
+							continue;
+						}
+
+						/* assume that if kinetic shield failed, pfe will also fail: ... */
+						done = TRUE;
+					}
+				}
+				if (!done) {
+					/* protection from evil, static and temporary: */
+#if 0
+					if (((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
+						(p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) ||
+					    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD) &&
+						(p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
+					    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON) &&
+						(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
+					    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL) &&
+						(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)))
+#else
+					prot = FALSE;
+					if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD)) {
+						if ((p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+							prot = TRUE;
+					} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON)) {
+						if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+							prot = TRUE;
+					} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL)) {
+						if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+							prot = TRUE;
+					}
+					if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
+					    (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
+					     ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
+						prot = TRUE;
+					}
+
+					if (prot)
 #endif
-				{
+					{
 #ifdef OLD_MONSTER_LORE
-					/* Remember the Evil-ness */
-					if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_EVIL;
+						/* Remember the Evil-ness */
+						if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_EVIL;
 #endif
 
-					/* Message */
-					msg_format(Ind, "%^s is repelled.", m_name);
+						/* Message */
+						msg_format(Ind, "%^s is repelled.", m_name);
 
-					/* Hack -- Next attack */
-					continue;
+						/* Hack -- Next attack */
+						continue;
+					}
 				}
-			    }
 			}
 
 #ifndef NEW_DODGING
@@ -1010,18 +1041,6 @@ bool make_attack_melee(int Ind, int m_idx)
 				continue;
 			}
  #endif
-#endif
-
-			/* Roll out the damage */
-			damage = damroll(d_dice, d_side);
-			if (invuln_applied) damage = (damage + 1) / 2;
-#ifdef EXPERIMENTAL_MITIGATION
-			damage_org = damage; /* as a special service, we allow the invuln reduction above to factor in first, to prevent getting ko'ed on stairs :-p */
-#endif
-
-#if 0
-			/* to prevent cloaking mode from breaking (break_cloaking) if an attack didn't do damage */
-			if (!d_dice && !d_side) no_dam = TRUE;
 #endif
 
 			/* Message */

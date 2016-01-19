@@ -14785,8 +14785,10 @@ Mindcraft schools:
                     Shared spell (see above): Psycho-Power / Attunement.
 
     Kinetic Shield  Uses telekinetic force to set up a shield around you that
-                    has a chance to repel physical attacks or projectiles,
+                    has a good chance to repel physical attacks or projectiles,
                     draining your mana each time.
+                    For repelling physical attacks the mana cost depends on the
+                    attacker's level and the damage the attack would inflict.
                     Required skill level for first spell level: 40.
 
 
