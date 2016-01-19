@@ -8544,8 +8544,20 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	    (!(r_ptr->flags3 & RF3_NONLIVING)) &&
 	    (!(strchr("AEgv", r_ptr->d_char)))) {
 		/* difficult to balance, due to the different damage effects of spells- might need some changes */
-		int eff_dam = (dam <= m_ptr->hp) ? dam : m_ptr->hp; //paranoia?
-		long gain = (eff_dam * 100) / 50; //scale up by 100 for finer calc
+		int eff_dam = (dam <= m_ptr->hp) ? dam : m_ptr->hp; //paranoia @hp?
+		long gain;
+
+#if 0 /* linear gain */
+		gain = (eff_dam * 100) / 50; //scale up by 100 for finer calc
+#else /* log gain */
+		if (eff_dam >= 50) {
+			eff_dam = (eff_dam * 100) / 50; //scale up by 100 for finer calc
+			gain = 4;
+			while ((eff_dam = (eff_dam * 10) / 12) >= 100) gain++;
+			//^ 1 (50), 3 (100), 12 (500), 16 (1000)
+			gain *= 25; //100..500
+		} else gain = eff_dam * 2;
+#endif
 
 		/* need a trauma skill matching rlev/2 or it'll become much less effective */
 		if (skill_trauma < r_ptr->level) gain = (gain * skill_trauma * skill_trauma) / (r_ptr->level * r_ptr->level);
