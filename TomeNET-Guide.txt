@@ -11560,6 +11560,9 @@ Note that not every skill is available to every profession (class).
                                 Even if your inflicted damage is rather low,
                                 each attack still has a chance of replenishing
                                 at least 1 MP.
+                                Traumaturgy is most effective with spells that
+                                have an area of effect and can therefore hit
+                                multiple monsters, such as balls and clouds.
                                 Traumaturgy has no effect on angels, undead,
                                 and nonliving (constructs) monsters.
 
