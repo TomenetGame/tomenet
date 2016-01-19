@@ -8544,7 +8544,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	    (!(r_ptr->flags3 & RF3_NONLIVING)) &&
 	    (!(strchr("AEgv", r_ptr->d_char)))) {
 		/* difficult to balance, due to the different damage effects of spells- might need some changes */
-		int eff_dam = (dam <= m_ptr->hp) ? dam : m_ptr->hp; //paranoia @hp?
+		int eff_dam = (dam <= m_ptr->hp) ? dam : m_ptr->hp;
 		long gain;
 
 #if 0 /* linear gain */
