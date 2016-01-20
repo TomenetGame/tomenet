@@ -2204,7 +2204,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (okay) {
 				int slot;
 
-				/* for pick_one: need to divide wand charges! */
+				/* for pick_one: need to divide wand charges - thanks Dj_Wolf */
 				if (!delete_it && o_ptr->tval == TV_WAND) {
 					o_floor_ptr->number = num_org; //temporarily unhack pick_one
 					o_ptr->pval = divide_charged_item(o_floor_ptr, 1);
