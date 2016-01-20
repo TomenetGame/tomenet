@@ -14674,7 +14674,7 @@ Priest schools:
                     Lv20: Gives clairvoyance (full enlightened map).
                     Required skill level for first spell level: 20.
 
-    Zeal            Gives +1 extra attack per round for a while.    (auto-p.)
+    Zeal            Gives +1 extra attack per round for a while.
                     Lv9:  Gives +2 EA.                         (auto-project)
                     Lv18: Gives +3 EA.                         (auto-project)
                     Friendly players around the caster that are affected by the

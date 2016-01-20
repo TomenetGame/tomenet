@@ -165,24 +165,21 @@ HZEAL_I = add_spell {
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	50,
-	["level"] = 	32,
-	["mana"] = 	50,
-	["mana_max"] = 	50,
+	["level"] = 	27,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
 	["fail"] = 	-35,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		local d, p
-		d = 9 + randint(5)
-		p = 10
-		set_zeal(Ind, p, d)
-		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
+		set_zeal(Ind, 10, 9 + randint(5))
+		--fire_ball(Ind, GF_ZEAL_PLAYER, 0, 20, 3, "")
 	end,
 	["info"] = 	function()
-			return "dur 9+d5, +1 EA"
+			return "dur 9+d5, +1 BpR"
 	end,
 	["desc"] = 	{
-		"Increases your melee attacks per round by up to +3 for 9+d5 turns.",
-		"***Automatically projecting (+1 EA)***",
+		"Increases your melee attacks per round by +1 for 9+d5 turns.",
+		-- "***Automatically projecting (+1 EA)***",
 	}
 }
 HZEAL_II = add_spell {
@@ -190,24 +187,21 @@ HZEAL_II = add_spell {
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	50,
-	["level"] = 	41,
-	["mana"] = 	70,
-	["mana_max"] = 	70,
+	["level"] = 	37,
+	["mana"] = 	60,
+	["mana_max"] = 	60,
 	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		local d, p
-		d = 9 + randint(5)
-		p = 20
-		set_zeal(Ind, p, d)
-		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
+		set_zeal(Ind, p, 9 + randint(5))
+		fire_ball(Ind, GF_ZEAL_PLAYER, 0, 40, 3, "")
 	end,
 	["info"] = 	function()
-			return "dur 9+d5, +2 EA"
+			return "dur 9+d5, +2 BpR"
 	end,
 	["desc"] = 	{
-		"Increases your melee attacks per round by up to +3 for 9+d5 turns.",
-		"***Automatically projecting (+1 EA)***",
+		"Increases your melee attacks per round by +2 for 9+d5 turns.",
+		"***Automatically projecting (+1 BpR)***",
 	}
 }
 HZEAL_III = add_spell {
@@ -215,23 +209,20 @@ HZEAL_III = add_spell {
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	50,
-	["level"] = 	50,
+	["level"] = 	47,
 	["mana"] = 	90,
 	["mana_max"] = 	90,
 	["fail"] = 	-110,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		local d, p
-		d = 9 + randint(5)
-		p = 30
-		set_zeal(Ind, p, d)
-		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
+		set_zeal(Ind, 30, 9 + randint(5))
+		fire_ball(Ind, GF_ZEAL_PLAYER, 0, 60, 3, "")
 	end,
 	["info"] = 	function()
-			return "dur 9+d5, +3 EA"
+			return "dur 9+d5, +3 BpR"
 	end,
 	["desc"] = 	{
-		"Increases your melee attacks per round by up to +3 for 9+d5 turns.",
+		"Increases your melee attacks per round by +3 for 9+d5 turns.",
 		"***Automatically projecting (+2 EA) ***",
 	}
 }
