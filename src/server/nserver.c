@@ -5474,7 +5474,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z
 		    && (sector00flags2 & LF2_INDOORS)) {
 			ville = TRUE;
-			desc = "Old Dungeon";
+			desc = "Lost Vault";
 		}
 		/* Hack for Highlander */
 		else if (wpos->wx == WPOS_HIGHLANDER_X && wpos->wy == WPOS_HIGHLANDER_Y && wpos->wz == WPOS_HIGHLANDER_Z) {
