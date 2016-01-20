@@ -2769,7 +2769,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 
 
 	/* Output color byte */
-//	fprintf(fff, "%c", 'G');
+	//fprintf(fff, "%c", 'G');
 
 	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
 		fprintf(fff, "======== House List ========\n");
@@ -2928,7 +2928,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
 
 
 	/* Output color byte */
-//	fprintf(fff, "%c", 'G');
+	//fprintf(fff, "%c", 'G');
 
 	if (letter && *letter) fprintf(fff, "\377y======== Objects known (%c) ========\n", *letter);
 	else {
@@ -2940,9 +2940,9 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
 	for (i = 1; i < max_k_idx; i++) {
 		k_ptr = &k_info[i];
 		if (!k_ptr->name) continue;
-		if (!all && *letter != k_ptr->d_char) continue;	// k_char ?
-//		if (!object_easy_know(i)) continue;
-//		if (!k_ptr->easy_know) continue;
+		if (!all && *letter != k_ptr->d_char) continue; // k_char ?
+		//if (!object_easy_know(i)) continue;
+		//if (!k_ptr->easy_know) continue;
 		if (!k_ptr->has_flavor) continue;
 		if (!p_ptr->obj_aware[i]) continue;
 
@@ -2974,12 +2974,8 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
 				}
 			}
 
-			/* Describe the artifact */
-			object_desc_store(Ind, o_name, &forge, FALSE, 512);
-
-			/* Hack -- remove {0} */
-			j = strlen(o_name);
-			o_name[j-4] = '\0';
+			/* Describe the object */
+			object_desc_store(Ind, o_name, &forge, FALSE, 512 + 256);
 
 			if (admin) fprintf(fff, "\377s(%3d, %3d)  \377w", k_ptr->tval, k_ptr->sval);
 
@@ -3003,8 +2999,8 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
 		k_ptr = &k_info[i];
 		if (!k_ptr->name) continue;
 		if (!all && *letter != k_ptr->d_char) continue;	// k_char ?
-//		if (!object_easy_know(i)) continue;
-//		if (!k_ptr->easy_know) continue;
+		//if (!object_easy_know(i)) continue;
+		//if (!k_ptr->easy_know) continue;
 		if (!k_ptr->has_flavor) continue;
 		if (p_ptr->obj_aware[i]) continue;
 		if (!p_ptr->obj_tried[i]) continue;
@@ -3027,12 +3023,8 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
 			/* Create the object */
 			invcopy(&forge, idx[i]);
 
-			/* Describe the artifact */
-			object_desc(Ind, o_name, &forge, FALSE, 0);
-
-			/* Hack -- remove {0} */
-			j = strlen(o_name);
-			o_name[j-4] = '\0';
+			/* Describe the object */
+			object_desc(Ind, o_name, &forge, FALSE, 256);
 
 			if (admin) fprintf(fff, "\377s(%3d, %3d)  \377w", k_ptr->tval, k_ptr->sval);
 
@@ -3041,7 +3033,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
 	}
 
 
-//	fprintf(fff, "\n");
+	//fprintf(fff, "\n");
 
 	if (!total) fprintf(fff, "Nothing so far.\n");
 	else fprintf(fff, "\nTotal : %d\n", total);
@@ -3057,8 +3049,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter) {
 /*
  * Check the status of traps
  */
-void do_cmd_knowledge_traps(int Ind)
-{
+void do_cmd_knowledge_traps(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int k;
 
@@ -3066,7 +3057,7 @@ void do_cmd_knowledge_traps(int Ind)
 
 	trap_kind *t_ptr;
 
-	int	total = 0;
+	int total = 0;
 	bool shown = FALSE;
 	bool admin = is_admin(p_ptr);
 
@@ -3082,8 +3073,7 @@ void do_cmd_knowledge_traps(int Ind)
 	fprintf(fff, "\377s======== known traps ========\n");
 
 	/* Scan the traps */
-	for (k = 0; k < MAX_T_IDX; k++)
-	{
+	for (k = 0; k < MAX_T_IDX; k++) {
 		/* Get the trap */
 		t_ptr = &t_info[k];
 
@@ -3118,8 +3108,7 @@ void do_cmd_knowledge_traps(int Ind)
 /*
  * Display motd, same as /motd command
  */
-void show_motd2(int Ind)
-{
+void show_motd2(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int k;
 	bool shown = FALSE;

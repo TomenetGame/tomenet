@@ -2115,7 +2115,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			}
 
 			if (o_ptr->sval == SV_SCROLL_CHEQUE) {
-				basenm = "& Cheque~ worth $ Au";
+				if (mode & 256)
+					basenm = "& Cheque~";
+				else
+					basenm = "& Cheque~ worth $ Au";
 				break;
 			}
 
@@ -2439,21 +2442,23 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		t = object_desc_str(t, !(mode & 8) ? " of " : " ");
 
 		if (o_ptr->sval == SV_SCROLL_FIREWORK) {
-			switch (o_ptr->xtra1) {
-			case 0: t = object_desc_str(t, "Small "); break;
-			case 1: t = object_desc_str(t, "Medium "); break;
-			case 2: t = object_desc_str(t, "Big "); break;
-			}
-			switch (o_ptr->xtra2) {
-			case 0: t = object_desc_str(t, "Red"); break;
-			case 1: t = object_desc_str(t, "Blue"); break;
-			case 2: t = object_desc_str(t, "Green"); break;
-			case 3: t = object_desc_str(t, "Golden"); break;
-			case 4: t = object_desc_str(t, "Mixed"); break;
-			case 5: t = object_desc_str(t, "Purple"); break;
-			case 6: t = object_desc_str(t, "Elemental"); break;
-			}
-			t = object_desc_str(t, " Firework");
+			if (!(mode & 256)) {
+				switch (o_ptr->xtra1) {
+				case 0: t = object_desc_str(t, "Small "); break;
+				case 1: t = object_desc_str(t, "Medium "); break;
+				case 2: t = object_desc_str(t, "Big "); break;
+				}
+				switch (o_ptr->xtra2) {
+				case 0: t = object_desc_str(t, "Red"); break;
+				case 1: t = object_desc_str(t, "Blue"); break;
+				case 2: t = object_desc_str(t, "Green"); break;
+				case 3: t = object_desc_str(t, "Golden"); break;
+				case 4: t = object_desc_str(t, "Mixed"); break;
+				case 5: t = object_desc_str(t, "Purple"); break;
+				case 6: t = object_desc_str(t, "Elemental"); break;
+				}
+				t = object_desc_str(t, " Firework");
+			} else t = object_desc_str(t, "Firework");
 		} else {
 			if (!skip_base_article)
 				t = object_desc_str(t, (k_name + k_ptr->name));
