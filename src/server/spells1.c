@@ -5087,7 +5087,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* hack -- by trap */
 	quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : (0 - Ind == c_ptr->m_idx ? TRUE : FALSE));
 
-//	if(quiet) return(FALSE);
+	//if (quiet) return(FALSE);
 	if (Ind <= 0 || 0 - Ind == c_ptr->m_idx) return(FALSE);
 	if (!quiet) {
 		p_ptr = Players[Ind];
@@ -5145,18 +5145,18 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 #ifdef USE_BLOCKING
 	/* handle blocking (deflection) */
-        if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
-            !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) &&
+	if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+	    !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) &&
 	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_NODF)) /* only for fire_bolt() */
-            && !rand_int(52 - r_ptr->level / 3)) { /* small chance to block spells */
+	    && !rand_int(52 - r_ptr->level / 3)) { /* small chance to block spells */
 		if (seen) {
 			char hit_desc[MAX_CHARS];
-	                sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
-    		        hit_desc[0] = toupper(hit_desc[0]);
-	                msg_print(Ind, hit_desc);
+			sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+			hit_desc[0] = toupper(hit_desc[0]);
+			msg_print(Ind, hit_desc);
 		}
 		return TRUE; /* notice */
-        }
+	}
 #endif
 
 
@@ -5256,7 +5256,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 
 			/* Check backlash vs caster */
-//			if (psi_backlash(Ind, c_ptr->m_idx, dam)) resist = TRUE;
+			//if (psi_backlash(Ind, c_ptr->m_idx, dam)) resist = TRUE;
 
 			/* Check susceptibility */
 #if 0
@@ -5295,7 +5295,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (!(r_ptr->flags3 & RF3_NO_SLEEP)) do_sleep = rand_int(2) ? 5 + randint(randint(60)) : 0;
 				if (!(r_ptr->flags3 & RF3_NO_FEAR)) do_fear = randint(15);
 			}
-  			break;
+			break;
 
 		/* Mindcrafter's charm spell, makes monsters ignore you and your teammates (mostly..) */
 		case GF_CHARMIGNORE:
@@ -5480,13 +5480,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Thick Poison */
 		case GF_UNBREATH:
 			if (seen) obvious = TRUE;
-//			if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
+			//if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
 			if ((r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
 			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
 			    (m_ptr->r_idx == RI_MORGOTH)) {
 				note = " is immune";
 				dam = 0;
-//				do_pois = 0;
+				//do_pois = 0;
 			} else if (r_ptr->flags3 & RF3_IM_POIS) {
 				note = " resists";
 				dam = (dam * 2) / 4;
@@ -5569,11 +5569,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 				}
 				else {
-//					note = " is hit";
+					//note = " is hit";
 					//dam *= 5; dam /= (randint(3)+4);
 				}
 			}
-//			if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
+			//if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
 			break;
 
 		/* Holy Orb -- hurts Evil */
@@ -5660,8 +5660,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				}
 #endif
 				else {
-//					note = " resists somewhat";
-//					dam *= 5; dam /= (randint(3)+4);
+					//note = " resists somewhat";
+					//dam *= 5; dam /= (randint(3)+4);
 				}
 			}
 			break;
@@ -5721,12 +5721,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " resists";
 				dam *= 3; dam /= (randint(6) + 6);
 			}
-//			else if (r_ptr->flags3 & RF3_EVIL)
+			//else if (r_ptr->flags3 & RF3_EVIL)
 			else if (r_ptr->flags3 & RF3_DEMON) {
 				dam /= 2;
 				note = " resists somewhat";
 #ifdef OLD_MONSTER_LORE
-//				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+				//if (seen) r_ptr->r_flags3 |= RF3_EVIL;
 				if (seen) r_ptr->r_flags3 |= RF3_DEMON;
 #endif
 			}
@@ -5789,14 +5789,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_DETONATION:
 		case GF_ROCKET:
 #if 0
-//			if (magik(12)) do_cut = (10 + randint(15) +r) / (r + 1);
+			//if (magik(12)) do_cut = (10 + randint(15) +r) / (r + 1);
 			if ((r_ptr->flags4 & (RF4_BR_SHAR)) || (r_ptr->flags9 & RF9_RES_SHARDS) ||
 			    (r_ptr->flags3 & RF3_IM_FIRE) || prefix(name, "Plasma") ||
 			    (r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS) ||
 			    (r_ptr->flags9 & RF9_RES_FIRE)) {
 				note = " resists somewhat";
 				dam /= 2;
-//				do_cut = 0;
+				//do_cut = 0;
 			}
 #else /* more distinct */
 		{
@@ -5818,7 +5818,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			case 1: case 2:
 				note = " resists somewhat";
 				dam = (dam * 3 + 3) / 4;
-//				do_cut = 0;
+				//do_cut = 0;
 				break;
 			default:
 				note = " resists";
@@ -5902,9 +5902,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
 			} else if (RES_OLD(r_ptr->level, dam)) {
 			} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
-//			else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
+			//else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
 			{
-//				if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
+				//if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
 				m_ptr->mspeed -= 10;
 				note = " starts moving slower";
 			}
@@ -5942,7 +5942,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_GRAVITY:
 		{
 			bool resist_tele = FALSE;
-//			dun_level		*l_ptr = getfloor(wpos);
+			//dun_level *l_ptr = getfloor(wpos);
 
 			if (seen) obvious = TRUE;
 
@@ -6110,9 +6110,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (r_ptr->flags3 & RF3_UNDEAD) {
 					if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
 				}
-//				if (r_ptr->flags3 & RF3_DEMON) {
-//					if (seen) r_ptr->r_flags3 |= RF3_DEMON;
-//				}
+				//if (r_ptr->flags3 & RF3_DEMON) {
+					//if (seen) r_ptr->r_flags3 |= RF3_DEMON;
+				//}
 				if (r_ptr->flags3 & RF3_NONLIVING) {
 					if (seen) r_ptr->r_flags3 |= RF3_NONLIVING;
 				}
@@ -6444,8 +6444,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					do_conf = 0;
 				}
 				//let's do some actual damage, too?
-//				dam = 0;
-//				quiet_dam = TRUE;
+				//dam = 0;
+				//quiet_dam = TRUE;
 				break;
 			} else { //Blind
 				do_blind = dam;
@@ -6598,8 +6598,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			do_blind = damroll(3, (dam / 20)) + 1;
 
 			if (r_ptr->d_char == 'A') {
+				do_blind = 0;
+				if (r_ptr->flags3 & RF3_EVIL) break; /* normal damage: fallen/corrupted angel */
 				note = " is immune";
-				dam = do_blind = 0;
+				dam = 0;
 			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
 				note = " resists";
 				dam *= 3; dam /= (randint(6) + 6);
@@ -6732,7 +6734,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_AWAY_ALL:
 		{
 			bool resists_tele = FALSE;
-//			dun_level		*l_ptr = getfloor(wpos);
+			//dun_level *l_ptr = getfloor(wpos);
 
 			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
 			    !(r_ptr->flags3 & (RF3_RES_TELE))) {
@@ -6984,7 +6986,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_TELE_TO:
 		{
 			bool resists_tele = FALSE;
-//			dun_level		*l_ptr = getfloor(wpos);
+			//dun_level *l_ptr = getfloor(wpos);
 
 			/* Teleport to nowhere..? */
 			if (quiet) break;
@@ -7523,7 +7525,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Teleport */
 		/* TODO: handle failure (eg. st-anchor)	*/
 
-//		teleport_away(c_ptr->m_idx, do_dist);
+		//teleport_away(c_ptr->m_idx, do_dist);
 		m_ptr->do_dist = do_dist;
 		scan_do_dist = TRUE;
 
@@ -7787,8 +7789,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster gets hit by a projection' */
 			/* isn't there any player in our casting-los? */
 			/* only ball spells/explosions, NOT clouds/walls/beams/bolts/traps/etc */
-//			if ((flg & PROJECT_JUMP) && (flg & PROJECT_KILL) && !(flg & PROJECT_STAY) &&
-//			if ((flg & PROJECT_KILL) && !(flg & PROJECT_STAY) &&
+			//if ((flg & PROJECT_JUMP) && (flg & PROJECT_KILL) && !(flg & PROJECT_STAY) &&
+			//if ((flg & PROJECT_KILL) && !(flg & PROJECT_STAY) &&
 			if ((flg & PROJECT_KILL) && /* well, why not for lasting effects too actually */
 			    /* some sanity/efficiency checks:.. */
 			    y_origin && x_origin && dam) {
@@ -12034,8 +12036,9 @@ int approx_damage(int m_idx, int dam, int typ) {
 			//do_blind = damroll(3, (dam / 20)) + 1;
 
 			if (r_ptr->d_char == 'A') {
-				dam = 0;
 				//do_blind = 0;
+				if (r_ptr->flags3 & RF3_EVIL) break;
+				dam = 0;
 			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
 				dam /= 3;
 				//do_blind = 0;
