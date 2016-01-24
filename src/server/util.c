@@ -3684,6 +3684,36 @@ static int censor(char *line) {
 
 	strcpy(lcopy, line);
 
+	/* special expressions to exempt: '@S...<.>blabla': '@S-.shards' -> '*****hards' :-p */
+	if ((word = strstr(lcopy, "@S"))) {
+		char *c = word + 2;
+
+		while (*c) {
+			switch (*c) {
+			/* still within @S expression */
+			case 'k': case 'K': case 'm': case 'M':
+			case '-': case '0': case '1': case '2':
+			case '3': case '4': case '5': case '6':
+			case '7': case '8': case '9':
+				c++;
+				continue;
+			/* end of @S expression */
+			case '.':
+				/* prevent the whole expression from getting tested for swear words */
+				while (word <= c) {
+					//lcopy2[(word - lcopy)] = 'Z';
+					*word = 'Z';
+					word++;
+				}
+				c = lcopy + strlen(lcopy); //to exit outer while loop
+				break;
+			/* not a valid @S expression or not followed up by any further text */
+			default:
+				break;
+			}
+		}
+	}
+
 	/* convert to lower case */
 	i = 0;
 	while (lcopy[i]) {
