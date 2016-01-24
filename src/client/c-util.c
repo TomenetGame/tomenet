@@ -4674,7 +4674,7 @@ Chain_Macro:
 					Term_putstr(8, 18, -1, TERM_L_GREEN, "j)   Use a shooting technique (archers and rangers)");
 					Term_putstr(8, 19, -1, TERM_L_GREEN, "k/K) Use any item with / without a target)");
 					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Use a magic device or activate an item");
-					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target");
+					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target (Draconian breath)");
 					Term_putstr(8, 22, -1, TERM_L_GREEN, "n)   Enter a custom action (same as pressing 'a' in macro screen)");
 					Term_putstr(8, 23, -1, TERM_L_GREEN, "o)   Load a macro file");
 
