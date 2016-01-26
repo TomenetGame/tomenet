@@ -3709,6 +3709,7 @@ static int censor(char *line) {
 				break;
 			/* not a valid @S expression or not followed up by any further text */
 			default:
+				c = lcopy + strlen(lcopy); //to exit outer while loop
 				break;
 			}
 		}
