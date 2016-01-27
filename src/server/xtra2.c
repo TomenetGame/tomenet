@@ -396,7 +396,7 @@ bool set_adrenaline(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
-        int i;
+	int i;
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -2248,7 +2248,7 @@ bool set_martyr(int Ind, int v) {
 			/* Increased remaining HP (from 1), to buffer environmental influences
 			   like nether/fire hit from the ground in the Nether Realm;
 			   assumes that martyr starts at -15 turns! : */
-//			p_ptr->chp = (p_ptr->mhp >= 30 * 15) ? 30 : p_ptr->mhp / 15;
+			//p_ptr->chp = (p_ptr->mhp >= 30 * 15) ? 30 : p_ptr->mhp / 15;
 			p_ptr->chp = (p_ptr->mhp <= 30 * p_ptr->martyr_dur) ? 30 : p_ptr->mhp / p_ptr->martyr_dur;
 			/* Update health bars */
 			update_health(0 - Ind);
@@ -3773,7 +3773,7 @@ void check_experience(int Ind) {
 		/* Lose a level */
 		p_ptr->lev--;
 
-		clockin(Ind, 1);        /* Set player level */
+		clockin(Ind, 1); /* Set player level */
 
 	}
 
@@ -3804,7 +3804,7 @@ void check_experience(int Ind) {
 		if (p_ptr->inval && p_ptr->lev >= 25) {
 			msg_print(Ind, "\377rYou cannot gain level further, wait for an admin to validate your account.");
 			break;
-//			return;
+			//return;
 		}
 
 		process_hooks(HOOK_PLAYER_LEVEL, "d", Ind);
@@ -3812,7 +3812,7 @@ void check_experience(int Ind) {
 		/* Gain a level */
 		p_ptr->lev++;
 
-		clockin(Ind, 1);        /* Set player level */
+		clockin(Ind, 1); /* Set player level */
 
 		/* Save the highest level */
 		if (p_ptr->lev > p_ptr->max_plv) {
@@ -4022,7 +4022,7 @@ void check_experience(int Ind) {
 			if (!p_ptr->inventory[i].k_idx) continue;
 			if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
 			if (p_ptr->inventory[i].tval == TV_POTION && (
-//				    p_ptr->inventory[i].sval == SV_POTION_CURE_LIGHT ||
+			    //p_ptr->inventory[i].sval == SV_POTION_CURE_LIGHT ||
 			    p_ptr->inventory[i].sval == SV_POTION_CURE_SERIOUS ||
 			    p_ptr->inventory[i].sval == SV_POTION_CURE_CRITICAL))
 				found_items = TRUE;
@@ -4189,7 +4189,7 @@ void check_experience(int Ind) {
 		if (old_lev < 70 && p_ptr->lev >= 70) msg_print(Ind, "\374\377GYour vision extends.");
 		if (old_lev < 80 && p_ptr->lev >= 80) msg_print(Ind, "\374\377GYour vision extends.");
 		if (old_lev < 90 && p_ptr->lev >= 90) msg_print(Ind, "\374\377GYour vision extends.");
-//			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to levitate!");
+		//if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to levitate!");
 		if (old_lev < 20 && p_ptr->lev >= 20) {
 			msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
 			msg_print(Ind, "\374\377G(Press '\377gm\377G' key and choose '\377guse innate power\377G' to polymorph.)");
@@ -4202,7 +4202,7 @@ void check_experience(int Ind) {
 	case RACE_MAIA:
 		if (p_ptr->ptrait) break; /* In case we got *bad* exp drain for some unfathomable reason ;) */
 		if (old_lev < 12 && p_ptr->lev >= 12) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
-//			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
+		//if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
 		if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYour soul thirsts for shaping, either enlightenment or corruption!");
 		if (old_lev <= 19 && p_ptr->lev >= 15 && old_lev < p_ptr->lev) {
 			/* Killed none? nothing happens except if we reached the threshold level */
@@ -4210,7 +4210,7 @@ void check_experience(int Ind) {
 			    && p_ptr->r_killed[RI_DARKLING] == 0) {
 				/* Threshold level has been overstepped -> die */
 				if (old_lev == 19) {
-//						msg_print(Ind, "\377RYou don't deserve to live.");
+					//msg_print(Ind, "\377RYou don't deserve to live.");
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 					strcpy(p_ptr->died_from, "indecisiveness");
 					p_ptr->deathblow = 0;
@@ -4367,7 +4367,7 @@ void check_experience(int Ind) {
 
 #ifdef KINGCAP_LEV
 	/* Added a check that (s)he's not already a king - mikaelh */
-//		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377GYou can't gain more levels until you defeat Morgoth, Lord of Darkness!");
+	//if (p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377GYou can't gain more levels until you defeat Morgoth, Lord of Darkness!");
 	if (p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377G* To level up further, you must defeat Morgoth, Lord of Darkness! *");
 #endif
 
@@ -4776,7 +4776,7 @@ bool monster_death(int Ind, int m_idx) {
 	bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
 	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
-//	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
+	//bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
 
 	bool good = (r_ptr->flags1 & RF1_DROP_GOOD) ? TRUE : FALSE;
 	bool great = (r_ptr->flags1 & RF1_DROP_GREAT) ? TRUE : FALSE;
@@ -5070,7 +5070,7 @@ bool monster_death(int Ind, int m_idx) {
 	/* Drop some objects */
 	for (j = 0; j < number; j++) {
 		/* Try 20 times per item, increasing range */
-//		for (i = 0; i < 20; ++i)
+		//for (i = 0; i < 20; ++i)
 		{
 #if 0
 			int d = (i + 14) / 15;
@@ -5731,7 +5731,7 @@ if (cfg.unikill_format) {
 			qq_ptr->name3 += rand_int(0xFFFF);
 
 			/* Check the tval is allowed */
-//			if (randart_make(qq_ptr) != NULL)
+			//if (randart_make(qq_ptr) != NULL)
 
 			apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
 
@@ -6073,7 +6073,7 @@ if (cfg.unikill_format) {
 				chance = chance * SEMI_PROMISED_ARTS_MODIFIER / 100;
 #endif
 
-//			if ((a_idx > 0) && ((randint(99)<chance) || (wizard)))
+			//if ((a_idx > 0) && ((randint(99)<chance) || (wizard)))
 			if ((a_idx > 0) && magik(chance) && !cfg.arts_disabled &&
 			    (a_info[a_idx].cur_num == 0)) {
 				a_ptr = &a_info[a_idx];
@@ -6108,7 +6108,7 @@ if (cfg.unikill_format) {
 						qq_ptr->note_utag = strlen(quark_str(local_quark));
 					}
 
-//					random_artifact_resistance(qq_ptr);
+					//random_artifact_resistance(qq_ptr);
 					handle_art_inum(a_idx);
 
 					/* Hack -- acquire "cursed" flag */
@@ -6210,7 +6210,7 @@ if (cfg.unikill_format) {
 		}
 	}
 
-//        if((!force_coin)&&(randint(100)<50)) place_corpse(m_ptr);
+	//if ((!force_coin) && (randint(100) < 50)) place_corpse(m_ptr);
 
 	/* Only process "Quest Monsters" */
 	if (!(r_ptr->flags1 & RF1_QUESTOR)) return TRUE;
@@ -6426,7 +6426,7 @@ static void check_killing_reward(int Ind) {
 		msg_broadcast_format(Ind, "\374\377y** %s vanquished 10 opponents! **", p_ptr->name);
 		msg_print(Ind, "\375\377G* Another 10 aggressors have fallen by your hands! *");
 		msg_print(Ind, "\375\377G* You received a reward! *");
-                give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
+		give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
 	}
 }
 
@@ -6551,7 +6551,7 @@ static void inven_death_damage(int Ind, int verbose) {
 			if (verbose) {
 				/* Message */
 				msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name,
-				                ((o_ptr->number > 1) ? "were" : "was"));
+				    ((o_ptr->number > 1) ? "were" : "was"));
 			}
 
 			if (true_artifact_p(o_ptr)) {
@@ -6595,7 +6595,7 @@ static void equip_death_damage(int Ind, int verbose) {
 			if (verbose) {
 				/* Message */
 				msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name,
-				                ((o_ptr->number > 1) ? "were" : "was"));
+				    ((o_ptr->number > 1) ? "were" : "was"));
 			}
 
 			if (true_artifact_p(o_ptr)) {
@@ -6638,7 +6638,7 @@ void player_death(int Ind) {
 #if 0
 	int inventory_loss = 0, equipment_loss = 0;
 #endif
-//	int inven_sort_map[INVEN_TOTAL];
+	//int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
 	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0), erase = FALSE, insanity = streq(p_ptr->died_from, "insanity");
 	cptr titlebuf;
@@ -6843,7 +6843,7 @@ void player_death(int Ind) {
 		}
 
 		/* Cure him from various maladies */
-//		p_ptr->black_breath = FALSE;
+		//p_ptr->black_breath = FALSE;
 		if (p_ptr->image) (void)set_image(Ind, 0);
 		if (p_ptr->blind) (void)set_blind(Ind, 0);
 		if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
@@ -6859,7 +6859,7 @@ void player_death(int Ind) {
 
 		/* Remove the death flag */
 		p_ptr->death = FALSE;
-//		ptr->ghost = 0;
+		//ptr->ghost = 0;
 
 		/* Give him his hit points back */
 		p_ptr->chp = p_ptr->mhp;
@@ -6873,8 +6873,8 @@ void player_death(int Ind) {
 			if (ge_secure) {
 				k = 0;
 				/* reset the monster :D */
-			        for (i = 1; i < m_max; i++) {
-			                m_ptr = &m_list[i];
+				for (i = 1; i < m_max; i++) {
+					m_ptr = &m_list[i];
 					if (m_ptr->wpos.wx == p_ptr->wpos.wx && m_ptr->wpos.wy == p_ptr->wpos.wy && m_ptr->wpos.wz == p_ptr->wpos.wz) {
 						k = m_ptr->r_idx;
 						j = m_ptr->ego;
@@ -6942,12 +6942,11 @@ void player_death(int Ind) {
 
 	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 		strcpy(p_ptr2->died_from, p_ptr->died_from);
-		if (!p_ptr2->ghost)
-		{
+		if (!p_ptr2->ghost) {
 			strcpy(p_ptr2->died_from_list, p_ptr->died_from);
 			p_ptr2->died_from_depth = getlevel(&p_ptr2->wpos);
 			/* Hack to remember total winning */
-                        if (p_ptr2->total_winner) strcat(p_ptr2->died_from_list, "\001");
+			if (p_ptr2->total_winner) strcat(p_ptr2->died_from_list, "\001");
 		}
 		/* new: 50-50 chance to die for linked mind */
 		bypass_invuln = TRUE;
@@ -6995,7 +6994,7 @@ void player_death(int Ind) {
 		teleport_player(Ind, 200, TRUE);
 		/* Remove the death flag */
 		p_ptr->death = FALSE;
-//		p_ptr->ghost = 0;
+		//p_ptr->ghost = 0;
 		/* Give him his hit points back */
 		p_ptr->chp = p_ptr->mhp;
 		p_ptr->chp_frac = 0;
@@ -7115,7 +7114,7 @@ void player_death(int Ind) {
 
 			if (p_ptr->black_breath) {
 				//msg_print(Ind, "The hold of the Black Breath on you is broken!");
-                                p_ptr->black_breath = FALSE;
+				p_ptr->black_breath = FALSE;
 			}
 
 			/* Remove the death flag */
@@ -7291,7 +7290,7 @@ void player_death(int Ind) {
 		p_ptr->inventory[INVEN_PACK].owner = p_ptr->id; /* hack */
 
 		/* Drop no more than 32000 gold */
-//		if (p_ptr->au > 32000) p_ptr->au = 32000;
+		//if (p_ptr->au > 32000) p_ptr->au = 32000;
 		/* (actually, this if-clause is not necessary) */
 		s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
 #if 0 /* lose 0 below 50k, up to 50% up to 500k, 50% after that */
@@ -7357,7 +7356,7 @@ void player_death(int Ind) {
 			a_info[p_ptr->inventory[i].name1].winner = FALSE;
 
 		/* If we committed suicide, only drop artifacts */
-//			if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
+		//if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
 		if (!p_ptr->alive) {
 			if (!true_artifact_p(o_ptr)) continue;
 
@@ -7457,7 +7456,7 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 			} else if (p_ptr->last_words) {
 				char death_message[80];
 
-        			(void)get_rnd_line("death.txt", 0, death_message, 80);
+				(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
 #endif	// CHATTERBOX_LEVEL
@@ -7493,7 +7492,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 			if (p_ptr->last_words) {
 				char death_message[80];
 
-        			(void)get_rnd_line("death.txt", 0, death_message, 80);
+				(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
 #endif	// CHATTERBOX_LEVEL
@@ -7802,7 +7801,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 		retire = TRUE;
 		death_type = DEATH_QUIT;
 s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
-        }
+	}
 	else if (!p_ptr->total_winner) {
 		/* assume newb_suicide option for world broadcasts */
 		if (p_ptr->max_plv == 1) world_broadcast = FALSE;
@@ -7893,7 +7892,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 
 	/* Tell him */
 	msg_print(Ind, "\374\377RYou die.");
-//	msg_print(Ind, NULL);
+	//msg_print(Ind, NULL);
 #if CHATTERBOX_LEVEL > 2
 	if (p_ptr->last_words) {
 		char death_message[80];
@@ -7995,7 +7994,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	teleport_player(Ind, 200, TRUE);
 
 	/* Hack -- Give him/her the newbie death guide */
-//	if (p_ptr->max_plv < 20)	/* Now it's for everyone */
+	//if (p_ptr->max_plv < 20)	/* Now it's for everyone */
 	{
 		object_type	forge;
 		o_ptr = &forge;
@@ -8240,7 +8239,7 @@ void kill_xorder(int Ind) {
 			break;
 		}
 	}
-//	if (pos == -1) return;	/* it's UNsigned :) */
+	//if (pos == -1) return;	/* it's UNsigned :) */
 	if (pos == 9999) return;
 
 	process_hooks(HOOK_QUEST_FINISH, "d", Ind);
@@ -8282,8 +8281,8 @@ void kill_xorder(int Ind) {
 		/* grant verygreat rerolls for better value? */
 		avg = ((r_info[xorders[pos].type].level * 2) + (p_ptr->lev * 4)) / 2;
 		avg = avg > 100 ? 100 : avg;
-//		if (great && p_ptr->lev >= 25) verygreat = magik(r_info[xorders[pos].type].level - (5 - (p_ptr->lev / 5)));
-//		if (great) verygreat = magik(((r_info[xorders[pos].type].level * 2) + (p_ptr->lev * 4)) / 5);
+		//if (great && p_ptr->lev >= 25) verygreat = magik(r_info[xorders[pos].type].level - (5 - (p_ptr->lev / 5)));
+		//if (great) verygreat = magik(((r_info[xorders[pos].type].level * 2) + (p_ptr->lev * 4)) / 5);
 		avg /= 2; avg = 540 / (57 - avg) + 5; /* same as exp calculation ;) phew, Heureka.. (14..75) */
 
 		/* boost quest rewards for the iron price */
@@ -8366,7 +8365,7 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 		msg_print(j, "\374\377oYou have been given an extermination order from your guild\377y!");
 	else
 		msg_print(j, "\376\377oYou have been given a extermination order\377y!");
-//	msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
+	//msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
 	msg_format(j, "\376\377oFind and kill \377y%d \377g%s\377o (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
 	msg_format(Ind, "\376\377oThe remaining time to carry it out is \377y%d\377o minutes.", MAX_XORDER_TURNS / (cfg.fps * 60));
 	xorders[i].active++;
@@ -8435,7 +8434,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	    (r_info[r].flags1 & RF1_UNIQUE) ||
 	    (r_info[r].flags7 & RF7_MULTIPLY) ||
 	    !r_info[r].level); /* "no town quests" ;) */
-//	    r_info[r].level <= 2); /* no Training Tower quests */
+	    //r_info[r].level <= 2); /* no Training Tower quests */
 
 	/* easier in Ironman environments */
 #ifndef RPG_SERVER
@@ -8504,7 +8503,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	int skill_trauma = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100);
 	bool old_tacit = suppress_message;
 
-//	int dun_level2 = getlevel(&p_ptr->wpos);
+	//int dun_level2 = getlevel(&p_ptr->wpos);
 	dungeon_type *dt_ptr2 = getdungeon(&p_ptr->wpos);
 #if 0
 	int dun_type2;
@@ -8620,7 +8619,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			int i, head, arm, leg, part, ok;
 			head = arm = leg = part = 0;
 			for (i = 1; i < 5; i++) {
-			        ok = 0;
+				ok = 0;
 				while(ok == 0) {
 					ok = 1;
 					part = randint(4);
@@ -8696,9 +8695,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		/* Death by Physical attack -- non-living monster */
 		else if ((r_ptr->flags3 & RF3_DEMON) ||
-		         (r_ptr->flags3 & RF3_UNDEAD) ||
-		         (r_ptr->flags2 & RF2_STUPID) ||
-		         (strchr("Evg", r_ptr->d_char))) {
+		    (r_ptr->flags3 & RF3_UNDEAD) ||
+		    (r_ptr->flags2 & RF2_STUPID) ||
+		    (strchr("Evg", r_ptr->d_char))) {
 			msg_format_near(Ind, "\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have destroyed %s.", m_name);
 		}
@@ -8942,8 +8941,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		/* When the player kills a Unique, it stays dead */
 		/* No more, this is handled byt p_ptr->r_killed -- DG */
-//		if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 0;
-//		p_ptr->r_killed[m_ptr->r_idx] = TRUE;
+		//if (r_ptr->flags1 & RF1_UNIQUE) r_ptr->max_num = 0;
+		//p_ptr->r_killed[m_ptr->r_idx] = TRUE;
 
 		/* Recall even invisible uniques or winners */
 		if (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE)) {
@@ -9137,7 +9136,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 	/* It is dead now */
 	if (m_ptr->hp < 0) {
 		/* Give some experience */
-//		new_exp = ((long)r_ptr->mexp * r_ptr->level) / am_ptr->level;
+		//new_exp = ((long)r_ptr->mexp * r_ptr->level) / am_ptr->level;
 		/* Division by zero occurs here when a pet attacks a townie (level 0) - mikaelh */
 		/* Only gain exp when target monster level > 0 */
 		if (am_ptr->level > 0) {
@@ -10026,7 +10025,7 @@ bool target_okay(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Accept stationary targets */
-//	if (p_ptr->target_who > MAX_M_IDX) return (TRUE);
+	//if (p_ptr->target_who > MAX_M_IDX) return (TRUE);
 	if (p_ptr->target_who < 0 - MAX_PLAYERS) return (TRUE);
 
 	/* Check moving monsters */
@@ -10288,12 +10287,12 @@ bool target_set(int Ind, int dir) {
 			} else if (p_ptr->target_idx[i] < 0) {
 				q_ptr = Players[0 - p_ptr->target_idx[i]];
 				if (q_ptr->body_monster) {
-		                        snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE));
-		                } else {
-		                        snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, get_prace(q_ptr), get_ptitle(q_ptr, FALSE));
+					snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE));
+				} else {
+					snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, get_prace(q_ptr), get_ptitle(q_ptr, FALSE));
 				}
 			}
-//			strcpy(out_val, "[<dir>, t, q] ");
+			//strcpy(out_val, "[<dir>, t, q] ");
 			Send_target_info(Ind, p_ptr->target_x[m] - p_ptr->panel_col_prt, p_ptr->target_y[m] - p_ptr->panel_row_prt, out_val);
 #endif
 		}
@@ -10691,7 +10690,7 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr) {
 
 	goal.wx = p_ptr->wpos.wx;
 	goal.wy = p_ptr->wpos.wy;
-//	goal.wz = 0 - p_ptr->max_dlv;	// hack -- default to 'dungeon'
+	//goal.wz = 0 - p_ptr->max_dlv;	// hack -- default to 'dungeon'
 #endif	// 0
 
 	/* check for a valid inscription */
@@ -10884,7 +10883,7 @@ void telekinesis_aux(int Ind, int item) {
 			if (!is_admin(p_ptr)) return;
 		}
 		if (true_artifact_p(q_ptr) && cfg.anti_arts_pickup)
-//                      if (artifact_p(q_ptr) && cfg.anti_arts_pickup)
+		//if (artifact_p(q_ptr) && cfg.anti_arts_pickup)
 		{
 			msg_print(Ind, "The target isn't powerful enough yet to receive that artifact!");
 			if (!is_admin(p_ptr)) return;
@@ -11019,7 +11018,7 @@ int get_player(int Ind, object_type *o_ptr) {
 
 	/* check for a valid inscription */
 	if (inscription == NULL) {
-//		msg_print(Ind, "Nobody to use the power with.");
+		//msg_print(Ind, "Nobody to use the power with.");
 		msg_print(Ind, "\377yNo target player specified.");
 		return 0;
 	}
@@ -11038,8 +11037,8 @@ int get_player(int Ind, object_type *o_ptr) {
 				strcpy(ins2, (cptr)inscription);
 				if (strchr(ins2, '#')) *(strchr(ins2, '#')) = '\0';
 
-//				Ind2 = find_player_name(inscription);
-//				Ind2 = name_lookup_loose(Ind, (cptr)inscription,< FALSE, FALSE);
+				//Ind2 = find_player_name(inscription);
+				//Ind2 = name_lookup_loose(Ind, (cptr)inscription,< FALSE, FALSE);
 				Ind2 = name_lookup_loose(Ind, ins2, FALSE, FALSE);
 				if (Ind2) ok = TRUE;
 			}
@@ -11090,7 +11089,7 @@ int get_monster(int Ind, object_type *o_ptr) {
 		inscription++;
 	}
 
-        if (!ok1) {
+	if (!ok1) {
 		msg_print(Ind, "That monster does not exist.");
 		return 0;
 	}
