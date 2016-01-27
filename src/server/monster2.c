@@ -2967,6 +2967,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 0\n");
 	dlev = getlevel(wpos);
 	nr_bottom = netherrealm_level && dlev == netherrealm_end;
 
+	/* don't allow any ego for N */
+	if (summon_override_checks != SO_ALL && r_idx == RI_NETHER_GUARD) ego = 0;
+
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 #endif
