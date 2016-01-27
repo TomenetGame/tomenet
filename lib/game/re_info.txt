@@ -391,7 +391,7 @@ N:29:(mimic)
 G:*:*
 I:+0:+0d+0:+0:+0:+0
 W:+0:120:+0:+0:A
-H:R_CHAR_! | R_CHAR_? | R_CHAR_= | R_CHAR_> | R_CHAR_<
+H:R_CHAR_! | R_CHAR_? | R_CHAR_= | R_CHAR_> | R_CHAR_< | R_CHAR_+
 H:MIMIC
 O:MULTIPLY
 
