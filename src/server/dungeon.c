@@ -400,7 +400,7 @@ static void sense_inventory(int Ind) {
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 31) {
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 31 && ok_combat) {
 #if 1 /* (apply 33% chance, see below) - allow basic feelings */
 		ok_archery = TRUE;
 #else /* (apply 33% chance, see below) - allow more distinctive feelings */
@@ -409,7 +409,7 @@ static void sense_inventory(int Ind) {
 	}
 
 	/* A very powerful warrior can even distinguish magic items */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 41) {
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 41 && ok_combat) {
 #if 0 /* too much? */
 		ok_magic = TRUE;
 #endif
@@ -439,7 +439,7 @@ static void sense_inventory(int Ind) {
 #endif
 
 	/* nothing to feel? exit */
-	if (!ok_combat && !ok_magic && !ok_archery) return;
+	if (!ok_combat && !ok_magic && !ok_archery && !ok_curse) return;
 
 	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 11) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 11) ? TRUE : FALSE;
@@ -483,16 +483,18 @@ static void sense_inventory(int Ind) {
 		case TV_DRAG_ARMOR:
 		case TV_AXE:
 		case TV_TRAPKIT:
-			if (ok_combat)
+			if (ok_combat) {
 				feel = (heavy ? value_check_aux1(o_ptr) :
 						value_check_aux2(o_ptr));
-			if (heavy) felt_heavy = TRUE;
+				if (heavy) felt_heavy = TRUE;
+			}
 			break;
 		case TV_MSTAFF:
-			if (ok_magic)
+			if (ok_magic) {
 				feel = (heavy_magic ? value_check_aux1(o_ptr) :
 						value_check_aux2(o_ptr));
-			if (heavy_magic) felt_heavy = TRUE;
+				if (heavy_magic) felt_heavy = TRUE;
+			}
 			break;
 		case TV_SCROLL:
 			/* hack for cheques: Don't try to pseudo-id them at all. */
@@ -503,20 +505,22 @@ static void sense_inventory(int Ind) {
 		case TV_STAFF:
 		case TV_ROD:
 		case TV_FOOD:
-			if (ok_magic && !object_aware_p(Ind, o_ptr))
+			if (ok_magic && !object_aware_p(Ind, o_ptr)) {
 				feel = (heavy_magic ? value_check_aux1_magic(o_ptr) :
 				    value_check_aux2_magic(o_ptr));
-			if (heavy_magic) felt_heavy = TRUE;
+				if (heavy_magic) felt_heavy = TRUE;
+			}
 			break;
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_BOW:
 		case TV_BOOMERANG:
-			if (ok_archery || (ok_combat && magik(25)))
+			if (ok_archery || (ok_combat && magik(25))) {
 				feel = (heavy_archery ? value_check_aux1(o_ptr) :
 				    value_check_aux2(o_ptr));
-			if (heavy_archery) felt_heavy = TRUE;
+				if (heavy_archery) felt_heavy = TRUE;
+			}
 			break;
 		}
 
