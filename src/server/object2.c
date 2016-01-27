@@ -7527,6 +7527,12 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			break;
 		}
 
+		if (o_ptr->name2 == EGO_MIRKWOOD && !o_ptr->name2b) {
+			if (p_ptr->prace == RACE_VAMPIRE ||
+			    (p_ptr->prace == RACE_DRACONIAN && p_ptr->ptrait == TRAIT_GREEN))
+				continue;
+		}
+
 		/* analyze race */
 		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr)) continue;
 
