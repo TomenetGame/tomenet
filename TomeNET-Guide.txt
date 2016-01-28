@@ -1291,6 +1291,7 @@ They all start with a slash '/' hence they're called slash commands:
             make it less deep..
 
 /shout <text>
+/yell <text>
             Shout <text> loudly, will wake up monsters.
 
 /scream <text>

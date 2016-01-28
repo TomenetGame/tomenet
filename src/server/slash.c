@@ -370,18 +370,28 @@ void do_slash_cmd(int Ind, char *message) {
 		wakeup_monsters_somewhat(Ind, -1);
 		return;
 	}
-	else if (prefix(message, "/shout") || prefix(message, "/sho")) {
+	else if (prefix(message, "/shout") || prefix(message, "/sho") || prefix(message, "/yell")) {
 		break_cloaking(Ind, 4);
 		if (colon++) {
 			censor_message = TRUE;
 			censor_length = strlen(colon);
-			msg_format_near(Ind, "\374\377%c%^s shouts: %s", COLOUR_CHAT, p_ptr->name, colon);
-			msg_format(Ind, "\374\377%cYou shout: %s", COLOUR_CHAT, colon);
+			if (prefix(message, "/yell")) {
+				msg_format_near(Ind, "\374\377%c%^s yells: %s", COLOUR_CHAT, p_ptr->name, colon);
+				msg_format(Ind, "\374\377%cYou yell: %s", COLOUR_CHAT, colon);
+			} else {
+				msg_format_near(Ind, "\374\377%c%^s shouts: %s", COLOUR_CHAT, p_ptr->name, colon);
+				msg_format(Ind, "\374\377%cYou shout: %s", COLOUR_CHAT, colon);
+			}
 			censor_message = FALSE;
 			handle_punish(Ind, censor_punish);
 		} else {
-			msg_format_near(Ind, "\374\377%cYou hear %s shout!", COLOUR_CHAT, p_ptr->name);
-			msg_format(Ind, "\374\377%cYou shout!", COLOUR_CHAT);
+			if (prefix(message, "/yell")) {
+				msg_format_near(Ind, "\374\377%cYou hear %s yell out!", COLOUR_CHAT, p_ptr->name);
+				msg_format(Ind, "\374\377%cYou yell out!", COLOUR_CHAT);
+			} else {
+				msg_format_near(Ind, "\374\377%cYou hear %s shout!", COLOUR_CHAT, p_ptr->name);
+				msg_format(Ind, "\374\377%cYou shout!", COLOUR_CHAT);
+			}
 		}
 		wakeup_monsters(Ind, -1);
 		return;
