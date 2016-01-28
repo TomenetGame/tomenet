@@ -3064,16 +3064,15 @@ static char* dodge_diz(int chance) {
 /*
  * Dodge Chance Feedback.
  */
-void use_ability_blade(int Ind)
-{
+void use_ability_blade(int Ind) {
 	player_type *p_ptr = Players[Ind];
 #ifndef NEW_DODGING
 	int dun_level = getlevel(&p_ptr->wpos);
 	int chance = p_ptr->dodge_level - (dun_level * 5 / 6);
 
 	if (chance < 0) chance = 0;
-	if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;	// see DODGE_MAX_CHANCE in melee1.c
-//	if (is_admin(p_ptr))
+	if (chance > DODGE_CAP) chance = DODGE_CAP;	// see DODGE_CAP in melee1.c
+	//if (is_admin(p_ptr))
 		msg_format(Ind, "You have a %d%% chance of dodging a level %d monster.", chance, dun_level);
  #if 0
 	if (chance < 5)
@@ -3114,8 +3113,7 @@ void use_ability_blade(int Ind)
 
 
 
-void check_parryblock(int Ind)
-{
+void check_parryblock(int Ind) {
 #ifdef ENABLE_NEW_MELEE
 	char msg[80];
 	player_type *p_ptr = Players[Ind];
@@ -3180,8 +3178,7 @@ void check_parryblock(int Ind)
 
 
 
-void toggle_shoot_till_kill(int Ind)
-{
+void toggle_shoot_till_kill(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	if (p_ptr->shoot_till_kill) {
 		msg_print(Ind, "\377wFire-till-kill mode now off.");
@@ -3195,8 +3192,7 @@ s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_t
 	return;
 }
 
-void toggle_dual_mode(int Ind)
-{
+void toggle_dual_mode(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	if (p_ptr->dual_mode)
 		msg_print(Ind, "\377wDual-wield mode: Main-hand. (This disables all dual-wield boni.)");

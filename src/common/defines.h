@@ -811,12 +811,14 @@
     an unbeliever (warrior) should not be surpassed and 12 seems too much. */
 #define ANTIMAGIC_DIS_CAP	9
 
-/* Limit effectiveness of interception/martial arts,
-   Should range from 75%..80%. - C. Blue */
-#define INTERCEPT_CAP		80
+/* Limit effectiveness of interception/martial arts [50..80] */
+#define INTERCEPT_CAP		70
+/* Give all characters a basic interception chance depending on level
+   and to compensate reduce the additional bonus from the skill somewhat. */
+//#define GENERIC_INTERCEPTION
 
-/* upper limit of dodging chance.       [90] */
-#define DODGE_MAX_CHANCE 	80
+/* upper limit of dodging chance. [80] */
+#define DODGE_CAP		80
 
 
 /* Total size of internal IDDC depth table */

@@ -941,9 +941,9 @@ bool make_attack_melee(int Ind, int m_idx)
 
 #ifndef NEW_DODGING
 			chance = p_ptr->dodge_level - ((rlev * 5) / 6);
-//						- UNAWARENESS(p_ptr) * 2;
+			//    - UNAWARENESS(p_ptr) * 2;
 			/* always 10% chance to hit */
-			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
+			if (chance > DODGE_CAP) chance = DODGE_CAP;
 			if ((chance > 0) && !bypass_ac && magik(chance)) {
 				msg_format(Ind, "\377%cYou dodge %s attack!", COLOUR_DODGE_GOOD, m_name_gen);
 				continue;

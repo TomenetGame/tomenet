@@ -3276,7 +3276,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 			 * ---- Level 79+ melee hits are not dodgable ----
 			 */
 			int dodge_chance = q_ptr->dodge_level - p_ptr->lev * 19 / 10;
-			if (dodge_chance > DODGE_MAX_CHANCE) dodge_chance = DODGE_MAX_CHANCE;
+			if (dodge_chance > DODGE_CAP) dodge_chance = DODGE_CAP;
 			if (!backstab && (dodge_chance > 0) && magik(dodge_chance)) {
 				msg_format(Ind, "\377c%s dodges your attack!", COLOUR_DODGE_PLY, q_name);
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name); 
@@ -7805,9 +7805,9 @@ int apply_dodge_chance(int Ind, int attack_level) {
 #endif
 
 #if 1 /* instead of capping... */
-	if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
+	if (chance > DODGE_CAP) chance = DODGE_CAP;
 #else /* ...let it scale? >:) */
-        chance = (chance * DODGE_MAX_CHANCE) / 100;
+        chance = (chance * DODGE_CAP) / 100;
 #endif
 
 	/* New- some malicious effects */
