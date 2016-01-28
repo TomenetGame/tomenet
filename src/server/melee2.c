@@ -1480,8 +1480,20 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		grabchance -= (rlev / 3);
 
 #ifdef GENERIC_INTERCEPTION
+ #if 0
 		grabchance >> 1; //50.000: 33..57 -> 33..70 (MA); 0.000: -16..12
-		grabchance += 10 + p_ptr->lev < 50 ? p_ptr->lev / 5 : 10;
+		/* the skill is available to this character? (threshold is paranoia for ignoring
+		   racial-bonus flukes) - then give him a base chance even when untrained */
+		if (q_ptr->s_info[SKILL_INTERCEPT].mod >= 300)
+			grabchance += 10 + p_ptr->lev < 50 ? p_ptr->lev / 5 : 10;
+ #endif
+ #if 1
+		grabchance = (grabchance * 2) / 5; //50.000: 26..46 -> 26..56 (MA); 0.000: -13..10
+		/* the skill is available to this character? (threshold is paranoia for ignoring
+		   racial-bonus flukes) - then give him a base chance even when untrained */
+		if (q_ptr->s_info[SKILL_INTERCEPT].mod >= 300)
+			grabchance += 5 + p_ptr->lev < 50 ? p_ptr->lev / 2 : 25;
+ #endif
 		//previously: 50.000: 67..115 -> 33..140 (MA); 0.000: -33..0
 #endif
 
