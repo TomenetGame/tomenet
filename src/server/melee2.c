@@ -1394,7 +1394,6 @@ if (season_halloween) {
 /* Don't allow interception of multiple players to stack? */
 #define NO_INTERCEPTION_STACKING
 bool monst_check_grab(int m_idx, int mod, cptr desc) {
-//	player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 
@@ -1411,8 +1410,6 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 	/* hack: if we dont auto-retaliate vs a monster than we dont intercept either */
 	if (r_ptr->flags8 & RF8_NO_AUTORET) return FALSE;
 
-	/* this one just cannot be intercepted */
-	//if (m_ptr->r_idx == RI_LIVING_LIGHTNING) return FALSE;
 	/* cannot intercept elementals and vortices (not '#' at this time) */
 	if (strchr("Ev*", r_ptr->d_char)) return FALSE;
 
@@ -1482,20 +1479,18 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		    !q_ptr->inventory[INVEN_ARM].k_idx)
 			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 25);
 
-//		grabchance *= mod / 100;
-		grabchance = grabchance * mod / 100;
+		grabchance = (grabchance * mod) / 100;
 
 		if (q_ptr->blind) grabchance /= 3;
 
-#ifndef NO_INTERCEPTION_STACKING
-		if (grabchance < 1) continue;
+		if (grabchance <= 0) continue;
 
-//		grabchance = 50 + q_ptr->lev/2 - (q_ptr->blind?30:0);
-		if (grabchance > INTERCEPT_CAP) grabchance = INTERCEPT_CAP;/* Interception cap */
+#ifndef NO_INTERCEPTION_STACKING
+		if (grabchance >= INTERCEPT_CAP) grabchance = INTERCEPT_CAP;
 
 		/* Got disrupted ? */
 		if (magik(grabchance)) {
-			char		m_name[MNAME_LEN];
+			char m_name[MNAME_LEN];
 			/* Get the monster name (or "it") */
 			monster_desc(i, m_name, m_idx, 0x00);
 
@@ -1504,6 +1499,12 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 			return TRUE;
 		}
 #else
+		if (grabchance >= INTERCEPT_CAP) {
+			grabchance_top = INTERCEPT_CAP;
+			i_top = i;
+			/* can't go higher, so we may stop here */
+			break;
+		}
 		if (grabchance > grabchance_top) {
 			grabchance_top = grabchance;
 			i_top = i;
@@ -1513,7 +1514,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 
 #ifdef NO_INTERCEPTION_STACKING
 	/* Got disrupted ? */
-	if (magik(grabchance)) {
+	if (magik(grabchance_top)) {
 		char m_name[MNAME_LEN];
 		/* Get the monster name (or "it") */
 		monster_desc(i_top, m_name, m_idx, 0x00);
