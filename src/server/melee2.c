@@ -1398,12 +1398,16 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 	monster_race    *r_ptr = race_inf(m_ptr);
 
 	worldpos *wpos = &m_ptr->wpos;
+	player_type *q_ptr;
 
 	cave_type **zcave;
 	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
 	int grabchance = 0;
 #ifdef NO_INTERCEPTION_STACKING
 	int grabchance_top = 0, i_top = 0;
+#endif
+#ifdef GENERIC_INTERCEPTION
+	int eff_lev;
 #endif
 	int rlev = r_ptr->level;
 
@@ -1417,7 +1421,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	for (i = 1; i <= NumPlayers; i++) {
-		player_type *q_ptr = Players[i];
+		q_ptr = Players[i];
 
 		/* Skip disconnected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
@@ -1480,21 +1484,25 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		grabchance -= (rlev / 3);
 
 #ifdef GENERIC_INTERCEPTION
- #if 0
-		grabchance >> 1; //50.000: 33..57 -> 33..70 (MA); 0.000: -16..12
+		eff_lev = 0;
 		/* the skill is available to this character? (threshold is paranoia for ignoring
 		   racial-bonus flukes) - then give him a base chance even when untrained */
-		if (q_ptr->s_info[SKILL_INTERCEPT].mod >= 300)
-			grabchance += 10 + p_ptr->lev < 50 ? p_ptr->lev / 5 : 10;
+		if (q_ptr->s_info[SKILL_INTERCEPT].mod >= 300) eff_lev = p_ptr->lev < 50 ? p_ptr->lev : 50;
+		/* alternatively, still make MA count, since it gives interception chance too */
+		else if (get_skill(q_ptr, SKILL_MARTIAL_ARTS)) {
+			eff_lev = get_skill(q_ptr, SKILL_MARTIAL_ARTS);
+			if (eff_lev > p_ptr->lev) eff_lev = p_ptr->lev;
+		}
+
+		//w/o G_I: 50.000: 67..115 -> 33..140 (MA); 0.000: -33..0
+ #if 0
+		grabchance >> 1; //50.000: 33..57 -> 33..70 (MA); 0.000: -16..12
+		if (eff_lev) grabchance += 10 + eff_lev / 5;
  #endif
  #if 1
 		grabchance = (grabchance * 2) / 5; //50.000: 26..46 -> 26..56 (MA); 0.000: -13..10
-		/* the skill is available to this character? (threshold is paranoia for ignoring
-		   racial-bonus flukes) - then give him a base chance even when untrained */
-		if (q_ptr->s_info[SKILL_INTERCEPT].mod >= 300)
-			grabchance += 5 + p_ptr->lev < 50 ? p_ptr->lev / 2 : 25;
+		if (eff_lev) grabchance += 5 + eff_lev / 2;
  #endif
-		//previously: 50.000: 67..115 -> 33..140 (MA); 0.000: -33..0
 #endif
 
 		grabchance = (grabchance * mod) / 100;
