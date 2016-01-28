@@ -15330,7 +15330,7 @@ is an exception to this rule, but only when retrieving the set rune (a refund).
 Name       | Lvl | Description                                       | Basic
 -------------------------------------------------------------------------------
 Beam       |  15 | Fires a beam, damaging all grids in a line.       | Bolt
-Storm      |  20 | A cloud that circles one target in line of sight. | Cloud
+Storm      |  20 | A high damage cloud that circles you as you move. | Cloud
 Glyph  (*) |  25 | Set or retrieve a damaging glyph of warding.      | Sign
 Swarm      |  30 | Fires 2-4 minimized balls near the target.        | Ball
 Dispel     |  35 | Instantly damages all monsters in line of sight.  | Wave
