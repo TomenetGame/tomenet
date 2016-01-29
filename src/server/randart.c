@@ -205,6 +205,8 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 		    (a_ptr->tval != TV_DIGGING))
 			p += a_ptr->pval * 3;
 
+		if (a_ptr->flags5 & TR5_VORPAL) p += 20;
+
 		/* Instead of formerly base dd/ds, only increased dd/ds add to ap now.
 		   This is less penalizing on 2h-weapons, making it fairer - C. Blue */
 //		p += ((a_ptr->dd - k_ptr->dd + 1) * (a_ptr->ds - k_ptr->ds + 1) - 1) * 2;
