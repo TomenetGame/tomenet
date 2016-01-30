@@ -6829,6 +6829,7 @@ void export_player_store_offers(int *export_turns) {
 	static FILE *fp;
 
 	int i;
+	long price;
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
@@ -6886,7 +6887,12 @@ void export_player_store_offers(int *export_turns) {
  #else
 		object_desc(0, o_name, o_ptr, TRUE, 1024 + 3);
  #endif
-		fprintf(fp, "(%d,%d) <%d,%d>: %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_name);
+
+		price = price_item_player_store(0, o_ptr);
+		/* Cut out the @S pricing information from the inscription. */
+		player_stores_cut_inscription(o_name);
+
+		fprintf(fp, "(%d,%d) <%d,%d>: (%ld Au) %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, price, o_name);
 	}
 	(*export_turns)--;
 	s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported o_list, step %d/%d.\n", step - (*export_turns), step);
