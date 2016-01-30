@@ -6880,11 +6880,11 @@ void export_player_store_offers(int *export_turns) {
 		if (o_ptr->tval == TV_WAND) {
 			int j = o_ptr->pval;
 			o_ptr->pval = j / o_ptr->number;
-			object_desc(0, o_name, o_ptr, FALSE, 1024 + 3 + 64);
+			object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
 			o_ptr->pval = j; /* hack clean-up */
-		} else object_desc(0, o_name, o_ptr, FALSE, 1024 + 3 + 64);
+		} else object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
  #else
-		object_desc(0, o_name, o_ptr, FALSE, 1024 + 3);
+		object_desc(0, o_name, o_ptr, TRUE, 1024 + 3);
  #endif
 		fprintf(fp, "(%d,%d) <%d,%d>: %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_name);
 	}
