@@ -4398,7 +4398,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				else if (ma_ptr->effect == MA_SLOW) {
 #if 0 /* less message order problems */
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
-					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char))) {
+					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?+", r_ptr->d_char))) {
 						msg_format(Ind, "You kick %s in the ankle.", m_name);
 						special_effect = MA_SLOW;
 					} else {
@@ -4407,14 +4407,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 					}
 #else
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
-					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
+					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?+", r_ptr->d_char)))
 						special_effect = MA_SLOW;
 					sprintf(hit_desc, ma_ptr->desc, m_name);
 #endif
 				} else if (ma_ptr->effect == MA_ROYAL_SLOW) { /* works against U,D,d,J,c,n */
 #if 0 /* less message order problems */
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
-					    || strchr("ANjmeEv$,sbBFIQSXlw!=?", r_ptr->d_char))) {
+					    || strchr("ANjmeEv$,sbBFIQSXlw!=?+", r_ptr->d_char))) {
 						msg_format(Ind, "You strike %s's pressure points.", m_name);
 						special_effect = MA_SLOW;
 					} else {
@@ -4423,7 +4423,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 					}
 #else
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
-					    || strchr("ANjmeEv$,sbBFIQSXlw!=?", r_ptr->d_char)))
+					    || strchr("ANjmeEv$,sbBFIQSXlw!=?+", r_ptr->d_char)))
 						special_effect = MA_SLOW;
 					sprintf(hit_desc, ma_ptr->desc, m_name);
 #endif
