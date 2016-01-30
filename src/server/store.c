@@ -6853,7 +6853,7 @@ void export_player_store_offers(int *export_turns) {
 		house_type *h_ptr;
 
 		/* scan traditional houses */
-		for (h = turn % step; h < num_houses; i += step) {
+		for (h = turn % step; h < num_houses; h += step) {
 			coverage++;
 			h_ptr = &houses[h];
 			for (i = 0; i < h_ptr->stock_num; i++) {
