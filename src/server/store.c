@@ -6895,7 +6895,11 @@ void export_player_store_offers(int *export_turns) {
 		/* Cut out the @S pricing information from the inscription. */
 		player_stores_cut_inscription(o_name);
 
-		fprintf(fp, "(%d,%d) <%d,%d>: (%ld Au) %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, price, o_name);
+		//TODO maybe: report house owner?
+		//h_ptr->dna->owner = p_ptr->id; //guilds[]
+		//h_ptr->dna->owner_type = OT_PLAYER; //OT_GUILD
+
+		fprintf(fp, "(%d,%d) <%d,%d>: (%d, %ld Au) %s\n", o_ptr->mode, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, price, o_name);
 	}
 	(*export_turns)--;
 	s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported o_list, step %d/%d.\n", step - (*export_turns), step);
