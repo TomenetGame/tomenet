@@ -6875,7 +6875,17 @@ void export_player_store_offers(int *export_turns) {
 		   stale_level() will have to take care of deallocating instead. */
 		//if (<alloc>) dealloc_dungeon_level(&o_ptr->wpos);
 
-		object_desc(0, o_name, o_ptr, FALSE, 1024);
+ #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
+		/* hack for wand charges to not get displayed accumulated (less comfortable) */
+		if (o_ptr->tval == TV_WAND) {
+			int j = o_ptr->pval;
+			o_ptr->pval = j / o_ptr->number;
+			object_desc(0, o_name, o_ptr, FALSE, 1024 + 3 + 64);
+			o_ptr->pval = j; /* hack clean-up */
+		} else object_desc(0, o_name, o_ptr, FALSE, 1024 + 3 + 64);
+ #else
+		object_desc(0, o_name, o_ptr, FALSE, 1024 + 3);
+ #endif
 		fprintf(fp, "(%d,%d) <%d,%d>: %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_name);
 	}
 	(*export_turns)--;
