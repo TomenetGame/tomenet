@@ -6821,11 +6821,17 @@ void verify_store_owner(store_type *st_ptr) {
 /* Only export n items per turn, in to avoid causing lag or anything (paranoia?) [10].
    Note that this could lead to glitches when the o_list changes between function calls,
    which is why we create an unmutable memory copy first. */
-//#define AMT_PER_TURN 10 /* test server */
-#define AMT_PER_TURN 1000 /* live server */
+#define AMT_PER_TURN 1000
+#ifndef USE_MANG_HOUSE_ONLY
+ #define HOUSES_PER_TURN 100
+#endif
 void export_player_store_offers(int *export_turns) {
 	//note: coverage and export_turns are sort of redundant
-	static int coverage = 0, o_max_bak, step;
+	static int coverage = 0, max_bak, step;
+#ifndef USE_MANG_HOUSE_ONLY
+	static bool coverage_trad = FALSE;
+	static house_type *houses_bak;
+#endif
 	static FILE *fp;
 
 	int i;
@@ -6834,11 +6840,72 @@ void export_player_store_offers(int *export_turns) {
 	char o_name[ONAME_LEN];
 
 
-	if (!o_max) { //paranoia
+	if (!o_max) { //paranoia -- note: we just discard TRAD_HOUSEs too in this case, who cares =P
 		(*export_turns) = 0;
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. No objects.\n");
 		return;
 	}
+
+#ifndef USE_MANG_HOUSE_ONLY
+	/* we're in the 2nd stage: exporting houses */
+	if (coverage_trad) {
+		int h;
+		house_type *h_ptr;
+
+		/* scan traditional houses */
+		for (h = turn % step; h < num_houses; i += step) {
+			coverage++;
+			h_ptr = &houses[h];
+			for (i = 0; i < h_ptr->stock_num; i++) {
+				o_ptr = &h_ptr->stock[i];
+
+				if (!o_ptr->k_idx) continue; //invalid item
+				if (!o_ptr->note) continue; //has no inscription
+				if (!strstr(quark_str(o_ptr->note), "@S")) continue; //has no @S inscription
+
+ #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
+				/* hack for wand charges to not get displayed accumulated (less comfortable) */
+				if (o_ptr->tval == TV_WAND) {
+					int j = o_ptr->pval;
+					o_ptr->pval = j / o_ptr->number;
+					object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
+					o_ptr->pval = j; /* hack clean-up */
+				} else object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
+ #else
+				object_desc(0, o_name, o_ptr, TRUE, 1024 + 3);
+ #endif
+
+				price = price_item_player_store(0, o_ptr);
+				/* Cut out the @S pricing information from the inscription. */
+				player_stores_cut_inscription(o_name);
+
+				//TODO maybe: report house owner?
+				//h_ptr->dna->owner = p_ptr->id; //guilds[]
+				//h_ptr->dna->owner_type = OT_PLAYER; //OT_GUILD
+
+				//TODO maybe: report house colour
+				//HOUSE_PAINTING
+				//h_ptr->colour - 1
+				fprintf(fp, "(%d,%d) <%d,%d>: (%d, %ld Au) %s\n", o_ptr->mode, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, price, o_name); //or just x,y?
+			}
+		}
+
+		(*export_turns)--;
+		s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported houses, step %d/%d.\n", step - (*export_turns), step);
+
+		/* finish exporting? */
+		if (coverage >= max_bak) {
+			coverage = 0; //reset counter
+			coverage_trad = FALSE; //reset stage
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: houses export completed.\n");
+
+			C_FREE(houses_bak, max_bak, house_type);
+
+			my_fclose(fp);
+			return;
+		}
+	}
+#endif
 
 	/* init exporting? */
 	if (!coverage) {
@@ -6852,15 +6919,15 @@ void export_player_store_offers(int *export_turns) {
 		}
 
 		/* create immutable, static working copy */
-		memcpy(o_list_bak, o_list, sizeof(object_type) * MAX_O_IDX);
-		o_max_bak = o_max;
-		step = (o_max_bak + AMT_PER_TURN - 1) / AMT_PER_TURN;
+		max_bak = o_max;
+		memcpy(houses_bak, o_list, sizeof(object_type) * max_bak);
+		step = (max_bak + AMT_PER_TURN - 1) / AMT_PER_TURN;
 		(*export_turns) = step; //function has to be called this often to completely export all objects
-		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning o_list [%d] export.\n", o_max_bak);
+		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning o_list [%d] export.\n", max_bak);
 	}
 
 	/* note: the items are not sorted in any way */
-	for (i = turn % step; i < o_max_bak; i += step) {
+	for (i = turn % step; i < max_bak; i += step) {
 		coverage++;
 		o_ptr = &o_list_bak[i];
 
@@ -6899,16 +6966,34 @@ void export_player_store_offers(int *export_turns) {
 		//h_ptr->dna->owner = p_ptr->id; //guilds[]
 		//h_ptr->dna->owner_type = OT_PLAYER; //OT_GUILD
 
+		//TODO maybe: report house colour
+		//HOUSE_PAINTING
+		//h_ptr->colour - 1
 		fprintf(fp, "(%d,%d) <%d,%d>: (%d, %ld Au) %s\n", o_ptr->mode, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, price, o_name);
 	}
 	(*export_turns)--;
 	s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported o_list, step %d/%d.\n", step - (*export_turns), step);
 
 	/* finish exporting? */
-	if (coverage >= o_max_bak) {
+	if (coverage >= max_bak) {
 		coverage = 0; //reset counter
-		my_fclose(fp);
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
+
+#ifndef USE_MANG_HOUSE_ONLY
+		/* switch to 2nd stage: scan trad houses */
+		coverage_trad = TRUE;
+
+		/* create immutable, static working copy */
+		max_bak = num_houses;
+		C_MAKE(houses_bak, max_bak, house_type);
+		memcpy(houses_bak, houses, sizeof(house_type) * max_bak);
+		step = (max_bak + HOUSES_PER_TURN - 1) / HOUSES_PER_TURN;
+		(*export_turns) = step; //function has to be called this often to completely export all objects
+		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning houses [%d] export.\n", max_bak);
+		fprintf(fp, "\n");
+#else
+		my_fclose(fp);
+#endif
 	}
 }
 #endif
