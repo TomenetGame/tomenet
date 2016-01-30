@@ -6920,7 +6920,7 @@ void export_player_store_offers(int *export_turns) {
 
 		/* create immutable, static working copy */
 		max_bak = o_max;
-		memcpy(houses_bak, o_list, sizeof(object_type) * max_bak);
+		memcpy(o_list_bak, o_list, sizeof(object_type) * max_bak);
 		step = (max_bak + AMT_PER_TURN - 1) / AMT_PER_TURN;
 		(*export_turns) = step; //function has to be called this often to completely export all objects
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning o_list [%d] export.\n", max_bak);
