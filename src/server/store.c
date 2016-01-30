@@ -6905,8 +6905,8 @@ void export_player_store_offers(int *export_turns) {
 			C_FREE(houses_bak, max_bak, house_type);
 
 			my_fclose(fp);
-			return;
 		}
+		return;
 	}
 #endif
 
