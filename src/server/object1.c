@@ -2985,7 +2985,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	else if (!known && (o_ptr->ident & ID_EMPTY))
 		strcpy(tmp_val, "empty");
 	/* Note "tried" if the object has been tested unsuccessfully */
-	else if (!aware && object_tried_p(Ind, o_ptr))
+	else if (!aware && (Ind && object_tried_p(Ind, o_ptr)))
 		strcpy(tmp_val, "tried");
 	/* Note the discount, if any */
 	else if (o_ptr->discount) {
