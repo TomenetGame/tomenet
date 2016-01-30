@@ -6823,7 +6823,8 @@ void verify_store_owner(store_type *st_ptr) {
    which is why we create an unmutable memory copy first. */
 #define AMT_PER_TURN 1000
 #ifndef USE_MANG_HOUSE_ONLY
- #define HOUSES_PER_TURN 100
+ //#define HOUSES_PER_TURN ((MANG_HOUSE_RATE == 100) ? 0 : (10000 / (100 - MANG_HOUSE_RATE)))
+ #define HOUSES_PER_TURN 200
 #endif
 void export_player_store_offers(int *export_turns) {
 	//note: coverage and export_turns are sort of redundant
@@ -6856,6 +6857,8 @@ void export_player_store_offers(int *export_turns) {
 		for (h = turn % step; h < num_houses; h += step) {
 			coverage++;
 			h_ptr = &houses[h];
+			if (!(h_ptr->flags & HF_TRAD)) continue;
+
 			for (i = 0; i < h_ptr->stock_num; i++) {
 				o_ptr = &h_ptr->stock[i];
 
@@ -6980,6 +6983,10 @@ void export_player_store_offers(int *export_turns) {
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 
 #ifndef USE_MANG_HOUSE_ONLY
+		if (MANG_HOUSE_RATE == 100) {
+			my_fclose(fp);
+			return;
+		}
 		/* switch to 2nd stage: scan trad houses */
 		coverage_trad = TRUE;
 
