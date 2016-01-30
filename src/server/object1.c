@@ -1881,6 +1881,8 @@ static char *object_desc_per(char *t, sint v) {
  *  +128 - Don't prefix "The"
  *  +256 - Short name: Only the purely textual name, no stats/level/owner/status.
  *  +512 - Don't suppress flavour for flavoured true arts (insta-arts, ie rings and amulets) (for ~4 list)
+ * +1024 - Assume that no flavours are known by the player (added for exporting player store item list)
+ *         ONLY works with Ind == 0.
  *
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
@@ -1933,6 +1935,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	} else {
 		/* Assume aware and known */
 		aware = known = TRUE;
+		if (mode & 1024) aware = FALSE; //don't spoil flavours in player shop export list!
 	}
 	/* Never use short item names in flavour knowledge list */
 	if ((mode & 512)) short_item_names = FALSE;

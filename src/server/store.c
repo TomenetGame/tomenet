@@ -6814,3 +6814,78 @@ void verify_store_owner(store_type *st_ptr) {
 
 	store_shuffle(st_ptr);
 }
+
+#ifdef PLAYER_STORES
+/* New plan for player shops: Export the list of objects to a file
+   that gets processed by an external script to be displayed on the website. */
+/* Only export n items per turn, in to avoid causing lag or anything (paranoia?) [10].
+   Note that this could lead to glitches when the o_list changes between function calls,
+   which is why we create an unmutable memory copy first. */
+//#define AMT_PER_TURN 10 /* test server */
+#define AMT_PER_TURN 1000 /* live server */
+void export_player_store_offers(int *export_turns) {
+	//note: coverage and export_turns are sort of redundant
+	static int coverage = 0, o_max_bak, step;
+	static FILE *fp;
+
+	int i;
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
+
+
+	if (!o_max) { //paranoia
+		(*export_turns) = 0;
+		s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. No objects.\n");
+		return;
+	}
+
+	/* init exporting? */
+	if (!coverage) {
+		fp = my_fopen("tomenet-o_list.txt", "w");
+		if (!fp) {
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open file.\n");
+			return;
+		}
+
+		/* create immutable, static working copy */
+		memcpy(o_list_bak, o_list, sizeof(object_type) * MAX_O_IDX);
+		o_max_bak = o_max;
+		step = (o_max_bak + AMT_PER_TURN - 1) / AMT_PER_TURN;
+		(*export_turns) = step; //function has to be called this often to completely export all objects
+		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning o_list [%d] export.\n", o_max_bak);
+	}
+
+	/* note: the items are not sorted in any way */
+	for (i = turn % step; i < o_max_bak; i += step) {
+		coverage++;
+		o_ptr = &o_list_bak[i];
+
+		if (!o_ptr->k_idx) continue; //invalid item
+		if (o_ptr->held_m_idx) continue; //held by a monster
+		if (!o_ptr->note) continue; //has no inscription
+		if (!strstr(quark_str(o_ptr->note), "@S")) continue; //has no @S inscription
+
+		/* expensive? probably not */
+		if (!getcave(&o_ptr->wpos)) {
+			alloc_dungeon_level(&o_ptr->wpos);
+			generate_cave(&o_ptr->wpos, NULL);
+		}
+		if (!inside_house(&o_ptr->wpos, o_ptr->ix, o_ptr->iy)) continue; //is not inside a player house
+		/* nah, keep it allocated for other objects that might be offered in this sector.
+		   stale_level() will have to take care of deallocating instead. */
+		//if (<alloc>) dealloc_dungeon_level(&o_ptr->wpos);
+
+		object_desc(0, o_name, o_ptr, FALSE, 1024);
+		fprintf(fp, "(%d,%d) <%d,%d>: %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_name);
+	}
+	(*export_turns)--;
+	s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported o_list, step %d/%d.\n", step - (*export_turns), step);
+
+	/* finish exporting? */
+	if (coverage >= o_max_bak) {
+		coverage = 0; //reset counter
+		my_fclose(fp);
+		s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
+	}
+}
+#endif

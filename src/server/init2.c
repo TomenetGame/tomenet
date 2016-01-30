@@ -2546,6 +2546,7 @@ static errr init_other(void)
 
 	/* Allocate and Wipe the object list */
 	C_MAKE(o_list, MAX_O_IDX, object_type);
+	C_MAKE(o_list_bak, MAX_O_IDX, object_type);
 
 	/* Allocate and Wipe the monster list */
 	C_MAKE(m_list, MAX_M_IDX, monster_type);

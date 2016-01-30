@@ -349,7 +349,7 @@ u16b numtowns = 0;
 /*
  * The array of dungeon items [MAX_O_IDX]
  */
-object_type *o_list;
+object_type *o_list, *o_list_bak;
 
 /*
  * The array of dungeon monsters [MAX_M_IDX]

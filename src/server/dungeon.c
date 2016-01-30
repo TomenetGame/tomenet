@@ -7089,6 +7089,7 @@ void process_player_change_wpos(int Ind) {
 
 void dungeon(void) {
 	int i;
+	static int export_turns = 0;
 	player_type *p_ptr;
 
 	/* Return if no one is playing */
@@ -7188,6 +7189,15 @@ void dungeon(void) {
 	/* Do some queued drawing */
 	process_lite_later();
 
+#ifdef PLAYER_STORES
+ #ifdef EXPORT_PLAYER_STORE_OFFERS
+  #if EXPORT_PLAYER_STORE_OFFERS > 0
+	/* export player store items every n hours */
+	if (!(turn % (cfg.fps * 3600 * EXPORT_PLAYER_STORE_OFFERS))) export_player_store_offers(&export_turns);
+	else if (export_turns) export_player_store_offers(&export_turns);
+  #endif
+ #endif
+#endif
 
 	if (!(turn % (cfg.fps * 60))) {
 #ifdef SOLO_REKING

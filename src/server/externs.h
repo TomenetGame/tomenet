@@ -345,7 +345,7 @@ extern cave_type ***cave;
 extern wilderness_type wild_info[MAX_WILD_Y][MAX_WILD_X];
 extern struct town_type *town;
 extern u16b numtowns;
-extern object_type *o_list;
+extern object_type *o_list, *o_list_bak;
 extern monster_type *m_list;
 extern xorder xo_list[MAX_XO_IDX];
 extern s16b alloc_kind_size;
@@ -1701,6 +1701,9 @@ extern void handle_store_leave(int Ind);
 extern void verify_store_owner(store_type *st_ptr);
 extern s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip);
 extern int gettown(int Ind);
+
+extern void export_player_store_offers(int *export_turns);
+
 
 /* util.c */
 extern bool suppress_message, censor_message, suppress_boni;
