@@ -6842,7 +6842,10 @@ void export_player_store_offers(int *export_turns) {
 
 	/* init exporting? */
 	if (!coverage) {
-		fp = my_fopen("tomenet-o_list.txt", "w");
+		char path[MAX_PATH_LENGTH];
+
+		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-o_list.txt");
+		fp = my_fopen(path, "w");
 		if (!fp) {
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open file.\n");
 			return;
