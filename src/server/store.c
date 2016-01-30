@@ -6921,12 +6921,18 @@ void export_player_store_offers(int *export_turns) {
 			return;
 		}
 
-		/* create immutable, static working copy */
-		max_bak = o_max;
-		memcpy(o_list_bak, o_list, sizeof(object_type) * max_bak);
-		step = (max_bak + AMT_PER_TURN - 1) / AMT_PER_TURN;
-		(*export_turns) = step; //function has to be called this often to completely export all objects
-		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning o_list [%d] export.\n", max_bak);
+		/* o_list exporting actually disabled? */
+		if (AMT_PER_TURN == 0) {
+			max_bak = 0;
+			step = 0; //hack: mark as disabled
+		} else {
+			/* create immutable, static working copy */
+			max_bak = o_max;
+			memcpy(o_list_bak, o_list, sizeof(object_type) * max_bak);
+			step = (max_bak + AMT_PER_TURN - 1) / AMT_PER_TURN;
+			(*export_turns) = step; //function has to be called this often to completely export all objects
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning o_list [%d] export.\n", max_bak);
+		}
 	}
 
 	/* note: the items are not sorted in any way */
@@ -6974,8 +6980,10 @@ void export_player_store_offers(int *export_turns) {
 		//h_ptr->colour - 1
 		fprintf(fp, "(%d,%d) <%d,%d>: (%d, %ld Au) %s\n", o_ptr->mode, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, price, o_name);
 	}
-	(*export_turns)--;
-	s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported o_list, step %d/%d.\n", step - (*export_turns), step);
+	if (step) { //not disabled? then log
+		(*export_turns)--;
+		s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported o_list, step %d/%d.\n", step - (*export_turns), step);
+	}
 
 	/* finish exporting? */
 	if (coverage >= max_bak) {
@@ -6983,7 +6991,8 @@ void export_player_store_offers(int *export_turns) {
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 
 #ifndef USE_MANG_HOUSE_ONLY
-		if (MANG_HOUSE_RATE == 100) {
+		if (MANG_HOUSE_RATE == 100
+		    || HOUSES_PER_TURN == 0) { /* houses exporting actually disabled? */
 			my_fclose(fp);
 			return;
 		}
