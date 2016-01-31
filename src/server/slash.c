@@ -9508,6 +9508,29 @@ void do_slash_cmd(int Ind, char *message) {
 
 				return;
 			}
+			/* imprint 'housed' on all objects */
+			else if (prefix(message, "/optrhoused")) {
+				int i, h;
+				house_type *h_ptr;
+				object_type *o_ptr;
+
+				/* process HF_TRAD houses */
+				for (h = 0; h < num_houses; h++) {
+					h_ptr = &houses[h];
+					if (!(h_ptr->flags & HF_TRAD)) continue;
+					for (i = 0; i < h_ptr->stock_num; i++) {
+						o_ptr = &h_ptr->stock[i];
+						o_ptr->housed = h + 1;
+					}
+				}
+				/* process HF_RECT houses */
+				for (i = 0; i < o_max; i++) {
+					o_ptr = &o_list[i];
+					o_ptr->housed = inside_which_house(&o_ptr->wpos, o_ptr->ix, o_ptr->iy);
+				}
+				msg_format(Ind, "%d houses, %d free objects, done.", num_houses, o_max);
+				return;
+			}
 		}
 	}
 
