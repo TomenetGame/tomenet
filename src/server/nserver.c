@@ -4021,7 +4021,8 @@ static int Receive_login(int ind) {
 		}
 		else{
 			/* fail login here */
-			Destroy_connection(ind, "Wrong password or name already in use.");
+			//Destroy_connection(ind, "Wrong password or name already in use.");
+			Destroy_connection(ind, "Name already in use.");
 			return(-1);
 		}
 		Sockbuf_flush(&connp->w);
