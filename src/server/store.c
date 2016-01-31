@@ -6945,7 +6945,8 @@ void export_player_store_offers(int *export_turns) {
 		if (!o_ptr->note) continue; //has no inscription
 		if (!strstr(quark_str(o_ptr->note), "@S")) continue; //has no @S inscription
 
-		/* expensive? probably not */
+#if 0 /* avoid a small lag spike? the inside_house() check isn't really needed */
+		/* expensive? yes, cause it basically all happens during the first loop run */
 		if (!getcave(&o_ptr->wpos)) {
 			alloc_dungeon_level(&o_ptr->wpos);
 			generate_cave(&o_ptr->wpos, NULL);
@@ -6954,8 +6955,9 @@ void export_player_store_offers(int *export_turns) {
 		/* nah, keep it allocated for other objects that might be offered in this sector.
 		   stale_level() will have to take care of deallocating instead. */
 		//if (<alloc>) dealloc_dungeon_level(&o_ptr->wpos);
+#endif
 
- #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
+#ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		/* hack for wand charges to not get displayed accumulated (less comfortable) */
 		if (o_ptr->tval == TV_WAND) {
 			int j = o_ptr->pval;
@@ -6963,9 +6965,9 @@ void export_player_store_offers(int *export_turns) {
 			object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
 			o_ptr->pval = j; /* hack clean-up */
 		} else object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
- #else
+#else
 		object_desc(0, o_name, o_ptr, TRUE, 1024 + 3);
- #endif
+#endif
 
 		price = price_item_player_store(0, o_ptr);
 		/* Cut out the @S pricing information from the inscription. */
