@@ -626,15 +626,14 @@ struct c_special{
 typedef struct cave_type cave_type;
 
 /* hooks structure containing calls for specials */
-struct sfunc{
+struct sfunc {
 	void (*load)(c_special *cs_ptr);		/* load function */
 	void (*save)(c_special *cs_ptr);		/* save function */
 	void (*see)(c_special *cs_ptr, char *c, byte *a, int Ind);	/* sets player view */
 	int (*activate)(c_special *cs_ptr, int y, int x, int Ind);	/* walk on/bump */
 };
 
-struct cave_type
-{
+struct cave_type {
 	u32b info;		/* Hack -- cave flags */
 	byte feat;		/* Hack -- feature type */
 	byte feat_org;		/* Feature type backup (todo: for wall-created grids to revert to original feat when tunneled!) */
@@ -675,8 +674,7 @@ struct cave_type
 /* This struct can be enlarged to handle more generic timed events maybe? */
 /* Lasting spell effects(clouds, ..) */
 typedef struct effect_type effect_type;
-struct effect_type
-{
+struct effect_type {
 	s16b	interval;	/* How quickly does it tick (10 = normal, once per 10 frames at 0 ft depth) */
 	s16b    time;           /* For how long */
 	s16b    dam;            /* How much damage */
@@ -793,14 +791,14 @@ struct object_type {
 	char uses_dir;			/* Client-side: Uses a direction or not? (for rods) */
 
 #if 0	/* from pernA.. consumes memory, but quick. shall we? */
-        u16b art_name;			/* Artifact name (random artifacts) */
+	u16b art_name;			/* Artifact name (random artifacts) */
 
-        u32b art_flags1;        	/* Flags, set 1  Alas, these were necessary */
-        u32b art_flags2;        	/* Flags, set 2  for the random artifacts of*/
-        u32b art_flags3;        	/* Flags, set 3  Zangband */
-        u32b art_flags4;        	/* Flags, set 4  PernAngband */
-        u32b art_flags5;        	/* Flags, set 5  PernAngband */
-        u32b art_esp;           	/* Flags, set esp  PernAngband */
+	u32b art_flags1;		/* Flags, set 1  Alas, these were necessary */
+	u32b art_flags2;		/* Flags, set 2  for the random artifacts of*/
+	u32b art_flags3;		/* Flags, set 3  Zangband */
+	u32b art_flags4;		/* Flags, set 4  PernAngband */
+	u32b art_flags5;		/* Flags, set 5  PernAngband */
+	u32b art_esp;			/* Flags, set esp  PernAngband */
 #endif	/* 0 */
 
 	byte inven_order;		/* Inventory position if held by a player,
@@ -816,6 +814,7 @@ struct object_type {
 	bool changed;			/* dummy flag to refresh item if o_name changed, but memory copy didn't */
 	bool NR_tradable;		/* for ALLOW_NR_CROSS_ITEMS */
 	byte temp;			/* any local hacks */
+	u16b housed;			/* <house index + 1> or 0 for not currently inside a house */
 };
 
 /*
@@ -831,8 +830,8 @@ struct npc_type{
 	s16b fy, fx;			/* Position */
 	struct worldpos wpos;
 
-        s32b exp;                       /* Experience of the monster */
-        s16b level;                     /* Level of the monster */
+	s32b exp;                       /* Experience of the monster */
+	s16b level;                     /* Level of the monster */
 
 	s16b energy;		/* Monster "energy" */
 

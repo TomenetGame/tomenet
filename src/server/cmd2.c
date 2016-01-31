@@ -1358,23 +1358,9 @@ int pick_house(struct worldpos *wpos, int y, int x)
 	return -1;
 }
 
-/* Test if a coordinate (player pos usually) is inside a building (or on its edge) - C. Blue */
+/* Test if a coordinate (player pos usually) is inside a building
+   (or on its edge), in a simple (risky?) way - C. Blue */
 bool inside_house(struct worldpos *wpos, int x, int y) {
-#if 0
-	int i;
-
-	for (i = 0; i < num_houses; i++) {
-		if (!inarea(&houses[i].wpos, wpos)) continue;
-
-		if (houses[i].flags & HF_RECT) {
-			if (houses[i].x <= x && houses[i].x + houses[i].coords.rect.width - 1 >= x &&
-			    houses[i].y <= y && houses[i].y + houses[i].coords.rect.height - 1 >= y)
-				return TRUE;
-		} else {
-			/* anyone willing to implement non-rectangular houses? */
-		}
-	}
-#else /* simple (risky?) way.. */
 	cave_type *c_ptr, **zcave = getcave(wpos);
 
 	/* This check was added so inside_house() can be used for player stores in delete_object_idx(),
@@ -1389,9 +1375,30 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 	if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY) &&
 	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
 		return TRUE;
-#endif
 
 	return FALSE;
+}
+/* like inside_house() but more costly since it returns the actual house index + 1,
+   or 0 for 'not inside any house'.
+   NOTE: currently only checks HF_RECT houses, not polygons (jails). */
+int inside_which_house(struct worldpos *wpos, int x, int y) {
+	int i;
+
+	for (i = 0; i < num_houses; i++) {
+		if (!inarea(&houses[i].wpos, wpos)) continue;
+
+		if (houses[i].flags & HF_RECT) {
+			if (houses[i].x <= x && houses[i].x + houses[i].coords.rect.width - 1 >= x &&
+			    houses[i].y <= y && houses[i].y + houses[i].coords.rect.height - 1 >= y)
+				return i + 1;
+#if 0 /* not needed atm */
+		} else {
+			/* anyone want to implement non-rectangular houses :-p? */
+#endif
+		}
+	}
+
+	return -1;
 }
 
 /* Door change permissions

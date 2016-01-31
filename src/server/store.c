@@ -5244,6 +5244,7 @@ void home_sell(int Ind, int item, int amt) {
 			    p_ptr->px, p_ptr->py);
 			/* appraise the item! */
 			(void)price_item_player_store(Ind, o_ptr);
+			o_ptr->housed = h_idx + 1;
 		}
  /* TODO: implement for home_purchase too, and for dropping/picking up in mang-style houses! */
  #ifdef HOUSE_PAINTING_HIDE_UNSELLABLE
@@ -6816,6 +6817,8 @@ void verify_store_owner(store_type *st_ptr) {
 }
 
 #ifdef PLAYER_STORES
+ #ifdef EXPORT_PLAYER_STORE_OFFERS
+  #if EXPORT_PLAYER_STORE_OFFERS > 0
 /* New plan for player shops: Export the list of objects to a file
    that gets processed by an external script to be displayed on the website. */
 /* Only export n items per turn, in to avoid causing lag or anything (paranoia?) [10].
@@ -6889,7 +6892,7 @@ void export_player_store_offers(int *export_turns) {
 				//TODO maybe: report house colour
 				//HOUSE_PAINTING
 				//h_ptr->colour - 1
-				fprintf(fp, "(%d,%d) <%d,%d>: (%d, %ld Au) %s\n", o_ptr->mode, h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, price, o_name); //or just x,y?
+				fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %ld Au) %s\n", h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->mode, price, o_name); //or just x,y?
 			}
 		}
 
@@ -6980,7 +6983,7 @@ void export_player_store_offers(int *export_turns) {
 		//TODO maybe: report house colour
 		//HOUSE_PAINTING
 		//h_ptr->colour - 1
-		fprintf(fp, "(%d,%d) <%d,%d>: (%d, %ld Au) %s\n", o_ptr->mode, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, price, o_name);
+		fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %ld Au) %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->mode, price, o_name);
 	}
 	if (step) { //not disabled? then log
 		(*export_turns)--;
@@ -7014,4 +7017,6 @@ void export_player_store_offers(int *export_turns) {
 #endif
 	}
 }
+  #endif
+ #endif
 #endif

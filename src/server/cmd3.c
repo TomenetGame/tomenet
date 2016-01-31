@@ -429,6 +429,7 @@ void inven_drop(int Ind, int item, int amt) {
 		    o_ptr->ix, o_ptr->iy);
 		/* appraise the item! */
 		(void)price_item_player_store(Ind, o_ptr);
+		o_ptr->housed = inside_which_house(&p_ptr->wpos, o_ptr->ix, o_ptr->iy);
 	}
 #endif
 

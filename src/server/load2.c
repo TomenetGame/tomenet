@@ -513,6 +513,9 @@ static void rd_item(object_type *o_ptr) {
 		o_ptr->appraised_value = (s64b)tmp32s;
 	}
 
+	if (!older_than(4, 6, 6)) //EXPORT_PLAYER_STORE_OFFERS
+		rd_u16b(&o_ptr->housed);
+
 
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */

@@ -635,6 +635,7 @@ extern void do_cmd_throw(int Ind, int dir, int item, char bashing);
 extern void do_cmd_purchase_house(int Ind, int dir);
 extern int pick_house(struct worldpos *wpos, int y, int x);
 extern bool inside_house(struct worldpos *wpos, int x, int y);
+extern int inside_which_house(struct worldpos *wpos, int x, int y);
 extern void house_admin(int Ind, int dir, char *args);
 extern void do_cmd_cloak(int Ind);
 extern void shadow_run(int Ind);
@@ -1701,9 +1702,13 @@ extern void handle_store_leave(int Ind);
 extern void verify_store_owner(store_type *st_ptr);
 extern s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip);
 extern int gettown(int Ind);
-
-extern void export_player_store_offers(int *export_turns);
-
+#ifdef PLAYER_STORES
+ #ifdef EXPORT_PLAYER_STORE_OFFERS
+  #if EXPORT_PLAYER_STORE_OFFERS > 0
+  extern void export_player_store_offers(int *export_turns);
+  #endif
+ #endif
+#endif
 
 /* util.c */
 extern bool suppress_message, censor_message, suppress_boni;
