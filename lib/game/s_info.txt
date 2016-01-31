@@ -98,7 +98,7 @@ D:*** REQUIRES SWORD-TYPE WEAPONS OR MARTIAL ARTS***
 I:1000:0
 
 N:12:Magic
-D:Increases your mana points.
+D:Increases your max mana by +4 per point.
 #outdated (pre-lua): and spell-casting chance.
 D:Allows you to pseudo-id magical items easily.
 #A:4:Toggle fire-till-kill mode
@@ -135,7 +135,7 @@ I:1000:0
 
 N:16:Mimicry
 D:Ability to polymorph into monster forms of a level of up to twice the skill.
-D:Unless you are vampire or druid you need to slay monsters to learn their form.
+D:At 30+ it increases max mana by 5. At 35+ it speeds up polymorphing by 5%.
 A:3:Use innate power
 F:MKEY_HARDCODE
 I:1000:0
