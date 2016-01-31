@@ -4742,8 +4742,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
-		if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || p_ptr->store_num == STORE_HOME)
-		//if (istownarea(&p_ptr->wpos, MAX_TOWNAREA))
+		if ((inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || p_ptr->store_num == STORE_HOME)
+		    && !(true_artifact_p(o_ptr) && (cfg.anti_arts_hoard || cfg.anti_arts_house)))
+			//if (istownarea(&p_ptr->wpos, MAX_TOWNAREA))
 			fprintf(fff, "This item would be appraised at %ld Au if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
  #endif
 #endif
@@ -5376,8 +5377,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
-	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || p_ptr->store_num == STORE_HOME)
-	//if (istownarea(&p_ptr->wpos, MAX_TOWNAREA))
+	if ((inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || p_ptr->store_num == STORE_HOME)
+	    && !(true_artifact_p(o_ptr) && (cfg.anti_arts_hoard || cfg.anti_arts_house)))
+		//if (istownarea(&p_ptr->wpos, MAX_TOWNAREA))
 		fprintf(fff, "This item would be appraised at %ld Au if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
  #endif
 #endif
