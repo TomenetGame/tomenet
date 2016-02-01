@@ -6919,6 +6919,7 @@ void export_player_store_offers(int *export_turns) {
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open file.\n");
 			return;
 		}
+		s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
 
 		/* o_list exporting actually disabled? */
 		if (AMT_PER_TURN == 0) {
