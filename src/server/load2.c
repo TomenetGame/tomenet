@@ -1669,7 +1669,7 @@ static bool rd_extra(int Ind) {
 	}
 	rd_s16b(&p_ptr->blessed);
 	rd_s16b(&p_ptr->tim_invis);
-	rd_s16b(&p_ptr->word_recall);
+	strip_bytes(2);			//hole
 	rd_s16b(&p_ptr->see_infra);
 	rd_s16b(&p_ptr->tim_infra);
 	rd_s16b(&p_ptr->oppose_fire);
@@ -1806,6 +1806,7 @@ static bool rd_extra(int Ind) {
 		rd_s16b(&p_ptr->recall_pos.wz);
 	} else {
 		strip_bytes(8);
+		p_ptr->word_recall = 0;
 		p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 		p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 		p_ptr->recall_pos.wz = p_ptr->max_dlv;

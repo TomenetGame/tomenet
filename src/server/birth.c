@@ -2115,10 +2115,6 @@ static void player_setup(int Ind, bool new) {
 		p_ptr->panic = FALSE;
 	}
 
-	/* Don't accidentally recall into nirvana.. */
-	/* p_ptr->recall_pos isn't saved so we really need this always, not just for panics - mikaelh */
-	p_ptr->word_recall = 0;
-
 #ifndef VAMPIRIC_MIST
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)
 		do_mimic_change(Ind, 0, TRUE);

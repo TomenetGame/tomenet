@@ -8007,8 +8007,6 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 	}
-	/* Cancel any WOR spells */
-	p_ptr->word_recall = 0;
 
 	/* He is carrying nothing */
 	p_ptr->inven_cnt = 0;

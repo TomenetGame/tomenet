@@ -811,7 +811,7 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->tim_regen_pow);
 	wr_s16b(p_ptr->blessed);
 	wr_s16b(p_ptr->tim_invis);
-	wr_s16b(p_ptr->word_recall);
+	wr_s16b(0x0);			//hole
 	wr_s16b(p_ptr->see_infra);
 	wr_s16b(p_ptr->tim_infra);
 	wr_s16b(p_ptr->oppose_fire);
