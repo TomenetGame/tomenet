@@ -2790,7 +2790,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 700, /*500, but motivating light armour hereby*/ },
 		{ SKILL_ANTIMAGIC,
 			'+', 0,
-			'+', 350, },//300
+			'+', 500, },//350
 		{ SKILL_HEALTH,
 			'+', 1000,
 			'+', 1000, },
