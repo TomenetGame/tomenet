@@ -1331,7 +1331,7 @@ static void rd_house(int n) {
 			i += 2;
 			rd_byte((byte*)&house_ptr->coords.poly[i]);
 			rd_byte((byte*)&house_ptr->coords.poly[i + 1]);
-		} while(house_ptr->coords.poly[i] || house_ptr->coords.poly[i + 1]);
+		} while (house_ptr->coords.poly[i] || house_ptr->coords.poly[i + 1]);
 		GROW(house_ptr->coords.poly, MAXCOORD, i + 2, byte);
 	}
 
@@ -3123,6 +3123,7 @@ errr rd_server_savefile() {
 
 	while (house_alloc <= num_houses) {
 		GROW(houses, house_alloc, house_alloc + 512, house_type);
+		GROW(houses_bak, house_alloc, house_alloc + 512, house_type);
 		house_alloc += 512;
 	}
 

@@ -2571,6 +2571,7 @@ static errr init_other(void)
 
 	/*** alloc for the houses ***/
 	C_MAKE(houses, 1024, house_type);
+	C_MAKE(houses_bak, 1024, house_type);
 	house_alloc = 1024;
 
 #ifdef PLAYER_STORES

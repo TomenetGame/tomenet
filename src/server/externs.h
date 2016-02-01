@@ -329,7 +329,7 @@ extern struct xorder_type xorders[MAX_XORDERS]; /* server quest data */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 extern struct iddc_type iddc[128]; //(hardcode, ew)
 #endif
-extern house_type *houses;
+extern house_type *houses, *houses_bak;
 #ifdef PLAYER_STORES
 extern store_type *fake_store;
 extern int fake_store_visited[MAX_VISITED_PLAYER_STORES];

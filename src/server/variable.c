@@ -272,7 +272,7 @@ struct iddc_type iddc[128]; //(hardcode, ew)
 #endif
 
 /* The information about houses */
-house_type *houses;
+house_type *houses, *houses_bak;
 s32b num_houses = 0;
 u32b house_alloc = 0;
 

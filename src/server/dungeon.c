@@ -8169,8 +8169,10 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 #endif
 			}
 			C_KILL(houses, house_alloc, house_type);
+			C_KILL(houses_bak, house_alloc, house_type);
 			house_alloc = 1024;
 			C_MAKE(houses, house_alloc, house_type);
+			C_MAKE(houses_bak, house_alloc, house_type);
 			num_houses = 0;
 
 			/* free old town[] and town[]->store info */
@@ -8243,8 +8245,10 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 #endif
 			}
 			C_KILL(houses, house_alloc, house_type);
+			C_KILL(houses_bak, house_alloc, house_type);
 			house_alloc = 1024;
 			C_MAKE(houses, house_alloc, house_type);
+			C_MAKE(houses_bak, house_alloc, house_type);
 			num_houses = 0;
 		}
 	}

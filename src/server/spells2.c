@@ -7095,8 +7095,7 @@ static bool poly_build(int Ind, char *args) {
 	return FALSE;
 }
 
-void house_creation(int Ind, bool floor, bool jail)
-{
+void house_creation(int Ind, bool floor, bool jail) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	char buildargs[3];
@@ -7115,6 +7114,7 @@ void house_creation(int Ind, bool floor, bool jail)
 	}
 	if (house_alloc - num_houses < 32) {
 		GROW(houses, house_alloc, house_alloc + 512, house_type);
+		GROW(houses_bak, house_alloc, house_alloc + 512, house_type);
 		house_alloc += 512;
 	}
 	p_ptr->master_move_hook = poly_build;

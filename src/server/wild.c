@@ -1349,8 +1349,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x, int dir) {
  for now will make a simple box,
    but we could do really fun stuff with this later.
 */
-static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
-{
+static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	int	h_x1,h_y1,h_x2,h_y2, p_x1,p_y1,p_x2,p_y2,
 		plot_xlen, plot_ylen, house_xlen, house_ylen,
 		door_x, door_y, drawbridge_x[3], drawbridge_y[3],
@@ -1860,8 +1859,9 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 #endif	// USE_MANG_HOUSE_ONLY
 
 			num_houses++;
-			if((house_alloc-num_houses)<32){
+			if ((house_alloc-num_houses)<32){
 				GROW(houses, house_alloc, house_alloc+512, house_type);
+				GROW(houses_bak, house_alloc, house_alloc+512, house_type);
 				house_alloc += 512;
 			}
 		} else {

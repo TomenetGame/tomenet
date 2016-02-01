@@ -10880,6 +10880,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 					num_houses++;
 					if ((house_alloc - num_houses) < 32) {
 						GROW(houses, house_alloc, house_alloc + 512, house_type);
+						GROW(houses_bak, house_alloc, house_alloc + 512, house_type);
 						house_alloc += 512;
 					}
 				} else {
@@ -10974,6 +10975,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 			num_houses++;
 			if ((house_alloc - num_houses) < 32) {
 				GROW(houses, house_alloc, house_alloc + 512, house_type);
+				GROW(houses_bak, house_alloc, house_alloc + 512, house_type);
 				house_alloc += 512;
 			}
 		}

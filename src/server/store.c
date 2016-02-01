@@ -6834,7 +6834,6 @@ void export_player_store_offers(int *export_turns) {
 	static int coverage = 0, max_bak, step;
 #ifndef USE_MANG_HOUSE_ONLY
 	static bool coverage_trad = FALSE;
-	static house_type *houses_bak;
 #endif
 	static FILE *fp;
 
@@ -6904,9 +6903,6 @@ void export_player_store_offers(int *export_turns) {
 			coverage = 0; //reset counter
 			coverage_trad = FALSE; //reset stage
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: houses export completed.\n");
-
-			C_FREE(houses_bak, max_bak, house_type);
-
 			my_fclose(fp);
 		}
 		return;
@@ -7006,7 +7002,6 @@ void export_player_store_offers(int *export_turns) {
 
 		/* create immutable, static working copy */
 		max_bak = num_houses;
-		C_MAKE(houses_bak, max_bak, house_type);
 		memcpy(houses_bak, houses, sizeof(house_type) * max_bak);
 		step = (max_bak + HOUSES_PER_TURN - 1) / HOUSES_PER_TURN;
 		(*export_turns) = step; //function has to be called this often to completely export all objects
