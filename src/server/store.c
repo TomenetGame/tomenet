@@ -6832,6 +6832,7 @@ void verify_store_owner(store_type *st_ptr) {
 void export_player_store_offers(int *export_turns) {
 	//note: coverage and export_turns are sort of redundant
 	static int coverage = 0, max_bak, step;
+	static bool copied = FALSE; //put memcpy() ops into a frame of their own to reduce load further
 #ifndef USE_MANG_HOUSE_ONLY
 	static bool coverage_trad = FALSE;
 #endif
@@ -6851,7 +6852,7 @@ void export_player_store_offers(int *export_turns) {
 
 #ifndef USE_MANG_HOUSE_ONLY
 	/* we're in the 2nd stage: exporting houses */
-	if (coverage_trad) {
+	if (coverage_trad && !copied) {
 		int h;
 		house_type *h_ptr;
 
@@ -6911,30 +6912,40 @@ void export_player_store_offers(int *export_turns) {
 
 	/* init exporting? */
 	if (!coverage) {
-		char path[MAX_PATH_LENGTH];
+		if (!copied) {
+			char path[MAX_PATH_LENGTH];
 
-		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-o_list.txt");
-		fp = my_fopen(path, "w");
-		if (!fp) {
-			s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open file.\n");
+			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-o_list.txt");
+			fp = my_fopen(path, "w");
+			if (!fp) {
+				s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open file.\n");
+				return;
+			}
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
+
+			/* o_list exporting actually disabled? */
+			if (AMT_PER_TURN == 0) {
+				max_bak = 0;
+				step = 0; //hack: mark as disabled
+			} else {
+				/* create immutable, static working copy */
+				max_bak = o_max;
+				memcpy(o_list_bak, o_list, sizeof(object_type) * max_bak);
+				step = (max_bak + AMT_PER_TURN - 1) / AMT_PER_TURN;
+				(*export_turns) = step; //function has to be called this often to completely export all objects
+				s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning o_list [%d] export.\n", max_bak);
+			}
+
+			/* memcpy gets its own frame now, continue the actual exporting next turn */
+			copied = TRUE;
 			return;
 		}
-		s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
-
-		/* o_list exporting actually disabled? */
-		if (AMT_PER_TURN == 0) {
-			max_bak = 0;
-			step = 0; //hack: mark as disabled
-		} else {
-			/* create immutable, static working copy */
-			max_bak = o_max;
-			memcpy(o_list_bak, o_list, sizeof(object_type) * max_bak);
-			step = (max_bak + AMT_PER_TURN - 1) / AMT_PER_TURN;
-			(*export_turns) = step; //function has to be called this often to completely export all objects
-			s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning o_list [%d] export.\n", max_bak);
-		}
+		copied = FALSE;
 	}
 
+#ifndef USE_MANG_HOUSE_ONLY
+    if (!coverage_trad) {
+#endif
 	/* note: the items are not sorted in any way */
 	for (i = turn % step; i < max_bak; i += step) {
 		coverage++;
@@ -6986,20 +6997,33 @@ void export_player_store_offers(int *export_turns) {
 		(*export_turns)--;
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported o_list, step %d/%d.\n", step - (*export_turns), step);
 	}
+#ifndef USE_MANG_HOUSE_ONLY
+    }
+#endif
 
 	/* finish exporting? */
 	if (coverage >= max_bak) {
-		coverage = 0; //reset counter
-		s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
-
 #ifndef USE_MANG_HOUSE_ONLY
 		if (MANG_HOUSE_RATE == 100
 		    || HOUSES_PER_TURN == 0) { /* houses exporting actually disabled? */
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 			my_fclose(fp);
 			return;
 		}
-		/* switch to 2nd stage: scan trad houses */
-		coverage_trad = TRUE;
+
+		if (!copied) {
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
+
+			/* switch to 2nd stage: scan trad houses */
+			coverage_trad = TRUE;
+
+			/* memcpy gets its own frame now, continue the actual exporting next turn */
+			copied = TRUE;
+			(*export_turns) = 1; //keep us alive for the extra 'copy houses' turn
+			return;
+		}
+		copied = FALSE;
+		coverage = 0; //reset counter
 
 		/* create immutable, static working copy */
 		max_bak = num_houses;
@@ -7009,6 +7033,7 @@ void export_player_store_offers(int *export_turns) {
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning houses [%d] export.\n", max_bak);
 		fprintf(fp, "\n");
 #else
+		s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 		my_fclose(fp);
 #endif
 	}
