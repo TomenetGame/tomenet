@@ -2720,7 +2720,7 @@ D:and cures stun and cuts.
 
 $NEW_TOMES!N:330:& Tome~ of Magical Energy
 $NEW_TOMES$N:330:& Tome~ of Magical Energy
-G:?:v
+G:?:M
 I:111:0:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -2738,7 +2738,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_FIRE | IGNORE_WATER
 
 $NEW_TOMES!N:332:& Tome~ of the Blowing Wind
 $NEW_TOMES$N:332:& Tome~ of the Blowing Wind
-G:?:c
+G:?:e
 I:111:2:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -2747,7 +2747,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_ELEC | IGNORE_WATER
 
 $NEW_TOMES!N:333:& Tome~ of the Impenetrable Earth
 $NEW_TOMES$N:333:& Tome~ of the Impenetrable Earth
-G:?:u
+G:?:H
 I:111:3:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -2756,7 +2756,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_ACID | IGNORE_WATER
 
 $NEW_TOMES!N:334:& Tome~ of the Everrunning Wave
 $NEW_TOMES$N:334:& Tome~ of the Everrunning Wave
-G:?:e
+G:?:Y
 I:111:4:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -2765,7 +2765,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 $NEW_TOMES!N:335:& Tome~ of Translocation
 $NEW_TOMES$N:335:& Tome~ of Translocation
-G:?:B
+G:?:q
 I:111:5:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -2774,7 +2774,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 $NEW_TOMES!N:336:& Tome~ of the Tree
 $NEW_TOMES$N:336:& Tome~ of the Tree
-G:?:G
+G:?:u
 I:111:6:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -5647,7 +5647,7 @@ F:LEVITATE | EASY_KNOW
 
 $NEW_TOMES!N:756:& Tome~ of the Time
 $NEW_TOMES$N:756:& Tome~ of the Time
-G:?:B
+G:?:t
 I:111:8:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -5666,7 +5666,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 $NEW_TOMES!N:758:& Tome~ of Meta Spells
 $NEW_TOMES$N:758:& Tome~ of Meta Spells
-G:?:v
+G:?:F
 I:111:9:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -5675,7 +5675,7 @@ F:FULL_NAME | EASY_KNOW | ATTR_MULTI | IGNORE_WATER
 
 $NEW_TOMES!N:759:& Tome~ of the Mind
 $NEW_TOMES$N:759:& Tome~ of the Mind
-G:?:b
+G:?:i
 I:111:10:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -5707,7 +5707,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 #F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 #
 N:763:& Unholy Tome~ of the Hellflame
-G:?:v
+G:?:X
 I:111:11:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -6650,7 +6650,7 @@ D:Restores 1000 MP.
 
 $NEW_TOMES!N:922:& Tome~ of Holy Offense
 $NEW_TOMES$N:922:& Tome~ of Holy Offense
-G:?:y
+G:?:J
 I:111:12:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -6659,7 +6659,8 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 $NEW_TOMES!N:923:& Tome~ of Holy Defense
 $NEW_TOMES$N:923:& Tome~ of Holy Defense
-G:?:B
+#G:?:S <-very similar to Astral Grimoire
+G:?:V
 I:111:13:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -6668,7 +6669,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID
 
 $NEW_TOMES!N:924:& Tome~ of Holy Curing
 $NEW_TOMES$N:924:& Tome~ of Holy Curing
-G:?:G
+G:?:g
 I:111:14:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -6697,7 +6698,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 $NEW_TOMES!N:950:& Tome~ of Arcane Lore
 $NEW_TOMES$N:950:& Tome~ of Arcane Lore
-G:?:G
+G:?:K
 I:111:16:0
 W:50:0:30:25000
 A:50/50:100/50
@@ -6927,7 +6928,7 @@ P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 #N:960:& Underworld's Handbook~
-#G:?:s
+#G:?:D
 #I:111:55:0
 #W:50:0:30:15000
 #A:20/30:40/65
@@ -7152,7 +7153,7 @@ F:INSTA_ART | EASY_KNOW
 
 # Contains mostly spells that DM chars might find useful - C. Blue
 N:982:& Handbook~ of Dungeon Keeping
-G:?:L
+G:?:E
 I:111:58:0
 W:127:255:30:0
 A:127/255
@@ -7274,7 +7275,7 @@ D:This deed can be turned in at the mayor's office in Bree.
 # 'Crystals' aka mindcrafter-tomes get neat ignore-flags as a bonus :)
 
 $ENABLE_MCRAFT$N:996:& Greater Crystal~ of Psycho-Power
-$ENABLE_MCRAFT$G:*:y
+$ENABLE_MCRAFT$G:*:T
 $ENABLE_MCRAFT$I:111:19:0
 $ENABLE_MCRAFT$W:50:0:30:35000
 #$ENABLE_MCRAFT$W:50:0:30:1
@@ -7283,7 +7284,7 @@ $ENABLE_MCRAFT$P:0:1d1:0:0:0
 $ENABLE_MCRAFT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID
 
 $ENABLE_MCRAFT$N:997:& Greater Crystal~ of Attunement
-$ENABLE_MCRAFT$G:*:y
+$ENABLE_MCRAFT$G:*:i
 $ENABLE_MCRAFT$I:111:20:0
 $ENABLE_MCRAFT$W:50:0:30:35000
 #$ENABLE_MCRAFT$W:50:0:30:1
@@ -7292,7 +7293,7 @@ $ENABLE_MCRAFT$P:0:1d1:0:0:0
 $ENABLE_MCRAFT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID
 
 $ENABLE_MCRAFT$N:998:& Greater Crystal~ of Mental Intrusion
-$ENABLE_MCRAFT$G:*:y
+$ENABLE_MCRAFT$G:*:P
 $ENABLE_MCRAFT$I:111:21:0
 $ENABLE_MCRAFT$W:50:0:30:35000
 #$ENABLE_MCRAFT$W:50:0:30:1
@@ -7609,7 +7610,7 @@ F:SHOW_MODS
 #$NEW_SHIELDS_NO_AC$F:EASY_KNOW
 
 N:1035:& Handbook~ of Revelation
-G:?:y
+G:?:B
 I:111:59:0
 W:50:0:30:12000
 A:20/30:40/65
@@ -7617,7 +7618,7 @@ P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW
 
 N:1041:& Handbook~ of Transportation
-G:?:B
+G:?:c
 I:111:60:0
 W:50:0:30:12000
 A:20/30:40/65
