@@ -3045,9 +3045,6 @@ void client_init(char *argv1, bool skip)
 	   read a big-map-enabled screen_hgt, so reset it: */
 	if (!strcmp(ANGBAND_SYS, "gcu")) screen_hgt = SCREEN_HGT;
 
-	/* Character Overview Resist/Boni/Abilities Page on Startup? - Kurzel */
-	if (c_cfg.overview_startup) csheet_page = 2;
-
 	if (status == E_NEED_INFO) {
 		/* Get sex/race/class */
 		/* XXX this function sends PKT_KEEPALIVE */
@@ -3087,23 +3084,23 @@ void client_init(char *argv1, bool skip)
 }
 
 bool ask_for_bigmap_generic(void) {
-        int ch;
+	int ch;
 
-        Term_clear();
-        Term_putstr(10, 3, -1, TERM_ORANGE, "Do you want to double the height of this window?");
-        Term_putstr(10, 5, -1, TERM_YELLOW, "It is recommended to do this on desktops,");
-        Term_putstr(10, 6, -1, TERM_YELLOW, "but it may not fit on small netbook screens.");
-        Term_putstr(10, 7, -1, TERM_YELLOW, "You can change this later anytime in the game's options menu.");
-        Term_putstr(10, 9, -1, TERM_ORANGE, "Press 'y' to enable BIG_MAP now, 'n' to not enable.");
+	Term_clear();
+	Term_putstr(10, 3, -1, TERM_ORANGE, "Do you want to double the height of this window?");
+	Term_putstr(10, 5, -1, TERM_YELLOW, "It is recommended to do this on desktops,");
+	Term_putstr(10, 6, -1, TERM_YELLOW, "but it may not fit on small netbook screens.");
+	Term_putstr(10, 7, -1, TERM_YELLOW, "You can change this later anytime in the game's options menu.");
+	Term_putstr(10, 9, -1, TERM_ORANGE, "Press 'y' to enable BIG_MAP now, 'n' to not enable.");
 
-        while (TRUE) {
-                ch = inkey();
-                if (ch == 'y') {
-                        Term_clear();
-                        return TRUE;
-                } else if (ch == 'n') {
-                        Term_clear();
-                        return FALSE;
-                }
-        }
+	while (TRUE) {
+		ch = inkey();
+		if (ch == 'y') {
+			Term_clear();
+			return TRUE;
+		} else if (ch == 'n') {
+			Term_clear();
+			return FALSE;
+		}
+	}
 }

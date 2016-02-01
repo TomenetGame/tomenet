@@ -1607,12 +1607,12 @@ int Receive_char_info(void) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode)) <= 0) return n;
 	}
 
-        p_ptr->prace = race;
-        p_ptr->rp_ptr = &race_info[race];
-        p_ptr->pclass = class;
-        p_ptr->cp_ptr = &class_info[class];
-        p_ptr->ptrait = trait;
-        p_ptr->tp_ptr = &trait_info[trait];
+	p_ptr->prace = race;
+	p_ptr->rp_ptr = &race_info[race];
+	p_ptr->pclass = class;
+	p_ptr->cp_ptr = &class_info[class];
+	p_ptr->ptrait = trait;
+	p_ptr->tp_ptr = &trait_info[trait];
 	p_ptr->male = sex;
 	p_ptr->mode = mode;
 
@@ -1620,6 +1620,9 @@ int Receive_char_info(void) {
 	if (!player_pref_files_loaded) {
 		initialize_player_pref_files();
 		player_pref_files_loaded = TRUE;
+
+		/* Character Overview Resist/Boni/Abilities Page on Startup? - Kurzel */
+		if (c_cfg.overview_startup) csheet_page = 2;
 
 		/* hack: also load auto-inscriptions here */
 		initialize_player_ins_files();
