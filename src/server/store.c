@@ -6824,7 +6824,7 @@ void verify_store_owner(store_type *st_ptr) {
 /* Only export n items per turn, in to avoid causing lag or anything (paranoia?) [10].
    Note that this could lead to glitches when the o_list changes between function calls,
    which is why we create an unmutable memory copy first. */
-#define AMT_PER_TURN 1000
+#define OBJECTS_PER_TURN 1000
 #ifndef USE_MANG_HOUSE_ONLY
  //#define HOUSES_PER_TURN ((MANG_HOUSE_RATE == 100) ? 0 : (10000 / (100 - MANG_HOUSE_RATE)))
  #define HOUSES_PER_TURN 200
@@ -6924,14 +6924,14 @@ void export_player_store_offers(int *export_turns) {
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
 
 			/* o_list exporting actually disabled? */
-			if (AMT_PER_TURN == 0) {
+			if (OBJECTS_PER_TURN == 0) {
 				max_bak = 0;
 				step = 0; //hack: mark as disabled
 			} else {
 				/* create immutable, static working copy */
 				max_bak = o_max;
 				memcpy(o_list_bak, o_list, sizeof(object_type) * max_bak);
-				step = (max_bak + AMT_PER_TURN - 1) / AMT_PER_TURN;
+				step = (max_bak + OBJECTS_PER_TURN - 1) / OBJECTS_PER_TURN;
 				(*export_turns) = step; //function has to be called this often to completely export all objects
 				s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning o_list [%d] export.\n", max_bak);
 			}
