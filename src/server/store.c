@@ -7039,6 +7039,7 @@ void export_player_store_offers(int *export_turns) {
 		    || !num_houses) {
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 			my_fclose(fp);
+			goto timing_before_return;
 			return;
 		}
 
@@ -7088,7 +7089,9 @@ timing_before_return:
 		time_delta.tv_sec--;
 		time_delta.tv_usec += 1000000;
 	}
-	s_printf("%s: Execution took %d.%06d seconds.\n", __func__, (int)time_delta.tv_sec, (int)time_delta.tv_usec);
+	int time_milliseconds = time_delta.tv_sec * 1000 + time_delta.tv_usec / 1000;
+	int time_milliseconds_fraction = time_delta.tv_usec % 1000;
+	s_printf("%s: Execution took %d.%03d milliseconds.\n", __func__, time_milliseconds, time_milliseconds_fraction);
 }
   #endif
  #endif
