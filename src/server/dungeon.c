@@ -7089,7 +7089,7 @@ void process_player_change_wpos(int Ind) {
 
 void dungeon(void) {
 	int i;
-	static int export_turns = 0;
+	static int export_turns = 1; // Setting this to '1' makes it run on server startup
 	player_type *p_ptr;
 
 	/* Return if no one is playing */
