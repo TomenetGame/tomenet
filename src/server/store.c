@@ -6838,7 +6838,7 @@ void export_player_store_offers(int *export_turns) {
 #ifndef USE_MANG_HOUSE_ONLY
 	static bool coverage_trad = FALSE;
 #endif
-	static FILE *fp;
+	static FILE *fp, *fph;
 
 	int i;
 	long price;
@@ -6859,9 +6859,19 @@ void export_player_store_offers(int *export_turns) {
 		house_type *h_ptr;
 
 		/* scan traditional houses */
+		cptr owner;
 		for (h = turn % step; h < num_houses; h += step) {
 			coverage++;
 			h_ptr = &houses[h];
+
+			/* also export houses while at it, so we don't have to do this in another function */
+			if (h_ptr->dna->owner_type == OT_PLAYER)
+				owner = lookup_player_name(h_ptr->dna->owner);
+			else if (h_ptr->dna->owner_type == OT_GUILD)
+				owner = guilds[h_ptr->dna->owner].name;
+			else owner = "";
+			fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, h_ptr->dna->owner_type == OT_GUILD ? "Guild" : "Player", owner);
+
 			if (!(h_ptr->flags & HF_TRAD)) continue;
 
 			for (i = 0; i < h_ptr->stock_num; i++) {
@@ -6909,6 +6919,7 @@ void export_player_store_offers(int *export_turns) {
 			coverage = 0; //reset counter
 			coverage_trad = FALSE; //reset stage
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: houses export completed.\n");
+			my_fclose(fph);
 			my_fclose(fp);
 		}
 		return;
@@ -6923,7 +6934,7 @@ void export_player_store_offers(int *export_turns) {
 			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-o_list.txt");
 			fp = my_fopen(path, "w");
 			if (!fp) {
-				s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open file.\n");
+				s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open objects file.\n");
 				return;
 			}
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
@@ -7012,8 +7023,11 @@ void export_player_store_offers(int *export_turns) {
 	/* finish exporting? */
 	if (coverage >= max_bak) {
 #ifndef USE_MANG_HOUSE_ONLY
+		char path[MAX_PATH_LENGTH];
+
 		if (MANG_HOUSE_RATE == 100
-		    || HOUSES_PER_TURN == 0) { /* houses exporting actually disabled? */
+		    || HOUSES_PER_TURN == 0 /* houses exporting actually disabled? */
+		    || !num_houses) {
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 			my_fclose(fp);
 			return;
@@ -7040,6 +7054,16 @@ void export_player_store_offers(int *export_turns) {
 		(*export_turns) = step; //function has to be called this often to completely export all objects
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning houses [%d] export.\n", max_bak);
 		fprintf(fp, "\n");
+
+		/* also prepare to additionally export all houses while we're iterating through them anyway! */
+		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-houses.txt");
+		fph = my_fopen(path, "w");
+		if (!fph) {
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open houses file.\n");
+			(*export_turns) = 0;
+			my_fclose(fp);
+			return;
+		}
 #else
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 		my_fclose(fp);
