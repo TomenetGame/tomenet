@@ -2305,8 +2305,9 @@ open source archiver that beats WinRAR and WinZIP easily. You can get it from
 www.7-zip.org.
 Important: You should exit the game before attempting to update it!
 Note for LINUX:
-If the packages in your repository do not provide '7zG' (the graphical user
-interface of 7-zip) then you'll need to compile it yourself. For details see
+The Linux version of the TomeNET-Updater no longer requires 7zG (the graphical
+user interface of 7-zip), so you do not need to compile it yourself if your
+repository packages don't provide it. If you want to compile it anyway then see
 (2.1a) and there "a) Automatic audio pack installation - LINUX". That paragraph
 has short instructions on how to compile 7-zip from source in Linux.
 
