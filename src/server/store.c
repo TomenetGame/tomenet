@@ -15,6 +15,9 @@
 
 #include "angband.h"
 
+/* For gettimeofday() */
+#include <sys/time.h>
+
 /* Minimal benefit a store should obtain via transaction,
  * in percent.	[10] */
 #define STORE_BENEFIT		10
@@ -6844,7 +6847,10 @@ void export_player_store_offers(int *export_turns) {
 	long price;
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
+	struct timeval time_begin, time_end, time_delta;
 
+	/* For measuring performance */
+	gettimeofday(&time_begin, NULL);
 
 	if (!o_max) { //paranoia -- note: we just discard TRAD_HOUSEs too in this case, who cares =P
 		(*export_turns) = 0;
@@ -6924,6 +6930,7 @@ void export_player_store_offers(int *export_turns) {
 			my_fclose(fph);
 			my_fclose(fp);
 		}
+		goto timing_before_return; // HACK - Execute timing code before returning
 		return;
 	}
 #endif
@@ -7032,6 +7039,7 @@ void export_player_store_offers(int *export_turns) {
 		    || !num_houses) {
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 			my_fclose(fp);
+			goto timing_before_return;
 			return;
 		}
 
@@ -7071,6 +7079,19 @@ void export_player_store_offers(int *export_turns) {
 		my_fclose(fp);
 #endif
 	}
+
+timing_before_return:
+	/* Calculate the amount of time spent */
+	gettimeofday(&time_end, NULL);
+	time_delta.tv_sec = time_end.tv_sec - time_begin.tv_sec;
+	time_delta.tv_usec = time_end.tv_usec - time_begin.tv_usec;
+	if (time_delta.tv_usec < 0) {
+		time_delta.tv_sec--;
+		time_delta.tv_usec += 1000000;
+	}
+	int time_milliseconds = time_delta.tv_sec * 1000 + time_delta.tv_usec / 1000;
+	int time_milliseconds_fraction = time_delta.tv_usec % 1000;
+	s_printf("%s: Execution took %d.%03d milliseconds.\n", __func__, time_milliseconds, time_milliseconds_fraction);
 }
   #endif
  #endif

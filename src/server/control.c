@@ -11,6 +11,7 @@
 #include <stdarg.h>
 #include "angband.h"
 #include "control.h"
+#include <sys/time.h>
 
 #ifdef MINGW
 #define EWOULDBLOCK WSAEWOULDBLOCK
@@ -121,6 +122,10 @@ void SGWHit(int read_fd, int arg) {
 	int i, sock, bytes;
 	gw_connection_t *gw_conn = NULL;
 	char buf[MSG_LEN];
+	struct timeval time_begin, time_end, time_delta;
+
+	/* For measuring performance */
+	gettimeofday(&time_begin, NULL);
 
 	/* Check if it's a new client */
 	if (read_fd == SGWSocket) {
@@ -406,6 +411,17 @@ void SGWHit(int read_fd, int arg) {
 
 	/* Advance the read buffer */
 	Sockbuf_advance(&gw_conn->r, gw_conn->r.ptr - gw_conn->r.buf);
+
+	/* Calculate the amount of time spent */
+	gettimeofday(&time_end, NULL);
+	time_delta.tv_sec = time_end.tv_sec - time_begin.tv_sec;
+	time_delta.tv_usec = time_end.tv_usec - time_begin.tv_usec;
+	if (time_delta.tv_usec < 0) {
+		time_delta.tv_sec--;
+		time_delta.tv_usec += 1000000;
+	}
+	// Disabled to reduce log file spam
+	//s_printf("%s: Gateway request took %d.%06d seconds.\n", __func__, (int)time_delta.tv_sec, (int)time_delta.tv_usec);
 }
 
 /* Checks whether GW connections should timeout */

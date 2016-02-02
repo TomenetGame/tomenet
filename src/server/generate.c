@@ -15,6 +15,7 @@
 
 #include "angband.h"
 
+// Needed for gettimeofday()
 #include <sys/time.h>
 
 /* Avoid generating doors that are standing around in weird/pointless locations (eg without walls attached) -- todo: fix/complete */
@@ -12190,7 +12191,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 		time_delta.tv_usec += 1000000;
 	}
 	// Disabled to prevent log spam on live server
-	//s_printf("Level generation took %d.%06d seconds.\n", (int)time_delta.tv_sec, (int)time_delta.tv_usec);
+	//s_printf("%s: Level generation took %d.%06d seconds.\n", __func__, (int)time_delta.tv_sec, (int)time_delta.tv_usec);
 }
 
 /* (Can ONLY be used on surface worldmap sectors.)
