@@ -6829,6 +6829,8 @@ void verify_store_owner(store_type *st_ptr) {
  //#define HOUSES_PER_TURN ((MANG_HOUSE_RATE == 100) ? 0 : (10000 / (100 - MANG_HOUSE_RATE)))
  #define HOUSES_PER_TURN 200
 #endif
+/* Don't export items inscribe @S- (aka 'museum') to the list. Note: Atm those are 2/7 of all items, wow! */
+//#define DONT_EXPORT_MUSEUM
 void export_player_store_offers(int *export_turns) {
 	//note: coverage and export_turns are sort of redundant
 	static int coverage = 0, max_bak, step;
@@ -6868,6 +6870,9 @@ void export_player_store_offers(int *export_turns) {
 				if (!o_ptr->k_idx) continue; //invalid item
 				if (!o_ptr->note) continue; //has no inscription
 				if (!strstr(quark_str(o_ptr->note), "@S")) continue; //has no @S inscription
+#ifdef DONT_EXPORT_MUSEUM
+				if (strstr(quark_str(o_ptr->note), "@S-")) continue; //museum, don't display?
+#endif
 
  #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 				/* hack for wand charges to not get displayed accumulated (less comfortable) */
@@ -6955,6 +6960,9 @@ void export_player_store_offers(int *export_turns) {
 		if (o_ptr->held_m_idx) continue; //held by a monster
 		if (!o_ptr->note) continue; //has no inscription
 		if (!strstr(quark_str(o_ptr->note), "@S")) continue; //has no @S inscription
+#ifdef DONT_EXPORT_MUSEUM
+		if (strstr(quark_str(o_ptr->note), "@S-")) continue; //museum, don't display?
+#endif
 
 #if 0 /* avoid a small lag spike? the inside_house() check isn't really needed */
 		/* expensive? yes, cause it basically all happens during the first loop run */
