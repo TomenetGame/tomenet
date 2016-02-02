@@ -6859,18 +6859,20 @@ void export_player_store_offers(int *export_turns) {
 		house_type *h_ptr;
 
 		/* scan traditional houses */
-		cptr owner;
 		for (h = turn % step; h < num_houses; h += step) {
 			coverage++;
 			h_ptr = &houses[h];
 
+			/* skip unowned houses */
+			if (!h_ptr->dna->owner) continue;
+
 			/* also export houses while at it, so we don't have to do this in another function */
 			if (h_ptr->dna->owner_type == OT_PLAYER)
-				owner = lookup_player_name(h_ptr->dna->owner);
+				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "Player", lookup_player_name(h_ptr->dna->owner));
 			else if (h_ptr->dna->owner_type == OT_GUILD)
-				owner = guilds[h_ptr->dna->owner].name;
-			else owner = "";
-			fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, h_ptr->dna->owner_type == OT_GUILD ? "Guild" : "Player", owner);
+				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "Guild", guilds[h_ptr->dna->owner].name);
+			else
+				fprintf(fph, "(%d, %d) <>:\n", h, h_ptr->dna->mode);
 
 			if (!(h_ptr->flags & HF_TRAD)) continue;
 

@@ -1339,19 +1339,15 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 /*
  * Return the index of a house given an coordinate pair
  */
-int pick_house(struct worldpos *wpos, int y, int x)
-{
+int pick_house(struct worldpos *wpos, int y, int x) {
 	int i;
 
 	/* Check each house */
-	for (i = 0; i < num_houses; i++)
-	{
+	for (i = 0; i < num_houses; i++) {
 		/* Check this one */
 		if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, wpos))
-		{
 			/* Return */
 			return i;
-		}
 	}
 
 	/* Failure */
@@ -1380,16 +1376,23 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 }
 /* like inside_house() but more costly since it returns the actual house index + 1,
    or 0 for 'not inside any house'.
+   Note: Does not test unowned houses, unlike inside_house().
    NOTE: currently only checks HF_RECT houses, not polygons (jails). */
 int inside_which_house(struct worldpos *wpos, int x, int y) {
 	int i;
+	house_type *h_ptr;
 
 	for (i = 0; i < num_houses; i++) {
-		if (!inarea(&houses[i].wpos, wpos)) continue;
+		h_ptr = &houses[i];
 
-		if (houses[i].flags & HF_RECT) {
-			if (houses[i].x <= x && houses[i].x + houses[i].coords.rect.width - 1 >= x &&
-			    houses[i].y <= y && houses[i].y + houses[i].coords.rect.height - 1 >= y)
+		/* skip unowned houses */
+		if (!h_ptr->dna->owner) continue;
+
+		if (!inarea(&h_ptr->wpos, wpos)) continue;
+
+		if (h_ptr->flags & HF_RECT) {
+			if (h_ptr->x <= x && h_ptr->x + h_ptr->coords.rect.width - 1 >= x &&
+			    h_ptr->y <= y && h_ptr->y + h_ptr->coords.rect.height - 1 >= y)
 				return i + 1;
 #if 0 /* not needed atm */
 		} else {
@@ -6767,27 +6770,30 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 static void destroy_house(int Ind, struct dna_type *dna) {
 	player_type *p_ptr = Players[Ind];
 	int i;
+	house_type *h_ptr;
+
 	if (!is_admin(p_ptr)) {
 		msg_print(Ind, "\377rYour attempts to destroy the house fail.");
 		return;
 	}
 	for (i = 0; i < num_houses; i++) {
-		if (houses[i].dna == dna) {
-			if (houses[i].flags & HF_STOCK) {
+		h_ptr = &houses[i];
+		if (h_ptr->dna == dna) {
+			if (h_ptr->flags & HF_STOCK) {
 				msg_print(Ind, "\377oThat house may not be destroyed");
-//				return;
+				//return;
 			}
 			/* quicker than copying back an array. */
 			msg_print(Ind, "\377DThe house crumbles away.");
-			fill_house(&houses[i], FILL_MAKEHOUSE, NULL);
-			houses[i].flags |= HF_DELETED;
+			fill_house(h_ptr, FILL_MAKEHOUSE, NULL);
+			h_ptr->flags |= HF_DELETED;
 
 #if 0 /* let's do this in fill_house(), so it also takes care of poly-houses - C. Blue */
 			/* redraw map so change becomes visible */
-			if (houses[i].flags & HF_RECT) {
-				for (x = 0; x < houses[i].coords.rect.width; x++)
-				for (y = 0; y < houses[i].coords.rect.height; y++)
-					everyone_lite_spot(&houses[i].wpos, houses[i].y + y, houses[i].x + x);
+			if (h_ptr->flags & HF_RECT) {
+				for (x = 0; x < h_ptr->coords.rect.width; x++)
+				for (y = 0; y < h_ptr->coords.rect.height; y++)
+					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 			}
 #endif
 			break;
@@ -6869,8 +6875,8 @@ void do_cmd_purchase_house(int Ind, int dir) {
 
 	int y, x, h_idx;
 	int factor;
-//	int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
-//	s64b price;
+	//int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
+	//s64b price;
 	s32b price;
 
 	cave_type *c_ptr = NULL;
