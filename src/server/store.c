@@ -6963,6 +6963,7 @@ void export_player_store_offers(int *export_turns) {
 
 			/* memcpy gets its own frame now, continue the actual exporting next turn */
 			copied = TRUE;
+			goto timing_before_return; // HACK - Execute timing code before returning
 			return;
 		}
 		copied = FALSE;
@@ -7052,6 +7053,7 @@ void export_player_store_offers(int *export_turns) {
 			/* memcpy gets its own frame now, continue the actual exporting next turn */
 			copied = TRUE;
 			(*export_turns) = 1; //keep us alive for the extra 'copy houses' turn
+			goto timing_before_return; // HACK - Execute timing code before returning
 			return;
 		}
 		copied = FALSE;
