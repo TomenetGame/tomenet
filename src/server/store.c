@@ -6838,7 +6838,7 @@ void export_player_store_offers(int *export_turns) {
 	//note: coverage and export_turns are sort of redundant
 	static int coverage = 0, max_bak, step;
 	static bool copied = FALSE; //put memcpy() ops into a frame of their own to reduce load further
-	static bool opened = FALSE; //put file-opening/closing into own frames too
+	static bool opened = FALSE, opened2 = FALSE; //put file-opening/closing into own frames too
 	static int num_houses_bak = -1; //helper for putting file ops into own frames (see above)
 #ifndef USE_MANG_HOUSE_ONLY
 	static bool coverage_trad = FALSE;
@@ -6867,16 +6867,23 @@ void export_player_store_offers(int *export_turns) {
 		house_type *h_ptr;
 
 		if (opened) { //put file-closing into its own frame
+			if (!opened2) {
+				s_printf("EXPORT_PLAYER_STORE_OFFERS: houses export completed.\n");
+				my_fclose(fph); /* --- This one seems to cost by far the most frame time in all of this routine --- */
+				opened2 = TRUE;
+				goto timing_before_return; // HACK - Execute timing code before returning
+				return;
+			}
+			opened2 = FALSE;
+
 			coverage = 0; //reset counter
 			coverage_trad = FALSE; //reset stage
 			opened = FALSE; //reset stage
-
-			s_printf("EXPORT_PLAYER_STORE_OFFERS: houses export completed.\n");
-			my_fclose(fph);
 			my_fclose(fp);
+
 			(*export_turns) = 0; //don't re-call us again, we're done for this time
 			goto timing_before_return; // HACK - Execute timing code before returning
-			return;
+			return; /* --- The final end of this routine --- */
 		}
 
 		/* scan traditional houses */
