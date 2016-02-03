@@ -5818,20 +5818,24 @@ int Send_stun(int Ind, int stun) {
 }
 
 int Send_direction(int Ind) {
-	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+	connection_t *connp = Conn[Players[Ind]->conn];
+#if 0
+	connection_t *connp2;
+	player_type *p_ptr2 = NULL;
+#endif
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for direction (%d.%d.%d)",
 			Ind, connp->state, connp->id));
 		return FALSE;
 	}
+#if 0 /* hmm? */
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		return Packet_printf(&connp2->c, "%c", PKT_DIRECTION);
 	}
+#endif
 	return Packet_printf(&connp->c, "%c", PKT_DIRECTION);
 }
 
@@ -5855,8 +5859,8 @@ int Send_message(int Ind, cptr msg) {
 // Taking this out for now, since it's ONLY called from msg_print in util.c,
 // which already performs checks - C. Blue
 // (otherwise, lines with colour codes might be crippled here :| )
-//	strncpy(buf, msg, 78);
-//	buf[78] = '\0';
+	//strncpy(buf, msg, 78);
+	//buf[78] = '\0';
 	strncpy(buf, msg, 158);
 	buf[158] = '\0';
 
