@@ -6838,6 +6838,8 @@ void export_player_store_offers(int *export_turns) {
 	//note: coverage and export_turns are sort of redundant
 	static int coverage = 0, max_bak, step;
 	static bool copied = FALSE; //put memcpy() ops into a frame of their own to reduce load further
+	static bool opened = FALSE; //put file-opening/closing into own frames too
+	static int num_houses_bak = -1; //helper for putting file ops into own frames (see above)
 #ifndef USE_MANG_HOUSE_ONLY
 	static bool coverage_trad = FALSE;
 #endif
@@ -6863,6 +6865,19 @@ void export_player_store_offers(int *export_turns) {
 	if (coverage_trad && !copied) {
 		int h;
 		house_type *h_ptr;
+
+		if (opened) { //put file-closing into its own frame
+			coverage = 0; //reset counter
+			coverage_trad = FALSE; //reset stage
+			opened = FALSE; //reset stage
+
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: houses export completed.\n");
+			my_fclose(fph);
+			my_fclose(fp);
+			(*export_turns) = 0; //don't re-call us again, we're done for this time
+			goto timing_before_return; // HACK - Execute timing code before returning
+			return;
+		}
 
 		/* scan traditional houses */
 		for (h = turn % step; h < num_houses; h += step) {
@@ -6924,11 +6939,8 @@ void export_player_store_offers(int *export_turns) {
 
 		/* finish exporting? */
 		if (coverage >= max_bak) {
-			coverage = 0; //reset counter
-			coverage_trad = FALSE; //reset stage
-			s_printf("EXPORT_PLAYER_STORE_OFFERS: houses export completed.\n");
-			my_fclose(fph);
-			my_fclose(fp);
+			opened = TRUE;
+			(*export_turns) = 1; //survive the file-closing turn
 		}
 		goto timing_before_return; // HACK - Execute timing code before returning
 		return;
@@ -6936,17 +6948,26 @@ void export_player_store_offers(int *export_turns) {
 #endif
 
 	/* init exporting? */
-	if (!coverage) {
+	if (!coverage && !coverage_trad) {
 		if (!copied) {
-			char path[MAX_PATH_LENGTH];
+			if (!opened) {
+				char path[MAX_PATH_LENGTH];
 
-			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-o_list.txt");
-			fp = my_fopen(path, "w");
-			if (!fp) {
-				s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open objects file.\n");
+				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-o_list.txt");
+				fp = my_fopen(path, "w");
+				if (!fp) {
+					s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open objects file.\n");
+					(*export_turns) = 0; //don't re-call us again, we're done for this time
+					return;
+				}
+
+				s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
+
+				opened = TRUE;
+				(*export_turns) = 1; //survive the file-opening turn
+				goto timing_before_return; // HACK - Execute timing code before returning
 				return;
 			}
-			s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
 
 			/* o_list exporting actually disabled? */
 			if (OBJECTS_PER_TURN == 0) {
@@ -6970,7 +6991,7 @@ void export_player_store_offers(int *export_turns) {
 	}
 
 #ifndef USE_MANG_HOUSE_ONLY
-    if (!coverage_trad) {
+    if (!coverage_trad && coverage < max_bak) {
 #endif
 	/* note: the items are not sorted in any way */
 	for (i = turn % step; i < max_bak; i += step) {
@@ -7035,29 +7056,59 @@ void export_player_store_offers(int *export_turns) {
 #ifndef USE_MANG_HOUSE_ONLY
 		char path[MAX_PATH_LENGTH];
 
+		/* no houses to process? */
+		if (num_houses_bak == -1) num_houses_bak = num_houses;
 		if (MANG_HOUSE_RATE == 100
 		    || HOUSES_PER_TURN == 0 /* houses exporting actually disabled? */
-		    || !num_houses) {
+		    || !num_houses_bak) {
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
+
+			if (opened) { //put fclose() in a frame of its own
+				opened = FALSE;
+				(*export_turns) = 1; //survive the file-closing turn
+				goto timing_before_return; // HACK - Execute timing code before returning
+				return;
+			}
+
+			num_houses_bak = -1;
 			my_fclose(fp);
-			goto timing_before_return;
+			(*export_turns) = 0; //don't re-call us again, we're done for this time
+			goto timing_before_return; // HACK - Execute timing code before returning
+			return;
+		}
+
+		if (!copied && opened) {
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
+
+			opened = FALSE;
+			(*export_turns) = 1; //keep us alive for the extra my_fopen turn
+			goto timing_before_return; // HACK - Execute timing code before returning
 			return;
 		}
 
 		if (!copied) {
-			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
-
-			/* switch to 2nd stage: scan trad houses */
-			coverage_trad = TRUE;
+			/* also prepare to additionally export all houses while we're iterating through them anyway! */
+			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-houses.txt");
+			fph = my_fopen(path, "w");
+			if (!fph) {
+				num_houses_bak = -1; //reset
+				s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open houses file.\n");
+				(*export_turns) = 0;
+				my_fclose(fp);
+				return;
+			}
 
 			/* memcpy gets its own frame now, continue the actual exporting next turn */
 			copied = TRUE;
-			(*export_turns) = 1; //keep us alive for the extra 'copy houses' turn
 			goto timing_before_return; // HACK - Execute timing code before returning
 			return;
 		}
-		copied = FALSE;
+
+		/* switch to 2nd stage: scan trad houses */
+		coverage_trad = TRUE;
 		coverage = 0; //reset counter
+		num_houses_bak = -1; //reset
+		copied = FALSE; //reset
 
 		/* create immutable, static working copy */
 		max_bak = num_houses;
@@ -7066,18 +7117,13 @@ void export_player_store_offers(int *export_turns) {
 		(*export_turns) = step; //function has to be called this often to completely export all objects
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning houses [%d] export.\n", max_bak);
 		fprintf(fp, "\n");
-
-		/* also prepare to additionally export all houses while we're iterating through them anyway! */
-		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-houses.txt");
-		fph = my_fopen(path, "w");
-		if (!fph) {
-			s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open houses file.\n");
-			(*export_turns) = 0;
-			my_fclose(fp);
-			return;
-		}
 #else
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
+		if (opened) { //put fclose() in a frame of its own
+			opened = FALSE;
+			goto timing_before_return; // HACK - Execute timing code before returning
+			return;
+		}
 		my_fclose(fp);
 #endif
 	}
