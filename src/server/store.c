@@ -6830,7 +6830,7 @@ void verify_store_owner(store_type *st_ptr) {
 #define OBJECTS_PER_TURN 1000
 #ifndef USE_MANG_HOUSE_ONLY
  //#define HOUSES_PER_TURN ((MANG_HOUSE_RATE == 100) ? 0 : (10000 / (100 - MANG_HOUSE_RATE)))
- #define HOUSES_PER_TURN 200
+ #define HOUSES_PER_TURN 100
 #endif
 /* Don't export items inscribe @S- (aka 'museum') to the list. Note: Atm those are 2/7 of all items, wow! */
 //#define DONT_EXPORT_MUSEUM
