@@ -6961,6 +6961,7 @@ void export_player_store_offers(int *export_turns) {
 				char path[MAX_PATH_LENGTH];
 
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-o_list.txt");
+				remove(path);
 				fp = my_fopen(path, "w");
 				if (!fp) {
 					s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open objects file.\n");
@@ -7096,6 +7097,7 @@ void export_player_store_offers(int *export_turns) {
 		if (!copied) {
 			/* also prepare to additionally export all houses while we're iterating through them anyway! */
 			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-houses.txt");
+			remove(path);
 			fph = my_fopen(path, "w");
 			if (!fph) {
 				num_houses_bak = -1; //reset
