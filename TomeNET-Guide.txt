@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. January 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 4. February 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -8873,6 +8873,8 @@ VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         hitting, you'll see 'Your weapon cuts deep into your enemy'.
         The multiplication is done after brand/slay effects have been applied,
         so brand/slay effects will increase VORPAL efficiency.
+SLAY_WEAP (No message, can spawn other mods/increase dice randomly.)
+        A special mod for "Weapons of Slaying", see further down in (5.9).
 CRIT    ('It affects your ability to score critical hits.')
         This item adds to your chance to score critical hits.
         If the item is a weapon then it will only affect hits done with this
@@ -9055,7 +9057,7 @@ Weapons of Nothingness  Similarly terribly cursed as weapons of Morgul. You
                         uncursed it drop it to the ground right away!
 
 Weapons of Slaying      These weapons can have greatly boosted damage dice
-                        and sometimes poison brand.
+ (SLAY_WEAP)            and sometimes poison brand.
                         If it's a sword, axe or slice-type polearm it could
                         also get a 'vorpal' effect - see 'VORPAL' under (5.8).
 
