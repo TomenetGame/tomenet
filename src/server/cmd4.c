@@ -3361,6 +3361,8 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	player_type *p_ptr = Players[Ind];
 	byte max_houses = (p_ptr->lev < 50 ? p_ptr->lev : 50) / cfg.houses_per_player;
 	char buf[MAX_CHARS];
+	int alim = cfg.acc_house_limit;
+	int ahou = acc_get_houses(p_ptr->accountname);
 
 	msg_print(Ind, " ");
 	if (admin) msg_format(Ind, "The game turn: %d", turn);
@@ -3388,40 +3390,81 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	else if (p_ptr->houses_owned == 1) strcpy(buf, "You own a house.");
 	else sprintf(buf, "You own %d houses.", p_ptr->houses_owned);
 	if (p_ptr->houses_owned < max_houses) {
-		if (p_ptr->houses_owned) {
-			bool free = TRUE;
-			if (cfg.acc_house_limit) {
-				int alim = cfg.acc_house_limit;
-				int ahou = acc_get_houses(p_ptr->accountname);
+		bool free = TRUE;
 
+		if (p_ptr->houses_owned) {
+			if (alim) {
 				if (ahou >= alim) {
 					free = FALSE;
+					strcat(buf, format(" %sou could buy %s%d more house%s, but",
+					    (p_ptr->lev < (50 / cfg.houses_per_player) * cfg.houses_per_player) ? "At your level y" : "Y",
+					    max_houses - p_ptr->houses_owned == 1 ? "" : "up to ",
+					    max_houses - p_ptr->houses_owned,
+					    max_houses - p_ptr->houses_owned == 1 ? "" : "s"));
 					msg_print(Ind, buf);
-					strcpy(buf, format(" You are owning the maximum amount of %d houses allowed per account.", cfg.acc_house_limit));
+					strcpy(buf, format(" you are owning the maximum amount of %d houses allowed per account.", cfg.acc_house_limit));
 				} else if (alim - ahou < max_houses - p_ptr->houses_owned) {
 					free = FALSE;
+					strcat(buf, format(" %sou could buy %s%d more house%s, but",
+					    (p_ptr->lev < (50 / cfg.houses_per_player) * cfg.houses_per_player) ? "At your level y" : "Y",
+					    max_houses - p_ptr->houses_owned == 1 ? "" : "up to ",
+					    max_houses - p_ptr->houses_owned,
+					    max_houses - p_ptr->houses_owned == 1 ? "" : "s"));
 					msg_print(Ind, buf);
-					strcpy(buf, format(" The account-wide limit of %d houses allows you to buy %s%d more house%s.",
+					strcpy(buf, format(" the account-wide limit of %d houses only allows you to buy %s%d more house%s.",
 					    cfg.acc_house_limit,
 					    alim - ahou == 1 ? "" : "up to ",
 					    alim - ahou,
 					    alim - ahou == 1 ? "" : "s"));
 				}
 			}
-			if (free)
+			if (free) {
 				strcat(buf, format(" %sou can buy %s%d more house%s.",
 				    (p_ptr->lev < (50 / cfg.houses_per_player) * cfg.houses_per_player) ? "At your level y" : "Y",
 				    max_houses - p_ptr->houses_owned == 1 ? "" : "up to ",
 				    max_houses - p_ptr->houses_owned,
 				    max_houses - p_ptr->houses_owned == 1 ? "" : "s"));
-		} else
-			strcat(buf, format(" %sou can buy %s%d house%s.",
-			    (p_ptr->lev < (50 / cfg.houses_per_player) * cfg.houses_per_player) ? "At your level y" : "Y",
-			    max_houses == 1 ? "" : "up to ",
-			    max_houses,
-			    max_houses == 1 ? "" : "s"));
+				msg_print(Ind, buf);
+			}
+		} else {
+			if (alim) {
+				if (ahou >= alim) {
+					free = FALSE;
+					msg_print(Ind, buf);
+					strcat(buf, format(" %sou could buy %s%d house%s, but",
+					    (p_ptr->lev < (50 / cfg.houses_per_player) * cfg.houses_per_player) ? "At your level y" : "Y",
+					    max_houses == 1 ? "" : "up to ",
+					    max_houses,
+					    max_houses == 1 ? "" : "s"));
+					strcpy(buf, format(" you are owning the maximum amount of %d houses allowed per account.", cfg.acc_house_limit));
+				} else if (alim - ahou < max_houses - p_ptr->houses_owned) {
+					free = FALSE;
+					msg_print(Ind, buf);
+					strcat(buf, format(" %sou could buy %s%d house%s, but",
+					    (p_ptr->lev < (50 / cfg.houses_per_player) * cfg.houses_per_player) ? "At your level y" : "Y",
+					    max_houses == 1 ? "" : "up to ",
+					    max_houses,
+					    max_houses == 1 ? "" : "s"));
+					strcpy(buf, format(" the account-wide limit of %d houses only allows you to buy %s%d house%s.",
+					    cfg.acc_house_limit,
+					    alim - ahou == 1 ? "" : "up to ",
+					    alim - ahou,
+					    alim - ahou == 1 ? "" : "s"));
+				}
+			}
+			if (free) {
+				strcat(buf, format(" %sou can buy %s%d house%s.",
+				    (p_ptr->lev < (50 / cfg.houses_per_player) * cfg.houses_per_player) ? "At your level y" : "Y",
+				    max_houses == 1 ? "" : "up to ",
+				    max_houses,
+				    max_houses == 1 ? "" : "s"));
+				msg_print(Ind, buf);
+			}
+		}
+	} else {
+		strcat(buf, " (The maximum possible.)");
+		msg_print(Ind, buf);
 	}
-	msg_print(Ind, buf);
 
 #if 0 /* already displayed to the left */
  #ifdef ENABLE_STANCES
