@@ -6929,7 +6929,7 @@ void export_player_store_offers(int *export_turns) {
 			} else if (h_ptr->dna->owner_type == OT_GUILD) {
  #ifdef EXPORT_JSON
 				if (kommah) fprintf(fph, ",\n");
-				fprintf(fph, "{\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"guild\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
+				fprintf(fph, "{\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"guild\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, guilds[h_ptr->dna->owner].name);
  #else
 				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "guild", guilds[h_ptr->dna->owner].name);
  #endif
