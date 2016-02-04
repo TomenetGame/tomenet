@@ -1776,7 +1776,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #ifdef NEWBIES_CANT_GRAB_IN_BREE
 		/* Avoid people picking up things that they cannot drop again? */
 		if (in_bree(wpos) &&
-		    p_ptr->max_plv < cfg.newbies_cannot_drop && o_ptr->owner && p_ptr->id != o_ptr->owner) {
+		    p_ptr->max_plv < cfg.newbies_cannot_drop && o_ptr->owner && p_ptr->id != o_ptr->owner
+		    && p_ptr->max_plv < o_ptr->level /* added this to allow giving revived level 1 newbies basic items which they lost, to avoid suicide */
+		    ) {
 			msg_format(Ind, "You cannot take items from other people in Bree until you are level %d.", cfg.newbies_cannot_drop);
 			if (!is_admin(p_ptr)) return;
 		}
