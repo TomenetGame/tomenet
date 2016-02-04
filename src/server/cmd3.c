@@ -1946,7 +1946,7 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 
 	/* Ghosts cannot steal ; not in WRAITHFORM */
 	if (p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
-		msg_print(Ind, "You cannot steal things!");
+		msg_print(Ind, "You cannot steal things in your immaterial form!");
 		return;
 	}
 
@@ -2137,7 +2137,7 @@ void do_cmd_steal(int Ind, int dir) {
 	/* Ghosts cannot steal */
 	/* not in WRAITHFORM either */
 	if (p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
-		msg_print(Ind, "You cannot steal things!");
+		msg_print(Ind, "You cannot steal things in your immaterial form!");
 		return;
 	}
 

@@ -2686,6 +2686,12 @@ void store_stole(int Ind, int item) {
 		return;
 	}
 
+	/* Ghosts cannot steal ; not in WRAITHFORM */
+	if (p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+		msg_print(Ind, "You cannot steal things in your immaterial form!");
+		return;
+	}
+
 	if (compat_pomode(Ind, o_ptr)) {
 		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
 		return;
