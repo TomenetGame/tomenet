@@ -192,7 +192,7 @@ server_opts cfg = {
 	33, 67, 33,	// zang_monsters, pern_monsters, cth_monsters
 	0, 67, 100, 0,		// joke_monsters, cblue_monsters, vanilla_monsters, pet_monsters
 	/* bool */
-	TRUE,TRUE,	// report_to_meta, secret_dungeon_master
+	FALSE,TRUE,	// report_to_meta, secret_dungeon_master
 
 	// anti_arts_hoard, anti_arts_house, anti_arts_wild, anti_arts_shop, anti_arts_pickup, anti_arts_send
 	FALSE,TRUE,TRUE,FALSE,TRUE,TRUE,
