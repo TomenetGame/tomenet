@@ -11864,6 +11864,7 @@ Note that not every skill is available to every profession (class).
                                 -use a void jumpgate,
                                 -invoke a mimic spell,
                                 -set a monster trap.
+                                Calmness does not depend on the enemy's level.
 
     .Trapping                   Improves your ability to set traps:
                                 Gives you a higher chance to successfully
