@@ -1323,7 +1323,7 @@ void show_inven(void) {
 void show_equip(void) {
 	int	i, j, k, l;
 	int	col, len, lim;
-	long int wgt, totalwgt = 0, armourwgt = 0;
+	long int wgt, totalwgt = 0, armourwgt = 0, shieldwgt = 0;
 
 	object_type *o_ptr;
 
@@ -1418,6 +1418,7 @@ void show_equip(void) {
 
 			totalwgt += wgt;
 			if (is_armour(o_ptr->tval)) armourwgt += wgt;
+			if (o_ptr->tval == TV_SHIELD) shieldwgt += wgt;
 		}
 	}
 
@@ -1431,12 +1432,8 @@ void show_equip(void) {
 			(void)sprintf(tmp_val, "Total: %3liM%1li lb", totalwgt / 10000000, (totalwgt % 10000000) / 1000000);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 
-		if (armourwgt < 10000) /* still fitting into 3 digits? */
-			(void)sprintf(tmp_val, "Armour: %3li.%1li lb", armourwgt / 10, armourwgt % 10);
-		else if (armourwgt < 10000000) /* still fitting into 3 digits? */
-			(void)sprintf(tmp_val, "Armour: %3lik%1li lb", armourwgt / 10000, (armourwgt % 10000) / 1000);
-		else
-			(void)sprintf(tmp_val, "Armour: %3liM%1li lb", armourwgt / 10000000, (armourwgt % 10000000) / 1000000);
+		if (!shieldwgt) (void)sprintf(tmp_val, "Armour: %3li.%1li lb", armourwgt / 10, armourwgt % 10);
+		else (void)sprintf(tmp_val, "Armour: %3li.%1li lb (%li.%1li lb)", armourwgt / 10, armourwgt % 10, (armourwgt - shieldwgt) / 10, (armourwgt - shieldwgt) % 10);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, col);
 	}
 
