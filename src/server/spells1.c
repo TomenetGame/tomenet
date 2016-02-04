@@ -2474,7 +2474,7 @@ static bool can_rust(object_type *o_ptr) {
 	case TV_HELM:
 #endif
 	case TV_SWORD:
-// :)	case TV_BLUNT:
+	// :)	case TV_BLUNT:
 	case TV_POLEARM:
 	case TV_AXE:
 		return (TRUE);
@@ -2704,8 +2704,6 @@ int inven_damage(int Ind, inven_func typ, int perc) {
  * Note that the "base armor" of an object never changes.
  * If any armor is damaged (or resists), the player takes less damage. <- not implemented atm
  */
-/* Hack -- 'water' means it was water damage (and not acid).
- * TODO: add IGNORE_WATER flags */
 int equip_damage(int Ind, int typ) {
 	player_type	*p_ptr = Players[Ind];
 	object_type	*o_ptr = NULL;
