@@ -5013,6 +5013,7 @@ void calc_boni(int Ind) {
 #ifdef USE_BLOCKING
 	if (o_ptr->k_idx && o_ptr->tval == TV_SHIELD) { /* might be dual-wielder */
 		int malus;
+
  #ifdef USE_NEW_SHIELDS
 		p_ptr->shield_deflect = o_ptr->ac * 10; /* add a figure by multiplying by _10_ for more accuracy */
  #else
@@ -5474,25 +5475,25 @@ void calc_boni(int Ind) {
 		if ((p_ptr->combat_stance == 1) &&
 		    (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) switch (p_ptr->combat_stance_power) {
 			/* note that defensive stance also increases chance to actually prefer shield over parrying in melee.c */
-			case 0: p_ptr->shield_deflect += 8;
+			case 0: p_ptr->shield_deflect += 9;
 				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
-			case 1: p_ptr->shield_deflect += 10;
+			case 1: p_ptr->shield_deflect += 11;
 				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
-			case 2: p_ptr->shield_deflect += 12;
+			case 2: p_ptr->shield_deflect += 13;
 				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
-			case 3: p_ptr->shield_deflect += 20;
+			case 3: p_ptr->shield_deflect += 15;
 				p_ptr->dis_to_d = (p_ptr->dis_to_d * 8) / 10;
 				p_ptr->to_d = (p_ptr->to_d * 8) / 10;
 				p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
@@ -5536,7 +5537,7 @@ void calc_boni(int Ind) {
 				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
-			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 17) / 10;
+			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 15) / 10;
 				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
 				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
