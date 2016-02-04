@@ -4069,8 +4069,32 @@ void do_slash_cmd(int Ind, char *message) {
 			else {
 				u16b ptype = lookup_player_type(p_id);
 				int lev = lookup_player_level(p_id);
-				msg_format(Ind, "That level %d %s %s belongs to account: \377s%s",
-				    lev,
+				byte mode = lookup_player_mode(p_id);
+				char col;
+
+				switch (mode & MODE_MASK) { // TODO: give better modifiers
+				case MODE_NORMAL:
+					col = 'W';
+					break;
+				case MODE_EVERLASTING:
+					col = 'B';
+					break;
+				case MODE_PVP:
+					col = COLOUR_MODE_PVP;
+					break;
+				case (MODE_HARD | MODE_NO_GHOST):
+					col = 'r';
+					break;
+				case MODE_HARD: //deprecated
+					col = 's';
+					break;
+				case MODE_NO_GHOST:
+					col = 'D';
+					break;
+				}
+
+				msg_format(Ind, "That level %d \377%c%s %s\377w belongs to account: \377s%s",
+				    lev, col,
 				    //race_info[ptype & 0xff].title,
 				    special_prace_lookup[ptype & 0xff],
 				    class_info[ptype >> 8].title,
