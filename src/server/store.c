@@ -6937,7 +6937,7 @@ void export_player_store_offers(int *export_turns) {
 				//TODO maybe: report house colour
 				//HOUSE_PAINTING
 				//h_ptr->colour - 1
-				fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %ld Au) %s\n", h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->mode, price, o_name); //or just x,y?
+				fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %ld Au) %s\n", h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name); //or just x,y?
 			}
 		}
 
@@ -7049,7 +7049,7 @@ void export_player_store_offers(int *export_turns) {
 		//TODO maybe: report house colour
 		//HOUSE_PAINTING
 		//h_ptr->colour - 1
-		fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %ld Au) %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->mode, price, o_name);
+		fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %ld Au) %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name);
 	}
 	if (step) { //not disabled? then log
 		(*export_turns)--;
