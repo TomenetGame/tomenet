@@ -221,10 +221,10 @@ HMARTYR = add_spell {
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
-	["level"] = 	40,
+	["level"] = 	45,
 	["mana"]= 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-30,
+	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			if player.martyr_timeout > 0 then

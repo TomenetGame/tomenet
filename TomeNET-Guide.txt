@@ -14571,7 +14571,7 @@ Priest schools:
                     During martyrdom any kind of line-of-sight (ie affecting
                     all monsters at once that are in your character's field of
                     view) spell damage you inflict will only deal half damage.
-                    Required skill level for first spell level: 40.
+                    Required skill level for first spell level: 45.
 
     BONI:           Protects the player from undead at 30, from demons at 40
                     and from evil in general at 50. Works similar to the
