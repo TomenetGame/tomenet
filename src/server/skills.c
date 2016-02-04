@@ -570,12 +570,12 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		/* + continuous effect */
                 break;
 	case SKILL_HSUPPORT:
-		if (old_value < 400 && new_value >= 400 && p_ptr->prace != RACE_MAIA) {
-			msg_print(Ind, "\374\377GYou don't feel hunger for worldly food anymore.");
-		} if (old_value < 500 && new_value >= 500) {
+		if (old_value < 400 && new_value >= 400) {
 			msg_print(Ind, "\374\377GYou feel superior to ancient curses.");
 		}
-		break;
+		if (old_value < 500 && new_value >= 500 && p_ptr->prace != RACE_MAIA) {
+			msg_print(Ind, "\374\377GYou don't feel hunger for worldly food anymore.");
+		} 		break;
 
 	case SKILL_SWORD: case SKILL_AXE: case SKILL_BLUNT: case SKILL_POLEARM:
 		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {

@@ -5655,7 +5655,7 @@ void calc_boni(int Ind) {
 //	if (get_skill(p_ptr, SKILL_HCURING) >= 50 && !p_ptr->reduce_insanity) p_ptr->reduce_insanity = 1;
 	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
 	
-	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) csheet_boni[14].cb[5] |= CB6_IFOOD;
+	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 50) csheet_boni[14].cb[5] |= CB6_IFOOD;
 	
 	/* slay/brand boni check here... */
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) csheet_boni[14].cb[9] |= CB10_SEVIL;

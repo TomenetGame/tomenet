@@ -3359,11 +3359,10 @@ bool set_food(int Ind, int v) {
 	bool notice = FALSE;
 
 	/* True Ghosts don't starve */
-	if ((p_ptr->ghost) || (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) ||
-	    (p_ptr->prace == RACE_MAIA && p_ptr->ptrait))
-	{
-	    p_ptr->food = PY_FOOD_FULL - 1;
-	    return (FALSE);
+	if ((p_ptr->ghost) || (get_skill(p_ptr, SKILL_HSUPPORT) == 50) ||
+	    (p_ptr->prace == RACE_MAIA && p_ptr->ptrait)) {
+		p_ptr->food = PY_FOOD_FULL - 1;
+		return (FALSE);
 	}
 
 	/* Warrior does not need food badly */

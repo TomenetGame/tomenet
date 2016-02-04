@@ -4764,7 +4764,7 @@ static bool process_player_end_aux(int Ind) {
 	/* let's say TY_CURSE lowers stats (occurs often) */
 	if (p_ptr->ty_curse &&
 	    (rand_int(p_ptr->wpos.wz != 0 ? 200 : (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos) ? 0 : 500)) == 1) &&
-	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50)) {
+	    (get_skill(p_ptr, SKILL_HSUPPORT) < 40)) {
 		if (magik(105 - p_ptr->skill_sav)) {
 			msg_print(Ind, "An ancient foul curse touches you but you resist!");
 		} else {
@@ -4781,7 +4781,7 @@ static bool process_player_end_aux(int Ind) {
 	}
 	/* and DG_CURSE randomly summons a monster (non-unique) */
 	if (p_ptr->dg_curse && (rand_int(300) == 0) && !istown(&p_ptr->wpos) && !isdungeontown(&p_ptr->wpos) &&
-	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50)) {
+	    (get_skill(p_ptr, SKILL_HSUPPORT) < 40)) {
 		int anti_Ind = world_check_antimagic(Ind);
 
 		if (anti_Ind) {

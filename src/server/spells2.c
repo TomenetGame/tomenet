@@ -1511,7 +1511,7 @@ void self_knowledge(int Ind) {
 	if (p_ptr->regen_mana) fprintf(fff, "You accumulate mana quickly.\n");
 
 	if (p_ptr->prace == RACE_MAIA && p_ptr->ptrait) fprintf(fff, "You have no need for worldly food.\n");
-	else if (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) fprintf(fff, "You have no need for worldly food.\n");
+	else if (get_skill(p_ptr, SKILL_HSUPPORT) >= 50) fprintf(fff, "You have no need for worldly food.\n");
 	else if (p_ptr->ghost) fprintf(fff, "You have no need for worldly food.\n");
 	else if (p_ptr->prace == RACE_VAMPIRE && p_ptr->total_winner) fprintf(fff, "Your appetite is small.\n");
 	else if (p_ptr->slow_digest) fprintf(fff, "Your appetite is small.\n");
