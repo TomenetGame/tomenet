@@ -3454,23 +3454,20 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 
 				k = damroll(o_ptr->dd, o_ptr->ds);
 
-				if (f5 & TR5_VORPAL && (randint(6) == 1)) {
-//					k = o_ptr->dd * o_ptr->ds; /* full weapon efficiency */
-//					if (magik(25)) k *= 3; else k *= 2; /* multi dice! */
-					vorpal_cut = k; /* save dice */
-				} else vorpal_cut = FALSE;
-
 				/* weapons that inflict little damage, especially of only 1 damage dice,
 				   mostly don't cause earthquakes at all */
 				if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
 				    500 / (10 + (k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(35)) do_quake = TRUE;
 				    /* I made the new formula above, to get a better chance curve over all the different weapon types. -C. Blue- */
 				    /* Some old tries: */
-//				    130 - ((k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(130)) do_quake = TRUE;
-//				    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
-//				    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
+				//    130 - ((k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(130)) do_quake = TRUE;
+				//    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
+				//    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+
+				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save branded dice */
+				else vorpal_cut = FALSE;
 
 #ifdef ENABLE_STANCES
 				/* apply stun from offensive combat stance */
@@ -3590,14 +3587,14 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 			}
 
 			/* Vorpal bonus - multi-dice!
-			   (currently +37.5% more branded dice damage and o_ptr->to_d on total average, just for the records) */
+			   (currently +31.25% more branded dice damage on total average, just for the records) */
                         if (vorpal_cut) {
 #ifdef CRIT_VS_VORPAL
-				k2 += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux_player(Ind, o_ptr, vorpal_cut, q_ptr, brand_msg, FALSE)); /* exempts critical strike */
+				k2 += (magik(25) ? 2 : 1) * vorpal_cut; /* exempts critical strike */
 				/* either critical hit or vorpal, not both */
 				if (k2 > k) k = k2;
 #else
-				k += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux_player(Ind, o_ptr, vorpal_cut, q_ptr, brand_msg, FALSE)); /* exempts critical strike */
+				k += (magik(25) ? 2 : 1) * vorpal_cut; /* exempts critical strike */
 #endif
 			}
 
@@ -4490,22 +4487,20 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 #endif
 				k = damroll(o_ptr->dd, o_ptr->ds);
 
-				if (f5 & TR5_VORPAL && (randint(6) == 1)) {
-//					k = o_ptr->dd * o_ptr->ds; /* full weapon efficiency */
-//					if (magik(25)) k *= 3; else k *= 2; /* multi dice! */
-					vorpal_cut = k; /* save dice */
-				} else vorpal_cut = FALSE;
-
 				/* weapons that inflict little damage, especially of only 1 damage dice,
 				   mostly don't cause earthquakes at all */
 				if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
 				    500 / (10 + (k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(35)) do_quake = TRUE;
 				    /* I made the new formula above, to get a better chance curve over all the different weapon types. -C. Blue- */
 				    /* Some old tries: */
-//				    130 - ((k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(130)) do_quake = TRUE;
-//				    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
-//				    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
+				//    130 - ((k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(130)) do_quake = TRUE;
+				//    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
+				//    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
+
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+
+				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save branded dice */
+				else vorpal_cut = FALSE;
 
 #ifdef ENABLE_STANCES
 				/* apply stun from offensive combat stance */
@@ -4576,7 +4571,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 
 				if (chaos_effect == 2) do_quake = TRUE;
 
-				if (vorpal_cut)	msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
+				if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
 
 				k += o_ptr->to_d;
 
@@ -4678,14 +4673,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 			}
 
 			/* Vorpal bonus - multi-dice!
-			   (currently +37.5% more branded dice damage and o_ptr->to_d on total average, just for the records) */
+			   (currently +31.25% more branded dice damage on total average, just for the records) */
                         if (vorpal_cut) {
 #ifdef CRIT_VS_VORPAL
-				k2 += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux(Ind, o_ptr, vorpal_cut, m_ptr, brand_msg, FALSE)); /* exempts critical strike */
+				k2 += (magik(25) ? 2 : 1) * vorpal_cut; /* exempts critical strike */
 				/* either critical hit or vorpal, not both */
 				if (k2 > k) k = k2;
 #else
-				k += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux(Ind, o_ptr, vorpal_cut, m_ptr, brand_msg, FALSE)); /* exempts critical strike */
+				k += (magik(25) ? 2 : 1) * vorpal_cut; /* exempts critical strike */
 #endif
 			}
 
