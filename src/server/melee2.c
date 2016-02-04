@@ -6985,7 +6985,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 
 	/* Handle "fear" */
-	if (m_ptr->monfear) {
+	if (m_ptr->monfear
+#if 1 /* experimental: don't recover from fear until healed up somewhat? except if we're usually attacking from afar anyway */
+	    && ((m_ptr->hp * 100) / m_ptr->maxhp >= 20 + rand_int(11) || (r_ptr->flags7 & RF7_AI_ANNOY))
+#endif
+	    ) {
 		/* Amount of "boldness" */
 		int d = randint(r_ptr->level / 10 + 1);
 
