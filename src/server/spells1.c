@@ -2560,7 +2560,7 @@ int set_water_destroy(object_type *o_ptr) {
 	if (!hates_water(o_ptr)) return (FALSE);
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-	if (f5 & TR5_IGNORE_WATER) return (FALSE);
+	if ((f5 & TR5_IGNORE_WATER) || (f3 & TR3_IGNORE_ACID)) return (FALSE);
 	return (TRUE);
 }
 
