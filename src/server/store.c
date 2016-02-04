@@ -6887,7 +6887,7 @@ void export_player_store_offers(int *export_turns) {
 				s_printf("EXPORT_PLAYER_STORE_OFFERS: houses export completed.\n");
  #ifdef EXPORT_JSON
 				if (kommah) fprintf(fph, "\n");
-				fprintf(fph, "}\n");
+				fprintf(fph, "]}\n");
  #endif
 				my_fclose(fph); /* --- This one seems to cost by far the most frame time in all of this routine --- */
 				opened2 = TRUE;
@@ -6901,7 +6901,7 @@ void export_player_store_offers(int *export_turns) {
 			opened = FALSE; //reset stage
  #ifdef EXPORT_JSON
 			if (kommao) fprintf(fp, "\n");
-			fprintf(fp, "}\n");
+			fprintf(fp, "]}\n");
  #endif
 			my_fclose(fp);
 
@@ -6922,20 +6922,20 @@ void export_player_store_offers(int *export_turns) {
 			if (h_ptr->dna->owner_type == OT_PLAYER) {
  #ifdef EXPORT_JSON
 				if (kommah) fprintf(fph, ",\n");
-				fprintf(fph, "\"house\": {\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"player\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
+				fprintf(fph, "{\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"player\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
  #else
 				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "player", lookup_player_name(h_ptr->dna->owner));
  #endif
 			} else if (h_ptr->dna->owner_type == OT_GUILD) {
  #ifdef EXPORT_JSON
 				if (kommah) fprintf(fph, ",\n");
-				fprintf(fph, "\"house\": {\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"guild\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
+				fprintf(fph, "{\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"guild\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
  #else
 				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "guild", guilds[h_ptr->dna->owner].name);
  #endif
 			} else {
  #ifdef EXPORT_JSON
-				fprintf(fph, "\"house\": {\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"unknown\", \"owner\":\"unknown\"}", h, h_ptr->dna->mode);
+				fprintf(fph, "{\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"unknown\", \"owner\":\"unknown\"}", h, h_ptr->dna->mode);
  #else
 				fprintf(fph, "(%d, %d) <>:\n", h, h_ptr->dna->mode);
  #endif
@@ -6985,7 +6985,7 @@ void export_player_store_offers(int *export_turns) {
 					kommao2 = FALSE;
 				}
 				while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
-				fprintf(fp, "\"object\": {\"wx\":\"%d\", \"wy\":\"%d, \"x\":\"%d\", \"y\":\"%d\", \"house\":\"%d\", \"tval\":\"%d\", \"sval\":\"%d\", \"mode\":\"%d\", \"price\":\"%ld\", \"name\":\"%s\"}",
+				fprintf(fp, "{\"wx\":\"%d\", \"wy\":\"%d, \"x\":\"%d\", \"y\":\"%d\", \"house\":\"%d\", \"tval\":\"%d\", \"sval\":\"%d\", \"mode\":\"%d\", \"price\":\"%ld\", \"name\":\"%s\"}",
 				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name);
 				kommao = TRUE;
  #else
@@ -7025,7 +7025,7 @@ void export_player_store_offers(int *export_turns) {
 
 				s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
 #ifdef EXPORT_JSON
-				fprintf(fp, "{\n");
+				fprintf(fp, "{\"objects\":[\n");
 				kommao = FALSE;
  #ifndef USE_MANG_HOUSE_ONLY
 				kommao2 = FALSE;
@@ -7114,7 +7114,7 @@ void export_player_store_offers(int *export_turns) {
  #ifdef EXPORT_JSON
 		if (kommao) fprintf(fp, ",\n");
 		while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
-		fprintf(fp, "\"object\": {\"wx\":\"%d\", \"wy\":\"%d, \"x\":\"%d\", \"y\":\"%d\", \"house\":\"%d\", \"tval\":\"%d\", \"sval\":\"%d\", \"mode\":\"%d\", \"price\":\"%ld\", \"name\":\"%s\"}",
+		fprintf(fp, "{\"wx\":\"%d\", \"wy\":\"%d, \"x\":\"%d\", \"y\":\"%d\", \"house\":\"%d\", \"tval\":\"%d\", \"sval\":\"%d\", \"mode\":\"%d\", \"price\":\"%ld\", \"name\":\"%s\"}",
 		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name);
 		kommao = TRUE;
  #else
@@ -7155,7 +7155,7 @@ void export_player_store_offers(int *export_turns) {
 			num_houses_bak = -1;
  #ifdef EXPORT_JSON
 			if (kommao) fprintf(fp, "\n");
-			fprintf(fp, "}\n");
+			fprintf(fp, "]}\n");
  #endif
 			my_fclose(fp);
 			(*export_turns) = 0; //don't re-call us again, we're done for this time
@@ -7183,13 +7183,13 @@ void export_player_store_offers(int *export_turns) {
 				(*export_turns) = 0;
  #ifdef EXPORT_JSON
 				if (kommao) fprintf(fp, "\n");
-				fprintf(fp, "}\n");
+				fprintf(fp, "]}\n");
  #endif
 				my_fclose(fp);
 				return;
 			}
  #ifdef EXPORT_JSON
-			fprintf(fph, "{\n");
+			fprintf(fph, "{\"houses\":[\n");
  #endif
 
 			/* memcpy gets its own frame now, continue the actual exporting next turn */
@@ -7222,7 +7222,7 @@ void export_player_store_offers(int *export_turns) {
 		}
  #ifdef EXPORT_JSON
 		if (kommao) fprintf(fp, "\n");
-		fprintf(fp, "}\n");
+		fprintf(fp, "]}\n");
  #endif
 		my_fclose(fp);
 #endif
