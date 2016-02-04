@@ -14686,7 +14686,7 @@ Priest schools:
                     spell will receive up to +2 EA depending on spell level.
                     Note: The EA effect won't be applied to barehanded players
                     if they don't have Martial Arts skill of at least 01.000.
-                    Required skill level for first spell level: 32.
+                    Required skill level for first spell level: 27, 37, 47.
 
     BONI:           Completely Suppresses DG_CURSE and TY_CURSE at 40.
                     Keeps the hunger satisfied all the time at 50.
