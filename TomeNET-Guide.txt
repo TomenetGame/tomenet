@@ -16471,9 +16471,9 @@ to manage it.
  distance.
 
 -The range of your missile weapon (slings, bows, crossbows, boomerangs) is
- often greater than monsters' attack range as well as your own range of sight,
- allowing you to take out some monsters by just shooting into the dark a couple
- of times where you guess they might be.
+ often greater than your own range of sight when it comes to dark hallways.
+ Just by shooting into the dark you can take out monsters, if you know they're
+ there.
 
 -If you open a door, especially doors to pits with unknown content, be very
  careful and open the door diagonally to have as little creatures as possible
