@@ -6840,6 +6840,8 @@ void verify_store_owner(store_type *st_ptr) {
 #endif
 /* Don't export items inscribe @S- (aka 'museum') to the list. Note: Atm those are 2/7 of all items, wow! */
 //#define DONT_EXPORT_MUSEUM
+/* Export in JSON format instead? */
+#define EXPORT_JSON
 void export_player_store_offers(int *export_turns) {
 	//note: coverage and export_turns are sort of redundant
 	static int coverage = 0, max_bak, step;
@@ -6856,6 +6858,14 @@ void export_player_store_offers(int *export_turns) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 	struct timeval time_begin, time_end, time_delta;
+
+#ifdef EXPORT_JSON
+	static bool kommao = FALSE;
+ #ifndef USE_MANG_HOUSE_ONLY
+	static bool kommao2 = FALSE, kommah = FALSE;
+ #endif
+	char *cesc;
+#endif
 
 	/* For measuring performance */
 	gettimeofday(&time_begin, NULL);
@@ -6875,6 +6885,10 @@ void export_player_store_offers(int *export_turns) {
 		if (opened) { //put file-closing into its own frame
 			if (!opened2) {
 				s_printf("EXPORT_PLAYER_STORE_OFFERS: houses export completed.\n");
+ #ifdef EXPORT_JSON
+				if (kommah) fprintf(fph, "\n");
+				fprintf(fph, "}\n");
+ #endif
 				my_fclose(fph); /* --- This one seems to cost by far the most frame time in all of this routine --- */
 				opened2 = TRUE;
 				goto timing_before_return; // HACK - Execute timing code before returning
@@ -6885,6 +6899,10 @@ void export_player_store_offers(int *export_turns) {
 			coverage = 0; //reset counter
 			coverage_trad = FALSE; //reset stage
 			opened = FALSE; //reset stage
+ #ifdef EXPORT_JSON
+			if (kommao) fprintf(fp, "\n");
+			fprintf(fp, "}\n");
+ #endif
 			my_fclose(fp);
 
 			(*export_turns) = 0; //don't re-call us again, we're done for this time
@@ -6901,13 +6919,30 @@ void export_player_store_offers(int *export_turns) {
 			if (!h_ptr->dna->owner) continue;
 
 			/* also export houses while at it, so we don't have to do this in another function */
-			if (h_ptr->dna->owner_type == OT_PLAYER)
-				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "Player", lookup_player_name(h_ptr->dna->owner));
-			else if (h_ptr->dna->owner_type == OT_GUILD)
-				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "Guild", guilds[h_ptr->dna->owner].name);
-			else
+			if (h_ptr->dna->owner_type == OT_PLAYER) {
+ #ifdef EXPORT_JSON
+				if (kommah) fprintf(fph, ",\n");
+				fprintf(fph, "\"house\": {\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"player\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
+ #else
+				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "player", lookup_player_name(h_ptr->dna->owner));
+ #endif
+			} else if (h_ptr->dna->owner_type == OT_GUILD) {
+ #ifdef EXPORT_JSON
+				if (kommah) fprintf(fph, ",\n");
+				fprintf(fph, "\"house\": {\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"guild\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
+ #else
+				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "guild", guilds[h_ptr->dna->owner].name);
+ #endif
+			} else {
+ #ifdef EXPORT_JSON
+				fprintf(fph, "\"house\": {\"index\":\"%d\", \"mode\":\"%d\", \"otype\":\"unknown\", \"owner\":\"unknown\"}", h, h_ptr->dna->mode);
+ #else
 				fprintf(fph, "(%d, %d) <>:\n", h, h_ptr->dna->mode);
-
+ #endif
+			}
+ #ifdef EXPORT_JSON
+			kommah = TRUE;
+ #endif
 			if (!(h_ptr->flags & HF_TRAD)) continue;
 
 			for (i = 0; i < h_ptr->stock_num; i++) {
@@ -6916,9 +6951,9 @@ void export_player_store_offers(int *export_turns) {
 				if (!o_ptr->k_idx) continue; //invalid item
 				if (!o_ptr->note) continue; //has no inscription
 				if (!strstr(quark_str(o_ptr->note), "@S")) continue; //has no @S inscription
-#ifdef DONT_EXPORT_MUSEUM
+ #ifdef DONT_EXPORT_MUSEUM
 				if (strstr(quark_str(o_ptr->note), "@S-")) continue; //museum, don't display?
-#endif
+ #endif
 
  #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 				/* hack for wand charges to not get displayed accumulated (less comfortable) */
@@ -6943,7 +6978,20 @@ void export_player_store_offers(int *export_turns) {
 				//TODO maybe: report house colour
 				//HOUSE_PAINTING
 				//h_ptr->colour - 1
-				fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %ld Au) %s\n", h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name); //or just x,y?
+ #ifdef EXPORT_JSON
+				if (kommao) fprintf(fp, ",\n");
+				if (kommao2) {
+					fprintf(fp, "\n");
+					kommao2 = FALSE;
+				}
+				while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
+				fprintf(fp, "\"object\": {\"wx\":\"%d\", \"wy\":\"%d, \"x\":\"%d\", \"y\":\"%d\", \"house\":\"%d\", \"tval\":\"%d\", \"sval\":\"%d\", \"mode\":\"%d\", \"price\":\"%ld\", \"name\":\"%s\"}",
+				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name);
+				kommao = TRUE;
+ #else
+				fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %ld Au) %s\n",
+				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name); //or just x,y?
+ #endif
 			}
 		}
 
@@ -6976,6 +7024,14 @@ void export_player_store_offers(int *export_turns) {
 				}
 
 				s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
+#ifdef EXPORT_JSON
+				fprintf(fp, "{\n");
+				kommao = FALSE;
+ #ifndef USE_MANG_HOUSE_ONLY
+				kommao2 = FALSE;
+				kommah = FALSE;
+ #endif
+#endif
 
 				opened = TRUE;
 				(*export_turns) = 1; //survive the file-opening turn
@@ -7055,7 +7111,15 @@ void export_player_store_offers(int *export_turns) {
 		//TODO maybe: report house colour
 		//HOUSE_PAINTING
 		//h_ptr->colour - 1
+ #ifdef EXPORT_JSON
+		if (kommao) fprintf(fp, ",\n");
+		while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
+		fprintf(fp, "\"object\": {\"wx\":\"%d\", \"wy\":\"%d, \"x\":\"%d\", \"y\":\"%d\", \"house\":\"%d\", \"tval\":\"%d\", \"sval\":\"%d\", \"mode\":\"%d\", \"price\":\"%ld\", \"name\":\"%s\"}",
+		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name);
+		kommao = TRUE;
+ #else
 		fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %ld Au) %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name);
+ #endif
 	}
 	if (step) { //not disabled? then log
 		(*export_turns)--;
@@ -7069,6 +7133,10 @@ void export_player_store_offers(int *export_turns) {
 	if (coverage >= max_bak) {
 #ifndef USE_MANG_HOUSE_ONLY
 		char path[MAX_PATH_LENGTH];
+
+ #ifdef EXPORT_JSON
+		if (kommao) kommao2 = TRUE;
+ #endif
 
 		/* no houses to process? */
 		if (num_houses_bak == -1) num_houses_bak = num_houses;
@@ -7085,6 +7153,10 @@ void export_player_store_offers(int *export_turns) {
 			}
 
 			num_houses_bak = -1;
+ #ifdef EXPORT_JSON
+			if (kommao) fprintf(fp, "\n");
+			fprintf(fp, "}\n");
+ #endif
 			my_fclose(fp);
 			(*export_turns) = 0; //don't re-call us again, we're done for this time
 			goto timing_before_return; // HACK - Execute timing code before returning
@@ -7109,9 +7181,16 @@ void export_player_store_offers(int *export_turns) {
 				num_houses_bak = -1; //reset
 				s_printf("EXPORT_PLAYER_STORE_OFFERS: Error. Cannot open houses file.\n");
 				(*export_turns) = 0;
+ #ifdef EXPORT_JSON
+				if (kommao) fprintf(fp, "\n");
+				fprintf(fp, "}\n");
+ #endif
 				my_fclose(fp);
 				return;
 			}
+ #ifdef EXPORT_JSON
+			fprintf(fph, "{\n");
+ #endif
 
 			/* memcpy gets its own frame now, continue the actual exporting next turn */
 			copied = TRUE;
@@ -7131,7 +7210,9 @@ void export_player_store_offers(int *export_turns) {
 		step = (max_bak + HOUSES_PER_TURN - 1) / HOUSES_PER_TURN;
 		(*export_turns) = step; //function has to be called this often to completely export all objects
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: Beginning houses [%d] export.\n", max_bak);
+ #ifndef EXPORT_JSON
 		fprintf(fp, "\n");
+ #endif
 #else
 		s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 		if (opened) { //put fclose() in a frame of its own
@@ -7139,6 +7220,10 @@ void export_player_store_offers(int *export_turns) {
 			goto timing_before_return; // HACK - Execute timing code before returning
 			return;
 		}
+ #ifdef EXPORT_JSON
+		if (kommao) fprintf(fp, "\n");
+		fprintf(fp, "}\n");
+ #endif
 		my_fclose(fp);
 #endif
 	}
