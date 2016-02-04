@@ -4091,6 +4091,8 @@ void do_slash_cmd(int Ind, char *message) {
 				case MODE_NO_GHOST:
 					col = 'D';
 					break;
+				default:
+					col = 'w';
 				}
 
 				msg_format(Ind, "That level %d \377%c%s %s\377w belongs to account: \377s%s",
