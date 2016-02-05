@@ -1790,7 +1790,11 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		if (o_ptr->sval == SV_SPELLBOOK) {
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
 			/*  */
-			int sl = school_spells[o_ptr->pval].skill_level + 5,
+			byte skill_level = 0;
+			if (o_ptr->pval < max_spells) {
+				skill_level = school_spells[o_ptr->pval].skill_level;
+			}
+			int sl = skill_level + 5,
 			    ego_value = value - k_ptr->cost,
 			    ev = ego_value > 700 ? 700 : ego_value;
 			/* override k_info.txt to have easier handling of possible changes here */
@@ -2661,7 +2665,11 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	case TV_BOOK:
 		if (o_ptr->sval == SV_SPELLBOOK) {
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
-			int sl = school_spells[o_ptr->pval].skill_level + 5;
+			byte skill_level = 0;
+			if (o_ptr->pval < max_spells) {
+				skill_level = school_spells[o_ptr->pval].skill_level;
+			}
+			int sl = skill_level + 5;
 			/* override k_info.txt to have easier handling of possible changes here */
 			value = 4;
 			/* Pay extra for the spell */
