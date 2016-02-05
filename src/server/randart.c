@@ -2229,14 +2229,16 @@ artifact_type *randart_make(object_type *o_ptr) {
  * Make random artifact name.
  */
 void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer) {
-	char tmp[80];
+	char tmp[MAX_CHARS];
 
 	/* Set the RNG seed. It this correct. Should it be restored??? XXX */
 	Rand_value = o_ptr->name3;
 	Rand_quick = TRUE;
 
 	/* Take a random name */
-	o_ptr->name4 = get_rnd_line("randarts.txt", 0, tmp, MAX_CHARS);
+	//o_ptr->name4 = get_rnd_line("randarts.txt", 0, tmp, MAX_CHARS);
+	/* Faster version */
+	o_ptr->name4 = get_rnd_line_from_memory(randart_names, num_randart_names, tmp, MAX_CHARS);
 
 	/* Capitalise first character */
 	tmp[0] = toupper(tmp[0]);

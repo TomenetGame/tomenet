@@ -2417,6 +2417,125 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 	return (line);
 }
 
+/*
+ * Read lines from a file to memory.
+ * 
+ * Adapted from get_rnd_line(). This function assumes similar format for files.
+ */
+errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out) {
+	char    **lines = NULL;
+	FILE    *fp = NULL;
+	char    buf[1024];
+	int     counter = 0, numentries = 0;
+	int     line_num = 0;
+	//bool    found = FALSE;
+
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_TEXT, file_name);
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Failed */
+	if (!fp) return (-1);
+
+	/* Find the entry of the monster */
+	while (TRUE) {
+		/* Get a line from the file */
+		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
+			/* Count the lines */
+			line_num++;
+
+			/* Look for lines starting with 'N:' */
+			if ((buf[0] == 'N') && (buf[1] == ':')) {
+				break;
+			}
+		} else {
+			/* Reached end of file */
+			my_fclose(fp);
+			return (-1);
+		}
+
+	}
+
+	/* Get the number of entries */
+	while (TRUE) {
+		/* Get the line */
+		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
+			/* Count the lines */
+			line_num++;
+
+			/* Look for the number of entries */
+			if (isdigit(buf[0])) {
+				/* Get the number of entries */
+				numentries = atoi(buf);
+				break;
+			}
+		} else {
+			/* Count the lines */
+			line_num++;
+
+			my_fclose(fp);
+			return (-1);
+		}
+	}
+	
+	/* Allocate array of pointers */
+	C_MAKE(lines, numentries, char *);
+
+	/* Read all entries */
+	for (counter = 0; counter < numentries; counter++) {
+		/* Count the lines */
+		line_num++;
+
+		/* Try to read the line */
+		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
+			/* Store the line in memory */
+			lines[counter] = strdup(buf);
+		} else {
+			my_fclose(fp);
+			return (-1);
+		}
+	}
+
+	/* Close the file */
+	my_fclose(fp);
+
+	/* Use the two parameters to return the array and its size */
+	*lines_out = lines;
+	*num_lines_out = numentries;
+
+	/* Success */
+	return (0);
+}
+
+/*
+ * Get a random line from an array stored in memory.
+ * 
+ * Adapted from get_rnd_line().
+ */
+errr get_rnd_line_from_memory(char **lines, int numentries, char *output, int max_len) {
+	int line = 0;
+	
+	if (numentries > 0) {
+		/* Grab an appropriate line number */
+		line = rand_int(numentries);
+
+		/* Copy the line */
+		strncpy(output, lines[line], max_len);
+		
+		/* Make sure the string is terminated */
+		output[max_len - 1] = '\0';
+	} else {
+		/* Make output an empty string */
+		output[0] = '\0';
+	}
+	
+	/* Success */
+	return (0);
+}
+
 /* Clear objects so that artifacts get saved.
  * This probably isn't neccecary, as all the objects on each of
  * these levels should have been cleared by now. However, paranoia

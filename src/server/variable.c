@@ -1011,3 +1011,7 @@ int __sfx_am = -1;
 char reserved_name_character[MAX_RESERVED_NAMES][NAME_LEN];
 char reserved_name_account[MAX_RESERVED_NAMES][NAME_LEN];
 int reserved_name_timeout[MAX_RESERVED_NAMES];
+
+/* Names for randarts */
+char **randart_names;
+int num_randart_names;

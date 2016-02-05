@@ -2895,6 +2895,13 @@ void init_swearing() {
 }
 
 /*
+ * Read randart names from lib/text/randart.txt.
+ */
+static errr init_randart(void) {
+	return read_lines_to_memory("randarts.txt", &randart_names, &num_randart_names);
+}
+
+/*
  * Initialize some other arrays
  */
 static errr init_alloc(void) {
@@ -3628,9 +3635,13 @@ void init_some_arrays(void)
 	/* Initialize some other arrays */
 	s_printf("[Initializing arrays... (iddc)]\n");
 	if (init_iddc()) quit("Cannot initialize iddc stuff");
-#endif	
+#endif
 	
 	init_swearing();
+	
+	/* Initialize randart names */
+	s_printf("[Initializing arrays... (randart)]\n");
+	if (init_randart()) quit("Cannot initialize randart stuff");
 
 	/* Hack -- all done */
 	s_printf("[Initializing arrays... done]\n");

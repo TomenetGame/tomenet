@@ -840,6 +840,8 @@ extern void signals_init(void);
 extern void kingly(int Ind, int type);
 extern void setup_exit_handler(void);
 extern errr get_rnd_line(cptr file_name, int entry, char *output, int max_len);
+extern errr get_rnd_line_from_memory(char **lines, int numentries, char *output, int max_len);
+extern errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out);
 extern void wipeout_needless_objects(void);
 extern bool highscore_reset(int Ind);
 extern bool highscore_remove(int Ind, int slot);
@@ -2396,3 +2398,7 @@ extern int __sfx_am;
 extern char reserved_name_character[MAX_RESERVED_NAMES][NAME_LEN];
 extern char reserved_name_account[MAX_RESERVED_NAMES][NAME_LEN];
 extern int reserved_name_timeout[MAX_RESERVED_NAMES];
+
+/* Names for randarts */
+extern char **randart_names;
+extern int num_randart_names;
