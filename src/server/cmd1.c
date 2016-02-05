@@ -3590,11 +3590,11 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 			   (currently +31.25% more branded dice damage on total average, just for the records) */
                         if (vorpal_cut) {
 #ifdef CRIT_VS_VORPAL
-				k2 += (magik(25) ? 2 : 1) * vorpal_cut; /* exempts critical strike */
+				k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 				/* either critical hit or vorpal, not both */
 				if (k2 > k) k = k2;
 #else
-				k += (magik(25) ? 2 : 1) * vorpal_cut; /* exempts critical strike */
+				k += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 #endif
 			}
 
@@ -4676,11 +4676,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 			   (currently +31.25% more branded dice damage on total average, just for the records) */
                         if (vorpal_cut) {
 #ifdef CRIT_VS_VORPAL
-				k2 += (magik(25) ? 2 : 1) * vorpal_cut; /* exempts critical strike */
+				k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 				/* either critical hit or vorpal, not both */
 				if (k2 > k) k = k2;
 #else
-				k += (magik(25) ? 2 : 1) * vorpal_cut; /* exempts critical strike */
+				k += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 #endif
 			}
 
