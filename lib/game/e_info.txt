@@ -906,11 +906,12 @@ X:A:24:18
 W:0:6:107:3000
 R:100
 F:SLAY_UNDEAD
+#note: only Nightcrawler has acidic attacks
 
 N:84:of Slay Demon
 T:15:0:255
 T:21:0:21
-T:21:23:255
+T:21:24:255
 T:22:0:255
 T:23:3:255
 T:24:0:255
@@ -1002,6 +1003,7 @@ W:0:2:107:9000
 C:0:0:0:2
 R:100
 F:WIS | KILL_UNDEAD | SEE_INVIS | ESP_UNDEAD | RES_NETHER
+#note: only Nightcrawler has acidic attacks
 
 N:92:of *Slay Demon*
 T:15:0:255
