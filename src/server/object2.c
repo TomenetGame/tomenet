@@ -6901,6 +6901,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	bool mha, rha; /* monk heavy armor, rogue heavy armor */
 	bool go_heavy = TRUE; /* new special thingy: don't pick super light cloth armour if we're not specifically light-armour oriented */
+	bool caster = FALSE;
 
 	/* for analysis functions and afterwards for determining concrete reward */
 	int maxweight_melee = adj_str_hold[p_ptr->stat_ind[A_STR]] * 10;
@@ -7457,6 +7458,19 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		s_printf("REWARD_UGLY (%d,%d)\n", o_ptr->tval, o_ptr->sval);
 	}
 
+	/* are we definitely going to use spells? (used for AM/MPDrain check) */
+	switch (p_ptr->pclass) {
+	case CLASS_SHAMAN:
+	case CLASS_MAGE:
+	case CLASS_RUNEMASTER:
+	case CLASS_MINDCRAFTER:
+	case CLASS_PRIEST:
+	case CLASS_PALADIN:
+	case CLASS_DRUID:
+		caster = TRUE;
+	}
+	if (spell_choice) caster = TRUE;
+
 	/* apply_magic to that item, until we find a fitting one */
 	tries = 0;
 	i = o_ptr->k_idx;
@@ -7547,7 +7561,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr)) continue;
 
 		/* Don't generate NO_MAGIC or DRAIN_MANA items if we do use magic */
-		if (spell_choice) {
+		if (caster) {
 			if (f5 & TR5_DRAIN_MANA) continue;
 			if (f3 & TR3_NO_MAGIC) continue;
 		}
