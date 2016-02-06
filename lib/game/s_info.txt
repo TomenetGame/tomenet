@@ -34,8 +34,8 @@ V:4.0.0
 #
 
 N:1:Combat
-D:Somewhat improves fighting in general and speeds up pseudo-identification.
-D:Allows wearing heavier armour without penalties (Martial Arts excepted).
+D:Improves fighting and allows wearing heavier armour (Martial Arts excepted).
+D:Pseudo-id melee weapons and armour faster and (at 11+) in more detail.
 A:14:Check parry/block chance
 I:1000:0
 
@@ -68,7 +68,7 @@ I:1000:0
 
 N:7:Archery
 D:Improves your skill with ranged weapons and provides special techniques.
-D:It also allows you to evaluate and create ammunition.
+D:Pseudo-id ranged weapons and ammunition faster and (at 11+) in more detail.
 A:6:Shooting techniques
 I:1000:0
 F:MKEY_HARDCODE
@@ -100,7 +100,7 @@ I:1000:0
 N:12:Magic
 D:Increases your max mana by +4 per point.
 #outdated (pre-lua): and spell-casting chance.
-D:Allows you to pseudo-id magical items easily.
+D:Allows you to pseudo-id magical items faster and (at 11+) in more detail.
 #A:4:Toggle fire-till-kill mode
 I:1000:0
 
