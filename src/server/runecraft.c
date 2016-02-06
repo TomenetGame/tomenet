@@ -190,17 +190,16 @@ byte rspell_fail(int Ind, byte imperative, byte type, s16b diff, u16b penalty) {
 
 u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, byte projection) {
 	u32b damage = rget_weight(r_projections[projection].weight);
-	u32b dice = rget_dice_weight(r_projections[projection].weight);
-	u32b d1, d2;
+	u32b d1 = r_types[type].d1min + rget_level(r_types[type].d1max - r_types[type].d1min);
+	u32b d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min);
 
-	/* Modifier */
+	/* Weight - Always a reduction if applicable, squarer damage for low weight elements when d1 > d2. - Kurzel */
+	d1 = d1 * damage / S_WEIGHT_HI;
+	damage = (r_types[type].dbmin + rget_level(r_types[type].dbmax - r_types[type].dbmin)) * damage / S_WEIGHT_HI;
+
+	/* Modifier - Usually an increase, squarer damage for high damage modifiers when d1 > d2. - Kurzel  */
+	d2 = d2 * r_imperatives[imperative].damage / 10;
 	damage = damage * r_imperatives[imperative].damage / 10;
-
-	/* Calculation */
-	d1 = r_types[type].d1min + rget_level(r_types[type].d1max - r_types[type].d1min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
-	//d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
-	d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * 1200 * 14 / (10 * S_WEIGHT_HI); //Squarer scaling, linear for all modifiers. - Kurzel
-	damage = r_types[type].dbmin + rget_level(r_types[type].dbmax - r_types[type].dbmin) * damage / S_WEIGHT_HI;
 
 	/* Return */
 	*dx = (byte)d1;
@@ -210,7 +209,7 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 }
 
 byte rspell_radius(byte imperative, byte type, byte skill, byte projection) {
-	s16b radius = r_types[type].r_min + rget_level(r_types[type].r_max - r_types[type].r_min) * rget_weight(r_projections[projection].weight) / S_WEIGHT_HI;
+	s16b radius = r_types[type].r_min + rget_level(r_types[type].r_max - r_types[type].r_min);
 	radius += r_imperatives[imperative].radius;
 	if (radius < S_RADIUS_MIN) radius = S_RADIUS_MIN;
 	if (radius > S_RADIUS_MAX) radius = S_RADIUS_MAX;
@@ -579,6 +578,10 @@ s_printf("Type: %s\n", r_types[type].name);
 #else
 		msg_format(Ind, "\377oYou do not have enough mana. (%s %s %s; cost: %d)", r_imperatives[imperative].name, r_projections[projection].name, r_types[type].name, cost);
 		p_ptr->energy -= energy;
+
+		/* Break FTK */
+		p_ptr->shooting_till_kill = FALSE;
+
 		return 0;
 #endif
 	}
@@ -694,21 +697,16 @@ s_printf("Duration: %d\n", duration);
 		case T_BOLT: { //Beam
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 			if (r_imperatives[imperative].flag != I_ENHA) fire_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
-			else {
-				damage = rspell_damage(&dx, &dy, flags_to_imperative(I_MAXI), type, skill, projection);
-				dice = damroll(dx, dy);
-				backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
-				fire_beam(Ind, gf_type, dir, dice, p_ptr->attacker);
-			}
+			else fire_beam(Ind, gf_type, dir, dice, p_ptr->attacker);
 		break; }
 
 		case T_CLOU: { //Storm
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 			if (r_imperatives[imperative].flag != I_ENHA) fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
 			else {
-				damage *= 2;
+				damage = damage * 15 / 10;
 				backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
-				fire_wave(Ind, gf_type, 0, damage, radius, duration*2, 10, EFF_STORM, p_ptr->attacker);
+				fire_wave(Ind, gf_type, 0, damage, 1, duration*2, 10, EFF_STORM, p_ptr->attacker);
 			}
 		break; }
 
@@ -717,9 +715,9 @@ s_printf("Duration: %d\n", duration);
 				switch (projection) {
 					case SV_R_LITE: { //Illumination
 						sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-						damage = rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2;
+						damage = rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/4;
 						backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
-						fire_ball(Ind, gf_type, 0, damage, radius+2, p_ptr->attacker);
+						fire_ball(Ind, gf_type, 0, damage, 3+radius*2, p_ptr->attacker);
 						lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 					break; }
 
@@ -731,11 +729,11 @@ s_printf("Duration: %d\n", duration);
 						switch (r_imperatives[imperative].flag) {
 							//Phase Door (6-12), Blink (10), Teleport (100), Spell (100-200)
 							case I_MINI: { radius = 12 + rget_level(12); break; }
-							case I_LENG: { radius = 36 + rget_level(36); break; }
+							case I_LENG: { radius = 25 + rget_level(25); break; }
 							case I_COMP: { radius =  6 + rget_level( 6); break; }
 							case I_MODE: { radius = 25 + rget_level(25); break; }
 							case I_EXPA: { radius = 75 + rget_level(75); break; }
-							case I_BRIE: { radius = 12 + rget_level(12); break; }
+							case I_BRIE: { radius = 25 + rget_level(25); break; }
 							case I_MAXI: { radius = 50 + rget_level(50); break; }
 						}
 						teleport_player(Ind, radius, FALSE); //FALSE -> reduced effect in pvp
@@ -811,7 +809,8 @@ s_printf("Duration: %d\n", duration);
 
 					case SV_R_SHAR: { //Dig
 						sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-						fire_bolt(Ind, GF_KILL_WALL, dir, dice, p_ptr->attacker);
+						//fire_bolt(Ind, GF_DISINTEGRATE, dir, dice, p_ptr->attacker);
+						wall_to_mud(Ind, dir); //Actually a beam, so hits own grid if wraithed. Be consistent, for now. - Kurzel
 					break; }
 
 					case SV_R_SOUN: { //Disarm
@@ -863,17 +862,14 @@ s_printf("Duration: %d\n", duration);
 		case T_BALL: { //Swarm
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 			if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
-			else fire_swarm(Ind, gf_type, dir, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), type, skill, projection), (((2+(skill-level+1)/10) > 2) ? (2+(skill-level+1)/10) : 2), p_ptr->attacker);
-			//Juse use regular ball backlash, instead of 2-4 mini backlashes? Similar to clouds. - Kurzel
-			//2 at skill 30 (60%-120%), 3 at skill 40 (90%-180%), 4 at skill 50 (120%-240%); mostly skewed toward minimum damage (but chance to 'crit'). - Kurzel
-			//~165% avg damage for 4 balls when PROJECT_STOP is enabled; ~5% better than brief balls on average, when the target has no cover.
+			else fire_swarm(Ind, gf_type, dir, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), type, skill, projection), (((3+(skill-level)/10) > 3) ? (3+(skill-level)/10) : 3), p_ptr->attacker);
 		break; }
 
 		case T_WAVE: { //Dispel
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, damage, 1, duration, 2, EFF_WAVE, p_ptr->attacker);
+			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, damage, 1, radius, 3, EFF_WAVE, p_ptr->attacker);
 			else {
-				damage *= 2;
+				damage = damage * 2;
 				backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
 				project_los(Ind, gf_type, damage, p_ptr->attacker);
 			}
@@ -888,7 +884,7 @@ s_printf("Duration: %d\n", duration);
 			if (r_imperatives[imperative].flag != I_ENHA) fire_full_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
 			else {
 				if (!failure) { failure = 1; backlash /= 3; } //Always backlash, but reduce the damage to 33% on a "successful" cast; Note FTK is disabled by backlash. - Kurzel
-				fire_grid_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
+				fire_grid_bolt(Ind, gf_type, dir, dx*dy, p_ptr->attacker);
 			}
 		break; }
 	}
@@ -1102,7 +1098,7 @@ bool warding_rune_break(int m_idx)
 
 	cs_ptr = GetCS(c_ptr, CS_RUNE);
 	/* Paranoia */
-	if(!cs_ptr) return(FALSE);
+	if (!cs_ptr) return(FALSE);
 
 	/* XXX Hack -- Owner online? */
 	int i, who = PROJECTOR_MON_TRAP;
@@ -1128,13 +1124,12 @@ bool warding_rune_break(int m_idx)
 
 		/* Calculate the Damage */
 		u32b dx, dy;
-		u16b damage = rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2;
+		u16b damage = rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection);
 
 		/* WRAITHFORM reduces damage/effect! */
 		//if (who > 0 && p_ptr->tim_wraith) damage /= 2;
 
 		/* Calculate the Remaining Parameters */
-		//byte radius = rspell_radius(imperative, 5, skill, projection);
 		byte radius = 0; //Be consistent with player traps, for now.
 
 		/* Resolve the Effect */
@@ -1153,13 +1148,15 @@ bool warding_rune_break(int m_idx)
 	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.rune.feat);
 
 	/* Drop rune */
-	invcopy(o_ptr, lookup_kind(TV_RUNE, cs_ptr->sc.rune.typ));
-	o_ptr->discount = cs_ptr->sc.rune.discount;
-	o_ptr->level = cs_ptr->sc.rune.level;
-	o_ptr->owner = cs_ptr->sc.rune.id;
-	o_ptr->mode = lookup_player_mode(cs_ptr->sc.rune.id);
-	o_ptr->note = cs_ptr->sc.rune.note;
-	drop_near(o_ptr, -1, wpos, my, mx);
+	if (who > 0) { //Ew, don't drop a rune for dead / missing players. - Kurzel
+		invcopy(o_ptr, lookup_kind(TV_RUNE, cs_ptr->sc.rune.typ));
+		o_ptr->discount = cs_ptr->sc.rune.discount;
+		o_ptr->level = cs_ptr->sc.rune.level;
+		o_ptr->owner = cs_ptr->sc.rune.id;
+		o_ptr->mode = lookup_player_mode(cs_ptr->sc.rune.id); //Ew, what if they're dead? - Kurzel
+		o_ptr->note = cs_ptr->sc.rune.note;
+		drop_near(o_ptr, -1, wpos, my, mx);
+	}
 
 	/* Cleanup */
 	cs_erase(c_ptr, cs_ptr);

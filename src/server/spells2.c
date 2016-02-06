@@ -7942,6 +7942,15 @@ void rune_combine_aux(int Ind, int item) {
 	byte number = o_ptr->number;
 	s16b note = o_ptr->note; //keep the incription of the initial rune
 
+	/* Rune Preservation? */
+	if (check_guard_inscription(o_ptr->note, 'R')) {
+		if (number > 1) number--;
+		else {
+			msg_format(Ind, "\377yYou choose to preserve your rune.");
+			return;
+		}
+	}
+
 	/* Recall the second rune */
 	o_ptr = &p_ptr->inventory[item];
 
@@ -7968,6 +7977,15 @@ void rune_combine_aux(int Ind, int item) {
 	level = (o_ptr->level > level) ? o_ptr->level : level;
 	discount = (o_ptr->discount > discount) ? o_ptr->discount : discount;
 	number = (o_ptr->number < number) ? o_ptr->number : number;
+
+	/* Rune Preservation? (second rune) */
+	if (check_guard_inscription(o_ptr->note, 'R')) {
+		if (number > 1) number--;
+		else {
+			msg_format(Ind, "\377yYou choose to preserve your rune.");
+			return;
+		}
+	}
 
 	/* Destroy the rune stacks in the pack */
 	msg_format(Ind, "There is a coupling of magic.");

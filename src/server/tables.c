@@ -3562,14 +3562,14 @@ player_class class_info[MAX_CLASS] = {
 			 * Intended to be the 'warrior' of the magic classes, but with allowed hybridization.
 			 */
 		TERM_L_BLUE,
-		{ 1, 2, -3, 3, -3, -3},
+		{ 0, 2, -2, 2, -2, 0}, //More towards rogue for STR/WIS, but more like an istar for CON. - Kurzel
 		{15, 0+100, 0, 19+100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 23, 20,  2, 20, 30, 45, 40,
-		10, 10, 10,  0,  3,  5, 20, 20,
-		 5, 20,
+		30, 32, 20,  3, 30, 26, 45, 40,
+		10, 12, 10,  0,  5,  5, 25, 30,
+		 4, 40, //4 is the minimum without form/shield? XP penalty similar to shaman. - Kurzel
 
 		{{ SKILL_COMBAT,
 			'+', 0,
@@ -3610,10 +3610,9 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 700, },
 			*/
-			/* Starting MP equivalent to Istari, er, or just slightly worse! (caster/blaster) */
 		{ SKILL_MAGIC,
-			'+', 3000, //4000
-			'+', 1000, },
+			'+', 1000,
+			'+', 800, },
 			/* Sneakiness tree */
 		{ SKILL_SNEAKINESS,
 			'+', 1000,

@@ -5058,7 +5058,6 @@ Chain_Macro:
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
 										color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
 									} else {
-										damage = rspell_damage(&dx, &dy, flags_to_imperative(I_MAXI), i, skill, projection);
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
 										color, 'a' + i, "beam", sdiff, cost, fail, dx, dy);
 									}
@@ -5070,7 +5069,7 @@ Chain_Macro:
 										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius, duration);
 									} else {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-										color, 'a' + i, "storm", sdiff, cost, fail, damage*2, radius, duration*2);
+										color, 'a' + i, "storm", sdiff, cost, fail, damage*15/10, 1, duration*2);
 									}
 								break; }
 
@@ -5080,7 +5079,7 @@ Chain_Macro:
 
 											case SV_R_LITE: { //Illumination
 												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d illumination",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2, radius+2);
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/4, 3+radius*2);
 											break; }
 
 											case SV_R_DARK: { //Invisibility
@@ -5092,11 +5091,11 @@ Chain_Macro:
 												switch (r_imperatives[imperative].flag) {
 													//Manual tuning; Phase Door (6-12), Blink (10), Teleport (100), Spell (100-200) - Kurzel
 													case I_MINI: { radius = 12 + rget_level(12); break; }
-													case I_LENG: { radius = 36 + rget_level(36); break; }
+													case I_LENG: { radius = 25 + rget_level(25); break; }
 													case I_COMP: { radius =  6 + rget_level( 6); break; }
 													case I_MODE: { radius = 25 + rget_level(25); break; }
 													case I_EXPA: { radius = 75 + rget_level(75); break; }
-													case I_BRIE: { radius = 12 + rget_level(12); break; }
+													case I_BRIE: { radius = 25 + rget_level(25); break; }
 													case I_MAXI: { radius = 50 + rget_level(50); break; }
 												}
 												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d teleportation",
@@ -5180,7 +5179,7 @@ Chain_Macro:
 										}
 									} else {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
-										color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2);
+										color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection));
 									}
 								break; }
 
@@ -5190,14 +5189,14 @@ Chain_Macro:
 										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 									} else {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d or %d (x%d)",
-										color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((2+(sdiff-1)/10) > 2) ? (2+(sdiff-1)/10) : 2));
+										color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((3+(sdiff-1)/10) > 3) ? (3+(sdiff-1)/10) : 3));
 									}
 								break; }
 
 								case T_WAVE: { //Dispel
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) dur %d",
-										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 									} else {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
 										color, 'a' + i, "dispel", sdiff, cost, fail, damage*2);
@@ -5219,8 +5218,8 @@ Chain_Macro:
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
 										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d (33%% backlash)",
-										color, 'a' + i, "flare", sdiff, cost, fail, dx, dy);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (33%% backlash)",
+										color, 'a' + i, "flare", sdiff, cost, fail, dx*dy);
 									}
 								break; }
 

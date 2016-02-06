@@ -1719,17 +1719,16 @@ byte rspell_fail(byte imperative, byte type, s16b diff, u16b penalty) {
 
 u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, byte projection) {
 	u32b damage = rget_weight(r_projections[projection].weight);
-	u32b dice = rget_dice_weight(r_projections[projection].weight);
-	u32b d1, d2;
+	u32b d1 = r_types[type].d1min + rget_level(r_types[type].d1max - r_types[type].d1min);
+	u32b d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min);
 
-	/* Modifier */
+	/* Weight - Always a reduction if applicable, squarer damage for low weight elements when d1 > d2. - Kurzel */
+	d1 = d1 * damage / S_WEIGHT_HI;
+	damage = (r_types[type].dbmin + rget_level(r_types[type].dbmax - r_types[type].dbmin)) * damage / S_WEIGHT_HI;
+
+	/* Modifier - Usually an increase, squarer damage for high damage modifiers when d1 > d2. - Kurzel  */ 
+	d2 = d2 * r_imperatives[imperative].damage / 10; 
 	damage = damage * r_imperatives[imperative].damage / 10;
-
-	/* Calculation */
-	d1 = r_types[type].d1min + rget_level(r_types[type].d1max - r_types[type].d1min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
-	//d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * dice * r_imperatives[imperative].damage / (10 * S_WEIGHT_HI);
-	d2 = r_types[type].d2min + rget_level(r_types[type].d2max - r_types[type].d2min) * 1200 * 14 / (10 * S_WEIGHT_HI); //Squarer scaling, linear for all modifiers. - Kurzel
-	damage = r_types[type].dbmin + rget_level(r_types[type].dbmax - r_types[type].dbmin) * damage / S_WEIGHT_HI;
 
 	/* Return */
 	*dx = (byte)d1;
@@ -1739,7 +1738,7 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 }
 
 byte rspell_radius(byte imperative, byte type, byte skill, byte projection) {
-	s16b radius = r_types[type].r_min + rget_level(r_types[type].r_max - r_types[type].r_min) * rget_weight(r_projections[projection].weight) / S_WEIGHT_HI;
+	s16b radius = r_types[type].r_min + rget_level(r_types[type].r_max - r_types[type].r_min);
 	radius += r_imperatives[imperative].radius;
 	if (radius < S_RADIUS_MIN) radius = S_RADIUS_MIN;
 	if (radius > S_RADIUS_MAX) radius = S_RADIUS_MAX;
@@ -1852,7 +1851,6 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
 					color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
 				} else {
-					damage = rspell_damage(&dx, &dy, flags_to_imperative(I_MAXI), i, skill, projection);
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
 					color, 'a' + i, "beam", sdiff, cost, fail, dx, dy);
 				}
@@ -1864,7 +1862,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius, duration);
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-					color, 'a' + i, "storm", sdiff, cost, fail, damage*2, radius, duration*2);
+					color, 'a' + i, "storm", sdiff, cost, fail, damage*15/10, 1, duration*2);
 				}
 			break; }
 
@@ -1874,7 +1872,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 
 						case SV_R_LITE: { //Illumination
 							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d illumination",
-							color, 'a' + i, r_types[i].name, sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2, radius+2);
+							color, 'a' + i, r_types[i].name, sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/4, 3+radius*2);
 						break; }
 
 						case SV_R_DARK: { //Invisibility
@@ -1886,11 +1884,11 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							switch (r_imperatives[imperative].flag) {
 								//Manual tuning; Phase Door (6-12), Blink (10), Teleport (100), Spell (100-200) - Kurzel
 								case I_MINI: { radius = 12 + rget_level(12); break; }
-								case I_LENG: { radius = 36 + rget_level(36); break; }
+								case I_LENG: { radius = 25 + rget_level(25); break; }
 								case I_COMP: { radius =  6 + rget_level( 6); break; }
 								case I_MODE: { radius = 25 + rget_level(25); break; }
 								case I_EXPA: { radius = 75 + rget_level(75); break; }
-								case I_BRIE: { radius = 12 + rget_level(12); break; }
+								case I_BRIE: { radius = 25 + rget_level(25); break; }
 								case I_MAXI: { radius = 50 + rget_level(50); break; }
 							}
 							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d teleportation",
@@ -1974,7 +1972,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					}
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
-					color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2);
+					color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection));
 				}
 			break; }
 
@@ -1984,14 +1982,14 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d or %d (x%d)",
-					color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((2+(sdiff-1)/10) > 2) ? (2+(sdiff-1)/10) : 2));
+					color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((3+(sdiff-1)/10) > 3) ? (3+(sdiff-1)/10) : 3));
 				}
 			break; }
 
 			case T_WAVE: { //Dispel
 				if (r_imperatives[imperative].flag != I_ENHA) {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) dur %d",
-					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
+					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
 					color, 'a' + i, "dispel", sdiff, cost, fail, damage*2);
@@ -2013,8 +2011,8 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
 					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 				} else {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d (33%% backlash)",
-					color, 'a' + i, "flare", sdiff, cost, fail, dx, dy);
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (33%% backlash)",
+					color, 'a' + i, "flare", sdiff, cost, fail, dx*dy);
 				}
 			break; }
 

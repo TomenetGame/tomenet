@@ -3476,7 +3476,7 @@ cptr item_activation(object_type *o_ptr) {
 
 	if (o_ptr->tval == TV_RUNE) {
 		if (o_ptr->sval < RCRAFT_MAX_ELEMENTS)
-			return "combining with a different, basic rune to a high tier rune";
+			return "combining with a different, basic rune to create a combination rune";
 		else
 			return "splitting into two basic tier runes";
 	}

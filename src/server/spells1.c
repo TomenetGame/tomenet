@@ -10966,6 +10966,10 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 								cave_set_feat_live(wpos, y, x, FEAT_FLOOR);
 							else
 								cave_set_feat_live(wpos, y, x, FEAT_ASH);
+							/* Cleanup Runemaster Glyphs - Kurzel */
+							struct c_special *cs_ptr;
+							cs_ptr = GetCS(c_ptr2, CS_RUNE);
+							if (cs_ptr) cs_erase(c_ptr2, cs_ptr);
 						}
 					}
 

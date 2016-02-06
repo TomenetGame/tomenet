@@ -13177,9 +13177,9 @@ Druid       +1   0  +2  -2  -2  +1       +5      +35%       4
 Shaman       0  +1  +2  -2   0   0       +3      +40%       4
             10  30  30   4  30  20  45  23              poor     poor
              0  11  10   0   5   3  20  12
-Runemaster  +1  +2  -3  +3  -3  -3       +5      +20%       4
-            30  23  20   2  30  20  45  40              fair     poor
-             0  11  10   0   5   3  20  20
+Runemaster   0  +2  -2  +2  -2   0       +4      +40%       4
+            30  32  20   3  30  26  45  40              fair     poor
+             0  12  10   0   5   5  25  30
 Mindcrafter +2  +2   0   0   0  +1       +6      +25%       5
             30  28  36   3  35  14  55  45              good     fair
              0   9   5   0   3   3  26  25
@@ -15299,14 +15299,14 @@ Enhanced Signs are an exception to this rule, but only when retrieving a glyph.
 -------------------------------------------------------------------------------
 Name         | Lvl | Description
 -------------------------------------------------------------------------------
-Minimized    | + 0 | Less damage, radius, duration, cost and failure rate.
-Lengthened   | + 2 | More duration, cost and failure rate. Less damage.
-Compressed   | + 3 | Less radius, duration and failure rate. More damage.
-Moderate     | + 5 | Comparable to traditional spells in all aspects.
-Expanded     | + 7 | More radius, duration, cost and failure rate. Projection.
-Brief        | + 8 | Less damage, duration, failure rate and half casting time.
-Maximized    | +10 | More damage, radius, duration, cost and failure rate.
-Enhanced (&) | +10 | More cost. Alternate spell type, see Enhanced Spell Types.
+Minimized    | + 0 | Best efficiency, worst damage, poor radius and duration.
+Extended     | + 2 | Good efficiency, poor damage, best duration.
+Compressed   | + 3 | Good efficiency and duration, worst radius.
+Moderate     | + 5 | Balanced spell parameters.
+Expanded     | + 7 | Poor efficiency and duration, best radius. Projects Signs.
+Brief        | + 8 | Poor efficiency, good damage, worst duration. Half energy!
+Maximized    | +10 | Worst efficiency, best damage, good radius and duration.
+Enhanced (&) | +10 | Unique spell parameters, see Enhanced Spell Types.
 
 Spell Types
 -----------
@@ -15321,9 +15321,9 @@ Bolt       |   5 | Fires a single target bolt, may be reflected.     | Beam
 Cloud      |  10 | Damages an area about your target over time.      | Storm
 Sign   (*) |  15 | Specific buff or effect, see Sign Effects.        | Glyph
 Ball       |  20 | Targeted area damage that diminishes with radius. | Swarm
-Wave       |  25 | Rapidly damages an area about yourself over time. | Dispel
+Wave       |  25 | High damage in an expanding area about yourself.  | Dispel
 Sigil  (&) |  30 | Grants worn equipment the according resistance.   | Boon
-Burst      |  35 | Targeted area damage, full damage across radius.  | Flare
+Burst      |  35 | Focussed area damage, full damage across radius.  | Flare
 
 Enhanced Spell Types
 --------------------
@@ -15335,9 +15335,9 @@ is an exception to this rule, but only when retrieving the set rune (a refund).
 Name       | Lvl | Description                                       | Basic
 -------------------------------------------------------------------------------
 Beam       |  15 | Fires a beam, damaging all grids in a line.       | Bolt
-Storm      |  20 | A high damage cloud that circles you as you move. | Cloud
+Storm      |  20 | A high damage, radius 1 cloud that follows you.   | Cloud
 Glyph  (*) |  25 | Set or retrieve a damaging glyph of warding.      | Sign
-Swarm      |  30 | Fires 2-4 minimized balls near the target.        | Ball
+Swarm      |  30 | Fires a spread of level/10, radius 1 mini balls.  | Ball
 Dispel     |  35 | Instantly damages all monsters in line of sight.  | Wave
 Boon   (&) |  40 | Enhances worn equipment, see Enhanced Sigil Boni. | Sigil
 Flare      |  45 | High damage non-reflectable bolt, 33% backlash.   | Burst

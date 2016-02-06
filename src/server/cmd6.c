@@ -4893,7 +4893,16 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				byte number = o_ptr->number;
 				s16b note = o_ptr->note;
 
-				/* Destroy the rune stack in the pack */
+				/* Rune Preservation? */
+				if (check_guard_inscription(o_ptr->note, 'R')) {
+					if (number > 1) number--;
+					else {
+						msg_format(Ind, "\377yYou choose to preserve your rune.");
+						return;
+					}
+				}
+
+				/* Destroy the rune stack in the pack (or reduce to just one) */
 				msg_format(Ind, "There is a decoupling of magic.");
 				inven_item_increase(Ind, item, -number);
 				inven_item_optimize(Ind, item);

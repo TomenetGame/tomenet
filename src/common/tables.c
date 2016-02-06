@@ -468,29 +468,29 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 { R_MANA, "Mana",     SKILL_R_MANA },
 };
 
-r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES] =
-{
-{ I_MINI, "minimized",   0,  6, -10,  6, -1,  8, 10 }, //best for sigils, some signs, lower levels
-{ I_LENG, "lengthened",  2,  8,  +5,  9,  0, 15, 10 }, //best efficiency, best for some signs, waves
-{ I_COMP, "compressed",  3, 12,  -5, 13, -2,  8, 10 }, //worst area damage, high single target efficiency
-{ I_MODE, "moderate",    5, 10,   0, 10,  0, 10, 10 }, //good for heavier weight elements with area damage
-{ I_EXPA, "expanded",    7, 13,  +5, 11, +2, 13, 10 }, //best area damage, low single target efficiency
-{ I_BRIE, "brief",       8,  8,  -5,  8,  0,  6,  5 }, //worst efficiency, sometimes best damage, flexible
-{ I_MAXI, "maximized",  10, 14, +10, 14, +1, 13, 10 }, //usually best damage, good ball efficiency
-{ I_ENHA, "enhanced",   10, 15, +15, 10,  0, 10, 10 }, //per-case damage / efficiency / area trade-offs
-};
+r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES] =   // |  EFF |  DPS |  AOE |  DUR |
+{                                                      // +------+------+------+------+
+{ I_MINI, "minimized",   0,  4, -12,  6, -1,  8, 10 }, // | +50% | -40% | POOR | POOR |
+{ I_LENG, "lengthened",  2,  6,  -6,  8,  0, 14, 10 }, // | +33% | -20% |      | BEST | Best efficiency (duration*area) for cloud.
+{ I_COMP, "compressed",  3,  8,  -3, 10, -2, 12, 10 }, // | +25% |   0% | PFFT | GOOD | Best dps efficiency; bolt. Ball for reflecting targets.
+{ I_MODE, "moderate",    5, 10,   0, 10,  0, 10, 10 }, // |      |      |      |      | Not inefficient in more situations, the macro/mana saver.
+{ I_EXPA, "expanded",    7, 12,  +3,  9, +2,  8, 10 }, // | -25% | -10% | BEST | POOR | Best aoe efficiency; burst. Cloud for dense population.
+{ I_BRIE, "brief",       8,  9,  +6,  6,  0,  6,  5 }, // | -33% | +20% |      | PFFT | 
+{ I_MAXI, "maximized",  10, 28, +12, 14, +1, 12, 10 }, // | -50% | +40% | GOOD | GOOD | Best outright dps, except situational storm, swarm, flare.
+{ I_ENHA, "enhanced",   10, 20,   0, 10,  0, 10, 10 }, // |      |      |      |      |
+};                                                     // +------+------+------+------+
 
-r_type r_types[RCRAFT_MAX_TYPES] =                                     //Max Avg Base Damage/Turn; [] Dice/Damage Limit
-{                                                                      // | ENHA | MAXI | BRIE | Enha | Maxi | Brie |
-{ T_BOLT, "bolt",   5,  1, 30, 3,  1, 40, 22,  0,   0, 0, 0,  0,  0 }, // |  915 |  915 | 1080 [  705 ]  705 |  840 | * Compare 900:1059 mana (bolt), beam is non-relecting, compare burst.
-{ T_CLOU, "cloud", 10,  5, 30, 0,  0,  0,  0,  2, 196, 1, 3,  6, 14 }, // |  440 |  307 |      |  232 |  162 |      | * Compare 370:360 ice (s), 234:219 poison (c), 162:168 shards (c).
-{ T_SIGN, "sign",  15, 10, 20, 7, 10, 13, 20, 10, 100, 2, 4, 10, 35 }, // |  403 |      |      [  216 ]      |      | * Glyph uses half a moderate ball damage, should be relatively small.
-{ T_BALL, "ball",  20, 15, 30, 0,  0,  0,  0, 20, 720, 2, 4,  0,  0 }, // | 1230 | 1122 | 1300 [  666 ]  598 [  700 ] * Swarm with one direct hit of four balls shown, a (x2.5) multiplier.
-{ T_WAVE, "wave",  25, 20, 40, 0,  0,  0,  0, 30, 334, 0, 0,  6, 10 }, // |  744 | 1524 |      [  418 ]  843 |      | * Weight 600 (mana) caps at 500; consecutive regular waves don't stack.
-{ T_SIGL, "sigil", 30, 50, 50, 0,  0,  0,  0, 10, 100, 0, 0,  0,  0 }, // |      |   S_WEIGHT_INFLUENCE 70   |      |
-{ T_BURS, "burst", 35, 15, 30, 3,  1, 53, 29, 20, 720, 1, 2,  0,  0 }, // | 1180 | 1122 | 1300 [  900 ]  598 [  700 ] * Dice actually scale better for lower weight elements! - Kurzel
-};                                                                     // ---- 1200 Weights -------- 400 Weights ----
-
+r_type r_types[RCRAFT_MAX_TYPES] =                                      // |   Moderate  |  Maximized  |  Enhanced*  | Table generated for 0.25 weight (base elements, +20% dps from high elements) Higher weight ruins the bolt advantage vs aoe spells for high elements. :/
+{                                                                       // +------+------+------+------+------+------+--------------------------------------------------------------------------------------------------------------------------------------------------------
+{ T_BOLT, "bolt",   5,  1, 15, 2,  1, 73, 20,  0,   0, 0,  0,  0,  0 }, // |  766 |  630 [ 1058 ]  870 |  766 |  630 | Bolt; +50% dps from ball. Beam; ~ball dps but more efficient, -25% compared to Swarm (but less restrictive). Base dmg matches istari manabolt damage, mana dmg is -100 dmg by comparison.
+{ T_CLOU, "cloud", 10,  3, 20, 0,  0,  0,  0,  1, 163, 2,  2,  6, 14 }, // |  163 |  135 |  228 |  190 |  244 |  203 | Storm is +50% dps for much lower cost than a maximized cloud, with 2.0x duration and a fixed radius of 1. Might see more use by hybrids; more applicable than frost barrier for most elements.
+{ T_SIGN, "sign",  15,  5, 20, 7, 10, 13, 20, 10, 100, 2,  2, 20, 45 }, // |      |      |      |      |      |      | Radius for Disarm is 1-4, Illumination is 5-11 (identical to Istari). Bolt damage matches stone-to-mud. Annihilation is -50% dps compared to the wand, 720 to Morgy/uniques, 2400 cap to PowerD/N/etc (better than flare if it hits).
+{ T_BALL, "ball",  20,  5, 15, 0,  0,  0,  0, 21, 519, 2,  3,  0,  0 }, // |  519 [  432 ]  726 [  605 ]  951 [  792 ] Fireflash(r4): 430vs432 pre SP, 594vs605 post SP, 792(usually less)vs792(inefficient) to Morgy, 1188vs605*2 suscept cap. OrbofDraining(r3): 367, 734 to Morgy
+{ T_WAVE, "wave",  25, 10, 30, 0,  0,  0,  0, 20, 200, 8, 12,  0,  0 }, // |  200 |  166 |  280 |  233 |  400 |  333 | -30% dps for mana dispel compared to power staff, base elements are equivalent.
+{ T_SIGL, "sigil", 30, 25, 25, 0,  0,  0,  0, 10, 100, 0,  0,  0,  0 }, // |      |      |      |      |      |      |
+{ T_BURS, "burst", 35,  3, 15, 1,  1, 32, 32, 21, 519, 1,  2,  0,  0 }, // |  519 |  432 |  726 |  605 [ 1056 ]  870 | Flare; +10% dps over swarm (and not area restricted), but -33% HP efficiency. oO Intended to mimic average bolt damage.
+};                                                                      // +------+------+------+------+------+------+
+                                                                        // | 1200 |  400 | 1200 |  400 | 1200 |  400 |
 r_projection r_projections[RCRAFT_MAX_PROJECTIONS] =
 {
 { R_LITE,          GF_LITE,       400, "light",           TR2_RES_LITE },
@@ -516,9 +516,8 @@ r_projection r_projections[RCRAFT_MAX_PROJECTIONS] =
 { R_NEXU | R_MANA, GF_TIME,       150, "time",            TR5_RES_TIME },
 
 { R_NETH | R_CHAO, GF_DISENCHANT, 500, "disenchantment",  TR2_RES_DISEN },
-//{ R_NETH | R_MANA, GF_ICE,        933, "ice",             TR2_RES_COLD | TR2_RES_SOUND | TR2_RES_SHARDS }, //Two high resists, too much? - Kurzel
 { R_NETH | R_MANA, GF_ICE,        933, "ice",             TR2_RES_COLD | TR2_RES_SHARDS },
 
-{ R_CHAO | R_MANA, GF_PLASMA,     933, "plasma",          TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND }, //Competitive weighting for base/high elements. - Kurzel
+{ R_CHAO | R_MANA, GF_PLASMA,     933, "plasma",          TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND },
 };
 

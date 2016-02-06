@@ -8067,18 +8067,17 @@ extern int PlayerUID;
 #define S_COST_MAX 75
 #define S_DIFF_MAX 15 //Maximum level difference between spell and skill levels
 #define S_RADIUS_MIN 1
-#define S_RADIUS_MAX 5
+#define S_RADIUS_MAX 14
 #define S_DURATION_MIN 3
 #define S_DURATION_MAX 50
 #define S_WEIGHT_LO 150 //refer common/tables.c
 #define S_WEIGHT_HI 1200 //refer common/tables.c
-#define S_WEIGHT_INFLUENCE 70 //0 to S_WEIGHT_INFLUENCE_MAX; directly proportional to the spread of element damage caps.
-#define S_WEIGHT_INFLUENCE_MAX 100 //Used to be 10, now one more significant figure!
+#define S_WEIGHT_INFLUENCE 25 //0 to 100; directly proportional to the spread of element damage caps.
 
 /* Macros */
 #define rget_level(x) ((skill * (x)) / 50)
-#define rget_weight(x) ((S_WEIGHT_HI * (100 * (S_WEIGHT_INFLUENCE_MAX - S_WEIGHT_INFLUENCE) + (100 * S_WEIGHT_INFLUENCE * (x - S_WEIGHT_LO) / (S_WEIGHT_HI - S_WEIGHT_LO))) / S_WEIGHT_INFLUENCE_MAX + 100 * S_WEIGHT_LO) / 100)
-#define rget_dice_weight(x) ((S_WEIGHT_HI * (100 * (S_WEIGHT_INFLUENCE_MAX - S_WEIGHT_INFLUENCE / 2) + (100 * S_WEIGHT_INFLUENCE / 2 * (x - S_WEIGHT_LO) / (S_WEIGHT_HI - S_WEIGHT_LO))) / S_WEIGHT_INFLUENCE_MAX + 100 * S_WEIGHT_LO) / 100)
+//#define rget_weight(x) ((S_WEIGHT_HI * (100 * (100 - S_WEIGHT_INFLUENCE) + (100 * S_WEIGHT_INFLUENCE * (x - S_WEIGHT_LO) / (S_WEIGHT_HI - S_WEIGHT_LO))) / 100 + 100 * S_WEIGHT_LO) / 100)
+#define rget_weight(x) ((x * S_WEIGHT_INFLUENCE + S_WEIGHT_HI * (100 - S_WEIGHT_INFLUENCE)) / 100) // Simple percent weighting, for easier hand calculations. - Kurzel
 
 /* macro for debugging Doppelgaenger @s */
 #define cave_midx_debug(wpos_, cy, cx, midx) { \
