@@ -7244,7 +7244,7 @@ timing_before_return:
 	int time_milliseconds_fraction = time_delta.tv_usec % 1000;
 	/* Restrict output, less spammy log file */
 	if (time_milliseconds >= 4) { /* 1.) only log timing result if it's spiking */
-		if (log[0]) s_printf(log); /* 2.) only log step process if timing result is spiking */
+		if (log[0]) s_printf("%s", log); /* 2.) only log step process if timing result is spiking */
 		s_printf("%s: Execution took %d.%03d milliseconds.\n", __func__, time_milliseconds, time_milliseconds_fraction);
 	}
 }
