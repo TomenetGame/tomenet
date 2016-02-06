@@ -6856,7 +6856,7 @@ void export_player_store_offers(int *export_turns) {
 	int i;
 	long price;
 	object_type *o_ptr;
-	char o_name[ONAME_LEN];
+	char o_name[ONAME_LEN], log[MAX_CHARS];
 	struct timeval time_begin, time_end, time_delta;
 
 #ifdef EXPORT_JSON
@@ -6869,6 +6869,7 @@ void export_player_store_offers(int *export_turns) {
 
 	/* For measuring performance */
 	gettimeofday(&time_begin, NULL);
+	log[0] = 0;
 
 	if (!o_max) { //paranoia -- note: we just discard TRAD_HOUSEs too in this case, who cares =P
 		(*export_turns) = 0;
@@ -6905,6 +6906,7 @@ void export_player_store_offers(int *export_turns) {
  #endif
 			my_fclose(fp);
 
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: Done.\n");
 			(*export_turns) = 0; //don't re-call us again, we're done for this time
 			goto timing_before_return; // HACK - Execute timing code before returning
 			return; /* --- The final end of this routine --- */
@@ -6996,7 +6998,7 @@ void export_player_store_offers(int *export_turns) {
 		}
 
 		(*export_turns)--;
-		s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported houses, step %d/%d.\n", step - (*export_turns), step);
+		sprintf(log, "EXPORT_PLAYER_STORE_OFFERS: Exported houses, step %d/%d.\n", step - (*export_turns), step);
 
 		/* finish exporting? */
 		if (coverage >= max_bak) {
@@ -7123,7 +7125,7 @@ void export_player_store_offers(int *export_turns) {
 	}
 	if (step) { //not disabled? then log
 		(*export_turns)--;
-		s_printf("EXPORT_PLAYER_STORE_OFFERS: Exported o_list, step %d/%d.\n", step - (*export_turns), step);
+		sprintf(log, "EXPORT_PLAYER_STORE_OFFERS: Exported o_list, step %d/%d.\n", step - (*export_turns), step);
 	}
 #ifndef USE_MANG_HOUSE_ONLY
     }
@@ -7143,9 +7145,8 @@ void export_player_store_offers(int *export_turns) {
 		if (MANG_HOUSE_RATE == 100
 		    || HOUSES_PER_TURN == 0 /* houses exporting actually disabled? */
 		    || !num_houses_bak) {
-			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
-
 			if (opened) { //put fclose() in a frame of its own
+				//(we've just exported the final chunk of o_list)
 				opened = FALSE;
 				(*export_turns) = 1; //survive the file-closing turn
 				goto timing_before_return; // HACK - Execute timing code before returning
@@ -7158,14 +7159,14 @@ void export_player_store_offers(int *export_turns) {
 			fprintf(fp, "]}\n");
  #endif
 			my_fclose(fp);
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 			(*export_turns) = 0; //don't re-call us again, we're done for this time
 			goto timing_before_return; // HACK - Execute timing code before returning
 			return;
 		}
 
 		if (!copied && opened) {
-			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
-
+				//(we've just exported the final chunk of o_list)
 			opened = FALSE;
 			(*export_turns) = 1; //keep us alive for the extra my_fopen turn
 			goto timing_before_return; // HACK - Execute timing code before returning
@@ -7173,6 +7174,8 @@ void export_player_store_offers(int *export_turns) {
 		}
 
 		if (!copied) {
+			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
+
 			/* also prepare to additionally export all houses while we're iterating through them anyway! */
 			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet-houses.txt");
 			remove(path);
@@ -7239,7 +7242,11 @@ timing_before_return:
 	}
 	int time_milliseconds = time_delta.tv_sec * 1000 + time_delta.tv_usec / 1000;
 	int time_milliseconds_fraction = time_delta.tv_usec % 1000;
-	s_printf("%s: Execution took %d.%03d milliseconds.\n", __func__, time_milliseconds, time_milliseconds_fraction);
+	/* Restrict output, less spammy log file */
+	if (time_milliseconds >= 4) { /* 1.) only log timing result if it's spiking */
+		if (log[0]) s_printf(log); /* 2.) only log step process if timing result is spiking */
+		s_printf("%s: Execution took %d.%03d milliseconds.\n", __func__, time_milliseconds, time_milliseconds_fraction);
+	}
 }
   #endif
  #endif
