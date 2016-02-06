@@ -6577,6 +6577,16 @@ Poison  -Poisoned       The player will continuously lose Hit Points.
                         Resisting poison will prevent the player from getting
                         poisoned (compare (5.6)).
 
+Not really a status effect but..
+Switch places           Monsters that have MOVE_BODY flag may switch place with
+                        the player. This can be very dangerous if it happens in
+                        a situation where the player is standing on a staircase
+                        on purpose to retreat quickly if the situation gets out
+                        of hands and the player is also within a no-teleport
+                        area.
+                        The higher the player's level and the greater his body
+                        weight is, the less likely he is going to get switched.
+
 (*) Details about melee-induced cuts and stuns:
 For a monster attack to cause cuts or stun, it must deal 95% of its potential
 damage maximum (rounded down). This is also called a 'critical hit' of a
