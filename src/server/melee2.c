@@ -2242,8 +2242,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (direct) msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
 			return (TRUE);
 		}
-
+ #ifdef GENERIC_INTERCEPTION
+		if (monst_check_grab(m_idx, 85, "cast")) return (TRUE);
+ #else
 		if (monst_check_grab(m_idx, 75, "cast")) return (TRUE);
+ #endif
 	}
 #endif	// STUPID_MONSTER_SPELLS
 
@@ -7837,7 +7840,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		}
 
 		/* Hack -- player hinders its movement */
+#ifdef GENERIC_INTERCEPTION
+		if (do_move && !pfriend && monst_check_grab(m_idx, 90, "run")) {
+#else
 		if (do_move && !pfriend && monst_check_grab(m_idx, 85, "run")) {
+#endif
 			/* Take a turn */
 			do_turn = TRUE;
 

@@ -11344,44 +11344,21 @@ Note that not every skill is available to every profession (class).
                                 The monster must be standing right beside you
                                 (horizontally, vertically or diagonally).
 
-                                The chance to intercept an enemy is
-                                (2 * interception) + (martial_arts_skill / 2)
-                                - (enemy_level / 3).
-                                Example: Chance to intercept summoning of the
-                                Balrog of Moria with maxed interception is
-                                (2*50) + 0 - (50/3) = 84% base. Now since it's
-                                spellcasting it's reduced to 75%: 84%*75%=63%.
-                                For Morgoth it's (2*50)+0-(100/3) = 67% base.
-                                To intercept his spells it's 75% of 67% = 50%!
-                                (A maxed out martial artist would have 69%.)
-                                Note that this formula shows that interception
-                                is actually not that useful if you don't keep
-                                it at the maximum possible value all the time.
-                                Note: Enemy level means 'rlevel' (see (0.4)).
-
-                                Interception chance is recuded by 2/3 while
+                                Interception chance is recuded greatly while
                                 you are blind.
                                 You aren't able to intercept while you are
                                 stunned, confused, paralyed, resting, cloaked
                                 or shadow running (compare (4.11)).
                                 Player ghosts cannot intercept either.
 
-                                Interception chances also depend on what the
-                                enemy is trying to do. Certain actions are
-                                harder to intercept, those reduce the chance
-                                further, to..
-                                100%    for shooting (except for missiles or
-                                        rockets, see below)
-                                 85%    for running (fleeing / stepping back)
-                                 75%    for casting a spell / summoning
-                                 50%    for teleporting / phasing (blinking)
-                                Some abilities cannot be intercepted:
+                                Interception works best to prevent shooting a
+                                ranged weapon. It's slightly harder to prevent
+                                a monster from running away or casting a spell
+                                and even somewhat harder to prevent a monster
+                                from teleporting or blinking.
+                                Some abilities cannot be intercepted at all:
                                 Shrieking, unmagic, shooting missiles/rockets,
                                 throwing boulders, breathing.
-
-                                Interception chance caps at 80% (cap is
-                                applied after all other penalties have been
-                                factored in, at the very end of calculation).
 
                                 Note that multiple players trying to intercept
                                 the same monster does not result in 'stacking'
