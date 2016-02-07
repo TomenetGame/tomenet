@@ -1410,6 +1410,10 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 	int eff_lev;
 #endif
 	int rlev = r_ptr->level;
+#ifdef ENABLE_STANCES
+	int fac;
+#endif
+
 
 	/* hack: if we dont auto-retaliate vs a monster than we dont intercept either */
 	if (r_ptr->flags8 & RF8_NO_AUTORET) return FALSE;
@@ -1454,21 +1458,24 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		/* Compute distance */
 		if (distance(y2, x2, q_ptr->py, q_ptr->px) > 1) continue;
 
+		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100);
 
 #ifdef ENABLE_STANCES
 		if (q_ptr->combat_stance == 1) switch(q_ptr->combat_stance_power) {
-			case 0: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 50); break;
-			case 1: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 55); break;
-			case 2: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 60); break;
-			case 3: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 65); break;
+			case 0: fac = 50; break;
+			case 1: fac = 55; break;
+			case 2: fac = 60; break;
+			case 3: fac = 65; break;
 		} else if (q_ptr->combat_stance == 2) switch(q_ptr->combat_stance_power) {
-			case 0: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 103); break;
-			case 1: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 106); break;
-			case 2: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 109); break;
-			case 3: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 115); break;
-		} else
+			case 0: fac = 104; break;
+			case 1: fac = 107; break;
+			case 2: fac = 110; break;
+			case 3: fac = 115; break;
+		} else fac = 100;
+ #ifndef GENERIC_INTERCEPTION /* old way: actually modify grabchance before subtracing rlev factor */
+		grabchance = (grabchance * fac) / 100;
+ #endif
 #endif
-		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100);
 
 		/* Apply Martial-arts bonus */
 		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr) &&
@@ -1495,17 +1502,10 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		}
 
 		//w/o G_I: 50.000: 67..115 -> 33..140 (MA); 0.000: -33..0
- #if 0
-		grabchance >> 1; //50.000: 33..57 -> 33..70 (MA); 0.000: -16..12
-		if (eff_lev) grabchance += 10 + eff_lev / 5;
- #endif
- #if 0
-		grabchance = (grabchance * 2) / 5; //50.000: 26..46 -> 26..56 (MA); 0.000: -13..10
-		if (eff_lev) grabchance += 5 + eff_lev / 2;
- #endif
- #if 1
 		grabchance = (grabchance * 2) / 5;
 		if (eff_lev) grabchance += 5 + (eff_lev * 2) / 5;
+ #ifdef ENABLE_STANCES
+		grabchance = (grabchance * fac) / 100; /* new way: modify final grabchance after rlev subtraction has been applied */
  #endif
 #endif
 
