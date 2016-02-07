@@ -817,7 +817,7 @@
    and to compensate reduce the additional bonus from the skill somewhat.
    Also this makes Interception skill actually scale properly for low skill levels vs
    high monster levels instead of the investment being completely effectless (!). */
-//#define GENERIC_INTERCEPTION
+#define GENERIC_INTERCEPTION
 
 /* upper limit of dodging chance. [80] */
 #define DODGE_CAP		80

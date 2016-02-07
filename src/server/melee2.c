@@ -1487,11 +1487,11 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		eff_lev = 0;
 		/* the skill is available to this character? (threshold is paranoia for ignoring
 		   racial-bonus flukes) - then give him a base chance even when untrained */
-		if (q_ptr->s_info[SKILL_INTERCEPT].mod >= 300) eff_lev = p_ptr->lev < 50 ? p_ptr->lev : 50;
+		if (q_ptr->s_info[SKILL_INTERCEPT].mod >= 300) eff_lev = q_ptr->lev < 50 ? q_ptr->lev : 50;
 		/* alternatively, still make MA count, since it gives interception chance too */
 		else if (get_skill(q_ptr, SKILL_MARTIAL_ARTS)) {
 			eff_lev = get_skill(q_ptr, SKILL_MARTIAL_ARTS);
-			if (eff_lev > p_ptr->lev) eff_lev = p_ptr->lev;
+			if (eff_lev > q_ptr->lev) eff_lev = q_ptr->lev;
 		}
 
 		//w/o G_I: 50.000: 67..115 -> 33..140 (MA); 0.000: -33..0
@@ -1499,12 +1499,17 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		grabchance >> 1; //50.000: 33..57 -> 33..70 (MA); 0.000: -16..12
 		if (eff_lev) grabchance += 10 + eff_lev / 5;
  #endif
- #if 1
+ #if 0
 		grabchance = (grabchance * 2) / 5; //50.000: 26..46 -> 26..56 (MA); 0.000: -13..10
 		if (eff_lev) grabchance += 5 + eff_lev / 2;
  #endif
+ #if 1
+		grabchance = (grabchance * 2) / 5;
+		if (eff_lev) grabchance += 5 + (eff_lev * 2) / 5;
+ #endif
 #endif
 
+		/* apply action-specific modifier */
 		grabchance = (grabchance * mod) / 100;
 
 		if (q_ptr->blind) grabchance /= 3;
