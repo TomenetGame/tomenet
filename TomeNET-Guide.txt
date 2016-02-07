@@ -5397,7 +5397,7 @@ Rubble-
 weapon can stand next to rubble and use their 'create ammo' ability to create
 sling ammunition from it.
 
-Pits-
+Dark Pits-
 Dark grey '^' are pits that can only be crossed if you have feather falling or
 levitation ability. Bree is protected by pits around the outer tree wall.
 These pits cannot be disarmed (because they don't count as trap, as opposed to
@@ -8793,12 +8793,15 @@ Let's look at 3 items it drops:
 FEATHER ('It makes you fall down gently like a feather.')
         'Feather Falling'.
         Lets you resist gravitation damage somewhat.
-        Lets you float down gently if you accidentally stumble into pits.
+        Lets you float down gently if you accidentally stumble into pit-style
+        traps.
+        Enables you to cross 'dark pits' terrain type (see (4.4)).
 LEVITATE
         ('It allows you to levitate.')
-        Allows you to cross water areas without drowning. Enables you to hover
-        over trees.
-        Note that levitation automatically also gives feather falling!
+        Allows you to cross over water areas without drowning. Enables you to
+        hover high enough to pass trees and bushes easily.
+        Note that levitation automatically also gives feather falling, so see
+        'FEATHER' above for further benefits granted by that ability.
 XTRA_SHOTS
         ('It fires missiles excessively fast.')
         This ranged weapon can fire an extra shot per round, see your number of
