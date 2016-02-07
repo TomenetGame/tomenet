@@ -4750,6 +4750,10 @@ static int get_coin_type(monster_race *r_ptr) {
 /* Display Zu-Aon kills in special colours:
  *  UxU is too flashy, lcl is possible, xcx maybe best (Nether Realm floor look preserved in msg ;) */
 #define ZU_AON_FLASHY_MSG
+/* Asides from disallowing exp/kill credit/quest credit from henc-cheezed monsters, also disallow loot?
+   Default is 'disabled' because a player can just as well visit a floor after the killing has been done, to loot it.
+   Note: As a side effect, even if loot is allowed, DROP_CHOSEN is disabled (no fire stones from Dragonriders etc). */
+//#define NO_HENC_CHEEZED_LOOT
 
 bool monster_death(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
@@ -5027,11 +5031,13 @@ bool monster_death(int Ind, int m_idx) {
 	/* ..neither do cheezed kills */
 	if (henc_cheezed &&
 	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
-	    !is_Pumpkin) /* allow a mixed hunting group */
+	    !is_Pumpkin /* allow a mixed hunting group */
+#ifndef NO_HENC_CHEEZED_LOOT
+	    /* ..however, never have henc'ed unique monsters drop loot, since kill credit won't be given for them, so could repeatedly loot them */
+	    && (m_ptr->questor || (r_ptr->flags1 & RF1_UNIQUE))
+#endif
+	    )
 		return FALSE;
-
-	/* Check whether a quest requested this monster dead */
-	if (p_ptr->quest_any_k_within_target) quest_check_goal_k(Ind, m_ptr);
 
 	dlev = getlevel(wpos);
 	rlev = r_ptr->level;
@@ -5162,6 +5168,16 @@ bool monster_death(int Ind, int m_idx) {
 		lore_treasure(m_idx, dump_item, dump_gold);
 	}
 #endif
+
+#ifdef NO_HENC_CHEEZED_LOOT /* we allowed loot (but we still disallow exp/credit) */
+	if (henc_cheezed &&
+	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
+	    !is_Pumpkin) /* allow a mixed hunting group */
+		return FALSE;
+#endif
+
+	/* Check whether a quest requested this monster dead */
+	if (p_ptr->quest_any_k_within_target) quest_check_goal_k(Ind, m_ptr);
 
 	/* Maia traitage */
 	if (p_ptr->prace == RACE_MAIA && !p_ptr->ptrait) {
