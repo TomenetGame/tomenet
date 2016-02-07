@@ -7116,7 +7116,7 @@ void export_player_store_offers(int *export_turns) {
  #ifdef EXPORT_JSON
 		if (kommao) fprintf(fp, ",\n");
 		while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
-		fprintf(fp, "{\"wx\":\"%d\", \"wy\":\"%d, \"x\":\"%d\", \"y\":\"%d\", \"house\":\"%d\", \"tval\":\"%d\", \"sval\":\"%d\", \"mode\":\"%d\", \"price\":\"%ld\", \"name\":\"%s\"}",
+		fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"mode\":%d, \"price\":%ld, \"name\":\"%s\"}",
 		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, o_ptr->mode, price, o_name);
 		kommao = TRUE;
  #else
