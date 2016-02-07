@@ -1411,7 +1411,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 #endif
 	int rlev = r_ptr->level;
 #ifdef ENABLE_STANCES
-	int fac;
+	int fac = 100;
 #endif
 
 
@@ -1471,7 +1471,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 			case 1: fac = 107; break;
 			case 2: fac = 110; break;
 			case 3: fac = 115; break;
-		} else fac = 100;
+		}
  #ifndef GENERIC_INTERCEPTION /* old way: actually modify grabchance before subtracing rlev factor */
 		grabchance = (grabchance * fac) / 100;
  #endif
