@@ -1457,15 +1457,15 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 
 #ifdef ENABLE_STANCES
 		if (q_ptr->combat_stance == 1) switch(q_ptr->combat_stance_power) {
-			case 0: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 50);
-			case 1: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 55);
-			case 2: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 60);
-			case 3: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 65);
+			case 0: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 50); break;
+			case 1: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 55); break;
+			case 2: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 60); break;
+			case 3: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 65); break;
 		} else if (q_ptr->combat_stance == 2) switch(q_ptr->combat_stance_power) {
-			case 0: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 103);
-			case 1: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 106);
-			case 2: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 109);
-			case 3: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 115);
+			case 0: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 103); break;
+			case 1: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 106); break;
+			case 2: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 109); break;
+			case 3: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 115); break;
 		} else
 #endif
 		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100);

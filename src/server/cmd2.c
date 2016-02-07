@@ -6042,15 +6042,15 @@ bool interfere(int Ind, int chance) {
 				continue;
 #ifdef ENABLE_STANCES
 			if (q_ptr->combat_stance == 1) switch(q_ptr->combat_stance_power) {
-				case 0: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 23);
-				case 1: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 26);
-				case 2: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 29);
-				case 3: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 35);
+				case 0: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 23); break;
+				case 1: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 26); break;
+				case 2: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 29); break;
+				case 3: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 35); break;
 			} else if (q_ptr->combat_stance == 2) switch(q_ptr->combat_stance_power) {
-				case 0: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 53);
-				case 1: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 56);
-				case 2: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 59);
-				case 3: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 65);
+				case 0: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 53); break;
+				case 1: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 56); break;
+				case 2: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 59); break;
+				case 3: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 65); break;
 			} else
 #endif
 			chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 50);
