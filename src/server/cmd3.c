@@ -1538,7 +1538,7 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 /*
  * Destroy an item
  */
-void do_cmd_destroy(int Ind, int item, int quantity) {
+bool do_cmd_destroy(int Ind, int item, int quantity) {
 	player_type *p_ptr = Players[Ind];
 	int			old_number;
 	//bool		force = FALSE;
@@ -1550,7 +1550,7 @@ void do_cmd_destroy(int Ind, int item, int quantity) {
 	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max) return; /* item doesn't exist */
+		if (-item >= o_max) return FALSE; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -1562,14 +1562,14 @@ void do_cmd_destroy(int Ind, int item, int quantity) {
 
 	if (check_guard_inscription( o_ptr->note, 'k')) {
 		msg_print(Ind, "The item's inscription prevents it.");
-		return;
+		return FALSE;
 	};
 #if 0
 	/* Verify if needed */
 	if (!force || other_query_flag) {
 		/* Make a verification */
 		snprintf(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
-		if (!get_check(Ind, out_val)) return;
+		if (!get_check(Ind, out_val)) return FALSE;
 	}
 #endif
 
@@ -1588,7 +1588,7 @@ void do_cmd_destroy(int Ind, int item, int quantity) {
 		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
 
 		/* Nope */
-		return;
+		return FALSE;
 	}
 #ifndef FUN_SERVER /* while server is being hacked, allow this (while /wish is also allowed) - C. Blue */
 	/* Artifacts cannot be destroyed */
@@ -1600,39 +1600,33 @@ void do_cmd_destroy(int Ind, int item, int quantity) {
 
 		/* Hack -- Handle icky artifacts */
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = "terrible";
-
 		/* Hack -- inscribe the artifact */
 		o_ptr->note = quark_add(feel);
-
 		/* We have "felt" it (again) */
 		o_ptr->ident |= (ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);
-
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
 		/* Done */
-		return;
+		return FALSE;
 	}
 #endif
 	/* Keys cannot be destroyed */
 	if (o_ptr->tval == TV_KEY && !is_admin(p_ptr)) {
 		/* Message */
 		msg_format(Ind, "You cannot destroy %s.", o_name);
-
 		/* Done */
-		return;
+		return FALSE;
 	}
 
 	/* Cursed, equipped items cannot be destroyed */
 	if (item >= INVEN_WIELD && cursed_p(o_ptr) && !is_admin(p_ptr)) {
 		/* Message */
 		msg_print(Ind, "Hmm, that seems to be cursed.");
-
 		/* Done */
-		return;
+		return FALSE;
 	}
 
 	/* Polymorph back */
@@ -1688,6 +1682,8 @@ void do_cmd_destroy(int Ind, int item, int quantity) {
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
+
+	return TRUE;
 }
 
 

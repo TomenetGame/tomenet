@@ -598,8 +598,8 @@ void do_slash_cmd(int Ind, char *message) {
 					    && !cursed_p(o_ptr))
 						return;
 
-					do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number);
-					whats_under_your_feet(Ind);
+					if (do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number))
+						whats_under_your_feet(Ind);
 					return;
 				}
 			}
