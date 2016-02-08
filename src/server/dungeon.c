@@ -8397,6 +8397,14 @@ void shutdown_server(void) {
 	/* Save dynamic quest info */
 	save_quests();
 
+	/* Hack: Erase formerly safe floors, ie Arena Monster Challenge.
+	   Otherwise if it looks the same after restart and has the same monster in it,
+	   people can die for real! (Because ge_special_sector is not saved.) */
+	if (ge_special_sector) {
+		struct worldpos wpos = { WPOS_ARENA_X, WPOS_ARENA_Y, WPOS_ARENA_Z };
+		dealloc_dungeon_level(&wpos);
+	}
+
 	/* Save the server state */
 	if (!save_server_info()) quit("Server state save failed!");
 
