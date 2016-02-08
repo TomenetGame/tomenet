@@ -6924,22 +6924,22 @@ void export_player_store_offers(int *export_turns) {
 			if (h_ptr->dna->owner_type == OT_PLAYER) {
  #ifdef EXPORT_JSON
 				if (kommah) fprintf(fph, ",\n");
-				fprintf(fph, "{\"index\":%d, \"mode\":%d, \"otype\":\"player\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
+				fprintf(fph, "{\"index\":%d, \"colour\":%d, \"mode\":%d, \"otype\":\"player\", \"owner\":\"%s\"}", h, h_ptr->colour, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
  #else
-				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "player", lookup_player_name(h_ptr->dna->owner));
+				fprintf(fph, "(%d, %d, %d) <player>:%s\n", h, h_ptr->colour, h_ptr->dna->mode, lookup_player_name(h_ptr->dna->owner));
  #endif
 			} else if (h_ptr->dna->owner_type == OT_GUILD) {
  #ifdef EXPORT_JSON
 				if (kommah) fprintf(fph, ",\n");
-				fprintf(fph, "{\"index\":%d, \"mode\":%d, \"otype\":\"guild\", \"owner\":\"%s\"}", h, h_ptr->dna->mode, guilds[h_ptr->dna->owner].name);
+				fprintf(fph, "{\"index\":%d, \"colour\":%d, \"mode\":%d, \"otype\":\"guild\", \"owner\":\"%s\"}", h, h_ptr->colour, h_ptr->dna->mode, guilds[h_ptr->dna->owner].name);
  #else
-				fprintf(fph, "(%d, %d) <%s>:%s\n", h, h_ptr->dna->mode, "guild", guilds[h_ptr->dna->owner].name);
+				fprintf(fph, "(%d, %d, %d) <guild>:%s\n", h, h_ptr->colour, h_ptr->dna->mode, guilds[h_ptr->dna->owner].name);
  #endif
 			} else {
  #ifdef EXPORT_JSON
-				fprintf(fph, "{\"index\":%d, \"mode\":%d, \"otype\":\"unknown\", \"owner\":\"unknown\"}", h, h_ptr->dna->mode);
+				fprintf(fph, "{\"index\":%d, \"colour\":%d, \"mode\":%d, \"otype\":\"unknown\", \"owner\":\"unknown\"}", h, h_ptr->colour, h_ptr->dna->mode);
  #else
-				fprintf(fph, "(%d, %d) <>:\n", h, h_ptr->dna->mode);
+				fprintf(fph, "(%d, %d, %d) <unknown>:unknown\n", h, h_ptr->colour, h_ptr->dna->mode);
  #endif
 			}
  #ifdef EXPORT_JSON
