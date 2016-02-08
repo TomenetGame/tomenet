@@ -2517,7 +2517,7 @@ errr read_lines_to_memory(cptr file_name, char ***lines_out, int *num_lines_out)
  */
 errr get_rnd_line_from_memory(char **lines, int numentries, char *output, int max_len) {
 	int line = 0;
-	
+
 	if (numentries > 0) {
 		/* Grab an appropriate line number */
 		line = rand_int(numentries);
@@ -2531,9 +2531,9 @@ errr get_rnd_line_from_memory(char **lines, int numentries, char *output, int ma
 		/* Make output an empty string */
 		output[0] = '\0';
 	}
-	
+
 	/* Success */
-	return (0);
+	return (line);
 }
 
 /* Clear objects so that artifacts get saved.
