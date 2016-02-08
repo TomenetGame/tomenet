@@ -2240,9 +2240,6 @@ void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer) {
 	/* Faster version */
 	o_ptr->name4 = get_rnd_line_from_memory(randart_names, num_randart_names, tmp, MAX_CHARS);
 
-	/* Restore RNG */
-	Rand_quick = FALSE;
-
 	/* Capitalise first character */
 	tmp[0] = toupper(tmp[0]);
 
@@ -2255,6 +2252,9 @@ void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer) {
 	}
 	/* for true arts in EQUIPMENT_SET_BONUS */
 	if (raw_buffer) strcpy(raw_buffer, tmp);
+
+	/* Restore RNG */
+	Rand_quick = FALSE;
 
 	return;
 }
