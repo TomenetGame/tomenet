@@ -6278,27 +6278,27 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		case SV_DRAGON_BLACK:
 			msg_print(Ind, "You breathe acid.");
 			sprintf(p_ptr->attacker, " breathes acid for");
-			fire_ball(Ind, GF_ACID, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+			fire_ball(Ind, GF_ACID, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_BLUE:
 			msg_print(Ind, "You breathe lightning.");
 			sprintf(p_ptr->attacker, " breathes lightning for");
-			fire_ball(Ind, GF_ELEC, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+			fire_ball(Ind, GF_ELEC, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_WHITE:
 			msg_print(Ind, "You breathe frost.");
 			sprintf(p_ptr->attacker, " breathes frost for");
-			fire_ball(Ind, GF_COLD, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+			fire_ball(Ind, GF_COLD, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_RED:
 			msg_print(Ind, "You breathe fire.");
 			sprintf(p_ptr->attacker, " breathes fire for");
-			fire_ball(Ind, GF_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+			fire_ball(Ind, GF_FIRE, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_GREEN:
 			msg_print(Ind, "You breathe poison.");
 			sprintf(p_ptr->attacker, " breathes poison for");
-			fire_ball(Ind, GF_POIS, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+			fire_ball(Ind, GF_POIS, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_MULTIHUED:
 			switch(rand_int(5)){
@@ -6403,7 +6403,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 				break;
 			case 1:	msg_print(Ind, "You breathe cold.");
 				sprintf(p_ptr->attacker, " breathes cold for");
-				fire_ball(Ind, GF_COLD, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+				fire_ball(Ind, GF_COLD, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
 				break;
 			}
 			break;
@@ -6443,7 +6443,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			} else {
 				msg_print(Ind, "You breathe cold.");
 				sprintf(p_ptr->attacker, " breathes cold for");
-				fire_ball(Ind, GF_COLD, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+				fire_ball(Ind, GF_COLD, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
 			}
 			break;
 		}

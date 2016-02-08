@@ -3352,19 +3352,19 @@ cptr item_activation(object_type *o_ptr) {
 		/* Branch on the sub-type */
 		switch (o_ptr->sval) {
 		case SV_DRAGON_BLUE:
-			return "breathe lightning (400..800) every 200+d100 turns";
+			return "breathe lightning (600..1200) every 200+d100 turns";
 //			return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
 		case SV_DRAGON_WHITE:
-			return "breathe frost (400..800) every 200+d100 turns";
+			return "breathe frost (600..1200) every 200+d100 turns";
 //			return "polymorph into an Ancient White Dragon every 200+d100 turns";
 		case SV_DRAGON_BLACK:
-			return "breathe acid (400..800) every 200+d100 turns";
+			return "breathe acid (600..1200) every 200+d100 turns";
 //			return "polymorph into an Ancient Black Dragon every 200+d100 turns";
 		case SV_DRAGON_GREEN:
-			return "breathe poison (400..800) every 200+d100 turns";
+			return "breathe poison (600..1200) every 200+d100 turns";
 //			return "polymorph into an Ancient Green Dragon every 200+d100 turns";
 		case SV_DRAGON_RED:
-			return "breathe fire (400..800) every 200+d100 turns";
+			return "breathe fire (600..1200) every 200+d100 turns";
 //			return "polymorph into an Ancient Red Dragon every 200+d100 turns";
 		case SV_DRAGON_MULTIHUED:
 			return "breathe the elements (600..1200) every 200+d100 turns";
@@ -3401,7 +3401,7 @@ cptr item_activation(object_type *o_ptr) {
 			return "breathe shards (400..800) every 200+d100 turns";
 //			return "polymorph into a great crystal drake every 200+d100 turns";
 		case SV_DRAGON_DRACOLICH:
-			return "breathe nether/cold (400..1050) every 200+d100 turns";
+			return "breathe nether/cold (400..1200) every 200+d100 turns";
 //			return "polymorph into a dracolich every 200+d100 turns";
 		case SV_DRAGON_DRACOLISK:
 			return "breathe fire/nexus (250..1200) every 200+d100 turns";
@@ -3410,7 +3410,7 @@ cptr item_activation(object_type *o_ptr) {
 			return "breathe electricity/light/gravity (300..1200) every 200+d100 turns";
 //			return "polymorph into a sky drake every 200+d100 turns";
 		case SV_DRAGON_SILVER:
-			return "breathe inertia/cold (250..800) every 200+d100 turns";
+			return "breathe inertia/cold (250..1200) every 200+d100 turns";
 //			return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
 		}
 	}
