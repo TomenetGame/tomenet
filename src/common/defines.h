@@ -819,6 +819,10 @@
    high monster levels instead of the investment being completely effectless (!). */
 #define GENERIC_INTERCEPTION
 
+/* If both interception and antimagic field suppress the same casting attempt of the same monster,
+   reduce the combined chance somewhat: from 92% (1 in 12) to 83% (1 in 6) to stay sane. */
+#define COMBO_AM_IC_CAP 83
+
 /* upper limit of dodging chance. [80] */
 #define DODGE_CAP		80
 

@@ -953,6 +953,9 @@ struct monster_type {
       will get less exp out of it. */
    byte backstabbed;		/* has this monster been backstabbed from cloaking mode already? prevent exploit */
    byte taunted;		/* has this monster been taunted (melee technique)? */
+#ifdef COMBO_AM_IC_CAP
+   byte intercepted;		/* remember best interception cap of adjacent players to determine reduction of subsequent antimagic field chances to avoid excessive suppression */
+#endif
 
    bool no_esp_phase;		/* for WEIRD_MIND esp flickering */
    int extra;			/* extra flag for debugging/testing purpose; also used for target dummy's "snowiness" now; new: also for Sauron boosting */

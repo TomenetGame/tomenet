@@ -824,6 +824,9 @@ char gbbs_line[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE];
 
 int global_luck = 0;
 int regen_boost_stamina = 4;
+#ifdef COMBO_AM_IC_CAP
+int slope_fak;
+#endif
 
 /* default 'updated_savegame' value for newly created chars [0].
    usually modified by lua (server_startup()) instead of here. */

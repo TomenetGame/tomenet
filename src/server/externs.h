@@ -2285,6 +2285,9 @@ extern int __lua_M_LAST;
 
 extern int cron_1h_last_hour; /* manage cron_1h calls */
 extern int regen_boost_stamina;
+#ifdef COMBO_AM_IC_CAP
+extern int slope_fak;
+#endif
 
 /* default 'updated_savegame' value for newly created chars [0].
    usually modified by lua (server_startup()) instead of here. */

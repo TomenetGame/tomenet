@@ -30,8 +30,7 @@
  *
  * Unnecessary, as the server doesn't open any "terms".  --KLJ--
  */
-static void quit_hook(cptr s)
-{
+static void quit_hook(cptr s) {
 #ifdef UNIX_SOCKETS
 	SocketCloseAll();
 #endif
@@ -75,8 +74,7 @@ extern unsigned _ovrbuffer = 0x1500;
  * Note that the "path" must be "Angband:" for the Amiga, and it
  * is ignored for "VM/ESA", so I just combined the two.
  */
-static void init_stuff(void)
-{
+static void init_paths(void) {
 	char path[MAX_PATH_LENGTH];
 
 #if defined(AMIGA) || defined(VM)
@@ -104,14 +102,23 @@ static void init_stuff(void)
 }
 
 
+#ifdef COMBO_AM_IC_CAP
+static void init_combo_am_ic_cap(void) {
+	int min_slope = (10000 * (COMBO_AM_IC_CAP - INTERCEPT_CAP)) / ANTIMAGIC_CAP; /* max IC, n AM */
+	int max_slope = 10000; /* 0 IC, n AM */
+
+	slope_fak = (max_slope - min_slope) / INTERCEPT_CAP; /* change of slope depending on initial IC */
+}
+#endif
+
+
 /*
  * The server config files were moved to lib/config with version 4.5.2.
  * The account file was also moved to lib/save. This code will
  * automatically create lib/config and move files to their new
  * locations. - mikaelh
  */
-static void migrate_files(void)
-{
+static void migrate_files(void) {
 	char buf[1024];
 	int errval;
 	DIR *dp;
@@ -166,8 +173,7 @@ static void migrate_files(void)
 }
 
 
-static void writepid(char *str)
-{
+static void writepid(char *str) {
 	FILE *fp;
 	fp = fopen(str, "wb");
 	if (fp) {
@@ -202,8 +208,7 @@ static void post_init_lua(void) {
  * The "path" options should probably be simplified into some form of
  * "-dWHAT=PATH" syntax for simplicity.
  */
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	bool new_game = FALSE, all_terrains = FALSE, dry_Bree = FALSE, new_wilderness = FALSE, new_flavours = FALSE, new_houses = FALSE;
 	bool config_specified = FALSE;
 	char buf[1024];
@@ -221,10 +226,7 @@ int main(int argc, char *argv[])
 
 #ifdef USE_286
 	/* Attempt to use XMS (or EMS) memory for swap space */
-	if (_OvrInitExt(0L, 0L))
-	{
-		_OvrInitEms(0, 0, 64);
-	}
+	if (_OvrInitExt(0L, 0L)) { _OvrInitEms(0, 0, 64); }
 #endif
 
 
@@ -242,7 +244,7 @@ int main(int argc, char *argv[])
 
 
 	/* Get the file paths */
-	init_stuff();
+	init_paths();
 
 	/* Possibly move the server config files and the account file */
 	migrate_files();
@@ -275,15 +277,11 @@ int main(int argc, char *argv[])
 
 	/* Initialize the "time" checker */
 	if (check_time_init() || check_time())
-	{
 		quit("The gates to Angband are closed (bad time).");
-	}
 
 	/* Initialize the "load" checker */
 	if (check_load_init() || check_load())
-	{
 		quit("The gates to Angband are closed (bad load).");
-	}
 
 #endif
 
@@ -291,14 +289,12 @@ int main(int argc, char *argv[])
 	MANGBAND_CFG = string_make(buf);
 
 	/* Process the command line arguments */
-	for (--argc, ++argv; argc > 0; --argc, ++argv)
-	{
+	for (--argc, ++argv; argc > 0; --argc, ++argv) {
 		/* Require proper options */
 		if (argv[0][0] != '-') goto usage;
 
 		/* Analyze option */
-		switch (argv[0][1])
-		{
+		switch (argv[0][1]) {
 			case 'c':
 			ANGBAND_DIR_USER = &argv[0][2];
 			break;
@@ -400,6 +396,11 @@ int main(int argc, char *argv[])
 
 	/* Initialize the arrays */
 	init_some_arrays();
+
+#ifdef COMBO_AM_IC_CAP
+	/* Initialize various stuff */
+	init_combo_am_ic_cap();
+#endif
 
 	/* Load dynamic quest data */
 	load_quests();

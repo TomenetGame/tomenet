@@ -1554,6 +1554,13 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 		msg_format_near(i_top, "\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name, desc);
 		return TRUE;
 	}
+ #ifdef COMBO_AM_IC_CAP
+	m_ptr->intercepted = grabchance_top; //we tried
+ #endif
+#else
+ #ifdef COMBO_AM_IC_CAP
+	m_ptr->intercepted = grabchance; //we tried
+ #endif
 #endif
 
 	/* Assume no grabbing */
@@ -1564,14 +1571,19 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 /* (Note that AM fields of players other than <Ind> will actually have only halved effect.) */
 static bool monst_check_antimagic(int Ind, int m_idx) {
 	//player_type *p_ptr;
-	monster_type	*m_ptr = &m_list[m_idx];
-	//monster_race    *r_ptr = race_inf(m_ptr);
+	monster_type *m_ptr = &m_list[m_idx];
+	//monster_race *r_ptr = race_inf(m_ptr);
 
 	worldpos *wpos = &m_ptr->wpos;
 
 	cave_type **zcave;
 	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
 	int antichance = 0, highest_antichance = 0, anti_Ind = 0;// , dis, antidis;
+
+#ifdef COMBO_AM_IC_CAP
+	int temp_cap, slope, combo_chance;
+#endif
+
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -1600,7 +1612,7 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 		antichance = q_ptr->antimagic;
 		//antichance -= r_ptr->level;
 
-		if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
+		if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP;
 
 		/* Reduction for party */
 		//if ((i != Ind) && player_in_party(p_ptr->party, i)) antichance >>= 1;
@@ -1614,6 +1626,14 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 		}
 	}
 
+#ifdef COMBO_AM_IC_CAP
+	/* from the combined cap, calculate the effective (reduced) AM cap */
+	slope = 10000 - (slope_fak * m_ptr->intercepted); /* calculate the new, reduced slope depending on initial IC */
+	combo_chance = m_ptr->intercepted * 100 + (highest_antichance * slope) / 100; /* calculate the actual effective combined (total) suppression chance of the monster's spell */
+	temp_cap = 100 - (10000 - combo_chance) / (100 - m_ptr->intercepted); /* calculate the effective AM chance (cap) from the total chance and IM chance. */
+	/* apply it */
+	if (highest_antichance > temp_cap) highest_antichance = temp_cap;
+#endif
 
 	/* Got disrupted ? */
 	if (magik(highest_antichance)) {
@@ -3967,8 +3987,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Always take note of monsters that kill you */
 	if (p_ptr->death) r_ptr->r_deaths++;
 
+#ifdef COMBO_AM_IC_CAP
+	/* Reset combo-cap-checking */
+	m_ptr->intercepted = 0;
+#endif
 
-	/* A spell was cast */
+	/* A spell was cast (or antimagic'ed) */
 	return (TRUE);
 }
 
