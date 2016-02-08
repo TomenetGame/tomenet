@@ -4534,12 +4534,15 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	cptr	note_kill = NULL;
 
+	bool	melt_gold = FALSE;
+
+
 	/* Acquire object */
 	o_ptr = &o_list[this_o_idx];
 	k_ptr = &k_info[o_ptr->k_idx];
 	/* Check for (nothing), execute hack to protect such items */
 	if (nothing_test(o_ptr, NULL, wpos, x, y, 3)) {
-//		s_printf("NOTHINGHACK: spell doesn't meet item at wpos %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		//s_printf("NOTHINGHACK: spell doesn't meet item at wpos %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return(FALSE);
 	}
 
@@ -4612,6 +4615,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
+			if (dam >= 1064) melt_gold = TRUE;
 			break;
 
 		/* Cold -- potions and flasks */
@@ -4668,6 +4672,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Note: Force item destruction is probably already covered
 			   by applied fire item destruction above */
 
+			if (dam >= 1064) melt_gold = TRUE;
 			break;
   
 		/* Fire + Impact */
@@ -4823,6 +4828,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				do_kill = TRUE;
 			}
+			if (dam >= 1064) melt_gold = TRUE;
 			break;
 
 		/* Unlock chests */
@@ -4930,6 +4936,19 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Redraw */
 			if (!quiet) everyone_lite_spot(wpos, y, x);
+		}
+	} else if (melt_gold && this_o_idx == c_ptr->o_idx) { //only apply to gold pieces on top of a pile, not inside */
+		//hardcoded massive piece of gold value: 5000
+		//hardcoded gold pieces sval: 10
+		if (o_ptr->tval == TV_GOLD && o_ptr->sval == 10 && o_ptr->pval >= 5000 * 2) {
+			object_type forge;
+
+			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
+			forge.owner = o_ptr->owner;
+			forge.mode = o_ptr->mode;
+			forge.number = 1;
+
+			*o_ptr = forge;
 		}
 	}
     }
