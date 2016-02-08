@@ -6987,12 +6987,12 @@ void export_player_store_offers(int *export_turns) {
 					kommao2 = FALSE;
 				}
 				while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
-				fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"name\":\"%s\"}",
-				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, o_ptr->level, o_ptr->mode, price, o_name);
+				fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"attr\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"name\":\"%s\"}",
+				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, get_attr_from_tval(o_ptr), o_ptr->level, o_ptr->mode, price, o_name);
 				kommao = TRUE;
  #else
 				fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %d, %ld Au) %s\n",
-				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, o_ptr->level, o_ptr->mode, price, o_name); //or just x,y?
+				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, get_attr_from_tval(o_ptr), o_ptr->level, o_ptr->mode, price, o_name); //or just x,y?
  #endif
 			}
 		}
@@ -7116,11 +7116,11 @@ void export_player_store_offers(int *export_turns) {
  #ifdef EXPORT_JSON
 		if (kommao) fprintf(fp, ",\n");
 		while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
-		fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"name\":\"%s\"}",
-		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, o_ptr->level, o_ptr->mode, price, o_name);
+		fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"attr\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"name\":\"%s\"}",
+		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, get_attr_from_tval(o_ptr), o_ptr->level, o_ptr->mode, price, o_name);
 		kommao = TRUE;
  #else
-		fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %d, %ld Au) %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, o_ptr->level, o_ptr->mode, price, o_name);
+		fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %d, %d, %ld Au) %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, get_attr_from_tval(o_ptr), o_ptr->level, o_ptr->mode, price, o_name);
  #endif
 	}
 	if (step) { //not disabled? then log
