@@ -4802,8 +4802,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Holy Orb -- destroys cursed non-artifacts */
-		case GF_HOLY_ORB:
 		case GF_HOLY_FIRE:
+			melt = TRUE; //hmm
+		case GF_HOLY_ORB:
 			do_smash_effect = TRUE;
 			if (cursed_p(o_ptr)
 //should be enabled maybe?    || hates_fire(o_ptr)
