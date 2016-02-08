@@ -3559,7 +3559,7 @@ void calc_boni(int Ind) {
 #ifdef EQUIPMENT_SET_BONUS
 		if (o_ptr->name1 == ART_RANDART) {
 			/* paranoia maybe? Make sure name4 field has been set: */
-			randart_name(o_ptr, tmp_name, tmp_name);
+			randart_name(o_ptr, NULL, tmp_name);
 			/* compare */
 			for (j = 0; j < i - INVEN_WIELD; j++)
 				if (equipment_set[j] == o_ptr->name4 + 1) {
