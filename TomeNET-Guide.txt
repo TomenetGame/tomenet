@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. February 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 8. February 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11305,6 +11305,19 @@ Note that not every skill is available to every profession (class).
                                 out of training the 'Interception' skill.
                                 If you train both, their effect will stack.
 
+                                In addition to that, training Martial Arts will
+                                provide a base interception chance if you don't
+                                have the Interception skill available on a
+                                character (see 'Interception' skill). These two
+                                interception gains from martial arts skill add
+                                up. (If you do have the Interception skill
+                                available, you get a base interception chance
+                                depending on your character level instead, to
+                                which again the Martial Arts interception bonus
+                                gets added. So you're gaining the same total
+                                interception chance in both cases, as long as
+                                you keep Martial Arts at maximum possible.)
+
                                 Slightly increases your Dodging skill, simply
                                 by increasing your Martial Arts skill, as if
                                 'Dodging' was a parent skill of Martial Arts.
@@ -11347,6 +11360,18 @@ Note that not every skill is available to every profession (class).
                                 The monster must be standing right beside you
                                 (horizontally, vertically or diagonally).
 
+                                All characters that are able to train this
+                                skill or that have trained martial arts skill
+                                actually gain a base interception chance:
+                                If they are able to train Interception then
+                                that base chance will depend on their character
+                                level. If they don't have Interception skill
+                                available then it will depend on their Martial
+                                Arts skill level instead (capped to their
+                                character level).
+                                Actually training the Interception skill will
+                                then further add to that base chance.
+
                                 The higher base level the monster has (rlevel)
                                 the harder it is to intercept it.
                                 Also, interception chance is recuded greatly
@@ -11371,6 +11396,10 @@ Note that not every skill is available to every profession (class).
                                 The player who has (under given circumstances
                                 such as being blinded etc) the best chance to
                                 intercept will override the others.
+
+                                Regarding spell suppression, interception
+                                combines with Antimagic in a special way, see
+                                'Antimagic' skill for details.
 
     +Archery                    Improves ranged to-damage bonus somewhat, by +1
                                 for every 5.000 increase in skill.
@@ -11643,6 +11672,19 @@ Note that not every skill is available to every profession (class).
                                 invisibilty, haste, slowness, resistances,
                                 invulnerability obtained from a potion,
                                 deflection, shield.
+
+                                Regarding spell suppression, Antimagic fields
+                                combine with interception in a special way:
+                                The total chance to suppress a monster's
+                                attempt to cast a spell will yield diminishing
+                                returns if the monster's attempt gets hindered
+                                by both, Interception and Antimagic. This means
+                                that having high values in both, Interception
+                                and Antimagic, will still give benefits for
+                                spell suppression, but the total chance of
+                                suppression that results from applying both to
+                                a single spell casting attempt will actually
+                                come out somewhat reduced.
 
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
