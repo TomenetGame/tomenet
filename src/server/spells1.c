@@ -4943,7 +4943,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		//hardcoded massive piece value and money svals..
 		switch (o_ptr->sval) {
 		case 1: //copper
-			if (dam < 1085 || o_ptr->pval < 800 * 2) break;
+			if (dam < 1085 / 2 || o_ptr->pval < 800 * 2) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_COPPER));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
@@ -4951,7 +4951,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			*o_ptr = forge;
 			break;
 		case 2: //silver
-			if (dam < 962 || o_ptr->pval < 3000 * 2) break;
+			if (dam < 962 / 2 || o_ptr->pval < 3000 * 2) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
@@ -4959,7 +4959,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			*o_ptr = forge;
 			break;
 		case 10: //gold
-			if (dam < 1064 || o_ptr->pval < 5000 * 2) break;
+			if (dam < 1064 / 2 || o_ptr->pval < 5000 * 2) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
