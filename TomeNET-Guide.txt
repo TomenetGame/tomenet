@@ -12603,7 +12603,7 @@ create a character!):
         At level 50 they will be able to levitate, become resistant to poison,
         electricity, cold and be enveloped in an aura of frost and lightning;
         also, their melee attacks will slay evil opponents intrinsically.
-        Able to instantly sense curses on items.
+        Able to almost instantly sense curses on items.
 
     Corrupted:
         Resist fire and darkness while being susceptible to good-based attacks.
@@ -12796,7 +12796,7 @@ create a character!):
     additional severe penalty.
     Priests are especially adept at sensing curses on any sort of item, an
     ability that grows with their character level, perfecting this at level 35
-    at which they are able to notice curses instantly.
+    at which they are able to notice curses almost instantly.
     Wisdom is the priest's primary stat and they get a bonus on 'Holy Curing'.
 
     Hint: Note that their spell Holy Light can be used to deal decent damage
