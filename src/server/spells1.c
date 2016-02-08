@@ -4949,6 +4949,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
 			forge.number = 1;
+			s_printf("MELTING: Copper for %d by %s.\n", o_ptr->pval, p_ptr->name);
 			*o_ptr = forge;
 			break;
 		case 2: //silver
@@ -4957,6 +4958,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
 			forge.number = 1;
+			s_printf("MELTING: Silver for %d by %s.\n", o_ptr->pval, p_ptr->name);
 			*o_ptr = forge;
 			break;
 		case 10: //gold
@@ -4965,6 +4967,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
 			forge.number = 1;
+			s_printf("MELTING: Gold for %d by %s.\n", o_ptr->pval, p_ptr->name);
 			*o_ptr = forge;
 			break;
 		}
