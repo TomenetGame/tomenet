@@ -4534,7 +4534,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	cptr	note_kill = NULL;
 
-	bool	melt_gold = FALSE;
+	bool	melt = FALSE;
 
 
 	/* Acquire object */
@@ -4615,7 +4615,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
-			if (dam >= 1064) melt_gold = TRUE;
+			melt = TRUE;
 			break;
 
 		/* Cold -- potions and flasks */
@@ -4672,7 +4672,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Note: Force item destruction is probably already covered
 			   by applied fire item destruction above */
 
-			if (dam >= 1064) melt_gold = TRUE;
+			melt = TRUE;
 			break;
   
 		/* Fire + Impact */
@@ -4828,7 +4828,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				do_kill = TRUE;
 			}
-			if (dam >= 1064) melt_gold = TRUE;
+			melt = TRUE;
 			break;
 
 		/* Unlock chests */
@@ -4937,19 +4937,37 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Redraw */
 			if (!quiet) everyone_lite_spot(wpos, y, x);
 		}
-	} else if (melt_gold && this_o_idx == c_ptr->o_idx) { //only apply to gold pieces on top of a pile, not inside */
-		//hardcoded massive piece of gold value: 5000
-		//hardcoded gold pieces sval: 10
-		if (o_ptr->tval == TV_GOLD && o_ptr->sval == 10 && o_ptr->pval >= 5000 * 2) {
-			object_type forge;
+	} else if (melt && this_o_idx == c_ptr->o_idx && o_ptr->tval == TV_GOLD) { //only apply to gold pieces on top of a pile, not inside */
+		object_type forge;
 
+		//hardcoded massive piece value and money svals..
+		switch (o_ptr->sval) {
+		case 1: //copper
+			if (dam < 1085 || o_ptr->pval < 800 * 2) break;
+			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_COPPER));
+			forge.owner = o_ptr->owner;
+			forge.mode = o_ptr->mode;
+			forge.number = 1;
+			*o_ptr = forge;
+			break;
+		case 2: //silver
+			if (dam < 962 || o_ptr->pval < 3000 * 2) break;
+			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
+			forge.owner = o_ptr->owner;
+			forge.mode = o_ptr->mode;
+			forge.number = 1;
+			*o_ptr = forge;
+			break;
+		case 10: //gold
+			if (dam < 1064 || o_ptr->pval < 5000 * 2) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
 			forge.number = 1;
-
 			*o_ptr = forge;
+			break;
 		}
+		//consider mithril/adamantite too hard to melt
 	}
     }
 
