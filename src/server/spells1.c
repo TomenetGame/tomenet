@@ -4939,7 +4939,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!quiet) everyone_lite_spot(wpos, y, x);
 		}
 	} else if (melt && this_o_idx == c_ptr->o_idx && o_ptr->tval == TV_GOLD) { //only apply to gold pieces on top of a pile, not inside */
-#define MELT_FACTOR 8 /* cost factor for smelting coins into massive pieces */
+#define MELT_FACTOR 8 /* cost factor for smelting coins into massive pieces; note: 7..17x is possible for default gold colour on player-dropped piles */
 		object_type forge;
 
 		//hardcoded massive piece value and money svals..
