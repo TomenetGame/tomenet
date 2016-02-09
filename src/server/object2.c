@@ -366,14 +366,16 @@ void compact_objects(int size, bool purge) {
 
 			if ((zcave = getcave(&o_ptr->wpos))) {
 				/* Hack -- only compact items in houses (or surface vaults) or inns in emergencies */
-				if (!o_ptr->wpos.wz && (zcave[y][x].info & (CAVE_ICKY | CAVE_PROT)))
+				if (!o_ptr->wpos.wz && ((zcave[y][x].info & (CAVE_ICKY | CAVE_PROT)) ||
+				    (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED))) {
 #if 0
 					if (cnt < 1000) /* Grant immunity except in emergencies */
 #endif
 					chance = 100;
-
+				}
 				/* Don't compact items on protected grids in special locations) */
-				else if ((zcave[y][x].info & CAVE_PROT)) //IDDC town inns!
+				else if ((zcave[y][x].info & CAVE_PROT) ||
+				    (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED)) //IDDC town inns!
 					chance = 100;
 			}
 
@@ -8064,7 +8066,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		c_ptr = &zcave[ny][nx];
 
 		/* Require floor space (or shallow terrain) -KMW- */
-//		if (!(f_info[c_ptr->feat].flags1 & FF1_FLOOR)) continue;
+		//if (!(f_info[c_ptr->feat].flags1 & FF1_FLOOR)) continue;
 		if (!cave_floor_bold(zcave, ny, nx) ||
 		    /* Usually cannot drop items on permanent features,
 		       exception for stairs/gates though in case of emergency */
@@ -8092,7 +8094,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		}
 
 		/* No traps */
-//		if (c_ptr->t_idx) continue;
+		//if (c_ptr->t_idx) continue;
 
 		/* No objects */
 		k = 0;
@@ -8118,11 +8120,11 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		if (!comb) k++;
 
 		/* No stacking (allow combining) */
-//		if (!testing_stack && (k > 1)) continue;
+		//if (!testing_stack && (k > 1)) continue;
 
 		/* Hack -- no stacking inside houses - nor inside the inn */
 		/* XXX this can cause 'arts crashes arts' */
-		crash = (!wpos->wz && k > 1 && !comb && (c_ptr->info & (CAVE_ICKY | CAVE_PROT)));
+		crash = (!wpos->wz && k > 1 && !comb && ((c_ptr->info & (CAVE_ICKY | CAVE_PROT)) || (f_info[c_ptr->feat].flags1 & FF1_PROTECTED)));
 		if (!arts && crash) continue;
 
 		/* Paranoia */
@@ -8181,8 +8183,8 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	case FEAT_SHAL_WATER:
 	case FEAT_DEEP_WATER:
 	case FEAT_GLIT_WATER:
-//	case FEAT_WATER:
-//	case FEAT_TAINTET_WATER:
+	//case FEAT_WATER:
+	//case FEAT_TAINTET_WATER:
 		if (hates_water(o_ptr)) {
 			do_kill = TRUE;
 #ifdef DROP_KILL_NOTE
@@ -8235,9 +8237,9 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	/* this should be in drop_near_severe, would be cleaner sometime in the future.. */
 	if (wpos->wz == 0) { /* Assume houses are always on surface */
 		if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house(wpos, nx, ny)) {
-//			char	o_name[ONAME_LEN];
-//			object_desc(Ind, o_name, o_ptr, TRUE, 0);
-//			msg_format(Ind, "%s fades into the air!", o_name);
+			//char o_name[ONAME_LEN];
+			//object_desc(Ind, o_name, o_ptr, TRUE, 0);
+			//msg_format(Ind, "%s fades into the air!", o_name);
 			handle_art_d(o_ptr->name1);
 			return (-1);
 		}
@@ -8267,19 +8269,17 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	}
 
 	/* Successful drop */
-//	if (flag)
+	//if (flag)
 	else {
 		/* Assume fails */
-//		flag = FALSE;
+		//flag = FALSE;
 
 		/* XXX XXX XXX */
 
-//		c_ptr = &zcave[ny][nx];
+		//c_ptr = &zcave[ny][nx];
 
 		/* Crush anything under us (for artifacts) */
-		if (flag == 3) {
-			delete_object(wpos, ny, nx, TRUE);
-		}
+		if (flag == 3) delete_object(wpos, ny, nx, TRUE);
 
 
 #ifdef MAX_ITEMS_STACKING
@@ -8394,7 +8394,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 				o_ptr->stack_pos = 0; /* first object on this grid */
 
 			/* Place */
-//			c_ptr = &zcave[ny][nx];
+			//c_ptr = &zcave[ny][nx];
 			c_ptr->o_idx = o_idx;
 
 			/* Clear visibility flags */
@@ -8418,16 +8418,12 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			/* Mega-Hack -- no message if "dropped" by player */
 			/* Message when an object falls under the player */
 			/*if (chance && (ny == py) && (nx == px))
-			{
-				msg_print("You feel something roll beneath your feet.");
-			}*/
-
-			if (chance && c_ptr->m_idx < 0) {
+				msg_print("You feel something roll beneath your feet.");*/
+			if (chance && c_ptr->m_idx < 0)
 				msg_print(0 - c_ptr->m_idx, "You feel something roll beneath your feet.");
-			}
 
 			/* Success */
-//			flag = TRUE;
+			//flag = TRUE;
 		} else /* paranoia: couldn't allocate a new object */ {
 			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 			questitem_d(o_ptr, o_ptr->number);
