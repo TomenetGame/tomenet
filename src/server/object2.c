@@ -3336,7 +3336,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 
 /*
- * Allow one item to "absorb" another, assuming they are similar
+ * Allow one item to "absorb" another, assuming they are similar.
+ * Note: j_ptr is the 'new' item that gets dropped/added to an existing one.
  */
 void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	int total = o_ptr->number + j_ptr->number;
@@ -3373,7 +3374,7 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 #else
 		o_ptr->pval += j_ptr->pval;
 		/* determine new 'colour' depending on the total amount */
-		if (j_ptr->xtra1) {
+		if (j_ptr->xtra1) { /* player-dropped? */
 			/* player-dropped piles are compact */
 			o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, TRUE);
 			o_ptr->sval = k_info[o_ptr->k_idx].sval;
