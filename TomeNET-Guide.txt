@@ -573,6 +573,8 @@ d       d       drop an item.
 
 $       $       drop some gold. You can use 'k' and 'm' for thousands or
                 millions, example: 3k -> drops 3000. 2m -> drops 2000000.
+                You can also do things like 2m43 to drop 2430000 gold pieces or
+                k6 to drop 600.
 
 D       D       disarm a trap. This yields experience points, depending on the
                 trap type. (Note that you won't get experience points for
