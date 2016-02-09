@@ -676,6 +676,14 @@ bool hp_player(int Ind, int num) {
 
 	if (p_ptr->no_heal) return FALSE;
 
+#ifdef AUTO_RET_NEW /* for drain life etc */
+	/* Don't allow phase/teleport for auto-retaliation methods */
+	if (p_ptr->auto_retaliaty) {
+		msg_print(Ind, "\377yYou cannot use means of healing for auto-retaliation.");
+		return FALSE;
+	}
+#endif
+
 	p_ptr->test_heal += num;
 
 	// The "number" that the character is displayed as before healing
@@ -768,6 +776,14 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
 
 	if (p_ptr->no_heal && !autoeffect) return FALSE;
+
+#ifdef AUTO_RET_NEW /* for drain life etc */
+	/* Don't allow phase/teleport for auto-retaliation methods */
+	if (p_ptr->auto_retaliaty) {
+		msg_print(Ind, "\377yYou cannot use means of healing for auto-retaliation.");
+		return FALSE;
+	}
+#endif
 
 	p_ptr->test_heal += num;
 

@@ -8030,6 +8030,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Catch healing hacks */
 	if (typ == GF_HEAL_PLAYER) {
+#ifdef AUTO_RET_NEW
+		/* Don't allow phase/teleport for auto-retaliation methods */
+		if (p_ptr->auto_retaliaty) {
+			msg_print(Ind, "\377yYou cannot use means of healing for auto-retaliation.");
+			return FALSE;
+		}
+#endif
 		hack_dam = dam & 0x3C00;
 		dam = dam & 0x03FF;
 	}
