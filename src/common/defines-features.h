@@ -225,6 +225,10 @@
 /* Allow ordering a specific item in a store */
 #define ENABLE_ITEM_ORDER
 
+/* Allow melting coins with high a magical fire-similar attack of high enough temperature into golem body pieces.
+   The number is the cost factor for smelting coins into massive pieces; note: 7..17x is possible for default gold colour on player-dropped piles. */
+#define COIN_SMELTING 8
+
 
 
 /* --------------------- Server-type dependant features -------------------- */

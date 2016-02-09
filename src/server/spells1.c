@@ -4506,7 +4506,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
-//	o_ptr = &o_list[c_ptr->o_idx];
+	//o_ptr = &o_list[c_ptr->o_idx];
 
 	/* Nothing here */
 	if (!c_ptr->o_idx) return (FALSE);
@@ -4534,7 +4534,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	cptr	note_kill = NULL;
 
+#ifdef COIN_SMELTING
 	bool	melt = FALSE;
+#endif
 
 
 	/* Acquire object */
@@ -4615,7 +4617,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
+#ifdef COIN_SMELTING
 			melt = TRUE;
+#endif
 			break;
 
 		/* Cold -- potions and flasks */
@@ -4672,9 +4676,11 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Note: Force item destruction is probably already covered
 			   by applied fire item destruction above */
 
+#ifdef COIN_SMELTING
 			melt = TRUE;
+#endif
 			break;
-  
+
 		/* Fire + Impact */
 		case GF_METEOR:
 			do_smash_effect = TRUE;
@@ -4756,7 +4762,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			do_kill = TRUE;
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
 						: (plural ? " is pulverized!" : " is pulverized!");
-//			note_kill = (plural ? " evaporate!" : " evaporates!");
+			//note_kill = (plural ? " evaporate!" : " evaporates!");
 			break;
 
 		case GF_DISENCHANT:
@@ -4798,12 +4804,14 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			do_kill = TRUE;
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
 						: (plural ? " is pulverized!" : " is pulverized!");
-//			note_kill = (plural ? " evaporate!" : " evaporates!");
+			//note_kill = (plural ? " evaporate!" : " evaporates!");
 			break;
 
 		/* Holy Orb -- destroys cursed non-artifacts */
 		case GF_HOLY_FIRE:
+#ifdef COIN_SMELTING
 			melt = TRUE; //hmm
+#endif
 		case GF_HOLY_ORB:
 			do_smash_effect = TRUE;
 			if (cursed_p(o_ptr)
@@ -4829,7 +4837,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				do_kill = TRUE;
 			}
+#ifdef COIN_SMELTING
 			melt = TRUE;
+#endif
 			break;
 
 		/* Unlock chests */
@@ -4864,7 +4874,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			object_type tmp_obj = *o_ptr;
 
 			if (check_st_anchor(wpos, y, x)) break;
-//			if (seen) obvious = TRUE;
+			//if (seen) obvious = TRUE;
 
 			do_smash_effect = TRUE;
 
@@ -4881,7 +4891,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!cave_floor_bold(zcave, cy, cx) ||
 				    cave_perma_bold(zcave, cy, cx)) continue;
 
-//				(void)floor_carry(cy, cx, &tmp_obj);
+				//(void)floor_carry(cy, cx, &tmp_obj);
 				drop_near(&tmp_obj, 0, wpos, cy, cx);
 
 				/* XXX not working? */
@@ -4898,18 +4908,18 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* Attempt to destroy the object */
-//	if (is_basic_potion && do_smash_effect) potion_smash_effect(who, wpos, y, x, o_sval);
+	//if (is_basic_potion && do_smash_effect) potion_smash_effect(who, wpos, y, x, o_sval);
 
-//	if(do_kill && (wpos->wz))
+	//if(do_kill && (wpos->wz))
 	if (do_kill) {
 		/* Effect "observed" */
-//		if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
+		//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
 		if (!quiet && p_ptr->obj_vis[this_o_idx]) obvious = TRUE;
 
 		/* Artifacts, and other objects, get to resist */
 		if (is_art || ignore) {
 			/* Observe the resist */
-//			if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
+			//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
 			if (!quiet && p_ptr->obj_vis[this_o_idx])
 				msg_format(Ind, "The %s %s unaffected!", o_name, (plural ? "are" : "is"));
 		}
@@ -4917,12 +4927,12 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Kill it */
 		else {
 			/* Describe if needed */
-//			if (!quiet && p_ptr->obj_vis[c_ptr->o_idx] && note_kill)
+			//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx] && note_kill)
 			if (!quiet && p_ptr->obj_vis[this_o_idx] && note_kill)
 				msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
 
 			/* Delete the object */
-//			delete_object(wpos, y, x);
+			//delete_object(wpos, y, x);
 			delete_object_idx(this_o_idx, TRUE);
 
 			/* Potions produce effects when 'shattered' */
@@ -4938,14 +4948,15 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Redraw */
 			if (!quiet) everyone_lite_spot(wpos, y, x);
 		}
-	} else if (melt && this_o_idx == c_ptr->o_idx && o_ptr->tval == TV_GOLD) { //only apply to gold pieces on top of a pile, not inside */
-#define MELT_FACTOR 8 /* cost factor for smelting coins into massive pieces; note: 7..17x is possible for default gold colour on player-dropped piles */
+	}
+#ifdef COIN_SMELTING
+	else if (melt && this_o_idx == c_ptr->o_idx && o_ptr->tval == TV_GOLD) { //only apply to gold pieces on top of a pile, not inside */
 		object_type forge;
 
 		//hardcoded massive piece value and money svals..
 		switch (o_ptr->sval) {
 		case 1: //copper
-			if (dam < 1085 / 2 || o_ptr->pval < 800 * MELT_FACTOR) break;
+			if (dam < 1085 / 2 || o_ptr->pval < 800 * COIN_SMELTING) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_COPPER));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
@@ -4954,7 +4965,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			*o_ptr = forge;
 			break;
 		case 2: //silver
-			if (dam < 962 / 2 || o_ptr->pval < 3000 * MELT_FACTOR) break;
+			if (dam < 962 / 2 || o_ptr->pval < 3000 * COIN_SMELTING) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
@@ -4963,7 +4974,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			*o_ptr = forge;
 			break;
 		case 10: //gold
-			if (dam < 1064 / 2 || o_ptr->pval < 5000 * MELT_FACTOR) break;
+			if (dam < 1064 / 2 || o_ptr->pval < 5000 * COIN_SMELTING) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
@@ -4974,6 +4985,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		//consider mithril/adamantite too hard to melt
 	}
+#endif
     }
 
 	/* Return "Anything seen?" */
