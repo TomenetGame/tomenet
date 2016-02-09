@@ -4939,12 +4939,13 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!quiet) everyone_lite_spot(wpos, y, x);
 		}
 	} else if (melt && this_o_idx == c_ptr->o_idx && o_ptr->tval == TV_GOLD) { //only apply to gold pieces on top of a pile, not inside */
+#define MELT_FACTOR 8 /* cost factor for smelting coins into massive pieces */
 		object_type forge;
 
 		//hardcoded massive piece value and money svals..
 		switch (o_ptr->sval) {
 		case 1: //copper
-			if (dam < 1085 / 2 || o_ptr->pval < 800 * 2) break;
+			if (dam < 1085 / 2 || o_ptr->pval < 800 * MELT_FACTOR) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_COPPER));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
@@ -4953,7 +4954,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			*o_ptr = forge;
 			break;
 		case 2: //silver
-			if (dam < 962 / 2 || o_ptr->pval < 3000 * 2) break;
+			if (dam < 962 / 2 || o_ptr->pval < 3000 * MELT_FACTOR) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
@@ -4962,7 +4963,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			*o_ptr = forge;
 			break;
 		case 10: //gold
-			if (dam < 1064 / 2 || o_ptr->pval < 5000 * 2) break;
+			if (dam < 1064 / 2 || o_ptr->pval < 5000 * MELT_FACTOR) break;
 			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
 			forge.owner = o_ptr->owner;
 			forge.mode = o_ptr->mode;
