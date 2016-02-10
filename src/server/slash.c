@@ -4243,12 +4243,12 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 			else if (prefix(message, "/shutlow")) {
-				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and few players are on *");
+				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and few (8) players are on *");
 				cfg.runlevel = 2047;
 				return;
 			}
 			else if (prefix(message, "/shutvlow")) {
-				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and very few players are on *");
+				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and very few (5) players are on *");
 				cfg.runlevel = 2046;
 				return;
 			}
@@ -4258,7 +4258,7 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 			else if (prefix(message, "/shutactivevlow")) {
-				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and very few players are active *");
+				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and very few (6) players are active *");
 				cfg.runlevel = 2044;
 				return;
 			}
@@ -4270,7 +4270,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 #endif
 			else if (prefix(message, "/shutxlow")) {
-				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and extremely few players are on *");
+				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and extremely few (3) players are on *");
 				cfg.runlevel = 2051;
 				return;
 			}
