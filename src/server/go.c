@@ -55,6 +55,14 @@
 /* Use 'fuego' engine? */
 //#define ENGINE_FUEGO
 
+/* Gimmick: Enable a 2nd, stronger engine that sends a 'special' opponent along
+   sometimes, provided you have beaten all the regular characters. ^^ */
+//#define HIDDEN_STAGE
+#ifdef HIDDEN_STAGE
+ //#define HS_ENGINE_FUEGO
+ #define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
+#endif
+
 /* Anti Mirror-Go engine?
    The normal engine will be swapped silently with this one
    if mirror Go is detected after a specific number of turns:
@@ -112,6 +120,10 @@ static const int NONE = 0, DOWN = 1, UP = 2;
 /* Global control variables */
 bool go_engine_up;		/* Go engine is online? */
 int go_engine_processing = 0;	/* Go engine is expected to deliver replies to commands? */
+#ifdef HIDDEN_STAGE
+ bool hs_go_engine_up;		/* Go engine is online? */
+ bool hidden_stage_active = FALSE;	/* Is the current game a hidden stage one? */
+#endif
 bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
 static char avatar_name[40];
@@ -147,7 +159,15 @@ static int pipeto[2];		/* pipe to feed the exec'ed program input */
 static int pipefrom[2];		/* pipe to get the exec'ed program output */
 static FILE *fw, *fr;
 static char pipe_buf[MAX_GTP_LINES][240];
-static int pipe_buf_current_line,  pipe_response_complete = 0;
+static int pipe_buf_current_line, pipe_response_complete = 0;
+#ifdef HIDDEN_STAGE
+ static pid_t hs_nPid;
+ static int hs_pipeto[2];		/* pipe to feed the exec'ed program input */
+ static int hs_pipefrom[2];		/* pipe to get the exec'ed program output */
+ static FILE *hs_fw, *hs_fr;
+ static char hs_pipe_buf[MAX_GTP_LINES][240];
+ static int hs_pipe_buf_current_line, hs_pipe_response_complete = 0;
+#endif
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 static bool terminating = FALSE;
 #endif
@@ -161,7 +181,7 @@ static struct tm* tmend;
 /* Game record: Keep track of moves and passes (for undo-handling too) */
 static int pass_count, current_komi;
 static bool last_move_was_pass = FALSE, CPU_to_move, CPU_now_to_move;
-#ifdef ENGINE_GNUGO
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
 static FILE *sgf;
 #endif
 static char last_black_move[3], last_white_move[3], game_result[10];
@@ -240,11 +260,11 @@ int go_engine_init(void) {
 		s_printf("GO_ERROR: fork().\n");
 		return 3;
 	} else if (nPid == 0) {
-//		close(STDIN_FILENO); close(STDOUT_FILENO); close(STDERR_FILENO);
+		//close(STDIN_FILENO); close(STDOUT_FILENO); close(STDERR_FILENO);
 		/* dup pipe read/write to stdin/stdout */
 		dup2(pipeto[0], STDIN_FILENO);
 		dup2(pipefrom[1], STDOUT_FILENO);
-//		dup2(pipefrom[1], STDERR_FILENO); leave this, to print error message further below.
+		//dup2(pipefrom[1], STDERR_FILENO); leave this, to print error message further below.
 		/* close unnecessary pipe descriptors for a clean environment */
 		close(pipeto[1]);
 		close(pipefrom[0]);
@@ -270,14 +290,15 @@ int go_engine_init(void) {
 		execlp("./go/gnugo", "gnugo", "--mode", "gtp", \
 		    "--quiet", "--boardsize", "9x9", "--chinese-rules", \
 		    "--capture-all-dead", \
-		    "--monte-carlo", "--komi", "0", "--never-resign", NULL);//try never-resign to prevent weird unjustified resigns
+		    "--monte-carlo", \
+		    "--komi", "0", "--never-resign", NULL);//try never-resign to prevent weird unjustified resigns
 		// --cache-size <megs>
 		// --japanese-rules
 #endif
 
 		/* We were unable to execute the engine? Game over! */
 		fprintf(stderr,"GO_ERROR: exec().\n");
-//		return 4;
+		//return 4;
 
 		/* Cause SIGPIPE to parent so they know what's up */
 		close(pipeto[0]);
@@ -330,9 +351,9 @@ int go_engine_init(void) {
 #ifdef ENGINE_FUEGO
 	writeToPipe("boardsize 9");
 	wait_for_response();
-/*	writeToPipe("clear_board");
-	wait_for_response();
-*/	writeToPipe("komi 0");
+	/*writeToPipe("clear_board");
+	wait_for_response();*/
+	writeToPipe("komi 0");
 	wait_for_response();
 	writeToPipe("time_settings 0 1 0");//infinite: b>0, s=0
 	wait_for_response();
@@ -392,6 +413,203 @@ int go_engine_init(void) {
 
 	/* ready for games */
 
+#ifdef HIDDEN_STAGE
+	/* Initialize again, this time the HS-engine */
+	gocmd = NULL;
+
+	s_printf("GO_INIT: ---INIT--- (HS)\n");
+
+ #ifdef HS_ENGINE_FUEGO
+	gocmd = "./go/fuego";
+ #endif
+ #ifdef HS_ENGINE_GNUGOMC
+	gocmd = "./go/gnugo";
+ #endif
+
+	if (!gocmd) {
+		s_printf("GO_ERROR: No engine defined during compile (HS).\n");
+		return 7;
+	}
+
+	if (access(gocmd, X_OK) != 0) {
+		s_printf("GO_ERROR: Engine executable not found (HS).\n");
+		return 8;
+	}
+
+	/* Try to create pipes for STDIN and STDOUT */
+	if (pipe(hs_pipeto) != 0) {
+		s_printf("GO_ERROR: pipe() to (HS).\n");
+		return 1;
+	}
+	if (pipe(hs_pipefrom) != 0) {
+		s_printf("GO_ERROR: pipe() from (HS).\n");
+		return 2;
+	}
+
+	/* Try to create Go AI engine process */
+	hs_nPid = fork();
+	if (hs_nPid < 0) {
+		s_printf("GO_ERROR: fork() (HS).\n");
+		return 3;
+	} else if (hs_nPid == 0) {
+		//close(STDIN_FILENO); close(STDOUT_FILENO); close(STDERR_FILENO);
+		/* dup pipe read/write to stdin/stdout */
+		dup2(hs_pipeto[0], STDIN_FILENO);
+		dup2(hs_pipefrom[1], STDOUT_FILENO);
+		//dup2(pipefrom[1], STDERR_FILENO); leave this, to print error message further below.
+		/* close unnecessary pipe descriptors for a clean environment */
+		close(hs_pipeto[1]);
+		close(hs_pipefrom[0]);
+
+		/* Start a new session to prevent Ctrl-C in the terminal from killing the child */
+		setsid();
+
+/*		"Options:\n"
+		"  -config file execute GTP commands from file before\n"
+	        "               starting main command loop\n"
+	        "  -help        display this help and exit\n"
+	        "  -maxgames n  make clear_board fail after n invocations\n"
+	        "  -nobook      don't automatically load opening book\n"
+	        "  -nohandicap  don't support handicap commands\n"
+	        "  -quiet       don't print debug messages\n"
+	        "  -size        initial (and fixed) board size\n"
+	        "  -srand       set random seed (-1:none, 0:time(0))\n";*/
+
+ #ifdef HS_ENGINE_FUEGO
+		execlp("./go/fuego", "fuego", NULL);
+ #endif
+ #ifdef HS_ENGINE_GNUGOMC
+		execlp("./go/gnugo", "gnugo", "--mode", "gtp", \
+		    "--quiet", "--boardsize", "9x9", "--chinese-rules", \
+		    "--capture-all-dead", \
+		    "--monte-carlo", "--mc-patterns montegnu_classic" /*mc_mogo_classic*/ \
+		    "--komi", "0", "--never-resign", NULL);//try never-resign to prevent weird unjustified resigns
+		// --cache-size <megs>
+		// --japanese-rules
+ #endif
+
+		/* We were unable to execute the engine? Game over! */
+		fprintf(stderr,"GO_ERROR: exec().\n");
+		//return 4;
+
+		/* Cause SIGPIPE to parent so they know what's up */
+		close(hs_pipeto[0]);
+		close(hs_pipefrom[1]);
+
+		/* Terminate child process */
+		exit(4);
+	}
+
+	/* We're parent */
+
+	/* Clear the pipe_buf[] array */
+	hs_pipe_buf_current_line = 0;
+	for (n = 0; n < MAX_GTP_LINES; n++) strcpy(hs_pipe_buf[n], "");
+
+	/* Prepare pipes (close unused ends) */
+	close(hs_pipeto[0]);
+	close(hs_pipefrom[1]);
+
+	if ((hs_fw = fdopen(hs_pipeto[1], "w")) == NULL) {
+		s_printf("GO_ERROR: fdopen() w (HS).\n");
+		return 5;
+	}
+	if ((hs_fr = fdopen(hs_pipefrom[0], "r")) == NULL) {
+		fclose(hs_fw);
+		s_printf("GO_ERROR: fdopen() r (HS).\n");
+		return 6;
+	}
+
+	/* Set stream for reading to non-blocking */
+	fcntl(hs_pipefrom[0], F_SETFL, O_NONBLOCK);
+
+	/* Power up engine */
+	s_printf("GO_INIT: ---STARTING UP--- (HS)\n");
+	/* We're up and running -
+	   at least if the next initializing writeToPipe() won't shut us down
+	   again due to broken pipe, in case the child couldn't init the engine. */
+	hs_go_engine_up = TRUE;
+
+	hidden_stage_active = TRUE;
+
+ #ifdef ENGINE_FUEGO
+	handle_loading();
+ #endif
+
+	/* Prepare general game configuration */
+	s_printf("GO_INIT: ---INIT AI--- (HS)\n");
+
+	/* Hack: Allow child to close pipes in case it cannot start the engine */
+	sleep(5);
+
+ #ifdef ENGINE_FUEGO
+	writeToPipe("boardsize 9");
+	wait_for_response();
+	/*writeToPipe("clear_board");
+	wait_for_response();*/
+	writeToPipe("komi 0");
+	wait_for_response();
+	writeToPipe("time_settings 0 1 0");//infinite: b>0, s=0
+	wait_for_response();
+
+	writeToPipe("uct_param_player reuse_subtree 1");
+	wait_for_response();
+
+	/* multi-core: */
+	/* only required for > 2 threads? doesn't matter: */
+	writeToPipe("uct_param_search lock_free 1");
+	wait_for_response();
+
+	writeToPipe("uct_param_search number_threads 2");//we have a 2-core cpu
+	wait_for_response();
+
+	/* we have 512 MB.. */
+	writeToPipe("uct_max_memory 300000000");
+	wait_for_response();
+
+	/* Hm, shouldn't this be default anyway? */
+	writeToPipe("go_param_rules ko_rule pos_superko");
+	wait_for_response();
+
+  #if 0 /* get more clue before using maybe^^ */
+   #if 1
+	/* more playouts = stronger? or obsolete?: */
+	writeToPipe("uct_param_player max_games=32000");
+	wait_for_response();
+   #endif
+   #if 0
+	/* not already covered by max_games and max_memory? */
+	writeToPipe("uct_param_search max_nodes=3750000");//seems max at 300MB RAM?
+	wait_for_response();
+   #endif
+  #endif
+
+	/* slight improvements? (might be obsolete meanwhile): */
+	writeToPipe("uct_param_search virtual_loss 1");
+	wait_for_response();
+	writeToPipe("uct_param_search number_playouts 2");
+	wait_for_response();
+
+	/* misc */
+	//go_param debug_to_comment 1
+	//go_param auto_save (filename)
+	//go_sentinel_file (filename)  (for resuming games that were interrupted by disconnection)
+	//final_status_list dead|seki|alive   returns list of stones; use to capture everything, to make a clear end?
+ #endif
+
+ #ifdef HS_ENGINE_GNUGOMC
+	writeToPipe("time_settings 0 0 0");//infinite: main = 0, byo = 0, stones = x
+	wait_for_response();
+ #endif
+
+	/* Init this 'flow control', to begin asynchronous pipe operation */
+	//hs_go_engine_processing = 0;
+
+	hidden_stage_active = FALSE;
+
+	/* ready for games */
+#endif
+
 	return 0;
 }
 
@@ -399,13 +617,12 @@ int go_engine_init(void) {
 void go_engine_terminate(void) {
 	int status_dummy;
 
-	if (!go_engine_up) {
-		/* No zombie child */
-		waitpid(nPid, &status_dummy, WNOHANG);
+    if (!go_engine_up) {
+	/* No zombie child */
+	waitpid(nPid, &status_dummy, WNOHANG);
 
-		/* Termination complete. */
-		return;
-	}
+	/* Termination complete. */
+    } else {
 
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	terminating = TRUE;
@@ -442,6 +659,58 @@ void go_engine_terminate(void) {
 	waitpid(nPid, &status_dummy, WNOHANG);
 
 	s_printf("GO_ENGINE: TERMINATED\n");
+    }
+
+#ifdef HIDDEN_STAGE
+	/* terminate all again, this time the hs-engine! */
+	if (!hs_go_engine_up) {
+		/* No zombie child */
+		waitpid(hs_nPid, &status_dummy, WNOHANG);
+
+		/* Termination complete. */
+		return;
+	}
+
+	hidden_stage_active = TRUE;
+
+#ifdef DISCARD_RESPONSES_WHEN_TERMINATING
+	terminating = TRUE;
+#endif
+
+	/* try to exit running games gracefully */
+	if (go_game_up) go_challenge_cleanup(TRUE);
+
+	/* terminate cleanly */
+	writeToPipe("quit");
+
+#if 0	/* disable, in case we're terminating the engine because it \
+	 stopped working! (would freeze server here, in that case) */
+	wait_for_response();
+#endif
+
+	hidden_stage_active = FALSE;
+
+	/* discard any possible answers we were still waiting for */
+	//hs_go_engine_processing = 0;
+
+#ifdef DISCARD_RESPONSES_WHEN_TERMINATING
+	terminating = FALSE;
+#endif
+
+	/* close pipes to it */
+	if (hs_go_engine_up) {
+		fclose(hs_fr);
+		fclose(hs_fw);
+		close(hs_pipeto[1]);
+		close(hs_pipefrom[0]);
+		hs_go_engine_up = FALSE;
+	}
+
+	/* No zombie child */
+	waitpid(hs_nPid, &status_dummy, WNOHANG);
+
+	s_printf("GO_ENGINE: TERMINATED (HS)\n");
+#endif
 }
 
 void go_challenge(int Ind) {
@@ -711,7 +980,7 @@ void go_challenge_accept(int Ind, bool new_wager) {
 void go_challenge_start(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int n;
-#ifdef ENGINE_GNUGO
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
 	char path[80];
 #endif
 
@@ -2315,7 +2584,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	/* Clean up everything */
 	go_game_up = FALSE;
 	go_engine_next_action = NACT_NONE;
-//	go_engine_processing = 0;
+	//go_engine_processing = 0;
 }
 
 /* Screen operations only: Update the board visuals for the player */
