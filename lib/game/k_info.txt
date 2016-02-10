@@ -4249,7 +4249,7 @@ P:0:3d6:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:529:& Three Piece Rod~
-G:\:u
+G:\:U
 I:21:11:0
 W:20:0:90:350
 A:20/3
@@ -4608,7 +4608,7 @@ P:0:1d1:0:0:0
 # Mage staffs (for Sorcerers to wield.)
 
 N:577:& Mage Staff~
-G:\:B
+G:\:w
 I:6:1:0
 W:5:0:12:300
 A:5/3:45/2
