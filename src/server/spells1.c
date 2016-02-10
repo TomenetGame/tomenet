@@ -321,7 +321,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 			break;
 		case SV_POTION_CURING:
 			dt = GF_CURING; //GF_OLD_HEAL;
-			dam = 0x4 + 0x8 + 0x10 + 0x20; //damroll(5,10);
+			dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //damroll(5,10);
 			ident = TRUE;
 			break;
 		case SV_POTION_HEALING:
@@ -9724,20 +9724,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (dam & 0x2) { /* Ungorge */
 				if (p_ptr->food >= PY_FOOD_MAX) set_food(Ind, PY_FOOD_MAX - 1);
 			}
-			if (dam & 0x4) { /* Neutralise Poison */
+			if (dam & 0x4) /* Neutralise Poison */
 				(void)set_poisoned(Ind, 0, 0);
-			}
-			if (dam & 0x8) { /* Close cuts */
+			if (dam & 0x8) /* Close cuts */
 				(void)set_cut(Ind, 0, 0);
-			}
 			if (dam & 0x10) { /* Remove conf/blind/stun */
 				(void)set_confused(Ind, 0);
 				(void)set_blind(Ind, 0);
-				(void)set_stun(Ind, 0);
 			}
-			if (dam & 0x20) { /* Remove hallu */
+			if (dam & 0x20) /* Remove hallu */
 				set_image(Ind, 0);
-			}
 			if (dam & 0x40) { /* Restore stats */
 				(void)do_res_stat(Ind, A_STR);
 				(void)do_res_stat(Ind, A_CON);
@@ -9746,9 +9742,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				(void)do_res_stat(Ind, A_INT);
 				(void)do_res_stat(Ind, A_CHR);
 			}
-			if (dam & 0x80) { /* Restore exp */
+			if (dam & 0x80) /* Restore exp */
 				(void)restore_level(Ind);
-			}
+			if (dam & 0x100) (void)set_stun(Ind, 0);
 			break;
 	case GF_RESURRECT_PLAYER:
 			//if (p_ptr->ghost)

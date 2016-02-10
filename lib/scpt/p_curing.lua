@@ -83,9 +83,9 @@ HCUREWOUNDS_I = add_spell {
 
 			status_ailments = 0
 			--hacks to cure effects same as potions would
-			if get_level(Ind, HCUREWOUNDS_I, 50) >= 9 then
-				status_ailments = status_ailments + 2048
-			end
+			--if get_level(Ind, HCUREWOUNDS_I, 50) >= 9 then
+			--	status_ailments = status_ailments + 2048
+			--end
 
 			hd = get_level(Ind, HCUREWOUNDS_I, 18)
 			if (hd > 9) then hd = 9 end
@@ -102,7 +102,7 @@ HCUREWOUNDS_I = add_spell {
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target.",
 		"Caps at 14d8 (same as potion of cure critical wounds).",
-		"Also cures blindness and cuts at level 9.",
+		--"Also cures blindness and cuts at level 9.",
 	}
 }
 --cure critical wounds
@@ -122,11 +122,11 @@ HCUREWOUNDS_II = add_spell {
 			status_ailments = 0
 
 			--hacks to cure effects same as potions would
-			if get_level(Ind, HCUREWOUNDS_II, 50) >= 9 then
-				status_ailments = status_ailments + 8192 + 4096 + 2048
-			else
-				status_ailments = status_ailments + 4096 + 2048
-			end
+			--if get_level(Ind, HCUREWOUNDS_II, 50) >= 9 then
+			--	status_ailments = status_ailments + 8192 + 4096 + 2048
+			--else
+			--	status_ailments = status_ailments + 4096 + 2048
+			--end
 
 			hd = get_level(Ind, HCUREWOUNDS_I, 27) + 1
 			if (hd > 14) then hd = 14 end
@@ -143,8 +143,8 @@ HCUREWOUNDS_II = add_spell {
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target.",
 		"Caps at 14d8 (same as potion of cure critical wounds).",
-		"Also cures blindness, cuts and confusion.",
-		"Also cures stun at level 9.",
+		--"Also cures blindness, cuts and confusion.",
+		--"Also cures stun at level 9.",
 	}
 }
 
@@ -159,14 +159,14 @@ HHEALING_I = add_spell {
 	["fail"] = 	25,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			local status_ailments
-			status_ailments = 1024
+			local status_ailments = 0
+			--status_ailments = 1024
 			--hacks to cure effects same as potions would
-			if get_level(Ind, HHEALING_I, 50) >= 10 then
-				status_ailments = status_ailments + 4096 + 2048
-			elseif get_level(Ind, HHEALING_I, 50) >= 4 then
-				status_ailments = status_ailments + 2048
-			end
+			--if get_level(Ind, HHEALING_I, 50) >= 10 then
+			--	status_ailments = status_ailments + 4096 + 2048
+			--elseif get_level(Ind, HHEALING_I, 50) >= 4 then
+			--	status_ailments = status_ailments + 2048
+			--end
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(8), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
@@ -174,7 +174,7 @@ HHEALING_I = add_spell {
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
-		"Also cures blindness and cuts at level 4 and confusion at level 10.",
+		--"Also cures blindness and cuts at level 4 and confusion at level 10.",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.",
 		"***Automatically projecting***",
 	}
@@ -191,20 +191,20 @@ HHEALING_II = add_spell {
 	["fail"] = 	-38,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			local status_ailments
-			status_ailments = 1024 + 2048 + 4096
+			local status_ailments = 0
+			--status_ailments = 1024 + 2048 + 4096
 			--hacks to cure effects same as potions would
-			if get_level(Ind, HHEALING_II, 50) >= 8 then
-				status_ailments = status_ailments + 8192
-			end
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(25), 1, " points at your wounds.")
+			--if get_level(Ind, HHEALING_II, 50) >= 8 then
+			--	status_ailments = status_ailments + 8192
+			--end
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(20), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
-			return "heal "..get_healing_percents2(25).."% (max "..get_healing_cap2(25)..") = "..get_healing_power2(25)
+			return "heal "..get_healing_percents2(20).."% (max "..get_healing_cap2(20)..") = "..get_healing_power2(20)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
-		"Also cures blindness, cuts and confusion and at level 8 stun too.",
+		--"Also cures blindness, cuts and confusion and at level 8 stun too.",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.",
 		"***Automatically projecting***",
 	}
@@ -220,9 +220,9 @@ HHEALING_III = add_spell {
 	["fail"] = 	-87,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			local status_ailments
+			local status_ailments = 0
 			--hacks to cure effects same as potions would
-			status_ailments = 1024 + 2048 + 4096 + 8192
+			--status_ailments = 1024 + 2048 + 4096 + 8192
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(0), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
@@ -230,7 +230,7 @@ HHEALING_III = add_spell {
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
-		"Also cures blindness, cuts, confusion and stun.",
+		--"Also cures blindness, cuts, confusion and stun.",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.",
 		"***Automatically projecting***",
 	}
@@ -355,13 +355,13 @@ HCURING_I = add_spell {
 			if (player.poisoned ~= 0 and player.slow_poison == 0) then
 				player.slow_poison = 1
 			end
-			fire_ball(Ind, GF_CURE_PLAYER, 0, 1 + 2, 1, " concentrates on your maladies.")
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 1 + 2 + 8, 1, " concentrates on your maladies.")
 			end,
 	["info"] = 	function()
 			return ""
 			end,
 	["desc"] = 	{
-			"Slows down the effect of poison and treats stomach ache.",
+			"Treats stomach ache, slows down the effect of poison and heals cuts.",
 			"***Automatically projecting***",
 	}
 }
@@ -381,14 +381,14 @@ HCURING_II = add_spell {
 			end
 			set_poisoned(Ind, 0, 0)
 			set_image(Ind, 0)
-			fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 20, 1, " concentrates on your maladies.")
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 8 + 16, 1, " concentrates on your maladies.")
 			end,
 	["info"] = 	function()
 			return ""
 			end,
 	["desc"] = 	{
-			"Treats stomach ache,",
-			"neutralizes poison and cures hallucinations.",
+			"Treats stomach ache, neutralizes poison, heals cuts",
+			"and cures blindness and confusion.",
 			"***Automatically projecting***",
 	}
 }
@@ -411,15 +411,14 @@ HCURING_III = add_spell {
 			set_stun(Ind, 0)
 			set_poisoned(Ind, 0, 0)
 			set_image(Ind, 0)
-			fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 10 + 20, 1, " concentrates on your maladies.")
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 8 + 16 + 32 + 256, 1, " concentrates on your maladies.")
 			end,
 	["info"] = 	function()
 			return ""
 			end,
 	["desc"] = 	{
-			"Treats stomach ache,",
-			"neutralizes poison and cures hallucinations,",
-			"cures confusion, blindness and stun.",
+			"Treats stomach ache, neutralizes poison, heals cuts",
+			"and cures blindness, confusion, stun and hallucinations.",
 			"***Automatically projecting***",
 	}
 }

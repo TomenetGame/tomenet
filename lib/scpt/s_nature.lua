@@ -63,13 +63,13 @@ HEALING = add_spell {
 			local status_ailments
 			status_ailments = 0
 			--hacks to cure effects same as potions would
-			if get_level(Ind, HEALING, 50) >= 24 then
-				status_ailments = status_ailments + 8192 + 4096 + 2048
-			elseif get_level(Ind, HEALING, 50) >= 10 then
-				status_ailments = status_ailments + 4096 + 2048
-			elseif get_level(Ind, HEALING, 50) >= 4 then
-				status_ailments = status_ailments + 2048
-			end
+			--if get_level(Ind, HEALING, 50) >= 24 then
+			--	status_ailments = status_ailments + 8192 + 4096 + 2048
+			--elseif get_level(Ind, HEALING, 50) >= 10 then
+			--	status_ailments = status_ailments + 4096 + 2048
+			--elseif get_level(Ind, HEALING, 50) >= 4 then
+			--	status_ailments = status_ailments + 2048
+			--end
 
 			if player.spell_project > 0 then
 				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(0), player.spell_project, "")
@@ -84,9 +84,9 @@ HEALING = add_spell {
 	["desc"] = 	{
 			"Heals a percent of hitpoints up to a maximum of 400 points healed",
 			"Projecting it will heal up to half that amount on nearby players",
-			"Also cures blindness and cuts at level 4",
-			"Also cures confusion at level 10",
-			"Also cures stun at level 24",
+			--"Also cures blindness and cuts at level 4",
+			--"Also cures confusion at level 10",
+			--"Also cures stun at level 24",
 			"***Affected by the Meta spell: Project Spell***",
 	}
 }
@@ -113,7 +113,7 @@ RECOVERY = add_spell	{
 				do_res_stat(Ind, A_CHR)
 				restore_level(Ind)
 				if player.spell_project > 0 then
-					fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 10 + 40 + 80, player.spell_project, "")
+					fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256 + 64 + 128, player.spell_project, "")
 				end
 			elseif get_level(Ind, RECOVERY, 50) >= 20 then
 				set_poisoned(Ind, 0, 0)
@@ -128,7 +128,7 @@ RECOVERY = add_spell	{
 				do_res_stat(Ind, A_INT)
 				do_res_stat(Ind, A_CHR)
 				if player.spell_project > 0 then
-					fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 10 + 40, player.spell_project, "")
+					fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256 + 64, player.spell_project, "")
 				end
 			elseif get_level(Ind, RECOVERY, 50) >= 15 then
 				set_poisoned(Ind, 0, 0)
@@ -137,7 +137,7 @@ RECOVERY = add_spell	{
 				set_blind(Ind, 0)
 				set_stun(Ind, 0)
 				if player.spell_project > 0 then
-					fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 10, player.spell_project, "")
+					fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256, player.spell_project, "")
 				end
 			elseif get_level(Ind, RECOVERY, 50) >= 5 then
 				set_poisoned(Ind, 0, 0)
