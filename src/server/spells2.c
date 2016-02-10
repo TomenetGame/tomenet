@@ -779,7 +779,7 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 
 #ifdef AUTO_RET_NEW /* for drain life etc */
 	/* Don't allow phase/teleport for auto-retaliation methods */
-	if (p_ptr->auto_retaliaty) {
+	if (p_ptr->auto_retaliaty && !autoeffect) { /* note: healing by drain-life-autoret is possible with this */
 		msg_print(Ind, "\377yYou cannot use means of healing for auto-retaliation.");
 		return FALSE;
 	}
