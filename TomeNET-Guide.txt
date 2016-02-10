@@ -1393,9 +1393,9 @@ or shorter: /tym [rs]
  (/autotag)
 
 /undoskills
-            A skill reset function, allowing you to undo the last couple of
-            skill points you assigned in 'G' menu. Use this to correct points
-            you accidentally put into a wrong skill.
+            A skill reset function ("respec"), allowing you to undo the last
+            couple of skill points you assigned in 'G' menu. Use this to
+            correct points you accidentally put into a wrong skill.
             NOTE: Logging off or gaining another level will reset undoskills,
             making it impossible to undo points spent previously.
             Also, it can only be used ONCE per level, so make sure you get your
