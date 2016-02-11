@@ -385,8 +385,7 @@ void do_cmd_ghost_power_aux(int Ind, int dir) {
 }
 
 /* old spinning, now unused. Added spin_attack() to replace it - C. Blue */
-void do_spin(int Ind)
-{
+void do_spin(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int d, x, y;
 

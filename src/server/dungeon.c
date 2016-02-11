@@ -5223,28 +5223,8 @@ static void process_player_end(int Ind) {
 		    player might auto-ret. - C. Blue) */
 		int energy = level_speed(&p_ptr->wpos);
 
-#if 0 /* don't modify energy! the correct amount of energy is deducted in the actual combat routines, and we want to have an extra amount of energy left, to break out quickly */
-		/* test ftk type and use according energy requirements */
-		if (p_ptr->shooting_till_kill) {
-			if (target_okay(Ind)) {
-				/* spells always require 1 turn: */
-				if (p_ptr->shoot_till_kill_spell || p_ptr->shoot_till_kill_mimic);
-				/* runespells excepted (for 'brief' modifier)*/
-				else if (p_ptr->shoot_till_kill_rcraft) energy = p_ptr->FTK_energy;
-				/* shooting with ranged weapon: */
-				else energy = energy / p_ptr->num_fire;
-			} else {
-				p_ptr->shooting_till_kill = FALSE;
-				/* normal auto-retaliation */
-				//MIGHT NOT BE A MELEE ATTACK, SO COMMENTED OUT!  else energy = energy / p_ptr->num_blow;
-			}
-		}
-		/* normal auto-retaliation */
-		//MIGHT NOT BE A MELEE ATTACK, SO COMMENTED OUT!  else energy = energy / p_ptr->num_blow;
-#else
 		/* is this line even required at all..? */
 		if (p_ptr->shooting_till_kill && !target_okay(Ind)) p_ptr->shooting_till_kill = FALSE;
-#endif
 
 		/* Check for auto-retaliate */
 	/* The 'old way' is actually the best way, because the initial delay of the 'new way',

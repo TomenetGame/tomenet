@@ -8099,9 +8099,10 @@ static int Receive_fire(int ind) {
 		player = GetInd[connp->id];
 		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
+		if (!p_ptr->num_fire) return 1; //prevent div/0 in energy check below
 	}
 
-//	if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &dir, &item)) <= 0)
+	//if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &dir, &item)) <= 0)
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
@@ -8120,7 +8121,7 @@ static int Receive_fire(int ind) {
 		if (bad_dir1(player, &dir)) return 1;
 
 		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
-//		do_cmd_fire(player, dir, item);
+		//do_cmd_fire(player, dir, item);
 		do_cmd_fire(player, dir);
 		if (!(p_ptr->shoot_till_kill && dir == 5 && !p_ptr->shooting_till_kill)) {
 			if (p_ptr->ranged_double) do_cmd_fire(player, dir);
@@ -8128,7 +8129,7 @@ static int Receive_fire(int ind) {
 		p_ptr->shooty_till_kill = FALSE;
 		return 2;
 	} else if (p_ptr) {
-//		Packet_printf(&connp->q, "%c%c%hd", ch, dir, item);
+		//Packet_printf(&connp->q, "%c%c%hd", ch, dir, item);
 		Packet_printf(&connp->q, "%c%c", ch, dir);
 		return 0;
 	}

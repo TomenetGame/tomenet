@@ -6378,7 +6378,7 @@ void calc_boni(int Ind) {
 
 	/* hack: no physical attacks */
 	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
-	    (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW) ||
+	    (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW)) ||
 	    never_blow)
 		p_ptr->num_blow = 0;
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)

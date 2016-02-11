@@ -4692,14 +4692,10 @@ void do_cmd_fire(int Ind, int dir) {
 	}
 
 	/* Extract the item flags */
-        object_flags(o_ptr, &f1a, &fx, &fx, &fx, &fx, &fx, &esp);
-
-	/* Use a base distance */
-//	tdis = 10;
+	object_flags(o_ptr, &f1a, &fx, &fx, &fx, &fx, &fx, &esp);
 
 	/* Use the proper number of shots */
-//	thits = boomerang? 1 : p_ptr->num_fire;
-	thits = p_ptr->num_fire;
+	if (!(thits = p_ptr->num_fire)) return; //div/0 check
 
 	if (!boomerang) {
 		/* Actually "fire" the object */
@@ -4730,11 +4726,11 @@ void do_cmd_fire(int Ind, int dir) {
 		returning = TRUE;
 
 		/* making art ammo less reusable over the history of many chars, increasing demand.. */
-//		o_ptr->level = 0;
+		//o_ptr->level = 0;
 	}
 
 	/* Get extra "power" from "extra might" */
-//	if (p_ptr->xtra_might) tmul++;
+	//if (p_ptr->xtra_might) tmul++;
 	if (!boomerang) tmul += p_ptr->xtra_might;
 
 	/* Base range */
@@ -5085,10 +5081,10 @@ void do_cmd_fire(int Ind, int dir) {
 		/* Travel until stopped */
 #if 0 /* I think it travelled once too far, since it's mmove2'ed in the very beginning of every for-pass, */
 /* and it goes from 0 to tdis, that's tdis+1 steps in total. Correct me if wrong~~  C. Blue */
-//		for (cur_dis = 0; cur_dis <= tdis; )
+		//for (cur_dis = 0; cur_dis <= tdis; )
 		for (cur_dis = real_dis = 0; real_dis <= tdis; )
 #else
-//		for (cur_dis = 0; cur_dis < tdis; )
+		//for (cur_dis = 0; cur_dis < tdis; )
 		for (cur_dis = real_dis = 0; real_dis < tdis; )
 #endif
 		{
@@ -5243,7 +5239,7 @@ void do_cmd_fire(int Ind, int dir) {
 						    || (p_ptr->ranged_precision && visible))
 						    && (!q_ptr->shadow_running || !rand_int(3))) {
 #else
-//						if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
+						//if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
 						if ((test_hit_fire(chance - cur_dis,
 						    (q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a,
 						    visible) || (p_ptr->ranged_precision && visible))
@@ -5257,7 +5253,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 #ifndef NEW_DODGING
 							if (get_skill(q_ptr, SKILL_DODGE)) {
-//								int chance = (q_ptr->dodge_level - p_ptr->lev - archery) / 3;
+								//int chance = (q_ptr->dodge_level - p_ptr->lev - archery) / 3;
 								int chance = (q_ptr->dodge_level - p_ptr->lev - get_skill(p_ptr, archery)) / 3;
 
 								if ((chance > 0) && magik(chance)) {
@@ -5269,7 +5265,7 @@ void do_cmd_fire(int Ind, int dir) {
 								}
 							}
 #else
-//							if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev + get_skill(p_ptr, archery) / 3 + 1000))) { /* hack - more difficult to dodge ranged attacks */
+							//if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev + get_skill(p_ptr, archery) / 3 + 1000))) { /* hack - more difficult to dodge ranged attacks */
 							if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev + get_skill(p_ptr, archery) / 3)) && (!p_ptr->ranged_barrage || magik(50))) {
 								// msg_print(Ind, "You dodge a magical attack!");
 								msg_format(0 - c_ptr->m_idx, "\377%cYou dodge the projectile!", COLOUR_DODGE_GOOD);
@@ -5780,8 +5776,8 @@ void do_cmd_fire(int Ind, int dir) {
 		}
 
 		/* If no break and if Archer, the ammo can ricochet */
-//		if ((num_ricochet) && (hit_body) && (magik(45 + p_ptr->lev)))
-//		if ((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
+		//if ((num_ricochet) && (hit_body) && (magik(45 + p_ptr->lev)))
+		//if ((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
 		if ((num_ricochet) && (hit_body) && (magik(ricochet_chance)) && !p_ptr->ranged_barrage) {
 			/* Some players do not want ricocheting shots as to not wake up other
 			 * monsters. How about we remove ricocheting shots for slingers, but
@@ -5967,7 +5963,7 @@ void do_cmd_fire(int Ind, int dir) {
 				inven_item_describe(Ind, item);
 				inven_item_optimize(Ind, item);
 				/* Window stuff */
-//				p_ptr->window |= (PW_EQUIP);
+				//p_ptr->window |= (PW_EQUIP);
 			}
 		} else {
 			breakage = 101; /* projectile gets destroyed by burning brightly + hitting someone */

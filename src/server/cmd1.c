@@ -2978,6 +2978,7 @@ void hit_trap(int Ind) {
  *       (important for dual-backstab treatment) - C. Blue
  */ 
 /* TODO: q_ptr/p_ptr->name should be replaced by strings made by player_desc */
+//note: we assume that p_ptr->num_blow isn't 0 (div/0)
 static void py_attack_player(int Ind, int y, int x, bool old) {
 	player_type *p_ptr = Players[Ind];
 	int num = 0, bonus, chance, slot;
@@ -3009,7 +3010,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 	int		drain_result = 0, drain_heal = 0, drain_frac;
 	int		drain_left = MAX_VAMPIRIC_DRAIN;
 	bool		drainable = TRUE, backstab_feed = FALSE;
-//	bool		py_slept;
+	//bool		py_slept;
 	bool		no_pk;
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster], *qr_ptr;
@@ -3027,8 +3028,8 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 	c_ptr = &zcave[y][x];
 	q_ptr = Players[0 - c_ptr->m_idx];
 	qr_ptr = &r_info[q_ptr->body_monster];
-//	py_slept = (q_ptr->sleep != 0);
-//	py_slept = q_ptr->afk; /* :D - unused though (also, AFK status can't be toggled for this anyway */
+	//py_slept = (q_ptr->sleep != 0);
+	//py_slept = q_ptr->afk; /* :D - unused though (also, AFK status can't be toggled for this anyway */
 	no_pk = ((zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK) ||
 	   (zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK));
 
@@ -3039,7 +3040,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 	if (q_ptr->afk) {
 		if (!p_ptr->afk) {
 			/* Message, reduce spamming frequency */
-//			if (!old)
+			//if (!old)
 			if (!(turn % (cfg.fps * 3))) msg_print(Ind, "For sportsmanship you may not assault players who are AFK.");
 		}
 		return;
@@ -3054,7 +3055,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 	disturb(0 - c_ptr->m_idx, 0, 0);
 
 	/* Extract name */
-//	strcpy(q_name, q_ptr->name);
+	//strcpy(q_name, q_ptr->name);
 	player_desc(Ind, q_name, 0 - c_ptr->m_idx, 0);
 
 	/* Track player health */
@@ -3089,7 +3090,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 
 	if (q_ptr->store_num == STORE_HOME) {
 		/* Message */
-//		msg_format(Ind, "You are too afraid to attack %s!", q_name);
+		//msg_format(Ind, "You are too afraid to attack %s!", q_name);
 
 		/* Done */
 		return;
@@ -3100,7 +3101,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 	/* Disturb the player */
-//	q_ptr->sleep = 0;
+	//q_ptr->sleep = 0;
 #ifndef KURZEL_PK
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if (!(q_ptr->pkill & PKILL_KILLABLE)) {
@@ -3144,7 +3145,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 
 #if 0
 	/* check whether player can be backstabbed */
-//	if (!q_ptr->sleep)
+	//if (!q_ptr->sleep)
 	if (!q_ptr->afk) /* :D */
 		sleep_stab = FALSE;
 	if (q_ptr->backstabbed) {
@@ -3217,7 +3218,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 		    (martial && (!q_ptr->body_monster || (qr_ptr->body_parts[BODY_HEAD] && qr_ptr->body_parts[BODY_TORSO]))))) {
 			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
 				backstab = TRUE;
-//				q_ptr->backstabbed = 1;
+				//q_ptr->backstabbed = 1;
 			} else if (q_ptr->afraid) {
 				stab_fleeing = TRUE;
 			}
@@ -3251,7 +3252,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 #ifndef PVP_AC_REDUCTION
 		if (p_ptr->piercing || backstab || test_hit_melee(chance, q_ptr->ac + q_ptr->to_a, 1)) {
 #else
-//		if (p_ptr->piercing || backstab || test_hit_melee(chance, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, 1)) {
+		//if (p_ptr->piercing || backstab || test_hit_melee(chance, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, 1)) {
 		if (p_ptr->piercing || backstab ||
 		    test_hit_melee(chance, (q_ptr->ac + q_ptr->to_a) > AC_CAP ?
 		    AC_CAP : q_ptr->ac + q_ptr->to_a, 1)) {
@@ -3408,7 +3409,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 						special_effect = MA_KNEE;
 					} else
 						sprintf(hit_desc, ma_ptr->desc, q_name);
-//						msg_format(Ind, ma_ptr->desc, q_name);
+						//msg_format(Ind, ma_ptr->desc, q_name);
 				}
 
 				else {
@@ -3417,7 +3418,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 					}
 
 					sprintf(hit_desc, ma_ptr->desc, q_name);
-//					msg_format(Ind, ma_ptr->desc, q_name);
+					//msg_format(Ind, ma_ptr->desc, q_name);
 				}
 
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
@@ -3642,7 +3643,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 				msg_format(0 - c_ptr->m_idx, "%s backstabs you for \377R%d \377wdamage.", p_ptr->name, k);
 			   }
 			}
-//			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
+			//else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
 			else {
 				msg_format(Ind, "%s for \377y%d \377wdamage.", hit_desc, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
@@ -3664,7 +3665,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 				// mimic forms for vampires/bats: 432, 520, 521, 623, 989
 				if (p_ptr->prace == RACE_VAMPIRE && drainable) {
 					int feed = q_ptr->mhp + 100;
-//					feed = (4 - (300 / feed)) * 1000;//1000..4000
+					//feed = (4 - (300 / feed)) * 1000;//1000..4000
 					feed = (6 - (300 / feed)) * 100;//300..600
 					if (backstab_feed) feed *= 2;
 					if (q_ptr->prace == RACE_VAMPIRE) feed /= 3;
@@ -3989,6 +3990,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
  * Note: old == TRUE if not auto-retaliating actually
  *       (important for dual-backstab treatment) - C. Blue
  */
+//note: we assume that p_ptr->num_blow isn't 0 (div/0)
 static void py_attack_mon(int Ind, int y, int x, bool old) {
 	player_type	*p_ptr = Players[Ind];
 	int		num = 0, bonus, chance, slot, owner_Ind = 0, sfx = 0;
@@ -4052,7 +4054,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 	helpless = (m_ptr->csleep || m_ptr->stunned > 100 || m_ptr->confused);
 
 	if ((r_ptr->flags3 & RF3_UNDEAD) ||
-//	    (r_ptr->flags3 & RF3_DEMON) ||
+	    //(r_ptr->flags3 & RF3_DEMON) ||
 	    (r_ptr->flags3 & RF3_NONLIVING) ||
 	    (strchr("Egv", r_ptr->d_char)))
 		drainable = FALSE;
@@ -4088,7 +4090,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 #else /* prevent golems being attacked by other players */
 	if ((m_ptr->owner == p_ptr->id && !p_ptr->confused && p_ptr->mon_vis[c_ptr->m_idx]) ||
 	    (m_ptr->owner == p_ptr->id && m_ptr->pet) || //dont kill pets either, meanie!
-//	    !owner_Ind || /* don't attack ownerless golems */
+	    //!owner_Ind || /* don't attack ownerless golems */
 	    (owner_Ind && !check_hostile(Ind, owner_Ind))) /* only attack if owner is hostile */
 #endif
 	{
@@ -4386,7 +4388,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 						special_effect = MA_KNEE;
 					} else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);
-//						msg_format(Ind, ma_ptr->desc, m_name);
+						//msg_format(Ind, ma_ptr->desc, m_name);
 					}
 #else
 					if (r_ptr->flags1 & RF1_MALE) special_effect = MA_KNEE;
@@ -4402,7 +4404,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 						special_effect = MA_SLOW;
 					} else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);
-//						msg_format(Ind, ma_ptr->desc, m_name);
+						//msg_format(Ind, ma_ptr->desc, m_name);
 					}
 #else
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
@@ -4418,7 +4420,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 						special_effect = MA_SLOW;
 					} else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);
-//						msg_format(Ind, ma_ptr->desc, m_name);
+						//msg_format(Ind, ma_ptr->desc, m_name);
 					}
 #else
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
@@ -4431,7 +4433,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 						stun_effect = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
 
 					sprintf(hit_desc, ma_ptr->desc, m_name);
-//					msg_format(Ind, ma_ptr->desc, m_name);
+					//msg_format(Ind, ma_ptr->desc, m_name);
 				}
 
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
@@ -4528,9 +4530,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 							/* nothing:
 							msg_format(Ind, "%^s is unaffected.", m_name);*/
 						}
-//						else if (!magik((r_ptr->level * 2) / 3 + resist_stun)) {
-//						else if (!magik(((r_ptr->level + 30) * 2) / 4 + resist_stun)) {
-//						else if (!magik((r_ptr->level + 100) / 3 + resist_stun)) {
+						//else if (!magik((r_ptr->level * 2) / 3 + resist_stun)) {
+						//else if (!magik(((r_ptr->level + 30) * 2) / 4 + resist_stun)) {
+						//else if (!magik((r_ptr->level + 100) / 3 + resist_stun)) {
 						else if (!magik(90 - (1000 / (r_ptr->level + 50)) + resist_stun)) {
 							m_ptr->stunned += (stun_effect + get_skill_scale(p_ptr, SKILL_COMBAT, 3));
 							did_stun = TRUE;
@@ -4592,7 +4594,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				if (p_ptr->resist_fire || p_ptr->oppose_fire) mon_fire /= 2;
 				if (p_ptr->immune_fire) mon_fire = 0;
 				i = mon_aqua + mon_acid + mon_fire;
-//				if (i && magik(20 + (i > 5 ? 5 : i) * 6)) {
+				//if (i && magik(20 + (i > 5 ? 5 : i) * 6)) {
 				if (i && magik(i > 5 ? 5 : i)) {
 					i = rand_int(i);
 					if (i < mon_aqua) weapon_takes_damage(Ind, GF_WATER, slot);
@@ -4725,8 +4727,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				else msg_format(Ind, "\377%cYou backstab the fleeing %s for \377p%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
 			   }
 			}
-//			else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
-//			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
+			//else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
+			//else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
 			else {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
 					msg_format(Ind, "\377%c%s for \377e%d \377%cdamage.", uniq, hit_desc, k, uniq);
@@ -4775,7 +4777,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				/* Vampires feed off the life force! (if any) */
 				// mimic forms for vampires/bats: 432, 520, 521, 623, 989
 				if (p_ptr->prace == RACE_VAMPIRE && drainable) {
-//					feed = (4 - (300 / feed)) * 1000;//1000..4000
+					//feed = (4 - (300 / feed)) * 1000;//1000..4000
 					feed = (6 - (300 / feed)) * 100;//300..600
 					if (r_ptr->flags3 & RF3_DEMON) feed /= 2;
 					if (r_ptr->d_char == 'A') feed /= 3;
@@ -4946,7 +4948,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 							num = p_ptr->num_blow + 1; /* Can't hit it anymore! */
 						}
 					} else msg_format(Ind, "%^s resists the effect.", m_name);
-//					no_extra = TRUE;
+					//no_extra = TRUE;
 				} else msg_format(Ind, "%^s is unaffected.", m_name);
 			}
 
@@ -4957,7 +4959,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				    (r_ptr->flags4 & RF4_BR_CHAO) ||
 				    (r_ptr->flags9 & RF9_IM_TELE) ||
 				    (r_ptr->flags9 & RF9_RES_CHAOS) ))
-//					|| (m_ptr->mflag & MFLAG_QUEST)))
+				    //|| (m_ptr->mflag & MFLAG_QUEST)))
 				{
 					if (randint(150) > m_ptr->level) {
 						int tmp = poly_r_idx(m_ptr->r_idx);
@@ -5142,13 +5144,12 @@ void py_attack(int Ind, int y, int x, bool old) {
 	struct worldpos *wpos = &p_ptr->wpos;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) return;
+	if (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW)) return;
+	if (!p_ptr->num_blow) return; //prevent div/0 in py_attack_..() routines
 
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
-	if ((p_ptr->body_monster &&
-	    (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW))
-	    || !p_ptr->num_blow) return;
 
 	/* Break goi/manashield */
 #if 0
@@ -5177,11 +5178,9 @@ void spin_attack(int Ind) {
 	cave_type *c_ptr;
 	int i, j, x, y;
 	struct worldpos *wpos = &p_ptr->wpos;
-	if(!(zcave = getcave(wpos))) return;
 
-	if (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW
-			|| !p_ptr->num_blow) return;
-
+	if (!(zcave = getcave(wpos))) return;
+	if (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW)) return;
 	if (!p_ptr->num_blow) return; /* paranoia */
 
 	/* In case we got here by weapon activation: */
