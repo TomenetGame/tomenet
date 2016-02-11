@@ -2470,6 +2470,11 @@ static bool auto_retaliate_test(int Ind) {
 						p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
 						break;
 					}
+					/* Skip this item in case it has @Ot and we aren't in town */
+					if (*inscription == 't') {
+						p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
+						if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) break;
+					}
 
 					/* Select the first usable item with @O */
 					item = i;
@@ -2499,7 +2504,7 @@ static bool auto_retaliate_test(int Ind) {
 		/* check for a valid inscription */
 		if (inscription == NULL) continue;
 
-		/* scan the inscription for @O */
+		/* scan the inscription for @Ox */
 		while (*inscription != '\0') {
 			if (inscription[0] == '@' && (inscription[1] == 'O' || inscription[1] == 'Q') && inscription[2] == 'x') {
 				p_ptr->warning_autoret = 99; /* seems he knows what he's doing! */
