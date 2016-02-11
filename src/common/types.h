@@ -2734,6 +2734,12 @@ struct player_type {
 	bool auto_retaliating;
 	bool auto_retaliaty;		/* TRUE for code-wise duration of autorataliation
 					   actions, to prevent going un-AFK from them! */
+	bool ar_test_fail;
+	monster_type *ar_m_target_ptr, *ar_prev_m_target_ptr;
+	player_type *ar_p_target_ptr, *ar_prev_p_target_ptr;
+	int ar_target, ar_item;
+	cptr ar_at_O_inscription;
+	bool ar_fallback, ar_no_melee;
 
 	/* Global events participant? */
 	int global_event_type[MAX_GLOBAL_EVENTS]; /* 0 means 'not participating' */

@@ -2409,10 +2409,10 @@ static bool retaliate_cmd(int Ind, bool fallback) {
    wraithed target, this code is in EXPENSIVE_NO_TARGET_TEST only, so it won't
    work if this isn't defined. This was already the case for melee, just not for @O ranged. */
 #define EXPENSIVE_NO_TARGET_TEST
-static int auto_retaliate(int Ind) {
+static bool auto_retaliate_test(int Ind) {
 	player_type *p_ptr = Players[Ind], *q_ptr, *p_target_ptr = NULL, *prev_p_target_ptr = NULL;
 	int d, i, tx, ty, target, prev_target, item = -1;
-//	char friends = 0;
+	//char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
 	monster_race *r_ptr = NULL, *r_ptr2, *r_ptr0;
 	object_type *o_ptr;
@@ -2423,12 +2423,19 @@ static int auto_retaliate(int Ind) {
 	/* are we dealing just physical damage? for wraithform checks (stormbringer ignores everything and just attacks anyway..): */
 	bool physical = TRUE, wraith = (p_ptr->tim_wraith != 0) && !p_ptr->stormbringer;
 
-	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
-
-	if (p_ptr->new_level_flag) return 0;
-
+	if (!(zcave = getcave(&p_ptr->wpos))) {
+		p_ptr->ar_test_fail = TRUE;
+		return FALSE;
+	}
+	if (p_ptr->new_level_flag) {
+		p_ptr->ar_test_fail = TRUE;
+		return FALSE;
+	}
 	/* disable auto-retaliation if we skip monsters/hostile players and blood-bonded players likewise */
-	if (skip_monsters && !p_ptr->blood_bond) return 0;
+	if (skip_monsters && !p_ptr->blood_bond) {
+		p_ptr->ar_test_fail = TRUE;
+		return FALSE;
+	}
 
 	/* Just to kill compiler warnings */
 	target = prev_target = 0;
@@ -2695,7 +2702,8 @@ static int auto_retaliate(int Ind) {
 		   adjacent targets, which just happened here, stop 'piercing' attacks */
 		if (p_ptr->piercing && !p_ptr->piercing_charged) p_ptr->piercing = 0;
 
-		return 0;
+		p_ptr->ar_test_fail = TRUE;
+		return FALSE;
 	}
 
 #ifndef EXPENSIVE_NO_TARGET_TEST
@@ -2779,6 +2787,54 @@ static int auto_retaliate(int Ind) {
 		}
 	}
 #endif
+
+
+	/* save data, for subsequent auto_retaliate() call */
+	p_ptr->ar_m_target_ptr = m_target_ptr;
+	p_ptr->ar_prev_m_target_ptr = prev_m_target_ptr;
+	p_ptr->ar_p_target_ptr = p_target_ptr;
+	p_ptr->ar_prev_p_target_ptr = prev_p_target_ptr;
+
+	p_ptr->ar_target = target;
+	p_ptr->ar_item = item;
+	p_ptr->ar_fallback = fallback;
+	p_ptr->ar_at_O_inscription = at_O_inscription;
+	p_ptr->ar_no_melee = no_melee;
+
+	p_ptr->ar_test_fail = FALSE;
+	/* employ forced (via @O or @Q inscription) auto-retaliation? */
+	return (at_O_inscription && *at_O_inscription != 'x');
+}
+static int auto_retaliate(int Ind) {
+	player_type *p_ptr = Players[Ind], *p_target_ptr, *prev_p_target_ptr;
+	int target, item;
+	//char friends = 0;
+	monster_type *m_target_ptr, *prev_m_target_ptr;
+	cptr at_O_inscription;
+	bool no_melee, fallback;
+	bool skip_monsters = (p_ptr->cloaked || p_ptr->shadow_running) && !p_ptr->stormbringer;
+	cave_type **zcave;
+
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
+	if (p_ptr->new_level_flag) return 0;
+	/* disable auto-retaliation if we skip monsters/hostile players and blood-bonded players likewise */
+	if (skip_monsters && !p_ptr->blood_bond) return 0;
+
+
+	/* load data, from preceding auto_retaliate_test() call */
+	if (p_ptr->ar_test_fail) return FALSE;
+
+	m_target_ptr = p_ptr->ar_m_target_ptr;
+	prev_m_target_ptr = p_ptr->ar_prev_m_target_ptr;
+	p_target_ptr = p_ptr->ar_p_target_ptr;
+	prev_p_target_ptr = p_ptr->ar_prev_p_target_ptr;
+
+	target = p_ptr->ar_target;
+	item = p_ptr->ar_item;
+	fallback = p_ptr->ar_fallback;
+	at_O_inscription = p_ptr->ar_at_O_inscription;
+	no_melee = p_ptr->ar_no_melee;
+
 
 	/* If we have a player target, attack him. */
 	if (p_target_ptr) {
@@ -5207,6 +5263,9 @@ static void process_player_end(int Ind) {
 #endif
 			/* assume nothing will happen here */
 			p_ptr->auto_retaliating = FALSE;
+
+			/* New feat: @O inscription will break FTK to enter melee auto-ret instead */
+			if (auto_retaliate_test(Ind)) p_ptr->shooting_till_kill = FALSE;
 
 			if (p_ptr->shooting_till_kill) {
 				/* stop shooting till kill if target is no longer available,
