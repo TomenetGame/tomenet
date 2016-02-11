@@ -827,6 +827,11 @@
 #define DODGE_CAP		80
 
 
+/* Monster interception ("interference") will not cancel FTK (fire-till-kill)?
+   -- TODO: implement for spells/runecraft/mimicpowers (those have 0 interference chance atm though so it doesn't matter) */
+#define INTERFERE_KEEPS_FTK
+
+
 /* Total size of internal IDDC depth table */
 #define IDDC_HIGHSCORE_SIZE 50
 /* The first n entries that are actually displayed */

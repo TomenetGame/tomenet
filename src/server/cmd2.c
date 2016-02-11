@@ -4771,11 +4771,20 @@ void do_cmd_fire(int Ind, int dir) {
 	}
 
 	/* Check if monsters around him/her hinder this */
-//  if (interfere(Ind, cfg.spell_interfere * 3)) return;
+	//if (interfere(Ind, cfg.spell_interfere * 3)) return;
 	/* boomerang is harder to intercept since it can just be swung as weapon :> - C. Blue */
 	if (boomerang) {
 		if (interfere(Ind, 25)) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / thits;
+#ifdef INTERFERE_KEEPS_FTK
+			if (p_ptr->shooty_till_kill) {
+				p_ptr->shooting_till_kill = TRUE;
+				/* disable other ftk types */
+				p_ptr->shoot_till_kill_spell = FALSE;
+				p_ptr->shoot_till_kill_mimic = FALSE;
+				p_ptr->shoot_till_kill_rcraft = FALSE;
+			}
+#endif
 			return; /* boomerang interference chance */
 		}
 	} else {
@@ -4789,6 +4798,15 @@ void do_cmd_fire(int Ind, int dir) {
 				p_ptr->energy -= (level_speed(&p_ptr->wpos) /
 				    (thits * (p_ptr->ranged_double && o_ptr->number >= 2 && p_ptr->cst >= 1 ? 2 : 1)));
 
+#ifdef INTERFERE_KEEPS_FTK
+			if (p_ptr->shooty_till_kill) {
+				p_ptr->shooting_till_kill = TRUE;
+				/* disable other ftk types */
+				p_ptr->shoot_till_kill_spell = FALSE;
+				p_ptr->shoot_till_kill_mimic = FALSE;
+				p_ptr->shoot_till_kill_rcraft = FALSE;
+			}
+#endif
 			return; /* shooting interference chance */
 		}
 	}
