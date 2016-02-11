@@ -11901,7 +11901,6 @@ Note that not every skill is available to every profession (class).
                                 grid (ie right next to you) and if you try to..
                                 -shoot with ranged weapons,
                                 -use a void jumpgate,
-                                -invoke a mimic spell,
                                 -set a monster trap.
                                 Calmness does not depend on the enemy's level.
 
