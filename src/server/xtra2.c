@@ -8571,10 +8571,27 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		} else gain = eff_dam * 2;
 #endif
 
+#if 0 /* good balance but logical problem: more powerful monster gives less MP back than damaging some weak sucker */
 		/* need a trauma skill matching rlev/2 or it'll become much less effective */
 		if (skill_trauma < r_ptr->level) gain = (gain * skill_trauma * skill_trauma) / (r_ptr->level * r_ptr->level);
 		if (gain < 100 && magik(gain)) gain = 1; /* fine-scale for values between +0..+1 MP */
 		else gain /= 100; /* unscale back to actual MP points */
+#else /* monster-level independant traumaturgy */
+		/* actually for low damage give a certain minimum gain */
+		if (gain < 100) gain = 100;
+//s_printf("dgain %d, ", gain);
+ #if 0 /* SKILL_TRAUMA has diminishing returns? */
+		gain = (gain * (200 - (20000 / (skill_trauma + 100))) / 100); // (((...))) = 0..100, diminishing returns: 0->0%, 10->18%, 50->66%, 100->100%
+ #else /* SKILL_TRAUMA has linear returns? */
+		gain = (gain * skill_trauma) / 100; //linear 0..100%?
+ #endif
+//s_printf("cgain %d, ", gain);
+		//if (!gain) gain = 1; //always a slight chance if we have the skill and inflicted >0 damage -- deprecated with minimum gain code further above
+		/* translate it back from percent chances to actual MP points */
+		if (gain < 100 && magik(gain)) gain = 1; /* fine-scale for values between +0..+1 MP */
+		else gain /= 100; /* unscale back to actual MP points (rounding down, no fine-scaling here atm) */
+//s_printf("gain %d\n", gain);
+#endif
 
 		if (gain && (p_ptr->csp < p_ptr->msp)
 #ifdef MARTYR_NO_MANA
