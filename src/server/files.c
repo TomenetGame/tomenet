@@ -808,13 +808,11 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
  *
  * Disabled --KLJ--
  */
-void do_cmd_help(int Ind, int line)
-{
-//	cptr name = "mangband.hlp";
+void do_cmd_help(int Ind, int line) {
 	cptr name = "tomenet.hlp";
 
 	/* Peruse the main help file */
-	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE, 0);
+	(void)do_cmd_help_aux(Ind, name, "Welcome to TomeNET", line, FALSE, 0);
 }
 
 

@@ -1,7 +1,3 @@
-===============================================================================
-
-                            Welcome to TomeNET
-
 If you are new to TomeNET, read the 'TomeNET-Guide.txt' in your TomeNET
 directory. Latest version is available online at http://www.tomenet.eu/.
 It contains all information about TomeNET, as well as a 'quickstart' part.
@@ -10,7 +6,7 @@ Listen to this bit of advice: Don't get discouraged!
 If you are new to TomeNET, you will die..... a lot. But, as you get more
 experienced, you will become better at surviving. Have fun!
 
-[super-quick-how-to-start]
+\{s--- super-quick-how-to-start: ---
 1. open up the guide, it's in your TomeNET folder.
 2. chat with ':' (colon) key as soon as you log on and say hi.
 3. check your inventory ('i') and equipment ('e').
@@ -18,14 +14,14 @@ experienced, you will become better at surviving. Have fun!
 5. the training tower is a good place to start. It's a green '<' symbol.
    Press SHIFT+m to see a map of town to see where it is located.
 6. press CTRL+q to save and quit the game, but do it in town to be safe!
-===============================================================================
-           PRESS SPACEBAR TO SCROLL DOWN OR ESCAPE TO EXIT THIS HELP
-===============================================================================
-       USE NUMBER PAD (or arrows) TO MOVE - press with SHIFT key to run!
-===============================================================================
+\{D===============================================================================
+            PRESS SPACEBAR TO SCROLL DOWN OR ESC TO EXIT THIS HELP
+\{D===============================================================================
+ Use the NUMBER PAD (or arrows) to move. Press together with SHIFT key to run.
+\{D===============================================================================
                               DEFAULT KEYS
  (non-rogue-like, you can find the rogue-like key set in the guide in (0.2))
-===============================================================================
+\{D===============================================================================
 a  Aim wand    A  Activate      !  Show BBS        SPACE  Autorepeat stop
 b  Browse book B  Bash door     #  Highscores
 c  Close door  C  Character     $  Drop gold       CTRL+C  Toggle music
@@ -50,4 +46,3 @@ v  Throw       V  Cloak         +  Dig             ,  predefined 'reply' macro
 \{yw  Wear/Wield\{w  W  Wear/Wield 2  <  Go up
 x  Swap        X  predefined    =  Options         (*) Use X to quickly switch
 z  Zap rod        x0-macro (*)  >  Go down         equipment inscribed @x0.
-===============================================================================
