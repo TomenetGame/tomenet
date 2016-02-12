@@ -30,24 +30,24 @@ a  Aim wand    A  Activate      !  Show BBS        SPACE  Autorepeat stop
 b  Browse book B  Bash door     #  Highscores
 c  Close door  C  Character     $  Drop gold       CTRL+C  Toggle music
 d  Drop        D  Disarm        %  Macro menu      CTRL+N  Toggle audio
-e  Equip       E  Eat           &  Auto inscribe   CTRL+U  Audio mixer or
+e  Equip       E  Eat           &  Auto inscribe   \{yCTRL+U  Audio mixer\{w or
 f  Fire        F  Refill        (  Friendly target         switch chat mode
 g  Get item    G  Skills        )  Clear buffer    CTRL+I  Lagometer or
 h  Houses      H  Auto inscribe *  Target/look             switch chat mode
 i  Inventory   I  Examine       .  Run
 j  Steal                        /  Use item        CTRL+O  Chat messages
-k  Destroy     K  Force-stack   :  Chat            CTRL+P  All Messages
+k  Destroy     K  Force-stack   \{y:  Chat\{w            CTRL+P  All Messages
 l  Look        L  Locate (map)  ;  Walk
-m  Use skill   M  Show minimap  ?  Help            CTRL+Q  Quit the game
-o  Open door                    @  Player list
-p  Open mind   P  Party menu    '  Inspect other nearby players
+m  Use skill   M  Show minimap  ?  Help            \{yCTRL+Q  Quit the game
+o  Open door                    \{y@  Player list\{w
+p  Open mind   \{yP  Party menu\{w    '  Inspect other nearby players
 q  Quaff       Q  Suicide       _  Sip from fountain/show item on the floor
 r  Read scroll R  Rest          {  Inscribe        CTRL+R  Redraw
 s  Search      S  Searching     |  Uniques         CTRL+S  Spike
 t  Take off       mode toggle   }  Uninscribe      CTRL+T  Screenshot
 u  Use staff                    ~  Knowledge menu
 v  Throw       V  Cloak         +  Dig             ,  predefined 'reply' macro
-w  Wield       W  Wield         <  Go up
+\{yw  Wear/Wield\{w  W  Wear/Wield 2  <  Go up
 x  Swap        X  predefined    =  Options         (*) Use X to quickly switch
 z  Zap rod        x0-macro (*)  >  Go down         equipment inscribed @x0.
 ===============================================================================
