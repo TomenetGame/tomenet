@@ -8581,7 +8581,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		if (gain < 100) gain = 100;
 //s_printf("dgain %d, ", gain);
  #if 0 /* SKILL_TRAUMA has diminishing returns? */
-		gain = (gain * (200 - (20000 / (skill_trauma + 100))) / 100); // (((...))) = 0..100, diminishing returns: 0->0%, 10->18%, 50->66%, 100->100%
+		//gain = (gain * (200 - (20000 / (skill_trauma + 100))) / 100); // (((...))) = 0..100, diminishing returns: 0->0%, 1->1%, 10->18%, 50->66%, 100->100%
+		gain = (gain * (200 - (20100 / (skill_trauma + 101))) / 100); // (((...))) = 0..100, diminishing returns: 0->0%, 1->2%, 10->18%, 50->66%, 100->100%
  #else /* SKILL_TRAUMA has linear returns? */
 		gain = (gain * skill_trauma) / 100; //linear 0..100%?
  #endif
