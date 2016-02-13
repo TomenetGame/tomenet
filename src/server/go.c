@@ -1186,9 +1186,23 @@ void go_challenge_start(int Ind) {
 	Send_store_special_str(Ind, 5, GO_BOARD_X + 6 - (strlen(avatar_name) + 1) / 2, TERM_YELLOW, avatar_name);
 
 	if (engine_api == EAPI_FUEGO) {
+		char tmp[80];
+
 		/* think while opponent is thinking? */
 		if (p_ptr->go_level <= 0) writeToPipe("uct_param_player ponder 0");
 		else writeToPipe("uct_param_player ponder 1");
+
+		if (CPU_has_white) {
+			sprintf(tmp, "go_set_info player_black %s%d", p_ptr->name, p_ptr->go_level);
+			writeToPipe(tmp);
+			sprintf(tmp, "go_set_info player_white %s", avatar_name);
+			writeToPipe(tmp);
+		} else {
+			sprintf(tmp, "go_set_info player_black %s", avatar_name);
+			writeToPipe(tmp);
+			sprintf(tmp, "go_set_info player_white %s%d", p_ptr->name, p_ptr->go_level);
+			writeToPipe(tmp);
+		}
 	}
 
 	/* Set colour and notice game start. */
