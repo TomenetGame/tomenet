@@ -83,7 +83,7 @@
    The normal engine will be swapped silently with this one
    if mirror Go is detected after a specific number of turns:
    (empty string just means 'current engine, switched to max level') */
-#define ANTI_MIRROR	""
+#define ANTI_MIRROR	"" /* not implemented! */
 /* If above is defined: Invoke countermeasures at which # of mirrorred moves? (Full moves.) [6] */
 #define ANTI_MIRROR_THRESHOLD	6
 
@@ -1389,7 +1389,6 @@ void go_challenge_cancel(void) {
 
 /* ------------------------------------------------------------------------- */
 
-
 static void go_engine_move_CPU() {
 	int Ind;
 	int tries = 5000, x = -1, y = -1, liberties;
@@ -1522,15 +1521,14 @@ static int verify_move_human(void) {
 		return -1;
 	}
 
-#ifdef ENGINE_FUEGO
 	/* Catch timeout! Oops. */
-	if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
+	if (engine_api == EAPI_FUEGO && !strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
  #ifdef GO_DEBUGLOG
 		s_printf("GO_GAME: timeout %s\n", Players[Ind]->name);
  #endif
 		return 2; //time over (py)
 	}
-#endif
+
 	/* Catch illegal moves */
 //	if (strstr("? point outside board"))
 	if (pipe_buf[MAX_GTP_LINES - 1][0] == '?') {
@@ -1540,8 +1538,7 @@ static int verify_move_human(void) {
 
 	move_count++;
 
-#ifdef ENGINE_GNUGO
-	if (sgf) {
+	if (engine_api == EAPI_GNUGO && sgf) {
 		/* translate char/num coords into char/char coords */
 		char m[3];
 		if (CPU_has_white) {
@@ -1560,7 +1557,6 @@ static int verify_move_human(void) {
 			fprintf(sgf, ";W[%s]\n", m);
 		}
 	}
-#endif
 
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
@@ -1637,15 +1633,14 @@ static int verify_move_CPU(void) {
 
 	if (go_err(DOWN, DOWN, "verify_move_CPU")) return -2;
 
-#ifdef ENGINE_FUEGO
 	/* Catch timeout! Oops. */
-	if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
+	if (engine_api == EAPI_FUEGO && !strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
  #ifdef GO_DEBUGPRINT
 		printf("Your opponent's time has run out, therefore you have won the match!\n");
  #endif
 		return 4;
 	}
-#endif
+
 	/* CPU resigns */
 	else if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "= resign")) {
 #ifdef GO_DEBUGPRINT
@@ -1730,8 +1725,7 @@ static int verify_move_CPU(void) {
 		move_count++;
 	}
 
-#ifdef ENGINE_GNUGO
-	if (sgf) {
+	if (engine_api == EAPI_GNUGO && sgf) {
 		/* translate char/num coords into char/char coords */
 		char m[3];
 		if (CPU_has_white) {
@@ -1750,7 +1744,6 @@ static int verify_move_CPU(void) {
 			fprintf(sgf, ";B[%s]\n", m);
 		}
 	}
-#endif
 
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
@@ -1807,80 +1800,74 @@ static void go_engine_move_result(int move_result) {
 		break;
 	case 1: invalid_move = TRUE; break;
 	case 2:
-#ifdef ENGINE_FUEGO
-		if (CPU_has_white) writeToPipe("go_set_info result W+Time");
-		else writeToPipe("go_set_info result B+Time");
-#endif
-#ifdef ENGINE_GNUGO
-		if (sgf) {
-			if (CPU_has_white) fprintf(sgf, "RE[W+Time]\n");
-			else fprintf(sgf, "RE[B+Time]\n");
+		if (engine_api == EAPI_FUEGO) {
+			if (CPU_has_white) writeToPipe("go_set_info result W+Time");
+			else writeToPipe("go_set_info result B+Time");
+		} else if (engine_api == EAPI_GNUGO) {
+			if (sgf) {
+				if (CPU_has_white) fprintf(sgf, "RE[W+Time]\n");
+				else fprintf(sgf, "RE[B+Time]\n");
+			}
 		}
-#endif
 		strcpy(result, "\377r*** You lost on time! ***");
 		lost = TRUE;
 
 		break;
 	case 3:
-#ifdef ENGINE_FUEGO
-		if (CPU_has_white) writeToPipe("go_set_info result W+Resign");
-		else writeToPipe("go_set_info result B+Resign");
-#endif
-#ifdef ENGINE_GNUGO
-		if (sgf) {
-			if (CPU_has_white) fprintf(sgf, "RE[W+Resign]\n");
-			else fprintf(sgf, "RE[B+Resign]\n");
+		if (engine_api == EAPI_FUEGO) {
+			if (CPU_has_white) writeToPipe("go_set_info result W+Resign");
+			else writeToPipe("go_set_info result B+Resign");
+		} else if (engine_api == EAPI_GNUGO) {
+			if (sgf) {
+				if (CPU_has_white) fprintf(sgf, "RE[W+Resign]\n");
+				else fprintf(sgf, "RE[B+Resign]\n");
+			}
 		}
-#endif
 		strcpy(result, "\377r*** You resigned! ***");
 		lost = TRUE;
 		break;
 	case 4:
-#ifdef ENGINE_FUEGO
-		if (CPU_has_white) writeToPipe("go_set_info result B+Time");
-		else writeToPipe("go_set_info result W+Time");
-#endif
-#ifdef ENGINE_GNUGO
-		if (sgf) {
-			if (CPU_has_white) fprintf(sgf, "RE[B+Time]\n");
-			else fprintf(sgf, "RE[W+Time]\n");
+		if (engine_api == EAPI_FUEGO) {
+			if (CPU_has_white) writeToPipe("go_set_info result B+Time");
+			else writeToPipe("go_set_info result W+Time");
+		} else if (engine_api == EAPI_GNUGO) {
+			if (sgf) {
+				if (CPU_has_white) fprintf(sgf, "RE[B+Time]\n");
+				else fprintf(sgf, "RE[W+Time]\n");
+			}
 		}
-#endif
 		strcpy(result, "\377G*** Your opponent lost on time! ***");
 		won = TRUE;
 		break;
 	case 5:
-#ifdef ENGINE_FUEGO
-		if (CPU_has_white) writeToPipe("go_set_info result B+Resign");
-		else writeToPipe("go_set_info result W+Resign");
-#endif
-#ifdef ENGINE_GNUGO
-		if (sgf) {
-			if (CPU_has_white) fprintf(sgf, "RE[B+Resign]\n");
-			else fprintf(sgf, "RE[W+Resign]\n");
+		if (engine_api == EAPI_FUEGO) {
+			if (CPU_has_white) writeToPipe("go_set_info result B+Resign");
+			else writeToPipe("go_set_info result W+Resign");
+		} else if (engine_api == EAPI_GNUGO) {
+			if (sgf) {
+				if (CPU_has_white) fprintf(sgf, "RE[B+Resign]\n");
+				else fprintf(sgf, "RE[W+Resign]\n");
+			}
 		}
-#endif
 		strcpy(result, "\377G*** Your opponent resigned! ***");
 		won = TRUE;
 		break;
 	case 6:
-#ifdef ENGINE_FUEGO
-		writeToPipe("go_set_info result Jigo");
-#endif
-#ifdef ENGINE_GNUGO
-		if (sgf) fprintf(sgf, "RE[0]\n");
-#endif
+		if (engine_api == EAPI_FUEGO) {
+			writeToPipe("go_set_info result Jigo");
+		} else if (engine_api == EAPI_GNUGO) {
+			if (sgf) fprintf(sgf, "RE[0]\n");
+		}
 		strcpy(result, "\377o** The game is a draw! **");
 		break;
 	default:
 		if (move_result >= 2000) { /* White wins */
-#ifdef ENGINE_FUEGO
-			sprintf(result, "go_set_info result W+%d", move_result - 2000);
-			writeToPipe(result);
-#endif
-#ifdef ENGINE_GNUGO
-			if (sgf) fprintf(sgf, "RE[W+%d]\n", move_result - 2000);
-#endif
+			if (engine_api == EAPI_FUEGO) {
+				sprintf(result, "go_set_info result W+%d", move_result - 2000);
+				writeToPipe(result);
+			} else if (engine_api == EAPI_GNUGO) {
+				if (sgf) fprintf(sgf, "RE[W+%d]\n", move_result - 2000);
+			}
 			if (CPU_has_white) {
 				sprintf(result, "\377r*** Your opponent won by %d point%s! ***", move_result - 2000, move_result - 2000 == 1 ? "" : "s");
 				lost = TRUE;
@@ -1889,13 +1876,12 @@ static void go_engine_move_result(int move_result) {
 				won = TRUE;
 			}
 		} else { /* Black wins */
-#ifdef ENGINE_FUEGO
-			sprintf(result, "go_set_info result B+%d", move_result - 1000);
-			writeToPipe(result);
-#endif
-#ifdef ENGINE_GNUGO
-			if (sgf) fprintf(sgf, "RE[B+%d]\n", move_result - 1000);
-#endif
+			if (engine_api == EAPI_FUEGO) {
+				sprintf(result, "go_set_info result B+%d", move_result - 1000);
+				writeToPipe(result);
+			} else if (engine_api == EAPI_GNUGO) {
+				if (sgf) fprintf(sgf, "RE[B+%d]\n", move_result - 1000);
+			}
 			if (CPU_has_white) {
 				sprintf(result, "\377G*** You won by %d point%s! ***", move_result - 1000, move_result - 1000 == 1 ? "" : "s");
 				won = TRUE;
@@ -2263,43 +2249,46 @@ static int test_for_response() {
 		tmp[79] = 0;
 	}
 
-	/* Received a board layout line? (from 'showboard') */
-	if (strlen(pipe_buf[pipe_buf_current_line]) > 2 &&
-#ifdef ENGINE_FUEGO
-	    pipe_buf[pipe_buf_current_line][1] == ' ' &&
-	    pipe_buf[pipe_buf_current_line][0] >= '1' && pipe_buf[pipe_buf_current_line][0] <= '9') {
-		i = pipe_buf[pipe_buf_current_line][0] - '1';
-		//strncpy(board_line[i], pipe_buf[pipe_buf_current_line] + 2, 10); it's SPACED!:
-		/* despace */
-		board_line[i][0] = pipe_buf[pipe_buf_current_line][2];
-		board_line[i][1] = pipe_buf[pipe_buf_current_line][4];
-		board_line[i][2] = pipe_buf[pipe_buf_current_line][6];
-		board_line[i][3] = pipe_buf[pipe_buf_current_line][8];
-		board_line[i][4] = pipe_buf[pipe_buf_current_line][10];
-		board_line[i][5] = pipe_buf[pipe_buf_current_line][12];
-		board_line[i][6] = pipe_buf[pipe_buf_current_line][14];
-		board_line[i][7] = pipe_buf[pipe_buf_current_line][16];
-		board_line[i][8] = pipe_buf[pipe_buf_current_line][18];
-#endif
-#ifdef ENGINE_GNUGO
-	    pipe_buf[pipe_buf_current_line][0] == ' ' &&
-	    pipe_buf[pipe_buf_current_line][1] >= '1' && pipe_buf[pipe_buf_current_line][1] <= '9') {
-		i = pipe_buf[pipe_buf_current_line][1] - '1';
-		/* despace */
-		board_line[i][0] = pipe_buf[pipe_buf_current_line][3];
-		board_line[i][1] = pipe_buf[pipe_buf_current_line][5];
-		board_line[i][2] = pipe_buf[pipe_buf_current_line][7];
-		board_line[i][3] = pipe_buf[pipe_buf_current_line][9];
-		board_line[i][4] = pipe_buf[pipe_buf_current_line][11];
-		board_line[i][5] = pipe_buf[pipe_buf_current_line][13];
-		board_line[i][6] = pipe_buf[pipe_buf_current_line][15];
-		board_line[i][7] = pipe_buf[pipe_buf_current_line][17];
-		board_line[i][8] = pipe_buf[pipe_buf_current_line][19];
-#endif
-		board_line[i][9] = 0;
-		received_board_visuals = TRUE;
+	if (engine_api == EAPI_FUEGO) {
+		/* Received a board layout line? (from 'showboard') */
+		if (strlen(pipe_buf[pipe_buf_current_line]) > 2 &&
+		    pipe_buf[pipe_buf_current_line][1] == ' ' &&
+		    pipe_buf[pipe_buf_current_line][0] >= '1' && pipe_buf[pipe_buf_current_line][0] <= '9') {
+			i = pipe_buf[pipe_buf_current_line][0] - '1';
+			//strncpy(board_line[i], pipe_buf[pipe_buf_current_line] + 2, 10); it's SPACED!:
+			/* despace */
+			board_line[i][0] = pipe_buf[pipe_buf_current_line][2];
+			board_line[i][1] = pipe_buf[pipe_buf_current_line][4];
+			board_line[i][2] = pipe_buf[pipe_buf_current_line][6];
+			board_line[i][3] = pipe_buf[pipe_buf_current_line][8];
+			board_line[i][4] = pipe_buf[pipe_buf_current_line][10];
+			board_line[i][5] = pipe_buf[pipe_buf_current_line][12];
+			board_line[i][6] = pipe_buf[pipe_buf_current_line][14];
+			board_line[i][7] = pipe_buf[pipe_buf_current_line][16];
+			board_line[i][8] = pipe_buf[pipe_buf_current_line][18];
+			board_line[i][9] = 0;
+			received_board_visuals = TRUE;
+		}
+	} else if (engine_api == EAPI_GNUGO) {
+		/* Received a board layout line? (from 'showboard') */
+		if (strlen(pipe_buf[pipe_buf_current_line]) > 2 &&
+		    pipe_buf[pipe_buf_current_line][0] == ' ' &&
+		    pipe_buf[pipe_buf_current_line][1] >= '1' && pipe_buf[pipe_buf_current_line][1] <= '9') {
+			i = pipe_buf[pipe_buf_current_line][1] - '1';
+			/* despace */
+			board_line[i][0] = pipe_buf[pipe_buf_current_line][3];
+			board_line[i][1] = pipe_buf[pipe_buf_current_line][5];
+			board_line[i][2] = pipe_buf[pipe_buf_current_line][7];
+			board_line[i][3] = pipe_buf[pipe_buf_current_line][9];
+			board_line[i][4] = pipe_buf[pipe_buf_current_line][11];
+			board_line[i][5] = pipe_buf[pipe_buf_current_line][13];
+			board_line[i][6] = pipe_buf[pipe_buf_current_line][15];
+			board_line[i][7] = pipe_buf[pipe_buf_current_line][17];
+			board_line[i][8] = pipe_buf[pipe_buf_current_line][19];
+			board_line[i][9] = 0;
+			received_board_visuals = TRUE;
+		}
 	}
-
 
 	/* If response is too long, just overwrite the final line repeatedly -
 	   it should be all that we need at this point anymore. */
@@ -2679,7 +2668,7 @@ static void readFromPipe(char *buf, int *cont) {
 	}
 }
 
-#ifdef ENGINE_FUEGO
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
 /* Handle engine startup process.
    Blocking reading is ok, because server is just starting up. */
 static int handle_loading() {
@@ -2700,9 +2689,9 @@ static int handle_loading() {
 			strcat(reply, lbuf);
 			if (reply[0] && reply[strlen(reply) - 1] == '\n') {
 				reply[strlen(reply) - 1] = 0;
-#ifdef GO_DEBUGPRINT
+ #ifdef GO_DEBUGPRINT
 				printf("<%s>\n", reply);
-#endif
+ #endif
 			}
 		}
 		/* wait till startup has been completed before proceeding */
@@ -2719,10 +2708,10 @@ static int handle_loading() {
    it'll just use blocking reading, for reading the replies. */
 static void go_challenge_cleanup(bool server_shutdown) {
 	int Ind;
-#ifdef ENGINE_FUEGO
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
 	char tmp[80];
 #endif
-#ifdef ENGINE_GNUGO
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
 	char *rc = NULL;
 #endif
 
@@ -2740,17 +2729,17 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	/* If we have to stop prematurely, interprete it as loss for the player.
 	   Note: The 'result' info is cleared by 'clear_board' below. */
 	if (!game_over) {
-#ifdef ENGINE_FUEGO
-		if (CPU_has_white) writeToPipe("go_set_info result W+Forfeit");
-		else writeToPipe("go_set_info result B+Forfeit");
-		if (server_shutdown) wait_for_response();
-#endif
-#ifdef ENGINE_GNUGO
-		if (sgf) {
-			if (CPU_has_white) fprintf(sgf, "RE[W+Forfeit]\n");
-			else fprintf(sgf, "RE[B+Forfeit]\n");
+		if (engine_api == EAPI_FUEGO) {
+			if (CPU_has_white) writeToPipe("go_set_info result W+Forfeit");
+			else writeToPipe("go_set_info result B+Forfeit");
+			if (server_shutdown) wait_for_response();
 		}
-#endif
+		if (engine_api == EAPI_GNUGO) {
+			if (sgf) {
+				if (CPU_has_white) fprintf(sgf, "RE[W+Forfeit]\n");
+				else fprintf(sgf, "RE[B+Forfeit]\n");
+			}
+		}
 		game_over = TRUE;
 	}
 
@@ -2758,44 +2747,48 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	tend = time(NULL);
 	tmend = localtime(&tend);
 
-#ifdef ENGINE_FUEGO
-	/* Save it as sgf */
-
-	/* Fix sgf displaying correct +1 bonus point on w 1st pass */
-	if (current_komi) writeToPipe("komi 1");
-
-	sprintf(tmp, "savesgf go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
-	    1900 + tmstart->tm_year, tmstart->tm_mon + 1, tmstart->tm_mday,
-	    tmstart->tm_hour, tmstart->tm_min, tmstart->tm_sec);
-	writeToPipe(tmp); //(saves current game (and tree if some global flag was set) to sgf)
-	if (server_shutdown) wait_for_response();
-#endif
-#ifdef ENGINE_GNUGO
-	/* Close SGF file */
-	if (sgf) {
-		fprintf(sgf, ")\n");
-		fclose(sgf);
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
+	if (engine_api == EAPI_FUEGO) {
+		/* Save it as sgf */
 
 		/* Fix sgf displaying correct +1 bonus point on w 1st pass */
-		if (current_komi) {
-			char buf[1024], *ck;
-			FILE *fp;
+		if (current_komi) writeToPipe("komi 1");
 
-			rename(sgf_name, "tmp$$$.sgf");
-			sgf = fopen("tmp$$$.sgf", "r");
-			fp = fopen(sgf_name, "w");
-
-			while (!feof(sgf)) {
-				rc = fgets(buf, 1024, sgf);
-				if (!rc) break;
-				ck = strstr(buf, "KM[");
-				if (ck) *(ck + 3) = '1';
-				fputs(buf, fp);
-			}
-			fclose(fp);
+		sprintf(tmp, "savesgf go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
+		    1900 + tmstart->tm_year, tmstart->tm_mon + 1, tmstart->tm_mday,
+		    tmstart->tm_hour, tmstart->tm_min, tmstart->tm_sec);
+		writeToPipe(tmp); //(saves current game (and tree if some global flag was set) to sgf)
+		if (server_shutdown) wait_for_response();
+	}
+#endif
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+	if (engine_api == EAPI_GNUGO) {
+		/* Close SGF file */
+		if (sgf) {
+			fprintf(sgf, ")\n");
 			fclose(sgf);
 
-			remove("tmp$$$.sgf");
+			/* Fix sgf displaying correct +1 bonus point on w 1st pass */
+			if (current_komi) {
+				char buf[1024], *ck;
+				FILE *fp;
+
+				rename(sgf_name, "tmp$$$.sgf");
+				sgf = fopen("tmp$$$.sgf", "r");
+				fp = fopen(sgf_name, "w");
+
+				while (!feof(sgf)) {
+					rc = fgets(buf, 1024, sgf);
+					if (!rc) break;
+					ck = strstr(buf, "KM[");
+					if (ck) *(ck + 3) = '1';
+					fputs(buf, fp);
+				}
+				fclose(fp);
+				fclose(sgf);
+
+				remove("tmp$$$.sgf");
+			}
 		}
 	}
 #endif
@@ -2908,21 +2901,22 @@ static void enable_anti_mirror(void) {
 	return;
  #endif
 
+	random_move_prob = 0;
+
 	/* keep using current engine, just set it to max level: */
 	if (!strlen(ANTI_MIRROR)) {
 		s_printf("max-current...\n");
-
-#ifdef ENGINE_FUEGO
-		writeToPipe("uct_max_memory 300000000");
-		sprintf(tmp, "go_param timelimit %d", GO_TIME_PY - 2);
-		writeToPipe(tmp);
-#endif
-#ifdef ENGINE_GNUGO
-		writeToPipe("level 10");
-		random_move_prob = 0;
-		sprintf(tmp, "time_settings 0 %d 1", GO_TIME_PY - 2);
-		writeToPipe(tmp);
-#endif
+		if (engine_api == EAPI_FUEGO) {
+			writeToPipe("uct_max_memory 300000000");
+			sprintf(tmp, "go_param timelimit %d", GO_TIME_PY - 2);
+			writeToPipe(tmp);
+		} else if (engine_api == EAPI_GNUGO) {
+			writeToPipe("level 10");
+			sprintf(tmp, "time_settings 0 %d 1", GO_TIME_PY - 2);
+			writeToPipe(tmp);
+		}
+	} else {
+		//TODO
 	}
 
 	anti_mirror_active = TRUE;
