@@ -2203,7 +2203,7 @@ extern void lua_forget_guilds(void);
 
 #ifdef ENABLE_GO_GAME
 /* go.c - C. Blue */
-extern bool go_engine_up, go_game_up;
+extern bool go_game_up;//, go_engine_up;
 extern int go_engine_processing;
 extern u32b go_engine_player_id;
 

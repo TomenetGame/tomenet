@@ -57,7 +57,7 @@
 
 /* Gimmick: Enable a 2nd, stronger engine that sends a 'special' opponent along
    sometimes, provided you have beaten all the regular characters. ^^ */
-//#define HIDDEN_STAGE 8 /* queue chance until hidden stage appears */
+#define HIDDEN_STAGE 8 /* queue chance until hidden stage appears */
 #ifdef HIDDEN_STAGE
  //#define HS_ENGINE_FUEGO
  #define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
@@ -136,13 +136,11 @@ static const int NONE = 0, DOWN = 1, UP = 2;
 
 
 /* Global control variables */
-bool go_engine_up;		/* Go engine is online? */
+static bool go_engine_up;	/* Go engine is online? */
 int go_engine_processing = 0;	/* Go engine is expected to deliver replies to commands? */
 #ifdef HIDDEN_STAGE
- bool hs_go_engine_up;		/* Go engine is online? */
- int hs_go_engine_processing = 0;	/* Go engine is expected to deliver replies to commands? */
-    //NOTE: maybe not necessary to have separate hs_go_engine_processing variable
- bool hidden_stage_active = FALSE;	/* Is the current game a hidden stage one? -> use hidden-stage-pipe */
+ static bool hs_go_engine_up;		/* Go engine is online? */
+ static bool hidden_stage_active = FALSE;	/* Is the current game a hidden stage one? -> use hidden-stage-pipe */
 #endif
 bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
@@ -598,7 +596,7 @@ int go_engine_init(void) {
  #endif
 
 	/* Init this 'flow control', to begin asynchronous pipe operation */
-	hs_go_engine_processing = 0;
+	go_engine_processing = 0;
 
 	hidden_stage_active = FALSE;
 
@@ -688,7 +686,7 @@ void go_engine_terminate(void) {
  #endif
 
 	/* discard any possible answers we were still waiting for */
-	hs_go_engine_processing = 0;
+	go_engine_processing = 0;
 
 	hidden_stage_active = FALSE;
 
@@ -1254,10 +1252,6 @@ void go_challenge_start(int Ind) {
 void go_engine_process(void) {
 //	if (go_err(DOWN, DOWN, "go_engine_process")) {
 	if (go_err(DOWN, NONE, "go_engine_process")) {
-#ifdef HIDDEN_STAGE
-		if (hidden_stage_active) hs_go_engine_processing = 0;
-		else
-#endif
 		go_engine_processing = 0;
 		return;
 	}
@@ -2180,9 +2174,6 @@ static int test_for_response() {
 	char tmp[80];//, *tptr = tmp + 79;
 	char pipe_line_buf[160];
 	int Ind = lookup_player_ind(go_engine_player_id);
-#ifdef HIDDEN_STAGE
-	int tmp_proc;
-#endif
 
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	/* we might not even want any responses (and them causing slowdown) here,
@@ -2197,7 +2188,7 @@ static int test_for_response() {
 	if (hidden_stage_active) {
 		if (!hs_fr) {
 			s_printf("GO_ENGINE: ERROR - fr is NULL (HS).\n");
-			hs_go_engine_processing = 0;
+			go_engine_processing = 0;
 			return -2;
 		}
 	} else
@@ -2365,24 +2356,13 @@ static int test_for_response() {
 	received_board_visuals = FALSE;
 
 	/* one less pending response */
-#ifdef HIDDEN_STAGE
-	if (hidden_stage_active)
-		hs_go_engine_processing--;
-	else
-#endif
 	go_engine_processing--;
 
 	/* do we have to react with a new command?
 	   This should only happen if no more responses are expected
 	   to come in: So we don't initiate a new command before an
 	   'important' command's response has been processed completely. */
-#ifdef HIDDEN_STAGE
-	if (hidden_stage_active) tmp_proc = hs_go_engine_processing;
-	else tmp_proc = go_engine_processing;
-	if (tmp_proc == 0) {
-#else
 	if (go_engine_processing == 0) {
-#endif
 		/* Did we read the last 'showboard's response?
 		   Then we can proceed with the game. */
 	    if (waiting_for_board_update) {
@@ -2468,10 +2448,6 @@ static int wait_for_response() {
 	}
 
 	/* reduce pending responses by one, which we are waiting for, in here */
-#ifdef HIDDEN_STAGE
-	if (hidden_stage_active) hs_go_engine_processing--;
-	else
-#endif
 	go_engine_processing--;
 
 	cont = 0;
@@ -2558,25 +2534,12 @@ static void writeToPipe(char *data) {
 //	if (go_err(DOWN, NONE, "writeToPipe")) return;
 
 	/* Before actually writing, clear all pending replies we can get! */
-#ifdef HIDDEN_STAGE
-	if (hidden_stage_active) {
-		if (hs_go_engine_processing) go_engine_process();
+	if (go_engine_processing) go_engine_process();
 
-		/* paranoia: catch overflows */
-		if (hs_go_engine_processing > 1000) {
-			s_printf("GO_ENGINE: ERROR - over 1000 pending replies (HS).\n");
-			return;
-		}
-	} else
-#endif
-	{
-		if (go_engine_processing) go_engine_process();
-
-		/* paranoia: catch overflows */
-		if (go_engine_processing > 1000) {
-			s_printf("GO_ENGINE: ERROR - over 1000 pending replies.\n");
-			return;
-		}
+	/* paranoia: catch overflows */
+	if (go_engine_processing > 1000) {
+		s_printf("GO_ENGINE: ERROR - over 1000 pending replies.\n");
+		return;
 	}
 
 	/* more paranoia: invalid file/pipe? */
@@ -2616,7 +2579,7 @@ static void writeToPipe(char *data) {
 		}
 
 		/* increase pending replies by one, ie the one to this command we now send */
-		hs_go_engine_processing++;
+		go_engine_processing++;
 		return;
 	}
 #endif
