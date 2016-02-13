@@ -140,6 +140,8 @@ bool go_engine_up;		/* Go engine is online? */
 int go_engine_processing = 0;	/* Go engine is expected to deliver replies to commands? */
 #ifdef HIDDEN_STAGE
  bool hs_go_engine_up;		/* Go engine is online? */
+ int hs_go_engine_processing = 0;	/* Go engine is expected to deliver replies to commands? */
+    //NOTE: maybe not necessary to have separate hs_go_engine_processing variable
  bool hidden_stage_active = FALSE;	/* Is the current game a hidden stage one? -> use hidden-stage-pipe */
 #endif
 bool go_game_up;		/* A game of Go is actually being played right now? */
@@ -479,7 +481,7 @@ int go_engine_init(void) {
 		execlp("./go/gnugo", "gnugo", "--mode", "gtp", \
 		    "--quiet", "--boardsize", "9x9", "--chinese-rules", \
 		    "--capture-all-dead", \
-		    "--monte-carlo", "--mc-patterns montegnu_classic", /*mc_mogo_classic*/ \
+		    "--monte-carlo", "--mc-patterns", "montegnu_classic", /*mc_mogo_classic*/ \
 		    "--komi", "0", "--never-resign", NULL);//try never-resign to prevent weird unjustified resigns
 		// --cache-size <megs>
 		// --japanese-rules
@@ -596,7 +598,7 @@ int go_engine_init(void) {
  #endif
 
 	/* Init this 'flow control', to begin asynchronous pipe operation */
-	//hs_go_engine_processing = 0;
+	hs_go_engine_processing = 0;
 
 	hidden_stage_active = FALSE;
 
@@ -685,10 +687,10 @@ void go_engine_terminate(void) {
 	wait_for_response();
  #endif
 
-	hidden_stage_active = FALSE;
-
 	/* discard any possible answers we were still waiting for */
-	//hs_go_engine_processing = 0;
+	hs_go_engine_processing = 0;
+
+	hidden_stage_active = FALSE;
 
  #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	terminating = FALSE;
@@ -1252,6 +1254,10 @@ void go_challenge_start(int Ind) {
 void go_engine_process(void) {
 //	if (go_err(DOWN, DOWN, "go_engine_process")) {
 	if (go_err(DOWN, NONE, "go_engine_process")) {
+#ifdef HIDDEN_STAGE
+		if (hidden_stage_active) hs_go_engine_processing = 0;
+		else
+#endif
 		go_engine_processing = 0;
 		return;
 	}
@@ -2174,6 +2180,9 @@ static int test_for_response() {
 	char tmp[80];//, *tptr = tmp + 79;
 	char pipe_line_buf[160];
 	int Ind = lookup_player_ind(go_engine_player_id);
+#ifdef HIDDEN_STAGE
+	int tmp_proc;
+#endif
 
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	/* we might not even want any responses (and them causing slowdown) here,
@@ -2184,18 +2193,20 @@ static int test_for_response() {
 	if (go_err(DOWN, NONE, "test_for_response")) return -3;
 
 	/* paranoia: invalid file/pipe? */
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) {
+		if (!hs_fr) {
+			s_printf("GO_ENGINE: ERROR - fr is NULL (HS).\n");
+			hs_go_engine_processing = 0;
+			return -2;
+		}
+	} else
+#endif
 	if (!fr) {
 		s_printf("GO_ENGINE: ERROR - fr is NULL.\n");
 		go_engine_processing = 0;
 		return -2;
 	}
-#ifdef HIDDEN_STAGE
-	if (hidden_stage_active && !hs_fr) {
-		s_printf("GO_ENGINE: ERROR - fr is NULL (HS).\n");
-		go_engine_processing = 0;
-		return -2;
-	}
-#endif
 
 	strcpy(tmp, "");
 	strcpy(pipe_line_buf, "");
@@ -2354,13 +2365,24 @@ static int test_for_response() {
 	received_board_visuals = FALSE;
 
 	/* one less pending response */
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active)
+		hs_go_engine_processing--;
+	else
+#endif
 	go_engine_processing--;
 
 	/* do we have to react with a new command?
 	   This should only happen if no more responses are expected
 	   to come in: So we don't initiate a new command before an
 	   'important' command's response has been processed completely. */
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) tmp_proc = hs_go_engine_processing;
+	else tmp_proc = go_engine_processing;
+	if (tmp_proc == 0) {
+#else
 	if (go_engine_processing == 0) {
+#endif
 		/* Did we read the last 'showboard's response?
 		   Then we can proceed with the game. */
 	    if (waiting_for_board_update) {
@@ -2432,19 +2454,24 @@ static int wait_for_response() {
 #endif
 
 	/* paranoia: invalid file/pipe? */
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) {
+		if (!hs_fr) {
+			s_printf("GO_ENGINE: ERROR - fr is NULL (HS).\n");
+			return 1;
+		}
+	} else
+#endif
 	if (!fr) {
 		s_printf("GO_ENGINE: ERROR - fr is NULL.\n");
 		return 1;
 	}
-#ifdef HIDDEN_STAGE
-	if (hidden_stage_active && !hs_fr) {
-		s_printf("GO_ENGINE: ERROR - fr is NULL (HS).\n");
-		go_engine_processing = 0;
-		return -2;
-	}
-#endif
 
 	/* reduce pending responses by one, which we are waiting for, in here */
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) hs_go_engine_processing--;
+	else
+#endif
 	go_engine_processing--;
 
 	cont = 0;
@@ -2531,25 +2558,40 @@ static void writeToPipe(char *data) {
 //	if (go_err(DOWN, NONE, "writeToPipe")) return;
 
 	/* Before actually writing, clear all pending replies we can get! */
-	if (go_engine_processing) go_engine_process();
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) {
+		if (hs_go_engine_processing) go_engine_process();
 
-	/* paranoia: catch overflows */
-	if (go_engine_processing > 1000) {
-		s_printf("GO_ENGINE: ERROR - over 1000 pending replies.\n");
-		return;
+		/* paranoia: catch overflows */
+		if (hs_go_engine_processing > 1000) {
+			s_printf("GO_ENGINE: ERROR - over 1000 pending replies (HS).\n");
+			return;
+		}
+	} else
+#endif
+	{
+		if (go_engine_processing) go_engine_process();
+
+		/* paranoia: catch overflows */
+		if (go_engine_processing > 1000) {
+			s_printf("GO_ENGINE: ERROR - over 1000 pending replies.\n");
+			return;
+		}
 	}
 
 	/* more paranoia: invalid file/pipe? */
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) {
+		if (!hs_fw) {
+			s_printf("GO_ENGINE: ERROR - fw is NULL (HS).\n");
+			return;
+		}
+	} else
+#endif
 	if (!fw) {
 		s_printf("GO_ENGINE: ERROR - fw is NULL.\n");
 		return;
 	}
-#ifdef HIDDEN_STAGE
-	if (hidden_stage_active && !hs_fw) {
-		s_printf("GO_ENGINE: ERROR - fw is NULL (HS).\n");
-		return;
-	}
-#endif
 
 #ifdef HIDDEN_STAGE
 	if (hidden_stage_active) {
@@ -2574,7 +2616,7 @@ static void writeToPipe(char *data) {
 		}
 
 		/* increase pending replies by one, ie the one to this command we now send */
-		go_engine_processing++;
+		hs_go_engine_processing++;
 		return;
 	}
 #endif
@@ -2629,6 +2671,7 @@ static void readFromPipe(char *buf, int *cont) {
 			strcat(buf, c);
 			if (c[0] == '\n' || strlen(buf) == 79) break;
 		}
+		return;
 	}
 #endif
 
