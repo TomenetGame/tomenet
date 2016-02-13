@@ -183,8 +183,6 @@ static int pipe_buf_current_line, pipe_response_complete = 0;
  static int hs_pipeto[2];		/* pipe to feed the exec'ed program input */
  static int hs_pipefrom[2];		/* pipe to get the exec'ed program output */
  static FILE *hs_fw, *hs_fr;
- static char hs_pipe_buf[MAX_GTP_LINES][240];
- static int hs_pipe_buf_current_line, hs_pipe_response_complete = 0;
 #endif
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 static bool terminating = FALSE;
@@ -500,10 +498,6 @@ int go_engine_init(void) {
 	}
 
 	/* We're parent */
-
-	/* Clear the pipe_buf[] array */
-	hs_pipe_buf_current_line = 0;
-	for (n = 0; n < MAX_GTP_LINES; n++) strcpy(hs_pipe_buf[n], "");
 
 	/* Prepare pipes (close unused ends) */
 	close(hs_pipeto[0]);
