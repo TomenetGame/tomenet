@@ -61,6 +61,22 @@
 #ifdef HIDDEN_STAGE
  //#define HS_ENGINE_FUEGO
  #define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
+ static void set_hidden_stage(bool active);
+#endif
+
+/* Set API (can be changed later) of the go engine we use */
+#define EAPI_NONE		0
+#define EAPI_GNUGO		1
+#define EAPI_FUEGO		2
+#ifdef HIDDEN_STAGE
+  static int engine_api = EAPI_NONE;
+#else
+ #ifdef ENGINE_FUEGO
+  static int engine_api = EAPI_FUEGO;
+ #endif
+ #ifdef ENGINE_GNUGO
+  static int engine_api = EAPI_GNUGO;
+ #endif
 #endif
 
 /* Anti Mirror-Go engine?
@@ -156,7 +172,7 @@ static void writeToPipe(char *data);
 static void readFromPipe(char *buf, int *cont);
 static int test_for_response(void); /* non-blocking read */
 static int wait_for_response(void); /* blocking read */
-#ifdef ENGINE_FUEGO
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
 static int handle_loading(void);
 #endif
 static void go_engine_move_CPU(void);
@@ -523,9 +539,9 @@ int go_engine_init(void) {
 	   again due to broken pipe, in case the child couldn't init the engine. */
 	hs_go_engine_up = TRUE;
 
-	hidden_stage_active = TRUE;
+	set_hidden_stage(TRUE);
 
- #ifdef ENGINE_FUEGO
+ #ifdef HS_ENGINE_FUEGO
 	handle_loading();
  #endif
 
@@ -535,7 +551,7 @@ int go_engine_init(void) {
 	/* Hack: Allow child to close pipes in case it cannot start the engine */
 	sleep(5);
 
- #ifdef ENGINE_FUEGO
+ #ifdef HS_ENGINE_FUEGO
 	writeToPipe("boardsize 9");
 	wait_for_response();
 	/*writeToPipe("clear_board");
@@ -598,7 +614,7 @@ int go_engine_init(void) {
 	/* Init this 'flow control', to begin asynchronous pipe operation */
 	go_engine_processing = 0;
 
-	hidden_stage_active = FALSE;
+	set_hidden_stage(FALSE);
 
 	/* ready for games */
 #endif
@@ -611,7 +627,7 @@ void go_engine_terminate(void) {
 	int status_dummy;
 
 #ifdef HIDDEN_STAGE
-	hidden_stage_active = FALSE; //make sure to shutdown the normal engine first
+	set_hidden_stage(FALSE); //make sure to shutdown the normal engine first
 #endif
 
     if (!go_engine_up) {
@@ -668,7 +684,7 @@ void go_engine_terminate(void) {
 		return;
 	}
 
-	hidden_stage_active = TRUE;
+	set_hidden_stage(TRUE);
 
  #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	terminating = TRUE;
@@ -688,8 +704,6 @@ void go_engine_terminate(void) {
 	/* discard any possible answers we were still waiting for */
 	go_engine_processing = 0;
 
-	hidden_stage_active = FALSE;
-
  #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	terminating = FALSE;
  #endif
@@ -707,6 +721,8 @@ void go_engine_terminate(void) {
 	waitpid(hs_nPid, &status_dummy, WNOHANG);
 
 	s_printf("GO_ENGINE: TERMINATED (HS)\n");
+
+	set_hidden_stage(FALSE);
 #endif
 }
 
@@ -1006,19 +1022,20 @@ void go_challenge_start(int Ind) {
 #endif
 
 #ifdef HIDDEN_STAGE
-	if (p_ptr->go_hidden_stage) hidden_stage_active = TRUE;
-	else hidden_stage_active = FALSE;
+	/* change API? */
+	if (p_ptr->go_hidden_stage)
+		set_hidden_stage(TRUE);
+	else
+		set_hidden_stage(FALSE);
 #endif
 
 	Send_store_special_clr(Ind, 4, 18);
 	if (go_err(DOWN, DOWN, "go_challenge_start")) return;
 
-#ifdef ENGINE_FUEGO
-	writeToPipe("komi 0"); //reset current_komi behaviour
-#endif
-#ifdef ENGINE_GNUGO
-	writeToPipe("komi 0"); //reset current_komi behaviour
-#endif
+	if (engine_api == EAPI_FUEGO)
+		writeToPipe("komi 0"); //reset current_komi behaviour
+	else if (engine_api == EAPI_GNUGO)
+		writeToPipe("komi 0"); //reset current_komi behaviour
 
 	/* somehow spread from 30k to dan level.. Final stage: Take white!
 	   Place opponent and configure game parameters accordingly. */
@@ -1123,15 +1140,20 @@ void go_challenge_start(int Ind) {
 	case TOP_RANK * 2 + 3: case TOP_RANK * 2 + 4: //HIDDEN_STAGE
 #ifdef HIDDEN_STAGE
 		if (p_ptr->go_hidden_stage) {
-			hidden_stage_active = TRUE;
 			if (p_ptr->go_level == TOP_RANK * 2 + 2)
 				strcpy(avatar_name, "Godalf, The White"); //-_-'
 			else
 				strcpy(avatar_name, "Godalf, The Black"); //oups
+ #ifdef HS_ENGINE_FUEGO
+			writeToPipe("uct_max_memory 300000000");
+			writeToPipe("go_param timelimit 28");
+
+			writeToPipe("komi 1"); //prepare for current_komi possibly = 1
+ #endif
  #ifdef HS_ENGINE_GNUGOMC
 			writeToPipe("level 10");
 			random_move_prob = 0;
-			writeToPipe("time_settings 0 25 1");
+			writeToPipe("time_settings 0 28 1");
 
 			writeToPipe("komi 1"); //prepare for current_komi possibly = 1
  #endif
@@ -1163,11 +1185,11 @@ void go_challenge_start(int Ind) {
 	}
 	Send_store_special_str(Ind, 5, GO_BOARD_X + 6 - (strlen(avatar_name) + 1) / 2, TERM_YELLOW, avatar_name);
 
-#ifdef ENGINE_FUEGO
-	/* think while opponent is thinking? */
-	if (p_ptr->go_level <= 0) writeToPipe("uct_param_player ponder 0");
-	else writeToPipe("uct_param_player ponder 1");
-#endif
+	if (engine_api == EAPI_FUEGO) {
+		/* think while opponent is thinking? */
+		if (p_ptr->go_level <= 0) writeToPipe("uct_param_player ponder 0");
+		else writeToPipe("uct_param_player ponder 1");
+	}
 
 	/* Set colour and notice game start. */
 	CPU_has_white = (p_ptr->go_level < TOP_RANK * 2);
@@ -1222,23 +1244,23 @@ void go_challenge_start(int Ind) {
 	tstart = time(NULL);
 	tmstart = localtime(&tstart);
 
-#ifdef ENGINE_GNUGO
-	/* Open new SGF file for writing (abuse var 'name') */
-	sprintf(path, "go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
-	    1900 + tmstart->tm_year, tmstart->tm_mon + 1, tmstart->tm_mday,
-	    tmstart->tm_hour, tmstart->tm_min, tmstart->tm_sec);
-	strcpy(sgf_name, path);
-	sgf = fopen(path, "w");
-	if (sgf) {
-		fprintf(sgf, "(;SZ[9]RU[Chinese]KM[0]\n");
-		fprintf(sgf, "PC[TomeNET - http://www.tomenet.eu/]\n");
-		if (CPU_has_white) fprintf(sgf, "PW[%s (AI)]PB[%s]BR[%dp]\n", avatar_name, p_ptr->name, p_ptr->go_level);
-		else fprintf(sgf, "PW[%s]PB[%s (AI)]WR[%dp]\n", p_ptr->name, avatar_name, p_ptr->go_level);
-	}
+	if (engine_api == EAPI_GNUGO) {
+		/* Open new SGF file for writing (abuse var 'name') */
+		sprintf(path, "go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
+		    1900 + tmstart->tm_year, tmstart->tm_mon + 1, tmstart->tm_mday,
+		    tmstart->tm_hour, tmstart->tm_min, tmstart->tm_sec);
+		strcpy(sgf_name, path);
+		sgf = fopen(path, "w");
+		if (sgf) {
+			fprintf(sgf, "(;SZ[9]RU[Chinese]KM[0]\n");
+			fprintf(sgf, "PC[TomeNET - http://www.tomenet.eu/]\n");
+			if (CPU_has_white) fprintf(sgf, "PW[%s (AI)]PB[%s]BR[%dp]\n", avatar_name, p_ptr->name, p_ptr->go_level);
+			else fprintf(sgf, "PW[%s]PB[%s (AI)]WR[%dp]\n", p_ptr->name, avatar_name, p_ptr->go_level);
+		}
  #ifdef GO_DEBUGLOG
-	else s_printf("GO_SGF: Couldn't open file.\n");
+		else s_printf("GO_SGF: Couldn't open file.\n");
  #endif
-#endif
+	}
 
 	/* Initiate human player input loop */
 	Send_store_special_str(Ind, 1, 1, TERM_WHITE, ">Type coordinates to place a stone, eg \"d5\". Hit ENTER to pass/ESC to resign.<");
@@ -2908,5 +2930,27 @@ static void enable_anti_mirror(void) {
 	return;
 #endif
 }
+#ifdef HIDDEN_STAGE
+/* For HIDDEN_STAGE: switch between APIs depending on hidden_stage state and defined engines */
+static void set_hidden_stage(bool active) {
+	if (active) {
+		hidden_stage_active = TRUE;
+ #ifdef HS_ENGINE_FUEGO
+		engine_api = EAPI_FUEGO;
+ #endif
+ #ifdef HS_ENGINE_GNUGOMC
+		engine_api = EAPI_GNUGO;
+ #endif
+	} else {
+		hidden_stage_active = FALSE;
+ #ifdef ENGINE_FUEGO
+		engine_api = EAPI_FUEGO;
+ #endif
+ #ifdef ENGINE_GNUGO
+		engine_api = EAPI_GNUGO;
+ #endif
+	}
+}
+#endif
 
 #endif /* ENABLE_GO_GAME */
