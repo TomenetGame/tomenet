@@ -1193,14 +1193,14 @@ void go_challenge_start(int Ind) {
 		else writeToPipe("uct_param_player ponder 1");
 
 		if (CPU_has_white) {
-			sprintf(tmp, "go_set_info player_black %s%d", p_ptr->name, p_ptr->go_level);
+			sprintf(tmp, "go_set_info player_black %s %dd", p_ptr->name, p_ptr->go_level);
 			writeToPipe(tmp);
 			sprintf(tmp, "go_set_info player_white %s", avatar_name);
 			writeToPipe(tmp);
 		} else {
 			sprintf(tmp, "go_set_info player_black %s", avatar_name);
 			writeToPipe(tmp);
-			sprintf(tmp, "go_set_info player_white %s%d", p_ptr->name, p_ptr->go_level);
+			sprintf(tmp, "go_set_info player_white %s %dd", p_ptr->name, p_ptr->go_level);
 			writeToPipe(tmp);
 		}
 	}
