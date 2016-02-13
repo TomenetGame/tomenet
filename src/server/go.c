@@ -57,7 +57,7 @@
 
 /* Gimmick: Enable a 2nd, stronger engine that sends a 'special' opponent along
    sometimes, provided you have beaten all the regular characters. ^^ */
-#define HIDDEN_STAGE 8 /* queue chance until hidden stage appears */
+//#define HIDDEN_STAGE 8 /* queue chance until hidden stage appears */
 #ifdef HIDDEN_STAGE
  //#define HS_ENGINE_FUEGO
  #define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */

@@ -1582,6 +1582,11 @@ bool Destroy_connection(int ind, char *reason_orig) {
 		p_ptr = Players[player];
 	}
 	if (p_ptr) {
+		/* Clean up SPECIAL store's status/features if player ALT+F4's in the middle of something.. */
+#ifdef ENABLE_GO_GAME
+		if (go_game_up && p_ptr->id == go_engine_player_id) go_challenge_cancel();
+#endif
+
 #ifdef SOLO_REKING
 		if (p_ptr->solo_reking) {
 			time_t now = time(&now);
