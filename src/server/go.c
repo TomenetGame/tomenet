@@ -51,16 +51,16 @@
 
 /* Pick one of the engines to use: */
 /* Use 'gnugno' engine? (recommended) */
-#define ENGINE_GNUGO
+//#define ENGINE_GNUGO
 /* Use 'fuego' engine? */
-//#define ENGINE_FUEGO
+#define ENGINE_FUEGO
 
 /* Gimmick: Enable a 2nd, stronger engine that sends a 'special' opponent along
    sometimes, provided you have beaten all the regular characters. ^^ */
-//#define HIDDEN_STAGE 8 /* queue chance until hidden stage appears */
+#define HIDDEN_STAGE 8 /* queue chance until hidden stage appears */
 #ifdef HIDDEN_STAGE
- //#define HS_ENGINE_FUEGO
- #define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
+ #define HS_ENGINE_FUEGO
+ //#define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
  static void set_hidden_stage(bool active);
 #endif
 
@@ -161,7 +161,10 @@ int go_engine_processing = 0;	/* Go engine is expected to deliver replies to com
 bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
 static char avatar_name[40];
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+static FILE *sgf;
 static char sgf_name[1024];
+#endif
 
 /* Private control variable to determine what to do next
    after go_engine_processing reaches 0 again: */
@@ -213,9 +216,6 @@ static struct tm* tmend;
 /* Game record: Keep track of moves and passes (for undo-handling too) */
 static int pass_count, current_komi;
 static bool last_move_was_pass = FALSE, CPU_to_move, CPU_now_to_move;
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-static FILE *sgf;
-#endif
 static char last_black_move[3], last_white_move[3], game_result[10];
 
 /* Helper vars to update the board visuals between turns */
@@ -1244,6 +1244,7 @@ void go_challenge_start(int Ind) {
 	tstart = time(NULL);
 	tmstart = localtime(&tstart);
 
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
 	if (engine_api == EAPI_GNUGO) {
 		/* Open new SGF file for writing (abuse var 'name') */
 		sprintf(path, "go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
@@ -1261,6 +1262,7 @@ void go_challenge_start(int Ind) {
 		else s_printf("GO_SGF: Couldn't open file.\n");
  #endif
 	}
+#endif
 
 	/* Initiate human player input loop */
 	Send_store_special_str(Ind, 1, 1, TERM_WHITE, ">Type coordinates to place a stone, eg \"d5\". Hit ENTER to pass/ESC to resign.<");
@@ -1538,6 +1540,7 @@ static int verify_move_human(void) {
 
 	move_count++;
 
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
 	if (engine_api == EAPI_GNUGO && sgf) {
 		/* translate char/num coords into char/char coords */
 		char m[3];
@@ -1557,6 +1560,7 @@ static int verify_move_human(void) {
 			fprintf(sgf, ";W[%s]\n", m);
 		}
 	}
+#endif
 
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
@@ -1725,6 +1729,7 @@ static int verify_move_CPU(void) {
 		move_count++;
 	}
 
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
 	if (engine_api == EAPI_GNUGO && sgf) {
 		/* translate char/num coords into char/char coords */
 		char m[3];
@@ -1744,6 +1749,7 @@ static int verify_move_CPU(void) {
 			fprintf(sgf, ";B[%s]\n", m);
 		}
 	}
+#endif
 
 	/* Test for game over by double-passe */
 	if (pass_count == 2) {
@@ -1803,12 +1809,15 @@ static void go_engine_move_result(int move_result) {
 		if (engine_api == EAPI_FUEGO) {
 			if (CPU_has_white) writeToPipe("go_set_info result W+Time");
 			else writeToPipe("go_set_info result B+Time");
-		} else if (engine_api == EAPI_GNUGO) {
+		}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+		else if (engine_api == EAPI_GNUGO) {
 			if (sgf) {
 				if (CPU_has_white) fprintf(sgf, "RE[W+Time]\n");
 				else fprintf(sgf, "RE[B+Time]\n");
 			}
 		}
+#endif
 		strcpy(result, "\377r*** You lost on time! ***");
 		lost = TRUE;
 
@@ -1817,12 +1826,15 @@ static void go_engine_move_result(int move_result) {
 		if (engine_api == EAPI_FUEGO) {
 			if (CPU_has_white) writeToPipe("go_set_info result W+Resign");
 			else writeToPipe("go_set_info result B+Resign");
-		} else if (engine_api == EAPI_GNUGO) {
+		}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+		else if (engine_api == EAPI_GNUGO) {
 			if (sgf) {
 				if (CPU_has_white) fprintf(sgf, "RE[W+Resign]\n");
 				else fprintf(sgf, "RE[B+Resign]\n");
 			}
 		}
+#endif
 		strcpy(result, "\377r*** You resigned! ***");
 		lost = TRUE;
 		break;
@@ -1830,12 +1842,15 @@ static void go_engine_move_result(int move_result) {
 		if (engine_api == EAPI_FUEGO) {
 			if (CPU_has_white) writeToPipe("go_set_info result B+Time");
 			else writeToPipe("go_set_info result W+Time");
-		} else if (engine_api == EAPI_GNUGO) {
+		}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+		else if (engine_api == EAPI_GNUGO) {
 			if (sgf) {
 				if (CPU_has_white) fprintf(sgf, "RE[B+Time]\n");
 				else fprintf(sgf, "RE[W+Time]\n");
 			}
 		}
+#endif
 		strcpy(result, "\377G*** Your opponent lost on time! ***");
 		won = TRUE;
 		break;
@@ -1843,21 +1858,27 @@ static void go_engine_move_result(int move_result) {
 		if (engine_api == EAPI_FUEGO) {
 			if (CPU_has_white) writeToPipe("go_set_info result B+Resign");
 			else writeToPipe("go_set_info result W+Resign");
-		} else if (engine_api == EAPI_GNUGO) {
+		}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+		else if (engine_api == EAPI_GNUGO) {
 			if (sgf) {
 				if (CPU_has_white) fprintf(sgf, "RE[B+Resign]\n");
 				else fprintf(sgf, "RE[W+Resign]\n");
 			}
 		}
+#endif
 		strcpy(result, "\377G*** Your opponent resigned! ***");
 		won = TRUE;
 		break;
 	case 6:
 		if (engine_api == EAPI_FUEGO) {
 			writeToPipe("go_set_info result Jigo");
-		} else if (engine_api == EAPI_GNUGO) {
+		}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+		else if (engine_api == EAPI_GNUGO) {
 			if (sgf) fprintf(sgf, "RE[0]\n");
 		}
+#endif
 		strcpy(result, "\377o** The game is a draw! **");
 		break;
 	default:
@@ -1865,9 +1886,12 @@ static void go_engine_move_result(int move_result) {
 			if (engine_api == EAPI_FUEGO) {
 				sprintf(result, "go_set_info result W+%d", move_result - 2000);
 				writeToPipe(result);
-			} else if (engine_api == EAPI_GNUGO) {
+			}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+			else if (engine_api == EAPI_GNUGO) {
 				if (sgf) fprintf(sgf, "RE[W+%d]\n", move_result - 2000);
 			}
+#endif
 			if (CPU_has_white) {
 				sprintf(result, "\377r*** Your opponent won by %d point%s! ***", move_result - 2000, move_result - 2000 == 1 ? "" : "s");
 				lost = TRUE;
@@ -1879,9 +1903,12 @@ static void go_engine_move_result(int move_result) {
 			if (engine_api == EAPI_FUEGO) {
 				sprintf(result, "go_set_info result B+%d", move_result - 1000);
 				writeToPipe(result);
-			} else if (engine_api == EAPI_GNUGO) {
+			}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+			else if (engine_api == EAPI_GNUGO) {
 				if (sgf) fprintf(sgf, "RE[B+%d]\n", move_result - 1000);
 			}
+#endif
 			if (CPU_has_white) {
 				sprintf(result, "\377G*** You won by %d point%s! ***", move_result - 1000, move_result - 1000 == 1 ? "" : "s");
 				won = TRUE;
@@ -2734,12 +2761,14 @@ static void go_challenge_cleanup(bool server_shutdown) {
 			else writeToPipe("go_set_info result B+Forfeit");
 			if (server_shutdown) wait_for_response();
 		}
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
 		if (engine_api == EAPI_GNUGO) {
 			if (sgf) {
 				if (CPU_has_white) fprintf(sgf, "RE[W+Forfeit]\n");
 				else fprintf(sgf, "RE[B+Forfeit]\n");
 			}
 		}
+#endif
 		game_over = TRUE;
 	}
 
