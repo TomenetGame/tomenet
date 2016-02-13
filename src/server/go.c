@@ -57,7 +57,7 @@
 
 /* Gimmick: Enable a 2nd, stronger engine that sends a 'special' opponent along
    sometimes, provided you have beaten all the regular characters. ^^ */
-//#define HIDDEN_STAGE
+//#define HIDDEN_STAGE 8 /* queue chance until hidden stage appears */
 #ifdef HIDDEN_STAGE
  //#define HS_ENGINE_FUEGO
  #define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
@@ -86,6 +86,24 @@
 
 /* Maximum rank: At this rank you'll have to play a game as white too! */
 #define TOP_RANK	7
+/* Gameplay configuration */
+#if 0 /* was a good incentive, but might be a bit cheezy regarding IDDC casino */
+static int wager_lvl[10] = {
+      5000,   7500,
+     10000,  15000,
+     20000,  30000,
+     50000, 100000,
+    0, 0,
+};
+#else
+static int wager_lvl[10] = {
+      2500,   5000,
+      7500,  10000,
+     15000,  20000,
+     30000,  50000,
+    0, 0,
+};
+#endif
 
 /* Time limits for the player (and CPU) in seconds. [30]
    Should be *ABOVE 20*, since some AI players will require 20s per move */
@@ -122,7 +140,7 @@ bool go_engine_up;		/* Go engine is online? */
 int go_engine_processing = 0;	/* Go engine is expected to deliver replies to commands? */
 #ifdef HIDDEN_STAGE
  bool hs_go_engine_up;		/* Go engine is online? */
- bool hidden_stage_active = FALSE;	/* Is the current game a hidden stage one? */
+ bool hidden_stage_active = FALSE;	/* Is the current game a hidden stage one? -> use hidden-stage-pipe */
 #endif
 bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
@@ -195,25 +213,6 @@ static int random_move_prob, move_count;
 static char last_cpu_move[3];
 static int mirror_count;
 static bool anti_mirror_active;
-#endif
-
-/* Gameplay configuration */
-#if 0 /* was a good incentive, but might be a bit cheezy regarding IDDC casino */
-static int wager_lvl[9] = {
-      5000,   7500,
-     10000,  15000,
-     20000,  30000,
-     50000, 100000,
-    0,
-};
-#else
-static int wager_lvl[9] = {
-      2500,   5000,
-      7500,  10000,
-     15000,  20000,
-     30000,  50000,
-    0,
-};
 #endif
 
 
@@ -617,6 +616,10 @@ int go_engine_init(void) {
 void go_engine_terminate(void) {
 	int status_dummy;
 
+#ifdef HIDDEN_STAGE
+	hidden_stage_active = FALSE; //make sure to shutdown the normal engine first
+#endif
+
     if (!go_engine_up) {
 	/* No zombie child */
 	waitpid(nPid, &status_dummy, WNOHANG);
@@ -673,9 +676,9 @@ void go_engine_terminate(void) {
 
 	hidden_stage_active = TRUE;
 
-#ifdef DISCARD_RESPONSES_WHEN_TERMINATING
+ #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	terminating = TRUE;
-#endif
+ #endif
 
 	/* try to exit running games gracefully */
 	if (go_game_up) go_challenge_cleanup(TRUE);
@@ -683,19 +686,19 @@ void go_engine_terminate(void) {
 	/* terminate cleanly */
 	writeToPipe("quit");
 
-#if 0	/* disable, in case we're terminating the engine because it \
+ #if 0	/* disable, in case we're terminating the engine because it \
 	 stopped working! (would freeze server here, in that case) */
 	wait_for_response();
-#endif
+ #endif
 
 	hidden_stage_active = FALSE;
 
 	/* discard any possible answers we were still waiting for */
 	//hs_go_engine_processing = 0;
 
-#ifdef DISCARD_RESPONSES_WHEN_TERMINATING
+ #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	terminating = FALSE;
-#endif
+ #endif
 
 	/* close pipes to it */
 	if (hs_go_engine_up) {
@@ -824,6 +827,19 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "if you want to try and win back your cash.");
 		break;
 	case TOP_RANK * 2 + 2:
+	case TOP_RANK * 2 + 3: case TOP_RANK * 2 + 4: //HIDDEN_STAGE
+#ifdef HIDDEN_STAGE
+		if (!p_ptr->go_sublevel) {
+			p_ptr->go_hidden_stage = TRUE;
+			p_ptr->go_sublevel = rand_int(HIDDEN_STAGE); //games until next hidden stage spawn
+			if (!p_ptr->go_turn) p_ptr->go_turn = turn; //make sure we're not just spamming game challenges to spawn hidden stage :-p
+			Send_store_special_str(Ind, 6, 3, TERM_VIOLET, "We have a visitor speaking in a strange");
+			Send_store_special_str(Ind, 7, 3, TERM_VIOLET, "tongue I've never heard before. But it");
+			Send_store_special_str(Ind, 8, 3, TERM_VIOLET, "seems that he wants to play the game!");
+			break;
+		}
+		p_ptr->go_hidden_stage = FALSE;
+#endif
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I'll see if the master is around for a game.");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "And you can even take white now..");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "quite impressive, game is on the house!");
@@ -962,6 +978,14 @@ void go_challenge_accept(int Ind, bool new_wager) {
 		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
 		break;
 	case TOP_RANK * 2 + 2:
+	case TOP_RANK * 2 + 3: case TOP_RANK * 2 + 4: //HIDDEN_STAGE
+#ifdef HIDDEN_STAGE
+		if (p_ptr->go_hidden_stage) {
+			Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a..*oh!* he's already standing in the doorway!");
+			Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "Show him that we're no pushovers!");
+			break;
+		}
+#endif
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a moment, I saw \377yArro, The Wise\377o just now..");
 		Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "<you hear some shouting>");
 		Send_store_special_str(Ind, 11, 3, TERM_ORANGE, "let's see what you can do.. You ready?");
@@ -969,8 +993,11 @@ void go_challenge_accept(int Ind, bool new_wager) {
 	}
 
 	/* Increase go level by 1, indicating that we paid the
-	   wager for this level and can play free from now on. */
-	if (new_wager) p_ptr->go_level++;
+	   wager for this level and can retry for free from now on. */
+	if (new_wager) {
+		p_ptr->go_level++;
+		if (p_ptr->go_level_top < p_ptr->go_level) p_ptr->go_level_top = p_ptr->go_level;
+	}
 
 	/* Wait for player keypress to start */
 	Send_request_key(Ind, RID_GO_START, "- press any key to start the game -");
@@ -982,6 +1009,11 @@ void go_challenge_start(int Ind) {
 	int n;
 #if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
 	char path[80];
+#endif
+
+#ifdef HIDDEN_STAGE
+	if (p_ptr->go_hidden_stage) hidden_stage_active = TRUE;
+	else hidden_stage_active = FALSE;
 #endif
 
 	Send_store_special_clr(Ind, 4, 18);
@@ -1094,6 +1126,26 @@ void go_challenge_start(int Ind) {
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case TOP_RANK * 2 + 1: case TOP_RANK * 2 + 2:
+	case TOP_RANK * 2 + 3: case TOP_RANK * 2 + 4: //HIDDEN_STAGE
+#ifdef HIDDEN_STAGE
+		if (p_ptr->go_hidden_stage) {
+			hidden_stage_active = TRUE;
+			if (p_ptr->go_level == TOP_RANK * 2 + 2)
+				strcpy(avatar_name, "Godalf, The White"); //-_-'
+			else
+				strcpy(avatar_name, "Godalf, The Black"); //oups
+ #ifdef HS_ENGINE_GNUGOMC
+			writeToPipe("level 10");
+			random_move_prob = 0;
+			writeToPipe("time_settings 0 25 1");
+
+			writeToPipe("komi 1"); //prepare for current_komi possibly = 1
+ #endif
+			player_timelimit_sec = GO_TIME_PY;
+
+			break;
+		}
+#endif
 		strcpy(avatar_name, "Arro, The Wise");
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 300000000");
@@ -1125,6 +1177,9 @@ void go_challenge_start(int Ind) {
 
 	/* Set colour and notice game start. */
 	CPU_has_white = (p_ptr->go_level < TOP_RANK * 2);
+#ifdef HIDDEN_STAGE
+	if (p_ptr->go_hidden_stage && p_ptr->go_level == TOP_RANK * 2 + 2) CPU_has_white = TRUE;
+#endif
 	CPU_now_to_move = !CPU_has_white;
 	player_timeleft_sec = player_timelimit_sec;
 
@@ -1864,7 +1919,7 @@ static void go_engine_move_result(int move_result) {
 				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
 			} else {
-				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You two are on the same..");
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You two are on the same");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "level eh? Hahaha! That's");
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "just great!");
 			}
@@ -1985,12 +2040,80 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 14, GO_BOARD_X + 13, TERM_ORANGE, "it'll be on the house, my word!");
 				wager = wager_lvl[p_ptr->go_level / 2];
 				p_ptr->go_level++;
+#ifdef HIDDEN_STAGE
+				p_ptr->go_sublevel = HIDDEN_STAGE;
+#endif
 			} else {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Oho a draw between masters..");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "can't ask for much more!");
 			}
 			break;
 		case TOP_RANK * 2 + 2:
+		case TOP_RANK * 2 + 3: case TOP_RANK * 2 + 4:
+#ifdef HIDDEN_STAGE
+			if (p_ptr->go_hidden_stage) {
+				switch (p_ptr->go_level) {
+				case TOP_RANK * 2 + 2:
+					if (lost) {
+						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "What in the devil's name!");
+						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "You don't have a hard time");
+						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "against Arro but lost against");
+						Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "this guy? The Go world seems");
+						Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "much bigger than I thought!");
+					} else if (won) {
+						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Hah! I have no idea what was");
+						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "going on on the board, but");
+						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "I know that someone who can");
+						Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "beat Arro surely can beat");
+						Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "any other Go player too..");
+						Send_store_special_str(Ind, 14, GO_BOARD_X + 13, TERM_ORANGE, "...am I right?!");
+						p_ptr->go_level++;
+					} else {
+						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Wow! How can it be a draw");
+						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "after such a crazy game!");
+					}
+					break;
+				case TOP_RANK * 2 + 3:
+					if (lost) {
+						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "I was rooting for you. But I've");
+						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "already seen this guy's Go");
+						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "and even if it's beyond me I'm");
+						Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "sure there is no shame in losing.");
+						p_ptr->go_level--;
+					} else if (won) {
+						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "The game went totally over my");
+						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "head but I was certain that");
+						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "you'd win, you're the best");
+						Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "player around, after all!");
+						p_ptr->go_level++;
+					} else {
+						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Just how unlikely is a draw?");
+						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Always baffles me when this");
+						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "happens..");
+					}
+					break;
+				case TOP_RANK * 2 + 4:
+					if (lost) {
+						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "It seems you're having bad days");
+						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "too. But we all know you could've");
+						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "won against him.. want more coffee?");
+						p_ptr->go_level--;
+					} else if (won) {
+						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You're letting us watch another");
+						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "flawless performance of yours!");
+						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "I'm really trying to learn from it!");
+					} else {
+						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Holy.. you're not causing a draw");
+						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "on purpose, are you? Can you even");
+						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "do that?..");
+					}
+					break;
+				}
+				break;
+			} else if (p_ptr->go_sublevel && turn - p_ptr->go_turn >= cfg.fps * 300)
+				p_ptr->go_sublevel--; //a game should last for at least 5 minutes until we accept it for counting down to hidden stage
+				p_ptr->go_turn = 0;
+#endif
 			if (lost) {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Hah, I can't judge what went");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "wrong there, your games go way");
@@ -2005,6 +2128,8 @@ static void go_engine_move_result(int move_result) {
 			}
 			break;
 		}
+
+		if (p_ptr->go_level_top < p_ptr->go_level) p_ptr->go_level_top = p_ptr->go_level;
 
 		/* earn winnings */
 		if (wager) {

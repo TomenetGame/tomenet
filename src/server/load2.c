@@ -1638,7 +1638,7 @@ static bool rd_extra(int Ind) {
 	rd_s16b(&p_ptr->paralyzed);
 	rd_s16b(&p_ptr->confused);
 	rd_s16b(&p_ptr->food);
-	strip_bytes(4);	/* Old "food_digested" / "protection" */
+	rd_s32b(&p_ptr->go_turn);
 	rd_s16b(&p_ptr->energy);
 	rd_s16b(&p_ptr->fast);
 	if (!older_than(4, 0, 3)) rd_s16b(&p_ptr->fast_mod);
@@ -1669,7 +1669,9 @@ static bool rd_extra(int Ind) {
 	}
 	rd_s16b(&p_ptr->blessed);
 	rd_s16b(&p_ptr->tim_invis);
-	strip_bytes(2);			//hole
+	rd_byte(&tmp8u);
+	p_ptr->go_level_top = tmp8u; //ENABLE_GO_GAME
+	strip_bytes(1);				//hole
 	rd_s16b(&p_ptr->see_infra);
 	rd_s16b(&p_ptr->tim_infra);
 	rd_s16b(&p_ptr->oppose_fire);

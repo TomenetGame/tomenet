@@ -781,8 +781,7 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->paralyzed);
 	wr_s16b(p_ptr->confused);
 	wr_s16b(p_ptr->food);
-	wr_s16b(0);	/* old "food_digested" */
-	wr_s16b(0);	/* old "protection" */
+	wr_s32b(p_ptr->go_turn);
 	wr_s16b(p_ptr->energy);
 	wr_s16b(p_ptr->fast);
 	wr_s16b(p_ptr->fast_mod);
@@ -811,7 +810,8 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->tim_regen_pow);
 	wr_s16b(p_ptr->blessed);
 	wr_s16b(p_ptr->tim_invis);
-	wr_s16b(0x0);			//hole
+	wr_byte(p_ptr->go_level_top);//ENABLE_GO_GAME
+	wr_byte(0x0);				//hole
 	wr_s16b(p_ptr->see_infra);
 	wr_s16b(p_ptr->tim_infra);
 	wr_s16b(p_ptr->oppose_fire);

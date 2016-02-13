@@ -2930,7 +2930,8 @@ struct player_type {
 	   could also be used for quests and neutral monsters. - C. Blue */
 	int store_action;		/* What the player is currently doing in a store */
 	int request_id, request_type;	/* to keep track of PKT_REQUEST_... requests */
-	char go_level, go_sublevel;	/* For playing Go */
+	unsigned char go_level, go_sublevel, go_level_top, go_hidden_stage;	/* For playing Go (latter two for HIDDEN_STAGE) */
+	s32b go_turn; /* for HIDDEN_STAGE when playing Go */
 
 	/* Delayed requests are for quests, to prevent players from spamming password attempts */
 	byte delay_str;
