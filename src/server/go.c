@@ -297,7 +297,7 @@ int go_engine_init(void) {
 	        "  -srand       set random seed (-1:none, 0:time(0))\n";*/
 
 #ifdef ENGINE_FUEGO
-		execlp("./go/fuego", "fuego", NULL);
+		execlp("./go/fuego", "fuego", "--quiet", NULL);
 #endif
 #ifdef ENGINE_GNUGO
 		execlp("./go/gnugo", "gnugo", "--mode", "gtp", \
@@ -489,7 +489,7 @@ int go_engine_init(void) {
 	        "  -srand       set random seed (-1:none, 0:time(0))\n";*/
 
  #ifdef HS_ENGINE_FUEGO
-		execlp("./go/fuego", "fuego", NULL);
+		execlp("./go/fuego", "fuego", "--quiet", NULL);
  #endif
  #ifdef HS_ENGINE_GNUGOMC
 		execlp("./go/gnugo", "gnugo", "--mode", "gtp", \
@@ -2701,6 +2701,14 @@ static void readFromPipe(char *buf, int *cont) {
 static int handle_loading() {
 	char lbuf[80], reply[240];
 	int cont = 0;
+
+#if 1
+	/* its seems that fuego (svn) now outputs its startup replies to stderr, so we don't need to catch anything here anymore.
+	   fuego's '--quiet' parameter completely suppresses the stderr output too. */
+	sleep(5); /* just make the log file live output prettier.. */
+	return 0;
+#endif
+
 	strcpy(reply, "");
 	strcpy(lbuf, "");
 
