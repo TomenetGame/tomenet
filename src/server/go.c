@@ -823,7 +823,7 @@ void go_challenge(int Ind) {
 	case TOP_RANK * 2 + 2:
 	case TOP_RANK * 2 + 3: case TOP_RANK * 2 + 4: //HIDDEN_STAGE
 #ifdef HIDDEN_STAGE
-		if (!p_ptr->go_sublevel) {
+		if (hs_go_engine_up && !p_ptr->go_sublevel) { //if hs-engine isn't up, fallback to normal engine (business as usual)
 			p_ptr->go_hidden_stage = TRUE;
 			p_ptr->go_sublevel = rand_int(HIDDEN_STAGE); //games until next hidden stage spawn
 			if (!p_ptr->go_turn) p_ptr->go_turn = turn; //make sure we're not just spamming game challenges to spawn hidden stage :-p
@@ -2189,6 +2189,13 @@ static int test_for_response() {
 		go_engine_processing = 0;
 		return -2;
 	}
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active && !hs_fr) {
+		s_printf("GO_ENGINE: ERROR - fr is NULL (HS).\n");
+		go_engine_processing = 0;
+		return -2;
+	}
+#endif
 
 	strcpy(tmp, "");
 	strcpy(pipe_line_buf, "");
@@ -2411,6 +2418,11 @@ static int wait_for_response() {
 	char lbuf[80], tmp[80];//, *tptr = tmp + 79;
 	strcpy(tmp, "");
 
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) {
+		if (!hs_go_engine_up) return 2;
+	} else
+#endif
 	if (!go_engine_up) return 2;
 
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
@@ -2424,6 +2436,13 @@ static int wait_for_response() {
 		s_printf("GO_ENGINE: ERROR - fr is NULL.\n");
 		return 1;
 	}
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active && !hs_fr) {
+		s_printf("GO_ENGINE: ERROR - fr is NULL (HS).\n");
+		go_engine_processing = 0;
+		return -2;
+	}
+#endif
 
 	/* reduce pending responses by one, which we are waiting for, in here */
 	go_engine_processing--;
@@ -2525,6 +2544,40 @@ static void writeToPipe(char *data) {
 		s_printf("GO_ENGINE: ERROR - fw is NULL.\n");
 		return;
 	}
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active && !hs_fw) {
+		s_printf("GO_ENGINE: ERROR - fw is NULL (HS).\n");
+		return;
+	}
+#endif
+
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) {
+		if (fprintf(hs_fw, "%s\n", data) < 0) {
+			s_printf("GO_ENGINE: ERROR in fprintf(). (HS)\n");
+			fclose(hs_fw);
+			fclose(hs_fr);
+			close(hs_pipeto[1]);
+			close(hs_pipefrom[0]);
+			hs_go_engine_up = FALSE;
+			return;
+		}
+
+		if (fflush(hs_fw) != 0) {
+			s_printf("GO_ENGINE: ERROR in fflush() (HS).\n");
+			fclose(hs_fw);
+			fclose(hs_fr);
+			close(hs_pipeto[1]);
+			close(hs_pipefrom[0]);
+			hs_go_engine_up = FALSE;
+			return;
+		}
+
+		/* increase pending replies by one, ie the one to this command we now send */
+		go_engine_processing++;
+		return;
+	}
+#endif
 
 	if (fprintf(fw, "%s\n", data) < 0) {
 		s_printf("GO_ENGINE: ERROR in fprintf().\n");
@@ -2556,6 +2609,28 @@ static void readFromPipe(char *buf, int *cont) {
 	char c[2];
 
 //	if (go_err(DOWN, NONE, "readFromPipe")) return;
+
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) {
+		strcpy(buf, "");
+		while (1) {
+			ch = fgetc(hs_fr);
+			if (!ch) break;
+			if (ch == EOF) {
+//printf("feof: %d, ferror: %d\n", feof(fr), ferror(fr));
+				(*cont) = 0;
+				break;
+			}
+
+			sprintf(c, "%c", (char)ch);
+			if (c[0] == '\n') (*cont)++;
+			else (*cont) = 0;
+
+			strcat(buf, c);
+			if (c[0] == '\n' || strlen(buf) == 79) break;
+		}
+	}
+#endif
 
 	strcpy(buf, "");
 	while (1) {
@@ -2739,6 +2814,33 @@ static void go_engine_board(void) {
 }
 
 static bool go_err(int engine_status, int game_status, char *name) {
+#ifdef HIDDEN_STAGE
+	if (hidden_stage_active) {
+		if (engine_status == DOWN) {
+			if (!hs_go_engine_up) {
+				s_printf("GO_ERR: go engine down in %s() (HS).\n", name);
+				return TRUE;
+			}
+		} else if (engine_status == UP) {
+			if (hs_go_engine_up) {
+				s_printf("GO_ERR: go engine up in %s() (HS).\n", name);
+				return TRUE;
+			}
+		}
+		if (game_status == DOWN) {
+			if (!go_game_up) {
+				s_printf("GO_ERR: go game down in %s().\n", name);
+				return TRUE;
+			}
+		} else if (game_status == UP) {
+			if (go_game_up) {
+				s_printf("GO_ERR: go game up in %s().\n", name);
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+#endif
 	if (engine_status == DOWN) {
 		if (!go_engine_up) {
 			s_printf("GO_ERR: go engine down in %s().\n", name);
