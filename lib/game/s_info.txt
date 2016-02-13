@@ -198,7 +198,7 @@ I:1000:0
 #D:Increases you auras power
 #I:1000:0
 N:27:Traumaturgy
-D:Drains spiritual energy from visible opponents when you attack,
+D:Drains spiritual energy from visible opponents when you inflict damage,
 D:replenishing your mana. Requires living creatures who feel pain.
 I:1000:0
 
