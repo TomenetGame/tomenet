@@ -479,7 +479,7 @@ int go_engine_init(void) {
 		execlp("./go/gnugo", "gnugo", "--mode", "gtp", \
 		    "--quiet", "--boardsize", "9x9", "--chinese-rules", \
 		    "--capture-all-dead", \
-		    "--monte-carlo", "--mc-patterns montegnu_classic" /*mc_mogo_classic*/ \
+		    "--monte-carlo", "--mc-patterns montegnu_classic", /*mc_mogo_classic*/ \
 		    "--komi", "0", "--never-resign", NULL);//try never-resign to prevent weird unjustified resigns
 		// --cache-size <megs>
 		// --japanese-rules
