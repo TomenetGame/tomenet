@@ -51,9 +51,9 @@
 
 /* Pick one of the engines to use: */
 /* Use 'gnugno' engine? (recommended) */
-//#define ENGINE_GNUGO
+#define ENGINE_GNUGO
 /* Use 'fuego' engine? */
-#define ENGINE_FUEGO
+//#define ENGINE_FUEGO
 
 /* Gimmick: Enable a 2nd, stronger engine that sends a 'special' opponent along
    sometimes, provided you have beaten all the regular characters. ^^ */
