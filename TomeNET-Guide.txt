@@ -11583,18 +11583,16 @@ Note that not every skill is available to every profession (class).
     .Traumaturgy                Drains mana from monsters when you inflict
                                 damage on them, replenishing your MP.
                                 Only works if you are able to see the target.
-                                The amount of points gained is a fraction of
-                                the damage points you inflicted and only
-                                depends on damage and skill.
-                                To be effective, your traumaturgy skill should
-                                not be much lower than half your target's base
-                                level (rlev).
-                                Even if your inflicted damage is rather low,
-                                each attack still has a chance of replenishing
-                                at least 1 MP.
+                                The amount of points gained depends linearly
+                                on your skill level and also somewhat on the
+                                damage you inflicted.
+                                Even if your inflicted damage and/or skill
+                                level is rather low, each attack still has a
+                                (small) chance of replenishing at least 1 MP.
                                 Traumaturgy is most effective with spells that
                                 have an area of effect and can therefore hit
-                                multiple monsters, such as balls and clouds.
+                                multiple monsters, such as balls and especially
+                                clouds.
                                 Traumaturgy has no effect on angels, undead,
                                 and nonliving (constructs) monsters.
 
