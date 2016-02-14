@@ -9518,7 +9518,7 @@ void handle_art_dnum(int aidx) {
 	if (a_info[aidx].cur_num > 0) a_info[aidx].cur_num--;
 #ifdef FLUENT_ARTIFACT_RESETS
 	if (a_info[aidx].cur_num == 0) {
-s_printf("A_TIMEOUT: handle_art_dnum\n");
+s_printf("A_TIMEOUT: handle_art_dnum (%d)\n", aidx);
 		a_info[aidx].timeout = 0;
 	}
 #endif
@@ -9529,7 +9529,7 @@ void handle_art_d(int aidx) {
 		if (!a_info[aidx].cur_num) {
 			a_info[aidx].known = FALSE;
 #ifdef FLUENT_ARTIFACT_RESETS
-s_printf("A_TIMEOUT: handle_art_d 1\n");
+s_printf("A_TIMEOUT: handle_art_d 1 (%d)\n", aidx);
 			a_info[aidx].timeout = 0;
 #endif
 		}
@@ -9537,7 +9537,7 @@ s_printf("A_TIMEOUT: handle_art_d 1\n");
 		a_info[aidx].cur_num = 0;
 		a_info[aidx].known = FALSE;//semi-paranoia: fixes old arts from before fluent reset mechanism!
 #ifdef FLUENT_ARTIFACT_RESETS
-s_printf("A_TIMEOUT: handle_art_d 2\n");
+s_printf("A_TIMEOUT: handle_art_d 2 (%d)\n", aidx);
 		a_info[aidx].timeout = 0;
 #endif
 	}
@@ -9786,7 +9786,7 @@ void determine_artifact_timeout(int a_idx, struct worldpos *wpos) {
 	int i;
 
 //debug
-s_printf("A_TIMEOUT: Called for item %d,%d (aidx %d)!\n", a_info[a_idx].tval, a_info[a_idx].sval, a_idx);
+s_printf("A_TIMEOUT: Called (%d)!\n", a_idx);
 
 	i = lookup_kind(a_info[a_idx].tval, a_info[a_idx].sval);
         if (i) invcopy(&forge, i);
