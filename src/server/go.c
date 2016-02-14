@@ -1148,14 +1148,16 @@ void go_challenge_start(int Ind) {
 			writeToPipe("uct_max_memory 300000000");
 			writeToPipe("go_param timelimit 28");
 
-			writeToPipe("komi 1"); //prepare for current_komi possibly = 1
+			if (p_ptr->go_level >= TOP_RANK * 2 + 3)
+				writeToPipe("komi 1"); //prepare for current_komi possibly = 1
  #endif
  #ifdef HS_ENGINE_GNUGOMC
 			writeToPipe("level 10");
 			random_move_prob = 0;
 			writeToPipe("time_settings 0 28 1");
 
-			writeToPipe("komi 1"); //prepare for current_komi possibly = 1
+			if (p_ptr->go_level >= TOP_RANK * 2 + 3)
+				writeToPipe("komi 1"); //prepare for current_komi possibly = 1
  #endif
 			player_timelimit_sec = GO_TIME_PY;
 
