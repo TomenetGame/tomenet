@@ -6793,8 +6793,13 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 	/* ..not if we're dual-wielding */
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) return selection;
-	/* ..not if we're rogues anyway */
-	if (p_ptr->pclass == CLASS_ROGUE) return selection;
+	/* ..not if we're rogues or rangers (help the lazy ones who forgot to spend skill points) anyway */
+	if (p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_ARCHER) return selection;
+	/* ..help lazy rangers somewhat: if he forgot to equip proper weaponry and hasn't skilled ranged weapon
+	   yet, he might get a shield otherwise, which is 'unusual' for rangers..
+	   (Make an exception if he WANTS to use a shield apparently.) */
+	if (p_ptr->pclass == CLASS_RANGER &&
+	    !(p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) return selection;
 	/* player's form cannot equip shields? */
 	if (!item_tester_hook_wear(p_ptr->Ind, INVEN_ARM)) return selection;
 //Nope, they can!	if (p_ptr->pclass == CLASS_SHAMAN) return(selection); /* shamans cannot cast magic well with shield. */
