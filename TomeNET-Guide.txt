@@ -3480,6 +3480,8 @@ This line consists of the following icons that may show up:
     Orange \       Your weapon isn't fit for your character (e.g. priest
                    using non-edged non-blessed weapons like swords).
                    You'll receive a big penalty on hit chance and damage.
+                   An orange warning message will display:
+                   "You do not feel comfortable with your weapon."
     Yellow /       You are using a 1,5-h weapon together with a shield.
                    This is possible, but you will receive a penalty on
                    hit chance and damage.
