@@ -29,7 +29,7 @@ MBASH = add_spell {
 	["spell_power"] = 0,
 	["level"] = 	1,
 	["mana"] = 	8,
-	["mana_max"] =	8,
+	["mana_max"] = 	8,
 	["fail"] = 	5,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
@@ -123,8 +123,8 @@ MDISARM = add_spell {
 	["spell_power"] = 0,
 	["level"] = 	3,
 	["mana"] = 	5,
-	["mana_max"] =	5,
-	["fail"] =	10,
+	["mana_max"] = 	5,
+	["fail"] = 	10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 --			destroy_doors_touch(Ind, 1)
@@ -199,7 +199,7 @@ MPYROKINESIS_I = add_spell {
 	["fail"] = 	-25,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
-	["spell"] =	function(args)
+	["spell"] = 	function(args)
 			local n, p
 			n, p = get_pyro_dam(Ind, 1)
 			fire_grid_bolt(Ind, GF_FIRE, args.dir, n + p, " causes an inflammation for")
@@ -221,7 +221,7 @@ MPYROKINESIS_II = add_spell {
 	["fail"] = 	-85,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
-	["spell"] =	function(args)
+	["spell"] = 	function(args)
 			local n, p
 			n, p = get_pyro_dam(Ind, 0)
 			fire_grid_bolt(Ind, GF_FIRE, args.dir, n + p, " causes an inflammation for")
@@ -244,7 +244,7 @@ MCRYOKINESIS_I = add_spell {
 	["fail"] = 	-25,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
-	["spell"] =	function(args)
+	["spell"] = 	function(args)
 			local n, p
 			n, p = get_cryo_dam(Ind, 1)
 			fire_grid_bolt(Ind, GF_COLD, args.dir, n + p, " causes freezing for")
@@ -267,7 +267,7 @@ MCRYOKINESIS_II = add_spell {
 	["fail"] = 	-90,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
-	["spell"] =	function(args)
+	["spell"] = 	function(args)
 			local n, p
 			n, p = get_cryo_dam(Ind, 0)
 			fire_grid_bolt(Ind, GF_COLD, args.dir, n + p, " causes freezing for")
