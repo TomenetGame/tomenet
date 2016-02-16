@@ -1206,7 +1206,7 @@ extern s16b inven_carry(int Ind, object_type *o_ptr);
 extern bool item_tester_okay(object_type *o_ptr);
 extern void display_inven(int Ind);
 extern void display_equip(int Ind);
-extern byte get_book_name_color(int Ind, object_type *o_ptr);
+extern byte get_book_name_color(object_type *o_ptr);
 /*extern void show_inven(void);
 extern void show_equip(void);
 extern void toggle_inven_equip(void);

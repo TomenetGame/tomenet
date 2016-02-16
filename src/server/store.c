@@ -783,8 +783,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		/* Analyze the type */
 		switch (o_ptr->tval) {
 		case TV_BOOK:
-			if (get_book_name_color(Ind, o_ptr) != TERM_GREEN &&
-			    get_book_name_color(Ind, o_ptr) != TERM_WHITE) /* unused custom books */
+			if (get_book_name_color(o_ptr) != TERM_GREEN &&
+			    get_book_name_color(o_ptr) != TERM_WHITE) /* unused custom books */
 				 return FALSE;
 		case TV_SCROLL:
 		case TV_POTION:
@@ -817,8 +817,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		/* Analyze the type */
 		switch (o_ptr->tval) {
 		case TV_BOOK:
-			if (get_book_name_color(Ind, o_ptr) != TERM_L_BLUE &&
-			    get_book_name_color(Ind, o_ptr) != TERM_WHITE) /* unused custom books */
+			if (get_book_name_color(o_ptr) != TERM_L_BLUE &&
+			    get_book_name_color(o_ptr) != TERM_WHITE) /* unused custom books */
 				return FALSE;
 		case TV_AMULET:
 		case TV_RING:
@@ -926,7 +926,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 
 	case STORE_HERBALIST:
 		switch (o_ptr->tval) {
-		case TV_BOOK: if (get_book_name_color(Ind, o_ptr) != TERM_L_GREEN) return FALSE;
+		case TV_BOOK: if (get_book_name_color(o_ptr) != TERM_L_GREEN) return FALSE;
 		case TV_FOOD:
 			if ((o_ptr->sval <= 19) || (o_ptr->sval == 50) || (o_ptr->sval == 40) ||
 			    (o_ptr->sval == 37) || (o_ptr->sval == 38) || (o_ptr->sval == 39))
@@ -2210,7 +2210,7 @@ static void display_entry(int Ind, int pos) {
 
 		attr = get_attr_from_tval(o_ptr);
 
-		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
+		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 
 		/* grey out if level requirements don't meet */
 		if (((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
@@ -2272,7 +2272,7 @@ static void display_entry(int Ind, int pos) {
 
 		attr = get_attr_from_tval(o_ptr);
 
-		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
+		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 
 		/* grey out if level requirements don't meet */
 		if (((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
@@ -5650,7 +5650,7 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr) {
 	attr = get_attr_from_tval(o_ptr);
 
 	/* Get the proper book colour */
-	if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
+	if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 	
 	/* Let's fade out the items we CAN'T use too inside our own houses */
 	if (!can_use_admin(Ind, o_ptr)) attr = TERM_L_DARK;
@@ -6856,7 +6856,7 @@ void export_player_store_offers(int *export_turns) {
 	int i;
 	long price;
 	object_type *o_ptr;
-	char o_name[ONAME_LEN], log[MAX_CHARS];
+	char o_name[ONAME_LEN], log[MAX_CHARS], attr;
 	struct timeval time_begin, time_end, time_delta;
 
 #ifdef EXPORT_JSON
@@ -6987,12 +6987,16 @@ void export_player_store_offers(int *export_turns) {
 					kommao2 = FALSE;
 				}
 				while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
+				if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
+				else attr = get_attr_from_tval(o_ptr);
 				fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"attr\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"name\":\"%s\"}",
-				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, get_attr_from_tval(o_ptr), o_ptr->level, o_ptr->mode, price, o_name);
+				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_name);
 				kommao = TRUE;
  #else
+				if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
+				else attr = get_attr_from_tval(o_ptr);
 				fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %d, %ld Au) %s\n",
-				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, get_attr_from_tval(o_ptr), o_ptr->level, o_ptr->mode, price, o_name); //or just x,y?
+				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_name); //or just x,y?
  #endif
 			}
 		}
@@ -7116,11 +7120,16 @@ void export_player_store_offers(int *export_turns) {
  #ifdef EXPORT_JSON
 		if (kommao) fprintf(fp, ",\n");
 		while ((cesc = strchr(o_name, '"'))) *cesc = '\''; //don't escape it, just replace instead, for laziness
+		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
+		else attr = get_attr_from_tval(o_ptr);
 		fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"attr\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"name\":\"%s\"}",
-		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, get_attr_from_tval(o_ptr), o_ptr->level, o_ptr->mode, price, o_name);
+		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_name);
 		kommao = TRUE;
  #else
-		fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %d, %d, %ld Au) %s\n", o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, get_attr_from_tval(o_ptr), o_ptr->level, o_ptr->mode, price, o_name);
+		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
+		else attr = get_attr_from_tval(o_ptr);
+		fprintf(fp, "(%d,%d) <%d,%d> [%d]: (%d, %d, %d, %d, %d, %ld Au) %s\n",
+		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_name);
  #endif
 	}
 	if (step) { //not disabled? then log

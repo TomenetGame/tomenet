@@ -3110,7 +3110,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 					if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
 						(*ap) = TERM_YELLOW;
 					else if (is_custom_tome(o_ptr->sval))
-						(*ap) = get_book_name_color(Ind, o_ptr);
+						(*ap) = get_book_name_color(o_ptr);
 				}
 
 				/* hack: colour of fancy shirts or custom objects can vary  */

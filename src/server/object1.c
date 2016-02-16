@@ -2581,7 +2581,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		else attr = TERM_L_DARK;
 
 		/* Get a color for a book */
-		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
+		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
@@ -5776,11 +5776,13 @@ void display_inven(int Ind)
 		//n = strlen(o_name);
 
 		/* Get a color */
-		if (can_use_admin(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
+		if (can_use_admin(Ind, o_ptr)) {
+			/* Get a color for a book */
+			if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
+			/* all other items */
+			else attr = get_attr_from_tval(o_ptr);
+		}
 		else attr = TERM_L_DARK;
-
-		/* Get a color for a book */
-		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
 
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
@@ -6013,9 +6015,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 #endif
 }
 
-byte get_book_name_color(int Ind, object_type *o_ptr)
-{
-	//player_type *p_ptr = Players[Ind];
+byte get_book_name_color(object_type *o_ptr) {
 	if (o_ptr->sval == SV_SPELLBOOK) { /* Simple spell scrolls */
 		return get_spellbook_name_colour(o_ptr->pval);
 	} else if (is_custom_tome(o_ptr->sval)) { /* Custom books */

@@ -4004,7 +4004,7 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 	attr = k_ptr->d_attr;
 #endif
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
-		attr = get_book_name_color(0, o_ptr);
+		attr = get_book_name_color(o_ptr);
 	/* hack: colour of fancy shirts or custom objects can vary  */
 	if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
