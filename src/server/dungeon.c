@@ -6906,7 +6906,7 @@ void process_player_change_wpos(int Ind) {
 	p_ptr->new_level_flag = FALSE;
 
 	/* Is arriving in a fixed IDDC-town noteworthy maybe? */
-	if (is_fixed_irondeepdive_town(&p_ptr->wpos, dlv)) {
+	if (is_fixed_irondeepdive_town(&p_ptr->wpos, dlv) && !is_admin(p_ptr)) {
 		if (dlv == 40) {
 			msg_broadcast_format(0, "\374\377s%s has reached Menegroth.", p_ptr->name);
 			l_printf("%s \\{s%s reached Menegroth\n", showdate(), p_ptr->name);
