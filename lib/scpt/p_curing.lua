@@ -159,7 +159,7 @@ HHEALING_I = add_spell {
 	["fail"] = 	25,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			local status_ailments = 0
+			local status_ailments = 1024
 			--status_ailments = 1024
 			--hacks to cure effects same as potions would
 			--if get_level(Ind, HHEALING_I, 50) >= 10 then
@@ -175,7 +175,7 @@ HHEALING_I = add_spell {
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
 		--"Also cures blindness and cuts at level 4 and confusion at level 10.",
-		--"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
+		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
 		"***Automatically projecting***",
 	}
 }
@@ -191,7 +191,7 @@ HHEALING_II = add_spell {
 	["fail"] = 	-38,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			local status_ailments = 0
+			local status_ailments = 1024
 			--status_ailments = 1024 + 2048 + 4096
 			--hacks to cure effects same as potions would
 			--if get_level(Ind, HHEALING_II, 50) >= 8 then
@@ -205,7 +205,7 @@ HHEALING_II = add_spell {
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
 		--"Also cures blindness, cuts and confusion and at level 8 stun too.",
-		--"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
+		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
 		"***Automatically projecting***",
 	}
 }
@@ -220,7 +220,7 @@ HHEALING_III = add_spell {
 	["fail"] = 	-87,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			local status_ailments = 0
+			local status_ailments = 1024
 			--hacks to cure effects same as potions would
 			--status_ailments = 1024 + 2048 + 4096 + 8192
 			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(0), 1, " points at your wounds.")
@@ -231,7 +231,7 @@ HHEALING_III = add_spell {
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
 		--"Also cures blindness, cuts, confusion and stun.",
-		--"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
+		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
 		"***Automatically projecting***",
 	}
 }
