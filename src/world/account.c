@@ -13,18 +13,18 @@ uint32_t account_id;		/* Current account ID */
 
 static uint32_t new_accid(void);
 static char *t_crypt(char *inbuf, unsigned char *salt);
-static struct account *GetAccount(unsigned char *name, char *pass);
+static int GetAccount(struct account *c_acc, unsigned char *name, char *pass);
 
 void l_account(struct wpacket *wpk, struct client *ccl){
 	struct pl_auth *login;
-	struct account *acc;
+	struct account acc;
 	login = &wpk->d.login;
 	switch (login->stat) {
 		case PL_INIT:
 			login->stat = PL_FAIL;
 			if (!strlen(login->pass) || !strlen(login->name))
 				break;
-			if ((acc = GetAccount((unsigned char *)login->name, login->pass))) {
+			if (GetAccount(&acc, (unsigned char *)login->name, login->pass)) {
 				login->stat = PL_OK;
 			}
 			break;
@@ -35,29 +35,23 @@ void l_account(struct wpacket *wpk, struct client *ccl){
 	/* always reset this */
 	memset(login->pass, '\0', sizeof(login->pass));
 	reply(wpk, ccl);
-	KILL(acc, struct account);
 }
 
-static struct account *GetAccount(unsigned char *name, char *pass) {
+static int GetAccount(struct account *c_acc, unsigned char *name, char *pass) {
 	FILE *fp;
-	struct account *c_acc;
 	long delpos = 0;
 
-	c_acc = malloc(sizeof(struct account));
-	if (c_acc == (struct account*)NULL) return(NULL);
 	fp = fopen("tomenet.acc", "rb+");
 	if (fp == (FILE*)NULL) {
 		if (errno == ENOENT) {	/* ONLY if non-existent */
 			fp = fopen("tomenet.acc", "wb+");
 			if (fp == (FILE*)NULL) {
-				free(c_acc);
-				return(NULL);
+				return 0;
 			}
 			fprintf(stderr, "Generated new account file\n");
 		}
 		else{
-			free(c_acc);
-			return(NULL);	/* failed */
+			return 0;	/* failed */
 		}
 	}
 	while (!feof(fp)) {
@@ -76,11 +70,10 @@ static struct account *GetAccount(unsigned char *name, char *pass) {
 			memset((char *)c_acc->pass, 0, 20);
 			if (val) {
 				fclose(fp);
-				free(c_acc);
-				return(NULL);
+				return 0;
 			}
 			fclose(fp);
-			return(c_acc);
+			return 1;
 		}
 	}
 	/* No account found. Create trial account */ 
@@ -95,9 +88,8 @@ static struct account *GetAccount(unsigned char *name, char *pass) {
 	}
 	memset((char *)c_acc->pass, 0, 20);
 	fclose(fp);
-	if (c_acc->id) return(c_acc);
-	free(c_acc);
-	return(NULL);
+	if (c_acc->id) return 1;
+	return 0;
 }
 
 /* our password encryptor */
@@ -114,14 +106,11 @@ static char *t_crypt(char *inbuf, unsigned char *salt) {
 #endif
 }
 
-struct account *GetAccountID(uint32_t id) {
+int GetAccountID(struct account *c_acc, uint32_t id) {
 	FILE *fp;
-	struct account *c_acc;
 
 	/* we may want to store a local index for fast
 	   id/name/filepos lookups in the future */
-	c_acc = malloc(sizeof(struct account));
-	if (c_acc == (struct account*)NULL) return(NULL);
 	fp = fopen("tomenet.acc", "rb+");
 	if (fp != (FILE*)NULL) {
 		while (!feof(fp)) {
@@ -129,13 +118,12 @@ struct account *GetAccountID(uint32_t id) {
 			if (id == c_acc->id && !(c_acc->flags & ACC_DELD)) {
 				memset((char *)c_acc->pass, 0, 20);
 				fclose(fp);
-				return(c_acc);
+				return 1;
 			}
 		}
 		fclose(fp);
 	}
-	free(c_acc);
-	return(NULL);
+	return 0;
 }
 
 static uint32_t new_accid() {
