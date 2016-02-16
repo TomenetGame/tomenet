@@ -6842,6 +6842,8 @@ void verify_store_owner(store_type *st_ptr) {
 //#define DONT_EXPORT_MUSEUM
 /* Export in JSON format instead? */
 #define EXPORT_JSON
+/* Export flavoured items as 'aware' (cheezy, but better than everyone using spoiler files instead) */
+#define EXPORT_FLAVOUR_AWARE
 void export_player_store_offers(int *export_turns) {
 	//note: coverage and export_turns are sort of redundant
 	static int coverage = 0, max_bak, step;
@@ -6962,11 +6964,24 @@ void export_player_store_offers(int *export_turns) {
 				if (o_ptr->tval == TV_WAND) {
 					int j = o_ptr->pval;
 					o_ptr->pval = j / o_ptr->number;
+  #ifndef EXPORT_FLAVOUR_AWARE
 					object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
+  #else
+					object_desc(0, o_name, o_ptr, TRUE, 3 + 64);
+  #endif
 					o_ptr->pval = j; /* hack clean-up */
-				} else object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
+				} else
+  #ifndef EXPORT_FLAVOUR_AWARE
+					object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
+  #else
+					object_desc(0, o_name, o_ptr, TRUE, 3 + 64);
+  #endif
  #else
+  #ifndef EXPORT_FLAVOUR_AWARE
 				object_desc(0, o_name, o_ptr, TRUE, 1024 + 3);
+  #else
+				object_desc(0, o_name, o_ptr, TRUE, 3);
+  #endif
  #endif
 
 				price = price_item_player_store(0, o_ptr);
@@ -7099,11 +7114,24 @@ void export_player_store_offers(int *export_turns) {
 		if (o_ptr->tval == TV_WAND) {
 			int j = o_ptr->pval;
 			o_ptr->pval = j / o_ptr->number;
+ #ifndef EXPORT_FLAVOUR_AWARE
 			object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
+ #else
+			object_desc(0, o_name, o_ptr, TRUE, 3 + 64);
+ #endif
 			o_ptr->pval = j; /* hack clean-up */
-		} else object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
+		} else
+ #ifndef EXPORT_FLAVOUR_AWARE
+			object_desc(0, o_name, o_ptr, TRUE, 1024 + 3 + 64);
+ #else
+			object_desc(0, o_name, o_ptr, TRUE, 3 + 64);
+ #endif
 #else
+ #ifndef EXPORT_FLAVOUR_AWARE
 		object_desc(0, o_name, o_ptr, TRUE, 1024 + 3);
+ #else
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+ #endif
 #endif
 
 		price = price_item_player_store(0, o_ptr);
