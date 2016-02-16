@@ -78,7 +78,7 @@
 #define PLAYER_STORES		/* Enable player-run shops - C. Blue */
 #define HOUSE_PAINTING		/* Allow players to paint their entrance area or house (for PLAYER_STORES) - C. Blue */
 #define HOME_APPRAISAL		/* Displays player store price when inspecting an item at home */
-#define EXPORT_PLAYER_STORE_OFFERS	4	/* Export all player store items to an external list every n hours [4] */
+#define EXPORT_PLAYER_STORE_OFFERS	60	/* Export all player store items to an external list every n minutes [60] */
 
 #ifndef WIN32
  #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */

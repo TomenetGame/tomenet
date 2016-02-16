@@ -7237,7 +7237,7 @@ void dungeon(void) {
  #ifdef EXPORT_PLAYER_STORE_OFFERS
   #if EXPORT_PLAYER_STORE_OFFERS > 0
 	/* export player store items every n hours */
-	if (!(turn % (cfg.fps * 3600 * EXPORT_PLAYER_STORE_OFFERS))) export_player_store_offers(&export_turns);
+	if (!(turn % (cfg.fps * 60 * EXPORT_PLAYER_STORE_OFFERS))) export_player_store_offers(&export_turns);
 	else if (export_turns) export_player_store_offers(&export_turns);
   #endif
  #endif
