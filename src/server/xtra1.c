@@ -2841,7 +2841,7 @@ void calc_boni(int Ind) {
 //	int extra_blows;
 	int extra_shots;
 	int extra_spells;
-	bool never_blow = FALSE;
+	bool never_blow = FALSE, never_blow_ranged = FALSE;
 
 	object_type *o_ptr, *o2_ptr;
 	object_kind *k_ptr;
@@ -3623,7 +3623,10 @@ void calc_boni(int Ind) {
 		   Dual-wielding won't apply the second weapon if encumbered */
 		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD && rogue_heavy_armor(p_ptr)) continue;
 
-		if (f4 & TR4_NEVER_BLOW) never_blow = TRUE;
+		if (f4 & TR4_NEVER_BLOW) {
+			if (o_ptr->tval == TV_BOOMERANG) never_blow_ranged = TRUE;
+			else never_blow = TRUE;
+		}
 
 		/* MEGA ugly hack -- set spacetime distortion resistance */
 		if (o_ptr->name1 == ART_ANCHOR) {
@@ -6381,7 +6384,8 @@ void calc_boni(int Ind) {
 	    (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW)) ||
 	    never_blow)
 		p_ptr->num_blow = 0;
-	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)
+	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
+	    never_blow_ranged)
 		p_ptr->num_fire = 0;
 }
 
