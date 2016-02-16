@@ -9403,6 +9403,10 @@ Probing         Tells you hit points, melee attacks, speed and armour class of
 Restoration     Restores experience points (aka live levels) and drained stats,
                 ie STR/INT/WIS/DEX/CON/CHR.
 Starlight       Casts 8 beams of light in a star-shaped pattern.
+Teleport To     Attempts to teleport your target towards you, placing it on an
+                adjacant grid next to you. Some monsters are immune and will
+                give an 'unaffected' message, all monsters have a chance to
+                resist in which case it'll give you a 'resists' message.
 Wonder          Wands of wonder cast random magic spells.
 
 
