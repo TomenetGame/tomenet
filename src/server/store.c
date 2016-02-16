@@ -7031,7 +7031,7 @@ void export_player_store_offers(int *export_turns) {
 
 				s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
 #ifdef EXPORT_JSON
-				fprintf(fp, "{\"objects\":[\n");
+				fprintf(fp, "{\"timestamp\": %lld, \"objects\":[\n", (long long)time(NULL));
 				kommao = FALSE;
  #ifndef USE_MANG_HOUSE_ONLY
 				kommao2 = FALSE;
@@ -7201,7 +7201,7 @@ void export_player_store_offers(int *export_turns) {
 				return;
 			}
  #ifdef EXPORT_JSON
-			fprintf(fph, "{\"houses\":[\n");
+			fprintf(fph, "{\"timestamp\": %lld, \"houses\":[\n", (long long)time(NULL));
  #endif
 
 			/* memcpy gets its own frame now, continue the actual exporting next turn */
