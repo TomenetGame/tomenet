@@ -147,7 +147,5 @@ VAPOR = add_spell {
 	["info"] = 	function()
 			return "dam "..(3 + get_level(Ind, VAPOR, 60)).." rad "..(3 + get_level(Ind, VAPOR, 4, 0)).." dur 5"
 	end,
-	["desc"] = 	{
-			"Fills the air with toxic moisture to eradicate annoying critters"
-	}
+	["desc"] = 	{ "Fills the air with toxic moisture to eradicate annoying critters" }
 }

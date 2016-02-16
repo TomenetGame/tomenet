@@ -1,7 +1,6 @@
 -- Handles thhe temporal school
 
-MAGELOCK = add_spell
-{
+MAGELOCK = add_spell {
 	["name"] = 	"Magelock",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	1,
@@ -35,37 +34,35 @@ MAGELOCK = add_spell
 	}
 }
 
-SLOWMONSTER = add_spell
-{
+SLOWMONSTER = add_spell {
 	["name"] = 	"Slow Monster",
-        ["school"] = 	{SCHOOL_TEMPORAL},
-        ["level"] = 	10,
-        ["mana"] = 	10,
-        ["mana_max"] = 	15,
-        ["fail"] = 	10,
-        ["direction"] = TRUE,
-        ["spell"] = 	function(args)
-                        if get_level(Ind, SLOWMONSTER, 50) >= 20 then
-                        	fire_ball(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER, 100), 1, "")
-                        else
-                        	fire_bolt(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER, 100), "")
-                        end
+	["school"] = 	{SCHOOL_TEMPORAL},
+	["level"] = 	10,
+	["mana"] = 	10,
+	["mana_max"] = 	15,
+	["fail"] = 	10,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			if get_level(Ind, SLOWMONSTER, 50) >= 20 then
+				fire_ball(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER, 100), 1, "")
+			else
+				fire_bolt(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER, 100), "")
+			end
 	end,
 	["info"] = 	function()
-                        if get_level(Ind, SLOWMONSTER, 50) >= 20 then
-	                       	return "power "..(5 + get_level(Ind, SLOWMONSTER, 100)).." rad 1"
-                        else
-	                       	return "power "..(5 + get_level(Ind, SLOWMONSTER, 100))
-                        end
+			if get_level(Ind, SLOWMONSTER, 50) >= 20 then
+				return "power "..(5 + get_level(Ind, SLOWMONSTER, 100)).." rad 1"
+			else
+				return "power "..(5 + get_level(Ind, SLOWMONSTER, 100))
+			end
 	end,
-        ["desc"] = 	{
-                        "Magically slows down the passing of time around a monster",
-                        "At level 20 it affects a zone"
-        }
+	["desc"] = 	{
+			"Magically slows down the passing of time around a monster",
+			"At level 20 it affects a zone"
+	}
 }
 
-ESSENSESPEED = add_spell
-{
+ESSENSESPEED = add_spell {
 	["name"] = 	"Essence of Speed",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	15,
@@ -107,25 +104,24 @@ ESSENSESPEED = add_spell
 	}
 }
 
-MASSWARP = add_spell
-{
+MASSWARP = add_spell {
 	["name"] = 	"Mass Warp",
-        ["school"] = 	{SCHOOL_TEMPORAL, SCHOOL_CONVEYANCE},
-        ["level"] = 	30,
-        ["mana"] = 	30,
-        ["mana_max"] = 	40,
-        ["fail"] = 	10,
-        ["spell"] = 	function()
-                        project_los(Ind, GF_AWAY_ALL, 40 + get_level(Ind, MASSWARP, 160), "casts a spell")
-                        if get_level(Ind, MASSWARP, 50) >= 15 then
-                                project_los(Ind, GF_STASIS, 20 + get_level(Ind, MASSWARP, 120), "casts a spell")
-                        end
+	["school"] = 	{SCHOOL_TEMPORAL, SCHOOL_CONVEYANCE},
+	["level"] = 	30,
+	["mana"] = 	30,
+	["mana_max"] = 	40,
+	["fail"] = 	10,
+	["spell"] = 	function()
+			project_los(Ind, GF_AWAY_ALL, 40 + get_level(Ind, MASSWARP, 160), "casts a spell")
+			if get_level(Ind, MASSWARP, 50) >= 15 then
+				project_los(Ind, GF_STASIS, 20 + get_level(Ind, MASSWARP, 120), "casts a spell")
+			end
 	end,
 	["info"] = 	function()
-                     	return "power "..(40 + get_level(Ind, MASSWARP, 160))
+			return "power "..(40 + get_level(Ind, MASSWARP, 160))
 	end,
-        ["desc"] = 	{
-        		"Disrupt the space/time continuum in your area and teleports all monsters away",
-                        "At level 15 it also may lock them in a time bubble for some turns"
-        }
+	["desc"] = 	{
+			"Disrupt the space/time continuum in your area and teleports all monsters away",
+			"At level 15 it also may lock them in a time bubble for some turns"
+	}
 }
