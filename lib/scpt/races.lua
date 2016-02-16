@@ -5,14 +5,14 @@ function get_race_diz(r_title, l)
     local i
     i = 0
     while __races_diz[i * 2 + 1] ~= nil do
-	if __races_diz[i * 2 + 1] == r_title then
-	    if __races_diz[i * 2 + 2][l + 1] == nil then
-		return ""
-	    else
-		return __races_diz[i * 2 + 2][l + 1]
-	    end
-	end
-	i = i + 1
+        if __races_diz[i * 2 + 1] == r_title then
+            if __races_diz[i * 2 + 2][l + 1] == nil then
+                return ""
+            else
+                return __races_diz[i * 2 + 2][l + 1]
+            end
+        end
+        i = i + 1
     end
     return ""
 end

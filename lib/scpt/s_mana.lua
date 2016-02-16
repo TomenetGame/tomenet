@@ -23,7 +23,7 @@ MANATHRUST = add_spell
         	        x, y = get_manathrust_dam()
 			return "dam "..x.."d"..y
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Conjures up mana into a powerful bolt",
                         "The damage is nearly irresistible and will increase with level"
 		}
@@ -47,7 +47,7 @@ DELCURSES = add_spell
 	["info"] = 	function()
 			return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Remove curses of worn objects",
         		"At level 20 switches to *remove curses*"
 		}
@@ -80,7 +80,7 @@ RESISTS = add_spell
 	["info"] = 	function()
 			return "dur "..(15 + get_level(Ind, RESISTS, 50)).."+d10"
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Provide resistances to the four basic elements",
                         "***Affected by the Meta spell: Project Spell***",
 		}
@@ -110,7 +110,7 @@ MANASHIELD = add_spell
 	["info"] = 	function()
 			return "dur "..(20 + get_level(Ind, MANASHIELD, 75)).."+d10"
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Uses mana instead of hp to take damage"
 --        		"At level 5 switches to globe of invulnerability",
 --                        "The spell breaks as soon as a melee, shooting,",

@@ -1,6 +1,5 @@
-__update_table =
-{
-        "scpt/update.lua",
+__update_table = {
+	"scpt/update.lua",
 	"scpt/c-init.lua",
 	"scpt/player.lua",
 	"scpt/spells.lua",
@@ -33,7 +32,7 @@ __update_table =
 	"scpt/m_mintrusion.lua",
 
 	"scpt/powers.lua",
-        "scpt/meta.lua",
+	"scpt/meta.lua",
 	"scpt/xml.lua",
 
 	"scpt/audio.lua",
@@ -44,9 +43,9 @@ __update_table =
 }
 
 function update_client()
-        local k, e
+	local k, e
 
-        for k, e in __update_table do
-                remote_update_lua(Ind, e)
-        end
+	for k, e in __update_table do
+		remote_update_lua(Ind, e)
+	end
 end

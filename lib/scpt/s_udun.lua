@@ -55,7 +55,7 @@ DRAIN = add_spell
 	["info"] = 	function()
 	                return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
                         "Drains the mana contained in wands, staves and rods to increase yours",
         }
 }
@@ -88,7 +88,7 @@ GENOCIDE = add_spell
 	["info"] = 	function()
 	                return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
                         "Casts 'Genocide' on all monsters of particular race on the level",
                         "At level 15 it can be used as an 'Obliteration' spell instead,",
                         "eradicating all monsters in your vincinity",
@@ -113,7 +113,7 @@ WRAITHFORM = add_spell
 	["info"] = 	function()
 	                return "dur "..(20 + get_level(Ind, WRAITHFORM, 40)).."+d30"
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
                         "Turns you into an immaterial being",
                         "***Affected by the Meta spell: Project Spell***",
         }
@@ -133,7 +133,7 @@ FLAMEOFUDUN = add_spell
 	["info"] = 	function()
 	                return "dur "..(5 + get_level(FLAMEOFUDUN, 30)).."+d15"
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
                         "Turns you into a powerful balrog",
         }
 }

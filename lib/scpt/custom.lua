@@ -40,29 +40,29 @@ end
 function playloop_startup(timestamp, h, m, s, dwd, dd, dm, dy)
 	lua_s_print(timestamp.."_PLAYLOOPSTARTUP_"..h..":"..m..":"..s.."-"..dy.."/"..dm.."/"..dd.."("..dwd..")\n")
 
-        --[[automatically fix season if required, for example if server
-            was down for 24+ hours while a season change date occured.
-            see cron_24h() for details and to keep values synchronized.]]
-        if (season ~= 0) then
-                if (dm >= 3 and dm <= 5) then
-                        lua_season_change(0, 0)
-                end
-        end
-        if (season ~= 1) then
-                if ((dm >= 6 and dm <= 8) or (dm == 9 and dd < 23)) then
-                        lua_season_change(1, 0)
-                end
-        end
-        if (season ~= 2) then
-                if ((dm == 9 and dd >= 23) or (dm >= 10 and dm <= 11) or (dm == 12 and dd < 22)) then
-                        lua_season_change(2, 0)
-                end
-        end
-        if (season ~= 3) then
-                if ((dm == 12 and dd >= 22) or (dm < 3)) then
-                        lua_season_change(3, 0)
-                end
-        end
+	--[[automatically fix season if required, for example if server
+	    was down for 24+ hours while a season change date occured.
+	    see cron_24h() for details and to keep values synchronized.]]
+	if (season ~= 0) then
+		if (dm >= 3 and dm <= 5) then
+			lua_season_change(0, 0)
+		end
+	end
+	if (season ~= 1) then
+		if ((dm >= 6 and dm <= 8) or (dm == 9 and dd < 23)) then
+			lua_season_change(1, 0)
+		end
+	end
+	if (season ~= 2) then
+		if ((dm == 9 and dd >= 23) or (dm >= 10 and dm <= 11) or (dm == 12 and dd < 22)) then
+			lua_season_change(2, 0)
+		end
+	end
+	if (season ~= 3) then
+		if ((dm == 12 and dd >= 22) or (dm < 3)) then
+			lua_season_change(3, 0)
+		end
+	end
 
 --	lua_add_anote("This is how you add server notes.");
 end

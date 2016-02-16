@@ -27,7 +27,7 @@ GLOBELIGHT = add_spell
 			return ""
 		end
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Creates a globe of magical light",
 			"At level 10 it damages monsters that are susceptible to light",
 			"At level 25 it becomes more powerful and hurts all monsters",
@@ -85,7 +85,7 @@ FIREFLASH = add_spell
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, FIREFLASH, 500)).." rad "..(2 + get_level(Ind, FIREFLASH, 3))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Conjures a ball of fire to burn your foes to ashes",
                         "At level 20 it turns into a ball of holy fire"
         }
@@ -111,7 +111,7 @@ FIERYAURA = add_spell
 	["info"] = 	function()
 		return "dam "..(5 + get_level(Ind, FIERYAURA, 15)).."d"..(5 + get_level(Ind, FIERYAURA, 7)).." dur "..(10 + get_level(Ind, FIERYAURA, 70)).."+d20"
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Creates a shield of fierce flames around you"
 --                      ,"At level 8 it turns into a greater kind of flame that can not be resisted"
         }
@@ -140,7 +140,7 @@ FIREWALL = add_spell
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, FIREWALL, 184)).." dur "..(6 + get_level(Ind, FIREWALL, 4))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Creates a fiery wall to incinerate monsters stupid enough to attack you"
 --                      ,"At level 6 it turns into a ball of holy fire"
         }

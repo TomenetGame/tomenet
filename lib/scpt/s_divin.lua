@@ -21,7 +21,7 @@ STARIDENTIFY = add_spell
 	["info"] = 	function()
                        	return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Asks for an object and fully identify it, providing the full list of powers",
                         "Cast at yourself it will reveal your powers"
         }
@@ -54,7 +54,7 @@ IDENTIFY = add_spell
                         	return ""
                         end
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Asks for an object and identifies it",
                         "At level 17 it identifies all objects in the inventory",
                         "At level 27 it identifies all objects in the inventory and in a",
@@ -84,7 +84,7 @@ VISION = add_spell
 	["info"] = 	function()
 			return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
                         "Detects the layout of the surrounding area",
                         "At level 25 it maps and lights the whole level",
                         "***Affected by the Meta spell: Project Spell***",
@@ -119,7 +119,7 @@ SENSEHIDDEN = add_spell
                                 return "rad "..(10 + get_level(Ind, SENSEHIDDEN, 40))
                         end
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Detects the traps in a certain radius around you",
                         "At level 15 it allows you to see invisible for a while",
                         "***Affected by the Meta spell: Project Spell***",
@@ -144,7 +144,7 @@ REVEALWAYS = add_spell
 	["info"] = 	function()
                         return "rad "..(10 + get_level(Ind, REVEALWAYS, 40))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Detects the doors/stairs/ways in a certain radius around you",
                         "***Affected by the Meta spell: Project Spell***",
         }
@@ -168,7 +168,7 @@ DETECTMONSTERS = add_spell
 --                        return "rad "..(10 + get_level(Ind, DETECTMONSTERS, 40))
 			return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
 			"Detects all nearby non-invisible creatures.",
                         "***Affected by the Meta spell: Project Spell***",
         }

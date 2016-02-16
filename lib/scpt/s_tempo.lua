@@ -28,7 +28,7 @@ MAGELOCK = add_spell
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Magically locks a door",
 			"At level 40 it creates a glyph of warding"
 --			,"At level 40 the glyph can be placed anywhere in the field of vision"
@@ -58,7 +58,7 @@ SLOWMONSTER = add_spell
 	                       	return "power "..(5 + get_level(Ind, SLOWMONSTER, 100))
                         end
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
                         "Magically slows down the passing of time around a monster",
                         "At level 20 it affects a zone"
         }
@@ -99,7 +99,7 @@ ESSENSESPEED = add_spell
 			end
 			return "dur "..(10 + get_level(Ind, ESSENSESPEED, 50)).."+d10 speed "..s
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Magically increases the passing of time around you.",
 --			"Istari will see twice the effect others will see.",
 			"Non-Istari cannot gain more than +10 speed from this spell.",
@@ -124,7 +124,7 @@ MASSWARP = add_spell
 	["info"] = 	function()
                      	return "power "..(40 + get_level(Ind, MASSWARP, 160))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Disrupt the space/time continuum in your area and teleports all monsters away",
                         "At level 15 it also may lock them in a time bubble for some turns"
         }

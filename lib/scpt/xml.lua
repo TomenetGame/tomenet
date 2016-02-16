@@ -71,16 +71,16 @@ xml.write = function(str)
 end
 
 function xml:print_xml(t, tab)
-	local i, k, e
+        local i, k, e
         local inside = nil
         local bcol, ecol = TERM_L_GREEN, TERM_GREEN
 
         xml.write(tab.."<"..t.label)
         for k, e in t.args do
-        	xml.write(" "..k)
-        	xml.write("=\"")
-        	xml.write(e)
-        	xml.write("\"")
+                xml.write(" "..k)
+                xml.write("=\"")
+                xml.write(e)
+                xml.write("\"")
         end
         xml.write(">")
 
@@ -88,16 +88,16 @@ function xml:print_xml(t, tab)
                 if type(t[i]) == "string" then
                         xml.write(t[i])
                 else
-                	if not inside then xml.write("\n") end
+                        if not inside then xml.write("\n") end
                         inside = not nil
                         xml:print_xml(t[i], tab.."    ")
                 end
         end
 
         if not inside then
-	        xml.write("</"..t.label..">\n")
+                xml.write("</"..t.label..">\n")
         else
-	        xml.write(tab.."</"..t.label..">\n")
+                xml.write(tab.."</"..t.label..">\n")
         end
 end
 
@@ -107,7 +107,7 @@ function xml:serialize(t)
         xml.__str__ = ''
         for _, e in t do
                 if type(e) == "table" then
-		        xml:print_xml(e, "")
+                        xml:print_xml(e, "")
                 end
         end
         return xml.__str__

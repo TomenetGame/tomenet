@@ -25,7 +25,7 @@ STONESKIN = add_spell
                                 return "dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(5 + get_level(Ind, STONESKIN, 30))
                         end
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Creates a shield of earth around you to protect you",
                         "At level 25 it starts dealing damage to attackers"
 		}
@@ -46,7 +46,7 @@ DIG = add_spell
 	["info"] = 	function()
         		return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Digs a hole in a wall much faster than any shovels",
 		}
 }
@@ -100,7 +100,7 @@ STONEPRISON = add_spell
 	["info"] = 	function()
         		return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Creates a prison of walls around you"
 --                        ,"At level 10 it allows you to target a monster"
 		}
@@ -129,7 +129,7 @@ STRIKE = add_spell
 				return "dam "..(50 + get_level(Ind, STRIKE, 50))
 			end
 	end,
-	["desc"] =	{
+	["desc"] = 	{
 			"Creates a force bolt that may stun enemies.",
 			"At level 12 it turns into a ball of radius 1"
 	}
@@ -156,7 +156,7 @@ SHAKE = add_spell
 	["info"] = 	function()
 			return "rad "..(2 + get_level(Ind, SHAKE, 50))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Creates a localized earthquake"
 --                        ,"At level 10 it can be targeted at any location"
         }

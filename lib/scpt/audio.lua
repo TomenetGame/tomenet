@@ -268,9 +268,9 @@ function get_sound_name(idx)
 end
 function get_sound_index(name)
     for i = 1, getn(audio_sfx) do
-	if audio_sfx[i] == name then
-	    return(i - 1)
-	end
+        if audio_sfx[i] == name then
+            return(i - 1)
+        end
     end
     return (-1)
 end
@@ -354,9 +354,9 @@ end
 --just for do_cmd_options_mus_sdl():
 function get_music_index(name)
     for i = 1, getn(audio_bgm) do
-	if audio_bgm[i] == name then
-	    return(i - 1)
-	end
+        if audio_bgm[i] == name then
+            return(i - 1)
+        end
     end
     return (-1)
 end

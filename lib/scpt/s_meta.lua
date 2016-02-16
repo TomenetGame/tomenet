@@ -15,7 +15,7 @@ RECHARGE = add_spell
 	["info"] = 	function()
                 	return "power "..(10 + get_level(Ind, RECHARGE, 140))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Taps on the ambient mana to recharge an object's power (charges or mana)",
         }
 }
@@ -42,7 +42,7 @@ PROJECT_SPELLS = add_spell
 	["info"] = 	function()
                 	return "base rad "..(1 + get_level(Ind, PROJECT_SPELLS, 6, 0))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Affects some of your spells(mostly utility ones) to make them",
                         "have an effect on your nearby party members",
         }
@@ -87,7 +87,7 @@ DISPERSEMAGIC = add_spell
 	["info"] = 	function()
                 	return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Dispels a lot of magic that can affect you, be it good or bad",
                         "Level 1: blindness",
                         "Level 5: confusion and hallucination",

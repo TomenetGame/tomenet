@@ -18,7 +18,7 @@ BLINK = add_spell
 	["info"] = 	function()
                 	return "distance "..(6 + get_level(Ind, BLINK, 6))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Teleports you on a small scale range",
 --                        "***Affected by the Meta spell: Project Spell***",
         },
@@ -38,7 +38,7 @@ DISARM = add_spell
 	["info"] = 	function()
                 	return "rad "..(1 + get_level(Ind, DISARM, 4, 0))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Destroys traps and visible doors",
         }
 }
@@ -61,7 +61,7 @@ TELEPORT = add_spell
 	["info"] = 	function()
         		return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Teleports you around the level.",
 --                        "***Affected by the Meta spell: Project Spell***",
         }
@@ -88,7 +88,7 @@ TELEAWAY = add_spell
 	["info"] = 	function()
         		return ""
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
                         "Teleports a line of monsters away",
                         "At level 10 it turns into a ball",
                         "At level 20 it teleports all monsters in sight"
@@ -115,7 +115,7 @@ RECALL = add_spell
 	["info"] = 	function()
 			return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Cast on yourself it will recall you to the surface/dungeon.",
                         "***Affected by the Meta spell: Project Spell***",
         }
@@ -135,7 +135,7 @@ PROBABILITY_TRAVEL = add_spell
 	["info"] = 	function()
         		return "dur "..get_level(Ind, PROBABILITY_TRAVEL, 60).."+d20"
 	end,
-        ["desc"] =	{
+        ["desc"] = 	{
         		"Renders you instable, when you hit a wall you travel throught it and",
                         "instantly appear on the other side of it. You can also float up and down",
                         "at will"
