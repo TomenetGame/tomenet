@@ -1,90 +1,90 @@
 -- handle the mind school
 
 --[[ Enable when we get pets
-CHARM = add_spell
-{
+CHARM = add_spell {
 	["name"] = 	"Charm",
-        ["school"] = 	{SCHOOL_MIND},
-        ["level"] = 	1,
-        ["mana"] = 	1,
-        ["mana_max"] = 	20,
-        ["fail"] = 	10,
-        ["direction"] = function () if get_level(Ind, CHARM, 50) >= 35 then return FALSE else return TRUE end end,
-        ["spell"] = 	function(args)
-                        if get_level(Ind, CHARM, 50) >= 35 then
-                                project_los(Ind, GF_CHARM, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
-                        elseif get_level(Ind, CHARM, 50) >= 15 then
-                                fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3, "mumbles softly")
-                        else
-                                fire_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
-                        end
+	["school"] = 	{SCHOOL_MIND},
+	["level"] = 	1,
+	["mana"] = 	1,
+	["mana_max"] = 	20,
+	["fail"] = 	10,
+	["am"] = 	75,
+	["direction"] = function () if get_level(Ind, CHARM, 50) >= 35 then return FALSE else return TRUE end end,
+	["spell"] = 	function(args)
+		if get_level(Ind, CHARM, 50) >= 35 then
+			project_los(Ind, GF_CHARM, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
+		elseif get_level(Ind, CHARM, 50) >= 15 then
+			fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3, "mumbles softly")
+		else
+			fire_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
+		end
 	end,
 	["info"] = 	function()
-                	return "power "..(10 + get_level(Ind, CHARM, 150))
+			return "power "..(10 + get_level(Ind, CHARM, 150))
 	end,
-        ["desc"] =	{
-        		"Tries to manipulate the mind of a monster to make it friendly",
-                        "At level 15 it turns into a ball",
-                        "At level 35 it affects all monsters in sight"
-        }
+	["desc"] = 	{
+		"Tries to manipulate the mind of a monster to make it friendly",
+		"At level 15 it turns into a ball",
+		"At level 35 it affects all monsters in sight"
+	}
 }
 ]]
-CONFUSE = add_spell
-{
+CONFUSE = add_spell {
 	["name"] = 	"Confusion",
-        ["school"] = 	{SCHOOL_MIND},
-        ["level"] = 	5,
-        ["mana"] = 	5,
-        ["mana_max"] = 	30,
-        ["fail"] = 	10,
-        ["direction"] = function () if get_level(Ind, CONFUSE, 50) >= 35 then return FALSE else return TRUE end end,
-        ["spell"] = 	function(args)
-                        if get_level(Ind, CONFUSE, 50) >= 35 then
-                                project_los(Ind, GF_OLD_CONF, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
-                        elseif get_level(Ind, CONFUSE, 50) >= 15 then
-                                fire_ball(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), 2, "focusses on your mind")
-                        else
-                                fire_bolt(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
-                        end
+	["school"] = 	{SCHOOL_MIND},
+	["level"] = 	5,
+	["mana"] = 	5,
+	["mana_max"] = 	30,
+	["fail"] = 	10,
+	["am"] = 	75,
+	["direction"] = function () if get_level(Ind, CONFUSE, 50) >= 35 then return FALSE else return TRUE end end,
+	["spell"] = 	function(args)
+		if get_level(Ind, CONFUSE, 50) >= 35 then
+			project_los(Ind, GF_OLD_CONF, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
+		elseif get_level(Ind, CONFUSE, 50) >= 15 then
+			fire_ball(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), 2, "focusses on your mind")
+		else
+			fire_bolt(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
+		end
 	end,
 	["info"] = 	function()
-			if get_level(Ind, CONFUSE, 50) < 35 and get_level(Ind, CONFUSE, 50) >= 15 then
-	                	return "power "..(5 + get_level(Ind, CONFUSE, 100)).." rad 2"
-                	else
-	                	return "power "..(5 + get_level(Ind, CONFUSE, 100))
-    	            	end
+		if get_level(Ind, CONFUSE, 50) < 35 and get_level(Ind, CONFUSE, 50) >= 15 then
+			return "power "..(5 + get_level(Ind, CONFUSE, 100)).." rad 2"
+		else
+			return "power "..(5 + get_level(Ind, CONFUSE, 100))
+		end
 	end,
-        ["desc"] =	{
-        		"Tries to manipulate the mind of a monster to confuse it",
-                        "At level 15 it turns into a ball",
-                        "At level 35 it affects all monsters in sight"
-        }
+	["desc"] = 	{
+		"Tries to manipulate the mind of a monster to confuse it",
+		"At level 15 it turns into a ball",
+		"At level 35 it affects all monsters in sight"
+	}
 }
 
-STUN = add_spell
-{
+STUN = add_spell {
 	["name"] = 	"Stun",
-        ["school"] = 	{SCHOOL_MIND},
-        ["level"] = 	15,
-        ["mana"] = 	10,
-        ["mana_max"] = 	90,
-        ["fail"] = 	10,
-        ["direction"] = TRUE,
-        ["spell"] = 	function(args)
-                        if get_level(Ind, STUN, 50) >= 25 then
-                                fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 50), 2, "")
-                        else
-                                fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 50), "")
-                        end
+	["school"] = 	{SCHOOL_MIND},
+	["level"] = 	15,
+	["mana"] = 	10,
+	["mana_max"] = 	90,
+	["fail"] = 	10,
+	["am"] = 	75,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		if get_level(Ind, STUN, 50) >= 25 then
+			fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 50), 2, "")
+		else
+			fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 50), "")
+		end
 	end,
 	["info"] = 	function()
-                	return ""
-                	--return "power "..(10 + get_level(Ind, STUN, 150))
+		return ""
+		--return "power "..(10 + get_level(Ind, STUN, 150))
 	end,
-        ["desc"] =	{
-                        "Tries to manipulate the mind of a monster to stun it",
-                        "At level 25 it turns into a ball",
-        }
+	["desc"] = 	{
+		"Tries to manipulate the mind of a monster to stun it",
+		"At level 25 it turns into a ball",
+	}
 }
 
 if (def_hack("TEMP1", nil) == 0) then
@@ -94,8 +94,9 @@ TELEKINESIS = add_spell {
 	["level"] = 	30,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] =      20,
-	["get_item"] =  {
+	["fail"] = 	20,
+	["am"] = 	75,
+	["get_item"] = {
 		["prompt"] = 	"Teleport which object? ",
 		["inven"] = 	TRUE,
 		["get"] = 	function (obj)
@@ -115,12 +116,12 @@ TELEKINESIS = add_spell {
 		end
 	end,
 	["info"] = 	function()
-			return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
+		return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
 	end,
-	["desc"] =	{
-			"Inscribe your book with @Pplayername, cast it, select an item",
-			"and the item will be teleported to that player whereever he/she might",
-			"be in the Universe",
+	["desc"] = 	{
+		"Inscribe your book with @Pplayername, cast it, select an item",
+		"and the item will be teleported to that player whereever he/she might",
+		"be in the Universe",
 	}
 }
 else
@@ -130,31 +131,32 @@ TELEKINESIS = add_spell {
 	["level"] = 	30,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] =      20,
+	["fail"] = 	20,
+	["am"] = 	75,
 	["spell"] = 	function(args)
-			telekinesis(Ind, player.inventory[1 + args.book], 4 + get_level(Ind, TELEKINESIS, 250, 0))
+		telekinesis(Ind, player.inventory[1 + args.book], 4 + get_level(Ind, TELEKINESIS, 250, 0))
 	end,
 	["info"] = 	function()
-			return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
+		return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
 	end,
-	["desc"] =	{
-			"Inscribe your book with @Pplayername, cast it, select an item",
-			"and the item will be teleported to that player whereever he/she might",
-			"be in the Universe",
+	["desc"] = 	{
+		"Inscribe your book with @Pplayername, cast it, select an item",
+		"and the item will be teleported to that player whereever he/she might",
+		"be in the Universe",
 	}
 }
 end
 
-SENSEMONSTERS = add_spell
-{
-	["name"] = "Sense Minds",
-        ["school"] = {SCHOOL_MIND},
-	["level"] = 30,
-	["mana"] = 15,
-        ["mana_max"] = 20,
-        ["fail"] = -15,
-        ["spell"] = function()
-	        set_tim_esp(Ind, 22 + randint(10) + get_level(Ind, SENSEMONSTERS, 28))
+SENSEMONSTERS = add_spell {
+	["name"] = 	"Sense Minds",
+	["school"] = 	{SCHOOL_MIND},
+	["level"] = 	30,
+	["mana"] = 	15,
+	["mana_max"] = 	20,
+	["fail"] = 	-15,
+	["am"] = 	75,
+	["spell"] = function()
+		set_tim_esp(Ind, 22 + randint(10) + get_level(Ind, SENSEMONSTERS, 28))
 		end,
 	["info"] = function()
 		return "dur "..(22 + get_level(Ind, SENSEMONSTERS, 28)).."+d10"
