@@ -369,7 +369,7 @@ EMPOWERMENT = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["am"] = 	33,
-	["blind"] =	0,
+	["blind"] = 	0,
 	["spell"] = 	function(args)
 				divine_empowerment(Ind, get_astral_lev(Ind));
 	end,

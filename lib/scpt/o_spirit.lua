@@ -4,7 +4,7 @@
 OCURSE = add_spell {
 	["name"] = 	"Curse",
 	["school"] = 	{SCHOOL_},
-	["am"] =	75,
+	["am"] = 	75,
 	["spell_power"] = 0,
 	["level"] = 	1,
 	["mana"] = 	2,
@@ -13,21 +13,21 @@ OCURSE = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = function () if get_level(Ind, OCURSE, 50) >= 25 then return FALSE else return TRUE end end,
 	["spell"] = 	function(args)
-			if get_level(Ind, OCURSE, 50) >= 25 then
-				project_los(Ind, GF_CURSE, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
-			elseif get_level(Ind, OCURSE, 50) >= 15 then
-				fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
-			else
-				fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
-			end
+		if get_level(Ind, OCURSE, 50) >= 25 then
+			project_los(Ind, GF_CURSE, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
+		elseif get_level(Ind, OCURSE, 50) >= 15 then
+			fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
+		else
+			fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
+		end
 	end,
 	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, OCURSE, 150))
+		return "power "..(10 + get_level(Ind, OCURSE, 150))
 	end,
 	["desc"] = {
-			"Randomly causes confusion damage, slowness or blindness.",
-			"At level 15 it passes through monsters, affecting those behind as well",
-			"At level 25 it affects all monsters in sight",
+		"Randomly causes confusion damage, slowness or blindness.",
+		"At level 15 it passes through monsters, affecting those behind as well",
+		"At level 25 it affects all monsters in sight",
 	}
 }
 ]]
@@ -35,22 +35,20 @@ OCURSE = add_spell {
 OCURSEDD = add_spell {
 	["name"] = 	"Cause wounds",
 	["school"] = 	{SCHOOL_SPIRIT},
-	["am"] =	75,
+	["am"] = 	75,
 	["level"] = 	5,
 	["mana"] = 	1,
 	["mana_max"] = 	20,
 	["fail"] = 	15,
-	["stat"] =	A_WIS,
+	["stat"] = 	A_WIS,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
-			fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + get_level(Ind, OCURSEDD, 300), "points and curses for")
+		fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + get_level(Ind, OCURSEDD, 300), "points and curses for")
 	end,
 	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, OCURSEDD, 300))
+		return "power "..(10 + get_level(Ind, OCURSEDD, 300))
 	end,
-	["desc"] = 	{
-			"Curse an enemy, causing wounds.",
-	}
+	["desc"] = 	{ "Curse an enemy, causing wounds.", }
 }
 
 function get_litebeam_dam()
@@ -93,17 +91,15 @@ OLIGHTNINGBOLT = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
-			fire_bolt(Ind, GF_LITE, args.dir, damroll(get_lightningbolt_dam()), " casts a light bolt for")
+		fire_bolt(Ind, GF_LITE, args.dir, damroll(get_lightningbolt_dam()), " casts a light bolt for")
 	end,
 	["info"] = 	function()
-			local x, y
+		local x, y
 
-			x, y = get_lightningbolt_dam()
-			return "dam "..x.."d"..y
+		x, y = get_lightningbolt_dam()
+		return "dam "..x.."d"..y
 	end,
-	["desc"] = 	{
-			"Conjures up spiritual power into a lightning bolt.",
-		}
+	["desc"] = 	{ "Conjures up spiritual power into a lightning bolt.", }
 }
 
 TRANCE = add_spell {
@@ -118,20 +114,20 @@ TRANCE = add_spell {
 	["fail"] = 	10,
 	["direction"] = function() if get_level(Ind, TRANCE, 50) >= 20 then return FALSE else return TRUE end end,
 	["spell"] = 	function(args)
---			if get_level(Ind, TRANCE, 50) < 20 then
---				fire_grid_bolt(Ind, GF_OLD_SLEEP, args.dir, 5 + get_level(Ind, TRANCE, 80), "mumbles softly")
---			else
---				project_los(Ind, GF_OLD_SLEEP, 5 + get_level(Ind, TRANCE, 80), "mumbles softly")
---			end
-			end,
+--		if get_level(Ind, TRANCE, 50) < 20 then
+--			fire_grid_bolt(Ind, GF_OLD_SLEEP, args.dir, 5 + get_level(Ind, TRANCE, 80), "mumbles softly")
+--		else
+--			project_los(Ind, GF_OLD_SLEEP, 5 + get_level(Ind, TRANCE, 80), "mumbles softly")
+--		end
+	end,
 	["info"] = 	function()
-				return "power "..(5 + get_level(Ind, TRANCE, 80))
-			end,
+		return "power "..(5 + get_level(Ind, TRANCE, 80))
+	end,
 	["desc"] = {
-			"Causes all ghosts, spirits and elementals that see you",
-			"to fall into a deep, spiritual sleep instantly.",
---			"Lets monsters next to you fall sleep.",
---			"At level 20 it lets all nearby monsters fall asleep.",
+		"Causes all ghosts, spirits and elementals that see you",
+		"to fall into a deep, spiritual sleep instantly.",
+--		"Lets monsters next to you fall sleep.",
+--		"At level 20 it lets all nearby monsters fall asleep.",
 	}
 }
 
@@ -146,20 +142,20 @@ POSSESS = add_spell {
 	["fail"] = 	10,
 	["direction"] = function () if get_level(Ind, POSSESS, 50) >= 13 then return FALSE else return TRUE end end,
 	["spell"] = 	function(args)
-			--reset previous charm spell first:
-			do_mstopcharm(Ind)
-			--cast charm!
-			fire_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
+		--reset previous charm spell first:
+		do_mstopcharm(Ind)
+		--cast charm!
+		fire_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
 	end,
 	["info"] = 	function()
---			return "power "..(10 + get_level(Ind, POSSESS, 150))
-			return ""
+--		return "power "..(10 + get_level(Ind, POSSESS, 150))
+		return ""
 	end,
 	["desc"] 	{
-			--"Tries to manipulate the mind of an animal to become your pet.",
-			"Tries to manipulate the mind of a monster to make it ignore you.",
---			"At level 7 it turns into a ball.",
---			"At level 13 it affects all monsters in sight.",
+		--"Tries to manipulate the mind of an animal to become your pet.",
+		"Tries to manipulate the mind of a monster to make it ignore you.",
+--		"At level 7 it turns into a ball.",
+--		"At level 13 it affects all monsters in sight.",
 	}
 }
 
@@ -174,14 +170,12 @@ STOPPOSSESS = add_spell {
 	["fail"] = 	-99,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			do_mstopcharm(Ind)
+		do_mstopcharm(Ind)
 	end,
 	["info"] = 	function()
-			return ""
+		return ""
 	end,
-	["desc"] 	{
-			"Cancel charming of any monsters.",
-	}
+	["desc"] 	{ "Cancel charming of any monsters.", }
 }
 
 STARLIGHT = add_spell {
@@ -212,9 +206,9 @@ STARLIGHT = add_spell {
 		end
 	end,
 	["desc"] = 	{
-			"Creates a globe of starlight.",
-			"At level 10 it damages monsters that are susceptible to light.",
-			"At level 25 it becomes more powerful and hurts all monsters.",
+		"Creates a globe of starlight.",
+		"At level 10 it damages monsters that are susceptible to light.",
+		"At level 25 it becomes more powerful and hurts all monsters.",
 	}
 }
 
@@ -226,17 +220,17 @@ DETECTCREATURES = add_spell {
 	["mana_max"] = 	3,
 	["fail"] = 	10,
 	["spell"] = 	function()
-			detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
---			if player.spell_project > 0 then
---				fire_ball(Ind, GF_DETECTINVIS_PLAYER, 0, 1, player.spell_project, "")
---			end
+		detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
+--		if player.spell_project > 0 then
+--			fire_ball(Ind, GF_DETECTINVIS_PLAYER, 0, 1, player.spell_project, "")
+--		end
 	end,
 	["info"] = 	function()
-			return "rad "..(10 + get_level(Ind, DETECTCREATURES, 40))
-			return ""
+		return "rad "..(10 + get_level(Ind, DETECTCREATURES, 40))
+		return ""
 	end,
 	["desc"] = 	{
-			"Detects all nearby creatures.",
---			"***Affected by the Meta spell: Project Spell***",
+		"Detects all nearby creatures.",
+--		"***Affected by the Meta spell: Project Spell***",
 	}
 }
