@@ -680,7 +680,7 @@ typedef struct {
 extern generic_term_info term_prefs[10];
 
 /* nclient.c (forer netclient.c) */
-extern int ticks, ticks10;
+extern int ticks, ticks10, existing_characters;
 extern void do_flicker(void);
 extern void do_mail(void);
 extern void update_ticks(void);

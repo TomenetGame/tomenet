@@ -1223,14 +1223,19 @@ static bool choose_mode(void) {
 	c_put_str(TERM_SLATE, "('Unworldly' - One life only. The traditional rogue-like way)", 17, 14);
 	put_str("e) Everlasting", 18, 2);
 	c_put_str(TERM_SLATE, "(You may resurrect infinite times, but cannot enter highscore)", 18, 17);
+	/* hack: no weird modi on first client startup!
+	   To find out whether it's 1st or not we check bigmap_hint and # of existing characters.
+	   However, we just don't display the choices, they're still choosable! */
+	if (!bigmap_hint || existing_characters) {
 #if 0
-	put_str("h) Hard", 19, 2);
-	c_put_str(TERM_SLATE, "('Purgatorial' - like normal, with nasty additional penalties)", 19, 10);
+		put_str("h) Hard", 19, 2);
+		c_put_str(TERM_SLATE, "('Purgatorial' - like normal, with nasty additional penalties)", 19, 10);
 #endif
-	put_str("H) Hellish", 20 - 1, 2);
-	c_put_str(TERM_SLATE, "(Like 'unworldly' mode, but extra hard - sort of ridiculous)", 20 - 1, 13);
-	put_str("p) PvP", 21 - 1, 2);
-	c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21 - 1, 9);
+		put_str("H) Hellish", 20 - 1, 2);
+		c_put_str(TERM_SLATE, "(Like 'unworldly' mode, but extra hard - sort of ridiculous)", 20 - 1, 13);
+		put_str("p) PvP", 21 - 1, 2);
+		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21 - 1, 9);
+	}
 
 	c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 	if (valid_dna) {

@@ -46,6 +46,7 @@ extern void flicker(void);
 
 int			ticks = 0; /* Keeps track of time in 100ms "ticks" */
 int			ticks10 = 0; /* 'deci-ticks', counting just 0..9 in 10ms intervals */
+int			existing_characters = 0;
 static bool		request_redraw;
 
 static sockbuf_t	rbuf, wbuf, qbuf;
@@ -511,6 +512,7 @@ if (total_cpa <= 12) {
 
 		i++;
 	}
+	existing_characters = i;
 
 	ded_pvp_shown = ded_pvp;
 	ded_iddc_shown = ded_iddc;
@@ -549,8 +551,13 @@ if (total_cpa <= 12) {
 
 	if (i < max_cpa) {
 		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", offset, 2);
-		if ((ded_pvp < max_ded_pvp_chars || ded_iddc < max_ded_iddc_chars) && max_cpa_plus)
-			c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character (IDDC or PvP only)", offset + 1, 2);
+		/* hack: no weird modi on first client startup!
+		   To find out whether it's 1st or not we check bigmap_hint and # of existing characters.
+		   However, we just don't display the choice, it's still choosable! */
+		if (!bigmap_hint || existing_characters) {
+			if ((ded_pvp < max_ded_pvp_chars || ded_iddc < max_ded_iddc_chars) && max_cpa_plus)
+				c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character (IDDC or PvP only)", offset + 1, 2);
+		}
 	} else {
 		c_put_str(CHARSCREEN_COLOUR, format("(Maximum of %d character reached.", max_cpa), offset, 2);
 		c_put_str(CHARSCREEN_COLOUR, " Get rid of one (suicide) before creating another.)", offset + 1, 2);
