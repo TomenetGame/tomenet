@@ -11938,24 +11938,23 @@ Note that not every skill is available to every profession (class).
                                 Hint: Inscribe all your trapping components
                                       '!=' for easy auto-pickup.
 
-+Health                         Increases your hit point regeneration rate:
-                                (skill_level * 2)% chance to regenerate 1.5x
-                                the normal amount of HP per turn (stacks with
-                                REGEN items).
++Health                         Increases your hit points by 2 for each point.
+                                Note that this gain stacks with +LIFE items
+                                (compare '+LIFE' in (5.8)).
+                                Increases your hit point regeneration rate:
+                                 (skill_level * 2)% chance to regenerate 1.5x
+                                 the normal amount of HP per turn (stacks with
+                                 REGEN items).
+                                Increases your stamina regeneration rate.
 
-                                Increases your hit points by 2 for each point.
-
-                                Also helps you to recover from temporary stats
-                                drain, hallucination, blindness, paralysis,
-                                confusion, slowness, poison and cuts faster.
+                                Helps you to recover from temporary stats drain
+                                drain, hallucination, blindness, confusion,
+                                poison and cuts faster.
 
                                 If you spend 10 points into Health, your
                                 sanity will be displayed as a bar.
                                 At 20 points you'll get the percentage
                                 displayed. At 40 the value will be shown.
-
-                                Note that Health skill stacks with +LIFE items
-                                (compare '+LIFE' in (5.8)).
 
                                 For mimicry users, Health skill is less
                                 effective than for other classes, because the

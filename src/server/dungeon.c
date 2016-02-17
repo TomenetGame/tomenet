@@ -4354,7 +4354,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Paralysis */
 	if (p_ptr->paralyzed)
-		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1 - minus_health);
+		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1);// - minus_health
 
 	/* Confusion */
 	if (p_ptr->confused)
@@ -4573,7 +4573,7 @@ static bool process_player_end_aux(int Ind) {
 		//(void)set_stun(Ind, p_ptr->stun - adjust - minus_health * 2);
 		(void)set_stun(Ind, p_ptr->stun - (adjust + minus_health) * (minus_health + 1));
 #endif
-		int adjust = minus + get_skill_scale_fine(p_ptr, SKILL_COMBAT, 2);
+		int adjust = minus + get_skill_scale_fine(p_ptr, SKILL_COMBAT, 1);
 		//if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust = (adjust * 5) / 3;
 		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++;
 
