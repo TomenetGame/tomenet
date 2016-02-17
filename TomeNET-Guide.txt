@@ -13898,7 +13898,8 @@ Plasma hound            speedy;
 (Code 726)              resists plasma (implying lightning and sound
                         resistance too), light; immune to fire;
                         susceptible to cold;
-                        can't be cut/stunned/confused or paralyzed;
+                        can't be cut/stunned (by magic)/confused or
+                        paralyzed;
                         can breathe plasma
 
 Level 40:
