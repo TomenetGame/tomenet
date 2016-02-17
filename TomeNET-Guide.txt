@@ -11080,8 +11080,8 @@ Note that not every skill is available to every profession (class).
 
                                 Increases Fear/Stun/Confuse duration of the
                                 target (if attacking causes those).
-                                Reduces Fear/Stun/Confuse durations that you
-                                suffer from.
+                                Reduces duration of Fear/Stun/Confuse effects
+                                that are applied to you.
 
                                 Increases 'Fighting' and 'Bows/Throws'
                                 abilities somewhat, thereby increasing your
