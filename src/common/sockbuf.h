@@ -93,8 +93,11 @@ int Sockbuf_copy(sockbuf_t *dest, sockbuf_t *src, int len);
 #   endif
 #endif
 #if STDVA
-    int Packet_printf(sockbuf_t *, char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
-    int Packet_scanf(sockbuf_t *, char *fmt, ...) __attribute__ ((format (scanf, 2, 3))) __attribute__ ((warn_unused_result));
+    // Disable noisy compiler warnings by default
+    //int Packet_printf(sockbuf_t *, char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
+    //int Packet_scanf(sockbuf_t *, char *fmt, ...) __attribute__ ((format (scanf, 2, 3))) __attribute__ ((warn_unused_result));
+    int Packet_printf(sockbuf_t *, char *fmt, ...);
+    int Packet_scanf(sockbuf_t *, char *fmt, ...);
 #else
     int Packet_printf();
     int Packet_scanf();
