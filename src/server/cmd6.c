@@ -3094,7 +3094,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 
 	case SV_STAFF_LITE:
 		if (msg) msg_format_near(Ind, "%s calls light.", p_ptr->name);
-		else msg_format_near(Ind, "A light appears.", p_ptr->name);
+		else msg_format_near(Ind, "A light appears.");
 		if (lite_area(Ind, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), 2)) ident = TRUE;
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), msg ? "a staff of Light" : "light", 0);
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
