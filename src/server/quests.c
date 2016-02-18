@@ -1879,7 +1879,7 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 		if (j == MAX_PQUESTS) continue;
 
 #if QDEBUG > 0
-		s_printf(" %s(%d)", q_name + q_ptr->name, q_ptr->codename);
+		s_printf(" %s(%s)", q_name + q_ptr->name, q_ptr->codename);
 #endif
 		if (p_ptr->quest_done[q_idx] < 10000) p_ptr->quest_done[q_idx]++;
 
