@@ -1360,11 +1360,16 @@ static bool choose_body_modification(void) {
 	sex &= ~MODE_FRUIT_BAT;
 
 	put_str("n) Normal body", 20, 2);
-	put_str("f) Fruit bat", 21, 2);
-	if (class == CLASS_MIMIC || class == CLASS_DRUID || class == CLASS_SHAMAN)
-		c_put_str(TERM_SLATE, "(not recommended for shapeshifters: Mimics, Druids, Shamans!)", 21, 15);
-	else
-		c_put_str(TERM_SLATE, "(Bats are faster and vampiric, but can't wear certain items)", 21, 15);
+	/* hack: no weird modi on first client startup!
+	   To find out whether it's 1st or not we check bigmap_hint and # of existing characters.
+	   However, we just don't display the choices, they're still choosable! */
+	if (!bigmap_hint || existing_characters) {
+		put_str("f) Fruit bat", 21, 2);
+		if (class == CLASS_MIMIC || class == CLASS_DRUID || class == CLASS_SHAMAN)
+			c_put_str(TERM_SLATE, "(not recommended for shapeshifters: Mimics, Druids, Shamans!)", 21, 15);
+		else
+			c_put_str(TERM_SLATE, "(Bats are faster and vampiric, but can't wear certain items)", 21, 15);
+	}
 
 	c_put_str(TERM_L_BLUE, "                    ", 8, CHAR_COL);
 	if (valid_dna) {
