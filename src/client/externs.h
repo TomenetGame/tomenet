@@ -158,12 +158,12 @@ extern s16b store_num;
 
 extern char spell_info[MAX_REALM + 9][9][9][80];
 
-extern char party_info_name[90];
-extern char party_info_members[20];
-extern char party_info_owner[50];
-extern char guild_info_name[90];
-extern char guild_info_members[20];
-extern char guild_info_owner[50];
+extern char party_info_name[MAX_CHARS];
+extern char party_info_members[MAX_CHARS];
+extern char party_info_owner[MAX_CHARS];
+extern char guild_info_name[MAX_CHARS];
+extern char guild_info_members[MAX_CHARS];
+extern char guild_info_owner[MAX_CHARS];
 extern bool guild_master;
 extern guild_type guild;
 extern int guildhall_wx, guildhall_wy;

@@ -343,7 +343,7 @@ void Receive_login(void) {
 	//assume that 60 is always more than we will need for max_cpa under all circumstances in the future:
 	int i = 0, max_cpa = 60, max_cpa_plus = 0;
 	short mode = 0;
-	char names[max_cpa][MAX_CHARS], colour_sequence[3];//sinc max_cpa is made ridiculously high anyway, we don't need to add DED_ slots really :-p
+	char names[max_cpa][MAX_CHARS], colour_sequence[MAX_CHARS];//sinc max_cpa is made ridiculously high anyway, we don't need to add DED_ slots really :-p
 	//char names[max_cpa + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS + 1][MAX_CHARS], colour_sequence[3];
 	char tmp[MAX_CHARS + 3];	/* like we'll need it... */
 	int ded_pvp = 0, ded_iddc = 0, ded_pvp_shown, ded_iddc_shown;
@@ -3178,7 +3178,7 @@ int Receive_pickup_check(void) {
 
 int Receive_party_stats(void) {
 	int n,j,k,chp, mhp, csp, msp, color;
-	char ch, partymembername[90];
+	char ch, partymembername[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%s%d%d%d%d%d", &ch, &j, &color, &partymembername, &k, &chp, &mhp, &csp, &msp)) <= 0) return n;
 
@@ -3191,7 +3191,7 @@ int Receive_party_stats(void) {
 
 int Receive_party(void) {
 	int n;
-	char ch, pname[90], pmembers[MAX_CHARS], powner[MAX_CHARS];
+	char ch, pname[MAX_CHARS], pmembers[MAX_CHARS], powner[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%s%s%s", &ch, pname, pmembers, powner)) <= 0) return n;
 
@@ -3228,7 +3228,7 @@ int Receive_party(void) {
 
 int Receive_guild(void) {
 	int n;
-	char ch, gname[90], gmembers[MAX_CHARS], gowner[MAX_CHARS];
+	char ch, gname[MAX_CHARS], gmembers[MAX_CHARS], gowner[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%s%s%s", &ch, gname, gmembers, gowner)) <= 0) return n;
 
@@ -3408,7 +3408,7 @@ int Receive_monster_health(void) {
 int Receive_chardump(void) {
 	char	ch;
 	int	n;
-	char tmp[160], type[20];
+	char tmp[160], type[MAX_CHARS];
 
 	time_t ct = time(NULL);
 	struct tm* ctl = localtime(&ct);
@@ -3533,7 +3533,7 @@ int Receive_encumberment(void) {
 int Receive_extra_status(void) {
 	int	n;
 	char	ch;
-	char    status[12 + 24];
+	char    status[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, &status)) <= 0) return n;
 

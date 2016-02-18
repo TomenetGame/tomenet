@@ -41,12 +41,12 @@ s16b store_num;				/* The current store number */
 /* XXX Mergin for future expansion -- this should be handled in Net_setup */
 char spell_info[MAX_REALM + 9][9][9][80];		/* Spell information */
 
-char party_info_name[90];		/* Information about your party: */
-char party_info_members[20];
-char party_info_owner[50];
-char guild_info_name[90];		/* Information about your guild: */
-char guild_info_members[20];
-char guild_info_owner[50];
+char party_info_name[MAX_CHARS];		/* Information about your party: */
+char party_info_members[MAX_CHARS];
+char party_info_owner[MAX_CHARS];
+char guild_info_name[MAX_CHARS];		/* Information about your guild: */
+char guild_info_members[MAX_CHARS];
+char guild_info_owner[MAX_CHARS];
 bool guild_master;
 guild_type guild;
 int guildhall_wx = -1, guildhall_wy;
