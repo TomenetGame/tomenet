@@ -8057,7 +8057,7 @@ void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m
 		tries--;
 		if (!tries) {
 s_printf("!!! INFINITE LOOP IN scatter() !!! -- Please reboot server and do '/unsta %d,%d,%d (%d,%d; %d,%d; %d %d)'\n",
-    wpos->wx, wpos->wy,wpos->wz, yp, xp, y, x, d, m);
+    wpos->wx, wpos->wy,wpos->wz, *yp, *xp, y, x, d, m);
 			ny = y;
 			nx = x;
 			break;
