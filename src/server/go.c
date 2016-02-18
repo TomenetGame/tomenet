@@ -54,6 +54,8 @@
 #define ENGINE_GNUGO
 /* Use 'fuego' engine? */
 //#define ENGINE_FUEGO
+/* Use 'pachi' engine? (stong) */
+//#define ENGINE_PACHI
 
 /* Gimmick: Enable a 2nd, stronger engine that sends a 'special' opponent along
    sometimes, provided you have beaten all the regular characters. ^^ */
@@ -61,6 +63,7 @@
 #ifdef HIDDEN_STAGE
  #define HS_ENGINE_FUEGO
  //#define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
+ //#define HS_ENGINE_PACHI
  static void set_hidden_stage(bool active);
 #endif
 
@@ -68,6 +71,7 @@
 #define EAPI_NONE		0
 #define EAPI_GNUGO		1
 #define EAPI_FUEGO		2
+#define EAPI_PACHI		3
 #ifdef HIDDEN_STAGE
   static int engine_api = EAPI_NONE;
 #else
@@ -76,6 +80,9 @@
  #endif
  #ifdef ENGINE_GNUGO
   static int engine_api = EAPI_GNUGO;
+ #endif
+ #ifdef ENGINE_PACHI
+  static int engine_api = EAPI_PACHI;
  #endif
 #endif
 
@@ -161,7 +168,7 @@ int go_engine_processing = 0;	/* Go engine is expected to deliver replies to com
 bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
 static char avatar_name[40];
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 static FILE *sgf;
 static char sgf_name[1024];
 #endif
@@ -246,6 +253,9 @@ int go_engine_init(void) {
 #ifdef ENGINE_GNUGO
 	gocmd = "./go/gnugo";
 #endif
+#ifdef ENGINE_PACHI
+	gocmd = "./go/pachi";
+#endif
 
 	if (!gocmd) {
 		s_printf("GO_ERROR: No engine defined during compile.\n");
@@ -308,6 +318,9 @@ int go_engine_init(void) {
 		// --cache-size <megs>
 		// --japanese-rules
 #endif
+#ifdef ENGINE_PACHI
+		execlp("./go/pachi", "pachi", "-f", "book.dat", "-r", "chinese", "threads=2,max_tree_size=300,pondering", NULL); //,maximize_score;, "-t", "20"; -e uct (default, combines uct+mc)
+#endif
 
 		/* We were unable to execute the engine? Game over! */
 		fprintf(stderr,"GO_ERROR: exec().\n");
@@ -351,7 +364,7 @@ int go_engine_init(void) {
 	   again due to broken pipe, in case the child couldn't init the engine. */
 	go_engine_up = TRUE;
 
-#ifdef ENGINE_FUEGO
+#if defined(ENGINE_FUEGO) || defined(ENGINE_PACHI)
 	handle_loading();
 #endif
 
@@ -421,6 +434,17 @@ int go_engine_init(void) {
 	wait_for_response();
 #endif
 
+#ifdef ENGINE_PACHI
+	writeToPipe("boardsize 9");
+	wait_for_response();
+	/*writeToPipe("clear_board");
+	wait_for_response();*/
+	writeToPipe("komi 0");
+	wait_for_response();
+	writeToPipe("time_settings 0 0 0");//infinite: main = 0, byo = 0, stones = x
+	wait_for_response();
+#endif
+
 	/* Init this 'flow control', to begin asynchronous pipe operation */
 	go_engine_processing = 0;
 
@@ -437,6 +461,9 @@ int go_engine_init(void) {
  #endif
  #ifdef HS_ENGINE_GNUGOMC
 	gocmd = "./go/gnugo";
+ #endif
+ #ifdef HS_ENGINE_PACHI
+	gocmd = "./go/pachi";
  #endif
 
 	if (!gocmd) {
@@ -500,6 +527,9 @@ int go_engine_init(void) {
 		// --cache-size <megs>
 		// --japanese-rules
  #endif
+ #ifdef HS_ENGINE_PACHI
+		execlp("./go/pachi", "pachi", "-f", "book.dat", "-r", "chinese", "threads=2,max_tree_size=300,pondering", NULL); //,maximize_score;, "-t", "20"; -e uct (default, combines uct+mc)
+ #endif
 
 		/* We were unable to execute the engine? Game over! */
 		fprintf(stderr,"GO_ERROR: exec().\n");
@@ -541,7 +571,7 @@ int go_engine_init(void) {
 
 	set_hidden_stage(TRUE);
 
- #ifdef HS_ENGINE_FUEGO
+ #if defined(HS_ENGINE_FUEGO) || defined(HS_ENGINE_PACHI)
 	handle_loading();
  #endif
 
@@ -607,6 +637,17 @@ int go_engine_init(void) {
  #endif
 
  #ifdef HS_ENGINE_GNUGOMC
+	writeToPipe("time_settings 0 0 0");//infinite: main = 0, byo = 0, stones = x
+	wait_for_response();
+ #endif
+
+ #ifdef HS_ENGINE_PACHI
+	writeToPipe("boardsize 9");
+	wait_for_response();
+	/*writeToPipe("clear_board");
+	wait_for_response();*/
+	writeToPipe("komi 0");
+	wait_for_response();
 	writeToPipe("time_settings 0 0 0");//infinite: main = 0, byo = 0, stones = x
 	wait_for_response();
  #endif
@@ -1017,7 +1058,7 @@ void go_challenge_accept(int Ind, bool new_wager) {
 void go_challenge_start(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int n;
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 	char path[80];
 #endif
 
@@ -1032,9 +1073,13 @@ void go_challenge_start(int Ind) {
 	Send_store_special_clr(Ind, 4, 18);
 	if (go_err(DOWN, DOWN, "go_challenge_start")) return;
 
+	random_move_prob = 0;
+
 	if (engine_api == EAPI_FUEGO)
 		writeToPipe("komi 0"); //reset current_komi behaviour
 	else if (engine_api == EAPI_GNUGO)
+		writeToPipe("komi 0"); //reset current_komi behaviour
+	else if (engine_api == EAPI_PACHI)
 		writeToPipe("komi 0"); //reset current_komi behaviour
 
 	/* somehow spread from 30k to dan level.. Final stage: Take white!
@@ -1134,6 +1179,9 @@ void go_challenge_start(int Ind) {
 		random_move_prob = 0;
 		writeToPipe("time_settings 0 20 1");
 #endif
+#ifdef ENGINE_PACHI
+		writeToPipe("time_settings 0 20 1");
+#endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
 	case TOP_RANK * 2 + 1: case TOP_RANK * 2 + 2:
@@ -1159,6 +1207,12 @@ void go_challenge_start(int Ind) {
 			if (p_ptr->go_level >= TOP_RANK * 2 + 3)
 				writeToPipe("komi 1"); //prepare for current_komi possibly = 1
  #endif
+ #ifdef ENGINE_PACHI
+			writeToPipe("time_settings 0 28 1");
+
+			if (p_ptr->go_level >= TOP_RANK * 2 + 3)
+				writeToPipe("komi 1"); //prepare for current_komi possibly = 1
+ #endif
 			player_timelimit_sec = GO_TIME_PY;
 
 			break;
@@ -1174,6 +1228,11 @@ void go_challenge_start(int Ind) {
 #ifdef ENGINE_GNUGO
 		writeToPipe("level 10");
 		random_move_prob = 0;
+		writeToPipe("time_settings 0 20 1");
+
+		writeToPipe("komi 1"); //prepare for current_komi possibly = 1
+#endif
+#ifdef ENGINE_PACHI
 		writeToPipe("time_settings 0 20 1");
 
 		writeToPipe("komi 1"); //prepare for current_komi possibly = 1
@@ -1260,8 +1319,8 @@ void go_challenge_start(int Ind) {
 	tstart = time(NULL);
 	tmstart = localtime(&tstart);
 
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-	if (engine_api == EAPI_GNUGO) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+	if (engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) {
 		/* Open new SGF file for writing (abuse var 'name') */
 		sprintf(path, "go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
 		    1900 + tmstart->tm_year, tmstart->tm_mon + 1, tmstart->tm_mday,
@@ -1556,8 +1615,8 @@ static int verify_move_human(void) {
 
 	move_count++;
 
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-	if (engine_api == EAPI_GNUGO && sgf) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+	if ((engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) && sgf) {
 		/* translate char/num coords into char/char coords */
 		char m[3];
 		if (CPU_has_white) {
@@ -1631,9 +1690,11 @@ static int verify_move_human(void) {
 	}
 #endif
 
-	/* display board after player's move */
-	writeToPipe("showboard");
-	waiting_for_board_update = TRUE;
+	if (engine_api != EAPI_PACHI) {
+		/* display board after player's move */
+		writeToPipe("showboard");
+		waiting_for_board_update = TRUE;
+	}
 
 	/* continue playing */
 	return 0;
@@ -1745,8 +1806,8 @@ static int verify_move_CPU(void) {
 		move_count++;
 	}
 
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-	if (engine_api == EAPI_GNUGO && sgf) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+	if ((engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) && sgf) {
 		/* translate char/num coords into char/char coords */
 		char m[3];
 		if (CPU_has_white) {
@@ -1790,9 +1851,11 @@ static int verify_move_CPU(void) {
 	Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, clock);
 	CPU_now_to_move = FALSE;
 
-	/* display board after CPU's move */
-	writeToPipe("showboard");
-	waiting_for_board_update = TRUE;
+	if (engine_api != EAPI_PACHI) {
+		/* display board after CPU's move */
+		writeToPipe("showboard");
+		waiting_for_board_update = TRUE;
+	}
 
 	/* continue playing */
 	return 0;
@@ -1826,8 +1889,8 @@ static void go_engine_move_result(int move_result) {
 			if (CPU_has_white) writeToPipe("go_set_info result W+Time");
 			else writeToPipe("go_set_info result B+Time");
 		}
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-		else if (engine_api == EAPI_GNUGO) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+		else if (engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) {
 			if (sgf) {
 				if (CPU_has_white) fprintf(sgf, "RE[W+Time]\n");
 				else fprintf(sgf, "RE[B+Time]\n");
@@ -1843,8 +1906,8 @@ static void go_engine_move_result(int move_result) {
 			if (CPU_has_white) writeToPipe("go_set_info result W+Resign");
 			else writeToPipe("go_set_info result B+Resign");
 		}
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-		else if (engine_api == EAPI_GNUGO) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+		else if (engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) {
 			if (sgf) {
 				if (CPU_has_white) fprintf(sgf, "RE[W+Resign]\n");
 				else fprintf(sgf, "RE[B+Resign]\n");
@@ -1859,8 +1922,8 @@ static void go_engine_move_result(int move_result) {
 			if (CPU_has_white) writeToPipe("go_set_info result B+Time");
 			else writeToPipe("go_set_info result W+Time");
 		}
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-		else if (engine_api == EAPI_GNUGO) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+		else if (engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) {
 			if (sgf) {
 				if (CPU_has_white) fprintf(sgf, "RE[B+Time]\n");
 				else fprintf(sgf, "RE[W+Time]\n");
@@ -1875,8 +1938,8 @@ static void go_engine_move_result(int move_result) {
 			if (CPU_has_white) writeToPipe("go_set_info result B+Resign");
 			else writeToPipe("go_set_info result W+Resign");
 		}
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-		else if (engine_api == EAPI_GNUGO) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+		else if (engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) {
 			if (sgf) {
 				if (CPU_has_white) fprintf(sgf, "RE[B+Resign]\n");
 				else fprintf(sgf, "RE[W+Resign]\n");
@@ -1890,8 +1953,8 @@ static void go_engine_move_result(int move_result) {
 		if (engine_api == EAPI_FUEGO) {
 			writeToPipe("go_set_info result Jigo");
 		}
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-		else if (engine_api == EAPI_GNUGO) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+		else if (engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) {
 			if (sgf) fprintf(sgf, "RE[0]\n");
 		}
 #endif
@@ -1903,8 +1966,8 @@ static void go_engine_move_result(int move_result) {
 				sprintf(result, "go_set_info result W+%d", move_result - 2000);
 				writeToPipe(result);
 			}
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-			else if (engine_api == EAPI_GNUGO) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+			else if (engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) {
 				if (sgf) fprintf(sgf, "RE[W+%d]\n", move_result - 2000);
 			}
 #endif
@@ -1920,8 +1983,8 @@ static void go_engine_move_result(int move_result) {
 				sprintf(result, "go_set_info result B+%d", move_result - 1000);
 				writeToPipe(result);
 			}
-#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC)
-			else if (engine_api == EAPI_GNUGO) {
+#if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
+			else if (engine_api == EAPI_GNUGO || engine_api == EAPI_PACHI) {
 				if (sgf) fprintf(sgf, "RE[B+%d]\n", move_result - 1000);
 			}
 #endif
@@ -2332,6 +2395,7 @@ static int test_for_response() {
 			received_board_visuals = TRUE;
 		}
 	}
+	//EAPI_PACHI has no 'showboard' command
 
 	/* If response is too long, just overwrite the final line repeatedly -
 	   it should be all that we need at this point anymore. */
@@ -2711,7 +2775,7 @@ static void readFromPipe(char *buf, int *cont) {
 	}
 }
 
-#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 /* Handle engine startup process.
    Blocking reading is ok, because server is just starting up. */
 static int handle_loading() {
@@ -2988,6 +3052,9 @@ static void set_hidden_stage(bool active) {
  #ifdef HS_ENGINE_GNUGOMC
 		engine_api = EAPI_GNUGO;
  #endif
+ #ifdef HS_ENGINE_PACHI
+		engine_api = EAPI_PACHI;
+ #endif
 	} else {
 		hidden_stage_active = FALSE;
  #ifdef ENGINE_FUEGO
@@ -2995,6 +3062,9 @@ static void set_hidden_stage(bool active) {
  #endif
  #ifdef ENGINE_GNUGO
 		engine_api = EAPI_GNUGO;
+ #endif
+ #ifdef ENGINE_PACHI
+		engine_api = EAPI_PACHI;
  #endif
 	}
 }
