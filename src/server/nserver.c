@@ -238,11 +238,11 @@ void add_banlist(char *account, char *ip_addy, char *hostname, int time, char *r
 	else s_printf("Banned for %d minutes:\n", time);
 	if (account) {
 		strcpy(ptr->acc, account);
-		s_printf(" Connections for %s.\n", ptr->acc, time);
+		s_printf(" Connections for %s.\n", ptr->acc);
 	} else ptr->acc[0] = 0;
 	if (ip_addy) {
 		strcpy(ptr->ip, ip_addy);
-		s_printf(" Connections from %s.\n", ptr->ip, time);
+		s_printf(" Connections from %s.\n", ptr->ip);
 	} else ptr->ip[0] = 0;
 
 	banlist = ptr;
@@ -4046,7 +4046,7 @@ static int Receive_login(int ind) {
 #endif
 
 		/* Prevent EXPLOIT (adding a SPACE to foreign charname) */
-		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, strlen(choice));
+		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, (int)strlen(choice));
 		Trim_name(choice);
 
 		/* If already exists, change capitalization to match */
