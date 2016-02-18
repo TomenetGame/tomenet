@@ -2290,7 +2290,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 							showtime(), name ? name : "(---)", lev, acc_name,
 							p_ptr->name, p_ptr->lev, p_ptr->accountname,
 							p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
-							object_value_real(0, o_ptr), o_ptr->discount, o_name);
+							(long long) object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
 
 					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
