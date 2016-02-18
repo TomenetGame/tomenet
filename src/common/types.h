@@ -1622,7 +1622,7 @@ typedef struct guild_type {
 	s32b members;		/* Number of guild members */
 	byte cmode;		/* Guild creator's character mode */
 	u32b flags;		/* Guild rules flags */
-	s16b minlev;		/* minimum level to join */
+	s32b minlev;		/* minimum level to join */
 	char adder[5][NAME_LEN];	/* Guild may have up to 5 people who can add besides the guild master */
 	s16b h_idx;		/* Guild Hall - house index */
 	u32b dna;		/* Remember the guild's identity - in case it times out and a new guild gets created of the same index */
