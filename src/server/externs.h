@@ -1781,11 +1781,14 @@ extern bool check_guard_inscription(s16b quark, char what);
 extern void msg_print(int Ind, cptr msg);
 extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_admins(int Ind, cptr msg);
-extern void msg_format(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3)));
+// extern void msg_format(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3))); // too much spam
+extern void msg_format(int Ind, cptr fmt, ...);
 extern void msg_print_near(int Ind, cptr msg);
 extern void msg_print_verynear(int Ind, cptr msg);
-extern void msg_format_near(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3)));
-extern void msg_format_verynear(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3)));
+// extern void msg_format_near(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3))); // too much spam
+extern void msg_format_near(int Ind, cptr fmt, ...);
+// extern void msg_format_verynear(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3))); // too much spam
+extern void msg_format_verynear(int Ind, cptr fmt, ...);
 extern void msg_print_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr msg);
 extern void msg_format_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr fmt, ...) __attribute__ ((format (printf, 6, 7)));
 extern void msg_print_near_monster(int m_idx, cptr msg);
