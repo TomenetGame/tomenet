@@ -3256,9 +3256,11 @@ int Receive_guild_config(void) {
 	int i, n, master, guild_adders, ghp;
 	char ch, dummy[MAX_CHARS];
 	int x, y;
+	int minlev_32b; /* 32 bits transmitted over the network gets converted to 16 bits */
 	Term_locate(&x, &y);
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d", &ch, &master, &guild.flags, &guild.minlev, &guild_adders, &guildhall_wx, &guildhall_wy, &ghp)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d", &ch, &master, &guild.flags, &minlev_32b, &guild_adders, &guildhall_wx, &guildhall_wy, &ghp)) <= 0) return n;
+	guild.minlev = minlev_32b;
 	switch (ghp) {
 	case 0: strcpy(guildhall_pos, "north-western"); break;
 	case 4: strcpy(guildhall_pos, "northern"); break;
