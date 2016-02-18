@@ -2508,9 +2508,9 @@ void do_slash_cmd(int Ind, char *message) {
 					/* Event still in announcement phase? */
 					if (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps) > 0)
 						//msg_format(Ind, " %d) '%s' \377grecruits\377w for %d mins.", i+1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
-						msg_format(Ind, "  \377U%d\377W) '%s' recruits for %d more minutes.", i+1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
+						msg_format(Ind, "  \377U%d\377W) '%s' recruits for %ld more minutes.", i+1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
 					/* or has already begun? */
-					else	msg_format(Ind, "  \377U%d\377W) '%s' began %d minutes ago.", i+1, global_event[i].title, -(global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
+					else	msg_format(Ind, "  \377U%d\377W) '%s' began %ld minutes ago.", i+1, global_event[i].title, -(global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
 				}
 				if (!n) msg_print(Ind, "\377WNo events are currently running.");
 				else {
@@ -2541,19 +2541,19 @@ void do_slash_cmd(int Ind, char *message) {
 
 //				msg_print(Ind, "\377d ");
 				if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) >= 120) {
-					msg_format(Ind, "\377WThis event will start in %d minutes.%s",
+					msg_format(Ind, "\377WThis event will start in %ld minutes.%s",
 					    (global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60,
 					    signup);
 				} else if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) > 0) {
-					msg_format(Ind, "\377WThis event will start in %d seconds.%s",
+					msg_format(Ind, "\377WThis event will start in %ld seconds.%s",
 					    global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps),
 					    signup);
 				} else if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) > -120) {
-					msg_format(Ind, "\377WThis event has been running for %d seconds.%s",
+					msg_format(Ind, "\377WThis event has been running for %ld seconds.%s",
 					    -global_event[k-1].announcement_time + ((turn - global_event[k-1].start_turn) / cfg.fps),
 					    signup);
 				} else {
-					msg_format(Ind, "\377WThis event has been running for %d minutes.%s",
+					msg_format(Ind, "\377WThis event has been running for %ld minutes.%s",
 					    -(global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60,
 					    signup);
 				}
@@ -3593,13 +3593,13 @@ void do_slash_cmd(int Ind, char *message) {
 			else {
 				msg_format(Ind, "    \377w# of successful attacks:  %8d", p_ptr->test_count);
 				tmp = p_ptr->test_dam / p_ptr->test_count;
-				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8d.%1d",
+				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8ld.%1d",
 				    tmp, ((p_ptr->test_dam * 10) / p_ptr->test_count) % 10);
-				else msg_format(Ind, "    \377o    Average damage done : %8d", tmp);
+				else msg_format(Ind, "    \377o    Average damage done : %8ld", tmp);
 				tmp = p_ptr->test_heal / p_ptr->test_count;
-				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8d.%1d",
+				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8ld.%1d",
 				    tmp, ((p_ptr->test_heal * 10) / p_ptr->test_count) % 10);
-				else msg_format(Ind, "    \377g    Average healing done: %8d", tmp);
+				else msg_format(Ind, "    \377g    Average healing done: %8ld", tmp);
 			}
 #ifdef TEST_SERVER
 			if (p_ptr->test_attacks == 0)
@@ -3616,13 +3616,13 @@ void do_slash_cmd(int Ind, char *message) {
 			else {
 				msg_format(Ind, "    \377w# of seconds passed:      %8d.%1d", (turn - p_ptr->test_turn) / cfg.fps, (((turn - p_ptr->test_turn) * 10) / cfg.fps) % 10);
 				tmp = (p_ptr->test_dam * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
-				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8d.%1d",
+				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8ld.%1d",
 				    tmp, ((p_ptr->test_dam * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
-				else msg_format(Ind, "    \377o    Average damage done : %8d", tmp);
+				else msg_format(Ind, "    \377o    Average damage done : %8ld", tmp);
 				tmp = (p_ptr->test_heal * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
-				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8d.%1d",
+				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8ld.%1d",
 				    tmp, ((p_ptr->test_heal * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
-				else msg_format(Ind, "    \377g    Average healing done: %8d", tmp);
+				else msg_format(Ind, "    \377g    Average healing done: %8ld", tmp);
 			}
 			return;
 		}
@@ -6272,7 +6272,7 @@ void do_slash_cmd(int Ind, char *message) {
 			else if (prefix(message, "/crash")) {
 				msg_print(Ind, "\377RCRASHING");
 				s_printf("$CRASHING$\n");
-				s_printf("%d %s", "game over man", 666);
+				s_printf("%s", (char *)666);
 				return; /* ^^ */
 			}
 			/* Assign all houses of a <party> or <guild> to a <player> instead (chown) - C. BLue */
@@ -6423,7 +6423,7 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				avg /= 10000;
 				msg_format(Ind, "Rerolled HP for %s 10000 times:", Players[p]->name);
-				msg_format(Ind, "  Min: %d, Max: %d, Avg: %d.", min, max, avg);
+				msg_format(Ind, "  Min: %d, Max: %d, Avg: %ld.", min, max, avg);
 				return;
 			}
 			/* Reroll a player's background history text (for d-elves/vampires/draconians, maybe ents) */
@@ -7628,11 +7628,11 @@ void do_slash_cmd(int Ind, char *message) {
 				    o_name, atoi(token[1]));
 				msg_format(Ind, "Flag cost: %d; for artifact: %d.",
 				    flag_cost(o_ptr, o_ptr->pval), artifact_flag_cost(o_ptr, o_ptr->pval));
-				msg_format(Ind, "Your value: %d.", object_value(Ind, o_ptr));
-				msg_format(Ind, "Your real value: %d; for artifact: %d.",
-				    object_value_real(Ind, o_ptr), artifact_value_real(Ind, o_ptr));
-				msg_format(Ind, "Full real value: %d; for artifact: %d.",
-				    object_value_real(0, o_ptr), artifact_value_real(0, o_ptr));
+				msg_format(Ind, "Your value: %lld.", (long long) object_value(Ind, o_ptr));
+				msg_format(Ind, "Your real value: %lld; for artifact: %lld.",
+				    (long long) object_value_real(Ind, o_ptr), (long long) artifact_value_real(Ind, o_ptr));
+				msg_format(Ind, "Full real value: %lld; for artifact: %lld.",
+				    (long long) object_value_real(0, o_ptr), (long long) artifact_value_real(0, o_ptr));
 				msg_format(Ind, "Discount %d; aware? %d; known? %d; broken? %d.",
 				    o_ptr->discount, object_aware_p(Ind, o_ptr), object_known_p(Ind, o_ptr), broken_p(o_ptr));
 				return;
