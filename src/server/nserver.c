@@ -4501,7 +4501,7 @@ static int Receive_file(int ind) {
 	unsigned short fnum;	/* unique SENDER side file number */
 	unsigned short len;
 	u32b csum;
-	int n;
+	int n, bytes_read;
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	int Ind;
@@ -4510,10 +4510,16 @@ static int Receive_file(int ind) {
 	p_ptr = Players[Ind];
 	n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &command, &fnum);
 	if (n == 3) {
+		bytes_read = 4;
 		switch (command) {
 			case PKT_FILE_INIT:
 				/* Admin to do this only !!! */
-				Packet_scanf(&connp->r, "%s", fname);
+				if ((n = Packet_scanf(&connp->r, "%s", fname)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&connp->r, bytes_read);
+
+					return n;
+				}
 				if (!is_admin(p_ptr)) {
 					msg_print(Ind, "\377rFile transfer refused");
 					x = 0;
@@ -4523,8 +4529,26 @@ static int Receive_file(int ind) {
 				}
 				break;
 			case PKT_FILE_DATA:
-				Packet_scanf(&connp->r, "%hd", &len);
-				x = local_file_write(ind, fnum, len);
+				if ((n = Packet_scanf(&connp->r, "%hd", &len)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&connp->r, bytes_read);
+
+					return n;
+				}
+				bytes_read += 2;
+				x = local_file_write(0, fnum, len);
+				if (x == -1) {
+					/* Not enough data available */
+
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&connp->r, bytes_read);
+
+					return 0;
+				} else if (x == -2) {
+					/* Write failed */
+					s_printf("Receive_file: local_file_write failed!\n");
+					return 0;
+				}
 				break;
 			case PKT_FILE_END:
 				x = local_file_close(ind, fnum);
@@ -4532,7 +4556,12 @@ static int Receive_file(int ind) {
 				break;
 			case PKT_FILE_CHECK:
 				/* Admin to do this only !!! */
-				Packet_scanf(&connp->r, "%s", fname);
+				if ((n = Packet_scanf(&connp->r, "%s", fname)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&connp->r, bytes_read);
+
+					return n;
+				}
 				if (!is_admin(p_ptr)) {
 					msg_print(Ind, "\377rFile check refused");
 					x = 0;
@@ -4544,7 +4573,12 @@ static int Receive_file(int ind) {
 				}
 				break;
 			case PKT_FILE_SUM:
-				Packet_scanf(&connp->r, "%d", &csum);
+				if ((n = Packet_scanf(&connp->r, "%d", &csum)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&connp->r, bytes_read);
+
+					return n;
+				}
 				check_return(ind, fnum, csum, Ind);
 
 				/* for 4.4.8.1.0.0 LUA update crash bug */
