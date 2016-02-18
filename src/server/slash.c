@@ -9028,10 +9028,10 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				s = now - sl;
-				if (s >= 60 * 60 * 24 * 3) msg_format(Ind, "Player <%s> was seen ~%d days ago.", message3, s / (60 * 60 * 24));
-				else if (s >= 60 * 60 * 3) msg_format(Ind, "Player <%s> was seen ~%d hours ago.", message3, s / (60 * 60));
-				else if (s >= 60 * 3) msg_format(Ind, "Player <%s> was seen ~%d minutes ago.", message3, s / 60);
-				else msg_format(Ind, "Player <%s> was seen %d seconds ago.", message3, s);
+				if (s >= 60 * 60 * 24 * 3) msg_format(Ind, "Player <%s> was seen ~%ld days ago.", message3, s / (60 * 60 * 24));
+				else if (s >= 60 * 60 * 3) msg_format(Ind, "Player <%s> was seen ~%ld hours ago.", message3, s / (60 * 60));
+				else if (s >= 60 * 3) msg_format(Ind, "Player <%s> was seen ~%ld minutes ago.", message3, s / 60);
+				else msg_format(Ind, "Player <%s> was seen %ld seconds ago.", message3, s);
 				return;
 			}
 			else if (prefix(message, "/testrandart")) { /* test how often randarts get AM shell '>_> */
@@ -9466,8 +9466,8 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "PARANOIA - couldn't get floor.");
 					return;
 				}
-				msg_format(Ind, "flags1 = %lu", l_ptr->flags1);
-				msg_format(Ind, "flags2 = %lu", l_ptr->flags2);
+				msg_format(Ind, "flags1 = %u", l_ptr->flags1);
+				msg_format(Ind, "flags2 = %u", l_ptr->flags2);
 				return;
 			}
 			else if (prefix(message, "/reservednames")) {
