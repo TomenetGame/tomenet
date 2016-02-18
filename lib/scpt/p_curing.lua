@@ -355,6 +355,7 @@ HCURING_I = add_spell {
 			if (player.poisoned ~= 0 and player.slow_poison == 0) then
 				player.slow_poison = 1
 			end
+			set_cut(Ind, 0, 0)
 			fire_ball(Ind, GF_CURE_PLAYER, 0, 1 + 2 + 8, 1, " concentrates on your maladies.")
 			end,
 	["info"] = 	function()
@@ -380,7 +381,9 @@ HCURING_II = add_spell {
 				set_food(Ind, PY_FOOD_MAX - 1)
 			end
 			set_poisoned(Ind, 0, 0)
-			set_image(Ind, 0)
+			set_cut(Ind, 0, 0)
+			set_blind(Ind, 0)
+			set_confused(Ind, 0)
 			fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 8 + 16, 1, " concentrates on your maladies.")
 			end,
 	["info"] = 	function()
@@ -406,10 +409,11 @@ HCURING_III = add_spell {
 			if (player.food >= PY_FOOD_MAX) then
 				set_food(Ind, PY_FOOD_MAX - 1)
 			end
-			set_confused(Ind, 0)
-			set_blind(Ind, 0)
-			set_stun(Ind, 0)
 			set_poisoned(Ind, 0, 0)
+			set_cut(Ind, 0, 0)
+			set_blind(Ind, 0)
+			set_confused(Ind, 0)
+			set_stun(Ind, 0)
 			set_image(Ind, 0)
 			fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 8 + 16 + 32 + 256, 1, " concentrates on your maladies.")
 			end,
