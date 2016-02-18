@@ -3719,7 +3719,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills_own);
 
 #ifdef SOLO_REKING
-	if (admin) msg_format(Ind, "SR %d, SR_Au %d, SR_laston %d", p_ptr->solo_reking, p_ptr->solo_reking_au, p_ptr->solo_reking_laston);
+	if (admin) msg_format(Ind, "SR %d, SR_Au %d, SR_laston %ld", p_ptr->solo_reking, p_ptr->solo_reking_au, p_ptr->solo_reking_laston);
 #endif
 
 	msg_print(Ind, " ");
