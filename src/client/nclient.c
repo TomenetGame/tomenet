@@ -953,13 +953,13 @@ unsigned char Net_login() {
 
 	/* Peek in the buffer to check if the server wanted to destroy the
 	 * connection - mikaelh */
-	if (rbuf.ptr[0] == PKT_QUIT) {
-		errno = 0;
+	if (rbuf.len > 1 && rbuf.ptr[0] == PKT_QUIT) {
 		quit(&rbuf.ptr[1]);
-		return -1;
 	}
 
-	Packet_scanf(&rbuf, "%c", &tc);
+	if (Packet_scanf(&rbuf, "%c", &tc) <= 0) {
+		quit("Failed to read status code from server!");
+	}
 	return tc;
 }
 

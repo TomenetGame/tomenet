@@ -2924,15 +2924,21 @@ void client_init(char *argv1, bool skip)
 		}
 
 		/* Extra info from packet */
-		Packet_scanf(&ibuf, "%c%c%d%d", &reply_to, &status, &temp, &char_creation_flags);
+		if (Packet_scanf(&ibuf, "%c%c%d%d", &reply_to, &status, &temp, &char_creation_flags) <= 0) {
+			Net_cleanup();
+			quit("Invalid response from server!\n");
+		}
 
 		/* Hack -- set the login port correctly */
 		//login_port = (int) temp;
 
 		/* Hack - Receive server version - mikaelh */
 		if (char_creation_flags & 0x02) {
-			Packet_scanf(&ibuf, "%d%d%d%d%d%d", &server_version.major, &server_version.minor,
-			    &server_version.patch, &server_version.extra, &server_version.branch, &server_version.build);
+			if (Packet_scanf(&ibuf, "%d%d%d%d%d%d", &server_version.major, &server_version.minor,
+			    &server_version.patch, &server_version.extra, &server_version.branch, &server_version.build) < 0) {
+				Net_cleanup();
+				quit("Invalid response from server!\n");
+			}
 
 			/* Remove the flag */
 			char_creation_flags ^= 0x02;
