@@ -2676,7 +2676,8 @@ int Receive_special_other(void) {
 }
 
 int Receive_store_action(void) {
-	int	n, cost, action, bact;
+	int	n;
+	short	bact, action, cost;
 	char	ch, pos, name[MAX_CHARS], letter, attr;
 	byte	flag;
 
@@ -3069,7 +3070,10 @@ int Receive_special_line(void) {
 	if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%d%d%c%I", &ch, &max, &line, &attr, buf)) <= 0) return n;
 	} else {
-		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%I", &ch, &max, &line, &attr, buf)) <= 0) return n;
+		s16b old_max, old_line;
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%I", &ch, &old_max, &old_line, &attr, buf)) <= 0) return n;
+		max = old_max;
+		line = old_line;
 	}
 
 	/* Hack - prepare for a special sized page (# of lines divisable by n) */
