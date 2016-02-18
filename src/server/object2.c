@@ -5548,7 +5548,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			resf_fallback = FALSE;
 		} else continue;
 
-		s_printf("dpt %d, dptval %d, egoval %d / %d, realval %d, flags %d (%s), resf %d\n",
+		s_printf("dpt %ld, dptval %ld, egoval %d / %d, realval %d, flags %d (%s), resf %d\n",
 		    depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name, resf);
 
 		if (!is_ammo(o_ptr->tval)) {
@@ -5582,7 +5582,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			fc = flag_cost(o_ptr, o_ptr->pval);
 
 			/* Dump information about the item */
-			s_printf("dpt %d, dptval %d, egoval %d / %d, realval %d, flags %d (%s)\n", 
+			s_printf("dpt %ld, dptval %ld, egoval %d / %d, realval %d, flags %d (%s)\n",
 			depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name);
 
 			s_printf("taken\n");
