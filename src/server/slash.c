@@ -6827,7 +6827,7 @@ void do_slash_cmd(int Ind, char *message) {
 							msg_format(Ind, "Monster #%d is holding an invalid item (o_idx=%d) (k_idx=%d)!", i, m_ptr->hold_o_idx, o_ptr->k_idx);
 
 						if (o_ptr->held_m_idx != i)
-							msg_format(Ind, "Item (o_idx=%d) has wrong held_m_idx! (is %d, should be %d)", this_o_idx, i);
+							msg_format(Ind, "Item (o_idx=%d) has wrong held_m_idx! (is %d, should be %d)", this_o_idx, o_ptr->held_m_idx, i);
 
 						next_o_idx = o_ptr->next_o_idx;
 					}
