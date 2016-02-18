@@ -116,32 +116,20 @@ typedef unsigned long huge;
 typedef signed short s16b;
 typedef unsigned short u16b;
 
-/* Signed/Unsigned 32 bit value */
-// #ifdef L64	/* 64 bit longs */
-#if 1 /* let's assume that int is always 32-bit nowadays - mikaelh */
-typedef signed int s32b;
-typedef unsigned int u32b;
-#else
-typedef signed long s32b;
-typedef unsigned long u32b;
-#endif
-#ifdef CYGWIN
-#undef WINDOWS
-#endif
-#ifndef WINDOWS
-typedef int64_t s64b;
-typedef u_int64_t u64b;
-/* An int big enough to store a pointer. */
+/* Assume that stdint.h is available and C99 is supported */
 #include <stdint.h>
+
+/* Signed/Unsigned 32 bit value */
+typedef int32_t s32b;
+typedef uint32_t u32b;
+
+/* Signed/Unsigned 64 bit value */
+typedef int64_t s64b;
+typedef uint64_t u64b;
+
+/* An int big enough to store a pointer. */
 typedef uintptr_t uintptr;
-#else
-typedef __int64 s64b;
-typedef unsigned __int64 u64b;
-typedef u32b uintptr; /* TODO: Proper type for 64-bit Windows */
-#endif
-#ifdef CYGWIN
-#define WINDOWS
-#endif
+
 
 
 /*** Pointers to all the basic types defined above ***/
