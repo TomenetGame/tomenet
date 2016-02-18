@@ -341,7 +341,8 @@ void Receive_login(void) {
 	int n;
 	char ch;
 	//assume that 60 is always more than we will need for max_cpa under all circumstances in the future:
-	int i = 0, max_cpa = 60, max_cpa_plus = 0, mode = 0;
+	int i = 0, max_cpa = 60, max_cpa_plus = 0;
+	short mode = 0;
 	char names[max_cpa][MAX_CHARS], colour_sequence[3];//sinc max_cpa is made ridiculously high anyway, we don't need to add DED_ slots really :-p
 	//char names[max_cpa + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS + 1][MAX_CHARS], colour_sequence[3];
 	char tmp[MAX_CHARS + 3];	/* like we'll need it... */
@@ -619,7 +620,7 @@ else
  */
 int Net_setup(void) {
 	int i, n, len, done = 0, j;
-	s16b b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+	char b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
 	long todo = 1;
 	char *ptr, str[MAX_CHARS];
 	sockbuf_t cbuf;
@@ -1737,7 +1738,7 @@ int Receive_skill_init(void) {
 	u16b	father, mkey, order;
 	char    name[MSG_LEN], desc[MSG_LEN], act[MSG_LEN];
 	u32b	flags1;
-	u16b	tval;
+	byte	tval;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%d%c%S%S%S", &ch, &i,
 	    &father, &order, &mkey, &flags1, &tval, name, desc, act)) <= 0) return n;
@@ -2484,6 +2485,7 @@ int Receive_line_info(void) {
 	int	x, i, n, bytes_read;
 	s16b	y;
 	byte	a;
+	byte	rep;
 	bool	draw = FALSE;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0) return n;
@@ -2521,15 +2523,15 @@ int Receive_line_info(void) {
 
 		bytes_read += n;
 
-		/* 4.4.3.1 servers use new RLE */
+		/* 4.4.3.1 servers use a = 0xFF to signal RLE */
 		if (is_newer_than(&server_version, 4, 4, 3, 0, 0, 5)) {
 			/* New RLE */
 			if (a == 0xFF) {
 				/* Read the real attr and number of repetitions */
-				Packet_scanf(&rbuf, "%c%c", &a, &n);
+				Packet_scanf(&rbuf, "%c%c", &a, &rep);
 			} else {
 				/* No RLE, just one instance */
-				n = 1;
+				rep = 1;
 			}
 		} else {
 			/* Check for bit 0x40 on the attribute */
@@ -2538,7 +2540,7 @@ int Receive_line_info(void) {
 				a &= ~(0x40);
 
 				/* Read the number of repetitions */
-				if ((n = Packet_scanf(&rbuf, "%c", &n)) <= 0) {
+				if ((n = Packet_scanf(&rbuf, "%c", &rep)) <= 0) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&rbuf, bytes_read);
 
@@ -2549,7 +2551,7 @@ int Receive_line_info(void) {
 				bytes_read += n;
 			} else {
 				/* No RLE, just one instance */
-				n = 1;
+				rep = 1;
 			}
 		}
 
@@ -2563,8 +2565,8 @@ int Receive_line_info(void) {
 			if (c == 2) c = 127;
  #endif
 #endif
-			/* Draw a character n times */
-			for (i = 0; i < n; i++) {
+			/* Draw a character 'rep' times */
+			for (i = 0; i < rep; i++) {
 				/* remember map_info in client-side buffer */
 				if (ch != PKT_MINI_MAP &&
 				    x + i >= PANEL_X && x + i < PANEL_X + screen_wid &&
@@ -2578,7 +2580,7 @@ int Receive_line_info(void) {
 		}
 
 		/* Reset 'x' to the correct value */
-		x += n - 1;
+		x += rep - 1;
 
 		/* hack -- if x > 80, assume we have received corrupted data,
 		 * flush our buffers
