@@ -5611,7 +5611,7 @@ if (cfg.unikill_format) {
 					/* Set his retire_timer if neccecary */
 					if (cfg.retire_timer >= 0) {
 						q_ptr->retire_timer = cfg.retire_timer;
-						msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg.retire_timer);
+						msg_format(i, "Otherwise you will retire after %d minutes of tenure.", cfg.retire_timer);
 					}
 
 					/* take char dump and screenshot from winning scene */
