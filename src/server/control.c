@@ -749,8 +749,8 @@ static void console_shutdown(void)
  */
 void NewConsole(int read_fd, int arg)
 {
-	char ch, passwd[80], buf[1024];
-	int i, j, bytes;
+	char ch = 0, passwd[MAX_CHARS] = {'\0'}, buf[MAX_CHARS] = {'\0'};
+	int i = 0, j = 0, bytes = 0;
 	static int newsock = 0;
 
 	/* Make a TCP connection */
@@ -800,28 +800,19 @@ void NewConsole(int read_fd, int arg)
 	console_buf.len = bytes;
 
 	/* Get the password */
-	Packet_scanf(&console_buf, "%s",passwd); 
+	if (Packet_scanf(&console_buf, "%s", passwd) <= 0) {
+		goto input_error;
+	}
 
-	if (strcmp(passwd, cfg.console_password))
-	{
-		/* Clear buffer */
-		Sockbuf_clear(&console_buf);
-
-		/* Put an "illegal access" reply in the buffer */
-		Packet_printf(&console_buf, "%c", CONSOLE_DENIED);
-		
-		/* Send it */
-		DgramWrite(read_fd, console_buf.buf, console_buf.len);
-
-		/* Log this to the local console */
-		s_printf("Illegal console command from %s.\n", DgramLastname(read_fd));
-
-		return;
+	if (strcmp(passwd, cfg.console_password) != 0) {
+		goto input_error;
 	}
 	else s_printf("Valid console command from %s.\n", DgramLastname(read_fd));
 
 	/* Acquire command */
-	Packet_scanf(&console_buf, "%c", &ch);
+	if (Packet_scanf(&console_buf, "%c", &ch) <= 0) {
+		goto input_error;
+	}
 
 	/* Determine what the command is */
 	switch(ch)
@@ -833,7 +824,9 @@ void NewConsole(int read_fd, int arg)
 
 		/* Wants to see detailed player info */
 		case CONSOLE_PLAYER_INFO:
-			Packet_scanf(&console_buf, "%d", &i);
+			if (Packet_scanf(&console_buf, "%d", &i) <= 0) {
+				goto input_error;
+			}
 			console_player_info(i);
 			break;
 
@@ -849,25 +842,33 @@ void NewConsole(int read_fd, int arg)
 
 		/* Wants to change artifact status */
 		case CONSOLE_CHANGE_ARTIFACT:
-			Packet_scanf(&console_buf, "%d%d", &i, &j);
+			if (Packet_scanf(&console_buf, "%d%d", &i, &j) <= 0) {
+				goto input_error;
+			}
 			console_change_artifact(i, j);
 			break;
 
 		/* Wants to change unique status */
 		case CONSOLE_CHANGE_UNIQUE:
-			Packet_scanf(&console_buf, "%d%s", &i, buf);
+			if (Packet_scanf(&console_buf, "%d%s", &i, buf) <= 0) {
+				goto input_error;
+			}
 			console_change_unique(i, buf);
 			break;
 
 		/* Wants to send a message */
 		case CONSOLE_MESSAGE:
-			Packet_scanf(&console_buf, "%s", buf);
+			if (Packet_scanf(&console_buf, "%s", buf) <= 0) {
+				goto input_error;
+			}
 			console_message(buf);
 			break;
 
 		/* Wants to kick a player */
 		case CONSOLE_KICK_PLAYER:
-			Packet_scanf(&console_buf, "%s", buf);
+			if (Packet_scanf(&console_buf, "%s", buf) <= 0) {
+				goto input_error;
+			}
 			console_kick_player(buf);
 			break;
 
@@ -889,6 +890,26 @@ void NewConsole(int read_fd, int arg)
 
 	/* Write the response */
 	DgramWrite(console_buf.sock, console_buf.ptr, console_buf.len);
+
+	/* Success */
+	return;
+
+	input_error: /* Handle any errors */
+	/* Clear buffer */
+	Sockbuf_clear(&console_buf);
+
+	/* Put an "illegal access" reply in the buffer */
+	/* TODO: This needs more error codes... */
+	Packet_printf(&console_buf, "%c", CONSOLE_DENIED);
+
+	/* Send it */
+	DgramWrite(read_fd, console_buf.buf, console_buf.len);
+
+	/* Log this to the local console */
+	s_printf("Illegal console command from %s.\n", DgramLastname(read_fd));
+
+	/* Failure */
+	return;
 }
 
 /*
