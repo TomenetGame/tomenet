@@ -85,7 +85,7 @@ void check_banlist() {
 		if (ptr->time) {
 			if (!(--ptr->time)) {
 				if (ptr->reason[0]) s_printf("Unbanning due to ban timeout (ban reason was '%s'):\n", ptr->reason);
-				else s_printf("Unbanning due to ban timeout:\n", ptr->reason);
+				else s_printf("Unbanning due to ban timeout:\n");
 				if (ptr->ip[0]) s_printf(" Connections from %s\n", ptr->ip);
 				if (ptr->acc[0]) s_printf(" Connections for %s\n", ptr->acc);
 
@@ -7197,8 +7197,8 @@ void restore_estate(int Ind) {
 				return;
 			}
 			gained_anything = TRUE;
-			s_printf("  gained %d Au.\n", au);
-			msg_format(Ind, "You receive %d gold pieces.", au);
+			s_printf("  gained %ld Au.\n", au);
+			msg_format(Ind, "You receive %ld gold pieces.", au);
 			continue;
 		}
 		/* get object from backup file */
@@ -7273,8 +7273,8 @@ void restore_estate(int Ind) {
 					return;
 				}
 				gained_anything = TRUE;
-				s_printf("  gained %d Au.\n", au);
-				msg_format(Ind, "You receive %d gold pieces.", au);
+				s_printf("  gained %ld Au.\n", au);
+				msg_format(Ind, "You receive %ld gold pieces.", au);
 				continue;
 			}
 
