@@ -2884,7 +2884,7 @@ void store_stole(int Ind, int item) {
 //		s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 		/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
 		if (chance > 10)
-		s_printf("Stealing: %s (%d) succ. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance < 10 ? 10 : chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		s_printf("Stealing: %s (%d) succ. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance < 10 ? 10 : chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 		        s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
 
@@ -2929,7 +2929,7 @@ void store_stole(int Ind, int item) {
 
 	else {
 //s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
-s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Complain */
 		// say_comment_4();
 		msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The angry shopkeeper throws you out!");
@@ -3644,11 +3644,11 @@ void store_confirm(int Ind) {
 
 	/* Server-side exploit checks - C. Blue */
 	if (amt <= 0) {
-		s_printf("$INTRUSION$ (FORCED) Bad amount %d! Sold by %s.\n", amt, p_ptr->name);
+		s_printf("$INTRUSION$ (FORCED) Bad amount %ld! Sold by %s.\n", amt, p_ptr->name);
 		return;
 	}
 	if (o_ptr->number < amt) {
-		s_printf("$INTRUSION$ Bad amount %d of %d! Sold by %s.\n", amt, o_ptr->number, p_ptr->name);
+		s_printf("$INTRUSION$ Bad amount %ld of %d! Sold by %s.\n", amt, o_ptr->number, p_ptr->name);
 		msg_print(Ind, "You don't have that many!");
 		return;
 	}
@@ -3688,7 +3688,7 @@ void store_confirm(int Ind) {
 	    !p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1 &&
 	    p_ptr->gold_picked_up < EVENT_TOWNIE_GOLD_LIMIT && price > EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up) {
 		price = EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;
-		msg_format(Ind, "\377yYou accept only %d gold, or your life would be forfeit.", price);
+		msg_format(Ind, "\377yYou accept only %d gold, or your life would be forfeit.", (int) price);
 	}
 #endif
 	if (!gain_au(Ind, price, FALSE, FALSE)) return;
@@ -5456,7 +5456,7 @@ void home_purchase(int Ind, int item, int amt) {
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
 				p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
-				object_value_real(0, o_ptr), o_ptr->discount, o_name);
+				(long long) object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
 
 		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
