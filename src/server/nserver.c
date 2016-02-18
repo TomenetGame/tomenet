@@ -4381,11 +4381,15 @@ static int Receive_play(int ind) {
 
 		/* Read screen dimensions */
 		if (is_newer_than(&connp->version, 4, 4, 9, 1, 0, 1)) {
-			n = Packet_scanf(&connp->r, "%d%d", &connp->Client_setup.screen_wid, &connp->Client_setup.screen_hgt);
+			int screen_wid_32b, screen_hgt_32b;
+			n = Packet_scanf(&connp->r, "%d%d", &screen_wid_32b, &screen_hgt_32b);
 			if (n <= 0) {
 				Destroy_connection(ind, "Misread dimensions");
 				return -1;
 			}
+			/* Conversion from 32 bits to 16 bits */
+			connp->Client_setup.screen_wid = screen_wid_32b;
+			connp->Client_setup.screen_hgt = screen_hgt_32b;
 
 			/* fix limits */
 #ifdef BIG_MAP
@@ -10466,11 +10470,15 @@ static int Receive_screen_dimensions(int ind) {
 	}
 
 	if (player) {
-		n = Packet_scanf(&connp->r, "%d%d", &p_ptr->screen_wid, &p_ptr->screen_hgt);
+		int screen_wid_32b, screen_hgt_32b;
+		n = Packet_scanf(&connp->r, "%d%d", &screen_wid_32b, &screen_hgt_32b);
 		if (n <= 0) {
 			Destroy_connection(ind, "read error");
 			return n;
 		}
+		/* Convert from 32 bits to 16 bits */
+		p_ptr->screen_wid = screen_wid_32b;
+		p_ptr->screen_hgt = screen_hgt_32b;
 #ifndef BIG_MAP
 		return 1;
 #endif

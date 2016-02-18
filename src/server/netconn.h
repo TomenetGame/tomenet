@@ -43,7 +43,7 @@ typedef struct {
 	int		trait;
 	int		sex;
 	int		class_extra;
-	int		stat_order[6];
+	short		stat_order[6];
 	client_setup_t	Client_setup;
 
 	int		audio_sfx, audio_mus;
