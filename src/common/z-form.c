@@ -232,6 +232,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 	/* The argument is "long" */
 	bool do_long;
 
+	/* The argument is "long long" (at least 64 bits) */
+	bool do_long_long;
+
 	/* The argument needs "processing" */
 	bool do_capitilization;
 
@@ -343,6 +346,9 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		/* Assume no "long" argument */
 		do_long = FALSE;
 
+		/* Assume no "long long" either */
+		do_long_long = FALSE;
+
 		/* Assume no "xtra" processing */
 		do_capitilization = FALSE;
 		do_escape = FALSE;
@@ -379,8 +385,13 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					/* Save the character */
 					aux[q++] = *s++;
 
-					/* Note the "long" flag */
-					do_long = TRUE;
+					if (do_long) {
+						/* Specifying 'l' twice results in long long */
+						do_long_long = TRUE;
+					} else {
+						/* Note the "long" flag */
+						do_long = TRUE;
+					}
 				}
 
 				/* Mega-Hack -- handle "extra-long" request */
@@ -482,7 +493,17 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			/* Signed Integers -- standard format */
 			case 'd': case 'i':
 			{
-				if (do_long)
+				if (do_long_long)
+				{
+					long long arg;
+
+					/* Access next argument */
+					arg = va_arg(vp, long long);
+
+					/* Format the argument */
+					sprintf(tmp, aux, arg);
+				}
+				else if (do_long)
 				{
 					long arg;
 
@@ -510,7 +531,17 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			/* Unsigned Integers -- various formats */
 			case 'u': case 'o': case 'x': case 'X':
 			{
-				if (do_long)
+				if (do_long_long)
+				{
+					unsigned long long arg;
+
+					/* Access next argument */
+					arg = va_arg(vp, unsigned long long);
+
+					/* Format the argument */
+					sprintf(tmp, aux, arg);
+				}
+				else if (do_long)
 				{
 					unsigned long arg;
 
