@@ -2528,7 +2528,15 @@ int Receive_line_info(void) {
 			/* New RLE */
 			if (a == 0xFF) {
 				/* Read the real attr and number of repetitions */
-				Packet_scanf(&rbuf, "%c%c", &a, &rep);
+				if ((n = Packet_scanf(&rbuf, "%c%c", &a, &rep)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&rbuf, bytes_read);
+
+					/* Packet isn't complete, graceful failure */
+					return n;
+				}
+
+				bytes_read += n;
 			} else {
 				/* No RLE, just one instance */
 				rep = 1;
