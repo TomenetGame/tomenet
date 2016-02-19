@@ -526,7 +526,7 @@ void remote_update_lua(int Ind, cptr file)
 
 /* Write a string to the log file */
 void lua_s_print(cptr logstr) {
-	s_printf(logstr);
+	s_printf("%s", logstr);
 	return;
 }
 
