@@ -4416,7 +4416,7 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 		q_goal = &q_stage->goal[j];
 #if QDEBUG > 2
 		if (q_goal->kill || q_goal->retrieve) {
-			s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_goal->kill, q_goal->retrieve);
+			s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_goal->kill->number, q_goal->retrieve->number);
 			if (!quest_get_goal(Ind, q_idx, j, FALSE)) {
 				s_printf("MISSING.\n");
 				break;
