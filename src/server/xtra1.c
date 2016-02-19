@@ -7320,7 +7320,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		}
 
 		if (!r_found) {
-			msg_format(Ind, "\377yCouldn't find base monster (punctuation and name must be exact).");
+			msg_print(Ind, "\377yCouldn't find base monster (punctuation and name must be exact).");
 			return;
 		}
 #ifdef GE_ARENA_ALLOW_EGO
