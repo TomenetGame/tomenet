@@ -598,7 +598,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 			case GE_DUNGEON_KEEPER:
 				/* tell everyone + himself that he won */
 				sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
-				msg_broadcast_format(0, buf);
+				msg_broadcast(0, buf);
 #ifdef TOMENET_WORLDS
 				if (cfg.worldd_events) world_msg(buf);
 #endif

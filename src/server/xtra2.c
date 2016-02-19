@@ -6807,14 +6807,14 @@ void player_death(int Ind) {
 		if (i < IDDC_HIGHSCORE_DISPLAYED) {
 			sprintf(buf, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge, placing %d%s!",
 			    p_ptr->name, ABS(p_ptr->wpos.wz), i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")));
-			msg_broadcast_format(0, buf);
+			msg_broadcast(0, buf);
 #ifdef TOMENET_WORLDS
 			if (cfg.worldd_events) world_msg(buf);
 #endif
 		} else {
 			sprintf(buf, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge!",
 			    p_ptr->name, ABS(p_ptr->wpos.wz));
-			msg_broadcast_format(0, buf);
+			msg_broadcast(0, buf);
 #ifdef TOMENET_WORLDS
 			if (cfg.worldd_events) world_msg(buf);
 #endif
@@ -12107,7 +12107,7 @@ bool master_player(int Ind, char *parms){
 		/* This could be fun - be wise dungeon master */
 		sprintf(buf, "\375\377r[\377%c%s\377r]\377%c %s", 'b', p_ptr->name, COLOUR_CHAT, &parms[1]); /* admin colour 'b' */
 		censor_length = 0;
-		msg_broadcast_format(0, buf);
+		msg_broadcast(0, buf);
 #ifdef TOMENET_WORLDS
 		if (cfg.worldd_broadcast) world_chat(0, buf);
 #endif

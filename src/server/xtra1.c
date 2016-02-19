@@ -7905,7 +7905,7 @@ static void process_global_event(int ge_id) {
 			}
 
 			sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
-			msg_broadcast_format(0, buf);
+			msg_broadcast(0, buf);
 #ifdef TOMENET_WORLDS
 			if (cfg.worldd_events) world_msg(buf);
 #endif
