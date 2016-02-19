@@ -203,14 +203,10 @@ static void show_news_aux(cptr why)
  * standard distributions, is most likely to be "lost", making it
  * impossible to create the high score file.
  */
-void show_news(void)
-{
+void show_news(void) {
 	int		fd = -1;
-
 	int		mode = 0644;
-
 	FILE        *fp;
-
 	char	buf[1024];
 
 
@@ -223,8 +219,7 @@ void show_news(void)
 	fd = fd_open(buf, O_RDONLY);
 
 	/* Failure */
-	if (fd < 0)
-	{
+	if (fd < 0) {
 		char why[1024];
 
 		/* Message */
@@ -247,13 +242,11 @@ void show_news(void)
 	fp = my_fopen(buf, "r");
 
 	/* Dump */
-	if (fp)
-	{
+	if (fp) {
 		/* Dump the file to the screen */
-		while (0 == my_fgets(fp, buf, 1024, FALSE))
-		{
+		while (0 == my_fgets(fp, buf, 1024, FALSE)) {
 			/* Display and advance */
-			s_printf(buf);
+			s_printf("%s", buf);
 			s_printf("\n");
 		}
 
@@ -270,8 +263,7 @@ void show_news(void)
 	fd = fd_open(buf, O_RDONLY);
 
 	/* Failure */
-	if (fd < 0)
-	{
+	if (fd < 0) {
 		/* File type is "DATA" */
 		FILE_TYPE(FILE_TYPE_DATA);
 
@@ -279,8 +271,7 @@ void show_news(void)
 		fd = fd_make(buf, mode);
 
 		/* Failure */
-		if (fd < 0)
-		{
+		if (fd < 0) {
 			char why[1024];
 
 			/* Message */
