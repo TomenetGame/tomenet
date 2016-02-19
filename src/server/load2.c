@@ -2645,7 +2645,7 @@ static errr rd_savefile_new_aux(int Ind) {
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_K_IDX) {
-		s_printf(format("Too many (%u) object kinds!\n", tmp16u));
+		s_printf("Too many (%u) object kinds!\n", tmp16u);
 		return (22);
 	}
 
@@ -2666,7 +2666,7 @@ static errr rd_savefile_new_aux(int Ind) {
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_T_IDX) {
-		s_printf(format("Too many (%u) trap kinds!\n", tmp16u));
+		s_printf("Too many (%u) trap kinds!\n", tmp16u);
 		return (22);
 	}
 
@@ -3021,7 +3021,7 @@ errr rd_server_savefile() {
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_R_IDX) {
-		s_printf(format("Too many (%u) monster races!\n", tmp16u));
+		s_printf("Too many (%u) monster races!\n", tmp16u);
 		return (21);
 	}
 
@@ -3036,7 +3036,7 @@ errr rd_server_savefile() {
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_A_IDX) {
-		s_printf(format("Too many (%u) artifacts!\n", tmp16u));
+		s_printf("Too many (%u) artifacts!\n", tmp16u);
 		return (24);
 	}
 	/* Read the artifact flags */
@@ -3074,7 +3074,7 @@ errr rd_server_savefile() {
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_PARTIES) {
-		s_printf(format("Too many (%u) parties!\n", tmp16u));
+		s_printf("Too many (%u) parties!\n", tmp16u);
 		return (25);
 	}
 
@@ -3100,7 +3100,7 @@ errr rd_server_savefile() {
 	/* get the number of monsters to be loaded */
 	rd_u32b(&tmp32u);
 	if (tmp32u > MAX_M_IDX) {
-		s_printf(format("Too many (%u) monsters!\n", tmp16u));
+		s_printf("Too many (%u) monsters!\n", tmp16u);
 		return (29);
 	}
 	/* load the monsters */
@@ -3111,7 +3111,7 @@ errr rd_server_savefile() {
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_O_IDX) {
-		s_printf(format("Too many (%u) objects!\n", tmp16u));
+		s_printf("Too many (%u) objects!\n", tmp16u);
 		return (26);
 	}
 
@@ -3132,7 +3132,7 @@ errr rd_server_savefile() {
 
 	/* Incompatible save files */
 	if (num_houses > MAX_HOUSES) {
-		s_printf(format("Too many (%u) houses!\n", num_houses));
+		s_printf("Too many (%u) houses!\n", num_houses);
 		return (27);
 	}
 
