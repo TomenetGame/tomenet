@@ -5970,9 +5970,8 @@ int gold_colour(int amt, bool fuzzy, bool compact) {
 }
 
 /* Catching bad players who hack their client.. nasty! */
-void lua_intrusion(int Ind, char *problem_diz)
-{
-	s_printf(format("LUA INTRUSION: %s : %s\n", Players[Ind]->name, problem_diz));
+void lua_intrusion(int Ind, char *problem_diz) {
+	s_printf("LUA INTRUSION: %s : %s\n", Players[Ind]->name, problem_diz);
 
 #if 0 /* 4.4.8 client had a bug, mass-near-killing people. Let's turn this silly stuff off. -C. Blue */
 	take_hit(Ind, Players[Ind]->chp - 1, "", 0);
