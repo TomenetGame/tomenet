@@ -85,8 +85,7 @@ bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x,
  * Determine if the player "hits" a monster (normal combat).
  * Note -- Always miss 5%, always hit 5%, otherwise random.
  */
-bool test_hit_fire(int chance, int ac, int vis)
-{
+bool test_hit_fire(int chance, int ac, int vis) {
 	int k;
 
 	/* Percentile dice */
@@ -115,8 +114,7 @@ bool test_hit_fire(int chance, int ac, int vis)
  *
  * Note -- Always miss 5%, always hit 5%, otherwise random.
  */
-bool test_hit_melee(int chance, int ac, int vis)
-{
+bool test_hit_melee(int chance, int ac, int vis) {
 	int k;
 
 	/* Percentile dice */
@@ -144,8 +142,7 @@ bool test_hit_melee(int chance, int ac, int vis)
  * Critical hits (from objects thrown by player)
  * Factor in item weight, total plusses, and player level.
  */
-s16b critical_shot(int Ind, int weight, int plus, int dam)
-{
+s16b critical_shot(int Ind, int weight, int plus, int dam) {
 	player_type *p_ptr = NULL;
 	int i, k;
 	bool boomerang = FALSE;
@@ -160,7 +157,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 
 		i = (weight + ((p_ptr->to_h + plus) * 5) +
 		    (boomerang ? 0 : get_skill_scale(p_ptr, SKILL_ARCHERY, 150)));
-		i += 50 * BOOST_CRIT(p_ptr->xtra_crit);
+		i += 50 * BOOST_CRIT(p_ptr->xtra_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
 	}
 	else i = weight;
 
@@ -198,8 +195,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
  *
  * Factor in weapon weight, total plusses, player level.
  */
-s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit, int o_crit)
-{
+s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit, int o_crit) {
 	player_type *p_ptr = Players[Ind];
 	int i, k, w;
 
@@ -218,7 +214,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 	if (w < 10) w = 10; /* shouldn't happen anyways */
 	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + get_skill_scale(p_ptr, SKILL_MASTERY, 150);
 
-	i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit);
+	i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
 	if (allow_skill_crit) i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
 
 	/* Chance */
