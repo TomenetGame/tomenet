@@ -208,7 +208,7 @@ extern void cat_script(int Ind, char *name);
 extern void msg_print(int Ind, cptr msg);
 extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_print_near(int Ind, cptr msg);
-extern void msg_admin(cptr msg);
+extern void msg_admins(int Ind, cptr msg);
 
 $static int lua_level_speed(worldpos *wpos) { return level_speed(wpos); }
 static int lua_level_speed@level_speed(worldpos *wpos);
