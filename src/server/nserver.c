@@ -1604,6 +1604,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 		    p_ptr->px, p_ptr->py);
 		clockin(player, 7); /* Remember his wpos -- should be redundant with clockin() call in dungeon.c:process_player_change_wpos() */
+		clockin(player, 0); /* Timestamp him (laston) */
 	} else
 		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=-,-,-;xy=-,-)\n",
 		    showtime(),
