@@ -843,144 +843,149 @@ struct npc_type{
 /*
  * Monster information, for a specific monster.
  *
- * Note: fy, fx constrain dungeon size to 256x256
+ * NOTE: fy, fx constrain dungeon size to 256x256
+ *
+ * NOTE: Keep this structure packed tightly since 32768 of these are allocated
+ * Try to keep fields sorted by size of the data type
  */
 
 typedef struct monster_type monster_type;
 
 struct monster_type {
-   byte pet;			/* Special pet value (not an ID). 0 = not a pet. 1 = is a pet. */
-   bool special;                   /* Does it use a special r_info ? */
-   monster_race *r_ptr;            /* The aforementionned r_info */
+	monster_race *r_ptr;		/* Used for special monsters and questors */
+	bool special;			/* Does it use a special r_info ? */
+	byte pet;			/* Special pet value (not an ID). 0 = not a pet. 1 = is a pet. */
 
-   s32b owner;                     /* id of Player owning it */
+	s16b r_idx;			/* Monster race index */
 
-   s16b r_idx;			/* Monster race index */
+	s32b owner;			/* ID of the player owning it (if it is a pet) */
 
-   byte fy;			/* Y location on map */
-   byte fx;			/* X location on map */
+	byte fy;			/* Y location on map */
+	byte fx;			/* X location on map */
 
-   struct worldpos wpos;
+	struct worldpos wpos;		/* (6 x s16b) */
 
-   s32b exp;                       /* Experience of the monster */
-   s16b level;                     /* Level of the monster */
+	s32b exp;			/* Experience of the monster */
+	s16b level;			/* Level of the monster */
 
-   monster_blow blow[4];        /* Up to four blows per round */
-   byte speed;			/* ORIGINAL Monster "speed" (gets copied from r_ptr->speed on monster placement) */
-   byte mspeed;			/* CURRENT Monster "speed" (is set to 'speed' initially on monster placement) */
-   s16b ac;                     /* Armour Class */
-   s16b org_ac;               	/* Armour Class */
+	monster_blow blow[4];		/* Up to four blows per round (6 x byte) */
+	byte speed;			/* ORIGINAL Monster "speed" (gets copied from r_ptr->speed on monster placement) */
+	byte mspeed;			/* CURRENT Monster "speed" (is set to 'speed' initially on monster placement) */
+	s16b ac;			/* Armour Class */
+	s16b org_ac;			/* Armour Class */
 
-   s32b hp;                        /* Current Hit points */
-   s32b maxhp;                     /* Max Hit points */
-   s32b org_maxhp;                 /* Max Hit points */
+	s32b hp;			/* Current Hit points */
+	s32b maxhp;			/* Max Hit points */
+	s32b org_maxhp;			/* Max Hit points */
 
-   s16b csleep;		/* Inactive counter */
+	s16b csleep;			/* Inactive counter */
 
-   s16b energy;		/* Monster "energy" */
-   byte no_move;	/* special effect GF_STOP */
+	u16b hold_o_idx;		/* Object being held (if any) */
 
-   byte monfear;		/* Monster is afraid */
-   byte monfear_gone;		/* Monster is no longer afraid because it has no other options or is temporarily immune */
-   byte confused;		/* Monster is confused */
-   byte stunned;		/* Monster is stunned */
-   byte paralyzed;		/* Monster is paralyzed (unused) */
-   byte bleeding;		/* Monster is bleeding (unused) */
-   byte poisoned;		/* Monster is poisoned (unused) */
-   byte blinded;		/* monster appears confused (unused: wrapped as confusion currently) */
-   byte silenced;		/* monster can't cast spells for a short time (for new mindcrafters) */
-   int charmedignore;		/* monster is charmed in a way that it ignores players */
+	s16b energy;			/* Monster "energy" */
+	byte no_move;			/* special effect GF_STOP */
 
-   u16b hold_o_idx;	/* Object being held (if any) */
+	byte monfear;			/* Monster is afraid */
+	byte monfear_gone;		/* Monster is no longer afraid because it has no other options or is temporarily immune */
+	byte confused;			/* Monster is confused */
+	byte stunned;			/* Monster is stunned */
+	byte paralyzed;			/* Monster is paralyzed (unused) */
+	byte bleeding;			/* Monster is bleeding (unused) */
+	byte poisoned;			/* Monster is poisoned (unused) */
+	byte blinded;			/* monster appears confused (unused: wrapped as confusion currently) */
+	byte silenced;			/* monster can't cast spells for a short time (for new mindcrafters) */
+	s32b charmedignore;		/* monster is charmed in a way that it ignores players */
 
-   s16b cdis;			/* Current dis from player */
+	s16b cdis;			/* Current dis from player */
 
-   /*	bool los;*/			/* Monster is "in sight" */
-   /*	bool ml;*/			/* Monster is "visible" */
+	// bool los;			/* Monster is "in sight" */
+	// bool ml;			/* Monster is "visible" */
 
-   s16b closest_player;	/* The player closest to this monster */
+	s16b closest_player;		/* The player closest to this monster */
 
-   #ifdef WDT_TRACK_OPTIONS
+#ifdef WDT_TRACK_OPTIONS
 
-   byte ty;			/* Y location of target */
-   byte tx;			/* X location of target */
-   byte t_dur;			/* How long are we tracking */
-   byte t_bit;			/* Up to eight bit flags */
+	byte ty;			/* Y location of target */
+	byte tx;			/* X location of target */
+	byte t_dur;			/* How long are we tracking */
+	byte t_bit;			/* Up to eight bit flags */
 
-   #endif
-
-   #ifdef DRS_SMART_OPTIONS
-
-   u32b smart;			/* Field for "smart_learn" */
-
-   #endif
-
-   u16b clone;			/* clone value */
-   u16b clone_summoning;		/* counter to keep track of summoning */
-
-   s16b mind;                      /* Current action -- golems */
-
-   #ifdef RANDUNIS
-   u16b ego;                       /* Ego monster type */
-   s32b name3;			/* Randuni seed, if any */
-   #endif
-
-   s16b status;			/* Status(friendly, pet, companion, ..) */
-   s16b target;			/* Monster target */
-   s16b possessor;		/* Is it under the control of a possessor ? */
-   s16b destx, desty;		/* Monster target grid to walk to. Added for questors (quest_info). */
-   s16b determination;		/* unused, maybe useful in the future for determining what it takes to stop the monster from doing something */
-   s16b limit_hp;		/* for questors - revert hostility when <= this (makes lookup easier than referring through lots of pointers..) */
-
-   u16b ai_state;		/* What special behaviour this monster takes now? */
-   s16b last_target;		/* For C. Blue's anti-cheeze C_BLUE_AI in melee2.c */
-   s16b last_target_melee;	/* For C. Blue's C_BLUE_AI_MELEE in melee2.c */
-   s16b last_target_melee_temp;	/* For C. Blue's C_BLUE_AI_MELEE in melee2.c */
-   s16b switch_target;		/* For distract_monsters(), implemented within C_BLUE_AI_MELEE in melee2.c */
-
-   s16b cdis_on_damage;		/* New Ball spell / explosion anti-cheeze */
-//   byte turns_tolerance;	/* Optional: How many turns pass until we react the new way */
-   s16b damage_tx, damage_ty;	/* new temporary target position: where we received damage from */
-   signed char previous_direction;	/* Optional: Don't move right back where we came from (at least during this turn -_-) after reaching the damage epicentrum. */
-   s16b damage_dis;		/* Remember distance to epicenter */
-   s16b p_tx, p_ty;		/* Coordinates from where the player cast the damaging projection */
-
-   s16b henc, henc_top;	/* 'highest_encounter' - my final anti-cheeze strike I hope ;) - C. Blue
-      This keeps track of the highest player which the monster
-      has 'encountered' (might offer various definitions of this
-      by different #defines) and adjusts its own experience value
-      towards that player, so low players who get powerful help
-      will get less exp out of it. */
-   byte backstabbed;		/* has this monster been backstabbed from cloaking mode already? prevent exploit */
-   byte taunted;		/* has this monster been taunted (melee technique)? */
-#ifdef COMBO_AM_IC_CAP
-   byte intercepted;		/* remember best interception cap of adjacent players to determine reduction of subsequent antimagic field chances to avoid excessive suppression */
 #endif
 
-   bool no_esp_phase;		/* for WEIRD_MIND esp flickering */
-   int extra;			/* extra flag for debugging/testing purpose; also used for target dummy's "snowiness" now; new: also for Sauron boosting */
+#ifdef DRS_SMART_OPTIONS
+
+	u32b smart;			/* Field for "smart_learn" */
+
+#endif
+
+	u16b clone;			/* clone value */
+	u16b clone_summoning;		/* counter to keep track of summoning */
+
+	s16b mind;			/* Current action -- golems */
+
+#ifdef RANDUNIS
+	u16b ego;			/* Ego monster type */
+	s32b name3;			/* Randuni seed, if any */
+#endif
+
+	s16b status;			/* Status(friendly, pet, companion, ..) */
+	s16b target;			/* Monster target */
+	s16b possessor;			/* Is it under the control of a possessor ? */
+	s16b destx, desty;		/* Monster target grid to walk to. Added for questors (quest_info). */
+	s16b determination;		/* unused, maybe useful in the future for determining what it takes to stop the monster from doing something */
+	s16b limit_hp;			/* for questors - revert hostility when <= this (makes lookup easier than referring through lots of pointers..) */
+
+	u16b ai_state;			/* What special behaviour this monster takes now? */
+	s16b last_target;		/* For C. Blue's anti-cheeze C_BLUE_AI in melee2.c */
+	s16b last_target_melee;		/* For C. Blue's C_BLUE_AI_MELEE in melee2.c */
+	s16b last_target_melee_temp;	/* For C. Blue's C_BLUE_AI_MELEE in melee2.c */
+	s16b switch_target;		/* For distract_monsters(), implemented within C_BLUE_AI_MELEE in melee2.c */
+
+	s16b cdis_on_damage;		/* New Ball spell / explosion anti-cheeze */
+	// byte turns_tolerance;	/* Optional: How many turns pass until we react the new way */
+	s16b damage_tx, damage_ty;	/* new temporary target position: where we received damage from */
+	s16b damage_dis;		/* Remember distance to epicenter */
+	s16b p_tx, p_ty;		/* Coordinates from where the player cast the damaging projection */
+	signed char previous_direction;	/* Optional: Don't move right back where we came from (at least during this turn -_-) after reaching the damage epicentrum. */
+
+	byte backstabbed;		/* has this monster been backstabbed from cloaking mode already? prevent exploit */
+
+	s16b henc, henc_top;		/* 'highest_encounter' - my final anti-cheeze strike I hope ;) - C. Blue
+		This keeps track of the highest player which the monster
+		has 'encountered' (might offer various definitions of this
+		by different #defines) and adjusts its own experience value
+		towards that player, so low players who get powerful help
+		will get less exp out of it. */
+	byte taunted;			/* has this monster been taunted (melee technique)? */
+#ifdef COMBO_AM_IC_CAP
+	byte intercepted;		/* remember best interception cap of adjacent players to determine reduction of subsequent antimagic field chances to avoid excessive suppression */
+#endif
+
+	s32b extra;			/* extra flag for debugging/testing purpose; also used for target dummy's "snowiness" now; new: also for Sauron boosting */
 
 #ifdef MONSTER_ASTAR
-    int astar_idx;		/* index in available A* arrays. A* is expensive, so we only provide a couple of instances for a few monsters to use */
+	s32b astar_idx;			/* index in available A* arrays. A* is expensive, so we only provide a couple of instances for a few monsters to use */
 #endif
 
-    u16b do_dist;		/* execute all monster teleportation at the end of turn */
+	/* Prevent a monster getting hit by cumulative projections caused recursively in project()
+		(except for intended effects such as runecraft sub-explosions). */
+	s32b hit_proj_id;
+
+	u16b do_dist;			/* execute all monster teleportation at the end of turn */
 
 #if 0 /* currently solved by bidirectional LoS testing via DOUBLE_LOS_SAFETY instead! */
-    byte xlos_x[5], xlos_y[5];	/* Prevent system immanent LoS-exploit when monster gets targetted diagonally */
-    /* note: affects near_hit, process_monsters, make_attack_spell, summon_possible, clean_shot..., projectable..., los... */
+	byte xlos_x[5], xlos_y[5];	/* Prevent system immanent LoS-exploit when monster gets targetted diagonally */
+	/* note: affects near_hit, process_monsters, make_attack_spell, summon_possible, clean_shot..., projectable..., los... */
 #endif
 
-    /* Prevent a monster getting hit by cumulative projections caused recursively in project()
-       (except for intended effects such as runecraft sub-explosions). */
-    int hit_proj_id;
+	/* for new quest_info */
+	s16b quest, questor_idx;
+	bool questor;
+	byte questor_invincible;	/* further quest_info flags are referred to when required, no need to copy all of them here */
+	byte questor_hostile;		/* hostility flags (0x1 = vs py, 0x2 = vs mon) */
+	byte questor_target;		/* can get targetted by monsters and stuff..? */
 
-    /* for new quest_info */
-    bool questor;
-    byte questor_invincible; /* further quest_info flags are referred to when required, no need to copy all of them here */
-    byte questor_hostile; /* hostility flags (0x1 = vs py, 0x2 = vs mon) */
-    byte questor_target; /* can get targetted by monsters and stuff..? */
-    s16b quest, questor_idx;
+	bool no_esp_phase;		/* for WEIRD_MIND esp flickering */
 };
 
 typedef struct monster_ego monster_ego;
