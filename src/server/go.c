@@ -2292,7 +2292,7 @@ static int test_for_response() {
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	/* we might not even want any responses (and them causing slowdown) here,
 	   in case we're doing a warm restart while TomeNET server keeps running! */
-	if (terminating) return 0;
+	if (terminating) return -1;
 #endif
 
 	if (go_err(DOWN, NONE, "test_for_response")) return -3;
