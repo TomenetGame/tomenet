@@ -3776,7 +3776,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, j, k, stage = quest_get_stage(Ind, q_idx), questor_idx = p_ptr->interact_questor_idx;
-	char *c, text[MAX_CHARS * 2];
+	char *c, text[MAX_CHARS * 2], *ct;
 	qi_keyword *q_key;
 	qi_kwreply *q_kwr;
 	int password_hack;
@@ -3786,9 +3786,30 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	if (p_ptr->questor_dialogue_hack_xy != p_ptr->px + (p_ptr->py << 8)) return;
 	if (p_ptr->questor_dialogue_hack_wpos != p_ptr->wpos.wx + (p_ptr->wpos.wy << 8) + (p_ptr->wpos.wz << 16)) return;
 
+	/* treat non-alphanum as spaces */
+	c = str;
+	while (*c) {
+		if (!isalpha(*c) && !isdigit(*c))
+			*c = ' ';
+		c++;
+	}
 	/* trim leading/trailing spaces */
 	while (*str == ' ') str++;
 	while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
+	/* reduce multi-spaces */
+	c = str;
+	ct = text;
+	while (*c) {
+		if (*c == ' ' && *(c + 1) == ' ') {
+			c++;
+			continue;
+		}
+		*ct = *c;
+		ct++;
+		c++;
+	}
+	*ct = *c;
+	strcpy(str, text);
 
 #if 0
 	if (!str[0] || str[0] == '\e') return; /* player hit the ESC key.. */
@@ -3806,11 +3827,41 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		c++;
 	}
 
+	/* hacks: player obviously wants to get out -- simulate ESC.
+	   todo: only allow these words if they're not used as keywords at the same time */
+	if (streq(str, "quit") || streq(str, "exit") || streq(str, "leave")) {
+		msg_print(Ind, " ");
+		return;
+	}
+
 	/* echo own reply for convenience */
 	msg_print(Ind, "\374 ");
 	if (!strcmp(str, "y")) msg_print(Ind, "\374\377u>\377UYes");
 	else if (!strcmp(str, "n")) msg_print(Ind, "\374\377u>\377UNo");
 	else msg_format(Ind, "\374\377u>\377U%s", str);
+
+	/* default "goodbye" phrases - same as ESC but at least give an answer since they are more polite :D */
+	if (streq(str, "bye") || streq(str, "goodbye") || streq(str, "good bye") || streq(str, "farewell") || streq(str, "fare well")
+	    || streq(str, "seeyou") || streq(str, "see you") || streq(str, "seeya") || streq(str, "see ya") || streq(str, "take care")) {
+		/* questor can actually speak? */
+		if (!q_ptr->stage[stage].talk_examine[questor_idx]) {
+			msg_print(Ind, "\374 ");
+			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
+			switch (rand_int(3)) {
+			case 0:
+				msg_print(Ind, "\374\377UGoodbye.");
+				break;
+			case 1:
+				msg_print(Ind, "\374\377UFarewell.");
+				break;
+			case 2:
+				msg_print(Ind, "\374\377UTake care.");
+				break;
+			}
+		}
+		msg_print(Ind, " ");
+		return;
+	}
 
 	/* scan keywords for match */
 	for (i = 0; i < q_ptr->keywords; i++) {
