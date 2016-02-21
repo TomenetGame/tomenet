@@ -1032,8 +1032,8 @@ void go_challenge_accept(int Ind, bool new_wager) {
 	case TOP_RANK * 2 + 3: case TOP_RANK * 2 + 4: //HIDDEN_STAGE
 #ifdef HIDDEN_STAGE
 		if (p_ptr->go_hidden_stage) {
-			Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a..*oh!* he's already standing in the doorway!");
-			Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "Show him that we're no pushovers!");
+			Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Alright, wait here for a..oh! He's already here!");
+			Send_store_special_str(Ind, 8, 10, TERM_ORANGE, "..show him that we're no pushovers!");
 			break;
 		}
 #endif
