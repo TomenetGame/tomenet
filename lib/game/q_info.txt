@@ -340,12 +340,12 @@ yY:*dank*
 #yY:thanks:thank you:thankyou:thanks you:thx:merci:danke:gracias:grazie:arigato:arigatou:xiexie:xie xie:spacibo:spasibo
 yR:-:You are welcome!
 
-Y:0:0:-:*bye*:-:1
-Y:0:0:-:*see*you*:-:1
-Y:0:0:-:*fare*well*:-:1
-y:-1:-1:-:*bye*
-yY:*see*you*:*fare*well*
-yR:-:Take care.
+#Y:0:0:-:*bye*:-:1
+#Y:0:0:-:*see*you*:-:1
+#Y:0:0:-:*fare*well*:-:1
+#y:-1:-1:-:*bye*
+#yY:*see*you*:*fare*well*
+#yR:-:Take care.
 
 
 #Talk to a roaming guard who patrols Menegroth
