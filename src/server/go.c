@@ -61,9 +61,9 @@
    sometimes, provided you have beaten all the regular characters. ^^ */
 #define HIDDEN_STAGE 4 /* queue chance until hidden stage appears */
 #ifdef HIDDEN_STAGE
- #define HS_ENGINE_FUEGO
+ //#define HS_ENGINE_FUEGO /* TODO: fix - makes our official server hang on startup, works on my pc +>_> */
  //#define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
- //#define HS_ENGINE_PACHI
+ #define HS_ENGINE_PACHI /* Prepare to get crushed -.- */
  static void set_hidden_stage(bool active);
 #endif
 
@@ -182,7 +182,7 @@ static void writeToPipe(char *data);
 static void readFromPipe(char *buf, int *cont);
 static int test_for_response(void); /* non-blocking read */
 static int wait_for_response(void); /* blocking read */
-#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 static int handle_loading(void);
 #endif
 static void go_engine_move_CPU(void);
