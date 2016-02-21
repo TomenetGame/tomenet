@@ -61,9 +61,9 @@
    sometimes, provided you have beaten all the regular characters. ^^ */
 #define HIDDEN_STAGE 4 /* queue chance until hidden stage appears */
 #ifdef HIDDEN_STAGE
- //#define HS_ENGINE_FUEGO /* TODO: fix - makes our official server hang on startup, works on my pc +>_> */
+ #define HS_ENGINE_FUEGO /* probably requires dan level to overcome */
  //#define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
- #define HS_ENGINE_PACHI /* Prepare to get crushed -.- */
+ //#define HS_ENGINE_PACHI /* ---todo: implement--- */
  static void set_hidden_stage(bool active);
 #endif
 
@@ -3048,23 +3048,29 @@ static void set_hidden_stage(bool active) {
 		hidden_stage_active = TRUE;
  #ifdef HS_ENGINE_FUEGO
 		engine_api = EAPI_FUEGO;
+		s_printf("GO: EAPI_FUEGO, HS\n");
  #endif
  #ifdef HS_ENGINE_GNUGOMC
 		engine_api = EAPI_GNUGO;
+		s_printf("GO: EAPI_GNUGO, HS\n");
  #endif
  #ifdef HS_ENGINE_PACHI
 		engine_api = EAPI_PACHI;
+		s_printf("GO: EAPI_PACHI, HS\n");
  #endif
 	} else {
 		hidden_stage_active = FALSE;
  #ifdef ENGINE_FUEGO
 		engine_api = EAPI_FUEGO;
+		s_printf("GO: EAPI_FUEGO\n");
  #endif
  #ifdef ENGINE_GNUGO
 		engine_api = EAPI_GNUGO;
+		s_printf("GO: EAPI_GNUGO\n");
  #endif
  #ifdef ENGINE_PACHI
 		engine_api = EAPI_PACHI;
+		s_printf("GO: EAPI_PACHI\n");
  #endif
 	}
 }
