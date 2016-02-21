@@ -1246,6 +1246,12 @@ void go_challenge_start(int Ind) {
 	}
 	Send_store_special_str(Ind, 5, GO_BOARD_X + 6 - (strlen(avatar_name) + 1) / 2, TERM_YELLOW, avatar_name);
 
+	/* Set colour and notice game start. */
+	CPU_has_white = (p_ptr->go_level < TOP_RANK * 2);
+#ifdef HIDDEN_STAGE
+	if (p_ptr->go_hidden_stage && p_ptr->go_level == TOP_RANK * 2 + 2) CPU_has_white = TRUE;
+#endif
+
 	if (engine_api == EAPI_FUEGO) {
 		char tmp[80];
 
@@ -1266,11 +1272,6 @@ void go_challenge_start(int Ind) {
 		}
 	}
 
-	/* Set colour and notice game start. */
-	CPU_has_white = (p_ptr->go_level < TOP_RANK * 2);
-#ifdef HIDDEN_STAGE
-	if (p_ptr->go_hidden_stage && p_ptr->go_level == TOP_RANK * 2 + 2) CPU_has_white = TRUE;
-#endif
 	CPU_now_to_move = !CPU_has_white;
 	player_timeleft_sec = player_timelimit_sec;
 
