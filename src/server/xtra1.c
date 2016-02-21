@@ -2859,6 +2859,15 @@ void calc_boni(int Ind) {
 
 	int lite_inc_norm = 0, lite_inc_white = 0, old_lite_type;
 
+	/* Equipment boni that might not be applied depending on encumberment */
+#ifndef USE_NEW_SHIELDS
+	int may_ac = 0;
+#endif
+#ifndef NEW_SHIELDS_NO_AC
+	int may_to_a, may_dis_to_a;
+#endif
+	bool may_reflect = FALSE;
+
 
 #ifdef EQUIPMENT_SET_BONUS
 	/* for boni of artifact "sets" ie arts of (about) identical name - C. Blue */
@@ -4016,9 +4025,10 @@ void calc_boni(int Ind) {
 		}
 		/* The Ring of Phasing, exclusively */
 		if (f4 & (TR4_IM_NETHER)) { p_ptr->immune_neth = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_INETH; }
-		if ((f5 & (TR5_REFLECT)) &&
-		    (o_ptr->tval != TV_SHIELD || !p_ptr->heavy_shield))
-			{ p_ptr->reflect = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RREFL; }
+		if (f5 & (TR5_REFLECT)) {
+			if (o_ptr->tval != TV_SHIELD) { p_ptr->reflect = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RREFL; }
+			else may_reflect = TRUE;
+		}
 		if (f3 & (TR3_SH_FIRE)) { p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_AFIRE; }
 		if (f5 & (TR5_SH_COLD)) { p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_ACOLD; }
 		if (f3 & (TR3_SH_ELEC)) { p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_AELEC; }
@@ -4054,7 +4064,7 @@ void calc_boni(int Ind) {
 		    )
 			p_ptr->black_breath_tmp = TRUE;
 
-//		if (f5 & (TR5_IMMOVABLE)) p_ptr->immovable = TRUE;
+		//if (f5 & (TR5_IMMOVABLE)) p_ptr->immovable = TRUE;
 
 		/* note: TR1_VAMPIRIC isn't directly applied for melee
 		   weapons here, but instead in the py_attack... functions
@@ -4063,32 +4073,24 @@ void calc_boni(int Ind) {
 
 
 
-		/* Modify the base armor class */
+		/* Modify the base armor class, which is always known (dis_) */
 #ifdef USE_NEW_SHIELDS
-		if (o_ptr->tval != TV_SHIELD)
+		if (o_ptr->tval != TV_SHIELD) {
+			p_ptr->ac += o_ptr->ac;
+			p_ptr->dis_ac += o_ptr->ac;
+		}
 #else
-		if (o_ptr->tval == TV_SHIELD && p_ptr->heavy_shield)
-			p_ptr->ac += o_ptr->ac / 2;
-		else
+		if (o_ptr->tval == TV_SHIELD) may_ac += o_ptr->ac;
+		else {
+			p_ptr->ac += o_ptr->ac;
+			p_ptr->dis_ac += o_ptr->ac;
+		}
 #endif
-		p_ptr->ac += o_ptr->ac;
-
-		/* The base armor class is always known */
-#ifdef USE_NEW_SHIELDS
-		if (o_ptr->tval != TV_SHIELD)
-#else
-		if (o_ptr->tval == TV_SHIELD && p_ptr->heavy_shield)
-			p_ptr->dis_ac += o_ptr->ac / 2;
-		else
-#endif
-		p_ptr->dis_ac += o_ptr->ac;
 
 #ifndef NEW_SHIELDS_NO_AC
 		/* Apply the bonuses to armor class */
-		if (o_ptr->tval == TV_SHIELD && p_ptr->heavy_shield)
-			p_ptr->to_a += o_ptr->to_a / 2;
-		else
-			p_ptr->to_a += o_ptr->to_a;
+		if (o_ptr->tval == TV_SHIELD) may_to_a += o_ptr->to_a;
+		else p_ptr->to_a += o_ptr->to_a;
 #else
 		if (o_ptr->tval != TV_SHIELD) p_ptr->to_a += o_ptr->to_a;
 #endif
@@ -4096,10 +4098,8 @@ void calc_boni(int Ind) {
 		/* Apply the mental bonuses to armor class, if known */
 		if (object_known_p(Ind, o_ptr)) {
 #ifndef NEW_SHIELDS_NO_AC
-			if (o_ptr->tval == TV_SHIELD && p_ptr->heavy_shield)
-				p_ptr->dis_to_a += o_ptr->to_a / 2;
-			else
-				p_ptr->dis_to_a += o_ptr->to_a;
+			if (o_ptr->tval == TV_SHIELD) may_dis_to_a += o_ptr->to_a;
+			else p_ptr->dis_to_a += o_ptr->to_a;
 #else
 			if (o_ptr->tval != TV_SHIELD) p_ptr->dis_to_a += o_ptr->to_a;
 #endif
@@ -5010,8 +5010,29 @@ void calc_boni(int Ind) {
 	/* Assume not heavy */
 	p_ptr->heavy_shield = FALSE;
 	/* It is hard to hold a heavy shield */
-	if (o_ptr->k_idx && o_ptr->tval == TV_SHIELD && (hold < (o_ptr->weight / 10 - 4) * 7)) /* dual-wielder? */
-		p_ptr->heavy_shield = TRUE;
+	if (o_ptr->k_idx && o_ptr->tval == TV_SHIELD) {
+		if (hold < (o_ptr->weight / 10 - 4) * 7) { /* dual-wielder? */
+			p_ptr->heavy_shield = TRUE;
+#ifndef USE_NEW_SHIELDS
+			p_ptr->ac += may_ac / 2;
+			p_ptr->dis_ac += may_ac / 2;
+#endif
+#ifndef NEW_SHIELDS_NO_AC
+			p_ptr->to_a += may_to_a / 2;
+			p_ptr->dis_to_a += may_dis_to_a / 2;
+#endif
+		} else {
+			if (may_reflect) { p_ptr->reflect = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RREFL; }
+#ifndef USE_NEW_SHIELDS
+			p_ptr->ac += may_ac;
+			p_ptr->dis_ac += may_ac;
+#endif
+#ifndef NEW_SHIELDS_NO_AC
+			p_ptr->to_a += may_to_a;
+			p_ptr->dis_to_a += may_dis_to_a;
+#endif
+		}
+	}
 
 #ifdef USE_BLOCKING
 	if (o_ptr->k_idx && o_ptr->tval == TV_SHIELD) { /* might be dual-wielder */
@@ -5356,6 +5377,15 @@ void calc_boni(int Ind) {
 			p_ptr->awkward_wield = TRUE;
 		}
 	}
+
+#ifdef USE_PARRYING
+	if (p_ptr->heavy_wield) p_ptr->weapon_parry /= 3;
+	else if (p_ptr->awkward_wield) p_ptr->weapon_parry /= 2;
+#endif
+#ifdef USE_BLOCKING
+	if (p_ptr->heavy_shield) p_ptr->shield_deflect /= 3;
+#endif
+
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && !p_ptr->inventory[INVEN_ARM].k_idx) {
 		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		if (f4 & TR4_COULD2H) p_ptr->easy_wield = TRUE;
@@ -5666,6 +5696,7 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) csheet_boni[14].cb[8] |= CB9_SDEMN;
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) csheet_boni[14].cb[9] |= CB10_SUNDD;
 	//prob: it's melee only! if (get_skill(p_ptr, SKILL_HCURING) >= 50) csheet_boni[14].cb[9] |= CB10_SUNDD;
+
 
 	/* Take note when "heavy bow" changes */
 	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
