@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. February 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 21. February 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9003,7 +9003,11 @@ WINNERS_ONLY
 
 (NO_SEED
         An ego item that is never created randomly (in terms of abilities
-        or power).)
+        or power) and that is a lesser type and therefore allowed to stack with
+        other similar ego items. These types are currently:
+        Cursed/indestructible rings,
+        Fireproof/waterproof scrolls and books,
+        Any type of ammunition.)
 INSTA_ART
         This item always is an artifact; it has no base-class that can spawn
         non-art items. Example: Long Sword base class can spawn regular long
