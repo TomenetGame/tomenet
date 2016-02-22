@@ -1343,6 +1343,7 @@ They all start with a slash '/' hence they're called slash commands:
             /t * !*   inscribes all uninscribed inventory items '!*'
             /t c !*   inscribes uninscribed inventory item in slot c) '!*'
             Will not affect equipped items.
+            Inscriptions can also be undone again with the /ut command.
 
 /tar <x> <y>
  (/target)
