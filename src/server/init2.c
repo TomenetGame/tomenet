@@ -3224,7 +3224,7 @@ static void set_server_option(char * option, char * value) {
 	else if (!strcmp(option,"FPS")) {
 		cfg.fps = atoi(value);
 		/* Hack -- reinstall the timer handler to match the new FPS */
-		install_timer_tick(dungeon, cfg.fps);
+		if (server_generated) install_timer_tick(dungeon, cfg.fps);
 	}
 	else if (!strcmp(option,"PLAYERS_NEVER_EXPIRE"))
 		cfg.players_never_expire = str_to_boolean(value);
