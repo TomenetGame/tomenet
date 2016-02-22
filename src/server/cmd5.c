@@ -1324,6 +1324,7 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 	/* mimics can easily restore from chauve-souris fruit bat form */
 	if (p_ptr->fruit_bat == 2) p_ptr->fruit_bat = 0;
 
+	p_ptr->body_monster_prev = p_ptr->body_monster;
 	p_ptr->body_monster = r_idx;
 	p_ptr->body_changed = TRUE;
 
@@ -1402,7 +1403,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			j++;
 			k++;
 			if (k >= MAX_R_IDX - 1) {
-//				j = 0;
+				//j = 0;
 				msg_print(Ind, "You don't know any forms!");
 				return;
 			}
@@ -1479,8 +1480,9 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 		else p_ptr->energy -= (level_speed(&p_ptr->wpos) * (55 - skill_mimic / 2)) / 20;//1-pt resolution
 	} else if (spell >= 20000) { /* hack: 20000 masks poly into.. */
 		k = p_ptr->body_monster;
-		//j = get_quantity("Which form (0 for player form)?", 0);
-		j = spell - 20000;
+
+		if (spell == 32767) j = p_ptr->body_monster_prev; /* hack: 32767 marks 'poly into previous' */
+		else j = spell - 20000;
 
 		if (p_ptr->pclass == CLASS_DRUID) { /* SPecial ^^ */
 			if (mimic_druid(j, p_ptr->lev) || (j == 0)) {

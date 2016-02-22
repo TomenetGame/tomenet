@@ -1937,6 +1937,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 				paid = TRUE;
 			}
 			if (p_ptr->body_monster) /* Undo normal mimicry */ {
+				p_ptr->body_monster_prev = p_ptr->body_monster;
 				p_ptr->body_monster = 0;
 				p_ptr->body_changed = TRUE;
 				paid = TRUE;

@@ -571,7 +571,7 @@ void do_mimic() {
 		char *cptr;
 
 		out_val[0] = '\0';
-		get_string("Which form (name or number; 0 for player) ? ", out_val, 40);
+		get_string("Which form (name or number; 0 for player; -1 for previous) ? ", out_val, 40);
 		out_val[40] = '\0';
 
 		/* empty input? */
@@ -579,6 +579,7 @@ void do_mimic() {
 
 		/* did user input an index number or a name? */
 		cptr = out_val;
+		if (*cptr == '-') cptr++; //cover minus sign for '-1' hack
 		while (*cptr) {
 			if (*cptr < '0' || *cptr > '9') {
 				is_string = TRUE;
@@ -615,8 +616,9 @@ void do_mimic() {
 		/* input is a number */
 		else {
 			j = atoi(out_val);
-			if ((j < 0) || (j > 2767)) return;
-			spell = 20000 + j;
+			if (j == -1) spell = 32767; //hack-o-mat -> 32767 is marker for 'previous form'
+			else if ((j < 0) || (j > 2767)) return; //<-32767 limit intended? but we only add 20000? =P
+			else spell = 20000 + j;
 		}
 	}
 

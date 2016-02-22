@@ -2391,7 +2391,7 @@ struct player_type {
 	s16b kinetic_shield;
 
 	s16b auto_tunnel;
-	s16b body_monster;
+	s16b body_monster, body_monster_prev;
 	bool dual_wield;		/* Currently wielding 2 one-handers at once */
 
 	s16b bless_temp_luck;		/* Timed blessing - luck */
