@@ -4771,6 +4771,7 @@ bool monster_death(int Ind, int m_idx) {
 	char buf[160], m_name[MAX_CHARS], o_name[ONAME_LEN];
 	cptr titlebuf;
 
+	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	cave_type *c_ptr;
 
 	monster_type *m_ptr = &m_list[m_idx];
@@ -5017,7 +5018,6 @@ bool monster_death(int Ind, int m_idx) {
 		/* Specialty - even for non-creditable Sauron:
 		   If Sauron is killed in Mt Doom, allow the player to recall! */
 		if (is_Sauron) {
-			dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 			if (d_ptr->type == DI_MT_DOOM) {
 				dun_level *l_ptr = getfloor(&p_ptr->wpos);
 				l_ptr->flags1 |= LF1_IRON_RECALL;
@@ -5389,7 +5389,6 @@ if (cfg.unikill_format) {
 	    && cfg.strict_etiquette
 #endif
 	    ) {
-		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		if ((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN)
 		    && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
@@ -5403,8 +5402,6 @@ if (cfg.unikill_format) {
 		}
 	}
 	else if (is_Sauron) {
-		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
-
 		/* If player killed Sauron, also mark the Shadow (formerly Necromancer) of Dol Guldur as killed!
 		   This is required since we now need a dungeon boss for Dol Guldur again =)
 		   So always kill the Shadow first, if you want his loot. - C. Blue */
@@ -5425,8 +5422,6 @@ if (cfg.unikill_format) {
 
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
-		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
-
 		msg_format(Ind, "\374\377UYou have conquered %s!", d_name +
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		    d_info[in_irondeepdive(wpos) ? iddc[ABS(wpos->wz)].type : d_ptr->type].name
@@ -6189,7 +6184,7 @@ if (cfg.unikill_format) {
 #endif
 
 	/* Hack - can find fireworks on new years eve */
-	if (season_newyearseve &&
+	if ((season_newyearseve || (firework_dungeon_chance && d_ptr && d_ptr->type == firework_dungeon && !rand_int(firework_dungeon_chance))) &&
 	    ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT)) || /*note: demons/undead don't do fireworks..*/
 	    (strchr("hHkpty", r_ptr->d_char))) &&
 	    !(r_ptr->flags7 & RF7_AQUATIC) &&

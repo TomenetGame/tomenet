@@ -5993,6 +5993,14 @@ static void process_various(void) {
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		(void)scan_iddc();
 #endif
+
+#if 1
+		/* allow firework scrolls to drop in one specific dungeon, changing every day? */
+		firework_dungeon = rand_int(max_d_idx); //note: 0 = all 'Wilderness' dungeons! (usually ironman)
+		s_printf("firework_dungeon: %d (%s)\n", firework_dungeon, d_name + d_info[firework_dungeon].name);
+		firework_dungeon_chance = 1000;
+#endif
+
 		if (cfg.auto_purge) {
 			s_printf("previous server status: m_max(%d) o_max(%d)\n",
 					m_max, o_max);
@@ -8369,6 +8377,13 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 #endif
 
 	init_day_and_night();
+
+#if 1
+	/* allow firework scrolls to drop in one specific dungeon, changing every day? */
+	firework_dungeon = rand_int(max_d_idx); //note: 0 = all 'Wilderness' dungeons! (usually ironman)
+	s_printf("firework_dungeon: %d (%s)\n", firework_dungeon, d_name + d_info[firework_dungeon].name);
+	firework_dungeon_chance = 1000;
+#endif
 
 	cfg.runlevel = 6;		/* Server is running */
 

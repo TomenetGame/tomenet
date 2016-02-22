@@ -362,6 +362,9 @@ extern int season_newyearseve;
 extern int fireworks;
 extern int fireworks_delay;
 
+extern int firework_dungeon = 0;
+extern int firework_dungeon_chance = 0;
+
 extern cptr *ANGBAND_DIR;
 
 

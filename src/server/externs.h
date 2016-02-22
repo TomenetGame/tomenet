@@ -2342,6 +2342,8 @@ extern int season_newyearseve;
 extern int fireworks;
 extern int fireworks_delay;
 
+extern int firework_dungeon, firework_dungeon_chance;
+
 /* for /shutrec command */
 extern int shutdown_recall_timer, shutdown_recall_state;
 
