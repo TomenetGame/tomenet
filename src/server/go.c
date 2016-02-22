@@ -65,6 +65,8 @@
  //#define HS_ENGINE_GNUGOMC /* GNUGo with Monte Carlo algorithm enabled (!) */
  //#define HS_ENGINE_PACHI /* ---todo: implement--- */
  static void set_hidden_stage(bool active);
+ #define GO_BROADCAST_ALWAYS /* broadcast a win for every win, or just the first time and only on reaching the absolute top rank? */
+ #define GO_LEGENDS_LOG /* log reaching the absolute top rank to noteworthy occurances */
 #endif
 
 /* Set API (can be changed later) of the go engine we use */
@@ -773,6 +775,15 @@ void go_challenge(int Ind) {
 
 	Send_store_special_clr(Ind, 4, 18);
 
+	/* Avoid both, legends-log spam and money cheeze, if someone
+	   just mass-transports newly made chars to Minas Anor.
+	   Admitted, very unlikely, but anyway.. */
+	if (p_ptr->max_plv < 30 && !isdungeontown(&p_ptr->wpos)) {
+		Send_store_special_str(Ind, 6, 3, TERM_YELLOW, "Sorry friend, the local authorities forbid");
+		Send_store_special_str(Ind, 7, 3, TERM_YELLOW, "playing for money with people under level 30.");
+		return;
+	}
+
 	/* Only one player at a time */
 	if (go_game_up) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Arrr.. sorry, I can't find a fitting player around right now");
@@ -1047,7 +1058,15 @@ void go_challenge_accept(int Ind, bool new_wager) {
 	   wager for this level and can retry for free from now on. */
 	if (new_wager) {
 		p_ptr->go_level++;
-		if (p_ptr->go_level_top < p_ptr->go_level) p_ptr->go_level_top = p_ptr->go_level;
+		if (p_ptr->go_level_top < p_ptr->go_level) {
+			p_ptr->go_level_top = p_ptr->go_level;
+#ifndef GO_BROADCAST_ALWAYS
+			if (p_ptr->go_level_top == TOP_RANK * 2 + 4) msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+#endif
+#ifdef GO_LEGENDS_LOG
+			if (p_ptr->go_level_top == TOP_RANK * 2 + 4) l_printf("%s \\{U%s has defeated a Go legend\n", showdate(), p_ptr->name);
+#endif
+		}
 	}
 
 	/* Wait for player keypress to start */
@@ -2177,6 +2196,9 @@ static void go_engine_move_result(int move_result) {
 						Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "any other Go player too..");
 						Send_store_special_str(Ind, 14, GO_BOARD_X + 13, TERM_ORANGE, "...am I right?!");
 						p_ptr->go_level++;
+#ifdef GO_BROADCAST_ALWAYS
+						msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+#endif
 					} else {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Wow! How can it be a draw");
 						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "after such a crazy game!");
@@ -2195,6 +2217,9 @@ static void go_engine_move_result(int move_result) {
 						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "you'd win, you're the best");
 						Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "player around, after all!");
 						p_ptr->go_level++;
+#ifdef GO_BROADCAST_ALWAYS
+						msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+#endif
 					} else {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Just how unlikely is a draw?");
 						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Always baffles me when this");
@@ -2211,6 +2236,9 @@ static void go_engine_move_result(int move_result) {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You're letting us watch another");
 						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "flawless performance of yours!");
 						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "I'm really trying to learn from it!");
+#ifdef GO_BROADCAST_ALWAYS
+						msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+#endif
 					} else {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Holy.. you're not causing a draw");
 						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "on purpose, are you? Can you even");
@@ -2238,7 +2266,15 @@ static void go_engine_move_result(int move_result) {
 			break;
 		}
 
-		if (p_ptr->go_level_top < p_ptr->go_level) p_ptr->go_level_top = p_ptr->go_level;
+		if (p_ptr->go_level_top < p_ptr->go_level) {
+			p_ptr->go_level_top = p_ptr->go_level;
+#ifndef GO_BROADCAST_ALWAYS
+			if (p_ptr->go_level_top == TOP_RANK * 2 + 4) msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
+#endif
+#ifdef GO_LEGENDS_LOG
+			if (p_ptr->go_level_top == TOP_RANK * 2 + 4) l_printf("%s \\{U%s has defeated a Go legend\n", showdate(), p_ptr->name);
+#endif
+		}
 
 		/* earn winnings */
 		if (wager) {

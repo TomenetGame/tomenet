@@ -1671,6 +1671,7 @@ static bool rd_extra(int Ind) {
 	rd_s16b(&p_ptr->tim_invis);
 	rd_byte(&tmp8u);
 	p_ptr->go_level_top = tmp8u; //ENABLE_GO_GAME
+	if (p_ptr->go_level_top < p_ptr->go_level) p_ptr->go_level_top = p_ptr->go_level; //fix older save files
 	strip_bytes(1);				//hole
 	rd_s16b(&p_ptr->see_infra);
 	rd_s16b(&p_ptr->tim_infra);
