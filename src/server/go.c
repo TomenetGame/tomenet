@@ -601,7 +601,7 @@ int go_engine_init(void) {
 	writeToPipe("uct_param_search lock_free 1");
 	wait_for_response();
 
-	writeToPipe("uct_param_search number_threads 2");//we have a 2-core cpu
+	writeToPipe("uct_param_search number_threads 4");//we have a 2-core cpu
 	wait_for_response();
 
 	/* we have 512 MB.. */
