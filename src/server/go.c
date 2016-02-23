@@ -894,7 +894,7 @@ void go_challenge(int Ind) {
 		if (hs_go_engine_up && !p_ptr->go_sublevel) { //if hs-engine isn't up, fallback to normal engine (business as usual)
 			p_ptr->go_hidden_stage = TRUE;
 			p_ptr->go_sublevel = rand_int(HIDDEN_STAGE); //games until next hidden stage spawn
-			if (!p_ptr->go_turn) p_ptr->go_turn = turn; //make sure we're not just spamming game challenges to spawn hidden stage :-p
+			p_ptr->go_turn = turn; //make sure we're not just spamming game challenges to spawn hidden stage :-p
 			Send_store_special_str(Ind, 6, 3, TERM_VIOLET, "We have a visitor speaking in a strange");
 			Send_store_special_str(Ind, 7, 3, TERM_VIOLET, "tongue I've never heard before. But it");
 			Send_store_special_str(Ind, 8, 3, TERM_VIOLET, "seems that he wants to play the game!");
@@ -2196,9 +2196,9 @@ static void go_engine_move_result(int move_result) {
 						Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "any other Go player too..");
 						Send_store_special_str(Ind, 14, GO_BOARD_X + 13, TERM_ORANGE, "...am I right?!");
 						p_ptr->go_level++;
-#ifdef GO_BROADCAST_ALWAYS
+ #ifdef GO_BROADCAST_ALWAYS
 						msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
-#endif
+ #endif
 					} else {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Wow! How can it be a draw");
 						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "after such a crazy game!");
@@ -2217,9 +2217,9 @@ static void go_engine_move_result(int move_result) {
 						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "you'd win, you're the best");
 						Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "player around, after all!");
 						p_ptr->go_level++;
-#ifdef GO_BROADCAST_ALWAYS
+ #ifdef GO_BROADCAST_ALWAYS
 						msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
-#endif
+ #endif
 					} else {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Just how unlikely is a draw?");
 						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Always baffles me when this");
@@ -2236,9 +2236,9 @@ static void go_engine_move_result(int move_result) {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "You're letting us watch another");
 						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "flawless performance of yours!");
 						Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "I'm really trying to learn from it!");
-#ifdef GO_BROADCAST_ALWAYS
+ #ifdef GO_BROADCAST_ALWAYS
 						msg_broadcast_format(0, "\377U%s has defeated a Go legend!", p_ptr->name);
-#endif
+ #endif
 					} else {
 						Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Holy.. you're not causing a draw");
 						Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "on purpose, are you? Can you even");
@@ -2249,7 +2249,7 @@ static void go_engine_move_result(int move_result) {
 				break;
 			} else if (p_ptr->go_sublevel && turn - p_ptr->go_turn >= cfg.fps * 300)
 				p_ptr->go_sublevel--; //a game should last for at least 5 minutes until we accept it for counting down to hidden stage
-				p_ptr->go_turn = 0;
+				p_ptr->go_turn = turn;
 #endif
 			if (lost) {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Hah, I can't judge what went");
