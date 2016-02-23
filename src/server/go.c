@@ -374,7 +374,7 @@ int go_engine_init(void) {
 	s_printf("GO_INIT: ---INIT AI---\n");
 
 	/* Hack: Allow child to close pipes in case it cannot start the engine */
-	sleep(5);
+	sleep(1);//5
 
 #ifdef ENGINE_FUEGO
 	writeToPipe("boardsize 9");
@@ -581,7 +581,7 @@ int go_engine_init(void) {
 	s_printf("GO_INIT: ---INIT AI--- (HS)\n");
 
 	/* Hack: Allow child to close pipes in case it cannot start the engine */
-	sleep(5);
+	sleep(1);//5
 
  #ifdef HS_ENGINE_FUEGO
 	writeToPipe("boardsize 9");
@@ -2822,7 +2822,7 @@ static int handle_loading() {
 #if 1
 	/* its seems that fuego (svn) now outputs its startup replies to stderr, so we don't need to catch anything here anymore.
 	   fuego's '--quiet' parameter completely suppresses the stderr output too. */
-	sleep(5); /* just make the log file live output prettier.. */
+	//sleep(5); /* just make the log file live output prettier.. */
 	return 0;
 #endif
 
