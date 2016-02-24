@@ -5995,10 +5995,7 @@ static void process_various(void) {
 #endif
 
 #if 1
-		/* allow firework scrolls to drop in one specific dungeon, changing every day? */
-		firework_dungeon = rand_int(max_d_idx); //note: 0 = all 'Wilderness' dungeons! (usually ironman)
-		s_printf("firework_dungeon: %d (%s)\n", firework_dungeon, d_name + d_info[firework_dungeon].name);
-		firework_dungeon_chance = 1000;
+		init_firework_dungeon();
 #endif
 
 		if (cfg.auto_purge) {
@@ -8379,10 +8376,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	init_day_and_night();
 
 #if 1
-	/* allow firework scrolls to drop in one specific dungeon, changing every day? */
-	firework_dungeon = rand_int(max_d_idx); //note: 0 = all 'Wilderness' dungeons! (usually ironman)
-	s_printf("firework_dungeon: %d (%s)\n", firework_dungeon, d_name + d_info[firework_dungeon].name);
-	firework_dungeon_chance = 1000;
+	init_firework_dungeon();
 #endif
 
 	cfg.runlevel = 6;		/* Server is running */

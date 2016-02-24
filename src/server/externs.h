@@ -934,6 +934,7 @@ extern void init_swearing(void);
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 extern int scan_iddc(void);
 #endif
+void init_firework_dungeon(void);
 
 /* load1.c */
 /*extern errr rd_savefile_old(void);*/

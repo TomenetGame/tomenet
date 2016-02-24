@@ -4016,3 +4016,22 @@ void reinit_some_arrays(void) {
 
 	s_printf("[Reinitializing arrays... done]\n");
 }
+
+/* Allow firework scrolls to drop in one specific dungeon, changing regularly? */
+void init_firework_dungeon(void) {
+	int i, d_ok[max_d_idx], d_ok_num = 0;
+
+	d_ok[0] = 0; //wilderness dungeons are always ok, even if they get visited frequently? hmm
+	for (i = 1; i < max_d_idx; i++) {
+		/* dungeon must be rarely frequented to be eligible */
+		if (dungeon_bonus[i] != 3) continue;
+
+		d_ok_num++;
+		d_ok[d_ok_num] = i;
+	}
+	firework_dungeon = d_ok[rand_int(d_ok_num + 1)]; //note: 0 = all 'Wilderness' dungeons! (usually ironman)
+
+	s_printf("firework_dungeon: %d (%s)%s\n", firework_dungeon, d_name + d_info[firework_dungeon].name, d_ok_num ? "" : " [exclusively]");
+	if (!d_ok_num) firework_dungeon_chance = 3000; //especially rare in 'wilderness' dungeons in case no other dungeons are eligible (!)
+	else firework_dungeon_chance = 1000;
+}
