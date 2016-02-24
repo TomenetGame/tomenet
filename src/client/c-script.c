@@ -491,7 +491,7 @@ void dump_lua_stack(int min, int max)
         c_msg_print("\377ylua_stack:");
         for (i = min; i <= max; i++)
         {
-                if (lua_isnumber(L, i)) c_msg_format("\377y%d [n] = %d", i, tolua_getnumber(L, i, 0));
+                if (lua_isnumber(L, i)) c_msg_format("\377y%d [n] = %ld", i, tolua_getnumber(L, i, 0));
                 else if (lua_isstring(L, i)) c_msg_format("\377y%d [s] = '%s'", i, tolua_getstring(L, i, 0));
         }
         c_msg_print("\377yEND lua_stack");
