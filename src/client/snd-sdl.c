@@ -2019,9 +2019,13 @@ void do_cmd_options_sfx_sdl(void) {
 				c_msg_print("Error: File 'sound.cfg' not found.");
 				return;
 			}
-			while (!feof(fff)) {
-				fgets(out_val, 2048, fff);
-				if (feof(fff)) continue;
+			while (TRUE) {
+				if (!fgets(out_val, 2048, fff)) {
+					if (ferror(fff)) {
+						c_msg_print("Error: Failed to read from file 'sound.cfg'.");
+					}
+					break;
+				}
 
 				p = out_val;
 				/* remove comment-character */
@@ -2219,9 +2223,13 @@ void do_cmd_options_mus_sdl(void) {
 				c_msg_print("Error: File 'music.cfg' not found.");
 				return;
 			}
-			while (!feof(fff)) {
-				fgets(out_val, 2048, fff);
-				if (feof(fff)) continue;
+			while (TRUE) {
+				if (!fgets(out_val, 2048, fff)) {
+					if (ferror(fff)) {
+						c_msg_print("Error: Failed to read from file 'music.cfg'.");
+					}
+					break;
+				}
 
 				p = out_val;
 				/* remove comment-character */
