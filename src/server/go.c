@@ -374,7 +374,7 @@ int go_engine_init(void) {
 	s_printf("GO_INIT: ---INIT AI---\n");
 
 	/* Hack: Allow child to close pipes in case it cannot start the engine */
-	sleep(1);//5
+	//sleep(1);//5
 
 #ifdef ENGINE_FUEGO
 	writeToPipe("boardsize 9");
@@ -581,7 +581,7 @@ int go_engine_init(void) {
 	s_printf("GO_INIT: ---INIT AI--- (HS)\n");
 
 	/* Hack: Allow child to close pipes in case it cannot start the engine */
-	sleep(1);//5
+	//sleep(1);//5
 
  #ifdef HS_ENGINE_FUEGO
 	writeToPipe("boardsize 9");
