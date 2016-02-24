@@ -6467,9 +6467,10 @@ which may range from 100 to 1000, like this:
 This will sell the item for 1.5 times (150%) the usual amount.
 
 Note that if you want to put up items with inscriptions longer than just the
-store-part, you need to terminate the store inscription with a dot. Examples:
+store-part, you need to terminate the store inscription with a dot or space.
+Examples:
   Hello@S10000.Customer
-  @S.Good stuff
+  @S Good stuff
 This item will appear in your store with an inscription "HelloCustomer". The
 "S@..." part is always omitted. This way, you can add short notes to the items
 you offer.

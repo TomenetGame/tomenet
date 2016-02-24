@@ -6082,7 +6082,7 @@ void store_debug_stock() {
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination.
    Expects 'price' to be the minimum allowed price (2x base price). */
 static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise) {
-	char buf[10], *p, *pos_dot;
+	char buf[10], *p, *pos_dot, *pos_space;
 	u32b final_price;
 	bool increase = FALSE, mult = FALSE;
 
@@ -6140,9 +6140,15 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 		return final_price;
 	}
 
-	/* add rudimentary usage of 'k' and 'M' */
+	/* a dot or space terminates the @S sequence */
 	pos_dot = strchr(buf, '.');
-	if (pos_dot) *pos_dot = '\0';
+	pos_space = strchr(buf, ' ');
+	if (pos_dot) {
+		if (pos_space && pos_space < pos_dot) *pos_space = '\0';
+		else *pos_dot = '\0';
+	} else if (pos_space) *pos_space = '\0';
+
+	/* add rudimentary usage of 'k' and 'M' */
 	if ((strchr(buf, 'k') || strchr(buf, 'K')) &&
 	    final_price <= 2000000)
 		final_price *= 1000;
@@ -6388,7 +6394,13 @@ void player_stores_cut_inscription(char *o_name) {
 		new_o_name[p - o_name] = '\0';
 
 		if (p_museum) p2 = p_museum + 2;
-		else p2 = strstr(p, ".");
+		else {
+			/* allow both dot and space to terminate the @S sequence */
+			cptr p2a = strstr(p, " ");
+
+			p2 = strstr(p, ".");
+			if ((!p2 && p2a) || (p2 && p2a && p2a < p2)) p2 = p2a;
+		}
 
 		if (p2) strcat(new_o_name, ++p2);
 
