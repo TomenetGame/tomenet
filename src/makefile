@@ -290,7 +290,7 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config -
 ##
 ## Variation -- Linux / FreeBSD
 ##
-## Add -msse2 -DHAVE_SSE2=1 to CFLAGS to enable SSE2 support in SFMT.
+## Add -msse2 to CFLAGS to enable SSE2 support in SFMT (not needed for x86_64).
 ##
 ## You can compile the client without X11 support by removing -DUSE_X11 from
 ## CFLAGS and -lX11 from LIBS

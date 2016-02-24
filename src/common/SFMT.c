@@ -27,6 +27,10 @@
   #endif
 #undef ONLY64
 #endif
+/* Automatic SSE2 detection based on predefined macros (works with GCC and Clang) */
+#ifdef __SSE2__
+  #define HAVE_SSE2
+#endif
 /*------------------------------------------------------
   128-bit SIMD data type for Altivec, SSE2 or standard C
   ------------------------------------------------------*/
