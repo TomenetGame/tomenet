@@ -4026,6 +4026,9 @@ void init_firework_dungeon(void) {
 		/* dungeon must be rarely frequented to be eligible */
 		if (dungeon_bonus[i] != 3) continue;
 
+		/* never in the Nether Realm */
+		if (i == DI_NETHER_REALM) continue;
+
 		d_ok_num++;
 		d_ok[d_ok_num] = i;
 	}
