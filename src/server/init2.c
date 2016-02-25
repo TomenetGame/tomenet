@@ -4023,6 +4023,9 @@ void init_firework_dungeon(void) {
 
 	d_ok[0] = 0; //wilderness dungeons are always ok, even if they get visited frequently? hmm
 	for (i = 1; i < max_d_idx; i++) {
+		/* dungeon must exist */
+		if (!d_info[i].name) continue;
+
 		/* dungeon must be rarely frequented to be eligible */
 		if (dungeon_bonus[i] != 3) continue;
 
