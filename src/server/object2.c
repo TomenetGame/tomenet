@@ -3703,8 +3703,10 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
 
 		/* Allow non-dropchosen/specialgene winner arts */
-		if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY))
-			continue;
+		if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY)) continue;
+
+		/* Sauron-slayers can't find The One Ring anymore */
+		if (i == ART_POWER && (resf & RESF_SAURON)) continue;
 
 		/* XXX XXX Enforce minimum "depth" (loosely) */
 		if (a_ptr->level > dlev) {
@@ -9611,6 +9613,9 @@ u32b make_resf(player_type *p_ptr) {
 
 	/* special mode handling */
 	if (p_ptr->mode & MODE_PVP) f |= RESF_NOTRUEART; /* PvP mode chars can't find true arts, since true arts are for kinging! */
+
+	/* don't generate The One Ring if player killed Sauron */
+	if (p_ptr->r_killed[RI_SAURON] == 1) f |= RESF_SAURON;
 
 	return (f);
 }
