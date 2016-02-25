@@ -4017,6 +4017,7 @@ void reinit_some_arrays(void) {
 	s_printf("[Reinitializing arrays... done]\n");
 }
 
+#ifdef FIREWORK_DUNGEON
 /* Allow firework scrolls to drop in one specific dungeon, changing regularly? */
 void init_firework_dungeon(void) {
 	int i, d_ok[max_d_idx], d_ok_num = 0;
@@ -4041,3 +4042,4 @@ void init_firework_dungeon(void) {
 	if (!d_ok_num) firework_dungeon_chance = 3000; //especially rare in 'wilderness' dungeons in case no other dungeons are eligible (!)
 	else firework_dungeon_chance = 1000;
 }
+#endif

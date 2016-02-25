@@ -934,7 +934,9 @@ extern void init_swearing(void);
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 extern int scan_iddc(void);
 #endif
+#ifdef FIREWORK_DUNGEON
 void init_firework_dungeon(void);
+#endif
 
 /* load1.c */
 /*extern errr rd_savefile_old(void);*/
@@ -2343,7 +2345,9 @@ extern int season_newyearseve;
 extern int fireworks;
 extern int fireworks_delay;
 
+#ifdef FIREWORK_DUNGEON
 extern int firework_dungeon, firework_dungeon_chance;
+#endif
 
 /* for /shutrec command */
 extern int shutdown_recall_timer, shutdown_recall_state;

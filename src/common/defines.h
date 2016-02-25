@@ -344,6 +344,11 @@
    Gets doubled for winner-arts and doubled on rpg-server (cumulative). */
 #define FLUENT_ARTIFACT_WEEKS 5
 
+#ifdef FLUENT_ARTIFACT_RESETS
+/* The One Ring doesn't get its timeout duration halved when worn by a winner */
+ #define THE_ONE_RING_LASTS
+#endif
+
 
 /* Can staticed levels no longer get their static-timeout 'reset' by someone
    logging on on them and leaving again? */
@@ -353,6 +358,7 @@
 #define STATIC_TIMER_RESETS_ON_DEATH
 /* Sauron's floor in Mt Doom has a shorter static timer */
 #define SAURON_FLOOR_FAST_UNSTAT
+
 
 
 /*
@@ -1554,6 +1560,20 @@
  * reproducing monsters.  Messy, but necessary.
  */
 #define MAX_REPRO	100
+
+/* A random, rarely visited dungeon has a (slim) chance for firework drops */
+#define FIREWORK_DUNGEON
+
+#ifdef HOUSE_PAINTING
+ /* Don't display house paint of mode-wise unusable player stores? */
+ #define HOUSE_PAINTING_HIDE_BAD_MODE
+ /* Don't display house paint of stores that contain more unsellable items than sellable ones? */
+ //TODO:implement fully
+ //#define HOUSE_PAINTING_HIDE_UNSELLABLE
+ /* Don't display house paint of 'museum' like player stores, where most sellable items are priced > 50x value? Added new '@S-' for this! */
+ //TODO:implement fully
+ //#define HOUSE_PAINTING_HIDE_MUSEUM
+#endif
 
 
 /*
@@ -3884,6 +3904,7 @@
 #define SV_SEAL				0	/* for invalid items */
 #define SV_CUSTOM_OBJECT		1	/* fun vanity objects, customizable by admins */
 #define SV_QUEST			2	/* a custom quest item (not to be confused with questors) */
+
 
 /*** General flag values ***/
 
@@ -8282,16 +8303,6 @@ extern int PlayerUID;
 #define PGF_NONE		0x00000000
 #define PGF_ADDER		0x00000001	/* player may add other players to the guild although he's not the leader */
 
-#ifdef HOUSE_PAINTING
- /* Don't display house paint of mode-wise unusable player stores? */
- #define HOUSE_PAINTING_HIDE_BAD_MODE
- /* Don't display house paint of stores that contain more unsellable items than sellable ones? */
- //TODO:implement fully
- //#define HOUSE_PAINTING_HIDE_UNSELLABLE
- /* Don't display house paint of 'museum' like player stores, where most sellable items are priced > 50x value? Added new '@S-' for this! */
- //TODO:implement fully
- //#define HOUSE_PAINTING_HIDE_MUSEUM
-#endif
 
 
 #define in_bree(wpos) ((wpos)->wx == cfg.town_x && (wpos)->wy == cfg.town_y && (wpos)->wz == 0)

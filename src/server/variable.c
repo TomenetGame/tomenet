@@ -930,8 +930,10 @@ int season_newyearseve = 0;
 int fireworks = 0;
 int fireworks_delay = 0;
 
+#ifdef FIREWORK_DUNGEON
 /* for dropping fireworks out of season (hmm) */
 int firework_dungeon = 0, firework_dungeon_chance = 0;
+#endif
 
 char last_chat_line[MSG_LEN];  /* What was said */
 char last_chat_owner[NAME_LEN]; /* Who said it */

@@ -5600,7 +5600,11 @@ if (cfg.unikill_format) {
 					/* Set all his artifacts to double-speed timeout */
 					for (j = 0; j < INVEN_TOTAL; j++)
 						if (p_ptr->inventory[j].name1 &&
-						    p_ptr->inventory[j].name1 != ART_RANDART)
+						    p_ptr->inventory[j].name1 != ART_RANDART
+#ifdef THE_ONE_RING_LASTS
+						    && p_ptr->inventory[j].name1 != ART_POWER
+#endif
+						    )
 							a_info[p_ptr->inventory[j].name1].winner = TRUE;
 
 					/* Set his retire_timer if neccecary */
@@ -6184,7 +6188,11 @@ if (cfg.unikill_format) {
 #endif
 
 	/* Hack - can find fireworks on new years eve */
-	if ((season_newyearseve || (firework_dungeon_chance && d_ptr && d_ptr->type == firework_dungeon && !rand_int(firework_dungeon_chance))) &&
+	if ((season_newyearseve
+#ifdef FIREWORK_DUNGEON
+	    || (firework_dungeon_chance && d_ptr && d_ptr->type == firework_dungeon && !rand_int(firework_dungeon_chance))
+#endif
+	    ) &&
 	    ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT)) || /*note: demons/undead don't do fireworks..*/
 	    (strchr("hHkpty", r_ptr->d_char))) &&
 	    !(r_ptr->flags7 & RF7_AQUATIC) &&
