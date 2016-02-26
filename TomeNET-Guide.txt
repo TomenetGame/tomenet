@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. February 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 26. February 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12517,15 +12517,15 @@ create a character!):
     and light sources (which may drain their hit points if equipped, even if
     the vampire acquired resistance to light).
     Vampires fear the sun light and any kind of items giving off powerful light
-    such as of a radius of 3 or more, or artifacts or blessed, evil-slaying or
-    undead-slaying items. Light sources aside they fear all items that are
-    blessed or *slay* undead. Exceptions are cursed lights and items and the
-    Stone of Lore - these will not harm vampires.
-    since it burns them, draining their hit points. They start with a mummy
-    wrapping, because it can protect them from the sunlight (press 'w' to wear
-    it). If they are moving on the world surface (meaning not in a dungeon or
-    tower) while it's day, the sun will burn them if they don't resist light
-    or wear a mummy wrapping.
+    (radius of 3 or more, artifacts lights, or light sources that are blessed,
+    evil-slaying or undead-slaying). Asides from light sources aside they fear
+    all items that are blessed or *slay undead*. Any such item will burn them,
+    draining their hit points. Exceptions are cursed lights and items and the
+    "Stone of Lore" - these will not harm them.
+    They start with a mummy wrapping, because it can protect them from the
+    sunlight (press 'w' to wear it). If they are moving on the world surface
+    (meaning not in a dungeon or tower) while it's day, the sun will burn them
+    if they don't resist light or wear a mummy wrapping.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness. This ability grows
     when the vampire rises in character-levels, starting at torch-wide radius
