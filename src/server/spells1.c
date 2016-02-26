@@ -2907,7 +2907,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int inv, hurt_eq;
 
-	dam -= p_ptr->reduc_acid * dam / 100;
+	dam -= (p_ptr->reduc_acid * dam) / 100;
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* this is SO much softer than MAngband, heh. I think it's good tho - C. Blue */
@@ -2963,7 +2963,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int inv;
 
-	dam -= p_ptr->reduc_elec * dam / 100;
+	dam -= (p_ptr->reduc_elec * dam) / 100;
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total immunity */
@@ -3006,7 +3006,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int inv, hurt_eq;
 
-	dam -= p_ptr->reduc_fire * dam / 100;
+	dam -= (p_ptr->reduc_fire * dam) / 100;
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	hurt_eq = (dam < 30) ? 15 : (dam < 60) ? 33 : 100;
@@ -3055,7 +3055,7 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int inv;
 
-	dam -= p_ptr->reduc_cold * dam / 100;
+	dam -= (p_ptr->reduc_cold * dam) / 100;
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total immunity */
