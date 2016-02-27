@@ -345,8 +345,8 @@
 #define FLUENT_ARTIFACT_WEEKS 5
 
 #ifdef FLUENT_ARTIFACT_RESETS
-/* The One Ring doesn't get its timeout duration halved when worn by a winner */
- #define THE_ONE_RING_LASTS
+/* The One Ring/Bladeturner don't get their timeout duration halved when their wearer wins */
+ #define L100_ARTS_LAST
 #endif
 
 

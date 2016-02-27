@@ -5601,8 +5601,9 @@ if (cfg.unikill_format) {
 					for (j = 0; j < INVEN_TOTAL; j++)
 						if (p_ptr->inventory[j].name1 &&
 						    p_ptr->inventory[j].name1 != ART_RANDART
-#ifdef THE_ONE_RING_LASTS
+#ifdef L100_ARTS_LAST
 						    && p_ptr->inventory[j].name1 != ART_POWER
+						    && p_ptr->inventory[j].name1 != ART_BLADETURNER
 #endif
 						    )
 							a_info[p_ptr->inventory[j].name1].winner = TRUE;
