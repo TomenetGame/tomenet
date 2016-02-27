@@ -39,6 +39,9 @@
 /* Limitation for teleport radius on the wilderness.	[20] */
 #define WILDERNESS_TELEPORT_RADIUS	40
 
+/* Is a hurt monster allowed to teleport out of (non no-tele) vaults? */
+#define HURT_MONSTER_ICKY_TELEPORT
+
 /* Macro to test in project_p() whether we are hurt by a PvP
    (player vs player) or a normal PvM (player vs monster) attack */
 #define IS_PVP	(who < 0 && who >= -NumPlayers)
@@ -451,7 +454,7 @@ s16b poly_r_idx(int r_idx) {
 //bool check_st_anchor(struct worldpos *wpos)
 bool check_st_anchor(struct worldpos *wpos, int y, int x) {
 	int i;
-//	dun_level *l_ptr = getfloor(wpos);
+	//dun_level *l_ptr = getfloor(wpos);
 
 	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
@@ -517,13 +520,22 @@ bool teleport_away(int m_idx, int dis) {
 	/* Space/Time Anchor */
 	if (check_st_anchor(&m_ptr->wpos, oy, ox)) return FALSE;
 
-
 	wpos = &m_ptr->wpos;
 	if (!(zcave = getcave(wpos))) return FALSE;
 	l_ptr = getfloor(wpos);
 
+#ifndef HURT_MONSTER_ICKY_TELEPORT
 	/* No teleporting/blinking out of any vaults (!) */
 	if (zcave[oy][ox].info & CAVE_ICKY) return FALSE;
+#else
+	/* actually allow teleporting out of a vault, if monster took damage; but still prevent for no-tele vaults */
+	if ((zcave[oy][ox].info & CAVE_ICKY) && m_ptr->hp == m_ptr->maxhp) return FALSE;
+	if (zcave[oy][ox].info & CAVE_STCK) return FALSE;
+#endif
+
+	/* anti-teleport floors apply to monsters too? */
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return FALSE;
+	if (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE)) return FALSE;
 
 	/* set distance according to map size, to avoid 'No empty field' failures for very small maps! */
 	if (l_ptr && distance(1, 1, l_ptr->wid, l_ptr->hgt) < max_dis)
@@ -627,21 +639,21 @@ void teleport_to_player(int Ind, int m_idx) {
 	bool look = TRUE;
 
 	monster_type *m_ptr = &m_list[m_idx];
-//	int attempts = 200;
+	//int attempts = 200;
 	int attempts = 5000;
 
 	struct worldpos *wpos = &m_ptr->wpos;
 	dun_level *l_ptr;
 	cave_type **zcave;
-//	if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
+	//if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return;
 
 	/* "Skill" test */
-//	if (randint(100) > m_ptr->level) return;	/* not here */
+	//if (randint(100) > m_ptr->level) return;	/* not here */
 
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	l_ptr = getfloor(wpos);
 
 	/* Save the old location */
@@ -650,8 +662,15 @@ void teleport_to_player(int Ind, int m_idx) {
 
 	/* Hrm, I cannot remember/see why it's commented out..
 	 * maybe pets and golems need it? */
-//	if (check_st_anchor(wpos)) return;
+	//if (check_st_anchor(wpos)) return;
 	if (check_st_anchor(wpos, oy, ox)) return;
+
+	/* don't teleport out of no-tele */
+	if (zcave[oy][ox].info & CAVE_STCK) return;
+
+	/* anti-teleport floors apply to monsters too? */
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
+	if (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE)) return;
 
 	/* set distance according to map size, to avoid 'No empty field' failures for very small maps! */
 	if (l_ptr && distance(1, 1, l_ptr->wid, l_ptr->hgt) < max_dis)
@@ -818,7 +837,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 		}
 #endif
 
-//		if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
+		//if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 		/* Hack -- on the wilderness one cannot teleport very far */
 		/* Double death isnt nice */
 		if (!wpos->wz && !istown(wpos) && dis > WILDERNESS_TELEPORT_RADIUS)
@@ -1077,7 +1096,7 @@ void teleport_player_to(int Ind, int ny, int nx) {
 	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return;
-//	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
+	//if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
 	if (ny < 1) ny = 1;
 	if (nx < 1) nx = 1;
@@ -1262,7 +1281,7 @@ void teleport_player_level(int Ind, bool force) {
 
 	if (!(zcave = getcave(wpos))) return;
 	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) && !force) return;
-//	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
+	//if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
 	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;

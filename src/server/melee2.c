@@ -1918,7 +1918,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	dun_level	*l_ptr = getfloor(wpos);
 	int		k, chance, thrown_spell, rlev; // , failrate;
-//	byte		spell[96], num = 0;
+	//byte		spell[96], num = 0;
 	u32b		f4, f5, f6, f7, f0;
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race	*r_ptr = race_inf(m_ptr);
@@ -1954,33 +1954,32 @@ bool make_attack_spell(int Ind, int m_idx) {
 	bool normal = TRUE;
 	/* Assume "projectable" */
 	bool direct = TRUE, local = FALSE;
-	bool stupid, summon = FALSE;
+	bool stupid = r_ptr->flags2 & (RF2_STUPID), summon = FALSE;
+
 	int rad = 0, srad;
 	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
 	int s_clone = 0, clone_summoning = m_ptr->clone_summoning;
-//	int eff_m_hp;
+	//int eff_m_hp;
 	/* To avoid TELE_TO from CAVE_ICKY pos on player outside */
 	cave_type **zcave;
 	/* Save the old location */
 	int oy = m_ptr->fy;
 	int ox = m_ptr->fx;
 	/* Space/Time Anchor */
-//	bool st_anchor = check_st_anchor(&m_ptr->wpos, oy, ox);
+	//bool st_anchor = check_st_anchor(&m_ptr->wpos, oy, ox);
 
 #ifdef SAURON_ANTI_GLYPH
 	bool summon_test = FALSE;
 	monster_race *base_r_ptr = &r_info[m_ptr->r_idx];
 #endif
+	//int antichance = 0, antidis = 0;
+
 
 	wpos = &m_ptr->wpos;
-
-
-//	int antichance = 0, antidis = 0;
-
+	if (!(zcave = getcave(wpos))) return FALSE;
 
 	/* Don't attack your master */
 	if (p_ptr->id == m_ptr->owner) return (FALSE);
-
 
 	/* Cannot cast spells when confused */
 	if (m_ptr->confused) return (FALSE);
@@ -2006,7 +2005,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 	f0 = r_ptr->flags0;
 
 	/* unable to summon on this floor? */
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON)) {
+	if ((l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON))
+	    || (in_sector00(wpos) && (sector00flags2 & LF2_NO_SUMMON))) {
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
 		f5 &= ~(RF5_SUMMON_MASK);
@@ -2015,7 +2015,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 	}
 
 	/* unable to teleport on this floor? */
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) {
+	if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE))
+	    || (in_sector00(wpos) && (sector00flags2 & LF2_NO_TELE))
+	    /* don't start futile attempts to tele on non-tele grids? */
+	    || (!stupid && (!(r_ptr->flags2 & RF2_EMPTY_MIND) || (r_ptr->flags2 & RF2_SMART)) && (zcave[oy][ox].info & CAVE_STCK))) {
 		/* Remove teleport spells */
 		f6 &= ~(RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL);
 	}
@@ -2138,9 +2141,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (!f4 && !f5 && !f6 && !f0) return (FALSE);
 	}
 
-	/* Stupid monster flag */
-	stupid = r_ptr->flags2 & (RF2_STUPID);
-
 
 #ifdef DRS_SMART_OPTIONS
 
@@ -2243,7 +2243,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	if (!thrown_spell) return (FALSE);
 
 #if 0
-	if(thrown_spell > 127 && l_ptr && l_ptr->flags1 & LF1_NO_MAGIC)
+	if (thrown_spell > 127 && l_ptr && l_ptr->flags1 & LF1_NO_MAGIC)
 		return(FALSE);
 #endif	// 0
 
@@ -3395,7 +3395,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (monst_check_antimagic(Ind, m_idx)) break;
 
 		/* No teleporting within no-tele vaults and such */
-		if (!(zcave = getcave(wpos))) break;
 		if (zcave[oy][ox].info & CAVE_STCK) {
 //			msg_format(Ind, "%^s fails to blink.", m_name);
 			break;
@@ -3426,7 +3425,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (monst_check_antimagic(Ind, m_idx)) break;
 
 		/* No teleporting within no-tele vaults and such */
-		if (!(zcave = getcave(wpos))) break;
 		if (zcave[oy][ox].info & CAVE_STCK) {
 //			msg_format(Ind, "%^s fails to teleport.", m_name);
 			break;
@@ -3475,7 +3473,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (p_ptr->martyr) break;
 
 		/* No teleporting within no-tele vaults and such */
-		if (!(zcave = getcave(wpos))) break;
 		if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK)) {
 			msg_format(Ind, "%^s fails to command you to return.", m_name);
 			break;
@@ -3511,7 +3508,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (p_ptr->martyr) break;
 
 		/* No teleporting within no-tele vaults and such */
-		if (!(zcave = getcave(wpos))) break;
 		if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK)) {
 			msg_format(Ind, "%^s fails to teleport you away.", m_name);
 			break;
@@ -3540,7 +3536,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (p_ptr->martyr) break;
 
 		/* No teleporting within no-tele vaults and such */
-		if (!(zcave = getcave(wpos))) break;
 		if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK)) {
 			msg_format(Ind, "%^s fails to teleport you away.", m_name);
 			break;
