@@ -1236,6 +1236,7 @@ W:50:0:2:5000
 A:50/1
 P:0:0d0:0:0:15
 F:RES_FIRE | ACTIVATE | BRAND_FIRE
+D:Affects your armour class.
 
 N:147:Acid
 G:=:d
@@ -1244,6 +1245,7 @@ W:50:0:2:5000
 A:50/1
 P:0:0d0:0:0:15
 F:RES_ACID | ACTIVATE | BRAND_ACID
+D:Affects your armour class.
 
 N:148:Ice
 G:=:d
@@ -1252,6 +1254,7 @@ W:50:0:2:5000
 A:50/1
 P:0:0d0:0:0:15
 F:RES_COLD | ACTIVATE | BRAND_COLD
+D:Affects your armour class.
 
 N:149:Woe
 G:=:d
@@ -3644,6 +3647,7 @@ I:45:48:0
 W:60:0:2:50000
 A:60/10
 F:RES_DISEN | RES_POIS | HOLD_LIFE | FREE_ACT
+D:Affects your armour class.
 
 N:436:Extra Attacks
 G:=:d
@@ -4624,6 +4628,7 @@ W:50:0:2:5000
 A:50/1
 P:0:0d0:0:0:15
 F:RES_ELEC | IGNORE_ELEC | ACTIVATE | BRAND_ELEC
+D:Affects your armour class.
 
 # More essences
 
