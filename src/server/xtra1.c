@@ -1341,7 +1341,7 @@ void calc_mana(int Ind) {
 	/* Istari being purely mana-based thanks to mana shield don't need @ form at all,
 	   so vampire istari could get free permanent +5 speed from vampire bat form.
 	   Prevent that here: */
-	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) new_mana /= 4; //for both, RI_VAMPIRE_BAT and RI_VAMPIRIC_MIST
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) new_mana /= 3; //for both, RI_VAMPIRE_BAT and RI_VAMPIRIC_MIST
 
 	/* Some classes dont use mana */
 	if ((p_ptr->pclass == CLASS_WARRIOR) ||
@@ -1924,8 +1924,6 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
 		p_ptr->pspeed = (((r_ptr->speed - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 	}
-	/* VAMPIRIC_MIST speed specialty: slowish */
-	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST && p_ptr->pspeed > 100) p_ptr->pspeed = 100 + (p_ptr->pspeed - 100) / 2;
 	csheet_boni->spd = p_ptr->pspeed - 110;
 
 #if 0 /* Should forms affect your searching/perception skills? Probably not. */
@@ -5880,6 +5878,9 @@ void calc_boni(int Ind) {
 	}
 #endif
 
+	/* VAMPIRIC_MIST speed specialty: creeping (slowish) */
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST && p_ptr->pspeed > 100)
+		p_ptr->pspeed = 100 + (p_ptr->pspeed - 100) / 2;
 
 	/* Extract the current weight (in tenth pounds) */
 	w = p_ptr->total_weight;
