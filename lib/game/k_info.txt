@@ -851,16 +851,16 @@ P:0:1d1:0:0:0
 N:99:& Golden Crown~
 G:]:y
 I:33:11:0
-W:45:0:30:1000
-A:45/1
+W:50:0:30:3000
+A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_WATER
 
 N:100:& Jewel Encrusted Crown~
 G:]:v
 I:33:12:0
-W:50:0:40:2000
-A:50/1
+W:55:0:40:4000
+A:55/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_WATER
 
@@ -3113,6 +3113,17 @@ I:66:11:100
 W:95:0:15:50000
 A:95/16
 P:0:1d1:0:0:0
+
+
+#Items from other materials
+
+N:378:& Silver Crown~
+G:]:W
+I:33:13:0
+W:45:0:25:1000
+A:45/1
+P:0:1d1:0:0:0
+F:IGNORE_WATER
 
 
 # Extra weapons to buff some categories away from too high rarity
@@ -6129,7 +6140,7 @@ W:0:0:2:2
 N:850:& Massive Piece~ of Wood
 G:*:u
 I:52:0:0
-W:10:0:2500:500
+W:10:0:1100:200
 A:10/30:20/10
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -6138,7 +6149,7 @@ D:This is a chunk of material used for building a golem.
 N:851:& Massive Piece~ of Copper
 G:*:U
 I:52:1:0
-W:30:0:3000:800
+W:30:0:8900:1400
 A:30/40:40/10
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -6147,7 +6158,7 @@ D:This is a chunk of material used for building a golem.
 N:852:& Massive Piece~ of Iron
 G:*:s
 I:52:2:0
-W:50:0:3500:1250
+W:50:0:7900:800
 A:50/12
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -6156,7 +6167,7 @@ D:This is a chunk of material used for building a golem.
 N:853:& Massive Piece~ of Aluminium
 G:*:W
 I:52:3:0
-W:70:0:2500:2000
+W:70:0:2700:2000
 A:70/12
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -6165,7 +6176,7 @@ D:This is a chunk of material used for building a golem.
 N:854:& Massive Piece~ of Silver
 G:*:w
 I:52:4:0
-W:80:0:3000:3000
+W:80:0:10000:4500
 A:80/24
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -6174,7 +6185,7 @@ D:This is a chunk of material used for building a golem.
 N:855:& Massive Piece~ of Gold
 G:*:y
 I:52:5:0
-W:90:0:3500:5000
+W:90:0:19000:20000
 A:90/24
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -6183,7 +6194,7 @@ D:This is a chunk of material used for building a golem.
 N:856:& Massive Piece~ of Mithril
 G:*:B
 I:52:6:0
-W:105:0:2500:10000
+W:105:0:4600:70000
 A:105/48
 P:0:1d1:0:0:0
 F:EASY_KNOW
@@ -6192,7 +6203,7 @@ D:This is a chunk of material used for building a golem.
 N:857:& Massive Piece~ of Adamantite
 G:*:v
 I:52:7:0
-W:115:0:4500:20000
+W:115:0:8200:90000
 A:115/48
 P:0:1d1:0:0:0
 F:EASY_KNOW

@@ -4553,7 +4553,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	cptr	note_kill = NULL;
 
-#ifdef COIN_SMELTING
+#ifdef SMELTING
 	bool	melt = FALSE;
 #endif
 
@@ -4636,7 +4636,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
-#ifdef COIN_SMELTING
+#ifdef SMELTING
 			melt = TRUE;
 #endif
 			break;
@@ -4695,7 +4695,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Note: Force item destruction is probably already covered
 			   by applied fire item destruction above */
 
-#ifdef COIN_SMELTING
+#ifdef SMELTING
 			melt = TRUE;
 #endif
 			break;
@@ -4828,7 +4828,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Holy Orb -- destroys cursed non-artifacts */
 		case GF_HOLY_FIRE:
-#ifdef COIN_SMELTING
+#ifdef SMELTING
 			melt = TRUE; //hmm
 #endif
 		case GF_HOLY_ORB:
@@ -4856,7 +4856,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				do_kill = TRUE;
 			}
-#ifdef COIN_SMELTING
+#ifdef SMELTING
 			melt = TRUE;
 #endif
 			break;
@@ -4968,42 +4968,97 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!quiet) everyone_lite_spot(wpos, y, x);
 		}
 	}
-#ifdef COIN_SMELTING
-	else if (melt && this_o_idx == c_ptr->o_idx && o_ptr->tval == TV_GOLD) { //only apply to gold pieces on top of a pile, not inside */
-		object_type forge;
+#ifdef SMELTING
+	else if (melt && this_o_idx == c_ptr->o_idx) { /* only apply to raw material on top of a pile, not inside */
+		if (o_ptr->tval == TV_GOLD) {
+			object_type forge;
 
-		//hardcoded massive piece value and money svals..
-		switch (o_ptr->sval) {
-		case 1: //copper
-			if (dam < 1085 / 2 || o_ptr->pval < 800 * COIN_SMELTING) break;
-			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_COPPER));
-			forge.owner = o_ptr->owner;
-			forge.mode = o_ptr->mode;
-			forge.number = 1;
-			s_printf("MELTING: Copper for %d by %s.\n", o_ptr->pval, p_ptr->name);
-			*o_ptr = forge;
-			break;
-		case 2: //silver
-			if (dam < 962 / 2 || o_ptr->pval < 3000 * COIN_SMELTING) break;
-			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
-			forge.owner = o_ptr->owner;
-			forge.mode = o_ptr->mode;
-			forge.number = 1;
-			s_printf("MELTING: Silver for %d by %s.\n", o_ptr->pval, p_ptr->name);
-			*o_ptr = forge;
-			break;
-		case 10: //gold
-			if (dam < 1064 / 2 || o_ptr->pval < 5000 * COIN_SMELTING) break;
-			invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
-			forge.owner = o_ptr->owner;
-			forge.mode = o_ptr->mode;
-			forge.number = 1;
-			s_printf("MELTING: Gold for %d by %s.\n", o_ptr->pval, p_ptr->name);
-			*o_ptr = forge;
-			break;
+			//hardcoded massive piece value and money svals..
+			switch (o_ptr->sval) {
+			case 1: //copper
+				if (dam < 1085 / 2 || o_ptr->pval < 1400 * SMELTING) break;
+				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_COPPER));
+				forge.owner = o_ptr->owner;
+				forge.mode = o_ptr->mode;
+				forge.number = 1;
+				s_printf("MELTING: Copper for %d by %s.\n", o_ptr->pval, p_ptr->name);
+				*o_ptr = forge;
+				break;
+			case 2: //silver
+				if (dam < 962 / 2 || o_ptr->pval < 4500 * SMELTING) break;
+				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
+				forge.owner = o_ptr->owner;
+				forge.mode = o_ptr->mode;
+				forge.number = 1;
+				s_printf("MELTING: Silver for %d by %s.\n", o_ptr->pval, p_ptr->name);
+				*o_ptr = forge;
+				break;
+			case 10: //gold
+				if (dam < 1064 / 2 || o_ptr->pval < 20000 * SMELTING) break;
+				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
+				forge.owner = o_ptr->owner;
+				forge.mode = o_ptr->mode;
+				forge.number = 1;
+				s_printf("MELTING: Gold for %d by %s.\n", o_ptr->pval, p_ptr->name);
+				*o_ptr = forge;
+				break;
+			}
+			//consider mithril/adamantite too hard to melt
+		}
+		//iron (heavy armour, swords, crowns)
+		else if (o_ptr->tval == TV_SWORD || (o_ptr->tval == TV_HARD_ARMOR && o_ptr->sval <= SV_RIBBED_PLATE_ARMOUR) || (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_IRON_CROWN)) {
+			int val = object_value_real(0, o_ptr), wgt = o_ptr->weight;
+
+			//hardcoded massive piece value...
+			if (dam >= 1538 / 2 && val >= 800 && wgt >= 7900) {
+				object_type forge;
+
+				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_IRON));
+				forge.owner = o_ptr->owner;
+				forge.mode = o_ptr->mode;
+				forge.number = 1;
+				s_printf("MELTING: Iron '%s' for %d by %s.\n", o_name, val, p_ptr->name);
+				*o_ptr = forge;
+				break;
+			}
+		}
+		//silver (crowns)
+		else if (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_SILVER_CROWN) {
+			int val = object_value_real(0, o_ptr), wgt = o_ptr->weight;
+
+			//hardcoded massive piece value...
+			if (dam >= 962 / 2 && val >= 4500 && wgt >= 10000) {
+				object_type forge;
+
+				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
+				forge.owner = o_ptr->owner;
+				forge.mode = o_ptr->mode;
+				forge.number = 1;
+				s_printf("MELTING: Silver '%s' for %d by %s.\n", o_name, val, p_ptr->name);
+				*o_ptr = forge;
+				break;
+			}
+		}
+		//gold (crowns)
+		else if (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_GOLDEN_CROWN) {
+			int val = object_value_real(0, o_ptr), wgt = o_ptr->weight;
+
+			//hardcoded massive piece value...
+			if (dam >= 1064 / 2 && val >= 20000 && wgt >= 19000) {
+				object_type forge;
+
+				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_IRON));
+				forge.owner = o_ptr->owner;
+				forge.mode = o_ptr->mode;
+				forge.number = 1;
+				s_printf("MELTING: Gold '%s' for %d by %s.\n", o_name, val, p_ptr->name);
+				*o_ptr = forge;
+				break;
+			}
 		}
 		//consider mithril/adamantite too hard to melt
 	}
+	//gold (crown!)
 #endif
     }
 

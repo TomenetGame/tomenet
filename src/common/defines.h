@@ -3214,6 +3214,7 @@
 #define SV_IRON_CROWN			10
 #define SV_GOLDEN_CROWN			11
 #define SV_JEWELED_CROWN		12
+#define SV_SILVER_CROWN			13
 #define SV_MORGOTH			50
 
 /* The "sval" codes for TV_BOOTS */
