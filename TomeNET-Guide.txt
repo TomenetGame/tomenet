@@ -1250,6 +1250,9 @@ They all start with a slash '/' hence they're called slash commands:
  (/xorder)  logged on). Completing it yields a random item for reward. It will
             appear in your inventory and carry an inscription indicating
             it's the reward. (See (4.13) for more info.)
+            This command is only available in the Ironman Deep Dive Challenge
+            dungeon. Otherwise you have to visit the mayor's office in Bree to
+            receive an extermination order.
 
 /que        Lists your currently pursued quests.
  (/quest)   Specify a quest number to drop a quest -- warning! You might not
@@ -6751,7 +6754,7 @@ Extermination Orders
 These are basically 'kill quests'. You need to venture out and kill a fixed
 amount of a certain type of monster.
 To receive an order, visit the major in the town hall (one of the '+'
-doors in town), or simply type "/xorder" in the chat.
+doors in town), or if you are in the IDDC simply type "/xorder" in the chat.
 There is a certain time limit which in most cases is easily sufficient,
 especially if you have the according ESP ability.
 The time limit is actually two 'in-game days', which in real time lasts
