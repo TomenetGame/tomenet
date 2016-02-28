@@ -328,6 +328,9 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 		/* Never get "silly" */
 		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
 
+		/* Note: BM, XBM, SBM and Rare Jewelry Store have same prices for speed/poly rings!
+		         Other rings are 2x as expensive in SBM than in BM/XBM/RJS. */
+
 		/* some shops are extra expensive */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE16) {
 			/* hack - keep price in SBM on XBM niveau for consumables */
