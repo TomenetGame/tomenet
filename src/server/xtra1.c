@@ -5879,10 +5879,8 @@ void calc_boni(int Ind) {
 #endif
 
 	/* VAMPIRIC_MIST speed specialty: creeping (slowish) */
-	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST && p_ptr->pspeed > 100) {
-		if (p_ptr->pspeed < 112) p_ptr->pspeed = 100 + (p_ptr->pspeed - 100) / 2;
-		else p_ptr->pspeed = (100 + (p_ptr->pspeed - 100) / 2 + ((p_ptr->pspeed - 110) / 2) * 3) / (((p_ptr->pspeed - 110) / 2) * 3);
-	}
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST && p_ptr->pspeed > 100)
+		p_ptr->pspeed = 100 + ((p_ptr->pspeed - 100) * 2) / 3;
 
 	/* Extract the current weight (in tenth pounds) */
 	w = p_ptr->total_weight;
