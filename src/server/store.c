@@ -328,23 +328,26 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 		/* Never get "silly" */
 		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
 
-		/* Note: BM, XBM, SBM and Rare Jewelry Store have same prices for speed/poly rings!
-		         Other rings are 2x as expensive in SBM than in BM/XBM/RJS. */
+		/* Note: Previously BM, XBM, SBM and Rare Jewelry Store had same prices for speed/poly rings!
+		         Other rings were 2x as expensive in SBM than in BM/XBM/RJS.
+		         Now, XBM/SBM/RJS are same price for speed and 2x as expensive as BM.
+		         Poly are still same price in those 3 as in BM. */
 
 		/* some shops are extra expensive */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE16) {
 			/* hack - keep price in SBM on XBM niveau for consumables */
 			if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_POTION) price *= 8;
 			/* hack - make speed/poly rings 'affordable' (1/2) */
-			else if (o_ptr->tval == TV_RING && (o_ptr->sval == SV_RING_SPEED || o_ptr->sval == SV_RING_POLYMORPH)) price *= 4;
+			else if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED) price *= 8;
+			else if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) price *= 4;
 			/* normal */
 			else price *= 16;
 		}
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE4) price *= 4;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE2) price *= 2;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 3) / 2;
-		/* hack - make speed/poly rings 'affordable' (2/2) */
-		if ((o_ptr->tval == TV_RING && (o_ptr->sval == SV_RING_SPEED || o_ptr->sval == SV_RING_POLYMORPH)) &&
+		/* hack - make speed/poly rings 'affordable' (2/2) -- not speed rings here anymore! */
+		if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) &&
 		    (st_info[st_ptr->st_idx].flags1 & (SF1_PRICE4 | SF1_PRICE16))) {
 			if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE2) price /= 2;
 			if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 2) / 3;
