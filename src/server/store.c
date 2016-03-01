@@ -5843,6 +5843,15 @@ void view_exploration_records(int Ind) {
 
 	/* output the actual list */
 	for (i = 1; i <= dungeon_id_max; i++) {
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+		/* only show those dungeons that have been discovered */
+		if (dungeon_tower[i]) {
+			if (!wild_info[dungeon_y[i]][dungeon_x[i]].tower->known) continue;
+		} else {
+			if (!wild_info[dungeon_y[i]][dungeon_x[i]].dungeon->known) continue;
+		}
+#endif
+
 		/* only show those dungeons that have been well-explored! */
 		if (dungeon_bonus[i] >= 2) continue;
 		/* exclude IDDC */
@@ -5850,6 +5859,13 @@ void view_exploration_records(int Ind) {
 		    dungeon_y[i] == WPOS_IRONDEEPDIVE_Y &&
 		    dungeon_tower[i] == (WPOS_IRONDEEPDIVE_Z > 0))
 			continue;
+		/* exclude Valinor */
+		if (dungeon_x[i] == valinor_wpos_x &&
+		    dungeon_y[i] == valinor_wpos_y &&
+		    dungeon_tower[i] == (valinor_wpos_z > 0))
+			continue;
+		/* exclude event dungeons, those are at (0,0) */
+		if (!dungeon_x[i] && !dungeon_y[i]) continue;
 
 		none = FALSE;
 		fprintf(fff, "             \377u%-30s %s\n",
@@ -5865,6 +5881,95 @@ void view_exploration_records(int Ind) {
 	/* Display the file contents */
 	do_cmd_check_other_prepare(Ind, file_name, "Recent Dungeon Exploration Reports");
 }
+
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+void view_exploration_history(int Ind) {
+	int i;
+	FILE *fff;
+	char file_name[MAX_PATH_LENGTH];
+	bool none = TRUE, admin = admin_p(Ind);
+	byte known;
+	struct dungeon_type *d_ptr;
+	char boss_name[MNAME_LEN], *bn = boss_name, *bnc, *bn1, *bn2, *bn3;
+
+	/* Temporary file */
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
+	fff = my_fopen(file_name, "wb");
+
+	fprintf(fff,"\377U  ~ List of all known dungeons, that adventurers have discovered in the past ~\n\n");
+
+	/* output the actual list */
+	for (i = 1; i <= dungeon_id_max; i++) {
+		/* only show those dungeons that have been discovered */
+		if (dungeon_tower[i]) d_ptr = wild_info[dungeon_y[i]][dungeon_x[i]].tower;
+		else d_ptr = wild_info[dungeon_y[i]][dungeon_x[i]].dungeon;
+		known = d_ptr->known;
+		if (admin) known = 0x1 + 0x2 + 0x4 + 0x8;
+		if (!known) continue;
+
+ #if 0
+		/* exclude IDDC */
+		if (dungeon_x[i] == WPOS_IRONDEEPDIVE_X &&
+		    dungeon_y[i] == WPOS_IRONDEEPDIVE_Y &&
+		    dungeon_tower[i] == (WPOS_IRONDEEPDIVE_Z > 0))
+			continue;
+ #endif
+		/* exclude Valinor */
+		if (dungeon_x[i] == valinor_wpos_x &&
+		    dungeon_y[i] == valinor_wpos_y &&
+		    dungeon_tower[i] == (valinor_wpos_z > 0))
+			continue;
+		/* exclude event dungeons, those are at (0,0) */
+		if (!dungeon_x[i] && !dungeon_y[i]) continue;
+
+		none = FALSE;
+
+		bn = boss_name;
+		if (d_info[d_ptr->type].final_guardian) {
+			/* cut off boss name at the first positional word or the or comma (whatever comes first) */
+			strcpy(boss_name, r_name + r_info[d_info[d_ptr->type].final_guardian].name);
+ #if 0
+			/* skip 'The ' prefixed article */
+			if (boss_name[0] == 'T' && boss_name[1] == 'h' && boss_name[2] == 'e' && boss_name[3] == ' ') bn += 4;
+ #endif
+			/* only cut off the name if it's too long */
+			if (strlen(boss_name) > 21) {
+				bn1 = strstr(bn, " of ");
+				bn2 = strstr(bn, " in ");
+				if (!bn1) bn1 = bn2;
+				else if (bn2 && bn2 < bn1) bn1 = bn2;
+				bn3 = strstr(bn, " the ");
+				if (!bn1) bn1 = bn3;
+				else if (bn3 && bn3 < bn1) bn1 = bn3;
+				bnc = strchr(bn, ',');
+				if (!bn1) bn1 = bnc;
+				else if (bnc && bnc < bn1) bn1 = bnc;
+				if (bn1) *bn1 = 0;
+			}
+		} else {
+			if (dungeon_x[i] == WPOS_IRONDEEPDIVE_X &&
+			    dungeon_y[i] == WPOS_IRONDEEPDIVE_Y &&
+			    dungeon_tower[i] == (WPOS_IRONDEEPDIVE_Z > 0))
+				strcpy(bn, " various guardians");
+			else strcpy(bn, " no guardian");
+		}
+
+		fprintf(fff, " \377u%-30s (%2d,%2d)  %s%s  %s\n",
+		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
+		    getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, FALSE),
+		    dungeon_x[i], dungeon_y[i],
+		    (known & 0x2) ? format("%4dft", d_ptr->baselevel * 50) : "",
+		    (known & 0x4) ? format(" - %4dft", (d_ptr->baselevel + d_ptr->maxdepth - 1) * 50) : "",
+		    (known & 0x8) ? bn : "");
+	}
+
+	if (none) fprintf(fff, "\n\377u    Nobody has ever discovered a dungeon in this town's history!\n");
+
+	my_fclose(fff);
+	/* Display the file contents */
+	do_cmd_check_other_prepare(Ind, file_name, "Dungeon Exploration History");
+}
+#endif
 
 void reward_deed_item(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];

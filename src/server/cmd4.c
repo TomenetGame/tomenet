@@ -1896,6 +1896,9 @@ void do_cmd_knowledge_dungeons(int Ind)
 				continue;
 
 			if ((d_ptr = wild_info[y][x].tower)) {
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+				if (!d_ptr->known && !admin) continue;
+#endif
 				i = d_ptr->type;
 				if (i == DI_VALINOR && !admin) continue;
 				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
@@ -1985,6 +1988,9 @@ void do_cmd_knowledge_dungeons(int Ind)
 				fprintf(fff,"\n");
 			}
 			if ((d_ptr = wild_info[y][x].dungeon)) {
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+				if (!d_ptr->known && !admin) continue;
+#endif
 				i = d_ptr->type;
 				if (i == DI_VALINOR && !admin) continue;
 				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));

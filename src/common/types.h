@@ -1305,8 +1305,12 @@ struct dungeon_type {
 	int store_timer;	/* control frequency of dungeon store generation (for misc iron stores mostly) */
 	byte theme;		/* inspired by IDDC themes - for 'wilderness' dungeons */
 	s16b quest, quest_stage;/* this dungeon was spawned by a quest? (for quest_info) quest==0 = no quest (it's q_idx + 1!) */
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+	byte known;		/* optional: Bits: 0x1 seen, 0x2 mindepth, 0x4 maxdepth, 0x8 boss seen */
+#endif
 
 	struct dun_level *level;	/* array of dungeon levels */
+
 };
 
 /*

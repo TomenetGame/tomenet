@@ -2204,6 +2204,11 @@ static void new_wr_wild() {
 				wr_byte(w_ptr->dungeon->theme);
 				wr_s16b(w_ptr->dungeon->quest);
 				wr_s16b(w_ptr->dungeon->quest_stage);
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+				wr_byte(w_ptr->dungeon->known);
+#else
+				wr_byte(0);
+#endif
 			}
 			if (w_ptr->flags & WILD_F_UP) {
 				wr_byte(w_ptr->dn_x);
@@ -2232,6 +2237,11 @@ static void new_wr_wild() {
 				wr_byte(w_ptr->tower->theme);
 				wr_s16b(w_ptr->tower->quest);
 				wr_s16b(w_ptr->tower->quest_stage);
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+				wr_byte(w_ptr->tower->known);
+#else
+				wr_byte(0);
+#endif
 			}
 		}
 	}

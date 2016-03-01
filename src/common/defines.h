@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	6
-#define SF_VERSION_PATCH	6
+#define SF_VERSION_PATCH	7
 #define SF_VERSION_EXTRA	0
 
 /* For quests savefile purpose only */
@@ -879,6 +879,13 @@
 
 /* Dungeons have minimum player level requirements to enter? */
 //#define OBEY_DUNGEON_LEVEL_REQUIREMENTS
+
+/* When one player discovers a dungeon, its location will automatically be
+   visible to everyone in the mathom house?
+   At the same time this will prevent players from discovering dungeons just by visiting
+   the according world map sector - they will additionally have to SEE the staircase once!
+   This can sometimes make discovering newly added dungeons much harder. */
+#define GLOBAL_DUNGEON_KNOWLEDGE
 
 /* Levels that Morgoth spawns on will not allow *destruction* nor any use of
    genocide spells. This can also prevent too trivial loot retrieval in
@@ -7738,6 +7745,9 @@ extern int PlayerUID;
 #endif
 #ifdef ENABLE_ITEM_ORDER
  #define BACT_ITEM_ORDER		66
+#endif
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+ #define BACT_DUNGEONS			67
 #endif
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */

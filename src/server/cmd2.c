@@ -305,6 +305,7 @@ void do_cmd_go_up(int Ind) {
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (surface) {
 			dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
@@ -321,6 +322,10 @@ void do_cmd_go_up(int Ind) {
 			if (d_ptr->type == DI_NETHER_REALM && p_ptr->insta_res)
 				msg_print(Ind, "\374\377R*** Warning: Instant Resurrection is not possible in the Nether Realm! ***");
  #endif
+#endif
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+			/* we now 'learned' the base level of this dungeon */
+			d_ptr->known |= 0x2;
 #endif
 		}
 #if 0 /* Disable use of dungeon names */
@@ -462,7 +467,13 @@ void do_cmd_go_up(int Ind) {
 			}
 		}
 
-		if (surface) msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
+		if (surface) {
+			msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+			/* we now 'learned' the base level of this dungeon */
+			wild_info[wpos->wy][wpos->wx].tower->known |= 0x2;
+#endif
+		}
 		else if (wpos->wz == -1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
 		else msg_print(Ind, "You float upwards.");
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
@@ -953,6 +964,7 @@ void do_cmd_go_down(int Ind) {
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (surface) {
 			dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
@@ -969,6 +981,10 @@ void do_cmd_go_down(int Ind) {
 			if (d_ptr->type == DI_NETHER_REALM && p_ptr->insta_res)
 				msg_print(Ind, "\374\377R*** Warning: Instant Resurrection is not possible in the Nether Realm! ***");
  #endif
+#endif
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+			/* we now 'learned' the base level of this dungeon */
+			d_ptr->known |= 0x2;
 #endif
 		}
 #if 0 /* Disable use of dungeon names */
@@ -1094,7 +1110,7 @@ void do_cmd_go_down(int Ind) {
 
 #ifdef RPG_SERVER /* This is an iron-server... Prob trav should not work - the_sandman */
 		msg_print(Ind, "This harsh world knows not what you're trying to do.");
-	        forget_view(Ind); //the_sandman
+		forget_view(Ind); //the_sandman
 		if (!is_admin(p_ptr)) return;
 #endif
 
@@ -1110,7 +1126,13 @@ void do_cmd_go_down(int Ind) {
 			}
 		}
 
-		if (surface) msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
+		if (surface) {
+			msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+			/* we now 'learned' the base level of this dungeon */
+			wild_info[wpos->wy][wpos->wx].dungeon->known |= 0x2;
+#endif
+		}
 		else if (wpos->wz == 1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
 		else msg_print(Ind, "You float downwards.");
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;

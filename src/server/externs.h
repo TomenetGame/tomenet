@@ -1680,6 +1680,7 @@ extern void store_exec_command(int Ind, int action, int item, int item2, int amt
 extern void home_extend(int Ind);
 extern void view_cheeze_list(int Ind);
 extern void view_exploration_records(int Ind);
+extern void view_exploration_history(int Ind);
 extern void reward_deed_item(int Ind, int item);
 extern void reward_deed_blessing(int Ind, int item);
 extern s64b price_item_player_store(int Ind, object_type *o_ptr);

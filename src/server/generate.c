@@ -10098,6 +10098,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #endif
 	}
 
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+	/* we now 'learned' the max level of this dungeon */
+	if (d_ptr->maxdepth == ABS(wpos->wz)) d_ptr->known |= 0x4;
+#endif
+
 	/* Basic "amount" */
 	k = (dun_lev / 3);
 

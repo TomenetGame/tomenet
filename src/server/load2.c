@@ -3365,6 +3365,7 @@ void new_rd_wild() {
 	wilderness_type *wptr;
 	struct dungeon_type *d_ptr;
 	u32b tmp;
+
 	rd_u32b(&tmp);	/* MAX_WILD_Y */
 	rd_u32b(&tmp);	/* MAX_WILD_X */
 	for (y = 0; y < MAX_WILD_Y; y++) {
@@ -3435,6 +3436,16 @@ void new_rd_wild() {
 					rd_s16b(&d_ptr->quest_stage);
 				}
 
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+				if (!s_older_than(4, 6, 7)) rd_byte(&d_ptr->known);
+				else
+ #if 0
+					d_ptr->known = 0x1; //assume server has been running for so long that all dungeons have actually been discovered by now
+ #else
+					d_ptr->known = 0x0; //watch live as the knowledge accumulates
+ #endif
+#endif
+
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 				for (i = 0; i < d_ptr->maxdepth; i++) {
 					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
@@ -3504,6 +3515,16 @@ void new_rd_wild() {
 					rd_s16b(&d_ptr->quest);
 					rd_s16b(&d_ptr->quest_stage);
 				}
+
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+				if (!s_older_than(4, 6, 7)) rd_byte(&d_ptr->known);
+				else
+ #if 0
+					d_ptr->known = 0x1; //assume server has been running for so long that all dungeons have actually been discovered by now
+ #else
+					d_ptr->known = 0x0; //watch live as the knowledge accumulates
+ #endif
+#endif
 
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 				for (i = 0; i < d_ptr->maxdepth; i++) {

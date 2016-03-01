@@ -2159,6 +2159,11 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		case BACT_EXPLORATIONS:
 			view_exploration_records(Ind);
 			break;
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+		case BACT_DUNGEONS:
+			view_exploration_history(Ind);
+			break;
+#endif
 		case BACT_RENAME_GUILD:
 			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
 				msg_print(Ind, "You need an up-to-date client to rename a guild.");

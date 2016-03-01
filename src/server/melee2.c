@@ -9315,10 +9315,15 @@ void process_monsters(void) {
 					//Dungeon boss or special unique? (can't override Sauron, Nazgul or Halloween)
 					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42 && p_ptr->music_monster != 55) {
 						//Dungeon boss?
-						if (r_ptr->flags0 & RF0_FINAL_GUARDIAN)
+						if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) {
+ #ifdef GLOBAL_DUNGEON_KNOWLEDGE
+							/* we now 'learned' who is the boss of this dungeon */
+							if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= 0x8;
+							else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
+ #endif
 							Send_music(pl, (p_ptr->music_monster = 41), -1);
 						//Special Unique (non-respawning)? Can't override dungeon boss..
-						else if (r_ptr->level >= 98 && p_ptr->music_monster != 41) {
+						} else if (r_ptr->level >= 98 && p_ptr->music_monster != 41) {
 							//Any of em
 							Send_music(pl, (p_ptr->music_monster = 40), -1);
 						}

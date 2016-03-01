@@ -3044,6 +3044,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 			    /* override colour from easiest to worst */
 			    get_staircase_colour(d_ptr, ap);
 		    }
+ #ifdef GLOBAL_DUNGEON_KNOWLEDGE
+		    /* player has seen the entrance on the actual main screen -> add it to global exploration history knowledge */
+		    d_ptr->known |= 0x1;
+ #endif
 		}
 #endif
 
@@ -4322,6 +4326,10 @@ static void wild_display_map(int Ind, char mode) {
 				dungeon_type *dun = wild_info[twpos.wy][twpos.wx].dungeon, *tow = wild_info[twpos.wy][twpos.wx].tower;
 				if (dun && !strcmp(d_info[dun->type].name + d_name, "The Shores of Valinor") && !admin) dun = NULL;
 				if (tow && !strcmp(d_info[tow->type].name + d_name, "The Shores of Valinor") && !admin) tow = NULL;
+ #ifdef GLOBAL_DUNGEON_KNOWLEDGE
+				if (dun && !dun->known) dun = NULL;
+				if (tow && !tow->known) tow = NULL;
+ #endif
 				if (dun) {
 					if (tow) {
 						tc = 'X';
