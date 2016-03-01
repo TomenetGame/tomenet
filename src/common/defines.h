@@ -885,7 +885,7 @@
    At the same time this will prevent players from discovering dungeons just by visiting
    the according world map sector - they will additionally have to SEE the staircase once!
    This can sometimes make discovering newly added dungeons much harder. */
-//#define GLOBAL_DUNGEON_KNOWLEDGE
+#define GLOBAL_DUNGEON_KNOWLEDGE
 
 /* Levels that Morgoth spawns on will not allow *destruction* nor any use of
    genocide spells. This can also prevent too trivial loot retrieval in
