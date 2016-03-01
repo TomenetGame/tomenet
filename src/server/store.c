@@ -5896,7 +5896,7 @@ void view_exploration_history(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff,"\377U  ~ List of all known dungeons, that adventurers have discovered in the past ~\n\n");
+	fprintf(fff,"\377U  ~ List of all known dungeons which adventurers have discovered in the past ~\n\n");
 
 	/* output the actual list */
 	for (i = 1; i <= dungeon_id_max; i++) {
