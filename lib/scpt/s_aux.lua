@@ -649,6 +649,10 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	if check_antimagic(Ind, get_spell_am(s)) == TRUE then
 --Next line is already in the server sources.
 --		msg_print(i, "Your anti-magic field disrupts any magic attempts.")
+
+		local energy = level_speed(player.wpos);
+		player.energy = player.energy - energy
+
 		return 1 --continue ftk
 	end
 
@@ -722,7 +726,6 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 		-- Take a turn
 		local energy = level_speed(player.wpos);
--- DGDGDG			if is_magestaff() == TRUE then energy = (8 * energy) / 10 end
 		player.energy = player.energy - energy
 	end
 
