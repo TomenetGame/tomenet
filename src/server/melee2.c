@@ -9310,6 +9310,11 @@ void process_monsters(void) {
 				} else if (r_ptr->flags1 & RF1_UNIQUE) {
 					if (m_ptr->r_idx == RI_SAURON) {
 						//Sauron; overrides all others
+ #ifdef GLOBAL_DUNGEON_KNOWLEDGE
+						/* we now 'learned' who is the boss of this dungeon */
+						if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= 0x8;
+						else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
+ #endif
 						Send_music(pl, (p_ptr->music_monster = 43), -1);
 					}
 					//Dungeon boss or special unique? (can't override Sauron, Nazgul or Halloween)
