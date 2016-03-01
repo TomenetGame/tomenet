@@ -5007,7 +5007,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		//iron (heavy armour, swords, crowns)
 		else if (o_ptr->tval == TV_SWORD || (o_ptr->tval == TV_HARD_ARMOR && o_ptr->sval <= SV_RIBBED_PLATE_ARMOUR) || (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_IRON_CROWN)) {
-			int val = object_value_real(0, o_ptr), wgt = o_ptr->weight;
+			int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
 
 			//hardcoded massive piece value...
 			if (dam >= 1538 / 2 && val >= 800 && wgt >= 7900) {
@@ -5024,7 +5024,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		//silver (crowns)
 		else if (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_SILVER_CROWN) {
-			int val = object_value_real(0, o_ptr), wgt = o_ptr->weight;
+			int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
 
 			//hardcoded massive piece value...
 			if (dam >= 962 / 2 && val >= 4500 && wgt >= 10000) {
@@ -5041,7 +5041,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		//gold (crowns)
 		else if (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_GOLDEN_CROWN) {
-			int val = object_value_real(0, o_ptr), wgt = o_ptr->weight;
+			int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
 
 			//hardcoded massive piece value...
 			if (dam >= 1064 / 2 && val >= 20000 && wgt >= 19000) {
