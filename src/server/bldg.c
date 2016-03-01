@@ -100,10 +100,16 @@ void show_building(int Ind, store_type *s_ptr) {
 		ba_ptr = &ba_info[st_ptr->actions[i]];
 
 		/* hack: some actions are admin-only (for testing purpose) */
-		if (!is_admin(Players[Ind]) && st_ptr->actions[i] == 70) {
+		if (!is_admin(Players[Ind]) && st_ptr->actions[i] == 70) { //BACT_STATIC
 			Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
 			continue;
 		}
+#ifndef GLOBAL_DUNGEON_KNOWLEDGE
+		if (st_ptr->actions[i] == 73) { //BACT_DUNGEONS
+			Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
+			continue;
+		}
+#endif
 
 		if (ba_ptr->letter != '.') {
 			if (ba_ptr->action_restr == 0) {
