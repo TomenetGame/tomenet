@@ -3444,6 +3444,8 @@ void new_rd_wild() {
  #else
 					d_ptr->known = 0x0; //watch live as the knowledge accumulates
  #endif
+#else
+				if (!s_older_than(4, 6, 7)) strip_bytes(1);
 #endif
 
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
@@ -3524,6 +3526,8 @@ void new_rd_wild() {
  #else
 					d_ptr->known = 0x0; //watch live as the knowledge accumulates
  #endif
+#else
+				if (!s_older_than(4, 6, 7)) strip_bytes(1);
 #endif
 
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
