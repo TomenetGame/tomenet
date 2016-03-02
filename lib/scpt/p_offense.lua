@@ -212,7 +212,7 @@ HEXORCISM_II = add_spell {
 			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 1400))
 	end,
 	["info"] = 	function()
-		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 1375))
+		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 1400))
 	end,
 	["desc"] = 	{ "Dispels nearby demons.", }
 }
