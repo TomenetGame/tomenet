@@ -7625,13 +7625,14 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			}
 		}
 
-		/* Don't generate (possibly expensive due to high bpval, hence passed up till here) crap */
+		/* Don't generate (possibly expensive due to high bpval or high +ac, hence passed up till here) crap */
 		if (!o_ptr->name2b)
 			switch (o_ptr->name2) {
 			case EGO_CONCENTRATION:
 			case EGO_INFRAVISION:
 			case EGO_BEAUTY:
 			case EGO_CHARMING:
+			case EGO_NOLDOR:
 				continue;
 		}
 
