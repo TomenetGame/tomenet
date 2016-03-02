@@ -191,10 +191,10 @@ HEXORCISM_I = add_spell {
 	["fail"] = 	-15,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 550))
+			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 600))
 	end,
 	["info"] = 	function()
-		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 550))
+		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 600))
 	end,
 	["desc"] = 	{ "Dispels nearby demons.", }
 }
@@ -204,15 +204,15 @@ HEXORCISM_II = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
-	["mana"] = 	70,
-	["mana_max"] = 	70,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
 	["fail"] = 	-90,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 1100))
+			dispel_demons(Ind, 50 + get_level(Ind, HEXORCISM_I, 1375))
 	end,
 	["info"] = 	function()
-		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 1100))
+		return "dam "..(50 + get_level(Ind, HEXORCISM_I, 1375))
 	end,
 	["desc"] = 	{ "Dispels nearby demons.", }
 }
@@ -267,10 +267,10 @@ HRELSOULS_II = add_spell {
 	["fail"] = 	-40,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 500))
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 550))
 			end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 500))
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 550))
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
@@ -280,15 +280,15 @@ HRELSOULS_III = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
-	["mana"] = 	70,
-	["mana_max"] = 	70,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
 	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 900))
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS_I, 1125))
 			end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 900))
+		return "dam "..(10 + get_level(Ind, HRELSOULS_I, 1125))
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
