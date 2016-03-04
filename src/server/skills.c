@@ -240,7 +240,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (old_value < 10 && new_value >= 10) { /* the_sandman */
 //			msg_print(Ind, "\374\377GYou feel as if you could take on the world!");
 			msg_print(Ind, "\374\377GYou learn to use punching techniques.");
-			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		}
 		if (old_value < 20 && new_value >= 20)
 			msg_print(Ind, "\374\377GYou get the hang of using kicks.");
@@ -254,7 +254,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYou get the hang of butting techniques.");
 		if (old_value < 100 && new_value >= 100) {
 			msg_print(Ind, "\374\377GYou learn how to fall safely!");
-			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		}
 		if (old_value < 110 && new_value >= 110)
 			msg_print(Ind, "\374\377GYour kicks have improved.");
@@ -267,7 +267,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (old_value < 200 && new_value >= 200) {
 			msg_print(Ind, "\374\377GYou learn to use the Cat's Claw technique.");
 			msg_print(Ind, "\374\377GYou learn how to keep your mind focussed and avoid confusion!");
-			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		}
 		if (old_value < 250 && new_value >= 250) {
 			msg_print(Ind, "\374\377GYou learn to use jump kicks effectively.");
@@ -277,24 +277,24 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYou learn to use the Eagle's Claw technique.");
 		if (old_value < 300 && new_value >= 300) {
 			msg_print(Ind, "\374\377GYou learn how to swim easily!");
-			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		}
 		if (old_value < 330 && new_value >= 330) {
 			msg_print(Ind, "\374\377GYou get the hang of circle kicks.");
 		}
 /*		} if (old_value < 350 && new_value >= 350) {  <- this one is now at skill 1.000 already
-			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!"); */
+			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!"); */
 		if (old_value < 370 && new_value >= 370)
 			msg_print(Ind, "\374\377GYou learn the Iron Fist technique.");
 		if (old_value < 400 && new_value >= 400) {
 			msg_print(Ind, "\374\377GYou learn how to climb mountains!");
-			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		}
 		if (old_value < 410 && new_value >= 410)
 			msg_print(Ind, "\374\377GYou get the hang of difficult flying kicks.");
 		if (old_value < 450 && new_value >= 450) {
 			msg_print(Ind, "\374\377GYou learn the Dragon Fist technique.");
-			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		}
 		if (old_value < 480 && new_value >= 480) {
 			msg_print(Ind, "\374\377GYou get the hang of effective Crushing Blows.");
@@ -306,7 +306,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\374\377GYou learn the technique of Levitation!");
 		/* The final +ea has been moved down from lvl 50 to lvl 1 to boost MA a little - the_sandman - moved it to 350 - C. Blue */
-			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		}
 		break;
 	case SKILL_STANCE:
@@ -579,7 +579,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 
 	case SKILL_SWORD: case SKILL_AXE: case SKILL_BLUNT: case SKILL_POLEARM:
 		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
 		}
 		break;
 	case SKILL_SLING:

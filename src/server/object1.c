@@ -4876,7 +4876,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	if (f1 & (TR1_SPEED))
 		fprintf(fff, "It affects your speed.\n");
 	if (f1 & (TR1_BLOWS))
-		fprintf(fff, "It affects your attack speed.\n");
+		fprintf(fff, "It affects your melee attack speed.\n");
 	if (f5 & (TR5_CRIT))
 		fprintf(fff, "It affects your ability to score critical hits.\n");
 	if (f5 & (TR5_LUCK))
