@@ -3424,8 +3424,8 @@ void calc_boni(int Ind) {
 	}
 
 	if (p_ptr->pclass == CLASS_RANGER) {
-		if (p_ptr->lev >= 15) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
-		if (p_ptr->lev >= 25) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
+		if (p_ptr->lev >= 8) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
+		if (p_ptr->lev >= 15) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
 	}
 
 	if (p_ptr->pclass == CLASS_SHAMAN)

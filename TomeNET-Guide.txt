@@ -13004,7 +13004,7 @@ create a character!):
     any situation. They use intelligence for spellcasting same as mages, they
     need strength if they rely on fighting in close combat, and they should
     have good dexterity if they aim at training ranged weapons.
-    At level 15 rangers learn to find paths passing thick woods, and at 25 they
+    At level 8 rangers learn to find paths passing thick woods, and at 15 they
     have become very able swimmers as well.
 
     If you're planning to make use of ranged weapons, the first thing you
