@@ -551,7 +551,9 @@ if (total_cpa <= 12) {
 	offset += max_cpa + 1;
 
 	if (i < max_cpa) {
-		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", offset, 2);
+		/* Only exclusive-slots left? Then don't display 'N' option but just 'E'. */
+		if (i < max_cpa - max_ded_pvp_chars - max_ded_iddc_chars)
+			c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", offset, 2);
 		/* hack: no weird modi on first client startup!
 		   To find out whether it's 1st or not we check bigmap_hint and # of existing characters.
 		   However, we just don't display the choice, it's still choosable! */
