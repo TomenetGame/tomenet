@@ -3724,6 +3724,7 @@ static bool process_player_end_aux(int Ind) {
 	int		regen_amount; //, NumPlayers_old = NumPlayers;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+	char o_name[ONAME_LEN];
 
 	int minus = 1;
 	int minus_magic = 1;
@@ -4933,7 +4934,11 @@ static bool process_player_end_aux(int Ind) {
 			o_ptr->timeout--;
 
 			/* Notice changes */
-			if (!(o_ptr->timeout)) j++;
+			if (!(o_ptr->timeout)) {
+				object_desc(Ind, o_name, o_ptr, FALSE, 256);
+				msg_format(Ind, "Your %s has finished charging.", o_name);
+				j++;
+			}
 		}
 	}
 
