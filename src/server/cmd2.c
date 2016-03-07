@@ -78,7 +78,7 @@ void do_cmd_go_up(int Ind) {
 		}
 #ifdef DED_IDDC_AWARE
 		for (i = 0; i < MAX_K_IDX; i++)
-			p_ptr->obj_aware[i] = TRUE;
+			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
 #endif
 	}
 

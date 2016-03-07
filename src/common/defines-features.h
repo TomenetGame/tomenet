@@ -158,8 +158,9 @@
 /* like BONE_AND_TREASURE_CHAMBERS, just for IDDC */
 #define IDDC_BONE_AND_TREASURE_CHAMBERS
 
-/* Dedicated IDDC-only characters are aware of all flavoured items, as soon as they enter the IDDC. */
-#define DED_IDDC_AWARE
+/* Dedicated IDDC-only characters are (randomly) aware of flavoured items,
+   with this chance per flavour, as soon as they enter the IDDC. [1..100] */
+#define DED_IDDC_AWARE 33
 
 
 /* New in 4.5.1.2: Support 100% client-side animated spellcasting - C. Blue
