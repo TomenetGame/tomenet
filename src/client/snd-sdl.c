@@ -700,7 +700,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 
 			for (s = 0; s < cfg_max_channels; s++) {
 				if (channel_type[s] == SFX_TYPE_NO_OVERLAP && channel_player_id[s] == player_id) {
-					Mix_FadeOutChannel(s, 250);
+					Mix_FadeOutChannel(s, 450); //250..450 (more realistic timing vs smoother sound (avoid final 'spike'))
 					found = TRUE;
 				}
 			}
@@ -710,7 +710,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 		else {
 			for (s = 0; s < cfg_max_channels; s++) {
 				if (channel_sample[s] == event && channel_player_id[s] == player_id) {
-					Mix_FadeOutChannel(s, 250);
+					Mix_FadeOutChannel(s, 450); //250..450 (more realistic timing vs smoother sound (avoid final 'spike'))
 					return TRUE;
 				}
 			}
