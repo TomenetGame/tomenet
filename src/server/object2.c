@@ -1712,9 +1712,12 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				    (o_ptr->sval == SV_RING_CUNNINGNESS))
 				    ) {
 					count /= 2;
-					if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 300L;
+					if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 300L;
+				/* hack for digging tools too.. */
+				} else if (o_ptr->tval == TV_DIGGING) {
+					if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 400L;
 				} else {
-					if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
+					if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 200L;
 				}
 
 //				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
