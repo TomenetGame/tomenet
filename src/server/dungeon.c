@@ -4936,7 +4936,7 @@ static bool process_player_end_aux(int Ind) {
 			/* Notice changes */
 			if (!(o_ptr->timeout)) {
 				object_desc(Ind, o_name, o_ptr, FALSE, 256);
-				msg_format(Ind, "Your %s has finished charging.", o_name);
+				msg_format(Ind, "Your %s (%c) has finished charging.", o_name, index_to_label(i));
 				j++;
 			}
 		}
