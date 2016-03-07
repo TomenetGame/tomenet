@@ -356,6 +356,9 @@ void Receive_login(void) {
 	int max_ded_pvp_chars = 1, max_ded_iddc_chars = 2;
 	int offset, total_cpa;
 
+	bool new_ok = TRUE, exclusive_ok = TRUE;
+
+
 	/* Check if the server wanted to destroy the connection - mikaelh */
 	if (rbuf.ptr[0] == PKT_QUIT) {
 		errno = 0;
@@ -550,15 +553,18 @@ if (total_cpa <= 12) {
 
 	offset += max_cpa + 1;
 
+	/* Only exclusive-slots left? Then don't display 'N' option. */
+	if (i - ded_pvp - ded_iddc >= max_cpa - max_ded_pvp_chars - max_ded_iddc_chars) new_ok = FALSE;
+	/* Only non-exclusive-slots left? Then don't display 'E' option. */
+	if (!((ded_pvp < max_ded_pvp_chars || ded_iddc < max_ded_iddc_chars) && max_cpa_plus)) exclusive_ok = FALSE;
+
 	if (i < max_cpa) {
-		/* Only exclusive-slots left? Then don't display 'N' option but just 'E'. */
-		if (i < max_cpa - max_ded_pvp_chars - max_ded_iddc_chars)
-			c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", offset, 2);
-		/* hack: no weird modi on first client startup!
-		   To find out whether it's 1st or not we check bigmap_hint and # of existing characters.
-		   However, we just don't display the choice, it's still choosable! */
-		if (!bigmap_hint || existing_characters) {
-			if ((ded_pvp < max_ded_pvp_chars || ded_iddc < max_ded_iddc_chars) && max_cpa_plus)
+		if (new_ok) c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", offset, 2);
+		if (exclusive_ok) {
+			/* hack: no weird modi on first client startup!
+			   To find out whether it's 1st or not we check bigmap_hint and # of existing characters.
+			   However, we just don't display the choice, it's still choosable! */
+			if (!bigmap_hint || existing_characters)
 				c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character (IDDC or PvP only)", offset + 1, 2);
 		}
 	} else {
@@ -580,7 +586,7 @@ if (total_cpa <= 13) {
 	offset += 2;
 }
 
-	while ((ch < 'a' || ch >= 'a' + i) && ((ch != 'N' && ch != 'E') || i > (max_cpa - 1))) {
+	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1))) {
 		ch = inkey();
 		if (ch == 'Q') quit(NULL);
 	}
