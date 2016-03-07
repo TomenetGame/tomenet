@@ -3279,6 +3279,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				}
 			}
 
+#ifdef USE_SOUND_2010
+			/* If we successfully tunneled this grid, stop sfx */
+			if (p_ptr->command_rep && p_ptr->command_rep != PKT_BASH && !more)
+				sound(Ind, NULL, NULL, SFX_TYPE_STOP, TRUE);
+#endif
+
 		}
 
 		/* Notice "blockage" changes */
