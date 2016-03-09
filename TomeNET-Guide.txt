@@ -18597,4 +18597,7 @@ SOLUTION:   Why are you STILL using Windows.. Ok well, you can try to just sit
             to freeze for about 15 minutes on Windows 10. Maybe it will just
             continue if you wait for a while.
 
+PROBLEM 52: Windows OS: Using the 'Alt' modifier key in macros doesn't work.
+SOLUTION:   None. Install Linux in addition to Windows (dual-boot).
+
 ==============================================================================
