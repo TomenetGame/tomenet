@@ -7580,10 +7580,12 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (f5 & TR5_DRAIN_MANA) continue;
 			if (f3 & TR3_NO_MAGIC) continue;
 		}
-		/* Don't generate DRAIN_HP items (Spectral) */
+		/* Don't generate DRAIN_HP items (Spectral) - except for Vampires who are unaffected */
 		if (f5 & TR5_DRAIN_HP) {
 			if ((o_ptr->name2 != EGO_SPECTRAL && o_ptr->name2b != EGO_SPECTRAL) || p_ptr->prace != RACE_VAMPIRE) continue;
 		}
+		/* Don't generate AGGRAVATE items at all */
+		if (f3 & TR3_AGGRAVATE) continue;
 
 		/* Don't generate mage-only benefitting reward if we don't use magic */
 		if (!spell_choice && !o_ptr->name2b) { /* as _double ego_, it should be acceptable :-p */
