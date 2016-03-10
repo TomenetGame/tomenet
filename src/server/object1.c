@@ -5410,12 +5410,23 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			/* no message maybe */
 			//fprintf(fff, "\377yIt has not been identified yet.\n");
  #endif
+
+ #if 1
+			/* maybe at least tell the person that this item needs ID */
+			if (!(f3 & TR3_EASY_KNOW)) fprintf(fff, "\377yThis item has not been identified yet.\n");
+ #endif
 		}
  #if 0 /* looks better if the text is the same for artifacts as it's for ego items, visually =P */
 		else if (o_ptr->name1) fprintf(fff, "\377yIt seems to have hidden powers.\n"); //art
  #endif
 		else fprintf(fff, "\377yIt may have hidden powers.\n"); //ego
 	}
+ #if 1
+	/* maybe at least tell the person that this item needs ID */
+	else if (!id) {
+		if (!(f3 & TR3_EASY_KNOW)) fprintf(fff, "\377yThis item has not been identified yet.\n");
+	}
+ #endif
 #endif
 
 	/* Close the file */
