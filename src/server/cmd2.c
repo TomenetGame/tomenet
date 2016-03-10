@@ -689,10 +689,15 @@ void do_cmd_go_down(int Ind) {
 	if (wpos->wz < 0) dungeon = TRUE;
 	if (wpos->wz == 0) surface = TRUE;
 
-	if ((p_ptr->mode & MODE_DED_IDDC) && surface &&
-	    (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z)) {
-		msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
-		return;
+	if ((p_ptr->mode & MODE_DED_IDDC) && surface) {
+		if  (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z) {
+			msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
+			return;
+		}
+#ifdef DED_IDDC_AWARE
+		for (i = 0; i < MAX_K_IDX; i++)
+			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
+#endif
 	}
 
 #ifndef RPG_SERVER
