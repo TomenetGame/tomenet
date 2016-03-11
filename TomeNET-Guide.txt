@@ -86,7 +86,7 @@ Contents
     (4.5a)  Shops and their services
     (4.5b)  Towns & town dungeons
     (4.5c)  Dungeons
-    (4.5c2) Eample dungeon depth relations
+    (4.5c2) Example dungeon depth relations
     (4.5d)  Dungeon bosses
     (4.6)   Pits and vaults
     (4.7)   Traps & trap kits
@@ -2134,7 +2134,6 @@ Other well-known rogue-likes are Nethack, Larn, Moria, Angband.
 --------------------------------------------------------------
 Links:
     http://www.thangorodrim.net/
-    http://yarns.felis7.civ.pl/
 Newsgroups:
     rec.games.roguelike.*
 
@@ -3330,7 +3329,7 @@ beginners to choose 'normal body' and NOT 'fruit bat'. ;)
 Body: 'Fruit bat' (Batty)
 -------------------------
 A fruit bat is like a normal character, just not in humanoid shape but in bat
-form! Fruit bats cannot equip weapons, body armour, boots or gloves.
+form! Fruit bats cannot equip weapons, boots or gloves.
 These restrictions won't change even if they choose a class which can make use
 if mimicry and thereby mimic a humanoid form (druid fruit bats would in fact be
 the most ineffective choice).
@@ -5846,8 +5845,8 @@ die to monsters (unlikely) or starvation (very likely).
 -Instant resurrection does not work in the Nether Realm.
 
 
-(4.5c2) Eample dungeon depth relations
---------------------------------------
+(4.5c2) Example dungeon depth relations
+---------------------------------------
 Here are some examples of relations of dungeon level difficulties.
 
 This does not take into account the dungeon 'theme', ie types of walls, floors
