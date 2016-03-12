@@ -8409,26 +8409,39 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 /* prepare some quest parameters for a standard kill quest */
 bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num){
 	int r = *type, i = *num, lev = *level, k = 0;
+	player_type *p_ptr = Players[j];
 
-	if (Players[j]->xorder_id) {
+	if (p_ptr->xorder_id) {
 		for (i = 0; i < MAX_XORDERS; i++) {
-			if (xorders[i].id == Players[j]->xorder_id) {
-				if (j == Ind)
+			if (xorders[i].id == p_ptr->xorder_id) {
+				if (j == Ind) {
 					msg_format(Ind, "\376\377oYour %sorder is to exterminate \377y%d \377g%s\377o (level %d).",
-					    (xorders[i].flags & QUEST_GUILD) ? "guild's " : "", Players[Ind]->xorder_num,
+					    (xorders[i].flags & QUEST_GUILD) ? "guild's " : "", p_ptr->xorder_num,
 					    r_name + r_info[xorders[i].type].name, r_info[xorders[i].type].level);
 					msg_format(Ind, "\376\377oThe remaining time to carry it out is \377y%d\377o minutes.", (MAX_XORDER_TURNS - (turn - xorders[i].turn)) / (cfg.fps * 60));
+				}
 				return FALSE;
 			}
 		}
 	}
 
+	if (!in_irondeepdive(&p_ptr->wpos) && p_ptr->store_num != STORE_MAYOR) {
+		msg_print(Ind, "\377yYou must visit the mayor's office in Bree to receive an extermination order.");
+		return FALSE;
+	}
+
+	if (p_ptr->IDDC_logscum) {
+		msg_print(Ind, "\377yYou cannot acquire an extermination order on a stale floor.");
+		msg_print(Ind, "\377yTake a staircase to move on to a different dungeon level.");
+		return FALSE;
+	}
+
 	/* don't start too early -C. Blue */
 #ifndef RPG_SERVER
-	if (Players[j]->lev < 5 && !in_irondeepdive(&Players[j]->wpos)) {
+	if (p_ptr->lev < 5 && !in_irondeepdive(&p_ptr->wpos)) {
 		msg_print(Ind, "\377oYou need to be level 5 or higher to receive an extermination order!");
 #else /* for ironman there's no harm in allowing early quests */
-	if (Players[j]->lev < 3) {
+	if (p_ptr->lev < 3) {
 		msg_print(Ind, "\377oYou need to be level 3 or higher to receive an extermination order!");
 #endif
 		return FALSE;
@@ -8455,7 +8468,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 	/* easier in Ironman environments */
 #ifndef RPG_SERVER
-	if (in_irondeepdive(&Players[j]->wpos)) {
+	if (in_irondeepdive(&p_ptr->wpos)) {
 #endif
 		if (lev < 40) {
 			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 3 + randint(4);
