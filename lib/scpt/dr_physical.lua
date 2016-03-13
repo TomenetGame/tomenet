@@ -104,7 +104,7 @@ HERBALTEA = add_spell {
 			end,
 	["desc"] = 	{ "It sustains you and those around you. (Auto-projecting)",
 			  "At level 20 it brews a drink that restores your life level.",
-			  "At level 25 it brews tea that restores your body status.",
+			  "At level 25 it brews tea that restores your body's attributes.",
 			  "At level 35 it brews the strongest tea to cure even the Black Breath.", }
 }
 
