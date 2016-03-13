@@ -4815,6 +4815,11 @@ bool monster_death(int Ind, int m_idx) {
 		m_ptr->charmedignore = 0;
 	}
 
+	if (m_ptr->special) s_printf("MONSTER_DEATH: Golem of '%s' by '%s'.\n", lookup_player_name(m_ptr->owner), p_ptr->name);
+#ifdef RPG_SERVER
+	else if (m_ptr->pet) s_printf("MONSTER_DEATH: Pet of '%s' by '%s'\n", lookup_player_name(m_ptr->owner), p_ptr->name);
+#endif
+
 #ifdef RPG_SERVER
 	/* Pet death. Update and inform the owner -the_sandman */
 	if (m_ptr->pet) {
@@ -8622,11 +8627,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		}
 	}
 
-	/* Some monsters are immune to death */
-	if (r_ptr->flags7 & RF7_NO_DEATH) return FALSE;
-
 	/* Wake it up */
 	m_ptr->csleep = 0;
+
+	/* Some monsters are immune to death */
+	if (r_ptr->flags7 & RF7_NO_DEATH) return FALSE;
 
 	/* for when a quest giver turned non-invincible */
 #if 0
@@ -9151,13 +9156,17 @@ void monster_death_mon(int am_idx, int m_idx) {
 			everyone_lite_spot(wpos, ny, nx);
 
 			/* Under a player */
-			if (c_ptr->m_idx < 0) {
+			if (c_ptr->m_idx < 0)
 				msg_print(0 - c_ptr->m_idx, "You feel something roll beneath your feet.");
-			}
 
 			break;
 		}
 	}
+
+	if (m_ptr->special) s_printf("MONSTER_DEATH_MON: Golem of '%s'.\n", lookup_player_name(m_ptr->owner));
+#ifdef RPG_SERVER
+	else if (m_ptr->pet) s_printf("MONSTER_DEATH_MON: Pet of '%s'.\n", lookup_player_name(m_ptr->owner));
+#endif
 
 	FREE(m_ptr->r_ptr, monster_race);
 }
@@ -9173,6 +9182,9 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 
 	/* Wake it up */
 	m_ptr->csleep = 0;
+
+	/* Some monsters are immune to death */
+	if (r_ptr->flags7 & RF7_NO_DEATH) return FALSE;
 
 	/* Hurt it */
 	m_ptr->hp -= dam;

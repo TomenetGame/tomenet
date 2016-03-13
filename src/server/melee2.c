@@ -8570,13 +8570,14 @@ static void process_monster_pet(int Ind, int m_idx) {
 				everyone_lite_spot(wpos, ny, nx);
 			}
 		}
+
 		if (!find_player(m_ptr->owner)) return; //hack: the owner must be online please. taking this out -> panic()
 		/* the player is in the way.  attack him. */
 		if (do_move && (c_ptr->m_idx < 0) ) {
 			/* sanity check */
 			if (Players[0-c_ptr->m_idx]->id != m_ptr->owner && 
-			   (find_player(m_ptr->owner) == 0 || 
-			    find_player(-c_ptr->m_idx) == 0)) { 
+			   (find_player(m_ptr->owner) == 0 ||
+			    find_player(-c_ptr->m_idx) == 0)) {
 				do_move = FALSE;
 				do_turn = FALSE;
 			}
@@ -8584,7 +8585,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 			if (Players[0-c_ptr->m_idx]->id != m_ptr->owner && 
 			    check_hostile(0-c_ptr->m_idx, find_player(m_ptr->owner))) {
 				(void)make_attack_melee(0 - c_ptr->m_idx, m_idx); 
-				do_move = FALSE; 
+				do_move = FALSE;
 				do_turn = TRUE;
 			} else {
 				if (m_ptr->owner != Players[-c_ptr->m_idx]->id) {
@@ -8597,7 +8598,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 						 "\377g%s's pet is staring at you.", 
 						 Players[find_player(m_ptr->owner)]->name);
 				}
-				do_move = FALSE; 
+				do_move = FALSE;
 				do_turn = TRUE;
 			}
 		} 
@@ -8674,13 +8675,13 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 }
 #endif
 static void process_monster_golem(int Ind, int m_idx) {
-        //player_type *p_ptr;
+	//player_type *p_ptr;
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
 	struct worldpos *wpos = &m_ptr->wpos;
 
-	int			i, d, oy, ox, ny, nx;
+	int			i, d, oy, ox, ny, nx, Ind_owner;
 
 	int			mm[8];
 
@@ -8710,8 +8711,15 @@ static void process_monster_golem(int Ind, int m_idx) {
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
-        //if (Ind > 0) p_ptr = Players[Ind];
-        //else p_ptr = NULL;
+	Ind_owner = find_player(m_ptr->owner);
+#if 0
+	/* Owner not logged in -> don't attack?
+	   Maybe not. It's cool if the golem can kill monsters around your house for example :) */
+	if (!Ind_owner) return;
+#endif
+
+	//if (Ind > 0) p_ptr = Players[Ind];
+	//else p_ptr = NULL;
 
 	/* Handle "stun" */
 	if (m_ptr->stunned) {
@@ -8829,8 +8837,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 
 		/* Tavern entrance? */
 //		if (c_ptr->feat == FEAT_SHOP_TAIL)
-		if (c_ptr->feat == FEAT_SHOP)
-		{
+		if (c_ptr->feat == FEAT_SHOP) {
 			/* Nothing */
 		}
 #if 0
@@ -8852,21 +8859,21 @@ static void process_monster_golem(int Ind, int m_idx) {
 		}
 		/* Permanent wall / permanently wanted structure */
 		else if (((f_info[c_ptr->feat].flags1 & FF1_PERMANENT) ||
-			(f_info[c_ptr->feat].flags2 & FF2_BOUNDARY) ||
-			(c_ptr->feat == FEAT_WALL_HOUSE) ||
-			(c_ptr->feat == FEAT_HOME_HEAD) ||
-			(c_ptr->feat == FEAT_HOME_TAIL) ||
-//			(c_ptr->feat == FEAT_SHOP_HEAD) ||
-//			(c_ptr->feat == FEAT_SHOP_TAIL) ||
-			(c_ptr->feat == FEAT_HOME_OPEN) ||
-			(c_ptr->feat == FEAT_HOME) ||
-			(c_ptr->feat == FEAT_ALTAR_HEAD) ||
-			(c_ptr->feat == FEAT_ALTAR_TAIL))
-			&& !(
-			(c_ptr->feat == FEAT_TREE) ||
-			(c_ptr->feat == FEAT_BUSH) ||
-//			(c_ptr->feat == FEAT_EVIL_TREE) ||
-			(c_ptr->feat == FEAT_DEAD_TREE)))
+		    (f_info[c_ptr->feat].flags2 & FF2_BOUNDARY) ||
+		    (c_ptr->feat == FEAT_WALL_HOUSE) ||
+		    (c_ptr->feat == FEAT_HOME_HEAD) ||
+		    (c_ptr->feat == FEAT_HOME_TAIL) ||
+		    //(c_ptr->feat == FEAT_SHOP_HEAD) ||
+		    //(c_ptr->feat == FEAT_SHOP_TAIL) ||
+		    (c_ptr->feat == FEAT_HOME_OPEN) ||
+		    (c_ptr->feat == FEAT_HOME) ||
+		    (c_ptr->feat == FEAT_ALTAR_HEAD) ||
+		    (c_ptr->feat == FEAT_ALTAR_TAIL))
+		    && !(
+		    (c_ptr->feat == FEAT_TREE) ||
+		    (c_ptr->feat == FEAT_BUSH) ||
+		    //(c_ptr->feat == FEAT_EVIL_TREE) ||
+		    (c_ptr->feat == FEAT_DEAD_TREE)))
 		{
 			/* Nothing */
 		}
@@ -8908,9 +8915,8 @@ static void process_monster_golem(int Ind, int m_idx) {
 		}
 		/* Handle doors and secret doors */
 		else if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		          (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-		         (c_ptr->feat == FEAT_SECRET))
-		{
+		    (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
+		    (c_ptr->feat == FEAT_SECRET)) {
 			bool may_bash = TRUE;
 
 			/* Take a turn */
@@ -8993,9 +8999,10 @@ static void process_monster_golem(int Ind, int m_idx) {
 		}
 
 		/* The player is in the way.  Attack him. */
-                if (do_move && (c_ptr->m_idx < 0)) {
+                if (do_move && (c_ptr->m_idx < 0)
+		    && Ind_owner && check_hostile(0-c_ptr->m_idx, Ind_owner)) {
 			/* Do the attack */
-                        if (Players[0-c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_melee(0 - c_ptr->m_idx, m_idx);
+			if (Players[0-c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_melee(0 - c_ptr->m_idx, m_idx);
 
 			/* Do not move */
 			do_move = FALSE;
@@ -9006,8 +9013,8 @@ static void process_monster_golem(int Ind, int m_idx) {
 
 		/* A monster is in the way */
 		if (do_move && c_ptr->m_idx > 0) {
-                        /* Attack it ! */
-                        if (m_ptr->owner != y_ptr->owner) monster_attack_normal(c_ptr->m_idx, m_idx);
+			/* Attack it ! */
+			if (m_ptr->owner != y_ptr->owner) monster_attack_normal(c_ptr->m_idx, m_idx);
 
 			/* Assume no movement */
 			do_move = FALSE;

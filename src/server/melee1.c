@@ -3188,19 +3188,19 @@ static int mon_check_hit(int m_idx, int power, int level) {
  */
 bool monster_attack_normal(int tm_idx, int m_idx) {
 	/* Targer */
-	monster_type    *tm_ptr = &m_list[tm_idx];
+	monster_type *tm_ptr = &m_list[tm_idx];
 #ifdef RPG_SERVER
-        monster_race    *tr_ptr = race_inf(tm_ptr);
+	monster_race *tr_ptr = race_inf(tm_ptr);
 	int exp_gain;
 #endif
 	/* Attacker */
-	monster_type    *m_ptr = &m_list[m_idx]; 
-	monster_race    *r_ptr = race_inf(m_ptr);
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
 
-	int                     ap_cnt;
+	int ap_cnt;
 
-	int                     ac, rlev; // ,i, j, k, tmp;
-	int                     do_cut, do_stun;
+	int ac, rlev; // ,i, j, k, tmp;
+	int do_cut, do_stun;
 
 	bool dead = FALSE;
 
