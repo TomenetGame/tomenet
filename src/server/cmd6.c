@@ -2846,6 +2846,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
  * item specification.  'keep' flag should be used for non-consuming
  * scrolls instead.		- Jir -
  */
+#define FORMAT_VALUE_WITH_COMMATA
 void do_cmd_read_scroll(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	//cave_type * c_ptr;
@@ -2907,6 +2908,9 @@ void do_cmd_read_scroll(int Ind, int item) {
 	/* Reading a cheque gives the money and costs no time. */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) {
 		u32b value = ps_get_cheque_value(o_ptr);
+ #ifdef FORMAT_VALUE_WITH_COMMATA
+		char val[MAX_CHARS], val2[MAX_CHARS], *d, *d2, *dm;
+ #endif
 
 		/* hack: prevent s32b overflow */
 		if (!gain_au(Ind, value, FALSE, FALSE)) return;
@@ -2916,9 +2920,27 @@ void do_cmd_read_scroll(int Ind, int item) {
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
 
-		msg_format(Ind, "\375\377sYou acquire \377y%d\377s gold pieces.", value);
 s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? quark_str(o_ptr->note) : "");
-
+ #ifndef FORMAT_VALUE_WITH_COMMATA
+		msg_format(Ind, "\375\377sYou acquire \377y%d\377s gold pieces.", value);
+ #else
+		sprintf(val, "%d", value);
+		val2[0] = 0;
+		d = val;
+		dm = d + strlen(val);
+		d2 = val2;
+		while (*d) {
+			if (!((dm - d) % 3) && d != val) {
+				*d2 = ',';
+				d2++;
+			}
+			*d2 = *d;
+			d++;
+			d2++;
+		}
+		*d2 = 0;
+		msg_format(Ind, "\375\377sYou acquire \377y%s\377s gold pieces.", val2);
+ #endif
 
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
