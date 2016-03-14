@@ -6096,8 +6096,8 @@ int Send_line_info(int Ind, int y) {
 		n = 1;
 
 		/* Count repetitions of this grid */
-		while (p_ptr->scr_info[y][x1].c == c &&
-		    p_ptr->scr_info[y][x1].a == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
+		while (x1 < 80 && p_ptr->scr_info[y][x1].c == c &&
+		    p_ptr->scr_info[y][x1].a == a) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
 			/* Increment count and column */
 			n++;
 			x1++;
