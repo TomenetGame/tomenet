@@ -2784,6 +2784,12 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			/* XXX XXX XXX Simply read each number following a colon */
 			for (i = 0, s = buf+1; s && (s[0] == ':') && s[1]; ++i)
 			{
+				/* Sanity check */
+				if (i >= 4) {
+					s_printf("Warning: Too many allocation entries on line %hd of 'k_info.txt'.\n", error_line);
+					break;
+				}
+
 				/* Default chance */
 				k_ptr->chance[i] = 1;
 
