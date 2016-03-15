@@ -4871,9 +4871,11 @@ void toggle_afk(int Ind, char *msg)
 		}
 		p_ptr->afk = TRUE;
 
+#if 0 /* not anymore */
 		/* actually a hint for newbie rogues couldn't hurt */
 		if (p_ptr->tim_blacklist)
 			msg_print(Ind, "\376\377yNote: Your blacklist timer won't decrease while AFK.");
+#endif
 
 		/* still too many starvations, so give a warning - C. Blue */
 		if (p_ptr->food < PY_FOOD_ALERT) {
