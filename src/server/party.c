@@ -3023,6 +3023,9 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		   but still take share toll by increasing the divisor in the loop above. */
 		if (q_ptr->ghost || !players_in_level(Ind, Ind2)) continue;
 
+		/* Calculate this guy's experience gain */
+		new_amount = amount;
+
 		/* HEnc-checks -
 		   in case henc_strictness is actually disabled, we abuse 'henc' here
 		   by calculating with max_plv values instead, using them as pseudo-henc values. */
@@ -3064,9 +3067,6 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			/* Don't allow cheap support from super-high level characters */
 			if (eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) continue; /* zonk */
 		}
-
-		/* Calculate this guy's experience gain */
-		new_amount = amount;
 
 		/* dungeon floor specific reduction if player dives too shallow */
 		if (not_in_iddc) new_amount = det_exp_level(new_amount, hlev, dlev);
