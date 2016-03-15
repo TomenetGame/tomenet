@@ -10236,6 +10236,10 @@ FORCE_MAXHP     The monster always gets rolled at maximum hit points.
                 monster it will always have 18 hp.
 FORCE_DEPTH     You cannot meet this monster out of depth. It will never appear
                 on a floor of lesser level that itself.
+FORCE_SLEEP     Deprecated, has no actual effect in-game.
+                A note about monster sleep in general: Check monster lore (~7)
+                to see which monsters start out asleep and which are awake.
+                Note that monsters inside a pit (see (4.6)) are never asleep.
 OOD_xx          The monster cannot occur more than xx levels out of depth.
                 All unique monsters actually have an intrinsic OOD_20 flag even
                 if it's not shown in the monster lore spoilers.
