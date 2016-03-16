@@ -8157,3 +8157,14 @@ void restore_prompt(void) {
 	last_prompt[0] = 0;
 }
 //#endif
+
+/* Parse a CSS style color code - mikaelh */
+u32b parse_color_code(const char *str) {
+	unsigned long c = 0xffffffff; /* 0xffffffff signals failure */
+
+	if (str && strlen(str) >= 7) {
+		sscanf(str + 1, "%lx", &c);
+	}
+
+	return c;
+}

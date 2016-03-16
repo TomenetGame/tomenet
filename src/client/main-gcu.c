@@ -233,6 +233,11 @@ static int can_use_color = TRUE;
 static int can_fix_color = FALSE;
 
 /*
+ * Software flag -- we are allowed to use a predefined 256 color palette
+ */
+static int can_use_256_color = TRUE;
+
+/*
  * Simple Angband to Curses color conversion table
  */
 static int colortable[16];
@@ -243,7 +248,7 @@ void resize_main_window_gcu(int cols, int rows);
 
 
 /* Remember original terminal colours to restore on exit */
-static short int cor[16], cog[16], cob[16];
+static short int cor[256], cog[256], cob[256];
 
 
 
@@ -911,8 +916,6 @@ errr init_gcu(void)
         /* set OS-specific resize_main_window() hook */
         resize_main_window = resize_main_window_gcu;
 
-        if (enabled_readability_blue) enable_readability_blue_gcu();
-
 
 #ifdef A_COLOR
 
@@ -922,33 +925,33 @@ errr init_gcu(void)
 	can_use_color = ((start_color() != ERR) && has_colors() &&
 	                 (COLORS >= 8) && (COLOR_PAIRS >= 8));
 
-	COLORS = 16;
-	COLOR_PAIRS = 16;
-#define REDEFINE_COLORS
-#ifdef REDEFINE_COLORS
 	/* Can we change colors? */
 	can_fix_color = (can_use_color && can_change_color() &&
-	                 (COLOR_PAIRS >= 16));
-#endif
+	                 (COLOR_PAIRS >= 16) && (COLORS >= 16));
+
+	/* Can we use 256 colors? */
+	can_use_256_color = (can_use_color && (COLOR_PAIRS >= 16) &&
+	                     (COLORS >= 256));
+
 	/* Attempt to use customized colors */
 	if (can_fix_color) {
 		/* Prepare the color pairs */
-		init_pair(0, 0, 0);	/*black */
-		init_pair(1, 1, 0);	/*white */
-		init_pair(2, 2, 0);	/*grey */
-		init_pair(3, 3, 0);	/*orange */
-		init_pair(4, 4, 0);	/*red */
-		init_pair(5, 5, 0);	/*green */
-		init_pair(6, 6, 0);	/*blue */
-		init_pair(7, 7, 0);	/*umber */
-		init_pair(8, 8, 0);	/*dark grey */
-		init_pair(9, 9, 0);	/*light grey */
-		init_pair(10, 10, 0);	/*violet */
-		init_pair(11, 11, 0);	/*yellow */
-		init_pair(12, 12, 0);	/*light red */
-		init_pair(13, 13, 0);	/*light green */
-		init_pair(14, 14, 0);	/*light blue */
-		init_pair(15, 15, 0);	/*light umber */
+		init_pair(0, 0, COLOR_BLACK);	/*black */
+		init_pair(1, 1, COLOR_BLACK);	/*white */
+		init_pair(2, 2, COLOR_BLACK);	/*grey */
+		init_pair(3, 3, COLOR_BLACK);	/*orange */
+		init_pair(4, 4, COLOR_BLACK);	/*red */
+		init_pair(5, 5, COLOR_BLACK);	/*green */
+		init_pair(6, 6, COLOR_BLACK);	/*blue */
+		init_pair(7, 7, COLOR_BLACK);	/*umber */
+		init_pair(8, 8, COLOR_BLACK);	/*dark grey */
+		init_pair(9, 9, COLOR_BLACK);	/*light grey */
+		init_pair(10, 10, COLOR_BLACK);	/*violet */
+		init_pair(11, 11, COLOR_BLACK);	/*yellow */
+		init_pair(12, 12, COLOR_BLACK);	/*light red */
+		init_pair(13, 13, COLOR_BLACK);	/*light green */
+		init_pair(14, 14, COLOR_BLACK);	/*light blue */
+		init_pair(15, 15, COLOR_BLACK);	/*light umber */
 
 		/* XXX XXX XXX Take account of "gamma correction" */
 
@@ -956,32 +959,65 @@ errr init_gcu(void)
 
 		/* Using the real colours if terminal supports redefining -  thanks Pepe for the patch */
 		/* Prepare the "Angband Colors" */
-		init_color(0,     0,    0,    0);	/* Dark */
-		init_color(1,  1000, 1000, 1000);	/* White */
-		init_color(2,   615,  615,  615);	/* Slate */
-		init_color(3,  1000,  552,    0);	/* Orange */
-		init_color(4,   717,    0,    0);	/* Red */
-		init_color(5,     0,  615,  266);	/* Green */
-#ifndef READIBILITY_BLUE
-		init_color(6,     0,    0, 1000);	/* Blue */
-#else
-		init_color(6,     0,  200, 1000);	/* Blue */
-#endif
-		init_color(7,   552,  400,    0);	/* Umber */
-#ifndef DISTINCT_DARK
-		init_color(8,   453,  453,  453);	/* "Light Dark" */
-#else
-		//init_color(8,   344,  344,  344);	/* "Light Dark" */
-		init_color(8,   398,  398,  398);	/* "Light Dark" */
-#endif
-		init_color(9,   843,  843,  843);	/* Light Slate */
-		init_color(10,  686,    0, 1000);	/* Violet */
-		init_color(11, 1000, 1000,    0);	/* Yellow */
-		init_color(12, 1000,  188,  188);	/* Light Red */
-		init_color(13,    0, 1000,    0);	/* Light Green */
-		init_color(14,    0, 1000, 1000);	/* Light Blue */
-		init_color(15,  780,  615,  333);	/* Light Umber */
+		/* Use common colors */
+		#define RED(i)   (((client_color_map[i] >> 16 & 0xff) * 1000 + 127) / 255)
+		#define GREEN(i) (((client_color_map[i] >> 8 & 0xff) * 1000 + 127) / 255)
+		#define BLUE(i)  (((client_color_map[i] & 0xff) * 1000 + 127) / 255)
+		for (i = 0; i < 16; i++) {
+			init_color(i, RED(i), GREEN(i), BLUE(i));
+		}
 
+		/* Prepare the "Angband Colors" */
+		colortable[0] = (COLOR_PAIR(0) | A_NORMAL);	/* Black */
+		colortable[1] = (COLOR_PAIR(1) | A_NORMAL);	/* White */
+		colortable[2] = (COLOR_PAIR(2) | A_NORMAL);	/* Grey XXX */
+		colortable[3] = (COLOR_PAIR(3) | A_NORMAL);	/* Orange XXX */
+		colortable[4] = (COLOR_PAIR(4) | A_NORMAL);	/* Red */
+		colortable[5] = (COLOR_PAIR(5) | A_NORMAL);	/* Green */
+		colortable[6] = (COLOR_PAIR(6) | A_NORMAL);	/* Blue */
+		colortable[7] = (COLOR_PAIR(7) | A_NORMAL);	/* Umber */
+
+		colortable[8] = (COLOR_PAIR(8) | A_NORMAL);	/* Dark-grey XXX */
+		colortable[9] = (COLOR_PAIR(9) | A_NORMAL);	/* Light-grey XXX */
+		colortable[10] = (COLOR_PAIR(10) | A_NORMAL);	/* Purple */
+		colortable[11] = (COLOR_PAIR(11) | A_NORMAL);	/* Yellow */
+		colortable[12] = (COLOR_PAIR(12) | A_NORMAL);	/* Light Red XXX */
+		colortable[13] = (COLOR_PAIR(13) | A_NORMAL);	/* Light Green */
+		colortable[14] = (COLOR_PAIR(14) | A_NORMAL);	/* Light Blue */
+		colortable[15] = (COLOR_PAIR(15) | A_NORMAL);	/* Light Umber XXX */
+	}
+	
+	else if (can_use_256_color) {
+		int j;
+		int color_palette[16] = { 0 };
+		
+		/* Read the fixed color palette */
+		for (i = 0; i < 256; i++) {
+			color_content(i, &cor[i], &cog[i], &cob[i]);
+		}
+		
+		/* Find the closest match in the palette for each desired color */
+		for (i = 0; i < 16; i++) {
+			int want_red = RED(i);
+			int want_green = GREEN(i);
+			int want_blue = BLUE(i);
+			int best_idx = COLOR_WHITE;
+			int best_distance = 3 * 256;
+			for (j = 0; j < 256; j++) {
+				int distance = abs(want_red - cor[j]) + abs(want_green - cog[j]) + abs(want_blue - cob[j]);
+				if (distance < best_distance) {
+					best_distance = distance;
+					best_idx = j;
+				}
+			}
+			color_palette[i] = best_idx;
+		}
+		
+		/* Prepare the color pairs */
+		for (i = 0; i < 16; i++) {
+			init_pair(i, color_palette[i], COLOR_BLACK);
+		}
+		
 		/* Prepare the "Angband Colors" */
 		colortable[0] = (COLOR_PAIR(0) | A_NORMAL);	/* Black */
 		colortable[1] = (COLOR_PAIR(1) | A_NORMAL);	/* White */
@@ -1134,10 +1170,6 @@ void resize_main_window_gcu(int cols, int rows) {
                 Term_resize(cols, rows);
         }
 #endif
-}
-
-void enable_readability_blue_gcu(void) {
-	init_color(6, 0, 200, 1000);
 }
 
 #endif /* USE_GCU */

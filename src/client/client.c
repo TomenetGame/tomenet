@@ -226,8 +226,29 @@ static bool read_mangrc(cptr filename) {
 				skip = TRUE;
 
 			/* READABILITY_BLUE */
-			if (!strncmp(buf, "lighterDarkBlue", 15))
+			if (!strncmp(buf, "lighterDarkBlue", 15)) {
+				/* Old code */
 				enabled_readability_blue = TRUE;
+
+				/* New code */
+				client_color_map[6] = 0x0033ff;
+			}
+
+			/* Color map */
+			if (!strncmp(buf, "colormap_", 9))
+			{
+				int colornum = atoi(buf + 9);
+				char *p;
+
+				/* Extract path */
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+
+				u32b c = parse_color_code(p);
+				if (colornum >= 0 && colornum <= 15 && c < 0x01000000) {
+					client_color_map[colornum] = c;
+				}
+			}
 
 #ifdef USE_GRAPHICS
 			/* graphics */
@@ -610,7 +631,30 @@ bool write_mangrc(void) {
 		fputs("#fullauto\n", config2);
 		fputs("\n", config2);
 
+		fputs("# Sets blue to #0033ff instead of #0000ff", config2);
 		fputs("lighterDarkBlue\n", config2);
+		fputs("\n", config2);
+
+		fputs("# Full color remapping\n", config2);
+		fputs("# 0 = black, 1 = white, 2 = gray, 3 = orange, 4 = red, 5 = green, 6 = blue\n", config2);
+		fputs("# 7 = umber, 8 = dark gray, 9 = light gray, 10 = violet, 11 = yellow\n", config2);
+		fputs("# 12 = light red, 13 = light green, 14 = light blue, 15 = light umber\n", config2);
+		fputs("#colormap_0\t\t#000000\n", config2);
+		fputs("#colormap_1\t\t#ffffff\n", config2);
+		fputs("#colormap_2\t\t#9d9d9d\n", config2);
+		fputs("#colormap_3\t\t#ff8d00\n", config2);
+		fputs("#colormap_4\t\t#b70000\n", config2);
+		fputs("#colormap_5\t\t#009d44\n", config2);
+		fputs("#colormap_6\t\t#0000ff\n", config2);
+		fputs("#colormap_7\t\t#8d6600\n", config2);
+		fputs("#colormap_8\t\t#666666\n", config2);
+		fputs("#colormap_9\t\t#d7d7d7\n", config2);
+		fputs("#colormap_10\t\t#af00ff\n", config2);
+		fputs("#colormap_11\t\t#ffff00\n", config2);
+		fputs("#colormap_12\t\t#ff3030\n", config2);
+		fputs("#colormap_13\t\t#00ff00\n", config2);
+		fputs("#colormap_14\t\t#00ffff\n", config2);
+		fputs("#colormap_15\t\t#c79d55\n", config2);
 		fputs("\n", config2);
 
 //#ifdef USE_GRAPHICS

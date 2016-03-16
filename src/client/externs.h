@@ -599,6 +599,7 @@ extern void prompt_topline(cptr prompt);
 extern void clear_topline(void);
 extern void clear_topline_forced(void);
 extern void restore_prompt(void); /* DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
+extern u32b parse_color_code(const char *str);
 
 /* c-store.c */
 extern bool leave_store;
@@ -968,3 +969,5 @@ extern char macro_trigger_exclusive[MAX_CHARS];
 extern bool macro_processing_exclusive;
 
 extern int max_chars_per_account;
+
+extern u32b client_color_map[16];

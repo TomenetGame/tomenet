@@ -2248,6 +2248,13 @@ static cptr color_ext_name[1][2] =
 void enable_readability_blue_x11(void) {
 	strcpy(color_name[6], "#0033ff");
 }
+static void enable_common_colormap_x11() {
+	int i;
+	for (i = 0; i < 16; i++) {
+		unsigned long c = client_color_map[i];
+		sprintf(color_name[i], "#%06lx", c & 0xffffffL);
+	}
+}
 
 #ifdef USE_GRAPHICS
 
@@ -2508,11 +2515,11 @@ errr init_x11(void) {
 	if (Metadpy_init_name(dpy_name)) return (-1);
 
 
-        /* set OS-specific resize_main_window() hook */
-        resize_main_window = resize_main_window_x11;
+	/* set OS-specific resize_main_window() hook */
+	resize_main_window = resize_main_window_x11;
 
-        if (enabled_readability_blue) enable_readability_blue_x11();
-
+	if (enabled_readability_blue) enable_readability_blue_x11();
+	enable_common_colormap_x11();
 
 	/* Prepare color "xor" (for cursor) */
 	MAKE(xor, infoclr);
