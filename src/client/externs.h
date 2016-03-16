@@ -29,10 +29,6 @@ extern errr init_x11(void);
 extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
 extern void resize_main_window_x11(int cols, int rows);
 extern bool ask_for_bigmap(void);
-extern void enable_readability_blue_x11(void);
-#endif
-#ifdef USE_GCU
-extern void enable_readability_blue_gcu(void);
 #endif
 
 #ifdef USE_XAW
@@ -889,7 +885,6 @@ extern void term_toggle_visibility(int term_idx);
 extern bool term_get_visibility(int term_idx);
 extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
-extern void enable_readability_blue_win(void);
 extern void store_crecedentials(void);
 #endif
 
@@ -963,7 +958,6 @@ extern char minimap_char;
 
 extern bool silent_dump;
 extern bool equip_no_weapon;
-extern bool enabled_readability_blue;
 extern bool auto_reincarnation;
 extern char macro_trigger_exclusive[MAX_CHARS];
 extern bool macro_processing_exclusive;

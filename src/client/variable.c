@@ -394,7 +394,6 @@ bool silent_dump = FALSE;
 /* For cleaner equip-display -- using a mimic/bat form that cannot use weapons? */
 bool equip_no_weapon = FALSE;
 
-bool enabled_readability_blue = FALSE;
 bool auto_reincarnation = FALSE;
 char macro_trigger_exclusive[MAX_CHARS];
 bool macro_processing_exclusive;

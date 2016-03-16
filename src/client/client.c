@@ -227,9 +227,6 @@ static bool read_mangrc(cptr filename) {
 
 			/* READABILITY_BLUE */
 			if (!strncmp(buf, "lighterDarkBlue", 15)) {
-				/* Old code */
-				enabled_readability_blue = TRUE;
-
 				/* New code */
 				client_color_map[6] = 0x0033ff;
 			}

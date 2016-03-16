@@ -2245,9 +2245,6 @@ static cptr color_ext_name[1][2] =
 	{"#0000ff", "#444444", },
 };
 #endif
-void enable_readability_blue_x11(void) {
-	strcpy(color_name[6], "#0033ff");
-}
 static void enable_common_colormap_x11() {
 	int i;
 	for (i = 0; i < 16; i++) {
@@ -2518,7 +2515,6 @@ errr init_x11(void) {
 	/* set OS-specific resize_main_window() hook */
 	resize_main_window = resize_main_window_x11;
 
-	if (enabled_readability_blue) enable_readability_blue_x11();
 	enable_common_colormap_x11();
 
 	/* Prepare color "xor" (for cursor) */
