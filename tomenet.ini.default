@@ -33,6 +33,27 @@ DisableNumlock=1
 ; - Use lighter 'dark blue' colour to increase readability on some screens
 LighterDarkBlue=1
 
+; Full color remapping
+; 0 = black, 1 = white, 2 = gray, 3 = orange, 4 = red, 5 = green, 6 = blue
+; 7 = umber, 8 = dark gray, 9 = light gray, 10 = violet, 11 = yellow
+; 12 = light red, 13 = light green, 14 = light blue, 15 = light umber
+;Colormap_0=#000000
+;Colormap_1=#ffffff
+;Colormap_2=#9d9d9d
+;Colormap_3=#ff8d00
+;Colormap_4=#b70000
+;Colormap_5=#009d44
+;Colormap_6=#0000ff
+;Colormap_7=#8d6600
+;Colormap_8=#666666
+;Colormap_9=#d7d7d7
+;Colormap_10=#af00ff
+;Colormap_11=#ffff00
+;Colormap_12=#ff3030
+;Colormap_13=#00ff00
+;Colormap_14=#00ffff
+;Colormap_15=#c79d55
+
 ; - enable graphics in general (0 = off)
 Graphics=0
 

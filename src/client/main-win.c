@@ -482,7 +482,16 @@ static COLORREF win_clr[16] =
 	PALETTERGB(0xC7, 0x9D, 0x55)   /* 3 2 1  Lt. Umber */
 };
 void enable_readability_blue_win(void) {
-	win_clr[6] = PALETTERGB(0x00, 0x33, 0xFF);
+	client_color_map[6] = 0x0033ff;
+}
+static void enable_common_colormap_win(void) {
+	int i;
+	#define RED(i)   (client_color_map[i] >> 16 & 0xFF)
+	#define GREEN(i) (client_color_map[i] >> 8 & 0xFF)
+	#define BLUE(i)  (client_color_map[i] & 0xFF)
+	for (i = 0; i < 16; i++) {
+		win_clr[i] = PALETTERGB(RED(i), GREEN(i), BLUE(i));
+	}
 }
 
 
@@ -949,17 +958,27 @@ static void load_prefs_sound(int i)
  */
 static void load_prefs(void)
 {
-#ifdef USE_SOUND
-#ifndef USE_SOUND_2010
 	int i;
-#endif
-#endif
+
 	/* Extract the "disable_numlock" flag */
 	disable_numlock = (GetPrivateProfileInt("Base", "DisableNumlock", 1, ini_file) != 0);
 
 	/* Extract the readability_blue flag */
 	if (GetPrivateProfileInt("Base", "LighterDarkBlue", 1, ini_file) != 0)
 		enable_readability_blue_win();
+
+	/* Read the colormap */
+	for (i = 0; i < 16; i++) {
+		char key_name[12] = { '\0' };
+		snprintf(key_name, sizeof(key_name), "Colormap_%d", i);
+		char default_color[8] = { '\0' };
+		unsigned long c = client_color_map[i];
+		snprintf(default_color, sizeof(default_color), "#%06lx", c);
+		char want_color[8] = { '\0' };
+		GetPrivateProfileString("Base", key_name, default_color, want_color, sizeof(want_color), ini_file);
+		client_color_map[i] = parse_color_code(want_color);
+	}
+	enable_common_colormap_win();
 
 #ifdef USE_GRAPHICS
 	/* Extract the "use_graphics" flag */
