@@ -31,6 +31,7 @@ LibPath=.\lib
 DisableNumlock=1
 
 ; - Use lighter 'dark blue' colour to increase readability on some screens
+; Sets blue to #0033ff instead of #0000ff
 LighterDarkBlue=1
 
 ; Full color remapping

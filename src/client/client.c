@@ -628,7 +628,8 @@ bool write_mangrc(void) {
 		fputs("#fullauto\n", config2);
 		fputs("\n", config2);
 
-		fputs("# Sets blue to #0033ff instead of #0000ff", config2);
+		fputs("# Use lighter 'dark blue' colour to increase readability on some screens\n", config2);
+		fputs("# Sets blue to #0033ff instead of #0000ff\n", config2);
 		fputs("lighterDarkBlue\n", config2);
 		fputs("\n", config2);
 

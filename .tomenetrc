@@ -29,6 +29,7 @@
 #fullauto
 
 # Use lighter 'dark blue' colour to increase readability on some screens
+# Sets blue to #0033ff instead of #0000ff
 lighterDarkBlue
 
 # Full color remapping
