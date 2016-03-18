@@ -1900,18 +1900,37 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	p_ptr->stat_add[A_STR] += i;
 	csheet_boni->pstr += i;
 
-	/* Cats, rogues, martial artists (mystics/ninjas) and skilled warriors are very agile */
-	if (r_ptr->d_char == 'f') { p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; }/* Cats! */
+	/* Cats, rogues, martial artists (mystics/ninjas) and skilled warriors are very agile and most of them are stealthy */
+	if (r_ptr->d_char == 'f') { /* Cats! */
+		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		/* don't stack with low weight stealth bonus too much (see further below) */
+		if (r_ptr->weight <= 500) { p_ptr->skill_stl++; csheet_boni->slth++; }
+		else { p_ptr->skill_stl = p_ptr->skill_stl + 2; csheet_boni->slth += 2; }
+	}
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE) { /* Rogues and master rogues */
-		if (r_ptr->level >= 23) { p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; }
-		else { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }
+		if (r_ptr->level >= 23) {
+			p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+			p_ptr->skill_stl = p_ptr->skill_stl + 2; csheet_boni->slth += 2;
+		} else {
+			p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++;
+			p_ptr->skill_stl = p_ptr->skill_stl++; csheet_boni->slth++;
+		}
 	}
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && strstr(mname, "master")) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; } /* Skilled warriors */
-	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) { p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; } /* Mystics */
+	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) { /* Mystics */
+		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		p_ptr->skill_stl = p_ptr->skill_stl++; csheet_boni->slth++;
+	}
 	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Jade Monk */
 	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Ivory Monk */
-	if (p_ptr->body_monster == 532) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Dagashi */
-	if (p_ptr->body_monster == 485) { p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; } /* Ninja */
+	if (p_ptr->body_monster == 532) { /* Dagashi */
+		p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++;
+		p_ptr->skill_stl = p_ptr->skill_stl++; csheet_boni->slth++;
+	}
+	if (p_ptr->body_monster == 485) {/* Ninja */
+		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		p_ptr->skill_stl = p_ptr->skill_stl + 3; csheet_boni->slth += 3;
+	}
 
 	if (r_ptr->speed < 110) {
 		/* let slowdown not be that large that players will never try that form */
@@ -1938,7 +1957,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
  #else
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh += r_ptr->aaf / 20 - 5;
-
+y
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos += r_ptr->aaf / 20 - 5;
  #endif
@@ -2220,7 +2239,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	p_ptr->stat_add[A_CHR] += d; csheet_boni->pchr += d;
 
 
-	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
+	//if (r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
 	if (r_ptr->flags2 & RF2_STUPID) { p_ptr->stat_add[A_INT] -= 2; csheet_boni->pint -= 2; }
 	if (r_ptr->flags2 & RF2_SMART) { p_ptr->stat_add[A_INT] += 2; csheet_boni->pint += 2; }
 	if (r_ptr->flags2 & RF2_INVISIBLE) {
