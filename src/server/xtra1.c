@@ -1913,19 +1913,19 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			p_ptr->skill_stl = p_ptr->skill_stl + 2; csheet_boni->slth += 2;
 		} else {
 			p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++;
-			p_ptr->skill_stl = p_ptr->skill_stl++; csheet_boni->slth++;
+			p_ptr->skill_stl++; csheet_boni->slth++;
 		}
 	}
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && strstr(mname, "master")) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; } /* Skilled warriors */
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) { /* Mystics */
 		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
-		p_ptr->skill_stl = p_ptr->skill_stl++; csheet_boni->slth++;
+		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
 	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Jade Monk */
 	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Ivory Monk */
 	if (p_ptr->body_monster == 532) { /* Dagashi */
 		p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++;
-		p_ptr->skill_stl = p_ptr->skill_stl++; csheet_boni->slth++;
+		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
 	if (p_ptr->body_monster == 485) {/* Ninja */
 		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
