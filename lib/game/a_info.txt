@@ -1125,7 +1125,8 @@ I:23:28:1
 W:40:15:360:111000
 P:0:7d6:18:29:0
 F:SLAY_DRAGON | SLAY_EVIL | SLAY_UNDEAD | SLAY_TROLL | SLAY_GIANT | BLOWS |
-F:SLAY_ORC | SEE_INVIS | SHOW_MODS | VORPAL | BRAND_POIS | WOUNDING
+F:SLAY_ORC | SEE_INVIS | SHOW_MODS | VORPAL | BRAND_POIS
+#| WOUNDING
 D:A giant's weapon, with a long blade tall and straight thrusting out from a
 D:massive double-pronged hilt.  On its blade are written doomspells against
 D:both the living and undead.
@@ -1184,10 +1185,10 @@ N:84:'Anguirel'
 I:23:23:2
 W:20:30:140:60000
 P:0:2d8:18:12:0
-F:STR | CON | SPEED | HIDE_TYPE |
+F:STR | CON | SPEED | HIDE_TYPE | RES_LITE | RES_DARK | 
 F:SLAY_EVIL | BRAND_ELEC | SLAY_DEMON | FREE_ACT | RES_ELEC |
-F:RES_LITE | RES_DARK | SEE_INVIS | SHOW_MODS | VORPAL | WOUNDING |
-F:AGGRAVATE | CURSED
+F:SEE_INVIS | SHOW_MODS | VORPAL | AGGRAVATE | CURSED
+#| WOUNDING
 D:Forged of black galvorn by the Dark-Elven smith Eol, this blade has the
 D:living lightning trapped inside.
 
@@ -1292,8 +1293,9 @@ N:92:'Vorpal Blade'
 I:23:31:2
 W:50:30:80:160000
 P:0:5d5:32:32:0
-F:VORPAL | SLAY_EVIL | WOUNDING | HIDE_TYPE
+F:VORPAL | SLAY_EVIL | HIDE_TYPE
 F:FREE_ACT | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR | DEX
+# | WOUNDING
 D:"One, two! One, two!  And through, and through, the vorpal blade
 D:went snicker-snack!"
 
@@ -1723,12 +1725,10 @@ N:123:of Gothmog
 I:21:2:-2
 W:35:15:120:60000
 P:0:3d5:15:16:0
-F:INT | DEX | INFRA | HIDE_TYPE | DRAIN_HP |
-F:HEAVY_CURSE | CURSED | AGGRAVATE |
+F:INT | DEX | INFRA | HIDE_TYPE | DRAIN_HP | HEAVY_CURSE | CURSED | AGGRAVATE
 F:BRAND_FIRE | SLAY_ANIMAL | SLAY_DEMON | IM_FIRE | ESP_SPIDER |
-F:VORPAL | RES_LITE | LITE1 | REGEN | ESP_DEMON | WOUNDING |
-F:SHOW_MODS
-F:REGEN_MANA
+F:VORPAL | RES_LITE | LITE1 | REGEN | ESP_DEMON | SHOW_MODS | REGEN_MANA
+#WOUNDING |
 D:With this unbearably bright whip of flame, the Balrog Gothmog has become
 D:known for never having lost in combat.
 
@@ -2098,7 +2098,8 @@ N:155:'Limbslicer'
 I:24:2:4
 W:15:5:100:22000
 P:0:2d5:22:15:0
-F:DEX | VORPAL | HIDE_TYPE | SHOW_MODS | WOUNDING | FEATHER
+F:DEX | VORPAL | HIDE_TYPE | SHOW_MODS | FEATHER
+#WOUNDING |
 D:The Petty-dwarves of Bathak forged this axe, and it shares their thirst
 D:for blood.
 

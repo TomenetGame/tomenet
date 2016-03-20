@@ -622,6 +622,7 @@ A:60/3
 P:0:10d4:5:5:0
 F:SHOW_MODS | MUST2H | VORPAL
 F:IGNORE_ACID | IGNORE_FIRE
+#| WOUNDING
 
 
 ##### Bows, Crossbows, Slings #####

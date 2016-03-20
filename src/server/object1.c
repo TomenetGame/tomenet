@@ -4900,8 +4900,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		fprintf(fff, "It can cause earthquakes.\n");
 	if (f5 & (TR5_VORPAL))
 		fprintf(fff, "It is very sharp and can cut your foes.\n");
-	if (f5 & (TR5_WOUNDING))
-		fprintf(fff, "It is very sharp and makes your foes bleed.\n");
+	/*if (f5 & (TR5_WOUNDING))
+		fprintf(fff, "It is very sharp and makes your foes bleed.\n");*/
 	if (f1 & (TR1_SLAY_ORC))
 		fprintf(fff, "It is especially deadly against orcs.\n");
 	if (f1 & (TR1_SLAY_TROLL))

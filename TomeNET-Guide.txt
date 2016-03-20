@@ -8953,8 +8953,6 @@ IMPACT ('It can cause earthquakes.')
         (If enabled in the server settings, it can be suppressed with
         the !E inscription. See (0.3) for !E settings or press ~d in game.
         Usually, !E only works on the artifact "Grond".)
-WOUNDING ('It is very sharp and makes your foes bleed.')
-        Has additional to-hit/to-dam bonus.
 FUEL_LITE ('It provides light when fueled.')
         A light source that needs to be fueled, otherwise it runs out.
         WARNING:
