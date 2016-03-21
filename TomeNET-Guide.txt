@@ -2713,6 +2713,9 @@ folder, preserving the archive pathname structure. You should end up with a
 folder lib/xtra/sound/ and lib/xtra/music/ respectively, which contain config
 files and further subfolders for either sound effects or background music.
 
+Important: If you extract it via command-line via '7z' command, make sure to
+use '7z x ...' and not '7z e ...'! x will extract with correct path names.
+
 Now start or restart the game, and you should have sound.
 If you don't have sound, press CTRL+U for audio mixer (or CTRL+F if you're
 using rogue-like key map):
