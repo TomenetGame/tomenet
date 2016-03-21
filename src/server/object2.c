@@ -7791,6 +7791,108 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (hres && pres == hres) continue;
 		}
 
+		/* If the item is a dragon scale mail and we're draconian, prevent redundant immunity.
+		   (Very ugly hacking, since we change sval and k_idx on the fly and
+		    just assume that no other base item features need to be modified.) */
+		if (o_ptr->tval == TV_DRAG_ARMOR) {
+			switch (p_ptr->prace) {
+			case RACE_DRACONIAN:
+				//TODO - switch for trait instead of dsm-type: switch (p_ptr->ptrait) {
+				switch (o_ptr->sval) {
+				case SV_DRAGON_BLUE:
+					if (p_ptr->ptrait == TRAIT_BLUE) {
+						o_ptr->sval = randint(4);
+						if (o_ptr->sval >= SV_DRAGON_BLUE) o_ptr->sval++;
+					}
+					break;
+				case SV_DRAGON_WHITE:
+					if (p_ptr->ptrait == TRAIT_WHITE) {
+						o_ptr->sval = randint(4);
+						if (o_ptr->sval >= SV_DRAGON_WHITE) o_ptr->sval++;
+					}
+					break;
+				case SV_DRAGON_RED:
+					if (p_ptr->ptrait == TRAIT_RED) {
+						o_ptr->sval = randint(4);
+						if (o_ptr->sval >= SV_DRAGON_RED) o_ptr->sval++;
+					}
+					break;
+				case SV_DRAGON_BLACK:
+					if (p_ptr->ptrait == TRAIT_BLACK) {
+						o_ptr->sval = randint(4);
+						if (o_ptr->sval >= SV_DRAGON_BLACK) o_ptr->sval++;
+					}
+					break;
+				case SV_DRAGON_GREEN:
+					if (p_ptr->ptrait == TRAIT_GREEN) o_ptr->sval = randint(4);
+					break;
+				case SV_DRAGON_BRONZE:
+					if (p_ptr->ptrait == TRAIT_BRONZE)
+						switch (rand_int(2)) {
+						case 0: o_ptr->sval = SV_DRAGON_SILVER; break;
+						case 1: o_ptr->sval = SV_DRAGON_GOLD; break;
+						}
+					break;
+				case SV_DRAGON_SILVER:
+					if (p_ptr->ptrait == TRAIT_WHITE)
+						switch (rand_int(2)) {
+						case 0: o_ptr->sval = SV_DRAGON_BRONZE; break;
+						case 1: o_ptr->sval = SV_DRAGON_GOLD; break;
+						}
+					//still ok for silver lineage, we gain IM+FA
+					break;
+				case SV_DRAGON_GOLD:
+					if (p_ptr->ptrait == TRAIT_GOLD)
+						switch (rand_int(2)) {
+						case 0: o_ptr->sval = SV_DRAGON_BRONZE; break;
+						case 1: o_ptr->sval = SV_DRAGON_SILVER; break;
+						}
+					break;
+				case SV_DRAGON_LAW:
+					if (p_ptr->ptrait == TRAIT_LAW) o_ptr->sval = SV_DRAGON_CHAOS;
+					break;
+				case SV_DRAGON_CHAOS:
+					if (p_ptr->ptrait == TRAIT_CHAOS) o_ptr->sval = SV_DRAGON_LAW;
+					break;
+				//case SV_DRAGON_BALANCE: //it's fine, we gain shard+chaos!
+				case SV_DRAGON_DRACOLICH:
+					if (p_ptr->ptrait == TRAIT_WHITE)
+						switch (rand_int(4)) {
+						case 0: o_ptr->sval = SV_DRAGON_LAW; break;
+						case 1: o_ptr->sval = SV_DRAGON_CHAOS; break;
+						case 2: o_ptr->sval = SV_DRAGON_CRYSTAL; break;
+						case 3: o_ptr->sval = SV_DRAGON_DRACOLISK; break;
+						}//SKY might exceed the reward value (actually CRYSTAL is also worth a bit more than DRACOLICH already
+					break;
+				case SV_DRAGON_DRACOLISK:
+					if (p_ptr->ptrait == TRAIT_RED)
+						switch (rand_int(4)) {
+						case 0: o_ptr->sval = SV_DRAGON_LAW; break;
+						case 1: o_ptr->sval = SV_DRAGON_CHAOS; break;
+						case 2: o_ptr->sval = SV_DRAGON_CRYSTAL; break;
+						case 3: o_ptr->sval = SV_DRAGON_DRACOLICH; break;
+						}//SKY might exceed the reward value (actually CRYSTAL is also worth a bit more than DRACOLICH already
+					break;
+				}
+				break;
+			case RACE_VAMPIRE:
+				switch (o_ptr->sval) {
+				case SV_DRAGON_DRACOLICH:
+					switch (rand_int(4)) {
+					case 0: o_ptr->sval = SV_DRAGON_LAW; break;
+					case 1: o_ptr->sval = SV_DRAGON_CHAOS; break;
+					case 2: o_ptr->sval = SV_DRAGON_CRYSTAL; break;
+					case 3: o_ptr->sval = SV_DRAGON_DRACOLISK; break;
+					}//SKY might exceed the reward value (actually CRYSTAL is also worth a bit more than DRACOLICH already
+					break;
+				}
+				break;
+			}
+
+			/* finally hack k_idx accordingly */
+			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+		}
+
 		break;
 	} while (tries < (verygreat ? 20 : 100));
 
