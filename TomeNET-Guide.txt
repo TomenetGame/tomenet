@@ -1409,7 +1409,8 @@ or shorter: /tym [rs]
  (/ver)
 
 /who <character name>
-            Returns the account name that character belongs to, and basic info.
+            Returns the account name that character belongs to, and basic info
+            on race, class and level.
 
 
 (0.2a) IRC bot commands
@@ -1422,6 +1423,9 @@ game server, you may enter these IRC commands:
 ?seen <name>    Tells you when the character or account of the <name> you
                 specified logged in the last time.
                 (Same as in-game command /seen.)
+?who <character name>
+                Returns the account name that character belongs to, and basic
+                info on race, class and level. (Same as in-game command /who.)
 
 
 
