@@ -607,11 +607,19 @@ void do_cmd_eat_food(int Ind, int item) {
 }
 
 
-
+/* Hack: pval < 0 means that we quaffed from a fountain, pval -257 means that it's a quest's status effect.
+   Apart from feeding us, the only effect of these hacks are the messages we receive. */
 bool quaff_potion(int Ind, int tval, int sval, int pval) {
 	player_type *p_ptr = Players[Ind];
-	int ident = FALSE;
-	int i;
+	int i, ident = FALSE, msg;
+
+	if (pval == -257) {
+		pval = 0;
+		msg = 2; //quest
+	} else if (pval < 0) {
+		pval = -1 - pval;
+		msg = 1; //fountain
+	} else msg = 0; //potion (default)
 
 	bypass_invuln = TRUE;
 
@@ -630,14 +638,17 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			break;
 		case SV_POTION_SALT_WATER:
 			if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
-				msg_print(Ind, "The salty potion makes you vomit!");
+				if (!msg) msg_print(Ind, "The salty potion makes you vomit!");
+				else if (msg == 1) msg_print(Ind, "The water is so salty that it makes you vomit!");
+				else msg_print(Ind, "You feel sick and have to vomit!");
 				msg_format_near(Ind, "%s vomits!", p_ptr->name);
 				/* made salt water less deadly -APD */
 				(void)set_food(Ind, (p_ptr->food / 2) - 400);
 				(void)set_poisoned(Ind, 0, 0);
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
 			} else {
-				msg_print(Ind, "That potion tastes awfully salty.");
+				if (!msg) msg_print(Ind, "That potion tastes awfully salty.");
+				else if (msg == 1) msg_print(Ind, "The water tastes awfully salty.");
 			}
 			ident = TRUE;
 			break;
@@ -680,7 +691,9 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			break;
 		case SV_POTION_RUINATION:
 			msg_print(Ind, "Your nerves and muscles feel weak and lifeless!");
-			take_hit(Ind, damroll(10, 10), "a Potion of Ruination", 0);
+			if (!msg) take_hit(Ind, damroll(10, 10), "a potion of ruination", 0);
+			else if (msg == 1) take_hit(Ind, damroll(10, 10), "a fountain of ruination", 0);
+			else take_hit(Ind, damroll(10, 10), "ruination", 0);
 			(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_NORMAL);
 			(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_NORMAL);
 			(void)dec_stat(Ind, A_CON, 25, STAT_DEC_NORMAL);
@@ -713,19 +726,25 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 #endif
 			msg_print(Ind, "Massive explosions rupture your body!");
 			msg_format_near(Ind, "%s blows up!", p_ptr->name);
-			take_hit(Ind, damroll(50, 20), "a Potion of Detonation", 0);
+			if (!msg) take_hit(Ind, damroll(50, 20), "a potion of detonation", 0);
+			else if (msg == 1) take_hit(Ind, damroll(50, 20), "a fountain of detonation", 0); //disabled
+			else take_hit(Ind, damroll(50, 20), "detonations", 0);
 			(void)set_stun(Ind, p_ptr->stun + 75);
 			(void)set_cut(Ind, p_ptr->cut + 5000, Ind);
 			ident = TRUE;
 			break;
 		case SV_POTION_DEATH:
 			if (!p_ptr->suscep_life) {
-				msg_print(Ind, "A feeling of Death flows through your body.");
-				take_hit(Ind, 5000, "a Potion of Death", 0);
+				msg_print(Ind, "A feeling of death flows through your body.");
+				if (!msg) take_hit(Ind, 5000, "a potion of death", 0);
+				else if (msg == 1) take_hit(Ind, 5000, "a fountain of death", 0); //disabled
+				else take_hit(Ind, 5000, "death", 0);
 				ident = TRUE;
 			} else {
-				msg_print(Ind, "You burp.");
-				msg_format_near(Ind, "%s burps.", p_ptr->name);
+				if (msg != 2) {
+					msg_print(Ind, "You burp.");
+					msg_format_near(Ind, "%s burps.", p_ptr->name);
+				}
 				if (p_ptr->cst < p_ptr->mst && !p_ptr->shadow_running) {
 					msg_print(Ind, "You feel refreshed.");
 					p_ptr->cst = p_ptr->mst;
@@ -804,7 +823,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (hp_player(Ind, damroll(14, 8))) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
-			//			if (set_poisoned(Ind, 0, 0)) ident = TRUE;	/* use specialized pots */
+			//if (set_poisoned(Ind, 0, 0)) ident = TRUE;	/* use specialized pots */
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			break;
@@ -827,7 +846,11 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 		case SV_POTION_LIFE:
 			msg_print(Ind, "\377GYou feel life flow through your body!");
 			restore_level(Ind);
-			if (p_ptr->suscep_life) take_hit(Ind, 500, "a Potion of Life", 0);
+			if (p_ptr->suscep_life) {
+				if (!msg) take_hit(Ind, 500, "a potion of life", 0);
+				else if (msg == 1) take_hit(Ind, 500, "a fountain of life", 0); //disabled
+				else take_hit(Ind, 500, "life", 0);
+			}
 			else hp_player(Ind, 700);
 			(void)set_poisoned(Ind, 0, 0);
 			(void)set_blind(Ind, 0);
@@ -1033,8 +1056,16 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				/* FRUIT BAT!!!!!! */
 				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 				msg_print(Ind, "You have been turned into a fruit bat!");
-				strcpy(p_ptr->died_from,"a Potion of Chauve-Souris");
-				strcpy(p_ptr->really_died_from,"a Potion of Chauve-Souris");
+				if (!msg) {
+					strcpy(p_ptr->died_from,"a potion of Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"a potion of Chauve-Souris");
+				} else if (msg == 1) {
+					strcpy(p_ptr->died_from,"a fountain of Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"a fountain of Chauve-Souris");
+				} else {
+					strcpy(p_ptr->died_from,"Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"Chauve-Souris");
+				}
 				p_ptr->fruit_bat = -1;
 				p_ptr->deathblow = 0;
 				player_death(Ind);
@@ -1086,8 +1117,16 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				/* FRUIT BAT!!!!!! */
 				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 				msg_print(Ind, "You have been turned into a fruit bat!");
-				strcpy(p_ptr->died_from,"a Potion of Chauve-Souris");
-				strcpy(p_ptr->really_died_from,"a Potion of Chauve-Souris");
+				if (!msg) {
+					strcpy(p_ptr->died_from,"a potion of Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"a potion of Chauve-Souris");
+				} else if (msg == 1) {
+					strcpy(p_ptr->died_from,"a fountain of Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"a fountain of Chauve-Souris");
+				} else {
+					strcpy(p_ptr->died_from,"Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"Chauve-Souris");
+				}
 				p_ptr->fruit_bat = -1;
 				p_ptr->deathblow = 0;
 				player_death(Ind);
@@ -1165,10 +1204,8 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
 
-	if ((o_ptr->tval != TV_POTION) &&
-		(o_ptr->tval != TV_POTION2))
-	{
-//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to quaff non-potion!");
+	if ((o_ptr->tval != TV_POTION) && (o_ptr->tval != TV_POTION2)) {
+		//(may happen on death, from macro spam)	msg_print(Ind, "SERVER ERROR: Tried to quaff non-potion!");
 		return;
 	}
 
@@ -1194,7 +1231,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	/* An identification was made */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
-//		object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
+		//object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
@@ -1477,9 +1514,9 @@ void do_cmd_drink_fountain(int Ind) {
 			else msg_print(Ind, "You drink some.");
 			break;
 		default:
-			ident = quaff_potion(Ind, tval, sval, pval);
+			ident = quaff_potion(Ind, tval, sval, -1 - pval);
 		}
-	else ident = quaff_potion(Ind, tval, sval, pval);
+	else ident = quaff_potion(Ind, tval, sval, -1 - pval);
 	if (ident) cs_ptr->sc.fountain.known = TRUE;
 	else if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "You feel less thirsty.");
 	else msg_print(Ind, "You drink some.");

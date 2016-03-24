@@ -4729,7 +4729,7 @@ void quest_statuseffect(int Ind, int fx) {
 	}
 
 	if (tv == TV_FOOD) (void)eat_food(Ind, sv, NULL, &dummy);
-	else if (tv == TV_POTION || tv == TV_POTION2) (void)quaff_potion(Ind, tv, sv, 0);//pval=0
+	else if (tv == TV_POTION || tv == TV_POTION2) (void)quaff_potion(Ind, tv, sv, -257);
 	else if (tv == TV_SCROLL) (void)read_scroll(Ind, tv, sv, NULL, 0, &dummy, &dummy);
 	else if (tv == TV_ROD) (void)zap_rod(Ind, sv, DEFAULT_RADIUS, NULL, &dummy);
 	else if (tv == TV_STAFF) (void)use_staff(Ind, sv, DEFAULT_RADIUS, FALSE, &dummy);
