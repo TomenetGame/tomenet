@@ -1401,7 +1401,7 @@ extern void fix_lost_guild_mode(int g_id);
 
 extern hash_entry *hash_table[NUM_HASH_ENTRIES];
 extern bool guild_rename(int Ind, char *new_name);
-extern void get_laston(char *name, char *response, bool admin);
+extern void get_laston(char *name, char *response, bool admin, bool colour);
 extern bool lookup_similar_account(cptr name, cptr accname);
 extern char acc_sum_houses(struct account *acc);
 extern char acc_get_houses(const char *name);

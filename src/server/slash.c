@@ -3941,7 +3941,7 @@ void do_slash_cmd(int Ind, char *message) {
 		}
 		else if (prefix(message, "/seen")) {
 			char response[MAX_CHARS_WIDE];
-			get_laston(message3, response, admin_p(Ind));
+			get_laston(message3, response, admin_p(Ind), TRUE);
 			msg_print(Ind, response);
 			return;
 		}
@@ -9579,7 +9579,7 @@ static void do_slash_brief_help(int Ind){
 
 
 /* determine when character or account name was online the last time */
-void get_laston(char *name, char *response, bool admin) {
+void get_laston(char *name, char *response, bool admin, bool colour) {
 	unsigned long int s, sl = 0;
 	time_t now;
 	u32b p_id;
@@ -9645,8 +9645,15 @@ void get_laston(char *name, char *response, bool admin) {
 
 	now = time(&now);
 	s = now - sl;
-	if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld days ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60 * 24));
-	else if (s >= 60 * 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld hours ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60));
-	else if (s >= 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld minutes ago.", acc_found ? "The player using account" : "The character", nameproc, s / 60);
-	else sprintf(response, "%s \377s%s\377w was last seen %ld seconds ago.", acc_found ? "The player using Account" : "The character", nameproc, s);
+	if (colour) {
+		if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld days ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60 * 24));
+		else if (s >= 60 * 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld hours ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60));
+		else if (s >= 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld minutes ago.", acc_found ? "The player using account" : "The character", nameproc, s / 60);
+		else sprintf(response, "%s \377s%s\377w was last seen %ld seconds ago.", acc_found ? "The player using Account" : "The character", nameproc, s);
+	} else { //for IRC output
+		if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s %s was last seen %ld days ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60 * 24));
+		else if (s >= 60 * 60 * 3) sprintf(response, "%s %s was last seen %ld hours ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60));
+		else if (s >= 60 * 3) sprintf(response, "%s %s was last seen %ld minutes ago.", acc_found ? "The player using account" : "The character", nameproc, s / 60);
+		else sprintf(response, "%s %s was last seen %ld seconds ago.", acc_found ? "The player using Account" : "The character", nameproc, s);
+	}
 }
