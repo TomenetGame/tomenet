@@ -3550,7 +3550,7 @@ I:71:39:1000
 W:60:0:4:6500
 A:60/4:100/2
 P:0:1d1:0:0:0
-F:FOUNTAIN
+#F:FOUNTAIN --too bad for vampires? (500 damage)
 D:Heals 700 hit points. Cures blindness, confusion, stun, poison, cuts,
 D:hallucination and Black Breath. Restores all drained stats and experience.
 
