@@ -631,7 +631,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 		case SV_POTION_APPLE_JUICE:
 		case SV_POTION_SLIME_MOLD:
 			if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
-			ident = TRUE;
+			ident = TRUE; //easy ident? by taste or something?
 			break;
 		case SV_POTION_SLOWNESS:
 			if (set_slow(Ind, p_ptr->slow + randint(25) + 15)) ident = TRUE;
@@ -653,21 +653,16 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			ident = TRUE;
 			break;
 		case SV_POTION_POISON:
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
-				if (set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10, 0)) {
-					ident = TRUE;
-				}
-			}
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+				if (set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10, 0)) ident = TRUE;
 			break;
 		case SV_POTION_BLINDNESS:
-			if (!p_ptr->resist_blind) {
+			if (!p_ptr->resist_blind)
 				if (set_blind(Ind, p_ptr->blind + rand_int(100) + 100)) ident = TRUE;
-			}
 			break;
 		case SV_POTION_CONFUSION:
-			if (!p_ptr->resist_conf) {
+			if (!p_ptr->resist_conf)
 				if (set_confused(Ind, p_ptr->confused + rand_int(20) + 15)) ident = TRUE;
-			}
 			break;
 #if 0
 		case SV_POTION_MUTATION:
@@ -675,9 +670,8 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			break;
 #endif
 		case SV_POTION_SLEEP:
-			if (!p_ptr->free_act) {
+			if (!p_ptr->free_act)
 				if (set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4)) ident = TRUE;
-			}
 			break;
 		case SV_POTION_LOSE_MEMORIES:
 			if (!p_ptr->hold_life && (p_ptr->exp > 0)) {
@@ -754,12 +748,10 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			}
 			break;
 		case SV_POTION_INFRAVISION:
-			if (set_tim_infra(Ind, 100 + randint(100))) /* removed stacking */
-				ident = TRUE;
+			if (set_tim_infra(Ind, 100 + randint(100))) ident = TRUE; /* removed stacking */
 			break;
 		case SV_POTION_DETECT_INVIS:
-			if (set_tim_invis(Ind, 12 + randint(12))) /* removed stacking */
-				ident = TRUE;
+			if (set_tim_invis(Ind, 12 + randint(12))) ident = TRUE; /* removed stacking */
 			break;
 		case SV_POTION_INVIS:
 			set_invis(Ind, 15 + randint(10), p_ptr->lev < 30 ? 24 : p_ptr->lev * 4 / 5);
@@ -783,20 +775,13 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			set_res_fear(Ind, 5);
 			break;
 		case SV_POTION_SPEED:
-			if (!p_ptr->fast) {
-				if (set_fast(Ind, randint(25) + 15, 10)) ident = TRUE;
-			} else {
-				/* not removed stacking due to interesting effect */
-				(void)set_fast(Ind, p_ptr->fast + 5, 10);
-			}
+			if (set_fast(Ind, randint(25) + 15, 10)) ident = TRUE; /* removed stacking */
 			break;
 		case SV_POTION_RESIST_HEAT:
-			if (set_oppose_fire(Ind, randint(10) + 10)) /* removed stacking */
-				ident = TRUE;
+			if (set_oppose_fire(Ind, randint(10) + 10)) ident = TRUE; /* removed stacking */
 			break;
 		case SV_POTION_RESIST_COLD:
-			if (set_oppose_cold(Ind, randint(10) + 10)) /* removed stacking */
-				ident = TRUE;
+			if (set_oppose_cold(Ind, randint(10) + 10)) ident = TRUE; /* removed stacking */
 			break;
 		case SV_POTION_HEROISM:
 			if (hp_player(Ind, 10)) ident = TRUE;
@@ -1076,7 +1061,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				p_ptr->update |= (PU_BONUS | PU_HP);
 				ident = TRUE;
 			}
-			else msg_print(Ind, "You feel certain you are a fruit bat!");
+			//else msg_print(Ind, "You feel certain you are a fruit bat!"); <-wouldn't this msg require 'ident' too? disabled for now
 			break;
 		case SV_POTION_LEARNING:
 			ident = TRUE;
@@ -1137,8 +1122,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				p_ptr->update |= (PU_BONUS | PU_HP);
 				ident = TRUE;
 			}
-			else msg_print(Ind, "You feel certain you are a fruit bat!");
-
+			//else msg_print(Ind, "You feel certain you are a fruit bat!"); <-wouldn't this msg require 'ident' too? disabled for now
 			break;
 		case SV_POTION2_LEARNING:
 			ident = TRUE;
@@ -1169,8 +1153,8 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
  */
 void do_cmd_quaff_potion(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	int		ident, lev;
-	object_type	*o_ptr;
+	int ident, lev;
+	object_type *o_ptr;
 	bool flipped = FALSE;
 
 
@@ -1178,14 +1162,10 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	item_tester_tval = TV_POTION;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-		o_ptr = &p_ptr->inventory[item];
-
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -1195,14 +1175,12 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		return;
 	}
 
-
 	if (check_guard_inscription(o_ptr->note, 'q')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
-
 
 	if ((o_ptr->tval != TV_POTION) && (o_ptr->tval != TV_POTION2)) {
 		//(may happen on death, from macro spam)	msg_print(Ind, "SERVER ERROR: Tried to quaff non-potion!");
