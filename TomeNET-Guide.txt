@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. March 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 24. March 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1419,6 +1419,7 @@ When in an IRC channel where the 'TomeNET' bot relays chat to and from a
 game server, you may enter these IRC commands:
 (See (1.1b) on how to set up IRC chat.)
 
+?help           Displays a list of commands.
 ?players        Will reply with a list of players online on this server.
 ?seen <name>    Tells you when the character or account of the <name> you
                 specified logged in the last time.
