@@ -4233,7 +4233,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_POTION_DEATH:
 			rad = 3;
-			typ = GF_NETHER;
+			typ = GF_NETHER_WEAK;
 			dam = damroll(60, 20);
 			break;
 		case SV_POTION_BOLDNESS:
