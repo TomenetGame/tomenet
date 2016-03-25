@@ -10470,14 +10470,15 @@ Vampirism source priority table (from best at the top to worst at the bottom)
 The best source overrides all weaker ones, which simply get ignored:
 | Melee                               | Ranged                              |
 -----------------------------------------------------------------------------
-| Weapon                     100%     | Shooter                    100%     |
-| Vampire bat/mist form      100%     | Ammunition                 100%     |
+| Weapon                     100%     | Shooter                     50%     |
+| Vampire bat/mist form      100%     | Ammunition                  50%     |
 | Vampire character race      50%     |                                     |
 | Other vampiric forms        50%     |                                     |
 | Non-weapons (gloves)        50%     | Non-weapons (gloves)        33%     |
-| Fruit bat (native/cs-pot,   50%     |                                     |
-|           not in mimicked form)     |                                     |
+| Fruit bat (native only)     50%     |                                     |
+| Fruit bat (potion only)     33%     |                                     |
 
+(Mimicked fruit bats don't get vampirism.)
 
 
 (5.16) Invisibility

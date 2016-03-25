@@ -3152,16 +3152,18 @@ void calc_boni(int Ind) {
 
 		/* Bats get +10 speed ... they need it!*/
 		if (p_ptr->fruit_bat) {
-			if (p_ptr->fruit_bat == 1)
+			if (p_ptr->fruit_bat == 1) {
 				p_ptr->pspeed += 10; //disabled due to bat-party-powerlevel-cheezing
 //				p_ptr->pspeed += (3 + (p_ptr->lev > 49 ? 7 : p_ptr->lev / 7)); // +10 eventually.
 //				p_ptr->pspeed += (3 + (p_ptr->lev > 42 ? 7 : p_ptr->lev / 6)); // +10 eventually.
 //				p_ptr->pspeed += (3 + (p_ptr->lev > 35 ? 7 : p_ptr->lev / 5)); // +10 eventually.
-			else
+				if (p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
+			} else {
 				p_ptr->pspeed += 3;
+				if (p_ptr->vampiric_melee < 33) { p_ptr->vampiric_melee = 33; csheet_boni->cb[6] |= CB7_RVAMP; }
+			}
 			p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV;
 			p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
-			if (p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
 		}
 		
 		csheet_boni[14].spd = p_ptr->pspeed - 110;
@@ -4150,7 +4152,7 @@ void calc_boni(int Ind) {
 		}
 
 		if (i == INVEN_AMMO || i == INVEN_BOW) {
-			if (f1 & TR1_VAMPIRIC) { p_ptr->vampiric_ranged = 100; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
+			if (f1 & TR1_VAMPIRIC) { p_ptr->vampiric_ranged = WEAPON_VAMPIRIC_CHANCE_RANGED; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
 			continue;
 		}
 		if (i == INVEN_TOOL) continue;

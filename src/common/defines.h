@@ -1020,9 +1020,11 @@
 /* Various melee/ranged combat settings for cmd1.c and cmd2.c mostly */
 
 #define MAX_VAMPIRIC_DRAIN 50   /* was 25 - note: this counts per turn, not per blow */
+#define WEAPON_VAMPIRIC_CHANCE 100
 #define NON_WEAPON_VAMPIRIC_CHANCE 50 /* was 67 - chance to drain if VAMPIRIC is given be a non-weapon item */
 
 #define MAX_VAMPIRIC_DRAIN_RANGED 10    /* was 25 - note: this counts per shot, not per turn */
+#define WEAPON_VAMPIRIC_CHANCE_RANGED 50
 #define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 33 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
 
 /* max range of arrows in do_cmd_fire.
