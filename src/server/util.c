@@ -115,16 +115,13 @@ void check_banlist() {
  *
  * Fake "usleep()" function grabbed from the inl netrek server -cba
  */
-static int usleep(huge microSeconds)
-{
-	struct timeval      Timer;
-
-	int                 nfds = 0;
-
+static int usleep(huge microSeconds) {
+	struct timeval Timer;
+	int nfds = 0;
 #ifdef FD_SET
-	fd_set          *no_fds = NULL;
+	fd_set *no_fds = NULL;
 #else
-	int                     *no_fds = NULL;
+	int *no_fds = NULL;
 #endif
 
 
@@ -141,8 +138,7 @@ static int usleep(huge microSeconds)
 	Timer.tv_usec = (microSeconds % 1000000L);
 
 	/* Wait for it */
-	if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0)
-	{
+	if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0) {
 		/* Hack -- ignore interrupts */
 		if (errno != EINTR) return -1;
 	}
@@ -240,11 +236,10 @@ void user_name(char *buf, int id)
  * Replace "~user/" by the home directory of the user named "user"
  * Replace "~/" by the home directory of the current user
  */
-errr path_parse(char *buf, int max, cptr file)
-{
-	cptr            u, s;
-	struct passwd   *pw;
-	char            user[128];
+errr path_parse(char *buf, int max, cptr file) {
+	cptr u, s;
+	struct passwd *pw;
+	char user[128];
 
 
 	/* Assume no result */
@@ -254,8 +249,7 @@ errr path_parse(char *buf, int max, cptr file)
 	if (!file) return (-1);
 
 	/* File needs no parsing */
-	if (file[0] != '~')
-	{
+	if (file[0] != '~') {
 		strcpy(buf, file);
 		return (0);
 	}
@@ -359,9 +353,8 @@ errr path_temp(char *buf, int max)
 /*
  * Hack -- replacement for "fopen()"
  */
-FILE *my_fopen(cptr file, cptr mode)
-{
-	char                buf[1024];
+FILE *my_fopen(cptr file, cptr mode) {
+	char buf[1024];
 
 	/* Hack -- Try to parse the path */
 	if (path_parse(buf, 1024, file)) return (NULL);
@@ -374,8 +367,7 @@ FILE *my_fopen(cptr file, cptr mode)
 /*
  * Hack -- replacement for "fclose()"
  */
-errr my_fclose(FILE *fff)
-{
+errr my_fclose(FILE *fff) {
 	/* Require a file */
 	if (!fff) return (-1);
 
@@ -523,9 +515,8 @@ extern long lseek(int, long, int);
 /*
  * Hack -- attempt to delete a file
  */
-errr fd_kill(cptr file)
-{
-	char                buf[1024];
+errr fd_kill(cptr file) {
+	char buf[1024];
 
 	/* Hack -- Try to parse the path */
 	if (path_parse(buf, 1024, file)) return (-1);
@@ -541,10 +532,9 @@ errr fd_kill(cptr file)
 /*
  * Hack -- attempt to move a file
  */
-errr fd_move(cptr file, cptr what)
-{
-	char                buf[1024];
-	char                aux[1024];
+errr fd_move(cptr file, cptr what) {
+	char buf[1024];
+	char aux[1024];
 
 	/* Hack -- Try to parse the path */
 	if (path_parse(buf, 1024, file)) return (-1);
@@ -563,10 +553,9 @@ errr fd_move(cptr file, cptr what)
 /*
  * Hack -- attempt to copy a file
  */
-errr fd_copy(cptr file, cptr what)
-{
-	char                buf[1024];
-	char                aux[1024];
+errr fd_copy(cptr file, cptr what) {
+	char buf[1024];
+	char aux[1024];
 
 	/* Hack -- Try to parse the path */
 	if (path_parse(buf, 1024, file)) return (-1);
@@ -595,9 +584,8 @@ errr fd_copy(cptr file, cptr what)
  * of "O_RDONLY", "O_WRONLY", and "O_RDWR" in "A-win-h", and then
  * we must simulate the effect of the proper "open()" call below.
  */
-int fd_make(cptr file, int mode)
-{
-	char                buf[1024];
+int fd_make(cptr file, int mode) {
+	char buf[1024];
 
 	/* Hack -- Try to parse the path */
 	if (path_parse(buf, 1024, file)) return (-1);
@@ -628,9 +616,8 @@ int fd_make(cptr file, int mode)
  *
  * Note that we assume that the file should be "binary"
  */
-int fd_open(cptr file, int flags)
-{
-	char                buf[1024];
+int fd_open(cptr file, int flags) {
+	char buf[1024];
 
 	/* Hack -- Try to parse the path */
 	if (path_parse(buf, 1024, file)) return (-1);
@@ -645,8 +632,7 @@ int fd_open(cptr file, int flags)
  *
  * Legal lock types -- F_UNLCK, F_RDLCK, F_WRLCK
  */
-errr fd_lock(int fd, int what)
-{
+errr fd_lock(int fd, int what) {
 	/* XXX XXX */
 	what = what ? what : 0;
 
@@ -2688,7 +2674,7 @@ static void floor_msg(struct worldpos *wpos, cptr msg) {
 //system-msg, currently unused anyway-	if(cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
-        	if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (Players[i]->conn == NOT_CONNECTED) continue;
 		/* Check this guy */
 		if (inarea(wpos, &Players[i]->wpos)) msg_print(i, msg);
 	}
@@ -2712,14 +2698,14 @@ void floor_msg_format(struct worldpos *wpos, cptr fmt, ...) {
  * Send a message to everyone on a floor, considering ignorance.
  */
 static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
-        int i;
+	int i;
 	if(cfg.log_u) s_printf("(%d,%d,%d)%s\n", wpos->wx, wpos->wy, wpos->wz, msg + 2);// Players[sender]->name, msg);
-        /* Check for this guy */
-        for (i = 1; i <= NumPlayers; i++) {
-                if (Players[i]->conn == NOT_CONNECTED) continue;
-                if (check_ignore(i, sender)) continue;
-	        /* Check this guy */
-	        if (inarea(wpos, &Players[i]->wpos)) msg_print(i, msg);
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (check_ignore(i, sender)) continue;
+		/* Check this guy */
+		if (inarea(wpos, &Players[i]->wpos)) msg_print(i, msg);
 	}
 }
 /*
@@ -2746,7 +2732,7 @@ void world_surface_msg(cptr msg) {
 //system-msg, currently unused anyway-	if(cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
-        	if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (Players[i]->conn == NOT_CONNECTED) continue;
 		/* Check this guy */
 		if (Players[i]->wpos.wz == 0) msg_print(i, msg);
 	}
@@ -4016,7 +4002,7 @@ static void player_talk_aux(int Ind, char *message) {
 		/* erase our traces */
 		search[0] = '\0';
 		len = 0;
-        }
+	}
 
 
 	colon = strchr(message, ':');
@@ -5636,13 +5622,12 @@ char *wpos_format_compact(int Ind, worldpos *wpos)
 }
 
 
-byte count_bits(u32b array)
-{
-	byte k = 0, i;        
+byte count_bits(u32b array) {
+	byte k = 0, i;
 
-	if(array)
-		for(i = 0; i < 32; i++)
-			if(array & (1 << i)) k++;
+	if (array)
+		for (i = 0; i < 32; i++)
+			if (array & (1 << i)) k++;
 
 	return k;
 }
@@ -5650,8 +5635,7 @@ byte count_bits(u32b array)
 /*
  * Find a player
  */
-int get_playerind(char *name)
-{
+int get_playerind(char *name) {
 	int i;
 
 	if (name == (char*)NULL) return(-1);
@@ -5661,8 +5645,7 @@ int get_playerind(char *name)
 	}
 	return(-1);
 }
-int get_playerind_loose(char *name)
-{
+int get_playerind_loose(char *name) {
 	int i, len = strlen(name);
 
 	if (len == 0) return(-1);
@@ -5791,7 +5774,7 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	if (l_ptr->flags1 & LF1_NO_MAGIC) {
 		msg_print(Ind, "\377oYou feel a suppressive air.");
 		/* Automatically dis/re-enable wraith form */
-	        p_ptr->update |= PU_BONUS;
+		p_ptr->update |= PU_BONUS;
 	}
 	if (l_ptr->flags1 & LF1_NO_GENO)
 //sounds as if it's good for the player		msg_print(Ind, "\377oYou have a feeling of peace...");
@@ -5878,19 +5861,15 @@ s32b bst(s32b what, s32b t)
 #endif
 }
 
-cptr get_month_name(int day, bool full, bool compact)
-{
+cptr get_month_name(int day, bool full, bool compact) {
 	int i = 8;
 	static char buf[40];
 
 	/* Find the period name */
 	while ((i > 0) && (day < month_day[i]))
-	{
 		i--;
-	}
 
-	switch (i)
-	{
+	switch (i) {
 		/* Yestare/Mettare */
 		case 0:
 		case 8:
@@ -5921,8 +5900,7 @@ cptr get_month_name(int day, bool full, bool compact)
 	return (buf);
 }
 
-cptr get_day(int day)
-{
+cptr get_day(int day) {
 	static char buf[20];
 	cptr p = "th";
 
@@ -5992,65 +5970,60 @@ void lua_intrusion(int Ind, char *problem_diz) {
 #endif
 }
 
-void bbs_add_line(cptr textline)
-{
+void bbs_add_line(cptr textline) {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
 	for (i = 0; i < BBS_LINES; i++)
-    		if(!strcmp(bbs_line[i], "")) break;
+		if(!strcmp(bbs_line[i], "")) break;
 	j = i;
 	/* or scroll up by one line, discarding the first line */
 	if (i == BBS_LINES)
-	        for (j = 0; j < BBS_LINES - 1; j++)
-	                strcpy(bbs_line[j], bbs_line[j + 1]);
+		for (j = 0; j < BBS_LINES - 1; j++)
+			strcpy(bbs_line[j], bbs_line[j + 1]);
 	/* write the line to the bbs */
 	strncpy(bbs_line[j], textline, MAX_CHARS_WIDE - 3); /* lines get one leading spaces on outputting, so it's 78-1  //  was 77 */
 }
 
-void bbs_del_line(int entry)
-{
+void bbs_del_line(int entry) {
 	int j;
 	if (entry < 0) return;
 	if (entry >= BBS_LINES) return;
-        for (j = entry; j < BBS_LINES - 1; j++)
-                strcpy(bbs_line[j], bbs_line[j + 1]);
+	for (j = entry; j < BBS_LINES - 1; j++)
+		strcpy(bbs_line[j], bbs_line[j + 1]);
 	/* erase last line */
 	strcpy(bbs_line[BBS_LINES - 1], "");
 }
 
-void bbs_erase(void)
-{
+void bbs_erase(void) {
 	int i;
-        for (i = 0; i < BBS_LINES; i++)
-                strcpy(bbs_line[i], "");
+	for (i = 0; i < BBS_LINES; i++)
+		strcpy(bbs_line[i], "");
 }
 
-void pbbs_add_line(u16b party, cptr textline)
-{
+void pbbs_add_line(u16b party, cptr textline) {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
 	for (i = 0; i < BBS_LINES; i++)
-    		if(!strcmp(pbbs_line[party][i], "")) break;
+		if(!strcmp(pbbs_line[party][i], "")) break;
 	j = i;
 	/* or scroll up by one line, discarding the first line */
 	if (i == BBS_LINES)
-	        for (j = 0; j < BBS_LINES - 1; j++)
-	                strcpy(pbbs_line[party][j], pbbs_line[party][j + 1]);
+		for (j = 0; j < BBS_LINES - 1; j++)
+			strcpy(pbbs_line[party][j], pbbs_line[party][j + 1]);
 	/* write the line to the bbs */
 	strncpy(pbbs_line[party][j], textline, MAX_CHARS_WIDE - 3);
 }
 
-void gbbs_add_line(byte guild, cptr textline)
-{
+void gbbs_add_line(byte guild, cptr textline) {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
 	for (i = 0; i < BBS_LINES; i++)
-    		if(!strcmp(gbbs_line[guild][i], "")) break;
+		if(!strcmp(gbbs_line[guild][i], "")) break;
 	j = i;
 	/* or scroll up by one line, discarding the first line */
 	if (i == BBS_LINES)
-	        for (j = 0; j < BBS_LINES - 1; j++)
-	                strcpy(gbbs_line[guild][j], gbbs_line[guild][j + 1]);
+		for (j = 0; j < BBS_LINES - 1; j++)
+			strcpy(gbbs_line[guild][j], gbbs_line[guild][j + 1]);
 	/* write the line to the bbs */
 	strncpy(gbbs_line[guild][j], textline, MAX_CHARS_WIDE - 3);
 }
@@ -6061,8 +6034,7 @@ void gbbs_add_line(byte guild, cptr textline)
  * Doesn't check for duplicates
  * Takes a double pointer to the list
  */
-void player_list_add(player_list_type **list, s32b player)
-{
+void player_list_add(player_list_type **list, s32b player) {
 	player_list_type *pl_ptr;
 
 	MAKE(pl_ptr, player_list_type);
@@ -6075,18 +6047,13 @@ void player_list_add(player_list_type **list, s32b player)
 /*
  * Check if a list contains an id.
  */
-bool player_list_find(player_list_type *list, s32b player)
-{
+bool player_list_find(player_list_type *list, s32b player) {
 	player_list_type *pl_ptr;
 
 	pl_ptr = list;
 
-	while (pl_ptr)
-	{
-		if (pl_ptr->id == player)
-		{
-			return TRUE;
-		}
+	while (pl_ptr) {
+		if (pl_ptr->id == player) return TRUE;
 		pl_ptr = pl_ptr->next;
 	}
 
@@ -6097,15 +6064,13 @@ bool player_list_find(player_list_type *list, s32b player)
  * Delete an id from a list.
  * Takes a double pointer to the list
  */
-bool player_list_del(player_list_type **list, s32b player)
-{
+bool player_list_del(player_list_type **list, s32b player) {
 	player_list_type *pl_ptr, *prev;
 
 	if (*list == NULL) return FALSE;
 
 	/* Check the first node */
-	if ((*list)->id == player)
-	{
+	if ((*list)->id == player) {
 		*list = (*list)->next;
 		return TRUE;
 	}
@@ -6114,10 +6079,8 @@ bool player_list_del(player_list_type **list, s32b player)
 	prev = *list;
 
 	/* Check the rest of the nodes */
-	while (pl_ptr)
-	{
-		if (pl_ptr->id == player)
-		{
+	while (pl_ptr) {
+		if (pl_ptr->id == player) {
 			prev->next = pl_ptr->next;
 			FREE(pl_ptr, player_list_type);
 			return TRUE;
@@ -6133,14 +6096,12 @@ bool player_list_del(player_list_type **list, s32b player)
 /*
  * Free an entire list.
  */
-void player_list_free(player_list_type *list)
-{
+void player_list_free(player_list_type *list) {
 	player_list_type *pl_ptr, *tmp;
 
 	pl_ptr = list;
 
-	while (pl_ptr)
-	{
+	while (pl_ptr) {
 		tmp = pl_ptr;
 		pl_ptr = pl_ptr->next;
 		FREE(tmp, player_list_type);
@@ -6152,8 +6113,7 @@ void player_list_free(player_list_type *list)
  *
  * Branch has to be an exact match.
  */
-bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build)
-{
+bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build) {
 	if (version->major < major)
 		return FALSE; /* very old */
 	else if (version->major > major)
@@ -6171,8 +6131,7 @@ bool is_newer_than(version_type *version, int major, int minor, int patch, int e
 	else if (version->extra > extra)
 		return TRUE; /* a little newer */
 	/* Check that the branch is an exact match */
-	else if (version->branch == branch)
-	{
+	else if (version->branch == branch) {
 		/* Now check the build */
 		if (version->build < build)
 			return FALSE;
@@ -6184,8 +6143,7 @@ bool is_newer_than(version_type *version, int major, int minor, int patch, int e
 	return FALSE;
 }
 
-bool is_older_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build)
-{
+bool is_older_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build) {
 	if (version->major > major)
 		return FALSE; /* very new */
 	else if (version->major < major)
@@ -6203,8 +6161,7 @@ bool is_older_than(version_type *version, int major, int minor, int patch, int e
 	else if (version->extra < extra)
 		return TRUE; /* a little older */
 	/* Check that the branch is an exact match */
-	else if (version->branch == branch)
-	{
+	else if (version->branch == branch) {
 		/* Now check the build */
 		if (version->build > build)
 			return FALSE;
@@ -6216,8 +6173,7 @@ bool is_older_than(version_type *version, int major, int minor, int patch, int e
 	return FALSE;
 }
 
-bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build)
-{
+bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build) {
 	if (version->major == major
 	    && version->minor == minor
 	    && version->patch == patch
@@ -6232,15 +6188,13 @@ bool is_same_as(version_type *version, int major, int minor, int patch, int extr
 /*
  * Since only GNU libc has memfrob, we use our own.
  */
-void my_memfrob(void *s, int n)
-{
+void my_memfrob(void *s, int n) {
 	int i;
 	char *str;
 
 	str = (char*) s;
 
-	for (i = 0; i < n; i++)
-	{
+	for (i = 0; i < n; i++) {
 		/* XOR every byte with 42 */
 		str[i] ^= 42;
 	}
@@ -6764,19 +6718,19 @@ void reindex_dungeons() {
 	int i;
 # endif
 	int x, y;
-    wilderness_type *w_ptr;
-    struct dungeon_type *d_ptr;
+	wilderness_type *w_ptr;
+	struct dungeon_type *d_ptr;
 
-    dungeon_id_max = 0;
+	dungeon_id_max = 0;
 
-    for (y = 0; y < MAX_WILD_Y; y++) {
-        for (x = 0; x < MAX_WILD_X; x++) {
-            w_ptr = &wild_info[y][x];
-            if (w_ptr->flags & WILD_F_UP) {
-            	d_ptr = w_ptr->tower;
-	            d_ptr->id = ++dungeon_id_max;
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		for (x = 0; x < MAX_WILD_X; x++) {
+			w_ptr = &wild_info[y][x];
+			if (w_ptr->flags & WILD_F_UP) {
+				d_ptr = w_ptr->tower;
+				d_ptr->id = ++dungeon_id_max;
 
-    	        dungeon_visit_frequency[dungeon_id_max] = 0;
+				dungeon_visit_frequency[dungeon_id_max] = 0;
 				dungeon_x[dungeon_id_max] = x;
 				dungeon_y[dungeon_id_max] = y;
 				dungeon_tower[dungeon_id_max] = TRUE;
@@ -6786,11 +6740,11 @@ void reindex_dungeons() {
 
 				s_printf("  indexed tower   at %d,%d: id = %d\n", x, y, dungeon_id_max);
 			}
-            if (w_ptr->flags & WILD_F_DOWN) {
-            	d_ptr = w_ptr->dungeon;
-	            d_ptr->id = ++dungeon_id_max;
+			if (w_ptr->flags & WILD_F_DOWN) {
+				d_ptr = w_ptr->dungeon;
+				d_ptr->id = ++dungeon_id_max;
 
-    	        dungeon_visit_frequency[dungeon_id_max] = 0;
+				dungeon_visit_frequency[dungeon_id_max] = 0;
 				dungeon_x[dungeon_id_max] = x;
 				dungeon_y[dungeon_id_max] = y;
 				dungeon_tower[dungeon_id_max] = FALSE;
@@ -6800,15 +6754,15 @@ void reindex_dungeons() {
 
 				s_printf("  indexed dungeon at %d,%d: id = %d\n", x, y, dungeon_id_max);
 			}
-        }
-    }
+		}
+	}
 
 # ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
-    for (i = 0; i < 20; i++)
-    	depthrange_visited[i] = 0;
+	for (i = 0; i < 20; i++)
+		depthrange_visited[i] = 0;
 # endif
 
-    s_printf("Reindexed %d dungeons/towers.\n", dungeon_id_max);
+	s_printf("Reindexed %d dungeons/towers.\n", dungeon_id_max);
 }
 
 void set_dungeon_bonus(int id, bool reset) {
@@ -6908,36 +6862,36 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 	player_type *p_ptr = Players[Ind];
 
 	/* hack: prevent s32b overflow */
-        if (2000000000 - amt < p_ptr->au) {
-                if (!quiet) msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
-                return FALSE;
-        } else {
+	if (2000000000 - amt < p_ptr->au) {
+		if (!quiet) msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+		return FALSE;
+	} else {
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
-    	    	    && p_ptr->gold_picked_up == EVENT_TOWNIE_GOLD_LIMIT) {
+		    && p_ptr->gold_picked_up == EVENT_TOWNIE_GOLD_LIMIT) {
 			msg_print(Ind, "\377yYou cannot collect any more cash or your life would be forfeit.");
 			return FALSE;
 		}
 #endif
 
-	        /* Collect the gold */
-                p_ptr->au += amt;
-	        p_ptr->redraw |= (PR_GOLD);
-        }
+		/* Collect the gold */
+		p_ptr->au += amt;
+		p_ptr->redraw |= (PR_GOLD);
+	}
 
 	if (exempt) return TRUE;
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 	/* if EVENT_TOWNIE_GOLD_LIMIT is 0 then nothing happens */
-        if (p_ptr->gold_picked_up <= EVENT_TOWNIE_GOLD_LIMIT) {
-                p_ptr->gold_picked_up += (amt > EVENT_TOWNIE_GOLD_LIMIT) ? EVENT_TOWNIE_GOLD_LIMIT : amt;
-                if (p_ptr->gold_picked_up > EVENT_TOWNIE_GOLD_LIMIT
-            	    && !p_ptr->max_exp) {
+	if (p_ptr->gold_picked_up <= EVENT_TOWNIE_GOLD_LIMIT) {
+		p_ptr->gold_picked_up += (amt > EVENT_TOWNIE_GOLD_LIMIT) ? EVENT_TOWNIE_GOLD_LIMIT : amt;
+		if (p_ptr->gold_picked_up > EVENT_TOWNIE_GOLD_LIMIT
+		    && !p_ptr->max_exp) {
 			msg_print(Ind, "You gain a tiny bit of experience from collecting cash.");
-            		gain_exp(Ind, 1);
-            	}
-        }
+			gain_exp(Ind, 1);
+		}
+	}
 #endif
-        return TRUE;
+	return TRUE;
 }
 
 /* backup all house prices and contents for all players to lib/save/estate/ */
@@ -6948,8 +6902,8 @@ bool backup_estate(void) {
 	cptr name;
 	int i, j, k;
 	int sy, sx, ey,ex , x, y;
-        cave_type **zcave, *c_ptr;
-        bool newly_created, allocated;
+	cave_type **zcave, *c_ptr;
+	bool newly_created, allocated;
 	u32b au;
 	house_type *h_ptr;
 	struct dna_type *dna;
@@ -6959,15 +6913,15 @@ bool backup_estate(void) {
 	s_printf("Backing up all real estate...\n");
 
 	/* create folder lib/save/estate if not existing */
-        path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
 
 	/* scan all houses */
-        for (i = 0; i < num_houses; i++) {
-                h_ptr = &houses[i];
-                if (!h_ptr->dna->owner) continue;
+	for (i = 0; i < num_houses; i++) {
+		h_ptr = &houses[i];
+		if (!h_ptr->dna->owner) continue;
 
-                wpos = &h_ptr->wpos;
-                dna = h_ptr->dna;
+		wpos = &h_ptr->wpos;
+		dna = h_ptr->dna;
 		/* assume worst possible charisma (3) */
 		au = dna->price / 100 * adj_chr_gold[0];
 		if (au < 100) au = 100;
@@ -6985,33 +6939,33 @@ bool backup_estate(void) {
 		/* create backup file if required, or append to it */
 		/* create actual filename from character name (same as used for sf_delete or process_player_name) */
 		k = 0;
-	        for (j = 0; name[j]; j++) {
-	                c = name[j];
-        	        /* Accept some letters */
-	                if (isalpha(c) || isdigit(c)) savefile[k++] = c;
-    	        	/* Convert space, dot, and underscore to underscore */
-	                else if (strchr(SF_BAD_CHARS, c)) savefile[k++] = '_';
-    		}
-    		savefile[k] = '\0';
+		for (j = 0; name[j]; j++) {
+			c = name[j];
+			/* Accept some letters */
+			if (isalpha(c) || isdigit(c)) savefile[k++] = c;
+			/* Convert space, dot, and underscore to underscore */
+			else if (strchr(SF_BAD_CHARS, c)) savefile[k++] = '_';
+		}
+		savefile[k] = '\0';
 		/* build path name and try to create/append to player's backup file */
-    		path_build(buf, MAX_PATH_LENGTH, buf2, savefile);
-    		if ((fp = fopen(buf, "rb")) == NULL)
-    			newly_created = TRUE;
-    		else {
-    			newly_created = FALSE;
-    			fclose(fp);
-    		}
-    		if ((fp = fopen(buf, "ab")) == NULL) {
-	    		s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
-    			return FALSE;
-    		} else if (newly_created) {
-    			newly_created = FALSE;
-    			/* begin with a version tag */
-    			fprintf(fp, "%s\n", ESTATE_BACKUP_VERSION);
+		path_build(buf, MAX_PATH_LENGTH, buf2, savefile);
+		if ((fp = fopen(buf, "rb")) == NULL)
+			newly_created = TRUE;
+		else {
+			newly_created = FALSE;
+			fclose(fp);
+		}
+		if ((fp = fopen(buf, "ab")) == NULL) {
+			s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
+			return FALSE;
+		} else if (newly_created) {
+			newly_created = FALSE;
+			/* begin with a version tag */
+			fprintf(fp, "%s\n", ESTATE_BACKUP_VERSION);
 
 #if 0 /* guild info is no longer tied to map reset! */
-    			/* add 2M Au if he's a guild master, since guilds will be erased if the server
-    			   savefile gets deleted (which is the sole purpose of calling this function..) */
+			/* add 2M Au if he's a guild master, since guilds will be erased if the server
+			   savefile gets deleted (which is the sole purpose of calling this function..) */
 			for (j = 0; j < MAX_GUILDS; j++)
 				if (guilds[j].master == h_ptr->dna->owner) {
 					fprintf(fp, "AU:%d\n", GUILD_PRICE);
@@ -7019,7 +6973,7 @@ bool backup_estate(void) {
 					break;
 				}
 #endif
-    		}
+		}
 
 		/* add house price to his backup file */
 		fprintf(fp, "AU:%d\n", au);
@@ -7028,21 +6982,21 @@ bool backup_estate(void) {
 		/* traditional house? */
 		if (h_ptr->flags & HF_TRAD) {
 			for (j = 0; j < h_ptr->stock_num; j++) {
-                    		o_ptr = &h_ptr->stock[j];
-                    		/* add object to backup file */
-                    		fprintf(fp, "OB:");
+				o_ptr = &h_ptr->stock[j];
+				/* add object to backup file */
+				fprintf(fp, "OB:");
 				(void)fwrite(o_ptr, sizeof(object_type), 1, fp);
 				/* store inscription too! */
 				if (o_ptr->note) {
-    					fprintf(fp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
-    					(void)fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp);
-    				} else
-    					fprintf(fp, "%d\n", -1);
-                        }
-                }
-                /* mang-style house? */
-                else {
-        		/* allocate sector of the house to access objects */
+					fprintf(fp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
+					(void)fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp);
+				} else
+					fprintf(fp, "%d\n", -1);
+			}
+		}
+		/* mang-style house? */
+		else {
+			/* allocate sector of the house to access objects */
 			if (!(zcave = getcave(wpos))) {
 				alloc_dungeon_level(wpos);
 				wilderness_gen(wpos);
@@ -7054,26 +7008,26 @@ bool backup_estate(void) {
 				allocated = TRUE;
 			} else allocated = FALSE;
 
-		        if (h_ptr->flags & HF_RECT) {
-		                sy = h_ptr->y + 1;
-		                sx = h_ptr->x + 1;
-		                ey = h_ptr->y + h_ptr->coords.rect.height - 1;
-		                ex = h_ptr->x + h_ptr->coords.rect.width - 1;
-		                for (y = sy; y < ey; y++) {
-		                        for (x = sx; x < ex; x++) {
-    						c_ptr = &zcave[y][x];
-		                                if (c_ptr->o_idx) {
-		                        		o_ptr = &o_list[c_ptr->o_idx];
-		                        		/* add object to backup file */
-		                        		fprintf(fp, "OB:");
-			    				(void)fwrite(o_ptr, sizeof(object_type), 1, fp);
-			    				/* store inscription too! */
-			    				if (o_ptr->note) {
-			    					fprintf(fp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
-			    					(void)fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp);
-			    				} else
-			    					fprintf(fp, "%d\n", -1);
-		                                }
+			if (h_ptr->flags & HF_RECT) {
+				sy = h_ptr->y + 1;
+				sx = h_ptr->x + 1;
+				ey = h_ptr->y + h_ptr->coords.rect.height - 1;
+				ex = h_ptr->x + h_ptr->coords.rect.width - 1;
+				for (y = sy; y < ey; y++) {
+					for (x = sx; x < ex; x++) {
+						c_ptr = &zcave[y][x];
+						if (c_ptr->o_idx) {
+							o_ptr = &o_list[c_ptr->o_idx];
+							/* add object to backup file */
+							fprintf(fp, "OB:");
+							(void)fwrite(o_ptr, sizeof(object_type), 1, fp);
+							/* store inscription too! */
+							if (o_ptr->note) {
+								fprintf(fp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
+								(void)fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp);
+							} else
+								fprintf(fp, "%d\n", -1);
+						}
 					}
 				}
 			} else {
@@ -7082,7 +7036,7 @@ bool backup_estate(void) {
 			}
 
 			if (allocated) dealloc_dungeon_level(wpos);
-                }
+		}
 
 		/* done with this particular house */
 		fclose(fp);
@@ -7125,7 +7079,7 @@ void restore_estate(int Ind) {
 	s_printf("Restoring real estate for %s...\n", p_ptr->name);
 
 	/* create folder lib/save/estate if not existing */
-        path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
 
 	/* build path name and try to create/append to player's backup file */
 	path_build(buf, MAX_PATH_LENGTH, buf2, p_ptr->basename);
@@ -7215,7 +7169,7 @@ void restore_estate(int Ind) {
 			/* Update item's kind-index in case k_info.txt has been modified */
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 #ifdef SEAL_INVALID_OBJECTS
-		        if (!seal_or_unseal_object(o_ptr)) continue;
+			if (!seal_or_unseal_object(o_ptr)) continue;
 #endif
 
 			/* also read inscription */
@@ -7231,7 +7185,7 @@ void restore_estate(int Ind) {
 			data_note[0] = '\0';
 #endif
 			if (rc == NULL || data_len == -2) {
-			        object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				s_printf("  error: Corrupted note line (item '%s').\n", o_name);
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
 				relay_estate(buf, buf2, fp, fp_tmp);
@@ -7260,7 +7214,7 @@ void restore_estate(int Ind) {
 
 					/* write failed gold gain back into new buffer file */
 					fprintf(fp_tmp, "OB:");
-        				(void)fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
+					(void)fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
 
 					/* paranoia: should always be inscriptionless of course */
 					/* ..and its inscription */
@@ -7301,8 +7255,8 @@ void restore_estate(int Ind) {
 
 			gained_anything = TRUE;
 			inven_carry(Ind, o_ptr);
-		        object_desc(Ind, o_name, o_ptr, TRUE, 3);
-		        msg_format(Ind, "You receive %s.", o_name);
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			msg_format(Ind, "You receive %s.", o_name);
 			s_printf("  gained %s.\n", o_name);
 			continue;
 		} else {
