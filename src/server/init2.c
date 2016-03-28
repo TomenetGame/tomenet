@@ -2523,8 +2523,7 @@ void init_spells(s16b new_size)
 /*
  * Initialize some other arrays
  */
-static errr init_other(void)
-{
+static errr init_other(void) {
 	//int i, k, n;
 
 
@@ -2651,9 +2650,11 @@ static errr init_other(void)
 	/*** Pre-allocate space for the "format()" buffer ***/
 
 	/* Hack -- Just call the "format()" function */
-	(void)format("%s (%s).", "Ben Harrison", MAINTAINER);
+	(void)format("%s (%s).", "C. Blue", MAINTAINER);
 
 	prepare_distance();
+
+	init_player_outfits();
 
 #ifdef MONSTER_ASTAR
 	{

@@ -9220,6 +9220,22 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	return (i);
 }
 
+/* Helper function for character birth: Equip starter items automatically. */
+void inven_carry_equip(int Ind, object_type *o_ptr) {
+#if 1
+	int item = inven_carry(Ind, o_ptr);
+
+	if (wearable_p(o_ptr)
+	    /* default starter ranged weapon is a bow, so equip magic arrow together with it */
+	    && (!is_ammo(o_ptr->tval) || o_ptr->tval == TV_ARROW)) {
+		suppress_message = TRUE;
+		do_cmd_wield(Ind, item, 0x0);
+		suppress_message = FALSE;
+	}
+#else
+	inven_carry(Ind, o_ptr);
+#endif
+}
 
 
 

@@ -1264,7 +1264,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
 		{ TV_POTION, SV_POTION_INVIS, 0 },
 		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
-		{ 255, 255, 0 },
+		{ TV_SOFT_ARMOR, SV_GOWN, 0 },
 	},
 
 	{
@@ -1415,7 +1415,18 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	},
     }
 };
-
+void init_player_outfits(void) {
+	/* hack: make sure spellbook constants are correct.
+	   actually this could be done once in init_lua,
+	   but since the array player_init is static, we
+	   just do it here. - C. Blue */
+	   //player_init[0][CLASS_PRIEST][2][2] = __lua_HHEALING;
+	   player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+	   player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+	   //player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
+	   player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+	   player_init[1][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+}
 
 #define BARD_INIT_NUM	15
 static byte bard_init[BARD_INIT_NUM][2] = {
@@ -1459,7 +1470,7 @@ void admin_outfit(int Ind, int realm) {
 	object_type     forge;
 	object_type     *o_ptr = &forge;
 
-//	int note = quark_add("!k");
+	//int note = quark_add("!k");
 
 	if (!is_admin(p_ptr)) return;
 
@@ -1483,7 +1494,7 @@ void admin_outfit(int Ind, int realm) {
 	o_ptr->number = 1;
 	do_admin_outfit();
 
-//	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
+	//invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_DWARVEN)); /* more subtile ;) */
 	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
 	o_ptr->number = 1;
@@ -1551,7 +1562,7 @@ void admin_outfit(int Ind, int realm) {
 	o_ptr->owner = p_ptr->id; \
 	o_ptr->mode = p_ptr->mode; \
 	o_ptr->level = 1; \
-	(void)inven_carry(Ind, o_ptr);
+	(void)inven_carry_equip(Ind, o_ptr);
 #else
  #if STARTEQ_TREATMENT == 3
     #define do_player_outfit()	\
@@ -1563,7 +1574,7 @@ void admin_outfit(int Ind, int realm) {
 	o_ptr->level = 0; \
 	o_ptr->discount = 100; /* <- replaced this by making level-0-items unsellable in general */ \
 	if (!o_ptr->note) o_ptr->note = quark_add(""); /* hack to hide '100% off' tag */ \
-	(void)inven_carry(Ind, o_ptr);
+	(void)inven_carry_equip(Ind, o_ptr);
  #else
     #define do_player_outfit()	\
 	object_aware(Ind, o_ptr); \
@@ -1572,7 +1583,7 @@ void admin_outfit(int Ind, int realm) {
 	o_ptr->owner = p_ptr->id; \
 	o_ptr->mode = p_ptr->mode; \
 	o_ptr->level = 0; \
-	(void)inven_carry(Ind, o_ptr);
+	(void)inven_carry_equip(Ind, o_ptr);
  #endif
 #endif
 
@@ -3214,38 +3225,6 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 //		p_ptr->noscore = 1;
 	}
 
-	/* special outfits for admin (pack overflows!) */
-	if (is_admin(p_ptr)) {
-		admin_outfit(Ind, 0);
-		p_ptr->au = 50000000;
-		p_ptr->lev = 99;
-		p_ptr->exp = 999999999;
-		p_ptr->skill_points = 9999;
-//		p_ptr->noscore = 1;
-		/* permanent invulnerability */
-		p_ptr->total_winner = TRUE;
-		p_ptr->once_winner = TRUE; //just for consistency, eg when picking up WINNERS_ONLY items
-		p_ptr->max_dlv = 200;
-#ifdef SEPARATE_RECALL_DEPTHS
-		for (i = 0; i < MAX_D_IDX * 2; i++)
-			p_ptr->max_depth[i] = 200;
-#endif
-	}
-	/* Hack -- outfit the player */
-	else {
-		/* hack: make sure spellbook constants are correct.
-		   actually this could be done once in init_lua,
-		   but since the array player_init is static, we
-		   just do it here. - C. Blue */
-		   player_init[0][CLASS_PRIEST][2][2] = __lua_HHEALING;
-		   player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
-		   player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
-		   player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
-		   player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
-		   player_init[1][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
-		player_outfit(Ind);
-	}
-
 	p_ptr->max_lev = p_ptr->max_plv = p_ptr->lev;
 	p_ptr->max_exp = p_ptr->exp;
 
@@ -3352,6 +3331,26 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Fruit bats get some skills nulled that they cannot put to use anyway,
 	   just to clean up and avoid newbies accidentally putting points into them. */
 	if (p_ptr->mode & MODE_FRUIT_BAT) fruit_bat_skills(p_ptr);
+
+	/* special outfits for admin (pack overflows!) */
+	if (is_admin(p_ptr)) {
+		admin_outfit(Ind, 0);
+		p_ptr->au = 50000000;
+		p_ptr->lev = 99;
+		p_ptr->exp = 999999999;
+		p_ptr->skill_points = 9999;
+//		p_ptr->noscore = 1;
+		/* permanent invulnerability */
+		p_ptr->total_winner = TRUE;
+		p_ptr->once_winner = TRUE; //just for consistency, eg when picking up WINNERS_ONLY items
+		p_ptr->max_dlv = 200;
+#ifdef SEPARATE_RECALL_DEPTHS
+		for (i = 0; i < MAX_D_IDX * 2; i++)
+			p_ptr->max_depth[i] = 200;
+#endif
+	}
+	/* Hack -- outfit the player */
+	else player_outfit(Ind);
 
 	/* Give the player some resurrections */
 	p_ptr->lives = cfg.lifes + 1;
