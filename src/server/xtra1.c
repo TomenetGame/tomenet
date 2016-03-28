@@ -4703,7 +4703,7 @@ void calc_boni(int Ind) {
 			int martsbonus, martsweight, martscapacity;
 			
 			martsbonus = (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
-			if (!(p_ptr->inventory[INVEN_BODY].k_idx) martsweight = 0;
+			if (!(p_ptr->inventory[INVEN_BODY].k_idx)) martsweight = 0;
 			else martsweight = p_ptr->inventory[INVEN_BODY].weight;
 			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 80) + 20;//(90/100/110) wire fleece/hard leather armour = 100; rhino hide/hard studded leather = 110
 			if (martsweight <= 20) { //allow most basic armour so we don't have to be naked ~~
