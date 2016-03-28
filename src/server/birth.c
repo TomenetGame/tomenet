@@ -1785,9 +1785,13 @@ static void player_outfit(int Ind) {
 
 			while (TRUE) {
 				invcopy(o_ptr, lookup_kind(tv2, sv2));
+				bpr = calc_blows_obj(Ind, o_ptr);
+
+				/* megahack: avoid weapons that are too heavy to wield them at all */
+				if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) bpr = j - 1;
 
 				/* weapon is fine? */
-				if ((bpr = calc_blows_obj(Ind, o_ptr)) >= j) {
+				if (bpr >= j) {
 					tv = tv2;
 					sv = sv2;
 					break;
