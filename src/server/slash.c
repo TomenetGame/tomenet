@@ -1821,6 +1821,10 @@ void do_slash_cmd(int Ind, char *message) {
 			cptr value = "Naught", flower = "Void"; //compiler warnings
 			int p = 0;
 			bool draw = FALSE;
+ #if 0 /* support down and underhanded cards, for players and for the floor */
+			bool down = (message[5] == 'd'); //commands /deald and /drawd for a down card
+			bool uhand = (message[5] == 'u'); //commands /dealu and /drawu for an underhanded card
+ #endif
 
 			if (p_ptr->body_monster) {
 				monster_race *r_ptr = &r_info[p_ptr->body_monster];
