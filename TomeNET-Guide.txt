@@ -8909,6 +8909,7 @@ ANTIMAGIC ('Antimagic field')
         not from using magic devices). You can still use scrolls and potions
         though.
         The field has less influence on _party members_ who try to cast.
+        Usage of magic devices by party members is not hindered.
         The radius is approximately the field power / 9, and is cumulative
         to the 'Antimagic' skill. The field power is the chance of
         suppressing a spell. It caps at 75% and is cumulative to the
@@ -9060,7 +9061,7 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 A Dark Sword (+3,+7) has 30 - (3+7) * 3/5 = 24% chance of
                 interrupting spellcasters. The chance is further quartered for
                 party members, so they are hardly affected by your antimagic
-                field.
+                field. Usage of magic devices by party members is not hindered.
                 The radius of the antimagic field is several fields (chance
                 to interrupt spells, divided by 9), getting smaller if the
                 chance is smaller than 30%.
@@ -11700,7 +11701,8 @@ Note that not every skill is available to every profession (class).
                                 It's capped at 75% chance of interrupting
                                 enemy spells. The capped chance is further
                                 quartered for party members, so they are hardly
-                                affected by your antimagic field.
+                                affected by your antimagic field. Usage of
+                                magic devices by party members is not hindered.
                                 The radius of your antimagic field is approx.
                                 the field's power / 9 and caps at range 9.
                                 Each point in Antimagic adds 1% to your
@@ -15615,7 +15617,7 @@ Parties:
 
     'Antimagic fields' of fellow party members have greatly reduced effect
     on spell-users in the same party, to allow the party to still be a vital
-    combination.
+    combination. Usage of magic devices by party members is not hindered.
 
     If you choose 'Create or rename a party' while already being in a party,
     you will be prompted to rename the party. Only the party owner can do this.
