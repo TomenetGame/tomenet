@@ -7004,14 +7004,10 @@ Ironman Deep Dive Challenge (IDDC)
     The level reached will be recorded in the mayor's office in Bree ('n' key
     inside the office, to view the records).
 
-    To provide some more support, this dungeon will have additional 'dungeon
-    town levels' occur at random. It is NOT possible to generate a random
-    dungeon town by logging out and back in later after the level has been
-    reset. Monsters cannot spawn in dungeon towns.
-    In each 1000ft interval (-450..+500) around the peak points of 1k,2k,3k,4k
-    there can be only one (random) town at a time.
-    Random towns cannot spawn before dungeon level 18 and not after dungeon
-    level 99. They remain static for only 5 minutes after dying, all other
+    To provide some more support, this dungeon will have additional, generic
+    town levels at -1000 ft and -3000 ft. Monsters cannot spawn in any kind of
+    dungeon town.
+    Those towns remain static for only 5 minutes after dying, all other IDDC
     floors will remain static for 10 minutes, giving other players a chance to
     loot items and money. An exception are floors 50 ft..350ft which only stay
     static for 2 minutes, still giving you a chance to reconnect if you get
