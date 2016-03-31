@@ -7689,8 +7689,9 @@ void condense_name(char *condensed, const char *name) {
 int similar_names(const char *name1, const char *name2) {
 	char tmpname[MAX_CHARS];
 	const char *ptr, *ptr2;
+	char *ptr3;
 	int diff, min;
-	int diff_loc;
+	int diff_loc, diff2;
 
 	if (strlen(name1) < 5 || strlen(name2) < 5) return 0; //trivial length, it's ok to be similar
 
@@ -7791,6 +7792,60 @@ int similar_names(const char *name1, const char *name2) {
 			s_printf("similar_names (3): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
 			return 3;
 		}
+	}
+
+	/* Check for anagrams */
+	diff = 0;
+	strcpy(tmpname, name2);
+	for (ptr = name1; *ptr; ptr++) {
+		for (ptr3 = tmpname; *ptr2; ptr2++) {
+			if (tolower(*ptr) == tolower(*ptr3)) {
+				*ptr3 = '*'; //'disable' this character
+				break;
+			}
+		}
+		if (ptr3 == tmpname) diff++;
+	}
+	diff2 = 0;
+	strcpy(tmpname, name1);
+	for (ptr = name2; *ptr; ptr++) {
+		for (ptr3 = tmpname; *ptr2; ptr2++) {
+			if (tolower(*ptr) == tolower(*ptr3)) {
+				*ptr3 = '*'; //'disable' this character
+				break;
+			}
+		}
+		if (ptr3 == tmpname) diff2++;
+	}
+	if (diff2 > diff) diff = diff2; //max()
+	//too little difference between names? forbidden!
+	if (diff <= (min - 6) / 2 + 1) { //must use the 'loosened up' version used further above, since it'd override otherwise
+		s_printf("similar_names (4): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+		return 1;
+	}
+
+	/* Check for prefix */
+	diff = 0;
+	if (strlen(name1) <= strlen(name2)) {
+		ptr = name1;
+		ptr2 = name2;
+		diff2 = strlen(name2);
+	} else {
+		ptr = name2;
+		ptr2 = name1;
+		diff2 = strlen(name1);
+	}
+	while (*ptr) {
+		if (tolower(*ptr) != tolower(*ptr2)) break;
+		ptr++;
+		ptr2++;
+		//REVERSE diff here
+		diff++;
+	}
+	//too little difference between names? forbidden!
+	if (diff >= 5 || diff2 >= diff + 2) {
+		s_printf("similar_names (5): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+		return 1;
 	}
 
 	return 0; //ok!
