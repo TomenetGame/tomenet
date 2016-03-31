@@ -7753,7 +7753,7 @@ int similar_names(const char *name1, const char *name2) {
 			//loosened up slightly
 			if (diff <= (min - 6) / 2 + 1) {
 				s_printf("similar_names (2a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-				return 1;
+				return 2;
 			}
 		} else { //normal case
 			s_printf("similar_names (2): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
@@ -7786,7 +7786,7 @@ int similar_names(const char *name1, const char *name2) {
 			//loosened up slightly
 			if (diff <= (min - 6) / 2 + 1) {
 				s_printf("similar_names (3a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-				return 1;
+				return 3;
 			}
 		} else { //normal case
 			s_printf("similar_names (3): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
@@ -7821,7 +7821,7 @@ int similar_names(const char *name1, const char *name2) {
 	//too little difference between names? forbidden!
 	if (diff <= (min - 6) / 2 + 1) { //must use the 'loosened up' version used further above, since it'd override otherwise
 		s_printf("similar_names (4): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-		return 1;
+		return 4;
 	}
 
 	/* Check for prefix */
@@ -7845,7 +7845,7 @@ int similar_names(const char *name1, const char *name2) {
 	//too little difference between names? forbidden!
 	if (diff >= 5 || diff2 >= diff + 2) {
 		s_printf("similar_names (5): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
-		return 1;
+		return 5;
 	}
 
 	return 0; //ok!
