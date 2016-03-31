@@ -1617,39 +1617,37 @@ void select_bounties(void)
 /*
  * Execute a building command
  */
-//bool bldg_process_command(store_type *s_ptr, int i)
-bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
-		int item2, int amt, int gold)
-{
+//bool bldg_process_command(store_type *st_ptr, int i)
+bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int item2, int amt, int gold) {
 	player_type *p_ptr = Players[Ind];
 	//object_type *q_ptr, forge;
-//	store_action_type *ba_ptr = &ba_info[st_info[s_ptr->st_idx].actions[i]];
+	//store_action_type *ba_ptr = &ba_info[st_info[st_ptr->st_idx].actions[i]];
 	store_action_type *ba_ptr = &ba_info[action];
 	int bact = ba_ptr->action;
 	int bcost;
 	bool paid = FALSE;
 	bool set_reward = FALSE;
 	bool recreate = FALSE;
-//	int amt;
+	//int amt;
 
 	if (p_ptr->store_action) {
 		msg_print(Ind, "You are currently busy.");
 		return FALSE;
 	}
 
-	if (is_state(Ind, s_ptr, STORE_LIKED))
+	if (is_state(Ind, st_ptr, STORE_LIKED))
 		bcost = ba_ptr->costs[STORE_LIKED];
-	else if (is_state(Ind, s_ptr, STORE_HATED))
+	else if (is_state(Ind, st_ptr, STORE_HATED))
 		bcost = ba_ptr->costs[STORE_HATED];
 	else bcost = ba_ptr->costs[STORE_NORMAL];
 
 	/* action restrictions */
-	if (((ba_ptr->action_restr == 1) && (!is_state(Ind, s_ptr, STORE_LIKED) ||
-		 !is_state(Ind, s_ptr, STORE_NORMAL))) ||
-	    ((ba_ptr->action_restr == 2) && (!is_state(Ind, s_ptr, STORE_LIKED))))
+	if (((ba_ptr->action_restr == 1) && (!is_state(Ind, st_ptr, STORE_LIKED) ||
+	    !is_state(Ind, st_ptr, STORE_NORMAL))) ||
+	    ((ba_ptr->action_restr == 2) && (!is_state(Ind, st_ptr, STORE_LIKED))))
 	{
 		msg_print(Ind, "You have no right to choose that!");
-//		msg_print(NULL);
+		//msg_print(NULL);
 		return FALSE;
 	}
 
@@ -1670,7 +1668,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 	}
 #endif	// 0
 	/* Similar penalty for those on black-list */
-	if (p_ptr->tim_blacklist) {
+	if (p_ptr->tim_blacklist && st_ptr->st_idx != STORE_CASINO) { /* allow them to still lose their money =P ..and play Go! */
 		if ((bact != BACT_SELL) && (bact != BACT_VIEW_BOUNTIES) &&
 		    (bact != BACT_SELL_CORPSES) &&
 		    (bact != BACT_VIEW_QUEST_MON) &&
@@ -2378,15 +2376,10 @@ void enter_quest(void)
 void do_cmd_bldg(void)
 {
 	int i,which, x = px, y = py;
-
 	char command;
-
 	bool validcmd;
-
 	store_type *s_ptr;
-
 	store_info_type *st_ptr;
-
 	store_action_type *ba_ptr;
 
 
