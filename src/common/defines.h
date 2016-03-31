@@ -6137,9 +6137,13 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /* minimum time required to stay on current floor in order to get an extra feeling on next floor */
 #define TURNS_FOR_EXTRA_FEELING		(cfg.fps * 120)
 
+
 /* Enable strict probability-travel prevention by NO_MAGIC floor flag, even in up/down direction? */
 //#define NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 
+/* Prevent probtravelling players ruining experience on floors of other players:
+   Skip a floor if it already has players on it who are all not in your party. */
+#define PROBTRAVEL_AVOIDS_OTHERS
 
 
 /* vault flags for v_info */

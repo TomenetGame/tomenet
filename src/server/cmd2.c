@@ -480,14 +480,69 @@ void do_cmd_go_up(int Ind) {
 #endif
 		}
 		else if (wpos->wz == -1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
+#ifndef PROBTRAVEL_AVOIDS_OTHERS
 		else msg_print(Ind, "You float upwards.");
+#else
+		else if (p_ptr->ghost) msg_print(Ind, "You float upwards.");
+#endif
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
+#ifndef PROBTRAVEL_AVOIDS_OTHERS
 		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
+#else
+		else {
+			/* Note 1: possible mini-exploit here: if the skipped floor has NO_MAGIC flag
+			   and we're running with PROBTRAVEL_AVOIDS_OTHERS (disabled by default though)
+			   we'd not get affected even though we're "crossing" that floor, in theory.
+
+			   Note 2: if a whole dungeon is completely blocked by people and we try to
+			   probtravel into it, we'll get the "You float into.." message followed by the
+			   failure message, which is a bit ugly. :-p */
+
+			int i, z = wpos->wz, z_max = wild_info[wpos->wy][wpos->wx].tower->maxdepth;
+			player_type *q_ptr;
+			bool skip, arrived = FALSE;
+
+			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
+
+			if (wpos->wz != -1) { /* always allow to float up to the surface, leaving a dungeon */
+				do {
+					wpos->wz++;
+					skip = FALSE;
+					for (i = 1; i <= NumPlayers; i++) {
+						if (i == Ind) continue;
+						q_ptr = Players[i];
+						if (!inarea(&q_ptr->wpos, wpos)) continue;
+						if (q_ptr->party && p_ptr->party && player_in_party(q_ptr->party, Ind)) {
+							skip = FALSE;
+							break;
+						}
+						skip = TRUE;
+					}
+					if (!skip) {
+						arrived = TRUE;
+						break;
+					}
+				} while (wpos->wz < z_max);
+				if (!arrived) {
+					wpos->wz = z; //restore our depth
+					msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
+					return;
+				}
+				msg_print(Ind, "You float upwards.");
+
+				/* A player has left this depth -- process partially here */
+				wpcopy(&old_wpos, wpos);
+				old_wpos.wz = z; /* restore original z, since we were looking ahead already */
+			} else wpos->wz++;
+		}
+#endif
 	}
 
 	/* A player has left this depth */
+#ifndef PROBTRAVEL_AVOIDS_OTHERS
 	wpcopy(&old_wpos, wpos);
 	wpos->wz++;
+#endif
 	new_players_on_depth(&old_wpos, -1, TRUE);
 	new_players_on_depth(wpos, 1, TRUE);
 
@@ -1146,12 +1201,63 @@ void do_cmd_go_down(int Ind) {
 		else if (wpos->wz == 1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
 		else msg_print(Ind, "You float downwards.");
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
+#ifndef PROBTRAVEL_AVOIDS_OTHERS
 		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
+#else
+		else {
+			/* Note 1: possible mini-exploit here: if the skipped floor has NO_MAGIC flag
+			   and we're running with PROBTRAVEL_AVOIDS_OTHERS (disabled by default though)
+			   we'd not get affected even though we're "crossing" that floor, in theory.
+
+			   Note 2: if a whole dungeon is completely blocked by people and we try to
+			   probtravel into it, we'll get the "You float into.." message followed by the
+			   failure message, which is a bit ugly. :-p */
+
+			int i, z = wpos->wz, z_min = -wild_info[wpos->wy][wpos->wx].dungeon->maxdepth;
+			player_type *q_ptr;
+			bool skip, arrived = FALSE;
+
+			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
+
+			if (wpos->wz != 1) { /* always allow to float down to the surface, leaving a tower */
+				do {
+					wpos->wz--;
+					skip = FALSE;
+					for (i = 1; i <= NumPlayers; i++) {
+						if (i == Ind) continue;
+						q_ptr = Players[i];
+						if (!inarea(&q_ptr->wpos, wpos)) continue;
+						if (q_ptr->party && p_ptr->party && player_in_party(q_ptr->party, Ind)) {
+							skip = FALSE;
+							break;
+						}
+						skip = TRUE;
+					}
+					if (!skip) {
+						arrived = TRUE;
+						break;
+					}
+				} while (wpos->wz > z_min);
+				if (!arrived) {
+					wpos->wz = z; //restore our depth
+					msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
+					return;
+				}
+				msg_print(Ind, "You float downwards.");
+
+				/* A player has left this depth -- process partially here */
+				wpcopy(&old_wpos, wpos);
+				old_wpos.wz = z; /* restore original z, since we were looking ahead already */
+			} else wpos->wz--;
+		}
+#endif
 	}
 
 	/* A player has left this depth */
+#ifndef PROBTRAVEL_AVOIDS_OTHERS
 	wpcopy(&old_wpos, wpos);
 	wpos->wz--;
+#endif
 	new_players_on_depth(&old_wpos, -1, TRUE);
 	new_players_on_depth(wpos, 1, TRUE);
 
