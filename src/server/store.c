@@ -2887,9 +2887,11 @@ void store_stole(int Ind, int item) {
 		/* Describe the final result */
 		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
 
-//		s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
+		//s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 		/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
+#if 0 /* omit logging successful stealing of trivial items? */
 		if (chance > 10)
+#endif
 		s_printf("Stealing: %s (%d) succ. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance < 10 ? 10 : chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 		        s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
