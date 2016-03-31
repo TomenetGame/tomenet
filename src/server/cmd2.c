@@ -539,9 +539,13 @@ void do_cmd_go_up(int Ind) {
 	}
 
 	/* A player has left this depth */
-#ifndef PROBTRAVEL_AVOIDS_OTHERS
-	wpcopy(&old_wpos, wpos);
-	wpos->wz++;
+#ifdef PROBTRAVEL_AVOIDS_OTHERS
+	if (p_ptr->new_level_method != LEVEL_PROB_TRAVEL) {
+#endif
+		wpcopy(&old_wpos, wpos);
+		wpos->wz++;
+#ifdef PROBTRAVEL_AVOIDS_OTHERS
+	}
 #endif
 	new_players_on_depth(&old_wpos, -1, TRUE);
 	new_players_on_depth(wpos, 1, TRUE);
@@ -1254,9 +1258,13 @@ void do_cmd_go_down(int Ind) {
 	}
 
 	/* A player has left this depth */
-#ifndef PROBTRAVEL_AVOIDS_OTHERS
-	wpcopy(&old_wpos, wpos);
-	wpos->wz--;
+#ifdef PROBTRAVEL_AVOIDS_OTHERS
+	if (p_ptr->new_level_method != LEVEL_PROB_TRAVEL) {
+#endif
+		wpcopy(&old_wpos, wpos);
+		wpos->wz--;
+#ifdef PROBTRAVEL_AVOIDS_OTHERS
+	}
 #endif
 	new_players_on_depth(&old_wpos, -1, TRUE);
 	new_players_on_depth(wpos, 1, TRUE);
