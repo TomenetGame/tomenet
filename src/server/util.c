@@ -7798,24 +7798,24 @@ int similar_names(const char *name1, const char *name2) {
 	diff = 0;
 	strcpy(tmpname, name2);
 	for (ptr = name1; *ptr; ptr++) {
-		for (ptr3 = tmpname; *ptr2; ptr2++) {
+		for (ptr3 = tmpname; *ptr3; ptr3++) {
 			if (tolower(*ptr) == tolower(*ptr3)) {
 				*ptr3 = '*'; //'disable' this character
 				break;
 			}
 		}
-		if (ptr3 == tmpname) diff++;
+		if (!(*ptr3)) diff++;
 	}
 	diff2 = 0;
 	strcpy(tmpname, name1);
 	for (ptr = name2; *ptr; ptr++) {
-		for (ptr3 = tmpname; *ptr2; ptr2++) {
+		for (ptr3 = tmpname; *ptr3; ptr3++) {
 			if (tolower(*ptr) == tolower(*ptr3)) {
 				*ptr3 = '*'; //'disable' this character
 				break;
 			}
 		}
-		if (ptr3 == tmpname) diff2++;
+		if (!(*ptr3)) diff2++;
 	}
 	if (diff2 > diff) diff = diff2; //max()
 	//too little difference between names? forbidden!
@@ -7843,8 +7843,8 @@ int similar_names(const char *name1, const char *name2) {
 		diff++;
 	}
 	//too little difference between names? forbidden!
-	if (diff >= 5 || diff2 >= diff + 2) {
-		s_printf("similar_names (5): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+	if (diff >= 5 || diff2 < diff + 2) {
+		s_printf("similar_names (5): name1 '%s', name2 '%s'\n", name1, name2);
 		return 5;
 	}
 
