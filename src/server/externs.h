@@ -1859,6 +1859,7 @@ extern bool shareable_starter_item(object_type *o_ptr);
 extern int activate_magic_device_chance(int Ind, object_type *o_ptr);
 extern bool activate_magic_device(int Ind, object_type *o_ptr);
 extern void condense_name(char *condensed, cptr name);
+extern int similar_names(const char *name1, const char *name2);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

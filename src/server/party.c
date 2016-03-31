@@ -586,9 +586,7 @@ bool Admin_GetAccount(struct account *c_acc, cptr name) {
 bool lookup_similar_account(cptr name, cptr accname) {
 	FILE *fp;
 	char buf[1024], tmpname[ACCOUNTNAME_LEN > CHARACTERNAME_LEN ? ACCOUNTNAME_LEN : CHARACTERNAME_LEN];
-	const char *ptr, *ptr2;
 	struct account acc;
-	int diff, min;
 
 
 	/* special exceptions (admins and their player accounts) */
@@ -619,69 +617,14 @@ bool lookup_similar_account(cptr name, cptr accname) {
 		}
 
 #ifdef STRICT_SIMILAR_NAMES
-		/* Super-strict mode? Disallow (non-trivial) names that only have 1+ letter inserted somewhere */
 		if (
  #ifdef SIMILAR_CHARNAMES_OK
 		    /*only apply this check to account names being created, be lenient for character names */
 		    !accname &&
  #endif
-		    strlen(name) >= 5 && strlen(acc.name) >= 5) { //non-trivial length
-			/* don't exaggerate */
-			if (strlen(name) > strlen(acc.name)) min = strlen(acc.name);
-			else min = strlen(name);
-
-			/* '->' */
-			diff = 0;
-			ptr2 = name;
-			for (ptr = acc.name; *ptr && *ptr2; ) {
-				if (tolower(*ptr) != tolower(*ptr2)) diff++;
-				else ptr++;
-				ptr2++;
-			}
-			//all remaining characters that couldn't be matched are also "different"
-			while (*ptr++) diff++;
-			while (*ptr2++) diff++;
-			//too little difference between account name and this character name? forbidden!
-			if (diff <= (min - 5) / 2 + 1) {
-				s_printf("lookup_similar_account (1): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
-				return TRUE;
-			}
-
-			/* '<-' */
-			diff = 0;
-			ptr2 = acc.name;
-			for (ptr = name; *ptr && *ptr2; ) {
-				if (tolower(*ptr) != tolower(*ptr2)) diff++;
-				else ptr++;
-				ptr2++;
-			}
-			//all remaining characters that couldn't be matched are also "different"
-			while (*ptr++) diff++;
-			while (*ptr2++) diff++;
-			//too little difference between account name and this character name? forbidden!
-			if (diff <= (min - 5) / 2 + 1) {
-				s_printf("lookup_similar_account (2): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
-				return TRUE;
-			}
-
-			/* '='  -- note: weakness here is, the first 2 methods don't combine with this one ;).
-			   So the checks could be tricked by combining one 'replaced char' with one 'too many char'
-			   to circumvent the limitations for longer names that usually would require a 3+ difference.. =P */
-			diff = 0;
-			ptr2 = acc.name;
-			for (ptr = name; *ptr && *ptr2; ) {
-				if (tolower(*ptr) != tolower(*ptr2)) diff++;
-				ptr++;
-				ptr2++;
-			}
-			//all remaining characters that couldn't be matched are also "different"
-			while (*ptr++) diff++;
-			while (*ptr2++) diff++;
-			//too little difference between account name and this character name? forbidden!
-			if (diff <= (min - 5) / 2 + 1) {
-				s_printf("lookup_similar_account (3): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
-				return TRUE;
-			}
+		    similar_names(name, acc.name)) {
+			s_printf("lookup_similar_account failed.\n");
+			return TRUE;
 		}
 #endif
 
@@ -1087,8 +1030,7 @@ static bool guild_name_legal(int Ind, char *name) {
 	player_type *p_ptr = Players[Ind];
 	object_type forge, *o_ptr = &forge;
 
-	char buf2[NAME_LEN], *ptr2;
-	int diff, min;
+	char buf2[NAME_LEN];
 
 
 	if (strlen(name) >= NAME_LEN) {
@@ -1171,7 +1113,6 @@ static bool guild_name_legal(int Ind, char *name) {
 
 //#ifdef STRICT_SIMILAR_NAMES
 #if 1
-		/* Super-strict mode? Disallow (non-trivial) names that only have 1+ letter inserted somewhere */
 		if (
  #if 1
 		    TRUE &&
@@ -1179,66 +1120,10 @@ static bool guild_name_legal(int Ind, char *name) {
  //#ifdef SIMILAR_CHARNAMES_OK
 		    FALSE &&
  #endif
-		    strlen(buf) >= 5 && strlen(buf2) >= 5) { //non-trivial length
-			/* don't exaggerate */
-			if (strlen(buf) > strlen(buf2)) min = strlen(buf2);
-			else min = strlen(buf);
-
-			/* '->' */
-			diff = 0;
-			ptr2 = buf;
-			for (ptr = buf2; *ptr && *ptr2; ) {
-				if (tolower(*ptr) != tolower(*ptr2)) diff++;
-				else ptr++;
-				ptr2++;
-			}
-			//all remaining characters that couldn't be matched are also "different"
-			while (*ptr++) diff++;
-			while (*ptr2++) diff++;
-			//too little difference between account name and this character name? forbidden!
-			if (diff <= (min - 5) / 2 + 1) {
-				s_printf("similar guild? (1): ngname '%s', ogname '%s'\n", buf, buf2);
-				msg_print(Ind, "\377yA guild by a too similar name already exists.");
-				return FALSE;
-			}
-
-			/* '<-' */
-			diff = 0;
-			ptr2 = buf2;
-			for (ptr = buf; *ptr && *ptr2; ) {
-				if (tolower(*ptr) != tolower(*ptr2)) diff++;
-				else ptr++;
-				ptr2++;
-			}
-			//all remaining characters that couldn't be matched are also "different"
-			while (*ptr++) diff++;
-			while (*ptr2++) diff++;
-			//too little difference between account name and this character name? forbidden!
-			if (diff <= (min - 5) / 2 + 1) {
-				s_printf("similar guild? (2): ngname '%s', ogname '%s'\n", buf, buf2);
-				msg_print(Ind, "\377yA guild by a too similar name already exists.");
-				return FALSE;
-			}
-
-			/* '='  -- note: weakness here is, the first 2 methods don't combine with this one ;).
-			   So the checks could be tricked by combining one 'replaced char' with one 'too many char'
-			   to circumvent the limitations for longer names that usually would require a 3+ difference.. =P */
-			diff = 0;
-			ptr2 = buf2;
-			for (ptr = buf; *ptr && *ptr2; ) {
-				if (tolower(*ptr) != tolower(*ptr2)) diff++;
-				ptr++;
-				ptr2++;
-			}
-			//all remaining characters that couldn't be matched are also "different"
-			while (*ptr++) diff++;
-			while (*ptr2++) diff++;
-			//too little difference between account name and this character name? forbidden!
-			if (diff <= (min - 5) / 2 + 1) {
-				s_printf("similar guild? (3): ngname '%s', ogname '%s'\n", buf, buf2);
-				msg_print(Ind, "\377yA guild by a too similar name already exists.");
-				return FALSE;
-			}
+		    similar_names(buf, buf2)) {
+			s_printf("guild_name_legal failure.\n");
+			msg_print(Ind, "\377yA guild by a too similar name already exists.");
+			return FALSE;
 		}
 #endif
 	}

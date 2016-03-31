@@ -7683,3 +7683,115 @@ void condense_name(char *condensed, const char *name) {
 			*ptr = 0;
 		else break;
 }
+
+/* Helper function to check account/character/guild.. names for too great similarity:
+   Super-strict mode: Disallow (non-trivial) names that only have 1+ letter inserted somewhere. */
+int similar_names(const char *name1, const char *name2) {
+	char tmpname[MAX_CHARS];
+	const char *ptr, *ptr2;
+	int diff, min;
+	int diff_loc;
+
+	if (strlen(name1) < 5 || strlen(name2) < 5) return 0; //trivial length, it's ok to be similar
+
+	/* don't exaggerate */
+	if (strlen(name1) > strlen(name2)) min = strlen(name2);
+	else min = strlen(name1);
+
+	/* '->' */
+	diff = 0;
+	ptr2 = name1;
+	diff_loc = -1;
+	for (ptr = name2; *ptr && *ptr2; ) {
+		if (tolower(*ptr) != tolower(*ptr2)) {
+			diff++;
+			if (diff_loc == -1) diff_loc = ptr - name2;//remember where they started to be different
+		}
+		else ptr++;
+		ptr2++;
+	}
+	//all remaining characters that couldn't be matched are also "different"
+	if (diff_loc == -1 && (*ptr || *ptr2)) diff_loc = ptr - name2;//remember where they started to be different
+	while (*ptr++) diff++;
+	while (*ptr2++) diff++;
+	//too little difference between names? forbidden!
+	if (diff <= (min - 5) / 2 + 1) {
+		//special check: if they differ early on, it weighs slightly more :)
+		if (diff_loc < min / 2 - 1) {
+			//loosened up slightly
+			if (diff <= (min - 6) / 2 + 1) {
+				s_printf("similar_names (1a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+				return 1;
+			}
+		} else { //normal case
+			s_printf("similar_names (1): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+			return 1;
+		}
+	}
+
+	/* '<-' */
+	diff = 0;
+	ptr2 = name2;
+	diff_loc = -1;
+	for (ptr = name1; *ptr && *ptr2; ) {
+		if (tolower(*ptr) != tolower(*ptr2)) {
+			diff++;
+			if (diff_loc == -1) diff_loc = ptr - name1;//remember where they started to be different
+		}
+		else ptr++;
+		ptr2++;
+	}
+	//all remaining characters that couldn't be matched are also "different"
+	if (diff_loc == -1 && (*ptr || *ptr2)) diff_loc = ptr - name1;//remember where they started to be different
+	while (*ptr++) diff++;
+	while (*ptr2++) diff++;
+	//too little difference between names? forbidden!
+	if (diff <= (min - 5) / 2 + 1) {
+		//special check: if they differ early on, it weighs slightly more :)
+		if (diff_loc < min / 2 - 1) {
+			//loosened up slightly
+			if (diff <= (min - 6) / 2 + 1) {
+				s_printf("similar_names (2a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+				return 1;
+			}
+		} else { //normal case
+			s_printf("similar_names (2): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+			return 2;
+		}
+	}
+
+	/* '='  -- note: weakness here is, the first 2 methods don't combine with this one ;).
+	   So the checks could be tricked by combining one 'replaced char' with one 'too many char'
+	   to circumvent the limitations for longer names that usually would require a 3+ difference.. =P */
+	diff = 0;
+	ptr2 = name2;
+	diff_loc = -1;
+	for (ptr = name1; *ptr && *ptr2; ) {
+		if (tolower(*ptr) != tolower(*ptr2)) {
+			diff++;
+			if (diff_loc == -1) diff_loc = ptr - name1;//remember where they started to be different
+		}
+		ptr++;
+		ptr2++;
+	}
+	//all remaining characters that couldn't be matched are also "different"
+	if (diff_loc == -1 && (*ptr || *ptr2)) diff_loc = ptr - name1;//remember where they started to be different
+	while (*ptr++) diff++;
+	while (*ptr2++) diff++;
+	//too little difference between names? forbidden!
+	if (diff <= (min - 5) / 2 + 1) {
+		//special check: if they differ early on, it weighs slightly more :)
+		if (diff_loc < min / 2 - 1) {
+			//loosened up slightly
+			if (diff <= (min - 6) / 2 + 1) {
+				s_printf("similar_names (3a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+				return 1;
+			}
+		} else { //normal case
+			s_printf("similar_names (3): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+			return 3;
+		}
+	}
+
+	return 0; //ok!
+}
