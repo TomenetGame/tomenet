@@ -4287,7 +4287,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 		/* Plan ahead if a missed attack would be a blocked or parried one or just an
 		   [hitchance-vs-AC-induced] miss. 'Piercing' requires this to be calculated ahead now. */
 		block = parry = 0;
-		if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+		if (strchr("hHJkpPtyn", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
 		    !(r_ptr->flags3 & RF3_ANIMAL)) {
 #ifdef USE_PARRYING
 			parry = 5 + m_ptr->ac / 10;

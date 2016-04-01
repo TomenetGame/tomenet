@@ -4634,7 +4634,7 @@ void wake_minions(int Ind, int who) {
 	else if (r_ptr->flags3 & RF3_UNDEAD) msg_format(Ind, "%s moans loudly!", mw_name);
 	else if (r_ptr->flags3 & RF3_ANIMAL) msg_format(Ind, "%s makes an alerting sound!", mw_name);
 	else if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON | RF3_DRAGONRIDER)) ||
-	    (strchr("AhHJkpPty", r_ptr->d_char))) {
+	    (strchr("AhHJkpPtyn", r_ptr->d_char))) {
 		msg_format(Ind, "%s shouts a command!", mw_name);
 		msg_format_near(Ind, "%s shouts a command!", mw_name);
 	}
