@@ -1756,7 +1756,7 @@ static bool rd_extra(int Ind) {
 	    p_ptr->castles_owned < 0 || p_ptr->castles_owned > 1) {
 		s_printf("HOUSES_OWNED_GLITCH_FIX: '%s' has %d houses (%d castles)\n", p_ptr->name, p_ptr->houses_owned, p_ptr->castles_owned);
 		/* we can do this since houses were already loaded further above: */
-		lua_count_houses(NumPlayers);
+		lua_count_houses(Ind);
 	}
 
 	if (!older_than(4, 5, 6)) rd_s16b(&p_ptr->flash_self);
