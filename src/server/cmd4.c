@@ -73,8 +73,7 @@
 #define ARTS_PRE_SORT
 /* colour art list depending on item type? (non-admins only) */
 #define COLOURED_ARTS
-void do_cmd_check_artifacts(int Ind, int line)
-{
+void do_cmd_check_artifacts(int Ind, int line) {
 	int i, j, k, z;
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
@@ -92,7 +91,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 
 	object_type forge, *o_ptr;
 	artifact_type *a_ptr;
-	char fmt[10];
+	char fmt[16];
 #ifdef COLOURED_ARTS
 	char cattr;
 #endif
@@ -287,10 +286,31 @@ void do_cmd_check_artifacts(int Ind, int line)
 			    base_name);
 #endif
 			if (admin) {
-				sprintf(fmt, "%%%ds\377w%%s\n", (int)(45 - strlen(base_name)));
+				char cs[3] = {'\377', 'o', 0}, cslv[3] = {'\377', 'd', 0};
+				cptr pname = NULL;
+				int lev = 0;
+
+				if ((pname = lookup_player_name(a_ptr->carrier))) {
+					s32b tmpm = lookup_player_mode(a_ptr->carrier);
+
+					if (tmpm & MODE_EVERLASTING) strcpy(cs, "\377B");
+					else if (tmpm & MODE_PVP) strcpy(cs, format("\377%c", COLOUR_MODE_PVP));
+					else if (tmpm & MODE_NO_GHOST) strcpy(cs, "\377D");
+					else if (tmpm & MODE_HARD) strcpy(cs, "\377s");
+					else strcpy(cs, "\377W");
+
+					lev = lookup_player_level(a_ptr->carrier);
+					if (lev <= 20) cslv[1] = 'G';
+					else if (lev <= 30) cslv[1] = 'y';
+					else if (lev <= 40) cslv[1] = 'o';
+					else if (lev <= 50) cslv[1] = 'r';
+					else cslv[1] = 'v';
+				}
+				sprintf(fmt, "%%%ds%s%2d %s%%s\n", (int)(43 - strlen(base_name)), cslv, lev, cs);
+
 				if (!a_ptr->known) fprintf(fff, fmt, "", "(unknown)");
 				else if (multiple_artifact_p(&forge)) fprintf(fff, "\n");
-				else if (a_ptr->carrier) fprintf(fff, fmt, "", lookup_player_name(a_ptr->carrier) ? lookup_player_name(a_ptr->carrier) : "(dead player)");
+				else if (a_ptr->carrier) fprintf(fff, fmt, "", pname ? pname : "(dead player)");
 				else fprintf(fff, fmt, "", "???");
 			} else {
 #ifdef FLUENT_ARTIFACT_RESETS
