@@ -281,6 +281,43 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 	player_type *p_ptr = Players[Ind];
 	s32b tmp;
 
+#ifdef FIX_LUA_GET_LEVEL
+	/* Improved version with the following changes:
+	 * - Fixed spell power calculations so that they have an effect with small values of 'max'.
+	 * - Higher resolution for spell-power calculations.
+	 * - Fixed LIMIT_SPELLS
+	 */
+	tmp = lvl - ((school_spells[s].skill_level - 1) * (SKILL_STEP / 10));
+
+	/* Require at least one spell level before applying bonus */
+	if (tmp >= (SKILL_STEP / 10)) {
+		/* Applying spell power bonus here makes it work for small values of 'max' */
+		if (school_spells[s].spell_power) {
+			tmp += tmp * get_skill_scale(p_ptr, SKILL_SPELL, 4000) / 10000;
+		}
+
+		/* Currently not used... */
+		tmp += bonus;
+	}
+
+#ifdef LIMIT_SPELLS
+	if (p_ptr->limit_spells > 0) {
+		s32b tmp_limit = p_ptr->limit_spells * (SKILL_STEP / 10);
+		if (tmp > tmp_limit) tmp = tmp_limit;
+	}
+#endif
+
+	tmp = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10));
+
+	if (tmp < 0) /* Shift all negative values, so they map to appropriate integer */
+		tmp -= SKILL_STEP / 10 - 1;
+
+	/* Now, we can safely divide */
+	lvl = tmp / (SKILL_STEP / 10);
+
+	if (lvl < min)
+		lvl = min;
+#else
 	tmp = lvl - ((school_spells[s].skill_level - 1) * (SKILL_STEP / 10));
 	lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
 	if (lvl < min) lvl = min;
@@ -298,6 +335,7 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 
 #ifdef LIMIT_SPELLS
 	if (p_ptr->limit_spells > 0 && lvl > p_ptr->limit_spells) lvl = p_ptr->limit_spells;
+#endif
 #endif
 
 	return lvl;
