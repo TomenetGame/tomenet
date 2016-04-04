@@ -7794,7 +7794,7 @@ int similar_names(const char *name1, const char *name2) {
 		}
 	}
 
-	/* Check for anagrams */
+#if 0	/* Check for anagrams */
 	diff = 0;
 	strcpy(tmpname, name2);
 	for (ptr = name1; *ptr; ptr++) {
@@ -7823,6 +7823,40 @@ int similar_names(const char *name1, const char *name2) {
 		s_printf("similar_names (4): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
 		return 4;
 	}
+#endif
+#if 1	/* Check for exact anagrams */
+	diff = 0;
+	strcpy(tmpname, name2);
+	for (ptr = name1; *ptr; ptr++) {
+		for (ptr3 = tmpname; *ptr3; ptr3++) {
+			if (tolower(*ptr) == tolower(*ptr3)) {
+				*ptr3 = '*'; //'disable' this character
+				break;
+			}
+		}
+		if (!(*ptr3)) {
+			diff = 1;
+			break;
+		}
+	}
+	strcpy(tmpname, name1);
+	for (ptr = name2; *ptr; ptr++) {
+		for (ptr3 = tmpname; *ptr3; ptr3++) {
+			if (tolower(*ptr) == tolower(*ptr3)) {
+				*ptr3 = '*'; //'disable' this character
+				break;
+			}
+		}
+		if (!(*ptr3)) {
+			diff = 1;
+			break;
+		}
+	}
+	if (!diff) { //perfect anagrams?
+		s_printf("similar_names (5): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+		return 5;
+	}
+#endif
 
 	/* Check for prefix */
 	diff = 0;
@@ -7844,8 +7878,8 @@ int similar_names(const char *name1, const char *name2) {
 	}
 	//too little difference between names? forbidden!
 	if (diff >= 5 || diff2 < diff + 2) {
-		s_printf("similar_names (5): name1 '%s', name2 '%s'\n", name1, name2);
-		return 5;
+		s_printf("similar_names (6): name1 '%s', name2 '%s'\n", name1, name2);
+		return 6;
 	}
 
 	return 0; //ok!
