@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. March 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 5. April 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1362,6 +1362,10 @@ or shorter: /tym [rs]
                   attacks that missed, were blocked/parried/dodged or
                   nullified by invulnerability, etc.
                   It however counts ALL attacks, for example aura hits too.
+            Note that for characters moving at high speed and having a high
+            number of blows per round, you might need to remove items giving
+            +SPEED or +Extra Attacks for the test to be accurate, this is due
+            to frame rate limits of the real-time engine, compare (8.7).
 
 /time       Tells you the current in-game time, same as /ex does.
 
