@@ -12291,7 +12291,7 @@ D:A pile of pulsing flesh that glows with an inner hellish fire. The world
 D:itself seems to cry out against it.
 
 N:728:Great Storm Wyrm
-G:D:b
+G:D:e
 I:130:40d100:30:150:80
 W:63:2:190000:20000
 E:0:1:2:6:1:2
@@ -12572,7 +12572,7 @@ D:An enormously fearsome and powerful inhabitant of the depths. It
 D:resembles a gargantuan octopus and its evil is almost tangible.
 
 N:741:Great Ice Wyrm
-G:D:w
+G:D:c
 I:130:40d100:30:150:80
 W:63:2:190000:20000
 E:0:1:2:6:1:2
@@ -12889,7 +12889,10 @@ D:vampire race on Middle-earth. At first she is charming to meet, but her
 D:wings and eyes give away her true form.
 
 N:756:Great Hell Wyrm
-G:D:r
+#G:D:f
+#G:D:l
+#new def: ember
+G:D:Z
 I:130:50d100:30:150:80
 W:67:2:190000:23000
 E:0:1:2:6:1:2
@@ -16556,7 +16559,8 @@ S:1_IN_12 | BLIND | SLOW | CONF | SCARE
 D:A novice in the arts of mind over matter.
 
 N:938:Great Swamp Wyrm
-G:D:g
+#G:D:p
+G:D:K
 I:130:40d100:30:150:80
 W:63:2:190000:20000
 E:0:1:2:6:1:2
@@ -16577,7 +16581,8 @@ D:from the beast nearly make you vomit; and while you may try to hold
 D:your breath as you fight it, it sees no reason to do likewise.
 
 N:939:Great Bile Wyrm
-G:D:D
+#G:D:a
+G:D:A
 I:130:50d100:30:150:80
 W:67:2:190000:23000
 E:0:1:2:6:1:2
@@ -17788,7 +17793,7 @@ D:one eye was blinded long ago by the warrior Odysseus, but he has trained
 D:himself to hear so well that it nearly makes up for his disability.
 
 N:1002:Great Wyrm of Perplexity
-G:D:U
+G:D:C
 I:130:40d100:30:170:80
 W:63:2:190000:20000
 E:0:1:2:6:1:2
@@ -17829,7 +17834,8 @@ D:was concentrated in their lean, hungry bodies. Or had they
 D:bodies? I saw them only for a moment, I cannot be certain."
 
 N:1004:Great Wyrm of Thunder
-G:D:y
+G:D:S
+#G:D:L
 I:130:50d100:30:170:80
 W:67:2:190000:23000
 E:0:1:2:6:1:2
@@ -19873,7 +19879,8 @@ D:A huge draconic form wreathed in a radiance of silver. The emanating cold air
 D:makes it unusually hard for you to move.
 
 N:1110:Great Wyrm of Radiance
-G:D:s
+#G:D:a
+G:D:q
 I:130:46d100:30:170:80
 W:65:2:190000:22000
 E:0:1:2:6:1:2
