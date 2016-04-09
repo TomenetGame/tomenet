@@ -245,9 +245,9 @@ void do_cmd_go_up(int Ind) {
 #ifndef ARCADE_SERVER
 	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
-#ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
+ #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-//		if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 10) ||
+		//if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 10) ||
 		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
 		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
@@ -257,7 +257,7 @@ void do_cmd_go_up(int Ind) {
 				return;
 			}
 		}
-#endif
+ #endif
 		/* Nether Realm only for Kings/Queens*/
 		if ((d_ptr->type == DI_NETHER_REALM || d_ptr->type == DI_CLOUD_PLANES) && !p_ptr->total_winner) {
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
@@ -498,42 +498,50 @@ void do_cmd_go_up(int Ind) {
 			   probtravel into it, we'll get the "You float into.." message followed by the
 			   failure message, which is a bit ugly. :-p */
 
-			int i, z = wpos->wz, z_max = wild_info[wpos->wy][wpos->wx].tower->maxdepth;
+			int i, z = wpos->wz, z_max;
 			player_type *q_ptr;
 			bool skip, arrived = FALSE;
 
+			if (surface || tower) z_max = wild_info[wpos->wy][wpos->wx].tower->maxdepth; //into a tower or further up the tower
+			else z_max = 0; //from dungeon upwards until surface (redundant, actually)
+
 			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 
-			if (wpos->wz != -1) { /* always allow to float up to the surface, leaving a dungeon */
-				do {
-					wpos->wz++;
-					skip = FALSE;
-					for (i = 1; i <= NumPlayers; i++) {
-						if (i == Ind) continue;
-						q_ptr = Players[i];
-						if (!inarea(&q_ptr->wpos, wpos)) continue;
-						if (q_ptr->party && p_ptr->party && player_in_party(q_ptr->party, Ind)) {
-							skip = FALSE;
-							break;
-						}
-						skip = TRUE;
-					}
-					if (!skip) {
-						arrived = TRUE;
+			do {
+				wpos->wz++;
+
+				/* always allow to float up to the surface, leaving a dungeon */
+				if (!wpos->wz) {
+					arrived = TRUE;
+					break;
+				}
+
+				skip = FALSE;
+				for (i = 1; i <= NumPlayers; i++) {
+					if (i == Ind) continue;
+					q_ptr = Players[i];
+					if (!inarea(&q_ptr->wpos, wpos)) continue;
+					if (q_ptr->party && p_ptr->party && player_in_party(q_ptr->party, Ind)) {
+						skip = FALSE;
 						break;
 					}
-				} while (wpos->wz < z_max);
-				if (!arrived) {
-					wpos->wz = z; //restore our depth
-					msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
-					return;
+					skip = TRUE;
 				}
-				msg_print(Ind, "You float upwards.");
+				if (!skip) {
+					arrived = TRUE;
+					break;
+				}
+			} while (wpos->wz < z_max);
+			if (!arrived) {
+				wpos->wz = z; //restore our depth
+				msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
+				return;
+			}
+			msg_print(Ind, "You float upwards.");
 
-				/* A player has left this depth -- process partially here */
-				wpcopy(&old_wpos, wpos);
-				old_wpos.wz = z; /* restore original z, since we were looking ahead already */
-			} else wpos->wz++;
+			/* A player has left this depth -- process partially here */
+			wpcopy(&old_wpos, wpos);
+			old_wpos.wz = z; /* restore original z, since we were looking ahead already */
 		}
 #endif
 	}
@@ -966,11 +974,11 @@ void do_cmd_go_down(int Ind) {
 #ifndef ARCADE_SERVER
 	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
-#ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
+ #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2 ||
-		//		d_info[d_ptr->type].min_plev > p_ptr->lev)
-//		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
+		//    d_info[d_ptr->type].min_plev > p_ptr->lev)
+		//if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
 		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
 		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev)) {
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
@@ -979,7 +987,7 @@ void do_cmd_go_down(int Ind) {
 				return;
 			}
 		}
-#endif
+ #endif
 		/* Nether Realm only for Kings/Queens*/
 		if ((d_ptr->type == DI_NETHER_REALM || d_ptr->type == DI_CLOUD_PLANES) && !p_ptr->total_winner) {
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
@@ -1217,42 +1225,49 @@ void do_cmd_go_down(int Ind) {
 			   probtravel into it, we'll get the "You float into.." message followed by the
 			   failure message, which is a bit ugly. :-p */
 
-			int i, z = wpos->wz, z_min = -wild_info[wpos->wy][wpos->wx].dungeon->maxdepth;
+			int i, z = wpos->wz, z_min;
 			player_type *q_ptr;
 			bool skip, arrived = FALSE;
 
+			if (surface || dungeon) z_min = -wild_info[wpos->wy][wpos->wx].dungeon->maxdepth; //into a dungeon or further down the dungeon
+			else z_min = 0; //from tower downwards until surface (redundant, actually)
+
 			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 
-			if (wpos->wz != 1) { /* always allow to float down to the surface, leaving a tower */
-				do {
-					wpos->wz--;
-					skip = FALSE;
-					for (i = 1; i <= NumPlayers; i++) {
-						if (i == Ind) continue;
-						q_ptr = Players[i];
-						if (!inarea(&q_ptr->wpos, wpos)) continue;
-						if (q_ptr->party && p_ptr->party && player_in_party(q_ptr->party, Ind)) {
-							skip = FALSE;
-							break;
-						}
-						skip = TRUE;
-					}
-					if (!skip) {
-						arrived = TRUE;
+			do {
+				wpos->wz--;
+
+				if (!wpos->wz) { /* always allow to float down to the surface, leaving a tower */
+					arrived = TRUE;
+					break;
+				}
+
+				skip = FALSE;
+				for (i = 1; i <= NumPlayers; i++) {
+					if (i == Ind) continue;
+					q_ptr = Players[i];
+					if (!inarea(&q_ptr->wpos, wpos)) continue;
+					if (q_ptr->party && p_ptr->party && player_in_party(q_ptr->party, Ind)) {
+						skip = FALSE;
 						break;
 					}
-				} while (wpos->wz > z_min);
-				if (!arrived) {
-					wpos->wz = z; //restore our depth
-					msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
-					return;
+					skip = TRUE;
 				}
-				msg_print(Ind, "You float downwards.");
+				if (!skip) {
+					arrived = TRUE;
+					break;
+				}
+			} while (wpos->wz > z_min);
+			if (!arrived) {
+				wpos->wz = z; //restore our depth
+				msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
+				return;
+			}
+			msg_print(Ind, "You float downwards.");
 
-				/* A player has left this depth -- process partially here */
-				wpcopy(&old_wpos, wpos);
-				old_wpos.wz = z; /* restore original z, since we were looking ahead already */
-			} else wpos->wz--;
+			/* A player has left this depth -- process partially here */
+			wpcopy(&old_wpos, wpos);
+			old_wpos.wz = z; /* restore original z, since we were looking ahead already */
 		}
 #endif
 	}
