@@ -850,6 +850,10 @@ struct player_type
 	int solo_reking_au;
 	time_t solo_reking_laston;
 #endif
+
+#ifdef ENABLE_ITEM_ORDER
+	s32b item_order_turn; /* server turn counter overflow debug */
+#endif
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */
