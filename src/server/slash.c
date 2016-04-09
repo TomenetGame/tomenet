@@ -3608,7 +3608,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 			if (p_ptr->test_turn == 0)
 				msg_print(Ind, "    \377sNo time-based result available: Initialize via '/testyourmight rs'.");
-			/* this shouldn't happen.. */
+			/* this shouldn't happen.. - except on 'turn' overflow/reset */
 			else if ((turn - p_ptr->test_turn) < cfg.fps)
 				msg_print(Ind,  "    \377sNo time-based result available: No second has passed yet.");
 			else {

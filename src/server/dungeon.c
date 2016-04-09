@@ -7231,6 +7231,19 @@ void dungeon(void) {
 		/* Players will probably timeout */
 		turn = 1;
 
+#if 0
+		//fix:
+		st_ptr->last_theft = st_ptr->tim_watch = 0;
+		p_ptr->test_turn =
+		st_ptr->last_visit =
+		p_ptr->item_order_turn =
+		p_ptr->last_gold_drop_timer = 0;
+		xorders[].turn =
+		p_ptr->go_turn = 0;
+		ge->start_turn
+		ge->end_turn
+#endif
+
 		/* Log it */
 		s_printf("%s: TURN COUNTER RESET (%d)\n", showtime(), turn_overflow);
 
