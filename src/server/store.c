@@ -4124,6 +4124,10 @@ void do_cmd_store(int Ind) {
 			if (slot != -1) {
 				object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+				s_printf("item_order_store: <%s> st %d, to %d: %d %s (%lld Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, p_ptr->item_order_forge.number, o_name, (long long) p_ptr->item_order_cost);
+			} else {
+				object_desc(Ind, o_name, &forge, TRUE, 3);
+				s_printf("item_order_store (NOSLOT): <%s> st %d, to %d: %d %s (%lld Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, p_ptr->item_order_forge.number, o_name, (long long) p_ptr->item_order_cost);
 			}
 
 			/* clear order */
