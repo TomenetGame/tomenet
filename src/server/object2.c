@@ -7519,7 +7519,14 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Don't generate cursed randarts.. */
 		if (cursed_p(o_ptr)) continue;
 
-		if (o_ptr->name2 == EGO_COMBAT)
+		/* melee ego: */
+		switch (o_ptr->name2) {
+		case EGO_AGILITY:
+			/* exception: martial artists can't benefit from +BPR */
+			if (melee_choice == 5) continue;
+		case EGO_COMBAT:
+		case EGO_SLAYING:
+		case EGO_THIEVERY:
 			switch (p_ptr->pclass) {
 			case CLASS_WARRIOR:
 			case CLASS_MIMIC:
@@ -7529,12 +7536,20 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case CLASS_PRIEST:
 			case CLASS_PALADIN:
 			case CLASS_DRUID:
+				/* ok, we pay heed to weird skilling aka all-spells MC */
+				if (spell_choice && !melee_choice && !ranged_choice
+				    && !o_ptr->name2b) //no double-egos exist for this combo though, iirc, w/e
+					continue;
 				break;
 			default:
-				continue;
+				if (!o_ptr->name2b) //no double-egos exist for this combo though, iirc, w/e
+					continue;
 			}
+		//EGO_POWER is treated as generically beneficial
+		}
 
-		/* analyze class (so far nothing is done here, but everything is determined by skills instead) */
+		/* analyze class (so far nothing is done here, but everything is determined by skills instead) -
+		   headgear ego: */
 		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
 		case CLASS_ARCHER:
@@ -7572,7 +7587,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 #endif
 
-		/* analyze race */
+		/* no anti-undead items for vampires */
 		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr)) continue;
 
 		/* Don't generate NO_MAGIC or DRAIN_MANA items if we do use magic */
@@ -7600,6 +7615,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				continue;
 			}
 		}
+
 		/* don't generate too worthless magi-specific items,
 		   prevented by simply hacking the pval up! */
 		else if (spell_choice) {
@@ -7686,6 +7702,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		if ((o_ptr->name2 == EGO_REFLECT || o_ptr->name2b == EGO_REFLECT)) continue;
 		/* - it's a bit sad to get super-low mage staves (of Mana, +1..4) */
 		if ((o_ptr->name2 == EGO_MMANA || o_ptr->name2b == EGO_MMANA)) continue;
+		//note: thievery gloves +1 speed are ok!
 
 		/* specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
 		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
