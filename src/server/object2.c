@@ -7616,44 +7616,48 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			}
 		}
 
-		/* don't generate too worthless magi-specific items,
-		   prevented by simply hacking the pval up! */
-		else if (spell_choice) {
-			switch (o_ptr->name2) {
+		/* don't generate items that are too worhtless at low pval */
+		switch (o_ptr->name2) {
+		case EGO_INTELLIGENCE:
+		case EGO_WISDOM:
+			if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
+			break;
+		case EGO_BRILLIANCE:
+			if (o_ptr->pval < 3) o_ptr->pval = 3 + (rand_int(3) ? 0 : 1);
+			break;
+		case EGO_OFTHEMAGI:
+			if (o_ptr->pval < 5) o_ptr->pval = 5; //higher pvals are commonly used towards end-game, no need to hack it up further now
+			break;
+		case EGO_AGILITY:
+			if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
+			break;
+		}
+		/* as _double ego_, it should be acceptable :-p */
+		if (!o_ptr->name2)
+			switch (o_ptr->name2b) {
 			case EGO_INTELLIGENCE:
 			case EGO_WISDOM:
-				if (o_ptr->pval < 4) o_ptr->pval = 4;
+				if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
 				break;
 			case EGO_BRILLIANCE:
-				if (o_ptr->pval < 3) o_ptr->pval = 3;
+				if (o_ptr->pval < 3) o_ptr->pval = 3 + (rand_int(3) ? 0 : 1);
 				break;
 			case EGO_OFTHEMAGI:
-				if (o_ptr->pval < 5) o_ptr->pval = 5;
+				if (o_ptr->pval < 5) o_ptr->pval = 5; //higher pvals are commonly used towards end-game, no need to hack it up further now
 				break;
-			}
-			/* as _double ego_, it should be acceptable :-p */
-			if (!o_ptr->name2) switch (o_ptr->name2b) {
-			case EGO_INTELLIGENCE:
-			case EGO_WISDOM:
-				if (o_ptr->pval < 4) o_ptr->pval = 4;
+			case EGO_AGILITY:
+				if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
 				break;
-			case EGO_BRILLIANCE:
-				if (o_ptr->pval < 3) o_ptr->pval = 3;
-				break;
-			case EGO_OFTHEMAGI:
-				if (o_ptr->pval < 5) o_ptr->pval = 5;
-				break;
-			}
 		}
 
-		/* Don't generate (possibly expensive due to high bpval or high +ac, hence passed up till here) crap */
+		/* Don't generate (possibly expensive due to high bpval or high +ac, hence passed up till here) definite crap */
 		if (!o_ptr->name2b)
 			switch (o_ptr->name2) {
 			case EGO_CONCENTRATION:
 			case EGO_INFRAVISION:
 			case EGO_BEAUTY:
 			case EGO_CHARMING:
-			case EGO_NOLDOR:
+			case EGO_NOLDOR: //well, could give +1 BPR and useful in Orc Cave actually =P -- still leaving it here though because pval is limited to just +2 in e_info
 				continue;
 		}
 
