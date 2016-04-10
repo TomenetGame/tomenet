@@ -7519,7 +7519,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Don't generate cursed randarts.. */
 		if (cursed_p(o_ptr)) continue;
 
-		/* melee ego: */
+		/* melee/ranged ego (ie non-spellonly): */
 		switch (o_ptr->name2) {
 		case EGO_AGILITY:
 			/* exception: martial artists can't benefit from +BPR */
