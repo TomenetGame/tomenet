@@ -2690,6 +2690,7 @@ static int Handle_login(int ind) {
 	p_ptr->r_char[1082] = p_ptr->f_char[FEAT_HOME];
 	p_ptr->r_attr[1082] = r_info[1082].d_attr;
 	//shrooms (mushroom patches)
+#if 0 /* pft - actually not all of these are really mushrooms.. and food could look differently anyway */
 	i = p_ptr->d_char[lookup_kind(TV_FOOD, 0)]; //anti-cheeze: all shrooms look alike
 	for (j = 1; j <= SV_FOOD_RESTORING; j++)
 		p_ptr->d_char[lookup_kind(TV_FOOD, j)] = i;
@@ -2721,6 +2722,7 @@ static int Handle_login(int ind) {
 	p_ptr->r_attr[1045] = r_info[1045].d_attr;
 	p_ptr->r_char[1062] = i;
 	p_ptr->r_attr[1062] = r_info[1062].d_attr;
+#endif
 	//coins (creeping coins)
 	p_ptr->r_char[85] = p_ptr->d_char[lookup_kind(TV_GOLD, 1)];
 	p_ptr->r_attr[85] = r_info[85].d_attr;
