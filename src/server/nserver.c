@@ -2631,6 +2631,63 @@ static int Handle_login(int ind) {
 		if (!p_ptr->r_char[i]) p_ptr->r_char[i] = r_info[i].x_char;
 		else p_ptr->use_r_gfx = TRUE;
 	}
+	/* Certain monsters (that don't already have CHAR_CLEAR) have fixed visuals
+	   that cannot be remapped by the player, because they're supposed to be
+	   chameleons of certain other things/features in the game! */
+	//items (Death Sword, Cloaker)
+	p_ptr->r_char[107] = p_ptr->d_char[lookup_kind(TV_SWORD, SV_LONG_SWORD)];
+	p_ptr->r_attr[107] = r_info[107].d_attr;
+	// + they arent chameleons but should still have sword-visuals: Hellblade, The Stormbringer
+	p_ptr->r_char[420] = p_ptr->d_char[lookup_kind(TV_SWORD, SV_LONG_SWORD)];
+	p_ptr->r_attr[420] = r_info[420].d_attr;
+	p_ptr->r_char[698] = p_ptr->d_char[lookup_kind(TV_SWORD, SV_LONG_SWORD)];
+	p_ptr->r_attr[698] = r_info[698].d_attr;
+	//floors (Chaos tile, Null)
+	p_ptr->r_char[458] = p_ptr->f_char[FEAT_FLOOR];
+	p_ptr->r_attr[458] = r_info[458].d_attr;
+	p_ptr->r_char[803] = p_ptr->f_char[FEAT_FLOOR];
+	p_ptr->r_attr[803] = r_info[803].d_attr;
+	//trees (Old Man Willow, Huorn, Xiclotlan)
+	p_ptr->r_char[458] = p_ptr->f_char[FEAT_FLOOR];
+	p_ptr->r_attr[458] = r_info[458].d_attr;
+	//ivy (Tangleweed, Poison Ivy, Giant Venus Flytrap)
+	p_ptr->r_char[248] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[248] = r_info[248].d_attr;
+	p_ptr->r_char[266] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[266] = r_info[266].d_attr;
+	p_ptr->r_char[317] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[317] = r_info[317].d_attr;
+	//mist (Vampiric mist, Mist giant, Weird fume, Dark mist)
+	p_ptr->r_char[365] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[365] = r_info[365].d_attr;
+	p_ptr->r_char[552] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[552] = r_info[552].d_attr;
+	p_ptr->r_char[625] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[625] = r_info[625].d_attr;
+	p_ptr->r_char[1064] = p_ptr->f_char[FEAT_IVY];
+	p_ptr->r_attr[1064] = r_info[1064].d_attr;
+	//walls (Stunwall, Livingstone, Lesser/Greater wall monster, Roper, Athu, Glass Golem? it's non-granite rather, Golgarach)
+	p_ptr->r_char[326] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[326] = r_info[326].d_attr;
+	p_ptr->r_char[336] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[336] = r_info[336].d_attr;
+	p_ptr->r_char[448] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[448] = r_info[448].d_attr;
+	p_ptr->r_char[718] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[718] = r_info[718].d_attr;
+	p_ptr->r_char[426] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[426] = r_info[426].d_attr;
+	p_ptr->r_char[761] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[761] = r_info[761].d_attr;
+	p_ptr->r_char[1033] = p_ptr->f_char[FEAT_WALL_EXTRA];//glass golem
+	p_ptr->r_attr[1033] = r_info[1033].d_attr;
+	p_ptr->r_char[1035] = p_ptr->f_char[FEAT_WALL_EXTRA];
+	p_ptr->r_attr[1035] = r_info[1035].d_attr;
+	//doors (Door Mimic, Void Jumpgate Mimic)
+	p_ptr->r_char[311] = p_ptr->f_char[FEAT_HOME];
+	p_ptr->r_attr[311] = r_info[311].d_attr;
+	p_ptr->r_char[1082] = p_ptr->f_char[FEAT_HOME];
+	p_ptr->r_attr[1082] = r_info[1082].d_attr;
 
 	sync_options(NumPlayers + 1, options);
 
