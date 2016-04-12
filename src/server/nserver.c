@@ -2635,12 +2635,13 @@ static int Handle_login(int ind) {
 	   that cannot be remapped by the player, because they're supposed to be
 	   chameleons of certain other things/features in the game! */
 	//items (Death Sword, Cloaker)
-	p_ptr->r_char[107] = p_ptr->d_char[lookup_kind(TV_SWORD, SV_LONG_SWORD)];
+	i= p_ptr->d_char[lookup_kind(TV_SWORD, rand_int(2) ? SV_LONG_SWORD : SV_BROAD_SWORD)];
+	p_ptr->r_char[107] = i;
 	p_ptr->r_attr[107] = r_info[107].d_attr;
 	// + they arent chameleons but should still have sword-visuals: Hellblade, The Stormbringer
-	p_ptr->r_char[420] = p_ptr->d_char[lookup_kind(TV_SWORD, SV_LONG_SWORD)];
+	p_ptr->r_char[420] = i;
 	p_ptr->r_attr[420] = r_info[420].d_attr;
-	p_ptr->r_char[698] = p_ptr->d_char[lookup_kind(TV_SWORD, SV_LONG_SWORD)];
+	p_ptr->r_char[698] = i;
 	p_ptr->r_attr[698] = r_info[698].d_attr;
 	//floors (Chaos tile, Null)
 	p_ptr->r_char[458] = p_ptr->f_char[FEAT_FLOOR];
@@ -2688,6 +2689,49 @@ static int Handle_login(int ind) {
 	p_ptr->r_attr[311] = r_info[311].d_attr;
 	p_ptr->r_char[1082] = p_ptr->f_char[FEAT_HOME];
 	p_ptr->r_attr[1082] = r_info[1082].d_attr;
+	//shrooms (mushroom patches)
+	i = p_ptr->d_char[lookup_kind(TV_FOOD, 0)]; //anti-cheeze: all shrooms look alike
+	for (j = 1; j <= SV_FOOD_RESTORING; j++)
+		p_ptr->d_char[lookup_kind(TV_FOOD, j)] = i;
+	p_ptr->r_char[22] = i;
+	p_ptr->r_attr[22] = r_info[22].d_attr;
+	p_ptr->r_char[40] = i;
+	p_ptr->r_attr[40] = r_info[40].d_attr;
+	p_ptr->r_char[47] = i;
+	p_ptr->r_attr[47] = r_info[47].d_attr;
+	p_ptr->r_char[72] = i;
+	p_ptr->r_attr[72] = r_info[72].d_attr;
+	p_ptr->r_char[108] = i;
+	p_ptr->r_attr[108] = r_info[108].d_attr;
+	p_ptr->r_char[184] = i;
+	p_ptr->r_attr[184] = r_info[184].d_attr;
+	p_ptr->r_char[267] = i;
+	p_ptr->r_attr[267] = r_info[267].d_attr;
+	p_ptr->r_char[316] = i;
+	p_ptr->r_attr[316] = r_info[316].d_attr;
+	p_ptr->r_char[425] = i;
+	p_ptr->r_attr[425] = r_info[425].d_attr;
+	p_ptr->r_char[437] = i;
+	p_ptr->r_attr[437] = r_info[437].d_attr;
+	p_ptr->r_char[486] = i;
+	p_ptr->r_attr[486] = r_info[486].d_attr;
+	p_ptr->r_char[960] = i;
+	p_ptr->r_attr[960] = r_info[960].d_attr;
+	p_ptr->r_char[1045] = i;
+	p_ptr->r_attr[1045] = r_info[1045].d_attr;
+	p_ptr->r_char[1062] = i;
+	p_ptr->r_attr[1062] = r_info[1062].d_attr;
+	//coins (creeping coins)
+	p_ptr->r_char[85] = p_ptr->d_char[lookup_kind(TV_GOLD, 1)];
+	p_ptr->r_attr[85] = r_info[85].d_attr;
+	p_ptr->r_char[117] = p_ptr->d_char[lookup_kind(TV_GOLD, 2)];
+	p_ptr->r_attr[117] = r_info[117].d_attr;
+	p_ptr->r_char[195] = p_ptr->d_char[lookup_kind(TV_GOLD, 10)];
+	p_ptr->r_attr[195] = r_info[195].d_attr;
+	p_ptr->r_char[239] = p_ptr->d_char[lookup_kind(TV_GOLD, 16)];
+	p_ptr->r_attr[239] = r_info[239].d_attr;
+	p_ptr->r_char[423] = p_ptr->d_char[lookup_kind(TV_GOLD, 18)];
+	p_ptr->r_attr[423] = r_info[423].d_attr;
 
 	sync_options(NumPlayers + 1, options);
 
