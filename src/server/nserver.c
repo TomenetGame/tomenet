@@ -2489,8 +2489,6 @@ static int Handle_login(int ind) {
 		options[i] = connp->Client_setup.options[i];
 
 	for (i = 0; i < TV_MAX; i++) {
-		int j;
-
 		if (!connp->Client_setup.u_attr[i] &&
 		    !connp->Client_setup.u_char[i])
 			continue;
@@ -2603,11 +2601,11 @@ static int Handle_login(int ind) {
 	}
 
 	for (i = 0; i < MAX_K_IDX; i++) {
-		p_ptr->k_attr[i] = connp->Client_setup.k_attr[i];
 		p_ptr->k_char[i] = connp->Client_setup.k_char[i];
-
-		if (!p_ptr->k_attr[i]) p_ptr->k_attr[i] = k_info[i].x_attr;
 		if (!p_ptr->k_char[i]) p_ptr->k_char[i] = k_info[i].x_char;
+
+		p_ptr->k_attr[i] = connp->Client_setup.k_attr[i];
+		if (!p_ptr->k_attr[i]) p_ptr->k_attr[i] = k_info[i].x_attr;
 
 #if 1
 		if (!p_ptr->d_attr[i]) p_ptr->d_attr[i] = k_info[i].d_attr;
@@ -2615,21 +2613,25 @@ static int Handle_login(int ind) {
 #else
 		if (!p_ptr->k_attr[i]) p_ptr->d_attr[i] = k_info[i].d_attr;
 		if (!p_ptr->k_char[i]) p_ptr->d_char[i] = k_info[i].d_char;
-#endif	// 0
+#endif
 	}
 
 	/* Hack -- acquire a flag for ego-monsters	- Jir - */
 	p_ptr->use_r_gfx = FALSE;
 
 	for (i = 0; i < MAX_R_IDX; i++) {
-		p_ptr->r_attr[i] = connp->Client_setup.r_attr[i];
 		p_ptr->r_char[i] = connp->Client_setup.r_char[i];
-
-		if (!p_ptr->r_attr[i]) p_ptr->r_attr[i] = r_info[i].x_attr;
-		else p_ptr->use_r_gfx = TRUE;
-
 		if (!p_ptr->r_char[i]) p_ptr->r_char[i] = r_info[i].x_char;
 		else p_ptr->use_r_gfx = TRUE;
+
+#if 0 /* old: allow remapping of attr too */
+		p_ptr->r_attr[i] = connp->Client_setup.r_attr[i];
+		if (!p_ptr->r_attr[i]) p_ptr->r_attr[i] = r_info[i].x_attr;
+		else p_ptr->use_r_gfx = TRUE;
+#else /* new: keep attr */
+		if (connp->Client_setup.r_attr[i]) p_ptr->use_r_gfx = TRUE;
+		p_ptr->r_attr[i] = r_info[i].x_attr;
+#endif
 	}
 	/* Certain monsters (that don't already have CHAR_CLEAR) have fixed visuals
 	   that cannot be remapped by the player, because they're supposed to be
