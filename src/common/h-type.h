@@ -116,8 +116,8 @@ typedef unsigned long huge;
 typedef signed short s16b;
 typedef unsigned short u16b;
 
-/* Assume that stdint.h is available and C99 is supported */
-#include <stdint.h>
+/* inttypes.h was added in the C99 standard. It includes stdint.h. */
+#include <inttypes.h>
 
 /* Signed/Unsigned 32 bit value */
 typedef int32_t s32b;

@@ -3319,9 +3319,11 @@ bool add_ignore(int Ind, cptr name) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr, *i_ptr;
 	int i;
-	int snum = 0;
 	cptr p, q = NULL;
+#ifdef TOMENET_WORLDS
+	int snum = 0;
 	char search[80], *pname;
+#endif
 
 	/* Check for silliness */
 	if (!name) {

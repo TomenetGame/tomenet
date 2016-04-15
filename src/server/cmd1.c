@@ -2262,7 +2262,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 							showtime(), name ? name : "(Dead player)", lev,
 							p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 							o_name);
-					c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %lld(%d%%) %s\n",
+					c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
 							showtime(), name ? name : "(---)", lev, acc_name,
 							p_ptr->name, p_ptr->lev, p_ptr->accountname,
 							object_value_real(0, o_ptr), o_ptr->discount, o_name);
@@ -2271,7 +2271,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 							showtime(), name ? name : "(Dead player)", lev,
 							p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 							o_name);
-					c_printf("%s item %s(%d,%s) %s(%d,%s) %lld(%d%%) %s\n",
+					c_printf("%s item %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
 							showtime(), name ? name : "(---)", lev, acc_name,
 							p_ptr->name, p_ptr->lev, p_ptr->accountname,
 							object_value_real(0, o_ptr), o_ptr->discount, o_name);
@@ -2282,11 +2282,11 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 							p_ptr->name, p_ptr->lev, p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 							p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 							o_name);
-					c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %lld(%d%%) : %s\n",
+					c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %" PRId64 "(%d%%) : %s\n",
 							showtime(), name ? name : "(---)", lev, acc_name,
 							p_ptr->name, p_ptr->lev, p_ptr->accountname,
 							p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
-							(long long) object_value_real(0, o_ptr), o_ptr->discount, o_name);
+							object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
 
 					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;

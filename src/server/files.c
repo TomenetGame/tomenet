@@ -2838,6 +2838,7 @@ void setup_exit_handler(void) {
  * This will probably inflict much anger upon the suspender, but it is still
  * allowed (for now) --KLJ--
  */
+#ifdef SIGTSTP
 static void handle_signal_suspend(int sig) {
 	/* Disable handler */
 	(void)signal(sig, SIG_IGN);
@@ -2856,6 +2857,7 @@ static void handle_signal_suspend(int sig) {
 	/* Restore handler */
 	(void)signal(sig, handle_signal_suspend);
 }
+#endif
 
 
 /*
@@ -2908,11 +2910,13 @@ static void handle_signal_simple(int sig) {
 	(void)signal(sig, handle_signal_simple);
 }
 
+#ifdef SIGPIPE
 static void handle_signal_bpipe(int sig){
 	(void)signal(sig, SIG_IGN);	/* This should not happen, but for the sake of convention... */
 	s_printf("SIGPIPE received\n");
 	(void)signal(sig, handle_signal_bpipe);
 }
+#endif
 
 /*
  * Handle signal -- abort, kill, etc

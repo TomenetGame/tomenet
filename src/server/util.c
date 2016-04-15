@@ -3978,7 +3978,9 @@ static void player_talk_aux(int Ind, char *message) {
 		len = strlen(search);
 		/* Look for a recipient who matches the search string */
 		if (len) {
+#ifdef TOMENET_WORLDS
 			struct rplist *w_player;
+#endif
 			/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
 			target = name_lookup_loose_quiet(Ind, search, TRUE, TRUE);
 
@@ -4367,7 +4369,9 @@ static void player_talk_aux(int Ind, char *message) {
 
 	/* Look for a recipient who matches the search string */
 	if (len) {
+#ifdef TOMENET_WORLDS
 		struct rplist *w_player;
+#endif
 
 		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
 		target = name_lookup_loose_quiet(Ind, search, TRUE, TRUE);
