@@ -436,7 +436,7 @@ static void write_mangrc_aux(int t, cptr sec_name, FILE *cfg_file) {
 
 /* linux clients: save one line of subwindow prefs to .tomenetrc - C. Blue */
 static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
-	char buf[1024], *ter_name = buf_org + strlen(sec_name), font_name[1024];
+	char buf[1024], *ter_name = buf_org + strlen(sec_name), font_name[1024] = { '\0' };
 	int x = -32000, y = -32000, c = 0, r = 24;
 
 	x11win_getinfo(t, &x, &y, &c, &r, font_name);
@@ -485,7 +485,7 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 			/* only change to double-screen if we're not already in some kind of enlarged screen */
 			sprintf(buf, "%s_Lines\t%d\n", sec_name, hgt);
 		}
-	} else if (!strncmp(ter_name, "_Font", 5)) {
+	} else if (!strncmp(ter_name, "_Font", 5) && font_name[0] != '\0') {
 		if (t != 0)
 			sprintf(buf, "%s_Font\t%s\n", sec_name, font_name);
 		else
