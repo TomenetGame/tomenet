@@ -1,45 +1,17 @@
 # $Id$
-# File: Makefile
+# File: makefile.mingw
 
 # This is not a very "nice" Makefile, but it usually works.
 
 #
-# Note that you may have to make modifications below according
-# to your machine, available libraries, compilation options,
-# and your "visual module" of choice.  This Makefile is intended
-# for use with Unix machines running X11, Curses, Ncurses, or Vt100,
-# or possibly for "Atari" or "Amiga" computers with "Curses" ports,
-# see below for more information.
+# This file allows compiling TomeNET binaries for the Windows platform using the
+# MinGW cross-compiler running on Linux.
 #
-# Note that "main-mac.c", the visual module for the Macintosh,
-# must be compiled in a special way, see elsewhere.
+# You must install the MinGW cross compiler and Wine first. Wine is used for
+# running tolua.exe during compilation.
 #
-# Note that "main-win.c", the visual module for Windows,
-# must be compiled in a special way, see elsewhere.
-#
-# Note that "main-ibm.c", "main-emx.c", and "main-286.c",
-# the visual modules for various types of IBM-PC computers,
-# must be compiled with special Makefiles, see elsewhere.
-#
-# Note that "main-lsl.c", the visual module for ???,
-# must be compiled with "Makefile.lsl", see elsewhere.
-#
-# Note that "main-acn.c", the visual module for Risc Acorn,
-# must be compiled with "Makefile.acn", see elsewhere.
-#
-# Note that "Makefile.w31" and "Makefile.wat" are slight variations
-# on "Makefile.win" and "Makefile.ibm", respectively, which allow
-# the use of the "main-win.c" and "main-ibm.c" files, respectively,
-# with special compilers.
-#
-# If you are able to construct "main-xxx.c" and/or "Makefile.xxx"
-# files for a currently unsupported system, please send them to me
-# (benh@voicenet.com) for inclusion in future versions.
-#
-# This Makefile comes with "default" dependancies that may be obsolete.
-#
-# You may want to run "make depend" if you are planning on changing
-# anything.
+# Optionally, you need to install the headers for SDL 1.2 and SDL_mixer in your
+# cross compiling environment.
 #
 
 
@@ -160,71 +132,19 @@ CLI_LUAOBJS = \
   client/w_play.o client/w_util.o client/w_spells.o
 
 
-##
-## Following are some "system" definitions
-##
-## No changes are needed to compile a version that will run on both
-## X11 and Curses, in debugging mode, with maximal warnings, on many
-## normal Unix machines of the Sun OS variety (non-solaris).
-##
-## To use an "alternative" definition, simply "modify" (or "replace")
-## the definition below with one that you like.  For example, you can
-## change the compiler to "cc", or remove the "debugging" options, or
-## remove the X11 or Curses support, etc, as desired.
-##
-## See also "config.h" and "h-config.h" for important information.
-##
-## Some "examples" are given below, they can be used by simply
-## removing the FIRST column of "#" signs from the "block" of lines
-## you wish to use, and commenting out "standard" block below.
-##
-## This is not intended to be a "good" Makefile, just a "simple" one.
-##
+#
+# MinGW toolchain target name
+#
+# You many need to change this depending on your setup.
+#
+# mikaelh's system (Gentoo Linux)
+#MINGW_TARGET = i686-pc-mingw32
 
+# Ubuntu
+#MINGW_TARGET = i586-mingw32msvc
 
-#
-# This is my compiler of choice, it seems to work most everywhere
-#
-#CC = gcc
-
-# For allowing #if..#else..#endif constructs in LUA files - C. Blue
-# Note: The flags must contain
-# 1) the option that turns off elimination of comment lines (ie cpp
-#    must just copy comments 1:1). Usually this is '-C'.
-# 2) the option that turns off generation of a preprocessor header
-#    (lines starting on '# '). Usually this is '-P'.
-# Also, if your system doesnt have a dedicated cpp command, you might
-# need to use the gcc invocation below instead.
-#
-# cpp variant:
-#CPP = cpp
-#CPPFLAGS = -C -P
-# gcc variant:
-#CPP = gcc
-#CPPFLAGS = -x c -E -Wp,-C,-P
-
-
-
-#
-# Standard version (see main-x11.c and main-gcu.c)
-#
-# This version supports both "X11" and "curses" in a single executable.
-#
-# You may have to add various X11 include/library directories to the
-# "CFLAGS", if your machine places files in a weird location.
-#
-# You may be able to remove "-ltermcap" on some machines (ex: Solaris).
-#
-# You may have to replace "-lcurses" with "-lncurses" to use the
-# "new curses" library instead of the "old curses" library, and
-# you may have to add "-l/usr/include/ncurses" to the "CFLAGS".
-#
-# See "main-gcu.c" and "config.h" for some optional "curses" defines,
-# including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
-# attempt to "guess" at many of these flags based on your system.
-#
-#CFLAGS = -Wall -g -pipe -DUSE_X11 -DUSE_GCU
-#LIBS = -L/usr/X11R6/lib -lX11 -lcurses
+# C. Blue's system (Arch Linux)
+MINGW_TARGET = i486-mingw32
 
 #
 # Path to sdl-config
@@ -232,32 +152,44 @@ CLI_LUAOBJS = \
 # You may need to replace /usr/mingw32 by whatever prefix your
 # cross-compiling tools use.
 #
-SDL_CONFIG = /usr/mingw32/bin/sdl-config
+SDL_CONFIG = /usr/$(MINGW_TARGET)/usr/bin/sdl-config
+
+#
+# Alternatively, specify include and lib paths for SDL
+#
+# mikaelh's system
+#SDL_INCLUDE_PATH = /usr/$(MINGW_TARGET)/usr/include/SDL
+#SDL_LIB_PATH = /usr/$(MINGW_TARGET)/usr/lib
+
+# C. Blue's system
+SDL_INCLUDE_PATH = /usr/$(MINGW_TARGET)/include/SDL
+SDL_LIB_PATH = /usr/$(MINGW_TARGET)/lib
 
 ##
 ## Variation -- MinGW on Linux
 ##
+## Common flags
+##
+CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=gnu99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
+LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
+
 ## With SDL, using 'sdl-config':
-#CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DSOUND_SDL `$(SDL_CONFIG) --cflags` -DWINVER=0x0501 -Wno-unused-but-set-variable
-#LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
+#CFLAGS += -DSOUND_SDL `$(SDL_CONFIG) --cflags`
+#LIBS += -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
 ##
-## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually (as located on my system - C. Blue):
-CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=gnu11 -DACC32 -DSOUND_SDL -I/usr/i486-mingw32/include/SDL -DWINVER=0x0501 -Wno-unused-but-set-variable
-LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer -L/usr/i486-mingw32/lib
-##
-## Without SDL:
-#CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32
-#LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
+## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually above:
+CFLAGS += -DSOUND_SDL -I$(SDL_INCLUDE_PATH)
+LIBS += -lSDL -lSDL_mixer -L$(SDL_LIB_PATH)
 
 # Added the according preprocessor for 'preproc' - C. Blue
 # If your system doesnt have a dedicated cpp command, you might
 # need to use the gcc invocation below instead.
 #
 # cpp variant:
-#CPP = mingw32-cpp
+#CPP = $(MINGW_TARGET)-cpp
 #CPPFLAGS = -C -P
 # gcc variant:
-#CPP = mingw32-gcc
+#CPP = $(MINGW_TARGET)-gcc
 #CPPFLAGS = -x c -E -Wp,-C,-P
 
 # Use these on Ubuntu
@@ -266,21 +198,21 @@ LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixe
 #CPP = i586-mingw32msvc-cpp
 #CPPFLAGS = -C -P
 
-# Use these on other Linux systems, possibly
-#CC = i386-mingw32msvc-gcc
-#WINDRES = i386-mingw32msvc-windres
-#CPP = i386-mingw32msvc-cpp
-#CPPFLAGS = -C -P
-
-# MinGW compiler and linker on my system - mikaelh
-#CC = mingw32-gcc
-#WINDRES = mingw32-windres
-
 # MinGW compiler, linker and preprocessor on mine - C. Blue
-CC = i486-mingw32-gcc
-WINDRES = i486-mingw32-windres
-CPP = i486-mingw32-gcc
+#CC = i486-mingw32-gcc
+#WINDRES = i486-mingw32-windres
+#CPP = i486-mingw32-gcc
+#CPPFLAGS = -x c -E -Wp,-C,-P
+
+# New: Construct CC, WINDRES, CPP and CPPFLAGS from MINGW_TARGET
+CC = $(MINGW_TARGET)-gcc
+WINDRES = $(MINGW_TARGET)-windres
+CPP = $(MINGW_TARGET)-gcc
 CPPFLAGS = -x c -E -Wp,-C,-P
+
+# Alternative CPP and CPPFLAGS definitions
+#CPP = $(MINGW_TARGET)-cpp
+#CPPFLAGS = -C -P
 
 
 # Native Linux gcc for compiling preproc.
