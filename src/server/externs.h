@@ -2362,8 +2362,8 @@ extern bool warding_rune(int Ind, byte typ, byte mod, byte lvl);
 extern bool warding_rune_break(int m_idx);
 /* common/tables.c */
 extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
-extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES+1];
-extern r_type r_types[RCRAFT_MAX_TYPES+1];
+extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES];
+extern r_type r_types[RCRAFT_MAX_TYPES];
 extern r_projection r_projections[RCRAFT_MAX_PROJECTIONS];
 
 #ifdef MONSTER_ASTAR
