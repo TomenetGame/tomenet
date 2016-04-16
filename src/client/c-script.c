@@ -622,6 +622,7 @@ void cat_script(char *name)
 
 bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
 {
+	(void) Ind; /* suppress compiler warning */
         int i = 0, nb = 0, nbr = 0;
         int oldtop = lua_gettop(L), size;
 	va_list ap;

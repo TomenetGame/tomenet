@@ -255,6 +255,9 @@ term *Term = NULL;
  */
 static errr term_win_nuke(term_win *s, int w, int h)
 {
+	(void) w; /* suppress compiler warning */
+	(void) h; /* suppress compiler warning */
+
 	/* Free the window access arrays */
 	C_KILL(s->a, h, byte*);
 	C_KILL(s->c, h, char*);

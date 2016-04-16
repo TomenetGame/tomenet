@@ -149,7 +149,7 @@ static void print_mimic_spells() {
 
 /* modified to accept certain capital letters for priest spells. -AD- */
 
-int get_spell(s32b *sn, cptr prompt, int book, bool known) {
+int get_spell(s32b *sn, cptr prompt, int book) {
 	int		i, num = 0;
 	bool		flag, redraw, okay;
 	char		choice;
@@ -740,7 +740,7 @@ void do_ghost(void) {
 	s32b j;
 
 	/* Ask for an ability, allow cancel */
-	if (!get_spell(&j, "use", 0, FALSE)) return;
+	if (!get_spell(&j, "use", 0)) return;
 
 	/* Tell the server */
 	Send_ghost(j);
@@ -766,6 +766,8 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 	int i, spell;
 	char buf[80];
 	char buf2[100];
+
+	(void) inven_first; /* suppress compiler warning */
 
 	strcpy(buf, "Manathrust");
 	if (!get_string("Spell name? ", buf, 79))
@@ -804,6 +806,8 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 	char buf[80], buf2[100], sname[40], *bufptr;
 	object_type *o_ptr;
 	bool exact_match = FALSE, combo_spell, found_something = FALSE;
+
+	(void) inven_first; /* suppress compiler warning */
 
 	strcpy(buf, "Manathrust");
 	if (!get_string("Spell name? ", buf, 79))

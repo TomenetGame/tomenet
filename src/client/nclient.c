@@ -300,6 +300,8 @@ int Receive_file(void){
 }
 
 int Receive_file_data(int ind, unsigned short len, char *buffer) {
+	(void) ind; /* suppress compiler warning */
+
 	/* Check that the sockbuf has enough data */
 	if (&rbuf.buf[rbuf.len] >= &rbuf.ptr[len]) {
 		memcpy(buffer, rbuf.ptr, len);
@@ -312,17 +314,23 @@ int Receive_file_data(int ind, unsigned short len, char *buffer) {
 }
 
 int Send_file_check(int ind, unsigned short id, char *fname) {
+	(void) ind; /* suppress compiler warning */
+
 	Packet_printf(&wbuf, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
 	return 0;
 }
 
 /* index arguments are just for common / laziness */
 int Send_file_init(int ind, unsigned short id, char *fname) {
+	(void) ind; /* suppress compiler warning */
+
 	Packet_printf(&wbuf, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
 	return 0;
 }
 
 int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len) {
+	(void) ind; /* suppress compiler warning */
+
 	Sockbuf_flush(&wbuf);
 	Packet_printf(&wbuf, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
 	if (Sockbuf_write(&wbuf, buf, len) != len)
@@ -331,6 +339,8 @@ int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len) {
 }
 
 int Send_file_end(int ind, unsigned short id) {
+	(void) ind; /* suppress compiler warning */
+
 	Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
 	return 0;
 }

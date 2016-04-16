@@ -1346,6 +1346,7 @@ errr file_character(cptr name, bool full)
 	FILE		*fff = NULL;
 	char		buf[1024];
 
+	(void) full; /* suppress compiler warning */
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);

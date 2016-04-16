@@ -70,7 +70,7 @@ extern r_projection r_projections[RCRAFT_MAX_PROJECTIONS];
 /* c-spell.c */
 /*extern void show_browse(int book); */
 s32b get_school_spell(cptr do_what, int *item_book);
-extern int get_spell(s32b *sn, cptr prompt, int book, bool known);
+extern int get_spell(s32b *sn, cptr prompt, int book);
 extern void show_browse(object_type *o_ptr);
 extern void browse_school_spell(int item, int book, int pval);
 extern void do_study(int book);

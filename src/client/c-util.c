@@ -7727,6 +7727,8 @@ bool is_same_as(version_type *version, int major, int minor, int patch, int extr
 
 /* dummy */
 void msg_format(int Ind, cptr fmt, ...) {
+	(void) Ind; /* suppress compiler warning */
+	(void) fmt; /* suppress compiler warning */
 	return;
 }
 

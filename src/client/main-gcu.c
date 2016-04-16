@@ -1169,6 +1169,9 @@ void resize_main_window_gcu(int cols, int rows) {
                 Term_activate(t);
                 Term_resize(cols, rows);
         }
+#else
+	(void) cols; /* suppress compiler warning */
+	(void) rows; /* suppress compiler warning */
 #endif
 }
 

@@ -1929,6 +1929,8 @@ void create_random_name(int race, char *name) {
 	char *syl1, *syl2, *syl3;
 	int idx;
 
+	(void) race; /* suppress compiler warning */
+
 	/* Paranoia */
 	if (!name) return;
 

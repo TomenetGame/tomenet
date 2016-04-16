@@ -76,6 +76,7 @@ school_type *grab_school_type(s16b num)
 
 /* Change this fct if I want to switch to learnable spells */
 s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
+	(void) Ind; /* suppress compiler warning */
 	s32b tmp;
 
 #ifdef FIX_LUA_GET_LEVEL
@@ -137,6 +138,9 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 
 /* adj_mag_stat? stat_ind??  pfft */
 s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat) {
+	(void) i; /* suppress compiler warning */
+	(void) mana; /* suppress compiler warning */
+	(void) cur_mana; /* suppress compiler warning */
 	int minfail;
 
 	/* correct LUA overflow bug */
@@ -323,12 +327,15 @@ int lua_get_new_bounty_monster(int lev)
 #endif
 
 int get_inven_sval(int Ind, int inven_slot) {
+	(void) Ind; /* suppress compiler warning */
 	return (inventory[inven_slot].sval);
 }
 int get_inven_pval(int Ind, int inven_slot) {
+	(void) Ind; /* suppress compiler warning */
 	return (inventory[inven_slot].pval);
 }
 int get_inven_xtra(int Ind, int inven_slot, int n) {
+	(void) Ind; /* suppress compiler warning */
 	/* browsing item in a store? */
 	if (inven_slot < 0) {
 		switch (n) {

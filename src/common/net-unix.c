@@ -1166,6 +1166,9 @@ static void inthandler(int signum)
 static inthandler()
 #endif /* __STDC__ */
 {
+#ifdef __STDC__
+    (void) signum; /* suppress compiler warning */
+#endif
     DEB(fprintf(stderr, "Connection interrupted, timeout\n"));
     (void) longjmp(env, 1);
 } /* inthandler */
@@ -2167,6 +2170,9 @@ static
 DgramInthandler()
 #endif /* __STDC__ */
 {
+#ifdef __STDC__
+    (void) signum; /* suppress compiler warning */
+#endif
     (void) signal(SIGALRM, DgramInthandler);
 } /* DgramInthandler */
 
