@@ -1349,7 +1349,7 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Piece together a 32-bit random seed */
-	p_ptr->mimic_seed = rand_int(0xFFFF) << 16;
+	p_ptr->mimic_seed = (u32b)rand_int(0xFFFF) << 16;
 	p_ptr->mimic_seed += rand_int(0xFFFF);
 
 	/* Penalise form-switching just for using a spell */

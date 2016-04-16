@@ -1207,7 +1207,7 @@ int guild_create(int Ind, cptr name) {
 
 
 	/* Set guild identity */
-	guilds[index].dna = rand_int(0xFFFF) << 16;
+	guilds[index].dna = (u32b)rand_int(0xFFFF) << 16;
 	guilds[index].dna += rand_int(0xFFFF);
 
 	/* Set guild name */

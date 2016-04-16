@@ -212,7 +212,7 @@ void sc_wish(int Ind, void *argp){
 			else o_ptr->name1 = ART_RANDART;
 
 			/* Piece together a 32-bit random seed */
-			o_ptr->name3 = rand_int(0xFFFF) << 16;
+			o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 			o_ptr->name3 += rand_int(0xFFFF);
 		}
 	} else o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
@@ -2474,7 +2474,7 @@ void do_slash_cmd(int Ind, char *message) {
 					else o_ptr->name1 = ART_RANDART;
 
 					/* Piece together a 32-bit random seed */
-					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 					o_ptr->name3 += rand_int(0xFFFF);
 				}
 			}
@@ -5110,7 +5110,7 @@ void do_slash_cmd(int Ind, char *message) {
 					if (nom == ART_RANDART) { /* see defines.h */
 						/* Piece together a 32-bit random seed */
 						o_ptr->name1 = ART_RANDART;
-						o_ptr->name3 = rand_int(0xFFFF) << 16;
+						o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 						o_ptr->name3 += rand_int(0xFFFF);
 					} else if (nom > 0) {
 						o_ptr->name1 = nom;
@@ -5121,7 +5121,7 @@ void do_slash_cmd(int Ind, char *message) {
 						if (tk > 5) o_ptr->name2b = 0 - atoi(token[6]);
 
 						/* Piece together a 32-bit random seed */
-						o_ptr->name3 = rand_int(0xFFFF) << 16;
+						o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 						o_ptr->name3 += rand_int(0xFFFF);
 					}
 				} else o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
@@ -5975,7 +5975,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 				while (tries) {
 					/* Piece together a 32-bit random seed */
-					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 					o_ptr->name3 += rand_int(0xFFFF);
 					/* Check the tval is allowed */
 					if (randart_make(o_ptr) == NULL) {
@@ -6040,7 +6040,7 @@ void do_slash_cmd(int Ind, char *message) {
 				while (tries < 1000000) {
 					if (!(tries % 10000)) s_printf("%d, ", tries);
 					/* Piece together a 32-bit random seed */
-					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 					o_ptr->name3 += rand_int(0xFFFF);
 					/* Check the tval is allowed */
 					if (randart_make(o_ptr) == NULL) {
@@ -8078,7 +8078,7 @@ void do_slash_cmd(int Ind, char *message) {
 				do {
 					tries++;
 					/* Piece together a 32-bit random seed */
-					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 					o_ptr->name3 += rand_int(0xFFFF);
 					/* Check the tval is allowed */
 					if ((a_ptr = randart_make(o_ptr)) == NULL) {
@@ -8171,7 +8171,7 @@ void do_slash_cmd(int Ind, char *message) {
 				handle_stuff(Ind);
 				while (tries--) {
 					/* Piece together a 32-bit random seed */
-					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 					o_ptr->name3 += rand_int(0xFFFF);
 					/* Check the tval is allowed */
 					if ((a_ptr = randart_make(o_ptr)) == NULL) {
@@ -9060,7 +9060,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 				do {
 					/* Piece together a 32-bit random seed */
-					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 					o_ptr->name3 += rand_int(0xFFFF);
 					/* Check the tval is allowed */
 					if (randart_make(o_ptr) == NULL) {

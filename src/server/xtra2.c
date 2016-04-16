@@ -5747,7 +5747,7 @@ if (cfg.unikill_format) {
 			qq_ptr->name1 = ART_RANDART;
 
 			/* Piece together a 32-bit random seed */
-			qq_ptr->name3 = rand_int(0xFFFF) << 16;
+			qq_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 			qq_ptr->name3 += rand_int(0xFFFF);
 
 			/* Check the tval is allowed */
@@ -5794,7 +5794,7 @@ if (cfg.unikill_format) {
 			qq_ptr->name2 = EGO_STORMBRINGER;
 
 			/* Piece together a 32-bit random seed */
-			qq_ptr->name3 = rand_int(0xFFFF) << 16;
+			qq_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 			qq_ptr->name3 += rand_int(0xFFFF);
 
 			apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
@@ -5850,7 +5850,7 @@ if (cfg.unikill_format) {
 			while (qq_ptr->pval < 6 && tries--) {
 				object_copy(&forge, &forge_bak);
 				/* Piece together a 32-bit random seed */
-				qq_ptr->name3 = rand_int(0xFFFF) << 16;
+				qq_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 				qq_ptr->name3 += rand_int(0xFFFF);
 				randart_make(qq_ptr);
 				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART);
@@ -5918,7 +5918,7 @@ if (cfg.unikill_format) {
 			tries = 500;
 			while (tries) {
 				/* Piece together a 32-bit random seed */
-				qq_ptr->name3 = rand_int(0xFFFF) << 16;
+				qq_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 				qq_ptr->name3 += rand_int(0xFFFF);
 				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
 

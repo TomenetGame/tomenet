@@ -3289,7 +3289,7 @@ bool create_artifact_aux(int Ind, int item) {
 		tries++;
 
 		/* Piece together a 32-bit random seed */
-		o_ptr->name3 = rand_int(0xFFFF) << 16;
+		o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 		o_ptr->name3 += rand_int(0xFFFF);
 
 		/* Check the tval is allowed */

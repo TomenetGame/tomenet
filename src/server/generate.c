@@ -9182,7 +9182,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 	/* Random seed for checking if a player logs back in on the same
 	   [static] floor that he logged out, or if it has changed. - C. Blue */
-	dun->l_ptr->id = rand_int(0xFFFF) << 16;
+	dun->l_ptr->id = (u32b)rand_int(0xFFFF) << 16;
 	dun->l_ptr->id += rand_int(0xFFFF);
 
 	/* test if we want fountains of blood in this dungeon - C. Blue */
