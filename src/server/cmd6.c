@@ -3867,7 +3867,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 
 	case SV_ROD_IDENTIFY:
 		ident = TRUE;
-		if (!ident_spell(Ind)) use_charge = FALSE;
+		if (!ident_spell(Ind)) *use_charge = FALSE;
 		//if (o_ptr) o_ptr->pval = 10;
 		/* up to 50% faster with maxed MD - the_sandman */
 //at 0 skill, this is like auto-id	if (o_ptr) o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
