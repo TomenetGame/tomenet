@@ -512,6 +512,7 @@ void dump_lua_stack_stdout(int min, int max)
 
 bool pern_dofile(int Ind, char *file)
 {
+	(void) Ind; /* suppress compiler warning */
 	char buf[MAX_PATH_LENGTH];
 	int error;
 	int oldtop = lua_gettop(L);
@@ -527,6 +528,7 @@ bool pern_dofile(int Ind, char *file)
 
 int exec_lua(int Ind, char *file)
 {
+	(void) Ind; /* suppress compiler warning */
 	int oldtop = lua_gettop(L);
 	int res;
 
@@ -547,6 +549,7 @@ int exec_lua(int Ind, char *file)
 
 cptr string_exec_lua(int Ind, char *file)
 {
+	(void) Ind; /* suppress compiler warning */
 	int oldtop = lua_gettop(L);
 	cptr res;
 

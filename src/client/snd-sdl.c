@@ -1800,6 +1800,7 @@ static bool my_fexists(const char *fname) {
 /* if audioCached is TRUE, load those audio files in a separate
    thread, to avoid startup delay of client - C. Blue */
 static int thread_load_audio(void *dummy) {
+	(void) dummy; /* suppress compiler warning */
 	int idx, subidx;
 
 	/* process all sound fx */
