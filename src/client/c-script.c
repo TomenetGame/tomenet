@@ -143,7 +143,7 @@ static int errorfb (lua_State *L) {
 
 static struct luaL_reg pern_iolib[] =
 {
-        {LUA_ALERT, pern_errormessage},
+	{LUA_ALERT, pern_errormessage},
 #ifdef NO_CLIENT_IOLIB
 	{LUA_ERRORMESSAGE, errorfb},
 #endif
@@ -157,16 +157,16 @@ static struct luaL_reg pern_iolib[] =
  * better avoid to use them maybe */
 
 #define DYADIC(name, op) \
-    s32b name(s32b a, s32b b); \
-    s32b name(s32b a, s32b b) { \
+	s32b name(s32b a, s32b b); \
+	s32b name(s32b a, s32b b) { \
 		return (a op b); \
-    }
+	}
 
 #define MONADIC(name, op) \
-    s32b name(s32b b); \
-    s32b name(s32b b) { \
+	s32b name(s32b b); \
+	s32b name(s32b b) { \
 		return (op b); \
-    }
+	}
 
 
 DYADIC(intMod,      % )
@@ -196,7 +196,7 @@ static int int_not(lua_State* L)
 static int int_mod(lua_State* L)
 {
 	lua_pushnumber(L, luaL_check_bit(L, 1) % luaL_check_bit(L, 2));
-    return 1;
+	return 1;
 }
 
 
@@ -226,9 +226,9 @@ static int int_or(lua_State *L)
 	long w = luaL_check_bit(L, 1);
 
 	for (i = 2; i <= n; i++) w |= luaL_check_bit(L, i);
-    lua_pushnumber(L, w);
+	lua_pushnumber(L, w);
 
-    return 1;
+	return 1;
 }
 
 
@@ -242,9 +242,9 @@ static int int_xor(lua_State *L)
 	long w = luaL_check_bit(L, 1);
 
 	for (i = 2; i <= n; i++) w ^= luaL_check_bit(L, i);
-    lua_pushnumber(L, w);
+	lua_pushnumber(L, w);
 
-    return 1;
+	return 1;
 }
 
 
@@ -255,7 +255,7 @@ static int int_xor(lua_State *L)
 static int int_lshift(lua_State* L)
 {
 	lua_pushnumber(L, luaL_check_bit(L, 1) << luaL_check_ubit(L, 2));
-    return 1;
+	return 1;
 }
 
 /*
@@ -281,14 +281,14 @@ static int int_arshift(lua_State* L)
 
 static const struct luaL_reg bitlib[] =
 {
-        {"bnot",    int_not},
-        {"imod",    int_mod},  /* "mod" already in Lua math library */
-        {"band",    int_and},
-        {"bor",     int_or},
-        {"bxor",    int_xor},
-        {"lshift",  int_lshift},
-        {"rshift",  int_rshift},
-        {"arshift", int_arshift},
+	{"bnot",    int_not},
+	{"imod",    int_mod},  /* "mod" already in Lua math library */
+	{"band",    int_and},
+	{"bor",     int_or},
+	{"bxor",    int_xor},
+	{"lshift",  int_lshift},
+	{"rshift",  int_rshift},
+	{"arshift", int_arshift},
 };
 
 
@@ -366,7 +366,7 @@ void init_lua()
 	char ind[80];
 	int oldtop;
 
-        if (init_lua_done) return;
+	if (init_lua_done) return;
 
 	/* Start the interpreter with default stack size */
 	L = lua_open(0);
@@ -389,19 +389,19 @@ void init_lua()
 	/* Register the TomeNET main APIs */
 	tolua_util_open(L);
 	tolua_player_open(L);
-        tolua_spells_open(L);
+	tolua_spells_open(L);
 
 	/* Set the Ind and player variables */
 	oldtop = lua_gettop(L);
-        sprintf(ind, "Ind = %d; player = Players_real[2]", 1);
-        lua_dostring(L, ind);
-        lua_settop(L, oldtop);
+	sprintf(ind, "Ind = %d; player = Players_real[2]", 1);
+	lua_dostring(L, ind);
+	lua_settop(L, oldtop);
 
 #if 1
 /* CONFLICT: We want to fetch server flags before opening lua, so we can't read audio.lua
-   in time, nor xml.lua/meta.lua which are needed earlier too, so we need to hard-code it here -_-. */
+in time, nor xml.lua/meta.lua which are needed earlier too, so we need to hard-code it here -_-. */
 
-        /* Load the xml module */
+	/* Load the xml module */
 	pern_dofile(0, "xml.lua");
 	pern_dofile(0, "meta.lua");
 
@@ -409,7 +409,7 @@ void init_lua()
 	pern_dofile(0, "audio.lua");
 #endif
 
-        init_lua_done = TRUE;
+	init_lua_done = TRUE;
 }
 
 /* Reinitialize Lua */
@@ -432,7 +432,7 @@ void open_lua()
 
 	if (open_lua_done) return;
 
-        if (!init_lua_done) init_lua();
+	if (!init_lua_done) init_lua();
 
 	/* Set server feature flags */
 	set_server_features();
@@ -486,62 +486,62 @@ void reopen_lua()
 
 void dump_lua_stack(int min, int max)
 {
-        int i;
+	int i;
 
-        c_msg_print("\377ylua_stack:");
-        for (i = min; i <= max; i++)
-        {
-                if (lua_isnumber(L, i)) c_msg_format("\377y%d [n] = %ld", i, tolua_getnumber(L, i, 0));
-                else if (lua_isstring(L, i)) c_msg_format("\377y%d [s] = '%s'", i, tolua_getstring(L, i, 0));
-        }
-        c_msg_print("\377yEND lua_stack");
+	c_msg_print("\377ylua_stack:");
+	for (i = min; i <= max; i++)
+	{
+		if (lua_isnumber(L, i)) c_msg_format("\377y%d [n] = %ld", i, tolua_getnumber(L, i, 0));
+		else if (lua_isstring(L, i)) c_msg_format("\377y%d [s] = '%s'", i, tolua_getstring(L, i, 0));
+	}
+	c_msg_print("\377yEND lua_stack");
 }
 
 void dump_lua_stack_stdout(int min, int max)
 {
-        int i;
+	int i;
 
-        printf("ylua_stack:\n");
-        for (i = min; i <= max; i++)
-        {
-                if (lua_isnumber(L, i)) printf("%d [n] = %ld\n", i, tolua_getnumber(L, i, 0));
-                else if (lua_isstring(L, i)) printf("%d [s] = '%s'\n", i, tolua_getstring(L, i, 0));
-        }
-        printf("END lua_stack\n");
+	printf("ylua_stack:\n");
+	for (i = min; i <= max; i++)
+	{
+		if (lua_isnumber(L, i)) printf("%d [n] = %ld\n", i, tolua_getnumber(L, i, 0));
+		else if (lua_isstring(L, i)) printf("%d [s] = '%s'\n", i, tolua_getstring(L, i, 0));
+	}
+	printf("END lua_stack\n");
 }
 
 bool pern_dofile(int Ind, char *file)
 {
 	char buf[MAX_PATH_LENGTH];
 	int error;
-        int oldtop = lua_gettop(L);
+	int oldtop = lua_gettop(L);
 
 	/* Build the filename */
-        path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
+	path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
 
-        error = lua_dofile(L, buf);
-        lua_settop(L, oldtop);
+	error = lua_dofile(L, buf);
+	lua_settop(L, oldtop);
 
-        return (error?TRUE:FALSE);
+	return (error?TRUE:FALSE);
 }
 
 int exec_lua(int Ind, char *file)
 {
 	int oldtop = lua_gettop(L);
-        int res;
+	int res;
 
-        if (!lua_dostring(L, file))
-        {
-                int size = lua_gettop(L) - oldtop;
+	if (!lua_dostring(L, file))
+	{
+		int size = lua_gettop(L) - oldtop;
 		if (size != 0)
-	                res = tolua_getnumber(L, -size, 0);
+			res = tolua_getnumber(L, -size, 0);
 		else
 			res = 0;
-        }
+	}
 	else
-                res = 0;
+		res = 0;
 
-        lua_settop(L, oldtop);
+	lua_settop(L, oldtop);
 	return (res);
 }
 
@@ -551,16 +551,16 @@ cptr string_exec_lua(int Ind, char *file)
 	cptr res;
 
 	if (!lua_dostring(L, file))
-        {
-                int size = lua_gettop(L) - oldtop;
+	{
+		int size = lua_gettop(L) - oldtop;
 		if (size != 0)
-	                res = tolua_getstring(L, -size, "");
+			res = tolua_getstring(L, -size, "");
 		else
 			res = 0;
-        }
+	}
 	else
 		res = "";
-        lua_settop(L, oldtop);
+	lua_settop(L, oldtop);
 	return (res);
 }
 
@@ -570,149 +570,149 @@ void master_script_begin(char *name, char mode)
 	char buf[MAX_PATH_LENGTH];
 
 	/* Build the filename */
-        path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, name);
+	path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, name);
 
-        switch (mode)
-        {
-        case MASTER_SCRIPTB_W:
-                lua_file = my_fopen(buf, "w");
-                break;
-        case MASTER_SCRIPTB_A:
-                lua_file = my_fopen(buf, "a");
-                break;
-        }
-        if (!lua_file)
-                plog(format("ERROR: creating lua file %s in mode %c", buf, mode));
-        else
-                plog(format("Creating lua file %s in mode %c", buf, mode));
+	switch (mode)
+	{
+	case MASTER_SCRIPTB_W:
+		lua_file = my_fopen(buf, "w");
+		break;
+	case MASTER_SCRIPTB_A:
+		lua_file = my_fopen(buf, "a");
+		break;
+	}
+	if (!lua_file)
+		plog(format("ERROR: creating lua file %s in mode %c", buf, mode));
+	else
+		plog(format("Creating lua file %s in mode %c", buf, mode));
 
 }
 
 void master_script_end()
 {
-        my_fclose(lua_file);
+	my_fclose(lua_file);
 }
 
 void master_script_line(char *buf)
 {
-        fprintf(lua_file, "%s\n", buf);
+	fprintf(lua_file, "%s\n", buf);
 }
 
 void master_script_exec(int Ind, char *buf)
 {
-        exec_lua(Ind, buf);
+	exec_lua(Ind, buf);
 }
 
 void cat_script(char *name)
 {
-        char buf[1025];
-        FILE *fff;
+	char buf[1025];
+	FILE *fff;
 
-        /* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_SCPT, name);
-        fff = my_fopen(buf, "r");
-        if (fff == NULL) return;
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_SCPT, name);
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) return;
 
-        /* Process the file */
-        while (0 == my_fgets(fff, buf, 1024))
-        {
-                c_msg_print(buf);
-        }
+	/* Process the file */
+	while (0 == my_fgets(fff, buf, 1024))
+	{
+		c_msg_print(buf);
+	}
 }
 
 bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
 {
 	(void) Ind; /* suppress compiler warning */
-        int i = 0, nb = 0, nbr = 0;
-        int oldtop = lua_gettop(L), size;
+	int i = 0, nb = 0, nbr = 0;
+	int oldtop = lua_gettop(L), size;
 	va_list ap;
 
-        va_start(ap, ret);
+	va_start(ap, ret);
 
-        /* Push the function */
-        lua_getglobal(L, function);
+	/* Push the function */
+	lua_getglobal(L, function);
 
-        /* Push and count the arguments */
-        while (args[i])
-        {
-                switch (args[i++])
-                {
-                case 'd':
-                case 'l':
-                        tolua_pushnumber(L, va_arg(ap, s32b));
-                        nb++;
-                        break;
-                case 's':
-                        tolua_pushstring(L, va_arg(ap, char*));
-                        nb++;
-                        break;
-                case 'O':
-                        tolua_pushusertype(L, (void*)va_arg(ap, object_type*), tolua_tag(L, "object_type"));
-                        nb++;
-                        break;
-                case '(':
-                case ')':
-                case ',':
-                        break;
-                }
-        }
+	/* Push and count the arguments */
+	while (args[i])
+	{
+		switch (args[i++])
+		{
+		case 'd':
+		case 'l':
+			tolua_pushnumber(L, va_arg(ap, s32b));
+			nb++;
+			break;
+		case 's':
+			tolua_pushstring(L, va_arg(ap, char*));
+			nb++;
+			break;
+		case 'O':
+			tolua_pushusertype(L, (void*)va_arg(ap, object_type*), tolua_tag(L, "object_type"));
+			nb++;
+			break;
+		case '(':
+		case ')':
+		case ',':
+			break;
+		}
+	}
 
-        /* Count returns */
-        nbr = strlen(ret);
- 
-        /* Call the function */
-        if (lua_call(L, nb, nbr))
-        {
-                plog_fmt("ERROR in lua_call while calling '%s' from call_lua.\nThings should start breaking up from now on!", function);
-                return FALSE;
-        }
+	/* Count returns */
+	nbr = strlen(ret);
 
-        /* Number of returned values, SHOULD be the same as nbr, but I'm paranoid */
-        size = lua_gettop(L) - oldtop;
+	/* Call the function */
+	if (lua_call(L, nb, nbr))
+	{
+		plog_fmt("ERROR in lua_call while calling '%s' from call_lua.\nThings should start breaking up from now on!", function);
+		return FALSE;
+	}
 
-        /* Get the returns */
-        for (i = 0; ret[i]; i++)
-        {
-                switch (ret[i])
-                {
-                case 'd':
-                case 'l':
-                        {
-                                s32b *tmp = va_arg(ap, s32b*);
+	/* Number of returned values, SHOULD be the same as nbr, but I'm paranoid */
+	size = lua_gettop(L) - oldtop;
 
-                                if (lua_isnumber(L, (-size) + i)) *tmp = tolua_getnumber(L, (-size) + i, 0);
-                                else *tmp = 0;
-                                break;
-                        }
+	/* Get the returns */
+	for (i = 0; ret[i]; i++)
+	{
+		switch (ret[i])
+		{
+		case 'd':
+		case 'l':
+			{
+				s32b *tmp = va_arg(ap, s32b*);
 
-                case 's':
-                        {
-                                cptr *tmp = va_arg(ap, cptr*);
+				if (lua_isnumber(L, (-size) + i)) *tmp = tolua_getnumber(L, (-size) + i, 0);
+				else *tmp = 0;
+				break;
+			}
 
-                                if (lua_isstring(L, (-size) + i)) *tmp = tolua_getstring(L, (-size) + i, "");
-                                else *tmp = NULL;
-                                break;
-                        }
+		case 's':
+			{
+				cptr *tmp = va_arg(ap, cptr*);
 
-                case 'O':
-                        {
-                                object_type **tmp = va_arg(ap, object_type**);
+				if (lua_isstring(L, (-size) + i)) *tmp = tolua_getstring(L, (-size) + i, "");
+				else *tmp = NULL;
+				break;
+			}
 
-                                if (tolua_istype(L, (-size) + i, tolua_tag(L, "object_type"), 0))
-                                        *tmp = (object_type*)tolua_getuserdata(L, (-size) + i, NULL);
-                                else
-                                        *tmp = NULL;
-                                break;
-                        }
+		case 'O':
+			{
+				object_type **tmp = va_arg(ap, object_type**);
 
-                default:
-                        plog_fmt("ERROR in lua_call while calling '%s' from call_lua:\n  Unkown return type '%c'", function, ret[i]);
-                        return FALSE;
-                }
-        }
-        lua_settop(L, oldtop);
+				if (tolua_istype(L, (-size) + i, tolua_tag(L, "object_type"), 0))
+					*tmp = (object_type*)tolua_getuserdata(L, (-size) + i, NULL);
+				else
+					*tmp = NULL;
+				break;
+			}
 
-        va_end(ap);
+		default:
+			plog_fmt("ERROR in lua_call while calling '%s' from call_lua:\n  Unkown return type '%c'", function, ret[i]);
+			return FALSE;
+		}
+	}
+	lua_settop(L, oldtop);
 
-        return TRUE;
+	va_end(ap);
+
+	return TRUE;
 }
