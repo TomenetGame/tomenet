@@ -1663,7 +1663,7 @@ void xhtml_screenshot(cptr name)
 	}
 	fprintf(fp, "<span style=\"color: %s\">", color_table[prt_attr]);
 
-	i = 0;
+	size_t bytes = 0;
 	for (y = 0; y < Term->hgt; y++)
 	{
 		scr_aa = Term->scr->a[y];
@@ -1674,8 +1674,8 @@ void xhtml_screenshot(cptr name)
 			{
 				cur_attr = scr_aa[x];
 
-				strcpy(&buf[i], "</span><span style=\"color: ");
-				i += 27;
+				strcpy(&buf[bytes], "</span><span style=\"color: ");
+				bytes += 27;
 
 				/* right now just pick a random colour for flickering colours
 				 * maybe add some javascript for real flicker later */
@@ -1683,59 +1683,59 @@ void xhtml_screenshot(cptr name)
 				if (prt_attr > sizeof(color_table) - 1) {
 					prt_attr = sizeof(color_table) - 1;
 				}
-				strcpy(&buf[i], color_table[prt_attr]);
-				i += 7;
+				strcpy(&buf[bytes], color_table[prt_attr]);
+				bytes += 7;
 
-				strcpy(&buf[i], "\">");
-				i += 2;
+				strcpy(&buf[bytes], "\">");
+				bytes += 2;
 			}
 
 			switch (scr_cc[x])
 			{
 				case 31: /* Windows client uses ASCII char 31 for paths */
-					buf[i++] = '.';
+					buf[bytes++] = '.';
 					break;
 				case '&':
-					buf[i++] = '&';
-					buf[i++] = 'a';
-					buf[i++] = 'm';
-					buf[i++] = 'p';
-					buf[i++] = ';';
+					buf[bytes++] = '&';
+					buf[bytes++] = 'a';
+					buf[bytes++] = 'm';
+					buf[bytes++] = 'p';
+					buf[bytes++] = ';';
 					break;
 				case '<':
-					buf[i++] = '&';
-					buf[i++] = 'l';
-					buf[i++] = 't';
-					buf[i++] = ';';
+					buf[bytes++] = '&';
+					buf[bytes++] = 'l';
+					buf[bytes++] = 't';
+					buf[bytes++] = ';';
 					break;
 				case '>':
-					buf[i++] = '&';
-					buf[i++] = 'g';
-					buf[i++] = 't';
-					buf[i++] = ';';
+					buf[bytes++] = '&';
+					buf[bytes++] = 'g';
+					buf[bytes++] = 't';
+					buf[bytes++] = ';';
 					break;
 				default:
-					buf[i++] = scr_cc[x];
+					buf[bytes++] = scr_cc[x];
 			}
 
 			/* Write data out before the buffer gets full */
-			if (i > 512) {
-				if (fwrite(buf, 1, i, fp) < i) {
+			if (bytes > 512) {
+				if (fwrite(buf, 1, bytes, fp) < bytes) {
 					fprintf(stderr, "fwrite failed\n");
 					c_msg_print("\377rScreenshot could not be written!");
 					fclose(fp);
 					return;
 				}
 
-				i = 0;
+				bytes = 0;
 			}
 		}
-		buf[i++] = '\n';
+		buf[bytes++] = '\n';
 	}
 
 	/* Write what remains in the buffer */
-	if (i) {
-		if (fwrite(buf, 1, i, fp) < i) {
+	if (bytes) {
+		if (fwrite(buf, 1, bytes, fp) < bytes) {
 			fprintf(stderr, "fwrite failed\n");
 			c_msg_print("\377rScreenshot could not be written!");
 			fclose(fp);

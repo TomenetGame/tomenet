@@ -348,7 +348,7 @@ int local_file_write(int ind, unsigned short fnum, unsigned long len) {
 
 /* Close file and make the changes */
 int local_file_close(int ind, unsigned short fnum) {
-	int x;
+	size_t bytes;
 	struct ft_data *c_fd;
 	char buf[4096];
 	int size = 4096;
@@ -363,8 +363,8 @@ int local_file_close(int ind, unsigned short fnum) {
 	if (wp) {
 		fseek(c_fd->fp, 0, SEEK_SET);
 
-		while ((x = fread(buf, 1, size, c_fd->fp)) > 0) {
-			if (fwrite(buf, 1, x, wp) < x) {
+		while ((bytes = fread(buf, 1, size, c_fd->fp)) > 0) {
+			if (fwrite(buf, 1, bytes, wp) < bytes) {
 				fprintf(stderr, "fwrite failed\n");
 				success = 0;
 				break;
