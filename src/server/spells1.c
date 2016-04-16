@@ -11750,8 +11750,9 @@ int approx_damage(int m_idx, int dam, int typ) {
 					dam = (dam * 3) / 4;
 				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 					dam /= 2;
-				else ;
+				else {
 					//dam *= 5; dam /= (randint(3)+4);
+				}
 			}
 			if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
 			break;
@@ -11782,8 +11783,9 @@ int approx_damage(int m_idx, int dam, int typ) {
 					dam = (dam * 3) / 4;
 				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 					dam /= 2;
-				else ;
-//					dam *= 5; dam /= (randint(3)+4);
+				else {
+					//dam *= 5; dam /= (randint(3)+4);
+				}
 			}
 			break;
 
@@ -11952,8 +11954,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 					resist_tele = TRUE;
 			}
 
-			if (!resist_tele) ;//do_dist = 10;
-			else ;//do_dist = 0;
+			if (!resist_tele) {}//do_dist = 10;
+			else {}//do_dist = 0;
 
 			if (r_ptr->flags4 & RF4_BR_GRAV) {
 				dam /= 3;
@@ -12070,7 +12072,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			//do_poly = TRUE;
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))
-				;//do_poly = FALSE;
+				{}//do_poly = FALSE;
 
 			dam = 0;
 			break;
@@ -12095,7 +12097,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if (!((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags3 & RF3_NO_SLEEP) ||
 			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))) /* RES_OLD() */
-				;//do_sleep = GF_OLD_SLEEP_DUR;
+				{}//do_sleep = GF_OLD_SLEEP_DUR;
 			dam = 0;
 			break;
 
@@ -12104,7 +12106,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags3 & RF3_NO_CONF) ||
 			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) /* RES_OLD() */
-				;//do_conf = 0;
+				{}//do_conf = 0;
 			dam = 0;
 			break;
 
@@ -12118,7 +12120,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			//do_blind = dam / 3;
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->level > ((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) / 2 + 10)) /* RES_OLD */
-				;//do_blind = do_conf = 0;
+				{}//do_blind = do_conf = 0;
 			if (r_ptr->flags3 & RF3_NO_CONF) {}//do_conf = 0;
 			dam /= 3;
 			break;
