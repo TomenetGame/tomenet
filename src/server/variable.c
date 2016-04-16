@@ -223,7 +223,7 @@ server_opts cfg = {
 	6,		/* charmode_trading_restrictions FLAGS: how restricted is trading? 0 = no exchange, +1 = ever can take (nonever&&nonpvp) items (bad idea), +2 = pvp can take ever, +4 = pvp can take nonever (double-edged) */
 	0,		/* item_awareness - how easily the player becomes aware of sofar un-identified items
 					    0 = normal, 1 = seeing in standard town shop (1 to 6), 2 = seeing in any shop while carrying it, 3 = seeing in any shop */
-	TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,	/* types of messages which will be transmitted through the world server (if available). */
+	TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,	/* types of messages which will be transmitted through the world server (if available). */
 };
 
 struct combo_ban *banlist = NULL;
