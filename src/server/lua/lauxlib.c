@@ -183,7 +183,7 @@ LUALIB_API void luaL_addstring (luaL_Buffer *B, const char *s) {
 LUALIB_API void luaL_pushresult (luaL_Buffer *B) {
   emptybuffer(B);
   if (B->level == 0)
-    lua_pushlstring(B->L, NULL, 0);
+    lua_pushlstring(B->L, "", 0);
   else if (B->level > 1)
     lua_concat(B->L, B->level);
   B->level = 1;
