@@ -2206,8 +2206,8 @@ static int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x
 	   worldmap coords. */
 	Rand_quick = TRUE;
 	/* My attempt to create something chaotic - mikaelh */
-	Rand_value = (3623 * wpos->wy + 29753) * (2843 * wpos->wx + 48869) +
-		(1741 * y + 22109) * y * x + (x + 96779) * x + 42;
+	Rand_value = (3623U * wpos->wy + 29753) * (2843U * wpos->wx + 48869) +
+		(1741U * y + 22109) * y * x + (x + 96779U) * x + 42U;
 
 	/* Seasons */
 	switch (season) {
