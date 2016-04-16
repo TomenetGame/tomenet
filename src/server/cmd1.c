@@ -2662,7 +2662,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 										continue;
 									}
 								} else {
-									if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+									if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
 									/* now <4.4.1.8 is no longer supported! to make s_aux.lua slimmer */
 										spell1_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell1));//NO LONGER SUPPORTED
 										spell2_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell2));//NO LONGER SUPPORTED
@@ -5985,7 +5985,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			/* update the wilderness map */
 			if(!p_ptr->ghost)
 				p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] |=
-				    (1 << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
+				    (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
 
 			new_players_on_depth(wpos, 1, TRUE);
 			p_ptr->new_level_flag = TRUE;
@@ -6611,7 +6611,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			(cs_ptr = GetCS(c_ptr, CS_SHOP)) && cs_ptr->sc.omni == 3)
 
 		{
-			if (p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] & (1 << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8))) {
+			if (p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] & (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8))) {
 				/* Resurrect him */
 				resurrect_player(Ind, 0);
 

@@ -2779,14 +2779,14 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
  #if 0 /* this only makes sense for single (x,y) revelation, not for patch area */
 				if (p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
-				    (1 << (x + y * MAX_WILD_X) % 8)) {
+				    (1U << (x + y * MAX_WILD_X) % 8)) {
 					msg_format(Ind, "\377sThis world map piece shows the layout at \377u(%d,%d)\377s which you already know.", x, y);
 					break;
 				}
  #endif
 
 				//msg_format(Ind, "\377sYou learn the world map layout at sector \377u(%d,%d)\377s.", x, y); //for single (x,y) revelation
-				p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] |= (1 << ((x + y * MAX_WILD_X) % 8));
+				p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] |= (1U << ((x + y * MAX_WILD_X) % 8));
 
 				if ((d_ptr = wild->tower) && d_ptr->type != DI_VALINOR) {
 					msg_print(Ind, "\377sYou learn that there is a tower at that location, called:");
@@ -4992,37 +4992,37 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			if (!m_idx) continue;
 			m_ptr = &m_list[m_idx];
 
-			if (!(m_ptr->r_ptr->extra & (1 << (o_ptr->sval - 200)))) {
+			if (!(m_ptr->r_ptr->extra & (1U << (o_ptr->sval - 200)))) {
 				msg_print(Ind, "The golem appears indifferent to your command.");
 				continue;
 			}
 
 			switch (o_ptr->sval) {
 			case SV_GOLEM_ATTACK:
-				if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
+				if (m_ptr->mind & (1U << (o_ptr->sval - 200))) {
 					msg_print(Ind, "The golem stops going for your target.");
-					m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+					m_ptr->mind &= ~(1U << (o_ptr->sval - 200));
 				} else {
 					msg_print(Ind, "The golem approaches your target!");
-					m_ptr->mind |= (1 << (o_ptr->sval - 200));
+					m_ptr->mind |= (1U << (o_ptr->sval - 200));
 				}
 				break;
 			case SV_GOLEM_FOLLOW:
-				if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
+				if (m_ptr->mind & (1U << (o_ptr->sval - 200))) {
 					msg_print(Ind, "The golem stops following you around.");
-					m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+					m_ptr->mind &= ~(1U << (o_ptr->sval - 200));
 				} else {
 					msg_print(Ind, "The golem starts following you around!");
-					m_ptr->mind |= (1 << (o_ptr->sval - 200));
+					m_ptr->mind |= (1U << (o_ptr->sval - 200));
 				}
 				break;
 			case SV_GOLEM_GUARD:
-				if (m_ptr->mind & (1 << (o_ptr->sval - 200))) {
+				if (m_ptr->mind & (1U << (o_ptr->sval - 200))) {
 					msg_print(Ind, "The golem stops being on guard.");
-					m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+					m_ptr->mind &= ~(1U << (o_ptr->sval - 200));
 				} else {
 					msg_print(Ind, "The golem seems to be on guard now!");
-					m_ptr->mind |= (1 << (o_ptr->sval - 200));
+					m_ptr->mind |= (1U << (o_ptr->sval - 200));
 				}
 				break;
 			}

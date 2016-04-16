@@ -1665,7 +1665,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME))
 				pval = 0;
 
-//			int boost = 1 << pval;
+//			int boost = 1U << pval;
 
 			/* Hack -- Negative "pval" is always bad */
 //			if (pval < 0) return (0L);
@@ -2552,7 +2552,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 			kpval = 0;
 		}
 
-		//int boost = 1 << pval;
+		//int boost = 1U << pval;
 
 		/* Hack -- Negative "pval" is always bad */
 		//if (pval < 0) return (0L);

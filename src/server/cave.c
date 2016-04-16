@@ -1718,7 +1718,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
 		bool stored = FALSE;
 
 		/* Don't have that breath */
-		if (!(r_ptr->flags4 & (1L << i))) continue;
+		if (!(r_ptr->flags4 & (1U << i))) continue;
 
 		/* Get the first color of this breath */
 		first_color = breath_to_attr[i][0];
@@ -4299,7 +4299,7 @@ static void wild_display_map(int Ind, char mode) {
 			/* if the player hasnt been here, dont show him the terrain */
 			/* Hack -- serverchez has knowledge of the full world */
 			if (!p_ptr->admin_dm)
-			if (!(p_ptr->wild_map[wild_idx(&twpos) / 8] & (1 << (wild_idx(&twpos) % 8)))) type = -1;
+			if (!(p_ptr->wild_map[wild_idx(&twpos) / 8] & (1U << (wild_idx(&twpos) % 8)))) type = -1;
 			/* hack --  the town is always known */
 
 			switch (type) {
@@ -6201,10 +6201,10 @@ errr vinfo_init(void)
 			{
 				switch (i / 32)
 				{
-					case 3: vinfo[e].bits_3 |= (1L << (i % 32)); break;
-					case 2: vinfo[e].bits_2 |= (1L << (i % 32)); break;
-					case 1: vinfo[e].bits_1 |= (1L << (i % 32)); break;
-					case 0: vinfo[e].bits_0 |= (1L << (i % 32)); break;
+					case 3: vinfo[e].bits_3 |= (1U << (i % 32)); break;
+					case 2: vinfo[e].bits_2 |= (1U << (i % 32)); break;
+					case 1: vinfo[e].bits_1 |= (1U << (i % 32)); break;
+					case 0: vinfo[e].bits_0 |= (1U << (i % 32)); break;
 				}
 			}
 		}

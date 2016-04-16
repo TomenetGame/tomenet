@@ -1565,7 +1565,7 @@ static errr grab_one_class_flag(s32b *choice, cptr what) {
 	//for (i = 0; i < max_c_idx && (s = class_info[i].title + c_name); i++)
 	for (i = 0; i < MAX_CLASS && (s = class_info[i].title); i++) {
 		if (streq(what, s)) {
-			(choice[i / 32]) |= (1L << i);
+			(choice[i / 32]) |= (1U << i);
 			return (0);
 		}
 	}
@@ -1589,7 +1589,7 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what) {
 //	for (i = 0; i < max_rp_idx && (s = race_info[i].title + rp_name); i++)
 	for (i = 0; i < MAX_RACE && (s = race_info[i].title); i++) {
 		if (streq(what, s)) {
-			(choice[i / 32]) |= (1L << i);
+			(choice[i / 32]) |= (1U << i);
 			return (0);
 		}
 	}
@@ -1611,7 +1611,7 @@ static errr grab_one_player_realm_flag(s32b *realms, cptr what) {
 	/* Check flags1 */
 	for (i = 1; i < MAX_REALM; i++) {
 		if (streq(what, realm_names[i][0])) {
-			(realms[(i - 1) / 32]) |= (1L << (i - 1));
+			(realms[(i - 1) / 32]) |= (1U << (i - 1));
 			return (0);
 		}
 	}
@@ -1633,7 +1633,7 @@ static errr grab_one_vault_flag(vault_type *v_ptr, cptr what) {
 	/* Check flags1 */
 	for (i = 0; i < 32; i++) {
 		if (streq(what, v_info_flags1[i])) {
-			v_ptr->flags1 |= (1L << i);
+			v_ptr->flags1 |= (1U << i);
 			return (0);
 		}
 	}
@@ -2052,11 +2052,11 @@ static errr grab_one_feature_flag(feature_type *f_ptr, cptr what) {
 	/* Check flags1 */
 	for (i = 0; i < 32; i++) {
 		if (streq(what, f_info_flags1[i])) {
-			f_ptr->flags1 |= (1L << i);
+			f_ptr->flags1 |= (1U << i);
 			return (0);
 		}
 		if (streq(what, f_info_flags2[i])) {
-			f_ptr->flags2 |= (1L << i);
+			f_ptr->flags2 |= (1U << i);
 			return (0);
 		}
 	}
@@ -2410,45 +2410,45 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what) {
 	for (i = 0; i < 32; i++) {
 		/* Check flags1 */
 		if (streq(what, k_info_flags1[i])) {
-			k_ptr->flags1 |= (1L << i);
+			k_ptr->flags1 |= (1U << i);
 			return (0);
 		}
 		/* Check flags2 */
 		if (streq(what, k_info_flags2[i])) {
-			k_ptr->flags2 |= (1L << i);
+			k_ptr->flags2 |= (1U << i);
 			return (0);
 		}
 #if 1
 		/* Check flags2 -- traps*/
 		if (streq(what, k_info_flags2_trap[i])) {
-			k_ptr->flags2 |= (1L << i);
+			k_ptr->flags2 |= (1U << i);
 			return (0);
 		}
 #endif	// 0
 		/* Check flags3 */
 		if (streq(what, k_info_flags3[i])) {
-			k_ptr->flags3 |= (1L << i);
+			k_ptr->flags3 |= (1U << i);
 			return (0);
 		}
 		/* Check flags4 */
 		if (streq(what, k_info_flags4[i])) {
-			k_ptr->flags4 |= (1L << i);
+			k_ptr->flags4 |= (1U << i);
 			return (0);
 		}
 		/* Check flags5 */
 		if (streq(what, k_info_flags5[i])) {
-			k_ptr->flags5 |= (1L << i);
+			k_ptr->flags5 |= (1U << i);
 			return (0);
 		}
 		/* Check flags6 */
 		if (streq(what, k_info_flags6[i])) {
-			k_ptr->flags6 |= (1L << i);
+			k_ptr->flags6 |= (1U << i);
 			return (0);
 		}
 
 		/* Check esp_flags */
 		if (streq(what, esp_flags[i])) {
-			k_ptr->esp |= (1L << i);
+			k_ptr->esp |= (1U << i);
 			return (0);
 		}
 	}
@@ -2789,45 +2789,45 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what) {
 	/* Check flags1 */
 	for (i = 0; i < 32; i++) {
 		if (streq(what, k_info_flags1[i])) {
-			a_ptr->flags1 |= (1L << i);
+			a_ptr->flags1 |= (1U << i);
 			return (0);
 		}
 		/* Check flags2 */
 		if (streq(what, k_info_flags2[i])) {
-			a_ptr->flags2 |= (1L << i);
+			a_ptr->flags2 |= (1U << i);
 			return (0);
 		}
 		/* Check flags3 */
 		if (streq(what, k_info_flags3[i])) {
-			a_ptr->flags3 |= (1L << i);
+			a_ptr->flags3 |= (1U << i);
 			return (0);
 		}
 #if 1
 		/* Check flags2 -- traps (huh? - Jir -) */
 		if (streq(what, k_info_flags2_trap[i])) {
-			a_ptr->flags2 |= (1L << i);
+			a_ptr->flags2 |= (1U << i);
 			return (0);
 		}
 #endif	// 0
 		/* Check flags4 */
 		if (streq(what, k_info_flags4[i])) {
-			a_ptr->flags4 |= (1L << i);
+			a_ptr->flags4 |= (1U << i);
 			return (0);
 		}
 		/* Check flags5 */
 		if (streq(what, k_info_flags5[i])) {
-			a_ptr->flags5 |= (1L << i);
+			a_ptr->flags5 |= (1U << i);
 			return (0);
 		}
 		/* Check flags6 */
 		if (streq(what, k_info_flags6[i])) {
-			a_ptr->flags6 |= (1L << i);
+			a_ptr->flags6 |= (1U << i);
 			return (0);
 		}
 
 		/* Check esp_flags */
 		if (streq(what, esp_flags[i])) {
-			a_ptr->esp |= (1L << i);
+			a_ptr->esp |= (1U << i);
 			return (0);
 		}
 	}
@@ -3119,7 +3119,7 @@ static errr grab_one_skill_flag(u32b *f1, cptr what) {
 	/* Check flags1 */
 	for (i = 0; i < 32; i++) {
 		if (streq(what, s_info_flags1[i])) {
-			(*f1) |= (1L << i);
+			(*f1) |= (1U << i);
 			return (0);
 		}
 	}
@@ -3474,51 +3474,51 @@ static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what, int n) {
 	for (i = 0; i < 32; i++) {
 		/* Check flags1 */
 		if (streq(what, k_info_flags1[i])) {
-			e_ptr->flags1[n] |= (1L << i);
+			e_ptr->flags1[n] |= (1U << i);
 			return (0);
 		}
 		/* Check flags2 */
 		if (streq(what, k_info_flags2[i])) {
-			e_ptr->flags2[n] |= (1L << i);
+			e_ptr->flags2[n] |= (1U << i);
 			return (0);
 		}
 #if 1
 		/* Check flags2 -- traps */
 		if (streq(what, k_info_flags2_trap[i])) {
-			e_ptr->flags2[n] |= (1L << i);
+			e_ptr->flags2[n] |= (1U << i);
 			return (0);
 		}
 #endif	// 0
 		/* Check flags3 */
 		if (streq(what, k_info_flags3[i])) {
-			e_ptr->flags3[n] |= (1L << i);
+			e_ptr->flags3[n] |= (1U << i);
 			return (0);
 		}
 #if 1
 		/* Check flags4 */
 		if (streq(what, k_info_flags4[i])) {
-			e_ptr->flags4[n] |= (1L << i);
+			e_ptr->flags4[n] |= (1U << i);
 			return (0);
 		}
 		/* Check flags5 */
 		if (streq(what, k_info_flags5[i])) {
-			e_ptr->flags5[n] |= (1L << i);
+			e_ptr->flags5[n] |= (1U << i);
 			return (0);
 		}
 
 		/* Check esp_flags */
 		if (streq(what, esp_flags[i])) {
-			e_ptr->esp[n] |= (1L << i);
+			e_ptr->esp[n] |= (1U << i);
 			return (0);
 		}
 
 		/* Check ego_flags */
 		if (streq(what, ego_flags1[i])) {
-			e_ptr->fego1[n] |= (1L << i);
+			e_ptr->fego1[n] |= (1U << i);
 			return (0);
 		}
 		if (streq(what, ego_flags2[i])) {
-			e_ptr->fego2[n] |= (1L << i);
+			e_ptr->fego2[n] |= (1U << i);
 			return (0);
 		}
 #endif
@@ -3881,49 +3881,49 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what) {
 	/* Scan flags3 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags3[i])) {
-			r_ptr->flags3 |= (1L << i);
+			r_ptr->flags3 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags1 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags1[i])) {
-			r_ptr->flags1 |= (1L << i);
+			r_ptr->flags1 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags2 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags2[i])) {
-			r_ptr->flags2 |= (1L << i);
+			r_ptr->flags2 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags8 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags8[i])) {
-			r_ptr->flags8 |= (1L << i);
+			r_ptr->flags8 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags7[i])) {
-			r_ptr->flags7 |= (1L << i);
+			r_ptr->flags7 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags9 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags9[i])) {
-			r_ptr->flags9 |= (1L << i);
+			r_ptr->flags9 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags0 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags0[i])) {
-			r_ptr->flags0 |= (1L << i);
+			r_ptr->flags0 |= (1U << i);
 			return (0);
 		}
 
@@ -3944,28 +3944,28 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what) {
 	/* Scan flags5 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags5[i])) {
-			r_ptr->flags5 |= (1L << i);
+			r_ptr->flags5 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags6 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags6[i])) {
-			r_ptr->flags6 |= (1L << i);
+			r_ptr->flags6 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags4 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags4[i])) {
-			r_ptr->flags4 |= (1L << i);
+			r_ptr->flags4 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags0 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags0[i])) {
-			r_ptr->flags0 |= (1L << i);
+			r_ptr->flags0 |= (1U << i);
 			return (0);
 		}
 
@@ -3974,7 +3974,7 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what) {
 if (season_halloween) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags8[i])) {
-			r_ptr->flags8 |= (1L << i);
+			r_ptr->flags8 |= (1U << i);
 			return (0);
 		}
 }
@@ -4524,9 +4524,9 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags1[i])) {
 			if (add)
-				re_ptr->mflags1 |= (1L << i);
+				re_ptr->mflags1 |= (1U << i);
 			else
-				re_ptr->nflags1 |= (1L << i);
+				re_ptr->nflags1 |= (1U << i);
 			return (0);
 		}
 
@@ -4534,45 +4534,45 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags2[i])) {
 			if (add)
-				re_ptr->mflags2 |= (1L << i);
+				re_ptr->mflags2 |= (1U << i);
 			else
-				re_ptr->nflags2 |= (1L << i);
+				re_ptr->nflags2 |= (1U << i);
 			return (0);
 		}
 	/* Scan flags3 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags3[i])) {
 			if (add)
-				re_ptr->mflags3 |= (1L << i);
+				re_ptr->mflags3 |= (1U << i);
 			else
-				re_ptr->nflags3 |= (1L << i);
+				re_ptr->nflags3 |= (1U << i);
 			return (0);
 		}
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags7[i])) {
 			if (add)
-				re_ptr->mflags7 |= (1L << i);
+				re_ptr->mflags7 |= (1U << i);
 			else
-				re_ptr->nflags7 |= (1L << i);
+				re_ptr->nflags7 |= (1U << i);
 			return (0);
 		}
 	/* Scan flags8 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags8[i])) {
 			if (add)
-				re_ptr->mflags8 |= (1L << i);
+				re_ptr->mflags8 |= (1U << i);
 			else
-				re_ptr->nflags8 |= (1L << i);
+				re_ptr->nflags8 |= (1U << i);
 			return (0);
 		}
 	/* Scan flags9 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags9[i])) {
 			if (add)
-				re_ptr->mflags9 |= (1L << i);
+				re_ptr->mflags9 |= (1U << i);
 			else
-				re_ptr->nflags9 |= (1L << i);
+				re_ptr->nflags9 |= (1U << i);
 			return (0);
 		}
 
@@ -4594,9 +4594,9 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags4[i])) {
 			if (add)
-				re_ptr->mflags4 |= (1L << i);
+				re_ptr->mflags4 |= (1U << i);
 			else
-				re_ptr->nflags4 |= (1L << i);
+				re_ptr->nflags4 |= (1U << i);
 			return (0);
 		}
 
@@ -4604,9 +4604,9 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags5[i])) {
 			if (add)
-				re_ptr->mflags5 |= (1L << i);
+				re_ptr->mflags5 |= (1U << i);
 			else
-				re_ptr->nflags5 |= (1L << i);
+				re_ptr->nflags5 |= (1U << i);
 			return (0);
 		}
 
@@ -4614,9 +4614,9 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags6[i])) {
 			if (add)
-				re_ptr->mflags6 |= (1L << i);
+				re_ptr->mflags6 |= (1U << i);
 			else
-				re_ptr->nflags6 |= (1L << i);
+				re_ptr->nflags6 |= (1U << i);
 			return (0);
 		}
 
@@ -4624,9 +4624,9 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add) {
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags0[i])) {
 			if (add)
-				re_ptr->mflags0 |= (1L << i);
+				re_ptr->mflags0 |= (1U << i);
 			else
-				re_ptr->nflags0 |= (1L << i);
+				re_ptr->nflags0 |= (1U << i);
 			return (0);
 		}
 
@@ -4660,47 +4660,47 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must) {
 	/* Scan flags1 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags1[i])) {
-			if (must) re_ptr->flags1 |= (1L << i);
-			else re_ptr->hflags1 |= (1L << i);
+			if (must) re_ptr->flags1 |= (1U << i);
+			else re_ptr->hflags1 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags2 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags2[i])) {
-			if (must) re_ptr->flags2 |= (1L << i);
-			else re_ptr->hflags2 |= (1L << i);
+			if (must) re_ptr->flags2 |= (1U << i);
+			else re_ptr->hflags2 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags3 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags3[i])) {
-			if (must) re_ptr->flags3 |= (1L << i);
-			else re_ptr->hflags3 |= (1L << i);
+			if (must) re_ptr->flags3 |= (1U << i);
+			else re_ptr->hflags3 |= (1U << i);
 			return (0);
 		}
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags7[i])) {
-			if (must) re_ptr->flags7 |= (1L << i);
-			else re_ptr->hflags7 |= (1L << i);
+			if (must) re_ptr->flags7 |= (1U << i);
+			else re_ptr->hflags7 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags8 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags8[i])) {
-			if (must) re_ptr->flags8 |= (1L << i);
-			else re_ptr->hflags8 |= (1L << i);
+			if (must) re_ptr->flags8 |= (1U << i);
+			else re_ptr->hflags8 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags9 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags9[i])) {
-			if (must) re_ptr->flags9 |= (1L << i);
-			else re_ptr->hflags9 |= (1L << i);
+			if (must) re_ptr->flags9 |= (1U << i);
+			else re_ptr->hflags9 |= (1U << i);
 			return (0);
 		}
 
@@ -5221,7 +5221,7 @@ static errr grab_one_trap_type_flag(trap_kind *t_ptr, cptr what) {
 	/* Check flags1 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, t_info_flags[i])) {
-			t_ptr->flags |= (1L << i);
+			t_ptr->flags |= (1U << i);
 			return (0);
 		}
 
@@ -5457,21 +5457,21 @@ static errr grab_one_dungeon_flag(dungeon_info_type *d_ptr, cptr what) {
 	/* Scan flags1 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, d_info_flags1[i])) {
-			d_ptr->flags1 |= (1L << i);
+			d_ptr->flags1 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags2 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, d_info_flags2[i])) {
-			d_ptr->flags2 |= (1L << i);
+			d_ptr->flags2 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags3 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, d_info_flags3[i])) {
-			d_ptr->flags3 |= (1L << i);
+			d_ptr->flags3 |= (1U << i);
 			return (0);
 		}
 
@@ -5491,42 +5491,42 @@ static errr grab_one_basic_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 	/* Scan flags1 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags1[i])) {
-			d_ptr->rules[rule].mflags1 |= (1L << i);
+			d_ptr->rules[rule].mflags1 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags2 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags2[i])) {
-			d_ptr->rules[rule].mflags2 |= (1L << i);
+			d_ptr->rules[rule].mflags2 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags3 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags3[i])) {
-			d_ptr->rules[rule].mflags3 |= (1L << i);
+			d_ptr->rules[rule].mflags3 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags7[i])) {
-			d_ptr->rules[rule].mflags7 |= (1L << i);
+			d_ptr->rules[rule].mflags7 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags8 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags8[i])) {
-			d_ptr->rules[rule].mflags8 |= (1L << i);
+			d_ptr->rules[rule].mflags8 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags9 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags9[i])) {
-			d_ptr->rules[rule].mflags9 |= (1L << i);
+			d_ptr->rules[rule].mflags9 |= (1U << i);
 			return (0);
 		}
 
@@ -5547,28 +5547,28 @@ static errr grab_one_spell_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 	/* Scan flags4 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags4[i])) {
-			d_ptr->rules[rule].mflags4 |= (1L << i);
+			d_ptr->rules[rule].mflags4 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags5 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags5[i])) {
-			d_ptr->rules[rule].mflags5 |= (1L << i);
+			d_ptr->rules[rule].mflags5 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags6 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags6[i])) {
-			d_ptr->rules[rule].mflags6 |= (1L << i);
+			d_ptr->rules[rule].mflags6 |= (1U << i);
 			return (0);
 		}
 
 	/* Scan flags0 */
 	for (i = 0; i < 32; i++)
 		if (streq(what, r_info_flags0[i])) {
-			d_ptr->rules[rule].mflags0 |= (1L << i);
+			d_ptr->rules[rule].mflags0 |= (1U << i);
 			return (0);
 		}
 
@@ -6169,7 +6169,7 @@ static errr grab_one_store_flag(store_info_type *st_ptr, cptr what) {
 	/* Scan store flags */
 	for (i = 0; i < 32; i++) {
 		if (streq(what, st_info_flags1[i])) {
-			st_ptr->flags1 |= (1L << i);
+			st_ptr->flags1 |= (1U << i);
 			return (0);
 		}
 	}

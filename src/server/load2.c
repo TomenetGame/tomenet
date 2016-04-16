@@ -3652,7 +3652,7 @@ void fix_max_depth(player_type *p_ptr) {
 
 		/* skip if player has never visited this dungeon's worldmap sector even! */
 		if (!is_admin(p_ptr) &&
-		    !(p_ptr->wild_map[wild_idx(&wpos) / 8] & (1 << (wild_idx(&wpos) % 8)))) continue;
+		    !(p_ptr->wild_map[wild_idx(&wpos) / 8] & (1U << (wild_idx(&wpos) % 8)))) continue;
 
 		/* translate */
 		if ((d_ptr = wild_info[y][x].tower)) {

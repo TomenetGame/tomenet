@@ -5631,7 +5631,7 @@ byte count_bits(u32b array) {
 
 	if (array)
 		for (i = 0; i < 32; i++)
-			if (array & (1 << i)) k++;
+			if (array & (1U << i)) k++;
 
 	return k;
 }
@@ -6684,7 +6684,7 @@ cptr flags_str(u32b flags) {
 	int b;
 
 	for (b = 0; b < 32; b++) {
-		*fsp++ = (flags & (1 << b)) ? '1' : '0';
+		*fsp++ = (flags & (1U << b)) ? '1' : '0';
 		if (b % 4 == 3) *fsp++ = ' ';
 	}
 	*fsp++ = '\0';

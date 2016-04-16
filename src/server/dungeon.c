@@ -2048,7 +2048,7 @@ static int retaliate_mimic_power(int Ind, int choice) {
 	for (k = 0; k < 3; k++) {
 		for (i = 0; i < 32; i++) {
 			/* Look for "okay" spells */
-			if (p_ptr->innate_spells[k] & (1L << i)) {
+			if (p_ptr->innate_spells[k] & (1U << i)) {
 				if (num == choice) return (k * 32 + i);
 				num++;
 			}
@@ -2251,7 +2251,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 				/* It's a tome */
 
 				/* Get the spell */
-				if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+				if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
 					/* no longer supported! to make s_aux.lua slimmer */
 					spell = exec_lua(Ind, format("return spell_x(%d, %d, %d)", o_ptr->sval, o_ptr->pval, choice));
 				} else {
@@ -3246,7 +3246,7 @@ void recall_player(int Ind, char *message) {
 	   We learn about the intermediate world map sectors we land on. */
 	if (!p_ptr->ghost)
 		p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] |=
-		    (1 << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
+		    (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
 
 	/* Did we really make it through all floors of the ironman challenge dungeon? */
 	if (in_irondeepdive(&old_wpos)
@@ -3527,7 +3527,7 @@ static void do_recall(int Ind, bool bypass)
 		int dis;
 
 		if (((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] &
-		    (1 << (wild_idx(&p_ptr->recall_pos))%8))) &&
+		    (1U << (wild_idx(&p_ptr->recall_pos))%8))) &&
 		    !is_admin(p_ptr) ) ||
 		    inarea(&p_ptr->wpos, &p_ptr->recall_pos))
 		{

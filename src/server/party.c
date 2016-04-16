@@ -919,7 +919,7 @@ static u32b new_accid() {
 	C_MAKE(t_map, MAX_ACCOUNTS / 8, char);
 	while (fread(&t_acc, sizeof(struct account), 1, fp)) {
 		if (t_acc.flags & ACC_DELD) continue;
-		t_map[t_acc.id / 8] |= (1 << (t_acc.id % 8));
+		t_map[t_acc.id / 8] |= (1U << (t_acc.id % 8));
 		num_entries++;
 	}
 
@@ -931,21 +931,21 @@ static u32b new_accid() {
 	 *  - mikaelh
 	 */
 	if (num_entries) {
-		t_map[0] |= (1 << 1);
+		t_map[0] |= (1U << 1);
 	}
 
 	/* Make account id 0 unavailable just to be safe */
-	t_map[0] |= (1 << 0);
+	t_map[0] |= (1U << 0);
 
 	/* Find the next free account ID */
 	for (id = account_id; id < MAX_ACCOUNTS; id++){
-		if(!(t_map[id / 8] & (1 << (id % 8)))) break;
+		if(!(t_map[id / 8] & (1U << (id % 8)))) break;
 	}
 
 	if (id == MAX_ACCOUNTS) {
 		/* Wrap around */
 		for (id = 1; id < account_id; id++) {
-			if (!(t_map[id / 8] & (1 << (id % 8)))) break;
+			if (!(t_map[id / 8] & (1U << (id % 8)))) break;
 		}
 
 		/* Oops, no free account IDs */
@@ -4057,7 +4057,7 @@ void scan_players() {
 #else
 				/* If a character didn't timeout, mark his
 				   account as active here */
-				account_active[ptr->account / 8] |= 1 << (ptr->account % 8);
+				account_active[ptr->account / 8] |= 1U << (ptr->account % 8);
 #endif
 			}
 
@@ -4148,7 +4148,7 @@ void scan_accounts() {
 		}
 
 		/* Was the account marked as active? */
-		else if (account_active[acc.id / 8] & (1 << (acc.id % 8))) {
+		else if (account_active[acc.id / 8] & (1U << (acc.id % 8))) {
 			acc.acc_laston = now;
 
 			/* Count active accounts */

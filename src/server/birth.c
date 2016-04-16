@@ -1147,7 +1147,7 @@ static void player_wipe(int Ind)
 		p_ptr->wild_map[i] = 0;
 
 	/* Hack -- assume the player has an initial knowledge of the area close to town */
-	p_ptr->wild_map[(cfg.town_x + cfg.town_y * MAX_WILD_X) / 8] |= 1 << ((cfg.town_x + cfg.town_y * MAX_WILD_X) % 8);
+	p_ptr->wild_map[(cfg.town_x + cfg.town_y * MAX_WILD_X) / 8] |= 1U << ((cfg.town_x + cfg.town_y * MAX_WILD_X) % 8);
 
 	/* Esp link */
 	p_ptr->esp_link_end = 0;
@@ -2237,7 +2237,7 @@ static void player_setup(int Ind, bool new) {
 			if (!players_on_depth(wpos)) new_players_on_depth(wpos, 1, FALSE);
 #ifndef NEW_DUNGEON
 			/* paranoia, update the players wilderness map. */
-			p_ptr->wild_map[(-p_ptr->dun_depth) / 8] |= (1 << ((-p_ptr->dun_depth) % 8));
+			p_ptr->wild_map[(-p_ptr->dun_depth) / 8] |= (1U << ((-p_ptr->dun_depth) % 8));
 #endif
 			p_ptr->dlev_id = 0;
 		}
@@ -3213,7 +3213,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if ((p_ptr->mode & MODE_DED_IDDC)) {
 		/* automatically know the location of IDDC dungeon */
 		p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
-		    (1 << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
+		    (1U << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
 	}
 #endif
 

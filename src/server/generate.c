@@ -5760,7 +5760,7 @@ static void build_type10(worldpos *wpos, int by0, int bx0, player_type *p_ptr) {
 		 */
 
 		/* Testing values for these parameters feel free to adjust */
-		grd = 1 << randint(4);
+		grd = 1U << randint(4);
 
 		/* Want average of about 16 */
 		roug = randint(8) * randint(4);

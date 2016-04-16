@@ -4038,7 +4038,7 @@ static bool addislands() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_OCEANBED1);
-		if (island(y, x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1 << MAXISLANDS) - 1))) added = TRUE;
+		if (island(y, x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1U << MAXISLANDS) - 1))) added = TRUE;
 	}
 	return added;
 }
@@ -4054,7 +4054,7 @@ static bool addforest() {
 			x = rand_int(MAX_WILD_X - 1);
 			y = rand_int(MAX_WILD_Y - 1);
 		} while (wild_info[y][x].type != WILD_GRASSLAND);
-		size = rand_int((1 << MAXWOOD) - 1);
+		size = rand_int((1U << MAXWOOD) - 1);
 		if (island(y, x, WILD_FOREST, WILD_GRASSLAND, size)) added = TRUE;
 		if (size > 3)
 			if (island(y, x, WILD_DENSEFOREST, WILD_FOREST, size - 3)) added = TRUE;
@@ -4309,10 +4309,10 @@ bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w)
 
 				/* New we know here */
 				if (!(p_ptr->wild_map[(i + j * MAX_WILD_X) / 8] &
-					(1 << ((i + j * MAX_WILD_X) % 8))))
+					(1U << ((i + j * MAX_WILD_X) % 8))))
 				{
 					p_ptr->wild_map[(i + j * MAX_WILD_X) / 8] |=
-						(1 << ((i + j * MAX_WILD_X) % 8));
+						(1U << ((i + j * MAX_WILD_X) % 8));
 					shown = TRUE;
 				}
 
@@ -4338,10 +4338,10 @@ bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w)
 
 				/* New we know here */
 				if (!(p_ptr->wild_map[(i + j * MAX_WILD_X) / 8] &
-					(1 << ((i + j * MAX_WILD_X) % 8))))
+					(1U << ((i + j * MAX_WILD_X) % 8))))
 				{
 					p_ptr->wild_map[(i + j * MAX_WILD_X) / 8] |=
-						(1 << ((i + j * MAX_WILD_X) % 8));
+						(1U << ((i + j * MAX_WILD_X) % 8));
 					shown = TRUE;
 				}
 

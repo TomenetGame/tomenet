@@ -7622,7 +7622,7 @@ void golem_creation(int Ind, int max) {
 			continue;
 		}
 		/* golem command scrolls */
-		else golem_flags |= 1 << (o_ptr->sval - 200);
+		else golem_flags |= 1U << (o_ptr->sval - 200);
 	}
 
 	/* Ahah FAIL !!! */

@@ -1850,7 +1850,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				inven_damage(Ind, set_all_destroy, 3 * k);
 
 				take_hit(Ind, l, "a chasm", 0);
-				//take_sanity_hit(Ind, 1 << k, "a chasm");
+				//take_sanity_hit(Ind, 1U << k, "a chasm");
 			}
 
 			do_player_trap_change_depth(Ind, -k);

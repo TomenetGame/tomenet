@@ -1299,22 +1299,22 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 
 	/* Extract the "innate" spells */
 	for (i = 0; i < 32; i++) {
-		if (f4 & (1L << i)) spells[num++] = i + RF4_OFFSET;
+		if (f4 & (1U << i)) spells[num++] = i + RF4_OFFSET;
 	}
 
 	/* Extract the "normal" spells */
 	for (i = 0; i < 32; i++) {
-		if (f5 & (1L << i)) spells[num++] = i + RF5_OFFSET;
+		if (f5 & (1U << i)) spells[num++] = i + RF5_OFFSET;
 	}
 
 	/* Extract the "bizarre" spells */
 	for (i = 0; i < 32; i++) {
-		if (f6 & (1L << i)) spells[num++] = i + RF6_OFFSET;
+		if (f6 & (1U << i)) spells[num++] = i + RF6_OFFSET;
 	}
 
 	/* Extract the "extra" spells */
 	for (i = 0; i < 32; i++) {
-		if (f0 & (1L << i)) spells[num++] = i + RF0_OFFSET;
+		if (f0 & (1U << i)) spells[num++] = i + RF0_OFFSET;
 	}
 
 if (season_halloween) {
@@ -1325,57 +1325,57 @@ if (season_halloween) {
 		if (m_ptr->hp > (m_ptr->maxhp / 3))
 		switch(rand_int(17)) {
 		case 0:	case 1:
-			if(f5 & (1L << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
+			if(f5 & (1U << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
 			break;
 		case 2:	case 3: case 4: case 5:
-			if(f5 & (1L << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
+			if(f5 & (1U << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
 			break;
 		case 6:	case 7:	case 8:
-			if(f5 & (1L << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
+			if(f5 & (1U << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
 			break;
 		case 9: case 10:
-			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
+			if(f6 & (1U << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
 			break;
 		default:
-			if(f4 & (1L << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
+			if(f4 & (1U << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
 			break;
 		}
 		/* Just more than 1/6 HP: Moan less, tele more often */
 		else if (m_ptr->hp > (m_ptr->maxhp / 6))
 		switch(rand_int(17)) {
 		case 0:	case 1:
-			if(f5 & (1L << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
+			if(f5 & (1U << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
 			break;
 		case 2:	case 3: case 4: case 5:
-			if(f5 & (1L << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
+			if(f5 & (1U << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
 			break;
 		case 6:	case 7:	case 8:
-			if(f5 & (1L << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
+			if(f5 & (1U << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
 			break;
 		case 9: case 10: case 11:// case 12:
-			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
+			if(f6 & (1U << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
 			break;
 		default:
-			if(f4 & (1L << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
+			if(f4 & (1U << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
 			break;
 		}
 		/* Nearly dead: Moan rarely, tele often */
 		else
 		switch(rand_int(17)) {
 		case 0:	case 1:
-			if(f5 & (1L << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
+			if(f5 & (1U << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
 			break;
 		case 2:	case 3: case 4: case 5:
-			if(f5 & (1L << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
+			if(f5 & (1U << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
 			break;
 		case 6:	case 7:	case 8:
-			if(f5 & (1L << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
+			if(f5 & (1U << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
 			break;
 		case 9: case 10: case 11: case 12:// case 13: case 14:
-			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
+			if(f6 & (1U << 5)) return(RF6_OFFSET + 5);	//RF6_TPORT
 			break;
 		default:
-			if(f4 & (1L << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
+			if(f4 & (1U << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
 			break;
 		}
 	}
@@ -2209,21 +2209,21 @@ bool make_attack_spell(int Ind, int m_idx) {
 #if 0
 	/* Extract the "innate" spells */
 	for (k = 0; k < 32; k++) {
-		if (f4 & (1L << k)) spell[num++] = k + RF4_OFFSET;
-		if (f5 & (1L << k)) spell[num++] = k + RF5_OFFSET;
-		if (f6 & (1L << k)) spell[num++] = k + RF6_OFFSET;
-		if (f0 & (1L << k)) spell[num++] = k + RF0_OFFSET;
+		if (f4 & (1U << k)) spell[num++] = k + RF4_OFFSET;
+		if (f5 & (1U << k)) spell[num++] = k + RF5_OFFSET;
+		if (f6 & (1U << k)) spell[num++] = k + RF6_OFFSET;
+		if (f0 & (1U << k)) spell[num++] = k + RF0_OFFSET;
 	}
 
 	/* Extract the "normal" spells */
 	for (k = 0; k < 32; k++)
-		if (f5 & (1L << k)) spell[num++] = k + RF5_OFFSET;
+		if (f5 & (1U << k)) spell[num++] = k + RF5_OFFSET;
 	/* Extract the "bizarre" spells */
 	for (k = 0; k < 32; k++)
-		if (f6 & (1L << k)) spell[num++] = k + RF6_OFFSET;
+		if (f6 & (1U << k)) spell[num++] = k + RF6_OFFSET;
 	/* Extract the "extra" spells */
 	for (k = 0; k < 32; k++)
-		if (f0 & (1L << k)) spell[num++] = k + RF0_OFFSET;
+		if (f0 & (1U << k)) spell[num++] = k + RF0_OFFSET;
 	/* No spells left */
 	if (!num) return (FALSE);
 #endif	// 0
@@ -3962,17 +3962,17 @@ bool make_attack_spell(int Ind, int m_idx) {
 	if (seen) {
 		/* Innate spell */
 		if (thrown_spell < 32*4) {
-			r_ptr->r_flags4 |= (1L << (thrown_spell - 32*3));
+			r_ptr->r_flags4 |= (1U << (thrown_spell - 32*3));
 			if (r_ptr->r_cast_innate < MAX_UCHAR) r_ptr->r_cast_inate++;
 		}
 		/* Bolt or Ball */
 		else if (thrown_spell < 32*5) {
-			r_ptr->r_flags5 |= (1L << (thrown_spell - 32*4));
+			r_ptr->r_flags5 |= (1U << (thrown_spell - 32*4));
 			if (r_ptr->r_cast_spell < MAX_UCHAR) r_ptr->r_cast_spell++;
 		}
 		/* Special spell */
 		else if (thrown_spell < 32*6) {
-			r_ptr->r_flags6 |= (1L << (thrown_spell - 32*5));
+			r_ptr->r_flags6 |= (1U << (thrown_spell - 32*5));
 			if (r_ptr->r_cast_spell < MAX_UCHAR) r_ptr->r_cast_spell++;
 		}
 	}
@@ -9477,7 +9477,7 @@ void process_monsters(void) {
 		p_ptr = _Players[closest];
 
 		/* Hack -- calculate the "player noise" */
-		noise = (1L << (30 - p_ptr->skill_stl));
+		noise = (1U << (30 - p_ptr->skill_stl));
 
 
 		/* Assume no move */

@@ -1136,7 +1136,7 @@ void do_slash_cmd(int Ind, char *message) {
 								return;
 							}
 						} else {
-							if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+							if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
 							/* now <4.4.1.8 is no longer supported! to make s_aux.lua slimmer */
 								spell_rec_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell_rec));//NO LONGER SUPPORTED
 #ifdef ENABLE_MAIA
@@ -1199,7 +1199,7 @@ void do_slash_cmd(int Ind, char *message) {
 						}
 						/* Test for 'Relocation' astral spell: */
 					} else {
-						if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+						if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
 						/* no longer supported! to make s_aux.lua slimmer */
 							if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
 								msg_print(Ind, "\377oRecall spell not found in this book.");
@@ -3725,7 +3725,7 @@ void do_slash_cmd(int Ind, char *message) {
  #if 1 /* note that this allows use of WoR to get to IDDC :) */
 					/* automatically know the location of IDDC dungeon */
 					p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
-					    (1 << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
+					    (1U << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
  #endif
 				}
 				p_ptr->warning_worldmap = 1;

@@ -443,7 +443,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	}
 
 	/* confirm the power */
-	if (!(p_ptr->innate_spells[j] & (1L << (power - j * 32)))) {
+	if (!(p_ptr->innate_spells[j] & (1U << (power - j * 32)))) {
 		msg_print(Ind, "You cannot use that power.");
 
 		/* Paranoia? Cease fire-till-kill! */
@@ -1609,7 +1609,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 			return;
 		}
 	} else {
-		if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+		if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
 			if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
 			/* no longer supported! to make s_aux.lua slimmer */
 				/* log for debugging */

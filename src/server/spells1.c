@@ -1334,7 +1334,7 @@ void teleport_player_level(int Ind, bool force) {
 		/* update the players wilderness map */
 		if (!p_ptr->ghost)
 			p_ptr->wild_map[(new_depth.wx + new_depth.wy * MAX_WILD_X) / 8] |=
-			    (1 << ((new_depth.wx + new_depth.wy * MAX_WILD_X) % 8));
+			    (1U << ((new_depth.wx + new_depth.wy * MAX_WILD_X) % 8));
 	/* sometimes go down */
 	} else if ((can_go_down(wpos, 0x1) && wpos->wz > 1 &&
 	    ((!can_go_up(wpos, 0x1) || wpos->wz >= -1 || (rand_int(100) < 50)) ||
@@ -1481,7 +1481,7 @@ void teleport_players_level(struct worldpos *wpos) {
 		/* update the players wilderness map */
 		if (!p_ptr->ghost)
 			p_ptr->wild_map[(new_wpos.wx + new_wpos.wy * MAX_WILD_X) / 8] |=
-			    (1 << ((new_wpos.wx + new_wpos.wy * MAX_WILD_X) % 8));
+			    (1U << ((new_wpos.wx + new_wpos.wy * MAX_WILD_X) % 8));
 
 		break_cloaking(i, 7);
 		stop_precision(i);
