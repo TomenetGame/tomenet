@@ -704,10 +704,10 @@ int Packet_scanf(va_alist)
 		    }
 		}
 		iptr = va_arg(ap, int *);
-		*iptr = sbuf->ptr[j++] << 24;
-		*iptr |= (sbuf->ptr[j++] & 0xFF) << 16;
-		*iptr |= (sbuf->ptr[j++] & 0xFF) << 8;
-		*iptr |= (sbuf->ptr[j++] & 0xFF);
+		*iptr = (sbuf->ptr[j++] & 0xFFU) << 24;
+		*iptr |= (sbuf->ptr[j++] & 0xFFU) << 16;
+		*iptr |= (sbuf->ptr[j++] & 0xFFU) << 8;
+		*iptr |= (sbuf->ptr[j++] & 0xFFU);
 		break;
 	    case 'u':
 		if (&sbuf->buf[sbuf->len] < &sbuf->ptr[j + 4]) {
@@ -725,10 +725,10 @@ int Packet_scanf(va_alist)
 		    }
 		}
 		uptr = va_arg(ap, unsigned *);
-		*uptr = (sbuf->ptr[j++] & 0xFF) << 24;
-		*uptr |= (sbuf->ptr[j++] & 0xFF) << 16;
-		*uptr |= (sbuf->ptr[j++] & 0xFF) << 8;
-		*uptr |= (sbuf->ptr[j++] & 0xFF);
+		*uptr = (sbuf->ptr[j++] & 0xFFU) << 24;
+		*uptr |= (sbuf->ptr[j++] & 0xFFU) << 16;
+		*uptr |= (sbuf->ptr[j++] & 0xFFU) << 8;
+		*uptr |= (sbuf->ptr[j++] & 0xFFU);
 		break;
 	    case 'h':
 		if (&sbuf->buf[sbuf->len] < &sbuf->ptr[j + 2]) {
@@ -748,13 +748,13 @@ int Packet_scanf(va_alist)
 		switch (fmt[++i]) {
 		case 'd':
 		    sptr = va_arg(ap, short *);
-		    *sptr = sbuf->ptr[j++] << 8;
-		    *sptr |= (sbuf->ptr[j++] & 0xFF);
+		    *sptr = (sbuf->ptr[j++] & 0xFFU) << 8;
+		    *sptr |= (sbuf->ptr[j++] & 0xFFU);
 		    break;
 		case 'u':
 		    usptr = va_arg(ap, unsigned short *);
-		    *usptr = (sbuf->ptr[j++] & 0xFF) << 8;
-		    *usptr |= (sbuf->ptr[j++] & 0xFF);
+		    *usptr = (sbuf->ptr[j++] & 0xFFU) << 8;
+		    *usptr |= (sbuf->ptr[j++] & 0xFFU);
 		    break;
 		default:
 		    failure = 1;
@@ -779,17 +779,17 @@ int Packet_scanf(va_alist)
 		switch (fmt[++i]) {
 		case 'd':
 		    lptr = va_arg(ap, long int *);
-		    *lptr = sbuf->ptr[j++] << 24;
-		    *lptr |= (sbuf->ptr[j++] & 0xFF) << 16;
-		    *lptr |= (sbuf->ptr[j++] & 0xFF) << 8;
-		    *lptr |= (sbuf->ptr[j++] & 0xFF);
+		    *lptr = (sbuf->ptr[j++] & 0xFFU) << 24;
+		    *lptr |= (sbuf->ptr[j++] & 0xFFU) << 16;
+		    *lptr |= (sbuf->ptr[j++] & 0xFFU) << 8;
+		    *lptr |= (sbuf->ptr[j++] & 0xFFU);
 		    break;
 		case 'u':
 		    ulptr = va_arg(ap, unsigned long int *);
-		    *ulptr = (sbuf->ptr[j++] & 0xFF) << 24;
-		    *ulptr |= (sbuf->ptr[j++] & 0xFF) << 16;
-		    *ulptr |= (sbuf->ptr[j++] & 0xFF) << 8;
-		    *ulptr |= (sbuf->ptr[j++] & 0xFF);
+		    *ulptr = (sbuf->ptr[j++] & 0xFFU) << 24;
+		    *ulptr |= (sbuf->ptr[j++] & 0xFFU) << 16;
+		    *ulptr |= (sbuf->ptr[j++] & 0xFFU) << 8;
+		    *ulptr |= (sbuf->ptr[j++] & 0xFFU);
 		    break;
 		default:
 		    failure = 1;
