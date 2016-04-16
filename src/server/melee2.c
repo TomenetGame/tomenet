@@ -6457,11 +6457,6 @@ void process_npcs() {
 #endif
 }
 
-/*
- * Hack -- local "player stealth" value (see below)
- */
-static u32b noise = 0L;
-
 
 static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, cave_type *c_ptr, bool pfriend) {
 	int p_idx_target = c_ptr ? 0 - c_ptr->m_idx : 0;
@@ -6874,6 +6869,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			break;
 		}
 #endif	// 0
+
+		/* Use the closest player (calculated in process_monsters()) */
+		p_ptr = Players[m_ptr->closest_player];
+
+		/* Calculate the "player noise" */
+		u32b noise = (1U << (30 - p_ptr->skill_stl));
 
 		/* Hack -- See if monster "notices" player */
 		if ((notice * notice * notice) <= noise || aggravated) {
@@ -9475,9 +9476,6 @@ void process_monsters(void) {
 //		if (m_ptr->cdis >= (r_ptr->aaf > 100 ? r_ptr->aaf : 100)) continue;
 
 		p_ptr = _Players[closest];
-
-		/* Hack -- calculate the "player noise" */
-		noise = (1U << (30 - p_ptr->skill_stl));
 
 
 		/* Assume no move */
