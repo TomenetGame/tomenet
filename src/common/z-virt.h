@@ -49,7 +49,7 @@
 
 /* Wipe an array of type T[N], at location P, and return P */
 #define C_WIPE(P, N, T) \
-	(memset((P), 0, (N) * sizeof(T)))
+	((N) > 0 ? memset((P), 0, (N) * sizeof(T)) : NULL)
 
 /* Wipe a thing of type T, at location P, and return P */
 #define WIPE(P, T) \
