@@ -2887,33 +2887,41 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				t = object_desc_int(t, o_ptr->pval);
 
 				/* Do not display the "pval" flags */
-				if (f3 & TR3_HIDE_TYPE)
-					; /* Nothing */
+				if (f3 & TR3_HIDE_TYPE) {
+					/* Nothing */
+				}
 				/* Speed */
-				else if (f1 & TR1_SPEED)
+				else if (f1 & TR1_SPEED) {
 					t = object_desc_str(t, !(mode & 8) ? " to speed" : "spd");
+				}
 				/* Attack speed */
 				else if (f1 & TR1_BLOWS) {
 					t = object_desc_str(t, !(mode & 8) ? " attack" : "at");
 					if (ABS(o_ptr->pval) != 1 && !(mode & 8)) t = object_desc_chr(t, 's');
 				}
 				/* Critical chance */
-				else if (f5 & (TR5_CRIT))
+				else if (f5 & (TR5_CRIT)) {
 					t = object_desc_str(t, !(mode & 8) ? " critical hits" : "crt");
+				}
 				/* Stealth */
-				else if (f1 & TR1_STEALTH)
+				else if (f1 & TR1_STEALTH) {
 					t = object_desc_str(t, !(mode & 8) ? " to stealth" : "stl");
+				}
 				/* Search */
-				else if (f1 & TR1_SEARCH)
+				else if (f1 & TR1_SEARCH) {
 					t = object_desc_str(t, !(mode & 8) ? " to searching" : "srch");
+				}
 				/* Infravision */
-				else if (f1 & TR1_INFRA)
+				else if (f1 & TR1_INFRA) {
 					t = object_desc_str(t, !(mode & 8) ? " to infravision" : "infr");
-				else if (f5 & TR5_LUCK)
+				}
+				else if (f5 & TR5_LUCK) {
 					t = object_desc_str(t, !(mode & 8) ? " to luck" : "luck");
+				}
 				/* Tunneling */
-				else if (f1 & TR1_TUNNEL)
-					; /* Nothing */
+				else if (f1 & TR1_TUNNEL) {
+					/* Nothing */
+				}
 
 				/* Finish the display */
 				t = object_desc_chr(t, p2);
