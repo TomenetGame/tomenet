@@ -3882,7 +3882,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 			tries++;
 
 			/* Piece together a 32-bit random seed */
-			o_ptr->name3 = rand_int(0xFFFF) << 16;
+			o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 			o_ptr->name3 += rand_int(0xFFFF);
 
 			/* Check the tval is allowed */
@@ -4019,7 +4019,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 		/* Piece together a 32-bit random seed */
 		if (e_ptr->fego1[0] & ETR1_NO_SEED) o_ptr->name3 = 0;
 		else {
-			o_ptr->name3 = rand_int(0xFFFF) << 16;
+			o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 			o_ptr->name3 += rand_int(0xFFFF);
 		}
 
@@ -4179,7 +4179,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 
 			/* Piece together a 32-bit random seed */
 			if (!(e_ptr->fego1[0] & ETR1_NO_SEED) && !o_ptr->name3) {
-				o_ptr->name3 = rand_int(0xFFFF) << 16;
+				o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 				o_ptr->name3 += rand_int(0xFFFF);
 			}
 			break;
@@ -10179,7 +10179,7 @@ static void hack_particular_item_aux(object_type *qq_ptr, struct worldpos xwpos)
 	tries = 500;
 	while (tries) {
 		/* Piece together a 32-bit random seed */
-		qq_ptr->name3 = rand_int(0xFFFF) << 16;
+		qq_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 		qq_ptr->name3 += rand_int(0xFFFF);
 		apply_magic(&xwpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
 
