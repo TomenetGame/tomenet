@@ -41,17 +41,17 @@ static bool is_state_aux(int Ind, store_type *s_ptr, int state)
 
 
 	/* Check race */
-	if (ot_ptr->races[state][p_ptr->prace / 32] & (1U << p_ptr->prace))
+	if (ot_ptr->races[state][p_ptr->prace / 32] & (1U << (p_ptr->prace % 32)))
 		return (TRUE);
 
 	/* Check class */
-	if (ot_ptr->classes[state][p_ptr->pclass / 32] & (1U << p_ptr->pclass))
+	if (ot_ptr->classes[state][p_ptr->pclass / 32] & (1U << (p_ptr->pclass % 32)))
 		return (TRUE);
 
 #if 0
 	/* Check realms */
-	if ((ot_ptr->realms[state][p_ptr->realm1 / 32] & (1U << p_ptr->realm1)) ||
-	    (ot_ptr->realms[state][p_ptr->realm2 / 32] & (1U << p_ptr->realm2)))
+	if ((ot_ptr->realms[state][p_ptr->realm1 / 32] & (1U << (p_ptr->realm1 % 32))) ||
+	    (ot_ptr->realms[state][p_ptr->realm2 / 32] & (1U << (p_ptr->realm2 % 32))))
 		return (TRUE);
 #endif	// 0
 
