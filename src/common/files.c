@@ -6,7 +6,11 @@
  * not need to worry about this.
  */
 
+#ifdef WIN32
+#include <winsock.h> /* For htonl and ntohl */
+#else
 #include <arpa/inet.h> /* For htonl and ntohl */
+#endif
 
 #include "angband.h"
 #include "md5.h"
