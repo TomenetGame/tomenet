@@ -30,9 +30,12 @@
 typedef uint32_t MD5_uint32;
 
 struct MD5Context {
-        MD5_uint32 buf[4];
-        MD5_uint32 bits[2];
-        unsigned char in[64];
+	MD5_uint32 buf[4];
+	MD5_uint32 bits[2];
+	union {
+		unsigned char in[64];
+		MD5_uint32 in32[16];
+	};
 };
 
 typedef struct MD5Context MD5_CTX;
