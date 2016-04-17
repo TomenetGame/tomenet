@@ -17,7 +17,7 @@
 
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 
-extern int remote_update(int ind, char *fname);
+extern int remote_update(int ind, char *fname, unsigned short chunksize);
 extern int check_return(int ind, unsigned short fnum, u32b sum, int Ind);
 extern int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16], int Ind);
 extern void kill_xfers(int ind);
@@ -27,7 +27,7 @@ extern int local_file_check(char *fname, u32b *sum);
 extern int local_file_check_new(char *fname, unsigned char digest_out[16]);
 extern int local_file_ack(int ind, unsigned short fnum);
 extern int local_file_err(int ind, unsigned short fnum);
-extern int local_file_send(int ind, char *fname);
+//extern int local_file_send(int ind, char *fname, unsigned short chunksize);
 extern int local_file_init(int ind, unsigned short fnum, char *fname);
 extern int local_file_write(int ind, unsigned short fnum, unsigned long len);
 extern int local_file_close(int ind, unsigned short fnum);
@@ -42,19 +42,22 @@ extern const char *ANGBAND_DIR;
 #define FS_DONE 8	/* ready to send end packet on final ack */
 #define FS_CHECK 16	/* file data block open for sum compare only */
 
-#define MAX_TNF_SEND	256	/* maximum bytes in a transfer
+#define MAX_TNF_SEND	1024	/* maximum bytes in a transfer
 				 * make this a power of 2 if possible
 				 */
 
+#define OLD_TNF_SEND	256	/* old value of MAX_TNF_SEND */
+
 struct ft_data{
-	struct ft_data *next;	/* next in list */
-	unsigned short id;	/* unique xfer ID */
-	int ind;		/* server security - who has this transfer */
+	char buffer[MAX_TNF_SEND];
 	char fname[256];	/* actual filename */
 	char tname[256];	/* temporary filename */
+	struct ft_data *next;	/* next in list */
 	FILE* fp;		/* FILE pointer */
+	int ind;		/* server security - who has this transfer */
+	unsigned short id;	/* unique xfer ID */
 	unsigned short state;	/* status of transfer */
-	char buffer[MAX_TNF_SEND];
+	unsigned short chunksize; /* old clients can handle only 256 bytes of data in one packet */
 };
 
 struct ft_data *fdata = NULL;	/* our pointer to the transfer data */
@@ -132,34 +135,38 @@ int local_file_err(int ind, unsigned short fnum) {
 	return(1);
 }
 
+#if 0 /* unused */
 /* initialise an file to send */
-int local_file_send(int ind, char *fname) {
+int local_file_send(int ind, char *fname, unsigned short chunksize) {
 	struct ft_data *c_fd;
 	FILE* fp;
 	char buf[256];
 
 	c_fd = getfile(ind, 0);
 	if (c_fd == (struct ft_data*)NULL) return(0);
-	path_build(buf, 256, ANGBAND_DIR, fname);
+	path_build(buf, sizeof(buf), ANGBAND_DIR, fname);
 	fp = fopen(buf, "rb");
 	if (!fp) return(0);
 	c_fd->fp = fp;
 	c_fd->ind = ind;
 	c_fd->id = new_fileid();	/* ALWAYS succeed */
 	c_fd->state = (FS_SEND|FS_NEW);
+	c_fd->chunksize = chunksize;
 	strncpy(c_fd->fname, fname, 255);
 	Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 	return(1);
 }
+#endif
 
 /* request checksum of remote file */
-int remote_update(int ind, char *fname) {
+int remote_update(int ind, char *fname, unsigned short chunksize) {
 	struct ft_data *c_fd;
 	c_fd = getfile(ind, 0);
 	if (c_fd == (struct ft_data*)NULL) return(0);
 	c_fd->ind = ind;
 	c_fd->id = new_fileid();	/* ALWAYS succeed */
 	c_fd->state = (FS_CHECK);
+	c_fd->chunksize = chunksize;
 	strncpy(c_fd->fname, fname, 255);
 	Send_file_check(c_fd->ind, c_fd->id, c_fd->fname);
 	return(1);
@@ -201,7 +208,7 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 			return 0;
 		}
 
-		path_build(buf, 256, ANGBAND_DIR, c_fd->fname);
+		path_build(buf, sizeof(buf), ANGBAND_DIR, c_fd->fname);
 		fp = fopen(buf, "rb");
 		if (!fp) {
 			remove_ft(c_fd);
@@ -254,7 +261,7 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 			return 0;
 		}
 
-		path_build(buf, 256, ANGBAND_DIR, c_fd->fname);
+		path_build(buf, sizeof(buf), ANGBAND_DIR, c_fd->fname);
 		fp = fopen(buf, "rb");
 		if (!fp) {
 			remove_ft(c_fd);
@@ -289,11 +296,18 @@ void do_xfers(){
 	int x;
 	struct ft_data *trav;
 	trav = fdata;
+	unsigned short chunksize;
 	for (; trav; trav = trav->next) {
 		if (!trav->id) continue;	/* non existent */
 		if (!(trav->state & FS_SEND)) continue; /* wrong type */
 		if (!(trav->state & FS_READY)) continue; /* not ready */
-		x = fread(trav->buffer, 1, MAX_TNF_SEND, trav->fp);
+		chunksize = trav->chunksize;
+		/* Sanity check */
+		if (!chunksize) {
+			fprintf(stderr, "Error: trav->chunksize should not be 0 in do_xfers\n");
+			trav->chunksize = chunksize = OLD_TNF_SEND;
+		}
+		x = fread(trav->buffer, 1, chunksize, trav->fp);
 		if (!(trav->state & FS_DONE)) {
 			if (x == 0) {
 				trav->state |= FS_DONE;
@@ -340,7 +354,7 @@ FILE *ftmpopen(char *template) {
 	rand_ext[1] = valid_characters[rand_int(sizeof (valid_characters))];
 	rand_ext[2] = valid_characters[rand_int(sizeof (valid_characters))];
 	rand_ext[3] = '\0';
-	strnfmt(f, 256, "%s/xfer_%ud.%s", ANGBAND_DIR, tmp_counter, rand_ext);
+	strnfmt(f, sizeof(f), "%s/xfer_%ud.%s", ANGBAND_DIR, tmp_counter, rand_ext);
 	tmp_counter++;
 
 	fp = fopen(f, "wb+");
@@ -369,6 +383,7 @@ int local_file_init(int ind, unsigned short fnum, char *fname) {
 	c_fd->fp = ftmpopen(tname);
 #endif
 	c_fd->state = FS_READY;
+	c_fd->chunksize = OLD_TNF_SEND;	/* doesn't matter when receiving, use the old value of MAX_TNF_SEND */
 	if (c_fd->fp) {
 #ifndef __MINGW32__
 		unlink(tname);		/* don't fill up /tmp */
@@ -395,7 +410,7 @@ int local_file_write(int ind, unsigned short fnum, unsigned long len) {
 		return -1;
 	}
 	if (fwrite(&c_fd->buffer, 1, len, c_fd->fp) < len) {
-		fprintf(stderr, "fwrite failed\n");
+		fprintf(stderr, "Error: fwrite failed in local_file_write\n");
 		fclose(c_fd->fp);	/* close & remove temp file */
 #ifdef __MINGW32__
 		unlink(c_fd->tname);	/* remove it on Windows OS */
@@ -425,7 +440,7 @@ int local_file_close(int ind, unsigned short fnum) {
 
 		while ((bytes = fread(buf, 1, size, c_fd->fp)) > 0) {
 			if (fwrite(buf, 1, bytes, wp) < bytes) {
-				fprintf(stderr, "fwrite failed\n");
+				fprintf(stderr, "Error: fwrite failed in local_file_close\n");
 				success = 0;
 				break;
 			}

@@ -554,11 +554,18 @@ int lua_get_new_bounty_monster(int lev)
 void remote_update_lua(int Ind, cptr file)
 {
 	player_type *p_ptr = Players[Ind];
+	unsigned short chunksize;
 
 	/* Count # of LUA files to check for updates (for 4.4.8.1.0.0 crash bug) */
 	p_ptr->warning_lua_count++;
 
-	remote_update(p_ptr->conn, file);
+	/* Starting from protocol version 4.6.1.2, the client can receive 1024 bytes in one packet */
+	if (is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 0)) {
+		chunksize = 1024;
+	} else {
+		chunksize = 256;
+	}
+	remote_update(p_ptr->conn, file, chunksize);
 	return;
 }
 

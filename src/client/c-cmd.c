@@ -3640,12 +3640,20 @@ static void cmd_master_aux_player() {
 /* TODO: up-to-date check and download facility */
 static void cmd_script_upload() {
 	char name[81];
+	unsigned short chunksize;
 
 	name[0] = '\0';
 
 	if (!get_string("Script name: ", name, 30)) return;
 
-	remote_update(0, name);
+	/* Starting from protocol version 4.6.1.2, the client can receive 1024 bytes in one packet */
+	if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 0)) {
+		chunksize = 1024;
+	} else {
+		chunksize = 256;
+	}
+
+	remote_update(0, name, chunksize);
 }
 
 /*

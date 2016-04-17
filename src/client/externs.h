@@ -851,7 +851,7 @@ extern void do_xfers(void);
 extern int get_xfers_num(void);
 extern int check_return(int ind, unsigned short fnum, unsigned long sum, int Ind);
 extern int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16], int Ind);
-extern int remote_update(int ind, char *fname);
+extern int remote_update(int ind, char *fname, unsigned short chunksize);
 extern void md5_digest_to_bigendian_uint(unsigned digest_out[4], const unsigned char digest[16]);
 extern void md5_digest_to_char_array(unsigned char digest_out[16], const unsigned digest[4]);
 
