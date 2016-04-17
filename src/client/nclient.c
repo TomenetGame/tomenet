@@ -173,7 +173,8 @@ int Receive_file(void){
 	char outbuf[80];
 	unsigned short fnum;	/* unique SENDER side file number */
 	unsigned short len;
-	u32b csum = 0;
+	u32b csum; /* old 32-bit checksum */
+	unsigned char digest[16]; /* new 128-bit MD5 checksum */
 	int n, bytes_read;
 	static bool updated_audio = FALSE;
 
@@ -266,18 +267,37 @@ int Receive_file(void){
 
 					return n;
 				}
-				x = local_file_check(fname, &csum);
-				Packet_printf(&wbuf, "%c%c%hd%d", PKT_FILE, PKT_FILE_SUM, fnum, csum);
+				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 0)) {
+					unsigned digest_net[4];
+					x = local_file_check_new(fname, digest);
+					md5_digest_to_bigendian_uint(digest_net, digest);
+					Packet_printf(&wbuf, "%c%c%hd%u%u%u%u", PKT_FILE, PKT_FILE_SUM, fnum, digest_net[0], digest_net[1], digest_net[2], digest_net[3]);
+				} else {
+					x = local_file_check(fname, &csum);
+					Packet_printf(&wbuf, "%c%c%hd%d", PKT_FILE, PKT_FILE_SUM, fnum, csum);
+				}
 				return 1;
 				break;
 			case PKT_FILE_SUM:
-				if ((n = Packet_scanf(&rbuf, "%d", &csum)) <= 0) {
-					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, bytes_read);
+				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 0)) {
+					unsigned digest_net[4];
+					if ((n = Packet_scanf(&rbuf, "%u%u%u%u", &digest_net[0], &digest_net[1], &digest_net[2], &digest_net[3])) <= 0) {
+						/* Rollback the socket buffer */
+						Sockbuf_rollback(&rbuf, bytes_read);
 
-					return n;
+						return n;
+					}
+					md5_digest_to_char_array(digest, digest_net);
+					check_return_new(0, fnum, digest, 0);
+				} else {
+					if ((n = Packet_scanf(&rbuf, "%d", &csum)) <= 0) {
+						/* Rollback the socket buffer */
+						Sockbuf_rollback(&rbuf, bytes_read);
+
+						return n;
+					}
+					check_return(0, fnum, csum, 0);
 				}
-				check_return(0, fnum, csum, 0);
 				return 1;
 				break;
 			case PKT_FILE_ACK:

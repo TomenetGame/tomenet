@@ -6,26 +6,29 @@
  * not need to worry about this.
  */
 
-/* #include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h> */
+#include <arpa/inet.h> /* For htonl and ntohl */
 
 #include "angband.h"
+#include "md5.h"
 
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 
-int remote_update(int ind, char *fname);
-int check_return(int ind, unsigned short fnum, u32b sum, int Ind);
-void kill_xfers(int ind);
-void do_xfers(void);
-int get_xfers_num(void);
-int local_file_check(char *fname, u32b *sum);
-int local_file_ack(int ind, unsigned short fnum);
-int local_file_err(int ind, unsigned short fnum);
-int local_file_send(int ind, char *fname);
-int local_file_init(int ind, unsigned short fnum, char *fname);
-int local_file_write(int ind, unsigned short fnum, unsigned long len);
-int local_file_close(int ind, unsigned short fnum);
+extern int remote_update(int ind, char *fname);
+extern int check_return(int ind, unsigned short fnum, u32b sum, int Ind);
+extern int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16], int Ind);
+extern void kill_xfers(int ind);
+extern void do_xfers(void);
+extern int get_xfers_num(void);
+extern int local_file_check(char *fname, u32b *sum);
+extern int local_file_check_new(char *fname, unsigned char digest_out[16]);
+extern int local_file_ack(int ind, unsigned short fnum);
+extern int local_file_err(int ind, unsigned short fnum);
+extern int local_file_send(int ind, char *fname);
+extern int local_file_init(int ind, unsigned short fnum, char *fname);
+extern int local_file_write(int ind, unsigned short fnum, unsigned long len);
+extern int local_file_close(int ind, unsigned short fnum);
+extern void md5_digest_to_bigendian_uint(unsigned digest_out[4], const unsigned char digest[16]);
+extern void md5_digest_to_char_array(unsigned char digest_out[16], const unsigned digest[4]);
 
 extern const char *ANGBAND_DIR;
 
@@ -178,6 +181,59 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 		return(0);
 	}
 	if (lsum != sum) {
+		/* Hack: Client 4.4.8.1 apparently was compiled by a MinGW version
+		   that broke lua updating, resulting in a client crash on logon.
+		   So skip any lua updates for players using that version.
+		   That means that players playing spell-casters that use spells in
+		   the affected LUA files will probably have to update their client
+		   at some point. */
+		if (Ind && is_same_as(&Players[Ind]->version, 4, 4, 8, 1, 0, 0)) {
+			/* Don't give him messages if he cannot help it */
+			if (!Players[Ind]->v_latest) {
+				Players[Ind]->warning_lua_update = 1;
+				msg_format(Ind, "\377oLUA file %s is outdated.", c_fd->fname);
+			}
+
+			return 0;
+		}
+
+		path_build(buf, 256, ANGBAND_DIR, c_fd->fname);
+		fp = fopen(buf, "rb");
+		if (!fp) {
+			remove_ft(c_fd);
+			return(0);
+		}
+		c_fd->fp = fp;
+		c_fd->ind = ind;
+		c_fd->state = (FS_SEND | FS_NEW);
+		Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
+		return(1);
+	}
+	remove_ft(c_fd);
+	return(1);
+}
+
+/*
+ * New version with support for MD5 checksums
+ */
+int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16], int Ind) {
+	struct ft_data *c_fd;
+	FILE* fp;
+	unsigned char local_digest[16];
+	char buf[256];
+
+	/* check how many LUA files were already checked (for 4.4.8.1.0.0 crash bug) */
+	if (Ind) Players[Ind]->warning_lua_count--;
+
+	c_fd = getfile(ind, fnum);
+	if (c_fd == (struct ft_data*)NULL) {
+		return(0);
+	}
+	local_file_check_new(c_fd->fname, local_digest);
+	if (!(c_fd->state & FS_CHECK)) {
+		return(0);
+	}
+	if (memcmp(digest, local_digest, 16) != 0) {
 		/* Hack: Client 4.4.8.1 apparently was compiled by a MinGW version
 		   that broke lua updating, resulting in a client crash on logon.
 		   So skip any lua updates for players using that version.
@@ -385,18 +441,15 @@ int local_file_close(int ind, unsigned short fnum) {
 	return success;
 }
 
-u32b total;
-
-/* uses adler checksum now - (client/server) compat essential */
-/* This is a broken version of Adler-32. This version is only half as
- * effective as a properly implemented Adler-32. - mikaelh
+/* 
+ * This is a broken version of Adler-32.
  */
-static void do_sum(unsigned char *buffer, int size) {
+static void do_sum(const unsigned char *buffer, size_t bytes_read, u32b *total_ptr) {
 	u32b s1, s2;
-	int n;
+	size_t idx;
 
-	s1 = total & 0xffff;
-	s2 = (total >> 16) & 0xffff;
+	s1 = *total_ptr & 0xffff;
+	s2 = (*total_ptr >> 16) & 0xffff;
 
 #if 0
 	for (n = 0; n < size; n++) {
@@ -405,79 +458,106 @@ static void do_sum(unsigned char *buffer, int size) {
 	}
 #else
 	/* Optimized version of the broken implementation above - mikaelh */
-	for (n = 0; n < size; n++) {
-		s1 += buffer[n];
+	for (idx = 0; idx < bytes_read; idx++) {
+		s1 += buffer[idx];
 	}
 
-	if (n) {
+	if (idx) {
 		s2 = (s1 + s1) % 65521;
 		s1 %= 65521;
 	}
 #endif
 
-	total = (s2 << 16) | s1;
+	*total_ptr = (s2 << 16) | s1;
 }
 
 /* Get checksum of file */
 /* don't waste a file transfer data space locally */
 int local_file_check(char *fname, u32b *sum) {
 	FILE *fp;
-	unsigned char *buffer;
-	int success = 0;
-	int size = 4096;
-	char buf[256];
+	size_t bytes_read;
+	u32b total = 1;
+	int success = 0; /* 0 = success, 1 = failure */
+	char buffer[4096];
+	char pathbuf[256];
 
-	path_build(buf, 256, ANGBAND_DIR, fname);
+	path_build(pathbuf, sizeof(pathbuf), ANGBAND_DIR, fname);
 
-	fp = fopen(buf, "rb");	/* b for windows.. */
+	fp = fopen(pathbuf, "rb");	/* b for windows.. */
+	if (!fp) {
+		*sum = 0;
+		return 1;
+	}
 
-	if (!fp) return(0);
+	while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
+		do_sum((unsigned char *) buffer, bytes_read, &total);
+	}
 
-	buffer = (unsigned char*) malloc(size);
-
-	if (buffer) {
-		total = 1L;
-#if 0
-		unsigned long tbytes = 0;
-		unsigned long pos;
-
-		while (size) {
-			pos = ftell(fp);
-			if (fread(buffer, size, 1, fp)) {
-				tbytes += size;
-				do_sum(buffer, size);
-			}
-			else {
-				if (feof(fp)) {
-					fseek(fp, pos, SEEK_SET);
-					size /= 2;
-				}
-				else if (ferror(fp))
-					break;
-			}
-		}
-
-		if (!size) success = 1;
-#else
-		/*
-		 * The above code makes sure that size is always a power of two
-		 * which really isn't necessary.
-		 *  - mikaelh
-		 */
-		unsigned long n;
-
-		while ((n = fread(buffer, 1, size, fp)) > 0) {
-			do_sum(buffer, n);
-		}
-
-		if (!ferror(fp)) {
-			success = 1;
-		}
-#endif
-		free(buffer);
+	/* Check for read failure */
+	if (!ferror(fp)) {
+		success = 1;
 	}
 
 	fclose(fp);
 	*sum = total;
-	return (success);
+	return success;
+}
+
+/*
+ * New MD5-based checksum function for files
+ */
+int local_file_check_new(char *fname, unsigned char digest_out[16]) {
+	FILE *fp;
+	size_t bytes_read;
+	int success = 0; /* 0 = success, 1 = failure */
+	char buffer[4096];
+	char pathbuf[256];
+	MD5_CTX ctx;
+
+	path_build(pathbuf, sizeof(pathbuf), ANGBAND_DIR, fname);
+
+	fp = fopen(pathbuf, "rb");	/* b for windows.. */
+	if (!fp) {
+		memset(digest_out, 0, 16);
+		return 1;
+	}
+
+	MD5Init(&ctx);
+
+	while ((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
+		MD5Update(&ctx, (unsigned char *) buffer, bytes_read);
+	}
+
+	MD5Final(digest_out, &ctx);
+
+	/* Check for read failure */
+	if (!ferror(fp)) {
+		success = 1;
+	}
+
+	fclose(fp);
+	return success;
+}
+
+/*
+ * Convert MD5 checksum stored from 'unsigned char[16]' to 'unsigned[4]' so it
+ * can be transmitted over the network.
+ */
+void md5_digest_to_bigendian_uint(unsigned digest_out[4], const unsigned char digest[16]) {
+	const unsigned *digest_in = (const unsigned *) digest;
+	digest_out[0] = htonl(digest_in[0]);
+	digest_out[1] = htonl(digest_in[1]);
+	digest_out[2] = htonl(digest_in[2]);
+	digest_out[3] = htonl(digest_in[3]);
+}
+
+/*
+ * Inverse of the above.
+ */
+void md5_digest_to_char_array(unsigned char digest_out[16], const unsigned digest[4]) {
+	unsigned *digest_out2 = (unsigned *) digest_out;
+	digest_out2[0] = ntohl(digest[0]);
+	digest_out2[1] = ntohl(digest[1]);
+	digest_out2[2] = ntohl(digest[2]);
+	digest_out2[3] = ntohl(digest[3]);
 }

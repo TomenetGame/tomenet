@@ -840,16 +840,20 @@ extern int color_char_to_attr(char c);
 extern byte mh_attr(int max);
 
 /* common/files.c */
-int local_file_init(int ind, unsigned short fnum, char *fname);
-int local_file_write(int ind, unsigned short fnum, unsigned long len);
-int local_file_close(int ind, unsigned short fnum);
-int local_file_check(char *fname, u32b *sum);
-int local_file_ack(int ind, unsigned short fnum);
-int local_file_err(int ind, unsigned short fnum);
-void do_xfers(void);
-int get_xfers_num(void);
-int check_return(int ind, unsigned short fnum, unsigned long sum, int Ind);
-int remote_update(int ind, char *fname);
+extern int local_file_init(int ind, unsigned short fnum, char *fname);
+extern int local_file_write(int ind, unsigned short fnum, unsigned long len);
+extern int local_file_close(int ind, unsigned short fnum);
+extern int local_file_check(char *fname, u32b *sum);
+extern int local_file_check_new(char *fname, unsigned char digest_out[16]);
+extern int local_file_ack(int ind, unsigned short fnum);
+extern int local_file_err(int ind, unsigned short fnum);
+extern void do_xfers(void);
+extern int get_xfers_num(void);
+extern int check_return(int ind, unsigned short fnum, unsigned long sum, int Ind);
+extern int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16], int Ind);
+extern int remote_update(int ind, char *fname);
+extern void md5_digest_to_bigendian_uint(unsigned digest_out[4], const unsigned char digest[16]);
+extern void md5_digest_to_char_array(unsigned char digest_out[16], const unsigned digest[4]);
 
 /*
  * Hack -- conditional (or "bizarre") externs
