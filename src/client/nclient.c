@@ -1908,13 +1908,17 @@ int Receive_char(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
 
-	if ((c & 0x80)) {
-		c &= 0x7F;
-		is_us = TRUE;
+	/* Old cfg.hilite_player implementation has been disabled after 4.6.1.1 because it interferes with custom fonts */
+	if (!is_newer_than(&server_version, 4, 6, 1, 1, 0, 0)) {
+		if ((c & 0x80)) {
+			c &= 0x7F;
+			is_us = TRUE;
+		}
 	}
 
 #ifdef TEST_CLIENT
 	/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */
+	/* NOTE: We need a better solution than this for custom fonts... */
  #ifndef WINDOWS
 	if (c == 127) c = 2;
  #else
