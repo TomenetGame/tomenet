@@ -7696,6 +7696,7 @@ int similar_names(const char *name1, const char *name2) {
 	char *ptr3;
 	int diff, min;
 	int diff_loc, diff2;
+	bool words = FALSE;
 
 	if (strlen(name1) < 5 || strlen(name2) < 5) return 0; //trivial length, it's ok to be similar
 
@@ -7875,13 +7876,14 @@ int similar_names(const char *name1, const char *name2) {
 	}
 	while (*ptr) {
 		if (tolower(*ptr) != tolower(*ptr2)) break;
+		if (!isalpha(*ptr) && !isdigit(*ptr)) words = TRUE;
 		ptr++;
 		ptr2++;
 		//REVERSE diff here
 		diff++;
 	}
 	//too little difference between names? forbidden!
-	if (diff >= 5 || diff2 < diff + 2) {
+	if ((diff >= 5 && diff > (diff2 * (words ? 6 : 5)) / 10) || (diff < 5 && !words && diff2 < diff + 2)) {
 		s_printf("similar_names (6): name1 '%s', name2 '%s'\n", name1, name2);
 		return 6;
 	}
