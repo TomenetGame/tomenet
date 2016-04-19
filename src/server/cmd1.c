@@ -3671,6 +3671,26 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 					set_food(Ind, feed);
 				}
 
+#ifdef USE_SOUND_2010
+				/* hack: always play 'hit' sfx for final killing hit,
+				   so if we didn't play it already (we did so if sfx==0) then play it now instead. */
+				if (sfx && p_ptr->sfx_combat) {
+					if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+						switch(o_ptr->tval) {
+						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						}
+					else
+						sound(Ind, "hit", NULL, SFX_TYPE_ATTACK, FALSE);
+				}
+//#else
+//				sound(Ind, SOUND_HIT);
+#endif
+
 				/* end of our fight */
 				break;
 			}
@@ -4783,6 +4803,27 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 					if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
 					set_food(Ind, feed);
 				}
+
+#ifdef USE_SOUND_2010
+				/* hack: always play 'hit' sfx for final killing hit,
+				   so if we didn't play it already (we did so if sfx==0) then play it now instead. */
+				if (sfx && p_ptr->sfx_combat) {
+					if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+						switch(o_ptr->tval) {
+						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						}
+					else
+						sound(Ind, "hit", NULL, SFX_TYPE_ATTACK, FALSE);
+				}
+//#else
+//				sound(Ind, SOUND_HIT);
+#endif
+
 				break; /* monster is dead */
 			}
 

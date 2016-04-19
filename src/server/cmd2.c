@@ -5771,6 +5771,18 @@ void do_cmd_fire(int Ind, int dir) {
 							/* Dead targetted monster */
 							p_ptr->shooting_till_kill = FALSE;
 						}
+
+#ifdef USE_SOUND_2010
+						/* hack: always play 'hit' sfx for final killing shot,
+						   so if we didn't play it already (we did so if sfx==0) then play it now instead. */
+						if (sfx && p_ptr->sfx_combat)
+							switch (o_ptr->tval) {
+							case TV_SHOT: sound(Ind, "fire_shot", NULL, SFX_TYPE_ATTACK, FALSE); break;
+							case TV_ARROW: sound(Ind, "fire_arrow", NULL, SFX_TYPE_ATTACK, FALSE); break;
+							case TV_BOLT: sound(Ind, "fire_bolt", NULL, SFX_TYPE_ATTACK, FALSE); break;
+							case TV_BOOMERANG: sound(Ind, "fire_boomerang", NULL, SFX_TYPE_ATTACK, FALSE); break;
+							}
+#endif
 					}
 					/* No death */
 					else {
