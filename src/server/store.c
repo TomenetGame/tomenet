@@ -4113,6 +4113,7 @@ void do_cmd_store(int Ind) {
 		for (i = 0; i < st_ptr->stock_num; i++) {
 			/* don't resell used wares ;) */
 			if (st_ptr->stock[i].owner) continue;
+
 			/* it's our item? */
 			if (!(st_ptr->stock[i].tval == p_ptr->item_order_forge.tval &&
 			    st_ptr->stock[i].sval == p_ptr->item_order_forge.sval &&
@@ -4124,23 +4125,32 @@ void do_cmd_store(int Ind) {
 			    st_ptr->stock[i].to_a == p_ptr->item_order_forge.to_a &&
 			    !st_ptr->stock[i].name1 && !st_ptr->stock[i].name2 && !st_ptr->stock[i].name2b))
 				continue;
-			/* hack: mark it as early delivery */
- #ifndef PARTIAL_ITEM_DELIVERY
-			/* don't deliver partially */
-			if (st_ptr->stock[i].number < p_ptr->item_order_forge.number) continue;
-			num = p_ptr->item_order_forge.number;
- #else
-			/* deliver partially */
-			if (st_ptr->stock[i].number < p_ptr->item_order_forge.number)
-				num = st_ptr->stock[i].number;
-			else
+
+			/* could only deliver partially or actually fully? */
+			if (st_ptr->stock[i].number < p_ptr->item_order_forge.number) {
+				num += st_ptr->stock[i].number;
+				/* paranoia: accumulated to a full delivery, from multiple store slots?
+				   (this shouldn't happen, because you can only order basic (non-ego) items
+				   and those should all stack in a single store slot..) */
+				if (num >= p_ptr->item_order_forge.number) {
+					num = p_ptr->item_order_forge.number;
+					break;
+				}
+			} else /* full delivery */
 				num = p_ptr->item_order_forge.number;
- #endif
-			//since the items are basic (non-ego etc), they'd stack in this slot. No need to continue searching further slots.
+
+ #if 0 /* paranoia, let's still search the whole stock. This will also be actually required if we ever allow ego item ordering. */
+			/* since the items are basic (non-ego etc), they'd stack in this slot.
+			   No need to continue searching further slots. */
 			break;
+ #endif
 		}
+ #ifndef PARTIAL_ITEM_DELIVERY
+		/* don't deliver partially */
+		if (num && num < p_ptr->item_order_forge.number) num = 0;
+ #endif
 
-
+		/* have our items arrived? */
 		if (p_ptr->item_order_turn > turn && !num) {
 			int dur = p_ptr->item_order_turn - turn;
 
