@@ -4167,40 +4167,40 @@ void do_cmd_store(int Ind) {
 			char o_name[ONAME_LEN];
 			int slot;
 
-			//hack: early delivery! (item appeared in regular stock)
+			/* early delivery! (ie item appeared in regular stock meanwhile) */
 			if (num) {
  #ifndef PARTIAL_ITEM_DELIVERY
 				msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
  #else
-				if (num < p_ptr->item_order_forge.number)
+				if (num < p_ptr->item_order_forge.number) {
 					msg_print(Ind, "\377GPart of your order has arrived earlier than expected! Here, take it.");
-				else
+					forge.number = num;
+				} else
 					msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
  #endif
 			}
-			//normal delivery
+			/* normal, full delivery */
 			else msg_print(Ind, "\377GYour order has arrived! Here, take it.");
 
 			object_aware(Ind, &forge);
 			object_known(&forge);
 			forge.ident |= ID_MENTAL;
 			forge.note = quark_add(format("%s Delivery", st_name + st_info[p_ptr->item_order_store - 1].name));
- #ifdef PARTIAL_ITEM_DELIVERY
-			if (num && num < p_ptr->item_order_forge.number) forge.number = num; //reduce delivered number to partial stock
- #endif
 			slot = inven_carry(Ind, &forge);
 			if (slot != -1) {
 				object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
-				s_printf("item_order_store: <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, p_ptr->item_order_forge.number, o_name, p_ptr->item_order_cost);
+				s_printf("item_order_store: <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
 			} else {
 				object_desc(Ind, o_name, &forge, TRUE, 3);
-				s_printf("item_order_store (NOSLOT): <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, p_ptr->item_order_forge.number, o_name, p_ptr->item_order_cost);
+				s_printf("item_order_store (NOSLOT): <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
 			}
 
 			/* clear order */
  #ifdef PARTIAL_ITEM_DELIVERY
-			if (!num || num == p_ptr->item_order_forge.number) //partial delivery - we're still waiting for the rest
+			if (num && num < p_ptr->item_order_forge.number) //we're still waiting for the rest
+				p_ptr->item_order_forge.number -= num;
+			else
  #endif
 			p_ptr->item_order_store = 0;
 		}
