@@ -4110,11 +4110,11 @@ void do_cmd_store(int Ind) {
 		/* Check for early arrival of ordered goods:
 		   This happens when the store is offering our items in its regular stock when we enter. */
 		if (p_ptr->item_order_turn > turn)
-		for (i = 0; i < st_ptr->stock_num; i++) {
+		for (i = st_ptr->stock_num - 1; i >= 0; i--) {
 			/* don't resell used wares ;) */
 			if (st_ptr->stock[i].owner) continue;
 
-			/* it's our item? */
+			/* it's our item? -- note: we ignore discounts */
 			if (!(st_ptr->stock[i].tval == p_ptr->item_order_forge.tval &&
 			    st_ptr->stock[i].sval == p_ptr->item_order_forge.sval &&
 			    st_ptr->stock[i].pval == p_ptr->item_order_forge.pval &&
@@ -4127,23 +4127,22 @@ void do_cmd_store(int Ind) {
 				continue;
 
 			/* could only deliver partially or actually fully? */
-			if (st_ptr->stock[i].number < p_ptr->item_order_forge.number) {
-				num += st_ptr->stock[i].number;
-				/* paranoia: accumulated to a full delivery, from multiple store slots?
-				   (this shouldn't happen, because you can only order basic (non-ego) items
-				   and those should all stack in a single store slot..) */
-				if (num >= p_ptr->item_order_forge.number) {
-					num = p_ptr->item_order_forge.number;
-					break;
-				}
-			} else /* full delivery */
-				num = p_ptr->item_order_forge.number;
+			if (st_ptr->stock[i].number < p_ptr->item_order_forge.number - num) {
+				/* actually take the item from stock (could otherwise maybe be exploited) */
+				store_item_increase(st_ptr, i, -st_ptr->stock[i].number);
+				store_item_optimize(st_ptr, i);
 
- #if 0 /* paranoia, let's still search the whole stock. This will also be actually required if we ever allow ego item ordering. */
-			/* since the items are basic (non-ego etc), they'd stack in this slot.
-			   No need to continue searching further slots. */
-			break;
- #endif
+				/* accumulated to a full delivery, from multiple store slots?
+				   This can happen for basic items too, if they are offered at different discounts! */
+				num += st_ptr->stock[i].number;
+			} else { /* full delivery */
+				/* actually take the item from stock (could otherwise maybe be exploited) */
+				store_item_increase(st_ptr, i, -(p_ptr->item_order_forge.number - num));
+				store_item_optimize(st_ptr, i);
+
+				num = p_ptr->item_order_forge.number;
+				break;
+			}
 		}
  #ifndef PARTIAL_ITEM_DELIVERY
 		/* don't deliver partially */
