@@ -222,7 +222,8 @@ NCC = gcc
 
 
 # Compile a client with 'test client' version/tag
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT -Og
+#tomenet.test.exe: CFLAGS += -DTEST_CLIENT -Og
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O1
 
 
 # Lua
