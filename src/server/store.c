@@ -4105,10 +4105,11 @@ void do_cmd_store(int Ind) {
 #ifdef ENABLE_ITEM_ORDER
 	if (p_ptr->item_order_store && p_ptr->item_order_store - 1 == which &&
 	    p_ptr->item_order_town == town_idx && !p_ptr->tim_blacklist) {
-		int num = 0; //for early delivery
+		int num = 0; //early delivery?
 
 		/* Check for early arrival of ordered goods:
 		   This happens when the store is offering our items in its regular stock when we enter. */
+		if (p_ptr->item_order_turn > turn)
 		for (i = 0; i < st_ptr->stock_num; i++) {
 			/* don't resell used wares ;) */
 			if (st_ptr->stock[i].owner) continue;
@@ -4135,6 +4136,8 @@ void do_cmd_store(int Ind) {
 			else
 				num = p_ptr->item_order_forge.number;
  #endif
+			//since the items are basic (non-ego etc), they'd stack in this slot. No need to continue searching further slots.
+			break;
 		}
 
 
