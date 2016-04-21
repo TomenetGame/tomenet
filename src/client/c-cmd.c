@@ -3647,7 +3647,7 @@ static void cmd_script_upload() {
 	if (!get_string("Script name: ", name, 30)) return;
 
 	/* Starting from protocol version 4.6.1.2, the client can receive 1024 bytes in one packet */
-	if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
 		chunksize = 1024;
 	} else {
 		chunksize = 256;

@@ -4675,7 +4675,7 @@ static int Receive_file(int ind) {
 				} else {
 					msg_print(Ind, "\377yChecking file");
 					/* Use MD5 checksums starting from protocol version 4.6.1.2 */
-					if (is_newer_than(&connp->version, 4, 6, 1, 1, 0, 0)) {
+					if (is_newer_than(&connp->version, 4, 6, 1, 1, 0, 1)) {
 						unsigned digest_net[4];
 						x = local_file_check_new(fname, digest);
 						md5_digest_to_bigendian_uint(digest_net, digest);
@@ -4688,7 +4688,7 @@ static int Receive_file(int ind) {
 				}
 				break;
 			case PKT_FILE_SUM:
-				if (is_newer_than(&connp->version, 4, 6, 1, 1, 0, 0)) {
+				if (is_newer_than(&connp->version, 4, 6, 1, 1, 0, 1)) {
 					unsigned digest_net[4];
 					if ((n = Packet_scanf(&connp->r, "%u%u%u%u", &digest_net[0], &digest_net[1], &digest_net[2], &digest_net[3])) <= 0) {
 						/* Rollback the socket buffer */

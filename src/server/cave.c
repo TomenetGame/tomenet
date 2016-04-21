@@ -3688,7 +3688,7 @@ void lite_spot(int Ind, int y, int x)
 			    (p_ptr->ovl_info[dispy][dispx].a != a))
 			{
 				/* Old cfg.hilite_player implementation has been disabled after 4.6.1.1 because it interferes with custom fonts */
-				if (!is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 0)) {
+				if (!is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 1)) {
 					if (is_us && is_newer_than(&p_ptr->version, 4, 5, 4, 0, 0, 0)) c |= 0x80;
 				}
 

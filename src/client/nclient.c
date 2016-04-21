@@ -267,7 +267,7 @@ int Receive_file(void){
 
 					return n;
 				}
-				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 0)) {
+				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
 					unsigned digest_net[4];
 					x = local_file_check_new(fname, digest);
 					md5_digest_to_bigendian_uint(digest_net, digest);
@@ -279,7 +279,7 @@ int Receive_file(void){
 				return 1;
 				break;
 			case PKT_FILE_SUM:
-				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 0)) {
+				if (is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
 					unsigned digest_net[4];
 					if ((n = Packet_scanf(&rbuf, "%u%u%u%u", &digest_net[0], &digest_net[1], &digest_net[2], &digest_net[3])) <= 0) {
 						/* Rollback the socket buffer */
@@ -1929,7 +1929,7 @@ int Receive_char(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
 
 	/* Old cfg.hilite_player implementation has been disabled after 4.6.1.1 because it interferes with custom fonts */
-	if (!is_newer_than(&server_version, 4, 6, 1, 1, 0, 0)) {
+	if (!is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
 		if ((c & 0x80)) {
 			c &= 0x7F;
 			is_us = TRUE;
