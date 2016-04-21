@@ -3901,6 +3901,11 @@ static bool leave_store = FALSE;
  * into other commands, normally, we convert "p" (pray) and "m"
  * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
  */
+#ifdef ENABLE_ITEM_ORDER
+ /* allow partial delivery if an item identical to our order is already in the regular stock.
+    (Partial deliveries are always 'early deliveries'.) */
+ #define PARTIAL_ITEM_DELIVERY
+#endif
 void do_cmd_store(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
@@ -4100,7 +4105,40 @@ void do_cmd_store(int Ind) {
 #ifdef ENABLE_ITEM_ORDER
 	if (p_ptr->item_order_store && p_ptr->item_order_store - 1 == which &&
 	    p_ptr->item_order_town == town_idx && !p_ptr->tim_blacklist) {
-		if (p_ptr->item_order_turn > turn) {
+		int num = 0; //for early delivery
+
+		/* Check for early arrival of ordered goods:
+		   This happens when the store is offering our items in its regular stock when we enter. */
+		for (i = 0; i < st_ptr->stock_num; i++) {
+			/* don't resell used wares ;) */
+			if (st_ptr->stock[i].owner) continue;
+			/* it's our item? */
+			if (!(st_ptr->stock[i].tval == p_ptr->item_order_forge.tval &&
+			    st_ptr->stock[i].sval == p_ptr->item_order_forge.sval &&
+			    st_ptr->stock[i].pval == p_ptr->item_order_forge.pval &&
+			    st_ptr->stock[i].bpval == p_ptr->item_order_forge.bpval &&
+			    st_ptr->stock[i].ac == p_ptr->item_order_forge.ac &&
+			    st_ptr->stock[i].to_h == p_ptr->item_order_forge.to_h &&
+			    st_ptr->stock[i].to_d == p_ptr->item_order_forge.to_d &&
+			    st_ptr->stock[i].to_a == p_ptr->item_order_forge.to_a &&
+			    !st_ptr->stock[i].name1 && !st_ptr->stock[i].name2 && !st_ptr->stock[i].name2b))
+				continue;
+			/* hack: mark it as early delivery */
+ #ifndef PARTIAL_ITEM_DELIVERY
+			/* don't deliver partially */
+			if (st_ptr->stock[i].number < p_ptr->item_order_forge.number) continue;
+			num = p_ptr->item_order_forge.number;
+ #else
+			/* deliver partially */
+			if (st_ptr->stock[i].number < p_ptr->item_order_forge.number)
+				num = st_ptr->stock[i].number;
+			else
+				num = p_ptr->item_order_forge.number;
+ #endif
+		}
+
+
+		if (p_ptr->item_order_turn > turn && !num) {
 			int dur = p_ptr->item_order_turn - turn;
 
 			if (dur <= HOUR / 2) msg_format(Ind, "Your order should arrive shortly.");
@@ -4110,16 +4148,32 @@ void do_cmd_store(int Ind) {
 			else if (dur <= DAY) msg_format(Ind, "I don't expect your order to take longer than a day to arrive.");
 			else msg_format(Ind, "About your order, it might take a long time to arrive, don't expect it today.");
 		} else {
+			/* deliver order! */
 			object_type forge = p_ptr->item_order_forge;
 			char o_name[ONAME_LEN];
 			int slot;
 
-			/* deliver order! */
-			msg_print(Ind, "\377GYour order has arrived! Here, take it.");
+			//hack: early delivery! (item appeared in regular stock)
+			if (num) {
+ #ifndef PARTIAL_ITEM_DELIVERY
+				msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
+ #else
+				if (num < p_ptr->item_order_forge.number)
+					msg_print(Ind, "\377GPart of your order has arrived earlier than expected! Here, take it.");
+				else
+					msg_print(Ind, "\377GYour order has arrived earlier than expected! Here, take it.");
+ #endif
+			}
+			//normal delivery
+			else msg_print(Ind, "\377GYour order has arrived! Here, take it.");
+
 			object_aware(Ind, &forge);
 			object_known(&forge);
 			forge.ident |= ID_MENTAL;
 			forge.note = quark_add(format("%s Delivery", st_name + st_info[p_ptr->item_order_store - 1].name));
+ #ifdef PARTIAL_ITEM_DELIVERY
+			if (num && num < p_ptr->item_order_forge.number) forge.number = num; //reduce delivered number to partial stock
+ #endif
 			slot = inven_carry(Ind, &forge);
 			if (slot != -1) {
 				object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);
@@ -4131,6 +4185,9 @@ void do_cmd_store(int Ind) {
 			}
 
 			/* clear order */
+ #ifdef PARTIAL_ITEM_DELIVERY
+			if (!num || num == p_ptr->item_order_forge.number) //partial delivery - we're still waiting for the rest
+ #endif
 			p_ptr->item_order_store = 0;
 		}
 	}
