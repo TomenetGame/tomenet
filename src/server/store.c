@@ -4148,6 +4148,8 @@ void do_cmd_store(int Ind) {
 		/* don't deliver partially */
 		if (num && num < p_ptr->item_order_forge.number) num = 0;
  #endif
+		/* Early-arrived items are taken from store inventory, so refresh it */
+		if (num) display_inventory(Ind);
 
 		/* have our items arrived? */
 		if (p_ptr->item_order_turn > turn && !num) {
