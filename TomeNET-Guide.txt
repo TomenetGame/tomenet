@@ -14436,7 +14436,12 @@ Istar schools:
 
     Probability Travel
                     Renders you instable, allowing to pass walls and to
-                    float upwards/downwards.
+                    float upwards/downwards. Floating up/down will skip floors
+                    that have other players on them, except if at least one of
+                    them is in your party (or if it's the world surface level).
+                    If all floors in the (up or down) direction of your attempt
+                    to probtravel are occupied by players you get this message:
+        "There is a magical discharge in the air as probability travel fails!"
                     Required skill level for first spell level: 35.
 
     BONI:           Resistance to teleportation attacks at 30.
