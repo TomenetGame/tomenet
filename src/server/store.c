@@ -369,6 +369,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 }
 
 #ifdef PLAYER_STORES
+ #define PSTORE_FACTOR 2 /* set default pstore price to n * base item price [2] */
 /* new hack: specify Ind to set the item's value; Ind == 0 -> retrieve it! */
 s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	s64b price, final_price;
@@ -399,13 +400,13 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 		int discount = o_ptr->discount;
 
 		o_ptr->discount = 0;
-		price = object_value(Ind, o_ptr) * 2; /* default: 2x base price */
+		price = object_value(Ind, o_ptr) * PSTORE_FACTOR; /* default: n * base price */
 		o_ptr->discount = discount;
 		o_ptr->appraised_value = price + 1;
 	}
 	/* Backward compatibility - converted old, unappraised items: */
 	else if (!o_ptr->appraised_value) {
-		price = object_value_real(0, o_ptr) * 2; /* default: 2x base price */
+		price = object_value_real(0, o_ptr) * PSTORE_FACTOR; /* default: n * base price */
 		o_ptr->appraised_value = price + 1;
 	}
 	/* Retrieve stored value: */
@@ -6264,7 +6265,9 @@ void store_debug_stock() {
 
 #ifdef PLAYER_STORES
 /* Inscription on mass cheques, ie cheques handling items sold partially from item stacks. */
-#define MASS_CHEQUE_NOTE "various piled items"
+ #define MASS_CHEQUE_NOTE "various piled items"
+/* Set minimum pstore item price factor (base item price * n) [2] */
+ #define PSTORE_MIN_FACTOR 1
 /* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
    Returns price or -2 if not for sale. Return -1 if not for display/not available.
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination.
@@ -6318,7 +6321,7 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 	/* multiplier? 0..1000% */
 	if (mult) {
 		/* catch overflows */
-		if (final_price < 100) final_price = 100; /* 100% of 'price' minimum */
+		if (final_price < 100 * PSTORE_MIN_FACTOR / PSTORE_FACTOR) final_price = 100* PSTORE_MIN_FACTOR / PSTORE_FACTOR; /* enforce minimum percentage of default price */
 		if (final_price > 1000) final_price = 1000;
 		if (price > 2000000000 / ((final_price + 99) / 100)) final_price = 2000000000;
 		else {

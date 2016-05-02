@@ -6476,7 +6476,8 @@ following inscription syntax:
 This will add 10000 gold to the default price that is asked for.
 
 Another way of increasing the price is by multiplying it with a percentage,
-which may range from 100 to 1000, like this:
+which may range from 50 to 1000 or from 100 to 1000 depending on the server,
+like this:
   @S%150
 This will sell the item for 1.5 times (150%) the usual amount.
 
