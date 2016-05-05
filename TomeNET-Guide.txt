@@ -14304,6 +14304,9 @@ Istar schools:
     Frost Bolt      Fires a frost bolt at a target.
                     Required skill level for first spell level: 8.
 
+    Water Bolt      Fires a water bolt at a target.
+                    Required skill level for first spell level: 14.
+
     Tidal Wave      Summons a monstrous tidal wave.
                     Required skill level for first spell level: 16.
 
