@@ -158,7 +158,9 @@
 #define PKT_AUTOINSCRIBE	135
 #define PKT_MARTYR		136	/* client lua notification client for updating spell mana costs */
 
-//XXX 137-149
+//XXX 137-147
+
+#define PKT_KEYPRESS		147	/* Quest/hint guidance: actually send keypresses to the client as if the player entered them */
 
 #define PKT_SFX_VOLUME		148	/* Tell client to modify volume level of ambient and/or weather sfx  */
 #define PKT_SFX_AMBIENT		149	/* background ambient sfx */
