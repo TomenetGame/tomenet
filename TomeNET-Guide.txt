@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. April 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 5. May 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -14349,6 +14349,7 @@ Istar schools:
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
                     Required skill level for first spell level: 25.
+                    Shared spell (see above): Air, Nature.
 
     BONI:           Feather falling at 30,
                     poison resistance at 40,
@@ -14403,6 +14404,11 @@ Istar schools:
     Vermin Control  Prevents vermin from breeding any further on
                     your current level.
                     Required skill level for first spell level: 15.
+
+    Thunderstorm    Throws thunder bolts at random monsters nearby.
+                    (33% lightning, 33% sound, 33% light)
+                    Required skill level for first spell level: 25.
+                    Shared spell (see above): Air, Nature.
 
     BONI:           Regeneration (faster hit point regeneration, same as from
                     items that provide regeneration) at 30,
