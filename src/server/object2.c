@@ -7703,10 +7703,15 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* - prevent +1 speed boots! */
 		if ((o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) && o_ptr->pval == 1) continue;
 		/* - prevent shields of reflection */
-		if ((o_ptr->name2 == EGO_REFLECT || o_ptr->name2b == EGO_REFLECT)) continue;
+		if (o_ptr->name2 == EGO_REFLECT || o_ptr->name2b == EGO_REFLECT) continue;
 		/* - it's a bit sad to get super-low mage staves (of Mana, +1..4) */
-		if ((o_ptr->name2 == EGO_MMANA || o_ptr->name2b == EGO_MMANA)) continue;
+		if (o_ptr->name2 == EGO_MMANA || o_ptr->name2b == EGO_MMANA)
+			//continue;
+			if (o_ptr->pval < 4) o_ptr->pval = 4;
 		//note: thievery gloves +1 speed are ok!
+
+		/* Limit for mage staves so they don't end up as top end gear (Wiz: 8..10) */
+		if ((o_ptr->name2 == EGO_MWIZARDRY || o_ptr->name2b == EGO_MWIZARDRY) && o_ptr->pval > 8) o_ptr->pval = 8;
 
 		/* specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
 		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
