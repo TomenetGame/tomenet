@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. May 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 10. May 2015 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -121,9 +121,10 @@ Contents
     (5.9b)  Artifacts and artifact resets
     (5.10)  Destruction of items by elemental attacks
     (5.10a) Equipment damage from elemental attacks
-    (5.11)  Monster attack mechanism, Armour Class, damage caps
-    (5.12)  Monster attack types and brands
-    (5.12a) Monster flags
+    (5.11)  Monsters
+    (5.11a) Monster flags
+    (5.12)  Monster attack mechanism, Armour Class, damage caps
+    (5.12a) Monster attack types and brands
     (5.13)  Earthquakes
     (5.14)  Curses
     (5.15)  Vampirism
@@ -3369,6 +3370,20 @@ important server-specific information or announcements to the players.
 After you logged in with a character you will now see yourself (you are the
 '@' symbol, except if you chose 'fruit bat' body, then you'll be a 'b')
 in the town of Bree in the main window.
+You will already have a few basic starter items equipped, so you're mostly
+ready to move out. Note that Bree has already two dungeon entrances, one is the
+"Training Tower" where you should go first, the other one is "Barrow-Downs",
+the first 'real' dungeon. The training tower entrance is a green '<' symbol,
+step on it and press the '<' key to enter. To actually locate the entrance you
+can use Shift+L which will let you look around the local map. The entrance to
+the training tower is somewhat south of your starting position.
+Note that the Bree already has some "monsters", well, townspeople, denoted by
+the letter 't'. They're all more or less hostile though so don't hesitate to
+kill them off for some extra money and beware of mean-looking mercenaries and
+battle-scarred veterans since these could make short work of you at level 1.
+You could enter some shops (numbers and '+' symbols) and see if you find
+anything affordable worth buying, maybe some armour, potions, scrolls or a
+brass lantern.
 
 You can move around in all 8 directions by using the number pad keys! You can
 run by pressing the SHIFT key together with a direction key.
@@ -3643,20 +3658,20 @@ to repeat a message or command you previously typed.
 
 (3.4) Start-up equipment
 ------------------------
-Every new player has some items right from the beginning, stored in the
-inventory (bottom right window). As a warrior you will have a chain mail and
-a weapon, for example a sword.
+Every new player has some items right from the beginning, in the past those
+came stored in the inventory but nowadays they are immediately equipped.
+As a warrior you will have a chain mail and a weapon, for example a sword.
 Start-up equipment always has level 0 and cannot be used by other players!
 
-You should now equip your start-up items, since they won't help you if
-they stay inside the backpack. Press the key 'w', you will be asked which
-item you would like to wear or wield, choose the letter in front of the item
-inside your inventory, for example e) if the sword is the fifth item in your
-backpack. Equip both, sword and armor this way, or whatever items you start out
-with - some characters start with a cap and a cloak, others with an axe..
-You can also equip a lightsource like a torch or lantern this way. If it is
-night in town that will help you to see anything. Inside a dungeon you should
-always make sure that you have a lightsource equippped.
+If you find further items you can equip them with 'w' key - you will be asked
+which item you would like to wear or wield, choose the letter in front of the
+item inside your inventory, for example e) if the item is the fifth item in
+your backpack.
+
+Make sure that you have a lightsource ready to be equipped, like a torch or a
+lantern. If it is night in town that will help you to see anything. Inside a
+dungeon most passages and rooms tend to be dark so you should always have a
+lightsource equipped while in a dungeon.
 
 Startup items that you don't want to use you may simply destroy with 'k'.
 In town, you can see rectangular blocks that rensemble buildings. These are the
@@ -6576,7 +6591,7 @@ Stun    -Stun           Reduces to-hit and to-dam.
                         it leaves your character completely helpless.
                         Beware!
 
-                        High AC helps to avoid melee-based stuns (see (5.11))
+                        High AC helps to avoid melee-based stuns (see (5.12))
                         (most famous monster is probably "The Stormbringer"),
                         while stun from sound attacks can only be prevented
                         by having sound resistance.
@@ -6622,7 +6637,7 @@ from critical hits by monsters, no matter how high the actual potential damage
 of that attack might be.
 However, unlike the most common damage types (like 'HURT') certain damage types
 cannot be mitigated by AC and hence their cut/stun potential is always to be
-reckoned with (see damage types in the second table in (5.12), which say so if
+reckoned with (see damage types in the second table in (5.12a), which say so if
 they can be mitigated by AC.)
 
 Example:
@@ -8420,7 +8435,7 @@ theory take up to 3200 damage.
 
 Branded melee attacks vs players:
 Some monsters attack with elemental-branded melee attacks. These are treated
-depending on the attack method, see (5.12): The attack method will determine
+depending on the attack method, see (5.12a): The attack method will determine
 how much of the damage is treated as elemental part and how much is physical
 part. The elemental part will accordingly be doubled if the player is
 susceptible to it.
@@ -8436,7 +8451,7 @@ a ring of fire resistance, or any druid ego monster or later on arch-vile will
 give you a hard time.
 
 (Branded physical attacks in pvp are not influenced by susceptibilities.
-Also see (5.11) for details about melee attacks and melee damage caps.)
+Also see (5.12) for details about melee attacks and melee damage caps.)
 
 
 
@@ -8672,6 +8687,7 @@ More examples:
 
 (5.7c) Loot tables
 ------------------
+Also called drop tables, specifying which type of items a monster might drop.
 The type, level, quality and use-level of an item may depend on these factors:
 
 -The level of the entity it is dropped by (monster or chest).
@@ -8686,7 +8702,7 @@ The type, level, quality and use-level of an item may depend on these factors:
  many of them, and whether the items have a higher chance to be enchanted or to
  possess ego powers or turn out to be an artifact than usual (those are the
  DROP_GOOD flag for enchantments and especially important the DROP_GREAT flag
- for it becoming and ego item or artifact - also see (5.12a) for some tips on
+ for it becoming and ego item or artifact - also see (5.11a) for some tips on
  hunting lower level monsters that have the DROP_GREAT flag).
  Note that unique monsters have a higher chance of dropping enchanted items
  (similar to the effect of the player having more 'Luck').
@@ -10006,7 +10022,158 @@ DSM Armour
 
 
 
-(5.11) Monster attack mechanism, Armour Class, damage caps
+(5.11) Monsters
+---------------
+All creatures in the game apart from special 'questors' and other player
+characters are actually "monsters", aka your enemies. Some might exhibit rather
+neutral looking movement or no movement at all, some might not even inflict
+damage, but none of them is friendly towards you and all of them will or in
+some way or another make your survival more difficult.
+Right after creating a new character you will already encounter "monsters" of
+some sort: Townspeople, denoted by the letter 't' and maybe some cats, birds or
+fish (if you happen to walk nearby the lake).
+Since all creatures are basically hostile, you will auto-attack them when you
+move onto an adjacent grid. Killing townies is a good way to make some easy
+money. Just beware of mean-looking mercenaries and battle-scarred veterans.
+
+When you enter the training tower or the dungeon you will soon notice the
+variety of monsters, for example you will probably encounter a "floating eye",
+denoted by an orange 'e'. These cannot inflict any damage on you but if you get
+too close they will gaze at you which will in most cases paralyze you!
+If you're unlucky or your Saving Throw stat (Shift+C to check) isn't
+particularly great a floating eye might even lock you in paralyzation forever,
+making you easy prey for any other monster around.
+
+To check monster information you have three ways:
+Press ~2 for monsters you have killed or ~3 for a list of 'unique' monsters.
+Press ~7 for the 'monster lore' search. It contains all monsters in the game
+ execpt for ego-variations (see below).
+
+There are three types of monsters:
+-Basic monsters (over 1100 of those), such as "a Hill Orc" or "a Zog".
+-Unique monsters (over 200), such as "Azog, King of the Uruk-Hai".
+  You can recognize these by distinctly flickering (like a colour 'spike').
+-Ego monsters (over 50). These are not actually monsters but modifications of
+  basic monsters, for example:
+  The basic monster "Hill Orc" receives the ego-power "Archer", it will become
+  "a Hill Orc Archer" and instead of trying to punch you in the face will shoot
+  arrows at you.
+  Ego monsters can also be recognized by flickering: They receive the ego-power
+  colour in addition to their base colour. For above's example that would be
+  the green base colour of the hill orc and the orange colour of "Archer"
+  ego-power resulting in a green orc that flickers orange.
+  If the ego-power colour is actually the same as the basic monster colour the
+  resulting ego monster will instead flicker in random colour spikes just like
+  unique monsters do.
+
+Some ego monsters can be extremely nasty at low and mid levels. Among the most
+feared are probably the (dark-brown) melee-specific egos "Monk", "Warrior" and
+"Unbeliever" and the somewhat less bad "Chieftain" and "Possessed" animals as
+well as the dark-green "Archpriest" ego which moves fast, has a powerful curse
+attack and can summon more monsters.
+
+Monsters have specific loot tables, a base level (r-level, racial level of the
+basic monster type in general) and an actual monster level (m-level, the real
+level of a monster standing before you, which can be above its basic r-level,
+because monsters can appear as levelled-up versions if you encounter them on
+much deeper dungeon levels than where they usually start to appear).
+See (5.7c) for loot tables, see (0.4) for details on m-level and r-level.
+
+Some unique monsters are "dungeon bosses", which means they can only be found
+on the final level of a particular dungeon and when you kill them you will
+"conquer" that dungeon (press ~8 to check your dungeon info). See (4.5d) for
+info about dungeon bosses.
+
+Morgoth, the Lord of Darkness is the game boss. To actually encounter him you
+first need to defeat Sauron, the Sorceror though. See (1.3b) for details.
+By defeating Morgoth the player is awarded royal status. There will be two
+more dungeons that can only be entered by royalty and offer further, insanely
+hard challenges and new unique bosses.
+
+
+(5.11a) Monster flags
+---------------------
+Most monster flags you find in the spoiler files (press ~7 in-game or open the
+actual file r_info.txt with a text editor or use Mikael's monster search) are
+self-explanatory. Here is an explanation of some flags that are important but
+might not be obvious:
+
+FORCE_MAXHP     The monster always gets rolled at maximum hit points.
+                For example if the monster has 3d6 hit points aka 3 dice with
+                6 sides each, it could have anything between 3 and 18 hp.
+                But if it has this flag, when you encounter this type of
+                monster it will always have 18 hp.
+FORCE_DEPTH     You cannot meet this monster out of depth. It will never appear
+                on a floor of lesser level that itself.
+FORCE_SLEEP     Deprecated, has no actual effect in-game.
+                A note about monster sleep in general: Check monster lore (~7)
+                to see which monsters start out asleep and which are awake.
+                Note that monsters inside a pit (see (4.6)) are never asleep.
+OOD_xx          The monster cannot occur more than xx levels out of depth.
+                All unique monsters actually have an intrinsic OOD_20 flag even
+                if it's not shown in the monster lore spoilers.
+FRIENDS         This monster comes in a pack. Makes life easier for mimics.
+
+RAND_xxx        This monster has random movement. The xxx number is the chance
+                in percent. Several of these flags will stack.
+NO_SLEEP        This does not mean that the monster cannot be asleep when you
+                meet it, but that you cannot use sleep spells (et al) on it.
+                (Compare (4.12).)
+NEVER_BLOW      This monster will never attack in melee.
+NEVER_ACT       This monster will never move or perform any action at all.
+                So this means it is completely harmless.
+
+NO_TARGET       This monster cannot be targetted with target command.
+NO_DEATH        This entity can never die.
+NO_AUTORET      You won't use auto-retaliation against this entity.
+
+REFLECTING      The monster can deflect bolts and arrows, physical and magical
+                projectiles, prolonging the fight.
+HURT_LITE       This monster is susceptible to light attacks.
+HURT_ROCK       This monster is susceptible to stone-to-mud attacks.
+
+COLD_BLOOD      You cannot spot this monster with infra-vision.
+WEIRD_MIND      The monster flickers on ESP.
+EMPTY_MIND      The monster does not show up on ESP.
+
+SHAPECHANGER    The monster changes its appearance randomly and quickly.
+CHAR_CLEAR      The monster has no visible appearance, not even if you can see
+                invisible.
+
+UNMAGIC         Will cancel all temporary magical effects on the player,
+                except for mimic form (from polymorph ring) and martyr.
+HOLD            Paralyses you from afar.
+FORGET          Blanks your mind, makes you forget the dungeon map and details
+                of your items (unidentifies items).
+TRAPS           Can place traps around you (from afar).
+DISBELIEVE      Monster has an antimagic field, the strength depending on its
+                level.
+
+                Like training the 'Antimagic' skill, having intrinsic antimagic
+                from the DISBELIEVE flag will also shorten the duration of
+                certain magical temporary buffs and debuffs on your character!
+                To see which those are and to see more information about
+                antimagic, see 'Antimagic' skill in (6.2) and 'Dark Sword' in
+                (5.9).
+
+DROP_GOOD       The monster usually drops enchanted items.
+DROP_GREAT      The monster usually drops items with ego powers or artifacts.
+                Hint: Usually monsters that have this flag are pretty powerful,
+                but there are actually some low-to-mid-level monsters that have
+                it too, so make sure to kill these when you see them:
+                Smeagol (level 3), Wormtongue (level 9), Robin Hood (level 10),
+                Boldor (level 15), Azog (level 23), It (level 24, but actually
+                impossible to seek out, you'll rather just meet It by chance),
+                Sandworm Queen (level 30), The Wight-King of the Barrow-Downs
+                (level 35). Azog, the Sandworm Queen and the Wight-King are
+                dungeon bosses, so you will only find them on the final floor
+                of their respective dungeon.
+                (For details on monster stats and flags, press ~ 7 in the game
+                to invoke the monster lore browser.)
+
+
+
+(5.12) Monster attack mechanism, Armour Class, damage caps
 ----------------------------------------------------------
 Monsters may try to attack you in three different ways:
 -Hitting you.
@@ -10101,11 +10268,10 @@ applied. That means that some very powerful ego-monsters may deal even more
 than cap damage on average per round, although that's very rare.
 
 Note that there are melee attacks that cannot be reduced by armour. It depends
-on the way the melee attack is performed. See (5.12) for details.
+on the way the melee attack is performed. See (5.12a) for details.
 
 
-
-(5.12) Monster attack types and brands
+(5.12a) Monster attack types and brands
 --------------------------------------
 Monsters can strike you with branded attacks, for example acidic hits, or hits
 that poison you if you get hit. If you resist the according brand you won't be
@@ -10228,87 +10394,6 @@ HOLD            Although not so special and already mentioned in the text above
                 Ghouls can do this for example, so make sure that you get
                 Free Action as early as possible, definitely before venturing
                 into Mordor though.
-
-
-(5.12a) Monster flags
----------------------
-Most monster flags you find in the spoiler files (press ~7 in-game or open the
-actual file r_info.txt with a text editor or use Mikael's monster search) are
-self-explanatory. Here is an explanation of some flags that are important but
-might not be obvious:
-
-FORCE_MAXHP     The monster always gets rolled at maximum hit points.
-                For example if the monster has 3d6 hit points aka 3 dice with
-                6 sides each, it could have anything between 3 and 18 hp.
-                But if it has this flag, when you encounter this type of
-                monster it will always have 18 hp.
-FORCE_DEPTH     You cannot meet this monster out of depth. It will never appear
-                on a floor of lesser level that itself.
-FORCE_SLEEP     Deprecated, has no actual effect in-game.
-                A note about monster sleep in general: Check monster lore (~7)
-                to see which monsters start out asleep and which are awake.
-                Note that monsters inside a pit (see (4.6)) are never asleep.
-OOD_xx          The monster cannot occur more than xx levels out of depth.
-                All unique monsters actually have an intrinsic OOD_20 flag even
-                if it's not shown in the monster lore spoilers.
-FRIENDS         This monster comes in a pack. Makes life easier for mimics.
-
-RAND_xxx        This monster has random movement. The xxx number is the chance
-                in percent. Several of these flags will stack.
-NO_SLEEP        This does not mean that the monster cannot be asleep when you
-                meet it, but that you cannot use sleep spells (et al) on it.
-                (Compare (4.12).)
-NEVER_BLOW      This monster will never attack in melee.
-NEVER_ACT       This monster will never move or perform any action at all.
-                So this means it is completely harmless.
-
-NO_TARGET       This monster cannot be targetted with target command.
-NO_DEATH        This entity can never die.
-NO_AUTORET      You won't use auto-retaliation against this entity.
-
-REFLECTING      The monster can deflect bolts and arrows, physical and magical
-                projectiles, prolonging the fight.
-HURT_LITE       This monster is susceptible to light attacks.
-HURT_ROCK       This monster is susceptible to stone-to-mud attacks.
-
-COLD_BLOOD      You cannot spot this monster with infra-vision.
-WEIRD_MIND      The monster flickers on ESP.
-EMPTY_MIND      The monster does not show up on ESP.
-
-SHAPECHANGER    The monster changes its appearance randomly and quickly.
-CHAR_CLEAR      The monster has no visible appearance, not even if you can see
-                invisible.
-
-UNMAGIC         Will cancel all temporary magical effects on the player,
-                except for mimic form (from polymorph ring) and martyr.
-HOLD            Paralyses you from afar.
-FORGET          Blanks your mind, makes you forget the dungeon map and details
-                of your items (unidentifies items).
-TRAPS           Can place traps around you (from afar).
-DISBELIEVE      Monster has an antimagic field, the strength depending on its
-                level.
-
-                Like training the 'Antimagic' skill, having intrinsic antimagic
-                from the DISBELIEVE flag will also shorten the duration of
-                certain magical temporary buffs and debuffs on your character!
-                To see which those are and to see more information about
-                antimagic, see 'Antimagic' skill in (6.2) and 'Dark Sword' in
-                (5.9).
-
-DROP_GOOD       The monster usually drops enchanted items.
-DROP_GREAT      The monster usually drops items with ego powers or artifacts.
-                Hint: Usually monsters that have this flag are pretty powerful,
-                but there are actually some low-to-mid-level monsters that have
-                it too, so make sure to kill these when you see them:
-                Smeagol (level 3), Wormtongue (level 9), Robin Hood (level 10),
-                Boldor (level 15), Azog (level 23), It (level 24, but actually
-                impossible to seek out, you'll rather just meet It by chance),
-                Sandworm Queen (level 30), The Wight-King of the Barrow-Downs
-                (level 35). Azog, the Sandworm Queen and the Wight-King are
-                dungeon bosses, so you will only find them on the final floor
-                of their respective dungeon.
-                (For details on monster stats and flags, press ~ 7 in the game
-                to invoke the monster lore browser.)
 
 
 
@@ -15837,14 +15922,14 @@ their base level from a_info.txt counts, ie what is displayed at
 (6.11) Parrying and blocking
 -----------------------------
 There are a couple of ways to reduce damage taken. One is simply to have high
-armour class (see (5.11) for details), another one is 'Dodging' skill (see
+armour class (see (5.12) for details), another one is 'Dodging' skill (see
 (6.2) for details).
 This paragraph is about parrying/blocking only. Note that the chance values
 given below do not always apply as is, but sometimes depend on the the attack
 type and especially on a little bit of randomness when your character chooses
 which defense method it actually uses (block or parry) - for details about this
 and about all damage reduction mechanisms in general and the order/chance they
-are applied, make sure you also read (5.11).
+are applied, make sure you also read (5.12).
 
 For melee fighters that use weapons or shields, two more abilities can help:
 Parrying enemy attacks with a weapon, and blocking attacks with a shield.
@@ -15917,7 +16002,7 @@ the actual block base chance will usually be displayed as a percentage in []
 brackets behind the shield's name, where AC is located for other types of
 armour.
 This base chance in many cases applies as is to standard melee combat IF your
-character tries to block instead of parrying (compare (5.11)), but is sometimes
+character tries to block instead of parrying (compare (5.12)), but is sometimes
 modified depending on the type of an incoming attack: When deflecting bolts
 from bolt traps or when in PvP combat blocking receives an additional bonus.
 
