@@ -14014,7 +14014,7 @@ Level 30:
 (Code 440)              all melee attacks are poisonous; immune to poison;
                         can cast fear and poison ball
 
-Minotaur                tough and very speed; susceptible to 'good'
+Minotaur                tough and very speedy; susceptible to 'good'
 (Code 641)
 
 Giant squid             tough and speedy aquatic(*) creature;
