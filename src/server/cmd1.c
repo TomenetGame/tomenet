@@ -1506,7 +1506,7 @@ void whats_under_your_feet(int Ind) {
 #ifdef ENABLE_XID_SPELL
 /* Allow BAGIDENTIFY spell to be used with !X inscription?
    This is currently not supported, because the spell is cast BEFORE the item is picked up. */
- //#define ALLOW_X_BAGID
+ #define ALLOW_X_BAGID
 #endif
 void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	object_type *o_ptr;

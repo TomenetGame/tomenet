@@ -3282,6 +3282,9 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 //NOTE: EXEMPT_BROKEN_SWEARWORDS and HIGHLY_EFFECTIVE_CENSOR shouldn't really work togehter (because latter one kills spaces etc.)
 #define EXEMPT_BROKEN_SWEARWORDS	/* don't 'recognize' swear words that are broken up into 'innocent' parts */
 #define HIGHLY_EFFECTIVE_CENSOR		/* strip all kinds of non-alpha chars too? ([disabled])*/
+#define HEC_RESTRICTION			/* actually restrict HIGHLY_EFFECTIVE_CENSOR so it does _not_ strip a couple specific \
+					   non-alpha chars which probably weren't used for masking swearing - eg: \
+					   "as---s" obviously means "ass", but "as '?' symbol" shouldn't recognize "ass". */
 #define CENSOR_PH_TO_F			/* (slightly picky) convert ph to f ?*/
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
 #define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
@@ -3299,6 +3302,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	int level = 0;
 #ifdef VSHORT_STEALTH_CHECK
 	bool masked;
+#endif
+#ifdef HEC_RESTRICTION
+	char repeated = 0;
+	bool hec_seq = FALSE, ok1 = FALSE, ok2 = FALSE, ok3 = FALSE;
 #endif
 
 	/* create working copies */
@@ -3433,11 +3440,47 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	/* check for non-alpha chars and _drop_ them (!) */
 	i = j = 0;
 	while (lcopy[j]) {
+		/* non-alphanum symbol? */
 		if ((lcopy[j] < 'a' || lcopy[j] > 'z') &&
 		    lcopy[j] != 'Z') {
+ #ifdef HEC_RESTRICTION
+			/* new sequence to look ahead into? */
+			if (!hec_seq) {
+				hec_seq = TRUE;
+				k = j;
+				while (lcopy[k] && (lcopy[k] < 'a' || lcopy[k] > 'z') && lcopy[k] != 'Z') {
+					/* don't allow these 'bad' symbols to be the only ones occuring. Note: spaces don't count as bad symbols */
+					if (lcopy[k] != '.' && lcopy[k] != ',' && lcopy[k] != '-') ok3 = TRUE;
+
+					/* make sure it's not just a single symbol getting repeated */
+					if (!repeated) {
+						repeated = lcopy[k];
+						k++;
+						continue;
+					}
+					if (lcopy[k] != repeated) ok1 = TRUE; /* different symbols = rather inconspicuous */
+
+					/* at least 3 non-alphanum symbols for the sequence to have any "meaning" */
+					if (k - j >= 2) ok2 = TRUE;
+
+					if (ok1 && ok2 && ok3) break;
+					k++;
+				}
+			}
+			if (!ok1 || !ok2 || !ok3) { /* conspicuous sequence? (possibly intended to mask swearing) */
+				/* cut them out */
+				j++;
+				continue;
+			}
+ #else
+			/* cut them out */
 			j++;
 			continue;
+ #endif
 		}
+ #ifdef HEC_RESTRICTION
+		else hec_seq = FALSE;
+ #endif
 
 		/* modify index map for stripped string */
 		cc[i] = cc[j];
