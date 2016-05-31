@@ -7766,14 +7766,6 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			int hres = 0;
 			int pres = 0;
 
-			if (f2 & TR2_RES_LITE) {
-				hres++;
-				if (p_ptr->resist_lite) pres++;
-			}
-			if (f2 & TR2_RES_DARK) {
-				hres++;
-				if (p_ptr->resist_dark) pres++;
-			}
 			if (f2 & TR2_RES_NEXUS) {
 				hres++;
 				if (p_ptr->resist_nexus) pres++;
@@ -7803,6 +7795,17 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				if (p_ptr->resist_disen) pres++;
 			}
 
+			/* semi-great */
+			if (f2 & TR2_RES_DARK) {
+				hres++;
+				if (p_ptr->resist_dark) pres++;
+			}
+			if (f2 & TR2_RES_LITE) {
+				hres++;
+				if (p_ptr->resist_lite) pres++;
+			}
+
+			/* less great */
 			if (f2 & TR2_RES_CONF) {
 				hres++;
 				if (p_ptr->resist_conf) pres++;
@@ -7811,8 +7814,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				hres++;
 				if (p_ptr->resist_blind) pres++;
 			}
+
+			/* misc */
 			//if (f5 & TR5_RES_WATER) hres++;
 			//PLASMA, MANA, TIME, FEAR
+			//don't check for FA, to make sure Vampires/GreenD don't get mirkwood boots
 
 			if (hres && pres == hres) continue;
 		}
