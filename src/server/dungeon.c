@@ -903,10 +903,10 @@ static void process_effects(void) {
 	player_type *p_ptr;
 
 	/* Every 10 game turns */
-//	if (turn % 10) return;
+	//if (turn % 10) return;
 
 	/* Not in the small-scale wilderness map */
-//	if (p_ptr->wild_mode) return;
+	//if (p_ptr->wild_mode) return;
 
 
 	for (k = 0; k < MAX_EFFECTS; k++) {
@@ -925,33 +925,33 @@ static void process_effects(void) {
 
 #ifdef ARCADE_SERVER
  #if 0
-                if ((e_ptr->flags & EFF_CROSSHAIR_A) || (e_ptr->flags & EFF_CROSSHAIR_B) || (e_ptr->flags & EFF_CROSSHAIR_C)) {
+		if ((e_ptr->flags & EFF_CROSSHAIR_A) || (e_ptr->flags & EFF_CROSSHAIR_B) || (e_ptr->flags & EFF_CROSSHAIR_C)) {
 
-                        /* e_ptr->interval is player who controls it */
-                        if (e_ptr->interval >= NumPlayers) {
-                                p_ptr = Players[e_ptr->interval];
-                                if (k == p_ptr->e) {
-                                        if (e_ptr->cy != p_ptr->arc_b || e_ptr->cx != p_ptr->arc_a) {
-                                                if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
-                                                c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
-                                                c_ptr->effect = 0;
-                                                everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
-                                                e_ptr->cy = p_ptr->arc_b;
-                                                e_ptr->cx = p_ptr->arc_a;
-                                                if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
-                                                c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
-                                                c_ptr->effect = k;
-                                                everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
-                                        }
+			/* e_ptr->interval is player who controls it */
+			if (e_ptr->interval >= NumPlayers) {
+				p_ptr = Players[e_ptr->interval];
+				if (k == p_ptr->e) {
+					if (e_ptr->cy != p_ptr->arc_b || e_ptr->cx != p_ptr->arc_a) {
+						if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
+						c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+						c_ptr->effect = 0;
+						everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+						e_ptr->cy = p_ptr->arc_b;
+						e_ptr->cx = p_ptr->arc_a;
+						if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
+						c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+						c_ptr->effect = k;
+						everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+					}
 
-                                } else {
-	                                erase_effects(k);
-                                }
-                        } else {
-	                        erase_effects(k);
-                        }
+				} else {
+					erase_effects(k);
+				}
+			} else {
+				erase_effects(k);
+			}
 			continue;
-                }
+		}
  #endif
 #endif
 
@@ -1046,8 +1046,7 @@ static void process_effects(void) {
 
 					/* Oh, destroyed? RIP */
 					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-							Players[0 - who]->conn == NOT_CONNECTED)
-					{
+					    Players[0 - who]->conn == NOT_CONNECTED) {
 						/* Make the effect friendly after death - mikaelh */
 						who = PROJECTOR_PLAYER;
 					}
@@ -1122,7 +1121,7 @@ static void process_effects(void) {
 				}
 			}
 
-                        /* Generate fireworks effects */
+			/* Generate fireworks effects */
 			if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
 				int semi = (e_ptr->time + e_ptr->rad) / 2;
 				/* until half-time (or half-radius) the fireworks rise into the air */
@@ -1202,7 +1201,7 @@ static void process_effects(void) {
 				}
 			}
 
-                        /* Generate lightning effects -- effect_xtra: -1\ 0| 1/ 2_ */
+			/* Generate lightning effects -- effect_xtra: -1\ 0| 1/ 2_ */
 			if (e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3)) {
 				int mirrored = (e_ptr->dam == 0) ? -1 : 1;
 
@@ -1585,13 +1584,11 @@ static void process_effects(void) {
 /*
  * Queued drawing at the beginning of a new turn.
  */
-static void process_lite_later(void)
-{
+static void process_lite_later(void) {
 	int i;
 	struct worldspot *wspot;
 
-	for (i = 0; i < lite_later_num; i++)
-	{
+	for (i = 0; i < lite_later_num; i++) {
 		wspot = &lite_later[i];
 
 		/* Draw now */
@@ -1612,23 +1609,20 @@ static void process_lite_later(void)
 /* Note that since this is done in real time, monsters will regenerate
  * faster in game time the deeper they are in the dungeon.
  */
-static void regen_monsters(void)
-{
+static void regen_monsters(void) {
 	int i, frac;
 
 	/* Regenerate everyone */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		/* Check the i'th monster */
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = race_inf(m_ptr);
+		monster_race *r_ptr = race_inf(m_ptr);
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
 
 		/* Allow regeneration (if needed) */
-		if (m_ptr->hp < m_ptr->maxhp)
-		{
+		if (m_ptr->hp < m_ptr->maxhp) {
 			/* Hack -- Base regeneration */
 			frac = m_ptr->maxhp / 100;
 
@@ -1663,7 +1657,7 @@ bool player_day(int Ind) {
 		return FALSE;
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
 
-//	if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
+	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
 	if (p_ptr->prace == RACE_VAMPIRE ||
 	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
 		calc_boni(Ind); /* daylight */
@@ -1716,7 +1710,7 @@ bool player_night(int Ind) {
 		return FALSE;
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
 
-//	if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
+	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
 	if (p_ptr->prace == RACE_VAMPIRE ||
 	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
 		calc_boni(Ind); /* no more daylight */
@@ -1865,7 +1859,7 @@ void world_surface_night(struct worldpos *wpos) {
 			c_ptr = &zcave[y1][x1];
 
 			/* Illuminate the store */
-//			c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
+			//c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
 			c_ptr->info |= CAVE_GLOW;
 		}
 	}
@@ -2598,7 +2592,7 @@ static bool auto_retaliate_test(int Ind) {
 				 * Q's because if the player is standing next to two Q's
 				 * he deserves whatever punishment he gets.
 				 */
-                                if (r_ptr->d_char == 'Q') {
+				if (r_ptr->d_char == 'Q') {
 					prev_m_target_ptr = m_target_ptr;
 					m_target_ptr = m_ptr;
 					prev_target = target;
@@ -2966,15 +2960,15 @@ static void process_player_begin(int Ind)
 					break;
 				}
 				if ((d_ptr = wild_info[y][x].dungeon) && (!strcmp(d_name + d_info[d_ptr->type].name, "The Shores of Valinor"))) {
-				        p_ptr->recall_pos.wx = x;
-				        p_ptr->recall_pos.wy = y;
+					p_ptr->recall_pos.wx = x;
+					p_ptr->recall_pos.wy = y;
 					p_ptr->recall_pos.wz = -1;
 					// let's try LEVEL_OUTSIDE_RAND (5) instead of LEVEL_OUTSIDE (4) - C. Blue :)
-				        p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-				        recall_player(Ind, "");
+					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					recall_player(Ind, "");
 					break;
 				}
-		        }
+			}
 		}
 		p_ptr->auto_transport = AT_VALINOR2;
 		break;
@@ -3118,11 +3112,10 @@ static void apply_effect(int Ind)
 			if (f_ptr->d_frequency[i] == 0) continue;
 
 			/* XXX it's no good to use 'turn' here */
-//			if (((turn % f_ptr->d_frequency[i]) == 0) &&
+			//if (((turn % f_ptr->d_frequency[i]) == 0) &&
 
 			if ((!rand_int(f_ptr->d_frequency[i])) &&
-			    ((f_ptr->d_side[i] != 0) || (f_ptr->d_dice[i] != 0)))
-			{
+			    ((f_ptr->d_side[i] != 0) || (f_ptr->d_dice[i] != 0))) {
 				int l, dam = 0;
 				int d = f_ptr->d_dice[i], s = f_ptr->d_side[i];
 
@@ -3136,7 +3129,7 @@ static void apply_effect(int Ind)
 
 				/* Apply damage */
 				project(PROJECTOR_TERRAIN, 0, &p_ptr->wpos, y, x, dam, f_ptr->d_type[i],
-				        PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP, "");
+				    PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP, "");
 
 				/* Hack -- notice death */
 //				if (!alive || death) return;
@@ -3329,12 +3322,12 @@ void recall_player(int Ind, char *message) {
 			msg_broadcast(Ind, buf);
 			l_printf("%s \\{U%s (%d) made it through the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->lev);
 #ifdef TOMENET_WORLDS
-	                if (cfg.worldd_events) world_msg(buf);
+			if (cfg.worldd_events) world_msg(buf);
 #endif
-		        /* enforce dedicated Ironman Deep Dive Challenge character slot usage */
-		        if (p_ptr->mode & MODE_DED_IDDC) {
-		                msg_print(Ind, "\377aYou return to town and may retire ('Q') when ready.");
-		                msg_print(Ind, "\377aIf you enter a dungeon or tower, \377Rretirement\377a is assumed \377Rautomatically\377a.");
+			/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
+			if (p_ptr->mode & MODE_DED_IDDC) {
+				msg_print(Ind, "\377aYou return to town and may retire ('Q') when ready.");
+				msg_print(Ind, "\377aIf you enter a dungeon or tower, \377Rretirement\377a is assumed \377Rautomatically\377a.");
 
 				process_player_change_wpos(Ind);
 				p_ptr->recall_pos.wx = cfg.town_x;
@@ -3359,19 +3352,19 @@ void recall_player(int Ind, char *message) {
 			p_ptr->IDDC_flags = 0x0; //clear IDDC specialties
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
 		} else {
-		        /* enforce dedicated Ironman Deep Dive Challenge character slot usage */
-		        if (p_ptr->mode & MODE_DED_IDDC) {
-		                msg_print(Ind, "\377RYou failed to complete the Ironman Deep Dive Challenge!");
-		                strcpy(p_ptr->died_from, "indetermination");
-		                p_ptr->deathblow = 0;
-		                p_ptr->death = TRUE;
-		                return;
-		        }
+			/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
+			if (p_ptr->mode & MODE_DED_IDDC) {
+				msg_print(Ind, "\377RYou failed to complete the Ironman Deep Dive Challenge!");
+				strcpy(p_ptr->died_from, "indetermination");
+				p_ptr->deathblow = 0;
+				p_ptr->death = TRUE;
+				return;
+			}
 
 			sprintf(buf, "\374\377s%s withdrew from the Ironman Deep Dive challenge.", p_ptr->name);
 			msg_broadcast(0, buf);
  #ifdef TOMENET_WORLDS
-	                if (cfg.worldd_events) world_msg(buf);
+			if (cfg.worldd_events) world_msg(buf);
  #endif
 
 			/* reduce his accumulated mimicry form knowledge somewhat
@@ -3465,14 +3458,14 @@ static void do_recall(int Ind, bool bypass)
 			}
 		}
 #endif
-	        /* Nether Realm only for Kings/Queens (currently paranoia, since NR is NO_RECALL_INTO) */
-    		if (d_ptr && (d_ptr->type == DI_NETHER_REALM) && !p_ptr->total_winner) {
-    	    		msg_print(Ind,"\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
-	        	if (!is_admin(p_ptr)) {
-    		        	set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
-	    	                return;
-	                }
-	        }
+		/* Nether Realm only for Kings/Queens (currently paranoia, since NR is NO_RECALL_INTO) */
+		if (d_ptr && (d_ptr->type == DI_NETHER_REALM) && !p_ptr->total_winner) {
+			msg_print(Ind,"\377rAs you attempt to recall, you are gripped by an uncontrollable fear.");
+			if (!is_admin(p_ptr)) {
+				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
+				return;
+			}
+		}
 	}
 
 	/* Determine the level */
@@ -3613,7 +3606,7 @@ static void do_recall(int Ind, bool bypass)
 				p_ptr->recall_pos.wz = 0;
 			} else {
 				message = "You feel yourself yanked downwards!";
-		                msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, FALSE, d_ptr, 0, FALSE));
+				msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, FALSE, d_ptr, 0, FALSE));
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			}
 		}
@@ -3663,7 +3656,7 @@ static void do_recall(int Ind, bool bypass)
 				p_ptr->recall_pos.wz = 0;
 			} else {
 				message = "You feel yourself yanked upwards!";
-		                msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, TRUE, d_ptr, 0, FALSE));
+				msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, TRUE, d_ptr, 0, FALSE));
 				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 			}
 		} else {
@@ -4133,7 +4126,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Regenerate the mana */
 	/* Hack -- regenerate mana 5/3 times faster */
 #ifdef ARCADE_SERVER
-        p_ptr->regen_mana = TRUE;
+	p_ptr->regen_mana = TRUE;
 #endif
 	if (p_ptr->csp < p_ptr->msp) {
 		if (p_ptr->wpos.wx == WPOS_PVPARENA_X &&
@@ -4489,7 +4482,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Thunderstorm */
 	if (p_ptr->tim_thunder) {
-                int dam = damroll(p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
+		int dam = damroll(p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
 		int i, tries = 600;
 		monster_type *m_ptr = NULL;
 
@@ -5363,7 +5356,7 @@ static void process_player_end(int Ind) {
 	/* Update stuff (if needed) */
 	if (p_ptr->update) update_stuff(Ind);
 
-//	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) p_ptr->tim_wraith = 0;
+	//if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) p_ptr->tim_wraith = 0;
 
 	/* Redraw stuff (if needed) */
 	if (p_ptr->redraw) redraw_stuff(Ind);
@@ -6175,7 +6168,7 @@ static void process_various(void) {
 		/* Reswpan for kings' joy  -Jir- */
 		/* Update the unique respawn timers */
 		/* I moved this out of the loop above so this may need some
-                 * tuning now - mikaelh */
+		 * tuning now - mikaelh */
 		for (j = 1; j <= NumPlayers; j++) {
 			p_ptr = Players[j];
 			if (!p_ptr->total_winner) continue;
@@ -7839,8 +7832,8 @@ void dungeon(void) {
 				get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
 
 #ifdef MUCHO_RUMOURS
-	        	/* the_sandman prints a rumour */
-		        if (NumPlayers) {
+			/* the_sandman prints a rumour */
+			if (NumPlayers) {
 				msg_print(1, "Suddenly a thought comes to your mind:");
 				fortune(1, TRUE);
 			}
@@ -8579,7 +8572,7 @@ void process_timers() {
 			if ((timer_pvparena3 % 2) == 0) { /* cycle preparation? */
 				/* clear old monsters and items */
 				wipe_m_list(&wpos);
-			        wipe_o_list_safely(&wpos);
+				wipe_o_list_safely(&wpos);
 				/* close all doors */
 				for (i = 1; i <= 6; i++) {
 					y = 2;
