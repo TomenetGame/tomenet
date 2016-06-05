@@ -7474,23 +7474,41 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Ruination! (now we're talking) */
 		case GF_RUINATION:
-			if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags7 & RF7_NO_DEATH)) {
+			if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
+			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
+			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
 				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 			} else {
 				/* hack */
 				dam = 0;
 
+				/* -STR */
 				for (i = 0; i < 4; i++) {
-					if ((m_ptr->blow[i].d_dice > 1) && (m_ptr->blow[i].org_d_dice - m_ptr->blow[i].d_dice < 3)) {
-						m_ptr->blow[i].d_dice -= 1;
+					/* prevent div0 if monster has no damaging attack */
+					if (!m_ptr->blow[i].org_d_dice) continue;
+
+					/* if dice are bigger than sides or if sides are just not further reducible, reduce the dice if they're still reducible */
+					if ((m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side || (100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side <= 72) &&
+					    (100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice > 72) {
+						/* reduce by 14% */
+						m_ptr->blow[i].d_dice -= (14 * m_ptr->blow[i].org_d_dice) / 100;
+						/* cap at 72% total reduction */
+						if ((100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice < 72)
+							m_ptr->blow[i].d_dice = (72 * m_ptr->blow[i].org_d_dice) / 100;
 						dam = 1;
 					}
-					else if ((m_ptr->blow[i].d_side > 1) && (m_ptr->blow[i].org_d_side - m_ptr->blow[i].d_side < 3)) {
-						m_ptr->blow[i].d_side -= 1;
+					/* otherwise reduce the sides, if still reducible */
+					else if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side > 72) {
+						/* reduce by 14% */
+						m_ptr->blow[i].d_side -= (14 * m_ptr->blow[i].org_d_side) / 100;
+						/* cap at 72% total reduction */
+						if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side < 72)
+							m_ptr->blow[i].d_side = (72 * m_ptr->blow[i].org_d_side) / 100;
 						dam = 1;
 					}
 				}
 
+				/* -DEX */
 				if (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) {
 					if (m_ptr->ac) {
 						m_ptr->ac = (m_ptr->ac * 7) / 8;
@@ -7500,6 +7518,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					}
 				}
 
+				/* -CON */
 				if (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) {
 					if (m_ptr->maxhp > 3) {
 						m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
