@@ -7225,6 +7225,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 			} else {
 				for (i = 0; i < 4; i++) {
+					/* prevent div0 if monster has no damaging attack */
+					if (!m_ptr->blow[i].org_d_dice) continue;
+
 					/* if dice are bigger than sides or if sides are just not further reducible, reduce the dice if they're still reducible */
 					if ((m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side || (100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side <= 72) &&
 					    (100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice > 72) {
@@ -7350,6 +7353,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = 0;
 
 				for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
+					if (!m_ptr->blow[i].org_d_dice) continue; /* monster has no damaging attack? */
+
 					/* do a 'restore strenght' before increasing it */
 					if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
 					if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
@@ -7421,6 +7426,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = 0;
 
 				for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
+					if (!m_ptr->blow[i].org_d_dice) continue; /* monster has no damaging attack? */
+
 					/* res */
 					if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
 					if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
