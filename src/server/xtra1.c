@@ -8916,6 +8916,22 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		price = (price * (180 - j) * (180 - j)) / 6400; //1x (100%) .. 5x (1%) -- so it's still above BM
 		price *= num;
 
+		/* Hack -- Charge lite uniformly (occurance 2 of 2, keep in sync) */
+		if (forge.tval == TV_LITE) {
+			u32b f1, f2, f3, f4, f5, f6, esp;
+			object_flags(&forge, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+			/* Only fuelable ones! */
+			if (f4 & TR4_FUEL_LITE) {
+				if (forge.sval == SV_LITE_TORCH) forge.timeout = FUEL_TORCH / 2;
+				if (forge.sval == SV_LITE_LANTERN) forge.timeout = FUEL_LAMP / 2;
+			}
+		}
+
+		/* If wands, update the # of charges. stack size can be set by force_num or mass_produce (occurance 2 of 2, keep in sync) */
+		if (forge.tval == TV_WAND && forge.number > 1)
+			forge.pval *= forge.number;
+
 		p_ptr->item_order_forge = forge;
 		p_ptr->item_order_cost = price;
 		p_ptr->item_order_rarity = j;
