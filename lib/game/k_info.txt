@@ -4027,7 +4027,7 @@ G:$:g
 I:100:15:0
 W:1:0:0:28
 
-#10xAu (early), 'beyond price' (later)
+#according to lore: '10xAu' (early), 'beyond price' (later)
 N:495:mithril
 G:$:B
 I:100:16:0
