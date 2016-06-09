@@ -629,6 +629,7 @@ F:R_CHAR_f
 H:AQUATIC | CAN_FLY
 O:CAN_SWIM | MULTIPLY
 M:RES_SHARDS | NO_CUT | IM_POIS | FORCE_MAXHP
+M:RES_FIRE | RES_COLD | RES_ELEC | RES_ACID
 
 #Birds can sometimes be spirit guardians. They hit a lot harder and summon other animals. More hp.
 N:50:Spirit Guardian
