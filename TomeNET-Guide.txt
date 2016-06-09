@@ -9246,7 +9246,7 @@ Restore Life Levels
 Restore Mana    Restores 500 MP.
 *Restore Mana*  Restores 1000 MP.
 Ruination       Take 10d10 damage. All stats are decreased by 25 (restorable).
-Self-Knowledge  Tells you everything about yourself :)
+Self-Knowledge  Tells you everything about yourself and identifies your items.
 
 
 Scrolls

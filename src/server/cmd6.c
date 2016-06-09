@@ -965,6 +965,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			ident = TRUE;
 			break;
 		case SV_POTION_SELF_KNOWLEDGE:
+			identify_pack(Ind);
 			msg_print(Ind, "You begin to know yourself a little better...");
 			msg_print(Ind, NULL);
 			self_knowledge(Ind);
