@@ -5940,7 +5940,7 @@ Moria                        |  Balrog of Moria      | Quarterstaff of Olorin
 The Small Water Cave         |  Watcher in the Water | Trident of Wrath
 Submerged Ruins              |  Ar-Pharazon          | Toris Mejistos
 The Illusory Castle          |  King in Yellow       | Helm of Knowledge
-The Sacred Land Of Mountains |  T'ron                | Coat of T'ron
+The Sacred Land Of Mountains |  T'ron  (level 72!)   | Coat of T'ron
 Erebor                       |  Smaug                | Nauglamir
 Dol Guldur                   |  Shadow of Dol Guldur | Ring of Durin
 Mount Doom                   |  Sauron, the Sorceror | - (***)
