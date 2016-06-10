@@ -1018,10 +1018,6 @@ static void get_money(int Ind) {
 	/* Minimum 100 gold */
 	if (gold < 100) gold = 100;
 
-	/* She charmed the banker into it! -CJS- */
-	/* She slept with the banker.. :) -GDH-  */
-	if (!p_ptr->male) gold += 50;
-
 	/* Save the gold */
 	p_ptr->au = gold;
 	p_ptr->balance = 0;
