@@ -10478,12 +10478,16 @@ TY_CURSE        Randomly drains stats sometimes, even if the item is uncursed.
                 also occur rather rarely while you're on the world surface,
                 ie not within a dungeon or tower.
                 Note that your saving throw has a chance to suppress it.
+                Having 'Holy Support' skill at 40.000 or better will completely
+                negate TY_CURSE effects.
                 ("It carries an ancient foul curse.")
 DG_CURSE        Rarely summons a random monster on you, even if uncursed.
                 (DG_CURSE will stay, even if the 'normal' curse is broken!)
                 Greatly lowers the items value by 25000 Au.
                 This curse will be on hold while you're in a town.
                 Note that an antimagic field has a chance to suppress it.
+                Having 'Holy Support' skill at 40.000 or better will completely
+                negate TY_CURSE effects.
                 ("It carries an ancient morgothian curse.")
 
 If 'CURSED' or 'HEAVY_CURSE' occurs on a weapon or armour piece, the curses
