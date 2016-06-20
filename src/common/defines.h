@@ -2135,8 +2135,9 @@
 #define FEAT_CLOUDYSKY		0x6B
 #define FEAT_ABYSS_BOUNDARY	0x6C
 #define FEAT_VOLCANIC		0x6D
+#define FEAT_PUDDLE		0x6E	/* Like shallow water, but evaporates on its own after a while -- not yet implemented */
 
-/* Features 0x6C - 0x9F -- unused */
+/* Features 0x6E - 0x9F -- unused */
 
 #define FEAT_BETWEEN		0xA0 /* 160 */
 

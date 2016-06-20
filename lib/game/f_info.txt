@@ -815,8 +815,15 @@ F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
 #F:SUPPORT_LIGHT | LAMP_LITE_SNOW
 F:LAMP_LITE_OPTIONAL
 
+N:110:puddle of water
+G:~:B
+S:B:B:B:B:B:B:b
+F:ATTR_MULTI
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | CAN_RUN
+F:DONT_NOTICE_RUNNING
 
-# 109..159 unused -------------------------------------------------------------
+
+# 111..159 unused -------------------------------------------------------------
 
 
 N:160:void jumpgate
