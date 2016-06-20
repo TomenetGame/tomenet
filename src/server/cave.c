@@ -7400,8 +7400,12 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	player_type *p_ptr;
 	cave_type **zcave;
 	cave_type *c_ptr;
-//	struct c_special *cs_ptr;
+	//struct c_special *cs_ptr;
 	int i;
+
+	/* for Submerged Ruins: ensure all deep water; also affects Small Water Cave. */
+	dun_level *l_ptr = getfloor(wpos);
+	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
 
 	if (!(zcave = getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
@@ -7433,8 +7437,21 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
 		case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
 	}
-	/* todo: submerged ruins/small water cave only water floor, grinding ice only ice floor.
-	   maybe add d_info flags for this stuff instead of hard-coding here */
+	/* in SR/SWC floor is always deep water */
+	if (deep_water) switch (feat) {
+		case FEAT_IVY:
+		case FEAT_SHAL_WATER:
+		case FEAT_SNOW:
+		case FEAT_ICE:
+		case FEAT_FLOOR:
+		case FEAT_DIRT:
+		case FEAT_GRASS:
+		case FEAT_SAND:
+		case FEAT_ASH:
+		case FEAT_MUD:
+	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER: feat = FEAT_DEEP_WATER;
+	}
 
 	/* Change the feature */
 	c_ptr->feat = feat;
@@ -7469,7 +7486,11 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
 	int i;
-//	struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
+	//struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
+
+	/* for Submerged Ruins: ensure all deep water; also affects Small Water Cave. */
+	dun_level *l_ptr = getfloor(wpos);
+	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
 
 	if (!(zcave = getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
@@ -7581,10 +7602,21 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
 		case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
 	}
-
-	/* todo: submerged ruins/small water cave only water floor, grinding ice only ice floor.
-	   maybe add d_info flags for this stuff instead of hard-coding here */
-
+	/* in SR/SWC floor is always deep water */
+	if (deep_water) switch (feat) {
+		case FEAT_IVY:
+		case FEAT_SHAL_WATER:
+		case FEAT_SNOW:
+		case FEAT_ICE:
+		case FEAT_FLOOR:
+		case FEAT_DIRT:
+		case FEAT_GRASS:
+		case FEAT_SAND:
+		case FEAT_ASH:
+		case FEAT_MUD:
+	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		case FEAT_FLOWER: feat = FEAT_DEEP_WATER;
+	}
 
 
 	/* Trees in greater fire become dead trees at once */

@@ -9173,7 +9173,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* Global data */
 	dun = &dun_body;
 	dun->l_ptr = getfloor(wpos);
-	//dun->l_ptr->flags1 = 0;
+	dun->l_ptr->flags1 = 0;
 	dun->l_ptr->flags2 = 0;
 	dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
 
@@ -9278,8 +9278,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	if(tron_forget && wpos->wz == 11)
 		dun->l_ptr->flags1 |= LF1_NO_MAP;
 #else
-
-	dun->l_ptr->flags1 = 0;
 	if (dun_lev < 100 && magik(NO_MAGIC_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC;
 	if (magik(NO_GENO_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_GENO;
  	if (magik(NO_MAP_CHANCE) && dun_lev >= 5) dun->l_ptr->flags1 |= LF1_NO_MAP;
