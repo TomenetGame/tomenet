@@ -234,6 +234,9 @@
    Also allow melting items. */
 #define SMELTING 8
 
+/* Load 'D:' tags from e_info.txt file and display them on examining */
+#define EGO_DIZ
+
 
 
 /* --------------------- Server-type dependant features -------------------- */

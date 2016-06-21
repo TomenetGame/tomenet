@@ -3540,6 +3540,9 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 	//int i;
 	int i, cur_r = -1, cur_t = 0, j;
 	char *s, *t;
+#ifdef ART_DIZ
+	char tmp[MSG_LEN];
+#endif
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -3668,9 +3671,13 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'D' for "Description" */
 		if (buf[0] == 'D') {
-#if 0
+#ifdef EGO_DIZ
 			/* Acquire the text */
 			s = buf + 2;
+
+			strcpy(tmp, " \377w");
+			strcat(tmp, s);
+			strcat(tmp, "\n");
 
 			/* Hack -- Verify space */
 			if (e_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
@@ -3679,11 +3686,10 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			if (!e_ptr->text) e_ptr->text = ++e_head->text_size;
 
 			/* Append chars to the name */
-			strcpy(e_text + e_head->text_size, s);
+			strcpy(e_text + e_head->text_size, tmp);
 
 			/* Advance the index */
-			e_head->text_size += strlen(s);
-
+			e_head->text_size += strlen(tmp);
 #endif
 			/* Next... */
 			continue;

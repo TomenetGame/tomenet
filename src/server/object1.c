@@ -4614,7 +4614,15 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
  #ifdef NEW_ID_SCREEN
 	if (aware)
  #endif
+	{
 		fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
+ #ifdef EGO_DIZ
+		if (o_ptr->name2 && e_text + e_info[o_ptr->name2].text)
+			fprintf(fff, "%s", e_text + e_info[o_ptr->name2].text);
+		if (o_ptr->name2b && e_text + e_info[o_ptr->name2b].text)
+			fprintf(fff, "%s", e_text + e_info[o_ptr->name2b].text);
+ #endif
+	}
 #endif
 
 	/* Questor object! */
