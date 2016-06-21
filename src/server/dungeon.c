@@ -4950,7 +4950,13 @@ static bool process_player_end_aux(int Ind) {
 				o_ptr->pval--;
 
 			/* Notice changes */
-			if (!(o_ptr->pval)) j++;
+			if (!(o_ptr->pval)) {
+				if (check_guard_inscription(o_ptr->note, 'C')) {
+					object_desc(Ind, o_name, o_ptr, FALSE, 256);
+					msg_format(Ind, "Your %s (%c) has finished charging.", o_name, index_to_label(i));
+				}
+				j++;
+			}
 		}
 	}
 

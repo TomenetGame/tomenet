@@ -1491,7 +1491,7 @@ Other !-inscriptions:
 !r  prevent reading this scroll.
 !u,!a, !z  prevent using a staff/aim a wand/zap a rod.
 !A  prevent activating this item.
-!R  will prevent consuming the last rune in a stack for runespells
+!R  will prevent consuming the last rune in a stack for runespells.
 
 The # inscription:
     This one makes all following inscription be appended directly behind the
@@ -1513,6 +1513,9 @@ Weapons, devices and spells:
        designed to make your character automatically attack targets that are
        standing directly adjacent to you.
        For details about auto-retaliation see (4.1a)!
+
+Rods only:
+    !C will notify you when the rod finished recharging.
 
 Ammunition:
     !=          will make your character auto-pickup the ammo from the floor.
