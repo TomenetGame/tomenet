@@ -4731,6 +4731,7 @@ void do_cmd_fire(int Ind, int dir) {
 #endif
 	cave_type **zcave;
 
+
 	if (!(zcave = getcave(wpos))) return;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRE_BAT) {
