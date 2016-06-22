@@ -9937,8 +9937,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			}
 
 			/* Hack -- add *more* downstairs for Highlander Tournament event */
-			if (sector00separation && wpos->wx == WPOS_HIGHLANDER_X && wpos->wy == WPOS_HIGHLANDER_Y &&
-			    wpos->wz * WPOS_HIGHLANDER_Z > 0 && dun_lev > COMFORT_PASSAGE_DEPTH) {
+			if (sector00separation && in_highlander(wpos) && dun_lev > COMFORT_PASSAGE_DEPTH) {
 				/* Place 3 or 4 down stairs near some walls */
 				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 2, NULL);
 			}
