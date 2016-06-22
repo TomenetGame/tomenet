@@ -2339,11 +2339,11 @@ static void add_river(worldpos *wpos, int feat1, int feat2)
 	if(!(zcave = getcave(wpos))) return;
 
 	/* hacks - don't build rivers that are shallower than the actual dungeon floor.. - C. Blue */
-	if ((l_ptr->flags1 & LF1_DEEP_WATER)) {
+	if ((l_ptr->flags1 & (LF1_WATER | LF1_DEEP_WATER))) {
 		if (feat1 == FEAT_SHAL_WATER) feat1 = FEAT_DEEP_WATER;
 		if (feat2 == FEAT_SHAL_WATER) feat2 = FEAT_DEEP_WATER;
 	}
-	if ((l_ptr->flags1 & LF1_DEEP_LAVA)) {
+	if ((l_ptr->flags1 & (LF1_LAVA | LF1_DEEP_LAVA))) {
 		if (feat1 == FEAT_SHAL_LAVA) feat1 = FEAT_DEEP_LAVA;
 		if (feat2 == FEAT_SHAL_LAVA) feat2 = FEAT_DEEP_LAVA;
 	}
@@ -8664,11 +8664,11 @@ static void init_feat_info(worldpos *wpos) {
 				l_ptr->flags1 |= LF1_LAVA | LF1_NO_WATER;
 
 			/* for streamer/river hack: don't build shallow ones if dungeon floor itself is deep */
-			if (d_ptr->floor[i] == FEAT_DEEP_WATER
-			    || d_ptr->floor[i] == FEAT_SHAL_WATER) /* also build deep rivers on shallow base floor! */
+			if (d_ptr->floor[i] == FEAT_DEEP_WATER)
+			    //wrong: we check for this above (LF1_WATER)--   || d_ptr->floor[i] == FEAT_SHAL_WATER) /* also build deep rivers on shallow base floor! */
 				l_ptr->flags1 |= LF1_DEEP_WATER;
-			if (d_ptr->floor[i] == FEAT_DEEP_LAVA
-			    || d_ptr->floor[i] == FEAT_SHAL_LAVA) /* also build deep rivers on shallow base floor! */
+			if (d_ptr->floor[i] == FEAT_DEEP_LAVA)
+			    //wrong: we check for this above (LF1_WATER)--   || d_ptr->floor[i] == FEAT_SHAL_LAVA) /* also build deep rivers on shallow base floor! */
 {
 				l_ptr->flags1 |= LF1_DEEP_LAVA;
 #ifdef TEST_SERVER /* debug */
@@ -10005,7 +10005,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			num = randint(DUN_STR_QUA - 1);
 
 			for (i = 0; i < num; i++)
-				build_streamer2(wpos, (dun->l_ptr->flags1 & LF1_DEEP_WATER) ? FEAT_DEEP_WATER : FEAT_SHAL_WATER, 0);
+				build_streamer2(wpos, (dun->l_ptr->flags1 & (LF1_WATER | LF1_DEEP_WATER)) ? FEAT_DEEP_WATER : FEAT_SHAL_WATER, 0);
 
 			if (randint(20) > 15) {
 				num = randint(DUN_STR_QUA);
@@ -10027,7 +10027,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				num = randint(DUN_STR_QUA);
 
 				for (i = 0; i < num; i++)
-					build_streamer2(wpos, (dun->l_ptr->flags1 & LF1_DEEP_LAVA) ? FEAT_DEEP_LAVA : FEAT_SHAL_LAVA, 0);
+					build_streamer2(wpos, (dun->l_ptr->flags1 & (LF1_LAVA | LF1_DEEP_LAVA)) ? FEAT_DEEP_LAVA : FEAT_SHAL_LAVA, 0);
 
 				if (randint(20) > 15) {
 					num = randint(DUN_STR_QUA - 1);
@@ -10045,7 +10045,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				num = randint(DUN_STR_QUA - 1);
 
 				for (i = 0; i < num; i++)
-					build_streamer2(wpos, (dun->l_ptr->flags1 & LF1_DEEP_WATER) ? FEAT_DEEP_WATER : FEAT_SHAL_WATER, 0);
+					build_streamer2(wpos, (dun->l_ptr->flags1 & (LF1_WATER | LF1_DEEP_WATER)) ? FEAT_DEEP_WATER : FEAT_SHAL_WATER, 0);
 
 				if (randint(20) > 15) {
 					num = randint(DUN_STR_QUA);
