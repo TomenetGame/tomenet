@@ -150,6 +150,7 @@
 */
 static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 	int i,j;
+
 #if 0 /* why should this be enabled, hmm */
 	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++)
 		if (ge_contender_buffer_ID[i] == p_ptr->account) return; /* player already has a buffer entry */
@@ -158,6 +159,7 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 		if (ge_contender_buffer_ID[i] == 0) break;
 	if (i == MAX_CONTENDER_BUFFERS) return; /* no free buffer entries anymore, sorry! */
 	ge_contender_buffer_ID[i] = p_ptr->account;
+
 	for (j = 0; j < MAX_GLOBAL_EVENTS; j++)
 		switch (p_ptr->global_event_type[j]) {
 		case GE_HIGHLANDER:
@@ -166,22 +168,23 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_HIGHLANDER;
 			return;
-#if 1 /* since everyone can win, this is not that important */
 		case GE_DUNGEON_KEEPER:
+			if (p_ptr->global_event_progress[j][0] < 1) break; /* only rewarded if actually already in the labyrinth! */
 			if (death_type >= DEATH_QUIT) break; /* no reward for suiciding! */
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_DUNGEONKEEPER;
 			return;
-#endif
 		case GE_NONE:
 		default:
 			break;
 		}
+
 	ge_contender_buffer_ID[i] = 0; /* didn't find any event where player participated */
 }
 
 static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievement) {
 	int i;
+
 #if 0 /* why should this be enabled, hmm */
 	for (i = 0; i < MAX_ACHIEVEMENT_BUFFERS; i++)
 		if (achievement_buffer_ID[i] == p_ptr->account) return; /* player already has a buffer entry */
@@ -190,6 +193,7 @@ static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievem
 		if (achievement_buffer_ID[i] == 0) break;
 	if (i == MAX_ACHIEVEMENT_BUFFERS) return; /* no free buffer entries anymore, sorry! */
 	achievement_buffer_ID[i] = p_ptr->account;
+
 	switch (achievement) {
 	case ACHV_PVP_MAX:
 		achievement_buffer_deed[i] = SV_DEED_PVP_MAX;
