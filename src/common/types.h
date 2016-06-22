@@ -3006,6 +3006,10 @@ struct player_type {
 	s64b item_order_cost;
 	s32b item_order_turn;
 #endif
+
+#ifdef TARGET_SWITCHING_COST
+	s16b tsc_lasttarget;
+#endif
 };
 
 typedef struct boni_col boni_col;

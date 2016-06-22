@@ -237,6 +237,9 @@
 /* Load 'D:' tags from e_info.txt file and display them on examining */
 #define EGO_DIZ
 
+/* For auto-retaliator's attack splitting: Switching target in the midst of combat costs 1 bpr of energy. Only affects melee attacking. */
+#define TARGET_SWITCHING_COST
+
 
 
 /* --------------------- Server-type dependant features -------------------- */

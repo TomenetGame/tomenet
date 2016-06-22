@@ -5195,6 +5195,28 @@ void py_attack(int Ind, int y, int x, bool old) {
 	if (p_ptr->tim_wraith) set_tim_wraith(Ind, 0);
 #endif	// 0
 
+#ifdef TARGET_SWITCHING_COST
+	/* Time cost for automatically switching target during auto-retaliation.
+	   Note: bumping into a target will consume a full turn of energy even if it dies before we hit it with our full number of bpr,
+	         so we don't need to check in that case really and can just focus on auto-retaliation instead. */
+	if (c_ptr->m_idx /* paranoia? */
+	    /* we did attack something right now without any pause afterwards,
+	    and it was something different than our current target? */
+	    && p_ptr->tsc_lasttarget != c_ptr->m_idx
+	    /* leeway - don't apply it to already pretty slow attackers */
+	    && p_ptr->num_blow > 2) {
+		/* we switched to a new target? */
+		if (p_ptr->tsc_lasttarget) {
+			p_ptr->tsc_lasttarget = c_ptr->m_idx;
+			/* skip a blow, for turning towards our new target */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
+			return;
+		}
+		/* we actually just began melee combat, attacking our very first target - we're already prepared. */
+		p_ptr->tsc_lasttarget = c_ptr->m_idx;
+	}
+#endif
+
 	/* Check for monster */
 	if (c_ptr->m_idx > 0)
 		py_attack_mon(Ind, y, x, old);
