@@ -142,7 +142,7 @@ bool test_hit_melee(int chance, int ac, int vis) {
  * Critical hits (from objects thrown by player)
  * Factor in item weight, total plusses, and player level.
  */
-s16b critical_shot(int Ind, int weight, int plus, int dam) {
+s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision) {
 	player_type *p_ptr = NULL;
 	int i, k;
 	bool boomerang = FALSE;
@@ -162,10 +162,15 @@ s16b critical_shot(int Ind, int weight, int plus, int dam) {
 	else i = weight;
 
 	/* Critical hit */
-	if (randint(3500) <= i) {
+	if (precision || randint(3500) <= i) {
 		k = weight + randint(700);
 
 		if (Ind > 0) k += (boomerang ? 0 : get_skill_scale(p_ptr, SKILL_ARCHERY, 100)) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20)));
+
+		if (precision) {
+			if (k < 650) k = 650;
+			k += rand_int(500);
+		}
 
 		if (k < 350) {
 			if (Ind > 0) msg_print(Ind, "It was a good hit!");

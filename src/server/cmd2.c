@@ -5495,7 +5495,7 @@ void do_cmd_fire(int Ind, int dir) {
 								tdam *= tmul;
 
 								/* Apply special damage XXX XXX XXX */
-								if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
+								if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE);
 
 								/* factor in AC */
 								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
@@ -5504,11 +5504,13 @@ void do_cmd_fire(int Ind, int dir) {
 								tdam = (tdam + PVP_SHOOT_DAM_REDUCTION - 1) / PVP_SHOOT_DAM_REDUCTION;
 								
 								if (ranged_double_real) tdam = (tdam * 35) / 100;
+
+								/* Precision shot skips most AC reduction (since that was applied above) */
 								if (p_ptr->ranged_precision) {
-									if (q_ptr->afraid) tdam *= 5;
-									else tdam *= 3;
+									tdam = critical_shot(Ind, o_ptr->weight, (o_ptr->to_h + p_ptr->to_h_ranged) * 2 + 100, tdam, TRUE);
 									p_ptr->ranged_precision = FALSE;
 								}
+
 								if (p_ptr->ranged_barrage) tdam *= 2; // maybe 3 even
 
 								/* No negative damage */
@@ -5704,14 +5706,18 @@ void do_cmd_fire(int Ind, int dir) {
 					tdam *= tmul;
 
 					/* Apply special damage XXX XXX XXX */
-					if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
+					if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE);
+
+					/* Maybe in the future: apply monster AC for damage reduction here */
 
 					if (ranged_double_real) tdam = (tdam * 35) / 100;
+
+					/* Precision shot usually skips most AC reduction -- but AC is currently only applied in PvP anyway */
 					if (p_ptr->ranged_precision) {
-						if (m_ptr->monfear) tdam *= 5;
-						else tdam *= 3;
+						tdam = critical_shot(Ind, o_ptr->weight, (o_ptr->to_h + p_ptr->to_h_ranged) * 3 + 500, tdam, TRUE);
 						p_ptr->ranged_precision = FALSE;
 					}
+
 					if (p_ptr->ranged_barrage) tdam *= 2; // maybe 3 even
 
 					/* can't attack while in WRAITHFORM (explosion still works) */
@@ -6672,7 +6678,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, TRUE);
 					tdam += o_ptr->to_d;
 					/* Apply special damage XXX XXX XXX */
-					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE);
 //less spam for now - C. Blue		if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 					/* No negative damage */
@@ -6799,7 +6805,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, TRUE);
 				tdam += o_ptr->to_d;
 				/* Apply special damage XXX XXX XXX */
-				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE);
 //less spam for now - C. Blue	if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				/* No negative damage */
