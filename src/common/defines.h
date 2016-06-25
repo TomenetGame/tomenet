@@ -4168,6 +4168,7 @@
 /* flags also used by the client as term window flags */
 #define PW_INVEN	0x00000001L	/* Display inven/equip */
 #define PW_EQUIP	0x00000002L	/* Display equip/inven */
+/*#define PW_SPELL	0x00000004L*/	/* Display spell list */
 #define PW_PLAYER	0x00000004L	/* Display character */
 #define PW_MSGNOCHAT	0x00000008L	/* Display messages except chat */
 #define PW_MESSAGE	0x00000010L	/* Display messages */
@@ -4605,6 +4606,21 @@
 				TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_DRAGON | \
 				TR1_KILL_DRAGON | TR1_KILL_DEMON | TR1_KILL_UNDEAD)
 
+/* Hack -- flag set 1 -- mask for "pval-dependant" flags. */
+#if 0
+#define TR1_PVAL_MASK	\
+	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
+	TR1_CON | TR1_CHR | TR1_MANA | TR1_SPELL_SPEED | \
+	TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
+	TR1_SPEED | TR1_BLOWS | TR1_LIFE | TR1_XXX4)
+#else
+#define TR1_PVAL_MASK   \
+	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
+	TR1_CON | TR1_CHR | TR1_LIFE | \
+	TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
+	TR1_SPEED | TR1_BLOWS | TR1_MANA | TR1_SPELL)
+#endif	/* 0 */
+
 /* ToME hack for trapkits */
 #define TRAP2_AUTOMATIC_5	0x00000001L     /* Trap automatically rearms itself, 1 in 5 failure */
 #define TRAP2_AUTOMATIC_99	0x00000002L     /* Trap automatically rearms itself */
@@ -4769,21 +4785,24 @@
 #define TR5_PASS_WATER			0x40000000L
 #define TR5_WINNERS_ONLY		0x80000000L
 
+/* Hack -- flag set 5 -- mask for "pval-dependant" flags. */
+#define TR5_PVAL_MASK   \
+	(TR5_CRIT | TR5_LUCK | TR5_DISARM)
+
 
 #define TR6_INSTA_EGO		0x00000001L		/* Similar to INSTA_ART, this item is always an ego item */
 #define TR6_STARTUP		0x00000002L		/* For weapons: Can be picked for starter item on character creation */
-/* Not yet implemented/used. Cold might be needed. For monsters, even susc-poison is implemented.
-   For the player I think fire and cold are enough. (C. Blue)
-#define TR6_SENS_FIRE           0x00000001L
-#define TR6_SENS_COLD		0x00000002L
-#define TR6_SENS_ACID		0x00000004L
-#define TR6_SENS_ELEC		0x00000008L
-Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
+ #define TR6_EVENT_HALLOWEEN	0x00000004L		/* Item not available if no event is running -- unused */
+ #define TR6_EVENT_XMAS		0x00000008L		/* Item not available if no event is running -- unused */
+/* Not yet implemented/used: Susceptibilities. Cold might be needed. For monsters, even susc-poison is implemented.
+   For the player I think fire and cold are enough. (C. Blue) */
+ #define TR6_SENS_FIRE			0x00000010L	/* makes user susceptible to fire -- unused */
+ #define TR6_SENS_COLD			0x00000020L	/* makes user susceptible to cold -- unused  */
+ #define TR6_SENS_ACID			0x00000040L	/* makes user susceptible to acid -- unused  */
+ #define TR6_SENS_ELEC			0x00000080L	/* makes user susceptible to lightning -- unused  */
+//Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
+#define TR6_OFTEN_EGO		0x00000100L		/* Item has higher chance to be generated with ego power */
 
-// Item not available if no event is running
-#define TR6_EVENT_HALLOWEEN	0x00000010L
-#define TR6_EVENT_XMAS		0x00000020L
-*/
 
 /* Character Sheet Boni Data Flags for Char/Byte PKT Transfer - Kurzel */
 #define CB1_SFIRE	0x01
@@ -4971,30 +4990,6 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /* Number of group of flags to choose from */
 #define MAX_FLAG_GROUP		12
 #define NEW_GROUP_CHANCE	40      /* Chance to get a new group */
-
-
-
-/*
- * Hack -- flag set 1 -- mask for "pval-dependant" flags.
- * Note that all "pval" dependant flags must be in "flags1".
- */
-#if 0
-#define TR1_PVAL_MASK	\
-	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
-	TR1_CON | TR1_CHR | TR1_MANA | TR1_SPELL_SPEED | \
-	TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
-	TR1_SPEED | TR1_BLOWS | TR1_LIFE | TR1_XXX4)
-#else
-#define TR1_PVAL_MASK   \
-	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
-	TR1_CON | TR1_CHR | TR1_LIFE | \
-	TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
-	TR1_SPEED | TR1_BLOWS | TR1_MANA | TR1_SPELL)
-/*#define PW_SPELL	0x00000004L*/	/* Display spell list */
-#endif	/* 0 */
-
-#define TR5_PVAL_MASK   \
-	(TR5_CRIT | TR5_LUCK | TR5_DISARM)
 
 
 /*** Ego flags ***/

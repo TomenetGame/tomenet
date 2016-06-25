@@ -841,7 +841,7 @@ static cptr k_info_flags6[] = {
 	"XXX00000040",
 	"XXX00000080",
 
-	"XXX00000100",
+	"OFTEN_EGO",
 	"XXX00000200",
 	"XXX00000400",
 	"XXX00000800",

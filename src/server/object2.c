@@ -5246,8 +5246,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Assume "good" */
 		power = 1;
 
-		/* Higher chance2 for super heavy armours are already very rare */
-		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) chance2 += 10;
+		/* Higher chance2 for super heavy armours are already very rare
+		   and also for normal mithril/adamantite armour, since they're pretty deep level yet just sell loot. */
+		//if (k_info[o_ptr->k_idx].flags6 & TR6_OFTEN_EGO) chance2 += 10;
+		if (k_info[o_ptr->k_idx].flags6 & TR6_OFTEN_EGO) chance2 = chance2 / 2 + 23; //(this calc treats non-royal armour especially nice)
 
 		/* Roll for "great" */
 		if (great || magik(chance2)) power = 2;
