@@ -1667,10 +1667,10 @@ static void store_create(store_type *st_ptr) {
 		object_known(o_ptr);
 
 		/* Mega-Hack -- no chests in stores */
-//		if (o_ptr->tval == TV_CHEST || o_ptr->tval == 8) continue;
+		//if (o_ptr->tval == TV_CHEST || o_ptr->tval == 8) continue;
 		if (o_ptr->tval == TV_CHEST) continue;
 
-		/* In general forbid Experienace/Invulnerability/Learning potions in ANY store! */
+		/* In general forbid Experience/Invulnerability/Learning potions in ANY store! */
 		if (o_ptr->tval == TV_POTION &&
 		    (o_ptr->sval == SV_POTION_EXPERIENCE || o_ptr->sval == SV_POTION_INVULNERABILITY
 #ifdef EXPAND_TV_POTION
@@ -1825,6 +1825,11 @@ static void store_create(store_type *st_ptr) {
 				break;
 			}
 		}
+
+		/* no OP mage staves from IDDC town magic shop */
+		if (st_ptr->st_idx == STORE_MAGIC_DUN &&
+		    o_ptr->tval == TV_MSTAFF && o_ptr->pval > 10)
+			o_ptr->pval = 10;
 
 		e_ptr = &e_info[o_ptr->name2];
 		e2_ptr = &e_info[o_ptr->name2b];
