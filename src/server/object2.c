@@ -3653,6 +3653,44 @@ static void log_arts(int a_idx, struct worldpos *wpos) {
 	return;
 }
 
+static bool true_artifact_ood(int aidx, int dlev) {
+	artifact_type *a_ptr = &a_info[aidx];
+	int d, alev = a_ptr->level;
+
+	/* Enforce minimum "depth" (loosely) (out-of-depth) */
+	if (alev > dlev + 5) {
+		//low level artifacts up to 30 are especially less restricted; level differences up to 17 are also less restricted
+		if ((d = alev - dlev - 5) <= 12 || alev < 30) { //slow linear increase
+			if (alev < 30) d = 100 - d * 2;
+			else d = 100 - d * 5; //60% max for 30 vs 1 (should be higher than below min %)
+		} else { //steeply growing increase
+			d = 100 - (100 * dlev) / alev; //54% min. for 48 vs 30 (should be lower than above max %)
+			d = (d * d) / 25; //at double dungeon level, chance to see arts becomes 0..
+		}
+		if (d > 95) d = 95;
+		if (magik(d)) {
+s_printf("TRUEART_OOD: %d failed, a %d vs d %d (%d%%)\n", aidx, alev, dlev, d);
+			return TRUE;
+		}
+	}
+
+	/* New: Prevent too many low-level artifacts on high dungeon levels (inverse out-of-depth).
+	   They tend to spawn very often due to their relatively low rarity,
+	   and are simply a small piece of cash, or even annoying if unsellable (Gorlim). */
+	/* Don't start checking before dungeon level 36 (arbitrarily, just so Barrow-Downs remains unaffected, pft..) */
+	if (alev < dlev - 5 && dlev >= 36) {
+		d = 100 - (100 * alev) / dlev;
+		d = (d * d) / 25; //at half dungeon level, chance to see arts becomes 0..
+		if (d > 95) d = 95;
+		if (magik(d)) {
+s_printf("TRUEART_R-OOD: %d failed, a %d vs d %d (%d%%)\n", aidx, alev, dlev, d);
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 /*
  * Mega-Hack -- Attempt to create one of the "Special Objects" (INSTA_ART only)
  *
@@ -3662,7 +3700,7 @@ static void log_arts(int a_idx, struct worldpos *wpos) {
  * Note -- see "make_artifact()" and "apply_magic()"
  */
 static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32b resf) {
-	int	i, d, dlev = getlevel(wpos);
+	int	i, dlev = getlevel(wpos);
 	int	k_idx = 0;
 	bool winner_arts_only = ((resf & RESF_NOTRUEART) && (resf & RESF_WINNER));
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
@@ -3718,27 +3756,8 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		if (rand_int(a_ptr->rarity) != 0) continue;
 #endif
 
-		/* Enforce minimum "depth" (loosely) (out-of-depth) */
-		if (a_ptr->level > dlev + 5) {
-			d = a_ptr->level - dlev - 5;
-			if (rand_int(d) != 0) {
-s_printf("TRUEART_OOD: %d failed, a %d vs d %d\n", i, a_ptr->level, dlev);
-				continue; //starting at level diff 7 actually
-			}
-		}
-		/* New: Prevent too many low-level artifacts on high dungeon levels (inverse out-of-depth).
-		   They tend to spawn very often due to their relatively low rarity,
-		   and are simply a small piece of cash, or even annoying if unsellable (Gorlim). */
-		/* Don't start checking before dungeon level 36 (arbitrarily, just so Barrow-Downs remains unaffected, pft..) */
-		if (a_ptr->level < dlev - 5 && dlev >= 36) {
-			d = 100 - (100 * a_ptr->level) / dlev;
-			d = (d * d) / 25; //at half dungeon level, chance to see arts becomes 0..
-			if (d >= 100) d = 99; //..almost =P
-			if (magik(d)) {
-s_printf("TRUEART_R-OOD: %d failed, a %d vs d %d\n", i, a_ptr->level, dlev);
-				continue;
-			}
-		}
+		/* enforce minimum/maximum ood */
+		if (true_artifact_ood(i, dlev)) continue;
 
 		/* Find the base object */
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
@@ -3783,7 +3802,7 @@ s_printf("TRUEART_R-OOD: %d failed, a %d vs d %d\n", i, a_ptr->level, dlev);
  * Note -- see "make_artifact_special()" and "apply_magic()"
  */
 static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) {
-	int i, tries = 0, d, dlev = getlevel(wpos);
+	int i, tries = 0, dlev = getlevel(wpos);
 	bool winner_arts_only = ((resf & RESF_NOTRUEART) && (resf & RESF_WINNER));
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
 	int difficulty = in_irondeepdive(wpos) ? 1 : 0;
@@ -3841,27 +3860,8 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 			if (rand_int(a_ptr->rarity) != 0) continue;
 #endif
 
-			/* Enforce minimum "depth" (loosely) (out-of-depth) */
-			if (a_ptr->level > dlev + 5) {
-				d = a_ptr->level - dlev - 5;
-				if (rand_int(d) != 0) {
-s_printf("TRUEART_OOD: %d failed, a %d vs d %d\n", i, a_ptr->level, dlev);
-					continue; //starting at level diff 7 actually
-				}
-			}
-			/* New: Prevent too many low-level artifacts on high dungeon levels (inverse out-of-depth).
-			   They tend to spawn very often due to their relatively low rarity,
-			   and are simply a small piece of cash, or even annoying if unsellable (Gorlim). */
-			/* Don't start checking before dungeon level 36 (arbitrarily, just so Barrow-Downs remains unaffected, pft..) */
-			if (a_ptr->level < dlev - 5 && dlev >= 36) {
-				d = 100 - (100 * a_ptr->level) / dlev;
-				d = (d * d) / 25; //at half dungeon level, chance to see arts becomes 0..
-				if (d >= 100) d = 99; //..almost =P
-				if (magik(d)) {
-s_printf("TRUEART_R-OOD: %d failed, a %d vs d %d\n", i, a_ptr->level, dlev);
-					continue;
-				}
-			}
+			/* enforce minimum/maximum ood */
+			if (true_artifact_ood(i, dlev)) continue;
 
 			/* Hack -- mark the item as an artifact */
 			o_ptr->name1 = i;
