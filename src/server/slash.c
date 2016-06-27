@@ -583,6 +583,11 @@ void do_slash_cmd(int Ind, char *message) {
 						return;
 					}
 
+					if (c_ptr->feat == FEAT_PROTECTED && !wpos->wz) {
+						msg_print(Ind, "You cannot destroy items inside an inn.");
+						return;
+					}
+
 					/* Get the object */
 					o_ptr = &o_list[c_ptr->o_idx];
 					if (!o_ptr->k_idx) return;
