@@ -5514,7 +5514,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		if ((!o_ptr->name2) && (!artifact_p(o_ptr))) {
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
+			    && get_skill(p_ptr, SKILL_HOFFENSE) < 30) {
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;
 			}
@@ -5536,7 +5537,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 				//*num = num_blow;
 			}
 		} else if (like_artifact_p(o_ptr)) {
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
+			    && get_skill(p_ptr, SKILL_HOFFENSE) < 30) {
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;
 			}
@@ -5566,7 +5568,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 			}
 		} else if (o_ptr->name2) {
 			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
-			    && !(f4 & TR4_BLACK_BREATH)) { /* :-O (for VAMPIRES_INV_CURSED, but makes sense in general!) */
+			    && !(f4 & TR4_BLACK_BREATH) /* :-O (for VAMPIRES_INV_CURSED, but makes sense in general!) */
+			    && get_skill(p_ptr, SKILL_HOFFENSE) < 30) {
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;
 			}

@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. May 2015 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 29. June 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2234,16 +2234,21 @@ If your weapon gets destroyed you'll receive a warning message:
 See (5.9b) for more information about artifacts.)
 
 Your weapon itself will not damage the Nazgul if it doesn't have one of the
-mods SLAY_EVIL, SLAY_UNDEAD or KILL_UNDEAD. However, you might still be able
-to damage the Nazgul, if your raw to-dam bonus is high enough. Enchantments
-from rings, gloves or other items and the damage bonus from your skills will
-be the only factors which decide the damage you deal, in that case.
+mods SLAY_EVIL, SLAY_UNDEAD or KILL_UNDEAD and if it isn't a Morgul weapon.
+However, you will still be able to damage the Nazgul, if your raw to-dam
+bonus is high enough. Enchantments from rings, gloves or other items and the
+damage bonus from your skills will be the only factors which decide the damage
+you deal, in that case.
 For weapons which damage dice and to-dam bonus will not be counted (ie non-
-SLAY/KILL EVIL/UNDEAD weapons) you'll see the message:
+SLAY/KILL EVIL/UNDEAD or Morgul weapons) you'll see the message:
 "The Ringwraith is IMPERVIOUS to the mundane weapon."
 
-Note: Having those slay/kill mods on gloves instead of the weapon does not
-      help! They will not count.
+Note: Having those slay/kill mods on gloves (or other items) instead of the
+      weapon does not help! They will not count.
+
+      However - the 'slay undead' bonus received from Holy Offense school at a
+      skill of 30.000 will infuse your weapon and will make its dice and damage
+      count again, as if the weapon itself had the slay mod!
 
 Martial Arts users can fight relatively efficiently against Nazgul, but their
 chance to receive Black Breath is higher than for weapon users.
