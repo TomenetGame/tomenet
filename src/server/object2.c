@@ -217,7 +217,8 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 
 	/* log special cases */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
-		s_printf("%s ARTSCROLL_DELETED (%d,%d,%d)\n", showtime(), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+		//note: number is already 0 at this point if it was floor/inven_item_increase'd
+		s_printf("%s ARTSCROLL_DELETED (amt:%d) (%d,%d,%d)\n", showtime(), o_ptr->number, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
 
 	/* Wipe the object */
 	WIPE(o_ptr, object_type);
