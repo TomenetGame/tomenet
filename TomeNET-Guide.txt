@@ -9055,6 +9055,8 @@ WINNERS_ONLY
         Cursed/indestructible rings,
         Fireproof/waterproof scrolls and books,
         Any type of ammunition.)
+        Items with other (more powerful) ego powers than these listed above
+        will not stack in your inventory even if the items are identical.
 INSTA_ART
         This item always is an artifact; it has no base-class that can spawn
         non-art items. Example: Long Sword base class can spawn regular long
