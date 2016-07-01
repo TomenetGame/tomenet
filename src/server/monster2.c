@@ -2891,7 +2891,7 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos) {
 	return (FALSE);
 }
 
-/* Pick a random vermin-like monster to spawn in prison houses */
+/* Pick a random vermin-like monster to spawn in prison houses -- SUPER HARDCODED :/ */
 static int get_prison_monster(void) {
 	switch (rand_int(14)) {
 	case 0: return 27; /* rats and mice */
