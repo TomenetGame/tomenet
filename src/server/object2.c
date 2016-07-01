@@ -215,6 +215,10 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	/* Dungeon floor */
 	if (!(o_ptr->held_m_idx)) everyone_lite_spot(wpos, y, x);
 
+	/* log special cases */
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
+		s_printf("%s ARTSCROLL_DELETED (%d,%d,%d)\n", showtime(), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+
 	/* Wipe the object */
 	WIPE(o_ptr, object_type);
 }
