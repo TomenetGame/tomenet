@@ -178,15 +178,15 @@
 #define PKT_STORE_CMD		159
 
 /* its a cleanup, not a hack */
-#define PKT_SKILL_PTS   	160
+#define PKT_SKILL_PTS		160
 
 /* Page someone who is afk */
 #define PKT_BEEP		161
 /* Give the client some info about the server details. - C. Blue
    For example: Is it running 'RPG_SERVER' settings? or 'FUN_SERVER'? */
 #define PKT_SERVERDETAILS	162
-#define PKT_AFK                 163
-#define PKT_ENCUMBERMENT        164
+#define PKT_AFK			163
+#define PKT_ENCUMBERMENT	164
 #define PKT_PARTY_STATS		165 /* DEG Packet type for party member info */
 #define PKT_PING		166 /* Ping packet */
 /* 167+ are further below.. */
@@ -257,6 +257,8 @@
 #define E_INVITE	0x0B
 #define E_BANNED	0x0C
 #define E_VERSION_UNKNOWN	0x0D
+//for RETRY_LOGIN:
+#define E_RETRY_ACCOUNT	0xFF
 
 
 /*

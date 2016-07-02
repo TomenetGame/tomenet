@@ -270,6 +270,15 @@
 #define ACCFILE_NAME_LEN	30
 #define ACCFILE_PASSWD_LEN	20
 
+/* 4.6.2: Allow to retry login, for re-entering invalid account/character names or after death. */
+#define RETRY_LOGIN
+#ifdef RETRY_LOGIN
+ //0x00000001..0x00800000 are reserved (used for transmitting character limits)
+ #define SF3_RETRY_ACCOUNT	0x01000000
+ #define SF3_RETRY_CHARACTER	0x02000000
+ #define SF3_RETRY_DEATH	0x04000000
+#endif
+
 /*
  * Maximum message length
  */

@@ -3027,7 +3027,16 @@ void client_init(char *argv1, bool skip)
 		quit("Network setup failed!\n");
 	}
 
+#ifdef RETRY_LOGIN
+	while (TRUE) {
+		status = Net_login();
+		if (status == E_RETRY_ACCOUNT) {
+			//...
+		} else break;
+	}
+#else
 	status = Net_login();
+#endif
 
 #if 0 /* moved to get_char_info(), because of CHAR_COL */
 	/* Hack -- display the nick */

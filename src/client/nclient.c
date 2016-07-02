@@ -400,6 +400,9 @@ void Receive_login(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags3, &sflags2, &sflags1, &sflags0)) <= 0) {
 		return;
 	}
+#ifdef RETRY_LOGIN
+	if (sflags3 & SF3_RETRY_ACCOUNT) return;
+#endif
 
 #ifdef WINDOWS
 	/* only on first time startup? */
@@ -496,10 +499,10 @@ void Receive_login(void) {
 	else
 		c_put_str(CHARSCREEN_COLOUR, "(You can create only ONE characters at a time to play with)", 1, 10);
 
-if (total_cpa <= 12) {
-	c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 2);
-	offset = 4;
-} else offset = 3;
+	if (total_cpa <= 12) {
+		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 2);
+		offset = 4;
+	} else offset = 3;
 
 	max_cpa += max_cpa_plus; /* for now, don't keep them in separate list positions
 				    but just use the '*' marker attached at server side
@@ -602,19 +605,19 @@ if (total_cpa <= 12) {
 		c_put_str(CHARSCREEN_COLOUR, " Get rid of one (suicide) before creating another.)", offset + 1, 2);
 	}
 
-if (total_cpa <= 13) {
-	c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", offset + 6, 2);
-	offset += 3;
-} else if (total_cpa <= 14) {
-	c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", offset + 5, 2);
-	offset += 2;
-} else if (total_cpa <= 15) {
-	c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", offset + 4, 2);
-	offset += 2;
-} else {
-	c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", offset + 3, 2);
-	offset += 2;
-}
+	if (total_cpa <= 13) {
+		c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", offset + 6, 2);
+		offset += 3;
+	} else if (total_cpa <= 14) {
+		c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", offset + 5, 2);
+		offset += 2;
+	} else if (total_cpa <= 15) {
+		c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", offset + 4, 2);
+		offset += 2;
+	} else {
+		c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", offset + 3, 2);
+		offset += 2;
+	}
 
 	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1))) {
 		ch = inkey();
@@ -624,10 +627,10 @@ if (total_cpa <= 13) {
 		if (!cname[0]) strcpy(c_name, nick);
 		else strcpy(c_name, cname);
 
-if (total_cpa <= 15)
-		c_put_str(TERM_SLATE, "(Press ESC to pick a random name)", offset + 1, COL_CHARS);
-else
-		c_put_str(TERM_SLATE, "(Press ESC to pick a random name)", offset, 35);
+		if (total_cpa <= 15)
+			c_put_str(TERM_SLATE, "(Press ESC to pick a random name)", offset + 1, COL_CHARS);
+		else
+			c_put_str(TERM_SLATE, "(Press ESC to pick a random name)", offset, 35);
 
 		while (1) {
 			c_put_str(TERM_YELLOW, "New name: ", offset, COL_CHARS);
@@ -976,16 +979,20 @@ unsigned char Net_login() {
 	Sockbuf_clear(&rbuf);
 	Sockbuf_read(&rbuf);
 	Receive_login();
+#ifdef RETRY_LOGIN
+	if (sflags3 & SF3_RETRY_ACCOUNT) return E_RETRY_ACCOUNT;
+#endif
+
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, cname);
 	if (Sockbuf_flush(&wbuf) == -1)
 		quit("Can't send login packet");
 
 	/* Wait for reply - mikaelh */
 	SetTimeout(5, 0);
-        if (!SocketReadable(rbuf.sock)) {
-                errno = 0;
-                quit("No login reply received.");
-        }
+	if (!SocketReadable(rbuf.sock)) {
+		errno = 0;
+		quit("No login reply received.");
+	}
 
 	Sockbuf_read(&rbuf);
 
