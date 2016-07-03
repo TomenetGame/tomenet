@@ -61,6 +61,9 @@ void do_cmd_go_up(int Ind) {
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
 #endif
+#ifdef DED_IDDC_AWARE
+	bool obtained = FALSE;
+#endif
 
 	if (!(zcave = getcave(wpos))) return;
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
@@ -79,6 +82,7 @@ void do_cmd_go_up(int Ind) {
 #ifdef DED_IDDC_AWARE
 		for (i = 0; i < MAX_K_IDX; i++)
 			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
+		obtained = TRUE;
 #endif
 	}
 
@@ -312,6 +316,9 @@ void do_cmd_go_up(int Ind) {
 			dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
+#ifdef DED_IDDC_AWARE
+			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");
+#endif
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {
@@ -337,6 +344,9 @@ void do_cmd_go_up(int Ind) {
  #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
 		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == 40 || ABS(wpos->wz) == 80 || ABS(wpos->wz) == 120) && ABS(wpos->wz) != 127) {
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+ #ifdef DED_IDDC_AWARE
+			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");
+ #endif
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
@@ -746,6 +756,9 @@ void do_cmd_go_down(int Ind) {
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
 #endif
+#ifdef DED_IDDC_AWARE
+	bool obtained = FALSE;
+#endif
 
 	if (!(zcave = getcave(wpos))) return;
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
@@ -764,6 +777,7 @@ void do_cmd_go_down(int Ind) {
 #ifdef DED_IDDC_AWARE
 		for (i = 0; i < MAX_K_IDX; i++)
 			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
+		obtained = TRUE;
 #endif
 	}
 
@@ -1043,6 +1057,9 @@ void do_cmd_go_down(int Ind) {
 			dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
+#ifdef DED_IDDC_AWARE
+			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");
+#endif
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {
@@ -1068,6 +1085,9 @@ void do_cmd_go_down(int Ind) {
  #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
 		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == 40 || ABS(wpos->wz) == 80 || ABS(wpos->wz) == 120) && ABS(wpos->wz) != 127) {
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
+ #ifdef DED_IDDC_AWARE
+			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");
+ #endif
 			if (p_ptr->party)
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
