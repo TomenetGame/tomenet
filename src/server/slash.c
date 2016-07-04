@@ -9561,6 +9561,19 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "%d houses, %d free objects, done.", num_houses, o_max);
 				return;
 			}
+			/* request back real estate of a specific character that was previously backed up via /backup_estate */
+			else if (prefix(message, "/rest1")) {
+				int i;
+
+				if (!tk) {
+					msg_print(Ind, "Usage: /rest1 <character name>");
+					return;
+				}
+				i = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				if (i) restore_estate(i);
+				else msg_print(Ind, "Player not online.");
+				return;
+			}
 		}
 	}
 

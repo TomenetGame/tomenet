@@ -6943,7 +6943,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 
 /* backup all house prices and contents for all players to lib/save/estate/.
    partial: don't stop with failure if a character files can't be read. */
-#define ESTATE_BACKUP_VERSION "v1"
+#define ESTATE_BACKUP_VERSION "v2"
 bool backup_estate(bool partial) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CHARACTERNAME_LEN], c;
