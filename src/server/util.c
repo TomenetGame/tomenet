@@ -6941,9 +6941,10 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 	return TRUE;
 }
 
-/* backup all house prices and contents for all players to lib/save/estate/ */
+/* backup all house prices and contents for all players to lib/save/estate/.
+   partial: don't stop with failure if a character files can't be read. */
 #define ESTATE_BACKUP_VERSION "v1"
-bool backup_estate(void) {
+bool backup_estate(bool partial) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CHARACTERNAME_LEN], c;
 	cptr name;
@@ -7004,6 +7005,7 @@ bool backup_estate(void) {
 		}
 		if ((fp = fopen(buf, "ab")) == NULL) {
 			s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
+			if (partial) continue;
 			return FALSE;
 		} else if (newly_created) {
 			newly_created = FALSE;

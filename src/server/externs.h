@@ -1854,7 +1854,7 @@ extern int handle_censor(char *message);
 extern void handle_punish(int Ind, int level);
 extern char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool extra);
 extern bool gain_au(int Ind, u32b amt, bool quiet, bool exempt);
-extern bool backup_estate(void);
+extern bool backup_estate(bool partial);
 extern void restore_estate(int Ind);
 extern void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos);
 extern void grid_affects_player(int Ind);

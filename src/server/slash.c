@@ -8768,7 +8768,8 @@ void do_slash_cmd(int Ind, char *message) {
 			   afterwards if the parameter "term" is given. - C. Blue */
 			if (prefix(message, "/backup_estate")) {
 				msg_print(Ind, "Backing up all real estate...");
-				if (!backup_estate()) {
+				//specify any parameter for allowing partial backup
+				if (!backup_estate(tk)) {
 					msg_print(Ind, "...failed.");
 					return;
 				}
