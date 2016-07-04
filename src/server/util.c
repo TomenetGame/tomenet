@@ -7005,7 +7005,7 @@ bool backup_estate(bool partial) {
 			fclose(fp);
 		}
 		if ((fp = fopen(buf, "ab")) == NULL) {
-			s_printf("  error: cannot open file '%s'.\nfailed.\n", buf);
+			s_printf("  error: cannot open file '%s'.\n", buf);
 			if (partial) continue;
 			return FALSE;
 		} else if (newly_created) {
