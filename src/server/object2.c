@@ -3666,8 +3666,8 @@ static bool true_artifact_ood(int aidx, int dlev) {
 	if (alev > dlev + 5) {
 		//low level artifacts up to 30 are especially less restricted; level differences up to 17 are also less restricted
 		if ((d = alev - dlev - 5) <= 12 || alev < 30) { //slow linear increase
-			if (alev < 30) d = 100 - d * 2;
-			else d = 100 - d * 5; //60% max for 30 vs 1 (should be higher than below min %)
+			if (alev < 30) d = d * 2;
+			else d = d * 5; //60% max for 30 vs 1 (should be higher than below min %)
 		} else { //steeply growing increase
 			d = 100 - (100 * dlev) / alev; //54% min. for 48 vs 30 (should be lower than above max %)
 			d = (d * d) / 25; //at double dungeon level, chance to see arts becomes 0..
