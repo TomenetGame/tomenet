@@ -6959,9 +6959,10 @@ bool backup_estate(bool partial) {
 	object_type *o_ptr;
 
 	s_printf("Backing up all real estate...\n");
+	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
 
 	/* create folder lib/save/estate if not existing */
-	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+	mkdir(buf2, 0770);
 
 	/* scan all houses */
 	for (i = 0; i < num_houses; i++) {
