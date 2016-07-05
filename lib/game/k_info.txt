@@ -330,8 +330,8 @@ F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER
 N:37:& Espadon~
 G:|:W
 I:23:25:0
-W:30:0:200:775
-A:30/1:40/1
+W:20:0:200:775
+A:20/1:40/1
 P:0:4d6:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -354,8 +354,8 @@ F:SHOW_MODS | COULD2H
 N:40:& Executioner's Sword~
 G:|:r
 I:23:28:0
-W:40:0:260:850
-A:40/2
+W:35:0:260:850
+A:35/2
 P:0:5d6:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -577,8 +577,8 @@ F:SHOW_MODS | MUST2H
 N:67:& Great Axe~
 G:/:s
 I:24:25:0
-W:40:0:230:700
-A:40/1
+W:25:0:230:700
+A:25/1
 P:0:5d5:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -593,8 +593,8 @@ F:SHOW_MODS | SHOULD2H
 N:69:& Heavy War Axe~
 G:/:D
 I:24:28:0
-W:25:0:250:750
-A:25/1
+W:30:0:250:750
+A:30/1
 P:0:4d7:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -3137,8 +3137,8 @@ F:IGNORE_WATER
 N:385:& Executioner Axe~
 G:/:r
 I:24:6:0
-W:50:0:300:800
-A:50/2
+W:40:0:300:800
+A:40/2
 P:0:6d5:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -4368,8 +4368,8 @@ F:SHOW_MODS | COULD2H
 N:545:& Flamberge~
 G:|:W
 I:23:26:0
-W:40:0:230:900
-A:40/2
+W:30:0:230:900
+A:30/2
 P:0:4d7:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -4392,8 +4392,8 @@ F:SHOW_MODS | COULD2H
 N:548:& Greatsword~
 G:|:W
 I:23:22:0
-W:40:0:240:800
-A:40/3
+W:25:0:240:800
+A:25/3
 P:0:5d5:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -6586,8 +6586,8 @@ D:Read this to reveal a random world map sector and any dungeons there.
 N:915:& Scourge~
 G:\:W
 I:21:21:0
-W:30:0:60:190
-A:30/2
+W:20:0:60:190
+A:20/2
 P:0:3d2:0:0:0
 F:SHOW_MODS
 
