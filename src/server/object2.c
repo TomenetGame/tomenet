@@ -3679,6 +3679,14 @@ s_printf("TRUEART_OOD: %d failed, a %d vs d %d (%d%%)\n", aidx, alev, dlev, d);
 		}
 	}
 
+	/* Skip low-level check for artifacts that are definitely very high level :-p.
+	   This is sort of required for super-deep (WINNERS_ONLY) artifacts, since this function
+	   actually checks against true dungeon level, not object_level (some sort of average
+	   of dungeon level and monster level). So some very high level items will actually
+	   require a much higher dungeon level since we usually kill rather lower-level monsters
+	   (eg GWoP is only 85), so this reverse-ood-check would kill them all >_<. */
+	if (alev >= 76) return FALSE; //arbitrary level cut: skip Ringil, since Angmar is only 70 (for luring purposes =P)
+
 	/* New: Prevent too many low-level artifacts on high dungeon levels (inverse out-of-depth).
 	   They tend to spawn very often due to their relatively low rarity,
 	   and are simply a small piece of cash, or even annoying if unsellable (Gorlim). */
@@ -3693,6 +3701,7 @@ s_printf("TRUEART_R-OOD: %d failed, a %d vs d %d (%d%%)\n", aidx, alev, dlev, d)
 		}
 	}
 
+	/* Allow artifact generation! */
 	return FALSE;
 }
 
