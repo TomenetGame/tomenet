@@ -62,7 +62,7 @@ D:The shining Star of the West, a famed heirloom of Elendil's house.
 
 N:3:of Thrain
 I:39:102:3
-W:40:50:5:175000
+W:60:50:5:175000
 P:0:1d1:0:0:0
 F:ACTIVATE | SEE_INVIS | HOLD_LIFE | RES_CHAOS | HIDE_TYPE | RES_BLIND
 F:INSTA_ART | SPEED | RES_LITE | RES_DARK | ESP_ORC | LITE3 | LITE2 | WIS
@@ -76,7 +76,7 @@ D:glowing shards.
 
 N:4:of Carlammas
 I:40:10:3
-W:30:10:3:150000
+W:40:10:3:150000
 F:STR | CON | SUST_STR | SUST_CON | FREE_ACT | RES_FEAR | HIDE_TYPE |
 F:ACTIVATE | IM_FIRE | RES_NETHER
 F:INSTA_ART
@@ -87,9 +87,9 @@ D:A fiery circle of bronze, with mighty spells to ward off evil.
 
 N:5:of Ingwe
 I:40:11:4
-W:65:40:3:150000
+W:50:40:3:150000
 F:INT | WIS | CHR | SUST_INT | SUST_WIS | SUST_CHR | SEARCH | INFRA | HIDE_TYPE |
-F:SEE_INVIS | FREE_ACT | ACTIVATE |
+F:SEE_INVIS | FREE_ACT | ACTIVATE | SLAY_EVIL
 F:RES_ACID | RES_COLD | RES_ELEC | RES_SHARDS | RES_CHAOS
 F:INSTA_ART
 D:The ancient heirloom of Ingwe, high lord of the Vanyar, against whom nothing
@@ -102,7 +102,7 @@ D:of evil could stand.
 
 N:6:'Nauglamir'
 I:40:12:3
-W:50:50:3:175000
+W:60:50:3:175000
 F:STR | CON | DEX | INFRA | HIDE_TYPE | RES_FEAR |
 F:SEE_INVIS | FREE_ACT | REGEN | LITE3 | SPEED | SPECIAL_GENE |
 F:INSTA_ART | WHITE_LIGHT
@@ -257,10 +257,11 @@ D:understanding as you stare into its depths.
 
 
 # The Multi-Hued Dragon Scale Mail 'Razorback'
+#should be nicer at W:75, but base item is W:90!
 
 N:16:'Razorback'
 I:38:6:0
-W:75:9:300:2000000
+W:90:9:300:2000000
 P:40:2d4:-4:0:30
 F:IM_ELEC | IM_ACID | IM_FIRE | IM_COLD | RES_POIS |
 F:RES_FEAR | RES_LITE | SH_ELEC | BRAND_ELEC |
@@ -2276,10 +2277,11 @@ D:truly more than it appears.
 
 
 # The Shield of Deflection of Gil-galad
+#should be nicer at W:60, but base item is W:80!
 
 N:169:of Gil-galad
 I:34:10:4
-W:60:4:80:85000
+W:80:4:80:85000
 $USE_NEW_SHIELDS!P:10:1d3:0:0:30
 $USE_NEW_SHIELDS$P:25:1d3:0:0:15
 F:ACTIVATE |
@@ -3157,10 +3159,11 @@ D:A unappearent leather cap with surprising abilities.
 
 
 # The Dragon Shield 'Stormshield'
+#should be nicer at W:55, but base item is W:70!
 
 N:254:'Stormshield'
 I:34:6:3
-W:55:30:130:90000
+W:70:30:130:90000
 $USE_NEW_SHIELDS!P:8:1d3:0:0:40
 $USE_NEW_SHIELDS$P:25:1d3:0:0:15
 F:STR | CON | RES_SOUND | RES_COLD | RES_LITE | IM_ELEC
