@@ -2803,7 +2803,7 @@ static int Handle_login(int ind) {
 	/* check pending notes to this player -C. Blue */
 	for (i = 0; i < MAX_ADMINNOTES; i++) {
 		if (strcmp(admin_note[i], "")) {
-			msg_format(NumPlayers, "\377sMotD: %s", admin_note[i]);
+			msg_format(NumPlayers, "\374\377sMotD: %s", admin_note[i]);
 		}
 	}
 	for (i = 0; i < MAX_NOTES; i++) {
