@@ -582,7 +582,7 @@ void lua_add_anote(char *anote) {
 		if (!strcmp(admin_note[i], "")) break;
 	if (i < MAX_ADMINNOTES) {
 		strcpy(admin_note[i], anote);
-		msg_broadcast_format(0, "\374\377s->MotD: %s", anote);
+		msg_broadcast_format(0, "\375\377s->MotD: %s", anote);
 	} else {
 		s_printf("lua_add_anote() failed: out of notes.\n");
 	}

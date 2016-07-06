@@ -3152,7 +3152,7 @@ void show_motd2(int Ind) {
 	/* Scan the lines */
 	for (k = 0; k < MAX_ADMINNOTES; k++) {
 		if (!strcmp(admin_note[k], "")) continue;
-		fprintf(fff, "\374\377sMotD: %s\n", admin_note[k]);
+		fprintf(fff, "\375\377sMotD: %s\n", admin_note[k]);
 		shown = TRUE;
 	}
 	fprintf(fff, "\n");

@@ -2181,7 +2181,7 @@ void do_slash_cmd(int Ind, char *message) {
 			prefix(message, "/motd")) { /* same as /anotes for admins basically */
 			for (i = 0; i < MAX_ADMINNOTES; i++) {
 				if (strcmp(admin_note[i], "")) {
-					msg_format(Ind, "\374\377sMotD: %s", admin_note[i]);
+					msg_format(Ind, "\375\377sMotD: %s", admin_note[i]);
 				}
 			}
 			if (server_warning[0]) msg_format(Ind, "\377R*** Note: %s ***", server_warning);
