@@ -2367,7 +2367,7 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 
 	/* 'The' weapon mods */
 	if (f1 & TR1_VAMPIRIC) total += 3;
-//	if (f1 & TR1_BLOWS) total += o_ptr->pval * 2;
+	//if (f1 & TR1_BLOWS) total += o_ptr->pval * 2;
 	if (f1 & TR1_BLOWS) total += (o_ptr->pval * (o_ptr->pval + 1));
 	if (f5 & TR5_CRIT) total += (o_ptr->pval + 5) / 3;
 	else if (f5 & TR5_VORPAL) total += 2;
@@ -2420,6 +2420,11 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 
 	/* Base cost */
 	s64b value = k_ptr->cost;
+#ifdef RANDART_PRICE_BONUS
+	/* Generate three different values, pick the highest one */
+	s64b vx = 0, v1 = 0, v2 = 0;
+	int x = 0;
+#endif
 	int i;
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
@@ -2507,7 +2512,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		if ((((o_ptr->to_h) < 0 && ((o_ptr->to_h - k_ptr->to_h) < 0 || k_ptr->to_h < 0)) ||
 		    ((o_ptr->to_d) < 0 && ((o_ptr->to_d - k_ptr->to_d) < 0 || k_ptr->to_d < 0)) ||
 		    ((o_ptr->to_a) < 0 && ((o_ptr->to_a - k_ptr->to_a) < 0 || k_ptr->to_a < 0)) ||
-/* to allow Mummy Wrappings in bm! - C. Blue */
+		    /* to allow Mummy Wrappings in bm! - C. Blue */
 		    //(o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
 		    //(o_ptr->pval < 0) || (o_ptr->bpval < k_ptr->pval)) &&
 		    //(o_ptr->pval < 0) || (o_ptr->tval != TV_ROD && o_ptr->bpval < k_ptr->pval)) &&
@@ -2847,8 +2852,6 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	}
 	/* OPTIONAL/EXPERIMENTAL: Add extra bonus for weapon that has both, top hit/_dam_ and ea/crit/vamp */
 	else if (is_weapon(o_ptr->tval) && (o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
-		/* generate two different values, pick the higher one */
-		s64b v1 = 0, v2 = 0;
 		int kill = 0;
 
 		/* first bonus prefers weapons with high flag rating */
@@ -2896,8 +2899,19 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		}
  #endif
 
-		value += v1;
 	}
+
+ #if 1 /* new: extra flag price bonus for low-hit/dam arts that otherwise wouldn't get a bonus */
+	if (f1 & TR1_BLOWS) x += o_ptr->pval * 4;
+	if (f1 & TR1_VAMPIRIC) x += 11;
+	if (f5 & TR5_CRIT) x += o_ptr->pval;
+	if (x >= 16) vx += 25000;
+	if (x >= 20) vx += 25000;
+ #endif
+
+	/* apply highest bonus boosted value */
+	if (v1 > vx) vx = v1;
+	value += vx;
 #endif
 
 	if (f3 & TR3_AGGRAVATE) value >>= 1; /* one generic aggravate penalty fits it all */
