@@ -7556,17 +7556,22 @@ However, if you have a choice or don't care about a few skill points more, you
 may want to consider the following table to help you make a decision:
 
 
-Type        1h/1.5+2h abundance   2h top damage/weight
-------------------------------------------------------
-Swords      very high / medium    medium / medium
-Axes        medium / medium       high / heavy
-Blunt       medium / high         high / very heavy
-Polearms    low / high            high / medium
+Type       1h/1.5+2h abundance  2h top damage/weight  Base item level 1+1.5h/2h
+-------------------------------------------------------------------------------
+Swords     very high / medium   medium / medium       low / mid
+Axes       medium / medium      high / heavy          low / high
+Blunt      medium / high        high / very heavy     low / mid
+Polearms   low / high           high / medium         low / mid
 
 
 For example if you stick with dual-wielding two weapons, you might want to go
 with swords and definitely not with polearms, since there are a lot of 1h
 swords, and very few 1h polearms.
+
+The base item level determines at which depth you will start finding that item.
+Also, normal town stores usually only sell low level weapons and armour while
+black markets tend to prefer mid (normal black market) or high (special black
+markets) level items.
 
 In-game you can press 'I' (or 'x' if inside a store) to inspect an item.
 Even if you haven't *identified* it, it will still tell you the weapon class
