@@ -11944,12 +11944,12 @@ Note that not every skill is available to every profession (class).
                                 as possible while trying to steal from a shop,
                                 since DEX is the main factor besides the skill.
 
-                                Stealing items which have a base value (with
-                                discount applied, as usual for stealing) not
-                                higher than your stealing_skill * 10 are
-                                especially easy to steal. Also, if you still
-                                get caught on such an item, the blacklist time
-                                will be much shorter too.
+                                Stealing items which have a base value (without
+                                discount applied!) not higher than your
+                                stealing_skill * 10 (eg 50 Au->5.000 Stealing)
+                                are especially easy to steal.
+                                Also, if you still get caught on such an item,
+                                the blacklist time will be much shorter too.
                                 Some potion/scroll break points regarding this:
                                 !Cure Critical Wounds: 100 Au.
                                 !Speed: 200 Au.

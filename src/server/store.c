@@ -2659,7 +2659,7 @@ void store_stole(int Ind, int item) {
 	int i, item_new, amt = 1;
 	long chance = 0;
 
-	s64b tbest, tcadd, tccompare;
+	s64b tbest, tcadd, tccompare, tbase;
 
 	object_type sell_obj, *o_ptr;
 	char o_name[ONAME_LEN];
@@ -2826,13 +2826,16 @@ void store_stole(int Ind, int item) {
 	    (2 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
 	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
 
+	/* Base item price in k_info, without discount */
+	tbase = object_value_real(0, &sell_obj);
+
 	/* Very simple items (value <= stealingskill * 10)
 	   [that occur in stacks? -> no for now, too nasty]
 	   get less attention from the shopkeeper, so you don't
 	   get blacklisted all the time for snatching some basic stuff - C. Blue */
 	if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
-		if (tbest <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
-			chance = ((chance * (long)(tbest)) / get_skill_scale(p_ptr, SKILL_STEALING, 500));
+		if (tbase <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
+			chance = ((chance * (long)(tbase)) / get_skill_scale(p_ptr, SKILL_STEALING, 500));
 	}
 
 	/* Invisibility and stealth are not unimportant */
@@ -2872,7 +2875,7 @@ void store_stole(int Ind, int item) {
 
 #ifdef STEAL_CHEEZEREDUCTION
 //		if (!magik((5000000 / tbest) + 5))
-		if ((!magik((5000000 / object_value_real(0, &sell_obj)) + 5))
+		if ((!magik((5000000 / tbase) + 5))
 		    && !(in_irondeepdive(&p_ptr->wpos) &&
 		    (st_info[st_ptr->st_idx].flags1 & (SF1_VHARD_STEAL | SF1_HARD_STEAL))))
 			sell_obj.level = 0;
@@ -2962,10 +2965,10 @@ s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->
 		i = tcadd * amt * 8 + 1000;
 		/* Reduce blacklist time for very cheap stuff (value <= skill * 10): */
 		if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
-			if (tbest <= get_skill_scale(p_ptr, SKILL_STEALING, 500)) {
+			if (tbase <= get_skill_scale(p_ptr, SKILL_STEALING, 500)) {
 				/* Limits for ultra-cheap items: */
-				if (get_skill_scale(p_ptr, SKILL_STEALING, 500) / tbest <= 5)
-					i = (i * tbest) / get_skill_scale(p_ptr, SKILL_STEALING, 500);
+				if (get_skill_scale(p_ptr, SKILL_STEALING, 500) / tbase <= 5)
+					i = (i * tbase) / get_skill_scale(p_ptr, SKILL_STEALING, 500);
 				else
 					i /= 5;
 			}
