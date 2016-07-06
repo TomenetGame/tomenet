@@ -13758,14 +13758,15 @@ S: spell list
     The chance to successfully use such a monster power is affected by the
     mimic's intelligence (INT).
     Depending on how frequently the monster is able to cast spells, the player
-    gets boni on intelligence and mana! This only applies if the spells are in
-    fact magic spells, not if the monster cannot do anything except firing
-    missiles, shrieking or shooting arrows (etc).
-    If the creature is able to cast 1_IN_3, the player receives +1 INT and
+    gets boni on mana and on intelligence or wisdom stat!
+    This only applies if the spells are in fact magic spells, not if the
+    monster cannot do anything except firing missiles, shrieking or shooting
+    arrows (etc).
+    If the creature is able to cast 1_IN_3, the player receives +1 stat and
     +20% Mana bonus (of base mana, same way +MANA items work).
-    If the creature is able to cast 1_IN_2, the player receives +3 INT and
+    If the creature is able to cast 1_IN_2, the player receives +3 stat and
     +35% Mana bonus (of base mana, same way +MANA items work).
-    If the creature is able to cast 1_IN_1, the player receives +4 INT and
+    If the creature is able to cast 1_IN_1, the player receives +4 stat and
     +50% Mana bonus (of base mana, same way +MANA items work).
 
     About specific spells:

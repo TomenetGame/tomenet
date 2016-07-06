@@ -1797,7 +1797,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
-	int d, immunities = 0, immunity[7], immrand;
+	int d, immunities = 0, immunity[7], immrand, spellbonus = 0;
 	int i, j;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	char mname[MNAME_LEN];
@@ -1900,14 +1900,23 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	p_ptr->stat_add[A_STR] += i;
 	csheet_boni->pstr += i;
 
-	/* Cats, rogues, martial artists (mystics/ninjas) and skilled warriors are very agile and most of them are stealthy */
+
+
+	/* Very specific group/single monster boni for animals and people:
+	   Note: Only STR/DEX/CHR (and Stealth) are considered for stats,
+	         WIS/INT are considered mind-intrinsic and only modified by spell-casting frequency,
+	         CON is already implied by the form's hit points.
+	         (The only other stats that could potentially be added to be modified here are probably Saving Throw and Perception.) */
+
+	/* Cats, rogues, martial artists (mystics/ninjas) and some warriors are very agile and most of them are stealthy */
 	if (r_ptr->d_char == 'f') { /* Cats! */
 		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
 		/* don't stack with low weight stealth bonus too much (see further below) */
 		if (r_ptr->weight <= 500) { p_ptr->skill_stl++; csheet_boni->slth++; }
 		else { p_ptr->skill_stl = p_ptr->skill_stl + 2; csheet_boni->slth += 2; }
 	}
-	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE) { /* Rogues and master rogues */
+	/* Rogues and master rogues */
+	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE) {
 		if (r_ptr->level >= 23) {
 			p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
 			p_ptr->skill_stl = p_ptr->skill_stl + 2; csheet_boni->slth += 2;
@@ -1916,21 +1925,28 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			p_ptr->skill_stl++; csheet_boni->slth++;
 		}
 	}
-	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && strstr(mname, "master")) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; } /* Skilled warriors */
-	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) { /* Mystics */
-		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
-		p_ptr->skill_stl++; csheet_boni->slth++;
-	}
-	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Jade Monk */
-	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Ivory Monk */
+	/* Warriors */
+	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && r_ptr->level >= 20) { p_ptr->stat_add[A_STR]++; csheet_boni->pstr++; } /* Skilled warriors */
+	if (p_ptr->body_monster == 239) { p_ptr->stat_add[A_STR]++; csheet_boni->pstr++; } /* Berserker */
+	if (p_ptr->body_monster == 1058 || p_ptr->body_monster == 1059) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; } /* (Grand) Swordsmaster */
 	if (p_ptr->body_monster == 532) { /* Dagashi */
 		p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++;
 		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
-	if (p_ptr->body_monster == 485) {/* Ninja */
+	if (p_ptr->body_monster == 485 || p_ptr->body_monster == 564) {/* Ninja, Nightblade */
 		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
 		p_ptr->skill_stl = p_ptr->skill_stl + 3; csheet_boni->slth += 3;
 	}
+	/* Mystics */
+	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) {
+		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		p_ptr->skill_stl++; csheet_boni->slth++;
+	}
+	/* Monks */
+	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Jade Monk */
+	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Ivory Monk */
+
+
 
 	if (r_ptr->speed < 110) {
 		/* let slowdown not be that large that players will never try that form */
@@ -2010,19 +2026,34 @@ y
 	    (r_ptr->flags6 & RF6_SPELLCASTER_MASK)) {
 		if (r_ptr->freq_innate > 30) {
 			p_ptr->num_spell++;	// 1_IN_3
-			p_ptr->stat_add[A_INT] += 1; csheet_boni->pint += 1;
+			spellbonus += 1;
 			p_ptr->to_m += 20; csheet_boni->mxmp += 2;
 		}
 		if (r_ptr->freq_innate >= 50) {
 			p_ptr->num_spell++;	// 1_IN_2
-			p_ptr->stat_add[A_INT] += 2; csheet_boni->pint += 2;
+			spellbonus += 2;
 			p_ptr->to_m += 15; csheet_boni->mxmp += 1;
 		}
 		if (r_ptr->freq_innate == 100) { /* well, drujs and quylthulgs >_> */
 			p_ptr->num_spell++;	// 1_IN_1
-			p_ptr->stat_add[A_INT] += 1;  csheet_boni->pint += 1;
+			spellbonus += 1;
 			p_ptr->to_m += 15; csheet_boni->mxmp += 2;
 		}
+		/* holy/druidic forms get some WIS bonus too, others get INT only */
+		if (r_ptr->d_char == 'h' || r_ptr->d_char == 'p') {
+			switch (r_ptr->d_attr) {
+			case TERM_GREEN:
+			case TERM_L_GREEN:
+			case TERM_WHITE:
+				i = spellbonus / 2;
+				j = spellbonus - i;
+				p_ptr->stat_add[A_WIS] += i; csheet_boni->pwis += i;
+				p_ptr->stat_add[A_INT] += j; csheet_boni->pint += j;
+				break;
+			default:
+				p_ptr->stat_add[A_INT] += spellbonus; csheet_boni->pint += spellbonus;
+			}
+		} else p_ptr->stat_add[A_INT] += spellbonus; csheet_boni->pint += spellbonus;
 	}
 
 
