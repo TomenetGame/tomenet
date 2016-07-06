@@ -11950,6 +11950,13 @@ Note that not every skill is available to every profession (class).
                                 especially easy to steal. Also, if you still
                                 get caught on such an item, the blacklist time
                                 will be much shorter too.
+                                Some potion/scroll break points regarding this:
+                                !Cure Critical Wounds: 100 Au.
+                                !Speed: 200 Au.
+                                !Restore stat: 300 Au.
+                                !Healing, ?Teleportation: 400 Au.
+                                !Resistance, !Restore Mana, ,Athelas: 450 Au.
+                                ?Wilderness Mapping: 500 Au.
 
                                 Trying to 'steal back' an item that was already
                                 owned by a player, ie an item that has been
