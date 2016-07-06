@@ -1530,11 +1530,11 @@ D:of the undead, and is utterly in command of the element of water.
 
 
 # The Scythe 'Avavir'
-#should be nicer at W:4, but base item is W:25!
+#should be nicer at W:4, but base item is W:15!
 
 N:109:'Avavir'
 I:22:17:4
-W:25:8:220:18000
+W:15:8:220:18000
 P:0:6d4:12:12:10
 F:DEX | CHR | HIDE_TYPE |
 F:BRAND_COLD | BRAND_FIRE | FREE_ACT | RES_FIRE | RES_COLD |
