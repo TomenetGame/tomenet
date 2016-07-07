@@ -99,13 +99,13 @@ static int bow_multiplier (int sval) {
 static void do_pval (artifact_type *a_ptr) {
 	/* Add some pval */
 	if (a_ptr->pval == 0)
-		a_ptr->pval = 1 + rand_int (3);
+		a_ptr->pval = 1 + rand_int(3);
 	/* Cursed -- make it worse! */
 	else if (a_ptr->pval < 0) {
-		if (rand_int (2) == 0) a_ptr->pval--;
+		if (rand_int(2) == 0) a_ptr->pval--;
 	}
 	/* Bump up an existing pval */
-	else if (rand_int (3) > 0)
+	else if (rand_int(3) > 0)
 		a_ptr->pval++;
 	/* Done */
 	return;
@@ -117,31 +117,31 @@ static void do_pval (artifact_type *a_ptr) {
  */
 static void do_curse (artifact_type *a_ptr) {
 	/* Some chance of picking up these flags */
-	if (rand_int (3) == 0) a_ptr->flags3 |= TR3_AGGRAVATE;
+	if (rand_int(3) == 0) a_ptr->flags3 |= TR3_AGGRAVATE;
 	if (!is_ammo(a_ptr->tval)) {
-		if (rand_int (5) == 0) a_ptr->flags3 |= TR3_DRAIN_EXP;
-		if (rand_int (8) == 0) a_ptr->flags5 |= TR5_DRAIN_MANA;
-		if (rand_int (11) == 0) a_ptr->flags5 |= TR5_DRAIN_HP;
-		if (rand_int (7) == 0) a_ptr->flags3 |= TR3_TELEPORT;
+		if (rand_int(5) == 0) a_ptr->flags3 |= TR3_DRAIN_EXP;
+		if (rand_int(8) == 0) a_ptr->flags5 |= TR5_DRAIN_MANA;
+		if (rand_int(11) == 0) a_ptr->flags5 |= TR5_DRAIN_HP;
+		if (rand_int(7) == 0) a_ptr->flags3 |= TR3_TELEPORT;
 	}
 
 	/* Some chance or reversing good bonuses */
-	if (!is_ammo(a_ptr->tval) && (a_ptr->pval > 0) && (rand_int (2) == 0)) a_ptr->pval = -a_ptr->pval;
-	if ((a_ptr->to_a > 0) && (rand_int (2) == 0)) a_ptr->to_a = -a_ptr->to_a;
-	if ((a_ptr->to_h > 0) && (rand_int (2) == 0)) a_ptr->to_h = -a_ptr->to_h;
-	if ((a_ptr->to_d > 0) && (rand_int (4) == 0)) a_ptr->to_d = -a_ptr->to_d;
+	if (!is_ammo(a_ptr->tval) && (a_ptr->pval > 0) && (rand_int(2) == 0)) a_ptr->pval = -a_ptr->pval;
+	if ((a_ptr->to_a > 0) && (rand_int(2) == 0)) a_ptr->to_a = -a_ptr->to_a;
+	if ((a_ptr->to_h > 0) && (rand_int(2) == 0)) a_ptr->to_h = -a_ptr->to_h;
+	if ((a_ptr->to_d > 0) && (rand_int(4) == 0)) a_ptr->to_d = -a_ptr->to_d;
 
 	/* Some chance of making bad bonuses worse */
-	if (!is_ammo(a_ptr->tval) && (a_ptr->pval < 0) && (rand_int (2) == 0)) a_ptr->pval -= rand_int(2);
-	if ((a_ptr->to_a < 0) && (rand_int (2) == 0)) a_ptr->to_a -= 3 + rand_int(10);
-	if ((a_ptr->to_h < 0) && (rand_int (2) == 0)) a_ptr->to_h -= 3 + rand_int(6);
-	if ((a_ptr->to_d < 0) && (rand_int (4) == 0)) a_ptr->to_d -= 3 + rand_int(6);
+	if (!is_ammo(a_ptr->tval) && (a_ptr->pval < 0) && (rand_int(2) == 0)) a_ptr->pval -= rand_int(2);
+	if ((a_ptr->to_a < 0) && (rand_int(2) == 0)) a_ptr->to_a -= 3 + rand_int(10);
+	if ((a_ptr->to_h < 0) && (rand_int(2) == 0)) a_ptr->to_h -= 3 + rand_int(6);
+	if ((a_ptr->to_d < 0) && (rand_int(4) == 0)) a_ptr->to_d -= 3 + rand_int(6);
 
 	/* If it is cursed, we can heavily curse it */
 	if (a_ptr->flags3 & TR3_CURSED)
 	{
-		if (rand_int (2) == 0) a_ptr->flags3 |= TR3_HEAVY_CURSE;
-		if (rand_int (15) == 0) a_ptr->flags4 |= TR4_CURSE_NO_DROP;
+		if (rand_int(2) == 0) a_ptr->flags3 |= TR3_HEAVY_CURSE;
+		if (rand_int(15) == 0) a_ptr->flags4 |= TR4_CURSE_NO_DROP;
 		return;
 	}
 
@@ -542,27 +542,27 @@ static void add_ability (artifact_type *a_ptr) {
 		case TV_BOOMERANG:
 			if (r < 1) { /* SPLIT FLAG: see r < 68 -_- */
 				a_ptr->flags1 |= TR1_BRAND_POIS;
-				if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_POIS;
+				if (rand_int(4) > 0) a_ptr->flags2 |= TR2_RES_POIS;
 			} else if (r < 4) {
 				a_ptr->flags1 |= TR1_WIS;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
+				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
 				/* chaotic and blessed are exclusive atm */
 				if (!(a_ptr->flags5 & TR5_CHAOTIC) &&
 				    (is_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG))
 					a_ptr->flags3 |= TR3_BLESSED;
 			} else if (r < 7) {
 				a_ptr->flags1 |= TR1_BRAND_ACID;
-				if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_ACID;
+				if (rand_int(4) > 0) a_ptr->flags2 |= TR2_RES_ACID;
 			} else if (r < 10) {
 				a_ptr->flags1 |= TR1_BRAND_ELEC;
-				if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_ELEC;
+				if (rand_int(4) > 0) a_ptr->flags2 |= TR2_RES_ELEC;
 			} else if (r < 14) {
 				a_ptr->flags1 |= TR1_BRAND_FIRE;
-				if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_FIRE;
+				if (rand_int(4) > 0) a_ptr->flags2 |= TR2_RES_FIRE;
 			} else if (r < 18) {
 				a_ptr->flags1 |= TR1_BRAND_COLD;
-				if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_COLD;
+				if (rand_int(4) > 0) a_ptr->flags2 |= TR2_RES_COLD;
 			} else if (r < 21) {
 				a_ptr->ds += 1 + rand_int(2) + rand_int(2);
 			} else if (r < 25) {
@@ -588,54 +588,54 @@ static void add_ability (artifact_type *a_ptr) {
 			} else if (r < 47) {
 				a_ptr->flags1 |= TR1_SLAY_UNDEAD;
 				if (magik(80)) a_ptr->esp |= (ESP_UNDEAD);
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_SLAY_DEMON;
 					if (magik(80)) a_ptr->esp |= (ESP_DEMON);
 				}
 			} else if (r < 51) {
 				a_ptr->flags1 |= TR1_SLAY_DEMON;
 				if (magik(80)) a_ptr->esp |= (ESP_DEMON);
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_SLAY_UNDEAD;
 					if (magik(80)) a_ptr->esp |= (ESP_UNDEAD);
 				}
 			} else if (r < 55) {
 				a_ptr->flags1 |= TR1_SLAY_ORC;
 				if (magik(80)) a_ptr->esp |= (ESP_ORC);
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_SLAY_TROLL;
 					if (magik(80)) a_ptr->esp |= (ESP_TROLL);
 				}
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_SLAY_GIANT;
 					if (magik(80)) a_ptr->esp |= (ESP_GIANT);
 				}
 			} else if (r < 59) {
 				a_ptr->flags1 |= TR1_SLAY_TROLL;
 				if (magik(80)) a_ptr->esp |= (ESP_TROLL);
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_SLAY_ORC;
 					if (magik(80)) a_ptr->esp |= (ESP_ORC);
 				}
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_SLAY_GIANT;
 					if (magik(80)) a_ptr->esp |= (ESP_GIANT);
 				}
 			} else if (r < 63) {
 				a_ptr->flags1 |= TR1_SLAY_GIANT;
 				if (magik(80)) a_ptr->esp |= (ESP_GIANT);
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_SLAY_ORC;
 					if (magik(80)) a_ptr->esp |= (ESP_ORC);
 				}
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_SLAY_TROLL;
 					if (magik(80)) a_ptr->esp |= (ESP_TROLL);
 				}
 			} else if (r < 66) a_ptr->flags3 |= TR3_SEE_INVIS;
 			else if (r < 68) { /* SPLIT FLAG: see r < 1 -_- */
 				a_ptr->flags1 |= TR1_BRAND_POIS;
-				if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_POIS;
+				if (rand_int(4) > 0) a_ptr->flags2 |= TR2_RES_POIS;
 			} else if (r < 72) {
 				/* +EA turns into xshots on boomies */
 				if (a_ptr->tval == TV_BOOMERANG) a_ptr->flags3 |= TR3_XTRA_SHOTS;
@@ -654,15 +654,15 @@ static void add_ability (artifact_type *a_ptr) {
 					if (a_ptr->pval > 3) a_ptr->pval = 3;
 				}
 			} else if (r < 87) {
-				a_ptr->to_d += 2 + rand_int (10);
-				a_ptr->to_h += 2 + rand_int (10);
+				a_ptr->to_d += 2 + rand_int(10);
+				a_ptr->to_h += 2 + rand_int(10);
 			} else if (r < 90) {
-				a_ptr->to_a += 3 + rand_int (3);
+				a_ptr->to_a += 3 + rand_int(3);
 			} else if (r < 93) {
 				a_ptr->flags5 |= TR5_CRIT;
 				if (a_ptr->pval < 0) break;
-				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (8);
-				else if (rand_int (2) == 0) a_ptr->pval++;
+				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int(8);
+				else if (rand_int(2) == 0) a_ptr->pval++;
 			} else if (r < 97) {
 				switch(a_ptr->tval) {
 				case TV_DIGGING:
@@ -695,7 +695,7 @@ static void add_ability (artifact_type *a_ptr) {
 				a_ptr->to_h += 2 + rand_int(10);
 			}
 			else if (r < 40) {
-				int rr = rand_int (29);
+				int rr = rand_int(29);
 				if (rr < 1) a_ptr->esp |= (ESP_ORC);
 				else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
 				else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
@@ -741,9 +741,9 @@ static void add_ability (artifact_type *a_ptr) {
 		case TV_BOOTS:
 			if (r < 10) a_ptr->flags3 |= TR3_FEATHER;
 #ifndef TO_AC_CAP_30
-			else if (r < 30) a_ptr->to_a += 3 + rand_int (5);
+			else if (r < 30) a_ptr->to_a += 3 + rand_int(5);
 #else
-			else if (r < 30) a_ptr->to_a += 3 + rand_int (4);
+			else if (r < 30) a_ptr->to_a += 3 + rand_int(4);
 #endif
 			else if (r < 40) a_ptr->flags4 |= TR4_LEVITATE;
 			else if (r < 50) a_ptr->flags4 |= TR4_CLIMB;
@@ -753,7 +753,7 @@ static void add_ability (artifact_type *a_ptr) {
 			} else if (r < 95) {
 				a_ptr->flags1 |= TR1_SPEED;
 				if (a_ptr->pval < 0) break;
-				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (8);
+				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int(8);
 				else {
 					a_ptr->pval++;
 					if (!rand_int(2)) a_ptr->pval++;
@@ -767,7 +767,7 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 21)
 			{
 				a_ptr->flags1 |= TR1_MANA;
-				if (a_ptr->pval == 0) a_ptr->pval = 5 + rand_int (6);
+				if (a_ptr->pval == 0) a_ptr->pval = 5 + rand_int(6);
 				else do_pval (a_ptr);
 				if (a_ptr->pval < 0) a_ptr->pval = 2;
 			} else if (r < 26) a_ptr->flags4 |= TR4_AUTO_ID;
@@ -788,8 +788,8 @@ static void add_ability (artifact_type *a_ptr) {
 			} else if (r < 58) {
 				a_ptr->flags5 |= TR5_CRIT;
 				if (a_ptr->pval < 0) break;
-				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (8);
-				else if (rand_int (2) == 0) a_ptr->pval++;
+				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int(8);
+				else if (rand_int(2) == 0) a_ptr->pval++;
 			}
 			else if (r < 73) {
 				int rsub = rand_int(24);
@@ -829,9 +829,9 @@ static void add_ability (artifact_type *a_ptr) {
 #endif
 			} else if (r < 77) a_ptr->flags1 |= TR1_VAMPIRIC;
 #ifndef TO_AC_CAP_30
-			else if (r < 95) a_ptr->to_a += 3 + rand_int (5);
+			else if (r < 95) a_ptr->to_a += 3 + rand_int(5);
 #else
-			else if (r < 95) a_ptr->to_a += 3 + rand_int (4);
+			else if (r < 95) a_ptr->to_a += 3 + rand_int(4);
 #endif
 			else {
 				a_ptr->to_h = 2 + rand_int(7);
@@ -877,9 +877,9 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 70) a_ptr->flags2 |= TR2_RES_CONF;
 			else if (r < 75) a_ptr->flags2 |= TR2_RES_FEAR;
 #ifndef TO_AC_CAP_30
-			else a_ptr->to_a += 3 + rand_int (5);
+			else a_ptr->to_a += 3 + rand_int(5);
 #else
-			else a_ptr->to_a += 3 + rand_int (4);
+			else a_ptr->to_a += 3 + rand_int(4);
 #endif
 			break;
 		case TV_CROWN:
@@ -922,9 +922,9 @@ static void add_ability (artifact_type *a_ptr) {
 			} else if (r < 77) a_ptr->flags2 |= TR2_RES_CONF;
 			else if (r < 81) a_ptr->flags2 |= TR2_RES_FEAR;
 #ifndef TO_AC_CAP_30
-			else a_ptr->to_a += 3 + rand_int (5);
+			else a_ptr->to_a += 3 + rand_int(5);
 #else
-			else a_ptr->to_a += 3 + rand_int (4);
+			else a_ptr->to_a += 3 + rand_int(4);
 #endif
 			break;
 		case TV_SHIELD:
@@ -936,9 +936,9 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 80) a_ptr->flags5 |= TR5_REFLECT;
 			else if (r < 90) a_ptr->weight = (a_ptr->weight * 9) / 10;
  #ifndef TO_AC_CAP_30
-			else a_ptr->to_a += 3 + rand_int (5);
+			else a_ptr->to_a += 3 + rand_int(5);
  #else
-			else a_ptr->to_a += 3 + rand_int (4);
+			else a_ptr->to_a += 3 + rand_int(4);
  #endif
 #else
 			if (r < 20) a_ptr->flags2 |= TR2_RES_ACID;
@@ -992,27 +992,27 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 30) {
 				a_ptr->flags1 |= TR1_CON;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0)
+				if (rand_int(2) == 0)
 					a_ptr->flags2 |= TR2_SUST_CON;
 			} else if (r < 45) {
 				a_ptr->flags1 |= TR1_STR;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0)
+				if (rand_int(2) == 0)
 					a_ptr->flags2 |= TR2_SUST_STR;
 			} else if (r < 50) {
 				a_ptr->flags1 |= TR1_LIFE;
 				do_pval (a_ptr);
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
 #ifndef TO_AC_CAP_30
-			} else a_ptr->to_a += 1 + rand_int (4);
+			} else a_ptr->to_a += 1 + rand_int(4);
 #else
-			} else a_ptr->to_a += 1 + rand_int (3);
+			} else a_ptr->to_a += 1 + rand_int(3);
 #endif
 			break;
 		case TV_HARD_ARMOR:
 			/* extra mods for royal armour */
 			if ((a_ptr->flags5 & TR5_WINNERS_ONLY) && !rand_int(10)) {
-				int rr = rand_int (100);
+				int rr = rand_int(100);
 				if (rr < 20) a_ptr->flags5 |= TR5_REFLECT;
 				else if (rr < 30) {
 					a_ptr->flags5 |= TR5_RES_MANA;
@@ -1037,7 +1037,7 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 22) {
 				a_ptr->flags1 |= TR1_CON;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0)
+				if (rand_int(2) == 0)
 					a_ptr->flags2 |= TR2_SUST_CON;
 			} else if (r < 34) a_ptr->flags2 |= TR2_RES_ACID;
 			else if (r < 46) a_ptr->flags2 |= TR2_RES_ELEC;
@@ -1049,9 +1049,9 @@ static void add_ability (artifact_type *a_ptr) {
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
 			} else if (r < 80) a_ptr->weight = (a_ptr->weight * 9) / 10;
 #ifndef TO_AC_CAP_30
-			else a_ptr->to_a += 3 + rand_int (8);
+			else a_ptr->to_a += 3 + rand_int(8);
 #else
-			else a_ptr->to_a += 3 + rand_int (7);
+			else a_ptr->to_a += 3 + rand_int(7);
 #endif
 			break;
 		case TV_RING:
@@ -1084,34 +1084,34 @@ static void add_ability (artifact_type *a_ptr) {
 			case 0:
 				a_ptr->flags1 |= TR1_STR;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_STR;
+				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_STR;
 				break;
 			case 1:
 				a_ptr->flags1 |= TR1_INT;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_INT;
+				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_INT;
 				break;
 			case 2:
 				a_ptr->flags1 |= TR1_WIS;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
+				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
 				if (a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM)
 					a_ptr->flags3 |= TR3_BLESSED;
 				break;
 			case 3:
 				a_ptr->flags1 |= TR1_DEX;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_DEX;
+				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_DEX;
 				break;
 			case 4:
 				a_ptr->flags1 |= TR1_CON;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_CON;
+				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_CON;
 				break;
 			case 5:
 				a_ptr->flags1 |= TR1_CHR;
 				do_pval (a_ptr);
-				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_CHR;
+				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_CHR;
 				break;
 			case 6:
 				a_ptr->flags1 |= TR1_STEALTH;
@@ -1142,26 +1142,26 @@ static void add_ability (artifact_type *a_ptr) {
 				}
 
 				a_ptr->flags1 |= TR1_SPEED;
-				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (3);
+				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int(3);
 				else do_pval (a_ptr);
 				break;
 			case 10:
 				a_ptr->flags2 |= TR2_SUST_STR;
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_STR;
 					do_pval (a_ptr);
 				}
 				break;
 			case 11:
 				a_ptr->flags2 |= TR2_SUST_INT;
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_INT;
 					do_pval (a_ptr);
 				}
 				break;
 			case 12:
 				a_ptr->flags2 |= TR2_SUST_WIS;
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_WIS;
 					do_pval (a_ptr);
 					if (a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM)
@@ -1170,36 +1170,36 @@ static void add_ability (artifact_type *a_ptr) {
 				break;
 			case 13:
 				a_ptr->flags2 |= TR2_SUST_DEX;
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_DEX;
 					do_pval (a_ptr);
 				}
 				break;
 			case 14:
 				a_ptr->flags2 |= TR2_SUST_CON;
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_CON;
 					do_pval (a_ptr);
 				}
 				break;
 			case 15:
 				a_ptr->flags2 |= TR2_SUST_CHR;
-				if (rand_int (2) == 0) {
+				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_CHR;
 					do_pval (a_ptr);
 				}
 				break;
 			case 16:
-				if (rand_int (3) == 0) a_ptr->flags2 |= TR2_IM_ACID;
+				if (rand_int(3) == 0) a_ptr->flags2 |= TR2_IM_ACID;
 				break;
 			case 17:
-				if (rand_int (3) == 0) a_ptr->flags2 |= TR2_IM_ELEC;
+				if (rand_int(3) == 0) a_ptr->flags2 |= TR2_IM_ELEC;
 				break;
 			case 18:
-				if (rand_int (4) == 0) a_ptr->flags2 |= TR2_IM_FIRE;
+				if (rand_int(4) == 0) a_ptr->flags2 |= TR2_IM_FIRE;
 				break;
 			case 19:
-				if (rand_int (3) == 0) a_ptr->flags2 |= TR2_IM_COLD;
+				if (rand_int(3) == 0) a_ptr->flags2 |= TR2_IM_COLD;
 				break;
 			case 20: a_ptr->flags2 |= TR2_FREE_ACT; break;
 			case 21: a_ptr->flags2 |= TR2_HOLD_LIFE; break;
@@ -1216,24 +1216,24 @@ static void add_ability (artifact_type *a_ptr) {
 			case 31: a_ptr->flags2 |= TR2_RES_SOUND; break;
 			case 32: a_ptr->flags2 |= TR2_RES_SHARDS; break;
 			case 33:
-				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_RES_NETHER;
+				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_RES_NETHER;
 				break;
 			case 34: a_ptr->flags2 |= TR2_RES_NEXUS; break;
 			case 35: a_ptr->flags2 |= TR2_RES_CHAOS; break;
 			case 36:
-				if (rand_int (2) == 0) a_ptr->flags2 |= TR2_RES_DISEN;
+				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_RES_DISEN;
 				break;
 			case 37: a_ptr->flags3 |= TR3_FEATHER; break;
 			case 38: a_ptr->flags3 |= TR3_LITE1; break;
 			case 39: a_ptr->flags3 |= TR3_SEE_INVIS; break;
 		        case 40:
 #if 0
-				if (rand_int (3) == 0)
+				if (rand_int(3) == 0)
 					//a_ptr->flags3 |= TR3_TELEPATHY;
 					a_ptr->esp |= (ESP_ALL);
 #endif	// 0
 				{
-					int rr = rand_int (29);
+					int rr = rand_int(29);
 					if (rr < 1) a_ptr->esp |= (ESP_ORC);
 					else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
 					else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
@@ -1948,7 +1948,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 
 	/* Really powerful items should aggravate. */
 	if (power > 100 + quality_boost) {
-		if (rand_int (100) < (power - 100 - quality_boost) * 3) {
+		if (rand_int(100) < (power - 100 - quality_boost) * 3) {
 			aggravate_me = TRUE;
 		}
 	}
