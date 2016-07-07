@@ -8198,7 +8198,6 @@ void do_slash_cmd(int Ind, char *message) {
 						mtoa += o_ptr->to_a;
 						c++;
 					}
-					if (!(tries % 100)) s_printf("%d-",mtoa);
 				}
 				msg_print(Ind, "..done:");
 
