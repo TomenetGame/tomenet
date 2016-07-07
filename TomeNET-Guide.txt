@@ -17556,8 +17556,6 @@ Shields
         All basic resistances (acid/elec/fire/cold)
         Reflection
         Reduced weight
-        Always the maximum of +15 AC, if the server uses block-percentages
-         (which is the default setting.)
 Cloaks
         Stealth
         Feather falling

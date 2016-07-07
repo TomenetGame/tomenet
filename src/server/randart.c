@@ -934,6 +934,7 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 54) a_ptr->flags2 |= TR2_RES_FIRE;
 			else if (r < 72) a_ptr->flags2 |= TR2_RES_COLD;
 			else if (r < 80) a_ptr->flags5 |= TR5_REFLECT;
+			else if (r < 90) a_ptr->weight = (a_ptr->weight * 9) / 10;
  #ifndef TO_AC_CAP_30
 			else a_ptr->to_a += 3 + rand_int (5);
  #else
@@ -1011,14 +1012,15 @@ static void add_ability (artifact_type *a_ptr) {
 		case TV_HARD_ARMOR:
 			/* extra mods for royal armour */
 			if ((a_ptr->flags5 & TR5_WINNERS_ONLY) && !rand_int(10)) {
-				if (r < 20) a_ptr->flags5 |= TR5_REFLECT;
-				else if (r < 30) {
+				int rr = rand_int (100);
+				if (rr < 20) a_ptr->flags5 |= TR5_REFLECT;
+				else if (rr < 30) {
 					a_ptr->flags5 |= TR5_RES_MANA;
 					a_ptr->flags5 |= TR5_IGNORE_DISEN;
-				} else if (r < 50) a_ptr->flags2 |= TR2_IM_FIRE;
-				else if (r < 65) a_ptr->flags2 |= TR2_IM_ELEC;
-				else if (r < 80) a_ptr->flags2 |= TR2_IM_ACID;
-				else if (r < 95) a_ptr->flags2 |= TR2_IM_COLD;
+				} else if (rr < 50) a_ptr->flags2 |= TR2_IM_FIRE;
+				else if (rr < 65) a_ptr->flags2 |= TR2_IM_ELEC;
+				else if (rr < 80) a_ptr->flags2 |= TR2_IM_ACID;
+				else if (rr < 95) a_ptr->flags2 |= TR2_IM_COLD;
 				else {
 					a_ptr->flags1 |= TR1_LIFE;
 					do_pval (a_ptr);
