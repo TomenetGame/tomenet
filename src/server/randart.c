@@ -740,7 +740,11 @@ static void add_ability (artifact_type *a_ptr) {
 			break;
 		case TV_BOOTS:
 			if (r < 10) a_ptr->flags3 |= TR3_FEATHER;
+#ifndef TO_AC_CAP_30
 			else if (r < 30) a_ptr->to_a += 3 + rand_int (5);
+#else
+			else if (r < 30) a_ptr->to_a += 3 + rand_int (4);
+#endif
 			else if (r < 40) a_ptr->flags4 |= TR4_LEVITATE;
 			else if (r < 50) a_ptr->flags4 |= TR4_CLIMB;
 			else if (r < 65) {
@@ -824,7 +828,11 @@ static void add_ability (artifact_type *a_ptr) {
 					a_ptr->flags1 |= TR1_SLAY_EVIL;
 #endif
 			} else if (r < 77) a_ptr->flags1 |= TR1_VAMPIRIC;
+#ifndef TO_AC_CAP_30
 			else if (r < 95) a_ptr->to_a += 3 + rand_int (5);
+#else
+			else if (r < 95) a_ptr->to_a += 3 + rand_int (4);
+#endif
 			else {
 				a_ptr->to_h = 2 + rand_int(7);
 				a_ptr->to_d = 2 + rand_int(7);
@@ -868,7 +876,11 @@ static void add_ability (artifact_type *a_ptr) {
 			}
 			else if (r < 70) a_ptr->flags2 |= TR2_RES_CONF;
 			else if (r < 75) a_ptr->flags2 |= TR2_RES_FEAR;
+#ifndef TO_AC_CAP_30
 			else a_ptr->to_a += 3 + rand_int (5);
+#else
+			else a_ptr->to_a += 3 + rand_int (4);
+#endif
 			break;
 		case TV_CROWN:
 			if (r < 2) {
@@ -909,7 +921,11 @@ static void add_ability (artifact_type *a_ptr) {
 				do_pval (a_ptr);
 			} else if (r < 77) a_ptr->flags2 |= TR2_RES_CONF;
 			else if (r < 81) a_ptr->flags2 |= TR2_RES_FEAR;
+#ifndef TO_AC_CAP_30
 			else a_ptr->to_a += 3 + rand_int (5);
+#else
+			else a_ptr->to_a += 3 + rand_int (4);
+#endif
 			break;
 		case TV_SHIELD:
 #ifndef USE_NEW_SHIELDS
@@ -918,7 +934,11 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 54) a_ptr->flags2 |= TR2_RES_FIRE;
 			else if (r < 72) a_ptr->flags2 |= TR2_RES_COLD;
 			else if (r < 80) a_ptr->flags5 |= TR5_REFLECT;
+ #ifndef TO_AC_CAP_30
 			else a_ptr->to_a += 3 + rand_int (5);
+ #else
+			else a_ptr->to_a += 3 + rand_int (4);
+ #endif
 #else
 			if (r < 20) a_ptr->flags2 |= TR2_RES_ACID;
 			else if (r < 40) a_ptr->flags2 |= TR2_RES_ELEC;
@@ -959,7 +979,11 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 68) a_ptr->flags2 |= TR2_RES_COLD;
 			else if (r < 71) a_ptr->flags2 |= TR2_RES_ACID;
 			else if (r < 75) a_ptr->flags2 |= TR2_RES_ELEC;
+#ifndef TO_AC_CAP_30
 			else a_ptr->to_a += 3 + rand_int(3);
+#else
+			else a_ptr->to_a += 3 + rand_int(2);
+#endif
 			break;
 		case TV_DRAG_ARMOR:
 			/*if (r < 55) ; --changed into 67% hack above */
@@ -978,7 +1002,11 @@ static void add_ability (artifact_type *a_ptr) {
 				a_ptr->flags1 |= TR1_LIFE;
 				do_pval (a_ptr);
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
+#ifndef TO_AC_CAP_30
 			} else a_ptr->to_a += 1 + rand_int (4);
+#else
+			} else a_ptr->to_a += 1 + rand_int (3);
+#endif
 			break;
 		case TV_HARD_ARMOR:
 			/* extra mods for royal armour */
@@ -1018,7 +1046,11 @@ static void add_ability (artifact_type *a_ptr) {
 				do_pval (a_ptr);
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
 			} else if (r < 80) a_ptr->weight = (a_ptr->weight * 9) / 10;
+#ifndef TO_AC_CAP_30
 			else a_ptr->to_a += 3 + rand_int (8);
+#else
+			else a_ptr->to_a += 3 + rand_int (7);
+#endif
 			break;
 		case TV_RING:
 			if (r < 5) {
