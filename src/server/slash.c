@@ -8155,7 +8155,7 @@ void do_slash_cmd(int Ind, char *message) {
 			else if (prefix(message, "/measureart")) { /* create a randart over and over, measuring frequency of an ability */
 				object_type *o_ptr;
 				artifact_type *a_ptr;
-				int tries = 10000;
+				int tries = 10000, c = 0;
 
 				int m1 = 0, m2 = 0, m3 = 0, m4 = 0, mtoa = 0;
 
@@ -8194,7 +8194,11 @@ void do_slash_cmd(int Ind, char *message) {
 					if (a_ptr->flags2 & TR2_IM_COLD) m2++;
 					if (a_ptr->flags2 & TR2_IM_FIRE) m3++;
 					if (a_ptr->flags2 & TR2_IM_ACID) m4++;
-					mtoa += o_ptr->to_a;
+					if (o_ptr->to_a >= 0) {//not cursed?
+						mtoa += o_ptr->to_a;
+						c++;
+					}
+					if (!(tries % 100)) s_printf("%d-",mtoa);
 				}
 				msg_print(Ind, "..done:");
 
@@ -8202,7 +8206,7 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "c %d.%d%%", m2 / 100, m2 % 100);
 				msg_format(Ind, "f %d.%d%%", m3 / 100, m3 % 100);
 				msg_format(Ind, "a %d.%d%%", m4 / 100, m4 % 100);
-				msg_format(Ind, "to_a ~%d", mtoa / 10000);
+				msg_format(Ind, "to_a ~%d", mtoa / c);
 
 				o_ptr->ident |= ID_MENTAL; /* *id*ed */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
