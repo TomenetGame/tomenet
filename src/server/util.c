@@ -3342,6 +3342,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '5': lcopy[i] = 's'; break;
 			case '7': lcopy[i] = 't'; break;
 			case '8': lcopy[i] = 'b'; break;
+			case '9': lcopy[i] = 'g'; break;
 			case '0': lcopy[i] = 'o'; break;
 #ifdef HIGHLY_EFFECTIVE_CENSOR
 			/* hack: Actually _counter_ the capabilities of highly-effective
