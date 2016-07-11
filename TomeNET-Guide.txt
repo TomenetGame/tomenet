@@ -16075,7 +16075,8 @@ ranged techniques.
 All techniques are accessable via 'm' key, also see (3.7a).
 
 The time your character learns a certain technique varies, depending on your
-class. The order in which they are learnt is the same though.
+class, see the table at the bottom of this section. The order in which they
+are learnt is the same though.
 
 The techniques are as follows:
 
@@ -16199,6 +16200,23 @@ The techniques are as follows:
 
 Stamina regenerates slowly over time, faster while resting. Your CONstitution
 stat and 'Health' skill will further improve regeneration speed.
+
+Different classes learn fighting techniques at the following levels, if at all:
+            | Sprint Taunt Distract Flashbomb Spin Berserk Shadowrun
+------------+-------------------------------------------------------
+Warrior     |    2     4                        6     20
+Istar       |
+Priest      |
+Rogue       |    3     6       9        12                     50
+Mimic       |   13    16                       20
+Archer      |
+Paladin     |   11    17                       20
+Ranger      |    5     9                       17
+Adventurer  |    6    15
+Druid       |    5
+Shaman      |
+Runemaster  |    4     9
+Mindcrafter |          8      12
 
 
 
