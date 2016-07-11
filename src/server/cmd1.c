@@ -20,12 +20,20 @@
 #define BB_INFECT_MINLEV 25
 
 /* Better hits of one override worse hits of the other,
-   instead of completely stacking for silly amounts.
+   instead of completely stacking for silly amounts. Recommended: BS [on], V [off].
    Note: Backstab and vorpal currently always stack. */
 #define CRIT_VS_BACKSTAB
 //#define CRIT_VS_VORPAL
 
-/* VORPAL being affected by brands? (+15 to-d & 2xbranded: +5% for crit weapons, +9% for non-crit weapons, crit +21% MoD over ZH, non-crit +13% MoD over ZH;)
+/* Crit multiplier should affect unbranded dice+todam instead of branded dice+todam? [off]
+   Advantage: Reduce huge gap between not so top 2h dice and top 2h dice weapons.
+   Big disadvantage: A +10 crit weapon wouldn't get more than ~4% damage increase even from a KILL mod.
+   NOTE: Currently only applies to melee. */
+//#define CRIT_UNBRANDED
+
+/* VORPAL being affected by brands? (+15 to-d & 2xbranded:
+   +5% for crit weapons, +9% for non-crit weapons,
+   crit +21% MoD over ZH, non-crit +13% MoD over ZH;)
    Recommended state is inverse of CRIT_VS_VORPAL. */
 #ifndef CRIT_VS_VORPAL
  #define VORPAL_UNBRANDED
@@ -3428,23 +3436,37 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 					//msg_format(Ind, ma_ptr->desc, q_name);
 				}
 
+#ifdef CRIT_UNBRANDED
+				k2 = k;
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+				k2 = k - k2; /* remember difference between branded and unbranded dice */
+
+				/* Apply the player damage boni */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
+
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0);
+				k3 += k2;
+#else
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+
+				/* Apply the player damage boni */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
+
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
+#endif
+
 #ifdef CRIT_VS_BACKSTAB
 				if (!backstab && !stab_fleeing)
 #endif
 				k = k3;
 
-				/* Apply the player damage boni */
-				k += p_ptr->to_d + p_ptr->to_d_melee;
-
-				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp)) {
+				if ((special_effect == MA_KNEE) && (k < q_ptr->chp)) {
 					msg_format(Ind, "%^s moans in agony!", q_name);
 					stun_effect = 3 + randint(3);
 					resist_stun /= 3;
 				}
 
-				if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp)) {
+				if (stun_effect && (k < q_ptr->chp)) {
 					if (marts > randint((q_ptr->lev * 2) + resist_stun + 10)) {
 						msg_format(Ind, "\377y%^s is stunned.", q_name);
 
@@ -3476,7 +3498,13 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save unbranded dice */
 				else vorpal_cut = FALSE;
 #endif
+#ifdef CRIT_UNBRANDED
+				k2 = k;
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+				k2 = k - k2; /* remember difference between branded and unbranded dice */
+#else
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+#endif
 #ifndef VORPAL_UNBRANDED
 				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save branded dice */
 				else vorpal_cut = FALSE;
@@ -3548,8 +3576,13 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 				/* Critical strike moved here, since it works best
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
-				k2 = k; /* remember damage before crit */
+#ifdef CRIT_UNBRANDED
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+				k3 += k2;
+#else
 				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+#endif
+				k2 = k; /* remember damage before crit */
 #ifdef CRIT_VS_BACKSTAB
 				if (!backstab && !stab_fleeing)
 #endif
@@ -4027,7 +4060,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 	player_type	*p_ptr = Players[Ind];
 	int		num = 0, bonus, chance, slot, owner_Ind = 0, sfx = 0;
 	int		k, k3, bs_multiplier;
-#ifdef CRIT_VS_VORPAL
+#if defined(CRIT_VS_VORPAL) || defined(CRIT_UNBRANDED)
 	int		k2;
 #endif
 	long int	kl;
@@ -4468,23 +4501,39 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 					//msg_format(Ind, ma_ptr->desc, m_name);
 				}
 
+#ifdef CRIT_UNBRANDED
+				k2 = k;
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+				k2 = k - k2; /* remember difference between branded and unbranded dice */
+
+				/* Apply the player damage boni */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
+
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0);
+				k3 += k2;
+#else
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+
+				/* Apply the player damage boni */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
+
+				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
+#endif
 #ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */
 #endif
-				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
 #ifdef CRIT_VS_BACKSTAB
 				if (!backstab && !stab_fleeing)
 #endif
 				k = k3;
 
-				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
+				if ((special_effect == MA_KNEE) && (k < m_ptr->hp)) {
 					did_knee = TRUE;
 					stun_effect = 7 + randint(13);
 					resist_stun /= 3;
 				}
 
-				else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
+				else if ((special_effect == MA_SLOW) && (k < m_ptr->hp)) {
 					if (!(r_ptr->flags1 & RF1_UNIQUE) &&
 					    !((r_ptr->flags2 & RF2_POWERFUL) && (r_ptr->flags8 & RF8_NO_CUT)) &&
 					    (randint(marts * 2) > r_ptr->level) &&
@@ -4494,7 +4543,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 					}
 				}
 
-				if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
+				if (stun_effect && (k < m_ptr->hp)) {
 					/* Stun the monster */
 					if (r_ptr->flags3 & RF3_NO_STUN) {
 						/* nothing:
@@ -4504,10 +4553,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 						did_stun = TRUE;
 					}
 				}
-
-				/* Apply the player damage boni */
-				/* (should this also cancelled by nazgul?(for now not)) */
-				k += p_ptr->to_d + p_ptr->to_d_melee;
 
 				/* Vampiric drain */
 				if ((magik(vampiric_melee)) && drainable)
@@ -4535,7 +4580,13 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save unbranded dice */
 				else vorpal_cut = FALSE;
 #endif
+#ifdef CRIT_UNBRANDED
+				k2 = k;
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+				k2 = k - k2; /* remember difference between branded and unbranded dice */
+#else
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+#endif
 #ifndef VORPAL_UNBRANDED
 				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save branded dice */
 				else vorpal_cut = FALSE;
@@ -4656,10 +4707,15 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				/* Critical strike moved here, since it works best
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
+#ifdef CRIT_UNBRANDED
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+				k3 += k2;
+#else
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+#endif
 #ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */
 #endif
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
 #ifdef CRIT_VS_BACKSTAB
 				if (!backstab && !stab_fleeing)
 #endif
