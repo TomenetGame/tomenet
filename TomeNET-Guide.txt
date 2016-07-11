@@ -16148,20 +16148,20 @@ The techniques are as follows:
 
     Shooting techniques:
     --------------------
-    Flare missile       2 stamina
+    Flare missile       2 stamina      (4.000 Archery)
         Prepares an oil-drenched shot for the next time you shoot, which will
         burn brightly, lighting up the area where it lands or hits a wall.
         If that spot is inside a room, the whole room will be lit up.
         This technique consumes 1 flask of oil and your shot/arrow/bolt.
         Note that this destroys magic ammunition too.
         (Preparing a flare missile costs a turn of energy.)
-    Precision shot      7 stamina
+    Precision shot      7 stamina      (8.000 Archery)
         You aim your next shot carefully, costing you a turn. The next shot
         you fire however will receive a great damage bonus, even more so
         against fleeing opponents. Useful opener against sleeping monsters.
         Aiming will be interrupted by most actions, including walking.
         (Aiming precisely costs a turn of energy.)
-    Create ammunition   -
+    Create ammunition   -              (10.000 Archery)
         Create ammunition for your currently equipped ranged weapon from
         bones, skeletons or broken sticks in your inventory or from a pile of
         rubble (':') next to your character.
@@ -16177,7 +16177,8 @@ The techniques are as follows:
         (the total weight of that inventory slot determines the stack size).
         The level of the raw materials has no effect on the outcome.
         (Creating ammunition costs a turn of energy.)
-    Double-shot         1 stamina/5 turns (random) while using it actively
+    Double-shot         1 stamina*     (16.000 Archery)
+        (*: 20% chance per turn of actively using it to drain 1 stamina.)
         Toggle, making you enter or leave double-shot mode. While active, you
         will fire 2 projectiles at once on each shot, dealing way less damage
         than a single shot though. Useful to eradicate weak critters.
@@ -16187,7 +16188,7 @@ The techniques are as follows:
               To permanently leave double-shot mode, you have to toggle it
               explicitely in the 'm' menu.
         (Double-shooting does not cost more energy than shooting normally.)
-    Barrage             9 stamina
+    Barrage             9 stamina      (25.000 Archery)
         Prepares to fire a powerful multi-shot which will cost you half a
         turn. It stuns the target (if it doesn't resist stunning attacks).
         Because 6 shots are fired at once you will need at least as many
