@@ -6996,6 +6996,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		armor_choice = reward_armor_check(p_ptr, mha, rha);
 		spell_choice = reward_spell_check(p_ptr, treshold);
 		misc_choice = reward_misc_check(p_ptr, treshold);
+		/* newbie druids who didn't spend points on MA (this prevents pure caster druid rewards, but w/e) */
+		if (p_ptr->pclass == CLASS_DRUID) {
+			melee_choice = 5;
+			mha = rha = TRUE; //Training MA causes Dodging skill spillover
+		}
 		/* martial arts -> no heavy armor (paranoia, shouldn't happen, already cought in reward_armor_check) */
 		if (melee_choice == 5 &&
 		    (armor_choice == 2 || armor_choice == 3))
@@ -7014,9 +7019,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_MINDCRAFTER:
 			if (item_tester_hook_wear(Ind, INVEN_WIELD) && !rand_int(4)) melee_choice = 6;
 			break;
+		case CLASS_DRUID:
+			melee_choice = 5;
 		case CLASS_ADVENTURER:
 		case CLASS_PRIEST:
-		case CLASS_DRUID:
 			mha = TRUE;
 			break;
 		case CLASS_ROGUE:

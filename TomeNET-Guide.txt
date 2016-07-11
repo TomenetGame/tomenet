@@ -17786,6 +17786,8 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   Resistances your character already possesses do not become prerequisites for
   the item, so it will not end up redundant with Draconian resistances for
   example.
+- druids will never receive a mage staff even if they haven't trained their
+  martial arts skill above the starting value yet.
 
 It does not matter if a skill is trained further above 3.000 or what your
 character level is. Skills are used to 'unlock' item classes such as
