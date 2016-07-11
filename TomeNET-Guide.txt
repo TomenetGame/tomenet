@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. June 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 11. July 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7558,11 +7558,18 @@ may want to consider the following table to help you make a decision:
 
 Type       1h/1.5+2h abundance  2h top damage/weight  Base item level 1+1.5h/2h
 -------------------------------------------------------------------------------
-Swords     very high / medium   medium / medium       low / mid
-Axes       medium / medium      high / heavy          low / high
+Swords*    very high / medium   medium / medium       low / mid
+Axes*      medium / medium      high / heavy          low / high
 Blunt      medium / high        high / very heavy     low / mid
-Polearms   low / high           high / medium         low / mid
-
+Polearms*  low / high           high / medium         low / mid
+-------------------------------------------------------------------------------
+ * Note that these weapon types can (partially) obtain VORPAL mod (see (5.8)):
+ Damage-wise 2h-swords with VORPAL flag can make up somewhat for the damage gap
+ towards 2h-blunts, especially if the weapons don't land many critical hits
+ (ie no CRIT item flag or Critical-Strike skill being applied).
+ Furthermore, axes and eligible polearms can reach even somewhat higher damage
+ if they have VORPAL flag, surpassing swords and even blunts for two-handed top
+ damage.
 
 For example if you stick with dual-wielding two weapons, you might want to go
 with swords and definitely not with polearms, since there are a lot of 1h
@@ -8963,6 +8970,10 @@ VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         hitting, you'll see 'Your weapon cuts deep into your enemy'.
         The multiplication is done after brand/slay effects have been applied,
         so brand/slay effects will increase VORPAL efficiency.
+        VORPAL requires an edged weapon, so swords, axes and several polearms
+        -including Scythe of Slicing- can obtain 'VORPAL' mod (via "Sharp" or
+        "Spinning" ego power). Blunt weapons can never be VORPAL.
+        For random artifacts, VORPAL can also spawn on boomerangs.
 SLAY_WEAP (No message, can spawn other mods/increase dice randomly.)
         A special mod for "Weapons of Slaying", see further down in (5.9).
 CRIT    ('It affects your ability to score critical hits.')
@@ -8974,6 +8985,10 @@ CRIT    ('It affects your ability to score critical hits.')
         will affect all of your physical attacks, including throwing items.
         For more information about critical strikes and attacks, see the
         description of the "Critical-strike" skill in (6.2).
+        CRIT requires light (up to 100 lbs) swords or polearms via "Perfection"
+        ego power, but can also spawn on random artifact gloves and all types
+        of random artifact weapons -including boomerangs- regardless of their
+        weight.
 CHAOTIC ('It produces chaotic effects.')
         On hitting, you have a 50% chance to do one of the following:
         a) drain life (VAMPIRIC, see (5.15)) (very likely).
@@ -17472,11 +17487,12 @@ Weapons, boomerangs
         Increased damage dice/dice sides
         All SLAY mods (also have a chance to add the corresponding ESP)
         All KILL (*SLAY*) mods (will also add the corresponding ESP)
+        Critical hit bonus
+        Vorpal mod (boomerangs, swords, axes and edged polearms only)
         See invisible
         Extra attacks
         Extra +hit and +dam bonus
         Extra +AC bonus
-        Critical hit bonus
         Vampiric life leech
         Chaotic (same as ego power)
         Reduced weight

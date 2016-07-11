@@ -25,6 +25,12 @@
 #define CRIT_VS_BACKSTAB
 //#define CRIT_VS_VORPAL
 
+/* VORPAL being affected by brands? (+15 to-d & 2xbranded: +5% for crit weapons, +9% for non-crit weapons, crit +21% MoD over ZH, non-crit +13% MoD over ZH;)
+   Recommended state is inverse of CRIT_VS_VORPAL. */
+#ifndef CRIT_VS_VORPAL
+ #define VORPAL_UNBRANDED
+#endif
+
 
 static void run_init(int Ind, int dir);
 
@@ -3466,10 +3472,15 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 				//    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
 				//    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 
+#ifdef VORPAL_UNBRANDED
+				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save unbranded dice */
+				else vorpal_cut = FALSE;
+#endif
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
-
+#ifndef VORPAL_UNBRANDED
 				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save branded dice */
 				else vorpal_cut = FALSE;
+#endif
 
 #ifdef ENABLE_STANCES
 				/* apply stun from offensive combat stance */
@@ -4520,10 +4531,15 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				//    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
 				//    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 
+#ifdef VORPAL_UNBRANDED
+				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save unbranded dice */
+				else vorpal_cut = FALSE;
+#endif
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
-
+#ifndef VORPAL_UNBRANDED
 				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save branded dice */
 				else vorpal_cut = FALSE;
+#endif
 
 #ifdef ENABLE_STANCES
 				/* apply stun from offensive combat stance */
