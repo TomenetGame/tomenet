@@ -12682,15 +12682,15 @@ create a character!):
     and light sources (which may drain their hit points if equipped, even if
     the vampire acquired resistance to light).
     Vampires fear the sun light and any kind of items giving off powerful light
-    (radius of 3 or more, artifacts lights, or light sources that are blessed,
+    (radius of 3 or more, artifact lights, or light sources that are blessed,
     evil-slaying or undead-slaying). Asides from light sources aside they fear
     all items that are blessed or *slay undead*. Any such item will burn them,
     draining their hit points. Exceptions are cursed lights and items and the
     "Stone of Lore" - these will not harm them.
     They start with a mummy wrapping, because it can protect them from the
-    sunlight (press 'w' to wear it). If they are moving on the world surface
-    (meaning not in a dungeon or tower) while it's day, the sun will burn them
-    if they don't resist light or wear a mummy wrapping.
+    sunlight. If they are moving on the world surface (meaning not in a dungeon
+    or tower) while it's day, the sun will burn them if they don't resist light
+    or wear a mummy wrapping.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness. This ability grows
     when the vampire rises in character-levels, starting at torch-wide radius
@@ -12716,7 +12716,7 @@ create a character!):
     Vampirism' for more information).
     Being undead, vampires don't drown as easily as other races, but the water
     still has a somewhat damaging effect if they cannot swim at all.
-    At level 20 they become able to turn into a bat (mimicry code 391).
+    At level 20 they become able to turn into a vampire bat (mimicry code 391).
     Vampire bats are fast, can fly (basically as effective as 'levitation')
     and are more resistant to sun burn than the humanoid vampire form,
     making them useful for travelling, although they move slightly erratically.
@@ -13111,9 +13111,12 @@ create a character!):
     The first thing you should do when you created your character is making
     a macro for firing your bow. Press % and then z to start the macro wizard,
     and then c to create a firing macro.
-    Archers start with all 3 types of magic ammo. Pick the one that fits your
-    ranged weapon (magic arrow for bow, magic bolt for crossbow, magic shot
-    for sling) and place it in your quiver (w key).
+    Even though archers start out with just a long bow for ranged weapon, they
+    also get one of each of the 3 base types of ammo in the game (magic arrow
+    for bow, magic bolt for crossbow, magic shot for sling) so you can buy any
+    ranged weapon of your choice in the town stores and will have the matching
+    type of ammo to go with it right from the start - press 'w' key to load it
+    into your quiver.
 
     Hint: Enchanting your ranged weapon to-damage is especially effective,
     because the enchantment will be multiplied by the weapons multiplier, so
