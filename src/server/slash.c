@@ -8103,7 +8103,7 @@ void do_slash_cmd(int Ind, char *message) {
 					if ((a_ptr->flags2 & TR2_IM_ACID)) i++;
 					if ((a_ptr->flags5 & TR5_IM_POISON)) i++;
 				} while (
-				    i < 2 ||
+				    //i < 2 ||
 				    //o_ptr->to_h < 30 ||
 				    //o_ptr->to_d < 30 ||
 				    //o_ptr->to_a < 30 ||
@@ -8139,6 +8139,7 @@ void do_slash_cmd(int Ind, char *message) {
 				    //!(a_ptr->flags1 & TR1_BLOWS) ||
 				    //!(a_ptr->flags1 & TR1_VAMPIRIC) ||
 				    //!(a_ptr->flags5 & TR5_CRIT) ||
+				    !(a_ptr->flags5 & TR5_VORPAL) ||
 
 				    //!(a_ptr->esp & ESP_ALL) ||
 
@@ -8190,21 +8191,25 @@ void do_slash_cmd(int Ind, char *message) {
 					o_ptr->timeout = 0;
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 
-					if (a_ptr->flags2 & TR2_IM_ELEC) m1++;
-					if (a_ptr->flags2 & TR2_IM_COLD) m2++;
-					if (a_ptr->flags2 & TR2_IM_FIRE) m3++;
-					if (a_ptr->flags2 & TR2_IM_ACID) m4++;
+					//if (a_ptr->flags2 & TR2_IM_ELEC) m1++;
+					//if (a_ptr->flags2 & TR2_IM_COLD) m2++;
+					//if (a_ptr->flags2 & TR2_IM_FIRE) m3++;
+					//if (a_ptr->flags2 & TR2_IM_ACID) m4++;
 					if (o_ptr->to_a >= 0) {//not cursed?
 						mtoa += o_ptr->to_a;
 						c++;
 					}
+					if (a_ptr->flags5 & TR5_VORPAL) m1++;
+					if (a_ptr->flags5 & TR5_CRIT) m2++;
+					if (a_ptr->flags1 & TR1_BLOWS) m3++;
+					if (a_ptr->flags1 & TR1_VAMPIRIC) m4++;
 				}
 				msg_print(Ind, "..done:");
 
-				msg_format(Ind, "e %d.%d%%", m1 / 100, m1 % 100);
+				msg_format(Ind, "V %d.%d%%", m1 / 100, m1 % 100);
 				msg_format(Ind, "c %d.%d%%", m2 / 100, m2 % 100);
-				msg_format(Ind, "f %d.%d%%", m3 / 100, m3 % 100);
-				msg_format(Ind, "a %d.%d%%", m4 / 100, m4 % 100);
+				msg_format(Ind, "e %d.%d%%", m3 / 100, m3 % 100);
+				msg_format(Ind, "v %d.%d%%", m4 / 100, m4 % 100);
 				msg_format(Ind, "to_a ~%d", mtoa / c);
 
 				o_ptr->ident |= ID_MENTAL; /* *id*ed */

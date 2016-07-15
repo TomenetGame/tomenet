@@ -632,8 +632,14 @@ static void add_ability (artifact_type *a_ptr) {
 					a_ptr->flags1 |= TR1_SLAY_TROLL;
 					if (magik(80)) a_ptr->esp |= (ESP_TROLL);
 				}
-			} else if (r < 66) a_ptr->flags3 |= TR3_SEE_INVIS; //maybe in the future: replace [partially] with TR5_VORPAL
-			else if (r < 68) { /* SPLIT FLAG: see r < 1 -_- */
+			} else if (r < 66) {
+#if 1
+				/* Swords only: VORPAL flag */
+				if (a_ptr->tval == TV_SWORD) a_ptr->flags5 |= TR5_VORPAL;
+#else
+				a_ptr->flags3 |= TR3_SEE_INVIS; //maybe in the future: replace [partially] with TR5_VORPAL
+#endif
+			} else if (r < 68) { /* SPLIT FLAG: see r < 1 -_- */
 				a_ptr->flags1 |= TR1_BRAND_POIS;
 				if (rand_int(4) > 0) a_ptr->flags2 |= TR2_RES_POIS;
 			} else if (r < 72) {

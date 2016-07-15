@@ -19,9 +19,13 @@
 /* Nice: minimum level of a player to be able to become infected by Black Breath by another player */
 #define BB_INFECT_MINLEV 25
 
+/* Inverse chance to get a vorpal cut (1 in n) [4] */
+#define VORPAL_CHANCE 4
+
 /* Better hits of one override worse hits of the other,
    instead of completely stacking for silly amounts. Recommended: BS [on], V [off].
-   Note: Backstab and vorpal currently always stack. */
+   Note: Backstab and vorpal currently always stack.
+   Note: Crit already makes Vorpal not so useful, so probably just keep CRIT_VS_VORPAL off anyway. */
 #define CRIT_VS_BACKSTAB
 //#define CRIT_VS_VORPAL
 
@@ -34,9 +38,12 @@
 /* VORPAL being affected by brands? (+15 to-d & 2xbranded:
    +5% for crit weapons, +9% for non-crit weapons,
    crit +21% MoD over ZH, non-crit +13% MoD over ZH;)
-   Recommended state is inverse of CRIT_VS_VORPAL. */
+   Recommended state is inverse of CRIT_VS_VORPAL (reduces vorpal efficiency in brand/kill flag scenario)
+    or off (keeps vorpal efficiency in brand/kill scenario)
+    or use VORPAL_LOWBRANDED to compromise (recommended). */
 #ifndef CRIT_VS_VORPAL
- #define VORPAL_UNBRANDED
+ //#define VORPAL_UNBRANDED
+ #define VORPAL_LOWBRANDED
 #endif
 
 
@@ -3494,8 +3501,8 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 				//    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
 				//    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 
-#ifdef VORPAL_UNBRANDED
-				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save unbranded dice */
+#if defined(VORPAL_UNBRANDED) || defined(VORPAL_LOWBRANDED)
+				if ((f5 & TR5_VORPAL) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
 				else vorpal_cut = FALSE;
 #endif
 #ifdef CRIT_UNBRANDED
@@ -3505,9 +3512,13 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 #else
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
 #endif
-#ifndef VORPAL_UNBRANDED
-				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save branded dice */
+#ifdef VORPAL_LOWBRANDED
+				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
+#else
+ #ifndef VORPAL_UNBRANDED
+				if ((f5 & TR5_VORPAL) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
 				else vorpal_cut = FALSE;
+ #endif
 #endif
 
 #ifdef ENABLE_STANCES
@@ -4576,8 +4587,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				//    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
 				//    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 
-#ifdef VORPAL_UNBRANDED
-				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save unbranded dice */
+#if defined(VORPAL_UNBRANDED) || defined(VORPAL_LOWBRANDED)
+				if ((f5 & TR5_VORPAL) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
 				else vorpal_cut = FALSE;
 #endif
 #ifdef CRIT_UNBRANDED
@@ -4587,9 +4598,13 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 #else
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
 #endif
-#ifndef VORPAL_UNBRANDED
-				if (f5 & TR5_VORPAL && (randint(4) == 1)) vorpal_cut = k; /* save branded dice */
+#ifdef VORPAL_LOWBRANDED
+				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
+#else
+ #ifndef VORPAL_UNBRANDED
+				if ((f5 & TR5_VORPAL) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
 				else vorpal_cut = FALSE;
+ #endif
 #endif
 
 #ifdef ENABLE_STANCES
