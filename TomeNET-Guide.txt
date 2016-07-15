@@ -8974,7 +8974,6 @@ VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         VORPAL requires an edged weapon, so swords, axes and several polearms
         -including Scythe of Slicing- can obtain 'VORPAL' mod (via "Sharp" or
         "Spinning" ego power). Blunt weapons can never be VORPAL.
-        For random artifacts, VORPAL can also spawn on boomerangs.
 SLAY_WEAP (No message, can spawn other mods/increase dice randomly.)
         A special mod for "Weapons of Slaying", see further down in (5.9).
 CRIT    ('It affects your ability to score critical hits.')
@@ -17511,7 +17510,6 @@ Weapons, boomerangs
         All SLAY mods (also have a chance to add the corresponding ESP)
         All KILL (*SLAY*) mods (will also add the corresponding ESP)
         Critical hit bonus
-        Vorpal mod (boomerangs, swords, axes and edged polearms only)
         See invisible
         Extra attacks
         Extra +hit and +dam bonus
