@@ -7184,7 +7184,11 @@ void player_death(int Ind) {
 
 			/* Lose some experience */
 			loss_factor = INSTANT_RES_XP_LOST;
-			if (get_skill(p_ptr, SKILL_HCURING) >= 50) loss_factor -= 5;
+			if (get_skill(p_ptr, SKILL_HCURING) >= 50
+#ifdef TEST_SERVER /* Occult */
+			    || get_skill(p_ptr, SKILL_OSPIRIT) >= 50
+#endif
+			    ) loss_factor -= 5;
 
 			reduce = p_ptr->max_exp;
 			reduce = reduce > 99999 ?
@@ -8135,7 +8139,11 @@ void resurrect_player(int Ind, int loss_factor) {
 	else if (loss_factor > 100) loss_factor = GHOST_XP_LOST;
 
 	/* Lose some experience */
-	if (get_skill(p_ptr, SKILL_HCURING) >= 50) loss_factor -= 5;
+	if (get_skill(p_ptr, SKILL_HCURING) >= 50
+#ifdef TEST_SERVER /* Occult */
+	    || get_skill(p_ptr, SKILL_OSPIRIT) >= 50
+#endif
+	    ) loss_factor -= 5;
 	if (loss_factor < 30) loss_factor = 30;//hardcoded mess
 
 	reduce = p_ptr->max_exp;

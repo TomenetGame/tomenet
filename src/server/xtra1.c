@@ -5748,6 +5748,16 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) csheet_boni[14].cb[9] |= CB10_SUNDD;
 	//prob: it's melee only! if (get_skill(p_ptr, SKILL_HCURING) >= 50) csheet_boni[14].cb[9] |= CB10_SUNDD;
 
+#ifdef TEST_SERVER /* Occult */
+	/* Should Occult schools really give boni? */
+	if (get_skill(p_ptr, SKILL_OSHADOW) >= 30) {
+		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
+		/* Stealth bonus: */
+		p_ptr->skill_stl += (get_skill(p_ptr, SKILL_OSHADOW) - 29) / 3;
+		csheet_boni[14].slth += (get_skill(p_ptr, SKILL_OSHADOW) - 29) / 3;
+	}
+	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 30) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
+#endif
 
 	/* Take note when "heavy bow" changes */
 	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
