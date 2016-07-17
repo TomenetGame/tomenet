@@ -260,7 +260,7 @@ VAPOR_II = add_spell {
 			fire_cloud(Ind, GF_VAPOUR, 0, 3 + 20 + get_level(Ind, VAPOR_II, 20), 3 + get_level(Ind, VAPOR_I, 4, 0), 5, 8, " fires a cloud of vapor for")
 	end,
 	["info"] = 	function()
-			return "dam "..(3 + get_level(Ind, VAPOR_II, 20)).." rad "..(3 + get_level(Ind, VAPOR_I, 4, 0)).." dur 5"
+			return "dam "..(3 + 20 + get_level(Ind, VAPOR_II, 20)).." rad "..(3 + get_level(Ind, VAPOR_I, 4, 0)).." dur 5"
 	end,
 	["desc"] = 	{ "Fills the air with toxic moisture to eradicate annoying critters." }
 }

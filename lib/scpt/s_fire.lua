@@ -16,7 +16,11 @@ GLOBELIGHT_I = add_spell {
 		end
 	end,
 	["info"] = 	function()
-			return ""
+			if get_level(Ind, GLOBELIGHT_I, 50) >= 10 then
+				return "dam "..(10 + get_level(Ind, GLOBELIGHT_I, 100)).." rad "..(5 + get_level(Ind, GLOBELIGHT_I, 6))
+			else
+				return ""
+			end
 	end,
 	["desc"] = 	{
 			"Creates a globe of magical light.",
@@ -29,7 +33,7 @@ GLOBELIGHT_II = add_spell {
 	["level"] = 	22,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	10,
+	["fail"] = 	-20,
 	["spell"] = 	function()
 			msg_print(Ind, "You are surrounded by a globe of light")
 			lite_room(Ind, player.wpos, player.py, player.px)

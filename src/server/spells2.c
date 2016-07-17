@@ -663,6 +663,43 @@ bool do_banish_dragons(int Ind, int chance) {
 	return (TRUE);
 }
 
+/* Teleport-to a monster */
+bool do_shadow_gate(int Ind, int range) {
+	player_type *p_ptr = Players[Ind];
+	int nx, ny, tx = -1, ty = -1, mdist = 999, dist, idx;
+	cave_type **zcave;
+
+	if (!p_ptr) return FALSE;
+	zcave = getcave(&p_ptr->wpos);
+	if (!zcave) return FALSE;
+
+	for (nx = p_ptr->px - range; nx <= p_ptr->px + range; nx++)
+	for (ny = p_ptr->py - range; ny <= p_ptr->py + range; ny++) {
+		/* out of range? */
+		if ((dist = distance(ny, nx, p_ptr->py, p_ptr->px)) > range) continue;
+		/* not a monster or hostile player? */
+		if ((idx = zcave[ny][nx].m_idx) <= 0) {//not a monster?
+			if (!idx || idx < -NumPlayers) continue;//not a player?
+			else if (!check_hostile(-idx, Ind)) continue;
+		}
+		/* don't remember monsters farther away than others */
+		if (dist > mdist) continue;
+		/* decide randomly between equally close ones */
+		if (dist == mdist && rand_int(2)) continue;
+		/* remember it! */
+		mdist = dist;
+		tx = nx;
+		ty = ny;
+	}
+	if (tx == -1) {
+		msg_print(Ind, "There is no adversary close enough to you.");
+		return FALSE;
+	}
+
+	teleport_player_to(Ind, ny, nx);
+	return TRUE;
+}
+
 /*
  * Increase players hit points, notice effects, and tell the player about it.
  */

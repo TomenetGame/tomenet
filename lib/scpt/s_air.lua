@@ -12,7 +12,7 @@ NOXIOUSCLOUD_I = add_spell {
 			fire_cloud(Ind, GF_POIS, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD_I, 52)), 3, 5 + get_level(Ind, NOXIOUSCLOUD_I, 14), 9, " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
-			return "dam "..(1 + (get_level(Ind, NOXIOUSCLOUD_I, 52))).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD_I, 14))
+			return "dam "..(1 + get_level(Ind, NOXIOUSCLOUD_I, 52)).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD_I, 14))
 	end,
 	["desc"] = 	{
 			"Creates a cloud of poison,",
@@ -50,7 +50,7 @@ NOXIOUSCLOUD_III = add_spell {
 			fire_cloud(Ind, GF_UNBREATH, args.dir, (1 + 91 + get_level(Ind, NOXIOUSCLOUD_III, 52)), 3, 5 + get_level(Ind, NOXIOUSCLOUD_I, 14), 9, " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
-			return "dam "..(91 + (get_level(Ind, NOXIOUSCLOUD_III, 52))).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD_I, 14))
+			return "dam "..(91 + get_level(Ind, NOXIOUSCLOUD_III, 52)).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD_I, 14))
 	end,
 	["desc"] = 	{
 			"Creates a cloud of thick gas, not just poisoning but also preventing",
