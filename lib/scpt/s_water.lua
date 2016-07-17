@@ -140,18 +140,36 @@ WATERBOLT_III = add_spell {
 	["desc"] = 	{ "Conjures up water into a powerful bolt.", }
 }
 
-TIDALWAVE = add_spell {
-	["name"] = 	"Tidal Wave",
+TIDALWAVE_I = add_spell {
+	["name"] = 	"Tidal Wave I",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	16,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
 	["fail"] = 	20,
 	["spell"] = 	function()
-			fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 1, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
+			fire_wave(Ind, GF_WAVE, 0, 30 + get_level(Ind, TIDALWAVE_I, 80), 1, 6 + get_level(Ind, TIDALWAVE_I, 6), 5, EFF_WAVE, " casts a tidal wave for")
 	end,
 	["info"] = 	function()
-			return "dam "..(40 + get_level(Ind, TIDALWAVE,  200)).." rad "..(6 + get_level(Ind, TIDALWAVE, 6))
+			return "dam "..(30 + get_level(Ind, TIDALWAVE_I,  80)).." rad "..(6 + get_level(Ind, TIDALWAVE_I, 6))
+	end,
+	["desc"] = 	{
+			"Summons a monstruous tidal wave that will expand and crush the",
+			"monsters under it's mighty waves."
+	}
+}
+TIDALWAVE_II = add_spell {
+	["name"] = 	"Tidal Wave II",
+	["school"] = 	{SCHOOL_WATER},
+	["level"] = 	36,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["fail"] = 	-10,
+	["spell"] = 	function()
+			fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE_I, 200), 1, 6 + get_level(Ind, TIDALWAVE_I, 6), 5, EFF_WAVE, " casts a tidal wave for")
+	end,
+	["info"] = 	function()
+			return "dam "..(40 + get_level(Ind, TIDALWAVE_I,  200)).." rad "..(6 + get_level(Ind, TIDALWAVE_I, 6))
 	end,
 	["desc"] = 	{
 			"Summons a monstruous tidal wave that will expand and crush the",

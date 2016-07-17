@@ -143,10 +143,10 @@ STRIKE_I = add_spell {
 	["fail"] = 	30,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 0, " casts a force bolt of")
+			fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE_I, 50), 0, " casts a force bolt of")
 	end,
 	["info"] = 	function()
-			return "dam "..(50 + get_level(Ind, STRIKE, 50))
+			return "dam "..(50 + get_level(Ind, STRIKE_I, 50))
 	end,
 	["desc"] = 	{ "Creates a force bolt that may stun enemies.", }
 }
@@ -159,10 +159,10 @@ STRIKE_II = add_spell {
 	["fail"] = 	0,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 1, " casts a force ball of")
+			fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE_I, 50), 1, " casts a force ball of")
 	end,
 	["info"] = 	function()
-			return "dam "..(50 + get_level(Ind, STRIKE, 50)).." rad 1"
+			return "dam "..(50 + get_level(Ind, STRIKE_I, 50)).." rad 1"
 	end,
 	["desc"] = 	{ "Creates a small force ball that may stun enemies.", }
 }
@@ -175,10 +175,10 @@ SHAKE = add_spell {
 	["mana_max"] = 	30,
 	["fail"] = 	30,
 	["spell"] = 	function()
-			earthquake(player.wpos, player.py, player.px, 2 + get_level(Ind, SHAKE, 50));
+			earthquake(player.wpos, player.py, player.px, 2 + get_level(Ind, SHAKE, 17));
 	end,
 	["info"] = 	function()
-			return "rad "..(2 + get_level(Ind, SHAKE, 50))
+			return "rad "..(2 + get_level(Ind, SHAKE, 17))
 	end,
 	["desc"] = 	{ "Creates a localized earthquake." }
 }

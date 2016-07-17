@@ -48,7 +48,7 @@ IDENTIFY_II = add_spell {
 	["level"] = 	25,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	10,
+	["fail"] = 	-30,
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			identify_pack(Ind)
@@ -61,10 +61,10 @@ IDENTIFY_II = add_spell {
 IDENTIFY_III = add_spell {
 	["name"] = 	"Identify III",
 	["school"] = 	{SCHOOL_DIVINATION},
-	["level"] = 	8,
+	["level"] = 	35,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	10,
+	["fail"] = 	-50,
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			identify_pack(Ind)

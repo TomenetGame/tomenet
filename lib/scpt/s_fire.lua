@@ -216,19 +216,35 @@ FIERYAURA_II = add_spell {
 	}
 }
 
-FIREWALL = add_spell {
-	["name"] = 	"Firewall",
+FIREWALL_I = add_spell {
+	["name"] = 	"Firewall I",
 	["school"] = 	{SCHOOL_FIRE},
 	["level"] = 	20,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
 	["fail"] = 	40,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL, 252), 6 + get_level(Ind, FIREWALL, 4), 8, " summons a firewall for")
+		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 89), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, FIREWALL, 252)).." dur "..(6 + get_level(Ind, FIREWALL, 4))
+		return "dam "..(20 + get_level(Ind, FIREWALL_I, 89)).." dur "..(6 + get_level(Ind, FIREWALL_I, 4))
+	end,
+	["desc"] = 	{ "Creates a fiery wall to incinerate monsters stupid enough to move through it." }
+}
+FIREWALL_II = add_spell {
+	["name"] = 	"Firewall II",
+	["school"] = 	{SCHOOL_FIRE},
+	["level"] = 	40,
+	["mana"] = 	80,
+	["mana_max"] = 	80,
+	["fail"] = 	0,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 252), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
+	end,
+	["info"] = 	function()
+		return "dam "..(20 + get_level(Ind, FIREWALL_I, 252)).." dur "..(6 + get_level(Ind, FIREWALL_I, 4))
 	end,
 	["desc"] = 	{ "Creates a fiery wall to incinerate monsters stupid enough to move through it." }
 }
