@@ -123,7 +123,7 @@ POISONFOG_II = add_spell {
 	["level"] = 	18,
 	["mana"] = 	9,
 	["mana_max"] = 	9,
-	["fail"] = 	0,
+	["fail"] = 	-30,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		fire_cloud(Ind, GF_POIS, args.dir, (1 + 38 + get_level(Ind, POISONFOG_II, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
@@ -144,7 +144,7 @@ POISONFOG_III = add_spell {
 	["level"] = 	33,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	-20,
+	["fail"] = 	-60,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		fire_cloud(Ind, GF_POIS, args.dir, (1 + 76 + get_level(Ind, POISONFOG_III, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
@@ -166,7 +166,7 @@ SHADOWGATE = add_spell {
 	["level"] = 	24,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	10,
+	["fail"] = 	-20,
 	["spell"] = 	function()
 		do_shadow_gate(Ind, 5 + get_level(Ind, SHADOWGATE, 5))
 		end,
@@ -234,7 +234,7 @@ DARKBOLT_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	12,
 	["mana_max"] = 	12,
-	["fail"] = 	-60,
+	["fail"] = 	-75,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -256,7 +256,7 @@ OINVIS = add_spell {
 	["level"] = 	30,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	50,
+	["fail"] = 	-40,
 	["spell"] = 	function()
 --		if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50)) end
 		set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50))

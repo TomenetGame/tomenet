@@ -159,7 +159,7 @@ INVISIBILITY = add_spell {
 	["level"] = 	30,
 	["mana"] = 	35,
 	["mana_max"] = 	35,
-	["fail"] = 	70,
+	["fail"] = 	-30,
 	["spell"] = 	function()
 --			if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, INVISIBILITY, 50), 20 + get_level(Ind, INVISIBILITY, 50)) end
 			set_invis(Ind, randint(20) + 15 + get_level(Ind, INVISIBILITY, 50), 20 + get_level(Ind, INVISIBILITY, 50))
