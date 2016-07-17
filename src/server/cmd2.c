@@ -2782,7 +2782,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			if (o2_ptr->sval == SV_SCYTHE ||
 			    o2_ptr->sval == SV_SCYTHE_OF_SLICING ||
 			    o2_ptr->sval == SV_SICKLE)
-				fibre_power = 40; break;
+				fibre_power = 40;
+			break;
 		}
 		if ((k_info[o2_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
 		    && !o3_ptr->k_idx) {
@@ -2798,7 +2799,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			if (o2_ptr->sval == SV_SCYTHE ||
 			    o2_ptr->sval == SV_SCYTHE_OF_SLICING ||
 			    o2_ptr->sval == SV_SICKLE)
-				fibre_power = 40; break;
+				fibre_power = 40;
+			break;
 		}
 	}
 	/* axes/swords help as well as certain slicing polearms against webs */
