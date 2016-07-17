@@ -9395,12 +9395,13 @@ void cloud_create(int i, int cx, int cy) {
 	for (x = xs - 1; x <= xd + 1; x++) {
 		for (y = ys - 1; y <= yd + 1; y++) {
 			if (in_bounds_wild(y, x) &&
-			    wild_info[y][x].type == WILD_DESERT)
+			    wild_info[y][x].type == WILD_DESERT) {
 				if (rand_int(10)) return;
 
 				/* leave loops */
 				x = 9999;
 				break;
+			}
 		}
 	}
 
