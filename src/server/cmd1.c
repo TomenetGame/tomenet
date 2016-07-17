@@ -4051,7 +4051,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 		    ) {
 			/* Giga-Hack -- equalize the chance (though not likely..) */
 			if (old || randint(p_ptr->num_blow) < 3) {
-				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 5);
 				p_ptr->quaked = TRUE;
 			}
 		}
@@ -5252,7 +5252,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 		    ) {
 			/* Giga-Hack -- equalize the chance (though not likely..) */
 			if (old || randint(p_ptr->num_blow) < 3) {
-				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 5);
 				p_ptr->quaked = TRUE;
 			}
 		}

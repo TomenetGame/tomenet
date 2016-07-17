@@ -3465,7 +3465,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		    && !check_guard_inscription(o_ptr->note, 'E')
 #endif
 		    ) {
-			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 7);
 			break_cloaking(Ind, 0); /* redundant, done above already */
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
