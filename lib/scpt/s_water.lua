@@ -55,7 +55,7 @@ FROSTBOLT_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	11,
 	["mana_max"] = 	11,
-	["fail"] = 	-95,
+	["fail"] = 	-75,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -125,7 +125,7 @@ WATERBOLT_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	17,
 	["mana_max"] = 	17,
-	["fail"] = 	-60,
+	["fail"] = 	-75,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -146,7 +146,7 @@ TIDALWAVE_I = add_spell {
 	["level"] = 	16,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	20,
+	["fail"] = 	-10,
 	["spell"] = 	function()
 			fire_wave(Ind, GF_WAVE, 0, 30 + get_level(Ind, TIDALWAVE_I, 80), 1, 6 + get_level(Ind, TIDALWAVE_I, 6), 5, EFF_WAVE, " casts a tidal wave for")
 	end,
@@ -164,7 +164,7 @@ TIDALWAVE_II = add_spell {
 	["level"] = 	36,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-10,
+	["fail"] = 	-60,
 	["spell"] = 	function()
 			fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE_I, 200), 1, 6 + get_level(Ind, TIDALWAVE_I, 6), 5, EFF_WAVE, " casts a tidal wave for")
 	end,
@@ -198,7 +198,7 @@ ICESTORM_II = add_spell {
 	["level"] = 	37,
 	["mana"] = 	60,
 	["mana_max"] = 	60,
-	["fail"] = 	-10,
+	["fail"] = 	-50,
 	["spell"] = 	function()
 			fire_wave(Ind, GF_ICE, 0, 80 + get_level(Ind, ICESTORM_I, 200), 1, 20 + get_level(Ind, ICESTORM_I, 47), 5, EFF_STORM, " summons an icy  for")
 	end,

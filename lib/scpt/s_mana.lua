@@ -29,7 +29,7 @@ MANATHRUST_I = add_spell {
 			x, y = get_manathrust_dam(Ind, 1)
 			return "dam "..x.."d"..y
 	end,
-	["desc"] = 	{ "Conjures up mana into a early irresistible bolt.", }
+	["desc"] = 	{ "Conjures up mana into a nearly irresistible bolt.", }
 }
 MANATHRUST_II = add_spell {
 	["name"] = 	"Manathrust II",
@@ -49,7 +49,7 @@ MANATHRUST_II = add_spell {
 			x, y = get_manathrust_dam(Ind, 20)
 			return "dam "..x.."d"..y
 	end,
-	["desc"] = 	{ "Conjures up mana into a early irresistible bolt.", }
+	["desc"] = 	{ "Conjures up mana into a nearly irresistible bolt.", }
 }
 MANATHRUST_III = add_spell {
 	["name"] = 	"Manathrust III",
@@ -57,7 +57,7 @@ MANATHRUST_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	-60,
+	["fail"] = 	-75,
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
@@ -69,7 +69,7 @@ MANATHRUST_III = add_spell {
 			x, y = get_manathrust_dam(Ind, 0)
 			return "dam "..x.."d"..y
 	end,
-	["desc"] = 	{ "Conjures up mana into a early irresistible bolt.", }
+	["desc"] = 	{ "Conjures up mana into a nearly irresistible bolt.", }
 }
 
 DELCURSES_I = add_spell {

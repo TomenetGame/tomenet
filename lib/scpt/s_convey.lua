@@ -59,7 +59,7 @@ TELEAWAY_I = add_spell {
 	["level"] = 	23,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	70,
+	["fail"] = 	0,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			teleport_monster(Ind, args.dir)
@@ -75,7 +75,7 @@ TELEAWAY_II = add_spell {
 	["level"] = 	43,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	5,
+	["fail"] = 	-60,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			project_los(Ind, GF_AWAY_ALL, 100, "points and shouts")

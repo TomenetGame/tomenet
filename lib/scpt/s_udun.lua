@@ -80,7 +80,7 @@ GENOCIDE_II = add_spell {
 	["level"] = 	40,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-10,
+	["fail"] = 	-40,
 	["stat"] = 	A_WIS,
 	["extra"] = 	TRUE,
 	["spell"] = 	function()
@@ -89,7 +89,7 @@ GENOCIDE_II = add_spell {
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{ "Casts 'Obliteration' on all monsters in your vincinity.", }
+	["desc"] = 	{ "Casts 'Obliteration' on all monsters in your vicinity.", }
 }
 
 WRAITHFORM = add_spell {
@@ -179,7 +179,7 @@ HELLFIRE_II = add_spell {
 	["level"] = 	40,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	0,
+	["fail"] = 	-60,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)

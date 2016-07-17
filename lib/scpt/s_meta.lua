@@ -6,7 +6,7 @@ RECHARGE_I = add_spell {
 	["level"] = 	5,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
-	["fail"] = 	10,
+	["fail"] = 	20,
 	["stat"] = 	A_INT,
 	["spell"] = 	function()
 			recharge(Ind, 10 + get_level(Ind, RECHARGE_I, 50))
@@ -22,7 +22,7 @@ RECHARGE_II = add_spell {
 	["level"] = 	20,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	-30,
+	["fail"] = 	-10,
 	["stat"] = 	A_INT,
 	["spell"] = 	function()
 			recharge(Ind, 10 + 50 + get_level(Ind, RECHARGE_II, 50))
@@ -38,7 +38,7 @@ RECHARGE_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	100,
 	["mana_max"] = 	100,
-	["fail"] = 	-70,
+	["fail"] = 	-60,
 	["stat"] = 	A_INT,
 	["spell"] = 	function()
 			recharge(Ind, 10 + get_level(Ind, RECHARGE_III, 140))

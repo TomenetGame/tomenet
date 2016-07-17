@@ -21,7 +21,7 @@ STARIDENTIFY = add_spell {
 			return ""
 	end,
 	["desc"] = 	{
-			"Asks for an object and fully identify it, providing the full list of powers.",
+			"Fully identifies an object, providing the complete list of its powers.",
 			"Cast at yourself it will reveal your powers."
 	}
 }
@@ -108,7 +108,7 @@ VISION_II = add_spell {
 	["mana"] = 	55,
 	["mana_max"] = 	55,
 --	["stat"] = 	A_WIS,
-	["fail"] = 	-20,
+	["fail"] = 	-40,
 	["spell"] = 	function()
 			wiz_lite_extra(Ind)
 			if player.spell_project > 0 then

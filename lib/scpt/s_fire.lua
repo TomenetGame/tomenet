@@ -9,7 +9,7 @@ GLOBELIGHT_I = add_spell {
 	["fail"] = 	10,
 	["spell"] = 	function()
 		if get_level(Ind, GLOBELIGHT_I, 50) >= 10 then
-			lite_area(Ind, 10, 4)
+			lite_area(Ind, 1 + get_level(Ind, GLOBELIGHT_I, 50), 2 + get_level(Ind, GLOBELIGHT_I, 6))
 		else
 			msg_print(Ind, "You are surrounded by a globe of light")
 			lite_room(Ind, player.wpos, player.py, player.px)
@@ -17,7 +17,7 @@ GLOBELIGHT_I = add_spell {
 	end,
 	["info"] = 	function()
 			if get_level(Ind, GLOBELIGHT_I, 50) >= 10 then
-				return "dam "..(10 + get_level(Ind, GLOBELIGHT_I, 100)).." rad "..(5 + get_level(Ind, GLOBELIGHT_I, 6))
+				return "dam "..(1 + get_level(Ind, GLOBELIGHT_I, 50)).." rad "..(2 + get_level(Ind, GLOBELIGHT_I, 6))
 			else
 				return ""
 			end
@@ -33,7 +33,7 @@ GLOBELIGHT_II = add_spell {
 	["level"] = 	22,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	-20,
+	["fail"] = 	-25,
 	["spell"] = 	function()
 			msg_print(Ind, "You are surrounded by a globe of light")
 			lite_room(Ind, player.wpos, player.py, player.px)
@@ -100,7 +100,7 @@ FIREBOLT_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	12,
 	["mana_max"] = 	12,
-	["fail"] = 	-60,
+	["fail"] = 	-75,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -138,7 +138,7 @@ FIREFLASH_II = add_spell {
 	["level"] = 	30,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	0,
+	["fail"] = 	-50,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
@@ -155,7 +155,7 @@ FIREFLASH_III = add_spell {
 	["level"] = 	42,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	-45,
+	["fail"] = 	-90,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
@@ -173,7 +173,7 @@ FIERYAURA_I = add_spell {
 	["level"] = 	16,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	50,
+	["fail"] = 	0,
 	["spell"] = 	function()
 		local type
 --		if (get_level(Ind, FIERYAURA, 50) >= 8) then
@@ -197,7 +197,7 @@ FIERYAURA_II = add_spell {
 	["level"] = 	36,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	15,
+	["fail"] = 	-55,
 	["spell"] = 	function()
 		local type
 --		if (get_level(Ind, FIERYAURA, 50) >= 8) then
@@ -222,7 +222,7 @@ FIREWALL_I = add_spell {
 	["level"] = 	20,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	40,
+	["fail"] = 	-10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 89), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
@@ -238,7 +238,7 @@ FIREWALL_II = add_spell {
 	["level"] = 	40,
 	["mana"] = 	80,
 	["mana_max"] = 	80,
-	["fail"] = 	0,
+	["fail"] = 	-70,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 252), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
