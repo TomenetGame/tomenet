@@ -38,7 +38,7 @@ RECHARGE_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	100,
 	["mana_max"] = 	100,
-	["fail"] = 	-95,
+	["fail"] = 	-70,
 	["stat"] = 	A_INT,
 	["spell"] = 	function()
 			recharge(Ind, 10 + get_level(Ind, RECHARGE_III, 140))

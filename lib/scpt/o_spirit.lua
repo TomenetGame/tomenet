@@ -127,7 +127,7 @@ LITEBEAM_II = add_spell {
 	["level"] = 	25,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
-	["fail"] = 	-10,
+	["fail"] = 	-30,
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
@@ -148,7 +148,7 @@ LITEBEAM_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	-10,
+	["fail"] = 	-50,
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
@@ -221,7 +221,7 @@ OLIGHTNINGBOLT_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	12,
 	["mana_max"] = 	12,
-	["fail"] = 	-95,
+	["fail"] = 	-55,
 	["direction"] = TRUE,
 	["ftk"] = 1,
 	["spell"] = 	function(args)
@@ -259,6 +259,33 @@ TRANCE = add_spell {
 	}
 }
 
+--pet version
+--[[POSSESS = add_spell {
+	["name"] = 	"Possess",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] = 	23,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
+	["stat"] = 	A_WIS,
+	["fail"] = 	10,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		--reset previous charm spell first:
+		do_ostoppossess(Ind)
+		--cast charm!
+		fire_bolt(Ind, GF_POSSESS, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
+	end,
+	["info"] = 	function()
+--		return "power "..(10 + get_level(Ind, POSSESS, 150))
+		return ""
+	end,
+	["desc"] =	{
+		"Tries to manipulate the mind of an animal to become your pet.",
+	}
+}]]--
+--placeholder version
 POSSESS = add_spell {
 	["name"] = 	"Possess",
 	["school"] = 	{SCHOOL_OSPIRIT},
@@ -267,21 +294,29 @@ POSSESS = add_spell {
 	["level"] = 	23,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
+	["stat"] = 	A_WIS,
 	["fail"] = 	10,
-	["direction"] = TRUE,
+	["direction"] = function () if get_level(Ind, POSSESS, 50) >= 17 then return FALSE else return TRUE end end,
 	["spell"] = 	function(args)
 		--reset previous charm spell first:
 		do_mstopcharm(Ind)
 		--cast charm!
-		fire_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
+		if get_level(Ind, POSSESS, 50) >= 17 then
+			project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, POSSESS, 150), "focusses")
+		elseif get_level(Ind, POSSESS, 50) >= 9 then
+			fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), 3, "focusses")
+		else
+			fire_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
+		end
 	end,
 	["info"] = 	function()
 --		return "power "..(10 + get_level(Ind, POSSESS, 150))
 		return ""
 	end,
 	["desc"] =	{
-		--"Tries to manipulate the mind of an animal to become your pet.",
 		"Tries to manipulate the mind of a monster to make it ignore you.",
+		"At level 9 it turns into a ball.",
+		"At level 17 it affects all monsters in sight.",
 	}
 }
 
@@ -293,6 +328,7 @@ STOPPOSSESS = add_spell {
 	["level"] = 	23,
 	["mana"] = 	0,
 	["mana_max"] = 	0,
+	["stat"] = 	A_WIS,
 	["fail"] = 	-99,
 	["direction"] = FALSE,
 	["spell"] = 	function()

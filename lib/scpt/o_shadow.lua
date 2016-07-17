@@ -291,7 +291,7 @@ DETECTINVIS = add_spell {
 	}
 }
 
-POISONRES = add_spell {
+--[[POISONRES = add_spell {
 	["name"] = 	"Poison Resistance",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
@@ -310,6 +310,41 @@ POISONRES = add_spell {
 		"Grants poison resistance.",
 --		"At level 10 it provides poison branding to wielded weapon"
 	}
+}]]--
+
+OBLIND_I = add_spell {
+	["name"] = 	"Blindness I",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	3,
+	["mana"] = 	2,
+	["mana_max"] = 	2,
+	["fail"] = 	10,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_BLIND, args.dir, 5 + get_level(Ind, OBLIND_I, 80), "hisses")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OBLIND_I, 80))
+	end,
+	["desc"] = { "Temporarily blinds a target.", }
+}
+OBLIND_II = add_spell {
+	["name"] = 	"Blindness II",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	20,
+	["mana"] = 	16,
+	["mana_max"] = 	16,
+	["fail"] = 	-20,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+		project_los(Ind, GF_BLIND, 5 + get_level(Ind, OBLIND_I, 80), "hisses")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OBLIND_I, 80))
+	end,
+	["desc"] = { "Temporarily blinds all nearby foes.", }
 }
 
 OSLEEP_I = add_spell {
@@ -317,8 +352,8 @@ OSLEEP_I = add_spell {
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	5,
-	["mana"] = 	2,
-	["mana_max"] = 	2,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
 	["fail"] = 	10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
@@ -333,9 +368,9 @@ OSLEEP_II = add_spell {
 	["name"] = 	"Veil of Night II",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
-	["level"] = 	25,
-	["mana"] = 	16,
-	["mana_max"] = 	16,
+	["level"] = 	22,
+	["mana"] = 	19,
+	["mana_max"] = 	19,
 	["fail"] = 	-20,
 	["direction"] = FALSE,
 	["spell"] = 	function()
