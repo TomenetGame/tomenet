@@ -368,6 +368,11 @@ void init_lua()
 		if (!strcmp(audio_sfx[i], "am_field")) __sfx_am = i;
 	}
 #endif
+
+	ID_spell1 = exec_lua(0, "return IDENTIFY_I"); ID_spell1a = exec_lua(0, "return IDENTIFY_II"); ID_spell1b = exec_lua(0, "return IDENTIFY_III");
+	ID_spell2 = exec_lua(0, "return MIDENTIFY");
+	ID_spell3 = exec_lua(0, "return STARIDENTIFY");
+	ID_spell4 = exec_lua(0, "return BAGIDENTIFY");
 }
 
 void reinit_lua()

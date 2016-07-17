@@ -990,6 +990,9 @@ int SCHOOL_ASTRAL;
 int SCHOOL_PPOWER, SCHOOL_MINTRUSION;
 int SCHOOL_OSHADOW, SCHOOL_OSPIRIT;
 
+/* For !X handling on spellbooks */
+int spell = -1, ID_spell1, ID_spell1a, ID_spell1b, ID_spell2, ID_spell3, ID_spell4;
+
 #ifdef DUNGEON_VISIT_BONUS
 # ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
 u16b depthrange_visited[20]; //(levels 0..9 each, so [19] := 190..199)
