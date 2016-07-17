@@ -749,6 +749,11 @@ function get_spellbook_name_colour(i)
 	if (s == SCHOOL_ASTRAL) then return TERM_ORANGE end
 	-- yellow for mindcrafters
 	if (s >= SCHOOL_PPOWER and s <= SCHOOL_MINTRUSION) then return TERM_YELLOW end
+-- Occult
+if (def_hack("TEST_SERVER", nil)) then
+	-- blue for Occult
+	if (s >= SCHOOL_OSHADOW and s <= SCHOOL_OSPIRIT) then return TERM_BLUE end
+end
 	-- light blue for the rest (istari schools)
 	return TERM_L_BLUE
 end

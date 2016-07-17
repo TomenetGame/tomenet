@@ -663,6 +663,7 @@ bool do_banish_dragons(int Ind, int chance) {
 	return (TRUE);
 }
 
+#ifdef TEST_SERVER /* Occult */
 /* Teleport-to a monster */
 bool do_shadow_gate(int Ind, int range) {
 	player_type *p_ptr = Players[Ind];
@@ -699,6 +700,7 @@ bool do_shadow_gate(int Ind, int range) {
 	teleport_player_to(Ind, ny, nx);
 	return TRUE;
 }
+#endif
 
 /*
  * Increase players hit points, notice effects, and tell the player about it.

@@ -34,7 +34,7 @@ OCURSE = add_spell {
 
 OCURSEDD_I = add_spell {
 	["name"] = 	"Cause wounds I",
-	["school"] = 	{SCHOOL_SPIRIT},
+	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	75,
 	["level"] = 	5,
 	["mana"] = 	1,
@@ -42,6 +42,7 @@ OCURSEDD_I = add_spell {
 	["fail"] = 	15,
 	["stat"] = 	A_WIS,
 	["ftk"] = 1,
+	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 100), "points and curses for")
 	end,
@@ -52,7 +53,7 @@ OCURSEDD_I = add_spell {
 }
 OCURSEDD_II = add_spell {
 	["name"] = 	"Cause wounds II",
-	["school"] = 	{SCHOOL_SPIRIT},
+	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	75,
 	["level"] = 	20,
 	["mana"] = 	5,
@@ -60,6 +61,7 @@ OCURSEDD_II = add_spell {
 	["fail"] = 	-15,
 	["stat"] = 	A_WIS,
 	["ftk"] = 1,
+	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + 100 + get_level(Ind, OCURSEDD_II, 100), "points and curses for")
 	end,
@@ -70,7 +72,7 @@ OCURSEDD_II = add_spell {
 }
 OCURSEDD_III = add_spell {
 	["name"] = 	"Cause wounds III",
-	["school"] = 	{SCHOOL_SPIRIT},
+	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	75,
 	["level"] = 	40,
 	["mana"] = 	20,
@@ -78,6 +80,7 @@ OCURSEDD_III = add_spell {
 	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["ftk"] = 1,
+	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + 200 + get_level(Ind, OCURSEDD_III, 100), "points and curses for")
 	end,
@@ -98,7 +101,7 @@ function get_litebeam_dam(Ind, limit_lev)
 end
 LITEBEAM_I = add_spell {
 	["name"] = 	"Spear of Light I",
-	["school"] = 	SCHOOL_SPIRIT,
+	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	10,
 	["mana"] = 	5,
@@ -119,7 +122,7 @@ LITEBEAM_I = add_spell {
 }
 LITEBEAM_II = add_spell {
 	["name"] = 	"Spear of Light II",
-	["school"] = 	SCHOOL_SPIRIT,
+	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	25,
 	["mana"] = 	10,
@@ -140,7 +143,7 @@ LITEBEAM_II = add_spell {
 }
 LITEBEAM_III = add_spell {
 	["name"] = 	"Spear of Light III",
-	["school"] = 	SCHOOL_SPIRIT,
+	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	40,
 	["mana"] = 	20,
@@ -171,7 +174,7 @@ function get_olightningbolt_dam(Ind, limit_lev)
 end
 OLIGHTNINGBOLT_I = add_spell {
 	["name"] = 	"Lightning I",
-	["school"] = 	SCHOOL_SPIRIT,
+	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	10,
 	["mana"] = 	3,
@@ -192,7 +195,7 @@ OLIGHTNINGBOLT_I = add_spell {
 }
 OLIGHTNINGBOLT_II = add_spell {
 	["name"] = 	"Lightning II",
-	["school"] = 	SCHOOL_SPIRIT,
+	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	25,
 	["mana"] = 	6,
@@ -213,7 +216,7 @@ OLIGHTNINGBOLT_II = add_spell {
 }
 OLIGHTNINGBOLT_III = add_spell {
 	["name"] = 	"Lightning III",
-	["school"] = 	SCHOOL_SPIRIT,
+	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	40,
 	["mana"] = 	12,
@@ -235,7 +238,7 @@ OLIGHTNINGBOLT_III = add_spell {
 
 TRANCE = add_spell {
 	["name"] = 	"Trance",
-	["school"] = 	{SCHOOL_SPIRIT},
+	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	33,
 	["spell_power"] = 0,
 	["level"] = 	5,
@@ -258,7 +261,7 @@ TRANCE = add_spell {
 
 POSSESS = add_spell {
 	["name"] = 	"Possess",
-	["school"] = 	{SCHOOL_SPIRIT},
+	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	23,
@@ -276,7 +279,7 @@ POSSESS = add_spell {
 --		return "power "..(10 + get_level(Ind, POSSESS, 150))
 		return ""
 	end,
-	["desc"] 	{
+	["desc"] =	{
 		--"Tries to manipulate the mind of an animal to become your pet.",
 		"Tries to manipulate the mind of a monster to make it ignore you.",
 	}
@@ -284,7 +287,7 @@ POSSESS = add_spell {
 
 STOPPOSSESS = add_spell {
 	["name"] = 	"Stop Possess",
-	["school"] = 	{SCHOOL_SPIRIT},
+	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	0,
 	["spell_power"] = 0,
 	["level"] = 	23,
@@ -298,12 +301,12 @@ STOPPOSSESS = add_spell {
 	["info"] = 	function()
 		return ""
 	end,
-	["desc"] 	{ "Cancel charming of any monsters.", }
+	["desc"] =	{ "Cancel charming of any monsters.", }
 }
 
 STARLIGHT_I = add_spell {
 	["name"] = 	"Starlight I",
-	["school"] = 	{SCHOOL_SPIRIT},
+	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["level"] = 	2,
 	["mana"] = 	4,
@@ -331,7 +334,7 @@ STARLIGHT_I = add_spell {
 }
 STARLIGHT_II = add_spell {
 	["name"] = 	"Starlight II",
-	["school"] = 	{SCHOOL_SPIRIT},
+	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["level"] = 	22,
 	["mana"] = 	15,
@@ -340,17 +343,17 @@ STARLIGHT_II = add_spell {
 	["spell"] = 	function()
 		msg_print(Ind, "You are surrounded by a globe of light")
 		lite_room(Ind, player.wpos, player.py, player.px)
-		fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, STARLIGHT, 100), 5 + get_level(Ind, STARLIGHT, 6), " calls a globe of light for")
+		fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, STARLIGHT_I, 100), 5 + get_level(Ind, STARLIGHT_I, 6), " calls a globe of light for")
 	end,
 	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, STARLIGHT, 100)).." rad "..(5 + get_level(Ind, STARLIGHT, 6))
+		return "dam "..(10 + get_level(Ind, STARLIGHT_I, 100)).." rad "..(5 + get_level(Ind, STARLIGHT_I, 6))
 	end,
 	["desc"] = 	{ "Creates a globe of starlight, powerful enough to hurt monsters.", }
 }
 
 DETECTCREATURES = add_spell {
 	["name"] = 	"Detect Creatures",
-	["school"] = 	{SCHOOL_SPIRIT},
+	["school"] = 	{SCHOOL_OSPIRIT},
 	["level"] = 	3,
 	["mana"] = 	5,
 	["mana_max"] = 	5,

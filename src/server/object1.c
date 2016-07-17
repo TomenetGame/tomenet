@@ -6062,6 +6062,10 @@ byte get_book_name_color(object_type *o_ptr) {
 		else if (o_ptr->sval == 18) return TERM_ORANGE;
 		/* mindcrafters */
 		else if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return TERM_YELLOW;
+#ifdef TEST_SERVER
+		/* Occult */
+		else if (o_ptr->sval >= 22 && o_ptr->sval <= 23) return TERM_BLUE;
+#endif
 		/* mages (default) */
 		else return TERM_L_BLUE;
 	}
@@ -6099,6 +6103,10 @@ byte get_spellbook_name_colour(int pval) {
 	if (spell_school[pval] == SCHOOL_ASTRAL) return TERM_ORANGE;
 	/* yellow for mindcrafters */
 	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return TERM_YELLOW;
+#ifdef TEST_SERVER
+	/* blue for Occult */
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return TERM_BLUE;
+#endif
 	/* light blue for the rest (istari schools) */
 	return TERM_L_BLUE;
 }

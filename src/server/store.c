@@ -1054,14 +1054,18 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 }
 
 static int get_spellbook_store_order(int pval) {
-	/* green for priests */
+	/* priests */
 	if (spell_school[pval] >= SCHOOL_HOFFENSE && spell_school[pval] <= SCHOOL_HSUPPORT) return 2;
-	/* light green for druids */
+	/* druids */
 	if (spell_school[pval] == SCHOOL_DRUID_ARCANE || spell_school[pval] == SCHOOL_DRUID_PHYSICAL) return 3;
-	/* orange for astral tome */
+	/* astral tome */
 	if (spell_school[pval] == SCHOOL_ASTRAL) return 5;
-	/* yellow for mindcrafters */
+	/* mindcrafters */
 	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return 4;
+#ifdef TEST_SERVER
+	/* Occult */
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return 6;
+#endif
 	/* light blue for the rest (istari schools) */
 	return 1;
 }

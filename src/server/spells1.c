@@ -6448,7 +6448,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Sleep (Use "dam" as "power") */
 		case GF_OLD_SLEEP:
-			/* hack for occult school's "Trance" spell */
+			/* hack for Occult school's "Trance" spell */
 			if (dam & 0x400) {
 				/* fails? (not a ghost, spirit or elemental) */
 				if (r_ptr->d_char != 'G' && r_ptr->d_char != 'E' && r_ptr->d_char != 'X') {

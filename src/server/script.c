@@ -344,6 +344,10 @@ void init_lua()
 	SCHOOL_ASTRAL = exec_lua(0, "return SCHOOL_ASTRAL");
 	SCHOOL_PPOWER = exec_lua(0, "return SCHOOL_PPOWER");
 	SCHOOL_MINTRUSION = exec_lua(0, "return SCHOOL_MINTRUSION");
+#ifdef TEST_SERVER /* Occult */
+	SCHOOL_OSHADOW = exec_lua(0, "return SCHOOL_OSHADOW");
+	SCHOOL_OSPIRIT = exec_lua(0, "return SCHOOL_OSPIRIT");
+#endif
 
 	/* Finish up the spells */
 	max = exec_lua(0, "return __tmp_spells_num");

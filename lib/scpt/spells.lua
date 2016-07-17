@@ -119,6 +119,18 @@ SCHOOL_MINTRUSION = add_school {
 	["skill"] = SKILL_MINTRUSION,
 }
 
+-- Occult
+if (def_hack("TEST_SERVER", nil)) then
+	SCHOOL_OSHADOW = add_school {
+		["name"] = "Shadow",
+		["skill"] = SKILL_OSHADOW,
+	}
+	SCHOOL_OSPIRIT = add_school {
+		["name"] = "Spirit",
+		["skill"] = SKILL_OSPIRIT,
+	}
+end
+
 
 -- Put some spells
 
@@ -150,6 +162,12 @@ pern_dofile(Ind, "m_mintrusion.lua")
 __lua_M_LAST = __tmp_spells_num - 1
 
 pern_dofile(Ind, "d_astral.lua")
+
+-- Occult
+if (def_hack("TEST_SERVER", nil)) then
+	pern_dofile(Ind, "o_shadow.lua")
+	pern_dofile(Ind, "o_spirit.lua")
+end
 
 
 -- Tomes / Greater crystals
@@ -223,6 +241,11 @@ end
 -- Create the book of mindcrafting: Mental intrusion (-)
 school_book[21] = { MMINDBLAST_III, MPSISTORM_II, MSCARE_II, MCONFUSE_II, MSLEEP_II, MSLOWMONSTER_II, MSILENCE, MMAP, MCHARM, MSTOPCHARM, }
 
+-- Create the Occult books, Shadow and Spirit (-)
+if (def_hack("TEST_SERVER", nil)) then
+school_book[22] = { ODRAINLIFE_II, POISONFOG_III, SHADOWGATE, DARKBOLT_III, OINVIS, DETECTINVIS, POISONRES, OSLEEP_II, } --shadow
+school_book[23] = { OCURSEDD_III, LITEBEAM_III, OLIGHTNINGBOLT_III, TRANCE, POSSESS, STOPPOSSESS, STARLIGHT_II, DETECTCREATURES, } --spirit
+end
 
 -- Handbooks:
 

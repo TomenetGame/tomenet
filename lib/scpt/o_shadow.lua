@@ -57,7 +57,7 @@ end
 
 ODRAINLIFE_I = add_spell {
 	["name"] = 	"Sap Life I",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["am"] = 	75,
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -77,7 +77,7 @@ ODRAINLIFE_I = add_spell {
 }
 ODRAINLIFE_II = add_spell {
 	["name"] = 	"Sap Life II",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["am"] = 	75,
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -98,7 +98,7 @@ ODRAINLIFE_II = add_spell {
 
 POISONFOG_I = add_spell {
 	["name"] = 	"Poisonous Fog I",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	3,
 	["mana"] = 	3,
@@ -109,7 +109,7 @@ POISONFOG_I = add_spell {
 		fire_cloud(Ind, GF_POIS, args.dir, (1 + get_level(Ind, POISONFOG_I, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
-		return "dam "..(1 + get_level(Ind, POISONFOG_I, 40))).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
+		return "dam "..(1 + get_level(Ind, POISONFOG_I, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
 	end,
 	["desc"] = {
 		"Creates a cloud of poisonous fog.",
@@ -118,7 +118,7 @@ POISONFOG_I = add_spell {
 }
 POISONFOG_II = add_spell {
 	["name"] = 	"Poisonous Fog II",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	18,
 	["mana"] = 	9,
@@ -129,7 +129,7 @@ POISONFOG_II = add_spell {
 		fire_cloud(Ind, GF_POIS, args.dir, (1 + 38 + get_level(Ind, POISONFOG_II, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
-		return "dam "..(1 + 38 + get_level(Ind, POISONFOG_II, 40))).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
+		return "dam "..(1 + 38 + get_level(Ind, POISONFOG_II, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
 	end,
 	["desc"] = {
 		"Creates a cloud of poison.",
@@ -137,9 +137,9 @@ POISONFOG_II = add_spell {
 		"At level 30 it turns into a thick gas preventing living beings from breathing.",
 	}
 }
-POISONFOG_II = add_spell {
-	["name"] = 	"Poisonous Fog II",
-	["school"] = 	{SCHOOL_SHADOW},
+POISONFOG_III = add_spell {
+	["name"] = 	"Poisonous Fog III",
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	33,
 	["mana"] = 	30,
@@ -150,7 +150,7 @@ POISONFOG_II = add_spell {
 		fire_cloud(Ind, GF_POIS, args.dir, (1 + 76 + get_level(Ind, POISONFOG_III, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
-		return "dam "..(1 + 76 + get_level(Ind, POISONFOG_III, 40))).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
+		return "dam "..(1 + 76 + get_level(Ind, POISONFOG_III, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
 	end,
 	["desc"] = {
 		"Creates a cloud of thick fog, not just poisoning but also preventing",
@@ -160,7 +160,7 @@ POISONFOG_II = add_spell {
 
 SHADOWGATE = add_spell {
 	["name"] = 	"Shadow Gate",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["am"] = 	75,
 	["spell_power"] = 0,
 	["level"] = 	24,
@@ -187,7 +187,7 @@ function get_darkbolt_dam(Ind, limit_lev)
 end
 DARKBOLT_I = add_spell {
 	["name"] = 	"Darkness Bolt I",
-	["school"] = 	SCHOOL_SHADOW,
+	["school"] = 	SCHOOL_OSHADOW,
 	["spell_power"] = 0,
 	["level"] = 	10,
 	["mana"] = 	3,
@@ -208,7 +208,7 @@ DARKBOLT_I = add_spell {
 }
 DARKBOLT_II = add_spell {
 	["name"] = 	"Darkness Bolt II",
-	["school"] = 	SCHOOL_SHADOW,
+	["school"] = 	SCHOOL_OSHADOW,
 	["spell_power"] = 0,
 	["level"] = 	25,
 	["mana"] = 	6,
@@ -229,7 +229,7 @@ DARKBOLT_II = add_spell {
 }
 DARKBOLT_III = add_spell {
 	["name"] = 	"Darkness Bolt III",
-	["school"] = 	SCHOOL_SHADOW,
+	["school"] = 	SCHOOL_OSHADOW,
 	["spell_power"] = 0,
 	["level"] = 	40,
 	["mana"] = 	12,
@@ -251,7 +251,7 @@ DARKBOLT_III = add_spell {
 
 OINVIS = add_spell {
 	["name"] = 	"Shadow Shroud",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	30,
 	["mana"] = 	30,
@@ -269,7 +269,7 @@ OINVIS = add_spell {
 
 DETECTINVIS = add_spell {
 	["name"] = 	"Detect Invisible",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	3,
 	["mana"] = 	3,
@@ -293,7 +293,7 @@ DETECTINVIS = add_spell {
 
 POISONRES = add_spell {
 	["name"] = 	"Poison Resistance",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	22,
 	["mana"] = 	15,
@@ -314,7 +314,7 @@ POISONRES = add_spell {
 
 OSLEEP_I = add_spell {
 	["name"] = 	"Veil of Night I",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	5,
 	["mana"] = 	2,
@@ -322,16 +322,16 @@ OSLEEP_I = add_spell {
 	["fail"] = 	10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_OLD_SLEEP, args.dir, 5 + get_level(Ind, OSLEEP, 80), "mumbles softly")
+		fire_grid_bolt(Ind, GF_OLD_SLEEP, args.dir, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
 	end,
 	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, OSLEEP, 80))
+		return "power "..(5 + get_level(Ind, OSLEEP_I, 80))
 	end,
 	["desc"] = { "Causes the target to fall asleep instantly.", }
 }
 OSLEEP_II = add_spell {
 	["name"] = 	"Veil of Night II",
-	["school"] = 	{SCHOOL_SHADOW},
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	25,
 	["mana"] = 	16,

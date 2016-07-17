@@ -1656,7 +1656,9 @@ extern bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr);
 extern u32b mod_ball_spell_flags(int typ, u32b flags);
 
 extern int py_create_gateway(int Ind);
+#ifdef TEST_SERVER /* Occult */
 extern bool do_shadow_gate(int Ind, int range);
+#endif
 
 /* store.c */
 extern int store_debug_mode, store_debug_quickmotion, store_debug_startturn;
@@ -2390,6 +2392,7 @@ extern int SCHOOL_HOFFENSE, SCHOOL_HSUPPORT;
 extern int SCHOOL_DRUID_ARCANE, SCHOOL_DRUID_PHYSICAL;
 extern int SCHOOL_ASTRAL;
 extern int SCHOOL_PPOWER, SCHOOL_MINTRUSION;
+extern int SCHOOL_OSHADOW, SCHOOL_OSPIRIT;
 
 #ifdef DUNGEON_VISIT_BONUS
 # ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
