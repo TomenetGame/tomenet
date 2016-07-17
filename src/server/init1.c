@@ -2331,13 +2331,14 @@ errr init_f_info_txt(FILE *fp, char *buf) {
 
 				j = 0;
 
-				while (d_info_dtypes[j].name != NULL)
+				while (d_info_dtypes[j].name != NULL) {
 					if (strcmp(d_info_dtypes[j].name, tmp) == 0) {
 						f_ptr->d_type[i] = d_info_dtypes[j].feat;
 						break;
 					} else j++;
 
 					if (d_info_dtypes[j].name == NULL) return(1);
+				}
 			} else f_ptr->d_type[i] = type;
 
 			freq *= 1;//was 10
