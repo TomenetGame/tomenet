@@ -2247,9 +2247,10 @@ static void go_engine_move_result(int move_result) {
 					break;
 				}
 				break;
-			} else if (p_ptr->go_sublevel && turn - p_ptr->go_turn >= cfg.fps * 300)
+			} else if (p_ptr->go_sublevel && turn - p_ptr->go_turn >= cfg.fps * 300) {
 				p_ptr->go_sublevel--; //a game should last for at least 5 minutes until we accept it for counting down to hidden stage
 				p_ptr->go_turn = turn;
+			}
 #endif
 			if (lost) {
 				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Hah, I can't judge what went");
