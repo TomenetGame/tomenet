@@ -819,7 +819,8 @@ s_printf("Duration: %d\n", duration);
 
 					case SV_R_TIME: { //Haste
 						damage = rget_level(15) * r_imperatives[imperative].damage / 10;
-						if (damage < 1) damage = 1; if (damage > 10) damage = 10;
+						if (damage < 1) damage = 1;
+						if (damage > 10) damage = 10;
 						set_fast(Ind, duration/2+randint(duration/2), damage);
 						if (r_imperatives[imperative].flag == I_EXPA)
 							fire_ball(Ind, GF_SPEED_PLAYER, 0, damage*2, RCRAFT_PJ_RADIUS, "");
@@ -840,13 +841,15 @@ s_printf("Duration: %d\n", duration);
 
 					case SV_R_ICEE: { //Ice Shield
 						damage = rget_level(20) * r_imperatives[imperative].damage / 10;
-						if (damage < 1) damage = 1; if (damage > 20) damage = 20;
+						if (damage < 1) damage = 1;
+						if (damage > 20) damage = 20;
 						set_shield(Ind, duration/2+randint(duration/2), damage, SHIELD_ICE, dx, dy);
 					break; }
 
 					case SV_R_PLAS: { //Plasma Shield
 						damage = rget_level(20) * r_imperatives[imperative].damage / 10;
-						if (damage < 1) damage = 1; if (damage > 20) damage = 20;
+						if (damage < 1) damage = 1;
+						if (damage > 20) damage = 20;
 						set_shield(Ind, duration/2+randint(duration/2), damage, SHIELD_PLASMA, dx, dy);
 					break; }
 				}
