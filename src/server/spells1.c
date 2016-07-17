@@ -4446,11 +4446,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* p1 % chance to create this feat */
 				p1 = 20; f1 = FEAT_SHAL_WATER;
 
-				if (c_ptr->feat == FEAT_DIRT)
+				if (c_ptr->feat == FEAT_DIRT) {
 					/* reduce feat1 chance */
 					p1 = 10;
 					/* p2 % chance to create this feat */
 					p2 = 15; f2 = FEAT_MUD;
+				}
 			}
 			else if (c_ptr->feat == FEAT_SHAL_LAVA) {
 				/* 15% chance to convert it to normal floor */
@@ -9317,7 +9318,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			dam = (k * 3) / 5;/* 60% COLD damage, total cold damage is saved in 'dam' */
 			k = (k * 2) / 5;/* 40% SHARDS damage, total shard damage is saved in 'k' */
 			if (p_ptr->biofeedback) k = (k * 2) / 3;
-			if (p_ptr->resist_shard) k *= 6; k /= (randint(6) + 6);
+			if (p_ptr->resist_shard) { k *= 6; k /= (randint(6) + 6); }
 			dam = cold_dam(Ind, dam, killer, -who);
 			dam = dam + k;
 			if (fuzzy) msg_format(Ind, "You are hit by something cold and sharp for \377%c%d \377wdamage!", damcol, dam);
