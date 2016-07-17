@@ -277,7 +277,12 @@ school_book[55] = {
 -- Create the handbook of novice etiquette
 school_book[56] = { HDELFEAR, HBLESSING_I, HGLOBELIGHT_I, HDETECTEVIL, HHEALING_I, HCURING_I }
 ---- Create the handbook for rogues (of shadows)
-school_book[57] = { BLINK, DISARM, NOXIOUSCLOUD_III, SENSEHIDDEN_II, REVEALWAYS, VISION_II, INVISIBILITY }
+if (def_hack("TEST_SERVER", nil)) then
+	--include Occult Shadow spells
+	school_book[57] = { BLINK, POISONFOG_III, OBLIND_II, DETECTINVIS, SENSEHIDDEN_II, REVEALWAYS, VISION_II, OINVIS, INVISIBILITY }
+else
+	school_book[57] = { BLINK, NOXIOUSCLOUD_III, SENSEHIDDEN_II, REVEALWAYS, VISION_II, INVISIBILITY }
+end
 ---- Create the handbook for dungeon masters & wizards (of dungeon keeping)
 school_book[58] = { TELEKINESIS, DIG, STONEPRISON, GROWTREE, DISARM, VISION_II, STARIDENTIFY, MANATHRUST_III, DISEBOLT, FIREFLASH_III, RECHARGE_III, MAGELOCK_II }
 -- Create the handbook of revelation
