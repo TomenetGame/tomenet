@@ -3256,7 +3256,7 @@ void calc_boni(int Ind) {
 	else if (p_ptr->prace == RACE_YEEK) {
 		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
 		/* not while in mimicried form */
-		if (!p_ptr->body_monster) p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE;
+		if (!p_ptr->body_monster) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
 	}
 
 	/* Goblin */
@@ -8499,10 +8499,11 @@ static void process_global_event(int ge_id) {
 			if (n == 180 / 5) {
 				for (x = 1; x < MAX_WID - 1; x++)
 				for (y = 1; y < MAX_HGT - 1; y++)
-					if (zcave[y][x].feat != FEAT_PERM_INNER)
+					if (zcave[y][x].feat != FEAT_PERM_INNER) {
 						//cave_set_feat_live(&wpos, y, x, FEAT_DEEP_LAVA);
 						zcave[y][x].feat = FEAT_DEEP_LAVA;
 						everyone_lite_spot(&wpos, y, x);
+					}
 				break;
 			}
 			/* if it's not that late yet, just fill some lava.. */
