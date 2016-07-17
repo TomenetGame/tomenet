@@ -2055,13 +2055,16 @@ int determine_wilderness_type(struct worldpos *wpos)
 					w_ptr->type = WILD_GRASSLAND; break;
 				/* dense forest is rarly next to town */
 				case WILD_DENSEFOREST :
-					if (rand_int(100) < 80) w_ptr->type = WILD_GRASSLAND; break;
+					if (rand_int(100) < 80) w_ptr->type = WILD_GRASSLAND;
+					break;
 				/* people usually don't build towns next to a swamp */
 				case WILD_SWAMP :
-					if (rand_int(100) < 50) w_ptr->type = WILD_GRASSLAND; break;
+					if (rand_int(100) < 50) w_ptr->type = WILD_GRASSLAND;
+					break;
 				/* forest is slightly less common near a town */
 				case WILD_FOREST :
-					if (rand_int(100) < 30) w_ptr->type = WILD_GRASSLAND; break;
+					if (rand_int(100) < 30) w_ptr->type = WILD_GRASSLAND;
+					break;
 			}
 #endif
 	}
@@ -3216,9 +3219,10 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					}
 					if (func == FILL_BUILD) {
 						c_ptr = &zcave[miny + (y - 1)][minx + (x - 1)];
-						if (!(h_ptr->flags & HF_NOFLOOR))
+						if (!(h_ptr->flags & HF_NOFLOOR)) {
 							c_ptr->feat = FEAT_FLOOR;
 							c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);
+						}
 						if (h_ptr->flags & HF_JAIL) {
 							c_ptr->info |= (CAVE_STCK | CAVE_JAIL);
 						}
