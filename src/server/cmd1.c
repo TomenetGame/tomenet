@@ -2445,11 +2445,11 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					}
 
 					if (!ID_item_found) { /* Check ID tools in our inventory if we haven't had any activatable tool */
-						int spell = -1, spell1, spell2, spell3, spell4;
-						bool spell1_found = FALSE, spell2_found = FALSE, spell3_found = FALSE, spell4_found = FALSE;
+						int spell = -1, spell1, spell1a, spell1b, spell2, spell3, spell4;
+						bool spell1_found = FALSE, spell1a_found = FALSE, spell1b_found = FALSE, spell2_found = FALSE, spell3_found = FALSE, spell4_found = FALSE;
 
 						/* todo: make these predefined for efficiency instead of calling lua over and over.. */
-						spell1 = exec_lua(Ind, "return IDENTIFY");
+						spell1 = exec_lua(Ind, "return IDENTIFY_I"); spell1a = exec_lua(Ind, "return IDENTIFY_II"); spell1b = exec_lua(Ind, "return IDENTIFY_III");
 						spell2 = exec_lua(Ind, "return MIDENTIFY");
 						spell3 = exec_lua(Ind, "return STARIDENTIFY");
 						spell4 = exec_lua(Ind, "return BAGIDENTIFY");
@@ -2660,7 +2660,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 							/* ID spell -- IDENTIFY or MIDENTIFY or even STARIDENTIFY or BAGIDENTIFY. */
 							else if (i_ptr->tval == TV_BOOK) {
 								if (i_ptr->sval == SV_SPELLBOOK) {
-									if (i_ptr->pval == spell1 || i_ptr->pval == spell2 ||
+									if (i_ptr->pval == spell1 || i_ptr->pval == spell1a || i_ptr->pval == spell1b || i_ptr->pval == spell2 ||
 									    i_ptr->pval == spell3
  #ifdef ALLOW_X_BAGID
 									    || i_ptr->pval == spell4
@@ -2676,7 +2676,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 										/* If so then use it */
 										spell = i_ptr->pval;
 										//wow-- use ground item! ;) (except for BAGIDENTIFY)
-										if (spell != spell4)
+										if (spell != spell4 && spell != spell1a && spell != spell1b)
  #ifndef XID_SPELL_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
 											p_ptr->current_item = -c_ptr->o_idx - 1;
  #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
@@ -2691,12 +2691,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 									if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
 									/* now <4.4.1.8 is no longer supported! to make s_aux.lua slimmer */
 										spell1_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell1));//NO LONGER SUPPORTED
+										//spell1a, spell1b are not supported
 										spell2_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell2));//NO LONGER SUPPORTED
 										spell3_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell3));//NO LONGER SUPPORTED
  #ifdef ALLOW_X_BAGID
 										spell4_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, spell4));//NO LONGER SUPPORTED
  #endif
-										if (!spell1_found && !spell2_found &&
+										if (!spell1_found && !spell2_found && //spell1a, spell1b are not supported
 										    !spell3_found && !spell4_found) {
 											/* Be severe and point out the wrong inscription: */
 											msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
@@ -2704,12 +2705,14 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 										}
 									} else {
 										spell1_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell1));
+										spell1a_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell1a));
+										spell1b_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell1b));
 										spell2_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell2));
 										spell3_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell3));
  #ifdef ALLOW_X_BAGID
 										spell4_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, spell4));
  #endif
-										if (!spell1_found && !spell2_found &&
+										if (!spell1_found && !spell1a_found && !spell1b_found && !spell2_found &&
 										    !spell3_found && !spell4_found) {
 											/* Be severe and point out the wrong inscription: */
 											msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
@@ -2727,6 +2730,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 									p_ptr->current_item = -slot - 1;
  #endif
 								}
+								else if (spell1a_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell1a)))
+									spell = spell1a; //bag-id effect
+								else if (spell1b_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell1b)))
+									spell = spell1b; //bag-id effect
 								else if (spell2_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell2))) {
 									spell = spell2;
  #ifndef XID_SPELL_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
