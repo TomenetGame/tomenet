@@ -575,7 +575,24 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		}
 		if (old_value < 500 && new_value >= 500 && p_ptr->prace != RACE_MAIA) {
 			msg_print(Ind, "\374\377GYou don't feel hunger for worldly food anymore.");
-		} 		break;
+		}
+		break;
+#ifdef TEST_SERVER /* Occult */
+	case SKILL_OSHADOW:
+		if (old_value < 300 && new_value >= 300) {
+			msg_print(Ind, "\374\377GYou feel strong against darkness.");
+		}
+		break;
+	case SKILL_OSPIRIT:
+		if (old_value < 300 && new_value >= 300) {
+			msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
+		} if (old_value < 400 && new_value >= 400) {
+			msg_print(Ind, "\374\377GYou fight against undead with holy wrath.");
+		} if (old_value < 500 && new_value >= 500) {
+			msg_print(Ind, "\374\377GYour soul escapes less quickly on death.");
+		}
+		break;
+#endif
 
 	case SKILL_SWORD: case SKILL_AXE: case SKILL_BLUNT: case SKILL_POLEARM:
 		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
