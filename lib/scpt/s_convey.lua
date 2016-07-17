@@ -4,7 +4,7 @@ BLINK = add_spell {
 	["name"] = 	"Phase Door",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	2,
-	["mana"] = 	2,
+	["mana"] = 	3,
 	["mana_max"] = 	3,
 	["fail"] = 	10,
 	["spell"] = 	function()
@@ -17,17 +17,14 @@ BLINK = add_spell {
 	["info"] = 	function()
 			return "distance "..(6 + get_level(Ind, BLINK, 6))
 	end,
-	["desc"] = 	{
-			"Teleports you on a small scale range",
---			"***Affected by the Meta spell: Project Spell***",
-	},
+	["desc"] = 	{ "Teleports you on a small scale range.", },
 }
 
 DISARM = add_spell {
 	["name"] = 	"Disarm",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	5,
-	["mana"] = 	2,
+	["mana"] = 	4,
 	["mana_max"] = 	4,
 	["fail"] = 	10,
 	["spell"] = 	function()
@@ -36,57 +33,57 @@ DISARM = add_spell {
 	["info"] = 	function()
 			return "rad "..(1 + get_level(Ind, DISARM, 4, 0))
 	end,
-	["desc"] = 	{ "Destroys traps and visible doors", }
+	["desc"] = 	{ "Destroys traps and visible doors.", }
 }
 
 TELEPORT = add_spell {
 	["name"] = 	"Teleportation",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	10,
-	["mana"] = 	8,
-	["mana_max"] = 	14,
+	["mana"] = 	12,
+	["mana_max"] = 	12,
 	["fail"] = 	50,
 	["spell"] = 	function()
 			local dist = 100 + get_level(Ind, TELEPORT, 100)
 			teleport_player(Ind, dist, FALSE)
---			if player.spell_project > 0 then
---				fire_ball(Ind, GF_AWAY_ALL, 0, dist, player.spell_project, "")
---			end
 	end,
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{
-			"Teleports you around the level.",
---			"***Affected by the Meta spell: Project Spell***",
-	}
+	["desc"] = 	{ "Teleports you around the level.", }
 }
 
-TELEAWAY = add_spell {
-	["name"] = 	"Teleport Away",
+TELEAWAY_I = add_spell {
+	["name"] = 	"Teleport Away I",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	23,
 	["mana"] = 	15,
-	["mana_max"] = 	40,
+	["mana_max"] = 	15,
 	["fail"] = 	70,
-	["direction"] = function () if get_level(Ind, TELEAWAY) >= 10 then return FALSE else return TRUE end end,
+	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			if get_level(Ind, TELEAWAY, 50) >= 20 then
-				project_los(Ind, GF_AWAY_ALL, 100, "points and shouts")
-			elseif get_level(Ind, TELEAWAY, 50) >= 10 then
-				fire_ball(Ind, GF_AWAY_ALL, args.dir, 100, 3 + get_level(Ind, TELEAWAY, 4), "points and shouts")
-			else
-				teleport_monster(Ind, args.dir)
-			end
+			teleport_monster(Ind, args.dir)
 	end,
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{
-			"Teleports a line of monsters away",
-			"At level 10 it turns into a ball",
-			"At level 20 it teleports all monsters in sight"
-	}
+	["desc"] = 	{ "Teleports a line of monsters away.", }
+}
+TELEAWAY_II = add_spell {
+	["name"] = 	"Teleport Away II",
+	["school"] = 	{SCHOOL_CONVEYANCE},
+	["level"] = 	43,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
+	["fail"] = 	5,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			project_los(Ind, GF_AWAY_ALL, 100, "points and shouts")
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{ "Teleports all monsters in sight away." }
 }
 
 RECALL = add_spell {
@@ -118,7 +115,7 @@ PROBABILITY_TRAVEL = add_spell {
 	["name"] = 	"Probability Travel",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	35,
-	["mana"] = 	30,
+	["mana"] = 	50,
 	["mana_max"] = 	50,
 	["fail"] = 	50,
 	["spell"] = 	function()
@@ -130,6 +127,6 @@ PROBABILITY_TRAVEL = add_spell {
 	["desc"] = 	{
 			"Renders you instable, when you hit a wall you travel throught it and",
 			"instantly appear on the other side of it. You can also float up and down",
-			"at will"
+			"at will."
 	}
 }

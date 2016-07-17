@@ -29,62 +29,74 @@ CHARM = add_spell {
 	}
 }
 ]]
-CONFUSE = add_spell {
-	["name"] = 	"Confusion",
+CONFUSE_I = add_spell {
+	["name"] = 	"Confusion I",
 	["school"] = 	{SCHOOL_MIND},
 	["level"] = 	5,
 	["mana"] = 	5,
-	["mana_max"] = 	30,
+	["mana_max"] = 	5,
 	["fail"] = 	10,
 	["am"] = 	75,
-	["direction"] = function () if get_level(Ind, CONFUSE, 50) >= 35 then return FALSE else return TRUE end end,
+	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		if get_level(Ind, CONFUSE, 50) >= 35 then
-			project_los(Ind, GF_OLD_CONF, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
-		elseif get_level(Ind, CONFUSE, 50) >= 15 then
-			fire_ball(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), 2, "focusses on your mind")
-		else
-			fire_bolt(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE, 100), "focusses on your mind")
-		end
+		fire_bolt(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE_I, 100), "focusses on your mind")
 	end,
 	["info"] = 	function()
-		if get_level(Ind, CONFUSE, 50) < 35 and get_level(Ind, CONFUSE, 50) >= 15 then
-			return "power "..(5 + get_level(Ind, CONFUSE, 100)).." rad 2"
-		else
-			return "power "..(5 + get_level(Ind, CONFUSE, 100))
-		end
+		return "power "..(5 + get_level(Ind, CONFUSE_I, 100))
 	end,
-	["desc"] = 	{
-		"Tries to manipulate the mind of a monster to confuse it",
-		"At level 15 it turns into a ball",
-		"At level 35 it affects all monsters in sight"
-	}
+	["desc"] = 	{ "Tries to manipulate the mind of a monster to confuse it.", }
+}
+CONFUSE_II = add_spell {
+	["name"] = 	"Confusion II",
+	["school"] = 	{SCHOOL_MIND},
+	["level"] = 	20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	-20,
+	["am"] = 	75,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_ball(Ind, GF_OLD_CONF, args.dir, 5 + get_level(Ind, CONFUSE_I, 100), 2, "focusses on your mind")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, CONFUSE_I, 100)).." rad 2"
+	end,
+	["desc"] = 	{ "Tries to manipulate the mind of all monsters in a small area to confuse them.", }
 }
 
-STUN = add_spell {
-	["name"] = 	"Stun",
+STUN_I = add_spell {
+	["name"] = 	"Stun I",
 	["school"] = 	{SCHOOL_MIND},
 	["level"] = 	15,
 	["mana"] = 	10,
+	["mana_max"] = 	10,
+	["fail"] = 	10,
+	["am"] = 	75,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN_I, 50), "")
+	end,
+	["info"] = 	function()
+		return ""
+	end,
+	["desc"] = 	{ "Tries to manipulate the mind of a monster to stun it.", }
+}
+STUN_II = add_spell {
+	["name"] = 	"Stun II",
+	["school"] = 	{SCHOOL_MIND},
+	["level"] = 	40,
+	["mana"] = 	90,
 	["mana_max"] = 	90,
 	["fail"] = 	10,
 	["am"] = 	75,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		if get_level(Ind, STUN, 50) >= 25 then
-			fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 50), 2, "")
-		else
-			fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 50), "")
-		end
+		fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN_I, 50), 2, "")
 	end,
 	["info"] = 	function()
 		return ""
-		--return "power "..(10 + get_level(Ind, STUN, 150))
 	end,
-	["desc"] = 	{
-		"Tries to manipulate the mind of a monster to stun it",
-		"At level 25 it turns into a ball",
-	}
+	["desc"] = 	{ "Tries to manipulate the minds of all monsters in a small area to stun them.", }
 }
 
 if (def_hack("TEMP1", nil) == 0) then
@@ -121,7 +133,7 @@ TELEKINESIS = add_spell {
 	["desc"] = 	{
 		"Inscribe your book with @Pplayername, cast it, select an item",
 		"and the item will be teleported to that player whereever he/she might",
-		"be in the Universe",
+		"be in the Universe.",
 	}
 }
 else
@@ -142,7 +154,7 @@ TELEKINESIS = add_spell {
 	["desc"] = 	{
 		"Inscribe your book with @Pplayername, cast it, select an item",
 		"and the item will be teleported to that player whereever he/she might",
-		"be in the Universe",
+		"be in the Universe.",
 	}
 }
 end
@@ -151,8 +163,8 @@ SENSEMONSTERS = add_spell {
 	["name"] = 	"Sense Minds",
 	["school"] = 	{SCHOOL_MIND},
 	["level"] = 	30,
-	["mana"] = 	15,
-	["mana_max"] = 	20,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
 	["fail"] = 	-15,
 	["am"] = 	75,
 	["spell"] = function()

@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. July 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 16. July 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -14529,18 +14529,12 @@ Istar schools:
 
     Healing         Heals a percentage of your hit points.          (project)
                     Required skill level for first spell level: 10.
-                    In addition to healing hit points, it will start curing
-                    status ailments at higher spell levels:
-                    Lv4: Cures cuts and blindness.                  (project)
-                    Lv10: Also cures confusion.                     (project)
-                    Lv24: Also cures stun.                          (project)
 
-    Recovery        Slows down the effect of poison.                (project)
-                    Lv5: Neutralizes poison.                        (project)
-                    Lv15: Heals cuts, cures confusion, blindness, stun (proj)
-                    Lv20: Restores drained stats.                   (project)
-                    Lv25: Restores lost experience.                 (project)
+    Recovery I      Neutralizes poison, heals cuts, cures confusion,
+                    stun and blindness.                             (project)
                     Required skill level for first spell level: 15.
+    Recovery II     In addition to the effects of Recovery I it also
+                    restores drained stats and lost experience.     (project)
 
     Regeneration    Increases your hit point regeneration rate.
                     Required skill level for first spell level: 20.
@@ -14643,9 +14637,8 @@ Istar schools:
                     classes the effect will cap at +10.
                     Required skill level for first spell level: 15.
 
-    Mass Warp       Teleports away all monsters within sight.
-                    Lv15: Locks monsters in stasis for a while.
-                    Required skill level for first spell level: 30.
+    Mass Warp       Locks monsters in stasis for a while.
+                    Required skill level for first spell level: 45.
                     Shared spell (see above): Temporal, Conveyance.
 
     BONI:           Time resistance at 50.
@@ -14654,10 +14647,15 @@ Istar schools:
 - Udun
 
     Genocide        Genocides all monsters of a race on the level.
-                    Lv15: Alternatively genocides all monsters near you
-                          ("obliterarion", choose 'y' when prompted).
-                    For details on the effects "genocide" and "obliteration"
-                    of this spell, please see (5.9) scroll of geno/oblit.
+                    For details on the effect "genocide" of this spell,
+                    please see (5.9) scroll of geno/oblit.
+                    (This spell uses WISDOM to determine fail-rates!
+                    Genocide-type spells do not yield experience or loot.)
+                    Required skill level for first spell level: 25.
+
+    Obliteration    Obliterates all monsters nearby.
+                    For details on the effect "obliteration" of this spell,
+                    please see (5.9) scroll of geno/oblit.
                     (This spell uses WISDOM to determine fail-rates!
                     Genocide-type spells do not yield experience or loot.)
                     Required skill level for first spell level: 25.
@@ -14681,7 +14679,6 @@ Istar schools:
 
     Confuse         Confuses a monsters.
                     Lv15: Turns into a ball.
-                    Lv35: Affects all monsters in sight.
                     Required skill level for first spell level: 5.
 
     Stun            Stuns a monster.
@@ -14727,9 +14724,7 @@ Istar schools:
     Disperse Magic  Removes magical influences.
                     Lv1: Blindness.
                     Lv5: Confusion/Hallucination.
-                    Lv10: Speed/Slowness.
-                    Lv15: Stun/Cuts.
-                    Lv20: Heroism/Berserk strength/Blessing/Shields/Fear.
+                    Lv10: Speed/Slowness/Stun.
                     Required skill level for first spell level: 15.
                     This spell can be used even while confused or blind.
 

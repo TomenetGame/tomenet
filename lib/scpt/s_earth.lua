@@ -44,110 +44,141 @@ DIG = add_spell {
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{ "Digs a hole in a wall much faster than any shovels", }
+	["desc"] = 	{ "Digs a hole in a wall much faster than any shovel.", }
 }
 
-function get_acidbolt_dam()
-	return 6 + get_level(Ind, ACIDBOLT, 25), 8 + get_level(Ind, ACIDBOLT, 25) + 1
+function get_acidbolt_dam(Ind, limit_lev)
+	--return 6 + get_level(Ind, ACIDBOLT, 25), 8 + get_level(Ind, ACIDBOLT, 25) + 1
+	local lev
+
+	lev = get_level(Ind, ACIDBOLT_I, 50)
+	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
+
+	return 6 + (lev / 2), 8 + (lev / 2) + 1
 end
-ACIDBOLT = add_spell {
-	["name"] = 	"Acid Bolt",
+ACIDBOLT_I = add_spell {
+	["name"] = 	"Acid Bolt I",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	12,
 	["mana"] = 	3,
-	["mana_max"] = 	13,
+	["mana_max"] = 	3,
 	["fail"] = 	-10,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-			fire_bolt(Ind, GF_ACID, args.dir, damroll(get_acidbolt_dam()), " casts a acid bolt for")
+			fire_bolt(Ind, GF_ACID, args.dir, damroll(get_acidbolt_dam(Ind, 1)), " casts a acid bolt for")
 	end,
 	["info"] = 	function()
 			local x, y
 
-			x, y = get_acidbolt_dam()
+			x, y = get_acidbolt_dam(Ind, 1)
 			return "dam "..x.."d"..y
 	end,
-	["desc"] = 	{ "Conjures up corroding acid into a powerful bolt", }
+	["desc"] = 	{ "Conjures up corroding acid into a powerful bolt.", }
+}
+ACIDBOLT_II = add_spell {
+	["name"] = 	"Acid Bolt II",
+	["school"] = 	SCHOOL_EARTH,
+	["level"] = 	24,
+	["mana"] = 	6,
+	["mana_max"] = 	6,
+	["fail"] = 	-30,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_bolt(Ind, GF_ACID, args.dir, damroll(get_acidbolt_dam(Ind, 12)), " casts a acid bolt for")
+	end,
+	["info"] = 	function()
+			local x, y
+
+			x, y = get_acidbolt_dam(Ind, 12)
+			return "dam "..x.."d"..y
+	end,
+	["desc"] = 	{ "Conjures up corroding acid into a powerful bolt.", }
+}
+ACIDBOLT_III = add_spell {
+	["name"] = 	"Acid Bolt III",
+	["school"] = 	SCHOOL_EARTH,
+	["level"] = 	40,
+	["mana"] = 	13,
+	["mana_max"] = 	13,
+	["fail"] = 	-95,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_bolt(Ind, GF_ACID, args.dir, damroll(get_acidbolt_dam(Ind, 0)), " casts a acid bolt for")
+	end,
+	["info"] = 	function()
+			local x, y
+
+			x, y = get_acidbolt_dam(Ind, 0)
+			return "dam "..x.."d"..y
+	end,
+	["desc"] = 	{ "Conjures up corroding acid into a powerful bolt.", }
 }
 
 STONEPRISON = add_spell {
 	["name"] = 	"Stone Prison",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	25,
-	["mana"] = 	40,
-	["mana_max"] = 	70,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
 	["fail"] = 	10,
 	["spell"] = 	function()
 			local ret, x, y
---			if get_level(Ind, STONEPRISON, 50) >= 10 then
---				ret, x, y = tgt_pt()
---			else
---				y = py
---				x = px
---			end
--- DGDGD we need client side tgt_pt			wall_stone(y, x)
 			fire_ball(Ind, GF_STONE_WALL, 0, 1, 1, "")
 	end,
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{
-			"Creates a prison of walls around you"
---			,"At level 10 it allows you to target a monster"
-		}
+	["desc"] = 	{ "Creates a prison of walls around you." }
 }
 
-STRIKE = add_spell {
-	["name"] = 	"Strike",
+STRIKE_I = add_spell {
+	["name"] = 	"Strike I",
 	["school"] = 	{SCHOOL_EARTH},
 	["level"] = 	25,
 	["mana"] = 	30,
-	["mana_max"] = 	50,
+	["mana_max"] = 	30,
 	["fail"] = 	30,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			if get_level(Ind, STRIKE, 50) >= 12 then
-				fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 1, " casts a force ball of")
-			else
-				fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 0, " casts a force bolt of")
-			end
+			fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 0, " casts a force bolt of")
 	end,
 	["info"] = 	function()
-			if get_level(Ind, STRIKE, 50) >= 12 then
-				return "dam "..(50 + get_level(Ind, STRIKE, 50)).." rad 1"
-			else
-				return "dam "..(50 + get_level(Ind, STRIKE, 50))
-			end
+			return "dam "..(50 + get_level(Ind, STRIKE, 50))
 	end,
-	["desc"] = 	{
-			"Creates a force bolt that may stun enemies.",
-			"At level 12 it turns into a ball of radius 1"
-	}
+	["desc"] = 	{ "Creates a force bolt that may stun enemies.", }
+}
+STRIKE_II = add_spell {
+	["name"] = 	"Strike II",
+	["school"] = 	{SCHOOL_EARTH},
+	["level"] = 	37,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["fail"] = 	0,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 1, " casts a force ball of")
+	end,
+	["info"] = 	function()
+			return "dam "..(50 + get_level(Ind, STRIKE, 50)).." rad 1"
+	end,
+	["desc"] = 	{ "Creates a small force ball that may stun enemies.", }
 }
 
 SHAKE = add_spell {
 	["name"] = 	"Shake",
 	["school"] = 	{SCHOOL_EARTH},
 	["level"] = 	27,
-	["mana"] = 	25,
+	["mana"] = 	30,
 	["mana_max"] = 	30,
 	["fail"] = 	30,
 	["spell"] = 	function()
---			if get_level(Ind, SHAKE, 50) >= 10 then
---			       	ret, x, y = tgt_pt()
---				if ret == FALSE then return end
---			else
---				x = player.px
---				y = player.py
---			end
 			earthquake(player.wpos, player.py, player.px, 2 + get_level(Ind, SHAKE, 50));
 	end,
 	["info"] = 	function()
 			return "rad "..(2 + get_level(Ind, SHAKE, 50))
 	end,
-	["desc"] = 	{
-			"Creates a localized earthquake"
---			,"At level 10 it can be targeted at any location"
-	}
+	["desc"] = 	{ "Creates a localized earthquake." }
 }

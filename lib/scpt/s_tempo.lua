@@ -1,73 +1,80 @@
 -- Handles thhe temporal school
 
-MAGELOCK = add_spell {
-	["name"] = 	"Magelock",
+MAGELOCK_I = add_spell {
+	["name"] = 	"Magelock I",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	1,
 	["mana"] = 	1,
-	["mana_max"] = 	60,
+	["mana_max"] = 	1,
 	["fail"] = 	10,
-	["direction"] = function () if get_level(Ind, MAGELOCK, 50) >= 40 then return FALSE else return TRUE end end,
+	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			if get_level(Ind, MAGELOCK, 50) >= 40 then
-				local ret, x, y, c_ptr
-
---				if get_level(Ind, MAGELOCK, 50) >= 40 then
---					ret, x, y = tgt_pt()
---					if ret == FALSE then return end
---				else
-					y = player.py
-					x = player.px
---				end
-				warding_glyph(Ind)
-			else
-				wizard_lock(Ind, args.dir)
-			end
+			wizard_lock(Ind, args.dir)
 	end,
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{
-			"Magically locks a door",
-			"At level 40 it creates a glyph of warding"
---			,"At level 40 the glyph can be placed anywhere in the field of vision"
-	}
+	["desc"] = 	{ "Magically locks a door.", }
+}
+MAGELOCK_II = add_spell {
+	["name"] = 	"Magelock II",
+	["school"] = 	{SCHOOL_TEMPORAL},
+	["level"] = 	41,
+	["mana"] = 	60,
+	["mana_max"] = 	60,
+	["fail"] = 	-20,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			local ret, x, y, c_ptr
+			y = player.py
+			x = player.px
+			warding_glyph(Ind)
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{ "Creates a glyph of warding." }
 }
 
-SLOWMONSTER = add_spell {
-	["name"] = 	"Slow Monster",
+SLOWMONSTER_I = add_spell {
+	["name"] = 	"Slow Monster I",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	10,
-	["mana"] = 	10,
-	["mana_max"] = 	15,
+	["mana"] = 	7,
+	["mana_max"] = 	7,
 	["fail"] = 	10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			if get_level(Ind, SLOWMONSTER, 50) >= 20 then
-				fire_ball(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER, 100), 1, "")
-			else
-				fire_bolt(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER, 100), "")
-			end
+			fire_bolt(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER_I, 100), "")
 	end,
 	["info"] = 	function()
-			if get_level(Ind, SLOWMONSTER, 50) >= 20 then
-				return "power "..(5 + get_level(Ind, SLOWMONSTER, 100)).." rad 1"
-			else
-				return "power "..(5 + get_level(Ind, SLOWMONSTER, 100))
-			end
+			return "power "..(5 + get_level(Ind, SLOWMONSTER_I, 100))
 	end,
-	["desc"] = 	{
-			"Magically slows down the passing of time around a monster",
-			"At level 20 it affects a zone"
-	}
+	["desc"] = 	{ "Magically slows down the passing of time around a monster.", }
+}
+SLOWMONSTER_II = add_spell {
+	["name"] = 	"Slow Monster II",
+	["school"] = 	{SCHOOL_TEMPORAL},
+	["level"] = 	30,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	-10,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			fire_ball(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER_I, 100), 1, "")
+	end,
+	["info"] = 	function()
+			return "power "..(5 + get_level(Ind, SLOWMONSTER_I, 100)).." rad 1"
+	end,
+	["desc"] = 	{ "Magically slows down the passing of time in a small zone.", }
 }
 
 ESSENSESPEED = add_spell {
 	["name"] = 	"Essence of Speed",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	15,
-	["mana"] = 	20,
-	["mana_max"] = 	40,
+	["mana"] = 	35,
+	["mana_max"] = 	35,
 	["fail"] = 	10,
 	["spell"] = 	function()
 			local s
@@ -105,23 +112,17 @@ ESSENSESPEED = add_spell {
 }
 
 MASSWARP = add_spell {
-	["name"] = 	"Mass Warp",
+	["name"] = 	"Mass Stasis",
 	["school"] = 	{SCHOOL_TEMPORAL, SCHOOL_CONVEYANCE},
-	["level"] = 	30,
-	["mana"] = 	30,
-	["mana_max"] = 	40,
+	["level"] = 	45,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
 	["fail"] = 	10,
 	["spell"] = 	function()
-			project_los(Ind, GF_AWAY_ALL, 40 + get_level(Ind, MASSWARP, 160), "casts a spell")
-			if get_level(Ind, MASSWARP, 50) >= 15 then
-				project_los(Ind, GF_STASIS, 20 + get_level(Ind, MASSWARP, 120), "casts a spell")
-			end
+			project_los(Ind, GF_STASIS, 20 + get_level(Ind, MASSWARP, 120), "casts a spell")
 	end,
 	["info"] = 	function()
-			return "power "..(40 + get_level(Ind, MASSWARP, 160))
+			return "power "..(20 + get_level(Ind, MASSWARP, 120))
 	end,
-	["desc"] = 	{
-			"Disrupt the space/time continuum in your area and teleports all monsters away",
-			"At level 15 it also may lock them in a time bubble for some turns"
-	}
+	["desc"] = 	{ "Attempts to locks all monsters in your area in a time bubble.", }
 }

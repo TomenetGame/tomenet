@@ -57,7 +57,7 @@ DRAIN = add_spell {
 	["desc"] = 	{ "Drains the mana contained in wands, staves and rods to increase yours", }
 }
 ]]
-GENOCIDE = add_spell {
+GENOCIDE_I = add_spell {
 	["name"] = 	"Genocide",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	25,
@@ -65,37 +65,38 @@ GENOCIDE = add_spell {
 	["mana_max"] = 	50,
 	["fail"] = 	20,
 	["stat"] = 	A_WIS,
-	["extra"] = 	function () if get_check2("Genocide all monsters near you (Y=all in radius, n=race on whole map)?", TRUE) == TRUE then return TRUE else return FALSE end end,
-	["spell"] = 	function(args)
-			local type
-
-			type = 0
-			if get_level(Ind, GENOCIDE) >= 15 then type = 1 end
-			if type == 0 then
-				genocide(Ind)
-			else
-				if args.aux == TRUE then
-					obliteration(Ind)
-				else
-					genocide(Ind)
-				end
-			end
+	["extra"] = 	FALSE,
+	["spell"] = 	function()
+			genocide(Ind)
 	end,
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{
-			"Casts 'Genocide' on all monsters of particular race on the level",
-			"At level 15 it can be used as an 'Obliteration' spell instead,",
-			"eradicating all monsters in your vincinity",
-	}
+	["desc"] = 	{ "Casts 'Genocide' on all monsters of particular race on the level.", }
+}
+GENOCIDE_II = add_spell {
+	["name"] = 	"Obliteration",
+	["school"] = 	{SCHOOL_UDUN},
+	["level"] = 	40,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["fail"] = 	20,
+	["stat"] = 	A_WIS,
+	["extra"] = 	TRUE,
+	["spell"] = 	function()
+			obliteration(Ind)
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{ "Casts 'Obliteration' on all monsters in your vincinity.", }
 }
 
 WRAITHFORM = add_spell {
 	["name"] = 	"Wraithform",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	35,
-	["mana"] = 	20,
+	["mana"] = 	40,
 	["mana_max"] = 	40,
 	["fail"] = 	20,
 	["spell"] = 	function()
@@ -109,7 +110,7 @@ WRAITHFORM = add_spell {
 			return "dur "..(20 + get_level(Ind, WRAITHFORM, 40)).."+d30"
 	end,
 	["desc"] = 	{
-			"Turns you into an immaterial being",
+			"Turns you into an immaterial being.",
 			"***Affected by the Meta spell: Project Spell***",
 	}
 }
@@ -135,7 +136,7 @@ DISEBOLT = add_spell {
 	["name"] = 	"Disenchantment Ray",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	40,
-	["mana"] = 	30,
+	["mana"] = 	50,
 	["mana_max"] = 	50,
 	["fail"] = 	-40,
 	["direction"] = TRUE,
@@ -150,29 +151,44 @@ DISEBOLT = add_spell {
 		return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{
-		"Conjures a powerful disenchantment beam",
-		"The damage is nearly irresistible and will increase with level"
+		"Conjures a powerful disenchantment beam.",
+		"The damage is nearly irresistible and will increase with level."
 	}
 }
 
-HELLFIRE = add_spell {
-	["name"] = 	"Hellfire",
+HELLFIRE_I = add_spell {
+	["name"] = 	"Hellfire I",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	20,
 	["mana"] = 	15,
-	["mana_max"] = 	40,
+	["mana_max"] = 	15,
 	["fail"] = 	30,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			local type
-			type = GF_HELL_FIRE
-			fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HELLFIRE, 500), 2 + get_level(Ind, HELLFIRE, 2), " casts a ball of hellfire for")
+			fire_ball(Ind, GF_HELL_FIRE, args.dir, 20 + get_level(Ind, HELLFIRE_I, 250), 2 + get_level(Ind, HELLFIRE_I, 2), " casts a ball of hellfire for")
 		end,
 	["info"] = 	function()
-			return "dam "..(20 + get_level(Ind, HELLFIRE, 500)).." rad "..(2 + get_level(Ind, HELLFIRE, 2))
+			return "dam "..(20 + get_level(Ind, HELLFIRE_I, 250)).." rad "..(2 + get_level(Ind, HELLFIRE_I, 2))
 		end,
-	["desc"] = 	{ "Conjures a ball of hellfire to burn your foes to ashes", }
+	["desc"] = 	{ "Conjures a ball of hellfire to burn your foes to ashes.", }
+}
+HELLFIRE_II = add_spell {
+	["name"] = 	"Hellfire II",
+	["school"] = 	{SCHOOL_UDUN},
+	["level"] = 	40,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
+	["fail"] = 	0,
+	["direction"] = TRUE,
+	["ftk"] = 	2,
+	["spell"] = 	function(args)
+			fire_ball(Ind, GF_HELL_FIRE, args.dir, 20 + 250 + get_level(Ind, HELLFIRE_II, 250), 2 + get_level(Ind, HELLFIRE_I, 2), " casts a ball of hellfire for")
+		end,
+	["info"] = 	function()
+			return "dam "..(20 + 250 + get_level(Ind, HELLFIRE_II, 250)).." rad "..(2 + get_level(Ind, HELLFIRE_I, 2))
+		end,
+	["desc"] = 	{ "Conjures a ball of hellfire to burn your foes to ashes.", }
 }
 
 STOPWRAITH = add_spell {
@@ -192,7 +208,7 @@ STOPWRAITH = add_spell {
 			return ""
 	end,
 	["desc"] = 	{
-			"Immediately returns you into a material being",
+			"Immediately returns you to material form.",
 			"***Affected by the Meta spell: Project Spell***",
 	}
 }

@@ -1,22 +1,52 @@
 -- handle the meta school
 
-RECHARGE = add_spell {
-	["name"] = 	"Recharge",
+RECHARGE_I = add_spell {
+	["name"] = 	"Recharge I",
 	["school"] = 	{SCHOOL_META},
 	["level"] = 	5,
 	["mana"] = 	10,
-	["mana_max"] = 	100,
+	["mana_max"] = 	10,
 	["fail"] = 	10,
 	["stat"] = 	A_INT,
 	["spell"] = 	function()
-			recharge(Ind, 10 + get_level(Ind, RECHARGE, 140))
+			recharge(Ind, 10 + get_level(Ind, RECHARGE_I, 50))
 	end,
 	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, RECHARGE, 140))
+			return "power "..(10 + get_level(Ind, RECHARGE_I, 50))
 	end,
-	["desc"] = 	{
-			"Taps on the ambient mana to recharge an object's power (charges or mana)",
-	}
+	["desc"] = 	{ "Taps on the ambient mana to recharge an object's power (charges or mana).", }
+}
+RECHARGE_II = add_spell {
+	["name"] = 	"Recharge II",
+	["school"] = 	{SCHOOL_META},
+	["level"] = 	20,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	-30,
+	["stat"] = 	A_INT,
+	["spell"] = 	function()
+			recharge(Ind, 10 + 50 + get_level(Ind, RECHARGE_II, 50))
+	end,
+	["info"] = 	function()
+			return "power "..(10 + 50 + get_level(Ind, RECHARGE_II, 50))
+	end,
+	["desc"] = 	{ "Taps on the ambient mana to recharge an object's power (charges or mana).", }
+}
+RECHARGE_III = add_spell {
+	["name"] = 	"Recharge III",
+	["school"] = 	{SCHOOL_META},
+	["level"] = 	40,
+	["mana"] = 	100,
+	["mana_max"] = 	100,
+	["fail"] = 	-95,
+	["stat"] = 	A_INT,
+	["spell"] = 	function()
+			recharge(Ind, 10 + get_level(Ind, RECHARGE_III, 140))
+	end,
+	["info"] = 	function()
+			return "power "..(10 + get_level(Ind, RECHARGE_III, 140))
+	end,
+	["desc"] = 	{ "Taps on the ambient mana to recharge an object's power (charges or mana).", }
 }
 
 PROJECT_SPELLS = add_spell {
@@ -42,7 +72,7 @@ PROJECT_SPELLS = add_spell {
 	end,
 	["desc"] = 	{
 			"Affects some of your spells(mostly utility ones) to make them",
-			"have an effect on your nearby party members",
+			"have an effect on your nearby party members.",
 	}
 }
 
@@ -51,7 +81,7 @@ DISPERSEMAGIC = add_spell {
 	["school"] = 	{SCHOOL_META},
 	["level"] = 	15,
 	["mana"] = 	30,
-	["mana_max"] = 	60,
+	["mana_max"] = 	30,
 	["fail"] = 	10,
 	["stat"] = 	A_INT,
 	-- Unnafected by blindness
@@ -67,30 +97,16 @@ DISPERSEMAGIC = add_spell {
 			if get_level(Ind, DISPERSEMAGIC, 50) >= 10 then
 				set_slow(Ind, 0)
 				set_fast(Ind, 0, 0)
-			end
-			if get_level(Ind, DISPERSEMAGIC, 50) >= 15 then
 				set_stun(Ind, 0)
-				-- set_meditation(Ind, 0)
-				set_cut(Ind, 0, 0)
-			end
-			if get_level(Ind, DISPERSEMAGIC, 50) >= 20 then
-				set_hero(Ind, 0)
-				set_shero(Ind, 0)
-				set_blessed(Ind, 0)
-				set_shield(Ind, 0, 0, 0, 0, 0)
-				set_afraid(Ind, 0)
 			end
 	end,
 	["info"] = 	function()
 			return ""
 	end,
 	["desc"] = 	{
-			"Dispels a lot of magic that can affect you, be it good or bad",
-			"Level 1: blindness",
-			"Level 5: confusion and hallucination",
-			"Level 10: speed (both bad or good)",
-			-- "Level 15: stunning, meditation, cuts",
-			"Level 15: stunning, cuts",
-			"Level 20: hero, super hero, bless, shields, afraid",
+			"Dispels a lot of magic that can affect you, be it good or bad.",
+			"Level 1: blindness.",
+			"Level 5: confusion and hallucination.",
+			"Level 10: speed (both bad or good) and stun.",
 	}
 }

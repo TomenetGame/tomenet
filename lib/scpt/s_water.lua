@@ -1,59 +1,151 @@
 -- handle the water school
 
-function get_frostbolt_dam()
-	return 4 + get_level(Ind, FROSTBOLT, 25), 6 + get_level(Ind, FROSTBOLT, 25) + 0
+function get_frostbolt_dam(Ind, limit_lev)
+	--return 4 + get_level(Ind, FROSTBOLT, 25), 6 + get_level(Ind, FROSTBOLT, 25) + 0
+	local lev
+
+	lev = get_level(Ind, FROSTBOLT_I, 50)
+	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
+
+	return 4 + (lev / 2), 6 + (lev / 2) + 0
 end
-FROSTBOLT = add_spell {
-	["name"] = 	"Frost Bolt",
+FROSTBOLT_I = add_spell {
+	["name"] = 	"Frost Bolt I",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	8,
 	["mana"] = 	2,
-	["mana_max"] = 	11,
+	["mana_max"] = 	2,
 	["fail"] = 	-10,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-			fire_bolt(Ind, GF_COLD, args.dir, damroll(get_frostbolt_dam()), " casts a frost bolt for")
+			fire_bolt(Ind, GF_COLD, args.dir, damroll(get_frostbolt_dam(Ind, 1)), " casts a frost bolt for")
 		end,
 	["info"] = 	function()
 			local x, y
 
-			x, y = get_frostbolt_dam()
+			x, y = get_frostbolt_dam(Ind, 1)
 			return "dam "..x.."d"..y
 		end,
-	["desc"] = 	{ "Conjures up icy moisture into a powerful frost bolt", }
+	["desc"] = 	{ "Conjures up icy moisture into a powerful frost bolt.", }
+}
+FROSTBOLT_II = add_spell {
+	["name"] = 	"Frost Bolt II",
+	["school"] = 	SCHOOL_WATER,
+	["level"] = 	22,
+	["mana"] = 	5,
+	["mana_max"] = 	5,
+	["fail"] = 	-30,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_bolt(Ind, GF_COLD, args.dir, damroll(get_frostbolt_dam(Ind, 14)), " casts a frost bolt for")
+		end,
+	["info"] = 	function()
+			local x, y
+
+			x, y = get_frostbolt_dam(Ind, 14)
+			return "dam "..x.."d"..y
+		end,
+	["desc"] = 	{ "Conjures up icy moisture into a powerful frost bolt.", }
+}
+FROSTBOLT_III = add_spell {
+	["name"] = 	"Frost Bolt III",
+	["school"] = 	SCHOOL_WATER,
+	["level"] = 	40,
+	["mana"] = 	11,
+	["mana_max"] = 	11,
+	["fail"] = 	-95,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_bolt(Ind, GF_COLD, args.dir, damroll(get_frostbolt_dam(Ind, 0)), " casts a frost bolt for")
+		end,
+	["info"] = 	function()
+			local x, y
+
+			x, y = get_frostbolt_dam(Ind, 0)
+			return "dam "..x.."d"..y
+		end,
+	["desc"] = 	{ "Conjures up icy moisture into a powerful frost bolt.", }
 }
 
-function get_waterbolt_dam()
-	return 4 + get_level(Ind, WATERBOLT, 25), 6 + get_level(Ind, WATERBOLT, 25) + 0
+function get_waterbolt_dam(Ind, limit_lev)
+	--return 4 + get_level(Ind, WATERBOLT, 25), 6 + get_level(Ind, WATERBOLT, 25) + 0
+	local lev
+
+	lev = get_level(Ind, WATERBOLT_I, 50)
+	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
+
+	return 4 + (lev / 2), 6 + (lev / 2) + 0
 end
-WATERBOLT = add_spell {
-	["name"] = 	"Water Bolt",
+WATERBOLT_I = add_spell {
+	["name"] = 	"Water Bolt I",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	14,
 	["mana"] = 	3,
+	["mana_max"] = 	3,
+	["fail"] = 	-10,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_bolt(Ind, GF_WATER, args.dir, damroll(get_waterbolt_dam(Ind, 1)), " casts a water bolt for")
+		end,
+	["info"] = 	function()
+			local x, y
+
+			x, y = get_waterbolt_dam(Ind, 1)
+			return "dam "..x.."d"..y
+		end,
+	["desc"] = 	{ "Conjures up water into a powerful bolt.", }
+}
+WATERBOLT_II = add_spell {
+	["name"] = 	"Water Bolt II",
+	["school"] = 	SCHOOL_WATER,
+	["level"] = 	24,
+	["mana"] = 	8,
+	["mana_max"] = 	8,
+	["fail"] = 	-10,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_bolt(Ind, GF_WATER, args.dir, damroll(get_waterbolt_dam(Ind, 10)), " casts a water bolt for")
+		end,
+	["info"] = 	function()
+			local x, y
+
+			x, y = get_waterbolt_dam(Ind, 10)
+			return "dam "..x.."d"..y
+		end,
+	["desc"] = 	{ "Conjures up water into a powerful bolt.", }
+}
+WATERBOLT_III = add_spell {
+	["name"] = 	"Water Bolt III",
+	["school"] = 	SCHOOL_WATER,
+	["level"] = 	40,
+	["mana"] = 	17,
 	["mana_max"] = 	17,
 	["fail"] = 	-10,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-			fire_bolt(Ind, GF_WATER, args.dir, damroll(get_waterbolt_dam()), " casts a water bolt for")
+			fire_bolt(Ind, GF_WATER, args.dir, damroll(get_waterbolt_dam(Ind, 0)), " casts a water bolt for")
 		end,
 	["info"] = 	function()
 			local x, y
 
-			x, y = get_waterbolt_dam()
+			x, y = get_waterbolt_dam(Ind, 0)
 			return "dam "..x.."d"..y
 		end,
-	["desc"] = 	{ "Conjures up water into a powerful bolt", }
+	["desc"] = 	{ "Conjures up water into a powerful bolt.", }
 }
 
 TIDALWAVE = add_spell {
 	["name"] = 	"Tidal Wave",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	16,
-	["mana"] = 	16,
-	["mana_max"] = 	40,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
 	["fail"] = 	20,
 	["spell"] = 	function()
 			fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 1, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
@@ -63,39 +155,47 @@ TIDALWAVE = add_spell {
 	end,
 	["desc"] = 	{
 			"Summons a monstruous tidal wave that will expand and crush the",
-			"monsters under it's mighty waves"
+			"monsters under it's mighty waves."
 	}
 }
 
-ICESTORM = add_spell {
-	["name"] = 	"Frost Barrier",
+ICESTORM_I = add_spell {
+	["name"] = 	"Frost Barrier I",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	22,
 	["mana"] = 	30,
-	["mana_max"] = 	60,
+	["mana_max"] = 	30,
 	["fail"] = 	20,
 	["spell"] = 	function()
-			local type
-
-			if get_level(Ind, ICESTORM, 50) >= 15 then type = GF_ICE
-			else type = GF_COLD end
-			fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1, 20 + get_level(Ind, ICESTORM, 47), 5, EFF_STORM, " summons an icy  for")
+			fire_wave(Ind, GF_COLD, 0, 80 + get_level(Ind, ICESTORM_I, 200), 1, 20 + get_level(Ind, ICESTORM_I, 47), 5, EFF_STORM, " summons an icy  for")
 	end,
 	["info"] = 	function()
-			return "dam "..(80 + get_level(Ind, ICESTORM, 200)).." rad 1 dur "..(20 + get_level(Ind, ICESTORM, 47))
+			return "dam "..(80 + get_level(Ind, ICESTORM_I, 200)).." rad 1 dur "..(20 + get_level(Ind, ICESTORM_I, 47))
 	end,
-	["desc"] = 	{
-			"Engulfs you in a whirl of roaring cold that strikes all foes at close range",
-			"At level 15 it turns into shards of ice"
-	}
+	["desc"] = 	{ "Engulfs you in a whirl of roaring cold that strikes all foes at close range.", }
+}
+ICESTORM_II = add_spell {
+	["name"] = 	"Frost Barrier II",
+	["school"] = 	{SCHOOL_WATER},
+	["level"] = 	37,
+	["mana"] = 	60,
+	["mana_max"] = 	60,
+	["fail"] = 	-10,
+	["spell"] = 	function()
+			fire_wave(Ind, GF_ICE, 0, 80 + get_level(Ind, ICESTORM_I, 200), 1, 20 + get_level(Ind, ICESTORM_I, 47), 5, EFF_STORM, " summons an icy  for")
+	end,
+	["info"] = 	function()
+			return "dam "..(80 + get_level(Ind, ICESTORM_I, 200)).." rad 1 dur "..(20 + get_level(Ind, ICESTORM_I, 47))
+	end,
+	["desc"] = 	{ "Engulfs you in a whirl of sparkling ice that strikes all foes at close range.", }
 }
 
 ENTPOTION = add_spell {
 	["name"] = 	"Ent's Potion",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	6,
-	["mana"] = 	7,
-	["mana_max"] = 	15,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
 	["fail"] = 	20,
 	["spell"] = 	function()
 				--if player.suscep_life == false then
@@ -127,25 +227,55 @@ ENTPOTION = add_spell {
 			end
 	end,
 	["desc"] = 	{
-			"Fills up your stomach",
-			"At level 5 it boldens your heart",
-			"At level 12 it make you heroic",
+			"Fills up your stomach.",
+			"At level 5 it boldens your heart.",
+			"At level 12 it make you heroic.",
 			"***Affected by the Meta spell: Project Spell***",
 	}
 }
 
-VAPOR = add_spell {
-	["name"] = 	"Vapor",
+VAPOR_I = add_spell {
+	["name"] = 	"Vapor I",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	2,
 	["mana"] = 	2,
 	["mana_max"] = 	12,
 	["fail"] = 	20,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_VAPOUR, 0, 3 + get_level(Ind, VAPOR, 60), 3 + get_level(Ind, VAPOR, 4, 0), 5, 8, " fires a cloud of vapor for")
+			fire_cloud(Ind, GF_VAPOUR, 0, 3 + get_level(Ind, VAPOR_I, 20), 3 + get_level(Ind, VAPOR_I, 4, 0), 5, 8, " fires a cloud of vapor for")
 	end,
 	["info"] = 	function()
-			return "dam "..(3 + get_level(Ind, VAPOR, 60)).." rad "..(3 + get_level(Ind, VAPOR, 4, 0)).." dur 5"
+			return "dam "..(3 + get_level(Ind, VAPOR_I, 20)).." rad "..(3 + get_level(Ind, VAPOR_I, 4, 0)).." dur 5"
 	end,
-	["desc"] = 	{ "Fills the air with toxic moisture to eradicate annoying critters" }
+	["desc"] = 	{ "Fills the air with toxic moisture to eradicate annoying critters." }
+}
+VAPOR_II = add_spell {
+	["name"] = 	"Vapor II",
+	["school"] = 	{SCHOOL_WATER},
+	["level"] = 	20,
+	["mana"] = 	5,
+	["mana_max"] = 	5,
+	["fail"] = 	-10,
+	["spell"] = 	function()
+			fire_cloud(Ind, GF_VAPOUR, 0, 3 + 20 + get_level(Ind, VAPOR_II, 20), 3 + get_level(Ind, VAPOR_I, 4, 0), 5, 8, " fires a cloud of vapor for")
+	end,
+	["info"] = 	function()
+			return "dam "..(3 + get_level(Ind, VAPOR_II, 20)).." rad "..(3 + get_level(Ind, VAPOR_I, 4, 0)).." dur 5"
+	end,
+	["desc"] = 	{ "Fills the air with toxic moisture to eradicate annoying critters." }
+}
+VAPOR_III = add_spell {
+	["name"] = 	"Vapor III",
+	["school"] = 	{SCHOOL_WATER},
+	["level"] = 	40,
+	["mana"] = 	12,
+	["mana_max"] = 	12,
+	["fail"] = 	-60,
+	["spell"] = 	function()
+			fire_cloud(Ind, GF_VAPOUR, 0, 3 + 40 + get_level(Ind, VAPOR_III, 20), 3 + get_level(Ind, VAPOR_I, 4, 0), 5, 8, " fires a cloud of vapor for")
+	end,
+	["info"] = 	function()
+			return "dam "..(3 + 40 + get_level(Ind, VAPOR_III, 20)).." rad "..(3 + get_level(Ind, VAPOR_I, 4, 0)).." dur 5"
+	end,
+	["desc"] = 	{ "Fills the air with toxic moisture to eradicate annoying critters." }
 }
