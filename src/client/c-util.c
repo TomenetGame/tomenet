@@ -5158,7 +5158,8 @@ Chain_Macro:
 
 											case SV_R_TIME: { //Haste
 												damage = rget_level(15) * r_imperatives[imperative].damage / 10;
-												if (damage < 1) damage = 1; if (damage > 10) damage = 10;
+												if (damage < 1) damage = 1;
+												if (damage > 10) damage = 10;
 												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d +%d speed",
 												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, damage);
 											break; }
@@ -5171,7 +5172,8 @@ Chain_Macro:
 											case SV_R_ICEE:
 											case SV_R_PLAS: { //Shield
 													damage = rget_level(20) * r_imperatives[imperative].damage / 10;
-													if (damage < 1) damage = 1; if (damage > 20) damage = 20;
+													if (damage < 1) damage = 1;
+													if (damage > 20) damage = 20;
 													sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d dur %d+1d%d +%d AC",
 													color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy, duration/2, duration/2, damage);
 											break; }
