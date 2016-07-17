@@ -3373,8 +3373,9 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 				if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 					switch(o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
-					case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
-							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+							break;
 					case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
@@ -3738,8 +3739,9 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 					if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 						switch(o_ptr->tval) {
 						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
-						case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
-								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+								break;
 						case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
@@ -4401,8 +4403,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 				if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 					switch(o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
-					case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
-							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+							break;
 					case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
@@ -4903,8 +4906,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 					if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 						switch(o_ptr->tval) {
 						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
-						case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
-								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+						case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+								else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+								break;
 						case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
