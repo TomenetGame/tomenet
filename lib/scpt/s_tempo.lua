@@ -22,7 +22,7 @@ MAGELOCK_II = add_spell {
 	["level"] = 	41,
 	["mana"] = 	60,
 	["mana_max"] = 	60,
-	["fail"] = 	-20,
+	["fail"] = 	-60,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			local ret, x, y, c_ptr

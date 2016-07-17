@@ -105,7 +105,7 @@ WATERBOLT_II = add_spell {
 	["level"] = 	24,
 	["mana"] = 	8,
 	["mana_max"] = 	8,
-	["fail"] = 	-30,
+	["fail"] = 	-34,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -273,7 +273,7 @@ VAPOR_II = add_spell {
 	["level"] = 	20,
 	["mana"] = 	5,
 	["mana_max"] = 	5,
-	["fail"] = 	-10,
+	["fail"] = 	-20,
 	["spell"] = 	function()
 			fire_cloud(Ind, GF_VAPOUR, 0, 3 + 20 + get_level(Ind, VAPOR_II, 20), 3 + get_level(Ind, VAPOR_I, 4, 0), 5, 8, " fires a cloud of vapor for")
 	end,
@@ -288,7 +288,7 @@ VAPOR_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	12,
 	["mana_max"] = 	12,
-	["fail"] = 	-50,
+	["fail"] = 	-75,
 	["spell"] = 	function()
 			fire_cloud(Ind, GF_VAPOUR, 0, 3 + 40 + get_level(Ind, VAPOR_III, 20), 3 + get_level(Ind, VAPOR_I, 4, 0), 5, 8, " fires a cloud of vapor for")
 	end,

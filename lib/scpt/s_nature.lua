@@ -66,7 +66,7 @@ HEALING_I = add_spell {
 	["level"] = 	10,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	30,
+	["fail"] = 	10,
 	["spell"] = 	function()
 			local status_ailments = 1024
 			--hacks to cure effects same as potions would
@@ -100,7 +100,7 @@ HEALING_II = add_spell {
 	["level"] = 	25,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	0,
+	["fail"] = 	-30,
 	["spell"] = 	function()
 			local status_ailments = 1024
 			--hacks to cure effects same as potions would
@@ -134,7 +134,7 @@ HEALING_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	120,
 	["mana_max"] = 	120,
-	["fail"] = 	-40,
+	["fail"] = 	-70,
 	["spell"] = 	function()
 			local status_ailments = 1024
 			--hacks to cure effects same as potions would
@@ -194,7 +194,7 @@ RECOVERY_II = add_spell	{
 	["level"] = 	35,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	-20,
+	["fail"] = 	-30,
 	["spell"] = 	function()
 			set_poisoned(Ind, 0, 0)
 			set_cut(Ind, 0, 0)
