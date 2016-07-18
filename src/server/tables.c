@@ -3425,7 +3425,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 1100, },
 		{ SKILL_OSPIRIT,
-			'+', 0,
+			'+', 1000,
 			'+', 1100, },
 #endif
 		{ SKILL_MIMIC,
@@ -3543,7 +3543,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 1100, },
 		{ SKILL_OSPIRIT,
-			'+', 0,
+			'+', 1000,
 			'+', 1100, },
 #endif
 		{ SKILL_MIMIC,
