@@ -682,7 +682,13 @@ bool do_shadow_gate(int Ind, int range) {
 		if ((idx = zcave[ny][nx].m_idx) <= 0) {//not a monster?
 			if (!idx || idx < -NumPlayers) continue;//not a player?
 			else if (!check_hostile(-idx, Ind)) continue;
+			/* LoS? (player) */
+			//if (!p_ptr->play_vis[-idx]) continue;
 		}
+		/* LoS? (monster) */
+		//else if (!p_ptr->mon_vis[idx]) continue;
+		/* Real LoS (not ESP)? */
+		if (!los(&p_ptr->wpos, p_ptr->py, p_ptr->px, ny, nx)) continue;
 		/* don't remember monsters farther away than others */
 		if (dist > mdist) continue;
 		/* decide randomly between equally close ones */
@@ -697,7 +703,7 @@ bool do_shadow_gate(int Ind, int range) {
 		return FALSE;
 	}
 
-	teleport_player_to(Ind, ny, nx);
+	teleport_player_to(Ind, ty, tx);
 	return TRUE;
 }
 #endif
