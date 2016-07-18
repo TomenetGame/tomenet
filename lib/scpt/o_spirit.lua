@@ -90,6 +90,76 @@ OCURSEDD_III = add_spell {
 	["desc"] = 	{ "Curse an enemy, causing wounds.", }
 }
 
+STARLIGHT_I = add_spell {
+	["name"] = 	"Starlight I",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["spell_power"] = 0,
+	["level"] = 	2,
+	["mana"] = 	4,
+	["mana_max"] = 	4,
+	["fail"] = 	10,
+	["spell"] = 	function()
+		if get_level(Ind, STARLIGHT_I, 50) >= 10 then
+			lite_area(Ind, 10, 4)
+		else
+			msg_print(Ind, "You are surrounded by a globe of light")
+			lite_room(Ind, player.wpos, player.py, player.px)
+		end
+	end,
+	["info"] = 	function()
+		if get_level(Ind, STARLIGHT_I, 50) >= 10 then
+			return "dam "..(10 + get_level(Ind, STARLIGHT_I, 100)).." rad "..(5 + get_level(Ind, STARLIGHT_I, 6))
+		else
+			return ""
+		end
+	end,
+	["desc"] = 	{
+		"Creates a globe of starlight.",
+		"At level 10 it damages monsters that are susceptible to light.",
+	}
+}
+STARLIGHT_II = add_spell {
+	["name"] = 	"Starlight II",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["spell_power"] = 0,
+	["level"] = 	22,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	-20,
+	["spell"] = 	function()
+		msg_print(Ind, "You are surrounded by a globe of light")
+		lite_room(Ind, player.wpos, player.py, player.px)
+		fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, STARLIGHT_I, 100), 5 + get_level(Ind, STARLIGHT_I, 6), " calls a globe of light for")
+	end,
+	["info"] = 	function()
+		return "dam "..(10 + get_level(Ind, STARLIGHT_I, 100)).." rad "..(5 + get_level(Ind, STARLIGHT_I, 6))
+	end,
+	["desc"] = 	{ "Creates a globe of starlight, powerful enough to hurt monsters.", }
+}
+
+DETECTCREATURES = add_spell {
+	["name"] = 	"Detect Creatures",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["level"] = 	7,
+	["mana"] = 	5,
+	["mana_max"] = 	5,
+	["fail"] = 	10,
+	["spell"] = 	function()
+		detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
+--		if player.spell_project > 0 then
+--			fire_ball(Ind, GF_DETECTINVIS_PLAYER, 0, 1, player.spell_project, "")
+--		end
+	end,
+	["info"] = 	function()
+--		return "rad "..(10 + get_level(Ind, DETECTCREATURES, 40))
+		return ""
+	end,
+	["desc"] = 	{
+		"Detects all nearby creatures.",
+--		"***Affected by the Meta spell: Project Spell***",
+	}
+}
+
 function get_litebeam_dam(Ind, limit_lev)
 	--return 5 + get_level(Ind, LITEBEAM, 25), 7 + get_level(Ind, LITEBEAM, 25) + 1
 	local lev
@@ -338,74 +408,4 @@ STOPPOSSESS = add_spell {
 		return ""
 	end,
 	["desc"] =	{ "Cancel charming of any monsters.", }
-}
-
-STARLIGHT_I = add_spell {
-	["name"] = 	"Starlight I",
-	["school"] = 	{SCHOOL_OSPIRIT},
-	["spell_power"] = 0,
-	["level"] = 	2,
-	["mana"] = 	4,
-	["mana_max"] = 	4,
-	["fail"] = 	10,
-	["spell"] = 	function()
-		if get_level(Ind, STARLIGHT_I, 50) >= 10 then
-			lite_area(Ind, 10, 4)
-		else
-			msg_print(Ind, "You are surrounded by a globe of light")
-			lite_room(Ind, player.wpos, player.py, player.px)
-		end
-	end,
-	["info"] = 	function()
-		if get_level(Ind, STARLIGHT_I, 50) >= 10 then
-			return "dam "..(10 + get_level(Ind, STARLIGHT_I, 100)).." rad "..(5 + get_level(Ind, STARLIGHT_I, 6))
-		else
-			return ""
-		end
-	end,
-	["desc"] = 	{
-		"Creates a globe of starlight.",
-		"At level 10 it damages monsters that are susceptible to light.",
-	}
-}
-STARLIGHT_II = add_spell {
-	["name"] = 	"Starlight II",
-	["school"] = 	{SCHOOL_OSPIRIT},
-	["spell_power"] = 0,
-	["level"] = 	22,
-	["mana"] = 	15,
-	["mana_max"] = 	15,
-	["fail"] = 	-20,
-	["spell"] = 	function()
-		msg_print(Ind, "You are surrounded by a globe of light")
-		lite_room(Ind, player.wpos, player.py, player.px)
-		fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, STARLIGHT_I, 100), 5 + get_level(Ind, STARLIGHT_I, 6), " calls a globe of light for")
-	end,
-	["info"] = 	function()
-		return "dam "..(10 + get_level(Ind, STARLIGHT_I, 100)).." rad "..(5 + get_level(Ind, STARLIGHT_I, 6))
-	end,
-	["desc"] = 	{ "Creates a globe of starlight, powerful enough to hurt monsters.", }
-}
-
-DETECTCREATURES = add_spell {
-	["name"] = 	"Detect Creatures",
-	["school"] = 	{SCHOOL_OSPIRIT},
-	["level"] = 	7,
-	["mana"] = 	5,
-	["mana_max"] = 	5,
-	["fail"] = 	10,
-	["spell"] = 	function()
-		detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
---		if player.spell_project > 0 then
---			fire_ball(Ind, GF_DETECTINVIS_PLAYER, 0, 1, player.spell_project, "")
---		end
-	end,
-	["info"] = 	function()
---		return "rad "..(10 + get_level(Ind, DETECTCREATURES, 40))
-		return ""
-	end,
-	["desc"] = 	{
-		"Detects all nearby creatures.",
---		"***Affected by the Meta spell: Project Spell***",
-	}
 }

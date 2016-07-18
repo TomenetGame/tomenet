@@ -55,127 +55,6 @@ OCURSEDD = add_spell {
 end
 ]]
 
-ODRAINLIFE_I = add_spell {
-	["name"] = 	"Sap Life I",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["am"] = 	75,
-	["spell_power"] = 0,
-	["level"] = 	20,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
-	["fail"] = 	0,
-	["stat"] = 	A_WIS,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE_I, 3))
-		hp_player(Ind, player.ret_dam / 4)
-	end,
-	["info"] = 	function()
-		return "drains "..(10 + get_level(Ind, ODRAINLIFE_I, 3)).."% life"
-	end,
-	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
-}
-ODRAINLIFE_II = add_spell {
-	["name"] = 	"Sap Life II",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["am"] = 	75,
-	["spell_power"] = 0,
-	["level"] = 	40,
-	["mana"] = 	50,
-	["mana_max"] = 	50,
-	["fail"] = 	-65,
-	["stat"] = 	A_WIS,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE_I, 10))
-		hp_player(Ind, player.ret_dam / 4)
-	end,
-	["info"] = 	function()
-		return "drains "..(10 + get_level(Ind, ODRAINLIFE_I, 10)).."% life"
-	end,
-	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
-}
-
-POISONFOG_I = add_spell {
-	["name"] = 	"Poisonous Fog I",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	3,
-	["mana"] = 	3,
-	["mana_max"] = 	3,
-	["fail"] = 	20,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		fire_cloud(Ind, GF_POIS, args.dir, (1 + get_level(Ind, POISONFOG_I, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
-	end,
-	["info"] = 	function()
-		return "dam "..(1 + get_level(Ind, POISONFOG_I, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
-	end,
-	["desc"] = {
-		"Creates a cloud of poisonous fog.",
-		"The cloud will persist for some turns, damaging all monsters passing by.",
-	}
-}
-POISONFOG_II = add_spell {
-	["name"] = 	"Poisonous Fog II",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	18,
-	["mana"] = 	9,
-	["mana_max"] = 	9,
-	["fail"] = 	-30,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		fire_cloud(Ind, GF_POIS, args.dir, (1 + 38 + get_level(Ind, POISONFOG_II, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
-	end,
-	["info"] = 	function()
-		return "dam "..(1 + 38 + get_level(Ind, POISONFOG_II, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
-	end,
-	["desc"] = {
-		"Creates a cloud of poison.",
-		"The cloud will persist for some turns, damaging all monsters passing by.",
-		"At level 30 it turns into a thick gas preventing living beings from breathing.",
-	}
-}
-POISONFOG_III = add_spell {
-	["name"] = 	"Poisonous Fog III",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	33,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
-	["fail"] = 	-60,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		fire_cloud(Ind, GF_POIS, args.dir, (1 + 76 + get_level(Ind, POISONFOG_III, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
-	end,
-	["info"] = 	function()
-		return "dam "..(1 + 76 + get_level(Ind, POISONFOG_III, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
-	end,
-	["desc"] = {
-		"Creates a cloud of thick fog, not just poisoning but also preventing",
-		"living beings from breathing. The cloud will persist for some turns.",
-	}
-}
-
-SHADOWGATE = add_spell {
-	["name"] = 	"Shadow Gate",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["am"] = 	75,
-	["spell_power"] = 0,
-	["level"] = 	24,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
-	["fail"] = 	-30,
-	["spell"] = 	function()
-		do_shadow_gate(Ind, 5 + get_level(Ind, SHADOWGATE, 5))
-		end,
-	["info"] = 	function()
-		return "range "..(5 + get_level(Ind, SHADOWGATE, 5))
-		end,
-	["desc"] = 	{ "Teleports you to the nearest opponent.", }
-}
-
 function get_darkbolt_dam(Ind, limit_lev)
 	--return 5 + get_level(Ind, DARKBOLT, 25), 7 + get_level(Ind, DARKBOLT, 25) + 1
 	local lev
@@ -249,22 +128,107 @@ DARKBOLT_III = add_spell {
 	["desc"] = 	{ "Conjures up shadows into a powerful bolt.", }
 }
 
-OINVIS = add_spell {
-	["name"] = 	"Shadow Shroud",
+POISONFOG_I = add_spell {
+	["name"] = 	"Poisonous Fog I",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
-	["level"] = 	30,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
-	["fail"] = 	-40,
-	["spell"] = 	function()
---		if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50)) end
-		set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50))
+	["level"] = 	3,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
+	["fail"] = 	20,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_cloud(Ind, GF_POIS, args.dir, (1 + get_level(Ind, POISONFOG_I, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
-		return "dur "..(15 + get_level(Ind, OINVIS, 50)).."+d20 power "..(20 + get_level(Ind, OINVIS, 50))
+		return "dam "..(1 + get_level(Ind, POISONFOG_I, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
 	end,
-	["desc"] = 	{ "Grants invisibility.", }
+	["desc"] = {
+		"Creates a cloud of poisonous fog.",
+		"The cloud will persist for some turns, damaging all monsters passing by.",
+	}
+}
+POISONFOG_II = add_spell {
+	["name"] = 	"Poisonous Fog II",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	18,
+	["mana"] = 	9,
+	["mana_max"] = 	9,
+	["fail"] = 	-30,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_cloud(Ind, GF_POIS, args.dir, (1 + 38 + get_level(Ind, POISONFOG_II, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
+	end,
+	["info"] = 	function()
+		return "dam "..(1 + 38 + get_level(Ind, POISONFOG_II, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
+	end,
+	["desc"] = {
+		"Creates a cloud of poison.",
+		"The cloud will persist for some turns, damaging all monsters passing by.",
+		"At level 30 it turns into a thick gas preventing living beings from breathing.",
+	}
+}
+POISONFOG_III = add_spell {
+	["name"] = 	"Poisonous Fog III",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	33,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	-60,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_cloud(Ind, GF_POIS, args.dir, (1 + 76 + get_level(Ind, POISONFOG_III, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
+	end,
+	["info"] = 	function()
+		return "dam "..(1 + 76 + get_level(Ind, POISONFOG_III, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
+	end,
+	["desc"] = {
+		"Creates a cloud of thick fog, not just poisoning but also preventing",
+		"living beings from breathing. The cloud will persist for some turns.",
+	}
+}
+
+ODRAINLIFE_I = add_spell {
+	["name"] = 	"Sap Life I",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["am"] = 	75,
+	["spell_power"] = 0,
+	["level"] = 	20,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	0,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE_I, 3))
+		hp_player(Ind, player.ret_dam / 4)
+	end,
+	["info"] = 	function()
+		return "drains "..(10 + get_level(Ind, ODRAINLIFE_I, 3)).."% life"
+	end,
+	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
+}
+ODRAINLIFE_II = add_spell {
+	["name"] = 	"Sap Life II",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["am"] = 	75,
+	["spell_power"] = 0,
+	["level"] = 	40,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["fail"] = 	-65,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE_I, 10))
+		hp_player(Ind, player.ret_dam / 4)
+	end,
+	["info"] = 	function()
+		return "drains "..(10 + get_level(Ind, ODRAINLIFE_I, 10)).."% life"
+	end,
+	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
 
 DETECTINVIS = add_spell {
@@ -381,3 +345,39 @@ OSLEEP_II = add_spell {
 	end,
 	["desc"] = { "Lets all nearby monsters fall asleep.", }
 }
+SHADOWGATE = add_spell {
+	["name"] = 	"Shadow Gate",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["am"] = 	75,
+	["spell_power"] = 0,
+	["level"] = 	24,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	-30,
+	["spell"] = 	function()
+		do_shadow_gate(Ind, 5 + get_level(Ind, SHADOWGATE, 5))
+		end,
+	["info"] = 	function()
+		return "range "..(5 + get_level(Ind, SHADOWGATE, 5))
+		end,
+	["desc"] = 	{ "Teleports you to the nearest opponent in line of sight.", }
+}
+
+OINVIS = add_spell {
+	["name"] = 	"Shadow Shroud",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	30,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	-40,
+	["spell"] = 	function()
+--		if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50)) end
+		set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50))
+	end,
+	["info"] = 	function()
+		return "dur "..(15 + get_level(Ind, OINVIS, 50)).."+d20 power "..(20 + get_level(Ind, OINVIS, 50))
+	end,
+	["desc"] = 	{ "Grants invisibility.", }
+}
+
