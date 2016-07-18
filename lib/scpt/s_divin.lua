@@ -32,7 +32,7 @@ IDENTIFY_I = add_spell {
 	["level"] = 	8,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
-	["fail"] = 	20,
+	["fail"] = 	30,
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			ident_spell(Ind)
@@ -48,7 +48,7 @@ IDENTIFY_II = add_spell {
 	["level"] = 	25,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	-20,
+	["fail"] = 	-15,
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			identify_pack(Ind)
@@ -108,7 +108,7 @@ VISION_II = add_spell {
 	["mana"] = 	55,
 	["mana_max"] = 	55,
 --	["stat"] = 	A_WIS,
-	["fail"] = 	-40,
+	["fail"] = 	-30,
 	["spell"] = 	function()
 			wiz_lite_extra(Ind)
 			if player.spell_project > 0 then

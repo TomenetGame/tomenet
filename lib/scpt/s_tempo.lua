@@ -58,7 +58,7 @@ SLOWMONSTER_II = add_spell {
 	["level"] = 	30,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	-10,
+	["fail"] = 	-30,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			fire_ball(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER_I, 100), 1, "")
