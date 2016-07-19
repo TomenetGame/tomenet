@@ -68,7 +68,7 @@ IDENTIFY_III = add_spell {
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			identify_pack(Ind)
-			fire_ball(Ind, GF_IDENTIFY_I, 0, 1, get_level(Ind, IDENTIFY_I, 3), "")
+			fire_ball(Ind, GF_IDENTIFY, 0, 1, get_level(Ind, IDENTIFY_I, 3), "")
 	end,
 	["info"] = 	function()
 			return "rad "..(get_level(Ind, IDENTIFY_I, 3))
