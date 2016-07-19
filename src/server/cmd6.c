@@ -995,7 +995,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			if (set_image(Ind, 0)) ident = TRUE;
 			if (heal_insanity(Ind, 40)) ident = TRUE;
-			if (p_ptr->food >= PY_FOOD_MAX)
+			if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
 				if (set_food(Ind, PY_FOOD_MAX - 1 - pval)) ident = TRUE;
 			if (do_res_stat(Ind, A_STR)) ident = TRUE;
 			if (do_res_stat(Ind, A_CON)) ident = TRUE;
@@ -3185,8 +3185,8 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, 0, 0)) ident = TRUE;
-		if (p_ptr->food >= PY_FOOD_MAX)
-		if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+		if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
+			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 		break;
 
 	case SV_STAFF_HEALING:
@@ -3927,8 +3927,8 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, 0, 0)) ident = TRUE;
-		if (p_ptr->food >= PY_FOOD_MAX)
-		if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+		if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
+			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 		if (o_ptr) o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
 		break;
 
@@ -4440,8 +4440,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, 0, 0)) ident = TRUE;
-		if (p_ptr->food >= PY_FOOD_MAX)
-		if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+		if (p_ptr->food >= PY_FOOD_MAX) /* ungorge */
+			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 		o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
 		break;
 
