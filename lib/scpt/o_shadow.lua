@@ -5,6 +5,7 @@ OCURSE = add_spell {
 	["name"] = 	"Curse",
 	["school"] = 	{SCHOOL_},
 	["am"] = 	75,
+	["spell_power"] = 0,
 	["level"] = 	1,
 	["mana"] = 	2,
 	["mana_max"] = 	30,
@@ -34,6 +35,7 @@ if (def_hack("TEST_SERVER", nil)) then
 OCURSEDD = add_spell {
 	["name"] = 	"Cause wounds",
 	["school"] = 	{SCHOOL_},
+	["spell_power"] = 0,
 	["am"] = 	75,
 	["spell_power"] = 0,
 	["level"] = 	5,
