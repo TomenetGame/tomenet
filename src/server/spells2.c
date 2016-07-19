@@ -663,7 +663,7 @@ bool do_banish_dragons(int Ind, int chance) {
 	return (TRUE);
 }
 
-#ifdef TEST_SERVER /* Occult */
+#ifdef ENABLE_OCCULT /* Occult */
 /* Teleport-to a monster */
 bool do_shadow_gate(int Ind, int range) {
 	player_type *p_ptr = Players[Ind];

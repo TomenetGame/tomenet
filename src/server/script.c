@@ -271,9 +271,14 @@ void set_server_features()
 #endif
 	lua_settop(L, oldtop);
 
-	//sflags_TEMP |= 0x00000004;
+#ifdef ENABLE_OCCULT
+	sflags_TEMP |= 0x00000004;
+	lua_dostring(L, "TEMP2 = 1");
+	lua_settop(L, oldtop);
+#else
 	lua_dostring(L, "TEMP2 = 0");
 	lua_settop(L, oldtop);
+#endif
 
 //	sflags_TEMP |= 0x00000008;
 	lua_dostring(L, "TEMP3 = 0");

@@ -493,22 +493,22 @@ $ENABLE_MCRAFT$D:
 $ENABLE_MCRAFT$I:1000:0
 $ENABLE_MCRAFT$F:DUMMY
 
-$TEST_SERVER$N:87:Shadow
-$TEST_SERVER$D:Ability to learn and use spells from the Shadow school.
-$TEST_SERVER$D:Spells mainly use the intelligence stat.
-$TEST_SERVER$A:11:Cast a spell
-$TEST_SERVER$I:1000:111
+$ENABLE_OCCULT$N:87:Shadow
+$ENABLE_OCCULT$D:Ability to learn and use spells from the Shadow school.
+$ENABLE_OCCULT$D:Spells mainly use the intelligence stat.
+$ENABLE_OCCULT$A:11:Cast a spell
+$ENABLE_OCCULT$I:1000:111
 
-$TEST_SERVER$N:88:Spirit
-$TEST_SERVER$D:Ability to learn and use spells from the Spirit school.
-$TEST_SERVER$D:Some spells use wisdom stat, some intelligence stat.
-$TEST_SERVER$A:11:Cast a spell
-$TEST_SERVER$I:1000:111
+$ENABLE_OCCULT$N:88:Spirit
+$ENABLE_OCCULT$D:Ability to learn and use spells from the Spirit school.
+$ENABLE_OCCULT$D:Some spells use wisdom stat, some intelligence stat.
+$ENABLE_OCCULT$A:11:Cast a spell
+$ENABLE_OCCULT$I:1000:111
 
-$TEST_SERVER$N:89:Occult Schools
-$TEST_SERVER$D:
-$TEST_SERVER$I:1000:0
-$TEST_SERVER$F:DUMMY
+$ENABLE_OCCULT$N:89:Occult Schools
+$ENABLE_OCCULT$D:
+$ENABLE_OCCULT$I:1000:0
+$ENABLE_OCCULT$F:DUMMY
 
 # additional ones
 
@@ -777,7 +777,7 @@ T:Magic:Magic Schools
 T:Magic:Prayer Schools
 T:Magic:Druidic Schools
 $ENABLE_MCRAFT$T:Magic:Mindcraft Schools
-$TEST_SERVER$T:Magic:Occult Schools
+$ENABLE_OCCULT$T:Magic:Occult Schools
 T:Magic:Runecraft
 $ENABLE_MAIA$T:Magic:Astral Knowledge
 T:Magic:Mimicry
@@ -816,8 +816,8 @@ $ENABLE_MCRAFT$T:Mindcraft Schools:Psycho-Power
 $ENABLE_MCRAFT$T:Mindcraft Schools:Attunement
 $ENABLE_MCRAFT$T:Mindcraft Schools:Mental Intrusion
 
-$TEST_SERVER$T:Occult Schools:Shadow
-$TEST_SERVER$T:Occult Schools:Spirit
+$ENABLE_OCCULT$T:Occult Schools:Shadow
+$ENABLE_OCCULT$T:Occult Schools:Spirit
 
 T:Runecraft:Light
 T:Runecraft:Darkness

@@ -1,5 +1,5 @@
 -- include Occult schools
-if (def_hack("TEST_SERVER", nil)) then
+if (def_hack("TEMP2", nil)) then
 __update_table = {
 	"scpt/update.lua",
 	"scpt/c-init.lua",

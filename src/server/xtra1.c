@@ -5747,11 +5747,11 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) csheet_boni[14].cb[8] |= CB9_SDEMN;
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) csheet_boni[14].cb[9] |= CB10_SUNDD;
 	//prob: it's melee only! if (get_skill(p_ptr, SKILL_HCURING) >= 50) csheet_boni[14].cb[9] |= CB10_SUNDD;
-#ifdef TEST_SERVER /* Occult */
+#ifdef ENABLE_OCCULT /* Occult */
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 40) csheet_boni[14].cb[9] |= CB10_SUNDD;
 #endif
 
-#ifdef TEST_SERVER /* Occult */
+#ifdef ENABLE_OCCULT /* Occult */
 	/* Should Occult schools really give boni? */
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 30) {
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;

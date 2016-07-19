@@ -2550,7 +2550,7 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_AIR,
 			'+', 0,
 			'+', 750, },
-#ifdef TEST_SERVER /* Occult */
+#ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
 			'+', 850, },
@@ -3175,7 +3175,7 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_MINTRUSION,
 			'+', 0,
 			'+', 500, },
-#ifdef TEST_SERVER /* Occult */
+#ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
 			'+', 500, },
@@ -3379,7 +3379,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 500, },
 		{ SKILL_MANA,
- #ifdef TEST_SERVER /* Occult */
+ #ifdef ENABLE_OCCULT /* Occult */
 			'+', 0,
  #else
 			'+', 1000,
@@ -3413,7 +3413,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 1000, },
 		{ SKILL_HOFFENSE,
- #ifdef TEST_SERVER /* Occult */
+ #ifdef ENABLE_OCCULT /* Occult */
 			'+', 0,
  #else
 			'+', 1000,
@@ -3428,7 +3428,7 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_HSUPPORT,
 			'+', 0,
 			'+', 900, },
- #ifdef TEST_SERVER /* Occult */
+ #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
 			'+', 1100, },
@@ -3504,7 +3504,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 500, },
 		{ SKILL_MANA,
- #ifdef TEST_SERVER /* Occult */
+ #ifdef ENABLE_OCCULT /* Occult */
 			'+', 0,
  #else
 			'+', 1000,
@@ -3538,7 +3538,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 1000, },
 		{ SKILL_HOFFENSE,
- #ifdef TEST_SERVER /* Occult */
+ #ifdef ENABLE_OCCULT /* Occult */
 			'+', 0,
  #else
 			'+', 1000,
@@ -3554,7 +3554,7 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_HSUPPORT,
 			'+', 0,
 			'+', 900, },//'+', 1000,
- #ifdef TEST_SERVER /* Occult */
+ #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
 			'+', 1100, },

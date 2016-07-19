@@ -190,7 +190,7 @@
 #define SKILL_SCHOOL_PRAYING	84
 #define SKILL_SCHOOL_DRUIDISM	85
 #define SKILL_SCHOOL_MINDCRAFT	86
-//#ifdef TEST_CLIENT//TEST_SERVER /* Occult */
+//#ifdef ENABLE_OCCULT /* Occult */
  #define SKILL_OSHADOW		87
  #define SKILL_OSPIRIT		88
  /* and the dummy skill for sorting: */

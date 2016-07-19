@@ -1062,7 +1062,7 @@ static int get_spellbook_store_order(int pval) {
 	if (spell_school[pval] == SCHOOL_ASTRAL) return 5;
 	/* mindcrafters */
 	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return 4;
-#ifdef TEST_SERVER
+#ifdef ENABLE_OCCULT
 	/* Occult */
 	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return 6;
 #endif

@@ -6448,6 +6448,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Sleep (Use "dam" as "power") */
 		case GF_OLD_SLEEP:
+#ifdef ENABLE_OCCULT
 			/* hack for Occult school's "Trance" spell */
 			if (dam & 0x400) {
 				/* fails? (not a ghost, spirit or elemental) */
@@ -6458,6 +6459,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				}
 				dam -= 0x400;
 			}
+#endif
 
 			if (seen) obvious = TRUE;
 

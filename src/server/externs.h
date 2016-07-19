@@ -1656,7 +1656,7 @@ extern bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr);
 extern u32b mod_ball_spell_flags(int typ, u32b flags);
 
 extern int py_create_gateway(int Ind);
-#ifdef TEST_SERVER /* Occult */
+#ifdef ENABLE_OCCULT /* Occult */
 extern bool do_shadow_gate(int Ind, int range);
 #endif
 

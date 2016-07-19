@@ -265,6 +265,8 @@
 #endif
 
 #ifdef TEST_SERVER
+ #define ENABLE_OCCULT		/* Enable o_*.lua 'Occult' magic schools (shamans, rogues, adventurers) */
+
  #define NEW_REMOVE_CURSE	/* rc has fail chance; allow projecting rc spell on others */
 
  /* limit to_ac to +30 instead of +35 -- Reason: Give base AC more weight!

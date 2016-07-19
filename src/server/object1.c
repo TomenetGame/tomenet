@@ -6062,7 +6062,7 @@ byte get_book_name_color(object_type *o_ptr) {
 		else if (o_ptr->sval == 18) return TERM_ORANGE;
 		/* mindcrafters */
 		else if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return TERM_YELLOW;
-#ifdef TEST_SERVER
+#ifdef ENABLE_OCCULT
 		/* Occult */
 		else if (o_ptr->sval >= 22 && o_ptr->sval <= 23) return TERM_BLUE;
 #endif
@@ -6103,7 +6103,7 @@ byte get_spellbook_name_colour(int pval) {
 	if (spell_school[pval] == SCHOOL_ASTRAL) return TERM_ORANGE;
 	/* yellow for mindcrafters */
 	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return TERM_YELLOW;
-#ifdef TEST_SERVER
+#ifdef ENABLE_OCCULT
 	/* blue for Occult */
 	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return TERM_BLUE;
 #endif

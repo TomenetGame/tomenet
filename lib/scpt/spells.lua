@@ -120,7 +120,7 @@ SCHOOL_MINTRUSION = add_school {
 }
 
 -- Occult
-if (def_hack("TEST_SERVER", nil)) then
+if (def_hack("TEMP2", nil)) then
 	SCHOOL_OSHADOW = add_school {
 		["name"] = "Shadow",
 		["skill"] = SKILL_OSHADOW,
@@ -164,7 +164,7 @@ __lua_M_LAST = __tmp_spells_num - 1
 pern_dofile(Ind, "d_astral.lua")
 
 -- Occult
-if (def_hack("TEST_SERVER", nil)) then
+if (def_hack("TEMP2", nil)) then
 	pern_dofile(Ind, "o_shadow.lua")
 	pern_dofile(Ind, "o_spirit.lua")
 end
@@ -242,7 +242,7 @@ end
 school_book[21] = { MSCARE_II, MCONFUSE_II, MSLEEP_II, MSLOWMONSTER_II, MPSISTORM_II, MMINDBLAST_III, MSILENCE, MMAP, MCHARM, MSTOPCHARM, }
 
 -- Create the Occult books, Shadow and Spirit (-)
-if (def_hack("TEST_SERVER", nil)) then
+if (def_hack("TEMP2", nil)) then
 school_book[22] = { DETECTINVIS, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, POISONFOG_III, DARKBOLT_III, ODRAINLIFE_II, } --shadow
 school_book[23] = { ODELFEAR, TRANCE, DETECTCREATURES, POSSESS, STOPPOSSESS, STARLIGHT_II, OCURSEDD_III, OLIGHTNINGBOLT_III, LITEBEAM_III, } --spirit
 end
@@ -277,7 +277,7 @@ school_book[55] = {
 -- Create the handbook of novice etiquette
 school_book[56] = { HDELFEAR, HBLESSING_I, HCURING_I, HGLOBELIGHT_I, HDETECTEVIL, HHEALING_I}
 ---- Create the handbook for rogues (of shadows)
-if (def_hack("TEST_SERVER", nil)) then
+if (def_hack("TEMP2", nil)) then
 	--include Occult Shadow spells
 	school_book[57] = { BLINK, POISONFOG_III, OBLIND_II, DETECTINVIS, SENSEHIDDEN_II, REVEALWAYS, VISION_II, OINVIS, INVISIBILITY }
 else
@@ -286,14 +286,14 @@ end
 ---- Create the handbook for dungeon masters & wizards (of dungeon keeping)
 school_book[58] = { TELEKINESIS, DIG, STONEPRISON, GROWTREE, DISARM, VISION_II, STARIDENTIFY, MANATHRUST_III, DISEBOLT, FIREFLASH_III, RECHARGE_III, MAGELOCK_II }
 -- Create the handbook of revelation
-if (def_hack("TEST_SERVER", nil)) then
+if (def_hack("TEMP2", nil)) then
 	--include Occult Shadow spells
 	school_book[59] = { IDENTIFY_III, STARIDENTIFY, SENSEHIDDEN_II, DETECTMONSTERS, SENSEMONSTERS, MSELFKNOW, MSANITY, HDETECTEVIL, MSENSEMON, MIDENTIFY, DETECTCREATURES }
 else
 	school_book[59] = { IDENTIFY_III, STARIDENTIFY, SENSEHIDDEN_II, DETECTMONSTERS, SENSEMONSTERS, MSELFKNOW, MSANITY, HDETECTEVIL, MSENSEMON, MIDENTIFY }
 end
 -- Create the handbook of transportation
-if (def_hack("TEST_SERVER", nil)) then
+if (def_hack("TEMP2", nil)) then
 	--include Occult Shadow spells
 	school_book[60] = {
 	    --TELEAWAY_I, MTELEAWAY,
@@ -304,7 +304,7 @@ else
 	    BLINK, TELEPORT, RECALL, TELEKINESIS, MBLINK, MTELEPORT, MTELETOWARDS, MTELEKINESIS, RELOCATION, GATEWAY }
 end
 -- Create the handbook of first visions
-if (def_hack("TEST_SERVER", nil)) then
+if (def_hack("TEMP2", nil)) then
 	--include Occult Shadow spells
 	school_book[61] = { OCURSEDD_I, ODELFEAR, STARLIGHT_I, DETECTCREATURES, DETECTINVIS, HCURSE_I, HDETECTEVIL, MANATHRUST_I, SENSEHIDDEN_I }
 else

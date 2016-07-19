@@ -577,7 +577,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYou don't feel hunger for worldly food anymore.");
 		}
 		break;
-#ifdef TEST_SERVER /* Occult */
+#ifdef ENABLE_OCCULT /* Occult */
 	case SKILL_OSHADOW:
 		if (old_value < 300 && new_value >= 300) {
 			msg_print(Ind, "\374\377GYou feel strong against darkness.");

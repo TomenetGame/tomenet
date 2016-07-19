@@ -648,7 +648,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			/* Slay Undead */
 			if (((f1 & TR1_SLAY_UNDEAD) ||
 			    (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 30) ||
-#ifdef TEST_SERVER /* Occult */
+#ifdef ENABLE_OCCULT /* Occult */
 			    (p_ptr && get_skill(p_ptr, SKILL_OSPIRIT) >= 40) ||
 #endif
 			    (p_ptr && get_skill(p_ptr, SKILL_HCURING) >= 50 && melee)) &&
@@ -1212,7 +1212,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 			/* Slay Undead */
 			if (((f1 & TR1_SLAY_UNDEAD) ||
 			    (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 30) ||
-#ifdef TEST_SERVER /* Occult */
+#ifdef ENABLE_OCCULT /* Occult */
 			    (p_ptr && get_skill(p_ptr, SKILL_OSPIRIT) >= 40) ||
 #endif
 			    (p_ptr && get_skill(p_ptr, SKILL_HCURING) >= 50 && melee)) &&
