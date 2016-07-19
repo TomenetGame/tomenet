@@ -94,7 +94,7 @@ HERBALTEA = add_spell {
 				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 4, 1, " gives you something bitter to drink.")
 			elseif lvl >= 20 then
 				restore_level(Ind)
-				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 2, 1 + 2, " gives you something bitter to drink.")
+				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2, 1, " gives you something bitter to drink.")
 			else
 				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 1, " gives you something bitter to drink.");
 			end
