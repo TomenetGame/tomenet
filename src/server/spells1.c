@@ -6195,11 +6195,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (r_ptr->d_char == 'A') {
 				//note = " is immune";
 				k_lite = do_blind = 0;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
-				//note = " resists";
-				k_lite *= 2;
-				k_lite /= (randint(6) + 6);
-				do_blind = 0;
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
@@ -6207,6 +6202,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				//note = " cringes from the light";
 				//note_dies = " shrivels away in the light";
 				dam *= 2;
+			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
+				//note = " resists";
+				k_lite *= 2;
+				k_lite /= (randint(6) + 6);
+				do_blind = 0;
 			}
 
 			dam = k_elec + k_sound + k_lite;
@@ -6740,10 +6740,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (r_ptr->flags3 & RF3_EVIL) break; /* normal damage: fallen/corrupted angel */
 				note = " is immune";
 				dam = 0;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-				do_blind = 0;
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
@@ -6751,6 +6747,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " cringes from the light";
 				note_dies = " shrivels away in the light";
 				dam *= 2;
+			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
+				note = " resists";
+				dam *= 3; dam /= (randint(6) + 6);
+				do_blind = 0;
 			}
 			break;
 
@@ -12053,11 +12053,11 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if (r_ptr->d_char == 'A') {
 				k_lite = 0;
 				//do_blind = 0;
+			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
+				k_lite *= 2;
 			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
 				k_lite /= 4;
 				//do_blind = 0;
-			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
-				k_lite *= 2;
 			}
 
 			dam = k_elec + k_sound + k_lite;
