@@ -202,11 +202,11 @@ ODRAINLIFE_I = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE_I, 3))
-		hp_player(Ind, player.ret_dam / 4)
+		drain_life(Ind, args.dir, 9 + get_level(Ind, ODRAINLIFE_I, 5))
+		hp_player(Ind, player.ret_dam / 6)
 	end,
 	["info"] = 	function()
-		return "drains "..(10 + get_level(Ind, ODRAINLIFE_I, 3)).."% life"
+		return "drain "..(9 + get_level(Ind, ODRAINLIFE_I, 5)).."% life, heal for 17%"
 	end,
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
@@ -222,11 +222,11 @@ ODRAINLIFE_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE_I, 10))
+		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE_I, 9))
 		hp_player(Ind, player.ret_dam / 4)
 	end,
 	["info"] = 	function()
-		return "drains "..(10 + get_level(Ind, ODRAINLIFE_I, 10)).."% life"
+		return "drain "..(10 + get_level(Ind, ODRAINLIFE_I, 9)).."% life, heal for 25%"
 	end,
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }

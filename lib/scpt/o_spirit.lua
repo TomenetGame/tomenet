@@ -90,6 +90,30 @@ OCURSEDD_III = add_spell {
 	["desc"] = 	{ "Curse an enemy, causing wounds.", }
 }
 
+ODELFEAR = add_spell {
+	["name"] = 	"Tame Fear",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["spell_power"] = 0,
+	["am"] = 	50,
+	["level"] = 	1,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
+	["fail"] = 	10,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, ODELFEAR, 30 * 2), 4, " speaks some words of insight and you lose your fear.")
+			set_afraid(Ind, 0)
+			set_res_fear(Ind, get_level(Ind, ODELFEAR, 30))
+			end,
+	["info"] = 	function()
+			return "dur "..get_level(Ind, ODELFEAR, 30)
+			end,
+	["desc"] = 	{
+			"Removes fear from your heart for a while.",
+			"***Automatically projecting***",
+	}
+}
+
 STARLIGHT_I = add_spell {
 	["name"] = 	"Starlight I",
 	["school"] = 	{SCHOOL_OSPIRIT},
