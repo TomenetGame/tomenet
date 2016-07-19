@@ -9602,11 +9602,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_SATHUNGER_PLAYER:
 		if (!p_ptr->suscep_life) {
-			if (p_ptr->male)
-			msg_format_near(Ind, "\377y%s looks like he is going to explode.", p_ptr->name);
-			else
-			msg_format_near(Ind, "\377y%s looks like she is going to explode.", p_ptr->name);
 			(void)set_food(Ind, PY_FOOD_MAX - 1);
+			//if (p_ptr->male) msg_format_near(Ind, "\377y%s looks like he is going to explode.", p_ptr->name);
+			//else msg_format_near(Ind, "\377y%s looks like she is going to explode.", p_ptr->name);
 		}
 			break;
 
@@ -9825,7 +9823,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_RESTORE_PLAYER:
 			if (dam & 0x1) { /* Restore food */
-				set_food(Ind, PY_FOOD_MAX - 1);
+				if (!p_ptr->suscep_life) {
+					set_food(Ind, PY_FOOD_MAX - 1);
+					//if (p_ptr->male) msg_format_near(Ind, "\377y%s looks like he is going to explode.", p_ptr->name);
+					//else msg_format_near(Ind, "\377y%s looks like she is going to explode.", p_ptr->name);
+				}
 			}
 			if (dam & 0x2) { /* Restore exp */
 				(void)restore_level(Ind);
