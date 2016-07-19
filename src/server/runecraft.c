@@ -775,11 +775,13 @@ s_printf("Duration: %d\n", duration);
 
 					case SV_R_WATE: { //Quench Thirst
 						if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
-						if (p_ptr->prace == RACE_ENT) {
+						if (p_ptr->prace == RACE_VAMPIRE) {
+							/* nothing */
+						} else if (p_ptr->prace == RACE_ENT) {
 							(void)set_food(Ind, p_ptr->food + 1500); //Same as WATER_ENT_FOOD - Kurzel
 						} else if (p_ptr->suscep_life) {
-							(void)set_food(Ind, p_ptr->food + (200 * 2) / 3);
-						} else (void)set_food(Ind, p_ptr->food + 200); //Same as water in k_info.txt - Kurzel
+							(void)set_food(Ind, p_ptr->food + (150 * 2) / 3);
+						} else (void)set_food(Ind, p_ptr->food + 150); //Same as water in k_info.txt - Kurzel
 					break; }
 
 					case SV_R_GRAV: { //Mass Teleport-To
