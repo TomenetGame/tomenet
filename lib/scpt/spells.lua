@@ -50,7 +50,7 @@ SCHOOL_NATURE = add_school {
 	["name"] = "Meta",
 	["skill"] = SKILL_META,
 	["sorcery"] = TRUE,
-}]]-
+}]]--
 SCHOOL_MIND = add_school {
 	["name"] = "Mind",
 	["skill"] = SKILL_MIND,
