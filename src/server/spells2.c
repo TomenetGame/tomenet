@@ -3948,6 +3948,11 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 	/* Recharge a rod */
 	if (o_ptr->tval == TV_ROD) {
+		if (pow < 60) {
+			msg_print(Ind, "The flow of mana seems not powerful enough to recharge a rod.");
+			return TRUE;
+		}
+
 		/* Extract a recharge power */
 		i = (100 - lev + pow) / 5;
 
