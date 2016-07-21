@@ -174,18 +174,12 @@ DETECTCREATURES = add_spell {
 	["fail"] = 	10,
 	["spell"] = 	function()
 		detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
---		if player.spell_project > 0 then
---			fire_ball(Ind, GF_DETECTINVIS_PLAYER, 0, 1, player.spell_project, "")
---		end
 	end,
 	["info"] = 	function()
 --		return "rad "..(10 + get_level(Ind, DETECTCREATURES, 40))
 		return ""
 	end,
-	["desc"] = 	{
-		"Detects all nearby creatures.",
---		"***Affected by the Meta spell: Project Spell***",
-	}
+	["desc"] = 	{ "Detects all nearby creatures.", }
 }
 
 function get_litebeam_dam(Ind, limit_lev)
@@ -332,6 +326,39 @@ OLIGHTNINGBOLT_III = add_spell {
 		return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Conjures up spiritual power into a lightning bolt.", }
+}
+
+ODELCURSES_I = add_spell {
+	["name"] = 	"Lift Curses I",
+	["school"] = 	SCHOOL_OSPIRIT,
+	["level"] = 	15,
+	["mana"] = 	20,
+	["mana_max"] =	20,
+	["fail"] = 	20,
+	["spell"] = 	function()
+			done = remove_curse(Ind)
+			if done == TRUE then msg_print(Ind, "The curse is broken!") end
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{ "Removes light curses from your items.", }
+}
+ODELCURSES_II = add_spell {
+	["name"] = 	"Lift Curses II",
+	["school"] = 	SCHOOL_OSPIRIT,
+	["level"] = 	40,
+	["mana"] = 	50,
+	["mana_max"] =	50,
+	["fail"] = 	-20,
+	["spell"] = 	function()
+			remove_all_curse(Ind)
+			if done == TRUE then msg_print(Ind, "The curse is broken!") end
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{ "Removes all light and heavy curses from your items.", }
 }
 
 TRANCE = add_spell {
