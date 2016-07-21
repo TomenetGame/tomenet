@@ -130,7 +130,6 @@ EXTRASTATS_I = add_spell {
 			end,
 	["desc"] = 	{ "At level 1 increases your strength.",
 			  "At level 5 also increases your dexterity.", }
-			--  "Not projectable.", }
 }
 EXTRASTATS_II = add_spell {
 	["name"] = 	"Extra Growth II",
@@ -150,7 +149,6 @@ EXTRASTATS_II = add_spell {
 			end,
 	["desc"] = 	{ "At level 1 increases strength, dexterity, constitution.",
 			  "At level 11 also increases your intelligence.", }
-			--  "Not projectable.", }
 }
 
 -- A shot that increases a players SPR (if wearing a shooter)
