@@ -10,9 +10,6 @@ BLINK = add_spell {
 	["spell"] = 	function()
 			local dist = 6 + get_level(Ind, BLINK, 6)
 			teleport_player(Ind, dist, TRUE);
---			if player.spell_project > 0 then
---				fire_ball(Ind, GF_AWAY_ALL, 0, dist, player.spell_project, "")
---			end
 	end,
 	["info"] = 	function()
 			return "distance "..(6 + get_level(Ind, BLINK, 6))
@@ -98,16 +95,14 @@ RECALL = add_spell {
 
 			if args.book < 0 then return end
 			set_recall(Ind, dur, player.inventory[1 + args.book])
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_RECALL_PLAYER, 0, dur, player.spell_project, "")
-			end
+			--fire_ball(Ind, GF_RECALL_PLAYER, 0, dur, 1, "")
 	end,
 	["info"] = 	function()
 			return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))
 	end,
 	["desc"] = 	{
 			"Cast on yourself it will recall you to the surface/dungeon.",
-			"***Affected by the Meta spell: Project Spell***",
+			--"***Automatically projecting***",
 	}
 }
 

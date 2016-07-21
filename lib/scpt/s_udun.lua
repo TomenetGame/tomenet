@@ -102,16 +102,14 @@ WRAITHFORM = add_spell {
 	["spell"] = 	function()
 			local dur = randint(30) + 20 + get_level(Ind, WRAITHFORM, 40)
 			set_tim_wraith(Ind, dur)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_WRAITH_PLAYER, 0, dur, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_WRAITH_PLAYER, 0, dur, 1, "")
 	end,
 	["info"] = 	function()
 			return "dur "..(20 + get_level(Ind, WRAITHFORM, 40)).."+d30"
 	end,
 	["desc"] = 	{
 			"Turns you into an immaterial being.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 --[[
@@ -200,15 +198,13 @@ STOPWRAITH = add_spell {
 	["fail"] = 	101,
 	["spell"] = 	function()
 			set_tim_wraith(Ind, 0)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_WRAITH_PLAYER, 0, 0, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_WRAITH_PLAYER, 0, 0, 1, "")
 	end,
 	["info"] = 	function()
 			return ""
 	end,
 	["desc"] = 	{
 			"Immediately returns you to material form.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }

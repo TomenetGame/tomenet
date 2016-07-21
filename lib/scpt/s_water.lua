@@ -221,20 +221,14 @@ ENTPOTION = add_spell {
 					set_food(Ind, PY_FOOD_MAX - 1)
 					msg_print(Ind, "The Ent's Potion fills your stomach.")
 				end
-				if player.spell_project > 0 then
-					fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, player.spell_project, "")
-				end
+				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 2, "")
 			if get_level(Ind, ENTPOTION, 50) >= 5 then
 				set_afraid(Ind, 0)
-				if player.spell_project > 0 then
-					fire_ball(Ind, GF_REMFEAR_PLAYER, 0, 1, player.spell_project, "")
-				end
+				fire_ball(Ind, GF_REMFEAR_PLAYER, 0, 1, 2, "")
 			end
 			if get_level(Ind, ENTPOTION, 50) >= 12 then
 				set_hero(Ind, randint(25) + 25 + get_level(Ind, ENTPOTION, 40))
-				if player.spell_project > 0 then
-					fire_ball(Ind, GF_HERO_PLAYER, 0, randint(25) + 25 + get_level(Ind, ENTPOTION, 40), player.spell_project, "")
-				end
+				fire_ball(Ind, GF_HERO_PLAYER, 0, randint(25) + 25 + get_level(Ind, ENTPOTION, 40), 2, "")
 			end
 	end,
 	["info"] = 	function()
@@ -248,7 +242,7 @@ ENTPOTION = add_spell {
 			"Fills up your stomach.",
 			"At level 5 it boldens your heart.",
 			"At level 12 it make you heroic.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 

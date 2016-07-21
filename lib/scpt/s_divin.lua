@@ -89,16 +89,14 @@ VISION_I = add_spell {
 	["fail"] = 	10,
 	["spell"] = 	function()
 			map_area(Ind)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
 	end,
 	["info"] = 	function()
 			return ""
 	end,
 	["desc"] = 	{
 			"Detects the layout of the surrounding area.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 VISION_II = add_spell {
@@ -111,16 +109,14 @@ VISION_II = add_spell {
 	["fail"] = 	-30,
 	["spell"] = 	function()
 			wiz_lite_extra(Ind)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
 	end,
 	["info"] = 	function()
 			return ""
 	end,
 	["desc"] = 	{
 			"Gives clairvoyance, mapping and lighting up the whole dungeon.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 
@@ -134,16 +130,14 @@ SENSEHIDDEN_I = add_spell {
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN_I, 40, 0))
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, 2, "")
 	end,
 	["info"] = 	function()
 			return "rad "..(10 + get_level(Ind, SENSEHIDDEN_I, 40))
 	end,
 	["desc"] = 	{
 			"Detects the traps in a certain radius around you.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 SENSEHIDDEN_II = add_spell {
@@ -156,13 +150,9 @@ SENSEHIDDEN_II = add_spell {
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN_I, 40, 0))
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, 2, "")
 			set_tim_invis(Ind, 10 + randint(20) + get_level(Ind, SENSEHIDDEN_I, 40))
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_SEEINVIS_PLAYER, 0, 10 + randint(20) + get_level(Ind, SENSEHIDDEN_I, 40), player.spell_project, "")
-			end
+			fire_ball(Ind, GF_SEEINVIS_PLAYER, 0, 10 + randint(20) + get_level(Ind, SENSEHIDDEN_I, 40), 2, "")
 	end,
 	["info"] = 	function()
 			return "rad "..(10 + get_level(Ind, SENSEHIDDEN_I, 40)).." dur "..(10 + get_level(Ind, SENSEHIDDEN_I, 40)).."+d20"
@@ -170,7 +160,7 @@ SENSEHIDDEN_II = add_spell {
 	["desc"] = 	{
 			"Detects the traps in a certain radius around you",
 			"and allows you to see invisible for a while.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 
@@ -184,16 +174,14 @@ REVEALWAYS = add_spell {
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			detect_sdoor(Ind, 10 + get_level(Ind, REVEALWAYS, 40, 0))
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_DETECTDOOR_PLAYER, 0, 1, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_DETECTDOOR_PLAYER, 0, 1, 2, "")
 	end,
 	["info"] = 	function()
 			return "rad "..(10 + get_level(Ind, REVEALWAYS, 40))
 	end,
 	["desc"] = 	{
 			"Detects the doors/stairs/ways in a certain radius around you.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 
@@ -206,9 +194,7 @@ DETECTMONSTERS = add_spell {
 	["fail"] = 	10,
 	["spell"] = 	function()
 			detect_creatures(Ind)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, 2, "")
 	end,
 	["info"] = 	function()
 --			return "rad "..(10 + get_level(Ind, DETECTMONSTERS, 40))
@@ -216,6 +202,6 @@ DETECTMONSTERS = add_spell {
 	end,
 	["desc"] = 	{
 			"Detects all nearby non-invisible creatures.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }

@@ -87,9 +87,7 @@ ESSENSESPEED = add_spell {
 				if s > 10 then s = 10 end
 			end
 			set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), s)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_SPEED_PLAYER, 0, s, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_SPEED_PLAYER, 0, s, 2, "")
 	end,
 	["info"] = 	function()
 			local s
@@ -107,7 +105,7 @@ ESSENSESPEED = add_spell {
 			"Magically increases the passing of time around you.",
 --			"Istari will see twice the effect others will see.",
 			"Non-Istari cannot gain more than +10 speed from this spell.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 
