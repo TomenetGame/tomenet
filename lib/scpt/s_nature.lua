@@ -47,15 +47,15 @@ GROWTREE = add_spell {
 	["name"] = 	"Grow Trees",
 --	["school"] = 	{SCHOOL_NATURE, SCHOOL_TEMPORAL},
 	["school"] = 	{SCHOOL_NATURE},
-	["level"] = 	6,
+	["level"] = 	25,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
 	["fail"] = 	20,
 	["spell"] = 	function()
-			grow_trees(Ind, 1 + get_level(Ind, GROWTREE, 5))
+			grow_trees(Ind, 1 + get_level(Ind, GROWTREE, 6))
 	end,
 	["info"] = 	function()
-			return "rad "..(1 + get_level(Ind, GROWTREE, 5))
+			return "rad "..(1 + get_level(Ind, GROWTREE, 6))
 	end,
 	["desc"] = 	{ "Makes trees grow extremely quickly around you.", }
 }
@@ -63,7 +63,7 @@ GROWTREE = add_spell {
 HEALING_I = add_spell {
 	["name"] = 	"Healing I",
 	["school"] = 	{SCHOOL_NATURE},
-	["level"] = 	10,
+	["level"] = 	1,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
 	["fail"] = 	10,
@@ -78,26 +78,21 @@ HEALING_I = add_spell {
 			--	status_ailments = status_ailments + 2048
 			--end
 
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(5), player.spell_project, "")
-			else
-				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(5), 0, "")
---				hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
-	                end
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(1), 1, "")
+--			hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
 	end,
 	["info"] = 	function()
-			return "heal "..get_healing_percents(5).."% (max "..get_healing_cap(5)..") = "..get_healing_power(5)
+			return "heal "..get_healing_percents(1).."% (max "..get_healing_cap(1)..") = "..get_healing_power(1)
 	end,
 	["desc"] = 	{
 			"Heals a percent of hitpoints up to a maximum of 400 points healed.",
 			"Projecting it will heal up to half that amount on nearby players.",
-			"***Affected by the Meta spell: Project Spell***",
 	}
 }
 HEALING_II = add_spell {
 	["name"] = 	"Healing II",
 	["school"] = 	{SCHOOL_NATURE},
-	["level"] = 	25,
+	["level"] = 	20,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
 	["fail"] = 	-30,
@@ -112,12 +107,8 @@ HEALING_II = add_spell {
 			--	status_ailments = status_ailments + 2048
 			--end
 
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(15), player.spell_project, "")
-			else
-				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(15), 0, "")
---				hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
-	                end
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(15), 1, "")
+--			hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents(15).."% (max "..get_healing_cap(15)..") = "..get_healing_power(15)
@@ -125,7 +116,6 @@ HEALING_II = add_spell {
 	["desc"] = 	{
 			"Heals a percent of hitpoints up to a maximum of 400 points healed.",
 			"Projecting it will heal up to half that amount on nearby players.",
-			"***Affected by the Meta spell: Project Spell***",
 	}
 }
 HEALING_III = add_spell {
@@ -146,12 +136,8 @@ HEALING_III = add_spell {
 			--	status_ailments = status_ailments + 2048
 			--end
 
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(0), player.spell_project, "")
-			else
-				fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(0), 0, "")
---				hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
-	                end
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(0), 1, "")
+--			hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents(0).."% (max "..get_healing_cap(0)..") = "..get_healing_power(0)
@@ -159,33 +145,30 @@ HEALING_III = add_spell {
 	["desc"] = 	{
 			"Heals a percent of hitpoints up to a maximum of 400 points healed.",
 			"Projecting it will heal up to half that amount on nearby players.",
-			"***Affected by the Meta spell: Project Spell***",
 	}
 }
 
 RECOVERY_I = add_spell	{
 	["name"] = 	"Recovery I",
 	["school"] = 	{SCHOOL_NATURE},
-	["level"] = 	18,
+	["level"] = 	15,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
-	["fail"] = 	20,
+	["fail"] = 	10,
 	["spell"] = 	function()
 			set_poisoned(Ind, 0, 0)
 			set_cut(Ind, 0, 0)
 			set_confused(Ind, 0)
 			set_blind(Ind, 0)
 			set_stun(Ind, 0)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256 + 64 + 128, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256 + 64 + 128, 2, "")
 	end,
 	["info"] = 	function()
 			return ""
 	end,
 	["desc"] = 	{
 			"Neutralizes poison, heals cuts, cures confusion, blindness and stun.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 RECOVERY_II = add_spell	{
@@ -208,9 +191,7 @@ RECOVERY_II = add_spell	{
 			do_res_stat(Ind, A_INT)
 			do_res_stat(Ind, A_CHR)
 			restore_level(Ind)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256 + 64 + 128, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256 + 64 + 128, 2, "")
 	end,
 	["info"] = 	function()
 			return ""
@@ -218,7 +199,7 @@ RECOVERY_II = add_spell	{
 	["desc"] = 	{
 			"Neutralizes poison, heals cuts, cures confusion, blindness and stun.",
 			"Restores drained stats and lost experience.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 	}
 }
 
@@ -241,10 +222,10 @@ REGENERATION = add_spell {
 VERMINCONTROL = add_spell {
 	["name"] = 	"Vermin Control",
 	["school"] = 	{SCHOOL_NATURE},
-	["level"] = 	15,
+	["level"] = 	10,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	30,
+	["fail"] = 	20,
 	["spell"] = 	function()
 			do_vermin_control(Ind)
 	end,
@@ -254,6 +235,58 @@ VERMINCONTROL = add_spell {
 	["desc"] = 	{
 			"Prevents any vermin from breeding.",
 	}
+}
+
+RESISTS_I = add_spell {
+	["name"] = 	"Elemental Shield I",
+	["school"] = 	SCHOOL_NATURE,
+	["level"] = 	20,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	40,
+	["spell"] = 	function()
+			set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+			set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+			set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+			set_oppose_acid(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+			fire_ball(Ind, GF_RESELEC_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+			fire_ball(Ind, GF_RESACID_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+	end,
+	["info"] = 	function()
+			return "dur "..(15 + get_level(Ind, RESISTS, 50)).."+d10"
+	end,
+	["desc"] = 	{
+			"Provide resistances to heat and cold.",
+			"***Automatically projecting***",
+		}
+}
+RESISTS_II = add_spell {
+	["name"] = 	"Elemental Shield II",
+	["school"] = 	SCHOOL_NATURE,
+	["level"] = 	30,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	10,
+	["spell"] = 	function()
+			set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+			set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+			set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+			set_oppose_acid(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+			fire_ball(Ind, GF_RESELEC_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+			fire_ball(Ind, GF_RESACID_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+	end,
+	["info"] = 	function()
+			return "dur "..(15 + get_level(Ind, RESISTS, 50)).."+d10"
+	end,
+	["desc"] = 	{
+			"Provide resistances to the four basic elements,",
+			"heat, cold, lightning and acid.",
+			"***Automatically projecting***",
+		}
 }
 
 --[[

@@ -5701,14 +5701,15 @@ A:10/50:50/50:100/50
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
-$NEW_TOMES!N:758:& Tome~ of Meta Spells
-$NEW_TOMES$N:758:& Tome~ of Meta Spells
-G:?:F
-I:111:9:0
-W:50:0:30:25000
-A:50/50:100/50
-P:0:1d1:0:0:0
-F:FULL_NAME | EASY_KNOW | ATTR_MULTI | IGNORE_WATER
+#removed Meta school (spells went to Mana and Nature)
+#$NEW_TOMES!N:758:& Tome~ of Meta Spells
+#$NEW_TOMES$N:758:& Tome~ of Meta Spells
+#G:?:F
+#I:111:9:0
+#W:50:0:30:25000
+#A:50/50:100/50
+#P:0:1d1:0:0:0
+#F:FULL_NAME | EASY_KNOW | ATTR_MULTI | IGNORE_WATER
 
 $NEW_TOMES!N:759:& Tome~ of the Mind
 $NEW_TOMES$N:759:& Tome~ of the Mind

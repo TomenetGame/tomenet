@@ -19,7 +19,7 @@ RECHARGE_I = add_spell {
 RECHARGE_II = add_spell {
 	["name"] = 	"Recharge II",
 	["school"] = 	{SCHOOL_META},
-	["level"] = 	20,
+	["level"] = 	25,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
 	["fail"] = 	-10,
@@ -90,11 +90,11 @@ DISPERSEMAGIC = add_spell {
 	["confusion"] = FALSE,
 	["spell"] = 	function()
 			set_blind(Ind, 0)
-			if get_level(Ind, DISPERSEMAGIC, 50) >= 5 then
-				set_confused(Ind, 0)
+			set_confused(Ind, 0)
+			if get_level(Ind, DISPERSEMAGIC, 50) >= 10 then
 				set_image(Ind, 0)
 			end
-			if get_level(Ind, DISPERSEMAGIC, 50) >= 10 then
+			if get_level(Ind, DISPERSEMAGIC, 50) >= 15 then
 				set_slow(Ind, 0)
 				set_fast(Ind, 0, 0)
 				set_stun(Ind, 0)
@@ -105,8 +105,41 @@ DISPERSEMAGIC = add_spell {
 	end,
 	["desc"] = 	{
 			"Dispels a lot of magic that can affect you, be it good or bad.",
-			"Level 1: blindness.",
-			"Level 5: confusion and hallucination.",
-			"Level 10: speed (both bad or good) and stun.",
+			"Level 1: blindness and confusion.",
+			"Level 10: hallucination.",
+			"Level 15: speed (both bad or good) and stun.",
 	}
+}
+
+DELCURSES_I = add_spell {
+	["name"] = 	"Remove Curses I",
+	["school"] = 	SCHOOL_META,
+	["level"] = 	15,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	20,
+	["spell"] = 	function()
+			done = remove_curse(Ind)
+			if done == TRUE then msg_print(Ind, "The curse is broken!") end
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{ "Removes light curses from your items.", }
+}
+DELCURSES_II = add_spell {
+	["name"] = 	"Remove Curses II",
+	["school"] = 	SCHOOL_META,
+	["level"] = 	40,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["fail"] = 	-20,
+	["spell"] = 	function()
+			remove_all_curse(Ind)
+			if done == TRUE then msg_print(Ind, "The curse is broken!") end
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{ "Removes all light and heavy curses from your items.", }
 }

@@ -46,11 +46,11 @@ SCHOOL_NATURE = add_school {
 	["skill"] = SKILL_NATURE,
 	["sorcery"] = TRUE,
 }
-SCHOOL_META = add_school {
+--[[SCHOOL_META = add_school {
 	["name"] = "Meta",
 	["skill"] = SKILL_META,
 	["sorcery"] = TRUE,
-}
+}]]-
 SCHOOL_MIND = add_school {
 	["name"] = "Mind",
 	["skill"] = SKILL_MIND,
@@ -142,7 +142,7 @@ pern_dofile(Ind, "s_earth.lua")
 pern_dofile(Ind, "s_convey.lua")
 pern_dofile(Ind, "s_divin.lua")
 pern_dofile(Ind, "s_tempo.lua")
-pern_dofile(Ind, "s_meta.lua")
+--pern_dofile(Ind, "s_meta.lua")
 pern_dofile(Ind, "s_nature.lua")
 pern_dofile(Ind, "s_mind.lua")
 pern_dofile(Ind, "s_udun.lua")
@@ -173,7 +173,7 @@ end
 -- Tomes / Greater crystals
 
 -- Create the crystal of mana (1-4)
-school_book[0] = { RESISTS, MANASHIELD, MANATHRUST_III, DELCURSES_II, }
+school_book[0] = { DISPERSEMAGIC, MANASHIELD, MANATHRUST_III, RECHARGE_III, DELCURSES_II, }
 -- The book of the eternal flame (5-8)
 school_book[1] = { GLOBELIGHT_II, FIERYAURA_II, FIREBOLT_III, FIREWALL_II, FIREFLASH_III, }
 -- The book of the blowing winds (9-13)
@@ -188,13 +188,13 @@ school_book[4] = { ENTPOTION, TIDALWAVE_II, ICESTORM_II, VAPOR_III, FROSTBOLT_II
 -- Create the book of translocation (22-27)
 school_book[5] = { BLINK, DISARM, TELEPORT, RECALL, PROBABILITY_TRAVEL, TELEAWAY_II, }
 -- Create the book of the tree * SUMMONANIMAL requires pets first (28-32)
-school_book[6] = { GROWTREE, VERMINCONTROL, REGENERATION, RECOVERY_II, HEALING_III, }
+school_book[6] = { VERMINCONTROL, REGENERATION, GROWTREE, RESISTS_II, RECOVERY_II, HEALING_III, }
 -- Create the book of Knowledge (33-38)
 school_book[7] = { DETECTMONSTERS, REVEALWAYS, SENSEHIDDEN_II, IDENTIFY_III,  STARIDENTIFY, VISION_II,}
 -- Create the book of the Time (39-42)
 school_book[8] = { ESSENSESPEED, SLOWMONSTER_II, MAGELOCK_II, MASSWARP, }
 -- Create the book of meta spells (43-45)
-school_book[9] = { PROJECT_SPELLS, DISPERSEMAGIC, RECHARGE_III, }
+--school_book[9] = { PROJECT_SPELLS, DISPERSEMAGIC, RECHARGE_III, }
 -- Create the book of the mind * CHARM requires pets first (46-48)
 school_book[10] = { CONFUSE_II, TELEKINESIS, SENSEMONSTERS, STUN_II, }
 -- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (49-53)
@@ -244,7 +244,7 @@ school_book[21] = { MSCARE_II, MCONFUSE_II, MSLEEP_II, MSLOWMONSTER_II, MPSISTOR
 -- Create the Occult books, Shadow and Spirit (-)
 if (def_hack("TEMP2", nil)) then
 school_book[22] = { DETECTINVIS, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, POISONFOG_III, DARKBOLT_III, ODRAINLIFE_II, } --shadow
-school_book[23] = { ODELFEAR, TRANCE, DETECTCREATURES, POSSESS, STOPPOSSESS, STARLIGHT_II, OCURSEDD_III, OLIGHTNINGBOLT_III, LITEBEAM_III, } --spirit
+school_book[23] = { ODELFEAR, TRANCE, DETECTCREATURES, POSSESS, STOPPOSSESS, STARLIGHT_II, OCURSEDD_III, OLIGHTNINGBOLT_III, LITEBEAM_III, ODELCURSES_II } --spirit
 end
 
 -- Handbooks:
