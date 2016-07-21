@@ -243,18 +243,12 @@ DETECTINVIS = add_spell {
 	["fail"] = 	10,
 	["spell"] = 	function()
 		detect_invisible(Ind)
---		if player.spell_project > 0 then
---			fire_ball(Ind, GF_DETECTINVIS_PLAYER, 0, 1, player.spell_project, "")
---		end
 	end,
 	["info"] = 	function()
 --		return "rad "..(10 + get_level(Ind, DETECTMONSTERS, 40))
 		return ""
 	end,
-	["desc"] = 	{
-		"Detects all nearby invisible creatures.",
---		"***Affected by the Meta spell: Project Spell***",
-	}
+	["desc"] = 	{ "Detects all nearby invisible creatures.", }
 }
 
 --[[POISONRES = add_spell {
