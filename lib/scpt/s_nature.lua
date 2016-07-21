@@ -47,7 +47,7 @@ GROWTREE = add_spell {
 	["name"] = 	"Grow Trees",
 --	["school"] = 	{SCHOOL_NATURE, SCHOOL_TEMPORAL},
 	["school"] = 	{SCHOOL_NATURE},
-	["level"] = 	25,
+	["level"] = 	30,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
 	["fail"] = 	20,
@@ -240,22 +240,18 @@ VERMINCONTROL = add_spell {
 RESISTS_I = add_spell {
 	["name"] = 	"Elemental Shield I",
 	["school"] = 	SCHOOL_NATURE,
-	["level"] = 	20,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
-	["fail"] = 	40,
+	["level"] = 	15,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
+	["fail"] = 	20,
 	["spell"] = 	function()
-			set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
-			set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
-			set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
-			set_oppose_acid(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
-			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
-			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
-			fire_ball(Ind, GF_RESELEC_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
-			fire_ball(Ind, GF_RESACID_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+			set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS_I, 50))
+			set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS_I, 50))
+			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, randint(20) + get_level(Ind, RESISTS_I, 50), 2, "")
+			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, randint(20) + get_level(Ind, RESISTS_I, 50), 2, "")
 	end,
 	["info"] = 	function()
-			return "dur "..(15 + get_level(Ind, RESISTS, 50)).."+d10"
+			return "dur "..(15 + get_level(Ind, RESISTS_I, 50)).."+d10"
 	end,
 	["desc"] = 	{
 			"Provide resistances to heat and cold.",
@@ -265,22 +261,22 @@ RESISTS_I = add_spell {
 RESISTS_II = add_spell {
 	["name"] = 	"Elemental Shield II",
 	["school"] = 	SCHOOL_NATURE,
-	["level"] = 	30,
+	["level"] = 	25,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	10,
+	["fail"] = 	-5,
 	["spell"] = 	function()
-			set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
-			set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
-			set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
-			set_oppose_acid(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
-			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
-			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
-			fire_ball(Ind, GF_RESELEC_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
-			fire_ball(Ind, GF_RESACID_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), 2, "")
+			set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS_I, 50))
+			set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS_I, 50))
+			set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, RESISTS_I, 50))
+			set_oppose_acid(Ind, randint(10) + 15 + get_level(Ind, RESISTS_I, 50))
+			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, randint(20) + get_level(Ind, RESISTS_I, 50), 2, "")
+			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, randint(20) + get_level(Ind, RESISTS_I, 50), 2, "")
+			fire_ball(Ind, GF_RESELEC_PLAYER, 0, randint(20) + get_level(Ind, RESISTS_I, 50), 2, "")
+			fire_ball(Ind, GF_RESACID_PLAYER, 0, randint(20) + get_level(Ind, RESISTS_I, 50), 2, "")
 	end,
 	["info"] = 	function()
-			return "dur "..(15 + get_level(Ind, RESISTS, 50)).."+d10"
+			return "dur "..(15 + get_level(Ind, RESISTS_I, 50)).."+d10"
 	end,
 	["desc"] = 	{
 			"Provide resistances to the four basic elements,",
