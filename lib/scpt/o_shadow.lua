@@ -67,7 +67,7 @@ function get_darkbolt_dam(Ind, limit_lev)
 	return 5 + (lev / 2), 7 + (lev / 2) + 1
 end
 DARKBOLT_I = add_spell {
-	["name"] = 	"Darkness Bolt I",
+	["name"] = 	"Shadow Bolt I",
 	["school"] = 	SCHOOL_OSHADOW,
 	["spell_power"] = 0,
 	["level"] = 	10,
@@ -77,7 +77,7 @@ DARKBOLT_I = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_DARK, args.dir, damroll(get_darkbolt_dam(Ind, 1)), " casts a darkness bolt for")
+		fire_bolt(Ind, GF_DARK, args.dir, damroll(get_darkbolt_dam(Ind, 1)), " casts a shadow bolt for")
 	end,
 	["info"] = 	function()
 		local x, y
@@ -85,10 +85,10 @@ DARKBOLT_I = add_spell {
 		x, y = get_darkbolt_dam(Ind, 1)
 		return "dam "..x.."d"..y
 	end,
-	["desc"] = 	{ "Conjures up shadows into a powerful bolt.", }
+	["desc"] = 	{ "Conjures up darkness into a powerful bolt.", }
 }
 DARKBOLT_II = add_spell {
-	["name"] = 	"Darkness Bolt II",
+	["name"] = 	"Shadow Bolt II",
 	["school"] = 	SCHOOL_OSHADOW,
 	["spell_power"] = 0,
 	["level"] = 	25,
@@ -98,7 +98,7 @@ DARKBOLT_II = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_DARK, args.dir, damroll(get_darkbolt_dam(Ind, 15)), " casts a darkness bolt for")
+		fire_bolt(Ind, GF_DARK, args.dir, damroll(get_darkbolt_dam(Ind, 15)), " casts a shadow bolt for")
 	end,
 	["info"] = 	function()
 		local x, y
@@ -106,10 +106,10 @@ DARKBOLT_II = add_spell {
 		x, y = get_darkbolt_dam(Ind, 15)
 		return "dam "..x.."d"..y
 	end,
-	["desc"] = 	{ "Conjures up shadows into a powerful bolt.", }
+	["desc"] = 	{ "Conjures up darkness into a powerful bolt.", }
 }
 DARKBOLT_III = add_spell {
-	["name"] = 	"Darkness Bolt III",
+	["name"] = 	"Shadow Bolt III",
 	["school"] = 	SCHOOL_OSHADOW,
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -119,7 +119,7 @@ DARKBOLT_III = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_DARK, args.dir, damroll(get_darkbolt_dam(Ind, 0)), " casts a darkness bolt for")
+		fire_bolt(Ind, GF_DARK, args.dir, damroll(get_darkbolt_dam(Ind, 0)), " casts a shadow bolt for")
 	end,
 	["info"] = 	function()
 		local x, y
@@ -127,7 +127,7 @@ DARKBOLT_III = add_spell {
 		x, y = get_darkbolt_dam(Ind, 0)
 		return "dam "..x.."d"..y
 	end,
-	["desc"] = 	{ "Conjures up shadows into a powerful bolt.", }
+	["desc"] = 	{ "Conjures up darkness into a powerful bolt.", }
 }
 
 POISONFOG_I = add_spell {

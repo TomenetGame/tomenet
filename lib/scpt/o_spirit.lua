@@ -165,7 +165,7 @@ STARLIGHT_II = add_spell {
 }
 
 DETECTCREATURES = add_spell {
-	["name"] = 	"Detect Creatures",
+	["name"] = 	"Ethereal Eye", --this name for if it really detects ALL monsters
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["level"] = 	7,
