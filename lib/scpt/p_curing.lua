@@ -244,7 +244,7 @@ HDELCURSES_I = add_spell {
 	["level"] = 	10,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	40,
+	["fail"] = 	25,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local done
