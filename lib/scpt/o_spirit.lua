@@ -347,9 +347,9 @@ ODELCURSES_I = add_spell {
 ODELCURSES_II = add_spell {
 	["name"] = 	"Lift Curses II",
 	["school"] = 	SCHOOL_OSPIRIT,
-	["level"] = 	40,
-	["mana"] = 	50,
-	["mana_max"] =	50,
+	["level"] = 	35,
+	["mana"] = 	45,
+	["mana_max"] =	45,
 	["fail"] = 	-20,
 	["spell"] = 	function()
 			remove_all_curse(Ind)
