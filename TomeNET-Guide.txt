@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. July 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 22. July 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11687,7 +11687,6 @@ Note that not every skill is available to every profession (class).
         .Temporal               Learn spells of the Temporal branch.
         .Udun                   Learn spells of the Udun branch.
         .Mind                   Learn spells of the Mind branch.
-        .Meta                   Learn spells of the Meta branch.
 
     +Prayer Schools
         .Holy Offense           Learn prayers of the Holy Offense branch.
@@ -12402,7 +12401,7 @@ All other factors listed here are further modifications, independant of (6.5).)
 
 Fighting        _'Combat'_, _'Weaponmastery'_, melee +hit boni
 Bows/Throw      _'Combat'_, _'Archery'_, ranged +hit boni
-Saving Throw    Wisdom, _level_, 'Meta', AM-shell
+Saving Throw    Wisdom, _level_, AM-shell
 Stealth         Mimic form weight, stealth items, _'Stealth'_, cloaking,
                 'Martial Arts'
 Perception      search items, _'Sneakiness'_
@@ -14349,28 +14348,14 @@ of your Noxious Cloud spell will increase by 3 and now be displayed as
 longer than it did on power level 1 when you just barely learned it.
 
 Casting spells on other players:
-Magic spells, prayers and druid magic are partially able to be used on fellow
-players, this works regardless of whether they are in the same party or not,
-the target player just needs to stand next to the caster for it to work.
-However, the ways projecting is done differ between magic school types:
-- Istari and other users of their magic may cast some magic spells on others
-  by summoning an ethereal projector sphere on their mind. While this project
-  spell is active, some of their spells will affect not only themselves but
-  also those players nearby. The project spell is found in their 'Meta' school
-  of magic. It works like a switch. Cast it once to enable projecting, cast it
-  again to disable projecting again.
-  The spells which are projectable are marked by a '(project)' tag below.
-- Priests and other classes who rely on prayers, as well as druids do not use
-  any kind of projector sphere. Their spells will always affect fellow players
-  nearby.
-  The prayers and druid spells which are projected on others are marked by a
-  '(auto-project)' tag at the end of the spell description below.
-- Mindcrafter spells either auto-project (same as priest/druid spells described
-  above) or require the target player to open his mind ('p' key) to receive the
-  spell effect.
-- Just for completeness:
-  Rune magic that can affect other players does so automatically. (Basically
-  same principle as for priests/druids, as described above).
+Some spells have effect on fellow players too, this works regardless of whether
+they are in the same party or not. In most cases the player needs to stand next
+to the caster for it to work.
+The spells which are projectable are marked by a '(project)' tag below.
+Some Mindcrafter spells require the target player to open his mind ('p' key) to
+receive the spell effect.
+Just for completeness: Rune magic that can affect other players does so
+automatically too, same as school magic.
 
 Shared school spells:
 Some spells are shared between different schools, occuring possibly but not
@@ -14392,13 +14377,18 @@ Istar schools:
     Manathrust      Casts a powerful mana bolt.
                     Required skill level for first spell level: 1.
 
+    Recharge        Recharges a magic staff or wand.
+                    Required skill level for first spell level: 5.
+
+    Disperse Magic  Removes magical influences.
+                    Lv1: Blindness/Confusion.
+                    Lv10: Confusion/Hallucination.
+                    Lv15: Speed/Slowness/Stun.
+                    Required skill level for first spell level: 15.
+                    This spell can be used even while confused or blind.
+
     Remove Curses   Removes all curses of carried/worn objects.
                     Lv20: Switches to *remove curses*.
-                    Required skill level for first spell level: 20.
-
-    Elemental Shield
-                    Gives temporary resistance to the elements,
-                    fire/cold/lightning/acid.                       (project)
                     Required skill level for first spell level: 20.
 
     Disruption Shield
@@ -14525,10 +14515,10 @@ Istar schools:
 - Nature
 
     Grow Trees      Grows trees quickly around you.
-                    Required skill level for first spell level: 6.
+                    Required skill level for first spell level: 20.
 
     Healing         Heals a percentage of your hit points.          (project)
-                    Required skill level for first spell level: 10.
+                    Required skill level for first spell level: 1.
 
     Recovery I      Neutralizes poison, heals cuts, cures confusion,
                     stun and blindness.                             (project)
@@ -14536,12 +14526,17 @@ Istar schools:
     Recovery II     In addition to the effects of Recovery I it also
                     restores drained stats and lost experience.     (project)
 
-    Regeneration    Increases your hit point regeneration rate.
-                    Required skill level for first spell level: 20.
-
     Vermin Control  Prevents vermin from breeding any further on
                     your current level.
                     Required skill level for first spell level: 15.
+
+    Elemental Shield
+                    Gives temporary resistance to the elements,
+                    fire/cold/lightning/acid.                       (project)
+                    Required skill level for first spell level: 15.
+
+    Regeneration    Increases your hit point regeneration rate.
+                    Required skill level for first spell level: 20.
 
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
@@ -14700,36 +14695,6 @@ Istar schools:
 
     BONI:           Reduces confusion and hallucination at 30,
                     Reduce insanity influence at 40 and especially at 50.
-
-
-- Meta
-
-    Recharge        Recharges a magic staff or wand.
-                    Required skill level for first spell level: 5.
-
-    Project Spells  Makes several spells and prayers affect other players too,
-                    in a radius around you that grows bigger depending on the
-                    'Project Spells' level.
-                    You need to cast the Project spell once! This 'turns on'
-                    the area of effect for all other spells which are usable
-                    on fellow players. Casting the Project spell again will
-                    switch the area effect off again.
-                    When you switch it on, the radius will depend on your
-                    Project skill level, starting at a radius of 1 field.
-                    The closer another player stands to you, the more he will
-                    usually get out of the spell (eg healed HP amount,
-                    duration of resistances, etc..).
-                    Required skill level for first spell level: 10.
-
-    Disperse Magic  Removes magical influences.
-                    Lv1: Blindness.
-                    Lv5: Confusion/Hallucination.
-                    Lv10: Speed/Slowness/Stun.
-                    Required skill level for first spell level: 15.
-                    This spell can be used even while confused or blind.
-
-    BONI:           Improves saving throw, the further it's trained above 20.
-                    (See (6.3) for details on Saving Throw.)
 
 
 Priest schools:
