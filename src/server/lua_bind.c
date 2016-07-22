@@ -971,7 +971,7 @@ void lua_fix_spellbooks_hackfix(int spell, int mod) {
 
 /* Similar to lua_fix_spellbooks() this function deletes, replaces or swaps spells.
    snew == -1 will erase the spell in custom books. */
-void lua_fix_spellbooks2(int sold, int snew, bool swap) {
+void lua_fix_spellbooks2(int sold, int snew, int swap) {
 	int i, j;
 	object_type *o_ptr;
 	house_type *h_ptr;
