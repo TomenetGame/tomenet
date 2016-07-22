@@ -2555,7 +2555,7 @@ player_class class_info[MAX_CLASS] = {
 #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'+', 850, },
+			'+', 800, },
 #endif
 		{ SKILL_DEVICE,
 			'+', 1000,
