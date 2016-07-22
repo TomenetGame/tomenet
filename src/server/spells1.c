@@ -7214,6 +7214,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & (RF1_UNIQUE)) ||
+			    (r_ptr->flags9 & RF9_RES_TIME) ||
 			    RES_OLD(r_ptr->level, dam)) {
 				note = " is unaffected";
 				obvious = FALSE;

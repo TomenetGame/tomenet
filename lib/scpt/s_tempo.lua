@@ -117,10 +117,10 @@ MASSWARP = add_spell {
 	["mana_max"] = 	50,
 	["fail"] = 	-70,
 	["spell"] = 	function()
-			project_los(Ind, GF_STASIS, 20 + get_level(Ind, MASSWARP, 120), "casts a spell")
+			project_los(Ind, GF_STASIS, 80 + get_level(Ind, MASSWARP, 200), "casts a spell")
 	end,
 	["info"] = 	function()
-			return "power "..(20 + get_level(Ind, MASSWARP, 120))
+			return "power "..(80 + get_level(Ind, MASSWARP, 200))
 	end,
 	["desc"] = 	{ "Attempts to lock all monsters in your area in a time bubble.", }
 }
