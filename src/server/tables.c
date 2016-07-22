@@ -2380,9 +2380,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_CONVEYANCE,
 			'+', 0,
 			'+', 1600, },
+#if 0
 		{ SKILL_META,
 			'+', 0,
 			'+', 1600, },
+#endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 1600, },
@@ -3004,9 +3006,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_CONVEYANCE,
 			'+', 0,
 			'+', 900, },
+#if 0
 		{ SKILL_META,
 			'+', 0,
 			'+', 800, },
+#endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 800, },
@@ -3131,9 +3135,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_DIVINATION,
 			'+', 0,
 			'+', 500, },//600, //500
+#if 0
 		{ SKILL_META,
 			'+', 0,
 			'+', 300, },
+#endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 500, },//600, //500
@@ -3406,9 +3412,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_UDUN,
 			'+', 0,
 			'+', 900, },
+ #if 0
 		{ SKILL_META,
 			'+', 0,
 			'+', 500, },
+ #endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 1000, },
@@ -3531,9 +3539,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_UDUN,
 			'+', 0,
 			'+', 900, },
+ #if 0
 		{ SKILL_META,
 			'+', 0,
 			'+', 500, },
+ #endif
 		{ SKILL_MIND,
 			'+', 0,
 			'+', 1000, },

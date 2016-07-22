@@ -381,6 +381,8 @@ D:Ability to learn and use spells from the Meta school.
 D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
+#Meta school was removed, so hide this skill for transgression phase:
+F:HIDDEN
 
 N:59:Mind
 D:Ability to learn and use spells from the Mind school.
