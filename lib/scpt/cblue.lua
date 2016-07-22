@@ -1273,7 +1273,7 @@ function fix_spellbooks2(name, sold, snew, swap)
 					players(p).inventory[i].pval = 0
 				else
 					players(p).inventory[i].pval = snew
-				endif
+				end
 			end
 			if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval >= 100) and (players(p).inventory[i].sval <= 102)) then
 				if players(p).inventory[i].xtra1 - 1 == sold then
