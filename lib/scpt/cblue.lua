@@ -1265,7 +1265,6 @@ function fix_spellbooks2(name, sold, snew, swap)
 	if (snew == -1) then
 		swap = 0
 	end
-
 	if (swap == 0) then
 		for i = 1, INVEN_PACK do
 			if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval == 255) and (players(p).inventory[i].pval == sold)) then
@@ -1318,7 +1317,7 @@ function fix_spellbooks2(name, sold, snew, swap)
 				if players(p).inventory[i].xtra1 - 1 == sold then
 					players(p).inventory[i].xtra1 = snew + 1
 				elseif players(p).inventory[i].xtra1 - 1 == snew then
-					players(p).inventory[i].xtra1 = sold
+					players(p).inventory[i].xtra1 = sold + 1
 				end
 				if players(p).inventory[i].xtra2 - 1 == sold then
 					players(p).inventory[i].xtra2 = snew + 1
