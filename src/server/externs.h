@@ -595,7 +595,7 @@ extern s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_p
 extern s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *p_ptr, char *brand_msg, bool thrown);
 extern void search(int Ind);
 extern void carry(int Ind, int pickup, int confirm, bool pick_one);
-extern void py_attack(int Ind, int y, int x, bool old);
+extern void py_attack(int Ind, int y, int x, byte old);
 extern void spin_attack(int Ind);
 extern void touch_zap_player(int Ind, int m_idx);
 extern void py_touch_zap_player(int Ind, int Ind2);

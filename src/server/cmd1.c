@@ -3007,7 +3007,7 @@ void hit_trap(int Ind) {
  */ 
 /* TODO: q_ptr/p_ptr->name should be replaced by strings made by player_desc */
 //note: we assume that p_ptr->num_blow isn't 0 (div/0)
-static void py_attack_player(int Ind, int y, int x, bool old) {
+static void py_attack_player(int Ind, int y, int x, byte old) {
 	player_type *p_ptr = Players[Ind];
 	int num = 0, bonus, chance, slot;
 	int k, k2, k3, bs_multiplier;
@@ -3195,6 +3195,11 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
 			p_ptr->cst -= 9;
 		}
 	}
+
+#ifdef TARGET_SWITCHING_COST
+	/* Hack for 'old' attack (bumping into enemy): Skip one attack. */
+	if (old == 2) num++;
+#endif
 
 	/* Attack once for each legal blow */
 	while (num++ < p_ptr->num_blow) {
@@ -4075,7 +4080,7 @@ static void py_attack_player(int Ind, int y, int x, bool old) {
  *       (important for dual-backstab treatment) - C. Blue
  */
 //note: we assume that p_ptr->num_blow isn't 0 (div/0)
-static void py_attack_mon(int Ind, int y, int x, bool old) {
+static void py_attack_mon(int Ind, int y, int x, byte old) {
 	player_type	*p_ptr = Players[Ind];
 	int		num = 0, bonus, chance, slot, owner_Ind = 0, sfx = 0;
 	int		k, k3, bs_multiplier;
@@ -4293,6 +4298,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 			p_ptr->redraw |= PR_STAMINA;
 		}
 	}
+
+#ifdef TARGET_SWITCHING_COST
+	/* Hack for 'old' attack (bumping into enemy): Skip one attack. */
+	if (old == 2) num++;
+#endif
 
 	/* Attack once for each legal blow */
 	while (num++ < p_ptr->num_blow) {
@@ -5276,7 +5286,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
  * If FALSE, player attacks only once, no matter what num_blow is,
  * and (1/num_blow) turn is consumed.   - Jir -
  */
-void py_attack(int Ind, int y, int x, bool old) {
+void py_attack(int Ind, int y, int x, byte old) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -5311,8 +5321,10 @@ void py_attack(int Ind, int y, int x, bool old) {
 		if (p_ptr->tsc_lasttarget) {
 			p_ptr->tsc_lasttarget = c_ptr->m_idx;
 			/* skip a blow, for turning towards our new target */
-			p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
-			return;
+			if (!old) {
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
+				return;
+			} else old = 2; //marker for skipping a blow
 		}
 		/* we actually just began melee combat, attacking our very first target - we're already prepared. */
 		p_ptr->tsc_lasttarget = c_ptr->m_idx;
