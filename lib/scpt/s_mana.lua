@@ -105,6 +105,17 @@ DELCURSES_II = add_spell {
 	["desc"] = 	{ "Removes all light and heavy curses from your items.", }
 }
 
+function get_recharge_pow(Ind, limit_lev)
+	local lev
+
+	lev = get_level(Ind, RECHARGE_I, 144)
+	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
+
+	--just for visual niceness below actually learnable level
+	if (lev < 2) then lev = 2 end
+
+	return 8 + lev
+end
 RECHARGE_I = add_spell {
 	["name"] = 	"Recharge I",
 	["school"] = 	{SCHOOL_MANA},
@@ -113,11 +124,12 @@ RECHARGE_I = add_spell {
 	["mana_max"] = 	10,
 	["fail"] = 	20,
 	["stat"] = 	A_INT,
+	["spell_power"] = 0,
 	["spell"] = 	function()
-			recharge(Ind, 10 + get_level(Ind, RECHARGE_I, 45))
+			recharge(Ind, get_recharge_pow(Ind, 49))
 	end,
 	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, RECHARGE_I, 45))
+			return "power "..get_recharge_pow(Ind, 49)
 	end,
 	["desc"] = 	{ "Taps on the ambient mana to recharge a wand or staff.", }
 }
@@ -127,13 +139,14 @@ RECHARGE_II = add_spell {
 	["level"] = 	25,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	-10,
+	["fail"] = 	-25,
 	["stat"] = 	A_INT,
+	["spell_power"] = 0,
 	["spell"] = 	function()
-			recharge(Ind, 10 + 50 + get_level(Ind, RECHARGE_II, 50))
+			recharge(Ind, get_recharge_pow(Ind, 78))
 	end,
 	["info"] = 	function()
-			return "power "..(10 + 50 + get_level(Ind, RECHARGE_II, 50))
+			return "power "..get_recharge_pow(Ind, 78)
 	end,
 	["desc"] = 	{ "Taps on the ambient mana to recharge a magic device.", }
 }
@@ -143,13 +156,14 @@ RECHARGE_III = add_spell {
 	["level"] = 	40,
 	["mana"] = 	100,
 	["mana_max"] = 	100,
-	["fail"] = 	-60,
+	["fail"] = 	-65,
 	["stat"] = 	A_INT,
+	["spell_power"] = 0,
 	["spell"] = 	function()
-			recharge(Ind, 10 + get_level(Ind, RECHARGE_III, 140))
+			recharge(Ind, get_recharge_pow(Ind, 0))
 	end,
 	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, RECHARGE_III, 140))
+			return "power "..get_recharge_pow(Ind, 0)
 	end,
 	["desc"] = 	{ "Taps on the ambient mana to recharge a magic device.", }
 }
