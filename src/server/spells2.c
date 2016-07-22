@@ -8164,11 +8164,13 @@ void tome_creation_aux(int Ind, int item) {
 	/* need to actually be able to cast the spell in order to transcribe it! */
 	if (exec_lua(Ind, format("return get_level(%d, %d, 50, -50)", Ind, o2_ptr->pval)) < 1) {
 		msg_print(Ind, "Your knowledge of that spell is insufficient!");
-		/* restore silyl hack.. */
-		p_ptr->using_up_item = item;
-		/* try again */
-		get_item(Ind, ITH_CUSTOM_TOME);
-		return;
+		if (!is_admin(p_ptr)) {
+			/* restore silyl hack.. */
+			p_ptr->using_up_item = item;
+			/* try again */
+			get_item(Ind, ITH_CUSTOM_TOME);
+			return;
+		}
 	}
 
 	/* check for duplicate entry -> prevent it */
