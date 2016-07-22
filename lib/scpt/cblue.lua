@@ -1253,3 +1253,104 @@ function _fg(name)
 --	msg_print(Ind, "No Grond found.")
 --    end
 end
+
+--similar to fix_spellbooks() this function just replaces a single spell or swaps two spells
+--swap == 0: just replace old by new; swap != 0: swap old and new
+function fix_spellbooks2(name, sold, snew, swap)
+	local i, p, x
+	p = ind(name)
+	if (p == -1) then return -1 end
+	if (swap == 0) then
+		for i = 1, INVEN_PACK do
+			if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval == 255) and (players(p).inventory[i].pval == sold)) then
+				players(p).inventory[i].pval = snew
+			end
+			if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval >= 100) and (players(p).inventory[i].sval <= 102)) then
+				if players(p).inventory[i].xtra1 - 1 == sold then
+					players(p).inventory[i].xtra1 = snew + 1
+				end
+				if players(p).inventory[i].xtra2 - 1 == sold then
+					players(p).inventory[i].xtra2 = snew + 1
+				end
+				if players(p).inventory[i].xtra3 - 1 == sold then
+					players(p).inventory[i].xtra3 = snew + 1
+				end
+				if players(p).inventory[i].xtra4 - 1 == sold then
+					players(p).inventory[i].xtra4 = snew + 1
+				end
+				if players(p).inventory[i].xtra5 - 1 == sold then
+					players(p).inventory[i].xtra5 = snew + 1
+				end
+				if players(p).inventory[i].xtra6 - 1 == sold then
+					players(p).inventory[i].xtra6 = snew + 1
+				end
+				if players(p).inventory[i].xtra7 - 1 == sold then
+					players(p).inventory[i].xtra7 = snew + 1
+				end
+				if players(p).inventory[i].xtra8 - 1 == sold then
+					players(p).inventory[i].xtra8 = snew + 1
+				end
+				if players(p).inventory[i].xtra9 - 1 == sold then
+					players(p).inventory[i].xtra9 = snew + 1
+				end
+			end
+		end
+	else
+		for i = 1, INVEN_PACK do
+			if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval == 255)) then
+				if (players(p).inventory[i].pval == sold) then
+					players(p).inventory[i].pval = snew
+				elseif (players(p).inventory[i].pval == snew) then
+					players(p).inventory[i].pval = sold
+				end
+			end
+			if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval >= 100) and (players(p).inventory[i].sval <= 102)) then
+				if players(p).inventory[i].xtra1 - 1 == sold then
+					players(p).inventory[i].xtra1 = snew + 1
+				elseif players(p).inventory[i].xtra1 - 1 == snew then
+					players(p).inventory[i].xtra1 = sold
+				end
+				if players(p).inventory[i].xtra2 - 1 == sold then
+					players(p).inventory[i].xtra2 = snew + 1
+				elseif players(p).inventory[i].xtra2 - 1 == snew then
+					players(p).inventory[i].xtra2 = sold + 1
+				end
+				if players(p).inventory[i].xtra3 - 1 == sold then
+					players(p).inventory[i].xtra3 = snew + 1
+				elseif players(p).inventory[i].xtra3 - 1 == snew then
+					players(p).inventory[i].xtra3 = sold + 1
+				end
+				if players(p).inventory[i].xtra4 - 1 == sold then
+					players(p).inventory[i].xtra4 = snew + 1
+				elseif players(p).inventory[i].xtra4 - 1 == snew then
+					players(p).inventory[i].xtra4 = sold + 1
+				end
+				if players(p).inventory[i].xtra5 - 1 == sold then
+					players(p).inventory[i].xtra5 = snew + 1
+				elseif players(p).inventory[i].xtra5 - 1 == snew then
+					players(p).inventory[i].xtra5 = sold + 1
+				end
+				if players(p).inventory[i].xtra6 - 1 == sold then
+					players(p).inventory[i].xtra6 = snew + 1
+				elseif players(p).inventory[i].xtra6 - 1 == snew then
+					players(p).inventory[i].xtra6 = sold + 1
+				end
+				if players(p).inventory[i].xtra7 - 1 == sold then
+					players(p).inventory[i].xtra7 = snew + 1
+				elseif players(p).inventory[i].xtra7 - 1 == snew then
+					players(p).inventory[i].xtra7 = sold + 1
+				end
+				if players(p).inventory[i].xtra8 - 1 == sold then
+					players(p).inventory[i].xtra8 = snew + 1
+				elseif players(p).inventory[i].xtra8 - 1 == snew then
+					players(p).inventory[i].xtra8 = sold + 1
+				end
+				if players(p).inventory[i].xtra9 - 1 == sold then
+					players(p).inventory[i].xtra9 = snew + 1
+				elseif players(p).inventory[i].xtra9 - 1 == snew then
+					players(p).inventory[i].xtra9 = sold + 1
+				end
+			end
+		end
+	end
+end

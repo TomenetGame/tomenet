@@ -866,8 +866,7 @@ long lua_player_exp(int level, int expfact) {
  * Adds mod to spellbook pval if it's greater than or equal to spell
  * spell in most cases is the number of the new spell and mod is 1
  * - mikaelh */
-void lua_fix_spellbooks(int spell, int mod)
-{
+void lua_fix_spellbooks(int spell, int mod) {
 	int i, j;
 	object_type *o_ptr;
 	house_type *h_ptr;
@@ -888,6 +887,7 @@ void lua_fix_spellbooks(int spell, int mod)
 				if (o_ptr->xtra6 - 1 >= spell) o_ptr->xtra6 += mod;
 				if (o_ptr->xtra7 - 1 >= spell) o_ptr->xtra7 += mod;
 				if (o_ptr->xtra8 - 1 >= spell) o_ptr->xtra8 += mod;
+				if (o_ptr->xtra9 - 1 >= spell) o_ptr->xtra9 += mod;
 			}
 		}
 	}
@@ -911,6 +911,7 @@ void lua_fix_spellbooks(int spell, int mod)
 					if (o_ptr->xtra6 - 1 >= spell) o_ptr->xtra6 += mod;
 					if (o_ptr->xtra7 - 1 >= spell) o_ptr->xtra7 += mod;
 					if (o_ptr->xtra8 - 1 >= spell) o_ptr->xtra8 += mod;
+					if (o_ptr->xtra9 - 1 >= spell) o_ptr->xtra9 += mod;
 				}
 			}
 		}
@@ -918,8 +919,7 @@ void lua_fix_spellbooks(int spell, int mod)
 }
 
 /* hacked crap if above function wasn't executed properly -.- regarding custom tomes */
-void lua_fix_spellbooks_hackfix(int spell, int mod)
-{
+void lua_fix_spellbooks_hackfix(int spell, int mod) {
 	int i, j;
 	object_type *o_ptr;
 	house_type *h_ptr;
@@ -939,6 +939,7 @@ void lua_fix_spellbooks_hackfix(int spell, int mod)
 				if (o_ptr->xtra6 - 1 >= spell) o_ptr->xtra6 += mod;
 				if (o_ptr->xtra7 - 1 >= spell) o_ptr->xtra7 += mod;
 				if (o_ptr->xtra8 - 1 >= spell) o_ptr->xtra8 += mod;
+				if (o_ptr->xtra9 - 1 >= spell) o_ptr->xtra9 += mod;
 			}
 		}
 	}
@@ -961,7 +962,85 @@ void lua_fix_spellbooks_hackfix(int spell, int mod)
 					if (o_ptr->xtra6 - 1 >= spell) o_ptr->xtra6 += mod;
 					if (o_ptr->xtra7 - 1 >= spell) o_ptr->xtra7 += mod;
 					if (o_ptr->xtra8 - 1 >= spell) o_ptr->xtra8 += mod;
+					if (o_ptr->xtra9 - 1 >= spell) o_ptr->xtra9 += mod;
 				}
+			}
+		}
+	}
+}
+
+/* Similar to lua_fix_spellbooks() this function replaces or swaps spells */
+void lua_fix_spellbooks2(int sold, int snew, bool swap) {
+	int i, j;
+	object_type *o_ptr;
+	house_type *h_ptr;
+
+#ifndef USE_MANG_HOUSE_ONLY
+	/* scan world (includes MAngband-style houses) */
+	for (i = 0; i < o_max; i++) {
+		o_ptr = &o_list[i];
+		if (o_ptr->tval != TV_BOOK) continue;
+
+		if (o_ptr->sval == SV_SPELLBOOK) {
+			if (o_ptr->pval == sold) o_ptr->pval = snew;
+			else if (swap && o_ptr->pval == snew) o_ptr->pval = sold;
+		}
+		/* spells inside custom books */
+		if (is_custom_tome(o_ptr->sval)) {
+			if (o_ptr->xtra1 - 1 == sold) o_ptr->xtra1 = snew;
+			else if (swap && o_ptr->xtra1 - 1 == snew) o_ptr->xtra1 = sold;
+			if (o_ptr->xtra2 - 1 == sold) o_ptr->xtra2 = snew;
+			else if (swap && o_ptr->xtra2 - 1 == snew) o_ptr->xtra2 = sold;
+			if (o_ptr->xtra3 - 1 == sold) o_ptr->xtra3 = snew;
+			else if (swap && o_ptr->xtra3 - 1 == snew) o_ptr->xtra3 = sold;
+			if (o_ptr->xtra4 - 1 == sold) o_ptr->xtra4 = snew;
+			else if (swap && o_ptr->xtra4 - 1 == snew) o_ptr->xtra4 = sold;
+			if (o_ptr->xtra5 - 1 == sold) o_ptr->xtra5 = snew;
+			else if (swap && o_ptr->xtra5 - 1 == snew) o_ptr->xtra5 = sold;
+			if (o_ptr->xtra6 - 1 == sold) o_ptr->xtra6 = snew;
+			else if (swap && o_ptr->xtra6 - 1 == snew) o_ptr->xtra6 = sold;
+			if (o_ptr->xtra7 - 1 == sold) o_ptr->xtra7 = snew;
+			else if (swap && o_ptr->xtra7 - 1 == snew) o_ptr->xtra7 = sold;
+			if (o_ptr->xtra8 - 1 == sold) o_ptr->xtra8 = snew;
+			else if (swap && o_ptr->xtra8 - 1 == snew) o_ptr->xtra8 = sold;
+			if (o_ptr->xtra9 - 1 == sold) o_ptr->xtra9 = snew;
+			else if (swap && o_ptr->xtra9 - 1 == snew) o_ptr->xtra9 = sold;
+		}
+	}
+#endif
+
+	/* scan traditional (vanilla) houses */
+	for (j = 0; j < num_houses; j++) {
+		h_ptr = &houses[j];
+		for (i = 0; i < h_ptr->stock_num; i++) {
+			o_ptr = &h_ptr->stock[i];
+			if (!o_ptr->k_idx) continue;
+			if (o_ptr->tval != TV_BOOK) continue;
+
+			if (o_ptr->sval == SV_SPELLBOOK) {
+				if (o_ptr->pval == sold) o_ptr->pval = snew;
+				else if (swap && o_ptr->pval == snew) o_ptr->pval = sold;
+			}
+			/* spells inside custom books */
+			if (is_custom_tome(o_ptr->sval)) {
+				if (o_ptr->xtra1 - 1 == sold) o_ptr->xtra1 = snew;
+				else if (swap && o_ptr->xtra1 - 1 == snew) o_ptr->xtra1 = sold;
+				if (o_ptr->xtra2 - 1 == sold) o_ptr->xtra2 = snew;
+				else if (swap && o_ptr->xtra2 - 1 == snew) o_ptr->xtra2 = sold;
+				if (o_ptr->xtra3 - 1 == sold) o_ptr->xtra3 = snew;
+				else if (swap && o_ptr->xtra3 - 1 == snew) o_ptr->xtra3 = sold;
+				if (o_ptr->xtra4 - 1 == sold) o_ptr->xtra4 = snew;
+				else if (swap && o_ptr->xtra4 - 1 == snew) o_ptr->xtra4 = sold;
+				if (o_ptr->xtra5 - 1 == sold) o_ptr->xtra5 = snew;
+				else if (swap && o_ptr->xtra5 - 1 == snew) o_ptr->xtra5 = sold;
+				if (o_ptr->xtra6 - 1 == sold) o_ptr->xtra6 = snew;
+				else if (swap && o_ptr->xtra6 - 1 == snew) o_ptr->xtra6 = sold;
+				if (o_ptr->xtra7 - 1 == sold) o_ptr->xtra7 = snew;
+				else if (swap && o_ptr->xtra7 - 1 == snew) o_ptr->xtra7 = sold;
+				if (o_ptr->xtra8 - 1 == sold) o_ptr->xtra8 = snew;
+				else if (swap && o_ptr->xtra8 - 1 == snew) o_ptr->xtra8 = sold;
+				if (o_ptr->xtra9 - 1 == sold) o_ptr->xtra9 = snew;
+				else if (swap && o_ptr->xtra9 - 1 == snew) o_ptr->xtra9 = sold;
 			}
 		}
 	}
