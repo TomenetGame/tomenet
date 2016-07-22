@@ -8104,7 +8104,7 @@ void tome_creation(int Ind) {
    because xtra1..9 are of type 'byte' so we can't use -1. */
 void tome_creation_aux(int Ind, int item) {
 	player_type	*p_ptr = Players[Ind];
-	bool		okay = TRUE;
+	bool		okay = FALSE;
 	object_type	*o_ptr, *o2_ptr;
 	char		o_name[ONAME_LEN];
 	byte		*xtra;
@@ -8130,16 +8130,16 @@ void tome_creation_aux(int Ind, int item) {
 	/* free space left? */
 	/* k_info-pval dependant */
 	switch (o_ptr->bpval) {
-	case 0: okay = FALSE; break;
-	case 1: if (o_ptr->xtra1) okay = FALSE; break;
-	case 2: if (o_ptr->xtra2) okay = FALSE; break;
-	case 3: if (o_ptr->xtra3) okay = FALSE; break;
-	case 4: if (o_ptr->xtra4) okay = FALSE; break;
-	case 5: if (o_ptr->xtra5) okay = FALSE; break;
-	case 6: if (o_ptr->xtra6) okay = FALSE; break;
-	case 7: if (o_ptr->xtra7) okay = FALSE; break;
-	case 8: if (o_ptr->xtra8) okay = FALSE; break;
-	default: if (o_ptr->xtra9) okay = FALSE; break;
+	case 9: if (!o_ptr->xtra9) okay = TRUE;
+	case 8: if (!o_ptr->xtra8) okay = TRUE;
+	case 7: if (!o_ptr->xtra7) okay = TRUE;
+	case 6: if (!o_ptr->xtra6) okay = TRUE;
+	case 5: if (!o_ptr->xtra5) okay = TRUE;
+	case 4: if (!o_ptr->xtra4) okay = TRUE;
+	case 3: if (!o_ptr->xtra3) okay = TRUE;
+	case 2: if (!o_ptr->xtra2) okay = TRUE;
+	case 1: if (!o_ptr->xtra1) okay = TRUE;
+	default: break;
 	}
 	if (!okay) {
 		/* completely start from scratch (have to re-'activate') */
@@ -8149,8 +8149,7 @@ void tome_creation_aux(int Ind, int item) {
 	}
 #endif
 
-	if (o2_ptr->tval != TV_BOOK || o2_ptr->sval != SV_SPELLBOOK)
-	{
+	if (o2_ptr->tval != TV_BOOK || o2_ptr->sval != SV_SPELLBOOK) {
 		msg_print(Ind, "You can only transcribe a spell scroll!");
 		/* restore silyl hack.. */
 		p_ptr->using_up_item = item;

@@ -5034,19 +5034,19 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* add a single spell to the player's customizable tome */
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
 		/* free space left? */
-		i = 1;
+		i = 0;
 		/* k_info-pval dependant */
                 switch (o_ptr->bpval) {
-		case 0: i = 0; break;
-		case 1: if (o_ptr->xtra1) i = 0; break;
-		case 2: if (o_ptr->xtra2) i = 0; break;
-		case 3: if (o_ptr->xtra3) i = 0; break;
-		case 4: if (o_ptr->xtra4) i = 0; break;
-		case 5: if (o_ptr->xtra5) i = 0; break;
-		case 6: if (o_ptr->xtra6) i = 0; break;
-		case 7: if (o_ptr->xtra7) i = 0; break;
-		case 8: if (o_ptr->xtra8) i = 0; break;
-		default: if (o_ptr->xtra9) i = 0; break;
+		case 9: if (!o_ptr->xtra9) i = 1;
+		case 8: if (!o_ptr->xtra8) i = 1;
+		case 7: if (!o_ptr->xtra7) i = 1;
+		case 6: if (!o_ptr->xtra6) i = 1;
+		case 5: if (!o_ptr->xtra5) i = 1;
+		case 4: if (!o_ptr->xtra4) i = 1;
+		case 3: if (!o_ptr->xtra3) i = 1;
+		case 2: if (!o_ptr->xtra2) i = 1;
+		case 1: if (!o_ptr->xtra1) i = 1;
+		default: break;
 		}
 		if (!i) {
 			msg_print(Ind, "That book has no blank pages left!");
