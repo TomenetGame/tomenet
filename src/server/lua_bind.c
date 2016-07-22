@@ -969,11 +969,15 @@ void lua_fix_spellbooks_hackfix(int spell, int mod) {
 	}
 }
 
-/* Similar to lua_fix_spellbooks() this function replaces or swaps spells */
+/* Similar to lua_fix_spellbooks() this function deletes, replaces or swaps spells.
+   snew == -1 will erase the spell in custom books. */
 void lua_fix_spellbooks2(int sold, int snew, bool swap) {
 	int i, j;
 	object_type *o_ptr;
 	house_type *h_ptr;
+
+	/* catch bad parameter choice */
+	if (snew == -1) swap = FALSE;
 
 #ifndef USE_MANG_HOUSE_ONLY
 	/* scan world (includes MAngband-style houses) */
@@ -982,29 +986,29 @@ void lua_fix_spellbooks2(int sold, int snew, bool swap) {
 		if (o_ptr->tval != TV_BOOK) continue;
 
 		if (o_ptr->sval == SV_SPELLBOOK) {
-			if (o_ptr->pval == sold) o_ptr->pval = snew;
+			if (o_ptr->pval == sold) o_ptr->pval = (snew != -1 ? snew : 0);
 			else if (swap && o_ptr->pval == snew) o_ptr->pval = sold;
 		}
 		/* spells inside custom books */
 		if (is_custom_tome(o_ptr->sval)) {
-			if (o_ptr->xtra1 - 1 == sold) o_ptr->xtra1 = snew;
-			else if (swap && o_ptr->xtra1 - 1 == snew) o_ptr->xtra1 = sold;
-			if (o_ptr->xtra2 - 1 == sold) o_ptr->xtra2 = snew;
-			else if (swap && o_ptr->xtra2 - 1 == snew) o_ptr->xtra2 = sold;
-			if (o_ptr->xtra3 - 1 == sold) o_ptr->xtra3 = snew;
-			else if (swap && o_ptr->xtra3 - 1 == snew) o_ptr->xtra3 = sold;
-			if (o_ptr->xtra4 - 1 == sold) o_ptr->xtra4 = snew;
-			else if (swap && o_ptr->xtra4 - 1 == snew) o_ptr->xtra4 = sold;
-			if (o_ptr->xtra5 - 1 == sold) o_ptr->xtra5 = snew;
-			else if (swap && o_ptr->xtra5 - 1 == snew) o_ptr->xtra5 = sold;
-			if (o_ptr->xtra6 - 1 == sold) o_ptr->xtra6 = snew;
-			else if (swap && o_ptr->xtra6 - 1 == snew) o_ptr->xtra6 = sold;
-			if (o_ptr->xtra7 - 1 == sold) o_ptr->xtra7 = snew;
-			else if (swap && o_ptr->xtra7 - 1 == snew) o_ptr->xtra7 = sold;
-			if (o_ptr->xtra8 - 1 == sold) o_ptr->xtra8 = snew;
-			else if (swap && o_ptr->xtra8 - 1 == snew) o_ptr->xtra8 = sold;
-			if (o_ptr->xtra9 - 1 == sold) o_ptr->xtra9 = snew;
-			else if (swap && o_ptr->xtra9 - 1 == snew) o_ptr->xtra9 = sold;
+			if (o_ptr->xtra1 - 1 == sold) o_ptr->xtra1 = snew + 1;
+			else if (swap && o_ptr->xtra1 - 1 == snew) o_ptr->xtra1 = sold + 1;
+			if (o_ptr->xtra2 - 1 == sold) o_ptr->xtra2 = snew + 1;
+			else if (swap && o_ptr->xtra2 - 1 == snew) o_ptr->xtra2 = sold + 1;
+			if (o_ptr->xtra3 - 1 == sold) o_ptr->xtra3 = snew + 1;
+			else if (swap && o_ptr->xtra3 - 1 == snew) o_ptr->xtra3 = sold + 1;
+			if (o_ptr->xtra4 - 1 == sold) o_ptr->xtra4 = snew + 1;
+			else if (swap && o_ptr->xtra4 - 1 == snew) o_ptr->xtra4 = sold + 1;
+			if (o_ptr->xtra5 - 1 == sold) o_ptr->xtra5 = snew + 1;
+			else if (swap && o_ptr->xtra5 - 1 == snew) o_ptr->xtra5 = sold + 1;
+			if (o_ptr->xtra6 - 1 == sold) o_ptr->xtra6 = snew + 1;
+			else if (swap && o_ptr->xtra6 - 1 == snew) o_ptr->xtra6 = sold + 1;
+			if (o_ptr->xtra7 - 1 == sold) o_ptr->xtra7 = snew + 1;
+			else if (swap && o_ptr->xtra7 - 1 == snew) o_ptr->xtra7 = sold + 1;
+			if (o_ptr->xtra8 - 1 == sold) o_ptr->xtra8 = snew + 1;
+			else if (swap && o_ptr->xtra8 - 1 == snew) o_ptr->xtra8 = sold + 1;
+			if (o_ptr->xtra9 - 1 == sold) o_ptr->xtra9 = snew + 1;
+			else if (swap && o_ptr->xtra9 - 1 == snew) o_ptr->xtra9 = sold + 1;
 		}
 	}
 #endif
@@ -1018,29 +1022,29 @@ void lua_fix_spellbooks2(int sold, int snew, bool swap) {
 			if (o_ptr->tval != TV_BOOK) continue;
 
 			if (o_ptr->sval == SV_SPELLBOOK) {
-				if (o_ptr->pval == sold) o_ptr->pval = snew;
+				if (o_ptr->pval == sold) o_ptr->pval = (snew != -1 ? snew : 0);
 				else if (swap && o_ptr->pval == snew) o_ptr->pval = sold;
 			}
 			/* spells inside custom books */
 			if (is_custom_tome(o_ptr->sval)) {
-				if (o_ptr->xtra1 - 1 == sold) o_ptr->xtra1 = snew;
-				else if (swap && o_ptr->xtra1 - 1 == snew) o_ptr->xtra1 = sold;
-				if (o_ptr->xtra2 - 1 == sold) o_ptr->xtra2 = snew;
-				else if (swap && o_ptr->xtra2 - 1 == snew) o_ptr->xtra2 = sold;
-				if (o_ptr->xtra3 - 1 == sold) o_ptr->xtra3 = snew;
-				else if (swap && o_ptr->xtra3 - 1 == snew) o_ptr->xtra3 = sold;
-				if (o_ptr->xtra4 - 1 == sold) o_ptr->xtra4 = snew;
-				else if (swap && o_ptr->xtra4 - 1 == snew) o_ptr->xtra4 = sold;
-				if (o_ptr->xtra5 - 1 == sold) o_ptr->xtra5 = snew;
-				else if (swap && o_ptr->xtra5 - 1 == snew) o_ptr->xtra5 = sold;
-				if (o_ptr->xtra6 - 1 == sold) o_ptr->xtra6 = snew;
-				else if (swap && o_ptr->xtra6 - 1 == snew) o_ptr->xtra6 = sold;
-				if (o_ptr->xtra7 - 1 == sold) o_ptr->xtra7 = snew;
-				else if (swap && o_ptr->xtra7 - 1 == snew) o_ptr->xtra7 = sold;
-				if (o_ptr->xtra8 - 1 == sold) o_ptr->xtra8 = snew;
-				else if (swap && o_ptr->xtra8 - 1 == snew) o_ptr->xtra8 = sold;
-				if (o_ptr->xtra9 - 1 == sold) o_ptr->xtra9 = snew;
-				else if (swap && o_ptr->xtra9 - 1 == snew) o_ptr->xtra9 = sold;
+				if (o_ptr->xtra1 - 1 == sold) o_ptr->xtra1 = snew + 1;
+				else if (swap && o_ptr->xtra1 - 1 == snew) o_ptr->xtra1 = sold + 1;
+				if (o_ptr->xtra2 - 1 == sold) o_ptr->xtra2 = snew + 1;
+				else if (swap && o_ptr->xtra2 - 1 == snew) o_ptr->xtra2 = sold + 1;
+				if (o_ptr->xtra3 - 1 == sold) o_ptr->xtra3 = snew + 1;
+				else if (swap && o_ptr->xtra3 - 1 == snew) o_ptr->xtra3 = sold + 1;
+				if (o_ptr->xtra4 - 1 == sold) o_ptr->xtra4 = snew + 1;
+				else if (swap && o_ptr->xtra4 - 1 == snew) o_ptr->xtra4 = sold + 1;
+				if (o_ptr->xtra5 - 1 == sold) o_ptr->xtra5 = snew + 1;
+				else if (swap && o_ptr->xtra5 - 1 == snew) o_ptr->xtra5 = sold + 1;
+				if (o_ptr->xtra6 - 1 == sold) o_ptr->xtra6 = snew + 1;
+				else if (swap && o_ptr->xtra6 - 1 == snew) o_ptr->xtra6 = sold + 1;
+				if (o_ptr->xtra7 - 1 == sold) o_ptr->xtra7 = snew + 1;
+				else if (swap && o_ptr->xtra7 - 1 == snew) o_ptr->xtra7 = sold + 1;
+				if (o_ptr->xtra8 - 1 == sold) o_ptr->xtra8 = snew + 1;
+				else if (swap && o_ptr->xtra8 - 1 == snew) o_ptr->xtra8 = sold + 1;
+				if (o_ptr->xtra9 - 1 == sold) o_ptr->xtra9 = snew + 1;
+				else if (swap && o_ptr->xtra9 - 1 == snew) o_ptr->xtra9 = sold + 1;
 			}
 		}
 	}

@@ -1255,15 +1255,25 @@ function _fg(name)
 end
 
 --similar to fix_spellbooks() this function just replaces a single spell or swaps two spells
---swap == 0: just replace old by new; swap != 0: swap old and new
+--swap == 0: just replace old by new; swap != 0: swap old and new; snew == -1: delete spell
 function fix_spellbooks2(name, sold, snew, swap)
 	local i, p, x
 	p = ind(name)
 	if (p == -1) then return -1 end
+
+	--catch bad parameter choice
+	if (snew == -1) then
+		swap = 0
+	end
+
 	if (swap == 0) then
 		for i = 1, INVEN_PACK do
 			if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval == 255) and (players(p).inventory[i].pval == sold)) then
-				players(p).inventory[i].pval = snew
+				if (snew == -1) then
+					players(p).inventory[i].pval = 0
+				else
+					players(p).inventory[i].pval = snew
+				endif
 			end
 			if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval >= 100) and (players(p).inventory[i].sval <= 102)) then
 				if players(p).inventory[i].xtra1 - 1 == sold then
