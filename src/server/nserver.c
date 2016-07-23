@@ -4133,8 +4133,10 @@ static int Receive_login(int ind) {
 		} else {
 			/* fail login here */
 #ifdef RETRY_LOGIN
+ #if 0 /* non-functional */
 			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, SF3_RETRY_ACCOUNT, 0x0, 0x0, 0x0);
 			return -1;
+ #endif
 #endif
 			//Destroy_connection(ind, "Wrong password or name already in use.");
 			Destroy_connection(ind, "Name already in use.");
