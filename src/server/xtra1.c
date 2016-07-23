@@ -8853,7 +8853,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				strcpy(str2, str + 18);
 				strcpy(str, "Spell Crystals");
 			} else {
-				msg_print(Ind, "I need to know which spell you want in the spell crystal.");
+				msg_print(Ind, "I need to know which spell you want in the spell crystals.");
 				return;
 				//*str2 = 0;
 			}
@@ -8863,11 +8863,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				strcpy(str2, str + 17);
 				strcpy(str, "Spell Scrolls");
 			} else {
-				msg_print(Ind, "I need to know which spell you want in the spell scroll.");
+				msg_print(Ind, "I need to know which spell you want in the spell scrolls.");
 				return;
 				//*str2 = 0;
 			}
-		} else if (!strncasecmp(str2, "spell crystal", 12)) {
+		} else if (!strncasecmp(str2, "spell crystal", 13)) {
 			/* extract spell name, error if not speficied */
 			if (strlen(str) > 17) {
 				strcpy(str2, str + 17);
@@ -8877,7 +8877,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				return;
 				//*str2 = 0;
 			}
-		} else if (!strncasecmp(str2, "spell scroll", 11)) {
+		} else if (!strncasecmp(str2, "spell scroll", 12)) {
 			/* extract spell name, error if not speficied */
 			if (strlen(str) > 16) {
 				strcpy(str2, str + 16);
