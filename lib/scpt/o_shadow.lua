@@ -327,18 +327,20 @@ OSLEEP_II = add_spell {
 	["name"] = 	"Veil of Night II",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
-	["level"] = 	22,
+	["level"] = 	20,--22
 	["mana"] = 	19,
 	["mana_max"] = 	19,
 	["fail"] = 	-25,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-		project_los(Ind, GF_OLD_SLEEP, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
+		--project_los(Ind, GF_OLD_SLEEP, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
+		fire_wave(Ind, GF_OLD_SLEEP, 0, 5 + get_level(Ind, OSLEEP_I, 80), 1, 10, 3, EFF_WAVE, "mumbles softly")
 	end,
 	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, OSLEEP_I, 80))
+		return "power "..(5 + get_level(Ind, OSLEEP_I, 80)).." rad 10"
 	end,
-	["desc"] = { "Lets all nearby monsters fall asleep.", }
+	--["desc"] = { "Lets all nearby monsters fall asleep.", }
+	["desc"] = { "Expanding veil that lets monsters fall asleep.", }
 }
 SHADOWGATE = add_spell {
 	["name"] = 	"Shadow Gate",

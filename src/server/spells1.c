@@ -1585,7 +1585,7 @@ byte spell_color(int type) {
 	/* To remove some hacks? */
 	case GF_THUNDER:	return (randint(3) != 1 ? TERM_ELEC : (randint(2) == 1 ? TERM_YELLOW : TERM_LITE));
 	case GF_ANNIHILATION:	return (randint(2) == 1 ? TERM_DARKNESS : TERM_L_DARK);
-	case GF_OLD_SLEEP:	return TERM_L_DARK; /* for Veil of Night (Occult) */
+	case GF_OLD_SLEEP:	return TERM_L_DARK; /* Occult: for Veil of Night as wave */
 	}
 
 	/* Standard "color" */
@@ -1651,6 +1651,7 @@ bool spell_color_animation(int type) {
 	/* To remove some hacks? */
 	case GF_THUNDER:	return TRUE;//(randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
 	case GF_ANNIHILATION:	return TRUE;//(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+	case GF_OLD_SLEEP:	return FALSE;/* Occult: For Veil of Night as wave */
 	}
 
 	/* Standard "color" */
@@ -1717,6 +1718,7 @@ byte spell_color(int type) {
 	/* To remove some hacks? */
 	case GF_THUNDER:	return (TERM_THUNDER);
 	case GF_ANNIHILATION:	return (TERM_ANNI);
+	case GF_OLD_SLEEP:	return TERM_L_DARK; /* Occult: for Veil of Night as wave */
 	}
 
 	/* Standard "color" */
