@@ -16,7 +16,7 @@ CHARM = add_spell {
 		elseif get_level(Ind, CHARM, 50) >= 15 then
 			fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3, "mumbles softly")
 		else
-			fire_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
+			fire_grid_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
 		end
 	end,
 	["info"] = 	function()

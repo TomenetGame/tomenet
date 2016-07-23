@@ -400,7 +400,7 @@ TRANCE = add_spell {
 		--reset previous charm spell first:
 		do_ostoppossess(Ind)
 		--cast charm!
-		fire_bolt(Ind, GF_POSSESS, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
+		fire_grid_bolt(Ind, GF_POSSESS, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
 	end,
 	["info"] = 	function()
 --		return "power "..(10 + get_level(Ind, POSSESS, 150))
@@ -431,7 +431,7 @@ POSSESS = add_spell {
 		elseif get_level(Ind, POSSESS, 50) >= 9 then
 			fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), 3, "focusses")
 		else
-			fire_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
+			fire_grid_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
 		end
 	end,
 	["info"] = 	function()

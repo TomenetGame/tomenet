@@ -168,7 +168,6 @@ POISONFOG_II = add_spell {
 	["desc"] = {
 		"Creates a cloud of poison.",
 		"The cloud will persist for some turns, damaging all monsters passing by.",
-		"At level 30 it turns into a thick gas preventing living beings from breathing.",
 	}
 }
 POISONFOG_III = add_spell {
