@@ -1585,6 +1585,7 @@ byte spell_color(int type) {
 	/* To remove some hacks? */
 	case GF_THUNDER:	return (randint(3) != 1 ? TERM_ELEC : (randint(2) == 1 ? TERM_YELLOW : TERM_LITE));
 	case GF_ANNIHILATION:	return (randint(2) == 1 ? TERM_DARKNESS : TERM_L_DARK);
+	case GF_OLD_SLEEP:	return TERM_L_DARK; /* for Veil of Night (Occult) */
 	}
 
 	/* Standard "color" */
