@@ -955,6 +955,8 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 		p_ptr->s_info[i].mod = m;
 		p_ptr->s_info[i].value = v;
 		p_ptr->s_info[i].base_value = v;
+		//new (for occult): also fix flags (DUMMY flag for SKILL_SCHOOL_OCCULT)
+		p_ptr->s_info[i].flags1 = (char)(s_info[i].flags1 & 0xFF);
 	}
 	if (p_ptr->fruit_bat == 1) fruit_bat_skills(p_ptr);
 
@@ -1000,6 +1002,8 @@ void respec_skills(int Ind, bool update_skills) {
 			p_ptr->s_info[i].base_value = v;
 			p_ptr->s_info[i].value = v;
 			p_ptr->s_info[i].mod = m;
+			//new (for occult): also fix flags (DUMMY flag for SKILL_SCHOOL_OCCULT)
+			p_ptr->s_info[i].flags1 = (char)(s_info[i].flags1 & 0xFF);
 		} else {
 			p_ptr->s_info[i].value = p_ptr->s_info[i].base_value;
 		}
