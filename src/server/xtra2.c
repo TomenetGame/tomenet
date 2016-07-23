@@ -3025,6 +3025,88 @@ bool set_kinetic_shield(int Ind, int v) {
 	return (TRUE);
 }
 
+#ifdef ENABLE_OCCULT
+bool set_savingthrow(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = (FALSE);
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->temp_savingthrow) {
+			msg_print(Ind, "You feel safe from peril.");
+			notice = (TRUE);
+		}
+	}
+
+	/* Shut */
+	else { //v = 0;
+		if (p_ptr->temp_savingthrow) {
+			msg_print(Ind, "You no longer feel safe from peril.");
+			notice = (TRUE);
+		}
+	}
+
+	p_ptr->temp_savingthrow = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_spirit_shield(int Ind, int power, int v) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->spirit_shield) {
+			p_ptr->spirit_shield_pow = power;
+			msg_print(Ind, "\376\377wYou feel the spirits watching over you.");
+			notice = TRUE;
+		} else if (p_ptr->spirit_shield > 10 && v <= 10) {
+			msg_print(Ind, "\376\377vYou feel the spirits weakening");
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->spirit_shield) {
+			msg_print(Ind, "\376\377vYou feel the spirits watching over you are disappearing.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->spirit_shield = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+#endif
+
 #ifdef ENABLE_MAIA
 /* timed hp bonus for RACE_MAIA.
    *fastest* path (SKILL_ASTRAL = lvl+2):

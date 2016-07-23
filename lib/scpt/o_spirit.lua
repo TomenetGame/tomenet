@@ -435,8 +435,7 @@ POSSESS = add_spell {
 		end
 	end,
 	["info"] = 	function()
---		return "power "..(10 + get_level(Ind, POSSESS, 150))
-		return ""
+		return "power "..(10 + get_level(Ind, POSSESS, 150))
 	end,
 	["desc"] =	{
 		"Tries to manipulate the mind of a monster to make it ignore you.",
@@ -464,3 +463,57 @@ STOPPOSSESS = add_spell {
 	end,
 	["desc"] =	{ "Cancel charming of any monsters.", }
 }
+
+GUARDIANSPIRIT_I = add_spell {
+	["name"] = 	"Guardian Spirit I",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] = 	30,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["stat"] = 	A_WIS,
+	["fail"] = 	-35,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+		local dur = 20 + randint(10) + get_level(Ind, GUARDIANSPIRIT_I, 70)
+		set_protevil(Ind, dur)
+		set_savingthrow(Ind, dur)
+	end,
+	["info"] = 	function()
+		return "dur d10+"..20 + get_level(Ind, GUARDIANSPIRIT_I, 70)
+	end,
+	["desc"] =	{
+		"Invokes your guardian spirit, guiding and protecting you.",
+		"Your saving throw is maximised and you are protected from evil.",
+	}
+}
+GUARDIANSPIRIT_II = add_spell {
+	["name"] = 	"Guardian Spirit II",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] = 	45,
+	["mana"] = 	100,
+	["mana_max"] = 	100,
+	["stat"] = 	A_WIS,
+	["fail"] = 	-80,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+		local dur = 20 + randint(10) + get_level(Ind, GUARDIANSPIRIT_I, 70)
+		set_protevil(Ind, dur)
+		set_savingthrow(Ind, dur)
+		set_spirit_shield(Ind, 29 + get_level(Ind, GUARDIANSPIRIT_II, 95), dur)
+	end,
+	["info"] = 	function()
+		return "dur d10+"..20 + get_level(Ind, GUARDIANSPIRIT_I, 70)..", miss "..29 + get_level(Ind, GUARDIANSPIRIT_II, 95).."%"
+	end,
+	["desc"] =	{
+		"Invokes your guardian spirit, guiding and protecting you.",
+		"Your saving throw is maximised and you are protected from evil.",
+		"All physical attacks have a chance to miss you, at the cost of your mana.",
+	}
+}
+--	["info"] = 	function()
+--		return "power "..(10 + get_level(Ind, GUARDIANSPIRIT_II, 50))
+--	end,

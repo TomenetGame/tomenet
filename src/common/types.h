@@ -2394,6 +2394,12 @@ struct player_type {
 	s16b mindboost_power;
 	s16b kinetic_shield;
 
+#ifdef ENABLE_OCCULT
+	s16b temp_savingthrow;
+	s16b spirit_shield;
+	s16b spirit_shield_pow;
+#endif
+
 	s16b auto_tunnel;
 	s16b body_monster, body_monster_prev;
 	bool dual_wield;		/* Currently wielding 2 one-handers at once */

@@ -865,7 +865,11 @@ bool make_attack_melee(int Ind, int m_idx)
 				prot = FALSE;
 
 				/* kinetic shield: (requires mana to work) */
-				if (p_ptr->kinetic_shield) {
+				if (p_ptr->kinetic_shield
+#ifdef ENABLE_OCCULT
+				    || p_ptr->spirit_shield
+#endif
+				    ) {
 					int cost = m_ptr->level / 10, clog, clog_dam;
 
 					if (damage > 45) {
@@ -877,14 +881,22 @@ bool make_attack_melee(int Ind, int m_idx)
 					}
 					if (p_ptr->csp >= cost) {
 						/* test if it repelled the blow */
-						int chance = (p_ptr->lev * ((r_ptr->flags2 & RF2_POWERFUL) ? 67 : 100)) / r_ptr->level;
+						int chance = (p_ptr->lev * ((r_ptr->flags2 & RF2_POWERFUL) ? 67 : 100)) / r_ptr->level, max_chance;
 						// ^= usually 50% chance vs all mobs you'd encounter at your level, 33% vs double-level POWERFUL
 
 						/* drains mana on hit */
 						p_ptr->csp -= cost;
 						p_ptr->redraw |= PR_MANA;
 
-						if (magik(chance > 50 ? 50 : chance)) {
+						/* spirit shield is usually weaker than kinetic shield */
+#ifdef ENABLE_OCCULT
+						if (p_ptr->kinetic_shield) max_chance = 50;
+						else max_chance = p_ptr->spirit_shield_pow;
+#else
+						max_chance = 50;
+#endif
+
+						if (magik(chance > max_chance ? max_chance : chance)) {
 							msg_format(Ind, "%^s is repelled.", m_name);
 							continue;
 						}

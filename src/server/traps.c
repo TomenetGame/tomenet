@@ -412,15 +412,33 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		msg_format(Ind, "Suddenly %s are shot at you!", i_name);
 
 	for (i = 0; i < num; i++) {
-		if (p_ptr->kinetic_shield && p_ptr->csp >= (dd * ds) / 20) {
+		if ((p_ptr->kinetic_shield
+#ifdef ENABLE_OCCULT
+		    || p_ptr->spirit_shield
+#endif
+		    ) && p_ptr->csp >= (dd * ds) / 20) {
 			/* drains mana on hit */
 			p_ptr->csp -= (dd * ds) / 20;
 			p_ptr->redraw |= PR_MANA;
 			/* test for deflection */
+#ifdef ENABLE_OCCULT
+			if (p_ptr->kinetic_shield) {
+				if (magik(50)) {
+					msg_print(Ind, "Your kinetic shield deflects the attack!");
+					continue;
+				}
+			} else if (p_ptr->spirit_shield) {
+				if (magik(p_ptr->spirit_shield_pow)) {
+					msg_print(Ind, "Your spirit shield deflects the attack!");
+					continue;
+				}
+			}
+#else
 			if (magik(50)) {
 				msg_print(Ind, "Your kinetic shield deflects the attack!");
 				continue;
 			}
+#endif
 		}
 		if (p_ptr->reflect && magik(60)) {
 			msg_print(Ind, "You deflect the attack!");

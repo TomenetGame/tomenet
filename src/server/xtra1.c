@@ -4332,6 +4332,10 @@ void calc_boni(int Ind) {
 
 	if (p_ptr->mindboost) p_ptr->skill_sav += p_ptr->mindboost_power / 5;
 
+#ifdef ENABLE_OCCULT
+	if (p_ptr->temp_savingthrow) p_ptr->skill_sav = 95;
+#endif
+
 	/* Temporary "Levitation" */
 	if (p_ptr->tim_ffall || p_ptr->tim_lev) p_ptr->feather_fall = TRUE;
 	if (p_ptr->tim_lev) p_ptr->levitate = TRUE;

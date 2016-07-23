@@ -141,6 +141,10 @@ extern bool set_tim_invis(int Ind, int v);
 extern bool set_tim_infra(int Ind, int v);
 extern bool set_mindboost(int Ind, int p, int v);
 extern bool set_kinetic_shield(int Ind, int v);
+#ifdef ENABLE_OCCULT
+extern bool set_savingthrow(int Ind, int v);
+extern bool set_spirit_shield(int Ind, int power, int v);
+#endif
 extern bool identify_fully(int Ind);
 extern void self_knowledge(int Ind);
 extern bool ident_spell(int Ind);

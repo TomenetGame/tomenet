@@ -8127,7 +8127,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	int k = 0;
 	int div, k_elec, k_sound, k_lite;
-	bool kinetic_shield = FALSE;
+	bool physical_shield;
+
 	/* Hack -- assume obvious */
 	bool obvious = TRUE;
 	/* Player blind-ness */
@@ -8591,8 +8592,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		return(TRUE);
 	}
 #endif
-	/* pre-calc kinetic shield mana tax before doing the reflection check below */
-	if (!friendly_player && p_ptr->kinetic_shield && (typ == GF_ARROW || typ == GF_MISSILE)
+#ifdef ENABLE_OCCULT
+	physical_shield = (p_ptr->kinetic_shield || p_ptr->spirit_shield);
+#else
+	physical_shield = (p_ptr->kinetic_shield);
+#endif
+	/* pre-calc kinetic/spirit shield mana tax before doing the reflection check below */
+	if (!friendly_player && physical_shield && (typ == GF_ARROW || typ == GF_MISSILE)
 	    && p_ptr->csp >= dam / 7 &&
 	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
 	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF))) {
@@ -8600,13 +8606,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		p_ptr->csp -= dam / 7;
 		p_ptr->redraw |= PR_MANA;
 		/* test for success */
-		if (rand_int(2) == 0) kinetic_shield = TRUE;
+		if (rand_int(2) == 0) physical_shield = TRUE;
 	}
 	/* Effects done by the plane cannot bounce,
 	   balls / clouds / storms / walls (and beams atm too) cannot bounce - C. Blue */
 	if (!friendly_player && (
-	    /* kinetic shield? (same as reflect basically) */
-	    kinetic_shield
+	    /* kinetic/spirit shield? (same as reflect basically) */
+	    physical_shield
 	    /* reflect? */
 	    || (p_ptr->reflect &&
 	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&

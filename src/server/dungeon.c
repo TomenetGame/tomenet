@@ -4413,6 +4413,12 @@ static bool process_player_end_aux(int Ind) {
 	/* Mindcrafters' repulsion shield */
 	if (p_ptr->kinetic_shield) (void)set_kinetic_shield(Ind, p_ptr->kinetic_shield - 1);
 
+#ifdef ENABLE_OCCULT
+	/* Spritiual shields (Occult) */
+	if (p_ptr->spirit_shield) (void)set_spirit_shield(Ind, p_ptr->spirit_shield_pow, p_ptr->spirit_shield - 1);
+	if (p_ptr->temp_savingthrow) (void)set_savingthrow(Ind, p_ptr->temp_savingthrow - 1);
+#endif
+
 	if (p_ptr->cloak_neutralized) p_ptr->cloak_neutralized--;
 	if (p_ptr->cloaked > 1) {
 		if (--p_ptr->cloaked == 1) {
