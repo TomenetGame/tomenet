@@ -316,7 +316,7 @@ OSLEEP_I = add_spell {
 	["fail"] = 	0,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_OLD_SLEEP, args.dir, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
+		fire_bolt(Ind, GF_OLD_SLEEP, args.dir, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
 	end,
 	["info"] = 	function()
 		return "power "..(5 + get_level(Ind, OSLEEP_I, 80))
