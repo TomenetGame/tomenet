@@ -1554,7 +1554,7 @@ static void init_kind_list() {
 static void init_artifact_list() {
 	char buf[1024], *p1, *p2, art_name[MSG_LEN], buf2[1024];
 	FILE *fff;
-	int tval = 0, sval = 0, i, v1 = 0, v2 = 0, v3 = 0, rar;
+	int tval = 0, sval = 0, i, v1 = 0, v2 = 0, v3 = 0, rar, lev;
 	bool discard, special_gene, flag_break_marker;
 	bool next_art_name_ok, premature_next_art = FALSE;
 
@@ -1618,7 +1618,7 @@ static void init_artifact_list() {
 		next_art_name_ok = FALSE;
 
 		/* fetch tval,sval and lookup type name in k_info */
-		rar = 1; /* paranoia/kill compiler warning */
+		rar = 1; lev = 0; /* paranoia/kill compiler warning */
 		while (0 == my_fgets(fff, buf, 1024)) {
 			strcpy(buf2, buf); //for premature_next_art
 			/* strip $/%..$/! conditions */
@@ -1671,6 +1671,7 @@ static void init_artifact_list() {
 				continue;
 			} else { /* 'W' -- scan rarity */
 				p1 = buf + 2;
+				lev = atoi(p1);
 				p2 = strchr(p1, ':') + 1;
 				rar = atoi(p2);
 				/* check for 'disabled' hack */
@@ -1693,17 +1694,20 @@ static void init_artifact_list() {
 		}
 		/* complete the artifact name */
 		strcat(artifact_list_name[artifact_list_idx], art_name);
-		/* new: add coloured symbol to indicate item type (sometimes impossible to recognize otherwise) */
+		/* new: add [coloured?] symbol to indicate item type (sometimes impossible to recognize otherwise) */
 		if (i < MAX_K_IDX) { //paranoia?
 #if 0 /* we cannot predict the attr for flavoured items! (rings, amulets) */
 			strcpy(buf, format(" <\377%c%c\377->", kind_list_attr[i], kind_list_char[i]));
 #else
 			strcpy(buf, format("%c  ", kind_list_char[i]));
 #endif
+			/* new: add artifact level too */
+			strcat(buf, format("L%-3d  ", lev));
+			/* ..and finish with the actual name */
 			strcat(buf, artifact_list_name[artifact_list_idx]);
 			strcpy(artifact_list_name[artifact_list_idx], buf);
 		} else {
-			strcpy(buf, "     ");
+			strcpy(buf, "         ");
 			strcat(buf, artifact_list_name[artifact_list_idx]);
 			strcpy(artifact_list_name[artifact_list_idx], buf);
 		}
