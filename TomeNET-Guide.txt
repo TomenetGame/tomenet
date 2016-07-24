@@ -14506,7 +14506,7 @@ Istar schools:
                     Required skill level for first spell level: 25.
 
     Shake           Creates a local earthquake.
-                    Required skill level for first spell level: 27.
+                    Required skill level for first spell level: 35.
 
     BONI:           Shard resistance at 30,
                     Great damage reduction against earthquakes at 45.
