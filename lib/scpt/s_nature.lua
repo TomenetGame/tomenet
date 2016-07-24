@@ -239,7 +239,8 @@ VERMINCONTROL = add_spell {
 
 RESISTS_I = add_spell {
 	["name"] = 	"Elemental Shield I",
-	["school"] = 	SCHOOL_NATURE,
+--	["school"] = 	SCHOOL_NATURE,
+	["school"] = 	{SCHOOL_FIRE,SCHOOL_WATER},
 	["level"] = 	15,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
@@ -260,7 +261,8 @@ RESISTS_I = add_spell {
 }
 RESISTS_II = add_spell {
 	["name"] = 	"Elemental Shield II",
-	["school"] = 	SCHOOL_NATURE,
+--	["school"] = 	SCHOOL_NATURE,
+	["school"] = 	{SCHOOL_FIRE,SCHOOL_WATER,SCHOOL_AIR,SCHOOL_EARTH},
 	["level"] = 	25,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
