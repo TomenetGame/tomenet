@@ -1452,14 +1452,11 @@ void get_char_name(void) {
 #ifndef SIMPLE_LOGIN
 	put_str("Name        :", 2, 1);
 	put_str("Password    :", 3, 1);
-	c_put_str(TERM_SLATE, "If TomeNET quits with a login failure, check account name and password", 4, 3);
-	c_put_str(TERM_SLATE, "for upper/lower case! If you are a new player, try a different name.", 5, 3);
+	c_put_str(TERM_SLATE, "Make sure you enter letters in correct upper/lower case!", 5, 3);
 #else
 	put_str("Name        :", 5, 1);
 	put_str("Password    :", 6, 1);
-	c_put_str(TERM_SLATE, "If TomeNET quits with a login failure and you are a new player, it means", 8, 3);
-	c_put_str(TERM_SLATE, "the account name you picked is already in use. Try a different name!", 9, 3);
-	c_put_str(TERM_SLATE, "If you're not a new player, check name and password for upper/lower case!", 10, 3);
+	c_put_str(TERM_SLATE, "Make sure you enter letters in correct upper/lower case!", 9, 3);
 #endif
 	/* Dump the default name */
 #ifndef SIMPLE_LOGIN
