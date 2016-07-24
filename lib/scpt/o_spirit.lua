@@ -503,10 +503,10 @@ GUARDIANSPIRIT_II = add_spell {
 		local dur = 20 + randint(10) + get_level(Ind, GUARDIANSPIRIT_I, 70)
 		set_protevil(Ind, dur)
 		set_savingthrow(Ind, dur)
-		set_spirit_shield(Ind, 29 + get_level(Ind, GUARDIANSPIRIT_II, 95), dur)
+		set_spirit_shield(Ind, 19 + get_level(Ind, GUARDIANSPIRIT_II, 95), dur)
 	end,
 	["info"] = 	function()
-		return "dur d10+"..20 + get_level(Ind, GUARDIANSPIRIT_I, 70)..", miss "..29 + get_level(Ind, GUARDIANSPIRIT_II, 95).."%"
+		return "dur d10+"..20 + get_level(Ind, GUARDIANSPIRIT_I, 70)..", miss "..19 + get_level(Ind, GUARDIANSPIRIT_II, 95).."%"
 	end,
 	["desc"] =	{
 		"Invokes your guardian spirit, guiding and protecting you.",
