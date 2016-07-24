@@ -181,6 +181,7 @@ bool wearable_p(object_type *o_ptr) {
 	case TV_RING:
 	case TV_AXE:
 	case TV_MSTAFF:
+	case TV_TOOL:
 		return (TRUE);
 	}
 
