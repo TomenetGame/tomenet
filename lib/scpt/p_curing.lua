@@ -254,7 +254,7 @@ HDELCURSES_I = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{ "Removes curses.", }
+	["desc"] = 	{ "Attempts to remove curses from your items.", }
 }
 HDELCURSES_II = add_spell {
 	["name"] = 	"Break Curses II",
@@ -274,7 +274,7 @@ HDELCURSES_II = add_spell {
 	["info"] = 	function()
 			return ""
 			end,
-	["desc"] = 	{ "Removes curses and heavy curses.", }
+	["desc"] = 	{ "Removes all curses and heavy curses from your items.", }
 }
 
 HHEALING2_I = add_spell {

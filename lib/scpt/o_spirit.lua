@@ -336,13 +336,14 @@ ODELCURSES_I = add_spell {
 	["mana_max"] =	20,
 	["fail"] = 	20,
 	["spell"] = 	function()
+			local done
 			done = remove_curse(Ind)
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 	end,
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{ "Removes light curses from your items.", }
+	["desc"] = 	{ "Attempts to remove curses from your items.", }
 }
 ODELCURSES_II = add_spell {
 	["name"] = 	"Lift Curses II",
@@ -352,13 +353,14 @@ ODELCURSES_II = add_spell {
 	["mana_max"] =	45,
 	["fail"] = 	-20,
 	["spell"] = 	function()
-			remove_all_curse(Ind)
+			local done
+			done = remove_all_curse(Ind)
 			if done == TRUE then msg_print(Ind, "The curse is broken!") end
 	end,
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{ "Removes all light and heavy curses from your items.", }
+	["desc"] = 	{ "Removes all normal and heavy curses from your items.", }
 }
 
 TRANCE = add_spell {
