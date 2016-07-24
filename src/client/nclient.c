@@ -366,7 +366,7 @@ int Send_file_end(int ind, unsigned short id) {
 }
 
 #define CHARSCREEN_COLOUR TERM_L_GREEN
-#define COL_CHARS 3
+#define COL_CHARS 4
 void Receive_login(void) {
 	int n;
 	char ch;
@@ -498,6 +498,32 @@ void Receive_login(void) {
 		c_put_str(CHARSCREEN_COLOUR, format("(You can create up to %d different characters to play with)", max_cpa), 1, 10);
 	else
 		c_put_str(CHARSCREEN_COLOUR, "(You can create only ONE characters at a time to play with)", 1, 10);
+
+#if 1
+	/* atmosphere */
+ #ifdef USE_SOUND_2010
+	/* Play background ambient sound effect (if enabled) */
+	if (use_sound) sound_ambient(exec_lua(0, "return get_sound_index(\"ambient_fireplace\")"));
+ #endif
+	/* left torch */
+	c_put_str(TERM_FIRE,  "^",  7, 1);
+	c_put_str(TERM_FIRE, " * ", 8, 0);
+	c_put_str(TERM_EMBER," # ", 9, 0);
+	c_put_str(TERM_UMBER, "|", 10, 1);
+	c_put_str(TERM_UMBER, "|", 11, 1);
+	c_put_str(TERM_UMBER, "|", 12, 1);
+	c_put_str(TERM_UMBER, "|", 13, 1);
+	c_put_str(TERM_L_DARK,"~", 14, 1);
+	/* right torch */
+	c_put_str(TERM_FIRE,  "^",  7, 78);
+	c_put_str(TERM_FIRE, " * ", 8, 77);
+	c_put_str(TERM_EMBER," # ", 9, 77);
+	c_put_str(TERM_UMBER, "|", 10, 78);
+	c_put_str(TERM_UMBER, "|", 11, 78);
+	c_put_str(TERM_UMBER, "|", 12, 78);
+	c_put_str(TERM_UMBER, "|", 13, 78);
+	c_put_str(TERM_L_DARK,"~", 14, 78);
+#endif
 
 	if (total_cpa <= 12) {
 		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 2);
