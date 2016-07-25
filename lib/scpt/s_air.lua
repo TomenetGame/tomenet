@@ -178,10 +178,12 @@ POISONBLOOD = add_spell {
 	["level"] = 	22,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	70,
+	["fail"] = 	0,
 	["spell"] = 	function()
-			set_oppose_pois(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25))
-			if get_level(Ind, POISONBLOOD, 50) >= 10 then set_brand(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25), BRAND_POIS, 10) end
+			local dur
+			dur = randint(30) + 25 + get_level(Ind, POISONBLOOD, 25)
+			set_oppose_pois(Ind, dur)
+			if get_level(Ind, POISONBLOOD, 50) >= 10 then set_brand(Ind, dur, BRAND_POIS, 10) end
 	end,
 	["info"] = 	function()
 			return "dur "..(25 + get_level(Ind, POISONBLOOD, 25)).."+d30"
@@ -198,7 +200,7 @@ THUNDERSTORM = add_spell {
 	["level"] = 	25,
 	["mana"] = 	45,
 	["mana_max"] = 	45,
-	["fail"] = 	50,
+	["fail"] = 	-10,
 	["spell"] = 	function()
 			set_tim_thunder(Ind, randint(10) + 10 + get_level(Ind, THUNDERSTORM, 25), 5 + get_level(Ind, THUNDERSTORM, 10), 10 + get_level(Ind, THUNDERSTORM, 25))
 	end,
