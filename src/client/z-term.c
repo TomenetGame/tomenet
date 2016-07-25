@@ -716,13 +716,35 @@ void flicker() {
 		for(y = 0; y < y2; y++) {
 			for(x = 0; x < x2; x++) {
 				attr = tterm->scr->a[y][x];
+				ch = tterm->scr->c[y][x];
+
 #ifdef EXTENDED_BG_COLOURS
 				if (attr < TERM_MULTI || attr == TERM2_BLUE) continue;
 #else
 				if (attr < TERM_MULTI) continue;
 #endif
 
-				ch = tterm->scr->c[y][x];
+#if 1
+				/* atmosphere */
+				if (attr == TERM_FIRE)
+					switch (ch) {
+					case '^': // ')(
+						switch (rand_int(3)) {
+						case 0: ch = '\''; break;
+						case 1: ch = ')'; break;
+						case 2: ch = '('; break;
+						}
+						break;
+					case '*': // Oo
+						switch (rand_int(3)) {
+						case 0: ch = '0'; break;
+						case 1: ch = 'o'; break;
+						case 2: ch = '*'; break;
+						}
+						break;
+					}
+#endif
+
 				attr = flick_colour(attr);
 
 				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));

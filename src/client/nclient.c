@@ -554,7 +554,8 @@ void Receive_login(void) {
 
 		strcpy(names[i], c_name);
 
-		sprintf(tmp, "%c) %s%s the level %d %s %s", 'a' + i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
+		//sprintf(tmp, "%c) %s%s the level %d %s %s", 'a' + i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
+		sprintf(tmp, "%c) %s%s (%d), %s %s", 'a' + i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
 		c_put_str(TERM_WHITE, tmp, offset + i, COL_CHARS);
 
 		if (mode & MODE_DED_PVP) {
