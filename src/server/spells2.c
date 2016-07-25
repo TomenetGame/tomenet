@@ -2590,7 +2590,8 @@ bool detect_noise(int Ind) {
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
 		/* Specialties for noise-detection: don't detect monsters in noiseless state */
-		if (m_ptr->csleep && ((r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD)) //RF3_DEMON debatable, maybe demon's don't really sleep at all?
+		if (m_ptr->csleep && r_ptr->d_char != 'E' && //elementals always give off some sort of noise ;)
+		    ((r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD)) //RF3_DEMON debatable, maybe demon's don't really sleep at all?
 		    || (r_ptr->flags7 & RF7_SPIDER)
 		    || r_ptr->d_char == 'A')) continue;
 		if (r_ptr->d_char == 'f') continue; //felines
