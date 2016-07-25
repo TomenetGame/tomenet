@@ -60,12 +60,21 @@ static void choose_name(void) {
   #define LOGO_ROW 1
   #define LOGO_ATTR TERM_EMBER
 	/* display a title */
+  #if 0
 	c_put_str(TERM_FIRETHIN, "  ^^^^^^^^^   ^^^^^^^    ^^^ ^^^      ^^^^^^^    ^^^  ^^^    ^^^^^^^   ^^^^^^^^^", LOGO_ROW, 0);
 	c_put_str(TERM_LITE,     " /########/  /######/   /##|/##|     /######/   /##| /##/   /######/  /########/", LOGO_ROW + 1, 0);
 	c_put_str(TERM_FIRE,     "   /##/     /##/ ##/   /###/###|    /##/       /###|/##/   /##/         /##/    ", LOGO_ROW + 2, 0);
 	c_put_str(TERM_FIRE,     "  /##/     /##/ ##/   /########|   /######/   /###/###/   /######/     /##/     ", LOGO_ROW + 3, 0);
 	c_put_str(TERM_FIRE,     " /##/     /##/ ##/   /##|##||##|  /##/       /##/|###/   /##/         /##/      ", LOGO_ROW + 4, 0);
 	c_put_str(TERM_EMBER,    "/##/     /######/   /##/|##||##| /######/   /##/ |##/   /######/     /##/       ", LOGO_ROW + 5, 0);
+  #else
+	c_put_str(TERM_FIRETHIN, " ^^^^^^^^^^  ^^^^^^^^  ^^^^    ^^^^  ^^^^^^^^   ^^^  ^^^^  ^^^^^^^^  ^^^^^^^^^^", LOGO_ROW, 0);
+	c_put_str(TERM_LITE,     " |########|  |######|  |###\\  /###|  |######|   |##\\ |##|  |######|  |########|", LOGO_ROW + 1, 0);
+	c_put_str(TERM_FIRE,     " |########|  |##| ##|  |####\\/####|  |##|       |###\\|##|  |##|      |########|", LOGO_ROW + 2, 0);
+	c_put_str(TERM_FIRE,     "    |##|     |##| ##|  |##########|  |######|   |#######|  |######|     |##|   ", LOGO_ROW + 3, 0);
+	c_put_str(TERM_FIRE,     "    |##|     |##| ##|  |##|\\##/|##|  |##|       |##|\\###|  |##|         |##|   ", LOGO_ROW + 4, 0);
+	c_put_str(TERM_EMBER,    "    |##|     |######|  |##| \\/ |##|  |######|   |##| \\##|  |######|     |##|   ", LOGO_ROW + 5, 0);
+  #endif
  #endif
 	c_put_str(TERM_SLATE, "Welcome! In order to play, you need to create an account.", LOGIN_ROW, 2);
 	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice, and don't", LOGIN_ROW + 1, 2);
