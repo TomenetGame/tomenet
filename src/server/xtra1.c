@@ -8666,22 +8666,22 @@ void calc_techniques(int Ind) {
 		p_ptr->melee_techniques |= MT_CHARGE;
 	if (mtech_lev[p_ptr->pclass][7] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][7])
-		p_ptr->melee_techniques |= MT_FLASH;
+		p_ptr->melee_techniques |= MT_DETNOISE;
 	if (mtech_lev[p_ptr->pclass][8] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][8])
-		p_ptr->melee_techniques |= MT_CLOAK;
+		p_ptr->melee_techniques |= MT_FLASH;
 	if (mtech_lev[p_ptr->pclass][9] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][9])
-		p_ptr->melee_techniques |= MT_SPIN;
+		p_ptr->melee_techniques |= MT_CLOAK;
 	if (mtech_lev[p_ptr->pclass][10] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][10])
-		p_ptr->melee_techniques |= MT_ASSA;
+		p_ptr->melee_techniques |= MT_SPIN;
 	if (mtech_lev[p_ptr->pclass][11] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][11])
-		p_ptr->melee_techniques |= MT_BERSERK;
+		p_ptr->melee_techniques |= MT_ASSA;
 	if (mtech_lev[p_ptr->pclass][12] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][12])
-		p_ptr->melee_techniques |= MT_XXX1000;
+		p_ptr->melee_techniques |= MT_BERSERK;
 	if (mtech_lev[p_ptr->pclass][13] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][13])
 		p_ptr->melee_techniques |= MT_SJUMP;

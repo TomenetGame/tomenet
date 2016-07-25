@@ -4418,13 +4418,13 @@ void check_experience(int Ind) {
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Perceive Noise'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][8] && p_ptr->lev >= mtech_lev[p_ptr->pclass][8])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Flash bomb'!");
-	if (old_lev < mtech_lev[p_ptr->pclass][9] && p_ptr->lev >= mtech_lev[p_ptr->pclass][9])
+	if (old_lev < mtech_lev[p_ptr->pclass][10] && p_ptr->lev >= mtech_lev[p_ptr->pclass][10])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Spin'!");
 #ifdef ENABLE_ASSASSINATE
-	if (old_lev < mtech_lev[p_ptr->pclass][10] && p_ptr->lev >= mtech_lev[p_ptr->pclass][10])
+	if (old_lev < mtech_lev[p_ptr->pclass][11] && p_ptr->lev >= mtech_lev[p_ptr->pclass][11])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Assasinate'!");
 #endif
-	if (old_lev < mtech_lev[p_ptr->pclass][11] && p_ptr->lev >= mtech_lev[p_ptr->pclass][11])
+	if (old_lev < mtech_lev[p_ptr->pclass][12] && p_ptr->lev >= mtech_lev[p_ptr->pclass][12])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Berserk'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][14] && p_ptr->lev >= mtech_lev[p_ptr->pclass][14]
 	    && p_ptr->total_winner)
