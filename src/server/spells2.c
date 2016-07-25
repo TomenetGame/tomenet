@@ -2594,9 +2594,11 @@ bool detect_noise(int Ind) {
 		    ((r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD)) //RF3_DEMON debatable, maybe demon's don't really sleep at all?
 		    || (r_ptr->flags7 & RF7_SPIDER)
 		    || r_ptr->d_char == 'A')) continue;
-		if (r_ptr->d_char == 'f') continue; //felines
-		if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE && r_ptr->level >= 23) continue; //master rogues
-		if (m_ptr->r_idx == 485 || m_ptr->r_idx == 564) continue; /* Ninja, Nightblade */
+		if (m_ptr->mspeed <= m_ptr->speed) { //aggravated (well, or hasted in this case) creatures are never stealthy
+			if (r_ptr->d_char == 'f') continue; //felines
+			if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE && r_ptr->level >= 23) continue; //master rogues
+			if (m_ptr->r_idx == 485 || m_ptr->r_idx == 564) continue; //ninja, nightblade
+		}
 
 		/* Detect all non-invisible monsters */
 		if (panel_contains(fy, fx) && (!(r_ptr->flags2 & RF2_INVISIBLE))) {
