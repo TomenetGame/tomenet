@@ -2559,6 +2559,125 @@ bool detect_creatures(int Ind) {
 	return (flag);
 }
 
+/* New Rogue technique */
+bool detect_noise(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int	i;
+	bool	flag = FALSE;
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+
+	/* Clear previously detected stuff */
+	clear_ovl(Ind);
+
+	/* Detect non-invisible monsters */
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = race_inf(m_ptr);
+		int fy = m_ptr->fy;
+		int fx = m_ptr->fx;
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+		/* Skip visible monsters */
+		if (p_ptr->mon_vis[i]) continue;
+		/* Skip monsters not on this depth */
+		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+
+		/* Specialties for noise-detection: don't detect monsters in noiseless state */
+		if (m_ptr->csleep && ((r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD)) //RF3_DEMON debatable, maybe demon's don't really sleep at all?
+		    || (r_ptr->flags7 & RF7_SPIDER)
+		    || r_ptr->d_char == 'A')) continue;
+		if (r_ptr->d_char == 'f') continue; //felines
+		if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE && r_ptr->level >= 23) continue; //master rogues
+		if (m_ptr->r_idx == 485 || m_ptr->r_idx == 564) continue; /* Ninja, Nightblade */
+
+		/* Detect all non-invisible monsters */
+		if (panel_contains(fy, fx) && (!(r_ptr->flags2 & RF2_INVISIBLE))) {
+			byte a;
+			char c;
+
+			/* Hack - Temporarily visible */
+			p_ptr->mon_vis[i] = TRUE;
+			/* Get the look of the monster */
+			map_info(Ind, fy, fx, &a, &c);
+			/* No longer visible */
+			p_ptr->mon_vis[i] = FALSE;
+			/* Draw the monster on the screen */
+			draw_spot_ovl(Ind, fy, fx, a, c);
+
+			flag = TRUE;
+		}
+	}
+
+	/* Detect non-invisible players */
+	for (i = 1; i <= NumPlayers; i++) {
+		player_type *q_ptr = Players[i];
+		int py = q_ptr->py;
+		int px = q_ptr->px;
+
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+		/* Skip ourself */
+		if (i == Ind) continue;
+		/* Skip players not on this depth */
+		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+		/* Never detect the dungeon master! */
+		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
+		/* Skip visible players */
+		if (p_ptr->play_vis[i]) continue;
+
+		/* Specialties for noise-detection */
+		if (p_ptr->skill_stl >= 14 /*30*/) continue; //don't detect Heroic/Legendary stealth
+
+		/* Detect all non-invisible players */
+		if (panel_contains(py, px) && !q_ptr->invis) {
+			byte a;
+			char c;
+
+			/* Hack - Temporarily visible */
+			p_ptr->play_vis[i] = TRUE;
+			/* Get the look of the player */
+			map_info(Ind, py, px, &a, &c);
+			/* No longer visible */
+			p_ptr->play_vis[i] = FALSE;
+			/* Draw the player on the screen */
+			draw_spot_ovl(Ind, py, px, a, c);
+
+			flag = TRUE;
+		}
+	}
+
+	/* Describe and clean up */
+	if (flag) {
+		/* Describe, and wait for acknowledgement */
+		msg_print(Ind, "You hear some revealing noise!");
+		msg_print(Ind, NULL);
+
+#if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
+		/* Wait */
+		Send_pause(Ind);
+
+		/* Mega-Hack -- Fix the monsters and players */
+		update_monsters(FALSE);
+		update_players();
+#endif
+	} else {
+#ifdef DETECT_ABSENCE
+		msg_print(Ind, "You cannot hear anything revealing.");
+		msg_print(Ind, NULL);
+#endif
+	}
+
+	/* Result */
+	return (flag);
+}
+
 /*
  * Detect everything
  */

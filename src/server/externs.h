@@ -1532,6 +1532,7 @@ extern bool detect_magic(int Ind, int rad);
 extern bool detect_invisible(int Ind);
 extern bool detect_evil(int Ind);
 extern bool detect_creatures(int Ind);
+extern bool detect_noise(int Ind);
 extern bool detection(int Ind, int rad);
 extern bool detect_bounty(int Ind, int rad);
 extern bool detect_object(int Ind, int rad);

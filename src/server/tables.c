@@ -2546,14 +2546,14 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_CONVEYANCE,
 			'+', 0,
 			'+', 750, },
-//#ifndef ENABLE_OCCULT /* Occult */
+#ifndef ENABLE_OCCULT /* Occult */
 		{ SKILL_DIVINATION,
 			'+', 0,
 			'+', 750, },
-//#endif
 		{ SKILL_AIR,
 			'+', 0,
 			'+', 750, },
+#endif
 #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
@@ -4603,19 +4603,19 @@ int p_tough_ac[51] = {
 
 /* For fighting techniques */
 byte mtech_lev[MAX_CLASS][16] = {
-    //	sprint,	taunt,	jump,	distr,	bash,	knockb,	charge,	flashb,	cloak,	spin,	assass,	berser,	-,	s-jump,	s-run,	instant cloak
-	{2,	4,	0,	0,	0,	0,	0,	0,	0,	6,	0,	20,	0,	0,	0,	0},	//warrior
+    //	sprint,	taunt,	jump,	distr,	bash,	knockb,	charge,	detnoi, flashb,	cloak,	spin,	assass,	berser,	s-jump,	s-run,	instant cloak
+	{2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	6,	0,	20,	0,	0,	0},	//warrior
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//istar
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//priest
 #ifdef ENABLE_ASSASSINATE
-	{3,	6,	0,	9,	0,	0,	0,	12,	0,	0,	35,	0,	0,	0,	50,	0},	//rogue
+	{2,	3,	0,	6,	0,	0,	0,	9,	12,	0,	0,	35,	0,	0,	50,	0},	//rogue
 #else
-	{3,	6,	0,	9,	0,	0,	0,	12,	0,	0,	0,	0,	0,	0,	50,	0},	//rogue
+	{2,	3,	0,	6,	0,	0,	0,	9,	12,	0,	0,	0,	0,	0,	50,	0},	//rogue
 #endif
-	{13,	16,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0,	0},	//mimic
+	{13,	16,	0,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//mimic
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//archer
-	{11,	17,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0,	0},	//paladin
-	{5,	9,	0,	0,	0,	0,	0,	0,	0,	17, 	0,	0,	0,	0,	0,	0},	//ranger
+	{11,	17,	0,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//paladin
+	{5,	9,	0,	0,	0,	0,	0,	0,	0,	0,	17, 	0,	0,	0,	0,	0},	//ranger
 	{6,	15,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//adventurer
 	{5,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//druid
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//shaman

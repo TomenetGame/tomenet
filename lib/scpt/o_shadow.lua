@@ -129,7 +129,7 @@ DARKBOLT_III = add_spell {
 	end,
 	["desc"] = 	{ "Conjures up darkness into a powerful bolt.", }
 }
---[[
+
 POISONFOG_I = add_spell {
 	["name"] = 	"Poisonous Fog I",
 	["school"] = 	{SCHOOL_OSHADOW},
@@ -190,7 +190,7 @@ POISONFOG_III = add_spell {
 		"living beings from breathing. The cloud will persist for some turns.",
 	}
 }
-]]--
+
 ODRAINLIFE_I = add_spell {
 	["name"] = 	"Sap Life I",
 	["school"] = 	{SCHOOL_OSHADOW},
@@ -250,26 +250,30 @@ DETECTINVIS = add_spell {
 	["desc"] = 	{ "Detects all nearby invisible creatures.", }
 }
 
---[[POISONRES = add_spell {
-	["name"] = 	"Poison Resistance",
+POISONRES = add_spell {
+	["name"] = 	"Aspect of Peril",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
-	["level"] = 	22,
+	["level"] = 	14,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	70,
+	["fail"] = 	0,
 	["spell"] = 	function()
-		set_oppose_pois(Ind, randint(30) + 25 + get_level(Ind, POISONRES, 25))
---		if get_level(Ind, POISONBLOOD, 50) >= 10 then set_brand(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25), BRAND_POIS, 10) end
+		local dur
+		dur = randint(15) + 20 + get_level(Ind, POISONRES, 25)
+		set_brand(Ind, dur, BRAND_POIS, 10)
+		if get_level(Ind, POISONRES, 50) >= 10 then
+			set_oppose_pois(Ind, dur)
+		end
 	end,
 	["info"] = 	function()
-		return "dur "..(25 + get_level(Ind, POISONRES, 25)).."+d30"
+		return "dur "..(20 + get_level(Ind, POISONRES, 25)).."+d15"
 	end,
 	["desc"] = 	{
-		"Grants poison resistance.",
---		"At level 10 it provides poison branding to wielded weapon"
+		"It temporarily bestows the touch of poison on your weapons."
+		"At level 10 it grants temporary poison resistance.",
 	}
-}]]--
+}
 
 OBLIND_I = add_spell {
 	["name"] = 	"Blindness I",

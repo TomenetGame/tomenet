@@ -513,18 +513,17 @@ cptr melee_techniques[16] =
   "Instant Cloak",
 
 #else
-
   "Bash",
   "Knock Back",
   "Charge",
-  "Flash Bomb",
+  "Perceive Noise",
 
+  "Flash Bomb",
   "Cloak",
   "Spin",
   "Assassinate",
-  "Berserk",
 
-  "",
+  "Berserk",
   "Shadow Jump",
   "Shadow Run",
   "Instant Cloak",
