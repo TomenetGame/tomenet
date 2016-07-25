@@ -2546,9 +2546,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_CONVEYANCE,
 			'+', 0,
 			'+', 750, },
+//#ifndef ENABLE_OCCULT /* Occult */
 		{ SKILL_DIVINATION,
 			'+', 0,
 			'+', 750, },
+//#endif
 		{ SKILL_AIR,
 			'+', 0,
 			'+', 750, },

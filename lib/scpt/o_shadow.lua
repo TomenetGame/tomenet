@@ -129,7 +129,7 @@ DARKBOLT_III = add_spell {
 	end,
 	["desc"] = 	{ "Conjures up darkness into a powerful bolt.", }
 }
-
+--[[
 POISONFOG_I = add_spell {
 	["name"] = 	"Poisonous Fog I",
 	["school"] = 	{SCHOOL_OSHADOW},
@@ -190,7 +190,7 @@ POISONFOG_III = add_spell {
 		"living beings from breathing. The cloud will persist for some turns.",
 	}
 }
-
+]]--
 ODRAINLIFE_I = add_spell {
 	["name"] = 	"Sap Life I",
 	["school"] = 	{SCHOOL_OSHADOW},
