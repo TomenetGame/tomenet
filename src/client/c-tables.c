@@ -503,21 +503,21 @@ cptr melee_techniques[16] =
   "Sweep",
 
   "Bash",
-  "Knock-back",
+  "Knockback",
   "Charge",
-  "Flash bomb",
+  "Flash Bomb",
 
   "Spin",
   "Berserk",
-  "Shadow jump",
-  "Instant cloak",
+  "Shadow Jump",
+  "Instant Cloak",
 
 #else
 
   "Bash",
-  "Knock back",
+  "Knock Back",
   "Charge",
-  "Flash bomb",
+  "Flash Bomb",
 
   "Cloak",
   "Spin",
@@ -525,19 +525,19 @@ cptr melee_techniques[16] =
   "Berserk",
 
   "",
-  "Shadow jump",
-  "Shadow run",
-  "Instant cloak",
+  "Shadow Jump",
+  "Shadow Run",
+  "Instant Cloak",
 #endif
 };
 
 cptr ranged_techniques[16] =
 {
 
-  "Flare missile",
-  "Precision shot",
-  "Craft some ammunition",
-  "Double-shot",
+  "Flare Missile",
+  "Precision Shot",
+  "Craft Ammunition",
+  "Double Shot",
 
   "Barrage",
   "XXX",

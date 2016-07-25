@@ -33,7 +33,7 @@ OCURSE = add_spell {
 ]]
 
 OCURSEDD_I = add_spell {
-	["name"] = 	"Cause wounds I",
+	["name"] = 	"Cause Wounds I",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -53,7 +53,7 @@ OCURSEDD_I = add_spell {
 	["desc"] = 	{ "Curse an enemy, causing wounds.", }
 }
 OCURSEDD_II = add_spell {
-	["name"] = 	"Cause wounds II",
+	["name"] = 	"Cause Wounds II",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -73,7 +73,7 @@ OCURSEDD_II = add_spell {
 	["desc"] = 	{ "Curse an enemy, causing wounds.", }
 }
 OCURSEDD_III = add_spell {
-	["name"] = 	"Cause wounds III",
+	["name"] = 	"Cause Wounds III",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	75,
