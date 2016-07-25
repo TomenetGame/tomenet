@@ -675,13 +675,6 @@ void Receive_login(void) {
 	else strcpy(c_name, names[ch - 'a']);
 	Term_clear();
 	strcpy(cname, c_name);
-
-#ifdef ATMOSPHERIC_INTRO
- #ifdef USE_SOUND_2010
-	/* Fade out ambient firelight sfx */
-	if (use_sound) sound_ambient(-1);
- #endif
-#endif
 }
 
 /*

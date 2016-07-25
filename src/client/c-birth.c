@@ -188,6 +188,18 @@ static bool choose_sex(void) {
 		c = '#';
 	}
 
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
+
 	while (1) {
 		if (valid_dna) c_put_str(TERM_SLATE, "Choose a sex (* for random, \377B#\377s/\377B%\377s to reincarnate, Q to quit): ", 20, 2);
 		else c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to quit): ", 20, 2);
@@ -313,6 +325,18 @@ race_redraw:
 		hazard = TRUE;
 		c = '#';
 	}
+
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
 
 	while (1) {
 		if (valid_dna) c_put_str(TERM_SLATE, "Choose a race (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
@@ -529,6 +553,18 @@ trait_redraw:
 		c = '#';
 	}
 
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
+
 	/* Get a trait */
 	while (1) {
 		if (valid_dna) c_put_str(TERM_SLATE, "Choose a trait (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
@@ -719,6 +755,18 @@ class_redraw:
 		c = '#';
 	}
 
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
+
 	/* Get a class */
 	while (1) {
 		if (valid_dna) c_put_str(TERM_SLATE, "Choose a class (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8):  ", n, 2);
@@ -869,6 +917,18 @@ static bool choose_stat_order(void) {
 			/* if (i > 4) hazard = TRUE;
 			It confused too many noobiez. Taking it out for now. */
 
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
+
 			/* Get a stat */
 			while (1) {
 				put_str("Choose your stat order (* for random, Q to quit): ", 20, 2);
@@ -946,6 +1006,18 @@ static bool choose_stat_order(void) {
 		if (auto_reincarnation) {
 			c = '#';
 		}
+
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
 
 		while (1) {
 			c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
@@ -1174,6 +1246,18 @@ static bool choose_mode(void) {
 			c = '#';
 		}
 
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
+
 		while (1) {
 			if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
 			else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to quit, BACKSPACE to go back): ", 15, 2);
@@ -1278,6 +1362,18 @@ static bool choose_mode(void) {
 		hazard = TRUE;
 		c = '#';
 	}
+
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
 
 	while (1) {
 		if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
@@ -1408,6 +1504,18 @@ static bool choose_body_modification(void) {
 		hazard = TRUE;
 		c = '#';
 	}
+
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
 
 	while (1) {
 		if (valid_dna) c_put_str(TERM_SLATE, "Choose body modification (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 19, 2);
@@ -1642,6 +1750,20 @@ void get_char_info(void) {
 	/* Clear bottom of screen */
 	clear_from(20);
 
+
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
+
+
 	/* Display some helpful information XXX XXX XXX */
 
 csex:
@@ -1726,8 +1848,22 @@ cstats:
 		c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 	}
 
+#if 0 //why?
 	/* Clear */
 	clear_from(15);
+#endif
+
+#ifdef ATMOSPHERIC_INTRO
+	/* torch */
+	c_put_str(TERM_FIRE,  "^", 3, 26);
+	c_put_str(TERM_FIRE, " * ",4, 25);
+	c_put_str(TERM_EMBER," # ",5, 25);
+	c_put_str(TERM_UMBER, "|", 6, 26);
+	c_put_str(TERM_UMBER, "|", 7, 26);
+	c_put_str(TERM_UMBER, "|", 8, 26);
+	c_put_str(TERM_UMBER, "|", 9, 26);
+	c_put_str(TERM_L_DARK,"~",10, 26);
+#endif
 
 	/* Hack: Apply slot-exclusive mode on user demand */
 	if (dedicated) {
@@ -1737,7 +1873,7 @@ cstats:
 
 	/* Save Birth DNA */
 	save_birth_file(cname);
-	
+
 	/* Message */
 	put_str("Entering game...  [Hit any key]", 21, 1);
 
@@ -1746,6 +1882,15 @@ cstats:
 
 	/* Clear */
 	clear_from(20);
+
+#ifdef ATMOSPHERIC_INTRO
+ #ifdef USE_SOUND_2010
+  #if 0 /* don't stop the sfx, since we'll end up in Bree's inn anyway, which has fireplace sfx too! */
+	/* Stop background ambient sound effect (if enabled) */
+	if (use_sound) sound_ambient(-1);
+  #endif
+ #endif
+#endif
 }
 
 static bool enter_server_name(void) {
