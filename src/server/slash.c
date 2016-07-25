@@ -2231,6 +2231,23 @@ void do_slash_cmd(int Ind, char *message) {
 			/* char/acc names always start on upper-case, so forgive the player if he slacked.. */
 			message2[6] = toupper(message2[6]);
 
+			/* was it just a '/note *' ? */
+			if (!strcmp(message3, "*")) { /* Delete all pending notes to all players */
+				for (i = 0; i < MAX_NOTES; i++) {
+					/* search for pending notes of this player */
+					if (!strcmp(priv_note_sender[i], p_ptr->name) ||
+					    !strcmp(priv_note_sender[i], p_ptr->accountname)) {
+						notes++;
+						strcpy(priv_note_sender[i], "");
+						strcpy(priv_note_target[i], "");
+						strcpy(priv_note[i], "");
+					}
+				}
+				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes.");
+				else msg_format(Ind, "\377oDeleted %d notes.", notes);
+				return;
+			}
+
 			/* translate character name to account name */
 			if (!(tpname = strchr(message2 + 6, ':'))) {
 				/* no text given */
@@ -2310,23 +2327,6 @@ void do_slash_cmd(int Ind, char *message) {
 						}
 					break;
 				}
-
-			/* was it just a '/note *' ? */
-			if (!colon && !strcmp(tname, "*")) { /* Delete all pending notes to all players */
-				for (i = 0; i < MAX_NOTES; i++) {
-					/* search for pending notes of this player */
-					if (!strcmp(priv_note_sender[i], p_ptr->name) ||
-					    !strcmp(priv_note_sender[i], p_ptr->accountname)) {
-						notes++;
-						strcpy(priv_note_sender[i], "");
-						strcpy(priv_note_target[i], "");
-						strcpy(priv_note[i], "");
-					}
-				}
-				if (!notes) msg_format(Ind, "\377oYou don't have any pending notes.");
-				else msg_format(Ind, "\377oDeleted %d notes.", notes);
-				return;
-			}
 
 			/* No colon found -> only a name parm give */
 			if (!colon) { /* Delete all pending notes to a specified player */
