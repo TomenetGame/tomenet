@@ -733,15 +733,16 @@ void flicker() {
 #ifdef ATMOSPHERIC_INTRO
 				if (attr == TERM_FIRE || attr == TERM_FIRETHIN)
 					switch (ch) {
-					case '^': // ')(
+					case '^':
 						switch (rand_int(4)) {
 						case 0: ch = '\''; break;
 						case 1: ch = ')'; break;
 						case 2: ch = '('; break;
-						case 3: ch = ','; break;
+						case 3: ch = '.'; break;
+						//case 4: ch = '|'; break;
 						}
 						break;
-					case '*': // Oo
+					case '*':
 						switch (rand_int(3)) {
 						case 0: ch = '0'; break;
 						case 1: ch = 'o'; break;
