@@ -4226,7 +4226,9 @@ static int Receive_login(int ind) {
 		    /* exception! reserved character names have priority.
 		       Otherwise someone could create an account meanwhile to block this player's reincarnation.
 		       Ok, far-fetched paranoia, but still >_>.. */
-		    && !took_reservation) {
+		    && !took_reservation
+		    /* Exempt similar-checking for when the character name is exactly the same as his account name - that should always be allowed! */
+		    && strcmp(choice, connp->nick)) {
 			Destroy_connection(ind, "A too similar name exists. Please choose a different name.");
 			return -1;
 		}
