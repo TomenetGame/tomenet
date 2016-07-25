@@ -317,6 +317,9 @@
  #ifdef TEST_CLIENT
   #define BIGMAP_MINDLINK_HACK
  #endif
+
+ /* Atmospheric login screens, with animation, sound and music? */
+ #define ATMOSPHERIC_INTRO
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/

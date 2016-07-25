@@ -499,9 +499,10 @@ void Receive_login(void) {
 	else
 		c_put_str(CHARSCREEN_COLOUR, "(You can create only ONE characters at a time to play with)", 1, 10);
 
-#if 1
-	/* atmosphere */
+#ifdef ATMOSPHERIC_INTRO
  #ifdef USE_SOUND_2010
+	/* Stop music playback from login screen - the character screen has no music, just the firelight sound! */
+	if (use_sound) music(-1);
 	/* Play background ambient sound effect (if enabled) */
 	if (use_sound) sound_ambient(exec_lua(0, "return get_sound_index(\"ambient_fireplace\")"));
  #endif
@@ -674,6 +675,13 @@ void Receive_login(void) {
 	else strcpy(c_name, names[ch - 'a']);
 	Term_clear();
 	strcpy(cname, c_name);
+
+#ifdef ATMOSPHERIC_INTRO
+ #ifdef USE_SOUND_2010
+	/* Fade out ambient firelight sfx */
+	if (use_sound) sound_ambient(-1);
+ #endif
+#endif
 }
 
 /*

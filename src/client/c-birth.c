@@ -31,6 +31,13 @@
 /* For character parameter list [15] */
 #define CHAR_COL 9
 
+/* Login screen text placement */
+#ifdef ATMOSPHERIC_INTRO
+ #define LOGIN_ROW 9 /*1*/
+#else
+ #define LOGIN_ROW 2
+#endif
+
 /*
  * Choose the character's name
  */
@@ -49,11 +56,22 @@ static void choose_name(void) {
 	prt("than 1 account. Ask a server administrator to 'validate' your account!", 18, 2);
 	prt("If an account is not validated, it has certain restrictions to prevent abuse.", 19, 2);
 #else
-	c_put_str(TERM_SLATE, "Welcome! In order to play, you need to create an account.", 1, 2);
-	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice, and don't", 2, 2);
-	c_put_str(TERM_SLATE, "forget name and password. Players may only own one account each at a time.", 3, 2);
-	c_put_str(TERM_SLATE, "If you are new to TomeNET, this guide may prove useful:", 14, 2);
-	prt("http://www.tomenet.eu/guide.php", 15, 2);
+ #ifdef ATMOSPHERIC_INTRO /* ascii-art in the top area */
+  #define LOGO_ROW 1
+  #define LOGO_ATTR TERM_EMBER
+	/* display a title */
+	c_put_str(TERM_FIRETHIN, "  ^^^^^^^^^   ^^^^^^^    ^^  ^^       ^^^^^^^    ^^   ^^^    ^^^^^^^   ^^^^^^^^^", LOGO_ROW, 0);
+	c_put_str(TERM_LITE,     " /########/  /######/   /##|/##|     /######/   /##| /##/   /######/  /########/", LOGO_ROW + 1, 0);
+	c_put_str(TERM_FIRE,     "   /##/     /##/ ##/   /###/###|    /##/       /###|/##/   /##/         /##/    ", LOGO_ROW + 2, 0);
+	c_put_str(TERM_FIRE,     "  /##/     /##/ ##/   /########|   /######/   /###/###/   /######/     /##/     ", LOGO_ROW + 3, 0);
+	c_put_str(TERM_EMBER,    " /##/     /##/ ##/   /##|##||##|  /##/       /##/|###/   /##/         /##/      ", LOGO_ROW + 4, 0);
+	c_put_str(TERM_HELLFIRE, "/##/     /######/   /##/|##||##| /######/   /##/ |##/   /######/     /##/       ", LOGO_ROW + 5, 0);
+ #endif
+	c_put_str(TERM_SLATE, "Welcome! In order to play, you need to create an account.", LOGIN_ROW, 2);
+	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice, and don't", LOGIN_ROW + 1, 2);
+	c_put_str(TERM_SLATE, "forget name and password. Players may only own one account each at a time.", LOGIN_ROW + 2, 2);
+	c_put_str(TERM_SLATE, "If you are new to TomeNET, this guide may prove useful:", LOGIN_ROW + 9, 2);
+	prt("http://www.tomenet.eu/guide.php", LOGIN_ROW + 10, 2);
 #endif
 #ifndef SIMPLE_LOGIN
 	prt("Enter your account name above.", 21, 2);
@@ -65,7 +83,7 @@ static void choose_name(void) {
 #ifndef SIMPLE_LOGIN
 		move_cursor(2, 15);
 #else
-		move_cursor(5, 15);
+		move_cursor(LOGIN_ROW + 4, 15);
 #endif
 		/* Save the player name */
 		strcpy(tmp, nick);
@@ -85,7 +103,7 @@ static void choose_name(void) {
 #ifndef SIMPLE_LOGIN
 	c_put_str(TERM_L_BLUE, tmp, 2, 15);
 #else
-	c_put_str(TERM_L_BLUE, tmp, 5, 15);
+	c_put_str(TERM_L_BLUE, tmp, LOGIN_ROW + 4, 15);
 #endif
 
 	/* Erase the prompt, etc */
@@ -114,7 +132,7 @@ static void enter_password(void) {
 #ifndef SIMPLE_LOGIN
 		move_cursor(3, 15);
 #else
-		move_cursor(6, 15);
+		move_cursor(LOGIN_ROW + 5, 15);
 #endif
 
 		/* Get an input, ignore "Escape" */
@@ -132,7 +150,7 @@ static void enter_password(void) {
 #ifndef SIMPLE_LOGIN
 		Term_putch(15+c, 3, TERM_L_BLUE, 'x');
 #else
-		Term_putch(15+c, 6, TERM_L_BLUE, 'x');
+		Term_putch(15+c, LOGIN_ROW + 5, TERM_L_BLUE, 'x');
 #endif
 
 	/* Erase the prompt, etc */
@@ -1448,21 +1466,28 @@ void get_char_name(void) {
 	/* Clear screen */
 	Term_clear();
 
+#ifdef ATMOSPHERIC_INTRO
+ #ifdef USE_SOUND_2010
+	/* Play back a fitting, non-common music piece, abused as 'intro theme'.. */
+	if (use_sound) music(exec_lua(0, "return get_music_index(\"town_generic\")"));
+ #endif
+#endif
+
 	/* Title everything */
 #ifndef SIMPLE_LOGIN
 	put_str("Name        :", 2, 1);
 	put_str("Password    :", 3, 1);
 	c_put_str(TERM_SLATE, "Make sure you enter letters in correct upper/lower case!", 5, 3);
 #else
-	put_str("Name        :", 5, 1);
-	put_str("Password    :", 6, 1);
-	c_put_str(TERM_SLATE, "Make sure you enter letters in correct upper/lower case!", 9, 3);
+	put_str("Name        :", LOGIN_ROW + 4, 1);
+	put_str("Password    :", LOGIN_ROW + 5, 1);
+	c_put_str(TERM_SLATE, "Make sure you enter letters in correct upper/lower case!", LOGIN_ROW + 7, 3);
 #endif
 	/* Dump the default name */
 #ifndef SIMPLE_LOGIN
 	c_put_str(TERM_L_BLUE, nick, 2, 15);
 #else
-	c_put_str(TERM_L_BLUE, nick, 5, 15);
+	c_put_str(TERM_L_BLUE, nick, LOGIN_ROW + 4, 15);
 #endif
 
 
@@ -1492,6 +1517,16 @@ void get_char_name(void) {
 	c_message_add("====================");
 	c_message_add("  ");
 	c_message_add(" ");
+
+#ifdef ATMOSPHERIC_INTRO /* ascii-art in the top area */
+	/* erase title, in case it gets half-way overwritten with a login-failure message (looks bad) */
+	c_put_str(TERM_DARK, "                                                                                ", LOGO_ROW, 0);
+	c_put_str(TERM_DARK, "                                                                                ", LOGO_ROW + 1, 0);
+	c_put_str(TERM_DARK, "                                                                                ", LOGO_ROW + 2, 0);
+	c_put_str(TERM_DARK, "                                                                                ", LOGO_ROW + 3, 0);
+	c_put_str(TERM_DARK, "                                                                                ", LOGO_ROW + 4, 0);
+	c_put_str(TERM_DARK, "                                                                                ", LOGO_ROW + 5, 0);
+#endif
 }
 
 /*

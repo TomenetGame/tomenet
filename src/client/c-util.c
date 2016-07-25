@@ -514,8 +514,9 @@ static char inkey_aux(void) {
 
 	/* If no network yet, just wait for a keypress */
 	if (net_fd == -1) {
+#ifndef ATMOSPHERIC_INTRO /* don't block, because we still want to animate colours maybe (title screen!) */
 		/* Wait for a keypress */
-                (void)(Term_inkey(&ch, TRUE, TRUE));
+		(void)(Term_inkey(&ch, TRUE, TRUE));
 
 		if (parse_macro && (ch == MACRO_WAIT)) {
 			buf_atoi[0] = '0';
@@ -533,6 +534,16 @@ static char inkey_aux(void) {
 			/* continue with the next 'real' key */
 			(void)(Term_inkey(&ch, TRUE, TRUE));
 		}
+#else
+		do {
+			do_flicker();
+			(void)(Term_inkey(&ch, FALSE, TRUE));
+			if (ch) break;
+			update_ticks();
+			/* Wait according to fps - mikaelh */
+			SetTimeout(0, next_frame());
+		} while (!ch);
+#endif
 	} else {
 		/* Wait for keypress, while also checking for net input */
 		do {
@@ -7682,8 +7693,12 @@ void my_memfrob(void *s, int n)
  *
  * Branch has to be an exact match.
  */
-bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build)
-{
+bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build) {
+#ifdef ATMOSPHERIC_INTRO
+	/* hack for animating colours before we even have network contact to server */
+	if (!version->major) return TRUE;
+#endif
+
 	if (version->major < major)
 		return FALSE; /* very old */
 	else if (version->major > major)

@@ -6841,6 +6841,10 @@ extern int PlayerUID;
 
  #define TERM_EMBER	55
 
+ #ifdef ATMOSPHERIC_INTRO
+  #define TERM_FIRETHIN	56
+ #endif
+
  #ifdef EXTENDED_BG_COLOURS
   #define TERM2_BLUE	63
  #endif

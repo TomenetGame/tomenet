@@ -1522,7 +1522,17 @@ void ambient_handle_fading(void) {
  */
 static bool play_music(int event) {
 	/* Paranoia */
-	if (event < 0 || event >= MUSIC_MAX) return FALSE;
+	if (event < -1 || event >= MUSIC_MAX) return FALSE;
+
+#ifdef ATMOSPHERIC_INTRO
+	/* New, for title screen -> character screen switch: Halt current music */
+	if (event == -1) {
+		/* Stop currently playing music though, before returning */
+		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
+			Mix_FadeOutMusic(2000);
+		return TRUE; /* claim that it 'succeeded' */
+	}
+#endif
 
 	if (songs[event].disabled) {
 		/* Stop currently playing music though, before returning */

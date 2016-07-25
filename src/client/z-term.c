@@ -679,6 +679,11 @@ byte flick_colour(byte attr){
 
 		case TERM_EMBER:
 			return (rand_int(6) ? TERM_RED : (rand_int(2) ? TERM_ORANGE : TERM_L_RED));
+
+ #ifdef ATMOSPHERIC_INTRO
+		case TERM_FIRETHIN: /* for ascii-art in client login screen */
+			return (!rand_int(2) ? (randint(5) > 3 ? TERM_ORANGE : (rand_int(2) ? TERM_YELLOW : TERM_RED)) : TERM_DARK);
+ #endif
 #endif
 		default:
 			return(attr);
@@ -724,15 +729,15 @@ void flicker() {
 				if (attr < TERM_MULTI) continue;
 #endif
 
-#if 1
-				/* atmosphere */
-				if (attr == TERM_FIRE)
+#ifdef ATMOSPHERIC_INTRO
+				if (attr == TERM_FIRE || attr == TERM_FIRETHIN)
 					switch (ch) {
 					case '^': // ')(
-						switch (rand_int(3)) {
+						switch (rand_int(4)) {
 						case 0: ch = '\''; break;
 						case 1: ch = ')'; break;
 						case 2: ch = '('; break;
+						case 3: ch = ','; break;
 						}
 						break;
 					case '*': // Oo
