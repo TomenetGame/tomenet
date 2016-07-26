@@ -8915,8 +8915,39 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			if (strstr(o_name, " of Manathrust") && extra != -1) break;
 		}
 		if (i == max_k_idx) {
+#if 1 /* quality of life: for specific stores, no need to type the whole (always same) item name. */
+			/* assume player maybe just entered a spell name, if this is the bookstore. */
+			if (p_ptr->store_num == STORE_BOOK ||
+			    p_ptr->store_num == STORE_BOOK_DUN ||
+			    p_ptr->store_num == STORE_LIBRARY ||
+			    p_ptr->store_num == STORE_HIDDENLIBRARY ||
+			    p_ptr->store_num == STORE_FORBIDDENLIBRARY) {
+				for (i = 0; i < max_spells; i++)
+					if (!strcasecmp(school_spells[i].name, str)) break;
+				if (i < max_spells) {
+					extra = i;
+					i = lookup_kind(TV_BOOK, SV_SPELLBOOK);
+					invcopy(&forge, i);
+				}
+			}
+			/* assume player maybe just entered a rune element, if this is the rune repository. */
+			if (p_ptr->store_num == STORE_RUNE ||
+			    p_ptr->store_num == STORE_RUNE_DUN) {
+				for (i = 0; i < max_k_idx; i++) {
+					if (k_info[i].tval != TV_RUNE) continue;
+					if (!strcasecmp(k_name + k_info[i].name, str)) break;
+				}
+				if (i < max_k_idx) invcopy(&forge, i);
+			}
+			/* still failure */
+			if (i == max_k_idx) {
+				msg_print(Ind, "Sorry, I have never heard of an item like that.");
+				return;
+			}
+#else
 			msg_print(Ind, "Sorry, I have never heard of an item like that.");
 			return;
+#endif
 		}
 		forge.number = 1;
 
