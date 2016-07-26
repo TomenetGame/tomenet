@@ -5441,15 +5441,15 @@ static void do_unstat(struct worldpos *wpos, bool fast_unstat) {
 		if (inarea(&Players[j]->wpos, wpos)) return;
 
 	// If this level is static and no one is actually on it
-//	if (stale_level(wpos)) {
+	//if (stale_level(wpos)) {
 		/* limit static time in Ironman Deep Dive Challenge a lot */
 		if (in_irondeepdive(wpos)) {
 			if (isdungeontown(wpos)) {
-				if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);
+				if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);//5 min
 			} else if ((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) {
 				/* still 2 minutes static for very shallow levels */
-				if (stale_level(wpos, 120)) new_players_on_depth(wpos, 0, FALSE);
-			} else if (stale_level(wpos, 600)) new_players_on_depth(wpos, 0, FALSE);
+				if (stale_level(wpos, 120)) new_players_on_depth(wpos, 0, FALSE);//2 min
+			} else if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);//5 min (was 10)
 		} else {
 #ifdef SAURON_FLOOR_FAST_UNSTAT
 			if (fast_unstat) j = 60 * 60; //1h
