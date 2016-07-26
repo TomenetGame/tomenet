@@ -3105,7 +3105,7 @@ D:ominously as it jumps at your throat!
 
 N:206:Old Man Willow
 G:#:s
-I:110:30d30:20:20:20
+I:110:50d30:20:20:20
 W:25:4:3000:150
 E:1:1:1:2:1:1
 O:0:50:50:0
@@ -15532,7 +15532,7 @@ D:It was left here to be used against intruders.
 
 N:872:The Balrog of Moria
 G:U:v
-I:130:30d100:20:100:40
+I:130:30d150:20:100:40
 W:50:1:13000:30000
 E:1:1:1:2:1:1
 O:0:50:50:0
@@ -17551,7 +17551,7 @@ D:come enslaved to its aid.
 
 N:990:Ulfang the Black
 G:p:U
-I:120:25d100:20:90:40
+I:120:25d130:20:90:40
 W:44:4:2100:1200
 E:1:1:1:2:1:1
 O:10:90:0:0
@@ -18319,7 +18319,7 @@ D:colours as you watch.
 
 N:1029:The Minotaur of the Labyrinth
 G:H:s
-I:130:150d10:13:25:10
+I:130:150d20:13:25:10
 W:40:2:17500:3100
 E:1:1:1:2:1:1
 O:0:0:0:0
@@ -18334,7 +18334,7 @@ D:It is a cross between a human and a bull.
 
 N:1030:The Sandworm Queen
 G:w:v
-I:120:30d20:20:40:80
+I:120:50d30:20:40:80
 W:30:3:9000:800
 E:0:0:0:0:1:0
 O:30:60:0:10
@@ -18419,7 +18419,7 @@ D:walls, the ceiling and your gear.
 
 N:1034:The White Balrog
 G:U:W
-I:120:25d100:20:120:40
+I:120:25d150:20:120:40
 W:50:3:12000:25000
 E:1:1:1:2:1:1
 O:0:50:50:0
@@ -18440,7 +18440,7 @@ D:pike in its hands.
 
 N:1035:Golgarach, the Living Rock
 G:#:W
-I:120:50d30:20:100:40
+I:120:50d50:20:100:40
 W:45:1:0:10000
 E:0:0:0:0:0:0
 O:60:0:40:0
