@@ -6376,6 +6376,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			/* :) */
 			if (m_ptr->r_idx == RI_LEPER) {
+				int clone = m_list[c_ptr->m_idx].clone, clone_summoning = m_list[c_ptr->m_idx].clone_summoning;
 				delete_monster_idx(c_ptr->m_idx, TRUE);
 				switch (rand_int(10)) {
 				case 0: i = 1; break;
@@ -6389,7 +6390,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				case 8: i = 17; break;
 				case 9: i = 18; break;
 				}
-				(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, 0, 0);
+				(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
 			}
 
 			/* No "real" damage */
