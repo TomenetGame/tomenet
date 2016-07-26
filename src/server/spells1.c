@@ -3123,6 +3123,14 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
  * Note that this function (used by stat potions) now restores
  * the stat BEFORE increasing it.
  */
+/* Fix visual glitch of stats maxing out at <= 18 not switching to TERM_L_UMBER;
+   also it was a bit annoying that non-fractionally displayed stats (ie stats <= 18)
+   weren't advancing visibly (ie by a full point) when quaffing stat potions, when
+   the stat in question was internally (stat_cur) already at 18+;
+   possible downside: This buffs stat gain tremendously for low-stat races (hi Yeeks),
+   since stats <= 18 will always increase by a full point, even though they'd usually
+   only increase by a fraction of a point if the stat_cur was really already above 18. */
+#define FIX_STATLOWMAX
 bool inc_stat(int Ind, int stat) {
 	player_type *p_ptr = Players[Ind];
 	int value, gain;
@@ -3133,9 +3141,19 @@ bool inc_stat(int Ind, int stat) {
 	/* Cannot go above 18/100 */
 	if (value < 18 + 100) {
 		/* Gain one (sometimes two) points */
+#ifndef FIX_STATLOWMAX
 		if (value < 18) {
+#else
+		if (p_ptr->stat_top[stat] < 18) {
+			if (value >= 18) gain = 10;
+			else
+#endif
 			gain = ((rand_int(100) < 75) ? 1 : 2);
 			value += gain;
+#ifdef FIX_STATLOWMAX
+			//paranoia - only needed for old characters who might've had their stats partially increased already:
+			if (value > 18) value = 18 + ((value - 18) / 10) * 10;
+#endif
 		}
 		/* Gain 1/6 to 1/3 of distance to 18/100 */
 		else if (value < 18+98) {
