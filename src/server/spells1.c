@@ -2335,7 +2335,6 @@ static bool hates_acid(object_type *o_ptr) {
 	case TV_CLOAK:
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
-	case TV_DRAG_ARMOR:
 
 	case TV_LITE:
 		return (TRUE);
