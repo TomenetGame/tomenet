@@ -9134,9 +9134,16 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 #ifdef IRONDEEPDIVE_EXPAND_SMALL
 	if (in_irondeepdive(wpos)) {
+		/* Note: the only applicable 'SMALLEST' dungeon for IDDC is 'The Maze' - enjoy the huge maze.. */
+ #if 0
 		/* expand small to normal and smallest to small */
 		df1_small = DF1_SMALLEST;
 		df1_smallest = 0x0;
+ #else
+		/* always expand level to normal size */
+		df1_small = 0x0;
+		df1_smallest = 0x0;
+ #endif
 	}
 #endif
 
