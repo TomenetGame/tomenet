@@ -1693,8 +1693,8 @@ void self_knowledge(int Ind) {
 	if (p_ptr->sustain_str) fprintf(fff, "Your strength is sustained.\n");
 	if (p_ptr->sustain_int) fprintf(fff, "Your intelligence is sustained.\n");
 	if (p_ptr->sustain_wis) fprintf(fff, "Your wisdom is sustained.\n");
-	if (p_ptr->sustain_con) fprintf(fff, "Your constitution is sustained.\n");
 	if (p_ptr->sustain_dex) fprintf(fff, "Your dexterity is sustained.\n");
+	if (p_ptr->sustain_con) fprintf(fff, "Your constitution is sustained.\n");
 	if (p_ptr->sustain_chr) fprintf(fff, "Your charisma is sustained.\n");
 	if (p_ptr->black_breath || p_ptr->black_breath_tmp)
 		fprintf(fff, "You suffer from Black Breath.\n");
