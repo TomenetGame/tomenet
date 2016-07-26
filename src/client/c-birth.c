@@ -34,6 +34,16 @@
 /* Login screen text placement */
 #ifdef ATMOSPHERIC_INTRO
  #define LOGIN_ROW 9 /*1*/
+ #define TORCH_CC_X 27
+ #define DRAW_TORCH \
+	c_put_str(TERM_FIRE,  "^", 3, TORCH_CC_X); \
+	c_put_str(TERM_FIRE,  "*", 4, TORCH_CC_X); \
+	c_put_str(TERM_EMBER, "#", 5, TORCH_CC_X); \
+	c_put_str(TERM_UMBER, "|", 6, TORCH_CC_X); \
+	c_put_str(TERM_UMBER, "|", 7, TORCH_CC_X); \
+	c_put_str(TERM_UMBER, "|", 8, TORCH_CC_X); \
+	c_put_str(TERM_UMBER, "|", 9, TORCH_CC_X); \
+	c_put_str(TERM_L_DARK,"~",10, TORCH_CC_X);
 #else
  #define LOGIN_ROW 2
 #endif
@@ -189,15 +199,7 @@ static bool choose_sex(void) {
 	}
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 	while (1) {
@@ -327,15 +329,7 @@ race_redraw:
 	}
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 	while (1) {
@@ -554,15 +548,7 @@ trait_redraw:
 	}
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 	/* Get a trait */
@@ -756,15 +742,7 @@ class_redraw:
 	}
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 	/* Get a class */
@@ -918,15 +896,7 @@ static bool choose_stat_order(void) {
 			It confused too many noobiez. Taking it out for now. */
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 			/* Get a stat */
@@ -1008,15 +978,7 @@ static bool choose_stat_order(void) {
 		}
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 		while (1) {
@@ -1247,15 +1209,7 @@ static bool choose_mode(void) {
 		}
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 		while (1) {
@@ -1364,15 +1318,7 @@ static bool choose_mode(void) {
 	}
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 	while (1) {
@@ -1506,15 +1452,7 @@ static bool choose_body_modification(void) {
 	}
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 	while (1) {
@@ -1752,15 +1690,7 @@ void get_char_info(void) {
 
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 
@@ -1854,15 +1784,7 @@ cstats:
 #endif
 
 #ifdef ATMOSPHERIC_INTRO
-	/* torch */
-	c_put_str(TERM_FIRE,  "^", 3, 26);
-	c_put_str(TERM_FIRE, " * ",4, 25);
-	c_put_str(TERM_EMBER," # ",5, 25);
-	c_put_str(TERM_UMBER, "|", 6, 26);
-	c_put_str(TERM_UMBER, "|", 7, 26);
-	c_put_str(TERM_UMBER, "|", 8, 26);
-	c_put_str(TERM_UMBER, "|", 9, 26);
-	c_put_str(TERM_L_DARK,"~",10, 26);
+	DRAW_TORCH
 #endif
 
 	/* Hack: Apply slot-exclusive mode on user demand */
