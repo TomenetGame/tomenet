@@ -3104,9 +3104,10 @@ D:It looks very cute, except for the razor sharp teeth. It moans
 D:ominously as it jumps at your throat!
 
 N:206:Old Man Willow
+#FINAL_GUARDIAN
 G:#:s
 I:110:50d30:20:20:20
-W:25:4:3000:150
+W:25:4:3000:2000
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:TOUCH:PARALYZE:1d12
@@ -5733,6 +5734,7 @@ F:EVIL | MORTAL | BASEANGBAND | HAS_LITE
 D:A scarred warrior who moves with confidence.
 
 N:373:Azog, King of the Uruk-Hai
+#FINAL_GUARDIAN
 G:o:v
 I:120:90d10:20:80:20
 W:23:4:2700:1111
@@ -7559,6 +7561,7 @@ S:BLINK | TELE_AWAY | TELE_LEVEL
 D:It is a very unstable, strange pulsing mound of flesh.
 
 N:481:Shelob, Spider of Darkness
+#FINAL_GUARDIAN
 G:S:D
 I:120:35d100:30:120:80
 W:55:2:1400:27000
@@ -8219,6 +8222,7 @@ S:TRAPS | ARROW_1 | BLINK
 D:Cool and confident, fast and lithe; protect your possessions quickly!
 
 N:517:The Watcher in the Water
+#FINAL_GUARDIAN
 G:~:v
 I:120:27d100:30:100:80
 W:45:3:7000:12000
@@ -11653,6 +11657,7 @@ D:A class of its own: you are already too late to protect your possessions -
 D:and he seems to have studied magic too, and is a master of setting traps.
 
 N:697:Smaug the Golden
+#FINAL_GUARDIAN
 G:D:R
 I:130:48d100:30:150:80
 W:70:2:230000:23000
@@ -12440,6 +12445,7 @@ D:fleshless legs. Eyes formed in the gelatinous oval and stared
 D:at him."
 
 N:735:The King in Yellow
+#FINAL_GUARDIAN
 G:L:y
 I:120:32d100:90:100:10
 W:53:3:0:25000
@@ -13637,6 +13643,7 @@ D:used for locomotion. The diameter of the body must have been
 D:at least ten feet at its least wide..."
 
 N:789:T'ron, the Rebel Dragonrider
+#FINAL_GUARDIAN
 G:D:D
 I:130:80d100:20:120:80
 W:72:2:400000:45000
@@ -13954,6 +13961,7 @@ S:DRAIN_MANA | HEAL | RAISE_DEAD
 D:A black hole in the fabric of reality. It simply is not there.
 
 N:804:Feagwath, the Undead Sorcerer
+#FINAL_GUARDIAN
 G:L:y
 I:130:60d100:20:85:50
 W:77:2:1900:30000
@@ -14313,6 +14321,7 @@ D:spells.
 #revived him as "Shadow" instead of "Necromancer", since we need a dungeon boss.
 # for that reason, hard-coded now: defeating Sauron will also kill-credit this one!
 N:819:The Shadow of Dol Guldur
+#FINAL_GUARDIAN
 G:p:v
 I:130:82d100:60:100:10
 W:75:1:1900:40000
@@ -15285,6 +15294,7 @@ D:of Chaos, regards you as a mortal meddling in the affairs of immortals,
 D:and thus is attempting to eliminate you.
 
 N:860:Sauron, the Sorcerer
+#FINAL_GUARDIAN
 G:p:v
 I:130:100d225:100:160:0
 W:99:1:2300:58000
@@ -15531,6 +15541,7 @@ S:ROCKET | ARROW_4 | BLINK | BR_POIS | BR_CHAO | BR_NEXU
 D:It was left here to be used against intruders.
 
 N:872:The Balrog of Moria
+#FINAL_GUARDIAN
 G:U:v
 I:130:30d150:20:100:40
 W:50:1:13000:30000
@@ -17191,6 +17202,7 @@ F:MORTAL | BASEANGBAND | UNIQUE | PET | NO_DEATH
 D:The poor hobbit got lost in the dreadful maze!
 
 N:971:The Wight-King of the Barrow-downs
+#FINAL_GUARDIAN
 #hard-code warning: It can only appear in Barrow-downs
 G:W:v
 I:120:38d22:30:45:0
@@ -17344,6 +17356,7 @@ D:A keeper of forbidden wisdom, this Teacher bombards you with his mastery
 D:over elements of matter.
 
 N:980:Ar-Pharazon the Golden
+#FINAL_GUARDIAN
 G:p:y
 I:130:50d100:30:45:255
 W:55:1:0:25000
@@ -17550,9 +17563,10 @@ D:summon the very shades of its victims from beyond the grave to
 D:come enslaved to its aid.
 
 N:990:Ulfang the Black
+#FINAL_GUARDIAN
 G:p:U
 I:120:25d130:20:90:40
-W:44:4:2100:1200
+W:44:4:2100:4000
 E:1:1:1:2:1:1
 O:10:90:0:0
 B:HIT:HURT:5d8
@@ -18318,9 +18332,10 @@ D:breath, and the fiery eyes, of a real Dragon. Its scales shimmer different
 D:colours as you watch.
 
 N:1029:The Minotaur of the Labyrinth
+#FINAL_GUARDIAN
 G:H:s
 I:130:150d20:13:25:10
-W:40:2:17500:3100
+W:40:2:17500:3500
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:BUTT:HURT:4d6
@@ -18333,9 +18348,10 @@ F:MORTAL | BASEANGBAND
 D:It is a cross between a human and a bull.
 
 N:1030:The Sandworm Queen
+#FINAL_GUARDIAN
 G:w:v
 I:120:50d30:20:40:80
-W:30:3:9000:800
+W:30:3:9000:3000
 E:0:0:0:0:1:0
 O:30:60:0:10
 B:CLAW:ACID:5d4
@@ -18418,6 +18434,7 @@ D:position. You feel somewhat dizzy as the radiant light reflects off the
 D:walls, the ceiling and your gear.
 
 N:1034:The White Balrog
+#FINAL_GUARDIAN
 G:U:W
 I:120:25d150:20:120:40
 W:50:3:12000:25000
@@ -18439,6 +18456,7 @@ D:It is a massive humanoid demon wreathed in frost, wielding a cruel looking
 D:pike in its hands.
 
 N:1035:Golgarach, the Living Rock
+#FINAL_GUARDIAN
 G:#:W
 I:120:50d50:20:100:40
 W:45:1:0:10000
@@ -19621,6 +19639,7 @@ D:But it is just someone costumed for Halloween festival!
 
 #Nether Realm only
 N:1097:Zu-Aon, The Cosmic Border Guard
+#FINAL_GUARDIAN
 G:N:b
 I:145:300d200:200:200:0
 W:128:1:0:1000000
@@ -20404,6 +20423,7 @@ D:by foes and friends alike when it flies into one of its berserk rages, the
 D:Horned Reaper will cut down anything in its path between it and you.
 
 N:1147:The Living Lightning
+#FINAL_GUARDIAN
 G:*:e
 I:200:6000d6:100:90:0
 W:127:1:0:200000
