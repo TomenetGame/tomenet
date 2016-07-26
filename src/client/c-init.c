@@ -2811,6 +2811,11 @@ void client_init(char *argv1, bool skip)
 	u16b version = MY_VERSION;
         s32b temp;
         bool BIG_MAP_fallback = FALSE;
+#ifdef ATMOSPHERIC_INTRO
+ #ifdef USE_SOUND_2010
+	bool stop_sfx = FALSE;
+ #endif
+#endif
 
 	/* Set the "plog hook" */
 	if (!plog_aux) plog_aux = plog_hook;
@@ -3069,6 +3074,12 @@ void client_init(char *argv1, bool skip)
 		/* XXX this function sends PKT_KEEPALIVE */
 		get_char_info();
 	}
+#ifdef ATMOSPHERIC_INTRO
+ #ifdef USE_SOUND_2010
+	/* Stop background ambient fireplace sound effect (if enabled) */
+	else if (use_sound) stop_sfx = TRUE;
+ #endif
+#endif
 
 	/* Setup the key mappings */
 	keymap_init();
@@ -3091,6 +3102,13 @@ void client_init(char *argv1, bool skip)
 
 	/* Turn the lag-o-meter on after we've logged in */
 	lagometer_enabled = TRUE;
+
+#ifdef ATMOSPHERIC_INTRO
+ #ifdef USE_SOUND_2010
+	/* Stop background ambient fireplace sound effect (if enabled) */
+	if (stop_sfx) sound_ambient(-1);
+ #endif
+#endif
 
 	/* Main loop */
 	Input_loop();
