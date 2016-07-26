@@ -10469,7 +10469,7 @@ D:It is a tougher relative of the Xorn. Its hide glitters with metal ores.
 
 N:640:Giant roc
 G:B:u
-I:120:80d13:20:80:10
+I:122:80d13:20:80:10
 W:40:3:6000:1600
 E:0:1:0:2:1:2
 O:0:0:0:0
@@ -11806,7 +11806,7 @@ D:piercing eyes, its evil breath burning the ground where it stands.
 
 N:704:Winged Horror
 G:B:D
-I:120:25d80:30:80:5
+I:122:25d80:30:80:5
 W:48:3:4500:4000
 E:0:1:0:2:1:2
 O:0:0:0:0
@@ -12616,7 +12616,7 @@ D:A lich who is partially immaterial, on its way to a new, ethereal form.
 
 N:743:The Phoenix
 G:B:f
-I:120:36d100:60:130:0
+I:125:36d100:60:130:0
 W:54:3:6000:20000
 E:0:1:0:2:1:2
 O:0:50:50:0
@@ -20113,7 +20113,7 @@ D:assisting you without complaining in assessing your combat prowess.
 # some sort of lesser phoenix for fire immunity
 N:1127:Firebird
 G:B:f
-I:120:29d100:60:80:0
+I:125:29d100:60:80:0
 W:52:5:3000:3500
 E:0:1:0:2:1:2
 O:0:0:0:0
