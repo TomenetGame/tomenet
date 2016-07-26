@@ -1347,7 +1347,7 @@ D:It's a large pile of pulsing blue flesh.
 
 N:85:Creeping copper coins
 G:$:u
-I:100:7d8:3:24:10
+I:100:7d24:3:24:10
 W:4:3:0:9
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -1784,7 +1784,7 @@ D:A rather shifty individual.
 
 N:117:Creeping silver coins
 G:$:s
-I:100:12d8:4:30:10
+I:100:12d24:4:30:10
 W:6:3:0:18
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -2939,7 +2939,7 @@ D:other demon matches its teleporting mastery.
 
 N:195:Creeping gold coins
 G:$:y
-I:100:18d8:5:36:10
+I:100:18d24:5:36:10
 W:10:3:0:32
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -3614,7 +3614,7 @@ D:A hideous, smallish giant that is often found near or with orcs.
 
 N:239:Creeping mithril coins
 G:$:B
-I:110:20d8:5:50:10
+I:110:20d24:5:50:10
 W:13:3:0:45
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -6554,7 +6554,7 @@ D:It even has two disgusting antennae in its head. Yecch!
 
 N:423:Creeping adamantite coins
 G:$:v
-I:120:20d25:5:50:10
+I:120:20d50:5:50:10
 W:27:3:0:60
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -18782,7 +18782,7 @@ D:of dispersed minimite race.
 #We have 3x this monster now, commenting out two of them
 #N:1053:Creeping adamantite coins
 #G:$:v
-#I:120:20d25:5:50:10
+#I:120:20d50:5:50:10
 #W:50:6:0:60
 #E:0:0:0:0:0:0
 #O:0:0:0:0
