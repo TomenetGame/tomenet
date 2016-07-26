@@ -6374,6 +6374,24 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Message */
 			note = " looks healthier";
 
+			/* :) */
+			if (m_ptr->r_idx == RI_LEPER) {
+				delete_monster_idx(c_ptr->m_idx, TRUE);
+				switch (rand_int(10)) {
+				case 0: i = 1; break;
+				case 1: i = 6; break;
+				case 2: i = 9; break;
+				case 3: i = 10; break;
+				case 4: i = 11; break;
+				case 5: i = 12; break;
+				case 6: i = 14; break;
+				case 7: i = 16; break;
+				case 8: i = 17; break;
+				case 9: i = 18; break;
+				}
+				(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, 0, 0);
+			}
+
 			/* No "real" damage */
 			dam = 0;
 			quiet_dam = TRUE;
