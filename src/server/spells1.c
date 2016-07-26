@@ -884,7 +884,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			if (!in_bounds4(l_ptr, y, x)) continue;
 
 			/* Require floor space if not ghost */
-			if (!p_ptr->ghost && !cave_naked_bold(zcave, y, x)) continue;
+			if (!p_ptr->ghost && !cave_free_bold(zcave, y, x)) continue;
 
 			/* never teleport onto perma-walls (happens to ghosts in khazad) */
 			if (cave_perma_bold(zcave, y, x)) continue;
@@ -1149,7 +1149,7 @@ void teleport_player_to(int Ind, int ny, int nx) {
 		/* ..and for instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
 		if (wpos->wz || (!(zcave[y][x].info & (CAVE_ICKY | CAVE_PROT)) && !(f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED))) {
 			/* No tele-to into no-tele vaults */
-			if (cave_naked_bold(zcave, y, x) &&
+			if (cave_free_bold(zcave, y, x) &&
 			    !(zcave[y][x].info & CAVE_STCK)) {
 				/* Never break into st-anchor */
 				if (!check_st_anchor(wpos, y, x)) {

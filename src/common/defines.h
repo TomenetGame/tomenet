@@ -6532,6 +6532,11 @@
 	 !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && \
 	  (ZCAVE[Y][X].o_idx == 0) && \
 	  (ZCAVE[Y][X].m_idx == 0))
+/* For teleportation maybe: allow landing on items? */
+#define cave_free_bold(ZCAVE,Y,X) \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) && \
+	 !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && \
+	  (ZCAVE[Y][X].m_idx == 0))
 
 #if 0
     ((ZCAVE[Y][X].feat >= FEAT_FLOOR) && \
