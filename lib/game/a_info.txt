@@ -233,7 +233,7 @@ N:14:of Space-Time
 I:39:105:0
 W:30:12:15:50000
 P:0:1d1:0:0:0
-F:INSTA_ART | SPECIAL_GENE | LITE3 | WHITE_LIGHT
+F:INSTA_ART | SPECIAL_GENE | LITE3 | WHITE_LIGHT | RES_TIME
 # ST-anchor is hard-coded!
 #F:NO_TELE
 D:A powerful stone that provides a strong light for any who
