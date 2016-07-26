@@ -6105,6 +6105,7 @@ int Send_technique_info(int Ind) {
 	return(0); /* disabled until client can handle it */
 #endif
 	connection_t *connp = Conn[Players[Ind]->conn];
+
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0)) return(0);
 
 	player_type *p_ptr = Players[Ind];
@@ -6115,6 +6116,13 @@ int Send_technique_info(int Ind) {
 			Ind, connp->state, connp->id));
 		return 0;
 	}
+
+	/* backward compatibility before addition of 'detect_noise()' for rogues */
+	if (is_older_than(&p_ptr->version, 4, 6, 1, 2, 0, 1)) {
+		u32b tech_compat = (p_ptr->melee_techniques & 0x7F) | ((p_ptr->melee_techniques & 0xFF00) >> 1);
+		return Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, tech_compat, p_ptr->ranged_techniques);
+	}
+
 	return Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, p_ptr->melee_techniques, p_ptr->ranged_techniques);
 }
 
@@ -8668,6 +8676,9 @@ static int Receive_activate_skill(int ind) {
 			break;
 
 		case MKEY_MELEE:
+			/* backward compatibility before addition of 'detect_noise()' for rogues */
+			if (is_older_than(&p_ptr->version, 4, 6, 1, 2, 0, 1) && spell >= 7 && spell < 13) spell++;
+
 			do_cmd_melee_technique(player, spell);
 			break;
 		case MKEY_RANGED:
