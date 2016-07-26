@@ -2659,7 +2659,7 @@ bool detect_noise(int Ind) {
 	/* Describe and clean up */
 	if (flag) {
 		/* Describe, and wait for acknowledgement */
-		msg_print(Ind, "You hear some revealing noise!");
+		msg_print(Ind, "You perceive some revealing sounds!");
 		msg_print(Ind, NULL);
 
 #if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
@@ -2671,10 +2671,10 @@ bool detect_noise(int Ind) {
 		update_players();
 #endif
 	} else {
-#ifdef DETECT_ABSENCE
+//#ifdef DETECT_ABSENCE
 		msg_print(Ind, "You cannot hear anything revealing.");
 		msg_print(Ind, NULL);
-#endif
+//#endif
 	}
 
 	/* Result */
