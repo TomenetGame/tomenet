@@ -103,10 +103,10 @@ if (def_hack("TEMP1", nil) == 0) then
 TELEKINESIS = add_spell {
 	["name"] = 	"Telekinesis I",
 	["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
-	["level"] = 	30,
+	["level"] = 	35,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	20,
+	["fail"] = 	10,
 	["am"] = 	75,
 	["get_item"] = {
 		["prompt"] = 	"Teleport which object? ",
@@ -140,16 +140,16 @@ else
 TELEKINESIS = add_spell {
 	["name"] = 	"Telekinesis I",
 	["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
-	["level"] = 	30,
+	["level"] = 	35,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	20,
+	["fail"] = 	10,
 	["am"] = 	75,
 	["spell"] = 	function(args)
-		telekinesis(Ind, player.inventory[1 + args.book], 4 + get_level(Ind, TELEKINESIS, 250, 0))
+		telekinesis(Ind, player.inventory[1 + args.book], 4 + get_level(Ind, TELEKINESIS, 330, 0))
 	end,
 	["info"] = 	function()
-		return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
+		return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 330, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 330, 0), 10))
 	end,
 	["desc"] = 	{
 		"Inscribe your book with @Pplayername, cast it, select an item",

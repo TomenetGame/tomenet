@@ -231,13 +231,13 @@ MSENSEMON = add_spell {
 
 MIDENTIFY = add_spell {
 	["name"] = 	"Recognition",
-	["school"] = 	{SCHOOL_TCONTACT},
+	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_MINTRUSION},
 	["am"] = 	33,
 	["spell_power"] = 0,
-	["level"] = 	25,
+	["level"] = 	20,
 	["mana"] = 	7,
 	["mana_max"] = 	7,
-	["fail"] = 	-10,
+	["fail"] = 	-5,
 	["spell"] = 	function()
 			ident_spell(Ind)
 			end,
