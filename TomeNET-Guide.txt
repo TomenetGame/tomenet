@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. July 2016 - written by C. Blue (c_blue@gmx.net)
-| for TomeNET version v4.6.1a - official websites are:
+| Latest update: 28. July 2016 - written by C. Blue (c_blue@gmx.net)
+| for TomeNET version v4.6.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 |
@@ -14420,6 +14420,12 @@ Istar schools:
                           evil opponents.
                     Required skill level for first spell level: 10.
 
+    Elemental Shield
+                    Gives temporary resistance to the elements,
+                    fire/cold/lightning/acid.                       (project)
+                    Required skill level for first spell level: 15.
+                    Shared spell (see above): Fire, Earth, Air, Water.
+
     Fiery Shield    Creates a shield of flames around you.
                     Required skill level for first spell level: 16.
 
@@ -14432,6 +14438,15 @@ Istar schools:
 
 - Water
 
+    Vapor           Fills the air around you with toxic moisture
+                    (which does pure water damage, not poison).
+                    Required skill level for first spell level: 2.
+
+    Ent's Potion    Fills your stomach.
+                    Lv5: Removes fear.
+                    Lv12: Makes you heroic.
+                    Required skill level for first spell level: 6.
+
     Frost Bolt      Fires a frost bolt at a target.
                     Required skill level for first spell level: 8.
 
@@ -14441,18 +14456,15 @@ Istar schools:
     Tidal Wave      Summons a monstrous tidal wave.
                     Required skill level for first spell level: 16.
 
+    Elemental Shield
+                    Gives temporary resistance to the elements,
+                    fire/cold/lightning/acid.                       (project)
+                    Required skill level for first spell level: 15.
+                    Shared spell (see above): Fire, Earth, Air, Water.
+
     Frost Barrier   Engulfs you in a storm of roaring cold.
                     Lv15: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
-
-    Ent's Potion    Fills your stomach.
-                    Lv5: Removes fear.
-                    Lv12: Makes you heroic.
-                    Required skill level for first spell level: 6.
-
-    Vapor           Fills the air around you with toxic moisture
-                    (which does pure water damage, not poison).
-                    Required skill level for first spell level: 2.
 
     BONI:           Water resistance at 30,
                     Passing water at 40,
@@ -14473,8 +14485,11 @@ Istar schools:
                     Required skill level for first spell level: 16.
                     Shared spell (see above): Air, Conveyance.
 
-    Invisibility    Turns you invisible.
-                    Required skill level for first spell level: 30.
+    Elemental Shield
+                    Gives temporary resistance to the elements,
+                    fire/cold/lightning/acid.                       (project)
+                    Required skill level for first spell level: 15.
+                    Shared spell (see above): Fire, Earth, Air, Water.
 
     Poison Blood    Gives temporary poison resistance.
                     Lv10: Brands melee weapons with venom.
@@ -14484,6 +14499,9 @@ Istar schools:
                     (33% lightning, 33% sound, 33% light)
                     Required skill level for first spell level: 25.
                     Shared spell (see above): Air, Nature.
+
+    Invisibility    Turns you invisible.
+                    Required skill level for first spell level: 30.
 
     BONI:           Feather falling at 30,
                     poison resistance at 40,
@@ -14497,6 +14515,12 @@ Istar schools:
 
     Acid Bolt       Fires an acid bolt at a target.
                     Required skill level for first spell level: 12.
+
+    Elemental Shield
+                    Gives temporary resistance to the elements,
+                    fire/cold/lightning/acid.                       (project)
+                    Required skill level for first spell level: 15.
+                    Shared spell (see above): Fire, Earth, Air, Water.
 
     Stone Prison    Creates a prison of granite walls around you.
                     Required skill level for first spell level: 25.
@@ -14530,11 +14554,6 @@ Istar schools:
                     your current level.
                     Required skill level for first spell level: 15.
 
-    Elemental Shield
-                    Gives temporary resistance to the elements,
-                    fire/cold/lightning/acid.                       (project)
-                    Required skill level for first spell level: 15.
-
     Regeneration    Increases your hit point regeneration rate.
                     Required skill level for first spell level: 20.
 
@@ -14560,6 +14579,11 @@ Istar schools:
     Teleport        Teleports you within the level.                 (project)
                     Required skill level for first spell level: 10.
 
+    Wings of Wind   Grants feather falling.
+                    Lv16: Lets you levitate.
+                    Required skill level for first spell level: 16.
+                    Shared spell (see above): Air, Conveyance.
+
     Teleport Away   Teleports a line of monsters away.
                     Lv10: Turns into a ball.
                     Lv20: Teleports away all monsters in sight.
@@ -14573,6 +14597,16 @@ Istar schools:
                     See "(0.3) Important inscriptions, Word of Recall" for more
                     info about Word of Recall!
 
+    Telekinesis I   Inscribe your book @P<Playername>, cast it, select an
+                    item that you wish to teleport to the player's inventory.
+                    The target player needs to concentrate by opening her/his
+                    mind, see (0.2). It's dangerous to have the mind opened,
+                    since everyone can send you any items, so better close it
+                    again as soon as the desired telekinesis transaction is
+                    done. Example inscription: @PGandalf
+                    Required skill level for first spell level: 35.
+                    Shared spell (see above): Mind, Conveyance.
+
     Probability Travel
                     Renders you instable, allowing to pass walls and to
                     float upwards/downwards. Floating up/down will skip floors
@@ -14582,6 +14616,10 @@ Istar schools:
                     to probtravel are occupied by players you get this message:
         "There is a magical discharge in the air as probability travel fails!"
                     Required skill level for first spell level: 35.
+
+    Mass Warp       Locks monsters in stasis for a while.
+                    Required skill level for first spell level: 45.
+                    Shared spell (see above): Temporal, Conveyance.
 
     BONI:           Resistance to teleportation attacks at 30.
 
@@ -14690,7 +14728,7 @@ Istar schools:
                     since everyone can send you any items, so better close it
                     again as soon as the desired telekinesis transaction is
                     done. Example inscription: @PGandalf
-                    Required skill level for first spell level: 30.
+                    Required skill level for first spell level: 35.
                     Shared spell (see above): Mind, Conveyance.
 
     BONI:           Reduces confusion and hallucination at 30,
@@ -15049,7 +15087,8 @@ Mindcraft schools:
                     This spell can be used even while blind.
 
     Recognition     Identifies an item.
-                    Required skill level for first spell level: 25.
+                    Required skill level for first spell level: 20.
+                    Shared spell (see above): Attunement / Mental Intrusion.
 
     Stabilize Thoughts
                     Cures some insanity and removes effects:   (auto-project)
@@ -15134,6 +15173,10 @@ Mindcraft schools:
                     you will automatically infuse the knowledge gained from the
                     vision to all open-minded (see (0.2)) allied players who
                     happen to be the same floor.
+
+    Recognition     Identifies an item.
+                    Required skill level for first spell level: 20.
+                    Shared spell (see above): Attunement / Mental Intrusion.
 
     Charm           Makes monsters in sight believe that you aren't an enemy,
                     preventing them most of the time from attacking you.
@@ -16088,6 +16131,10 @@ The techniques are as follows:
         This skill is useless if there is no team mate next to you (and the
         monster).
         (Distracting costs half a turn of energy.)
+    Perceive Noise        3 Stamina
+        Listen carefully to every sound in your surroundings, thereby locating
+        creatures. Some entities are so quiet that they cannot be detected this
+        way though.
     Flash bomb          4 stamina
         You throw down a flash bomb that causes a flash of light, blinding
         your opponents for a short time, giving you opportunity to escape or
