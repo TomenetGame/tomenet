@@ -2170,6 +2170,7 @@ spell_type *grab_spell_type(s16b num);
 school_type *grab_school_type(s16b num);
 void lua_s_print(cptr logstr);
 void lua_add_anote(char *anote);
+void lua_del_anotes(void);
 void lua_count_houses(int Ind);
 void lua_recalc_char(int Ind);
 void lua_examine_item(int Ind, int Ind_target, int item);

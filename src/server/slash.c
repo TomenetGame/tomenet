@@ -2187,6 +2187,10 @@ void do_slash_cmd(int Ind, char *message) {
 			if (server_warning[0]) msg_format(Ind, "\377R*** Note: %s ***", server_warning);
 			return;
 		}
+		else if (prefix(message, "/reloadmotd")) {
+			/* update MotD changes on the fly */
+			exec_lua(0, format("set_motd()"));
+		}
 		else if (prefix(message, "/notes")) {
 			int notes = 0;
 			for (i = 0; i < MAX_NOTES; i++) {

@@ -577,15 +577,25 @@ void lua_s_print(cptr logstr) {
 
 void lua_add_anote(char *anote) {
 	int i;
+
 	bracer_ff(anote); /* allow colouring */
+
 	for (i = 0; i < MAX_ADMINNOTES; i++)
 		if (!strcmp(admin_note[i], "")) break;
+
 	if (i < MAX_ADMINNOTES) {
 		strcpy(admin_note[i], anote);
 		msg_broadcast_format(0, "\375\377s->MotD: %s", anote);
 	} else {
 		s_printf("lua_add_anote() failed: out of notes.\n");
 	}
+	return;
+}
+void lua_del_anotes(void) {
+	int i;
+
+	for (i = 0; i < MAX_ADMINNOTES; i++)
+		if (strcmp(admin_note[i], "")) strcpy(admin_note[i], "");
 	return;
 }
 
