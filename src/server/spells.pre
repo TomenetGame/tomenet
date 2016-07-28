@@ -332,6 +332,8 @@ extern s32b lua_spell_chance(int Ind, s32b chance, int level, int skill_level, i
 /* extern u32b get_school_spell(cptr do_what); */
 extern void lua_s_print(cptr logstr);
 extern void lua_add_anote(char *anote);
+extern void lua_del_anotes();
+extern void lua_broadcast_motd();
 extern void lua_count_houses(int Ind);
 extern void lua_recalc_char(int Ind);
 extern void lua_examine_item(int Ind, int Ind_target, int item);
