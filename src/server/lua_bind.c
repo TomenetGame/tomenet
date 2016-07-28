@@ -551,8 +551,7 @@ int lua_get_new_bounty_monster(int lev)
 #endif
 
 /* To do some connection magik ! */
-void remote_update_lua(int Ind, cptr file)
-{
+void remote_update_lua(int Ind, cptr file) {
 	player_type *p_ptr = Players[Ind];
 	unsigned short chunksize;
 
@@ -566,13 +565,11 @@ void remote_update_lua(int Ind, cptr file)
 		chunksize = 256;
 	}
 	remote_update(p_ptr->conn, file, chunksize);
-	return;
 }
 
 /* Write a string to the log file */
 void lua_s_print(cptr logstr) {
 	s_printf("%s", logstr);
-	return;
 }
 
 void lua_add_anote(char *anote) {
@@ -589,14 +586,24 @@ void lua_add_anote(char *anote) {
 	} else {
 		s_printf("lua_add_anote() failed: out of notes.\n");
 	}
-	return;
 }
 void lua_del_anotes(void) {
 	int i;
 
 	for (i = 0; i < MAX_ADMINNOTES; i++)
 		if (strcmp(admin_note[i], "")) strcpy(admin_note[i], "");
-	return;
+}
+void lua_broadcast_motd(void) {
+	int p, i;
+
+	for (i = 0; i < MAX_ADMINNOTES; i++)
+		if (strcmp(admin_note[i], ""))
+			for (p = 1; p <= NumPlayers; p++)
+				msg_format(p, "\375\377sMotD: %s", admin_note[i]);
+
+	if (server_warning[0])
+		for (p = 1; p <= NumPlayers; p++)
+			msg_format(p, "\377R*** Note: %s ***", server_warning);
 }
 
 void lua_count_houses(int Ind) {
@@ -625,7 +632,6 @@ void lua_count_houses(int Ind) {
 					s_printf("HOUSES_EXCEEDED: non-(ex)winner %s owns castle(s).\n", p_ptr->name);
 			}
 		}
-	return;
 }
 
 /* keep whole function in sync with birth.c! */
@@ -711,7 +717,6 @@ void lua_recalc_char(int Ind) {
 
 void lua_examine_item(int Ind, int Ind_target, int item) {
 	identify_fully_aux(Ind, &Players[Ind_target]->inventory[item], FALSE);
-	return;
 }
 
 void lua_determine_level_req(int Ind, int item) {
@@ -719,7 +724,6 @@ void lua_determine_level_req(int Ind, int item) {
 	   It means: assume that finding-depth is same as object-base-level,
 	   for smooth and easy calculation. */
 	determine_level_req(-9999, &Players[Ind]->inventory[item]);
-	return;
 }
 
 /* the essential function for art reset */
