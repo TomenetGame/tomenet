@@ -1016,7 +1016,7 @@ unsigned char Net_login() {
 	Sockbuf_read(&rbuf);
 	Receive_login();
 #ifdef RETRY_LOGIN
-	/* something wrong with our account crecedentials? */
+	/* Our connection was destroyed in Receive_login() -> something wrong with our account crecedentials? */
 	if (connection_destroyed) return -1;
 #endif
 
@@ -1232,9 +1232,9 @@ int Net_input(void) {
 		if (n == 0) {
 			quit("Server closed the connection");
 		} else if (n < 0) {
-#ifdef RETRY_LOGIN
+#ifdef RETRY_LOGIN /* not needed */
 			/* catch an already destroyed connection - don't call quit() *again*, just go back peacefully; part 2/2 */
-			if (connection_destroyed) return 1;
+//			if (connection_destroyed) return 1;
 #endif
 			return n;
 		} else {

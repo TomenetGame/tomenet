@@ -2918,9 +2918,6 @@ void client_init(char *argv1, bool skip) {
 	if (server_protocol >= 2)
 		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD + (VERSION_OS) * 1000000);
 
-#ifdef RETRY_LOGIN
-	connection_destroyed = FALSE;
-#endif
 	/* Connect to server */
 #ifdef UNIX_SOCKETS
 	if ((DgramConnect(Socket, server_name, cfg_game_port)) == -1)
@@ -3049,9 +3046,6 @@ void client_init(char *argv1, bool skip) {
 		quit("Network setup failed!\n");
 	}
 
-#ifdef RETRY_LOGIN
-	connection_destroyed = FALSE;
-#endif
 	status = Net_login();
 #ifdef RETRY_LOGIN
 	if (connection_destroyed) {
