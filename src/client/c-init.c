@@ -270,7 +270,7 @@ void initialize_player_pref_files(void){
 	process_pref_file(buf);
 	keymap_init();
 	prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
-        Send_options();
+	Send_options();
 
 #if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */
 	/* Access the "account" pref file */
@@ -2871,7 +2871,7 @@ void client_init(char *argv1, bool skip) {
 		if (!get_server_name())
 			quit("No server specified.");
 #ifdef EXPERIMENTAL_META
-                cfg_game_port = server_port;
+		cfg_game_port = server_port;
 #endif
 	} else {
 		/* Set the server's name */
@@ -2910,7 +2910,7 @@ void client_init(char *argv1, bool skip) {
 		my_memfrob(pass, strlen(pass));
 	}
 
-        /* Capitalize the name */
+	/* Capitalize the name */
 	nick[0] = toupper(nick[0]);
 
 	/* Create the net socket and make the TCP connection */
@@ -3100,15 +3100,15 @@ void client_init(char *argv1, bool skip) {
 	/* Initialize the pref files */
 	initialize_main_pref_files();
 
-        /* Handle asking for big_map mode on first time startup */
+	/* Handle asking for big_map mode on first time startup */
 #if defined(USE_X11) || defined(WINDOWS)
-        if (bigmap_hint && !c_cfg.big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
+	if (bigmap_hint && !c_cfg.big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
 	        c_cfg.big_map = TRUE;
 		Client_setup.options[CO_BIGMAP] = TRUE;
 		check_immediate_options(CO_BIGMAP, TRUE, FALSE);
 		//(void)options_dump("global.opt");
 		(void)options_dump(format("%s.opt", cname));
-        }
+	}
 #endif
 	/* If command-line client reads from same config file as X11 one it might
 	   read a big-map-enabled screen_hgt, so reset it: */
