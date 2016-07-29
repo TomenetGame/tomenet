@@ -3179,7 +3179,7 @@ void client_init(char *argv1, bool skip) {
 		/* auto-logon up to character screen */
 		cname[0] = 0; //reset character choice, or relog into character screen won't work
 		auto_relogin = TRUE;
-		c_quit = FALSE; //un-quit
+		c_quit = FALSE; //un-quit (or Net_fd() will always return -1)
 		goto retry_contact;
 	}
 #endif
