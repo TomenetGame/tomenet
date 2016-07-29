@@ -2870,9 +2870,9 @@ void client_init(char *argv1, bool skip) {
 		/* Query metaserver */
 		if (!get_server_name())
 			quit("No server specified.");
-#ifdef EXPERIMENTAL_META
+ #ifdef EXPERIMENTAL_META
 		cfg_game_port = server_port;
-#endif
+ #endif
 	} else {
 		/* Set the server's name */
 		strcpy(server_name, argv1);
@@ -2894,7 +2894,9 @@ void client_init(char *argv1, bool skip) {
 
 #ifdef RETRY_LOGIN
 	retry_contact:
+	connection_state = 0;
 	connection_destroyed = FALSE;
+	connection_destructible = FALSE;
 	if (auto_relogin) skip = TRUE;
 #endif
 
