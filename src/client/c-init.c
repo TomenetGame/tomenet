@@ -3077,6 +3077,7 @@ void client_init(char *argv1, bool skip) {
 		/* bad account crecedentials? */
 		if (status == E_RETRY_CONTACT) {
 			Net_cleanup();
+			c_quit = FALSE; //un-quit, paranoia at this point though (only needed for Input_loop())
 			goto retry_contact;
 		}
 		/* bad character name? */
@@ -3085,6 +3086,7 @@ void client_init(char *argv1, bool skip) {
 			/* auto-logon up to character screen */
 			cname[0] = 0; //reset character choice, maybe it was an illegal name (login-fail-spam would be the result?)
 			auto_relogin = TRUE;
+			c_quit = FALSE; //un-quit, paranoia at this point though (only needed for Input_loop())
 			goto retry_contact;
 		}
 		/* paranoia - shouldn't happen */
@@ -3177,6 +3179,7 @@ void client_init(char *argv1, bool skip) {
 		/* auto-logon up to character screen */
 		cname[0] = 0; //reset character choice, or relog into character screen won't work
 		auto_relogin = TRUE;
+		c_quit = FALSE; //un-quit
 		goto retry_contact;
 	}
 #endif
