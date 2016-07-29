@@ -2724,7 +2724,7 @@ static void quit_hook(cptr s) {
 
 #ifdef RETRY_LOGIN
 	/* don't kill the windows and all */
-	if (connection_destroyed && connection_state >= 2) return;
+	if (connection_state >= 2) return;
 #endif
 
 #ifdef UNIX_SOCKETS
