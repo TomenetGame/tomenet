@@ -450,7 +450,7 @@ D:leather whose wearer moves with agility and assurance.
 
 N:29:of Wormtongue
 I:30:2:3
-W:20:20:20:140000
+W:20:15:20:140000
 P:2:1d1:-10:-10:15
 F:INT | DEX | CHR | STEALTH | SEARCH | SPEED | HIDE_TYPE |
 F:FREE_ACT | FEATHER | RES_DARK | RES_LITE | ESP_GOOD | ESP_UNIQUE
@@ -503,7 +503,7 @@ D:himself powerless to wither or diminish.
 
 N:33:of Hurin
 I:24:10:1
-W:20:15:200:40000
+W:20:12:200:40000
 P:0:4d6:12:20:0
 F:STR | CON | HIDE_TYPE | BRAND_ACID | RES_ACID | LITE1 | DRAIN_MANA |
 F:SLAY_ORC | KILL_DEMON | SLAY_TROLL | ACTIVATE | SHOW_MODS | BLOWS
@@ -664,7 +664,7 @@ D:nature and magnitude of the task.
 
 N:44:'Colluin'
 I:35:3:0
-W:20:25:10:50000
+W:20:20:10:50000
 P:3:0d0:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | ACTIVATE | ESP_GOOD
 D:A cape worn by a hero from Valinor, a land utterly beyond the strife
@@ -675,7 +675,7 @@ D:of Elements.
 
 N:45:'Holcolleth'
 I:35:1:2
-W:15:25:10:35000
+W:15:18:10:35000
 P:1:0d0:0:0:4
 F:INT | WIS | SPEED | STEALTH | HIDE_TYPE |
 F:RES_ACID | ACTIVATE
@@ -689,7 +689,7 @@ D:the Sindar.
 
 N:46:of Thingol
 I:35:1:3
-W:10:30:10:30000
+W:10:15:10:30000
 P:1:0d0:0:0:18
 F:DEX | CHR | HIDE_TYPE |
 F:FREE_ACT | RES_ACID | RES_FIRE | RES_COLD | ACTIVATE
@@ -701,7 +701,7 @@ D:and clear as moonlight on still water.
 
 N:47:of Thorongil
 I:35:1:0
-W:4:10:10:15000
+W:4:5:10:15000
 P:1:0d0:0:0:10
 F:FREE_ACT | RES_ACID | SEE_INVIS | RES_FEAR
 D:A cloak of shimmering green and brown that grants sight beyond sight and
@@ -755,7 +755,7 @@ D:shielded by his cloak from a multitude of hostile eyes.
 # The Main Gauche of Azaghal, which wounded Glaurung
 N:51:of Azaghal
 I:23:5:3
-W:15:30:30:40000
+W:15:30:20:40000
 P:0:2d5:12:14:0
 F:KILL_DRAGON | IM_FIRE | ESP_DRAGON | RES_FEAR |
 F:DEX | FREE_ACT | SEE_INVIS |
@@ -835,7 +835,7 @@ D:A set of handgear so corrosive that it may fire bolts of acid.
 
 N:58:'Camlost'
 I:31:2:-3
-W:10:20:25:0
+W:10:16:25:0
 P:2:1d1:-19:-14:-10
 F:STR | DEX | HIDE_TYPE | DRAIN_MANA |
 F:IM_POISON | RES_FIRE | RES_COLD | RES_DISEN | RES_NETHER | FREE_ACT |
@@ -912,7 +912,7 @@ D:A dark black arrow with which Bard took down Smaug, the Golden.
 
 N:64:of Maedhros
 I:23:5:3
-W:13:30:30:75000
+W:13:22:30:75000
 P:0:2d5:12:15:0
 F:INT | DEX | HIDE_TYPE | SPEED | ESP_EVIL |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_GIANT | FREE_ACT | SEE_INVIS | SHOW_MODS
@@ -925,7 +925,7 @@ D:his right hand in the pits of Thangorodrim.
 
 N:65:'Angrist'
 I:23:4:4
-W:20:80:12:65000
+W:20:20:12:65000
 P:0:2d4:10:15:5
 F:DEX | HIDE_TYPE | STEALTH | SEARCH | BRAND_POIS |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | BRAND_ACID |
@@ -939,7 +939,7 @@ D:ordinary metal as easily as its title, "Iron Cleaver", suggests.
 
 N:66:'Narthanc'
 I:23:4:0
-W:6:100:12:20000
+W:6:10:12:20000
 P:0:1d4:8:12:0
 F:BRAND_FIRE | IM_FIRE | ACTIVATE | SHOW_MODS | LITE1 | LEVELS
 D:A fiery dagger finely balanced for deadly throws.
@@ -949,7 +949,7 @@ D:A fiery dagger finely balanced for deadly throws.
 
 N:67:'Nimthanc'
 I:23:4:0
-W:6:100:12:16000
+W:6:10:12:16000
 P:0:1d4:8:12:0
 F:BRAND_COLD | IM_COLD | ACTIVATE | SHOW_MODS | LEVELS
 D:A frosty dagger finely balanced for deadly throws.
@@ -959,7 +959,7 @@ D:A frosty dagger finely balanced for deadly throws.
 
 N:68:'Dethanc'
 I:23:4:0
-W:6:100:12:15000
+W:6:10:12:15000
 P:0:1d4:8:12:0
 F:BRAND_ELEC | IM_ELEC | ACTIVATE | SHOW_MODS | LEVELS
 D:A dagger covered in sparks and finely balanced for deadly throws.
@@ -969,7 +969,7 @@ D:A dagger covered in sparks and finely balanced for deadly throws.
 
 N:69:of Rilia
 I:23:4:0
-W:8:40:12:35000
+W:8:20:12:35000
 P:0:2d4:4:3:0
 F:SLAY_ORC | IM_POISON | RES_DISEN | ACTIVATE | SHOW_MODS | BRAND_POIS
 D:A large stiletto dagger that glistens with odorless poison, to which the
@@ -981,7 +981,7 @@ D:wearer seems oddly immune.
 
 N:70:'Belangil'
 I:23:4:2
-W:18:40:12:65000
+W:18:25:12:65000
 P:0:2d4:6:9:0
 F:DEX | HIDE_TYPE | SPEED | BLOWS |
 F:BRAND_COLD | RES_COLD |
@@ -1011,7 +1011,7 @@ D:peril.
 
 N:72:'Arunruth'
 I:23:16:4
-W:23:45:150:100000
+W:23:40:150:100000
 P:0:3d6:20:14:0
 F:STR | DEX | CON | SUST_CON | SUST_STR
 F:REGEN | FREE_ACT | SEE_INVIS | RES_COLD | BRAND_COLD |
@@ -1042,7 +1042,7 @@ D:who dared to come near hidden Gondolin.
 
 N:74:'Aeglin'
 I:23:15:5
-W:20:90:100:30000
+W:20:20:100:30000
 P:0:2d5:18:22:0
 F:SEARCH | BLESSED | LITE1 | HIDE_TYPE |
 F:BRAND_ELEC | SLAY_ORC | SLAY_GIANT | SLAY_TROLL | RES_FEAR |
@@ -1057,7 +1057,7 @@ D:eerily in the globe of light they create.
 
 N:75:'Orcrist'
 I:23:9:3
-W:9:20:80:20000
+W:9:10:80:20000
 P:0:1d8:10:16:0
 F:SEARCH | ESP_ORC | SLAY_DRAGON | ESP_DRAGON | RES_COLD | HIDE_TYPE |
 F:SLAY_EVIL | BRAND_COLD | SLAY_ORC | LITE1 | RES_DARK | WHITE_LIGHT
@@ -1240,7 +1240,7 @@ D:dismay to creatures natural and unnatural.
 
 N:88:'Sting'
 I:23:8:1
-W:22:40:70:75000
+W:22:30:70:75000
 P:0:1d6:7:8:0
 F:STR | DEX | CON | BLOWS | SPEED | LEVELS | HIDE_TYPE
 F:ESP_ORC | ESP_UNDEAD | ESP_SPIDER |
@@ -1361,7 +1361,7 @@ D:demons, who war forever, trapped by magely spells.
 
 N:97:'Aeglos'
 I:22:2:4
-W:19:45:50:72000
+W:19:20:50:72000
 P:0:3d5:15:20:5
 F:DEX | WIS | HIDE_TYPE |
 F:BRAND_COLD | BRAND_ELEC | LITE1 | WHITE_LIGHT
@@ -1504,7 +1504,7 @@ D:creatures of the earth.
 
 N:107:of Wrath
 I:22:5:2
-W:27:35:90:80000
+W:27:30:90:80000
 P:0:4d7:16:18:0
 F:STR | DEX | HIDE_TYPE | CHAOTIC | DRAIN_MANA | SPECIAL_GENE |
 F:SLAY_EVIL | KILL_UNDEAD | RES_LITE | RES_DARK | SEE_INVIS |
@@ -1608,7 +1608,7 @@ D:crackle around its massive head.
 
 N:114:'Bloodspike'
 I:21:12:4
-W:17:30:150:35000
+W:17:15:150:35000
 P:0:2d6:8:24:0
 F:STR | HIDE_TYPE | BRAND_POIS |
 F:SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC | RES_NEXUS | SEE_INVIS |
@@ -1621,7 +1621,7 @@ D:around - and bathe it in the blood of your foes.
 
 N:115:'Firestar'
 I:21:12:0
-W:19:100:150:25000
+W:19:20:140:25000
 P:0:2d6:5:17:2
 F:BRAND_FIRE | IM_FIRE | ACTIVATE | SHOW_MODS | LITE1
 D:A famed battle-lord of old, with a ruddy head, colored as embers are that
@@ -2156,7 +2156,7 @@ D:axe has a bloodthirst for nature.
 
 N:159:of Ice
 I:24:8:3
-W:13:25:130:30550
+W:13:15:130:30550
 P:0:2d5:3:15:0
 F:INT | CHR | SUST_DEX | BRAND_COLD | IM_COLD | RES_NEXUS | HIDE_TYPE |
 F:SHOW_MODS
@@ -2196,7 +2196,7 @@ D:hide or armour.
 
 N:162:'Hanisbroner's Surprise'
 I:46:6:3
-W:20:20:20:20000
+W:20:15:20:20000
 P:0:0d0:0:0:25
 F:STEALTH | XTRA_SHOTS | TELEPORT_TO | HIDE_TYPE | AUTOMATIC_99
 D:A magical trap, armed with a wand. Unaccountably, its victims keep
@@ -2207,7 +2207,7 @@ D:on coming back for more...
 
 N:163:'Merlion Karc's Demonbane'
 I:46:2:2
-W:20:20:40:20000
+W:20:15:40:20000
 P:0:0d0:17:27:37
 F:STEALTH | XTRA_SHOTS | XTRA_MIGHT | HIDE_TYPE | ONLY_DEMON
 D:A snare set not for animals, or people, but for demons alone, and
@@ -2842,7 +2842,7 @@ D:rider to enslave him.
 
 N:226:That Were Forgotten
 I:36:1:4
-W:27:25:20:40000
+W:27:22:20:40000
 P:1:0d0:0:0:-1
 F:RES_TIME | WIS | INT | ESP_UNIQUE | MANA
 D:Noone knows who once forgot those rags, but they surely endured ages.
@@ -3114,7 +3114,7 @@ D:mad terror and showing no mercy to anything in its way.
 
 N:249:'Impaler'
 I:22:7:0
-W:8:15:100:25000
+W:8:10:100:25000
 P:0:1d10:25:10:0
 F:SHOW_MODS | RES_FEAR | ESP_UNIQUE | RES_COLD | BRAND_COLD
 D:Driving right through the chest, piercing strongest armour.
@@ -3175,7 +3175,7 @@ D:this shield is astonishingly heavy and not easy to handle.
 
 N:255:of Piety
 I:36:20:4
-W:25:35:20:30000
+W:25:25:20:30000
 P:2:0d0:0:0:15
 F:HIDE_TYPE | WIS | INT | REGEN_MANA | RES_FIRE | RES_COLD
 D:A traditional monk's clothing, made for improving meditation and also
@@ -3198,7 +3198,7 @@ D:rendering him immune to any adverse effects of wind and weather.
 
 N:257:of Fiona
 I:36:22:5
-W:15:30:20:20000
+W:15:20:20:20000
 P:1:0d0:0:0:20
 F:HIDE_TYPE | CHR | SUST_CHR |
 F:RES_FIRE | RES_ACID | RES_COLD | RES_ELEC
@@ -3210,7 +3210,7 @@ D:boots in a fashionable way.
 
 N:258:of Scarlet Order
 I:36:23:2
-W:25:50:30:50000
+W:25:25:30:50000
 P:4:0d0:0:0:20
 F:HIDE_TYPE | DEX | STR | RES_FIRE | RES_COLD | RES_ELEC |
 F:RES_CONF | FREE_ACT | HOLD_LIFE | REGEN
@@ -3222,7 +3222,7 @@ D:aids every zealot in his struggle against the unholy forces.
 
 N:259:'Thinking Cap'
 I:32:1:4
-W:20:25:10:40000
+W:20:20:10:40000
 P:1:0d0:0:0:13
 F:INT | WIS | REGEN_MANA | HIDE_TYPE |
 F:RES_BLIND | RES_CONF | FREE_ACT | ESP_UNIQUE
@@ -3309,7 +3309,7 @@ D:(Not to be acquired by players!)
 
 N:266:of Moltor
 I:30:9:5
-W:24:30:30:50000
+W:24:25:30:50000
 P:3:0d0:0:0:-5
 F:INSTA_ART | HIDE_TYPE | SPEED | AGGRAVATE
 D:The remains of a dwarven archer who fearlessly rushed into peril.
