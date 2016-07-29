@@ -7929,7 +7929,7 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 			/* unidentifies an item */
-			else if (prefix(message, "/unid")) {
+			else if (prefix(message, "/unid")) {//note collision with /unidisable, prevented purely by order
 				object_type *o_ptr;
 				char note2[80], noteid[10];
 
@@ -7947,16 +7947,10 @@ void do_slash_cmd(int Ind, char *message) {
 					return; /* inventory slot empty */
 				}
 				o_ptr = &p_ptr->inventory[k];
-#if 0
-				/* Hack -- Clear the "empty" flag */
-				o_ptr->ident &= ~ID_EMPTY;
-				/* Hack -- Clear the "known" flag */
-				o_ptr->ident &= ~ID_KNOWN;
-				/* Hack -- Clear the "felt" flag */
-				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_MENTAL | ID_SENSE_HEAVY);
-#else
-				o_ptr->ident = 0x0;
-#endif
+
+				o_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL);
+				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
+
 				p_ptr->window |= PW_INVEN;
 
 				/* remove pseudo-id tags too */
