@@ -358,7 +358,7 @@ static void sense_inventory(int Ind) {
 
 	bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE;
 	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE;
-	bool ok_curse = FALSE;
+	bool ok_curse = FALSE, force_curse = FALSE;
 
 	cptr feel;
 	bool felt_heavy;
@@ -431,10 +431,10 @@ static void sense_inventory(int Ind) {
  #endif
 #endif
 #if 1
-	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) ok_curse = TRUE;
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) force_curse = ok_curse = TRUE;
 	else if (p_ptr->pclass == CLASS_PRIEST) {
 		//i = (p_ptr->lev < 35) ? (135 - (p_ptr->lev + 10) * 3) : 1;
-		if (p_ptr->lev >= 35 || !rand_int(3000 / (p_ptr->lev * 2 + 30) - 29)) ok_curse = TRUE;
+		if (p_ptr->lev >= 35 || !rand_int(3000 / (p_ptr->lev * 2 + 30) - 29)) force_curse = ok_curse = TRUE;
 	}
 #endif
 
@@ -459,7 +459,12 @@ static void sense_inventory(int Ind) {
 		if (object_known_p(Ind, o_ptr)) continue;
 		/* Occasional failure on inventory items */
 		if ((i < INVEN_WIELD) &&
-		    (magik(80) || UNAWARENESS(p_ptr))) continue;
+		    (magik(80) || UNAWARENESS(p_ptr))) {
+			/* usually fail, except if we're forced to insta-sense a curse */
+			if (!force_curse) continue;
+			/* if we're forced to insta-sense a curse, do just that */
+			ok_magic = ok_combat = ok_archery = FALSE;
+		}
 
 		feel = NULL;
 		felt_heavy = FALSE;
