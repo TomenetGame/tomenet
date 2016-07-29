@@ -2538,7 +2538,7 @@ static void Input_loop(void) {
 		if (Net_flush() == -1) {
 #ifdef RETRY_LOGIN
 			/* player got ghost-killed? */
-			if (connection_destroyed && connection_state >= 2) return;
+			if (connection_state >= 2) return;
 #endif
 			plog("Bad net flush");
 			return;
@@ -2576,7 +2576,7 @@ static void Input_loop(void) {
 			process_command();
 #ifdef RETRY_LOGIN
 			/* player used quit command? */
-			if (connection_destroyed && connection_state >= 2) return;
+			if (connection_state >= 2) return;
 #endif
 
 			/* Clear previous command */
@@ -3092,8 +3092,6 @@ void client_init(char *argv1, bool skip) {
 		/* paranoia - shouldn't happen */
 		connection_destroyed = FALSE;
 	}
-
-	connection_state = 1; //maybe too early? can be pushed back after Net_start() maybe, as long as it's called before Input_loop() so all normal Net_input() gets enabled */
 #endif
 
 #if 0 /* moved to get_char_info(), because of CHAR_COL */
@@ -3160,13 +3158,16 @@ void client_init(char *argv1, bool skip) {
 #endif
 
 	/* Main loop */
+#ifdef RETRY_LOGIN
+	connection_state = 1;
+#endif
 	Input_loop();
 
 	/* Cleanup network stuff */
 	Net_cleanup();
 
 #ifdef RETRY_LOGIN
-	if (connection_destroyed && connection_state >= 2) {
+	if (connection_state >= 2) {
 		/* We quit the game actively? (Otherwise the quit_hook will already have taken care of fading out) */
 		if (connection_state == 3) {
  #ifdef USE_SOUND_2010
@@ -3180,6 +3181,8 @@ void client_init(char *argv1, bool skip) {
 		cname[0] = 0; //reset character choice, or relog into character screen won't work
 		auto_relogin = TRUE;
 		c_quit = FALSE; //un-quit (or Net_fd() will always return -1)
+		in_game = FALSE; //BIG_MAP stuff?
+		//stop timers (lagometer et al)
 		goto retry_contact;
 	}
 #endif

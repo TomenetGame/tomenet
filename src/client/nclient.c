@@ -997,7 +997,7 @@ int Net_fd(void) {
 		return -1;
 #ifdef RETRY_LOGIN
 	/* prevent inkey() from crashing/causing Sockbuf_read() errors ("no read from non-readable socket..") */
-	if (!connection_state) return -1;
+	if (connection_state != 1) return -1;
 #endif
 	return rbuf.sock;
 }
@@ -1271,7 +1271,7 @@ int Flush_queue(void) {
 
 	if (!initialized) return 0;
 #ifdef RETRY_LOGIN
-	if (connection_state == 0) return 0;
+	if (connection_state != 1) return 0;
 #endif
 
 	len = qbuf.len - (qbuf.ptr - qbuf.buf);
