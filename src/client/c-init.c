@@ -2732,8 +2732,8 @@ static void quit_hook(cptr s) {
 #endif
 
 #ifdef USE_GCU
-        /* clean up USE_GCU's terminal colour modifications */
-        if (!strcmp(ANGBAND_SYS, "gcu")) gcu_restore_colours();
+	/* clean up USE_GCU's terminal colour modifications */
+	if (!strcmp(ANGBAND_SYS, "gcu")) gcu_restore_colours();
 #endif
 
 	/* Nuke each term */
