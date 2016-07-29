@@ -3079,6 +3079,7 @@ void client_init(char *argv1, bool skip) {
 		}
 		/* bad character name? */
 		if (status == E_RETRY_LOGIN) {
+			Net_cleanup();
 			/* auto-logon up to character screen */
 			cname[0] = 0; //reset character choice, maybe it was an illegal name (login-fail-spam would be the result?)
 			auto_relogin = TRUE;
