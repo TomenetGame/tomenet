@@ -354,7 +354,7 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config -
 
 
 # Compile a client with 'test client' version/tag
-tomenet.test: CFLAGS += -DTEST_CLIENT -Og
+tomenet.test: CFLAGS += -DTEST_CLIENT -Og -O0
 
 
 # Lua

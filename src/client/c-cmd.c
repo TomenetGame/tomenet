@@ -303,7 +303,15 @@ void process_command() {
 	case KTRL('O'): do_cmd_messages_chatonly(); break;
 	case KTRL('P'): do_cmd_messages(); break;
 
-	case KTRL('Q'): Net_cleanup(); quit(NULL);
+	case KTRL('Q'):
+#ifdef RETRY_LOGIN
+		connection_destructible = TRUE;
+		connection_state = 3;
+#endif
+		Net_cleanup(); quit(NULL);
+#ifdef RETRY_LOGIN
+		return; //why aren't all of these breaks returns? :-p
+#endif
 	case KTRL('R'): cmd_redraw(); break;
 	case 'Q': cmd_suicide(); break;
 	case '=': do_cmd_options(); break;

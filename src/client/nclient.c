@@ -1355,6 +1355,10 @@ int Receive_quit(void) {
 		/* Hack -- tombstone */
 		if (strstr(reason, "Killed by") ||
 		    strstr(reason, "Committed suicide")) {
+#ifdef RETRY_LOGIN
+			connection_destructible = TRUE;
+			connection_state = 2;
+#endif
 			/* TERAHACK */
 			initialized = FALSE;
 

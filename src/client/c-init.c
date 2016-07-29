@@ -2536,6 +2536,10 @@ static void Input_loop(void) {
 		do_ping();
 
 		if (Net_flush() == -1) {
+#ifdef RETRY_LOGIN
+			/* player got ghost-killed? */
+			if (connection_destroyed && connection_state >= 2) return;
+#endif
 			plog("Bad net flush");
 			return;
 		}
@@ -2570,6 +2574,10 @@ static void Input_loop(void) {
 		while (command_cmd) {
 			/* Process it */
 			process_command();
+#ifdef RETRY_LOGIN
+			/* player used quit command? */
+			if (connection_destroyed && connection_state >= 2) return;
+#endif
 
 			/* Clear previous command */
 			command_cmd = 0;
@@ -2710,12 +2718,17 @@ static void quit_hook(cptr s) {
 		}
 	}
 
-#ifdef UNIX_SOCKETS
-	SocketCloseAll();
-#endif
-
 #ifndef WINDOWS
 	write_mangrc();
+#endif
+
+#ifdef RETRY_LOGIN
+	/* don't kill the windows and all */
+	if (connection_destroyed && connection_state >= 2) return;
+#endif
+
+#ifdef UNIX_SOCKETS
+	SocketCloseAll();
 #endif
 
 #ifdef USE_GCU
@@ -2881,7 +2894,6 @@ void client_init(char *argv1, bool skip) {
 
 #ifdef RETRY_LOGIN
 	retry_contact:
-	connection_destructible = TRUE;
 	connection_destroyed = FALSE;
 	if (auto_relogin) skip = TRUE;
 #endif
@@ -3054,6 +3066,9 @@ void client_init(char *argv1, bool skip) {
 		quit("Network setup failed!\n");
 	}
 
+#ifdef RETRY_LOGIN
+	connection_destructible = TRUE;
+#endif
 	status = Net_login();
 #ifdef RETRY_LOGIN
 	if (connection_destroyed) {
@@ -3065,6 +3080,7 @@ void client_init(char *argv1, bool skip) {
 		/* bad character name? */
 		if (status == E_RETRY_LOGIN) {
 			/* auto-logon up to character screen */
+			cname[0] = 0; //reset character choice, maybe it was an illegal name (login-fail-spam would be the result?)
 			auto_relogin = TRUE;
 			goto retry_contact;
 		}
@@ -3143,6 +3159,24 @@ void client_init(char *argv1, bool skip) {
 
 	/* Cleanup network stuff */
 	Net_cleanup();
+
+#ifdef RETRY_LOGIN
+	if (connection_destroyed && connection_state >= 2) {
+		/* We quit the game actively? (Otherwise the quit_hook will already have taken care of fading out) */
+		if (connection_state == 3) {
+ #ifdef USE_SOUND_2010
+  #ifdef SOUND_SDL
+			mixer_fadeall();
+  #endif
+ #endif
+		}
+
+		/* auto-logon up to character screen */
+		cname[0] = 0; //reset character choice, or relog into character screen won't work
+		auto_relogin = TRUE;
+		goto retry_contact;
+	}
+#endif
 
 	/* Quit, closing term windows */
 	quit(NULL);

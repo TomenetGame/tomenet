@@ -3503,6 +3503,11 @@ static void hook_quit(cptr str) {
 	/* Note: This takes time with anti-virus on */
 	save_prefs();
 
+#ifdef RETRY_LOGIN
+	/* don't kill the windows and all */
+	if (connection_destroyed && connection_state >= 2) return;
+#endif
+
 	/* Destroy the windows */
 	/* Sub-Windows */
 	for (i = MAX_TERM_DATA - 1; i >= 1; i--) {
