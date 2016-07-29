@@ -3010,6 +3010,7 @@ void client_init(char *argv1, bool skip) {
 				quit("That nickname is already in use.  If it is your nickname, wait 30 seconds and try again.");
 			case E_INVAL:
 				quit("The server didn't like your nickname, realname, or hostname.");
+				//note: not a good case for RETRY_LOGIN, since a name or even the hostname might be asian/cyrillic or so.. not easily solvable maybe
 			case E_TWO_PLAYERS:
 				quit("There is already another character from this user/machine on the server.");
 			case E_INVITE:
