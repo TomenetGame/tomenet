@@ -402,6 +402,10 @@ void Receive_login(void) {
 		quit(&rbuf.ptr[1]);
 		return;
 	}
+#ifdef RETRY_LOGIN
+	/* allow quitting again (especially 'Q' in character screen ;)) */
+	connection_destructible = FALSE;
+#endif
 
 	/* Read server detail flags for informational purpose - C. Blue */
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags3, &sflags2, &sflags1, &sflags0)) <= 0) {

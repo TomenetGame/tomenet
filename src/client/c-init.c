@@ -3052,6 +3052,7 @@ void client_init(char *argv1, bool skip) {
 		Net_cleanup();
 		goto retry_login;
 	}
+
 	connection_state = 1; //maybe too early? can be pushed back after Net_start() maybe, as long as it's called before Input_loop() so all normal Net_input() gets enabled */
 #endif
 
