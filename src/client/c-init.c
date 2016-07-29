@@ -3083,9 +3083,8 @@ void client_init(char *argv1, bool skip) {
 		/* bad character name? */
 		if (status == E_RETRY_LOGIN) {
 			Net_cleanup();
-			/* auto-logon up to character screen */
 			cname[0] = 0; //reset character choice, maybe it was an illegal name (login-fail-spam would be the result?)
-			auto_relogin = TRUE;
+			auto_relogin = TRUE; //auto-logon up to character screen
 			c_quit = FALSE; //un-quit, paranoia at this point though (only needed for Input_loop())
 			goto retry_contact;
 		}
@@ -3157,6 +3156,14 @@ void client_init(char *argv1, bool skip) {
  #endif
 #endif
 
+#if 1 /* test shit.. */
+	{
+		cname[0] = 0; //reset character choice, or relog into character screen won't work
+		auto_relogin = TRUE; //auto-logon up to character screen
+		goto retry_contact;
+	}
+#endif
+
 	/* Main loop */
 #ifdef RETRY_LOGIN
 	connection_state = 1;
@@ -3177,11 +3184,10 @@ void client_init(char *argv1, bool skip) {
  #endif
 		}
 
-		/* auto-logon up to character screen */
 		cname[0] = 0; //reset character choice, or relog into character screen won't work
-		auto_relogin = TRUE;
+		auto_relogin = TRUE; //auto-logon up to character screen
 		c_quit = FALSE; //un-quit (or Net_fd() will always return -1)
-		in_game = FALSE; //BIG_MAP stuff?
+		in_game = FALSE; //BIG_MAP stuff? (paranoia?)
 		//stop timers (lagometer et al)
 		goto retry_contact;
 	}
