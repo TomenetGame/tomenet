@@ -69,8 +69,7 @@ int usleep(huge microSeconds) {
 #endif /* SET_UID */
 
 #ifdef WIN32
-int usleep(long microSeconds)
-{
+int usleep(long microSeconds) {
 	Sleep(microSeconds / 1000); /* meassured in milliseconds not microseconds*/
 	return(0);
 }
@@ -98,28 +97,23 @@ static bool was_chat_buffer = FALSE;
 static bool was_all_buffer = FALSE;
 static bool was_important_scrollback = FALSE;
 
-static char octify(uint i)
-{
+static char octify(uint i) {
 	return (hexsym[i%8]);
 }
 
-static char hexify(uint i)
-{
+static char hexify(uint i) {
 	return (hexsym[i%16]);
 }
 
-void move_cursor(int row, int col)
-{
+void move_cursor(int row, int col) {
 	Term_gotoxy(col, row);
 }
 
-void flush(void)
-{
+void flush(void) {
 	flush_later = TRUE;
 }
 
-void flush_now(void)
-{
+void flush_now(void) {
 	/* Clear various flags */
 	flush_later = FALSE;
 
@@ -143,13 +137,11 @@ if (c_cfg.keep_topline)
 /*
  * Check for possibly pending macros
  */
-static int macro_maybe(cptr buf, int n)
-{
+static int macro_maybe(cptr buf, int n) {
 	int i;
 
 	/* Scan the macros */
-	for (i = n; i < macro__num; i++)
-	{
+	for (i = n; i < macro__num; i++) {
 		/* Skip inactive macros */
 		if (macro__hyb[i] && (shopping || inkey_msg)) continue;
 		if (macro__cmd[i] && (shopping || !inkey_flag || inkey_msg)) continue;
@@ -170,13 +162,11 @@ static int macro_maybe(cptr buf, int n)
 /*
  * Find the longest completed macro
  */
-static int macro_ready(cptr buf)
-{
+static int macro_ready(cptr buf) {
 	int i, t, n = -1, s = -1;
 
 	/* Scan the macros */
-	for (i = 0; i < macro__num; i++)
-	{
+	for (i = 0; i < macro__num; i++) {
 		/* Skip inactive macros */
 		if (macro__cmd[i] && (shopping || inkey_msg || !inkey_flag)) continue;
 		if (macro__hyb[i] && (shopping || inkey_msg)) continue;
@@ -269,15 +259,12 @@ void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
 /*
  * Try to delete a macro - mikaelh
  */
-bool macro_del(cptr pat)
-{
+bool macro_del(cptr pat) {
 	int i, num = -1;
 
 	/* Find the macro */
-	for (i = 0; i < macro__num; i++)
-	{
-		if (streq(macro__pat[i], pat))
-		{
+	for (i = 0; i < macro__num; i++) {
+		if (streq(macro__pat[i], pat)) {
 			num = i;
 			break;
 		}
@@ -292,8 +279,7 @@ bool macro_del(cptr pat)
 	macro__act[num] = NULL;
 
 	/* Remove it from every array */
-	for (i = num + 1; i < macro__num; i++)
-	{
+	for (i = num + 1; i < macro__num; i++) {
 		macro__pat[i - 1] = macro__pat[i];
 		macro__act[i - 1] = macro__act[i];
 		macro__cmd[i - 1] = macro__cmd[i];
@@ -6784,8 +6770,7 @@ static void do_cmd_options_mus(void) {
 #endif
 }
 
-errr options_dump(cptr fname)
-{
+errr options_dump(cptr fname) {
 	int i, j;
 
 	FILE *fff;
@@ -6823,8 +6808,7 @@ errr options_dump(cptr fname)
 	fprintf(fff, "# Automatic option dump\n\n");
 
 	/* Dump them */
-	for (i = 0; i < OPT_MAX; i++)
-	{
+	for (i = 0; i < OPT_MAX; i++) {
 		/* Require a real option */
 		if (!option_info[i].o_desc) continue;
 
@@ -6833,13 +6817,9 @@ errr options_dump(cptr fname)
 
 		/* Dump the option */
 		if (*option_info[i].o_var)
-		{
 			fprintf(fff, "Y:%s\n", option_info[i].o_text);
-		}
 		else
-		{
 			fprintf(fff, "X:%s\n", option_info[i].o_text);
-		}
 
 		/* End the option */
 		fprintf(fff, "\n");
@@ -7397,8 +7377,7 @@ void do_cmd_options(void) {
 /*
  * Centers a string within a 31 character string		-JWT-
  */
-static void center_string(char *buf, cptr str)
-{
+static void center_string(char *buf, cptr str) {
 	int i, j;
 
 	/* Total length */
@@ -7416,21 +7395,15 @@ static void center_string(char *buf, cptr str)
  * Display a "tomb-stone"
  */
 /* ToME parts. */
-static void print_tomb(cptr reason)
-{
+static void print_tomb(cptr reason) {
 	bool done = FALSE;
 
 	/* Print the text-tombstone */
-	if (!done)
-	{
+	if (!done) {
 		char	tmp[160];
-
 		char	buf[1024];
-
 		FILE        *fp;
-
 		time_t	ct = time(NULL);
-
 
 		/* Clear screen */
 		Term_clear();
@@ -7442,13 +7415,11 @@ static void print_tomb(cptr reason)
 		fp = my_fopen(buf, "r");
 
 		/* Dump */
-		if (fp)
-		{
+		if (fp) {
 			int i = 0;
 
 			/* Dump the file to the screen */
-			while (0 == my_fgets(fp, buf, 1024))
-			{
+			while (0 == my_fgets(fp, buf, 1024)) {
 				/* Display and advance */
 				Term_putstr(0, i++, -1, TERM_WHITE, buf);
 			}
@@ -7460,15 +7431,10 @@ static void print_tomb(cptr reason)
 #if 0	/* make the server send those info! */
 		/* King or Queen */
 		if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
-		{
 			p = "Magnificent";
-		}
-
 		/* Normal */
 		else
-		{
 			p =  cp_ptr->titles[(p_ptr->lev-1)/5] + c_text;
-		}
 #endif	/* 0 */
 
 		center_string(buf, cname);
@@ -7477,10 +7443,10 @@ static void print_tomb(cptr reason)
 		center_string(buf, "the");
 		put_str(buf, 7, 11);
 
-        	center_string(buf, race_info[race].title);
+		center_string(buf, race_info[race].title);
 		put_str(buf, 8, 11);
 
-        	center_string(buf, class_info[class].title);
+		center_string(buf, class_info[class].title);
 		put_str(buf, 9, 11);
 
 		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
@@ -7509,13 +7475,11 @@ static void print_tomb(cptr reason)
 		put_str(buf, 14, 11);
 
 
-		if (strlen(died_from) > 24)
-		{
+		if (strlen(died_from) > 24) {
 			strncpy(dummy, died_from, 24);
 			dummy[24] = '\0';
 			(void)sprintf(tmp, "by %s.", dummy);
-		}
-		else
+		} else
 			(void)sprintf(tmp, "by %s.", died_from);
 
 		center_string(buf, tmp);
@@ -7535,8 +7499,7 @@ static void print_tomb(cptr reason)
  * Display some character info	- Jir -
  * For now, only when losing the character.
  */
-void c_close_game(cptr reason)
-{
+void c_close_game(cptr reason) {
 	int k;
 	char tmp[MAX_CHARS];
 
@@ -7551,28 +7514,23 @@ void c_close_game(cptr reason)
 	put_str("ESC to quit, 'f' to dump the record or any other key to proceed", 23, 0);
 
 	/* TODO: bandle them in one loop instead of 2 */
-	while (1)
-	{
+	while (1) {
 		/* Get command */
 		k = inkey();
 
 		/* Exit */
 		if (k == ESCAPE || k == KTRL('Q') || k == 'q' || k == 'Q') return;
 
-		else if (k == KTRL('T'))
-		{
+		else if (k == KTRL('T')) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
 		}
 
 		/* Dump */
-		else if ((k == 'f') || (k == 'F'))
-		{
+		else if ((k == 'f') || (k == 'F')) {
 			strnfmt(tmp, MAX_CHARS - 1, "%s.txt", cname);
-			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, MAX_CHARS - 1))
-			{
-				if (tmp[0] && (tmp[0] != ' '))
-				{
+			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, MAX_CHARS - 1)) {
+				if (tmp[0] && (tmp[0] != ' ')) {
 					file_character(tmp, FALSE);
 					break;
 				}
@@ -7586,8 +7544,7 @@ void c_close_game(cptr reason)
 	}
 
 	/* Interact */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -7614,52 +7571,38 @@ void c_close_game(cptr reason)
 
 		/* Take a screenshot */
 		if (k == KTRL('T'))
-		{
 			xhtml_screenshot("screenshot????");
-		}
 
 		/* Character screen */
 		else if (k == '1' || k == 'C')
-		{
 			cmd_character();
-		}
 
 		/* Inventory */
 		else if (k == '2' || k == 'i')
-		{
 			cmd_inven();
-		}
 
 		/* Equipments */
 		else if (k == '3' || k == 'e')
-		{
 			/* Process the running options */
 			cmd_equip();
-		}
 
 		/* Message history */
 		else if (k == '4' || k == KTRL('P'))
-		{
 			do_cmd_messages();
-		}
 
 		/* Chat history */
 		else if (k == '5' || k == KTRL('O'))
-		{
 			do_cmd_messages_chatonly();
-		}
 
 #if 0
 		/* Skill browsing ... is not available for now */
-		else if (k == '6' || k == KTRL('G'))
-		{
+		else if (k == '6' || k == KTRL('G')) {
 			do_cmd_skill();
 		}
 #endif	/* 0 */
 
 		/* Unknown option */
-		else
-		{
+		else {
 			/* Oops */
 			bell();
 		}
@@ -7671,18 +7614,16 @@ void c_close_game(cptr reason)
 /*
  * Since only GNU libc has memfrob, we use our own.
  */
-void my_memfrob(void *s, int n)
-{
-        int i;
-        char *str;
+void my_memfrob(void *s, int n) {
+	int i;
+	char *str;
 
-        str = (char*) s;
+	str = (char*) s;
 
-        for (i = 0; i < n; i++)
-        {
-                /* XOR every byte with 42 */
-                str[i] ^= 42;
-        }
+	for (i = 0; i < n; i++) {
+		/* XOR every byte with 42 */
+		str[i] ^= 42;
+	}
 }
 
 
@@ -8057,29 +7998,29 @@ void check_immediate_options(int i, bool yes, bool playing) {
 #endif
 
 	if (option_info[i].o_var == &c_cfg.big_map
-            && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
-            && (sflags1 & SFLG1_BIG_MAP)) {
+	    && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
+	    && (sflags1 & SFLG1_BIG_MAP)) {
 		if (!yes && screen_hgt != SCREEN_HGT) {
-	        	screen_hgt = SCREEN_HGT;
-    		        resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
-	                /* too early, connection not ready yet? (otherwise done in Input_loop()) */
-    		        if (playing) {
+			screen_hgt = SCREEN_HGT;
+			resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+			/* too early, connection not ready yet? (otherwise done in Input_loop()) */
+			if (playing) {
 				if (screen_icky) Term_switch(0);
 				Term_clear(); /* get rid of map tiles where now status bars go instead */
 				if (screen_icky) Term_switch(0);
 				Send_screen_dimensions();
-    		    	}
+			}
 		}
 		if (yes && screen_hgt <= SCREEN_HGT) {
-                        screen_hgt = MAX_SCREEN_HGT;
-                        resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
-	                /* too early, connection not ready yet? (otherwise done in Input_loop()) */
-    		        if (playing) {
+			screen_hgt = MAX_SCREEN_HGT;
+			resize_main_window(CL_WINDOW_WID, CL_WINDOW_HGT);
+			/* too early, connection not ready yet? (otherwise done in Input_loop()) */
+			if (playing) {
 				if (screen_icky) Term_switch(0);
 				Term_clear(); /* paranoia ;) */
 				if (screen_icky) Term_switch(0);
 				Send_screen_dimensions();
-    		    	}
+			}
 		}
 	}
 
