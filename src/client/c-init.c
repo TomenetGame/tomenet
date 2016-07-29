@@ -2819,6 +2819,9 @@ void client_init(char *argv1, bool skip) {
 	bool stop_sfx = FALSE;
  #endif
 #endif
+#ifdef RETRY_LOGIN
+	bool auto_relogin = FALSE;
+#endif
 
 	/* Set the "plog hook" */
 	if (!plog_aux) plog_aux = plog_hook;
@@ -2877,14 +2880,19 @@ void client_init(char *argv1, bool skip) {
 
 
 #ifdef RETRY_LOGIN
-	retry_login:
+	retry_contact:
 	connection_destructible = TRUE;
 	connection_destroyed = FALSE;
+	if (auto_relogin) skip = TRUE;
 #endif
 
 	/* Get character name and pass */
 	if (!skip) get_char_name();
 
+#ifdef RETRY_LOGIN
+	/* don't memfrob an already memfrobbed password */
+	if (!auto_relogin)
+#endif
 	if (server_protocol >= 2) {
 		/* Use memfrob on the password */
 		my_memfrob(pass, strlen(pass));
@@ -3049,8 +3057,19 @@ void client_init(char *argv1, bool skip) {
 	status = Net_login();
 #ifdef RETRY_LOGIN
 	if (connection_destroyed) {
-		Net_cleanup();
-		goto retry_login;
+		/* bad account crecedentials? */
+		if (status == E_RETRY_CONTACT) {
+			Net_cleanup();
+			goto retry_contact;
+		}
+		/* bad character name? */
+		if (status == E_RETRY_LOGIN) {
+			/* auto-logon up to character screen */
+			auto_relogin = TRUE;
+			goto retry_contact;
+		}
+		/* paranoia - shouldn't happen */
+		connection_destroyed = FALSE;
 	}
 
 	connection_state = 1; //maybe too early? can be pushed back after Net_start() maybe, as long as it's called before Input_loop() so all normal Net_input() gets enabled */

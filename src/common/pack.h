@@ -257,8 +257,9 @@
 #define E_INVITE	0x0B
 #define E_BANNED	0x0C
 #define E_VERSION_UNKNOWN	0x0D
-//for RETRY_LOGIN:
-#define E_RETRY_ACCOUNT	0xFF
+//RETRY_LOGIN:
+#define E_RETRY_CONTACT	0xFF
+#define E_RETRY_LOGIN	0xFE
 
 
 /*

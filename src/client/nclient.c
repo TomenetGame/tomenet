@@ -1021,7 +1021,9 @@ unsigned char Net_login() {
 	Receive_login();
 #ifdef RETRY_LOGIN
 	/* Our connection was destroyed in Receive_login() -> something wrong with our account crecedentials? */
-	if (connection_destroyed) return -1;
+	if (connection_destroyed) return E_RETRY_CONTACT;
+	/* Prepare for refusal of a new character name we entered */
+	connection_destructible = 1;
 #endif
 
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, cname);
@@ -1040,8 +1042,18 @@ unsigned char Net_login() {
 	/* Peek in the buffer to check if the server wanted to destroy the
 	 * connection - mikaelh */
 	if (rbuf.len > 1 && rbuf.ptr[0] == PKT_QUIT) {
+#ifdef RETRY_LOGIN
+		connection_destroyed = TRUE;
+		/* should be illegal character name this time.. */
+		plog(&rbuf.ptr[1]);
+		return E_RETRY_LOGIN;
+#endif
 		quit(&rbuf.ptr[1]);
 	}
+#ifdef RETRY_LOGIN
+	/* back to normal - can quit() anytime */
+	connection_destructible = 0;
+#endif
 
 	if (Packet_scanf(&rbuf, "%c", &tc) <= 0) {
 		quit("Failed to read status code from server!");
