@@ -6455,13 +6455,6 @@ void process_player_change_wpos(int Ind) {
 		/* Generate a dungeon level there */
 		generate_cave(wpos, p_ptr);
 
-#if 0 /* arena monster challenge - paranoia (should be generated in xtra1.c, and permanently static really) */
-//copy/pasted code, non-functional as is, just put it here for later maybe
-		new_players_on_depth(&wpos, 1, TRUE); /* make it static */
-		s_printf("EVENT_LAYOUT: Generating arena_tt at %d,%d,%d\n", wpos.wx, wpos.wy, wpos.wz);
-		process_dungeon_file("t_arena_tt.txt", &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
-#endif
-
 		/* allow non-normal (interval-timed) ambient sfx, but depend on our own fast-travel-induced rythm */
 		travel_ambient = TRUE;
 	} else if (players_on_depth(wpos) == 1) travel_ambient = TRUE; /* exception - if we're the only one here we won't mess up someone else's ambient sfx rythm, so it's ok */

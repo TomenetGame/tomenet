@@ -761,3 +761,8 @@ extern int stricmp(cptr a, cptr b);
 
 extern cptr longVersion;
 extern cptr shortVersion;
+
+/* only for sockbuf.c, on client-side */
+#ifdef RETRY_LOGIN
+extern bool connection_destructible, connection_destroyed;
+#endif

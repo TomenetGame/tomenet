@@ -4088,7 +4088,6 @@ static int Receive_login(int ind) {
 
 			/* Abuse flag set 3 for actual char limit, so it's no longer hardcoded in the client */
 			sflags3 |= (MAX_CHARS_PER_ACCOUNT & 0xFF) | ((MAX_DED_IDDC_CHARS & 0xFF00) << 8) | ((MAX_DED_PVP_CHARS & 0xFF) << 16);
-			/* (4.6.2: Abuse flag set 3 further, for returning problems in login/character selection -> RETRY_LOGIN) */
 
 			/* Send all flags! */
 			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, sflags3, sflags2, sflags1, sflags0);
@@ -4133,12 +4132,6 @@ static int Receive_login(int ind) {
 			if (n) C_KILL(id_list, n, int);
 		} else {
 			/* fail login here */
-#ifdef RETRY_LOGIN
- #if 0 /* non-functional */
-			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, SF3_RETRY_ACCOUNT, 0x0, 0x0, 0x0);
-			return -1;
- #endif
-#endif
 			//Destroy_connection(ind, "Wrong password or name already in use.");
 			Destroy_connection(ind, "Name already in use.");
 			return(-1);

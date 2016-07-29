@@ -969,3 +969,7 @@ extern bool macro_processing_exclusive;
 extern int max_chars_per_account;
 
 extern u32b client_color_map[16];
+
+#ifdef RETRY_LOGIN
+extern bool connection_destructible, connection_destroyed, connection_state;
+#endif

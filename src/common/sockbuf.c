@@ -330,6 +330,10 @@ int Sockbuf_read(sockbuf_t *sbuf)
 
     if (BIT(sbuf->state, SOCKBUF_READ) == 0) {
 	errno = 0;
+#ifdef RETRY_LOGIN /* for client-side only */
+	/* catch an already destroyed connection - don't call quit() *again*, just go back peacefully; part 1/2 */
+	if (connection_destroyed) return -1;
+#endif
 	plog(format("No read from non-readable socket buffer (%d)", sbuf->state));
 	return -1;
     }

@@ -419,3 +419,7 @@ u32b client_color_map[16] = {
 	0x00ffff,	/* LIGHT BLUE */
 	0xc79d55,	/* LIGHT UMBER */
 };
+
+#ifdef RETRY_LOGIN
+bool connection_destructible = FALSE, connection_destroyed = FALSE, connection_state = 0;
+#endif

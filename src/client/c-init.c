@@ -2804,8 +2804,7 @@ static void turn_off_numlock(void) {
 /*
  * Initialize everything, contact the server, and start the loop.
  */
-void client_init(char *argv1, bool skip)
-{
+void client_init(char *argv1, bool skip) {
 	sockbuf_t ibuf;
 	unsigned magic = 12345;
 	unsigned char reply_to, status = 0;
@@ -2813,8 +2812,8 @@ void client_init(char *argv1, bool skip)
 	int bytes, retries;
 	char host_name[80];
 	u16b version = MY_VERSION;
-        s32b temp;
-        bool BIG_MAP_fallback = FALSE;
+	s32b temp;
+	bool BIG_MAP_fallback = FALSE;
 #ifdef ATMOSPHERIC_INTRO
  #ifdef USE_SOUND_2010
 	bool stop_sfx = FALSE;
@@ -2860,22 +2859,28 @@ void client_init(char *argv1, bool skip)
 #endif
 	} else {
 		/* Set the server's name */
-                strcpy(server_name, argv1);
-                if (strchr(server_name, ':') &&
+		strcpy(server_name, argv1);
+		if (strchr(server_name, ':') &&
 		    /* Make sure it's not an IPv6 address. */
 		    !strchr(strchr(server_name, ':') + 1, ':')) {
 
-                        char *port = strchr(server_name, ':');
-                        cfg_game_port = atoi(port + 1);
-                        *port = '\0';
-                }
+			char *port = strchr(server_name, ':');
+			cfg_game_port = atoi(port + 1);
+			*port = '\0';
+		}
 	}
 
 	/* Fix "localhost" */
 	if (!strcmp(server_name, "localhost"))
 #endif
-                strcpy(server_name, host_name);
+		strcpy(server_name, host_name);
 
+
+#ifdef RETRY_LOGIN
+	retry_login:
+	connection_destructible = TRUE;
+	connection_destroyed = FALSE;
+#endif
 
 	/* Get character name and pass */
 	if (!skip) get_char_name();
@@ -2913,6 +2918,9 @@ void client_init(char *argv1, bool skip)
 	if (server_protocol >= 2)
 		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD + (VERSION_OS) * 1000000);
 
+#ifdef RETRY_LOGIN
+	connection_destroyed = FALSE;
+#endif
 	/* Connect to server */
 #ifdef UNIX_SOCKETS
 	if ((DgramConnect(Socket, server_name, cfg_game_port)) == -1)
@@ -2931,10 +2939,14 @@ void client_init(char *argv1, bool skip)
 		if (!SocketReadable(Socket)) continue;
 
 		/* Read reply */
-		if(DgramRead(Socket, ibuf.buf, ibuf.size) <= 0) {
+		if (DgramRead(Socket, ibuf.buf, ibuf.size) <= 0) {
 			/*printf("DgramReceiveAny failed (errno = %d)\n", errno);*/
 			continue;
 		}
+
+#ifdef RETRY_LOGIN
+		if (connection_destroyed) break;
+#endif
 
 		/* Extra info from packet */
 		if (Packet_scanf(&ibuf, "%c%c%d%d", &reply_to, &status, &temp, &char_creation_flags) <= 0) {
@@ -2976,6 +2988,14 @@ void client_init(char *argv1, bool skip)
 		break;
 	}
 
+#ifdef RETRY_LOGIN
+	if (connection_destroyed) {
+		Net_cleanup();
+		goto retry_login;
+	}
+	connection_destructible = FALSE;
+#endif
+
 	if (BIG_MAP_fallback) {
 		screen_wid = SCREEN_WID;
 		screen_hgt = SCREEN_HGT;
@@ -3001,7 +3021,13 @@ void client_init(char *argv1, bool skip)
 			case E_IN_USE:
 				quit("That nickname is already in use.  If it is your nickname, wait 30 seconds and try again.");
 			case E_INVAL:
+#ifdef RETRY_LOGIN
+				display_message("The server didn't like your nickname, realname, or hostname.", "Quitting");
+				Net_cleanup();
+				goto retry_login;
+#else
 				quit("The server didn't like your nickname, realname, or hostname.");
+#endif
 			case E_TWO_PLAYERS:
 				quit("There is already another character from this user/machine on the server.");
 			case E_INVITE:
@@ -3041,14 +3067,15 @@ void client_init(char *argv1, bool skip)
 	}
 
 #ifdef RETRY_LOGIN
-	while (TRUE) {
-		status = Net_login();
-		if (status == E_RETRY_ACCOUNT) {
-			//...
-		} else break;
-	}
-#else
+	connection_destroyed = FALSE;
+#endif
 	status = Net_login();
+#ifdef RETRY_LOGIN
+	if (connection_destroyed) {
+		Net_cleanup();
+		goto retry_login;
+	}
+	connection_state = 1; //maybe too early? can be pushed back after Net_start() maybe, as long as it's called before Input_loop() so all normal Net_input() gets enabled */
 #endif
 
 #if 0 /* moved to get_char_info(), because of CHAR_COL */

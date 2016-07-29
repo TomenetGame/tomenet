@@ -392,6 +392,13 @@ void Receive_login(void) {
 	/* Check if the server wanted to destroy the connection - mikaelh */
 	if (rbuf.ptr[0] == PKT_QUIT) {
 		errno = 0;
+#ifdef RETRY_LOGIN
+		connection_destroyed = TRUE;
+		plog(&rbuf.ptr[1]);
+		/* illegal name? don't suggest it as default again */
+		if (strstr(&rbuf.ptr[1], "a different name")) strcpy(nick, "");
+		return;
+#endif
 		quit(&rbuf.ptr[1]);
 		return;
 	}
@@ -400,9 +407,6 @@ void Receive_login(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags3, &sflags2, &sflags1, &sflags0)) <= 0) {
 		return;
 	}
-#ifdef RETRY_LOGIN
-	if (sflags3 & SF3_RETRY_ACCOUNT) return;
-#endif
 
 #ifdef WINDOWS
 	/* only on first time startup? */
@@ -743,30 +747,30 @@ int Net_setup(void) {
 					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s%d", &b1, &b2, &b3, &b4, &b5, &b6, str, &race_info[i].choice);
 					race_info[i].title = string_make(str);
 					race_info[i].r_adj[0] = b1 - 50;
-                                        race_info[i].r_adj[1] = b2 - 50;
-                                        race_info[i].r_adj[2] = b3 - 50;
-                                        race_info[i].r_adj[3] = b4 - 50;
-                                        race_info[i].r_adj[4] = b5 - 50;
-                                        race_info[i].r_adj[5] = b6 - 50;
+					race_info[i].r_adj[1] = b2 - 50;
+					race_info[i].r_adj[2] = b3 - 50;
+					race_info[i].r_adj[3] = b4 - 50;
+					race_info[i].r_adj[4] = b5 - 50;
+					race_info[i].r_adj[5] = b6 - 50;
 				}
 
 				for (i = 0; i < Setup.max_class; i++) {
 					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s", &b1, &b2, &b3, &b4, &b5, &b6, str);
 					class_info[i].title = string_make(str);
 					class_info[i].c_adj[0] = b1 - 50;
-                                        class_info[i].c_adj[1] = b2 - 50;
-                                        class_info[i].c_adj[2] = b3 - 50;
-                                        class_info[i].c_adj[3] = b4 - 50;
-                                        class_info[i].c_adj[4] = b5 - 50;
-                                        class_info[i].c_adj[5] = b6 - 50;
-                                        if (is_newer_than(&server_version, 4, 4, 3, 1, 0, 0))
-	                                        for (j = 0; j < 6; j++) {
+					class_info[i].c_adj[1] = b2 - 50;
+					class_info[i].c_adj[2] = b3 - 50;
+					class_info[i].c_adj[3] = b4 - 50;
+					class_info[i].c_adj[4] = b5 - 50;
+					class_info[i].c_adj[5] = b6 - 50;
+					if (is_newer_than(&server_version, 4, 4, 3, 1, 0, 0))
+						for (j = 0; j < 6; j++) {
 							Packet_scanf(&cbuf, "%c", &b1);
 							class_info[i].min_recommend[j] = b1;
 						}
 				}
 
-                                if (Setup.max_trait != 0) {
+				if (Setup.max_trait != 0) {
 					for (i = 0; i < Setup.max_trait; i++) {
 						Packet_scanf(&cbuf, "%s%d", str, &trait_info[i].choice);
 						trait_info[i].title = string_make(str);
@@ -987,6 +991,10 @@ int Net_flush(void) {
 int Net_fd(void) {
 	if (!initialized || c_quit)
 		return -1;
+#ifdef RETRY_LOGIN
+	/* prevent inkey() from crashing/causing Sockbuf_read() errors ("no read from non-readable socket..") */
+	if (!connection_state) return -1;
+#endif
 	return rbuf.sock;
 }
 
@@ -1008,7 +1016,8 @@ unsigned char Net_login() {
 	Sockbuf_read(&rbuf);
 	Receive_login();
 #ifdef RETRY_LOGIN
-	if (sflags3 & SF3_RETRY_ACCOUNT) return E_RETRY_ACCOUNT;
+	/* something wrong with our account crecedentials? */
+	if (connection_destroyed) return -1;
 #endif
 
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, cname);
@@ -1223,6 +1232,10 @@ int Net_input(void) {
 		if (n == 0) {
 			quit("Server closed the connection");
 		} else if (n < 0) {
+#ifdef RETRY_LOGIN
+			/* catch an already destroyed connection - don't call quit() *again*, just go back peacefully; part 2/2 */
+			if (connection_destroyed) return 1;
+#endif
 			return n;
 		} else {
 			n = Net_packet();
@@ -1241,6 +1254,9 @@ int Flush_queue(void) {
 	int	len;
 
 	if (!initialized) return 0;
+#ifdef RETRY_LOGIN
+	if (connection_state == 0) return 0;
+#endif
 
 	len = qbuf.len - (qbuf.ptr - qbuf.buf);
 
@@ -1309,8 +1325,8 @@ int Receive_quit(void) {
 
 	/* game ends, so leave all other screens like
 	   shops or browsed books or skill screen etc */
-        if (screen_icky) Term_load();
-        topline_icky = FALSE;
+	if (screen_icky) Term_load();
+	topline_icky = FALSE;
 
 	if (Packet_scanf(&rbuf, "%c", &pkt) != 1) {
 		errno = 0;
