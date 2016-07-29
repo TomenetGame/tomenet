@@ -2537,11 +2537,15 @@ static void Input_loop(void) {
 
 		if (Net_flush() == -1) {
 #ifdef RETRY_LOGIN
-			/* player got ghost-killed? */
-			if (connection_state >= 2) return;
-#endif
+			/* if player got ghost-killed, we won't have a connection anymore. But that's not an error, so skip.. */
+			if (connection_state == 1) {
+				plog("Bad net flush");
+				return;
+			}
+#else
 			plog("Bad net flush");
 			return;
+#endif
 		}
 
 		/* Set the timeout on the network socket */
@@ -2574,10 +2578,6 @@ static void Input_loop(void) {
 		while (command_cmd) {
 			/* Process it */
 			process_command();
-#ifdef RETRY_LOGIN
-			/* player used quit command? */
-			if (connection_state >= 2) return;
-#endif
 
 			/* Clear previous command */
 			command_cmd = 0;
@@ -2597,6 +2597,11 @@ static void Input_loop(void) {
 
 		/* Redraw windows if necessary */
 		if (p_ptr->window) window_stuff();
+
+#ifdef RETRY_LOGIN
+		/* player used quit command? */
+		if (connection_state >= 2) return;
+#endif
 	}
 }
 
@@ -3154,14 +3159,6 @@ void client_init(char *argv1, bool skip) {
 	/* Stop background ambient fireplace sound effect (if enabled) */
 	if (stop_sfx) sound_ambient(-1);
  #endif
-#endif
-
-#if 1 /* test shit.. */
-	{
-		cname[0] = 0; //reset character choice, or relog into character screen won't work
-		auto_relogin = TRUE; //auto-logon up to character screen
-		goto retry_contact;
-	}
 #endif
 
 	/* Main loop */
