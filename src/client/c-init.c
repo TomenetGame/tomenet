@@ -2944,10 +2944,6 @@ void client_init(char *argv1, bool skip) {
 			continue;
 		}
 
-#ifdef RETRY_LOGIN
-		if (connection_destroyed) break;
-#endif
-
 		/* Extra info from packet */
 		if (Packet_scanf(&ibuf, "%c%c%d%d", &reply_to, &status, &temp, &char_creation_flags) <= 0) {
 			Net_cleanup();
@@ -2988,14 +2984,6 @@ void client_init(char *argv1, bool skip) {
 		break;
 	}
 
-#ifdef RETRY_LOGIN
-	if (connection_destroyed) {
-		Net_cleanup();
-		goto retry_login;
-	}
-	connection_destructible = FALSE;
-#endif
-
 	if (BIG_MAP_fallback) {
 		screen_wid = SCREEN_WID;
 		screen_hgt = SCREEN_HGT;
@@ -3021,13 +3009,7 @@ void client_init(char *argv1, bool skip) {
 			case E_IN_USE:
 				quit("That nickname is already in use.  If it is your nickname, wait 30 seconds and try again.");
 			case E_INVAL:
-#ifdef RETRY_LOGIN
-				display_message("The server didn't like your nickname, realname, or hostname.", "Quitting");
-				Net_cleanup();
-				goto retry_login;
-#else
 				quit("The server didn't like your nickname, realname, or hostname.");
-#endif
 			case E_TWO_PLAYERS:
 				quit("There is already another character from this user/machine on the server.");
 			case E_INVITE:
