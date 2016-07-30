@@ -3074,7 +3074,7 @@ void client_init(char *argv1, bool skip) {
 	}
 
 #ifdef RETRY_LOGIN
-	connection_destructible = TRUE;
+	connection_destructible = TRUE; //(will be reset to FALSE in Net_login():Receive_login())
 #endif
 	status = Net_login();
 #ifdef RETRY_LOGIN
@@ -3185,7 +3185,21 @@ void client_init(char *argv1, bool skip) {
 		auto_relogin = TRUE; //auto-logon up to character screen
 		c_quit = FALSE; //un-quit (or Net_fd() will always return -1)
 		in_game = FALSE; //BIG_MAP stuff? (paranoia?)
-		//stop timers (lagometer et al)
+
+ #if 0 //testing stuff..
+		connection_state = 0;
+		connection_destroyed = FALSE;
+		connection_destructible = FALSE;
+		Term_load();
+		Term_load();
+		Term_load();
+		Term_load();
+		Term_load();
+		Term_activate(ang_term[0]);
+		Term_flush(); /* Hack -- flush the key buffer */
+		Term_clear(); /* Clear the screen again */
+ #endif
+
 		goto retry_contact;
 	}
 #endif
