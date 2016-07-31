@@ -2512,7 +2512,6 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
  */
 static void Input_loop(void) {
 	int	netfd, result;
-int x = 0;
 
 	if (Net_flush() == -1) return;
 
@@ -2603,11 +2602,6 @@ int x = 0;
 		/* player used quit command? */
 		if (connection_state >= 2) return;
 #endif
-x++;
-if (x == 600) {
-connection_state = 2;
-break;
-}
 	}
 }
 
@@ -2729,13 +2723,13 @@ static void quit_hook(cptr s) {
 		}
 	}
 
-#ifndef WINDOWS
-	write_mangrc();
-#endif
-
 #ifdef RETRY_LOGIN
 	/* don't kill the windows and all */
 	if (connection_state >= 2) return;
+#endif
+
+#ifndef WINDOWS
+	write_mangrc();
 #endif
 
 #ifdef UNIX_SOCKETS
