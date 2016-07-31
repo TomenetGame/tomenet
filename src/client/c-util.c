@@ -2416,9 +2416,14 @@ cptr message_str_impscroll(s32b age)
 /*
  * How many messages are "available"?
  */
-s32b message_num(void)
-{
+s32b message_num(void) {
         int last, next, n;
+
+#ifdef RETRY_LOGIN
+	/* Don't prompt to 'save chat messages?' when quitting the game from within the character screen,
+	   if we have previousl been in-game and therefore messages have had been added. */
+	if (!in_game) return 0;
+#endif
 
         /* Extract the indexes */
         last = message__last;
