@@ -531,6 +531,9 @@ extern int hack_force_spell_level;
 extern void move_cursor(int row, int col);
 extern void flush(void);
 extern void flush_now(void);
+#ifdef RETRY_LOGIN
+extern void RL_revert_input(void);
+#endif
 extern void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag);
 extern bool macro_del(cptr pat);
 extern char inkey(void);

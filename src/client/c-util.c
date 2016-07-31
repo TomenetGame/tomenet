@@ -134,6 +134,29 @@ if (c_cfg.keep_topline)
 	Term_flush();
 }
 
+#ifdef RETRY_LOGIN
+void RL_revert_input(void) {
+	int i;
+
+	after_macro = FALSE;
+	parse_macro = FALSE; /* are we inside the process of executing a macro */
+	inkey_sleep = FALSE; inkey_sleep_semaphore = FALSE;
+	macro_missing_item = 0;
+	parse_under = FALSE;
+	parse_slash = FALSE;
+	strip_chars = FALSE;
+
+	flush_later = FALSE;
+
+	for (i = 0; i < 256; i++)
+		macro__use[i] = 0;
+
+	was_chat_buffer = FALSE;
+	was_all_buffer = FALSE;
+	was_important_scrollback = FALSE;
+}
+#endif
+
 /*
  * Check for possibly pending macros
  */
