@@ -2512,6 +2512,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
  */
 static void Input_loop(void) {
 	int	netfd, result;
+int x = 0;
 
 	if (Net_flush() == -1) return;
 
@@ -2602,6 +2603,11 @@ static void Input_loop(void) {
 		/* player used quit command? */
 		if (connection_state >= 2) return;
 #endif
+x++;
+if (x == 600) {
+connection_state = 2;
+break;
+}
 	}
 }
 
@@ -3185,21 +3191,7 @@ void client_init(char *argv1, bool skip) {
 		auto_relogin = TRUE; //auto-logon up to character screen
 		c_quit = FALSE; //un-quit (or Net_fd() will always return -1)
 		in_game = FALSE; //BIG_MAP stuff? (paranoia?)
-
- #if 0 //testing stuff..
-		connection_state = 0;
-		connection_destroyed = FALSE;
-		connection_destructible = FALSE;
-		Term_load();
-		Term_load();
-		Term_load();
-		Term_load();
-		Term_load();
-		Term_activate(ang_term[0]);
-		Term_flush(); /* Hack -- flush the key buffer */
-		Term_clear(); /* Clear the screen again */
- #endif
-
+		RL_revert_input(); //reset input parsing behaviour (macros etc) to normal
 		goto retry_contact;
 	}
 #endif
