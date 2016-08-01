@@ -2329,7 +2329,9 @@ byte get_3way(cptr prompt, bool default_no) {
 		if (i == 'Y' || i == 'y') res = 1;
 		else if (i == 'A' || i == 'a') res = 2;
 		else if (i == 'N' || i == 'n' ||
-		    (default_no && (i == '\r' || i == '\n' || i == '\e'))) /* not all keys, just ESC and RETURN */
+		    /* added CTRL+Q for quickly exit in-game by double-tapping CTRL+Q,
+		       and for RETRY_LOGIN to quickly exit the whole game by triple-tapping CTRL+Q. */
+		    (default_no && (i == '\r' || i == '\n' || i == '\e' || i == KTRL('Q')))) /* not all keys, just ESC and RETURN */
 			res = 0;
 		if (res != -1) break;
 	}

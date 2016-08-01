@@ -657,7 +657,8 @@ void Receive_login(void) {
 
 	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1))) {
 		ch = inkey();
-		if (ch == 'Q') quit(NULL);
+		//added CTRL+Q for RETRY_LOGIN, so you can quit the whole game from within in-game via simply double-tapping CTRL+Q
+		if (ch == 'Q' || ch == KTRL('Q')) quit(NULL);
 	}
 	if (ch == 'N' || ch == 'E') {
 		if (!cname[0]) strcpy(c_name, nick);

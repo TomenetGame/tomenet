@@ -3185,11 +3185,34 @@ void client_init(char *argv1, bool skip) {
  #endif
 		}
 
-		cname[0] = 0; //reset character choice, or relog into character screen won't work
+		/* reset global game states (and activate auto-relogin) */
 		auto_relogin = TRUE; //auto-logon up to character screen
-		c_quit = FALSE; //un-quit (or Net_fd() will always return -1)
 		in_game = FALSE; //BIG_MAP stuff? (paranoia?)
+		c_quit = FALSE; //un-quit (or Net_fd() will always return -1)
 		RL_revert_input(); //reset input parsing behaviour (macros etc) to normal
+
+		/* reset stuff that needs resetting for anew character-choice or anew character-creation specifically: */
+		cname[0] = 0; //reset character choice, or relog into character screen won't work
+		auto_reincarnation = FALSE;
+
+		/* reset in-game related timed stuff */
+		lagometer_enabled = FALSE; //don't do lag-o-meter during do_ping()
+		weather_type = weather_elements = 0; //don't do do_weather() during do_ping()
+
+		/* reset in-game states */
+		shopping = perusing = FALSE; //paraonia?
+		recording_macro = FALSE; //paranoia?
+
+ #if 1		/* optional: reset message log? */
+		hist_end = hist_chat_end = 0;
+		hist_looped = hist_chat_looped = FALSE;
+		message__next = message__last = message__head = message__tail = 0;
+		message__next_chat =  message__last_chat = message__head_chat = message__tail_chat = 0;
+		message__next_msgnochat = message__last_msgnochat = message__head_msgnochat = message__tail_msgnochat = 0;
+		message__next_impscroll = message__last_impscroll = message__head_impscroll = message__tail_impscroll = 0;
+ #endif
+
+		/* retuuurrrnnnn... */
 		goto retry_contact;
 	}
 #endif
