@@ -4762,7 +4762,7 @@ they aren't 'real' Gold-Plated rods. (!)
 
 
 (3.10) Experience, level-ups and skill points
---------------------------------------------
+---------------------------------------------
 By killing monsters your character gains experience. In general, harder
 monsters on deeper dungeon levels give more experience than easy kills.
 
