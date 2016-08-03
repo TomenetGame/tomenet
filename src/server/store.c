@@ -1275,8 +1275,10 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 	/* No runes at all, actually... */
 	if (o_ptr->tval == TV_RUNE) return (TRUE);
 
+#if 0
 	/* No "Handbook"s in the BM (can only be found) - C. Blue */
 	if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_BOOK_COMBO && o_ptr->sval < SV_CUSTOM_TOME_1) return (TRUE);
+#endif
 
 	/* no ethereal ammo */
 	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return(TRUE);
