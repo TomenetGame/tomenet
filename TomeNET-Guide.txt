@@ -4766,6 +4766,31 @@ they aren't 'real' Gold-Plated rods. (!)
 By killing monsters your character gains experience. In general, harder
 monsters on deeper dungeon levels give more experience than easy kills.
 
+If your character accumulates a certain amount of experience, it will gain
+a 'level-up', meaning that you become noticably more powerful than you were
+until now.
+Each character level requires your character to accumulate more experience
+than was needed for the level before, up to millions of experience points!
+All characters start the game at level 1. At level 50 they are supposed to
+fight the bad boss of the game, Morgoth, Lord of Darkness.
+Depending on race and class, characters need to kill a different amount of
+monsters in order to reach the next level. Yeeks get experience fastest,
+while Maiar are slowest. (See (6.4) and (6.5).)
+The exact amounts you need are shown in the subsequent paragraph (3.10a).
+
+Each time your character gains a new level, it also gains 5 skill
+points that you can distribute on your character's skills, press 'G' to invoke
+the skill chart where you can raise skills of your choice. Do this at a safe
+place, so your character won't be attacked and killed while you are looking
+at the skill chart. The different skills are described in (6.2). Which
+skills your character may specialize in depends on his class,
+and sometimes also on his race; skills that are not available to your
+character's class are greyed out and cannot be raised.
+On the skill chart you can press 'Up'/'Down' keys to select a skill and
+'Right' key to invest one of your spare skill points into it. Choices cannot
+be undone, so be careful here.
+For details about skill point distribution and the different skills see (6.2).
+
 Hanging out on easy dungeon levels compared to your character level (for
 example a high level 50 character on an (to him) easy dungeon level like 60)
 may result in diminishing returns of experience points for killed monsters.
@@ -4777,35 +4802,41 @@ Experience is shared automatically in 'parties', see (6.9).
 
 Note that if your experience is drained (it will be displayed in yellow instead
 of in light green to indicate that it is drained), your maximum experience ie
-the amount you used to have before getting drained still profits of 10% of any
+the amount you used to have before getting drained still profits by 10% of any
 experience you gain, so it is not completely wasted if you don't have a potion
 of restore life levels at hand, or some other means to restore your experience
 back to normal.
 
 
 Recommended minimum depths for optimal experience gain
+------------------------------------------------------
 
-Note: In general, the deeper the better! These are only _minimum_ recommended
-depths above which your experience gain will receive a quite severe reduction.
-Also, your character might not always be strong enough to survive on
-these depths. In that case, despite the experience penalty, you should
-consider moving to easier dungeon levels anway until you found decent items
-and maxed out your vital stats (constitution, etc).
+These are only minimum recommended depths above which your experience gain
+will - depending on your character level - suffer quite a severe reduction.
+Your character might not always be strong enough to survive on these depths.
+In that case, despite the experience penalty, you should consider moving to
+easier dungeon levels anway until you found decent items and maxed out your
+vital stats (constitution, etc).
 
-Note: Your depth display in the bottom right screen corner will indicate the
-appropriateness of your current depth in relation to your character level by
-its colour:
-If you're on a far easier depth, it'll be dark grey, indicating that you
-cannot expect to gain experience here.
-If you're on a slightly easier depth, it'll turn yellow, to tell you that
-you're getting closer to the depth required for normal experience gain, but
-there is still a penalty.
-On the minimum required depth for normal experience gain or deeper, it's white.
-(On a side note, while Word of Recall is pending, it'll turn orange, since
-it's also used as a Word of Recall indicator this way.)
+Note: Your depth display in the bottom right corner of the main window will
+indicate the appropriateness of your current depth in relation to your
+character level by its colour:
 
-Here is a list of this relation between character level and minimum dungeon
-level required for normal, non-penalised experience gain:
+- If you're on a far easier depth, it'll be dark grey, indicating that you
+  cannot expect to gain experience here.
+
+- If you're on a slightly easier depth, it'll turn yellow, to tell you that
+  you're getting closer to the depth required for normal experience gain, but
+  there is still a penalty.
+
+- On the minimum required depth for normal experience gain, or deeper, it's
+  plain white.
+
+(On a side note, while Word of Recall is pending, your depth indicator will
+actually turn orange, since it's also used as a Word of Recall indicator.)
+
+Here is a list of this relation between character level and the minimum dungeon
+level required for normal, non-penalised experience gain, showing some steps:
 
     Character level     |     Dungeon level
 ------------------------------------------------
@@ -4852,30 +4883,6 @@ will be deep enough to deliver optimal experience and your experience gain
 after attaining level 66 will sharply decrease outside of the Nether Realm.
 The Nether Realm is by far the deepest dungeon in the game and allows players
 of very high character levels to accumulate excellent experience.
-
-If your character accumulates a certain amount of experience, (s)he will gain
-a 'level-up', meaning that you become noticably more powerful than you were
-until now.
-Each character level requires your character to accumulate more experience
-than was needed for the level before, up to millions of experience points!
-All characters start the game at level 1. At level 50 they are supposed to
-fight the bad boss of the game, Morgoth, Lord of Darkness.
-Depending on race and class, characters need to kill a different amount of
-monsters in order to reach the next level. Yeeks get experience fastest,
-while Maiar are slowest. (See (6.4) and (6.5).)
-
-Each time your character gains a new level, (s)he also gains 5 skill
-points that you can distribute on your character's skills, press 'G' to invoke
-the skill chart where you can raise skills of your choice. Do this at a safe
-place, so your character won't be attacked and killed while you are looking
-at the skill chart. The different skills are described in (6.2). Which
-skills your character may specialize in depends on his class,
-and sometimes also on his race; skills that are not available to your
-character's class are greyed out and cannot be raised.
-On the skill chart you can press 'Up'/'Down' keys to select a skill and
-'Right' key to invest one of your spare skill points into it. Choices cannot
-be undone, so be careful here.
-For details about skill point distribution and the different skills see (6.2).
 
 
 (3.10a) Experience point table
