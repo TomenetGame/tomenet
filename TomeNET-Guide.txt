@@ -74,6 +74,7 @@ Contents
     (3.9a)  Creating a chat macro for your party
     (3.9b)  Alternative macros: Calling objects by their name
     (3.10)  Experience, level-ups and skill points
+    (3.10a) Experience point table
     (3.11)  Death, ghosts and looting
 (4) The world
     (4.1)   Running, picking up items, fighting
@@ -164,7 +165,6 @@ Contents
     (6.13)  PvP mode
     (6.14)  Miscellaneous character properties
     (6.15)  Character sheet boni page
-    (6.16)  Experience point table
 (7) Tactics & strategy
     (7.1)   Preparing the inventory for diving into the dungeon
     (7.2)   Preparing the equipment for diving into the dungeon
@@ -4876,6 +4876,62 @@ On the skill chart you can press 'Up'/'Down' keys to select a skill and
 'Right' key to invest one of your spare skill points into it. Choices cannot
 be undone, so be careful here.
 For details about skill point distribution and the different skills see (6.2).
+
+
+(3.10a) Experience point table
+------------------------------
+This table shows how many experience points a character needs to attain each
+character level. Keep in mind that depending on choice of race and class
+characters main earn experience at a faster or slower rate than others.
+
+A character who gets his experience drained below zero will die. Ghosts (dead
+players) continuously lose experience points, aka they are fading. If they fall
+below zero experience points they die permanently.
+
+At level 50, characters may still accumulate experience points until 1 point
+below the experience needed for level 51. To eventually advance further they
+will need to defeat the game boss, Morgoth, the Lord of Darkness (see (1.3) and
+subsequent subparagraphs for details).
+Since characters receive a royal title on defeating Morgoth, the level range
+past level 50 are often referred to as "post-king levels", while the life time
+of a character during levels 1 to 50 is often referred to as "pre-king"
+accordingly.
+
+The highest possible level is 99. Characters of level 99 are impervious to any
+type of life force (aka experience) draining attacks or effects.
+
+In general, the amount of experience points required to advance from current to
+next character level tends to increase with each further level gained.
+Occasionally, the subsequent level might actually require the same gain of
+experience points than the previous one, but it will never require less.
+
+
+Lev.   Experience   Lev.   Experience   Lev.   Experience   Lev.   Experience
+  1            0     26        17500     51      7000000     76    147000000
+  2           10     27        25000     52      8200000     77    162000000
+  3           25     28        35000     53      9400000     78    178000000
+  4           45     29        50000     54     10800000     79    195000000
+  5           70     30        75000     55     12600000     80    213000000
+  6          100     31       100000     56     14600000     81    233000000
+  7          140     32       150000     57     16800000     82    255000000
+  8          200     33       200000     58     19200000     83    279000000
+  9          280     34       275000     59     21800000     84    305000000
+ 10          380     35       350000     60     24600000     85    333000000
+ 11          500     36       450000     61     28000000     86    363000000
+ 12          650     37       550000     62     31500000     87    395000000
+ 13          850     38       700000     63     35500000     88    429000000
+ 14         1100     39       850000     64     40000000     89    465000000
+ 15         1400     40      1050000     65     45000000     90    503000000
+ 16         1800     41      1300000     66     50500000     91    544000000
+ 17         2300     42      1550000     67     56500000     92    588000000
+ 18         2900     43      1850000     68     63000000     93    635000000
+ 19         3600     44      2150000     69     70000000     94    685000000
+ 20         4400     45      2500000     70     78000000     95    738000000
+ 21         5400     46      2900000     71     87000000     96    796000000
+ 22         6800     47      3400000     72     97000000     97    859000000
+ 23         8400     48      4000000     73    108000000     98    927000000
+ 24        10200     49      4800000     74    120000000     99    999000000
+ 25        12500     50      5800000     75    133000000     -
 
 
 
@@ -16374,63 +16430,6 @@ Some row specific glyphs:
 s (gold)        Immunity to Cuts (shards row)
 ~ (blue)        Swimming (levitation row)
 # (green)       Pass Forests (levitation row)
-
-
-
-(6.16) Experience point table
------------------------------
-This table shows how many experience points a character needs to attain each
-character level. Keep in mind that depending on choice of race and class
-characters main earn experience at a faster or slower rate than others.
-
-A character who gets his experience drained below zero will die. Ghosts (dead
-players) continuously lose experience points, aka they are fading. If they fall
-below zero experience points they die permanently.
-
-At level 50, characters may still accumulate experience points until 1 point
-below the experience needed for level 51. To eventually advance further they
-will need to defeat the game boss, Morgoth, the Lord of Darkness (see (1.3) and
-subsequent subparagraphs for details).
-Since characters receive a royal title on defeating Morgoth, the level range
-past level 50 are often referred to as "post-king levels", while the life time
-of a character during levels 1 to 50 is often referred to as "pre-king"
-accordingly.
-
-The highest possible level is 99. Characters of level 99 are impervious to any
-type of life force (aka experience) draining attacks or effects.
-
-In general, the amount of experience points required to advance from current to
-next character level tends to increase with each further level gained.
-Occasionally, the subsequent level might actually require the same gain of
-experience points than the previous one, but it will never require less.
-
-
-Lev.   Experience   Lev.   Experience   Lev.   Experience   Lev.   Experience
-  1            0     26        17500     51      7000000     76    147000000
-  2           10     27        25000     52      8200000     77    162000000
-  3           25     28        35000     53      9400000     78    178000000
-  4           45     29        50000     54     10800000     79    195000000
-  5           70     30        75000     55     12600000     80    213000000
-  6          100     31       100000     56     14600000     81    233000000
-  7          140     32       150000     57     16800000     82    255000000
-  8          200     33       200000     58     19200000     83    279000000
-  9          280     34       275000     59     21800000     84    305000000
- 10          380     35       350000     60     24600000     85    333000000
- 11          500     36       450000     61     28000000     86    363000000
- 12          650     37       550000     62     31500000     87    395000000
- 13          850     38       700000     63     35500000     88    429000000
- 14         1100     39       850000     64     40000000     89    465000000
- 15         1400     40      1050000     65     45000000     90    503000000
- 16         1800     41      1300000     66     50500000     91    544000000
- 17         2300     42      1550000     67     56500000     92    588000000
- 18         2900     43      1850000     68     63000000     93    635000000
- 19         3600     44      2150000     69     70000000     94    685000000
- 20         4400     45      2500000     70     78000000     95    738000000
- 21         5400     46      2900000     71     87000000     96    796000000
- 22         6800     47      3400000     72     97000000     97    859000000
- 23         8400     48      4000000     73    108000000     98    927000000
- 24        10200     49      4800000     74    120000000     99    999000000
- 25        12500     50      5800000     75    133000000     -
 
 
 
