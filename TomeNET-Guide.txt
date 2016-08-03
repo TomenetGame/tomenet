@@ -5911,8 +5911,12 @@ level of the dungeon floor. With a few random exceptions sometimes.)
 Most dungeons have a dungeon boss at the final floor, which in most cases has a
 chance to drop a specific artifact. In most cases the chance to drop it is 1/3.
 The bosses have different probabilities to appear, but none of them is overly
-rare, so just reset the level a couple of times until you find the boss (by
-leaving the level, waiting for a little bit, then entering it again).
+rare (Azog being one of the rarer ones), so just reset the level a couple of
+times until you find the boss (by leaving the level, waiting for a little bit,
+then entering it again).
+Dungeon bosses have especially high hit points and yield an extraordinary
+amount of experience points when you defeat them. Apart from the specific
+artifact drop the higher level ones also tend to drop great items in general.
 
 Of course you can only find an artifact if it is currently not on the list of
 known artifacts ie if noone else is currently in possession of it.
@@ -5950,8 +5954,8 @@ Submerged Ruins              |  Ar-Pharazon          | Toris Mejistos
 The Illusory Castle          |  King in Yellow       | Helm of Knowledge
 The Sacred Land Of Mountains |  T'ron  (level 72!)   | Coat of T'ron
 Erebor                       |  Smaug                | Nauglamir
-Dol Guldur                   |  Shadow of Dol Guldur | Ring of Durin
-Mount Doom                   |  Sauron, the Sorceror | - (***)
+Dol Guldur            (***)  |  Shadow of Dol Guldur | Ring of Durin
+Mount Doom            (***)  |  Sauron, the Sorceror | -
 The Cloud Planes             |  The Living Lightning | -
 Nether Realm                 |  Zu-Aon               | Ring of Phasing
 
