@@ -6557,10 +6557,18 @@ you like:
 To turn a house into a player-store, simply put an item in it that carries the
   @S
 inscription. This inscription means that this item will be put up for sale in
-your store. (Press '{' key to inscribe an item, '}' to remove an inscription.)
+your store for the item's default price.
+(Press '{' key to inscribe an item or '}' key to remove an inscription.)
 As soon as a house contains at least one item inscribed this way, if a player
 who does not have access to the house tries to open the door, he will be
 presented with a store screen where he can buy those inscribed items.
+
+The default price of an item is 2x its base value that it would cost in normal
+(non black market) town stores. This price cannot be undercut in player shops.
+However, the following items have a default price of only 1x their base value:
+- Rings of Speed
+- Scrolls of Artifact Creation
+- Random artifacts
 
 If you want to set a higher price than the default price, you can inscribe the
 item with the price like this:
@@ -6573,12 +6581,10 @@ following inscription syntax:
 This will add 10000 gold to the default price that is asked for.
 
 Another way of increasing the price is by multiplying it with a percentage,
-which may range from 50 to 1000 or from 100 to 1000 depending on the server,
+which may range from 100 to 1000 depending on the server,
 like this:
   @S%150
-This will sell the item for 1.5 times (150%) the usual amount (which would be
-3x the base price of the item; @S%50 would be its actual base price, at which
-it'd be sold in normal shops).
+This will sell the item for 1.5 times (150%) the default price.
 
 Note that if you want to put up items with inscriptions longer than just the
 store-part, you need to terminate the store inscription with a dot or space.

@@ -369,7 +369,26 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 }
 
 #ifdef PLAYER_STORES
- #define PSTORE_FACTOR 2 /* set default pstore price to n * base item price [2] */
+/* set default pstore price for '@S' inscriptions to n * base item price [2] */
+ #define PSTORE_FACTOR 2
+/* set default pstore price for '@S' inscriptions for cheaper exceptions to n * base item price [1] */
+ #define PSTORE_FACTOR_SPECIAL 1
+/* for price-modifiers: set minimum pstore item price factor (base item price * n) [2] */
+ #define PSTORE_MIN_FACTOR 2
+/* for price-modifiers: set minimum pstore item price factor for cheaper exceptions (base item price * n) [1] */
+ #define PSTORE_MIN_FACTOR_SPECIAL 1
+
+static int player_store_factor(object_type *o_ptr, bool modified) {
+	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED) ||
+	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) |
+	    (o_ptr->name1 == ART_RANDART)) {
+		if (modified) return PSTORE_MIN_FACTOR_SPECIAL;
+		else return PSTORE_FACTOR_SPECIAL;
+	}
+	if (modified) return PSTORE_MIN_FACTOR;
+	else return PSTORE_FACTOR;
+}
+
 /* new hack: specify Ind to set the item's value; Ind == 0 -> retrieve it! */
 s64b price_item_player_store(int Ind, object_type *o_ptr) {
 	s64b price, final_price;
@@ -400,13 +419,13 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 		int discount = o_ptr->discount;
 
 		o_ptr->discount = 0;
-		price = object_value(Ind, o_ptr) * PSTORE_FACTOR; /* default: n * base price */
+		price = object_value(Ind, o_ptr) * player_store_factor(o_ptr, FALSE); /* default: n * base price */
 		o_ptr->discount = discount;
 		o_ptr->appraised_value = price + 1;
 	}
 	/* Backward compatibility - converted old, unappraised items: */
 	else if (!o_ptr->appraised_value) {
-		price = object_value_real(0, o_ptr) * PSTORE_FACTOR; /* default: n * base price */
+		price = object_value_real(0, o_ptr) * player_store_factor(o_ptr, FALSE); /* default: n * base price */
 		o_ptr->appraised_value = price + 1;
 	}
 	/* Retrieve stored value: */
@@ -6278,12 +6297,10 @@ void store_debug_stock() {
 #ifdef PLAYER_STORES
 /* Inscription on mass cheques, ie cheques handling items sold partially from item stacks. */
  #define MASS_CHEQUE_NOTE "various piled items"
-/* Set minimum pstore item price factor (base item price * n) [2] */
- #define PSTORE_MIN_FACTOR 1
 /* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
    Returns price or -2 if not for sale. Return -1 if not for display/not available.
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination.
-   Expects 'price' to be the minimum allowed price (2x base price). */
+   Expects 'price' to be the minimum allowed price (2x base price or for some exceptions 1x base price). */
 static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise) {
 	char buf[10], *p, *pos_dot, *pos_space;
 	u32b final_price;
@@ -6333,9 +6350,9 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 	/* multiplier? 0..1000% */
 	if (mult) {
 		/* catch overflows */
-		if (final_price < 100 * PSTORE_MIN_FACTOR / PSTORE_FACTOR) final_price = 100* PSTORE_MIN_FACTOR / PSTORE_FACTOR; /* enforce minimum percentage of default price */
+		if (final_price < 100) final_price = 100;
 		if (final_price > 1000) final_price = 1000;
-		if (price > 2000000000 / ((final_price + 99) / 100)) final_price = 2000000000;
+		if (price > 2000000000 / ((final_price + 99) / 100)) final_price = 2000000000; //absolute maximum price
 		else {
 			if (price <= 2000000) final_price = (price * final_price) / 100;
 			else final_price = (price / 100) * final_price;
@@ -6359,7 +6376,7 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 	    final_price <= 2000)
 		final_price *= 1000000;
 
-	if (final_price > 2000000000) final_price = 2000000000;
+	if (final_price > 2000000000) final_price = 2000000000; //absolute maximum price
 	/* cannot be negative (paranoia, '-' cought above) */
 	if (final_price <= 0) return price;
 
