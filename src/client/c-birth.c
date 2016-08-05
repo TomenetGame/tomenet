@@ -114,6 +114,8 @@ static void choose_name(void) {
 		else
 #endif
 		if (askfor_aux(tmp, ACCOUNTNAME_LEN - 1, 0)) strcpy(nick, tmp);
+		/* at this point: ESC = quit game */
+		else exit(0);
 
 		/* All done */
 		break;
@@ -138,7 +140,7 @@ static void choose_name(void) {
 /*
  * Choose the character's name
  */
-static void enter_password(void) {
+static bool enter_password(void) {
 	size_t c;
 	char tmp[PASSWORD_LEN];
 
@@ -161,6 +163,8 @@ static void enter_password(void) {
 
 		/* Get an input, ignore "Escape" */
 		if (askfor_aux(tmp, PASSWORD_LEN - 1, ASKFOR_PRIVATE)) strcpy(pass, tmp);
+		/* abort and jump back to name prompt? */
+		else return FALSE;
 
 		/* All done */
 		break;
@@ -179,6 +183,7 @@ static void enter_password(void) {
 
 	/* Erase the prompt, etc */
 	clear_from(20);
+	return TRUE;
 }
 
 
@@ -1553,11 +1558,13 @@ void get_char_name(void) {
 
 	/* Display some helpful information XXX XXX XXX */
 
-	/* Choose a name */
-	choose_name();
-
-	/* Enter password */
-	enter_password();
+	/* Enter both name and password */
+	while (TRUE) {
+		/* Choose a name */
+		choose_name();
+		/* Enter password */
+		if (enter_password()) break;
+	}
 
 #ifdef WINDOWS
 	/* erase crecedentials? */
