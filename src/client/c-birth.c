@@ -108,6 +108,11 @@ static void choose_name(void) {
 		strcpy(tmp, nick);
 
 		/* Get an input, ignore "Escape" */
+#ifdef RETRY_LOGIN
+		/* Name was ok, just skip to password? */
+		if (rl_password) rl_password = FALSE;
+		else
+#endif
 		if (askfor_aux(tmp, ACCOUNTNAME_LEN - 1, 0)) strcpy(nick, tmp);
 
 		/* All done */

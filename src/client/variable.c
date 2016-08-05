@@ -421,5 +421,6 @@ u32b client_color_map[16] = {
 };
 
 #ifdef RETRY_LOGIN
-bool connection_destructible = FALSE, connection_destroyed = FALSE, connection_state = 0;
+bool connection_destructible = FALSE, connection_destroyed = FALSE, rl_password = FALSE;
+byte connection_state = 0;
 #endif
