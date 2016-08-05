@@ -3455,7 +3455,6 @@ important stats:
  -Combat stance (Bl = balanced, Df = defensive, Of = offensive, see (6.2))
  -Dual-wield mode (DH = dual-hand aka default, MH = main hand only, see (6.2))
  -Fire-till-kill toggle (FK = enabled, see (5.2a))
- -Project spells toggle (Pj = enabled, see (6.8))
 
 Below that, there are further status indicators such as
 -your current world map location (sector 32,32 aka the starter town of 'Bree'
