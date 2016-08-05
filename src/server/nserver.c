@@ -959,7 +959,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 	return SUCCESS;
 }
 /* new, fix timing exploit that allows multi-login, part 2/2 (non-resuming) */
-bool check_multi_exploit(char *acc, char *nick) {
+int check_multi_exploit(char *acc, char *nick) {
 	connection_t *connp = NULL;
 	int i;
 
@@ -980,7 +980,7 @@ bool check_multi_exploit(char *acc, char *nick) {
 			continue;
 		}
 #endif
-		return TRUE;
+		return i;
 	}
 	return FALSE;
 }
@@ -3641,7 +3641,7 @@ int Net_input(void) {
 
 #if 0
 			/* Very VERY bad hack :/ - C. Blue */
-	                save_game_panic();
+			save_game_panic();
 #endif
 
 			continue;
@@ -4140,7 +4140,7 @@ static int Receive_login(int ind) {
 		return(0);
 
 	} else if (connp->password_verified) { /* we have entered a character name */
-		int check_account_reason = 0;
+		int check_account_reason = 0, err_Ind;
 		bool censor_swearing_tmp = censor_swearing, took_reservation = FALSE;
 		char tmp_name[CHARACTERNAME_LEN];
 
@@ -4231,7 +4231,7 @@ static int Receive_login(int ind) {
 		   allowed. */
 		/* i realise it should return different value depending
 		   on reason - evileye */
-		check_account_reason = check_account(connp->nick, choice);
+		check_account_reason = check_account(connp->nick, choice, &err_Ind);
 		//s_printf("success = %d\n", check_account_reason);
 		switch (check_account_reason) {
 		case 0: //NOT OK
@@ -4246,7 +4246,22 @@ static int Receive_login(int ind) {
 			return(-1);
 		case -2: //NOT OK
 			/* fail login here */
+#if 0 /* true, but.. */
 			Destroy_connection(ind, "Multiple logins on the same account aren't allowed.");
+#else /* ..give more descriptive instructions */
+		{
+			connection_t *err_connp;
+
+			if (err_Ind > 0) err_connp = Conn[Players[err_Ind]->conn];
+			else if (err_Ind < 0) err_connp = Conn[-err_Ind];
+			else err_connp = NULL;
+
+			if (err_connp && err_connp->state != CONN_FREE
+			    && err_connp->timeout && (err_connp->start + err_connp->timeout * cfg.fps >= turn))
+				Destroy_connection(ind, format("You have to wait for %d seconds until your other character has timed out.", (err_connp->start + err_connp->timeout * cfg.fps - turn +(cfg.fps - 1)) / cfg.fps));
+			else Destroy_connection(ind, "Multiple logins on the same account aren't allowed."); //fallback (shouldn't happen)
+		}
+#endif
 			return(-1);
 		case -3: /* Out of character slots! */
 			Destroy_connection(ind, "Character amount limit reached.");

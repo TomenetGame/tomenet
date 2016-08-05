@@ -3645,7 +3645,7 @@ void do_slash_cmd(int Ind, char *message) {
 		}
 		/* Specialty: Convert current character into a 'slot-exclusive' character if possible */
 		else if (prefix(message, "/convertexclusive")) {
-			int ok;
+			int ok, err_Ind;
 
 #if 0 /* was because of Destroy_connection().. */
 			if (!istown(&p_ptr->wpos)) {
@@ -3666,7 +3666,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			/* check what's possible for us to convert into */
-			ok = check_account(p_ptr->accountname, "");
+			ok = check_account(p_ptr->accountname, "", &err_Ind);
 			s_printf("CONVEXCL: '%s' (%d) -> %d\n", p_ptr->name, p_ptr->mode, ok);
 
 			/* We want to convert into ded.pvp? */

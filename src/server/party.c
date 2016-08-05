@@ -737,7 +737,7 @@ static char *t_crypt(char *inbuf, cptr salt) {
 #endif
 }
 
-int check_account(char *accname, char *c_name) {
+int check_account(char *accname, char *c_name, int *Ind) {
 	struct account acc, acc2;
 	u32b id, a_id;
 	u32b flags;
@@ -746,6 +746,8 @@ int check_account(char *accname, char *c_name) {
 #ifndef RPG_SERVER
 	int ded_iddc, ded_pvp;
 #endif
+
+	*Ind = 0;
 
 	/* Make sure noone creates a character of the same name as another player's accountname!
 	   This is important for new feat of messaging to an account instead of character name. - C. Blue */
@@ -863,11 +865,16 @@ int check_account(char *accname, char *c_name) {
 			   Allow to login with the same name to 'resume connection' though. */
 			if (!(flags & ACC_MULTI)) {
 				/* check for login-timing exploit */
-				if (check_multi_exploit(accname, c_name)) return -2;
+				if ((i = check_multi_exploit(accname, c_name))) {
+					*Ind = -i;
+					return -2;
+				}
 				/* check for normal ineligible multi-login attempts */
 				for (i = 1; i <= NumPlayers; i++) {
-					if (Players[i]->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, Players[i]->name))
+					if (Players[i]->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, Players[i]->name)) {
+						*Ind = i;
 						return(-2);
+					}
 				}
 			}
 

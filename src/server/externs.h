@@ -70,7 +70,7 @@ extern char* get_conn_userhost(int ind);
 extern char *get_player_ip(int Ind);
 extern bool get_conn_state_ok(int Ind);
 extern void do_quit(int ind, bool tellclient);
-extern bool check_multi_exploit(char *acc, char *nick);
+extern int check_multi_exploit(char *acc, char *nick);
 
 /* randart.c */
 extern artifact_type *ego_make(object_type *o_ptr);
@@ -1394,7 +1394,7 @@ extern void account_checkexpiry(int Ind);
 extern void party_check(int Ind);
 extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...) __attribute__ ((format (printf, 3, 4)));
 extern u16b lookup_player_type(int id);
-extern int check_account(char *accname, char *c_name);
+extern int check_account(char *accname, char *c_name, int *Ind);
 extern void strip_true_arts_from_hashed_players(void);
 extern void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses);
 extern void account_change_password(int Ind, char *old_pass, char *new_pass);
