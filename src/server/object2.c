@@ -7084,7 +7084,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 		go_heavy = FALSE;
 	}
+	//Critical-strike skill isn't applied to weapons heavier than 100 lbs
 	if (p_ptr->s_info[SKILL_CRITS].value >= treshold) maxweight_melee = 100;
+	//Mindcrafters can't wear helmets > 4.0lbs without MP-reducing encumberment
+	if (p_ptr->pclass == CLASS_MINDCRAFTER && armor_choice == 6) maxweight_armor = 40;
 
 	/* Fruit bats/monster form hack for unwieldable mage staff */
 	if (spell_choice && /* aka TV_MSTAFF, exlusively */
