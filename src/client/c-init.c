@@ -2665,7 +2665,8 @@ static void display_message(cptr msg, cptr title) {
 
 	/* Prevent hammering login or anything (when resuming connection for example) */
 	Term_fresh();
-	usleep(1500000);
+	if (strstr(msg, " wait for ")) usleep(800000); //if counting down seconds, wait for <1s until we can retry (looks better when hammered)
+	else usleep(1500000); //default: wait for 1.5s
 
 	/* Print the good old "Press any key to continue..." message */
 	c_prt(TERM_L_BLUE, "Press any key to continue...", row++, 0);
