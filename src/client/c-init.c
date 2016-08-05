@@ -3124,10 +3124,24 @@ void client_init(char *argv1, bool skip) {
 	   read a big-map-enabled screen_hgt, so reset it: */
 	if (!strcmp(ANGBAND_SYS, "gcu")) screen_hgt = SCREEN_HGT;
 
+	/* Initiate character creation? */
 	if (status == E_NEED_INFO) {
-		/* Get sex/race/class */
+		/* Get sex/race/class/etc */
 		/* XXX this function sends PKT_KEEPALIVE */
+#ifdef RETRY_LOGIN
+		rl_connection_destructible = TRUE; //return to character overview if character creation process is aborted
+#endif
 		get_char_info();
+#ifdef RETRY_LOGIN
+		if (rl_connection_destroyed) {
+			Net_cleanup();
+			cname[0] = 0; //reset character choice, maybe it was an illegal name (login-fail-spam would be the result?)
+			rl_auto_relogin = TRUE; //auto-logon up to character screen
+			c_quit = FALSE; //un-quit, paranoia at this point though (only needed for Input_loop())
+			goto retry_contact;
+		}
+		rl_connection_destructible = FALSE;
+#endif
 	}
 #ifdef ATMOSPHERIC_INTRO
  #ifdef USE_SOUND_2010

@@ -221,6 +221,9 @@ static bool choose_sex(void) {
 
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
+#ifdef RETRY_LOGIN
+		if (rl_connection_destroyed) return FALSE;
+#endif
 		if (c == 'm') {
 			sex = 1;
 			put_str("      ", 4, CHAR_COL);
@@ -353,6 +356,9 @@ race_redraw:
 		if (!hazard) c = inkey();
 
 		if (c == 'Q') quit(NULL);
+#ifdef RETRY_LOGIN
+		if (rl_connection_destroyed) return FALSE;
+#endif
 		if (c == '\b') {
 			clear_diz();
 			clear_from(n);
@@ -573,6 +579,9 @@ trait_redraw:
 		if (!hazard) c = inkey();
 
 		if (c == 'Q') quit(NULL);
+#ifdef RETRY_LOGIN
+		if (rl_connection_destroyed) return FALSE;
+#endif
 		if (c == '\b') {
 			clear_diz();
 			clear_from(n);
@@ -767,6 +776,9 @@ class_redraw:
 		if (!hazard) c = inkey();
 
 		if (c == 'Q') quit(NULL);
+#ifdef RETRY_LOGIN
+		if (rl_connection_destroyed) return FALSE;
+#endif
 		if (c == '\b') {
 			clear_diz();
 			clear_from(n - 3);
@@ -920,6 +932,9 @@ static bool choose_stat_order(void) {
 
 					c = inkey();
 					if (c == 'Q') quit(NULL);
+#ifdef RETRY_LOGIN
+					if (rl_connection_destroyed) return FALSE;
+#endif
 					if (c == '*') hazard = TRUE;
 
 					j = (islower(c) ? A2I(c) : -1);
@@ -1152,6 +1167,9 @@ static bool choose_stat_order(void) {
 			}
 			if (c == '\e') break;
 			if (c == 'Q') quit(NULL);
+#ifdef RETRY_LOGIN
+			if (rl_connection_destroyed) return FALSE;
+#endif
 			if (c == '\b') {
 				for (i = 0; i < 6; i++) stat_order[i] = stat_order_tmp[i];
 
@@ -1230,13 +1248,16 @@ static bool choose_mode(void) {
 			Term->scr->cu = 1;
 
 			if (!hazard) c = inkey();
+
 			if (c == 'Q') quit(NULL);
+#ifdef RETRY_LOGIN
+			if (rl_connection_destroyed) return FALSE;
+#endif
 			if (c == '\b') {
 				clear_from(15);
 				return FALSE;
 			}
-
-			if (c == 'p') {
+			else if (c == 'p') {
 				sex += MODE_PVP;
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
@@ -1339,13 +1360,16 @@ static bool choose_mode(void) {
 		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
+
 		if (c == 'Q') quit(NULL);
+#ifdef RETRY_LOGIN
+		if (rl_connection_destroyed) return FALSE;
+#endif
 		if (c == '\b') {
 			clear_from(15);
 			return FALSE;
 		}
-
-		if (c == 'p') {
+		else if (c == 'p') {
 			sex += MODE_PVP;
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
@@ -1473,13 +1497,16 @@ static bool choose_body_modification(void) {
 		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
+
 		if (c == 'Q') quit(NULL);
+#ifdef RETRY_LOGIN
+		if (rl_connection_destroyed) return FALSE;
+#endif
 		if (c == '\b') {
 			clear_from(19);
 			return FALSE;
 		}
-
-		if (c == 'f') {
+		else if (c == 'f') {
 			sex += MODE_FRUIT_BAT;
 			c_put_str(TERM_L_BLUE, "                    ", 8, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Fruit bat", 8, CHAR_COL);
@@ -1709,6 +1736,9 @@ void get_char_info(void) {
 	/* Display some helpful information XXX XXX XXX */
 
 csex:
+#ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+#endif
 	/* Choose a sex */
 	choose_sex();
 
@@ -1721,6 +1751,9 @@ csex:
 
 #ifndef CLASS_BEFORE_RACE
 crace:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	/* Choose a race */
 	//Show the trait if we previously selected draconian
 	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) {
@@ -1729,29 +1762,47 @@ crace:
 	} else put_str("             ", 6, 1);
 	if (!choose_race()) goto csex;
 ctrait:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	/* Choose a trait */
 	if (!choose_trait()) goto crace;
 cbody:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	/* Choose character's body modification */
 	if (!choose_body_modification()) {
 		if (trait == -1) goto crace;
 		else goto ctrait;
 	}
 cclass:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	/* Choose a class */
 	if (!choose_class()) goto cbody;
 
 
 cstats:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	class_extra = 0;
 
 	/* Choose stat order */
 	if (!choose_stat_order()) goto cclass;
 #else
 cclass:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	/* Choose a class */
 	if (!choose_class()) goto csex;
 crace:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	/* Choose a race */
 	//Show the trait if we previously selected draconian
 	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) {
@@ -1760,9 +1811,15 @@ crace:
 	} else put_str("             ", 7, 1);
 	if (!choose_race()) goto cclass;
 ctrait:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	/* Choose a trait */
 	if (!choose_trait()) goto crace;
 cbody:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	/* Choose character's body modification */
 	if (!choose_body_modification()) {
 		if (trait == -1) goto crace;
@@ -1771,6 +1828,9 @@ cbody:
 
 
 cstats:
+ #ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+ #endif
 	class_extra = 0;
 
 	/* Choose stat order */
@@ -1778,6 +1838,9 @@ cstats:
 #endif
 
 
+#ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+#endif
 	/* Fix trait hack: '-1' meant "no traits available" */
 	if (trait == -1) trait = 0;
 
@@ -1789,6 +1852,10 @@ cstats:
 		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 		c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 	}
+#ifdef RETRY_LOGIN
+	if (rl_connection_destroyed) return;
+#endif
+
 
 #if 0 //why?
 	/* Clear */
