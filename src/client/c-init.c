@@ -2538,7 +2538,7 @@ static void Input_loop(void) {
 		if (Net_flush() == -1) {
 #ifdef RETRY_LOGIN
 			/* if player got ghost-killed, we won't have a connection anymore. But that's not an error, so skip.. */
-			if (connection_state == 1) {
+			if (rl_connection_state == 1) {
 				plog("Bad net flush");
 				return;
 			}
@@ -2600,7 +2600,7 @@ static void Input_loop(void) {
 
 #ifdef RETRY_LOGIN
 		/* player used quit command? */
-		if (connection_state >= 2) return;
+		if (rl_connection_state >= 2) return;
 #endif
 	}
 }
@@ -2729,7 +2729,7 @@ static void quit_hook(cptr s) {
 
 #ifdef RETRY_LOGIN
 	/* don't kill the windows and all */
-	if (connection_state >= 2) return;
+	if (rl_connection_state >= 2) return;
 #endif
 
 #ifndef WINDOWS
@@ -2842,7 +2842,7 @@ void client_init(char *argv1, bool skip) {
  #endif
 #endif
 #ifdef RETRY_LOGIN
-	bool auto_relogin = FALSE;
+	bool rl_auto_relogin = FALSE;
 #endif
 
 	/* Set the "plog hook" */
@@ -2903,10 +2903,10 @@ void client_init(char *argv1, bool skip) {
 
 #ifdef RETRY_LOGIN
 	retry_contact:
-	connection_state = 0;
-	connection_destroyed = FALSE;
-	connection_destructible = FALSE;
-	if (auto_relogin) skip = TRUE;
+	rl_connection_state = 0;
+	rl_connection_destroyed = FALSE;
+	rl_connection_destructible = FALSE;
+	if (rl_auto_relogin) skip = TRUE;
 #endif
 
 	/* Get character name and pass */
@@ -2914,7 +2914,7 @@ void client_init(char *argv1, bool skip) {
 
 #ifdef RETRY_LOGIN
 	/* don't memfrob an already memfrobbed password */
-	if (!auto_relogin)
+	if (!rl_auto_relogin)
 #endif
 	if (server_protocol >= 2) {
 		/* Use memfrob on the password */
@@ -3078,11 +3078,11 @@ void client_init(char *argv1, bool skip) {
 	}
 
 #ifdef RETRY_LOGIN
-	connection_destructible = TRUE; //(will be reset to FALSE in Net_login():Receive_login())
+	rl_connection_destructible = TRUE; //(will be reset to FALSE in Net_login():Receive_login())
 #endif
 	status = Net_login();
 #ifdef RETRY_LOGIN
-	if (connection_destroyed) {
+	if (rl_connection_destroyed) {
 		/* bad account crecedentials? */
 		if (status == E_RETRY_CONTACT) {
 			Net_cleanup();
@@ -3093,12 +3093,12 @@ void client_init(char *argv1, bool skip) {
 		if (status == E_RETRY_LOGIN) {
 			Net_cleanup();
 			cname[0] = 0; //reset character choice, maybe it was an illegal name (login-fail-spam would be the result?)
-			auto_relogin = TRUE; //auto-logon up to character screen
+			rl_auto_relogin = TRUE; //auto-logon up to character screen
 			c_quit = FALSE; //un-quit, paranoia at this point though (only needed for Input_loop())
 			goto retry_contact;
 		}
 		/* paranoia - shouldn't happen */
-		connection_destroyed = FALSE;
+		rl_connection_destroyed = FALSE;
 	}
 #endif
 
@@ -3167,7 +3167,7 @@ void client_init(char *argv1, bool skip) {
 
 	/* Main loop */
 #ifdef RETRY_LOGIN
-	connection_state = 1;
+	rl_connection_state = 1;
 #endif
 	Input_loop();
 
@@ -3175,9 +3175,9 @@ void client_init(char *argv1, bool skip) {
 	Net_cleanup();
 
 #ifdef RETRY_LOGIN
-	if (connection_state >= 2) {
+	if (rl_connection_state >= 2) {
 		/* We quit the game actively? (Otherwise the quit_hook will already have taken care of fading out) */
-		if (connection_state == 3) {
+		if (rl_connection_state == 3) {
  #ifdef USE_SOUND_2010
   #ifdef SOUND_SDL
 			mixer_fadeall();
@@ -3186,7 +3186,7 @@ void client_init(char *argv1, bool skip) {
 		}
 
 		/* reset global game states (and activate auto-relogin) */
-		auto_relogin = TRUE; //auto-logon up to character screen
+		rl_auto_relogin = TRUE; //auto-logon up to character screen
 		in_game = FALSE; //BIG_MAP stuff? (paranoia?)
 		c_quit = FALSE; //un-quit (or Net_fd() will always return -1)
 		RL_revert_input(); //reset input parsing behaviour (macros etc) to normal

@@ -393,7 +393,7 @@ void Receive_login(void) {
 	if (rbuf.ptr[0] == PKT_QUIT) {
 		errno = 0;
 #ifdef RETRY_LOGIN
-		connection_destroyed = TRUE;
+		rl_connection_destroyed = TRUE;
 		plog(&rbuf.ptr[1]);
 		/* illegal name? don't suggest it as default again */
 		if (strstr(&rbuf.ptr[1], "a different name")) strcpy(nick, "");
@@ -406,7 +406,7 @@ void Receive_login(void) {
 	}
 #ifdef RETRY_LOGIN
 	/* allow quitting again (especially 'Q' in character screen ;)) */
-	connection_destructible = FALSE;
+	rl_connection_destructible = FALSE;
 #endif
 
 	/* Read server detail flags for informational purpose - C. Blue */
@@ -1000,7 +1000,7 @@ int Net_fd(void) {
 		return -1;
 #ifdef RETRY_LOGIN
 	/* prevent inkey() from crashing/causing Sockbuf_read() errors ("no read from non-readable socket..") */
-	if (connection_state != 1) return -1;
+	if (rl_connection_state != 1) return -1;
 #endif
 	return rbuf.sock;
 }
@@ -1024,9 +1024,9 @@ unsigned char Net_login() {
 	Receive_login();
 #ifdef RETRY_LOGIN
 	/* Our connection was destroyed in Receive_login() -> something wrong with our account crecedentials? */
-	if (connection_destroyed) return E_RETRY_CONTACT;
+	if (rl_connection_destroyed) return E_RETRY_CONTACT;
 	/* Prepare for refusal of a new character name we entered */
-	connection_destructible = 1;
+	rl_connection_destructible = 1;
 #endif
 
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, cname);
@@ -1046,7 +1046,7 @@ unsigned char Net_login() {
 	 * connection - mikaelh */
 	if (rbuf.len > 1 && rbuf.ptr[0] == PKT_QUIT) {
 #ifdef RETRY_LOGIN
-		connection_destroyed = TRUE;
+		rl_connection_destroyed = TRUE;
 		/* should be illegal character name this time.. */
 		plog(&rbuf.ptr[1]);
 		return E_RETRY_LOGIN;
@@ -1055,7 +1055,7 @@ unsigned char Net_login() {
 	}
 #ifdef RETRY_LOGIN
 	/* back to normal - can quit() anytime */
-	connection_destructible = 0;
+	rl_connection_destructible = 0;
 #endif
 
 	if (Packet_scanf(&rbuf, "%c", &tc) <= 0) {
@@ -1253,7 +1253,7 @@ int Net_input(void) {
 		} else if (n < 0) {
 #ifdef RETRY_LOGIN /* not needed */
 			/* catch an already destroyed connection - don't call quit() *again*, just go back peacefully; part 2/2 */
-//			if (connection_destroyed) return 1;
+//			if (rl_connection_destroyed) return 1;
 #endif
 			return n;
 		} else {
@@ -1274,7 +1274,7 @@ int Flush_queue(void) {
 
 	if (!initialized) return 0;
 #ifdef RETRY_LOGIN
-	if (connection_state != 1) return 0;
+	if (rl_connection_state != 1) return 0;
 #endif
 
 	len = qbuf.len - (qbuf.ptr - qbuf.buf);
@@ -1359,8 +1359,8 @@ int Receive_quit(void) {
 		if (strstr(reason, "Killed by") ||
 		    strstr(reason, "Committed suicide")) {
 #ifdef RETRY_LOGIN
-			connection_destructible = TRUE;
-			connection_state = 2;
+			rl_connection_destructible = TRUE;
+			rl_connection_state = 2;
 #endif
 			/* TERAHACK */
 			initialized = FALSE;

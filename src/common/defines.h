@@ -274,12 +274,6 @@
 #if defined(TEST_SERVER) || defined(TEST_CLIENT)
  #define RETRY_LOGIN
 #endif
-#ifdef RETRY_LOGIN
- //0x00000001..0x00800000 are reserved (used for transmitting character limits)
- #define SF3_RETRY_ACCOUNT	0x01000000
- #define SF3_RETRY_CHARACTER	0x02000000
- #define SF3_RETRY_DEATH	0x04000000
-#endif
 
 /*
  * Maximum message length

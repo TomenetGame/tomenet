@@ -974,6 +974,6 @@ extern int max_chars_per_account;
 extern u32b client_color_map[16];
 
 #ifdef RETRY_LOGIN
-extern bool connection_destructible, connection_destroyed, rl_password;
-extern byte connection_state;
+extern bool rl_connection_destructible, rl_connection_destroyed, rl_password;
+extern byte rl_connection_state;
 #endif

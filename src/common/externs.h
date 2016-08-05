@@ -764,5 +764,5 @@ extern cptr shortVersion;
 
 /* only for sockbuf.c, on client-side */
 #ifdef RETRY_LOGIN
-extern bool connection_destructible, connection_destroyed;
+extern bool rl_connection_destructible, rl_connection_destroyed;
 #endif

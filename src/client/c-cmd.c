@@ -305,8 +305,8 @@ void process_command() {
 
 	case KTRL('Q'):
 #ifdef RETRY_LOGIN
-		connection_destructible = TRUE;
-		connection_state = 3;
+		rl_connection_destructible = TRUE;
+		rl_connection_state = 3;
 #endif
 		Net_cleanup(); quit(NULL);
 #ifdef RETRY_LOGIN

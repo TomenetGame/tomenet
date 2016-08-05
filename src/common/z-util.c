@@ -199,7 +199,8 @@ void (*quit_aux)(cptr) = NULL;
  #define RETRY_LOGIN
 #endif
 #ifdef RETRY_LOGIN
-extern bool connection_destructible, connection_destroyed, connection_state;
+extern bool rl_connection_destructible, rl_connection_destroyed;
+extern byte rl_connection_state;
 #endif
 void quit(cptr str) {
 	char buf[1024];
@@ -212,13 +213,13 @@ void quit(cptr str) {
 		buf[0] = '\0';
 
 #ifdef RETRY_LOGIN
-	if (connection_destructible && connection_state < 2) {
+	if (rl_connection_destructible && rl_connection_state < 2) {
 		/* partially execute quit_aux(): */
 		/* Display the quit reason */
 		if (str && *str) plog(str);
 
 		/* prepare for revival */
-		connection_destroyed = TRUE;
+		rl_connection_destroyed = TRUE;
 		return;
 	}
 #endif
@@ -227,9 +228,9 @@ void quit(cptr str) {
 	if (quit_aux) (*quit_aux)(str ? buf : NULL);
 
 #ifdef RETRY_LOGIN
-	if (connection_destructible && connection_state >= 2) {
+	if (rl_connection_destructible && rl_connection_state >= 2) {
 		/* prepare for revival */
-		connection_destroyed = TRUE;
+		rl_connection_destroyed = TRUE;
 		return;
 	}
 #endif

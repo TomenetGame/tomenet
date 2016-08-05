@@ -3505,7 +3505,7 @@ static void hook_quit(cptr str) {
 
 #ifdef RETRY_LOGIN
 	/* don't kill the windows and all */
-	if (connection_state >= 2) return;
+	if (rl_connection_state >= 2) return;
 #endif
 
 	/* Destroy the windows */
