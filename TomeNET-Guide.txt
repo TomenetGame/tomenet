@@ -12551,7 +12551,7 @@ create a character!):
     throwing, and have good saving throws. They also are very good at searching
     disarming, perception, and stealth; so they make excellent rogues, but
     prefer to be called burglars. They are much weaker than humans, and no good
-    at melee fighting. Halflings have fair infravision, so they can detect
+    at melee fighting. Halflings have fair infra-vision, so they can detect
     warm-blooded creatures at a distance. Hobbits resist black breath somewhat.
     They get bonus on 'Sling-Mastery', 'Sneakiness', 'Dodging' and a large
     bonus on 'Stealth'.
@@ -15732,7 +15732,7 @@ Lv - Levitation
 Pl - Permanent Light (+1 light radius)
 HL - Hold life
 I+ - Intelligence bonus (PVAL Required) [Helm -- Crowns ONLY]
-If - Infravision (PVAL Required)
+If - Infra-vision (PVAL Required)
 Im - Immunity (One element only!)
 In - Invisibility
 MP - Max mana increase (PVAL Required) [Helm -- Crowns ONLY]
