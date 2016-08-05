@@ -5077,7 +5077,7 @@ void calc_boni(int Ind) {
 			p_ptr->dis_to_a += may_dis_to_a / 2;
 #endif
 		} else {
-			if (may_reflect) { p_ptr->reflect = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RREFL; }
+			if (may_reflect) { p_ptr->reflect = TRUE; csheet_boni[INVEN_ARM-INVEN_WIELD].cb[6] |= CB7_RREFL; }
 #ifndef USE_NEW_SHIELDS
 			p_ptr->ac += may_ac;
 			p_ptr->dis_ac += may_ac;
