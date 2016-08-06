@@ -4341,7 +4341,8 @@ static bool summon_specific_okay(int r_idx) {
 			    !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		case SUMMON_MONSTER:
-			okay = (!(r_ptr->flags1 & RF1_UNIQUE));
+			okay = (!(r_ptr->flags1 & RF1_UNIQUE) &&
+			    (r_ptr->d_char != 'A')); //hm, actually disallow Angels for generic monster summoning..
 			break;
 		case SUMMON_ANT:
 			okay = ((r_ptr->d_char == 'a') &&
