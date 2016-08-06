@@ -1445,8 +1445,14 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
  *
  * XXX: 'Ego randarts' are not handled correltly, so be careful!
  */
-/* Ego powers multiply the price instead of adding? */
+/* Magic devices: Ego powers multiply the price instead of adding? */
 #define EGO_MDEV_FACTOR
+/* Ego power value overrides negative enchantments?
+   This is already done for NEW_SHIELDS_NO_AC below; it means that items such
+   as [3,-4] armour can still return a value > 0 thanks to its ego power,
+   preventing it from pseudo-iding as 'worthless'. (This hack is required for
+   ego powers that don't have a pval.) */
+#define EGO_VS_ENCHANTS
 s64b object_value_real(int Ind, object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -1564,7 +1570,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	/* Bad items don't sell. Good items with some bad modifiers DO sell ((*defenders*)). -C. Blue */
 	switch (o_ptr->tval) {
 	case TV_SHIELD:
-#ifdef NEW_SHIELDS_NO_AC
+#if defined(NEW_SHIELDS_NO_AC) || defined(EGO_VS_ENCHANTS)
 		/* Shields of Preservation won't sell anymore without this exception,
 		   because they don't have any positive stat left (o_ptr->to_a was it before). */
 		if ((((o_ptr->to_h) < 0 && ((o_ptr->to_h - k_ptr->to_h) < 0)) ||
@@ -1592,6 +1598,9 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		    !(((o_ptr->to_h) > 0) ||
 		    ((o_ptr->to_d) > 0) ||
 		    ((o_ptr->to_a) > 0) ||
+#ifdef EGO_VS_ENCHANTS
+		    (value > k_ptr->cost) || /* <- hack: check for ego power value - can prevent a negatively enchanted item from conning as 'worthless' */
+#endif
 		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
 	        break;
 
@@ -1624,6 +1633,9 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		    !(((o_ptr->to_h) > 0) ||
 		    ((o_ptr->to_d) > 0) ||
 		    ((o_ptr->to_a) > 0) ||
+#ifdef EGO_VS_ENCHANTS
+		    (value > k_ptr->cost) || /* <- hack: check for ego power value - can prevent a negatively enchanted item from conning as 'worthless' */
+#endif
 		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
 	        break;
 	}
@@ -2471,6 +2483,8 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	}
 
 	/* Bad items don't sell. Good items with some bad modifiers DO sell ((*defenders*)). -C. Blue */
+	// ^ outdated comment, since this function is now for random artifacts only; adjustment is not
+	//   needed however, since non-cursed randarts nowadays shouldn't have any negative enchantments anyway!
 	switch (o_ptr->tval) {
 	case TV_BOOTS:
 	case TV_GLOVES:
