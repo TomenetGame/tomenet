@@ -300,12 +300,6 @@ W:0:0:0:-:The training tower is a safe place where you won't die for real,
 W:0:0:0:-:Experience gain is pretty limited however, and it only has two floors.
 W:0:0:0:-:If you go to the dungeon, don't forget to bring a light source!
 
-Y:0:0:-:?:-:255
-Y:0:0:-:'?':-:255
-y:-1:-1:-:?
-yY:'?'
-yR:-:Press the '?' key back in the game, after we are done talking.
-
 Y:0:0:-:*tower*:-:255
 Y:0:0:-:*training*:-:255
 y:-1:-1:-:*tower*

@@ -3780,11 +3780,18 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	qi_keyword *q_key;
 	qi_kwreply *q_kwr;
 	int password_hack;
+	bool help = FALSE;
 
 	/* if player got teleported/moved (switched places? :-p)
 	   away from the questor, stop the dialogue */
 	if (p_ptr->questor_dialogue_hack_xy != p_ptr->px + (p_ptr->py << 8)) return;
 	if (p_ptr->questor_dialogue_hack_wpos != p_ptr->wpos.wx + (p_ptr->wpos.wy << 8) + (p_ptr->wpos.wz << 16)) return;
+
+	/* check for pure '?': trim leading/trailing spaces */
+	while (*str == ' ') str++;
+	while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
+	/* check for '?': */
+	if (!strcmp(str, "?")) help = TRUE;
 
 	/* treat non-alphanum as spaces */
 	c = str;
@@ -3811,8 +3818,11 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	*ct = *c;
 	strcpy(str, text);
 
+	/* hack: restore '?' special keyword */
+	if (!str[0] && help) strcpy(str, "?");
+
 #if 0
-	if (!str[0] || str[0] == '\e') return; /* player hit the ESC key.. */
+	if ((!str[0] || str[0] == '\e') && !help) return; /* player hit the ESC key.. */
 #else /* distinguish RETURN key, to allow empty "" keyword (to 'continue' a really long talk for example) */
 	if (str[0] == '\e') {
 		msg_print(Ind, " "); //format it up a little bit?
@@ -3935,6 +3945,15 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		break;
 	}
 	/* it was nice small-talking to you, dude */
+
+	/* generic help */
+	if (help && str[0]) { //check that there was no '?' keyword implicitely defined in this quest
+		msg_print(Ind, "\374 ");
+		msg_format(Ind, "\374\377uType any of the keywords that are highlighted in the questor's text,");
+		msg_format(Ind, "\374\377uor press ESC key or type \377%cbye\377u to exit this quest dialogue.", QUEST_KEYWORD_HIGHLIGHT);
+		str[0] = 0; /* don't give the 'nothing to say' line */
+	}
+
 #if 1
 	/* if keyword wasn't recognised, repeat input prompt instead of just 'dropping' the convo */
 	quest_dialogue(Ind, q_idx, questor_idx, TRUE, FALSE, FALSE);

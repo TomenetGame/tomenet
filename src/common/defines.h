@@ -658,6 +658,12 @@
 #define MAX_CONCURRENT_QUESTS 5
 #define LOCAL_QUEST (MAX_CONCURRENT_QUESTS) /* hack: reserve a special slot index for a 'local' type quest */
 #define MAX_PQUESTS (MAX_CONCURRENT_QUESTS + 1) /* maximum number of quests a player can have: concurrently running quests plus the special 'local' quest */ 
+/* highlight quest keywords enclosed in [[..]] brackets in this colour */
+#if 0
+ #define QUEST_KEYWORD_HIGHLIGHT	'y'
+#else
+ #define QUEST_KEYWORD_HIGHLIGHT	'o'
+#endif
 
 /*
  * Maximum number of high scores in the high score file

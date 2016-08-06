@@ -37,13 +37,6 @@
  */
 
 
-/* highlight quest keywords enclosed in [[..]] brackets in this colour */
-#if 0
- #define QUEST_KEYWORD_HIGHLIGHT	'y'
-#else
- #define QUEST_KEYWORD_HIGHLIGHT	'o'
-#endif
-
 
 #ifdef ALLOW_TEMPLATES
 
