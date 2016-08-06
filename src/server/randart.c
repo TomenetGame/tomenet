@@ -446,7 +446,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 }
 
 
-static void remove_contradictory (artifact_type *a_ptr, bool aggravate_me) { //Kurzel
+static void remove_contradictory(artifact_type *a_ptr, bool aggravate_me) { //Kurzel
 	/* If the item is predestined to be aggravating, already get free
 	   its ap from useless mods that won't make it onto the final item */
 	if (aggravate_me) {
@@ -454,19 +454,18 @@ static void remove_contradictory (artifact_type *a_ptr, bool aggravate_me) { //K
 		a_ptr->flags5 &= ~(TR5_INVIS);
 	}
 
-	/* Remove redundante resistances */
+	/* Remove redundant resistances et al */
 	if (a_ptr->flags2 & TR2_IM_ACID) a_ptr->flags2 &= ~(TR2_RES_ACID);
 	if (a_ptr->flags2 & TR2_IM_ELEC) a_ptr->flags2 &= ~(TR2_RES_ELEC);
 	if (a_ptr->flags2 & TR2_IM_FIRE) a_ptr->flags2 &= ~(TR2_RES_FIRE);
 	if (a_ptr->flags2 & TR2_IM_COLD) a_ptr->flags2 &= ~(TR2_RES_COLD);
+	if (a_ptr->flags2 & TR2_RES_CHAOS) a_ptr->flags2 &= ~(TR2_RES_CONF);
+	if (a_ptr->flags4 & TR4_LEVITATE) a_ptr->flags3 &= ~(TR3_FEATHER);
 
 	/* Remove redundant slay mods */
 	if (a_ptr->flags1 & TR1_KILL_DRAGON) a_ptr->flags1 &= ~(TR1_SLAY_DRAGON);
 	if (a_ptr->flags1 & TR1_KILL_UNDEAD) a_ptr->flags1 &= ~(TR1_SLAY_UNDEAD);
 	if (a_ptr->flags1 & TR1_KILL_DEMON) a_ptr->flags1 &= ~(TR1_SLAY_DEMON);
-
-	/* Remove redundant resistances */
-	if (a_ptr->flags2 & TR2_RES_CHAOS) a_ptr->flags2 &= ~(TR2_RES_CONF);
 
 	/* Remove accidentally given good mods on cursed object */
 	if (a_ptr->pval < 0) {
