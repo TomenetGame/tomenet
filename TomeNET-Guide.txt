@@ -1282,10 +1282,6 @@ They all start with a slash '/' hence they're called slash commands:
 
 /rfe        Store a message/suggestion for the admin(s).
 
-/whisper <text>
-            Speaks <text> in a low voice, so only players standing directly
-            next to you can hear it.
-
 /say <text>
             Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
