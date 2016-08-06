@@ -291,6 +291,7 @@ VAPOR_III = add_spell {
 	end,
 	["desc"] = 	{ "Fills the air with toxic moisture to eradicate annoying critters." }
 }
+
 FROSTBALL_I = add_spell {
 	["name"] = 	"Frost Ball I",
 	["school"] = 	{SCHOOL_WATER},

@@ -149,6 +149,7 @@ FIREBALL_II = add_spell {
 	end,
 	["desc"] = 	{ "Conjures a ball of fire to burn your foes to ashes.", }
 }
+
 FIREFLASH_I = add_spell {
 	["name"] = 	"Fireflash I",
 	["school"] = 	{SCHOOL_FIRE},
