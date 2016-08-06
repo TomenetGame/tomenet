@@ -2107,6 +2107,7 @@ struct player_type {
 
 	bool obj_aware[MAX_K_IDX];	/* Is the player aware of this obj type? */
 	bool obj_tried[MAX_K_IDX];	/* Has the player tried this obj type? */
+	//obj_felt and obj_felt_heavy have currently no function
 	bool obj_felt[MAX_K_IDX];	/* Has the player felt the value of this obj type via pseudo-id before? - C. Blue */
 	bool obj_felt_heavy[MAX_K_IDX];	/* Has the player had strong pseudo-id on this item? */
 

@@ -7951,7 +7951,49 @@ void do_slash_cmd(int Ind, char *message) {
 				o_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL);
 				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
 
+				p_ptr->obj_felt[o_ptr->k_idx] = FALSE;//(no effect)
+				p_ptr->obj_felt_heavy[o_ptr->k_idx] = FALSE;//(no effect)
+
 				p_ptr->window |= PW_INVEN;
+
+				/* remove pseudo-id tags too */
+				if (o_ptr->note) {
+					note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
+					if (!note2[0]) o_ptr->note = 0;
+					else o_ptr->note = quark_add(note2);
+				}
+				return;
+			}
+			/* un-know an item */
+			else if (prefix(message, "/unkw")) {//includes /unid
+				object_type *o_ptr;
+				char note2[80], noteid[10];
+
+				if (!tk) {
+					msg_print(Ind, "No inventory slot specified.");
+					return; /* no inventory slot specified */
+				}
+				if (k < 1 || k > INVEN_TOTAL) {
+					msg_format(Ind, "Inventory slot must be between 1 and %d", INVEN_TOTAL);
+					return; /* invalid inventory slot index */
+				}
+				k--; /* start at index 1, easier for user */
+				if (!p_ptr->inventory[k].tval) {
+					msg_print(Ind, "Specified inventory slot is empty.");
+					return; /* inventory slot empty */
+				}
+				o_ptr = &p_ptr->inventory[k];
+
+				o_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL);
+				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
+
+				p_ptr->obj_aware[o_ptr->k_idx] = FALSE;
+				p_ptr->obj_tried[o_ptr->k_idx] = FALSE;
+				p_ptr->obj_felt[o_ptr->k_idx] = FALSE;//(no effect)
+				p_ptr->obj_felt_heavy[o_ptr->k_idx] = FALSE;//(no effect)
+
+				p_ptr->window |= PW_INVEN;
+				o_ptr->changed = !o_ptr->changed;//touch for refresh
 
 				/* remove pseudo-id tags too */
 				if (o_ptr->note) {
