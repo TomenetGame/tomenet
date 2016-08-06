@@ -3209,6 +3209,7 @@ void client_init(char *argv1, bool skip) {
 		/* reset stuff that needs resetting for anew character-choice or anew character-creation specifically: */
 		cname[0] = 0; //reset character choice, or relog into character screen won't work
 		auto_reincarnation = FALSE;
+		player_pref_files_loaded = FALSE; //reload appropriate macros/auto-inscriptions on next character logon
 
 		/* reset in-game related timed stuff */
 		lagometer_enabled = FALSE; //don't do lag-o-meter during do_ping()

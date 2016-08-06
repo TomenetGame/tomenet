@@ -1714,7 +1714,9 @@ int Receive_char_info(void) {
 	int	n;
 	char	ch;
 
+#ifndef RETRY_LOGIN
 	static bool player_pref_files_loaded = FALSE;
+#endif
 
 	/* Clear any old info */
 	race = class = trait = sex = mode = 0;

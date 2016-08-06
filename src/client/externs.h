@@ -976,4 +976,5 @@ extern u32b client_color_map[16];
 #ifdef RETRY_LOGIN
 extern bool rl_connection_destructible, rl_connection_destroyed, rl_password;
 extern byte rl_connection_state;
+extern bool player_pref_files_loaded;
 #endif
