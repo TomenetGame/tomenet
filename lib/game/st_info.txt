@@ -495,7 +495,8 @@ N:16:Beastmaster Shanty
 # Disabled the bounty list for the time being to not confuse people
 # with the bounty quest
 # A:18:0:19:20:21:22
-A:18:0:21:22:0:0
+#A:18:0:21:22:0:0
+A:0:0:0:0:0:0
 O:19:19:19:19:19:19
 G:+:g
 W:0
@@ -605,7 +606,8 @@ G:+:U
 W:0
 
 N:32:Minstrels Haven
-A:0:0:40:0:41:0
+#A:0:0:40:0:41:0
+A:0:0:40:0:0:0
 O:62:62:62:62:62:62
 G:+:U
 W:0
