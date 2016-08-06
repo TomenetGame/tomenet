@@ -253,7 +253,7 @@ extern char *message__buf_impscroll;
 
 
 
-extern bool msg_flag;
+extern bool msg_flag; //no effect
 
 extern term *ang_term[ANGBAND_TERM_MAX];
 extern u32b window_flag[ANGBAND_TERM_MAX];

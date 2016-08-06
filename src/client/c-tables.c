@@ -316,7 +316,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_verify_sell",		"Skip safety question when selling items" },
 	{ &c_cfg.no_verify_destroy,	FALSE,	6,	0, 49, TRUE,
 	    "no_verify_destroy",	"Skip safety question when destroying items" },
-	//HOLE:16
+	//HOLE:15
 
     //page 4 - 49
 	{ &c_cfg.auto_afk,		TRUE,	2,	1, 50, TRUE,
@@ -486,6 +486,10 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.speak_unique,		TRUE,	6,	13, xx, TRUE,
 	    "speak_unique",		"Allow shopkeepers and uniques to speak" },
 #endif
+
+    /* new additions after 4.6.1a */
+	{ &c_cfg.topline_no_msg,	FALSE,	6,	0, 109, TRUE, //page 3 (UI 3)
+	    "topline_no_msg",		"Don't display messages in main window top line" },
 };
 
 

@@ -3261,8 +3261,9 @@ void c_msg_print(cptr msg) {
 	char buf[1024];
 	char *t;
 
-	/* using clear_topline() here prevents top-line clearing via c_msg_print(NULL) */
-	if (!topline_icky) clear_topline();
+	if (!c_cfg.topline_no_msg)
+		/* using clear_topline() here prevents top-line clearing via c_msg_print(NULL) */
+		if (!topline_icky) clear_topline();
 
 	/* No message */
 	if (!msg) return;
@@ -3313,6 +3314,9 @@ void c_msg_print(cptr msg) {
 		c_message_add_msgnochat(t);
 	if (was_chat_buffer || was_all_buffer || was_important_scrollback)
 		c_message_add_impscroll(t);
+
+	/* Don't display any messages in top line? */
+	if (c_cfg.topline_no_msg) return;
 
 	/* Small length limit */
 	if (n > 80) n = 80;

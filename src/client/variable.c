@@ -134,7 +134,7 @@ s32b *message__ptr_impscroll;
 char *message__buf_impscroll;
 
 
-bool msg_flag;
+bool msg_flag; //no effect
 
 
 term *ang_term[ANGBAND_TERM_MAX];
