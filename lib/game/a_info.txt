@@ -3175,7 +3175,7 @@ D:this shield is astonishingly heavy and not easy to handle.
 
 N:255:of Piety
 I:36:20:4
-W:25:25:20:30000
+W:25:10:20:30000
 P:2:0d0:0:0:15
 F:HIDE_TYPE | WIS | INT | REGEN_MANA | RES_FIRE | RES_COLD
 D:A traditional monk's clothing, made for improving meditation and also
@@ -3198,7 +3198,7 @@ D:rendering him immune to any adverse effects of wind and weather.
 
 N:257:of Fiona
 I:36:22:5
-W:15:20:20:20000
+W:15:10:20:20000
 P:1:0d0:0:0:20
 F:HIDE_TYPE | CHR | SUST_CHR |
 F:RES_FIRE | RES_ACID | RES_COLD | RES_ELEC
