@@ -3018,7 +3018,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 		    (!(cave_empty_bold(zcave, y, x) &&
 		    !(cave_empty_mountain(zcave, y, x) &&
 		     ((r_ptr->flags8 & RF8_WILD_MOUNTAIN) ||
-		     (r_ptr->flags8 & RF8_WILD_VOLCANO)))))) return 12;
+		     (r_ptr->flags8 & RF8_WILD_VOLCANO) ||
+		     (r_ptr->flags0 & RF0_CAN_CLIMB))
+		     ))))
+			return 12;
 #endif
 	}
 

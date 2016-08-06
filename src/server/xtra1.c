@@ -2192,7 +2192,8 @@ y
 		{ p_ptr->pass_trees = TRUE; csheet_boni->cb[12] |= CB13_XTREE; }
 
 	/* Forms that occur in the mountains are able to pass them */
-	if (r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO))
+	if ((r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO)) ||
+	    (r_ptr->flags0 & RF0_CAN_CLIMB))
 		{ p_ptr->climb = TRUE; csheet_boni->cb[6] |= CB7_RCLMB; }
 	/* Spiders can always climb */
 	if (r_ptr->flags7 & RF7_SPIDER) { p_ptr->climb = TRUE; csheet_boni->cb[6] |= CB7_RCLMB; }

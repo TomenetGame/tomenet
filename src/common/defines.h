@@ -5538,7 +5538,8 @@
 #define RF0_BO_DISE			0x00000080
 #define RF0_BA_DISE		0x00000100
 #define RF0_ROAMING		0x00000200		/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
-#define RF0_DROP_1		0x00000400		/* Drop exactly 1 item/gold */
+#define RF0_DROP_1		0x00000400		/* Drop exactly 1 item/gold pile */
+#define RF0_CAN_CLIMB		0x00000800		/* Monster can climb */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 
@@ -6719,7 +6720,7 @@
     ((R)->flags2 & RF2_POWERFUL))) || \
     /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
     (((C)->feat == FEAT_MOUNTAIN) && \
-    (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO))))
+    (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags0 & RF0_CAN_CLIMB))))
 
     //((C)->m_idx < 0)) /* Player ghost in wall XXX */
     // (((c_ptr->feat != FEAT_SHOP) && /* Tavern entrance?(need GetCS to check that) // if (c_ptr->feat == FEAT_SHOP_TAIL - 1) */
@@ -6745,7 +6746,7 @@
 ((R)->flags2 & RF2_POWERFUL))) || \
 /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
 (((C)->feat == FEAT_MOUNTAIN) && \
-(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO))) || \
+(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags0 & RF0_CAN_CLIMB))) || \
 /* Monster moves through walls (and doors) */ \
 /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
 /*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
