@@ -101,8 +101,8 @@ WRAITHFORM = add_spell {
 	["fail"] = 	20,
 	["spell"] = 	function()
 			local dur = randint(30) + 20 + get_level(Ind, WRAITHFORM, 40)
-			set_tim_wraith(Ind, dur)
 			fire_ball(Ind, GF_WRAITH_PLAYER, 0, dur, 1, "")
+			set_tim_wraith(Ind, dur)
 	end,
 	["info"] = 	function()
 			return "dur "..(20 + get_level(Ind, WRAITHFORM, 40)).."+d30"
@@ -197,8 +197,8 @@ STOPWRAITH = add_spell {
 	["mana_max"] = 	0,
 	["fail"] = 	101,
 	["spell"] = 	function()
-			set_tim_wraith(Ind, 0)
 			fire_ball(Ind, GF_WRAITH_PLAYER, 0, 0, 1, "")
+			set_tim_wraith(Ind, 0)
 	end,
 	["info"] = 	function()
 			return ""

@@ -86,8 +86,8 @@ ESSENSESPEED = add_spell {
 			if player.pclass ~= 1 then
 				if s > 10 then s = 10 end
 			end
-			set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), s)
 			fire_ball(Ind, GF_SPEED_PLAYER, 0, s, 2, "")
+			set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), s)
 	end,
 	["info"] = 	function()
 			local s

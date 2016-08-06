@@ -216,19 +216,19 @@ ENTPOTION = add_spell {
 	["mana_max"] = 	10,
 	["fail"] = 	20,
 	["spell"] = 	function()
+				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 2, "")
 				--if player.suscep_life == false then
 				if player.prace ~= RACE_VAMPIRE then
 					set_food(Ind, PY_FOOD_MAX - 1)
 					msg_print(Ind, "The Ent's Potion fills your stomach.")
 				end
-				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 2, "")
 			if get_level(Ind, ENTPOTION, 50) >= 5 then
-				set_afraid(Ind, 0)
 				fire_ball(Ind, GF_REMFEAR_PLAYER, 0, 1, 2, "")
+				set_afraid(Ind, 0)
 			end
 			if get_level(Ind, ENTPOTION, 50) >= 12 then
-				set_hero(Ind, randint(25) + 25 + get_level(Ind, ENTPOTION, 40))
 				fire_ball(Ind, GF_HERO_PLAYER, 0, randint(25) + 25 + get_level(Ind, ENTPOTION, 40), 2, "")
+				set_hero(Ind, randint(25) + 25 + get_level(Ind, ENTPOTION, 40))
 			end
 	end,
 	["info"] = 	function()

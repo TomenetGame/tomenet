@@ -212,11 +212,11 @@ MSENSEMON = add_spell {
 	["mana_max"] = 	15,
 	["fail"] = 	5,
 	["spell"] = 	function()
---			set_tim_invis(Ind, 10 + get_level(Ind, HSENSEMON, 50))
---			detect_creatures(Ind) <- detecting empty-minded monsters isn't mindcrafter ability
 --			if get_level(Ind, MSENSEMON, 50) >= 20 then
 				set_tim_esp(Ind, 20 + randint(10) + get_level(Ind, MSENSEMON, 50))
 --			end
+--			set_tim_invis(Ind, 10 + get_level(Ind, HSENSEMON, 50))
+--			detect_creatures(Ind) <- detecting empty-minded monsters isn't mindcrafter ability
 			end,
 	["info"] = 	function()
 			return "dur 20+d10+d"..get_level(Ind, MSENSEMON, 50)

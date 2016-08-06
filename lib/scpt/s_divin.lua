@@ -88,8 +88,8 @@ VISION_I = add_spell {
 --	["stat"] = 	A_WIS,
 	["fail"] = 	10,
 	["spell"] = 	function()
-			map_area(Ind)
 			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
+			map_area(Ind)
 	end,
 	["info"] = 	function()
 			return ""
@@ -108,8 +108,8 @@ VISION_II = add_spell {
 --	["stat"] = 	A_WIS,
 	["fail"] = 	-30,
 	["spell"] = 	function()
-			wiz_lite_extra(Ind)
 			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
+			wiz_lite_extra(Ind)
 	end,
 	["info"] = 	function()
 			return ""
@@ -129,8 +129,8 @@ SENSEHIDDEN_I = add_spell {
 	["fail"] = 	10,
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN_I, 40, 0))
 			fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, 2, "")
+			detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN_I, 40, 0))
 	end,
 	["info"] = 	function()
 			return "rad "..(10 + get_level(Ind, SENSEHIDDEN_I, 40))
@@ -149,10 +149,11 @@ SENSEHIDDEN_II = add_spell {
 	["fail"] = 	-10,
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN_I, 40, 0))
 			fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, 2, "")
-			set_tim_invis(Ind, 10 + randint(20) + get_level(Ind, SENSEHIDDEN_I, 40))
+			detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN_I, 40, 0))
+
 			fire_ball(Ind, GF_SEEINVIS_PLAYER, 0, 10 + randint(20) + get_level(Ind, SENSEHIDDEN_I, 40), 2, "")
+			set_tim_invis(Ind, 10 + randint(20) + get_level(Ind, SENSEHIDDEN_I, 40))
 	end,
 	["info"] = 	function()
 			return "rad "..(10 + get_level(Ind, SENSEHIDDEN_I, 40)).." dur "..(10 + get_level(Ind, SENSEHIDDEN_I, 40)).."+d20"
@@ -173,8 +174,8 @@ REVEALWAYS = add_spell {
 	["fail"] = 	10,
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			detect_sdoor(Ind, 10 + get_level(Ind, REVEALWAYS, 40, 0))
 			fire_ball(Ind, GF_DETECTDOOR_PLAYER, 0, 1, 2, "")
+			detect_sdoor(Ind, 10 + get_level(Ind, REVEALWAYS, 40, 0))
 	end,
 	["info"] = 	function()
 			return "rad "..(10 + get_level(Ind, REVEALWAYS, 40))
@@ -193,8 +194,8 @@ DETECTMONSTERS = add_spell {
 	["mana_max"] = 	3,
 	["fail"] = 	10,
 	["spell"] = 	function()
-			detect_creatures(Ind)
 			fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, 2, "")
+			detect_creatures(Ind)
 	end,
 	["info"] = 	function()
 --			return "rad "..(10 + get_level(Ind, DETECTMONSTERS, 40))

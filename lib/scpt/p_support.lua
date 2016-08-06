@@ -171,8 +171,8 @@ HZEAL_I = add_spell {
 	["fail"] = 	-35,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		set_zeal(Ind, 10, 9 + randint(5))
 		--fire_ball(Ind, GF_ZEAL_PLAYER, 0, 20, 3, "")
+		set_zeal(Ind, 10, 9 + randint(5))
 	end,
 	["info"] = 	function()
 			return "dur 9+d5, +1 BpR"
@@ -193,8 +193,8 @@ HZEAL_II = add_spell {
 	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		set_zeal(Ind, 20, 9 + randint(5))
 		fire_ball(Ind, GF_ZEAL_PLAYER, 0, 40, 3, "")
+		set_zeal(Ind, 20, 9 + randint(5))
 	end,
 	["info"] = 	function()
 			return "dur 9+d5, +2 BpR"
@@ -215,8 +215,8 @@ HZEAL_III = add_spell {
 	["fail"] = 	-110,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-		set_zeal(Ind, 30, 9 + randint(5))
 		fire_ball(Ind, GF_ZEAL_PLAYER, 0, 60, 3, "")
+		set_zeal(Ind, 30, 9 + randint(5))
 	end,
 	["info"] = 	function()
 			return "dur 9+d5, +3 BpR"
