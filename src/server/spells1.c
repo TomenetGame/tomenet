@@ -3985,6 +3985,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (c_ptr->feat == FEAT_WEB)
 				cave_set_feat_live(wpos, y, x, FEAT_ASH);
 
+			if (c_ptr->feat == FEAT_DEAD_TREE) { //dead trees only^^
+				/* Destroy the tree */
+				cave_set_feat_live(wpos, y, x, FEAT_ASH);
+			}
+
 #if 1			/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
 			if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
 				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
