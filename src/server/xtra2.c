@@ -6150,6 +6150,9 @@ if (cfg.unikill_format) {
 			} else if (strstr((r_name + r_ptr->name), "Saruman of Many Colours")) {
 				a_idx = ART_ELENDIL;
 				chance = 30;
+			} else if (strstr((r_name + r_ptr->name), "Gorlim, Betrayer of Barahir")) {
+				a_idx = ART_GORLIM;
+				chance = 30;
 			} else if (strstr((r_name + r_ptr->name), "Hagen, son of Alberich")) { /* not in the game */
 				a_idx = ART_NIMLOTH;
 				chance = 66;
