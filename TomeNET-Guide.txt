@@ -8220,9 +8220,8 @@ type. Also, armour can be damaged by fire, acid or water, depending on its
 material.
 Items which ignore an element, resist it, or even provide immunity against it
 are unaffected by any attack of that type and won't take damage.
-Taking damage means that weapons will lose +dam enchantment, and shields or
-armour  will lose +AC enchantment, so you can repair them again by reenchanting
-them.
+Taking damage means that weapons will lose +dam enchantment, and armour will
+will lose +AC enchantment, so you can repair them again by reenchanting them.
 If your character resists a specific element, the chance of any item getting
 damaged by it is reduced. Having double resistance will reduce it much further
 even.
