@@ -220,7 +220,7 @@ static bool choose_sex(void) {
 		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
-		if (c == 'Q') quit(NULL);
+		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return FALSE;
 #endif
@@ -355,7 +355,7 @@ race_redraw:
 
 		if (!hazard) c = inkey();
 
-		if (c == 'Q') quit(NULL);
+		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return FALSE;
 #endif
@@ -578,7 +578,7 @@ trait_redraw:
 
 		if (!hazard) c = inkey();
 
-		if (c == 'Q') quit(NULL);
+		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return FALSE;
 #endif
@@ -775,7 +775,7 @@ class_redraw:
 
 		if (!hazard) c = inkey();
 
-		if (c == 'Q') quit(NULL);
+		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return FALSE;
 #endif
@@ -931,7 +931,7 @@ static bool choose_stat_order(void) {
 					Term->scr->cu = 1;
 
 					c = inkey();
-					if (c == 'Q') quit(NULL);
+					if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 					if (rl_connection_destroyed) return FALSE;
 #endif
@@ -1166,7 +1166,7 @@ static bool choose_stat_order(void) {
 				}
 			}
 			if (c == '\e') break;
-			if (c == 'Q') quit(NULL);
+			if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 			if (rl_connection_destroyed) return FALSE;
 #endif
@@ -1249,7 +1249,7 @@ static bool choose_mode(void) {
 
 			if (!hazard) c = inkey();
 
-			if (c == 'Q') quit(NULL);
+			if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 			if (rl_connection_destroyed) return FALSE;
 #endif
@@ -1361,7 +1361,7 @@ static bool choose_mode(void) {
 
 		if (!hazard) c = inkey();
 
-		if (c == 'Q') quit(NULL);
+		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return FALSE;
 #endif
@@ -1498,7 +1498,7 @@ static bool choose_body_modification(void) {
 
 		if (!hazard) c = inkey();
 
-		if (c == 'Q') quit(NULL);
+		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return FALSE;
 #endif
@@ -2053,7 +2053,7 @@ bool get_server_name(void) {
 		c = inkey();
 
 		/* Check for quit */
-		if (c == 'Q') return enter_server_name();
+		if (c == 'Q' || c == KTRL('Q')) return enter_server_name();
 		else if (c == ESCAPE) {
 			quit(NULL);
 			return FALSE;
