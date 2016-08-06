@@ -14485,11 +14485,6 @@ Istar schools:
     Fire Bolt       Fires a fire bolt at a target.
                     Required skill level for first spell level: 10.
 
-    Fireflash       Conjures a fire ball.
-                    Lv20: Turns into holy fire which is especially deadly to
-                          evil opponents.
-                    Required skill level for first spell level: 10.
-
     Elemental Shield
                     Gives temporary resistance to the elements,
                     fire/cold/lightning/acid.                       (project)
@@ -14501,6 +14496,12 @@ Istar schools:
 
     Firewall        Creates a fire wall to incinerate monsters that cross it.
                     Required skill level for first spell level: 20.
+
+    Fire Ball       Conjures a fire ball.
+                    Required skill level for first spell level: 23.
+
+    Fireflash       Conjures a ball of holy fire.
+                    Required skill level for first spell level: 30.
 
     BONI:           Fire resistance at 30,
                     Fire immunity at 50.
@@ -14523,17 +14524,20 @@ Istar schools:
     Water Bolt      Fires a water bolt at a target.
                     Required skill level for first spell level: 14.
 
-    Tidal Wave      Summons a monstrous tidal wave.
-                    Required skill level for first spell level: 16.
-
     Elemental Shield
-                    Gives temporary resistance to the elements,
-                    fire/cold/lightning/acid.                       (project)
+                    Gives temporary resistance to heat and cold at first,
+                    later on to fire/cold/lightning/acid.           (project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Earth, Air, Water.
 
+    Tidal Wave      Summons a monstrous tidal wave.
+                    Required skill level for first spell level: 16.
+
     Frost Barrier   Engulfs you in a storm of roaring cold.
                     Lv15: Turns into a storm of shards of ice.
+                    Required skill level for first spell level: 22.
+
+    Frost Ball      Conjures a frost ball.
                     Required skill level for first spell level: 22.
 
     BONI:           Water resistance at 30,

@@ -115,54 +115,71 @@ FIREBOLT_III = add_spell {
 	["desc"] = 	{ "Conjures up fire into a powerful bolt.", }
 }
 
-FIREFLASH_I = add_spell {
-	["name"] = 	"Fireflash I",
+FIREBALL_I = add_spell {
+	["name"] = 	"Fire Ball I",
 	["school"] = 	{SCHOOL_FIRE},
-	["level"] = 	10,
-	["mana"] = 	5,
-	["mana_max"] = 	5,
-	["fail"] = 	30,
+	["level"] = 	23,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
+	["fail"] = 	-25,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREFLASH_I, 150), 2 + get_level(Ind, FIREFLASH_I, 3), " casts a fire ball for")
+			fire_ball(Ind, GF_FIRE, args.dir, 100 + get_level(Ind, FIREBALL_I, 500), 2 + get_level(Ind, FIREBALL_I, 3), " casts a fire ball for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, FIREFLASH_I, 150)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
+		return "dam "..(100 + get_level(Ind, FIREBALL_I, 500)).." rad "..(2 + get_level(Ind, FIREBALL_I, 3))
 	end,
 	["desc"] = 	{ "Conjures a ball of fire to burn your foes to ashes.", }
 }
-FIREFLASH_II = add_spell {
-	["name"] = 	"Fireflash II",
+FIREBALL_II = add_spell {
+	["name"] = 	"Fire Ball II",
 	["school"] = 	{SCHOOL_FIRE},
-	["level"] = 	30,
-	["mana"] = 	15,
-	["mana_max"] = 	15,
-	["fail"] = 	-50,
-	["direction"] = TRUE,
-	["ftk"] = 	2,
-	["spell"] = 	function(args)
-			fire_ball(Ind, GF_HOLY_FIRE, args.dir, 20 + get_level(Ind, FIREFLASH_I, 300), 2 + get_level(Ind, FIREFLASH_I, 3), " casts a ball of holy fire for")
-	end,
-	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, FIREFLASH_I, 300)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
-	end,
-	["desc"] = 	{ "Conjures a ball of holy fire to burn your foes to ashes.", }
-}
-FIREFLASH_III = add_spell {
-	["name"] = 	"Fireflash III",
-	["school"] = 	{SCHOOL_FIRE},
-	["level"] = 	42,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
+	["level"] = 	40,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
 	["fail"] = 	-90,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_HOLY_FIRE, args.dir, 20 + get_level(Ind, FIREFLASH_I, 500), 2 + get_level(Ind, FIREFLASH_I, 3), " casts a ball of holy fire for")
+			fire_ball(Ind, GF_FIRE, args.dir, 170 + get_level(Ind, FIREBALL_I, 800), 2 + get_level(Ind, FIREBALL_I, 3), " casts a fire ball for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, FIREFLASH_I, 500)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
+		return "dam "..(170 + get_level(Ind, FIREBALL_I, 800)).." rad "..(2 + get_level(Ind, FIREBALL_I, 3))
+	end,
+	["desc"] = 	{ "Conjures a ball of fire to burn your foes to ashes.", }
+}
+FIREFLASH_I = add_spell {
+	["name"] = 	"Fireflash I",
+	["school"] = 	{SCHOOL_FIRE},
+	["level"] = 	30,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	-50,
+	["direction"] = TRUE,
+	["ftk"] = 	2,
+	["spell"] = 	function(args)
+			fire_ball(Ind, GF_HOLY_FIRE, args.dir, 100 + get_level(Ind, FIREFLASH_I, 400), 2 + get_level(Ind, FIREFLASH_I, 3), " casts a ball of holy fire for")
+	end,
+	["info"] = 	function()
+		return "dam "..(100 + get_level(Ind, FIREFLASH_I, 400)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
+	end,
+	["desc"] = 	{ "Conjures a ball of holy fire to burn your foes to ashes.", }
+}
+FIREFLASH_II = add_spell {
+	["name"] = 	"Fireflash II",
+	["school"] = 	{SCHOOL_FIRE},
+	["level"] = 	42,
+	["mana"] = 	35,
+	["mana_max"] = 	35,
+	["fail"] = 	-90,
+	["direction"] = TRUE,
+	["ftk"] = 	2,
+	["spell"] = 	function(args)
+			fire_ball(Ind, GF_HOLY_FIRE, args.dir, 145 + get_level(Ind, FIREFLASH_I, 700), 2 + get_level(Ind, FIREFLASH_I, 3), " casts a ball of holy fire for")
+	end,
+	["info"] = 	function()
+		return "dam "..(145 + get_level(Ind, FIREFLASH_I, 700)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
 	end,
 	["desc"] = 	{ "Conjures a ball of holy fire to burn your foes to ashes.", }
 }
