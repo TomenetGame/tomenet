@@ -201,6 +201,9 @@
 /* Total flow depth? Might be superfluous, just flood whole level, and let sound/smell take care of the rest.. - C. Blue */
 #define MONSTER_FLOW_DEPTH		32
 
+/* Sort the monster list by level before displaying it? */
+#define MONS_PRE_SORT
+
 
 /* The four seasons - C. Blue */
 #define SEASON_SPRING 0
@@ -353,6 +356,9 @@
 /* The One Ring/Bladeturner don't get their timeout duration halved when their wearer wins */
  #define L100_ARTS_LAST
 #endif
+
+/* Sort the artifact list by tval/sval before displaying it? */
+#define ARTS_PRE_SORT
 
 
 /* Can staticed levels no longer get their static-timeout 'reset' by someone

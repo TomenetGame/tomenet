@@ -457,6 +457,9 @@ header *a_head;
 artifact_type *a_info;
 char *a_name;
 char *a_text;
+#ifdef ARTS_PRE_SORT
+int a_radix_idx[MAX_A_IDX];
+#endif
 
 /*
  * The ego-item arrays
@@ -483,6 +486,9 @@ header *r_head;
 monster_race *r_info;
 char *r_name;
 char *r_text;
+#ifdef MONS_PRE_SORT
+int r_radix_idx[MAX_R_IDX];
+#endif
 
 /*
  * The monster ego race arrays

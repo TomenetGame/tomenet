@@ -66,24 +66,17 @@
  * Why does Ben save the list to a file and then display it?  Seems like a
  * strange way of doing things to me.  --KLJ--
  */
-/* Sort the artifact list by tval/sval before displaying it?
-   todo: alternate between 2 bufs instead of copying back the buf into the main
-   array each time, sorta defeats the speed advantage.. or actually pre-sort in
-   init*.c already instead of repeating it everytime here ^^- C. Blue */
-#define ARTS_PRE_SORT
 /* colour art list depending on item type? (non-admins only) */
 #define COLOURED_ARTS
 void do_cmd_check_artifacts(int Ind, int line) {
 	int i, j, k, z;
+#ifdef ARTS_PRE_SORT
+	int i0;
+#endif
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 	char base_name[ONAME_LEN];
 	bool okay[MAX_A_IDX];
-#ifdef ARTS_PRE_SORT
-	int n;
-	int radix_idx[MAX_A_IDX], radix_key[MAX_A_IDX];
-	int radix_buf[MAX_A_IDX][10], radix_buf_cnt[10], radix_buf_idx[MAX_A_IDX][10];
-#endif
 
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	bool admin = is_admin(p_ptr);
@@ -157,53 +150,17 @@ void do_cmd_check_artifacts(int Ind, int line) {
 		}
 	}
 
-#ifdef ARTS_PRE_SORT
-	/* init */
-	memset(radix_buf_cnt, 0, sizeof(int) * 10);
-	/* Build radix key, forged from 2 digits of tval and 2 digits of sval */
-	z = 0;
-	for (i = 0; i < MAX_A_IDX; i++) {
-		if (!okay[i]) continue;
-
-		a_ptr = &a_info[i];
-		radix_idx[z] = i;
-		radix_key[z] = a_ptr->tval * 100 + a_ptr->sval;
-		z++;
-	}
-	/* Sort starting at least significant digit, for all 4 digits */
-	for (n = 1; n <= 1000; n *= 10) { /* 10^digit 0..3 */
-		for (i = 0; i < z; i++) { /* # of valid arts */
-			k = (radix_key[i] / n) % 10;
-			j = radix_buf_cnt[k];
-			radix_buf[j][k] = radix_key[i];
-			radix_buf_idx[j][k] = radix_idx[i];
-			radix_buf_cnt[k]++;
-		}
-		/* re-merge it to prepare sorting the next digit */
-		k = 0;
-		for (i = 0; i < 10; i++) {
-			for (j = 0; j < radix_buf_cnt[i]; j++) {
-				radix_key[k] = radix_buf[j][i];
-				radix_idx[k] = radix_buf_idx[j][i];
-				k++;
-			}
-			/* empty bucket */
-			radix_buf_cnt[i] = 0;
-		}
-	}
-#endif
-
 	/* Scan the artifacts */
-#ifndef ARTS_PRE_SORT
+#ifdef ARTS_PRE_SORT
+	for (i0 = 0; i0 < MAX_A_IDX; i0++) {
+		i = a_radix_idx[i0];
+#else
 	for (i = 0; i < MAX_A_IDX; i++) {
+#endif
 		a_ptr = &a_info[i];
 
 		/* List "dead" ones */
 		if (!okay[i]) continue;
-#else
-	for (i = 0; i < z; i++) {
-		a_ptr = &a_info[radix_idx[i]];
-#endif
 
 		/* Paranoia */
 		strcpy(base_name, "Unknown Artifact");
@@ -217,11 +174,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
 			invcopy(&forge, k);
 
 			/* Create the artifact */
-#ifndef ARTS_PRE_SORT
 			forge.name1 = i;
-#else
-			forge.name1 = radix_idx[i];
-#endif
 
 			/* Describe the artifact */
 			object_desc_store(Ind, base_name, &forge, FALSE, 0);
@@ -270,11 +223,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
 					c = 'D';
 #endif
 				fprintf(fff, "\377%c", c);
-#ifndef ARTS_PRE_SORT
 				fprintf(fff, "%3d/%d %s\377%c", i, a_ptr->cur_num, timeleft, c);
-#else
-				fprintf(fff, "%3d/%d %s\377%c", radix_idx[i], a_ptr->cur_num, timeleft, c);
-#endif
 			}
 #ifndef COLOURED_ARTS
 			else fprintf(fff, "\377%c", (!multiple_artifact_p(&forge) && a_ptr->carrier == p_ptr->id) ? 'U' : 'w');
@@ -2615,6 +2564,9 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 	player_type *p_ptr = Players[Ind];
 
 	int i, j, num, total = 0, forms = 0, forms_learnt = 0;
+#ifdef MONS_PRE_SORT
+	int i0;
+#endif
 	monster_race *r_ptr;
 	bool shown = FALSE, all = FALSE;
 	byte mimic = (get_skill_scale(p_ptr, SKILL_MIMIC, 100));
@@ -2652,7 +2604,12 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 
 	/* for each monster race */
 	/* XXX I'm not sure if this list should be sorted.. */
+#ifdef MONS_PRE_SORT
+	for (i0 = 1; i0 < MAX_R_IDX - 1; i0++) {
+		i = r_radix_idx[i0];
+#else
 	for (i = 1; i < MAX_R_IDX - 1; i++) {
+#endif
 		r_ptr = &r_info[i];
 
 //		if (letter && *letter != r_ptr->d_char) continue;

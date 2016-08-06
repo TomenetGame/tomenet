@@ -511,15 +511,15 @@ static errr init_k_info(void)
  * Note that we let each entry have a unique "name" and "text" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_a_info(void)
-{
+static errr init_a_info(void) {
 	errr err;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
-
+#ifdef ARTS_PRE_SORT
+	int i, j, k, n, z;
+	int radix_key[MAX_A_IDX], radix_buf[MAX_A_IDX][10], radix_buf_cnt[10], radix_buf_idx[MAX_A_IDX][10];
+#endif
 
 	/*** Make the "header" ***/
 
@@ -572,8 +572,7 @@ static errr init_a_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -587,6 +586,39 @@ static errr init_a_info(void)
 		/* Quit */
 		quit("Error in 'a_info.txt' file.");
 	}
+
+#ifdef ARTS_PRE_SORT /* generate sorted-by-level mapping */
+	/* init */
+	memset(radix_buf_cnt, 0, sizeof(int) * 10);
+	/* Build radix key, forged from 2 digits of tval and 2 digits of sval */
+	z = 0;
+	for (i = 0; i < MAX_A_IDX; i++) {
+		a_radix_idx[z] = i;
+		radix_key[z] = a_info[i].tval * 100 + a_info[i].sval;
+		z++;
+	}
+	/* Sort starting at least significant digit, for all 4 digits */
+	for (n = 1; n <= 1000; n *= 10) { /* 10^digit 0..3 */
+		for (i = 0; i < z; i++) { /* # of valid arts */
+			k = (radix_key[i] / n) % 10;
+			j = radix_buf_cnt[k];
+			radix_buf[j][k] = radix_key[i];
+			radix_buf_idx[j][k] = a_radix_idx[i];
+			radix_buf_cnt[k]++;
+		}
+		/* re-merge it to prepare sorting the next digit */
+		k = 0;
+		for (i = 0; i < 10; i++) {
+			for (j = 0; j < radix_buf_cnt[i]; j++) {
+				radix_key[k] = radix_buf[j][i];
+				a_radix_idx[k] = radix_buf_idx[j][i];
+				k++;
+			}
+			/* empty bucket */
+			radix_buf_cnt[i] = 0;
+		}
+	}
+#endif
 
 	/* Success */
 	return (0);
@@ -968,18 +1000,17 @@ static errr init_e_info(void)
  * Note that we let each entry have a unique "name" and "text" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_r_info(void)
-{
+static errr init_r_info(void) {
 	errr err;
-
 	s16b idx[MAX_R_IDX];
 	int i, j, total = 0, tmp;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
-
+#ifdef MONS_PRE_SORT
+	int k, n, z;
+	int radix_key[MAX_R_IDX], radix_buf[MAX_R_IDX][10], radix_buf_cnt[10], radix_buf_idx[MAX_R_IDX][10];
+#endif
 
 	/*** Make the header ***/
 
@@ -1032,8 +1063,7 @@ static errr init_r_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -1068,6 +1098,38 @@ static errr init_r_info(void)
 //s_printf("UNI #%d r_idx %d (lev %d)\n", i, idx[i], r_info[idx[i]].level);
 	}
 
+#ifdef MONS_PRE_SORT /* generate sorted-by-level mapping */
+	/* init */
+	memset(radix_buf_cnt, 0, sizeof(int) * 10);
+	/* Build radix key, forged from 2 digits of tval and 2 digits of sval */
+	z = 1;
+	for (i = 1; i < MAX_R_IDX - 1; i++) {
+		r_radix_idx[z] = i;
+		radix_key[z] = r_info[i].level;
+		z++;
+	}
+	/* Sort starting at least significant digit, for all 3 digits */
+	for (n = 1; n <= 100; n *= 10) { /* 10^digit 0..2 */
+		for (i = 0; i < z; i++) { /* # of valid mons */
+			k = (radix_key[i] / n) % 10;
+			j = radix_buf_cnt[k];
+			radix_buf[j][k] = radix_key[i];
+			radix_buf_idx[j][k] = r_radix_idx[i];
+			radix_buf_cnt[k]++;
+		}
+		/* re-merge it to prepare sorting the next digit */
+		k = 0;
+		for (i = 0; i < 10; i++) {
+			for (j = 0; j < radix_buf_cnt[i]; j++) {
+				radix_key[k] = radix_buf[j][i];
+				r_radix_idx[k] = radix_buf_idx[j][i];
+				k++;
+			}
+			/* empty bucket */
+			radix_buf_cnt[i] = 0;
+		}
+	}
+#endif
 
 	/* Success */
 	return (0);

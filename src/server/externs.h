@@ -387,6 +387,9 @@ extern header *a_head;
 extern artifact_type *a_info;
 extern char *a_name;
 extern char *a_text;
+#ifdef ARTS_PRE_SORT
+extern int a_radix_idx[MAX_A_IDX];
+#endif
 extern header *e_head;
 extern ego_item_type *e_info;
 extern char *e_name;
@@ -397,6 +400,9 @@ extern header *r_head;
 extern monster_race *r_info;
 extern char *r_name;
 extern char *r_text;
+#ifdef MONS_PRE_SORT
+extern int r_radix_idx[MAX_R_IDX];
+#endif
 extern cptr ANGBAND_SYS;
 extern cptr ANGBAND_DIR;
 extern cptr ANGBAND_DIR_SCPT;
