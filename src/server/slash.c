@@ -444,7 +444,7 @@ void do_slash_cmd(int Ind, char *message) {
 		return;
 // :)		break_cloaking(Ind, 3);
 	}
-	else if (prefix(message, "/whisper") || prefix(message, "/wh")) {
+	else if (prefix(message, "/whisper") || (prefix(message, "/wh") && !prefix(message, "/who"))) {
 		if (colon++) {
 			censor_message = TRUE;
 			censor_length = strlen(colon);
