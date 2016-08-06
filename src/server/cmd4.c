@@ -484,13 +484,13 @@ void do_cmd_check_uniques(int Ind, int line)
 			/* different colour for uniques higher than Morgoth (the 'boss') */
 //			if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name); else
 			if (!(p_ptr->uniques_alive)) {
-				if (k == RI_MORGOTH) fprintf(fff, "\377v%s\377%c was slain by", r_name + r_ptr->name, c_out);
-				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s\377%c was slain by", r_name + r_ptr->name, c_out);
-				else fprintf(fff, "%s was slain by", r_name + r_ptr->name);
+				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (100)\377%c was slain by", r_name + r_ptr->name, c_out);
+				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
+				else fprintf(fff, "%s (%d) was slain by", r_name + r_ptr->name, r_ptr->level);
 			} else {
-				if (k == RI_MORGOTH) fprintf(fff, "\377v%s\377%c", r_name + r_ptr->name, c_out);
-				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s\377%c", r_name + r_ptr->name, c_out);
-				else fprintf(fff, "%s", r_name + r_ptr->name);
+				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (100)\377%c", r_name + r_ptr->name, c_out);
+				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
+				else fprintf(fff, "%s (%d)", r_name + r_ptr->name, r_ptr->level);
 			}
 			
 			for (i = 1; i <= NumPlayers; i++) {
