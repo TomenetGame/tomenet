@@ -297,7 +297,7 @@ FROSTBALL_I = add_spell {
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	22,
 	["mana"] = 	9,
-	["mana_max"] = 	5,
+	["mana_max"] = 	9,
 	["fail"] = 	-25,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
@@ -313,16 +313,16 @@ FROSTBALL_II = add_spell {
 	["name"] = 	"Frost Ball II",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	40,
-	["mana"] = 	22,
-	["mana_max"] = 	22,
+	["mana"] = 	23,
+	["mana_max"] = 	23,
 	["fail"] = 	-90,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function()
-			fire_ball(Ind, GF_COLD, args.dir, 160 + get_level(Ind, FROSTBALL_I, 790), 2 + get_level(Ind, FROSTBALL_I, 3), " casts a frost ball for")
+			fire_ball(Ind, GF_COLD, args.dir, 160 + get_level(Ind, FROSTBALL_I, 780), 2 + get_level(Ind, FROSTBALL_I, 3), " casts a frost ball for")
 	end,
 	["info"] = 	function()
-			return "dam "..(160 + get_level(Ind, FROSTBALL_I, 790)).." rad "..(2 + get_level(Ind, FROSTBALL_I, 3))
+			return "dam "..(160 + get_level(Ind, FROSTBALL_I, 780)).." rad "..(2 + get_level(Ind, FROSTBALL_I, 3))
 	end,
 	["desc"] = 	{ "Conjures a ball of frost to shatter your foes to pieces." }
 }
