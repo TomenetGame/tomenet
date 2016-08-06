@@ -12930,7 +12930,7 @@ D:octopus. It will destroy you.
 N:758:Bloodthirster
 G:U:r
 I:130:60d70:30:160:20
-W:55:3:60000:18500
+W:55:2:60000:18500
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:50d1
