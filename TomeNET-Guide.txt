@@ -1287,7 +1287,7 @@ They all start with a slash '/' hence they're called slash commands:
             instead of sending your message to everyone on the server.
 
 /whisper <text>
-            Whispers <text> to players currently standing right next to you.
+ (/wh)      Whispers <text> to players currently standing right next to you.
             Others won't be able to hear it.
 
 /cough      You cough noisily. Will disturb the sleep of monsters or at least
