@@ -8214,10 +8214,9 @@ Acid                    These attacks can destroy items in your inventory.
                         Immunity or double resistance protects items in your
                         inventory from getting harmed (5.10), (5.17).
 
-Note: Equipment is mostly safe, except that some weapons and shields can take
-damage from coming in contact with fire, acid or water, depending on the item
-type. Also, armour can be damaged by fire, acid or water, depending on its
-material.
+Note: Equipment is mostly safe, except that some weapons can take damage from
+coming in contact with fire, acid or water, depending on the item type.
+Also, armour can be damaged by fire, acid or water, depending on its material.
 Items which ignore an element, resist it, or even provide immunity against it
 are unaffected by any attack of that type and won't take damage.
 Taking damage means that weapons will lose +dam enchantment, and armour will
