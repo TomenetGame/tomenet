@@ -2465,7 +2465,7 @@ W:60:0:10:30000
 A:60/5
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
-D:Damages a monster by a 15..25% of its current hit points.
+D:Damages a monster by 15..25% of its current hit points.
 
 N:299:Rockets
 G:-:d
