@@ -4030,14 +4030,14 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Apprentice", "Apprentice", "Apprentice", "Apprentice", },
 		{"Trickster", "Trickster", "Trickster", "Trickster", },
 		{"Illusionist", "Illusionist", "Illusionist", "Illusionist", },
-		{"Spellbinder", "Spellbinder", "Spellbinder", "Spellbinder", },
+		{"Spellbinder", "Spellbinder", "Spellbinder", "Spellbinder", },//Arcanist
 		{"Spellweaver", "Spellweaver", "Spellweaver", "Spellweaver", },
 		{"Evoker", "Evoker", "Evoker", "Evoker", },
 		{"Conjurer", "Conjurer", "Conjurer", "Conjurer", },
 		{"Sorcerer", "Sorceress", "Sorcerer", "Sorceress", },
 		{"Warlock", "Warlock", "Warlock", "Warlock", },
 		//{"Mage", "Mage", "Mage", "Mage", },
-		{"Arch-Mage", "Arch-Mage", "Arch-Mage", "Arch-Mage", },
+		{"Archmage", "Archmage", "Archmage", "Archmage", },
 	},
 
 	/* Priest */
