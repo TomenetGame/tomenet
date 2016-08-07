@@ -7771,12 +7771,12 @@ D:A monk trained in the most lethal martial arts.
 
 N:493:Bert the Stone Troll
 G:T:W
-I:120:11d100:20:70:50
+I:120:11d200:20:70:50
 W:34:7:5000:2000
 E:1:1:1:2:1:1
 O:0:100:0:0
-B:HIT:HURT:6d6
-B:HIT:HURT:6d6
+B:HIT:HURT:7d6
+B:HIT:HURT:7d6
 B:BITE:HURT:3d10
 F:UNIQUE | MALE |
 F:FORCE_MAXHP |
@@ -7791,12 +7791,12 @@ D:Bill and Tom.
 
 N:494:Bill the Stone Troll
 G:T:W
-I:120:11d100:20:70:50
+I:120:11d200:20:70:50
 W:34:7:5000:2000
 E:1:1:1:2:1:1
 O:0:100:0:0
-B:HIT:HURT:6d6
-B:HIT:HURT:6d6
+B:HIT:HURT:7d6
+B:HIT:HURT:7d6
 B:BITE:HURT:3d10
 F:UNIQUE | MALE |
 F:FORCE_MAXHP |
@@ -7811,12 +7811,12 @@ D:Bert and Tom.
 
 N:495:Tom the Stone Troll
 G:T:W
-I:120:11d100:20:70:50
+I:120:11d200:20:70:50
 W:34:7:5000:2000
 E:1:1:1:2:1:1
 O:0:100:0:0
-B:HIT:HURT:6d6
-B:HIT:HURT:6d6
+B:HIT:HURT:7d6
+B:HIT:HURT:7d6
 B:BITE:HURT:3d10
 F:UNIQUE | MALE |
 F:FORCE_MAXHP |
@@ -8792,7 +8792,7 @@ D:has four huge arms protruding from its enormous torso.
 
 N:551:Rogrog the Black Troll
 G:T:D
-I:120:15d100:20:70:50
+I:120:26d100:20:70:50
 W:41:5:9000:5000
 E:1:1:1:2:1:1
 O:0:100:0:0
