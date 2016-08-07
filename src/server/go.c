@@ -132,7 +132,7 @@ static int wager_lvl[10] = {
 
 /* Time limits for the player (and CPU) in seconds. [30]
    Should be *ABOVE 20*, since some AI players will require 20s per move */
-#define GO_TIME_PY		30
+#define GO_TIME_PY		60
 
 /* Only play random moves instead of engine-generated ones up to this move number
    in the game. (Half moves.) [35] */
