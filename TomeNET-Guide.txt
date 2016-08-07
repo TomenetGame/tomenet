@@ -12596,7 +12596,8 @@ create a character!):
     very stupid and slow. They make great warriors and iffy priests. They are
     bad at searching, disarming, perception, and stealth. They are so ugly
     that a Half-Orc grimaces in their presence. They need to eat often but
-    they also regenerate hit point especially quickly.
+    they also regenerate hit point especially quickly. Thanks to their thick
+    skin, they also get an (albeit very small) bonus to armour class.
     Half-Trolls get bonus on 'Blunt-Mastery', 'Health'. They receive a penalty
     on 'Critical-Strike' and 'Swimming' and large penalties on 'Climbing',
     'Swimming', 'Archery', 'Magic' and 'Sorcery'.
@@ -12661,7 +12662,8 @@ create a character!):
     such as grass, earth, mud or water. Their food state will go up to 'Full'
     that way. They cannot eat normal food but will feed greatly from drinking
     potions that provide nourishment. They can never be gorged though.
-    Ents intrinsically resist the force of unleashed water.
+    Ents intrinsically resist the force of unleashed water and their bark skin
+    provides a small bonus to armour class.
     They get bonus to 'Health' and a large bonus on 'Calmness' and on the magic
     schools 'Earth' and 'Water'. They receive a large penalty on 'Fire' school,
     a penalty on 'Axe-mastery' and a small penalty on 'Sword-mastery'. They
@@ -12692,6 +12694,8 @@ create a character!):
     a reptile (including Hydras) or an actual dragon (including dragonriders).
     The resistances and other abilities obtained from a trait remain active
     even while polymorphed.
+    Thanks to their scaly hide they receive a small bonus to armour class,
+    especially the metallic lineages - bronze, silver and gold.
     Draconians receive a bonus on 'Attunement', 'Polearm-Mastery' and
     'Magic devices' and a slight bonus on 'Swimming'.
 
@@ -12708,11 +12712,11 @@ create a character!):
     Multi-hued  Random of       lightning (5), frost (10), fire (15),
                 those above     acid (20), poison (25)
     Bronze      Confusion       confusion (5), paralysis and electricity (10),
-                                reflection (20)
+                                reflection (20); a small extra AC bonus
     Silver      Inertia         cold (5), acid (10), poison (15),
-                                reflection (20)
+                                reflection (20); a small extra AC bonus
     Golden      Sound           fire (5), acid (10), sound (15),
-                                reflection (20)
+                                reflection (20); a small extra AC bonus
     Law         Shards          shards (5), paralysis (10), sound (15)
     Chaos       Chaos           confusion (5), chaos (15), disenchantment (20)
     Balance     Disenchantment  disenchantment (10), sound (20)
@@ -12865,7 +12869,7 @@ create a character!):
         Able to see invisible and resisting light, while being susceptible to
         evil-based attacks.
         Intrinsic light aura that adds to any light source's radius.
-        +1 bonus AC for every 2 levels above 20.
+        +1 bonus AC for every 2 levels above 20 (caps at 50).
         At level 50 they will be able to levitate, become resistant to poison,
         electricity, cold and be enveloped in an aura of frost and lightning;
         also, their melee attacks will slay evil opponents intrinsically.

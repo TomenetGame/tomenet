@@ -3241,6 +3241,9 @@ void calc_boni(int Ind) {
 	else if (p_ptr->prace == RACE_HALF_TROLL) {
 		p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
 		p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP;
+		/* especially tough skin */
+		p_ptr->to_a += 2;
+		p_ptr->dis_to_a += 2;
 	}
 
 	/* Dunadan */
@@ -3280,6 +3283,9 @@ void calc_boni(int Ind) {
 			p_ptr->pspeed -= 2; csheet_boni[14].spd -= 2;
 			p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; /* wood? */
 			p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE;
+			/* tree bark is  harder than skin */
+			p_ptr->to_a += 5;
+			p_ptr->dis_to_a += 5;
 		} else { p_ptr->pspeed -= 1; csheet_boni[14].spd -= 1; } /* it's cost of ent's power, isn't it? */
 
 		if (p_ptr->lev >= 4) { p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV; }
@@ -3306,8 +3312,12 @@ void calc_boni(int Ind) {
 		if (p_ptr->lev >= 25) { p_ptr->resist_elec = TRUE; csheet_boni[14].cb[0] |= CB1_RELEC; }
 #endif
 		/* not while in mimicried form */
-		if (!p_ptr->body_monster)
-		    if (p_ptr->lev >= 30) { p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV; }
+		if (!p_ptr->body_monster) {
+			if (p_ptr->lev >= 30) { p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV; }
+			/* scales are harder than skin */
+			p_ptr->to_a += 4;
+			p_ptr->dis_to_a += 4;
+		}
 	}
 
 	/* Dark-Elves */
@@ -3353,11 +3363,13 @@ void calc_boni(int Ind) {
 			p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV;
 			p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
 			if (p_ptr->lev >= 20) {
+				int l = ((p_ptr->lev > 50 ? 50 : p_ptr->lev) - 20) / 2;
+
 				p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; csheet_boni[14].lite = 1 + p_ptr->lev / 10; //REAL light!
 				csheet_boni[14].cb[12] |= CB13_XLITE;
 				lite_inc_white += 1 + (p_ptr->lev - 20) / 6;
-				p_ptr->to_a += (p_ptr->lev - 20)/2;
-				p_ptr->dis_to_a += (p_ptr->lev - 20)/2;
+				p_ptr->to_a += l;
+				p_ptr->dis_to_a += l;
 			}
 
 			if (p_ptr->lev >= 50) {
@@ -3437,18 +3449,24 @@ void calc_boni(int Ind) {
 		if (p_ptr->lev >= 25) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
 		break;
 	case TRAIT_BRONZE: /* Draconic Bronze */
+		p_ptr->to_a += 4;
+		p_ptr->dis_to_a += 4;
 		if (p_ptr->lev >= 5) { p_ptr->resist_conf = TRUE; csheet_boni[14].cb[2] |= CB3_RCONF; }
 		if (p_ptr->lev >= 10) { p_ptr->resist_elec = TRUE; csheet_boni[14].cb[0] |= CB1_RELEC; }
 		if (p_ptr->lev >= 10) { p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA; }
 		if (p_ptr->lev >= 20) { p_ptr->reflect = TRUE; csheet_boni[14].cb[6] |= CB7_RREFL; }
 		break;
 	case TRAIT_SILVER: /* Draconic Silver */
+		p_ptr->to_a += 4;
+		p_ptr->dis_to_a += 4;
 		if (p_ptr->lev >= 5) { p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD; }
 		if (p_ptr->lev >= 10) { p_ptr->resist_acid = TRUE; csheet_boni[14].cb[1] |= CB2_RACID; }
 		if (p_ptr->lev >= 15) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
 		if (p_ptr->lev >= 20) { p_ptr->reflect = TRUE; csheet_boni[14].cb[6] |= CB7_RREFL; }
 		break;
 	case TRAIT_GOLD: /* Draconic Gold */
+		p_ptr->to_a += 4;
+		p_ptr->dis_to_a += 4;
 		if (p_ptr->lev >= 5) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
 		if (p_ptr->lev >= 10) { p_ptr->resist_acid = TRUE; csheet_boni[14].cb[1] |= CB2_RACID; }
 		if (p_ptr->lev >= 15) { p_ptr->resist_sound = TRUE; csheet_boni[14].cb[2] |= CB3_RSOUN; }
