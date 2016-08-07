@@ -5933,6 +5933,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
 				note = " resists";
 				dam *= 3; dam /= (randint(6) + 6);
+			} else if (r_ptr->flags8 & RF8_NO_CUT) {
+				note = " resists somewhat";
+				dam /= 2;
 			}
 			break;
 
@@ -11978,6 +11981,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_SHARDS:
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				dam /= 3;
+			else if (r_ptr->flags8 & RF8_NO_CUT)
+				dam /= 2;
 			break;
 		case GF_INFERNO:
 		case GF_DETONATION:
