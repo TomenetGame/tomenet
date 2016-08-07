@@ -274,7 +274,7 @@
 #define ACCFILE_PASSWD_LEN	20
 
 /* 4.6.2: Allow to retry login, for re-entering invalid account/character names or after death. */
-#if defined(TEST_SERVER) || defined(TEST_CLIENT)
+#ifdef CLIENT_SIDE
  #define RETRY_LOGIN
 #endif
 

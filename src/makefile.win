@@ -244,10 +244,10 @@ LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixe
 
 
 # Compile a client with 'test client' version/tag
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0 -DCLIENT_SIDE
 
 # Normal release build
-tomenet.exe: CFLAGS += -O2
+tomenet.exe: CFLAGS += -O2 -DCLIENT_SIDE
 
 
 # Lua
