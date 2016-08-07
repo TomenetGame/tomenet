@@ -4312,7 +4312,8 @@ static int Receive_login(int ind) {
 			else if (res == E_INVAL)
 				Destroy_connection(ind, "Your charactername contains invalid characters"); //user+host names have already been checked previously (on account login)
 			else
-				Destroy_connection(ind, "Security violation");
+				//Destroy_connection(ind, "Security violation");
+				Destroy_connection(ind, "Login not possible because you are still logged in from another IP address.");
 			return(-1);
 		}
 		Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
