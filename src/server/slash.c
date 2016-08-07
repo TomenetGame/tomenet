@@ -2508,16 +2508,18 @@ void do_slash_cmd(int Ind, char *message) {
 			bool found = FALSE;
 
 			if (tk < 1) {
+				int at;
 				msg_print(Ind, "\377d ");
 				for (i = 0; i < MAX_GLOBAL_EVENTS; i++) if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden == FALSE || admin)) {
 					n++;
 					if (n == 1) msg_print(Ind, "\377WCurrently ongoing events:");
 					/* Event still in announcement phase? */
-					if (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps) > 0)
-						//msg_format(Ind, " %d) '%s' \377grecruits\377w for %d mins.", i+1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
-						msg_format(Ind, "  \377U%d\377W) '%s' recruits for %ld more minutes.", i+1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
+					at = global_event[i].announcement_time - (turn - global_event[i].start_turn) / cfg.fps;
+					if (at > 0)
+						//msg_format(Ind, " %d) '%s' \377grecruits\377w for %d mins.", i+1, global_event[i].title, at / 60);
+						msg_format(Ind, "  \377U%d\377W) '%s' recruits for %ld more minute%s.", i+1, global_event[i].title, at / 60, at / 60 == 1 ? "" : "s");
 					/* or has already begun? */
-					else	msg_format(Ind, "  \377U%d\377W) '%s' began %ld minutes ago.", i+1, global_event[i].title, -(global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
+					else	msg_format(Ind, "  \377U%d\377W) '%s' began %ld minute%s ago.", i+1, global_event[i].title, -at / 60, -at / 60 == 1 ? "" : "s");
 				}
 				if (!n) msg_print(Ind, "\377WNo events are currently running.");
 				else {
@@ -2532,13 +2534,16 @@ void do_slash_cmd(int Ind, char *message) {
 			} else {
 				/* determine if we can still sign up, to display the appropriate signup-command too */
 				char signup[MAX_CHARS];
+				int at = global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps;
+				int as = global_event[k-1].signup_time - (turn - global_event[k-1].start_turn) / cfg.fps;
+
 				signup[0] = '\0';
 				if (!(global_event[k-1].signup_time == -1) &&
 				    !(!global_event[k-1].signup_time &&
 				     (!global_event[k-1].announcement_time ||
-				     (global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0))) &&
+				     at <= 0)) &&
 				    !(global_event[k-1].signup_time &&
-				     (global_event[k-1].signup_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0)))
+				     as <= 0))
 					strcpy(signup, format(" Type \377U/evsign %d\377W to sign up!", k));
 
 				msg_format(Ind, "\377sInfo on event #%d '\377s%s\377s':", k, global_event[k-1].title);
@@ -2547,22 +2552,14 @@ void do_slash_cmd(int Ind, char *message) {
 				if (global_event[k-1].noghost) msg_print(Ind, "\377RIn this event death is permanent - if you die your character will be erased!");
 
 //				msg_print(Ind, "\377d ");
-				if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) >= 120) {
-					msg_format(Ind, "\377WThis event will start in %ld minutes.%s",
-					    (global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60,
-					    signup);
-				} else if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) > 0) {
-					msg_format(Ind, "\377WThis event will start in %ld seconds.%s",
-					    global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps),
-					    signup);
-				} else if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) > -120) {
-					msg_format(Ind, "\377WThis event has been running for %ld seconds.%s",
-					    -global_event[k-1].announcement_time + ((turn - global_event[k-1].start_turn) / cfg.fps),
-					    signup);
+				if (at >= 120) {
+					msg_format(Ind, "\377WThis event will start in %ld minute%s.%s", at / 60, at / 60 == 1 ? "" : "s", signup);
+				} else if (at > 0) {
+					msg_format(Ind, "\377WThis event will start in %ld second%s.%s", at, at == 1 ? "" : "s", signup);
+				} else if (at > -120) {
+					msg_format(Ind, "\377WThis event has been running for %ld second%s.%s", -at, -at  == 1 ? "" : "s", signup);
 				} else {
-					msg_format(Ind, "\377WThis event has been running for %ld minutes.%s",
-					    -(global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60,
-					    signup);
+					msg_format(Ind, "\377WThis event has been running for %ld minute%s.%s", -at / 60, -at / 60  == 1 ? "" : "s", signup);
 				}
 
 				strcpy(ppl, "\377WSubscribers: ");
