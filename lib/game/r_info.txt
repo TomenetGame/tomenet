@@ -12937,7 +12937,7 @@ B:HIT:HURT:50d1
 F:DEMON | EVIL | DROP_GOOD | REGENERATE | CAN_FLY |
 F:FORCE_SLEEP | FORCE_MAXHP | ONLY_ITEM | DROP_2D2 | ELDRITCH_HORROR |
 F:OPEN_DOOR | BASH_DOOR | RES_NETH | RES_NEXU | RES_TELE | MOVE_BODY |
-F:RES_ACID | RES_FIRE | RES_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_FEAR
+F:RES_ACID | IM_FIRE | RES_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_FEAR
 F:ZANGBAND | HAS_LITE | NO_NEST
 D:Khorne's mightiest servant, a winged hound-demon walking on
 D:two paws and wielding a mighty axe and a whip in the other
