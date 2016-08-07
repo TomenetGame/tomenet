@@ -12458,7 +12458,8 @@ N:736:Great unclean one
 G:U:g
 I:120:80d80:30:150:20
 W:53:3:53000:17500
-E:0:0:0:0:0:0
+#E:0:0:0:0:0:0 --EXPERIMENTAL:
+E:1:1:2:2:1:2
 O:50:0:50:0
 B:BITE:DISEASE:10d10
 B:BITE:ACID:10d10
@@ -13037,7 +13038,8 @@ N:763:Bile Demon
 G:U:R
 I:120:35d100:40:110:40
 W:61:2:30000:12000
-E:1:0:1:2:1:0
+#E:1:0:1:2:1:0 --EXPERIMENTAL:
+E:1:1:2:2:1:0
 O:30:70:0:0
 B:HIT:HURT:8d8
 B:HIT:HURT:8d8
@@ -13574,7 +13576,9 @@ N:787:Gelugon
 G:U:w
 I:130:45d100:20:120:40
 W:69:3:8000:14000
-E:2:1:2:0:0:1
+#E:2:1:2:0:0:1 --EXPERIMENTAL: (actually their head is probably unfitting for helmets and should be zero'ed)
+E:1:1:2:2:1:2
+# E: weapons : torso : arms : finger : head : leg
 O:20:60:20:0
 B:CLAW:COLD:6d10
 B:CLAW:COLD:6d10
@@ -14685,7 +14689,8 @@ N:836:Star-spawn of Cthulhu
 G:U:G
 I:140:75d100:90:135:40
 W:86:2:120000:30000
-E:0:0:2:0:1:0
+#E:0:0:2:0:1:0 --EXPERIMENTAL:
+E:0:1:2:6:1:2
 O:0:0:100:0
 B:CLAW:POISON:1d30
 B:CLAW:ACID:1d30
