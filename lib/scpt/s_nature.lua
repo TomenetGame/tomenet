@@ -161,7 +161,7 @@ RECOVERY_I = add_spell	{
 			set_confused(Ind, 0)
 			set_blind(Ind, 0)
 			set_stun(Ind, 0)
-			fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256 + 64 + 128, 2, "")
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256, 2, "")
 	end,
 	["info"] = 	function()
 			return ""
