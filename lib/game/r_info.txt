@@ -19425,7 +19425,8 @@ F:UNDEAD | WEIRD_MIND | EVIL | GOOD | CAN_FLY | PSEUDO_UNIQUE
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
-S:MOAN | SLOW | SCARE | HOLD | TPORT
+S:MOAN | SCARE | HOLD | TPORT
+#SLOW |
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
@@ -19450,7 +19451,8 @@ F:UNDEAD | WEIRD_MIND | EVIL | GOOD | CAN_FLY | PSEUDO_UNIQUE
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
-S:MOAN | SLOW | SCARE | HOLD | TPORT
+S:MOAN | SCARE | HOLD | TPORT
+#SLOW |
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
@@ -19475,7 +19477,8 @@ F:UNDEAD | WEIRD_MIND | EVIL | GOOD | CAN_FLY | PSEUDO_UNIQUE
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
-S:MOAN | SLOW | SCARE | HOLD | TPORT
+S:MOAN | SCARE | HOLD | TPORT
+#SLOW |
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
