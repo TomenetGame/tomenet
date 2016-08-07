@@ -346,9 +346,9 @@ F:SHOW_MODS
 N:39:& Cutlass~
 G:|:W
 I:23:12:0
-W:5:0:110:85
+W:5:0:110:140
 A:5/1
-P:0:1d7:0:0:0
+P:0:2d4:0:0:0
 F:SHOW_MODS | COULD2H
 
 N:40:& Executioner's Sword~
