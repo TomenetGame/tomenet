@@ -4976,6 +4976,15 @@
 #define RESF_NO_ENCHANT		0x00100000	/* generate an 'average' item (no enchantments/ego powers/artifacts) */
 #define RESF_SAURON		0x00200000	/* don't generate The One Ring, as player has already slain Sauron */
 
+#define RESF_COND_SWORD		0x00400000	/* force a sword (swordmen, rogues) */
+#define RESF_COND_DARKSWORD	0x00800000	/* force a dark sword (unbelievers) */
+#define RESF_COND_BLUNT		0x01000000	/* force a blunt weapon (priests) */
+#define RESF_COND_NOSWORD	0x02000000	/* if weapon, force not a sword (shamans) */
+#define RESF_COND_MSTAFF	0x04000000	/* force a mage staff (mages) */
+#define RESF_COND_SLING		0x08000000	/* force a sling (slingers) */
+#define RESF_COND_RANGED	0x10000000	/* force any ranged weapon (archers) */
+#define RESF_COND_RUNE		0x20000000	/* force a rune (runemasters) */
+
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
 #define RESF_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED | RESF_NOHIVALUE)	/* prevent generation of especially powerful high-level items */
@@ -4985,6 +4994,14 @@
 #define RESF_WILD		RESF_NONE
 #define RESF_STORE		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 #define RESF_STOREBM		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
+
+#define RESF_COND_MASK		(RESF_COND_SWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_COND_NOSWORD | RESF_COND_MSTAFF | RESF_COND_SLING | RESF_COND_RANGED | RESF_COND_RUNE)
+
+/* Force certain items to drop from certain monsters, to fit their lore? - C. Blue
+   Eg swords from swordmasters, blunt weapons from priests.
+   Note: We ignore books/crystals at this time, also distinguishing between those would use too many flags.
+   0: off, 1: way 1 (soft), 2: way 2 (hard) -- utilizes RESF_COND... flags. [2] */
+#define FORCED_DROPS 2
 
 
 /* ESP defines */

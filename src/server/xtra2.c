@@ -4876,6 +4876,10 @@ bool monster_death(int Ind, int m_idx) {
 	bool do_gold = (!(r_ptr->flags1 & RF1_ONLY_ITEM));
 	bool do_item = (!(r_ptr->flags1 & RF1_ONLY_GOLD));
 
+#if FORCED_DROPS != 0
+	bool drop_dual = FALSE;
+#endif
+
 	int force_coin = get_coin_type(r_ptr);
 	s16b local_quark = 0;
 	object_type forge;
@@ -5165,6 +5169,63 @@ bool monster_death(int Ind, int m_idx) {
 		}
 	}
 
+#if FORCED_DROPS != 0
+	/* Hack drops: Monster should drop specific item class? */
+	/* re_info takes priority */
+	switch (m_ptr->ego) {
+	case 35: case 39: //unbeliever
+		if (!rand_int(2)) resf_drops |= RESF_COND_DARKSWORD;
+		break;
+	case 11: case 28: case 33: //rogues
+		if (rand_int(2)) {
+			drop_dual = TRUE;
+			number++; // :o
+		}
+		resf_drops |= RESF_COND_SWORD; break;
+	case 8: case 26: //priests
+		resf_drops |= RESF_COND_BLUNT; break;
+	case 7: //shamans
+		resf_drops |= RESF_COND_NOSWORD; break;
+	case 9: case 30: //mages (mage/sorceror)
+		if (rand_int(4)) resf_drops |= RESF_COND_MSTAFF;
+		break;
+	case 10: case 13: case 23: //archers
+		resf_drops |= RESF_COND_RANGED; break;
+//	case :
+//		resf_drops |= RESF_COND_RUNE; break;
+	default: /* then r_info */
+		switch (m_ptr->r_idx) {
+		case 1047: case 1048: case 1049: case 1050: //unbeliever
+			if (!rand_int(2)) resf_drops |= RESF_COND_DARKSWORD;
+			break;
+		case 44: case 116: case 150: case 199: case 376: case 516: case 696: //rogues
+			if (rand_int(2)) {
+				drop_dual = TRUE;
+				number++; // :o  (hope this isn't overkill with novice rogue packs)
+			}
+		case 216: case 1058: case 1059: case 1070: //swordmen
+		case 485: //ninja
+			resf_drops |= RESF_COND_SWORD; break;
+		case 45: case 109: case 225: //priests
+		case 1017: case 689: case 1018: case 226: //evil priests
+			resf_drops |= RESF_COND_BLUNT; break;
+		case 888: case 906: case 217: //shamans
+			resf_drops |= RESF_COND_NOSWORD; break;
+		case 46: case 93: //novice mages
+			if (!rand_int(5)) resf_drops |= RESF_COND_MSTAFF;
+			break;
+		case 240: case 449: case 638: case 738: case 281: case 178: case 657: //mages (mage/illusionist/sorcerer)
+			if (rand_int(4)) resf_drops |= RESF_COND_MSTAFF;
+			break;
+		case 375: //warlocks (dark-elven)
+			if (!rand_int(5)) resf_drops |= RESF_COND_MSTAFF;
+			break;
+		case 539: //slinger
+			resf_drops |= RESF_COND_SLING; break;
+		}
+	}
+#endif
+
 	/* Drop some objects */
 	for (j = 0; j < number; j++) {
 		/* Try 20 times per item, increasing range */
@@ -5238,6 +5299,11 @@ bool monster_death(int Ind, int m_idx) {
 
 				/* generate an object and place it */
 				place_object(wpos, y, x, good, great, FALSE, resf_drops, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
+#if FORCED_DROPS != 0
+				/* clear all forced drops that we just successfully created */
+				if (drop_dual) drop_dual = FALSE;
+				else resf_drops &= ~(place_object_restrictor & RESF_COND_MASK);
+#endif
 
 				//if (player_can_see_bold(Ind, ny, nx)) dump_item++;
 			}

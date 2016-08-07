@@ -38,6 +38,11 @@
 #define TRAPKIT_EGO_ALL
 
 
+#if FORCED_DROPS == 1
+static int which_theme(int tval);
+#endif
+
+
 /*
  * Excise a dungeon object from any stacks
  * Borrowed from ToME.
@@ -825,6 +830,9 @@ s16b o_pop(void) {
 errr get_obj_num_prep(u32b resf) {
 	long	i, n, p, adj;
 	long	k_idx;
+#if FORCED_DROPS != 0 /* either, way 1 or 2 */
+	int tval, sval;
+#endif
 
 	/* Get the entry */
 	alloc_entry *restrict table = alloc_kind_table;
@@ -852,6 +860,56 @@ errr get_obj_num_prep(u32b resf) {
 			p = adj * p / 100;
 		}
 
+#if FORCED_DROPS == 1 /* way 1/2 */
+		/* Check for special item types */
+		tval = k_info[k_idx].tval;
+		sval = k_info[k_idx].sval;
+		//force generation of a sword, if generating a combat item at all
+		if ((resf & RESF_COND_SWORD) && which_theme(tval) == 2) {
+			if (tval != TV_SWORD) p = 0;
+			else if (sval == SV_DARK_SWORD) p >>= 2; //don't overdo it..
+		}
+		//force generation of a dark sword, if generating a combat item at all
+		if ((resf & RESF_COND_DARKSWORD) && which_theme(tval) == 2 && (tval != TV_SWORD || sval != SV_DARK_SWORD)) p = 0;
+		//force generation of a blunt, if generating a combat at all
+		if ((resf & RESF_COND_BLUNT) && which_theme(tval) == 2 && tval != TV_BLUNT) p = 0;
+		//force generation of a non-sword weapon, if generating a _weapon_ at all
+		if ((resf & RESF_COND_NOSWORD) && is_weapon(tval) && tval == TV_SWORD) p = 0;
+		//force generation of a mage staff:
+		if (resf & RESF_COND_MSTAFF && tval != TV_MSTAFF) p = 0;
+		//force generation of a sling or sling-ammo, if generating a combat item at all
+		if ((resf & RESF_COND_SLING) && which_theme(tval) == 2 && (tval != TV_BOW || sval != SV_SLING) && tval != TV_SHOT) p = 0;
+		//force generation of a ranged weapon or ammo, if generating a combat item at all
+		if ((resf & RESF_COND_RANGED) && which_theme(tval) == 2 && !is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
+		//force generation of a rune, if generating a magic item at all
+		if ((resf & RESF_COND_RUNE) && which_theme(tval) == 3 && tval != TV_RUNE) p = 0;
+#endif
+#if FORCED_DROPS == 2 /* way 2/2 */
+		/* Check for special item types */
+		tval = k_info[k_idx].tval;
+		sval = k_info[k_idx].sval;
+		//force generation of a sword
+		if (resf & RESF_COND_SWORD) {
+			if (tval != TV_SWORD) p = 0;
+			else if (sval == SV_DARK_SWORD) p >>= 2; //don't overdo it..
+		}
+		//force generation of a dark sword
+		if ((resf & RESF_COND_DARKSWORD) && (tval != TV_SWORD || sval != SV_DARK_SWORD)) p = 0;
+		//force generation of a blunt
+		if ((resf & RESF_COND_BLUNT) && tval != TV_BLUNT) p = 0;
+		//force generation of a non-sword weapon, _if_ generating a _weapon_ at all
+		if ((resf & RESF_COND_NOSWORD) && is_weapon(tval) && tval == TV_SWORD) p = 0;
+		//force generation of a mage staff:
+		if (resf & RESF_COND_MSTAFF && tval != TV_MSTAFF) p = 0;
+		//force generation of a sling or sling-ammo
+		if ((resf & RESF_COND_SLING) && (tval != TV_BOW || sval != SV_SLING) && tval != TV_SHOT) p = 0;
+		//force generation of a ranged weapon or ammo
+		if ((resf & RESF_COND_RANGED) && !is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
+		//force generation of a rune
+		if ((resf & RESF_COND_RUNE) && tval != TV_RUNE) p = 0;
+#endif
+
+		/* Dungeon town stores: Even rarer items have same probability of appearing */
 		if (p && (resf & RESF_STOREFLAT)) p = 100;
 
 		/* Save the probability */
@@ -6098,8 +6156,7 @@ static obj_theme match_theme;
  * XXX XXX XXX It relies on the fact that obj_theme is a four byte structure
  * for its efficient operation. A horrendous hack, I'd say.
  */
-void init_match_theme(obj_theme theme)
-{
+void init_match_theme(obj_theme theme) {
 	/* Save the theme */
 	match_theme = theme;
 }
@@ -6108,8 +6165,7 @@ void init_match_theme(obj_theme theme)
 /*
  * Ditto XXX XXX XXX
  */
-static bool theme_changed(obj_theme theme)
-{
+static bool theme_changed(obj_theme theme) {
 	/* Any of the themes has been changed */
 	if (theme.treasure != match_theme.treasure) return (TRUE);
 	if (theme.combat != match_theme.combat) return (TRUE);
@@ -6125,10 +6181,8 @@ static bool theme_changed(obj_theme theme)
 /*
  * Maga-Hack -- match certain types of object only.
  */
-static int kind_is_theme(int k_idx)
-{
+static int kind_is_theme(int k_idx) {
 	object_kind *k_ptr = &k_info[k_idx];
-
 	int p = 0;
 
 	/*
@@ -6143,81 +6197,161 @@ static int kind_is_theme(int k_idx)
 
 	/* Pick probability to use */
 	switch (k_ptr->tval) {
-		case TV_SKELETON:
-		case TV_BOTTLE:
-		case TV_JUNK:
-		case TV_FIRESTONE:
-		case TV_CORPSE:
-		case TV_EGG:
-		/* hm, this was missing here, for a long time - C. Blue */
-		case TV_GOLEM:
-			/*
-			 * Degree of junk is defined in terms of the other
-			 * 4 quantities XXX XXX XXX
-			 * The type of prob should be *signed* as well as
-			 * larger than theme components, or we would see
-			 * unexpected, well, junks.
-			 */
-			p = 100 - (match_theme.treasure + match_theme.combat +
-			              match_theme.magic + match_theme.tools);
-			break;
-		case TV_CHEST:          p = match_theme.treasure; break;
-		case TV_CROWN:          p = match_theme.treasure; break;
-		case TV_DRAG_ARMOR:     p = match_theme.treasure; break;
-		case TV_AMULET:         p = match_theme.treasure; break;
-		case TV_RING:           p = match_theme.treasure; break;
+	case TV_SKELETON:
+	case TV_BOTTLE:
+	case TV_JUNK:
+	case TV_FIRESTONE:
+	case TV_CORPSE:
+	case TV_EGG:
+	/* hm, this was missing here, for a long time - C. Blue */
+	case TV_GOLEM:
+		/*
+		 * Degree of junk is defined in terms of the other
+		 * 4 quantities XXX XXX XXX
+		 * The type of prob should be *signed* as well as
+		 * larger than theme components, or we would see
+		 * unexpected, well, junks.
+		 */
+		p = 100 - (match_theme.treasure + match_theme.combat +
+		              match_theme.magic + match_theme.tools);
+		break;//junk
 
-		case TV_SHOT:           p = match_theme.combat; break;
-		case TV_ARROW:          p = match_theme.combat; break;
-		case TV_BOLT:           p = match_theme.combat; break;
-		case TV_BOOMERANG:      p = match_theme.combat; break;
-		case TV_BOW:            p = match_theme.combat; break;
-		case TV_BLUNT:          p = match_theme.combat; break;
-		case TV_POLEARM:        p = match_theme.combat; break;
-		case TV_SWORD:          p = match_theme.combat; break;
-		case TV_AXE:            p = match_theme.combat; break;
-		case TV_GLOVES:         p = match_theme.combat; break;
-		case TV_HELM:           p = match_theme.combat; break;
-		case TV_SHIELD:         p = match_theme.combat; break;
-		case TV_SOFT_ARMOR:     p = match_theme.combat; break;
-		case TV_HARD_ARMOR:     p = match_theme.combat; break;
+	case TV_CHEST:		p = match_theme.treasure; break;
+	case TV_CROWN:		p = match_theme.treasure; break;
+	case TV_DRAG_ARMOR:	p = match_theme.treasure; break;
+	case TV_AMULET:		p = match_theme.treasure; break;
+	case TV_RING:		p = match_theme.treasure; break;
 
-		case TV_MSTAFF:         p = match_theme.magic; break;
-		case TV_STAFF:          p = match_theme.magic; break;
-		case TV_WAND:           p = match_theme.magic; break;
-		case TV_ROD:            p = match_theme.magic; break;
-		case TV_ROD_MAIN:       p = match_theme.magic; break;
-		case TV_SCROLL:         p = match_theme.magic; break;
-		case TV_PARCHMENT:      p = match_theme.magic; break;
-		case TV_POTION:         p = match_theme.magic; break;
-		case TV_POTION2:        p = match_theme.magic; break;
+	case TV_SHOT:		p = match_theme.combat; break;
+	case TV_ARROW:		p = match_theme.combat; break;
+	case TV_BOLT:		p = match_theme.combat; break;
+	case TV_BOOMERANG:	p = match_theme.combat; break;
+	case TV_BOW:		p = match_theme.combat; break;
+	case TV_BLUNT:		p = match_theme.combat; break;
+	case TV_POLEARM:	p = match_theme.combat; break;
+	case TV_SWORD:		p = match_theme.combat; break;
+	case TV_AXE:		p = match_theme.combat; break;
+	case TV_GLOVES:		p = match_theme.combat; break;
+	case TV_HELM:		p = match_theme.combat; break;
+	case TV_SHIELD:		p = match_theme.combat; break;
+	case TV_SOFT_ARMOR:	p = match_theme.combat; break;
+	case TV_HARD_ARMOR:	p = match_theme.combat; break;
 
-		case TV_RUNE:           p = match_theme.magic; break;
+	case TV_MSTAFF:		p = match_theme.magic; break;
+	case TV_STAFF:		p = match_theme.magic; break;
+	case TV_WAND:		p = match_theme.magic; break;
+	case TV_ROD:		p = match_theme.magic; break;
+	case TV_ROD_MAIN:	p = match_theme.magic; break;
+	case TV_SCROLL:		p = match_theme.magic; break;
+	case TV_PARCHMENT:	p = match_theme.magic; break;
+	case TV_POTION:		p = match_theme.magic; break;
+	case TV_POTION2:	p = match_theme.magic; break;
+
+	case TV_RUNE:		p = match_theme.magic; break;
 #if 0
-		case TV_BATERIE:        p = match_theme.magic; break;
-		case TV_RANDART:        p = match_theme.magic; break;
-		case TV_BOOK:           p = match_theme.magic; break;
-		case TV_SYMBIOTIC_BOOK: p = match_theme.magic; break;
-		case TV_MUSIC_BOOK:     p = match_theme.magic; break;
-		case TV_DRUID_BOOK:     p = match_theme.magic; break;
-		case TV_DAEMON_BOOK:    p = match_theme.magic; break;
-#endif	// 0
-		case TV_BOOK:           p = match_theme.magic; break;
-		case TV_LITE:           p = match_theme.tools; break;
-		case TV_CLOAK:          p = match_theme.tools; break;
-		case TV_BOOTS:          p = match_theme.tools; break;
-		case TV_SPIKE:          p = match_theme.tools; break;
-		case TV_DIGGING:        p = match_theme.tools; break;
-		case TV_FLASK:          p = match_theme.tools; break;
-		case TV_FOOD:           p = match_theme.tools; break;
-		case TV_TOOL:           p = match_theme.tools; break;
-		case TV_INSTRUMENT:     p = match_theme.tools; break;
-		case TV_TRAPKIT:        p = match_theme.tools; break;
+	case TV_BATERIE:	p = match_theme.magic; break;
+	case TV_RANDART:	p = match_theme.magic; break;
+	case TV_BOOK:		p = match_theme.magic; break;
+	case TV_SYMBIOTIC_BOOK: p = match_theme.magic; break;
+	case TV_MUSIC_BOOK:	p = match_theme.magic; break;
+	case TV_DRUID_BOOK:	p = match_theme.magic; break;
+	case TV_DAEMON_BOOK:	p = match_theme.magic; break;
+#endif
+	case TV_BOOK:		p = match_theme.magic; break;
+
+	case TV_LITE:		p = match_theme.tools; break;
+	case TV_CLOAK:		p = match_theme.tools; break;
+	case TV_BOOTS:		p = match_theme.tools; break;
+	case TV_SPIKE:		p = match_theme.tools; break;
+	case TV_DIGGING:	p = match_theme.tools; break;
+	case TV_FLASK:		p = match_theme.tools; break;
+	case TV_FOOD:		p = match_theme.tools; break;
+	case TV_TOOL:		p = match_theme.tools; break;
+	case TV_INSTRUMENT:	p = match_theme.tools; break;
+	case TV_TRAPKIT:	p = match_theme.tools; break;
 	}
 
 	/* Return the percentage */
 	return p;
 }
+
+#if FORCED_DROPS == 1
+static int which_theme(int tval) {
+	/* Pick probability to use */
+	switch (tval) {
+	case TV_SKELETON:
+	case TV_BOTTLE:
+	case TV_JUNK:
+	case TV_FIRESTONE:
+	case TV_CORPSE:
+	case TV_EGG:
+	case TV_GOLEM:
+		return 0; //junk
+
+	case TV_CHEST:
+	case TV_CROWN:
+	case TV_DRAG_ARMOR:
+	case TV_AMULET:
+	case TV_RING:
+		return 1; //treasure
+
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOOMERANG:
+	case TV_BOW:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_AXE:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_SHIELD:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+		return 2; //combat
+
+	case TV_MSTAFF:
+	case TV_STAFF:
+	case TV_WAND:
+	case TV_ROD:
+	case TV_ROD_MAIN:
+	case TV_SCROLL:
+	case TV_PARCHMENT:
+	case TV_POTION:
+	case TV_POTION2:
+
+	case TV_RUNE:
+ #if 0
+	case TV_BATERIE:
+	case TV_RANDART:
+	case TV_BOOK:
+	case TV_SYMBIOTIC_BOOK:
+	case TV_MUSIC_BOOK:
+	case TV_DRUID_BOOK:
+	case TV_DAEMON_BOOK:
+ #endif
+	case TV_BOOK:
+		return 3; //magic
+
+	case TV_LITE:
+	case TV_CLOAK:
+	case TV_BOOTS:
+	case TV_SPIKE:
+	case TV_DIGGING:
+	case TV_FLASK:
+	case TV_FOOD:
+	case TV_TOOL:
+	case TV_INSTRUMENT:
+	case TV_TRAPKIT:
+		return 4; //tools
+
+	default: //paranoia
+		s_printf("ERROR: uncategorized item %d\n", tval);
+		return -1;
+	}
+}
+#endif
 
 /*
  * Determine if an object must not be generated.
@@ -6461,6 +6595,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* Hack -- clear out the forgery */
 	invwipe(&forge);
 
+	/* Generate an item for debugging purpose */
 	if (resf & RESF_DEBUG_ITEM) {
 		k_idx = debug_k_idx;
 
@@ -6601,6 +6736,15 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 		}
 	}
 
+	/* Forced type? Hack: Abuse place_object_restrictor to report success */
+	if ((resf & RESF_COND_SWORD) && forge.tval == TV_SWORD) place_object_restrictor |= RESF_COND_SWORD;
+	if ((resf & RESF_COND_DARKSWORD) && forge.tval == TV_SWORD && forge.sval == SV_DARK_SWORD) place_object_restrictor |= RESF_COND_DARKSWORD;
+	if ((resf & RESF_COND_BLUNT) && forge.tval == TV_BLUNT) place_object_restrictor |= RESF_COND_BLUNT;
+	if ((resf & RESF_COND_NOSWORD) && forge.tval != TV_SWORD) place_object_restrictor |= RESF_COND_NOSWORD;
+	if ((resf & RESF_COND_MSTAFF) && forge.tval == TV_MSTAFF) place_object_restrictor |= RESF_COND_MSTAFF;
+	if ((resf & RESF_COND_SLING) && forge.tval == TV_BOW && forge.sval == SV_SLING) place_object_restrictor |= RESF_COND_SLING;
+	if ((resf & RESF_COND_RANGED) && is_ranged_weapon(forge.tval)) place_object_restrictor |= RESF_COND_RANGED;
+	if ((resf & RESF_COND_RUNE) && forge.tval == TV_RUNE) place_object_restrictor |= RESF_COND_RUNE;
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */
