@@ -8229,7 +8229,29 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Player cannot hurt himself */
 	if (0 - who == Ind) {
-		if (flg & (PROJECT_SELF | PROJECT_PLAY)) self = TRUE;
+		if (flg & (PROJECT_SELF | PROJECT_PLAY)) {
+			/* todo: certain spell effects should not be cast on oneself,
+			   they're only meant for projecting onto team mates. The reason
+			   is that the player usually calls even better direct functions
+			   in the lua files that already apply the spell effect to him.
+			   Example: Detect traps spell in Divination. */
+			if (typ == GF_WRAITH_PLAYER || typ == GF_CURE_PLAYER ||
+			    typ == GF_RESFIRE_PLAYER || typ == GF_RESCOLD_PLAYER ||
+			    typ == GF_RESELEC_PLAYER || typ == GF_RESACID_PLAYER ||
+			    typ == GF_SEEMAP_PLAYER || typ == GF_DETECTTRAP_PLAYER ||
+			    typ == GF_SEEINVIS_PLAYER || typ == GF_DETECTDOOR_PLAYER ||
+			    typ == GF_DETECTCREATURE_PLAYER  || typ == GF_SPEED_PLAYER ||
+			    typ == GF_SATHUNGER_PLAYER || typ == GF_REMFEAR_PLAYER ||
+			    typ == GF_HERO_PLAYER ||
+			    typ == GF_ZEAL_PLAYER || typ == GF_RESTORE_PLAYER ||
+			    typ == GF_SANITY_PLAYER || typ == GF_SOULCURE_PLAYER ||
+			    typ == GF_BLESS_PLAYER || typ == GF_RESPOIS_PLAYER ||
+			    typ == GF_MINDBOOST_PLAYER || typ == GF_REMIMAGE_PLAYER ||
+			    typ == GF_REMCONF_PLAYER)
+				return FALSE;
+			/* ok */
+			self = TRUE;
+		}
 		else return (FALSE);
 	}
 
