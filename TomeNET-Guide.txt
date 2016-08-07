@@ -18882,4 +18882,9 @@ SOLUTION:   Why are you STILL using Windows.. Ok well, you can try to just sit
 PROBLEM 52: Windows OS: Using the 'Alt' modifier key in macros doesn't work.
 SOLUTION:   None. Install Linux in addition to Windows (dual-boot).
 
+PROBLEM 53: I cannot select a server from the meta server list, it seems my key
+            presses get ignored.
+SOLUTION:   If you are using a non-english keyboard layout with asian or
+            cyrillic letters, switch it to english layout.
+
 ==============================================================================
