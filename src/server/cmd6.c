@@ -3016,7 +3016,9 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	break_cloaking(Ind, 4);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
+#ifdef CONTINUE_FTK
 	stop_shooting_till_kill(Ind);
+#endif
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -3418,7 +3420,9 @@ void do_cmd_use_staff(int Ind, int item) {
 	break_cloaking(Ind, 4);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
+#ifdef CONTINUE_FTK
 	stop_shooting_till_kill(Ind);
+#endif
 
 	/* Hack -- some uses are "free" */
 	if (!use_charge) return;
@@ -3554,6 +3558,12 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
+
+	break_cloaking(Ind, 3);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -3812,11 +3822,6 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	break_cloaking(Ind, 3);
-	break_shadow_running(Ind);
-	stop_precision(Ind);
-	stop_shooting_till_kill(Ind);
 
 	/* Extract the item level */
 	lev = k_info[o_ptr->k_idx].level;
@@ -4095,6 +4100,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	break_cloaking(Ind, 3);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
+#ifdef CONTINUE_FTK
+	if (rod_requires_direction(Ind, o_ptr))
+#endif
 	stop_shooting_till_kill(Ind);
 
 	/* Combine / Reorder the pack (later) */
@@ -4496,6 +4504,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	break_cloaking(Ind, 3);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
+#ifdef CONTINUE_FTK
+	if (rod_requires_direction(Ind, o_ptr))
+#endif
 	stop_shooting_till_kill(Ind);
 
 	/* Clear the current rod */
@@ -4885,13 +4896,17 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	break_cloaking(Ind, 0);
 	stop_precision(Ind);
+#ifndef CONTINUE_FTK
 	stop_shooting_till_kill(Ind);
+#endif
 
-
-        if (activation_requires_direction(o_ptr)
+	if (activation_requires_direction(o_ptr)
 //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr)
-	    )
-	{
+	    ) {
+#ifdef CONTINUE_FTK
+		stop_shooting_till_kill(Ind);
+#endif
+
 		if (dir != 0 && dir != 11) {
 		//redundant: lower versions cant have dir != 0. ---  && is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
 			p_ptr->current_activation = item;

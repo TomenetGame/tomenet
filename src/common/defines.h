@@ -853,6 +853,10 @@
 /* Monster interception ("interference") will not cancel FTK (fire-till-kill)?
    -- TODO: implement for spells/runecraft/mimicpowers (those have 0 interference chance atm though so it doesn't matter) */
 #define INTERFERE_KEEPS_FTK
+/* Performing certain actions - using consumables, activating magic devices that don't require a direction -
+  will not break FTK. This is useful to zap a rod of healing or speed in between without losing the target.
+  (So far the only item type where this was possible were potions.) */
+#define CONTINUE_FTK
 
 
 /* Total size of internal IDDC depth table */
