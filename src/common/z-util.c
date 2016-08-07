@@ -195,8 +195,7 @@ void (*quit_aux)(cptr) = NULL;
  * Otherwise, plog() 'str' and exit with an error code of -1.
  * But always use 'quit_aux', if set, before anything else.
  */
-//#ifdef TEST_CLIENT /* all RETRY_LOGIN stuff here is for client-side only */
-#if defined(TEST_CLIENT) || defined(TEST_SERVER) /* need to define for TEST_SERVER too, or it won't compile */
+#ifdef TEST_CLIENT /* all RETRY_LOGIN stuff here is for client-side only */
  #define RETRY_LOGIN
 #endif
 #ifdef RETRY_LOGIN
