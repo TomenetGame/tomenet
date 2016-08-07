@@ -1312,6 +1312,9 @@ void show_inven(void) {
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
 
+	/* Notify if inventory is actually empty */
+	if (!k) prt("(Your inventory is empty)", 1, 13);
+
 	/* Save the new column */
 	command_gap = col;
 }
