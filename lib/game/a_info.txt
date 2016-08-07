@@ -552,9 +552,7 @@ N:36:of Thranduil
 I:32:2:2
 W:20:3:15:50000
 P:2:0d0:0:0:10
-F:INT | WIS | HIDE_TYPE |
-F:RES_BLIND | ESP_ORC | ESP_EVIL | ESP_TROLL
-F:REGEN_MANA
+F:INT | WIS | HIDE_TYPE | RES_BLIND | ESP_EVIL REGEN_MANA
 D:The hunting cap of King Thranduil, to whose ears come all the secrets of
 D:his forest domain.
 
