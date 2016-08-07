@@ -8062,7 +8062,8 @@ encumbers "your movement" accordingly.)
 
 Armour weight (concerning flexibility boni and abilities)
 ---------------------------------------------------------
-Some special abilities depend on armour weight too. Those are..
+Some special abilities depend on armour weight (including shield) too.
+Those are..
 -dodge chance from 'Dodging' skill.
 -critical hit bonus from 'Critical-strike' skill.
 -extra parry bonus from dual-wielding two weapons. (Also see (6.11).)
