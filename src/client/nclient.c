@@ -661,6 +661,15 @@ void Receive_login(void) {
 		ch = inkey();
 		//added CTRL+Q for RETRY_LOGIN, so you can quit the whole game from within in-game via simply double-tapping CTRL+Q
 		if (ch == 'Q' || ch == KTRL('Q')) quit(NULL);
+		/* Take a screenshot */
+		if (ch == KTRL('T')) {
+			xhtml_screenshot("screenshot????");
+			/* Redraw title line */
+			Term_fresh();
+			usleep(1000000);
+			prt("", 0, 0); //clear line
+			c_put_str(CHARSCREEN_COLOUR, "Character Overview", 0, 30);
+		}
 	}
 	if (ch == 'N' || ch == 'E') {
 		if (!cname[0]) strcpy(c_name, nick);
