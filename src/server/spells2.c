@@ -489,7 +489,7 @@ bool do_xtra_stats(int Ind, int v, int p) {
 			p_ptr->statval = p;
 			p = (p / 10) + 2;
 			switch (p_ptr->statval / 5) {
-				default: p_ptr->xint = p;
+				default: //p_ptr->xint = p;
 				case 3:
 				case 2: p_ptr->xcon = p;
 				case 1: p_ptr->xdex = p;
