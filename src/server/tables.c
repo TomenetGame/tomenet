@@ -4032,8 +4032,8 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Illusionist", "Illusionist", "Illusionist", "Illusionist", },
 		{"Spellbinder", "Spellbinder", "Spellbinder", "Spellbinder", },
 		{"Spellweaver", "Spellweaver", "Spellweaver", "Spellweaver", },
-		{"Evoker", "Evokeress", "Evoker", "Evokeress", },
-		{"Conjurer", "Conjuress", "Conjurer", "Conjuress", },
+		{"Evoker", "Evoker", "Evoker", "Evoker", },
+		{"Conjurer", "Conjurer", "Conjurer", "Conjurer", },
 		{"Sorcerer", "Sorceress", "Sorcerer", "Sorceress", },
 		{"Warlock", "Warlock", "Warlock", "Warlock", },
 		//{"Mage", "Mage", "Mage", "Mage", },
@@ -4053,7 +4053,6 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Arch-Bishop", "Arch-Bishop", "Arch-Bishop", "Arch-Bishop", },
 		{"Cardinal", "Cardinal", "Cardinal", "Cardinal", },
 		{"High Priest", "High Priestess", "High Priest", "H.Priestess", },
-		//{"Spiritual Guardian", "Spiritual Guardian", },
 		{"Patriarch", "Matriarch", "Patriarch", "Matriarch", },
 	},
 
@@ -4064,10 +4063,10 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Robber", "Robber", "Robber", "Robber", },
 		{"Burglar", "Burglar", "Burglar", "Burglar", },
 		{"Filcher", "Filcher", "Filcher", "Filcher", },
-		{"Sharper", "Sharpress", "Sharper", "Sharpress", },
+		{"Sharper", "Sharper", "Sharper", "Sharper", },
 		{"Thief", "Thief", "Thief", "Thief", },
 		{"Master Thief", "Master Thief", "Master Thief", "Master Thief", },
-		{"Infiltrator", "Infiltratess", "Infiltrator", "Infiltratess", },
+		{"Infiltrator", "Infiltrator", "Infiltrator", "Infiltrator", },
 		{"Grandmaster Thief", "Grandmaster Thief", "GM-Thief", "GM-Thief", },
 		{"Assassin", "Assassin", "Assassin", "Assassin", },
 	},
@@ -4076,36 +4075,36 @@ cptr player_title[MAX_CLASS][11][4] = {
 	{
 		{"Pretender", "Pretender", "Pretender", "Pretender", },
 		{"Modifier", "Modifier", "Modifier", "Modifier", },
-		{"Copier", "Copyress", "Copier", "Copyress", },
+		{"Elastic", "Elastic", "Elastic", "Elastic", },
+		{"Copier", "Copyier", "Copier", "Copyier", },
 		{"Multiple (1st)", "Multiple (1st)", "Multiple I", "Multiple I", },
 		{"Multiple (2nd)", "Multiple (2nd)", "Multiple II", "Multiple II", },
-		{"Shapeshifter", "Shapeshiftress", "Shapeshifter", "Shapeshftr.", },
 		{"Metamorph", "Metamorph", "Metamorph", "Metamorph", },
-		{"Changer", "Changeress", "Changer", "Changeress", },
-		{"Master Changer", "Master Changeress", "M-Changer", "M-Changeress", },
-		{"Grandmaster Changer", "Grandmaster Changeress", "GM-Changer", "GM-Changress", },
-		{"Ultimate Changer", "Ultimate Changeress", "U-Changer", "U-Changeress", },
+		{"Many-Faced", "Many-Faced", "Many-Faced", "Many-Faced", },
+		{"Changer", "Changer", "Changer", "Changer", },
+		{"Master Changer", "Master Changer", "M-Changer", "M-Changer", },
+		{"Grandmaster Changer", "Grandmaster Changer", "GM-Changer", "GM-Changer", },
 	},
 
 	/* Archer */
 	{
 		{"Rock Thrower", "Rock Thrower", "Rock Thrower", "Rock Thrower", },
 		{"Slinger", "Slinger", "Slinger", "Slinger", },
-		{"Great Slinger", "Great Slinger", "Great Slinger", "Gr.Slinger", },
-		{"Bowsen", "Bowsen", "Bowsen", "Bowsen", },
-		{"Bowman", "Bow Maiden", "Bowman", "Bow Maiden", },
-		{"Great Bowman", "Great Bowmaiden", "Great Bowman", "Gr.Bowmaiden", },
-		{"High Archer", "High Archer", "High Archer", "High Archer", },
-		{"Grand Archer", "Grand Archer", "Grand Archer", "Grand Archer", },
+		{"Great Slinger", "Great Slinger", "Gr.Slinger", "Gr.Slinger", },
+		{"Bowman", "Bowmaiden", "Bowman", "Bowmaiden", },
+		{"Marksman", "Marksman", "Marksman", "Marksman", },
+		{"Archer", "Archer", "Archer", "Archer", },
+		{"Sharpshooter", "Sharpshooter", "Sharpshooter", "Sharpshooter", },
 		{"Veteran Archer", "Veteran Archer", "Vet. Archer", "Vet. Archer", },
 		{"Master Archer", "Master Archer", "M-Archer", "M-Archer", },
-		{"Grandmaster Archer", "Grandmistress Archer", "GM-Archer", "GM-Archer", },
+		{"Grandmaster Archer", "Grandmaster Archer", "GM-Archer", "GM-Archer", },
+		{"Deadeye", "Deadeye", "Deadeye", "Deadeye", },
 	},
 
 	/* Paladin */
 	{
 		{"Page", "Page", "Page", "Page", },
-		{"Squire", "Squiress", "Squire", "Squiress", },
+		{"Squire", "Squire", "Squire", "Squire", },
 		{"Faithful", "Faithful", "Faithful", "Faithful", },
 		{"Zealot", "Zealot", "Zealot", "Zealot", },
 		{"Chaplain", "Chaplain", "Chaplain", "Chaplain", },
@@ -4148,9 +4147,9 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Discoverer", "Discoverer", "Discoverer", "Discoverer", },
 		{"Spelunker", "Spelunker", "Spelunker", "Spelunker"},
 		{"Voyager", "Voyager", "Voyager", "Voyager", },
-		{"Navigator", "Navigatress", "Navigator", "Navigatress", },
+		{"Navigator", "Navigator", "Navigator", "Navigator", },
 		{"Explorer", "Explorer", "Explorer", "Explorer", },
-		//Adventurer", "Adventuress", "Adventurer", "Adventuress", },
+		//Adventurer", "Adventurer", "Adventurer", "Adventurer", },
 	},
 
 	/* Druid */
@@ -4174,28 +4173,28 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Novice Walker", "Novice Walker", "Nov. Walker", "Nov. Walker", },
 		{"Walker", "Walker", "Walker", "Walker", },
 		{"Spiritwalker", "Spiritwalker", "Spiritwalker", "Spiritwalker", },
-		{"Bone Fletcher", "Bone Fletcher", "Bone Fletchr", "Bone Fletchr", },
+		{"Bonecaster", "Bonecaster", "Bonecaster", "Bonecaster", },
+		{"Bonefletcher", "Bonefletcher", "Bonefletchr", "Bonefletchr", },
 		{"Cursed", "Cursed", "Cursed", "Cursed", },
 		{"Chanter", "Chantress", "Chanter", "Chantress", },
 		{"Elder Chanter", "Elder Chantress", "Eld.Chanter", "El.Chantress", },
 		//{"Spiritwatcher", "Spiritwatcher", },
 		{"Shaman", "Shaman", "Shaman", "Shaman", },
 		{"Elder Shaman", "Elder Shaman", "Elder Shaman", "Elder Shaman", },
-		{"Shaman King", "Shaman Queen", "Shaman King", "Shaman Queen", },
 	},
 	/* Runemaster */
 	{
 		{"Digger", "Digger", "Digger", "Digger", },
 		{"Rune Tracer", "Rune Tracer", "Rune Tracer", "Rune Tracer", },
 		{"Rock Collector", "Rock Collector", "R.Collector", "R.Collector", },
-		//{"Rock Painter", "Rock Paintress", "Rock Painter", "Rock Paintrs", },
+		//{"Rock Painter", "Rock Painter", "Rock Painter", "Rock Painter", },
 		{"Fire Starter", "Fire Starter", "Fire Starter", "Fire Starter", },
 		{"Treasure Hunter", "Treasure Hunter", "T.Hunter", "T.Hunter", },
 		//{"Archaeologist", "Archaeologist", "Professor", "Professor," }, //too cool for 12 letters? ^^
 		{"Archaeologist", "Archaeologist", "Archaelgst.", "Archaelgst.", },
 		{"Earth Guard", "Earth Guard", "Earth Guard", "Earth Guard", },
 		{"Rune Knight", "Rune Knight", "Rune Knight", "Rune Knight", },
-		{"Rune Keeper", "Rune Keepress", "Rune Keeper", "Rune Keeprss", },
+		{"Rune Keeper", "Rune Keeper", "Rune Keeper", "Rune Keeper", },
 		{"Runemaster", "Runemistress", "Runemaster", "Runemistress", },
 		{"Grand Runemaster", "Grand Runemistress", "G-Runemaster", "G-Runemstrss", },
 	},
@@ -4213,9 +4212,9 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Warper", "Warper", "Warper", "Warper", },
 		{"Psychic", "Psychic", "Psychic", "Psychic", },
 		{"Telepath", "Telepath", "Telepath", "Telepath", },
-		{"Manipulator", "Manipulatress", "Manipulator", "Manipulatrs.", },
+		{"Manipulator", "Manipulator", "Manipulator", "Manipulator", },
 		{"Controller", "Controller", "Controller", "Controller", },
-		{"Master Mindcrafter", "Master Mindcraftress", "M-Mindcrftr.", "M-Mindcrftr.", },
+		{"Master Mindcrafter", "Master Mindcrafter", "M-Mindcrftr.", "M-Mindcrftr.", },
 	},
 };
 
@@ -4228,11 +4227,11 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 	/* Warrior */
 	{
 #if 1
-		{"Highlord", "Highlady", "Highlord", "Highlady", },
+		{"Highlord", "Highlord", "Highlord", "Highlord", },
 		{"Overlord", "Overlord", "Overlord", "Overlord", },
 		//{"Hero", "Hero", }, hero is back in the normal warrior ranks!
-		{"Destroyer", "Destroyess", "Destroyer", "Destroyess", },
-		{"Annihilator", "Annihilatress", "Annihilator", "Annihilatrss", },
+		{"Destroyer", "Destroyer", "Destroyer", "Destroyer", },
+		{"Annihilator", "Annihilator", "Annihilator", "Annihilator", },
 		{"Titan", "Titan", "Titan", "Titan", },
 #else
 		{"Admiral", "Admiral", },
@@ -4245,13 +4244,12 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 
 	/* Istar */
 	{
+		{"Savant", "Savant", "Savant", "Savant", },
 		{"Grand Wizard", "Grand Wizard", "Gr.Wizard", "Gr.Wizard", },
-		{"Dragon Lord", "Dragon Lady", "Dragon Lord", "Dragon Lady", },
-		/* explanation about all the 'Dragon..' stuff: I was out of ideas and
-		    just thought of 'Earthsea Quartet' from Ursula LeGuin - C. Blue */
-		{"Dragon Highlord", "Dragon Highlady", "Dragon HLord", "Dragon HLady", },//yolady
-		{"Dragon Overlord", "Dragon Overlady", "Dragon OLord", "Dragon OLady", },//I need some improvements here....
-		{"Dragon Arch-Mage", "Dragon Arch-Mage", "Drg.Archmage", "Drg.Archmage", },
+		{"Dragon Lord", "Dragon Lady", "Dragon Lord", "Dragon Lady", },//Earthsea
+		//{"Plane Master", "Plane Master", "Plane Master", "Plane Master", },//I like planes
+		{"Dimensionalist", "Dimensionalist", "Dimension.", "Dimension.", },
+		{"Omniscient", "Omniscient", "Omniscient", "Omniscient", },
 	},
 
 	/* Priest */
@@ -4282,12 +4280,11 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 
 	/* Mimic */
 	{
-		{"Faker", "Fakeress", "Faker", "Fakeress", },
+		{"Faker", "Faker", "Faker", "Faker", },
 		{"Doppelganger", "Doppelganger", "Doppelganger", "Doppelganger", },
 		{"Transformer", "Transformer", "Transformer", "Transformer", },
-		{"Replicator", "Replicatress", "Replicator", "Replicatress", },
-		//{"Master Replicator", "Master Replicatress", "M-Replicator", "M-Replicatrs", },
-		{"Unlimited", "Unlimited", "Unlimited", "Unlimited", },
+		{"Replicator", "Replicator", "Replicator", "Replicator", },
+		{"Limitless", "Limitless", "Limitless", "Limitless", },
 	},
 
 	/* Archer */
@@ -4324,47 +4321,48 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 
 	/* Adventurer */
 	{
-		{"Seasoned Adventurer", "Seasoned Adventuress", "Seasoned Adv", "Seasoned Adv", },
-		{"Famous Adventurer", "Famous Adventuress", "Famous Adv.", "Famous Adv.", },
-		{"Grand Adventurer", "Grand Adventuress", "Grand Advntr", "Grand Advtrs", },
-		{"Legendary Adventurer", "Legendary Adventuress", "Legend. Adv.", "Legend. Adv.", },
-		{"Mythical Adventurer", "Mythical Adventuress", "Mythic Adv.", "Mythic Adv.", },
+		{"Seasoned Adventurer", "Seasoned Adventurer", "Seasoned Adv", "Seasoned Adv", },
+		{"Famous Adventurer", "Famous Adventurer", "Famous Adv.", "Famous Adv.", },
+		{"Grand Adventurer", "Grand Adventurer", "Grand Advntr", "Grand Advntr", },
+		{"Legendary Adventurer", "Legendary Adventurer", "Legend. Adv.", "Legend. Adv.", },
+		{"Mythical Adventurer", "Mythical Adventurer", "Mythic Adv.", "Mythic Adv.", },
 	},
 
 	/* Druid */
 	{
 		{"Forest Guardian", "Forest Guardian", "Forest Guard", "Forest Guard", },
-		{"Wind Evoker", "Wind Evokeress", "Wind Evoker", "Wind Evokrss", },
-		{"Forest Keeper", "Forest Keepress", "Forest Kpr.", "Forest Kprs.", },
+		{"Wind Evoker", "Wind Evoker", "Wind Evoker", "Wind Evoker", },
+		{"Forest Keeper", "Forest Keeper", "Forest Kpr.", "Forest Kpr.", },
 		{"Autumn", "Autumn", "Autumn", "Autumn", },
 		{"Evergreen", "Evergreen", "Evergreen", "Evergreen", },
 	},
 
 	/* Shaman */
 	{
-		{"Spirit Keeper", "Spirit Keepress", "Sprt.Keeper", "Spt.Keepress", },
+		{"Spirit Keeper", "Spirit Keeper", "Sprt.Keeper", "Sprt.Keeper", },
 		{"Spirit Master", "Spirit Mistress", "Sprt.Master", "Spt.Mistress", },
-		{"Realm Keeper", "Realm Keepress", "Realm Keeper", "Realm Kprss.", },
-		{"Realm Master", "Realm Mistress", "Realm Master", "Realm Mistr.", },
+		{"Grand Sage", "Grand Sage", "Grand Sage", "Grand Sage", },
+		{"Realm Keeper", "Realm Keeper", "Realm Keeper", "Realm Keeper", },
+		//{"Transient", "Transient", "Transient", "Transient", },
 		{"Presence", "Presence", "Presence", "Presence", },
 	},
 
 	/* Runemaster */
 	{
+		{"Runescribe", "Runescribe", "Runescribe", "Runescribe", },
 		//{"Grand Runemaster", "Grand Runemistress", "G.Runemaster", "G.Runemstrss", },
+		{"Elemental Master", "Elemental Mistress", "Elemental-M", "Elemental-M", },
 		{"Force Master", "Force Mistress", "Force Master", "Force Mstrss", },
 		//{"Elemental Overlord", "Elemental Overlady", "E-Overlord", "E-Overlady", },
-		{"Elemental Channelist", "Elemental Channelist", "E-Channelist", "E-Channelist", },
-		{"Elemental Master", "Elemental Master", "Elemental-M", "Elemental-M", },
-		{"Elemental Vortex", "Elemental Vortex", "Elemn.Vortex", "Elemn.Vortex", },
-		{"Savant", "Savant", "Savant", "Savant", },
+		{"Grand Channelist", "Grand Channelist", "G-Channelist", "G-Channelist", },
+		{"Vortex", "Vortex", "Vortex", "Vortex", },
 	},
 
 	/* Mindcrafter */
 	{
-		{"Master Manipulator", "Master Manipulatress", "M.Manipultr.", "M.Manipultr.", },
+		{"Master Manipulator", "Master Manipulator", "M.Manipultr.", "M.Manipultr.", },
 		{"Master Controller", "Master Controller", "M.Controllr.", "M.Controllr.", },
-		{"Alterator", "Alteratress", "Alterator", "Alteratress", },
+		{"Alterator", "Alterator", "Alterator", "Alterator", },
 		{"Reality Shifter", "Reality Shifter", "Real.Shifter", "Real.Shifter", },
 		{"Truth", "Truth", "Truth", "Truth", },
 	},
