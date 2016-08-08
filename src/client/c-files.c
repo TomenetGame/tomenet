@@ -1336,31 +1336,25 @@ void peruse_file(void)
  * XXX XXX XXX Allow the "full" flag to dump additional info,
  * and trigger its usage from various places in the code.
  */
-errr file_character(cptr name, bool full)
-{
-	int			i, x, y;
+errr file_character(cptr name, bool full) {
+	int		i, x, y;
 	byte		a;
 	char		c;
 	cptr		paren = ")";
-	int			fd = -1;
+	int		fd = -1;
 	FILE		*fff = NULL;
 	char		buf[1024];
-
 	(void) full; /* suppress compiler warning */
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
-
 	/* File type is "TEXT" */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
 	/* Open the non-existing file */
 	if (fd < 0) fff = my_fopen(buf, "w");
-
-
 	/* Invalid file */
-	if (!fff)
-	{
+	if (!fff) {
 		/* Message */
 		c_msg_print("Character dump failed!");
 		clear_topline_forced();
@@ -1380,21 +1374,16 @@ errr file_character(cptr name, bool full)
 	display_player(0);
 
 	/* Dump part of the screen */
-	for (y = 1; y < 22; y++)
-	{
+	for (y = 1; y < 22; y++) {
 		/* Dump each row */
-		for (x = 0; x < Term->wid; x++)
-		{
+		for (x = 0; x < Term->wid; x++) {
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
-
 			/* Dump it */
 			buf[x] = c;
 		}
-
 		/* Terminate */
 		buf[x] = '\0';
-
 		/* End the row */
 		fprintf(fff, "%s\n", buf);
 	}
@@ -1403,21 +1392,16 @@ errr file_character(cptr name, bool full)
 	display_player(1);
 
 	/* Dump part of the screen */
-	for (y = 14; y < 19; y++)
-	{
+	for (y = 14; y < 19; y++) {
 		/* Dump each row */
-		for (x = 0; x < Term->wid; x++)
-		{
+		for (x = 0; x < Term->wid; x++) {
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
-
 			/* Dump it */
 			buf[x] = c;
 		}
-
 		/* Terminate */
 		buf[x] = '\0';
-
 		/* End the row */
 		fprintf(fff, "%s\n", buf);
 	}
@@ -1432,20 +1416,14 @@ errr file_character(cptr name, bool full)
 	/* Dump the equipment */
 	fprintf(fff, "  [Character Equipment]\n\n");
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-	{
-		fprintf(fff, "%c%s %s\n",
-				index_to_label(i), paren, inventory_name[i]);
-	}
+		fprintf(fff, "%c%s %s\n", index_to_label(i), paren, inventory_name[i]);
 	fprintf(fff, "\n\n");
 
 	/* Dump the inventory */
 	fprintf(fff, "  [Character Inventory]\n\n");
-	for (i = 0; i < INVEN_PACK; i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		if (!strncmp(inventory_name[i], "(nothing)", 9)) continue;
-
-		fprintf(fff, "%c%s %s\n",
-				index_to_label(i), paren, inventory_name[i]);
+		fprintf(fff, "%c%s %s\n", index_to_label(i), paren, inventory_name[i]);
 	}
 	fprintf(fff, "\n\n");
 
@@ -1462,6 +1440,25 @@ errr file_character(cptr name, bool full)
 	for (y = 1; y < Term->hgt; y++) {
 		for (x = 0; x < Term->wid; x++) {
 			(void)(Term_what(x, y, &a, &c));
+
+			switch (c) {
+			/* Windows client uses ASCII char 31 for paths */
+			case 31:
+				c = '.';
+				break;
+			/* revert special characters from font_map_solid_walls */
+			case 127: case 2:
+				c = '#';
+				break;
+			case 1:
+				c = '$';
+				break;
+			default:
+				/* catch possible custom fonts */
+				if (c < 32 || c > 126) c = '_';
+			}
+
+			/* dump it */
 			buf[x] = c;
 		}
 		buf[x] = '\0';
@@ -1478,11 +1475,10 @@ errr file_character(cptr name, bool full)
 	if (!x) fprintf(fff,"You have not slain any unique monsters yourself.\n");
 	/* 2nd pass - list killed and assisted with monsters */
 	for (i = 0; i < MAX_UNIQUES; i++) {
-		if (r_unique[i] == 1) {
+		if (r_unique[i] == 1)
 			fprintf(fff,"You have slain %s.\n", r_unique_name[i]);
-		} else if (r_unique[i] == 2) {
+		else if (r_unique[i] == 2)
 			fprintf(fff,"You have assisted in slaying %s.\n", r_unique_name[i]);
-		}
 	}
 	fprintf(fff, "\n\n");
 
@@ -1504,10 +1500,8 @@ errr file_character(cptr name, bool full)
  * Make an xhtml screenshot - mikaelh
  * Some code borrowed from ToME
  */
-void xhtml_screenshot(cptr name)
-{
-	static cptr color_table[17] =
-	{
+void xhtml_screenshot(cptr name) {
+	static cptr color_table[17] = {
 		"#000000",	/* BLACK */
 		"#ffffff",	/* WHITE */
 		"#9d9d9d",	/* GRAY */
@@ -1548,12 +1542,9 @@ void xhtml_screenshot(cptr name)
 	x = strlen(name) - 4;
 
 	/* Replace "????" in the end with numbers */
-	if (!strcmp("????", &name[x]))
-	{
+	if (!strcmp("????", &name[x])) {
 		/* Paranoia */
-		if (x > 200) {
-			x = 200;
-		}
+		if (x > 200) x = 200;
 
 #ifdef WINDOWS
 		/* Windows implementation */
@@ -1616,16 +1607,13 @@ void xhtml_screenshot(cptr name)
 		buf[x] = '\0';
 		snprintf(file_name, 256, "%s%04d.xhtml", buf, max + 1);
 		path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
-	}
-	else
-	{
+	} else {
 		strncpy(file_name, name, 249);
 		file_name[249] = '\0';
 		strcat(file_name, ".xhtml");
 		path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 		fp = fopen(buf, "rb");
-		if (fp)
-		{
+		if (fp) {
 			char buf2[1028];
 			fclose(fp);
 			strcpy(buf2, buf);
@@ -1636,8 +1624,7 @@ void xhtml_screenshot(cptr name)
 	}
 
 	fp = fopen(buf, "wb");
-	if (!fp)
-	{
+	if (!fp) {
 		/* Couldn't write */
 		return;
 	}
@@ -1664,14 +1651,12 @@ void xhtml_screenshot(cptr name)
 	fprintf(fp, "<span style=\"color: %s\">", color_table[prt_attr]);
 
 	size_t bytes = 0;
-	for (y = 0; y < Term->hgt; y++)
-	{
+	for (y = 0; y < Term->hgt; y++) {
 		scr_aa = Term->scr->a[y];
 		scr_cc = Term->scr->c[y];
-		for (x = 0; x < Term->wid; x++)
-		{
-			if (scr_aa[x] != cur_attr)
-			{
+
+		for (x = 0; x < Term->wid; x++) {
+			if (scr_aa[x] != cur_attr) {
 				cur_attr = scr_aa[x];
 
 				strcpy(&buf[bytes], "</span><span style=\"color: ");
@@ -1690,9 +1675,16 @@ void xhtml_screenshot(cptr name)
 				bytes += 2;
 			}
 
-			switch (scr_cc[x])
-			{
-				case 31: /* Windows client uses ASCII char 31 for paths */
+			switch (scr_cc[x]) {
+				/* revert special characters from font_map_solid_walls */
+				case 127: case 2:
+					buf[bytes++] = '#';
+					break;
+				case 1:
+					buf[bytes++] = '$';
+					break;
+				/* Windows client uses ASCII char 31 for paths */
+				case 31:
 					buf[bytes++] = '.';
 					break;
 				case '&':
@@ -1715,6 +1707,11 @@ void xhtml_screenshot(cptr name)
 					buf[bytes++] = ';';
 					break;
 				default:
+					/* catch possible custom fonts */
+					if (scr_cc[x] < 32 || scr_cc[x] > 126)
+						buf[bytes++] = '_';
+					else
+					/* proceed normally */
 					buf[bytes++] = scr_cc[x];
 			}
 
