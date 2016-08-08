@@ -16211,7 +16211,7 @@ F:IM_POIS | EVIL | EMPTY_MIND
 S:1_IN_10 |
 S:S_UNDEAD | S_MONSTER
 D:A stargazer brought back from the dead under control of some unholy
-D:sorceror.
+D:sorcerer.
 
 N:917:Killer whale
 G:~:w

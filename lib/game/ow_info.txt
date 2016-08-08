@@ -149,7 +149,7 @@ H:Vampire
 N:21:Tanistil(Elf)
 I:5000:210:115:6:6
 C:120:100:80
-#L:Mage | Sorceror | Thaumaturgist
+#L:Mage | Sorcerer | Thaumaturgist
 #H:Warrior |
 H:Vampire
 
@@ -361,7 +361,7 @@ H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 N:54:Valceronwe(Elf)
 I:30000:140:105:6:12
 C:120:100:80
-#L:Mage | Thaumaturgist | Sorceror
+#L:Mage | Thaumaturgist | Sorcerer
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:55:Voronwe(Elf)
@@ -418,7 +418,7 @@ N:63:Sulraen(High-Elf)
 I:0:120:105:6:16
 C:120:100:80
 L:Maia | High-Elf | Half-Elf | Elf
-#L:Mage | Sorceror
+#L:Mage | Sorcerer
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:64:Firiel(High-Elf)
