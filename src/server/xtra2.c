@@ -5174,11 +5174,11 @@ bool monster_death(int Ind, int m_idx) {
 	/* re_info takes priority */
 	switch (m_ptr->ego) {
 	case 35: case 39: //unbeliever
-		if (rand_int(2)) resf_drops |= RESF_COND_DARKSWORD;
+		if (rand_int(3)) resf_drops |= RESF_COND_DARKSWORD;
 		resf_drops |= RESF_COND2_HARMOUR;
 		break;
 	case 11: case 28: case 33: //rogues
-		resf_drops |= RESF_COND_SWORD;
+		resf_drops |= RESF_COND_LSWORD;
 		if (rand_int(2)) {
 			drop_dual = TRUE;
 			number++; // :o
@@ -5189,11 +5189,11 @@ bool monster_death(int Ind, int m_idx) {
 		resf_drops |= RESF_COND_BLUNT;
 		break;
 	case 7: //shamans
-		resf_drops |= RESF_COND_NOSWORD;
+		resf_drops |= RESF_CONDF_NOSWORD;
 		resf_drops |= RESF_COND2_LARMOUR;
 		break;
 	case 9: case 30: //mages (mage/sorceror)
-		if (rand_int(2)) resf_drops |= RESF_COND_MSTAFF;
+		if (rand_int(3)) resf_drops |= RESF_CONDF_MSTAFF;
 		resf_drops |= RESF_COND2_LARMOUR;
 		break;
 	case 10: case 13: case 23: //archers
@@ -5201,7 +5201,7 @@ bool monster_death(int Ind, int m_idx) {
 		break;
 	case 62: //runemasters
 		if (rand_int(4)) {
-			resf_drops |= RESF_COND_RUNE;
+			resf_drops |= RESF_CONDF_RUNE;
 			number++; //mh, just don't look too forced in case we only drop one item :p
 		}
 		resf_drops |= RESF_COND2_LARMOUR;
@@ -5217,15 +5217,15 @@ bool monster_death(int Ind, int m_idx) {
 	default:
 		switch (m_ptr->r_idx) {
 		case 1048: //unbeliever with FRIENDS -_- should just get removed maybe?
-			if (!rand_int(5)) resf_drops |= RESF_COND_DARKSWORD;
+			if (!rand_int(3)) resf_drops |= RESF_COND_DARKSWORD;
 			resf_drops |= RESF_COND2_HARMOUR;
 			break;
 		case 1047: case 1049: case 1050: //unbeliever
-			if (rand_int(2)) resf_drops |= RESF_COND_DARKSWORD;
+			if (rand_int(3)) resf_drops |= RESF_COND_DARKSWORD;
 			resf_drops |= RESF_COND2_HARMOUR;
 			break;
 		case 44: case 116: case 150: case 199: case 376: case 516: case 696: //rogues
-			resf_drops |= RESF_COND_SWORD;
+			resf_drops |= RESF_COND_LSWORD;
 			if (rand_int(2)) {
 				drop_dual = TRUE;
 				number++; // :o  (hope this isn't overkill with novice rogue packs)
@@ -5233,7 +5233,7 @@ bool monster_death(int Ind, int m_idx) {
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
 		case 485: //ninja
-			resf_drops |= RESF_COND_SWORD;
+			resf_drops |= RESF_COND_LSWORD;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
 		case 216: case 1058: case 1059: case 1070: //swordmen
@@ -5245,20 +5245,20 @@ bool monster_death(int Ind, int m_idx) {
 			resf_drops |= RESF_COND_BLUNT;
 			break;
 		case 888: case 906: case 217: //shamans
-			resf_drops |= RESF_COND_NOSWORD;
+			resf_drops |= RESF_CONDF_NOSWORD;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
 		case 46: case 93: //novice mages
-			if (!rand_int(5)) resf_drops |= RESF_COND_MSTAFF;
+			if (!rand_int(5)) resf_drops |= RESF_CONDF_MSTAFF;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
 		case 240: case 449: case 638: case 738: case 178: case 657: //mages (mage/illusionist/sorcerer)
-			if (rand_int(2)) resf_drops |= RESF_COND_MSTAFF;
+			if (rand_int(3)) resf_drops |= RESF_CONDF_MSTAFF;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
 		case 281: //gnome mages
 		case 375: //warlocks (dark-elven)
-			if (!rand_int(5)) resf_drops |= RESF_COND_MSTAFF;
+			if (!rand_int(5)) resf_drops |= RESF_CONDF_MSTAFF;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
 		case 539: //slinger
@@ -5373,7 +5373,13 @@ bool monster_death(int Ind, int m_idx) {
 				}
 
 #if FORCED_DROPS != 0
-				if (!j && !rand_int(FORCE_DROPS_PROBABLE)) resf_drops |= RESF_COND_FORCE;
+ #if 0
+				/* only try forcing the item for the first item dropped */
+				if (!j && magik(FORCE_DROPS_PROBABLE)) resf_drops |= RESF_COND_FORCE;
+ #else
+				/* retry forcing the item until it gets generated or all items have been dropped */
+				if (magik(FORCE_DROPS_PROBABLE)) resf_drops |= RESF_COND_FORCE;
+ #endif
 #endif
 				/* generate an object and place it */
 				place_object(wpos, y, x, good, great, FALSE, resf_drops, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);

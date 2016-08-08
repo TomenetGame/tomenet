@@ -4983,6 +4983,7 @@
  #define RESF_EGOMID		0x00004000	/* e_info value of 1000..9000 */
 #else /* use it for actual stuff.. */
  #define RESF_COND_FORCE	0x00000800	/* force item drop of desired type according to conditions */
+ #define RESF_COND_LSWORD	0x00001000	/* force a sword (swordmen, rogues) */
 #endif
 #define RESF_EGOHI		0x00008000	/* e_info value of 9000.. */
 
@@ -4996,11 +4997,11 @@
 #define RESF_COND_SWORD		0x00400000	/* force a sword (swordmen, rogues) */
 #define RESF_COND_DARKSWORD	0x00800000	/* force a dark sword (unbelievers) */
 #define RESF_COND_BLUNT		0x01000000	/* force a blunt weapon (priests) */
-#define RESF_COND_NOSWORD	0x02000000	/* if weapon, force not a sword (shamans) */
-#define RESF_COND_MSTAFF	0x04000000	/* force a mage staff (mages) */
+#define RESF_CONDF_NOSWORD	0x02000000	/* if weapon, force not a sword (shamans) */
+#define RESF_CONDF_MSTAFF	0x04000000	/* force a mage staff (mages) */
 #define RESF_COND_SLING		0x08000000	/* force a sling (slingers) */
 #define RESF_COND_RANGED	0x10000000	/* force any ranged weapon (archers) */
-#define RESF_COND_RUNE		0x20000000	/* force a rune (runemasters) */
+#define RESF_CONDF_RUNE		0x20000000	/* force a rune (runemasters) */
 #define RESF_COND2_LARMOUR	0x40000000	/* mostly avoid dropping heavy armour (persistent) */
 #define RESF_COND2_HARMOUR	0x80000000	/* mostly avoid dropping light armour (persistent) */
 
@@ -5014,15 +5015,15 @@
 #define RESF_STORE		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 #define RESF_STOREBM		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 
-#define RESF_COND_MASK		(RESF_COND_SWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_COND_NOSWORD | RESF_COND_MSTAFF | RESF_COND_SLING | RESF_COND_RANGED | RESF_COND_RUNE)
+#define RESF_COND_MASK		(RESF_COND_SWORD | RESF_COND_LSWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_CONDF_NOSWORD | RESF_CONDF_MSTAFF | RESF_COND_SLING | RESF_COND_RANGED | RESF_CONDF_RUNE)
 
 /* Force certain items to drop from certain monsters, to fit their lore? - C. Blue
    Eg swords from swordmasters, blunt weapons from priests.
    Note: We ignore books/crystals at this time, also distinguishing between those would use too many flags.
    0: off, 1: way 1 (soft), 2: way 2 (hard) -- utilizes RESF_COND... flags. [2] */
 #define FORCED_DROPS 2
-/* Artificial generation chance when we try hard to generate a fitting item (overrides normal item probabilities): (1 in n) [2] */
-#define FORCE_DROPS_PROBABLE 2
+/* Artificial generation chance when we try hard to generate a fitting item (overrides normal item probabilities): (1 in n) [50] */
+#define FORCE_DROPS_PROBABLE 50
 
 
 /* ESP defines */
