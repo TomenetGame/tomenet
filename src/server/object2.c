@@ -6884,7 +6884,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	if ((resf & RESF_COND_SWORD) && forge.tval == TV_SWORD) place_object_restrictor |= RESF_COND_SWORD;
 	if ((resf & RESF_COND_DARKSWORD) && forge.tval == TV_SWORD && forge.sval == SV_DARK_SWORD) place_object_restrictor |= RESF_COND_DARKSWORD;
 	if ((resf & RESF_COND_BLUNT) && forge.tval == TV_BLUNT) place_object_restrictor |= RESF_COND_BLUNT;
-	if ((resf & RESF_COND_NOSWORD) && forge.tval != TV_SWORD) place_object_restrictor |= RESF_COND_NOSWORD;
+	if ((resf & RESF_COND_NOSWORD) && is_weapon(forge.tval) && forge.tval != TV_SWORD) place_object_restrictor |= RESF_COND_NOSWORD;
 	if ((resf & RESF_COND_MSTAFF) && forge.tval == TV_MSTAFF) place_object_restrictor |= RESF_COND_MSTAFF;
 	if ((resf & RESF_COND_SLING) && forge.tval == TV_BOW && forge.sval == SV_SLING) place_object_restrictor |= RESF_COND_SLING;
 	if ((resf & RESF_COND_RANGED) && is_ranged_weapon(forge.tval)) place_object_restrictor |= RESF_COND_RANGED;
