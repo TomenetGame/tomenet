@@ -610,12 +610,14 @@ S:1_IN_5 |
 S:HASTE | BLINK | BLIND | SLOW | BO_FIRE | BO_ELEC | S_ANIMAL
 #S:HASTE | BLINK | BLIND | HOLD | SLOW | BO_FIRE | BO_ELEC | S_ANIMAL
 
+#Lightman's additions:
+
 #Rabid animals; extra HP
 N:48:Rabid
 G:*:*
 B:BITE:DISEASE:+2d+2
 I:+0:%120d+0:+0:+0:=0
-W:+0:50:+0:%110:B
+W:+0:35:+0:%110:B
 F:ANIMAL
 H:UNDEAD
 #H:R_CHAR_Z
@@ -651,11 +653,11 @@ O:MULTIPLY
 N:51:Pack Leader
 G:*:*
 I:+0:%150d+0:+0:+200:=0
-W:+20:30:+0:%300:A
-B:*:*:%200d%200
-B:*:*:%200d%200
-B:*:*:%200d%200
-B:*:*:%200d%200
+W:+5:25:+0:%300:A
+B:*:*:%150d%150
+B:*:*:%150d%150
+B:*:*:%150d%150
+B:*:*:%150d%150
 F:R_CHAR_C | R_CHAR_Z | R_CHAR_f | FRIENDS
 #H:UNDEAD
 M:FORCE_MAXHP
@@ -699,16 +701,17 @@ O:AI_ANNOY
 N:55:Everburning
 G:*:f
 I:+0:+0d+0:+0:+0:=0
-W:+0:45:+0:%100:B
+W:+0:30:+0:%100:B
 F:R_CHAR_g
 H:IM_FIRE
 M:IM_FIRE | HAS_LITE | AURA_FIRE | SUSCEP_COLD
+O:SUSCEP_FIRE
 
 #There are some vortexes that are more fierce than others. They are much faster and harder to defeat.
 N:56:Fierce
 G:*:*
 I:+20:%200d+0:+0:+0:=0
-W:+5:25:+0:%200:B
+W:+5:20:+0:%200:B
 F:R_CHAR_v
 M:FORCE_MAXHP
 
@@ -725,8 +728,8 @@ M:DROP_2D2 | DROP_GOOD
 #Demonised skeletons and flying skulls etc.
 N:58:Demonic
 G:*:r
-I:+20:%200d%200:+0:+0:=0
-W:+20:30:+0:%300:B
+I:+5:%200d%200:+0:+0:=0
+W:+4:20:+0:%300:B
 F:R_CHAR_s
 M:FORCE_MAXHP | DROP_2D2 | DROP_GOOD
 S:1_IN_10 | BR_FIRE
@@ -734,15 +737,15 @@ S:1_IN_10 | BR_FIRE
 #Orcs and the like sometimes ride wolves, making them faster and more dangerous
 N:59:Wolf Rider
 G:C:*
-I:+10:%150d%150:+0:+0:=0
-W:+20:15:+0:%200:A
+I:+15:%150d%150:+0:+0:=0
+W:+10:10:+0:%200:A
 F:R_CHAR_o
 
 #Various types of troll king, pretty rare.
 N:60:King
 G:T:*
 I:+10:%200d%200:+0:+0:=0
-W:+30:50:+0:%500:A
+W:+15:50:+0:%500:A
 F:R_CHAR_T
 M:FORCE_MAXHP | DROP_1D2 | DROP_GREAT
 
@@ -754,6 +757,8 @@ I:%100:%200d%200:+0:+0:=0
 W:+15:25:+0:%200:A
 F:SPIDER
 M:FORCE_MAXHP
+
+#New additions:
 
 N:62:Runemaster
 G:*:B
