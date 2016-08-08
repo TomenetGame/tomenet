@@ -1109,6 +1109,10 @@ bool set_fury(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->fury) {
+			if (p_ptr->shero) {
+				msg_print(Ind, "You cannot grow additional fury while in a berserk rage!");
+				return FALSE;
+			}
 			msg_print(Ind, "You grow a fury!");
 			notice = TRUE;
 		}
@@ -1992,6 +1996,10 @@ bool set_shero(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->shero) {
+			if (p_ptr->fury) {
+				msg_print(Ind, "The berserk rage replaces your fury!");
+				set_fury(Ind, 0);
+			}
 			msg_format_near(Ind, "%s has become a killing machine.", p_ptr->name);
 			msg_print(Ind, "You feel like a killing machine!");
 			notice = TRUE;
