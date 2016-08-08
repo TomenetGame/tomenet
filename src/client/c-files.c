@@ -1455,7 +1455,7 @@ errr file_character(cptr name, bool full) {
 				break;
 			default:
 				/* catch possible custom fonts */
-				if (c < 32 || c > 126) c = '_';
+				if (c < 32 || c > 126) c = '~';
 			}
 
 			/* dump it */
@@ -1709,7 +1709,7 @@ void xhtml_screenshot(cptr name) {
 				default:
 					/* catch possible custom fonts */
 					if (scr_cc[x] < 32 || scr_cc[x] > 126)
-						buf[bytes++] = '_';
+						buf[bytes++] = '~';
 					else
 					/* proceed normally */
 					buf[bytes++] = scr_cc[x];
