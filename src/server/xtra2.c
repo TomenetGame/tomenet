@@ -5219,7 +5219,11 @@ bool monster_death(int Ind, int m_idx) {
 	/* switch to r_info next: */
 	default:
 		switch (m_ptr->r_idx) {
-		case 1047: case 1048: case 1049: case 1050: //unbeliever
+		case 1048: //unbeliever with FRIENDS -_- should just get removed maybe?
+			if (!rand_int(FD_CHANCE + 3)) resf_drops |= RESF_COND_DARKSWORD;
+			resf_drops |= RESF_COND2_HARMOUR;
+			break;
+		case 1047: case 1049: case 1050: //unbeliever
 			if (rand_int(FD_CHANCE)) resf_drops |= RESF_COND_DARKSWORD;
 			resf_drops |= RESF_COND2_HARMOUR;
 			break;

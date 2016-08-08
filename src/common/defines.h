@@ -4998,7 +4998,7 @@
 #define RESF_COND_RANGED	0x10000000	/* force any ranged weapon (archers) */
 #define RESF_COND_RUNE		0x20000000	/* force a rune (runemasters) */
 #define RESF_COND2_LARMOUR	0x40000000	/* mostly avoid dropping heavy armour (persistent) */
-#define RESF_COND2_HARMOUR	0x40000000	/* mostly avoid dropping light armour (persistent) */
+#define RESF_COND2_HARMOUR	0x80000000	/* mostly avoid dropping light armour (persistent) */
 
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
