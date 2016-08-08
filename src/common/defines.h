@@ -3022,18 +3022,6 @@
 #define SV_BLACK_BISHOP			15
 
 
-/* items requiring hard-coded adjustments;
- * those items need some reworking. */
-/*
-#define SV_AMULET_DOOM			0
-#define SV_AMULET_THE_MAGI		8
-*/
-#define SV_AMULET_TERKEN		30
-#define SV_AMULET_SPEED			31
-#define SV_AMULET_THE_MOON		33
-#define SV_AMULET_RAGE			34
-#define SV_AMULET_LIFE_SAVING		35
-#define SV_AMULET_MANA_CHARGING		36
 
 /*
  * Special "sval" limit -- first "normal" food
@@ -3348,6 +3336,7 @@
 #define SV_LITE_PALANTIR		104
 #define SV_ANCHOR_SPACETIME		105
 #define SV_STONE_LORE			106
+#define SV_LITE_PALANTIR_ITHIL		107
 
 
 /* The "sval" codes for TV_AMULET */
@@ -3370,13 +3359,24 @@
 #define SV_AMULET_NOTHING		16
 #define SV_AMULET_SERPENT		17
 #define SV_AMULET_TORIS_MEJISTOS	18
+#define SV_AMULET_ELESSAR		19
+#define SV_AMULET_EVENSTAR		20
+#define SV_AMULET_SUSTENANCE		21
 #define SV_AMULET_ESP			22
 #define SV_AMULET_TRICKERY		23
-#define SV_AMULET_DEVOTION		25
 #define SV_AMULET_WEAPONMASTERY		24
-#define SV_AMULET_WISDOM		28
+#define SV_AMULET_DEVOTION		25
 #define SV_AMULET_INFRA			26
+#define SV_AMULET_REGENERATION		27
+#define SV_AMULET_WISDOM		28
+#define SV_AMULET_RESIST_ELEC		29
+#define SV_AMULET_TERKEN		30
+#define SV_AMULET_SPEED			31
 #define SV_AMULET_HIGHLANDS		32	/* for highlander games */
+#define SV_AMULET_MOON			33
+#define SV_AMULET_RAGE			34
+#define SV_AMULET_LIFE_SAVING		35
+#define SV_AMULET_MANA_CHARGING		36
 #define SV_AMULET_INVINCIBILITY		37	/* for admins */
 #define SV_AMULET_GROM			38
 #define SV_AMULET_LUCK			39	/* Talisman */
@@ -3442,9 +3442,9 @@
 #define SV_RING_LEVITATION		54
 #define SV_RING_WRAITH			55
 #define SV_RING_ELEC			56
-/* 57 - DURIN (arts) */
+#define SV_RING_DURIN			57
 #define SV_RING_CRIT			58
-/* ToME-NET additions */
+//hole
 #define SV_RING_POLYMORPH		60
 #define SV_RING_STEALTH			61
 
