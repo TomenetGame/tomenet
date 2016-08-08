@@ -200,6 +200,9 @@ end
 -- Can we cast the spell ?
 function is_ok_spell(i, s)
 	if get_level(i, s, 50, 0) == 0 then return nil end
+	if (s == FIREFLASH_I or s == FIREFLASH_II) and player.prace == RACE_VAMPIRE then
+		return nil
+	end
 	return 1
 end
 
