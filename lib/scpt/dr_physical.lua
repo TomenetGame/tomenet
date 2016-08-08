@@ -147,7 +147,8 @@ EXTRASTATS_II = add_spell {
 	["info"] = 	function()
 			return "+" .. ((get_level(Ind, EXTRASTATS_I, 50) / 10) + 2) .. " dur " .. (20 + get_level(Ind, EXTRASTATS_I, 50))
 			end,
-	["desc"] = 	{ "Increases strength, dexterity, constitution.", }
+	["desc"] = 	{ "Increases strength, dexterity, constitution.",
+			  "At level 11 also increases your intelligence.", }
 }
 
 -- A shot that increases a players SPR (if wearing a shooter)
