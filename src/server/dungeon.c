@@ -4453,17 +4453,13 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->hero)
 		(void)set_hero(Ind, p_ptr->hero - 1);
 
-	/* Super Heroism */
+	/* Berserk */
 	if (p_ptr->shero)
 		(void)set_shero(Ind, p_ptr->shero - 1);
 
-	/* Furry */
+	/* Fury */
 	if (p_ptr->fury)
 		(void)set_fury(Ind, p_ptr->fury - 1);
-
-	/* Berserk #2 */
-	if (p_ptr->berserk)
-		(void)set_berserk(Ind, p_ptr->berserk - 1);
 
 	/* Sprint? melee technique */
 	if (p_ptr->melee_sprint)

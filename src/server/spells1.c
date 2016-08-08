@@ -8810,7 +8810,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_PSI:
 		if (rand_int(100) < p_ptr->skill_sav) psi_resists++;
 		if (p_ptr->mindboost && magik(p_ptr->mindboost_power)) psi_resists++;
-		if ((p_ptr->shero || p_ptr->berserk) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--;
+		if ((p_ptr->shero) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--;
 		if (p_ptr->confused) psi_resists--;
 		if (p_ptr->image) psi_resists--;
 		if (p_ptr->stun) psi_resists--;

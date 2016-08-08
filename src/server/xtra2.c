@@ -2027,51 +2027,6 @@ bool set_shero(int Ind, int v) {
 }
 
 
-bool set_berserk(int Ind, int v) {
-	player_type *p_ptr = Players[Ind];
-	bool notice = FALSE;
-
-	/* Hack -- Force good values */
-	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
-
-	/* Open */
-	if (v) {
-		if (!p_ptr->berserk) {
-			msg_format_near(Ind, "%s has become a killing machine.", p_ptr->name);
-			msg_print(Ind, "You feel like a killing machine!");
-			notice = TRUE;
-		}
-	}
-
-	/* Shut */
-	else {
-		if (p_ptr->berserk) {
-			msg_format_near(Ind, "%s has returned to being a wimp.", p_ptr->name);
-			msg_print(Ind, "You feel less Berserk.");
-			notice = TRUE;
-		}
-	}
-
-	/* Use the value */
-	p_ptr->berserk = v;
-
-	/* Nothing to notice */
-	if (!notice) return (FALSE);
-
-	/* Disturb */
-	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
-
-	/* Recalculate boni + hit points */
-	p_ptr->update |= (PU_BONUS | PU_HP);
-
-	/* Handle stuff */
-	handle_stuff(Ind);
-
-	/* Result */
-	return (TRUE);
-}
-
-
 bool set_melee_sprint(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;

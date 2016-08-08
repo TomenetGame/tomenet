@@ -1653,7 +1653,7 @@ static bool rd_extra(int Ind) {
 	rd_s16b(&p_ptr->invuln);
 	rd_s16b(&p_ptr->hero);
 	rd_s16b(&p_ptr->shero);
-	if (!older_than(4, 3, 7)) rd_s16b(&p_ptr->berserk);
+	if (!older_than(4, 3, 7)) strip_bytes(2);//berserk, deprecated		hole
 	rd_s16b(&p_ptr->shield);
 	if (!older_than(4, 0, 4)) {
 		rd_s16b(&p_ptr->shield_power);

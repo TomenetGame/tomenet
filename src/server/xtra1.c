@@ -1663,10 +1663,6 @@ void calc_hitpoints(int Ind) {
 	   Specialty: It's applied AFTER mimic form HP influence. */
 	if (p_ptr->hero) mhp += 10;
 	if (p_ptr->shero) mhp += 20;
-#if 1 /* hmm */
-	else if (p_ptr->fury) mhp += 20;
-	else if (p_ptr->berserk) mhp += 20;
-#endif
 
 #if 0 /* p_ptr->to_hp is unused atm! */
 	/* Fixed Hit Point Bonus */
@@ -4380,30 +4376,12 @@ void calc_boni(int Ind) {
 		p_ptr->dis_to_h += 12;
 	}
 
-	/* Temporary "Berserk Strength" (potion) */
+	/* Temporary "Berserk"/"Berserk Strength" */
 	if (p_ptr->shero) {
-#if 0 /* disabled, since the bonus to A_STR below already increases the damage greatly, even by more than +10 usually.. */
-		p_ptr->to_h += 5;//24
-		p_ptr->dis_to_h += 5;//24
-		p_ptr->to_d += 10;
-		p_ptr->dis_to_d += 10;
-#endif
-		p_ptr->to_a -= 10;//10
-		p_ptr->dis_to_a -= 10;//10
-
-		/* mainly to help bashing doors open, but makes sense in general, also helps tunnelling now.. */
-		p_ptr->stat_add[A_STR] += 10;
-	}
-
-	/* Temporary "Berserk" */
-	if (p_ptr->berserk) {
-		p_ptr->to_h -= 5;
-		p_ptr->dis_to_h -= 5;
-		p_ptr->to_d += 15;
-		p_ptr->dis_to_d += 15;
 		p_ptr->to_a -= 10;
 		p_ptr->dis_to_a -= 10;
-		p_ptr->extra_blows++;
+		/* may greatly increase +dam and +bpr, also helps bashing doors open and tunnelling */
+		p_ptr->stat_add[A_STR] += 10;
 	}
 
 	/* Temporary "Fury" */

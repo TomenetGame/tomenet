@@ -6581,7 +6581,6 @@ bool unmagic(int Ind) {
 		set_tim_manashield(Ind, 0) |
 		set_tim_traps(Ind, 0) |
 		set_invis(Ind, 0, 0) |
-		set_fury(Ind, 0) |
 		set_tim_meditation(Ind, 0) |
 		set_tim_wraith(Ind, 0) |
 		set_fast(Ind, 0, 0) |
@@ -6589,6 +6588,7 @@ bool unmagic(int Ind) {
 		set_blessed(Ind, 0) |
 		set_hero(Ind, 0) |
 		set_shero(Ind, 0) |
+		set_fury(Ind, 0) |
 		set_protevil(Ind, 0) |
 		set_invuln(Ind, 0) |
 		set_tim_invis(Ind, 0) |
@@ -7347,7 +7347,7 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 		un_afk_idle(Ind);
 		hp_player(Ind, 20);
 		set_afraid(Ind, 0);
-		set_berserk(Ind, randint(5) + 15);
+		set_shero(Ind, randint(5) + 15);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
