@@ -5009,7 +5009,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 			break;
 
 		/* Amulet of wisdom/charisma */
-		case SV_AMULET_BRILLANCE:
+		case SV_AMULET_BRILLIANCE:
 		case SV_AMULET_CHARISMA:
 		case SV_AMULET_WISDOM:
 		case SV_AMULET_INFRA:
@@ -6446,33 +6446,152 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_MSTAFF:
 		return 100;
 
-	/* Trap kits are good now, since weapons are, too (required for dungeon keeper reward sval generation..) */
-#if 0 /* disabled them again, because _every_ monster would drop them like weapons/armour, ie way too high frequency! - instead, added kind_is_good_reward() */
+	/* Trap kits are good now, since weapons are, too. */
+	/* kept <100%, because _every_ monster would drop them like weapons/armour, ie way too high frequency! */
 	case TV_TRAPKIT:
-		return 100;
-#endif
+		return 5;
 
 	/* Rings -- Rings of Speed are good */
 	case TV_RING:
-		if (k_ptr->sval == SV_RING_SPEED) return 100;
-		if (k_ptr->sval == SV_RING_BARAHIR) return 100;
-		if (k_ptr->sval == SV_RING_TULKAS) return 100;
-		if (k_ptr->sval == SV_RING_NARYA) return 100;
-		if (k_ptr->sval == SV_RING_NENYA) return 100;
-		if (k_ptr->sval == SV_RING_VILYA) return 100;
-		if (k_ptr->sval == SV_RING_POWER) return 100;
+		switch (k_ptr->sval) {
+		case SV_RING_SPEED:
+		case SV_RING_BARAHIR:
+		case SV_RING_TULKAS:
+		case SV_RING_NARYA:
+		case SV_RING_NENYA:
+		case SV_RING_VILYA:
+		case SV_RING_POWER:
+#if 1 /* 4.6.2 */
+		case SV_RING_LORDLY:
+		case SV_RING_ATTACKS:
+		case SV_RING_FLAR:
+		case SV_RING_CRIT:
+		case SV_RING_DURIN:
+#endif
+#if 1 /* 4.6.2; lesser rings, but still good: */
+		//omitted +stat rings, but they _could_ turn out great
+		case SV_RING_ACCURACY:
+		case SV_RING_DAMAGE:
+		case SV_RING_SLAYING:
+		case SV_RING_RES_NETHER:
+		case SV_RING_RES_DISENCHANT:
+		case SV_RING_RES_CHAOS:
+		case SV_RING_INVIS:
+#endif
+			return 25;
+		}
 		return 0;
 
-	/* Amulets -- Amulets of the Magi are good */
+#if 1 /* 4.6.2 */
+	case TV_LITE:
+		switch (k_ptr->sval) {
+		case SV_LITE_TORCH_EVER:
+		case SV_LITE_DWARVEN:
+		case SV_LITE_FEANORIAN:
+		case SV_LITE_GALADRIEL:
+		case SV_LITE_ELENDIL:
+		case SV_LITE_THRAIN:
+		case SV_LITE_PALANTIR:
+		case SV_ANCHOR_SPACETIME:
+		case SV_STONE_LORE:
+			return 10;
+		}
+		return 0;
+
 	case TV_AMULET:
-#if 0
-		if (k_ptr->sval == SV_AMULET_THE_MAGI) return 100;
-		if (k_ptr->sval == SV_AMULET_THE_MOON) return 100;
-		if (k_ptr->sval == SV_AMULET_SPEED) return 100;
-		if (k_ptr->sval == SV_AMULET_TERKEN) return 100;
-#endif
+		switch (k_ptr->sval) {
+		case SV_AMULET_BRILLIANCE:
+		case SV_AMULET_REFLECTION:
+		case SV_AMULET_CARLAMMAS:
+		case SV_AMULET_INGWE:
+		case SV_AMULET_DWARVES:
+		case SV_AMULET_RESISTANCE:
+		case SV_AMULET_SERPENT:
+		case SV_AMULET_TORIS_MEJISTOS:
+		case SV_AMULET_ELESSAR:
+		case SV_AMULET_EVENSTAR:
+		case SV_AMULET_SUSTENANCE:
+		case SV_AMULET_ESP:
+		case SV_AMULET_THE_MAGI:
+		case SV_AMULET_TRICKERY:
+		case SV_AMULET_DEVOTION:
+		case SV_AMULET_THE_MOON:
+		case SV_AMULET_WEAPONMASTERY:
+		case SV_AMULET_RAGE:
+		case SV_AMULET_GROM:
+		case SV_AMULET_SSHARD:
+		case SV_AMULET_SPEED:
+		case SV_AMULET_TERKEN:
+			return 25;
+		}
+		return 0;
+
+	case TV_STAFF:
+		switch (k_ptr->sval) {
+		case SV_STAFF_CURING:
+		case SV_STAFF_HEALING:
+		case SV_STAFF_THE_MAGI:
+		case SV_STAFF_SPEED:
+		case SV_STAFF_PROBING:
+		case SV_STAFF_DISPEL_EVIL:
+		case SV_STAFF_POWER:
+		case SV_STAFF_HOLINESS:
+		case SV_STAFF_GENOCIDE:
+		case SV_STAFF_EARTHQUAKES:
+		case SV_STAFF_DESTRUCTION:
+		case SV_STAFF_STAR_IDENTIFY:
+			return 10;
+		}
+		return 0;
+	case TV_WAND:
+		switch (k_ptr->sval) {
+		case SV_WAND_DRAIN_LIFE:
+		case SV_WAND_ACID_BOLT:
+		case SV_WAND_FIRE_BOLT:
+		case SV_WAND_COLD_BOLT:
+		case SV_WAND_ACID_BALL:
+		case SV_WAND_ELEC_BALL:
+		case SV_WAND_COLD_BALL:
+		case SV_WAND_FIRE_BALL:
+		case SV_WAND_ANNIHILATION:
+		case SV_WAND_DRAGON_FIRE:
+		case SV_WAND_DRAGON_COLD:
+		case SV_WAND_DRAGON_BREATH:
+		case SV_WAND_ROCKETS:
+		case SV_WAND_ELEC_BOLT:
+		case SV_WAND_TELEPORT_AWAY:
+		//case SV_WAND_WALL_CREATION:
+			return 10;
+		}
+		return 0;
+	case TV_ROD:
+		switch (k_ptr->sval) {
+		case SV_ROD_IDENTIFY:
+		case SV_ROD_RECALL:
+		case SV_ROD_MAPPING:
+		case SV_ROD_DETECTION:
+		case SV_ROD_PROBING:
+		case SV_ROD_CURING:
+		case SV_ROD_HEALING:
+		case SV_ROD_RESTORATION:
+		case SV_ROD_SPEED:
+		case SV_ROD_TELEPORT_AWAY:
+		case SV_ROD_DRAIN_LIFE:
+		case SV_ROD_ACID_BOLT:
+		case SV_ROD_ELEC_BOLT:
+		case SV_ROD_COLD_BOLT:
+		case SV_ROD_FIRE_BOLT:
+		case SV_ROD_ACID_BALL:
+		case SV_ROD_ELEC_BALL:
+		case SV_ROD_COLD_BALL:
+		case SV_ROD_FIRE_BALL:
+		case SV_ROD_HAVOC:
+			return 10;
+		}
 		return 0;
 	}
+	//note: no tools atm :/ could add +2/+3 diggers?
+#endif
 
 	/* Assume not good */
 	return 0;
