@@ -885,28 +885,54 @@ errr get_obj_num_prep(u32b resf) {
 		if ((resf & RESF_COND_RUNE) && which_theme(tval) == 3 && tval != TV_RUNE) p = 0;
 #endif
 #if FORCED_DROPS == 2 /* way 2/2 */
-		/* Check for special item types */
+		/* Check for special item types. - C. Blue
+		   Note: The 'p = 10000' lines are for enabling this item for monsters
+		   who usually don't have it in their theme table. This is needed for
+		   drops we expect from certain ego monster types. Eg ogres don't have
+		   magic items in their loot table, but an ogre mage could drop a mage staff! */
 		tval = k_info[k_idx].tval;
 		sval = k_info[k_idx].sval;
 		//force generation of a sword
 		if (resf & RESF_COND_SWORD) {
 			if (tval != TV_SWORD) p = 0;
 			else if (sval == SV_DARK_SWORD) p >>= 2; //don't overdo it..
+			else p = 10000;
 		}
 		//force generation of a dark sword
-		if ((resf & RESF_COND_DARKSWORD) && (tval != TV_SWORD || sval != SV_DARK_SWORD)) p = 0;
+		if (resf & RESF_COND_DARKSWORD) {
+			if (tval != TV_SWORD || sval != SV_DARK_SWORD) p = 0;
+			else p = 10000;
+		}
 		//force generation of a blunt
-		if ((resf & RESF_COND_BLUNT) && tval != TV_BLUNT) p = 0;
+		if (resf & RESF_COND_BLUNT) {
+			if (tval != TV_BLUNT) p = 0;
+			else p = 10000;
+		}
 		//force generation of a non-sword weapon, _if_ generating a _weapon_ at all
 		if ((resf & RESF_COND_NOSWORD) && is_weapon(tval) && tval == TV_SWORD) p = 0;
 		//force generation of a mage staff:
-		if (resf & RESF_COND_MSTAFF && tval != TV_MSTAFF) p = 0;
+		if (resf & RESF_COND_MSTAFF) {
+			if (tval != TV_MSTAFF) p = 0;
+			else p = 10000;
+		}
 		//force generation of a sling or sling-ammo
-		if ((resf & RESF_COND_SLING) && (tval != TV_BOW || sval != SV_SLING) && tval != TV_SHOT) p = 0;
+		if (resf & RESF_COND_SLING) {
+			if ((tval != TV_BOW || sval != SV_SLING) && tval != TV_SHOT) p = 0;
+			else if (tval == TV_SHOT) p = 10000; //ammo
+			else p = 10000; //sling
+		}
 		//force generation of a ranged weapon or ammo
-		if ((resf & RESF_COND_RANGED) && !is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
+		if (resf & RESF_COND_RANGED) {
+			if (!is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
+			else if (is_ammo(tval)) p = 10000;
+			else if (tval == TV_BOOMERANG) p = 5000;
+			else p = 10000;
+		}
 		//force generation of a rune
-		if ((resf & RESF_COND_RUNE) && tval != TV_RUNE) p = 0;
+		if (resf & RESF_COND_RUNE) {
+			if (tval != TV_RUNE) p = 0;
+			else p = 10000;
+		}
 #endif
 
 		/* Dungeon town stores: Even rarer items have same probability of appearing */

@@ -5191,8 +5191,12 @@ bool monster_death(int Ind, int m_idx) {
 		break;
 	case 10: case 13: case 23: //archers
 		resf_drops |= RESF_COND_RANGED; break;
-//	case :
-//		resf_drops |= RESF_COND_RUNE; break;
+	case 62: //runemasters
+		if (rand_int(4)) {
+			resf_drops |= RESF_COND_RUNE;
+			number++; //mh, just don't look too forced in case we only drop one item :p
+		}
+		break;
 	default: /* then r_info */
 		switch (m_ptr->r_idx) {
 		case 1047: case 1048: case 1049: case 1050: //unbeliever
@@ -5214,9 +5218,10 @@ bool monster_death(int Ind, int m_idx) {
 		case 46: case 93: //novice mages
 			if (!rand_int(5)) resf_drops |= RESF_COND_MSTAFF;
 			break;
-		case 240: case 449: case 638: case 738: case 281: case 178: case 657: //mages (mage/illusionist/sorcerer)
+		case 240: case 449: case 638: case 738: case 178: case 657: //mages (mage/illusionist/sorcerer)
 			if (rand_int(4)) resf_drops |= RESF_COND_MSTAFF;
 			break;
+		case 281: //gnome mages
 		case 375: //warlocks (dark-elven)
 			if (!rand_int(5)) resf_drops |= RESF_COND_MSTAFF;
 			break;
