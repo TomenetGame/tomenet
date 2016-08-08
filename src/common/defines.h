@@ -4994,13 +4994,13 @@
 #define RESF_NO_ENCHANT		0x00100000	/* generate an 'average' item (no enchantments/ego powers/artifacts) */
 #define RESF_SAURON		0x00200000	/* don't generate The One Ring, as player has already slain Sauron */
 
-#define RESF_COND_SWORD		0x00400000	/* force a sword (swordmen, rogues) */
-#define RESF_COND_DARKSWORD	0x00800000	/* force a dark sword (unbelievers) */
-#define RESF_COND_BLUNT		0x01000000	/* force a blunt weapon (priests) */
-#define RESF_CONDF_NOSWORD	0x02000000	/* if weapon, force not a sword (shamans) */
+#define RESF_COND_SWORD		0x00400000	/* don't allow weapons besides a sword (swordmen, rogues) */
+#define RESF_COND_DARKSWORD	0x00800000	/* don't allow weapons besides a dark sword (unbelievers) */
+#define RESF_COND_BLUNT		0x01000000	/* don't allow weapons besides a blunt weapon (priests) */
+#define RESF_CONDF_NOSWORD	0x02000000	/* don't allow swords (shamans) -- */
 #define RESF_CONDF_MSTAFF	0x04000000	/* force a mage staff (mages) */
-#define RESF_COND_SLING		0x08000000	/* force a sling (slingers) */
-#define RESF_COND_RANGED	0x10000000	/* force any ranged weapon (archers) */
+#define RESF_COND_SLING		0x08000000	/* don't allow weapons besides a sling (clears condition) or ammo (doesn't clear condition) (slingers) */
+#define RESF_COND_RANGED	0x10000000	/* don't allow weapons besides ranged weapons (clear condition) or ammo (doesn't clear condition) (archers) */
 #define RESF_CONDF_RUNE		0x20000000	/* force a rune (runemasters) */
 #define RESF_COND2_LARMOUR	0x40000000	/* mostly avoid dropping heavy armour (persistent) */
 #define RESF_COND2_HARMOUR	0x80000000	/* mostly avoid dropping light armour (persistent) */

@@ -4878,6 +4878,7 @@ bool monster_death(int Ind, int m_idx) {
 
 #if FORCED_DROPS != 0
 	bool drop_dual = FALSE;
+	bool forced_drops_probable = FORCE_DROPS_PROBABLE / ((r_ptr->flags1 & (RF1_FRIEND | RF1_FRIENDS)) == 0x0 ? 1 : 3);
 #endif
 
 	int force_coin = get_coin_type(r_ptr);
@@ -5216,7 +5217,7 @@ bool monster_death(int Ind, int m_idx) {
 	/* switch to r_info next: */
 	default:
 		switch (m_ptr->r_idx) {
-		case 1048: //unbeliever with FRIENDS -_- should just get removed maybe?
+		case 1048: //unbeliever with FRIENDS
 			if (!rand_int(3)) resf_drops |= RESF_COND_DARKSWORD;
 			resf_drops |= RESF_COND2_HARMOUR;
 			break;
@@ -5224,7 +5225,8 @@ bool monster_death(int Ind, int m_idx) {
 			if (rand_int(3)) resf_drops |= RESF_COND_DARKSWORD;
 			resf_drops |= RESF_COND2_HARMOUR;
 			break;
-		case 44: case 116: case 150: case 199: case 376: case 516: case 696: //rogues
+		case 116:  //rogues with FRIENDS
+		case 44: case 150: case 199: case 376: case 516: case 696: //rogues
 			resf_drops |= RESF_COND_LSWORD;
 			if (rand_int(2)) {
 				drop_dual = TRUE;
@@ -5232,15 +5234,17 @@ bool monster_death(int Ind, int m_idx) {
 			}
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
+		case 564: ///nightblade has FRIENDS
 		case 485: //ninja
 			resf_drops |= RESF_COND_LSWORD;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
-		case 216: case 1058: case 1059: case 1070: //swordmen
+		case 216: case 1058: case 1059: case 1075: //swordmen
 			resf_drops |= RESF_COND_SWORD;
 			resf_drops |= RESF_COND2_HARMOUR;
 			break;
-		case 45: case 109: case 225: //priests
+		case 109: //priests with FRIENDS
+		case 45: case 225: //priests
 		case 1017: case 689: case 1018: case 226: //evil priests
 			resf_drops |= RESF_COND_BLUNT;
 			break;
@@ -5248,7 +5252,7 @@ bool monster_death(int Ind, int m_idx) {
 			resf_drops |= RESF_CONDF_NOSWORD;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
-		case 46: case 93: //novice mages
+		case 46: case 93: //novice mages without/with FRIENDS, both suck ;)
 			if (!rand_int(5)) resf_drops |= RESF_CONDF_MSTAFF;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
@@ -5256,12 +5260,12 @@ bool monster_death(int Ind, int m_idx) {
 			if (rand_int(3)) resf_drops |= RESF_CONDF_MSTAFF;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
-		case 281: //gnome mages
-		case 375: //warlocks (dark-elven)
+		case 281: //gnome mages have FRIENDS
+		case 375: //warlocks (dark-elven) have FRIENDS
 			if (!rand_int(5)) resf_drops |= RESF_CONDF_MSTAFF;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
-		case 539: //slinger
+		case 539: //slinger have FRIENDS
 			resf_drops |= RESF_COND_SLING;
 			break;
 		/* -- only do flexible vs tough armour choice for the remaining monsters here -- */
@@ -5269,7 +5273,6 @@ bool monster_death(int Ind, int m_idx) {
 			switch (m_ptr->r_idx) {
 			/* monsters that don't fall into the usual colouring scheme */
 			case 370: case 492: //monks
-			case 485: case 564: //nightblade/ninja
 			case 532: //dagashi too
 				resf_drops |= RESF_COND2_LARMOUR;
 				break;
@@ -5375,10 +5378,10 @@ bool monster_death(int Ind, int m_idx) {
 #if FORCED_DROPS != 0
  #if 0
 				/* only try forcing the item for the first item dropped */
-				if (!j && magik(FORCE_DROPS_PROBABLE)) resf_drops |= RESF_COND_FORCE;
+				if (!j && magik(forced_drops_probable)) resf_drops |= RESF_COND_FORCE;
  #else
 				/* retry forcing the item until it gets generated or all items have been dropped */
-				if (magik(FORCE_DROPS_PROBABLE)) resf_drops |= RESF_COND_FORCE;
+				if (magik(forced_drops_probable)) resf_drops |= RESF_COND_FORCE;
  #endif
 #endif
 				/* generate an object and place it */
