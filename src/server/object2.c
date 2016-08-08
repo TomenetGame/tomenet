@@ -6447,9 +6447,8 @@ static int kind_is_good(int k_idx, u32b resf) {
 		return 100;
 
 	/* Trap kits are good now, since weapons are, too. */
-	/* kept <100%, because _every_ monster would drop them like weapons/armour, ie way too high frequency! */
 	case TV_TRAPKIT:
-		return 5;
+		return 25;
 
 	/* Rings -- Rings of Speed are good */
 	case TV_RING:
@@ -6478,7 +6477,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_RING_RES_CHAOS:
 		case SV_RING_INVIS:
 #endif
-			return 25;
+			return 35;
 		}
 		return 0;
 
@@ -6494,7 +6493,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_LITE_PALANTIR:
 		case SV_ANCHOR_SPACETIME:
 		case SV_STONE_LORE:
-			return 10;
+			return 50;
 		}
 		return 0;
 
@@ -6540,7 +6539,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_STAFF_EARTHQUAKES:
 		case SV_STAFF_DESTRUCTION:
 		case SV_STAFF_STAR_IDENTIFY:
-			return 10;
+			return 13;
 		}
 		return 0;
 	case TV_WAND:
@@ -6561,7 +6560,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_WAND_ELEC_BOLT:
 		case SV_WAND_TELEPORT_AWAY:
 		//case SV_WAND_WALL_CREATION:
-			return 10;
+			return 13;
 		}
 		return 0;
 	case TV_ROD:
@@ -6586,7 +6585,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_ROD_COLD_BALL:
 		case SV_ROD_FIRE_BALL:
 		case SV_ROD_HAVOC:
-			return 10;
+			return 5;
 		}
 		return 0;
 	}
