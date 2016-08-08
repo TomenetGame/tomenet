@@ -2928,6 +2928,19 @@
 	(tval) == TV_SOFT_ARMOR || (tval) == TV_CLOAK || \
 	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)) || \
 	((tval) == TV_SHIELD && ((sval) == SV_SMALL_LEATHER_SHIELD || (sval) == SV_LARGE_LEATHER_SHIELD)))
+/* what magic/roguish/martial artist would wear; ignores DSM */
+#define is_flexible_armour(tval,sval) \
+	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_HARD_LEATHER_BOOTS && (sval) != SV_PAIR_OF_METAL_SHOD_BOOTS && (sval) != SV_PAIR_OF_WITAN_BOOTS) || \
+	((tval) == TV_GLOVES && (sval) != SV_SET_OF_GAUNTLETS && (sval) != SV_SET_OF_CESTI) || \
+	(tval) == TV_SOFT_ARMOR || (tval) == TV_CLOAK || \
+	((tval) == TV_HELM && ((sval) == SV_CLOTH_CAP || (sval) == SV_HARD_LEATHER_CAP || (sval) == SV_GOGGLES_DM)))
+/* what non-light melee fighters would wear; ignores DSM */
+#define is_tough_armour(tval,sval) \
+	(((tval) == TV_BOOTS && (sval) != SV_PAIR_OF_SOFT_LEATHER_BOOTS) || \
+	((tval) == TV_GLOVES && (sval) != SV_SET_OF_LEATHER_GLOVES) || \
+	(tval) == TV_HARD_ARMOR || (tval) == TV_CLOAK || \
+	((tval) == TV_HELM && (sval) != SV_CLOTH_CAP && (sval) != SV_HARD_LEATHER_CAP && (sval) != SV_GOGGLES_DM) || \
+	(tval == TV_SHIELD))
 #define is_cheap_misc(tval) \
 	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK)
 #define is_ranged_weapon(tval) \
@@ -4984,6 +4997,8 @@
 #define RESF_COND_SLING		0x08000000	/* force a sling (slingers) */
 #define RESF_COND_RANGED	0x10000000	/* force any ranged weapon (archers) */
 #define RESF_COND_RUNE		0x20000000	/* force a rune (runemasters) */
+#define RESF_COND2_LARMOUR	0x40000000	/* mostly avoid dropping heavy armour (persistent) */
+#define RESF_COND2_HARMOUR	0x40000000	/* mostly avoid dropping light armour (persistent) */
 
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */

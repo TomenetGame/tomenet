@@ -933,6 +933,10 @@ errr get_obj_num_prep(u32b resf) {
 			if (tval != TV_RUNE) p = 0;
 			else p = 10000;
 		}
+		//mostly avoid heavy armour
+		if ((resf & RESF_COND2_LARMOUR) && is_tough_armour(tval, sval)) p >>= 2;
+		//mostly avoid light armour
+		if ((resf & RESF_COND2_HARMOUR) && is_flexible_armour(tval, sval)) p >>= 2;
 #endif
 
 		/* Dungeon town stores: Even rarer items have same probability of appearing */
