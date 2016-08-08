@@ -2458,7 +2458,7 @@ static bool auto_retaliate_test(int Ind) {
 				/* a valid @O has been located */
 				/* @O shouldn't work on weapons or ammo in inventory - mikaelh */
 				if ((*inscription == 'O' || *inscription == 'Q') && !(i < INVEN_WIELD &&
-				    (is_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
+				    (is_melee_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
 				    is_armour(o_ptr->tval) || o_ptr->tval == TV_MSTAFF ||
 				    o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG))) {
 					if (*inscription == 'Q') fallback = TRUE;
@@ -2491,7 +2491,7 @@ static bool auto_retaliate_test(int Ind) {
 	}
 
 	/* check if we're using physical damage attacks */
-	if (item != -1) physical = is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF || is_ranged_weapon(o_ptr->tval) || is_ammo(o_ptr->tval);
+	if (item != -1) physical = is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF || is_ammo(o_ptr->tval);
 
 	/* Scan for @Ox to disable auto-retaliation only if no @O was found - mikaelh */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
@@ -2729,7 +2729,7 @@ static bool auto_retaliate_test(int Ind) {
 				/* a valid @O has been located */
 				/* @O shouldn't work on weapons or ammo in inventory - mikaelh */
 				if ((*inscription == 'O' || *inscription == 'Q') && !(i < INVEN_WIELD &&
-				    (is_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
+				    (is_melee_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
 				    is_armour(o_ptr->tval) || o_ptr->tval == TV_MSTAFF ||
 				    o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG))) {
 					if (*inscription == 'Q') fallback = TRUE;
@@ -6943,7 +6943,7 @@ void process_player_change_wpos(int Ind) {
 	if (!p_ptr->ghost) { /* don't warn ghosts */
 		if (p_ptr->warning_bpr2 != 1 && p_ptr->num_blow == 1 &&
 		    /* and don't spam Martial Arts users or mage-staff wielders ;) */
-		    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
+		    p_ptr->inventory[INVEN_WIELD].k_idx && is_melee_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
 			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
 			msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");

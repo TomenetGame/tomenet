@@ -1754,7 +1754,7 @@ static void store_create(store_type *st_ptr) {
 			   which can sell almost all armour/weapon types, so they don't sell these.
 			    - C. Blue */
 			if (object_value(0, o_ptr) == 1) {
-				if (is_weapon(o_ptr->tval) &&
+				if (is_melee_weapon(o_ptr->tval) &&
 				    k_info[o_ptr->k_idx].to_h < 0 &&
 				    k_info[o_ptr->k_idx].to_d < 0)
 					continue;
@@ -1960,7 +1960,7 @@ static void store_create(store_type *st_ptr) {
 					if (is_armour(k_ptr->tval)) continue;
 
 					/* otherwise the rare weapons occur too often with nice ego powers for too low price */
-					else if (is_weapon(k_ptr->tval)) continue;
+					else if (is_melee_weapon(k_ptr->tval)) continue;
 
 					/* don't make rare jewelry store unemployed */
 					else if (k_ptr->tval == TV_AMULET || k_ptr->tval == TV_RING) continue;

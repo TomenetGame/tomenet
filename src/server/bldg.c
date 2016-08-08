@@ -1253,7 +1253,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac, int
 			msg_format(Ind, "Your %s has been enchanted to [+%d].", tmp_str, maxenchant_eff);
 			break;
 		} else {
-			if (!is_weapon(o_ptr->tval) && !is_ranged_weapon(o_ptr->tval) && !is_ammo(o_ptr->tval)) continue;
+			if (!is_weapon(o_ptr->tval) && !is_ammo(o_ptr->tval)) continue;
 			if (o_ptr->to_h >= maxenchant_eff && o_ptr->to_d >= maxenchant_eff) continue;
 			if (o_ptr->to_h < maxenchant_eff) o_ptr->to_h = maxenchant_eff;
 			if (o_ptr->to_d < maxenchant_eff) o_ptr->to_d = maxenchant_eff;

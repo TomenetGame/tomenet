@@ -548,7 +548,7 @@ static void add_ability (artifact_type *a_ptr) {
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
 				/* chaotic and blessed are exclusive atm */
 				if (!(a_ptr->flags5 & TR5_CHAOTIC) &&
-				    (is_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG))
+				    (is_melee_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG))
 					a_ptr->flags3 |= TR3_BLESSED;
 			} else if (r < 7) {
 				a_ptr->flags1 |= TR1_BRAND_ACID;
@@ -1488,7 +1488,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 	/* Limit speed on 1-hand weapons and shields (balances both, dual-wiel and 2-handed weapons) */
 	/* Limit +LIFE to +2 under same circumstances */
-	if (k_ptr->tval == TV_SHIELD || is_weapon(k_ptr->tval)) {
+	if (k_ptr->tval == TV_SHIELD || is_melee_weapon(k_ptr->tval)) {
 		if (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)) {
 			if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 			if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
@@ -1758,7 +1758,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 	/* Limit speed on 1-hand weapons and shields (balances both, dual-wiel and 2-handed weapons) */
 	/* Limit +LIFE to +2 under same circumstances */
-	if (k_ptr->tval == TV_SHIELD || is_weapon(k_ptr->tval)) {
+	if (k_ptr->tval == TV_SHIELD || is_melee_weapon(k_ptr->tval)) {
 		if (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)) {
 			if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 			if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
@@ -1890,7 +1890,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 	if ((k_ptr->tval != TV_BOW) &&
 	    (k_ptr->tval != TV_BOOMERANG) &&
 	    !is_ammo(k_ptr->tval) &&
-	    !is_weapon(k_ptr->tval) &&
+	    !is_melee_weapon(k_ptr->tval) &&
 	    !is_armour(k_ptr->tval) &&
 	    (k_ptr->tval != TV_MSTAFF) &&
 	    (k_ptr->tval != TV_LITE) &&
@@ -1988,7 +1988,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		a_ptr->to_d = o_ptr->to_d;
 		a_ptr->to_a = o_ptr->to_a;
 #ifdef RANDART_WEAPON_BUFF
-	} else if (is_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG) {
+	} else if (is_melee_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG) {
 		/* normalise +hit,+dam to somewhat more buffed values for all art weapons */
 		a_ptr->to_h = 0;//k_ptr->to_h / 2;
 		a_ptr->to_d = 0;//k_ptr->to_d / 2;
@@ -1999,7 +1999,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		/* Get base +hit,+dam,+ac from k_info for any item type, to start out with this. */
 #ifdef RANDART_WEAPON_BUFF
 		/* note: we assume that shooters don't have big k_info +hit/+dam,
-		   or we'd have to move them up there to is_weapon() block probably. */
+		   or we'd have to move them up there to is_melee_weapon() block probably. */
 #endif
 		a_ptr->to_h = k_ptr->to_h;
 		a_ptr->to_d = k_ptr->to_d;
@@ -2023,7 +2023,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 
 	/* Ensure weapons have some bonus to hit & dam */
 #ifdef RANDART_WEAPON_BUFF
-	if (is_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG) {
+	if (is_melee_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG) {
 		/* emphasise non-low values */
  #if 0		/* relatively steep start -- y=20-(125/(5+x)-5), 0<=x<=20 */
 		a_ptr->to_d += 20 - (125 / (5 + rand_int(21)) - 5);
@@ -2038,7 +2038,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		a_ptr->to_h += rand_int(21);
 	}
 #else
-	if (is_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG ||
+	if (is_melee_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG ||
 	    a_ptr->tval == TV_DIGGING || a_ptr->tval == TV_BOW) {
 		a_ptr->to_d += 1 + rand_int(20);
 		a_ptr->to_h += 1 + rand_int(20);
@@ -2610,7 +2610,7 @@ try_an_other_ego:
 
 	/* Limit +LIFE on 1-hand weapons +2 (balances both, dual-wiel and 2-handed weapons) */
 	if (o_ptr->tval == TV_SHIELD ||
-	    (is_weapon(o_ptr->tval) &&
+	    (is_melee_weapon(o_ptr->tval) &&
 	    !(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)) ) {
 		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
 	}

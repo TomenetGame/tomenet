@@ -604,7 +604,7 @@ bool item_tester_hook_armour(object_type *o_ptr) {
 	return (is_armour(o_ptr->tval));
 }
 bool item_tester_hook_weapon(object_type *o_ptr) {
-	return (is_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
+	return (is_melee_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
 	    o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG ||
 	    (o_ptr->tval == TV_TRAPKIT && is_firearm_trapkit(o_ptr->sval)) ||
 	    o_ptr->tval == TV_DIGGING || o_ptr->tval == TV_MSTAFF);

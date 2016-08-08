@@ -1998,7 +1998,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 	action = "item_";
 
 	/* choose sound */
-	if (is_weapon(tval)) switch(tval) {
+	if (is_melee_weapon(tval)) switch(tval) {
 		case TV_SWORD: item = "sword"; break;
 		case TV_BLUNT:
 			if (sval == SV_WHIP) item = "whip"; else item = "blunt";

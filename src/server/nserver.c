@@ -3066,7 +3066,7 @@ static int Handle_login(int ind) {
 
 		if (!p_ptr->warning_ma_weapon &&
 		    (p_ptr->inventory[INVEN_WIELD].k_idx ||
-		    is_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */
+		    is_melee_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */
 #ifndef ENABLE_MA_BOOMERANG
 		    p_ptr->inventory[INVEN_BOW].k_idx)) {
 #else

@@ -3493,7 +3493,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	    - (extract_energy[p_ptr->pspeed] / 100) * 100) / 10);
 
 	/* show parry/block chance if we're using weapon or shield */
-	if (is_weapon(p_ptr->inventory[INVEN_WIELD].tval) ||
+	if (is_melee_weapon(p_ptr->inventory[INVEN_WIELD].tval) ||
 	    p_ptr->inventory[INVEN_ARM].tval) /* dual-wield or shield */
 		check_parryblock(Ind);
 	/* show dodge chance if we have dodge skill */

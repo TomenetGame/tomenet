@@ -2875,7 +2875,9 @@
 
 /* some masks (originally just is_armour for XBM control) - C. Blue */
 #define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
-#define is_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
+#define is_melee_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
+#define is_ranged_weapon(tval)	((tval) == TV_BOW || (tval) == TV_BOOMERANG)
+#define is_weapon(tval)		(is_melee_weapon(tval) || is_ranged_weapon(tval))
 #define is_rare_weapon(tval,sval) ( \
 	(((tval) == TV_SWORD) && ((sval) >= SV_BLADE_OF_CHAOS)) || /* blade of chaos, dark sword, bluesteel, shadow */ \
 	(((tval) == TV_BLUNT) && ((sval) == SV_MACE_OF_DISRUPTION || (sval) == SV_DEMON_HAMMER || (sval) == SV_SCOURGE_OF_REPENTANCE)) || \
@@ -2943,8 +2945,6 @@
 	(tval == TV_SHIELD))
 #define is_cheap_misc(tval) \
 	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK)
-#define is_ranged_weapon(tval) \
-	((tval) == TV_BOW || (tval) == TV_BOOMERANG)
 #define is_ranged_item(Ind, o_ptr) \
 	(is_ranged_weapon((o_ptr)->tval) || \
 	is_ammo((o_ptr)->tval) || \
@@ -2956,14 +2956,14 @@
 #ifndef NEW_SHIELDS_NO_AC
 /* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
 #define is_enchantable(o_ptr) \
-	(is_weapon((o_ptr)->tval) || is_ranged_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
+	(is_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
 	(o_ptr)->tval == TV_MSTAFF || \
 	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
 	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING)
 #else
 /* Note: This doesn't check artifact_p() or TR5_NO_ENCHANT, but only the base item type. */
 #define is_enchantable(o_ptr) \
-	((is_weapon((o_ptr)->tval) || is_ranged_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
+	((is_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
 	(o_ptr)->tval == TV_MSTAFF || \
 	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
 	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING) \
@@ -4976,10 +4976,14 @@
 #define RESF_NOHIVALUE		0x00000200	/* no items worth more than 100000 Au */
 
 #define RESF_NOETHEREAL		0x00000400	/* no 'ethereal' ego power (ammo) */
-#define RESF_KINDMID		0x00000800	/* k_info value of 500..10000 */
-#define RESF_KINDHI		0x00001000	/* k_info value of 10000.. */
-#define RESF_EGOLOW		0x00002000	/* e_info value of ..1000 */
-#define RESF_EGOMID		0x00004000	/* e_info value of 1000..9000 */
+#if 0 /* not implemented: */
+ #define RESF_KINDMID		0x00000800	/* k_info value of 500..10000 */
+ #define RESF_KINDHI		0x00001000	/* k_info value of 10000.. */
+ #define RESF_EGOLOW		0x00002000	/* e_info value of ..1000 */
+ #define RESF_EGOMID		0x00004000	/* e_info value of 1000..9000 */
+#else /* use it for actual stuff.. */
+ #define RESF_COND_FORCE	0x00000800	/* force item drop of desired type according to conditions */
+#endif
 #define RESF_EGOHI		0x00008000	/* e_info value of 9000.. */
 
 #define RESF_LIFE		0x00010000	/* allow +LIFE randarts */
@@ -5017,6 +5021,8 @@
    Note: We ignore books/crystals at this time, also distinguishing between those would use too many flags.
    0: off, 1: way 1 (soft), 2: way 2 (hard) -- utilizes RESF_COND... flags. [2] */
 #define FORCED_DROPS 2
+/* Artificial generation chance when we try hard to generate a fitting item (overrides normal item probabilities): (1 in n) [2] */
+#define FORCE_DROPS_PROBABLE 2
 
 
 /* ESP defines */

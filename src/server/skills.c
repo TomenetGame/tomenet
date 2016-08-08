@@ -210,7 +210,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			bool warn_takeoff = FALSE;
 			/* display some warnings if an item will severely conflict with Martial Arts skill */
 			if (p_ptr->inventory[INVEN_WIELD].k_idx ||
-			    is_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */
+			    is_melee_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */
 #ifndef ENABLE_MA_BOOMERANG
 			    p_ptr->inventory[INVEN_BOW].k_idx) {
 #else

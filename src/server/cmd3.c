@@ -1000,7 +1000,7 @@ return;
 
 	/* display some warnings if the item will severely conflict with Martial Arts skill */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
-		if ((is_weapon(o_ptr->tval) ||
+		if ((is_melee_weapon(o_ptr->tval) ||
 		    o_ptr->tval == TV_MSTAFF ||
 #ifndef ENABLE_MA_BOOMERANG
 		    o_ptr->tval == TV_BOOMERANG ||

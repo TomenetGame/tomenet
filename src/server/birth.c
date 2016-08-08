@@ -1744,7 +1744,7 @@ static void player_outfit(int Ind) {
 
 		/* If someone uses too low STR/DEX values, "downgrade"
 		   his starter weapon to a lighter version to ensure at least 2 bpr. */
-		if (is_weapon(tv)) {
+		if (is_melee_weapon(tv)) {
 			int wgt, sv2 = sv;
 			int sv_best = sv, bpr_best = 0, bpr;
 			int tv2 = tv, tv_best = tv;

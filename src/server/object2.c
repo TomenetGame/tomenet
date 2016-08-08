@@ -874,7 +874,7 @@ errr get_obj_num_prep(u32b resf) {
 		//force generation of a blunt, if generating a combat at all
 		if ((resf & RESF_COND_BLUNT) && which_theme(tval) == 2 && tval != TV_BLUNT) p = 0;
 		//force generation of a non-sword weapon, if generating a _weapon_ at all
-		if ((resf & RESF_COND_NOSWORD) && is_weapon(tval) && tval == TV_SWORD) p = 0;
+		if ((resf & RESF_COND_NOSWORD) && is_melee_weapon(tval) && tval == TV_SWORD) p = 0;
 		//force generation of a mage staff:
 		if (resf & RESF_COND_MSTAFF && tval != TV_MSTAFF) p = 0;
 		//force generation of a sling or sling-ammo, if generating a combat item at all
@@ -892,46 +892,81 @@ errr get_obj_num_prep(u32b resf) {
 		   magic items in their loot table, but an ogre mage could drop a mage staff! */
 		tval = k_info[k_idx].tval;
 		sval = k_info[k_idx].sval;
-		//force generation of a sword
-		if (resf & RESF_COND_SWORD) {
-			if (tval != TV_SWORD) p = 0;
-			else if (sval == SV_DARK_SWORD) p >>= 2; //don't overdo it..
-			else p = 10000;
-		}
-		//force generation of a dark sword
-		if (resf & RESF_COND_DARKSWORD) {
-			if (tval != TV_SWORD || sval != SV_DARK_SWORD) p = 0;
-			else p = 10000;
-		}
-		//force generation of a blunt
-		if (resf & RESF_COND_BLUNT) {
-			if (tval != TV_BLUNT) p = 0;
-			else p = 10000;
-		}
-		//force generation of a non-sword weapon, _if_ generating a _weapon_ at all
-		if ((resf & RESF_COND_NOSWORD) && is_weapon(tval) && tval == TV_SWORD) p = 0;
-		//force generation of a mage staff:
-		if (resf & RESF_COND_MSTAFF) {
-			if (tval != TV_MSTAFF) p = 0;
-			else p = 10000;
-		}
-		//force generation of a sling or sling-ammo
-		if (resf & RESF_COND_SLING) {
-			if ((tval != TV_BOW || sval != SV_SLING) && tval != TV_SHOT) p = 0;
-			else if (tval == TV_SHOT) p = 10000; //ammo
-			else p = 10000; //sling
-		}
-		//force generation of a ranged weapon or ammo
-		if (resf & RESF_COND_RANGED) {
-			if (!is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
-			else if (is_ammo(tval)) p = 10000;
-			else if (tval == TV_BOOMERANG) p = 5000;
-			else p = 10000;
-		}
-		//force generation of a rune
-		if (resf & RESF_COND_RUNE) {
-			if (tval != TV_RUNE) p = 0;
-			else p = 10000;
+		if (resf & RESF_COND_FORCE) {
+			if (resf & RESF_COND_SWORD) { //force generation of a sword
+				if (tval != TV_SWORD) p = 0;
+				else p = 10000;
+			}
+			if (resf & RESF_COND_DARKSWORD) { //force generation of a dark sword
+				if (tval != TV_SWORD || sval != SV_DARK_SWORD) p = 0;
+				else p = 10000;
+			}
+			if (resf & RESF_COND_BLUNT) { //force generation of a blunt weapon
+				if (tval != TV_BLUNT) p = 0;
+				else p = 10000;
+			}
+			if ((resf & RESF_COND_NOSWORD) && tval == TV_SWORD) p = 0; //force generation of a non-sword if 'generating' a weapon
+			if (resf & RESF_COND_MSTAFF) { //force generation of a mage staff
+				if (tval != TV_MSTAFF) p = 0;
+				else p = 10000;
+			}
+			if (resf & RESF_COND_SLING) { //force generation of a sling (or ammo)
+				if (tval != TV_BOW || sval != SV_SLING) p = 0;
+				else if (tval == TV_SHOT) p = 3000;
+				else p = 10000; //sling
+			}
+			if (resf & RESF_COND_RANGED) { //force generation of a ranged weapon (or ammo)
+				if (!is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
+				else if (is_ammo(tval)) p = 3000;
+				else if (tval == TV_BOOMERANG) p = 3000;
+				else p = 10000; //sling/bow/crossbow
+			}
+			if (resf & RESF_COND_RUNE) { //force generation of a rune
+				if (tval != TV_RUNE) p = 0;
+				else p = 10000;
+			}
+		} else {
+			//force generation of a sword, if generating a weapon
+			if ((resf & RESF_COND_SWORD) && is_weapon(tval)) {
+				if (tval != TV_SWORD) p = 0;
+				else if (sval == SV_DARK_SWORD) p >>= 2; //don't overdo it..
+				else p = 10000;
+			}
+			//force generation of a dark sword, if generating a weapon
+			if ((resf & RESF_COND_DARKSWORD) && is_weapon(tval)) {
+				if (tval != TV_SWORD || sval != SV_DARK_SWORD) p = 0;
+				else p = 10000;
+			}
+			//force generation of a blunt, if generating a weapon
+			if ((resf & RESF_COND_BLUNT) && is_weapon(tval)) {
+				if (tval != TV_BLUNT) p = 0;
+				else p = 10000;
+			}
+			//force generation of a non-sword, if generating a weapon (note: focusses on melee weapons when clearing)
+			if ((resf & RESF_COND_NOSWORD) && tval == TV_SWORD) p = 0;
+			//force generation of a mage staff, absolutely:
+			if (resf & RESF_COND_MSTAFF) {
+				if (tval != TV_MSTAFF) p = 0;
+				else p = 10000;
+			}
+			//force generation of a sling or sling-ammo, if generating any weapon or ammo (note: focusses on ranged weapons when clearing)
+			if ((resf & RESF_COND_SLING) && (is_weapon(tval) || is_ammo(tval))) {
+				if ((tval != TV_BOW || sval != SV_SLING) && tval != TV_SHOT) p = 0;
+				else if (tval == TV_SHOT) p = 10000;
+				else p = 10000; //sling
+			}
+			//force generation of a ranged weapon or ammo
+			if ((resf & RESF_COND_RANGED) && (is_weapon(tval) || is_ammo(tval))) {
+				if (!is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
+				else if (is_ammo(tval)) p = 10000;
+				else if (tval == TV_BOOMERANG) p = 3000;
+				else p = 10000; //sling/bow/crossbow
+			}
+			//force generation of a rune, absolutely
+			if (resf & RESF_COND_RUNE) {
+				if (tval != TV_RUNE) p = 0;
+				else p = 10000;
+			}
 		}
 		//mostly avoid heavy armour
 		if ((resf & RESF_COND2_LARMOUR) && is_tough_armour(tval, sval)) p >>= 2;
@@ -2447,7 +2482,7 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 	int slay = 0;
 
 	/* this routine treats armour only */
-	if ((o_ptr->name1 != ART_RANDART) || !is_weapon(o_ptr->tval)) return 0;
+	if ((o_ptr->name1 != ART_RANDART) || !is_melee_weapon(o_ptr->tval)) return 0;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -2953,7 +2988,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		if (i >= 15) value += (o_ptr->to_a + i - 30) * 3000;
 	}
 	/* OPTIONAL/EXPERIMENTAL: Add extra bonus for weapon that has both, top hit/_dam_ and ea/crit/vamp */
-	else if (is_weapon(o_ptr->tval) && (o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
+	else if (is_melee_weapon(o_ptr->tval) && (o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
 		int kill = 0;
 
 		/* first bonus prefers weapons with high flag rating */
@@ -5677,16 +5712,17 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		if ((resf & RESF_LOWSPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
 		if ((resf & RESF_NOHISPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
 
+		if (o_ptr->name2) ego_value1 = e_info[o_ptr->name2].cost; else ego_value1 = 0;
+		if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
+		if ((resf & RESF_EGOHI) && ego_value1 + ego_value2 < 9000) continue;
+
 		/* "verygreat" check: */
 		/* 2000 to exclude res, light, reg, etc */
 		/* 5000+objval to exclude brands/slays */
 		//NO:	if (!verygreat || object_value_real(0, o_ptr) >= 7000) break; <- arrows (+36,+42) -> lol. - C. Blue
 		if (!verygreat) break;
 
-		if (o_ptr->name2) ego_value1 = e_info[o_ptr->name2].cost; else ego_value1 = 0;
-		if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
-
-	        object_desc(0, o_name, o_ptr, FALSE, 3);
+		object_desc(0, o_name, o_ptr, FALSE, 3);
 		ovr = object_value_real(0, o_ptr);
 		fc = flag_cost(o_ptr, o_ptr->pval);
 
@@ -6888,10 +6924,10 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	if ((resf & RESF_COND_SWORD) && forge.tval == TV_SWORD) place_object_restrictor |= RESF_COND_SWORD;
 	if ((resf & RESF_COND_DARKSWORD) && forge.tval == TV_SWORD && forge.sval == SV_DARK_SWORD) place_object_restrictor |= RESF_COND_DARKSWORD;
 	if ((resf & RESF_COND_BLUNT) && forge.tval == TV_BLUNT) place_object_restrictor |= RESF_COND_BLUNT;
-	if ((resf & RESF_COND_NOSWORD) && is_weapon(forge.tval) && forge.tval != TV_SWORD) place_object_restrictor |= RESF_COND_NOSWORD;
+	if ((resf & RESF_COND_NOSWORD) && is_melee_weapon(forge.tval) && forge.tval != TV_SWORD) place_object_restrictor |= RESF_COND_NOSWORD; //note: only melee weapons can clear this, not ranged weapons
 	if ((resf & RESF_COND_MSTAFF) && forge.tval == TV_MSTAFF) place_object_restrictor |= RESF_COND_MSTAFF;
-	if ((resf & RESF_COND_SLING) && forge.tval == TV_BOW && forge.sval == SV_SLING) place_object_restrictor |= RESF_COND_SLING;
-	if ((resf & RESF_COND_RANGED) && is_ranged_weapon(forge.tval)) place_object_restrictor |= RESF_COND_RANGED;
+	if ((resf & RESF_COND_SLING) && forge.tval == TV_BOW && forge.sval == SV_SLING) place_object_restrictor |= RESF_COND_SLING; //note: sling ammo can't clear it, need an actual sling
+	if ((resf & RESF_COND_RANGED) && is_ranged_weapon(forge.tval)) place_object_restrictor |= RESF_COND_RANGED; //note: ammo can't clear it, need a ranged weapon
 	if ((resf & RESF_COND_RUNE) && forge.tval == TV_RUNE) place_object_restrictor |= RESF_COND_RUNE;
 }
 
@@ -7591,7 +7627,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* for weapons and TV_SHIELD: this shouldn't happen */
 		if (tmp_obj.tval == TV_MSTAFF
 #if 0 /* if someone on purpose trains a skill that doesn't fit his form (bat/mimicry), still give him the desired item */
-		    || is_weapon(tmp_obj.tval) || is_ranged_weapon(tmp_obj.tval)
+		    || is_weapon(tmp_obj.tval)
 #endif
 		    ) {
 			/* shouldn't happen, but.. */
@@ -7704,7 +7740,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		int weapon_bpr = 0; /* try that the reward weapon does not reduce bpr compared to current bpr */
 		bool weapon_2h = FALSE; /* make the reward weapon 2-handed if we're using 2-handed */
 
-		if (is_weapon(reward_tval)) { /* melee weapon */
+		if (is_melee_weapon(reward_tval)) { /* melee weapon */
 			if (p_ptr->inventory[INVEN_WIELD].k_idx) {
 				i = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_WIELD]);
 

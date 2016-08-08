@@ -379,7 +379,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
 		gets the brand(s) on ranged attacks */
 		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
-		    is_weapon(o_ptr->tval))
+		    is_melee_weapon(o_ptr->tval))
 			if (o_ptr->k_idx) apply_monster_brands = FALSE;
 #endif
 		/* The player never gets brands on ranged attacks from a form */
@@ -937,7 +937,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
 		gets the brand(s) on ranged attacks */
 		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
-		    is_weapon(o_ptr->tval))
+		    is_melee_weapon(o_ptr->tval))
 			apply_monster_brands = FALSE;
 #endif
 		/* The player never gets brands on ranged attacks from a form */
@@ -3318,7 +3318,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name); 
   #ifdef USE_SOUND_2010
 				if (sfx == 0 && p_ptr->sfx_combat) {
-					if (o_ptr->k_idx && is_weapon(o_ptr->tval)
+					if (o_ptr->k_idx && is_melee_weapon(o_ptr->tval)
 						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
 						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
@@ -3333,7 +3333,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
  #ifdef USE_SOUND_2010
 				if (sfx == 0 && p_ptr->sfx_combat) {
-					if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+					if (o_ptr->k_idx && is_melee_weapon(o_ptr->tval))
 						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
 						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
@@ -3381,7 +3381,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 #ifdef USE_SOUND_2010
 			if (sfx == 0 && p_ptr->sfx_combat) {
-				if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+				if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 					switch(o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -3747,7 +3747,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				/* hack: always play 'hit' sfx for final killing hit,
 				   so if we didn't play it already (we did so if sfx==0) then play it now instead. */
 				if (sfx && p_ptr->sfx_combat) {
-					if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+					if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 						switch(o_ptr->tval) {
 						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -4023,7 +4023,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 #ifdef USE_SOUND_2010
 			if (sfx == 0 && p_ptr->sfx_combat) {
-				if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+				if (o_ptr->k_idx && is_melee_weapon(o_ptr->tval))
 					sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 				else
 					sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);
@@ -4416,7 +4416,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 #ifdef USE_SOUND_2010
 			if (sfx == 0 && p_ptr->sfx_combat) {
-				if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+				if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 					switch(o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 					case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -4919,7 +4919,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				/* hack: always play 'hit' sfx for final killing hit,
 				   so if we didn't play it already (we did so if sfx==0) then play it now instead. */
 				if (sfx && p_ptr->sfx_combat) {
-					if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+					if (o_ptr->k_idx && (is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 						switch(o_ptr->tval) {
 						case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
 						case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
@@ -5217,7 +5217,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				msg_format(Ind, "You miss %s.", m_name);
 #ifdef USE_SOUND_2010
 				if (sfx == 0 && p_ptr->sfx_combat) {
-					if (o_ptr->k_idx && is_weapon(o_ptr->tval))
+					if (o_ptr->k_idx && is_melee_weapon(o_ptr->tval))
 						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
 						sound(Ind, "miss", NULL, SFX_TYPE_ATTACK, FALSE);

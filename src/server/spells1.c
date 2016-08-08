@@ -2737,7 +2737,7 @@ int equip_damage(int Ind, int typ) {
 
 	/* Pick a (possibly empty) inventory slot */
 #if !defined(NEW_SHIELDS_NO_AC) || !defined(USE_NEW_SHIELDS)
-//	switch (rand_int(is_weapon(p_ptr->inventory[INVEN_ARM].tval) ? 5 : 6)) { /* in case of DUAL_WIELD */
+//	switch (rand_int(is_melee_weapon(p_ptr->inventory[INVEN_ARM].tval) ? 5 : 6)) { /* in case of DUAL_WIELD */
 	switch (rand_int(p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD ? 6 : 5)) { /* in case of DUAL_WIELD */
 #else
 	switch (rand_int(5)) {

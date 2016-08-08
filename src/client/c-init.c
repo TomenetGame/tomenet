@@ -2255,9 +2255,9 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 						    a_val, v_hit, a_key));
 						strcat(info, info_tmp);
 					}
-				} else if (is_weapon(tval) || is_ammo(tval) || tval == TV_BOOMERANG) {
+				} else if (is_melee_weapon(tval) || is_ammo(tval) || tval == TV_BOOMERANG) {
 					empty = FALSE;
-				        sprintf(info_tmp, "Damage dice: \377%c(%s)\377%c. To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+					sprintf(info_tmp, "Damage dice: \377%c(%s)\377%c. To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
 					    a_val, v_ddice, a_key,
 					    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key);
 					strcpy(info, info_tmp);
@@ -2274,7 +2274,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					case SV_HEAVY_XBOW: mult = 4; break;
 					}
 					if (xtra_might) mult++;
-				        sprintf(info_tmp, "Damage/range multiplier: \377%c(x%d)\377%c. To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+					sprintf(info_tmp, "Damage/range multiplier: \377%c(x%d)\377%c. To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
 					    a_val, mult, a_key,
 					    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key);
 					strcpy(info, info_tmp);

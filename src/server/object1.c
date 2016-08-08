@@ -1409,7 +1409,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 
 			else if (sigil == SV_R_TIME) { //Time           | Sp     | EA   |        |       |       |       | EA    | Sp
 				if (!((*f1) & TR1_SPEED) && pval
-				&& !(is_weapon(o_ptr->tval) && !(((*f4) & TR4_SHOULD2H) || ((*f4) & TR4_MUST2H)) && (pval > 3))
+				&& !(is_melee_weapon(o_ptr->tval) && !(((*f4) & TR4_SHOULD2H) || ((*f4) & TR4_MUST2H)) && (pval > 3))
 				&& !((((*f4) & TR4_SHOULD2H) || ((*f4) & TR4_MUST2H)) && (pval > 5))
 				&& !((((*f5) & TR5_CRIT) || ((*f1) & TR1_MANA)) && (pval > 7))
 				&& !(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA) && (pval > 5)))
@@ -3559,7 +3559,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 		p_ptr->inventory[INVEN_ARM].k_idx = 0; /* temporarily delete */
 	}
 	/* take care of SHOULD2H if player is dual-wielding */
-	else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) && (is_weapon(p_ptr->inventory[INVEN_ARM].tval))) {
+	else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) && (is_melee_weapon(p_ptr->inventory[INVEN_ARM].tval))) {
 		p_ptr->inventory[INVEN_ARM].k_idx = 0; /* temporarily delete */
 	}
 
@@ -4119,7 +4119,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	p_ptr->inventory[INVEN_WIELD].number = 1; /* fix weight */
 	if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) p_ptr->inventory[INVEN_ARM].k_idx = 0;
 	else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
-	    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
+	    (is_melee_weapon(p_ptr->inventory[INVEN_ARM].tval)))
 		p_ptr->inventory[INVEN_ARM].k_idx = 0;
 
 #if 0 /* shouldn't be required just for measuring encumberment */
@@ -4326,11 +4326,11 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		else
 			msg_print(Ind, "\377s  It can be wielded one-handed or two-handed.");
 	}
-	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= DUAL_MAX_WEIGHT) msg_print(Ind, "\377s  It can be wielded one-handed or dual.");
-	else if (is_weapon(o_ptr->tval)) msg_print(Ind, "\377s  It is wielded one-handed.");
+	else if (is_melee_weapon(o_ptr->tval) && o_ptr->weight <= DUAL_MAX_WEIGHT) msg_print(Ind, "\377s  It can be wielded one-handed or dual.");
+	else if (is_melee_weapon(o_ptr->tval)) msg_print(Ind, "\377s  It is wielded one-handed.");
 
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, NULL);
-	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL);
+	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL);
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, NULL);
 
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD) {
@@ -4344,7 +4344,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
 			p_ptr->inventory[INVEN_ARM].k_idx = 0;
 		else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
-		    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
+		    (is_melee_weapon(p_ptr->inventory[INVEN_ARM].tval)))
 			p_ptr->inventory[INVEN_ARM].k_idx = 0;
 		suppress_message = TRUE;
 		suppress_boni = TRUE;
@@ -4704,8 +4704,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		else
 			fprintf(fff, "It can be wielded one-handed or two-handed.\n");
 	}
-	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= DUAL_MAX_WEIGHT) fprintf(fff, "It can be wielded one-handed or dual.\n");
-	else if (is_weapon(o_ptr->tval)) fprintf(fff, "It is wielded one-handed.\n");
+	else if (is_melee_weapon(o_ptr->tval) && o_ptr->weight <= DUAL_MAX_WEIGHT) fprintf(fff, "It can be wielded one-handed or dual.\n");
+	else if (is_melee_weapon(o_ptr->tval)) fprintf(fff, "It is wielded one-handed.\n");
 
 	/* Kings/Queens only warning */
 	if (f5 & TR5_WINNERS_ONLY) fprintf(fff, "\377vIt is to be used by royalties exclusively.\377w\n");
@@ -4715,7 +4715,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	}
 
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, fff);
-	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, fff);
+	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, fff);
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, fff);
 
 	/* specialty: recognize custom spell books and display their contents! - C. Blue */

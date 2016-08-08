@@ -6455,7 +6455,7 @@ void calc_boni(int Ind) {
 		/* warning messages, mostly for newbies */
 		if (p_ptr->warning_bpr == 0 && /* limit, so it won't annoy priests anymore who use zeal spell */
 		    p_ptr->num_blow == 1 && old_num_blow > 1 &&
-		    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
+		    p_ptr->inventory[INVEN_WIELD].k_idx && is_melee_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 			p_ptr->warning_bpr = 1;
 			msg_print(Ind, "\374\377yWARNING! Your number of melee attacks per round has just dropped to ONE.");
 			msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
@@ -6468,7 +6468,7 @@ void calc_boni(int Ind) {
 		if (p_ptr->warning_bpr3 == 2 &&
 		    p_ptr->num_blow == 1 && old_num_blow == 1 && 
 		    /* and don't spam Martial Arts users or mage-staff wielders ;) */
-		    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
+		    p_ptr->inventory[INVEN_WIELD].k_idx && is_melee_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
 			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
 			msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
