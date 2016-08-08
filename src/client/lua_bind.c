@@ -98,12 +98,12 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 		tmp += bonus;
 	}
 
-#ifdef LIMIT_SPELLS
+ #ifdef LIMIT_SPELLS
 	if (hack_force_spell_level > 0) {
 		s32b tmp_limit = hack_force_spell_level * (SKILL_STEP / 10);
 		if (tmp > tmp_limit) tmp = tmp_limit;
 	}
-#endif
+ #endif
 
 	tmp = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10));
 
@@ -118,6 +118,10 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 #else
 	tmp = lvl - ((school_spells[s].skill_level - 1) * (SKILL_STEP / 10));
 	lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
+
+	//hack to fix rounding-down, for correctly displaying spell levels <= 0:
+	if (tmp < 0 && tmp % 100) lvl--;
+
 	if (lvl < min) lvl = min;
 	else if (lvl > 0) {
 		tmp += bonus;
@@ -128,9 +132,9 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 		}
 	}
 
-#ifdef LIMIT_SPELLS
+ #ifdef LIMIT_SPELLS
 	if (hack_force_spell_level > 0 && lvl > hack_force_spell_level) lvl = hack_force_spell_level;
-#endif
+ #endif
 #endif
 
 	return lvl;
