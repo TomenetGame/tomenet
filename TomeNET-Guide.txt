@@ -14545,8 +14545,8 @@ Istar schools:
     Frost Ball      Conjures a frost ball.
                     Required skill level for first spell level: 22.
 
-    BONI:           Water resistance at 30,
-                    Passing water at 40,
+    BONI:           Passing water at 30,
+                    Water resistance at 40,
                     Water immunity at 50.
 
 
@@ -14611,8 +14611,8 @@ Istar schools:
     Shake           Creates a local earthquake.
                     Required skill level for first spell level: 35.
 
-    BONI:           Shard resistance at 30,
-                    Great damage reduction against earthquakes at 45.
+    BONI:           Shard resistance at 40,
+                    Great damage reduction against earthquakes at 50.
 
 
 - Nature
@@ -14700,7 +14700,7 @@ Istar schools:
                     Required skill level for first spell level: 45.
                     Shared spell (see above): Temporal, Conveyance.
 
-    BONI:           Resistance to teleportation attacks at 30.
+    BONI:           Resistance to teleportation attacks at 40.
 
 
 - Divination
@@ -14783,8 +14783,7 @@ Istar schools:
                     GOOD opponents.
                     Required skill level for first spell level: 20.
 
-    BONI:           Resist teleportation attacks at 30,
-                    Hold life at 40.
+    BONI:           Hold life at 40.
 
 
 - Mind

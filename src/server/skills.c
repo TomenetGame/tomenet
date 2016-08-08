@@ -445,9 +445,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 
 	case SKILL_EARTH:
-		if (old_value < 300 && new_value >= 300) {
+		if (old_value < 400 && new_value >= 400) {
 			msg_print(Ind, "\374\377GYou feel able to prevent shards of rock from striking you.");
-		} if (old_value < 450 && new_value >= 450) {
+		} if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\374\377GYou feel able to prevent large masses of rock from striking you.");
 		}
 		break;
@@ -466,11 +466,11 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 	case SKILL_WATER:
 		if (old_value < 300 && new_value >= 300
-		    && p_ptr->prace != RACE_ENT) {
-			msg_print(Ind, "\374\377GYou feel able to prevent water streams from striking you.");
-		} if (old_value < 400 && new_value >= 400
 		    && p_ptr->prace != RACE_ENT && p_ptr->pclass != CLASS_RANGER) {
 			msg_print(Ind, "\374\377GYou feel able to move through water easily.");
+		} if (old_value < 400 && new_value >= 400
+		    && p_ptr->prace != RACE_ENT) {
+			msg_print(Ind, "\374\377GYou feel able to prevent water streams from striking you.");
 		} if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\374\377GYou feel able to prevent tidal waves from striking you.");
 		}
@@ -490,7 +490,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		}
 		break;
 	case SKILL_CONVEYANCE:
-		if (old_value < 300 && new_value >= 300 &&
+		if (old_value < 400 && new_value >= 400 &&
 		    get_skill(p_ptr, SKILL_UDUN) < 30) {
 			msg_print(Ind, "\374\377GYou are impervious to feeble teleportation attacks.");
 		}
@@ -529,10 +529,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		}
 		break;
 	case SKILL_UDUN:
-		if (old_value < 300 && new_value >= 300 &&
-		    get_skill(p_ptr, SKILL_CONVEYANCE) < 30) {
-			msg_print(Ind, "\374\377GYou are impervious to feeble teleportation attacks.");
-		} if (old_value < 400 && new_value >= 400
+		if (old_value < 400 && new_value >= 400
 		    && p_ptr->prace != RACE_VAMPIRE) {
 			msg_print(Ind, "\374\377GYou have strong control over your life force.");
 		}

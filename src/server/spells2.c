@@ -5476,7 +5476,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 				if (!sn) {
 					/* Message and damage */
 					damage = 300;
-					if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
+					if (get_skill(p_ptr, SKILL_EARTH) == 50) damage /= 2;
 					/* Cap the damage - mikaelh */
 					if (damage + p_ptr->total_damage > 300) {
 						damage = 300 - p_ptr->total_damage;
@@ -5501,7 +5501,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 							break;
 						case 2:
 							damage = damroll(10, 4);
-							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
+							if (get_skill(p_ptr, SKILL_EARTH) == 50) damage /= 2;
 							/* Cap the damage - mikaelh */
 							if (damage + p_ptr->total_damage > 300)
 								damage = 300 - p_ptr->total_damage;
@@ -5515,7 +5515,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 							break;
 						case 3:
 							damage = damroll(30, 4);
-							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
+							if (get_skill(p_ptr, SKILL_EARTH) == 50) damage /= 2;
 							/* Cap the damage - mikaelh */
 							if (damage + p_ptr->total_damage > 300)
 								damage = 300 - p_ptr->total_damage;
