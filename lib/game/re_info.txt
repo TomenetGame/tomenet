@@ -147,7 +147,8 @@ F:R_CHAR_O | BASEANGBAND
 M:SMART | FORCE_MAXHP | DROP_1D2
 M:AI_ANNOY | NO_BLOCK
 O:FRIENDS
-S:1_IN_6 | BA_COLD | BO_FIRE | TRAPS | HEAL | HOLD | S_MONSTER | TPORT
+S:1_IN_6 | BA_COLD | BO_FIRE | HEAL | HOLD | S_MONSTER | TPORT
+#TRAPS |
 
 N:10:Archer
 G:*:o
@@ -394,7 +395,7 @@ H:R_CHAR_! | R_CHAR_? | R_CHAR_= | R_CHAR_> | R_CHAR_< | R_CHAR_+
 H:MIMIC
 O:MULTIPLY
 
-N:30:Sorceror
+N:30:Sorcerer
 G:*:v
 I:+0:%150d%150:+10:%120:=0
 W:+30:20:%120:%500:A
@@ -408,7 +409,8 @@ M:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
 M:AI_ANNOY | NO_BLOCK
 H:DISBELIEVE
 O:FRIENDS
-S:1_IN_2 | BA_POIS | BO_NETH | BO_PLAS | SLOW | TRAPS | HEAL | HOLD | HASTE
+S:1_IN_2 | BA_POIS | BO_NETH | BO_PLAS | SLOW | HEAL | HOLD | HASTE
+#TRAPS |
 S:TPORT | BLINK | S_MONSTER | S_UNDEAD | S_DRAGON
 
 N:31:Telepath
@@ -753,13 +755,39 @@ W:+15:25:+0:%200:A
 F:SPIDER
 M:FORCE_MAXHP
 
+N:62:Runemaster
+G:*:B
+I:+10:%100d%100:+10:%100:=0
+W:+11:10:%100:%220:A
+F:R_CHAR_O | R_CHAR_o | R_CHAR_k | R_CHAR_n | R_CHAR_y
+M:SMART | DROP_1D2 | RES_FIRE | RES_ELEC | AI_ANNOY
+H:DISBELIEVE
+O:FRIENDS
+S:1_IN_3 | BO_FIRE | BO_COLD | BO_ACID | BO_ELEC | TPORT
+
+N:63:Ranger
+G:*:U
+I:+5:%120d%100:+10:%120:=0
+W:+8:6:%110:%150:A
+B:HIT:HURT:+1d+0
+F:R_CHAR_k | R_CHAR_y
+M:SMART | FORCE_MAXHP | DROP_1D2 | NO_BLOCK
+H:DISBELIEVE
+O:FRIENDS
+S:1_IN_4 | ARROW_1 | ARROW_2 | BO_FIRE | BO_COLD | BLINK | HEAL | TRAPS
+
+
 # N:x:ego name
-# G:x:y                 x is the char, y the attribute, * means the normal one
+# G:x:y (x=monster letter, y=colour, use * to use the same as the standard monster)
 # I:speed:(dice)d(side):aaf:ac:sleep
 # W:lev:rarity:weight:xp:place('B'efore or 'A'fter)
-# F:flags that the normal monster *must* have
-# H:flags that the normal monster *must not* have
-# M:monster flags that the ego-monster adds
-# O:monster flags to remove (use MF_ALL for all)
-# S:monster spells that the ego-monster adds
-# T:monster spells to remove (use MF_ALL for all)
+# E:weapon:torso:arms:finger:head:legs
+# B:method:effect:(dice)d(side) (up to x4 lines)
+# F:flags that the standard monster MUST have - at least ONE of the R_CHAR_x
+#    flags (if present, to determine which monster letters can have this ego
+#    type), plus ALL of the rest
+# H:flags that the standard monster MUST NOT have
+# M:monster flags to add for the ego-type
+# O:monster flags to remove, use MF_ALL for all
+# S:monster spells to add for the ego-type
+# T:monster spells to remove, use MF_ALL for all
