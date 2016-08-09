@@ -2000,8 +2000,8 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		/* Give credit for bonuses */
 //		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) + 
-			PRICE_BOOST(o_ptr->to_d, 7, 3) + 
+		value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) +
+			PRICE_BOOST(o_ptr->to_d, 7, 3) +
 			PRICE_BOOST(o_ptr->to_a, 11, 4)) * 100L);
 
 		/* Done */
@@ -2024,12 +2024,12 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		/* Give credit for bonuses */
 //		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 : 
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5): 
-			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) +
 			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
 			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) +
 			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
 			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
 			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
@@ -2065,10 +2065,10 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
 			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) +
 			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
 			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) +
 			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
 			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
 			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
@@ -2092,7 +2092,7 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
 			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) +
 			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
 			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
 			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
