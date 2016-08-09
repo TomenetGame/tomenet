@@ -1475,8 +1475,9 @@ void go_engine_clocks(void) {
 	sprintf(clock, "%02d", player_timeleft_sec);
 	if (CPU_now_to_move)
 		Send_store_special_str(Ind, GO_BOARD_Y + 1, GO_BOARD_X - 8, TERM_SLATE, clock);
-	else
-		Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, clock);
+	else if (player_timeleft_sec > 10)
+		Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_ORANGE, clock);
+	else Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, clock);
 }
 
 void go_challenge_cancel(void) {
