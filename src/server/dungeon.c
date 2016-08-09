@@ -7518,6 +7518,31 @@ void dungeon(void) {
 	}
 #endif
 
+#ifdef ENABLE_MERCHANT_MAIL
+	i = turn % MAX_MERCHANT_MAILS; //fast enough >_>
+	if (mail_duration[i]) {
+		mail_duration[i]--;
+
+		/* ok, notify him */
+		if (!mail_duration[i]) {
+			int j;
+
+			for (j = 1; j < NumPlayers; j++) {
+				if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
+					if (strcmp(Players[j]->name, mail_target[i]))
+						msg_print(j, "\374\377yThe merchant guild has mail for another character of yours!");
+					else {
+						if (Players[j]->store_num == STORE_MERCHANTS_GUILD)
+							merchant_mail_delivery(j);
+						else
+							msg_print(j, "\374\377yThe merchant guild has mail for you!");
+					}
+				}
+			}
+		}
+	}
+#endif
+
 	/* Process all of the monsters */
 	if (!(turn % MONSTER_TURNS))
 		process_monsters();

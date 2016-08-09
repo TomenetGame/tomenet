@@ -1032,3 +1032,11 @@ int reserved_name_timeout[MAX_RESERVED_NAMES];
 /* Names for randarts */
 char **randart_names;
 int num_randart_names;
+
+#ifdef ENABLE_MERCHANT_MAIL
+object_type mail_forge[MAX_MERCHANT_MAILS];
+char mail_sender[MAX_MERCHANT_MAILS][NAME_LEN];
+char mail_target[MAX_MERCHANT_MAILS][NAME_LEN];
+char mail_target_acc[MAX_MERCHANT_MAILS][NAME_LEN];
+s16b mail_duration[MAX_MERCHANT_MAILS];
+#endif

@@ -9047,6 +9047,136 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		return;
 		}
 #endif
+#ifdef ENABLE_MERCHANT_MAIL
+	case RID_SEND_ITEM: {
+		int i;
+		object_type *o_ptr = &p_ptr->inventory[p_ptr->mail_item];
+		char accname[ACCOUNTNAME_LEN];
+		cptr comp;
+		cptr acc;
+		u32b pid, fee;
+
+		if (!o_ptr->k_idx) {
+			msg_print(Ind, "Invalid item.");
+			return;
+		}
+
+		str[0] = toupper(str[0]);
+		pid = lookup_player_id(str);
+		if (!pid) {
+			msg_format(Ind, "\377ySorry, there is no character named %s.", str);
+			return;
+		}
+		acc = lookup_accountname(pid);
+		if (acc) strcpy(accname, acc);
+		else { //paranoia
+			msg_format(Ind, "\377ySorry, that character does not have an account.");
+			return;
+		}
+
+		fee = object_value_real(0, o_ptr) / 20;
+		if (fee < 5) fee = 5;
+		if (p_ptr->au < fee) {
+			msg_format(Ind, "\377yYou do not carry enough money to pay the fee of %d Au!", fee);
+			return;
+		}
+
+		comp = compat_mode(p_ptr->mode, lookup_player_mode(pid));
+		if (comp) {
+			msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
+			return;
+		}
+
+		/* le paranoid double-check */
+		for (i = 0; i < MAX_MERCHANT_MAILS; i++)
+			if (!mail_sender[i][0]) break;
+		if (i == MAX_MERCHANT_MAILS) {
+			msg_print(Ind, "\377yWe're very sorry, our service is currently overloaded! Please try again later.");
+			return;
+		}
+
+		msg_format(Ind, "Thanks, %s! We have sent a package on its way.", p_ptr->male ? "sir" : "ma'am");
+		p_ptr->au -= fee;
+		p_ptr->redraw |= PR_GOLD;
+
+ #ifdef USE_SOUND_2010
+		sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
+ #endif
+
+		mail_forge[i] = *o_ptr; // we accept a full item stack actually
+		strcpy(mail_sender[i], p_ptr->name);
+		strcpy(mail_target[i], str);
+		strcpy(mail_target_acc[i], acc);
+		mail_duration[i] = 36; // this * (MAX_MERCHANT_MAILS / cfg.fps) seconds  [1 min]
+
+		inven_item_increase(Ind, p_ptr->mail_item, -o_ptr->number);
+		inven_item_describe(Ind, p_ptr->mail_item);
+		inven_item_optimize(Ind, p_ptr->mail_item);
+		return; }
+	case RID_SEND_GOLD: {
+		int i;
+		char accname[ACCOUNTNAME_LEN];
+		cptr comp;
+		cptr acc;
+		u32b pid, fee, total;
+
+		if (p_ptr->mail_gold > p_ptr->au) {
+			//someone steal from us while we're in the store dialogue? =P
+			msg_print(Ind, "\377yYou do not have that much money!");
+			return;
+		}
+
+		fee = p_ptr->mail_gold / 20;
+		if (fee < 5) fee = 5;
+		total = p_ptr->mail_gold + fee;
+		if (p_ptr->au < total) {
+			msg_format(Ind, "\377yYou do not carry enough money to pay the total amount of %d, including the fee of %d Au!", total, fee);
+			return;
+		}
+
+		str[0] = toupper(str[0]);
+		pid = lookup_player_id(str);
+		if (!pid) {
+			msg_format(Ind, "\377ySorry, there is no character named %s.", str);
+			return;
+		}
+		acc = lookup_accountname(pid);
+		if (acc) strcpy(accname, acc);
+		else { //paranoia
+			msg_format(Ind, "\377ySorry, that character does not have an account.");
+			return;
+		}
+
+		comp = compat_mode(p_ptr->mode, lookup_player_mode(pid));
+		if (comp) {
+			msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
+			return;
+		}
+
+		/* le paranoid double-check */
+		for (i = 0; i < MAX_MERCHANT_MAILS; i++)
+			if (!mail_sender[i][0]) break;
+		if (i == MAX_MERCHANT_MAILS) {
+			msg_print(Ind, "\377yWe're very sorry, our service is currently overloaded! Please try again later.");
+			return;
+		}
+
+		msg_format(Ind, "Thanks, %s! We have sent %d Au on its way.", p_ptr->male ? "sir" : "ma'am", p_ptr->mail_gold);
+		p_ptr->au -= total;
+		p_ptr->redraw |= PR_GOLD;
+
+ #ifdef USE_SOUND_2010
+		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
+
+		invcopy(&mail_forge[i], lookup_kind(TV_GOLD, 1));
+		mail_forge[i].pval = p_ptr->mail_gold;
+		strcpy(mail_sender[i], p_ptr->name);
+		strcpy(mail_target[i], str);
+		strcpy(mail_target_acc[i], acc);
+		mail_duration[i] = 36; // this * (MAX_MERCHANT_MAILS / cfg.fps) seconds  [1 min]
+		return; }
+#endif
 	default:;
 	}
 }
@@ -9227,6 +9357,14 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		else msg_format(Ind, "Deal. But this might take a long time to arrive, don't expect it today.");
 		return;
 		}
+#endif
+#ifdef ENABLE_MERCHANT_MAIL
+	case RID_SEND_ITEM:
+		if (cfr) Send_request_str(Ind, RID_SEND_ITEM, "Who is the addressee, please? ", "");
+		return;
+	case RID_SEND_GOLD:
+		if (cfr) Send_request_str(Ind, RID_SEND_GOLD, "Who is the addressee, please? ", "");
+		return;
 #endif
 	default: ;
 	}

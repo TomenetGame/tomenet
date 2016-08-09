@@ -3017,6 +3017,11 @@ struct player_type {
 #ifdef TARGET_SWITCHING_COST
 	s16b tsc_lasttarget;
 #endif
+
+#ifdef ENABLE_MERCHANT_MAIL
+	int mail_item;
+	s32b mail_gold;
+#endif
 };
 
 typedef struct boni_col boni_col;

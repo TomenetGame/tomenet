@@ -242,6 +242,7 @@
 
 /* Allow sending gold or an item to someone via merchants' guild */
 #define ENABLE_MERCHANT_MAIL
+#define MAX_MERCHANT_MAILS 100
 
 
 /* --------------------- Server-type dependant features -------------------- */

@@ -1058,6 +1058,43 @@ static void rd_notes() {
 	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
+static void rd_mail() {
+	int i;
+	s16b j;
+
+	char dummy[NAME_LEN];
+	s16b dummy_i;
+	object_type dummy_o;
+
+#ifdef ENABLE_MERCHANT_MAIL
+	rd_s16b(&j);
+	for (i = 0; i < j; i++) {
+		if (i >= MAX_MERCHANT_MAILS) {
+			rd_item(&dummy_o);
+			rd_string(dummy, NAME_LEN);
+			rd_string(dummy, NAME_LEN);
+			rd_string(dummy, NAME_LEN);
+			rd_s16b(&dummy_i);
+			continue;
+		}
+		rd_item(&mail_forge[i]);
+		rd_string(mail_sender[i], NAME_LEN);
+		rd_string(mail_target[i], NAME_LEN);
+		rd_string(mail_target_acc[i], NAME_LEN);
+		rd_s16b(&mail_duration[i]);
+	}
+#else
+	rd_s16b(&j);
+	for (i = 0; i < j; i++) {
+		rd_obj(&dummy_o);
+		rd_string(dummy, NAME_LEN);
+		rd_string(dummy, NAME_LEN);
+		rd_string(dummy, NAME_LEN);
+		rd_s16b(&dummy_i);
+	}
+#endif
+}
+
 static void rd_xorders() {
 	int i;
 	rd_s16b(&questid);
@@ -3284,6 +3321,9 @@ errr rd_server_savefile() {
 			rd_string(deep_dive_name[i], MAX_CHARS);
 		}
 	}
+
+	//#ifdef ENABLE_MERCHANT_MAIL
+	if (!s_older_than(4, 6, 8)) rd_mail();
 
 	/* Hack -- no ghosts */
 	r_info[MAX_R_IDX-1].max_num = 0;

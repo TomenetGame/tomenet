@@ -2442,7 +2442,7 @@ static int Handle_login(int ind) {
 	int timeout;
 #endif
 	bool options[OPT_MAX], greeting;
-	char namebuf1[80], namebuf2[80], o_name[ONAME_LEN];
+	char msgbuf[80], o_name[ONAME_LEN];
 	cptr title = "";
 	char traffic[50+1];
 	bool newly_created_msg = FALSE;
@@ -2807,13 +2807,9 @@ static int Handle_login(int ind) {
 		}
 	}
 	for (i = 0; i < MAX_NOTES; i++) {
-		strcpy(namebuf1, priv_note_target[i]);
-		strcpy(namebuf2, connp->nick);
-		j = 0; while(namebuf1[j]) { namebuf1[j] = tolower(namebuf1[j]); j++; }
-		j = 0; while(namebuf2[j]) { namebuf2[j] = tolower(namebuf2[j]); j++; }
-//		if (!strcmp(priv_note_target[i], p_ptr->name)) { /* <- sent to a character name */
-//		if (!strcmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name */
-		if (!strcmp(namebuf1, namebuf2)) { /* <- sent to an account name, case-independant */
+		//if (!strcasecmp(priv_note_target[i], p_ptr->name)) { /* <- sent to a character name */
+		//if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name */
+		if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, case-independant */
 			msg_format(NumPlayers, "\374\377RNote from %s: %s", priv_note_sender[i], priv_note[i]);
 			strcpy(priv_note_sender[i], "");
 			strcpy(priv_note_target[i], "");
@@ -2835,6 +2831,22 @@ static int Handle_login(int ind) {
 		}
 	}
 	if (server_warning[0]) msg_format(NumPlayers, "\374\377R*** Note: %s ***", server_warning);
+
+#ifdef ENABLE_MERCHANT_MAIL
+	{ bool you = FALSE;
+	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+		if (!mail_sender[i][0] || mail_duration[i]) continue;
+
+		if (!strcmp(mail_target_acc[i], connp->nick)) {
+			if (strcmp(mail_target[i], p_ptr->name))
+				msg_print(NumPlayers, "\374\377yThe merchant guild has mail for another character of yours!");
+			else if (!you) {
+				msg_print(NumPlayers, "\374\377yThe merchant guild has mail for you!");
+				you = TRUE; //don't spam message, no point
+			}
+		}
+	} }
+#endif
 
 	/* Warn the player if some of his/her characters are about to expire */
 	account_checkexpiry(NumPlayers);
@@ -3094,7 +3106,7 @@ static int Handle_login(int ind) {
 	}
 
 	/* automatically re-add him to the guild of his last character? */
-	namebuf1[0] = '\0'; //abuse namebuf1
+	msgbuf[0] = '\0';
 	if ((i = acc_get_guild(p_ptr->accountname))) {
 #if 1
 		if (p_ptr->newly_created) {
@@ -3111,7 +3123,7 @@ static int Handle_login(int ind) {
 			    guilds[i].members /* guild still exists? */
 			    && guilds[i].dna == acc_get_guild_dna(p_ptr->accountname)) { /* and is still the SAME guild? */
 				/* auto-re-add him to the guild */
-				if (guild_auto_add(NumPlayers, i, namebuf1)) {
+				if (guild_auto_add(NumPlayers, i, msgbuf)) {
 					/* also restore his 'adder' status if he was one */
 					if ((acc_get_flags(p_ptr->accountname) & ACC_GUILD_ADDER)) {
 #ifdef GUILD_ADDERS_LIST
@@ -3290,7 +3302,7 @@ static int Handle_login(int ind) {
 					msg_format(i, "\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name);
 			} else
 				msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
-			if (namebuf1[0] && Players[i]->guild == p_ptr->guild) msg_print(i, namebuf1);
+			if (msgbuf[0] && Players[i]->guild == p_ptr->guild) msg_print(i, msgbuf);
 		}
 		return 0;
 	}
@@ -3311,7 +3323,7 @@ static int Handle_login(int ind) {
 			msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 
 		/* print notification message about guild-auto-add now */
-		if (namebuf1[0] && Players[i]->guild == p_ptr->guild) msg_print(i, namebuf1);
+		if (msgbuf[0] && Players[i]->guild == p_ptr->guild) msg_print(i, msgbuf);
 	}
 
 #ifdef TOMENET_WORLDS

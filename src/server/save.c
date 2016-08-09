@@ -444,6 +444,23 @@ static void wr_notes() {
 	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
+static void wr_mail() {
+#ifdef ENABLE_MERCHANT_MAIL
+	int i;
+
+	wr_s16b(MAX_MERCHANT_MAILS);
+	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+		wr_item(&mail_forge[i]);
+		wr_string(mail_sender[i]);
+		wr_string(mail_target[i]);
+		wr_string(mail_target_acc[i]);
+		wr_s16b(mail_duration[i]);
+	}
+#else
+	wr_s16b(0);
+#endif
+}
+
 static void wr_xorders() {
 	int i;
 	wr_s16b(questid);
@@ -2150,6 +2167,9 @@ static bool wr_server_savefile() {
 		wr_string(deep_dive_account[i]);
 		wr_s16b(deep_dive_class[i]);
 	}
+
+	//#ifdef ENABLE_MERCHANT_MAIL
+	wr_mail();
 
 	/* Write the remaining contents of the buffer */
 	write_buffer();

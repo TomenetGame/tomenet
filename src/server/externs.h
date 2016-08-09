@@ -1731,6 +1731,10 @@ extern int gettown(int Ind);
  #endif
 #endif
 
+#ifdef ENABLE_MERCHANT_MAIL
+extern void merchant_mail_delivery(int Ind);
+#endif
+
 /* util.c */
 extern bool suppress_message, censor_message, suppress_boni;
 extern int censor_length, censor_punish;
@@ -2441,3 +2445,11 @@ extern int reserved_name_timeout[MAX_RESERVED_NAMES];
 /* Names for randarts */
 extern char **randart_names;
 extern int num_randart_names;
+
+#ifdef ENABLE_MERCHANT_MAIL
+extern object_type mail_forge[MAX_MERCHANT_MAILS];
+extern char mail_sender[MAX_MERCHANT_MAILS][NAME_LEN];
+extern char mail_target[MAX_MERCHANT_MAILS][NAME_LEN];
+extern char mail_target_acc[MAX_MERCHANT_MAILS][NAME_LEN];
+extern s16b mail_duration[MAX_MERCHANT_MAILS];
+#endif

@@ -2329,23 +2329,73 @@ if (is_admin(p_ptr))
 			break;
 #endif
 #ifdef ENABLE_MERCHANT_MAIL
-		case BACT_SEND_ITEM:
- #ifdef USE_SOUND_2010
-			//sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
- #endif
-			paid = TRUE;
-			break;
-		case BACT_SEND_GOLD:
-			if (gold > p_ptr->au) gold = p_ptr->au;
+		case BACT_SEND_ITEM: {
+			int i;
+			object_type *o_ptr;
+			/* Get the item (in the pack) */
+			o_ptr = &p_ptr->inventory[item];
+			u32b fee;
+
+			if (!o_ptr->k_idx) {
+				msg_print(Ind, "Invalid item.");
+				break;
+			}
+
+			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+				msg_print(Ind, "\377oYou need an up-to-date client to send an item.");
+				break;
+			}
+			if (!(o_ptr->ident & ID_KNOWN)) {
+				msg_print(Ind, "\377yItems must be identified before you can send them.");
+				break;
+			}
+
+			for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+				if (!mail_sender[i][0]) break;
+				if (!strcmp(mail_sender[i], p_ptr->name)) {
+					msg_print(Ind, "\377yYou can only have one active shipment at a time.");
+					return FALSE;
+				}
+			}
+			if (i == MAX_MERCHANT_MAILS) {
+				msg_print(Ind, "\377yWe're very sorry, our service is currently overloaded! Please try again later.");
+				break;
+			}
+
+			p_ptr->mail_item = item;
+			fee = object_value_real(0, o_ptr) / 20;
+			if (fee < 5) fee = 5;
+			Send_request_cfr(Ind, RID_SEND_ITEM, format("The fee for sending this item is %d, accept?", fee), FALSE);
+			break; }
+		case BACT_SEND_GOLD: {
+			int i;
+			u32b fee;
+
+			if (is_older_than(&p_ptr->version, 4, 4, 6, 2, 0, 0)) {
+				msg_print(Ind, "\377oYou need an up-to-date client to send gold.");
+				break;
+			}
+
+			for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+				if (!mail_sender[i][0]) break;
+				if (!strcmp(mail_sender[i], p_ptr->name)) {
+					msg_print(Ind, "\377yYou can only have one active shipment at a time.");
+					return FALSE;
+				}
+			}
+			if (i == MAX_MERCHANT_MAILS) {
+				msg_print(Ind, "\377yWe're very sorry, our service is currently overloaded! Please try again later.");
+				break;
+			}
+
 			if (gold < 1) break;
-			//p_ptr->au -= gold;
- #ifdef USE_SOUND_2010
-			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
- #endif
-			//msg_format(Ind, "You withdraw %i gold pieces.", gold);
-			//s_printf("Withdraw: %s - %d Au.\n", p_ptr->name, gold);
-			paid = TRUE;
-			break;
+			if (gold > p_ptr->au) gold = p_ptr->au;
+			fee = gold / 20;
+			if (fee < 5) fee = 5;
+
+			p_ptr->mail_gold = gold;
+			Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d, accept?", gold, fee), FALSE);
+			break; }
 #endif
 		default:
 #if 0

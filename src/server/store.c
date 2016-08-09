@@ -4239,10 +4239,57 @@ void do_cmd_store(int Ind) {
 	}
 #endif
 
+#ifdef ENABLE_MERCHANT_MAIL
+	/* check if we received any mail */
+	if (which == STORE_MERCHANTS_GUILD) merchant_mail_delivery(Ind);
+#endif
+
 	/* Do not leave */
 	leave_store = FALSE;
 }
 
+#ifdef ENABLE_MERCHANT_MAIL
+void merchant_mail_delivery(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	char o_name[ONAME_LEN];
+	int i, slot;
+
+	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+		if (!mail_sender[i][0] || mail_duration[i]) continue;
+
+		if (!strcasecmp(mail_target[i], p_ptr->name)) {
+			if (mail_forge[i].tval == TV_GOLD) {
+				if (2000000000 - mail_forge[i].pval < p_ptr->au) {
+					msg_print(Ind, "\374\377yYou are currently carrying too much gold to receive a payment!");
+					continue;
+				}
+				msg_format(Ind, "\374\377yThe accountant hands you a bag of %d gold pieces from %s.", mail_forge[i].pval, mail_sender[i]);
+				p_ptr->au += mail_forge[i].pval;
+				p_ptr->redraw |= PR_GOLD;
+ #ifdef USE_SOUND_2010
+				sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
+			} else {
+				if (p_ptr->inven_cnt >= INVEN_PACK) {
+					msg_print(Ind, "\374\377yYou currently have no room in your inventory to receive a shipment!");
+					continue;
+				}
+				msg_format(NumPlayers, "\374\377yThe accountant hands you a package from %s!", mail_sender[i]);
+				slot = inven_carry(Ind, &mail_forge[i]);
+				object_desc(Ind, o_name, &mail_forge[i], TRUE, 3);
+				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+ #ifdef USE_SOUND_2010
+				sound_item(Ind, mail_forge[i].tval, mail_forge[i].sval, "pickup_");
+ #endif
+			}
+
+			mail_sender[i][0] = 0;
+			mail_target[i][0] = 0;
+			mail_forge[i].k_idx = 0;
+		}
+	}
+}
+#endif
 
 
 /*
