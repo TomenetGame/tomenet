@@ -9585,12 +9585,17 @@ void process_monsters(void) {
 #ifdef SAURON_ANTI_MELEE
 		/* Special Sauron enhancements */
 		if (m_ptr->r_idx == RI_SAURON) {
+			/* temporarily disable AI_ANNOY if the player who causes it is already adjacent to us!
+			   otherwise we might waste too much time running instead of casting/attacking. */
+			bool adj = ((p_ptr->py - m_ptr->fy <= 1) && (p_ptr->px - m_ptr->fx <= 1));
+
 			/* is player a melee fighter mostly, or can intercept at least? */
-			if (p_ptr->s_info[SKILL_SWORD].value + p_ptr->s_info[SKILL_BLUNT].value +
+			if (!adj &&
+			    (p_ptr->s_info[SKILL_SWORD].value + p_ptr->s_info[SKILL_BLUNT].value +
 			    p_ptr->s_info[SKILL_AXE].value + p_ptr->s_info[SKILL_POLEARM].value +
 			    p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= (p_ptr->max_plv * 2000L) / 3 ||
 			    p_ptr->s_info[SKILL_INTERCEPT].value >= (p_ptr->max_plv * 3000L) / 4 ||
-			    p_ptr->antimagic >= 40) {
+			    p_ptr->antimagic >= 40)) {
 				if (!(r_info[m_ptr->r_idx].flags7 & RF7_AI_ANNOY)) {
 					r_info[m_ptr->r_idx].flags7 |= RF7_AI_ANNOY;
 					s_printf("SAURON: add ai_annoy.\n");
@@ -9598,7 +9603,7 @@ void process_monsters(void) {
 			} else {
 				if (r_info[m_ptr->r_idx].flags7 & RF7_AI_ANNOY) {
 					r_info[m_ptr->r_idx].flags7 &= ~RF7_AI_ANNOY;
-					s_printf("SAURON: no ai_annoy.\n");
+					s_printf("SAURON: rm ai_annoy%s\n", adj ? " (adj)." : ".");
 				}
 			}
 		}
