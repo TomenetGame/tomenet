@@ -3787,6 +3787,7 @@ void calc_boni(int Ind) {
 #endif
 		}
 
+#if 0 /* deprecated, see text */
 		/* bad hack for certain double-egos, sorry. need redesign of boni - C. Blue
 		    *** deprecated, because VAMPIRIC no longer gives -LIFE ***
 		   fixes the vampiric shadow blade bug / affects all -life +basestealth weapons:
@@ -3802,6 +3803,7 @@ void calc_boni(int Ind) {
 			if (o_ptr->bpval < 0) p_ptr->to_l += o_ptr->bpval;		*/
 			p_ptr->to_l += o_ptr->pval;
 		}
+#endif
 
 		/* Next, add our ego bonuses */
 		/* Hack -- clear out any pval bonuses that are in the base item
