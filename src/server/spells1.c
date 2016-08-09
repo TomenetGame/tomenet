@@ -6843,27 +6843,22 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			break;
 
-		/* Teleport undead (Use "dam" as "power") */
+		/* Teleport undead (Use "dam" as "power") -- unused */
 		case GF_AWAY_UNDEAD:
 			/* Only affect undead */
-			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
-			    (r_ptr->flags3 & (RF3_UNDEAD))) {
+			if (r_ptr->flags3 & (RF3_UNDEAD)) {
 				bool resists_tele = FALSE;
 
-				if ((r_ptr->flags3 & (RF3_RES_TELE)) || (r_ptr->flags9 & RF9_IM_TELE)) {
-					if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE)) {
+				if ((r_ptr->flags3 & (RF3_RES_TELE)) || (r_ptr->flags9 & RF9_IM_TELE)
+				    || (r_ptr->flags1 & (RF1_UNIQUE))) {
 #ifdef OLD_MONSTER_LORE
-						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
 #endif
-						note = " is unaffected";
-						resists_tele = TRUE;
-					} else if (m_ptr->level > randint(100)) {
-#ifdef OLD_MONSTER_LORE
-						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
-#endif
-						note = " resists";
-						resists_tele = TRUE;
-					}
+					note = " is unaffected";
+					resists_tele = TRUE;
+				} else if (m_ptr->level > randint(100)) {
+					note = " resists";
+					resists_tele = TRUE;
 				}
 
 				if (!resists_tele) {
@@ -6880,27 +6875,22 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			quiet_dam = TRUE;
 			break;
 
-		/* Teleport evil (Use "dam" as "power") */
+		/* Teleport evil (Use "dam" as "power") -- unused */
 		case GF_AWAY_EVIL:
 			/* Only affect evil */
-			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
-			    !(r_ptr->flags3 & (RF3_EVIL))) {
+			if (r_ptr->flags3 & (RF3_EVIL)) {
 				bool resists_tele = FALSE;
 
-				if ((r_ptr->flags3 & (RF3_RES_TELE)) || (r_ptr->flags9 & RF9_IM_TELE)) {
-					if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE)) {
+				if ((r_ptr->flags3 & (RF3_RES_TELE)) || (r_ptr->flags9 & RF9_IM_TELE)
+				    || (r_ptr->flags1 & (RF1_UNIQUE))) {
 #ifdef OLD_MONSTER_LORE
-						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
 #endif
-						note = " is unaffected";
-						resists_tele = TRUE;
-					} else if (m_ptr->level > randint(100)) {
-#ifdef OLD_MONSTER_LORE
-						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
-#endif
-						note = " resists";
-						resists_tele = TRUE;
-					}
+					note = " is unaffected";
+					resists_tele = TRUE;
+				} else if (m_ptr->level > randint(100)) {
+					note = " resists";
+					resists_tele = TRUE;
 				}
 
 				if (!resists_tele) {
@@ -6923,28 +6913,24 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			bool resists_tele = FALSE;
 			//dun_level *l_ptr = getfloor(wpos);
 
-			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
-			    !(r_ptr->flags3 & (RF3_RES_TELE))) {
-				if (r_ptr->flags1 & (RF1_UNIQUE)) {
+			if ((r_ptr->flags9 & RF9_IM_TELE) ||
+			    (r_ptr->flags3 & (RF3_RES_TELE)) ||
+			    (r_ptr->flags1 & (RF1_UNIQUE))) {
 #ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
 #endif
-					note = " is unaffected";
-					resists_tele = TRUE;
-				} else if (m_ptr->level > randint(100)) {
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
-#endif
-					note = " resists";
-					resists_tele = TRUE;
-				}
+				note = " is unaffected";
+				resists_tele = TRUE;
+			} else if (m_ptr->level > randint(100)) {
+				note = " resists";
+				resists_tele = TRUE;
+			}
 
-				if (!resists_tele) {
-					/* Obvious */
-					if (seen) obvious = TRUE;
-					/* Prepare to teleport */
-					do_dist = dam;
-				}
+			if (!resists_tele) {
+				/* Obvious */
+				if (seen) obvious = TRUE;
+				/* Prepare to teleport */
+				do_dist = dam;
 			}
 
 			/* No "real" damage */
@@ -6954,7 +6940,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 
-		/* Turn undead (Use "dam" as "power") */
+		/* Turn undead (Use "dam" as "power") -- overrides NO_FEAR, UNIQUE -- unused */
 		case GF_TURN_UNDEAD:
 			/* Only affect undead */
 			if (r_ptr->flags3 & RF3_UNDEAD) {
@@ -6981,7 +6967,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			quiet_dam = TRUE;
 			break;
 
-		/* Turn evil (Use "dam" as "power") */
+		/* Turn evil (Use "dam" as "power") -- overrides NO_FEAR -- unused */
 		case GF_TURN_EVIL:
 			/* Only affect evil */
 			if (r_ptr->flags3 & RF3_EVIL) {
@@ -6994,8 +6980,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				/* Apply some fear */
 				do_fear = damroll(3, (dam / 2)) + 1;
 
+				if (r_ptr->flags1 & RF1_UNIQUE) {
+					/* No obvious effect */
+					note = " is unaffected";
+					obvious = FALSE;
+					do_fear = 0;
+				}
 				/* Attempt a saving throw */
-				if (RES_OLD(r_ptr->level, dam)) {
+				else if (RES_OLD(r_ptr->level, dam)) {
 					/* No obvious effect */
 					note = " is unaffected";
 					obvious = FALSE;
