@@ -6268,7 +6268,8 @@ static bool theme_changed(obj_theme theme) {
  */
 static int kind_is_theme(int k_idx) {
 	object_kind *k_ptr = &k_info[k_idx];
-	int p = 0;
+	/* assume 'junk' class */
+	int p = 100 - (match_theme.treasure + match_theme.combat + match_theme.magic + match_theme.tools);
 
 	/*
 	 * Paranoia -- Prevent accidental "(Nothing)"
@@ -6276,8 +6277,7 @@ static int kind_is_theme(int k_idx) {
 	 *
 	 * Caution: Junks go into the allocation table.
 	 */
-	if (match_theme.treasure + match_theme.combat +
-	    match_theme.magic + match_theme.tools == 0) return (TRUE);
+	if (p == 100) return 100;
 
 
 	/* Pick probability to use */
@@ -6285,11 +6285,9 @@ static int kind_is_theme(int k_idx) {
 	case TV_SKELETON:
 	case TV_BOTTLE:
 	case TV_JUNK:
-	case TV_FIRESTONE:
 	case TV_CORPSE:
 	case TV_EGG:
-	/* hm, this was missing here, for a long time - C. Blue */
-	case TV_GOLEM:
+	case TV_GOLEM: /* hm, this was missing here, for a long time - C. Blue */
 		/*
 		 * Degree of junk is defined in terms of the other
 		 * 4 quantities XXX XXX XXX
@@ -6297,9 +6295,7 @@ static int kind_is_theme(int k_idx) {
 		 * larger than theme components, or we would see
 		 * unexpected, well, junks.
 		 */
-		p = 100 - (match_theme.treasure + match_theme.combat +
-		              match_theme.magic + match_theme.tools);
-		break;//junk
+		break;//junk (p default value)
 
 	case TV_CHEST:		p = match_theme.treasure; break;
 	case TV_CROWN:		p = match_theme.treasure; break;
@@ -6350,10 +6346,14 @@ static int kind_is_theme(int k_idx) {
 	case TV_SPIKE:		p = match_theme.tools; break;
 	case TV_DIGGING:	p = match_theme.tools; break;
 	case TV_FLASK:		p = match_theme.tools; break;
-	case TV_FOOD:		p = match_theme.tools; break;
 	case TV_TOOL:		p = match_theme.tools; break;
 	case TV_INSTRUMENT:	p = match_theme.tools; break;
 	case TV_TRAPKIT:	p = match_theme.tools; break;
+
+	/* hybrid: can be junk or tools (while being neither..)! */
+	case TV_FIRESTONE:
+	case TV_FOOD:
+		if (match_theme.tools > p) p = match_theme.tools; break;
 	}
 
 	/* Return the percentage */
