@@ -7434,7 +7434,7 @@ static void print_tomb(cptr reason) {
 
 	/* Print the text-tombstone */
 	if (!done) {
-		char	tmp[160];
+		char	tmp[160], reason2[MAX_CHARS];
 		char	buf[1024], buf2[1024 * 2];
 		FILE	*fp;
 		time_t	ct = time(NULL);
@@ -7491,41 +7491,43 @@ static void print_tomb(cptr reason) {
 #endif	/* 0 */
 
 		center_string(buf, cname);
-		put_str(buf, 6, 11);
+		c_put_str(TERM_L_UMBER, buf, 6, 11);
 
-		center_string(buf, "the");
-		put_str(buf, 7, 11);
+		center_string(buf, format("the %s %s", race_info[race].title, class_info[class].title));
+		c_put_str(TERM_L_UMBER, buf, 7, 11);
 
+#if 0
 		center_string(buf, race_info[race].title);
-		put_str(buf, 8, 11);
+		c_put_str(TERM_L_UMBER, buf, 8, 11);
 
 		center_string(buf, class_info[class].title);
-		put_str(buf, 9, 11);
+		c_put_str(TERM_L_UMBER, buf, 9, 11);
+#endif
 
 		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
 		center_string(buf, tmp);
-		put_str(buf, 11, 11);
+		c_put_str(TERM_L_UMBER, buf, 11-2, 11);
 
 		(void)sprintf(tmp, "Exp: %d", p_ptr->exp);
 		center_string(buf, tmp);
-		put_str(buf, 12, 11);
+		c_put_str(TERM_L_UMBER, buf, 12-2, 11);
 
 		/* XXX usually 0 */
 		(void)sprintf(tmp, "AU: %d", p_ptr->au);
 		center_string(buf, tmp);
-		put_str(buf, 13, 11);
+		c_put_str(TERM_L_UMBER, buf, 13-2, 11);
 
 		if (c_cfg.depth_in_feet)
 			(void)sprintf(tmp, "Died on %dft of [%2d, %2d]", p_ptr->wpos.wz * 50, p_ptr->wpos.wy, p_ptr->wpos.wx);
 		else
 			(void)sprintf(tmp, "Died on Level %d of [%2d, %2d]", p_ptr->wpos.wz, p_ptr->wpos.wy, p_ptr->wpos.wx);
 		center_string(buf, tmp);
-		put_str(buf, 14, 11);
+		c_put_str(TERM_L_UMBER, buf, 14-1, 11);
 
 #if 0
 		(void)sprintf(tmp, "Killed on Level %d", dun_level);
 		center_string(buf, tmp);
-		put_str(buf, 14, 11);
+		c_put_str(TERM_L_UMBER, buf, 14, 11);
 
 
 		if (strlen(died_from) > 24) {
@@ -7536,15 +7538,35 @@ static void print_tomb(cptr reason) {
 			(void)sprintf(tmp, "by %s.", died_from);
 
 		center_string(buf, tmp);
-		put_str(buf, 15, 11);
+		c_put_str(TERM_L_UMBER, buf, 15, 11);
 #endif	/* 0 */
 
 
 		(void)sprintf(tmp, "%-.24s", ctime(&ct));
 		center_string(buf, tmp);
-		put_str(buf, 17, 11);
+		c_put_str(TERM_L_UMBER, buf, 17-3, 11);
 
-		put_str(reason, 21, 10);
+
+		strcpy(reason2, reason);
+		if (strchr(reason2, '(')) *(strchr(reason2, '(')) = 0;
+
+		if (strstr(reason2, "Killed by")) {
+			center_string(buf, "Killed by");
+			c_put_str(TERM_L_UMBER, buf, 18-3, 11);
+			center_string(buf, reason2 + 10);
+			c_put_str(TERM_L_UMBER, buf, 21-5, 11);
+		} else if (strstr(reason2, "Committed suicide")) {
+			if (p_ptr->total_winner) {
+				center_string(buf, "Died from ripe old age");
+				c_put_str(TERM_L_UMBER, buf, 19-3, 11);
+			} else {
+				center_string(buf, "Committed suicide");
+				c_put_str(TERM_L_UMBER, buf, 19-3, 11);
+			}
+		} else {
+			center_string(buf, reason2);
+			c_put_str(TERM_L_UMBER, buf, 21-5, 11);
+		}
 	}
 }
 
