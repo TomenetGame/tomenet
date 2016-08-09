@@ -8882,6 +8882,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	/* It is dead now */
 	if (m_ptr->hp < 0) {
+		char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
+		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 #ifdef ARCADE_SERVER
 		cave_set_feat(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, 172); /* drop "blood"? */
 		if(m_ptr->hp < -1000) {
@@ -8920,10 +8923,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		}
 #endif
 
-		char m_name[MNAME_LEN];
-		dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
-
 		/* prepare for experience calculation further down */
 		if (m_ptr->level == 0) tmp_exp = r_ptr->mexp;
 		else tmp_exp = r_ptr->mexp * m_ptr->level;
@@ -8947,6 +8946,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		/* Extract monster name */
 		monster_desc(Ind, m_name, m_idx, 0);
+		monster_desc(Ind, m_name_real, m_idx, 0x100);
 
 #ifdef USE_SOUND_2010
 #else
@@ -8956,14 +8956,30 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		/* Death by Missile/Spell attack */
 		/* DEG modified spell damage messages. */
 		if (note) {
-			msg_format_near(Ind, "\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
 			msg_format(Ind, "\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
+			msg_print_near_monvar(Ind, m_idx,
+			    format("\377y%^s%s from \377g%d \377ydamage.", m_name_real, note, dam),
+			    format("\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam),
+			    format("\377yIt%s from \377g%d \377ydamage.", note, dam));
 		}
 
 		/* Death by physical attack -- invisible monster */
 		else if (!p_ptr->mon_vis[m_idx]) {
-			msg_format_near(Ind, "\377y%^s has been killed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have killed %s.", m_name);
+			/* other player(s) can maybe see it, so get at least 'killed' vs 'destroyed' right for them */
+			if ((r_ptr->flags3 & RF3_DEMON) ||
+			    (r_ptr->flags3 & RF3_UNDEAD) ||
+			    (r_ptr->flags2 & RF2_STUPID) ||
+			    (strchr("Evg", r_ptr->d_char)))
+				msg_print_near_monvar(Ind, m_idx,
+				    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
+				    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
+				    format("\377yIt has been killed from \377g%d \377ydamage by %s.", dam, p_ptr->name));
+			else
+				msg_print_near_monvar(Ind, m_idx,
+				    format("\377y%^s has been killed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
+				    format("\377y%^s has been killed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
+				    format("\377yIt has been killed from \377g%d \377ydamage by %s.", dam, p_ptr->name));
 		}
 
 		/* Death by Physical attack -- non-living monster */
@@ -8971,14 +8987,20 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		    (r_ptr->flags3 & RF3_UNDEAD) ||
 		    (r_ptr->flags2 & RF2_STUPID) ||
 		    (strchr("Evg", r_ptr->d_char))) {
-			msg_format_near(Ind, "\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have destroyed %s.", m_name);
+			msg_print_near_monvar(Ind, m_idx,
+			    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
+			    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
+			    format("\377yIt has been killed from \377g%d \377ydamage by %s.", dam, p_ptr->name));
 		}
 
 		/* Death by Physical attack -- living monster */
 		else {
-			msg_format_near(Ind, "\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have slain %s.", m_name);
+			msg_print_near_monvar(Ind, m_idx,
+			    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
+			    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
+			    format("\377yIt has been slain from \377g%d \377ydamage by %s.", dam, p_ptr->name));
 		}
 
 		/* Check if it's cloned unique, ie "someone else's spawn" */
@@ -11339,6 +11361,7 @@ int get_player(int Ind, object_type *o_ptr) {
 	return Ind2;
 }
 
+/* Get base monster race to be conjured from an item inscription */
 int get_monster(int Ind, object_type *o_ptr) {
 	bool ok1 = TRUE, ok2 = TRUE;
 	int r_idx = 0;

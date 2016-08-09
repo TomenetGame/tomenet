@@ -1521,12 +1521,16 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 
 		/* Got disrupted ? */
 		if (magik(grabchance)) {
-			char m_name[MNAME_LEN];
+			char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 			/* Get the monster name (or "it") */
 			monster_desc(i, m_name, m_idx, 0x00);
+			monster_desc(i, m_name_real, m_idx, 0x100);
 
 			msg_format(i, "\377%cYou intercept %s's attempt to %s!", COLOUR_IC_GOOD, m_name, desc);
-			msg_format_near(i, "\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name, desc);
+			msg_print_near_monvar(i, m_idx,
+			    format("\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name_real, desc),
+			    format("\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name, desc),
+			    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, q_ptr->name));
 			return TRUE;
 		}
 #else
@@ -1546,12 +1550,16 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 #ifdef NO_INTERCEPTION_STACKING
 	/* Got disrupted ? */
 	if (magik(grabchance_top)) {
-		char m_name[MNAME_LEN];
+		char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 		/* Get the monster name (or "it") */
 		monster_desc(i_top, m_name, m_idx, 0x00);
+		monster_desc(i_top, m_name_real, m_idx, 0x100);
 
 		msg_format(i_top, "\377%cYou intercept %s's attempt to %s!", COLOUR_IC_GOOD, m_name, desc);
-		msg_format_near(i_top, "\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name, desc);
+		msg_print_near_monvar(i_top, m_idx,
+		    format("\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name_real, desc),
+		    format("\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name, desc),
+		    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, Players[i_top]->name));
 		return TRUE;
 	}
  #ifdef COMBO_AM_IC_CAP
@@ -1638,9 +1646,10 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 	/* Got disrupted ? */
 	if (magik(highest_antichance)) {
 		if ((Players[anti_Ind]->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) {//got LOS?
-			char m_name[MNAME_LEN];
+			char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 			/* Get the monster name (or "it") */
 			monster_desc(Ind, m_name, m_idx, 0x00);
+			monster_desc(Ind, m_name_real, m_idx, 0x100);
 
 			//msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
 #if 0
@@ -1653,7 +1662,10 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 #endif
 				msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
 			}
-			msg_format_near(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
+			msg_print_near_monvar(anti_Ind, m_idx,
+			    format("\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name_real),
+			    format("\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name),
+			    format("\377%c%s's anti-magic field disrupts its attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name));
 #endif
 		}
 		return TRUE;
@@ -1923,7 +1935,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race	*r_ptr = race_inf(m_ptr);
 	//object_type	*o_ptr = &p_ptr->inventory[INVEN_WIELD];
-	char		m_name[MNAME_LEN];
+	char		m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
 	char		ddesc[MNAME_LEN];
 
@@ -2234,6 +2246,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* Get the monster name (or "it") */
 	monster_desc(Ind, m_name, m_idx, 0x00);
+	monster_desc(Ind, m_name_real, m_idx, 0x100);
 
 	/* Choose a spell to cast */
 //	thrown_spell = choose_attack_spell(Ind, m_idx, spell, num);
@@ -2292,8 +2305,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 		//if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		/* the_sandman: changed it so that other ppl nearby will know too */
-		msg_format(Ind, "\377R%^s makes a high-pitched shriek.", m_name); 
-		msg_format_near(Ind, "\377R%^s makes a high-pitched shriek.", m_name);
+		msg_format(Ind, "\377R%^s makes a high-pitched shriek.", m_name);
+		msg_print_near_monvar(Ind, m_idx,
+		    format("\377R%^s makes a high-pitched shriek.", m_name_real),
+		    format("\377R%^s makes a high-pitched shriek.", m_name),
+		    format("\377RIt makes a high-pitched shriek."));
 #ifdef USE_SOUND_2010
 		sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
@@ -3525,7 +3541,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 		msg_format(Ind, "%^s teleports you away.", m_name);
-		msg_format_near(Ind, "%^s teleports %s away.", m_name, p_ptr->name);
+		msg_print_near_monvar(Ind, m_idx,
+		    format("%^s teleports %s away.", m_name_real, p_ptr->name),
+		    format("%^s teleports %s away.", m_name, p_ptr->name),
+		    format("It teleports %s away.", p_ptr->name));
 		teleport_player(Ind, 100, TRUE);
 		break;
 		}
@@ -3554,7 +3573,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 		else if (rand_int(100) < p_ptr->skill_sav)
 			msg_print(Ind, "You resist the effects!");
 		else {
-			msg_format_near(Ind, "%^s teleports %s away.", m_name, p_ptr->name);
+			msg_print_near_monvar(Ind, m_idx,
+			    format("%^s teleports %s away.", m_name_real, p_ptr->name),
+			    format("%^s teleports %s away.", m_name, p_ptr->name),
+			    format("It teleports %s away.", p_ptr->name));
 			teleport_player_level(Ind, FALSE);
 		}
 		update_smart_learn(m_idx, DRS_NEXUS);

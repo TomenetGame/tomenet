@@ -1804,6 +1804,7 @@ extern void msg_admins(int Ind, cptr msg);
 extern void msg_format(int Ind, cptr fmt, ...);
 extern void msg_print_near(int Ind, cptr msg);
 extern void msg_print_verynear(int Ind, cptr msg);
+extern void msg_print_near_monvar(int Ind, int m_idx, cptr msg, cptr msg_garbled, cptr msg_unseen);
 // extern void msg_format_near(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3))); // too much spam
 extern void msg_format_near(int Ind, cptr fmt, ...);
 // extern void msg_format_verynear(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3))); // too much spam

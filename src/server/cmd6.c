@@ -2301,23 +2301,32 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 #endif
 			break;
 
-		case SV_SCROLL_CONJURE_MONSTER: /* clone to avoid heavy mimic cheeze (and maybe exp cheeze) */
+		case SV_SCROLL_CONJURE_MONSTER:
+		{
+			char m_name_real[MNAME_LEN];
+
 			if (!o_ptr) break;
 
 			if (!check_self_summon(p_ptr)) break;
 			k = get_monster(Ind, o_ptr);
-			if(!k) break;
+			if (!k) break;
 			if (r_info[k].flags1 & RF1_UNIQUE) break;
 
-			monster_race_desc(Ind, m_name, k, 0x188);
+			monster_race_desc(Ind, m_name, k, 0x88);
+			monster_race_desc(Ind, m_name_real, k, 0x188);
 			msg_format(Ind, "\377oYou conjure %s!", m_name);
-			msg_format_near(Ind, "\377o%s conjures %s", p_ptr->name, m_name);
-			if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, k, 100, 1))
-				ident = TRUE;
+			msg_print_near_monvar(Ind, -1,
+			    format("\377o%s conjures %s", p_ptr->name, m_name_real),
+			    format("\377o%s conjures %s", p_ptr->name, m_name),
+			    format("\377o%s conjures some entity", p_ptr->name));//(unused)
+
+			/* clone to avoid heavy mimic cheeze (and maybe exp cheeze) */
+			if (!place_monster_one(&p_ptr->wpos, p_ptr->py, p_ptr->px, k, FALSE, FALSE, FALSE, 100, 100)) ident = TRUE;
 #ifdef USE_SOUND_2010
 			if (ident) sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "summon", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 			break;
+		}
 
 		case SV_SCROLL_SLEEPING:
 			msg_print(Ind, "A veil of sleep falls down over the wide surroundings..");

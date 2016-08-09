@@ -2746,8 +2746,7 @@ void world_surface_msg(cptr msg) {
  * by a player.  The message is not sent to the player who performed
  * the action.
  */
-void msg_print_near(int Ind, cptr msg)
-{
+void msg_print_near(int Ind, cptr msg) {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
 	struct worldpos *wpos;
@@ -2781,8 +2780,7 @@ void msg_print_near(int Ind, cptr msg)
 }
 
 /* Whispering: Send message to adjacent players */
-void msg_print_verynear(int Ind, cptr msg)
-{
+void msg_print_verynear(int Ind, cptr msg) {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
 	struct worldpos *wpos;
@@ -2815,14 +2813,51 @@ void msg_print_verynear(int Ind, cptr msg)
 	}
 }
 
+/* Take into account player hallucination.
+   In theory, msg_print_near_monster() could be used, but that one doesn't support
+   starting on colour codes, and this function is used in all places where messages
+   ought to follow the game's message colour scheme.. this all seems not too efficient :/.
+   m_idx == -1: assume seen. */
+void msg_print_near_monvar(int Ind, int m_idx, cptr msg, cptr msg_garbled, cptr msg_unseen) {
+	player_type *p_ptr = Players[Ind];
+	int y, x, i;
+	struct worldpos *wpos;
+	wpos = &p_ptr->wpos;
+
+	if (p_ptr->admin_dm) return;
+
+	y = p_ptr->py;
+	x = p_ptr->px;
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Don't send the message to the player who caused it */
+		if (Ind == i) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Can he see this player? */
+		if (p_ptr->cave_flag[y][x] & CAVE_VIEW) {
+			/* Send the message */
+			if (m_idx != -1 && !p_ptr->mon_vis[m_idx]) msg_print(i, msg_unseen);
+			else if (p_ptr->image) msg_print(i, msg_garbled);
+			else msg_print(i, msg);
+		}
+	}
+}
 
 /*
  * Same as above, except send a formatted message.
  */
-void msg_format_near(int Ind, cptr fmt, ...)
-{
+void msg_format_near(int Ind, cptr fmt, ...) {
 	va_list vp;
-
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
@@ -2839,10 +2874,8 @@ void msg_format_near(int Ind, cptr fmt, ...)
 }
 
 /* for whispering */
-void msg_format_verynear(int Ind, cptr fmt, ...)
-{
+void msg_format_verynear(int Ind, cptr fmt, ...) {
 	va_list vp;
-
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
@@ -2859,8 +2892,7 @@ void msg_format_verynear(int Ind, cptr fmt, ...)
 }
 
 /* location-based - also, skip player Ind if non-zero */
-void msg_print_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr msg)
-{
+void msg_print_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr msg) {
 	int i, d;
 	player_type *p_ptr;
 
@@ -2896,10 +2928,8 @@ void msg_print_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr 
 /*
  * Same as above, except send a formatted message.
  */
-void msg_format_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr fmt, ...)
-{
+void msg_format_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr fmt, ...) {
 	va_list vp;
-
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
@@ -2925,8 +2955,7 @@ void msg_format_near_site(int y, int x, worldpos *wpos, int Ind, bool view, cptr
  * TODO: allow format
  * TODO: distinguish 'witnessing' and 'hearing'
  */
-void msg_print_near_monster(int m_idx, cptr msg)
-{
+void msg_print_near_monster(int m_idx, cptr msg) {
 	int i;
 	player_type *p_ptr;
 	cave_type **zcave;
