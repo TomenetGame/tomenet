@@ -619,7 +619,7 @@ extern int apply_block_chance(player_type *p_ptr, int n);
 extern int apply_parry_chance(player_type *p_ptr, int n);
 extern void do_cmd_force_stack(int Ind, int item);
 extern bool wraith_access(int Ind);
-extern void whats_under_your_feet(int Ind);
+extern void whats_under_your_feet(int Ind, bool force);
 
 /* cmd2.c */
 extern cptr get_house_owner(struct c_special *cs_ptr);

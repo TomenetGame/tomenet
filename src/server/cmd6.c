@@ -1317,7 +1317,7 @@ void do_cmd_drink_fountain(int Ind) {
 	   tell us which it is, instead of trying to drink from
 	   a fountain! - C. Blue */
 	if (c_ptr->o_idx) {
-		whats_under_your_feet(Ind);
+		whats_under_your_feet(Ind, TRUE);
 		return;
 	}
 

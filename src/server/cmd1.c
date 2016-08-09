@@ -1483,7 +1483,7 @@ void search(int Ind) {
 
 
 /* Hack -- tell player of the next object on the pile */
-void whats_under_your_feet(int Ind) {
+void whats_under_your_feet(int Ind, bool force) {
 	object_type *o_ptr;
 
 	char    o_name[ONAME_LEN];
@@ -1491,6 +1491,9 @@ void whats_under_your_feet(int Ind) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type *c_ptr;
 	cave_type **zcave;
+
+	if (p_ptr->ghost && !force) return;
+
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -1741,7 +1744,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		else o_ptr->pval -= amount;
 
 		/* Hack -- tell the player of the next object on the pile */
-		whats_under_your_feet(Ind);
+		whats_under_your_feet(Ind, FALSE);
 	}
 
 	/* Pick it up */
@@ -1990,7 +1993,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			delete_object_idx(c_ptr->o_idx, FALSE);
 
 			/* Hack -- tell the player of the next object on the pile */
-			whats_under_your_feet(Ind);
+			whats_under_your_feet(Ind, FALSE);
 
 			/* Tell the client */
 			//Send_floor(Ind, 0);
@@ -2072,7 +2075,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			delete_object_idx(c_ptr->o_idx, FALSE);
 
 			/* Hack -- tell the player of the next object on the pile */
-			whats_under_your_feet(Ind);
+			whats_under_your_feet(Ind, FALSE);
 
 			/* Tell the client */
 			Send_floor(Ind, 0);
@@ -2157,7 +2160,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				delete_object_idx(c_ptr->o_idx, FALSE);
 
 				/* Hack -- tell the player of the next object on the pile */
-				whats_under_your_feet(Ind);
+				whats_under_your_feet(Ind, FALSE);
 
 				/* Tell the client */
 				Send_floor(Ind, 0);
@@ -2883,7 +2886,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					delete_object_idx(c_ptr->o_idx, FALSE);
 
 					/* Hack -- tell the player of the next object on the pile */
-					whats_under_your_feet(Ind);
+					whats_under_your_feet(Ind, FALSE);
 
 					/* Tell the client */
 					Send_floor(Ind, 0);
