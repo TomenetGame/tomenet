@@ -562,7 +562,7 @@ void compact_objects(int size, bool purge) {
  *
  * Note -- we do NOT visually reflect these (irrelevant) changes
  */
- 
+
 void wipe_o_list(struct worldpos *wpos) {
 	int i;
 	cave_type **zcave;
@@ -626,7 +626,7 @@ void wipe_o_list(struct worldpos *wpos) {
  *
  * Note -- we do NOT visually reflect these (irrelevant) changes
  * (cave[Depth][y][x].info & CAVE_ICKY)
- */ 
+ */
 void wipe_o_list_safely(struct worldpos *wpos) {
 	int i;
 
@@ -1585,6 +1585,16 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
    preventing it from pseudo-iding as 'worthless'. (This hack is required for
    ego powers that don't have a pval.) */
 #define EGO_VS_ENCHANTS
+/* Price boosts based on enchants, hit/dam (max +30) and ac (max +35): */
+#define PB1 9
+#define PB2 6
+#ifdef TO_AC_CAP_30
+ #define PBA1 9
+ #define PBA2 6
+#else
+ #define PBA1 14
+ #define PBA2 6
+#endif
 s64b object_value_real(int Ind, object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -2025,14 +2035,14 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 //		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) +
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
 			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) +
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2))) +
 			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
-			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
+			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), PBA1, PBA2))) ) * 100L;
 
 		/* Costumes */
 		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME))
@@ -2064,14 +2074,14 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 //		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) +
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
 			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) +
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2))) +
 			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
-			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
+			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), PBA1, PBA2))) ) * 100L;
 
 		/* Hack -- Factor in extra damage dice */
 		if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
@@ -2091,11 +2101,11 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 //		value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) +
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
 			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2)))  ) * 5L;
 
 		/* Hack -- Factor in extra damage dice */
 		if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
@@ -2871,8 +2881,8 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		/* Give credit for bonuses */
 //		value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) + 
-			PRICE_BOOST(o_ptr->to_d, 7, 3) + 
+		value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) +
+			PRICE_BOOST(o_ptr->to_d, 7, 3) +
 			PRICE_BOOST(o_ptr->to_a, 11, 4)) * 100L);
 
 		/* Done */
@@ -2895,15 +2905,15 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		/* Give credit for bonuses */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 : 
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5): 
-			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
 			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2))) +
 			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
-			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
+			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), PBA1, PBA2))) ) * 100L;
 
 		/* Costumes */
 		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME))
@@ -2935,14 +2945,14 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
 			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2))) +
 			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
-			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
+			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), PBA1, PBA2))) ) * 100L;
 
 		/* Hack -- Factor in extra damage dice */
 		if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
@@ -2962,11 +2972,11 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		//value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
-			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
+			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
 			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
-			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
+			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2)))  ) * 5L;
 
 		/* Hack -- Factor in extra damage dice */
 		if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
@@ -4167,7 +4177,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 	}
 
 	/* Now test them a few times */
-//	for (i = 0; i < ok_num * 10; i++)	// I wonder.. 
+//	for (i = 0; i < ok_num * 10; i++)	// I wonder..
 	for (j = 0; j < ok_num * 10; j++) {
 		ego_item_type *e_ptr;
 
@@ -5374,7 +5384,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
  * a chance that an artifact will be created.  This is true even if both the
  * "good" and "great" arguments are false.  As a total hack, if "great" is
  * true, then the item gets 3 extra "attempts" to become an artifact.
- * 
+ *
  * Added "true_art" to disallow true artifacts in case a king/queen kills a
  * monster, they cannot carry true artifacts anyways (but they would usually
  * find heaps of them..) - C. Blue
@@ -5652,7 +5662,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		    if (o_ptr->name2b == EGO_FIREPROOF_BOOK || o_ptr->name2b == EGO_WATERPROOF_BOOK) o_ptr->name2b = 0;
 		}
 
-#if 1		// tweaked pernA ego.. 
+#if 1		// tweaked pernA ego..
 		/* Hack -- analyze ego-items */
 		//else if (o_ptr->name2)
 		if (o_ptr->name2 && !o_ptr->name1) {
@@ -10141,7 +10151,7 @@ bool anti_undead(object_type *o_ptr) {
 	return(FALSE);
 }
 
-/* 
+/*
  * Generate default item-generation restriction flags for a given player - C. Blue
  */
 u32b make_resf(player_type *p_ptr) {
