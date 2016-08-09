@@ -3876,7 +3876,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	bool obvious = FALSE;
 //	bool quiet = ((Ind <= 0) ? TRUE : FALSE);
 	bool quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : FALSE);
-	int div;
+	int div, i;
 
 	player_type *p_ptr = (quiet ? NULL : Players[Ind]);
 
@@ -3973,8 +3973,16 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Notice */
 			if (!quiet) note_spot(Ind, y, x);
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
+
+			/* Redraw - the walls might block view and cause wall shading etc! */
+			for (i = 1; i <= NumPlayers; i++) {
+				/* If he's not playing, skip him */
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				/* If he's not here, skip him */
+				if (!inarea(wpos, &Players[i]->wpos)) continue;
+
+				Players[i]->update |= (PU_VIEW | PU_LITE | PU_FLOW); //PU_DISTANCE, PU_TORCH, PU_MONSTERS??; PU_FLOW needed? both VIEW and LITE needed?
+			}
 			break;
 
 		/* Burn trees and grass */

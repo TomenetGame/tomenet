@@ -309,8 +309,7 @@ void do_autokinesis_to(int Ind, int dis) {
 /*
  * Grow trees
  */
-void grow_trees(int Ind, int rad)
-{
+void grow_trees(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 	int a, i, j;
 
@@ -321,7 +320,7 @@ void grow_trees(int Ind, int rad)
 #endif
 
 	for (a = 0; a < rad * rad + 11; a++) {
-                cave_type **zcave = getcave(&p_ptr->wpos);
+		cave_type **zcave = getcave(&p_ptr->wpos);
 
 		i = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
 		j = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
@@ -333,6 +332,17 @@ void grow_trees(int Ind, int rad)
 		    (zcave[p_ptr->py + j][p_ptr->px + i].feat != FEAT_HOME_OPEN)) /* HACK - not on open house door - mikaelh */
 		{
 			cave_set_feat_live(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50)?FEAT_TREE:FEAT_BUSH);
+#if 1
+			/* Redraw - the trees might block view and cause wall shading etc! */
+			for (i = 1; i <= NumPlayers; i++) {
+				/* If he's not playing, skip him */
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				/* If he's not here, skip him */
+				if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
+
+				Players[i]->update |= (PU_VIEW | PU_LITE | PU_FLOW); //PU_DISTANCE, PU_TORCH, PU_MONSTERS??; PU_FLOW needed? both VIEW and LITE needed?
+			}
+#endif
 		}
 	}
 }
