@@ -11203,9 +11203,9 @@ void telekinesis_aux(int Ind, int item) {
 #endif
 	if ((k_info[q_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
 #ifdef FALLEN_WINNERSONLY
-	    !p_ptr->once_winner
+	    !p2_ptr->once_winner
 #else
-	    !p_ptr->total_winner
+	    !p2_ptr->total_winner
 #endif
 	    ) {
 		msg_print(Ind, "Only royalties are powerful enough to receive that item!");
