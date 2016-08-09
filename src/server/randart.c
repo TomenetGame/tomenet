@@ -272,9 +272,11 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	case TV_LITE:
 //		p += 35;
 		p += 25;
+#if 0 /* we're already subtracting 10 from p for FUEL_LITE flag presence, further below. Also this is unfair for wooden torch/brass lantern. */
 		if (!(a_ptr->flags4 & TR4_FUEL_LITE) &&
 		    (k_ptr->flags4 & TR4_FUEL_LITE))
 			p += 10;
+#endif
 		break;
 	case TV_RING:
 	case TV_AMULET:
@@ -405,7 +407,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->flags3 & TR3_LITE1) p += 2;
 	if (a_ptr->flags4 & TR4_LITE2) p += 4;
 	if (a_ptr->flags4 & TR4_LITE3) p += 8;
-	if (a_ptr->flags4 & TR4_FUEL_LITE) p -= 10;//20
+	if (a_ptr->flags4 & TR4_FUEL_LITE) p -= 15;//10
 	if (a_ptr->flags3 & TR3_SEE_INVIS) p += 8;
 	//if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
 	if (a_ptr->esp & (ESP_ORC)) p += 1;
