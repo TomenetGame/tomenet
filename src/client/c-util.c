@@ -7423,6 +7423,18 @@ static void center_string(char *buf, cptr str) {
 	/* Mega-Hack */
 	(void)sprintf(buf, "%*s%s%*s", j, "", str, 31 - i - j, "");
 }
+static void center_string_short(char *buf, cptr str) {
+	int i, j;
+
+	/* Total length */
+	i = strlen(str);
+
+	/* Necessary border */
+	j = 10 - i / 2;
+
+	/* Mega-Hack */
+	(void)sprintf(buf, "%*s%s%*s", j, "", str, 21 - i - j, "");
+}
 
 
 /*
@@ -7505,17 +7517,17 @@ static void print_tomb(cptr reason) {
 #endif
 
 		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
-		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 11-2, 11);
+		center_string_short(buf, tmp);
+		c_put_str(TERM_L_UMBER, buf, 11-2, 11+5);
 
 		(void)sprintf(tmp, "Exp: %d", p_ptr->exp);
-		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 12-2, 11);
+		center_string_short(buf, tmp);
+		c_put_str(TERM_L_UMBER, buf, 12-2, 11+5);
 
 		/* XXX usually 0 */
 		(void)sprintf(tmp, "AU: %d", p_ptr->au);
-		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 13-2, 11);
+		center_string_short(buf, tmp);
+		c_put_str(TERM_L_UMBER, buf, 13-2, 11+5);
 
 		if (c_cfg.depth_in_feet)
 			(void)sprintf(tmp, "Died on %dft of [%2d, %2d]", p_ptr->wpos.wz * 50, p_ptr->wpos.wy, p_ptr->wpos.wx);
