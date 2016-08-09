@@ -316,6 +316,9 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 		if (a_ptr->flags1 & TR1_DEX) p += a_ptr->pval * 2;
 		if (a_ptr->flags1 & TR1_CON) p += a_ptr->pval * 2;
 		if (a_ptr->flags1 & TR1_STEALTH) p += a_ptr->pval * 4;
+#ifdef ART_WITAN_STEALTH
+		else if (a_ptr->tval == TV_BOOTS && a_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) p += -2 * 4;
+#endif
 		if (a_ptr->flags1 & TR1_SEARCH) p += a_ptr->pval * 2;
 	} else if (a_ptr->pval < 0) {	/* hack: don't give large negatives */
 		if (a_ptr->flags1 & TR1_STR) p += a_ptr->pval;
@@ -324,6 +327,9 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 		if (a_ptr->flags1 & TR1_DEX) p += a_ptr->pval;
 		if (a_ptr->flags1 & TR1_CON) p += a_ptr->pval;
 		if (a_ptr->flags1 & TR1_STEALTH) p += a_ptr->pval;
+#ifdef ART_WITAN_STEALTH
+		else if (a_ptr->tval == TV_BOOTS && a_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) p += -2 * 4;
+#endif
 		if (a_ptr->flags1 & TR1_SEARCH) p += a_ptr->pval;
 	}
 	if (a_ptr->flags1 & TR1_CHR) p += a_ptr->pval;
@@ -753,6 +759,9 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 40) a_ptr->flags4 |= TR4_LEVITATE;
 			else if (r < 50) a_ptr->flags4 |= TR4_CLIMB;
 			else if (r < 65) {
+#ifdef ART_WITAN_STEALTH
+				if (a_ptr->tval == TV_BOOTS && a_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) break;
+#endif
 				a_ptr->flags1 |= TR1_STEALTH;
 				do_pval (a_ptr);
 			} else if (r < 95) {
@@ -2014,12 +2023,16 @@ artifact_type *randart_make(object_type *o_ptr) {
 	a_ptr->flags1 = k_ptr->flags1;
 	a_ptr->flags2 = k_ptr->flags2;
 	a_ptr->flags3 = k_ptr->flags3;
-	a_ptr->flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
-			   TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
+	a_ptr->flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC | TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
 	a_ptr->flags4 = k_ptr->flags4;
 	a_ptr->flags5 = k_ptr->flags5;
 	a_ptr->flags5 |= TR5_IGNORE_WATER;
 	a_ptr->flags6 = k_ptr->flags6;
+#ifdef ART_WITAN_STEALTH
+	if (o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS)
+		a_ptr->flags1 &= ~(TR1_STEALTH);
+#endif
+
 
 	/* Ensure weapons have some bonus to hit & dam */
 #ifdef RANDART_WEAPON_BUFF

@@ -2849,8 +2849,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	if (!(mode & 32)) {
 		/* Dump "pval" flags for wearable items */
-	        if (known && (((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK)))
-    		    || o_ptr->tval == TV_GOLEM || o_ptr->tval == TV_TRAPKIT)) {
+		if (known && (((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK)))
+		    || o_ptr->tval == TV_GOLEM || o_ptr->tval == TV_TRAPKIT)) {
 			/* Hack -- first display any base pval bonuses.
 			 * The "bpval" flags are never displayed.  */
 			if (o_ptr->bpval && !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL)) {
@@ -2877,6 +2877,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				/* finish with closing bracket ')' */
 				t = object_desc_chr(t, p2);
 			}
+#ifdef ART_WITAN_STEALTH
+			else if (o_ptr->name1 && o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) {
+				if (!(mode & 8)) t = object_desc_chr(t, ' ');
+				t = object_desc_str(t, "(-2)");
+			}
+#endif
 			/* Next, display any pval bonuses. */
 			if (o_ptr->pval) {
 				/* Start the display */
@@ -4881,6 +4887,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		else
 			fprintf(fff, "It is well-hidden.\n");
 	}
+#ifdef ART_WITAN_STEALTH
+	else if (o_ptr->name1 && o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS)
+		fprintf(fff, "It affects your stealth.\n");
+#endif
 	if (f1 & (TR1_SEARCH))
 		fprintf(fff, "It affects your searching.\n");
 	if (f5 & (TR5_DISARM))

@@ -3878,6 +3878,10 @@ void calc_boni(int Ind) {
 
 		/* Affect stealth */
 		if (f1 & TR1_STEALTH) { p_ptr->skill_stl += pval; csheet_boni[i-INVEN_WIELD].slth += pval; }
+#ifdef ART_WITAN_STEALTH
+		else if (o_ptr->name1 && o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS)
+			{ p_ptr->skill_stl += -2; csheet_boni[i-INVEN_WIELD].slth += -2; }
+#endif
 		/* Affect searching ability (factor of five) */
 		if (f1 & TR1_SEARCH) { p_ptr->skill_srh += (pval * 5); csheet_boni[i-INVEN_WIELD].srch += pval; }
 		/* Affect searching frequency (factor of five) */

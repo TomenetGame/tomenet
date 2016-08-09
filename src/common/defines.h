@@ -4549,6 +4549,9 @@
 #define EGO_XTRA_ABILITY	3
 
 
+/* Bad hack: Witan boots retain -STEALTH as artifacts.. ew */
+#define ART_WITAN_STEALTH
+
 
 
 
@@ -8504,12 +8507,12 @@ extern int PlayerUID;
 #define RT_PRECS	0x0002
 #define RT_CRAFT	0x0004
 #define RT_DOUBLE	0x0008
-  
+
 #define RT_BARRAGE	0x0010
 #define RT_XXX0020	0x0020
 #define RT_XXX0040	0x0040
 #define RT_XXX0080	0x0080
-  
+
 #define RT_XXX0100	0x0100
 #define RT_XXX0200	0x0200
 #define RT_XXX0400	0x0400
