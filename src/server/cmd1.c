@@ -3247,6 +3247,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 		/* Manage backstabbing and 'flee-stabbing' */
 		if (stab_skill && /* Need TV_SWORD type weapon or martial arts to backstab */
+		    p_ptr->mon_vis[c_ptr->m_idx] &&
 		    (o_ptr->tval == TV_SWORD ||
 		    (martial && (!q_ptr->body_monster || (qr_ptr->body_parts[BODY_HEAD] && qr_ptr->body_parts[BODY_TORSO]))))) {
 			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
@@ -4354,6 +4355,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 		/* Manage backstabbing and 'flee-stabbing' */
 		if (stab_skill && /* Need TV_SWORD type weapon or martial arts to backstab */
+		    p_ptr->mon_vis[c_ptr->m_idx] &&
 		    (o_ptr->tval == TV_SWORD ||
 		    (martial && r_ptr->body_parts[BODY_HEAD] && r_ptr->body_parts[BODY_TORSO]))) {
 			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
@@ -4826,32 +4828,32 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				backstab = FALSE;
 			   if (martial) {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+					msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
 					if (uniq_bell) Send_beep(Ind);
 				}
-				else msg_format(Ind, "You twist the neck of the sleeping %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
+				else msg_format(Ind, "You twist the neck of the sleeping %s for \377p%d \377wdamage.", m_name, k);
 			   } else {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+					msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
 					if (uniq_bell) Send_beep(Ind);
 				}
-				else msg_format(Ind, "You stab the helpless, sleeping %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
+				else msg_format(Ind, "You stab the helpless, sleeping %s for \377p%d \377wdamage.", m_name, k);
 			   }
 			}
 			else if (stab_fleeing) {
 				stab_fleeing = FALSE;
 			   if (martial) {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_format(Ind, "\377%cYou strike the back of %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+					msg_format(Ind, "\377%cYou strike the back of %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
 					if (uniq_bell) Send_beep(Ind);
 				}
-				else msg_format(Ind, "You strike the back of %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
+				else msg_format(Ind, "You strike the back of %s for \377p%d \377wdamage.", m_name, k);
 			   } else {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", r_name_get(m_ptr), k);
+					msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", m_name, k);
 					if (uniq_bell) Send_beep(Ind);
 				}
-				else msg_format(Ind, "\377%cYou backstab the fleeing %s for \377p%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+				else msg_format(Ind, "\377%cYou backstab the fleeing %s for \377p%d \377%cdamage.", uniq, m_name, k, uniq);
 			   }
 			}
 			//else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
