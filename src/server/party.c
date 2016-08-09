@@ -3233,7 +3233,7 @@ bool remove_hostility(int Ind, cptr name) {
 				}
 
 				/* Message */
-				msg_format(Ind, "\377GNo longer hostile toward %s.", p);
+				msg_format(Ind, "\374\377GNo longer hostile toward %s.", p);
 				msg_format(i, "\374\377G%s is no longer hostile toward you.", p_ptr->name);
 
 				/* Delete node */
@@ -3259,7 +3259,7 @@ bool remove_hostility(int Ind, cptr name) {
 				}
 
 				/* Message */
-				msg_format(Ind, "\377GNo longer hostile toward party '%s'.", parties[0 - i].name);
+				msg_format(Ind, "\374\377GNo longer hostile toward party '%s'.", parties[0 - i].name);
 				msg_broadcast_format(Ind, "\374\377G%s is no longer hostile toward party '%s'.", p_ptr->name, parties[0 - i].name);
 
 				/* Delete node */
