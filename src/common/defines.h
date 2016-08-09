@@ -7096,7 +7096,7 @@ extern int PlayerUID;
 /*
  * Monster AI-state defines	- Jir -
  */
-#define AI_STATE_EFFECT		0x0001
+#define AI_STATE_EFFECT		0x0001 /* monster wants to avoid a quite harmful GF_ effect on a grid */
 #define AI_STATE_TERRAIN	0x0002
 /*
 #define AI_STATE_ANNOY		0x0004
