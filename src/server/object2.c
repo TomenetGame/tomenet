@@ -1981,7 +1981,11 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 
 	case TV_STAFF:
 		/* Pay extra for charges */
+#ifdef NEW_MDEV_STACKING
 		value += ((value / 20) * o_ptr->pval);
+#else
+		value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+#endif
 
 		/* Done */
 		break;
@@ -2858,7 +2862,11 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 
 	case TV_STAFF:
 		/* Pay extra for charges */
+#ifdef NEW_MDEV_STACKING
+		value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+#else
 		value += ((value / 20) * o_ptr->pval);
+#endif
 		/* Done */
 		break;
 
@@ -3277,8 +3285,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			    (!(j_ptr->ident & (ID_EMPTY)) &&
 			    (!Ind || !object_known_p(Ind, j_ptr)))) return(FALSE);
 
-			/* Beware artifatcs should not combine with "lesser" thing */
+			/* Beware artifacts should not combine with "lesser" thing */
 			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
+			if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
 
 			/* Do not combine recharged ones with non recharged ones. */
 //			if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return (FALSE);
@@ -3294,8 +3303,13 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 		case TV_STAFF:
 			/* Require knowledge */
-			if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (FALSE);
+			//if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (FALSE);
+			if ((!(o_ptr->ident & (ID_EMPTY)) &&
+			    (!Ind || !object_known_p(Ind, o_ptr))) ||
+			    (!(j_ptr->ident & (ID_EMPTY)) &&
+			    (!Ind || !object_known_p(Ind, j_ptr)))) return(FALSE);
 
+			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 			if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
 
 			/* Require identical charges */
@@ -3313,13 +3327,20 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		/* Staffs and Wands and Rods */
 		case TV_ROD:
 			/* Overpoweredness, Hello! - the_sandman */
+#if 1
 			if (o_ptr->sval == SV_ROD_HAVOC) return (FALSE);
+#else
+			if (o_ptr->sval == SV_ROD_HAVOC && o_ptr->number + j_ptr->number > 3) return (FALSE); //hm
+#endif
 
 			/* Require permission */
 			if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
+			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 
+#ifndef NEW_MDEV_STACKING
 			/* this is only for rods... the_sandman */
 			if (o_ptr->pval == 0 && j_ptr->pval != 0) return (FALSE); //lol :)
+#endif
 
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
@@ -3521,6 +3542,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
  */
 void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	int total = o_ptr->number + j_ptr->number;
+#ifndef NEW_MDEV_STACKING
+	int onum = o_ptr->number, jnum = j_ptr->number;
+#endif
 
 	/* Prepare ammo for possible combining */
 	//int o_to_h, o_to_d;
@@ -3608,13 +3632,20 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	if (o_ptr->level > j_ptr->level) o_ptr->level = j_ptr->level;
 
 	/* Hack -- if wands are stacking, combine the charges. -LM- */
-	if (o_ptr->tval == TV_WAND)
+	if (o_ptr->tval == TV_WAND
+#ifdef NEW_MDEV_STACKING
+	    || o_ptr->tval == TV_STAFF
+#endif
+	    )
 		o_ptr->pval += j_ptr->pval;
 
 	/* Hack -- if rods are stacking, average out the timeout. the_sandman */
 	if (o_ptr->tval == TV_ROD) {
-		o_ptr->pval = (o_ptr->number) * (o_ptr->pval) + (j_ptr->pval);
-		o_ptr->pval = (o_ptr->pval) / (o_ptr->number + 1);
+#ifdef NEW_MDEV_STACKING
+		stack_rods(o_ptr, j_ptr);
+#else
+		o_ptr->pval = (onum * o_ptr->pval + jnum * j_ptr->pval) / o_ptr->number;
+#endif
 	}
 
 	/* Hack for dropping items onto stacks that have dead owner */
@@ -9054,33 +9085,55 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 	everyone_lite_spot(wpos, y, x);
 }
 
+void discharge_rod(object_type *o_ptr, int c) {
+	o_ptr->pval += c;
+	//limit against rod-specific max:
+	
+}
+
 /*
  * Divide 'stacked' wands.	- Jir -
  * o_ptr->number is not changed here!
  */
-int divide_charged_item(object_type *o_ptr, int amt)
-{
+void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt) {
 	int charge = 0;
 
 	/* Paranoia */
-	if (o_ptr->number < amt) return (-1);
+	if (o_ptr->number < amt) return;
 
-	if (o_ptr->tval == TV_WAND) {
+	if (o_ptr->tval == TV_WAND
+#ifdef NEW_MDEV_STACKING
+	    || o_ptr->tval == TV_STAFF
+#endif
+	    ) {
 		charge = (o_ptr->pval * amt) / o_ptr->number;
 		if (amt < o_ptr->number) o_ptr->pval -= charge;
+		if (onew_ptr) onew_ptr->pval = charge;
 	}
-
-	return (charge);
+#ifdef NEW_MDEV_STACKING
+	else if (o_ptr->tval == TV_ROD) {
+		
+	}
+#endif
 }
+
+#ifdef NEW_MDEV_STACKING
+void stack_rods(object_type *onew_ptr, object_type *o_ptr) {
+	int charge = 0;
+
+	/* Paranoia */
+	if (o_ptr->tval != TV_ROD) return;
+
+	
+}
+#endif
 
 
 /*
  * Describe the charges on an item in the inventory.
  */
-void inven_item_charges(int Ind, int item)
-{
+void inven_item_charges(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-
 	object_type *o_ptr = &p_ptr->inventory[item];
 
 	/* Require staff/wand */
@@ -9090,15 +9143,12 @@ void inven_item_charges(int Ind, int item)
 	if (!object_known_p(Ind, o_ptr)) return;
 
 	/* Multiple charges */
-	if (o_ptr->pval != 1)
-	{
+	if (o_ptr->pval != 1) {
 		/* Print a message */
 		msg_format(Ind, "You have %d charges remaining.", o_ptr->pval);
 	}
-
 	/* Single charge */
-	else
-	{
+	else {
 		/* Print a message */
 		msg_format(Ind, "You have %d charge remaining.", o_ptr->pval);
 	}
@@ -9108,12 +9158,9 @@ void inven_item_charges(int Ind, int item)
 /*
  * Describe an item in the inventory.
  */
-void inven_item_describe(int Ind, int item)
-{
+void inven_item_describe(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-
 	object_type	*o_ptr = &p_ptr->inventory[item];
-
 	char	o_name[ONAME_LEN];
 
 	/* Hack -- suppress msg */
@@ -9245,8 +9292,7 @@ bool inven_item_optimize(int Ind, int item)
 /*
  * Describe the charges on an item on the floor.
  */
-void floor_item_charges(int item)
-{
+void floor_item_charges(int item) {
 	object_type *o_ptr = &o_list[item];
 
 	/* Require staff/wand */
@@ -9256,15 +9302,12 @@ void floor_item_charges(int item)
 	/*if (!object_known_p(o_ptr)) return;*/
 
 	/* Multiple charges */
-	if (o_ptr->pval != 1)
-	{
+	if (o_ptr->pval != 1) {
 		/* Print a message */
 		/*msg_format("There are %d charges remaining.", o_ptr->pval);*/
 	}
-
 	/* Single charge */
-	else
-	{
+	else {
 		/* Print a message */
 		/*msg_format("There is %d charge remaining.", o_ptr->pval);*/
 	}
@@ -9275,8 +9318,7 @@ void floor_item_charges(int item)
 /*
  * Describe an item in the inventory.
  */
-void floor_item_describe(int item)
-{
+void floor_item_describe(int item) {
 	/* Get a description */
 	/*object_desc(o_name, o_ptr, TRUE, 3);*/
 
@@ -9288,8 +9330,7 @@ void floor_item_describe(int item)
 /*
  * Increase the "number" of an item on the floor
  */
-void floor_item_increase(int item, int num)
-{
+void floor_item_increase(int item, int num) {
 	object_type *o_ptr = &o_list[item];
 
 	/* Apply */
@@ -9310,8 +9351,7 @@ void floor_item_increase(int item, int num)
 /*
  * Optimize an item on the floor (destroy "empty" items)
  */
-void floor_item_optimize(int item)
-{
+void floor_item_optimize(int item) {
 	object_type *o_ptr = &o_list[item];
 
 	/* Paranoia -- be sure it exists */
@@ -9331,8 +9371,7 @@ void floor_item_optimize(int item)
  *
  * TODO: inscribe item's power like {+StCo[FiAc;FASI}
  */
-void auto_inscribe(int Ind, object_type *o_ptr, int flags)
-{
+void auto_inscribe(int Ind, object_type *o_ptr, int flags) {
 	player_type *p_ptr = Players[Ind];
 #if 0
 	char c[] = "@m ";
@@ -9416,10 +9455,8 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 /*
  * Check if we have space for an item in the pack without overflow
  */
-bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance)
-{
+bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	player_type *p_ptr = Players[Ind];
-
 	int i;
 
 	/* Empty slot? */

@@ -280,7 +280,7 @@ void inven_drop(int Ind, int item, int amt) {
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND) tmp_obj.pval = divide_charged_item(o_ptr, amt);
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, amt);
 
 	/* What are we "doing" with the object */
 	if (amt < o_ptr->number)
@@ -1663,7 +1663,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 	questitem_d(o_ptr, quantity);
 
-	if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, quantity);
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, quantity);
 
 	/* Eliminate the item (from the pack) */
 	if (item >= 0) {
@@ -2367,7 +2367,7 @@ void do_cmd_steal(int Ind, int dir) {
 				}
 
 				/* Give one item to thief */
-				if (o_ptr->tval == TV_WAND) forge.pval = divide_charged_item(o_ptr, 1);
+				if (is_magic_device(o_ptr->tval)) divide_charged_item(&forge, o_ptr, 1);
 				forge.number = 1;
 				inven_carry(Ind, &forge);
 

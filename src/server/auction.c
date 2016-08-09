@@ -811,11 +811,8 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 	/* Grab one item */
 	COPY(o_ptr, &p_ptr->inventory[slot], object_type);
 	o_ptr->number = 1;
-	if (o_ptr->tval == TV_WAND)
-	{
-		o_ptr->pval = divide_charged_item(&p_ptr->inventory[slot], 1);
-	}
-		
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(o_ptr, &p_ptr->inventory[slot], 1);
+
 	inven_item_increase(Ind, slot, -1);
 	inven_item_describe(Ind, slot);
 	inven_item_optimize(Ind, slot);

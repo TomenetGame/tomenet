@@ -302,7 +302,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 				 * maximum timeouts or charges between those
 				 * stolen and those missed. -LM-
 				 */
-				if (o_ptr->tval == TV_WAND) j_ptr->pval = divide_charged_item(o_ptr, 1);
+				if (is_magic_device(o_ptr->tval)) divide_charged_item(j_ptr, o_ptr, 1);
 
 				/* Forget mark */
 				// j_ptr->marked = FALSE;
@@ -318,7 +318,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 			} else questitem_d(o_ptr, o_ptr->number); /* quest items are not immune to stealing :) */
 		} else questitem_d(o_ptr, o_ptr->number); /* questors go poof */
 #else
-		if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, 1);
+		if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, 1);
 #endif	// MONSTER_INVENTORY
 
 		/* Steal the items */
@@ -1288,9 +1288,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						if ((((o_ptr->tval == TV_STAFF) ||
 						     (o_ptr->tval == TV_WAND)) &&
 						    (o_ptr->pval)) ||
+						    o_ptr->tval == TV_ROD ||
 						     ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) &&
 						      (o_ptr->timeout > 1)))
 						{
+							s16b chance = rand_int(get_skill_scale(p_ptr, SKILL_DEVICE, 80));
+
 							/* Message */
 							if (i < INVEN_PACK)
 								msg_print(Ind, "Energy drains from your pack!");
@@ -1304,6 +1307,8 @@ bool make_attack_melee(int Ind, int m_idx)
 							j = rlev;
 							if (o_ptr->tval == TV_RING)
 								m_ptr->hp += j * (o_ptr->timeout / 2000) * o_ptr->number;
+							else if (o_ptr->tval == TV_ROD)
+								m_ptr->hp += j * (k_info[o_ptr->k_idx].level >> 3) * o_ptr->number;
 							else
 								m_ptr->hp += j * o_ptr->pval * o_ptr->number;
 							if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
@@ -1315,28 +1320,27 @@ bool make_attack_melee(int Ind, int m_idx)
 							if (o_ptr->tval == TV_RING) {
 								if (i < INVEN_PACK) {
 									o_ptr->timeout = 1; /* leave 0 to the dungeon.c routine.. */
+								} else if (magik(chance)) {
+									if (o_ptr->timeout > 8000) o_ptr->timeout -= (o_ptr->timeout / 100);
+									else if (o_ptr->timeout > 2000) o_ptr->timeout -= (o_ptr->timeout / 50);
+									else if (o_ptr->timeout > 500) o_ptr->timeout -= (o_ptr->timeout / 25);
+									else o_ptr->timeout = 1;
 								} else {
-									/* don't be too harsh */
-#if 1
-									if (o_ptr->timeout > 8000) o_ptr->timeout = (o_ptr->timeout * 3) / 4;
-									else if (o_ptr->timeout > 2000) o_ptr->timeout -= 2000;
-									else if (o_ptr->timeout > 500) o_ptr->timeout -= 500;
+									if (o_ptr->timeout > 8000) o_ptr->timeout -= (o_ptr->timeout / 20);
+									else if (o_ptr->timeout > 2000) o_ptr->timeout -= (o_ptr->timeout / 10);
+									else if (o_ptr->timeout > 500) o_ptr->timeout -= (o_ptr->timeout / 5);
 									else o_ptr->timeout = 1;
-#else
-									if (o_ptr->timeout > 9000) o_ptr->timeout -= 4000;
-									else if (o_ptr->timeout > 3000) o_ptr->timeout -= 2000;
-									else if (o_ptr->timeout > 1000) o_ptr->timeout -= 1000;
-									else o_ptr->timeout = 1;
-#endif
 								}
+							} else if (o_ptr->tval == TV_ROD) {
+								if (magik(chance)) discharge_rod(o_ptr, 5 + rand_int(5));
+								else discharge_rod(o_ptr, 15 + rand_int(10));
 							} else {
 								/* Pfft, this is really sucky... -,- MD should have something to
 								 * do with it, at least... Will change it to 1_in_MDlev chance of
 								 * total draining. Otherwise we will decrement. the_sandman
 								 * - actual idea was to make ELEC IMM worth something btw =-p - C. Blue */
-								s16b chance = randint(get_skill_scale(p_ptr, SKILL_DEVICE, 50));
-								if (!(chance - 1)) o_ptr->pval = 0;
-								else o_ptr->pval--;
+								if (magik(chance)) o_ptr->pval--;
+								else o_ptr->pval = 0;
 							}
 
 							/* Combine / Reorder the pack */

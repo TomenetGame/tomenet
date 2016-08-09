@@ -82,7 +82,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap) {
 		 * maximum timeouts or charges between those
 		 * stolen and those missed. -LM-
 		 */
-		if (o_ptr->tval == TV_WAND) tmp_obj.pval = divide_charged_item(o_ptr, 1);
+		if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, 1);
 
 		/* drop carefully */
 		drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -133,15 +133,12 @@ bool do_player_scatter_items(int Ind, int chance, int rad) {
 			 * maximum timeouts or charges between those
 			 * stolen and those missed. -LM-
 			 */
-			if (o_ptr->tval == TV_WAND) {
-				if (o_ptr->tval == TV_WAND)
-					tmp_obj.pval = divide_charged_item(o_ptr, 1);
-			}
+			if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, 1);
 
 			inven_item_increase(Ind, i,-999);
 			inven_item_optimize(Ind, i);
 			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-			//                  (void)floor_carry(cy, cx, &tmp_obj);
+			//(void)floor_carry(cy, cx, &tmp_obj);
 			drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, cy, cx);
 			if (!message) {
 				msg_print(Ind, "You feel light-footed.");
@@ -895,7 +892,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				q_ptr = &forge;
 				object_copy(q_ptr, j_ptr);
 				q_ptr->number = 1;
-				if (j_ptr->tval == TV_WAND) q_ptr->pval = divide_charged_item(j_ptr, 1);
+				if (is_magic_device(j_ptr->tval)) divide_charged_item(q_ptr, j_ptr, 1);
 
 				/* Drop it somewhere */
 				do_trap_teleport_away(Ind, q_ptr, y, x);
@@ -1119,6 +1116,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					/* Combine / Reorder the pack */
 					p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 					if (randint(10) > 3) break; /* 60% chance of only 1 */
+				} else if (j_ptr->tval == TV_ROD) {
+					ident = TRUE;
+					discharge_rod(j_ptr, 20 + rand_int(20));
+					/* Window stuff */
+					p_ptr->window |= PW_INVEN;
+					/* Combine / Reorder the pack */
+					p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 				}
 			}
 			if (ident)
@@ -1942,7 +1946,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				 * maximum timeouts or charges between those
 				 * stolen and those missed. -LM-
 				 */
-				if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, j - 1); /* The charge goes to .. void ;) */
+				if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, j - 1); /* The charge goes to .. void ;) */
 
 				inven_item_increase(Ind, i, 1 - j);
 				inven_item_optimize(Ind, i);
@@ -3256,7 +3260,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (j_ptr->tval == TV_WAND) i_ptr->pval = divide_charged_item(j_ptr, 1);
+	if (is_magic_device(j_ptr->tval)) divide_charged_item(i_ptr, j_ptr, 1);
 
 //	cs_ptr->type = CS_MON_TRAP;
 //	cs_ptr->sc.montrap.trap_load = pop_montrap(i_ptr);

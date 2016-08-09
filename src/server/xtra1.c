@@ -9010,7 +9010,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		}
 
 		/* If wands, update the # of charges. stack size can be set by force_num or mass_produce (occurance 2 of 2, keep in sync) */
-		if (forge.tval == TV_WAND && forge.number > 1)
+		if ((forge.tval == TV_WAND
+#ifdef NEW_MDEV_STACKING
+		    || forge.tval == TV_STAFF
+#endif
+		    ) && forge.number > 1)
 			forge.pval *= forge.number;
 
 		p_ptr->item_order_forge = forge;

@@ -244,6 +244,9 @@
 #define ENABLE_MERCHANT_MAIL
 #define MAX_MERCHANT_MAILS 100
 
+/* Make staves stack the same way as wands; enable improved way of rod-stacking */
+#define NEW_MDEV_STACKING
+
 
 /* --------------------- Server-type dependant features -------------------- */
 

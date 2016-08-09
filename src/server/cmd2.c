@@ -6483,7 +6483,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND) throw_obj.pval = divide_charged_item(o_ptr, 1);
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(&throw_obj, o_ptr, 1);
 
 	/* Reduce and describe inventory */
 	if (item >= 0) {

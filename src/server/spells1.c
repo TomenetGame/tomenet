@@ -2693,17 +2693,17 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 
 				/* Potions smash open */
 				if (k_info[o_ptr->k_idx].tval == TV_POTION &&
-					typ != set_water_destroy)	/* MEGAHACK */
-//					&& typ != set_cold_destroy)
+				    typ != set_water_destroy)	/* MEGAHACK */
+				    //&& typ != set_cold_destroy)
 				{
-//					(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
+					//(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
 					bypass_invuln = TRUE;
 					(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
 					bypass_invuln = FALSE;
 				}
 
 				/* Destroy "amt" items */
-				if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, amt);
+				if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, amt);
 				inven_item_increase(Ind, i, -amt);
 				inven_item_optimize(Ind, i);
 
@@ -3554,10 +3554,8 @@ bool apply_discharge(int Ind, int dam) {
 			else if (o_ptr->timeout > 10) o_ptr->timeout -= 3 + rand_int(3);
 			else if (o_ptr->timeout) o_ptr->timeout--;
 		} else if (o_ptr->tval == TV_ROD) {
-			if (o_ptr->pval < 30000) {
-				o_ptr->pval += 5;
-				damaged = TRUE;
-			}
+			discharge_rod(o_ptr, 5 + rand_int(5));
+			damaged = TRUE;
 		}
 
 		if (o_ptr->pval) switch (o_ptr->tval) {
@@ -3629,10 +3627,8 @@ bool apply_discharge_item(int o_idx, int dam) {
 		else if (o_ptr->timeout > 10) o_ptr->timeout -= 3 + rand_int(3);
 		else if (o_ptr->timeout) o_ptr->timeout--;
 	} else if (o_ptr->tval == TV_ROD) {
-		if (o_ptr->pval < 30000) {
-			o_ptr->pval += 5;
-			damaged = TRUE;
-		}
+		discharge_rod(o_ptr, 5 + rand_int(5));
+		damaged = TRUE;
 	}
 
 	if (o_ptr->pval) switch (o_ptr->tval) {
@@ -4829,7 +4825,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (o_ptr->to_a > k_ptr->to_a) o_ptr->to_a--;
 
 			switch (o_ptr->tval) {
-			case TV_ROD: break;
+			case TV_ROD:
+				discharge_rod(o_ptr, 10 + rand_int(10));
+				break;
 			case TV_WAND:
 			case TV_STAFF:
 				o_ptr->pval = 0;

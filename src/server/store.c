@@ -580,7 +580,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	if (compat_omode(o_ptr, j_ptr)) return (0);
 
 	/* Different charges (etc) cannot be stacked */
-	if (o_ptr->pval != j_ptr->pval && o_ptr->tval != TV_WAND) return (0);
+	if (o_ptr->pval != j_ptr->pval && !is_magic_device(o_ptr->tval)) return (0);
 	if (o_ptr->bpval != j_ptr->bpval) return (0);
 
 	/* Require many identical values */
@@ -650,8 +650,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
  * Allow a store item to absorb another item
  */
 /* o_ptr is item in store, j_ptr is new item bought. */
-static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
-{
+static void store_object_absorb(object_type *o_ptr, object_type *j_ptr) {
 	int total = o_ptr->number + j_ptr->number;
 
 	if (!j_ptr->owner) o_ptr->owner = 0;
@@ -660,10 +659,26 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->level < 1) o_ptr->level = 1; -C. Blue */
 
 	/* Combine quantity, lose excess items */
-	o_ptr->number = (total > 99) ? 99 : total;
+	total = o_ptr->number + j_ptr->number;
+	if (total > 99) total = 99;
+
+	if (o_ptr->tval == TV_ROD) {
+#ifdef NEW_MDEV_STACKING
+		stack_rods(o_ptr, j_ptr);
+#else
+		o_ptr->pval = (o_ptr->number * o_ptr->pval + j_ptr->number * j_ptr->pval) / total;
+#endif
+	}
+
+	/* Combine! */
+	o_ptr->number = total;
 
 	/* Hack -- combine wands' charge */
-	if (o_ptr->tval == TV_WAND) {
+	if (o_ptr->tval == TV_WAND
+#ifdef NEW_MDEV_STACKING
+	    || o_ptr->tval == TV_STAFF
+#endif
+	    ) {
 		o_ptr->pval += j_ptr->pval;
 #ifdef STORE_ROUNDS_SINGLE_WAND_CHARGES
 		/* Hack: Avoid odd jumps of extra charges due to rounding problems.
@@ -1420,11 +1435,8 @@ static void store_delete(store_type *st_ptr) {
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND) { //wait what? adding TODO marker here
-		if (o_ptr->tval == TV_WAND) {
-			(void)divide_charged_item(o_ptr, num);
-		}
-	}
+	if (is_magic_device(o_ptr->tval)) //wait what? adding TODO marker here
+		divide_charged_item(NULL, o_ptr, num);
 
 	/* Actually destroy (part of) the item */
 	store_item_increase(st_ptr, what, -num);
@@ -2050,7 +2062,11 @@ static void store_create(store_type *st_ptr) {
 		}
 
 		/* If wands, update the # of charges. stack size can be set by force_num or mass_produce (occurance 1 of 2, keep in sync) */
-		if (o_ptr->tval == TV_WAND && o_ptr->number > 1)
+		if ((o_ptr->tval == TV_WAND
+#ifdef NEW_MDEV_STACKING
+		    || o_ptr->tval == TV_STAFF
+#endif
+		    ) && o_ptr->number > 1)
 			o_ptr->pval *= o_ptr->number;
 
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ZEROLEVEL) o_ptr->level = 0;
@@ -2231,12 +2247,21 @@ static void display_entry(int Ind, int pos) {
 		/* Describe the object */
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		/* hack for wand charges to not get displayed accumulated (less comfortable) */
-		if (o_ptr->tval == TV_WAND) {
+		if (o_ptr->tval == TV_WAND
+ #ifdef NEW_MDEV_STACKING
+		    || o_ptr->tval == TV_STAFF
+ #endif
+		    ) {
 			i = o_ptr->pval;
 			o_ptr->pval = i / o_ptr->number;
 		}
 		object_desc(Ind, o_name, o_ptr, TRUE, 3 + 64);
-		if (o_ptr->tval == TV_WAND) o_ptr->pval = i; /* hack clean-up */
+		if (o_ptr->tval == TV_WAND
+ #ifdef NEW_MDEV_STACKING
+		    || o_ptr->tval == TV_STAFF
+ #endif
+		    )
+			o_ptr->pval = i; /* hack clean-up */
 #else
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 #endif
@@ -2260,13 +2285,13 @@ static void display_entry(int Ind, int pos) {
 
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
-                        if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
-                                Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
+				Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 			} else {
-                                Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
-                                    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
-                        }
-                } else {
+				Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
+				    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
+			}
+		} else {
 			Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 		}
 	}
@@ -2281,7 +2306,11 @@ static void display_entry(int Ind, int pos) {
 		/* Describe the object (fully) */
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		/* hack for wand charges to not get displayed accumulated (less comfortable) */
-		if (o_ptr->tval == TV_WAND) {
+		if (o_ptr->tval == TV_WAND
+ #ifdef NEW_MDEV_STACKING
+		    || o_ptr->tval == TV_STAFF
+ #endif
+		    ) {
 			i = o_ptr->pval;
 			o_ptr->pval = i / o_ptr->number;
 		}
@@ -2298,7 +2327,12 @@ static void display_entry(int Ind, int pos) {
 #endif
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		object_desc_store(Ind, o_name, o_ptr, TRUE, 3 + 64);
-		if (o_ptr->tval == TV_WAND) o_ptr->pval = i; /* hack clean-up */
+		if (o_ptr->tval == TV_WAND
+ #ifdef NEW_MDEV_STACKING
+		    || o_ptr->tval == TV_STAFF
+ #endif
+		    )
+			o_ptr->pval = i; /* hack clean-up */
 #else
 		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
 #endif
@@ -2802,8 +2836,7 @@ void store_stole(int Ind, int item) {
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND)
-		sell_obj.pval = divide_charged_item(o_ptr, amt);
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sell_obj, o_ptr, amt);
 
 	/*
 	 * Hack -- Mark the item temporarily as stolen so that the
@@ -3240,11 +3273,7 @@ void store_purchase(int Ind, int item, int amt) {
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND) {
-		if (o_ptr->tval == TV_WAND) {
-			sell_obj.pval = divide_charged_item(o_ptr, amt);
-		}
-	}
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sell_obj, o_ptr, amt);
 
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(Ind, &sell_obj, tolerance)) {
@@ -3535,7 +3564,11 @@ void store_sell(int Ind, int item, int amt) {
 	sold_obj.number = amt;
 
 	/* Wands get their charges divided - mikaelh */
-	if (o_ptr->tval == TV_WAND) {
+	if (o_ptr->tval == TV_WAND
+#ifdef NEW_MDEV_STACKING
+	    || o_ptr->tval == TV_STAFF
+#endif
+	    ) {
 		sold_obj.pval = o_ptr->pval * amt / o_ptr->number;
 	}
 
@@ -3696,7 +3729,11 @@ void store_confirm(int Ind) {
 	sold_obj.number = amt;
 
 	/* Wands get their charges divided - mikaelh */
-	if (o_ptr->tval == TV_WAND) {
+	if (o_ptr->tval == TV_WAND
+#ifdef NEW_MDEV_STACKING
+	    || o_ptr->tval == TV_STAFF
+#endif
+	    ) {
 		sold_obj.pval = o_ptr->pval * amt / o_ptr->number;
 	}
 
@@ -3792,7 +3829,7 @@ void store_confirm(int Ind) {
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND) sold_obj.pval = divide_charged_item(o_ptr, amt);
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sold_obj, o_ptr, amt);
 
 	/* Get the "actual" value */
 	//value = object_value(Ind, &sold_obj) * sold_obj.number;
@@ -4858,9 +4895,10 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 
 		/* Beware artifatcs should not combine with "lesser" thing */
 		if (o_ptr->name1 != j_ptr->name1) return (FALSE);
+		if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
 
 		/* Do not combine recharged ones with non recharged ones. */
-//		if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return (FALSE);
+		//if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return (FALSE);
 
 		/* Do not combine different ego or normal ones */
 		if (o_ptr->name2 != j_ptr->name2) return (FALSE);
@@ -4873,12 +4911,20 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 
 	case TV_STAFF:
 		/* Require knowledge */
-		if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (FALSE);
+		//if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (FALSE);
+		/* Require either knowledge or known empty for both staves. */
+		if ((!(o_ptr->ident & (ID_EMPTY)) &&
+		    !object_known_p(Ind, o_ptr)) ||
+		    (!(j_ptr->ident & (ID_EMPTY)) &&
+		    !object_known_p(Ind, j_ptr))) return(FALSE);
 
 		if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
+		if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 
 		/* Require identical charges */
+#ifdef NEW_MDEV_STACKING
 		if (o_ptr->pval != j_ptr->pval) return (FALSE);
+#endif
 
 		if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 		if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
@@ -5358,7 +5404,7 @@ void home_sell(int Ind, int item, int amt) {
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND) sold_obj.pval = divide_charged_item(o_ptr, amt);
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sold_obj, o_ptr, amt);
 
 	/* Get the description all over again */
 	object_desc(Ind, o_name, &sold_obj, TRUE, 3);
@@ -5562,11 +5608,7 @@ void home_purchase(int Ind, int item, int amt) {
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND) {
-		if (o_ptr->tval == TV_WAND) {
-			sell_obj.pval = divide_charged_item(o_ptr, amt);
-		}
-	}
+	if (is_magic_device(o_ptr->tval)) divide_charged_item(&sell_obj, o_ptr, amt);
 
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(Ind, &sell_obj, 0x0)) {
@@ -7240,7 +7282,11 @@ void export_player_store_offers(int *export_turns) {
 
  #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 				/* hack for wand charges to not get displayed accumulated (less comfortable) */
-				if (o_ptr->tval == TV_WAND) {
+				if (o_ptr->tval == TV_WAND
+ #ifdef NEW_MDEV_STACKING
+				    || o_ptr->tval == TV_STAFF
+ #endif
+				    ) {
 					int j = o_ptr->pval;
 					o_ptr->pval = j / o_ptr->number;
   #ifndef EXPORT_FLAVOUR_AWARE
@@ -7390,7 +7436,11 @@ void export_player_store_offers(int *export_turns) {
 
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		/* hack for wand charges to not get displayed accumulated (less comfortable) */
-		if (o_ptr->tval == TV_WAND) {
+		if (o_ptr->tval == TV_WAND
+#ifdef NEW_MDEV_STACKING
+		    || o_ptr->tval == TV_STAFF
+#endif
+		    ) {
 			int j = o_ptr->pval;
 			o_ptr->pval = j / o_ptr->number;
  #ifndef EXPORT_FLAVOUR_AWARE

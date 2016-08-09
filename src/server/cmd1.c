@@ -2241,9 +2241,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				int slot;
 
 				/* for pick_one: need to divide wand charges - thanks Dj_Wolf */
-				if (!delete_it && o_ptr->tval == TV_WAND) {
+				if (!delete_it && is_magic_device(o_ptr->tval)) {
 					o_floor_ptr->number = num_org; //temporarily unhack pick_one
-					o_ptr->pval = divide_charged_item(o_floor_ptr, 1);
+					divide_charged_item(o_ptr, o_floor_ptr, 1);
 					o_floor_ptr->number = 1; //rehack pick_one
 				}
 

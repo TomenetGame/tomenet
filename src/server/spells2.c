@@ -4164,8 +4164,8 @@ bool recharge_aux(int Ind, int item, int pow) {
 			if (o_ptr->name2 == EGO_PLENTY) t <<= 1;
 
 #if 0 /* old way */
-                       /* Recharge based on the power */
-                       if (t > 0) o_ptr->pval += 2 + randint(t);
+			/* Recharge based on the power */
+			if (t > 0) o_ptr->pval += 2 + randint(t);
 #else /* new way: correct wand stacking, added stack size dr */
 			/* Wands stack, so recharging must multiply the power.
 			   Add small 'laziness' diminishing returns malus. */
@@ -4184,7 +4184,11 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 				/* allow dr to factor in more: */
 				dr = 4500 / (10 + 400 / (o_ptr->number + 3)) - 30;
+ #ifdef NEW_MDEV_STACKING
+				if (t > 0) o_ptr->pval += 1 + (rand_int((t + 2) * dr)) / 10;
+ #else
 				if (t > 0) o_ptr->pval += 1 + (rand_int((t + 2) * dr) / o_ptr->number) / 10;
+ #endif
 			}
 #endif
 
