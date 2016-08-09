@@ -2755,8 +2755,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	int wood_power = 0, fibre_power = 0;
 
 	cave_type *c_ptr;
-	bool old_floor = FALSE;
-	bool more = FALSE;
+	bool old_floor = FALSE, more = FALSE, no_quake = FALSE;
 	feature_type *f_ptr;
 	cave_type **zcave;
 
@@ -2957,6 +2956,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 			/* Rubble */
 			else if (c_ptr->feat == FEAT_RUBBLE) {
+				no_quake = TRUE;
+
 				/* Remove the rubble */
 				if (power > rand_int(200) && twall(Ind, y, x)) {
 					/* Message */
@@ -3033,6 +3034,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 
 			else if (c_ptr->feat == FEAT_TREE) {
+				no_quake = TRUE;
+
 				/* mow down the vegetation */
 				if (((power > wood_power ? power : wood_power) > rand_int(400)) && twall(Ind, y, x)) { /* 400 */
 					/* Message */
@@ -3071,6 +3074,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 				}
 			} else if (c_ptr->feat == FEAT_BUSH) {
+				no_quake = TRUE;
+
 				/* mow down the vegetation */
 				if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 400 */
 					/* Message */
@@ -3095,6 +3100,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 				}
 			} else if (c_ptr->feat == FEAT_IVY) {
+				no_quake = TRUE;
+
 				/* mow down the vegetation */
 				if (((power > fibre_power ? power : fibre_power) > rand_int(200)) && twall(Ind, y, x)) { /* 400 */
 					/* Message */
@@ -3117,6 +3124,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 				}
 			} else if (c_ptr->feat == FEAT_DEAD_TREE) {
+				no_quake = TRUE;
+
 				/* mow down the vegetation */
 				if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 600 */
 					/* Message */
@@ -3395,6 +3404,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 			/* Spider Webs */
 			else if (c_ptr->feat == FEAT_WEB) {
+				no_quake = TRUE;
+
 				/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
 				if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, y, x)) {
 					msg_print(Ind, "You have cleared the web.");
@@ -3456,7 +3467,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	}
 
 	/* Apply Earthquakes */
-	if (p_ptr->inventory[INVEN_TOOL].k_idx) {
+	if (!no_quake && /* don't quake from digging rather soft stuff */
+	    p_ptr->inventory[INVEN_TOOL].k_idx) {
 		u32b fx, f5;
 		object_flags(o_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
 		if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
