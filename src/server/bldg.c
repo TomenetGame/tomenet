@@ -1741,6 +1741,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			if (ok) recreate = castle_quest(y - 1, x - 1);;
 			else msg_format(Ind, "ERROR: no quest info feature found: %d", bact - BACT_QUEST1 + FEAT_QUEST1);
 #else
+			/* get an extermination order */
 			u16b flags = QUEST_MONSTER | QUEST_RANDOM | QUEST_RACE;
 			int lev = p_ptr->lev;
 			u16b type, num;

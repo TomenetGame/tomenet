@@ -1327,7 +1327,7 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				return;
 			}
-
+#if 0 /* not atm */
 			if (tk && !strcmp(token[1], "guild")) {
 				if (!p_ptr->guild || guilds[p_ptr->guild].master != p_ptr->id) {
 					msg_print(Ind, "\377rYou are not a guildmaster");
@@ -1350,6 +1350,7 @@ void do_slash_cmd(int Ind, char *message) {
 				flags |= QUEST_GUILD;
 				lev = Players[j]->lev + 5;
 			}
+#endif
 			else if (admin && tk) {
 				if ((j = name_lookup_loose(Ind, token[1], FALSE, FALSE))) {
 					if (Players[j]->xorder_id) {
@@ -1363,6 +1364,7 @@ void do_slash_cmd(int Ind, char *message) {
 				flags |= QUEST_RACE;
 				lev = Players[j]->lev;
 			}
+
 			if (prepare_xorder(Ind, j, flags, &lev, &r, &num))
 			add_xorder(Ind, j, r, num, flags);
 			return;

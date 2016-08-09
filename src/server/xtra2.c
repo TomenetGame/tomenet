@@ -8651,9 +8651,18 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 		}
 	}
 
-	if (!in_irondeepdive(&p_ptr->wpos) && p_ptr->store_num != STORE_MAYOR) {
-		msg_print(Ind, "\377yYou must visit the mayor's office in Bree to receive an extermination order.");
-		return FALSE;
+	if (!in_irondeepdive(&p_ptr->wpos)) {
+		switch (p_ptr->store_num) {
+		case STORE_MAYOR:
+		case STORE_CASTLE:
+		case STORE_SEATRULING:
+		case STORE_KINGTOWER:
+		case STORE_SEADOME:
+			break;
+		default:
+			msg_print(Ind, "\377yPlease visit your local town hall or seat of ruling to receive an order!");
+			return FALSE;
+		}
 	}
 
 	if (p_ptr->IDDC_logscum) {

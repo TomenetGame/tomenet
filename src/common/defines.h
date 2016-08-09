@@ -1411,7 +1411,11 @@
 #define STORE_RUNE	9
 #define STORE_MAYOR	10
 #define STORE_INN	11
+#define STORE_CASTLE	14
 #define STORE_CASINO	15
+#define STORE_SEATRULING	24
+#define STORE_KINGTOWER	27
+#define STORE_SEADOME	35
 #define STORE_JEWELX	42
 #define STORE_SHOESX	45
 #define STORE_LIBRARY	46		/* unused */
