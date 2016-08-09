@@ -1964,6 +1964,7 @@ static void wr_player_names(void) {
 			/* Store the player name */
 			wr_string(ptr->name);
 			wr_byte(ptr->houses);
+			wr_byte(ptr->winner);
 		}
 	}
 

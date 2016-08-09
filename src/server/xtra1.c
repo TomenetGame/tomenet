@@ -9055,6 +9055,8 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		cptr comp;
 		cptr acc;
 		u32b pid, fee;
+		byte w;
+		bool total_winner, once_winner;
 
 		if (!o_ptr->k_idx) {
 			msg_print(Ind, "Invalid item.");
@@ -9073,6 +9075,9 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			msg_format(Ind, "\377ySorry, that character does not have an account.");
 			return;
 		}
+		w = lookup_player_winner(pid);
+		total_winner = (w & 0x1);
+		once_winner = (w & 0x2);
 
 		fee = object_value_real(0, o_ptr) / 20;
 		if (fee < 5) fee = 5;
@@ -9084,6 +9089,32 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		comp = compat_mode(p_ptr->mode, lookup_player_mode(pid));
 		if (comp) {
 			msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
+			return;
+		}
+		/* true artifact restrictions */
+		if (true_artifact_p(o_ptr)) {
+			if (cfg.anti_arts_hoard || p_ptr->total_winner) {
+				msg_print(Ind, "\377yAs a royalty, you cannot hand over true artifacts.");
+				return;
+			}
+			if (!winner_artifact_p(o_ptr) && cfg.kings_etiquette && total_winner) {
+				msg_print(Ind, "\377yRoyalties may not own true artifacts.");
+				return;
+			}
+			if (cfg.anti_arts_pickup && o_ptr->level < lookup_player_level(pid)) {
+				msg_print(Ind, "\377yThe receipient must match the level of a true artifact.");
+				return;
+			}
+		}
+		/* WINNERS_ONLY item restrictions */
+		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
+#ifdef FALLEN_WINNERSONLY
+		    !once_winner
+#else
+		    !total_winner
+#endif
+		    ) {
+			msg_print(Ind, "That item may only be sent to royalties!");
 			return;
 		}
 

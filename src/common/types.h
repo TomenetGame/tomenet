@@ -3681,6 +3681,7 @@ struct hash_entry {
 #endif
 
 	char houses; // ACC_HOUSE_LIMIT
+	byte winner;
 
 	struct hash_entry *next;	/* Next entry in the chain */
 };

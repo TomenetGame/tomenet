@@ -3191,6 +3191,8 @@ errr rd_server_savefile() {
 		u16b xorder;
 		byte admin;
 		struct worldpos wpos;
+		byte houses;
+		byte winner;
 
 		rd_u32b(&tmp32u);
 
@@ -3233,11 +3235,14 @@ errr rd_server_savefile() {
 
 			// ACC_HOUSE_LIMIT
 			//see further below. We need to close the server save file first, to load player savefiles, so we can't do this here!
-			if (!s_older_than(4, 6, 3)) rd_byte(&tmp8u);
-			else tmp8u = -1;
+			if (!s_older_than(4, 6, 3)) rd_byte(&houses);
+			else houses = -1;
+
+			if (!s_older_than(4, 6, 8)) rd_byte(&winner);
+			else winner = 0;
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin, wpos, (char)tmp8u);
+			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner);
 		}
 		s_printf("Read %d player name records.\n", tmp32u);
 	}
@@ -3368,6 +3373,8 @@ errr rd_server_savefile() {
 				if (!load_player(NumPlayers))
 					s_printf("INIT_ACC_HOUSE_LIMIT_ERROR: load_player '%s' failed\n", ptr->name);
 				else {
+					byte w;
+
 					/* catch old bugs ;) */
 					if (p_ptr->houses_owned < 0 || p_ptr->houses_owned > 10 ||
 					    p_ptr->castles_owned < 0 || p_ptr->castles_owned > 1) {
@@ -3380,7 +3387,9 @@ errr rd_server_savefile() {
 
 					tmp8u = p_ptr->houses_owned;
 					s_printf("INIT_ACC_HOUSE_LIMIT_OK: '%s' has %d houses\n", ptr->name, tmp8u);
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), p_ptr->wpos, (char)tmp8u);
+
+					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), p_ptr->wpos, (char)tmp8u, w);
 				}
 
 				/* unhack */

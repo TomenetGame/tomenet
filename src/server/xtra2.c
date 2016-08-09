@@ -5790,6 +5790,7 @@ if (cfg.unikill_format) {
 
 					/* Redraw the "title" */
 					q_ptr->redraw |= (PR_TITLE);
+					clockin(i, 9);
 
 					/* Congratulations */
 					msg_print(i, "\377G*** CONGRATULATIONS ***");

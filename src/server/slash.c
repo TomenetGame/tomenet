@@ -3672,18 +3672,22 @@ void do_slash_cmd(int Ind, char *message) {
 			if ((p_ptr->mode & MODE_PVP)) {
 #if 0 /* old: only allow one pvp-dedicated char */
 				if (ok == -4 || ok == -9 || ok == -6 || ok == -7) {
+					byte w;
 					p_ptr->mode |= MODE_DED_PVP;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned);//assume NO ADMIN!
-//					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
+					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w);//assume NO ADMIN!
+					//Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}
 				msg_print(Ind, "\377yYou already have a slot-exclusive PvP-mode character.");
 #else /* allow unlimitid pvp-dedicated chars */
+				byte w;
 				p_ptr->mode |= MODE_DED_PVP;
 				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
-				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned);//assume NO ADMIN!
-//				Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
+				w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
+				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w);//assume NO ADMIN!
+				//Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 #endif
 				return;
 			}
@@ -3696,16 +3700,20 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				if (ok == -5 || ok == -8 || ok == -6 || ok == -7) {
+					byte w;
 					p_ptr->mode |= MODE_DED_IDDC;
 					p_ptr->mode &= ~MODE_EVERLASTING;
 					p_ptr->mode |= MODE_NO_GHOST;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned);//assume NO ADMIN!
+					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}
 				msg_print(Ind, "\377yYou already have a slot-exclusive IDDC-mode character.");
 #else /* new way: ANY character may be convert, already in town even */
+				byte w;
+
 				if ((p_ptr->max_exp || p_ptr->max_plv > 1) &&
 				    !in_irondeepdive(&p_ptr->wpos)) {
 					msg_print(Ind, "\377yYou must have zero experience points to be eligible to convert to IDDC!");
@@ -3719,7 +3727,8 @@ void do_slash_cmd(int Ind, char *message) {
 				/* (get rid of his houses -- not needed though since you can't currently buy houses at level 1) */
 
 				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
-				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned);//assume NO ADMIN!
+				w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
+				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w);//assume NO ADMIN!
 
 				/* set typical character parameters as if we were born like this */
 				if (!in_irondeepdive(&p_ptr->wpos)) {

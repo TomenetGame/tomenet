@@ -3837,6 +3837,15 @@ u32b lookup_player_account(int id) {
 	return -1L;
 }
 
+byte lookup_player_winner(int id) {
+	hash_entry *ptr;
+	if ((ptr = lookup_player(id)))
+		return ptr->winner;
+
+	/* Not found */
+	return -1L;
+}
+
 void stat_player(char *name, bool on) {
 	int id;
 	int slot;
@@ -3897,6 +3906,9 @@ void clockin(int Ind, int type) {
 				break;
 			case 8:
 				ptr->houses = p_ptr->houses_owned;
+				break;
+			case 9:
+				ptr->winner = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 				break;
 			}
 			break;
@@ -4448,7 +4460,7 @@ void account_checkexpiry(int Ind) {
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses) {
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner) {
 	int slot;
 	hash_entry *ptr;
 
@@ -4479,6 +4491,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 	ptr->wpos.wy = wpos.wy;
 	ptr->wpos.wz = wpos.wz;
 	ptr->houses = houses;
+	ptr->winner = winner;
 
 	/* Add the rest of the chain to this entry */
 	ptr->next = hash_table[slot];
@@ -4490,7 +4503,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 /*
  * Verify a player's data against the hash table. - C. Blue
  */
-void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses) {
+void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner) {
 	hash_entry *ptr = lookup_player(id);
 
 	/* For savegame conversion 4.2.0 -> 4.2.2: */
@@ -4530,6 +4543,10 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 	if (ptr->houses != houses) {
 		s_printf("hash_entry: fixing houses of %s.\n", ptr->name);
 		ptr->houses = houses;
+	}
+	if (ptr->winner != winner) {
+		s_printf("hash_entry: fixing winner of %s.\n", ptr->name);
+		ptr->winner = winner;
 	}
 }
 
@@ -5015,7 +5032,7 @@ void restore_acclists(void) {
 			time_t ttime;
 			//s_printf("  adding: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
 			/* Add backed-up entry again */
-			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, 0, time(&ttime), ptr->admin, ptr->wpos, ptr->houses);
+			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, 0, time(&ttime), ptr->admin, ptr->wpos, ptr->houses, ptr->winner);
 		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", name_forge, ptr->id, ptr->account);
 	}
 
