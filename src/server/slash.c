@@ -471,7 +471,7 @@ void do_slash_cmd(int Ind, char *message) {
 		}
 
 		/* Default to no search string */
-		//		strcpy(search, "");
+		//strcpy(search, "");
 
 		/* Form a search string if we found a colon */
 		if (tk) k = atoi(token[1]);
@@ -509,10 +509,8 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 			p = name_lookup_loose(Ind, message3, FALSE, TRUE);
-			if (!p || (Players[Ind]->admin_dm && cfg.secret_dungeon_master && !is_admin(Players[Ind]))) {
-				msg_format(Ind, "\377yPlayer %s not online.", message3);
-				return;
-			}
+			if (!p) return;
+
 #if 0 /* no real need to restrict this */
 			if (!Players[p]->afk) {
 				msg_format(Ind, "\377yPlayer %s is not afk.", message3);
@@ -1744,10 +1742,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			i = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!i || !p_ptr->play_vis[i]) {
-				msg_print(Ind, "You don't see anyone of that name.");
-				return;
-			}
+			if (!i || !p_ptr->play_vis[i]) return;
 			q_ptr = Players[i];
 
 			if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) {
@@ -1847,10 +1842,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 			if (tk) {
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
-				if ((!p || !p_ptr->play_vis[p]) && p != Ind) {
-					msg_print(Ind, "You don't see anyone of that name.");
-					return;
-				}
+				if ((!p || !p_ptr->play_vis[p]) && p != Ind) return;
 
 				if (!inarea(&p_ptr->wpos, &Players[p]->wpos)) {
 					msg_print(Ind, "\377yThat player is not nearby.");
@@ -3199,13 +3191,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
-				msg_print(Ind, "You don't see anyone of that name.");
-				return;
-			}
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
-//				if (i == 5) continue;
+				//if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
 			}
 			if (i == 10) {
@@ -3235,13 +3224,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
-				msg_print(Ind, "You don't see anyone of that name.");
-				return;
-			}
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
-//				if (i == 5) continue;
+				//if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
 			}
 			if (i == 10) {
@@ -3268,13 +3254,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
-				msg_print(Ind, "You don't see anyone of that name.");
-				return;
-			}
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
-//				if (i == 5) continue;
+				//if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
 			}
 			if (i == 10) {
@@ -3301,13 +3284,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
-				msg_print(Ind, "You don't see anyone of that name.");
-				return;
-			}
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
-//				if (i == 5) continue;
+				//if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
 			}
 			if (i == 10) {
@@ -3349,12 +3329,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
-				msg_print(Ind, "You don't see anyone of that name.");
-				return;
-			}
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+
 			for (i = 1; i <= 9; i++) {
-//				if (i == 5) continue;
+				//if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
 			}
 			if (i == 10) {
@@ -4575,10 +4553,8 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 
 				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
-				if (!j) {
-					msg_print(Ind, "Player not online.");
-					return;
-				}
+				if (!j) return;
+
 				if (reason) s_printf("<%s> Kicking '%s' (%s).\n", p_ptr->name, Players[j]->name, reason);
 				else s_printf("<%s> Kicking '%s'.\n", p_ptr->name, Players[j]->name);
 				kick_char(Ind, j, reason);
@@ -6478,10 +6454,8 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
-				if (!p) {
-					msg_print(Ind, "Player not found.");
-					return;
-				}
+				if (!p) return;
+
 				teleport_player_force(p, 10);
 				msg_print(Ind, "Phased that player.");
 				return;
@@ -6494,10 +6468,8 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
-				if (!p) {
-					msg_print(Ind, "Player not found.");
-					return;
-				}
+				if (!p) return;
+
 				teleport_player_force(p, 100);
 				msg_print(Ind, "Teleported that player.");
 				return;
@@ -6516,10 +6488,7 @@ void do_slash_cmd(int Ind, char *message) {
 				x = atoi(token[1]);
 				y = atoi(token[2]);
 				p = name_lookup_loose(Ind, token[3], FALSE, FALSE);
-				if (!p) {
-					msg_print(Ind, "Player not found.");
-					return;
-				}
+				if (!p) return;
 
 				q_ptr = Players[p];
 				if (!in_bounds4(getfloor(&q_ptr->wpos), y, x)) {
@@ -6583,10 +6552,7 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
-				if (!p) {
-					msg_print(Ind, "Player not found.");
-					return;
-				}
+				if (!p) return;
 
 				q_ptr = Players[p];
 				if (!(zcave = getcave(&q_ptr->wpos))) {
@@ -7662,10 +7628,7 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 
 				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-				if (!j) {
-					msg_print(Ind, "Name not found.");
-					return;
-				}
+				if (!j) return;
 
 				for (i = 0; i < INVEN_PACK; i++) {
 					if (Players[j]->inventory[i].tval != TV_DRAG_ARMOR) continue;
@@ -7695,10 +7658,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 				/* syntax: /ocopy <1..38> <name> */
 				j = name_lookup_loose(Ind, strstr(message3, " ") + 1, FALSE, FALSE);
-				if (!j) {
-					msg_print(Ind, "Name not found.");
-					return;
-				}
+				if (!j) return;
 				object_copy(o_ptr, &Players[j]->inventory[atoi(token[1]) - 1]);
 
 				/* skip true arts to prevent duplicates */
@@ -7904,10 +7864,7 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 
 				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
-				if (!j) {
-					msg_format(Ind, "Couldn't find player %s.", token[1]);
-					return;
-				}
+				if (!j) return;
 				q_ptr = Players[j];
 
 				gettimeofday(&now, NULL);
@@ -8045,10 +8002,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-				if (!j) {
-					msg_format(Ind, "Couldn't find player %s.", message3);
-					return;
-				}
+				if (!j) return;
 
 				msg_format(Ind, "Using music of player %s.", Players[j]->name);
 				f = Players[Ind]->esp_link_flags;
@@ -9319,10 +9273,8 @@ void do_slash_cmd(int Ind, char *message) {
 
 				if (q == -1) p = name_lookup_loose(Ind, message3, FALSE, FALSE);
 				else p = name_lookup_loose(Ind, message3 + 2, FALSE, FALSE);
-				if (!p) {
-					msg_print(Ind, "Couldn't find that player.");
-					return;
-				}
+				if (!p) return;
+
 				p_ptr = Players[p];
 
 				if (q == -1) {
@@ -9630,7 +9582,6 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				i = name_lookup_loose(Ind, message3, FALSE, FALSE);
 				if (i) restore_estate(i);
-				else msg_print(Ind, "Player not online.");
 				return;
 			}
 		}
