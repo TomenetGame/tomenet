@@ -7436,14 +7436,14 @@ static void print_tomb(cptr reason) {
 	if (!done) {
 		char	tmp[160];
 		char	buf[1024];
-		FILE        *fp;
+		FILE	*fp;
 		time_t	ct = time(NULL);
 
 		/* Clear screen */
 		Term_clear();
 
 		/* Build the filename */
-		path_build(buf, 1024, ANGBAND_DIR_TEXT, ct % 2 ? "dead.txt" : "dead2.txt");
+		path_build(buf, 1024, ANGBAND_DIR_TEXT, (ct % 2) == 0 ? "dead.txt" : "dead2.txt");
 
 		/* Open the News file */
 		fp = my_fopen(buf, "r");
@@ -7586,11 +7586,12 @@ void c_close_game(cptr reason) {
 		prt("Your tracks", 2, 0);
 
 		/* Give some choices */
-		prt("(1) Character", 4, 5);
-		prt("(2) Inventory", 5, 5);
-		prt("(3) Equipments", 6, 5);
-		prt("(4) Messages", 7, 5);
-		prt("(5) Chat messages", 8, 5);
+		c_put_str(TERM_WHITE, "(\377y1\377w) Character", 4, 5);
+		c_put_str(TERM_WHITE, "(\377y2\377w) Inventory", 5, 5);
+		c_put_str(TERM_WHITE, "(\377y3\377w) Equipments", 6, 5);
+		c_put_str(TERM_WHITE, "(\377y4\377w) Messages", 7, 5);
+		c_put_str(TERM_WHITE, "(\377y5\377w) Chat messages", 8, 5);
+		c_put_str(TERM_WHITE, "Press a number to review or press \377yESC\377w to continue", 10, 5);
 
 		/* What a pity no score list here :-/ */
 
