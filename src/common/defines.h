@@ -7835,6 +7835,8 @@ extern int PlayerUID;
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
  #define BACT_DUNGEONS			67
 #endif
+#define BACT_SEND_ITEM			68
+#define BACT_SEND_GOLD			69
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 

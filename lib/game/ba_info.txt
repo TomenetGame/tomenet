@@ -348,3 +348,11 @@ I:66:0:o:0
 N:73:Exploration history
 C:0:0:0
 I:67:0:h:0
+
+N:74:Send item
+C:0:0:0
+I:68:0:t:2
+
+N:75:Send gold
+C:0:0:0
+I:69:0:g:4

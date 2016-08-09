@@ -240,6 +240,8 @@
 /* For auto-retaliator's attack splitting: Switching target in the midst of combat costs 1 bpr of energy. Only affects melee attacking. */
 #define TARGET_SWITCHING_COST
 
+/* Allow sending gold or an item to someone via merchants' guild */
+#define ENABLE_MERCHANT_MAIL
 
 
 /* --------------------- Server-type dependant features -------------------- */

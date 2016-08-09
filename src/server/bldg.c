@@ -110,6 +110,12 @@ void show_building(int Ind, store_type *s_ptr) {
 			continue;
 		}
 #endif
+#ifndef ENABLE_MERCHANT_MAIL
+		if (st_ptr->actions[i] == 74 || st_ptr->actions[i] == 75) { //BACT_SEND_ITEM/BACT_SEND_GOLD
+			Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
+			continue;
+		}
+#endif
 
 		if (ba_ptr->letter != '.') {
 			if (ba_ptr->action_restr == 0) {
@@ -2320,6 +2326,25 @@ if (is_admin(p_ptr))
 				break;
 			}
 			Send_request_str(Ind, RID_ITEM_ORDER, "Which item would you like to order? ", "");
+			break;
+#endif
+#ifdef ENABLE_MERCHANT_MAIL
+		case BACT_SEND_ITEM:
+ #ifdef USE_SOUND_2010
+			//sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
+ #endif
+			paid = TRUE;
+			break;
+		case BACT_SEND_GOLD:
+			if (gold > p_ptr->au) gold = p_ptr->au;
+			if (gold < 1) break;
+			//p_ptr->au -= gold;
+ #ifdef USE_SOUND_2010
+			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
+			//msg_format(Ind, "You withdraw %i gold pieces.", gold);
+			//s_printf("Withdraw: %s - %d Au.\n", p_ptr->name, gold);
+			paid = TRUE;
 			break;
 #endif
 		default:
