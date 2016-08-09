@@ -4929,7 +4929,7 @@ void message_pain(int Ind, int m_idx, int dam) {
 
 	/* DEG Modified to give damage information */
 	/* Jelly's, Mold's, Vortex's, Quthl's */
-	if (strchr("jmvQ", r_ptr->d_char)) {
+	if (strchr("jmvQE", r_ptr->d_char)) {
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 			if (percentage > 95)
 				msg_format(Ind, "\377%c%^s barely notices the \377e%d \377%cdamage.", uniq, m_name, dam, uniq);
