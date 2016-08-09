@@ -745,7 +745,7 @@ static void mon_highlight_flags(char *info) {
 void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
 	FILE *fff;
-	int l = 0, info_val, pl = -1;
+	int l = 0, info_val, pl = -1, drops = 0;
 	int pf_col_cnt = 0; /* combine multiple [3] flag lines into one */
 	/* for multiple definitions via $..$/!: */
 	bool got_W_line = FALSE; /* usually only W: lines are affected, right? */
@@ -1019,13 +1019,14 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			case 'O': /* treasure, combat, magic, tool */
 				strcpy(info, "Usual drops: ");
 				sprintf(info_tmp, "\377%cDrops: ", a_key);
-				info_val = 0;
+				info_val = drops = 0;
 			    /* treasure */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1)) {
 					strcat(info_tmp, format("\377%c%d%% valuables\377%c", a_val, atoi(p1), a_key));
 					strcat(info, format("\377%c%d%% valuables\377%c", a_val, atoi(p1), a_key));
 					info_val = 1;
+					drops += atoi(p1);
 				}
 				p1 = p2;
 			    /* combat */
@@ -1038,6 +1039,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					strcat(info_tmp, format("\377%c%d%% combat\377%c", a_val, atoi(p1), a_key));
 					strcat(info, format("\377%c%d%% combat\377%c", a_val, atoi(p1), a_key));
 					info_val = 1;
+					drops += atoi(p1);
 				}
 				p1 = p2;
 			    /* magic */
@@ -1050,6 +1052,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					strcat(info_tmp, format("\377%c%d%% magic\377%c", a_val, atoi(p1), a_key));
 					strcat(info, format("\377%c%d%% magic items\377%c", a_val, atoi(p1), a_key));
 					info_val = 1;
+					drops += atoi(p1);
 				}
 				p1 = p2;
 			    /* tool */
@@ -1061,11 +1064,17 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					strcat(info_tmp, format("\377%c%d%% tools\377%c", a_val, atoi(p1), a_key));
 					strcat(info, format("\377%c%d%% tools\377%c", a_val, atoi(p1), a_key));
 					info_val = 1;
+					drops += atoi(p1);
 				}
 			    /* all done, display: */
 				if (!info_val) {
-					strcat(info_tmp, format("\377%cNothing (or junk/miscellaneous items)\377%c", a_val, a_key));
-					strcat(info, format("\377%cNothing (or junk/miscellaneous items)\377%c", a_val, a_key));
+					strcat(info_tmp, format("\377%cNothing or any item\377%c", a_val, a_key));
+					strcat(info, format("\377%cNothing or any item\377%c", a_val, a_key));
+				} else if (drops < 100) {
+					strcat(info_tmp, ", ");
+					strcat(info, ", ");
+					strcat(info_tmp, format("\377%c%d%% junk\377%c", a_val, 100 - drops, a_key));
+					strcat(info, format("\377%c%d%% junk\377%c", a_val, 100 - drops, a_key));
 				}
 				strcat(info_tmp, ".");
 				strcat(info, ".");

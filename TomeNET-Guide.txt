@@ -8889,6 +8889,8 @@ item that you will find on the floor:
     -Junk (rest chance, not covered by the above four categories):
      Skeletons/skulls/bones, bottles, shards of pottery, broken sticks,
      firestones, all golem parts (massive pieces, arms, legs, command scrolls).
+     Note: Monsters that don't have any treasure class at all are not set to
+           100% junk, but can instead drop any item of all the five classes.
 
     Example: 'Green naga'.
     A Green naga has 25% chance of dropping 'Combat' loot and 65% chance of
