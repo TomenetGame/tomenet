@@ -6353,7 +6353,8 @@ static int kind_is_theme(int k_idx) {
 	/* hybrid: can be junk or tools (while being neither..)! */
 	case TV_FIRESTONE:
 	case TV_FOOD:
-		if (match_theme.tools > p) p = match_theme.tools; break;
+		if (match_theme.tools > p) p = match_theme.tools;
+		break;
 	}
 
 	/* Return the percentage */
