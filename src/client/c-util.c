@@ -7435,7 +7435,7 @@ static void print_tomb(cptr reason) {
 	/* Print the text-tombstone */
 	if (!done) {
 		char	tmp[160];
-		char	buf[1024];
+		char	buf[1024], buf2[1024 * 2];
 		FILE	*fp;
 		time_t	ct = time(NULL);
 
@@ -7454,8 +7454,27 @@ static void print_tomb(cptr reason) {
 
 			/* Dump the file to the screen */
 			while (0 == my_fgets(fp, buf, 1024)) {
+#if 1 /* allow colour code shortcut: '\{' = colour, '{' = normal */
+				char *t = buf, *t2 = buf2;
+				while (*t) {
+					if (*t != '\\') *t2++ = *t++;
+					else {
+						/* double code ? -> colour */
+						if (*(t + 1) == '{') {
+							*t2++ = '\377';
+							t += 2;
+						}
+						/* single '{' ? keep */
+						else *t2++ = *t++;
+					}
+				}
+				*t2 = 0;
+				/* Display and advance */
+				Term_putstr(0, i++, -1, TERM_WHITE, buf2);
+#else
 				/* Display and advance */
 				Term_putstr(0, i++, -1, TERM_WHITE, buf);
+#endif
 			}
 
 			/* Close */
