@@ -4725,7 +4725,7 @@ Chain_Macro:
 							if ((choice < 'a' || choice > mw_LAST) &&
 							    choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' &&
 							    choice != 'G' && choice != 'I' && choice != 'K' && choice != 'H') {
-//								i = -1;
+								//i = -1;
 								continue;
 							}
 						}
@@ -4830,7 +4830,7 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'c') {
-//									i = -1;
+									//i = -1;
 									continue;
 								}
 							}
@@ -4880,7 +4880,7 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if ((choice < 'a' || choice > 'f') && choice != '?' && choice != '*') {
-//									i = -1;
+									//i = -1;
 									continue;
 								}
 							}
@@ -4921,7 +4921,7 @@ Chain_Macro:
 							if (i == -1 || i == -2) continue; //invalid action -OR- drawing less than the maximum number of runes
 
 							clear_from(14);
-//							Term_putstr(10, 14, -1, TERM_GREEN, format("Selected runes: \377s%s", buf2)); //Redundant unless RCRAFT_MAX_ELEMENTS > 2
+							//Term_putstr(10, 14, -1, TERM_GREEN, format("Selected runes: \377s%s", buf2)); //Redundant unless RCRAFT_MAX_ELEMENTS > 2
 							for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
 								/* Show duplicate rune(s) in umber (or press ENTER; allow both!) */
 								if (e_flags & r_elements[i].flag) {
@@ -4949,15 +4949,15 @@ Chain_Macro:
 							default: /* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'a' + RCRAFT_MAX_ELEMENTS - 1) {
 									j--;
-//									i = -1; //Just ignore it. (ESC to exit)
+									//i = -1; //Just ignore it. (ESC to exit)
 									continue;
 								}
 
 								/* add this rune.. */
 								e_flags |= r_elements[choice - 'a'].flag;
 								/* Enable below for old 'rune list' display - Redundant at the moment, but cool~ +_+ */
-//								//strcat(buf2, r_elements[choice - 'a'].name);
-//								//strcat(buf2, " ");
+								//strcat(buf2, r_elements[choice - 'a'].name);
+								//strcat(buf2, " ");
 							}
 
 							/* build macro part: 'a'..'p' or '\r' */
@@ -5015,7 +5015,7 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > ('a'+RCRAFT_MAX_IMPERATIVES-1)) {
-//									i = -1; //Just ignore it. (ESC to exit)
+									//i = -1; //Just ignore it. (ESC to exit)
 									continue;
 								}
 							}
@@ -5274,7 +5274,7 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > ('a'+RCRAFT_MAX_TYPES-1)) {
-//									i = -1; //Just ignore it. (ESC to exit)
+									//i = -1; //Just ignore it. (ESC to exit)
 									continue;
 								}
 							}
@@ -5368,7 +5368,7 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'f') {
-//									i = -1;
+									//i = -1;
 									continue;
 								}
 							}
@@ -5736,7 +5736,7 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'g') {
-//									i = -1;
+									//i = -1;
 									continue;
 								}
 							}
@@ -5758,6 +5758,8 @@ Chain_Macro:
 
 							Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9) ");
 
+							/* hack: temporarily enable macro parsing for using numpad keys without numlock to specify a direction */
+							inkey_interact_macros = FALSE;
 							while (TRUE) {
 								switch (target_dir = inkey()) {
 								case ESCAPE:
@@ -5772,12 +5774,14 @@ Chain_Macro:
 								default:
 									/* invalid action -> exit wizard */
 									if (target_dir < '1' || target_dir > '9') {
-//										i = -1;
+										//i = -1;
 										continue;
 									}
 								}
 								break;
 							}
+							/* disable macro parsing again */
+							inkey_interact_macros = TRUE;
 							/* exit? */
 							if (i == -1) continue;
 						}
