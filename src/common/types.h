@@ -3327,7 +3327,6 @@ struct client_opts {
 	bool recall_flicker;
 	bool no_verify_destroy;
 	bool no_verify_sell;
-	bool topline_no_msg;
 
     //page 5
 	bool auto_afk;
@@ -3430,6 +3429,9 @@ struct client_opts {
 	bool avoid_abort;
 	bool compress_savefile;
 #endif
+
+	bool topline_no_msg;
+	bool shuffle_music;
 };
 
 /*

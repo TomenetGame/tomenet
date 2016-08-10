@@ -55,9 +55,14 @@ bool on_demand_loading = FALSE;
 //#define DEBUG_SOUND
 
 /* Path to sound files */
+#define SEGFAULT_HACK
+#ifndef SEGFAULT_HACK
 static const char *ANGBAND_DIR_XTRA_SOUND;
-static const char *ANGBAND_DIR_XTRA_MUSIC;
-
+static const char *ANGBAND_DIR_XTRA_MUSIC; //<-this one in particular segfaults!
+#else
+char ANGBAND_DIR_XTRA_SOUND[1024];
+char ANGBAND_DIR_XTRA_MUSIC[1024];
+#endif
 
 /* for threaded caching of audio files */
 SDL_Thread *load_audio_thread;
@@ -191,8 +196,10 @@ static void close_audio(void) {
 		}
 	}
 
+#ifndef SEGFAULT_HACK
 	string_free(ANGBAND_DIR_XTRA_SOUND);
 	string_free(ANGBAND_DIR_XTRA_MUSIC);
+#endif
 
 	/* Close the audio */
 	Mix_CloseAudio();
@@ -290,7 +297,11 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Build the "sound" path */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "sound");
+#ifndef SEGFAULT_HACK
 	ANGBAND_DIR_XTRA_SOUND = string_make(path);
+#else
+	strcpy(ANGBAND_DIR_XTRA_SOUND, path);
+#endif
 
 	/* Find and open the config file */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
@@ -477,7 +488,11 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Build the "music" path */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "music");
+#ifndef SEGFAULT_HACK
 	ANGBAND_DIR_XTRA_MUSIC = string_make(path);
+#else
+	strcpy(ANGBAND_DIR_XTRA_MUSIC, path);
+#endif
 
 	/* Find and open the config file */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
@@ -1584,9 +1599,38 @@ static void fadein_next_music(void) {
 	if (!cfg_audio_master || !cfg_audio_music) return;
 #endif
 
+	/* Catch music_next == -1, this can now happen with shuffle_music option, since songs are no longer looped if it's enabled */
+	if (c_cfg.shuffle_music && music_next == -1) {
+		/* stick with music event, but play different song, randomly */
+		int tries = songs[music_cur].num == 1 ? 1 : 100, mcs;
+		if (songs[music_cur].num < 1) return; //paranoia
+		while (tries--) {
+			mcs = rand_int(songs[music_cur].num);
+			if (music_cur_song != mcs) break;
+		}
+		music_cur_song = mcs;
+
+		/* Choose the predetermined random event */
+		wave = songs[music_cur].wavs[music_cur_song];
+
+		/* Try loading it, if it's not cached */
+		if (!wave && !(wave = load_song(music_cur, music_cur_song))) {
+			/* we really failed to load it */
+			plog(format("SDL music load failed (%d, %d).", music_cur, music_cur_song));
+			puts(format("SDL music load failed (%d, %d).", music_cur, music_cur_song));
+			return;
+		}
+
+		/* Actually play the thing */
+		//Mix_PlayMusic(wave, 0);//-1 infinite, 0 once, or n times
+		Mix_FadeInMusic(wave, 0, 1000);
+		return;
+	}
+
 	/* Paranoia */
 	if (music_next < 0 || music_next >= MUSIC_MAX) return;
 
+	/* Sub-song file was disabled? (local audio options) */
 	if (songs[music_next].disabled) return;
 
 	/* Check there are samples for this event */
@@ -1609,8 +1653,8 @@ static void fadein_next_music(void) {
 	music_cur_song = music_next_song;
 //#endif
 	music_next = -1;
-//	Mix_PlayMusic(wave, -1);//-1 infinite, 0 once, or n times
-	Mix_FadeInMusic(wave, -1, 1000);
+//	Mix_PlayMusic(wave, c_cfg.shuffle_music ? 0 : -1);//-1 infinite, 0 once, or n times
+	Mix_FadeInMusic(wave, c_cfg.shuffle_music ? 0 : -1, 1000);
 }
 
 #ifdef DISABLE_MUTED_AUDIO
@@ -1633,7 +1677,7 @@ static void reenable_music(void) {
 	if (!wave) return;
 
 	/* Take up playing again immediately, no fading in */
-	Mix_PlayMusic(wave, -1);
+	Mix_PlayMusic(wave, c_cfg.shuffle_music ? 0 : -1);
 }
 #endif
 
