@@ -7815,8 +7815,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			tries++;
 			k_idx = 0;
 
-			/* rings (except speed) and amulets don't count as good so they won't be generated (see kind_is_good) */
-			if (reward_tval != TV_AMULET && reward_tval != TV_RING) {
+			/* rings, amulets and lights don't count as good so they won't be generated (see kind_is_good).
+			   Note: the whole kind_is_good_reward stuff is kinda pointless.. */
+			if (reward_tval != TV_AMULET && reward_tval != TV_RING && reward_tval != TV_LITE) {
 				get_obj_num_hook = kind_is_good_reward;
 				get_obj_num_prep_tval(reward_tval, resf);
 			} else {
@@ -7946,6 +7947,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		apply_magic_depth(base, o_ptr, base, TRUE, good, great, verygreat, resf);
 		s_printf("REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d), resf %d\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, resf);
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+		/* Avoid simple Dragon Helmets etc */
+		if (!o_ptr->name2 && !o_ptr->name2b && o_ptr->name1 &&
+		    o_ptr->tval != TV_DRAG_ARMOR && o_ptr->tval != TV_RING && o_ptr->tval != TV_AMULET) continue;
 
 		/* This should have already been checked in apply_magic_depth above itself,
 		   but atm it seems not to work: */
