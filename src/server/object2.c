@@ -3312,8 +3312,10 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 			if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
 
+#ifndef NEW_MDEV_STACKING
 			/* Require identical charges */
 			if (o_ptr->pval != j_ptr->pval) return (FALSE);
+#endif
 
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
@@ -3642,7 +3644,8 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	/* Hack -- if rods are stacking, average out the timeout. the_sandman */
 	if (o_ptr->tval == TV_ROD) {
 #ifdef NEW_MDEV_STACKING
-		stack_rods(o_ptr, j_ptr);
+		o_ptr->pval += j_ptr->pval; //total "uncharge"
+		o_ptr->bpval += j_ptr->bpval; //total "fresh rods" counter
 #else
 		o_ptr->pval = (onum * o_ptr->pval + jnum * j_ptr->pval) / o_ptr->number;
 #endif
@@ -9087,17 +9090,18 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 
 void discharge_rod(object_type *o_ptr, int c) {
 	o_ptr->pval += c;
+
 	//limit against rod-specific max:
-	
+	 //todo: make a function from the cmd6.c ..zap_rod.. code that returns the default recharge time of a rod or sth..
 }
 
 /*
  * Divide 'stacked' wands.	- Jir -
  * o_ptr->number is not changed here!
+ * Note: onew_ptr already has the correct number (amt), o_ptr has still the full number (amt not yet subtracted).
+ *       Our job is not to set the numbers, but just to handle charges et al.
  */
 void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt) {
-	int charge = 0;
-
 	/* Paranoia */
 	if (o_ptr->number < amt) return;
 
@@ -9106,28 +9110,54 @@ void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt) {
 	    || o_ptr->tval == TV_STAFF
 #endif
 	    ) {
-		charge = (o_ptr->pval * amt) / o_ptr->number;
+		int charge = (o_ptr->pval * amt) / o_ptr->number;
 		if (amt < o_ptr->number) o_ptr->pval -= charge;
 		if (onew_ptr) onew_ptr->pval = charge;
 	}
 #ifdef NEW_MDEV_STACKING
 	else if (o_ptr->tval == TV_ROD) {
-		
+		//only drop [some] charging rods? (priority)
+		if (amt <= o_ptr->bpval) {
+			//some or all charging rods
+			if (onew_ptr) {
+ #if 0 /* looks less weird, since "uncharge" of separated rods cannot grow higher than "uncharge" of original stack */
+				onew_ptr->pval = (o_ptr->pval * amt + o_ptr->number - 1) / o_ptr->number;
+ #else /* allow clean separation of fresh rods? [recommended]*/
+				onew_ptr->pval = (o_ptr->pval * amt + o_ptr->bpval - 1) / o_ptr->bpval;
+ #endif
+				onew_ptr->bpval = amt;
+			}
+			//our old ones retain the "uncharge" and the used counter, since we only removed unused (fresh) ones
+ #if 0 /* looks less weird, since "uncharge" of separated rods cannot grow higher than "uncharge" of original stack */
+			o_ptr->pval = (o_ptr->pval * (o_ptr->number - amt)) / o_ptr->number;
+ #else /* allow clean separation of fresh rods? [recommended]*/
+			o_ptr->pval = (o_ptr->pval * (o_ptr->bpval - amt)) / o_ptr->bpval;
+ #endif
+			o_ptr->bpval -= amt;
+		}
+		//drop charging + fresh rods?
+		else if (o_ptr->bpval) {
+			//dump all "uncharge" and the whole used-counter into the dropped rods
+			if (onew_ptr) {
+				onew_ptr->pval = o_ptr->pval;
+				onew_ptr->bpval = o_ptr->bpval;
+			}
+			//the left-over rods are now clean *sparkle*
+			o_ptr->pval = 0;
+			o_ptr->bpval = 0;
+		}
+		//only drop fresh rods?
+		else { //(note: o_ptr->bpval == 0 implies o_ptr->pval == 0)
+			//fresh rods
+			if (onew_ptr) {
+				onew_ptr->pval = 0;
+				onew_ptr->bpval = 0;
+			}
+			//our old ones retain the "uncharge" and the used counter, since we only removed unused (fresh) ones
+		}
 	}
 #endif
 }
-
-#ifdef NEW_MDEV_STACKING
-void stack_rods(object_type *onew_ptr, object_type *o_ptr) {
-	int charge = 0;
-
-	/* Paranoia */
-	if (o_ptr->tval != TV_ROD) return;
-
-	
-}
-#endif
-
 
 /*
  * Describe the charges on an item in the inventory.
@@ -9936,19 +9966,12 @@ void reorder_pack(int Ind) {
 
 
 /*
- * Hack -- process the objects
+ * Hack -- process the objects (called every turn)
  */
-/* TODO: terrain effects (lava burns scrolls etc) */
-void process_objects(void)
-{
+/* TODO: terrain effects (lava burns scrolls etc) -- those are done elsewhere */
+void process_objects(void) {
 	int i, k;
-
 	object_type *o_ptr;
-
-
-	/* Hack -- only every ten game turns */
-//	if ((turn % 10) != 5) return;
-
 
 	/* Process objects */
 	for (k = o_top - 1; k >= 0; k--) {
@@ -9967,9 +9990,22 @@ void process_objects(void)
 			continue;
 		}
 
+#if 1 /* timing fix - see description in dungeon() */
+		if ((turn % (level_speed(&o_ptr->wpos) / 120))) continue;
+#endif
+
 		/* Recharge rods on the ground */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) o_ptr->pval--;
-		
+		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
+#ifndef NEW_MDEV_STACKING
+			o_ptr->pval--;
+#else
+			o_ptr->pval -= o_ptr->number;
+			if (o_ptr->pval < 0) o_ptr->pval = 0; //can happen by rod-stack-splitting (divide_charged_item())
+			/* Reset it from 'charging' state to charged state */
+			if (!o_ptr->pval) o_ptr->bpval = 0;
+#endif
+		}
+
 		/* Recharge rod trap kits */
 		if (o_ptr->tval == TV_TRAPKIT && o_ptr->sval == SV_TRAPKIT_DEVICE &&
 		    o_ptr->timeout) o_ptr->timeout--;
@@ -9980,14 +10016,12 @@ void process_objects(void)
  * Set the "o_idx" fields in the cave array to correspond
  * to the objects in the "o_list".
  */
-void setup_objects(void)
-{
+void setup_objects(void) {
 	int i;
 	cave_type **zcave;
 	object_type *o_ptr;
 
-	for (i = 0; i < o_max; i++)
-	{
+	for (i = 0; i < o_max; i++) {
 		o_ptr = &o_list[i];
 
 		/* Skip dead objects */

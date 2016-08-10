@@ -2835,12 +2835,26 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* Hack -- Rods have a "charging" indicator */
 	else if (known && (o_ptr->tval == TV_ROD)) {
 		/* Hack -- Dump " (charging)" if relevant */
+#ifndef NEW_MDEV_STACKING
 		if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
+#else
+ #if 0 /* debug code */
+		if (o_ptr->pval && o_ptr->bpval) {
+			t = object_desc_str(t, " (#");
+			t = object_desc_num(t, o_ptr->pval);
+			t = object_desc_chr(t, ':');
+			t = object_desc_num(t, o_ptr->bpval);
+			t = object_desc_chr(t, ')');
+		}
+ #else
+		if (o_ptr->pval && o_ptr->bpval) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
+ #endif
+#endif
 	}
 
 	/* Hack -- Process Lanterns/Torches */
-//	else if ((o_ptr->tval == TV_LITE) && (o_ptr->sval < SV_LITE_DWARVEN) && (!o_ptr->name3))
-        else if ((o_ptr->tval == TV_LITE) && (f4 & TR4_FUEL_LITE)) {
+	//else if ((o_ptr->tval == TV_LITE) && (o_ptr->sval < SV_LITE_DWARVEN) && (!o_ptr->name3))
+	else if ((o_ptr->tval == TV_LITE) && (f4 & TR4_FUEL_LITE)) {
 		/* Hack -- Turns of light for normal lites */
 		t = object_desc_str(t, !(mode & 8) ? " (with " : "(");
 		t = object_desc_num(t, o_ptr->timeout);

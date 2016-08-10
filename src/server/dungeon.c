@@ -4949,12 +4949,21 @@ static bool process_player_end_aux(int Ind) {
 
 		/* Examine all charging rods */
 		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
+#ifndef NEW_MDEV_STACKING
 			/* Charge it */
 			o_ptr->pval--;
-
+ #if 0 /* zap_rod() already applies individually reduced "uncharge" based on Magic Device skill, so this is redundant. And it's not used for rods on the floor. */
 			/* Charge it further */
 			if (o_ptr->pval && magik(p_ptr->skill_dev))
 				o_ptr->pval--;
+ #endif
+#else
+			/* Charge it */
+			o_ptr->pval -= o_ptr->number;
+			if (o_ptr->pval < 0) o_ptr->pval = 0; //can happen by rod-stack-splitting (divide_charged_item())
+			/* Reset it from 'charging' state to charged state */
+			if (!o_ptr->pval) o_ptr->bpval = 0;
+#endif
 
 			/* Notice changes */
 			if (!(o_ptr->pval)) {
@@ -7552,7 +7561,13 @@ void dungeon(void) {
 		process_npcs();
 
 	/* Process all of the objects */
+#if 0 /* way too fast: currently, process_objects() only recharges rods on the floor and in trap kits. \
+         It must be called as frequently as process_player_end_aux(), which recharges rods in inventory, \
+         so they're both recharging at the same rate! */
 	if ((turn % 10) == 5) process_objects();
+#else
+	process_objects(); //note: the exact timing is done inside the function now
+#endif
 
 	/* Process the world */
 	if (!(turn % 50)) {

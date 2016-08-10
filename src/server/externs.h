@@ -1187,9 +1187,6 @@ extern int Send_martyr(int ind);
 /* object2.c */
 extern void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt);
 extern void discharge_rod(object_type *o_ptr, int c);
-#ifdef NEW_MDEV_STACKING
-extern void stack_rods(object_type *o_ptr, object_type *q_ptr);
-#endif
 extern s16b unique_quark;
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);

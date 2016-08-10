@@ -580,8 +580,18 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	if (compat_omode(o_ptr, j_ptr)) return (0);
 
 	/* Different charges (etc) cannot be stacked */
-	if (o_ptr->pval != j_ptr->pval && !is_magic_device(o_ptr->tval)) return (0);
-	if (o_ptr->bpval != j_ptr->bpval) return (0);
+	if (o_ptr->pval != j_ptr->pval &&
+#ifdef NEW_MDEV_STACKING
+	    !is_magic_device(o_ptr->tval)
+#else
+	    o_ptr->tval != TV_WAND
+#endif
+		) return (0);
+	if (o_ptr->bpval != j_ptr->bpval
+#ifdef NEW_MDEV_STACKING
+	    && o_ptr->tval != TV_ROD
+#endif
+		) return (0);
 
 	/* Require many identical values */
 	if (o_ptr->to_h  !=  j_ptr->to_h) return (0);
@@ -664,7 +674,8 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr) {
 
 	if (o_ptr->tval == TV_ROD) {
 #ifdef NEW_MDEV_STACKING
-		stack_rods(o_ptr, j_ptr);
+		o_ptr->pval += j_ptr->pval; //total "uncharge"
+		o_ptr->bpval += j_ptr->bpval; //total "fresh rods" counter
 #else
 		o_ptr->pval = (o_ptr->number * o_ptr->pval + j_ptr->number * j_ptr->pval) / total;
 #endif
