@@ -3032,6 +3032,9 @@ int Receive_target_info(void) {
 
 		/* Display target info */
 		put_str(buf, 0, 0);
+
+		/* Also add the target info as a normal message */
+		if (c_cfg.targetinfo_msg) c_message_add(buf);
 	}
 
 	/* Move the cursor */

@@ -3432,8 +3432,9 @@ struct client_opts {
 #endif
 
 	bool shuffle_music;
-	bool topline_no_msg;
 	bool permawall_shade;
+	bool topline_no_msg;
+	bool targetinfo_msg;
 };
 
 /*

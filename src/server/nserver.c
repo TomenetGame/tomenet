@@ -2354,7 +2354,7 @@ static void sync_options(int Ind, bool *options) {
 	p_ptr->hilite_player = options[45];
 	p_ptr->consistent_players = options[46];
 	tmp = p_ptr->permawalls_shade;
-	if ((p_ptr->permawalls_shade = options[113]) != tmp) p_ptr->redraw |= PR_MAP;
+	if ((p_ptr->permawalls_shade = options[112]) != tmp) p_ptr->redraw |= PR_MAP;
 
 	//page 4
 
