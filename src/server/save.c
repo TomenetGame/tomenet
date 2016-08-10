@@ -455,6 +455,9 @@ static void wr_mail() {
 		wr_string(mail_target[i]);
 		wr_string(mail_target_acc[i]);
 		wr_s16b(mail_duration[i]);
+		wr_s32b(mail_timeout[i]);
+		wr_byte(mail_COD[i]);
+		wr_u32b(mail_xfee[i]);
 	}
 #else
 	wr_s16b(0);

@@ -3022,6 +3022,8 @@ struct player_type {
 #ifdef ENABLE_MERCHANT_MAIL
 	int mail_item;
 	s32b mail_gold;
+	s32b mail_fee;
+	bool mail_COD;
 #endif
 };
 

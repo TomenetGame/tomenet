@@ -10832,7 +10832,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #endif	// PROJECTION_FLUSH_LIMIT
 		{
 			/* Hack -- Visual effect -- "explode" the grids */
-			for (j = 1; j < NumPlayers + 1; j++) {
+			for (j = 1; j <= NumPlayers; j++) {
 				player_type *p_ptr = Players[j];
 				int dispx, dispy;
 				byte attr;
@@ -11045,7 +11045,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #endif	// PROJECTION_FLUSH_LIMIT
 		{
 #ifdef PROJECTION_FLUSH_LIMIT
-			for (j = 1; j < NumPlayers + 1; j++) {
+			for (j = 1; j <= NumPlayers; j++) {
 				player_type *p_ptr = Players[j];
 				int dispy, dispx;
 				char ch;
@@ -11122,7 +11122,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		y9 = path_y[i];
 		x9 = path_x[i];
 
-		for (j = 1; j < NumPlayers + 1; j++) {
+		for (j = 1; j <= NumPlayers; j++) {
 			player_type *p_ptr = Players[j];
 			int dispy, dispx;
 			char ch;
@@ -11317,7 +11317,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				y = gy[i];
 				x = gx[i];
 
-				for (j = 1; j < NumPlayers + 1; j++) {
+				for (j = 1; j <= NumPlayers; j++) {
 					player_type *p_ptr = Players[j];
 					int dispy, dispx;
 					byte attr;
@@ -11622,7 +11622,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				y = gy[i];
 				x = gx[i];
 
-				for (j = 1; j < NumPlayers + 1; j++) {
+				for (j = 1; j <= NumPlayers; j++) {
 					player_type *p_ptr = Players[j];
 					int dispy, dispx;
 					byte attr;

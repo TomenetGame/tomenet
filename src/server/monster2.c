@@ -367,7 +367,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 
 
 	/* Remove him from everybody's view */
-	for (Ind = 1; Ind < NumPlayers + 1; Ind++)
+	for (Ind = 1; Ind <= NumPlayers; Ind++)
 	{
 		/* Skip this player if he isn't playing */
 		if (Players[Ind]->conn == NOT_CONNECTED) continue;
@@ -625,7 +625,7 @@ void compact_monsters(int size, bool purge) {
 			}
 
 			/* Copy the visibility and los flags for the players */
-			for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
+			for (Ind = 1; Ind <= NumPlayers; Ind++) {
 				if (Players[Ind]->conn == NOT_CONNECTED) continue;
 
 				Players[Ind]->mon_vis[i] = Players[Ind]->mon_vis[m_max];
@@ -3516,7 +3516,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		/* hack for global event "Arena Monster Challenge" - C. Blue */
 		if (clone_summoning != 1000) m_ptr->clone = 0;
 
-	for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
+	for (Ind = 1; Ind <= NumPlayers; Ind++) {
 		if (Players[Ind]->conn == NOT_CONNECTED)
 			continue;
 
@@ -4185,7 +4185,7 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp) {
 		if (!cave_naked_bold(zcave, y, x)) continue;
 
 		/* Accept far away grids */
-		for (i = 1; i < NumPlayers + 1; i++)
+		for (i = 1; i <= NumPlayers; i++)
 		{
 			p_ptr = Players[i];
 
@@ -4274,7 +4274,7 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 
 
 		/* Accept far away grids */
-		for (i = 1; i < NumPlayers + 1; i++) {
+		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 
 			/* Skip him if he's not playing */

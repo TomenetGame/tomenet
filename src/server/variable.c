@@ -1039,4 +1039,7 @@ char mail_sender[MAX_MERCHANT_MAILS][NAME_LEN];
 char mail_target[MAX_MERCHANT_MAILS][NAME_LEN];
 char mail_target_acc[MAX_MERCHANT_MAILS][NAME_LEN];
 s16b mail_duration[MAX_MERCHANT_MAILS];
+s32b mail_timeout[MAX_MERCHANT_MAILS];
+bool mail_COD[MAX_MERCHANT_MAILS];
+u32b mail_xfee[MAX_MERCHANT_MAILS];
 #endif

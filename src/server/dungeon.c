@@ -5038,7 +5038,7 @@ static bool process_player_end_aux(int Ind) {
 				player_type *q_ptr;
 				bool bye = FALSE;
 
-				for (j = 1; j < NumPlayers + 1; j++) {
+				for (j = 1; j <= NumPlayers; j++) {
 					if (Ind == j) continue;
 					if (admin_p(j)) continue;
 					q_ptr = Players[j];
@@ -6303,7 +6303,7 @@ static void process_various(void) {
 int find_player(s32b id) {
 	int i;
 
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *p_ptr = Players[i];
 		if (Players[i]->conn == NOT_CONNECTED) return 0;
 		if (p_ptr->id == id) return i;
@@ -6316,7 +6316,7 @@ int find_player(s32b id) {
 int find_player_name(char *name) {
 	int i;
 
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *p_ptr = Players[i];
 
 		if (!strcmp(p_ptr->name, name)) return i;
@@ -7174,7 +7174,7 @@ void dungeon(void) {
 	}
 
 	/* Check player's depth info */
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i]; 
 		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag)
 			continue;
@@ -7529,23 +7529,92 @@ void dungeon(void) {
 
 #ifdef ENABLE_MERCHANT_MAIL
 	i = turn % MAX_MERCHANT_MAILS; //fast enough >_>
-	if (mail_duration[i]) {
-		mail_duration[i]--;
+	if (mail_sender[i][0]) {
+		if (mail_duration[i]) {
+			mail_duration[i]--;
+			if (!mail_duration[i]) {
+				int j;
 
-		/* ok, notify him */
-		if (!mail_duration[i]) {
-			int j;
+				/* set timeout for expiry */
+				if (lookup_player_id(mail_target[i]))
+					/* normal */
+					mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
+				else
+					/* hack for players who no longer exist */
+					mail_timeout[i] = -1;
 
-			for (j = 1; j < NumPlayers; j++) {
-				if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
-					if (strcmp(Players[j]->name, mail_target[i]))
-						msg_print(j, "\374\377yThe merchant guild has mail for another character of yours!");
-					else {
-						if (Players[j]->store_num == STORE_MERCHANTS_GUILD)
-							merchant_mail_delivery(j);
-						else
-							msg_print(j, "\374\377yThe merchant guild has mail for you!");
+				/* notify him */
+				for (j = 1; j <= NumPlayers; j++) {
+					if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
+						if (strcmp(Players[j]->name, mail_target[i]))
+							msg_print(j, "\374\377yThe merchant guild has mail for another character of yours!");
+						else {
+							if (Players[j]->store_num == STORE_MERCHANTS_GUILD)
+								merchant_mail_delivery(j);
+							else
+								msg_print(j, "\374\377yThe merchant guild has mail for you!");
+						}
 					}
+				}
+			}
+		} else if (mail_timeout[i] != 0) {
+			bool erase, quiet;
+
+			if (mail_timeout[i] == -1) {
+				/* character timed out and was deleted */
+				mail_timeout[i] = 0;
+				erase = TRUE;
+				quiet = FALSE;
+			} else if (mail_timeout[i] == -2) {
+				/* player refused to pay for COD mail */
+				mail_timeout[i] = 0;
+				erase = FALSE;
+				quiet = TRUE;
+			} else {
+				/* normal expiry countdown */
+				mail_timeout[i]--;
+				erase = FALSE;
+				quiet = FALSE;
+			}
+
+			if (!mail_timeout[i]) {
+				/* send it back */
+				char tmp[NAME_LEN];
+				u32b pid;
+				cptr acc;
+				int j;
+
+				/* notify receipient that he didn't make it in time */
+				if (!erase && !quiet)
+					for (j = 1; j <= NumPlayers; j++) {
+						if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
+							if (strcmp(Players[j]->name, mail_target[i]))
+								msg_print(j, "\374\377yA mail package for another character of yours just expired and was returned!");
+							else
+								msg_print(j, "\374\377yA mail package for you just expired and was returned to the sender!");
+						}
+					}
+
+				mail_duration[i] = MERCHANT_MAIL_DURATION;
+				strcpy(tmp, mail_sender[i]);
+				strcpy(mail_sender[i], mail_target[i]);
+				strcpy(mail_target[i], tmp);
+
+				pid = lookup_player_id(mail_target[i]);
+				if (!pid) {
+					s_printf("MAIL_ERROR: no pid - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+					/* special: the mail bounced back to a character that no longer exists!
+					   if this happens with the new receipient too, the mail gets deleted,
+					   since noone can pick it up anymore. */
+					if (erase) {
+						s_printf("MAIL_ERROR_ERASED.\n");
+						/* delete mail! */
+						mail_sender[i][0] = 0;
+					}
+				} else {
+					acc = lookup_accountname(pid);
+					if (acc) strcpy(mail_target_acc[i], acc);
+					else s_printf("MAIL_ERROR_RETURN: no acc - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
 				}
 			}
 		}
@@ -7891,7 +7960,7 @@ void dungeon(void) {
 #endif
 		}
 
-		for (i = 1; i < NumPlayers + 1; i++) {
+		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED)
 				continue;
 
@@ -7944,7 +8013,7 @@ void dungeon(void) {
 		int depthrange;
 # endif
 
-		for (i = 1; i < NumPlayers + 1; i++) {
+		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 			if (p_ptr->conn == NOT_CONNECTED) continue;
 
@@ -8027,7 +8096,7 @@ void dungeon(void) {
 	if (!(turn % HOUR)) process_day_and_night();
 
 	/* Refresh everybody's displays */
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
 		if (p_ptr->conn == NOT_CONNECTED)
@@ -8049,7 +8118,7 @@ void dungeon(void) {
 	/* Animate player's @ in his own view here on server side */
 	/* This animation is only for mana shield / GOI indication */
 	if (!(turn % 5))
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Colour animation is done in lite_spot */
 		lite_spot(i, Players[i]->py, Players[i]->px);
 	}

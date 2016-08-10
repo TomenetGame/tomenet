@@ -213,7 +213,7 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	excise_object_idx(o_idx);
 
 	/* No one can see it anymore */
-	for (i = 1; i < NumPlayers + 1; i++)
+	for (i = 1; i <= NumPlayers; i++)
 		Players[i]->obj_vis[o_idx] = FALSE;
 
 	/* Visual update */

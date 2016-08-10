@@ -5362,7 +5362,7 @@ void do_cmd_fire(int Ind, int dir) {
 			q_ptr = p_ptr;
 
 			/* Display it for each player */
-			for (i = 1; i < NumPlayers + 1; i++) {
+			for (i = 1; i <= NumPlayers; i++) {
 				int dispx, dispy;
 
 				/* Use this player */
@@ -6088,7 +6088,7 @@ void do_cmd_fire(int Ind, int dir) {
 			y = ny;
 
 			/* Display it for each player */
-			for (i = 1; i < NumPlayers + 1; i++) {
+			for (i = 1; i <= NumPlayers; i++) {
 				int dispx, dispy;
 
 				/* Use this player */
@@ -6137,7 +6137,7 @@ void do_cmd_fire(int Ind, int dir) {
 		q_ptr = p_ptr;
 
 		/* Draw a projectile here for everyone */
-		for (i = 1; i < NumPlayers + 1; i++) {
+		for (i = 1; i <= NumPlayers; i++) {
 			int dispx, dispy;
 
 			/* Use this player */
@@ -6628,7 +6628,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		q_ptr = p_ptr;
 
 		/* Display it for each player */
-		for (i = 1; i < NumPlayers + 1; i++) {
+		for (i = 1; i <= NumPlayers; i++) {
 			int dispx, dispy;
 
 			/* Use this player */
@@ -6919,7 +6919,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		q_ptr = p_ptr;
 
 		/* Draw a projectile here for everyone */
-		for (i = 1; i < NumPlayers + 1; i++) {
+		for (i = 1; i <= NumPlayers; i++) {
 			/* Use this player */
 			p_ptr = Players[i];
 

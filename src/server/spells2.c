@@ -4283,7 +4283,7 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 	//should be added as well, however.
 
 	/* Affect all (nearby) non-partied players */
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		/* If he's not playing, skip him */
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -7449,7 +7449,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	m_ptr->owner = 0;
 	m_ptr->pet = 0;
 
-	for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
+	for (Ind = 1; Ind <= NumPlayers; Ind++) {
 		if (Players[Ind]->conn == NOT_CONNECTED)
 			continue;
 
@@ -7604,7 +7604,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	m_ptr->owner = Players[owner_id]->id;
 	m_ptr->pet = 1;
 
-	for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
+	for (Ind = 1; Ind <= NumPlayers; Ind++) {
 		if (Players[Ind]->conn == NOT_CONNECTED)
 			continue;
 

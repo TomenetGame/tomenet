@@ -890,7 +890,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 	if (strchr(nick_name, ':')) return E_INVAL;
 
 	if (check_for_resume) {
-		for (i = 1; i < NumPlayers + 1; i++) {
+		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn != NOT_CONNECTED ) {
 				p_ptr = Players[i];
 				/*
@@ -1014,7 +1014,7 @@ static void Console(int fd, int arg) {
 
 		if (NumPlayers > 0) {
 			s_printf("%s:\n", (NumPlayers > 1 ? "They are" : "He is"));
-			for (i = 1; i < NumPlayers + 1; i++)
+			for (i = 1; i <= NumPlayers; i++)
 				s_printf("\t%s\n", Players[i]->name);
 		}
 	}
@@ -1411,7 +1411,7 @@ static void Delete_player(int Ind) {
 			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 
-			for (i = 1; i < NumPlayers + 1; i++)
+			for (i = 1; i <= NumPlayers; i++)
 			{
 				if (Players[i]->conn == NOT_CONNECTED)
 					continue;
@@ -1434,7 +1434,7 @@ static void Delete_player(int Ind) {
 			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 #endif
-			for (i = 1; i < NumPlayers + 1; i++) {
+			for (i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->conn == NOT_CONNECTED)
 					continue;
 				if (!is_admin(Players[i]))
@@ -2457,7 +2457,7 @@ static int Handle_login(int ind) {
 
 	/* This will cause problems for account/char with same name */
 #if 0
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		if (strcasecmp(Players[i]->name, connp->nick) == 0) {
 			errno = 0;
 			plog(format("Name already in use %s", connp->nick));
@@ -2893,7 +2893,7 @@ static int Handle_login(int ind) {
 		}
 	}
 	/* Notify all online admins about an invalid player having joined, so they may validate him */
-	if (p_ptr->inval) for (i = 1; i < NumPlayers + 1; i++) {
+	if (p_ptr->inval) for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (is_admin(Players[i])) {
 			msg_format(i, "\374\377R(Admin) Invalid account \"%s\", host: \"%s\"", p_ptr->accountname, p_ptr->hostname);

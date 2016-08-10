@@ -1306,7 +1306,7 @@ void do_cmd_check_players(int Ind, int line) {
 	if(fff == (FILE*)NULL) return;
 
 	/* Scan the player races */
-	for (k = 1; k < NumPlayers + 1; k++) {
+	for (k = 1; k <= NumPlayers; k++) {
 		q_ptr = Players[k];
 		flag_str[0] = '\0';
 		byte attr = 'w';
@@ -1671,7 +1671,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 	fff = my_fopen(file_name, "wb");
 
 	/* Scan the player races */
-	for (k = 1; k < NumPlayers + 1; k++) {
+	for (k = 1; k <= NumPlayers; k++) {
 		player_type *q_ptr = Players[k];
 		byte attr = 'w';
 		bool hidden = FALSE, hidden_diz = FALSE;

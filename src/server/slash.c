@@ -8476,7 +8476,7 @@ void do_slash_cmd(int Ind, char *message) {
 				for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
 					/* check surface */
 					k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = 0;
-					for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+					for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
 					if (used && k) msg_format(Ind, "\377g  %2d,%2d", x, y);
 					else if (wild_info[y][x].ondepth > k) {
 						msg_format(Ind, "  %2d,%2d", x, y);
@@ -8488,7 +8488,7 @@ void do_slash_cmd(int Ind, char *message) {
 					    //msg_format(Ind, "T max,base = %d,%d", d_ptr->maxdepth, d_ptr->baselevel);
 					    for (i = 0; i < d_ptr->maxdepth; i++) {
 						k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = i + 1;
-						for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+						for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
 						if (used && k) msg_format(Ind, "\377gT %2d,%2d,%2d", x, y, i + 1);
 						else if (d_ptr->level[i].ondepth > k) {
 							msg_format(Ind, "T %2d,%2d,%2d", x, y, i + 1);
@@ -8502,7 +8502,7 @@ void do_slash_cmd(int Ind, char *message) {
 					    //msg_format(Ind, "D max,base = %d,%d", d_ptr->maxdepth, d_ptr->baselevel);
 					    for (i = 0; i < d_ptr->maxdepth; i++) {
 						k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = -(i + 1);
-						for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+						for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
 						if (used && k) msg_format(Ind, "\377gD %2d,%2d,%2d", x, y, -(i + 1));
 						else if (d_ptr->level[i].ondepth > k) {
 							msg_format(Ind, "D %2d,%2d,%2d", x, y, -(i + 1));

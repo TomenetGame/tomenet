@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	6
-#define SF_VERSION_PATCH	8
+#define SF_VERSION_PATCH	9
 #define SF_VERSION_EXTRA	0
 
 /* For quests savefile purpose only */
@@ -8306,6 +8306,9 @@ extern int PlayerUID;
 #endif
 #define RID_SEND_ITEM		8
 #define RID_SEND_GOLD		9
+#define RID_SEND_ITEM2		10
+#define RID_SEND_GOLD2		11
+#define RID_SEND_FEE		12
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 

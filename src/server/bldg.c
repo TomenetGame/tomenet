@@ -2262,7 +2262,7 @@ if (is_admin(p_ptr))
 							k = 0;
 							tpos.wz = -(i + 1);
 
-							for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
+							for (j = 1; j <= NumPlayers; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
 							if (d_ptr->level[i].ondepth <= k) continue;
 
 							/* add an inter-dungeon spacer */
@@ -2362,9 +2362,11 @@ if (is_admin(p_ptr))
 				break;
 			}
 
-			p_ptr->mail_item = item;
 			fee = object_value_real(0, o_ptr) / 20;
 			if (fee < 5) fee = 5;
+
+			p_ptr->mail_item = item;
+			p_ptr->mail_fee = fee;
 			Send_request_cfr(Ind, RID_SEND_ITEM, format("The fee for sending this item is %d, accept?", fee), FALSE);
 			break; }
 		case BACT_SEND_GOLD: {
@@ -2394,6 +2396,7 @@ if (is_admin(p_ptr))
 			if (fee < 5) fee = 5;
 
 			p_ptr->mail_gold = gold;
+			p_ptr->mail_fee = fee;
 			Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d, accept?", gold, fee), FALSE);
 			break; }
 #endif

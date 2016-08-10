@@ -1735,6 +1735,7 @@ extern int gettown(int Ind);
 
 #ifdef ENABLE_MERCHANT_MAIL
 extern void merchant_mail_delivery(int Ind);
+extern bool merchant_mail_carry(int Ind, int i);
 #endif
 
 /* util.c */
@@ -2454,4 +2455,7 @@ extern char mail_sender[MAX_MERCHANT_MAILS][NAME_LEN];
 extern char mail_target[MAX_MERCHANT_MAILS][NAME_LEN];
 extern char mail_target_acc[MAX_MERCHANT_MAILS][NAME_LEN];
 extern s16b mail_duration[MAX_MERCHANT_MAILS];
+extern s32b mail_timeout[MAX_MERCHANT_MAILS];
+extern bool mail_COD[MAX_MERCHANT_MAILS];
+extern u32b mail_xfee[MAX_MERCHANT_MAILS];
 #endif

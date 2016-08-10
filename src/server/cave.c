@@ -3438,7 +3438,7 @@ void note_spot_depth(struct worldpos *wpos, int y, int x)
 {
 	int i;
 
-	for (i = 1; i < NumPlayers + 1; i++)
+	for (i = 1; i <= NumPlayers; i++)
 	{
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -3455,7 +3455,7 @@ void everyone_lite_spot(struct worldpos *wpos, int y, int x)
 	int i;
 
 	/* Check everyone */
-	for (i = 1; i < NumPlayers + 1; i++)
+	for (i = 1; i <= NumPlayers; i++)
 	{
 		/* If he's not playing, skip him */
 		if (Players[i]->conn == NOT_CONNECTED)
@@ -3475,7 +3475,7 @@ void everyone_clear_ovl_spot(struct worldpos *wpos, int y, int x)
 	int i;
 
 	/* Check everyone */
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		/* If he's not playing, skip him */
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -3497,7 +3497,7 @@ void everyone_forget_spot(struct worldpos *wpos, int y, int x)
 	int i;
 
 	/* Check everyone */
-	for (i = 1; i < NumPlayers + 1; i++)
+	for (i = 1; i <= NumPlayers; i++)
 	{
 		/* If he's not playing, skip him */
 		if (Players[i]->conn == NOT_CONNECTED)

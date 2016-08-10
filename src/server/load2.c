@@ -1064,7 +1064,9 @@ static void rd_mail() {
 
 	char dummy[NAME_LEN];
 	s16b dummy_i;
+	u32b dummy_l;
 	object_type dummy_o;
+	byte tmp8u;
 
 #ifdef ENABLE_MERCHANT_MAIL
 	rd_s16b(&j);
@@ -1075,6 +1077,11 @@ static void rd_mail() {
 			rd_string(dummy, NAME_LEN);
 			rd_string(dummy, NAME_LEN);
 			rd_s16b(&dummy_i);
+			if (!s_older_than(4, 6, 9)) {
+				rd_s16b(&dummy_i);
+				rd_byte(&tmp8u);
+				rd_u32b(&dummy_l);
+			}
 			continue;
 		}
 		rd_item(&mail_forge[i]);
@@ -1082,6 +1089,12 @@ static void rd_mail() {
 		rd_string(mail_target[i], NAME_LEN);
 		rd_string(mail_target_acc[i], NAME_LEN);
 		rd_s16b(&mail_duration[i]);
+		if (!s_older_than(4, 6, 9)) {
+			rd_s32b(&mail_timeout[i]);
+			rd_byte(&tmp8u);
+			mail_COD[i] = (tmp8u != 0);
+			rd_u32b(&mail_xfee[i]);
+		}
 	}
 #else
 	rd_s16b(&j);
@@ -1091,6 +1104,11 @@ static void rd_mail() {
 		rd_string(dummy, NAME_LEN);
 		rd_string(dummy, NAME_LEN);
 		rd_s16b(&dummy_i);
+		if (!s_older_than(4, 6, 9)) {
+			rd_s16b(&dummy_i);
+			rd_byte(&tmp8u);
+			rd_u32b(&dummy_l);
+		}
 	}
 #endif
 }
