@@ -5714,7 +5714,7 @@ Chain_Macro:
 						Term_putstr(10, 13, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
 						Term_putstr(10, 14, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
 						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise target own grid.");
-						Term_putstr(10, 16, -1, TERM_L_GREEN, "d) Fire into a fixed direction.");
+						Term_putstr(10, 16, -1, TERM_L_GREEN, "d) Fire into a fixed direction or prompt for direction.");
 						Term_putstr(10, 17, -1, TERM_L_GREEN, "e) Target own grid (ie yourself).");
 
 						Term_putstr(10, 19, -1, TERM_L_GREEN, "f) Target most wounded friendly player,");
@@ -5748,15 +5748,15 @@ Chain_Macro:
 						/* Get a specific fixed direction */
 						if (choice == 'd') {
 							clear_from(8);
-							Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction:");
+							Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction or '?':");
 
-							Term_putstr(30, 13, -1, TERM_L_GREEN, " 7  8  9");
-							Term_putstr(30, 14, -1, TERM_GREEN, "  \\ | / ");
-							Term_putstr(30, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
-							Term_putstr(30, 16, -1, TERM_GREEN, "  / | \\ ");
-							Term_putstr(30, 17, -1, TERM_L_GREEN, " 1  2  3");
+							Term_putstr(25, 13, -1, TERM_L_GREEN, " 7  8  9");
+							Term_putstr(25, 14, -1, TERM_GREEN, "  \\ | / ");
+							Term_putstr(25, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
+							Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\         \377G?\377g = 'Prompt for direction each time'");
+							Term_putstr(25, 17, -1, TERM_L_GREEN, " 1  2  3");
 
-							Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9) ");
+							Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '?') ");
 
 							/* hack: temporarily enable macro parsing for using numpad keys without numlock to specify a direction */
 							inkey_interact_macros = FALSE;
@@ -5773,7 +5773,7 @@ Chain_Macro:
 									continue;
 								default:
 									/* invalid action -> exit wizard */
-									if (target_dir < '1' || target_dir > '9') {
+									if ((target_dir < '1' || target_dir > '9') && target_dir != '?') {
 										//i = -1;
 										continue;
 									}
@@ -5799,7 +5799,9 @@ Chain_Macro:
 
 							/* add new direction feature */
 							if (choice == 'b') strcat(buf, "+");
-							else if (choice == 'd') strcat(buf, format("%c", target_dir));
+							else if (choice == 'd') {
+								if (target_dir != '?') strcat(buf, format("%c", target_dir));
+							}
 							else if (choice == 'e' || choice == 'g') strcat(buf, "5");
 							else strcat(buf, "-");
 
