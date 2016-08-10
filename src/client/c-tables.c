@@ -488,10 +488,12 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 #endif
 
     /* new additions after 4.6.1a */
-	{ &c_cfg.topline_no_msg,	FALSE,	6,	0, 109, TRUE, //page 3 (UI 3)
-	    "topline_no_msg",		"Don't display messages in main window top line" },
 	{ &c_cfg.shuffle_music,		FALSE,	5,	0, 109, TRUE,
 	    "shuffle_music",		"Don't loop song files but shuffle through them" },
+	{ &c_cfg.topline_no_msg,	FALSE,	6,	0, 110, TRUE, //page 3 (UI 3)
+	    "topline_no_msg",		"Don't display messages in main window top line" },
+	{ &c_cfg.permawall_shade,	FALSE,	6,	0, 111, TRUE, //page 3 (UI 3)
+	    "permawall_shade",		"Display permanent vault walls in a special colour" },
 };
 
 

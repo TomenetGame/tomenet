@@ -2829,7 +2829,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 				a = p_ptr->f_attr_solid[feat];
 			}
 
-
 			/* Add trap color - Illusory wall masks everythink */
 			/* Hack to display detected traps */
 			/*
@@ -2966,6 +2965,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 				}
 			}
 			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
+
+			/* Display vault walls in a more distinguishable colour, if desired */
+			if (p_ptr->permawalls_shade && (feat == FEAT_PERM_INNER || feat == FEAT_PERM_OUTER)) a = TERM_L_UMBER;
 
 			/* The attr */
 			(*ap) = a;

@@ -325,6 +325,7 @@ struct player_type
 	bool wall_lighting;
 	bool floor_lighting;
 	bool view_animated_lite;
+	bool permawalls_shade;
 
 	/* TomeNET additions -- consider using macro or bitfield */
 	bool easy_open;

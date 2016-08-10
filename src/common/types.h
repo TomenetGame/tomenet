@@ -2164,6 +2164,7 @@ struct player_type {
 	bool floor_lighting;
 	bool view_animated_lite;
 	bool view_lite_extra;
+	bool permawalls_shade;
 
 	/* TomeNET additions -- consider using macro or bitfield */
 	bool easy_open;
@@ -3430,8 +3431,9 @@ struct client_opts {
 	bool compress_savefile;
 #endif
 
-	bool topline_no_msg;
 	bool shuffle_music;
+	bool topline_no_msg;
+	bool permawall_shade;
 };
 
 /*

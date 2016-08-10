@@ -2149,7 +2149,7 @@ static void sync_options(int Ind, bool *options) {
 	p_ptr->easy_open = options[60];
 	p_ptr->easy_disarm = options[61];
 	p_ptr->easy_tunnel = options[62];
-//	p_ptr->auto_destroy = options[63];
+	//p_ptr->auto_destroy = options[63];
 	p_ptr->clear_inscr = options[63];
 	p_ptr->auto_inscribe = options[64];
 	if (!is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0)) {
@@ -2353,6 +2353,8 @@ static void sync_options(int Ind, bool *options) {
 	p_ptr->flash_self = options[44] ? 0 : -1;
 	p_ptr->hilite_player = options[45];
 	p_ptr->consistent_players = options[46];
+	tmp = p_ptr->permawalls_shade;
+	if ((p_ptr->permawalls_shade = options[113]) != tmp) p_ptr->redraw |= PR_MAP;
 
 	//page 4
 
