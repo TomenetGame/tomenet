@@ -714,7 +714,7 @@ static void health_redraw(int Ind) {
 			return;
 		}
 
-		if (0 - p_ptr->health_who < NumPlayers) {
+		if (0 - p_ptr->health_who <= NumPlayers) {
 			if(Players[0-p_ptr->health_who]->conn == NOT_CONNECTED ) {
 				Send_monster_health(Ind, 0, 0);
 				return;
