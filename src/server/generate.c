@@ -3453,8 +3453,8 @@ static bool vault_aux_treasure(int r_idx) {
  * Helper function for "monster nest (clone)"
  */
 static bool vault_aux_clone(int r_idx) {
-	/* unsure - blades shouldn't happen, but should titans?
-	if (r_info[r_idx].flags0 & RF0_NO_NEST) return (FALSE); */
+	/* unsure - blades shouldn't happen, but should titans? */
+	if (r_info[r_idx].flags0 & RF0_NO_NEST) return (FALSE);
 
 	return (r_idx == template_race);
 }
