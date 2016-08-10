@@ -6508,9 +6508,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (r_ptr->d_char != 'G' && r_ptr->d_char != 'E' && r_ptr->d_char != 'X') {
 					dam = 0;
 					quiet_dam = TRUE;
+					quiet = TRUE;
 					break;
 				}
 				dam -= 0x400;
+
+				if (RES_OLD(r_ptr->level, dam)) {
+					note = " resists";
+					if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
+					/* No obvious effect */
+					obvious = FALSE;
+				} else {
+					/* Go to sleep (much) later */
+					note = " falls asleep";
+					do_sleep = GF_OLD_SLEEP_DUR;
+				}
+				/* No "real" damage */
+				dam = 0;
+				quiet_dam = TRUE;
+				break;
 			}
 #endif
 
