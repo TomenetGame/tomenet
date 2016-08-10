@@ -44,6 +44,41 @@
 #define INDESTRUCTIBLE_BOOMERANGS
 
 
+
+#ifdef USE_SOUND_2010
+static void staircase_sfx(int Ind) {
+	int b = Players[Ind]->body_monster;
+	if (b) {
+		/* hack: Riders */
+		switch (b) {
+		case 955: case 956: case 957: case 958: case 959:
+			sound(Ind, "staircase_rider", "staircase", SFX_TYPE_COMMAND, FALSE);
+			return;
+		}
+
+		switch (r_info[b].d_char) {
+		case 'b': case 'B': case 'F':
+			sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
+			break;
+		case 'C': case 'f': case 'Z':
+		case 'R': case 'd': case 'D': case 'q': case 'r': case 'M':
+			sound(Ind, "staircase_pad", "staircase", SFX_TYPE_COMMAND, FALSE);
+			break;
+		//case 'X': ~?~
+		case '~': case 'J': case 'i': case 'n': case 'v': case 'w': case 'E': case 'G':
+			sound(Ind, "staircase_slither", "staircase", SFX_TYPE_COMMAND, FALSE);
+			break;
+		case 'I': case 'S': case 'c': case 'a': case 'l': case 'K':
+			sound(Ind, "staircase_scuttle", "staircase", SFX_TYPE_COMMAND, FALSE);
+			break;
+		default:
+			sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
+		}
+	} else if (Players[Ind]->fruit_bat) sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
+	else sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
+}
+#endif
+
 /*
  * Go up one level                                      -RAK-
  */
@@ -449,14 +484,7 @@ void do_cmd_go_up(int Ind) {
 		}
 		p_ptr->new_level_method = LEVEL_UP;
 #ifdef USE_SOUND_2010
-		if (p_ptr->fruit_bat ||
-		    (p_ptr->body_monster &&
-		    (r_info[p_ptr->body_monster].d_char == 'b' ||
-		    r_info[p_ptr->body_monster].d_char == 'B' ||
-		    r_info[p_ptr->body_monster].d_char == 'F' ||
-		    r_info[p_ptr->body_monster].d_char == 'I')))
-			sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
-		else sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
+		staircase_sfx(Ind);
 #endif
 	} else {
 		if (p_ptr->safe_float_turns) {
@@ -1190,14 +1218,7 @@ void do_cmd_go_down(int Ind) {
 		}
 		p_ptr->new_level_method = LEVEL_DOWN;
 #ifdef USE_SOUND_2010
-		if (p_ptr->fruit_bat ||
-		    (p_ptr->body_monster &&
-		    (r_info[p_ptr->body_monster].d_char == 'b' ||
-		    r_info[p_ptr->body_monster].d_char == 'B' ||
-		    r_info[p_ptr->body_monster].d_char == 'F' ||
-		    r_info[p_ptr->body_monster].d_char == 'I')))
-			sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
-		else sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
+		staircase_sfx(Ind);
 #endif
 	} else {
 		if (p_ptr->safe_float_turns) {
