@@ -9775,10 +9775,10 @@ B:GAZE:UN_POWER:2d6
 B:GAZE:INSANITY:2d6
 B:BITE:HURT:6d6
 F:FORCE_SLEEP | FORCE_MAXHP | RES_TELE | CAN_FLY |
-F:BASH_DOOR | DROP_CORPSE | RES_DARK | DISBELIEVE
+F:BASH_DOOR | DROP_CORPSE | RES_DARK
 F:EVIL | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND
 S:1_IN_2 |
-S:BLIND | SLOW | CONF | SCARE | DRAIN_MANA | MIND_BLAST |
+S:BLIND | SLOW | CONF | SCARE | DRAIN_MANA | MIND_BLAST | UNMAGIC
 S:FORGET | DARKNESS | BO_ACID | BO_FIRE | BO_COLD | BO_ELEC
 D:A vile creature with one huge central eye, twelve smaller eyes on stalks, and
 D:a huge mouth filled with sharp teeth.
@@ -10962,13 +10962,13 @@ B:GAZE:INSANITY:3d6
 B:BITE:EXP_40:7d6
 F:FORCE_SLEEP | FORCE_MAXHP | RES_TELE |
 F:COLD_BLOOD | BASH_DOOR | RES_NETH |
-F:EVIL | UNDEAD | CAN_FLY | DISBELIEVE
+F:EVIL | UNDEAD | CAN_FLY
 F:RES_ACID | RES_FIRE | IM_COLD | RES_ELEC | IM_POIS |
 F:NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 S:1_IN_2 |
 S:SLOW | CONF | CURSE | DRAIN_MANA | MIND_BLAST | FORGET |
 S:BO_MANA | BO_NETH | BRAIN_SMASH | BA_FIRE | BA_COLD | BO_ACID |
-S:S_UNDEAD | RAISE_DEAD
+S:S_UNDEAD | RAISE_DEAD | UNMAGIC
 D:A beholder which has cheated death. Black nether storms rage around the
 D:bloodshot pupil of its central giant eye, and light seems to bend as it
 D:sucks its power from the very air around it. Your soul chills as it drains
@@ -13452,12 +13452,12 @@ B:GAZE:PARALYZE:5d5
 B:GAZE:INSANITY:5d5
 B:GAZE:UN_POWER:5d5
 F:FORCE_SLEEP | FORCE_MAXHP | RES_TELE | CAN_FLY |
-F:BASH_DOOR | FEMALE | SMART | DROP_CORPSE | DISBELIEVE
+F:BASH_DOOR | FEMALE | SMART | DROP_CORPSE
 F:EVIL | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND
 S:1_IN_2 |
 S:BLIND | CONF | FORGET | SCARE | DRAIN_MANA | BRAIN_SMASH |
 S:BA_DARK | BO_MANA | BA_ACID | BA_FIRE | BA_COLD | BO_NETH |
-S:S_KIN
+S:S_KIN | UNMAGIC
 D:A hive mother of the race of beholders, she can summon her brood to her aid
 D:whenever she wishes.
 
@@ -13973,11 +13973,11 @@ B:BITE:EXP_80:8d8
 F:UNIQUE | MALE | CAN_SPEAK | RES_TELE |
 F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY |
 F:SMART | BASH_DOOR | EVIL | IM_POIS |
-F:NO_CONF | NO_SLEEP | BASEANGBAND | DISBELIEVE
+F:NO_CONF | NO_SLEEP | BASEANGBAND
 S:1_IN_2 |
 S:BLIND | CONF | FORGET | SCARE | DRAIN_MANA | BRAIN_SMASH |
 S:BA_DARK | BO_MANA | BA_NETH | BA_ACID | BA_FIRE | BA_COLD |
-S:S_KIN
+S:S_KIN | UNMAGIC
 D:A beholder of great size and age, floating in the air. His gaze seems to
 D:shred your soul and his spells crush your will. He is ancient, his history
 D:steeped in forgotten evils, his atrocities numerous and sickening.
@@ -15858,11 +15858,11 @@ B:GAZE:EXP_20:2d6
 B:GAZE:UN_POWER:2d6
 B:GAZE:INSANITY:2d6
 B:BITE:HURT:6d6
-F:EVIL | IM_POIS | NO_CONF | NO_SLEEP | AQUATIC | DISBELIEVE
+F:EVIL | IM_POIS | NO_CONF | NO_SLEEP | AQUATIC
 F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY | RES_TELE |
 F:SMART | DROP_CORPSE | BASEANGBAND | RES_DARK |
 S:1_IN_2 |
-S:BLIND | SLOW | CONF | SCARE | DRAIN_MANA | MIND_BLAST |
+S:BLIND | SLOW | CONF | SCARE | DRAIN_MANA | MIND_BLAST | UNMAGIC
 S:FORGET | DARKNESS | BO_WATE | BO_ICEE | BO_MANA | BO_COLD
 D:A beholder that inhabits the depths of the sea, sleeping and pondering
 D:alien thoughts for centuries. Occasionally, it will float to the
