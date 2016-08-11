@@ -1296,7 +1296,7 @@ D:owner as they inflict wounds that will never heal.
 
 N:92:'Vorpal Blade'
 I:23:31:2
-W:60:30:80:160000
+W:60:30:60:160000
 P:0:5d5:32:32:0
 F:VORPAL | SLAY_EVIL | HIDE_TYPE
 F:FREE_ACT | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR | DEX

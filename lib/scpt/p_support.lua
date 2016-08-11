@@ -155,7 +155,7 @@ HSENSEMON = add_spell {
 			set_tim_esp(Ind, 10 + randint(10) + 30 + get_level(Ind, HSENSEMON, 20))
 			end,
 	["info"] = 	function()
-			return ""
+			return "dur "..(40 + get_level(Ind, HSENSEMON, 20)).."+d10"
 			end,
 	["desc"] = 	{ "Lets you sense the minds of monsters for a while.", }
 }

@@ -101,7 +101,7 @@ HCUREWOUNDS_I = add_spell {
 	end,
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target.",
-		"Caps at 14d8 (same as potion of cure critical wounds).",
+		"Caps at 9d8 (same as potion of cure critical wounds).",
 		--"Also cures blindness and cuts at level 9.",
 	}
 }
