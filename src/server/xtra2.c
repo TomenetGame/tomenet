@@ -5188,6 +5188,7 @@ bool monster_death(int Ind, int m_idx) {
 			if (rand_int(3)) resf_drops |= RESF_COND_DARKSWORD;
 			resf_drops |= RESF_COND2_HARMOUR;
 			break;
+		case 505: //Groo, the Wanderer!
 		case 116:  //rogues with FRIENDS
 		case 44: case 150: case 199: case 376: case 516: case 696: //rogues
 			resf_drops |= RESF_COND_LSWORD;
