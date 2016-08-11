@@ -7551,7 +7551,7 @@ void dungeon(void) {
 				/* set timeout for expiry */
 				if (lookup_player_id(mail_target[i]))
 					/* normal */
- #ifndef MERCHANT_MAIL_INFINITE
+ #ifdef MERCHANT_MAIL_INFINITE
 					mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
  #else
 				{
