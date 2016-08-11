@@ -5698,7 +5698,7 @@
 /* Hack -- summon spells */
 
 #define RF4_SUMMON_MASK \
-	(0L)
+	(RF4_S_ANIMAL)
 
 #define RF5_SUMMON_MASK \
 	(0L)
