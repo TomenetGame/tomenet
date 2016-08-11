@@ -747,17 +747,17 @@
 /*
  * OPTION: Maximum number of messages to remember (see "io.c")
  * Default: assume maximal memorization of 2048 total messages
- * Doubled to 4096 - mikaelh
+ * Doubled to 4096 - mikaelh // Doubled again to 8k - C. Blue
  */
-#define MESSAGE_MAX	4096
+#define MESSAGE_MAX	8192
 
 /*
  * OPTION: Maximum space for the message text buffer (see "io.c")
  * Default: assume that each of the 2048 messages is repeated an
  * average of three times, and has an average length of 48
- * Doubled to 65536 - mikaelh
+ * Doubled to 65536 - mikaelh // Quadrupled again to 256k - C.Blue
  */
-#define MESSAGE_BUF	65536
+#define MESSAGE_BUF	262143
 
 
 /*
@@ -6993,6 +6993,8 @@ extern int PlayerUID;
  #define MESSAGE_MAX	128
  #undef MESSAGE_BUF
  #define MESSAGE_BUF	4096
+ #undef MESSAGE_HISTORY
+ #define MESSAGE_HISTORY	30
 #endif
 
 
