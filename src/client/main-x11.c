@@ -2978,25 +2978,25 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 void resize_main_window_x11(int cols, int rows) {
 	int wid, hgt;
 	term_data *td = term_idx_to_term_data(0);
-        term *t = ang_term[0]; //&screen
+	term *t = ang_term[0]; //&screen
 
 	term_prefs[0].columns = cols; //screen_wid + (SCREEN_PAD_X);
-        term_prefs[0].lines = rows; //screen_hgt + (SCREEN_PAD_Y);
+	term_prefs[0].lines = rows; //screen_hgt + (SCREEN_PAD_Y);
 
-        wid = cols * td->fnt->wid;
-        hgt = rows * td->fnt->hgt;
+	wid = cols * td->fnt->wid;
+	hgt = rows * td->fnt->hgt;
 
-        /* Resize the windows if any "change" is needed */
-        Infowin_set(td->outer);
-        if ((Infowin->w != wid + 2) || (Infowin->h != hgt + 2)) {
-                Infowin_set(td->outer);
-                Infowin_resize(wid + 2, hgt + 2);
-                Infowin_set(td->inner);
-                Infowin_resize(wid, hgt);
+	/* Resize the windows if any "change" is needed */
+	Infowin_set(td->outer);
+	if ((Infowin->w != wid + 2) || (Infowin->h != hgt + 2)) {
+		Infowin_set(td->outer);
+		Infowin_resize(wid + 2, hgt + 2);
+		Infowin_set(td->inner);
+		Infowin_resize(wid, hgt);
 
-	        Term_activate(t);
-	        Term_resize(cols, rows);
-        }
+		Term_activate(t);
+		Term_resize(cols, rows);
+	}
 }
 
 bool ask_for_bigmap(void) {
@@ -3021,4 +3021,8 @@ bool term_get_visibility(int term_idx) {
 	return term_prefs[term_idx].visible;
 }
 
+/* automatically store name+password to ini file if we're a new player? */
+void store_crecedentials(void) {
+	write_mangrc(TRUE);
+}
 #endif

@@ -670,7 +670,7 @@ extern errr dump_messages(cptr name, int lines, int mode);
 extern void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color);
 
 /* client.c */
-extern bool write_mangrc(void);
+extern bool write_mangrc(bool creds_only);
 typedef struct {
 	bool visible;
 	int x, y;
@@ -892,8 +892,8 @@ extern void term_toggle_visibility(int term_idx);
 extern bool term_get_visibility(int term_idx);
 extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
-extern void store_crecedentials(void);
 #endif
+extern void store_crecedentials(void);
 
 extern const cptr angband_sound_name[SOUND_MAX];
 extern int audio_sfx, audio_music;

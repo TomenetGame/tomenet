@@ -414,11 +414,11 @@ void Receive_login(void) {
 		return;
 	}
 
-#ifdef WINDOWS
+//#ifdef WINDOWS
 	/* only on first time startup? */
 	//if (bigmap_hint)
 	store_crecedentials();
-#endif
+//#endif
 
 	/* Set server type flags */
 	if (sflags0 & SFLG0_RPG) s_RPG = TRUE;

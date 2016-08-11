@@ -2743,7 +2743,7 @@ static void quit_hook(cptr s) {
 #endif
 
 #ifndef WINDOWS
-	write_mangrc();
+	write_mangrc(FALSE);
 #endif
 
 #ifdef UNIX_SOCKETS
@@ -2853,6 +2853,14 @@ void client_init(char *argv1, bool skip) {
 #endif
 #ifdef RETRY_LOGIN
 	bool rl_auto_relogin = FALSE;
+#endif
+
+#if defined(USE_X11) || defined(USE_GCU)
+	/* Force creation of fresh .tomenetrc file in case none existed yet.
+	   The reason we do it *right now* is that it generates visual glitches later
+	   and prevents plog() output from being displayed.
+	   We only call a 'light' version (TRUE) in case .tomenetrc already exists. */
+	write_mangrc(TRUE);
 #endif
 
 	/* Set the "plog hook" */

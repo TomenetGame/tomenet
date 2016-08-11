@@ -1593,11 +1593,11 @@ void get_char_name(void) {
 		if (enter_password()) break;
 	}
 
-#ifdef WINDOWS
+//#ifdef WINDOWS
 	/* erase crecedentials? */
 	if (!strlen(nick) || !strlen(pass))
 		store_crecedentials();
-#endif
+//#endif
 
 	/* Message */
 	put_str("Connecting to server....", 21, 1);

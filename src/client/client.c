@@ -497,7 +497,7 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 }
 #endif
 /* linux clients: save some prefs to .tomenetrc - C. Blue */
-bool write_mangrc(void) {
+bool write_mangrc(bool creds_only) {
 	char config_name2[100];
 	FILE *config, *config2;
 	char buf[1024];
@@ -517,7 +517,7 @@ bool write_mangrc(void) {
 		while (!feof(config)) {
 			/* Get a line */
 			if (!fgets(buf, 1024, config)) break;
-
+    if (!creds_only) {
 #ifdef USE_SOUND_2010
 			/* modify the line */
 			/* audio mixer settings */
@@ -568,15 +568,30 @@ bool write_mangrc(void) {
 					write_mangrc_aux_line(6, "Term-6window", buf);
 				else if (!strncmp(buf, "Term-7window", 12))
 					write_mangrc_aux_line(7, "Term-7window", buf);
-#if 0 /* keep n/a for now, not really needed */
+ #if 0 /* keep n/a for now, not really needed */
 				else if (!strncmp(buf, "Term-8window", 12))
 					write_mangrc_aux_line(8, "Term-8window", buf);
 				else if (!strncmp(buf, "Term-9window", 12))
 					write_mangrc_aux_line(9, "Term-9window", buf);
-#endif
+ #endif
 			}
 #endif /* USE_X11 */
+    }
+			if (!strncmp(buf, "#nick", 5) && nick[0] && pass[0]) {
+				strcpy(buf, "nick\t\t");
+				strcat(buf, nick);
+				strcat(buf, "\n");
+			}
+			if (!strncmp(buf, "#pass", 5) && nick[0] && pass[0]) {
+				char tmp[MAX_CHARS];
 
+				strcpy(tmp, pass);
+				my_memfrob(tmp, strlen(tmp));
+				strcpy(buf, "pass\t\t");
+				strcat(buf, tmp); //security hole here, buf doesn't get zero'ed
+				memset(tmp, 0, MAX_CHARS);
+				strcat(buf, "\n");
+			}
 
 			/*** Everything else is ignored ***/
 
@@ -584,13 +599,17 @@ bool write_mangrc(void) {
 			fputs(buf, config2);
 
 #ifdef USE_SOUND_2010
+    if (!creds_only) {
 			/* hack: disable one-time hint */
 			if (!strncmp(buf, "sound", 5) && sound_hint) fputs("hintSound\n", config2);
+    }
 #endif
 		}
 
+    if (!creds_only) {
 		/* hack: disable one-time hint */
 		if (bigmap_hint) fputs("\nhintBigmap\n", config2);
+    }
 
 		fclose(config);
 		fclose(config2);
@@ -606,8 +625,18 @@ bool write_mangrc(void) {
 		fputs("# (basic version - generated automatically because it was missing)\n", config2);
 		fputs("\n\n", config2);
 
-		fputs(format("#nick\t\t%s\n", nick), config2);
-		fputs(format("#pass\t\t%s\n", ""), config2);//keep pass secure maybe
+		if (nick[0] && pass[0]) {
+			char tmp[MAX_CHARS];
+
+			fputs(format("nick\t\t%s\n", nick), config2);
+			strcpy(tmp, pass);
+			my_memfrob(tmp, strlen(tmp));
+			fputs(format("pass\t\t%s\n", tmp), config2);
+			memset(tmp, 0, MAX_CHARS);
+		} else {
+			fputs(format("#nick\t\t%s\n", nick), config2);
+			fputs(format("#pass\t\t%s\n", ""), config2);//keep pass secure maybe
+		}
 		fputs(format("#name\t\t%s\n", cname), config2);
 		fputs("\n", config2);
 
@@ -699,8 +728,10 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 }
 #endif
 
+    if (!creds_only) {
 		fputs("\n", config2);
 		fputs("hintBigmap\n", config2);
+    }
 
 		fclose(config2);
 
