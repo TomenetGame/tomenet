@@ -7531,7 +7531,9 @@ void dungeon(void) {
 	i = turn % MAX_MERCHANT_MAILS; //fast enough >_>
 	if (mail_sender[i][0]) {
 		if (mail_duration[i]) {
+ #ifndef MERCHANT_MAIL_INFINITE
 			bool erase = FALSE;
+ #endif
 
 			if (mail_duration[i] < 0) {
 				/* we bounced back to sender, but now stop bouncing and erase it if he doesn't want it either, if MERCHANT_MAIL_INFINITE */
