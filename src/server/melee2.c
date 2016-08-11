@@ -2693,6 +2693,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* RF4_BOULDER */
 	case RF4_OFFSET+31:
+		//note: not intercepted atm
 		disturb(Ind, 1, 0);
 		if (blind) msg_print(Ind, "You hear something grunt with exertion.");
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s hurls a boulder at you for", m_name);
