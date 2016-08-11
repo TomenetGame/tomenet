@@ -1493,22 +1493,20 @@ void do_slash_cmd(int Ind, char *message) {
 		}
 		else if (prefix(message, "/empty") || prefix(message, "/emp")) {
 			int slot;
-			return;//disabled for anti-cheeze
-			if (!tk)
-			{
+			//return;//disabled for anti-cheeze
+			if (!tk) {
 				msg_print(Ind, "\377oUsage: /empty (inventory slot letter)");
 				return;
 			}
 			slot = (char)(token[1][0]);
 			/* convert to upper case ascii code */
-			if (slot >= 97 && slot <= 122) slot -= 32;
+			if (slot >= 'a' && slot <= 'z') slot -= 32;
 			/* check for valid inventory slot */
-			if (slot < 65 || slot > (90 - 3))
-			{
+			if (slot < 'A' || slot > 'W') {
 				msg_print(Ind, "\377oValid inventory slots are a-w (or A-W). Please try again.");
 				return;
 			}
-			do_cmd_empty_potion(Ind, slot - 65);
+			do_cmd_empty_potion(Ind, slot - 'A');
 			return;
 		}
 		else if ((prefix(message, "/dice") || !strcmp(message, "/d") ||
