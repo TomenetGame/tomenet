@@ -7837,6 +7837,7 @@ extern int PlayerUID;
 #endif
 #define BACT_SEND_ITEM			68
 #define BACT_SEND_GOLD			69
+#define BACT_SEND_ITEM_PAY		70
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 
@@ -8309,6 +8310,9 @@ extern int PlayerUID;
 #define RID_SEND_ITEM2		10
 #define RID_SEND_GOLD2		11
 #define RID_SEND_FEE		12
+#define RID_SEND_ITEM_PAY	13
+#define RID_SEND_ITEM_PAY2	14
+#define RID_SEND_FEE_PAY	15
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 

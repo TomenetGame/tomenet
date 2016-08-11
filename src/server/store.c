@@ -4311,6 +4311,7 @@ bool merchant_mail_carry(int Ind, int i) {
  #ifdef USE_SOUND_2010
 		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
  #endif
+		s_printf("MERCHANT_MAIL: <%s> from <%s> received: %d Au.\n", p_ptr->name, mail_sender[i], mail_forge[i].pval);
 	} else {
 		int slot;
 		char o_name[ONAME_LEN];
@@ -4326,6 +4327,7 @@ bool merchant_mail_carry(int Ind, int i) {
  #ifdef USE_SOUND_2010
 		sound_item(Ind, mail_forge[i].tval, mail_forge[i].sval, "pickup_");
  #endif
+		s_printf("MERCHANT_MAIL: <%s> from <%s> received: %s.\n", p_ptr->name, mail_sender[i], o_name);
 	}
 
 	/* reset mail slot */
@@ -4340,12 +4342,28 @@ void merchant_mail_delivery(int Ind) {
 		if (!mail_sender[i][0] || mail_duration[i]) continue;
 
 		if (!strcasecmp(mail_target[i], p_ptr->name)) {
+			if (mail_xfee[i]) {
+				p_ptr->mail_fee = 0;
+				if (mail_COD[i]) {
+					if (mail_forge[i].tval == TV_GOLD) p_ptr->mail_fee += mail_forge[i].pval / 20;
+					else p_ptr->mail_fee += object_value_real(0, &mail_forge[i]) / 20;
+					if (p_ptr->mail_fee < 5) p_ptr->mail_fee = 5;
+				}
+				p_ptr->mail_fee += mail_xfee[i];
+
+				p_ptr->mail_item = i; //reuse mail_item for this
+				msg_print(Ind, "\374\377yA mail package for you has arrived! The sender has made a payment request.");
+				Send_request_cfr(Ind, RID_SEND_FEE_PAY, format("Do you accept the sender's payment request over %d Au?", p_ptr->mail_fee), FALSE);
+				/* get those COD mails one by one.. */
+				return;
+			}
 			if (mail_COD[i]) {
 				if (mail_forge[i].tval == TV_GOLD) p_ptr->mail_fee = mail_forge[i].pval / 20;
 				else p_ptr->mail_fee = object_value_real(0, &mail_forge[i]) / 20;
 				if (p_ptr->mail_fee < 5) p_ptr->mail_fee = 5;
 
 				p_ptr->mail_item = i; //reuse mail_item for this
+				msg_print(Ind, "\374\377yA COD mail package for you has arrived!");
 				Send_request_cfr(Ind, RID_SEND_FEE, format("Do you accept the fee of %d Au?", p_ptr->mail_fee), FALSE);
 				/* get those COD mails one by one.. */
 				return;

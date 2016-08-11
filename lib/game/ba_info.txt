@@ -356,3 +356,7 @@ I:68:0:t:2
 N:75:Send gold
 C:0:0:0
 I:69:0:g:4
+
+N:76:Send item for payment
+C:0:0:0
+I:70:0:a:2

@@ -111,7 +111,7 @@ void show_building(int Ind, store_type *s_ptr) {
 		}
 #endif
 #ifndef ENABLE_MERCHANT_MAIL
-		if (st_ptr->actions[i] == 74 || st_ptr->actions[i] == 75) { //BACT_SEND_ITEM/BACT_SEND_GOLD
+		if (st_ptr->actions[i] == 74 || st_ptr->actions[i] == 75 || st_ptr->actions[i] == 76) { //BACT_SEND_ITEM/BACT_SEND_GOLD/BACT_SEND_ITEM_PAY
 			Send_store_action(Ind, i, 0, 0, "", TERM_DARK, '.', 0, 0);
 			continue;
 		}
@@ -2329,7 +2329,8 @@ if (is_admin(p_ptr))
 			break;
 #endif
 #ifdef ENABLE_MERCHANT_MAIL
-		case BACT_SEND_ITEM: {
+		case BACT_SEND_ITEM:
+		case BACT_SEND_ITEM_PAY: {
 			int i;
 			object_type *o_ptr;
 			/* Get the item (in the pack) */
@@ -2367,7 +2368,9 @@ if (is_admin(p_ptr))
 
 			p_ptr->mail_item = item;
 			p_ptr->mail_fee = fee;
-			Send_request_cfr(Ind, RID_SEND_ITEM, format("The fee for sending this item is %d, accept?", fee), FALSE);
+			p_ptr->mail_xfee = 0;
+			Send_request_cfr(Ind, bact == BACT_SEND_ITEM ? RID_SEND_ITEM : RID_SEND_ITEM_PAY,
+			    format("The fee for sending this item is %d, accept?", fee), FALSE);
 			break; }
 		case BACT_SEND_GOLD: {
 			int i;
@@ -2397,6 +2400,7 @@ if (is_admin(p_ptr))
 
 			p_ptr->mail_gold = gold;
 			p_ptr->mail_fee = fee;
+			p_ptr->mail_xfee = 0;
 			Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d, accept?", gold, fee), FALSE);
 			break; }
 #endif

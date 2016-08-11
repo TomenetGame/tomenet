@@ -9061,6 +9061,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		u32b pid;
 		byte w;
 		bool total_winner, once_winner;
+		char o_name[ONAME_LEN];
 
 		if (!o_ptr->k_idx) {
 			msg_print(Ind, "Invalid item.");
@@ -9132,6 +9133,9 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		if (!p_ptr->mail_COD) {
 			p_ptr->au -= p_ptr->mail_fee;
 			p_ptr->redraw |= PR_GOLD;
+ #ifdef USE_SOUND_2010
+			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
 		}
 
  #ifdef USE_SOUND_2010
@@ -9144,10 +9148,14 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		strcpy(mail_target_acc[i], acc);
 		mail_duration[i] = MERCHANT_MAIL_DURATION;
 		mail_COD[i] = p_ptr->mail_COD;
+		mail_xfee[i] = p_ptr->mail_xfee;
 
 		inven_item_increase(Ind, p_ptr->mail_item, -o_ptr->number);
 		inven_item_describe(Ind, p_ptr->mail_item);
 		inven_item_optimize(Ind, p_ptr->mail_item);
+
+		object_desc(0, o_name, &mail_forge[i], TRUE, 3);
+		s_printf("MERCHANT_MAIL:(SENT) <%s> to <%s> sent: %s.\n", p_ptr->name, mail_target[i], o_name);
 		return; }
 	case RID_SEND_GOLD: {
 		int i;
@@ -9209,6 +9217,9 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		strcpy(mail_target_acc[i], acc);
 		mail_duration[i] = MERCHANT_MAIL_DURATION;
 		mail_COD[i] = p_ptr->mail_COD;
+		mail_xfee[i] = 0;
+
+		s_printf("MERCHANT_MAIL:(SENT) <%s> to <%s> sent: %d Au.\n", p_ptr->name, mail_target[i], mail_forge[i].pval);
 		return; }
 #endif
 	default:;
@@ -9265,6 +9276,20 @@ void handle_request_return_num(int Ind, int id, int num) {
 			p_ptr->once_winner = 0;
 			p_ptr->r_killed[RI_MORGOTH] = 0;
 		}
+		return;
+#endif
+#ifdef ENABLE_MERCHANT_MAIL
+	case RID_SEND_ITEM_PAY:
+		if (num < 1) {
+			msg_print(Ind, "\377yThe requested payment must be at least 1 Au.");
+			return;
+		}
+		if (num > 2000000000) {
+			msg_print(Ind, "\377yThat is too much, the maximum allowed amount is 2 000 000 000 Au.");
+			return;
+		}
+		p_ptr->mail_xfee = num;
+		Send_request_str(Ind, RID_SEND_ITEM, "Who is the addressee, please? ", "");
 		return;
 #endif
 	default:;
@@ -9408,8 +9433,17 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		Send_request_str(Ind, RID_SEND_GOLD, "Who is the addressee, please? ", "");
 		return;
 	case RID_SEND_FEE:
+	case RID_SEND_FEE_PAY: {
+		int i = p_ptr->mail_item;
+
+		/* silyl case: the package expired while we were looking at the "do you accept the fee?" prompt */
+		if (mail_duration[i]) {
+			msg_print(Ind, "\377ySorry, the package has already been returned.");
+			return;
+		}
+
 		if (cfr) {
-			int i = p_ptr->mail_item;
+			char sender[NAME_LEN];
 
 			if (p_ptr->au < p_ptr->mail_fee) {
 				msg_format(Ind, "\377yYou do not carry enough money to pay the fee of %d Au!", p_ptr->mail_fee);
@@ -9417,20 +9451,52 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 			}
 
 			/* we accepted the COD fee */
+			strcpy(sender, mail_sender[i]); //save it before it gets 0'ed in the next line
 			if (merchant_mail_carry(Ind, i)) {
 				p_ptr->au -= p_ptr->mail_fee;
 				p_ptr->redraw |= PR_GOLD;
+ #ifdef USE_SOUND_2010
+				sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+ #endif
+
+				/* mail the payment to the sender -- reuse the current mail slot 'i' for that */
+				if (id == RID_SEND_FEE_PAY) {
+					u32b pid;
+					cptr acc;
+
+					invcopy(&mail_forge[i], lookup_kind(TV_GOLD, 1));
+					mail_forge[i].pval = mail_xfee[i];
+
+					strcpy(mail_sender[i], p_ptr->name);
+					strcpy(mail_target[i], sender);
+
+					pid = lookup_player_id(sender);
+					if (pid) {
+						acc = lookup_accountname(pid);
+						if (acc) strcpy(mail_target_acc[i], acc);
+						else s_printf("MAIL_ERROR: payment acc '%s'\n", sender);
+					} else s_printf("MAIL_ERROR: payment id '%s'\n", sender);
+
+					mail_duration[i] = MERCHANT_MAIL_DURATION;
+					mail_COD[i] = FALSE;
+					mail_xfee[i] = 0;
+				}
 
 				/* check if there's more waiting for us */
 				merchant_mail_delivery(Ind);
 			}
 		} else {
-			int i = p_ptr->mail_item;
-
 			/* return to sender */
 			msg_format(Ind, "Alright, %s. We're sending it back.", p_ptr->male ? "sir" : "ma'am");
 			mail_timeout[i] = -2;
 		}
+		return; }
+	case RID_SEND_ITEM_PAY:
+		if (cfr) Send_request_cfr(Ind, RID_SEND_ITEM_PAY2, "Will you be paying the fee? Otherwise we'll charge the addressee.", TRUE);
+		return;
+	case RID_SEND_ITEM_PAY2:
+		p_ptr->mail_COD = !cfr;
+		Send_request_num(Ind, RID_SEND_ITEM_PAY, "How much does the receipient have to pay you? ", -1);
 		return;
 #endif
 	default: ;

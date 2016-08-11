@@ -3023,6 +3023,7 @@ struct player_type {
 	int mail_item;
 	s32b mail_gold;
 	s32b mail_fee;
+	s32b mail_xfee;
 	bool mail_COD;
 #endif
 };
