@@ -2012,7 +2012,7 @@ void cmd_check_misc(void) {
 
 	Term_putstr( 5, second + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
 	Term_putstr( 5, second + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
-	Term_putstr( 5, second + 2, -1, TERM_WHITE, "(\377yc\377w) Score list");
+	Term_putstr( 5, second + 2, -1, TERM_WHITE, "(\377yc\377w) High Scores");
 	Term_putstr( 5, second + 3, -1, TERM_WHITE, "(\377yd\377w) Server settings");
 	Term_putstr( 5, second + 4, -1, TERM_WHITE, "(\377ye\377w) Opinions (if available)");
 	Term_putstr(40, second + 0, -1, TERM_WHITE, "(\377yf\377w) News (Message of the day)");
