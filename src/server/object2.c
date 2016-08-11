@@ -5384,6 +5384,10 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 			o_ptr->level = 1;
 		}
 		break;
+
+	case TV_TOOL:
+		if (o_ptr->sval == SV_TOOL_PICKLOCK) o_ptr->bpval = randint(o_ptr->bpval);
+		break;
 	}
 }
 
