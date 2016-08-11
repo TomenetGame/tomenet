@@ -7531,14 +7531,32 @@ void dungeon(void) {
 	i = turn % MAX_MERCHANT_MAILS; //fast enough >_>
 	if (mail_sender[i][0]) {
 		if (mail_duration[i]) {
+			bool erase = FALSE;
+
+			if (mail_duration[i] < 0) {
+				/* we bounced back to sender, but now stop bouncing and erase it if he doesn't want it either, if MERCHANT_MAIL_INFINITE */
+				mail_duration[i]++;
+ #ifndef MERCHANT_MAIL_INFINITE
+				erase = TRUE;
+ #endif
+			} else
+			/* normal case (1st send, or infinite bouncing enabled) */
 			mail_duration[i]--;
+
 			if (!mail_duration[i]) {
 				int j;
 
 				/* set timeout for expiry */
 				if (lookup_player_id(mail_target[i]))
 					/* normal */
+ #ifndef MERCHANT_MAIL_INFINITE
 					mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
+ #else
+				{
+					if (erase) mail_timeout[i] = - 2 - MERCHANT_MAIL_TIMEOUT;
+					else mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
+				}
+ #endif
 				else
 					/* hack for players who no longer exist */
 					mail_timeout[i] = -1;
@@ -7570,6 +7588,37 @@ void dungeon(void) {
 				mail_timeout[i] = 0;
 				erase = FALSE;
 				quiet = TRUE;
+			} else if (mail_timeout[i] < -2) {
+				/* we just bounced back, might result in erasure if not picked up and not MERCHANT_MAIL_INFINITE */
+				mail_timeout[i]++;
+				if (mail_timeout[i] == -2)
+ #ifdef MERCHANT_MAIL_INFINITE
+					mail_timeout[i] = 0;
+ #else
+				{
+  #if 1
+					/* notify sloth */
+					int j;
+
+					for (j = 1; j <= NumPlayers; j++) {
+						if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
+							if (strcmp(Players[j]->name, mail_target[i]))
+								msg_print(j, "\374\377yA mail package for another character of yours just expired!");
+							else
+								msg_print(j, "\374\377yA mail package for you just expired!");
+						}
+					}
+  #endif
+
+					s_printf("MAIL_ERROR_ERASED (1st bounce).\n");
+					/* delete mail! */
+					mail_sender[i][0] = 0;
+					/* leave structure */
+					mail_timeout[i] = 1;
+				}
+ #endif
+				erase = FALSE;
+				quiet = FALSE;
 			} else {
 				/* normal expiry countdown */
 				mail_timeout[i]--;
@@ -7595,10 +7644,16 @@ void dungeon(void) {
 						}
 					}
 
+ #ifndef MERCHANT_MAIL_INFINITE
+				erase = TRUE;
+				mail_duration[i] = -MERCHANT_MAIL_DURATION;
+ #else
 				mail_duration[i] = MERCHANT_MAIL_DURATION;
+ #endif
 				strcpy(tmp, mail_sender[i]);
 				strcpy(mail_sender[i], mail_target[i]);
 				strcpy(mail_target[i], tmp);
+
 
 				pid = lookup_player_id(mail_target[i]);
 				if (!pid) {

@@ -243,6 +243,7 @@
 /* Allow sending gold or an item to someone via merchants' guild */
 #define ENABLE_MERCHANT_MAIL
 #ifdef ENABLE_MERCHANT_MAIL
+ //#define MERCHANT_MAIL_INFINITE /* If enabled, it'll bounce forever. [no] */
  #define MAX_MERCHANT_MAILS 100
  /* <this> x (MAX_MERCHANT_MAILS / cfg.fps) seconds  [36 -> 1 min] */
  #define MERCHANT_MAIL_DURATION 36
