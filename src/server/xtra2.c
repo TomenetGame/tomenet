@@ -9962,11 +9962,13 @@ static int player_wounded(s16b ind) {
 	player_type *p_ptr = Players[ind];
 	int wounded = ((p_ptr->mhp + 1) * 100) / (p_ptr->chp + 1); //prevent div/0
 
+#if 0 /* Cure Wounds no longer cures status ailments */
 	/* allow targetting healed up players that suffer from status ailments
 	   curable by Cure Wounds spell - C. Blue */
 	if (wounded == 100 &&
 	    (p_ptr->cut || p_ptr->blind || p_ptr->confused || p_ptr->stun))
 		wounded = 101;
+#endif
 
 	return wounded;
 }
@@ -10767,10 +10769,11 @@ bool target_set_friendly(int Ind, int dir, ...) {
 	}
 
 
+#if 0 /* currently no effect with wounded_player_target_sort() */
 	/* Set the sort hooks */
 	ang_sort_comp = ang_sort_comp_distance;
 	ang_sort_swap = ang_sort_swap_distance;
-
+#endif
 	/* Sort the positions */
 	wounded_player_target_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_idx, p_ptr->target_n);
 
@@ -10820,7 +10823,7 @@ bool target_set_friendly(int Ind, int dir, ...) {
 
 #else
 
-/* targets closest player */
+/* targets most wounded player */
 bool target_set_friendly(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
