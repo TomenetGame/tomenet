@@ -4996,9 +4996,11 @@ void do_cmd_fire(int Ind, int dir) {
 			if (p_ptr->shooty_till_kill) {
 				p_ptr->shooting_till_kill = TRUE;
 				/* disable other ftk types */
-				p_ptr->shoot_till_kill_spell = FALSE;
-				p_ptr->shoot_till_kill_mimic = FALSE;
+				p_ptr->shoot_till_kill_spell = 0;
+				p_ptr->shoot_till_kill_mimic = 0;
 				p_ptr->shoot_till_kill_rcraft = FALSE;
+				p_ptr->shoot_till_kill_wand = 0;
+				p_ptr->shoot_till_kill_rod = 0;
 			}
 #endif
 			return; /* boomerang interference chance */
@@ -5018,9 +5020,11 @@ void do_cmd_fire(int Ind, int dir) {
 			if (p_ptr->shooty_till_kill) {
 				p_ptr->shooting_till_kill = TRUE;
 				/* disable other ftk types */
-				p_ptr->shoot_till_kill_spell = FALSE;
-				p_ptr->shoot_till_kill_mimic = FALSE;
+				p_ptr->shoot_till_kill_spell = 0;
+				p_ptr->shoot_till_kill_mimic = 0;
 				p_ptr->shoot_till_kill_rcraft = FALSE;
+				p_ptr->shoot_till_kill_wand = 0;
+				p_ptr->shoot_till_kill_rod = 0;
 			}
 #endif
 			return; /* shooting interference chance */
@@ -5119,9 +5123,11 @@ void do_cmd_fire(int Ind, int dir) {
 	if (p_ptr->shooty_till_kill) {
 		p_ptr->shooting_till_kill = TRUE;
 		/* disable other ftk types */
-		p_ptr->shoot_till_kill_spell = FALSE;
-		p_ptr->shoot_till_kill_mimic = FALSE;
+		p_ptr->shoot_till_kill_spell = 0;
+		p_ptr->shoot_till_kill_mimic = 0;
 		p_ptr->shoot_till_kill_rcraft = FALSE;
+		p_ptr->shoot_till_kill_wand = 0;
+		p_ptr->shoot_till_kill_rod = 0;
 	}
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50)) {
@@ -7585,15 +7591,18 @@ void stop_precision(int Ind) {
 
 /* stop shooting-till-kill */
 void stop_shooting_till_kill(int Ind) {
-	Players[Ind]->shooting_till_kill = FALSE;
-	Players[Ind]->shoot_till_kill_book = 0;
-	Players[Ind]->shoot_till_kill_spell = 0;
-	Players[Ind]->shoot_till_kill_rcraft = FALSE;
-	Players[Ind]->shoot_till_kill_mimic = 0;
-	if (Players[Ind]->shoot_till_kill_rcraft) {
-		Players[Ind]->FTK_e_flags = 0;
-		Players[Ind]->FTK_m_flags = 0;
-		Players[Ind]->FTK_energy = 0;
+	player_type *p_ptr = Players[Ind];
+	p_ptr->shooting_till_kill = FALSE;
+	p_ptr->shoot_till_kill_book = 0;
+	p_ptr->shoot_till_kill_spell = 0;
+	p_ptr->shoot_till_kill_rcraft = FALSE;
+	p_ptr->shoot_till_kill_mimic = 0;
+	p_ptr->shoot_till_kill_wand = 0;
+	p_ptr->shoot_till_kill_rod = 0;
+	if (p_ptr->shoot_till_kill_rcraft) {
+		p_ptr->FTK_e_flags = 0;
+		p_ptr->FTK_m_flags = 0;
+		p_ptr->FTK_energy = 0;
 	}
 }
 
@@ -7603,16 +7612,16 @@ void stop_shooting_till_kill(int Ind) {
 void shadow_run(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-        if (p_ptr->shadow_running) {
+	if (p_ptr->shadow_running) {
 		p_ptr->shadow_running = FALSE;
-                msg_print(Ind, "Your silhouette stabilizes and your movements return to normal.");
-                msg_format_near(Ind, "%s silhouette stabilizes and %s movements return to normal.", p_ptr->name, p_ptr->male ? "his" : "her");
-	        p_ptr->update |= (PU_BONUS | PU_VIEW);
-	        p_ptr->redraw |= (PR_STATE | PR_SPEED);
-	        /* update so everyone sees the colour animation */
-	        everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		msg_print(Ind, "Your silhouette stabilizes and your movements return to normal.");
+		msg_format_near(Ind, "%s silhouette stabilizes and %s movements return to normal.", p_ptr->name, p_ptr->male ? "his" : "her");
+		p_ptr->update |= (PU_BONUS | PU_VIEW);
+		p_ptr->redraw |= (PR_STATE | PR_SPEED);
+		/* update so everyone sees the colour animation */
+		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		return;
-        }
+	}
 
 	if (p_ptr->body_monster) { /* in case of vampire bat, for vampire rogue! */
 		msg_print(Ind, "\377yYou cannot shadow run while you are transformed.");

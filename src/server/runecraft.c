@@ -476,8 +476,10 @@ s_printf("Type: %s\n", r_types[type].name);
 				p_ptr->shooting_till_kill = TRUE;
 				p_ptr->shoot_till_kill_rcraft = TRUE;
 				/* disable other ftk types */
-				p_ptr->shoot_till_kill_spell = FALSE;
-				p_ptr->shoot_till_kill_mimic = FALSE;
+				p_ptr->shoot_till_kill_spell = 0;
+				p_ptr->shoot_till_kill_mimic = 0;
+				p_ptr->shoot_till_kill_wand = 0;
+				p_ptr->shoot_till_kill_rod = 0;
 			}
 		}
 	}

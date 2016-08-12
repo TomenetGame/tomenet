@@ -2833,7 +2833,8 @@ struct player_type {
 	int autoret;			/* set auto-retaliation via command instead of inscription */
 #endif
 	bool shoot_till_kill, shooty_till_kill, shooting_till_kill; /* Shoot a target until it's dead, like a ranged 'auto-retaliator' - C. Blue */
-	int shoot_till_kill_book, shoot_till_kill_spell, shoot_till_kill_mimic;
+	int shoot_till_kill_book, shoot_till_kill_spell, shoot_till_kill_mimic; //and there's shoot_till_kill_rcraft too
+	int shoot_till_kill_wand, shoot_till_kill_rod;
 	bool dual_mode; /* for dual-wield: TRUE = dual-mode, FALSE = main-hand-mode */
 
 	/* Runecraft Info */

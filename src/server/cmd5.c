@@ -774,8 +774,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 /*
  * Finish casting a spell that required a direction --KLJ--
  */
-void do_mimic_power_aux(int Ind, int dir)
-{
+void do_mimic_power_aux(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	int rad;
@@ -1281,13 +1280,15 @@ void do_mimic_power_aux(int Ind, int dir)
                 /* We lost our target? (monster dead?) */
                 if (dir != 5 || !target_okay(Ind)) return;
 
-                /* we're now indeed ftk */
-                p_ptr->shooting_till_kill = TRUE;
-                p_ptr->shoot_till_kill_mimic = cs + 1;
+		/* we're now indeed ftk */
+		p_ptr->shooting_till_kill = TRUE;
+		p_ptr->shoot_till_kill_mimic = cs + 1;
 		/* disable other ftk types */
-		p_ptr->shoot_till_kill_spell = FALSE;
+		p_ptr->shoot_till_kill_spell = 0;
 		p_ptr->shoot_till_kill_rcraft = FALSE;
-        }
+		p_ptr->shoot_till_kill_wand = 0;
+		p_ptr->shoot_till_kill_rod = 0;
+	}
 #endif
 }
 
@@ -1729,6 +1730,8 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 			/* disable other ftk types */
 			p_ptr->shoot_till_kill_mimic = FALSE;
 			p_ptr->shoot_till_kill_rcraft = FALSE;
+			p_ptr->shoot_till_kill_wand = FALSE;
+			p_ptr->shoot_till_kill_rod = FALSE;
 		}
 #endif
 	}

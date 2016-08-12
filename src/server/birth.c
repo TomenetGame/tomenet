@@ -2454,6 +2454,8 @@ static void player_setup(int Ind, bool new) {
 	/* disable other ftk types */
 	p_ptr->shoot_till_kill_mimic = FALSE;
 	p_ptr->shoot_till_kill_rcraft = FALSE;
+	p_ptr->shoot_till_kill_wand = FALSE;
+	p_ptr->shoot_till_kill_rod = FALSE;
 	/* totally obsolete and redundant */
 	p_ptr->IDDC_logscum = FALSE;
 #endif

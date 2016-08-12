@@ -5304,6 +5304,10 @@ static void process_player_end(int Ind) {
 						(void)cast_rune_spell(Ind, 5, p_ptr->FTK_e_flags, p_ptr->FTK_m_flags, 0, 1);
 					} else if (p_ptr->shoot_till_kill_mimic) {
 						do_cmd_mimic(Ind, p_ptr->shoot_till_kill_mimic - 1 + 3, 5);
+					} else if (p_ptr->shoot_till_kill_wand) {
+						do_cmd_aim_wand(Ind, p_ptr->shoot_till_kill_wand, 5);
+					} else if (p_ptr->shoot_till_kill_rod) {
+						do_cmd_zap_rod(Ind, p_ptr->shoot_till_kill_rod, 5);
 					} else {
 						do_cmd_fire(Ind, 5);
 #if 1 //what was the point of this hack again?..
