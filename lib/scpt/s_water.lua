@@ -301,7 +301,7 @@ FROSTBALL_I = add_spell {
 	["fail"] = 	-25,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
-	["spell"] = 	function()
+	["spell"] = 	function(args)
 			fire_ball(Ind, GF_COLD, args.dir, 90 + get_level(Ind, FROSTBALL_I, 490), 2 + get_level(Ind, FROSTBALL_I, 3), " casts a frost ball for")
 	end,
 	["info"] = 	function()
@@ -318,7 +318,7 @@ FROSTBALL_II = add_spell {
 	["fail"] = 	-90,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
-	["spell"] = 	function()
+	["spell"] = 	function(args)
 			fire_ball(Ind, GF_COLD, args.dir, 160 + get_level(Ind, FROSTBALL_I, 780), 2 + get_level(Ind, FROSTBALL_I, 3), " casts a frost ball for")
 	end,
 	["info"] = 	function()
