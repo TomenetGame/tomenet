@@ -4018,22 +4018,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		set_tim_wraith(Ind, 0);
 #endif	// 0
 
-
-#if 1
-	if (p_ptr->anti_magic) {
-		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
-#endif	// 0
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
-		return;
-	}
-	if (magik((p_ptr->antimagic * 8) / 5)) {
-#ifdef USE_SOUND_2010
-		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
 
@@ -4067,7 +4053,21 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		return;
 	}
 
-        if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) return;
+
+#if 1
+	if (p_ptr->anti_magic) {
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
+#endif
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
 
 	/* Get a direction (unless KNOWN not to need it) */
 	/* Pfft, dirty, dirty, diiirrrrtie!! (FIXME) */
@@ -4205,6 +4205,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	int pval_old;
 #endif
 
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
+		return;
+	}
+
 	item = p_ptr->current_rod;
 
 	/* Get the item (in the pack) */
@@ -4235,6 +4240,20 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	}
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
+
+#if 1
+	if (p_ptr->anti_magic) {
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
+#endif
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
 
 	/* Hack -- verify potential overflow */
 	/*if ((inven_cnt >= INVEN_PACK) &&
