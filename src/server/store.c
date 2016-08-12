@@ -7117,6 +7117,9 @@ s_printf("PLAYER_STORE_HANDLE: complete, mang, owner %s (%d), %s, value %d, buye
 
 			/* Notify the owner now that he's online */
 			msg_format(i, "\374\377yYour store at (%d,%d) just sold something!", p_ptr->wpos.wx, p_ptr->wpos.wy);
+#ifdef USE_SOUND_2010
+			sound(i, "pickup_gold", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			break;
 		}
 		/* If he's not online, store account notification for later */

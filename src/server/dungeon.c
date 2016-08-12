@@ -7589,13 +7589,23 @@ void dungeon(void) {
 				/* notify him */
 				for (j = 1; j <= NumPlayers; j++) {
 					if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
-						if (strcmp(Players[j]->name, mail_target[i]))
+						if (strcmp(Players[j]->name, mail_target[i])) {
 							msg_print(j, "\374\377yThe merchant guild has mail for another character of yours!");
-						else {
-							if (Players[j]->store_num == STORE_MERCHANTS_GUILD)
+ #ifdef USE_SOUND_2010
+							sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+						} else {
+							if (Players[j]->store_num == STORE_MERCHANTS_GUILD) {
+ #ifdef USE_SOUND_2010
+								sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
 								merchant_mail_delivery(j);
-							else
+							} else {
 								msg_print(j, "\374\377yThe merchant guild has mail for you!");
+ #ifdef USE_SOUND_2010
+								sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+							}
 						}
 					}
 				}

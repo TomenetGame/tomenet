@@ -3050,6 +3050,9 @@ static int Handle_login(int ind) {
 	if (acc_get_flags(p_ptr->accountname) & ACC_WARN_SALE) {
 		acc_set_flags(p_ptr->accountname, ACC_WARN_SALE, FALSE);
 		msg_print(NumPlayers, "\374\377yA store of yours has sold something meanwhile!");
+#ifdef USE_SOUND_2010
+		sound(NumPlayers, "pickup_gold", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 	}
 
 #if 1 /* hm, too much spam? - but usually you'd get this notification anyway, if logged in a bit earlier.. */
