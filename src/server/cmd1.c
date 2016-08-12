@@ -2467,8 +2467,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 							if (!can_use(Ind, i_ptr)) continue;
 							/* ID rod && ID staff (no *perc*) */
-							if ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY && !i_ptr->pval) ||
-							    (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0)) {
+							if ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY &&
+#ifndef NEW_MDEV_STACKING
+							    !i_ptr->pval
+#else
+							    i_ptr->bpval < i_ptr->number
+#endif
+							    ) || (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0)) {
 								bool flipped = FALSE;
 
 								ID_item_found = TRUE;
@@ -2498,11 +2503,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 								p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 								if (i_ptr->tval == TV_ROD) {
-									//Formula is taken from cmd6.c
-									i_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+									//Formula is taken from cmd6.c -- KEEP IN SYNC!
+									//i_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+#ifndef NEW_MDEV_STACKING
+									i_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
 									if (i_ptr->name2 == EGO_RISTARI /* of istari */ || i_ptr->name2 == EGO_RCHARGING /* of charging */)
 										i_ptr->pval /= 2;
-
 									//Unstack
 									if (i_ptr->number > 1) {
 										/* Make a fake item */
@@ -2521,10 +2527,17 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 										/* Message */
 										msg_print(Ind, "You unstack your rod.");
 									}
+#else
+									if (i_ptr->name2 == EGO_RISTARI /* of istari */ || i_ptr->name2 == EGO_RCHARGING /* of charging */)
+										i_ptr->pval += (55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50) + 1) / 2;
+									else
+										i_ptr->pval += 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
+									i_ptr->bpval++;
+#endif
 								} else if (i_ptr->tval == TV_STAFF) {
 									//Decrease the charge
 									i_ptr->pval--;
-
+#ifndef NEW_MDEV_STACKING
 									//Unstack
 									if (i_ptr->number > 1) {
 										/* Make a fake item */
@@ -2545,6 +2558,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 										if (item >= 0) inven_item_charges(Ind, item);
 										else floor_item_charges(0-item);
 									}
+#endif
 								}
 
 								/* consume a turn */

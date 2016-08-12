@@ -4097,7 +4097,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 			msg_print(Ind, "There is a static discharge.");
 
 			/* Hack -- decharge the rod */
-			if (o_ptr->pval < 10000) o_ptr->pval = (o_ptr->pval + 100) * 2;
+			if (o_ptr->pval < 999) discharge_rod(o_ptr, 999);
 		}
 
 		/* Recharge */

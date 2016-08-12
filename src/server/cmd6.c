@@ -3886,7 +3886,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		if (o_ptr) o_ptr->pval += 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 		break;
 
-	case SV_ROD_IDENTIFY:
+	case SV_ROD_IDENTIFY: //KEEP IN SYNC with cmd1.c '!X' zapping!
 		ident = TRUE;
 		if (!ident_spell(Ind)) *use_charge = FALSE;
 		//if (o_ptr) o_ptr->pval += 10;
@@ -4119,8 +4119,11 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	pval_old = o_ptr->pval;
 #endif
 	ident = zap_rod(Ind, o_ptr->sval, rad, o_ptr, &use_charge);
-
+#ifdef NEW_MDEV_STACKING
+	if (f4 & TR4_CHARGING) o_ptr->pval -= (o_ptr->pval - pval_old) / 2;
+#else
 	if (f4 & TR4_CHARGING) o_ptr->pval /= 2;
+#endif
 
 	break_cloaking(Ind, 3);
 	break_shadow_running(Ind);

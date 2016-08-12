@@ -76,7 +76,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap) {
 			msg_format(Ind, "%s resists the effect!", o_name);
 			continue;
 		}
-//		tmp_obj = p_ptr->inventory[i];
+		//tmp_obj = p_ptr->inventory[i];
 
 		/* Hack -- If a wand, allocate total
 		 * maximum timeouts or charges between those
@@ -1016,10 +1016,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 						msg_print(Ind, "The fire hasn't finished.");
 					ident = TRUE;
 				}
-				//else if ((j_ptr->tval == TV_ROD_MAIN) && (j_ptr->sval == SV_ROD_RECALL))
 				else if ((j_ptr->tval == TV_ROD) && (j_ptr->sval == SV_ROD_RECALL)) {
-					//j_ptr->timeout = 0; /* a long time */
-					j_ptr->pval = 999; /* a long time */
+					discharge_rod(j_ptr, 999); /* a long time */
 					if (!ident) msg_print(Ind, "You feel the air stabilize around you.");
 					ident = TRUE;
 				}
@@ -3131,7 +3129,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	int num;
 
 	object_type *o_ptr, *j_ptr, *i_ptr;
-//	cptr q,s,c;
+	//cptr q,s,c;
 	object_type object_type_body;
 
 	u32b f1, f2, f3, f4, f5, f6, esp;
@@ -3251,7 +3249,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	i_ptr->number = num;
 
 	/* Drop it here */
-//	cave[py][px].special = floor_carry(py, px, i_ptr);
+	//cave[py][px].special = floor_carry(py, px, i_ptr);
 	if (!(cs_ptr = AddCS(c_ptr, CS_MON_TRAP))) return;
 
 	/*
@@ -3262,8 +3260,8 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	 */
 	if (is_magic_device(j_ptr->tval)) divide_charged_item(i_ptr, j_ptr, 1);
 
-//	cs_ptr->type = CS_MON_TRAP;
-//	cs_ptr->sc.montrap.trap_load = pop_montrap(i_ptr);
+	//cs_ptr->type = CS_MON_TRAP;
+	//cs_ptr->sc.montrap.trap_load = pop_montrap(i_ptr);
 	i = pop_montrap(Ind, i_ptr, 0);
 
 	/* Obtain local object for trap trigger kit */
@@ -3398,15 +3396,15 @@ static void identify_mon_trap_load(int who, object_type *o_ptr) {
 	//p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }
 
-/* 
+/*
  * Monster hitting a rod trap -MWK-
  *
  * Return TRUE if the monster died
- */ 
+ */
 static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	int dam = 0, typ = 0, rad = 0;//unused huh, cloud = 0, cloudi = 0;
 	monster_type *m_ptr = &m_list[m_idx];
-//	monster_race    *r_ptr = race_inf(m_ptr);
+	//monster_race    *r_ptr = race_inf(m_ptr);
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	u32b f1, f2, f3, f4, f5, f6, esp, flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP;
@@ -3421,16 +3419,16 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	/* Depend on rod type */
         switch (o_ptr->sval) {
 	case SV_ROD_DETECT_TRAP:
-//		m_ptr->smart |= SM_NOTE_TRAP;
+		//m_ptr->smart |= SM_NOTE_TRAP;
 		break;
 	case SV_ROD_DETECTION:
-//		m_ptr->smart |= SM_NOTE_TRAP;
+		//m_ptr->smart |= SM_NOTE_TRAP;
 		break;
 	case SV_ROD_ILLUMINATION:
 		typ = GF_LITE;//GF_LITE_WEAK;
 		dam = damroll(4, 6);
 		rad = 2;
-//		lite_room(y, x);
+		//lite_room(y, x);
 		break;
 	case SV_ROD_CURING:
 		typ = GF_CURING; //GF_OLD_HEAL;
@@ -3535,25 +3533,32 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	if (typ) (void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
 
 	/* Set rod recharge time */
-//	o_ptr->timeout -= (f4 & TR4_CHEAPNESS) ? tip_ptr->pval / 2 : tip_ptr->pval;
-	o_ptr->pval = (f4 & TR4_CHEAPNESS) ? k_ptr->level / 2 + 5 : k_ptr->level + 10;
+#ifndef NEW_MDEV_STACKING
+	o_ptr->pval = (f4 & TR4_CHEAPNESS) ? k_ptr->level / 2 + 5 : k_ptr->level + 10);
+#else
+	//(TR4_CHEAPNESS is unused/deprecated)
+	if (f4 & TR4_CHARGING) o_ptr->pval += (k_ptr->level + 10) / 2;
+	else o_ptr->pval += k_ptr->level + 10;
+	o_ptr->bpval++;
+#endif
+
 
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
-/* 
+/*
  * Monster hitting a device trap -MWK-
  *
  * Return TRUE if the monster died
- */ 
+ */
 static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
-//	monster_race    *r_ptr = race_inf(m_ptr);
+	//monster_race    *r_ptr = race_inf(m_ptr);
 	worldpos wpos = m_ptr->wpos;
 	int dam = 0, typ = 0, rad = 0;//unused huh   , cloud = 0, cloudi = 0;
 	int k;
 	int y = m_ptr->fy;
-	int x = m_ptr->fx;	
+	int x = m_ptr->fx;
 	cave_type **zcave;
 	zcave = getcave(&wpos);
 	bool id = FALSE;
@@ -4517,7 +4522,7 @@ bool mon_hit_trap(int m_idx) {
 	int i, who = PROJECTOR_MON_TRAP;
 	cave_type *c_ptr;
 	cave_type **zcave;
-//	worldpos *wpos = &m_ptr->wpos;
+	//worldpos *wpos = &m_ptr->wpos;
 	worldpos wpos = m_ptr->wpos;
 
 	zcave = getcave(&wpos);
@@ -4667,8 +4672,17 @@ bool mon_hit_trap(int m_idx) {
 #endif
 	}
 
-	/* Is the trap ready to fire? (Important only for rod-traps) - C. Blue */
-	if (kit_o_ptr->timeout) return (FALSE);
+	/* Trap doesn't get removed but is also not ready to fire?
+	   (Important only for rod-traps, so they don't get remove'd w/o actually having fired). */
+	if (!disarm &&
+	    kit_o_ptr->sval == SV_TRAPKIT_DEVICE &&
+	    load_o_ptr->tval == TV_ROD) {
+#ifndef NEW_MDEV_STACKING
+		if (load_o_ptr->pval) return FALSE;
+#else
+		if (load_o_ptr->bpval == load_o_ptr->number) return FALSE;
+#endif
+	}
 
 	/* Otherwise, activate the trap! */
 	if (!disarm) {
@@ -4690,7 +4704,7 @@ bool mon_hit_trap(int m_idx) {
 #endif
 
 		/* Next time be more careful */
-		//                if (randint(100) < 80) m_ptr->smart |= SM_NOTE_TRAP;
+		//if (randint(100) < 80) m_ptr->smart |= SM_NOTE_TRAP;
 
 		/* Actually activate the trap */
 		switch (kit_o_ptr->sval) {
@@ -4967,7 +4981,11 @@ bool mon_hit_trap(int m_idx) {
 			/* Get number of shots */
 			shots = 1;
 			if (load_o_ptr->tval == TV_ROD) {
+#ifndef NEW_MDEV_STACKING
 				if (load_o_ptr->pval) shots = 0;
+#else
+				if (load_o_ptr->bpval == load_o_ptr->number) shots = 0;
+#endif
 			} else {
 				if (f3 & TR3_XTRA_SHOTS) shots += kit_o_ptr->pval;
 				if (shots <= 0) shots = 1;
@@ -4998,9 +5016,7 @@ bool mon_hit_trap(int m_idx) {
 					break;
 				}
 				/* Decrease charges */
-				if (load_o_ptr->tval != TV_ROD) {
-					load_o_ptr->pval--;
-				}
+				if (load_o_ptr->tval != TV_ROD) load_o_ptr->pval--;
 			}
 			break;
 
@@ -5018,8 +5034,8 @@ bool mon_hit_trap(int m_idx) {
 	if ((f2 & TRAP2_TELEPORT_TO) && (!disarm) && (!dead) && who > 0)
 		teleport_to_player(who, m_idx);
 
-	/* Remove the trap if inactive now */	
-//	if (remove) cave_set_feat_live(wpos, my, mx, FEAT_FLOOR);
+	/* Remove the trap if inactive now */
+	//if (remove) cave_set_feat_live(wpos, my, mx, FEAT_FLOOR);
 	if (remove) do_cmd_disarm_mon_trap_aux(&wpos, my, mx);
 
 	/* did it die? */

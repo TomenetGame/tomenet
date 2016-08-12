@@ -9098,10 +9098,16 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 }
 
 void discharge_rod(object_type *o_ptr, int c) {
+#ifndef NEW_MDEV_STACKING
 	o_ptr->pval += c;
+#else
+	o_ptr->pval += c * o_ptr->number;
+	o_ptr->bpval = o_ptr->number; //discharge whole stack
+#endif
 
 	//limit against rod-specific max:
 	 //todo: make a function from the cmd6.c ..zap_rod.. code that returns the default recharge time of a rod or sth..
+
 }
 
 /*
@@ -10003,7 +10009,7 @@ void process_objects(void) {
 		if ((turn % (level_speed(&o_ptr->wpos) / 120))) continue;
 #endif
 
-		/* Recharge rods on the ground */
+		/* Recharge rods on the ground and inside trap kits */
 		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
 #ifndef NEW_MDEV_STACKING
 			o_ptr->pval--;
@@ -10014,10 +10020,6 @@ void process_objects(void) {
 			if (!o_ptr->pval) o_ptr->bpval = 0;
 #endif
 		}
-
-		/* Recharge rod trap kits */
-		if (o_ptr->tval == TV_TRAPKIT && o_ptr->sval == SV_TRAPKIT_DEVICE &&
-		    o_ptr->timeout) o_ptr->timeout--;
 	}
 }
 
