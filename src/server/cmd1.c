@@ -2508,7 +2508,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #ifndef NEW_MDEV_STACKING
 									i_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
 									if (i_ptr->name2 == EGO_RISTARI /* of istari */ || i_ptr->name2 == EGO_RCHARGING /* of charging */)
-										i_ptr->pval /= 2;
+										i_ptr->pval /= 2; //maybe replace ego-hardcode by TR4_CHARGING
 									//Unstack
 									if (i_ptr->number > 1) {
 										/* Make a fake item */
@@ -2528,6 +2528,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 										msg_print(Ind, "You unstack your rod.");
 									}
 #else
+									//maybe replace ego-hardcode by TR4_CHARGING
 									if (i_ptr->name2 == EGO_RISTARI /* of istari */ || i_ptr->name2 == EGO_RCHARGING /* of charging */)
 										i_ptr->pval += (55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50) + 1) / 2;
 									else
