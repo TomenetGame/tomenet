@@ -4495,7 +4495,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Thunderstorm */
 	if (p_ptr->tim_thunder) {
 		int dam = damroll(p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
-		int x, y, tries = 30;
+		int x, y, tries = 40;
 		monster_type *m_ptr = NULL;
 
 		while (--tries) {
