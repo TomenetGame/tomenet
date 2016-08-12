@@ -479,6 +479,10 @@ void do_cmd_eat_food(int Ind, int item) {
 			msg_print(Ind, "You cannot eat food.");
 			return;
 		}
+		if (o_ptr->tval == TV_FIRESTONE) {
+			msg_print(Ind, "You cannot eat firestones.");
+			return;
+		}
 	}
 
 	/* Let the player stay afk while eating,
