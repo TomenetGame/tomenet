@@ -4022,14 +4022,14 @@
 #define PROJECT_DUMY	0x00000400	/* Don't affect anything or anybody (just visual fx, used for EFF_FIREWORKS etc.) */
 #define PROJECT_GRAV	0x00000800	/* Affected by gravity ie running along the ground. Example: Fire Wall. (Will hence stop at FEAT_DARK_PIT) */
 
-#define PROJECT_PLAY	0x00001000	/* Affect players too, including the projector. (for GF_HEALINGCLOUD) */
+#define PROJECT_PLAY	0x00001000	/* Affect friendly players too, including the projector. (for GF_HEALINGCLOUD) */
 #define PROJECT_NORF	0x00002000	/* cannot be deflected by REFLECT monster flag */
 #define PROJECT_FULL	0x00004000	/* Deal full damage over radius spread (May dehack many things with this! - Kurzel) */
 #define PROJECT_EVSG	0x00008000	/* 'Entity vs Grid': It's a bolt spell that can hit EITHER mon/py OR floor/item. */
 
-#define PROJECT_NODO	PROJECT_NORF	/* cannot be dodged (basically used in the same places as NORF) */
-#define PROJECT_LODF	0x00020000	/* can only partially be deflected by shield-blocking. */
-#define PROJECT_NODF	0x00040000	/* cannot be deflected by shield-blocking. */
+#define PROJECT_NODO	0x00010000	/* cannot be dodged (basically used in the same places as NORF) */
+#define PROJECT_LODF	0x00020000	/* can not often be deflected by shield-blocking. */
+#define PROJECT_NODF	0x00040000	/* cannot be deflected by shield-blocking at all. */
 #define PROJECT_RNAF	0x00080000	/* has no adverse effects if resisted (added for time runecraft on high-elven characters) */
 
 /* ToME expansions */

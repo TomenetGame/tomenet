@@ -197,10 +197,10 @@ POISONBLOOD = add_spell {
 THUNDERSTORM = add_spell {
 	["name"] = 	"Thunderstorm",
 	["school"] = 	{SCHOOL_AIR, SCHOOL_NATURE},
-	["level"] = 	25,
+	["level"] = 	15,
 	["mana"] = 	45,
 	["mana_max"] = 	45,
-	["fail"] = 	-10,
+	["fail"] = 	0,
 	["spell"] = 	function()
 			set_tim_thunder(Ind, randint(10) + 10 + get_level(Ind, THUNDERSTORM, 25), 5 + get_level(Ind, THUNDERSTORM, 10), 10 + get_level(Ind, THUNDERSTORM, 25))
 	end,
@@ -210,7 +210,6 @@ THUNDERSTORM = add_spell {
 	["desc"] = 	{
 			"Charges up the air around you with electricity.",
 			"Each turn it will throw a thunder bolt at a random monster in sight.",
-			"The thunder does 3 types of damage: One third of lightning,",
-			"one third of sound and one third of light."
+			"Thunder is a compound damage type, consisting of electricity, sound and light."
 	}
 }

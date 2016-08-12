@@ -1041,8 +1041,7 @@ static void process_effects(void) {
 			if (c_ptr->effect != k) /* Nothing */;
 			else {
 				if (e_ptr->time) {
-					int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP;
-						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP
+					int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF;
 
 					flg = mod_ball_spell_flags(e_ptr->type, flg);
 
@@ -2913,8 +2912,7 @@ static int auto_retaliate(int Ind) {
 /*
  * Player processing that occurs at the beginning of a new turn
  */
-static void process_player_begin(int Ind)
-{
+static void process_player_begin(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* for AT_VALINOR: */
@@ -3096,8 +3094,7 @@ static void process_player_begin(int Ind)
 /*
  * Generate the feature effect
  */
-static void apply_effect(int Ind)
-{
+static void apply_effect(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int y = p_ptr->py, x = p_ptr->px;
 	cave_type *c_ptr;
@@ -3134,7 +3131,7 @@ static void apply_effect(int Ind)
 
 				/* Apply damage */
 				project(PROJECTOR_TERRAIN, 0, &p_ptr->wpos, y, x, dam, f_ptr->d_type[i],
-				    PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP, "");
+				    PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF, "");
 
 				/* Hack -- notice death */
 //				if (!alive || death) return;
@@ -3935,7 +3932,7 @@ static bool process_player_end_aux(int Ind) {
 		if (d_ptr && d_ptr->type == DI_CLOUD_PLANES) {
 #if 0 /* questionable - same as floor terrain effects? (kills potions) */
 			project(PROJECTOR_TERRAIN, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, randint(20), GF_COLD,
-			    PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP, "freezing winds");
+			    PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF, "freezing winds");
 #else /* seems better/cleaner */
 			if (!p_ptr->immune_cold) {
 				int dam;
@@ -4490,43 +4487,56 @@ static bool process_player_end_aux(int Ind) {
 	/* Thunderstorm */
 	if (p_ptr->tim_thunder) {
 		int dam = damroll(p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
-		int i, tries = 600;
+		int x, y, tries = 30;
 		monster_type *m_ptr = NULL;
 
-		while (tries) {
-			/* Access the monster */
-			m_ptr = &m_list[i = rand_range(1, m_max - 1)];
+		while (--tries) {
+			/* Pick random location within thunderstorm radius and check for creature */
+			scatter(&p_ptr->wpos, &y, &x, p_ptr->py, p_ptr->px, (MAX_RANGE * 2) / 3, FALSE);
+			//(max possible grids [tries recommended]: 1 ~1020, 5/6 ~710, 4/5 ~615, 3/4 ~530, 2/3 ~450 [30], 1/2 ~255 [15])
+			c_ptr = &zcave[y][x];
 
-			tries--;
+			/* Any creature/player here, apart from ourselves? */
+			if (!c_ptr->m_idx || -c_ptr->m_idx == Ind) continue;
+
+			/* Non-hostile player or special projector? Skip. */
+			if (c_ptr->m_idx < 0 &&
+			    (c_ptr->m_idx <= PROJECTOR_UNUSUAL || !check_hostile(Ind, -c_ptr->m_idx)))
+				continue;
+
+			/* Access the monster */
+			m_ptr = &m_list[c_ptr->m_idx];
 
 			/* Ignore "dead" monsters */
 			if (!m_ptr->r_idx) continue;
 
-			/* pfft. not even our level */
+			/* Spells cast by a player never hurt a friendly golem */
+			if (m_ptr->owner) {
+				int i;
 
-			if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-			/* Cant see ? cant hit */
-			if (!los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) continue;
-			if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > 15) continue;
+				//look for its owner to see if he's hostile or not
+				for (i = 1; i < NumPlayers; i++)
+					if (Players[i]->id == m_ptr->owner) {
+						if (!check_hostile(Ind, i)) continue;
+						break;
+					}
+				//if his owner is not online, assume friendly(!)
+				if (i == NumPlayers) continue;
+			}
 
-			/* Do not hurt friends! */
-			/* if (is_friend(m_ptr) >= 0) continue; */
+			/* We found a target */
 			break;
 		}
 
 		if (tries) {
 			char m_name[MNAME_LEN];
 
-			monster_desc(Ind, m_name, i, 0);
-			msg_format(Ind, "Lightning strikes %s.", m_name, i, dam);
-			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam, GF_THUNDER,
-			        PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID, "");
-			//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
-			//	PROJECT_KILL | PROJECT_ITEM, "");
-			//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,
-			//	PROJECT_KILL | PROJECT_ITEM, "");
-			//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_SOUND,
-			//	PROJECT_KILL | PROJECT_ITEM, "");
+			monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+			msg_format(Ind, "Lightning strikes %s.", m_name);
+#ifdef USE_SOUND_2010
+			sound_near_site(y, x, &p_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE); //don't overlap, too silyl?
+#endif
+			project(0 - Ind, 0, &p_ptr->wpos, y, x, dam, GF_THUNDER, PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO, "");
 		}
 
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - minus_magic, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);

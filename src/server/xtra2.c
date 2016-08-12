@@ -4982,7 +4982,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	/* One more ultra-hack: An Unmaker goes out with a big bang! */
 	else if (strstr((r_name + r_ptr->name),"Unmaker")) {
-		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+		int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 		(void)project(m_idx, 6, wpos, y, x, 150, GF_CHAOS, flg, "The Unmaker explodes for");
 	}
 
@@ -5013,7 +5013,7 @@ bool monster_death(int Ind, int m_idx) {
 	/* Let monsters explode! */
 	for (i = 0; i < 4; i++) {
 		if (m_ptr->blow[i].method == RBM_EXPLODE) {
-			int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+			int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 			int typ = GF_MISSILE;
 			int d_dice = m_ptr->blow[i].d_dice;
 			int d_side = m_ptr->blow[i].d_side;
@@ -12248,7 +12248,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 			int x, y;
 			//abuse 'id'
 			id = 10;
-			while (id--) {
+			while (--id) {
 				if (rand_int(2)) x = houses[i].x - 15 + rand_int(13);
 				else x = houses[i].x + 15 - rand_int(13);
 				if (rand_int(2)) y = houses[i].y - 15 + rand_int(13);

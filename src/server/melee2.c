@@ -558,7 +558,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
  #endif
 #endif
 
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
@@ -567,7 +567,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
 static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad) {
 	player_type *p_ptr = Players[Ind];
 //	int rad;
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
@@ -631,7 +631,7 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
  #endif
 #endif
 
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
@@ -665,7 +665,7 @@ static void beam(int Ind, int m_idx, int typ, int dam_hp) {
  */
 static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad, int duration, int interval) {
 	player_type *p_ptr = Players[Ind];
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODO | PROJECT_NODF;
 
 	project_time = duration;
 	project_interval = interval;

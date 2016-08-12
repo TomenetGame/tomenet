@@ -11270,7 +11270,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 		   direction that would set the coords for us. */
 		if ((d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) || (d_ptr->flags2 & DF2_IRON)) {
 			n = 1000;
-			while (n--) {
+			while (--n) {
 				x = rand_int(MAX_WID - 2) + 1;
 				y = rand_int(MAX_HGT - 2) + 1;
 				if (cave_floor_bold(zcave, y, x)) break;

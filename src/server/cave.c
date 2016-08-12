@@ -8073,28 +8073,24 @@ bool projectable_wall_real(int Ind, int y1, int x1, int y2, int x2, int range)
  * This function is often called from inside a loop which searches for
  * locations while increasing the "d" distance.
  *
- * Currently the "m" parameter is unused.
- *
- * But now the "m" parameter specifies whether "los" is necessary.
+ * m: FALSE = need LoS to x,y to be valid. TRUE = don't need LoS.
  */
 /* if d<16, consider using tdi,tdy,tdx; considerably quicker! */
-void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m)
-{
+void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m) {
 	int nx, ny;
-//	long tries = 100000;
+	//long tries = 100000;
 	/* Reduced to 10k to lessen lockups - mikaelh */
 	long tries = 10000;
 
-        cave_type **zcave;
-        if (!(zcave = getcave(wpos))) {
+	cave_type **zcave;
+	if (!(zcave = getcave(wpos))) {
 		(*yp) = y;
 		(*xp) = x;
 		return;
 	}
 
 	/* Pick a location */
-	while (TRUE)
-	{
+	while (TRUE) {
 		/* Don't freeze in infinite loop!
 		   Conditions: wpos is not allocated.
 		   Note: los() returns TRUE if x==nx and y==ny.

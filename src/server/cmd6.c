@@ -3820,7 +3820,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 #endif	// 0
 
 	case SV_WAND_WALL_CREATION:
-		project_hook(Ind, GF_STONE_WALL, dir, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID, "");
+		project_hook(Ind, GF_STONE_WALL, dir, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
 		ident = TRUE;
 		break;
 

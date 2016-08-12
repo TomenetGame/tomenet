@@ -4606,26 +4606,26 @@ static void do_arrow_brand_effect(int Ind, int y, int x) {
 
 	switch (p_ptr->bow_brand_t) {
 	case BRAND_BALL_FIRE:
-		project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+		project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
 	case BRAND_BALL_COLD:
-		project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+		project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
 	case BRAND_BALL_ELEC:
-		project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+		project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
 	case BRAND_BALL_ACID:
-		project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+		project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
 	case BRAND_BALL_SOUN:
-		project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
+		project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
 	case BRAND_VORP:
 		/* Nothing here */
 		break;
 	case BRAND_CHAO:
 		/* XXX This allows the target player to 'dodge' the effect... */
-		project(0 - Ind, 0, &p_ptr->wpos, y, x, 1, GF_CONFUSION, PROJECT_NORF | PROJECT_JUMP | PROJECT_KILL, "");
+		project(0 - Ind, 0, &p_ptr->wpos, y, x, 1, GF_CONFUSION, PROJECT_NORF | PROJECT_JUMP | PROJECT_KILL | PROJECT_NODO | PROJECT_NODF, "");
 		break;
 	}
 }
@@ -4639,7 +4639,7 @@ void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x,
 	//int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 4;
 	//int dam = (damroll(o_ptr->dd, o_ptr->ds) + 5) * 3 + o_ptr->to_d;
 	int dam = (damroll(o_ptr->dd, o_ptr->ds) + 10) * 2 + o_ptr->to_d;
-	int flag = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
+	int flag = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP | PROJECT_NODO;
 
 	switch(o_ptr->sval) {
 	case SV_AMMO_LIGHT: rad = 1; break;
@@ -6183,7 +6183,7 @@ void do_cmd_fire(int Ind, int dir) {
 	if (p_ptr->ranged_flare && !boomerang) {
 		if (!hit_body && !ranged_flare_body) {
 			object_type forge;
-			(void)project(0 - Ind, 2, wpos, y, x, damroll(2, 6), GF_LITE_WEAK, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL, "");
+			(void)project(0 - Ind, 2, wpos, y, x, damroll(2, 6), GF_LITE_WEAK, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO, "");
 #ifndef PY_FIRE_ON_WALL
 			lite_room(Ind, wpos, y, x);
 #else

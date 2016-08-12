@@ -920,13 +920,13 @@ s_printf("Duration: %d\n", duration);
 #ifdef BACKLASH_PROTECTION
 		if (!rspell_socket(Ind, projection, FALSE))
 #endif
-			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, backlash, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP | PROJECT_RNAF), "");
+			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, backlash, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP | PROJECT_RNAF | PROJECT_NODO | PROJECT_NODF), "");
 
 #ifdef BACKLASH_SUSCEPT
 	/* Lite Susceptability Check -- Add other suscept checks? ie. Fire for Ents? Disabled for consistancy until this is done. */
 	if (!failure && (gf_type == GF_LITE)) {
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 4 + randint(10));
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, GF_LITE, (PROJECT_KILL | PROJECT_NORF), "");
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, GF_LITE, (PROJECT_KILL | PROJECT_NORF | PROJECT_NODO | PROJECT_NODF | PROJECT_JUMP), "");
 		p_ptr->shooting_till_kill = FALSE;
 	}
 #endif
@@ -1141,7 +1141,7 @@ bool warding_rune_break(int m_idx)
 		byte gf_type = r_projections[projection].gf_type;
 
 		/* Create the Effect */
-		project(0 - who, radius, wpos, my, mx, damage, gf_type, (PROJECT_JUMP | PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL), "");
+		project(0 - who, radius, wpos, my, mx, damage, gf_type, (PROJECT_JUMP | PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_LODF), "");
 
 #ifdef USE_SOUND_2010
 		/* Sound */

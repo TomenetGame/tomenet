@@ -8689,7 +8689,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!friendly_player && (typ == GF_ARROW || typ == GF_MISSILE)
 		    && p_ptr->csp >= dam / 7 &&
 		    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF))) {
+		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO))) {
 			/* drain mana */
 			p_ptr->csp -= dam / 7;
 			p_ptr->redraw |= PR_MANA;
@@ -8705,13 +8705,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    /* reflect? */
 	    || (p_ptr->reflect &&
 	     !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) &&
+	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO)) &&
 	     rand_int(20) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 15 : 9))
 #ifdef USE_BLOCKING
 	    /* using a shield? requires USE_BLOCKING */
 	    || (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect / 5)) &&
 	     !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) &&
+	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO)) &&
 	     rand_int(20) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 15 : 9))
 #endif
 	    ))

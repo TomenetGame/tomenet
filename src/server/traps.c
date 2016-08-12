@@ -489,7 +489,7 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap) {
 	dam = damroll(my_dd, my_ds);
 
 	ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type,
-	    PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, t_name + t_ptr->name);
+	    PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO, t_name + t_ptr->name);
 	    // | PROJECT_KILL | PROJECT_JUMP
 	return (ident);
 }
@@ -3407,7 +3407,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	//monster_race    *r_ptr = race_inf(m_ptr);
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
-	u32b f1, f2, f3, f4, f5, f6, esp, flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP;
+	u32b f1, f2, f3, f4, f5, f6, esp, flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF;
 	//object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -3429,6 +3429,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 		dam = damroll(4, 6);
 		rad = 2;
 		//lite_room(y, x);
+		flg &= ~(PROJECT_NODF);
 		break;
 	case SV_ROD_CURING:
 		typ = GF_CURING; //GF_OLD_HEAL;
@@ -3471,51 +3472,56 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	case SV_ROD_ACID_BOLT:
 		typ = GF_ACID;
 		dam = damroll(8, 8);
-		flg &= ~PROJECT_NORF;
+		flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
 		flg |= PROJECT_EVSG;
 		break;
 	case SV_ROD_ELEC_BOLT:
 		typ = GF_ELEC;
 		dam = damroll(6, 8);
-		flg &= ~PROJECT_NORF;
+		flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
 		flg |= PROJECT_EVSG;
 		break;
 	case SV_ROD_FIRE_BOLT:
 		typ = GF_FIRE;
 		dam = damroll(10, 8);
-		flg &= ~PROJECT_NORF;
+		flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
 		flg |= PROJECT_EVSG;
 		break;
 	case SV_ROD_COLD_BOLT:
 		typ = GF_COLD;
 		dam = damroll(7, 8);
-		flg &= ~PROJECT_NORF;
+		flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
 		flg |= PROJECT_EVSG;
 		break;
 	case SV_ROD_ACID_BALL:
 		typ = GF_ACID;
 		dam = 100;
 		rad = 2;
+		flg &= ~(PROJECT_NODF);
 		break;
 	case SV_ROD_ELEC_BALL:
 		typ = GF_ELEC;
 		dam = 90;
 		rad = 2;
+		flg &= ~(PROJECT_NODF);
 		break;
 	case SV_ROD_FIRE_BALL:
 		typ = GF_FIRE;
 		dam = 105;
 		rad = 2;
+		flg &= ~(PROJECT_NODF);
 		break;
 	case SV_ROD_COLD_BALL:
 		typ = GF_COLD;
 		dam = 95;
 		rad = 2;
+		flg &= ~(PROJECT_NODF);
 		break;
 	case SV_ROD_HAVOC:
 		typ = GF_CHAOS;
 		dam = 200;
 		rad = 5;
+		flg &= ~(PROJECT_LODF);
 		break;
 	default:
 		return (FALSE);
@@ -3708,7 +3714,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	if (rad >= 2) rad += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty / 15;
 
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODO | PROJECT_LODF, "");
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -3912,7 +3918,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODO | PROJECT_LODF, "");
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -3928,7 +3934,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	int x = m_ptr->fx;
 	cave_type **zcave;
 	zcave = getcave(&m_ptr->wpos);
-	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODF;
+	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO;
 
 	/* Depend on wand type */
 	switch ((o_ptr->sval == SV_WAND_WONDER) ? rand_int(SV_WAND_WONDER) : o_ptr->sval) {
@@ -3958,6 +3964,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 		case SV_WAND_LITE:
 			typ = GF_LITE;//GF_LITE_WEAK;
 			dam = damroll(6, 8);
+			flg &= ~(PROJECT_NODF);
 			break;
 		case SV_WAND_SLEEP_MONSTER:
 			typ = GF_OLD_SLEEP;
@@ -3993,51 +4000,55 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 		case SV_WAND_MAGIC_MISSILE:
 			typ = GF_MISSILE;
 			dam = damroll(3, 6);
-			flg &= ~PROJECT_NORF;
+			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
 			break;
 		case SV_WAND_ACID_BOLT:
 			typ = GF_ACID;
 			dam = damroll(6, 8);
-			flg &= ~PROJECT_NORF;
+			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
 			flg |= PROJECT_EVSG;
 			break;
 		case SV_WAND_FIRE_BOLT:
 			typ = GF_FIRE;
 			dam = damroll(6, 8);
-			flg &= ~PROJECT_NORF;
+			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
 			flg |= PROJECT_EVSG;
 			break;
 		case SV_WAND_ELEC_BOLT:
 			typ = GF_ELEC;
 			dam = damroll(5, 8);
-			flg &= ~PROJECT_NORF;
+			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
 			flg |= PROJECT_EVSG;
 			break;
 		case SV_WAND_COLD_BOLT:
 			typ = GF_COLD;
 			dam = damroll(5, 8);
-			flg &= ~PROJECT_NORF;
+			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
 			flg |= PROJECT_EVSG;
 			break;
 		case SV_WAND_ACID_BALL:
 			typ = GF_ACID;
 			rad = 2;
 			dam = 60;
+			flg &= ~(PROJECT_NODF);
 			break;
 		case SV_WAND_ELEC_BALL:
 			typ = GF_ELEC;
 			rad = 2;
 			dam = 52;
+			flg &= ~(PROJECT_NODF);
 			break;
 		case SV_WAND_FIRE_BALL:
 			typ = GF_FIRE;
 			rad = 2;
 			dam = 68;
+			flg &= ~(PROJECT_NODF);
 			break;
 		case SV_WAND_COLD_BALL:
 			typ = GF_COLD;
 			dam = 60;
 			rad = 2;
+			flg &= ~(PROJECT_NODF);
 			break;
 		case SV_WAND_ANNIHILATION:
 			typ = GF_ANNIHILATION;
@@ -4048,11 +4059,13 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			typ = GF_FIRE;
 			dam = 200;
 			rad = 3;
+			flg &= ~(PROJECT_NODF);
 			break;
 		case SV_WAND_DRAGON_COLD:
 			typ = GF_COLD;
 			dam = 170;
 			rad = 3;
+			flg &= ~(PROJECT_NODF);
 			break;
 		case SV_WAND_DRAGON_BREATH:
 			switch(randint(5)) {
@@ -4072,12 +4085,13 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			typ = GF_ROCKET;
 			dam = 300;
 			rad = 3;
+			flg &= ~(PROJECT_NODF);
 			break;
 		case SV_WAND_WALL_CREATION:
 			identify_mon_trap_load(who, o_ptr);
 			/* create a stone prison same as the istar spell - C. Blue */
 			project(PROJECTOR_TRAP, 1, &m_ptr->wpos, y, x, 1, GF_STONE_WALL,
-				PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, "trap of walls"); /* shouldn't this strictly speaking be a projection from '0 - who' too?.. */
+				PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO | PROJECT_NODF, "trap of walls"); /* shouldn't this strictly speaking be a projection from '0 - who' too?.. */
 			return (FALSE);
 
 		default:
@@ -4343,7 +4357,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 
 	/* Actually hit the monster */
 //	(void) project_m(who, y, x, 0, y, x, dam, typ);
-	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
+	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF), "");
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -4471,7 +4485,7 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
 
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODO | PROJECT_LODF, "");
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
