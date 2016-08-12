@@ -506,9 +506,11 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		    && p_ptr->prace != RACE_YEEK && p_ptr->prace != RACE_ENT
 		    && p_ptr->pclass != CLASS_RANGER && p_ptr->pclass != CLASS_DRUID) {
 			msg_print(Ind, "\374\377GYour magic allows you to pass trees and forests easily.");
-		} if (old_value < 400 && new_value >= 400
+		} if (old_value < 300 && new_value >= 300
 		    && p_ptr->prace != RACE_ENT && p_ptr->pclass != CLASS_RANGER) {
 			msg_print(Ind, "\374\377GYour magic allows you to pass water easily.");
+		} if (old_value < 400 && new_value >= 400) {
+			msg_print(Ind, "\374\377GYou feel able to breathe within poisoned air.");
 		}
 		/* + continuous effect */
 		break;

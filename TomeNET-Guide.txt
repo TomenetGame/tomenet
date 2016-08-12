@@ -14549,8 +14549,8 @@ Istar schools:
                     Required skill level for first spell level: 22.
 
     BONI:           Passing water at 30,
-                    Water resistance at 40,
-                    Water immunity at 50.
+                    water resistance at 40,
+                    water immunity at 50.
 
 
 - Air
@@ -14572,10 +14572,6 @@ Istar schools:
                     fire/cold/lightning/acid.                       (project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Earth, Air, Water.
-
-    Poison Blood    Gives temporary poison resistance.
-                    Lv10: Brands melee weapons with venom.
-                    Required skill level for first spell level: 22.
 
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
@@ -14620,34 +14616,39 @@ Istar schools:
 
 - Nature
 
-    Grow Trees      Grows trees quickly around you.
-                    Required skill level for first spell level: 20.
-
     Healing         Heals a percentage of your hit points.          (project)
                     Required skill level for first spell level: 1.
 
     Recovery I      Neutralizes poison, heals cuts, cures confusion,
                     stun and blindness.                             (project)
                     Required skill level for first spell level: 15.
-    Recovery II     In addition to the effects of Recovery I it also
-                    restores drained stats and lost experience.     (project)
-
     Vermin Control  Prevents vermin from breeding any further on
                     your current level.
                     Required skill level for first spell level: 15.
 
+    Thunderstorm    Throws thunder bolts at random monsters nearby.
+                    (33% lightning, 33% sound, 33% light)
+                    Required skill level for first spell level: 15.
+                    Shared spell (see above): Air, Nature.
+
     Regeneration    Increases your hit point regeneration rate.
                     Required skill level for first spell level: 20.
 
-    Thunderstorm    Throws thunder bolts at random monsters nearby.
-                    (33% lightning, 33% sound, 33% light)
-                    Required skill level for first spell level: 25.
-                    Shared spell (see above): Air, Nature.
+    Grow Trees      Grows trees quickly around you.
+                    Required skill level for first spell level: 30.
+
+    Poison Blood    Gives temporary poison resistance
+                    and brands melee weapons with venom.
+                    Required skill level for first spell level: 30.
+
+    Recovery II     In addition to the effects of Recovery I it also
+                    restores drained stats and lost experience.     (project)
+                    Required skill level for first spell level: 35.
 
     BONI:           Regeneration (faster hit point regeneration, same as from
                     items that provide regeneration) at 30,
-                    Pass trees easily at 30,
-                    Pass water easily at 40.
+                    pass trees and water easily at 30,
+                    poison resistance at 40.
 
 
 - Conveyance

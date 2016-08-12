@@ -5731,7 +5731,8 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_DIVINATION) >= 50) { p_ptr->auto_id = TRUE; csheet_boni[14].cb[6] |= CB7_RIDNT; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
-	if (get_skill(p_ptr, SKILL_NATURE) >= 40) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
+	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
+	if (get_skill(p_ptr, SKILL_NATURE) >= 40) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
 	/* - SKILL_MIND also helps to reduce hallucination time in set_image() */
 	if (get_skill(p_ptr, SKILL_MIND) >= 40 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
 	if (get_skill(p_ptr, SKILL_MIND) >= 50) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[3] |= CB4_RMIND; }
