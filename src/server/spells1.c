@@ -5273,10 +5273,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Never affect projector */
 	if ((who > 0) && (c_ptr->m_idx == who)) return (FALSE);
 
-	/* Never hurt golem */
-	if (who < 0 && who > PROJECTOR_UNUSUAL) {
-//if (IS_PVP) {
-		if (Players[-who]->id == m_ptr->owner) return (FALSE);
+	/* Spells cast by a player never hurt a friendly golem */
+	//if (IS_PVP)
+	if (m_ptr->owner && who < 0 && who > PROJECTOR_UNUSUAL) {
+		//look for its owner to see if he's hostile or not
+		for (i = 1; i < NumPlayers; i++)
+			if (Players[i]->id == m_ptr->owner) {
+				if (!check_hostile(0 - who, i)) return FALSE;
+				break;
+			}
+		//if his owner is not online, assume friendly(!)
+		if (i == NumPlayers) return FALSE;
 	}
 
 	/* Set the "seen" flag */
