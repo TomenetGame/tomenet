@@ -7993,6 +7993,7 @@ void golem_creation(int Ind, int max) {
 }
 
 /* pernAngband Additions	- Jir - */
+//note: average total damage is 2.333 x (damage+extra_damage), so ~3150 for (675+675)
 void call_chaos(int Ind, int dir, int extra_damage) {
 	player_type *p_ptr = Players[Ind];
 	int Chaos_type, dummy;
