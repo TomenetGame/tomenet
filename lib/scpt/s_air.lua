@@ -203,10 +203,12 @@ THUNDERSTORM = add_spell {
 	["mana_max"] = 	10,
 	["fail"] = 	0,
 	["spell"] = 	function()
-			set_tim_thunder(Ind, randint(10) + 10 + get_level(Ind, THUNDERSTORM, 25), 5 + get_level(Ind, THUNDERSTORM, 10), 10 + get_level(Ind, THUNDERSTORM, 25))
+			local lev = (player.s_info[SKILL_AIR + 1].value) / 2000
+			set_tim_thunder(Ind, randint(10) + 10 + get_level(Ind, THUNDERSTORM, 25), get_level(Ind, THUNDERSTORM, 10) + lev, 10 + get_level(Ind, THUNDERSTORM, 25) + lev / 2)
 	end,
 	["info"] = 	function()
-			return "dam "..(5 + get_level(Ind, THUNDERSTORM, 10)).."d"..(10 + get_level(Ind, THUNDERSTORM, 25)).." dur "..(10 + get_level(Ind, THUNDERSTORM, 25)).."+d10"
+			local lev = (player.s_info[SKILL_AIR + 1].value) / 2000
+			return "dam "..(get_level(Ind, THUNDERSTORM, 10) + lev).."d"..(10 + get_level(Ind, THUNDERSTORM, 25) + lev / 2).." dur "..(10 + get_level(Ind, THUNDERSTORM, 25)).."+d10"
 	end,
 	["desc"] = 	{
 			"Charges up the air around you with electricity.",
