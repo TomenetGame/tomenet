@@ -6507,6 +6507,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, typ, flg, pattacker)); /* typ -> colour */
 }
 
+/* For Nether Realm collapse ;) - C. Blue */
 bool cast_lightning(worldpos *wpos, int x, int y) {
 	char pattacker[80];
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
@@ -6535,6 +6536,21 @@ bool cast_lightning(worldpos *wpos, int x, int y) {
 #endif
 
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, typ, GF_SHOW_LIGHTNING, flg, pattacker));
+}
+
+/* For reworked Thunderstorm spell */
+bool thunderstorm_visual(worldpos *wpos, int x, int y) {
+	char pattacker[80];
+	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
+
+	strcpy(pattacker, "");
+
+	project_time_effect = EFF_THUNDER_VISUAL;
+	// 25,1; 5,3
+	project_time = 5;
+	project_interval = 3;
+
+	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, GF_THUNDER_VISUAL, flg, pattacker));
 }
 
 

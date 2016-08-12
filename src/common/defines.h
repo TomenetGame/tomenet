@@ -2237,15 +2237,18 @@
 /*
  * Number of effects
  */
-#define MAX_EFFECTS             256	/* 256, 128 */
-#define MAX_EFFECTS_PLAYER      256	/* 128, 32 */
-#define EFF_WAVE                0x00000001      /* A circle whose radius increase */
-#define EFF_LAST                0x00000002      /* The wave lasts */
-#define EFF_STORM               0x00000004      /* The area follows the player */
+#define MAX_EFFECTS		256	/* 256, 128 */
+#define MAX_EFFECTS_PLAYER	256	/* 128, 32 */
+
+#define EFF_WAVE		0x00000001	/* A circle whose radius increase */
+#define EFF_LAST		0x00000002	/* The wave lasts */
+#define EFF_STORM		0x00000004	/* The area follows the player */
 #define EFF_WALL		0x00000008	/* A cloud shaped like a beam */
 #define EFF_CROSSHAIR_A		0x00000010
 #define EFF_CROSSHAIR_B		0x00000020
 #define EFF_CROSSHAIR_C		0x00000040
+
+#define EFF_THUNDER_VISUAL	0x00800000	/* For 'Thunderstorm' spell electrocution */
 #define EFF_LIGHTNING1		0x01000000	/* For Nether Realm finishing */
 #define EFF_LIGHTNING2		0x02000000	/* For Nether Realm finishing */
 #define EFF_LIGHTNING3		0x04000000	/* For Nether Realm finishing */
@@ -4456,6 +4459,7 @@
 //ugly though, since they are wpos-bound -..
 // #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
 #define GF_SHOW_LIGHTNING	211
+#define GF_THUNDER_VISUAL	212
 
 #define GF_CROSSHAIR		250 /* what's this for? appearently unused; moved it to 250 */
 

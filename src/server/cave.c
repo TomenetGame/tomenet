@@ -3308,6 +3308,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 	}
 
 
+	/* Special 'dummy' effects that are purely for adding unusual visuals */
 	if (!c_ptr->effect) return;
 
 	/* display blue raindrops */
@@ -3346,6 +3347,21 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 		case -1: (*cp) = '\\'; break;
 		case 2: (*cp) = '_'; break;
 		default: (*cp) = '*';
+		}
+	}
+
+	/* for 'Thunderstorm' spell */
+	if ((effects[c_ptr->effect].flags & EFF_THUNDER_VISUAL)) {
+		(*ap) = TERM_THUNDER;
+		/* if basic floor or water, make it a bit flashier afterglow :D (makes it easier to see/better to savour if monster dies from it) */
+		// | * / \ ( )
+		if (*cp == '.' || *cp == '~' || rand_int(2))
+		switch (rand_int(5)) {
+		case 0: (*cp) = '|'; break;
+		case 1: (*cp) = '\\'; break;
+		case 2: (*cp) = '/'; break;
+		case 3: (*cp) = ')'; break;
+		case 4: (*cp) = '('; break;
 		}
 	}
 

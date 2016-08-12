@@ -1573,6 +1573,14 @@ static void process_effects(void) {
 		    && e_ptr->rad < 15) {
 			e_ptr->rad++;
 		}
+
+		/* thunderstorm visual */
+		else if (e_ptr->flags & EFF_THUNDER_VISUAL) {
+			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+			c_ptr->effect = k;
+			everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+		}
+
 	}
 
 
@@ -4537,6 +4545,7 @@ static bool process_player_end_aux(int Ind) {
 			sound_near_site(y, x, &p_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE); //don't overlap, too silyl?
 #endif
 			project(0 - Ind, 0, &p_ptr->wpos, y, x, dam, GF_THUNDER, PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO, "");
+			thunderstorm_visual(&p_ptr->wpos, x, y);
 		}
 
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - minus_magic, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);

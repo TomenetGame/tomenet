@@ -202,6 +202,7 @@
 //ugly though, since they are wpos-bound -..
 // #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
 #define GF_SHOW_LIGHTNING	211
+#define GF_THUNDER_VISUAL	212
 
 #define GF_CROSSHAIR		250 /* what's this for? appearently unused; moved it to 250 */
 
