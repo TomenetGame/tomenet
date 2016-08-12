@@ -4084,25 +4084,45 @@ void reinit_some_arrays(void) {
 /* Allow firework scrolls to drop in one specific dungeon, changing regularly? */
 void init_firework_dungeon(void) {
 	int i, d_ok[max_d_idx], d_ok_num = 0;
+ #ifdef DUNGEON_VISIT_BONUS
+	int dvb = 3;
+ #endif
 
 	d_ok[0] = 0; //wilderness dungeons are always ok, even if they get visited frequently? hmm
-	for (i = 1; i < max_d_idx; i++) {
-		/* dungeon must exist */
-		if (!d_info[i].name) continue;
+ #ifdef DUNGEON_VISIT_BONUS
+	while (TRUE) {
+ #endif
+		for (i = 1; i < max_d_idx; i++) {
+			/* dungeon must exist */
+			if (!d_info[i].name) continue;
 
-		/* dungeon must be rarely frequented to be eligible */
-		if (dungeon_bonus[i] != 3) continue;
+ #ifdef DUNGEON_VISIT_BONUS
+			/* dungeon must be among the most rarely frequented ones to be eligible */
+			if (dungeon_bonus[i] != dvb) continue;
+ #endif
 
-		/* never in the Nether Realm */
-		if (i == DI_NETHER_REALM) continue;
-
-		d_ok_num++;
-		d_ok[d_ok_num] = i;
+			/* never in the Nether Realm */
+			if (i == DI_NETHER_REALM) continue;
+			d_ok_num++;
+			d_ok[d_ok_num] = i;
+		}
+ #ifdef DUNGEON_VISIT_BONUS
+		/* If we were looking for too rarely visited dungeons, which didn't/hardly seem to exist at this time,
+		   check the next less-rarely visited tier instead, down to no rarely-visited checking at all.. */
+		if (d_ok_num <= 3) {
+			/* one less rarity tier */
+			dvb--;
+			/* and start over */
+			d_ok_num = 0;
+			continue;
+		}
+		/* ok, we got at least a couple eligible dungeons, so the choice isn't too narrow.. */
+		break;
 	}
-	firework_dungeon = d_ok[rand_int(d_ok_num + 1)]; //note: 0 = all 'Wilderness' dungeons! (usually ironman)
-
-	s_printf("firework_dungeon: %d (%s)%s\n", firework_dungeon, d_name + d_info[firework_dungeon].name, d_ok_num ? "" : " [exclusively]");
-	if (!d_ok_num) firework_dungeon_chance = 3000; //especially rare in 'wilderness' dungeons in case no other dungeons are eligible (!)
+ #endif
+	firework_dungeon = d_ok[rand_int(d_ok_num + 1)]; //note: 0 = all 'Wilderness' dungeons! (usually ironman) So those are ALWAYS eligible!
+	if (!firework_dungeon) firework_dungeon_chance = 2000; //especially rare in 'wilderness' dungeons
 	else firework_dungeon_chance = 1000;
+	s_printf("firework_dungeon: %d (%s)%s\n", firework_dungeon, d_name + d_info[firework_dungeon].name, d_ok_num ? "" : " [exclusively]"); //(currently cannot be exclusive)
 }
 #endif
