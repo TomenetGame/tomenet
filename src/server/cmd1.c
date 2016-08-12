@@ -4076,9 +4076,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	if (do_quake && !p_ptr->quaked) {
 		if (o_ptr->k_idx
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
-		    && !check_guard_inscription(o_ptr->note, 'E')
+		    && !check_guard_inscription(o_ptr->note, 'Q')
 #else
-		    && (!check_guard_inscription(o_ptr->note, 'E') ||
+		    && (!check_guard_inscription(o_ptr->note, 'Q') ||
 		    o_ptr->name1 != ART_GROND)
 #endif
 		    ) {
@@ -5283,9 +5283,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	if (do_quake && !p_ptr->quaked) {
 		if (o_ptr->k_idx
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
-		    && !check_guard_inscription(o_ptr->note, 'E')
+		    && !check_guard_inscription(o_ptr->note, 'Q')
 #else
-		    && (!check_guard_inscription(o_ptr->note, 'E') ||
+		    && (!check_guard_inscription(o_ptr->note, 'Q') ||
 		    o_ptr->name1 != ART_GROND)
 #endif
 		    ) {

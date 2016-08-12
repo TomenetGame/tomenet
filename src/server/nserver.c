@@ -8250,7 +8250,9 @@ static int Receive_aim_wand(int ind) {
 			return 1;
 		}
 
+		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 		do_cmd_aim_wand(player, item, dir);
+		p_ptr->shooty_till_kill = FALSE;
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%c", ch, item, dir);
@@ -9199,7 +9201,9 @@ static int Receive_zap_dir(int ind) {
 			return 1;
 		}
 
+		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 		do_cmd_zap_rod(player, item, dir);
+		p_ptr->shooty_till_kill = FALSE;
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd%c", ch, item, dir);

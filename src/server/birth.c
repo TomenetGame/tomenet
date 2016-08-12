@@ -2452,10 +2452,10 @@ static void player_setup(int Ind, bool new) {
 	/* Runecraft */
 	p_ptr->shoot_till_kill_rcraft = FALSE;
 	/* disable other ftk types */
-	p_ptr->shoot_till_kill_mimic = FALSE;
-	p_ptr->shoot_till_kill_rcraft = FALSE;
-	p_ptr->shoot_till_kill_wand = FALSE;
-	p_ptr->shoot_till_kill_rod = FALSE;
+	p_ptr->shoot_till_kill_mimic = 0;
+	p_ptr->shoot_till_kill_spell = 0;
+	p_ptr->shoot_till_kill_wand = 0;
+	p_ptr->shoot_till_kill_rod = 0;
 	/* totally obsolete and redundant */
 	p_ptr->IDDC_logscum = FALSE;
 #endif

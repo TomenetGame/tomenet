@@ -3493,7 +3493,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
 		    (randint(200) < power) && magik(50)
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
-		    && !check_guard_inscription(o_ptr->note, 'E')
+		    && !check_guard_inscription(o_ptr->note, 'Q')
 #endif
 		    ) {
 			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 7);
@@ -7592,17 +7592,21 @@ void stop_precision(int Ind) {
 /* stop shooting-till-kill */
 void stop_shooting_till_kill(int Ind) {
 	player_type *p_ptr = Players[Ind];
+
 	p_ptr->shooting_till_kill = FALSE;
+
 	p_ptr->shoot_till_kill_book = 0;
 	p_ptr->shoot_till_kill_spell = 0;
-	p_ptr->shoot_till_kill_rcraft = FALSE;
 	p_ptr->shoot_till_kill_mimic = 0;
 	p_ptr->shoot_till_kill_wand = 0;
 	p_ptr->shoot_till_kill_rod = 0;
+
 	if (p_ptr->shoot_till_kill_rcraft) {
 		p_ptr->FTK_e_flags = 0;
 		p_ptr->FTK_m_flags = 0;
 		p_ptr->FTK_energy = 0;
+
+		p_ptr->shoot_till_kill_rcraft = FALSE;
 	}
 }
 

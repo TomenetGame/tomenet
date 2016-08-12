@@ -3496,6 +3496,42 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	object_type *o_ptr;
 	bool flipped = FALSE;
 
+	/* Get the item (in the pack) */
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
+	/* Get the item (on the floor) */
+	else {
+		if (-item >= o_max) {
+			p_ptr->shooting_till_kill = FALSE;
+			return; /* item doesn't exist */
+		}
+		o_ptr = &o_list[0 - item];
+	}
+	if (o_ptr->tval != TV_WAND) {
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
+		p_ptr->shooting_till_kill = FALSE;
+		return;
+	}
+
+	/* Handle FTK targetting mode */
+	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
+		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
+		p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
+	}
+	if (p_ptr->shooty_till_kill) {
+		if (dir == 5 && check_guard_inscription(o_ptr->note, 'K')) {
+			/* We lost our target? (monster dead?) */
+			if (target_okay(Ind)) {
+				/* To continue shooting_till_kill, check if spell requires clean LOS to target
+				   with no other monsters in the way, so we won't wake up more monsters accidentally. */
+ #ifndef PY_PROJ_WALL
+				if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+ #else
+				if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+ #endif
+			} else p_ptr->shooty_till_kill = FALSE;
+		} else p_ptr->shooty_till_kill = FALSE;
+	}
+
 	/* Break goi/manashield */
 #if 0
 	if (p_ptr->invuln) set_invuln(Ind, 0);
@@ -3513,33 +3549,13 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
-	if (magik((p_ptr->antimagic * 8) / 5)) {
-#ifdef USE_SOUND_2010
-		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
-
 	/* Restrict choices to wands */
 	item_tester_tval = TV_WAND;
 
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max) return; /* item doesn't exist */
-		o_ptr = &o_list[0 - item];
-	}
 	if( check_guard_inscription( o_ptr->note, 'a' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};
-
-	if (o_ptr->tval != TV_WAND) {
-//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
-		return;
-	}
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
@@ -3582,8 +3598,38 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	/* Not identified yet */
 	ident = FALSE;
 
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+
+		//don't cancel FTK since this failure was just a chance thing
+		if (p_ptr->shooty_till_kill) {
+			p_ptr->shooting_till_kill = TRUE;
+			p_ptr->shoot_till_kill_wand = item;
+			/* disable other ftk types */
+			p_ptr->shoot_till_kill_mimic = 0;
+			p_ptr->shoot_till_kill_spell = 0;
+			p_ptr->shoot_till_kill_rcraft = FALSE;
+			p_ptr->shoot_till_kill_rod = 0;
+		}
+		return;
+	}
+
 	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the wand properly." , COLOUR_MD_FAIL);
+
+		//don't cancel FTK since this failure was just a chance thing
+		if (p_ptr->shooty_till_kill) {
+			p_ptr->shooting_till_kill = TRUE;
+			p_ptr->shoot_till_kill_wand = item;
+			/* disable other ftk types */
+			p_ptr->shoot_till_kill_mimic = 0;
+			p_ptr->shoot_till_kill_spell = 0;
+			p_ptr->shoot_till_kill_rcraft = FALSE;
+			p_ptr->shoot_till_kill_rod = 0;
+		}
 		return;
 	}
 
@@ -3859,6 +3905,29 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	/* Describe the charges on the floor */
 	else
 		floor_item_charges(0 - item);
+
+	if (p_ptr->shooty_till_kill) {
+#if 0
+		/* To continue shooting_till_kill, check if spell requires clean LOS to target
+		   with no other monsters in the way, so we won't wake up more monsters accidentally. */
+ #ifndef PY_PROJ_WALL
+		if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+ #else
+		if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+ #endif
+
+		/* We lost our target? (monster dead?) */
+		if (dir != 5 || !target_okay(Ind)) return;
+#endif
+		/* we're now indeed ftk */
+		p_ptr->shooting_till_kill = TRUE;
+		p_ptr->shoot_till_kill_wand = item;
+		/* disable other ftk types */
+		p_ptr->shoot_till_kill_mimic = 0;
+		p_ptr->shoot_till_kill_spell = 0;
+		p_ptr->shoot_till_kill_rcraft = FALSE;
+		p_ptr->shoot_till_kill_rod = 0;
+	}
 }
 
 
@@ -4061,13 +4130,6 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		return;
 	}
 #endif
-	if (magik((p_ptr->antimagic * 8) / 5)) {
-#ifdef USE_SOUND_2010
-		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
 
 	/* Get a direction (unless KNOWN not to need it) */
 	/* Pfft, dirty, dirty, diiirrrrtie!! (FIXME) */
@@ -4097,6 +4159,14 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	/* Not identified yet */
 	ident = FALSE;
+
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
 
 	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
@@ -4205,11 +4275,6 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	int pval_old;
 #endif
 
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
-		return;
-	}
-
 	item = p_ptr->current_rod;
 
 	/* Get the item (in the pack) */
@@ -4218,20 +4283,48 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	}
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max)
+		if (-item >= o_max) {
+			p_ptr->shooting_till_kill = FALSE;
 			return; /* item doesn't exist */
+		}
 
 		o_ptr = &o_list[0 - item];
 	}
+	if (o_ptr->tval != TV_ROD) {
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
+		p_ptr->shooting_till_kill = FALSE;
+		return;
+	}
+
+	/* Handle FTK targetting mode */
+	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
+		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
+		p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
+	}
+	if (p_ptr->shooty_till_kill) {
+		if (dir == 5 && check_guard_inscription(o_ptr->note, 'K')) {
+			/* We lost our target? (monster dead?) */
+			if (target_okay(Ind)) {
+				/* To continue shooting_till_kill, check if spell requires clean LOS to target
+				   with no other monsters in the way, so we won't wake up more monsters accidentally. */
+ #ifndef PY_PROJ_WALL
+				if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+ #else
+				if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+ #endif
+			} else p_ptr->shooty_till_kill = FALSE;
+		} else p_ptr->shooty_till_kill = FALSE;
+	}
+
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
+		return;
+	}
+
 	if (check_guard_inscription( o_ptr->note, 'z')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};
-
-	if (o_ptr->tval != TV_ROD) {
-//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
-		return;
-	}
 
 	/* Mega-Hack -- refuse to zap a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
@@ -4247,13 +4340,6 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		return;
 	}
 #endif
-	if (magik((p_ptr->antimagic * 8) / 5)) {
-#ifdef USE_SOUND_2010
-		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
 
 	/* Hack -- verify potential overflow */
 	/*if ((inven_cnt >= INVEN_PACK) &&
@@ -4278,9 +4364,39 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	/* Not identified yet */
 	ident = FALSE;
 
+	if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+
+		//don't cancel FTK since this failure was just a chance thing
+		if (p_ptr->shooty_till_kill) {
+			p_ptr->shooting_till_kill = TRUE;
+			p_ptr->shoot_till_kill_rod = item;
+			/* disable other ftk types */
+			p_ptr->shoot_till_kill_mimic = 0;
+			p_ptr->shoot_till_kill_spell = 0;
+			p_ptr->shoot_till_kill_rcraft = FALSE;
+			p_ptr->shoot_till_kill_wand = 0;
+		}
+		return;
+	}
+
 	/* Roll for usage */
 	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
+
+		//don't cancel FTK since this failure was just a chance thing
+		if (p_ptr->shooty_till_kill) {
+			p_ptr->shooting_till_kill = TRUE;
+			p_ptr->shoot_till_kill_rod = item;
+			/* disable other ftk types */
+			p_ptr->shoot_till_kill_mimic = 0;
+			p_ptr->shoot_till_kill_spell = 0;
+			p_ptr->shoot_till_kill_rcraft = FALSE;
+			p_ptr->shoot_till_kill_wand = 0;
+		}
 		return;
 	}
 
@@ -4298,6 +4414,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 #ifdef NEW_MDEV_STACKING
 	pval_old = o_ptr->pval;
+	o_ptr->bpval++; /* count # of used rods of a stack of rods */
 #endif
 
 	/* Analyze the rod */
@@ -4605,7 +4722,6 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		return;
 	}
 
-
 #ifndef NEW_MDEV_STACKING
 	/* XXX Hack -- unstack if necessary */
 	if ((item >= 0) && (o_ptr->number > 1)) {
@@ -4626,6 +4742,29 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		msg_print(Ind, "You unstack your rod.");
 	}
 #endif
+
+	if (p_ptr->shooty_till_kill) {
+#if 0
+		/* To continue shooting_till_kill, check if spell requires clean LOS to target
+		   with no other monsters in the way, so we won't wake up more monsters accidentally. */
+ #ifndef PY_PROJ_WALL
+		if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+ #else
+		if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+ #endif
+
+		/* We lost our target? (monster dead?) */
+		if (dir != 5 || !target_okay(Ind)) return;
+#endif
+		/* we're now indeed ftk */
+		p_ptr->shooting_till_kill = TRUE;
+		p_ptr->shoot_till_kill_rod = item;
+		/* disable other ftk types */
+		p_ptr->shoot_till_kill_mimic = 0;
+		p_ptr->shoot_till_kill_spell = 0;
+		p_ptr->shoot_till_kill_rcraft = FALSE;
+		p_ptr->shoot_till_kill_wand = 0;
+	}
 }
 
 
