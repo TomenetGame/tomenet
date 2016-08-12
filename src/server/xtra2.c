@@ -5225,8 +5225,11 @@ bool monster_death(int Ind, int m_idx) {
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
 		case 281: //gnome mages have FRIENDS
-		case 375: //warlocks (dark-elven) have FRIENDS
 			if (!rand_int(5)) resf_drops |= RESF_CONDF_MSTAFF;
+			resf_drops |= RESF_COND2_LARMOUR;
+			break;
+		case 375: //warlocks (dark-elven) have FRIENDS
+			if (!rand_int(10)) resf_drops |= RESF_CONDF_MSTAFF;
 			resf_drops |= RESF_COND2_LARMOUR;
 			break;
 		case 539: //slinger have FRIENDS
