@@ -198,8 +198,8 @@ THUNDERSTORM = add_spell {
 	["name"] = 	"Thunderstorm",
 	["school"] = 	{SCHOOL_AIR, SCHOOL_NATURE},
 	["level"] = 	15,
-	["mana"] = 	45,
-	["mana_max"] = 	45,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
 	["fail"] = 	0,
 	["spell"] = 	function()
 			set_tim_thunder(Ind, randint(10) + 10 + get_level(Ind, THUNDERSTORM, 25), 5 + get_level(Ind, THUNDERSTORM, 10), 10 + get_level(Ind, THUNDERSTORM, 25))
