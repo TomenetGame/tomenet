@@ -1042,7 +1042,11 @@ static void play_sound_weather(int event) {
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return;
 
-	if (samples[event].disabled) return;
+	if (samples[event].disabled) {
+		weather_current = event;
+		weather_current_vol = -1;
+		return;
+	}
 
 	/* Check there are samples for this event */
 	if (!samples[event].num) {
@@ -1110,6 +1114,7 @@ static void play_sound_weather(int event) {
 		//successfully started playing the first weather
 		weather_channel = new_wc;
 		weather_current = event;
+		weather_current_vol = -1;
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
 	} else {
 		//failed to start playing?
@@ -1121,11 +1126,13 @@ static void play_sound_weather(int event) {
 			//same channel?
 			if (new_wc == weather_channel) {
 				weather_current = event;
+				weather_current_vol = -1;
 			//different channel?
 			} else {
 				Mix_HaltChannel(weather_channel);
 				weather_channel = new_wc;
 				weather_current = event;
+				weather_current_vol = -1;
 				Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
 			}
 		}
@@ -1140,6 +1147,7 @@ static void play_sound_weather(int event) {
 	}
 	if (weather_channel != -1) { //paranoia? should always be != -1 at this point
 		weather_current = event;
+		weather_current_vol = -1;
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
 	}
 #endif
@@ -1232,7 +1240,11 @@ static void play_sound_weather_vol(int event, int vol) {
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return;
 
-	if (samples[event].disabled) return;
+	if (samples[event].disabled) {
+		weather_current = event; //pretend we play it
+		weather_current_vol = vol;
+		return;
+	}
 
 	/* Check there are samples for this event */
 	if (!samples[event].num) return;
@@ -1289,6 +1301,7 @@ static void play_sound_weather_vol(int event, int vol) {
 		//successfully started playing the first weather
 		weather_channel = new_wc;
 		weather_current = event;
+		weather_current_vol = vol;
 
 		weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
@@ -1302,11 +1315,13 @@ static void play_sound_weather_vol(int event, int vol) {
 			//same channel?
 			if (new_wc == weather_channel) {
 				weather_current = event;
+				weather_current_vol = vol;
 			//different channel?
 			} else {
 				Mix_HaltChannel(weather_channel);
 				weather_channel = new_wc;
 				weather_current = event;
+				weather_current_vol = vol;
 				weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
 				Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
 			}
@@ -1322,6 +1337,7 @@ static void play_sound_weather_vol(int event, int vol) {
 	}
 	if (weather_channel != -1) { //paranoia? should always be != -1 at this point
 		weather_current = event;
+		weather_current_vol = vol;
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100) * grid_weather_volume) / 100);
 	}
 #endif
@@ -1401,7 +1417,10 @@ static void play_sound_ambient(int event) {
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return;
 
-	if (samples[event].disabled) return;
+	if (samples[event].disabled) {
+		ambient_current = event; //pretend we play it
+		return;
+	}
 
 	/* Check there are samples for this event */
 	if (!samples[event].num) {
@@ -1549,14 +1568,6 @@ static bool play_music(int event) {
 	}
 #endif
 
-	if (songs[event].disabled) {
-		/* Stop currently playing music though, before returning */
-		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
-			Mix_FadeOutMusic(500);
-
-		return TRUE; /* claim that it 'succeeded' */
-	}
-
 	/* Check there are samples for this event */
 	if (!songs[event].num) {
 		/* Stop currently playing music though, before returning */
@@ -1601,6 +1612,9 @@ static void fadein_next_music(void) {
 
 	/* Catch music_next == -1, this can now happen with shuffle_music option, since songs are no longer looped if it's enabled */
 	if (c_cfg.shuffle_music && music_next == -1) {
+		/* Catch disabled songs */
+		if (songs[music_cur].disabled) return;
+
 		/* stick with music event, but play different song, randomly */
 		int tries = songs[music_cur].num == 1 ? 1 : 100, mcs;
 		if (songs[music_cur].num < 1) return; //paranoia
@@ -1631,7 +1645,12 @@ static void fadein_next_music(void) {
 	if (music_next < 0 || music_next >= MUSIC_MAX) return;
 
 	/* Sub-song file was disabled? (local audio options) */
-	if (songs[music_next].disabled) return;
+	if (songs[music_next].disabled) {
+		music_cur = music_next;
+		music_cur_song = music_next_song;
+		music_next = -1; //pretend we play it
+		return;
+	}
 
 	/* Check there are samples for this event */
 	if (songs[music_next].num < music_next_song + 1) return;
@@ -2017,7 +2036,7 @@ void do_cmd_options_sfx_sdl(void) {
 		/* Display the events */
 		for (i = y - 10 ; i <= y + 10 ; i++) {
 			if (i < 0 || i >= audio_sfx) {
-				Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                        ");
+				Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                          ");
 				continue;
 			}
 
@@ -2045,13 +2064,18 @@ void do_cmd_options_sfx_sdl(void) {
 			}
 
 			Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, a2, format("%3d", i + 1));
-			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                              ");
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                ");
 			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+			if (i == weather_current || i == ambient_current) {
+				if (a != TERM_L_DARK) a = TERM_L_GREEN;
+				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%s (playing %d)", (char*)lua_name, i));
+			} else
+				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 		}
 
 		/* display static selector */
 		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_ORANGE, ">>>");
-		Term_putstr(horiz_offset + 1 + 12 + 40 + 1, vertikal_offset + 10, -1, TERM_ORANGE, "<<<");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + 10, -1, TERM_ORANGE, "<<<");
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
@@ -2146,12 +2170,37 @@ void do_cmd_options_sfx_sdl(void) {
 
 		case 't':
 			samples[y].disabled = !samples[y].disabled;
+			if (samples[y].disabled) {
+				if (y == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
+				if (y == ambient_current && ambient_channel != -1 && Mix_Playing(ambient_channel)) Mix_HaltChannel(ambient_channel);
+			} else {
+				if (y == weather_current) {
+					weather_current = -1; //allow restarting it
+					if (weather_current_vol != -1) play_sound_weather(y);
+					else play_sound_weather_vol(y, weather_current_vol);
+				}
+				if (y == ambient_current) {
+					ambient_current = -1; //allow restarting it
+					play_sound_ambient(y);
+				}
+			}
 			break;
 		case 'y':
 			samples[y].disabled = FALSE;
+			if (y == weather_current) {
+				weather_current = -1; //allow restarting it
+				if (weather_current_vol != -1) play_sound_weather(y);
+				else play_sound_weather_vol(y, weather_current_vol);
+			}
+			if (y == ambient_current) {
+				ambient_current = -1; //allow restarting it
+				play_sound_ambient(y);
+			}
 			break;
 		case 'n':
 			samples[y].disabled = TRUE;
+			if (y == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
+			if (y == ambient_current && ambient_channel != -1 && Mix_Playing(ambient_channel)) Mix_HaltChannel(ambient_channel);
 			break;
 
 		case '#':
@@ -2221,7 +2270,7 @@ void do_cmd_options_mus_sdl(void) {
 		/* Display the events */
 		for (i = y - 10 ; i <= y + 10 ; i++) {
 			if (i < 0 || i >= audio_music) {
-				Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                        ");
+				Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                          ");
 				continue;
 			}
 
@@ -2249,13 +2298,17 @@ void do_cmd_options_mus_sdl(void) {
 			}
 
 			Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, a2, format("%3d", i + 1));
-			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                              ");
-			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                ");
+			if (i == music_cur) {
+				if (a != TERM_L_DARK) a = TERM_L_GREEN;
+				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%s    (playing)", (char*)lua_name));
+			} else
+				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 		}
 
 		/* display static selector */
 		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_ORANGE, ">>>");
-		Term_putstr(horiz_offset + 1 + 12 + 40 + 1, vertikal_offset + 10, -1, TERM_ORANGE, "<<<");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + 10, -1, TERM_ORANGE, "<<<");
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
@@ -2350,15 +2403,25 @@ void do_cmd_options_mus_sdl(void) {
 
 		case 't':
 			songs[y].disabled = !songs[y].disabled;
-			play_music(y);
+			if (songs[y].disabled) {
+				if (music_cur == y && Mix_PlayingMusic()) Mix_HaltMusic();
+			} else {
+				if (music_cur == y) {
+					music_cur = -1; //allow restarting it
+					play_music(y);
+				}
+			}
 			break;
 		case 'y':
 			songs[y].disabled = FALSE;
-			play_music(y);
+			if (music_cur == y) {
+				music_cur = -1; //allow restarting it
+				play_music(y);
+			}
 			break;
 		case 'n':
 			songs[y].disabled = TRUE;
-			play_music(y);
+			if (music_cur == y && Mix_PlayingMusic()) Mix_HaltMusic();
 			break;
 
 		case '#':
