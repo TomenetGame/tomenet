@@ -304,6 +304,7 @@ static bool sound_sdl_init(bool no_cache) {
 #endif
 
 	/* Find and open the config file */
+#if 0
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
@@ -316,6 +317,10 @@ static bool sound_sdl_init(bool no_cache) {
 		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 		fff = my_fopen(path, "r");
 	}
+#else
+	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
+	fff = my_fopen(path, "r");
+#endif
 #else
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 	fff = my_fopen(path, "r");
@@ -492,6 +497,26 @@ static bool sound_sdl_init(bool no_cache) {
 		if (disabled) samples[event].disabled = TRUE;
 	}
 
+#ifdef WINDOWS
+	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
+	   So if it exists, let it override the normal config file. */
+	strcpy(path, getenv("HOMEDRIVE"));
+	strcat(path, getenv("HOMEPATH"));
+	strcat(path, "\\tomenet-nosound.cfg");
+
+	fff = my_fopen(path, "r");
+	if (fff) {
+		while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
+			/* find out event state (disabled/enabled) */
+			i = exec_lua(0, format("return get_sound_index(\"%s\")", buffer0));
+			/* unknown (different game version/sound pack?) */
+			if (i == -1 || !samples[i].config) continue;
+			/* disable samples listed in this file */
+			samples[i].disabled = TRUE;
+		}
+	}
+#endif
+
 	/* Close the file */
 	my_fclose(fff);
 
@@ -509,6 +534,7 @@ static bool sound_sdl_init(bool no_cache) {
 #endif
 
 	/* Find and open the config file */
+#if 0
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
@@ -521,6 +547,10 @@ static bool sound_sdl_init(bool no_cache) {
 		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 		fff = my_fopen(path, "r");
 	}
+#else
+	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
+	fff = my_fopen(path, "r");
+#endif
 #else
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 	fff = my_fopen(path, "r");
@@ -714,6 +744,26 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Close the file */
 	my_fclose(fff);
+
+#ifdef WINDOWS
+	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
+	   So if it exists, let it override the normal config file. */
+	strcpy(path, getenv("HOMEDRIVE"));
+	strcat(path, getenv("HOMEPATH"));
+	strcat(path, "\\tomenet-nomusic.cfg");
+
+	fff = my_fopen(path, "r");
+	if (fff) {
+		while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
+			/* find out event state (disabled/enabled) */
+			i = exec_lua(0, format("return get_music_index(\"%s\")", buffer0));
+			/* unknown (different game version/music pack?) */
+			if (i == -1 || !songs[i].config) continue;
+			/* disable songs listed in this file */
+			songs[i].disabled = TRUE;
+		}
+	}
+#endif
 
 #ifdef DEBUG_SOUND
 	puts("sound_sdl_init() done.");
@@ -2124,12 +2174,16 @@ void do_cmd_options_sfx_sdl(void) {
 #else
 			strcpy(buf2, getenv("HOMEDRIVE"));
 			strcat(buf2, getenv("HOMEPATH"));
-			strcat(buf2, "\\tomenet-sound.cfg");
+			strcat(buf2, "\\tomenet-nosound.cfg");
 #endif
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
 				c_msg_print("Error: File 'sound.cfg' not found.");
+				return;
+			}
+			if (!fff2) {
+				c_msg_print("Error: Cannot write to sound config file.");
 				return;
 			}
 			while (TRUE) {
@@ -2146,7 +2200,9 @@ void do_cmd_options_sfx_sdl(void) {
 
 				/* ignores lines that don't start on a letter */
 				if (tolower(*p) < 'a' || tolower(*p) > 'z') {
+#ifndef WINDOWS
 					fputs(out_val, fff2);
+#endif
 					continue;
 				}
 
@@ -2158,17 +2214,23 @@ void do_cmd_options_sfx_sdl(void) {
 				j = exec_lua(0, format("return get_sound_index(\"%s\")", evname));
 				if (j == -1 || !samples[j].config) {
 					/* 'empty' event (no filenames specified), just copy it over same as misc lines */
+#ifndef WINDOWS
 					fputs(out_val, fff2);
+#endif
 					continue;
 				}
 
 				/* apply new state */
 				if (samples[j].disabled) {
+#ifndef WINDOWS
 					strcpy(out_val2, ";");
 					strcat(out_val2, p);
-				} else {
-					strcpy(out_val2, p);
-				}
+				} else strcpy(out_val2, p);
+#else
+					strcpy(out_val2, evname);
+					strcat(out_val2, "\n");
+				} else continue;
+#endif
 
 				fputs(out_val2, fff2);
 			}
@@ -2371,12 +2433,16 @@ void do_cmd_options_mus_sdl(void) {
 #else
 			strcpy(buf2, getenv("HOMEDRIVE"));
 			strcat(buf2, getenv("HOMEPATH"));
-			strcat(buf2, "\\tomenet-music.cfg");
+			strcat(buf2, "\\tomenet-nomusic.cfg");
 #endif
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
 				c_msg_print("Error: File 'music.cfg' not found.");
+				return;
+			}
+			if (!fff2) {
+				c_msg_print("Error: Cannot write to music config file.");
 				return;
 			}
 			while (TRUE) {
@@ -2393,7 +2459,9 @@ void do_cmd_options_mus_sdl(void) {
 
 				/* ignores lines that don't start on a letter */
 				if (tolower(*p) < 'a' || tolower(*p) > 'z') {
+#ifndef WINDOWS
 					fputs(out_val, fff2);
+#endif
 					continue;
 				}
 
@@ -2405,17 +2473,23 @@ void do_cmd_options_mus_sdl(void) {
 				j = exec_lua(0, format("return get_music_index(\"%s\")", evname));
 				if (j == -1 || !songs[j].config) {
 					/* 'empty' event (no filenames specified), just copy it over same as misc lines */
+#ifndef WINDOWS
 					fputs(out_val, fff2);
+#endif
 					continue;
 				}
 
 				/* apply new state */
 				if (songs[j].disabled) {
+#ifndef WINDOWS
 					strcpy(out_val2, ";");
 					strcat(out_val2, p);
-				} else {
-					strcpy(out_val2, p);
-				}
+				} else strcpy(out_val2, p);
+#else
+					strcpy(out_val2, evname);
+					strcat(out_val2, "\n");
+				} else continue;
+#endif
 
 				fputs(out_val2, fff2);
 			}
