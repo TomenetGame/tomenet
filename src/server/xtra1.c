@@ -2019,7 +2019,8 @@ y
 	/* Extra casting if good spellcaster */
 	if ((r_ptr->flags4 & RF4_SPELLCASTER_MASK) ||
 	    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) ||
-	    (r_ptr->flags6 & RF6_SPELLCASTER_MASK)) {
+	    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) ||
+	    (r_ptr->flags0 & RF0_SPELLCASTER_MASK)) {
 		if (r_ptr->freq_innate > 30) {
 			p_ptr->num_spell++;	// 1_IN_3
 			spellbonus += 1;

@@ -5214,6 +5214,7 @@
  */
 #define RF1_UNIQUE			0x00000001	/* Unique Monster */
 #define RF1_QUESTOR			0x00000002	/* Quest Monster */
+//HOLE^unused
 #define RF1_MALE			0x00000004	/* Male gender */
 #define RF1_FEMALE			0x00000008	/* Female gender */
 #define RF1_CHAR_CLEAR		0x00000010	/* Absorbs symbol */
@@ -5313,6 +5314,7 @@
 #define RF3_RES_NEXU		0x02000000	/* Resist nexus */
 #define RF3_RES_DISE		0x04000000	/* Resist disenchantment */
 #define RF3_UNIQUE_4		0x08000000      /* Is a "Nazgul" unique -- UNUSED*/
+//HOLE ^ uniq4
 #define RF3_NO_FEAR			0x10000000	/* Cannot be scared */
 #define RF3_NO_STUN			0x20000000	/* Cannot be stunned */
 #define RF3_NO_CONF			0x40000000	/* Cannot be confused */
@@ -5391,10 +5393,11 @@
 #define RF5_BA_NUKE			0x00004000  /* TY: Nuke Ball */
 #define RF5_BA_CHAO			0x00008000  /* Chaos Ball */
 #define RF5_BO_ACID		0x00010000	/* Acid Bolt */
-#define RF5_BO_ELEC		0x00020000	/* Elec Bolt (unused) */
+#define RF5_BO_ELEC		0x00020000	/* Elec Bolt */
 #define RF5_BO_FIRE		0x00040000	/* Fire Bolt */
 #define RF5_BO_COLD		0x00080000	/* Cold Bolt */
 #define RF5_BO_POIS			0x00100000	/* Poison Bolt (unused/not implemented for monsters) */
+//HOLE (^unused pois bolt)
 #define RF5_BO_NETH			0x00200000	/* Nether Bolt */
 #define RF5_BO_WATE			0x00400000	/* Water Bolt */
 #define RF5_BO_MANA			0x00800000	/* Mana Bolt */
@@ -5422,6 +5425,7 @@
 #define RF6_BLINK			0x00000010	/* Teleport Short */
 #define RF6_TPORT			0x00000020	/* Teleport Long */
 #define RF6_RAISE_DEAD			0x00000040      /* Raise Dead -- not implemented */
+//HOLE^not implemented
 #define RF6_S_BUG			0x00000080      /* Summon Software bug */
 #define RF6_TELE_TO		0x00000100	/* Move player to monster */
 #define RF6_TELE_AWAY		0x00000200	/* Move player far away */
@@ -5461,10 +5465,12 @@
 #define RF7_FRIENDLY		0x00000008  /* Monster is friendly */
 #define RF7_PET				0x00000010  /* Monster is a pet */
 #define RF7_MORTAL			0x00000020  /* Monster is a mortal being -- UNUSED */
+//HOLE^mortal
 #define RF7_SPIDER			0x00000040  /* Monster is a spider (can pass webs) */
 #define RF7_NAZGUL			0x00000080  /* Monster is a Nazgul */
 #define RF7_DG_CURSE		0x00000100  /* If killed the monster grant a DG Curse to the player */
 #define RF7_POSSESSOR		0x00000200  /* Is it a dreaded possessor monster ? -- UNUSED */
+//HOLE^poss
 #define RF7_NO_DEATH		0x00000400  /* Cannot be killed */
 #define RF7_NO_TARGET		0x00000800  /* Cannot be targeted */
 #define RF7_AI_ANNOY			0x00001000  /* Try to tease the player */
@@ -5544,17 +5550,19 @@
 #define RF9_DROP_SKELETON	0x00000002
 #define RF9_HAS_LITE		0x00000004      /* Carries a lite */
 #define RF9_MIMIC		0x00000008      /* *REALLY* looks like an object ... only nastier */
-#define RF9_HAS_EGG			0x00000010      /* Can be monster's eggs */
+#define RF9_HAS_EGG			0x00000010      /* Can be monster's eggs -- used in r_info but not in the code */
 #define RF9_IMPRESSED			0x00000020      /* The monster can follow you on each level until he dies */
 #define RF9_SUSCEP_ACID			0x00000040      /* Susceptible to acid */
 #define RF9_SUSCEP_ELEC			0x00000080      /* Susceptible to lightning */
 #define RF9_SUSCEP_POIS		0x00000100      /* Susceptible to poison */
 #define RF9_KILL_TREES		0x00000200      /* Monster can eat trees */
 #define RF9_WYRM_PROTECT	0x00000400      /* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
-#define RF9_DOPPLEGANGER	0x00000800      /* The monster looks like you */
+#define RF9_DOPPLEGANGER	0x00000800      /* The monster looks like you - UNUSED */
+//HOLE^
 #define RF9_ONLY_DEPTH			0x00001000      /* The monster can only be generated at the GIVEN depth */
 #define RF9_SPECIAL_GENE		0x00002000      /* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
-#define RF9_NEVER_GENE			0x00004000      /* The monster cannot be normaly generated */
+#define RF9_NEVER_GENE			0x00004000      /* The monster cannot be normaly generated - UNUSED */
+//HOLE^
 /* no_conf, no_fear, no_sleep, res_<others> already exist (C. Blue) */
 /* These flags are added to r_info for improved logic in mimic forms (eg chaos hound gives res_chaos) */
 /* The resistance flags are added to distinguish between im_ and res_ now. Until now im_ was simply a strong res. */
@@ -5577,8 +5585,8 @@
  * but the code for them already exists in our code..
  * Let's consider of recycling them :)		- Jir - */
 #define RF9_IM_TELE			0x20000000      /* Resist teleportation */
-#define RF9_IM_PSI			0x40000000	/* Immune to (?) */
-#define RF9_RES_PSI			0x80000000	/* Resist (?) */
+#define RF9_IM_PSI			0x40000000	/* Immune to psi */
+#define RF9_RES_PSI			0x80000000	/* Resist psi */
 
 
 /* New monster attack spells and stuff - C. Blue */
@@ -5605,7 +5613,7 @@
 
 /* Special addition, since RF0_ mixes quite different types of flags.
    This is to sort them out a bit. */
-#define RF0_ACTIVE_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_BO_DISE | RF0_BA_DISE)
+#define RF0_ACTIVE_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE)
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
 #define RF1_DISABLE_MASK	(0x0)
@@ -5627,13 +5635,14 @@
  */
 /* I suspect the usefulness of this mask.. */
 
-#define RF4_INT_MASK \
+#if 0 /* I think it's possible that this accidentally prevents the monster from casting when it could and should - C. Blue */
+ #define RF4_INT_MASK \
 	(RF4_S_ANIMAL | RF4_UNMAGIC)
 
-#define RF5_INT_MASK \
+ #define RF5_INT_MASK \
 	(RF5_HOLD | RF5_SLOW | RF5_CONF | RF5_BLIND | RF5_SCARE)
 
-#define RF6_INT_MASK \
+ #define RF6_INT_MASK \
 	(RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
 	RF6_HEAL | RF6_HASTE | RF6_TRAPS | \
 	RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | \
@@ -5642,9 +5651,14 @@
 	RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_NAZGUL | RF6_S_UNIQUE | \
 	RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG | RF6_S_ANIMALS)
 
-#define RF0_INT_MASK \
+ #define RF0_INT_MASK \
 	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
-
+#else
+ #define RF4_INT_MASK (0L)
+ #define RF5_INT_MASK (0L)
+ #define RF6_INT_MASK (0L)
+ #define RF0_INT_MASK (0L)
+#endif
 /*
  * Spells castable even when farther than MAX_RANGE
  */
@@ -5666,10 +5680,11 @@
  * Spells castable only when within the sight
  */
 #define RF4_DIRECT_MASK \
-	(RF4_SHRIEK | RF4_UNMAGIC)
+	(RF4_SHRIEK | RF4_UNMAGIC | RF4_ARROW1 | RF4_ARROW2 | RF4_ARROW3 | RF4_ARROW4 | RF4_BOULDER)
 
 #define RF5_DIRECT_MASK \
 	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_CURSE | \
+	 RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE \
 	 RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
 
 
@@ -5678,7 +5693,7 @@
 	 RF6_TRAPS | RF6_FORGET)
 
 #define RF0_DIRECT_MASK \
-	(0L)
+	(RF0_BO_DISE)
 
  
 /*
@@ -5742,7 +5757,6 @@
 	 RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | \
 	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
 	 RF4_BR_NUKE | RF4_BR_DISI | RF4_BOULDER)
-/*	 RF4_BA_NUKE | RF4_BR_NUKE | RF4_BA_CHAO | RF4_BR_DISI) */
 
 #define RF5_ATTACK_MASK \
 	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
@@ -5845,7 +5859,7 @@
 	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE)
 
 
-/* 
+/*
 	Different types of terrain, used for the wilderness.
 	-APD-
 	
