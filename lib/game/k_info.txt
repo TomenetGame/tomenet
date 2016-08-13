@@ -2680,8 +2680,8 @@ D:Dispels foes for 200..500 damage, depending on your magic device skill.
 N:325:the Magi
 G:_:d
 I:55:19:0
-W:70:0:50:4500
-A:70/2
+W:80:0:50:4500
+A:80/2
 P:0:1d2:0:0:0
 D:Restores mana and drained intelligence.
 
