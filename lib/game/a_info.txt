@@ -251,7 +251,7 @@ I:39:106:0
 W:15:12:15:25000
 P:0:1d1:0:0:0
 F:ACTIVATE | SPECIAL_GENE | EASY_USE | LITE2 | WHITE_LIGHT
-F:INSTA_ART
+F:INSTA_ART | REGEN_MANA
 D:A great emerald that fills your mind with images of knowledge and dreadful
 D:understanding as you stare into its depths.
 
@@ -2484,7 +2484,7 @@ F:SEE_INVIS | RES_BLIND | AGGRAVATE | DRAIN_MANA | LITE3 | LITE1
 F:INSTA_ART | WHITE_LIGHT
 D:A shining white ball of unbreakable crystal, the ancient Palantiri
 D:were used by kings of Numenor and later by the Exiles for rapid
-D:communication between distant lands.  Nothing is hidden from one who
+D:communication between distant lands. Nothing is hidden from one who
 D:gazes into a Palantir: but the observed will also be aware of the
 D:observer, as was Sauron when Saruman tried to spy on him with this
 D:particular Palantir.
@@ -2581,7 +2581,7 @@ F:CURSED | HEAVY_CURSE | TY_CURSE | DRAIN_EXP | WHITE_LIGHT
 F:RES_BLIND | SEE_INVIS | ACTIVATE | INSTA_ART
 D:A shining white ball of unbreakable crystal, the ancient Palantiri
 D:were used by kings of Numenor and later by the Exiles for rapid
-D:communication between distant lands.  This Palantir, however, was
+D:communication between distant lands. This Palantir, however, was
 D:taken by Sauron long ago, and mastered to his evil uses, to the
 D:destruction of all others who would gaze into it.
 
