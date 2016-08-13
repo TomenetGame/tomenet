@@ -206,11 +206,11 @@ THUNDERSTORM = add_spell {
 	["spell"] = 	function()
 			--hack: linear spell-power gain
 			local lev = (player.s_info[SKILL_SPELL + 1].value) / 2500
-			set_tim_thunder(Ind, randint(10) + 10 + get_level(Ind, THUNDERSTORM, 25), 5 + get_level(Ind, THUNDERSTORM, 20), 10 + get_level(Ind, THUNDERSTORM, 70) + lev)
+			set_tim_thunder(Ind, randint(10) + 10 + get_level(Ind, THUNDERSTORM, 25), 5 + get_level(Ind, THUNDERSTORM, 14), 10 + get_level(Ind, THUNDERSTORM, 98) + lev)
 	end,
 	["info"] = 	function()
 			local lev = (player.s_info[SKILL_SPELL + 1].value) / 2500
-			return "dam "..(5 + get_level(Ind, THUNDERSTORM, 20)).."d"..(10 + get_level(Ind, THUNDERSTORM, 70) + lev).." dur "..(10 + get_level(Ind, THUNDERSTORM, 25)).."+d10"
+			return "dam "..(5 + get_level(Ind, THUNDERSTORM, 14)).."d"..(10 + get_level(Ind, THUNDERSTORM, 98) + lev).." dur "..(10 + get_level(Ind, THUNDERSTORM, 25)).."+d10"
 	end,
 	["desc"] = 	{
 			"Charges up the air around you with electricity.",
