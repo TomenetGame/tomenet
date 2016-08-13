@@ -304,8 +304,22 @@ static bool sound_sdl_init(bool no_cache) {
 #endif
 
 	/* Find and open the config file */
+#ifdef WINDOWS
+	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
+	   So if it exists, let it override the normal config file. */
+	strcpy(path, getenv("HOMEDRIVE"));
+	strcat(path, getenv("HOMEPATH"));
+	strcat(path, "\\tomenet-sound.cfg");
+
+	fff = my_fopen(path, "r");
+	if (!fff) {
+		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
+		fff = my_fopen(path, "r");
+	}
+#else
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 	fff = my_fopen(path, "r");
+#endif
 
 	/* Handle errors */
 	if (!fff) {
@@ -495,8 +509,22 @@ static bool sound_sdl_init(bool no_cache) {
 #endif
 
 	/* Find and open the config file */
+#ifdef WINDOWS
+	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
+	   So if it exists, let it override the normal config file. */
+	strcpy(path, getenv("HOMEDRIVE"));
+	strcat(path, getenv("HOMEPATH"));
+	strcat(path, "\\tomenet-music.cfg");
+
+	fff = my_fopen(path, "r");
+	if (!fff) {
+		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
+		fff = my_fopen(path, "r");
+	}
+#else
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 	fff = my_fopen(path, "r");
+#endif
 
 	/* Handle errors */
 	if (!fff) {
@@ -2068,7 +2096,7 @@ void do_cmd_options_sfx_sdl(void) {
 			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 			if (i == weather_current || i == ambient_current) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
-				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%s (playing %d)", (char*)lua_name, i));
+				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%s    (playing)", (char*)lua_name));
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 		}
@@ -2091,7 +2119,13 @@ void do_cmd_options_sfx_sdl(void) {
 		case ESCAPE:
 			/* auto-save */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
+#ifndef WINDOWS
 			path_build(buf2, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.$$$");
+#else
+			strcpy(buf2, getenv("HOMEDRIVE"));
+			strcat(buf2, getenv("HOMEPATH"));
+			strcat(buf2, "\\tomenet-sound.cfg");
+#endif
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
@@ -2141,6 +2175,7 @@ void do_cmd_options_sfx_sdl(void) {
 			fclose(fff);
 			fclose(fff2);
 
+#if 0
 #if 0 /* cannot overwrite the cfg files in Programs (x86) folder on Windows 7 (+?) */
 			rename(buf, format("%s.bak", buf));
 			rename(buf2, buf);
@@ -2153,6 +2188,13 @@ void do_cmd_options_sfx_sdl(void) {
 #endif
 #if 0 /* use a separate file instead? */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "sound-override.cfg");
+			rename(buf2, buf);
+#endif
+#endif
+#ifndef WINDOWS
+			rename(buf, format("%s.bak", buf));
+			//fd_kill(file_name);
+			remove(buf);
 			rename(buf2, buf);
 #endif
 
@@ -2324,7 +2366,13 @@ void do_cmd_options_mus_sdl(void) {
 		case ESCAPE:
 			/* auto-save */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
+#ifndef WINDOWS
 			path_build(buf2, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.$$$");
+#else
+			strcpy(buf2, getenv("HOMEDRIVE"));
+			strcat(buf2, getenv("HOMEPATH"));
+			strcat(buf2, "\\tomenet-music.cfg");
+#endif
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
 			if (!fff) {
@@ -2374,6 +2422,7 @@ void do_cmd_options_mus_sdl(void) {
 			fclose(fff);
 			fclose(fff2);
 
+#if 0
 #if 0 /* cannot overwrite the cfg files in Programs (x86) folder on Windows 7 (+?) */
 			rename(buf, format("%s.bak", buf));
 			rename(buf2, buf);
@@ -2386,6 +2435,13 @@ void do_cmd_options_mus_sdl(void) {
 #endif
 #if 0 /* use a separate file instead? */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music-override.cfg");
+			rename(buf2, buf);
+#endif
+#endif
+#ifndef WINDOWS
+			rename(buf, format("%s.bak", buf));
+			//fd_kill(file_name);
+			remove(buf);
 			rename(buf2, buf);
 #endif
 
