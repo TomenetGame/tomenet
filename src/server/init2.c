@@ -4085,24 +4085,30 @@ void reinit_some_arrays(void) {
 void init_firework_dungeon(void) {
 	int i, d_ok[max_d_idx], d_ok_num = 0;
  #ifdef DUNGEON_VISIT_BONUS
-	int dvb = 3;
- #endif
+	int j, dvb = 3;
 
-	d_ok[0] = 0; //wilderness dungeons are always ok, even if they get visited frequently? hmm
- #ifdef DUNGEON_VISIT_BONUS
 	while (TRUE) {
- #endif
-		for (i = 1; i < max_d_idx; i++) {
+		for (j = 1; j <= dungeon_id_max; j++) {
+			i = getdungeon(&((struct worldpos){dungeon_x[j], dungeon_y[j], dungeon_tower[j] ? 1 : -1}))->type;
+			/* dungeon must be among the most rarely frequented ones to be eligible */
+			if (dungeon_bonus[j] != dvb) continue;
+ #else
+		for (i = 0; i < max_d_idx; i++) {
 			/* dungeon must exist */
 			if (!d_info[i].name) continue;
-
- #ifdef DUNGEON_VISIT_BONUS
-			/* dungeon must be among the most rarely frequented ones to be eligible */
-			if (dungeon_bonus[i] != dvb) continue;
  #endif
-
-			/* never in the Nether Realm */
+			/* never in the Nether Realm/Valinor */
 			if (i == DI_NETHER_REALM) continue;
+			if (i == DI_VALINOR) continue;
+
+			/* exclude town dungeons? */
+			if (!strcmp(d_name + d_info[i].name, "Barrow-Downs") ||
+			    !strcmp(d_name + d_info[i].name, "The Training Tower") ||
+			    !strcmp(d_name + d_info[i].name, "Mordor") ||
+			    !strcmp(d_name + d_info[i].name, "Angband") ||
+			    !strcmp(d_name + d_info[i].name, "The Paths of the Dead"))
+				continue;
+
 			d_ok_num++;
 			d_ok[d_ok_num] = i;
 		}
@@ -4120,6 +4126,7 @@ void init_firework_dungeon(void) {
 		break;
 	}
  #endif
+	d_ok[0] = 0; //wilderness dungeons are always ok, even if they get visited frequently? hmm
 	firework_dungeon = d_ok[rand_int(d_ok_num + 1)]; //note: 0 = all 'Wilderness' dungeons! (usually ironman) So those are ALWAYS eligible!
 	if (!firework_dungeon) firework_dungeon_chance = 2000; //especially rare in 'wilderness' dungeons
 	else firework_dungeon_chance = 1000;

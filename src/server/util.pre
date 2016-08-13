@@ -406,6 +406,7 @@ extern int scan_iddc(void);
 /* 128 = MAX_D_IDX * 2 */
 extern u16b dungeon_visit_frequency[128];
 extern int dungeon_bonus[128];
+extern int dungeon_id_max;
 #endif
 
 bool censor_swearing;
