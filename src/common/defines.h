@@ -1053,6 +1053,7 @@
  * [MAX_RANGE] */
 /* commented out due to monster AI improvements.
  * activate it if STUPID_MONSTER_SPELLS is defined!
+ * --actually this should always be enabled and set to MAX_RANGE, that limit is also used for spellcasting.
  */
 #define ARROW_DIST_LIMIT MAX_RANGE
 
