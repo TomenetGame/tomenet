@@ -8490,32 +8490,22 @@ extern int PlayerUID;
  #define MT_SLICE	0x0020
  #define MT_QUAKE	0x0040
  #define MT_SWEEP	0x0080
-
- #define MT_BASH	0x0100
- #define MT_KNOCK	0x0200
- #define MT_CHARGE	0x0400
- #define MT_FLASH	0x0800
-
- #define MT_SPIN	0x1000
- #define MT_BERSERK	0x2000
- #define MT_SJUMP	0x4000
- #define MT_ICLOAK	0x8000
-#else
- #define MT_BASH	0x0010
- #define MT_KNOCK	0x0020
- #define MT_CHARGE	0x0040
- #define MT_DETNOISE	0x0080
-
- #define MT_FLASH	0x0100
- #define MT_CLOAK	0x0200
- #define MT_SPIN	0x0400
- #define MT_ASSA	0x0800
-
- #define MT_BERSERK	0x1000
- #define MT_SJUMP	0x2000
- #define MT_SRUN	0x4000
- #define MT_ICLOAK	0x8000
 #endif
+
+#define MT_POISON	0x0010
+#define MT_KNOCK	0x0020
+#define MT_CHARGE	0x0040
+#define MT_DETNOISE	0x0080
+
+#define MT_FLASH	0x0100
+#define MT_CLOAK	0x0200
+#define MT_SPIN	0x0400
+#define MT_ASSA	0x0800
+
+#define MT_BERSERK	0x1000
+#define MT_SJUMP	0x2000
+#define MT_SRUN	0x4000
+#define MT_ICLOAK	0x8000
 
 /* Ranged techniques */
 #define RT_NONE		0x0000

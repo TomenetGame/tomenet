@@ -7440,6 +7440,7 @@ s_printf("SWITCH_STANCE: %s - offensive\n", p_ptr->name);
 
 void do_cmd_melee_technique(int Ind, int technique) {
 	player_type *p_ptr = Players[Ind];
+	int i;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) {
 		msg_print(Ind, "You cannot use techniques while transformed.");
@@ -7502,6 +7503,30 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+	case 4:	if (!(p_ptr->melee_techniques & MT_POISON)) return; /* Apply Poison */
+		//if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (!p_ptr->inventory[INVEN_WIELD].k_idx && (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) {
+			msg_print(Ind, "You must wield a melee weapon to apply poison.");
+			return;
+		}
+		for (i = 0; i < INVEN_WIELD; i++)
+			if (p_ptr->inventory[i].tval == TV_POTION && p_ptr->inventory[i].sval == SV_POTION_POISON) {
+				//p_ptr->cst -= 2;
+				inven_item_increase(Ind, i, -1);
+				inven_item_describe(Ind, i);
+				inven_item_optimize(Ind, i);
+				msg_print(Ind, "You apply a potion of poison..");
+				set_brand(Ind, 50 + randint(20), BRAND_POIS, 0);
+				break;
+			}
+		if (i == INVEN_WIELD) {
+			msg_print(Ind, "You are missing a potion of poison.");
+			return;
+		}
+		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
+s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
+		break;
 	case 7:	if (!(p_ptr->melee_techniques & MT_DETNOISE)) return; /* Perceive Noise */
 		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 3;
@@ -7512,7 +7537,7 @@ s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 		break;
 	case 8:	if (!(p_ptr->melee_techniques & MT_FLASH)) return; /* Flash bomb */
 		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
-//		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+		//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 		if (p_ptr->energy <= 0) return;
 		p_ptr->cst -= 4;
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -7649,7 +7674,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 #endif
 		for (i = 0; i < INVEN_WIELD; i++)
 			if (p_ptr->inventory[i].tval == TV_FLASK) { /* oil */
-//				p_ptr->cst -= 2;
+				//p_ptr->cst -= 2;
 				p_ptr->ranged_flare = TRUE;
 				inven_item_increase(Ind, i, -1);
 				inven_item_describe(Ind, i);
@@ -7673,7 +7698,7 @@ s_printf("TECHNIQUE_RANGED: %s - flare missile\n", p_ptr->name);
 			return;
 		}
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
-//		p_ptr->cst -= 7;
+		//p_ptr->cst -= 7;
 		p_ptr->ranged_flare = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
 		p_ptr->ranged_precision = TRUE;
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* focus.. >:) (maybe even 2 turns oO) */
@@ -7688,7 +7713,7 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		return;
 	case 3:	if (!(p_ptr->ranged_techniques & RT_DOUBLE)) return; /* Double-shot */
 		if (!p_ptr->ranged_double) {
-//			if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
+			//if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 2) {
 				msg_print(Ind, "You need at least 2 projectiles for a dual-shot!");
 				return;
@@ -7713,7 +7738,7 @@ s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 			msg_print(Ind, "You need at least 6 projectiles for a barrage!");
 			return;
 		}
-//		p_ptr->cst -= 9;
+		//p_ptr->cst -= 9;
 		p_ptr->ranged_flare = FALSE; p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE;
 		p_ptr->ranged_barrage = TRUE;
 		msg_print(Ind, "You prepare a powerful multi-shot barrage...");

@@ -4602,14 +4602,14 @@ int p_tough_ac[51] = {
 
 /* For fighting techniques */
 byte mtech_lev[MAX_CLASS][16] = {
-    //	sprint,	taunt,	jump,	distr,	bash,	knockb,	charge,	detnoi, flashb,	cloak,	spin,	assass,	berser,	s-jump,	s-run,	instant cloak
+    //	sprint,	taunt,	jump,	distr,	poison,	knockb,	charge,	detnoi, flashb,	cloak,	spin,	assass,	berser,	s-jump,	s-run,	instant cloak
 	{2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	6,	0,	20,	0,	0,	0},	//warrior
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//istar
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//priest
 #ifdef ENABLE_ASSASSINATE
-	{2,	3,	0,	6,	0,	0,	0,	9,	12,	0,	0,	35,	0,	0,	50,	0},	//rogue
+	{2,	3,	0,	4,	5,	0,	0,	8,	11,	0,	0,	35,	0,	0,	50,	0},	//rogue
 #else
-	{2,	3,	0,	6,	0,	0,	0,	9,	12,	0,	0,	0,	0,	0,	50,	0},	//rogue
+	{2,	3,	0,	4,	5,	0,	0,	8,	11,	0,	0,	0,	0,	0,	50,	0},	//rogue
 #endif
 	{13,	16,	0,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//mimic
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//archer

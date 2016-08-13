@@ -8659,7 +8659,7 @@ void calc_techniques(int Ind) {
 		p_ptr->melee_techniques |= MT_DISTRACT;
 	if (mtech_lev[p_ptr->pclass][4] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][4])
-		p_ptr->melee_techniques |= MT_BASH;
+		p_ptr->melee_techniques |= MT_POISON;
 	if (mtech_lev[p_ptr->pclass][5] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][5])
 		p_ptr->melee_techniques |= MT_KNOCK;

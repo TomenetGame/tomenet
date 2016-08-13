@@ -16196,6 +16196,15 @@ The techniques are as follows:
         and -if you and an ally both stand next to the same monster- to draw
         its attention from your ally and make it attack you instead.
         (Taunting costs a quarter of a turn of energy.)
+    Distract            1 stamina
+        Your character will attempt to appear wimpy and a non-worthy target to
+        adjacent monsters, in hope of making them attack another player who
+        must be standing next to you and also next to the monster, instead of
+        you. Not all monsters can be fooled though. Some monsters might resist,
+        but probably fall for it if you give it another try.
+        This skill is useless if there is no team mate next to you (and the
+        monster).
+        (Distracting costs half a turn of energy.)
     Spin                8 stamina
         A sweep that hits all adjacent monsters and may stun them if they don't
         resist. You might even perform more than one complete sweep circle,
@@ -16208,16 +16217,12 @@ The techniques are as follows:
 
     Rogue-specific fighting techniques:
     -----------------------------------
-    Distract            1 stamina
-        Your character will attempt to appear wimpy and a non-worthy target to
-        adjacent monsters, in hope of making them attack another player who
-        must be standing next to you and also next to the monster, instead of
-        you. Not all monsters can be fooled though. Some monsters might resist,
-        but probably fall for it if you give it another try.
-        This skill is useless if there is no team mate next to you (and the
-        monster).
-        (Distracting costs half a turn of energy.)
-    Perceive Noise        3 Stamina
+    Apply Poison        -
+        Apply a potion of poison you must have in your inventory to your melee
+        weapon that you have equipped. If you have two weapons equipped, it is
+        applied to both. This technique does not work without a weapon. If you
+        take off a weapon, the poison branding will fade away.
+    Perceive Noise      3 stamina
         Listen carefully to every sound in your surroundings, thereby locating
         creatures. Some entities are so quiet that they cannot be detected this
         way though.

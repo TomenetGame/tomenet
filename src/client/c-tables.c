@@ -499,45 +499,33 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 };
 
 
-cptr melee_techniques[16] =
-{
+cptr melee_techniques[16] = {
   "Sprint",
   "Taunt",
-  "Jump",
+  "TechA", /*"Jump",*/
   "Distract",
 
 #if 0
-  "Stab",
-  "Slice",
-  "Quake",
-  "Sweep",
+  "Stab", //swords
+  "Slice", //axes
+  "Quake", //blunts
+  "Sweep", //polearms
+#endif
 
-  "Bash",
-  "Knockback",
-  "Charge",
-  "Flash Bomb",
-
-  "Spin",
-  "Berserk",
-  "Shadow Jump",
-  "Instant Cloak",
-
-#else
-  "Bash",
-  "Knock Back",
-  "Charge",
+  "Apply Poison",
+  "TechB", /*"Knock Back",*/
+  "TechC", /*"Charge",*/
   "Perceive Noise",
 
   "Flash Bomb",
-  "Cloak",
+  "TechD", /*"Cloak",*/
   "Spin",
   "Assassinate",
 
   "Berserk",
-  "Shadow Jump",
+  "TechE", /*"Shadow Jump",*/
   "Shadow Run",
-  "Instant Cloak",
-#endif
+  "TechF", /*"Instant Cloak",*/
 };
 
 cptr ranged_techniques[16] =

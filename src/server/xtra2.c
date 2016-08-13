@@ -768,8 +768,8 @@ bool set_brand(int Ind, int v, int t, int p) {
 					else msg_format(Ind, "\377WYour weapon is no longer branded with \377wfrost.");
 				break;
 				case BRAND_POIS:
-					if (plural) msg_format(Ind, "\377WYour weapons are branded with \377gpoison.");
-					else msg_format(Ind, "\377WYour weapon is branded with \377gpoison.");
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377gpoison.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377gpoison.");
 				break;
 				default:
 					if (plural) msg_print(Ind, "\377WYour weapons are no longer branded.");
@@ -4377,6 +4377,8 @@ void check_experience(int Ind) {
 		    "\374\377GYou learn the fighting technique 'Taunt'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][3] && p_ptr->lev >= mtech_lev[p_ptr->pclass][3])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'!");
+	if (old_lev < mtech_lev[p_ptr->pclass][4] && p_ptr->lev >= mtech_lev[p_ptr->pclass][4])
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Apply Poison'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][7] && p_ptr->lev >= mtech_lev[p_ptr->pclass][7])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Perceive Noise'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][8] && p_ptr->lev >= mtech_lev[p_ptr->pclass][8])
