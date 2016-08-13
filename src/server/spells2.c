@@ -8401,21 +8401,23 @@ void tome_creation_aux(int Ind, int item) {
 	return;
 }
 
-void do_mstopcharm(int Ind) {
+bool do_mstopcharm(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	monster_type *m_ptr;
 	int m;
+	bool unknown = TRUE;
 
-	if (p_ptr->mcharming == 0) return; /* optimization */
+	if (p_ptr->mcharming == 0) return FALSE; /* optimization */
 
 	p_ptr->mcharming = 0;
 
 	for (m = m_top - 1; m >= 0; m--) {
 		m_ptr = &m_list[m_fast[m]];
-//		r_ptr = race_inf(m_ptr);
+		//r_ptr = race_inf(m_ptr);
 		if (m_ptr->charmedignore && m_ptr->charmedignore == Ind)
-			m_ptr->charmedignore = 0;
+			unknown = m_ptr->charmedignore = 0;
 	}
+	return unknown;
 }
 
 bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr) {

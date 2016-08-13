@@ -1661,7 +1661,7 @@ extern bool swap_position(int Ind, int lty, int ltx);
 extern void call_chaos(int Ind, int dir, int extra_damage);
 extern bool turn_monsters(int Ind, int dam);
 extern void wizard_lock(int Ind, int dir);
-extern void do_mstopcharm(int Ind);
+extern bool do_mstopcharm(int Ind);
 extern bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr);
 extern u32b mod_ball_spell_flags(int typ, u32b flags);
 

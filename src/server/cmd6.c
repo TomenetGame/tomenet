@@ -6818,6 +6818,8 @@ bool unmagic(int Ind) {
 		set_sh_fire_tim(Ind, 0) |
 		set_sh_cold_tim(Ind, 0) |
 		set_sh_elec_tim(Ind, 0) |
+		set_kinetic_shield(Ind, 0) |
+		do_mstopcharm(Ind) |
 #ifdef ENABLE_OCCULT
 		set_savingthrow(Ind, 0) |
 		set_spirit_shield(Ind, 0, 0) |

@@ -257,7 +257,7 @@ extern bool curse_spell_aux(int Ind, int item);
 extern void house_creation(int Ind, bool floor, bool jail);
 extern bool do_vermin_control(int Ind);
 extern void do_autokinesis_to(int Ind, int dis);
-extern void do_mstopcharm(int Ind);
+extern bool do_mstopcharm(int Ind);
 
 /* traps.c */
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);
