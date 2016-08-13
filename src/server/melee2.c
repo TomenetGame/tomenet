@@ -2300,7 +2300,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
 #ifndef STUPID_MONSTER_SPELLS
-	if (!stupid && thrown_spell >= 128) {
+	if (!stupid && (thrown_spell >= 128 || thrown_spell == 98)) { //98 = S_ANIMAL
 		int factor = 0;
 
 		/* Extract the 'stun' factor */
