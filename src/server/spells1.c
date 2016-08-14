@@ -6649,6 +6649,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					note = " resists";
 					if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
 
+
 					/* Memorize a flag */
 					if (r_ptr->flags3 & RF3_NO_CONF) {
 #ifdef OLD_MONSTER_LORE
@@ -6659,9 +6660,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					/* Resist */
 					do_conf = 0;
 				}
+
 				//let's do some actual damage, too?
 				//dam = 0;
 				//quiet_dam = TRUE;
+				/* then apply proper confusion resistance damage reduction (same as for GF_CONF) */
+				if ((r_ptr->flags4 & RF4_BR_CONF) ||
+				    (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
+					dam *= 3; dam /= (randint(6) + 6);
+				} else if (r_ptr->flags3 & RF3_NO_CONF)
+					dam /= 2;
 				break;
 			} else { //Blind
 				do_blind = dam;
@@ -12265,7 +12273,14 @@ int approx_damage(int m_idx, int dam, int typ) {
 			    (r_ptr->level > ((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) / 2 + 10)) /* RES_OLD */
 				{}//do_blind = do_conf = 0;
 			if (r_ptr->flags3 & RF3_NO_CONF) {}//do_conf = 0;
-			dam /= 3;
+
+			dam /= 3; /* only applies damage in 1 of the 3 spell effects */
+
+			if ((r_ptr->flags4 & RF4_BR_CONF) ||
+				(r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
+				dam /= 3;
+			else if (r_ptr->flags3 & RF3_NO_CONF)
+				dam /= 2;
 			break;
 
 		case GF_HEALINGCLOUD:
