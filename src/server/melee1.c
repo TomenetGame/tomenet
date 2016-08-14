@@ -928,7 +928,8 @@ bool make_attack_melee(int Ind, int m_idx)
 						if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
 							prot = TRUE;
 					}
-					if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
+					/* 'else' here to avoid crazy stacking */
+					else if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
 					    (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
 					     ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
 						prot = TRUE;
