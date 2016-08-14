@@ -125,111 +125,57 @@ static cptr pw_vowel[] = {
 #define PWV_TOTAL (5 + PW_YV)
 
 /* Initialise randomised passwords */
+static void qip_syllable(char *pw) {
+	int q;
+	bool p, v;
+
+	q = rand_int(PWC_TOTAL - 1);
+	strcat(pw, pw_consonant[q]);
+	if (q >= PWC_TOTAL - PW_SUF - PW_XOR) p = TRUE;
+	else p = FALSE;
+
+	q = rand_int(PWV_TOTAL);
+	strcat(pw, pw_vowel[q]);
+	if (q >= PWV_TOTAL - PW_YV) v = TRUE;
+	else v = FALSE;
+
+#if 0 /* allow 'pseudo-russian'? ;) sound a bit odd though */
+	if (rand_int(2)) {
+#else
+	if (!v && rand_int(2)) {
+#endif
+		if (p && v) q = rand_int(PWC_TOTAL - PW_SUF - PW_XOR - PW_PRE);
+		else if (v) {
+			q = rand_int(PWC_TOTAL - PW_YV - PW_PRE);
+			if (q >= PW_ALL) q += PW_PRE;
+		}
+		else if (p) {
+			q = rand_int(PWC_TOTAL - PW_SUF - PW_PRE);
+			if (q >= PW_ALL) q += PW_PRE;
+			if (q == PWC_TOTAL - PW_SUF - PW_XOR) q += PW_SUF;
+		} else {
+			q = rand_int(PWC_TOTAL - PW_PRE);
+			if (q >= PW_ALL) q += PW_PRE;
+		}
+		strcat(pw, pw_consonant[q]);
+	}
+}
 void quest_init_passwords(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int i, q;
-
-	bool p, v;
-	int tries = 100;
+	int i, tries = 100;
 
 	for (i = 0; i < QI_PASSWORDS; i++) {
+		q_ptr->password[i][0] = 0;
+
 		/* syllable 1 */
-		q = rand_int(PWC_TOTAL - 1);
-		strcpy(q_ptr->password[i], pw_consonant[q]);
-		if (q >= PWC_TOTAL - PW_SUF - PW_XOR) p = TRUE;
-		else p = FALSE;
-
-		q = rand_int(PWV_TOTAL);
-		strcat(q_ptr->password[i], pw_vowel[q]);
-		if (q >= PWV_TOTAL - PW_YV) v = TRUE;
-		else v = FALSE;
-
-#if 0 /* allow 'pseudo-russian'? ;) sound a bit odd though */
-		if (rand_int(2)) {
-#else
-		if (!v && rand_int(2)) {
-#endif
-			if (p && v) q = rand_int(PWC_TOTAL - PW_SUF - PW_XOR - PW_PRE);
-			else if (v) {
-				q = rand_int(PWC_TOTAL - PW_YV - PW_PRE);
-				if (q >= PW_ALL) q += PW_PRE;
-			}
-			else if (p) {
-				q = rand_int(PWC_TOTAL - PW_SUF - PW_PRE);
-				if (q >= PW_ALL) q += PW_PRE;
-				if (q == PWC_TOTAL - PW_SUF - PW_XOR) q += PW_SUF;
-			} else {
-				q = rand_int(PWC_TOTAL - PW_PRE);
-				if (q >= PW_ALL) q += PW_PRE;
-			}
-			strcat(q_ptr->password[i], pw_consonant[q]);
-		}
+		qip_syllable(q_ptr->password[i]);
 
 		/* syllable 2 */
-		q = rand_int(PWC_TOTAL - 1);
-		strcat(q_ptr->password[i], pw_consonant[q]);
-		if (q >= PWC_TOTAL - PW_SUF - PW_XOR) p = TRUE;
-		else p = FALSE;
-
-		q = rand_int(PWV_TOTAL);
-		strcat(q_ptr->password[i], pw_vowel[q]);
-		if (q >= PWV_TOTAL - PW_YV) v = TRUE;
-		else v = FALSE;
-
-#if 0 /* allow 'pseudo-russian'? ;) sound a bit odd though */
-		if (rand_int(2)) {
-#else
-		if (!v && rand_int(2)) {
-#endif
-			if (p && v) q = rand_int(PWC_TOTAL - PW_SUF - PW_XOR - PW_PRE);
-			else if (v) {
-				q = rand_int(PWC_TOTAL - PW_SUF - PW_PRE);
-				if (q >= PW_ALL) q += PW_PRE;
-			}
-			else if (p) {
-				q = rand_int(PWC_TOTAL - PW_XOR - PW_PRE);
-				if (q >= PW_ALL) q += PW_PRE;
-				if (q == PWC_TOTAL - PW_SUF - PW_XOR) q += PW_XOR;
-			} else {
-				q = rand_int(PWC_TOTAL - PW_PRE);
-				if (q >= PW_ALL) q += PW_PRE;
-			}
-			strcat(q_ptr->password[i], pw_consonant[q]);
-		}
-
+		qip_syllable(q_ptr->password[i]);
 		if (strlen(q_ptr->password[i]) > QI_PASSWORD_LEN - 5) continue;
 
 		/* syllable 3 */
-		q = rand_int(PWC_TOTAL - 1);
-		strcat(q_ptr->password[i], pw_consonant[q]);
-		if (q >= PWC_TOTAL - 3) p = TRUE;
-		else p = FALSE;
-
-		q = rand_int(PWV_TOTAL);
-		strcat(q_ptr->password[i], pw_vowel[q]);
-		if (q >= PWV_TOTAL - PW_YV) v = TRUE;
-		else v = FALSE;
-
-#if 0 /* allow 'pseudo-russian'? ;) sound a bit odd though */
-		if (rand_int(2)) {
-#else
-		if (!v && rand_int(2)) {
-#endif
-			if (p && v) q = rand_int(PWC_TOTAL - PW_SUF - PW_XOR - PW_PRE);
-			else if (v) {
-				q = rand_int(PWC_TOTAL - PW_SUF - PW_PRE);
-				if (q >= PW_ALL) q += PW_PRE;
-			}
-			else if (p) {
-				q = rand_int(PWC_TOTAL - PW_XOR);
-				if (q >= PW_ALL) q += PW_PRE;
-				if (q == PWC_TOTAL - PW_SUF - PW_XOR) q += PW_XOR;
-			} else {
-				q = rand_int(PWC_TOTAL - PW_PRE);
-				if (q >= PW_ALL) q += PW_PRE;
-			}
-			strcat(q_ptr->password[i], pw_consonant[q]);
-		}
+		qip_syllable(q_ptr->password[i]);
 
 		/* ^^' repeat? */
 		if (handle_censor(q_ptr->password[i])) {
