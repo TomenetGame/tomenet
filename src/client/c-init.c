@@ -174,7 +174,6 @@ static void init_stuff(void) {
  */
 void initialize_main_pref_files(void) {
 	char buf[1024];
-
 	int i;
 
 	/* MEGAHACK -- clean up the arrays
@@ -192,6 +191,7 @@ void initialize_main_pref_files(void) {
 	for (i = 0; i < MAX_K_IDX; i++) Client_setup.k_char[i] = Client_setup.k_attr[i] = 0;
 	for (i = 0; i < MAX_R_IDX; i++) Client_setup.r_char[i] = Client_setup.r_attr[i] = 0;
 
+    global_big_map_hold = TRUE;
 
 	/* Access the "basic" pref file */
 	strcpy(buf, "pref.prf");
@@ -3124,6 +3124,11 @@ void client_init(char *argv1, bool skip) {
 	/* Hack -- display the nick */
 	prt(format("Name        : %s", cname), 2, 1);
 #endif
+
+	/* put actual screen size changes from loading option files on hold
+	   until we've finished loading ALL option files,
+	   instead of switching and glitching back and forth */
+	global_big_map_hold = TRUE;
 
 	/* Initialize the pref files */
 	initialize_main_pref_files();

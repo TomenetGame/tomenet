@@ -8091,6 +8091,9 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	} else
 #endif
 
+	/* Not yet. First, process all the option files before doing this */
+	if (option_info[i].o_var == &c_cfg.big_map && global_big_map_hold) return;
+
 	if (option_info[i].o_var == &c_cfg.big_map
 	    && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
 	    && (sflags1 & SFLG1_BIG_MAP)) {
