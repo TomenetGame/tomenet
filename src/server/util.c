@@ -1786,8 +1786,13 @@ void handle_music(int Ind) {
 #if 0
 				Send_music(Ind, 1, 0); /* 'generic town' music instead, for a change */
 #else /* different music for static towns? */
+ #if 0
 				if (dlev == 40) Send_music(Ind, 1, 0); /* Menegroth: generic town */
 				else Send_music(Ind, 49, 1); /* Nargothrond: generic town night */
+ #else
+				if (dlev == 40) Send_music(Ind, 57, 1); /* Menegroth: own music, fallback to generic town */
+				else Send_music(Ind, 58, 49); /* Nargothrond: own music, fallback to generic town night */
+ #endif
 #endif
 			} else Send_music(Ind, 2, 1); /* the usual music for this case */
 			return;

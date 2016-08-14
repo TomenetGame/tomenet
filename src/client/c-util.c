@@ -7450,6 +7450,26 @@ static void center_string_short(char *buf, cptr str) {
 static void print_tomb(cptr reason) {
 	bool done = FALSE;
 
+#ifdef ATMOSPHERIC_INTRO /* also extro =P */
+ #ifdef USE_SOUND_2010
+  #if 1
+	if (use_sound) {
+   #if 0
+		/* switch to login screen music if available, or fade music out */
+		if (!music(exec_lua(0, "return get_music_index(\"tomb\")"))) music(-1);
+   #else
+		/* switch to login screen music if available; otherwise just continue playing the current in-game music */
+		music(exec_lua(0, "return get_music_index(\"tomb\")"));
+   #endif
+   #if 1
+		/* fade out any ongoing in-game weather effects? */
+		sound_weather(-1);
+   #endif
+	}
+  #endif
+ #endif
+#endif
+
 	/* Print the text-tombstone */
 	if (!done) {
 		char	tmp[160], reason2[MAX_CHARS];

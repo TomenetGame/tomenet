@@ -347,6 +347,13 @@ audio_bgm = {
 
     "event_Halloween",
     "TheCloudPlanes",
+
+    "Menegroth",
+    "Nargothrond",
+
+    "title",
+    "account",
+    "tomb",
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end

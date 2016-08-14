@@ -3201,6 +3201,8 @@ void client_init(char *argv1, bool skip) {
  #ifdef USE_SOUND_2010
 	/* Stop background ambient fireplace sound effect (if enabled) */
 	if (stop_sfx) sound_ambient(-1);
+	/* Stop music that might be playing back from account screen still */
+	//if (use_sound) music(-1);
  #endif
 #endif
 

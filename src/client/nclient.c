@@ -255,7 +255,7 @@ int Receive_file(void){
 
 					if (updated_audio) {
 						c_msg_print("\377R* Audio information was updated - restarting the game is recommended! *");
-						c_msg_print("\377R   Without a restart, you might be hearing the wrong sound effects.");
+						c_msg_print("\377R   Without a restart, you might be hearing the wrong sound effects or music.");
 					}
 				}
 
@@ -511,8 +511,17 @@ void Receive_login(void) {
 
 #ifdef ATMOSPHERIC_INTRO
  #ifdef USE_SOUND_2010
+  #if 0
 	/* Stop music playback from login screen - the character screen has no music, just the firelight sound! */
 	if (use_sound) music(-1);
+  #else
+	if (use_sound) {
+		/* switch to login screen music if available, or fade music out */
+		if (!music(exec_lua(0, "return get_music_index(\"account\")")))
+			music(-1);
+	}
+  #endif
+
 	/* Play background ambient sound effect (if enabled) */
 	if (use_sound) sound_ambient(exec_lua(0, "return get_sound_index(\"ambient_fireplace\")"));
  #endif

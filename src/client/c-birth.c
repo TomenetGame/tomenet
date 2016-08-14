@@ -1561,7 +1561,10 @@ void get_char_name(void) {
 #ifdef ATMOSPHERIC_INTRO
  #ifdef USE_SOUND_2010
 	/* Play back a fitting, non-common music piece, abused as 'intro theme'.. */
-	if (use_sound) music(exec_lua(0, "return get_music_index(\"town_generic\")"));
+	if (use_sound) {
+		if (!music(exec_lua(0, "return get_music_index(\"title\")")))
+			music(exec_lua(0, "return get_music_index(\"town_generic\")"));
+	}
  #endif
 #endif
 
