@@ -7548,7 +7548,7 @@ s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 9:	if (!(p_ptr->melee_techniques & MT_SPIN)) return; /* Spin */
+	case 10: if (!(p_ptr->melee_techniques & MT_SPIN)) return; /* Spin */
 		if (p_ptr->cst < 5) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (p_ptr->afraid) {
 			msg_print(Ind, "You are too afraid to attack!");
@@ -7563,7 +7563,7 @@ s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 #ifdef ENABLE_ASSASSINATE
-	case 10:if (!(p_ptr->melee_techniques & MT_ASSA)) return; /* Assassinate */
+	case 11: if (!(p_ptr->melee_techniques & MT_ASSA)) return; /* Assassinate */
 		if (p_ptr->piercing_charged) {
 			msg_print(Ind, "You drop your preparations for assassination.");
 			p_ptr->piercing_charged = FALSE;
@@ -7582,7 +7582,7 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 #endif
-	case 11:if (!(p_ptr->melee_techniques & MT_BERSERK)) return; /* Berserk */
+	case 12 :if (!(p_ptr->melee_techniques & MT_BERSERK)) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 10;
 		un_afk_idle(Ind);
@@ -7592,7 +7592,7 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 14:if (!(p_ptr->melee_techniques & MT_SRUN)) return; /* Shadow Run */
+	case 15 :if (!(p_ptr->melee_techniques & MT_SRUN)) return; /* Shadow Run */
 		shadow_run(Ind);
 s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
