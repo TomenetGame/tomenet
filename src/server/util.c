@@ -1063,7 +1063,7 @@ void bell(void)
  */
 #ifndef USE_SOUND_2010
 void sound(int Ind, int val) {
-//	Send_sound(Ind, val);
+	//Send_sound(Ind, val);
 	Send_sound(Ind, val, 0, 0, 100, 0);
 }
 #else
@@ -1106,7 +1106,7 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 
 #endif
 
-//	if (is_admin(p_ptr)) s_printf("USE_SOUND_2010: looking up sound %s -> %d.\n", name, val);
+	//if (is_admin(p_ptr)) s_printf("USE_SOUND_2010: looking up sound %s -> %d.\n", name, val);
 
 	if (val == -1) {
 		if (val2 != -1) {
@@ -1137,7 +1137,7 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 			if (d == 0) d = 1; //paranoia oO
 
 			Send_sound(i, val, val2, type, 100 / d, p_ptr->id);
-//			Send_sound(i, val, val2, type, (6 - d) * 20, p_ptr->id);  hm or this?
+			//Send_sound(i, val, val2, type, (6 - d) * 20, p_ptr->id);  hm or this?
 #else
 			if (d > MAX_SIGHT) continue;
 			d += 3;
@@ -1170,7 +1170,7 @@ void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int 
 	}
 
 
-//	if (is_admin(Players[Ind])) s_printf("USE_SOUND_2010: looking up sound %s -> %d.\n", name, val);
+	//if (is_admin(Players[Ind])) s_printf("USE_SOUND_2010: looking up sound %s -> %d.\n", name, val);
 
 	if (val == -1) {
 		if (val2 != -1) {
@@ -1195,7 +1195,7 @@ void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int 
 			if (d == 0) d = 1; //paranoia oO
 
 			Send_sound(i, val, val2, type, vol / d, Players[Ind]->id);
-//			Send_sound(i, val, val2, type, vol... (6 - d) * 20, Players[Ind]->id);  hm or this?
+			//Send_sound(i, val, val2, type, vol... (6 - d) * 20, Players[Ind]->id);  hm or this?
 #else
 			if (d > MAX_SIGHT) continue;
 			d += 3;
@@ -1297,7 +1297,7 @@ void sound_near(int Ind, cptr name, cptr alternative, int type) {
 		if (!inarea(&Players[i]->wpos, &Players[Ind]->wpos)) continue;
 
 		/* Can player see the target player? */
-//		if (!(Players[i]->cave_flag[Players[Ind]->py][Players[Ind]->px] & CAVE_VIEW)) continue;
+		//if (!(Players[i]->cave_flag[Players[Ind]->py][Players[Ind]->px] & CAVE_VIEW)) continue;
 
 		/* within audible range? */
 		d = distance(Players[Ind]->py, Players[Ind]->px, Players[i]->py, Players[i]->px);
@@ -1514,10 +1514,10 @@ void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 		/* Skip if not visible */
-//		if (!p_ptr->mon_vis[m_idx]) continue;
+		//if (!p_ptr->mon_vis[m_idx]) continue;
 
 		/* Can player see this monster via LOS? */
-//		if (!(p_ptr->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) continue;
+		//if (!(p_ptr->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) continue;
 
 		/* within audible range? */
 		d = distance(m_ptr->fy, m_ptr->fx, Players[i]->py, Players[i]->px);
@@ -1596,10 +1596,10 @@ void sound_near_monster_atk(int m_idx, int Ind, cptr name, cptr alternative, int
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 		/* Skip if not visible */
-//		if (!p_ptr->mon_vis[m_idx]) continue;
+		//if (!p_ptr->mon_vis[m_idx]) continue;
 
 		/* Can player see this monster via LOS? */
-//		if (!(p_ptr->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) continue;
+		//if (!(p_ptr->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) continue;
 
 		/* within audible range? */
 		d = distance(m_ptr->fy, m_ptr->fx, Players[i]->py, Players[i]->px);
@@ -1635,7 +1635,7 @@ void handle_music(int Ind) {
 #ifdef ARCADE_SERVER
 	/* Special music for Arcade Server stuff */
 	if (p_ptr->wpos.wx == WPOS_ARCADE_X && p_ptr->wpos.wy == WPOS_ARCADE_Y
-//	    && p_ptr->wpos.wz == WPOS_ARCADE_Z
+	//    && p_ptr->wpos.wz == WPOS_ARCADE_Z
 	    ) {
 		p_ptr->music_monster = -2;
  #if 0
@@ -2229,8 +2229,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 bool suppress_message = FALSE, censor_message = FALSE, suppress_boni = FALSE;
 int censor_length = 0, censor_punish = 0;
 
-void msg_print(int Ind, cptr msg_raw)
-{
+void msg_print(int Ind, cptr msg_raw) {
 	char msg_dup[MSG_LEN], *msg = msg_dup;
 	int line_len = 80; /* maximum length of a text line to be displayed;
 		     this is client-dependant, compare c_msg_print (c-util.c) */
@@ -2240,7 +2239,7 @@ void msg_print(int Ind, cptr msg_raw)
 	char colour_code = 'w';
 	bool no_colour_code = FALSE;
 	bool first_character = TRUE;
-//	bool is_chat = ((msg_raw != NULL) && (strlen(msg_raw) > 2) && (msg_raw[2] == '['));
+	//bool is_chat = ((msg_raw != NULL) && (strlen(msg_raw) > 2) && (msg_raw[2] == '['));
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
 
 	/* for {- feature */
@@ -2323,7 +2322,7 @@ void msg_print(int Ind, cptr msg_raw)
 			msg_minibuf[1] = colour_code;
 			msg_minibuf[2] = '\0';
 			strcat(msg_buf, msg_minibuf);
-///			colour_code = 0;
+			///colour_code = 0;
 		}
 
 		/* Process the string... */
@@ -2545,61 +2544,54 @@ void msg_print(int Ind, cptr msg_raw)
 	    msg));
 }
 
-void msg_broadcast(int Ind, cptr msg)
-{
+void msg_broadcast(int Ind, cptr msg) {
 	int i;
-	
+
 	/* Tell every player */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
 		if (Players[i]->conn == NOT_CONNECTED) 
 			continue;
-			
+
 		/* Skip the specified player */
 		if (i == Ind)
-			continue;       
-			
+			continue;
+
 		/* Tell this one */
 		msg_print(i, msg);
 	 }
 }
 
-void msg_admins(int Ind, cptr msg)
-{
+void msg_admins(int Ind, cptr msg) {
 	int i;
-	
+
 	/* Tell every player */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Skip disconnected players */
 		if (Players[i]->conn == NOT_CONNECTED) 
 			continue;
-			
+
 		/* Skip the specified player */
 		if (i == Ind)
 			continue;
-		
+
 		/* Skip non-admins */
 		if (!is_admin(Players[i]))
 			continue;
-			
+
 		/* Tell this one */
 		msg_print(i, msg);
 	 }
 }
 
-void msg_broadcast_format(int Ind, cptr fmt, ...)
-{
-//	int i;
-	
+void msg_broadcast_format(int Ind, cptr fmt, ...) {
+	//int i;
 	va_list vp;
-
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-	
+
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -2615,9 +2607,7 @@ void msg_admin(cptr fmt, ...)
 {
 	int i;
 	player_type *p_ptr;
-	
 	va_list vp;
-
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
@@ -2630,8 +2620,7 @@ void msg_admin(cptr fmt, ...)
 	va_end(vp);
 
 	/* Tell every admin */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
 		/* Skip disconnected players */
@@ -2650,15 +2639,13 @@ void msg_admin(cptr fmt, ...)
 /*
  * Display a formatted message, using "vstrnfmt()" and "msg_print()".
  */
-void msg_format(int Ind, cptr fmt, ...)
-{
+void msg_format(int Ind, cptr fmt, ...) {
 	va_list vp;
-
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-	
+
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -2674,6 +2661,7 @@ void msg_format(int Ind, cptr fmt, ...)
  */
 static void floor_msg(struct worldpos *wpos, cptr msg) {
 	int i;
+
 //system-msg, currently unused anyway-	if(cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -2688,6 +2676,7 @@ static void floor_msg(struct worldpos *wpos, cptr msg) {
 void floor_msg_format(struct worldpos *wpos, cptr fmt, ...) {
 	va_list vp;
 	char buf[1024];
+
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
 	/* Format the args, save the length */
@@ -2702,6 +2691,7 @@ void floor_msg_format(struct worldpos *wpos, cptr fmt, ...) {
  */
 static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
 	int i;
+
 	if(cfg.log_u) s_printf("(%d,%d,%d)%s\n", wpos->wx, wpos->wy, wpos->wz, msg + 2);// Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -2717,6 +2707,7 @@ static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
 static void floor_msg_format_ignoring(int sender, struct worldpos *wpos, cptr fmt, ...) {
 	va_list vp;
 	char buf[1024];
+
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
 	/* Format the args, save the length */
@@ -2732,6 +2723,7 @@ static void floor_msg_format_ignoring(int sender, struct worldpos *wpos, cptr fm
  */
 void world_surface_msg(cptr msg) {
 	int i;
+
 //system-msg, currently unused anyway-	if(cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
 	/* Check for this guy */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -2753,8 +2745,8 @@ void msg_print_near(int Ind, cptr msg) {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
 	struct worldpos *wpos;
-	wpos = &p_ptr->wpos;
 
+	wpos = &p_ptr->wpos;
 	if (p_ptr->admin_dm) return;
 
 	y = p_ptr->py;
@@ -2789,7 +2781,7 @@ void msg_print_verynear(int Ind, cptr msg) {
 	struct worldpos *wpos;
 	wpos = &p_ptr->wpos;
 
-//	if(p_ptr->admin_dm) return;
+	//if(p_ptr->admin_dm) return;
 
 	y = p_ptr->py;
 	x = p_ptr->px;
@@ -3362,10 +3354,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '<': lcopy[i] = 'c'; break;
 			case '!': lcopy[i] = 'i'; break;
 			case '|': lcopy[i] = 'l'; break;//hm, could be i too :/
-//			case '(': lcopy[i] = 'c'; break;
-//			case ')': lcopy[i] = 'i'; break;
-//			case '/': lcopy[i] = 'i'; break;
-//			case '\\': lcopy[i] = 'i'; break;
+			//case '(': lcopy[i] = 'c'; break;
+			//case ')': lcopy[i] = 'i'; break;
+			//case '/': lcopy[i] = 'i'; break;
+			//case '\\': lcopy[i] = 'i'; break;
 			case '$': lcopy[i] = 's'; break;
 			case '+': lcopy[i] = 't'; break;
 			case '1': lcopy[i] = 'i'; break;
@@ -3720,10 +3712,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 				/* MUST be disabled or interferes with detection overlaps: */
 				/* for processing lcopy in a while loop instead of just 'if'
 				   -- OBSOLETE ACTUALLY (thanks to 'offset')? */
-//				lcopy[pos + j] = '*';
+				//lcopy[pos + j] = '*';
 			}
 			/* see right above - MUST be disabled: */
-//			lcopy[pos + j] = '*';
+			//lcopy[pos + j] = '*';
 #endif
 			level = MAX(level, swear[i].level);
 		}
@@ -3981,7 +3973,7 @@ static int censor(char *line) {
 /*
  * This function is hacked *ALOT* to add extra-commands w/o
  * client change.		- Jir -
- * 
+ *
  * Yeah. totally.
  *
  * Muted players can't talk now (player_type.muted-- can be enabled
@@ -3994,7 +3986,7 @@ static void player_talk_aux(int Ind, char *message) {
 	char message2[MSG_LEN];
 	player_type *p_ptr = NULL, *q_ptr;
 	char *colon;
-	bool me = FALSE, log = TRUE, nocolon = FALSE;
+	bool me = FALSE, me_gen = FALSE, log = TRUE, nocolon = FALSE;
 	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
 #ifdef KURZEL_PK
 	char c_b = 'B';
@@ -4097,7 +4089,7 @@ static void player_talk_aux(int Ind, char *message) {
 	}
 
 	/* Ignore "smileys" or URL */
-//	if (colon && strchr(")(-/:", colon[1]))
+	//if (colon && strchr(")(-/:", colon[1]))
 	/* (C. Blue) changing colon parsing. :: becomes
 	    textual :  - otherwise : stays control char */
 	if (colon) {
@@ -4164,7 +4156,7 @@ static void player_talk_aux(int Ind, char *message) {
 			/* check for smiley at end of the line */
 			if ((message + strlen(message) - colon >= 3) &&
 			    (message + strlen(message) - colon <= 4)) // == 3 for 2-letter-smileys only.
-//			if ((*(colon + 2)) && !(*(colon + 3)))
+			//if ((*(colon + 2)) && !(*(colon + 3)))
 			switch (*(colon + 2)) {
 			case '(': case ')':
 			case '[': case ']':
@@ -4202,7 +4194,7 @@ static void player_talk_aux(int Ind, char *message) {
 		log = FALSE;
 
 	/* no big brother */
-//	if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
+	//if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
 	if (cfg.log_u && log &&
 	    (!colon || nocolon || (message[0] == '/' && strncmp(message, "/note", 5)))) {
 		/* Shorten multiple identical messages to prevent log file spam,
@@ -4231,6 +4223,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 	if (message[0] == '/' ){
 		if (!strncmp(message, "/me ", 4)) me = TRUE;
+		else if (!strncmp(message, "/me's", 4)) me = me_gen = TRUE;
 		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
 		else {
 			do_slash_cmd(Ind, message);	/* add check */
@@ -4282,7 +4275,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 
 	/* Special function '!:' at beginning of message sends to own party - sorry for hack, C. Blue */
-//	if ((strlen(message) >= 1) && (message[0] == ':') && (!colon) && (p_ptr->party))
+	//if ((strlen(message) >= 1) && (message[0] == ':') && (!colon) && (p_ptr->party))
 	if ((strlen(message) >= 2) && (message[0] == '!') && (message[1] == ':') && (colon) && (p_ptr->party)) {
 		target = p_ptr->party;
 
@@ -4304,7 +4297,7 @@ static void player_talk_aux(int Ind, char *message) {
 			message[MSG_LEN - 1 - 7 - strlen(sender) - strlen(parties[target].name)] = 0;
 			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2);
 #endif
-//			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 1);
+			//party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 1);
 		}
 
 		/* Done */
@@ -4480,7 +4473,7 @@ static void player_talk_aux(int Ind, char *message) {
 		/* lookup failed */
 		if (!target) {
 			/* Bounce message to player who sent it */
-//			msg_format(Ind, "(no receipient for: %s)", colon);
+			//msg_format(Ind, "(no receipient for: %s)", colon);
 #ifndef ARCADE_SERVER
 			msg_print(Ind, "(Cannot match desired recipient)");
 #endif
@@ -4635,11 +4628,11 @@ static void player_talk_aux(int Ind, char *message) {
 		/* prevent buffer overflow */
 		message[MSG_LEN - 1 - strlen(sender) - 8 + mycolor] = 0;
 
-#ifndef KURZEL_PK
+ #ifndef KURZEL_PK
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
-#else
+ #else
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message + mycolor);
-#endif
+ #endif
 		censor_length = strlen(message + mycolor);
 	} else {
 		/* Why not... */
@@ -4652,24 +4645,32 @@ static void player_talk_aux(int Ind, char *message) {
 
 		/* prevent buffer overflow */
 		message[MSG_LEN - 1 - strlen(sender) - 10 + 4 + mycolor] = 0;
-#ifndef KURZEL_PK
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
-#else
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4 + mycolor, c_b);
-#endif
-		censor_length = strlen(message + 4 + mycolor) + 1;
+		if (me_gen) {
+ #ifndef KURZEL_PK
+			snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s%s]", c_n, sender, message + 3 + mycolor);
+ #else
+			snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s%s\377%c]", c_b, c_n, sender, message + 3 + mycolor, c_b);
+ #endif
+		} else {
+ #ifndef KURZEL_PK
+			snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
+ #else
+			snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4 + mycolor, c_b);
+ #endif
+			censor_length = strlen(message + 4 + mycolor) + 1;
+		}
 	}
 
-#if 0
  #if 0
+  #if 0
 	if ((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
 	    && !(len && (target != 0) && !cfg.worldd_privchat)) /* privchat = to party or to person */
 		world_chat(p_ptr->id, tmessage);	/* no ignores... */
- #else
+  #else
 	/* Incoming chat is now filtered instead of outgoing which allows IRC relay to get public chat messages from worldd - mikaelh */
 	world_chat(p_ptr->id, tmessage);	/* no ignores... */
- #endif
-#else /* Remove current redundancy. Make worldd_pubchat decide if we broadcast all our chat out there or not. */
+  #endif
+ #else /* Remove current redundancy. Make worldd_pubchat decide if we broadcast all our chat out there or not. */
 	/* in case privchat wasn't handled above (because it's disabled),
 	   exempt it here so we only process real chat/broadcasts */
 	if (!(!cfg.worldd_privchat && len && target != 0)) {
@@ -4679,7 +4680,7 @@ static void player_talk_aux(int Ind, char *message) {
 			world_chat(p_ptr->id, tmessage);
 		}
 	}
-#endif
+ #endif
 
 	for(i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
@@ -4716,11 +4717,11 @@ static void player_talk_aux(int Ind, char *message) {
 			message[MSG_LEN - 1 - strlen(sender) - 12 + mycolor] = 0;
 
 			censor_length = strlen(message + mycolor);
-#ifndef KURZEL_PK
+ #ifndef KURZEL_PK
 			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
-#else
+ #else
 			msg_format(i, "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message + mycolor);
-#endif
+ #endif
 			/* msg_format(i, "\375\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
 		}
 		else {
@@ -4728,7 +4729,10 @@ static void player_talk_aux(int Ind, char *message) {
 			message[MSG_LEN - 1 - strlen(sender) - 1 + 4] = 0;
 
 			censor_length = strlen(message + 4);
-			msg_format(i, "%s %s", sender, message + 4);
+			if (me_gen)
+				msg_format(i, "%s%s", sender, message + 3);
+			else
+				msg_format(i, "%s %s", sender, message + 4);
 		}
 	}
 #endif
@@ -5027,21 +5031,19 @@ void player_talk(int Ind, char *message)
 /*
  * Check a char for "vowel-hood"
  */
-bool is_a_vowel(int ch)
-{
-	switch (ch)
-	{
-		case 'a':
-		case 'e':
-		case 'i':
-		case 'o':
-		case 'u':
-		case 'A':
-		case 'E':
-		case 'I':
-		case 'O':
-		case 'U':
-		return (TRUE);
+bool is_a_vowel(int ch) {
+	switch (ch) {
+	case 'a':
+	case 'e':
+	case 'i':
+	case 'o':
+	case 'u':
+	case 'A':
+	case 'E':
+	case 'I':
+	case 'O':
+	case 'U':
+	return (TRUE);
 	}
 
 	return (FALSE);
@@ -5055,8 +5057,7 @@ bool is_a_vowel(int ch)
  *
  * if 'party' is TRUE, party name is also looked up.
  */
-int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names)
-{
+int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names) {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
 	cptr problem = "";
@@ -5222,8 +5223,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 }
 
 /* same as name_lookup_loose, but without warning message if no name was found */
-int name_lookup_loose_quiet(int Ind, cptr name, u16b party, bool include_account_names)
-{
+int name_lookup_loose_quiet(int Ind, cptr name, u16b party, bool include_account_names) {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
 	cptr problem = "";
@@ -5386,8 +5386,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party, bool include_account
 }
 
 /* copy/pasted from name_lookup_loose(), just without being loose.. */
-int name_lookup(int Ind, cptr name, u16b party, bool include_account_names)
-{
+int name_lookup(int Ind, cptr name, u16b party, bool include_account_names) {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
 	bool party_online;
@@ -5507,8 +5506,7 @@ int name_lookup(int Ind, cptr name, u16b party, bool include_account_names)
 }
 
 /* copy/pasted from name_lookup_loose(), just without being loose.. but with quiet */
-int name_lookup_quiet(int Ind, cptr name, u16b party, bool include_account_names)
-{
+int name_lookup_quiet(int Ind, cptr name, u16b party, bool include_account_names) {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
 	bool party_online;
@@ -5627,8 +5625,7 @@ int name_lookup_quiet(int Ind, cptr name, u16b party, bool include_account_names
 /*
  * Convert bracer '{' into '\377'
  */
-void bracer_ff(char *buf)
-{
+void bracer_ff(char *buf) {
 	int i, len = strlen(buf);
 
 	for (i = 0; i < len; i++) {
@@ -5639,8 +5636,7 @@ void bracer_ff(char *buf)
 /*
  * make strings from worldpos '-1550ft of (17,15)'	- Jir -
  */
-char *wpos_format(int Ind, worldpos *wpos)
-{
+char *wpos_format(int Ind, worldpos *wpos) {
 	int i = Ind, n, d = 0;
 	cptr desc = "";
 	bool ville = istown(wpos) && !isdungeontown(wpos);
@@ -5678,8 +5674,7 @@ char *wpos_format(int Ind, worldpos *wpos)
 				return (format("%s", desc));
 	}
 }
-char *wpos_format_compact(int Ind, worldpos *wpos)
-{
+char *wpos_format_compact(int Ind, worldpos *wpos) {
 	int n;
 	cptr desc = "";
 	bool ville = istown(wpos) && !isdungeontown(wpos);
@@ -5803,8 +5798,8 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	   Note: Don't display feelings in Training Tower (NO_DEATH). */
 	if ((!p_ptr->distinct_floor_feeling && !is_admin(p_ptr)) || (d_ptr->flags2 & DF2_NO_DEATH) ||
 	    (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z)) {
-//		msg_print(Ind, "\376\377yLooks like any other level..");
-//		msg_print(Ind, "\377ypfft");
+		//msg_print(Ind, "\376\377yLooks like any other level..");
+		//msg_print(Ind, "\377ypfft");
 	}
 	else if (l_ptr->flags2 & LF2_OOD_HI) {
 		msg_print(Ind, "\374\377yWhat a terrifying place..");
@@ -5885,35 +5880,31 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
  * returned. Case doesn't matter. -DG-
  */
 
-int test_item_name(cptr name)
-{
-       int i;
+int test_item_name(cptr name) {
+	int i;
 
-       /* Scan the items */
-       for (i = 1; i < max_k_idx; i++)
-       {
+	/* Scan the items */
+	for (i = 1; i < max_k_idx; i++) {
 		object_kind *k_ptr = &k_info[i];
 		cptr obj_name = k_name + k_ptr->name;
 
 		/* If name matches, give us the number */
 		if (stricmp(name, obj_name) == 0) return (i);
-       }
-       return (0);
+	}
+	return (0);
 }
 
-/* 
+/*
  * Middle-Earth (Imladris) calendar code from ToME
  */
 /*
  * Break scalar time
  */
-s32b bst(s32b what, s32b t)
-{
+s32b bst(s32b what, s32b t) {
 #if 0 /* TIMEREWRITE */
 	s32b turns = t + (10 * DAY_START);
 
-	switch (what)
-	{
+	switch (what) {
 		case MINUTE:
 			return ((turns / 10 / MINUTE) % 60);
 		case HOUR:
@@ -5950,30 +5941,28 @@ cptr get_month_name(int day, bool full, bool compact) {
 		i--;
 
 	switch (i) {
-		/* Yestare/Mettare */
-		case 0:
-		case 8:
-		{
-			char buf2[20];
+	/* Yestare/Mettare */
+	case 0:
+	case 8: {
+		char buf2[20];
 
-			snprintf(buf2, 20, "%s", get_day(day + 1));
-			if (full) snprintf(buf, 40, "%s (%s day)", month_name[i], buf2);
-			else snprintf(buf, 40, "%s", month_name[i]);
-			break;
-		}
-		/* 'Normal' months + Enderi */
-		default:
-		{
-			char buf2[20];
-			char buf3[20];
+		snprintf(buf2, 20, "%s", get_day(day + 1));
+		if (full) snprintf(buf, 40, "%s (%s day)", month_name[i], buf2);
+		else snprintf(buf, 40, "%s", month_name[i]);
+		break;
+	}
+	/* 'Normal' months + Enderi */
+	default: {
+		char buf2[20];
+		char buf3[20];
 
-			snprintf(buf2, 20, "%s", get_day(day + 1 - month_day[i]));
-			snprintf(buf3, 20, "%s", get_day(day + 1));
+		snprintf(buf2, 20, "%s", get_day(day + 1 - month_day[i]));
+		snprintf(buf3, 20, "%s", get_day(day + 1));
 
-			if (full) snprintf(buf, 40, "%s day of %s (%s day)", buf2, month_name[i], buf3);
-			else if (compact) snprintf(buf, 40, "%s day of %s", buf2, month_name[i]);
-			else snprintf(buf, 40, "%s %s", buf2, month_name[i]);
-			break;
+		if (full) snprintf(buf, 40, "%s day of %s (%s day)", buf2, month_name[i], buf3);
+		else if (compact) snprintf(buf, 40, "%s day of %s", buf2, month_name[i]);
+		else snprintf(buf, 40, "%s %s", buf2, month_name[i]);
+		break;
 		}
 	}
 
@@ -7187,9 +7176,9 @@ void restore_estate(int Ind) {
 	strcpy(buf2, buf);
 	strcat(buf2, ".$$$");
 	if ((fp_tmp = fopen(buf2, "wb")) == NULL) {
-    		s_printf("  error: cannot open temporary file '%s'.\nfailed.\n", buf2);
-    		msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
-    		fclose(fp);
+		s_printf("  error: cannot open temporary file '%s'.\nfailed.\n", buf2);
+		msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
+		fclose(fp);
 		return;
 	}
 
