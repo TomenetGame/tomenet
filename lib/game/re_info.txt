@@ -721,8 +721,8 @@ G:*:*
 I:+20:%200d%200:+0:+0:=0
 W:+5:35:+0:%300:A
 F:R_CHAR_E
-# no unmakers:
-H:MULTIPLY
+# no unmakers/death orbs/shambler/invisible stalker/Will o' the wisp:
+H:MULTIPLY | DEATH_ORB | RES_TELE | BLINK
 M:DROP_2D2 | DROP_GOOD
 
 #Demonised skeletons and flying skulls etc.
