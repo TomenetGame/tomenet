@@ -4156,9 +4156,10 @@ void do_cmd_store(int Ind) {
 		if (p_ptr->blind) set_blind(Ind, 0);
 		if (p_ptr->confused) set_confused(Ind, 0);
 
-		if (p_ptr->chp < p_ptr->mhp / 2) {
+		if (p_ptr->chp < p_ptr->mhp / 2 || p_ptr->cut) {
 			msg_print(Ind, "The temple priest applies a bandage.");
 			hp_player_quiet(Ind, p_ptr->mhp / 2, TRUE);
+			set_cut(Ind, 0, 0);
 		}
 	}
 
