@@ -14918,6 +14918,8 @@ Priest schools:
                     and from evil in general at 50. Works similar to the
                     'protection from evil' spell, but has better effect on
                     monsters of higher level.
+                    (This effect does not stack with the spell/scroll, but
+                    overrides them.)
 
 
 - Holy Curing
