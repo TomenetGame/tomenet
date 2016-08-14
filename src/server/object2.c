@@ -3174,6 +3174,8 @@ s64b object_value(int Ind, object_type *o_ptr) {
 bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
 	player_type *p_ptr = NULL;
 	int total = o_ptr->number + j_ptr->number;
+	bool unknown = !((k_info[o_ptr->k_idx].flags3 & TR3_EASY_KNOW) && (k_info[j_ptr->k_idx].flags3 & TR3_EASY_KNOW))
+	    && (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr));
 
 
 	/* Hack -- gold always merge */
@@ -3406,11 +3408,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 //			if (o_ptr->tval == TV_BOOK) { /* this was probably only meant for books..? */
 			/* Require full knowledge of both items */
-			if (!Ind || !object_known_p(Ind, o_ptr) ||
-//			    !object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (FALSE);
-			    !object_known_p(Ind, j_ptr))
-				return (FALSE);
-//			}
+			if (unknown) return (FALSE);
 
 			/* different bpval? */
 			if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
@@ -3479,8 +3477,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		/* Various */
 		default:
 			/* Require knowledge */
-			if (Ind && (!object_known_p(Ind, o_ptr) ||
-				    !object_known_p(Ind, j_ptr))) return (FALSE);
+			if (!unknown && /* added this just for the EASY_KNOW check it contains */
+			    Ind && (!object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)))
+				return (FALSE);
 
 			/* Probably okay */
 			break;
