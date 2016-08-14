@@ -1906,7 +1906,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 
 /* play single ambient sfx, synched for all players, depending on worldmap terrain - C. Blue */
 void process_ambient_sfx(void) {
-	int i;
+	int i, vol = 30 + rand_int(70);
 	player_type *p_ptr;
 	wilderness_type *w_ptr;
 
@@ -1934,36 +1934,36 @@ void process_ambient_sfx(void) {
 		case WILD_LAKE:
 		case WILD_SWAMP:
 			if (season == SEASON_WINTER) break;
-			sound_floor_vol(&p_ptr->wpos, "animal_toad", NULL, SFX_TYPE_AMBIENT, 100);
+			sound_floor_vol(&p_ptr->wpos, "animal_toad", NULL, SFX_TYPE_AMBIENT, vol);
 			w_ptr->ambient_sfx_timer = 4 + rand_int(4);
 			break;
 		case WILD_ICE:
 		case WILD_MOUNTAIN:
 		case WILD_WASTELAND:
-			if (IS_NIGHT) sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, 100);
+			if (IS_NIGHT) sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, vol);
 			w_ptr->ambient_sfx_timer = 30 + rand_int(60);
 			break;
 		//case WILD_SHORE:
 		case WILD_OCEAN:
-			if (IS_DAY) sound_floor_vol(&p_ptr->wpos, "animal_seagull", NULL, SFX_TYPE_AMBIENT, 100);
+			if (IS_DAY) sound_floor_vol(&p_ptr->wpos, "animal_seagull", NULL, SFX_TYPE_AMBIENT, vol);
 			w_ptr->ambient_sfx_timer = 30 + rand_int(60);
 			break;
 		case WILD_FOREST:
 		case WILD_DENSEFOREST:
 			if (IS_DAY) {
 				if (season == SEASON_WINTER) {
-					sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, 100);
+					sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, vol);
 					w_ptr->ambient_sfx_timer = 30 + rand_int(60);
 				} else {
-					sound_floor_vol(&p_ptr->wpos, "animal_bird", NULL, SFX_TYPE_AMBIENT, 100);
+					sound_floor_vol(&p_ptr->wpos, "animal_bird", NULL, SFX_TYPE_AMBIENT, vol);
 					w_ptr->ambient_sfx_timer = 10 + rand_int(20);
 				}
 			} else {
 				if (!rand_int(3)) {
-					sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, 100);
+					sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, vol);
 					w_ptr->ambient_sfx_timer = 30 + rand_int(60);
 				} else {
-					sound_floor_vol(&p_ptr->wpos, "animal_owl", NULL, SFX_TYPE_AMBIENT, 100);
+					sound_floor_vol(&p_ptr->wpos, "animal_owl", NULL, SFX_TYPE_AMBIENT, vol);
 					w_ptr->ambient_sfx_timer = 20 + rand_int(40);
 				}
 			}
