@@ -92,27 +92,44 @@ static cptr qi_msg_max = "\377yYou are already pursuing the maximum possible num
 
 /* syllable generation for random passwords */
 static cptr pw_consonant[] = {
-    "b", "c", "d", "f", "g", "k", "l", "m", "n", "p", "r", "s", "t", "w", "x", "z", /* <- (16) */
-    "h", "j", "v", /*"qu",*/ "kw", "bl", "br", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "kl", /*"kn",*/ "kr", /* <- may only occur as prefix in a syllable (30) */
-    "pl", "pn", "pr", "ps", "sk", "sl", "sm", "sn", "sp", /*"sr",*/ "st", /* <- may only occur as prefix in a syllable */
-    /*"th",*/ "tr", "tw", /*"vl", "vn",*/ "vr", /*"wl",*/ "wr", /* <- may only occur as prefix in a syllable */
-    "sh", "ch", /* <- may not occur as both prefix and suffix in the same syllable (2) */
-    "ck"}; /* <- may only occur as suffix in a syllable (1) */
+     /* may occur everywhere (16) */
+    "b", "c", "d", "f", "g",
+    "k", "l", "m", "n", "p",
+    "r", "s", "t", "w", "x", "z",
+
+     /* may only occur as prefix in a syllable (29) */
+    "h", "j", "v", /*"qu",*/ "kw", "bl",
+    "br", "cl", "cr", "dr", "fl",
+    "fr", "gl", "gr", "kl", /*"kn",*/ "kr",
+    "pl", "pn", "pr", "ps", "sk",
+    "sl", "sm", "sn", "sp", /*"sr",*/ "st",
+    /*"th",*/ "tr", "tw", /*"vl", "vn",*/ "vr", /*"wl",*/ "wr",
+
+    /* may not occur as both prefix and suffix in the same syllable (2) */
+    "sh", "ch",
+
+    /* may only occur as suffix in a syllable (1) */
+    "ck"};
 #define PW_ALL 16
-#define PW_PRE 30
+#define PW_PRE 29
 #define PW_XOR 2
 #define PW_SUF 1
+
 static cptr pw_vocal[] = {
     "a", "e", "i", "o", "u", /*"y",*/
-    "ay", "oy", "ee", "oo"}; /* <- may not be followed by 'ck'--actually not by any consonant (4) */
+
+     /* may not be followed by 'ck'--actually not by any consonant (4) */
+    "ay", "oy", "ee", "oo"};
 #define PW_YV 4
 
 /* Initialise randomised passwords */
 void quest_init_passwords(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, q;
-	int pwc = sizeof(pw_consonant) / sizeof(pw_consonant[0]);
-	int pwv = sizeof(pw_vocal) / sizeof(pw_vocal[0]);
+
+	int pwc = PW_ALL + PW_PRE + PW_XOR + PW_SUF; //consonant array element amount
+	int pwv = 9; //vocal array element amount
+
 	bool p, v;
 	int tries = 100;
 
