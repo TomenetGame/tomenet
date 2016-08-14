@@ -5730,7 +5730,7 @@ if (cfg.unikill_format) {
 					determine_artifact_timeout(a_idx, wpos);
 				}
 #endif
-				drop_near(qq_ptr, -1, wpos, y, x);
+				drop_near(0, qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
 			} else  s_printf("..failed.\n");
 		} else if (
@@ -5760,7 +5760,7 @@ if (cfg.unikill_format) {
 			qq_ptr->mode = p_ptr->mode;
 			if (true_artifact_p(qq_ptr)) determine_artifact_timeout(qq_ptr->name1, wpos);
 #endif
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 			s_printf("..dropped.\n");
 		}
 	}
@@ -5882,7 +5882,7 @@ if (cfg.unikill_format) {
 			/* Drop it in the dungeon */
 			if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
 			else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
-			drop_near(&prize, -1, wpos, y, x);
+			drop_near(0, &prize, -1, wpos, y, x);
 
 			/* Mega-Hack -- Prepare to make "Morgoth" */
 			invcopy(&prize, lookup_kind(TV_CROWN, SV_MORGOTH));
@@ -5899,7 +5899,7 @@ if (cfg.unikill_format) {
 			/* Drop it in the dungeon */
 			if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
 			else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
-			drop_near(&prize, -1, wpos, y, x);
+			drop_near(0, &prize, -1, wpos, y, x);
 
 
 			/* Special reward: 1 *great* acquirement item per player. */
@@ -5940,7 +5940,7 @@ if (cfg.unikill_format) {
 
 			qq_ptr->bpval = 5;
 			/* Drop it in the dungeon */
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* finally made Robin Hood drop a Bow ;) */
 		} else if (strstr((r_name + r_ptr->name),"Robin Hood, the Outlaw") && magik(50)) {
@@ -5951,7 +5951,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_drops);
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		} else if (r_ptr->flags7 & RF7_NAZGUL) {
 			/* Get local object */
@@ -5985,7 +5985,7 @@ if (cfg.unikill_format) {
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 #endif
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* Hack - the Dragonriders give some firestone */
 		} else if (r_ptr->flags3 & RF3_DRAGONRIDER) {
@@ -5998,7 +5998,7 @@ if (cfg.unikill_format) {
 			qq_ptr->number = (byte)rand_range(1,12);
 
 			/* Drop it in the dungeon */
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* PernAngband additions */
 		/* Mega^2-hack -- destroying the Stormbringer gives it us! */
@@ -6026,7 +6026,7 @@ if (cfg.unikill_format) {
 			qq_ptr->to_d = 17 + rand_int(14);
 
 			/* Drop it in the dungeon */
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 #if 0 /* currently no such book */
 		/* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
@@ -6041,7 +6041,7 @@ if (cfg.unikill_format) {
 			invcopy(qq_ptr, lookup_kind(TV_BOOK, 11));
 
 			/* Drop it in the dungeon */
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 #endif
 
 		} else if (m_ptr->r_idx == RI_LIVING_LIGHTNING) {
@@ -6092,7 +6092,7 @@ if (cfg.unikill_format) {
 			if (qq_ptr->pval < 6) object_copy(qq_ptr, &forge_fallback);
 #endif
 			qq_ptr->timeout = 0;
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_BOOK, 2));
@@ -6100,7 +6100,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_RUNE, 5));
@@ -6108,7 +6108,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_RUNE, 8));
@@ -6116,7 +6116,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_ROD, SV_ROD_ELEC_BALL));
@@ -6126,7 +6126,7 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
 			qq_ptr->name2 = EGO_RISTARI;
 			qq_ptr->name2b = 0;
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_DRAG_ARMOR, SV_DRAGON_SKY));
@@ -6151,7 +6151,7 @@ if (cfg.unikill_format) {
 			if (!tries) msg_format(Ind, "RI_LIVING_LIGHTNING: Re-rolling out of tries!");
 
 			qq_ptr->timeout = 0;
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		} else if (m_ptr->r_idx == RI_HELLRAISER) {
 			/* Get local object */
@@ -6168,7 +6168,7 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
 			/* Drop it in the dungeon */
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			/* Prepare a second reward */
 			object_wipe(qq_ptr);
@@ -6191,7 +6191,7 @@ if (cfg.unikill_format) {
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 #endif
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		} else if (m_ptr->r_idx == RI_DOR) {
 			/* Get local object */
@@ -6206,7 +6206,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
 			qq_ptr->pval = qq_ptr->number * 5 + 3 + rand_int(4);
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 #endif
 
 			/* a rod of havoc */
@@ -6219,7 +6219,7 @@ if (cfg.unikill_format) {
 			/* hack ego power */
 			qq_ptr->name2 = EGO_RISTARI;
 			qq_ptr->name2b = 0;
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* dungeon boss, but drops multiple items */
 		} else if (m_ptr->r_idx == RI_ZU_AON) {
@@ -6248,7 +6248,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 			/* Drop it in the dungeon */
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			/* Prepare a second reward */
 			object_wipe(qq_ptr);
@@ -6268,7 +6268,7 @@ if (cfg.unikill_format) {
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 #endif
-			drop_near(qq_ptr, -1, wpos, y, x);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		} else if (!pvp) {
 			a_idx = 0;
@@ -6373,7 +6373,7 @@ if (cfg.unikill_format) {
 					qq_ptr->mode = p_ptr->mode;
 					determine_artifact_timeout(a_idx, wpos);
 #endif
-					drop_near(qq_ptr, -1, wpos, y, x);
+					drop_near(0, qq_ptr, -1, wpos, y, x);
 				}
 			}
 		}
@@ -6410,7 +6410,7 @@ if (cfg.unikill_format) {
 		qq_ptr->ident &= ~ID_CURSED; //paranoia
 		determine_level_req(0, qq_ptr);
 
-		drop_near(qq_ptr, -1, wpos, y, x);
+		drop_near(0, qq_ptr, -1, wpos, y, x);
 	}
  #endif
 #endif
@@ -6440,7 +6440,7 @@ if (cfg.unikill_format) {
 		apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
 		s_printf("NEWYEARSEVE: Dropped fireworks (%d,%d) for '%s'.\n", qq_ptr->xtra1, qq_ptr->xtra2, p_ptr->name);
-		drop_near(qq_ptr, -1, wpos, y, x);
+		drop_near(0, qq_ptr, -1, wpos, y, x);
 	}
 
 	/* for when a quest giver turned non-invincible */
@@ -7645,7 +7645,7 @@ void player_death(int Ind) {
 				else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 
 				/* Drop this one */
-				away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
+				away = drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
 					<= 0 ? TRUE : FALSE;
 			}
 
@@ -7661,7 +7661,7 @@ void player_death(int Ind) {
 						if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 						else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
 						else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-						o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
+						o_idx = drop_near(0, o_ptr, 0, &p_ptr->wpos, y1, x1);
 					}
 			}
 		} else {
@@ -8232,7 +8232,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 		else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
 		else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-		(void)drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		(void)drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 	}
 
 	/* Give him his hit points back */
@@ -8936,7 +8936,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 				o_ptr->mode = p_ptr->mode;
 				o_ptr->level = 1;
 				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
-				(void)drop_near(o_ptr, 0, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				(void)drop_near(0, o_ptr, 0, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 			}
 		}
 #endif
@@ -11918,7 +11918,7 @@ bool master_build(int Ind, char * parms) {
 		invcopy(&newkey, lookup_kind(TV_KEY, SV_HOUSE_KEY ));
 		newkey.pval = key->id;
 		newkey.marked2 = ITEM_REMOVAL_NEVER;
-		drop_near(&newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		drop_near(0, &newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		cs_ptr = ReplaceCS(c_ptr, CS_KEYDOOR);
 		if (cs_ptr) cs_ptr->sc.ptr = key;
 		else KILL(key, struct key_type);

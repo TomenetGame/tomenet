@@ -3222,7 +3222,7 @@ s_printf("ROOM4_BONES\n");
 				for (x = x1; x <= x2; x++)
 					if (!rand_int(5)) {
 						invcopy(&forge, lookup_kind(TV_SKELETON, randint(8)));
-						drop_near(&forge, 0, wpos, y, x);
+						drop_near(0, &forge, 0, wpos, y, x);
 					}
 
 			/* Place a monster in the room */

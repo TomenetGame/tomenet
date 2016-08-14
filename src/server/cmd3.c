@@ -1495,7 +1495,7 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 	tmp_obj.mode = p_ptr->mode;
 
 	/* Drop it */
-	drop_near(&tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	drop_near(0, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Subtract from the player's gold */
 	p_ptr->au -= amt;

@@ -1918,7 +1918,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 					q_ptr->number = amt;
 					object_aware(q_ptr);
 					object_known(q_ptr);
-					drop_near(q_ptr, -1, py, px);
+					drop_near(0, q_ptr, -1, py, px);
 				}
 				else msg_print(Ind, "You do not have the gold!");
 			}

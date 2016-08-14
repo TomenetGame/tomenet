@@ -6971,7 +6971,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 
 	forge.marked2 = removal_marker;
 	forge.discount = object_discount; /* usually 0, except for creation from stolen acquirement scrolls */
-	drop_near(&forge, -1, wpos, y, x);
+	drop_near(0, &forge, -1, wpos, y, x);
 
 	/* for now ignore live-spawns. change that maybe? */
 	if (level_generation_time) {
@@ -8482,7 +8482,7 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
 	}
 
 	/* Drop it */
-	drop_near(&forge, -1, wpos, y, x);
+	drop_near(0, &forge, -1, wpos, y, x);
 }
 
 
@@ -8585,7 +8585,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 /* XXX XXX XXX DIRTY! DIRTY! DIRTY!		- Jir - */
 //#define DROP_KILL_NOTE /* todo: needs adjustments - see below */
 #define DROP_ON_STAIRS_IN_EMERGENCY
-s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
+s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
 	int k, d, ny, nx, i, s;	// , y1, x1
 	int bs, bn;
 	int by, bx;
@@ -8718,7 +8718,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			next_o_idx = j_ptr->next_o_idx;
 
 			/* Check for possible combination */
-			if (object_similar(0, o_ptr, j_ptr, 0x4)) comb = TRUE;
+			if (object_similar(Ind, o_ptr, j_ptr, 0x4)) comb = TRUE;
 
 			/* Count objects */
 			k++;
@@ -8864,7 +8864,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		next_o_idx = q_ptr->next_o_idx;
 
 		/* Check for combination */
-		if (object_similar(0, o_ptr, q_ptr, 0x4)) {
+		if (object_similar(Ind, o_ptr, q_ptr, 0x4)) {
 			/* Combine the items */
 			object_absorb(0, q_ptr, o_ptr);
 
@@ -9064,7 +9064,7 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
 		handle_art_d(o_ptr->name1);
 		return -1;
 	}
-	else return (drop_near(o_ptr, chance, wpos, y, x));
+	else return (drop_near(Ind, o_ptr, chance, wpos, y, x));
 }
 
 

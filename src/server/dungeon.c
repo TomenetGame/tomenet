@@ -5181,7 +5181,7 @@ static void process_games(int Ind) {
 						if (!cave_floor_bold(zcave, oy, ox)) continue;
 						tmp_obj = p_ptr->inventory[ball];
 						tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
-						drop_near(&tmp_obj, -1, &p_ptr->wpos, oy, ox);
+						drop_near(0, &tmp_obj, -1, &p_ptr->wpos, oy, ox);
 						printf("dropping at %d %d (%d)\n", ox, oy, try);
 						inven_item_increase(Ind, ball, -999);
 						inven_item_optimize(Ind, ball);

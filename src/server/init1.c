@@ -9009,7 +9009,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 				k_allow_special[object_index] = FALSE;
 
-				drop_near(o_ptr, -1, wpos, y, x);
+				drop_near(0, o_ptr, -1, wpos, y, x);
 			}
 #else /* rudimentary support yada yada yada - C. Blue */
 			else if (object_index) {
@@ -9021,7 +9021,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 					o_ptr->sval = k_info[o_ptr->k_idx].sval;
 				}
 				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
-				drop_near(o_ptr, -1, wpos, y, x);
+				drop_near(0, o_ptr, -1, wpos, y, x);
 			}
 #endif	// 0
 
@@ -9068,7 +9068,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				a_allow_special[artifact_index] = FALSE;
 
 				/* Drop the artifact */
-				drop_near(q_ptr, -1, y, x);
+				drop_near(0, q_ptr, -1, y, x);
 #endif
 			}
 

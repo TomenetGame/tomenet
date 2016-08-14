@@ -183,7 +183,7 @@ static bool do_player_trap_garbage(int Ind, int times) {
 
 		ident = TRUE;
 		if (inven_carry(Ind, o_ptr) < 0)
-			drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+			drop_near(0, o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 	}
 	return (ident);
 }
@@ -464,7 +464,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		}
 	}
 
-	drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	drop_near(0, o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	return TRUE;
 }
@@ -1685,7 +1685,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				p_ptr->au -= amt * price;
 				o_ptr->number = amt;
-				drop_near(o_ptr, -1, wpos, p_ptr->py, p_ptr->px);
+				drop_near(0, o_ptr, -1, wpos, p_ptr->py, p_ptr->px);
 
 				msg_print(Ind, "You feel like having a shot.");
 				ident = TRUE;
@@ -3338,7 +3338,7 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 		delete_object_idx(this_o_idx, FALSE);
 
 		/* Drop it */
-		drop_near(q_ptr, -1, wpos, y, x);
+		drop_near(0, q_ptr, -1, wpos, y, x);
 	}
 
 //	cave[py][px].special = cave[py][px].special2 = 0;
@@ -4894,7 +4894,7 @@ bool mon_hit_trap(int m_idx) {
 					}
 
 					/* Drop (or break) near that location */
-					if (!load_o_ptr->pval) drop_near(j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
+					if (!load_o_ptr->pval) drop_near(0, j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
 				}
 
 			}

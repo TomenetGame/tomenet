@@ -1243,7 +1243,7 @@ extern void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool g
 extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold);
 extern void give_reward(int Ind, u32b resf, cptr quark, int level, int discount);
 extern void place_gold(struct worldpos *wpos, int y, int x, int bonus);
-extern s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
+extern s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
 extern void compact_objects(int size, bool purge);
 extern s16b o_pop(void);

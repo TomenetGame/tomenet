@@ -5604,7 +5604,7 @@ void monster_drop_carried_objects(monster_type *m_ptr) {
 //		object_desc(Ind, tempbuf, o_ptr, 0, 0);
 //		if (!strcmp(tempbuf, "(nothing)")) {
 			/* Drop it */
-			drop_near(q_ptr, -1, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+			drop_near(0, q_ptr, -1, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 //		}
 //		free(tempbuf);
 	}

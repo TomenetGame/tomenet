@@ -3010,7 +3010,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
-							drop_near(&forge, -1, wpos, y, x);
+							drop_near(0, &forge, -1, wpos, y, x);
 							if (tval == TV_CHEST)
 								s_printf("DIGGING: %s found a chest.\n", p_ptr->name);
 							else if (tval == TV_RUNE)
@@ -3024,7 +3024,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 								default_obj_theme, p_ptr->luck);
 							object_desc(0, o_name, &forge, TRUE, 3);
 							s_printf("DIGGING: %s found item: %s.\n", p_ptr->name, o_name);
-							drop_near(&forge, -1, wpos, y, x);
+							drop_near(0, &forge, -1, wpos, y, x);
 #else
 							place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
 								default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL);
@@ -3076,7 +3076,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 //						forge.level = ;
 						forge.marked2 = ITEM_REMOVAL_NORMAL;
 						msg_print(Ind, "You have found something!");
-						drop_near(&forge, -1, wpos, y, x);
+						drop_near(0, &forge, -1, wpos, y, x);
 						s_printf("DIGGING: %s found a wood piece.\n", p_ptr->name);
 					}
 
@@ -3219,7 +3219,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							forge.number = 1;
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
-							drop_near(&forge, -1, wpos, y, x);
+							drop_near(0, &forge, -1, wpos, y, x);
 							s_printf("DIGGING: %s found a metal piece.\n", p_ptr->name);
 						} else {
 							object_level = find_level;
@@ -3259,7 +3259,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
-							drop_near(&forge, -1, wpos, y, x);
+							drop_near(0, &forge, -1, wpos, y, x);
 							s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 					}
 				}
@@ -3403,7 +3403,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
-							drop_near(&forge, -1, wpos, y, x);
+							drop_near(0, &forge, -1, wpos, y, x);
 							s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 						}
 					}
@@ -3800,11 +3800,11 @@ void do_cmd_disarm(int Ind, int dir) {
 					   the total chance for this is about 3% */
 					if (magik((sdis / 10) + 1)) {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-						drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+						drop_near(0, yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 						msg_print(Ind, "You have created a wonderful trapkit using pieces of the disarmed trap.");
 					} else {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, FALSE, FALSE, FALSE, make_resf(p_ptr));
-						drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+						drop_near(0, yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 						msg_print(Ind, "You have fashioned a trapkit of a sort from the disarmed trap.");
 					}
 				}
@@ -6223,10 +6223,10 @@ void do_cmd_fire(int Ind, int dir) {
 #ifdef PY_FIRE_ON_WALL
 		if (!cave_los(zcave, y, x)) /* target coordinates were in a wall? */
 			/* drop it right there _before_ the wall, not 'in' the wall and then calling scatter().. */
-			drop_near(o_ptr, breakage, wpos, prev_y, prev_x);
+			drop_near(Ind, o_ptr, breakage, wpos, prev_y, prev_x);
 		else
 #endif
-		drop_near(o_ptr, breakage, wpos, y, x);
+		drop_near(Ind, o_ptr, breakage, wpos, y, x);
 	}
 
 	suppress_message = FALSE;
@@ -6696,7 +6696,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					msg_format_near(0 - c_ptr->m_idx, "\377r%s misses the ball", Players[0 - c_ptr->m_idx]->name);
 					msg_print(0 - c_ptr->m_idx, "\377rYou miss the ball");
 					o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-					drop_near(o_ptr, -1, wpos, y, x);
+					drop_near(0, o_ptr, -1, wpos, y, x);
 				}
 				/* and stop */
 				return;

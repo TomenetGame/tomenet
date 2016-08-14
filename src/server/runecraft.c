@@ -980,7 +980,7 @@ bool warding_rune(int Ind, byte projection, byte imperative, byte skill)
 		o_ptr->owner = cs_ptr->sc.rune.id;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->note = cs_ptr->sc.rune.note;
-		//drop_near(o_ptr, -1, wpos, y, x);
+		//drop_near(0, o_ptr, -1, wpos, y, x);
 		inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
 		//refund cost too? - Kurzel
 
@@ -1162,7 +1162,7 @@ bool warding_rune_break(int m_idx)
 		o_ptr->owner = cs_ptr->sc.rune.id;
 		o_ptr->mode = lookup_player_mode(cs_ptr->sc.rune.id); //Ew, what if they're dead? - Kurzel
 		o_ptr->note = cs_ptr->sc.rune.note;
-		drop_near(o_ptr, -1, wpos, my, mx);
+		drop_near(0, o_ptr, -1, wpos, my, mx);
 	}
 
 	/* Cleanup */

@@ -4943,7 +4943,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				    cave_perma_bold(zcave, cy, cx)) continue;
 
 				//(void)floor_carry(cy, cx, &tmp_obj);
-				drop_near(&tmp_obj, 0, wpos, cy, cx);
+				drop_near(0, &tmp_obj, 0, wpos, cy, cx);
 
 				/* XXX not working? */
 				if (!quiet && note_kill)
