@@ -1047,8 +1047,7 @@ void do_cmd_save_game(int Ind)
  */
 /* FIXME: this function returns bad value when max_exp is stupidly large
  * (usually admin chars) */
-int total_points(int Ind)
-{
+int total_points(int Ind) {
 	u32b points, tmp_base, tmp1, tmp2, tmp3, tmp3a, bonusm, bonusd;
 	u32b lev_factoring;
 	player_type *p_ptr = Players[Ind];
@@ -1064,15 +1063,10 @@ int total_points(int Ind)
 //	return (p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
 
 	/* Bonus */
-	bonusm = 100; bonusd = 100;
-	if (p_ptr->mode & MODE_NO_GHOST)
-	{
-		bonusm += 25;
-	}
-	if (p_ptr->mode & MODE_HARD)
-	{
-		bonusm += 25;
-	}
+	bonusm = 100;
+	bonusd = 100;
+	if (p_ptr->mode & MODE_NO_GHOST) bonusm += 25;
+	if (p_ptr->mode & MODE_HARD) bonusm += 25;
 
 #ifndef ALT_EXPRATIO
 	/* Bonus might cause overflow at lvl 94+ - so maybe compensate */
