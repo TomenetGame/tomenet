@@ -6734,10 +6734,12 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			/* Automatically disable permanent wraith form (set_tim_wraith) */
 			p_ptr->tim_wraith = 0; //avoid duplicate message
 			p_ptr->update |= PU_BONUS;
+			p_ptr->redraw |= PR_BPR_WRAITH;
 		}
 		if (zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK)) {
 			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
 			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+			p_ptr->redraw |= PR_BPR_WRAITH;
 #ifdef USE_SOUND_2010
 			/* New: Have bgm indicate no-tele too! */
 			handle_music(Ind);

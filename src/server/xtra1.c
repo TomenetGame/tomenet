@@ -463,6 +463,11 @@ static void prt_bpr(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	byte attr = p_ptr->num_blow ? TERM_L_GREEN : TERM_RED;
 
+	if (p_ptr->tim_wraith) {
+		Send_bpr(Ind, 255, TERM_WHITE);
+		return;
+	}
+
 	switch (p_ptr->pclass) {
 	case CLASS_WARRIOR:
 	case CLASS_MIMIC:
@@ -2281,6 +2286,7 @@ y
 		if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
 		    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
 			//BAD!(recursion)	set_tim_wraith(Ind, 10000);
+			if (!p_ptr->tim_wraith) p_ptr->redraw |= PR_BPR_WRAITH;
 			p_ptr->tim_wraith = 10000; csheet_boni->cb[5] |= CB6_RWRTH;
 		}
 		p_ptr->drain_life++; csheet_boni->cb[5] |= CB6_SRGHP;
@@ -6103,7 +6109,7 @@ void calc_boni(int Ind) {
 	p_ptr->redraw |= (PR_ENCUMBERMENT);
 	if (is_newer_than(&p_ptr->version, 4, 4, 8, 4, 0, 0))
 		/* Redraw BpR */
-		p_ptr->redraw |= PR_BPR;
+		p_ptr->redraw |= PR_BPR_WRAITH;
 
 	/* Send all the columns */
 	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0) && logged_in)
@@ -6887,8 +6893,8 @@ void redraw_stuff(int Ind) {
 			prt_study(Ind);
 		}
 	} else {
-		if (p_ptr->redraw & PR_BPR) {
-			p_ptr->redraw &= ~(PR_BPR);
+		if (p_ptr->redraw & PR_BPR_WRAITH) {
+			p_ptr->redraw &= ~(PR_BPR_WRAITH);
 			prt_bpr(Ind);
 		}
 	}

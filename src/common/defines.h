@@ -4178,7 +4178,7 @@
 #define PR_ENCUMBERMENT	0x40000000L	/* Display Encumberment status line */
 #define PR_STAMINA	0x80000000L	/* Display Stamina */
 
-#define PR_BPR		0x00400000L	/* Re-use (!) to display BpR */
+#define PR_BPR_WRAITH	0x00400000L	/* Re-use (!) to display BpR and also Wraithform */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

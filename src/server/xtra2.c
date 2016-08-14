@@ -1219,6 +1219,7 @@ bool set_tim_wraith(int Ind, int v) {
 				notice = TRUE;
 
 				p_ptr->wraith_in_wall = TRUE;
+				p_ptr->redraw |= PR_BPR_WRAITH;
 			}
 		}
 #if 0	// I can't remember what was it for..
@@ -1266,6 +1267,7 @@ bool set_tim_wraith(int Ind, int v) {
 				if (v != 10000) {
 					msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 					msg_print(Ind, "You lose your wraith powers.");
+					p_ptr->redraw |= PR_BPR_WRAITH;
 					notice = TRUE;
 
 					/* That will hopefully prevent game hinging when loading */

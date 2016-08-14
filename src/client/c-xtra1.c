@@ -791,7 +791,9 @@ void prt_bpr(byte bpr, byte attr) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	c_put_str(attr, format("%2d BpR", bpr), ROW_BPR, COL_BPR);
+	/* hack: display active wraithform indicator instead */
+	if (bpr == 255) c_put_str(attr, "Wraith", ROW_BPR, COL_BPR);
+	else c_put_str(attr, format("%2d BpR", bpr), ROW_BPR, COL_BPR);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
