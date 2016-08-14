@@ -191,8 +191,6 @@ void initialize_main_pref_files(void) {
 	for (i = 0; i < MAX_K_IDX; i++) Client_setup.k_char[i] = Client_setup.k_attr[i] = 0;
 	for (i = 0; i < MAX_R_IDX; i++) Client_setup.r_char[i] = Client_setup.r_attr[i] = 0;
 
-    global_big_map_hold = TRUE;
-
 	/* Access the "basic" pref file */
 	strcpy(buf, "pref.prf");
 
@@ -3125,9 +3123,13 @@ void client_init(char *argv1, bool skip) {
 	prt(format("Name        : %s", cname), 2, 1);
 #endif
 
-	/* put actual screen size changes from loading option files on hold
+	/* Put actual screen size changes from loading option files on hold
 	   until we've finished loading ALL option files,
-	   instead of switching and glitching back and forth */
+	   instead of switching and glitching back and forth.
+
+	   This glitch occurred seemingly at random,
+	   and exactly when global.opt said 'Y' to big_map option,
+	   while it would actually _not_ glitch out when it was set to 'X' in global.opt(!) */
 	global_big_map_hold = TRUE;
 
 	/* Initialize the pref files */
