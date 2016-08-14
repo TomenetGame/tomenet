@@ -739,6 +739,8 @@ void do_takeoff_impossible(int Ind) {
 		}
 		/* new: also redisplay empty slots as '(unavailable)' after a form change, if they are */
 		if (!o_ptr->k_idx) Send_equip_availability(Ind, k);
+		/* for druids/shamans: climbing set may not work with form even though it is equippable! */
+		else if (k == INVEN_TOOL) Send_equip_availability(Ind, k);
 	}
 	bypass_inscrption = FALSE;
 }

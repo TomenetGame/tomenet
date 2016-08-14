@@ -5461,7 +5461,7 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	char uses_dir = 0;
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	int slot = INVEN_WIELD + pos - 'a';
 
 	/* Mark activatable items that require a direction */
@@ -5484,19 +5484,23 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		name = "(unavailable)";
 	}
 	/* hack: display INVEN_ARM slot as unavailable for 2-h weapons */
-	else if (slot == INVEN_ARM && Players[Ind]->inventory[INVEN_WIELD].k_idx && (k_info[Players[Ind]->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H)) {
+	else if (slot == INVEN_ARM && p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H)) {
 		attr = TERM_L_DARK;
 		//name = "(occupied)";
 		name = "-";
 	}
 	/* hack: display secondary weapon 'greyed out' if flexibility is encumbered */
 	else if (slot == INVEN_ARM &&
-	    Players[Ind]->inventory[INVEN_WIELD].k_idx &&
-	    Players[Ind]->inventory[INVEN_ARM].k_idx && k_info[Players[Ind]->inventory[INVEN_ARM].k_idx].tval != TV_SHIELD &&
-	    Players[Ind]->rogue_heavyarmor) {
+	    p_ptr->inventory[INVEN_WIELD].k_idx &&
+	    p_ptr->inventory[INVEN_ARM].k_idx && k_info[p_ptr->inventory[INVEN_ARM].k_idx].tval != TV_SHIELD &&
+	    p_ptr->rogue_heavyarmor)
 		attr = TERM_L_DARK;
-	}
-
+	/* hack: grey out climbing set if in monster form that doesn't allow it (compare calc_boni()!) */
+	else if (slot == INVEN_TOOL &&
+	    k_info[p_ptr->inventory[INVEN_TOOL].k_idx].tval == TV_TOOL &&
+	    k_info[p_ptr->inventory[INVEN_TOOL].k_idx].sval == SV_TOOL_CLIMB &&
+	    p_ptr->body_monster && !(r_info[p_ptr->body_monster].body_parts[BODY_FINGER] && r_info[p_ptr->body_monster].body_parts[BODY_ARMS]))
+		attr = TERM_L_DARK;
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -5511,63 +5515,32 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 	}
 
-	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
+	if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
 		    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
-	else if (is_newer_than(&Players[Ind]->version, 4, 4, 5, 10, 0, 0))
+	else if (is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, uses_dir, name);
-	else if (is_newer_than(&Players[Ind]->version, 4, 4, 4, 2, 0, 0))
+	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 	else
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 }
 
 int Send_equip_availability(int Ind, int slot) {
-	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+	char o_name[ONAME_LEN];
+	object_type *o_ptr = &Players[Ind]->inventory[slot];
+	byte attr;
+	int wgt;
 
-	char pos = 'a' + slot - INVEN_WIELD;
-	cptr name = "(nothing)";
-	byte attr = TERM_WHITE;
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
-		errno = 0;
-		plog(format("Connection not ready for equip (%d.%d.%d)",
-			Ind, connp->state, connp->id));
-		return 0;
-	}
+	attr = get_attr_from_tval(o_ptr);
+	/* Hack -- fake monochrome */
+	if (!use_color) attr = TERM_WHITE;
 
-	if (!item_tester_hook_wear(Ind, slot)) {
-		attr = TERM_L_DARK;
-		name = "(unavailable)";
-	}
-	/* hack: 2-h weapon disables INVEN_ARM slot */
-	else if (slot == INVEN_ARM && Players[Ind]->inventory[INVEN_WIELD].k_idx && (k_info[Players[Ind]->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H)) {
-		attr = TERM_L_DARK;
-		//name = "(occupied)";
-		name = "-";
-	}
+	wgt = o_ptr->weight;
 
-	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
-		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&p_ptr2->version, 4, 5, 2, 0, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, 0, 0, name);
-		else if (is_newer_than(&p_ptr2->version, 4, 4, 5, 10, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, 0, name);
-		else if (is_newer_than(&p_ptr2->version, 4, 4, 4, 2, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, name);
-		else
-			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, name);
-	}
-
-	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, 0, 0, name);
-	else if (is_newer_than(&Players[Ind]->version, 4, 4, 5, 10, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, 0, name);
-	else if (is_newer_than(&Players[Ind]->version, 4, 4, 4, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, name);
-	else
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, name);
+	return Send_equip(Ind, 'a' + slot - INVEN_WIELD, attr, wgt, o_ptr, o_name);
 }
 
 int Send_title(int Ind, cptr title) {

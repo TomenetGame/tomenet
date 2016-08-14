@@ -4084,7 +4084,7 @@ void calc_boni(int Ind) {
 			p_ptr->feather_fall = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RFALL;
 		}
 		if (f4 & (TR4_CLIMB)) {
-			/* hack: climbing kit is made for humanoids, so it won't work for other forms! */
+			/* hack: climbing kit is made for humanoids, so it won't work for other forms! (compare Send_equip()!) */
 			if (o_ptr->tval != TV_TOOL || o_ptr->sval != SV_TOOL_CLIMB || !p_ptr->body_monster)
 				{ p_ptr->climb = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RCLMB; } /* item isn't a climbing kit or player is in normal @ form */
 #if 0
