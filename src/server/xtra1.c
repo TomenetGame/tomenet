@@ -47,7 +47,7 @@
 #define EQUIPMENT_SET_BONUS
 
 /* Do not lower HP of mimics if the monster form has lower HP than their @ form. - C. Blue 
-   Could be extended onto to-dam and even Speed maybe. Shouldn't be extended onto AC. */
+   Currently also works for to-dam, could be extended to even Speed maybe. Shouldn't be extended onto AC. */
 #define MIMICRY_BOOST_WEAK_FORM
 
 /* Enable to allow '..' inscription, for suppressing TELEPORT flag on non-cursed items.
