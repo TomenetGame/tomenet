@@ -9582,6 +9582,13 @@ void do_slash_cmd(int Ind, char *message) {
 				if (i) restore_estate(i);
 				return;
 			}
+			else if (prefix(message, "/ambient")) {
+				wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+				w_ptr->ambient_sfx_counteddown = FALSE,
+				w_ptr->ambient_sfx = 0;
+				w_ptr->ambient_sfx_timer = 0;
+				return;
+			}
 		}
 	}
 

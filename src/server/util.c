@@ -1906,7 +1906,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 
 /* play single ambient sfx, synched for all players, depending on worldmap terrain - C. Blue */
 void process_ambient_sfx(void) {
-	int i, vol = 30 + rand_int(70);
+	int i, vol;
 	player_type *p_ptr;
 	wilderness_type *w_ptr;
 
@@ -1928,6 +1928,9 @@ void process_ambient_sfx(void) {
 			}
 			continue;
 		}
+
+		vol = 25 + rand_int(75);
+		//if (!rand_int(6)) vol = 100;
 
 		switch (w_ptr->type) { /* ---- ensure consistency with alloc_dungeon_level() ---- */
 		case WILD_RIVER:
