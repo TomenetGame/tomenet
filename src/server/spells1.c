@@ -5621,7 +5621,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags3 & RF3_IM_POIS) ||
 			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
+			    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
 				note = " is immune";
 				dam = 0;
 #ifdef OLD_MONSTER_LORE
@@ -5647,7 +5647,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 			//if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
 			if ((r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
+			    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
 			    (m_ptr->r_idx == RI_MORGOTH)) {
 				note = " is immune";
 				dam = 0;
@@ -6702,7 +6702,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) obvious = TRUE;
 				if ((r_ptr->flags3 & RF3_IM_POIS) ||
 				  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-				  (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
+				  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
 					note = " is immune";
 					dam = 0;
 #ifdef OLD_MONSTER_LORE
@@ -6767,7 +6767,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) obvious = TRUE;
 				if ((r_ptr->flags3 & RF3_IM_POIS) ||
 				  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-				  (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
+				  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
 				{
 					note = " is immune";
 					dam = 0;
@@ -11859,7 +11859,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_POIS:
 			if ((r_ptr->flags3 & RF3_IM_POIS) ||
 			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
+			    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
 				dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_POIS)
 				dam /= 4;
@@ -11870,7 +11870,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_UNBREATH:
 //			if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
 			if ((r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-				(r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
+				(r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
 				(m_ptr->r_idx == RI_MORGOTH)) /* <- Morgoth */
 				dam = 0;
 //				do_pois = 0;
@@ -12292,7 +12292,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			k = dam / 2;
 			if ((r_ptr->flags3 & RF3_IM_POIS) ||
 			  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			  (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
+			  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
 				k = 0;
 			else if (r_ptr->flags9 & RF9_RES_POIS)
 				k /= 4;
@@ -12328,7 +12328,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			k = dam / 5;
 			if ((r_ptr->flags3 & RF3_IM_POIS) ||
 			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
+			    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
 				k = 0;
 			else if (r_ptr->flags9 & RF9_RES_POIS)
 				k /= 4;
