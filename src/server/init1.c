@@ -4461,13 +4461,13 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 		/* Certain NON-UNIQUE monsters don't use shields, so they don't block */
 		else if (r_info[i].d_char == 'p') {
-			if (r_info[i].d_attr == 'b' || r_info[i].d_attr == 'o' ||
-			    r_info[i].d_attr == 'G' || r_info[i].d_attr == 'r' ||
-			    r_info[i].d_attr == 'R')
+			if (r_info[i].d_attr == TERM_BLUE || r_info[i].d_attr == TERM_ORANGE ||
+			    r_info[i].d_attr == TERM_L_GREEN || r_info[i].d_attr == TERM_RED ||
+			    r_info[i].d_attr == TERM_L_RED)
 				r_info[i].flags8 |= RF8_NO_BLOCK;
 		} else if (r_info[i].d_char == 'h') {
-			if (r_info[i].d_attr == 'r' || r_info[i].d_attr == 'v' ||
-			    r_info[i].d_attr == 'R')
+			if (r_info[i].d_attr == TERM_RED || r_info[i].d_attr == TERM_VIOLET ||
+			    r_info[i].d_attr == TERM_L_RED)
 				r_info[i].flags8 |= RF8_NO_BLOCK;
 		}
 
