@@ -10678,11 +10678,15 @@ The best source overrides all weaker ones, which simply get ignored:
 | Vampire bat/mist form      100%     | Ammunition                  50%     |
 | Vampire character race      50%     |                                     |
 | Other vampiric forms        50%     |                                     |
-| Non-weapons (gloves)        50%     | Non-weapons (gloves)        33%     |
+| Non-weapons (gloves)   50%/100% (*) | Non-weapons (gloves)        33%     |
 | Fruit bat (native only)     50%     |                                     |
 | Fruit bat (potion only)     33%     |                                     |
 
 (Mimicked fruit bats don't get vampirism.)
+
+(*) 100% if on gloves and fighting without weapon and shield (Martial Arts),
+    50% otherwise.
+
 
 
 (5.16) Invisibility

@@ -4220,7 +4220,12 @@ void calc_boni(int Ind) {
 		/* Generally vampiric? */
 		if (f1 & TR1_VAMPIRIC) {
 			csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; //Display the flag always...
-			if (p_ptr->vampiric_melee < NON_WEAPON_VAMPIRIC_CHANCE) p_ptr->vampiric_melee = NON_WEAPON_VAMPIRIC_CHANCE;
+			/* specialty: martial artists benefit with 100% in melee if on gloves! And must not even wear a shield. */
+			if (i == INVEN_HANDS && !p_ptr->inventory[INVEN_WIELD].k_idx && !p_ptr->inventory[INVEN_ARM].k_idx) {
+				if (p_ptr->vampiric_melee < 100) p_ptr->vampiric_melee = 100;
+			} else {
+				if (p_ptr->vampiric_melee < NON_WEAPON_VAMPIRIC_CHANCE) p_ptr->vampiric_melee = NON_WEAPON_VAMPIRIC_CHANCE;
+			}
 			if (p_ptr->vampiric_ranged < NON_WEAPON_VAMPIRIC_CHANCE_RANGED) p_ptr->vampiric_ranged = NON_WEAPON_VAMPIRIC_CHANCE_RANGED;
 		}
 		
