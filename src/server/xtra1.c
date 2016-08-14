@@ -5320,7 +5320,7 @@ void calc_boni(int Ind) {
 			p_ptr->pspeed = speed + 110;
 		}
 		if (p_ptr->num_blow > 1) p_ptr->num_blow--;
-		if (p_ptr->num_shot > 1) p_ptr->num_shot--;
+		if (p_ptr->num_fire > 1) p_ptr->num_fire--;
 	}
 
 	/* PvP mode */
