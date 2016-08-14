@@ -1694,7 +1694,7 @@ static void fadein_next_music(void) {
 		if (songs[music_cur].disabled) return;
 
 		/* stick with music event, but play different song, randomly */
-		int tries = songs[music_cur].num == 1 ? 1 : 100, mcs;
+		int tries = songs[music_cur].num == 1 ? 1 : 100, mcs = music_cur_song;
 		if (songs[music_cur].num < 1) return; //paranoia
 		while (tries--) {
 			mcs = rand_int(songs[music_cur].num);
