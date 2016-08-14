@@ -6009,6 +6009,11 @@ void determine_level_req(int level, object_type *o_ptr) {
 		case SV_AMULET_DEVOTION:
 			base += 16 + o_ptr->bpval * 3;
 			break;
+		/* These are as drops just too low level */
+		case SV_AMULET_WEAPONMASTERY:
+		case SV_AMULET_RAGE:
+			base += 10;
+			break;
 		}
 	}
 
