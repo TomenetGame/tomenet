@@ -3404,6 +3404,19 @@ D:An long sceptre crowned with a ram's skull, imbued with magic allowing you to
 D:sense those who oppose evil and to unleash devastating forces on your foe.
 D:A white glow emanates from its hollow eyes as you channel its powers.
 
+# The Bastard Sword of Eowyn
+
+N:275:of Eowyn
+I:23:21:4
+W:28:30:160:120000
+P:0:4d5:14:21:0
+F:STR | CHR | STEALTH | SPEED |
+F:SLAY_EVIL | KILL_UNDEAD | SLAY_GIANT | SLAY_ANIMAL |
+F:RES_NETHER | RES_FEAR | RES_DARK | RES_COLD
+D:The blade of the legendary Shieldmaiden of Rohan, who struck a
+D:mighty blow against the Morgul-lord whom no mortal Man could hinder,
+D:and also slew his foul steed.
+
 
 #weapon base items that don't have arts yet:
 #Three Piece Rod, Club; Awl-Pike, Rhomphaia
