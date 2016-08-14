@@ -977,7 +977,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			if (p_ptr->shield_deflect && !bypass_shield && 
 			    (!p_ptr->inventory[INVEN_WIELD].k_idx || magik(p_ptr->combat_stance == 1 ? 75 : 50))) {
 				if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
-					msg_format(Ind, "\377%cYou block %^s attack.", COLOUR_BLOCK_GOOD, m_name_gen);
+					msg_format(Ind, "\377%cYou block %s attack.", COLOUR_BLOCK_GOOD, m_name_gen);
   #ifndef NEW_SHIELDS_NO_AC
 					if (mon_acid + mon_fire) {
 						if (randint(mon_acid + mon_fire) > mon_acid) {
@@ -998,7 +998,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					int slot = INVEN_WIELD;
 					if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
 						slot = INVEN_ARM;
-					msg_format(Ind, "\377%cYou parry %^s attack.", COLOUR_PARRY_GOOD, m_name_gen);
+					msg_format(Ind, "\377%cYou parry %s attack.", COLOUR_PARRY_GOOD, m_name_gen);
 					if (mon_acid + mon_fire) {
 						if (randint(mon_acid + mon_fire) > mon_acid) {
 							if (magik(3)) weapon_takes_damage(Ind, GF_FIRE, slot);
@@ -1025,7 +1025,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			}
  #ifdef USE_BLOCKING
 			if (attempt_block && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
-				msg_format(Ind, "\377%cYou block %^s attack.", COLOUR_BLOCK_GOOD, m_name_gen);
+				msg_format(Ind, "\377%cYou block %s attack.", COLOUR_BLOCK_GOOD, m_name_gen);
   #ifndef NEW_SHIELDS_NO_AC
 				if (mon_acid + mon_fire) {
 					if (randint(mon_acid + mon_fire) > mon_acid) {
@@ -1043,7 +1043,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				int slot = INVEN_WIELD;
 				if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
 					slot = INVEN_ARM;
-				msg_format(Ind, "\377%cYou parry %^s attack.", COLOUR_PARRY_GOOD, m_name_gen);
+				msg_format(Ind, "\377%cYou parry %s attack.", COLOUR_PARRY_GOOD, m_name_gen);
 				if (mon_acid + mon_fire) {
 					if (randint(mon_acid + mon_fire) > mon_acid) {
 						if (magik(3)) weapon_takes_damage(Ind, GF_FIRE, slot);

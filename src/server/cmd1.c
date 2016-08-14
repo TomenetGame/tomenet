@@ -4750,7 +4750,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				/* May it clone the monster ? */
 				if (((f4 & TR4_CLONE) && randint(1000) == 1)
 				    || chaos_effect == 6) {
-					msg_format(Ind, "Your weapon clones %^s!", m_name);
+					msg_format(Ind, "Your weapon clones %s!", m_name);
 					multiply_monster(c_ptr->m_idx);
 				}
 
