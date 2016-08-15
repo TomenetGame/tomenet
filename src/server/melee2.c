@@ -8587,6 +8587,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 						default:
 							msg_format(-c_ptr->m_idx, "\377g%s's pet is staring at you.", q_ptr->name);
 						}
+					}
 				}
 				do_move = FALSE;
 				do_turn = TRUE;
