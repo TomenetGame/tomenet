@@ -1521,15 +1521,32 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 
 		/* Got disrupted ? */
 		if (magik(grabchance)) {
-			char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
+			char m_name[MNAME_LEN], m_name_real[MNAME_LEN], bgen[2], bgen_real[2];
+
 			/* Get the monster name (or "it") */
 			monster_desc(i, m_name, m_idx, 0x00);
 			monster_desc(i, m_name_real, m_idx, 0x100);
+			switch (m_name[strlen(m_name) - 1]) {
+			case 's': case 'x': case 'z':
+				bgen[0] = 0;
+				break;
+			default:
+				bgen[0] = 's';
+				bgen[1] = 0;
+			}
+			switch (m_name_real[strlen(m_name_real) - 1]) {
+			case 's': case 'x': case 'z':
+				bgen_real[0] = 0;
+				break;
+			default:
+				bgen_real[0] = 's';
+				bgen_real[1] = 0;
+			}
 
-			msg_format(i, "\377%cYou intercept %s's attempt to %s!", COLOUR_IC_GOOD, m_name, desc);
+			msg_format(i, "\377%cYou intercept %s'%s attempt to %s!", COLOUR_IC_GOOD, m_name, bgen, desc);
 			msg_print_near_monvar(i, m_idx,
-			    format("\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name_real, desc),
-			    format("\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name, desc),
+			    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name_real, bgen_real, desc),
+			    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name, bgen, desc),
 			    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, q_ptr->name));
 			return TRUE;
 		}
@@ -1550,15 +1567,31 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 #ifdef NO_INTERCEPTION_STACKING
 	/* Got disrupted ? */
 	if (magik(grabchance_top)) {
-		char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
+		char m_name[MNAME_LEN], m_name_real[MNAME_LEN], bgen[2], bgen_real[2];
 		/* Get the monster name (or "it") */
 		monster_desc(i_top, m_name, m_idx, 0x00);
 		monster_desc(i_top, m_name_real, m_idx, 0x100);
+		switch (m_name[strlen(m_name) - 1]) {
+		case 's': case 'x': case 'z':
+			bgen[0] = 0;
+			break;
+		default:
+			bgen[0] = 's';
+			bgen[1] = 0;
+		}
+		switch (m_name_real[strlen(m_name_real) - 1]) {
+		case 's': case 'x': case 'z':
+			bgen_real[0] = 0;
+			break;
+		default:
+			bgen_real[0] = 's';
+			bgen_real[1] = 0;
+		}
 
-		msg_format(i_top, "\377%cYou intercept %s's attempt to %s!", COLOUR_IC_GOOD, m_name, desc);
+		msg_format(i_top, "\377%cYou intercept %s'%s attempt to %s!", COLOUR_IC_GOOD, m_name, bgen, desc);
 		msg_print_near_monvar(i_top, m_idx,
-		    format("\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name_real, desc),
-		    format("\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name, desc),
+		    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name_real, bgen_real, desc),
+		    format("\377%c%s intercepts %s'%s attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name, bgen, desc),
 		    format("\377%c%s intercepts it!", COLOUR_IC_NEAR, Players[i_top]->name));
 		return TRUE;
 	}
@@ -1646,25 +1679,41 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 	/* Got disrupted ? */
 	if (magik(highest_antichance)) {
 		if ((Players[anti_Ind]->cave_flag[m_ptr->fy][m_ptr->fx] & CAVE_VIEW)) {//got LOS?
-			char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
+			char m_name[MNAME_LEN], m_name_real[MNAME_LEN], bgen[2], bgen_real[2];
 			/* Get the monster name (or "it") */
 			monster_desc(Ind, m_name, m_idx, 0x00);
 			monster_desc(Ind, m_name_real, m_idx, 0x100);
+			switch (m_name[strlen(m_name) - 1]) {
+			case 's': case 'x': case 'z':
+				bgen[0] = 0;
+				break;
+			default:
+				bgen[0] = 's';
+				bgen[1] = 0;
+			}
+			switch (m_name_real[strlen(m_name_real) - 1]) {
+			case 's': case 'x': case 'z':
+				bgen_real[0] = 0;
+				break;
+			default:
+				bgen_real[0] = 's';
+				bgen_real[1] = 0;
+			}
 
 			//msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
 #if 0
-			if (i == anti_Ind) msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
-			else msg_format(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
+			if (i == anti_Ind) msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s'%s attempts.", COLOUR_AM_GOOD, m_name, bgen);
+			else msg_format(anti_Ind, "\377%c%s's anti-magic field disrupts %s'%s attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name, bgen);
 #else
 			if (Players[anti_Ind]->mon_vis[m_idx]) {
 #ifdef USE_SOUND_2010
 				sound(anti_Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-				msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
+				msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s'%s attempts.", COLOUR_AM_GOOD, m_name, bgen);
 			}
 			msg_print_near_monvar(anti_Ind, m_idx,
-			    format("\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name_real),
-			    format("\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name),
+			    format("\377%c%s's anti-magic field disrupts %s'%s attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name_real, bgen_real),
+			    format("\377%c%s's anti-magic field disrupts %s'%s attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name, bgen),
 			    format("\377%c%s's anti-magic field disrupts its attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name));
 #endif
 		}
@@ -1704,10 +1753,18 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 			if (!magik(antichance)) continue;
 
 			if (p_ptr->mon_vis[m_idx]) {
-				char m_name[MNAME_LEN];
+				char m_name[MNAME_LEN], bgen[2];
 
 				monster_desc(Ind, m_name, m_idx, 0);
-				msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
+				switch (m_name[strlen(m_name) - 1]) {
+				case 's': case 'x': case 'z':
+					bgen[0] = 0;
+					break;
+				default:
+					bgen[0] = 's';
+					bgen[1] = 0;
+				}
+				msg_format(Ind, "\377%c%^s'%s anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name, bgen);
 			} else
 				msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
 #ifdef USE_SOUND_2010
@@ -8491,35 +8548,43 @@ static void process_monster_pet(int Ind, int m_idx) {
 
 		if (!find_player(m_ptr->owner)) return; //hack: the owner must be online please. taking this out -> panic()
 		/* the player is in the way.  attack him. */
-		if (do_move && (c_ptr->m_idx < 0) ) {
+		if (do_move && (c_ptr->m_idx < 0) && (c_ptr->m_idx >= -NumPlayers)) {
+			player_type *p_ptr = Players[0-c_ptr->m_idx];
+
 			/* sanity check */
-			if (Players[0-c_ptr->m_idx]->id != m_ptr->owner && 
+			if (p_ptr->id != m_ptr->owner &&
 			   (find_player(m_ptr->owner) == 0 ||
 			    find_player(-c_ptr->m_idx) == 0)) {
 				do_move = FALSE;
 				do_turn = FALSE;
 			}
 			/* do the attack only if hostile... */
-			if (Players[0-c_ptr->m_idx]->id != m_ptr->owner && 
+			if (p_ptr->id != m_ptr->owner &&
 			    check_hostile(0-c_ptr->m_idx, find_player(m_ptr->owner))) {
-				(void)make_attack_melee(0 - c_ptr->m_idx, m_idx); 
+				(void)make_attack_melee(0 - c_ptr->m_idx, m_idx);
 				do_move = FALSE;
 				do_turn = TRUE;
 			} else {
-				if (m_ptr->owner != Players[-c_ptr->m_idx]->id) {
+				if (m_ptr->owner != p_ptr->id) {
 					if (magik(10))
-						msg_format(find_player(m_ptr->owner), 
-						 "\377gYour pet is staring at %s.", 
-						 Players[-c_ptr->m_idx]->name);
-					if (magik(10))
-						msg_format(-c_ptr->m_idx, 
-						 "\377g%s's pet is staring at you.", 
-						 Players[find_player(m_ptr->owner)]->name);
+						msg_format(find_player(m_ptr->owner),
+						 "\377gYour pet is staring at %s.",
+						 p_ptr->name);
+					if (magik(10)) {
+						player_type *q_ptr = Players[find_player(m_ptr->owner)];
+
+						switch (q_ptr->name[strlen(q_ptr->name) - 1]) {
+						case 's': case 'x': case 'z':
+							msg_format(-c_ptr->m_idx, "\377g%s' pet is staring at you.", q_ptr->name);
+							break;
+						default:
+							msg_format(-c_ptr->m_idx, "\377g%s's pet is staring at you.", q_ptr->name);
+						}
 				}
 				do_move = FALSE;
 				do_turn = TRUE;
 			}
-		} 
+		}
 		/* a monster is in the way */
 		else if (do_move && c_ptr->m_idx > 0) {
 			/* attack it ! */

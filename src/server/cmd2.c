@@ -5508,7 +5508,13 @@ void do_cmd_fire(int Ind, int dir) {
 							    (!q_ptr->inventory[INVEN_WIELD].k_idx || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
 								if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 15))) { /* boost for PvP! */
 									if (visible) msg_format(Ind, "\377%c%s blocks %s!", COLOUR_BLOCK_PLY, p_name, o_name);
-									msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
+									switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+									case 's': case 'x': case 'z':
+										msg_format(0 - c_ptr->m_idx, "\377%cYou block %s' attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
+										break;
+									default:
+										msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
+									}
 #ifdef USE_SOUND_2010
 									if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
 #endif
@@ -5521,8 +5527,14 @@ void do_cmd_fire(int Ind, int dir) {
 							if (q_ptr->weapon_parry) {
 								// && !p_ptr->ranged_barrage etc, any prepared bow stance?
 								if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry + 5))) { /* boost for PvP! */
-									msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
 									if (visible) msg_format(Ind, "\377%c%s parries %s!", COLOUR_PARRY_PLY, p_name, o_name);
+									switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+									case 's': case 'x': case 'z':
+										msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s' attack!", COLOUR_PARRY_GOOD, p_ptr->name);
+										break;
+									default:
+										msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
+									}
 #ifdef USE_SOUND_2010
 									if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
 #endif
@@ -7680,7 +7692,13 @@ void shadow_run(int Ind) {
 	stop_shooting_till_kill(Ind);
 	p_ptr->shadow_running = TRUE;
 	msg_print(Ind, "Your silhouette turns shadowy and your movements become lightning-fast!");
-	msg_format_near(Ind, "%s's silhouette turns shadowy and %s movements become lightning-fast!", p_ptr->name, p_ptr->male ? "his" : "her");
+	switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+	case 's': case 'x': case 'z':
+		msg_format_near(Ind, "%s' silhouette turns shadowy and %s movements become lightning-fast!", p_ptr->name, p_ptr->male ? "his" : "her");
+		break;
+	default:
+		msg_format_near(Ind, "%s's silhouette turns shadowy and %s movements become lightning-fast!", p_ptr->name, p_ptr->male ? "his" : "her");
+	}
 	p_ptr->update |= (PU_BONUS | PU_VIEW);
 	p_ptr->redraw |= (PR_STATE | PR_SPEED);
 	/* update so everyone sees the colour animation */

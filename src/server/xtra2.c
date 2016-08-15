@@ -4886,7 +4886,13 @@ bool monster_death(int Ind, int m_idx) {
 		for (i = NumPlayers; i > 0; i--) {
 			if (m_ptr->owner == Players[i]->id) {
 				msg_format(i, "\374\377R%s has killed your pet!", Players[Ind]->name);
-				msg_format(Ind, "\374\377RYou have killed %s's pet!", Players[i]->name);
+				switch (Players[i]->name[strlen(Players[i]->name) - 1]) {
+				case 's': case 'x': case 'z':
+					msg_format(Ind, "\374\377RYou have killed %s' pet!", Players[i]->name);
+					break;
+				default:
+					msg_format(Ind, "\374\377RYou have killed %s's pet!", Players[i]->name);
+				}
 				Players[i]->has_pet = 0;
 				FREE(m_ptr->r_ptr, monster_race); //no drop, no exp.
 				return FALSE;
@@ -7724,15 +7730,21 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 
 			if (cfg.unikill_format) {
-				if (p_ptr->name[strlen(p_ptr->name) - 1] == 's')
+				switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+				case 's': case 'x': case 'z':
 					snprintf(buf, sizeof(buf), "\374\377a**\377r%s %s' (%d) ghost was destroyed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
-				else
+					break;
+				default:
 					snprintf(buf, sizeof(buf), "\374\377a**\377r%s %s's (%d) ghost was destroyed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+				}
 			} else {
-				if (p_ptr->name[strlen(p_ptr->name) - 1] == 's')
+				switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+				case 's': case 'x': case 'z':
 					snprintf(buf, sizeof(buf), "\374\377a**\377r%s' (%d) ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
-				else
+					break;
+				default:
 					snprintf(buf, sizeof(buf), "\374\377a**\377r%s's (%d) ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+				}
 			}
 			s_printf("%s - %s's (%d) ghost was destroyed by %s for %d damage on %d, %d, %d.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)

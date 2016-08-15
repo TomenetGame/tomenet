@@ -3337,7 +3337,13 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			if (dodge_chance > DODGE_CAP) dodge_chance = DODGE_CAP;
 			if (!backstab && (dodge_chance > 0) && magik(dodge_chance)) {
 				msg_format(Ind, "\377c%s dodges your attack!", COLOUR_DODGE_PLY, q_name);
-				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name); 
+				switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+				case 's': case 'x': case 'z':
+					msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s' attack!", COLOUR_DODGE_GOOD, p_ptr->name);
+					break;
+				default:
+					msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
+				}
   #ifdef USE_SOUND_2010
 				if (sfx == 0 && p_ptr->sfx_combat) {
 					if (o_ptr->k_idx && is_melee_weapon(o_ptr->tval)
@@ -3352,7 +3358,13 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #else /* :-o */
 			if (!backstab && magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev * 2))) {
 				msg_format(Ind, "\377%c%s dodges your attack!", COLOUR_DODGE_PLY, q_name);
-				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
+				switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+				case 's': case 'x': case 'z':
+					msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s' attack!", COLOUR_DODGE_GOOD, p_ptr->name);
+					break;
+				default:
+					msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
+				}
  #ifdef USE_SOUND_2010
 				if (sfx == 0 && p_ptr->sfx_combat) {
 					if (o_ptr->k_idx && is_melee_weapon(o_ptr->tval))
@@ -3373,7 +3385,13 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			if (!backstab && q_ptr->shield_deflect && (!q_ptr->weapon_parry || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
 				if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 10))) { /* boost for PvP! */
 					msg_format(Ind, "\377%c%s blocks your attack!", COLOUR_BLOCK_PLY, q_name);
-					msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
+					switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+					case 's': case 'x': case 'z':
+						msg_format(0 - c_ptr->m_idx, "\377%cYou block %s' attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
+						break;
+					default:
+						msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
+					}
  #ifdef USE_SOUND_2010
 					if (sfx == 0 && p_ptr->sfx_defense)
 						sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
@@ -3391,7 +3409,13 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				    + (q_ptr->dual_wield && q_ptr->dual_mode ? 10 : 0)
 				    ))) {
 					msg_format(Ind, "\377%c%s parries your attack!", COLOUR_PARRY_PLY, q_name);
-					msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
+					switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+					case 's': case 'x': case 'z':
+						msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s' attack!", COLOUR_PARRY_GOOD, p_ptr->name);
+						break;
+					default:
+						msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
+					}
  #ifdef USE_SOUND_2010
 					if (sfx == 0 && p_ptr->sfx_defense)
 						sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
@@ -4534,7 +4558,13 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #if 0 /* less message order problems */
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
 					    || strchr("ANjmeEv$,sbBFIQSXlw!=?+", r_ptr->d_char))) {
-						msg_format(Ind, "You strike %s's pressure points.", m_name);
+						switch (m_name[strlen(m_name) - 1]) {
+						case 's': case 'x': case 'z':
+							msg_format(Ind, "You strike %s' pressure points.", m_name);
+							break;
+						default:
+							msg_format(Ind, "You strike %s's pressure points.", m_name);
+						}
 						special_effect = MA_SLOW;
 					} else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);

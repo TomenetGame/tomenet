@@ -2025,7 +2025,15 @@ static void process_world(int Ind) {
 		msg_print(Ind, "\377rA flashback storms your head!");
 
 		/* alert to the neighbors also */
-		if (magik(20)) msg_format_near(Ind, "You see %s's eyes bloodshot.", p_ptr->name);
+		if (magik(20)) {
+			switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+			case 's': case 'x': case 'z':
+				msg_format_near(Ind, "You see %s' eyes bloodshot.", p_ptr->name);
+				break;
+			default:
+				msg_format_near(Ind, "You see %s's eyes bloodshot.", p_ptr->name);
+			}
+		}
 
 		set_image(Ind, p_ptr->image + 12 - i / 8);
 		disturb(Ind, 0, 0);
@@ -4867,7 +4875,14 @@ static bool process_player_end_aux(int Ind) {
 
 		if (anti_Ind) {
 			msg_format(anti_Ind, "\377%cA curse builds up but dissipates in your anti-magic field.", COLOUR_AM_GOOD);
-			msg_format_near(anti_Ind, "\377%cA curse builds up but dissipates in %s's anti-magic field.", COLOUR_AM_NEAR, Players[anti_Ind]->name);
+
+			switch (Players[anti_Ind]->name[strlen(Players[anti_Ind]->name) - 1]) {
+			case 's': case 'x': case 'z':
+				msg_format_near(anti_Ind, "\377%cA curse builds up but dissipates in %s' anti-magic field.", COLOUR_AM_NEAR, Players[anti_Ind]->name);
+				break;
+			default:
+				msg_format_near(anti_Ind, "\377%cA curse builds up but dissipates in %s's anti-magic field.", COLOUR_AM_NEAR, Players[anti_Ind]->name);
+			}
 		} else {
 			msg_print(Ind, "An ancient morgothian curse calls out!");
 #ifdef USE_SOUND_2010

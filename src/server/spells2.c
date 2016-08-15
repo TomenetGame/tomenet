@@ -431,7 +431,13 @@ bool do_focus_shot(int Ind, int v, int p) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->focus_time) {
-			msg_format_near(Ind, "%s's arm movements turn blurry!", p_ptr->name);
+			switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+			case 's': case 'x': case 'z':
+				msg_format_near(Ind, "%s' arm movements turn blurry!", p_ptr->name);
+				break;
+			default:
+				msg_format_near(Ind, "%s's arm movements turn blurry!", p_ptr->name);
+			}
 			msg_print(Ind, "Your arms feel... dexterous!");
 			notice = TRUE;
 		}
@@ -443,7 +449,13 @@ bool do_focus_shot(int Ind, int v, int p) {
 	/* Shut */
 	else {
 		if (p_ptr->focus_time) {
-			msg_format_near(Ind, "You can see %s's arms again.", p_ptr->name);
+			switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+			case 's': case 'x': case 'z':
+				msg_format_near(Ind, "You can see %s' arms again.", p_ptr->name);
+				break;
+			default:
+				msg_format_near(Ind, "You can see %s's arms again.", p_ptr->name);
+			}
 			msg_print(Ind, "Your feel your arms turn into lead.");
 			notice = TRUE;
 			p_ptr->focus_time = 0;
@@ -592,7 +604,13 @@ bool do_banish_animals(int Ind, int chance) {
 	} else {
 		msg_print(Ind, "\337gThe Day of Returning is here!.");
 		/* lol */
-		msg_format_near(Ind, "\337gYou see %s's tears of joy at the number of returning animals.", p_ptr->name);
+		switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+		case 's': case 'x': case 'z':
+			msg_format_near(Ind, "\337gYou see %s' tears of joy at the number of returning animals.", p_ptr->name);
+			break;
+		default:
+			msg_format_near(Ind, "\337gYou see %s's tears of joy at the number of returning animals.", p_ptr->name);
+		}
 	}
 	return (TRUE);
 }

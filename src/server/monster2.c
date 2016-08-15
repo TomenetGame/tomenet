@@ -5245,31 +5245,41 @@ cptr r_name_get(monster_type *m_ptr) {
 		}
 	} else if (m_ptr->special) {
 		cptr p = (m_ptr->owner) ? lookup_player_name(m_ptr->owner) : "**INTERNAL BUG**";
+		char bgen[2];
+
 		if (p == NULL) p = "**INTERNAL BUG**";
+		switch (p[strlen(p) - 1]) {
+		case 's': case 'x': case 'z':
+			bgen[0] = 0;
+			break;
+		default:
+			bgen[0] = 's';
+			bgen[1] = 0;
+		}
 		switch (m_ptr->r_idx - 1) {
 			case SV_GOLEM_WOOD:
-				snprintf(buf, sizeof(buf), "%s's Wood Golem", p);
+				snprintf(buf, sizeof(buf), "%s'%s Wood Golem", p, bgen);
 				break;
 			case SV_GOLEM_COPPER:
-				snprintf(buf, sizeof(buf), "%s's Copper Golem", p);
+				snprintf(buf, sizeof(buf), "%s'%s Copper Golem", p, bgen);
 				break;
 			case SV_GOLEM_IRON:
-				snprintf(buf, sizeof(buf), "%s's Iron Golem", p);
+				snprintf(buf, sizeof(buf), "%s'%s Iron Golem", p, bgen);
 				break;
 			case SV_GOLEM_ALUM:
-				snprintf(buf, sizeof(buf), "%s's Aluminium Golem", p);
+				snprintf(buf, sizeof(buf), "%s'%s Aluminium Golem", p, bgen);
 				break;
 			case SV_GOLEM_SILVER:
-				snprintf(buf, sizeof(buf), "%s's Silver Golem", p);
+				snprintf(buf, sizeof(buf), "%s'%s Silver Golem", p, bgen);
 				break;
 			case SV_GOLEM_GOLD:
-				snprintf(buf, sizeof(buf), "%s's Gold Golem", p);
+				snprintf(buf, sizeof(buf), "%s'%s Gold Golem", p, bgen);
 				break;
 			case SV_GOLEM_MITHRIL:
-				snprintf(buf, sizeof(buf), "%s's Mithril Golem", p);
+				snprintf(buf, sizeof(buf), "%s'%s Mithril Golem", p, bgen);
 				break;
 			case SV_GOLEM_ADAM:
-				snprintf(buf, sizeof(buf), "%s's Adamantite Golem", p);
+				snprintf(buf, sizeof(buf), "%s'%s Adamantite Golem", p, bgen);
 				break;
 		}
 		return (buf);

@@ -161,8 +161,20 @@ bool check_antimagic(int Ind, int percentage) {
 #ifdef USE_SOUND_2010
 				sound_pair(Ind, i, "am_field", NULL, SFX_TYPE_MISC);
 #endif
-				msg_format(Ind, "\377%c%s's anti-magic field disrupts your attempts.", COLOUR_AM_PLY, q_ptr->name);
-				msg_format(i, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_PLY, p_ptr->name);
+				switch (q_ptr->name[strlen(q_ptr->name) - 1]) {
+				case 's': case 'x': case 'z':
+					msg_format(Ind, "\377%c%s' anti-magic field disrupts your attempts.", COLOUR_AM_PLY, q_ptr->name);
+					break;
+				default:
+					msg_format(Ind, "\377%c%s's anti-magic field disrupts your attempts.", COLOUR_AM_PLY, q_ptr->name);
+				}
+				switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
+				case 's': case 'x': case 'z':
+					msg_format(i, "\377%cYour anti-magic field disrupts %s' attempts.", COLOUR_AM_PLY, p_ptr->name);
+					break;
+				default:
+					msg_format(i, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_PLY, p_ptr->name);
+				}
 			}
 			return TRUE;
 		}
@@ -202,7 +214,13 @@ bool check_antimagic(int Ind, int percentage) {
 				char m_name[MNAME_LEN];
 
 				monster_desc(Ind, m_name, m_idx, 0);
-				msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
+				switch (m_name[strlen(m_name) - 1]) {
+				case 's': case 'x': case 'z':
+					msg_format(Ind, "\377%c%^s' anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
+					break;
+				default:
+					msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
+				}
 			} else {
 				msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
 			}
