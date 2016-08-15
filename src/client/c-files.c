@@ -1429,7 +1429,7 @@ errr file_character(cptr name, bool full) {
 
 	/* Dump the last messages */
 	fprintf(fff, "  [Last Messages]\n\n");
-	dump_messages_aux(fff, 50, 0, TRUE);
+	dump_messages_aux(fff, 100, 0, TRUE);
 	fprintf(fff, "\n"); /* one less newline, since dump_messages_aux already adds */
 
 	/* Dump a simple monochrome 'screenshot' of the level too, in
