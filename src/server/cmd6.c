@@ -1542,6 +1542,9 @@ void do_cmd_fill_bottle(int Ind) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	c_special *cs_ptr;
+#ifdef FOUNTAIN_GUARDS
+	bool guard = TRUE;
+#endif
 
 	//bool ident;
 	int tval, sval, k_idx, item;
@@ -1654,7 +1657,13 @@ void do_cmd_fill_bottle(int Ind) {
 	k_idx = lookup_kind(tval, sval);
 
 	/* Doh! */
-	if (!k_idx) k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
+	if (!k_idx) {
+#ifdef FOUNTAIN_GUARDS
+		guard = FALSE;
+#endif
+		k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
+	}
+
 
 	if (!get_something_tval(Ind, TV_BOTTLE, &item)) {
 		msg_print(Ind, "You have no bottles to fill.");
@@ -1681,10 +1690,10 @@ void do_cmd_fill_bottle(int Ind) {
 	q_ptr = &forge;
 	object_prep(q_ptr, k_idx);
 	q_ptr->number = 1;
-//	q_ptr->owner = p_ptr->id;
+	//q_ptr->owner = p_ptr->id;
 	determine_level_req(getlevel(&p_ptr->wpos), q_ptr);
 
-//	if (c_ptr->info & CAVE_IDNT)
+	//if (c_ptr->info & CAVE_IDNT)
 	if (cs_ptr->sc.fountain.known) {
 		object_aware(Ind, q_ptr);
 		object_known(q_ptr);
@@ -1703,30 +1712,7 @@ void do_cmd_fill_bottle(int Ind) {
 	}
 
 #ifdef FOUNTAIN_GUARDS
-	item = 0;
-//	if (k_info[lookup_kind(tval, sval)].cost > 0) {
-	if (magik(FOUNTAIN_GUARDS)) {
-		if (getlevel(&p_ptr->wpos) >= 40) { switch (randint(2)) { case 1:item = 924;break; case 2:item = 893; }
-		} else if (getlevel(&p_ptr->wpos) >= 35) { switch (randint(3)) { case 1:item = 1038;break; case 2:item = 894;break; case 3:item = 902; }
-		} else if (getlevel(&p_ptr->wpos) >= 30) { switch (randint(2)) { case 1:item = 512;break; case 2:item = 509; }
-		} else if (getlevel(&p_ptr->wpos) >= 25) { item = 443;
-		} else if (getlevel(&p_ptr->wpos) >= 20) { switch (randint(4)) {case 1:item = 919;break; case 2:item = 882;break; case 3:item = 927;break; case 4:item = 1057; }
-		} else if (getlevel(&p_ptr->wpos) >= 15) { switch (randint(3)) {case 1:item = 303;break; case 2:item = 923;break; case 3:item = 926; }
-		} else if (getlevel(&p_ptr->wpos) >= 10) { item = 925;
-		} else if (getlevel(&p_ptr->wpos) >= 5) { item = 207;
-		} else { item = 900;
-		}
-		s_printf("FOUNTAIN_GUARDS: %d ", item);
-	}
-//	}
-	if (item) {
-		msg_print(Ind, "A monster appears in the fountain!");
-		summon_override_checks = SO_GRID_TERRAIN | SO_IDDC | SO_PLAYER_SUMMON;
-		if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, item, 0, 1))
-			s_printf("ok.\n");
-		else s_printf("failed.\n");
-		summon_override_checks = SO_NONE;
-	}
+	if (guard) fountain_guard(Ind, q_ptr->sval == SV_POTION_BLOOD);
 #endif
 
 	/* Take a turn */
