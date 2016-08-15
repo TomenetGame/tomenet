@@ -155,7 +155,7 @@
 #define GF_RESURRECT_PLAYER	140
 #define GF_SANITY_PLAYER	141
 #define GF_ZEAL_PLAYER		142
-#define GF_DISP_DEMON	143
+#define GF_DISP_DEMON		143
 #define GF_SOULCURE_PLAYER	144
 #define GF_MINDBOOST_PLAYER	145
 #define GF_REMCONF_PLAYER	146
@@ -181,6 +181,7 @@
 #define GF_SILENCE		160 /* for new mindcrafters */
 #define GF_CHARMIGNORE		161
 #define GF_STOP			162 /* special fx: scroll of rune of protection in a monster trap - C. Blue */
+#define GF_CAUSE		163 /* 'Curse' actually, the monster spell */
 
 #define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
 #define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands */

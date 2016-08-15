@@ -129,7 +129,7 @@ void divine_vengeance(int Ind, int power) {
 		project_los(Ind, GF_TELE_TO, 0, " commands return");
 	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 		dispel_monsters(Ind, power);
-	//	project_los(Ind, GF_DISP_ALL, power, " commands leave");
+		//project_los(Ind, GF_DISP_ALL, power, " commands leave");
 	}
 }
 

@@ -2959,7 +2959,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			msg_print(Ind, "You resist the effects!");
 		} else {
 			msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
-			//				take_hit(Ind, damroll(12, 15), ddesc, 0);
+			//take_hit(Ind, damroll(12, 15), ddesc, 0);
 			take_sanity_hit(Ind, damroll(9,9), ddesc);/* 12,15 was too powerful */
 			if (!p_ptr->resist_blind)
 				(void)set_blind(Ind, p_ptr->blind + 8 + rand_int(8));
@@ -3034,7 +3034,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		/* RF5_CAUSE_4 */
 		else {
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
-			else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
+			else msg_format(Ind, "%^s points at you, screaming the word 'DIE'!", m_name);
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 			if (p_ptr->sfx_monsterattack) sound(Ind, "curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
@@ -3046,7 +3046,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				//					take_hit(Ind, damroll(15, 15), ddesc, 0);
+				//take_hit(Ind, damroll(15, 15), ddesc, 0);
 				take_hit(Ind, damroll(power / 4, 15), ddesc, 0);
 				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), 0);
 			}

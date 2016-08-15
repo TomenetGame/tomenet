@@ -7148,6 +7148,22 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note_dies = " dissolves";
 			break;
 
+		/* mimic spell 'Cause Wounds' aka monsters' 'Curse' */
+		case GF_CAUSE:
+			if (r_ptr->d_char == 'A' || (r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD))) {
+				note = " is unaffected";
+				dam = 0;
+			} else {
+				int chance = 100 - (r_ptr->level >> 1);
+
+				if (r_ptr->flags3 & RF3_GOOD) chance >>= 1;
+				if (rand_int(100) >= chance) {
+					note = " resists the effect";
+					dam = 0;
+				}
+			}
+			break;
+
 		/* Nuclear waste */
 		case GF_NUKE:
 			if (seen) obvious = TRUE;
@@ -10481,6 +10497,20 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 		break;
 
+	/* mimic spell 'Cause Wounds' aka monsters' 'Curse' */
+	case GF_CAUSE: {
+		int chance = p_ptr->skill_sav;
+
+		if (p_ptr->suscep_evil) chance = chance + (100 - chance) / 2;
+		if (chance > 95) chance = 95;
+
+		if (rand_int(100) < chance) {
+			msg_print(Ind, "You resist the effect!");
+			break;
+		}
+		take_hit(Ind, dam, killer, -who);
+		break; }
+
 	/* Default */
 	default:
 		/* No damage */
@@ -12395,6 +12425,14 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam = 0;
 			break;
 		case GF_DISP_ALL:
+			break;
+		case GF_CAUSE:
+			if (r_ptr->d_char == 'A' || (r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD)))
+				dam = 0;
+			else {
+				dam = (dam * (100 - r_ptr->level / 2)) / 100;
+				if (r_ptr->flags3 & RF3_GOOD) dam /= 2;
+			}
 			break;
 
 		case GF_NUKE:

@@ -45,7 +45,7 @@ OCURSEDD_I = add_spell {
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 100), "points and curses for")
+		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 100), "points and curses for")
 	end,
 	["info"] = 	function()
 		return "power "..(10 + get_level(Ind, OCURSEDD_I, 100))
@@ -65,7 +65,7 @@ OCURSEDD_II = add_spell {
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + 100 + get_level(Ind, OCURSEDD_II, 100), "points and curses for")
+		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + 100 + get_level(Ind, OCURSEDD_II, 100), "points and curses for")
 	end,
 	["info"] = 	function()
 		return "power "..(10 + 100 + get_level(Ind, OCURSEDD_II, 100))
@@ -85,7 +85,7 @@ OCURSEDD_III = add_spell {
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + 200 + get_level(Ind, OCURSEDD_III, 100), "points and curses for")
+		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + 200 + get_level(Ind, OCURSEDD_III, 100), "points and curses for")
 	end,
 	["info"] = 	function()
 		return "power "..(10 + 200 + get_level(Ind, OCURSEDD_III, 100))

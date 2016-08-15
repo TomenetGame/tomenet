@@ -1076,10 +1076,24 @@ void do_mimic_power_aux(int Ind, int dir) {
 	break;
 // RF5_CAUSE_1			0x00001000	/* Cause Wound */
     case 44:
+#if 0
 	sprintf(p_ptr->attacker, " causes wounds for");
 	msg_print(Ind, "You cause wounds.");
 	fire_bolt(Ind, GF_MANA, dir, damroll(3 + rlev / 4, 8), p_ptr->attacker);
 	break;
+#else
+	{
+	int power = 10 + rlev / 2 + randint(rlev / 2);
+
+	sprintf(p_ptr->attacker, " causes wounds for");
+	if (power < 15) msg_print(Ind, "You point and curse!");
+	else if (power < 35) msg_print(Ind, "You point and curse horribly!");
+	else if (power < 50) msg_print(Ind, "You point and incant terribly!");
+	else msg_print(Ind, "You scream the word 'DIE'!");
+	fire_bolt(Ind, GF_CAUSE, dir, power, p_ptr->attacker);
+	break;
+	}
+#endif
 // RF5_CAUSE_2			0x00002000	/* XXX */
     case 45:
 	break;
