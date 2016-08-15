@@ -4311,7 +4311,7 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 			continue;
 
 		/* Ignore players we aren't hostile to */
-//		if (!check_hostile(Ind, i)) continue;
+		//if (!check_hostile(Ind, i)) continue;
 
 		/* if we are in the same party, don't affect target player */
 		if (p_ptr->party && (player_in_party(p_ptr->party, i)))
@@ -5237,7 +5237,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			/* Hack -- don't do this to houses/rooms outside the dungeon,
 			 * this will protect hosues outside town.
 			 */
-			if(wpos->wz) {
+			if (wpos->wz) {
 				/* Lose room and nest */
 				c_ptr->info &= ~(CAVE_ROOM | CAVE_NEST_PIT);
 			}
@@ -5294,7 +5294,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			}
 
 			/* Destroy "valid" grids */
-//			if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info&CAVE_ICKY))
+			//if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info&CAVE_ICKY))
 			if (cave_valid_bold(zcave, y, x)) {
 				struct c_special *cs_ptr;
 				/* Delete the object (if any) */
@@ -5444,7 +5444,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 			c_ptr->info &= ~(CAVE_GLOW);
 
 			/* This can be really annoying and frustrating - mikaelh */
-//			everyone_forget_spot(wpos, y, x);
+			//everyone_forget_spot(wpos, y, x);
 			everyone_lite_spot(wpos, y, x);
 
 #ifdef USE_SOUND_2010
@@ -5844,8 +5844,7 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
  * NORMAL monsters wake up 1/4 the time when illuminated
  * STUPID monsters wake up 1/10 the time when illuminated
  */
-static void cave_temp_room_lite(int Ind)
-{
+static void cave_temp_room_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -5853,8 +5852,7 @@ static void cave_temp_room_lite(int Ind)
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Clear them all */
-	for (i = 0; i < p_ptr->temp_n; i++)
-	{
+	for (i = 0; i < p_ptr->temp_n; i++) {
 		int y = p_ptr->temp_y[i];
 		int x = p_ptr->temp_x[i];
 
@@ -5870,13 +5868,10 @@ static void cave_temp_room_lite(int Ind)
 		c_ptr->info |= CAVE_GLOW;
 
 		/* Process affected monsters */
-		if (c_ptr->m_idx > 0)
-		{
+		if (c_ptr->m_idx > 0) {
 			int chance = 25;
-
 			monster_type	*m_ptr = &m_list[c_ptr->m_idx];
-
-                        monster_race    *r_ptr = race_inf(m_ptr);
+			monster_race    *r_ptr = race_inf(m_ptr);
 
 			/* Update the monster */
 			update_mon(c_ptr->m_idx, FALSE);
@@ -5888,14 +5883,12 @@ static void cave_temp_room_lite(int Ind)
 			if (r_ptr->flags2 & RF2_SMART) chance = 100;
 
 			/* Sometimes monsters wake up */
-			if (m_ptr->csleep && (rand_int(100) < chance))
-			{
+			if (m_ptr->csleep && (rand_int(100) < chance)) {
 				/* Wake up! */
 				m_ptr->csleep = 0;
 
 				/* Notice the "waking up" */
-				if (p_ptr->mon_vis[c_ptr->m_idx])
-				{
+				if (p_ptr->mon_vis[c_ptr->m_idx]) {
 					char m_name[MNAME_LEN];
 
 					/* Acquire the monster name */
@@ -5931,8 +5924,7 @@ static void cave_temp_room_lite(int Ind)
  *
  * Also, process all affected monsters
  */
-static void cave_temp_room_unlite(int Ind)
-{
+static void cave_temp_room_unlite(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -5940,11 +5932,9 @@ static void cave_temp_room_unlite(int Ind)
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Clear them all */
-	for (i = 0; i < p_ptr->temp_n; i++)
-	{
+	for (i = 0; i < p_ptr->temp_n; i++) {
 		int y = p_ptr->temp_y[i];
 		int x = p_ptr->temp_x[i];
-
 		cave_type *c_ptr = &zcave[y][x];
 
 		/* No longer in the array */
@@ -5955,8 +5945,7 @@ static void cave_temp_room_unlite(int Ind)
 
 		/* Hack -- Forget "boring" grids */
 //		if (c_ptr->feat <= FEAT_INVIS)
-		if (cave_plain_floor_grid(c_ptr))
-		{
+		if (cave_plain_floor_grid(c_ptr)) {
 			/* Forget the grid */
 			p_ptr->cave_flag[y][x] &= ~CAVE_MARK;
 
@@ -5965,8 +5954,7 @@ static void cave_temp_room_unlite(int Ind)
 		}
 
 		/* Process affected monsters */
-		if (c_ptr->m_idx > 0)
-		{
+		if (c_ptr->m_idx > 0) {
 			/* Update the monster */
 			update_mon(c_ptr->m_idx, FALSE);
 		}
@@ -5985,8 +5973,7 @@ static void cave_temp_room_unlite(int Ind)
 /*
  * Aux function -- see below
  */
-static void cave_temp_room_aux(int Ind, struct worldpos *wpos, int y, int x)
-{
+static void cave_temp_room_aux(int Ind, struct worldpos *wpos, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 
 	cave_type *c_ptr;
@@ -6018,10 +6005,8 @@ static void cave_temp_room_aux(int Ind, struct worldpos *wpos, int y, int x)
 /*
  * Illuminate any room containing the given location.
  */
-void lite_room(int Ind, struct worldpos *wpos, int y1, int x1)
-{
+void lite_room(int Ind, struct worldpos *wpos, int y1, int x1) {
 	player_type *p_ptr = Players[Ind];
-
 	int i, x, y;
 
 	cave_type **zcave;
@@ -6031,8 +6016,7 @@ void lite_room(int Ind, struct worldpos *wpos, int y1, int x1)
 	cave_temp_room_aux(Ind, wpos, y1, x1);
 
 	/* While grids are in the queue, add their neighbors */
-	for (i = 0; i < p_ptr->temp_n; i++)
-	{
+	for (i = 0; i < p_ptr->temp_n; i++) {
 		x = p_ptr->temp_x[i], y = p_ptr->temp_y[i];
 
 		/* Walls get lit, but stop light */
@@ -6059,10 +6043,8 @@ void lite_room(int Ind, struct worldpos *wpos, int y1, int x1)
 /*
  * Darken all rooms containing the given location
  */
-void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1)
-{
+void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1) {
 	player_type *p_ptr = Players[Ind];
-
 	int i, x, y;
 
 	cave_type **zcave;
@@ -6072,8 +6054,7 @@ void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1)
 	cave_temp_room_aux(Ind, wpos, y1, x1);
 
 	/* Spread, breadth first */
-	for (i = 0; i < p_ptr->temp_n; i++)
-	{
+	for (i = 0; i < p_ptr->temp_n; i++) {
 		x = p_ptr->temp_x[i], y = p_ptr->temp_y[i];
 
 		/* Walls get dark, but stop darkness */
@@ -6104,7 +6085,6 @@ void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1)
  */
 bool lite_area(int Ind, int dam, int rad) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO | PROJECT_NODF;
 
 	/* WRAITHFORM reduces damage/effect! */
@@ -6129,20 +6109,15 @@ bool lite_area(int Ind, int dam, int rad) {
  * Hack -- call darkness around the player
  * Affect all monsters in the projection radius
  */
-bool unlite_area(int Ind, int dam, int rad)
-{
+bool unlite_area(int Ind, int dam, int rad) {
 	player_type *p_ptr = Players[Ind];
-
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO | PROJECT_NODF;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) proj_dam_wraith(GF_DARK_WEAK, &dam);
 
 	/* Hack -- Message */
-	if (!p_ptr->blind)
-	{
-		msg_print(Ind, "Darkness surrounds you.");
-	}
+	if (!p_ptr->blind) msg_print(Ind, "Darkness surrounds you.");
 
 	/* Hook into the "project()" function */
 	(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg, "");
@@ -6162,8 +6137,7 @@ bool unlite_area(int Ind, int dam, int rad)
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
-{
+bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	char pattacker[80];
 	int tx, ty;
@@ -6461,8 +6435,8 @@ bool cast_raindrop(worldpos *wpos, int x) {
 	if (pseudo_y_start < 0) pseudo_y_start = 0;
 	return (project(PROJECTOR_EFFECT, 0, wpos, pseudo_y_start, x, 0, GF_RAINDROP, flg, pattacker));
 
-//	project_time = 20;//1 + randint(66 - 3);
-//	return (project(PROJECTOR_EFFECT, 0, wpos, 1 + randint(66 - 3), x, 0, GF_RAINDROP, flg, pattacker));
+	//project_time = 20;//1 + randint(66 - 3);
+	//return (project(PROJECTOR_EFFECT, 0, wpos, 1 + randint(66 - 3), x, 0, GF_RAINDROP, flg, pattacker));
 }
 
 /*
@@ -6730,7 +6704,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker) {
 
 	/* Hack -- Use an actual "target" */
 	if ((dir == 5) && target_okay(Ind)) {
-//		cave_type **zcave = getcave(&p_ptr->wpos);
+		//cave_type **zcave = getcave(&p_ptr->wpos);
 
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
@@ -6777,10 +6751,10 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
  * Affect monsters (not grids or objects)
  */
 bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker) {
-        char pattacker[80];
+	char pattacker[80];
 		//int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
 		//Actually, since beams affect the whole tile, don't deflect or reflect them (we don't have proper code for changing beam path anyway) - Kurzel
-        int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 		snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
 #ifdef USE_SOUND_2010
@@ -6880,7 +6854,7 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 
 	// (project_grid is required for disarm beam! same for project_item, for chests!)
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
-//	flg |= PROJECT_STOP | PROJECT_HIDE;
+	//flg |= PROJECT_STOP | PROJECT_HIDE;
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
