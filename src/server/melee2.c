@@ -2976,6 +2976,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 		/* No antimagic check -- is 'curse' magic? */
 		/* rebalance might be needed? */
 		int power = rlev / 2 + randint(rlev);
+
+#if 0 /* maybe in the future */
+		char damcol = 'o';
+		if (race_inf(m_ptr)->flags1 & RF1_UNIQUE) damcol = 'L';
+		msg_format(Ind, "%^s points at you and curses for \377%c%d \377wdamage.", m_name, damcol, dam);
+#endif
+
 		if (monst_check_antimagic(Ind, m_idx) && !(rand_int(4))) break;
 		disturb(Ind, 1, 0);
 		if (power < 15) {
