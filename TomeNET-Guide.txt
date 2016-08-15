@@ -148,7 +148,7 @@ Contents
     (6.4)   Races
     (6.5)   Classes/Professions, titles, melee blows/round
     (6.5a)  Start-up Blows/Round Table
-    (6.6)   Sanity (or insanity..)
+    (6.6)   Sanity (or insanity)
     (6.7)   Mimicry details
     (6.7a)  Polymorph rings
     (6.7b)  Druid form details
@@ -13591,8 +13591,8 @@ given by the 'Max. base blows/round' shown further above, and other parameters.
 
 
 
-(6.6) Sanity (or insanity..)
-----------------------------
+(6.6) Sanity (or insanity)
+--------------------------
 Your sanity can have the following values:
 Sound, Sane, Weird, Insane, Mad, Vegetable.
 
