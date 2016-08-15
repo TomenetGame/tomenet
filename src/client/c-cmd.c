@@ -1235,6 +1235,110 @@ void cmd_high_scores(void) {
 	peruse_file();
 }
 
+void cmd_the_guide(void) {
+	bool inkey_msg_old;
+	int line = 0, c, n;
+	char path[1024], buf[MAX_CHARS + 1];
+	FILE *fff;
+
+	path_build(path, 1024, "", "TomeNET-Guide.txt");
+	fff = my_fopen(path, "r");
+	if (!fff) return;
+
+	Term_save();
+	while (TRUE) {
+		Term_clear();
+		Term_putstr(34,  0, -1, TERM_L_BLUE, "[The Guide]");
+		Term_putstr(5, screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1 , -1, TERM_L_BLUE, "-- Up,Down,PgUp,PgDn,End to navigate; ?,s,/ to search; ESC to exit --");
+
+		/* Always begin at zero */
+		fseek(fff, 0, SEEK_SET);
+
+		/* Seek forwards until reaching the desired start line */
+		for (n = 0; n < line; n++)
+			if (!fgets(buf, 80, fff)) {
+				/* If we're trying to forward too much, stop, so the screen fully displays
+				   the maximum amount of possible lines at the end of the Guide. */
+				line = n - (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4) - 1;
+				if (line < 0) line = 0;
+				break;
+			}
+		if (n != line) continue;
+
+		/* Display as many lines as fit on the screen, starting at the desired position */
+		for (n = 0; n < (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4); n++) {
+			if (fgets(buf, 80, fff)) {
+				buf[strlen(buf) - 1] = 0;
+				Term_putstr(0, 2 + n, -1, TERM_WHITE, buf);
+			} else break;
+		}
+
+		/* hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
+		inkey_msg_old = inkey_msg;
+		inkey_msg = TRUE;
+		c = inkey();
+		inkey_msg = inkey_msg_old;
+
+		/* specialty: allow chatting from within here */
+		if (c == ':') {
+			cmd_message();
+			continue;
+		}
+		/* allow inscribing items (hm) */
+		if (c == '{') {
+			cmd_inscribe();
+			continue;
+		}
+		if (c == '}') {
+			cmd_uninscribe();
+			continue;
+		}
+
+		/* navigate (up/down) */
+		if (c == '8' || c == '\010' || c == 0x7F) { //rl:'k'
+			line--;
+			if (line < 0) line = 99999;
+			continue;
+		}
+		if (c == '2' || c == ' ') { //rl:'j'
+			line++;
+			continue;
+		}
+		/* page up/down */
+		if (c == '9') { //rl:?
+			if (line == 0) line = 99999;
+			else {
+				line -= (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
+				if (line < 0) line = 0;
+			}
+			continue;
+		}
+		if (c == '3') { //rl:?
+			line += (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
+			continue;
+		}
+		/* home key to reset */
+		if (c == '7') { //rl:?
+			line = 0;
+			continue;
+		}
+
+		/* search - uhoh */
+		if (c == '/' || c == 's' || c == '?') {
+			continue;
+		}
+
+		/* escape */
+		if (c == ESCAPE) break;
+	}
+
+	my_fclose(fff);
+	Term_load();
+}
+
 void cmd_help(void) {
 	/* Set the hook */
 	special_line_type = SPECIAL_FILE_HELP;
@@ -2020,8 +2124,9 @@ void cmd_check_misc(void) {
 	Term_putstr(40, second + 2, -1, TERM_WHITE, "(\377yh\377w) Message history");
 	Term_putstr(40, second + 3, -1, TERM_WHITE, "(\377yi\377w) Chat history");
 	Term_putstr(40, second + 4, -1, TERM_WHITE, "(\377yl\377w) Lag-o-meter");
-	Term_putstr( 5, 17, -1, TERM_WHITE, "(\377y?\377w) Help");
-	Term_putstr(20, 16, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat to view extra character information)");
+	Term_putstr( 5, second + 6, -1, TERM_WHITE, "(\377y?\377w) Help");
+	Term_putstr(40, second + 6, -1, TERM_WHITE, "(\377yG\377w) The Guide");
+	Term_putstr(20, second + 8, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat to view extra character information)");
 
 	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
 
@@ -2116,6 +2221,9 @@ void cmd_check_misc(void) {
 				break;
 			case '?':
 				cmd_help();
+				break;
+			case 'G':
+				cmd_the_guide();
 				break;
 			case ESCAPE:
 			case KTRL('Q'):
