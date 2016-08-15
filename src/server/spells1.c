@@ -10719,29 +10719,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	int path_num = 0;
 #endif
 
-	struct worldpos wpos_fix, *wpos = &wpos_fix;
-	/* copy wpos in case it was a monster's wpos that gets erased from mon_take_hit() if monster dies */
-	wpos_fix = *wpos_tmp;
-
-	/* Affected location(s) */
-	cave_type *c_ptr, *c_ptr2;
-
-	/* Assume the player sees nothing */
-	bool notice = FALSE;
-
-	/* Assume the player has seen nothing */
-	/*bool visual = FALSE;*/
-
-	/* Assume the player has seen no blast grids */
-	bool drawn = FALSE;
-
-	/* Is the player blind? */
-	/* Blindness is currently ignored for this function */
-	/*bool blind;*/
-
 	/* Number of grids in the "blast area" (including the "beam" path) */
 	int grids = 0;
-
 	int effect = 0;
 
 	bool players_only = FALSE; /* spell affects players only */
@@ -10761,6 +10740,30 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 	dun_level *l_ptr;
 	cave_type **zcave;
+	struct worldpos wpos_fix, *wpos = &wpos_fix;
+
+	/* Affected location(s) */
+	cave_type *c_ptr, *c_ptr2;
+
+	/* Assume the player sees nothing */
+	bool notice = FALSE;
+
+	/* Assume the player has seen nothing */
+	/*bool visual = FALSE;*/
+
+	/* Assume the player has seen no blast grids */
+	bool drawn = FALSE;
+
+	/* Is the player blind? */
+	/* Blindness is currently ignored for this function */
+	/*bool blind;*/
+
+
+	/* Hack: GF_CAUSE does travel by LoS but isn't a real bolt and actually unavoidable, except by saving throw! */
+	if (typ == GF_CAUSE) flg |= PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+
+	/* copy wpos in case it was a monster's wpos that gets erased from mon_take_hit() if monster dies */
+	wpos_fix = *wpos_tmp;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
