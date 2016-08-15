@@ -62,6 +62,7 @@ glass
 bypass
 surpass
 pass
+cok
 cook
 coke
 coca
