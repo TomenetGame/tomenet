@@ -1072,8 +1072,9 @@ static bool guild_name_legal(int Ind, char *name) {
 	}
 
 	/* Prevent abuse */
-	if (ILLEGAL_GROUP_NAME(name)) {
-		msg_print(Ind, "\377yThat's not a legal guild name, please try again.");
+	strcpy(buf2, name);
+	if (ILLEGAL_GROUP_NAME(name) || handle_censor(buf2)) {
+		msg_print(Ind, "\377yThat guild name is not available, please try again.");
 		return FALSE;
 	}
 
@@ -1340,8 +1341,8 @@ void account_check(int Ind) { /* Temporary Ind */
 int party_create(int Ind, cptr name) {
 	player_type *p_ptr = Players[Ind];
 	int index = 0, i, oldest = turn;
+	char *ptr, buf[NAME_LEN], buf2[NAME_LEN];
 
-	char *ptr, buf[NAME_LEN];
 	if (strlen(name) >= NAME_LEN) {
 		msg_format(Ind, "\377yParty name must not exceed %d characters!", NAME_LEN - 1);
 		return FALSE;
@@ -1367,8 +1368,9 @@ int party_create(int Ind, cptr name) {
 		return FALSE;
 	}
 	/* Prevent abuse */
-	if (ILLEGAL_GROUP_NAME(name)) {
-		msg_print(Ind, "\377yThat's not a legal party name, please try again.");
+	strcpy(buf2, name);
+	if (ILLEGAL_GROUP_NAME(name) || handle_censor(buf2)) {
+		msg_print(Ind, "\377yThat party name is not available, please try again.");
 		return FALSE;
 	}
 
@@ -1450,8 +1452,7 @@ int party_create(int Ind, cptr name) {
 int party_create_ironteam(int Ind, cptr name) {
 	player_type *p_ptr = Players[Ind];
 	int index = 0, i, oldest = turn;
-
-	char *ptr, buf[NAME_LEN];
+	char *ptr, buf[NAME_LEN], buf2[NAME_LEN];
 
 	/* prevent buffer overflows by someone entering way too long names */
 	if (strlen(name) >= NAME_LEN) {
@@ -1486,8 +1487,9 @@ int party_create_ironteam(int Ind, cptr name) {
 		return FALSE;
 	}
 	/* Prevent abuse */
-	if (ILLEGAL_GROUP_NAME(name)) {
-		msg_print(Ind, "\377yThat's not a legal party name, please try again.");
+	strcpy(buf2, name);
+	if (ILLEGAL_GROUP_NAME(name) || handle_censor(buf2)) {
+		msg_print(Ind, "\377yThat party name is not available, please try again.");
 		return FALSE;
 	}
 
