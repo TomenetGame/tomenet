@@ -5663,7 +5663,7 @@ void do_cmd_fire(int Ind, int dir) {
 				drainable = !((r_ptr->flags3 & RF3_UNDEAD) ||
 					    /* (r_ptr->flags3 & RF3_DEMON) ||*/
 					    (r_ptr->flags3 & RF3_NONLIVING) ||
-					    (strchr("Egv", r_ptr->d_char)));
+					    (strchr("EgvwlIFijmxszQX", r_ptr->d_char)));
 
 				/* Do not hit pets - the_sandman */
 				if (m_ptr->pet) break;

@@ -4191,7 +4191,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	if ((r_ptr->flags3 & RF3_UNDEAD) ||
 	    //(r_ptr->flags3 & RF3_DEMON) ||
 	    (r_ptr->flags3 & RF3_NONLIVING) ||
-	    (strchr("Egv", r_ptr->d_char)))
+	    (strchr("EgvwlIFijmxszQX", r_ptr->d_char)))
 		drainable = FALSE;
 
 	/* is it a unique we already got kill credit for? */
