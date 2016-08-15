@@ -529,7 +529,10 @@ bool teleport_away(int m_idx, int dis) {
 	if (zcave[oy][ox].info & CAVE_ICKY) return FALSE;
 #else
 	/* actually allow teleporting out of a vault, if monster took damage; but still prevent for no-tele vaults */
-	if ((zcave[oy][ox].info & CAVE_ICKY) && m_ptr->hp == m_ptr->maxhp) return FALSE;
+	if ((zcave[oy][ox].info & CAVE_ICKY) &&
+	    /* teleport out when hurt - except for Qs, who stay to summon for most of the fight, since it's their way of fighting! */
+	    (m_ptr->hp == m_ptr->maxhp || (r_ptr->d_char == 'Q' && m_ptr->hp >= m_ptr->maxhp / 5)))
+		return FALSE;
 	if (zcave[oy][ox].info & CAVE_STCK) return FALSE;
 #endif
 
