@@ -1732,8 +1732,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				}
 			}
 			if (!i) { /* Paranoia */
-				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
-				KILL(q_ptr, player_type);
+				if (loaded) { //loaded is always TRUE here, but we need to slay the compiler warning
+					C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+					KILL(q_ptr, player_type);
+				}
 				NumPlayers--;
 				msg_print(Ind, "House transfer failed.");
 				s_printf("HOUSE_CHOWN_SELF: FAILED. source %s, house %d, dest %s.\n", p_ptr->name, pick_house(&p_ptr->wpos, y, x), &args[2]);
