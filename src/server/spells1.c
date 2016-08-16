@@ -1744,7 +1744,7 @@ byte spell_color(int type) {
  */
 bool bypass_invuln = FALSE;
 void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
-	cptr hit_from_real = hit_from; /* non-hallucinated attacker */
+	char hit_from_real[MNAME_LEN];
 	player_type *p_ptr = Players[Ind];
 
 	// The "number" that the character is displayed as before the hit
@@ -1769,6 +1769,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		     p_ptr->afk || Players[Ind_attacker]->afk))
 			return;
 	}
+
+	strcpy(hit_from_real, hit_from); /* non-hallucinated attacker */
 
 	if (!p_ptr->no_alert) {
 		if (((p_ptr->alert_afk_dam && p_ptr->afk)
@@ -1996,7 +1998,7 @@ destined_defeat:
 		/* get real killer (for log file and scoreboard) in case we're hallucinating */
 		} else if (p_ptr->image && IS_MONSTER(Ind_attacker)) {
 			/* get real monster name, in case we're hallucinating */
-			hit_from_real = r_name + race_inf(&m_list[-Ind_attacker])->name;
+			monster_desc(0, hit_from_real, -Ind_attacker, 0x88);
 		}
 
 		/* Note cause of death */
@@ -8350,7 +8352,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		monster_desc(Ind, killer, who, 0x88);
 
 		/* Get the monster's real name */
-		monster_desc(Ind, p_ptr->really_died_from, who, 0x100);
+		monster_desc(Ind, p_ptr->really_died_from, who, 0x188);
 
 		/* Unique monsters cause different damage message colour */
 		if (race_inf(m_ptr)->flags1 & RF1_UNIQUE) damcol = 'L';
