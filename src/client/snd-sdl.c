@@ -311,8 +311,8 @@ static bool sound_sdl_init(bool no_cache) {
 	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
-		strcat(path, "\\tomenet-sound.cfg");
-	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "tomenet-sound.cfg"); //paranoia
+		strcat(path, "\\TomeNET-sound.cfg");
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "TomeNET-sound.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (!fff) {
@@ -505,8 +505,8 @@ static bool sound_sdl_init(bool no_cache) {
 	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
-		strcat(path, "\\tomenet-nosound.cfg");
-	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "tomenet-nosound.cfg"); //paranoia
+		strcat(path, "\\TomeNET-nosound.cfg");
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "TomeNET-nosound.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (fff) {
@@ -545,8 +545,8 @@ static bool sound_sdl_init(bool no_cache) {
 	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
-		strcat(path, "\\tomenet-music.cfg");
-	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "tomenet-music.cfg"); //paranoia
+		strcat(path, "\\TomeNET-music.cfg");
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "TomeNET-music.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (!fff) {
@@ -757,8 +757,8 @@ static bool sound_sdl_init(bool no_cache) {
 	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
-		strcat(path, "\\tomenet-nomusic.cfg");
-	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "tomenet-nomusic.cfg"); //paranoia
+		strcat(path, "\\TomeNET-nomusic.cfg");
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "TomeNET-nomusic.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (fff) {
@@ -2183,8 +2183,8 @@ void do_cmd_options_sfx_sdl(void) {
 			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 				strcpy(buf2, getenv("HOMEDRIVE"));
 				strcat(buf2, getenv("HOMEPATH"));
-				strcat(buf2, "\\tomenet-nosound.cfg");
-			} else path_build(buf2, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "tomenet-nosound.cfg"); //paranoia
+				strcat(buf2, "\\TomeNET-nosound.cfg");
+			} else path_build(buf2, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "TomeNET-nosound.cfg"); //paranoia
 #endif
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
@@ -2444,8 +2444,8 @@ void do_cmd_options_mus_sdl(void) {
 			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 				strcpy(buf2, getenv("HOMEDRIVE"));
 				strcat(buf2, getenv("HOMEPATH"));
-				strcat(buf2, "\\tomenet-nomusic.cfg");
-			} else path_build(buf2, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "tomenet-nomusic.cfg"); //paranoia
+				strcat(buf2, "\\TomeNET-nomusic.cfg");
+			} else path_build(buf2, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "TomeNET-nomusic.cfg"); //paranoia
 #endif
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");

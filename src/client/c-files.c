@@ -745,7 +745,7 @@ void init_file_paths(char *path) {
 		btail = buf + strlen(buf);
 
 		/* Set 'scpt' folder */
-		strcpy(btail, "\\tomenet-scpt");
+		strcpy(btail, "\\TomeNET-scpt");
 		ANGBAND_DIR_SCPT = string_make(buf);
 		/* make sure it exists, just in case the installer didn't create it */
 		if (!check_dir(ANGBAND_DIR_SCPT)) {
@@ -756,7 +756,7 @@ void init_file_paths(char *path) {
 		}
 
 		/* Set 'user' folder */
-		strcpy(btail, "\\tomenet-user");
+		strcpy(btail, "\\TomeNET-user");
 		ANGBAND_DIR_USER = string_make(buf);
 		/* make sure it exists, just in case the installer didn't create it */
 		if (!check_dir(ANGBAND_DIR_USER)) {
