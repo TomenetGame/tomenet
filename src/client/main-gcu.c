@@ -255,8 +255,7 @@ static short int cor[256], cog[256], cob[256];
 /*
  * Place the "keymap" into its "normal" state
  */
-static void keymap_norm(void)
-{
+static void keymap_norm(void) {
 
 #ifdef USE_TPOSIX
 
@@ -288,8 +287,7 @@ static void keymap_norm(void)
 /*
  * Place the "keymap" into the "game" state
  */
-static void keymap_game(void)
-{
+static void keymap_game(void) {
 
 #ifdef USE_TPOSIX
 
@@ -321,8 +319,7 @@ static void keymap_game(void)
 /*
  * Save the normal keymap
  */
-static void keymap_norm_prepare(void)
-{
+static void keymap_norm_prepare(void) {
 
 #ifdef USE_TPOSIX
 
@@ -354,8 +351,7 @@ static void keymap_norm_prepare(void)
 /*
  * Save the keymaps (normal and game)
  */
-static void keymap_game_prepare(void)
-{
+static void keymap_game_prepare(void) {
 
 #ifdef USE_TPOSIX
 
@@ -449,11 +445,9 @@ static void keymap_game_prepare(void)
 /*
  * Suspend/Resume
  */
-static errr Term_xtra_gcu_alive(int v)
-{
+static errr Term_xtra_gcu_alive(int v) {
 	/* Suspend */
-	if (!v)
-	{
+	if (!v) {
 		/* Go to normal keymap mode */
 		keymap_norm();
 
@@ -484,8 +478,7 @@ static errr Term_xtra_gcu_alive(int v)
 	}
 
 	/* Resume */
-	else
-	{
+	else {
 		/* Refresh */
 		/* (void)touchwin(curscr); */
 		/* (void)wrefresh(curscr); */
@@ -509,8 +502,7 @@ static errr Term_xtra_gcu_alive(int v)
 /*
  * Init the "curses" system
  */
-static void Term_init_gcu(term *t)
-{
+static void Term_init_gcu(term *t) {
 	term_data *td = (term_data *)(t->data);
 
 	/* Count init's, handle first */
@@ -539,8 +531,7 @@ static void Term_init_gcu(term *t)
 /*
  * Nuke the "curses" system
  */
-static void Term_nuke_gcu(term *t)
-{
+static void Term_nuke_gcu(term *t) {
 	term_data *td = (term_data *)(t->data);
 
 	/* Delete this window */
@@ -581,13 +572,11 @@ static void Term_nuke_gcu(term *t)
 /*
  * Process events, with optional wait
  */
-static errr Term_xtra_gcu_event(int v)
-{
+static errr Term_xtra_gcu_event(int v) {
 	int i, k;
 
 	/* Wait */
-	if (v)
-	{
+	if (v) {
 		/* Paranoia -- Wait for it */
 		nodelay(stdscr, FALSE);
 
@@ -603,8 +592,7 @@ static errr Term_xtra_gcu_event(int v)
 	}
 
 	/* Do not wait */
-	else
-	{
+	else {
 		/* Do not wait for it */
 		nodelay(stdscr, TRUE);
 
@@ -631,15 +619,12 @@ static errr Term_xtra_gcu_event(int v)
 /*
  * Process events (with optional wait)
  */
-static errr Term_xtra_gcu_event(int v)
-{
+static errr Term_xtra_gcu_event(int v) {
 	int i, k;
-
 	char buf[2];
 
 	/* Wait */
-	if (v)
-	{
+	if (v) {
 		/* Wait for one byte */
 		i = read(0, buf, 1);
 
@@ -648,8 +633,7 @@ static errr Term_xtra_gcu_event(int v)
 	}
 
 	/* Do not wait */
-	else
-	{
+	else {
 		/* Get the current flags for stdin */
 		k = fcntl(0, F_GETFL, 0);
 
@@ -682,13 +666,11 @@ static errr Term_xtra_gcu_event(int v)
 /*
  * Handle a "special request"
  */
-static errr Term_xtra_gcu(int n, int v)
-{
+static errr Term_xtra_gcu(int n, int v) {
 	term_data *td = (term_data *)(Term->data);
 
 	/* Analyze the request */
-	switch (n)
-	{
+	switch (n) {
 		/* Clear screen */
 		case TERM_XTRA_CLEAR:
 		touchwin(td->win);
@@ -741,8 +723,7 @@ static errr Term_xtra_gcu(int n, int v)
 /*
  * Actually MOVE the hardware cursor
  */
-static errr Term_curs_gcu(int x, int y)
-{
+static errr Term_curs_gcu(int x, int y) {
 	term_data *td = (term_data *)(Term->data);
 
 	/* Literally move the cursor */
@@ -757,22 +738,18 @@ static errr Term_curs_gcu(int x, int y)
  * Erase a grid of space
  * Hack -- try to be "semi-efficient".
  */
-static errr Term_wipe_gcu(int x, int y, int n)
-{
+static errr Term_wipe_gcu(int x, int y, int n) {
 	term_data *td = (term_data *)(Term->data);
 
 	/* Place cursor */
 	wmove(td->win, y, x);
 
 	/* Clear to end of line */
-	if (x + n >= td->cols)
-	{
+	if (x + n >= td->cols) {
 		wclrtoeol(td->win);
 	}
-
 	/* Clear some characters */
-	else
-	{
+	else {
 		while (n-- > 0) waddch(td->win, ' ');
 	}
 
@@ -788,12 +765,9 @@ static errr Term_wipe_gcu(int x, int y, int n)
 /*
  * Place some text on the screen using an attribute
  */
-static errr Term_text_gcu(int x, int y, int n, byte a, cptr s)
-{
+static errr Term_text_gcu(int x, int y, int n, byte a, cptr s) {
 	term_data *td = (term_data *)(Term->data);
-
 	int i;
-
 	char text[255];
 
 	/* Obtain a copy of the text */
@@ -875,16 +849,16 @@ static errr term_data_init(term_data *td, int rows, int cols, int y, int x)
  *
  * Someone should really check the semantics of "initscr()"
  */
-errr init_gcu(void)
-{
+errr init_gcu(void) {
 	int i;
 	/*term *t = &term_screen_body;*/
 	int num_term = 4, next_win = 0;
 
 
 	/* hack -- work on Xfce4's 'Terminal' without requiring the user to set this */
-	if (!strcmp(getenv("TERM"), "xterm") &&
-	    !getenv("XTERM_VERSION"))
+	if (!getenv("TERM") ||
+	    (!strcmp(getenv("TERM"), "xterm") &&
+	    !getenv("XTERM_VERSION")))
 		setenv("TERM", "xterm-16color", -1);
 
 
@@ -913,8 +887,8 @@ errr init_gcu(void)
 	if (i) quit("Angband needs an 80x24 'curses' screen");
 
 
-        /* set OS-specific resize_main_window() hook */
-        resize_main_window = resize_main_window_gcu;
+	/* set OS-specific resize_main_window() hook */
+	resize_main_window = resize_main_window_gcu;
 
 
 #ifdef A_COLOR
@@ -986,7 +960,7 @@ errr init_gcu(void)
 		colortable[14] = (COLOR_PAIR(14) | A_NORMAL);	/* Light Blue */
 		colortable[15] = (COLOR_PAIR(15) | A_NORMAL);	/* Light Umber XXX */
 	}
-	
+
 	else if (can_use_256_color) {
 		int j;
 		int color_palette[16] = { 0 };
@@ -995,7 +969,7 @@ errr init_gcu(void)
 		for (i = 0; i < 256; i++) {
 			color_content(i, &cor[i], &cog[i], &cob[i]);
 		}
-		
+
 		/* Find the closest match in the palette for each desired color */
 		for (i = 0; i < 16; i++) {
 			int want_red = RED(i);
@@ -1012,12 +986,12 @@ errr init_gcu(void)
 			}
 			color_palette[i] = best_idx;
 		}
-		
+
 		/* Prepare the color pairs */
 		for (i = 0; i < 16; i++) {
 			init_pair(i, color_palette[i], COLOR_BLACK);
 		}
-		
+
 		/* Prepare the "Angband Colors" */
 		colortable[0] = (COLOR_PAIR(0) | A_NORMAL);	/* Black */
 		colortable[1] = (COLOR_PAIR(1) | A_NORMAL);	/* White */
@@ -1091,13 +1065,11 @@ errr init_gcu(void)
 
 	/*** Now prepare the term(s) ***/
 
-	for (i = 0; i < num_term; i++)
-	{
+	for (i = 0; i < num_term; i++) {
 		int rows, cols;
 		int y, x;
 
-		switch (i)
-		{
+		switch (i) {
 			case 0: rows = 24;
 				cols = 80;
 				y = x = 0;

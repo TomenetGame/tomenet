@@ -308,9 +308,11 @@ static bool sound_sdl_init(bool no_cache) {
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
-	strcpy(path, getenv("HOMEDRIVE"));
-	strcat(path, getenv("HOMEPATH"));
-	strcat(path, "\\tomenet-sound.cfg");
+	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+		strcpy(path, getenv("HOMEDRIVE"));
+		strcat(path, getenv("HOMEPATH"));
+		strcat(path, "\\tomenet-sound.cfg");
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "tomenet-sound.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (!fff) {
@@ -500,9 +502,11 @@ static bool sound_sdl_init(bool no_cache) {
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
-	strcpy(path, getenv("HOMEDRIVE"));
-	strcat(path, getenv("HOMEPATH"));
-	strcat(path, "\\tomenet-nosound.cfg");
+	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+		strcpy(path, getenv("HOMEDRIVE"));
+		strcat(path, getenv("HOMEPATH"));
+		strcat(path, "\\tomenet-nosound.cfg");
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "tomenet-nosound.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (fff) {
@@ -538,9 +542,11 @@ static bool sound_sdl_init(bool no_cache) {
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
-	strcpy(path, getenv("HOMEDRIVE"));
-	strcat(path, getenv("HOMEPATH"));
-	strcat(path, "\\tomenet-music.cfg");
+	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+		strcpy(path, getenv("HOMEDRIVE"));
+		strcat(path, getenv("HOMEPATH"));
+		strcat(path, "\\tomenet-music.cfg");
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "tomenet-music.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (!fff) {
@@ -748,9 +754,11 @@ static bool sound_sdl_init(bool no_cache) {
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
-	strcpy(path, getenv("HOMEDRIVE"));
-	strcat(path, getenv("HOMEPATH"));
-	strcat(path, "\\tomenet-nomusic.cfg");
+	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+		strcpy(path, getenv("HOMEDRIVE"));
+		strcat(path, getenv("HOMEPATH"));
+		strcat(path, "\\tomenet-nomusic.cfg");
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "tomenet-nomusic.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (fff) {
@@ -2172,9 +2180,11 @@ void do_cmd_options_sfx_sdl(void) {
 #ifndef WINDOWS
 			path_build(buf2, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.$$$");
 #else
-			strcpy(buf2, getenv("HOMEDRIVE"));
-			strcat(buf2, getenv("HOMEPATH"));
-			strcat(buf2, "\\tomenet-nosound.cfg");
+			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+				strcpy(buf2, getenv("HOMEDRIVE"));
+				strcat(buf2, getenv("HOMEPATH"));
+				strcat(buf2, "\\tomenet-nosound.cfg");
+			} else path_build(buf2, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "tomenet-nosound.cfg"); //paranoia
 #endif
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
@@ -2431,9 +2441,11 @@ void do_cmd_options_mus_sdl(void) {
 #ifndef WINDOWS
 			path_build(buf2, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.$$$");
 #else
-			strcpy(buf2, getenv("HOMEDRIVE"));
-			strcat(buf2, getenv("HOMEPATH"));
-			strcat(buf2, "\\tomenet-nomusic.cfg");
+			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+				strcpy(buf2, getenv("HOMEDRIVE"));
+				strcat(buf2, getenv("HOMEPATH"));
+				strcat(buf2, "\\tomenet-nomusic.cfg");
+			} else path_build(buf2, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "tomenet-nomusic.cfg"); //paranoia
 #endif
 			fff = my_fopen(buf, "r");
 			fff2 = my_fopen(buf2, "w");
