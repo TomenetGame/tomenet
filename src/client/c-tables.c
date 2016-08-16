@@ -514,7 +514,7 @@ cptr melee_techniques[16] = {
 
   "Apply Poison",
   "TechB", /*"Knock Back",*/
-  "TechC", /*"Charge",*/
+  "Track Animals", /*"Charge",*/
   "Perceive Noise",
 
   "Flash Bomb",

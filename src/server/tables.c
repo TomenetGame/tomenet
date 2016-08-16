@@ -4614,7 +4614,7 @@ int p_tough_ac[51] = {
 
 /* For fighting techniques */
 byte mtech_lev[MAX_CLASS][16] = {
-    //	sprint,	taunt,	jump,	distr,	poison,	knockb,	charge,	detnoi, flashb,	cloak,	spin,	assass,	berser,	s-jump,	s-run,	instant cloak
+    //	sprint,	taunt,	jump,	distr,	poison,	knockb,	trackan,detnoi, flashb,	cloak,	spin,	assass,	berser,	s-jump,	s-run,	instant cloak
 	{2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	6,	0,	20,	0,	0,	0},	//warrior
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//istar
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//priest
@@ -4626,7 +4626,7 @@ byte mtech_lev[MAX_CLASS][16] = {
 	{13,	16,	0,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//mimic
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//archer
 	{11,	17,	0,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//paladin
-	{5,	9,	0,	0,	0,	0,	0,	0,	0,	0,	17, 	0,	0,	0,	0,	0},	//ranger
+	{5,	9,	0,	0,	0,	0,	7,	0,	0,	0,	17, 	0,	0,	0,	0,	0},	//ranger
 	{6,	15,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//adventurer
 	{5,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//druid
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//shaman

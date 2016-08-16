@@ -6123,7 +6123,7 @@ int Send_technique_info(int Ind) {
 
 	/* backward compatibility before addition of 'detect_noise()' and 'apply_poison()' for rogues */
 	if (is_older_than(&p_ptr->version, 4, 6, 1, 2, 0, 1)) {
-		u32b tech_compat = (p_ptr->melee_techniques & 0x6F) | ((p_ptr->melee_techniques & 0xFF00) >> 1);
+		u32b tech_compat = (p_ptr->melee_techniques & 0x0F) | ((p_ptr->melee_techniques & 0xFF00) >> 1);
 		return Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, tech_compat, p_ptr->ranged_techniques);
 	}
 

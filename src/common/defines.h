@@ -8516,7 +8516,7 @@ extern int PlayerUID;
 
 #define MT_POISON	0x0010
 #define MT_KNOCK	0x0020
-#define MT_CHARGE	0x0040
+#define MT_TRACKANIM	0x0040
 #define MT_DETNOISE	0x0080
 
 #define MT_FLASH	0x0100

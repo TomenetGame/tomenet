@@ -4381,6 +4381,8 @@ void check_experience(int Ind) {
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][4] && p_ptr->lev >= mtech_lev[p_ptr->pclass][4])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Apply Poison'!");
+	if (old_lev < mtech_lev[p_ptr->pclass][6] && p_ptr->lev >= mtech_lev[p_ptr->pclass][6])
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Track Animals'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][7] && p_ptr->lev >= mtech_lev[p_ptr->pclass][7])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Perceive Noise'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][8] && p_ptr->lev >= mtech_lev[p_ptr->pclass][8])

@@ -7523,6 +7523,14 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+	case 6:	if (!(p_ptr->melee_techniques & MT_TRACKANIM)) return; /* Track Animals */
+		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
+		p_ptr->cst -= 3;
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		(void)detect_creatures_xxx(Ind, RF3_ANIMAL);
+s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
+		p_ptr->warning_technique_melee = 1;
+		break;
 	case 7:	if (!(p_ptr->melee_techniques & MT_DETNOISE)) return; /* Perceive Noise */
 		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 3;
