@@ -2099,6 +2099,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 
 	/* Art ammo doesn't get great hit/dam in general. */
 	if (is_ammo(a_ptr->tval)) {
+		o_ptr->xtra9 = 0; //clear 'mark as unsellable' hack.. as if^^
 		a_ptr->to_d = 0;
 		a_ptr->to_h = 0;
 		if (magik(50)) {

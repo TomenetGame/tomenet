@@ -5137,8 +5137,11 @@ void do_cmd_fire(int Ind, int dir) {
 
 #if (STARTEQ_TREATMENT > 1)
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL)
-		o_ptr->level = 0;
+	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
+		/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
+		if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
+		else o_ptr->xtra9 = 1; //mark as unsellable
+	}
 #endif
 
 	/* S(he) is no longer afk */
@@ -6482,8 +6485,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	if (!bashing) {
 #if (STARTEQ_TREATMENT > 1)
 		if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-		    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL)
-			o_ptr->level = 0;
+		    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
+			/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
+			if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
+			else o_ptr->xtra9 = 1; //mark as unsellable
+		}
 #endif
 	}
 

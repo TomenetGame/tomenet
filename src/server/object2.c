@@ -1607,6 +1607,9 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
 
+	/* hack: ammo used by newbies, that wasn't level0'ed */
+	if (o_ptr->xtra9 == 1 && is_ammo(o_ptr->tval)) return 0L;
+
 	/* Sigil (ignore it) */
 	s32b temp_sigil = o_ptr->sigil;
 	s32b temp_sseed = o_ptr->sseed;
@@ -3127,6 +3130,9 @@ s64b object_value(int Ind, object_type *o_ptr) {
 
 	/* Apply discount (if any) */
 	if (o_ptr->discount) value -= (value * o_ptr->discount / 100L);
+
+	/* hack: ammo used by newbies, that wasn't level0'ed */
+	if (o_ptr->xtra9 == 1 && is_ammo(o_ptr->tval)) return 0L;
 
 	/* Return the final value */
 	return (value);
