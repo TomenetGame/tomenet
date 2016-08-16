@@ -10910,7 +10910,7 @@ static int Receive_guild_config(int ind) {
 	case 2: /* set/remove adder */
 		if (!adder[0]) break;
 		adder[0] = toupper(adder[0]); /* be helpful */
-		n = name_lookup_loose(player, adder, FALSE, FALSE);
+		n = name_lookup_loose(player, adder, FALSE, FALSE, FALSE);
 		if (!n) {
 #ifdef GUILD_ADDERS_LIST
 			/* Handle de-authorization */

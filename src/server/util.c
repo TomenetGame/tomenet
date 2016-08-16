@@ -16,7 +16,6 @@
 
 static void console_talk_aux(char *message);
 
-//static int name_lookup_loose_quiet(int Ind, cptr name, u16b party);
 
 #ifndef HAS_MEMSET
 
@@ -4055,7 +4054,7 @@ static void player_talk_aux(int Ind, char *message) {
 			struct rplist *w_player;
 #endif
 			/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
-			target = name_lookup_loose_quiet(Ind, search, TRUE, TRUE);
+			target = name_lookup_loose(Ind, search, TRUE, TRUE, TRUE);
 
 			if (target) {
 				/* strip leading chat mode prefix,
@@ -4448,7 +4447,7 @@ static void player_talk_aux(int Ind, char *message) {
 #endif
 
 		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
-		target = name_lookup_loose_quiet(Ind, search, TRUE, TRUE);
+		target = name_lookup_loose(Ind, search, TRUE, TRUE, TRUE);
 #ifdef TOMENET_WORLDS
 		if (!target && cfg.worldd_privchat) {
 			w_player = world_find_player(search, 0);
@@ -5062,7 +5061,7 @@ bool is_a_vowel(int ch) {
  *
  * if 'party' is TRUE, party name is also looked up.
  */
-int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names) {
+int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names, bool quiet) {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
 	cptr problem = "";
@@ -5208,7 +5207,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 	/* Check for recipient set but no match found */
 	if ((len && !target) || (target < 0 && !party)) {
 		/* Send an error message */
-		msg_format(Ind, "Could not match name '%s'.", name);
+		if (!quiet) msg_format(Ind, "Could not match name '%s'.", name);
 
 		/* Give up */
 		return 0;
@@ -5217,170 +5216,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 	/* Check for multiple recipients found */
 	if (strlen(problem)) {
 		/* Send an error message */
-		msg_format(Ind, "'%s' matches too many %s.", name, problem);
-
-		/* Give up */
-		return 0;
-	}
-
-	/* Success */
-	return target;
-}
-
-/* same as name_lookup_loose, but without warning message if no name was found */
-int name_lookup_loose_quiet(int Ind, cptr name, u16b party, bool include_account_names) {
-	int i, j, len, target = 0;
-	player_type *q_ptr, *p_ptr;
-	cptr problem = "";
-	bool party_online;
-
-	p_ptr = Players[Ind];
-
-	/* don't waste time */
-	if(p_ptr == (player_type*)NULL) return(0);
-
-	/* Acquire length of search string */
-	len = strlen(name);
-
-	/* Look for a recipient who matches the search string */
-	if (len) {
-		/* Check players */
-		for (i = 1; i <= NumPlayers; i++) {
-			/* Check this one */
-			q_ptr = Players[i];
-
-			/* Skip if disconnected */
-			if (q_ptr->conn == NOT_CONNECTED) continue;
-
-			/* let admins chat */
-			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
-			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "kurzel")
-			    && strcasecmp(p_ptr->accountname, "moltor")
-			    && strcasecmp(p_ptr->accountname, "the_sandman")
-			    && strcasecmp(p_ptr->accountname, "faith")
-			    && strcasecmp(p_ptr->accountname, "mikaelh")
-			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
-
-			/* Check name */
-			if (!strncasecmp(q_ptr->name, name, len)) {
-				/* Set target if not set already */
-				if (!target) {
-					target = i;
-				} else {
-					/* Matching too many people */
-					problem = "players";
-				}
-
-				/* Check for exact match */
-				if (len == (int)strlen(q_ptr->name)) {
-					/* Never a problem */
-					target = i;
-					problem = "";
-
-					/* Finished looking */
-					break;
-				}
-			}
-		}
-
-		/* Then check accounts */
-		if (include_account_names && !target) for (i = 1; i <= NumPlayers; i++) {
-			/* Check this one */
-			q_ptr = Players[i];
-
-			/* Skip if disconnected */
-			if (q_ptr->conn == NOT_CONNECTED) continue;
-
-			/* let admins chat */
-			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
-			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "kurzel")
-			    && strcasecmp(p_ptr->accountname, "moltor")
-			    && strcasecmp(p_ptr->accountname, "the_sandman")
-			    && strcasecmp(p_ptr->accountname, "faith")
-			    && strcasecmp(p_ptr->accountname, "mikaelh")
-			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
-
-			/* Check name */
-			if (!strncasecmp(q_ptr->accountname, name, len)) {
-				/* Set target if not set already */
-				if (!target) {
-					target = i;
-				} else {
-					/* Matching too many people */
-					problem = "players";
-				}
-
-				/* Check for exact match */
-				if (len == (int)strlen(q_ptr->accountname)) {
-					/* Never a problem */
-					target = i;
-					problem = "";
-
-					/* Finished looking */
-					break;
-				}
-			}
-		}
-
-		/* Check parties */
-		if (party && !target) {
-			for (i = 1; i < MAX_PARTIES; i++) {
-				/* Skip if empty */
-				if (!parties[i].members) continue;
-
-				/* Check that the party has players online - mikaelh */
-				party_online = FALSE;
-				for (j = 1; j <= NumPlayers; j++) {
-					/* Check this one */
-					q_ptr = Players[j];
-
-					/* Skip if disconnected */
-					if (q_ptr->conn == NOT_CONNECTED) continue;
-
-					/* Check if the player belongs to this party */
-					if (q_ptr->party == i) {
-						party_online = TRUE;
-						break;
-					}
-				}
-				if (!party_online) continue;
-
-				/* Check name */
-				if (!strncasecmp(parties[i].name, name, len)) {
-					/* Set target if not set already */
-					if (!target) {
-						target = 0 - i;
-					} else {
-						/* Matching too many parties */
-						problem = "parties";
-					}
-
-					/* Check for exact match */
-					if (len == (int)strlen(parties[i].name)) {
-						/* Never a problem */
-						target = 0 - i;
-						problem = "";
-
-						/* Finished looking */
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	/* Check for recipient set but no match found */
-	if ((len && !target) || (target < 0 && !party)) {
-		/* Give up */
-		return 0;
-	}
-
-	/* Check for multiple recipients found */
-	if (strlen(problem)) {
-		/* Send an error message */
-		msg_format(Ind, "'%s' matches too many %s.", name, problem);
+		if (!quiet) msg_format(Ind, "'%s' matches too many %s.", name, problem);
 
 		/* Give up */
 		return 0;
@@ -5391,7 +5227,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party, bool include_account
 }
 
 /* copy/pasted from name_lookup_loose(), just without being loose.. */
-int name_lookup(int Ind, cptr name, u16b party, bool include_account_names) {
+int name_lookup(int Ind, cptr name, u16b party, bool include_account_names, bool quiet) {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
 	bool party_online;
@@ -5500,125 +5336,8 @@ int name_lookup(int Ind, cptr name, u16b party, bool include_account_names) {
 	/* Check for recipient set but no match found */
 	if ((len && !target) || (target < 0 && !party)) {
 		/* Send an error message */
-		msg_format(Ind, "Could not match name '%s'.", name);
+		if (!quiet) msg_format(Ind, "Could not match name '%s'.", name);
 
-		/* Give up */
-		return 0;
-	}
-
-	/* Success */
-	return target;
-}
-
-/* copy/pasted from name_lookup_loose(), just without being loose.. but with quiet */
-int name_lookup_quiet(int Ind, cptr name, u16b party, bool include_account_names) {
-	int i, j, len, target = 0;
-	player_type *q_ptr, *p_ptr;
-	bool party_online;
-
-	p_ptr = Players[Ind];
-
-	/* don't waste time */
-	if (p_ptr == (player_type*)NULL) return(0);
-
-	/* Acquire length of search string */
-	len = strlen(name);
-
-	/* Look for a recipient who matches the search string */
-	if (len) {
-		/* Check players */
-		for (i = 1; i <= NumPlayers; i++) {
-			/* Check this one */
-			q_ptr = Players[i];
-
-			/* Skip if disconnected */
-			if (q_ptr->conn == NOT_CONNECTED) continue;
-
-			/* let admins chat */
-			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
-			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "kurzel")
-			    && strcasecmp(p_ptr->accountname, "moltor")
-			    && strcasecmp(p_ptr->accountname, "the_sandman")
-			    && strcasecmp(p_ptr->accountname, "faith")
-			    && strcasecmp(p_ptr->accountname, "mikaelh")
-			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
-
-			/* Check name */
-			if (!strcasecmp(q_ptr->name, name)) {
-				/* Never a problem */
-				target = i;
-
-				/* Finished looking */
-				break;
-			}
-		}
-
-		/* Then check accounts */
-		if (include_account_names && !target) for (i = 1; i <= NumPlayers; i++) {
-			/* Check this one */
-			q_ptr = Players[i];
-
-			/* Skip if disconnected */
-			if (q_ptr->conn == NOT_CONNECTED) continue;
-
-			/* let admins chat */
-			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
-			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
-			    && strcasecmp(p_ptr->accountname, "kurzel")
-			    && strcasecmp(p_ptr->accountname, "moltor")
-			    && strcasecmp(p_ptr->accountname, "the_sandman")
-			    && strcasecmp(p_ptr->accountname, "faith")
-			    && strcasecmp(p_ptr->accountname, "mikaelh")
-			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
-
-			/* Check name */
-			if (!strcasecmp(q_ptr->accountname, name)) {
-				/* Never a problem */
-				target = i;
-
-				/* Finished looking */
-				break;
-			}
-		}
-
-		/* Check parties */
-		if (party && !target) {
-			for (i = 1; i < MAX_PARTIES; i++) {
-				/* Skip if empty */
-				if (!parties[i].members) continue;
-
-				/* Check that the party has players online - mikaelh */
-				party_online = FALSE;
-				for (j = 1; j <= NumPlayers; j++) {
-					/* Check this one */
-					q_ptr = Players[j];
-
-					/* Skip if disconnected */
-					if (q_ptr->conn == NOT_CONNECTED) continue;
-
-					/* Check if the player belongs to this party */
-					if (q_ptr->party == i) {
-						party_online = TRUE;
-						break;
-					}
-				}
-				if (!party_online) continue;
-
-				/* Check name */
-				if (!strcasecmp(parties[i].name, name)) {
-					/* Never a problem */
-					target = 0 - i;
-
-					/* Finished looking */
-					break;
-				}
-			}
-		}
-	}
-
-	/* Check for recipient set but no match found */
-	if ((len && !target) || (target < 0 && !party)) {
 		/* Give up */
 		return 0;
 	}

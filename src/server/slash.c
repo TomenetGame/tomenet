@@ -508,7 +508,7 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "\377oAllows you to send a 'beep' sound to someone who is currently afk.");
 				return;
 			}
-			p = name_lookup_loose(Ind, message3, FALSE, TRUE);
+			p = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 			if (!p) return;
 
 #if 0 /* no real need to restrict this */
@@ -906,7 +906,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			if (token[3]) {
-				if (!(whichplayer = name_lookup_loose(Ind, token[3], TRUE, FALSE)))
+				if (!(whichplayer = name_lookup_loose(Ind, token[3], TRUE, FALSE, FALSE)))
 					return;
 
 				if (whichplayer == Ind) {
@@ -1332,7 +1332,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				if (tk == 2) {
-					if ((j = name_lookup_loose(Ind, token[2], FALSE, FALSE))) {
+					if ((j = name_lookup_loose(Ind, token[2], FALSE, FALSE, FALSE))) {
 						if(Players[j]->xorder_id){
 							msg_format(Ind, "\377y%s already received an extermination order.", Players[j]->name);
 							return;
@@ -1350,7 +1350,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 #endif
 			else if (admin && tk) {
-				if ((j = name_lookup_loose(Ind, token[1], FALSE, FALSE))) {
+				if ((j = name_lookup_loose(Ind, token[1], FALSE, FALSE, FALSE))) {
 					if (Players[j]->xorder_id) {
 						msg_format(Ind, "\377y%s already received an extermination order.", Players[j]->name);
 						return;
@@ -1739,7 +1739,7 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 
-			i = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			i = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 			if (!i || !p_ptr->play_vis[i]) return;
 			q_ptr = Players[i];
 
@@ -1839,7 +1839,7 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			if (tk) {
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if ((!p || !p_ptr->play_vis[p]) && p != Ind) return;
 
 				if (!inarea(&p_ptr->wpos, &Players[p]->wpos)) {
@@ -2379,7 +2379,7 @@ void do_slash_cmd(int Ind, char *message) {
 			message2[j + MAX_CHARS_WIDE - 1] = '\0';
 
 			/* Check whether target is actually online by now :) */
-			if ((i = name_lookup_loose_quiet(Ind, tname, FALSE, FALSE))
+			if ((i = name_lookup_loose(Ind, tname, FALSE, FALSE, TRUE))
 			    && !check_ignore(i, Ind)) {
 				player_type *q_ptr = Players[i];
 
@@ -3188,7 +3188,7 @@ void do_slash_cmd(int Ind, char *message) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
@@ -3221,7 +3221,7 @@ void do_slash_cmd(int Ind, char *message) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
@@ -3251,7 +3251,7 @@ void do_slash_cmd(int Ind, char *message) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
@@ -3281,7 +3281,7 @@ void do_slash_cmd(int Ind, char *message) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
@@ -3326,7 +3326,7 @@ void do_slash_cmd(int Ind, char *message) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
 
 			for (i = 1; i <= 9; i++) {
@@ -3412,7 +3412,7 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "Usage: /guild_adder <player name>");
 				return;
 			}
-			i = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			i = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 			if (!i) {
 #ifdef GUILD_ADDERS_LIST
 				/* Handle de-authorization */
@@ -4556,7 +4556,7 @@ void do_slash_cmd(int Ind, char *message) {
 					*(strchr(message3, ':')) = 0;
 				}
 
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 
 				if (reason) s_printf("<%s> Kicking '%s' (%s).\n", p_ptr->name, Players[j]->name, reason);
@@ -4678,7 +4678,7 @@ void do_slash_cmd(int Ind, char *message) {
 			 */
 			else if (prefix(message, "/mute")) {
 				if (tk) {
-					j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 					if (j) {
 						Players[j]->muted = TRUE;
 						msg_print(j, "\377fYou have been muted.");
@@ -4690,7 +4690,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/unmute")) {   //oh no!
 				if (tk) {
-					j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 					if (j) {
 						Players[j]->muted = FALSE;
 						msg_print(j, "\377fYou have been unmuted.");
@@ -6092,7 +6092,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			/* very dangerous if player is poisoned, very weak, or has hp draining */
 			else if (prefix(message, "/threaten") || prefix(message, "/thr")) { /* Nearly kill someone, as threat >:) */
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!tk) {
 					msg_print(Ind, "Usage: /threaten <player name>");
 					return;
@@ -6112,7 +6112,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /aslap <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 #ifdef USE_SOUND_2010
 				sound_near_site(Players[j]->py, Players[j]->px, &p_ptr->wpos, 0, "slap", "", SFX_TYPE_COMMAND, TRUE);
@@ -6130,7 +6130,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /apat <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yPatting %s.", Players[j]->name);
 				msg_print(j, "\377yYou are patted by something invisible.");
@@ -6142,7 +6142,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /ahug <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yHugging %s.", Players[j]->name);
 				msg_print(j, "\377yYou are hugged by something invisible.");
@@ -6154,7 +6154,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /apoke <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yPoking %s.", Players[j]->name);
 				msg_print(j, "\377yYou are poked by something invisible.");
@@ -6166,7 +6166,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /strangle <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yPoking %s.", Players[j]->name);
 				msg_print(j, "\377yYou are being strangled by something invisible!");
@@ -6182,7 +6182,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /cheer <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				msg_print(j, "\377ySomething invisible is cheering for you!");
 				msg_format_near(j, "\377yYou hear something invisible cheering for %s!", Players[j]->name);
@@ -6195,7 +6195,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /applaud <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377yApplauding %s.", Players[j]->name);
 				msg_print(j, "\377ySomeone invisible is applauding for you!");
@@ -6208,7 +6208,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /presence <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				msg_print(j, "\377yYou feel an invisible presence watching you!");
 				msg_format_near(j, "\377yYou feel an invisible presence near %s!", Players[j]->name);
@@ -6219,7 +6219,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /snicker <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				msg_format(Ind, "\377ySnickering at %s.", Players[j]->name);
 				msg_print(j, "\377yYou hear someone invisible snickering evilly!");
@@ -6236,7 +6236,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /chouse <character name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				lua_count_houses(j);
 				msg_format(Ind, "Counted houses/castles for %s.", Players[j]->name);
@@ -6274,7 +6274,7 @@ void do_slash_cmd(int Ind, char *message) {
 			else if (prefix(message, "/citychown")) {
 				int c = 0;
 #if 0
-				int p; - after 'return': p = name_lookup_loose(Ind, token[2], FALSE, FALSE);
+				int p; - after 'return': p = name_lookup_loose(Ind, token[2], FALSE, FALSE, FALSE);
 				if (tk < 2) {
 					msg_print(Ind, "\377oUsage: /citychown <party|guild> <player>");
 					msg_print(Ind, "\377oExample: /citychown Housekeepers Janitor");
@@ -6323,7 +6323,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /fixchown <player>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				msg_format(Ind, "Fixing house owner %s...", token[1]);
 				for (i = 0; i < num_houses; i++) {
 					struct dna_type *dna = houses[i].dna;
@@ -6375,7 +6375,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /pyhpdbg <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				for (i = 1; i <= 100; i += 10) {
 					sprintf(buf, "Lv %d-%d:", i, i + 10 - 1);
@@ -6394,7 +6394,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /rollchar <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				lua_recalc_char(p);
 				msg_format(Ind, "Rerolled HP for %s.", Players[p]->name);
@@ -6408,7 +6408,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /roll!char <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				for (i = 0; i < 10000; i++) {
 					lua_recalc_char(p);
@@ -6428,7 +6428,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /rollhistory <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				get_history(p);
 				Players[p]->redraw |= PR_HISTORY; //update the client's history text
@@ -6441,7 +6441,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /checkhistory <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				for (i = 0; i < 4; i++) msg_format(Ind, "[%d]: %s", i, Players[p]->history[i]);
 				return;
@@ -6457,7 +6457,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /blink <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
 				teleport_player_force(p, 10);
@@ -6471,7 +6471,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /tport <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
 				teleport_player_force(p, 100);
@@ -6491,7 +6491,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 				x = atoi(token[1]);
 				y = atoi(token[2]);
-				p = name_lookup_loose(Ind, token[3], FALSE, FALSE);
+				p = name_lookup_loose(Ind, token[3], FALSE, FALSE, FALSE);
 				if (!p) return;
 
 				q_ptr = Players[p];
@@ -6555,7 +6555,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
 				q_ptr = Players[p];
@@ -6607,7 +6607,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			/* STRIP ALL TRUE ARTIFACTS FROM A PLAYER */
 			else if (prefix(message, "/strat")) {
-				int p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				int p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				lua_strip_true_arts_from_present_player(Ind, 0);
 				msg_format(Ind, "Stripped arts from player %s.", Players[Ind]->name);
@@ -6619,7 +6619,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /wipewild <player name>");
 					return;
 				}
-				int p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				int p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				for (i = 0; i < MAX_WILD_8; i++)
 					Players[p]->wild_map[i] = 0;
@@ -7415,7 +7415,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /reward <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!j) return;
 				msg_print(j, "\377GYou have been rewarded by the gods!");
 
@@ -7631,7 +7631,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!j) return;
 
 				for (i = 0; i < INVEN_PACK; i++) {
@@ -7661,7 +7661,7 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 
 				/* syntax: /ocopy <1..38> <name> */
-				j = name_lookup_loose(Ind, strstr(message3, " ") + 1, FALSE, FALSE);
+				j = name_lookup_loose(Ind, strstr(message3, " ") + 1, FALSE, FALSE, FALSE);
 				if (!j) return;
 				object_copy(o_ptr, &Players[j]->inventory[atoi(token[1]) - 1]);
 
@@ -7680,7 +7680,7 @@ void do_slash_cmd(int Ind, char *message) {
 			/* re-initialize the skill chart */
 			else if (prefix(message, "/fixskills")) {
 				if (tk < 1) return;
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (j < 1) return;
 				lua_fix_skill_chart(j);
 				return;
@@ -7867,7 +7867,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
 				q_ptr = Players[j];
 
@@ -8005,7 +8005,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /hmus <player>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!j) return;
 
 				msg_format(Ind, "Using music of player %s.", Players[j]->name);
@@ -8583,7 +8583,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /debugmd <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				msg_format(Ind, "max_depth[] for player '%s':", Players[p]->name);
 				for (i = 0; i < MAX_D_IDX; i++) {
@@ -8601,7 +8601,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /fixmd <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
 				fix_max_depth(Players[p]);
@@ -8615,7 +8615,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /wipemd <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
 				for (i = 0; i < MAX_D_IDX * 2; i++) {
@@ -8636,7 +8636,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /fix!md <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
 				fix_max_depth_bug(Players[p]);
@@ -8650,7 +8650,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "\377oUsage: /fixcondmd <player name>");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 
 				condense_max_depth(Players[p]);
@@ -9003,7 +9003,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "No player specified.");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				if (Players[p]->health_who <= 0) {//target_who
 					msg_print(Ind, "No monster looked at.");
@@ -9023,7 +9023,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "No player specified.");
 					return;
 				}
-				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!p) return;
 				clockin(p, 6);
 				return;
@@ -9251,7 +9251,7 @@ void do_slash_cmd(int Ind, char *message) {
 				char buf[MAX_CHARS];
 
 				if (!tk) k = Ind;
-				else k = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				else k = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				p_ptr = Players[k];
 
 				msg_format(Ind, "\377yQuest item info for player %s (%d):", p_ptr->name, k);
@@ -9275,8 +9275,8 @@ void do_slash_cmd(int Ind, char *message) {
 				if (message3[0] >= '0' && message3[0] <= '9') q = atoi(message3);
 				else if (message3[0] == '*') q = -2; //drop all
 
-				if (q == -1) p = name_lookup_loose(Ind, message3, FALSE, FALSE);
-				else p = name_lookup_loose(Ind, message3 + 2, FALSE, FALSE);
+				if (q == -1) p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
+				else p = name_lookup_loose(Ind, message3 + 2, FALSE, FALSE, FALSE);
 				if (!p) return;
 
 				p_ptr = Players[p];
@@ -9584,7 +9584,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /rest1 <character name>");
 					return;
 				}
-				i = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				i = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (i) restore_estate(i);
 				return;
 			}

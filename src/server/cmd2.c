@@ -1643,7 +1643,7 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 }
 
 /* Door change ownership */
-static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
+static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) {
 	player_type *p_ptr = Players[Ind];
 	int newowner = -1;
 	int i, h_idx;
@@ -1659,7 +1659,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 	switch (args[1]) {
 	case '1':
 		/* Check house limit of target player! */
-		i = name_lookup_loose(Ind, &args[2], FALSE, FALSE);
+		i = name_lookup(Ind, &args[2], FALSE, FALSE, TRUE);
 		if (!i) return(FALSE);
 
 		if (compat_pmode(Ind, i, TRUE)) {
