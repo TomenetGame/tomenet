@@ -1,6 +1,31 @@
 /* $Id$ */
 #include "angband.h"
 
+#ifdef WINDOWS
+static char *strcasestr(char *big, char *little) {
+	char *ret;
+	int cnt = 0, cnt2 = 0;
+	int L = strlen(little),l = 0;
+
+	if (little == NULL) return big;
+
+	do {
+		cnt2 = 0;
+		while (little[cnt2] != 0) {
+			if (big[cnt + cnt2] == little[cnt2] || big[cnt + cnt2] == little[cnt2] - 32 || big[cnt + cnt2] == little[cnt2] + 32) l++;
+			else l = 0;
+
+			if (l == 1) ret = big + cnt;
+			cnt2++;
+		}
+
+		if (L == l) return ret;
+		cnt++;
+	} while (big[cnt] != '\0');
+	return 0;
+}
+#endif
+
 /* reordering will allow these to be removed */
 static void cmd_clear_buffer(void);
 static void cmd_master(void);
