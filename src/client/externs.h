@@ -892,6 +892,7 @@ extern void term_toggle_visibility(int term_idx);
 extern bool term_get_visibility(int term_idx);
 extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
+extern bool check_dir(cptr s);
 #endif
 extern void store_crecedentials(void);
 

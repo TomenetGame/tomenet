@@ -9,6 +9,12 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+
+/* Does WINDOWS client use the user's home folder instead of the TomeNET folder for 'scpt' and 'user' subfolders?
+   This may be required in Windows 7 and higher, where access rights could cause problems when writing to these folders. - C. Blue */
+#define WINDOWS_USER_HOME
+
+
 static int MACRO_WAIT = 96; //hack: ASCII 96 ("`") is unused in the game's key layout
 
 /*
@@ -669,76 +675,109 @@ errr my_fgets2(FILE *fff, char **line, int *n)
  * to succeed even if the strings have not been allocated yet,
  * as long as the variables start out as "NULL".
  */
-void init_file_paths(char *path)
-{
-        char *tail;
+void init_file_paths(char *path) {
+	char *tail;
 
-        /*** Free everything ***/
+	/*** Free everything ***/
 
-        /* Free the main path */
-        string_free(ANGBAND_DIR);
+	/* Free the main path */
+	string_free(ANGBAND_DIR);
 
-        /* Free the sub-paths */
-        string_free(ANGBAND_DIR_SCPT);
-        string_free(ANGBAND_DIR_TEXT);
-        string_free(ANGBAND_DIR_USER);
-        string_free(ANGBAND_DIR_XTRA);
-        string_free(ANGBAND_DIR_GAME);
+	/* Free the sub-paths */
+	string_free(ANGBAND_DIR_SCPT);
+	string_free(ANGBAND_DIR_TEXT);
+	string_free(ANGBAND_DIR_USER);
+	string_free(ANGBAND_DIR_XTRA);
+	string_free(ANGBAND_DIR_GAME);
 
 
-        /*** Prepare the "path" ***/
+	/*** Prepare the "path" ***/
 
-        /* Hack -- save the main directory */
-        ANGBAND_DIR = string_make(path);
+	/* Hack -- save the main directory */
+	ANGBAND_DIR = string_make(path);
 
-        /* Prepare to append to the Base Path */
-        tail = path + strlen(path);
+	/* Prepare to append to the Base Path */
+	tail = path + strlen(path);
 
 
 #ifdef VM
+	/*** Use "flat" paths with VM/ESA ***/
 
-
-        /*** Use "flat" paths with VM/ESA ***/
-
-        /* Use "blank" path names */
-        ANGBAND_DIR_SCPT = string_make("");
-        ANGBAND_DIR_TEXT = string_make("");
-        ANGBAND_DIR_USER = string_make("");
-        ANGBAND_DIR_XTRA = string_make("");
-        ANGBAND_DIR_GAME = string_make("");
-
+	/* Use "blank" path names */
+	ANGBAND_DIR_SCPT = string_make("");
+	ANGBAND_DIR_TEXT = string_make("");
+	ANGBAND_DIR_USER = string_make("");
+	ANGBAND_DIR_XTRA = string_make("");
+	ANGBAND_DIR_GAME = string_make("");
 
 #else /* VM */
 
+	/*** Build the sub-directory names ***/
 
-        /*** Build the sub-directory names ***/
+	/* Build a path name */
+	strcpy(tail, "text");
+	ANGBAND_DIR_TEXT = string_make(path);
 
-        /* Build a path name */
-        strcpy(tail, "scpt");
-        ANGBAND_DIR_SCPT = string_make(path);
+	/* Build a path name */
+	strcpy(tail, "xtra");
+	ANGBAND_DIR_XTRA = string_make(path);
 
-        /* Build a path name */
-        strcpy(tail, "text");
-        ANGBAND_DIR_TEXT = string_make(path);
+	/* Build a path name */
+	strcpy(tail, "game");
+	ANGBAND_DIR_GAME = string_make(path);
 
-        /* Build a path name */
-        strcpy(tail, "user");
-        ANGBAND_DIR_USER = string_make(path);
+ /* On Windows 7 and higher, users should save their data to their designated user folder,
+    or write access problems might occur, especially when overwriting a file! */
+ #if !defined(WINDOWS) || !defined(WINDOWS_USER_HOME)
+	/* Build a path name */
+	strcpy(tail, "scpt");
+	ANGBAND_DIR_SCPT = string_make(path);
 
-        /* Build a path name */
-        strcpy(tail, "xtra");
-        ANGBAND_DIR_XTRA = string_make(path);
+	/* Build a path name */
+	strcpy(tail, "user");
+	ANGBAND_DIR_USER = string_make(path);
+ #else
+	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+		char buf[1024], *btail, out_val[1024];
 
-        /* Build a path name */
-        strcpy(tail, "game");
-        ANGBAND_DIR_GAME = string_make(path);
+		strcpy(buf, getenv("HOMEDRIVE"));
+		strcat(buf, getenv("HOMEPATH"));
+		btail = buf + strlen(buf);
+
+		/* Set 'scpt' folder */
+		strcpy(btail, "\\tomenet-scpt");
+		ANGBAND_DIR_SCPT = string_make(buf);
+		/* make sure it exists, just in case the installer didn't create it */
+		if (!check_dir(ANGBAND_DIR_SCPT)) {
+			mkdir(ANGBAND_DIR_SCPT);
+			/* copy over the default files from the installation folder */
+			sprintf(out_val, "xcopy /I /E /Q /Y /H %s%s %s", ANGBAND_DIR, "scpt", ANGBAND_DIR_SCPT);
+			system(out_val);
+		}
+
+		/* Set 'user' folder */
+		strcpy(btail, "\\tomenet-user");
+		ANGBAND_DIR_USER = string_make(buf);
+		/* make sure it exists, just in case the installer didn't create it */
+		if (!check_dir(ANGBAND_DIR_USER)) {
+			mkdir(ANGBAND_DIR_USER);
+			/* copy over the default files from the installation folder */
+			sprintf(out_val, "xcopy /I /E /Q /Y /H %s%s %s", ANGBAND_DIR, "user", ANGBAND_DIR_USER);
+			system(out_val);
+		}
+	} else { /* Fall back */
+		strcpy(tail, "scpt");
+		ANGBAND_DIR_SCPT = string_make(path);
+
+		strcpy(tail, "user");
+		ANGBAND_DIR_USER = string_make(path);
+	}
+ #endif
 
 		/* terminate lib path again at it's actual location of the 'lib' folder */
 		strcpy(tail, ""); /* -> this is ANGBAND_DIR */
 
 #endif /* VM */
-
-
 }
 
 

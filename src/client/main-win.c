@@ -606,7 +606,7 @@ static bool check_file(cptr s)
 /*
  * Check for existence of a directory
  */
-static bool check_dir(cptr s)
+bool check_dir(cptr s)
 {
 	int i;
 
