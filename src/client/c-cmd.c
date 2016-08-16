@@ -1236,41 +1236,156 @@ void cmd_high_scores(void) {
 }
 
 void cmd_the_guide(void) {
-	bool inkey_msg_old;
-	int line = 0, c, n;
-	char path[1024], buf[MAX_CHARS + 1];
+	bool inkey_msg_old, within;
+	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
+	int line = 0, lastline = -1, searchline, within_cnt, c, n;
+	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
+	char chapter[8], search[MAX_CHARS], lastsearch[MAX_CHARS], withinsearch[MAX_CHARS];
 	FILE *fff;
 
 	path_build(path, 1024, "", "TomeNET-Guide.txt");
 	fff = my_fopen(path, "r");
 	if (!fff) return;
 
+	/* init searches */
+	chapter[0] = 0;
+	search[0] = 0;
+	lastsearch[0] = 0;
+	/* initially count lines */
+	while (fgets(buf, 80 , fff)) lastline++;
+	/* empty file? */
+	if (lastline == -1) return;
+
 	Term_save();
+
 	while (TRUE) {
 		Term_clear();
-		Term_putstr(34,  0, -1, TERM_L_BLUE, "[The Guide]");
-		Term_putstr(5, screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1 , -1, TERM_L_BLUE, "-- Up,Down,PgUp,PgDn,End to navigate; ?,s,/ to search; ESC to exit --");
+		Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+		Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/S/c/# search/next/chapter/line; ESC to exit");
 
 		/* Always begin at zero */
 		fseek(fff, 0, SEEK_SET);
 
-		/* Seek forwards until reaching the desired start line */
-		for (n = 0; n < line; n++)
-			if (!fgets(buf, 80, fff)) {
-				/* If we're trying to forward too much, stop, so the screen fully displays
-				   the maximum amount of possible lines at the end of the Guide. */
-				line = n - (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4) - 1;
-				if (line < 0) line = 0;
-				break;
-			}
-		if (n != line) continue;
+		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
+		if (!chapter[0]) for (n = 0; n < line; n++) fgets(buf, 80, fff);
+		else searchline = -1; //init searchline for chapter-search
 
 		/* Display as many lines as fit on the screen, starting at the desired position */
-		for (n = 0; n < (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4); n++) {
+		withinsearch[0] = 0;
+		for (n = 0; n < maxlines; n++) {
 			if (fgets(buf, 80, fff)) {
-				buf[strlen(buf) - 1] = 0;
-				Term_putstr(0, 2 + n, -1, TERM_WHITE, buf);
-			} else break;
+				buf[strlen(buf) - 1] = 0; //strip trailing newlines
+
+				/* Automatically add colours to "(x.yza)" formatted chapter markers */
+				cp = buf;
+				cp2 = buf2;
+				within = FALSE;
+				while (*cp) {
+					/* look ahead for "(x.yza)" */
+					if (*cp == '(') {
+						switch (*(cp + 1)) {
+						case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+							if (*(cp + 2) == '.') {
+								switch (*(cp + 3)) {
+								case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+									if (*(cp + 4) == ')' || *(cp + 5) == ')' || *(cp + 6) == ')') {
+										/* begin of colourizing */
+										*cp2++ = '\377';
+										*cp2++ = 'G';
+										within = TRUE;
+									}
+								}
+							}
+						}
+					}
+
+					/* just copy each single character over */
+					*cp2++ = *cp++;
+
+					/* end of colourizing */
+					if (*(cp - 1) == ')' && within) {
+						*cp2++ = '\377';
+						*cp2++ = 'w';
+						within = FALSE;
+					}
+
+				}
+				*cp2 = 0;
+
+				/* Search for specific chapter? */
+				if (chapter[0]) {
+					searchline++;
+					//accomodate for colour code and '.' must not follow after the chapter marker
+					if (strstr(buf2, chapter) == buf2 + 2 && !strchr(strchr(buf2, ')'), '.')) {
+						chapter[0] = 0;
+						line = searchline;
+						/* Redraw line number display */
+						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+					} else {
+						/* Skip all lines until we find the desired chapter */
+						n--;
+						continue;
+					}
+				}
+
+				/* Search for specific string? */
+				else if (search[0]) {
+					searchline++;
+					if (strstr(buf2, search)) {
+						strcpy(withinsearch, search);
+						search[0] = 0;
+						line = searchline;
+						/* Redraw line number display */
+						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+					} else {
+						/* Skip all lines until we find the desired string */
+						n--;
+						continue;
+					}
+				}
+				/* Colour all search finds */
+				if (withinsearch[0] && strstr(buf2, withinsearch)) {
+					strcpy(buf, buf2);
+
+					cp = buf;
+					cp2 = buf2;
+					within = FALSE;
+					while (*cp) {
+						if (!strncasecmp(cp, withinsearch, strlen(withinsearch))) {
+							/* begin of colourizing */
+							*cp2++ = '\377';
+							*cp2++ = 'R';
+							within = TRUE;
+							within_cnt = 0;
+						}
+
+						/* just copy each single character over */
+						*cp2++ = *cp++;
+
+						/* end of colourizing? */
+						if (within) {
+							within_cnt++;
+							if (within_cnt == strlen(withinsearch)) {
+								*cp2++ = '\377';
+								*cp2++ = 'w';
+								within = FALSE;
+							}
+						}
+
+					}
+					*cp2 = 0;
+				}
+
+				/* Display processed line, colourized by chapters and search results */
+				Term_putstr(0, 2 + n, -1, TERM_WHITE, buf2);
+			}
+			/* Reached end of file, no need to try and display further lines */
+			else break;
+		}
+		/* failed to locate chapter? Forget about it and return to where we were */
+		if (chapter[0]) {
+			chapter[0] = 0;
+			continue;
 		}
 
 		/* hide cursor */
@@ -1282,57 +1397,123 @@ void cmd_the_guide(void) {
 		c = inkey();
 		inkey_msg = inkey_msg_old;
 
+		switch (c) {
 		/* specialty: allow chatting from within here */
-		if (c == ':') {
+		case ':':
 			cmd_message();
 			continue;
-		}
 		/* allow inscribing items (hm) */
-		if (c == '{') {
+		case '{':
 			cmd_inscribe();
 			continue;
-		}
-		if (c == '}') {
+		case '}':
 			cmd_uninscribe();
 			continue;
-		}
 
 		/* navigate (up/down) */
-		if (c == '8' || c == '\010' || c == 0x7F) { //rl:'k'
+		case '8': case '\010': case 0x7F: //rl:'k'
 			line--;
-			if (line < 0) line = 99999;
+			if (line < 0) line = lastline - maxlines;
+			if (line < 0) line = 0;
 			continue;
-		}
-		if (c == '2' || c == ' ') { //rl:'j'
+		case '2': case '\r': case '\n': //rl:'j'
 			line++;
+			if (line > lastline - maxlines) line = 0;
 			continue;
-		}
 		/* page up/down */
-		if (c == '9') { //rl:?
-			if (line == 0) line = 99999;
-			else {
-				line -= (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
+		case '9': case 'p': //rl:?
+			if (line == 0) line = lastline - maxlines;
+			else line -= maxlines;
+			if (line < 0) line = 0;
+			continue;
+		case '3': case 'n': case ' ': //rl:?
+			if (line < lastline - maxlines) {
+				line += maxlines;
+				if (line > lastline - maxlines) line = lastline - maxlines;
 				if (line < 0) line = 0;
-			}
+			} else line = 0;
 			continue;
-		}
-		if (c == '3') { //rl:?
-			line += (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
-			continue;
-		}
 		/* home key to reset */
-		if (c == '7') { //rl:?
+		case '7': //rl:?
 			line = 0;
 			continue;
-		}
 
 		/* search - uhoh */
-		if (c == '/' || c == 's' || c == '?') {
-			continue;
-		}
+		case 'c':
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter chapter to jump to: ");
+			buf[0] = 0;
+			if (!askfor_aux(buf, 7, 0)) continue;
 
-		/* escape */
-		if (c == ESCAPE) break;
+			memset(chapter, 0, sizeof(char) * 8);
+			cp = buf;
+			cp2 = chapter;
+			if (*cp == '(') cp++;
+			*cp2++ = '(';
+			*cp2++ = *cp++;
+			*cp2++ = *cp++;
+			*cp2++ = *cp++;
+			*cp2++ = *cp++;
+			if (*(cp2 - 1) == ')') continue; // (x.y)
+			else if (*(cp2 - 1) == 0) {
+				*(cp2 - 1) = ')';
+				continue;
+			}
+			*cp2++ = *cp++;
+			if (*(cp2 - 1) == ')') continue; // (x.yn)
+			else if (*(cp2 - 1) == 0) {
+				*(cp2 - 1) = ')';
+				continue;
+			}
+			*cp2++ = *cp++;
+			if (*(cp2 - 1) == ')') continue; // (x.yza)
+			else if (*(cp2 - 1) == 0) {
+				*(cp2 - 1) = ')';
+				continue;
+			}
+			chapter[0] = 0; //invalid chapter specified
+			continue;
+		case 's':
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search string: ");
+			search[0] = 0;
+			askfor_aux(search, MAX_CHARS, 0);
+			if (!search[0]) continue;
+
+			/* Skip the line we're currently in, start with the next line actually */
+			line++;
+			if (line > lastline - maxlines) line = lastline - maxlines;
+			if (line < 0) line = 0;
+
+			strcpy(lastsearch, search);
+			searchline = line - 1; //init searchline for string-search
+			continue;
+		case 'S':
+			if (!lastsearch[0]) continue;
+
+			/* Skip the line we're currently in, start with the next line actually */
+			line++;
+			if (line > lastline - maxlines) line = lastline - maxlines;
+			if (line < 0) line = 0;
+
+			strcpy(search, lastsearch);
+			searchline = line - 1; //init searchline for string-search
+			continue;
+		case '#':
+			Term_erase(0, bottomline, 80);
+			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter line number to jump to: ");
+			buf[0] = 0;
+			if (!askfor_aux(buf, 7, 0)) continue;
+
+			line = atoi(buf) - 1;
+			if (line > lastline - maxlines) line = lastline - maxlines;
+			if (line < 0) line = 0;
+			continue;
+		case ESCAPE: //case 'q': case KTRL('Q'):
+			my_fclose(fff);
+			Term_load();
+			return;
+		}
 	}
 
 	my_fclose(fff);
