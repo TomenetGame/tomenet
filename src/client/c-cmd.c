@@ -1303,7 +1303,7 @@ void cmd_the_guide(void) {
 	search[0] = 0;
 	lastsearch[0] = 0;
 	/* initially count lines */
-	while (fgets(buf, 80 , fff)) lastline++;
+	while (fgets(buf, 81 , fff)) lastline++;
 	/* empty file? */
 	if (lastline == -1) return;
 
@@ -1319,13 +1319,13 @@ void cmd_the_guide(void) {
 
 		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
 		if (!chapter[0]) {
-			if (!searchwrap) for (n = 0; n < line; n++) fgets(buf, 80, fff);
+			if (!searchwrap) for (n = 0; n < line; n++) fgets(buf, 81, fff);
 		} else searchline = -1; //init searchline for chapter-search
 
 		/* Display as many lines as fit on the screen, starting at the desired position */
 		withinsearch[0] = 0;
 		for (n = 0; n < maxlines; n++) {
-			if (fgets(buf, 80, fff)) {
+			if (fgets(buf, 81, fff)) {
 				buf[strlen(buf) - 1] = 0; //strip trailing newlines
 
 				/* Automatically add colours to "(x.yza)" formatted chapter markers */
