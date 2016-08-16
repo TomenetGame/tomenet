@@ -1331,7 +1331,7 @@ void cmd_the_guide(void) {
 				/* Search for specific string? */
 				else if (search[0]) {
 					searchline++;
-					if (strstr(buf2, search)) {
+					if (strcasestr(buf2, search)) {
 						strcpy(withinsearch, search);
 						search[0] = 0;
 						line = searchline;
@@ -1344,7 +1344,7 @@ void cmd_the_guide(void) {
 					}
 				}
 				/* Colour all search finds */
-				if (withinsearch[0] && strstr(buf2, withinsearch)) {
+				if (withinsearch[0] && strcasestr(buf2, withinsearch)) {
 					strcpy(buf, buf2);
 
 					cp = buf;
