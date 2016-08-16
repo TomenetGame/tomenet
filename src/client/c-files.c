@@ -751,7 +751,7 @@ void init_file_paths(char *path) {
 		if (!check_dir(ANGBAND_DIR_SCPT)) {
 			mkdir(ANGBAND_DIR_SCPT);
 			/* copy over the default files from the installation folder */
-			sprintf(out_val, "xcopy /I /E /Q /Y /H %s%s %s", ANGBAND_DIR, "scpt", ANGBAND_DIR_SCPT);
+			sprintf(out_val, "xcopy /I /E /Q /Y /H /C %s%s %s", ANGBAND_DIR, "scpt", ANGBAND_DIR_SCPT);
 			system(out_val);
 		}
 
@@ -762,7 +762,7 @@ void init_file_paths(char *path) {
 		if (!check_dir(ANGBAND_DIR_USER)) {
 			mkdir(ANGBAND_DIR_USER);
 			/* copy over the default files from the installation folder */
-			sprintf(out_val, "xcopy /I /E /Q /Y /H %s%s %s", ANGBAND_DIR, "user", ANGBAND_DIR_USER);
+			sprintf(out_val, "xcopy /I /E /Q /Y /H /C %s%s %s", ANGBAND_DIR, "user", ANGBAND_DIR_USER);
 			system(out_val);
 		}
 	} else { /* Fall back */
