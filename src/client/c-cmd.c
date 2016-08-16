@@ -1287,7 +1287,7 @@ void cmd_high_scores(void) {
 }
 
 void cmd_the_guide(void) {
-	bool inkey_msg_old, within;
+	bool inkey_msg_old, within, searchwrap = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int line = 0, lastline = -1, searchline, within_cnt, c, n;
 	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
@@ -1318,8 +1318,9 @@ void cmd_the_guide(void) {
 		fseek(fff, 0, SEEK_SET);
 
 		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
-		if (!chapter[0]) for (n = 0; n < line; n++) fgets(buf, 80, fff);
-		else searchline = -1; //init searchline for chapter-search
+		if (!chapter[0]) {
+			if (!searchwrap) for (n = 0; n < line; n++) fgets(buf, 80, fff);
+		} else searchline = -1; //init searchline for chapter-search
 
 		/* Display as many lines as fit on the screen, starting at the desired position */
 		withinsearch[0] = 0;
@@ -1382,12 +1383,20 @@ void cmd_the_guide(void) {
 				/* Search for specific string? */
 				else if (search[0]) {
 					searchline++;
-					if (strcasestr(buf2, search)) {
+					/* Search wrapped around once and still no result? Finish. */
+					if (searchwrap && searchline == line) {
+						search[0] = 0;
+						searchwrap = FALSE;
+						withinsearch[0] = 0;
+					/* We found a result */
+					} else if (strcasestr(buf2, search)) {
 						strcpy(withinsearch, search);
 						search[0] = 0;
+						searchwrap = FALSE;
 						line = searchline;
 						/* Redraw line number display */
 						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+					/* Still searching */
 					} else {
 						/* Skip all lines until we find the desired string */
 						n--;
@@ -1437,6 +1446,19 @@ void cmd_the_guide(void) {
 		if (chapter[0]) {
 			chapter[0] = 0;
 			continue;
+		}
+		/* failed to find search string? wrap around and search once more,
+		   this time from the beginning up to our actual posititon. */
+		if (search[0]) {
+			if (!searchwrap) {
+				searchline = -1; //start from the beginning of the file again
+				searchwrap = TRUE;
+				continue;
+			} else {
+				/* finally end search, without any results */
+				search[0] = 0;
+				searchwrap = FALSE;
+			}
 		}
 
 		/* hide cursor */
