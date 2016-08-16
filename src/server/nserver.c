@@ -5946,7 +5946,7 @@ int Send_bpr(int Ind, byte bpr, byte attr) {
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
-		if (bpr == 255 && !is_older_than(&Players[Ind2]->version, 4, 6, 1, 2, 0, 1))
+		if (bpr != 255 || !is_older_than(&Players[Ind2]->version, 4, 6, 1, 2, 0, 1))
 			Packet_printf(&connp2->c, "%c%c%c", PKT_BPR, bpr, attr);
 	}
 
