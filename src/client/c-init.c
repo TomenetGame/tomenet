@@ -81,7 +81,7 @@ void init_spells(s16b new_size) {
 	max_spells = new_size;
 }
 
-static bool check_dir(cptr s) {
+static bool check_dir2(cptr s) {
 	DIR *dp = opendir(s);
 
 	if (dp) {
@@ -94,7 +94,7 @@ static bool check_dir(cptr s) {
 
 static void validate_dir(cptr s) {
 	/* Verify or fail */
-	if (!check_dir(s))
+	if (!check_dir2(s))
 		quit_fmt("Cannot find required directory:\n%s", s);
 }
 
