@@ -159,7 +159,7 @@ Contents
     (6.8c)  Runespell tables
     (6.9)   Parties, Iron Teams, Guilds
     (6.9a)  Guild halls
-    (6.10)  Magic Devices, skill and ability
+    (6.10)  Magic devices, skill and ability
     (6.11)  Parrying and blocking
     (6.12)  Fighting/shooting techniques
     (6.13)  PvP mode
@@ -16023,7 +16023,7 @@ installed or changed by the current guild master.
 
 
 
-(6.10) Magic Devices, skill and ability
+(6.10) Magic devices, skill and ability
 ---------------------------------------
 The player's "Magic Device" ability in the character overview screen is
 calculated from a base ability depending on race/class, your intelligence, and
