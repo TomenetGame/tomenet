@@ -8475,6 +8475,12 @@ extern int PlayerUID;
 #define irondeepdive_bottom(wpos) \
 	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z == 127)
 
+/* Will we definitely fail to recall out of IDDC? */
+#define iddc_recall_fail(p_ptr, l_ptr) \
+	(in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && \
+	!(irondeepdive_bottom(&p_ptr->wpos) || \
+	 (l_ptr && (l_ptr->flags1 & LF1_IRON_RECALL) && p_ptr->wpos.wz >= 100)))
+
 /* quickly check if a given wpos is inside the highlander dungeon */
 #define in_highlander(wpos) \
 	((wpos)->wx == WPOS_HIGHLANDER_DUN_X && (wpos)->wy == WPOS_HIGHLANDER_DUN_Y && (wpos)->wz * WPOS_HIGHLANDER_DUN_Z > 0)

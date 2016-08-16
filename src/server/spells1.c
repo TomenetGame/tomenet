@@ -8253,6 +8253,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Another player casting attack spell on us? */
 	bool friendly_player = FALSE;
 
+	dun_level *l_ptr = getfloor(wpos);
+
+
 	/* Bad player number */
 	if (Ind <= 0) return (FALSE);
 
@@ -8400,7 +8403,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		return FALSE;
 	}
 	else if (who == PROJECTOR_TERRAIN) {
-		dun_level *l_ptr = getfloor(wpos);
 		if ((l_ptr && (l_ptr->flags2 & LF2_FAIR_TERRAIN_DAM)) ||
 		    (in_sector00(wpos) && (sector00flags2 & LF2_FAIR_TERRAIN_DAM)))
 			dam = (p_ptr->mhp * (8 + rand_int(5))) / 15 + 1;
@@ -9937,7 +9939,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->afk) break;
 
 			/* prevent silly things */
-			if ((in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos))
+			if (iddc_recall_fail(p_ptr, l_ptr)
 #ifdef ANTI_TELE_CHEEZE
 			    || p_ptr->anti_tele
 #endif

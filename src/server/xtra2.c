@@ -11100,6 +11100,7 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr) {
 bool set_recall_timer(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
+	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* don't accidentally recall players in Ironman Deep Dive Challenge
 	   by some effect (spell/Morgoth) */
@@ -11107,7 +11108,7 @@ bool set_recall_timer(int Ind, int v) {
 #ifdef ANTI_TELE_CHEEZE
 	    p_ptr->anti_tele ||
 #endif
-	    (in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)))) {
+	    iddc_recall_fail(p_ptr, l_ptr))) {
 		msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
 		return FALSE;
 	}
@@ -11149,8 +11150,9 @@ bool set_recall_timer(int Ind, int v) {
 	return (TRUE);
 }
 
-bool set_recall(int Ind, int v, object_type * o_ptr) {
+bool set_recall(int Ind, int v, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
+	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* don't accidentally recall players in Ironman Deep Dive Challenge
 	   by some effect (spell/Morgoth) */
@@ -11158,7 +11160,7 @@ bool set_recall(int Ind, int v, object_type * o_ptr) {
 #ifdef ANTI_TELE_CHEEZE
 	    p_ptr->anti_tele ||
 #endif
-	    (in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)))) {
+	    iddc_recall_fail(p_ptr, l_ptr))) {
 		msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
 		return FALSE;
 	}

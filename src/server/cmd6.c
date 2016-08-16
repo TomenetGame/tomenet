@@ -5794,7 +5794,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			o_ptr->timeout = 500 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 			break;
 #if 0
-		case ART_AVAVIR:
+		case ART_AVAVIR: {
+			struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 			if (dlev && (max_dlv[dungeon_type] > dlev)) {
 				if (get_check("Reset recall depth? "))
 					max_dlv[dungeon_type] = dlev;
@@ -5805,7 +5807,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
  #if ANTI_TELE_CHEEZE
 			    p_ptr->anti_tele ||
  #endif
-			    in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)) {
+			    iddc_recall_fail(p_ptr, l_ptr)) {
 				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
 			} else if (!p_ptr->word_recall) {
 				p_ptr->word_recall = randint(20) + 15;
@@ -5815,7 +5817,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				msg_print(Ind, "\377oA tension leaves the air around you...");
 			}
 			o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
-			break;
+			break; }
 #endif
 		case ART_EVENSTAR:
 			restore_level(Ind);
