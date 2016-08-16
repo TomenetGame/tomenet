@@ -4173,7 +4173,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #else
 	if (o_ptr->bpval == o_ptr->number) {
 #endif
-		msg_print(Ind, "The rod is still charging.");
+		if (o_ptr->number == 1) msg_print(Ind, "The rod is still charging.");
+		else msg_print(Ind, "The rods are still charging.");
 		return;
 	}
 
@@ -4400,7 +4401,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 #else
 	if (o_ptr->bpval == o_ptr->number) {
 #endif
-		msg_print(Ind, "The rod is still charging.");
+		if (o_ptr->number == 1) msg_print(Ind, "The rod is still charging.");
+		else msg_print(Ind, "The rods are still charging.");
 		return;
 	}
 
