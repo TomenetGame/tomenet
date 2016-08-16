@@ -788,7 +788,33 @@ void cmd_swap(void) {
 
 	if (!c_get_item(&item, "Swap which item? ", (USE_INVEN | USE_EQUIP | INVEN_FIRST | USE_EXTRA))) return;
 
-	if (item < INVEN_PACK) Send_wield(item);
+	/* For items that can go into multiple slots (weapons and rings),
+	   check @xN inscriptions on source and destination to pick slot */
+	if (item < INVEN_PACK) {
+		char insc[4], *c;
+
+		if (is_weapon(inventory[item].tval) && is_weapon(inventory[INVEN_ARM].tval) &&
+		    (c = strstr(inventory_name[item], "@x"))) {
+			strncpy(insc, c, 3);
+			insc[3] = 0;
+			if (strstr(inventory_name[INVEN_ARM], insc) && !strstr(inventory_name[INVEN_WIELD], insc)) {
+				Send_wield2(item);
+				return;
+			}
+		}
+		else if (inventory[item].tval == TV_RING && inventory[INVEN_RIGHT].tval == TV_RING &&
+		    (c = strstr(inventory_name[item], "@x"))) {
+			strncpy(insc, c, 3);
+			insc[3] = 0;
+			if (strstr(inventory_name[INVEN_RIGHT], insc) && !strstr(inventory_name[INVEN_LEFT], insc)) {
+				Send_wield2(item);
+				return;
+			}
+		}
+
+		/* default */
+		Send_wield(item);
+	}
 	else Send_take_off(item);
 }
 
