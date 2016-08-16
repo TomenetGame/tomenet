@@ -4993,7 +4993,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
-	/* Recharge rods */
+	/* Recharge rods in player's inventory */
 	/* this should be moved to 'timeout'? */
 	for (i = 0; i < INVEN_PACK; i++) {
 		o_ptr = &p_ptr->inventory[i];
