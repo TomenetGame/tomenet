@@ -3926,6 +3926,7 @@ static bool process_player_end_aux(int Ind) {
 #endif
 			if (player_can_enter(Ind, c_ptr->feat, FALSE)) {
 				/* Do nothing */
+				//take damage like if from hp-drain? (old way)
 			}
 			else if (c_ptr->feat == FEAT_HOME){/* rien */}
 			//else if (PRACE_FLAG(PR1_SEMI_WRAITH) && (!p_ptr->wraith_form) && (f_info[cave[py][px].feat].flags1 & FF1_CAN_PASS))
