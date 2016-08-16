@@ -3425,6 +3425,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
+#if 0 /* no, because then if you find a stack of unidentified ammo and you shoot those arrows and pick them up again they won't stack anymore! */
+			/* For ammo too! */
+			if (unknown) return (FALSE);
+#endif
+
 			/* Require identical "boni" -
 			   except for ammunition which carries special inscription (will merge!) - C. Blue */
 			if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) ||
