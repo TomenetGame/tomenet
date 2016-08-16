@@ -1644,10 +1644,11 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 
 /* Door change ownership */
 static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) {
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind], *q_ptr;
 	int newowner = -1;
 	int i, h_idx;
 	int acc_houses = acc_get_houses(p_ptr->accountname), acc_houses2;
+	bool loaded = FALSE;
 
 	/* to prevent house amount cheeze (houses_owned)
 	   let's just say house ownership can't be transferred.
@@ -1658,24 +1659,126 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 	}
 	switch (args[1]) {
 	case '1':
+		h_idx = pick_house(&p_ptr->wpos, y, x);
+		/* paranoia */
+		if (h_idx == -1) {
+			msg_print(Ind, "There is no transferrable house there.");
+			return FALSE;
+		}
+
 		/* Check house limit of target player! */
 		i = name_lookup(Ind, &args[2], FALSE, FALSE, TRUE);
-		if (!i) return(FALSE);
+		if (!i) {
+			/* Trying to add another of our own characters maybe? */
+			int j, *id_list, ids, slot;
+			struct account acc;
+			hash_entry *ptr;
+			object_type *o_ptr;
+
+			if (!GetAccount(&acc, p_ptr->accountname, NULL, FALSE)) { /* paranoia */
+				/* uhh.. */
+				msg_print(Ind, "Character not online, nor found in your list of characters.");
+				return FALSE;
+			}
+			ids = player_id_list(&id_list, acc.id);
+			for (j = 0; j < ids; j++)
+				if (!strcmp(lookup_player_name(id_list[j]), &args[2])) break;
+			if (j == ids) {
+				msg_print(Ind, "Character not online, nor found in your list of characters.");
+				return(FALSE);
+			}
+
+			/* hack - actually load that player */
+			NumPlayers++;
+			MAKE(Players[NumPlayers], player_type);
+			q_ptr = Players[NumPlayers];
+			q_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
+			for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+				ptr = hash_table[slot];
+				while (ptr) {
+					if (ptr->id != id_list[j]) {
+						/* advance to next character */
+						ptr = ptr->next;
+						continue;
+					}
+
+					/* clear his data */
+					o_ptr = q_ptr->inventory;
+					WIPE(q_ptr, player_type);
+					q_ptr->inventory = o_ptr;
+					q_ptr->Ind = NumPlayers;
+					C_WIPE(q_ptr->inventory, INVEN_TOTAL, object_type);
+					/* set his supposed name */
+					strcpy(q_ptr->name, ptr->name);
+					/* generate savefile name */
+					process_player_name(NumPlayers, TRUE);
+					/* try to load him! */
+					if (!load_player(NumPlayers)) {
+						/* bad fail */
+						s_printf("HOUSE_CHOWN_SELF: %d, '%s' load_player('%s') failed\n", h_idx, p_ptr->name, &args[2]);
+						/* unhack */
+						C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+						KILL(q_ptr, player_type);
+						NumPlayers--;
+						msg_print(Ind, "House transfer failed.");
+						return FALSE;
+					}
+					loaded = TRUE;
+
+					/* break */
+					slot = NUM_HASH_ENTRIES;
+					i = NumPlayers;
+					break;
+				}
+			}
+			if (!i) { /* Paranoia */
+				msg_print(Ind, "House transfer failed.");
+				s_printf("HOUSE_CHOWN_SELF: FAILED. source %s, house %d, dest %s.\n", p_ptr->name, pick_house(&p_ptr->wpos, y, x), &args[2]);
+				return FALSE;
+			}
+
+			/* Log */
+			s_printf("HOUSE_CHOWN_SELF: source %s, house %d, dest %s.\n", p_ptr->name, pick_house(&p_ptr->wpos, y, x), &args[2]);
+		}
 
 		if (compat_pmode(Ind, i, TRUE)) {
 			msg_format(Ind, "You cannot transfer houses to %s players!", compat_pmode(Ind, i, TRUE));
+			/* unhack */
+			if (loaded) {
+				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(q_ptr, player_type);
+				NumPlayers--;
+			}
 			return(FALSE);
 		}
 		if (Players[i]->inval) {
 			msg_print(Ind, "You cannot transfer houses to players that aren't validated!");
+			/* unhack */
+			if (loaded) {
+				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(q_ptr, player_type);
+				NumPlayers--;
+			}
 			return(FALSE);
 		}
 		if ((Players[i]->mode & MODE_PVP) && Players[i]->houses_owned >= 1) {
 			msg_print(Ind, "PvP characters may not own more than one house!");
+			/* unhack */
+			if (loaded) {
+				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(q_ptr, player_type);
+				NumPlayers--;
+			}
 			return FALSE;
 		}
 		if (Players[i]->mode & MODE_DED_IDDC) {
 			msg_print(Ind, "IDDC-exclusive characters may not own houses!");
+			/* unhack */
+			if (loaded) {
+				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(q_ptr, player_type);
+				NumPlayers--;
+			}
 			return FALSE;
 		}
 		if (cfg.houses_per_player && (Players[i]->houses_owned >= ((Players[i]->lev > 50 ? 50 : Players[i]->lev) / cfg.houses_per_player)) && !is_admin(Players[i])) {
@@ -1683,24 +1786,31 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				msg_format(Ind, "That player needs to be at least level %d to own a house!", cfg.houses_per_player);
 			else
 				msg_print(Ind, "At his current level, that player cannot own more houses!");
+			/* unhack */
+			if (loaded) {
+				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(q_ptr, player_type);
+				NumPlayers--;
+			}
 			return (FALSE);
 		}
 
 		//ACC_HOUSE_LIMIT
-		if (acc_get_houses(Players[i]->accountname) >= cfg.acc_house_limit) {
+		if (!loaded && /* actually not if we transfer to ourselves.. */
+		    acc_get_houses(Players[i]->accountname) >= cfg.acc_house_limit) {
 			msg_print(Ind, "That player cannot own more houses on his account!");
 			return FALSE;
 		}
 
-		h_idx = pick_house(&p_ptr->wpos, y, x);
-		/* paranoia */
-		if (h_idx == -1) {
-			msg_print(Ind, "There is no transferrable house there.");
-			return FALSE;
-		}
 		if (houses[h_idx].flags & HF_MOAT) {
 			if (cfg.castles_for_kings && !Players[i]->total_winner) {
 				msg_print(Ind, "That player is neither king nor queen, neither emperor nor empress!");
+				/* unhack */
+				if (loaded) {
+					C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+					KILL(q_ptr, player_type);
+					NumPlayers--;
+				}
 				return FALSE;
 			}
 			if (cfg.castles_per_player && (Players[i]->castles_owned >= cfg.castles_per_player))  {
@@ -1708,6 +1818,12 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 					msg_format(Ind, "That player already owns a castle!");
 				else
 					msg_format(Ind, "That player already owns %d castles!", cfg.castles_per_player);
+				/* unhack */
+				if (loaded) {
+					C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+					KILL(q_ptr, player_type);
+					NumPlayers--;
+				}
 				return FALSE;
 			}
 		}
@@ -1812,6 +1928,17 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 					dna->owner = newowner;
 					dna->owner_type = args[1] - '0';
 					dna->a_flags = ACF_NONE;
+
+					/* unhack */
+					if (loaded) {
+						/* finally write him back after transfer succeeded */
+						save_player(i);
+
+						C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+						KILL(q_ptr, player_type);
+						NumPlayers--;
+					}
+
 					return(TRUE);
 				}
 			}
@@ -1824,17 +1951,32 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			acc_set_houses(p_ptr->accountname, acc_houses);
 			clockin(Ind, 8);
 
+			/* unhack */
+			if (loaded) {
+				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(q_ptr, player_type);
+				NumPlayers--;
+			}
 			return(FALSE);
 		}
 
-		/* args[1] == '2' aka change to OT_GUILD: */
-		dna->owner = newowner;
-		dna->owner_type = args[1] - '0';
-		if (dna->owner_type == OT_GUILD) {
-			guilds[p_ptr->guild].h_idx = h_idx + 1;
-			Send_guild_config(p_ptr->guild);
+		/* 2: OT_GUILD */
+		if (args[1] == '2') {
+			dna->owner = newowner;
+			dna->owner_type = args[1] - '0';
+			if (dna->owner_type == OT_GUILD) {
+				guilds[p_ptr->guild].h_idx = h_idx + 1;
+				Send_guild_config(p_ptr->guild);
+			}
+			return(TRUE);
 		}
-		return(TRUE);
+	}
+
+	/* unhack if needed */
+	if (loaded) {
+		C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+		KILL(q_ptr, player_type);
+		NumPlayers--;
 	}
 	return FALSE;
 }
