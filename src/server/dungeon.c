@@ -361,7 +361,7 @@ static void sense_inventory(int Ind) {
 	bool ok_curse = FALSE, force_curse = FALSE;
 
 	cptr feel;
-	bool felt_heavy;
+	bool felt_heavy, fail;
 
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
@@ -450,11 +450,10 @@ static void sense_inventory(int Ind) {
 	/* Check everything */
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
+		fail = FALSE;
 
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
-		/* We know about it already, do not tell us again */
-		if (o_ptr->ident & ID_SENSE) continue;
 		/* It is fully known, no information needed */
 		if (object_known_p(Ind, o_ptr)) continue;
 		/* Occasional failure on inventory items */
@@ -465,6 +464,9 @@ static void sense_inventory(int Ind) {
 			/* if we're forced to insta-sense a curse, do just that */
 			ok_magic = ok_combat = ok_archery = FALSE;
 		}
+		/* We know about it already, do not tell us again */
+		if (o_ptr->ident & ID_SENSE_HEAVY) continue;
+		else if (o_ptr->ident & ID_SENSE) fail = TRUE;
 
 		feel = NULL;
 		felt_heavy = FALSE;
@@ -488,6 +490,7 @@ static void sense_inventory(int Ind) {
 		case TV_DRAG_ARMOR:
 		case TV_AXE:
 		case TV_TRAPKIT:
+			if (fail && !heavy) continue; //finally fail
 			if (ok_combat) {
 				feel = (heavy ? value_check_aux1(o_ptr) :
 						value_check_aux2(o_ptr));
@@ -495,6 +498,7 @@ static void sense_inventory(int Ind) {
 			}
 			break;
 		case TV_MSTAFF:
+			if (fail && !heavy_magic) continue; //finally fail
 			if (ok_magic) {
 				feel = (heavy_magic ? value_check_aux1(o_ptr) :
 						value_check_aux2(o_ptr));
@@ -510,6 +514,7 @@ static void sense_inventory(int Ind) {
 		case TV_STAFF:
 		case TV_ROD:
 		case TV_FOOD:
+			if (fail && !heavy_magic) continue; //finally fail
 			if (ok_magic && !object_aware_p(Ind, o_ptr)) {
 				feel = (heavy_magic ? value_check_aux1_magic(o_ptr) :
 				    value_check_aux2_magic(o_ptr));
@@ -521,6 +526,7 @@ static void sense_inventory(int Ind) {
 		case TV_BOLT:
 		case TV_BOW:
 		case TV_BOOMERANG:
+			if (fail && !heavy_archery) continue; //finally fail
 			if (ok_archery || (ok_combat && magik(25))) {
 				feel = (heavy_archery ? value_check_aux1(o_ptr) :
 				    value_check_aux2(o_ptr));
@@ -578,6 +584,16 @@ static void sense_inventory(int Ind) {
 			p_ptr->obj_felt[o_ptr->k_idx] = TRUE;
 			if (felt_heavy) p_ptr->obj_felt_heavy[o_ptr->k_idx] = TRUE;
 		}
+
+#if 1
+		/* new: remove previous pseudo-id tag completely, since we've bumped our p-id tier meanwhile */
+		if (fail) {
+			char note2[80], noteid[10];
+			note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
+			if (!note2[0]) o_ptr->note = o_ptr->note_utag = 0;
+			else o_ptr->note = quark_add(note2);
+		}
+#endif
 
 		/* Inscribe it textually */
 #if 0 /* make pseudo-id remove previous unique tag? */
