@@ -2906,6 +2906,7 @@ void calc_boni(int Ind) {
 
 	bool old_auto_id = p_ptr->auto_id;
 	bool old_dual_wield = p_ptr->dual_wield;
+	bool melee_weapon;
 
 	bool old_sun_burn;
 
@@ -5198,7 +5199,6 @@ void calc_boni(int Ind) {
 		/* Heavy weapon */
 		p_ptr->heavy_wield = TRUE;
 	}
-
 	/* dual-wield */
 	/* It is hard to hold a heavy weapon */
 	o_ptr = &p_ptr->inventory[INVEN_ARM];
@@ -5217,7 +5217,8 @@ void calc_boni(int Ind) {
 	/* Normal weapons */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	o2_ptr = &p_ptr->inventory[INVEN_ARM];
-	if ((o_ptr->k_idx || (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD)) && !p_ptr->heavy_wield) {
+	melee_weapon = (o_ptr->k_idx || (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD));
+	if (melee_weapon && !p_ptr->heavy_wield) {
 		int lev1 = -1, lev2 = -1;
 
 		p_ptr->num_blow = calc_blows_weapons(Ind);
@@ -5251,7 +5252,7 @@ void calc_boni(int Ind) {
 
 
 	/* Different calculation for monks with empty hands */
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx &&
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !melee_weapon &&
 #ifndef ENABLE_MA_BOOMERANG
 	    !(p_ptr->inventory[INVEN_BOW].k_idx)) {
 #else
@@ -5349,20 +5350,19 @@ void calc_boni(int Ind) {
 	}
 
 	/* A perma_cursed weapon stays even in weapon-less body form, reduce blows for that: */
-	if ((p_ptr->inventory[INVEN_WIELD].k_idx ||
-	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) &&
+	if (melee_weapon &
 	    (!r_info[p_ptr->body_monster].body_parts[BODY_WEAPON]) &&
 	    (p_ptr->num_blow > 1)) p_ptr->num_blow = 1;
 
 	/* Weaponmastery bonus to hit and damage - not for MA!- C. Blue */
-	if (get_skill(p_ptr, SKILL_MASTERY) && o_ptr->k_idx) {
+	if (get_skill(p_ptr, SKILL_MASTERY) && melee_weapon) {
 		int lev = get_skill(p_ptr, SKILL_MASTERY);
 		p_ptr->to_h_melee += lev / 3;
 		p_ptr->to_d_melee += lev / 10;
 	}
 
 	if (get_skill(p_ptr, SKILL_DODGE) && !p_ptr->rogue_heavyarmor)
-//	if (!(r_ptr->flags1 & RF1_NEVER_MOVE));		// not for now
+	//if (!(r_ptr->flags1 & RF1_NEVER_MOVE)); // not for now
 	{
 #ifndef NEW_DODGING /* reworking dodge, see #else.. */
 		/* use a long var temporarily to handle v.high total_weight */
@@ -5372,7 +5372,7 @@ void calc_boni(int Ind) {
 		/* Base dodge chance */
 		temp_chance = get_skill_scale(p_ptr, SKILL_DODGE, 150);
 		/* Armor weight bonus/penalty */
-//		p_ptr->dodge_level -= cur_wgt * 2;
+		//p_ptr->dodge_level -= cur_wgt * 2;
 		temp_chance -= cur_wgt;		/* XXX adjust me */
 		/* Encumberance bonus/penalty */
 		temp_chance -= p_ptr->total_weight / 100;
@@ -5427,7 +5427,7 @@ void calc_boni(int Ind) {
 	p_ptr->awkward_shoot = FALSE;
 
 	/* 2handed weapon and shield = less damage */
-//	if (inventory[INVEN_WIELD + i].k_idx && inventory[INVEN_ARM + i].k_idx)
+	//if (inventory[INVEN_WIELD + i].k_idx && inventory[INVEN_ARM + i].k_idx)
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx) {
 		/* Extract the item flags */
 		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -5492,7 +5492,7 @@ void calc_boni(int Ind) {
 		p_ptr->awkward_shoot = TRUE;
 	}
 
-	/* Priest weapon penalty for non-blessed edged weapons */
+	/* Priest weapon penalty for non-blessed edged weapons (assumes priests cannot dual-wield) */
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    (p_ptr->pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
 	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM) ||
