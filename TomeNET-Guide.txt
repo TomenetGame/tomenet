@@ -16221,13 +16221,15 @@ The techniques are as follows:
         This skill is useless if there is no team mate next to you (and the
         monster).
         (Distracting costs half a turn of energy.)
+    Track Animals       3 stamina    (rangers only)
+        Read animal tracks, disclosing their whereabouts in your surroundings.
     Spin                8 stamina
         A sweep that hits all adjacent monsters and may stun them if they don't
         resist. You might even perform more than one complete sweep circle,
         hitting some or all monsters multiple times, based on your number of
         blows/round!
         (Spinning around costs a turn of energy.)
-    Berserk             10 stamina
+    Berserk             10 stamina   (warriors only)
         Similar to potions of berserk strength, also giving you +1 blow/round.
         (Entering berserk rage does not cost energy.)
 
