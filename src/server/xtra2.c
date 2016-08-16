@@ -7116,6 +7116,8 @@ void player_death(int Ind) {
 		/* Give him his hit points back */
 		p_ptr->chp = p_ptr->mhp;
 		p_ptr->chp_frac = 0;
+		/* Sanity death? Ew. */
+		if (p_ptr->csane < 0) p_ptr->csane = 0;
 
 		if (secure) {
 			p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
@@ -7164,8 +7166,10 @@ void player_death(int Ind) {
 				p_ptr->max_exp = (p_ptr->max_exp * 4 + 1) / 5; /* never drop below 1! (Highlander Tournament exploit) */
 				p_ptr->exp = p_ptr->max_exp;
 #endif
+#if 0
 			} else {
 				if (p_ptr->csane <= 10) p_ptr->csane = 10; /* just something, paranoia */
+#endif
 			}
 			check_experience(Ind);
 
