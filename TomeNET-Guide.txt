@@ -12541,7 +12541,8 @@ create a character!):
     Half-elves are slightly better at searching, disarming, saving throws,
     stealth, bows, and magic, but they are not as good at hand weapons.
     Half-elves resist light intrinsically.
-    They get bonus on 'Bow-Mastery' and 'Interception'.
+    They get bonus on 'Bow-Mastery' and 'Interception' and a small bonus on
+    the magic 'Nature' school.
 
 - Elf
     Elves resist light effects intrinsically and see invisible creatures.
@@ -12551,7 +12552,8 @@ create a character!):
     Elves are better at searching, disarming, perception, stealth, bows, and
     magic, but they are not as good at hand weapons.
     Elves get bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging',
-    'Calmness' and 'Sneakiness'.
+    'Calmness', 'Sneakiness' and the magic 'Water' school and a large bonus on
+    the magic 'Nature' school.
 
 - Hobbit
     Hobbits have their dexterity sustained. Further, they get a dexterity bonus
@@ -12632,8 +12634,9 @@ create a character!):
     their wisdom is sometimes suspect. They do very well in all professions.
     There are few things that they have not seen already, and experience is
     hard for them to gain.
-    High-Elves receive boni on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging',
-    a large bonus on 'Calmness' and a slight bonus on 'Swimming'.
+    High-Elves receive boni on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging'
+    and the magic 'Nature' school, a large bonus on 'Calmness' and a slight
+    bonus on 'Swimming'.
 
 - Yeek
     Being weak and losing many childhood fights, they have learned the
