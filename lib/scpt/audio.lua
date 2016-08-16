@@ -209,6 +209,7 @@ audio_sfx = {
     "fireworks_big",
     "fireworks_norm",
     "fireworks_small",
+    "fireworks_launch",
 
     --[item]
     "item_food",

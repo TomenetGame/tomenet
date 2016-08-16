@@ -2813,6 +2813,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				msg_format_near(Ind, "%s releases a magical firework from a scroll!", p_ptr->name);
 			}
 			cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * 7 + o_ptr->xtra2); //size, colour
+#ifdef USE_SOUND_2010
+			sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_AMBIENT, TRUE, 50);
+#endif
 			ident = TRUE;
 			break;
 		}
@@ -3007,6 +3010,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	used_up = TRUE;
 
 #ifdef USE_SOUND_2010
+	if (o_ptr->sval != SV_SCROLL_FIREWORK) /* these just combust and cause 'launch' sfx instead */
 	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
