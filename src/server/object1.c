@@ -2847,7 +2847,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			t = object_desc_chr(t, ')');
 		}
  #else
-		if (o_ptr->pval && o_ptr->bpval) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
+		if (o_ptr->bpval == o_ptr->number) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
+		else if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (partially charging)" : "(~)");
  #endif
 #endif
 	}
