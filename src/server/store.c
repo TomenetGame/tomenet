@@ -41,6 +41,11 @@
    same wands of different charge amounts to the same store. This may be less confusing though! */
 #define STORE_ROUNDS_SINGLE_WAND_CHARGES
 
+/* Sort spell scrolls alphabetically by spell name? [no] */
+#ifdef TEST_SERVER
+ #define STORE_SORT_SPELLS_BY_NAME
+#endif
+
 
 static int gettown_dun(int Ind);
 
@@ -1208,6 +1213,10 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 		if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
 			if (get_spellbook_store_order(o_ptr->pval) < get_spellbook_store_order(j_ptr->pval)) break;
 			if (get_spellbook_store_order(o_ptr->pval) > get_spellbook_store_order(j_ptr->pval)) continue;
+#ifdef STORE_SORT_SPELLS_BY_NAME
+			if (strcmp(school_spells[o_ptr->pval].name, school_spells[j_ptr->pval].name) < 0) break;
+			continue;
+#endif
 		}
 
 		/* Evaluate that slot */
