@@ -11103,8 +11103,11 @@ bool set_recall_timer(int Ind, int v) {
 
 	/* don't accidentally recall players in Ironman Deep Dive Challenge
 	   by some effect (spell/Morgoth) */
-	if (!is_admin(p_ptr) &&
-	    in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)) {
+	if (!is_admin(p_ptr) && (
+#ifdef ANTI_TELE_CHEEZE
+	    p_ptr->anti_tele ||
+#endif
+	    (in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)))) {
 		msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
 		return FALSE;
 	}
@@ -11151,8 +11154,11 @@ bool set_recall(int Ind, int v, object_type * o_ptr) {
 
 	/* don't accidentally recall players in Ironman Deep Dive Challenge
 	   by some effect (spell/Morgoth) */
-	if (!is_admin(p_ptr) &&
-	    in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)) {
+	if (!is_admin(p_ptr) && (
+#ifdef ANTI_TELE_CHEEZE
+	    p_ptr->anti_tele ||
+#endif
+	    (in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)))) {
 		msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
 		return FALSE;
 	}

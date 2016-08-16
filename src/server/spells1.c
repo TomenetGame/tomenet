@@ -9937,7 +9937,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->afk) break;
 
 			/* prevent silly things */
-			if (in_irondeepdive(&p_ptr->wpos) && !irondeepdive_bottom(&p_ptr->wpos)) {
+			if ((in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos))
+#ifdef ANTI_TELE_CHEEZE
+			    || p_ptr->anti_tele
+#endif
+			    ) {
 				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
 				break;
 			}

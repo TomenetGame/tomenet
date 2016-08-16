@@ -5801,12 +5801,18 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			}
 
 			msg_print(Ind, "Your scythe glows soft white...");
-			if (!p_ptr->word_recall) {
+			if (
+ #if ANTI_TELE_CHEEZE
+			    p_ptr->anti_tele ||
+ #endif
+			    in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)) {
+				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
+			} else if (!p_ptr->word_recall) {
 				p_ptr->word_recall = randint(20) + 15;
-				msg_print(Ind, "The air about you becomes charged...");
+				msg_print(Ind, "\377oThe air about you becomes charged...");
 			} else {
 				p_ptr->word_recall = 0;
-				msg_print(Ind, "A tension leaves the air around you...");
+				msg_print(Ind, "\377oA tension leaves the air around you...");
 			}
 			o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;

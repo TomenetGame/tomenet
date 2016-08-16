@@ -1893,14 +1893,21 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			break;
 #if 0
 		case BACT_RECALL:
+ #ifdef ANTI_TELE_CHEEZE
+			if (p_ptr->anti_tele) {
+				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
+				break;
+			}
+ #endif
 			p_ptr->word_recall = 1;
 			msg_print(Ind, "\377oThe air about you becomes charged...");
 			paid = TRUE;
 			break;
 		case BACT_TELEPORT_LEVEL:
+			break;//disabled
 			if (reset_recall(FALSE)) {
 				p_ptr->word_recall = 1;
-				msg_print(Ind, "The air about you becomes charged...");
+				msg_print(Ind, "\377oThe air about you becomes charged...");
 				paid = TRUE;
 			}
 			break;

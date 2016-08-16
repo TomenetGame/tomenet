@@ -253,6 +253,9 @@
 /* Make staves stack the same way as wands; enable improved way of rod-stacking */
 #define NEW_MDEV_STACKING
 
+/* Anti-teleportation will cancel Word-of-recall instead of delaying it. */
+#define ANTI_TELE_CHEEZE
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
