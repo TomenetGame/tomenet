@@ -1644,7 +1644,7 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 
 /* Door change ownership */
 static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) {
-	player_type *p_ptr = Players[Ind], *q_ptr;
+	player_type *p_ptr = Players[Ind], *q_ptr = p_ptr; /* q_ptr set to p_ptr just to slay compiler warning */
 	int newowner = -1;
 	int i, h_idx;
 	int acc_houses = acc_get_houses(p_ptr->accountname), acc_houses2;
@@ -1732,10 +1732,8 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				}
 			}
 			if (!i) { /* Paranoia */
-				if (loaded) { //loaded is always TRUE here, but we need to slay the compiler warning
-					C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
-					KILL(q_ptr, player_type);
-				}
+				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(q_ptr, player_type);
 				NumPlayers--;
 				msg_print(Ind, "House transfer failed.");
 				s_printf("HOUSE_CHOWN_SELF: FAILED. source %s, house %d, dest %s.\n", p_ptr->name, pick_house(&p_ptr->wpos, y, x), &args[2]);
