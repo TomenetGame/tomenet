@@ -3903,6 +3903,13 @@ void interact_macros(void) {
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
+			if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
+			    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
+			    (*buf >= 'a' && *buf <= 'w') || /* inventory */
+			    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
+			    )
+				c_msg_print("\377oWarning: This key may only work with command macros, not hybrid or normal ones!");
+
 			/* Some keys aren't allowed to prevent the user
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
@@ -3925,6 +3932,13 @@ void interact_macros(void) {
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
+
+			if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
+			    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
+			    (*buf >= 'a' && *buf <= 'w') || /* inventory */
+			    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
+			    )
+				c_msg_print("\377oWarning: This key may only work with command macros, not hybrid or normal ones!");
 
 			/* Some keys aren't allowed to prevent the user
 			   from locking himself out accidentally */
@@ -4264,11 +4278,13 @@ void interact_macros(void) {
 				/* Automatically choose usually best fitting macro type,
 				   depending on chosen trigger key! */
 				//[normal macros: F-keys (only keys that aren't used for any text input)]
-				//command macros: / * a..w (all keys that are used in important standard prompts)
+				//command macros: / * a..w (all keys that are used in important standard prompts: inventory)
 				//hybrid macros: all others, maybe even also normal-macro-keys
 				if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
 				    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
-				    (*buf >= 'a' && *buf <= 'w')) {
+				    (*buf >= 'a' && *buf <= 'w') ||
+				    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
+				    ) {
 					/* make it a command macro */
 					/* Link the macro */
 					macro_add(buf, macro__buf, TRUE, FALSE);
@@ -5840,11 +5856,14 @@ Chain_Macro:
 						get_macro_trigger(buf);
 
 						/* choose proper macro type, and bind it to key */
+#if 0 /* allow remapping this key too */
 						if (!strcmp(buf, format("%c", KTRL('T')))) {
 							/* Take a screenshot */
 							xhtml_screenshot("screenshot????");
 							continue;
-						} else if (!strcmp(buf, "\e")) {//chaining: || !strcmp(buf, "%")) {
+						} else
+#endif
+						if (!strcmp(buf, "\e")) {//chaining: || !strcmp(buf, "%")) {
 							c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 							if (!strcmp(buf, "\e")) {
 								i = -1; /* leave */
@@ -5869,11 +5888,13 @@ Chain_Macro:
 					/* Automatically choose usually best fitting macro type,
 					   depending on chosen trigger key! */
 					//[normal macros: F-keys (only keys that aren't used for any text input)]
-					//command macros: / * a..w (all keys that are used in important standard prompts)
+					//command macros: / * a..w (all keys that are used in important standard prompts: inventory)
 					//hybrid macros: all others, maybe even also normal-macro-keys
 					if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
 					    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
-					    (*buf >= 'a' && *buf <= 'w')) {
+					    (*buf >= 'a' && *buf <= 'w') ||
+					    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
+					    ) {
 						/* make it a command macro */
 						/* Link the macro */
 						macro_add(buf, macro__buf, TRUE, FALSE);
