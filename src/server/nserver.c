@@ -11335,6 +11335,14 @@ static int Receive_raw_key(int ind) {
 		}
 		return 2;
 	} else if (p_ptr) {
+		/* If we hit an unknown/unused raw key, don't wait for our energy,
+		   or disturb() would be called which is a bit annoying.. */
+		if (p_ptr->store_num == -1) {
+			//ALL keys are unused, so we don't need to check the value of 'key'
+			msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
+			return 2;
+		}
+
 		Packet_printf(&connp->q, "%c%c", ch, key);
 		return 0;
 	}
