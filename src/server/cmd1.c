@@ -1629,11 +1629,17 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* hack for cloaking: since picking up anything breaks it,
 		   we don't pickup gold except if the player really wants to */
 		if (((p_ptr->cloaked == 1 || p_ptr->shadow_running) && !pickup) || forbidden || (p_ptr->ghost && !p_ptr->admin_dm)) {
-			if (p_ptr->blind || no_lite(Ind))
-				msg_format(Ind, "You feel %s%s here.", o_name, 
-						o_ptr->next_o_idx ? " on a pile" : "");
-			else msg_format(Ind, "You see %s%s.", o_name,
-						o_ptr->next_o_idx ? " on a pile" : "");
+			if (compat_pomode(Ind, o_ptr)) {
+				if (p_ptr->blind || no_lite(Ind))
+					msg_format(Ind, "\377DYou feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+				else
+					msg_format(Ind, "\377DYou see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+			} else {
+				if (p_ptr->blind || no_lite(Ind))
+					msg_format(Ind, "You feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+				else
+					msg_format(Ind, "You see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+			}
 			Send_floor(Ind, o_ptr->tval);
 			return;
 		}
@@ -1779,11 +1785,17 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				}
 			}
 
-			if (p_ptr->blind || no_lite(Ind))
-				msg_format(Ind, "You feel %s%s%s here.", o_name, pseudoid,
-						o_ptr->next_o_idx ? " on a pile" : "");
-			else msg_format(Ind, "You see %s%s%s.", o_name, pseudoid,
-						o_ptr->next_o_idx ? " on a pile" : "");
+			if (compat_pomode(Ind, o_ptr)) {
+				if (p_ptr->blind || no_lite(Ind))
+					msg_format(Ind, "\377DYou feel %s%s%s here.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+				else
+					msg_format(Ind, "\377DYou see %s%s%s.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+			} else {
+				if (p_ptr->blind || no_lite(Ind))
+					msg_format(Ind, "You feel %s%s%s here.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+				else
+					msg_format(Ind, "You see %s%s%s.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+			}
 			Send_floor(Ind, o_ptr->tval);
 			return;
 		}
