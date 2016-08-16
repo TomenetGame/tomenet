@@ -648,14 +648,13 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 	local use = FALSE
 
+
 	-- No magic
 	if check_antimagic(Ind, get_spell_am(s)) == TRUE then
 --Next line is already in the server sources.
 --		msg_print(i, "Your anti-magic field disrupts any magic attempts.")
-
 		local energy = level_speed(player.wpos);
 		player.energy = player.energy - energy
-
 		return 1 --continue ftk
 	end
 
@@ -666,12 +665,16 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	if not no_cost then
 		-- Require lite
 		if (check_affect(s, "blind")) and ((player.blind > 0) or (no_lite(Ind) == TRUE)) then
+			local energy = level_speed(player.wpos);
+			player.energy = player.energy - energy
 			msg_print(i, "You cannot see!")
 			return 0
 		end
 
 		-- Not when confused
 		if (check_affect(s, "confusion")) and (player.confused > 0) then
+			local energy = level_speed(player.wpos);
+			player.energy = player.energy - energy
 			msg_print(i, "You are too confused!")
 			return 0
 		end
@@ -685,6 +688,8 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 		-- Enough mana
 		if (get_mana(i, s) > get_power(i, s)) then
+			local energy = level_speed(player.wpos);
+			player.energy = player.energy - energy
 --			if (get_check2("You do not have enough "..get_power_name(s)..", do you want to try anyway?", FALSE) == FALSE) then return end
 			msg_print(i, "You do not have enough mana to cast "..spell(s).name..".")
 				return 0

@@ -1680,6 +1680,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 
 	/* No magic */
 	if (p_ptr->anti_magic) {
+		p_ptr->energy -= level_speed(&p_ptr->wpos); //full turn lost
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts any magic attempts.", COLOUR_AM_OWN);
 		return;
 	}
@@ -1687,6 +1688,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 #ifdef USE_SOUND_2010
 		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+		p_ptr->energy -= level_speed(&p_ptr->wpos); //full turn lost
 		msg_format(Ind, "\377%cYour anti-magic field disrupts any magic attempts.", COLOUR_AM_OWN);
 		return;
 	}
