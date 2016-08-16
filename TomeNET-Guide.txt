@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. August 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 16. August 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -159,7 +159,7 @@ Contents
     (6.8c)  Runespell tables
     (6.9)   Parties, Iron Teams, Guilds
     (6.9a)  Guild halls
-    (6.10)  Magic Device skill/ability details
+    (6.10)  Magic Devices, skill and ability
     (6.11)  Parrying and blocking
     (6.12)  Fighting/shooting techniques
     (6.13)  PvP mode
@@ -9789,13 +9789,15 @@ Tarpaulin           When equipped a tarp prevents your inventory and equipment
 (5.9a) Activatable items
 ------------------------
 Many items can be activated (press 'A' to try). These items are generally
-called 'Magic Devices'.
+called 'Magic Devices'. (Apart from these items, magic devices also include
+wands, staves and rods, see (6.10) for more information.)
+
 The chance of successful activation may or may not depend on various factors,
 such as..
 -your magic device ability vs the item type base level, your magic device
  ability consists mainly of your 'Magic Device' skill and also somewhat of your
  intelligence.
- See (6.10) for more information about the Magic Device skill.
+ See (6.10) for more information on the Magic Device skill.
 -whether you have trained your Antimagic skill
 -if you have the item equipped
 
@@ -11827,11 +11829,12 @@ Note that not every skill is available to every profession (class).
                                 35.000 will cut this down by 5%, so at 50.000
                                 Mimicry shapechanging will only take 1/4 turn.
 
-    .Magic device               Ability to use magic devices (wands, staves,
-                                rods, activatable items) without failing.
-                                Also increases their power.
-                                Speeds up recharging of rods you carry.
-                                See (6.10) for more information.
+    .Magic device               Mainly reduces fail chance when trying to use
+                                magic devices (wands, staves, rods, activatable
+                                items - see (5.9a)), increases their power and
+                                speeds up recharging of rods you carry.
+                                See (6.10) for more information on magic
+                                devices, the skill and the ability.
 
 +Necromancy                     Drains life and mana from killed monsters,
                                 replenishing your HP and MP.
@@ -16020,13 +16023,13 @@ installed or changed by the current guild master.
 
 
 
-(6.10) Magic Device skill/ability details
-------------------------------------------
+(6.10) Magic Devices, skill and ability
+---------------------------------------
 The player's "Magic Device" ability in the character overview screen is
 calculated from a base ability depending on race/class, your intelligence, and
 to the largest part from the 'Magic device' skill in the skill screen ('G').
 It determines how well a character can make use of magical devices such as
-wands, staves, rods and activatable items.
+wands, staves, rods and activatable items (see (5.9a)).
 
 The Magic Device ability is not limited to a maximum value, although the
 player won't be able to increase it infinitely.
@@ -16037,31 +16040,35 @@ in combat effectively. Otherwise your failure chance might be too high and
 therefore your damage output lacking.
 
 In detail, the magic device ability does this...
--makes it easier to use wands, staves and rods and to activate items:
-  If random(1 to (skill - baseitemlevel)) > 2 then you will successfully
-  use the item. (There's always a slim chance to succeed even if your
-  chances should be zero.) The base item level is from k_info.txt. It is NOT
-  the (often higher) level displayed on the item that you see when looking at
-  it in-game (ie the level shown in curly brackets).
-  Confusion halves your skill, EASY_USE roughly doubles it and adds a small,
-  flat bonus.
--speeds up recharging of rods:
-  Skill in percent is added to the recharge rate; caps at skill 100,
-  which means +100% recharge rate (approximately).
+-makes it easier to use wands, staves and rods and to activate items.
+ There's always a slim chance to succeed even if your magic device ability is
+ really bad.
+ Items that have higher base item level (from k_info.txt) determines how
+ difficult it is to activate a magic device. This level is not the (often
+ higher) level displayed on the item that you see when looking at
+ it in-game (ie the level shown in curly brackets).
+ Confusion reduces your chance, EASY_USE (rods of charging/of the istari)
+ greatly increases it.
 
 The 'Magic device' skill does the following...
+-increases the power of magic devices.
+-makes rods take less time to recharge.
 -helps to reduce effects of UN_POWER attacks (does not protect the remaining
  duration of a form gained from a ring of polymorphing).
 -helps to increase the duration on polymorph-rings when they are forged.
--increases the power of magic devices.
 -makes it easier to recharge items provided you don't use scrolls to do that,
  but a real magic device (some artifacts can be activated for recharging).
 
 Magic device skill and ability have no effect on the damage output of traps
-loaded with a magic device.
+loaded with a magic device or on recharge time of rods that are loaded inside
+trap kits.
 
 Rods have more high level item types and hence are harder to use on average,
 staves and wands have more lower level types available in comparison.
+Wands are always used directional (with a target), staves are always used
+without a target, rods and other activatable items have both types.
+Wands and rods that cast elemental bolt spells or magic missiles have a small
+chance of actually casting a beam instead, on each activation.
 
 Equippable items and true artifacts may have higher levels in general, but are
 actually much easier to activate than normal magic devices. (For true artifacts
