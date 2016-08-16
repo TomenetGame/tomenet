@@ -655,11 +655,11 @@ CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.1a).)
                 TomeNET homepage for official packs, or look in the forum for
                 user-made packs).
 
-CTRL+C  CTRL+X  Toggles music. (Shortcut for toggling it in the mixer settings.)
+CTRL+C  CTRL+X  Toggles music. Shortcut for toggling it in the mixer settings.
                 This hotkey works outside of the mixer screen too.
 
-CTRL+N  CTRL+V  Toggles audio. (Shortcut for master toggle in the mixer settings).
-                This hotkey works outside of the mixer screen too.
+CTRL+N  CTRL+V  Toggles audio. Shortcut for master toggle in the mixer
+                settings. This hotkey works outside of the mixer screen too.
 
                 Note: If you press this while in chat prompt, you will instead
                 cycle forwards through lines you previously typed - also see
@@ -1007,8 +1007,8 @@ They all start with a slash '/' hence they're called slash commands:
             As another specialty, /dis (without parameters) will skip dragon
             scale mails, leaving them intact.
 
-/dis a      DESTROYS items like '/dis', and additionally destroys all items that
-            have no inscription at all.
+/dis a      DESTROYS items like '/dis', and additionally destroys all items
+            that have no inscription at all.
             Also see /tag and /untag.
 
 /dis b      DESTROYS items like '/dis a' does, but skips identified ego items,
@@ -4362,7 +4362,7 @@ Example 2: Assumed your book is inscribed @m1 as usual, and you want to cast
 Example 3: Assumed you have the spell Manathrust somewhere in your books and
     want to cast it by name, what you enter in the q'n'd field is:
         *tM@Manathrust\-
-    and it will automatically be expanded to '\e)*tm@11\r@Manathrust\r-', voila.
+    and it will automatically be expanded to '\e)*tm@11\r@Manathrust\r-'.
 
 Example 4: Casting phase door would be..
         M@Phase Door\
@@ -5701,10 +5701,10 @@ The 1..9 are standard shops, namely..
         Enchant Services
                         These will enchant weapons, arrows, or armour you have
                         equipped.
-                        For weapons, this will attempt to enchant a main-hand or
-                        off-hand (if dual-wielding) weapon, for armour this will
-                        look through all armour slots. When an eligible item is
-                        found, it will be enchanted.
+                        For weapons, this will attempt to enchant a main-hand
+                        or off-hand (if dual-wielding) weapon, for armour this
+                        will look through all armour slots. When an eligible
+                        item is found, it will be enchanted.
                         Cursed items, artifacts and items that cannot be
                         enchanted are not eligible and will be skipped.
 
@@ -6133,7 +6133,7 @@ type appended to it in { } brackets. It looks like this:
 ^ A potion of Constitution {Chaos Ball Trap}
 
 Trap symbols ('^') come in different colours. Here's an overview:
-    blue            stat traps (STR/INT/WIS/DEX/CON/CHR), in three difficulties:
+    blue            stat traps (STR/INT/WIS/DEX/CON/CHR) in three difficulties:
                     1) only reduces an attribute temporarily, heals on its own.
                     2) reduces an attribute, requiring you to use restoration.
                     3) permanently reduces an attribute. Counter with stat
@@ -6767,13 +6767,14 @@ Hit point drain ('Drains your hit points')
     Drains your hit points down to zero, then stops. This means that this
     effect won't kill you, but can make it extremely risky to go AFK in an
     unsafe place. Well, going AFK in an unsafe place can kill you anyway.
+
     HP drain stacks and is given by:
      -Items that just drain your HP
      -Items that have strong good powers and you use them as a Vampire
      -The sun, when it's day and you're a Vampire and out in the open without
       a protective mummy wrapping
      -Monster forms that provide wall-passing (wraith form)
-     -Being entombed in walls, ie stuck without the ability to pass through them
+
     HP drain can be countered by HP regeneration, which can be gained from:
      -'Regeneration' ability (which is a flag, ie one source providing it is
       enough and having more than one regen source won't increase the effect),
@@ -7625,8 +7626,8 @@ especially skilled at one of the four masteries you might want to pick that one
 to save skill points (for example Half-Trolls get a bonus on Blunt-Mastery).
 
 Also, priests cannot use edged weapons that aren't 'blessed' (a special magical
-property, ie ego-power), so if the player wants to make a melee-oriented priest,
-he will usually pick blunt weapons (or 'martial arts' instead, for weaponless
+property, ie ego-power), so if you want to create a melee-oriented priest,
+you will usually pick blunt weapons (or 'martial arts' instead, for weaponless
 combat, making more for a monk-style character).
 
 However, if you have a choice or don't care about a few skill points more, you
@@ -12348,8 +12349,8 @@ character classes' usual ratio.)
 
 When a skill's ratio has been modified on initiation, the skill will
 automatically be set as close as possible to its previous value, and the extra
-skill points will be refunded, so the character does not "lose" any skill points
-by training skills prior to initiation.
+skill points will be refunded, so the character does not "lose" any skill
+points by training skills prior to initiation.
 
 Skills that become disabled on initiation will not be nulled and hence will
 continue to have effect, although the character won't be able to increase them
@@ -13402,8 +13403,8 @@ create a character!):
 - Mindcrafter
     Mindcrafters are great melee fighters who additionally train the use of
     telepathy to unleash spells formed by their psychic powers.
-    Their intellect is superior compared to primitive warriors, making them calm
-    and silent fighters who are hard to read and are dangerously sharp.
+    Their intellect is superior compared to primitive warriors, making them
+    calm and silent fighters who are hard to read and are dangerously sharp.
     They have a lot of possibilities to positively or negatively influence the
     minds of others. However, their repertoire is more limited when they are up
     against creatures of little or no intelligence.
@@ -16462,8 +16463,8 @@ Here is an explanation of the common glyphs which may occupy a row/column grid:
 + (red)         Aggravation
 + (white)       Resistance, Miscellaneous Flags, Slay+ESP, Brand+Aura
 * (gold)        Immunity, Anti-Teleportation (yellow), Kill/ESP (white)
-# (green)       A positive number, dark green adds 10, gold indicates sustained.
-# (red)         A negative number, dark red subtracts 10.
+# (green)       A number, dark green adds 10, gold indicates sustenance.
+# (red)         A number, red subtracts 10.
 s (gold)        A sustained ability without numerical modification.
 s (white)       Slay (2x)
 k (white)       Kill (3x)
@@ -17868,7 +17869,7 @@ to fit your character relatively well.
 There is still some randomness playing a part in it though, so the outcome will
 always vary and not necessarily be exactly what you wished for.
 
-Since the resulting item will be affected by your character and its skill chart,
+Since the resulting item will be affected by your character and skill chart,
 what you must actively do BEFORE turning in a deed for a reward item is:
 
 - spend skill points! Never get a reward item without having spent any skill
@@ -18398,7 +18399,7 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
                     version than your client is.
             "Sorry, the game is full.  Try again later."
                     Wow the game is really full!
-            "Your accountname, username or hostname contains invalid characters"
+           "Your accountname, username or hostname contains invalid characters"
             (or just "Net input error")
                     Player characters are identified by 4 names:
                     -Character name
@@ -18592,8 +18593,8 @@ SOLUTION:   Despite similar name, the only thing these two games have in common
             also be similar.
             Other than that, the two games are quite different in most aspects!
             In other words: TomeNET is definitely not 'multi-player ToME'.
-            Also, the two games are maintained/developed by completely different
-            persons and teams.
+            Also, the two games are maintained and developed by completely
+            different persons and teams.
 
 PROBLEM 21: My (mixer) settings or window positions (MS Windows only) aren't
             saved automatically as they should be, when I quit the game.
@@ -18605,8 +18606,8 @@ SOLUTION:   Don't use ALT+F4 or the 'x' button in the title bar of the game
 PROBLEM 22: When I try to login, I get a 'security violation'.
 SOLUTION:   Either your host name (that's your PC's network name you can set in
             the Windows network settings) or network user name (usually same
-            you use to login with, UNIX-style) is empty, or your TomeNET account
-            name starts with an invalid character (must be A..Z).
+            you use to login with, UNIX-style) is empty, or your TomeNET
+            account name starts with an invalid character (must be A..Z).
             Another possibility is that you are already logged in, and are now
             trying to log in again from a different IP address. Resuming a
             connection is possible, but must be done from the same IP address.
