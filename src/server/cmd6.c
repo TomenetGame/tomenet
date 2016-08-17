@@ -5103,7 +5103,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (!activate_magic_device(Ind, o_ptr) &&
 	    o_ptr->tval != TV_BOOK) /* hack: blank books can always be 'activated' */
 	{
-		msg_print(Ind, "\377yYou failed to activate it properly.");
+		msg_format(Ind, "\377%cYou failed to activate it properly.", COLOUR_MD_FAIL);
 		return;
 	}
 

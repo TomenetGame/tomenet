@@ -2427,7 +2427,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 						/* Roll for usage */
 						if (!activate_magic_device(Ind, i_ptr)) {
-							msg_print(Ind, "You failed to activate it properly.");
+							msg_format(Ind, "\377%cYou failed to activate it properly.", COLOUR_MD_FAIL);
 							break;
 						}
 
@@ -2500,9 +2500,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 								/* Roll for usage */
 								if (!activate_magic_device(Ind, i_ptr)) {
 									if (i_ptr->tval == TV_ROD)
-										msg_print(Ind, "You failed to use the rod properly.");
+										msg_format(Ind, "\377%cYou failed to use the rod properly.", COLOUR_MD_FAIL);
 									else
-										msg_print(Ind, "You failed to use the staff properly.");
+										msg_format(Ind, "\377%cYou failed to use the staff properly.", COLOUR_MD_FAIL);
 									break;
 								}
 
