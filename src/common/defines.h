@@ -6135,11 +6135,14 @@
 #define DF3_NO_SUMMON		0x04000000L	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) */
 #define DF3_LIMIT_ESP		0x08000000L	/* All ESP gets its range limited */
 
+#define DF3_DARK		0x10000000L	/* All unlit levels */
+#define DF3_NO_DARK		0x20000000L	/* Don't build unlit levels */
+
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
-   without changing its main flags (set my admin on dungeon creation) too much */
+   without changing its main flags (set by admin on dungeon creation) too much */
 #define DF3_THEME_MASK \
 	(DF3_DERARE_MONSTERS | DF3_MANY_MONSTERS | DF3_VMANY_MONSTERS | \
-	DF3_NO_WALL_STREAMERS | DF3_NOT_EMPTY | DF3_NOT_WATERY | DF3_FEW_ROOMS | DF3_NO_VAULTS | DF3_NO_MAZE | DF3_NO_EMPTY | DF3_NO_DESTROYED)
+	DF3_NO_WALL_STREAMERS | DF3_NOT_EMPTY | DF3_NOT_WATERY | DF3_FEW_ROOMS | DF3_NO_VAULTS | DF3_NO_MAZE | DF3_NO_EMPTY | DF3_NO_DARK | DF3_NO_DESTROYED)
 
 
 /* level flags for dun_level */

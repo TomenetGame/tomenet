@@ -9091,7 +9091,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				    - C. Blue */
 
 	bool destroyed = FALSE;
-	bool empty_level = FALSE, dark_empty = TRUE;
+	bool empty_level = FALSE, dark_empty = TRUE, dark_level = FALSE;
 	bool cavern = FALSE;
 	bool maze = FALSE, permaze = FALSE, bonus = FALSE;
 
@@ -9493,6 +9493,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		if ((randint(DARK_EMPTY) != 1 || (randint(100) > dun_lev)))
 			dark_empty = FALSE;
 	}
+	if (dflags3 & DF3_NO_DARK) dark_level = FALSE;
+	else if (dflags3 & DF3_DARK) dark_level = TRUE;
 
 	if (dflags3 & DF3_NO_EMPTY) empty_level = FALSE;
 	if (dflags3 & DF3_NO_DESTROYED) destroyed = FALSE;
@@ -9510,22 +9512,41 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* All dungeons get their own visuals now, if defined in B-line in d_info - C. Blue */
 	feat_boundary = d_info[dtype].feat_boundary;
 
-	/* Hack -- Start with permawalls
-	 * Hope run-length do a good job :) */
-	for (y = 0; y < MAX_HGT; y++) {
-		for (x = 0; x < MAX_WID; x++) {
-			c_ptr = &zcave[y][x];
+	/* Efficiency */
+	if ((empty_level && !dark_empty) && !dark_level) {
+		/* Hack -- Start with permawalls
+		 * Hope run-length do a good job :) */
+		for (y = 0; y < MAX_HGT; y++) {
+			for (x = 0; x < MAX_WID; x++) {
+				c_ptr = &zcave[y][x];
 
 #ifdef BIG_MAP
-			/* new visuals - also for non-big map mode actually possible */
-			if (x >= dun->l_ptr->wid || y >= dun->l_ptr->hgt) c_ptr->feat = FEAT_PERM_FILL;
-			else
+				/* new visuals - also for non-big map mode actually possible */
+				if (x >= dun->l_ptr->wid || y >= dun->l_ptr->hgt) c_ptr->feat = FEAT_PERM_FILL;
+				else
 #endif
-			/* Create granite (? granite != permanent) wall */
-			c_ptr->feat = feat_boundary;
+				/* Create granite (? granite != permanent) wall */
+				c_ptr->feat = feat_boundary;
 
-			/* Illuminate Arena if needed */
-			if (empty_level && !dark_empty) c_ptr->info |= CAVE_GLOW;
+				/* Illuminate Arena if needed */
+				c_ptr->info |= CAVE_GLOW;
+			}
+		}
+	} else {
+		/* Hack -- Start with permawalls
+		 * Hope run-length do a good job :) */
+		for (y = 0; y < MAX_HGT; y++) {
+			for (x = 0; x < MAX_WID; x++) {
+				c_ptr = &zcave[y][x];
+
+#ifdef BIG_MAP
+				/* new visuals - also for non-big map mode actually possible */
+				if (x >= dun->l_ptr->wid || y >= dun->l_ptr->hgt) c_ptr->feat = FEAT_PERM_FILL;
+				else
+#endif
+				/* Create granite (? granite != permanent) wall */
+				c_ptr->feat = feat_boundary;
+			}
 		}
 	}
 

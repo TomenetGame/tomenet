@@ -1181,12 +1181,12 @@ static cptr d_info_flags3[] = {
 	"NO_EMPTY",
 	"NO_DESTROYED",
 
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
+	"NO_TELE",
+	"NO_ESP",
+	"NO_SUMMON",
+	"LIMIT_ESP",
+	"DARK",
+	"NO_DARK",
 	"",
 	"",
 };
