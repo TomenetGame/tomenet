@@ -6477,9 +6477,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		if (p_ptr->admin_dm &&
 		    /* except if he wields his scythe (uhoh!) */
 		    (!instakills(Ind) ||
-		    /* except except if he's not disabled auto-retaliation */
+		    /* except if he's not disabled auto-retaliation */
 		    (p_ptr->running && p_ptr->inventory[INVEN_WIELD].note &&
-		    strstr(quark_str(p_ptr->inventory[INVEN_WIELD].note), "@Rx")))) {
+		    strstr(quark_str(p_ptr->inventory[INVEN_WIELD].note), "@Ox")))) {
 			/* save old player location */
 			oldx = p_ptr->px;
 			oldy = p_ptr->py;
