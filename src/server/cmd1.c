@@ -2478,6 +2478,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 							if (!check_guard_inscription(i_ptr->note, 'X')) continue;
 
 							if (!can_use(Ind, i_ptr)) continue;
+
 							/* ID rod && ID staff (no *perc*) */
 							if ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY &&
 #ifndef NEW_MDEV_STACKING
@@ -2485,7 +2486,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #else
 							    i_ptr->bpval < i_ptr->number
 #endif
-							    ) || (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0)) {
+							    ) || (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY &&
+							     (i_ptr->pval > 0 || (!object_known_p(Ind, i_ptr) && !(i_ptr->ident & ID_EMPTY))))) {
 								bool flipped = FALSE;
 
 								ID_item_found = TRUE;
@@ -2502,6 +2504,31 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 									else
 										msg_print(Ind, "You failed to use the staff properly.");
 									break;
+								}
+
+								/* Just remember if an empty ID-staff was among our designated items,
+								   so we can give an 'empty' message later on if we didn't have a replacement item */
+								if (i_ptr->tval == TV_STAFF && !i_ptr->pval) {
+									msg_print(Ind, "The staff has no charges left.");
+									i_ptr->ident |= ID_EMPTY;
+
+									if (!i_ptr->note) i_ptr->note = quark_add("empty");
+									else if (strcmp(quark_str(i_ptr->note), "empty")) { // (*) check 1 of 2 (exact match)
+										if (!strstr(quark_str(i_ptr->note), "empty-")) { // (*) check 2 of 2 (partial match)
+											char insc[ONAME_LEN + 6];
+
+											strcpy(insc, "empty-");
+											strcat(insc, quark_str(i_ptr->note));
+											insc[ONAME_LEN] = 0;
+											i_ptr->note = quark_add(insc);
+										}
+									}
+
+									/* Redraw */
+									i_ptr->changed = !i_ptr->changed;
+									p_ptr->window |= (PW_INVEN);
+									/* Try another item */
+									continue; //or should we instead 'break'? probably not.
 								}
 
 								//We managed to pull it off :-)

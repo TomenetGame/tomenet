@@ -6130,96 +6130,116 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 		strcpy(s0, s2);
 		strcpy(s2, "");
 
-		if ((p = strstr(s0, "uncursed-"))) {
+		if ((p = strstr(s0, "empty-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 6);
+			if (id < 0) id = 0;
+		} else if ((p = strstr(s0, "empty"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 5);
+			if (id < 0) id = 0;
+		} else if ((p = strstr(s0, "uncursed-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 9);
-			if (id < 0) id = 0;
+			if (id < 0) id = 1;
 		} else if ((p = strstr(s0, "uncursed"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 8);
-			if (id < 0) id = 0;
+			if (id < 0) id = 1;
 		} else if ((p = strstr(s0, "terrible-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 9);
-			if (id < 1) id = 1;
+			if (id < 1) id = 2;
 		} else if ((p = strstr(s0, "terrible"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 8);
-			if (id < 1) id = 1;
+			if (id < 1) id = 2;
 		} else if ((p = strstr(s0, "cursed-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 7);
-			if (id < 2) id = 2;
+			if (id < 2) id = 3;
 		} else if ((p = strstr(s0, "cursed"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 6);
-			if (id < 2) id = 2;
+			if (id < 2) id = 3;
+		} else if ((p = strstr(s0, "bad-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 4);
+			if (id < 2) id = 4;
+		} else if ((p = strstr(s0, "bad"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 3);
+			if (id < 2) id = 4;
 		} else if ((p = strstr(s0, "worthless-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 10);
-			if (id < 4) id = 4;
+			if (id < 4) id = 5;
 		} else if ((p = strstr(s0, "worthless"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 9);
-			if (id < 4) id = 4;
+			if (id < 4) id = 5;
 		} else if ((p = strstr(s0, "broken-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 7);
-			if (id < 5) id = 5;
+			if (id < 5) id = 6;
 		} else if ((p = strstr(s0, "broken"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 6);
-			if (id < 5) id = 5;
+			if (id < 5) id = 6;
 		} else if ((p = strstr(s0, "average-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 8);
-			if (id < 6) id = 6;
+			if (id < 6) id = 7;
 		} else if ((p = strstr(s0, "average"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 7);
-			if (id < 6) id = 6;
+			if (id < 6) id = 7;
 		} else if ((p = strstr(s0, "good-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 5);
-			if (id < 7) id = 7;
+			if (id < 7) id = 8;
 		} else if ((p = strstr(s0, "good"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 4);
-			if (id < 7) id = 7;
+			if (id < 7) id = 8;
 		} else if ((p = strstr(s0, "excellent-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 10);
-			if (id < 8) id = 8;
+			if (id < 8) id = 9;
 		} else if ((p = strstr(s0, "excellent"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 9);
-			if (id < 8) id = 8;
+			if (id < 8) id = 9;
 		} else if ((p = strstr(s0, "special-"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 8);
-			if (id < 9) id = 9;
+			if (id < 9) id = 10;
 		} else if ((p = strstr(s0, "special"))) {
 			strncpy(s2, s0, p - s0);
 			s2[p - s0] = '\0';
 			strcat(s2, p + 7);
-			if (id < 9) id = 9;
+			if (id < 9) id = 10;
 		} else {
 			/* no further replacements to make */
 			break;
@@ -6229,16 +6249,17 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 	strcpy(s2, s0);
 
 	switch (id) {
-	case 0: strcpy(psid, "uncursed"); break;
-	case 1: strcpy(psid, "terrible"); break;
-	case 2: strcpy(psid, "cursed"); break;
-	case 3: strcpy(psid, "bad"); break;
-	case 4: strcpy(psid, "worthless"); break;
-	case 5: strcpy(psid, "broken"); break;
-	case 6: strcpy(psid, "average"); break;
-	case 7: strcpy(psid, "good"); break;
-	case 8: strcpy(psid, "excellent"); break;
-	case 9: strcpy(psid, "special"); break;
+	case 0: strcpy(psid, "empty"); break;
+	case 1: strcpy(psid, "uncursed"); break;
+	case 2: strcpy(psid, "terrible"); break;
+	case 3: strcpy(psid, "cursed"); break;
+	case 4: strcpy(psid, "bad"); break;
+	case 5: strcpy(psid, "worthless"); break;
+	case 6: strcpy(psid, "broken"); break;
+	case 7: strcpy(psid, "average"); break;
+	case 8: strcpy(psid, "good"); break;
+	case 9: strcpy(psid, "excellent"); break;
+	case 10: strcpy(psid, "special"); break;
 	default:
 		strcpy(psid, "");
 	}

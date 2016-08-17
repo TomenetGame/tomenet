@@ -3393,6 +3393,18 @@ void do_cmd_use_staff(int Ind, int item) {
 		msg_print(Ind, "The staff has no charges left.");
 		o_ptr->ident |= ID_EMPTY;
 
+		if (!o_ptr->note) o_ptr->note = quark_add("empty");
+		else if (strcmp(quark_str(o_ptr->note), "empty")) { // (*) check 1 of 2 (exact match)
+			if (!strstr(quark_str(o_ptr->note), "empty-")) { // (*) check 2 of 2 (partial match)
+				char insc[ONAME_LEN + 6];
+
+				strcpy(insc, "empty-");
+				strcat(insc, quark_str(o_ptr->note));
+				insc[ONAME_LEN] = 0;
+				o_ptr->note = quark_add(insc);
+			}
+		}
+
 		/* Redraw */
 		o_ptr->changed = !o_ptr->changed;
 		p_ptr->window |= (PW_INVEN);
@@ -3631,6 +3643,18 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	if (o_ptr->pval <= 0) {
 		msg_print(Ind, "The wand has no charges left.");
 		o_ptr->ident |= ID_EMPTY;
+
+		if (!o_ptr->note) o_ptr->note = quark_add("empty");
+		else if (strcmp(quark_str(o_ptr->note), "empty")) { // (*) check 1 of 2 (exact match)
+			if (!strstr(quark_str(o_ptr->note), "empty-")) { // (*) check 2 of 2 (partial match)
+				char insc[ONAME_LEN + 6];
+
+				strcpy(insc, "empty-");
+				strcat(insc, quark_str(o_ptr->note));
+				insc[ONAME_LEN] = 0;
+				o_ptr->note = quark_add(insc);
+			}
+		}
 
 		/* Redraw */
 		o_ptr->changed = !o_ptr->changed;

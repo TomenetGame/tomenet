@@ -364,7 +364,7 @@ static void sense_inventory(int Ind) {
 	bool felt_heavy, fail;
 
 	object_type *o_ptr;
-	char o_name[ONAME_LEN];
+	char o_name[ONAME_LEN + 10];
 
 
 	/*** Check for "sensing" ***/
@@ -612,6 +612,7 @@ static void sense_inventory(int Ind) {
 			strcat(o_name, "-");
 			if (!strstr(quark_str(o_ptr->note), o_name)) { // (*) check 2 of 2 (partial match)
 				strcat(o_name, quark_str(o_ptr->note));
+				o_name[ONAME_LEN - 1] = 0;
 				o_ptr->note = quark_add(o_name);
 			}
 		}
