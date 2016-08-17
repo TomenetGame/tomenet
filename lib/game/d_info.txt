@@ -243,7 +243,8 @@ R:2:0
 R:90:1
 M:SPIDER
 R:8:3
-M:ORC | R_CHAR_w | R_CHAR_m | R_CHAR_j | R_CHAR_c | R_CHAR_a | R_CHAR_I
+M:ORC | RES_DARK | RES_POIS
+S:BR_POIS | BR_DARK
 
 # The Heart of the Earth
 # levels 25-36
