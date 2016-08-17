@@ -4665,11 +4665,13 @@ static bool process_player_end_aux(int Ind) {
 		    (p_ptr->body_monster == o_ptr->pval)) {
 			/* Decrease life-span */
 			o_ptr->timeout--;
-
+ #ifndef LIVE_TIMEOUT
 			/* Hack -- notice interesting energy steps */
-			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100))) {
+			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+ #endif
+			{
 				/* Window stuff */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+				p_ptr->window |= PW_EQUIP;
 			}
 
 			/* Hack -- notice interesting fuel steps */
@@ -4677,7 +4679,7 @@ static bool process_player_end_aux(int Ind) {
 				if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
 				msg_print(Ind, "\376\377LYour ring flickers and fades, flashes of light run over its surface.");
 				/* Window stuff */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+				p_ptr->window |= PW_EQUIP;
 			} else if (o_ptr->timeout == 0) {
 				disturb(Ind, 0, 0);
 				msg_print(Ind, "\376\377LYour ring disintegrates!");
@@ -4734,9 +4736,12 @@ static bool process_player_end_aux(int Ind) {
 			o_ptr->timeout--;
 
 			/* Hack -- notice interesting fuel steps */
-			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100))) {
+#ifndef LIVE_TIMEOUT
+			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+#endif
+			{
 				/* Window stuff */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+				p_ptr->window |= PW_EQUIP;
 			}
 
 			/* Hack -- Special treatment when blind */
@@ -4959,8 +4964,13 @@ static bool process_player_end_aux(int Ind) {
 		if (!(o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) || !o_ptr->timeout) continue;
 
 		o_ptr->timeout--;
+#ifdef LIVE_TIMEOUT
+		p_ptr->window |= PW_INVEN;
+#endif
 		/* Notice changes */
 		if (!(o_ptr->timeout)) {
+			/* todo: Maybe give extra message for SV_POTION_BLOOD? */
+
 			inven_item_increase(Ind, i, -o_ptr->number);
 			inven_item_describe(Ind, i);
 			inven_item_optimize(Ind, i);

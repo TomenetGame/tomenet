@@ -645,6 +645,7 @@ extern bool interfere(int Ind, int chance);
 extern void do_cmd_throw(int Ind, int dir, int item, char bashing);
 extern void do_cmd_purchase_house(int Ind, int dir);
 extern int pick_house(struct worldpos *wpos, int y, int x);
+extern int pick_player(house_type *h_ptr);
 extern bool inside_house(struct worldpos *wpos, int x, int y);
 extern int inside_which_house(struct worldpos *wpos, int x, int y);
 extern void house_admin(int Ind, int dir, char *args);
@@ -1721,6 +1722,13 @@ extern void auction_retrieve_items(int Ind, int *retrieved, int *unretrieved);
 extern int auction_show(int Ind, int auction_id);
 extern int auction_examine(int Ind, int auction_id);
 #endif
+
+/* for handling recharging/timeouting in traditional (list) houses */
+extern void home_item_increase(house_type *h_ptr, int item, int num);
+extern void home_item_optimize(house_type *h_ptr, int item);
+//extern void display_house_inventory(int Ind, house_type *h_ptr);
+extern void display_trad_house(int Ind, house_type *h_ptr);
+extern void display_house_entry(int Ind, int pos, house_type *h_ptr);
 
 extern void handle_store_leave(int Ind);
 extern void verify_store_owner(store_type *st_ptr);

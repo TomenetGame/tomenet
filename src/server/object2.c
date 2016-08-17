@@ -10000,8 +10000,9 @@ void reorder_pack(int Ind) {
  */
 /* TODO: terrain effects (lava burns scrolls etc) -- those are done elsewhere */
 void process_objects(void) {
-	int i, k;
+	int i, k, Ind, skip_house_timing = (turn % ((level_speeds[0] * 5) / 120)); //standard world surface speed
 	object_type *o_ptr;
+	house_type *h_ptr;
 
 	/* Process objects */
 	for (k = o_top - 1; k >= 0; k--) {
@@ -10020,10 +10021,8 @@ void process_objects(void) {
 			continue;
 		}
 
-#if 1 /* timing fix - see description in dungeon() */
-		if ((turn % (level_speed(&o_ptr->wpos) / 120))) continue;
-#endif
-
+		/* timing fix - see description in dungeon() */
+		if (turn % (level_speed(&o_ptr->wpos) / 120)) continue;
 		/* Recharge rods on the ground and inside trap kits */
 		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
 #ifndef NEW_MDEV_STACKING
@@ -10036,6 +10035,58 @@ void process_objects(void) {
 #endif
 		}
 	}
+
+#if 1 /* experimental: also process items in list houses */
+
+	/* timing fix - see description in dungeon():
+	   Since all we do here for now is handling recharging/timeouting,
+	   we may just as well return if it's not yet time to. */
+	if (skip_house_timing) return;
+
+	/* process items in list houses */
+	for (k = 0; k < num_houses; k++) {
+		h_ptr = &houses[k];
+		if (!(houses[k].flags & HF_TRAD)) continue; /* skip non-list houses */
+
+		for (i = 0; i < h_ptr->stock_num; i++) {
+			o_ptr = &h_ptr->stock[i];
+
+			/* Handle Timeouts */
+			if (o_ptr->timeout) {
+				switch (o_ptr->tval) {
+				case TV_RING: case TV_LITE:
+					//don't decrement, they don't time out in player inventory either
+					continue;
+				case TV_POTION: case TV_FOOD: //basically just SV_POTION_BLOOD
+					Ind = pick_player(h_ptr);
+					o_ptr->timeout--;
+					/* poof */
+					if (!(o_ptr->timeout)) {
+						home_item_increase(h_ptr, i, -o_ptr->number);
+						home_item_optimize(h_ptr, i);
+						if (Ind) display_trad_house(Ind, h_ptr); //display_house_inventory(Ind, h_ptr);
+					}
+#ifdef LIVE_TIMEOUT
+					else if (Ind) display_house_entry(Ind, i, h_ptr);
+#endif
+					break;
+				}
+			}
+
+			/* Recharge rods in the list house */
+			if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
+#ifndef NEW_MDEV_STACKING
+				o_ptr->pval--;
+#else
+				o_ptr->pval -= o_ptr->number;
+				if (o_ptr->pval < 0) o_ptr->pval = 0; //can happen by rod-stack-splitting (divide_charged_item())
+				/* Reset it from 'charging' state to charged state */
+				if (!o_ptr->pval) o_ptr->bpval = 0;
+#endif
+			}
+		}
+	}
+#endif
 }
 
 /*

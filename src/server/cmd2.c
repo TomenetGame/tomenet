@@ -1555,6 +1555,21 @@ int pick_house(struct worldpos *wpos, int y, int x) {
 	/* Failure */
 	return -1;
 }
+/* Reverse function of pick_house() */
+int pick_player(house_type *h_ptr) {
+	int i;
+
+	/* Check each house */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this one */
+		if (Players[i]->px == h_ptr->dx && Players[i]->py == h_ptr->dy && inarea(&Players[i]->wpos, &h_ptr->wpos))
+			/* Return */
+			return i;
+	}
+
+	/* Failure */
+	return 0;
+}
 
 /* Test if a coordinate (player pos usually) is inside a building
    (or on its edge), in a simple (risky?) way - C. Blue */

@@ -52,9 +52,9 @@ static int gettown_dun(int Ind);
 void home_sell(int Ind, int item, int amt);
 void home_purchase(int Ind, int item, int amt);
 void home_examine(int Ind, int item);
-static void display_house_entry(int Ind, int pos, house_type *h_ptr);
-static void display_house_inventory(int Ind, house_type *h_ptr);
-static void display_trad_house(int Ind, house_type *h_ptr);
+void display_house_entry(int Ind, int pos, house_type *h_ptr);
+void display_house_inventory(int Ind, house_type *h_ptr);
+void display_trad_house(int Ind, house_type *h_ptr);
 void home_extend(int Ind);
 #ifdef PLAYER_STORES
 static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise);
@@ -5290,7 +5290,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
  * Increase, by a given amount, the number of a certain item
  * in a certain store.  This can result in zero items.
  */
-static void home_item_increase(house_type *h_ptr, int item, int num) {
+void home_item_increase(house_type *h_ptr, int item, int num) {
 	int         cnt;
 	object_type *o_ptr;
 
@@ -5311,7 +5311,7 @@ static void home_item_increase(house_type *h_ptr, int item, int num) {
 /*
  * Remove a slot if it is empty
  */
-static void home_item_optimize(house_type *h_ptr, int item) {
+void home_item_optimize(house_type *h_ptr, int item) {
 	int         j;
 	object_type *o_ptr;
 
@@ -5888,7 +5888,7 @@ void home_extend(int Ind) {
 }
 
 
-static void display_house_entry(int Ind, int pos, house_type *h_ptr) {
+void display_house_entry(int Ind, int pos, house_type *h_ptr) {
 	player_type *p_ptr = Players[Ind];
 	object_type		*o_ptr;
 
@@ -5939,7 +5939,7 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr) {
  *
  * The inventory is "sent" not "displayed". -KLJ-
  */
-static void display_house_inventory(int Ind, house_type *h_ptr) {
+void display_house_inventory(int Ind, house_type *h_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int k;
 
@@ -5960,7 +5960,7 @@ static void display_house_inventory(int Ind, house_type *h_ptr) {
 /*
  * Displays store (after clearing screen)		-RAK-
  */
-static void display_trad_house(int Ind, house_type *h_ptr) {
+void display_trad_house(int Ind, house_type *h_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int c = h_ptr->colour; //note: p_ptr->tmp_x is used for non-tradhouses
 
