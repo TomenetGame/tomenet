@@ -79,9 +79,7 @@
  */
 
 typedef struct header header;
-
-struct header
-{
+struct header {
 	byte	v_major;		/* Version -- major */
 	byte	v_minor;		/* Version -- minor */
 	byte	v_patch;		/* Version -- patch */
@@ -109,9 +107,7 @@ struct header
  * extra variables in each struct. (its standard).
  */
 typedef struct worldpos worldpos;
-
-struct worldpos
-{
+struct worldpos {
 	s16b wx;	/* west to east */
 	s16b wy;	/* south to north */
 	s16b wz;	/* deep to sky */
@@ -119,9 +115,7 @@ struct worldpos
 
 /* worldspot adds exact x and y coordinates */
 typedef struct worldspot worldspot;
-
-struct worldspot
-{
+struct worldspot {
 	struct worldpos wpos;
 	s16b x;
 	s16b y;
@@ -129,9 +123,7 @@ struct worldspot
 
 /* cavespot consists of coordinates within a cave */
 typedef struct cavespot cavespot;
-
-struct cavespot
-{
+struct cavespot {
 	s16b x;
 	s16b y;
 };
@@ -144,8 +136,7 @@ struct cavespot
  */
 /* Borrowed from ToME	- Jir - */
 typedef struct obj_theme obj_theme;
-struct obj_theme
-{
+struct obj_theme {
 	byte treasure;
 	byte combat;
 	byte magic;
@@ -158,9 +149,7 @@ struct obj_theme
  */
 
 typedef struct feature_type feature_type;
-
-struct feature_type
-{
+struct feature_type {
 	u16b name;			/* Name (offset) */
 	u16b text;			/* Text (offset) */
 #if 1
@@ -202,9 +191,7 @@ struct feature_type
  */
 
 typedef struct object_kind object_kind;
-
-struct object_kind
-{
+struct object_kind {
 	u16b name;			/* Name (offset) */
 	u16b text;			/* Text (offset) */
 
@@ -281,9 +268,7 @@ struct object_kind
  */
 
 typedef struct artifact_type artifact_type;
-
-struct artifact_type
-{
+struct artifact_type {
 	u16b name;		/* Name (offset) */
 	u16b text;		/* Text (offset) */
 
@@ -338,9 +323,7 @@ struct artifact_type
  */
 
 typedef struct ego_item_type ego_item_type;
-
-struct ego_item_type
-{
+struct ego_item_type {
 	u16b name;			/* Name (offset) */
 	u16b text;			/* Text (offset) */
 
@@ -393,9 +376,7 @@ struct ego_item_type
  */
 
 typedef struct monster_blow monster_blow;
-
-struct monster_blow
-{
+struct monster_blow {
 	byte method;
 	byte effect;
 	byte d_dice;
@@ -428,9 +409,7 @@ struct monster_blow
 
 
 typedef struct monster_race monster_race;
-
-struct monster_race
-{
+struct monster_race {
 	u16b name;				/* Name (offset) */
 	u16b text;				/* Text (offset) */
 	u16b dup_idx;				/* For mimicry: Race idx of duplicate that differs only in FRIENDS flag */
@@ -536,9 +515,7 @@ struct monster_race
  */
 
 typedef struct vault_type vault_type;
-
-struct vault_type
-{
+struct vault_type {
 	u16b name;			/* Name (offset) */
 	u32b text;			/* Text (offset) */
 
@@ -606,7 +583,6 @@ struct trap_kind{
  * and for the "tracking" code.
  */
 typedef struct c_special c_special;
-
 struct c_special{
 	unsigned char type;
 	union	/* 32bits -> 64bits (rune) */
@@ -708,7 +684,6 @@ struct effect_type {
  */
 
 typedef struct object_type object_type;
-
 struct object_type {
 	s32b owner;			/* Player that found it */
 	s16b level;			/* Level req */
@@ -854,7 +829,6 @@ struct npc_type{
  */
 
 typedef struct monster_type monster_type;
-
 struct monster_type {
 	monster_race *r_ptr;		/* Used for special monsters and questors */
 	bool special;			/* Does it use a special r_info ? */
@@ -993,9 +967,7 @@ struct monster_type {
 };
 
 typedef struct monster_ego monster_ego;
-
-struct monster_ego
-{
+struct monster_ego {
 	u32b name;				/* Name (offset) */
 	bool before;                            /* Display ego before or after */
 
@@ -1081,9 +1053,7 @@ struct monster_ego
  */
 
 typedef struct alloc_entry alloc_entry;
-
-struct alloc_entry
-{
+struct alloc_entry {
 	s16b index;		/* The actual index */
 
 	s16b level;		/* Base dungeon level */
@@ -1102,9 +1072,7 @@ struct alloc_entry
  * Please see Init_setup for details.		- Jir -
  */
 typedef struct setup_t setup_t;
-
-struct setup_t
-{
+struct setup_t {
 	s16b frames_per_second;
 	byte max_race;
 	byte max_class;
@@ -1120,9 +1088,7 @@ struct setup_t
  * server.
  */
 typedef struct client_setup_t client_setup_t;
-
-struct client_setup_t
-{
+struct client_setup_t {
 	bool options[OPT_MAX];
 
 	s16b screen_wid;
@@ -1159,9 +1125,7 @@ struct client_setup_t
  */
 
 typedef struct option_type option_type;
-
-struct option_type
-{
+struct option_type {
 	bool	*o_var;
 
 	byte	o_norm;
@@ -1181,9 +1145,7 @@ struct option_type
  * of items, and a table of items that are often purchased.
  */
 typedef struct store_type store_type;
-
-struct store_type
-{
+struct store_type {
 	u16b st_idx;
 
 	u16b owner;                     /* Owner index */
@@ -1317,8 +1279,7 @@ struct dungeon_type {
  * TODO:
  * - allow towns to have dungeon flags(DFn_*)
  */
-struct town_type
-{
+struct town_type {
 	u16b x,y;		/* town wilderness location */
 	u16b baselevel;		/* Normally 0 for the basic town */
 	u16b flags;		/* town flags */
@@ -1336,7 +1297,6 @@ struct town_type
 };
 
 typedef struct wilderness_type wilderness_type;
-
 struct wilderness_type {
 	u16b radius;	/* the distance from the town */
 	u16b type;	/* what kind of terrain we are in */
@@ -1375,9 +1335,7 @@ struct wilderness_type {
  */
 
 typedef struct owner_type owner_type;
-
-struct owner_type
-{
+struct owner_type {
 	u32b name;                      /* Name (offset) */
 
 	s32b max_cost;                  /* Purse limit */
@@ -1401,9 +1359,7 @@ struct owner_type
  */
 /* I'd prefer 'store_kind'.. but just let's not change it */
 typedef struct store_info_type store_info_type;
-
-struct store_info_type
-{
+struct store_info_type {
 	u32b name;                      /* Name (offset) */
 
 	s16b table[STORE_CHOICES][2];   /* Table -- Legal item kinds */
@@ -1427,9 +1383,7 @@ struct store_info_type
  * Stores/buildings actions
  */
 typedef struct store_action_type store_action_type;
-
-struct store_action_type
-{
+struct store_action_type {
 	u32b name;                      /* Name (offset) */
 
 	int costs[3];			/* Costs for hated/neutral/liked people */
@@ -1446,9 +1400,7 @@ struct store_action_type
  */
 
 typedef struct magic_type magic_type;
-
-struct magic_type
-{
+struct magic_type {
 	byte slevel;		/* Required level (to learn) */
 	byte smana;		/* Required mana (to cast) */
 	byte sfail;		/* Minimum chance of failure */
@@ -1464,9 +1416,7 @@ struct magic_type
  */
 
 typedef struct player_magic player_magic;
-
-struct player_magic
-{
+struct player_magic {
 	s16b spell_book;		/* Tval of spell books (if any) */
 	s16b spell_stat;		/* Stat for spells (if any)  */
         magic_type info[64];	/* The available spells */
@@ -1479,7 +1429,6 @@ struct player_magic
  */
 
 typedef struct player_race player_race;
-
 struct player_race {
 	cptr title;		/* Type of race */
 
@@ -1533,7 +1482,6 @@ struct player_race {
  */
 
 typedef struct player_class player_class;
-
 struct player_class {
 	cptr title;			/* Type of class */
 
@@ -1579,9 +1527,7 @@ struct player_class {
  * Player trait info, originally added for Draconians - C. Blue
  */
 typedef struct player_trait player_trait;
-
-struct player_trait
-{
+struct player_trait {
 	cptr title;	/* Name of trait */
 	s32b choice;	/* Legal trait choices, depending on race */
 };
@@ -1589,9 +1535,7 @@ struct player_trait
 
 /* The information needed to show a single "grid" */
 typedef struct cave_view_type cave_view_type;
-
-struct cave_view_type
-{
+struct cave_view_type {
 	byte a;		/* Color attribute */
 	char c;		/* ASCII character */
 };
@@ -1705,8 +1649,7 @@ struct floor_insc{
 
 #if 0
 /* Traditional, store-like house */
-struct trad_house_type
-{
+struct trad_house_type {
 	struct dna_type *dna;	/* house dna door information */
 	s16b stock_num;			/* Stock -- Number of entries */
 	s16b stock_size;		/* Stock -- Total Size of Array */
@@ -1721,8 +1664,7 @@ struct trad_house_type
  */
 typedef struct hostile_type hostile_type;
 
-struct hostile_type
-{
+struct hostile_type {
 	s32b id;		/* ID of player we are hostile to */
 	hostile_type *next;	/* Next in list */
 };
@@ -1733,16 +1675,14 @@ struct hostile_type
 #define hostile_type player_list_type
 typedef struct player_list_type player_list_type;
 
-struct player_list_type
-{
+struct player_list_type {
 	s32b id;		/* ID of player */
 	player_list_type *next;
 };
 #endif
 
 /* remotely ignore players */
-struct remote_ignore
-{
+struct remote_ignore {
 	unsigned int id;		/* player unique id */
 	short serverid;
 	struct remote_ignore *next;	/* Next in list */
@@ -1753,8 +1693,7 @@ struct remote_ignore
  * ESP link list
  */
 typedef struct esp_link_type esp_link_type;
-struct esp_link_type
-{
+struct esp_link_type {
 	s32b id;	/* player ID */
 	byte type;
 	u16b flags;
@@ -1786,8 +1725,7 @@ struct combo_ban {
  * Skills !
  */
 typedef struct skill_type skill_type;
-struct skill_type
-{
+struct skill_type {
 	uintptr name;                              /* Name */
 	uintptr desc;                              /* Description */
 	uintptr action_desc;                       /* Action Description */
@@ -1809,8 +1747,7 @@ struct skill_type
  * Skills of each player
  */
 typedef struct skill_player skill_player;
-struct skill_player
-{
+struct skill_player {
 	s32b base_value;                         /* Base value */
 	s32b value;                             /* Actual value */
 	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
@@ -1862,7 +1799,6 @@ struct account_old {
 };
 
 typedef struct version_type version_type;
-
 struct version_type {		/* Extended version structure */
 	int major;
 	int minor;
@@ -1918,7 +1854,7 @@ struct player_type {
 	char accountname[MAX_CHARS];
 	char hostname[MAX_CHARS];	/* His hostname */
 	char addr[MAX_CHARS];		/* His IP address */
-//	unsigned int version;		/* His version */
+	//unsigned int version;		/* His version */
 	version_type version;
 	bool v_outdated, v_latest, v_test, v_test_latest, v_unknown;
 	bool rogue_like_commands;
@@ -2170,7 +2106,7 @@ struct player_type {
 	bool easy_open;
 	bool easy_disarm;
 	bool easy_tunnel;
-//	bool auto_destroy;
+	//bool auto_destroy;
 	bool clear_inscr;
 	bool auto_inscribe;
 	bool taciturn_messages;
@@ -3045,7 +2981,6 @@ struct boni_col {
 /* For Monk martial arts */
 
 typedef struct martial_arts martial_arts;
-
 struct martial_arts {
 	cptr desc;	/* A verbose attack description */
 	int min_level;	/* Minimum level to use */
@@ -3159,7 +3094,6 @@ struct town_extra {
 /* Server option struct */
 
 typedef struct server_opts server_opts;
-
 struct server_opts {
 	s16b runlevel;		/* Glorified shutdown mode */
 	time_t runtime;		/* Server start time */
@@ -3271,7 +3205,6 @@ struct server_opts {
 /* Client option struct */
 /* Consider separate it into client/types.h and server/types.h */
 typedef struct client_opts client_opts;
-
 struct client_opts {
     //page 1
 	bool rogue_like_commands;
@@ -3443,8 +3376,7 @@ struct client_opts {
  * Most variables in client/variable.c should be bandled here maybe.
  */
 typedef struct c_player_extra c_player_extra;
-struct c_player_extra
-{
+struct c_player_extra {
 	char body_name[MAX_CHARS];	/* Form of Player */
 	char sanity[10];	/* Sanity strings */
 	byte sanity_attr;	/* Colour to display sanity */
@@ -3452,8 +3384,7 @@ struct c_player_extra
 };
 
 typedef struct c_store_extra c_store_extra;
-struct c_store_extra
-{
+struct c_store_extra {
 	char owner_name[40];
 	char store_name[40];
 	s32b max_cost;			/* Purse limit */
@@ -3477,16 +3408,14 @@ struct c_store_extra
 typedef int (*inven_func)(object_type *);
 
 typedef struct hooks_chain hooks_chain;
-struct hooks_chain
-{
+struct hooks_chain {
 	char name[40];
 	char script[40];
 	hooks_chain *next;
 };
 
 typedef union hook_return hook_return;
-union hook_return
-{
+union hook_return {
 	s32b num;
 	char *str;
 	object_type *o_ptr;
@@ -3496,22 +3425,20 @@ union hook_return
  * The spell function must provide the desc
  */
 typedef struct spell_type spell_type;
-struct spell_type
-{
-        cptr name;                      /* Name */
-        byte skill_level;               /* Required level (to learn) */
+struct spell_type {
+	cptr name;                      /* Name */
+	byte skill_level;               /* Required level (to learn) */
 	byte mana;			/* Required mana at lvl 1 */
 	byte mana_max;			/* Required mana at max lvl */
 	byte fail;			/* Minimum chance of failure */
-        s16b level;                     /* Spell level(0 = not learnt) */
-        byte spell_power;		/* affected by spell-power skill? */
+	s16b level;                     /* Spell level(0 = not learnt) */
+	byte spell_power;		/* affected by spell-power skill? */
 };
 
 typedef struct school_type school_type;
-struct school_type
-{
-        cptr name;                      /* Name */
-        s16b skill;                     /* Skill used for that school */
+struct school_type {
+	cptr name;                      /* Name */
+	s16b skill;                     /* Skill used for that school */
 };
 
 /* C. Blue - don't confuse with xorder_type, which is for the basic kill '/xorder'.
@@ -3519,43 +3446,41 @@ struct school_type
    schedule. Timing is possible too. Might want to make use of AT_... sequences. */
 typedef struct global_event_type global_event_type;
 struct global_event_type {
-    int getype;			/* Type of the event (or quest) */
-    bool paused;		/* Is the event currently paused? (special admin command) */
-    s32b paused_turns;		/* Keeps track of turns the event was actually frozen */
-    s32b state[64];		/* progress (zero'ed on event start) */
-    s32b extra[64];		/* extra info (zero'ed on event start) */
-    s32b participant[MAX_GE_PARTICIPANTS];	/* player IDs */
-    s32b creator;       	/* Player ID or 0L */
-    long int announcement_time;	/* for how many seconds the event will be announced until it actually starts */
-    long int signup_time;	/* for how many seconds the event will allow signing up:
+	int getype;			/* Type of the event (or quest) */
+	bool paused;		/* Is the event currently paused? (special admin command) */
+	s32b paused_turns;		/* Keeps track of turns the event was actually frozen */
+	s32b state[64];		/* progress (zero'ed on event start) */
+	s32b extra[64];		/* extra info (zero'ed on event start) */
+	s32b participant[MAX_GE_PARTICIPANTS];	/* player IDs */
+	s32b creator;       	/* Player ID or 0L */
+	long int announcement_time;	/* for how many seconds the event will be announced until it actually starts */
+	long int signup_time;	/* for how many seconds the event will allow signing up:
 				   -1 = this event doesn't allow signing up at all!
 				   0 = same as announcement_time, ie during the announcement phase
 				   >0 = designated time instead of announcement_time. */
-    bool first_announcement;	/* just keep track of first advertisement, and add additional info that time */
-    s32b start_turn;          	/* quest started */
-    s32b end_turn;		/* quest will end */
-    time_t started;		/* quest started */
-    time_t ending;		/* quest will end */
-    char title[64];		/* short title of this event (used for /gesign <n> player command) */
-    char description[10][78];	/* longer event description */
-    bool hidden;		/* hidden from the players? */
-    int min_participants;	/* minimum amount of participants */
-    int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */
-    int cleanup;		/* what kind of cleaning-up is required when event ends (state=255) ? */
-    bool noghost;		/* event will erase character on failure */
+	bool first_announcement;	/* just keep track of first advertisement, and add additional info that time */
+	s32b start_turn;          	/* quest started */
+	s32b end_turn;		/* quest will end */
+	time_t started;		/* quest started */
+	time_t ending;		/* quest will end */
+	char title[64];		/* short title of this event (used for /gesign <n> player command) */
+	char description[10][78];	/* longer event description */
+	bool hidden;		/* hidden from the players? */
+	int min_participants;	/* minimum amount of participants */
+	int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */
+	int cleanup;		/* what kind of cleaning-up is required when event ends (state=255) ? */
+	bool noghost;		/* event will erase character on failure */
 };
 
 /* Runecraft */
 typedef struct r_element r_element;
-struct r_element
-{
+struct r_element {
 	u16b flag;
 	char * name;
 	u16b skill;
 };
 typedef struct r_imperative r_imperative;
-struct r_imperative
-{
+struct r_imperative {
 	u16b flag;
 	char * name;
 	byte level;
@@ -3567,8 +3492,7 @@ struct r_imperative
 	byte energy;
 };
 typedef struct r_type r_type;
-struct r_type
-{
+struct r_type {
 	u16b flag;
 	char * name;
 	byte level;
@@ -3586,8 +3510,7 @@ struct r_type
 	byte d_max;
 };
 typedef struct r_projection r_projection;
-struct r_projection
-{
+struct r_projection {
 	u16b flags;
 	int gf_type;
 	int weight;
@@ -3597,15 +3520,13 @@ struct r_projection
 
 /* Auction system - mikaelh */
 typedef struct bid_type bid_type;
-struct bid_type
-{
+struct bid_type {
 	s32b		bid;
 	s32b		bidder;
 };
 
 typedef struct auction_type auction_type;
-struct auction_type
-{
+struct auction_type {
 	byte		status;			/* Status: setup, bidding, finished or cancelled */
 	byte		flags;			/* Flags: payments */
 	byte		mode;			/* Owner mode: Non-everlasting or everlasting */
