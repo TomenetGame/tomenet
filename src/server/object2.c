@@ -3592,8 +3592,9 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 		/* determine new 'colour' depending on the total amount */
 		if (j_ptr->xtra1) { /* player-dropped? */
 			/* player-dropped piles are compact */
- #ifndef COIN_SMELTING /* disable for golem piece smelting feature in project_i(): requires unchanged colour to accumulate the necessary copper/silver (it's ok for gold) */
+ #ifndef SMELTING /* disable for golem piece smelting feature in project_i(): requires unchanged colour to accumulate the necessary copper/silver (it's ok for gold) */
 			o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, TRUE);
+			everyone_lite_spot(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
  #endif
 			o_ptr->sval = k_info[o_ptr->k_idx].sval;
 		} else if (!o_ptr->xtra2 && !j_ptr->xtra2) { /* coin-type monster piles don't change type to something else */
