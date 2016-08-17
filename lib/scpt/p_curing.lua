@@ -289,7 +289,7 @@ HHEALING2_I = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 12)), (1 + get_level(Ind, HHEALING2_I, 10)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 12)), (1 + get_level(Ind, HHEALING2_I, 10)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " recites purification rites")
 			end,
 	["info"] = 	function()
 			return "heals " .. (get_level(Ind, HHEALING2_I, 12) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 10)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
@@ -309,7 +309,7 @@ HHEALING2_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 22)), (1 + get_level(Ind, HHEALING2_I, 10)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 22)), (1 + get_level(Ind, HHEALING2_I, 10)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " recites purification rites")
 			end,
 	["info"] = 	function()
 			return "heals " .. (get_level(Ind, HHEALING2_I, 22) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 10)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
@@ -329,7 +329,7 @@ HHEALING2_III = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 42)), (1 + get_level(Ind, HHEALING2_I, 10)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 42)), (1 + get_level(Ind, HHEALING2_I, 10)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " recites purification rites")
 			end,
 	["info"] = 	function()
 			return "heals " .. (get_level(Ind, HHEALING2_I, 42) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 10)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
