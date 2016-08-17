@@ -11,21 +11,59 @@ end
 -- The original 'healing cloud' for priests (which never happened)
 -- Basically a nox that heals you. Not targettable; casts the cloud around the caster
 
-HEALINGCLOUD = add_spell {
-	["name"] = 	"Forest's Embrace",
+HEALINGCLOUD_I = add_spell {
+	["name"] = 	"Forest's Embrace I",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	18,
-	["mana"] = 	25,
-	["mana_max"] = 	25,
+	["mana"] = 	18,
+	["mana_max"] = 	18,
 	["fail"] = 	30,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD, 25)), (1 + get_level(Ind, HEALINGCLOUD, 2)), (5 + get_level(Ind, HEALINGCLOUD, 5)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD_I, 12)), (1 + get_level(Ind, HEALINGCLOUD_I, 5)), (5 + get_level(Ind, HEALINGCLOUD_I, 10)), 10, " calls the spirits")
 			end,
 	["info"] = 	function()
-			return "heals " .. (get_level(Ind, HEALINGCLOUD, 25) + 1) .. " rad " .. (1 + get_level(Ind,HEALINGCLOUD,2)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD, 5))
+			return "heals " .. (get_level(Ind, HEALINGCLOUD_I, 12) + 1) .. " rad " .. (1 + get_level(Ind, HEALINGCLOUD_I, 5)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD_I, 10))
+			end,
+	["desc"] = 	{ "Continuously heals you and those around you.",
+			  "Damages undead creatures.", }
+}
+HEALINGCLOUD_II = add_spell {
+	["name"] = 	"Forest's Embrace II",
+	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
+	["spell_power"] = 0,
+	["level"] = 	29,
+	["mana"] = 	32,
+	["mana_max"] = 	32,
+	["fail"] = 	-25,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD_I, 22)), (1 + get_level(Ind, HEALINGCLOUD_I, 5)), (5 + get_level(Ind, HEALINGCLOUD_I, 10)), 10, " calls the spirits")
+			end,
+	["info"] = 	function()
+			return "heals " .. (get_level(Ind, HEALINGCLOUD_I, 22) + 1) .. " rad " .. (1 + get_level(Ind, HEALINGCLOUD_I, 5)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD_I, 10))
+			end,
+	["desc"] = 	{ "Continuously heals you and those around you.",
+			  "Damages undead creatures.", }
+}
+HEALINGCLOUD_III = add_spell {
+	["name"] = 	"Forest's Embrace III",
+	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
+	["spell_power"] = 0,
+	["level"] = 	40,
+	["mana"] = 	60,
+	["mana_max"] = 	60,
+	["fail"] = 	-55,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD_I, 42)), (1 + get_level(Ind, HEALINGCLOUD_I, 5)), (5 + get_level(Ind, HEALINGCLOUD_I, 10)), 10, " calls the spirits")
+			end,
+	["info"] = 	function()
+			return "heals " .. (get_level(Ind, HEALINGCLOUD_I, 42) + 1) .. " rad " .. (1 + get_level(Ind, HEALINGCLOUD_I, 5)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD_I, 10))
 			end,
 	["desc"] = 	{ "Continuously heals you and those around you.",
 			  "Damages undead creatures.", }
