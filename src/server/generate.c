@@ -9195,7 +9195,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* test if we want fountains of blood in this dungeon - C. Blue */
 #if 0//needs dungeon_info_type and all
 	/* Process all dungeon-specific monster generation rules */
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < 10; i++) {
 		rule_type *rule = &d_ptr->rules[i];
 		if (!rule->percent) break;
 		if (rule->percent >= 70 && rule->mode != 4 && (rule->mflags3 & RF3_UNDEAD))

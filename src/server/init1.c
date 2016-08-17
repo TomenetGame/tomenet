@@ -5712,13 +5712,13 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			d_ptr->fill_method = 1;
 			rule_num = -1;
 			r_char_number = 0;
-			for (j = 0; j < 5; j++) {
+			for (j = 0; j < 10; j++) {
 				int k;
 
 				d_ptr->rules[j].mode = DUNGEON_MODE_NONE;
 				d_ptr->rules[j].percent = 0;
 
-				for (k = 0; k < 5; k++) d_ptr->rules[j].r_char[k] = 0;
+				for (k = 0; k < 10; k++) d_ptr->rules[j].r_char[k] = 0;
 			}
 
 			/* HACK -- Those ones HAVE to have a set default value */
@@ -5760,7 +5760,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-		/* Process 'R' for "monster generation Rule" (up to 5 lines) */
+		/* Process 'B' for "boundary Rule" (up to 5 lines) */
 		if (buf[0] == 'B') {
 			int feat_boundary;
 
@@ -6014,7 +6014,7 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 		/* Process 'R' for "monster generation Rule" (up to 5 lines) */
 		if (buf[0] == 'R') {
 			int percent, mode;
-			int z, y, lims[5];
+			int z, y, lims[10];
 
 			/* Scan for the values */
 			if (2 != sscanf(buf + 2, "%d:%d",
@@ -6058,8 +6058,11 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 
 				/* XXX XXX XXX Hack -- Read monster symbols */
 				if (1 == sscanf(s, "R_CHAR_%c", &r_char)) {
-					/* Limited to 5 races */
-					if(r_char_number >= 5) continue;
+					/* Limited to 10 races */
+					if (r_char_number >= 10) {
+						s = t;
+						continue;
+					}
 
 					/* Extract a "frequency" */
 					d_ptr->rules[rule_num].r_char[r_char_number++] = r_char;

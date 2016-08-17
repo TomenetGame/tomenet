@@ -3031,8 +3031,7 @@ struct player_type {
 
 typedef struct boni_col boni_col;
 
-struct boni_col
-{
+struct boni_col {
 	/* Index */
 	byte i;
 	/* Hack signed char/byte values */
@@ -3047,20 +3046,18 @@ struct boni_col
 
 typedef struct martial_arts martial_arts;
 
-struct martial_arts
-{
-    cptr    desc;    /* A verbose attack description */
-    int     min_level;  /* Minimum level to use */
-    int     rchance;     /* Reverse chance, lower value means more often */
-    int     dd;        /* Damage dice */
-    int     ds;        /* Damage sides */
-    int     effect;     /* Special effects */
+struct martial_arts {
+	cptr desc;	/* A verbose attack description */
+	int min_level;	/* Minimum level to use */
+	int rchance;	/* Reverse chance, lower value means more often */
+	int dd;		/* Damage dice */
+	int ds;		/* Damage sides */
+	int effect;	/* Special effects */
 };
 
 /* Define monster generation rules */
 typedef struct rule_type rule_type;
-struct rule_type
-{
+struct rule_type {
 	byte mode;			/* Mode of combination of the monster flags */
 	byte percent;			/* Percentage of monsters added by this rule */
 
@@ -3075,7 +3072,7 @@ struct rule_type
 	u32b mflags9;
 	u32b mflags0;
 
-	char r_char[5];			/* Monster race allowed */
+	char r_char[10];			/* Monster race allowed */
 };
 
 #ifdef IRONDEEPDIVE_MIXED_TYPES
@@ -3089,10 +3086,9 @@ struct iddc_type {
 
 /* A structure for the != dungeon types */
 typedef struct dungeon_info_type dungeon_info_type;
-struct dungeon_info_type
-{
+struct dungeon_info_type {
 	u32b name;                      /* Name */
-//	int idx;			/* index in d_info.txt */
+	//int idx;			/* index in d_info.txt */
 	u32b text;                      /* Description */
 	char short_name[3];             /* Short name */
 
@@ -3120,7 +3116,7 @@ struct dungeon_info_type
 	u32b flags3;                    /* Flags 3 */
 
 	byte rule_percents[100];        /* Flat rule percents */
-	rule_type rules[5];             /* Monster generation rules */
+	rule_type rules[10];            /* Monster generation rules */
 
 	int final_object;               /* The object you'll find at the bottom */
 	int final_artifact;             /* The artifact you'll find at the bottom */
@@ -3145,8 +3141,7 @@ struct dungeon_info_type
  * (In great need of death!)
  */
 typedef struct town_extra town_extra;
-struct town_extra
-{
+struct town_extra {
 	cptr name;
 	byte feat1;
 	byte feat2;

@@ -1019,7 +1019,7 @@ int restrict_monster_to_dungeon(int r_idx, int dun_type) {
 	int i, percents = 0, factor = 10000;
 
 	/* Process all rules */
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < 10; i++) {
 		rule_type *rule = &d_ptr->rules[i];
 
 		/* Break if not valid */
