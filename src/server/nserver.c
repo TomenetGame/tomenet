@@ -8024,7 +8024,7 @@ static int Receive_run(int ind) {
 	}
 
 	/* If not the dungeon master, who can always run */
-	if (!p_ptr->admin_dm) {
+	if (!p_ptr->admin_dm && !p_ptr->admin_invinc) {
 		monster_race *r_ptr;
 
 		if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return Receive_walk(ind);
