@@ -7502,7 +7502,7 @@ void player_death(int Ind) {
 
  #ifndef FALLEN_WINNERSONLY
 			/* Take off winner artifacts and winner-only items */
-			for (i = INVEN_WIELD; i <= INVEN_TOTAL; i++) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 				o_ptr = &p_ptr->inventory[i];
 				object_flags(o_ptr, &dummy, &dummy, &dummy, &dummy, &f5, &dummy, &dummy);
 				if ((f5 & TR5_WINNERS_ONLY)) {
