@@ -1519,7 +1519,8 @@ Weapons, devices and spells:
     @O          and its variants control the 'auto-retaliator' which is a
                 mechanism designed to make your character automatically attack
                 targets that are standing directly adjacent to you.
-                For details about auto-retaliation see (4.1a)!
+                For details about auto-retaliation and the different types of
+                @O... inscriptions, see (4.1a)!
 
 Rods only:
     !C          will notify you when the rod finished recharging.
