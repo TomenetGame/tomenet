@@ -6664,9 +6664,15 @@ void update_stuff(int Ind) {
 		}
 		/* we just broke a link (and we were receiver) */
 		else {
+			cave_type **zcave = getcave(&p_ptr->wpos);
 			handle_music(Ind); /* restore music after a mind-link has been broken */
 			/* ultra hack-- abuse this for ambient sfx too ^^ */
-			handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
+			if (zcave) handle_ambient_sfx(Ind, &(zcave[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
+			else {
+				s_printf("UPATE_STUFF: zcave failed (%s)\n", p_ptr->name);
+				/* retry */
+				p_ptr->update |= PU_MUSIC;
+			}
 		}
 	}
 #endif
