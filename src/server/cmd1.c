@@ -6526,6 +6526,22 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			/* Full energy must always be consumed when attacking */
 			if (consume_full_energy) *consume_full_energy = TRUE;
 
+#if 0 /* not for now (note: this code doesn't work yet!) */
+			/* Allow performing a different action that melee attacking */
+			for (i = 0; i < INVEN_TOTAL; i++) {
+				if (!p_ptr->inventory[i].note) continue;
+				if (strstr(quark_str(p_ptr->inventory[i].note), "@M")) {
+					if (p_ptr->stormbringer || (
+#ifdef AUTO_RET_CMD
+					    !retaliate_cmd(Ind, fallback) &&
+#endif
+					    !retaliate_item(Ind, item, at_O_inscription, fallback)))
+						py_attack(Ind, y, x, TRUE);
+				}
+			}
+			if (i == INVEN_TOTAL)
+#endif
+			/* Normal attack */
 			py_attack(Ind, y, x, TRUE);
 		}
 
