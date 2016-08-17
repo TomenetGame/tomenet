@@ -6669,6 +6669,9 @@ void update_stuff(int Ind) {
 			/* ultra hack-- abuse this for ambient sfx too ^^ */
 			if (zcave) handle_ambient_sfx(Ind, &(zcave[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
 			else {
+				/* Rare crash, induced by clearing a doppelganger of the mindlink receiver at
+				   his actual location, putting him at some odd location where he not really is,
+				   causing getcave() to find no allocated cave at 'his' coordinates. */
 				s_printf("UPATE_STUFF: zcave failed (%s)\n", p_ptr->name);
 				/* retry */
 				p_ptr->update |= PU_MUSIC;
