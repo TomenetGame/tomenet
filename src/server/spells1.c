@@ -4397,11 +4397,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					/* Observe */
 					if (player_can_see_bold(Ind, y, x)) obvious = TRUE;
 				}
-			}
 
-			/* Mega-Hack -- Update the monster in the affected grid */
-			/* This allows "spear of light" (etc) to work "correctly" */
-			if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
+				/* Mega-Hack -- Update the monster in the affected grid */
+				/* This allows "spear of light" (etc) to work "correctly" */
+				if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
+			}
 			break;
 
 		/* Darken the grid */
@@ -4410,27 +4410,28 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Notice */
 			if (!quiet && player_can_see_bold(Ind, y, x)) obvious = TRUE;
 
-			/* Turn off the light. */
-			c_ptr->info &= ~CAVE_GLOW;
+			/* don't ruin the mood :> (allow turning on light inside houses though) */
+			if ((!(wpos->wz == 0 && (season_halloween || season_newyearseve))) || (c_ptr->info & CAVE_ICKY)) {
+				/* Turn off the light. */
+				c_ptr->info &= ~CAVE_GLOW;
 
-			/* Hack -- Forget "boring" grids */
-			    //if (c_ptr->feat <= FEAT_INVIS)
-			if (cave_plain_floor_grid(c_ptr)) {
-				/* Forget the wall */
-				everyone_forget_spot(wpos, y, x);
+				/* Hack -- Forget "boring" grids */
+				    //if (c_ptr->feat <= FEAT_INVIS)
+				if (cave_plain_floor_grid(c_ptr)) {
+					/* Forget the wall */
+					everyone_forget_spot(wpos, y, x);
+					if (!quiet)
+						/* Notice */
+						note_spot(Ind, y, x);
+				}
 				if (!quiet)
-					/* Notice */
-					note_spot(Ind, y, x);
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
+
+				/* Mega-Hack -- Update the monster in the affected grid */
+				/* This allows "spear of light" (etc) to work "correctly" */
+				if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
 			}
-			if (!quiet)
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-
-			/* Mega-Hack -- Update the monster in the affected grid */
-			/* This allows "spear of light" (etc) to work "correctly" */
-			if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
-
-			/* All done */
 			break;
 
 		case GF_KILL_GLYPH:
