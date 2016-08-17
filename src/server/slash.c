@@ -5505,15 +5505,15 @@ void do_slash_cmd(int Ind, char *message) {
 				bool found_town = FALSE;
 #endif
 				struct dungeon_type *d_ptr, dun_tmp;
-				struct worldpos *tpos = &p_ptr->wpos;
-				wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
+				struct worldpos tpos = p_ptr->wpos;
+				wilderness_type *wild = &wild_info[tpos.wy][tpos.wx];
 
 				/* more mad code to change RPG_SERVER dungeon flags.. */
 				for(x = 0; x < (tk ? 64 : 1); x++)
 				for(y = 0; y < (tk ? 64 : 1); y++) {
-					if (!tk) {tpos = &p_ptr->wpos;}
-					else {tpos->wx = x; tpos->wy = y; tpos->wz = 0;}
-					wild = &wild_info[tpos->wy][tpos->wx];
+					if (!tk) {tpos = p_ptr->wpos;}
+					else {tpos.wx = x; tpos.wy = y; tpos.wz = 0;}
+					wild = &wild_info[tpos.wy][tpos.wx];
 
 					if ((d_ptr = wild->tower)) {
 						type = d_ptr->type;
@@ -5579,7 +5579,7 @@ void do_slash_cmd(int Ind, char *message) {
 						    !(d_ptr->flags2 & DF2_IRON)) { /* already Ironman? Don't change it */
 							found_town = FALSE;
 							for(i = 0; i < numtowns; i++) {
-								if(town[i].x == tpos->wx && town[i].y == tpos->wy) {
+								if(town[i].x == tpos.wx && town[i].y == tpos.wy) {
 									found_town = TRUE;
 									if (in_bree(tpos)) {
 										/* exempt training tower since it might be needed for global events */
@@ -5663,9 +5663,9 @@ void do_slash_cmd(int Ind, char *message) {
 						    !(d_ptr->flags2 & DF2_IRON)) { /* already Ironman? Don't change it */
 							found_town = FALSE;
 							for(i = 0; i < numtowns; i++) {
-								if(town[i].x == tpos->wx && town[i].y == tpos->wy) {
+								if(town[i].x == tpos.wx && town[i].y == tpos.wy) {
 									found_town = TRUE;
-									if (in_bree(tpos)) {
+									if (in_bree(&tpos)) {
 										d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
 									} else {
 										d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */
