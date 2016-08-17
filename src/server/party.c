@@ -2517,10 +2517,14 @@ void guild_leave(int Ind, bool voluntarily) {
 	/* Inform people */
 	if (voluntarily) {
 		msg_print(Ind, "\374\377yYou have left your guild.");
+		p_ptr->guild = 0; //hack: prevent duplicate message
 		if (!is_admin(p_ptr)) guild_msg_format(guild_id, "\374\377y%s has left the guild.", p_ptr->name);
+		p_ptr->guild = guild_id; //unhack
 	} else {
 		msg_print(Ind, "\374\377yYou have been removed from your guild.");
+		p_ptr->guild = 0; //hack: prevent duplicate message
 		if (!is_admin(p_ptr)) guild_msg_format(guild_id, "\374\377y%s has been removed from the guild.", p_ptr->name);
+		p_ptr->guild = guild_id; //unhack
 	}
 
 	/* If he's the guildmaster, set master to zero */
