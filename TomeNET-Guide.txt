@@ -18919,4 +18919,16 @@ PROBLEM 53: I cannot select a server from the meta server list, it seems my key
 SOLUTION:   If you are using a non-english keyboard layout with asian or
             cyrillic letters, switch it to english layout.
 
+PROBLEM 54: Editing config files of all kinds (ini/prf/opt/ins..) doesn't seem
+            to have any effect.
+SOLUTION:   If you're on Windows and using a game version greater than 4.6.1a,
+            TomeNET will make copies of your 'scpt' and 'user' folders and work
+            with those instead of the original ones (which are probably in your
+            Program Files folder). The working copies are located at folder:
+            C:\users\yourname\
+            The drive letter and path could vary depending on your Windows
+            installation, but this is the normal location in almost all cases.
+            (The reason the game does this is that Windows starting at version 7
+            will severly limit access to the Program Files folder.)
+
 ==============================================================================
