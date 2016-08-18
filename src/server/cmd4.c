@@ -432,10 +432,12 @@ void do_cmd_check_uniques(int Ind, int line) {
 			if (!(p_ptr->uniques_alive)) {
 				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (100)\377%c was slain by", r_name + r_ptr->name, c_out);
 				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
+				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
 				else fprintf(fff, "%s (%d) was slain by", r_name + r_ptr->name, r_ptr->level);
 			} else {
 				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (100)\377%c", r_name + r_ptr->name, c_out);
 				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
+				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
 				else fprintf(fff, "%s (%d)", r_name + r_ptr->name, r_ptr->level);
 			}
 			
