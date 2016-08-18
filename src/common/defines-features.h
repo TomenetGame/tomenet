@@ -35,14 +35,15 @@
 #define IRONDEEPDIVE_EXTRA_FIXED_TOWNS
 /* Do artifacts time out especially quickly in the IDDC? */
 #define IDDC_ARTIFACT_FAST_TIMEOUT
+/* Can the first [two] speed rings be found especially easily in the IDDC? Or too much pampering? (0/[1]/2) */
+#define IDDC_EASY_SPEED_RINGS 1
+
 /* Do artifacts time out especially quickly for total_winners
    (and for once_winners if fallenkings_etiquette is set)? */
 #define WINNER_ARTIFACT_FAST_TIMEOUT
 
-/* Can the first [two] speed rings be found especially easily in the IDDC? Or too much pampering? (0/[1]/2) */
-#define IDDC_EASY_SPEED_RINGS 1
-
-#define DUNGEON_VISIT_BONUS	/* Experimental: Dungeons rarely visited give exp bonus - C. Blue */
+/* Experimental: Dungeons rarely visited give exp bonus - C. Blue */
+#define DUNGEON_VISIT_BONUS
 //#define DUNGEON_VISIT_BONUS_DEPTHRANGE /* not yet implemented: enhance DUNGEON_VISIT_BONUS algorithm further (but seems inefficient atm) */
 
 /* Filter swearwords (depends on client-side option too) and put offenders to jail?
@@ -86,6 +87,7 @@
 #define ENABLE_MAIA		/* enable RACE_MAIA (formerly 'DIVINE' race) */
 #define ENABLE_KOBOLD		/* enable RACE_KOBOLD */
 
+
 /* Allow monsters with AI_ASTAR r_info flag to use A* pathfinding algorithm? - C. Blue */
 #define MONSTER_ASTAR
 
@@ -105,6 +107,7 @@
    Let's just use same as for MONSTER_FLOW_BY_SOUND, so we don't need more fields for cave_type.. - C. Blue */
 //#define MONSTER_FLOW_BY_ESP
 
+
 /* Allow use of '!E' inscription on any item to prevent earthquakes from TR5_IMPACT items?
    If disabled, it's still allowed to be used on Grond (exclusively)! */
 //#define ALLOW_NO_QUAKE_INSCRIPTION
@@ -119,11 +122,14 @@
 /* Load 'D:' tags from a_info.txt file and display them on examining - C. Blue */
 #define ART_DIZ
 
-#define ENABLE_INSTANT_RES	/* Enable the instant resurrection feature */
+/* Enable the instant resurrection feature (for everlasting players, in the temple) */
+#define ENABLE_INSTANT_RES
 
-#define WILDERNESS_NEW_FEATURES	/* Use new 4.4.9 wilderness features? WARNING: Changes wilderness and houses */
+/* Use new 4.4.9 wilderness features? WARNING: Changes wilderness and houses */
+#define WILDERNESS_NEW_FEATURES
 
-#define BIG_MAP		/* Allow a larger main window with a map bigger than 66x22 - C. Blue */
+/* Allow a larger main window with a map bigger than 66x22 (usually 66x44) - C. Blue */
+#define BIG_MAP
 
 /* Use an info screen for normal ID too, not just for *ID*, and display all
    guaranteed abilities (k_info and 100%-e_info flags/esp) in it. - C. Blue */
@@ -332,6 +338,8 @@
  /* Remove some hard-coding in the client options */
  #define CO_BIGMAP	7
 
+ /* Blacken lower part of screen if we're mindlinked to a non-bigmap-target but
+    are actually using bigmap-screen. */
  #ifdef TEST_CLIENT
   #define BIGMAP_MINDLINK_HACK
  #endif
