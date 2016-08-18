@@ -5578,10 +5578,10 @@ void do_slash_cmd(int Ind, char *message) {
  #endif
 						    !(d_ptr->flags2 & DF2_IRON)) { /* already Ironman? Don't change it */
 							found_town = FALSE;
-							for(i = 0; i < numtowns; i++) {
-								if(town[i].x == tpos.wx && town[i].y == tpos.wy) {
+							for (i = 0; i < numtowns; i++) {
+								if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
 									found_town = TRUE;
-									if (in_bree(tpos)) {
+									if (in_bree(&tpos)) {
 										/* exempt training tower since it might be needed for global events */
 										continue;
 
@@ -5662,8 +5662,8 @@ void do_slash_cmd(int Ind, char *message) {
  #endif
 						    !(d_ptr->flags2 & DF2_IRON)) { /* already Ironman? Don't change it */
 							found_town = FALSE;
-							for(i = 0; i < numtowns; i++) {
-								if(town[i].x == tpos.wx && town[i].y == tpos.wy) {
+							for (i = 0; i < numtowns; i++) {
+								if (town[i].x == tpos.wx && town[i].y == tpos.wy) {
 									found_town = TRUE;
 									if (in_bree(&tpos)) {
 										d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
