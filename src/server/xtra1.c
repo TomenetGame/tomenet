@@ -9194,7 +9194,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		}
 		if (!p_ptr->mail_COD) total += p_ptr->mail_fee;
 		if (p_ptr->au < total) {
-			msg_format(Ind, "\377yYou do not carry enough money to pay the total amount of %d, including the fee of %d Au!", total, p_ptr->mail_fee);
+			msg_format(Ind, "\377yYou do not carry enough money to pay the total amount of %d Au, including the fee of %d Au!", total, p_ptr->mail_fee);
 			return;
 		}
 
@@ -9519,7 +9519,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		return;
 	case RID_SEND_ITEM_PAY2:
 		p_ptr->mail_COD = !cfr;
-		Send_request_num(Ind, RID_SEND_ITEM_PAY, "How much does the receipient have to pay you? ", -1);
+		Send_request_num(Ind, RID_SEND_ITEM_PAY, "How much gold does the receipient have to pay you? ", -1);
 		return;
 #endif
 	default: ;

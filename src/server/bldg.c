@@ -2377,7 +2377,7 @@ if (is_admin(p_ptr))
 			p_ptr->mail_fee = fee;
 			p_ptr->mail_xfee = 0;
 			Send_request_cfr(Ind, bact == BACT_SEND_ITEM ? RID_SEND_ITEM : RID_SEND_ITEM_PAY,
-			    format("The fee for sending this item is %d, accept?", fee), FALSE);
+			    format("The fee for sending this item is %d Au, accept?", fee), FALSE);
 			break; }
 		case BACT_SEND_GOLD: {
 			int i;
@@ -2408,7 +2408,7 @@ if (is_admin(p_ptr))
 			p_ptr->mail_gold = gold;
 			p_ptr->mail_fee = fee;
 			p_ptr->mail_xfee = 0;
-			Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d, accept?", gold, fee), FALSE);
+			Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d Au, accept?", gold, fee), FALSE);
 			break; }
 #endif
 		default:
