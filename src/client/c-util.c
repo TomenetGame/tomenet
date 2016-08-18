@@ -2194,8 +2194,7 @@ if (!c_cfg.keep_topline)
 //#endif
 }
 
-bool get_dir(int *dp)
-{
+bool get_dir(int *dp) {
 	int	dir = 0;
 	char	command;
 	cptr	p;
@@ -2237,8 +2236,7 @@ bool get_dir(int *dp)
  * At the given location, using the given attribute, if allowed,
  * add the given string.  Do not clear the line.
  */
-void c_put_str(byte attr, cptr str, int row, int col)
-{
+void c_put_str(byte attr, cptr str, int row, int col) {
 	/* Position cursor, Dump the attr/text */
 	Term_putstr(col, row, -1, attr, (char*)str);
 }
@@ -2247,8 +2245,7 @@ void c_put_str(byte attr, cptr str, int row, int col)
 /*
  * As above, but in "white"
  */
-void put_str(cptr str, int row, int col)
-{
+void put_str(cptr str, int row, int col) {
 	/* Spawn */
 	Term_putstr(col, row, -1, TERM_WHITE, (char*)str);
 }
@@ -2300,6 +2297,51 @@ bool get_check2(cptr prompt, bool default_yes) {
 
 	/* More normal */
 	if (default_yes) {
+		if (i == 'n' || i == 'N' || i == '\e') return FALSE;
+		return TRUE;
+	}
+
+	if ((i == 'Y') || (i == 'y')) return (TRUE);
+	return (FALSE);
+}
+/* default_choice:
+   0 = no preference, only accept y/Y/n/N for input
+   1 = default is yes, any key besides n/N will count as yes
+   2 = default is yes, any key besides y/Y will count as no */
+bool get_check3(cptr prompt, char default_choice) {
+	int i;
+	char buf[80];
+
+	/* Hack -- Build a "useful" prompt */
+	if (default_choice == 1) strnfmt(buf, 78, "%.70s [Y/n]", prompt);
+	else if (default_choice == 2) strnfmt(buf, 78, "%.70s [y/N]", prompt);
+	else strnfmt(buf, 78, "%.70s [y/n]", prompt);
+
+	/* The top line is "icky" */
+	topline_icky = TRUE;
+
+	/* Prompt for it */
+	prompt_topline(buf);
+
+	/* Get an acceptable answer */
+	while (TRUE) {
+		i = inkey();
+		//if (c_cfg.quick_messages) break; //always on now
+		if (!default_choice && !strchr("YyNn", i)) continue;
+		break;
+	}
+
+	/* Erase the prompt */
+	clear_topline();
+
+	/* The top line is OK again */
+	topline_icky = FALSE;
+
+	/* Flush any events that came in while we were icky */
+	if (!c_quit) Flush_queue();
+
+	/* More normal */
+	if (default_choice == 1) {
 		if (i == 'n' || i == 'N' || i == '\e') return FALSE;
 		return TRUE;
 	}

@@ -9048,28 +9048,28 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			/* special hack: spell scrolls get a unique message */
 			if (extra != -1) {
 				if (strstr(o_name, "Scroll"))
-					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep that particular scroll for you, that will be %d Au!", price), FALSE);
+					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep that particular scroll for you, that will be %d Au!", price), 2);
 				else
-					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep that particular crystal for you, that will be %d Au!", price), FALSE);
+					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep that particular crystal for you, that will be %d Au!", price), 2);
 			}
-			else if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
-			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is somewhat less common, that will be %d Au!", price), FALSE);
-			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is uncommon, I could promise you delivery for %d Au!", price), FALSE);
-			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is rare, I'll try to get it for you for %d Au!", price), FALSE);
-			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That's very rare, I might be able to get hold of one for %d Au!", price), FALSE);
+			else if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), 2);
+			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is somewhat less common, that will be %d Au!", price), 2);
+			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is uncommon, I could promise you delivery for %d Au!", price), 2);
+			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That item is rare, I'll try to get it for you for %d Au!", price), 2);
+			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("That's very rare, I might be able to get hold of one for %d Au!", price), 2);
 		} else {
 			/* special hack: spell scrolls get a unique message */
 			if (extra != -1) {
 				if (strstr(o_name, "Scroll"))
-					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep those specific scrolls for you, that will be %d Au!", price), FALSE);
+					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep those specific scrolls for you, that will be %d Au!", price), 2);
 				else
-					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep those specific crystals for you, that will be %d Au!", price), FALSE);
+					Send_request_cfr(Ind, RID_ITEM_ORDER, format("I can keep those specific crystals for you, that will be %d Au!", price), 2);
 			}
-			else if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), FALSE);
-			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are somewhat less common, that will be %d Au!", price), FALSE);
-			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are uncommon, I could promise you delivery for %d Au!", price), FALSE);
-			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are rare, I'll try to get those for you for %d Au!", price), FALSE);
-			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are very rare, I might be able to obtain them for %d Au!", price), FALSE);
+			else if (j >= 90) Send_request_cfr(Ind, RID_ITEM_ORDER, format("That will be %d gold pieces!", price), 2);
+			else if (j >= 50) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are somewhat less common, that will be %d Au!", price), 2);
+			else if (j >= 20) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are uncommon, I could promise you delivery for %d Au!", price), 2);
+			else if (j >= 5) Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are rare, I'll try to get those for you for %d Au!", price), 2);
+			else Send_request_cfr(Ind, RID_ITEM_ORDER, format("Those are very rare, I might be able to obtain them for %d Au!", price), 2);
 		}
 		return;
 		}
@@ -9442,10 +9442,10 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 #endif
 #ifdef ENABLE_MERCHANT_MAIL
 	case RID_SEND_ITEM:
-		if (cfr) Send_request_cfr(Ind, RID_SEND_ITEM2, "Will you be paying the fee? Otherwise we'll charge the addressee.", TRUE);
+		if (cfr) Send_request_cfr(Ind, RID_SEND_ITEM2, "Will you be paying the fee? Otherwise we'll charge the addressee.", 2);
 		return;
 	case RID_SEND_GOLD:
-		if (cfr) Send_request_cfr(Ind, RID_SEND_GOLD2, "Will you be paying the fee? Otherwise we'll charge the addressee.", TRUE);
+		if (cfr) Send_request_cfr(Ind, RID_SEND_GOLD2, "Will you be paying the fee? Otherwise we'll charge the addressee.", 1);
 		return;
 	case RID_SEND_ITEM2:
 		p_ptr->mail_COD = !cfr;
@@ -9515,7 +9515,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		}
 		return; }
 	case RID_SEND_ITEM_PAY:
-		if (cfr) Send_request_cfr(Ind, RID_SEND_ITEM_PAY2, "Will you be paying the fee? Otherwise we'll charge the addressee.", TRUE);
+		if (cfr) Send_request_cfr(Ind, RID_SEND_ITEM_PAY2, "Will you be paying the fee? Otherwise we'll charge the addressee.", 2);
 		return;
 	case RID_SEND_ITEM_PAY2:
 		p_ptr->mail_COD = !cfr;

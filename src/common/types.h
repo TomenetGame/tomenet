@@ -2899,7 +2899,7 @@ struct player_type {
 	byte delay_cfr;
 	int delay_cfr_id;
 	char delay_cfr_prompt[MAX_CHARS];
-	bool delay_cfr_default_yes;
+	bool delay_cfr_default_choice;
 
 	char reply_name[MAX_CHARS];	/* last player who sent us a private message, for replying */
 

@@ -3550,7 +3550,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	if (may_acquire) {
 		/* auto-acquire? */
 		if (q_ptr->auto_accept) quest_acquire_confirmed(Ind, q_idx, q_ptr->auto_accept >= 2);
-		else Send_delayed_request_cfr(Ind, RID_QUEST_ACQUIRE + q_idx, format("Accept the quest \"%s\"?", q_name + q_ptr->name), TRUE);
+		else Send_delayed_request_cfr(Ind, RID_QUEST_ACQUIRE + q_idx, format("Accept the quest \"%s\"?", q_name + q_ptr->name), 1);
 	}
 }
 
@@ -3667,7 +3667,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 			/* hack: if 1st keyword is "y" just give a yes/no choice instead of an input prompt?
 			   we assume that 2nd keyword is a "n" then. */
 			if (yn_hack)
-				Send_delayed_request_cfr(Ind, RID_QUEST + q_idx, "? (choose yes or no)>", FALSE);
+				Send_delayed_request_cfr(Ind, RID_QUEST + q_idx, "? (choose yes or no)>", 0);
 			else /* normal prompt for keyword input */
 				Send_delayed_request_str(Ind, RID_QUEST + q_idx, "?> ", "");
 		}

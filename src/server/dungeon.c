@@ -8139,7 +8139,7 @@ void dungeon(void) {
 				p_ptr->delay_cfr -= 10;
 				if (p_ptr->delay_cfr <= 0) {
 					p_ptr->delay_cfr = 0;
-					Send_request_cfr(i, p_ptr->delay_cfr_id, p_ptr->delay_cfr_prompt, p_ptr->delay_cfr_default_yes);
+					Send_request_cfr(i, p_ptr->delay_cfr_id, p_ptr->delay_cfr_prompt, p_ptr->delay_cfr_default_choice);
 				}
 			}
 		}

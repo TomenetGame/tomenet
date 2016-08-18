@@ -2187,7 +2187,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				msg_print(Ind, "You need an up-to-date client to rename a guild.");
 				break;
 			}
-			Send_request_cfr(Ind, RID_GUILD_RENAME, format("Renaming your guild costs %d Au. Are you sure?", GUILD_PRICE), FALSE);
+			Send_request_cfr(Ind, RID_GUILD_RENAME, format("Renaming your guild costs %d Au. Are you sure?", GUILD_PRICE), 2);
 			break;
 		case BACT_STATIC:
 #if 1
@@ -2377,7 +2377,7 @@ if (is_admin(p_ptr))
 			p_ptr->mail_fee = fee;
 			p_ptr->mail_xfee = 0;
 			Send_request_cfr(Ind, bact == BACT_SEND_ITEM ? RID_SEND_ITEM : RID_SEND_ITEM_PAY,
-			    format("The fee for sending this item is %d Au, accept?", fee), FALSE);
+			    format("The fee for sending this item is %d Au, accept?", fee), 2);
 			break; }
 		case BACT_SEND_GOLD: {
 			int i;
@@ -2408,7 +2408,7 @@ if (is_admin(p_ptr))
 			p_ptr->mail_gold = gold;
 			p_ptr->mail_fee = fee;
 			p_ptr->mail_xfee = 0;
-			Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d Au, accept?", gold, fee), FALSE);
+			Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d Au, accept?", gold, fee), 2);
 			break; }
 #endif
 		default:

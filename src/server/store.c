@@ -4363,7 +4363,7 @@ void merchant_mail_delivery(int Ind) {
 
 				p_ptr->mail_item = i; //reuse mail_item for this
 				msg_print(Ind, "\374\377yA mail package for you has arrived! The sender has made a payment request.");
-				Send_request_cfr(Ind, RID_SEND_FEE_PAY, format("Do you accept the sender's payment request over %d Au?", p_ptr->mail_fee), FALSE);
+				Send_request_cfr(Ind, RID_SEND_FEE_PAY, format("Do you accept the sender's payment request over %d Au?", p_ptr->mail_fee), 0);
 				/* get those COD mails one by one.. */
 				return;
 			}
@@ -4374,7 +4374,7 @@ void merchant_mail_delivery(int Ind) {
 
 				p_ptr->mail_item = i; //reuse mail_item for this
 				msg_print(Ind, "\374\377yA COD mail package for you has arrived!");
-				Send_request_cfr(Ind, RID_SEND_FEE, format("Do you accept the fee of %d Au?", p_ptr->mail_fee), FALSE);
+				Send_request_cfr(Ind, RID_SEND_FEE, format("Do you accept the fee of %d Au?", p_ptr->mail_fee), 0);
 				/* get those COD mails one by one.. */
 				return;
 			}

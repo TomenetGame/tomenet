@@ -7799,15 +7799,15 @@ int Send_request_str(int Ind, int id, char *prompt, char *std) {
 	Players[Ind]->request_type = RTYPE_STR;
 	return Packet_printf(&connp->c, "%c%d%s%s", PKT_REQUEST_STR, id, prompt, std);
 }
-void Send_delayed_request_cfr(int Ind, int id, char *prompt, bool default_yes) {
+void Send_delayed_request_cfr(int Ind, int id, char *prompt, char default_choice) {
 	player_type *p_ptr = Players[Ind];
 
 	p_ptr->delay_cfr = cfg.fps / 2;//delay (turns)
 	p_ptr->delay_cfr_id = id;
 	strcpy(p_ptr->delay_cfr_prompt, prompt);
-	p_ptr->delay_cfr_default_yes = default_yes;
+	p_ptr->delay_cfr_default_choice = default_choice;
 }
-int Send_request_cfr(int Ind, int id, char *prompt, bool default_yes) {
+int Send_request_cfr(int Ind, int id, char *prompt, char default_choice) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
 	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return(0);
@@ -7821,7 +7821,7 @@ int Send_request_cfr(int Ind, int id, char *prompt, bool default_yes) {
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_CFR;
 	if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1))
-		return Packet_printf(&connp->c, "%c%d%s%c", PKT_REQUEST_CFR, id, prompt, default_yes ? 1 : 0);
+		return Packet_printf(&connp->c, "%c%d%s%c", PKT_REQUEST_CFR, id, prompt, default_choice);
 	else
 		return Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_CFR, id, prompt);
 }
@@ -10851,7 +10851,7 @@ static int Receive_guild(int ind) {
 	switch (command) {
 	case GUILD_CREATE:
 		strcpy(p_ptr->cur_file_title, buf);//hack: abuse cur_file_title
-		Send_request_cfr(player, RID_GUILD_CREATE, format("Creating a guild costs %d Au. Are you sure?", GUILD_PRICE), FALSE);
+		Send_request_cfr(player, RID_GUILD_CREATE, format("Creating a guild costs %d Au. Are you sure?", GUILD_PRICE), 2);
 		break;
 	case GUILD_ADD:
 		if (!p_ptr->guild) guild_add_self(player, buf);
@@ -11817,7 +11817,7 @@ static int Receive_request_cfr(int ind) {
 	int n, id, player = -1, cfr;
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
-//		use_esp_link(&player, LINKF_OBJ);
+		//use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
 	}
 

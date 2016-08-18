@@ -550,6 +550,7 @@ extern bool get_dir(int *dp);
 extern void c_put_str(byte attr, cptr str, int row, int col);
 extern void put_str(cptr str, int row, int col);
 extern bool get_check2(cptr prompt, bool default_yes);
+extern bool get_check3(cptr prompt, char default_choice);
 extern byte get_3way(cptr prompt, bool default_no);
 extern s32b message_num(void);
 extern s32b message_num_chat(void);

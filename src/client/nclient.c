@@ -4099,18 +4099,18 @@ int Receive_request_str(void) {
 int Receive_request_cfr(void) {
 	int n, id;
 	char ch, prompt[MAX_CHARS];
-	bool default_yes = FALSE;
+	char default_choice = FALSE;
 
 	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
 		char dy;
 		if ((n = Packet_scanf(&rbuf, "%c%d%s%c", &ch, &id, prompt, &dy)) <= 0) return n;
-		if (dy != 0) default_yes = TRUE;
+		default_choice = dy;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
 	}
 
 	request_pending = TRUE;
-	Send_request_cfr(id, get_check2(prompt, default_yes));
+	Send_request_cfr(id, get_check3(prompt, default_choice));
 	request_pending = FALSE;
 	return 1;
 }

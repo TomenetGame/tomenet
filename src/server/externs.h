@@ -1158,11 +1158,11 @@ extern int Send_account_info(int ind);
 extern int Send_request_key(int Ind, int id, char *prompt);
 extern int Send_request_num(int Ind, int id, char *prompt, int max);
 extern int Send_request_str(int Ind, int id, char *prompt, char *std);
-extern int Send_request_cfr(int Ind, int id, char *prompt, bool default_yes);
+extern int Send_request_cfr(int Ind, int id, char *prompt, char default_choice);
 extern int Send_request_abort(int Ind);
 
 extern void Send_delayed_request_str(int Ind, int id, char *prompt, char *std);
-extern void Send_delayed_request_cfr(int Ind, int id, char *prompt, bool default_yes);
+extern void Send_delayed_request_cfr(int Ind, int id, char *prompt, char default_choice);
 
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
