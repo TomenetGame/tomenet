@@ -4090,14 +4090,14 @@ int mon_will_run(int Ind, int m_idx) {
  * being close enough to chase directly.  I have no idea what will
  * happen if you combine "smell" with low "aaf" values.
  */
-static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp)
-{
+static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp) {
 	int i, y, x, y1, x1, when = 0, cost = 999;
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave, *c_ptr;
-	if(!(zcave = getcave(&m_ptr->wpos))) return FALSE;
+
+	if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
 
 	/* Monster flowing disabled */
 	if (!flow_by_sound && !flow_by_smell) return (FALSE);
@@ -4114,8 +4114,7 @@ static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp)
 	c_ptr = &zcave[y1][x1];
 
 	/* The player is not currently near the monster grid */
-	if (c_ptr->when < zcave[py][px]->when)
-	{
+	if (c_ptr->when < zcave[py][px]->when) {
 		/* The player has never been near the monster grid */
 		if (!c_ptr->when) return (FALSE);
 
@@ -4131,8 +4130,7 @@ static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp)
 	if (player_has_los_bold(Ind, y1, x1)) return (FALSE);
 
 	/* Check nearby grids, diagonals first */
-	for (i = 7; i >= 0; i--)
-	{
+	for (i = 7; i >= 0; i--) {
 		/* Get the location */
 		y = y1 + ddy_ddd[i];
 		x = x1 + ddx_ddd[i];
@@ -4201,8 +4199,7 @@ return (FALSE);
 	
 
 	/* Check nearby grids, diagonals first */
-	for (i = 7; i >= 0; i--)
-	{
+	for (i = 7; i >= 0; i--) {
 		/* Get the location */
 		y = y1 + ddy_ddd[i];
 		x = x1 + ddx_ddd[i];
@@ -4232,8 +4229,7 @@ return (FALSE);
 
 
 /* Is the monster willing to avoid that grid?	- Jir - */
-static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr)
-{
+static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr) {
 	effect_type *e_ptr;
 	//cptr name;
 	int dam;

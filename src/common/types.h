@@ -3549,7 +3549,7 @@ typedef struct astar_list_open astar_list_open;
 struct astar_list_open {
 	int m_idx; /* monster which currently uses this index in the available A* arrays, or -1 for 'unused' ie available */
 	int nodes; /* current amount of nodes stored in this list */
-	int node_x[ASTAR_MAX_NODES], node_y[ASTAR_MAX_NODES]; /* unsigned char would do, but maybe we want to stop using that one for floor grids (compiler warnings in other files too, etc..) */
+	int node_x[ASTAR_MAX_NODES], node_y[ASTAR_MAX_NODES]; /* floor grids. Unsigned char would do too */
 	int astarF[ASTAR_MAX_NODES], astarG[ASTAR_MAX_NODES], astarH[ASTAR_MAX_NODES]; /* grid score (F=G+H), starting point distance cost, estimated goal distance cost */
 	int closed_parent_idx[ASTAR_MAX_NODES]; /* the idx of the grid in the closed list, which is the parent of this grid */
 };

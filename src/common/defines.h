@@ -181,6 +181,8 @@
 #ifdef MONSTER_ASTAR
  #define ASTAR_MAX_NODES		1000	/* max size of open/closed pathfinding table in an A* instance */
  #define ASTAR_MAX_INSTANCES		20	/* how many spawned monsters can use A* at once */
+ /* Heuristics function: Guesstimate distance from an inbetween grid sx,sy to our destination grid dx,dy */
+ #define ASTAR_HEURISTICS(sx,sy,dx,dy)	(ABS((sx) - (dx)) > ABS((sy) - (dy)) ? ABS((sx) - (dx)) : ABS((sy) - (dy)))
 #endif
 
 /* for MONSTER_FLOW_BY_SOUND */

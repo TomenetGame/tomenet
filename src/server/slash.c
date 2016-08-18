@@ -9595,6 +9595,48 @@ void do_slash_cmd(int Ind, char *message) {
 				w_ptr->ambient_sfx_timer = 0;
 				return;
 			}
+#ifdef MONSTER_ASTAR
+			/* Reset all A* info - to be used when the server is switched to allow A*,
+			   but still has existing monsters that were previously allocated. */
+			else if (prefix(message, "/rsastar")) {
+				monster_type *m_ptr;
+				monster_race *r_ptr;
+
+				/* Clear all monsters' A* info */
+				for (i = 1; i < m_max; i++)
+					m_list[i].astar_idx = -1;
+
+				/* Clear the A* structures themselves */
+				for (i = 0; i < ASTAR_MAX_INSTANCES; i++)
+					astar_info_open[i].m_idx = -1;
+
+				/* Create A* instances from scratch for those monsters that actually use it */
+				k = tk = 0;
+				for (i = 1; i < m_max; i++) {
+					m_ptr = &m_list[i];
+					r_ptr = race_inf(m_ptr);
+					if (!(r_ptr->flags0 & RF0_ASTAR)) continue;
+
+					/* search for an available A* table to use */
+					tk++;
+					for (j = 0; j < ASTAR_MAX_INSTANCES; j++) {
+						/* found an available instance? */
+						if (astar_info_open[j].m_idx == -1) {
+							astar_info_open[j].m_idx = i;
+							astar_info_open[j].nodes = 0; /* init: start with empty set of nodes */
+							astar_info_closed[j].nodes = 0; /* init: start with empty set of nodes */
+							m_ptr->astar_idx = j;
+							k++;
+							break;
+						}
+					}
+					/* All A* instances in use now? Then we don't need to continue. */
+					if (j == ASTAR_MAX_INSTANCES) break;
+				}
+				msg_format(Ind, "Reset A* info and reinitialised it for %d of %d monsters.", k, tk);
+				return;
+			}
+#endif
 		}
 	}
 

@@ -367,8 +367,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 
 
 	/* Remove him from everybody's view */
-	for (Ind = 1; Ind <= NumPlayers; Ind++)
-	{
+	for (Ind = 1; Ind <= NumPlayers; Ind++) {
 		/* Skip this player if he isn't playing */
 		if (Players[Ind]->conn == NOT_CONNECTED) continue;
 #ifdef RPG_SERVER
@@ -400,8 +399,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 
 #ifdef MONSTER_INVENTORY
 	/* Delete objects */
-	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
-	{
+	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
 		object_type *o_ptr;
 
 		/* Acquire object */
@@ -3598,7 +3596,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		}
 		/* no instance available? Mark us (-1) to use normal movement instead */
 		if (j == ASTAR_MAX_INSTANCES) m_ptr->astar_idx = -1;
-	}
+	} else m_ptr->astar_idx = -1;
 #endif
 
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {

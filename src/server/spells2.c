@@ -7504,7 +7504,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 		}
 		/* no instance available? Mark us (-1) to use normal movement instead */
 		if (j == ASTAR_MAX_INSTANCES) m_ptr->astar_idx = -1;
-	}
+	} else m_ptr->astar_idx = -1;
 #endif
 
 	return (TRUE);
