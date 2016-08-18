@@ -6199,9 +6199,12 @@ Fully Automatic - Sets off up to 99 times.
 Well-hidden     - Makes it harder for monsters to spot the trap.
 Complicated     - Trap gets an extra AC bonus, making it harder to disarm.
 Obvious         - Curses the trap and makes it practically useless.
+
 (suffixes:)
 of Extra Might  - fires with +x (bonus shown in round brackets) extra might.
+                  ("It fires missiles with extra might.")
 of Extra Shots  - fires +x (bonus shown in round brackets) extra shots/round.
+                  ("It fires missiles excessively fast.")
 for Dragons     - Only triggers against dragons. Especially hard to spot.
                   Fires extra shots.
 for Demons      - Only triggers against demons. Especially hard to spot.
@@ -6213,14 +6216,18 @@ for Undead      - Only triggers against undead. Especially hard to spot.
 for Evil        - Only triggers against evil. Especially hard to spot.
                   Fires extra shots. May damage or destroy ghosts.
 
+Trap kits can also have two special properties in addition to the above:
+Kill Ghosts     - trap kit will also harm creatures in wraithform (those are
+                  all creatures that can pass solid walls). Trap kits without
+                  KILL_GHOST flag cannot hurt wraithform creatures.
+
+Teleport-To     - after triggering, if the monster is still alive, it will be
+                  teleported to the player (TELEPORT_TO).
+
 If monsters notice a trap they can try to disarm it:
 
 A pval (that's a number in round parentheses, eg (+2)) increases the trap's
 "stealth", making it well-hidden and therefore harder for monsters to notice.
-
-For trap kits that have XTRA_SHOTS flag, ie that fire more than 1 shot at once
-(you see "It fires missiles excessively fast." on *identifying* the trap kit),
-this value also determines the number of extra shots.
 
 The "armour class" bonus of a trap kit, given in brackets (eg [+8]) increases
 the trap's complexity, making it harder for monsters to disarm the trap.
