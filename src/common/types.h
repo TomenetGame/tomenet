@@ -2101,6 +2101,7 @@ struct player_type {
 	bool view_animated_lite;
 	bool view_lite_extra;
 	bool permawalls_shade;
+	bool live_timeouts;
 
 	/* TomeNET additions -- consider using macro or bitfield */
 	bool easy_open;
@@ -3364,9 +3365,10 @@ struct client_opts {
 #endif
 
 	bool shuffle_music;
-	bool permawall_shade;
+	bool permawalls_shade;
 	bool topline_no_msg;
 	bool targetinfo_msg;
+	bool live_timeouts;
 };
 
 /*

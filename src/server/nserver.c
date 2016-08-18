@@ -2355,6 +2355,7 @@ static void sync_options(int Ind, bool *options) {
 	p_ptr->consistent_players = options[46];
 	tmp = p_ptr->permawalls_shade;
 	if ((p_ptr->permawalls_shade = options[112]) != tmp) p_ptr->redraw |= PR_MAP;
+	p_ptr->live_timeouts = options[115];
 
 	//page 4
 

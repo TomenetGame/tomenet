@@ -490,12 +490,14 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
     /* new additions after 4.6.1a */
 	{ &c_cfg.shuffle_music,		FALSE,	5,	0, 109, TRUE,
 	    "shuffle_music",		"Don't loop song files but shuffle through them" },
-	{ &c_cfg.permawall_shade,	FALSE,	6,	0, 110, TRUE, //page 3 (UI 3)
-	    "permawall_shade",		"Display permanent vault walls in a special colour" },
+	{ &c_cfg.permawalls_shade,	FALSE,	6,	0, 110, TRUE, //page 3 (UI 3)
+	    "permawalls_shade",		"Display permanent vault walls in a special colour" },
 	{ &c_cfg.topline_no_msg,	FALSE,	6,	0, 111, TRUE, //page 3 (UI 3)
 	    "topline_no_msg",		"Don't display messages in main window top line" },
 	{ &c_cfg.targetinfo_msg,	FALSE,	6,	0, 112, TRUE, //page 3 (UI 3)
 	    "targetinfo_msg",		"Display look/target info in message window too" },
+	{ &c_cfg.live_timeouts,		TRUE,	6,	0, 113, TRUE, //page 3 (UI 3)
+	    "live_timeouts",		"Always update item timeout numbers on every tick" },
 };
 
 

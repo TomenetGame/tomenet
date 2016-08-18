@@ -4666,9 +4666,11 @@ static bool process_player_end_aux(int Ind) {
 		    (p_ptr->body_monster == o_ptr->pval)) {
 			/* Decrease life-span */
 			o_ptr->timeout--;
- #ifndef LIVE_TIMEOUT
+ #ifndef LIVE_TIMEOUTS
 			/* Hack -- notice interesting energy steps */
 			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+ #else
+			if (p_ptr->live_timeouts || (o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
  #endif
 			{
 				/* Window stuff */
@@ -4737,8 +4739,10 @@ static bool process_player_end_aux(int Ind) {
 			o_ptr->timeout--;
 
 			/* Hack -- notice interesting fuel steps */
-#ifndef LIVE_TIMEOUT
+#ifndef LIVE_TIMEOUTS
 			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+#else
+			if (p_ptr->live_timeouts || (o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
 #endif
 			{
 				/* Window stuff */
@@ -4965,8 +4969,8 @@ static bool process_player_end_aux(int Ind) {
 		if (!(o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) || !o_ptr->timeout) continue;
 
 		o_ptr->timeout--;
-#ifdef LIVE_TIMEOUT
-		p_ptr->window |= PW_INVEN;
+#ifdef LIVE_TIMEOUTS
+		if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
 #endif
 		/* Notice changes */
 		if (!(o_ptr->timeout)) {

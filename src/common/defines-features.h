@@ -263,7 +263,7 @@
 #define ANTI_TELE_CHEEZE
 
 /* Update item timeouts in realtime? (Torches/lanterns/Poly-rings/Blood-potions) */
-#define LIVE_TIMEOUT
+#define LIVE_TIMEOUTS
 
 
 /* --------------------- Server-type dependant features -------------------- */

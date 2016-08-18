@@ -10067,8 +10067,8 @@ void process_objects(void) {
 						home_item_optimize(h_ptr, i);
 						if (Ind) display_trad_house(Ind, h_ptr); //display_house_inventory(Ind, h_ptr);
 					}
-#ifdef LIVE_TIMEOUT
-					else if (Ind) display_house_entry(Ind, i, h_ptr);
+#ifdef LIVE_TIMEOUTS
+					else if (Ind && Players[Ind]->live_timeouts) display_house_entry(Ind, i, h_ptr);
 #endif
 					break;
 				}
