@@ -302,7 +302,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
 				fprintf(fff, "\n");
 			}
 #ifdef ART_DIZ
-//	                fprintf(fff, "%s", a_text + a_info[forge.name1].text);
+			//fprintf(fff, "%s", a_text + a_info[forge.name1].text);
 #endif
 		}
 
@@ -333,8 +333,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
  */
 /* Pfft, we should rewrite show_file so that we can change
  * the colour for each letter!	- Jir - */
-void do_cmd_check_uniques(int Ind, int line)
-{
+void do_cmd_check_uniques(int Ind, int line) {
 	monster_race *r_ptr;
 
 	int i, j, kk;
@@ -345,13 +344,11 @@ void do_cmd_check_uniques(int Ind, int line)
 	byte attr;
 
 	FILE *fff;
-
 	char file_name[MAX_PATH_LENGTH];
 
 	player_type *q_ptr = Players[Ind], *p_ptr = q_ptr;
 	bool admin = is_admin(q_ptr);
 	s16b idx[MAX_R_IDX];
-
 	char buf[17];
 
 
@@ -371,7 +368,7 @@ void do_cmd_check_uniques(int Ind, int line)
 		/* Only print Uniques */
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 			/* Only display known uniques */
-//			if (r_ptr->r_sights && mon_allowed(r_ptr))
+			//if (r_ptr->r_sights && mon_allowed(r_ptr))
 			if (r_ptr->r_sights && mon_allowed_view(r_ptr))
 				idx[total++] = k;
 
@@ -429,9 +426,9 @@ void do_cmd_check_uniques(int Ind, int line)
 			if (admin) fprintf(fff, "(%4d, L%d) ", k, r_ptr->level);
 
 			/* Format message */
-//			fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
+			//fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
 			/* different colour for uniques higher than Morgoth (the 'boss') */
-//			if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name); else
+			//if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name); else
 			if (!(p_ptr->uniques_alive)) {
 				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (100)\377%c was slain by", r_name + r_ptr->name, c_out);
 				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
@@ -486,10 +483,10 @@ void do_cmd_check_uniques(int Ind, int line)
 					if (Ind == i) attr = 'G';
 
 					/* Print party members in blue */
-//					else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+					//else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
 
 					/* Print hostile players in red */
-//					else if (check_hostile(Ind, i)) attr = 'r';
+					//else if (check_hostile(Ind, i)) attr = 'r';
 
 					/* first player name entry for this unique? add ':' and go to next line */
 					if (!ok) {
@@ -510,8 +507,8 @@ void do_cmd_check_uniques(int Ind, int line)
 						full = TRUE;
 					}
 				}
-//				else if (Ind == i && q_ptr->r_killed[k] == 2) {
-//					/* helped killing it - only shown to the player who helped */
+				//else if (Ind == i && q_ptr->r_killed[k] == 2) {
+					///* helped killing it - only shown to the player who helped */
 				else if (q_ptr->r_killed[k] == 2) {
 					/* helped killing it */
 
@@ -933,7 +930,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
 
 		/* Quest flag */
-//		fprintf(fff, " %c", (q_ptr->xorder_id ? 'X' : ' '));
+		//fprintf(fff, " %c", (q_ptr->xorder_id ? 'X' : ' '));
 	}
 
 	/* PK */
@@ -1036,7 +1033,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	}
 
 	fprintf(fff, "*%s\377U", info_chars);
-//	fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
+	//fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
 	fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
 
   #ifndef COMPACT_GENDER
@@ -1266,7 +1263,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	}
 
 	fprintf(fff, "%sLv %d\377U", attr_p, q_ptr->lev);
-//		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
+	    //q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
 
 	if (q_ptr->guild)
 		fprintf(fff, ", \377y[\377%c%s\377y]\377U",
@@ -1388,7 +1385,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			if (q_ptr->xorder_id) fprintf(fff, " X");
 		}
 
-//		fprintf(fff, ", %s@%s", q_ptr->accountname, q_ptr->hostname);
+		//fprintf(fff, ", %s@%s", q_ptr->accountname, q_ptr->hostname);
 
 		/* Print afk/info message */
 		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
@@ -1536,7 +1533,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		/* -AD- will this work? - Sure -C. Blue- */
 		fprintf(fff, "\n\377U");
 
-//		if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
+		//if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
 
 		//show local system username? q_ptr->realname
 #if 0
@@ -1656,8 +1653,7 @@ if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
  /*
  * Check the equipments of other player.
  */
-void do_cmd_check_player_equip(int Ind, int line)
-{
+void do_cmd_check_player_equip(int Ind, int line) {
 	int i, k;
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
@@ -1814,11 +1810,10 @@ void do_cmd_check_player_equip(int Ind, int line)
 //#define SHOW_DLVL_TO_NONADMIN
 /* Also indicate slain dungeon bosses (no room for full name though) */
 #define INDICATE_DUNGEONBOSSES_SLAIN
-void do_cmd_knowledge_dungeons(int Ind)
-{
+void do_cmd_knowledge_dungeons(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-//	msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
+	//msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
 
 	int		i, x, y;	// num, total = 0;
 	//bool	shown = FALSE;
@@ -1875,7 +1870,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 				if (admin) {
 					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
-//							d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
+							//d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
  #ifdef SHOW_DLVL_TO_NONADMIN
 				} else {
@@ -1967,7 +1962,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 				if (admin) {
 					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
-//							d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
+							//d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
  #ifdef SHOW_DLVL_TO_NONADMIN
 				} else {
@@ -2099,14 +2094,10 @@ void do_cmd_knowledge_dungeons(int Ind)
 /*
  * Tell players of server settings, using temporary file. - Jir -
  */
-void do_cmd_check_server_settings(int Ind)
-{
+void do_cmd_check_server_settings(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	int		 k;
-
 	FILE *fff;
-
 #if 0
 	char file_name[MAX_PATH_LENGTH];
 
@@ -2127,13 +2118,13 @@ void do_cmd_check_server_settings(int Ind)
 
 
 	/* Output color byte */
-//	fprintf(fff, "%c", 'G');
+	//fprintf(fff, "%c", 'G');
 
 	fprintf(fff, "%s\n", longVersion);
 	fprintf(fff, "======== Server Settings ========\n\n");
 
 	/* Output color byte */
-//	fprintf(fff, "%c", 'w');
+	//fprintf(fff, "%c", 'w');
 
 	/* General information */
 	fprintf(fff, "Server notes: %s\n", cfg.server_notes);
@@ -2304,8 +2295,8 @@ void do_cmd_check_server_settings(int Ind)
 	}
 
 	fprintf(fff,"\n");
-		
-        /* Items */
+
+	/* Items */
 	if (cfg.anti_cheeze_pickup)
 		fprintf(fff, "Items cannot be transferred to a character of too low level.\n");
 	if (cfg.anti_cheeze_telekinesis)
@@ -2454,8 +2445,7 @@ void do_cmd_check_server_settings(int Ind)
 
 	/* monster-sets */
 	fprintf(fff, "Monsters:\n");
-	if (is_admin(p_ptr))
-	{
+	if (is_admin(p_ptr)) {
 		if (cfg.vanilla_monsters)
 			fprintf(fff, "  Vanilla-angband(default) monsters (%d%%)\n", cfg.vanilla_monsters);
 		if (cfg.zang_monsters)
@@ -2470,9 +2460,7 @@ void do_cmd_check_server_settings(int Ind)
 			fprintf(fff, "  Joke-monsters (%d%%)\n", cfg.joke_monsters);
 		if (cfg.pet_monsters)
 			fprintf(fff, "  Pet/neutral monsters (%d%%)\n", cfg.pet_monsters);
-	}
-	else
-	{
+	} else {
 		if (cfg.vanilla_monsters > TELL_MONSTER_ABOVE)
 			fprintf(fff, "  Vanilla-angband(default) monsters\n");
 		if (cfg.zang_monsters > TELL_MONSTER_ABOVE)
@@ -2491,18 +2479,18 @@ void do_cmd_check_server_settings(int Ind)
 
 	/* trivial */
 	if (cfg.public_rfe)
-//		fprintf(fff, "You can see RFE files via '&62' command.\n");
+		//fprintf(fff, "You can see RFE files via '&62' command.\n");
 		fprintf(fff, "You can see RFE files via '~e' command.\n");
 
 	/* TODO: reflect client options too */
 	if (cfg.door_bump_open & BUMP_OPEN_DOOR)
-//		fprintf(fff, "You'll try to open a door by bumping onto it.\n");
+		//fprintf(fff, "You'll try to open a door by bumping onto it.\n");
 		fprintf(fff, "easy_open is allowed.\n");
 	else
 		fprintf(fff, "You should use 'o' command explicitly to open a door.\n");
 
 	if (cfg.door_bump_open & BUMP_OPEN_TRAP)
-//		fprintf(fff, "You'll try to disarm a visible trap by stepping onto it.\n");
+		//fprintf(fff, "You'll try to disarm a visible trap by stepping onto it.\n");
 		fprintf(fff, "easy_disarm is allowed.\n");
 
 	if (cfg.door_bump_open & BUMP_OPEN_HOUSE)
@@ -2510,10 +2498,9 @@ void do_cmd_check_server_settings(int Ind)
 
 
 	/* Administrative */
-	if (is_admin(p_ptr))
-	{
+	if (is_admin(p_ptr)) {
 		/* Output color byte */
-//		fprintf(fff, "%c\n", 'o');
+		//fprintf(fff, "%c\n", 'o');
 
 		fprintf(fff,"\n");
 		
@@ -2521,7 +2508,7 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "==== Administrative or hidden settings ====\n");
 
 		/* Output color byte */
-//		fprintf(fff, "%c\n", 'w');
+		//fprintf(fff, "%c\n", 'w');
 
 		fprintf(fff, "dun_unusual: %d (default = 200)\n", cfg.dun_unusual);
 		fprintf(fff, "Stores change their inventory every ~%d seconds.\n", (cfg.store_turns * 10) / cfg.fps);
@@ -2612,7 +2599,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 #endif
 		r_ptr = &r_info[i];
 
-//		if (letter && *letter != r_ptr->d_char) continue;
+		//if (letter && *letter != r_ptr->d_char) continue;
 		if (!all && !strchr(letter, r_ptr->d_char)) continue;
 		if (r_ptr->level < minlev) continue;
 
@@ -2790,7 +2777,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 		fprintf(fff, "%3d)   [%d,%d] in %s", total,
 		    h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
 		    wpos_format(Ind, &h_ptr->wpos));
-//		    h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
+		    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
 
 		if (dna->creator == p_ptr->dna) {
 			/* Take player's CHR into account */
@@ -2868,7 +2855,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 		if (local) fprintf(fff, "You don't have any houses in this area.");
 		else fprintf(fff, "You're homeless for now.\n");
 	}
-//	else fprintf(fff, "\nTotal : %d\n", total);
+	//else fprintf(fff, "\nTotal : %d\n", total);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3193,8 +3180,7 @@ static void fetch_time_diz(char *path, char *desc) {
 	/* Close the file */
 	my_fclose(fff);
 }
-void do_cmd_time(int Ind)
-{
+void do_cmd_time(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	bool fun = FALSE;
 
@@ -3253,8 +3239,7 @@ void do_cmd_time(int Ind)
  * Unlike show_file and do_cmd_help_aux, this can display the file
  * w/o request from client, ie. no new packet definition etc. is needed.
  */
-void do_cmd_check_other_prepare(int Ind, char *path, char *title)
-{
+void do_cmd_check_other_prepare(int Ind, char *path, char *title) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Current file viewing */
@@ -3273,10 +3258,8 @@ void do_cmd_check_other_prepare(int Ind, char *path, char *title)
  * Scroll through *ID* or Self Knowledge information.
  */
 //void do_cmd_check_other(int Ind, int line, int color)
-void do_cmd_check_other(int Ind, s32b line)
-{
+void do_cmd_check_other(int Ind, s32b line) {
 	player_type *p_ptr = Players[Ind];
-
 
 	/* Make sure the player is allowed to */
 	if (!p_ptr->special_file_type) return;
@@ -3297,14 +3280,10 @@ void do_cmd_check_other(int Ind, s32b line)
 }
 
 #if 0
-void do_cmd_check_other(int Ind, s32b line)
-{
+void do_cmd_check_other(int Ind, s32b line) {
 	player_type *p_ptr = Players[Ind];
-
 	int n = 0;
-
 	FILE *fff;
-
 	char file_name[MAX_PATH_LENGTH];
 
 
@@ -3318,8 +3297,7 @@ void do_cmd_check_other(int Ind, s32b line)
 	fff = my_fopen(file_name, "wb");
 
 	/* Scan "info" */
-	while (n < 128 && p_ptr->info[n] && strlen(p_ptr->info[n]))
-	{
+	while (n < 128 && p_ptr->info[n] && strlen(p_ptr->info[n])) {
 		/* Dump a line of info */
 		fprintf(fff, p_ptr->info[n]);
 
