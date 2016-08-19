@@ -4449,7 +4449,9 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 
 	/* We found a way? */
 	if (found) {
+#ifdef TEST_SERVER
 s_printf("ASTAR: -1 (found, %d,%d,%d)\n", aoc, acc, turn);
+#endif
 		/* Backtrace the path from destination (player) to start (monster)
 		   through the closed list, from player position to monster position. */
 		i = destIdx;
@@ -4486,7 +4488,9 @@ s_printf("ASTAR: -1 (found, %d,%d,%d)\n", aoc, acc, turn);
 	/* No legal move at all, aka the only node we checked
 	   (and put on the closed list accordingly) was our starter node? */
 	else if (acc == 1) {
+#ifdef TEST_SERVER
 s_printf("ASTAR: 0 (no moves, %d,%d,%d)\n", aoc, acc, turn);
+#endif
  #ifdef ASTAR_DISTRIBUTE
 		/* Remember result for when it's actually our turn? */
 		if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
@@ -4500,7 +4504,9 @@ s_printf("ASTAR: 0 (no moves, %d,%d,%d)\n", aoc, acc, turn);
 //todo:
 
 	/* We found a way to get closer to the target at least? */
+#ifdef TEST_SERVER
 s_printf("ASTAR: 1 (indirect, %d,%d,%d)\n", aoc, acc, turn);
+#endif
  #ifdef ASTAR_DISTRIBUTE
 	/* Remember result for when it's actually our turn? */
 	if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
@@ -4510,7 +4516,9 @@ s_printf("ASTAR: 1 (indirect, %d,%d,%d)\n", aoc, acc, turn);
 
 
 	/* We had moves but didn't find any way that could get us closer to the target */
+#ifdef TEST_SERVER
 s_printf("ASTAR: 2 (no good moves, %d,%d,%d)\n", aoc, acc, turn);
+#endif
  #ifdef ASTAR_DISTRIBUTE
 	/* Remember result for when it's actually our turn? */
 	if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
