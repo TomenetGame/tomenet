@@ -4164,68 +4164,140 @@ static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp) {
 
 
 #ifdef MONSTER_ASTAR
-/* Get monster moves for A* pathfinding - C. Blue */
+/* Get monster moves for A* pathfinding - C. Blue
+ * Return values:
+ * -3  ASTAR_DISTRIBUTE only:
+ *     No result yet, we just interrupted the algorithm temporarily for
+ *     this server frame, to resume it in the next.
+ * -2  didn't invoke. Either there was no spare memory slot for us,
+ *                    or we have direct LoS to player already,
+ *                    or zcave bugged out :p.
+ * -1  success.
+ *  0  we can't move! Maybe enclosed in a stone prison or similar.
+ *  1  we can get closer to the player but didn't find a complete path to
+ *     actually reaching him completely.
+ *  2  we can move, but all moves we were able to find would actually
+ *     increase distance to the player.
+ */
 static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 	player_type *p_ptr = Players[Ind];
 	int i, ireal, j;
 	int x, y, mx, my, px, py;
+ #ifdef ASTAR_DISTRIBUTE
+	int acc_last;
+ #endif
 
-	astar_list_open *ao = &astar_info_open[m_ptr->astar_idx];
-	astar_list_closed *ac = &astar_info_closed[m_ptr->astar_idx];
-	int *aoc = &ao->nodes, *acc = &ac->nodes; //node counters for both lists
-	astar_node *aonode = ao->node, *acnode = ac->node, min_node, tmp_node;
+	astar_list_open *ao;
+	astar_list_closed *ac;
+	int aoc, acc; //node counters for both lists
+	astar_node *aonode, *acnode, min_node, tmp_node;
 	int minF, minIdx = 0, destIdx = 0;
 	cave_type **zcave, *c_ptr;
 	bool skip, end = FALSE, found = FALSE;
 
+	/* Did we get a spare A* table? */
+	if (m_ptr->astar_idx == -1) return -2;
 
+ #if 0 /* such a monster shouldn't have gotten ASTAR flag in the first place */
 	/* Monster can go through permanent rocks even? Morgoth only, and he's never on
 	   levels with mountains or other perma-wall obstacles that he cannot destroy. */
-	if ((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL)) return (FALSE);
+	if ((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL)) return -2;
+ #endif
 
-	if (!(zcave = getcave(&m_ptr->wpos))) return FALSE; //paranoia
+	if (!(zcave = getcave(&m_ptr->wpos))) return -2; //paranoia
+s_printf("ASTAR-call: %d,%d,%d\n", Ind, m_idx, turn);
 
 	/* Monster location */
 	mx = m_ptr->fx;
 	my = m_ptr->fy;
 
 	/* Hack -- Player can see us, run towards him */
-	if (player_has_los_bold(Ind, my, mx)) return (FALSE);
+	if (player_has_los_bold(Ind, my, mx)) return -2;
 
+	ao = &astar_info_open[m_ptr->astar_idx];
+	ac = &astar_info_closed[m_ptr->astar_idx];
+	aoc = ao->nodes;
+	acc = ac->nodes;
+	aonode = ao->node;
+	acnode = ac->node;
 
 	/* Player location */
 	px = p_ptr->px;
 	py = p_ptr->py;
 
-	/* Initialise open and closed lists.
-	   Note: This especially initialises all nodes' 'in_use' with zero. */
-	memset(aonode, 0, sizeof(astar_node) * ASTAR_MAX_NODES);
-	memset(acnode, 0, sizeof(astar_node) * ASTAR_MAX_NODES);
+ #ifdef ASTAR_DISTRIBUTE
+	/* Initialise? */
+	if (acc == 0) {
+ #endif
+		/* Initialise open and closed lists.
+		   Note: This especially initialises all nodes' 'in_use' with zero. */
+		memset(aonode, 0, sizeof(astar_node) * ASTAR_MAX_NODES);
+		memset(acnode, 0, sizeof(astar_node) * ASTAR_MAX_NODES);
 
-	/* Create our starting node and put it on the open list */
-	aonode[0].x = mx;
-	aonode[0].y = my;
-	/* Note: F, G, H and parent_idx of this node have been initialised with zero, as they should be. */
-	aonode[0].in_use = TRUE;
-	*aoc = 1;
+		/* Create our starting node and put it on the open list */
+		aonode[0].x = mx;
+		aonode[0].y = my;
+		/* Note: F, G, H and parent_idx of this node have been initialised with zero, as they should be. */
+		aonode[0].in_use = TRUE;
+		aoc = 1;
 
-	/* Closed list starts with zero nodes */
-	*acc = 0;
+ #ifndef ASTAR_DISTRIBUTE
+		/* Closed list starts with zero nodes */
+		acc = 0;
+ #else
+		/* If we leave the function in the middle of calculating,
+		   return the special result 'temporarily on hold' */
+		ao->result = -3;
+	} else if (ao->result != -3) { /* We got a result! */
+		/* Are we allowed to set it now? */
+		//hack: we abused xp/yp to indicate that it's not yet our turn
+		if (*xp == mx && *yp == my) {
+s_printf(" interim\n");
+			return -3; //not yet
+		}
+
+s_printf("report\n");
+		/* Ok, use pre-calculated result! */
+		*xp = acnode[0].x;
+		*yp = acnode[0].y;
+		/* and reset our list, for our next algorithm run */
+		ac->nodes = 0;
+		return ao->result;
+	}
+
+	/* Rememeber size of closed list, just so we won't immediately jump out again */
+	acc_last = acc;
+ #endif
 
 	/* tmp_node is always 'in_use', hehe */
 	tmp_node.in_use = TRUE;
 
+ #ifdef ASTAR_DISTRIBUTE
+s_printf("ASTAR: %d,%d,%d (%d)\n", aoc, acc, turn, ao->result);
+ #endif
+
 	/* A-Star ends when open list is empty */
-	while (*aoc) {
+	while (aoc) {
+ #ifdef ASTAR_DISTRIBUTE
+		/* Stop here for now and resume in the next server frame? */
+		if (acc > acc_last && acc % ASTAR_DISTRIBUTE == 0) {
+s_printf("ASTAR_DISTRIBUTE: break %d,%d,%d\n", aoc, acc, turn);
+
+			/* Write back */
+			ao->nodes = aoc;
+			ac->nodes = acc;
+
+			return -3;
+		}
+ #endif
 		minF = 8192; //something higher than any expected movement cost, even in a maze level =P
 		/* Find node on open list with minimum F */
-		for (i = 0, ireal = 0; ireal < *aoc; i++) {
+		for (i = 0, ireal = 0; ireal < aoc; i++) {
 			/* skip notes marked as 'deleted' */
 			if (!aonode[i].in_use) continue;
 			ireal++;
-
 			if (aonode[i].F < minF) {
 				minF = aonode[i].F;
 				minIdx = i;
@@ -4235,14 +4307,14 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 		/* Pop that node off the open list and hold it in 'min_node' */
 		min_node = aonode[minIdx];
 		aonode[minIdx].in_use = FALSE; //it's now 'deleted'
-		(*aoc)--;
+		aoc--;
 
 		/* Push our current node on the closed list */
 		for (i = 0; i < ASTAR_MAX_NODES; i++) {
 			if (acnode[i].in_use) continue;
 
 			acnode[i] = min_node;
-			(*acc)++;
+			acc++;
 			break;
 		}
 		if (i == ASTAR_MAX_NODES) break; //oops, out of memory!
@@ -4273,7 +4345,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 					if (acnode[i].in_use) continue;
 
 					acnode[i] = tmp_node;
-					(*acc)++;
+					acc++;
 					break;
 				}
 				if (i == ASTAR_MAX_NODES) break; //oops, out of memory!
@@ -4298,7 +4370,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 			skip = FALSE;
 
 			/* Compare this successor node with all nodes still in the open list */
-			for (i = 0, ireal = 0; ireal < *aoc; i++) {
+			for (i = 0, ireal = 0; ireal < aoc; i++) {
 				/* skip notes marked as 'deleted' */
 				if (!aonode[i].in_use) continue;
 				ireal++;
@@ -4313,12 +4385,13 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 					}
 					/* Otherwise, remove this worse one from the open list */
 					aonode[i].in_use = FALSE;
+					aoc--;
 				}
 			}
 			if (skip) continue;
 
 			/* Compare this successor node with all nodes in the closed list */
-			for (i = 0, ireal = 0; ireal < *acc; i++) {
+			for (i = 0, ireal = 0; ireal < acc; i++) {
 				/* skip notes marked as 'deleted' */
 				if (!acnode[i].in_use) continue;
 				ireal++;
@@ -4333,6 +4406,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 					}
 					/* Otherwise, remove this worse one from the closed list */
 					acnode[i].in_use = FALSE;
+					acc--;
 				}
 			}
 			if (skip) continue;
@@ -4342,7 +4416,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 				if (aonode[i].in_use) continue;
 
 				aonode[i] = tmp_node;
-				(*aoc)++;
+				aoc++;
 				break;
 			}
 			/* If (i == ASTAR_MAX_NODES) then oops - we're out of memory and have to discard this node.. */
@@ -4352,9 +4426,20 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 		if (end) break;
 	}
 
+ #ifdef ASTAR_DISTRIBUTE
+	/* Write back */
+	ao->nodes = aoc;
+	ac->nodes = acc;
+
+	/* For ALL results, we can already reset acc now for our next algorithm run */
+	if (*xp != mx || *yp != my) //hack: we abused xp/yp to indicate that it's not yet our turn
+		/* It WAS our turn, so reset! */
+		ac->nodes = 0;
+ #endif
+
 	/* We found a way? */
 	if (found) {
-s_printf("ASTAR: -1 (found, %d,%d)\n", *aoc, *acc);
+s_printf("ASTAR: -1 (found, %d,%d,%d)\n", aoc, acc, turn);
 		/* Backtrace the path from destination (player) to start (monster)
 		   through the closed list, from player position to monster position. */
 		i = destIdx;
@@ -4366,28 +4451,63 @@ s_printf("ASTAR: -1 (found, %d,%d)\n", *aoc, *acc);
 			/* Go back another step */
 			i = acnode[i].parent_idx;
 		}
+
+ #ifdef ASTAR_DISTRIBUTE
+		/* Remember result for when it's actually our turn? */
+		if (*xp == mx && *yp == my) { //hack: we abused xp/yp to indicate that it's not yet our turn
+			ao->result = -1;
+			//another hack: abuse first closed node to store our x,y result temporarily
+			acnode[0].x = acnode[i].x;
+			acnode[0].y = acnode[i].y;
+s_printf("postpone\n");
+		} else {
+			/* Return our movement coordinates */
+			*xp = acnode[i].x;
+			*yp = acnode[i].y;
+s_printf("set\n");
+		}
+ #else
+		/* Return our movement coordinates */
 		*xp = acnode[i].x;
 		*yp = acnode[i].y;
+ #endif
+
 		return -1;
 	}
 
 	/* No legal move at all, aka the only node we checked
 	   (and put on the closed list accordingly) was our starter node? */
-	else if (*acc == 1) {
-s_printf("ASTAR: 0 (no moves, %d,%d)\n", *aoc, *acc);
+	else if (acc == 1) {
+s_printf("ASTAR: 0 (no moves, %d,%d,%d)\n", aoc, acc, turn);
+ #ifdef ASTAR_DISTRIBUTE
+		/* Remember result for when it's actually our turn? */
+		if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
+			ao->result = 0;
+ #endif
 		return 0;
 	}
 
-	/* We didn't find a way? */
-	else {
-		/* We found a way to get closer to the target at least? */
-s_printf("ASTAR: 1 (indirect, %d,%d)\n", *aoc, *acc);
-		return 1;
+	/* We didn't find a clear way. */
+//todo:
 
-		/* We had moves but didn't find any way that could get us closer to the target */
-s_printf("ASTAR: 2 (no good moves, %d,%d)\n", *aoc, *acc);
-		return 2;
-	}
+	/* We found a way to get closer to the target at least? */
+s_printf("ASTAR: 1 (indirect, %d,%d,%d)\n", aoc, acc, turn);
+ #ifdef ASTAR_DISTRIBUTE
+	/* Remember result for when it's actually our turn? */
+	if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
+		ao->result = 1;
+ #endif
+	return 1;
+
+
+	/* We had moves but didn't find any way that could get us closer to the target */
+s_printf("ASTAR: 2 (no good moves, %d,%d,%d)\n", aoc, acc, turn);
+ #ifdef ASTAR_DISTRIBUTE
+	/* Remember result for when it's actually our turn? */
+	if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
+		ao->result = 2;
+ #endif
+	return 2;
 }
 #endif
 
@@ -9235,6 +9355,45 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 	}
 }
 
+#ifdef ASTAR_DISTRIBUTE
+void process_monsters_astar(void) {
+	int		i;
+	int		fx, fy;
+
+	monster_type	*m_ptr;
+	monster_race	*r_ptr;
+
+	/* Local copies for speed - mikaelh */
+	//s16b *_m_fast = m_fast;
+	//monster_type *_m_list = m_list;
+	// ? player_type **_Players = Players;
+
+	for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
+		if (astar_info_open[i].m_idx == -1) continue;
+s_printf("\nm_idx %d\n", astar_info_open[i].m_idx);
+
+		/* Access the monster */
+		//m_ptr = &_m_list[astar_info_open[i].m_idx];
+		m_ptr = &m_list[astar_info_open[i].m_idx];
+
+		/* Be careful, in case the player disconnected somehow
+		   before the m_ptr data was properly updated. (Not sure..) */
+		if (m_ptr->closest_player <= 0) continue;
+		if (m_ptr->closest_player > NumPlayers) continue;
+		//maybe todo: super para check via id:
+		//if (m_ptr->closest_player_id != Players[m_ptr->closest_player].id) continue;
+
+		r_ptr = race_inf(m_ptr);
+
+		/* Access the location */
+		fx = m_ptr->fx;
+		fy = m_ptr->fy;
+
+		get_moves_astar(m_ptr->closest_player, astar_info_open[i].m_idx, &fy, &fx); //hack: own coordinates tell us that this isn't the real thing
+	}
+}
+#endif
+
 
 
 /*
@@ -9310,7 +9469,7 @@ void process_monsters(void) {
 
 	/* Process the monsters */
 	for (k = m_top - 1; k >= 0; k--) {
-/*		int closest = -1, dis_to_closest = 9999, lowhp = 9999;
+		/*int closest = -1, dis_to_closest = 9999, lowhp = 9999;
 		bool blos = FALSE, new_los;	*/
 
 		/* Access the index */
@@ -9335,8 +9494,8 @@ void process_monsters(void) {
 		fy = m_ptr->fy;
 
 		/* Efficiency */
-//		if (!(getcave(m_ptr->wpos))) return(FALSE);
-//		if (!Players_on_depth(&m_ptr->wpos)) continue;
+		//if (!(getcave(m_ptr->wpos))) return(FALSE);
+		//if (!Players_on_depth(&m_ptr->wpos)) continue;
 
 		/* Obtain the energy boost */
 		e = extract_energy[m_ptr->mspeed];

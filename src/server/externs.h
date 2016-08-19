@@ -979,6 +979,9 @@ extern bool monster_attack_normal(int m_idx, int tm_idx);
 extern bool make_attack_melee(int Ind, int m_idx);
 extern bool make_attack_spell(int Ind, int m_idx);
 extern void process_monsters(void);
+#ifdef ASTAR_DISTRIBUTE
+extern void process_monsters_astar(void);
+#endif
 extern void curse_equipment(int Ind, int chance, int heavy_chance);
 extern void process_npcs(void);
 extern bool mon_allowed_pickup(int tval);

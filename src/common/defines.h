@@ -194,8 +194,10 @@
  #define ASTAR_MAX_INSTANCES	10
  /* Heuristics function: Guesstimate distance from an inbetween grid sx,sy to our destination grid dx,dy */
  #define ASTAR_HEURISTICS(sx,sy,dx,dy)	(ABS((sx) - (dx)) > ABS((sy) - (dy)) ? ABS((sx) - (dx)) : ABS((sy) - (dy)))
- /* Distribute calculations onto multiple server frames? (Assumption: Monster doesn't really move INSANELY fast) */
- #define ASTAR_DISTRIBUTE	(cfg.fps / 6)
+ /* Distribute calculations onto multiple server frames?
+    Assumption: Monster doesn't really move INSANELY fast: Divide cfg.fps by how often it can move at most per second.
+                Suggested default: 3 times (for monsters with +20 base speed maybe). */
+ #define ASTAR_DISTRIBUTE	(ASTAR_MAX_NODES / (cfg.fps / 3))
 #endif
 
 /* for MONSTER_FLOW_BY_SOUND */

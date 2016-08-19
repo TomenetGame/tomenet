@@ -2997,6 +2997,11 @@ static bool file_exist(char *buf) {
 
 errr rd_server_savefile() {
 	unsigned int i;
+#ifdef MONSTER_ASTAR
+	int j;
+	monster_race *r_ptr;
+	monster_type *m_ptr;
+#endif
 
 	errr err = 0;
 
@@ -3162,6 +3167,29 @@ errr rd_server_savefile() {
 	}
 	/* load the monsters */
 	for (i = 0; i < tmp32u; i++) rd_monster(&m_list[m_pop()]);
+#ifdef MONSTER_ASTAR
+	/* Reassign A* instances */
+	for (i = 1; i < m_max; i++) {
+		m_ptr = &m_list[i];
+		r_ptr = race_inf(m_ptr);
+		if (r_ptr->flags0 & RF0_ASTAR) {
+			/* search for an available A* table to use */
+			for (j = 0; j < ASTAR_MAX_INSTANCES; j++) {
+				/* found an available instance? */
+				if (astar_info_open[j].m_idx == -1) {
+					astar_info_open[j].m_idx = i;
+					m_ptr->astar_idx = j;
+ #ifdef ASTAR_DISTRIBUTE
+					astar_info_closed[j].nodes = 0;
+ #endif
+					break;
+				}
+			}
+			/* no instance available? Mark us (-1) to use normal movement instead */
+			if (j == ASTAR_MAX_INSTANCES) m_ptr->astar_idx = -1;
+		} else m_ptr->astar_idx = -1;
+	}
+#endif
 
 	/* Read object info if new enough */
 	rd_u16b(&tmp16u);

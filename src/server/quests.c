@@ -933,6 +933,9 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 			if (astar_info_open[i].m_idx == -1) {
 				astar_info_open[i].m_idx = m_idx;
 				m_ptr->astar_idx = i;
+ #ifdef ASTAR_DISTRIBUTE
+				astar_info_closed[i].nodes = 0;
+ #endif
 				break;
 			}
 		}
@@ -1568,7 +1571,7 @@ static void quest_despawn_questor(int q_idx, int questor_idx) {
 #if QDEBUG > 1
 			s_printf(" Scanning entire monster list..\n");
 #endif
-			for (j = 0; j < m_max; j++) {
+			for (j = 1; j < m_max; j++) {
 				if (!m_list[j].questor) continue;
 				if (m_list[j].quest != q_idx) continue;
 				if (m_list[j].questor_idx != questor_idx) continue;

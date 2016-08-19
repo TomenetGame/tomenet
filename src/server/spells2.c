@@ -7497,6 +7497,9 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 			if (astar_info_open[j].m_idx == -1) {
 				astar_info_open[j].m_idx = c_ptr->m_idx;
 				m_ptr->astar_idx = j;
+ #ifdef ASTAR_DISTRIBUTE
+				astar_info_closed[j].nodes = 0;
+ #endif
 				break;
 			}
 		}

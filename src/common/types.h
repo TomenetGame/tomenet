@@ -3553,6 +3553,9 @@ struct astar_list_open {
 	int m_idx; /* monster which currently uses this index in the available A* arrays, or -1 for 'unused' ie available */
 	int nodes; /* current amount of nodes stored in this list */
 	astar_node node[ASTAR_MAX_NODES];
+ #ifdef ASTAR_DISTRIBUTE
+	int result;
+ #endif
 };
 typedef struct astar_list_closed astar_list_closed;
 struct astar_list_closed {

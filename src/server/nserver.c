@@ -8037,7 +8037,7 @@ static int Receive_run(int ind) {
 			return Receive_walk(ind);
 
 		/* Check for monsters in sight */
-		for (i = 0; i < m_max; i++) {
+		for (i = 1; i < m_max; i++) {
 			/* Check this monster */
 			if (p_ptr->mon_los[i] && !m_list[i].csleep && !m_list[i].special
 			    /* not for Bree townies, Santa, Halloween townies, Target dummy */

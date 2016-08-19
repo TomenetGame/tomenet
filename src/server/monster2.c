@@ -444,7 +444,7 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts) {
 		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx, unfound_arts);
 	} else { /* still delete the monster, just slower method */
 		int i;
-		for (i = 0; i < m_max; i++){
+		for (i = 1; i < m_max; i++){
 			monster_type *m_ptr = &m_list[i];
 			if (m_ptr->r_idx && inarea(wpos, &m_ptr->wpos)) {
 				if (y == m_ptr->fy && x == m_ptr->fx)
@@ -509,6 +509,9 @@ void compact_monsters(int size, bool purge) {
 
 			/* Skip questors (new quest_info) */
 			if (m_ptr->questor) continue;
+
+			/* Skip A* */
+			if (m_ptr->astar_idx != -1) continue;
 
 			/* Skip special hard-coded monsters (target dummy, invis dummy, santa) */
 			if (r_info[m_ptr->r_idx].flags8 & RF8_GENO_NO_THIN) continue;
@@ -622,6 +625,14 @@ void compact_monsters(int size, bool purge) {
 				}
 			}
 
+#ifdef MONSTER_ASTAR
+			/* Reassign correct A* index */
+			if (m_list[i].astar_idx != -1) {
+				astar_info_open[m_list[i].astar_idx].m_idx = i;
+				s_printf("ASTAR_COMPACT_MONSTERS: Reassigned m_idx %d to %d.\n", i, m_list[i].astar_idx);
+			}
+#endif
+
 			/* Copy the visibility and los flags for the players */
 			for (Ind = 1; Ind <= NumPlayers; Ind++) {
 				if (Players[Ind]->conn == NOT_CONNECTED) continue;
@@ -649,7 +660,7 @@ void compact_monsters(int size, bool purge) {
 	m_top = 0;
 
 	/* Collect "live" monsters */
-	for (i = 0; i < m_max; i++) {
+	for (i = 1; i < m_max; i++) {
 		/* Collect indexes */
 		m_fast[m_top++] = i;
 	}
@@ -3351,7 +3362,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
 		if (ego || randuni) return 46;
 
 		/* prevent duplicate uniques on a floor */
-		for(i = 0; i < m_max; i++) {
+		for(i = 1; i < m_max; i++) {
 			m_ptr = &m_list[i];
 			if (m_ptr->r_idx == r_idx) {
 				if (inarea(wpos, &m_ptr->wpos)) {
@@ -3589,6 +3600,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 			if (astar_info_open[j].m_idx == -1) {
 				astar_info_open[j].m_idx = c_ptr->m_idx;
 				m_ptr->astar_idx = j;
+ #ifdef ASTAR_DISTRIBUTE
+				astar_info_closed[j].nodes = 0;
+ #endif
 				break;
 			}
 		}
@@ -5190,7 +5204,7 @@ void setup_monsters(void) {
 	monster_type *r_ptr;
 	cave_type **zcave;
 
-	for (i = 0; i < m_max; i++) {
+	for (i = 1; i < m_max; i++) {
 		r_ptr = &m_list[i];
 		/* setup the cave m_idx if the level has been 
 		 * allocated.

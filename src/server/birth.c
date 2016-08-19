@@ -1997,7 +1997,7 @@ static void player_setup(int Ind, bool new) {
 		wpos->wz = 0;
 	}
 	/* If dungeon existences changed, restore players who saved
-           within a now-invalid dungeon - C. Blue */
+	   within a now-invalid dungeon - C. Blue */
 	if (((wpos->wz > 0) && (wild_info[wpos->wy][wpos->wx].tower == NULL)) ||
 	    ((wpos->wz < 0) && (wild_info[wpos->wy][wpos->wx].dungeon == NULL))) {
 		s_printf("Ultra-hack #2 executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
@@ -2032,7 +2032,7 @@ static void player_setup(int Ind, bool new) {
 	   to continue it, but that must be accepted. Otherwise players could exploit it and just join
 	   with a certain character during highlander tourneys and continue to level it up
 	   infinitely! :) So, who gets disconnected will be removed from the event! */
-//	if (sector00separation && ...) {
+	//if (sector00separation && ...) {
 	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
 		/* Teleport him out of the event area */
 #if 0
@@ -2075,7 +2075,7 @@ static void player_setup(int Ind, bool new) {
 		switch (p_ptr->global_event_type[d]) {
 		case GE_ARENA_MONSTER:
 			wpos->wx = cfg.town_x;
-		        wpos->wy = cfg.town_y;
+			wpos->wy = cfg.town_y;
 			wpos->wz = 0;
 			break;
 		}
@@ -2094,15 +2094,15 @@ static void player_setup(int Ind, bool new) {
 			    at_netherrealm(wpos) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) {
 				/* need to leave party, since we might be teamed up with incompatible char mode players! */
 				/* party_leave(Ind, FALSE); */
-			        if (streq(p_ptr->name, parties[p_ptr->party].owner)) {
+				if (streq(p_ptr->name, parties[p_ptr->party].owner)) {
 					/* impossible, because the owner always has the same mode as the party's cmode */
 					/* party_remove(Ind, p_ptr->name); */
-			        } else {
+				} else {
 					parties[p_ptr->party].members--;
 					Send_party(Ind, TRUE, FALSE);
 					p_ptr->party = 0;
 					clockin(Ind, 2);
-			        }
+				}
 			}
  #endif
  #ifdef ALLOW_NR_CROSS_ITEMS
@@ -2111,11 +2111,13 @@ static void player_setup(int Ind, bool new) {
 					p_ptr->inventory[i].NR_tradable = FALSE;
  #endif
 
+#if 0
 			wpos->wz = 0;
 
-	    		/* Avoid landing in permanent rock or trees or mountains etc.
-		           after an auto-recall, caused by a previous panic save. */
+			/* Avoid landing in permanent rock or trees or mountains etc.
+			   after an auto-recall, caused by a previous panic save. */
 			p_ptr->auto_transport = AT_BLINK;
+#endif
 		}
 #endif
 		/* Avoid critical border spots which might lead to segfaults.. (don't ask) */
@@ -2137,7 +2139,7 @@ static void player_setup(int Ind, bool new) {
 	p_ptr->spam = 0;
 
 	/* Default location if just starting */
-//	if (wpos->wz == 0 && wpos->wy == 0 && wpos->wx == 0 && p_ptr->py == 0 && p_ptr->px == 0) {
+	//if (wpos->wz == 0 && wpos->wy == 0 && wpos->wx == 0 && p_ptr->py == 0 && p_ptr->px == 0) {
 	if (new) {
 		p_ptr->wpos.wx = cfg.town_x;
 		p_ptr->wpos.wy = cfg.town_y;
@@ -2245,7 +2247,7 @@ static void player_setup(int Ind, bool new) {
 		if (!player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat, TRUE)
 		    /* max level limit to make players learn? or more comfort instead?
 		      -- it's important for ppl who log back into IDDC to have this teleport! */
-//		    && p_ptr->lev < 10
+		    //&& p_ptr->lev < 10
 		    ) {
 			NumPlayers++; // hack for cave_midx_debug - mikaelh
 			/* not a '_force'd teleport, so won't get out of NO_TELE vaults! */
@@ -2315,20 +2317,20 @@ static void player_setup(int Ind, bool new) {
 	if (!wpos->wz) {
 		/* hack: temporarily allow the player to be called in wild
 		   view update routines (player_day/player_night) */
-//		NumPlayers++;
+		//NumPlayers++;
 
 		/* hack #2: assume his (so far not loaded!) options are
 		   set the way that he remembers all town features */
 		i = p_ptr->view_perma_grids;
 		p_ptr->view_perma_grids = TRUE;
 
-//		if (IS_DAY) world_surface_day(wpos);
-//		else world_surface_night(wpos);
+		//if (IS_DAY) world_surface_day(wpos);
+		//else world_surface_night(wpos);
 		if (IS_DAY) player_day(Ind);
 		else player_night(Ind);
 
 		p_ptr->view_perma_grids = i;
-//		NumPlayers--;
+		//NumPlayers--;
 
 		/* Don't allow players to save in houses they don't own -> teleport them - C. Blue */
 		/* Assumption: wpos.wz==0 and CAVE_ICKY -> we're inside a house*/
@@ -2376,7 +2378,7 @@ static void player_setup(int Ind, bool new) {
 	if (zcave[y][x].m_idx && zcave[y][x].m_idx != 0 - Ind) {
 		for (i = 0; i < 3000; i++) {
 			d = (i + 9) / 10;
-//			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 0);
+			//scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 0);
 			/* Don't require LOS anymore - mikaelh */
 			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 1);
 

@@ -5036,7 +5036,7 @@ void do_slash_cmd(int Ind, char *message) {
 					if (uniques_only && !(r_info[i].flags1 & RF1_UNIQUE)) continue;
 					j = 0;
 					/* Now count how many monsters there are of each race */
-					for (k = 0; k < m_max; k++)
+					for (k = 1; k < m_max; k++)
 						if (m_list[k].r_idx == i) j++;
 					if (r_info[i].cur_num != j)
 						msg_format(Ind, "(%d) %s mismatch: cur_num %d, real %d.",
@@ -9624,7 +9624,11 @@ void do_slash_cmd(int Ind, char *message) {
 						if (astar_info_open[j].m_idx == -1) {
 							astar_info_open[j].m_idx = i;
 							m_ptr->astar_idx = j;
+ #ifdef ASTAR_DISTRIBUTE
+							astar_info_closed[j].nodes = 0;
+ #endif
 							k++;
+							msg_format(Ind, "Reassigned monster %d (r_idx %d) at %d,%d,%d.", i, m_ptr->r_idx, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz);
 							break;
 						}
 					}

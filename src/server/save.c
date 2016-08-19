@@ -2114,10 +2114,10 @@ static bool wr_server_savefile() {
 	/* Prepare to write the monsters */
 	compact_monsters(0, FALSE);
 	/* Note the number of monsters */
-	tmp32u = m_max;
+	tmp32u = m_max - 1;
 	wr_u32b(tmp32u);
 	/* Dump the monsters */
-	for (i = 0; i < m_max; i++) wr_monster(&m_list[i]);
+	for (i = 1; i < m_max; i++) wr_monster(&m_list[i]);
 
 	/* Prepare to write the objects */
 	compact_objects(0, FALSE);
