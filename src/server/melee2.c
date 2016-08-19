@@ -4253,7 +4253,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 		tmp_node.G = min_node.G + 1; //all grid distances in TomeNET are always 1
 
 		/* Generate its surrounding successor nodes */
-		for (j = 7; j >= 0; j--) {
+		for (j = 0; j < 8; j++) {
 			x = min_node.x + ddx_ddd[j];
 			y = min_node.y + ddy_ddd[j];
 
