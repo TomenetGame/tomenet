@@ -5268,7 +5268,14 @@ static void get_moves(int Ind, int m_idx, int *mm){
 #ifdef MONSTER_ASTAR
 	/* Monster uses A* pathfinding algorithm? - C. Blue */
 	if ((r_ptr->flags0 & RF0_ASTAR) && (m_ptr->astar_idx != -1))
-		(void)get_moves_astar(Ind, m_idx, &y2, &x2);
+		switch (get_moves_astar(Ind, m_idx, &y2, &x2)) {
+		case 0: /* No moves - blink or teleport */
+			//no worky: m_ptr->ai_state |= AI_STATE_EFFECT;
+			break;
+		case 2: /* No good moves - blink or wait */
+			break;
+		default: ; /* Nothing, either we're fine or we don't want to do anything special */
+		}
 #endif
 
 
