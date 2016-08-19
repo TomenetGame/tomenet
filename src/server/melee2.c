@@ -6503,6 +6503,9 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 	/* Added all monsters that can see through 'Cloaking' ability too - C. Blue */
 	if (strchr("eAN", r_ptr->d_char) ||
 	    ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->flags2 & RF2_SMART) && (r_ptr->flags2 & RF2_POWERFUL)) ||
+#ifdef MONSTER_ASTAR
+	    (r_ptr->flags0 & RF0_ASTAR) || /* hmm.. */
+#endif
 	    (r_ptr->flags7 & RF7_NAZGUL))
 		return(FALSE);
 
