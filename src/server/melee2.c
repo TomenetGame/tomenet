@@ -9383,20 +9383,12 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 void process_monsters_astar(void) {
 	int		i;
 	int		fx, fy;
-
 	monster_type	*m_ptr;
-	monster_race	*r_ptr;
-
-	/* Local copies for speed - mikaelh */
-	//s16b *_m_fast = m_fast;
-	//monster_type *_m_list = m_list;
-	// ? player_type **_Players = Players;
 
 	for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
 		if (astar_info_open[i].m_idx == -1) continue;
 
 		/* Access the monster */
-		//m_ptr = &_m_list[astar_info_open[i].m_idx];
 		m_ptr = &m_list[astar_info_open[i].m_idx];
 
 		/* Be careful, in case the player disconnected somehow
@@ -9405,8 +9397,6 @@ void process_monsters_astar(void) {
 		if (m_ptr->closest_player > NumPlayers) continue;
 		//maybe todo: super para check via id:
 		//if (m_ptr->closest_player_id != Players[m_ptr->closest_player].id) continue;
-
-		r_ptr = race_inf(m_ptr);
 
 		/* Access the location */
 		fx = m_ptr->fx;
