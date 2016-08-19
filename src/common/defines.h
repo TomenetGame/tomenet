@@ -190,7 +190,7 @@
      300: Can track ok within a distance of 1 sector.
      100: Can find lesser, local shortcuts. */
  #define ASTAR_MAX_NODES	1000
- /* how many spawned monsters can use A* at once (Sauron + 9 Nazgul = 10?) */
+ /* how many spawned monsters can use A* at once (Sauron + 9 Nazgul = 10? Adunaphel has PASS_WALL though.) */
  #define ASTAR_MAX_INSTANCES	10
  /* Heuristics function: Guesstimate distance from an inbetween grid sx,sy to our destination grid dx,dy */
  #define ASTAR_HEURISTICS(sx,sy,dx,dy)	(ABS((sx) - (dx)) > ABS((sy) - (dy)) ? ABS((sx) - (dx)) : ABS((sy) - (dy)))
