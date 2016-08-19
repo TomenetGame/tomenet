@@ -20175,7 +20175,7 @@ D:to means such as teleport.
 
 N:1133:Star Test Blob
 G:j:p
-I:100:1d1:0:0:0
+I:100:1d1:200:0:0
 W:127:255:0:0
 E:0:0:0:0:0:0
 O:0:0:0:0
