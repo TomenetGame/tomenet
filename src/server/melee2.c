@@ -4176,7 +4176,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 	astar_list_closed *ac = &astar_info_closed[m_ptr->astar_idx];
 	int *aoc = &ao->nodes, *acc = &ac->nodes; //node counters for both lists
 	astar_node *aonode = ao->node, *acnode = ac->node, min_node, tmp_node;
-	int minF, minIdx, destIdx = 0;
+	int minF, minIdx = 0, destIdx = 0;
 	cave_type **zcave, *c_ptr;
 	bool skip, end = FALSE, found = FALSE;
 
