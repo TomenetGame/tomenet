@@ -71,7 +71,7 @@
  * set to 0 to disable it.
  */
  #define		SAFETY_RADIUS	8
- 
+
 /* INDIRECT_FREQ does the following:
  *
  * ########....
@@ -93,7 +93,7 @@
  * reducing this also speeds the server up. [50]
  */
  #define		INDIRECT_FREQ	50
- 
+
 /* pseudo 'radius' for summoning spells. default is 3.  */
  #define		INDIRECT_SUMMONING_RADIUS	2
 
@@ -120,7 +120,7 @@
  *
  * If defined (even 0), monsters will also 'stand still' when a pile of items
  * is below their feet.
- */ 
+ */
  #define		MONSTERS_GREEDY	30
 
 #else	// STUPID_MONSTERS
@@ -143,7 +143,7 @@
  */
 #define		MULTI_HUED_UPDATE	2
 
-/* 
+/*
  * Chance of a breeder breeding, in percent. [0]
  * if you completely ban monsters from breeding, set this to -1(and not 0!).
  * 0 disables this check.
@@ -280,7 +280,7 @@ static bool int_outof(monster_race *r_ptr, int prob) {
  */
 static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *f0p) {
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = race_inf(m_ptr);
+	monster_race *r_ptr = race_inf(m_ptr);
 
 	u32b f4 = (*f4p);
 	u32b f5 = (*f5p);
@@ -570,7 +570,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad) {
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = race_inf(m_ptr);
+	monster_race *r_ptr = race_inf(m_ptr);
 
 	/* Determine the radius of the blast */
 	if (rad < 1) rad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
@@ -748,10 +748,10 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 #if 0
 			if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
 
-                        /* Nor on the between */
-                        if (cave[y][x].feat == FEAT_BETWEEN) return (FALSE);
+			/* Nor on the between */
+			if (cave[y][x].feat == FEAT_BETWEEN) return (FALSE);
 
-                        /* ...nor on the Pattern */
+			/* ...nor on the Pattern */
 			if ((cave[y][x].feat >= FEAT_PATTERN_START)
 				&& (cave[y][x].feat <= FEAT_PATTERN_XTRA2)) continue;
 #endif	// 0
@@ -760,7 +760,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 			/* Changed for summoning on mountains */
 			if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return (TRUE);
 #if 0
-			if ((cave_empty_bold(zcave,y,x) || cave_empty_mountain(zcave,y,x)) && 
+			if ((cave_empty_bold(zcave,y,x) || cave_empty_mountain(zcave,y,x)) &&
 			    los(wpos, y1,x1,y,x)) return (TRUE);
 #endif
 		}
@@ -1031,7 +1031,7 @@ static bool spell_heal(byte spell) {
 static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num) {
 	player_type *p_ptr = Players[Ind];
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = race_inf(m_ptr);
+	monster_race *r_ptr = race_inf(m_ptr);
 
 	byte escape[96], escape_num = 0;
 	byte attack[96], attack_num = 0;
@@ -1164,33 +1164,33 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 	if (!(r_ptr->flags2 & (RF2_STUPID))) {
 		/* What have we got? */
 		has_escape = ((f4 & (RF4_ESCAPE_MASK)) ||
-		              (f5 & (RF5_ESCAPE_MASK)) ||
-		              (f6 & (RF6_ESCAPE_MASK)) ||
-		              (f0 & (RF0_ESCAPE_MASK)));
+			      (f5 & (RF5_ESCAPE_MASK)) ||
+			      (f6 & (RF6_ESCAPE_MASK)) ||
+			      (f0 & (RF0_ESCAPE_MASK)));
 		has_attack = ((f4 & (RF4_ATTACK_MASK)) ||
-		              (f5 & (RF5_ATTACK_MASK)) ||
-		              (f6 & (RF6_ATTACK_MASK)) ||
-		              (f0 & (RF0_ATTACK_MASK)));
+			      (f5 & (RF5_ATTACK_MASK)) ||
+			      (f6 & (RF6_ATTACK_MASK)) ||
+			      (f0 & (RF0_ATTACK_MASK)));
 		has_summon = ((f4 & (RF4_SUMMON_MASK)) ||
-		              (f5 & (RF5_SUMMON_MASK)) ||
-		              (f6 & (RF6_SUMMON_MASK)) ||
-		              (f0 & (RF0_SUMMON_MASK)));
+			      (f5 & (RF5_SUMMON_MASK)) ||
+			      (f6 & (RF6_SUMMON_MASK)) ||
+			      (f0 & (RF0_SUMMON_MASK)));
 		has_tactic = ((f4 & (RF4_TACTIC_MASK)) ||
-		              (f5 & (RF5_TACTIC_MASK)) ||
-		              (f6 & (RF6_TACTIC_MASK)) ||
-		              (f0 & (RF0_TACTIC_MASK)));
+			      (f5 & (RF5_TACTIC_MASK)) ||
+			      (f6 & (RF6_TACTIC_MASK)) ||
+			      (f0 & (RF0_TACTIC_MASK)));
 		has_annoy = ((f4 & (RF4_ANNOY_MASK)) ||
-		             (f5 & (RF5_ANNOY_MASK)) ||
-		             (f6 & (RF6_ANNOY_MASK)) ||
-		             (f0 & (RF0_ANNOY_MASK)));
+			     (f5 & (RF5_ANNOY_MASK)) ||
+			     (f6 & (RF6_ANNOY_MASK)) ||
+			     (f0 & (RF0_ANNOY_MASK)));
 		has_haste = ((f4 & (RF4_HASTE_MASK)) ||
-		             (f5 & (RF5_HASTE_MASK)) ||
-		             (f6 & (RF6_HASTE_MASK)) ||
-		             (f0 & (RF0_HASTE_MASK)));
+			     (f5 & (RF5_HASTE_MASK)) ||
+			     (f6 & (RF6_HASTE_MASK)) ||
+			     (f0 & (RF0_HASTE_MASK)));
 		has_heal = ((f4 & (RF4_HEAL_MASK)) ||
-		            (f5 & (RF5_HEAL_MASK)) ||
-		            (f6 & (RF6_HEAL_MASK)) ||
-		            (f0 & (RF0_HEAL_MASK)));
+			    (f5 & (RF5_HEAL_MASK)) ||
+			    (f6 & (RF6_HEAL_MASK)) ||
+			    (f0 & (RF0_HEAL_MASK)));
 
 		/*** Try to pick an appropriate spell type ***/
 
@@ -2042,7 +2042,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	int count = 0;
 
 	/* scatter summoning target location if player is shadow running, ie hard to pin down */
-	if (p_ptr->shadow_running) scatter(wpos, &ys, &xs, y, x, 5, 0); 
+	if (p_ptr->shadow_running) scatter(wpos, &ys, &xs, y, x, 5, 0);
 
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
 	/* Extract the "within-the-vision-ness" --
@@ -2051,7 +2051,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	         We can easily guess who cast that fireball 'around the corner'.. */
 	bool visible = p_ptr->mon_vis[m_idx]
 			&& player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx);//new: require LoS
-	/* Extract the "see-able-ness" -- 
+	/* Extract the "see-able-ness" --
 	   Note: This allows non-LoS (aka ESP-only) visibility,
 	         because it is only used for direct spells. */
 	bool seen = p_ptr->mon_vis[m_idx] && !blind;
@@ -2206,7 +2206,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 						srad : INDIRECT_SUMMONING_RADIUS);
 			else rad = 99;
 
-			//if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL)))) 
+			//if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL))))
 			if (rad > srad) {
 				local = TRUE;
 
@@ -3991,7 +3991,7 @@ int mon_will_run(int Ind, int m_idx) {
 	cave_type **zcave;
 
 #ifdef ALLOW_TERROR
-        monster_race *r_ptr = race_inf(m_ptr);
+	monster_race *r_ptr = race_inf(m_ptr);
 
 	u16b p_lev, m_lev;
 	u16b p_chp, p_mhp;
@@ -4093,7 +4093,7 @@ int mon_will_run(int Ind, int m_idx) {
 static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp) {
 	int i, y, x, y1, x1, when = 0, cost = 999;
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = race_inf(m_ptr);
+	monster_race *r_ptr = race_inf(m_ptr);
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave, *c_ptr;
 
@@ -4586,7 +4586,7 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 
 		/* Skip locations in a wall */
 #if 0
-		if (!cave_floor_bold(zcave, y, x) && 
+		if (!cave_floor_bold(zcave, y, x) &&
 				!((r_ptr->flags2 & (RF2_PASS_WALL)) ||
 					(r_ptr->flags2 & (RF2_KILL_WALL))))
 			continue;
@@ -5110,7 +5110,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 	player_type *p_ptr = Players[Ind];
 
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = race_inf(m_ptr);
+	monster_race *r_ptr = race_inf(m_ptr);
 
 	int y, ay, x, ax, mwr;
 	int move_val = 0;
@@ -5124,7 +5124,6 @@ static void get_moves(int Ind, int m_idx, int *mm){
 	if (ABS(m_ptr->fx - x2) <= 1 && ABS(m_ptr->fy - y2) <= 1 &&
 	    (!(r_ptr->flags7 & RF7_AI_ANNOY) || m_ptr->taunted))
 		close_combat = TRUE;
-
 
 #ifdef MONSTER_FLOW
 	/* Flow towards the player */
@@ -5300,7 +5299,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 			monster_type *mx_ptr;
 			for (yt = m_ptr->fy - 5; yt <= m_ptr->fy + 5; yt ++)
 			for (xt = m_ptr->fx - 5; xt <= m_ptr->fx + 5; xt ++) {
-    				if (in_bounds(yt,xt) && (zcave[yt][xt].m_idx > 0) &&
+				if (in_bounds(yt,xt) && (zcave[yt][xt].m_idx > 0) &&
 				   !(yt == m_ptr->fy && xt == m_ptr->fx)) {
 					mx_ptr = &m_list[zcave[yt][xt].m_idx];
 					if (!mx_ptr->csleep && !mx_ptr->confused && !mx_ptr->monfear && (mx_ptr->level * 3 > m_ptr->level))
@@ -5321,10 +5320,10 @@ static void get_moves(int Ind, int m_idx, int *mm){
 				if (rand_int(2)) clockwise = FALSE; /* circle the player anti-clockwise */
 				for (yt = m_ptr->fy - 1; yt <= m_ptr->fy + 1; yt ++)
 				for (xt = m_ptr->fx - 1; xt <= m_ptr->fx + 1; xt ++) {
-	    				if (in_bounds(yt, xt) && !(yt == m_ptr->fy && xt == m_ptr->fx) &&
+					if (in_bounds(yt, xt) && !(yt == m_ptr->fy && xt == m_ptr->fx) &&
 					    /* Random target position mustn't change distance to player */
 					    /* Better not enter a position perfectly diagonal to player */
-			    		    ((ABS(yt - y2) == 2 && ABS(xt - x2) <= 1) ||
+					    ((ABS(yt - y2) == 2 && ABS(xt - x2) <= 1) ||
 					    (ABS(yt - y2) <= 1 && ABS(xt - x2) == 2))) {
 						/* Only 2 fields should ever pass the previous if-clause!
 						   So we can separate them using boolean values: */
@@ -5354,7 +5353,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 	}
 #endif	// 0
 
-//        if (!stupid_monsters && (is_friend(m_ptr) < 0))
+	//if (!stupid_monsters && (is_friend(m_ptr) < 0))
 #ifndef STUPID_MONSTERS
 	if (!done) {
 		int tx = x2, ty = y2;
@@ -5674,13 +5673,13 @@ static void get_moves(int Ind, int m_idx, int *mm){
 static void get_moves_arc(int targy, int targx, int m_idx, int *mm) {
 
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = race_inf(m_ptr);
+	monster_race *r_ptr = race_inf(m_ptr);
 
 	int y, ay, x, ax;
 	int move_val = 0;
 
-        int y2 = targy;
-        int x2 = targx;
+	int y2 = targy;
+	int x2 = targx;
 	//bool done = FALSE;//, c_blue_ai_done = FALSE;	// not used fully (FIXME)
 
 
@@ -5851,22 +5850,22 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 	if (Ind > 0) p_ptr = Players[Ind];
 	else p_ptr = NULL;
 
-        /* Lets find a target */
+	/* Lets find a target */
 
-        if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && p_ptr->target_who && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who))) {
-                tm_idx = p_ptr->target_who;
-        } else// if (m_ptr->mind & GOLEM_GUARD)
-        {
-                int sx, sy;
-                s32b max_hp = 0;
+	if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && p_ptr->target_who && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who))) {
+		tm_idx = p_ptr->target_who;
+	} else// if (m_ptr->mind & GOLEM_GUARD)
+	{
+		int sx, sy;
+		s32b max_hp = 0;
 
-                /* Scan grids around */
-                for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
-                for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++)
-                {
-                        cave_type *c_ptr;
+		/* Scan grids around */
+		for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
+		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++)
+		{
+			cave_type *c_ptr;
 			cave_type **zcave;
-                        if (!in_bounds(sy, sx)) continue;
+			if (!in_bounds(sy, sx)) continue;
 
 			/* ignore ourself */
 			if (sx == m_ptr->fx && sy == m_ptr->fy) continue;
@@ -5875,40 +5874,40 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 			/* and it would crash anyway ;) */
 
 			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
-                        c_ptr = &zcave[sy][sx];
+			c_ptr = &zcave[sy][sx];
 
 			if(!c_ptr->m_idx) continue;
 
-                        if (c_ptr->m_idx > 0)
-                        {
-                                if (max_hp < m_list[c_ptr->m_idx].maxhp)
-                                {
-                                        max_hp = m_list[c_ptr->m_idx].maxhp;
-                                        tm_idx = c_ptr->m_idx;
-                                }
-                        }
-                        else
-                        {
-                                if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id))
-                                {
-                                        max_hp = Players[-c_ptr->m_idx]->mhp;
-                                        tm_idx = c_ptr->m_idx;
-                                }
-                        }
-                }
-        }
-        /* Nothing else to do ? */
-        if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
-        {
-                tm_idx = -Ind;
-        }
+			if (c_ptr->m_idx > 0)
+			{
+				if (max_hp < m_list[c_ptr->m_idx].maxhp)
+				{
+					max_hp = m_list[c_ptr->m_idx].maxhp;
+					tm_idx = c_ptr->m_idx;
+				}
+			}
+			else
+			{
+				if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id))
+				{
+					max_hp = Players[-c_ptr->m_idx]->mhp;
+					tm_idx = c_ptr->m_idx;
+				}
+			}
+		}
+	}
+	/* Nothing else to do ? */
+	if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
+	{
+		tm_idx = -Ind;
+	}
 
-        if (!tm_idx) return FALSE;
+	if (!tm_idx) return FALSE;
 
 	if(!(inarea(&m_ptr->wpos, (tm_idx>0)? &m_list[tm_idx].wpos:&Players[-tm_idx]->wpos))) return FALSE;
 
-        y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
-        x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
+	y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
+	x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
 
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
@@ -6078,7 +6077,7 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 		break;
 	}
 
-        return TRUE;
+	return TRUE;
 }
 #endif
 
@@ -6087,36 +6086,36 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
  * Returns TRUE to move, FALSE to stand still
  */
 static bool get_moves_golem(int Ind, int m_idx, int *mm) {
-        player_type *p_ptr;
+	player_type *p_ptr;
 	monster_type *m_ptr = &m_list[m_idx];
 
 	int y, ay, x, ax;
 	int move_val = 0;
-        int tm_idx = 0;
+	int tm_idx = 0;
 
-        int y2, x2;
+	int y2, x2;
 
-        if (Ind > 0) p_ptr = Players[Ind];
-        else p_ptr = NULL;
+	if (Ind > 0) p_ptr = Players[Ind];
+	else p_ptr = NULL;
 
-        /* Lets find a target */
+	/* Lets find a target */
 
-        if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && p_ptr->target_who && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who)))
-        {
-                tm_idx = p_ptr->target_who;
-        }
-        else if (m_ptr->mind & GOLEM_GUARD)
-        {
-                int sx, sy;
-                s32b max_hp = 0;
+	if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && p_ptr->target_who && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who)))
+	{
+		tm_idx = p_ptr->target_who;
+	}
+	else if (m_ptr->mind & GOLEM_GUARD)
+	{
+		int sx, sy;
+		s32b max_hp = 0;
 
-                /* Scan grids around */
-                for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
-                for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++)
-                {
-                        cave_type *c_ptr;
+		/* Scan grids around */
+		for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
+		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++)
+		{
+			cave_type *c_ptr;
 			cave_type **zcave;
-                        if (!in_bounds(sy, sx)) continue;
+			if (!in_bounds(sy, sx)) continue;
 
 			/* ignore ourself */
 			if (sx == m_ptr->fx && sy == m_ptr->fy) continue;
@@ -6125,40 +6124,40 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 			/* and it would crash anyway ;) */
 
 			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
-                        c_ptr = &zcave[sy][sx];
+			c_ptr = &zcave[sy][sx];
 
 			if(!c_ptr->m_idx) continue;
 
-                        if (c_ptr->m_idx > 0)
-                        {
-                                if (max_hp < m_list[c_ptr->m_idx].maxhp)
-                                {
-                                        max_hp = m_list[c_ptr->m_idx].maxhp;
-                                        tm_idx = c_ptr->m_idx;
-                                }
-                        }
-                        else
-                        {
-                                if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id))
-                                {
-                                        max_hp = Players[-c_ptr->m_idx]->mhp;
-                                        tm_idx = c_ptr->m_idx;
-                                }
-                        }
-                }
-        }
-        /* Nothing else to do ? */
-        if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
-        {
-                tm_idx = -Ind;
-        }
+			if (c_ptr->m_idx > 0)
+			{
+				if (max_hp < m_list[c_ptr->m_idx].maxhp)
+				{
+					max_hp = m_list[c_ptr->m_idx].maxhp;
+					tm_idx = c_ptr->m_idx;
+				}
+			}
+			else
+			{
+				if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id))
+				{
+					max_hp = Players[-c_ptr->m_idx]->mhp;
+					tm_idx = c_ptr->m_idx;
+				}
+			}
+		}
+	}
+	/* Nothing else to do ? */
+	if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
+	{
+		tm_idx = -Ind;
+	}
 
-        if (!tm_idx) return FALSE;
+	if (!tm_idx) return FALSE;
 
 	if(!(inarea(&m_ptr->wpos, (tm_idx>0)? &m_list[tm_idx].wpos:&Players[-tm_idx]->wpos))) return FALSE;
 
-        y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
-        x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
+	y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
+	x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
 
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
@@ -6328,7 +6327,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 		break;
 	}
 
-        return TRUE;
+	return TRUE;
 }
 
 static bool get_moves_questor(int Ind, int m_idx, int *mm) {
@@ -6962,7 +6961,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	*/
 	if (!(zcave = getcave(wpos))) return;
 
-	/* If the monster can't see the player */ 
+	/* If the monster can't see the player */
 	inv = player_invis(Ind, m_ptr, m_ptr->cdis);
 
 #ifdef SAURON_ANTI_GLYPH
@@ -7671,8 +7670,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 		/* Handle doors and secret doors */
 		else if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		          (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-		         (c_ptr->feat == FEAT_SECRET))
+			  (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
+			 (c_ptr->feat == FEAT_SECRET))
 		{
 			bool may_bash = TRUE;
 
@@ -7933,7 +7932,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 		/* A monster is in the way */
 		if (do_move && c_ptr->m_idx > 0) {
-                        monster_race *z_ptr = race_inf(y_ptr);
+			monster_race *z_ptr = race_inf(y_ptr);
 
 			/* Assume no movement */
 			do_move = FALSE;
@@ -8397,11 +8396,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
  * - the_sandman
  */
 static void process_monster_pet(int Ind, int m_idx) {
-	//player_type *p_ptr; 
+	//player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 	struct worldpos *wpos = &m_ptr->wpos;
-   
+
 	int			i, d, oy, ox, ny, nx;
 
 	int			mm[8];
@@ -8624,8 +8623,8 @@ static void process_monster_pet(int Ind, int m_idx) {
 		}
 		/* Handle doors and secret doors */
 		else if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		          (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-		         (c_ptr->feat == FEAT_SECRET))
+			  (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
+			 (c_ptr->feat == FEAT_SECRET))
 		{
 			bool may_bash = TRUE;
 
@@ -8755,10 +8754,10 @@ static void process_monster_pet(int Ind, int m_idx) {
 			/* attack it ! */
 			if (m_ptr->owner != y_ptr->owner || (y_ptr->owner && check_hostile(find_player(m_ptr->owner), find_player(y_ptr->owner))))
 			//if (m_ptr->owner != y_ptr->owner || !(y_ptr->pet && y_ptr->owner && !check_hostile(find_player(m_ptr->owner), find_player(y_ptr->owner))))
-				monster_attack_normal(c_ptr->m_idx, m_idx); 
+				monster_attack_normal(c_ptr->m_idx, m_idx);
 
 			/* assume no movement */
-			do_move = FALSE; 
+			do_move = FALSE;
 			/* take a turn */
 			do_turn = TRUE;
 		}
@@ -8826,7 +8825,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 	//player_type *p_ptr;
 
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = race_inf(m_ptr);
+	monster_race    *r_ptr = race_inf(m_ptr);
 	struct worldpos *wpos = &m_ptr->wpos;
 
 	int			i, d, oy, ox, ny, nx, Ind_owner;
@@ -8853,7 +8852,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 #endif
 
 
-        /* Hack -- don't process monsters on wilderness levels that have not
+	/* Hack -- don't process monsters on wilderness levels that have not
 	   been regenerated yet.
 	*/
 	cave_type **zcave;
@@ -8940,7 +8939,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 	/* Normal movement */
 	else {
 		/* Logical moves */
-                if (!get_moves_golem(Ind, m_idx, mm)) return;
+		if (!get_moves_golem(Ind, m_idx, mm)) return;
 	}
 
 
@@ -9147,7 +9146,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 		}
 
 		/* The player is in the way.  Attack him. */
-                if (do_move && (c_ptr->m_idx < 0)
+		if (do_move && (c_ptr->m_idx < 0)
 		    && Ind_owner && check_hostile(0-c_ptr->m_idx, Ind_owner)) {
 			/* Do the attack */
 			if (Players[0-c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_melee(0 - c_ptr->m_idx, m_idx);
@@ -9271,7 +9270,7 @@ void process_monsters(void) {
 	bool		test;
 
 	int		closest, dis_to_closest, lowhp;
-	bool		blos, new_los; 
+	bool		blos, new_los;
 
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
@@ -9669,7 +9668,7 @@ void process_monsters(void) {
 		/* Do nothing */
 		if (!test) continue;
 
-	        /* Change monster's highest player encounter (mode 1+ : monster actively targets a player) */
+		/* Change monster's highest player encounter (mode 1+ : monster actively targets a player) */
 		if (!m_ptr->csleep && !in_bree(&m_ptr->wpos)) { /* not in Bree, because of Halloween & Christmas (Santa Claus) :) */
 			if (m_ptr->henc < p_ptr->max_lev) m_ptr->henc = p_ptr->max_lev;
 			if (m_ptr->henc_top < (p_ptr->max_lev + p_ptr->max_plv) / 2) m_ptr->henc_top = (p_ptr-> max_lev + p_ptr->max_plv) / 2;
@@ -9782,19 +9781,19 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 {
 	player_type *p_ptr = Players[Ind];
 	bool changed = FALSE;
-        u32b f1, f2, f3, f4, f5, f6, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_type * o_ptr = &p_ptr->inventory[INVEN_WIELD + rand_int(12)];
 
 	if (randint(100) > chance) return;
 
 	if (!(o_ptr->k_idx)) return;
 
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 
 	/* Extra, biased saving throw for blessed items */
 	if ((f3 & (TR3_BLESSED)) && (randint(888) > chance))
-	{   
+	{
 		char o_name[ONAME_LEN];
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		msg_format(Ind, "Your %s resist%s cursing!", o_name,
