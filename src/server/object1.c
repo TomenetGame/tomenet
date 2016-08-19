@@ -2838,17 +2838,21 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 #ifndef NEW_MDEV_STACKING
 		if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
 #else
- #if 0 /* debug code */
-		if (o_ptr->pval && o_ptr->bpval) {
-			t = object_desc_str(t, " (#");
-			t = object_desc_num(t, o_ptr->pval);
-			t = object_desc_chr(t, ':');
-			t = object_desc_num(t, o_ptr->bpval);
-			t = object_desc_chr(t, ')');
-		}
- #else
 		if (o_ptr->bpval == o_ptr->number) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
+ #if 1
 		else if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (partially charging)" : "(~)");
+ #else
+		else if (o_ptr->pval) {
+			if (mode & 8) {
+				t = object_desc_str(t, "(");
+				t = object_desc_num(t, o_ptr->bpval);
+				t = object_desc_str(t, "~)");
+			} else {
+				t = object_desc_str(t, " (");
+				t = object_desc_num(t, o_ptr->bpval);
+				t = object_desc_str(t, " charging)");
+			}
+		}
  #endif
 #endif
 	}
