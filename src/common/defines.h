@@ -179,7 +179,17 @@
 //#define MON_IGNORE_KEYS
 
 #ifdef MONSTER_ASTAR
- #define ASTAR_MAX_NODES		1000	/* max size of open/closed pathfinding table in an A* instance */
+ /* max size of open/closed pathfinding table in an A* instance.
+    4000: Can track reasonably over a complete big level with non-trivial layout.
+          This is enough to cover a big 'maze' layout almost completely, except when
+          hidint in the very, diagonally opposite, corners. Maybe add another 500..?
+    2000: Can track reasonably over a complete big level of the usual, normal layout
+          w/ rooms and hallways. However, practically no monsters have this AAF.
+    1000: Can track ok over 3 sectors of usual layout. [RECOMMENDED]
+     500: Can track ok over 2 sectors of usual layout.
+     300: Can track ok within a distance of 1 sector.
+     100: Can find lesser, local shortcuts. */
+ #define ASTAR_MAX_NODES		1000
  #define ASTAR_MAX_INSTANCES		20	/* how many spawned monsters can use A* at once */
  /* Heuristics function: Guesstimate distance from an inbetween grid sx,sy to our destination grid dx,dy */
  #define ASTAR_HEURISTICS(sx,sy,dx,dy)	(ABS((sx) - (dx)) > ABS((sy) - (dy)) ? ABS((sx) - (dx)) : ABS((sy) - (dy)))
@@ -6830,6 +6840,33 @@
 /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
 ((f_info[(C)->feat].flags1 & FF1_WALL) &&!(f_info[(C)->feat].flags1 & FF1_PERMANENT) && ((R)->flags2 & (RF2_KILL_WALL))) || \
 (C)->feat == FEAT_MON_TRAP) /* Floor is trapped? */ \
+
+/* Extended version of the above, again! This one is used for monsters utilising A* path-finding. - C. Blue
+   This version really covers ALL grids that the monster could somehow enter: It includes doors too. */
+#define creature_can_enter3(R,C) \
+(cave_floor_grid(C) || /* Floor is open? */ \
+(((f_info[(C)->feat].flags1 & FF1_CAN_FEATHER) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
+((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY))) || \
+/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+/* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
+(((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
+(((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
+/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
+((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
+/* POWERFUL monsters can hack down trees */ \
+((R)->flags2 & RF2_POWERFUL))) || \
+/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+(((C)->feat == FEAT_MOUNTAIN) && \
+(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags0 & RF0_CAN_CLIMB))) || \
+/* Monster moves through walls (and doors) */ \
+/*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
+/*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
+((f_info[(C)->feat].flags1 & FF1_WALL) && (f_info[(C)->feat].flags1 & FF1_CAN_PASS) && ((R)->flags2 & (RF2_PASS_WALL))) || \
+/* Monster can crush walls (note: Morgoth isn't taken into account here, shouldn't matter much though) */ \
+/*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
+((f_info[(C)->feat].flags1 & FF1_WALL) &&!(f_info[(C)->feat].flags1 & FF1_PERMANENT) && ((R)->flags2 & (RF2_KILL_WALL))) || \
+(C)->feat == FEAT_MON_TRAP || /* Floor is trapped? */ \
+((((c_ptr->feat >= FEAT_DOOR_HEAD) && (c_ptr->feat <= FEAT_DOOR_TAIL)) || (c_ptr->feat == FEAT_SECRET)) && ((R)->flags2 & (RF2_KILL_WALL | RF2_OPEN_DOOR))))
 
 
 /* A wall that doesn't "fill" the grid completely, ie could be passed without

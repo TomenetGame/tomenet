@@ -4260,7 +4260,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 			/* Skip forbidden grids */
 			if (!in_bounds(y, x)) continue;
 			c_ptr = &zcave[y][x];
-			if (!creature_can_enter2(r_ptr, c_ptr)) continue;
+			if (!creature_can_enter3(r_ptr, c_ptr)) continue;
 
 			/* Is it the player grid? We got you!
 			   Note: We don't need to set xp/yp because they've already been initialised

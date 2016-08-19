@@ -20407,6 +20407,16 @@ S:1_IN_1
 #S:S_ANIMAL
 S:S_ANGEL
 
+N:1150:Fast Star Test Blob
+G:j:p
+I:130:1d1:200:0:0
+W:127:255:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR
+D:For testing
+
 
 
 # N: serial number : monster name
