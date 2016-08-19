@@ -4257,12 +4257,12 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 			x = min_node.x + ddx_ddd[j];
 			y = min_node.y + ddy_ddd[j];
 
-			/* Skip forbidden grids */
+			/* Skip non-existant grids */
 			if (!in_bounds(y, x)) continue;
 			c_ptr = &zcave[y][x];
-			if (!creature_can_enter3(r_ptr, c_ptr)) continue;
 
 			/* Is it the player grid? We got you!
+			   No matter if we can actually enter this grid or not, since we can still attack him anyway.
 			   Note: We don't need to set xp/yp because they've already been initialised
 			   with the player's location in our calling function get_moves(). */
 			if (x == px && y == py) {
@@ -4286,6 +4286,9 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 				destIdx = i;
 				break;
 			}
+
+			/* Skip forbidden grids */
+			if (!creature_can_enter3(r_ptr, c_ptr)) continue;
 
 			/* Create and hold the successor node in 'tmp_node' to process it further */
 			tmp_node.x = x;
