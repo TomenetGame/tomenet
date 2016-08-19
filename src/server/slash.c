@@ -9623,8 +9623,6 @@ void do_slash_cmd(int Ind, char *message) {
 						/* found an available instance? */
 						if (astar_info_open[j].m_idx == -1) {
 							astar_info_open[j].m_idx = i;
-							astar_info_open[j].nodes = 0; /* init: start with empty set of nodes */
-							astar_info_closed[j].nodes = 0; /* init: start with empty set of nodes */
 							m_ptr->astar_idx = j;
 							k++;
 							break;

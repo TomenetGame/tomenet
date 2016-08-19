@@ -932,8 +932,6 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 			/* found an available instance? */
 			if (astar_info_open[i].m_idx == -1) {
 				astar_info_open[i].m_idx = m_idx;
-				astar_info_open[i].nodes = 0; /* init: start with empty set of nodes */
-				astar_info_closed[i].nodes = 0; /* init: start with empty set of nodes */
 				m_ptr->astar_idx = i;
 				break;
 			}

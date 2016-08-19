@@ -4165,65 +4165,226 @@ static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp) {
 
 #ifdef MONSTER_ASTAR
 /* Get monster moves for A* pathfinding - C. Blue */
-static bool get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
-	int i, y, x, y1, x1;
+static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = race_inf(m_ptr);
+	monster_race *r_ptr = race_inf(m_ptr);
 	player_type *p_ptr = Players[Ind];
-	cave_type **zcave;//, *c_ptr;
+	int i, ireal, j;
+	int x, y, mx, my, px, py;
 
-#if 0 /* just disabled while unused, to prevent compiler warnings */
 	astar_list_open *ao = &astar_info_open[m_ptr->astar_idx];
 	astar_list_closed *ac = &astar_info_closed[m_ptr->astar_idx];
-	int astarF = 0, astarG = 0, astarH = 0;
-#endif
-	int cost = 999;
+	int *aoc = &ao->nodes, *acc = &ac->nodes; //node counters for both lists
+	astar_node *aonode = ao->node, *acnode = ac->node, min_node, tmp_node;
+	int minF, minIdx, destIdx = 0;
+	cave_type **zcave, *c_ptr;
+	bool skip, end = FALSE, found = FALSE;
 
-	if(!(zcave = getcave(&m_ptr->wpos))) return FALSE;
 
-return (FALSE);
-
-	/* Monster can go through permanent rocks even? (Morgoth only) */
+	/* Monster can go through permanent rocks even? Morgoth only, and he's never on
+	   levels with mountains or other perma-wall obstacles that he cannot destroy. */
 	if ((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL)) return (FALSE);
 
-	/* Hack -- Player can see us, run towards him */
-	if (player_has_los_bold(Ind, y1, x1)) return (FALSE);
+	if (!(zcave = getcave(&m_ptr->wpos))) return FALSE; //paranoia
 
 	/* Monster location */
-	y1 = m_ptr->fy;
-	x1 = m_ptr->fx;
+	mx = m_ptr->fx;
+	my = m_ptr->fy;
 
-	/* Monster grid */
-	//c_ptr = &zcave[y1][x1];
+	/* Hack -- Player can see us, run towards him */
+	if (player_has_los_bold(Ind, my, mx)) return (FALSE);
 
-	
 
-	/* Check nearby grids, diagonals first */
-	for (i = 7; i >= 0; i--) {
-		/* Get the location */
-		y = y1 + ddy_ddd[i];
-		x = x1 + ddx_ddd[i];
-		if (!in_bounds(y, x)) continue;
+	/* Player location */
+	px = p_ptr->px;
+	py = p_ptr->py;
 
-		/* Ignore distant locations */
-//		if (zcave[y][x].astarF > cost) continue;
+	/* Initialise open and closed lists.
+	   Note: This especially initialises all nodes' 'in_use' with zero. */
+	memset(aonode, 0, sizeof(astar_node) * ASTAR_MAX_NODES);
+	memset(acnode, 0, sizeof(astar_node) * ASTAR_MAX_NODES);
 
-		/* Save the cost and time */
-//		cost = zcave[y][x].astarF;
+	/* Create our starting node and put it on the open list */
+	aonode[0].x = mx;
+	aonode[0].y = my;
+	/* Note: F, G, H and parent_idx of this node have been initialised with zero, as they should be. */
+	aonode[0].in_use = TRUE;
+	*aoc = 1;
 
-		/* Hack -- Save the "twiddled" location */
-		(*yp) = p_ptr->py + 16 * ddy_ddd[i];
-		(*xp) = p_ptr->px + 16 * ddx_ddd[i];
+	/* Closed list starts with zero nodes */
+	*acc = 0;
+
+	/* tmp_node is always 'in_use', hehe */
+	tmp_node.in_use = TRUE;
+
+	/* A-Star ends when open list is empty */
+	while (*aoc) {
+		minF = 8192; //something higher than any expected movement cost, even in a maze level =P
+		/* Find node on open list with minimum F */
+		for (i = 0, ireal = 0; ireal < *aoc; i++) {
+			/* skip notes marked as 'deleted' */
+			if (!aonode[i].in_use) continue;
+			ireal++;
+
+			if (aonode[i].F < minF) {
+				minF = aonode[i].F;
+				minIdx = i;
+			}
+		}
+
+		/* Pop that node off the open list and hold it in 'min_node' */
+		min_node = aonode[minIdx];
+		aonode[minIdx].in_use = FALSE; //it's now 'deleted'
+		(*aoc)--;
+
+		/* Push our current node on the closed list */
+		for (i = 0; i < ASTAR_MAX_NODES; i++) {
+			if (acnode[i].in_use) continue;
+
+			acnode[i] = min_node;
+			(*acc)++;
+			break;
+		}
+		if (i == ASTAR_MAX_NODES) break; //oops, out of memory!
+
+		/* Efficiency: Already set that partial info of all successor nodes, which is invariant for all of them.
+		   There is really no need to do this over and over inside the loop below. ^^ */
+		tmp_node.parent_idx = i; //parent node 'min_node' will in any case land on top of the closed list
+		tmp_node.G = min_node.G + 1; //all grid distances in TomeNET are always 1
+
+		/* Generate its surrounding successor nodes */
+		for (j = 7; j >= 0; j--) {
+			x = min_node.x + ddx_ddd[j];
+			y = min_node.y + ddy_ddd[j];
+
+			/* Skip forbidden grids */
+			if (!in_bounds(y, x)) continue;
+			c_ptr = &zcave[y][x];
+			if (!creature_can_enter2(r_ptr, c_ptr)) continue;
+
+			/* Is it the player grid? We got you!
+			   Note: We don't need to set xp/yp because they've already been initialised
+			   with the player's location in our calling function get_moves(). */
+			if (x == px && y == py) {
+				end = TRUE;
+
+				/* Add it to the closed list, still.. */
+				for (i = 0; i < ASTAR_MAX_NODES; i++) {
+					if (acnode[i].in_use) continue;
+
+					acnode[i] = tmp_node;
+					(*acc)++;
+					break;
+				}
+				if (i == ASTAR_MAX_NODES) break; //oops, out of memory!
+
+				/* Note: x,y,H,F have not yet been set, but it doesn't matter :p -
+				   we only need the parent_idx really. */
+
+				/* Success */
+				found = TRUE;
+				destIdx = i;
+				break;
+			}
+
+			/* Create and hold the successor node in 'tmp_node' to process it further */
+			tmp_node.x = x;
+			tmp_node.y = y;
+			tmp_node.H = ASTAR_HEURISTICS(x, y, px, py);
+			tmp_node.F = tmp_node.G + tmp_node.H;
+			skip = FALSE;
+
+			/* Compare this successor node with all nodes still in the open list */
+			for (i = 0, ireal = 0; ireal < *aoc; i++) {
+				/* skip notes marked as 'deleted' */
+				if (!aonode[i].in_use) continue;
+				ireal++;
+
+				/* Does the open list node have same position as the current successor node? */
+				if (aonode[i].x == tmp_node.x && aonode[i].y == tmp_node.y) {
+					/* ..it also hasn't better F than we do? */
+					if (aonode[i].G <= tmp_node.G) {
+						/* Then just discard this successor. */
+						skip = TRUE;
+						break;
+					}
+					/* Otherwise, remove this worse one from the open list */
+					aonode[i].in_use = FALSE;
+				}
+			}
+			if (skip) continue;
+
+			/* Compare this successor node with all nodes in the closed list */
+			for (i = 0, ireal = 0; ireal < *acc; i++) {
+				/* skip notes marked as 'deleted' */
+				if (!acnode[i].in_use) continue;
+				ireal++;
+
+				/* Does the closed list node have same position as the current successor node? */
+				if (acnode[i].x == tmp_node.x && acnode[i].y == tmp_node.y) {
+					/* ..it also hasn't better F than we do? */
+					if (acnode[i].G <= tmp_node.G) {
+						/* Then just discard this successor. */
+						skip = TRUE;
+						break;
+					}
+					/* Otherwise, remove this worse one from the closed list */
+					acnode[i].in_use = FALSE;
+				}
+			}
+			if (skip) continue;
+
+			/* Ok, add this successor to the open list */
+			for (i = 0; i < ASTAR_MAX_NODES; i++) {
+				if (aonode[i].in_use) continue;
+
+				aonode[i] = tmp_node;
+				(*aoc)++;
+				break;
+			}
+			/* If (i == ASTAR_MAX_NODES) then oops - we're out of memory and have to discard this node.. */
+		}
+
+		/* We found a way or ran out of memory? */
+		if (end) break;
 	}
 
-	/* Monster is too far away to notice the player */
-//	if (c_ptr->astarF > r_ptr->aaf) return (FALSE);
+	/* We found a way? */
+	if (found) {
+s_printf("ASTAR: -1 (found, %d,%d)\n", *aoc, *acc);
+		/* Backtrace the path from destination (player) to start (monster)
+		   through the closed list, from player position to monster position. */
+		i = destIdx;
 
-	/* No legal move (?) */
-	if (!cost) return (FALSE);
+		while (TRUE) {
+			/* Stop one grid before the very first node (parent_idx = 0) aka
+			   the monster's grid, as the first node after that one is our goal. */
+			if (!acnode[i].parent_idx) break;
+			/* Go back another step */
+			i = acnode[i].parent_idx;
+		}
+		*xp = acnode[i].x;
+		*yp = acnode[i].y;
+		return -1;
+	}
 
-	/* Success */
-	return (TRUE);
+	/* No legal move at all, aka the only node we checked
+	   (and put on the closed list accordingly) was our starter node? */
+	else if (*acc == 1) {
+s_printf("ASTAR: 0 (no moves, %d,%d)\n", *aoc, *acc);
+		return 0;
+	}
+
+	/* We didn't find a way? */
+	else {
+		/* We found a way to get closer to the target at least? */
+s_printf("ASTAR: 1 (indirect, %d,%d)\n", *aoc, *acc);
+		return 1;
+
+		/* We had moves but didn't find any way that could get us closer to the target */
+s_printf("ASTAR: 2 (no good moves, %d,%d)\n", *aoc, *acc);
+		return 2;
+	}
 }
 #endif
 

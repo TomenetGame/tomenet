@@ -3588,8 +3588,6 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 			/* found an available instance? */
 			if (astar_info_open[j].m_idx == -1) {
 				astar_info_open[j].m_idx = c_ptr->m_idx;
-				astar_info_open[j].nodes = 0; /* init: start with empty set of nodes */
-				astar_info_closed[j].nodes = 0; /* init: start with empty set of nodes */
 				m_ptr->astar_idx = j;
 				break;
 			}
