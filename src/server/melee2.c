@@ -4256,10 +4256,28 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 			return -3; //not yet
 		}
 
-		/* Ok, use pre-calculated result! */
-		*xp = acnode[0].x;
-		*yp = acnode[0].y;
-		/* and reset our list, for our next algorithm run */
+		switch (ao->result) {
+		/* Result was 'success'? */
+		case -1:
+			/* Then use our valid result values to determine our movement */
+			*xp = acnode[0].x;
+			*yp = acnode[0].y;
+			break;
+		/* Result was 'no moves'? */
+		case 0:
+			/* Don't do anything then */
+			break;
+		/* Result was 'indirect'? */
+		case 1:
+//todo:
+			break;
+		/* Result was 'no good moves'? */
+		case 2:
+//todo:
+			break;
+		}
+
+		/* Reset our list, for our next algorithm run */
 		ac->nodes = 0;
 		return ao->result;
 	}
@@ -4474,6 +4492,7 @@ s_printf("ASTAR: 0 (no moves, %d,%d,%d)\n", aoc, acc, turn);
 		if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
 			ao->result = 0;
  #endif
+		/* Don't do anything herre if we can't move.. */
 		return 0;
 	}
 
