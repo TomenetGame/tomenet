@@ -189,10 +189,13 @@
      500: Can track ok over 2 sectors of usual layout.
      300: Can track ok within a distance of 1 sector.
      100: Can find lesser, local shortcuts. */
- #define ASTAR_MAX_NODES		1000
- #define ASTAR_MAX_INSTANCES		20	/* how many spawned monsters can use A* at once */
+ #define ASTAR_MAX_NODES	1000
+ /* how many spawned monsters can use A* at once (Sauron + 9 Nazgul = 10?) */
+ #define ASTAR_MAX_INSTANCES	10
  /* Heuristics function: Guesstimate distance from an inbetween grid sx,sy to our destination grid dx,dy */
  #define ASTAR_HEURISTICS(sx,sy,dx,dy)	(ABS((sx) - (dx)) > ABS((sy) - (dy)) ? ABS((sx) - (dx)) : ABS((sy) - (dy)))
+ /* Distribute calculations onto multiple server frames? (Assumption: Monster doesn't really move INSANELY fast) */
+ #define ASTAR_DISTRIBUTE	(cfg.fps / 6)
 #endif
 
 /* for MONSTER_FLOW_BY_SOUND */
