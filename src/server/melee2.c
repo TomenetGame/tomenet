@@ -4207,7 +4207,6 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
  #endif
 
 	if (!(zcave = getcave(&m_ptr->wpos))) return -2; //paranoia
-s_printf("ASTAR-call: %d,%d,%d\n", Ind, m_idx, turn);
 
 	/* Monster location */
 	mx = m_ptr->fx;
@@ -4254,11 +4253,9 @@ s_printf("ASTAR-call: %d,%d,%d\n", Ind, m_idx, turn);
 		/* Are we allowed to set it now? */
 		//hack: we abused xp/yp to indicate that it's not yet our turn
 		if (*xp == mx && *yp == my) {
-s_printf(" interim\n");
 			return -3; //not yet
 		}
 
-s_printf("report\n");
 		/* Ok, use pre-calculated result! */
 		*xp = acnode[0].x;
 		*yp = acnode[0].y;
@@ -4274,16 +4271,11 @@ s_printf("report\n");
 	/* tmp_node is always 'in_use', hehe */
 	tmp_node.in_use = TRUE;
 
- #ifdef ASTAR_DISTRIBUTE
-s_printf("ASTAR: %d,%d,%d (%d)\n", aoc, acc, turn, ao->result);
- #endif
-
 	/* A-Star ends when open list is empty */
 	while (aoc) {
  #ifdef ASTAR_DISTRIBUTE
 		/* Stop here for now and resume in the next server frame? */
 		if (acc > acc_last && acc % ASTAR_DISTRIBUTE == 0) {
-s_printf("ASTAR_DISTRIBUTE: break %d,%d,%d\n", aoc, acc, turn);
 
 			/* Write back */
 			ao->nodes = aoc;
@@ -4459,12 +4451,10 @@ s_printf("ASTAR: -1 (found, %d,%d,%d)\n", aoc, acc, turn);
 			//another hack: abuse first closed node to store our x,y result temporarily
 			acnode[0].x = acnode[i].x;
 			acnode[0].y = acnode[i].y;
-s_printf("postpone\n");
 		} else {
 			/* Return our movement coordinates */
 			*xp = acnode[i].x;
 			*yp = acnode[i].y;
-s_printf("set\n");
 		}
  #else
 		/* Return our movement coordinates */
@@ -9370,7 +9360,6 @@ void process_monsters_astar(void) {
 
 	for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
 		if (astar_info_open[i].m_idx == -1) continue;
-s_printf("\nm_idx %d\n", astar_info_open[i].m_idx);
 
 		/* Access the monster */
 		//m_ptr = &_m_list[astar_info_open[i].m_idx];
