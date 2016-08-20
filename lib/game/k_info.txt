@@ -1386,6 +1386,7 @@ I:40:1:0
 W:10:0:3:300
 A:10/1
 F:CURSED | TELEPORT | EASY_KNOW
+D:Teleports you randomly within a large range.
 
 N:167:Slow Digestion
 G:":d
@@ -1393,6 +1394,7 @@ I:40:3:0
 W:15:0:3:200
 A:15/1
 F:SLOW_DIGEST | EASY_KNOW
+D:Reduces your need to consume food.
 
 N:168:Acid Resistance
 G:":d
@@ -1537,12 +1539,14 @@ G:?:d
 I:70:8:0
 W:1:0:5:15
 A:1/1
+D:Randomly teleports you within a short range
 
 N:186:Teleportation
 G:?:d
 I:70:9:0
 W:10:0:5:400
 A:10/1
+D:Randomly teleports you within a long range.
 
 #taken out (originally b/c of RPG_SERVER)
 #N:187:Teleport Level
@@ -1550,12 +1554,14 @@ A:10/1
 #I:70:10:0
 #W:20:0:5:50
 #A:20/1
+#D:Randomly teleports you up or down a dungeon level.
 
 N:188:Monster Confusion
 G:?:d
 I:70:36:0
 W:5:0:5:30
 A:5/1
+D:Makes a few of your subsequent melee attacks apply confusion to your target.
 
 N:189:Magic Mapping
 G:?:d
@@ -1673,6 +1679,7 @@ G:?:d
 I:70:7:0
 W:10:0:5:0
 A:10/1
+D:Spawns a ring of random traps around you.
 
 N:204:Trap/Door Destruction
 G:?:d
@@ -1709,6 +1716,7 @@ G:?:d
 I:70:0:0
 W:1:0:5:0
 A:1/1
+D:Darkens the room you're in and may blind you temporarily.
 
 N:209:Protection from Evil
 G:?:d
@@ -1722,12 +1730,14 @@ G:?:d
 I:70:32:0
 W:5:0:5:10
 A:5/1:20/1:50/1:75/1
+D:Removes your hunger and also cures being gorged.
 
 N:211:Dispel Undead
 G:?:d
 I:70:42:0
 W:40:0:5:200
 A:40/1
+D:Damages all undead in your line of sight.
 
 N:212:*Enchant Weapon*
 G:?:d
@@ -1741,6 +1751,7 @@ G:?:d
 I:70:3:0
 W:50:0:5:0
 A:50/1
+D:Removes all special powers from your equipped weapon and applies a curse.
 
 N:214:*Enchant Armour*
 G:?:d
@@ -1754,6 +1765,7 @@ G:?:d
 I:70:2:0
 W:50:0:5:0
 A:50/1
+D:Removes all special powers from your equipped body armour and applies a curse.
 
 N:216:Summon Undead
 G:?:d
@@ -2045,6 +2057,7 @@ W:1:0:4:200
 A:1/1:40/1:60/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
+D:Temporarily increases your speed by 10.
 
 N:250:Slowness
 G:!:d
@@ -2053,6 +2066,7 @@ W:1:0:4:0
 A:1/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
+D:Temporarily decreases your speed by 10.
 
 N:251:Dexterity
 G:!:d
@@ -2260,6 +2274,7 @@ I:65:6:0
 W:10:0:10:300
 A:10/1:40/1:80/1
 P:0:1d1:0:0:0
+D:Turns stone and also many less resilient materials to mud.
 
 N:274:Polymorph
 G:-:d
@@ -2267,6 +2282,8 @@ I:65:13:0
 W:20:0:10:400
 A:20/1
 P:0:1d1:0:0:0
+D:Randomly changes a monster into another one.
+D:Can have unforeseen side effects when used on players.
 
 N:275:Heal Monster
 G:-:d
@@ -2282,6 +2299,7 @@ I:65:1:0
 W:2:0:10:0
 A:2/1
 P:0:1d1:0:0:0
+D:Increases speed of a monster by 10.
 
 N:277:Slow Monster
 G:-:d
@@ -2289,6 +2307,7 @@ I:65:9:0
 W:5:0:10:500
 A:2/1
 P:0:1d1:0:0:0
+D:Decreases speed of a monster by 10.
 
 N:278:Confuse Monster
 G:-:d
@@ -2349,6 +2368,7 @@ I:65:3:0
 W:20:0:10:350
 A:20/1
 P:0:1d1:0:0:0
+D:Teleports a monster away within a long range.
 
 # Almost same with Trap/Door Destruction..
 N:286:Disarming
@@ -2557,6 +2577,7 @@ I:55:2:0
 W:10:0:50:0
 A:10/1
 P:0:1d2:0:0:0
+D:Increases speed of a monster by 10.
 
 N:310:Slow Monsters
 G:_:d
@@ -2564,6 +2585,7 @@ I:55:21:0
 W:10:0:50:800
 A:10/1
 P:0:1d2:0:0:0
+D:Decreases speed of a monster by 10.
 
 N:311:Sleep Monsters
 G:_:d
@@ -2595,6 +2617,7 @@ I:55:22:0
 W:40:0:50:2500
 A:40/1
 P:0:1d2:0:0:0
+D:Temporarily increases your speed by 10.
 
 N:315:Slowness
 G:_:d
@@ -2602,6 +2625,7 @@ I:55:1:0
 W:40:0:50:0
 A:40/1
 P:0:1d2:0:0:0
+D:Temporarily decreases your speed by 10.
 
 N:316:Door/Stair Location
 G:_:d
@@ -2980,6 +3004,8 @@ I:66:19:25
 W:35:0:15:1200
 A:35/1
 P:0:1d1:0:0:0
+D:Randomly changes a monster into another one.
+D:Can have unforeseen side effects when used on players.
 
 N:361:Slow Monster
 G:-:d
@@ -2987,6 +3013,7 @@ I:66:17:25
 W:30:0:15:1500
 A:30/1
 P:0:1d1:0:0:0
+D:Decreases speed of a monster by 10.
 
 N:362:Sleep Monster
 G:-:d
@@ -3116,6 +3143,7 @@ I:66:11:100
 W:95:0:15:50000
 A:95/16
 P:0:1d1:0:0:0
+D:Temporarily increases your speed by 10.
 
 
 #Items from other materials
