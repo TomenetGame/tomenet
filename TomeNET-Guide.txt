@@ -9599,11 +9599,6 @@ Amulet of Anti-Teleportation    If worn it will suppress all attemps to
                                 regardless whether initiated by a monster or
                                 by himself. It will also prevent certain
                                 effects of unresisted nexus attacks.
-                                Any Word of Recall that is cast while
-                                teleportation is supressed will be suspended
-                                and then immediately kick in as soon as the
-                                amulet is taken off. This allows for some
-                                interesting tactics..
 Amulets of Brilliance   increase intelligence and wisdom, provide light.
 Rings of Cunningness    increase strength and intelligence.
 Rings of Might          increase strength and constitution.
