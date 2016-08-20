@@ -3747,7 +3747,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
    I CANT WAIT. DOING FRUIT BAT RIGHT NOW!!! 
    -APD-
 */
-/* note: apply_morph() is only called by polymorph-rod usage.
+/* note: apply_morph() is only called by polymorph-rod/wand usage.
    disable body-scrambling, to make it more usable for un-bat'ing someone? */
 #define DISABLE_MORPH_SCRAMBLE
 static void apply_morph(int Ind, int power, char * killer, int Ind_attacker) {
