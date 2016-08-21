@@ -2838,7 +2838,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 #ifndef NEW_MDEV_STACKING
 		if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
 #else
-		if (o_ptr->bpval == o_ptr->number) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
+		if (o_ptr->bpval == o_ptr->number
+		    && o_ptr->number) /* <- special case: 'You have no more rods..' */
+			t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
  #if 0
 		else if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (partially charging)" : "(~)");
  #else
