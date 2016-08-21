@@ -321,7 +321,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
     //page 4 - 49
 	{ &c_cfg.auto_afk,		TRUE,	2,	1, 50, TRUE,
 	    "auto_afk",			"Set 'AFK mode' automatically" },
-	{ &c_cfg.idle_starve_kick,	FALSE,	2,	1, 51, TRUE,
+	{ &c_cfg.idle_starve_kick,	TRUE,	2,	1, 51, TRUE,
 	    "idle_starve_kick",		"Disconnect when idle for 30s while starving" },
 	{ &c_cfg.safe_float,		FALSE,	2,	1, 52, TRUE,
 	    "safe_float",		"Prevent floating for a short while after death" },
