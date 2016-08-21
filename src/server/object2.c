@@ -10001,7 +10001,7 @@ void reorder_pack(int Ind) {
  */
 /* TODO: terrain effects (lava burns scrolls etc) -- those are done elsewhere */
 void process_objects(void) {
-	int i, k, Ind, skip_house_timing = (turn % ((level_speeds[0] * 5) / 120)); //standard world surface speed
+	int i, k, Ind;
 	object_type *o_ptr;
 	house_type *h_ptr;
 
@@ -10042,7 +10042,7 @@ void process_objects(void) {
 	/* timing fix - see description in dungeon():
 	   Since all we do here for now is handling recharging/timeouting,
 	   we may just as well return if it's not yet time to. */
-	if (skip_house_timing) return;
+	if (turn % ((level_speeds[0] * 5) / 120)) return; //standard world surface speed)
 
 	/* process items in list houses */
 	for (k = 0; k < num_houses; k++) {
