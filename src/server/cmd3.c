@@ -248,11 +248,9 @@ void inven_drop(int Ind, int item, int amt) {
 	/* Access the slot to be dropped */
 	o_ptr = &(p_ptr->inventory[item]);
 
-	/* Error check */
-	if (amt <= 0) return;
 	/* Not too many */
 	if (amt > o_ptr->number) amt = o_ptr->number;
-	/* Nothing done? */
+	/* Error check/Nothing done? */
 	if (amt <= 0) return;
 
 	/* check for !d  or !* in inscriptions */
