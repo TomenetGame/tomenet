@@ -7239,7 +7239,7 @@ void export_player_store_offers(int *export_turns) {
 	int i;
 	long price;
 	object_type *o_ptr;
-	char o_name[ONAME_LEN], log[MAX_CHARS], attr;
+	char o_name[ONAME_LEN], o_name_escaped[2 * ONAME_LEN], log[MAX_CHARS], attr;
 	struct timeval time_begin, time_end, time_delta;
 
 #ifdef EXPORT_JSON
@@ -7390,7 +7390,7 @@ void export_player_store_offers(int *export_turns) {
 				if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 				else attr = get_attr_from_tval(o_ptr);
 				fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"attr\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"wgt\":%d, \"name\":\"%s\"}",
-				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, o_name);
+				    h_ptr->wpos.wx, h_ptr->wpos.wy, h_ptr->dx, h_ptr->dy, h, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, json_escape_str(o_name_escaped, o_name, sizeof(o_name_escaped)));
 				kommao = TRUE;
  #else
 				if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
@@ -7540,7 +7540,7 @@ void export_player_store_offers(int *export_turns) {
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 		else attr = get_attr_from_tval(o_ptr);
 		fprintf(fp, "{\"wx\":%d, \"wy\":%d, \"x\":%d, \"y\":%d, \"house\":%d, \"tval\":%d, \"sval\":%d, \"attr\":%d, \"lev\":%d, \"mode\":%d, \"price\":%ld, \"wgt\":%d, \"name\":\"%s\"}",
-		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, o_name);
+		    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->ix, o_ptr->iy, o_ptr->housed - 1, o_ptr->tval, o_ptr->sval, attr, o_ptr->level, o_ptr->mode, price, o_ptr->weight, json_escape_str(o_name_escaped, o_name, sizeof(o_name_escaped)));
 		kommao = TRUE;
  #else
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);

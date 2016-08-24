@@ -1871,6 +1871,7 @@ extern cptr compat_pomode(int Ind, object_type *o_ptr);
 extern cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr);
 
 extern char *html_escape(const char *str);
+extern char *json_escape_str(char *dest, const char *src, size_t n);
 extern void do_benchmark(int Ind);
 #if (MAX_PING_RECVS_LOGGED > 0)
 extern cptr timediff(struct timeval *begin, struct timeval *end);

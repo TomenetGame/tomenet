@@ -6404,6 +6404,74 @@ char *html_escape(const char *str) {
 	return result;
 }
 
+#define JSON_ESCAPE_ARRAY_SIZE 93
+const char *json_escape_chars[JSON_ESCAPE_ARRAY_SIZE] = {
+	"\\u0000", "\\u0001", "\\u0002", "\\u0003", "\\u0004", "\\u0005", "\\u0006", "\\u0007",
+	"\\b",     "\\t",     "\\n",     "\\u000b", "\\f",     "\\r",     "\\u000e", "\\u000f",
+	"\\u0010", "\\u0011", "\\u0012", "\\u0013", "\\u0014", "\\u0015", "\\u0016", "\\u0017",
+	"\\u0018", "\\u0019", "\\u001a", "\\u001b", "\\u001c", "\\u001d", "\\u001e", "\\u001f",
+	NULL, NULL, "\\\"", NULL, NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL, "\\\\"
+};
+
+const int json_escape_len[JSON_ESCAPE_ARRAY_SIZE] = {
+	5, 5, 5, 5, 5, 5, 5, 5,
+	2, 2, 2, 5, 2, 2, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5,
+	0, 0, 2, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 2
+};
+
+/*
+ * JSON spec requires that all control characters, ", and \ must be escaped.
+ * 'dest' is the output buffer, 'src' is the input buffer and 'n' is the size of the output buffer.
+ * The resulting string is always NULL-terminated even if the buffer is not big enough.
+ */
+char *json_escape_str(char *dest, const char *src, size_t n) {
+	size_t destpos = 0;
+	const char *outstr = NULL;
+	int outlen = 0;
+	int c = 0;
+	while ((c = *src++)) {
+		// Special characters need to be escaped
+		if (c >= 0 && c < JSON_ESCAPE_ARRAY_SIZE) {
+			outstr = json_escape_chars[c];
+			outlen = json_escape_len[c];
+		} else {
+			outstr = NULL;
+			outlen = 0;
+		}
+		if (outstr) {
+			if (destpos + outlen + 1 < n) {
+				char c2;
+				while ((c2 = *outstr++)) {
+					dest[destpos++] = c2;
+				}
+			}
+		} else {
+			// Make sure output buffer has enough room
+			if (destpos + 1 < n) {
+				dest[destpos++] = c;
+			}
+		}
+	}
+	dest[destpos] = '\0';
+	return dest;
+}
+
 /* level generation benchmark */
 void do_benchmark(int Ind) {
 	int i, n = 100;
