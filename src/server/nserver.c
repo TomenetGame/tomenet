@@ -5183,32 +5183,11 @@ int Send_gold(int Ind, s32b au, s32b balance) {
 	return Packet_printf(&connp->c, "%c%d%d", PKT_GOLD, au, balance);
 }
 
-#if 0	// well, it's easily cracked by client
-int Send_sanity(int Ind, int msane, int csane) {
-#ifdef SHOW_SANITY
-	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
-//	printf("sanity send!\n");
-
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
-		errno = 0;
-		plog(format("Connection not ready for hp (%d.%d.%d)",
-			Ind, connp->state, connp->id));
-		return 0;
-	}
-	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
-		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%hd%hd", PKT_SANITY, msane, csane);
-	}
-	return Packet_printf(&connp->c, "%c%hd%hd", PKT_SANITY, msane, csane);
-#endif	// SHOW_SANITY
-}
-#else	// 0
 int Send_sanity(int Ind, byte attr, cptr msg) {
 #ifdef SHOW_SANITY
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
-//	printf("sanity send!\n");
+	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
+	char dam = (p_ptr->csane_prev > p_ptr->csane);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -5216,14 +5195,23 @@ int Send_sanity(int Ind, byte attr, cptr msg) {
 			Ind, connp->state, connp->id));
 		return 0;
 	}
+
+	/* For client-side 'alert_offpanel_dam' */
+	p_ptr->csane_prev = p_ptr->csane;
+
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%c%s", PKT_SANITY, attr, msg);
+		if (is_newer_than(&p_ptr2->version, 4, 6, 1, 2, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%s%c", PKT_SANITY, attr, msg, dam);
+		else
+			Packet_printf(&connp2->c, "%c%c%s", PKT_SANITY, attr, msg);
 	}
-	return Packet_printf(&connp->c, "%c%c%s", PKT_SANITY, attr, msg);
-#endif	// SHOW_SANITY
+	if (is_newer_than(&p_ptr->version, 4, 6, 1, 2, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%s%c", PKT_SANITY, attr, msg, dam);
+	else
+		return Packet_printf(&connp->c, "%c%c%s", PKT_SANITY, attr, msg);
+#endif
 }
-#endif	// 0
 
 int Send_hp(int Ind, int mhp, int chp) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;

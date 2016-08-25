@@ -238,13 +238,13 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "view_lite_extra",		"Lamp light affects more floor/wall types" },
 
 	{ &c_cfg.alert_hitpoint,	FALSE,	1,	0, 17, TRUE,
-	    "alert_hitpoint",		"Beep about critical hitpoints/sanity" },
+	    "alert_hitpoint",		"Beep/message about critical hitpoints/sanity" },
 	{ &c_cfg.alert_mana,		FALSE,	1,	0, 18, TRUE,
-	    "alert_mana",		"Beep about critically low mana pool" },
+	    "alert_mana",		"Beep/message about critically low mana pool" },
 	{ &c_cfg.alert_afk_dam,		FALSE,	1,	0, 19, TRUE,
 	    "alert_afk_dam",		"Beep when taking damage while AFK" },
 	{ &c_cfg.alert_offpanel_dam,	FALSE,	1,	0, 20, TRUE,
-	    "alert_offpanel_dam",	"Beep when taking damage while off-panel" },
+	    "alert_offpanel_dam",	"Beep when taking damage while looking elsewhere" },
 
 	{ &c_cfg.exp_bar,		TRUE,	1,	9, 21, TRUE,
 	    "exp_bar",			"Show experience bar instead of a number" },

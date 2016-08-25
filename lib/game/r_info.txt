@@ -20419,6 +20419,15 @@ D:For testing
 S:1_IN_3
 S:TPORT
 
+N:1151:Insanity Test Blob
+G:j:p
+I:110:1d1:1:0:0
+W:127:255:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:INSANITY:1d1
+F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | NO_AUTORET | NEVER_MOVE
+
 
 
 # N: serial number : monster name

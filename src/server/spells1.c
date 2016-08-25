@@ -1791,17 +1791,19 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 #endif
 		}
 
+#if 0 /* Since 4.6.2 covered by 'alert_offpanel_dam' */
 		/* warn if taking (continuous) damage while inside a store! */
 		if (p_ptr->store_num != -1) {
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 			Send_warning_beep(Ind);
 			//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
-#else
+ #else
 			if (p_ptr->paging == 0) p_ptr->paging = 1;
-#endif
+ #endif
 			/* continuous-damage message only */
 			if (bypass_invuln) msg_print(Ind, "\377RWarning - you are taking damage!");
 		}
+#endif
 	}
 
 	// The "number" that the character is displayed as before the hit
@@ -2091,17 +2093,19 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from) {
 #endif
 	}
 
+#if 0 /* Since 4.6.2 covered by 'alert_offpanel_dam' */
 	/* warn if taking (continuous) damage while inside a store! */
 	if (p_ptr->store_num != -1) {
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 		Send_warning_beep(Ind);
 		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
-#else
+ #else
 		if (p_ptr->paging == 0) p_ptr->paging = 1;
-#endif
+ #endif
 		//there's already a message given, usually..
 		//msg_print(Ind, "\377RWarning - you are taking sanity damage!");
 	}
+#endif
 
 #ifdef USE_SOUND_2010
 	sound(Ind, "insanity", NULL, SFX_TYPE_MISC, FALSE);

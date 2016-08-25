@@ -1395,8 +1395,16 @@ int Receive_sanity(void) {
 	int n;
 	char ch, buf[MAX_CHARS];
 	byte attr;
-	if ((n = Packet_scanf(&rbuf, "%c%c%s", &ch, &attr, buf)) <= 0)
-		return n;
+
+	if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) {
+		char dam;
+
+		if ((n = Packet_scanf(&rbuf, "%c%c%s%c", &ch, &attr, buf, &dam)) <= 0) return n;
+ #ifdef USE_SOUND_2010
+		/* Send beep when we're losing Sanity while we're busy in some other window */
+		if (c_cfg.alert_offpanel_dam && screen_icky && dam) warning_page();
+ #endif
+	} else if ((n = Packet_scanf(&rbuf, "%c%c%s", &ch, &attr, buf)) <= 0) return n;
 
 	strcpy(c_p_ptr->sanity, buf);
 	c_p_ptr->sanity_attr = attr;
@@ -1413,9 +1421,8 @@ int Receive_sanity(void) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
-
+#endif
 	return 1;
-#endif	/* SHOW_SANITY */
 }
 
 int Receive_stat(void) {
@@ -1446,12 +1453,21 @@ int Receive_hp(void) {
 	int	n;
 	char 	ch;
 	s16b	max, cur;
+#ifdef USE_SOUND_2010
+	static int prev_chp = 0;
+#endif
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
 		return n;
 
 	p_ptr->mhp = max;
 	p_ptr->chp = cur;
+
+#ifdef USE_SOUND_2010
+	/* Send beep when we're losing HP while we're busy in some other window */
+	if (c_cfg.alert_offpanel_dam && screen_icky && cur < prev_chp) warning_page();
+	if (cur != prev_chp) prev_chp = cur;
+#endif
 
 	if (screen_icky) Term_switch(0);
 
