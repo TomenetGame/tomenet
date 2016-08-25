@@ -551,11 +551,6 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 	char depths[32];
 	int x2, y2;
 
-	/* Remember coordinates */
-	p_ptr->wpos.wx = x;
-	p_ptr->wpos.wy = y;
-	p_ptr->wpos.wz = z;
-
 	/* Remember everything else */
 	depth_town = town;
 	depth_colour = colour;
@@ -566,7 +561,8 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 	/* remember cursor position */
 	Term_locate(&x2, &y2);
 
-	sprintf(depths, "(%-2d,%-2d)",x,y);
+	if (x == 127) sprintf(depths, "(?\?,?\?)");
+	else sprintf(depths, "(%2d,%2d)", x, y);
 	c_put_str(colour_sector, depths, ROW_XYPOS, COL_XYPOS);
 
 	if (town)
@@ -2284,21 +2280,29 @@ void display_player(int hist) {
 		/* Show location (better description needed XXX) */
 		if (c_cfg.depth_in_feet) {
 			if (location_name2[0])
-				put_str(format("You are at %s%d ft%s in %s.",
+				put_str(format("You are at %s%d ft%s %s %s.",
 					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz * 50,
 					p_ptr->wpos.wz ? "" : ")",
-					location_name2), 20, 10);//hist ? 10 : 1);
+					location_pre, location_name2), 20, 10);//hist ? 10 : 1);
+			else if (p_ptr->wpos.wx == 127)
+				put_str(format("You are at %s%d ft%s of an unknown region.",
+					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz * 50,
+					p_ptr->wpos.wz ? "" : ")"), 20, 10);//hist ? 10 : 1);
 			else
-				put_str(format("You are at %s%d ft%s of world map sector %d,%d.", 
+				put_str(format("You are at %s%d ft%s of world map sector %d,%d.",
 					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz * 50,
 					p_ptr->wpos.wz ? "" : ")",
 					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, 10);//hist ? 10 : 1);
 		} else {
 			if (location_name2[0])
-				put_str(format("You are at %slevel %d%s in %s.",
+				put_str(format("You are at %slevel %d%s %s %s.",
 					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz,
 					p_ptr->wpos.wz ? "" : ")",
-					location_name2), 20, 10);//hist ? 10 : 1);
+					location_pre, location_name2), 20, 10);//hist ? 10 : 1);
+			else if (p_ptr->wpos.wx == 127)
+				put_str(format("You are at %slevel %d%s of an unknown region.",
+					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz,
+					p_ptr->wpos.wz ? "" : ")"), 20, 10);//hist ? 10 : 1);
 			else
 				put_str(format("You are at %slevel %d%s of world map sector %d,%d.",
 					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz,

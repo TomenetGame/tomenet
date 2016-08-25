@@ -2298,17 +2298,26 @@ int Receive_depth(void) {
 	char	buf[MAX_CHARS];
 
 	/* Compatibility with older servers */
-	if (is_newer_than(&server_version, 4, 5, 9, 0, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%c%c%s%s%s", &ch, &x, &y, &z, &town, &colour, &colour_sector, buf, location_name2, location_pre)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 5, 9, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%c%c%s%s", &ch, &x, &y, &z, &town, &colour, &colour_sector, buf, location_name2)) <= 0)
 			return n;
+		if (location_name2[0]) strcpy(location_pre, "in");
+		else strcpy(location_pre, "of");
 	} else if (is_newer_than(&server_version, 4, 4, 1, 6, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%c%c%s", &ch, &x, &y, &z, &town, &colour, &colour_sector, buf)) <= 0)
 			return n;
+		if (buf[0]) strcpy(location_pre, "in");
+		else strcpy(location_pre, "of");
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &old_colour, buf)) <= 0)
 			return n;
 		colour = old_colour;
 		colour_sector = TERM_L_GREEN;
+		if (buf[0]) strcpy(location_pre, "in");
+		else strcpy(location_pre, "of");
 	}
 
 	/* Compatibility with older servers - mikaelh */

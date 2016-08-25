@@ -5575,7 +5575,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	bool ville = istown(wpos) && !isdungeontown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
-	cptr desc = "", loc_name = "";
+	cptr desc = "", loc_name = "", loc_pre = "in";
 	dungeon_type *d_ptr = NULL;
 	int colour, colour_sector = TERM_L_GREEN, Ind2;
 	cave_type **zcave;
@@ -5617,12 +5617,14 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	else if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) {
 		ville = TRUE;
 		desc = "Arena";
+		loc_pre = "an";
 	}
 #if 0
 	/* Hack for Arena Monster Challenge */
 	else if (wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) {
 		ville = TRUE;
 		desc = "Arena";
+		loc_pre = "an";
 	}
 #endif
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
@@ -5643,16 +5645,19 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		    && (sector00flags2 & LF2_INDOORS)) {
 			ville = TRUE;
 			desc = "Lost Vault";
+			loc_pre = "a";
 		}
 		/* Hack for Highlander */
 		else if (wpos->wx == WPOS_HIGHLANDER_X && wpos->wy == WPOS_HIGHLANDER_Y && wpos->wz == WPOS_HIGHLANDER_Z) {
 			ville = TRUE;
 			desc = "Highlands";
+			loc_pre = "in the";
 		}
 		/* Hack for Highlander (dungeon) */
 		else if (in_highlander(wpos)) {
 			ville = TRUE;
 			desc = "Underground";
+			loc_pre = "in the";
 		}
 	}
 
@@ -5692,7 +5697,10 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 
 	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&p_ptr2->version, 4, 5, 9, 0, 0, 0)) {
+		if (is_newer_than(&p_ptr2->version, 4, 6, 1, 2, 0, 0)) {
+			if (no_tele) Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
+			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name, loc_pre);
+		} else if (is_newer_than(&p_ptr2->version, 4, 5, 9, 0, 0, 0)) {
 			if (no_tele) Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name);
 		} else if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
@@ -5703,7 +5711,9 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		}
 	}
 
-	if (is_newer_than(&p_ptr->version, 4, 5, 9, 0, 0, 0)) {
+	if (is_newer_than(&p_ptr->version, 4, 6, 1, 2, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name, loc_pre);
+	} else if (is_newer_than(&p_ptr->version, 4, 5, 9, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name);
 	} else if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);

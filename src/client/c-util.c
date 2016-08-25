@@ -7605,6 +7605,7 @@ static void print_tomb(cptr reason) {
 		c_put_str(TERM_L_UMBER, buf, 9, 11);
 #endif
 
+#if 0
 		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
 		center_string_short(buf, tmp);
 		c_put_str(TERM_L_UMBER, buf, 11-2, 11+5);
@@ -7612,42 +7613,39 @@ static void print_tomb(cptr reason) {
 		(void)sprintf(tmp, "Exp: %d", p_ptr->exp);
 		center_string_short(buf, tmp);
 		c_put_str(TERM_L_UMBER, buf, 12-2, 11+5);
-
+#else
+		(void)sprintf(tmp, "Lv: %d, Exp: %d", (int)p_ptr->lev, p_ptr->exp);
+		center_string_short(buf, tmp);
+		c_put_str(TERM_L_UMBER, buf, 11-2, 11+5);
+#endif
 		/* XXX usually 0 */
 		(void)sprintf(tmp, "AU: %d", p_ptr->au);
 		center_string_short(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 13-2, 11+5);
+		c_put_str(TERM_L_UMBER, buf, 12-2, 11+5);
 
+		/* Location */
 		if (c_cfg.depth_in_feet)
-			(void)sprintf(tmp, "Died on %dft of [%2d, %2d]", p_ptr->wpos.wz * 50, p_ptr->wpos.wy, p_ptr->wpos.wx);
+			(void)sprintf(tmp, "Died on %dft %s", p_ptr->wpos.wz * 50, location_pre);
 		else
-			(void)sprintf(tmp, "Died on Level %d of [%2d, %2d]", p_ptr->wpos.wz, p_ptr->wpos.wy, p_ptr->wpos.wx);
+			(void)sprintf(tmp, "Died on Lv %d %s", p_ptr->wpos.wz, location_pre);
+		center_string(buf, tmp);
+		c_put_str(TERM_L_UMBER, buf, 13-1, 11);
+
+		if (location_name2[0])
+			sprintf(tmp, format("%s", location_name2));
+		else if (p_ptr->wpos.wx == 127)
+			sprintf(tmp, "an unknown location");
+		else
+			sprintf(tmp, format("world map region (%d,%d)", p_ptr->wpos.wx, p_ptr->wpos.wy));
 		center_string(buf, tmp);
 		c_put_str(TERM_L_UMBER, buf, 14-1, 11);
 
-#if 0
-		(void)sprintf(tmp, "Killed on Level %d", dun_level);
-		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 14, 11);
-
-
-		if (strlen(died_from) > 24) {
-			strncpy(dummy, died_from, 24);
-			dummy[24] = '\0';
-			(void)sprintf(tmp, "by %s.", dummy);
-		} else
-			(void)sprintf(tmp, "by %s.", died_from);
-
-		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 15, 11);
-#endif	/* 0 */
-
-
+		/* Time of death */
 		(void)sprintf(tmp, "%-.24s", ctime(&ct));
 		center_string(buf, tmp);
 		c_put_str(TERM_L_UMBER, buf, 17-3, 11);
 
-
+		/* Death cause */
 		strcpy(reason2, reason);
 		if (strchr(reason2, '(')) *(strchr(reason2, '(')) = 0;
 
