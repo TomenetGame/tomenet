@@ -6149,7 +6149,7 @@ byte get_spellbook_name_colour(int pval) {
 void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr;
-	int index, i;
+	int index;
 	bool ID_spell1_found = FALSE, ID_spell1a_found = FALSE, ID_spell1b_found = FALSE, ID_spell2_found = FALSE, ID_spell3_found = FALSE, ID_spell4_found = FALSE;
 	byte failure = 0x0;
 
@@ -6175,6 +6175,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 			break;
 		}
 
+#if 0
 		/* we id the newly picked up item */
 		object_aware(Ind, o_ptr);
 		object_known(o_ptr);
@@ -6188,7 +6189,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 			inven_item_optimize(Ind, index);
 
 			/* hack complete: find the identified item again after possible reordering */
-			for (i = 0; i < INVEN_PACK; i++)
+			for (int i = 0; i < INVEN_PACK; i++)
 				if (p_ptr->inventory[i].temp) {
 					o_ptr = &p_ptr->inventory[i];
 					o_ptr->temp = 0;
@@ -6206,9 +6207,20 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 		}
 
 		/* consume a turn */
-		/* taken out for now since carry() in move_player() doesnt need energy.
-		   mass-'g'-presses result in frozen char for a while
+		/* taken out for now since carry() in move_player() doesnt need energy,
+		   so it won't check whether we already have accumulated enough energy again to pick up another item ->
+		   mass-'g'-presses result in frozen char for a while, for working through all the ID-scrolls getting read.
 		p_ptr->energy -= level_speed(&p_ptr->wpos);*/
+#else
+		/* Read it later, at a point where we can use p_ptr->command_rep.
+		   Even though scrolls always succeed, this is better because of energy management!
+		   See comment about g-spam in alternative #if branch above. This way, each carry() will be
+		   preceeded by the ID scroll read from the previous carry(), avoiding stacking negative energy. */
+		p_ptr->delayed_index = index;
+s_printf("di0-s %d\n", p_ptr->delayed_index);
+		p_ptr->delayed_spell = -4;
+		p_ptr->current_item = slot;
+#endif
 
 		return;
 	}

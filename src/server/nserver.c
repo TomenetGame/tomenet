@@ -8872,6 +8872,12 @@ static int Receive_read(int ind) {
 			return 1;
 		}
 
+		/* Hack for repeated id-commands from !X: We're already at the correct index! */
+		if (p_ptr->command_rep == PKT_READ) {
+			item = p_ptr->delayed_index;
+			p_ptr->command_rep = 0; //scrolls always succeed
+		}
+
 		do_cmd_read_scroll(player, item);
 		return 2;
 	} else if (p_ptr) {
@@ -9023,6 +9029,9 @@ static int Receive_use(int ind) {
 			msg_print(player, "Command failed because item is gone.");
 			return 1;
 		}
+
+		/* Hack for repeated id-commands from !X: We're already at the correct index! */
+		if (p_ptr->command_rep == PKT_USE) item = p_ptr->delayed_index;
 
 		do_cmd_use_staff(player, item);
 		return 2;
@@ -9389,6 +9398,9 @@ static int Receive_activate(int ind) {
 			msg_print(player, "Command failed because item is gone.");
 			return 1;
 		}
+
+		/* Hack for repeated id-commands from !X: We're already at the correct index! */
+		if (p_ptr->command_rep == PKT_ACTIVATE) item = p_ptr->delayed_index;
 
 		do_cmd_activate(player, item, 0);
 		return 2;
@@ -11651,6 +11663,7 @@ static int Receive_inventory_revision(int ind) {
 #ifdef XID_REPEAT
 			/* Hack: Don't clear a retrying ID command from !X inscription: */
 			switch (p_ptr->command_rep) {
+			case PKT_READ:
 			case PKT_ACTIVATE:
 			case PKT_USE:
 			case PKT_ZAP:

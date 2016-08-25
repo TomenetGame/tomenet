@@ -5313,6 +5313,11 @@ s_printf("yo (item=%d)\n", p_ptr->delayed_index);
 		Packet_printf(connpq, "%c%hd", PKT_ZAP, p_ptr->delayed_index);
 		p_ptr->delayed_spell = 0;
 		break;
+	case -4: /* ID / *ID* scroll read */
+		p_ptr->command_rep = PKT_READ;
+		Packet_printf(connpq, "%c%hd", PKT_READ, p_ptr->delayed_index);
+		p_ptr->delayed_spell = 0;
+		break;
 	default: /* spell */
 		p_ptr->command_rep = PKT_ACTIVATE_SKILL;
 		Packet_printf(connpq, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, p_ptr->delayed_index, p_ptr->delayed_spell, -1, -1, 0);
