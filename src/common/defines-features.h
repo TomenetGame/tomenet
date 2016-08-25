@@ -187,17 +187,26 @@
 /* Allow usage of /hilite command (todo: turn into client option) */
 #define ENABLE_SELF_FLASHING
 
+
 /* Allow !X pseudo-auto-identify inscription on spell books too - C. Blue
    Note that this badly abuses the 'item-on-floor' (negative current_item value) feature,
    which fortunately is unused in general.
    Currently there's a harmless message inconsistency: !X from spells will output an
    additional 'In your pack: xxxx (x)' message before the 'You have..' carry() message. */
 #define ENABLE_XID_SPELL
-#ifdef ENABLE_XID_SPELL
- #define XID_SPELL_AFTER_PICKUP /* this must be set to reflect 'inven_carry()' call position in 'carry()' routine! */
- /* Repeat spell until it succeeds */
+
+/* Allow !X on magic devices too (rods/staves of perception). See ENABLE_XID_SPELL above, basically. */
+#define ENABLE_XID_MDEV
+
+/* This must be set to reflect 'inven_carry()' call position in 'carry()' routine:
+   If !X ID is applied _after_ having picked up the item, this must be defined, otherwise undefined! */
+#define XID_AFTER_PICKUP
+
+#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
+ /* Repeat spell cast/device activation attempt until it succeeds. (Scrolls always succeed, so not needed for those.) */
  #define XID_REPEAT
 #endif
+
 
 /* Allow Martial Arts users to wield boomerangs? */
 #define ENABLE_MA_BOOMERANG

@@ -8225,7 +8225,7 @@ void disturb(int Ind, int stop_search, int keep_resting) {
 
 		/* Cancel */
 		p_ptr->command_rep = 0;
-#ifdef ENABLE_XID_SPELL
+#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
 		p_ptr->current_item = -1; //unnecessary?
 #endif
 

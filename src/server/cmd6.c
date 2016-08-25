@@ -4091,6 +4091,14 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #ifdef NEW_MDEV_STACKING
 	int pval_old;
 #endif
+#ifdef ENABLE_XID_MDEV
+ #ifdef XID_REPEAT
+	bool rep = (p_ptr->command_rep == PKT_ZAP)
+	    && p_ptr->current_item < 0; //extra sanity check, superfluous?
+s_printf("rep = %d==%d,curitem=%d (item = %d)\n", p_ptr->command_rep, PKT_ZAP, p_ptr->current_item, item);
+	p_ptr->command_rep = 0;
+ #endif
+#endif
 
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE, flipped = FALSE;
@@ -4118,8 +4126,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max)
+		if (-item >= o_max) {
+s_printf("..ew0\n");
 			return; /* item doesn't exist */
+}
 
 		o_ptr = &o_list[0 - item];
 	}
@@ -4130,6 +4140,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 
 	if (o_ptr->tval != TV_ROD) {
+s_printf("..ew1\n");
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
 		return;
 	}
@@ -4140,7 +4151,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		return;
 	}
 
-	if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) {
+s_printf("..ew2\n");
+		return;
+	}
 
 #if 1
 	if (p_ptr->anti_magic) {
@@ -4188,6 +4202,19 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
+#ifdef ENABLE_XID_MDEV
+ #ifdef XID_REPEAT
+s_printf("kk? %d,%d\n", rep, p_ptr->current_item);
+		/* hack: repeat ID-spell attempt until item is successfully identified */
+		if (rep && !object_known_p(Ind, &p_ptr->inventory[-p_ptr->current_item - 1])) {
+s_printf("kk (item=%d)\n", item);
+			sockbuf_t *conn_q = get_conn_q(Ind);
+
+			p_ptr->command_rep = PKT_ZAP;
+			Packet_printf(conn_q, "%c%hd", PKT_ZAP, item);
+		} else p_ptr->current_item = -1;
+ #endif
+#endif
 		return;
 	}
 
@@ -4212,6 +4239,11 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	if (f4 & TR4_CHARGING) o_ptr->pval -= (o_ptr->pval - pval_old) / 2;
 #else
 	if (f4 & TR4_CHARGING) o_ptr->pval /= 2;
+#endif
+#ifdef ENABLE_XID_MDEV
+ #ifdef XID_REPEAT
+	if (rep) p_ptr->current_item = -1;
+ #endif
 #endif
 
 	break_cloaking(Ind, 3);

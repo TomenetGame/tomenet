@@ -1619,7 +1619,6 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
  #endif
 #endif
 
-
 	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
 		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
 		if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */

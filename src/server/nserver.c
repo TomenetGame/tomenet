@@ -9140,7 +9140,9 @@ static int Receive_zap(int ind) {
 			msg_print(player, "Command failed because item is gone.");
 			return 1;
 		}
-
+s_printf("k (item=%d)\n", item);
+		/* Hack for repeated id-commands from !X: We're already at the correct index! */
+		if (p_ptr->command_rep == PKT_ZAP) item = p_ptr->delayed_index;
 		do_cmd_zap_rod(player, item, 0);
 		return 2;
 	} else if (p_ptr) {
@@ -9182,6 +9184,7 @@ static int Receive_zap_dir(int ind) {
 		}
 
 		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
+s_printf("no-k\n");
 		do_cmd_zap_rod(player, item, dir);
 		p_ptr->shooty_till_kill = FALSE;
 		return 2;
@@ -10422,7 +10425,7 @@ static void Handle_clear_actions(int Ind) {
 
 	/* Stop automatically executed repeated actions */
 	p_ptr->command_rep = 0;
-#ifdef ENABLE_XID_SPELL
+#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
 	p_ptr->current_item = -1; //unnecessary?
 #endif
 
@@ -11644,7 +11647,23 @@ static int Receive_inventory_revision(int ind) {
 		 * detect that something is queued and then this command would
 		 * block the command queue forever.
 		 */
-		if (p_ptr->command_rep) p_ptr->command_rep = -1;
+		if (p_ptr->command_rep) {
+#ifdef XID_REPEAT
+			/* Hack: Don't clear a retrying ID command from !X inscription: */
+			switch (p_ptr->command_rep) {
+			case PKT_ACTIVATE:
+			case PKT_USE:
+			case PKT_ZAP:
+			case PKT_ACTIVATE_SKILL:
+				break;
+			default:
+				p_ptr->command_rep = -1;
+			}
+s_printf("-1 rir\n");
+#else
+			p_ptr->command_rep = -1;
+#endif
+		}
 		if (connp->q.len) {
 			/* There are some queued packets, block any further
 			 * packets until the queue is empty

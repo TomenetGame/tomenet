@@ -6144,3 +6144,299 @@ byte get_spellbook_name_colour(int pval) {
 	/* light blue for the rest (istari schools) */
 	return TERM_L_BLUE;
 }
+
+/* Search inventory for items inscribed !X to use them to identify a newly picked up object. */
+void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
+	player_type *p_ptr = Players[Ind];
+	object_type *i_ptr;
+	int index, i;
+	bool ID_spell1_found = FALSE, ID_spell1a_found = FALSE, ID_spell1b_found = FALSE, ID_spell2_found = FALSE, ID_spell3_found = FALSE, ID_spell4_found = FALSE;
+	byte failure = 0x0;
+
+	/* Look for ID / *ID* (the decadence) scrolls 1st */
+	for (index = 0; index < INVEN_PACK; index++) {
+		i_ptr = &(p_ptr->inventory[index]);
+		if (!i_ptr->k_idx) continue;
+
+		/* Not an ID / *ID* scroll? */
+		if (i_ptr->tval != TV_SCROLL || !i_ptr->number ||
+		    (i_ptr->sval != SV_SCROLL_IDENTIFY && i_ptr->sval != SV_SCROLL_STAR_IDENTIFY))
+			continue;
+
+		/* This paragraph sort of replaces item_tester_hook_activate() */
+		if (!object_known_p(Ind, i_ptr)) continue;
+
+		/* Check if the player does want this feature (!X - for now :) ) */
+		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+
+		/* Can't use them? skip */
+		if (p_ptr->blind || no_lite(Ind) || p_ptr->confused) {
+			failure |= 0x1;
+			break;
+		}
+
+		/* we id the newly picked up item */
+		object_aware(Ind, o_ptr);
+		object_known(o_ptr);
+
+#ifdef XID_AFTER_PICKUP /* important for scroll behaviour here! */
+		if (slot <= INVEN_PACK) {
+			/* hack: remember item position for 'You have ..' message,
+			   in case it was our last scroll and items get reordered */
+			o_ptr->temp = 1;
+			inven_item_increase(Ind, index, -1);
+			inven_item_describe(Ind, index);
+			inven_item_optimize(Ind, index);
+
+			/* hack complete: find the identified item again after possible reordering */
+			for (i = 0; i < INVEN_PACK; i++)
+				if (p_ptr->inventory[i].temp) {
+					o_ptr = &p_ptr->inventory[i];
+					o_ptr->temp = 0;
+					slot = i;
+					break;
+				}
+			/* paranoia clean up */
+			if (i == INVEN_PACK)
+				for (i = 0; i < INVEN_PACK; i++)
+					p_ptr->inventory[i].temp = 0;
+		} else {
+			inven_item_increase(Ind, index, -1);
+			inven_item_describe(Ind, index);
+			inven_item_optimize(Ind, index);
+		}
+#else
+		inven_item_increase(Ind, index, -1);
+		inven_item_describe(Ind, index);
+		inven_item_optimize(Ind, index);
+#endif
+
+		/* consume a turn */
+		/* taken out for now since carry() in move_player() doesnt need energy.
+		   mass-'g'-presses result in frozen char for a while
+		p_ptr->energy -= level_speed(&p_ptr->wpos);*/
+
+		return;
+	}
+
+	/* Check activatable items we have equipped */
+	for (index = INVEN_WIELD; index < INVEN_TOTAL; index++) {
+		i_ptr = &(p_ptr->inventory[index]);
+		if (!i_ptr->k_idx) continue;
+
+		/* hard-coded -- the only artifacts that have ID activation */
+		if (i_ptr->name1 != ART_ERIRIL &&
+		    i_ptr->name1 != ART_STONE_LORE) continue;
+
+		/* This paragraph sort of replaces item_tester_hook_activate() */
+		if (!object_known_p(Ind, i_ptr)) continue;
+
+		/* Check if the player does want this feature (!X - for now :) ) */
+		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+
+		/* Item is still charging up? */
+		if (i_ptr->timeout) continue;
+
+		/* Can't use them? skip */
+		if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+			msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
+			failure |= 0x2;
+			break; /* can't activate any other items either */
+		}
+
+		/* activate it later, at a point where we can use p_ptr->command_rep */
+		p_ptr->delayed_index = index;
+s_printf("di0 %d\n", p_ptr->delayed_index);
+		p_ptr->delayed_spell = -1;
+ #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
+		p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+		p_ptr->current_item = -slot - 1;
+ #endif
+		return;
+	}
+
+#ifdef ENABLE_XID_MDEV
+	/* Check for ID rods/staves */
+	for (index = 0; index < INVEN_PACK; index++) {
+		i_ptr = &(p_ptr->inventory[index]);
+
+		/* ID rod && ID staff (no *perc*) */
+		if (!(i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY &&
+#ifndef NEW_MDEV_STACKING
+		    !i_ptr->pval
+#else
+		    i_ptr->bpval < i_ptr->number
+#endif
+		    ) && !(i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY &&
+		     (i_ptr->pval > 0 || (!object_known_p(Ind, i_ptr) && !(i_ptr->ident & ID_EMPTY)))))
+			continue;
+
+		if (!can_use(Ind, i_ptr)) continue;
+
+		/* Check if the player does want this feature (!X - for now :) ) */
+		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+
+		if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+			msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
+			failure |= 0x2;
+			break; /* can't activate any other items either */
+		}
+
+		/* activate it later, at a point where we can use p_ptr->command_rep */
+		p_ptr->delayed_index = index;
+s_printf("di1 %d\n", p_ptr->delayed_index);
+		p_ptr->delayed_spell = (i_ptr->tval == TV_ROD) ? -3 : -2;
+ #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
+		p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+		p_ptr->current_item = -slot - 1;
+ #endif
+		return;
+	}
+#endif
+
+#ifdef ENABLE_XID_SPELL
+	/* Lastly, check for ID spells -- IDENTIFY or MIDENTIFY or even STARIDENTIFY or BAGIDENTIFY. */
+	for (index = 0; index < INVEN_PACK; index++) {
+		i_ptr = &(p_ptr->inventory[index]);
+
+		if (i_ptr->tval == TV_BOOK) {
+			if (i_ptr->sval == SV_SPELLBOOK) {
+				if (i_ptr->pval == ID_spell1 || i_ptr->pval == ID_spell1a || i_ptr->pval == ID_spell1b || i_ptr->pval == ID_spell2 ||
+				    i_ptr->pval == ID_spell3
+ #ifdef ALLOW_X_BAGID
+				    || i_ptr->pval == ID_spell4
+ #endif
+				    ) {
+					/* Have we learned this spell yet at all? */
+					if (!exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, i_ptr->pval))) {
+						/* Just continue&ignore instead of return, since we
+						   might just have picked up someone else's book! */
+						msg_print(Ind, "\377oYou cannot cast the identify spell of your inscribed spell scroll.");
+						continue;
+					}
+					/* If so then use it */
+					spell = i_ptr->pval;
+					//wow-- use ground item! ;) (except for BAGIDENTIFY)
+					if (spell != ID_spell4 && spell != ID_spell1a && spell != ID_spell1b)
+ #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
+						p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+						p_ptr->current_item = -slot - 1;
+ #endif
+				} else {
+					/* Be severe and point out the wrong inscription: */
+					msg_print(Ind, "\377oThe inscribed spell scroll isn't an eligible identify spell.");
+					continue;
+				}
+			} else {
+				if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
+				/* now <4.4.1.8 is no longer supported! to make s_aux.lua slimmer */
+					ID_spell1_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell1));//NO LONGER SUPPORTED
+					//ID_spell1a, ID_spell1b are not supported
+					ID_spell2_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell2));//NO LONGER SUPPORTED
+					ID_spell3_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell3));//NO LONGER SUPPORTED
+ #ifdef ALLOW_X_BAGID
+					ID_spell4_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell4));//NO LONGER SUPPORTED
+ #endif
+					if (!ID_spell1_found && !ID_spell2_found && //ID_spell1a, ID_spell1b are not supported
+					    !ID_spell3_found && !ID_spell4_found) {
+						/* Be severe and point out the wrong inscription: */
+						msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
+						continue;
+					}
+				} else {
+					ID_spell1_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell1));
+					ID_spell1a_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell1a));
+					ID_spell1b_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell1b));
+					ID_spell2_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell2));
+					ID_spell3_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell3));
+ #ifdef ALLOW_X_BAGID
+					ID_spell4_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell4));
+ #endif
+					if (!ID_spell1_found && !ID_spell1a_found && !ID_spell1b_found && !ID_spell2_found &&
+					    !ID_spell3_found && !ID_spell4_found) {
+						/* Be severe and point out the wrong inscription: */
+						msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
+						continue;
+					}
+				}
+			}
+			/* Have we learned this spell yet at all? */
+			//wow, first time use of '-item' ground access nowadays? :-p
+			if (ID_spell1_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1))) {
+				spell = ID_spell1;
+ #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
+				p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+				p_ptr->current_item = -slot - 1;
+ #endif
+			}
+			else if (ID_spell1a_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1a)))
+				spell = ID_spell1a; //bag-id effect
+			else if (ID_spell1b_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1b)))
+				spell = ID_spell1b; //bag-id effect
+			else if (ID_spell2_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell2))) {
+				spell = ID_spell2;
+ #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
+				p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+				p_ptr->current_item = -slot - 1;
+ #endif
+			} else if (ID_spell3_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell3))) {
+				spell = ID_spell3;
+ #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
+				p_ptr->current_item = -c_ptr->o_idx - 1;
+ #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
+				p_ptr->current_item = -slot - 1;
+ #endif
+			}
+ #ifdef ALLOW_X_BAGID
+			else if (ID_spell4_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell4)))
+				spell = ID_spell4;
+ #endif
+			/* Just continue&ignore instead of return, since we
+			   might just have picked up someone else's book! */
+			if (spell == -1) {
+				msg_print(Ind, "\377oYou cannot cast the identify spell of your inscribed book.");
+				continue;
+			}
+
+			/* Can't use them? skip */
+			if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+				msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
+				failure |= 0x8;
+				break; /* can't activate any other items either */
+			}
+			/* Can't use them? skip. (Note: Even 'Revelation' requires these, luckily) */
+			if (p_ptr->blind || no_lite(Ind) || p_ptr->confused) {
+				failure |= 0x4;
+				break;
+			}
+
+			/* cast it later, at a point where we can use p_ptr->command_rep */
+			p_ptr->delayed_index = index;
+s_printf("di2 %d\n", p_ptr->delayed_index);
+			p_ptr->delayed_spell = spell;
+			return;
+		}
+	}
+#endif
+
+	switch (failure) {
+	case 0x1:
+		msg_print(Ind, "You cannot read identify scrolls while blinded, confused or without light.");
+		return;
+	case 0x2:
+		msg_print(Ind, "Your antimagic prevents using your magic device to identify the item.");
+		return;
+	case 0x4:
+		msg_print(Ind, "You cannot cast identify spells while blinded, confused or without light.");
+		return;
+	case 0x8:
+		msg_print(Ind, "Your antimagic prevents you from casting your identify spell.");
+		return;
+	}
+	msg_print(Ind, "You are unable to use any of your identify items.");
+}
