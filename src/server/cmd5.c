@@ -1719,7 +1719,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		ftk_type = (exec_lua(Ind, format("return get_spell_ftk(%d)", spell)));
 
 #ifdef LIMIT_SPELLS
-	p_ptr->limit_spells = 0; //paranoia?
+		p_ptr->limit_spells = 0; //paranoia?
 #endif
 
 #ifdef ENABLE_XID_SPELL
