@@ -3732,13 +3732,9 @@ bool ident_spell(int Ind) {
 
 #if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
 	/* special hack for !X on ID spells */
-	if (p_ptr->current_item < -1) {
+	if (p_ptr->current_item != -1) {
 		clear_current(Ind);
- #ifndef XID_AFTER_PICKUP
-		ident_spell_aux(Ind, p_ptr->current_item + 1);
- #else
-		ident_spell_aux(Ind, -p_ptr->current_item - 1);
- #endif
+		ident_spell_aux(Ind, p_ptr->current_item);
 		return TRUE;
 	}
 #endif
@@ -3837,13 +3833,9 @@ bool identify_fully(int Ind) {
 
 #if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
 	/* special hack for !X on ID spells */
-	if (p_ptr->current_item < -1) {
+	if (p_ptr->current_item != -1) {
 		clear_current(Ind);
- #ifndef XID_AFTER_PICKUP
-		identify_fully_item(Ind, p_ptr->current_item + 1);
- #else
-		identify_fully_item(Ind, -p_ptr->current_item - 1);
- #endif
+		identify_fully_item(Ind, p_ptr->current_item);
 		return TRUE;
 	}
 #endif

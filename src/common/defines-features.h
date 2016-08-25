@@ -198,10 +198,6 @@
 /* Allow !X on magic devices too (rods/staves of perception). See ENABLE_XID_SPELL above, basically. */
 #define ENABLE_XID_MDEV
 
-/* This must be set to reflect 'inven_carry()' call position in 'carry()' routine:
-   If !X ID is applied _after_ having picked up the item, this must be defined, otherwise undefined! */
-#define XID_AFTER_PICKUP
-
 #if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
  /* Repeat spell cast/device activation attempt until it succeeds. (Scrolls always succeed, so not needed for those.) */
  #define XID_REPEAT

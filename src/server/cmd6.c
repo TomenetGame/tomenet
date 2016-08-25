@@ -4094,7 +4094,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
 	bool rep = (p_ptr->command_rep == PKT_ZAP)
-	    && p_ptr->current_item < 0; //extra sanity check, superfluous?
+	    && p_ptr->current_item != -1; //extra sanity check, superfluous?
 s_printf("rep = %d==%d,curitem=%d (item = %d)\n", p_ptr->command_rep, PKT_ZAP, p_ptr->current_item, item);
 	p_ptr->command_rep = 0;
  #endif
@@ -4206,7 +4206,7 @@ s_printf("..ew2\n");
  #ifdef XID_REPEAT
 s_printf("kk? %d,%d\n", rep, p_ptr->current_item);
 		/* hack: repeat ID-spell attempt until item is successfully identified */
-		if (rep && !object_known_p(Ind, &p_ptr->inventory[-p_ptr->current_item - 1])) {
+		if (rep && !object_known_p(Ind, &p_ptr->inventory[p_ptr->current_item])) {
 s_printf("kk (item=%d)\n", item);
 			sockbuf_t *conn_q = get_conn_q(Ind);
 

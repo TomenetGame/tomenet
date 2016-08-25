@@ -2225,9 +2225,6 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 			/* hack 'pick_one' */
 			if (pick_one) {
-#if 0 /* redundant since o_ptr->number is already set to 1 above if 'pick_one' is TRUE */
-				o_floor_ptr->number = 1; //a hack inside this hack, just for !XID_AFTER_PICKUP (which performs a floor-id!), sigh */
-#endif
 				forge = (*o_floor_ptr);
 				if (num_org == 1) delete_it = TRUE;
 				else delete_it = FALSE;
@@ -2375,7 +2372,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 				/* Carry the item */
 				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
-				slot = inven_carry(Ind, o_ptr); //XID_AFTER_PICKUP must be set accordingly to this inven_carry() call! (Before or after !X application)
+				slot = inven_carry(Ind, o_ptr);
 				inven_carried = TRUE;
 				o_ptr->quest_credited = FALSE; //unhack.
 

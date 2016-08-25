@@ -6179,7 +6179,6 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 		object_aware(Ind, o_ptr);
 		object_known(o_ptr);
 
-#ifdef XID_AFTER_PICKUP /* important for scroll behaviour here! */
 		if (slot <= INVEN_PACK) {
 			/* hack: remember item position for 'You have ..' message,
 			   in case it was our last scroll and items get reordered */
@@ -6205,11 +6204,6 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 			inven_item_describe(Ind, index);
 			inven_item_optimize(Ind, index);
 		}
-#else
-		inven_item_increase(Ind, index, -1);
-		inven_item_describe(Ind, index);
-		inven_item_optimize(Ind, index);
-#endif
 
 		/* consume a turn */
 		/* taken out for now since carry() in move_player() doesnt need energy.
@@ -6248,11 +6242,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 		p_ptr->delayed_index = index;
 s_printf("di0 %d\n", p_ptr->delayed_index);
 		p_ptr->delayed_spell = -1;
- #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
-		p_ptr->current_item = -c_ptr->o_idx - 1;
- #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
-		p_ptr->current_item = -slot - 1;
- #endif
+		p_ptr->current_item = slot;
 		return;
 	}
 
@@ -6287,11 +6277,7 @@ s_printf("di0 %d\n", p_ptr->delayed_index);
 		p_ptr->delayed_index = index;
 s_printf("di1 %d\n", p_ptr->delayed_index);
 		p_ptr->delayed_spell = (i_ptr->tval == TV_ROD) ? -3 : -2;
- #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
-		p_ptr->current_item = -c_ptr->o_idx - 1;
- #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
-		p_ptr->current_item = -slot - 1;
- #endif
+		p_ptr->current_item = slot;
 		return;
 	}
 #endif
@@ -6320,11 +6306,7 @@ s_printf("di1 %d\n", p_ptr->delayed_index);
 					spell = i_ptr->pval;
 					//wow-- use ground item! ;) (except for BAGIDENTIFY)
 					if (spell != ID_spell4 && spell != ID_spell1a && spell != ID_spell1b)
- #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
-						p_ptr->current_item = -c_ptr->o_idx - 1;
- #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
-						p_ptr->current_item = -slot - 1;
- #endif
+						p_ptr->current_item = slot;
 				} else {
 					/* Be severe and point out the wrong inscription: */
 					msg_print(Ind, "\377oThe inscribed spell scroll isn't an eligible identify spell.");
@@ -6367,11 +6349,7 @@ s_printf("di1 %d\n", p_ptr->delayed_index);
 			//wow, first time use of '-item' ground access nowadays? :-p
 			if (ID_spell1_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1))) {
 				spell = ID_spell1;
- #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
-				p_ptr->current_item = -c_ptr->o_idx - 1;
- #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
-				p_ptr->current_item = -slot - 1;
- #endif
+				p_ptr->current_item = slot;
 			}
 			else if (ID_spell1a_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1a)))
 				spell = ID_spell1a; //bag-id effect
@@ -6379,18 +6357,10 @@ s_printf("di1 %d\n", p_ptr->delayed_index);
 				spell = ID_spell1b; //bag-id effect
 			else if (ID_spell2_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell2))) {
 				spell = ID_spell2;
- #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
-				p_ptr->current_item = -c_ptr->o_idx - 1;
- #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
-				p_ptr->current_item = -slot - 1;
- #endif
+				p_ptr->current_item = slot;
 			} else if (ID_spell3_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell3))) {
 				spell = ID_spell3;
- #ifndef XID_AFTER_PICKUP /* item still on the ground? ie this ID routine gets called before inven_carry()? */
-				p_ptr->current_item = -c_ptr->o_idx - 1;
- #else /* item is already in our inventory? ie this ID routine gets called after inven_carry()? */
-				p_ptr->current_item = -slot - 1;
- #endif
+				p_ptr->current_item = slot;
 			}
  #ifdef ALLOW_X_BAGID
 			else if (ID_spell4_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell4)))
@@ -6423,6 +6393,10 @@ s_printf("di2 %d\n", p_ptr->delayed_index);
 		}
 	}
 #endif
+
+	/* 'failure' is set at this point; clear actions */
+	p_ptr->delayed_spell = -1;
+	p_ptr->current_item = -1;
 
 	switch (failure) {
 	case 0x1:
