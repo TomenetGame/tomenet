@@ -1612,6 +1612,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	int ftk_type;
 #ifdef ENABLE_XID_SPELL
  #ifdef XID_REPEAT
+	/* Note: item and current_item are treated synonymously here, which looks confusing. Could clean this up a bit maybe. */
 	bool rep = (p_ptr->command_rep == PKT_ACTIVATE_SKILL)
 	    && p_ptr->current_item != -1; //extra sanity check, superfluous?
 

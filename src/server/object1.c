@@ -6401,6 +6401,7 @@ s_printf("di1 %d\n", p_ptr->delayed_index);
 			p_ptr->delayed_index = index;
 s_printf("di2 %d\n", p_ptr->delayed_index);
 			p_ptr->delayed_spell = spell;
+			p_ptr->current_item = slot;
 			return;
 		}
 	}
