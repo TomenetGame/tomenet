@@ -107,7 +107,7 @@ F:STR | CON | DEX | INFRA | HIDE_TYPE | RES_FEAR |
 F:SEE_INVIS | FREE_ACT | REGEN | LITE3 | SPEED | SPECIAL_GENE |
 F:INSTA_ART | WHITE_LIGHT
 D:A carencet of gold, set with a multitude of shining gems of
-D:Valinor.  Despite its size, its weight seems as that of gossamer.
+D:Valinor. Despite its size, its weight seems as that of gossamer.
 
 
 # The Ring of F'lar
@@ -123,7 +123,7 @@ F:ESP_DRAGONRIDER | SEE_INVIS | LEVITATE |
 F:INSTA_ART
 Z:swap position
 D:The mighty ring of the Dragonrider F'lar that makes the wearer
-D:strong and healthy.  It was once a ring of power and has been
+D:strong and healthy. It was once a ring of power and has been
 D:given to F'lar by Celegorm when he arrived on Arda with a full weyr
 D:of Dragonrider.
 
@@ -165,7 +165,7 @@ F:SUST_STR | SUST_CON | SUST_WIS | SUST_CHR
 F:IM_FIRE | RES_NETHER | RES_FEAR | REGEN |
 F:INSTA_ART
 F:REGEN_MANA
-D:The Ring of Fire, set with a ruby that glows like flame.  Narya is one
+D:The Ring of Fire, set with a ruby that glows like flame. Narya is one
 D:of the three Rings of Power created by the Elves and hidden by them from
 D:Morgoth.
 
@@ -181,7 +181,7 @@ F:ACTIVATE | HOLD_LIFE | FREE_ACT | SEE_INVIS |
 F:SUST_INT | SUST_WIS | SUST_CHR |
 F:IM_COLD | RES_BLIND | STEALTH | ESP_ALL |
 F:INSTA_ART
-D:The Ring of Adamant, with a pure white stone as centerpiece.  Nenya is one
+D:The Ring of Adamant, with a pure white stone as centerpiece. Nenya is one
 D:of the three Rings of Power created by the Elves and hidden by them from
 D:Morgoth.
 
@@ -200,7 +200,7 @@ F:IM_ELEC | RES_POIS | RES_DISEN |
 F:INSTA_ART
 F:REGEN_MANA
 D:The Ring of Sapphire, with clear blue gems that shine like stars,
-D:glittering untouchable despite all that Morgoth ever wrought.  Vilya is
+D:glittering untouchable despite all that Morgoth ever wrought. Vilya is
 D:one of the three Rings of Power created by the Elves and hidden by them
 D:from Morgoth.
 
@@ -341,7 +341,7 @@ F:STR | DEX | SPEED | HIDE_TYPE | RES_FEAR |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_CONF | RES_POIS | RES_SOUND
 D:A stiff suit of armour composed of small metal plates sewn to an
 D:inner layer of heavy canvas, and covered with a second layer of
-D:cloth.  Within it is the spirit of Eorl the Young, matchless in combat.
+D:cloth. Within it is the spirit of Eorl the Young, matchless in combat.
 
 
 # The Mithril Chain Mail 'Belegennon'
@@ -372,7 +372,7 @@ F:STR | CHR | HIDE_TYPE | ESP_ORC |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_DARK | RES_LITE | RES_CHAOS |
 F:RES_DISEN | ACTIVATE
 D:A shimmering suit of true-silver, forged long ago by dwarven smiths of
-D:legend.  It gleams with purest white as you gaze upon it, and mighty are
+D:legend. It gleams with purest white as you gaze upon it, and mighty are
 D:it powers to protect and banish.
 
 
@@ -398,7 +398,7 @@ P:16:1d4:-2:0:20
 F:INT | WIS | STR | CON | HIDE_TYPE |
 F:RES_ACID | RES_POIS | RES_CONF | ACTIVATE
 D:A hauberk, leggings, and sleeves of interlocking steel rings, strategically
-D:reinforced at vital locations with a second layer of chain.  Magics to
+D:reinforced at vital locations with a second layer of chain. Magics to
 D:enhance body and mind lie within, and no door can hope to resist the wearer.
 
 
@@ -414,7 +414,7 @@ F:STEALTH | ESP_DRAGONRIDER | CON | CHR | INT | ACTIVATE | LEVITATE |
 F:RES_ACID | RES_ELEC | IM_COLD | AGGRAVATE | HEAVY_CURSE | CURSED
 F:REGEN_MANA | SPECIAL_GENE | SPEED | HIDE_TYPE
 D:The flying suit of Mardra, very powerful armour that protects
-D:the wearer from cold.  Wonderful as this mighty
+D:the wearer from cold. Wonderful as this mighty
 D:armour is, beware wearing it, for it has been cursed by a
 D:powerful wizard since Mardra had it and is said to have gained
 D:a couple of undesirable side-effects...
@@ -429,7 +429,7 @@ P:9:0d0:0:0:20
 F:REFLECT | RES_NEXUS | SH_FIRE | LEVITATE | SPECIAL_GENE |
 F:STEALTH | ESP_DRAGONRIDER | CON | INT | SPEED |
 F:RES_ACID | RES_ELEC | IM_FIRE | RES_COLD | HIDE_TYPE
-D:The flying suit of T'ron.  It protects the user from fire and
+D:The flying suit of T'ron. It protects the user from fire and
 D:imps are said to be less annoying with this on.
 
 
@@ -565,7 +565,7 @@ W:10:2:20:27000
 P:3:1d1:0:0:12
 F:WIS | CHR | RES_CONF | HIDE_TYPE | LUCK
 D:A ridged helmet made of steel, and embossed with scenes of valor in fine-
-D:engraved silver.  It grants the wearer nobility, clearness of thought and
+D:engraved silver. It grants the wearer nobility, clearness of thought and
 D:understanding.
 
 
@@ -653,7 +653,7 @@ F:SEE_INVIS | FREE_ACT | RES_DARK | RES_BLIND |
 F:RES_SHARDS | RES_SOUND | RES_LITE | RES_COLD |
 F:LITE1 | ACTIVATE | DRAIN_MANA | REGEN_MANA | WHITE_LIGHT
 D:A crown of massive gold, set with wondrous jewels of thought and warding,
-D:worn by the kings of ancient Numenor.  Its wearer may go into battle
+D:worn by the kings of ancient Numenor. Its wearer may go into battle
 D:always knowing what he faces - unless his own folly blinds him to the
 D:nature and magnitude of the task.
 
@@ -757,7 +757,7 @@ W:15:30:20:40000
 P:0:2d5:12:14:0
 F:KILL_DRAGON | IM_FIRE | ESP_DRAGON | RES_FEAR |
 F:DEX | FREE_ACT | SEE_INVIS |
-D:The weapon of Azaghal when he wounded Glaurung.  It is deadly
+D:The weapon of Azaghal when he wounded Glaurung. It is deadly
 D:when fighting dragons and is said to make the breaths of fire
 D:completely harmless.
 
@@ -891,7 +891,7 @@ W:30:25:80:130000
 P:6:1d1:0:0:20
 F:STR | CON | HIDE_TYPE | SPEED | RES_FEAR | CLIMB
 D:Sturdy footwear of leather and steel as enduring as the long-suffering
-D:Dwarven King-in-exile who wore them.  Of dwarven make, the wearer of
+D:Dwarven King-in-exile who wore them. Of dwarven make, the wearer of
 D:these boots will be completely at home in the mountains.
 
 
@@ -1074,7 +1074,7 @@ F:STR | HIDE_TYPE | VORPAL | ESP_DRAGON | DRAIN_HP |
 F:IM_FIRE | RES_POIS | BRAND_FIRE | BRAND_POIS |
 F:KILL_DRAGON | SLAY_TROLL | FREE_ACT | SLOW_DIGEST | REGEN | SHOW_MODS
 D:A giant sword once wielded by mighty Turin, and a great dragonbane which
-D:bathed in Glaurung's blood:  but beware, it will drink the blood of those
+D:bathed in Glaurung's blood: But beware, it will drink the blood of those
 D:who wield it eventually.
 
 
@@ -1116,7 +1116,7 @@ P:0:1d7:10:19:0
 F:DEX | STEALTH | HIDE_TYPE |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | FEATHER |
 F:SEE_INVIS | REGEN | SHOW_MODS
-D:Famed sea-defender of Lebennin.  A short, slightly curved chopping blade
+D:Famed sea-defender of Lebennin. A short, slightly curved chopping blade
 D:with a perfect edge shining cleanly in the sun, an object of hate to the
 D:men of Umbar who met it in combat.
 
@@ -1131,7 +1131,7 @@ F:SLAY_DRAGON | SLAY_EVIL | SLAY_UNDEAD | SLAY_TROLL | SLAY_GIANT | BLOWS |
 F:SLAY_ORC | SEE_INVIS | SHOW_MODS | VORPAL | BRAND_POIS
 #| WOUNDING
 D:A giant's weapon, with a long blade tall and straight thrusting out from a
-D:massive double-pronged hilt.  On its blade are written doomspells against
+D:massive double-pronged hilt. On its blade are written doomspells against
 D:both the living and undead.
 
 
@@ -1145,8 +1145,8 @@ P:0:8d4:10:0:0
 F:DEX | CRIT | SPEED | HIDE_TYPE |
 F:SUST_DEX | SHOW_MODS
 D:An utterly perfect, cleanly chiseled sword, with a edge that effortlessly
-D:slices rock and bone, and spells to render the wearer lithe and nimble.  It
-D:is combat incarnate.
+D:slices rock and bone, and spells to render the wearer lithe and nimble.
+D:It is combat incarnate.
 
 
 # The Long Sword 'Ringil'
@@ -1160,7 +1160,7 @@ F:SLAY_EVIL | BRAND_COLD | SLAY_UNDEAD | KILL_DEMON | SLAY_TROLL |
 F:FREE_ACT | RES_COLD | RES_LITE | LITE1 | SEE_INVIS | SLOW_DIGEST | REGEN |
 F:ACTIVATE | SHOW_MODS | WHITE_LIGHT
 D:The weapon of Fingolfin, High King of the Noldor; it shines like a column
-D:of ice lit by light unquenchable.  Morgoth came but unwillingly to meet it
+D:of ice lit by light unquenchable. Morgoth came but unwillingly to meet it
 D:of old; his lame foot will remind him of its might should be meet it again.
 
 
@@ -1177,8 +1177,8 @@ F:RES_FIRE | SUST_DEX | SEE_INVIS | ACTIVATE | SHOW_MODS | LITE1 |
 F:RES_DISEN | ESP_GOOD | RES_CHAOS
 #F:SPECIAL_GENE |
 D:The famed "Flame of the West", the sword that was broken and is forged
-D:again.  It glows with the essence of fire, its wearer is mighty in combat,
-D:and no creature of Sauron can withstand it.  It will never be stained or
+D:again. It glows with the essence of fire, its wearer is mighty in combat,
+D:and no creature of Sauron can withstand it. It will never be stained or
 D:broken even in defeat.
 
 
@@ -1244,7 +1244,7 @@ F:STR | DEX | CON | BLOWS | SPEED | LEVELS | HIDE_TYPE
 F:ESP_ORC | ESP_UNDEAD | ESP_SPIDER |
 F:SLAY_EVIL | SLAY_UNDEAD | SLAY_ORC | SLAY_ANIMAL | LITE1 | WHITE_LIGHT
 F:FREE_ACT | RES_LITE | SEE_INVIS | SHOW_MODS | SPECIAL_GENE | RES_DISEN
-D:"I will give you a name, and I shall call you Sting."  The perfect size
+D:"I will give you a name, and I shall call you Sting." The perfect size
 D:for Bilbo, and stamped forever by the courage he found in Mirkwood, this
 D:sturdy little blade grants the wearer combat prowess and survival
 D:abilities they did not know they had.
@@ -1260,7 +1260,7 @@ P:0:2d5:19:11:0
 F:INT | WIS | BLOWS |
 F:SLAY_ANIMAL | SLAY_EVIL | SLAY_UNDEAD | SLAY_DRAGON | SLAY_DEMON |
 F:RES_CHAOS | RES_NEXUS | SEE_INVIS | BLESSED | SHOW_MODS
-D:A damascened scimitar that seems wondrously easy to hold.  Famed in song as
+D:A damascened scimitar that seems wondrously easy to hold. Famed in song as
 D:the "Sickle of Harad", and a deadly foe to the undead.
 
 
@@ -1301,7 +1301,7 @@ P:0:5d5:32:32:0
 F:VORPAL | SLAY_EVIL | HIDE_TYPE
 F:FREE_ACT | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR | DEX
 # | WOUNDING
-D:"One, two! One, two!  And through, and through, the vorpal blade
+D:"One, two! One, two! And through, and through, the vorpal blade
 D:went snicker-snack!"
 
 # The Beaked Axe of Theoden
@@ -1706,9 +1706,9 @@ F:IM_FIRE | RES_DARK | RES_CHAOS | RES_DISEN | AGGRAVATE |
 F:SHOW_MODS | BRAND_POIS | VAMPIRIC | IM_POISON
 #NO_TELE | SLAY_DRAGON
 D:A weapon so massive it seems beyond the strength of mortals, yet you feel
-D:the might of giants within you as you heft it.  As you grip the handle
+D:the might of giants within you as you heft it. As you grip the handle
 D:of ebony and steel, coronas of fire blaze and mighty spells to preserve
-D:magic activate around you.  You wield the Fear of Dragons and the Despair
+D:magic activate around you. You wield the Fear of Dragons and the Despair
 D:of the Undead!
 
 
@@ -1833,7 +1833,7 @@ F:SUST_INT | SUST_WIS | FREE_ACT | SEE_INVIS |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_MANA |
 F:REGEN_MANA
 Z:weigh magic
-D:Gandalf's long, flowing robe.  It provides insight and allows the
+D:Gandalf's long, flowing robe. It provides insight and allows the
 D:wearer to see things not seen by all.
 
 
@@ -1846,7 +1846,7 @@ P:0:3d4:12:15:0
 F:DEX | BLOWS | HIDE_TYPE |
 F:SLAY_ANIMAL | SLAY_ORC | BRAND_POIS | VORPAL |
 F:RES_POIS | FREE_ACT | ESP_ORC
-D:A powerful whip that is deadly against orcs.  It poisons your foes
+D:A powerful whip that is deadly against orcs. It poisons your foes
 D:and is said to go "snicker snack".
 
 
@@ -2302,7 +2302,7 @@ F:ACTIVATE
 F:REGEN_MANA
 #since SPELL doesn't work atm:
 F:MANA
-D:This once belonged to Celebrimbor, maker of the Rings of Power.  One who
+D:This once belonged to Celebrimbor, maker of the Rings of Power. One who
 D:knows both fire and acid, from the business of forging and engraving, will
 D:fear neither: nor have his enchantments ever faded. Celebrimbor was even
 D:aware of Sauron before Sauron became aware of him, when Sauron put on the
@@ -2334,7 +2334,7 @@ F:RES_FIRE | RES_ELEC | RES_COLD | REGEN
 D:This bow, and its twin, belonged to Feanor's last two twin sons, Amrod
 D:and Amras, who both hunted with the Green-elves for a time. Like the
 D:twins, the bows are similar, for both protect their wielders from the
-D:elements:  and yet they are also unlike, for this bow gives endurance
+D:elements: And yet they are also unlike, for this bow gives endurance
 D:and strength, while the other gives quickness and subtlety.
 
 
@@ -2350,7 +2350,7 @@ F:REGEN_MANA
 D:This bow, and its twin, belonged to Feanor's last two twin sons, Amrod
 D:and Amras, who both hunted with the Green-elves for a time. Like the
 D:twins, the bows are similar, for both protect their wielders from the
-D:elements:  and yet they are also unlike, for this bow gives quickness
+D:elements: And yet they are also unlike, for this bow gives quickness
 D:and subtlety, while the other gives endurance and strength.
 
 
@@ -2395,7 +2395,7 @@ F:STR | CON | SUST_STR | SUST_CON | HIDE_TYPE |
 F:RES_FEAR | RES_BLIND | RES_POIS
 D:A great shield from the far lands of the South, whose wielder
 D:will go charging into battle heedless of danger, with the
-D:strength and endurance of a madman.  Nor will he fear poison, for
+D:strength and endurance of a madman. Nor will he fear poison, for
 D:the Southron barbarians handle poisoned darts naturally.
 
 
@@ -2536,9 +2536,9 @@ F:RES_DARK | RES_CHAOS | RES_NETHER | RES_COLD | RES_ACID |
 F:INSTA_ART | SPECIAL_GENE
 Z:midas touch
 D:The greatest of the Seven Rings of the Dwarf-lords, and the last to be
-D:lost.  Alone among the Seven, it was not taken by Sauron when he made
+D:lost. Alone among the Seven, it was not taken by Sauron when he made
 D:war on the Elves, but was given as a gift from Celebrimbor to King Durin
-D:III of Moria in token of friendship:  nevertheless, Sauron in disguise
+D:III of Moria in token of friendship: Nevertheless, Sauron in disguise
 D:had a hand in its making, and so it is cursed, and draws evil towards it.
 
 
@@ -2551,7 +2551,7 @@ P:0:0d0:7:7:10
 F:STR | WIS | CHR | SPEED | LITE3 | INSTA_ART | WHITE_LIGHT
 F:RES_FEAR | RES_FIRE | RES_POIS | RES_DISEN | HIDE_TYPE |
 F:ACTIVATE
-D:This green gem glows with inner light.  Aragorn son of Arathorn wore
+D:This green gem glows with inner light. Aragorn son of Arathorn wore
 D:it at the Battle of the Pelennor Fields, and he was himself given the
 D:name of 'Elessar' by the people of Gondor because of this.
 
