@@ -6390,9 +6390,10 @@ I:40:32:1
 W:127:255:3:1
 A:127/255
 P:0:0d0:1:1:1
-F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE |
-F:REGEN_MANA | REGEN | FREE_ACT | RES_FEAR
-F:AUTO_ID | LITE1 | WHITE_LIGHT
+F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE
+F:REGEN_MANA | REGEN | FREE_ACT | RES_FEAR | HOLD_LIFE | SLOW_DIGEST
+F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR
+F:AUTO_ID | LITE1 | WHITE_LIGHT | EASY_KNOW
 D:This amulet can be combined with other amulets of the highlands!
 
 N:889:the Moon
@@ -7199,15 +7200,18 @@ D:This deed can be turned in at the mayor's office in Bree.
 
 #N:978: Silver Dragon Scale Mail, defined above with the other DSMs
 
-## Only for Highlander tornaments, version 2 with ESP (for surface combat!) ##
+## Only for Highlander tornaments, version 2 with ESP+SI (for surface combat!) ##
 N:979:the Highlands
 G:":e
 I:40:42:1
 W:127:255:3:1
 A:127/255
 P:0:0d0:1:1:1
-F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE |
-F:REGEN_MANA | REGEN | ESP_ALL | SEE_INVIS | FREE_ACT | RES_FEAR
+F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE
+F:REGEN_MANA | REGEN | FREE_ACT | RES_FEAR | HOLD_LIFE | SLOW_DIGEST
+F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR
+F:AUTO_ID | LITE1 | WHITE_LIGHT | EASY_KNOW
+F:ESP_ALL | SEE_INVIS
 D:This amulet can be combined with other amulets of the highlands!
 
 # Goggles that allow a player to spot hidden DMs (for testing purpose)
