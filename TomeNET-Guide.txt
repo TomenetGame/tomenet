@@ -9426,7 +9426,7 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 do with it. In most cases, you have to turn it in at the
                 mayor's office in Bree (one of the '+' doors in town).
 *Destruction*   Causes a local earthquake, nearly completely wiping the area
-                of monsters and objects.
+                of monsters and objects (see (5.13) about earthquakes).
                 Extremely powerful magic which causes a searing blast of light
                 and a terrible shockwave that will blind you and knock you and
                 everyone else out.
@@ -10525,15 +10525,15 @@ be filled with rocks, to be cleared from previous obstacles (walls) and turn
 into empty floor fields, or to remain untouched and unchanged.
 
 Players don't take damage from their 'own' earthquakes, caused by their
-equipment or items (weapons of earthquakes, scrolls of *destruction*).
+equipment or items (for example weapons of earthquakes or scrolls of
+*destruction*).
 
 Earthquakes can deal up to 300 damage if you cannot evade the falling rocks
 and shifting ground: Depending on the number of unchanged (by the earthquake)
 empty fields that are adjacent to your character, there is a chance to 'evade'
 and take much less damage or even none at all. Earthquakes can also stun you.
 
-Items will usually be destroyed/lost, only very rarely you'll be able to grab
-one before it falls into a chasm and vanishes forever.
+Items will usually be destroyed/lost. Stairs and void jump gates are immune.
 
 Monsters killed by earthquakes do not yield experience, loot or other credit,
 same as goes for monsters erased by *destruction* or genocide.

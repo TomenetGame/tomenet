@@ -5254,7 +5254,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 					/* Become blind */
 					(void)set_blind(Ind, p_ptr->blind + 20 + randint(10));
 				}
-				(void)set_stun(Ind, stun); /* ~20s in NR, depends tho */
+				if (!is_admin(p_ptr)) (void)set_stun(Ind, stun); /* ~20s in NR, depends tho */
 
 				/* Mega-Hack -- Forget the view and lite */
 				p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
@@ -5301,7 +5301,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 					else cs_ptr->sc.trap.found = FALSE;
 
 					/* Redraw */
-//					everyone_lite_spot(wpos, y, x);
+					//everyone_lite_spot(wpos, y, x);
 				}
 
 				/* Granite */
@@ -5330,8 +5330,10 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			}
 		}
 	}
+	/* Stun everyone around who hasn't been affected by the initial stun */
 	for (k = 1; k <= NumPlayers; k++) {
 		if (inarea(wpos, &Players[k]->wpos) &&
+		    !is_admin(p_ptr) &&
 		    Players[k]->stun < stun) {
 			msg_print(k, "\377oYou are hit by a terrible shockwave!");
 			(void)set_stun(k, stun - (distance(Players[k]->py, Players[k]->px, y1, x1) - r) / 3);
