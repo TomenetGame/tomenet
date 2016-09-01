@@ -37,7 +37,7 @@ l  Look        L  Locate (map)  ;  Walk
 m  Use skill   M  Show minimap  ?  Help            \{yCTRL+Q  Quit the game
 o  Open door                    \{y@  Player list\{w
 p  Open mind   \{yP  Party menu\{w    '  Inspect other nearby players
-q  Quaff       Q  Suicide       _  Sip from fountain/show item on the floor
+q  Quaff       \{yQ  Suicide\{w       _  Sip from fountain/show item on the floor
 r  Read scroll R  Rest          {  Inscribe        CTRL+R  Redraw
 s  Search      S  Searching     |  Uniques         CTRL+S  Spike
 t  Take off       mode toggle   }  Uninscribe      CTRL+T  Screenshot
