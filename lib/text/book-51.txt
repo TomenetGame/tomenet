@@ -14,7 +14,6 @@ parchment).. the stuffs you had with you while alive is left on the site of
 your death.
 
 You can freely pass through walls, floors and ceilings; so hide inside a wall.
-Press 'U' (or '\U') to use ghostly powers (currently not available).
 
 
 Well, there's roughly 3 ways a ghost might wish to take:
@@ -35,6 +34,14 @@ Well, there's roughly 3 ways a ghost might wish to take:
 
 When you're resurrected, you'll lose 40% of your experience points (or slightly
 less if a fellow player resurrected you by the priest spell 'Resurrection').
+
+If you are an 'everlasting' character you can actually avoid turning into a
+ghost on death and instead respawn back in town right away. To do this, visit
+your local temple and enable its 'instant resurrection' feature.
+That way, when you die you will not come into a situation where you might have
+to leave all your items behind and you won't risk destruction of your ghost.
+The drawback is that this service costs a fee and the experience loss is a
+hefty 50%. See (4.5a) in the guide for details.
 
 
 Better luck next time...
