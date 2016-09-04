@@ -171,8 +171,8 @@ SHAKE = add_spell {
 	["name"] = 	"Shake",
 	["school"] = 	{SCHOOL_EARTH},
 	["level"] = 	35,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
+	["mana"] = 	60,
+	["mana_max"] = 	60,
 	["fail"] = 	15,
 	["spell"] = 	function()
 			earthquake(player.wpos, player.py, player.px, 2 + get_level(Ind, SHAKE, 17));
