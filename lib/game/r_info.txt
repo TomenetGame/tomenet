@@ -5290,7 +5290,7 @@ D:It is a tracker; half human, half beast.
 
 N:345:Ranger
 G:p:W
-I:110:15d11:20:40:40
+I:110:18d11:20:40:40
 W:20:1:1700:55
 E:1:1:1:2:1:1
 O:20:50:20:0
@@ -5307,7 +5307,7 @@ D:minor spellcasting skills.
 
 N:346:Paladin
 G:p:w
-I:110:15d11:20:40:40
+I:110:25d11:20:40:40
 W:20:1:1700:55
 E:1:1:1:2:1:1
 O:20:60:0:10
@@ -5318,7 +5318,7 @@ F:DROP_1D2 | GOOD |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:BASEANGBAND | MORTAL | HAS_LITE
 S:1_IN_4 |
-S:HEAL | CURSE | SLOW | SCARE | BLIND
+S:HEAL | CURSE | SCARE | BLIND
 D:A warrior for a holy cause. Unfortunately, his god is not yours, and there is
 D:rivalry even between the various gods of Good, so he is your enemy.
 
