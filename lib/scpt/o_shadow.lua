@@ -180,7 +180,7 @@ POISONFOG_III = add_spell {
 	["fail"] = 	-60,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_cloud(Ind, GF_POIS, args.dir, (1 + 76 + get_level(Ind, POISONFOG_III, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
+		fire_cloud(Ind, GF_UNBREATH, args.dir, (1 + 76 + get_level(Ind, POISONFOG_III, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
 		return "dam "..(1 + 76 + get_level(Ind, POISONFOG_III, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
@@ -191,8 +191,9 @@ POISONFOG_III = add_spell {
 	}
 }
 
+--[[
 ODRAINLIFE_I = add_spell {
-	["name"] = 	"Sap Life I",
+	["name"] = 	"Drain Life I",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["am"] = 	75,
 	["spell_power"] = 0,
@@ -207,12 +208,12 @@ ODRAINLIFE_I = add_spell {
 		hp_player(Ind, player.ret_dam / 6)
 	end,
 	["info"] = 	function()
-		return "drain "..(9 + get_level(Ind, ODRAINLIFE_I, 5)).."% life, heal for 17%"
+		return "drain "..(9 + get_level(Ind, ODRAINLIFE_I, 5)).."%, heal for 17%"
 	end,
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
-ODRAINLIFE_II = add_spell {
-	["name"] = 	"Sap Life II",
+ODRAINLIFE = add_spell {
+	["name"] = 	"Drain Life",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["am"] = 	75,
 	["spell_power"] = 0,
@@ -227,7 +228,27 @@ ODRAINLIFE_II = add_spell {
 		hp_player(Ind, player.ret_dam / 4)
 	end,
 	["info"] = 	function()
-		return "drain "..(10 + get_level(Ind, ODRAINLIFE_I, 9)).."% life, heal for 25%"
+		return "drain "..(10 + get_level(Ind, ODRAINLIFE_I, 9)).."%, heal for 25%"
+	end,
+	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
+}]]--
+ODRAINLIFE = add_spell {
+	["name"] = 	"Drain Life",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["am"] = 	75,
+	["level"] = 	37,
+	["mana"] = 	45,
+	["mana_max"] = 	45,
+	["fail"] = 	-20,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE, 20))
+		hp_player(Ind, player.ret_dam / 4)
+	end,
+	["info"] = 	function()
+		return "drain "..(10 + get_level(Ind, ODRAINLIFE, 20)).."%, heal for 25%"
 	end,
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
@@ -244,7 +265,7 @@ DETECTINVIS = add_spell {
 		detect_invisible(Ind)
 	end,
 	["info"] = 	function()
---		return "rad "..(10 + get_level(Ind, DETECTMONSTERS, 40))
+		--return "rad "..(10 + get_level(Ind, DETECTMONSTERS, 40))
 		return ""
 	end,
 	["desc"] = 	{ "Detects all nearby invisible creatures.", }
@@ -273,6 +294,41 @@ POISONRES = add_spell {
 		"It temporarily bestows the touch of poison on your weapons.",
 		"At level 10 it grants temporary poison resistance.",
 	}
+}
+
+OFEAR_I = add_spell {
+	["name"] = 	"Cause Fear I",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	1,
+	["mana"] = 	2,
+	["mana_max"] = 	2,
+	["fail"] = 	0,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_TURN_ALL, args.dir, 5 + get_level(Ind, OFEAR_I, 65), "hisses")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OFEAR_I, 65))
+	end,
+	["desc"] = { "Temporarily scares a target.", }
+}
+OFEAR_II = add_spell {
+	["name"] = 	"Cause Fear II",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	18,
+	["mana"] = 	16,
+	["mana_max"] = 	16,
+	["fail"] = 	-25,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+		project_los(Ind, GF_TURN_ALL, 5 + get_level(Ind, OFEAR_I, 65), "hisses")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OFEAR_I, 65))
+	end,
+	["desc"] = { "Temporarily scares all nearby foes.", }
 }
 
 OBLIND_I = add_spell {
@@ -373,7 +429,7 @@ OINVIS = add_spell {
 	["mana_max"] = 	30,
 	["fail"] = 	-40,
 	["spell"] = 	function()
---		if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50)) end
+		--if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50)) end
 		set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50))
 	end,
 	["info"] = 	function()
@@ -382,3 +438,31 @@ OINVIS = add_spell {
 	["desc"] = 	{ "Grants invisibility.", }
 }
 
+function get_chaosbolt_dam(Ind)
+	local lev
+	--same damage as shadow bolt iii at 50:
+	--lev = get_level(Ind, CHAOSBOLT, 50) + 20
+	--slightly more damage:
+	lev = get_level(Ind, CHAOSBOLT, 50) + 21
+	return 5 + (lev / 2), 7 + (lev / 2) + 1
+end
+CHAOSBOLT = add_spell {
+	["name"] = 	"Chaos Bolt",
+	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_HOFFENSE},
+	["spell_power"] = 0,
+	["level"] = 	30,
+	["mana"] = 	18,
+	["mana_max"] = 	18,
+	["fail"] = 	-55,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_CHAOS, args.dir, damroll(get_chaosbolt_dam(Ind), " casts a chaos bolt for"))
+	end,
+	["info"] = 	function()
+		local x, y
+		x, y = get_chaosbolt_dam(Ind)
+		return "dam "..x.."d"..y
+	end,
+	["desc"] = 	{ "Channels the powers of chaos into a bolt.", }
+}

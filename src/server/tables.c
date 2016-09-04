@@ -2480,6 +2480,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_HSUPPORT,
 			'+', 0,
 			'+', 1500, },
+#ifdef ENABLE_OCCULT
+		{ SKILL_OSHADOW,
+			'+', 0,
+			'+', 1150, },
+#endif
 		{ SKILL_DEVICE,
 			'+', 1000,
 			'+', 900, },

@@ -217,27 +217,6 @@ HEXORCISM_II = add_spell {
 	["desc"] = 	{ "Dispels nearby demons.", }
 }
 
-HDRAINLIFE = add_spell {
-	["name"] = 	"Drain Life",
-	["school"] = 	{SCHOOL_HOFFENSE},
-	["spell_power"] = 0,
-	["am"] = 	75,
-	["level"] = 	37,
-	["mana"] = 	45,
-	["mana_max"] = 	45,
-	["fail"] = 	-20,
-	["stat"] = 	A_WIS,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		drain_life(Ind, args.dir, 15)
-		hp_player(Ind, player.ret_dam / 4)
-	end,
-	["info"] = 	function()
-		return "drain 15%, heal for 25%"
-	end,
-	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
-}
-
 HRELSOULS_I = add_spell {
 	["name"] = 	"Redemption I",
 	["school"] = 	{SCHOOL_HOFFENSE},
@@ -292,10 +271,15 @@ HRELSOULS_III = add_spell {
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
-
+-- Occult
+if (def_hack("TEMP2", nil)) then
+    HDCS = {SCHOOL_HOFFENSE, SCHOOL_OSHADOW}
+else
+    HDCS = {SCHOOL_HOFFENSE}
+end
 HDRAINCLOUD = add_spell {
 	["name"] = 	"Doomed Grounds",
-	["school"] = 	{SCHOOL_HOFFENSE},
+	["school"] = 	HDCS,
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,     -- pointless for crap with low lvl anyway
@@ -305,7 +289,7 @@ HDRAINCLOUD = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
---			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), 10, " drains for")
+			--fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), 10, " drains for")
 			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 4 + get_level(Ind, HDRAINCLOUD, 39) / 4, 10, " drains for")
 			-- dmgs a Power D for 2050 (307 goes to hp), Balance D for 1286 (192 goes to hp) from full hp
 			-- (with, of course, maxed spell power and h_offense schools)
@@ -325,6 +309,23 @@ HDRAINCLOUD = add_spell {
 			"Curses an area temporarily, sucking life force of those walking it.",
 			"15% of the damage is fed back to the caster's hit points."
 	}
+}
+
+EARTHQUAKE = add_spell {
+	["name"] = 	"Earthquake",
+	["school"] = 	{SCHOOL_HOFFENSE},
+	["level"] = 	42,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	-50,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			earthquake(player.wpos, player.py, player.px, 4 + get_level(Ind, EARTHQUAKE, 20));
+	end,
+	["info"] = 	function()
+			return "rad "..(4 + get_level(Ind, SHAKE, 20))
+	end,
+	["desc"] = 	{ "Creates a localized earthquake." }
 }
 
 --[[

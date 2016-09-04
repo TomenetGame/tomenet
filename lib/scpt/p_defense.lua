@@ -194,6 +194,41 @@ HPROTEVIL = add_spell {
 	["desc"] = 	{ "Repels evil that tries to lay hand on you.", }
 }
 
+DISPELMAGIC = add_spell {
+	["name"] = 	"Dispel Magic",
+	["school"] = 	{SCHOOL_HDEFENSE},
+	["level"] = 	18,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	10,
+	["stat"] = 	A_WIS,
+	-- Unnafected by blindness
+	["blind"] = 	FALSE,
+	-- Unnafected by confusion
+	["confusion"] = FALSE,
+	["spell"] = 	function()
+			set_blind(Ind, 0)
+			set_confused(Ind, 0)
+			if get_level(Ind, DISPELMAGIC, 50) >= 8 then
+				set_image(Ind, 0)
+			end
+			if get_level(Ind, DISPELMAGIC, 50) >= 13 then
+				set_slow(Ind, 0)
+				set_fast(Ind, 0, 0)
+				set_stun(Ind, 0)
+			end
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{
+			"Dispels a lot of magic that can affect you, be it good or bad.",
+			"Level 1: blindness and confusion.",
+			"Level 8: hallucination.",
+			"Level 13: speed (both bad or good) and stun.",
+	}
+}
+
 HRUNEPROT = add_spell {
 	["name"] = 	"Glyph of Warding",
 	["school"] = 	{SCHOOL_HDEFENSE},
