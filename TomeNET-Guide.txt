@@ -15138,9 +15138,6 @@ Occult schools:
                     to fall into a deep, spiritual sleep instantly.
                     Required skill level for first spell level: 5.
 
-    Ethereal Eye    Detects all nearby creatures.
-                    Required skill level for first spell level: 7.
-
     Lightning Bolt  Conjures up spiritual power into a lightning bolt.
                     Required skill level for first spell level: 10.
 
@@ -15150,6 +15147,9 @@ Occult schools:
     Lift Curses     Removes all curses of carried/worn objects.
                     Lv20: Switches to *remove curses*.
                     Required skill level for first spell level: 15.
+
+    Ethereal Eye    Detects all nearby creatures.
+                    Required skill level for first spell level: 20.
 
     Possess         Tries to manipulate the mind of a monster to make it ignore
                     you.
