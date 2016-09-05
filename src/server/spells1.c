@@ -8695,38 +8695,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* Reflection */
-#if 0
-	/* Effects done by the plane cannot bounce */
-	if (!friendly_player && p_ptr->reflect && !a_rad && !(randint(10) == 1) && ((who != -101) && (who != -100))) {
-				int t_y, t_x;
-		int max_attempts = 10;
 
-		if (blind) msg_print("Something bounces!");
-		else msg_print("The attack bounces!");
-
-		/* Choose 'new' target */
-		do {
-			t_y = m_list[who].fy - 1 + randint(3);
-			t_x = m_list[who].fx - 1 + randint(3);
-			max_attempts--;
-		} while (max_attempts && in_bounds2(t_y, t_x) &&
-		    !(player_has_los_bold(t_y, t_x)));
-
-		if (max_attempts < 1) {
-			t_y = m_list[who].fy;
-			t_x = m_list[who].fx;
-		}
-
-		project(0, 0, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL), "");
-
-		disturb(1, 0);
-		return(TRUE);
-	}
-#endif
+	/* Physical-attack shield spells don't reflect all the time..! */
 #ifdef ENABLE_OCCULT
-	physical_shield = (p_ptr->kinetic_shield || p_ptr->spirit_shield);
+	physical_shield = (p_ptr->kinetic_shield ? rand_int(2) == 0 : FALSE) || (p_ptr->spirit_shield ? magik(p_ptr->spirit_shield_pow) : FALSE);
 #else
-	physical_shield = (p_ptr->kinetic_shield);
+	physical_shield = (p_ptr->kinetic_shield ? rand_int(2) == 0 : FALSE);
 #endif
 	/* pre-calc kinetic/spirit shield mana tax before doing the reflection check below */
 	if (physical_shield) {
@@ -8737,10 +8711,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* drain mana */
 			p_ptr->csp -= dam / 7;
 			p_ptr->redraw |= PR_MANA;
-			/* doesn't reflect all the time..! */
-			if (rand_int(2)) physical_shield = FALSE;
-		} else physical_shield = FALSE;
+		} else physical_shield = FALSE; /* failure to apply the shield to this particular attack */
 	}
+
 	/* Effects done by the plane cannot bounce,
 	   balls / clouds / storms / walls (and beams atm too) cannot bounce - C. Blue */
 	if (!friendly_player && (
