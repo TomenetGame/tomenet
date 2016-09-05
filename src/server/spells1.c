@@ -8698,9 +8698,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Physical-attack shield spells don't reflect all the time..! */
 #ifdef ENABLE_OCCULT
-	physical_shield = (p_ptr->kinetic_shield ? rand_int(2) == 0 : FALSE) || (p_ptr->spirit_shield ? magik(p_ptr->spirit_shield_pow) : FALSE);
+	physical_shield = (p_ptr->kinetic_shield ? (rand_int(2) == 0) : FALSE) || (p_ptr->spirit_shield ? magik(p_ptr->spirit_shield_pow) : FALSE);
 #else
-	physical_shield = (p_ptr->kinetic_shield ? rand_int(2) == 0 : FALSE);
+	physical_shield = (p_ptr->kinetic_shield ? (rand_int(2) == 0) : FALSE);
 #endif
 	/* pre-calc kinetic/spirit shield mana tax before doing the reflection check below */
 	if (physical_shield) {
