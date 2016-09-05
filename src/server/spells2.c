@@ -5332,11 +5332,12 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 	}
 	/* Stun everyone around who hasn't been affected by the initial stun */
 	for (k = 1; k <= NumPlayers; k++) {
-		if (inarea(wpos, &Players[k]->wpos) &&
+		p_ptr = Players[k];
+		if (inarea(wpos, &p_ptr->wpos) &&
 		    !is_admin(p_ptr) &&
-		    Players[k]->stun < stun) {
+		    p_ptr->stun < stun) {
 			msg_print(k, "\377oYou are hit by a terrible shockwave!");
-			(void)set_stun(k, stun - (distance(Players[k]->py, Players[k]->px, y1, x1) - r) / 3);
+			(void)set_stun(k, stun - (distance(p_ptr->py, p_ptr->px, y1, x1) - r) / 3);
 		}
 	}
 }
