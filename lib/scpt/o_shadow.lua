@@ -467,3 +467,32 @@ CHAOSBOLT = add_spell {
 	end,
 	["desc"] = 	{ "Channels the powers of chaos into a bolt.", }
 }
+
+function get_netherbolt_dam(Ind)
+	local lev
+	--same damage as shadow bolt iii at 50:
+	--lev = get_level(Ind, NETHERBOLT, 50) + 20
+	--slightly more damage:
+	lev = get_level(Ind, NETHERBOLT, 50) + 21
+	return 5 + (lev / 2), 7 + (lev / 2) + 0
+end
+NETHERBOLT = add_spell {
+	["name"] = 	"Nether Bolt",
+	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_NECROMANCY},
+	["spell_power"] = 0,
+	["level"] = 	30,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	-55,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_NETHER, args.dir, damroll(get_netherbolt_dam(Ind), " casts a nether bolt for"))
+	end,
+	["info"] = 	function()
+		local x, y
+		x, y = get_netherbolt_dam(Ind)
+		return "dam "..x.."d"..y
+	end,
+	["desc"] = 	{ "Channels lingering nether into a bolt.", }
+}

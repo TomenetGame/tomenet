@@ -129,6 +129,11 @@ if (def_hack("TEMP2", nil)) then
 		["name"] = "Spirit",
 		["skill"] = SKILL_OSPIRIT,
 	}
+	-- If Occult and Death Knight are enabled, this is a hack for 'Nether Bolt' spell
+	SCHOOL_NECROMANCY = add_school {
+		["name"] = "Necromancy",
+		["skill"] = SKILL_NECROMANCY,
+	}
 end
 
 
