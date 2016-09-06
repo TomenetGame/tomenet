@@ -3588,8 +3588,8 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			dam = 50;
 			break;
 		case SV_STAFF_DARKNESS:
-//			unlite_room(y, x);
-			typ = GF_DARK;//GF_DARK_WEAK
+			//unlite_room(y, x);
+			typ = GF_DARK;//GF_DARK_WEAK;
 			dam = 20;
 			rad = 3;
 			break;
@@ -3769,7 +3769,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			dam = 100;
 			rad = 3;
 		case SV_SCROLL_DARKNESS:
-//			unlite_room(y, x);
+			//unlite_room(y, x);
 			typ = GF_DARK;//GF_DARK_WEAK;
 			dam = 15;
 			rad = 3;

@@ -2254,7 +2254,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			break;
 
 		case SV_SCROLL_DARKNESS:
-			if (unlite_area(Ind, 10, 3)) ident = TRUE;
+			if (unlite_area(Ind, 10, 6)) ident = TRUE;
 			if (!p_ptr->resist_dark)
 				(void)set_blind(Ind, p_ptr->blind + 3 + randint(5));
 			break;

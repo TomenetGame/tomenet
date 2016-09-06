@@ -6855,8 +6855,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			break;
 
-		/* Dark -- opposite of Lite */
+		case GF_DARK_WEAK:
+			if (seen) obvious = TRUE;
+
+			/* Get blinded later */
+			do_blind = damroll(3, (dam / 20)) + 1;
+
+			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
+			    || (r_ptr->flags3 & RF3_UNDEAD)) {
+				note = " resists";
+				do_blind = 0;
+			}
+
+			//TODO: Light Hounds could get damaged. Currently, all GF_DARK_WEAK causes have been changed to do GF_DARK though, anyway.
+			dam = 0;
+			quiet_dam = TRUE;
+			break;
+
 		case GF_DARK:
+			//TODO: Light Hounds could be susceptible.
 			if (seen) obvious = TRUE;
 
 			/* Get blinded later */
