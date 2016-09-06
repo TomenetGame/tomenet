@@ -2101,6 +2101,14 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
 		{ SKILL_HSUPPORT,
 			'+', 0,
 			'%', 70, },
+#ifdef ENABLE_OCCULT
+		{ SKILL_OSHADOW,
+			'+', 0,
+			'%', 70, },
+		{ SKILL_OSPIRIT,
+			'+', 0,
+			'%', 70, },
+#endif
 		{ SKILL_SNEAKINESS,
 			'+', 0,
 			'%', 110, },

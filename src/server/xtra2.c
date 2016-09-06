@@ -3668,6 +3668,12 @@ void shape_Maia_skills(int Ind) {
 		p_ptr->s_info[SKILL_HCURING].mod = 0;
 		p_ptr->s_info[SKILL_HDEFENSE].mod = 0;
 		p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
+
+#ifdef ENABLE_OCCULT
+		p_ptr->s_info[SKILL_OSPIRIT].mod = 0;
+		do_Maia_skill(Ind, SKILL_OSHADOW, 21);
+#endif
+
 #if 0
 		respec_skill(Ind, SKILL_DRUID_ARCANE, FALSE, FALSE);
 		respec_skill(Ind, SKILL_DRUID_PHYSICAL, FALSE, FALSE);
@@ -3703,6 +3709,11 @@ void shape_Maia_skills(int Ind) {
 		p_ptr->s_info[SKILL_TRAUMATURGY].mod = 0;
 		p_ptr->s_info[SKILL_NECROMANCY].mod = 0;
 		p_ptr->s_info[SKILL_AURA_DEATH].mod = 0;
+
+#ifdef ENABLE_OCCULT
+		p_ptr->s_info[SKILL_OSHADOW].mod = 0;
+		do_Maia_skill(Ind, SKILL_OSPIRIT, 21);
+#endif
 
 		/* Yay */
 		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
