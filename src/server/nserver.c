@@ -395,7 +395,6 @@ static int Init_setup(void) {
 #else
 	Setup.max_class = MAX_CLASS - 1;
 #endif
-
 	Setup.max_trait = MAX_TRAIT;
 
 	Setup.motd_len = 23 * 120; /*80;*/	/* colour codes extra */
@@ -1802,12 +1801,21 @@ static int Handle_setup(int ind) {
 	}
 
 	if (connp->setup == 0) {
+		int mc = Setup.max_class;
+
+#ifdef ENABLE_DEATHKNIGHT
+		/* The DK class should never be listed in the class list, since it shares a slot with Paladin:
+		   Make sure that old clients don't actually display the Death Knight class at the end of the list.
+		   Note: This will require old clients to update to play it, since they lack the setup info for DK class. */
+		if (!is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) mc--;
+#endif
+
 		if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0))
 			n = Packet_printf(&connp->c, "%d%hd%c%c%c%d",
-			    Setup.motd_len, Setup.frames_per_second, Setup.max_race, Setup.max_class, Setup.max_trait, Setup.setup_size);
+			    Setup.motd_len, Setup.frames_per_second, Setup.max_race, mc, Setup.max_trait, Setup.setup_size);
 		else
 			n = Packet_printf(&connp->c, "%d%hd%c%c%d",
-			    Setup.motd_len, Setup.frames_per_second, Setup.max_race, Setup.max_class, Setup.setup_size);
+			    Setup.motd_len, Setup.frames_per_second, Setup.max_race, mc, Setup.setup_size);
 
 		if (n <= 0) {
 			Destroy_connection(ind, "Setup 0 write error");
@@ -1815,7 +1823,7 @@ static int Handle_setup(int ind) {
 		}
 
 		for (i = 0; i < Setup.max_race; i++) {
-//			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
+			//Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 			b1 = race_info[i].r_adj[0]+50;
 			b2 = race_info[i].r_adj[1]+50;
 			b3 = race_info[i].r_adj[2]+50;
@@ -1825,8 +1833,8 @@ static int Handle_setup(int ind) {
 			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%d", b1, b2, b3, b4, b5, b6, race_info[i].title, race_info[i].choice);
 		}
 
-		for (i = 0; i < Setup.max_class; i++) {
-//			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
+		for (i = 0; i < mc; i++) {
+			//Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 			b1 = class_info[i].c_adj[0]+50;
 			b2 = class_info[i].c_adj[1]+50;
 			b3 = class_info[i].c_adj[2]+50;
