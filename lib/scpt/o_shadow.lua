@@ -468,6 +468,7 @@ CHAOSBOLT = add_spell {
 	["desc"] = 	{ "Channels the powers of chaos into a bolt.", }
 }
 
+--ENABLE_DEATHKNIGHT:
 function get_netherbolt_dam(Ind)
 	local lev
 	--same damage as shadow bolt iii at 50:
