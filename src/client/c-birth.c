@@ -796,10 +796,10 @@ class_redraw:
 	}
 #ifndef CLASS_BEFORE_RACE
 	c_put_str(TERM_L_BLUE, "                    ", 7, CHAR_COL);
-	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, class_info[dna_class].title, 7, CHAR_COL);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, dna_class_title, 7, CHAR_COL);
 #else
 	c_put_str(TERM_L_BLUE, "                    ", 5, CHAR_COL);
-	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, class_info[dna_class].title, 5, CHAR_COL);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, dna_class_title, 5, CHAR_COL);
 #endif
 
 	if (auto_reincarnation) {
@@ -1739,7 +1739,7 @@ void get_char_info(void) {
 	}
  #endif
 	put_str("Class :", 7, 1);
-	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, class_info[dna_class].title, 7, CHAR_COL);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, dna_class_title, 7, CHAR_COL);
 	put_str("Body  :", 8, 1);
 	if (valid_dna) {
 		if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c_put_str(TERM_SLATE, "Fruit bat", 8, CHAR_COL);
@@ -1747,7 +1747,7 @@ void get_char_info(void) {
 	}
 #else
 	put_str("Class :", 5, 1);
-	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, class_info[dna_class].title, 5, CHAR_COL);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, dna_class_title, 5, CHAR_COL);
 	put_str("Race  :", 6, 1);
 	if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) c_put_str(TERM_SLATE, race_info[dna_race].title, 6, CHAR_COL);
  #ifndef HIDE_UNAVAILABLE_TRAIT

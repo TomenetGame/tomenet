@@ -273,6 +273,7 @@ extern byte csheet_page;
 extern bool valid_dna, dedicated;
 extern s16b race, dna_race;
 extern s16b class, dna_class;
+extern cptr dna_class_title; //ENABLE_DEATHKNIGHT
 extern s16b sex, dna_sex;
 extern s16b mode;
 extern s16b trait, dna_trait;

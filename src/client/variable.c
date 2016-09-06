@@ -155,6 +155,7 @@ byte csheet_page = 0;
 bool valid_dna = FALSE, dedicated = FALSE;
 s16b race, dna_race;
 s16b class, dna_class;
+cptr dna_class_title; //ENABLE_DEATHKNIGHT
 s16b sex, dna_sex;
 s16b mode;
 s16b trait = 0, dna_trait;

@@ -2128,6 +2128,11 @@ void load_birth_file(cptr name) {
 	r = fscanf(fp, "\n%d", &tmp); //Class
 	if (r == EOF || r == 0) return; // Failed to read from file
 	dna_class = (s16b)tmp;
+
+	/* Unhack for ENABLE_DEATHKNIGHT: Share slot with Paladin class choice */
+	dna_class_title = class_info[dna_class].title;
+	if (dna_class == CLASS_DEATHKNIGHT) dna_class = CLASS_PALADIN;
+
 	r = fscanf(fp, "\n%d", &tmp); //Race
 	if (r == EOF || r == 0) return; // Failed to read from file
 	dna_race = (s16b)tmp;
