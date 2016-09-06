@@ -434,6 +434,8 @@ race_redraw:
 
 		if ((j < Setup.max_race) && (j >= 0)) {
 			rp_ptr = &race_info[j];
+			if (!(rp_ptr->choice & BITS(class))) continue;
+
 #ifdef CLASS_BEFORE_RACE
 			/* ENABLE_DEATHKNIGHT */
 			if (j == RACE_VAMPIRE && class == CLASS_PALADIN) {
@@ -461,8 +463,6 @@ race_redraw:
 				c_put_str(TERM_L_BLUE, (char*)class_info[class].title, 5, CHAR_COL);
  #endif
 			}
-
-			if (!(rp_ptr->choice & BITS(class))) continue;
 #endif
 
 			race = j;
