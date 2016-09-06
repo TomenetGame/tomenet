@@ -6177,13 +6177,47 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 			failure |= 0x1;
 			break;
 		}
- #if 0
+
+#ifndef TEST_SERVER
+		/* temporary hack - disable all other !X uses except for scrolls
+		   while this whole mess is undergoing complete rewrite.. */
+		/* we id the newly picked up item */
+		object_aware(Ind, o_ptr);
+		object_known(o_ptr);
+
+ #ifdef XID_AFTER_PICKUP /* important for scroll behaviour here! */
+		/* hack: remember item position for 'You have ..' message,
+		   in case it was our last scroll and items get reordered */
+		o_ptr->temp = 1;
+		inven_item_increase(Ind, index, -1);
+		inven_item_describe(Ind, index);
+		inven_item_optimize(Ind, index);
+
+		/* hack complete: find the identified item again after possible reordering */
+		for (i = 0; i < INVEN_PACK; i++)
+			if (p_ptr->inventory[i].temp) {
+				o_ptr = &p_ptr->inventory[i];
+				o_ptr->temp = 0;
+				slot = i;
+				break;
+			}
+		/* paranoia clean up */
+		if (i == INVEN_PACK)
+			for (i = 0; i < INVEN_PACK; i++)
+				p_ptr->inventory[i].temp = 0;
+ #else
+		inven_item_increase(Ind, index, -1);
+		inven_item_describe(Ind, index);
+		inven_item_optimize(Ind, index);
+ #endif
 		/* consume a turn */
 		/* taken out for now since carry() in move_player() doesnt need energy,
 		   so it won't check whether we already have accumulated enough energy again to pick up another item ->
 		   mass-'g'-presses result in frozen char for a while, for working through all the ID-scrolls getting read.
 		p_ptr->energy -= level_speed(&p_ptr->wpos);*/
- #endif
+
+		return;
+#endif
 
 		/* Read it later, at a point where we can use p_ptr->command_rep.
 		   Even though scrolls always succeed, this is better because of energy management!
@@ -6196,6 +6230,11 @@ s_printf("di0-s %d\n", p_ptr->delayed_index);
 
 		return;
 	}
+#ifndef TEST_SERVER
+	/* temporary hack - disable all other !X uses except for scrolls
+	   while this whole mess is undergoing complete rewrite.. */
+	return;
+#endif
 
 	/* Check activatable items we have equipped */
 	for (index = INVEN_WIELD; index < INVEN_TOTAL; index++) {
