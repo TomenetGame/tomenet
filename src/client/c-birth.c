@@ -300,6 +300,21 @@ static bool choose_race(void) {
 	char out_val[160];
 	bool hazard = FALSE, sel_ok = FALSE;
 
+	/* ENABLE_DEATHKNIGHT hack: If we went back here from next menu, change 'Death Knight' choice back to
+	   the more generic 'Paladin', or only 'Vampire' would be highlighted as noone else can pick DK. */
+	if (class == CLASS_DEATHKNIGHT) {
+		class = CLASS_PALADIN;
+		p_ptr->cp_ptr = &class_info[class];
+		/* Redraw proper class name */
+ #ifndef CLASS_BEFORE_RACE
+		c_put_str(TERM_L_BLUE, "                    ", 7, CHAR_COL);
+		c_put_str(TERM_L_BLUE, (char*)p_ptr->cp_ptr->title, 7, CHAR_COL);
+ #else
+		c_put_str(TERM_L_BLUE, "                    ", 5, CHAR_COL);
+		c_put_str(TERM_L_BLUE, (char*)p_ptr->cp_ptr->title, 5, CHAR_COL);
+ #endif
+	}
+
 	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
 
 race_redraw:
@@ -420,6 +435,33 @@ race_redraw:
 		if ((j < Setup.max_race) && (j >= 0)) {
 			rp_ptr = &race_info[j];
 #ifdef CLASS_BEFORE_RACE
+			/* ENABLE_DEATHKNIGHT */
+			if (j == RACE_VAMPIRE && class == CLASS_PALADIN) {
+				/* Unhack class 'Paladin' to 'Death Knight' */
+				class = CLASS_DEATHKNIGHT;
+				p_ptr->cp_ptr = &class_info[class];
+				/* Redraw proper class name */
+ #ifndef CLASS_BEFORE_RACE
+				c_put_str(TERM_L_BLUE, "                    ", 7, CHAR_COL);
+				c_put_str(TERM_L_BLUE, (char*)p_ptr->cp_ptr->title, 7, CHAR_COL);
+ #else
+				c_put_str(TERM_L_BLUE, "                    ", 5, CHAR_COL);
+				c_put_str(TERM_L_BLUE, (char*)p_ptr->cp_ptr->title, 5, CHAR_COL);
+ #endif
+			}
+			else {
+				/* Need to redraw class name for non-Death Knights too, since they
+				   could've been Death Knights and pressed BACKSPACE to pick another
+				   race than Vampire.. */
+ #ifndef CLASS_BEFORE_RACE
+				c_put_str(TERM_L_BLUE, "                    ", 7, CHAR_COL);
+				c_put_str(TERM_L_BLUE, (char*)class_info[class].title, 7, CHAR_COL);
+ #else
+				c_put_str(TERM_L_BLUE, "                    ", 5, CHAR_COL);
+				c_put_str(TERM_L_BLUE, (char*)class_info[class].title, 5, CHAR_COL);
+ #endif
+			}
+
 			if (!(rp_ptr->choice & BITS(class))) continue;
 #endif
 
@@ -703,8 +745,13 @@ static bool choose_class(void) {
 	int i, j, l, m, n, sel = 0;
 	char c = '\0';
 	char out_val[160];
-	bool hazard = FALSE;
+	bool hazard = FALSE, dk = FALSE;
 
+	/* ENABLE_DEATHKNIGHT duplicate slot hack (Paladin/Death Knight) */
+	if (Setup.max_class == 14) {
+		Setup.max_class = 13;
+		dk = TRUE;
+	}
 
 	/* Prepare to list */
 	l = 2;
@@ -864,6 +911,9 @@ class_redraw:
 			/*do_cmd_help("help.hlp");*/
 		} else bell();
 	}
+
+	/* Unhack */
+	if (dk) Setup.max_class = 14;
 
 	clear_diz();
 	clear_from(n - 3); /* -3 so beginner-warnings are also cleared */

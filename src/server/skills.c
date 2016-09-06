@@ -353,6 +353,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_PALADIN:
+#ifdef ENABLE_DEATHKNIGHT
+		case CLASS_DEATHKNIGHT:
+#endif
 			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('\377gm\377G' key)");
 			if (old_value < 200 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");

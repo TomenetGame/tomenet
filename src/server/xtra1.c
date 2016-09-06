@@ -471,6 +471,9 @@ static void prt_bpr(int Ind) {
 	switch (p_ptr->pclass) {
 	case CLASS_WARRIOR:
 	case CLASS_MIMIC:
+#ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+#endif
 	case CLASS_PALADIN:
 	case CLASS_RANGER:
 	case CLASS_ROGUE:
@@ -1110,6 +1113,9 @@ void calc_mana(int Ind) {
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
 			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 4000;
 		break;
+#ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+#endif
 	case CLASS_PALADIN:
 		/* few Int, much Wis --140 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
@@ -1189,6 +1195,9 @@ void calc_mana(int Ind) {
 	case CLASS_PRIEST: /* maybe Shamans are treated too good in comparison here */
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 130;
 		break;
+#ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+#endif
 	case CLASS_PALADIN:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
 		break;
@@ -1295,6 +1304,9 @@ void calc_mana(int Ind) {
 	case CLASS_MAGE: max_wgt = 150 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_RANGER: max_wgt = 240 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_PRIEST: max_wgt = 250 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+#ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+#endif
 	case CLASS_PALADIN: max_wgt = 300 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_DRUID: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_SHAMAN: max_wgt = 170 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
@@ -2626,48 +2638,32 @@ int calc_blows_obj(int Ind, object_type *o_ptr) {
 
 	/* Analyze the class */
 	switch (p_ptr->pclass) {
-							/* Adevnturer */
 		case CLASS_ADVENTURER: num = 4; wgt = 35; mul = 4; break;//wgt=35, but MA is too easy in comparison.
 //was num = 5; ; mul = 6
-							/* Warrior */
 		case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
-
-							/* Mage */
 		case CLASS_MAGE: num = 1; wgt = 40; mul = 2; break;
 //was num = 3; ; 
-							/* Priest */
 		case CLASS_PRIEST: num = 4; wgt = 35; mul = 4; break;//mul3
 //was num = 5; ; 
-							/* Rogue */
 		case CLASS_ROGUE: num = 5; wgt = 30; mul = 4; break; /* was mul = 3 - C. Blue - EXPERIMENTAL */
-
 		/* I'm a rogue like :-o */
 		case CLASS_RUNEMASTER: num = 4; wgt = 30; mul = 4; break;//was wgt = 40
-							/* Mimic */
 //trying 5bpr	case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
 		case CLASS_MIMIC: num = 5; wgt = 35; mul = 5; break;//mul3; mul4!
-
-							/* Archer */
 //		case CLASS_ARCHER: num = 3; wgt = 30; mul = 3; break;
 		case CLASS_ARCHER: num = 3; wgt = 35; mul = 4; break;
-
-							/* Paladin */
+#ifdef ENABLE_DEATHKNIGHT
+		case CLASS_DEATHKNIGHT:
+#endif
 		case CLASS_PALADIN: num = 5; wgt = 35; mul = 5; break;//mul4
-
-							/* Ranger */
 		case CLASS_RANGER: num = 5; wgt = 35; mul = 4; break;//mul4
-
-
-		case CLASS_DRUID: num = 4; wgt = 35; mul = 4; break; 
-
+		case CLASS_DRUID: num = 4; wgt = 35; mul = 4; break;
 /* if he is to become a spellcaster, necro working on spell-kills:
 		case CLASS_SHAMAN: num = 2; wgt = 40; mul = 3; break;
     however, then Martial Arts would require massive nerfing too for this class (or being removed even).
 otherwise, let's compromise for now: */
 		case CLASS_SHAMAN: num = 4; wgt = 35; mul = 4; break;
-
 		case CLASS_MINDCRAFTER: num = 5; wgt = 35; mul = 4; break;//was 4,30,4
-
 /*		case CLASS_BARD: num = 4; wgt = 35; mul = 4; break; */
 	}
 
@@ -5127,6 +5123,9 @@ void calc_boni(int Ind) {
 		case CLASS_ROGUE: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
 		case CLASS_MIMIC: p_ptr->shield_deflect = (p_ptr->shield_deflect * 5 + 1) / 6; break;
 		case CLASS_RANGER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
+ #ifdef ENABLE_DEATHKNIGHT
+		case CLASS_DEATHKNIGHT:
+ #endif
 		case CLASS_PALADIN: p_ptr->shield_deflect = p_ptr->shield_deflect; break;
 		case CLASS_SHAMAN: p_ptr->shield_deflect = (p_ptr->shield_deflect * 3 + 3) / 6; break;
 		case CLASS_DRUID: p_ptr->shield_deflect = (p_ptr->shield_deflect * 3 + 3) / 6; break;
@@ -5177,6 +5176,9 @@ void calc_boni(int Ind) {
 		case CLASS_ROGUE: p_ptr->weapon_parry = p_ptr->weapon_parry; break;
 		case CLASS_MIMIC: p_ptr->weapon_parry = (p_ptr->weapon_parry * 5 + 1) / 6; break;
 		case CLASS_RANGER: p_ptr->weapon_parry = p_ptr->weapon_parry; break;
+ #ifdef ENABLE_DEATHKNIGHT
+		case CLASS_DEATHKNIGHT:
+ #endif
 		case CLASS_PALADIN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 5 + 1) / 6; break;
 		case CLASS_SHAMAN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3 + 3) / 6; break;
 		case CLASS_DRUID: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3 + 3) / 6; break;
@@ -6485,6 +6487,11 @@ void calc_boni(int Ind) {
 			case CLASS_PALADIN:
 				msg_print(Ind, "\374\377y    Paladins should try either a dagger, whip, spear or cleaver.");
 				break;
+#ifdef ENABLE_DEATHKNIGHT
+			case CLASS_DEATHKNIGHT:
+				msg_print(Ind, "\374\377y    Death Knights should try either a dagger, spear or cleaver.");
+				break;
+#endif
 			case CLASS_MIMIC:
 				msg_print(Ind, "\374\377y    Mimics should try either a dagger, whip, spear or cleaver.");
 				break;

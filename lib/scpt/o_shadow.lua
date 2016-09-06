@@ -313,6 +313,7 @@ OFEAR_I = add_spell {
 	end,
 	["desc"] = { "Temporarily scares a target.", }
 }
+__lua_OFEAR = OFEAR_I
 OFEAR_II = add_spell {
 	["name"] = 	"Cause Fear II",
 	["school"] = 	{SCHOOL_OSHADOW},

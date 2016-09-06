@@ -295,6 +295,9 @@
 
 #ifdef TEST_SERVER
  #define ENABLE_OCCULT		/* Enable o_*.lua 'Occult' magic schools (shamans, rogues, adventurers) */
+ #ifdef ENABLE_OCCULT
+  #define ENABLE_DEATHKNIGHT	/* Allow 'Vampire Paladins' aka Death Knights. Requires ENABLE_OCCULT. */
+ #endif
 
  #define NEW_REMOVE_CURSE	/* rc has fail chance; allow projecting rc spell on others */
 
@@ -348,6 +351,9 @@
  #ifdef TEST_CLIENT
   #define BIGMAP_MINDLINK_HACK
  #endif
+
+ /* Death Knight class? (ENABLE_OCCULT -> Vampire Paladin) */
+ #define ENABLE_DEATHKNIGHT
 
  /* Atmospheric login screens, with animation, sound and music? */
  #define ATMOSPHERIC_INTRO

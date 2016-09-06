@@ -390,17 +390,13 @@ static int Init_setup(void) {
 
 	Setup.frames_per_second = cfg.fps;
 	Setup.max_race = MAX_RACE;
-#if 1
-  #ifdef ENABLE_MCRAFT
+#ifdef ENABLE_MCRAFT
 	Setup.max_class = MAX_CLASS;
-  #else
-	Setup.max_class = MAX_CLASS - 1;
-  #endif
 #else
-	Setup.max_class = MAX_CLASS;
+	Setup.max_class = MAX_CLASS - 1;
 #endif
-	Setup.max_trait = MAX_TRAIT;
 
+	Setup.max_trait = MAX_TRAIT;
 
 	Setup.motd_len = 23 * 120; /*80;*/	/* colour codes extra */
 	Setup.setup_size = sizeof(setup_t);
@@ -4411,6 +4407,10 @@ static int Receive_play(int ind) {
 				return -1;
 			}
 		}
+#ifdef ENABLE_DEATHKNIGHT
+		/* Unhack duplicate class slot usage (Paladin/Death Knight) */
+		if (race == RACE_VAMPIRE && class == CLASS_PALADIN) class = CLASS_DEATHKNIGHT;
+#endif
 
 		/* hacks for forcibly dedicated characters */
 		if ((connp->sex & MODE_DED_PVP) &&

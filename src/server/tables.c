@@ -1989,7 +1989,11 @@ player_race race_info[MAX_RACE] = {
 		82, 10, 170, 15,
 		15,
 		//No paladin,druid,priest,shaman/mimic
+#ifdef ENABLE_DEATHKNIGHT
+		(CF_ALL&~CFD&~CFP&~CFM&~CFS)|CFK,
+#else
 		CF_ALL&~CFL&~CFD&~CFP&~CFM&~CFS,
+#endif
 		125,
 
 		{{ SKILL_BLUNT,
@@ -3894,6 +3898,110 @@ player_class class_info[MAX_CLASS] = {
 			'+', 900, },
 		}, },
 #endif
+
+#ifdef ENABLE_DEATHKNIGHT
+	{ "Death Knight",
+		TERM_YELLOW,
+		{ 3, -3, 1, 0, 2, 2},
+		{20+100, 0, 0+100, 10, 0, 0},
+/*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
+ *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
+ *   HD, Exp*/
+		10, 21, 54, 1,  13, 16, 60, 40,
+		2, 8,  10, 0,  0,  2,  35, 10,
+		8, 30,
+
+		{{  SKILL_COMBAT,
+			'+', 2700,
+			'+', 1400, },
+		{ SKILL_MASTERY,
+			'+', 1800,
+			'+', 900, },
+		{ SKILL_TECHNIQUE,
+			'+', 1000,
+			'+', 0, },
+#ifdef ENABLE_STANCES
+		{ SKILL_STANCE,
+			'+', 1000,
+			'+', 0, },
+#endif
+		{ SKILL_SWORD,
+			'+', 0,
+			'+', 750, },
+#if 1 /* offer it at all? */
+		{ SKILL_AXE,
+			'+', 0,
+			'+', 600, },//savage^^
+#endif
+		{ SKILL_POLEARM,
+			'+', 0,
+			'+', 700, },
+		{ SKILL_BOW,
+			'+', 0,
+			'+', 300, },
+		{ SKILL_XBOW,
+			'+', 0,
+			'+', 300, },
+		{  SKILL_MARTIAL_ARTS, /* let's keep it low for now - offbalancing */
+			'+', 0,
+			'+', 500, },
+		{ SKILL_MAGIC,
+			'+', 1000,
+			'+', 600, },
+ #ifdef ENABLE_OCCULT /* Occult */
+		{ SKILL_OSHADOW,
+			'+', 0,
+			'+', 800, },
+ #endif
+#if 0
+		{ SKILL_SPELL,
+			'+', 0,
+			'+', 350, },
+#endif
+		{ SKILL_NECROMANCY,
+			'+', 0,
+			'+', 1500, },
+		{ SKILL_TRAUMATURGY,
+			'%', 0,
+			'%', 0, },
+		{ SKILL_AURA_FEAR,
+			'+', 0,
+			'+', 1500, },
+		{ SKILL_AURA_SHIVER,
+			'+', 0,
+			'+', 1500, },
+		{ SKILL_AURA_DEATH,
+			'+', 0,
+			'+', 1500, },
+		{ SKILL_DEVICE,
+			'+', 1500,
+			'+', 800, },
+		{ SKILL_SNEAKINESS,
+			'+', 1000,
+			'+', 500, }, //650,
+		{ SKILL_DISARM,
+			'+', 1000,
+			'+', 600, },
+		{ SKILL_DODGE,
+			'+', 0,/*1000*/
+			'+', 600, },
+		{ SKILL_STEALTH,
+			'+', 0,
+			'+', 500, },
+		{ SKILL_HEALTH,
+			'+', 2000,
+			'+', 1000, },
+		{ SKILL_DIG,
+			'+', 1000,
+			'+', 700, },
+		{ SKILL_CALMNESS,
+			'+', 0,
+			'+', 600, },
+		{ SKILL_INTERCEPT,
+			'+', 1000,
+			'+', 800, },
+		}, },
+#endif
 };
 
 
@@ -4215,6 +4323,7 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Shaman", "Shaman", "Shaman", "Shaman", },
 		{"Elder Shaman", "Elder Shaman", "Elder Shaman", "Elder Shaman", },
 	},
+
 	/* Runemaster */
 	{
 		{"Digger", "Digger", "Digger", "Digger", },
@@ -4231,6 +4340,7 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Runemaster", "Runemistress", "Runemaster", "Runemistress", },
 		{"Grand Runemaster", "Grand Runemistress", "G-Runemaster", "G-Runemstrss", },
 	},
+
 	/* Mindcrafter */
 	{
 		//{"Simple-minded", "Simple-minded", "Simple-mind", "Simple-mind", },
@@ -4249,6 +4359,23 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Controller", "Controller", "Controller", "Controller", },
 		{"Master Mindcrafter", "Master Mindcrafter", "M-Mindcrftr.", "M-Mindcrftr.", },
 	},
+
+#ifdef ENABLE_DEATHKNIGHT
+	/* Death Knight (Vampire Paladin) */
+	{
+		{"Faithless", "Faithless", "Faithless", "Faithless", },
+		{"Heretic", "Heretic", "Heretic", "Heretic", },
+		{"Unhallowed", "Unhallowed", "Unhallowed", "Unhallowed", },
+		{"Cultist", "Cultist", "Cultist", "Cultist", },
+		{"Dark Adept", "Dark Adept", "Dark Adept", "Dark Adept", },
+		{"Tainted", "Tainted", "Tainted", "Tainted", },
+		{"Crypt Keeper", "Crypt Keeper", "Crypt Keeper", "Crpyt Keeper", },
+		{"Sacrificer", "Sacrificer", "Sacricifer", "Sacrificer", },
+		{"Unholy Zealot", "Unholy Zealot", "U.Zealot", "U.Zealot", },
+		{"Antipaladin", "Antipaladin", "A.Paladin", "A.Paladin", },
+		{"Death Knight", "Death Knight", "Death Knight", "Death Knight", },
+	},
+#endif
 };
 
 /*
@@ -4303,9 +4430,9 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 		{"Phantom", "Phantom", "Phantom", "Phantom" },
 		//{"Legendary Assassin", "Legendary Assassin", "Lgd.Assassin", "Lgd.Assassin", },
 		{"Myth", "Myth", "Myth", "Myth", },
+		{"Nightmare", "Nightmare", "Nightmare", "Nightmare", },
 		{"Terror", "Terror", "Terror", "Terror" },
 		//{"Mythical Assassin", "Mythical Assassin", "Myt.Assassin", "Myt.Assassin", },
-		{"Death's Hand", "Death's Hand", "Death's Hand", "Death's Hand", },
 		{"Death Fate", "Death Fate", "Death Fate", "Death Fate", },
 		/* yeah it's fitting, but let's not make the game JOKEBAND anyway */
 		//{"RNG", "RNG", }, //LOL! Perfect, do you not think so? :) -adam
@@ -4399,6 +4526,20 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 		{"Reality Shifter", "Reality Shifter", "Real.Shifter", "Real.Shifter", },
 		{"Truth", "Truth", "Truth", "Truth", },
 	},
+
+#ifdef ENABLE_DEATHKNIGHT
+	/* Death Knight (Vampire Paladin) */
+	{
+		{"Crypt Lord", "Crypt Lord", "Crypt Lord", "Crypt Lord", },
+		{"Nether Lord", "Nether Lord", "Nether Lord", "Nether Lord", },
+		//{"Avenger", "Avenger", "Avenger", "Avenger", },
+		{"Unholy Avenger", "Unholy Avenger", "Unholy Avenger", "Unholy Avenger", },
+		//{"Holy Defender", "Holy Defender", }, defender comes before avenger if at all;
+		//DF and HA are old 'good' ego mods from predecessors.
+		{"Unholy King", "Unholy Queen", "Unholy King", "Unholy Queen", },
+		{"Death's Hand", "Death's Hand", "Death's Hand", "Death's Hand", },
+	},
+#endif
 };
 
 /*

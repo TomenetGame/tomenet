@@ -1040,6 +1040,9 @@ static void get_money(int Ind) {
 	case CLASS_ARCHER:	p_ptr->au += 400; break;
 	case CLASS_ADVENTURER:	p_ptr->au += 300; break;
 	case CLASS_RANGER:      p_ptr->au += 200; break;
+   #ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+   #endif
 	case CLASS_PALADIN:     p_ptr->au += 200; break;
 	case CLASS_DRUID:	p_ptr->au += 200; break;
 	case CLASS_MIMIC:	p_ptr->au += 100; break;
@@ -1056,6 +1059,9 @@ static void get_money(int Ind) {
 	case CLASS_ADVENTURER:	p_ptr->au += 700; break;
 	case CLASS_DRUID:	p_ptr->au += 600; break;
 	case CLASS_RANGER:      p_ptr->au += 600; break;
+   #ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+   #endif
 	case CLASS_PALADIN:     p_ptr->au += 600; break;
 	case CLASS_ROGUE:	p_ptr->au += 600; break;
 	case CLASS_MIMIC:	p_ptr->au += 600; break;
@@ -1289,6 +1295,18 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
 		{ 255, 255, 0 },
 	},
+
+#ifdef ENABLE_DEATHKNIGHT
+	{
+		/* Death Knight (Vampire Paladin) */
+		{ TV_SWORD, SV_LONG_SWORD, 0 },
+		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
+		//{ TV_SCROLL, SV_SCROLL_ICE, 0 },
+		{ TV_SCROLL, SV_SCROLL_DARKNESS, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_OFEAR */
+		{ 255, 255, 0 },
+	},
+#endif
     },
     { /* Fruit bat body */
 	{
@@ -1409,6 +1427,17 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
 		{ 255, 255, 0 },
 	},
+#ifdef ENABLE_DEATHKNIGHT
+	{
+		/* Death Knight (Vampire Paladin) */
+		{ TV_HELM, SV_METAL_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		//{ TV_SCROLL, SV_SCROLL_ICE, 0 },
+		{ TV_SCROLL, SV_SCROLL_DARKNESS, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_OFEAR */
+		{ 255, 255, 0 },
+	},
+#endif
     }
 };
 void init_player_outfits(void) {
@@ -1418,9 +1447,15 @@ void init_player_outfits(void) {
 	   just do it here. - C. Blue */
 	   //player_init[0][CLASS_PRIEST][2][2] = __lua_HHEALING;
 	   player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+#ifdef ENABLE_DEATHKNIGHT
+	   player_init[0][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
+#endif
 	   player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
 	   //player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
 	   player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+#ifdef ENABLE_DEATHKNIGHT
+	   player_init[1][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
+#endif
 	   player_init[1][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
 }
 
@@ -1771,6 +1806,9 @@ static void player_outfit(int Ind) {
 				break;
 			case CLASS_MIMIC:
 			case CLASS_PALADIN:
+#ifdef ENABLE_DEATHKNIGHT
+			case CLASS_DEATHKNIGHT:
+#endif
 			case CLASS_MINDCRAFTER:
 			//case CLASS_PRIEST:
 				j = 2;
@@ -2722,6 +2760,9 @@ void disable_specific_warnings(player_type *p_ptr) {
 	}
 
 	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
+#ifdef ENABLE_DEATHKNIGHT
+	    || p_ptr->pclass == CLASS_DEATHKNIGHT
+#endif
 	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
 //	    || p_ptr->pclass == CLASS_RUNEMASTER
 //	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER
@@ -2729,8 +2770,11 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_bpr2 = 1;
 	}
 
-	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN ||
-	    p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
+	if (!(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
+#ifdef ENABLE_DEATHKNIGHT
+	    || p_ptr->pclass == CLASS_DEATHKNIGHT
+#endif
+	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
 //	    || p_ptr->pclass == CLASS_RUNEMASTER
 //	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER
 	    )) {
@@ -2747,6 +2791,9 @@ void disable_specific_warnings(player_type *p_ptr) {
 	/* cannot use melee techniques? */
 	if (!(p_ptr->pclass == CLASS_WARRIOR ||
 	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_PALADIN ||
+#ifdef ENABLE_DEATHKNIGHT
+	    p_ptr->pclass == CLASS_DEATHKNIGHT ||
+#endif
 	    p_ptr->pclass == CLASS_MIMIC || p_ptr->pclass == CLASS_ROGUE ||
 	    p_ptr->pclass == CLASS_ADVENTURER || p_ptr->pclass == CLASS_RUNEMASTER ||
 	    p_ptr->pclass == CLASS_MINDCRAFTER))
@@ -2903,6 +2950,11 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	stat_order[3] = connp->stat_order[3];
 	stat_order[4] = connp->stat_order[4];
 	stat_order[5] = connp->stat_order[5];
+
+#ifdef ENABLE_DEATHKNIGHT
+	/* Unhack the artificial duplicate slot usage of Paladin/Death Knight class */
+	if (class == CLASS_PALADIN && race == RACE_VAMPIRE) class = CLASS_DEATHKNIGHT;
+#endif
 
 	/* To find out which characters crash the server */
 	s_printf("Trying to log in with character %s...\n", name);

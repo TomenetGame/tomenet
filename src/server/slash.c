@@ -858,7 +858,7 @@ void do_slash_cmd(int Ind, char *message) {
 				bool found = FALSE;
 
 				c[1] = ((p_ptr->pclass == CLASS_PRIEST) ||
-				    (p_ptr->pclass == CLASS_PALADIN)? 'p':'m');
+				    (p_ptr->pclass == CLASS_PALADIN)? 'p':'m'); //CLASS_DEATHKNIGHT
 				if (p_ptr->pclass == CLASS_WARRIOR) c[1] = 'n';
 				c[2] = *token[1];
 				c[3] = '\0';

@@ -7069,6 +7069,11 @@ void process_player_change_wpos(int Ind) {
 			case CLASS_PALADIN:
 				msg_print(Ind, "\374\377y    Paladins should try either a dagger, whip, spear or cleaver.");
 				break;
+#ifdef ENABLE_DEATHKNIGHT
+			case CLASS_DEATHKNIGHT:
+				msg_print(Ind, "\374\377y    Death Knights should try either a dagger, spear or cleaver.");
+				break;
+#endif
 			case CLASS_MIMIC:
 				msg_print(Ind, "\374\377y    Mimics should try either a dagger, whip, spear or cleaver.");
 				break;

@@ -859,6 +859,11 @@ int __lua_HBLESSING;
 int __lua_MSCARE;
 int __lua_M_FIRST;
 int __lua_M_LAST;
+#ifndef ENABLE_OCCULT
+int __lua_OFEAR = 0;
+#else
+int __lua_OFEAR;
+#endif
 
 /* for cron_1h (using turns % 3600 isn't precise enough, might happen that
    one hour gets skipped, eg if transition is 1:59 -> 3:00; so now we're

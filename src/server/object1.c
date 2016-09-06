@@ -3608,6 +3608,9 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 		case CLASS_WARRIOR:
 		case CLASS_MIMIC:
 		case CLASS_PALADIN:
+ #ifdef ENABLE_DEATHKNIGHT
+		case CLASS_DEATHKNIGHT:
+ #endif
 		case CLASS_RANGER:
 		case CLASS_ROGUE:
 		case CLASS_MINDCRAFTER:

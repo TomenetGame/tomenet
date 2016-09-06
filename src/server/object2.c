@@ -7433,6 +7433,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_WARRIOR:
 		case CLASS_MIMIC:
 		case CLASS_PALADIN:
+#ifdef ENABLE_DEATHKNIGHT
+		case CLASS_DEATHKNIGHT:
+#endif
 		case CLASS_MINDCRAFTER:
 			if (item_tester_hook_wear(Ind, INVEN_WIELD) && !rand_int(4)) melee_choice = 6;
 			break;
@@ -7950,6 +7953,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	case CLASS_MINDCRAFTER:
 	case CLASS_PRIEST:
 	case CLASS_PALADIN:
+#ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+#endif
 	case CLASS_DRUID:
 		caster = TRUE;
 	}
@@ -8008,6 +8014,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case CLASS_MINDCRAFTER:
 			case CLASS_PRIEST:
 			case CLASS_PALADIN:
+#ifdef ENABLE_DEATHKNIGHT
+			case CLASS_DEATHKNIGHT:
+#endif
 			case CLASS_DRUID:
 				/* ok, we pay heed to weird skilling aka all-spells MC */
 				if (spell_choice && !melee_choice && !ranged_choice
@@ -8047,6 +8056,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_PRIEST:
 			if (!melee_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue;
 		case CLASS_PALADIN:
+#ifdef ENABLE_DEATHKNIGHT
+		case CLASS_DEATHKNIGHT:
+#endif
 		case CLASS_DRUID:
 			if (o_ptr->name2 == EGO_INTELLIGENCE && !o_ptr->name2b) continue;
 			break;

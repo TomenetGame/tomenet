@@ -88,7 +88,9 @@
 #define CLASS_SHAMAN		10
 #define CLASS_RUNEMASTER	11
 #define CLASS_MINDCRAFTER	12
-
+#ifdef ENABLE_DEATHKNIGHT
+ #define CLASS_DEATHKNIGHT	13
+#endif
 
 /* for spell-casting */
 #define TRAIT_ENLIGHTENED	14	/* Maiar */

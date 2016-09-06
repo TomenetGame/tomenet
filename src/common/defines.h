@@ -550,7 +550,11 @@
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS	13
+#ifdef ENABLE_DEATHKNIGHT
+ #define MAX_CLASS	14
+#else
+ #define MAX_CLASS	13
+#endif
 
 
 /*
@@ -1805,13 +1809,16 @@
 #define CLASS_SHAMAN		10
 #define CLASS_RUNEMASTER	11
 #define CLASS_MINDCRAFTER	12
+#ifdef ENABLE_DEATHKNIGHT
+ #define CLASS_DEATHKNIGHT	13
+#endif
 
 /*
  * Races' class flags, which races allow which classes for choice
  * (must be same order as according CLASS_.. constants!)
  */
 #define CF_NONE	0x0000
-#define CF_ALL	0xFFFF
+#define CF_ALL	0x1FFF	/* Note: Death Knight is left out intentionally, since it shares a slot with Paladin */
 
 #define CFW	0x0001	/* Warrior */
 #define CFI	0x0002	/* Istar */
@@ -1829,6 +1836,9 @@
 #define CFU	0x0800	/* Runemaster */
 
 #define CFC	0x1000	/* Mindcrafter */
+#ifdef ENABLE_DEATHKNIGHT
+ #define CFK	0x2000	/* Death Knight */
+#endif
 
 /*
  * Traits' class flags, which traits are allowed for which race for choice
@@ -7466,8 +7476,13 @@ extern int PlayerUID;
 #define PRICE_BOOST(value, base, step) \
 			(value > base ? value << ((value - base)/step) : value )
 
-#define is_fighter(p_ptr) \
+#ifndef ENABLE_DEATHKNIGHT
+ #define is_fighter(p_ptr) \
 	((p_ptr->pclass == CLASS_WARRIOR) || (p_ptr->pclass == CLASS_PALADIN) || (p_ptr->pclass == CLASS_RANGER) || (p_ptr->pclass == CLASS_MIMIC))
+#else
+ #define is_fighter(p_ptr) \
+	((p_ptr->pclass == CLASS_WARRIOR) || (p_ptr->pclass == CLASS_PALADIN) || (p_ptr->pclass == CLASS_RANGER) || (p_ptr->pclass == CLASS_MIMIC) || (p_ptr->pclass == CLASS_DEATHKNIGHT))
+#endif
 
 #define is_admin(p_ptr) (p_ptr->admin_wiz || p_ptr->admin_dm)
 #define admin_p(Ind) (Players[Ind]->admin_wiz || Players[Ind]->admin_dm)
