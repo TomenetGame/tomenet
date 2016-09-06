@@ -1802,8 +1802,8 @@ static int Handle_setup(int ind) {
 
 	if (connp->setup == 0) {
 		int mc = Setup.max_class;
-
 #ifdef ENABLE_DEATHKNIGHT
+		int ch;
 		/* The DK class should never be listed in the class list, since it shares a slot with Paladin:
 		   Make sure that old clients don't actually display the Death Knight class at the end of the list.
 		   Note: This will require old clients to update to play it, since they lack the setup info for DK class. */
@@ -1830,7 +1830,13 @@ static int Handle_setup(int ind) {
 			b4 = race_info[i].r_adj[3]+50;
 			b5 = race_info[i].r_adj[4]+50;
 			b6 = race_info[i].r_adj[5]+50;
+#ifdef ENABLE_DEATHKNIGHT /* check for outdated client (see above), don't give 'Paladin' option there for Vampires */
+			ch = race_info[i].choice;
+			if (i == RACE_VAMPIRE && !is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) ch &= ~CFL;
+			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%d", b1, b2, b3, b4, b5, b6, race_info[i].title, ch);
+#else
 			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%d", b1, b2, b3, b4, b5, b6, race_info[i].title, race_info[i].choice);
+#endif
 		}
 
 		for (i = 0; i < mc; i++) {
