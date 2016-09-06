@@ -2016,6 +2016,14 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_HSUPPORT,
 			'+', 0,
 			'%', 0, },
+#ifdef ENABLE_OCCULT
+		{ SKILL_OSHADOW,
+			'+', 0,
+			'%', 110, },
+		{ SKILL_OSPIRIT,
+			'+', 0,
+			'%', 0, },
+#endif
 		{ SKILL_R_LITE, /* cannot train Light runecraft well */
 			'+', 0,
 			'%', 50, },

@@ -12801,8 +12801,8 @@ create a character!):
     Vampires are good fighters and decent mages. However, they are unable to
     conjure holy fire or utilize magic of water or nature school. Neither can
     they make use of mimicry techniques (with the exception of vampire bat,
-    see below) or holy spells. They are unable to try and suppress magic, but
-    can make use of items that provide antimagic effects.
+    see below) or holy or spirit spells. They are unable to try and suppress
+    magic, but can make use of items that provide antimagic effects.
     Aside from darkness they also resist sanity-draining effects (somewhat),
     time, nether, poison, and it's hard to drain their life force - as a
     specialty this is also true for life force drained by items a vampire has
@@ -12839,11 +12839,11 @@ create a character!):
     without feeding - even an item granting 'Slow Digestion' will not improve
     this any further.
     Vampires hate 'Blunt' weapons, are bad at 'Swimming', get a penalty on
-    'Divination' magic school, but receive a bonus on 'Mental Intrusion' and a
-    large bonus on 'Necromancy' and all aura skills and a small bonus on
-    'Traumaturgy'. They cannot use certain magic schools at all as described
-    above. As undead, Vampires gain a moderate skill bonus for 'Nether' runes
-    but in turn find it hard to improve in 'Light' runes.
+    'Divination' magic school, but receive a bonus on 'Mental Intrusion' and
+    'Shadow', a large bonus on 'Necromancy' and all aura skills and a small
+    bonus on 'Traumaturgy'. They cannot use certain magic schools at all as
+    described above. As undead, Vampires gain a moderate skill bonus for
+    'Nether' runes but in turn find it hard to improve in 'Light' runes.
 
     Hint: In case you lose your mummy wrapping and the general store doesn't
     have one in stock, you can order one there (press 'o' key in the store).
