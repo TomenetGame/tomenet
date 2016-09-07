@@ -217,6 +217,8 @@
 #define SKILL_R_CHAO		100
 #define SKILL_R_MANA		101
 
+#define SKILL_BLOOD_MAGIC	109 /* dummy */
+
 /* For Draconians */
 #define SKILL_BREATH		110
 

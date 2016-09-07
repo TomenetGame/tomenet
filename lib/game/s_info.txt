@@ -118,7 +118,7 @@ I:1000:0
 # This is like that of ToME2 now
 N:14:Sorcery
 #D:Ability to cast sorcery spells, beware it reduces hp
-D:Ability to use all the magic schools as if their skill was sorcery,
+D:Ability to use all the wizardry schools as if their skill was sorcery,
 D:but you won't receive any bonus abilities/resistances of the schools.
 #D:But the price to channel that much magic is your health
 #A::Cast sorcery spell
@@ -324,8 +324,8 @@ A:11:Cast a spell
 I:1000:111
 
 N:49:Spell-power
-#D:Further boosts most (learned) spells of the 'Magic' and 'Prayer' schools.
-D:Further boosts most (learned) spells of the 'Magic' schools.
+#D:Further boosts most (learned) spells of the 'Wizardry' and 'Prayers' schools.
+D:Further boosts most (learned) spells of the 'Wizardry' schools.
 I:1000:0
 
 N:50:Mana
@@ -424,11 +424,6 @@ I:1000:111
 
 # druid
 
-#N:74:Druidry
-#D:Access to the Druid's Arcane Realm
-#A:11:Cast a spell
-#I:1000:111
-
 N:74:Arcane Lore
 D:Access to the Druid's Arcane Realm.
 D:Spells use the wisdom stat.
@@ -475,22 +470,22 @@ $ENABLE_MCRAFT$A:11:Cast a spell
 $ENABLE_MCRAFT$I:1000:111
 
 
-N:83:Magic Schools
+N:83:Wizardry
 D:
 I:1000:0
 F:DUMMY
 
-N:84:Prayer Schools
+N:84:Prayers
 D:
 I:1000:0
 F:DUMMY
 
-N:85:Druidic Schools
+N:85:Druidism
 D:
 I:1000:0
 F:DUMMY
 
-$ENABLE_MCRAFT$N:86:Mindcraft Schools
+$ENABLE_MCRAFT$N:86:Mindcraft
 $ENABLE_MCRAFT$D:
 $ENABLE_MCRAFT$I:1000:0
 $ENABLE_MCRAFT$F:DUMMY
@@ -507,7 +502,7 @@ $ENABLE_OCCULT$D:Some spells use wisdom stat, some intelligence stat.
 $ENABLE_OCCULT$A:11:Cast a spell
 $ENABLE_OCCULT$I:1000:111
 
-$ENABLE_OCCULT$N:89:Occult Schools
+$ENABLE_OCCULT$N:89:Occultism
 $ENABLE_OCCULT$D:
 $ENABLE_OCCULT$I:1000:0
 $ENABLE_OCCULT$F:DUMMY
@@ -574,6 +569,11 @@ D:Ability to evoke runes of mana.
 A:12:Draw a rune
 I:1000:105
 F:MKEY_HARDCODE
+
+N:109:Blood Magic
+D:
+I:1000:0
+F:DUMMY
 
 N:110:Breathe element
 D:Ability to breathe an element.
@@ -695,7 +695,6 @@ f:Holy Defense:Magic%10
 f:Holy Curing:Magic%10
 f:Holy Support:Magic%10
 
-#f:Druidry:Magic%10
 f:Arcane Lore:Magic%10
 f:Physical Lore:Magic%10
 
@@ -729,13 +728,13 @@ f:Calmness:Sneakiness%10
 f:Interception:Combat%10
 
 
-# Auras increase Necromancy skill (pfft who forgot this? :) - C. Blue)
+# Auras increase Magic skill
 #f:Aura power:Necromancy%20
-f:Traumaturgy:Necromancy%20
-f:Aura of Fear:Necromancy%20
-f:Shivering Aura:Necromancy%20
-f:Aura of Death:Necromancy%20
-#Antimagic increasing Necromancy wouldn't make sense!
+f:Necromancy:Magic%5
+f:Traumaturgy:Magic%5
+f:Aura of Fear:Magic%5
+f:Shivering Aura:Magic%5
+f:Aura of Death:Magic%5
 
 # Exercises are good to your health :)
 #f:Training:Health%25
@@ -773,53 +772,53 @@ T:Combat:Boomerang-mastery
 
 T:Main:Magic
 
-T:Magic:Magic Schools
+T:Magic:Wizardry
 #T:Magic:Spell-learning
 #T:Magic:Spell-power
-T:Magic:Prayer Schools
-T:Magic:Druidic Schools
-$ENABLE_MCRAFT$T:Magic:Mindcraft Schools
-$ENABLE_OCCULT$T:Magic:Occult Schools
+T:Magic:Prayers
+T:Magic:Druidism
+$ENABLE_MCRAFT$T:Magic:Mindcraft
+$ENABLE_OCCULT$T:Magic:Occultism
 T:Magic:Runecraft
 $ENABLE_MAIA$T:Magic:Astral Knowledge
+T:Magic:Blood Magic
 T:Magic:Mimicry
 T:Magic:Magic device
 
-T:Magic Schools:Sorcery
-T:Magic Schools:Mana
-T:Magic Schools:Fire
-T:Magic Schools:Water
-T:Magic Schools:Air
-T:Magic Schools:Earth
-T:Magic Schools:Nature
-T:Magic Schools:Conveyance
-T:Magic Schools:Divination
-T:Magic Schools:Temporal
-T:Magic Schools:Udun
-T:Magic Schools:Mind
-T:Magic Schools:Meta
-T:Magic Schools:Spell-power
+T:Wizardry:Sorcery
+T:Wizardry:Mana
+T:Wizardry:Fire
+T:Wizardry:Water
+T:Wizardry:Air
+T:Wizardry:Earth
+T:Wizardry:Nature
+T:Wizardry:Conveyance
+T:Wizardry:Divination
+T:Wizardry:Temporal
+T:Wizardry:Udun
+T:Wizardry:Mind
+T:Wizardry:Meta
+T:Wizardry:Spell-power
 
 #T:Magic:Demonology
 #T:Magic:Necromancy
 #T:Magic:Thaumaturgy
 #T:Magic:Alchemy
 
-T:Prayer Schools:Holy Offense
-T:Prayer Schools:Holy Defense
-T:Prayer Schools:Holy Curing
-T:Prayer Schools:Holy Support
+T:Prayers:Holy Offense
+T:Prayers:Holy Defense
+T:Prayers:Holy Curing
+T:Prayers:Holy Support
 
-#T:Druidic Schools:Druidry
-T:Druidic Schools:Arcane Lore
-T:Druidic Schools:Physical Lore
+T:Druidism:Arcane Lore
+T:Druidism:Physical Lore
 
-$ENABLE_MCRAFT$T:Mindcraft Schools:Psycho-Power
-$ENABLE_MCRAFT$T:Mindcraft Schools:Attunement
-$ENABLE_MCRAFT$T:Mindcraft Schools:Mental Intrusion
+$ENABLE_MCRAFT$T:Mindcraft:Psycho-Power
+$ENABLE_MCRAFT$T:Mindcraft:Attunement
+$ENABLE_MCRAFT$T:Mindcraft:Mental Intrusion
 
-$ENABLE_OCCULT$T:Occult Schools:Shadow
-$ENABLE_OCCULT$T:Occult Schools:Spirit
+$ENABLE_OCCULT$T:Occultism:Shadow
+$ENABLE_OCCULT$T:Occultism:Spirit
 
 T:Runecraft:Light
 T:Runecraft:Darkness
@@ -834,12 +833,12 @@ T:Runecraft:Mana
 #T:Spirituality:Mindcraft
 #T:Spirituality:Music
 
-T:Main:Necromancy
 #T:Necromancy:Aura power
-T:Necromancy:Traumaturgy
-T:Necromancy:Aura of Fear
-T:Necromancy:Shivering Aura
-T:Necromancy:Aura of Death
+T:Blood Magic:Necromancy
+T:Blood Magic:Traumaturgy
+T:Blood Magic:Aura of Fear
+T:Blood Magic:Shivering Aura
+T:Blood Magic:Aura of Death
 
 T:Main:Antimagic
 
