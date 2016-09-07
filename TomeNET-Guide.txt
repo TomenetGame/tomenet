@@ -11760,7 +11760,7 @@ Note that not every skill is available to every profession (class).
                                 get more distinctive feelings from pseudo-id,
                                 before that you only sense 'good' or 'cursed'.
 
-    +Magic Schools
+    +Wizardry
         .Sorcery                Learn to use spells of ALL magic schools at
                                 once, instead of training a particular branch!
         .Mana                   Learn spells of the Mana branch.
@@ -11775,7 +11775,7 @@ Note that not every skill is available to every profession (class).
         .Udun                   Learn spells of the Udun branch.
         .Mind                   Learn spells of the Mind branch.
 
-    +Prayer Schools
+    +Prayers
         .Holy Offense           Learn prayers of the Holy Offense branch.
         .Holy Defense           Learn prayers of the Holy Defense branch.
         .Holy Curing            Learn prayers of the Holy Curing branch.
@@ -11794,11 +11794,11 @@ Note that not every skill is available to every profession (class).
                                 It does not affect mimic powers or magic
                                 devices either.
 
-    +Druidic Schools
-        .Arcane Lore            Learn druid magic tought by arcane lore.
-        .Physical Lore          Learn druid magic tought by physical lore.
+    +Druidism
+        .Arcane Lore            Learn druid magic taught by arcane lore.
+        .Physical Lore          Learn druid magic taught by physical lore.
 
-    +Mindcraft Schools
+    +Mindcraft
         .Psycho-Power           Learn mindcrafter spells of psycho-power.
         .Attunement             Learn mindcrafter spells of attunement.
         .Mental Intrusion       Learn mindcrafter spells of mental intrusion.
@@ -11813,6 +11813,70 @@ Note that not every skill is available to every profession (class).
 
     .Astral Knowledge           Learn spells of the Astral branch of magic,
                                 exclusively available to the Maia race.
+
+    +Blood Magic
+        .Necromancy             Drains life and mana from killed monsters,
+                                replenishing your HP and MP.
+                                Only works if you are able to see the target,
+                                and if you are not a player-ghost.
+                                The amount of points gained depends on the
+                                skill and the target's level. To get maximum
+                                drain, the skill should be at least half as
+                                high as the monster level.
+                                Necromancy has no effect on undead and
+                                nonliving monsters.
+
+        .Traumaturgy            Drains mana from monsters when you inflict
+                                damage on them, replenishing your MP.
+                                Only works if you are able to see the target.
+                                The amount of points gained depends linearly
+                                on your skill level and also somewhat on the
+                                damage you inflicted.
+                                Even if your inflicted damage and/or skill
+                                level is rather low, each attack still has a
+                                (small) chance of replenishing at least 1 MP.
+                                Traumaturgy is most effective with spells that
+                                have an area of effect and can therefore hit
+                                multiple monsters, such as balls and especially
+                                clouds.
+                                Traumaturgy has no effect on angels, undead,
+                                and nonliving (constructs) monsters.
+
+        .Aura of Fear           Monsters that hit you are stroke by fear.
+                                Undead and non-living monsters and those that
+                                resist fear (NO_FEAR) are not affected.
+                                The chance for the aura to trigger depends on
+                                your skill alone. Whether it has effect on your
+                                foe or not only depends on its rlevel compared
+                                to your skill - uniques and powerful monsters
+                                receive a small bonus in their favour.
+                                It is automatically enabled when you train the
+                                skill; you can disable the aura in 'm' menu.
+
+        .Shivering Aura         Monsters that hit you are stunned.
+                                Monsters that are immune to cold and those that
+                                resist stun (NO_STUN) are not affected.
+                                The chance for the aura to trigger depends on
+                                your skill alone. Whether it has effect on your
+                                foe or not only depends on its rlevel compared
+                                to your skill - uniques receive a small bonus
+                                in their favour.
+                                At a skill of 30 the aura is so strong that
+                                your melee attacks (weapon as well as martial
+                                arts will be branded by it (cold brand).
+                                It is automatically enabled when you train the
+                                skill; you can disable the aura in 'm' menu.
+
+        .Aura of Death          Monsters that hit you are hit by waves
+                                of plasma and ice, alternating randomly.
+                                The chance for the aura to trigger depends on
+                                your skill alone.
+                                At a skill of 40 the aura is so strong that
+                                your melee attacks (weapon as well as martial
+                                arts) will be branded by it (alternating fire
+                                or cold brand).
+                                It is automatically enabled when you train the
+                                skill; you can disable the aura in 'm' menu.
 
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
@@ -11839,69 +11903,6 @@ Note that not every skill is available to every profession (class).
                                 speeds up recharging of rods you carry.
                                 See (6.10) for more information on magic
                                 devices, the skill and the ability.
-
-+Necromancy                     Drains life and mana from killed monsters,
-                                replenishing your HP and MP.
-                                Only works if you are able to see the target,
-                                and if you are not a player-ghost.
-                                The amount of points gained depends on the
-                                skill and the target's level. To get maximum
-                                drain, the skill should be at least half as
-                                high as the monster level.
-                                Necromancy has no effect on undead and
-                                nonliving monsters.
-
-    .Traumaturgy                Drains mana from monsters when you inflict
-                                damage on them, replenishing your MP.
-                                Only works if you are able to see the target.
-                                The amount of points gained depends linearly
-                                on your skill level and also somewhat on the
-                                damage you inflicted.
-                                Even if your inflicted damage and/or skill
-                                level is rather low, each attack still has a
-                                (small) chance of replenishing at least 1 MP.
-                                Traumaturgy is most effective with spells that
-                                have an area of effect and can therefore hit
-                                multiple monsters, such as balls and especially
-                                clouds.
-                                Traumaturgy has no effect on angels, undead,
-                                and nonliving (constructs) monsters.
-
-    .Aura of Fear               Monsters that hit you are stroke by fear.
-                                Undead and non-living monsters and those that
-                                resist fear (NO_FEAR) are not affected.
-                                The chance for the aura to trigger depends on
-                                your skill alone. Whether it has effect on your
-                                foe or not only depends on its rlevel compared
-                                to your skill - uniques and powerful monsters
-                                receive a small bonus in their favour.
-                                It is automatically enabled when you train the
-                                skill; you can disable the aura in 'm' menu.
-
-    .Shivering Aura             Monsters that hit you are stunned.
-                                Monsters that are immune to cold and those that
-                                resist stun (NO_STUN) are not affected.
-                                The chance for the aura to trigger depends on
-                                your skill alone. Whether it has effect on your
-                                foe or not only depends on its rlevel compared
-                                to your skill - uniques receive a small bonus
-                                in their favour.
-                                At a skill of 30 the aura is so strong that
-                                your melee attacks (weapon as well as martial
-                                arts will be branded by it (cold brand).
-                                It is automatically enabled when you train the
-                                skill; you can disable the aura in 'm' menu.
-
-    .Aura of Death              Monsters that hit you are hit by waves
-                                of plasma and ice, alternating randomly.
-                                The chance for the aura to trigger depends on
-                                your skill alone.
-                                At a skill of 40 the aura is so strong that
-                                your melee attacks (weapon as well as martial
-                                arts) will be branded by it (alternating fire
-                                or cold brand).
-                                It is automatically enabled when you train the
-                                skill; you can disable the aura in 'm' menu.
 
 .Antimagic                      Generated from your strong disbelief in magic
                                 an antimagic field surrounds you, preventing
