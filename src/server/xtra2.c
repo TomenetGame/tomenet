@@ -8803,7 +8803,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	s64b new_exp, new_exp_frac;
 	s64b tmp_exp;
-	int skill_trauma = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100);
+	int skill_trauma = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100) != 0 && !p_ptr->anti_magic && !get_skill(p_ptr, SKILL_ANTIMAGIC);
 	bool old_tacit = suppress_message;
 
 	//int dun_level2 = getlevel(&p_ptr->wpos);
@@ -8845,6 +8845,15 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	    (!(r_ptr->flags3 & RF3_UNDEAD)) &&
 	    (!(r_ptr->flags3 & RF3_NONLIVING)) &&
 	    (!(strchr("AEgv", r_ptr->d_char)))) {
+		if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+			sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+			msg_format(Ind, "\377%cYour anti-magic field disrupts your traumaturgy.", COLOUR_AM_OWN);
+			skill_trauma = FALSE;
+		}
+	} else skill_trauma = FALSE;
+	if (skill_trauma) {
 		/* difficult to balance, due to the different damage effects of spells- might need some changes */
 		int eff_dam = (dam <= m_ptr->hp) ? dam : m_ptr->hp;
 		long gain;
@@ -8931,6 +8940,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	if (m_ptr->hp < 0) {
 		char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+		bool necro = get_skill(p_ptr, SKILL_NECROMANCY) != 0 && !p_ptr->anti_magic && !get_skill(p_ptr, SKILL_ANTIMAGIC);
 
 #ifdef ARCADE_SERVER
 		cave_set_feat(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, 172); /* drop "blood"? */
@@ -9191,10 +9201,19 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		 * Necromancy skill regenerates you
 		 * Cannot drain an undead or nonliving monster
 		 */
-		if ((get_skill(p_ptr, SKILL_NECROMANCY)) &&
+		if (necro &&
 		    (!(r_ptr->flags3 & RF3_UNDEAD)) &&
 		    (!(r_ptr->flags3 & RF3_NONLIVING)) &&
 		    target_able(Ind, m_idx) && !p_ptr->ghost) { /* Target must be in LoS */
+			if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+				sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+				msg_format(Ind, "\377%cYour anti-magic field disrupts your necromancy.", COLOUR_AM_OWN);
+				necro = FALSE;
+			}
+		} else necro = FALSE;
+		if (necro) {
 			/*int gain = (r_ptr->level *
 			    get_skill_scale(p_ptr, SKILL_NECROMANCY, 100)) / 100 +
 			    get_skill(p_ptr, SKILL_NECROMANCY); */
@@ -12615,6 +12634,17 @@ bool check_esp_link_type(int Ind, int Ind2, u16b flags) {
 void toggle_aura(int Ind, int aura) {
 	char buf[80];
 	player_type *p_ptr = Players[Ind];
+
+	if (!p_ptr->aura[aura]) {
+		if (p_ptr->anti_magic) {
+			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+			return;
+		}
+		if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+			msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
+			return;
+		}
+	}
 
 	p_ptr->aura[aura] = !p_ptr->aura[aura];
 

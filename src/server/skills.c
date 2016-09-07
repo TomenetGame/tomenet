@@ -636,9 +636,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYour boomerang throwing speed has become faster due to your training!");
 		}
 		break;
-	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
-	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0) p_ptr->aura[1] = TRUE; break;
-	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0) p_ptr->aura[2] = TRUE; break;
+	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
+	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[1] = TRUE; break;
+	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[2] = TRUE; break;
 #if 0 /* obsolete */
 	case SKILL_DIG:
 		if (old_value < 300 && new_value >= 300) {
@@ -650,6 +650,13 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (old_value < 100 && new_value >= 100) p_ptr->sanity_bar = 1;
 		else if (old_value < 200 && new_value >= 200) p_ptr->sanity_bar = 2;
 		else if (old_value < 400 && new_value >= 400) p_ptr->sanity_bar = 3;
+		break;
+	case SKILL_ANTIMAGIC:
+		if (!new_value) break; //paranoia..
+		/* turn off all magic auras */
+		if (p_ptr->aura[0]) toggle_aura(Ind, 0);
+		if (p_ptr->aura[1]) toggle_aura(Ind, 1);
+		if (p_ptr->aura[2]) toggle_aura(Ind, 2);
 		break;
 	}
 }

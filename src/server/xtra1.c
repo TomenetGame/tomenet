@@ -3523,7 +3523,6 @@ void calc_boni(int Ind) {
 
 	/* Compute antimagic */
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-//		p_ptr->anti_magic = TRUE;	/* it means 95% saving-throw!! */
 #ifdef NEW_ANTIMAGIC_RATIO
 		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 50); csheet_boni[14].amfi += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 50);
 		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
@@ -4063,7 +4062,6 @@ void calc_boni(int Ind) {
 		if (f5 & TR5_RES_TELE) { p_ptr->res_tele = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RTELE; }
 		if (f2 & TR2_RES_BLIND) { p_ptr->resist_blind = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RBLND; }
 		if (f2 & TR2_RES_NETHER) { p_ptr->resist_neth = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RNETH; }
-//		if (f2 & TR2_ANTI_MAGIC) p_ptr->anti_magic = TRUE;
 
 		/* Sustain flags */
 		if (f2 & TR2_SUST_STR) { p_ptr->sustain_str = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSSTR; }
@@ -4107,7 +4105,13 @@ void calc_boni(int Ind) {
 		if (f3 & (TR3_SH_FIRE)) { p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_AFIRE; }
 		if (f5 & (TR5_SH_COLD)) { p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_ACOLD; }
 		if (f3 & (TR3_SH_ELEC)) { p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_AELEC; }
-		if (f3 & (TR3_NO_MAGIC)) { p_ptr->anti_magic = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAMSH; }
+		if (f3 & (TR3_NO_MAGIC)) {
+			p_ptr->anti_magic = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAMSH;
+			/* turn off all magic auras */
+			if (p_ptr->aura[0]) toggle_aura(Ind, 0);
+			if (p_ptr->aura[1]) toggle_aura(Ind, 1);
+			if (p_ptr->aura[2]) toggle_aura(Ind, 2);
+		}
 		if (f3 & (TR3_NO_TELE)) { p_ptr->anti_tele = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_ITELE; }
 
 		/* Additional flags from PernAngband */

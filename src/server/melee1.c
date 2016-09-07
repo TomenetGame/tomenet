@@ -2878,6 +2878,10 @@ bool make_attack_melee(int Ind, int m_idx)
 			}
 
 			if (touched) {
+				/* Check if our 'intrinsic' (Blood Magic, not from item/external spell) auras were suppressed by our own antimagic field. */
+				bool aura_ok = !magik((p_ptr->antimagic * 8) / 5);
+				int auras_failed = 0;
+
 				/*
 				 * Apply item auras
 				 */
@@ -3012,7 +3016,7 @@ bool make_attack_melee(int Ind, int m_idx)
 //				}
 
 				/*
-				 * Apply the necromantic auras
+				 * Apply the blood magic auras
 				 */
 				/* Aura of fear is now affected by the monster level too */
 				if (get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[0] &&
@@ -3023,10 +3027,12 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					if (magik(get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 5) &&
 					    r_ptr->level + mod < get_skill_scale(p_ptr, SKILL_AURA_FEAR, 100)) {
-						msg_format(Ind, "%^s appears afraid.", m_name);
-						//short 'shock' effect ;) it's cooler than just running away
-						m_ptr->monfear = 2 + get_skill_scale(p_ptr, SKILL_AURA_FEAR, 2);
-						m_ptr->monfear_gone = 0;
+						if (aura_ok) {
+							msg_format(Ind, "%^s appears afraid.", m_name);
+							//short 'shock' effect ;) it's cooler than just running away
+							m_ptr->monfear = 2 + get_skill_scale(p_ptr, SKILL_AURA_FEAR, 2);
+							m_ptr->monfear_gone = 0;
+						} else auras_failed++;
 					}
 				}
 				/* Shivering Aura is affected by the monster level */
@@ -3045,12 +3051,14 @@ bool make_attack_melee(int Ind, int m_idx)
 					chance_trigger += 25; //generic boost
 
 					if (magik(chance_trigger) && (r_ptr->level + mod < threshold_effect)) {
-						m_ptr->stunned += 10;
-						if (m_ptr->stunned > 100)
-							msg_format(Ind, "%^s appears frozen.", m_name);
-						else if (m_ptr->stunned > 50)
-							msg_format(Ind, "%^s appears heavily shivering.", m_name);
-						else msg_format(Ind, "%^s appears shivering.", m_name);
+						if (aura_ok) {
+							m_ptr->stunned += 10;
+							if (m_ptr->stunned > 100)
+								msg_format(Ind, "%^s appears frozen.", m_name);
+							else if (m_ptr->stunned > 50)
+								msg_format(Ind, "%^s appears heavily shivering.", m_name);
+							else msg_format(Ind, "%^s appears shivering.", m_name);
+						} else auras_failed++;
 					}
 				}
 				/* Aura of death is NOT affected by monster level*/
@@ -3058,18 +3066,27 @@ bool make_attack_melee(int Ind, int m_idx)
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_DEATH, 50);
 
 					if (magik(chance)) {
-						int dam = 5 + chance * 3;
+						if (aura_ok) {
+							int dam = 5 + chance * 3;
 
-						if (magik(50)) {
-							//msg_format(Ind, "%^s is engulfed by plasma for %d damage!", m_name, dam);
-							sprintf(p_ptr->attacker, " eradiates a wave of plasma for");
-							fire_ball(Ind, GF_PLASMA, 0, dam, 1, p_ptr->attacker);
-						} else {
-							//msg_format(Ind, "%^s is hit by icy shards for %d damage!", m_name, dam);
-							sprintf(p_ptr->attacker, " eradiates a wave of ice for");
-							fire_ball(Ind, GF_ICE, 0, dam, 1, p_ptr->attacker);
-						}
+							if (magik(50)) {
+								//msg_format(Ind, "%^s is engulfed by plasma for %d damage!", m_name, dam);
+								sprintf(p_ptr->attacker, " eradiates a wave of plasma for");
+								fire_ball(Ind, GF_PLASMA, 0, dam, 1, p_ptr->attacker);
+							} else {
+								//msg_format(Ind, "%^s is hit by icy shards for %d damage!", m_name, dam);
+								sprintf(p_ptr->attacker, " eradiates a wave of ice for");
+								fire_ball(Ind, GF_ICE, 0, dam, 1, p_ptr->attacker);
+							}
+						} else auras_failed++;
 					}
+				}
+				/* Notify if our 'intrinsic' (Blood Magic, not from item/external spell) auras failed.. */
+				if (auras_failed) {
+#ifdef USE_SOUND_2010
+					sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+					msg_format(Ind, "\377%cYour anti-magic field disrupts your aura%s.", COLOUR_AM_OWN, auras_failed == 1 ? "" : "s");
 				}
 
 				touched = FALSE;
