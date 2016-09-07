@@ -11814,7 +11814,11 @@ Note that not every skill is available to every profession (class).
     .Astral Knowledge           Learn spells of the Astral branch of magic,
                                 exclusively available to the Maia race.
 
-    +Blood Magic
+    +Blood Magic                Blood magic doesn't require mana and doesn't
+                                provide spells unlike most other magic schools.
+                                Instead it provides passive or innate powers
+                                that are fueled by your own blood to work.
+
         .Necromancy             Drains life and mana from killed monsters,
                                 replenishing your HP and MP.
                                 Only works if you are able to see the target,
