@@ -8803,7 +8803,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	s64b new_exp, new_exp_frac;
 	s64b tmp_exp;
-	int skill_trauma = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100) != 0 && !p_ptr->anti_magic && !get_skill(p_ptr, SKILL_ANTIMAGIC);
+	int skill_trauma = (p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC)) ? 0 : get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100);
 	bool old_tacit = suppress_message;
 
 	//int dun_level2 = getlevel(&p_ptr->wpos);
@@ -8940,7 +8940,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	if (m_ptr->hp < 0) {
 		char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
-		bool necro = get_skill(p_ptr, SKILL_NECROMANCY) != 0 && !p_ptr->anti_magic && !get_skill(p_ptr, SKILL_ANTIMAGIC);
+		bool necro = get_skill(p_ptr, SKILL_NECROMANCY) && !p_ptr->anti_magic && !get_skill(p_ptr, SKILL_ANTIMAGIC);
 
 #ifdef ARCADE_SERVER
 		cave_set_feat(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, 172); /* drop "blood"? */
