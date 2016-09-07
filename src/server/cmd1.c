@@ -1538,11 +1538,6 @@ void whats_under_your_feet(int Ind, bool force) {
 /* Prevent characters in Bree from taking gold/items while they cannot drop
    them again due to being lower level than cfg.newbies_cannot_drop? */
 #define NEWBIES_CANT_GRAB_IN_BREE
-#ifdef ENABLE_XID_SPELL
-/* Allow BAGIDENTIFY spell to be used with !X inscription?
-   This is currently not supported, because the spell is cast BEFORE the item is picked up. */
-// #define ALLOW_X_BAGID
-#endif
 void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	object_type *o_ptr;
 

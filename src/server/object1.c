@@ -6149,6 +6149,10 @@ byte get_spellbook_name_colour(int pval) {
 }
 
 /* Search inventory for items inscribed !X to use them to identify a newly picked up object. */
+#ifdef ENABLE_XID_SPELL
+/* Allow BAGIDENTIFY spell to be used with !X inscription? */
+ #define ALLOW_X_BAGID
+#endif
 void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr;
@@ -6166,8 +6170,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 		    (i_ptr->sval != SV_SCROLL_IDENTIFY && i_ptr->sval != SV_SCROLL_STAR_IDENTIFY))
 			continue;
 
-		/* This paragraph sort of replaces item_tester_hook_activate() */
-		if (!object_known_p(Ind, i_ptr)) continue;
+		if (!can_use(Ind, i_ptr)) continue;
 
 		/* Check if the player does want this feature (!X - for now :) ) */
 		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
@@ -6181,11 +6184,12 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 #ifndef TEST_SERVER
 		/* temporary hack - disable all other !X uses except for scrolls
 		   while this whole mess is undergoing complete rewrite.. */
+
 		/* we id the newly picked up item */
 		object_aware(Ind, o_ptr);
 		object_known(o_ptr);
 
- #ifdef XID_AFTER_PICKUP /* important for scroll behaviour here! */
+ #if 0 /* (was XID_AFTER_PICKUP) important for scroll behaviour here! */
 		/* hack: remember item position for 'You have ..' message,
 		   in case it was our last scroll and items get reordered */
 		o_ptr->temp = 1;
@@ -6247,9 +6251,6 @@ s_printf("di0-s %d\n", p_ptr->delayed_index);
 		if (i_ptr->name1 != ART_ERIRIL &&
 		    i_ptr->name1 != ART_STONE_LORE) continue;
 
-		/* This paragraph sort of replaces item_tester_hook_activate() */
-		if (!object_known_p(Ind, i_ptr)) continue;
-
 		/* Check if the player does want this feature (!X - for now :) ) */
 		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
 
@@ -6277,6 +6278,7 @@ s_printf("di0 %d\n", p_ptr->delayed_index);
 	/* Check for ID rods/staves */
 	for (index = 0; index < INVEN_PACK; index++) {
 		i_ptr = &(p_ptr->inventory[index]);
+		if (!i_ptr->k_idx) continue;
 
 		/* ID rod && ID staff (no *perc*) */
 		if (!(i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY &&
@@ -6315,114 +6317,122 @@ s_printf("di1 %d\n", p_ptr->delayed_index);
 	/* Lastly, check for ID spells -- IDENTIFY or MIDENTIFY or even STARIDENTIFY or BAGIDENTIFY. */
 	for (index = 0; index < INVEN_PACK; index++) {
 		i_ptr = &(p_ptr->inventory[index]);
+		if (!i_ptr->k_idx) continue;
 
-		if (i_ptr->tval == TV_BOOK) {
-			if (i_ptr->sval == SV_SPELLBOOK) {
-				if (i_ptr->pval == ID_spell1 || i_ptr->pval == ID_spell1a || i_ptr->pval == ID_spell1b || i_ptr->pval == ID_spell2 ||
-				    i_ptr->pval == ID_spell3
+		if (i_ptr->tval != TV_BOOK) continue;
+
+		if (!can_use(Ind, i_ptr)) continue;
+
+		/* Check if the player does want this feature (!X - for now :) ) */
+		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+
+		/* Can't use them? skip. (Note: Even 'Revelation' requires these, luckily) */
+		if (p_ptr->blind || no_lite(Ind) || p_ptr->confused) {
+			failure |= 0x4;
+			break;
+		}
+
+		if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+			msg_format(Ind, "\377%cYour antimagic prevents you from casting your spell.", COLOUR_AM_OWN);
+			failure |= 0x8;
+			break; /* can't activate any other items either */
+		}
+
+		if (i_ptr->sval == SV_SPELLBOOK) {
+			if (i_ptr->pval == ID_spell1 || i_ptr->pval == ID_spell1a || i_ptr->pval == ID_spell1b || i_ptr->pval == ID_spell2 ||
+			    i_ptr->pval == ID_spell3
  #ifdef ALLOW_X_BAGID
-				    || i_ptr->pval == ID_spell4
+			    || i_ptr->pval == ID_spell4
  #endif
-				    ) {
-					/* Have we learned this spell yet at all? */
-					if (!exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, i_ptr->pval))) {
-						/* Just continue&ignore instead of return, since we
-						   might just have picked up someone else's book! */
-						msg_print(Ind, "\377oYou cannot cast the identify spell of your inscribed spell scroll.");
-						continue;
-					}
-					/* If so then use it */
-					spell = i_ptr->pval;
-					//wow-- use ground item! ;) (except for BAGIDENTIFY)
-					if (spell != ID_spell4 && spell != ID_spell1a && spell != ID_spell1b)
-						p_ptr->current_item = slot;
-				} else {
+			    ) {
+				/* Have we learned this spell yet at all? */
+				if (!exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, i_ptr->pval))) {
+					/* Just continue&ignore instead of return, since we
+					   might just have picked up someone else's book! */
+					msg_print(Ind, "\377oYou cannot cast the identify spell of your inscribed spell scroll.");
+					continue;
+				}
+				/* If so then use it */
+				spell = i_ptr->pval;
+				//wow-- use ground item! ;) (except for BAGIDENTIFY)
+				if (spell != ID_spell4 && spell != ID_spell1a && spell != ID_spell1b)
+					p_ptr->current_item = slot;
+			} else {
+				/* Be severe and point out the wrong inscription: */
+				msg_print(Ind, "\377oThe inscribed spell scroll isn't an eligible identify spell.");
+				continue;
+			}
+		} else {
+			if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
+			/* now <4.4.1.8 is no longer supported! to make s_aux.lua slimmer */
+				ID_spell1_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell1));//NO LONGER SUPPORTED
+				//ID_spell1a, ID_spell1b are not supported
+				ID_spell2_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell2));//NO LONGER SUPPORTED
+				ID_spell3_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell3));//NO LONGER SUPPORTED
+ #ifdef ALLOW_X_BAGID
+				ID_spell4_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell4));//NO LONGER SUPPORTED
+ #endif
+				if (!ID_spell1_found && !ID_spell2_found && //ID_spell1a, ID_spell1b are not supported
+				    !ID_spell3_found && !ID_spell4_found) {
 					/* Be severe and point out the wrong inscription: */
-					msg_print(Ind, "\377oThe inscribed spell scroll isn't an eligible identify spell.");
+					msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
 					continue;
 				}
 			} else {
-				if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
-				/* now <4.4.1.8 is no longer supported! to make s_aux.lua slimmer */
-					ID_spell1_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell1));//NO LONGER SUPPORTED
-					//ID_spell1a, ID_spell1b are not supported
-					ID_spell2_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell2));//NO LONGER SUPPORTED
-					ID_spell3_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell3));//NO LONGER SUPPORTED
+				ID_spell1_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell1));
+				ID_spell1a_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell1a));
+				ID_spell1b_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell1b));
+				ID_spell2_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell2));
+				ID_spell3_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell3));
  #ifdef ALLOW_X_BAGID
-					ID_spell4_found = exec_lua(Ind, format("return spell_in_book(%d, %d)", i_ptr->sval, ID_spell4));//NO LONGER SUPPORTED
+				ID_spell4_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell4));
  #endif
-					if (!ID_spell1_found && !ID_spell2_found && //ID_spell1a, ID_spell1b are not supported
-					    !ID_spell3_found && !ID_spell4_found) {
-						/* Be severe and point out the wrong inscription: */
-						msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
-						continue;
-					}
-				} else {
-					ID_spell1_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell1));
-					ID_spell1a_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell1a));
-					ID_spell1b_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell1b));
-					ID_spell2_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell2));
-					ID_spell3_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell3));
- #ifdef ALLOW_X_BAGID
-					ID_spell4_found = exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", index, i_ptr->sval, ID_spell4));
- #endif
-					if (!ID_spell1_found && !ID_spell1a_found && !ID_spell1b_found && !ID_spell2_found &&
-					    !ID_spell3_found && !ID_spell4_found) {
-						/* Be severe and point out the wrong inscription: */
-						msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
-						continue;
-					}
+				if (!ID_spell1_found && !ID_spell1a_found && !ID_spell1b_found && !ID_spell2_found &&
+				    !ID_spell3_found && !ID_spell4_found) {
+					/* Be severe and point out the wrong inscription: */
+					msg_print(Ind, "\377oThe inscribed book doesn't contain an eligible identify spell.");
+					continue;
 				}
 			}
-			/* Have we learned this spell yet at all? */
-			//wow, first time use of '-item' ground access nowadays? :-p
-			if (ID_spell1_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1))) {
-				spell = ID_spell1;
-				p_ptr->current_item = slot;
-			}
-			else if (ID_spell1a_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1a)))
-				spell = ID_spell1a; //bag-id effect
-			else if (ID_spell1b_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1b)))
-				spell = ID_spell1b; //bag-id effect
-			else if (ID_spell2_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell2))) {
-				spell = ID_spell2;
-				p_ptr->current_item = slot;
-			} else if (ID_spell3_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell3))) {
-				spell = ID_spell3;
-				p_ptr->current_item = slot;
-			}
+		}
+
+		/* Have we learned this spell yet at all? */
+		//wow, first time use of '-item' ground access nowadays? :-p
+		if (ID_spell1_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1))) {
+			spell = ID_spell1;
+			p_ptr->current_item = slot;
+		}
+		else if (ID_spell1a_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1a)))
+			spell = ID_spell1a; //bag-id effect
+		else if (ID_spell1b_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell1b)))
+			spell = ID_spell1b; //bag-id effect
+		else if (ID_spell2_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell2))) {
+			spell = ID_spell2;
+			p_ptr->current_item = slot;
+		} else if (ID_spell3_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell3))) {
+			spell = ID_spell3;
+			p_ptr->current_item = slot;
+		}
  #ifdef ALLOW_X_BAGID
-			else if (ID_spell4_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell4)))
-				spell = ID_spell4;
+		else if (ID_spell4_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, ID_spell4)))
+			spell = ID_spell4;
  #endif
-			/* Just continue&ignore instead of return, since we
-			   might just have picked up someone else's book! */
-			if (spell == -1) {
-				msg_print(Ind, "\377oYou cannot cast the identify spell of your inscribed book.");
-				continue;
-			}
 
-			/* Can't use them? skip */
-			if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-				msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
-				failure |= 0x8;
-				break; /* can't activate any other items either */
-			}
-			/* Can't use them? skip. (Note: Even 'Revelation' requires these, luckily) */
-			if (p_ptr->blind || no_lite(Ind) || p_ptr->confused) {
-				failure |= 0x4;
-				break;
-			}
+		/* Just continue&ignore instead of return, since we
+		   might just have picked up someone else's book! */
+		if (spell == -1) {
+			msg_print(Ind, "\377oYou cannot cast the identify spell of your inscribed book.");
+			continue;
+		}
 
-			/* cast it later, at a point where we can use p_ptr->command_rep */
-			p_ptr->delayed_index = index;
+		/* cast it later, at a point where we can use p_ptr->command_rep */
+		p_ptr->delayed_index = index;
 #ifdef TEST_SERVER /* XID-testing */
 s_printf("di2 %d\n", p_ptr->delayed_index);
 #endif
-			p_ptr->delayed_spell = spell;
-			p_ptr->current_item = slot;
-			return;
-		}
+		p_ptr->delayed_spell = spell;
+		p_ptr->current_item = slot;
+		return;
 	}
 #endif
 
@@ -6430,6 +6440,7 @@ s_printf("di2 %d\n", p_ptr->delayed_index);
 	p_ptr->delayed_spell = -1;
 	p_ptr->current_item = -1;
 
+	/* Display single failure */
 	switch (failure) {
 	case 0x1:
 		msg_print(Ind, "You cannot read identify scrolls while blinded, confused or without light.");
@@ -6444,5 +6455,6 @@ s_printf("di2 %d\n", p_ptr->delayed_index);
 		msg_print(Ind, "Your antimagic prevents you from casting your identify spell.");
 		return;
 	}
+	/* Multiple failures occurred */
 	msg_print(Ind, "You are unable to use any of your identify items.");
 }
