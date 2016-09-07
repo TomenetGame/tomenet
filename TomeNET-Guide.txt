@@ -7065,11 +7065,11 @@ Asides from extermination orders and events, there is another, permanently
 available challenge that waits for you to tackle it:
 
 Ironman Deep Dive Challenge (IDDC)
-    There is exactly one designated huge ironman dungeon (or tower) on each
-    server, normal one and ironman server, which is 127 levels in size and does
-    not allow recalling in between, except for two 'dungeon towns' which will
-    always occur at dungeon level 40 and 80 respectively. If you recall at such
-    a town it calls as withdrawing from the challenge and you won't make it on
+    This is a special, gigantic ironman dungeon (or tower) which is 127 levels
+    in size and does not allow recalling in between, except for in the two
+    'dungeon towns' which will be generated at dungeon level 40 and 80. (More
+    dungeon towns might spawn but won't allow recalling.) If you recall at such
+    a town it counts as withdrawing from the challenge and you won't make it on
     the leaderboard that can be viewed at the mayor's office in Bree.
     (Note that 'IDDC-exclusive' characters can NOT recall out at static towns.
     If they try, they are just 'killed by indetermnation' and erased.)
