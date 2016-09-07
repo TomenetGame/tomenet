@@ -191,7 +191,7 @@ I:1000:0
 
 N:26:Antimagic
 D:A field surrounding you, preventing any creature from casting spells.
-D:Permanently renders you unable to use magic or magic devices!
+D:Permanently renders you unable to use magic (including Blood) or magic devices!
 I:1000:0
 
 #N:27:Aura power
