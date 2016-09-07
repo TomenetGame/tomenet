@@ -6229,7 +6229,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
 		   ID scroll read from the previous carry(), avoiding stacking negative energy. */
 		p_ptr->delayed_index = index;
 #ifdef TEST_SERVER /* XID-testing */
-s_printf("di0-s %d\n", p_ptr->delayed_index);
+s_printf("di0-scroll %d (slot %d)\n", p_ptr->delayed_index, slot);
 #endif
 		p_ptr->delayed_spell = -4;
 		p_ptr->current_item = slot;
@@ -6267,7 +6267,7 @@ s_printf("di0-s %d\n", p_ptr->delayed_index);
 		/* activate it later, at a point where we can use p_ptr->command_rep */
 		p_ptr->delayed_index = index;
 #ifdef TEST_SERVER /* XID-testing */
-s_printf("di0 %d\n", p_ptr->delayed_index);
+s_printf("di0-activate %d (slot %d)\n", p_ptr->delayed_index, slot);
 #endif
 		p_ptr->delayed_spell = -1;
 		p_ptr->current_item = slot;
@@ -6305,7 +6305,10 @@ s_printf("di0 %d\n", p_ptr->delayed_index);
 		/* activate it later, at a point where we can use p_ptr->command_rep */
 		p_ptr->delayed_index = index;
 #ifdef TEST_SERVER /* XID-testing */
-s_printf("di1 %d\n", p_ptr->delayed_index);
+if (i_ptr->tval == TV_ROD)
+s_printf("di1-mdev/rod %d (slot %d)\n", p_ptr->delayed_index, slot);
+else
+s_printf("di1-mdev/staff %d (slot %d)\n", p_ptr->delayed_index, slot);
 #endif
 		p_ptr->delayed_spell = (i_ptr->tval == TV_ROD) ? -3 : -2;
 		p_ptr->current_item = slot;
@@ -6428,7 +6431,7 @@ s_printf("di1 %d\n", p_ptr->delayed_index);
 		/* cast it later, at a point where we can use p_ptr->command_rep */
 		p_ptr->delayed_index = index;
 #ifdef TEST_SERVER /* XID-testing */
-s_printf("di2 %d\n", p_ptr->delayed_index);
+s_printf("di2-spell %d (spell %d, slot %d)\n", p_ptr->delayed_index, spell, slot);
 #endif
 		p_ptr->delayed_spell = spell;
 		p_ptr->current_item = slot;

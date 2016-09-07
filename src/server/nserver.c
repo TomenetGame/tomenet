@@ -9210,7 +9210,7 @@ static int Receive_zap_dir(int ind) {
 
 		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 #ifdef TEST_SERVER /* XID-testing */
-s_printf("no-k\n");
+s_printf("zapdir:no-k\n");
 #endif
 		do_cmd_zap_rod(player, item, dir);
 		p_ptr->shooty_till_kill = FALSE;
@@ -11679,6 +11679,9 @@ static int Receive_inventory_revision(int ind) {
 		 */
 		if (p_ptr->command_rep) {
 #ifdef XID_REPEAT
+#ifdef TEST_SERVER /* XID-testing */
+s_printf("-1 rir (rep=%d)\n", p_ptr->command_rep);
+#endif
 			/* Hack: Don't clear a retrying ID command from !X inscription: */
 			switch (p_ptr->command_rep) {
 			case PKT_READ:
@@ -11690,9 +11693,6 @@ static int Receive_inventory_revision(int ind) {
 			default:
 				p_ptr->command_rep = -1;
 			}
-#ifdef TEST_SERVER /* XID-testing */
-s_printf("-1 rir\n");
-#endif
 #else
 			p_ptr->command_rep = -1;
 #endif

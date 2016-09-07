@@ -5294,6 +5294,10 @@ static void process_player_end(int Ind) {
  #ifdef XID_REPEAT
 	{
 	sockbuf_t *connpq = get_conn_q(Ind);
+#ifdef TEST_SERVER /* XID-testing */
+if (p_ptr->delayed_spell)
+s_printf("yo (ds=%d,item=%d)\n", p_ptr->delayed_spell, p_ptr->delayed_index);
+#endif
 	/* hack: inject the delayed ID-spell cast command */
 	switch (p_ptr->delayed_spell) {
 	case 0: break; /* nothing */
@@ -5308,9 +5312,6 @@ static void process_player_end(int Ind) {
 		p_ptr->delayed_spell = 0;
 		break;
 	case -3: /* perception rod zap */
-#ifdef TEST_SERVER /* XID-testing */
-s_printf("yo (item=%d)\n", p_ptr->delayed_index);
-#endif
 		p_ptr->command_rep = PKT_ZAP;
 		Packet_printf(connpq, "%c%hd", PKT_ZAP, p_ptr->delayed_index);
 		p_ptr->delayed_spell = 0;
