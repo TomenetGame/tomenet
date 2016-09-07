@@ -2098,6 +2098,9 @@ player_race race_info[MAX_RACE] = {
 /* The plan is to have a skill tree that is updated as the player level.
 Only 70%-ify the skills that could potentially be updated when the player mutates!!
  */
+		{ SKILL_ANTIMAGIC,
+			'%', 0,
+			'%', 0, },
 		{ SKILL_ASTRAL,
 			'+', 1250,
 			'+', 1250, },
