@@ -2235,6 +2235,12 @@ char *special_prace_lookup[MAX_RACE] = {
  *   HD, Exp
  */
 /* TODO: let's move them to p_info.txt */
+
+/* Experimental: Unlock Necromancy (and for Mimics Traumaturgy) for some unusual classes?
+   Disabled this with the addition of Death Knight. Understanding is: Only classes very
+   proficient in magic or specifically aligned to nether should be able to learn it. */
+//#define EXP_NECRO
+
 player_class class_info[MAX_CLASS] = {
 	{ "Warrior",
 		TERM_UMBER,
@@ -2306,9 +2312,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_DODGE,
 			'+', 0,/*1000*/
 			'+', 800, },
+#ifdef EXP_NECRO
 		{ SKILL_NECROMANCY, /* Necromancy for this class - experimental */
 			'+', 0,
 			'+', 1000, },
+#endif
 		{ SKILL_TRAUMATURGY,
 			'%', 0,
 			'%', 0, },
@@ -2600,10 +2608,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_DEVICE,
 			'+', 1000,
 			'+', 950, },
-		/* Necromancy for this class - experimental */
+#ifdef EXP_NECRO /* Necromancy for this class - experimental */
 		{ SKILL_NECROMANCY,
 			'+', 0,
 			'+', 1000, },
+#endif
 		{ SKILL_TRAUMATURGY,
 			'+', 0,
 			'+', 1000, },
@@ -2719,13 +2728,14 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_DEVICE,
 			'+', 1000,
 			'+', 850, },
-		/* Necromancy for this class - experimental */
+#ifdef EXP_NECRO /* Necromancy for this class - experimental */
 		{ SKILL_NECROMANCY,
 			'+', 0,
 			'+', 1000, },
 		{ SKILL_TRAUMATURGY,
 			'+', 0,
 			'+', 1000, },
+#endif
 		{ SKILL_AURA_FEAR,
 			'+', 0,
 			'+', 1000, },
@@ -2808,9 +2818,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_DEVICE,
 			'+', 1000,
 			'+', 700, },
-		{ SKILL_NECROMANCY, /* Necromancy for this class - experimental */
+#ifdef EXP_NECRO /* Necromancy for this class - experimental */
+		{ SKILL_NECROMANCY,
 			'+', 0,
 			'+', 1000, },
+#endif
 		{ SKILL_TRAUMATURGY,
 			'%', 0,
 			'%', 0, },
@@ -3874,9 +3886,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_INTERCEPT,
 			'+', 0,
 			'+', 600, },
+#ifdef EXP_NECRO
 		{ SKILL_NECROMANCY,
 			'+', 0,
 			'+', 700, },
+#endif
 		{ SKILL_TRAUMATURGY,
 			'+', 0,
 			'+', 800, },
