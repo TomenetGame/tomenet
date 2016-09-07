@@ -2910,9 +2910,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_XBOW,
 			'+', 0,
 			'+', 300, },
+#if 0 /* for 'monk' class, pick priest instead */
 		{  SKILL_MARTIAL_ARTS, /* let's keep it low for now - offbalancing */
 			'+', 0,
 			'+', 500, },
+#endif
 		{ SKILL_MAGIC,
 			'+', 1000,
 			'+', 600, },
@@ -3959,9 +3961,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_XBOW,
 			'+', 0,
 			'+', 300, },
+#if 0 /* same as paladin */
 		{  SKILL_MARTIAL_ARTS, /* let's keep it low for now - offbalancing */
 			'+', 0,
 			'+', 500, },
+#endif
 		{ SKILL_MAGIC,
 			'+', 1000,
 			'+', 600, },
