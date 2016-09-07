@@ -5308,7 +5308,9 @@ static void process_player_end(int Ind) {
 		p_ptr->delayed_spell = 0;
 		break;
 	case -3: /* perception rod zap */
+#ifdef TEST_SERVER /* XID-testing */
 s_printf("yo (item=%d)\n", p_ptr->delayed_index);
+#endif
 		p_ptr->command_rep = PKT_ZAP;
 		Packet_printf(connpq, "%c%hd", PKT_ZAP, p_ptr->delayed_index);
 		p_ptr->delayed_spell = 0;

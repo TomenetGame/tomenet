@@ -9163,7 +9163,9 @@ static int Receive_zap(int ind) {
 			msg_print(player, "Command failed because item is gone.");
 			return 1;
 		}
+#ifdef TEST_SERVER /* XID-testing */
 s_printf("k (item=%d)\n", item);
+#endif
 		/* Hack for repeated id-commands from !X: We're already at the correct index! */
 		if (p_ptr->command_rep == PKT_ZAP) item = p_ptr->delayed_index;
 		do_cmd_zap_rod(player, item, 0);
@@ -9207,7 +9209,9 @@ static int Receive_zap_dir(int ind) {
 		}
 
 		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
+#ifdef TEST_SERVER /* XID-testing */
 s_printf("no-k\n");
+#endif
 		do_cmd_zap_rod(player, item, dir);
 		p_ptr->shooty_till_kill = FALSE;
 		return 2;
@@ -11686,7 +11690,9 @@ static int Receive_inventory_revision(int ind) {
 			default:
 				p_ptr->command_rep = -1;
 			}
+#ifdef TEST_SERVER /* XID-testing */
 s_printf("-1 rir\n");
+#endif
 #else
 			p_ptr->command_rep = -1;
 #endif
