@@ -9421,9 +9421,11 @@ static int Receive_activate(int ind) {
 			return 1;
 		}
 
+#ifdef TEST_SERVER /* XID-testing */
+s_printf("act-k (item=%d)\n", item);
+#endif
 		/* Hack for repeated id-commands from !X: We're already at the correct index! */
 		if (p_ptr->command_rep == PKT_ACTIVATE) item = p_ptr->delayed_index;
-
 		do_cmd_activate(player, item, 0);
 		return 2;
 	} else if (p_ptr) {
@@ -9463,6 +9465,9 @@ static int Receive_activate_dir(int ind) {
 			return 1;
 		}
 
+#ifdef TEST_SERVER /* XID-testing */
+s_printf("actdir-k (item=%d)\n", item);
+#endif
 		do_cmd_activate(player, item, dir);
 		return 2;
 	} else if (p_ptr) {

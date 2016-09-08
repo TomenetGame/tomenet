@@ -7499,6 +7499,9 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 /* just for display purpose, return an actual average percentage value */
 int activate_magic_device_chance(int Ind, object_type *o_ptr) {
 	int chance = magic_device_base_chance(Ind, o_ptr);
+#ifdef TEST_SERVER /* XID-testing */
+	chance >>= 4;
+#endif
 
 	/* Give everyone a (slight) chance */
 	if (chance < USE_DEVICE)
@@ -7512,6 +7515,9 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	int chance = magic_device_base_chance(Ind, o_ptr);
+#ifdef TEST_SERVER /* XID-testing */
+	chance >>= 4;
+#endif
 
 	/* Certain items are heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
 	if (o_ptr->name1 == ART_PHASING && !p_ptr->total_winner) {

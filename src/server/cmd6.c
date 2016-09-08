@@ -5107,8 +5107,19 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int         i, k;
 	bool done = FALSE;
-//	int md = get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+	//int md = get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 	object_type *o_ptr;
+
+#ifdef ENABLE_XID_MDEV
+ #ifdef XID_REPEAT
+	bool rep = (p_ptr->command_rep == PKT_ACTIVATE)
+	    && p_ptr->current_item != -1; //extra sanity check, superfluous?
+#ifdef TEST_SERVER /* XID-testing */
+s_printf("activate: rep = %d==%d,curitem=%d (item = %d)\n", p_ptr->command_rep, PKT_ACTIVATE, p_ptr->current_item, item);
+#endif
+	p_ptr->command_rep = 0;
+ #endif
+#endif
 
 	/* Break goi/manashield */
 #if 0
@@ -5127,8 +5138,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	}
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max)
+		if (-item >= o_max) {
+#ifdef TEST_SERVER /* XID-testing */
+s_printf(" ..ew0\n");
+#endif
 			return; /* item doesn't exist */
+		}
 
 		o_ptr = &o_list[0 - item];
 	}
@@ -5169,7 +5184,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
-	if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) {
+#ifdef TEST_SERVER /* XID-testing */
+s_printf(" ..ew2\n");
+#endif
+		return;
+}
 
 	/* Test the item */
 	if (!item_tester_hook_activate(Ind, o_ptr)) {
@@ -5194,6 +5214,23 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	    o_ptr->tval != TV_BOOK) /* hack: blank books can always be 'activated' */
 	{
 		msg_format(Ind, "\377%cYou failed to activate it properly.", COLOUR_MD_FAIL);
+#ifdef ENABLE_XID_MDEV
+ #ifdef XID_REPEAT
+#ifdef TEST_SERVER /* XID-testing */
+s_printf(" kk? %d,%d\n", rep, p_ptr->current_item);
+#endif
+		/* hack: repeat ID-spell attempt until item is successfully identified */
+		if (rep && !object_known_p(Ind, &p_ptr->inventory[p_ptr->current_item])) {
+#ifdef TEST_SERVER /* XID-testing */
+s_printf(" kk (item=%d)\n", item);
+#endif
+			sockbuf_t *conn_q = get_conn_q(Ind);
+
+			p_ptr->command_rep = PKT_ACTIVATE;
+			Packet_printf(conn_q, "%c%hd", PKT_ACTIVATE, item);
+		} else p_ptr->current_item = -1;
+ #endif
+#endif
 		return;
 	}
 
@@ -6390,6 +6427,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+#ifdef ENABLE_XID_MDEV
+ #ifdef XID_REPEAT
+		if (rep) p_ptr->current_item = -1;
+ #endif
+#endif
 
 		/* Success */
 		return;
