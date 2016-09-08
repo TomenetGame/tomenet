@@ -11672,7 +11672,7 @@ static int Receive_inventory_revision(int ind) {
 	}
 	if (p_ptr) {
 		/* NOTE:
-		 * There is conflict between this function and Receive_search
+		 * There is conflict between this function and Receive_search/disarm/tunnel/open/etc
 		 * which automatically queues itself again. The code below would
 		 * detect that something is queued and then this command would
 		 * block the command queue forever.
