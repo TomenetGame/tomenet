@@ -36,7 +36,7 @@ __races_diz = {
     "stealth, bows and magic, but they are not as good",
     "at hand weapons. Half-elves resist light intrinsi-",
     "cally. They get a bonus on Bow-Mastery and on",
-    "Interception.",
+    "Interception and a small bonus on Nature magic.",
     "", "", "", "", "",},
 
 "Elf",
@@ -47,8 +47,9 @@ __races_diz = {
     "searching, disarming, perception, stealth, bows/",
     "throwing and magic.",
     "They get a bonus on Bow-Mastery, Magic, Stealth,",
-    "Dodging, Calmness and Sneakiness.",
-    "", "", "", "",},
+    "Dodging, Calmness, Sneakiness and Water magic, and",
+    "a large bonus on Nature magic.",
+    "", "", "",},
 
 "Hobbit",
     {"\255uHobbits\255U have infra-vision, resist black breath",
@@ -134,8 +135,9 @@ __races_diz = {
     "there are few things they haven't seen yet and so",
     "experience is hard for them to gain.",
     "High-elves receive boni on Bow-Mastery, Magic,",
-    "Stealth, Dodging, and a large bonus on Calmness.",
-    "", "",},
+    "Stealth, Dodging, Nature magic and a large bonus",
+    "on Calmness.",
+    "",},
 
 "Yeek",
     {"\255uYeeks\255U, being weak and losing many childhood",
@@ -229,8 +231,8 @@ __races_diz = {
     "melee attacks. They are unable to utilize Water",
     "or Nature magic and are bad at Light runecraft.",
     "Vampires hate blunt weapons or divination magic,",
-    "but get boni on Mental Intrusion, Necromancy and",
-    "auras, Nether runecraft and Traumaturgy.",},
+    "but get boni on Mental Intrusion, Blood magic,",
+    "Nether runecraft and occult Shadow magic.",},
 
 "Maia",
     {"\255uMaiar\255U are lesser spirits associated with one",
