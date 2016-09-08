@@ -6459,5 +6459,5 @@ s_printf("di2-spell %d (spell %d, slot %d)\n", p_ptr->delayed_index, spell, slot
 		return;
 	}
 	/* Multiple failures occurred */
-	msg_print(Ind, "You are unable to use any of your identify items.");
+	if (failure) msg_print(Ind, "You are unable to use any of your identify items.");
 }
