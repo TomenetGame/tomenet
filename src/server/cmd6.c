@@ -3305,6 +3305,17 @@ void do_cmd_use_staff(int Ind, int item) {
 	/* Hack -- let staffs of identify get aborted */
 	bool use_charge = TRUE, flipped = FALSE;
 
+#ifdef ENABLE_XID_MDEV
+ #ifdef XID_REPEAT
+	bool rep = (p_ptr->command_rep == PKT_USE)
+	    && p_ptr->current_item != -1; //extra sanity check, superfluous?
+#ifdef TEST_SERVER /* XID-testing */
+s_printf("usestaff: rep = %d==%d,curitem=%d (item = %d)\n", p_ptr->command_rep, PKT_USE, p_ptr->current_item, item);
+#endif
+	p_ptr->command_rep = 0;
+ #endif
+#endif
+
 	/* Break goi/manashield */
 #if 0
 	if (p_ptr->invuln)
@@ -3341,8 +3352,12 @@ void do_cmd_use_staff(int Ind, int item) {
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max)
+		if (-item >= o_max) {
+#ifdef TEST_SERVER /* XID-testing */
+s_printf(" ..ew0\n");
+#endif
 			return; /* item doesn't exist */
+		}
 
 		o_ptr = &o_list[0 - item];
 	}
@@ -3354,10 +3369,18 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	if (o_ptr->tval != TV_STAFF) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-staff!");
+#ifdef TEST_SERVER /* XID-testing */
+s_printf(" ..ew1\n");
+#endif
 		return;
 	}
 
-	if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) {
+#ifdef TEST_SERVER /* XID-testing */
+s_printf(" ..ew2\n");
+#endif
+		return;
+	}
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
@@ -3385,6 +3408,23 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the staff properly." , COLOUR_MD_FAIL);
+#ifdef ENABLE_XID_MDEV
+ #ifdef XID_REPEAT
+#ifdef TEST_SERVER /* XID-testing */
+s_printf(" kk? %d,%d\n", rep, p_ptr->current_item);
+#endif
+		/* hack: repeat ID-spell attempt until item is successfully identified */
+		if (rep && !object_known_p(Ind, &p_ptr->inventory[p_ptr->current_item])) {
+#ifdef TEST_SERVER /* XID-testing */
+s_printf(" kk (item=%d)\n", item);
+#endif
+			sockbuf_t *conn_q = get_conn_q(Ind);
+
+			p_ptr->command_rep = PKT_USE;
+			Packet_printf(conn_q, "%c%hd", PKT_USE, item);
+		} else p_ptr->current_item = -1;
+ #endif
+#endif
 		return;
 	}
 
@@ -3413,6 +3453,11 @@ void do_cmd_use_staff(int Ind, int item) {
 	}
 
 	ident = use_staff(Ind, o_ptr->sval, rad, TRUE, &use_charge);
+#ifdef ENABLE_XID_MDEV
+ #ifdef XID_REPEAT
+	if (rep) p_ptr->current_item = -1;
+ #endif
+#endif
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -4091,6 +4136,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #ifdef NEW_MDEV_STACKING
 	int pval_old;
 #endif
+
+	/* Hack -- let perception get aborted */
+	bool use_charge = TRUE, flipped = FALSE;
+
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
 	bool rep = (p_ptr->command_rep == PKT_ZAP)
@@ -4101,9 +4150,6 @@ s_printf("zaprod: rep = %d==%d,curitem=%d (item = %d)\n", p_ptr->command_rep, PK
 	p_ptr->command_rep = 0;
  #endif
 #endif
-
-	/* Hack -- let perception get aborted */
-	bool use_charge = TRUE, flipped = FALSE;
 
 	/* Break goi/manashield */
 #if 0

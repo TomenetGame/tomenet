@@ -9044,9 +9044,11 @@ static int Receive_use(int ind) {
 			return 1;
 		}
 
+#ifdef TEST_SERVER /* XID-testing */
+s_printf("use-k (item=%d)\n", item);
+#endif
 		/* Hack for repeated id-commands from !X: We're already at the correct index! */
 		if (p_ptr->command_rep == PKT_USE) item = p_ptr->delayed_index;
-
 		do_cmd_use_staff(player, item);
 		return 2;
 	} else if (p_ptr) {
@@ -9163,8 +9165,9 @@ static int Receive_zap(int ind) {
 			msg_print(player, "Command failed because item is gone.");
 			return 1;
 		}
+
 #ifdef TEST_SERVER /* XID-testing */
-s_printf("k (item=%d)\n", item);
+s_printf("zap-k (item=%d)\n", item);
 #endif
 		/* Hack for repeated id-commands from !X: We're already at the correct index! */
 		if (p_ptr->command_rep == PKT_ZAP) item = p_ptr->delayed_index;
@@ -9209,8 +9212,9 @@ static int Receive_zap_dir(int ind) {
 		}
 
 		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
+
 #ifdef TEST_SERVER /* XID-testing */
-s_printf("zapdir:no-k\n");
+s_printf("zapdir:no-k (item=%d)\n", item);
 #endif
 		do_cmd_zap_rod(player, item, dir);
 		p_ptr->shooty_till_kill = FALSE;
