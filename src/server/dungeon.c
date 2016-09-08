@@ -5294,10 +5294,6 @@ static void process_player_end(int Ind) {
  #ifdef XID_REPEAT
 	{
 	sockbuf_t *connpq = get_conn_q(Ind);
-#ifdef TEST_SERVER /* XID-testing */
-if (p_ptr->delayed_spell)
-s_printf("yo (ds=%d,item=%d)\n", p_ptr->delayed_spell, p_ptr->delayed_index);
-#endif
 	/* hack: inject the delayed ID-spell cast command */
 	switch (p_ptr->delayed_spell) {
 	case 0: break; /* nothing */
