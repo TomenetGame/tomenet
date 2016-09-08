@@ -4160,10 +4160,10 @@ static bool process_player_end_aux(int Ind) {
 		regen_amount = regen_amount * RESTING_RATE;
 
 	/* Regenerate the mana */
-	/* Hack -- regenerate mana 5/3 times faster */
 #ifdef ARCADE_SERVER
 	p_ptr->regen_mana = TRUE;
 #endif
+	/* Hack -- regenerate mana 5/3 times faster */
 	if (p_ptr->csp < p_ptr->msp) {
 		if (p_ptr->wpos.wx == WPOS_PVPARENA_X &&
 		    p_ptr->wpos.wy == WPOS_PVPARENA_Y &&
@@ -4183,6 +4183,9 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Holy curing gives improved regeneration ability */
 	if (get_skill(p_ptr, SKILL_HCURING) >= 30) regen_amount = (regen_amount * (get_skill(p_ptr, SKILL_HCURING) - 10)) / 20;
+
+	/* Blood Magic, aka Auras, draw from your blood and thereby slow your regen */
+	regen_amount = regen_amount / (1 + (p_ptr->aura[0] ? 1 : 0) + (p_ptr->aura[1] ? 1 : 0) + (p_ptr->aura[2] ? 1 : 0));
 
 	/* Increase regen by tim regen */
 	if (p_ptr->tim_regen) regen_amount += p_ptr->tim_regen_pow;
