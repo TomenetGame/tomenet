@@ -1352,7 +1352,7 @@ void do_cmd_drink_fountain(int Ind) {
 			case WILD_COAST:
 #else /* abuse ambient-sfx logic - it works pretty well ^^ */
 			if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE) {
-#endif
+#endif /* actually instead, to do this non-hackily, it should just check for .type AND .bled to not be WILD_OCEAN (same result as this hack) */
 				if (p_ptr->prace == RACE_ENT) msg_print(Ind, "The water is too salty to feed off.");
 				else msg_print(Ind, "The water tastes very salty.");
 
@@ -1588,7 +1588,7 @@ void do_cmd_fill_bottle(int Ind) {
 			case WILD_COAST:
 #else /* abuse ambient-sfx logic - it works pretty well ^^ */
 			if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE)
-#endif
+#endif /* actually instead, to do this non-hackily, it should just check for .type AND .bled to not be WILD_OCEAN (same result as this hack) */
 				/* salt water */
 				k_idx = lookup_kind(TV_POTION, SV_POTION_SALT_WATER);
 			else

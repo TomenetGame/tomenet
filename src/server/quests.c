@@ -538,7 +538,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 
 				switch (wild_info[y][x].type) {
 				case WILD_OCEAN: if (choice == RF8_WILD_OCEAN) break;
-				case WILD_LAKE: if (choice == RF8_WILD_OCEAN) break; /* hmm */
+				case WILD_LAKE: if (choice == RF8_WILD_LAKE) break;
 				case WILD_GRASSLAND: if (choice == RF8_WILD_GRASS) break;
 				case WILD_FOREST: if (choice == RF8_WILD_WOOD) break;
 				case WILD_SWAMP: if (choice == RF8_WILD_SWAMP) break;
@@ -553,7 +553,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 					for (y = 0; y < MAX_WILD_Y; y++) {
 						switch (wild_info[y][x].type) {
 						case WILD_OCEAN: if (choice == RF8_WILD_OCEAN) break;
-						case WILD_LAKE: if (choice == RF8_WILD_OCEAN) break; /* hmm */
+						case WILD_LAKE: if (choice == RF8_WILD_LAKE) break;
 						case WILD_GRASSLAND: if (choice == RF8_WILD_GRASS) break;
 						case WILD_FOREST: if (choice == RF8_WILD_WOOD) break;
 						case WILD_SWAMP: if (choice == RF8_WILD_SWAMP) break;

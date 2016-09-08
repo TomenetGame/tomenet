@@ -5535,7 +5535,7 @@
 #define RF8_WILD_WASTE			0x00000020
 #define RF8_WILD_WOOD			0x00000040
 #define RF8_WILD_VOLCANO		0x00000080
-#define RF8_RAND_5		0x00000100	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
+#define RF8_WILD_LAKE		0x00000100
 #define RF8_WILD_MOUNTAIN	0x00000200
 #define RF8_WILD_GRASS		0x00000400
 #define RF8_NO_CUT		0x00000800
@@ -5563,7 +5563,7 @@
 #define RF8_WILD_TOO_MASK \
 	( RF8_WILD_TOWN | RF8_WILD_EASY | RF8_WILD_SHORE | \
 	  RF8_WILD_OCEAN | RF8_WILD_WASTE | RF8_WILD_WOOD | RF8_WILD_VOLCANO | \
-	  RF8_WILD_MOUNTAIN | RF8_WILD_GRASS | RF8_WILD_SWAMP | \
+	  RF8_WILD_LAKE | RF8_WILD_MOUNTAIN | RF8_WILD_GRASS | RF8_WILD_SWAMP | \
 	  RF8_WILD_DESERT | RF8_WILD_ICE)
 
 #define RF8_WILD_EASY_MASK \
@@ -5631,7 +5631,7 @@
 #define RF0_ROAMING		0x00000200		/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
 #define RF0_DROP_1		0x00000400		/* Drop exactly 1 item/gold pile */
 #define RF0_CAN_CLIMB		0x00000800		/* Monster can climb */
-
+#define RF0_RAND_5			0x00001000	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 
 #define RF0_PLAYER_SPELLS (0L)

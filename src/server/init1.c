@@ -443,7 +443,7 @@ static cptr r_info_flags8[] = {
 	"WILD_WASTE",
 	"WILD_WOOD",
 	"WILD_VOLCANO",
-	"RAND_5",
+	"WILD_LAKE",
 	"WILD_MOUNTAIN",
 	"WILD_GRASS",
 	"NO_CUT",
@@ -531,7 +531,7 @@ static cptr r_info_flags0[] = {
 	"ROAMING",
 	"DROP_1",
 	"CAN_CLIMB",//12
-	"X00001000",
+	"RAND_5",
 	"X00002000",
 	"X00004000",
 	"X00008000",//16
@@ -4440,18 +4440,13 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		r_info[i].flags8 ^= 1L;
 
 		/* WILD_TOO without any other wilderness flags enables all flags */
-#if 0
-		if ((r_info[i].flags8 & RF8_WILD_TOO) && !(r_info[i].flags8 & 0x7FFFFFFE))
-			r_info[i].flags8 = 0x0463;
-#else	// 0
 		if ((r_info[i].flags8 & RF8_WILD_TOO) &&
-				!(r_info[i].flags8 & RF8_WILD_TOO_MASK))
+		    !(r_info[i].flags8 & RF8_WILD_TOO_MASK))
 			r_info[i].flags8 |= RF8_WILD_TOO_MASK;
-#endif	// 0
 
 		/* WILD_EASY without any other wilderness flags enables all flags */
 		if ((r_info[i].flags8 & RF8_WILD_EASY) &&
-				!(r_info[i].flags8 & RF8_WILD_EASY_MASK))
+		    !(r_info[i].flags8 & RF8_WILD_EASY_MASK))
 			r_info[i].flags8 |= RF8_WILD_EASY_MASK;
 
 		/* Implied flags */

@@ -443,202 +443,121 @@ void init_wild_info() {
  *
  * a hack not to have elven archers etc. on town.
  */
-static bool wild_monst_aux_town(int r_idx)
-{
+static bool wild_monst_aux_town(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_TOWN)
-		return TRUE;
-	else
-		return FALSE;
 #if 0
 	/* Maggot is allowed :) */
 	if (!strcmp(&r_name[r_ptr->name],"Farmer Maggot")) return TRUE;
+#endif
 
-	/* no special monsters allowed */
-	if (r_ptr->flags9 & RF9_SPECIAL_GENE) return FALSE;
-
-	/* non-town monsters are not allowed */
-//	if (r_ptr->level) return FALSE;
-
-	/* OK */
-	return TRUE;
-#endif	// 0
+	if (r_ptr->flags8 & RF8_WILD_TOWN) return TRUE;
+	return FALSE;
 }
 
 
 /*
  * Helper function for wild_add_monster
  */
-static bool wild_monst_aux_lake(int r_idx)
-{
+static bool wild_monst_aux_lake(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
+
+	if (r_ptr->flags8 & RF8_WILD_LAKE) return TRUE;
 
 	/* no reproducing monsters allowed */
 	if (r_ptr->flags7 & RF7_MULTIPLY) return FALSE;
 
-	if (r_ptr->flags2 & RF2_AURA_FIRE)
-		return FALSE;
+	if (r_ptr->flags2 & RF2_AURA_FIRE) return FALSE;
 
 	/* animals are OK */
 	if (r_ptr->flags3 & RF3_ANIMAL) return TRUE;
 	/* humanoids and other races are OK */
 	if (strchr("ph", r_ptr->d_char)) return TRUE;
+
+#if 0 /* could be salt-water aquatics.. */
 	/* always allow aquatics! */
-	if (r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY))
-		return TRUE;
+	if (r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY)) return TRUE;
+#else
+	if (r_ptr->flags7 & (RF7_CAN_SWIM | RF7_CAN_FLY)) return TRUE;
+#endif
 
 	/* No */
 	return FALSE;
 }
 
-
-/*
- * Helper function for wild_add_monster
- */
-static bool wild_monst_aux_grassland(int r_idx)
-{
+static bool wild_monst_aux_river(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	/* no reproducing monsters allowed */
-	if (r_ptr->flags7 & RF7_MULTIPLY) return FALSE;
-
-	if (r_ptr->flags8 & RF8_WILD_GRASS)
-		return TRUE;
-	else
-		return FALSE;
-
-#if 0
-	/* no aquatic life here */
-	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_LAKE) return TRUE;
 
 	/* no reproducing monsters allowed */
 	if (r_ptr->flags7 & RF7_MULTIPLY) return FALSE;
+
+	if (r_ptr->flags2 & RF2_AURA_FIRE) return FALSE;
 
 	/* animals are OK */
 	if (r_ptr->flags3 & RF3_ANIMAL) return TRUE;
+	/* humanoids and other races are OK */
+	if (strchr("ph", r_ptr->d_char)) return TRUE;
 
-	/* what exactly is a yeek? */
-	if (strchr("CEGOPTWYdhmpqvy", r_ptr->d_char)) return TRUE;
+#if 0 /* could be salt-water aquatics.. */
+	/* always allow aquatics! */
+	if (r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY)) return TRUE;
+#else
+	if (r_ptr->flags7 & (RF7_CAN_SWIM | RF7_CAN_FLY)) return TRUE;
+#endif
 
-	if (!strcmp(&r_name[r_ptr->name],"Hill orc")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Uruk")) return TRUE;
-
-	/* town monsters are OK */
-	if (!r_ptr->level) return TRUE;
-
+	/* No */
 	return FALSE;
-#endif	// 0
 }
 
-/*
- * Helper function for wild_add_monster
- */
-static bool wild_monst_aux_forest(int r_idx)
-{
+static bool wild_monst_aux_grassland(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_WOOD)
-		return TRUE;
-	else
-		return FALSE;
-#if 0
-	/* snakes, wolves, beetles, and felines are OK */
-	if (strchr("JCKf", r_ptr->d_char)) return (TRUE);
-	if (!strcmp(&r_name[r_ptr->name],"Wood spider")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Novice ranger")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Novice archer")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Druid")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Forest wight")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Forest troll")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Dark elven druid")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Mystic")) return TRUE;
+	if (r_ptr->flags8 & RF8_WILD_GRASS) return TRUE;
+
+	/* no reproducing monsters allowed */
+	if (r_ptr->flags7 & RF7_MULTIPLY) return FALSE;
 
 	return FALSE;
-#endif	// 0
 }
 
-/*
- * Helper function for wild_add_monster
- */
-static bool wild_monst_aux_swamp(int r_idx)
-{
+static bool wild_monst_aux_forest(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_SWAMP)
-		return TRUE;
-	else
-		return FALSE;
-#if 0
-	/* swamps are full of annoying monsters */
-	if (strchr("Jwj,FGILMQRSVWceilmsz", r_ptr->d_char)) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Dark elven mage")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Dark elven lord")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Dark elven druid")) return TRUE;
-
+	if (r_ptr->flags8 & RF8_WILD_WOOD) return TRUE;
 	return FALSE;
-#endif	// 0
 }
 
-/*
- * Helper function for wild_add_monster
- */
+static bool wild_monst_aux_swamp(int r_idx) {
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (r_ptr->flags8 & RF8_WILD_SWAMP) return TRUE;
+	return FALSE;
+}
+
 /* Hrm.. now it's exactly same with normal forest.. */
-static bool wild_monst_aux_denseforest(int r_idx)
-{
+static bool wild_monst_aux_denseforest(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_WOOD)
-		return TRUE;
-	else
-		return FALSE;
-#if 0
-	if (!strcmp(&r_name[r_ptr->name],"Forest Troll")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Mirkwood spider")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Forest wight")) return TRUE;
-	if (!strcmp(&r_name[r_ptr->name],"Dark elven druid")) return TRUE;
-
+	if (r_ptr->flags8 & RF8_WILD_WOOD) return TRUE;
 	return FALSE;
-#endif	// 0
 }
 
-/*
- * Helper function for wild_add_monster
- */
-static bool wild_monst_aux_wasteland(int r_idx)
-{
+static bool wild_monst_aux_wasteland(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_WASTE)
-		return TRUE;
-	else
-		return FALSE;
-#if 0
-	/* no aquatic life here */
-	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
-
-	/* wastelands are full of tough monsters */
-	if (strchr("ABCDEFHLMOPTUVWXYZdefghopqv", r_ptr->d_char)) return TRUE;
-
-	/* town monsters are OK ;-) */
-	if (!r_ptr->level) return TRUE;
-
+	if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
 	return FALSE;
-#endif	// 0
-
 }
 
-/*
- * Helper function for wild_add_monster
- */
-static bool wild_monst_aux_desert(int r_idx)
-{
+static bool wild_monst_aux_desert(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	if (r_ptr->flags8 & RF8_WILD_DESERT) return TRUE;
 
 	/* borrow from wasteland monsters */
-//	if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
+	//if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
 
 	/* no aquatic life here */
 	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
@@ -649,11 +568,7 @@ static bool wild_monst_aux_desert(int r_idx)
 	return FALSE;
 }
 
-/*
- * Helper function for wild_add_monster
- */
-static bool wild_monst_aux_ice(int r_idx)
-{
+static bool wild_monst_aux_ice(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	if (r_ptr->flags8 & RF8_WILD_ICE) return TRUE;
@@ -669,65 +584,74 @@ static bool wild_monst_aux_ice(int r_idx)
 	if (r_ptr->flags9 & RF9_RES_COLD) return TRUE;
 
 	/* borrow from wasteland monsters */
-//	if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
+	//if (r_ptr->flags8 & RF8_WILD_WASTE) return TRUE;
 
 	return FALSE;
 }
 
-#if 0 /* looks like these aren't used - mikaelh */
-static bool wild_monst_aux_ocean(int r_idx)
-{
+static bool wild_monst_aux_ocean(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_OCEAN)
-		return TRUE;
-	else
-		return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_OCEAN) return TRUE;
+	return FALSE;
 }
 
-static bool wild_monst_aux_shore(int r_idx)
-{
+static bool wild_monst_aux_oceanbed(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_SHORE)
-		return TRUE;
-	else
-		return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_OCEAN) return TRUE;
+	/* No fresh water creatures */
+	if ((r_ptr->flags8 & RF8_WILD_SHORE) && !(r_ptr->flags8 & RF8_WILD_SWAMP)) return TRUE;
+	return FALSE;
 }
 
-static bool wild_monst_aux_volcano(int r_idx)
-{
+static bool wild_monst_aux_shore(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_VOLCANO)
-		return TRUE;
-	else
-		return FALSE;
+	if (r_ptr->flags8 & RF8_WILD_SHORE) return TRUE;
+	return FALSE;
 }
-#endif // 0
 
-void set_mon_num_hook_wild(struct worldpos *wpos)
-{
-	switch(wild_info[wpos->wy][wpos->wx].type) {
-		case WILD_RIVER:
-		case WILD_OCEAN:
-		case WILD_LAKE: get_mon_num_hook = wild_monst_aux_lake; break;
-		case WILD_GRASSLAND: get_mon_num_hook = wild_monst_aux_grassland; break;
-		case WILD_FOREST: get_mon_num_hook = wild_monst_aux_forest; break;
-		case WILD_SWAMP: get_mon_num_hook = wild_monst_aux_swamp; break;
-		case WILD_DENSEFOREST: get_mon_num_hook = wild_monst_aux_denseforest; break;
-		case WILD_WASTELAND: get_mon_num_hook = wild_monst_aux_wasteland; break;
-		case WILD_DESERT: get_mon_num_hook = wild_monst_aux_desert; break;
-		case WILD_ICE: get_mon_num_hook = wild_monst_aux_ice; break;
-		case WILD_TOWN: get_mon_num_hook = wild_monst_aux_town; break;
-		default: get_mon_num_hook = dungeon_aux;
+static bool wild_monst_aux_volcano(int r_idx) {
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (r_ptr->flags8 & RF8_WILD_VOLCANO) return TRUE;
+	/* Borrow some monsters from mountains */
+	else if ((r_ptr->flags8 & RF8_WILD_MOUNTAIN) && (r_ptr->flags3 & RF3_IM_FIRE)) return TRUE;
+	return FALSE;
+}
+
+static bool wild_monst_aux_mountain(int r_idx) {
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Borrow some monsters from volcanoes */
+	if (r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO)) return TRUE;
+	return FALSE;
+}
+
+void set_mon_num_hook_wild(struct worldpos *wpos) {
+	switch (wild_info[wpos->wy][wpos->wx].type) {
+	case WILD_OCEANBED1: case WILD_OCEANBED2: get_mon_num_hook = wild_monst_aux_oceanbed; break;
+	case WILD_OCEAN: get_mon_num_hook = wild_monst_aux_ocean; break;
+	case WILD_SHORE1: case WILD_SHORE2: get_mon_num_hook = wild_monst_aux_shore; break;
+	case WILD_RIVER: get_mon_num_hook = wild_monst_aux_river; break;
+	case WILD_LAKE: get_mon_num_hook = wild_monst_aux_lake; break;
+	case WILD_SWAMP: get_mon_num_hook = wild_monst_aux_swamp; break;
+	case WILD_FOREST: get_mon_num_hook = wild_monst_aux_forest; break;
+	case WILD_DENSEFOREST: get_mon_num_hook = wild_monst_aux_denseforest; break;
+	case WILD_GRASSLAND: get_mon_num_hook = wild_monst_aux_grassland; break;
+	case WILD_WASTELAND: get_mon_num_hook = wild_monst_aux_wasteland; break;
+	case WILD_MOUNTAIN: get_mon_num_hook = wild_monst_aux_mountain; break;
+	case WILD_VOLCANO: get_mon_num_hook = wild_monst_aux_volcano; break;
+	case WILD_DESERT: get_mon_num_hook = wild_monst_aux_desert; break;
+	case WILD_ICE: get_mon_num_hook = wild_monst_aux_ice; break;
+	case WILD_TOWN: get_mon_num_hook = wild_monst_aux_town; break;
+	default: get_mon_num_hook = dungeon_aux;
 	}
 }
 
-
 /* this may not be the most efficient way of doing things... */
-void wild_add_monster(struct worldpos *wpos)
-{
+void wild_add_monster(struct worldpos *wpos) {
 	int monst_x, monst_y, r_idx;
 	int tries = 0;
 	cave_type **zcave;
