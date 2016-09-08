@@ -4439,12 +4439,12 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		/* Invert flag WILD_ONLY <-> RF8_DUNGEON */
 		r_info[i].flags8 ^= 1L;
 
-		/* WILD_TOO without any other wilderness flags enables all flags */
+		/* WILD_TOO without any other wilderness flags from WILD_TOO_MASK enables all flags */
 		if ((r_info[i].flags8 & RF8_WILD_TOO) &&
 		    !(r_info[i].flags8 & RF8_WILD_TOO_MASK))
 			r_info[i].flags8 |= RF8_WILD_TOO_MASK;
 
-		/* WILD_EASY without any other wilderness flags enables all flags */
+		/* WILD_EASY without any other wilderness flags from WILD_EASY_MASK enables all flags */
 		if ((r_info[i].flags8 & RF8_WILD_EASY) &&
 		    !(r_info[i].flags8 & RF8_WILD_EASY_MASK))
 			r_info[i].flags8 |= RF8_WILD_EASY_MASK;
