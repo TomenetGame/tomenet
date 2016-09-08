@@ -3920,7 +3920,7 @@ player_class class_info[MAX_CLASS] = {
 
 #ifdef ENABLE_DEATHKNIGHT
 	{ "Death Knight",
-		TERM_YELLOW,
+		TERM_L_DARK,
 		{ 3, -3, 1, 0, 2, 2},
 		{20+100, 0, 0+100, 10, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
