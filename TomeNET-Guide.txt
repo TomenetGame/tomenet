@@ -1032,6 +1032,7 @@ They all start with a slash '/' hence they're called slash commands:
             known to you.
             With tag it just equips all items that contain that tag in their
             name or inscription somewhere (even if they are cursed).
+            Opposite of /bed.
 
 /dun        Displays the name of the dungeon you're currently in.
 
