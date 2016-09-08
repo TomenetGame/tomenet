@@ -6424,7 +6424,7 @@ s_printf("di1-mdev/staff %d (slot %d)\n", p_ptr->delayed_index, slot);
 		/* Just continue&ignore instead of return, since we
 		   might just have picked up someone else's book! */
 		if (spell == -1) {
-			msg_print(Ind, "\377oYou cannot cast the identify spell of your inscribed book.");
+			msg_print(Ind, "\377oYou cannot cast an identify spell in your inscribed book.");
 			continue;
 		}
 
