@@ -6439,8 +6439,8 @@ s_printf("di2-spell %d (spell %d, slot %d)\n", p_ptr->delayed_index, spell, slot
 	}
 #endif
 
-	/* 'failure' is set at this point; clear actions */
-	p_ptr->delayed_spell = -1;
+	/* 'failure' is set at this point; clear actions (spell and item) */
+	p_ptr->delayed_spell = 0;
 	p_ptr->current_item = -1;
 
 	/* Display single failure */
