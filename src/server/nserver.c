@@ -3271,7 +3271,7 @@ static int Handle_login(int ind) {
 #endif
 
 #ifdef USE_SOUND_2010
-	/* Note: This must come after grid_affects_players() has been called initially. */
+	/* Note: This must come after grid_affects_player() has been called initially. */
 	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
 #endif
 

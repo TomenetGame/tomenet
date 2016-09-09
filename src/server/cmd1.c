@@ -6365,6 +6365,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		store_exit(Ind);
 		p_ptr->py = y;
 		p_ptr->px = x;
+
 		grid_affects_player(Ind);
 
 #ifdef USE_SOUND_2010
