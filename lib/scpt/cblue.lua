@@ -6,7 +6,7 @@ function knowall(name)
     local p, i
     p = ind(name)
     if (p == -1) then return -1 end
-    for i = 1, MAX_K_IDX do
+    for i = 1, max_k_idx do
 	players(p).obj_aware[i] = TRUE;
     end
 end
