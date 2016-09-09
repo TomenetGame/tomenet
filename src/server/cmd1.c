@@ -6275,9 +6275,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 	/* Player can not walk through "walls", but ghosts can */
 	if (!player_can_enter(Ind, c_ptr->feat, FALSE) || !csmove) {
-		bool passing = (p_ptr->tim_wraith || p_ptr->ghost);
+		bool my_home = FALSE;
 
-		if (passing) {
+		if (p_ptr->tim_wraith || p_ptr->ghost) {
 			if (c_ptr->feat == FEAT_WALL_HOUSE) {
 				if (!wraith_access_virtual(Ind, y, x)) {
 					msg_print(Ind, "The wall blocks your movement.");
@@ -6285,114 +6285,26 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					return;
 				}
 				msg_print(Ind, "\377GYou pass through the house wall.");
+				my_home = TRUE;
 			}
 		}
 
-		/* Disturb the player */
-		disturb(Ind, 0, 0);
+		if (!my_home) {
+			/* Disturb the player */
+			disturb(Ind, 0, 0);
 
-		/* Notice things in the dark */
-		if (!(*w_ptr & CAVE_MARK) &&
-		    (p_ptr->blind || !(*w_ptr & CAVE_LITE)))
-		{
-			if (c_ptr->feat == FEAT_SIGN) {
-				msg_print(Ind, "You feel some structure blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			/* Rubble */
-			} else if (c_ptr->feat == FEAT_RUBBLE) {
-				msg_print(Ind, "You feel some rubble blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-
-				if (!p_ptr->warning_tunnel) {
-					if (p_ptr->rogue_like_commands)
-						msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with '\377o+\377y' key.");
-					else
-						msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with \377oSHIFT+t\377y.");
-					msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
-					s_printf("warning_tunnel: %s\n", p_ptr->name);
-					p_ptr->warning_tunnel = 1;
-				}
-			/* Treasure - just for the 'warning' hint */
-			} else if (c_ptr->feat == FEAT_MAGMA_K || c_ptr->feat == FEAT_QUARTZ_K || c_ptr->feat == FEAT_SANDWALL_K) {
-				msg_print(Ind, "You feel a wall blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-
-				if (!p_ptr->warning_tunnel2) {
-					if (p_ptr->rogue_like_commands)
-						msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with '\377o+\377y' key.");
-					else
-						msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with \377oSHIFT+t\377y.");
-					msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
-					s_printf("warning_tunnel2: %s\n", p_ptr->name);
-					p_ptr->warning_tunnel2 = 1;
-				}
-			/* Closed door */
-			} else if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
-				 (c_ptr->feat == FEAT_HOME)) {
-				msg_print(Ind, "You feel a closed door blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			/* Tree */
-			} else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
-			    c_ptr->feat == FEAT_BUSH) {
-				msg_print(Ind, "You feel a tree blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			/* Dark Pit */
-			} else if (c_ptr->feat == FEAT_DARK_PIT) {
-				msg_print(Ind, "You don't feel any ground ahead of you.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			/* Mountains */
-			} else if (c_ptr->feat == FEAT_PERM_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNT_SOLID) {
-				msg_print(Ind, "There is a steep mountain blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			} else if (c_ptr->feat == FEAT_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNTAIN) {
-				msg_print(Ind, "There is a mountain blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			} else if (c_ptr->feat == FEAT_ABYSS || c_ptr->feat == FEAT_ABYSS_BOUNDARY) {
-				msg_print(Ind, "There is an endless abyss blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			} else if (c_ptr->feat == FEAT_CLOUDYSKY) {
-				msg_print(Ind, "There is an endless depth below the clouds, blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			} else if (c_ptr->feat == FEAT_SICKBAY_DOOR) {
-				msg_print(Ind, "You feel a door blocking your way.");
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			/* Wall (or secret door) */
-			} else {
-				msg_print(Ind, "You feel a wall blocking your way.");
-				//msg_format(Ind, "You feel %s.", f_text + f_info[c_ptr->feat].block);
-
-				*w_ptr |= CAVE_MARK;
-				everyone_lite_spot(wpos, y, x);
-			}
-		}
-
-		/* Notice things */
-		else {
-			//struct c_special *cs_ptr;
-			/* Closed doors */
-			if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
-			    (c_ptr->feat == FEAT_HOME)) {
-				if (p_ptr->easy_open) do_cmd_open(Ind, dir);
-				else msg_print(Ind, "There is a closed door blocking your way.");
-			} else if (p_ptr->auto_tunnel) {
-				do_cmd_tunnel(Ind, dir, TRUE);
-			} else if (p_ptr->easy_tunnel) {
-				do_cmd_tunnel(Ind, dir, FALSE);
-			} else {
+			/* Notice things in the dark */
+			if (!(*w_ptr & CAVE_MARK) &&
+			    (p_ptr->blind || !(*w_ptr & CAVE_LITE))) {
+				if (c_ptr->feat == FEAT_SIGN) {
+					msg_print(Ind, "You feel some structure blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 				/* Rubble */
-				if (c_ptr->feat == FEAT_RUBBLE) {
-					msg_print(Ind, "There is rubble blocking your way.");
+				} else if (c_ptr->feat == FEAT_RUBBLE) {
+					msg_print(Ind, "You feel some rubble blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 
 					if (!p_ptr->warning_tunnel) {
 						if (p_ptr->rogue_like_commands)
@@ -6403,11 +6315,11 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						s_printf("warning_tunnel: %s\n", p_ptr->name);
 						p_ptr->warning_tunnel = 1;
 					}
-				}
 				/* Treasure - just for the 'warning' hint */
-				else if (c_ptr->feat == FEAT_MAGMA_K || c_ptr->feat == FEAT_QUARTZ_K || c_ptr->feat == FEAT_SANDWALL_K) {
-					msg_print(Ind, "There is a wall blocking your way.");
-					//msg_print(Ind, "There is a wall with valuable minerals blocking your way.");
+				} else if (c_ptr->feat == FEAT_MAGMA_K || c_ptr->feat == FEAT_QUARTZ_K || c_ptr->feat == FEAT_SANDWALL_K) {
+					msg_print(Ind, "You feel a wall blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 
 					if (!p_ptr->warning_tunnel2) {
 						if (p_ptr->rogue_like_commands)
@@ -6418,31 +6330,121 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						s_printf("warning_tunnel2: %s\n", p_ptr->name);
 						p_ptr->warning_tunnel2 = 1;
 					}
-				}
+				/* Closed door */
+				} else if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
+					 (c_ptr->feat == FEAT_HOME)) {
+					msg_print(Ind, "You feel a closed door blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 				/* Tree */
-				else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
+				} else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
 				    c_ptr->feat == FEAT_BUSH) {
-					msg_print(Ind, "There is a tree blocking your way.");
+					msg_print(Ind, "You feel a tree blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
+				/* Dark Pit */
 				} else if (c_ptr->feat == FEAT_DARK_PIT) {
-					msg_print(Ind, "There is a dark pit in your way.");
+					msg_print(Ind, "You don't feel any ground ahead of you.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
+				/* Mountains */
 				} else if (c_ptr->feat == FEAT_PERM_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNT_SOLID) {
 					msg_print(Ind, "There is a steep mountain blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 				} else if (c_ptr->feat == FEAT_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNTAIN) {
 					msg_print(Ind, "There is a mountain blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 				} else if (c_ptr->feat == FEAT_ABYSS || c_ptr->feat == FEAT_ABYSS_BOUNDARY) {
 					msg_print(Ind, "There is an endless abyss blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 				} else if (c_ptr->feat == FEAT_CLOUDYSKY) {
 					msg_print(Ind, "There is an endless depth below the clouds, blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 				} else if (c_ptr->feat == FEAT_SICKBAY_DOOR) {
-					msg_print(Ind, "You are not allowed to enter the sickbay.");
+					msg_print(Ind, "You feel a door blocking your way.");
+					*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 				/* Wall (or secret door) */
-				} else if (c_ptr->feat != FEAT_SIGN) {
-					msg_print(Ind, "There is a wall blocking your way.");
-					//msg_format(Ind, "There is %s.", f_text + f_info[c_ptr->feat].block);
+				} else {
+					msg_print(Ind, "You feel a wall blocking your way.");
+					//msg_format(Ind, "You feel %s.", f_text + f_info[c_ptr->feat].block);
+
+				*w_ptr |= CAVE_MARK;
+					everyone_lite_spot(wpos, y, x);
 				}
 			}
+
+			/* Notice things */
+			else {
+				//struct c_special *cs_ptr;
+				/* Closed doors */
+				if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
+				    (c_ptr->feat == FEAT_HOME)) {
+					if (p_ptr->easy_open) do_cmd_open(Ind, dir);
+					else msg_print(Ind, "There is a closed door blocking your way.");
+				} else if (p_ptr->auto_tunnel) {
+					do_cmd_tunnel(Ind, dir, TRUE);
+				} else if (p_ptr->easy_tunnel) {
+					do_cmd_tunnel(Ind, dir, FALSE);
+				} else {
+					/* Rubble */
+					if (c_ptr->feat == FEAT_RUBBLE) {
+						msg_print(Ind, "There is rubble blocking your way.");
+
+					if (!p_ptr->warning_tunnel) {
+							if (p_ptr->rogue_like_commands)
+								msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with '\377o+\377y' key.");
+							else
+								msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with \377oSHIFT+t\377y.");
+							msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
+							s_printf("warning_tunnel: %s\n", p_ptr->name);
+							p_ptr->warning_tunnel = 1;
+						}
+					}
+					/* Treasure - just for the 'warning' hint */
+					else if (c_ptr->feat == FEAT_MAGMA_K || c_ptr->feat == FEAT_QUARTZ_K || c_ptr->feat == FEAT_SANDWALL_K) {
+						msg_print(Ind, "There is a wall blocking your way.");
+						//msg_print(Ind, "There is a wall with valuable minerals blocking your way.");
+
+					if (!p_ptr->warning_tunnel2) {
+							if (p_ptr->rogue_like_commands)
+								msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with '\377o+\377y' key.");
+							else
+								msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with \377oSHIFT+t\377y.");
+							msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
+							s_printf("warning_tunnel2: %s\n", p_ptr->name);
+							p_ptr->warning_tunnel2 = 1;
+						}
+					}
+					/* Tree */
+					else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
+					    c_ptr->feat == FEAT_BUSH) {
+						msg_print(Ind, "There is a tree blocking your way.");
+					} else if (c_ptr->feat == FEAT_DARK_PIT) {
+						msg_print(Ind, "There is a dark pit in your way.");
+					} else if (c_ptr->feat == FEAT_PERM_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNT_SOLID) {
+						msg_print(Ind, "There is a steep mountain blocking your way.");
+					} else if (c_ptr->feat == FEAT_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNTAIN) {
+						msg_print(Ind, "There is a mountain blocking your way.");
+					} else if (c_ptr->feat == FEAT_ABYSS || c_ptr->feat == FEAT_ABYSS_BOUNDARY) {
+						msg_print(Ind, "There is an endless abyss blocking your way.");
+					} else if (c_ptr->feat == FEAT_CLOUDYSKY) {
+						msg_print(Ind, "There is an endless depth below the clouds, blocking your way.");
+					} else if (c_ptr->feat == FEAT_SICKBAY_DOOR) {
+						msg_print(Ind, "You are not allowed to enter the sickbay.");
+					/* Wall (or secret door) */
+					} else if (c_ptr->feat != FEAT_SIGN) {
+						msg_print(Ind, "There is a wall blocking your way.");
+						//msg_format(Ind, "There is %s.", f_text + f_info[c_ptr->feat].block);
+					}
+				}
+			}
+			return;
 		}
-		return;
 	}
 	/* is this actually still needed or dead code? */
 	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall &&
