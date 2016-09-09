@@ -5619,6 +5619,178 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	return (TRUE);
 }
 
+/* Helper function for move_player():
+   Handle various things that change for the player depending on the grid he left
+   vs the new grid he just entered.
+   Note: Further 'interesting' effects (searching, noticing objects, entering stores)
+         are skipped here, as these are not applied when players are switching places
+         but only on normal movement. */
+static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox, int oy) {
+	int x = p_ptr->px, y = p_ptr->py;
+	struct worldpos *wpos = &p_ptr->wpos;
+	cave_type *c_ptr = &zcave[y][x];
+	struct c_special *cs_ptr;
+
+	grid_affects_player(Ind);
+
+#ifdef USE_SOUND_2010
+	handle_ambient_sfx(Ind, c_ptr, wpos, TRUE);
+#endif
+
+	/* Handle entering/leaving no-teleport area */
+	if (zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
+		msg_print(Ind, "\377DThe air in here feels very still.");
+		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+#ifdef USE_SOUND_2010
+		/* New: Have bgm indicate no-tele too! */
+		handle_music(Ind);
+#endif
+
+		msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his" : "her");
+		msg_print(Ind, "You lose your wraith powers.");
+
+		/* Automatically disable permanent wraith form (set_tim_wraith) */
+		p_ptr->tim_wraith = 0; //avoid duplicate message
+		p_ptr->update |= PU_BONUS;
+		p_ptr->redraw |= PR_BPR_WRAITH;
+	}
+	if (zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK)) {
+		msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
+		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+		p_ptr->redraw |= PR_BPR_WRAITH;
+#ifdef USE_SOUND_2010
+		/* New: Have bgm indicate no-tele too! */
+		handle_music(Ind);
+#endif
+
+		/* Automatically re-enable permanent wraith form (set_tim_wraith) */
+		p_ptr->update |= PU_BONUS;
+	}
+
+#ifdef USE_SOUND_2010
+	/* Handle leaving a sickbay area */
+	if (p_ptr->music_monster == -3 && c_ptr->feat != FEAT_PROTECTED && c_ptr->feat != FEAT_SICKBAY_DOOR) {
+		p_ptr->music_monster = -1; //unhack sickbay music
+		handle_music(Ind);
+	}
+
+	/* Handle entering/leaving taverns. (-3 check is for distinguishing inn from sickbay) */
+	if (p_ptr->music_monster != -3 && p_ptr->music_monster != -4 && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(&p_ptr->wpos)) {
+		p_ptr->music_monster = -4; //hack inn music
+		handle_music(Ind);
+	}
+	if (p_ptr->music_monster == -4 && !((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(&p_ptr->wpos))) {
+		p_ptr->music_monster = -1; //unhack inn music
+		handle_music(Ind);
+	}
+#endif
+
+	cave_midx_debug(wpos, y, x, -Ind);
+
+	/* Redraw new spot */
+	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+	/* Redraw old spot */
+	everyone_lite_spot(wpos, oy, ox);
+
+	/* Check for new panel (redraw map) */
+	verify_panel(Ind);
+
+	/* Update stuff */
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+	/* Update the monsters */
+	p_ptr->update |= (PU_DISTANCE);
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+
+	/* Hack -- quickly update the view, to reduce perceived lag */
+	redraw_stuff(Ind);
+	window_stuff(Ind);
+
+	/* Stairs, gates, fountains */
+	if (!p_ptr->warning_staircase && !wpos->wz &&
+	    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE ||
+	    c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
+		dungeon_type *d_ptr = NULL;
+
+		if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE) d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+		if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+
+		/* paranoia - maybe it's a broken staircase ^^ */
+		if (d_ptr) {
+			msg_print(Ind, "\374\377yHINT: You found a staircase. Press the according key '\377o<\377y' or '\377o>\377y' to enter!");
+			s_printf("warning_staircase: %s\n", p_ptr->name);
+			//p_ptr->warning_staircase = 1;
+
+			if (d_ptr->flags2 & DF2_IRON) {
+				if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
+				    ((WPOS_IRONDEEPDIVE_Z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
+				    (WPOS_IRONDEEPDIVE_Z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
+					msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon,");
+					msg_print(Ind, "\374\377y         this particular one being the 'Ironman Deep Dive Challenge'.");
+					if (p_ptr->mode & MODE_DED_IDDC)
+						msg_print(Ind, "\374\377y         If you enter, you cannot escape until you make it to the bottom!");
+					else
+						msg_print(Ind, "\374\377y         If you enter, you cannot escape until you reach Menegroth!");
+				} else {
+					msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon!");
+					msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
+					msg_print(Ind, "\374\377y         read a scroll of word-of-recall there! Also, death is \377opermanent\377y!");
+				}
+			} else if (d_ptr->flags1 & DF1_NO_UP) {
+				msg_print(Ind, "\374\377oWARNING: \377yThe orange staircase indicates a 'No-up' dungeon!");
+				msg_print(Ind, "\374\377y         That means that you cannot take a staircase back up. You can");
+				msg_print(Ind, "\374\377y         only escape by reading a scroll of word-of-recall!");
+			} else if (d_ptr->flags1 & DF1_FORCE_DOWN) {
+				msg_print(Ind, "\374\377oWARNING: \377yThe light red staircase indicates a 'Force-down' dungeon!");
+				msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
+				msg_print(Ind, "\374\377y         read a scroll of word-of-recall there!");
+			}
+		}
+	}
+
+	if (!p_ptr->warning_voidjumpgate && c_ptr->feat == FEAT_BETWEEN) {
+		msg_print(Ind, "\374\377yHINT: You found a void jump gate. You may press '\377o>\377y' to teleport!");
+		s_printf("warning_voidjumpgate: %s\n", p_ptr->name);
+		//p_ptr->warning_voidjumpgate = 1;
+	}
+
+	if (!p_ptr->warning_fountain && c_ptr->feat == FEAT_FOUNTAIN) {
+		msg_print(Ind, "\374\377yHINT: You found a fountain. Press '\377o_\377y' if you want to drink from it!");
+		s_printf("warning_fountain: %s\n", p_ptr->name);
+		p_ptr->warning_fountain = 1;
+	}
+
+
+	/* Trigger traps */
+	if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+#ifndef ARCADE_SERVER
+		bool hit = TRUE;
+#endif
+
+		/* Disturb */
+		disturb(Ind, 0, 0);
+
+		if (!cs_ptr->sc.trap.found) {
+			/* Message */
+			msg_print(Ind, "You triggered a trap!");
+
+			/* Pick a trap */
+			pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		}
+#ifndef ARCADE_SERVER
+		else if (magik(get_skill_scale(p_ptr, SKILL_TRAPPING, 90) - UNAWARENESS(p_ptr))) {
+			msg_print(Ind, "You carefully avoid touching the trap.");
+			hit = FALSE;
+		}
+#endif
+
+		/* Hit the trap */
+#ifndef ARCADE_SERVER
+		if (hit)
+#endif
+			hit_trap(Ind);
+	}
+}
 
 /*
  * Move player in the given direction, with the given "pickup" flag.
@@ -5640,7 +5812,6 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 
     -APD-
  */
-
 void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos, nwpos, old_wpos;
@@ -5699,7 +5870,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	assuming that the mimic does not use the monster mind but its own to control
 	the body, on the other hand the body still carries reflexes from the monster ;)
 	- technical reason was to make more forms useful, especially RAND_50 forms */
-/*	if (((p_ptr->pclass != CLASS_SHAMAN) || ((r_ptr->d_char != 'E') && (r_ptr->d_char != 'G'))) && */
+	/* if (((p_ptr->pclass != CLASS_SHAMAN) || ((r_ptr->d_char != 'E') && (r_ptr->d_char != 'G'))) && */
 	/* And now shamans gain advantage by linking to the being's mind instead of copying it..or something..err ^^ */
 	else if ((p_ptr->pclass != CLASS_SHAMAN) &&
 	    (((r_ptr->flags5 & RF5_RAND_100) && magik(40)) ||
@@ -5844,7 +6015,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	/* Bump into other players */
 	if (c_ptr->m_idx < 0)
 	    /* mountains for example are FF1_PERMANENT too! */
-//	    && (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
+	    //&& (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
 	{
 		player_type *q_ptr = Players[0 - c_ptr->m_idx];
 		int Ind2 = 0 - c_ptr->m_idx;
@@ -5897,7 +6068,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		    && !(p_ptr->admin_dm && !(q_ptr->admin_dm || q_ptr->admin_wiz))) /* dm shouldn't switch with non-dms ever */
 #endif
 		{
-/*			if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
+			/* if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
 			/* switch places only if BOTH have WRAITHFORM or NONE has it, well or if target is a DM */
 			if ((!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players into trees to kill them */
 			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
@@ -5910,18 +6081,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 				q_ptr->py = p_ptr->py;
 				q_ptr->px = p_ptr->px;
-				calc_boni(Ind2); /* in case he's a vampire and got swapped from/onto sunlit grid */
 
 				p_ptr->py = y;
 				p_ptr->px = x;
-				grid_affects_player(Ind);
-
-#ifdef USE_SOUND_2010
-				handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos, TRUE);
-#endif
-
-				cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
-				cave_midx_debug(wpos, q_ptr->py, q_ptr->px, -Ind2);
 
 				/* Tell both of them */
 				/* Don't tell people they bumped into the Dungeon Master */
@@ -5947,34 +6109,13 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					disturb(Ind2, 1, 0);
 				}
 
-				/* Re-show both grids */
-				everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-				everyone_lite_spot(wpos, q_ptr->py, q_ptr->px);
-
-				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-				q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-#if 0
-				/* Check for new panel (redraw map) */
-				verify_panel(Ind);
-				/* Update the monsters */
-				p_ptr->update |= (PU_DISTANCE);
-				/* Window stuff */
-				p_ptr->window |= (PW_OVERHEAD);
-				/* Hack -- quickly update the view, to reduce perceived lag */
-				redraw_stuff(Ind);
-				window_stuff(Ind);
-#endif
-#if 0 /* replace suppressed switching by bumping */
-			} else if ((p_ptr->afk || q_ptr->afk) && 
-			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
-			{
-#endif
+				moved_player(Ind2, q_ptr, zcave, p_ptr->px, p_ptr->py);
+				moved_player(Ind, p_ptr, zcave, q_ptr->px, q_ptr->py);
 			} else {
 				black_breath_infection(Ind, Ind2); /* =p */
 				disturb(Ind, 1, 0); /* turn off running, so player won't be un-AFK'ed automatically */
-//was here->			return;
 			}
-			return;//<- moved it here, so switching gets terminated too
+			return;
 		}
 
 		/* Hack -- the Dungeon Master cannot bump people */
@@ -6053,19 +6194,16 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			store_exit(Ind);
 			p_ptr->px = m_list[c_ptr->m_idx].fx;
 			p_ptr->py = m_list[c_ptr->m_idx].fy;
-			grid_affects_player(Ind);
-#ifdef USE_SOUND_2010
-			handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos, TRUE);
-#endif
+
 			/* update monster location */
 			m_list[c_ptr->m_idx].fx = oldx;
 			m_list[c_ptr->m_idx].fy = oldy;
-			/* update cave monster indexes */
+			/* update cave monster indices */
 			zcave[oldy][oldx].m_idx = c_ptr->m_idx;
 			c_ptr->m_idx = -Ind;
-			/* Re-show both grids */
-			everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-			everyone_lite_spot(wpos, oldy, oldx);
+
+			moved_player(Ind, p_ptr, zcave, oldx, oldy);
+			return;
 		}
 		/* Questor? Bump -> talk :D */
 		else if (m_list[c_ptr->m_idx].questor && !m_list[c_ptr->m_idx].questor_hostile) {
@@ -6122,8 +6260,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	}
 
 	/* now this is temp while i redesign!!! - do not change  <- ok and who wrote this and when? =p */
-	if (!(cs_ptr = GetCS(c_ptr, CS_RUNE))) //fix for walking-over-rune panic save, maybe cleanup this code? - Kurzel
-	{
+	if (!(cs_ptr = GetCS(c_ptr, CS_RUNE))) { //fix for walking-over-rune panic save, maybe cleanup this code? - Kurzel
 		cs_ptr = c_ptr->special;
 		while (cs_ptr) {
 			int tcv;
@@ -6138,50 +6275,18 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 	/* Player can not walk through "walls", but ghosts can */
 	if (!player_can_enter(Ind, c_ptr->feat, FALSE) || !csmove) {
-		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
-		bool myhome = FALSE;
 		bool passing = (p_ptr->tim_wraith || p_ptr->ghost);
 
-		/* XXX quick fix */
 		if (passing) {
-#if 0
-			if (c_ptr->feat == FEAT_HOME) {
-				struct c_special *cs_ptr;
-				if ((!(cs_ptr = GetCS(c_ptr, CS_DNADOOR)) ||
-				    !access_door(Ind, cs_ptr->sc.ptr, TRUE)) && !admin_p(Ind))
-				{
-					msg_print(Ind, "The door blocks your movement.");
-					disturb(Ind, 0, 0);
-					return;
-				}
-
-				myhome = TRUE;
-				msg_print(Ind, "\377GYou pass through the door.");
-			} else
-#endif	// 0
-
-			/* XXX maybe needless anymore */
 			if (c_ptr->feat == FEAT_WALL_HOUSE) {
 				if (!wraith_access_virtual(Ind, y, x)) {
 					msg_print(Ind, "The wall blocks your movement.");
 					disturb(Ind, 0, 0);
 					return;
 				}
-
-				myhome = TRUE;
 				msg_print(Ind, "\377GYou pass through the house wall.");
 			}
 		}
-
-
-#if 0
-		/* Hack -- Exception for trees (in a bad way :-/) */
-		if (!myhome && c_ptr->feat == FEAT_TREE &&
-		    (p_ptr->levitate || p_ptr->pass_trees))
-			myhome = TRUE;
-#endif	// 0
-
-	    if (!myhome) {
 
 		/* Disturb the player */
 		disturb(Ind, 0, 0);
@@ -6338,11 +6443,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			}
 		}
 		return;
-	    } /* 'if (!myhome)' ends here */
 	}
-
-
-	/* XXX fly? */
+	/* is this actually still needed or dead code? */
 	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall &&
 	    !p_ptr->levitate && !p_ptr->tim_wraith && !p_ptr->admin_dm) {
 		msg_print(Ind, "You can't cross the chasm.");
@@ -6352,7 +6454,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	}
 
 	/* Normal movement */
-//	else
 	{
 		int oy, ox;
 		struct c_special *cs_ptr;
@@ -6366,77 +6467,12 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		p_ptr->py = y;
 		p_ptr->px = x;
 
-		grid_affects_player(Ind);
-
-#ifdef USE_SOUND_2010
-		handle_ambient_sfx(Ind, &zcave[y][x], &p_ptr->wpos, TRUE);
-#endif
-
-		/* Handle entering/leaving no-teleport area */
-		if (zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
-			msg_print(Ind, "\377DThe air in here feels very still.");
-			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-#ifdef USE_SOUND_2010
-			/* New: Have bgm indicate no-tele too! */
-			handle_music(Ind);
-#endif
-
-			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his" : "her");
-			msg_print(Ind, "You lose your wraith powers.");
-
-			/* Automatically disable permanent wraith form (set_tim_wraith) */
-			p_ptr->tim_wraith = 0; //avoid duplicate message
-			p_ptr->update |= PU_BONUS;
-			p_ptr->redraw |= PR_BPR_WRAITH;
-		}
-		if (zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK)) {
-			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
-			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-			p_ptr->redraw |= PR_BPR_WRAITH;
-#ifdef USE_SOUND_2010
-			/* New: Have bgm indicate no-tele too! */
-			handle_music(Ind);
-#endif
-
-			/* Automatically re-enable permanent wraith form (set_tim_wraith) */
-			p_ptr->update |= PU_BONUS;
-		}
-
-#ifdef USE_SOUND_2010
-		/* Handle leaving a sickbay area */
-		if (p_ptr->music_monster == -3 && zcave[y][x].feat != FEAT_PROTECTED && zcave[y][x].feat != FEAT_SICKBAY_DOOR)
-			handle_music(Ind);
-
-		/* Handle entering/leaving tarverns */
-		
-#endif
-
 		/* Update the player indices */
 		zcave[oy][ox].m_idx = 0;
 		zcave[y][x].m_idx = 0 - Ind;
-		cave_midx_debug(wpos, y, x, -Ind);
 
-		/* Redraw new spot */
-		everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+		moved_player(Ind, p_ptr, zcave, ox, oy);
 
-		/* Redraw old spot */
-		everyone_lite_spot(wpos, oy, ox);
-
-		/* Check for new panel (redraw map) */
-		verify_panel(Ind);
-
-		/* Update stuff */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-
-		/* Update the monsters */
-		p_ptr->update |= (PU_DISTANCE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
-
-		/* Hack -- quickly update the view, to reduce perceived lag */
-		redraw_stuff(Ind);
-		window_stuff(Ind);
 
 		/* Spontaneous Searching */
 		if ((p_ptr->skill_fos >= 75) ||
@@ -6476,18 +6512,16 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 		/* Handle resurrection */
 		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP &&
-			(cs_ptr = GetCS(c_ptr, CS_SHOP)) && cs_ptr->sc.omni == 3)
-
-		{
+		    (cs_ptr = GetCS(c_ptr, CS_SHOP)) && cs_ptr->sc.omni == 3) {
 			if (p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] & (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8))) {
 				/* Resurrect him */
 				resurrect_player(Ind, 0);
 
 				/* Give him some gold to restart */
-//				if (p_ptr->lev > 1 && !p_ptr->admin_dm) {
+				//if (p_ptr->lev > 1 && !p_ptr->admin_dm) {
 				if (!p_ptr->admin_dm) {
 					/* int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100; */
-//					int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
+					//int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
 //					int i = (p_ptr->lev > 4) ? 100 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 5 : 100;
 #if 0 /* got exploited by chain-dying on purpose */
 					int i = 300 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2; /* buffed it greatly, yet still sensible */
@@ -6502,94 +6536,13 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		}
 #ifndef USE_MANG_HOUSE_ONLY
 		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
-		    && (!p_ptr->ghost || is_admin(p_ptr)))
-		{
+		    && (!p_ptr->ghost || is_admin(p_ptr))) {
 			disturb(Ind, 1, 0);
 			do_cmd_trad_house(Ind);
-//			return;	/* allow builders to build */
+			//return;	/* allow builders to build */
 		}
 #endif	// USE_MANG_HOUSE_ONLY
 
-		if (!p_ptr->warning_staircase && !wpos->wz &&
-		    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE ||
-		    c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
-			dungeon_type *d_ptr = NULL;
-
-			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE) d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
-			if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
-
-			/* paranoia - maybe it's a broken staircase ^^ */
-			if (d_ptr) {
-				msg_print(Ind, "\374\377yHINT: You found a staircase. Press the according key '\377o<\377y' or '\377o>\377y' to enter!");
-				s_printf("warning_staircase: %s\n", p_ptr->name);
-				//p_ptr->warning_staircase = 1;
-
-				if (d_ptr->flags2 & DF2_IRON) {
-					if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y &&
-					    ((WPOS_IRONDEEPDIVE_Z > 0 && (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) ||
-					    (WPOS_IRONDEEPDIVE_Z < 0 && (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)))) {
-						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon,");
-						msg_print(Ind, "\374\377y         this particular one being the 'Ironman Deep Dive Challenge'.");
-						if (p_ptr->mode & MODE_DED_IDDC)
-							msg_print(Ind, "\374\377y         If you enter, you cannot escape until you make it to the bottom!");
-						else
-							msg_print(Ind, "\374\377y         If you enter, you cannot escape until you reach Menegroth!");
-					} else {
-						msg_print(Ind, "\374\377oWARNING: \377yThe dark grey staircase indicates an 'Ironman' dungeon!");
-						msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
-						msg_print(Ind, "\374\377y         read a scroll of word-of-recall there! Also, death is \377opermanent\377y!");
-					}
-				} else if (d_ptr->flags1 & DF1_NO_UP) {
-					msg_print(Ind, "\374\377oWARNING: \377yThe orange staircase indicates a 'No-up' dungeon!");
-					msg_print(Ind, "\374\377y         That means that you cannot take a staircase back up. You can");
-					msg_print(Ind, "\374\377y         only escape by reading a scroll of word-of-recall!");
-				} else if (d_ptr->flags1 & DF1_FORCE_DOWN) {
-					msg_print(Ind, "\374\377oWARNING: \377yThe light red staircase indicates a 'Force-down' dungeon!");
-					msg_print(Ind, "\374\377y         That means that you cannot escape until you reach the bottom and");
-					msg_print(Ind, "\374\377y         read a scroll of word-of-recall there!");
-				}
-			}
-		}
-
-		if (!p_ptr->warning_voidjumpgate && c_ptr->feat == FEAT_BETWEEN) {
-			msg_print(Ind, "\374\377yHINT: You found a void jump gate. You may press '\377o>\377y' to teleport!");
-			s_printf("warning_voidjumpgate: %s\n", p_ptr->name);
-			//p_ptr->warning_voidjumpgate = 1;
-		}
-
-		if (!p_ptr->warning_fountain && c_ptr->feat == FEAT_FOUNTAIN) {
-			msg_print(Ind, "\374\377yHINT: You found a fountain. Press '\377o_\377y' if you want to drink from it!");
-			s_printf("warning_fountain: %s\n", p_ptr->name);
-			p_ptr->warning_fountain = 1;
-		}
-
-		/* Discover invisible traps */
-//		else if (c_ptr->feat == FEAT_INVIS)
-		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
-			bool hit = TRUE;
-
-			/* Disturb */
-			disturb(Ind, 0, 0);
-
-			if (!cs_ptr->sc.trap.found) {
-				/* Message */
-//				msg_print(Ind, "You found a trap!");
-				msg_print(Ind, "You triggered a trap!");
-
-				/* Pick a trap */
-				pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-			}
-//			else if (magik(get_skill_scale(p_ptr, SKILL_DISARM, 90)
-			else if (magik(get_skill_scale(p_ptr, SKILL_TRAPPING, 90) - UNAWARENESS(p_ptr))) {
-#ifndef ARCADE_SERVER
-				msg_print(Ind, "You carefully avoid touching the trap.");
-				hit = FALSE;
-#endif
-			}
-
-			/* Hit the trap */
-			if (hit) hit_trap(Ind);
-		}
 
 		/* Mega-hack -- if we are the dungeon master, and our movement hook
 		 * is set, call it.  This is used to make things like building walls

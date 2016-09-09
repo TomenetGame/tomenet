@@ -1734,7 +1734,10 @@ void handle_music(int Ind) {
 	}
 
 	/* rest of the music has lower priority than already running, boss-specific music */
-	if (p_ptr->music_monster != -1) return;
+	if (p_ptr->music_monster != -1
+	    /* hacks for sickbay and tavern music */
+	    && p_ptr->music_monster != -3 && p_ptr->music_monster != -4)
+		return;
 
 
 	/* on world surface */
@@ -1749,7 +1752,7 @@ void handle_music(int Ind) {
 			case TOWN_BREE: tmus = 50; tmus_inverse = 3; break; //Bree
 			case TOWN_GONDOLIN: tmus = 51; tmus_inverse = 4; break; //Gondo
 			case TOWN_MINAS_ANOR: tmus = 52; tmus_inverse = 5; break; //Minas
-			case TOWN_LOTHLORIEN:	tmus = 53; tmus_inverse = 6; break; //Loth
+			case TOWN_LOTHLORIEN: tmus = 53; tmus_inverse = 6; break; //Loth
 			case TOWN_KHAZADDUM: tmus = 54; tmus_inverse = 7; break; //Khaz
 			}
 			else switch (town[i].type) {
@@ -1765,6 +1768,30 @@ void handle_music(int Ind) {
 			/* Sickbay hack */
 			if (p_ptr->music_monster == -3) {
 				Send_music(Ind, 80, tmus);
+				return;
+			}
+			/* Tavern hack */
+			if (p_ptr->music_monster == -4) {
+				//abuse tmus_inverse
+				if (night_surface) switch (town[i].type) {
+				default:
+				case TOWN_VANILLA: tmus_inverse = 65; break; //default town
+				case TOWN_BREE: tmus_inverse = 67; break; //Bree
+				case TOWN_GONDOLIN: tmus_inverse = 69; break; //Gondo
+				case TOWN_MINAS_ANOR: tmus_inverse = 71; break; //Minas
+				case TOWN_LOTHLORIEN: tmus_inverse = 73; break; //Loth
+				case TOWN_KHAZADDUM: tmus_inverse = 75; break; //Khaz
+				}
+				else switch (town[i].type) {
+				default:
+				case TOWN_VANILLA: tmus_inverse = 66; break; //default town
+				case TOWN_BREE: tmus_inverse = 68; break; //Bree
+				case TOWN_GONDOLIN: tmus_inverse = 70; break; //Gondo
+				case TOWN_MINAS_ANOR: tmus_inverse = 72; break; //Minas
+				case TOWN_LOTHLORIEN: tmus_inverse = 74; break; //Loth
+				case TOWN_KHAZADDUM: tmus_inverse = 76; break; //Khaz
+				}
+				Send_music(Ind, tmus_inverse, tmus);
 				return;
 			}
 
@@ -1789,18 +1816,29 @@ void handle_music(int Ind) {
 		/* Dungeon towns have their own music to bolster the player's motivation ;) */
 		if (isdungeontown(&p_ptr->wpos)) {
 			if (is_fixed_irondeepdive_town(&p_ptr->wpos, dlev)) {
-#if 0
-				Send_music(Ind, 1, 0); /* 'generic town' music instead, for a change */
-#else /* different music for static towns? */
- #if 0
-				if (dlev == 40) Send_music(Ind, 1, 0); /* Menegroth: generic town */
-				else Send_music(Ind, 49, 1); /* Nargothrond: generic town night */
- #else
-				if (dlev == 40) Send_music(Ind, 57, 1); /* Menegroth: own music, fallback to generic town */
-				else Send_music(Ind, 58, 49); /* Nargothrond: own music, fallback to generic town night */
- #endif
-#endif
-			} else Send_music(Ind, 2, 1); /* the usual music for this case */
+				if (dlev == 40) {
+					/* Tavern hack */
+					if (p_ptr->music_monster == -4) {
+						Send_music(Ind, 78, 57);
+						return;
+					}
+					Send_music(Ind, 57, 1); /* Menegroth: own music, fallback to generic town */
+				} else {
+					/* Tavern hack */
+					if (p_ptr->music_monster == -4) {
+						Send_music(Ind, 79, 58);
+						return;
+					}
+					Send_music(Ind, 58, 49); /* Nargothrond: own music, fallback to generic town night */
+				}
+			} else {
+				/* Tavern hack */
+				if (p_ptr->music_monster == -4) {
+					Send_music(Ind, 77, 2);
+					return;
+				}
+				Send_music(Ind, 2, 1); /* the usual music for this case */
+			}
 			return;
 		}
 
@@ -1903,7 +1941,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos)) {
 #endif
 		Send_sfx_ambient(Ind, SFX_AMBIENT_FIREPLACE, smooth);
-	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && 
+	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE &&
 	    p_ptr->sound_ambient != SFX_AMBIENT_SHORE && wpos->wz == 0 && (wild_info[wpos->wy][wpos->wx].type == WILD_OCEAN || wild_info[wpos->wy][wpos->wx].bled == WILD_OCEAN)) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_SHORE, smooth);
 	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && p_ptr->sound_ambient != SFX_AMBIENT_SHORE && 
