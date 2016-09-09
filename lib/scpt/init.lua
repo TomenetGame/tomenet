@@ -47,10 +47,9 @@ pern_dofile(Ind, "spells.lua")
 -- Initialize audio
 pern_dofile(Ind, "audio.lua")
 -- *** Set max values to compare on player login to determine if her/his audio packs are outdated. ***
--- This doesn't work because not all sfx are actually available in even the most recent sfx pack:
---__audio_sfx_max = getn(audio_sfx)
--- So for now  hard-coded:
-__audio_sfx_max = 119
+-- Note that not all fx/songs are neccesarily uncommented, even if they're supported, even in the official packs.
+-- Custom packs could be faster and actually implement those already. :)
+__audio_sfx_max = getn(audio_sfx)
 __audio_mus_max = getn(audio_bgm)
 
 -- Initialize tables

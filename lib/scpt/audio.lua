@@ -280,7 +280,7 @@ end
 
 -- Background Music
 audio_bgm = {
-    "generic",
+    "generic",--0
 
     "town_generic",
     "town_dungeon",
@@ -293,7 +293,7 @@ audio_bgm = {
     "Valinor",
 
     "wilderness_generic_day",
-    "wilderness_generic_night",
+    "wilderness_generic_night",--10
 
     "dungeon_generic",
     "dungeon_generic_nodeath",
@@ -306,7 +306,7 @@ audio_bgm = {
     "ThePathsoftheDead",
     "Angband",
 
-    "TheOrcCave",
+    "TheOrcCave",--20
     "MountDoom",
     "NetherRealm",
     "TheHelcaraxe",
@@ -316,7 +316,7 @@ audio_bgm = {
     "TheOldForest",
     "TheHeartoftheEarth",
     "TheMinesofMoria",
-    "CirithUngol",
+    "CirithUngol",--30
     "TheSmallWaterCave",
     "Mirkwood",
     "DeathFate",
@@ -327,7 +327,7 @@ audio_bgm = {
     "TheSacredLandofMountains",
     "TheMaze",
 
-    "boss_specialunique",
+    "boss_specialunique",--40
     "boss_dungeon",
     "boss_Nazgul",
     "boss_Sauron",
@@ -340,7 +340,7 @@ audio_bgm = {
     "event_AreanaMonsterChallenge",
 
     "town_generic_night",
-    "Bree_night",
+    "Bree_night",--50
     "Gondolin_night",
     "MinasAnor_night",
     "Lothlorien_night",
@@ -353,18 +353,19 @@ audio_bgm = {
     "Nargothrond",
 
     "title",
-    "account",
+    "account",--60
     "tomb",
 
     "event_Highlander_dungeon",
     "event_Highlander_dungeon_final",
     "event_DungeonKeeper",
     "event_DungeonKeeper_final",
+    "event_PvP_arena",
 
     "tavern_town_generic",
     "tavern_town_generic_night",
     "tavern_Bree",
-    "tavern_Bree_night",
+    "tavern_Bree_night",--70
     "tavern_Gondolin",
     "tavern_Gondolin_night",
     "tavern_MinasAnor",
@@ -374,7 +375,7 @@ audio_bgm = {
     "tavern_Khazaddum",
     "tavern_Khazaddum_night",
     "tavern_town_dungeon",
-    "tavern_Menegroth",
+    "tavern_Menegroth",--80
     "tavern_Nargothrond",
 
     "sickbay",

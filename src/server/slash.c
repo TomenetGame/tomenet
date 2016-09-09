@@ -8017,6 +8017,10 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/psfx")) { /* play specific sound */
 				int vol = 100;
+				if (!__audio_sfx_max) {
+					msg_print(Ind, "No sound effects available.");
+					return;
+				}
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /psfx <sound name> [vol]");
 					return;
@@ -8032,8 +8036,12 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 			else if (prefix(message, "/pmus")) { /* play specific music */
-				if (tk < 1) {
-					msg_print(Ind, "Usage: /pmus <music number>");
+				if (!__audio_mus_max) {
+					msg_print(Ind, "No music available.");
+					return;
+				}
+				if (tk < 1 || k < 0 || k >= __audio_mus_max) {
+					msg_format(Ind, "Usage: /pmus <music number 0..%d>", __audio_mus_max - 1);
 					return;
 				}
 				msg_format(Ind, "Playing <%d>.", k);
