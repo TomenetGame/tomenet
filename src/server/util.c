@@ -6394,6 +6394,47 @@ void note_toggle_cursed(object_type *o_ptr, bool cursed) {
 	}
 }
 
+/* Wands/staves: Add/crop 'empty' inscription. */
+void note_toggle_empty(object_type *o_ptr, bool empty) {
+	char *cn, note2[MAX_CHARS_WIDE], *cnp;
+
+	/* If no inscription, object_desc() will handle this by adding a pseudo-inscription 'empty'. */
+	if (!o_ptr->note) return;
+
+	strcpy(note2, quark_str(o_ptr->note));
+
+	if (!empty) {
+		/* remove old 'empty' inscription */
+		if ((cn = strstr(note2, "empty"))) {
+			while (note2[0] && (cn = strstr(note2, "empty"))) {
+				cnp = cn + 4;
+				if (cn > note2 && //the 'empty' does not start on the first character of note2?
+				    *(cn - 1) == '-') cn--; /* cut out leading '-' delimiter before "empty" */
+
+				/* strip formerly trailing delimiter if it'd end up on first position in the new inscription */
+				if (cn == note2 && *(cnp + 1) == '-') cnp++;
+
+				do {
+					cnp++;
+					*cn = *cnp;
+					cn++;
+				} while (*cnp);
+			}
+		}
+		o_ptr->note = quark_add(note2);
+		return;
+	}
+
+	/* inscription already exists? */
+	if (strstr(note2, "empty")) return;
+	/* append the new empty-state indicator */
+	if (note2[0]) strcat(note2, "-");
+	if (empty) {
+		strcat(note2, "empty");
+		o_ptr->note = quark_add(note2);
+	}
+}
+
 /* Convert certain characters into HTML entities
 * These characters are <, >, & and "
 * NOTE: The returned string is dynamically allocated

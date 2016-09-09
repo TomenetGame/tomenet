@@ -1240,6 +1240,7 @@ void object_known(object_type *o_ptr) {
 
 	/* Clear the "Empty" info */
 	o_ptr->ident &= ~ID_EMPTY;
+	note_toggle_empty(o_ptr, FALSE);
 
 	/* Now we know about the item */
 	o_ptr->ident |= (ID_KNOWN | ID_SENSED_ONCE);

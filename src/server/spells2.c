@@ -1844,6 +1844,7 @@ bool lose_all_info(int Ind) {
 
 		/* Hack -- Clear the "empty" flag */
 		o_ptr->ident &= ~ID_EMPTY;
+		note_toggle_empty(o_ptr, FALSE);
 
 		/* Hack -- Clear the "known" flag */
 		o_ptr->ident &= ~ID_KNOWN;
@@ -4133,6 +4134,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 				msg_print(Ind, "There is a static discharge.");
 				o_ptr->pval = 0;
 				o_ptr->ident |= ID_EMPTY;
+				note_toggle_empty(o_ptr, TRUE);
 			} else {
 				/* Dangerous Hack -- Destroy the item */
 				msg_print(Ind, "There is a bright flash of light.");
@@ -4159,6 +4161,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 			msg_print(Ind, "There is a static discharge.");
 			o_ptr->pval = 0;
 			o_ptr->ident |= ID_EMPTY;
+			note_toggle_empty(o_ptr, TRUE);
 		}
 
 		/* Recharge */
@@ -4203,6 +4206,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 			/* Hack -- we no longer think the item is empty */
 			o_ptr->ident &= ~ID_EMPTY;
+			note_toggle_empty(o_ptr, FALSE);
 		}
 	}
 
