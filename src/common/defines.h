@@ -1238,6 +1238,7 @@
 #define RI_BAD_LUCK_BAT		1114
 #define RI_TARGET_DUMMY2	1126	/* snow-covered version */
 #define RI_PANDA		1135
+#define RI_ROBIN		1142
 #define RI_TARGET_DUMMYA1	1144	/* normal armoured version */
 #define RI_TARGET_DUMMYA2	1145	/* snow-covered armoured version */
 #define RI_HORNED_REAPER_GE	1146	/* low-power Horned Reaper for 'Dungeon Keeper' event */

@@ -9581,8 +9581,22 @@ void process_monsters(void) {
 		may_move_Ind = 0;
 		may_move_dis = 9999;
 
+#if 1
+		/* Hack, Sandman's robin */
+		if (m_ptr->r_idx == RI_ROBIN)
+			for (pl = 1; pl <= NumPlayers; pl++) {
+				p_ptr = Players[pl];
+				//if (!strcmp(p_ptr->accountname, "The_sandman")) { //you can make it!~
+				if (!strcmp(p_ptr->name, "Test")) {
+					closest = pl;
+					dis_to_closest = distance(p_ptr->py, p_ptr->px, fy, fx); //probably not needed
+					break;
+				}
+			}
+		if (closest == -1)
+#endif
 		/* Find the closest player */
-		for (pl = 1, n = NumPlayers; pl < n + 1; pl++)  {
+		for (pl = 1, n = NumPlayers; pl <= n; pl++)  {
 			p_ptr = _Players[pl];
 			reveal_cloaking = spot_cloaking = FALSE;
 
@@ -9768,7 +9782,7 @@ void process_monsters(void) {
 			}
 			else if (spot_cloaking) {
 				monster_desc(pl, m_name, i, 0);
-			    	msg_format(pl, "\377o%^s spots your actions!", m_name);
+				msg_format(pl, "\377o%^s spots your actions!", m_name);
 				break_cloaking(pl, 0); /* monster reveals our presence */
 			}
 
