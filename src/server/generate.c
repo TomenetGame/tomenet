@@ -21,6 +21,11 @@
 /* Avoid generating doors that are standing around in weird/pointless locations (eg without walls attached) -- todo: fix/complete */
 //#define ENABLE_DOOR_CHECK
 
+/* Don't generate non-vault rooms over already generated vault grids, partially destroying them.
+   That would not only create 'open' vaults but also leave CAVE_STCK no-tele grids inside the now
+   plain looking rooms if there was previously part of a no-teleport vault generated at its position. */
+#define UNBROKEN_VAULTS //todo: implement =P
+
 static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 static void town_gen_hack(struct worldpos *wpos);
 #ifdef ENABLE_DOOR_CHECK
