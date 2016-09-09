@@ -6474,7 +6474,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Speed Monster (Ignore "dam") */
 		case GF_OLD_SPEED:
 			if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->mspeed >= 150) {
-				note = "is unaffected";
+				note = " is unaffected";
 			} else {
 				if (seen) obvious = TRUE;
 
