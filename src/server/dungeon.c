@@ -6439,7 +6439,7 @@ void process_player_change_wpos(int Ind) {
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 	char o_name_short[ONAME_LEN];
-	bool smooth_ambient = FALSE, travel_ambient = FALSE;
+	bool smooth_ambient = FALSE, travel_ambient = FALSE, sickbay = FALSE;
 
 	/* IDDC specialties */
 	if (in_irondeepdive(&p_ptr->wpos_old)) {
@@ -6782,11 +6782,28 @@ void process_player_change_wpos(int Ind) {
 		}
 		break;
 	case LEVEL_TO_TEMPLE:
-		/* Try to find a temple */
+		/* Try to find a temple's sickbay area */
 		for (y = 0; y < MAX_HGT; y++) {
 			for (x = 0; x < MAX_WID; x++) {
 				cave_type* c_ptr = &zcave[y][x];
-#if 0 /* old method: actually find the temple shop door */
+
+				if (c_ptr->feat == FEAT_SICKBAY_DOOR) {
+					/* Found the temple's sickbay area */
+					startx = x;
+					starty = y;
+					sickbay = TRUE;
+					break;
+				}
+			}
+			if (startx) break;
+		}
+
+		/* Try to find a temple instead */
+		if (!startx)
+		for (y = 0; y < MAX_HGT; y++) {
+			for (x = 0; x < MAX_WID; x++) {
+				cave_type* c_ptr = &zcave[y][x];
+
 				if (c_ptr->feat == FEAT_SHOP) {
 					struct c_special *cs_ptr = GetCS(c_ptr, CS_SHOP);
 					if (cs_ptr) {
@@ -6799,20 +6816,12 @@ void process_player_change_wpos(int Ind) {
 						}
 					}
 				}
-#else /* new: find the sickbay door instead and place him into the sickbay */
-				if (c_ptr->feat == FEAT_SICKBAY_DOOR) {
-					/* Found the temple's sickbay area */
-					startx = x;
-					starty = y;
-					break;
-				}
-#endif
 			}
 			if (startx) break;
 		}
 
+		/* Go with random coordinates in case there's no temple */
 		if (!startx) {
-			/* Random coordinates in case there's no temple */
 			starty = level_rand_y(wpos);
 			startx = level_rand_x(wpos);
 		}
@@ -7239,7 +7248,8 @@ void process_player_change_wpos(int Ind) {
 
 #ifdef USE_SOUND_2010
 	/* clear boss/floor-specific music */
-	p_ptr->music_monster = -1;
+	if (sickbay) p_ptr->music_monster = -3;
+	else p_ptr->music_monster = -1;
 	handle_music(Ind);
 	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, smooth_ambient);
 #endif

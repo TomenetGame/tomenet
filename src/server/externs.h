@@ -2348,7 +2348,7 @@ extern int artifact_reset;
 
 /* variables for controlling global events (automated Highlander Tournament) - C. Blue */
 extern global_event_type global_event[MAX_GLOBAL_EVENTS];
-extern int sector00separation, sector00downstairs, sector00music, sector00wall, ge_special_sector; /* see variable.c */
+extern int sector00separation, sector00downstairs, sector00music, sector00musicalt, sector00wall, ge_special_sector; /* see variable.c */
 extern u32b sector00flags1, sector00flags2;
 extern u32b ge_contender_buffer_ID[MAX_CONTENDER_BUFFERS];
 extern int ge_contender_buffer_deed[MAX_CONTENDER_BUFFERS];

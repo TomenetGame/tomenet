@@ -355,6 +355,30 @@ audio_bgm = {
     "title",
     "account",
     "tomb",
+
+    "event_Highlander_dungeon",
+    "event_Highlander_dungeon_final",
+    "event_DungeonKeeper",
+    "event_DungeonKeeper_final",
+
+    "tavern_town_generic",
+    "tavern_town_generic_night",
+    "tavern_Bree",
+    "tavern_Bree_night",
+    "tavern_Gondolin",
+    "tavern_Gondolin_night",
+    "tavern_MinasAnor",
+    "tavern_MinasAnor_night",
+    "tavern_Lothlorien",
+    "tavern_Lothlorien_night",
+    "tavern_Khazaddum",
+    "tavern_Khazaddum_night",
+    "tavern_town_dungeon",
+    "tavern_Menegroth",
+    "tavern_Nargothrond",
+
+    "sickbay",
+    "winner",
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end

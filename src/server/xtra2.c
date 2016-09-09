@@ -5819,6 +5819,11 @@ if (cfg.unikill_format) {
 					q_ptr->redraw |= (PR_TITLE);
 					clockin(i, 9);
 
+#ifdef USE_SOUND_2010
+					/* Play 'winner' music */
+					handle_music(i);
+#endif
+
 					/* Congratulations */
 					msg_print(i, "\377G*** CONGRATULATIONS ***");
 					if (q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {

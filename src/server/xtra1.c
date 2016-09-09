@@ -7821,6 +7821,9 @@ static void process_global_event(int ge_id) {
 				s_printf("EVENT_LAYOUT: Dungeon already in place.\n");
 			}
 
+			sector00music = 61;
+			sector00musicalt = 0;
+
 			/* teleport the participants into the dungeon */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
@@ -7891,6 +7894,9 @@ static void process_global_event(int ge_id) {
 			}
 			break;
 		case 2: /* final exp phase after the warning has been issued - end prematurely if needed (see above) */
+			sector00music = 62;
+			sector00musicalt = 61;
+
 			n = 0;
 			k = 0;
 			for (i = 1; i <= NumPlayers; i++)
@@ -7898,6 +7904,7 @@ static void process_global_event(int ge_id) {
 					n++;
 					j = i;
 					if (!Players[i]->wpos.wz) k++;
+					handle_music(i);
 				}
 
 			if (!n) ge->state[0] = 255; /* double kill or something? ew. */
@@ -7913,6 +7920,7 @@ static void process_global_event(int ge_id) {
 			ge->state[2] = turn - ge->start_turn; /* this keeps it /gefforward friendly */
 			ge->state[3] = 0;
 			sector00music = 47; /* death match theme */
+			sector00musicalt = 0;
 
 			/* got a staircase to remove? */
 			if (ge->extra[5]) {
@@ -8250,7 +8258,8 @@ static void process_global_event(int ge_id) {
 			ge->state[1] = 0;
 			ge->cleanup = 1;
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
-			sector00music = 46; /* terrifying (notele) music */
+			sector00music = 63;
+			sector00musicalt = 46; /* terrifying (notele) music */
 			sector00flags1 = LF1_NO_MAGIC_MAP;
 			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED | LF2_NO_RES_HEAL | LF2_FAIR_TERRAIN_DAM | LF2_INDOORS;
 			sector00wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
@@ -8522,7 +8531,8 @@ static void process_global_event(int ge_id) {
 			/* timeout not yet reached? proceed normally */
 			if (elapsed - ge->announcement_time < 300) break;//start after 300s
 
-			sector00music = 47; /* death match music */
+			sector00music = 64;
+			sector00musicalt = 47; /* death match music */
 			for (i = 1; i <= NumPlayers; i++)
 				handle_music(i);
 

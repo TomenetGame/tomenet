@@ -5897,7 +5897,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		    && !(p_ptr->admin_dm && !(q_ptr->admin_dm || q_ptr->admin_wiz))) /* dm shouldn't switch with non-dms ever */
 #endif
 		{
-/*		    	if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
+/*			if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
 			/* switch places only if BOTH have WRAITHFORM or NONE has it, well or if target is a DM */
 			if ((!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players into trees to kill them */
 			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
@@ -6010,12 +6010,12 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						msg_format(Ind2, "\377r%s tries to tackle you", p_ptr->name);
 						msg_format(Ind, "\377rYou fail to tackle %s", q_ptr->name);
 					}
-				}else {
+				} else {
 					if (p_ptr->play_vis[Ind2])
 						msg_format(Ind, "You bump into %s.", q_ptr->name);
 					else
 						msg_print(Ind, "You bump into it.");
-			
+
 					/* Hack if invisible */
 					if (q_ptr->play_vis[Ind])
 						msg_format(Ind2, "%s bumps into you.", p_ptr->name);
@@ -6371,6 +6371,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		handle_ambient_sfx(Ind, &zcave[y][x], &p_ptr->wpos, TRUE);
 #endif
 
+		/* Handle entering/leaving no-teleport area */
 		if (zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
 			msg_print(Ind, "\377DThe air in here feels very still.");
 			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
@@ -6399,6 +6400,16 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			/* Automatically re-enable permanent wraith form (set_tim_wraith) */
 			p_ptr->update |= PU_BONUS;
 		}
+
+#ifdef USE_SOUND_2010
+		/* Handle leaving a sickbay area */
+		if (p_ptr->music_monster == -3 && zcave[y][x].feat != FEAT_PROTECTED && zcave[y][x].feat != FEAT_SICKBAY_DOOR)
+			handle_music(Ind);
+
+		/* Handle entering/leaving tarverns */
+		
+#endif
+
 		/* Update the player indices */
 		zcave[oy][ox].m_idx = 0;
 		zcave[y][x].m_idx = 0 - Ind;

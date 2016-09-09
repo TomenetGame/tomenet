@@ -1691,11 +1691,12 @@ void handle_music(int Ind) {
 		p_ptr->music_monster = -2;
 		Send_music(Ind, 45, 14);
 		return;
-	} else if ((i != -1) && (l_ptr->flags1 & LF1_NO_GHOST)) {
+	} else if ((i != -1) && (l_ptr->flags1 & LF1_NO_GHOST)) { /* Assuming that only Morgoth's floor has LF1_NO_GHOST */
 		//Morgoth
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 44, 14);
+		if (p_ptr->total_winner) Send_music(Ind, 81, 44);
+		else Send_music(Ind, 44, 14);
 		return;
 	}
 
@@ -1719,7 +1720,7 @@ void handle_music(int Ind) {
 	} else if (in_sector00(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, sector00music, 0);
+		Send_music(Ind, sector00music, sector00musicalt);
 		return;
 	}
 
@@ -1759,6 +1760,12 @@ void handle_music(int Ind) {
 			case TOWN_MINAS_ANOR: tmus = 5; tmus_inverse = 52; break; //Minas
 			case TOWN_LOTHLORIEN: tmus = 6; tmus_inverse = 53; break; //Loth
 			case TOWN_KHAZADDUM: tmus = 7; tmus_inverse = 54; break; //Khaz
+			}
+
+			/* Sickbay hack */
+			if (p_ptr->music_monster == -3) {
+				Send_music(Ind, 80, tmus);
+				return;
 			}
 
 			/* now the specialty: If we're coming from elsewhere,
