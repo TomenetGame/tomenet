@@ -19073,7 +19073,7 @@ SOLUTION:   If you're on Windows and using a game version greater than 4.6.1a,
             C:\users\yourname\
             The drive letter and path could vary depending on your Windows
             installation, but this is the normal location in almost all cases.
-            (The reason the game does this is that Windows starting at version 7
-            will severly limit access to the Program Files folder.)
+            (The reason the game does this is that Windows starting at version
+            7 will severly limit access to the Program Files folder.)
 
 ==============================================================================
