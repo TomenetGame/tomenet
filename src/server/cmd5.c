@@ -502,7 +502,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 
 	/* Failed spell */
 	if (rand_int(100) < chance) {
-		msg_print(Ind, "You failed to use the power!");
+		msg_format(Ind, "\377%cYou failed to use the power!", COLOUR_MD_FAIL);
 	/* Clients > 4.4.5.10 can already send a dir != 0 here, for directed spells */
 	/* Clients >= 4.4.6.2 can also use '+' (dir==11) fallback to manual mode here: */
 	} else if (dir != 0 && dir != 11) {

@@ -716,7 +716,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 			if (flush_failure) then flush() end
 ]]
 
-			msg_print(i, "You failed to get the spell "..spell(s).name.." off!")
+			msg_print(i, "\255yYou failed to get the spell "..spell(s).name.." off!")
 			for index, sch in __spell_school[s] do
 				if __schools[sch].fail then
 					__schools[sch].fail(spell_chance(i, s))

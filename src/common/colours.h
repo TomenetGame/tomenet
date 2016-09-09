@@ -37,8 +37,10 @@
 #define COLOUR_IC_NEAR         'w'
 #endif
 
-/* MD feedback messages */ 
-#define COLOUR_MD_FAIL		'y'
+/* Magic feedback messages */
+#define COLOUR_MD_FAIL		'y'	/* Magic devices */
+#define COLOUR_MIMIC_FAIL	'y'	/* Mimic spells */
+//#define COLOUR_SPELL_FAIL	'y'	/* Normal spells -- currently hardcoded in s_aux.lua instead */
 
 /* Dodging messages */
 #define COLOUR_DODGE_MON       'y'     /* <- currently unused (!) */
