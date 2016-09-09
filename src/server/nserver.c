@@ -2937,16 +2937,9 @@ static int Handle_login(int ind) {
 		msg_print(NumPlayers, "\374\377D --- Your client is NOT the latest version, it's not 'outdated' though. ---");
 	}
 #endif
-#if 0
-	if (p_ptr->audio_mus == 49) /* problem: cannot take into account if the player purposefully removed some songs */
-		msg_print(NumPlayers, "\374\377D --- Your music pack is outdated. ---");
-	else if (p_ptr->audio_mus == 55 || p_ptr->audio_mus == 56) /* problem: cannot take into account if the player purposefully removed some songs */
-		msg_print(NumPlayers, "\374\377D --- Your music pack is outdated. ---");
-#else
 	/* In 4.5.7 we can now distinguish (client-side) between disabled and unavailable audio */
 	if (p_ptr->audio_sfx > 3 && p_ptr->audio_sfx < __audio_sfx_max) msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
-	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 5) msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---"); //-5 for 5 optional songs in 4.6.2 (user's choic)
-#endif
+	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 5 - 21) msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---"); //-5 for 5 optional songs in 4.6.2 (user's choic)
 
 	/* Admin messages */
 	if (p_ptr->admin_dm)
