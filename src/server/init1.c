@@ -8671,6 +8671,7 @@ struct dungeon_grid {
 	bool	    defined;
 };
 static bool meta_sleep = TRUE;
+static int meta_width = 0, meta_height = 0;
 
 static dungeon_grid letter[255];
 
@@ -9307,6 +9308,15 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		}
 #endif
 	}
+	else if (buf[0] == 'S') { /* S:<maxwidth>:<maxheight> */
+		int num;
+
+		if ((num = tokenize(buf + 2, 2, zz, ':', '/')) > 0) {
+			meta_width = atoi(zz[0]);
+			meta_height = atoi(zz[1]);
+		}
+		return (0);
+	}
 
 	/* Failure */
 	return (1);
@@ -9565,7 +9575,7 @@ static cptr process_dungeon_file_expr(char **sp, char *fp) {
 errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int ymax, int xmax, bool init) {
 	FILE *fp;
 	char buf[1024];
-	int num = -1, i;
+	int num = -1, i, x, y;
 	errr err = 0;
 	bool bypass = FALSE;
 
@@ -9586,6 +9596,9 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 			letter[i].by = 0;
 		}
 	}
+	/* Default to no maximum width/height */
+	meta_width = 0;
+	meta_height = 0;
 
 	/* Build the filename */
 //	path_build(buf, 1024, ANGBAND_DIR_EDIT, name);
@@ -9664,6 +9677,15 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 		if (err) break;
 	}
 
+	/* Fill rest of map with perma clear walls if specific size was given */
+	if (meta_width)
+		for (x = meta_width; x < MAX_WID; x++)
+			for (y = 0; y < MAX_HGT; y++)
+				zcave[y][x].feat = FEAT_PERM_CLEAR;
+	if (meta_height)
+		for (y = meta_height; y < MAX_HGT; y++)
+			for (x = 0; x < MAX_WID; x++)
+				zcave[y][x].feat = FEAT_PERM_CLEAR;
 
 	/* Error */
 	if (err) {
