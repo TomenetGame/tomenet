@@ -8015,24 +8015,23 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type
 #endif	/* 0 */
 
 	/* Build a room */
-	switch (typ)
-	{
-		/* Build an appropriate room */
-		case 12: build_type12(wpos, y, x, p_ptr); break;
-		case 11: build_type11(wpos, y, x, p_ptr); break;
-		case 10: build_type10(wpos, y, x, p_ptr); break;
-		case  9: build_type9 (wpos, y, x, p_ptr); break;
-		case  8: build_type8 (wpos, y, x, p_ptr); break;
-		case  7: build_type7 (wpos, y, x, p_ptr); break;
-		case  6: build_type6 (wpos, y, x, p_ptr); break;
-		case  5: build_type5 (wpos, y, x, p_ptr); break;
-		case  4: build_type4 (wpos, y, x, p_ptr); break;
-		case  3: build_type3 (wpos, y, x, p_ptr); break;
-		case  2: build_type2 (wpos, y, x, p_ptr); break;
-		case  1: build_type1 (wpos, y, x, p_ptr); break;
+	switch (typ) {
+	/* Build an appropriate room */
+	case 12: build_type12(wpos, y, x, p_ptr); break;
+	case 11: build_type11(wpos, y, x, p_ptr); break;
+	case 10: build_type10(wpos, y, x, p_ptr); break;
+	case  9: build_type9 (wpos, y, x, p_ptr); break;
+	case  8: build_type8 (wpos, y, x, p_ptr); break;
+	case  7: build_type7 (wpos, y, x, p_ptr); break;
+	case  6: build_type6 (wpos, y, x, p_ptr); break;
+	case  5: build_type5 (wpos, y, x, p_ptr); break;
+	case  4: build_type4 (wpos, y, x, p_ptr); break;
+	case  3: build_type3 (wpos, y, x, p_ptr); break;
+	case  2: build_type2 (wpos, y, x, p_ptr); break;
+	case  1: build_type1 (wpos, y, x, p_ptr); break;
 
-		/* Paranoia */
-		default: return (FALSE);
+	/* Paranoia */
+	default: return (FALSE);
 	}
 
 #if 0
