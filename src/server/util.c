@@ -1695,7 +1695,7 @@ void handle_music(int Ind) {
 		//Morgoth
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		if (p_ptr->total_winner) Send_music(Ind, 83, 44);
+		if (p_ptr->total_winner) Send_music(Ind, 86, 44);
 		else Send_music(Ind, 44, 14);
 		return;
 	}
@@ -1746,7 +1746,7 @@ void handle_music(int Ind) {
 		if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
 			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx;
 
-			if (night_surface) switch (town[i].type) {
+			if (night_surface) switch (town[i].type) { //nightly music
 			default:
 			case TOWN_VANILLA: tmus = 49; tmus_inverse = 1; break; //default town
 			case TOWN_BREE: tmus = 50; tmus_inverse = 3; break; //Bree
@@ -1755,7 +1755,7 @@ void handle_music(int Ind) {
 			case TOWN_LOTHLORIEN: tmus = 53; tmus_inverse = 6; break; //Loth
 			case TOWN_KHAZADDUM: tmus = 54; tmus_inverse = 7; break; //Khaz
 			}
-			else switch (town[i].type) {
+			else switch (town[i].type) { //daily music
 			default:
 			case TOWN_VANILLA: tmus = 1; tmus_inverse = 49; break; //default town
 			case TOWN_BREE: tmus = 3; tmus_inverse = 50; break; //Bree
@@ -1765,9 +1765,32 @@ void handle_music(int Ind) {
 			case TOWN_KHAZADDUM: tmus = 7; tmus_inverse = 54; break; //Khaz
 			}
 
+			/* Seasonal music, overrides the music of the place (usually Bree) where it mainly takes place */
+			if (season_halloween) {
+				/* Designated place: Bree */
+				if (istown(&p_ptr->wpos) && (tmus == 1 || tmus_inverse == 1)) {
+					Send_music(Ind, 82, tmus);
+					return;
+				}
+			}
+			else if (season_xmas) {
+				/* Designated place: Bree */
+				if (istown(&p_ptr->wpos) && (tmus == 1 || tmus_inverse == 1)) {
+					Send_music(Ind, 83, tmus);
+					return;
+				}
+			}
+			else if (season_newyearseve) {
+				/* Designated place: Bree */
+				if (istown(&p_ptr->wpos) && (tmus == 1 || tmus_inverse == 1)) {
+					Send_music(Ind, 84, tmus);
+					return;
+				}
+			}
+
 			/* Sickbay hack */
 			if (p_ptr->music_monster == -3) {
-				Send_music(Ind, 82, tmus);
+				Send_music(Ind, 85, tmus);
 				return;
 			}
 			/* Tavern hack */
@@ -1803,6 +1826,7 @@ void handle_music(int Ind) {
 			    /* don't switch from town area music to wild music on day/night change: */
 			    || p_ptr->music_current == tmus_inverse)
 				Send_music(Ind, tmus, night_surface ? tmus_inverse : 1);
+			/* Wilderness music */
 			else if (night_surface) Send_music(Ind, 10, 0);
 			else Send_music(Ind, 9, 0);
 			return;

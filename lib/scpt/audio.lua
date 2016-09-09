@@ -378,6 +378,10 @@ audio_bgm = {
     "tavern_Menegroth",--80
     "tavern_Nargothrond",
 
+    "season_halloween",
+    "season_xmas",
+    "season_newyearseve",
+
     "sickbay",
     "winner",
 }
