@@ -1927,22 +1927,35 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 	if (newowner != -1) {
 		/* 1: OT_PLAYER */
 		if (args[1] == '1') {
+			player_type *p2_ptr;
+#ifdef USE_MANG_HOUSE
+			house_type *h_ptr = &houses[h_idx];
+			int sy, sx, ey, ex;
+
+			if (h_ptr->flags & HF_RECT) {
+				sy = h_ptr->y + 1;
+				sx = h_ptr->x + 1;
+				ey = h_ptr->y + h_ptr->coords.rect.height - 1;
+				ex = h_ptr->x + h_ptr->coords.rect.width - 1;
+			}
+#endif
 			for (i = 1; i <= NumPlayers; i++) {     /* in game? maybe long winded */
-				if (Players[i]->id == newowner) {
+				p2_ptr = Players[i];
+				if (p2_ptr->id == newowner) {
 					//if (dna->owner_type == OT_PLAYER) p_ptr->houses_owned--;
-					Players[i]->houses_owned++;
+					p2_ptr->houses_owned++;
 					if (houses[h_idx].flags & HF_MOAT) {
 						//if (dna->owner_type == OT_PLAYER) p_ptr->castles_owned--;
-						Players[i]->castles_owned++;
+						p2_ptr->castles_owned++;
 					}
 
 					//ACC_HOUSE_LIMIT
-					acc_houses2 = acc_get_houses(Players[i]->accountname);
+					acc_houses2 = acc_get_houses(p2_ptr->accountname);
 					acc_houses2++;
-					acc_set_houses(Players[i]->accountname, acc_houses2);
+					acc_set_houses(p2_ptr->accountname, acc_houses2);
 					clockin(i, 8);
 
-					dna->creator = Players[i]->dna;
+					dna->creator = p2_ptr->dna;
 					dna->owner = newowner;
 					dna->owner_type = args[1] - '0';
 					dna->a_flags = ACF_NONE;
@@ -1959,6 +1972,23 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 
 					return(TRUE);
 				}
+#ifdef USE_MANG_HOUSE
+				else {
+					/* Teleport the former owner out of the house if he's still inside,
+					   so he doesn't get stuck. */
+					if (h_ptr->flags & HF_RECT) {
+						if (inarea(&p2_ptr->wpos, &h_ptr->wpos) &&
+						    p2_ptr->py >= sy && p2_ptr->py <= ey &&
+						    p2_ptr->px >= sx && p2_ptr->px <= ex)
+							teleport_player_force(i, 1);
+					} else {
+						//fill_house(h_ptr, FILL_CLEAR, NULL);
+						/* Polygonal house */
+
+						//todo: teleport any players inside out */
+					}
+				}
+#endif
 			}
 			//hard paranoia: undo!
 			p_ptr->houses_owned++;
