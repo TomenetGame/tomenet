@@ -697,8 +697,7 @@ void wild_add_monster(struct worldpos *wpos) {
 
 /* chooses a clear building location, possibly specified by xcen, ycen, and "reserves" it so
  * nothing else can choose any of its squares for building again */
-static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *x2, int *y2, int xlen, int ylen, int xcen, int ycen)
-{
+static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *x2, int *y2, int xlen, int ylen, int xcen, int ycen) {
 	int x,y, attempts = 0, plot_clear;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
@@ -790,8 +789,7 @@ static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *
    food or not will not effect the final state it is in.
 */
 
-static void wild_add_garden(struct worldpos *wpos, int x, int y)
-{
+static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 	int x1, y1, x2, y2, type, xlen, ylen;
 #ifdef DEVEL_TOWN_COMPATIBILITY
 	int attempts = 0;
@@ -920,8 +918,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y)
 }
 
 
-static bool wild_monst_aux_invaders(int r_idx)
-{
+static bool wild_monst_aux_invaders(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	if(r_ptr->flags7 & RF7_AQUATIC) return FALSE;
@@ -935,8 +932,7 @@ static bool wild_monst_aux_invaders(int r_idx)
 	return FALSE;
 }
 
-static bool wild_monst_aux_home_owner(int r_idx)
-{
+static bool wild_monst_aux_home_owner(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* not aquatic */
@@ -948,22 +944,20 @@ static bool wild_monst_aux_home_owner(int r_idx)
 	return FALSE;
 }
 
-static int wild_obj_aux_bones(int k_idx, u32b resf)
-{
+static int wild_obj_aux_bones(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
 
 	/* paranoia */
 	if (k_idx < 0) return 0;
 
-	if (k_ptr->tval == TV_SKELETON) return 100;
+	if (k_ptr->tval == TV_SKELETON) return 1000;
 
 	return 0;
 }
 
 /* make a dwelling (building in the wilderness) 'interesting'.
 */
-static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2, int type)
-{
+static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2, int type) {
 	int x,y, cash, num_food, num_objects, num_bones, trys, r_idx, k_idx, food_sval;
 	bool inhabited, at_home, taken_over;
 	object_type forge;
@@ -1169,8 +1163,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 /* check if a location is suitable for placing a door	- Jir - */
 /* TODO: check for houses built *after* door creation */
 #ifdef __DISABLE_HOUSEBOOST
-static bool dwelling_check_entrance(worldpos *wpos, int y, int x)
-{
+static bool dwelling_check_entrance(worldpos *wpos, int y, int x) {
 	int i;
 	cave_type *c_ptr;
 	cave_type **zcave;

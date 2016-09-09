@@ -857,7 +857,7 @@ errr get_obj_num_prep(u32b resf) {
 		/* Call the hook and adjust the probability */
 		if (hook) {
 			adj = (*hook)(k_idx, resf);
-			p = adj * p / 100;
+			p = (adj * p) / 1000;
 		}
 
 #if FORCED_DROPS == 1 /* way 1/2 */
@@ -1029,7 +1029,7 @@ errr get_obj_num_prep_tval(int tval, u32b resf) {
 		/* Call the hook and adjust the probability */
 		if (hook) {
 			adj = (*hook)(k_idx, resf);
-			p = adj * p / 100;
+			p = (adj * p) / 1000;
 		}
 
 		if (p && (resf & RESF_STOREFLAT)) p = 100;
@@ -6495,6 +6495,7 @@ static int which_theme(int tval) {
 
 /*
  * Determine if an object must not be generated.
+ * Note: Returns PERMILLE.
  */
 int kind_is_legal_special = -1;
 int kind_is_legal(int k_idx, u32b resf) {
@@ -6508,10 +6509,10 @@ int kind_is_legal(int k_idx, u32b resf) {
 	if ((kind_is_legal_special != -1) && (kind_is_legal_special != k_ptr->tval)) p = 0;
 
 	/* If legal store item and 'flat', make it equal to all other items */
-	if (p && (resf & RESF_STOREFLAT)) p = 100;
+	if (p && (resf & RESF_STOREFLAT)) p = 1000;
 
 	/* Return the percentage */
-	return p;
+	return p * 10;
 }
 
 
@@ -6520,10 +6521,16 @@ int kind_is_legal(int k_idx, u32b resf) {
 /*
  * Hack -- determine if a template is "good"
  *   ugh, this is pretty bad hard-coding, and probably not even needed anymore?
- *   note: Removing the speed-ring hardcode will probably lower their drop rate from wyrms and other good-droppers!
+ *   Note: Removing the speed-ring hardcode will probably lower their drop rate from wyrms and other good-droppers!
+ *   Note: Returns PERMILLE.
  */
 static int kind_is_good(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
+	int tc_p = kind_is_legal(k_idx, resf);
+
+	/* DROP_GOOD also obeys the monster's treasure class
+	   (we basically just need its kind_is_theme() call) */
+	if (!tc_p) return 0;
 
 	/* Analyze the item type */
 	switch (k_ptr->tval) {
@@ -6538,7 +6545,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_HELM:
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return 0;
-		return 100;
+		return (100 * tc_p) / 100;
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -6550,19 +6557,19 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_BOOMERANG:
 		if (k_ptr->to_h < 0) return 0;
 		if (k_ptr->to_d < 0) return 0;
-		return 100;
+		return (100 * tc_p) / 100;
 
 	/* Ammo -- Arrows/Bolts are good */
 	case TV_BOLT:
 	case TV_ARROW:
-	case TV_SHOT:	/* are Shots bad? */
+	case TV_SHOT:
 		if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
 	case TV_MSTAFF:
-		return 100;
+		return (100 * tc_p) / 100;
 
 	/* Trap kits are good now, since weapons are, too. */
 	case TV_TRAPKIT:
-		return 25;
+		return (25 * tc_p) / 100;
 
 	/* Rings -- Rings of Speed are good */
 	case TV_RING:
@@ -6591,7 +6598,17 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_RING_RES_CHAOS:
 		case SV_RING_INVIS:
 #endif
-			return 35;
+			return (35 * tc_p) / 100;
+#if 1 /* 4.6.2; lesser rings, but still ok for when we're matching monster themes (kind_is_legal() call above): */
+		case SV_RING_RESIST_POIS:
+		case SV_RING_RES_BLINDNESS:
+		case SV_RING_LEVITATION:
+		case SV_RING_FLAMES:
+		case SV_RING_ICE:
+		case SV_RING_ACID:
+		case SV_RING_ELEC:
+			return (15 * tc_p) / 100;
+#endif
 		}
 		return 0;
 
@@ -6607,7 +6624,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_LITE_PALANTIR:
 		case SV_ANCHOR_SPACETIME:
 		case SV_STONE_LORE:
-			return 50;
+			return (50 * tc_p) / 100;
 		}
 		return 0;
 
@@ -6635,7 +6652,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_AMULET_SSHARD:
 		case SV_AMULET_SPEED:
 		case SV_AMULET_TERKEN:
-			return 25;
+			return (25 * tc_p) / 100;
 		}
 		return 0;
 
@@ -6653,28 +6670,28 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_STAFF_EARTHQUAKES:
 		case SV_STAFF_DESTRUCTION:
 		case SV_STAFF_STAR_IDENTIFY:
-			return 13;
+			return (13 * tc_p) / 100;
 		}
 		return 0;
 	case TV_WAND:
 		switch (k_ptr->sval) {
-		case SV_WAND_DRAIN_LIFE:
 		case SV_WAND_ACID_BOLT:
 		case SV_WAND_FIRE_BOLT:
 		case SV_WAND_COLD_BOLT:
+		case SV_WAND_ELEC_BOLT:
 		case SV_WAND_ACID_BALL:
 		case SV_WAND_ELEC_BALL:
 		case SV_WAND_COLD_BALL:
 		case SV_WAND_FIRE_BALL:
+		case SV_WAND_DRAIN_LIFE:
 		case SV_WAND_ANNIHILATION:
 		case SV_WAND_DRAGON_FIRE:
 		case SV_WAND_DRAGON_COLD:
 		case SV_WAND_DRAGON_BREATH:
 		case SV_WAND_ROCKETS:
-		case SV_WAND_ELEC_BOLT:
 		case SV_WAND_TELEPORT_AWAY:
 		//case SV_WAND_WALL_CREATION:
-			return 13;
+			return (13 * tc_p) / 100;
 		}
 		return 0;
 	case TV_ROD:
@@ -6699,19 +6716,30 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_ROD_COLD_BALL:
 		case SV_ROD_FIRE_BALL:
 		case SV_ROD_HAVOC:
-			return 5;
+			return (5 * tc_p) / 100;
 		}
 		return 0;
+	default:
+		/* Specialty! Used to be 0, but now that we're apparently
+		   matching kind_is_theme(), any item tval left over here must
+		   be possible without problems! */
+		return 1000;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 #endif
 
+#if 0
 	/* Assume not good */
 	return 0;
+#else
+	/* Assume not *that* good */
+	return 10;
+#endif
 }
 
 /* Variant of kind_is_good() that includes trap kits,
-   specifically made for create_reward(). */
+   specifically made for create_reward().
+   Note: Returns PERMILLE. */
 static int kind_is_good_reward(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
 
@@ -6728,7 +6756,7 @@ static int kind_is_good_reward(int k_idx, u32b resf) {
 	case TV_HELM:
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return 0;
-		return 100;
+		return 1000;
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -6740,7 +6768,7 @@ static int kind_is_good_reward(int k_idx, u32b resf) {
 	case TV_BOOMERANG:
 		if (k_ptr->to_h < 0) return 0;
 		if (k_ptr->to_d < 0) return 0;
-		return 100;
+		return 1000;
 
 	/* Ammo -- Arrows/Bolts are good */
 	case TV_BOLT:
@@ -6748,11 +6776,11 @@ static int kind_is_good_reward(int k_idx, u32b resf) {
 	case TV_SHOT:	/* are Shots bad? */
 		if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
 	case TV_MSTAFF:
-		return 100;
+		return 1000;
 
 	/* Trap kits are good now, since weapons are, too (required for dungeon keeper reward sval generation..) */
 	case TV_TRAPKIT:
-		return 100;
+		return 1000;
 	}
 
 	/* Assume not good */
@@ -6868,6 +6896,9 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			tries++;
 			k_idx = 0;
 
+			/* Select items based on "theme" */
+			init_match_theme(theme);
+
 			/* Good objects */
 			if (good) {
 				/* Activate restriction */
@@ -6878,9 +6909,6 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			}
 			/* Normal objects */
 			else {
-				/* Select items based on "theme" */
-				init_match_theme(theme);
-
 				/* Activate normal restriction */
 				get_obj_num_hook = kind_is_legal;
 
@@ -6888,7 +6916,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				get_obj_num_prep(resf);
 
 				/* The table is synchronised */
-	//			alloc_kind_table_valid = TRUE;
+				//alloc_kind_table_valid = TRUE;
 			}
 
 
@@ -6903,17 +6931,6 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				}
 			else
 				k_idx = get_obj_num(base, resf);
-
-			/* Good objects */
-#if 0	// commented out for efficiency
-			if (good) {
-				/* Clear restriction */
-				get_obj_num_hook = NULL;
-
-				/* Prepare allocation table */
-				get_obj_num_prep(resf);
-			}
-#endif	// 0
 
 			if ((resf & RESF_NOHIDSM) && (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
 			    !sv_dsm_low(k_info[k_idx].sval) && !sv_dsm_mid(k_info[k_idx].sval))
@@ -6950,23 +6967,23 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* Hack -- generate multiple spikes/missiles */
 	if (!forge.name1)
 		switch (forge.tval) {
-			case TV_SPIKE:
-				forge.number = damroll(6, 7);
-				break;
-			case TV_SHOT:
-			case TV_ARROW:
-			case TV_BOLT:
-				/* luck has influence on ammo stack size, heh */
-				if (luck >= 0)
-					forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
-				else
-					forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
-				/* Stacks of ethereal ammo are smaller */
-				if (forge.name2 == EGO_ETHEREAL || forge.name2b == EGO_ETHEREAL) forge.number /= ETHEREAL_AMMO_REDUCTION;
-				/* Ammo from acquirement scrolls comes in more generous numbers :) */
-				if (verygreat) forge.number *= 2;
-				if (forge.sval == SV_AMMO_CHARRED) forge.number = randint(6);
-				break;
+		case TV_SPIKE:
+			forge.number = damroll(6, 7);
+			break;
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+			/* luck has influence on ammo stack size, heh */
+			if (luck >= 0)
+				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
+			else
+				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
+			/* Stacks of ethereal ammo are smaller */
+			if (forge.name2 == EGO_ETHEREAL || forge.name2b == EGO_ETHEREAL) forge.number /= ETHEREAL_AMMO_REDUCTION;
+			/* Ammo from acquirement scrolls comes in more generous numbers :) */
+			if (verygreat) forge.number *= 2;
+			if (forge.sval == SV_AMMO_CHARRED) forge.number = randint(6);
+			break;
 		}
 
 	/* Hack -- inscribe items that a unique drops */
@@ -7069,6 +7086,9 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 			tries++;
 			k_idx = 0;
 
+			/* Select items based on "theme" */
+			init_match_theme(theme);
+
 			/* Good objects */
 			if (good) {
 				/* Activate restriction */
@@ -7079,9 +7099,6 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 			}
 			/* Normal objects */
 			else {
-				/* Select items based on "theme" */
-				init_match_theme(theme);
-
 				/* Activate normal restriction */
 				get_obj_num_hook = kind_is_legal;
 
@@ -7089,7 +7106,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 				get_obj_num_prep(resf);
 
 				/* The table is synchronised */
-	//			alloc_kind_table_valid = TRUE;
+				//alloc_kind_table_valid = TRUE;
 			}
 
 
@@ -7104,19 +7121,6 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 				}
 			else
 				k_idx = get_obj_num(base, resf);
-
-			/* Good objects */
-#if 0	// commented out for efficiency
-
-			if (good)
-			{
-				/* Clear restriction */
-				get_obj_num_hook = NULL;
-
-				/* Prepare allocation table */
-				get_obj_num_prep(resf);
-			}
-#endif	// 0
 
 			if ((resf & RESF_NOHIDSM) && (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
 			    !sv_dsm_low(k_info[k_idx].sval) && !sv_dsm_mid(k_info[k_idx].sval))
@@ -7156,25 +7160,24 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 
 	/* Hack -- generate multiple spikes/missiles */
 	if (!o_ptr->name1)
-		switch (o_ptr->tval)
-		{
-			case TV_SPIKE:
-				o_ptr->number = damroll(6, 7);
-				break;
-			case TV_SHOT:
-			case TV_ARROW:
-			case TV_BOLT:
-				/* luck has influence on ammo stack size, heh */
-				if (luck >= 0)
-					o_ptr->number = damroll(6, (o_ptr->sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
-				else
-					o_ptr->number = damroll(6, (o_ptr->sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
-				/* Stacks of ethereal ammo are smaller */
-				if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) o_ptr->number /= ETHEREAL_AMMO_REDUCTION;
-				/* Ammo from acquirement scrolls comes in more generous numbers :) */
-				if (verygreat) o_ptr->number *= 2;
-				if (o_ptr->sval == SV_AMMO_CHARRED) o_ptr->number = randint(6);
-				break;
+		switch (o_ptr->tval) {
+		case TV_SPIKE:
+			o_ptr->number = damroll(6, 7);
+			break;
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+			/* luck has influence on ammo stack size, heh */
+			if (luck >= 0)
+				o_ptr->number = damroll(6, (o_ptr->sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
+			else
+				o_ptr->number = damroll(6, (o_ptr->sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
+			/* Stacks of ethereal ammo are smaller */
+			if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) o_ptr->number /= ETHEREAL_AMMO_REDUCTION;
+			/* Ammo from acquirement scrolls comes in more generous numbers :) */
+			if (verygreat) o_ptr->number *= 2;
+			if (o_ptr->sval == SV_AMMO_CHARRED) o_ptr->number = randint(6);
+			break;
 		}
 
 	/* Hack -- inscribe items that a unique drops */

@@ -1494,6 +1494,7 @@ static int store_tval = 0, store_level = 0;
 
 /*
  * Hack -- determine if a template is "good"
+ * Note: Returns PERMILLE.
  */
 static int kind_is_storeok(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
@@ -1513,7 +1514,7 @@ static int kind_is_storeok(int k_idx, u32b resf) {
 	if (k_ptr->tval != store_tval) p = 0;
 	if (k_ptr->level < (store_level / 2)) p = 0;
 
-	/* Return the percentage */
+	/* Return the PERMILLE */
 	return p;
 }
 
