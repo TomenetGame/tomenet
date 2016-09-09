@@ -3348,6 +3348,10 @@ void do_slash_cmd(int Ind, char *message) {
 
 			q_ptr = Players[j];
 
+			if (q_ptr->ghost) {
+				msg_print(Ind, "Ghosts cannot be tipped.");
+				return;
+			}
 			/* To avoid someone ruining IDDC or event participation */
 			if (!q_ptr->max_exp) {
 				msg_print(Ind, "You may not tip players who have zero experience points.");
