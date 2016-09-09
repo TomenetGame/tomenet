@@ -1076,8 +1076,10 @@ void do_slash_cmd(int Ind, char *message) {
 		}
 		/* Now this command is opened for everyone */
 		else if (prefix(message, "/recall") || prefix(message, "/rec")) {
-			if (admin) set_recall_timer(Ind, 1);
-			else {
+			if (admin) {
+				if (!p_ptr->word_recall) set_recall_timer(Ind, 1);
+				else set_recall_timer(Ind, 0);
+			} else {
 				int item = -1, spell = -1, spell_rec = -1, spell_rel = -1;
 				bool spell_rec_found = FALSE, spell_rel_found = FALSE;
 				object_type *o_ptr;
