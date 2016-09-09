@@ -3730,14 +3730,13 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 bool ident_spell(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
-	/* special hack for !X on ID spells */
+	/* originally special hack for !X on ID spells,
+	   but now actually used for everything (scrolls etc) */
 	if (p_ptr->current_item != -1) {
 		clear_current(Ind);
 		ident_spell_aux(Ind, p_ptr->current_item);
 		return TRUE;
 	}
-#endif
 
 	get_item(Ind, ITH_NONE);
 
@@ -3759,10 +3758,9 @@ bool ident_spell_aux(int Ind, int item) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
-#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
-	/* clean up special hack for !X on ID spells */
+	/* clean up special hack, originally for !X on ID spells
+	   but now actually used for everything (scrolls etc) */
 	p_ptr->current_item = -1;
-#endif
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
@@ -3831,14 +3829,13 @@ bool ident_spell_aux(int Ind, int item) {
 bool identify_fully(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
-	/* special hack for !X on ID spells */
+	/* originally special hack for !X on ID spells,
+	   but now used for *ID* scrolls too. */
 	if (p_ptr->current_item != -1) {
 		clear_current(Ind);
 		identify_fully_item(Ind, p_ptr->current_item);
 		return TRUE;
 	}
-#endif
 
 	get_item(Ind, ITH_NONE);
 
@@ -3860,10 +3857,9 @@ bool identify_fully_item(int Ind, int item) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
-#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
-	/* clean up special hack for !X on ID spells */
+	/* clean up special hack, originally for !X on ID spells
+	   but now actually used for *ID* scrolls too. */
 	p_ptr->current_item = -1;
-#endif
 
 	/* Get the item (in the pack) */
 	if (item >= 0)

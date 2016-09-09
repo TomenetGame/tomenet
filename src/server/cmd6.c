@@ -2388,20 +2388,26 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 		case SV_SCROLL_IDENTIFY:
 			if (!o_ptr) break;
 
-			msg_print(Ind, "This is an identify scroll.");
 			ident = TRUE;
-			(void)ident_spell(Ind);
-			*used_up = FALSE;
+			if (p_ptr->current_item != -1) (void)ident_spell(Ind); /* XID */
+			else { /* Manual usage */
+				msg_print(Ind, "This is an identify scroll.");
+				(void)ident_spell(Ind);
+				*used_up = FALSE;
+			}
 			p_ptr->using_up_item = item;
 			break;
 
 		case SV_SCROLL_STAR_IDENTIFY:
 			if (!o_ptr) break;
 
-			msg_print(Ind, "This is an *identify* scroll.");
 			ident = TRUE;
-			(void)identify_fully(Ind);
-			*used_up = FALSE;
+			if (p_ptr->current_item != -1) (void)identify_fully(Ind); /* XID */
+			else { /* Manual usage */
+				msg_print(Ind, "This is an *identify* scroll.");
+				(void)identify_fully(Ind);
+				*used_up = FALSE;
+			}
 			p_ptr->using_up_item = item;
 			break;
 
