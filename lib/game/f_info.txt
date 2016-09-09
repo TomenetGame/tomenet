@@ -934,7 +934,16 @@ F:ATTR_MULTI
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
-# XXX 183 - 186
+#Basic perma-wall, but this time as dungeon level boundary.
+#The difference to FEAT_PERM_SOLID is basically that this perma-wall has NO_SHADE, used for AMC visuals.
+N:183:permanent wall
+G:#:w
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY
+
+
+# XXX 184 - 186  unused -------------------------------------------------------------
+
 
 # 187 --> terrain -- deep water
 

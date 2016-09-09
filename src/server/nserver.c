@@ -2566,6 +2566,7 @@ static int Handle_login(int ind) {
 		p_ptr->f_char_solid[100] = 1; //specialty: sand wall with treasure (diamond ascii)
 
 		p_ptr->f_char_solid[177] = 127;
+		p_ptr->f_char_solid[183] = 127;
 		p_ptr->f_char_solid[188] = 127;
 		p_ptr->f_char_solid[189] = 127;
 		p_ptr->f_char_solid[190] = 127; //house roofs, 11
@@ -2605,6 +2606,7 @@ static int Handle_login(int ind) {
 		p_ptr->f_char_solid[100] = 1; //specialty: sand wall with treasure (diamond ascii)
 
 		p_ptr->f_char_solid[177] = 2;
+		p_ptr->f_char_solid[183] = 2;
 		p_ptr->f_char_solid[188] = 2;
 		p_ptr->f_char_solid[189] = 2;
 		p_ptr->f_char_solid[190] = 2; //house roofs, 11

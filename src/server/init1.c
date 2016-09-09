@@ -8671,7 +8671,7 @@ struct dungeon_grid {
 	bool	    defined;
 };
 static bool meta_sleep = TRUE;
-static int meta_width = 0, meta_height = 0;
+static int meta_width = 0, meta_height = 0, meta_boundary = 0;
 
 static dungeon_grid letter[255];
 
@@ -9317,6 +9317,14 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 		}
 		return (0);
 	}
+	else if (buf[0] == 'B') { /* B:<boundary wall feat> */
+		int num;
+
+		/* Set a specific feature for the boundary walls instead of defaulting to FEAT_PERM_SOLID */
+		if ((num = tokenize(buf + 2, 1, zz, ':', '/')) > 0)
+			meta_boundary = atoi(zz[0]);
+		return (0);
+	}
 
 	/* Failure */
 	return (1);
@@ -9599,6 +9607,8 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 	/* Default to no maximum width/height */
 	meta_width = 0;
 	meta_height = 0;
+	/* Default boundary wall of the level (0 = use dungeon's) */
+	meta_boundary = 0;
 
 	/* Build the filename */
 //	path_build(buf, 1024, ANGBAND_DIR_EDIT, name);
@@ -9681,11 +9691,26 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 	if (meta_width)
 		for (x = meta_width; x < MAX_WID; x++)
 			for (y = 0; y < MAX_HGT; y++)
-				zcave[y][x].feat = FEAT_PERM_CLEAR;
+				zcave[y][x].feat = FEAT_PERM_FILL;
 	if (meta_height)
 		for (y = meta_height; y < MAX_HGT; y++)
 			for (x = 0; x < MAX_WID; x++)
-				zcave[y][x].feat = FEAT_PERM_CLEAR;
+				zcave[y][x].feat = FEAT_PERM_FILL;
+
+	/* Replace FEAT_PERM_SOLID or whatever default boundary wall is used by a specific one? */
+	if (meta_boundary) {
+		int mx = meta_width ? meta_width : MAX_WID;
+		int my = meta_height ? meta_height : MAX_HGT;
+
+		for (x = 0; x < mx; x++) {
+			zcave[0][x].feat = meta_boundary;
+			zcave[my - 1][x].feat = meta_boundary;
+		}
+		for (y = 1; y < my - 1; y++) {
+			zcave[y][0].feat = meta_boundary;
+			zcave[y][mx - 1].feat = meta_boundary;
+		}
+	}
 
 	/* Error */
 	if (err) {

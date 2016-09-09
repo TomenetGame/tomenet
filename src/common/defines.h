@@ -2210,6 +2210,7 @@
 #define FEAT_WAY_LESS		0xB4 /* 180 */
 /* Feature 0xB5 -- field */
 #define FEAT_EKKAIA		0xB6 /* 182 */
+#define FEAT_PERM_EXTRA_BOUND	0xB7 /* 183 */
 
 /* Features 0xB7 - 0xBA -- unused */
 
