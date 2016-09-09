@@ -6581,13 +6581,13 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_RING_NENYA:
 		case SV_RING_VILYA:
 		case SV_RING_POWER:
-#if 1 /* 4.6.2 */
+
 		case SV_RING_LORDLY:
 		case SV_RING_ATTACKS:
 		case SV_RING_FLAR:
 		case SV_RING_CRIT:
 		case SV_RING_DURIN:
-#endif
+
 #if 1 /* 4.6.2; lesser rings, but still good: */
 		//omitted +stat rings, but they _could_ turn out great
 		case SV_RING_ACCURACY:
@@ -6610,9 +6610,8 @@ static int kind_is_good(int k_idx, u32b resf) {
 			return (15 * tc_p) / 100;
 #endif
 		}
-		return 0;
+		break;
 
-#if 1 /* 4.6.2 */
 	case TV_LITE:
 		switch (k_ptr->sval) {
 		case SV_LITE_TORCH_EVER:
@@ -6626,7 +6625,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_STONE_LORE:
 			return (50 * tc_p) / 100;
 		}
-		return 0;
+		break;
 
 	case TV_AMULET:
 		switch (k_ptr->sval) {
@@ -6654,7 +6653,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_AMULET_TERKEN:
 			return (25 * tc_p) / 100;
 		}
-		return 0;
+		break;
 
 	case TV_STAFF:
 		switch (k_ptr->sval) {
@@ -6672,7 +6671,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_STAFF_STAR_IDENTIFY:
 			return (13 * tc_p) / 100;
 		}
-		return 0;
+		break;
 	case TV_WAND:
 		switch (k_ptr->sval) {
 		case SV_WAND_ACID_BOLT:
@@ -6693,7 +6692,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		//case SV_WAND_WALL_CREATION:
 			return (13 * tc_p) / 100;
 		}
-		return 0;
+		break;
 	case TV_ROD:
 		switch (k_ptr->sval) {
 		case SV_ROD_IDENTIFY:
@@ -6718,22 +6717,25 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_ROD_HAVOC:
 			return (5 * tc_p) / 100;
 		}
-		return 0;
+		break;
 	default:
-		/* Specialty! Used to be 0, but now that we're apparently
-		   matching kind_is_theme(), any item tval left over here must
-		   be possible without problems! */
-		return 1000;
+		/* Specialty: Left over tvals.
+		   Probably potions and scrolls mostly, these don't need any special treatment:
+		   Monsters specialized on dropping them are already highly valued for that.
+
+		   All left over tvals used to be chance=0, but now that we're matching
+		   kind_is_theme(), any item tval left over here must be possible to spawn: */
+		return (100 * tc_p) / 100;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
-#endif
 
 #if 0
 	/* Assume not good */
 	return 0;
 #else
-	/* Assume not *that* good */
-	return 10;
+	/* svals that we assume are 'not good', but let's give them a tiny
+	   chance nevertheless, to smooth out the item drop choices. */
+	return (1 * tc_p) / 100;
 #endif
 }
 
