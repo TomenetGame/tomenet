@@ -21,19 +21,16 @@
 /*
  * Get a new magic type
  */
-magic_power *new_magic_power(int num)
-{
+magic_power *new_magic_power(int num) {
 	magic_power *m_ptr;
 	C_MAKE(m_ptr, num, magic_power);
 	return (m_ptr);
 }
-magic_power *grab_magic_power(magic_power *m_ptr, int num)
-{
+magic_power *grab_magic_power(magic_power *m_ptr, int num) {
 	return (&m_ptr[num]);
 }
 static char *magic_power_info_lua_fct;
-static void magic_power_info_lua(char *p, int power)
-{
+static void magic_power_info_lua(char *p, int power) {
 	int oldtop = lua_gettop(L);
 
 	lua_getglobal(L, magic_power_info_lua_fct);
@@ -42,14 +39,12 @@ static void magic_power_info_lua(char *p, int power)
 	strcpy(p, lua_tostring(L, -1));
 	lua_settop(L, oldtop);
 }
-int get_magic_power_lua(int *sn, magic_power *powers, int max_powers, char *info_fct, int plev, int cast_stat)
-{
+int get_magic_power_lua(int *sn, magic_power *powers, int max_powers, char *info_fct, int plev, int cast_stat) {
 	magic_power_info_lua_fct = info_fct;
 	return (get_magic_power(sn, powers, max_powers, magic_power_info_lua, plev, cast_stat));
 }
 
-bool lua_spell_success(magic_power *spell, int stat, char *oups_fct)
-{
+bool lua_spell_success(magic_power *spell, int stat, char *oups_fct) {
 	int             chance;
 	int             minfail = 0;
 
@@ -99,23 +94,20 @@ bool lua_spell_success(magic_power *spell, int stat, char *oups_fct)
 /*
  * Create objects
  */
-object_type *new_object()
-{
+object_type *new_object() {
 	object_type *o_ptr;
 	MAKE(o_ptr, object_type);
 	return (o_ptr);
 }
 
-void end_object(object_type *o_ptr)
-{
+void end_object(object_type *o_ptr) {
 	FREE(o_ptr, object_type);
 }
 
 /*
  * Powers
  */
-s16b    add_new_power(cptr name, cptr desc, cptr gain, cptr lose, byte level, byte cost, byte stat, byte diff)
-{
+s16b add_new_power(cptr name, cptr desc, cptr gain, cptr lose, byte level, byte cost, byte stat, byte diff) {
 	/* Increase the size */
 	reinit_powers_type(power_max + 1);
 
@@ -139,8 +131,7 @@ s16b    add_new_power(cptr name, cptr desc, cptr gain, cptr lose, byte level, by
 }
 
 static char *lua_item_tester_fct;
-static bool lua_item_tester(object_type* o_ptr)
-{
+static bool lua_item_tester(object_type* o_ptr) {
 	int oldtop = lua_gettop(L);
 	bool ret;
 
@@ -152,8 +143,7 @@ static bool lua_item_tester(object_type* o_ptr)
 	return (ret);
 }
 
-void    lua_set_item_tester(int tval, char *fct)
-{
+void lua_set_item_tester(int tval, char *fct) {
 	if (tval) {
 		item_tester_tval = tval;
 	} else {
@@ -162,8 +152,7 @@ void    lua_set_item_tester(int tval, char *fct)
 	}
 }
 
-char *lua_object_desc(object_type *o_ptr, int pref, int mode)
-{
+char *lua_object_desc(object_type *o_ptr, int pref, int mode) {
 	static char buf[150];
 
 	object_desc(buf, o_ptr, pref, mode);
@@ -174,8 +163,7 @@ char *lua_object_desc(object_type *o_ptr, int pref, int mode)
  * Monsters
  */
 
-void find_position(int y, int x, int *yy, int *xx)
-{
+void find_position(int y, int x, int *yy, int *xx) {
 	int attempts = 500;
 
 	do {
@@ -184,8 +172,7 @@ void find_position(int y, int x, int *yy, int *xx)
 }
 
 static char *summon_lua_okay_fct;
-bool summon_lua_okay(int r_idx)
-{
+bool summon_lua_okay(int r_idx) {
 	int oldtop = lua_gettop(L);
 	bool ret;
 
@@ -216,8 +203,7 @@ bool lua_summon_monster(int y, int x, int lev, bool friend, char *fct) {
 /*
  * Quests
  */
-s16b add_new_quest(char *name)
-{
+s16b add_new_quest(char *name) {
 	int i;
 
 	/* Increase the size */
@@ -231,8 +217,7 @@ s16b add_new_quest(char *name)
 	return (max_xo_idx - 1);
 }
 
-void desc_quest(int q_idx, int d, char *desc)
-{
+void desc_quest(int q_idx, int d, char *desc) {
 	if (d >= 0 && d < 10)
 		strncpy(quest[q_idx].desc[d], desc, 79);
 }
@@ -240,8 +225,7 @@ void desc_quest(int q_idx, int d, char *desc)
 /*
  * Misc
  */
-bool get_com_lua(cptr prompt, int *com)
-{
+bool get_com_lua(cptr prompt, int *com) {
 	char c;
 
 	if (!get_com(prompt, &c)) return (FALSE);
@@ -251,28 +235,24 @@ bool get_com_lua(cptr prompt, int *com)
 #endif	// 0
 
 /* Spell schools */
-s16b new_school(int i, cptr name, s16b skill)
-{
+s16b new_school(int i, cptr name, s16b skill) {
 	schools[i].name = string_make(name);
 	schools[i].skill = skill;
 	return (i);
 }
 
-s16b new_spell(int i, cptr name)
-{
+s16b new_spell(int i, cptr name) {
 	school_spells[i].name = string_make(name);
 	school_spells[i].level = 0;
 	school_spells[i].level = 0;
 	return (i);
 }
 
-spell_type *grab_spell_type(s16b num)
-{
+spell_type *grab_spell_type(s16b num) {
 	return (&school_spells[num]);
 }
 
-school_type *grab_school_type(s16b num)
-{
+school_type *grab_school_type(s16b num) {
 	return (&schools[num]);
 }
 
@@ -300,12 +280,12 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 		tmp += bonus;
 	}
 
-#ifdef LIMIT_SPELLS
+ #ifdef LIMIT_SPELLS
 	if (p_ptr->limit_spells > 0) {
 		s32b tmp_limit = p_ptr->limit_spells * (SKILL_STEP / 10);
 		if (tmp > tmp_limit) tmp = tmp_limit;
 	}
-#endif
+ #endif
 
 	tmp = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10));
 
@@ -333,9 +313,9 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 		}
 	}
 
-#ifdef LIMIT_SPELLS
+ #ifdef LIMIT_SPELLS
 	if (p_ptr->limit_spells > 0 && lvl > p_ptr->limit_spells) lvl = p_ptr->limit_spells;
-#endif
+ #endif
 #endif
 
 	return lvl;
@@ -404,21 +384,18 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 
 #if 0
 /* Cave */
-cave_type *lua_get_cave(int y, int x)
-{
+cave_type *lua_get_cave(int y, int x) {
 	return (&(cave[y][x]));
 }
 
-void set_target(int y, int x)
-{
+void set_target(int y, int x) {
 	target_who = -1;
 	target_col = x;
 	target_row = y;
 }
 
 /* Level gen */
-void get_map_size(char *name, int *ysize, int *xsize)
-{
+void get_map_size(char *name, int *ysize, int *xsize) {
 	*xsize = 0;
 	*ysize = 0;
 	init_flags = INIT_GET_SIZE;
@@ -428,8 +405,7 @@ void get_map_size(char *name, int *ysize, int *xsize)
 
 }
 
-void load_map(char *name, int *y, int *x)
-{
+void load_map(char *name, int *y, int *x) {
 	/* Set the correct monster hook */
 	set_mon_num_hook();
 
@@ -442,8 +418,7 @@ void load_map(char *name, int *y, int *x)
 	process_dungeon_file_full = FALSE;
 }
 
-bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y2, int *x2)
-{
+bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y2, int *x2) {
 	int xval, yval, x, y;
 
 	/* Try to allocate space for room.  If fails, exit */
@@ -469,8 +444,7 @@ bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y
 
 
 /* Files */
-void lua_print_hook(cptr str)
-{
+void lua_print_hook(cptr str) {
 	fprintf(hook_file, str);
 }
 
@@ -483,8 +457,7 @@ void lua_print_hook(cptr str)
 /*
  * Hook for bounty monster selection.
  */
-static bool lua_mon_hook_bounty(int r_idx)
-{
+static bool lua_mon_hook_bounty(int r_idx) {
 	monster_race* r_ptr = &r_info[r_idx];
 
 	/* Reject 'non-spawning' monsters */
@@ -528,8 +501,7 @@ static bool lua_mon_hook_bounty(int r_idx)
 	return (TRUE);
 }
 
-int lua_get_new_bounty_monster(int lev)
-{
+int lua_get_new_bounty_monster(int lev) {
 	int r_idx;
 
 	/*
@@ -559,11 +531,9 @@ void remote_update_lua(int Ind, cptr file) {
 	p_ptr->warning_lua_count++;
 
 	/* Starting from protocol version 4.6.1.2, the client can receive 1024 bytes in one packet */
-	if (is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 1)) {
-		chunksize = 1024;
-	} else {
-		chunksize = 256;
-	}
+	if (is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 1)) chunksize = 1024;
+	else chunksize = 256;
+
 	remote_update(p_ptr->conn, file, chunksize);
 }
 
@@ -583,9 +553,8 @@ void lua_add_anote(char *anote) {
 	if (i < MAX_ADMINNOTES) {
 		strcpy(admin_note[i], anote);
 		msg_broadcast_format(0, "\375\377s->MotD: %s", anote);
-	} else {
+	} else
 		s_printf("lua_add_anote() failed: out of notes.\n");
-	}
 }
 void lua_del_anotes(void) {
 	int i;
