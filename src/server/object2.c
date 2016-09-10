@@ -6553,9 +6553,10 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_SWORD:
 	case TV_BLUNT:
 	case TV_POLEARM:
-	case TV_DIGGING:
 	case TV_AXE:
 	case TV_BOOMERANG:
+	/* Diggers are similar to weapons in this regard */
+	case TV_DIGGING:
 		if (k_ptr->to_h < 0) return 0;
 		if (k_ptr->to_d < 0) return 0;
 		return (100 * tc_p) / 100;
@@ -6726,18 +6727,236 @@ static int kind_is_good(int k_idx, u32b resf) {
 
 		   All left over tvals used to be chance=0, but now that we're matching
 		   kind_is_theme(), any item tval left over here must be possible to spawn: */
+		if (k_ptr->cost <= 200) return 0; //except items that are really not GOOD
 		return (100 * tc_p) / 100;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
-#if 0
-	/* Assume not good */
-	return 0;
-#else
 	/* svals that we assume are 'not good', but let's give them a tiny
 	   chance nevertheless, to smooth out the item drop choices. */
+	if (k_ptr->cost <= 200) return 0; //except items that are really not GOOD
 	return (1 * tc_p) / 100;
+}
+/* A variant of kind_is_good() for DROP_GREAT monsters.
+   The main difference is, that flavoured objects do not have 'great' enchantments,
+   so instead their sval must be picked so that they can be considered 'great'.
+   For non-flavoured objects this function is the same as kind_is_good().
+   (Note: 'power' in apply_magic() has actually no effect on jewelry boni (stat rings).
+   it is ONLY used for determining ego/art. How to make great jewelry drop from DROP_GREAT monster? :/) */
+static int kind_is_great(int k_idx, u32b resf) {
+	object_kind *k_ptr = &k_info[k_idx];
+	int tc_p = kind_is_legal(k_idx, resf);
+
+	/* DROP_GOOD also obeys the monster's treasure class
+	   (we basically just need its kind_is_theme() call) */
+	if (!tc_p) return 0;
+
+	/* Analyze the item type */
+	switch (k_ptr->tval) {
+	/* Armor -- Good unless damaged */
+	case TV_HARD_ARMOR:
+	case TV_SOFT_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+		if (k_ptr->to_a < 0) return 0;
+		return (100 * tc_p) / 100;
+
+	/* Weapons -- Good unless damaged */
+	case TV_BOW:
+	case TV_SWORD:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_AXE:
+	case TV_BOOMERANG:
+	/* Diggers are similar to weapons in this regard */
+	case TV_DIGGING:
+		if (k_ptr->to_h < 0) return 0;
+		if (k_ptr->to_d < 0) return 0;
+		return (100 * tc_p) / 100;
+
+	/* Ammo -- Arrows/Bolts are good */
+	case TV_BOLT:
+	case TV_ARROW:
+	case TV_SHOT:
+		if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
+	case TV_MSTAFF:
+		return (100 * tc_p) / 100;
+
+	/* Trap kits are good now, since weapons are, too. */
+	case TV_TRAPKIT:
+		return (25 * tc_p) / 100;
+
+	/* Rings -- Rings of Speed are good */
+	case TV_RING:
+		switch (k_ptr->sval) {
+		case SV_RING_SPEED:
+		case SV_RING_BARAHIR:
+		case SV_RING_TULKAS:
+		case SV_RING_NARYA:
+		case SV_RING_NENYA:
+		case SV_RING_VILYA:
+		case SV_RING_POWER:
+
+		case SV_RING_LORDLY:
+		case SV_RING_ATTACKS:
+		case SV_RING_FLAR:
+		case SV_RING_CRIT:
+		case SV_RING_DURIN:
+#if 0
+		case SV_RING_RES_NETHER:
+		case SV_RING_RES_DISENCHANT:
+		case SV_RING_RES_CHAOS:
+		case SV_RING_INVIS:
 #endif
+			return (35 * tc_p) / 100;
+		}
+		break;
+
+	case TV_LITE:
+		switch (k_ptr->sval) {
+#if 0
+		case SV_LITE_TORCH_EVER:
+#endif
+#if 1
+		case SV_LITE_DWARVEN: /* <- not so great, but hoping for ego power */
+#endif
+		case SV_LITE_FEANORIAN:
+		case SV_LITE_GALADRIEL:
+		case SV_LITE_ELENDIL:
+		case SV_LITE_THRAIN:
+		case SV_LITE_PALANTIR:
+		case SV_ANCHOR_SPACETIME:
+		case SV_STONE_LORE:
+			return (50 * tc_p) / 100;
+		}
+		break;
+
+	case TV_AMULET:
+		switch (k_ptr->sval) {
+#if 0
+		case SV_AMULET_BRILLIANCE:
+		case SV_AMULET_REFLECTION:
+		case SV_AMULET_RESISTANCE:
+		case SV_AMULET_SERPENT:
+		case SV_AMULET_SUSTENANCE:
+		case SV_AMULET_THE_MOON:
+		case SV_AMULET_TERKEN:
+#endif
+		case SV_AMULET_SPEED:
+		case SV_AMULET_CARLAMMAS:
+		case SV_AMULET_INGWE:
+		case SV_AMULET_DWARVES:
+		case SV_AMULET_TORIS_MEJISTOS:
+		case SV_AMULET_ELESSAR:
+		case SV_AMULET_EVENSTAR:
+		case SV_AMULET_ESP:
+		case SV_AMULET_THE_MAGI:
+		case SV_AMULET_TRICKERY:
+		case SV_AMULET_DEVOTION:
+		case SV_AMULET_WEAPONMASTERY:
+		case SV_AMULET_RAGE:
+		case SV_AMULET_GROM:
+		case SV_AMULET_SSHARD:
+			return (25 * tc_p) / 100;
+		}
+		break;
+
+	case TV_STAFF:
+		switch (k_ptr->sval) {
+#if 0
+		case SV_STAFF_CURING:
+		case SV_STAFF_HEALING:
+		case SV_STAFF_SPEED:
+		case SV_STAFF_PROBING:
+		case SV_STAFF_EARTHQUAKES:
+#endif
+#if 0
+		case SV_STAFF_HEALING:
+		case SV_STAFF_DESTRUCTION:
+		case SV_STAFF_DISPEL_EVIL:
+		case SV_STAFF_GENOCIDE:
+#endif
+		case SV_STAFF_POWER:
+		case SV_STAFF_THE_MAGI:
+		case SV_STAFF_HOLINESS:
+		case SV_STAFF_STAR_IDENTIFY:
+			return (13 * tc_p) / 100;
+		}
+		break;
+	case TV_WAND:
+		switch (k_ptr->sval) {
+#if 0
+		case SV_WAND_TELEPORT_AWAY:
+		//case SV_WAND_WALL_CREATION:
+		case SV_WAND_ACID_BOLT:
+		case SV_WAND_FIRE_BOLT:
+		case SV_WAND_COLD_BOLT:
+		case SV_WAND_ELEC_BOLT:
+		case SV_WAND_ACID_BALL:
+		case SV_WAND_ELEC_BALL:
+		case SV_WAND_COLD_BALL:
+		case SV_WAND_FIRE_BALL:
+		case SV_WAND_DRAGON_FIRE:
+		case SV_WAND_DRAGON_COLD:
+		case SV_WAND_DRAGON_BREATH:
+#endif
+		case SV_WAND_DRAIN_LIFE:
+		case SV_WAND_ANNIHILATION:
+		case SV_WAND_ROCKETS:
+			return (13 * tc_p) / 100;
+		}
+		break;
+	case TV_ROD:
+		switch (k_ptr->sval) {
+#if 0
+		case SV_ROD_DETECTION:
+		case SV_ROD_PROBING:
+		case SV_ROD_CURING:
+		case SV_ROD_TELEPORT_AWAY:
+		case SV_ROD_ACID_BOLT:
+		case SV_ROD_ELEC_BOLT:
+		case SV_ROD_COLD_BOLT:
+		case SV_ROD_FIRE_BOLT:
+
+		case SV_ROD_ACID_BALL:
+		case SV_ROD_ELEC_BALL:
+		case SV_ROD_COLD_BALL:
+		case SV_ROD_FIRE_BALL:
+#endif
+#if 1
+		case SV_ROD_RECALL: /* <- not so great, but hoping for ego power */
+		case SV_ROD_MAPPING: /* <- not so great, but hoping for ego power */
+#endif
+		case SV_ROD_IDENTIFY:
+		case SV_ROD_HEALING:
+		case SV_ROD_RESTORATION:
+		case SV_ROD_SPEED:
+		case SV_ROD_DRAIN_LIFE:
+		case SV_ROD_HAVOC:
+			return (5 * tc_p) / 100;
+		}
+		break;
+	default:
+		/* Specialty: Left over tvals.
+		   Probably potions and scrolls mostly, these don't need any special treatment:
+		   Monsters specialized on dropping them are already highly valued for that.
+
+		   All left over tvals used to be chance=0, but now that we're matching
+		   kind_is_theme(), any item tval left over here must be possible to spawn: */
+		if (k_ptr->cost <= 3000) return 0; //except items that are really not GREAT
+		return (100 * tc_p) / 100;
+	}
+	//note: no tools atm :/ could add +2/+3 diggers?
+
+	/* svals that we assume are 'not good', but let's give them a tiny
+	   chance nevertheless, to smooth out the item drop choices. */
+	if (k_ptr->cost <= 3000) return 0; //except items that are really not GREAT
+	return (1 * tc_p) / 100;
 }
 
 /* Variant of kind_is_good() that includes trap kits,
@@ -6903,7 +7122,15 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			init_match_theme(theme);
 
 			/* Good objects */
-			if (good) {
+			if (great) {
+				/* Activate restriction */
+				get_obj_num_hook = kind_is_great;
+
+				/* Prepare allocation table */
+				get_obj_num_prep(resf);
+			}
+			/* Good objects */
+			else if (good) {
 				/* Activate restriction */
 				get_obj_num_hook = kind_is_good;
 
@@ -7092,8 +7319,16 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 			/* Select items based on "theme" */
 			init_match_theme(theme);
 
+			/* Great objects */
+			if (great) {
+				/* Activate restriction */
+				get_obj_num_hook = kind_is_great;
+
+				/* Prepare allocation table */
+				get_obj_num_prep(resf);
+			}
 			/* Good objects */
-			if (good) {
+			else if (good) {
 				/* Activate restriction */
 				get_obj_num_hook = kind_is_good;
 
