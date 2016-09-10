@@ -3020,8 +3020,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	/* Must be have something to dig with, or power gets halved */
 	if (!p_ptr->inventory[INVEN_TOOL].k_idx ||
-	    (p_ptr->inventory[INVEN_TOOL].tval != TV_DIGGING))
+	    (p_ptr->inventory[INVEN_TOOL].tval != TV_DIGGING)) {
 		power >>= 1;
+
+		if (!p_ptr->warning_tunnel3) {
+			msg_print(Ind, "\374\377yHINT: You can tunnel more effectively if you equip a digging tool.");
+			msg_print(Ind, "\374\377y      The general store in town sells some basic shovels and picks.");
+			p_ptr->warning_tunnel3 = 1;
+		}
+	}
 
 	/* have at least 1 digging power so you can dig through rubble/organic stuff */
 	if (!power) power = 1;
