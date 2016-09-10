@@ -11693,9 +11693,6 @@ static int Receive_inventory_revision(int ind) {
 			inven_confirm_revision(player, revision);
 			return 2;
 		}
-	} else if (p_ptr) {
-		Packet_printf(&connp->q, "%c%d", ch, revision);
-		return 0;
 	}
 	return 1;
 }
