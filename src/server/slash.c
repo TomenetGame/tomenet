@@ -957,21 +957,26 @@ void do_slash_cmd(int Ind, char *message) {
 			if (!tk) {
 				start = INVEN_BODY;
 				end = INVEN_FEET + 1;
-			}
+			} else tk = (tk != 0) && !(token[1][0] == '*' && token[1][1] == 0);
 
 			disturb(Ind, 1, 0);
 
-//			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
+			//for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
 			for (i = start; i < end; i++) {
 				o_ptr = &(p_ptr->inventory[i]);
-				if (!o_ptr->tval) continue;
+				if (!o_ptr->k_idx) continue;
 
-				/* skip inscribed items */
-				/* skip non-matching tags */
-				if ((check_guard_inscription(o_ptr->note, 't')) ||
-					(check_guard_inscription(o_ptr->note, 'T')) ||
-					(cursed_p(o_ptr))) continue;
-
+				/* Limit to items with specified strings, if any */
+				if (tk) {
+					if (!o_ptr->note || !strstr(quark_str(o_ptr->note), token[1]))
+						continue;
+				} else {
+					/* skip inscribed items */
+					/* skip non-matching tags */
+					if ((check_guard_inscription(o_ptr->note, 't')) ||
+						(check_guard_inscription(o_ptr->note, 'T')) ||
+						(cursed_p(o_ptr))) continue;
+				}
 				inven_takeoff(Ind, i, 255, FALSE);
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 			}

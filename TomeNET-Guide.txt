@@ -936,8 +936,14 @@ They all start with a slash '/' hence they're called slash commands:
             power aka 'c)', instead it will be treated like power 'b)' aka
             'polymorph into next form with fitting extremities'.)
 
-/bed        Opposite of /dress.
- (/naked)
+/bed [*|<inscription>]
+ (/naked)   Opposite of /dress.
+            If no parameter is given, the character takes off everything from
+            body slot to feet slot.
+            If '*' is given as parameter, the character will take off all
+            equipped items.
+            If another parameter is given, the character will take off all
+            items that have this parameter occur in their inscription.
 
 /bbs <text>
             Add a line of text to the in-game bulletin board system. Players
