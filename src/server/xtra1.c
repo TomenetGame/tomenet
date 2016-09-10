@@ -6021,6 +6021,10 @@ void calc_boni(int Ind) {
 	/* Make sure we don't get negative stealth from monster body malus */
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
 
+	/* Antimagic characters cannot use magic devices at all.
+	   Note: This isn't technically needed, it's just for visuals. */
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) p_ptr->skill_dev = 0;
+
 #ifdef FUNSERVER
 	/* Limit AC?.. */
 	if (!is_admin(p_ptr)) {
