@@ -1930,7 +1930,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			player_type *p2_ptr;
 #ifdef USE_MANG_HOUSE
 			house_type *h_ptr = &houses[h_idx];
-			int sy, sx, ey, ex;
+			int sy = 0, sx = 0, ey = 0, ex = 0; //frigging compiler warnings ('uninitialized')
 
 			if (h_ptr->flags & HF_RECT) {
 				sy = h_ptr->y + 1;
