@@ -349,7 +349,8 @@ void do_slash_cmd(int Ind, char *message) {
 	}
 	else if ((prefix(message, "/rfe")) || prefix(message, "/cookie")) {
 		if (colon) {
-#if 1 /* send RFEs to chat for everyone to bounce ideas? */
+#if 1
+			/* send RFEs to chat for everyone to bounce ideas */
 			if (!admin_p(Ind)) msg_broadcast_format(0, "\374\377s[\377wRFE\377s:\377w%s\377s]%s", p_ptr->name, colon);
 #endif
 			rfe_printf("RFE [%s]%s\n", p_ptr->accountname, colon);
