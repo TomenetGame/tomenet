@@ -379,7 +379,7 @@ void Receive_login(void) {
 	int ded_pvp = 0, ded_iddc = 0, ded_pvp_shown, ded_iddc_shown;
 	char loc[MAX_CHARS];
 
-	static char c_name[MAX_CHARS];
+	static char c_name[MAX_CHARS], *cp;
 	s16b c_race, c_class, level;
 
 	/* un-hardcode character amount limits */
@@ -694,6 +694,17 @@ void Receive_login(void) {
 			askfor_aux(c_name, CHARACTERNAME_LEN - 1, 0);//was 20/19 once
 			if (strlen(c_name)) break;
 			create_random_name(0, c_name);
+		}
+
+		/* Trim spaces right away */
+		strcpy(tmp, c_name);
+		cp = tmp;
+		while (*cp == ' ') cp++;
+		strcpy(c_name, cp);
+		cp = c_name + (strlen(c_name) - 1);
+		while (*cp == ' ') {
+			*cp = 0;
+			cp--;
 		}
 
 		/* Capitalize the name */

@@ -52,7 +52,7 @@
  * Choose the character's name
  */
 static void choose_name(void) {
-	char tmp[ACCOUNTNAME_LEN], fmt[ACCOUNTNAME_LEN];
+	char tmp[ACCOUNTNAME_LEN], fmt[ACCOUNTNAME_LEN], *cp;
 
 	/* Prompt and ask */
 #ifndef SIMPLE_LOGIN
@@ -119,6 +119,17 @@ static void choose_name(void) {
 
 		/* All done */
 		break;
+	}
+
+	/* Trim spaces right away */
+	strcpy(fmt, nick);
+	cp = fmt;
+	while (*cp == ' ') cp++;
+	strcpy(nick, cp);
+	cp = nick + (strlen(nick) - 1);
+	while (*cp == ' ') {
+		*cp = 0;
+		cp--;
 	}
 
 	/* Pad the name (to clear junk) */
