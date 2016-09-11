@@ -1821,7 +1821,7 @@ static void destroy_level(struct worldpos *wpos) {
  * Only really called by some of the "vault" routines.
  */
 static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_type *p_ptr) {
-	int        i, j, k, tries = 1000;
+	int i, j, k, tries = 1000;
 	cave_type **zcave;
 	u32b resf = make_resf(p_ptr);
 	if (!(zcave = getcave(wpos))) return;
@@ -1861,7 +1861,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
  * Place a trap with a given displacement of point
  */
 static void vault_trap_aux(struct worldpos *wpos, int y, int x, int yd, int xd) {
-	int		count, y1, x1, tries = 1000;
+	int count, y1, x1, tries = 1000;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
@@ -1900,7 +1900,7 @@ static void vault_traps(struct worldpos *wpos, int y, int x, int yd, int xd, int
  * Hack -- Place some sleeping monsters near the given location
  */
 static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num) {
-	int          k, i, y, x;
+	int k, i, y, x;
 	cave_type **zcave;
 	int dun_lev;
 
@@ -2877,7 +2877,7 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0, player_type *p_
  *	7 - Treasure chamber (inner room has money lying around), possibly non-human guardian
  */
 static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr) {
-	int y, x, y1, x1;
+	int y, x, y1, x1, lev = getlevel(wpos);
 	int y2, x2, tmp, yval, xval;
 	u32b resf = make_resf(p_ptr);
 
@@ -2891,7 +2891,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	if (!room_alloc(wpos, 25, 11, FALSE, by0, bx0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
-	light = (getlevel(wpos) <= randint(25));
+	light = (lev <= randint(25));
 
 	/* Large room */
 	y1 = yval - 4;
@@ -2947,18 +2947,18 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 
 	/* Inner room variations */
-#ifndef BONE_AND_TREASURE_CHAMBERS
- #ifndef IDDC_BONE_AND_TREASURE_CHAMBERS
-	switch (randint(10)) {
- #else
-	switch (randint(in_irondeepdive(wpos) ? 11 : 10)) {
- #endif
+#if !defined(BONE_AND_TREASURE_CHAMBERS) && !defined(IDDC_BONE_AND_TREASURE_CHAMBERS)
+	switch (randint(15)) {
+#elif defined(BONE_AND_TREASURE_CHAMBERS) && defined(IDDC_BONE_AND_TREASURE_CHAMBERS)
+	switch (randint(16)) {
+#elif defined(IDDC_BONE_AND_TREASURE_CHAMBERS)
+	switch (randint(in_irondeepdive(wpos) ? 16 : 15)) {
 #else
-	switch (randint(11)) {
+	switch (randint(in_irondeepdive(wpos) ? 15 : 16)) {
 #endif
 
 	/* Just an inner room with a monster */
-	case 1: case 2:
+	case 1: case 2: case 3:
 		/* Place a secret door */
 		switch (randint(4)) {
 		case 1: place_secret_door(wpos, y1 - 1, xval); break;
@@ -2972,7 +2972,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		break;
 
 	/* Treasure Vault (with a door) */
-	case 3: case 4:
+	case 4: case 5: case 6:
 		/* Place a secret door */
 		switch (randint(4)) {
 		case 1: place_secret_door(wpos, y1 - 1, xval); break;
@@ -3019,7 +3019,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		break;
 
 	/* Inner pillar(s). */
-	case 5: case 6:
+	case 7: case 8: case 9:
 		/* Place a secret door */
 		switch (randint(4)) {
 		case 1: place_secret_door(wpos, y1 - 1, xval); break;
@@ -3082,7 +3082,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		break;
 
 	/* Maze inside. */
-	case 7: case 8:
+	case 10: case 11: case 12:
 		/* Place a secret door */
 		switch (randint(4)) {
 		case 1: place_secret_door(wpos, y1 - 1, xval); break;
@@ -3115,7 +3115,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 
 	/* Four small rooms. */
-	case 9: case 10:
+	case 13: case 14: case 15:
 		/* Inner "cross" */
 		for (y = y1; y <= y2; y++) {
 			c_ptr = &zcave[y][xval];
@@ -3153,9 +3153,10 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		break;
 
 
+#if defined(BONE_AND_TREASURE_CHAMBERS) || defined(IDDC_BONE_AND_TREASURE_CHAMBERS)
 	/* Room with lots of bones, possibly guardian (Butcher-style ;) or
 	   room with lots of treasure, possibly guardian - C. Blue */
-	case 11:
+	case 16:
 		/* Place a secret door */
 		switch (randint(4)) {
 		case 1: place_secret_door(wpos, y1 - 1, xval); break;
@@ -3168,8 +3169,9 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 s_printf("ROOM4_BONES\n");
 			/* Place bones, skulls and skeletons */
 			object_type forge;
-//			for (y = yval; y <= yval; y++)
-//				for (x = xval; x <= xval; x++)
+
+			//for (y = yval; y <= yval; y++)
+				//for (x = xval; x <= xval; x++)
 			for (y = y1; y <= y2; y++)
 				for (x = x1; x <= x2; x++)
 					if (!rand_int(5)) {
@@ -3177,22 +3179,35 @@ s_printf("ROOM4_BONES\n");
 						drop_near(0, &forge, 0, wpos, y, x);
 					}
 
-			/* Place a monster in the room */
-//			vault_monsters(wpos, yval, xval, 1);
+			/* Place a monster in the room - ideas: bizarre/undead/animal? (the butcher!) */
+			if (rand_int(2)) {
+				x = xval - 9 + rand_int(19);
+				y = yval - 2 + rand_int(5);
+				monster_level = lev + 10;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level = lev;
+			}
 		} else {
 s_printf("ROOM4_TREASURE\n");
 			/* Place monetary treasure */
-//			for (y = yval; y <= yval; y++)
-//				for (x = xval; x <= xval; x++)
+			//for (y = yval; y <= yval; y++)
+				//for (x = xval; x <= xval; x++)
 			for (y = y1; y <= y2; y++)
 				for (x = x1; x <= x2; x++)
 					if (!rand_int(5)) place_gold(wpos, y, x, 0);
 
-			/* Place a monster in the room */
-//			vault_monsters(wpos, yval, xval, 1);
+			/* Place a monster in the room - ideas: creeping coins or treasure hoarders? */
+			if (rand_int(2)) {
+				x = xval - 9 + rand_int(19);
+				y = yval - 2 + rand_int(5);
+				monster_level = lev + 10;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level = lev;
+			}
 		}
 
 		break;
+#endif
 
 	}
 }

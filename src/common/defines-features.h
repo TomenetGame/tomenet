@@ -277,14 +277,15 @@
     Can be adjusted by using different AC_CAP/AC_DIV values. */
 #define TO_AC_CAP_30
 
+/* New experimental room types: Generate pits of bones or treasure - C. Blue */
+#define BONE_AND_TREASURE_CHAMBERS
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
  /* Do we want to use Kurzel's PvE/P when mode 1 PK is configured? */
 //#define KURZEL_PK --disabled because it breaks chat highlighting
-
- #define BONE_AND_TREASURE_CHAMBERS	/* New experimental room types: Generate pits of bones or treasure - C. Blue */
 
  #define MUCHO_RUMOURS		/* print a rumour on day changes and unique kills (the_sandman) */
 // #define PRECIOUS_STONES
