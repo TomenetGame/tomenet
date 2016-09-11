@@ -21,8 +21,7 @@ extern lua_State* L;
 
 /* items */
 static char *lua_item_tester_fct;
-static bool lua_item_tester(object_type* o_ptr)
-{
+static bool lua_item_tester(object_type* o_ptr) {
 	int oldtop = lua_gettop(L);
 	bool ret;
 
@@ -34,47 +33,38 @@ static bool lua_item_tester(object_type* o_ptr)
 	return (ret);
 }
 
-void    lua_set_item_tester(int tval, char *fct)
-{
-	if (tval)
-	{
-		item_tester_tval = tval;
-	}
-	else
-	{
+void lua_set_item_tester(int tval, char *fct) {
+	if (tval) item_tester_tval = tval;
+	else {
 		lua_item_tester_fct = fct;
 		item_tester_hook = lua_item_tester;
 	}
 }
 
-
 /* Spell schools */
-s16b new_school(int i, cptr name, s16b skill)
-{
-        schools[i].name = string_make(name);
-        schools[i].skill = skill;
-        return (i);
+s16b new_school(int i, cptr name, s16b skill) {
+	schools[i].name = string_make(name);
+	schools[i].skill = skill;
+	return (i);
 }
 
-s16b new_spell(int i, cptr name)
-{
-        school_spells[i].name = string_make(name);
-        school_spells[i].level = 0;
-        school_spells[i].level = 0;
-        return (i);
+s16b new_spell(int i, cptr name) {
+	school_spells[i].name = string_make(name);
+	school_spells[i].level = 0;
+	school_spells[i].level = 0;
+	return (i);
 }
 
-spell_type *grab_spell_type(s16b num)
-{
+spell_type *grab_spell_type(s16b num) {
 	return (&school_spells[num]);
 }
 
-school_type *grab_school_type(s16b num)
-{
+school_type *grab_school_type(s16b num) {
 	return (&schools[num]);
 }
 
 /* Change this fct if I want to switch to learnable spells */
+/* NOTE: KEEP CONSISTENT WITH SERVER-SIDE lua_bind.c:lua_get_level()! */
 s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 	(void) Ind; /* suppress compiler warning */
 	s32b tmp;
@@ -141,6 +131,7 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 }
 
 /* adj_mag_stat? stat_ind??  pfft */
+/* NOTE: KEEP CONSISTENT WITH SERVER-SIDE lua_bind.c:lua_spell_chance()! */
 s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat) {
 	(void) i; /* suppress compiler warning */
 	(void) mana; /* suppress compiler warning */
@@ -158,9 +149,11 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 
 	 /* Not enough mana to cast */
 	if (chance < 0) chance = 0;
+
 #if 0 /* just confuses and casting without mana is disabled anyway */
 	if (mana > cur_mana) chance += 15 * (mana - cur_mana);
 #endif
+
 	/* Extract the minimum failure rate */
 	minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
 
@@ -174,7 +167,7 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 
 	/* Hack -- Priest prayer penalty for "edged" weapons  -DGK */
 	if ((forbid_non_blessed()) && (p_ptr->icky_wield)) chance += 25;
-#endif	/* 0 */
+#endif
 
 	/* Minimum failure rate */
 	if (chance < minfail) chance = minfail;
@@ -192,22 +185,19 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 
 #if 0
 /* Cave */
-cave_type *lua_get_cave(int y, int x)
-{
-        return (&(cave[y][x]));
+cave_type *lua_get_cave(int y, int x) {
+	return (&(cave[y][x]));
 }
 
-void set_target(int y, int x)
-{
-        target_who = -1;
-        target_col = x;
-        target_row = y;
+void set_target(int y, int x) {
+	target_who = -1;
+	target_col = x;
+	target_row = y;
 }
 
 /* Level gen */
-void get_map_size(char *name, int *ysize, int *xsize)
-{
-        *xsize = 0;
+void get_map_size(char *name, int *ysize, int *xsize) {
+	*xsize = 0;
 	*ysize = 0;
 	init_flags = INIT_GET_SIZE;
 	process_dungeon_file_full = TRUE;
@@ -216,8 +206,7 @@ void get_map_size(char *name, int *ysize, int *xsize)
 
 }
 
-void load_map(char *name, int *y, int *x)
-{
+void load_map(char *name, int *y, int *x) {
 	/* Set the correct monster hook */
 	set_mon_num_hook();
 
@@ -230,9 +219,8 @@ void load_map(char *name, int *y, int *x)
 	process_dungeon_file_full = FALSE;
 }
 
-bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y2, int *x2)
-{
-        int xval, yval, x, y;
+bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y2, int *x2) {
+	int xval, yval, x, y;
 
 	/* Try to allocate space for room.  If fails, exit */
 	if (!room_alloc(xsize + 2, ysize + 2, FALSE, by0, bx0, &xval, &yval)) return FALSE;
@@ -244,24 +232,21 @@ bool alloc_room(int by0, int bx0, int ysize, int xsize, int *y1, int *x1, int *y
 	*x2 = xval + (xsize) / 2;
 
 	/* Place a full floor under the room */
-	for (y = *y1 - 1; y <= *y2 + 1; y++)
-	{
-		for (x = *x1 - 1; x <= *x2 + 1; x++)
-		{
+	for (y = *y1 - 1; y <= *y2 + 1; y++) {
+		for (x = *x1 - 1; x <= *x2 + 1; x++) {
 			cave_type *c_ptr = &cave[y][x];
 			cave_set_feat(y, x, floor_type[rand_int(100)]);
 			c_ptr->info |= (CAVE_ROOM);
 			c_ptr->info |= (CAVE_GLOW);
 		}
-        }
-        return TRUE;
+	}
+	return TRUE;
 }
 
 
 /* Files */
-void lua_print_hook(cptr str)
-{
-        fprintf(hook_file, str);
+void lua_print_hook(cptr str) {
+	fprintf(hook_file, str);
 }
 
 
@@ -273,10 +258,8 @@ void lua_print_hook(cptr str)
 /*
  * Hook for bounty monster selection.
  */
-static bool lua_mon_hook_bounty(int r_idx)
-{
+static bool lua_mon_hook_bounty(int r_idx) {
 	monster_race* r_ptr = &r_info[r_idx];
-
 
 	/* Reject uniques */
 	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
@@ -284,9 +267,9 @@ static bool lua_mon_hook_bounty(int r_idx)
 	/* Reject those who cannot leave anything */
 	if (!(r_ptr->flags9 & RF9_DROP_CORPSE)) return (FALSE);
 
-        /* Accept only monsters that can be generated */
-        if (r_ptr->flags9 & RF9_SPECIAL_GENE) return (FALSE);
-        if (r_ptr->flags9 & RF9_NEVER_GENE) return (FALSE);
+	/* Accept only monsters that can be generated */
+	if (r_ptr->flags9 & RF9_SPECIAL_GENE) return (FALSE);
+	if (r_ptr->flags9 & RF9_NEVER_GENE) return (FALSE);
 
 	/* Reject pets */
 	if (r_ptr->flags7 & RF7_PET) return (FALSE);
@@ -294,22 +277,21 @@ static bool lua_mon_hook_bounty(int r_idx)
 	/* Reject friendly creatures */
 	if (r_ptr->flags7 & RF7_FRIENDLY) return (FALSE);
 
-        /* Accept only monsters that are not breeders */
-        if (r_ptr->flags4 & RF4_MULTIPLY) return (FALSE);
+	/* Accept only monsters that are not breeders */
+	if (r_ptr->flags4 & RF4_MULTIPLY) return (FALSE);
 
-        /* Forbid joke monsters */
-        if (r_ptr->flags8 & RF8_JOKEANGBAND) return (FALSE);
+	/* Forbid joke monsters */
+	if (r_ptr->flags8 & RF8_JOKEANGBAND) return (FALSE);
 
-        /* Accept only monsters that are not good */
-        if (r_ptr->flags3 & RF3_GOOD) return (FALSE);
+	/* Accept only monsters that are not good */
+	if (r_ptr->flags3 & RF3_GOOD) return (FALSE);
 
 	/* The rest are acceptable */
 	return (TRUE);
 }
 
-int lua_get_new_bounty_monster(int lev)
-{
-        int r_idx;
+int lua_get_new_bounty_monster(int lev) {
+	int r_idx;
 
 	/*
 	 * Set up the hooks -- no bounties on uniques or monsters
@@ -323,9 +305,9 @@ int lua_get_new_bounty_monster(int lev)
 
 	/* Undo the filters */
 	get_mon_num_hook = NULL;
-        get_mon_num_prep();
+	get_mon_num_prep();
 
-        return r_idx;
+	return r_idx;
 }
 
 #endif
@@ -359,8 +341,8 @@ int get_inven_xtra(int Ind, int inven_slot, int n) {
 		case 1: return (inventory[inven_slot].xtra1);
 		case 2: return (inventory[inven_slot].xtra2);
 		case 3: return (inventory[inven_slot].xtra3);
-    		case 4: return (inventory[inven_slot].xtra4);
-        	case 5: return (inventory[inven_slot].xtra5);
+		case 4: return (inventory[inven_slot].xtra4);
+		case 5: return (inventory[inven_slot].xtra5);
 		case 6: return (inventory[inven_slot].xtra6);
 		case 7: return (inventory[inven_slot].xtra7);
 		case 8: return (inventory[inven_slot].xtra8);

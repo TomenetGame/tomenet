@@ -270,6 +270,9 @@
 /* Update item timeouts in realtime? (Torches/lanterns/Poly-rings/Blood-potions) */
 #define LIVE_TIMEOUTS
 
+/* Small fixes/improvements to lua_get_level() and spell-power (not required) */
+#define FIX_LUA_GET_LEVEL
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
@@ -321,8 +324,6 @@
  #define TELEPORT_SURPRISES	/* monsters are surprised for a short moment if a player long-range teleported next to them */
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
-
- #define FIX_LUA_GET_LEVEL	/* Fixes to lua_get_level() and spell-power */
 #endif
 
 #ifdef ARCADE_SERVER

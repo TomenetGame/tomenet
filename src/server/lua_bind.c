@@ -257,6 +257,7 @@ school_type *grab_school_type(s16b num) {
 }
 
 /* Change this fct if I want to switch to learnable spells */
+/* NOTE: KEEP CONSISTENT WITH CLIENT-SIDE lua_bind.c:lua_get_level()! */
 s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 	player_type *p_ptr = Players[Ind];
 	s32b tmp;
@@ -300,12 +301,13 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 #else
 	tmp = lvl - ((school_spells[s].skill_level - 1) * (SKILL_STEP / 10));
 	lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
+
+	//hack to fix rounding-down, for correctly displaying spell levels <= 0:
+	if (tmp < 0 && tmp % 100) lvl--;
+
 	if (lvl < min) lvl = min;
 	else if (lvl > 0) {
-//		tmp += p_ptr->to_s * (SKILL_STEP / 10);
 		tmp += bonus;
-//		  tmp += (get_skill_scale(p_ptr, SKILL_SPELL, 20) * (SKILL_STEP / 10));
-//		  tmp /= 100; tmp *= (100 + (get_skill_scale(p_ptr, SKILL_SPELL, 40) * (SKILL_STEP / 10)));
 		lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
 		if (school_spells[s].spell_power) {
 			lvl *= (100 + get_skill_scale(p_ptr, SKILL_SPELL, 40));
@@ -322,22 +324,15 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus) {
 }
 
 /* adj_mag_stat? stat_ind??  pfft */
-//s32b lua_spell_chance(s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
 /* NOTE: KEEP CONSISTENT WITH CLIENT-SIDE lua_bind.c:lua_spell_chance()! */
 s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat) {
 	player_type *p_ptr = Players[i];
 	int             minfail;
 
 //DEBUG:s_printf("chance %d - level %d - skill_level %d", chance, level, skill_level);
+
 	/* correct LUA overflow bug ('fail' is type char, ie unsigned byte) */
 	if (chance > 100) chance -= 256;
-
-#if 0 /* requires client-side modification too, so I'm moving it into s_aux.lua instead - C. Blue */
-	/* hack - -99 means 'never fails'. This is used for 'stop' spells that
-	   turn off durational spells that have been cast, like Wraithform,
-	   and also don't cost any mana to "cast". - C. Blue */
-	if (chance == -99) return(0);
-#endif
 
 	/* Reduce failure rate by "effective" level adjustment */
 	chance -= 3 * (level - skill_level);
@@ -347,16 +342,15 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 
 	 /* Not enough mana to cast */
 	if (chance < 0) chance = 0;
+
 #if 0 /* you cannot cast the spell anyway, so this just confuses */
-	if (mana > cur_mana) {
-		chance += 15 * (mana - cur_mana);
-	}
+	if (mana > cur_mana) chance += 15 * (mana - cur_mana);
 #endif
 
 	/* Extract the minimum failure rate */
 	minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
 
-#if 0	// disabled for the time being
+#if 0	/* disabled for the time being */
 	/*
 	 * Non mage characters never get too good
 	 */
@@ -366,7 +360,7 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 
 	/* Hack -- Priest prayer penalty for "edged" weapons  -DGK */
 	if ((forbid_non_blessed()) && (p_ptr->icky_wield)) chance += 25;
-#endif	// 0
+#endif
 
 	/* Minimum failure rate */
 	if (chance < minfail) chance = minfail;
@@ -834,9 +828,9 @@ long lua_player_exp(int level, int expfact) {
 	s64b adv;
 	if ((level > 1) && (level < 100))
 #ifndef ALT_EXPRATIO
-	        adv = ((s64b)player_exp[level - 2] * (s64b)expfact / 100L);
+		adv = ((s64b)player_exp[level - 2] * (s64b)expfact / 100L);
 #else
-	        adv = (s64b)player_exp[level - 2];
+		adv = (s64b)player_exp[level - 2];
 #endif
 	else
 		adv = 0;
@@ -1339,29 +1333,31 @@ int nonswear_affix_get(int i) { return nonswear_affix[i]; }
 
 void lua_fix_max_depth(int Ind) {
 	player_type *p_ptr = Players[Ind];
-        fix_max_depth(p_ptr);
+	fix_max_depth(p_ptr);
 }
 
 void lua_fix_max_depth_bug(int Ind) {
 	player_type *p_ptr = Players[Ind];
-        fix_max_depth_bug(p_ptr);
+	fix_max_depth_bug(p_ptr);
 }
 
 /* for use with flavour reset by '-f' */
 void lua_forget_flavours(int Ind) {
 	int i;
-        for (i = 0; i < MAX_K_IDX; i++) {
-                Players[Ind]->obj_aware[i] = FALSE;
-                Players[Ind]->obj_tried[i] = FALSE;
-                Players[Ind]->obj_felt[i] = FALSE;
-                Players[Ind]->obj_felt_heavy[i] = FALSE;
-        }
+
+	for (i = 0; i < MAX_K_IDX; i++) {
+		Players[Ind]->obj_aware[i] = FALSE;
+		Players[Ind]->obj_tried[i] = FALSE;
+		Players[Ind]->obj_felt[i] = FALSE;
+		Players[Ind]->obj_felt_heavy[i] = FALSE;
+	}
 }
 
 /* for use with '-w' wilderness creation */
 void lua_forget_map(int Ind) {
 	int i;
-        for (i = 0; i < MAX_WILD_8; i++)
+
+	for (i = 0; i < MAX_WILD_8; i++)
 		Players[Ind]->wild_map[i] = 0;
 }
 
@@ -1374,14 +1370,14 @@ void lua_forget_parties(void) {
 	}
 	for (i = 0; i < MAX_PARTIES; i++) {
 		parties[i].name[0] = '\0';
-	        parties[i].owner[0] = '\0';
-	        parties[i].members = 0;
-	        parties[i].created = 0;
-	        parties[i].mode = 0;
-	        parties[i].cmode = 0;
-	        parties[i].flags = 0x0;
-	        for (j = 0; j < BBS_LINES; j++)
-    			pbbs_line[i][j][0] = '\0';
+		parties[i].owner[0] = '\0';
+		parties[i].members = 0;
+		parties[i].created = 0;
+		parties[i].mode = 0;
+		parties[i].cmode = 0;
+		parties[i].flags = 0x0;
+		for (j = 0; j < BBS_LINES; j++)
+			pbbs_line[i][j][0] = '\0';
 	}
 }
 
@@ -1397,12 +1393,12 @@ void lua_forget_guilds(void) {
 		guilds[i].name[0] = '\0';
 		guilds[i].master = 0;
 		guilds[i].members = 0;
-	        guilds[i].cmode = 0;
+		guilds[i].cmode = 0;
 		guilds[i].flags = 0x0;
 		guilds[i].minlev = 0;
-                for (j = 0; j < 5; j++)
-                        guilds[i].adder[j][0] = '\0';
-	        for (j = 0; j < BBS_LINES; j++)
-    			gbbs_line[i][j][0] = '\0';
+		for (j = 0; j < 5; j++)
+			guilds[i].adder[j][0] = '\0';
+		for (j = 0; j < BBS_LINES; j++)
+			gbbs_line[i][j][0] = '\0';
 	}
 }
