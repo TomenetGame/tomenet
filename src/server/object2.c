@@ -6739,10 +6739,11 @@ static int kind_is_good(int k_idx, u32b resf) {
 }
 /* A variant of kind_is_good() for DROP_GREAT monsters.
    The main difference is, that flavoured objects do not have 'great' enchantments,
+   except maybe for ego rods and ego lamps,
    so instead their sval must be picked so that they can be considered 'great'.
    For non-flavoured objects this function is the same as kind_is_good().
    (Note: 'power' in apply_magic() has actually no effect on jewelry boni (stat rings).
-   it is ONLY used for determining ego/art. How to make great jewelry drop from DROP_GREAT monster? :/) */
+   it is ONLY used for determining ego/art.) */
 static int kind_is_great(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
 	int tc_p = kind_is_legal(k_idx, resf);
@@ -6822,8 +6823,8 @@ static int kind_is_great(int k_idx, u32b resf) {
 #if 0
 		case SV_LITE_TORCH_EVER:
 #endif
-#if 1
-		case SV_LITE_DWARVEN: /* <- not so great, but hoping for ego power */
+#if 1 /* not so great, but hoping for ego power */
+		case SV_LITE_DWARVEN:
 #endif
 		case SV_LITE_FEANORIAN:
 		case SV_LITE_GALADRIEL:
@@ -6913,7 +6914,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		break;
 	case TV_ROD:
 		switch (k_ptr->sval) {
-#if 0
+#if 1 /* not so great base item, but hoping for ego power! */
 		case SV_ROD_DETECTION:
 		case SV_ROD_PROBING:
 		case SV_ROD_CURING:
@@ -6928,9 +6929,9 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_ROD_COLD_BALL:
 		case SV_ROD_FIRE_BALL:
 #endif
-#if 1
-		case SV_ROD_RECALL: /* <- not so great, but hoping for ego power */
-		case SV_ROD_MAPPING: /* <- not so great, but hoping for ego power */
+#if 1 /* not so great base item, but hoping for ego power! */
+		case SV_ROD_RECALL:
+		case SV_ROD_MAPPING:
 #endif
 		case SV_ROD_IDENTIFY:
 		case SV_ROD_HEALING:
