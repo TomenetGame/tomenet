@@ -4282,8 +4282,8 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 			if ((zcave[y][x].info & (CAVE_ICKY | CAVE_NEST_PIT))) continue;
 		}
 
-
 		/* Accept far away grids */
+		min_dis = 999;
 		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 
@@ -4302,7 +4302,7 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 		if (min_dis >= dis) break;
 
 		/* try especially hard to succeed */
-		if (!(tries % 100)) dis -= org_dis / 10;
+		if (!(tries % 182)) dis -= org_dis / 10;
 	}
 
 	/* Abort */
