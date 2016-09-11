@@ -2093,7 +2093,15 @@ with other players and developers via the following media:
 
 (1.1b) How to set up IRC chat
 -----------------------------
-First you need to install an IRC client to connect to IRC chat networks:
+Easiest method: Use the official webclient provided by the 'Freenode' IRC
+server. Start your internet browser and enter this URL:
+  https://webchat.freenode.net/?channels=%23tomenet
+You will be prompted to enter a chat name of your choice and to click the box
+saying "I'm not a robot", then you can click the "Connect" button and voila.
+(The channel name "#tomenet" should have already been filled in for you.)
+
+If you prefer to use a stand-alone IRC chat client instead of using a browser-
+based chat, here are some suggestions:
 
 Windows: Most popular client is probably mIRC.
 
