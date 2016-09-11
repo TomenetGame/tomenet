@@ -9586,8 +9586,7 @@ void process_monsters(void) {
 		if (m_ptr->r_idx == RI_ROBIN)
 			for (pl = 1; pl <= NumPlayers; pl++) {
 				p_ptr = Players[pl];
-				//if (!strcmp(p_ptr->accountname, "The_sandman")) { //you can make it!~
-				if (!strcmp(p_ptr->name, "Test")) {
+				if (!strcmp(p_ptr->accountname, "The_sandman")) { //you can make it!~
 					closest = pl;
 					dis_to_closest = distance(p_ptr->py, p_ptr->px, fy, fx); //probably not needed
 					break;
