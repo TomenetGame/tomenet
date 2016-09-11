@@ -100,10 +100,14 @@ static int check_hit(int Ind, int power, int level, bool flag) {
 #ifndef TO_AC_CAP_30
 	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
 #else
-	/* *4/5, *5/6 and *6/7 are possible mainly:
+	/* *3/4, *4/5, *5/6 and *6/7 are possible mainly:
+	   3/4 would mean a slight nerf to AC values,
 	   4/5 would mean a slight nerf to 'normal' AC values,
 	   5/6 would mean a very slight buff to top-end AC values and very slight nerf to 'normal' values,
-	   6/7 would mean a slight buff to top-end AC values. */
+	   6/7 would mean a slight buff to top-end AC values.
+	   However, note that *enchant* scrolls and shop enchantment service is indirectly buffed by TO_AC_CAP_30
+	   and that low-ac players also look a bit better in comparison to higher-ac ones now.
+	   All in all, 3/4 or 4/5 are the recommended values to use. */
 	if ((i > 0) && (randint(i) > ((ac * 4) / 5))) return (TRUE);
 #endif
 
