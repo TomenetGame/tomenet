@@ -549,8 +549,14 @@ static char inkey_aux(void) {
 			(void)(Term_inkey(&ch, FALSE, TRUE));
 			if (ch) break;
 			update_ticks();
+
+			/* Don't consume 100% cpu, wait according to client fps. */
+ #if 0
 			/* Wait according to fps - mikaelh */
-			SetTimeout(0, next_frame());
+			SetTimeout(0, next_frame()); //doesn't work here
+ #else
+			usleep(1000); //so use this instead
+ #endif
 		} while (!ch);
 #endif
 	} else {
@@ -968,6 +974,7 @@ if (c_cfg.keep_topline)
 			(void)Term_inkey(&xh, !inkey_scan, TRUE);
 #else /* ..but keep processing net input in the background so we don't timeout. - C. Blue */
 			int net_fd = Net_fd();
+
 			if (inkey_scan) (void)Term_inkey(&xh, FALSE, TRUE); /* don't wait */
 			else if (net_fd == -1) (void)Term_inkey(&xh, TRUE, TRUE); /* wait and block, no network yet anyway */
 			else do { /* do wait, but don't block; keep processing */
@@ -1072,7 +1079,6 @@ if (c_cfg.keep_topline)
 
 		/* Get a key (see above) */
 		kk = ch = inkey_aux();
-
 
 		/* Finished a "control-underscore" sequence */
 		if (parse_under && (ch <= 32)) {
