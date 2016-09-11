@@ -104,6 +104,7 @@ bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x,
 
 /*
  * Determine if the player "hits" a monster (normal combat).
+ * Also used for PvP - for now not doing any adjustments in case TO_AC_CAP_30 is enabled, unlike check_hit().
  * Note -- Always miss 5%, always hit 5%, otherwise random.
  */
 bool test_hit_fire(int chance, int ac, int vis) {
@@ -111,16 +112,13 @@ bool test_hit_fire(int chance, int ac, int vis) {
 
 	/* Percentile dice */
 	k = rand_int(100);
-
 	/* Hack -- Instant miss or hit */
 	if (k < 10) return (k < 5);
 
 	/* Never hit */
 	if (chance <= 0) return (FALSE);
-
 	/* Invisible monsters are harder to hit */
 	if (!vis) chance = (chance + 1) / 2;
-
 	/* Power competes against armor */
 	if (rand_int(chance) < (ac * 3 / 4)) return (FALSE);
 
@@ -132,7 +130,7 @@ bool test_hit_fire(int chance, int ac, int vis) {
 
 /*
  * Determine if the player "hits" a monster (normal combat).
- *
+ * Also used for PvP - for now not doing any adjustments in case TO_AC_CAP_30 is enabled, unlike check_hit().
  * Note -- Always miss 5%, always hit 5%, otherwise random.
  */
 bool test_hit_melee(int chance, int ac, int vis) {
@@ -140,16 +138,13 @@ bool test_hit_melee(int chance, int ac, int vis) {
 
 	/* Percentile dice */
 	k = rand_int(100);
-
 	/* Hack -- Instant miss or hit */
 	if (k < 10) return (k < 5);
 
 	/* Wimpy attack never hits */
 	if (chance <= 0) return (FALSE);
-
 	/* Penalize invisible targets */
 	if (!vis) chance = (chance + 1) / 2;
-
 	/* Power must defeat armor */
 	if (rand_int(chance) < (ac * 3 / 4)) return (FALSE);
 
@@ -167,9 +162,9 @@ s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision) {
 	player_type *p_ptr = NULL;
 	int i, k;
 	bool boomerang = FALSE;
-//	int xtra_crit = p_ptr->xtra_crit + p_ptr->inventory;
-//	if xtra_crit > 50 cap
-//	xtra_crit = 65 - (975 / (xtra_crit + 15));
+	//int xtra_crit = p_ptr->xtra_crit + p_ptr->inventory;
+	//if xtra_crit > 50 cap
+	//xtra_crit = 65 - (975 / (xtra_crit + 15));
 
 	/* Extract "shot" power */
 	if (Ind > 0) {

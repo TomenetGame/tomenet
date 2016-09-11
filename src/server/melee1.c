@@ -83,26 +83,29 @@ static int monster_critical(int dice, int sides, int dam) {
  * Always miss 5% of the time, Always hit 5% of the time.
  * Otherwise, match monster power against player armor.
  */
-static int check_hit(int Ind, int power, int level, bool flag)
-{
+static int check_hit(int Ind, int power, int level, bool flag) {
 	player_type *p_ptr = Players[Ind];
-
 	int i, k, ac;
 
 	/* Percentile dice */
 	k = rand_int(100);
-
 	/* Hack -- Always miss or hit */
 	if (k < 10) return (k < 5);
 
 	/* Calculate the "attack quality" */
 	i = (power + (level * 3));
-
 	/* Total armor */
 	ac = (flag ? 0 : p_ptr->ac) + p_ptr->to_a;
-
 	/* Power and Level compete against Armor */
+#ifndef TO_AC_CAP_30
 	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
+#else
+	/* *4/5, *5/6 and *6/7 are possible mainly:
+	   4/5 would mean a slight nerf to 'normal' AC values,
+	   5/6 would mean a very slight buff to top-end AC values and very slight nerf to 'normal' values,
+	   6/7 would mean a slight buff to top-end AC values. */
+	if ((i > 0) && (randint(i) > ((ac * 4) / 5))) return (TRUE);
+#endif
 
 	/* Assume miss */
 	return (FALSE);

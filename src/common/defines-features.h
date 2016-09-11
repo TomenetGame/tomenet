@@ -273,16 +273,16 @@
 /* Small fixes/improvements to lua_get_level() and spell-power (not required) */
 #define FIX_LUA_GET_LEVEL
 
+ /* limit to_ac to +30 instead of +35 -- Reason: Give base AC more weight!
+    Can be adjusted by using different AC_CAP/AC_DIV values. */
+#define TO_AC_CAP_30
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
- /* limit to_ac to +30 instead of +35 -- Reason: Give base AC more weight!
-    Counter-balanced by different AC_CAP/AC_DIV values, so no nerf for players! */
- #define TO_AC_CAP_30
-
  /* Do we want to use Kurzel's PvE/P when mode 1 PK is configured? */
-// #define KURZEL_PK --disabled because it breaks chat highlighting
+//#define KURZEL_PK --disabled because it breaks chat highlighting
 
  #define BONE_AND_TREASURE_CHAMBERS	/* New experimental room types: Generate pits of bones or treasure - C. Blue */
 
@@ -303,10 +303,6 @@
  #endif
 
  #define NEW_REMOVE_CURSE	/* rc has fail chance; allow projecting rc spell on others */
-
- /* limit to_ac to +30 instead of +35 -- Reason: Give base AC more weight!
-    Counter-balanced by different AC_CAP/AC_DIV values, so no nerf for players! */
- #define TO_AC_CAP_30		/* limit to_ac to +30 instead of +35 */
 
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
