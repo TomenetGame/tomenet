@@ -1985,17 +1985,6 @@ static void process_world(int Ind) {
 	 * deeper in the dungeon.
 	 */
 
-#if 0 //see below o_O
-	/* Check for creature generation */
-	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
- #ifndef HALLOWEEN
-	    (istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE * ((3 / NumPlayers) + 1)) == 0)))
- #else
-	    (istown(&p_ptr->wpos) && (rand_int((in_bree(&p_ptr->wpos) ?
-	    HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) * ((3 / NumPlayers) + 1)) == 0)))
- #endif
-#endif//0
-
 	/* Check for creature generation */
 #if 0 /* too many people idling all day.. ;) */
 	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
