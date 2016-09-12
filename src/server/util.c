@@ -1695,7 +1695,7 @@ void handle_music(int Ind) {
 		//Morgoth
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		if (p_ptr->total_winner) Send_music(Ind, 86, 44);
+		if (p_ptr->total_winner) Send_music(Ind, 87, 44);
 		else Send_music(Ind, 44, 14);
 		return;
 	}
@@ -1769,28 +1769,28 @@ void handle_music(int Ind) {
 			if (season_halloween) {
 				/* Designated place: Bree */
 				if (istown(&p_ptr->wpos) && (tmus == 1 || tmus_inverse == 1)) {
-					Send_music(Ind, 82, tmus);
+					Send_music(Ind, 83, tmus);
 					return;
 				}
 			}
 			else if (season_xmas) {
 				/* Designated place: Bree */
 				if (istown(&p_ptr->wpos) && (tmus == 1 || tmus_inverse == 1)) {
-					Send_music(Ind, 83, tmus);
+					Send_music(Ind, 84, tmus);
 					return;
 				}
 			}
 			else if (season_newyearseve) {
 				/* Designated place: Bree */
 				if (istown(&p_ptr->wpos) && (tmus == 1 || tmus_inverse == 1)) {
-					Send_music(Ind, 84, tmus);
+					Send_music(Ind, 85, tmus);
 					return;
 				}
 			}
 
 			/* Sickbay hack */
 			if (p_ptr->music_monster == -3) {
-				Send_music(Ind, 85, tmus);
+				Send_music(Ind, 86, tmus);
 				return;
 			}
 			/* Tavern hack */
@@ -1798,21 +1798,21 @@ void handle_music(int Ind) {
 				//abuse tmus_inverse
 				if (night_surface) switch (town[i].type) {
 				default:
-				case TOWN_VANILLA: tmus_inverse = 67; break; //default town
-				case TOWN_BREE: tmus_inverse = 69; break; //Bree
-				case TOWN_GONDOLIN: tmus_inverse = 71; break; //Gondo
-				case TOWN_MINAS_ANOR: tmus_inverse = 73; break; //Minas
-				case TOWN_LOTHLORIEN: tmus_inverse = 75; break; //Loth
-				case TOWN_KHAZADDUM: tmus_inverse = 77; break; //Khaz
-				}
-				else switch (town[i].type) {
-				default:
 				case TOWN_VANILLA: tmus_inverse = 68; break; //default town
 				case TOWN_BREE: tmus_inverse = 70; break; //Bree
 				case TOWN_GONDOLIN: tmus_inverse = 72; break; //Gondo
 				case TOWN_MINAS_ANOR: tmus_inverse = 74; break; //Minas
 				case TOWN_LOTHLORIEN: tmus_inverse = 76; break; //Loth
 				case TOWN_KHAZADDUM: tmus_inverse = 78; break; //Khaz
+				}
+				else switch (town[i].type) {
+				default:
+				case TOWN_VANILLA: tmus_inverse = 69; break; //default town
+				case TOWN_BREE: tmus_inverse = 71; break; //Bree
+				case TOWN_GONDOLIN: tmus_inverse = 73; break; //Gondo
+				case TOWN_MINAS_ANOR: tmus_inverse = 75; break; //Minas
+				case TOWN_LOTHLORIEN: tmus_inverse = 77; break; //Loth
+				case TOWN_KHAZADDUM: tmus_inverse = 79; break; //Khaz
 				}
 				Send_music(Ind, tmus_inverse, tmus);
 				return;
@@ -1843,14 +1843,14 @@ void handle_music(int Ind) {
 				if (dlev == 40) {
 					/* Tavern hack */
 					if (p_ptr->music_monster == -4) {
-						Send_music(Ind, 80, 57);
+						Send_music(Ind, 81, 57);
 						return;
 					}
 					Send_music(Ind, 57, 1); /* Menegroth: own music, fallback to generic town */
 				} else {
 					/* Tavern hack */
 					if (p_ptr->music_monster == -4) {
-						Send_music(Ind, 81, 58);
+						Send_music(Ind, 82, 58);
 						return;
 					}
 					Send_music(Ind, 58, 49); /* Nargothrond: own music, fallback to generic town night */
@@ -1858,7 +1858,7 @@ void handle_music(int Ind) {
 			} else {
 				/* Tavern hack */
 				if (p_ptr->music_monster == -4) {
-					Send_music(Ind, 79, 2);
+					Send_music(Ind, 80, 2);
 					return;
 				}
 				Send_music(Ind, 2, 1); /* the usual music for this case */

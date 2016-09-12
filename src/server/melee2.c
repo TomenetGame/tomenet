@@ -9689,6 +9689,10 @@ void process_monsters(void) {
 				    && (p_ptr->music_monster != 43)) {
 					//The Great Pumpkin; overrides Nazgul, Dungeon Bosses and even Special Uniques ^^
 					Send_music(pl, (p_ptr->music_monster = 55), -1);
+				} else if ((m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2)
+				    && (p_ptr->music_monster != 43)) {
+					//Santa Claus
+					Send_music(pl, (p_ptr->music_monster = 67), -1);
 				}
 			}
 #endif

@@ -361,11 +361,12 @@ audio_bgm = {
     "event_DungeonKeeper",
     "event_DungeonKeeper_final",
     "event_PvP_arena",
+    "event_Xmas",
 
     "tavern_town_generic",
     "tavern_town_generic_night",
-    "tavern_Bree",
-    "tavern_Bree_night",--70
+    "tavern_Bree",--70
+    "tavern_Bree_night",
     "tavern_Gondolin",
     "tavern_Gondolin_night",
     "tavern_MinasAnor",
@@ -374,8 +375,8 @@ audio_bgm = {
     "tavern_Lothlorien_night",
     "tavern_Khazaddum",
     "tavern_Khazaddum_night",
-    "tavern_town_dungeon",
-    "tavern_Menegroth",--80
+    "tavern_town_dungeon",--80
+    "tavern_Menegroth",
     "tavern_Nargothrond",
 
     "season_halloween",
