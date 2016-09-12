@@ -5789,5 +5789,5 @@ void set_mon_num2_hook(int feat) {
 /* Generic function to set a proper hook for monster spawning. */
 void set_mon_num_hook(struct worldpos *wpos) {
 	if (!wpos->wz) set_mon_num_hook_wild(wpos);
-	else get_mon_num_hook = dungeon_aux();
+	else get_mon_num_hook = dungeon_aux;
 }
