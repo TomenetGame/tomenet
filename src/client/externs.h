@@ -336,7 +336,7 @@ extern school_type *schools;
 
 /* Server ping statistics */
 extern int ping_id;
-extern int ping_times[60];
+extern int ping_times[60], ping_avg, ping_avg_cnt;
 extern bool lagometer_enabled;
 extern bool lagometer_open;
 

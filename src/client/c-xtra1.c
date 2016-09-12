@@ -1894,6 +1894,13 @@ void display_lagometer(bool display_commands) {
 	else tmp[0] = '\0';
 	prt(tmp, 20, 22);
 
+ #if 0 /* TMI */
+	prt("10-min cleaned avg:", 21, 2);
+	sprintf(tmp, "%5dms", ping_avg);
+	else tmp[0] = '\0';
+	prt(tmp, 21, 22);
+ #endif
+
 	prt("Min:", 20, 32);
 	if (min != -1) sprintf(tmp, "%5dms", min);
 	else tmp[0] = '\0';
@@ -1931,6 +1938,20 @@ void display_lagometer(bool display_commands) {
 	}
 	else tmp[0] = '\0';
 	c_prt(attr, tmp, 20, 22);
+
+ #if 0 /* TMI */
+	prt("10-min cleaned avg:", 21, 2);
+	if (ping_avg != -1) {
+		sprintf(tmp, "%5dms", ping_avg);
+		if (ping_avg >= 400) attr = TERM_RED;
+		else if (ping_avg >= 300) attr = TERM_ORANGE;
+		else if (ping_avg >= 200) attr = TERM_YELLOW;
+		else if (ping_avg >= 100) attr = TERM_GREEN;
+		else attr = TERM_L_GREEN;
+	}
+	else tmp[0] = '\0';
+	c_prt(attr, tmp, 21, 22);
+ #endif
 
 	prt("Min:", 20, 32);
 	if (min != -1) {

@@ -217,7 +217,7 @@ school_type *schools;
 
 /* Server ping statistics */
 int ping_id = 0;
-int ping_times[60];
+int ping_times[60], ping_avg = 0, ping_avg_cnt = 0;
 bool lagometer_enabled = FALSE; /* Must be disabled during login */
 bool lagometer_open = FALSE;
 

@@ -3758,6 +3758,23 @@ int Receive_ping(void) {
 		index = ping_id - id;
 		if (index >= 0 && index < 60) {
 			ping_times[index] = rtt;
+
+			/* Also determine our average ping over the last 10 minutes or so */
+
+			/* Hack to catch ongoing parallel downloads and stuff:
+			   Reset average ping if we're suddenly getting much lower pings.
+			   Ignore new pings that are suddenly much higher than our average ping so far. */
+			if (rtt < (ping_avg * 7 / 10)) { //reset on too low pings
+				ping_avg = rtt;
+				ping_avg_cnt = 1;
+			}
+			if (rtt <= (ping_avg * 13) / 10 || ping_avg_cnt < 10) { //ignore too high pings
+				if (ping_avg_cnt == 600) ping_avg = (ping_avg * 599 + rtt) / 600;
+				else {
+					ping_avg = (ping_avg * ping_avg_cnt + rtt) / (ping_avg_cnt + 1);
+					ping_avg_cnt++;
+				}
+			}
 		}
 
 		update_lagometer();
