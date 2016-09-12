@@ -3715,31 +3715,11 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	tmp = randint(dun_lev);
 
 	if ((tmp < 25) && (rand_int(5) != 0)) {
-#if 0
-		int tries = 2000;
-
-		while (TRUE) {
-			template_race = randint(MAX_R_IDX - 2);
-
-			/* Reject uniques */
-			if (r_info[template_race].flags1 & RF1_UNIQUE) continue;
-
-			/* Reject OoD monsters in a loose fashion */
-			if (((r_info[template_race].level) + randint(5)) >
-			    (dun_lev + randint(5))) continue;
-
-			if (!tries--) return;
-
-			/* Don't like 'break's like this, but this cannot be made better */
-			break;
-		}
-#else
 		/* Alternate version that uses get_mon_num() - mikaelh */
 		get_mon_num_hook = dungeon_aux;
 		set_mon_num2_hook(floor_type[0]);
 		get_mon_num_prep(dun_type, reject_uniques);
 		template_race = get_mon_num(dun_lev, dun_lev);
-#endif
 
 		if ((dun_lev >= (25 + randint(15))) && (rand_int(2) != 0)) {
 			/* monster nest (same r_info symbol) */
@@ -3792,35 +3772,6 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			get_mon_num_hook = vault_aux_undead;
 		}
 	}
-
-#if 0
-	/* Monster nest (jelly) */
-	if (tmp < 30) {
-		/* Describe */
-		//name = "jelly";
-
-		/* Restrict to jelly */
-		get_mon_num_hook = vault_aux_jelly;
-	}
-
-	/* Monster nest (animal) */
-	else if (tmp < 50) {
-		/* Describe */
-		//name = "animal";
-
-		/* Restrict to animal */
-		get_mon_num_hook = vault_aux_animal;
-	}
-
-	/* Monster nest (undead) */
-	else {
-		/* Describe */
-		//name = "undead";
-
-		/* Restrict to undead */
-		get_mon_num_hook = vault_aux_undead;
-	}
-#endif	/* 0 */
 
 	/* Set the second hook according to the first floor type */
 	set_mon_num2_hook(floor_type[0]);
@@ -4048,9 +3999,6 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Watery pit */
 	if (aqua) {
-		/* Message */
-		//name = "aquatic";
-
 		/* Restrict monster selection */
 		get_mon_num_hook = vault_aux_aquatic;
 	}
@@ -4058,15 +4006,9 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	/* Orc pit */
 	else if (tmp < 15) {
 		if (dun_lev > 30 && magik(50)) {
-			/* Message */
-			//name = "orc and ogre";
-
 			/* Restrict monster selection */
 			get_mon_num_hook = vault_aux_orc_ogre;
 		} else {
-			/* Message */
-			//name = "orc";
-
 			/* Restrict monster selection */
 			get_mon_num_hook = vault_aux_orc;
 		}
@@ -4074,36 +4016,24 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Troll pit */
 	else if (tmp < 30) {
-		/* Message */
-		//name = "troll";
-
 		/* Restrict monster selection */
 		get_mon_num_hook = vault_aux_troll;
 	}
 
 	/* Man pit */
 	else if (tmp < 40) {
-		/* Message */
-		//name = "mankind";
-
 		/* Restrict monster selection */
 		get_mon_num_hook = vault_aux_man;
 	}
 
 	/* Giant pit */
 	else if (tmp < 55) {
-		/* Message */
-		//name = "giant";
-
 		/* Restrict monster selection */
 		get_mon_num_hook = vault_aux_lesser_giant;
 	}
 
 	else if (tmp < 70) {
 		if (randint(4) != 1) {
-			/* Message */
-			//name = "ordered clones";
-
 #if 0
 			do { template_race = randint(MAX_R_IDX - 2); }
 			while ((r_info[template_race].flags1 & RF1_UNIQUE)
@@ -4121,7 +4051,6 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			get_mon_num_hook = vault_aux_symbol;
 		} else {
 
-			//name = "ordered chapel";
 			get_mon_num_hook = vault_aux_lesser_chapel;
 		}
 
@@ -4131,84 +4060,44 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	else if (tmp < 80) {
 		/* Pick dragon type */
 		switch (rand_int(7)) {
-			/* Black */
-			case 0:
-				/* Message */
-				//name = "acid dragon";
+		/* Black */
+		case 0:
+			/* Restrict dragon breath type */
+			vault_aux_dragon_mask4 = RF4_BR_ACID;
+			break;
+		/* Blue */
+		case 1:
+			/* Restrict dragon breath type */
+			vault_aux_dragon_mask4 = RF4_BR_ELEC;
+			break;
+		/* Red */
+		case 2:
+			/* Restrict dragon breath type */
+			vault_aux_dragon_mask4 = RF4_BR_FIRE;
+			break;
+		/* White */
+		case 3:
+			/* Restrict dragon breath type */
+			vault_aux_dragon_mask4 = RF4_BR_COLD;
+			break;
+		/* Green */
+		case 4:
+			/* Restrict dragon breath type */
+			vault_aux_dragon_mask4 = RF4_BR_POIS;
+			break;
+		/* All stars */
+		case 5:
+			/* Restrict dragon breath type */
+			vault_aux_dragon_mask4 = 0L;
+			break;
 
-				/* Restrict dragon breath type */
-				vault_aux_dragon_mask4 = RF4_BR_ACID;
-
-				/* Done */
-				break;
-
-			/* Blue */
-			case 1:
-				/* Message */
-				//name = "electric dragon";
-
-				/* Restrict dragon breath type */
-				vault_aux_dragon_mask4 = RF4_BR_ELEC;
-
-				/* Done */
-				break;
-
-			/* Red */
-			case 2:
-				/* Message */
-				//name = "fire dragon";
-
-				/* Restrict dragon breath type */
-				vault_aux_dragon_mask4 = RF4_BR_FIRE;
-
-				/* Done */
-				break;
-
-			/* White */
-			case 3:
-				/* Message */
-				//name = "cold dragon";
-
-				/* Restrict dragon breath type */
-				vault_aux_dragon_mask4 = RF4_BR_COLD;
-
-				/* Done */
-				break;
-
-			/* Green */
-			case 4:
-				/* Message */
-				//name = "poison dragon";
-
-				/* Restrict dragon breath type */
-				vault_aux_dragon_mask4 = RF4_BR_POIS;
-
-				/* Done */
-				break;
-
-			/* All stars */
-			case 5:
-				/* Message */
-				//name = "dragon";
-
-				/* Restrict dragon breath type */
-				vault_aux_dragon_mask4 = 0L;
-
-				/* Done */
-				break;
-
-			/* Multi-hued */
-			default:
-				/* Message */
-				//name = "multi-hued dragon";
-
-				/* Restrict dragon breath type */
-				vault_aux_dragon_mask4 = (RF4_BR_ACID | RF4_BR_ELEC |
-				                          RF4_BR_FIRE | RF4_BR_COLD |
-				                          RF4_BR_POIS);
-
-				/* Done */
-				break;
+		/* Multi-hued */
+		default:
+			/* Restrict dragon breath type */
+			vault_aux_dragon_mask4 = (RF4_BR_ACID | RF4_BR_ELEC |
+			                          RF4_BR_FIRE | RF4_BR_COLD |
+			                          RF4_BR_POIS);
+			break;
 		}
 
 		/* Restrict monster selection */
@@ -4217,9 +4106,6 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Demon pit */
 	else {
-		/* Message */
-		//name = "demon";
-
 		/* Restrict monster selection */
 		get_mon_num_hook = vault_aux_demon;
 	}
@@ -9370,31 +9256,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				if (rand_int(3) == 0) add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
 			}
 		}
-
-#if 0
-		/* Hack -- Add some water streamers */
-		if (dun->watery) {
- #if 0
-			get_mon_num_hook = vault_aux_aquatic;
-
-			/* Prepare allocation table */
-			get_mon_num_prep();
- #endif	/* 0 */
-
-			for (i = 0; i < DUN_STR_WAT; i++)
-				build_streamer(wpos, FEAT_DEEP_WATER, 0, TRUE);
-
-			lake_level(wpos);
-
- #if 0
-			/* Remove restriction */
-			get_mon_num_hook = dungeon_aux;
-
-			/* Prepare allocation table */
-			get_mon_num_prep();
- #endif	/* 0 */
-		}
-#endif	/* 0 */
 
 #ifdef VOLCANIC_FLOOR /* experimental - this might be too costly on cpu: add volcanic floor around lava rivers - C. Blue */
 		for (x = 0; x < dun->l_ptr->wid; x++)
