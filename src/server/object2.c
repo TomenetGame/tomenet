@@ -6942,21 +6942,40 @@ static int kind_is_great(int k_idx, u32b resf) {
 			return (5 * tc_p) / 100;
 		}
 		break;
+
+	/* Handle some tvals that in most cases shouldn't count as 'great' due to their low usability */
+	case TV_RUNE:
+		/* Even though runes can cost 5000 Au, we'll exclude them from 'great' for now. */
+		return 0;
+	case TV_BOOK:
+		/* No handbooks, even though they're pretty costly. */
+		if (k_ptr->cost <= 20000) return 0; //Tomes+Grimoires
+		return (100 * tc_p) / 100;
+	case TV_GOLEM:
+		/* Only rare massive pieces (gold+), no arms/legs/scrolls */
+		if (k_ptr->cost < 20000) return 0;
+		return (100 * tc_p) / 100;
+
 	default:
 		/* Specialty: Left over tvals.
 		   Probably potions and scrolls mostly, these don't need any special treatment:
 		   Monsters specialized on dropping them are already highly valued for that.
 
+		   However, low-level DROP_GREAT monsters *might* need treasure class changes
+		   if they're really expected to provide great starter weapons/armour.
+		   Then again the potions/scrolls passing the price check shouldn't occur on
+		   low levels anyway except for very rare OoD rolls.
+
 		   All left over tvals used to be chance=0, but now that we're matching
 		   kind_is_theme(), any item tval left over here must be possible to spawn: */
-		if (k_ptr->cost <= 3000) return 0; //except items that are really not GREAT
+		if (k_ptr->cost <= 7000) return 0; //except items that are really not GREAT
 		return (100 * tc_p) / 100;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
 	/* svals that we assume are 'not good', but let's give them a tiny
 	   chance nevertheless, to smooth out the item drop choices. */
-	if (k_ptr->cost <= 3000) return 0; //except items that are really not GREAT
+	if (k_ptr->cost <= 7000) return 0; //except items that are really not GREAT
 	return (1 * tc_p) / 100;
 }
 
