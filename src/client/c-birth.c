@@ -1030,13 +1030,22 @@ static bool choose_stat_order(void) {
 		if (valid_dna) c_put_str(TERM_SLATE, "Current:   (Base) (Prev) Recommended min:", 15, col2);
 		else c_put_str(TERM_SLATE, "Current:   (Base)        Recommended min::", 15, col2);
 
-		if (valid_dna) c_put_str(TERM_SLATE, "'\377B#\377s/\377B%\377s' to reincarnate.", 15, col1);
+		if (valid_dna) c_put_str(TERM_SLATE, "Press \377B#\377s/\377B%\377s to reincarnate.", 15, col1);
+#if 0
 		c_put_str(TERM_SLATE, "Use keys '+', '-', 'RETURN'", 16, col1);
 		c_put_str(TERM_SLATE, "or 8/2/4/6 or arrow keys to", 17, col1);
 		c_put_str(TERM_SLATE, "modify and navigate.", 18, col1);
 		c_put_str(TERM_SLATE, "After you distributed all", 19, col1);
 		c_put_str(TERM_SLATE, "points, press ESC to proceed.", 20, col1);
 		c_put_str(TERM_SLATE, "'Q' = quit, BACKSPACE = back.", 21, col1);
+#else
+		c_put_str(TERM_WHITE, "RETURN\377s/\377w8\377s/\377w2\377s/\377wUp\377s/\377wDown\377s:", 16, col1);
+		c_put_str(TERM_SLATE, " Select a stat.", 17, col1);
+		c_put_str(TERM_WHITE, "-\377s/\377w+\377s/\377w4\377s/\377w6\377s/\377wLeft\377s/\377wRight\377s:", 18, col1);
+		c_put_str(TERM_SLATE, " Modify the selected stat.", 19, col1);
+		c_put_str(TERM_WHITE, "ESC\377s to proceed when done.", 20, col1);
+		c_put_str(TERM_WHITE, "Q\377s quits, \377wBACKSPACE\377s goes back.", 21, col1);
+#endif
 
 		c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, col1);
 
