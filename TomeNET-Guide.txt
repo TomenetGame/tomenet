@@ -4685,6 +4685,9 @@ Miscellanous escape sequences:
                 which depend on each others execution. You might have to
                 adjust the delay to your personal latency, depending on your
                 internet connection and speed at which your character acts.
+                NOTE: You must always specify TWO digits. For example if you
+                      want to wait for 200 ms, you need to enter "\w02" and
+                      NOT "\w2"!
 
 
 (3.9a) Creating a chat macro for your party
