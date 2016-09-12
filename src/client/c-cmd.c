@@ -793,6 +793,7 @@ void cmd_swap(void) {
 	if (item < INVEN_PACK) {
 		char insc[4], *c;
 
+		/* smart handling of @xN swapping with equipped items that have alternative slot options */
 		if (is_weapon(inventory[item].tval) && is_weapon(inventory[INVEN_ARM].tval) &&
 		    (c = strstr(inventory_name[item], "@x"))) {
 			strncpy(insc, c, 3);
@@ -806,6 +807,25 @@ void cmd_swap(void) {
 		    (c = strstr(inventory_name[item], "@x"))) {
 			strncpy(insc, c, 3);
 			insc[3] = 0;
+			if (strstr(inventory_name[INVEN_RIGHT], insc) && !strstr(inventory_name[INVEN_LEFT], insc)) {
+				Send_wield2(item);
+				return;
+			}
+		}
+		/* new: also smart handling of @N swapping with equipped items that have alternative slot options */
+		else if (is_weapon(inventory[item].tval) && is_weapon(inventory[INVEN_ARM].tval) &&
+		    (c = strstr(inventory_name[item], "@")) && c[1] >= '0' && c[1] <= '9') {
+			strncpy(insc, c, 2);
+			insc[2] = 0;
+			if (strstr(inventory_name[INVEN_ARM], insc) && !strstr(inventory_name[INVEN_WIELD], insc)) {
+				Send_wield2(item);
+				return;
+			}
+		}
+		else if (inventory[item].tval == TV_RING && inventory[INVEN_RIGHT].tval == TV_RING &&
+		    (c = strstr(inventory_name[item], "@")) && c[1] >= '0' && c[1] <= '9') {
+			strncpy(insc, c, 2);
+			insc[2] = 0;
 			if (strstr(inventory_name[INVEN_RIGHT], insc) && !strstr(inventory_name[INVEN_LEFT], insc)) {
 				Send_wield2(item);
 				return;

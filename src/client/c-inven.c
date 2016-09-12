@@ -1,6 +1,23 @@
 /* $Id$ */
 #include "angband.h"
 
+
+/* This is actually not very smart but done with a bad hack -
+   Try to avoid swapping an item for another one which are actually identical,
+   but search the inventory for an alternative item to use in that case.
+   Example: Player has 3x teleport ring @x0 and 1x protection ring @x0,
+   he certainly doesn't want to swap one teleport ring for another one.
+   The problem is that item names aren't identical due to number/article and grammar,
+   eg '3 rings' vs 'a ring'. The current hack just checks for ' of ' in the item name
+   and only compares the rest of it, ignoring the first part, so it basically only
+   works for identified flavoured items atm. Better than nothing maybe.
+   (The best ever state would be of course if the client could check if the items are
+   really totally identical and then even takes off the equipped item if the only
+   items in inventory that are fittingly inscribed are actually identical ones ^^.)
+   Note: SMART_SWAP needs the 'smart handling' code in cmd_swap() to work properly. */
+#define SMART_SWAP
+
+
 bool verified_item = FALSE;
 bool abort_prompt = FALSE;
 
@@ -120,8 +137,13 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	int i, j;
 	int start, stop, step;
 	cptr s;
-
 	bool inven_first = mode & INVEN_FIRST;
+#ifdef SMART_SWAP
+	int i_found = -1;
+	char buf1[ONAME_LEN], buf3[ONAME_LEN];
+	bool multi = mode & CHECK_MULTI;
+	bool postpone;
+#endif
 
 	/* neither inventory nor equipment is allowed to be searched? */
 	if (!inven && !equip) return (FALSE);
@@ -175,20 +197,114 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 		while (s) {
 			/* Check the normal tags */
 			if (s[1] == tag) {
+#ifdef SMART_SWAP /* not really cool, with the ' of ' hack.. problem was eg 'ring' vs 'rings' */
+				postpone = FALSE;
+				if (multi && i <= INVEN_PACK) {
+					/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
+					char *buf1p, *buf3p, *s3;
+					int k;
+
+					strcpy(buf1, buf);
+					buf1p = buf1;
+					while (*buf1p) {
+						/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+						   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+						if (*buf1p == '@') buf1p ++;
+						else *buf1p = tolower(*buf1p);
+						buf1p++;
+					}
+
+					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+					for (k = INVEN_WIELD; k <= INVEN_TOTAL; k++) {
+						strcpy(buf3, inventory_name[k]);
+						buf3p = buf3;
+						while (*buf3p) {
+							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+							if (*buf3p == '@') buf3p ++;
+							else *buf3p = tolower(*buf3p);
+							buf3p++;
+						}
+
+						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+						/* Actually we should only test for equipment slots that fulfill wield_slot() condition
+						   for the inventory item, but since we don't have this function client-side we just test all.. */
+						s3 = strchr(buf3, '@');
+						if (s3 && s3[1] == tag &&
+						    !strcmp(buf1p, buf3p)) {
+							/* remember this item to use it if we don't find a different one.. */
+							i_found = i;
+							break;
+						}
+					}
+					if (k <= INVEN_TOTAL && i_found != -1) postpone = TRUE;
+				}
+			    if (!postpone) {
+#endif
 				/* Save the actual inventory ID */
 				*cp = i;
 
 				/* Success */
 				return (TRUE);
+#ifdef SMART_SWAP
+			    }
+#endif
 			}
 
 			/* Check the special tags */
 			if ((s[1] == command_cmd) && (s[2] == tag)) {
+#ifdef SMART_SWAP /* not really cool, with the ' of ' hack.. problem was eg 'ring' vs 'rings' */
+				postpone = FALSE;
+				if (multi && i <= INVEN_PACK) {
+					/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
+					char *buf1p, *buf3p, *s3;
+					int k;
+
+					strcpy(buf1, buf);
+					buf1p = buf1;
+					while (*buf1p) {
+						/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+						   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+						if (*buf1p == '@') buf1p ++;
+						else *buf1p = tolower(*buf1p);
+						buf1p++;
+					}
+
+					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+					for (k = INVEN_WIELD; k <= INVEN_TOTAL; k++) {
+						strcpy(buf3, inventory_name[k]);
+						buf3p = buf3;
+						while (*buf3p) {
+							/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+							   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+							if (*buf3p == '@') buf3p ++;
+							else *buf3p = tolower(*buf3p);
+							buf3p++;
+						}
+
+						if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+						/* Actually we should only test for equipment slots that fulfill wield_slot() condition
+						   for the inventory item, but since we don't have this function client-side we just test all.. */
+						s3 = strchr(buf3, '@');
+						if (s3 && s3[1] == command_cmd && s3[2] == tag &&
+						    !strcmp(buf1p, buf3p)) {
+							/* remember this item to use it if we don't find a different one.. */
+							i_found = i;
+							break;
+						}
+					}
+					if (k <= INVEN_TOTAL && i_found != -1) postpone = TRUE;
+				}
+			    if (!postpone) {
+#endif
 				/* Save the actual inventory ID */
 				*cp = i;
 
 				/* Success */
 				return (TRUE);
+#ifdef SMART_SWAP
+			    }
+#endif
 			}
 
 			/* Find another '@' */
@@ -196,6 +312,12 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 		}
 	}
 
+#ifdef SMART_SWAP
+	if (i_found != -1) {
+		*cp = i_found;
+		return TRUE;
+	}
+#endif
 	/* No such tag */
 	return (FALSE);
 }
@@ -207,13 +329,15 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
  */
 cptr get_item_hook_find_obj_what;
 bool get_item_hook_find_obj(int *item, int mode) {
-	int i, j, i_found = -1;
+	int i, j;
 	char buf[ONAME_LEN];
 	char buf1[ONAME_LEN], buf2[ONAME_LEN], *ptr; /* for manual strcasestr() */
-	char buf3[ONAME_LEN];
-
 	bool inven_first = mode & INVEN_FIRST;
+#ifdef SMART_SWAP
+	char buf3[ONAME_LEN];
 	bool multi = mode & CHECK_MULTI;
+	int i_found = -1;
+#endif
 
 	strcpy(buf, "");
 	if (!get_string(get_item_hook_find_obj_what, buf, 79))
@@ -256,8 +380,8 @@ bool get_item_hook_find_obj(int *item, int mode) {
 //printf("comparing '%s','%s'\n", buf1, buf2);
 		if (strstr(buf1, buf2)) {
 #endif
-#if 1 /* not really cool, with the ' of ' hack.. problem was eg 'ring' vs 'rings' */
-			if (multi && j <= INVEN_PACK) {
+#ifdef SMART_SWAP /* not really cool, with the ' of ' hack.. problem was eg 'ring' vs 'rings' */
+			if (multi && i <= INVEN_PACK) {
 				/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
 				char *buf1p, *buf3p;
 				int k;
@@ -291,10 +415,12 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			return TRUE;
 		}
 	}
+#ifdef SMART_SWAP
 	if (i_found != -1) {
 		*item = i_found;
 		return TRUE;
 	}
+#endif
 	return FALSE;
 }
 
