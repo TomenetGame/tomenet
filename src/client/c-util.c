@@ -4726,8 +4726,9 @@ void interact_macros(void) {
 #define mw_abilityt 'M'
 #define mw_custom 'n'
 #define mw_load 'o'
+#define mw_equip 'q'
 
-#define mw_LAST 'o'
+#define mw_LAST 'q'
 
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
@@ -4771,7 +4772,7 @@ Chain_Macro:
 					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Use a magic device or activate an item");
 					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target (Draconian breath)");
 					Term_putstr(8, 22, -1, TERM_L_GREEN, "n)   Enter a custom action (same as pressing 'a' in macro screen)");
-					Term_putstr(8, 23, -1, TERM_L_GREEN, "o)   Load a macro file");
+					Term_putstr(8, 23, -1, TERM_L_GREEN, "o/q) Load a macro file / change equipment (wield/takeoff/swap)");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
@@ -5530,6 +5531,47 @@ Chain_Macro:
 						Term_putstr(5, 12, -1, TERM_GREEN, format("For example, enter:     \377G%s.prf", cname));
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Exact file name:");
 						break;
+
+					case mw_equip:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Do you want to wear/wield, take off or swap an item?");
+						Term_putstr(5, 11, -1, TERM_L_GREEN, "    w\377g) primary wear/wield");
+						Term_putstr(5, 12, -1, TERM_L_GREEN, "    W\377g) secondary wear/wield");
+						Term_putstr(5, 13, -1, TERM_L_GREEN, "    t\377g) take off an item");
+						Term_putstr(5, 14, -1, TERM_L_GREEN, "    x\377g) swap item(s)");
+						Term_putstr(5, 16, -1, TERM_GREEN, "Note: This macro depends on your current 'rogue_like_commands' option");
+						Term_putstr(5, 17, -1, TERM_GREEN, "      setting and will not work anymore if you change the keymap.");
+
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -1; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							case 'w':
+							case 'W':
+							case 't':
+							case 'x':
+								break;
+							default:
+								continue;
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -1) continue;
+
+						clear_from(10);
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial item name or inscription:");
+
+						j = choice;
+						choice = mw_equip;
+						break;
 					}
 
 					/* --------------- specify item/parm if required --------------- */
@@ -5758,6 +5800,41 @@ Chain_Macro:
 						buf2[l] = '\\';
 						buf2[l + 1] = 'e';
 						buf2[l + 2] = 0;
+						break;
+
+					case mw_equip:
+						if (!c_cfg.rogue_like_commands)
+							switch (j) {
+							case 'w':
+								buf2[3] = 'w';
+								break;
+							case 'W':
+								buf2[3] = 'W';
+								break;
+							case 't':
+								buf2[3] = 't';
+								break;
+							case 'x':
+								buf2[3] = 'x';
+								break;
+							}
+						else
+							switch (j) {
+							case 'w':
+								buf2[3] = 'w';
+								break;
+							case 'W':
+								buf2[3] = KTRL('W');
+								break;
+							case 't':
+								buf2[3] = 'T';
+								break;
+							case 'x':
+								buf2[3] = KTRL('A');
+								break;
+							}
+						buf2[4] = '@';
+						strcpy(buf2 + 5, buf);
 						break;
 					}
 

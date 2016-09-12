@@ -775,6 +775,11 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	bool highlander = FALSE, warn_takeoff = FALSE;
 
 
+	/* Catch items that we have already equipped -
+	   this can happen when entering items by name (@ key)
+	   and it looks kinda bad to get repeated 'You are ...' messages for something already in place. */
+	if (item > INVEN_PACK) return;
+
 	/* Restrict the choices */
 	/*item_tester_hook = item_tester_hook_wear;*/
 
@@ -1260,6 +1265,12 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	u32b f3, dummy;
+
+
+	/* Catch items that we have already unequipped -
+	   this can happen when entering items by name (@ key)
+	   and it looks kinda bad to get repeated 'You are ...' messages for something already in place. */
+	if (item <= INVEN_PACK) return;
 
 	if (amt <= 0) return;
 
