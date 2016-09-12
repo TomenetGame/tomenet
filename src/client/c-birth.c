@@ -25,7 +25,7 @@
 #define HIDE_UNAVAILABLE_TRAIT
 
 /* For race/class/trait descriptions */
-#define DIZ_ROW 3
+#define DIZ_ROW 2
 #define DIZ_COL 29
 
 /* For character parameter list [15] */
@@ -1017,18 +1017,18 @@ static bool choose_stat_order(void) {
 
 	/* player can define his stats completely manually: */
 	else if (char_creation_flags == 1) {
-		int col1 = 3, col2 = 35, col3 = 54, tmp_stat;
+		int col1 = 3, col2 = 35, col3 = 54, tmp_stat, rowA = 12;
 
 		j = 0; /* current stat to be modified */
 		k = 30; /* free points left */
 
 		clear_from(14);
 
-		c_put_str(TERM_SLATE, "Distribute your attribute points (\377ouse them all!\377s):", 13, col1);
-		c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
-		c_put_str(TERM_SLATE, "                         Min. recommended,", 14, col2);
-		if (valid_dna) c_put_str(TERM_SLATE, "Current:   (Base) (Prev) if possible:", 15, col2);
-		else c_put_str(TERM_SLATE, "Current:   (Base)        if possible:", 15, col2);
+		c_put_str(TERM_SLATE, "Distribute your attribute points (\377ouse them all!\377s):", rowA, col1);
+		c_put_str(TERM_L_GREEN, format("%2d", k), rowA, col3);
+		c_put_str(TERM_SLATE, "If any values are shown under 'recommended minimum', try to reach those.", rowA + 1, col1);
+		if (valid_dna) c_put_str(TERM_SLATE, "Current:   (Base) (Prev) Recommended min:", 15, col2);
+		else c_put_str(TERM_SLATE, "Current:   (Base)        Recommended min::", 15, col2);
 
 		if (valid_dna) c_put_str(TERM_SLATE, "'\377B#\377s/\377B%\377s' to reincarnate.", 15, col1);
 		c_put_str(TERM_SLATE, "Use keys '+', '-', 'RETURN'", 16, col1);
@@ -1040,12 +1040,12 @@ static bool choose_stat_order(void) {
 
 		c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, col1);
 
-		c_put_str(TERM_L_UMBER,"   - Strength -    ", 3, 30);
-		c_put_str(TERM_YELLOW, "   How quickly you can strike.", 4, 30);
-		c_put_str(TERM_YELLOW, "   How much you can carry and wield.", 5, 30);
-		c_put_str(TERM_YELLOW, "   How much damage your strikes inflict.", 6, 30);
-		c_put_str(TERM_YELLOW, "   How easily you can bash, throw and dig.", 7, 30);
-		c_put_str(TERM_YELLOW, "   Slightly improves your swimming.", 8, 30);
+		c_put_str(TERM_L_UMBER,"   - Strength -    ", DIZ_ROW, 30);
+		c_put_str(TERM_YELLOW, "   How quickly you can strike.", DIZ_ROW + 1, 30);
+		c_put_str(TERM_YELLOW, "   How much you can carry and wield.", DIZ_ROW + 2, 30);
+		c_put_str(TERM_YELLOW, "   How much damage your strikes inflict.", DIZ_ROW + 3, 30);
+		c_put_str(TERM_YELLOW, "   How easily you can bash, throw and dig.", DIZ_ROW + 4, 30);
+		c_put_str(TERM_YELLOW, "   Slightly improves your swimming.", DIZ_ROW + 5, 30);
 
 		for (i = 0; i < 6; i++) {
 			stat_order[i] = 10;
@@ -1068,7 +1068,7 @@ static bool choose_stat_order(void) {
 #endif
 
 		while (1) {
-			c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
+			c_put_str(TERM_L_GREEN, format("%2d", k), rowA, col3);
 
 			for (i = 0; i < 6; i++) {
 				crb = stat_order[i] + cp_ptr->c_adj[i] + rp_ptr->r_adj[i];
@@ -1164,65 +1164,65 @@ static bool choose_stat_order(void) {
 			if (c == '8' || c == 'k') j = (j+5) % 6;
 			if (c == '\r' || c == '2' || c == '8' || c == 'j' || c == 'k') {
 				switch (j) {
-				case 0:	c_put_str(TERM_L_UMBER,"   - Strength -    ", 3, 30);
-					c_put_str(TERM_YELLOW, "   How quickly you can strike.                  ", 4, 30);
-					c_put_str(TERM_YELLOW, "   How much you can carry and wear/wield.       ", 5, 30);
-					c_put_str(TERM_YELLOW, "   How much damage your strikes inflict.        ", 6, 30);
-					c_put_str(TERM_YELLOW, "   How easily you can bash, throw and dig.      ", 7, 30);
-					c_put_str(TERM_YELLOW, "   Slightly improves your swimming.             ", 8, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 9, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 10, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 11, 30);
+				case 0:	c_put_str(TERM_L_UMBER,"   - Strength -    ", DIZ_ROW, 30);
+					c_put_str(TERM_YELLOW, "   How quickly you can strike.                  ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "   How much you can carry and wear/wield.       ", DIZ_ROW + 2, 30);
+					c_put_str(TERM_YELLOW, "   How much damage your strikes inflict.        ", DIZ_ROW + 3, 30);
+					c_put_str(TERM_YELLOW, "   How easily you can bash, throw and dig.      ", DIZ_ROW + 4, 30);
+					c_put_str(TERM_YELLOW, "   Slightly improves your swimming.             ", DIZ_ROW + 5, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 6, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 7, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 8, 30);
 					break;
-				case 1:	c_put_str(TERM_L_UMBER,"   - Intelligence -", 3, 30);
-					c_put_str(TERM_YELLOW, "   How well you can use magic                   ", 4, 30);
-					c_put_str(TERM_YELLOW, "    (depending on your class and spells).       ", 5, 30);
-					c_put_str(TERM_YELLOW, "   How well you can use magic devices.          ", 6, 30);
-					c_put_str(TERM_YELLOW, "   Helps your disarming ability.                ", 7, 30);
-					c_put_str(TERM_YELLOW, "   Helps noticing attempts to steal from you.   ", 8, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 9, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 10, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 11, 30);
+				case 1:	c_put_str(TERM_L_UMBER,"   - Intelligence -", DIZ_ROW, 30);
+					c_put_str(TERM_YELLOW, "   How well you can use magic                   ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "    (depending on your class and spells).       ", DIZ_ROW + 2, 30);
+					c_put_str(TERM_YELLOW, "   How well you can use magic devices.          ", DIZ_ROW + 3, 30);
+					c_put_str(TERM_YELLOW, "   Helps your disarming ability.                ", DIZ_ROW + 4, 30);
+					c_put_str(TERM_YELLOW, "   Helps noticing attempts to steal from you.   ", DIZ_ROW + 5, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 6, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 7, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 8, 30);
 					break;
-				case 2:	c_put_str(TERM_L_UMBER,"   - Wisdom -      ", 3, 30);
-					c_put_str(TERM_YELLOW, "   How well you can use prayers and magic       ", 4, 30);
-					c_put_str(TERM_YELLOW, "    (depending on your class and spells).       ", 5, 30);
-					c_put_str(TERM_YELLOW, "   How well can you resist malicious effects    ", 6, 30);
-					c_put_str(TERM_YELLOW, "    and influences on both body and mind        ", 7, 30);
-					c_put_str(TERM_YELLOW, "    (saving throw).                             ", 8, 30);
-					c_put_str(TERM_YELLOW, "   How much insanity your mind can take.        ", 9, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 10, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 11, 30);
+				case 2:	c_put_str(TERM_L_UMBER,"   - Wisdom -      ", DIZ_ROW, 30);
+					c_put_str(TERM_YELLOW, "   How well you can use prayers and magic       ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "    (depending on your class and spells).       ", DIZ_ROW + 2, 30);
+					c_put_str(TERM_YELLOW, "   How well can you resist malicious effects    ", DIZ_ROW + 3, 30);
+					c_put_str(TERM_YELLOW, "    and influences on both body and mind        ", DIZ_ROW + 4, 30);
+					c_put_str(TERM_YELLOW, "    (saving throw).                             ", DIZ_ROW + 5, 30);
+					c_put_str(TERM_YELLOW, "   How much insanity your mind can take.        ", DIZ_ROW + 6, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 7, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 8, 30);
 					break;
-				case 3:	c_put_str(TERM_L_UMBER,"   - Dexterity -   ", 3, 30);
-					c_put_str(TERM_YELLOW, "   How quickly you can strike.                  ", 4, 30);
-					c_put_str(TERM_YELLOW, "   Reduces your chance to miss.                 ", 5, 30);
-					c_put_str(TERM_YELLOW, "   Opponents will miss very slightly more often.", 6, 30);
-					c_put_str(TERM_YELLOW, "   Helps your stealing skills (if any).         ", 7, 30);
-					c_put_str(TERM_YELLOW, "   Helps to prevent foes stealing from you.     ", 8, 30);
-					c_put_str(TERM_YELLOW, "   Helps keeping your balance after bashing.    ", 9, 30);
-					c_put_str(TERM_YELLOW, "   Helps your disarming ability.                ", 10, 30);
-					c_put_str(TERM_YELLOW, "   Slightly improves your swimming.             ", 11, 30);
+				case 3:	c_put_str(TERM_L_UMBER,"   - Dexterity -   ", DIZ_ROW, 30);
+					c_put_str(TERM_YELLOW, "   How quickly you can strike.                  ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "   Reduces your chance to miss.                 ", DIZ_ROW + 2, 30);
+					c_put_str(TERM_YELLOW, "   Opponents will miss very slightly more often.", DIZ_ROW + 3, 30);
+					c_put_str(TERM_YELLOW, "   Helps your stealing skills (if any).         ", DIZ_ROW + 4, 30);
+					c_put_str(TERM_YELLOW, "   Helps to prevent foes stealing from you.     ", DIZ_ROW + 5, 30);
+					c_put_str(TERM_YELLOW, "   Helps keeping your balance after bashing.    ", DIZ_ROW + 6, 30);
+					c_put_str(TERM_YELLOW, "   Helps your disarming ability.                ", DIZ_ROW + 7, 30);
+					c_put_str(TERM_YELLOW, "   Slightly improves your swimming.             ", DIZ_ROW + 8, 30);
 					break;
-				case 4:	c_put_str(TERM_L_UMBER,"   - Constitution -", 3, 30);
-					c_put_str(TERM_YELLOW, "   Determines your amout of HP                  ", 4, 30);
-					c_put_str(TERM_YELLOW, "    (hit points, ie how much damage you can     ", 5, 30);
-					c_put_str(TERM_YELLOW, "    take without dying.                         ", 6, 30);
-					c_put_str(TERM_YELLOW, "    Very high constitution might not show much  ", 7, 30);
-					c_put_str(TERM_YELLOW, "    effect until your character also reaches    ", 8, 30);
-					c_put_str(TERM_YELLOW, "    an appropriate level.)                      ", 9, 30);
-					c_put_str(TERM_YELLOW, "   Reduces the duration of poisonous effects.   ", 10, 30);
-					c_put_str(TERM_YELLOW, "   Helps your character not to drown too easily.", 11, 30);
+				case 4:	c_put_str(TERM_L_UMBER,"   - Constitution -", DIZ_ROW, 30);
+					c_put_str(TERM_YELLOW, "   Determines your amout of HP                  ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "    (hit points, ie how much damage you can     ", DIZ_ROW + 2, 30);
+					c_put_str(TERM_YELLOW, "    take without dying.                         ", DIZ_ROW + 3, 30);
+					c_put_str(TERM_YELLOW, "    Very high constitution might not show much  ", DIZ_ROW + 4, 30);
+					c_put_str(TERM_YELLOW, "    effect until your character also reaches    ", DIZ_ROW + 5, 30);
+					c_put_str(TERM_YELLOW, "    an appropriate level.)                      ", DIZ_ROW + 6, 30);
+					c_put_str(TERM_YELLOW, "   Reduces the duration of poisonous effects.   ", DIZ_ROW + 7, 30);
+					c_put_str(TERM_YELLOW, "   Helps your character not to drown too easily.", DIZ_ROW + 8, 30);
 					break;
-				case 5:	c_put_str(TERM_L_UMBER,"   - Charisma -    ", 3, 30);
-					c_put_str(TERM_YELLOW, "   Shops will offer you wares at better prices. ", 4, 30);
-					c_put_str(TERM_YELLOW, "    (Note that shop keepers are also influenced ", 5, 30);
-					c_put_str(TERM_YELLOW, "    by your character's race.)                  ", 6, 30);
-					c_put_str(TERM_YELLOW, "   Helps you to resist seducing attacks.        ", 7, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 8, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 9, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 10, 30);
-					c_put_str(TERM_YELLOW, "                                                ", 11, 30);
+				case 5:	c_put_str(TERM_L_UMBER,"   - Charisma -    ", DIZ_ROW, 30);
+					c_put_str(TERM_YELLOW, "   Shops will offer you wares at better prices. ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "    (Note that shop keepers are also influenced ", DIZ_ROW + 2, 30);
+					c_put_str(TERM_YELLOW, "    by your character's race.)                  ", DIZ_ROW + 3, 30);
+					c_put_str(TERM_YELLOW, "   Helps you to resist seducing attacks.        ", DIZ_ROW + 4, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 5, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 6, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 7, 30);
+					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 8, 30);
 					break;
 				}
 			}
@@ -1235,7 +1235,7 @@ static bool choose_stat_order(void) {
 				for (i = 0; i < 6; i++) stat_order[i] = stat_order_tmp[i];
 
 				for (i = 3; i < 12; i++) Term_erase(30, i, 255);
-				clear_from(13);
+				clear_from(rowA);
 
 				return FALSE;
 			}
@@ -1246,7 +1246,7 @@ static bool choose_stat_order(void) {
 						else stat_order[i] = 8;
 					}
 					for (i = 3; i < 12; i++) Term_erase(30, i, 255);
-					clear_from(13);
+					clear_from(rowA);
 					return TRUE;
 				} else {
 					auto_reincarnation = FALSE;
@@ -1262,7 +1262,7 @@ static bool choose_stat_order(void) {
 		}
 
 		for (i = 3; i < 12; i++) Term_erase(30, i, 255);
-		clear_from(13);
+		clear_from(rowA);
 	}
 	return TRUE;
 }
