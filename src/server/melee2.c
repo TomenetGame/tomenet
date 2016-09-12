@@ -5259,6 +5259,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 	int x2 = p_ptr->px;
 	bool done = FALSE, c_blue_ai_done = FALSE;	// not used fully (FIXME)
 	bool close_combat = FALSE;
+	bool robin = (m_ptr->r_idx == RI_ROBIN && !m_ptr->extra);
 
 	/* If player is next to us, we might attack instead of avoiding terrain problems */
 	if (ABS(m_ptr->fx - x2) <= 1 && ABS(m_ptr->fy - y2) <= 1 &&
@@ -5372,7 +5373,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 
 
 	/* Tease the player */
-	else if ((r_ptr->flags7 & RF7_AI_ANNOY) && !m_ptr->taunted) {
+	else if (((r_ptr->flags7 & RF7_AI_ANNOY) || robin) && !m_ptr->taunted) {
 		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < ANNOY_DISTANCE) {
 			y = -y;
 			x = -x;
@@ -9583,15 +9584,18 @@ void process_monsters(void) {
 
 #if 1
 		/* Hack, Sandman's robin */
-		if (m_ptr->r_idx == RI_ROBIN)
+		if (m_ptr->r_idx == RI_ROBIN) {
+			m_ptr->extra = 0;
 			for (pl = 1; pl <= NumPlayers; pl++) {
 				p_ptr = Players[pl];
 				if (!strcmp(p_ptr->accountname, "The_sandman")) { //you can make it!~
+					m_ptr->extra = 1;
 					closest = pl;
 					dis_to_closest = distance(p_ptr->py, p_ptr->px, fy, fx); //probably not needed
 					break;
 				}
 			}
+		}
 		if (closest == -1)
 #endif
 		/* Find the closest player */
