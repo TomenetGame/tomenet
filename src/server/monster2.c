@@ -3960,8 +3960,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 	int r_idx = 0, i;
 	player_type *p_ptr;
-	int lev = getlevel(wpos); /* HALLOWEEN; and 
-	new: anti-double-OOD */
+	int lev = getlevel(wpos); /* HALLOWEEN; and new: anti-double-OOD */
 //#ifdef RPG_SERVER
 	struct dungeon_type *d_ptr = getdungeon(wpos);
 //#endif
@@ -4086,6 +4085,8 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 			if (dt_ptr->theme) dun_type = dt_ptr->theme;
 			else dun_type = dt_ptr->type;
 		}
+
+		if (wpos->wz) get_mon_num_hook = dungeon_aux;
 
 		if (in_bounds(y, x) && (zcave = getcave(wpos))) {
 			/* Set monster restriction */
