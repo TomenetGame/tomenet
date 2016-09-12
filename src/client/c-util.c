@@ -4703,6 +4703,7 @@ void interact_macros(void) {
 
 		else if (i == 'z') {
 			int target_dir = '5';
+			bool should_wait;
 #define mw_quaff 'a'
 #define mw_read 'b'
 #define mw_fire 'c'
@@ -4736,6 +4737,7 @@ void interact_macros(void) {
 			/* initialise macro-chaining */
 			chain_macro_buf[0] = 0;
 Chain_Macro:
+			should_wait = FALSE;
 
 			/* Clear screen */
 			Term_clear();
@@ -4921,8 +4923,9 @@ Chain_Macro:
 						Term_putstr(10, 13, -1, TERM_GREEN, "The first number on the left, in parentheses, is what you need.)");
 						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter  \377GFruit bat\377g  or just  \377G37  \377gto transform into one.");
 						Term_putstr(10, 15, -1, TERM_GREEN, "To return to your normal form, use  \377GPlayer\377g  or its code  \377G0\377g  .");
-//						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
+						//Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
 						Term_putstr(1, 17, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
+						should_wait = TRUE;
 						break;
 					case mw_prfimm:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an immunity preference:");
@@ -5571,6 +5574,7 @@ Chain_Macro:
 
 						j = choice;
 						choice = mw_equip;
+						should_wait = TRUE;
 						break;
 					}
 
@@ -5981,14 +5985,14 @@ Chain_Macro:
 						get_macro_trigger(buf);
 
 						/* choose proper macro type, and bind it to key */
-#if 0 /* allow remapping this key too */
+#if 0 /* no, because we allow remapping of this key too, here */
 						if (!strcmp(buf, format("%c", KTRL('T')))) {
 							/* Take a screenshot */
 							xhtml_screenshot("screenshot????");
 							continue;
 						} else
 #endif
-						if (!strcmp(buf, "\e")) {//chaining: || !strcmp(buf, "%")) {
+						if (!strcmp(buf, "\e")) {
 							c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 							if (!strcmp(buf, "\e")) {
 								i = -1; /* leave */
@@ -5996,11 +6000,51 @@ Chain_Macro:
 							}
 							continue;
 						} else if (!strcmp(buf, "%")) {
+							char tmp[1024];
+							int delay;
+
 							/* max length check, rough estimate */
 							if (strlen(chain_macro_buf) + strlen(macro__buf) >= 1024 - 50) {
 								c_msg_print("\377oYou cannot chain any further commands to this macro.");
 								continue;
 							}
+
+							/* Some macros require a latency-based delay in order to update the client with
+							   necessary reply information from the server before another command based on
+							   this action might work.
+							   Example: Wield an item, then activate it. The activation part needs to wait
+							   until the server tells the client that the item has been successfully equipped.
+							   Example: Polymorph into a form that has a certain spell available to cast.
+							   The casting needs to wait until the server tells us that we successfully polymorphed. */
+							if (should_wait) {
+								clear_from(19);
+								Term_putstr(10, 19, -1, TERM_YELLOW, "This macro might need a latency-based delay to work properly!");
+								Term_putstr(10, 20, -1, TERM_YELLOW, "You can accept the suggested delay or modify it in steps");
+								Term_putstr(10, 21, -1, TERM_YELLOW, "of 100 ms up to 9900 ms, or hit ESC to not use a delay.");
+								Term_putstr(10, 23, -1, TERM_L_GREEN, "ENTER\377g to accept, \377GESC\377g to discard (in ms):");
+
+								/* suggest +25% reserve tolerance but at least +25 ms on the ping time */
+								sprintf(tmp, "%d", ((ping_avg < 100 ? ping_avg + 25 : (ping_avg * 125) / 100) / 100 + 1) * 100);
+								Term_gotoxy(52, 23);
+								if (askfor_aux(tmp, 50, 0)) {
+									delay = atoi(tmp);
+									if (delay % 100) delay += 100; //QoL hack for noobs who can't read
+									delay /= 100;
+									if (delay < 0) delay = 0;
+									if (delay > 99) delay = 99;
+
+									if (delay) {
+										sprintf(tmp, "\\w%c%c", '0' + delay / 10, '0' + delay % 10);
+										text_to_ascii(macro__buf, tmp);
+										strcat(chain_macro_buf, macro__buf);
+										strcpy(macro__buf, chain_macro_buf);
+									}
+								}
+							}
+
+							/* Echo it for convenience, to check */
+							ascii_to_text(tmp, chain_macro_buf);
+							c_msg_format("\377yChaining to: %s", tmp);
 
 							/* chain another macro */
 							goto Chain_Macro;
