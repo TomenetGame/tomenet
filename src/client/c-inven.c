@@ -4,8 +4,7 @@
 bool verified_item = FALSE;
 bool abort_prompt = FALSE;
 
-s16b index_to_label(int i)
-{
+s16b index_to_label(int i) {
 	/* Indices for "inven" are easy */
 	if (i < INVEN_WIELD) return (I2A(i));
 
@@ -44,8 +43,7 @@ bool item_tester_okay(object_type *o_ptr) {
 }
 
 
-static bool get_item_okay(int i)
-{
+static bool get_item_okay(int i) {
 	/* Illegal items */
 	if ((i < 0) || (i >= INVEN_TOTAL)) return (FALSE);
 
@@ -57,10 +55,8 @@ static bool get_item_okay(int i)
 }
 
 
-static bool verify(cptr prompt, int item)
-{
+static bool verify(cptr prompt, int item) {
 	char	o_name[ONAME_LEN];
-
 	char	out_val[MSG_LEN];
 
 
@@ -75,8 +71,7 @@ static bool verify(cptr prompt, int item)
 }
 
 
-static s16b c_label_to_inven(int c)
-{
+static s16b c_label_to_inven(int c) {
 	int i;
 
 	/* Convert */
@@ -92,8 +87,7 @@ static s16b c_label_to_inven(int c)
 	return (i);
 }
 
-static s16b c_label_to_equip(int c)
-{
+static s16b c_label_to_equip(int c) {
 	int i;
 
 	/* Convert */
@@ -122,11 +116,12 @@ static s16b c_label_to_equip(int c)
  * Addition: flags 'inven' and 'equip' tell it which items to check:
  * If one of them is false, the according part is ignored. - C. Blue
  */
-static int get_tag(int *cp, char tag, bool inven, bool equip, bool inven_first)
-{
-        int i, j;
-        int start, stop, step;
-        cptr s;
+static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
+	int i, j;
+	int start, stop, step;
+	cptr s;
+
+	bool inven_first = mode & INVEN_FIRST;
 
 	/* neither inventory nor equipment is allowed to be searched? */
 	if (!inven && !equip) return (FALSE);
@@ -142,16 +137,16 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, bool inven_first)
 		step = -1;
 	}
 
-        /* Check every object */
+	/* Check every object */
 #if 0
-//        for (i = (inven ? 0 : INVEN_WIELD); i < (equip ? INVEN_TOTAL : INVEN_PACK); ++i)
-        /* Equipment before inventory, since inventory
-           items are usually more restricted. - C. Blue */
-        for (j = (equip ? INVEN_TOTAL : INVEN_PACK) - 1; j >= (inven ? 0 : INVEN_WIELD); --j)
+	//for (i = (inven ? 0 : INVEN_WIELD); i < (equip ? INVEN_TOTAL : INVEN_PACK); ++i)
+	/* Equipment before inventory, since inventory
+	   items are usually more restricted. - C. Blue */
+	for (j = (equip ? INVEN_TOTAL : INVEN_PACK) - 1; j >= (inven ? 0 : INVEN_WIELD); --j)
 #else
-        for (j = start; j != stop; j += step)
+	for (j = start; j != stop; j += step)
 #endif
-        {
+	{
 		char *buf;
 		char *buf2;
 
@@ -164,45 +159,45 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, bool inven_first)
 
 		buf = inventory_name[i];
 
-                /* Skip empty objects */
-                if (!buf[0]) continue;
+		/* Skip empty objects */
+		if (!buf[0]) continue;
 
 		/* Skip items that don't fit (for mkey) */
 		if (!item_tester_okay(&inventory[i])) continue;
 
-                /* Skip empty inscriptions (those which don't contain any @.. tag) */
-                if (!(buf2 = strchr(buf, '@'))) continue;
+		/* Skip empty inscriptions (those which don't contain any @.. tag) */
+		if (!(buf2 = strchr(buf, '@'))) continue;
 
-                /* Find a '@' */
-                s = strchr(buf2, '@');
+		/* Find a '@' */
+		s = strchr(buf2, '@');
 
-                /* Process all tags */
-                while (s) {
-                        /* Check the normal tags */
-                        if (s[1] == tag) {
-                                /* Save the actual inventory ID */
-                                *cp = i;
+		/* Process all tags */
+		while (s) {
+			/* Check the normal tags */
+			if (s[1] == tag) {
+				/* Save the actual inventory ID */
+				*cp = i;
 
-                                /* Success */
-                                return (TRUE);
-                        }
+				/* Success */
+				return (TRUE);
+			}
 
-                        /* Check the special tags */
-                        if ((s[1] == command_cmd) && (s[2] == tag)) {
-                                /* Save the actual inventory ID */
-                                *cp = i;
+			/* Check the special tags */
+			if ((s[1] == command_cmd) && (s[2] == tag)) {
+				/* Save the actual inventory ID */
+				*cp = i;
 
-                                /* Success */
-                                return (TRUE);
-                        }
+				/* Success */
+				return (TRUE);
+			}
 
-                        /* Find another '@' */
-                        s = strchr(s + 1, '@');
-                }
-        }
+			/* Find another '@' */
+			s = strchr(s + 1, '@');
+		}
+	}
 
-        /* No such tag */
-        return (FALSE);
+	/* No such tag */
+	return (FALSE);
 }
 
 /*
@@ -211,10 +206,14 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, bool inven_first)
  * This is modified code from ToME. - mikaelh
  */
 cptr get_item_hook_find_obj_what;
-bool get_item_hook_find_obj(int *item, bool inven_first) {
-	int i, j;
+bool get_item_hook_find_obj(int *item, int mode) {
+	int i, j, i_found = -1;
 	char buf[ONAME_LEN];
 	char buf1[ONAME_LEN], buf2[ONAME_LEN], *ptr; /* for manual strcasestr() */
+	char buf3[ONAME_LEN];
+
+	bool inven_first = mode & INVEN_FIRST;
+	bool multi = mode & CHECK_MULTI;
 
 	strcpy(buf, "");
 	if (!get_string(get_item_hook_find_obj_what, buf, 79))
@@ -254,19 +253,54 @@ bool get_item_hook_find_obj(int *item, bool inven_first) {
 			*ptr = tolower(*ptr);
 			ptr++;
 		}
-printf("comparing '%s','%s'\n", buf1, buf2);
+//printf("comparing '%s','%s'\n", buf1, buf2);
 		if (strstr(buf1, buf2)) {
+#endif
+#if 1 /* not really cool, with the ' of ' hack.. problem was eg 'ring' vs 'rings' */
+			if (multi && j <= INVEN_PACK) {
+				/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
+				char *buf1p, *buf3p;
+				int k;
+
+				if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+				for (k = INVEN_WIELD; k <= INVEN_TOTAL; k++) {
+					strcpy(buf3, inventory_name[k]);
+					ptr = buf3;
+					while (*ptr) {
+						/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+						   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+						if (*ptr == '@') ptr ++;
+						else *ptr = tolower(*ptr);
+						ptr++;
+					}
+
+					if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+					/* Actually we should only test for equipment slots that fulfill wield_slot() condition
+					   for the inventory item, but since we don't have this function client-side we just test all.. */
+					if (strstr(buf3, buf2) &&
+					    !strcmp(buf1p, buf3p)) {
+						/* remember this item to use it if we don't find a different one.. */
+						i_found = i;
+						break;
+					}
+				}
+				if (k <= INVEN_TOTAL && i_found != -1) continue;
+			}
 #endif
 			*item = i;
 			return TRUE;
 		}
 	}
+	if (i_found != -1) {
+		*item = i_found;
+		return TRUE;
+	}
 	return FALSE;
 }
 
-bool (*get_item_extra_hook)(int *cp, bool inven_first);
+bool (*get_item_extra_hook)(int *cp, int mode);
 bool c_get_item(int *cp, cptr pmt, int mode) {
-	//char	n1, n2;
+	//char n1, n2;
 	char which = ' ';
 
 	int k, i1, i2, e1, e2, ver;
@@ -280,7 +314,6 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	bool inven = FALSE;
 	//bool floor = FALSE;
 	bool extra = FALSE, limit = FALSE;
-	bool inven_first = FALSE;
 	bool special_req = FALSE;
 
 	bool safe_input = FALSE;
@@ -304,7 +337,6 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	if (mode & (USE_INVEN)) inven = TRUE;
 	//if (mode & (USE_FLOOR)) floor = TRUE;
 	if (mode & (USE_EXTRA)) extra = TRUE;
-	if (mode & (INVEN_FIRST)) inven_first = TRUE;
 	if (mode & (SPECIAL_REQ)) special_req = TRUE;
 	if (mode & (USE_LIMIT)) limit = TRUE;
 
@@ -321,7 +353,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	}
 
 	/* Command macros work as an exception here */
-//	inkey_get_item = TRUE;
+	//inkey_get_item = TRUE;
 
 	/* Full inventory */
 	i1 = 0;
@@ -563,7 +595,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		case '4': case '5': case '6':
 		case '7': case '8': case '9':
 			/* XXX XXX Look up that tag */
-			if (!get_tag(&k, which, inven, equip, inven_first)) {
+			if (!get_tag(&k, which, inven, equip, mode)) {
 				bell();
 				break;
 			}
@@ -624,7 +656,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		{
 			int i;
 
-			if (extra && get_item_extra_hook(&i, inven_first)) {
+			if (extra && get_item_extra_hook(&i, mode)) {
 				(*cp) = i;
 				item = TRUE;
 				done = TRUE;

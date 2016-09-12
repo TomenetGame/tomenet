@@ -786,7 +786,7 @@ void cmd_swap(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Swap which item? ", (USE_INVEN | USE_EQUIP | INVEN_FIRST | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Swap which item? ", (USE_INVEN | USE_EQUIP | INVEN_FIRST | USE_EXTRA | CHECK_MULTI))) return;
 
 	/* For items that can go into multiple slots (weapons and rings),
 	   check @xN inscriptions on source and destination to pick slot */

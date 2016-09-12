@@ -762,12 +762,12 @@ void do_ghost(void) {
 static int hack_force_spell = -1;
 int hack_force_spell_level = 0;
 #ifndef DISCRETE_SPELL_SYSTEM /* good method before the big spell system rework */
-bool get_item_hook_find_spell(int *item, bool inven_first) {
+bool get_item_hook_find_spell(int *item, int mode) {
 	int i, spell;
 	char buf[80];
 	char buf2[100];
 
-	(void) inven_first; /* suppress compiler warning */
+	(void) mode; /* suppress compiler warning */
 
 	strcpy(buf, "Manathrust");
 	if (!get_string("Spell name? ", buf, 79))
@@ -801,13 +801,13 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 	return FALSE;
 }
 #else /* new method that allows to enter partial spell names, for comfortable 'I/II/III..' handling */
-bool get_item_hook_find_spell(int *item, bool inven_first) {
+bool get_item_hook_find_spell(int *item, int mode) {
 	int i, spos, highest = 0, current, spell;
 	char buf[80], buf2[100], sname[40], *bufptr;
 	object_type *o_ptr;
 	bool exact_match = FALSE, combo_spell, found_something = FALSE;
 
-	(void) inven_first; /* suppress compiler warning */
+	(void) mode; /* suppress compiler warning */
 
 	strcpy(buf, "Manathrust");
 	if (!get_string("Spell name? ", buf, 79))

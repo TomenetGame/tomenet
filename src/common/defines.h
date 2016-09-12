@@ -4134,6 +4134,7 @@
 #define INVEN_FIRST	0x10	/* Seach for inscription tag in inventory first */
 #define SPECIAL_REQ	0x20	/* Allow pressing '-' key to switch the request in a special way */
 #define USE_LIMIT	0x40	/* Allow spell level limit */
+#define CHECK_MULTI	0x80	/* For swap command with USE_EXTRA (search by name): Check multiple items and avoid ones that we've already equipped */
 
 /*
  * Bit flags for the "p_ptr->notice" variable
