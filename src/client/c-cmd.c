@@ -1963,7 +1963,7 @@ static void monster_lore(void) {
 
 		/* Entering a '!' first means "search for monster symbol instead" */
 		if (s[0] == '!') {
-			if (s[1] && !pageoffset) for (i = 1; i < MAX_R_IDX; i++) {
+			if (s[1] && !pageoffset) for (i = 1; i < monster_list_idx; i++) {
 				/* match? */
 				if (monster_list_symbol[i][1] == s[1] &&
 				    (!s[2] ||
@@ -1990,7 +1990,7 @@ static void monster_lore(void) {
 				}
 			}
 			/* check for more matches */
-			for (i = 1; i < MAX_R_IDX && n < MONSTER_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
+			for (i = 1; i < monster_list_idx && n < MONSTER_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
 				/* direct match above already? */
 				if (i == selected_list) continue;
 
@@ -2036,7 +2036,7 @@ static void monster_lore(void) {
 			/* hack 1: direct match always takes top position
 			   hack 2: match at beginning of name takes precedence */
 			direct_match = FALSE;
-			if (s[0] && !pageoffset) for (i = 1; i < MAX_R_IDX; i++) {
+			if (s[0] && !pageoffset) for (i = 1; i < monster_list_idx; i++) {
 				/* create upper-case working copy */
 				strcpy(tmp, monster_list_name[i]);
 				for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
@@ -2093,7 +2093,7 @@ static void monster_lore(void) {
 			}
 			presorted = n;
 
-			for (i = 1; i < MAX_R_IDX && n < MONSTER_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
+			for (i = 1; i < monster_list_idx && n < MONSTER_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
 #if 0
 				/* direct match above already? */
 				if (i == selected_list) continue;
