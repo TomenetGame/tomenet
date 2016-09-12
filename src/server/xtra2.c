@@ -12106,7 +12106,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 
 	/* specific depth specified */
 	case 'd':
-		get_mon_num_hook = dungeon_aux;
+		get_mon_num_hook = NULL;//dungeon_aux; --'depth' doesn't have to be for dungeon, we could also be summoning in the wilderness..
 
 		/* Wilderness-specific hook */
 		if (!p_ptr->wpos.wz) set_mon_num_hook_wild(&p_ptr->wpos);

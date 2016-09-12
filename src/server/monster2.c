@@ -4086,7 +4086,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 			else dun_type = dt_ptr->type;
 		}
 
-		if (wpos->wz) get_mon_num_hook = dungeon_aux;
+		set_mon_num_hook(wpos);
 
 		if (in_bounds(y, x) && (zcave = getcave(wpos))) {
 			/* Set monster restriction */
@@ -4677,7 +4677,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	if (!allow_sidekicks && (r_info[r_idx].flags1 & RF1_UNIQUE)) return (FALSE);
 
 	/* Remove restriction */
-	get_mon_num_hook = dungeon_aux;
+	set_mon_num_hook(wpos);
 
 	/* Handle failure */
 	if (!r_idx) return (FALSE);
@@ -5784,4 +5784,10 @@ void set_mon_num2_hook(int feat) {
 		get_mon_num2_hook = monster_ground;
 		break;
 	}
+}
+
+/* Generic function to set a proper hook for monster spawning. */
+void set_mon_num_hook(struct worldpos *wpos) {
+	if (!wpos->wz) set_mon_num_hook_wild(wpos);
+	else get_mon_num_hook = dungeon_aux();
 }
