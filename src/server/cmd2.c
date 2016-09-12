@@ -499,7 +499,8 @@ void do_cmd_go_up(int Ind) {
 #endif
 
 		if (surface || tower) {
-			if (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) {
+			if (wild_info[wpos->wy][wpos->wx].tower->flags2 & (DF2_IRON
+			    | (p_ptr->ghost ? DF2_NO_DEATH : 0))) { //hack: don't ghost into the training tower (might confuse newbies who return from barrow-downs)
 				msg_print(Ind, "There is a magic barrier blocking your attempt.");
 				if (!is_admin(p_ptr)) return;
 			}
@@ -1233,7 +1234,8 @@ void do_cmd_go_down(int Ind) {
 #endif
 
 		if (surface || dungeon) {
-			if (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) {
+			if (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & (DF2_IRON
+			    | (p_ptr->ghost ? DF2_NO_DEATH : 0))) { //hack: don't ghost into the training tower (might confuse newbies who return from barrow-downs)
 				msg_print(Ind, "There is a magic barrier blocking your attempt.");
 				if (!is_admin(p_ptr)) return;
 			}
