@@ -3077,7 +3077,7 @@ N:246:'Nightclaw'
 I:23:32:3
 W:50:30:40:120000
 P:0:4d4:30:15:0
-F:SHOW_MODS | STEALTH | VAMPIRIC | SPEED | RES_DARK | SEE_INVIS
+F:SHOW_MODS | VAMPIRIC | SPEED | RES_DARK | SEE_INVIS
 F:RES_FEAR | CRIT | HIDE_TYPE
 D:Impossible to spot in the shadows, this blade comes as a quick
 D:surprise to the unaware victim, striking the vital points,
