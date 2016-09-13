@@ -2033,10 +2033,9 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 /*
  * Return the correct "color" of another player
  */
-static byte player_color(int Ind)
-{
+static byte player_color(int Ind) {
 	player_type *p_ptr = Players[Ind];
-//	monster_race *r_ptr = &r_info[p_ptr->body_monster];
+	//monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	byte pcolor = p_ptr->pclass;
 	char dummy;
 	cave_type **zcave = getcave(&p_ptr->wpos);
@@ -3400,8 +3399,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
  * and terrain features separately, though both are dependant on the
  * "player_can_see_bold()" macro.
  */
-void note_spot(int Ind, int y, int x)
-{
+void note_spot(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	byte *w_ptr = &p_ptr->cave_flag[y][x];
 
@@ -3450,29 +3448,23 @@ void note_spot(int Ind, int y, int x)
 }
 
 
-void note_spot_depth(struct worldpos *wpos, int y, int x)
-{
+void note_spot_depth(struct worldpos *wpos, int y, int x) {
 	int i;
 
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
 		if (inarea(wpos, &Players[i]->wpos))
-		{
 			note_spot(i, y, x);
-		}
 	}
 }
 
-void everyone_lite_spot(struct worldpos *wpos, int y, int x)
-{
+void everyone_lite_spot(struct worldpos *wpos, int y, int x) {
 	int i;
 
 	/* Check everyone */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* If he's not playing, skip him */
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -3486,8 +3478,7 @@ void everyone_lite_spot(struct worldpos *wpos, int y, int x)
 	}
 }
 
-void everyone_clear_ovl_spot(struct worldpos *wpos, int y, int x)
-{
+void everyone_clear_ovl_spot(struct worldpos *wpos, int y, int x) {
 	int i;
 
 	/* Check everyone */
@@ -3508,13 +3499,11 @@ void everyone_clear_ovl_spot(struct worldpos *wpos, int y, int x)
 /*
  * Wipe the "CAVE_MARK" bit in everyone's array
  */
-void everyone_forget_spot(struct worldpos *wpos, int y, int x)
-{
+void everyone_forget_spot(struct worldpos *wpos, int y, int x) {
 	int i;
 
 	/* Check everyone */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* If he's not playing, skip him */
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -3531,10 +3520,10 @@ void everyone_forget_spot(struct worldpos *wpos, int y, int x)
 /*
  * Redraw (on the screen) a given MAP location
  */
-void lite_spot(int Ind, int y, int x)
-{
+void lite_spot(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	bool is_us = FALSE;
+	int sane;
 
 	/* Redraw if on screen */
 	if (panel_contains(y, x)) {
@@ -3654,6 +3643,14 @@ void lite_spot(int Ind, int y, int x)
 			if (p_ptr->flash_self > 0) a = (p_ptr->flash_self % 2) ? TERM_L_RED : TERM_L_GREEN;
 #endif
 
+			/* display a low-on-sanity player flashy to himself? */
+			if (p_ptr->flash_insane) {
+				sane = p_ptr->msane ? (p_ptr->csane * 100) / p_ptr->msane : 100;
+				/* use same colours as for sanity bar */
+				if (sane < 10) a = TERM_MULTI;
+				else if (sane < 25) a = TERM_SHIELDI;
+			}
+
 			/* bugfix on MASSIVE deaths (det/death) */
 			if (p_ptr->fruit_bat && !p_ptr->body_monster &&
 				!((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))) c = 'b';
@@ -3725,18 +3722,15 @@ void lite_spot(int Ind, int y, int x)
 /*
  * Draw something on the overlay layer.
  */
-void draw_spot_ovl(int Ind, int y, int x, byte a, char c)
-{
+void draw_spot_ovl(int Ind, int y, int x, byte a, char c) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Redraw if on screen */
-	if (panel_contains(y, x))
-	{
+	if (panel_contains(y, x)) {
 		int dispx, dispy;
 
 		/* Handle "player" */
-		if ((y == p_ptr->py) && (x == p_ptr->px))
-		{
+		if ((y == p_ptr->py) && (x == p_ptr->px)) {
 			/* Never redraw the player */
 			return;
 		}
@@ -3749,8 +3743,7 @@ void draw_spot_ovl(int Ind, int y, int x, byte a, char c)
 
 		/* Only draw if different than buffered */
 		if (p_ptr->ovl_info[dispy][dispx].c != c ||
-		    p_ptr->ovl_info[dispy][dispx].a != a)
-		{
+		    p_ptr->ovl_info[dispy][dispx].a != a) {
 			/* Modify internal buffer */
 			p_ptr->ovl_info[dispy][dispx].c = c;
 			p_ptr->ovl_info[dispy][dispx].a = a;
@@ -3765,8 +3758,7 @@ void draw_spot_ovl(int Ind, int y, int x, byte a, char c)
 /*
  * Clear a spot on the overlay layer.
  */
-void clear_ovl_spot(int Ind, int y, int x)
-{
+void clear_ovl_spot(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Redraw if on screen */
@@ -3805,10 +3797,8 @@ void clear_ovl_spot(int Ind, int y, int x)
 /*
  * Clear the entire overlay ler.
  */
-void clear_ovl(int Ind)
-{
+void clear_ovl(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	int y, x;
 
 	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++) {

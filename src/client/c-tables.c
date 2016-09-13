@@ -487,7 +487,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "speak_unique",		"Allow shopkeepers and uniques to speak" },
 #endif
 
-    /* new additions after 4.6.1a */
+    /* new additions for 4.6.2 */
 	{ &c_cfg.shuffle_music,		FALSE,	5,	0, 109, TRUE,
 	    "shuffle_music",		"Don't loop song files but shuffle through them" },
 	{ &c_cfg.permawalls_shade,	FALSE,	6,	0, 110, TRUE, //page 3 (UI 3)
@@ -498,6 +498,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "targetinfo_msg",		"Display look/target info in message window too" },
 	{ &c_cfg.live_timeouts,		TRUE,	6,	0, 113, TRUE, //page 3 (UI 3)
 	    "live_timeouts",		"Always update item timeout numbers on every tick" },
+	{ &c_cfg.flash_insane,		FALSE,	6,	0, 114, TRUE, //page 3 (UI 3)
+	    "flash_insane",		"Flash own character icon when going badly insane" },
 };
 
 

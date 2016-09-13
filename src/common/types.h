@@ -2921,6 +2921,7 @@ struct player_type {
 	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever */
 	bool font_map_solid_walls;	/* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
 	s16b flash_self;
+	bool flash_insane;
 	bool hilite_player;		/* possible resurrection of long since broken c_cfg.hilite_player: Draw cursor around us at all times. */
 	bool consistent_players;	/* Use consistent colouring for player and allies. Ignore all status/body_monster */
 #ifdef TELEPORT_SURPRISES
@@ -3359,11 +3360,13 @@ struct client_opts {
 	bool compress_savefile;
 #endif
 
+    //new additions
 	bool shuffle_music;
 	bool permawalls_shade;
 	bool topline_no_msg;
 	bool targetinfo_msg;
 	bool live_timeouts;
+	bool flash_insane;
 };
 
 /*
