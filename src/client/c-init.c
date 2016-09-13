@@ -193,31 +193,24 @@ void initialize_main_pref_files(void) {
 
 	/* Access the "basic" pref file */
 	strcpy(buf, "pref.prf");
-
 	/* Process that file */
 	process_pref_file(buf);
 
 	/* Access the "user" pref file */
 	sprintf(buf, "global.opt");
-
 	/* Process that file */
 	process_pref_file(buf);
 
 	/* Access the "basic" system pref file */
 	sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
-
 	/* Process that file */
 	process_pref_file(buf);
 
 	/* Access the "visual" system pref file (if any) */
-	sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-
-	/* Process that file */
-	process_pref_file(buf);
+	handle_process_font_file();
 
 	/* Access the "user" system pref file */
 	sprintf(buf, "global-%s.opt", ANGBAND_SYS);
-
 	/* Process that file */
 	process_pref_file(buf);
 

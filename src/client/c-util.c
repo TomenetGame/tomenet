@@ -4044,9 +4044,8 @@ void interact_macros(void) {
 				/* Access the "basic" system pref file */
 				sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 				process_pref_file(buf);
-				/* Access the "visual" system pref file (if any) */
-				sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-				process_pref_file(buf);
+
+				handle_process_font_file();
 
 				macro_trigger_exclusive[0] = 0; //unhack
 				macro_processing_exclusive = FALSE;
@@ -4433,8 +4432,7 @@ void interact_macros(void) {
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
 			/* Access the "visual" system pref file (if any) */
-			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-			process_pref_file(buf);
+			handle_process_font_file();
 #if 0 /* skip exactly these here */
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
@@ -4485,8 +4483,7 @@ void interact_macros(void) {
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
 			/* Access the "visual" system pref file (if any) */
-			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-			process_pref_file(buf);
+			handle_process_font_file();
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
 			process_pref_file(buf);
@@ -4537,8 +4534,7 @@ void interact_macros(void) {
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
 			/* Access the "visual" system pref file (if any) */
-			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-			process_pref_file(buf);
+			handle_process_font_file();
 #if 0 /* skip these here */
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
@@ -4591,8 +4587,7 @@ void interact_macros(void) {
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
 			/* Access the "visual" system pref file (if any) */
-			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-			process_pref_file(buf);
+			handle_process_font_file();
 #if 0 /* skip these here */
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
@@ -4664,8 +4659,7 @@ void interact_macros(void) {
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
 			/* Access the "visual" system pref file (if any) */
-			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-			process_pref_file(buf);
+			handle_process_font_file();
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
 			process_pref_file(buf);
@@ -8435,4 +8429,33 @@ u32b parse_color_code(const char *str) {
 	}
 
 	return c;
+}
+
+/* Load the default font's or a custom font's pref file aka
+    "Access the "visual" system pref file (if any)". */
+#define CUSTOM_FONT_PRF /* enable custom pref files? */
+void handle_process_font_file(void) {
+	char buf[1024];
+	char fname[1024];
+
+#ifdef CUSTOM_FONT_PRF
+	/* Actually try to load a custom font-xxx.prf file, depending on the main screen font */
+	get_screen_font_name(fname);
+	if (!use_graphics && fname[0]) {
+		FILE *fff;
+
+		sprintf(buf, "font-custom-%s.prf", fname);
+		fff = my_fopen(buf, "r");
+		/* If custom file doesn't exist, fallback to normal font pref file: */
+		if (!fff) sprintf(buf, "font-%s.prf", ANGBAND_SYS);
+		else fclose(fff);
+		process_pref_file(buf);
+	} else {
+#endif
+	/* Access the "visual" system pref file (if any) */
+	sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
+	process_pref_file(buf);
+#ifdef CUSTOM_FONT_PRF
+	}
+#endif
 }

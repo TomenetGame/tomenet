@@ -1202,20 +1202,13 @@ static void term_window_resize(term_data *td)
  *
  * This function returns zero only if everything succeeds.
  */
-static errr term_force_font(term_data *td, cptr name)
-{
+static errr term_force_font(term_data *td, cptr name) {
 	int i;
-
 	int wid, hgt;
-
 	cptr s;
-
 	char base[16];
-
 	char base_font[16];
-
 	char buf[1024];
-
 	bool used;
 
 
@@ -1229,20 +1222,16 @@ static errr term_force_font(term_data *td, cptr name)
 	if (td->font_id) DeleteObject(td->font_id);
 
 	/* Forget old font */
-	if (td->font_file)
-	{
+	if (td->font_file) {
 		used = FALSE;
 
 		/* Scan windows */
-		for (i = 0; i < MAX_TERM_DATA; i++)
-		{
+		for (i = 0; i < MAX_TERM_DATA; i++) {
 			/* Check "screen" */
 			if ((td != &data[i]) &&
 			    (data[i].font_file) &&
 			    (streq(data[i].font_file, td->font_file)))
-			{
 				used = TRUE;
-			}
 		}
 
 		/* Remove unused font resources */
@@ -1269,8 +1258,7 @@ static errr term_force_font(term_data *td, cptr name)
 	hgt = 0;
 
 	/* Copy, capitalize, remove suffix, extract width */
-	for (i = 0; (i < 16 - 1) && s[i] && (s[i] != '.'); i++)
-	{
+	for (i = 0; (i < 16 - 1) && s[i] && (s[i] != '.'); i++) {
 		/* Capitalize */
 		base[i] = FORCEUPPER(s[i]);
 
@@ -1301,15 +1289,12 @@ static errr term_force_font(term_data *td, cptr name)
 	used = FALSE;
 
 	/* Scan windows */
-	for (i = 0; i < MAX_TERM_DATA; i++)
-	{
+	for (i = 0; i < MAX_TERM_DATA; i++) {
 		/* Check "screen" */
 		if ((td != &data[i]) &&
-			(data[i].font_file) &&
-			(streq(data[i].font_file, td->font_file)))
-		{
+		    (data[i].font_file) &&
+		    (streq(data[i].font_file, td->font_file)))
 			used = TRUE;
-		}
 	}
 
 	/* Only call AddFontResource once for each file or the font files
@@ -1317,9 +1302,7 @@ static errr term_force_font(term_data *td, cptr name)
 	if (!used) {
 		/* Load the new font or quit */
 		if (!AddFontResource(buf))
-		{
 			quit_fmt("Font file corrupted:\n%s", buf);
-		}
 	}
 
 	/* Notify other applications that a new font is available  XXX */
@@ -1333,8 +1316,7 @@ static errr term_force_font(term_data *td, cptr name)
 #endif
 
 	/* Hack -- Unknown size */
-	if (!wid || !hgt)
-	{
+	if (!wid || !hgt) {
 		HDC         hdcDesktop;
 		HFONT       hfOld;
 		TEXTMETRIC  tm;
@@ -1361,6 +1343,9 @@ static errr term_force_font(term_data *td, cptr name)
 
 	/* Resize the window */
 	term_window_resize(td);
+
+	/* Reload custom font prefs on main screen font change */
+	if (td == &data[0]) handle_process_font_file();
 
 	/* Success */
 	return (0);
@@ -2614,62 +2599,46 @@ static void check_for_save_file(LPSTR cmd_line)
 /*
  * Process a menu command
  */
-static void process_menus(WORD wCmd)
-{
+static void process_menus(WORD wCmd) {
 #ifdef	MNU_SUPPORT
 	int i;
-
-#if 0
+ #if 0
 	OPENFILENAME ofn;
-#endif
+ #endif
 
 	/* Analyze */
-	switch (wCmd)
-	{
+	switch (wCmd) {
 		/* New game */
 		case IDM_FILE_NEW:
-		{
-#if 0
-			if (!initialized)
-			{
+ #if 0
+			if (!initialized) {
 				MessageBox(data[0].w, "You cannot do that yet...",
 				           "Warning", MB_ICONEXCLAMATION | MB_OK);
-			}
-			else if (game_in_progress)
-			{
+			} else if (game_in_progress) {
 				MessageBox(data[0].w,
 				           "You can't start a new game while you're still playing!",
 				           "Warning", MB_ICONEXCLAMATION | MB_OK);
-			}
-			else
-			{
+			} else {
 				game_in_progress = TRUE;
 				disable_start();
 				Term_flush();
 				play_game(TRUE);
 				quit(NULL);
 			}
-#endif
+ #endif
 			break;
-		}
 
 		// Open game
 		case IDM_FILE_OPEN:
-		{
-#if 0
-			if (!initialized)
-			{
+ #if 0
+			if (!initialized) {
 				MessageBox(data[0].w, "You cannot do that yet...",
 				           "Warning", MB_ICONEXCLAMATION | MB_OK);
-			}
-			else if (game_in_progress)
-			{
+			} else if (game_in_progress) {
 				MessageBox(data[0].w,
 				           "You can't open a new game while you're still playing!",
 				           "Warning", MB_ICONEXCLAMATION | MB_OK);
-			}
-			else
-			{
+			} else {
 				memset(&ofn, 0, sizeof(ofn));
 				ofn.lStructSize = sizeof(ofn);
 				ofn.hwndOwner = data[0].w;
@@ -2680,8 +2649,7 @@ static void process_menus(WORD wCmd)
 				ofn.lpstrInitialDir = ANGBAND_DIR_USER;
 				ofn.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
-				if (GetOpenFileName(&ofn))
-				{
+				if (GetOpenFileName(&ofn)) {
 					// Load 'savefile'
 					validate_file(savefile);
 					game_in_progress = TRUE;
@@ -2691,58 +2659,44 @@ static void process_menus(WORD wCmd)
 					quit(NULL);
 				}
 			}
-#endif
+ #endif
 			break;
-		}
 
 		/* Save game */
 		case IDM_FILE_SAVE:
-		{
-#if 0
-			if (!game_in_progress)
-			{
+ #if 0
+			if (!game_in_progress) {
 				MessageBox(data[0].w, "No game in progress.",
 				           "Warning", MB_ICONEXCLAMATION | MB_OK);
-			}
-			else
-			{
+			} else {
 				// Save the game
 				do_cmd_save_game();
 			}
-#endif
+ #endif
 			break;
-		}
 
 
 		/* Save and Exit */
 		case IDM_FILE_EXIT:
-		{
 			quit(NULL);
 			break;
-		}
 
 		/* Quit (no save) */
 		case IDM_FILE_QUIT:
-		{
 			quit(NULL);
 			break;
-		}
 
 		case IDM_TEXT_SCREEN:
-		{
-
-#ifdef USE_GRAPHICS
+ #ifdef USE_GRAPHICS
 			/* XXX XXX XXX */
-			if (use_graphics)
-			{
+			if (use_graphics) {
 				term_change_bitmap(&data[0]);
 				break;
 			}
-#endif
+ #endif
 
 			term_change_font(&data[0]);
 			break;
-		}
 
 		/* Window fonts */
 		case IDM_TEXT_MIRROR:
@@ -2752,7 +2706,6 @@ static void process_menus(WORD wCmd)
 		case IDM_TEXT_TERM_5:
 		case IDM_TEXT_TERM_6:
 		case IDM_TEXT_TERM_7:
-		{
 			i = wCmd - IDM_TEXT_SCREEN;
 
 			if ((i < 0) || (i >= MAX_TERM_DATA)) break;
@@ -2760,7 +2713,6 @@ static void process_menus(WORD wCmd)
 			term_change_font(&data[i]);
 
 			break;
-		}
 
 		/* Window visibility */
 		case IDM_WINDOWS_MIRROR:
@@ -2770,61 +2722,48 @@ static void process_menus(WORD wCmd)
 		case IDM_WINDOWS_TERM_5:
 		case IDM_WINDOWS_TERM_6:
 		case IDM_WINDOWS_TERM_7:
-		{
 			i = wCmd - IDM_WINDOWS_SCREEN;
 
 			if ((i < 0) || (i >= MAX_TERM_DATA)) break;
 
-			if (!data[i].visible)
-			{
+			if (!data[i].visible) {
 				data[i].visible = TRUE;
 				ShowWindow(data[i].w, SW_SHOW);
 				term_data_redraw(&data[i]);
-			}
-			else
-			{
+			} else {
 				data[i].visible = FALSE;
 				ShowWindow(data[i].w, SW_HIDE);
 			}
 
 			break;
-		}
 
 		/* Hack -- unused */
 		case IDM_OPTIONS_UNUSED:
-		{
 			/* XXX XXX XXX */
 			break;
-		}
+
 /*	Currently no graphics options available. -GP */
 #ifdef USE_GRAPHICS
 		case IDM_OPTIONS_GRAPHICS:
-		{
-			char buf[1024];
-
 			/* XXX XXX XXX  */
 			Term_activate(term_screen);
 
 			/* Reset the visuals */
-//                        reset_visuals();
+			//reset_visuals();
 
 			/* Toggle "graphics" */
 			use_graphics = !use_graphics;
 
 			/* Access the "graphic" mappings */
-			sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
+			handle_process_font_file();
 
-			/* Load the file */
-			process_pref_file(buf);
 #endif		/* GP's USE_GRAPHICS */
 #ifdef USE_GRAPHICS
 
 			/* Use graphics */
-			if (use_graphics)
-			{
+			if (use_graphics) {
 				/* Try to use the current font */
-				if (term_force_graf(&data[0], data[0].font_file))
-				{
+				if (term_force_graf(&data[0], data[0].font_file)) {
 					/* XXX XXX XXX Force a "usable" font */
 					(void)term_force_font(&data[0], DEFAULT_FONTNAME);
 
@@ -2835,11 +2774,9 @@ static void process_menus(WORD wCmd)
 #ifdef FULL_GRAPHICS
 
 				/* Windows */
-				for (i = 1; i < MAX_TERM_DATA; i++)
-				{
+				for (i = 1; i < MAX_TERM_DATA; i++) {
 					/* Try to use the current font */
-					if (term_force_graf(&data[i], data[i].font_file))
-					{
+					if (term_force_graf(&data[i], data[i].font_file)) {
 						/* XXX XXX XXX Force a "usable" font */
 						(void)term_force_font(&data[i], DEFAULT_FONTNAME);
 
@@ -2862,19 +2799,14 @@ static void process_menus(WORD wCmd)
 			Term_key_push(KTRL('R'));
 
 			break;
-		}
 #endif
 		case IDM_OPTIONS_SOUND:
-		{
 			use_sound = !use_sound;
 			break;
-		}
 
 		case IDM_OPTIONS_SAVEPREF:
-		{
 			save_prefs();
 			break;
-		}
 	}
 #endif	/* MNU_SUPPORT */
 }
@@ -4124,27 +4056,27 @@ void resize_main_window_win(int cols, int rows) {
 	term *old;
 	term *t = &td->t;
 
-        td->cols = cols;
-        td->rows = rows;
-        term_getsize(td);
-        term_window_resize(td);
+	td->cols = cols;
+	td->rows = rows;
+	term_getsize(td);
+	term_window_resize(td);
 	old = Term;
 	Term_activate(t);
-        Term_resize(td->cols, td->rows);
+	Term_resize(td->cols, td->rows);
 	Term_activate(old);
 }
 
 bool ask_for_bigmap(void) {
 #if 0
-        if (MessageBox(NULL,
-            "Do you want to double the height of this window?\n"
-            "It is recommended to do this on desktops,\n"
+	if (MessageBox(NULL,
+	    "Do you want to double the height of this window?\n"
+	    "It is recommended to do this on desktops,\n"
 	    "but it may not fit on small netbook screens.\n"
 	    "You can change this later anytime in the game's options menu.",
-            "Enable 'big_map' option?",
-            MB_YESNO + MB_ICONQUESTION) == IDYES)
-        	return TRUE;
-        return FALSE;
+	    "Enable 'big_map' option?",
+	    MB_YESNO + MB_ICONQUESTION) == IDYES)
+		return TRUE;
+	return FALSE;
 #else
 	return ask_for_bigmap_generic();
 #endif
@@ -4178,5 +4110,9 @@ void store_crecedentials(void) {
 	WritePrivateProfileString("Online", "pass", tmp, ini_file);
 
 	memset(tmp, 0, MAX_CHARS);
+}
+void get_screen_font_name(char *buf) {
+	if (data[0].font_file) strcpy(buf, data[0].font_file);
+	else strcpy(buf, "");
 }
 #endif /* _Windows */

@@ -29,6 +29,7 @@ extern errr init_x11(void);
 extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
 extern void resize_main_window_x11(int cols, int rows);
 extern bool ask_for_bigmap(void);
+extern void get_screen_font_name(char *buf);
 #endif
 
 #ifdef USE_XAW
@@ -601,6 +602,7 @@ extern void clear_topline(void);
 extern void clear_topline_forced(void);
 extern void restore_prompt(void); /* DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
 extern u32b parse_color_code(const char *str);
+extern void handle_process_font_file(void);
 
 /* c-store.c */
 extern bool leave_store;
@@ -895,6 +897,7 @@ extern bool term_get_visibility(int term_idx);
 extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
 extern bool check_dir(cptr s);
+extern void get_screen_font_name(char *buf);
 #endif
 extern void store_crecedentials(void);
 

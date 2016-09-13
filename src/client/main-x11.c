@@ -2882,6 +2882,9 @@ static void term_force_font(int term_idx, char fnt_name[256]) {
 		Infowin_resize(wid, hgt);
 	}
 	XFlush(Metadpy->dpy);
+
+	/* Reload custom font prefs on main screen font change */
+	if (td == &screen) handle_process_font_file();
 }
 #endif
 
@@ -3024,5 +3027,9 @@ bool term_get_visibility(int term_idx) {
 /* automatically store name+password to ini file if we're a new player? */
 void store_crecedentials(void) {
 	write_mangrc(TRUE);
+}
+void get_screen_font_name(char *buf) {
+	if (screen.fnt->name) strcpy(buf, screen.fnt->name);
+	else strcpy(buf, "");
 }
 #endif
