@@ -897,16 +897,9 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	/* Two handed weapons can't be wielded with a shield */
 	/* TODO: move to item_tester_hook_wear? */
-#if 0
-	if ((is_slot_ok(slot - INVEN_WIELD + INVEN_ARM)) &&
-	    (f4 & TR4_MUST2H) &&
-	    (inventory[slot - INVEN_WIELD + INVEN_ARM].k_idx != 0))
-#endif	// 0
-
 	if ((f4 & TR4_MUST2H) &&
-	    (p_ptr->inventory[INVEN_ARM].k_idx != 0))
-	{
-#if 1 /* a) either give error msg, or.. */
+	    (p_ptr->inventory[INVEN_ARM].k_idx != 0)) {
+#if 0 /* a) either give error msg, or.. */
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		if (get_skill(p_ptr, SKILL_DUAL))
 			msg_format(Ind, "You cannot wield your %s with a shield or a secondary weapon.", o_name);
@@ -914,42 +907,46 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			msg_format(Ind, "You cannot wield your %s with a shield.", o_name);
 		return;
 #else /* b) take off the left-hand item too */
-/* important note: can't enable this like this, because it's NOT FINISHED:
-   after taking off the shield/2nd weapon, item letters in inventory will
-   CHANGE and the WRONG item will be equipped. - C. Blue */
-return;
 		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't' )) {
-			msg_print(Ind, "Your second wielded item's inscription prevents taking it off.");
+			msg_print(Ind, "Your secondary item's inscription prevents taking it off.");
 			return;
 		};
 		if (cursed_p(&p_ptr->inventory[INVEN_ARM]) && !is_admin(p_ptr)) {
-			msg_print(Ind, "Hmmm, the second item you're wielding seems to be cursed.");
+			msg_print(Ind, "Hmmm, the secondary item you're wielding seems to be cursed.");
 			return;
 		}
 		inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
+		if (item >= 0) {
+			item = replay_inven_changes(Ind, item);
+			o_ptr = &(p_ptr->inventory[item]);
+			if (item == 0xFF) return; //item is gone, shouldn't happen
+		}
 #endif
 	}
 	if ((f4 & TR4_SHOULD2H) &&
-	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield not with 1.5h */
-	{
+	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) { /* dual-wield not with 1.5h */
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		msg_format(Ind, "You cannot wield your %s with a secondary weapon.", o_name);
 		return;
 	}
 
-//	if (is_slot_ok(slot - INVEN_ARM + INVEN_WIELD)) {
-//		i_ptr = &inventory[slot - INVEN_ARM + INVEN_WIELD];
 	if (o_ptr->tval == TV_SHIELD && (x_ptr = &p_ptr->inventory[INVEN_WIELD])) {
 		/* Extract the flags */
 		object_flags(x_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-		/* Prevent shield from being put on if wielding 2H */
-		if ((f4 & TR4_MUST2H) && (x_ptr->k_idx) )
-			//		    (p_ptr->body_parts[slot - INVEN_WIELD] == INVEN_ARM))
-		{
+		if ((f4 & TR4_MUST2H) && (x_ptr->k_idx)) {
+#if 0 /* Prevent shield from being put on if wielding 2H */
 			object_desc(Ind, o_name, o_ptr, FALSE, 0);
 			msg_format(Ind, "You cannot wield your %s with a two-handed weapon.", o_name);
 			return;
+#else /* Take off 2h weapon when equipping a shield */
+			inven_takeoff(Ind, INVEN_WIELD, 255, TRUE);
+			if (item >= 0) {
+				item = replay_inven_changes(Ind, item);
+				o_ptr = &(p_ptr->inventory[item]);
+				if (item == 0xFF) return; //item is gone, shouldn't happen
+			}
+#endif
 		}
 	}
 
