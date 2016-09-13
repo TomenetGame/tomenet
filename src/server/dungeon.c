@@ -6915,8 +6915,6 @@ void process_player_change_wpos(int Ind) {
 	p_ptr->py = y;
 	p_ptr->px = x;
 
-	grid_affects_player(Ind);
-
 	/* Update the player location */
 	zcave[y][x].m_idx = 0 - Ind;
 	cave_midx_debug(wpos, y, x, -Ind);
@@ -7226,20 +7224,12 @@ void process_player_change_wpos(int Ind) {
 	/* If he found a town in the dungeon, map it as much as a normal town would be at night */
 	if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) player_dungeontown(Ind);
 
-	/* Did we enter a no-tele vault? */
-	if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
-		msg_print(Ind, "\377DThe air in here feels very still.");
-		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-		/* New: Have bgm indicate no-tele too! (done below in handle_music()) */
-	}
-
 	quest_check_player_location(Ind);
 
 #ifdef USE_SOUND_2010
 	/* clear boss/floor-specific music */
 	if (sickbay) p_ptr->music_monster = -3;
 	else p_ptr->music_monster = -1;
-	handle_music(Ind);
 	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, smooth_ambient);
 #endif
 
@@ -7248,6 +7238,8 @@ void process_player_change_wpos(int Ind) {
 	   flicker player for a moment, to allow for easy location */
 	if (!smooth_ambient && p_ptr->flash_self >= 0) p_ptr->flash_self = cfg.fps / FLASH_SELF_DIV2; //todo: make client option
 #endif
+
+	grid_affects_player(Ind, -1, -1);
 
 	clockin(Ind, 7); /* Remember his wpos */
 }

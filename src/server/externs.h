@@ -1888,7 +1888,7 @@ extern bool gain_au(int Ind, u32b amt, bool quiet, bool exempt);
 extern bool backup_estate(bool partial);
 extern void restore_estate(int Ind);
 extern void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos);
-extern void grid_affects_player(int Ind);
+extern void grid_affects_player(int Ind, int ox, int oy);
 extern bool exceptionally_shareable_item(object_type *o_ptr);
 extern bool shareable_starter_item(object_type *o_ptr);
 extern int activate_magic_device_chance(int Ind, object_type *o_ptr);

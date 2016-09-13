@@ -2941,7 +2941,7 @@ static int Handle_login(int ind) {
 #endif
 	/* In 4.5.7 we can now distinguish (client-side) between disabled and unavailable audio */
 	if (p_ptr->audio_sfx > 3 && p_ptr->audio_sfx < __audio_sfx_max - 100) msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
-	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 5 - 25) msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---"); //-5 for 5 optional songs in 4.6.2 (user's choic)
+	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 5 - 26) msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---"); //-5 for 5 optional songs in 4.6.2 (user's choic)
 
 	/* Admin messages */
 	if (p_ptr->admin_dm)
@@ -3258,21 +3258,19 @@ static int Handle_login(int ind) {
 	/* Keep music quiet for a moment to allow player to hear the introduction speech? */
 	if (greeting && p_ptr->audio_mus > 0 && p_ptr->audio_sfx >= 2) /* speech is event #2 in unmodified sounds.cfg */
 		p_ptr->music_start = 20; /* wait for this # of turns until starting the music */
-	else
-		handle_music(NumPlayers); /* start music normally (instantly) */
 
 	/* Don't skip the first attack sfx (in case player enabled half_sfx_attack or cut_sfx_attack) */
 	p_ptr->count_cut_sfx_attack = 500;
 #endif
 
 #ifdef USE_SOUND_2010
-	/* Note: This must come after grid_affects_player() has been called initially. */
+	/* Update ambient sound effects if needed.
+	   Note: This should be called before grid_affects_player() to correctly have no_house_sfx/quiet_house_sfx applied to it afterwards. */
 	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
 #endif
 
 	/* Note: p_ptr->sound_ambient must be initialised to -1 before calling this. */
-	/* Note2: This should be called after handle_ambient_sfx() to correctly apply no_house_sfx/quiet_house_sfx to it. */
-	grid_affects_player(NumPlayers);
+	grid_affects_player(NumPlayers, -1, -1);
 
 	/* Initialize the client's unique list;
 	it will become further updated each time he kills another unique */

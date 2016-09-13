@@ -2302,7 +2302,7 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 			ny = q_qact->tppy_y;
 			p_ptr->py = ny;
 			p_ptr->px = nx;
-			grid_affects_player(pInd);
+			grid_affects_player(pInd, ox, oy);
 			zcave[oy][ox].m_idx = 0;
 			zcave[ny][nx].m_idx = 0 - pInd;
 			cave_midx_debug(&q_qact->tppy_wpos, ny, nx, -pInd);
@@ -2342,7 +2342,7 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 				nx = q_qact->tppy_x;
 				p_ptr->py = ny;
 				p_ptr->px = nx;
-				grid_affects_player(j);
+				grid_affects_player(j, ox, oy);
 				zcave[oy][ox].m_idx = 0;
 				zcave[ny][nx].m_idx = 0 - j;
 				cave_midx_debug(&q_qact->tppy_wpos, ny, nx, -j);

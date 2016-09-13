@@ -7291,11 +7291,12 @@ void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos) {
 
 /* whenever the player enters a new grid (walk, teleport..)
    check whether he is affected in certain ways.. */
-void grid_affects_player(int Ind) {
+void grid_affects_player(int Ind, int ox, int oy) {
 	player_type *p_ptr = Players[Ind];
+	int x = p_ptr->px, y = p_ptr->py;
 	cave_type **zcave;
 	cave_type *c_ptr;
-	bool inn = FALSE;
+	bool inn = FALSE, music = FALSE;
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -7312,6 +7313,65 @@ void grid_affects_player(int Ind) {
 		calc_boni(Ind);
 	}
 
+	/* Handle entering/leaving no-teleport area */
+	if (zcave[y][x].info & CAVE_STCK && (ox == -1 || !(zcave[oy][ox].info & CAVE_STCK))) {
+		msg_print(Ind, "\377DThe air in here feels very still.");
+		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+#ifdef USE_SOUND_2010
+		/* New: Have bgm indicate no-tele too! */
+		handle_music(Ind);
+		music = TRUE;
+#endif
+
+		msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his" : "her");
+		msg_print(Ind, "You lose your wraith powers.");
+
+		/* Automatically disable permanent wraith form (set_tim_wraith) */
+		p_ptr->tim_wraith = 0; //avoid duplicate message
+		p_ptr->update |= PU_BONUS;
+		p_ptr->redraw |= PR_BPR_WRAITH;
+	}
+	if (ox != -1 && (zcave[oy][ox].info & CAVE_STCK) && !(zcave[y][x].info & CAVE_STCK)) {
+		msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
+		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+		p_ptr->redraw |= PR_BPR_WRAITH;
+#ifdef USE_SOUND_2010
+		/* New: Have bgm indicate no-tele too! */
+		handle_music(Ind);
+		music = TRUE;
+#endif
+
+		/* Automatically re-enable permanent wraith form (set_tim_wraith) */
+		p_ptr->update |= PU_BONUS;
+	}
+
+#ifdef USE_SOUND_2010
+	/* Handle leaving a sickbay area */
+	if (p_ptr->music_monster == -3 && c_ptr->feat != FEAT_PROTECTED && c_ptr->feat != FEAT_SICKBAY_DOOR) {
+		p_ptr->music_monster = -1; //unhack sickbay music
+		handle_music(Ind);
+		music = TRUE;
+	}
+
+	/* Handle entering/leaving taverns. (-3 check is for distinguishing inn from sickbay) */
+	if (p_ptr->music_monster != -3 && p_ptr->music_monster != -4 && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(&p_ptr->wpos)) {
+		p_ptr->music_monster = -4; //hack inn music
+		handle_music(Ind);
+		music = TRUE;
+
+		/* Also take care of inn ambient sfx (fireplace) */
+		handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos, TRUE);
+	}
+	if (p_ptr->music_monster == -4 && !((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(&p_ptr->wpos))) {
+		p_ptr->music_monster = -1; //unhack inn music
+		handle_music(Ind);
+		music = TRUE;
+
+		/* Also take care of inn ambient sfx (fireplace) */
+		handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos, TRUE);
+	}
+#endif
+
 	/* Hack: Inns count as houses */
 	if (!p_ptr->wpos.wz && ((c_ptr->info & CAVE_PROT) || (f_info[c_ptr->feat].flags1 & FF1_PROTECTED))) inn = TRUE;
 
@@ -7325,6 +7385,9 @@ void grid_affects_player(int Ind) {
 		p_ptr->grid_house = FALSE;
 		if (p_ptr->sfx_house_quiet || !p_ptr->sfx_house) Send_sfx_volume(Ind, 100, 100);
 	}
+
+	/* Renew music too? */
+	if (!music && ox == -1) handle_music(Ind);
 
 	/* quests - check if he has arrived at a designated exact x,y target location */
 	if (p_ptr->quest_any_deliver_xy_within_target) quest_check_goal_deliver(Ind);

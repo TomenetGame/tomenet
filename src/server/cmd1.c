@@ -5626,64 +5626,12 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 	cave_type *c_ptr = &zcave[y][x];
 	struct c_special *cs_ptr;
 
-	grid_affects_player(Ind);
-
-#ifdef USE_SOUND_2010
-	handle_ambient_sfx(Ind, c_ptr, wpos, TRUE);
-#endif
-
-	/* Handle entering/leaving no-teleport area */
-	if (zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
-		msg_print(Ind, "\377DThe air in here feels very still.");
-		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-#ifdef USE_SOUND_2010
-		/* New: Have bgm indicate no-tele too! */
-		handle_music(Ind);
-#endif
-
-		msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his" : "her");
-		msg_print(Ind, "You lose your wraith powers.");
-
-		/* Automatically disable permanent wraith form (set_tim_wraith) */
-		p_ptr->tim_wraith = 0; //avoid duplicate message
-		p_ptr->update |= PU_BONUS;
-		p_ptr->redraw |= PR_BPR_WRAITH;
-	}
-	if (zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK)) {
-		msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
-		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-		p_ptr->redraw |= PR_BPR_WRAITH;
-#ifdef USE_SOUND_2010
-		/* New: Have bgm indicate no-tele too! */
-		handle_music(Ind);
-#endif
-
-		/* Automatically re-enable permanent wraith form (set_tim_wraith) */
-		p_ptr->update |= PU_BONUS;
-	}
-
-#ifdef USE_SOUND_2010
-	/* Handle leaving a sickbay area */
-	if (p_ptr->music_monster == -3 && c_ptr->feat != FEAT_PROTECTED && c_ptr->feat != FEAT_SICKBAY_DOOR) {
-		p_ptr->music_monster = -1; //unhack sickbay music
-		handle_music(Ind);
-	}
-
-	/* Handle entering/leaving taverns. (-3 check is for distinguishing inn from sickbay) */
-	if (p_ptr->music_monster != -3 && p_ptr->music_monster != -4 && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(&p_ptr->wpos)) {
-		p_ptr->music_monster = -4; //hack inn music
-		handle_music(Ind);
-	}
-	if (p_ptr->music_monster == -4 && !((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(&p_ptr->wpos))) {
-		p_ptr->music_monster = -1; //unhack inn music
-		handle_music(Ind);
-	}
-#endif
+	grid_affects_player(Ind, ox, oy);
 
 	cave_midx_debug(wpos, y, x, -Ind);
 
 	/* Redraw new spot */
-	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+	everyone_lite_spot(wpos, y, x);
 	/* Redraw old spot */
 	everyone_lite_spot(wpos, oy, ox);
 
@@ -5770,7 +5718,7 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 			msg_print(Ind, "You triggered a trap!");
 
 			/* Pick a trap */
-			pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+			pick_trap(&p_ptr->wpos, y, x);
 		}
 #ifndef ARCADE_SERVER
 		else if (magik(get_skill_scale(p_ptr, SKILL_TRAPPING, 90) - UNAWARENESS(p_ptr))) {
