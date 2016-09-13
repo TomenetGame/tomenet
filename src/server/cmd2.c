@@ -6914,7 +6914,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				cave_type *c_ptr = &zcave[y][x];
 
 				q_ptr = Players[0 - c_ptr->m_idx];
-				if (rand_int(11) > 6) {
+				if (rand_int(150) > 105 + 256 - adj_dex_th[p_ptr->stat_ind[A_DEX]] - adj_dex_th[q_ptr->stat_ind[A_DEX]]) {
 					msg_format_near(0 - c_ptr->m_idx, "\377y%s catches the ball", q_ptr->name);
 					msg_print(0 - c_ptr->m_idx, "\377yYou catch the ball");
 					inven_carry(0 - c_ptr->m_idx, o_ptr);
