@@ -1415,7 +1415,8 @@ errr file_character(cptr name, bool full) {
 	/* Dump part of the screen */
 	for (y = 1; y < 22; y++) {
 		/* Dump each row */
-		for (x = 0; x < Term->wid; x++) {
+		//for (x = 0; x < Term->wid; x++) {
+		for (x = 0; x < 79; x++) {
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
 			/* Dump it */
@@ -1433,7 +1434,8 @@ errr file_character(cptr name, bool full) {
 	/* Dump part of the screen */
 	for (y = 14; y < 19; y++) {
 		/* Dump each row */
-		for (x = 0; x < Term->wid; x++) {
+		//for (x = 0; x < Term->wid; x++) {
+		for (x = 0; x < 79; x++) {
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
 			/* Dump it */
