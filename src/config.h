@@ -752,6 +752,11 @@
  * This should be of *great* help for slow servers :)
  */
 #define MONSTER_TURNS	6
+
+/* Smoother load distribution:
+   Handle monsters actually once per turn but only 1/MONSTER_TURNS of them: */
+#define PROCESS_MONSTERS_DISTRIBUTE
+
 #define NPC_TURNS	6	/* Programmable NPC Turns */
 
 /*

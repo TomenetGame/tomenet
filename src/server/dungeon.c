@@ -1973,7 +1973,7 @@ static void init_day_and_night() {
  * Handle certain things once every 50 game turns
  */
 
-static void process_world(int Ind) {
+static void process_world_player(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int	i;
 //	int	regen_amount, NumPlayers_old = NumPlayers;
@@ -5613,7 +5613,7 @@ static void scan_houses() {
 static void purge_old() {
 	int x, y, i;
 
-//	if (cfg.level_unstatic_chance > 0)
+	//if (cfg.level_unstatic_chance > 0)
 	{
 		struct worldpos twpos;
 		twpos.wz = 0;
@@ -6015,7 +6015,7 @@ void store_turnover() {
 
 	for (i = 0; i < numtowns; i++) {
 		/* Maintain each shop (except home and auction house) */
-//		for (n = 0; n < MAX_BASE_STORES - 2; n++)
+		//for (n = 0; n < MAX_BASE_STORES - 2; n++)
 		for (n = 0; n < max_st_idx; n++) {
 			/* Maintain */
 			store_maint(&town[i].townstore[n]);
@@ -6024,7 +6024,7 @@ void store_turnover() {
 		/* Sometimes, shuffle the shopkeepers */
 		if (rand_int(STORE_SHUFFLE) == 0) {
 			/* Shuffle a random shop (except home and auction house) */
-//			store_shuffle(&town[i].townstore[rand_int(MAX_BASE_STORES - 2)]);
+			//store_shuffle(&town[i].townstore[rand_int(MAX_BASE_STORES - 2)]);
 			store_shuffle(&town[i].townstore[rand_int(max_st_idx)]);
 		}
 	}
@@ -6134,7 +6134,7 @@ static void process_various(void) {
 		get_date(&dwd, &dd, &dm, &dy);
 		exec_lua(0, format("cron_24h(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), h, m, s, dwd, dd, dm, dy));
 
-/*		bbs_add_line("--- new day line ---"); */
+		/* bbs_add_line("--- new day line ---"); */
 	}
 
 	/* every 10 seconds */
@@ -6393,6 +6393,666 @@ static void process_various(void) {
 	}
 #endif /* if 0 */
 }
+
+/* Process timed shutdowns, compacting objects/monsters and
+   call process_world_player() for each player.
+   We are called once every 50 turns. */
+static void process_world(void) {
+	int i;
+	player_type *p_ptr;
+
+	if (cfg.runlevel < 6 && time(NULL) - cfg.closetime > 120)
+		set_runlevel(cfg.runlevel - 1);
+
+	if (cfg.runlevel < 5) {
+		for (i = NumPlayers; i > 0 ;i--) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (Players[i]->wpos.wz != 0) break;
+		}
+		if (!i) set_runlevel(0);
+	}
+
+	if (cfg.runlevel == 2049) {
+		shutdown_server();
+	} else if (cfg.runlevel == 2052) {
+		/* same as /shutdown 0, except server will return -2 instead of -1.
+		   can be used by scripts to initiate maintenance downtime etc. */
+		set_runlevel(-1);
+
+		/* paranoia - set_runlevel() will call exit() */
+		time(&cfg.closetime);
+		return;
+	} else if (cfg.runlevel == 2051) {
+		int n = 0;
+		for (i = NumPlayers; i > 0 ;i--) {
+			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+			/* Ignore admins that are loged in */
+			if (admin_p(i)) continue;
+			/* count players */
+			n++;
+
+			/* Ignore characters that are afk and not in a dungeon/tower */
+			//if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
+
+			/* Ignore chars in fixed irondeepdive towns */
+			if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+			if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
+
+			/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
+			if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
+
+			/* Ignore characters that are not in a dungeon/tower */
+			if (p_ptr->wpos.wz == 0) {
+				/* Don't interrupt events though */
+				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+			}
+			break;
+		}
+		if (!i && (n <= 3)) {
+			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+			cfg.runlevel = 2049;
+		}
+	}
+#ifdef ENABLE_GO_GAME
+	else if (cfg.runlevel == 2048 && !go_game_up) {
+#else
+	else if (cfg.runlevel == 2048) {
+#endif
+		for (i = NumPlayers; i > 0 ;i--) {
+			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+
+			/* Ignore admins that are loged in */
+			if (admin_p(i)) continue;
+
+			/* Ignore chars in fixed irondeepdive towns */
+			if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+			if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
+
+			/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
+			if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
+
+			/* Ignore characters that are afk and not in a dungeon/tower */
+			//if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
+
+			/* Ignore characters that are not in a dungeon/tower */
+			if (p_ptr->wpos.wz == 0) {
+				/* Don't interrupt events though */
+				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+			}
+			break;
+		}
+		if (!i) {
+			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+			cfg.runlevel = 2049;
+		}
+	} else if (cfg.runlevel == 2047) {
+		int n = 0;
+		for (i = NumPlayers; i > 0 ;i--) {
+			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+			/* Ignore admins that are loged in */
+			if (admin_p(i)) continue;
+			/* count players */
+			n++;
+
+			/* Ignore characters that are afk and not in a dungeon/tower */
+			//if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
+
+			/* Ignore chars in fixed irondeepdive towns */
+			if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+			if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
+
+			/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
+			if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
+
+			/* Ignore characters that are not in a dungeon/tower */
+			if (p_ptr->wpos.wz == 0) {
+				/* Don't interrupt events though */
+				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+			}
+			break;
+		}
+		if (!i && (n <= 8)) {
+			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+			cfg.runlevel = 2049;
+		}
+	} else if (cfg.runlevel == 2046) {
+		int n = 0;
+		for (i = NumPlayers; i > 0 ;i--) {
+			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+			/* Ignore admins that are loged in */
+			if (admin_p(i)) continue;
+			/* count players */
+			n++;
+
+			/* Ignore characters that are afk and not in a dungeon/tower */
+			//if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
+
+			/* Ignore chars in fixed irondeepdive towns */
+			if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+			if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
+
+			/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
+			if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
+
+			/* Ignore characters that are not in a dungeon/tower */
+			if (p_ptr->wpos.wz == 0) {
+				/* Don't interrupt events though */
+				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+			}
+			break;
+		}
+		if (!i && (n <= 5)) {
+			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+			cfg.runlevel = 2049;
+		}
+	} else if (cfg.runlevel == 2045) {
+		int n = 0;
+		for (i = NumPlayers; i > 0 ;i--) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			/* Ignore admins that are loged in */
+			if (admin_p(i)) continue;
+			/* count players */
+			n++;
+		}
+		if (!n) {
+			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+			cfg.runlevel = 2049;
+		}
+	} else if (cfg.runlevel == 2044) {
+		int n = 0;
+		for (i = NumPlayers; i > 0 ;i--) {
+			p_ptr = Players[i];
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+
+			/* Ignore admins that are loged in */
+			if (admin_p(i)) continue;
+
+			/* Ignore perma-afk players! */
+			//if (p_ptr->afk && 
+			if (is_inactive(i) >= 30 * 20) /* 20 minutes idle? */
+				continue;
+
+			/* count players */
+			n++;
+
+			/* Ignore characters that are afk and not in a dungeon/tower */
+			//if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
+
+			/* Ignore chars in fixed irondeepdive towns */
+			if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+			if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
+
+			/* Ignore characters that are not in a dungeon/tower */
+			if (p_ptr->wpos.wz == 0) {
+				/* Don't interrupt events though */
+				if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+			}
+			break;
+		}
+		if (!i && (n <= 6)) {
+			msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+			cfg.runlevel = 2049;
+		}
+	}
+
+	if (cfg.runlevel == 2043 || cfg.runlevel == 2042) {
+		if (shutdown_recall_timer <= 60 && shutdown_recall_state < 3) {
+			if (cfg.runlevel == 2043)
+				msg_broadcast(0, "\374\377I*** \377RServer restart in max 1 minute (auto-recall). \377I***");
+			else
+				msg_broadcast(0, "\374\377I*** \377RServer shutdown in max 1 minute (auto-recall). \377I***");
+			shutdown_recall_state = 3;
+		}
+		else if (shutdown_recall_timer <= 300 && shutdown_recall_state < 2) {
+			if (cfg.runlevel == 2043)
+				msg_broadcast(0, "\374\377I*** \377RServer restart in max 5 minutes (auto-recall). \377I***");
+			else
+				msg_broadcast(0, "\374\377I*** \377RServer shutdown in max 5 minutes (auto-recall). \377I***");
+			shutdown_recall_state = 2;
+		}
+		else if (shutdown_recall_timer <= 900 && shutdown_recall_state < 1) {
+			if (cfg.runlevel == 2043)
+				msg_broadcast(0, "\374\377I*** \377RServer restart in max 15 minutes (auto-recall). \377I***");
+			else
+				msg_broadcast(0, "\374\377I*** \377RServer shutdown in max 15 minutes (auto-recall). \377I***");
+			shutdown_recall_state = 1;
+		}
+		if (!shutdown_recall_timer) {
+			for (i = NumPlayers; i > 0 ;i--) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+
+				/* Don't remove loot from ghosts waiting for res */
+				if (admin_p(i) || p_ptr->ghost) continue;
+
+				/* Don't free people from the Ironman Deep Dive Challenge */
+				if (in_irondeepdive(&p_ptr->wpos)) continue;
+
+				if (p_ptr->wpos.wz) {
+					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+					p_ptr->recall_pos.wz = 0;
+					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+					recall_player(i, "");
+				}
+			}
+			if (cfg.runlevel == 2043) {
+				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+				cfg.runlevel = 2049;
+			} else { //if (cfg.runlevel == 2042) {
+				msg_broadcast(-1, "\374\377G<<<\377oServer is now going down for maintenance.\377G>>>");
+				cfg.runlevel = 2052;
+			}
+		} else {
+			for (i = NumPlayers; i > 0 ;i--) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+
+				/* Ignore admins that are loged in */
+				if (admin_p(i)) continue;
+
+				/* Ignore chars in fixed irondeepdive towns */
+				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+#endif
+
+				/* Ignore characters that are afk and not in a dungeon/tower */
+				//if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
+
+				/* Ignore characters that are not in a dungeon/tower */
+				if (p_ptr->wpos.wz == 0) {
+					/* Don't interrupt events though */
+					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+				}
+				break;
+			}
+			if (!i) {
+				if (cfg.runlevel == 2043) {
+					msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+					cfg.runlevel = 2049;
+				} else { //if (cfg.runlevel == 2042)
+					msg_broadcast(-1, "\374\377G<<<\377oServer is now going down for maintenance.\377G>>>");
+					cfg.runlevel = 2052;
+				}
+			}
+		}
+	}
+
+	/* Hack -- Compact the object list occasionally */
+	if (o_top + 160 > MAX_O_IDX) compact_objects(320, TRUE);
+
+	/* Hack -- Compact the monster list occasionally */
+	if (m_top + 320 > MAX_M_IDX) compact_monsters(640, TRUE);
+
+	/* Hack -- Compact the trap list occasionally */
+	//if (t_top + 160 > MAX_TR_IDX) compact_traps(320, TRUE);
+
+	/* Tell a day passed */
+	//if (((turn + (DAY_START * 10L)) % (10L * DAY)) == 0)
+	if (!(turn % DAY)) { /* midnight */
+		char buf[20];
+
+		snprintf(buf, 20, "%s", get_day(bst(YEAR, turn))); /* hack: abuse get_day()'s capabilities */
+		msg_broadcast_format(0,
+			"\377GToday it is %s of the %s year of the third age.",
+			get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
+
+#ifdef MUCHO_RUMOURS
+		/* the_sandman prints a rumour */
+		if (NumPlayers) {
+			msg_print(1, "Suddenly a thought comes to your mind:");
+			fortune(1, TRUE);
+		}
+#endif
+	}
+
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		/* Process the world of that player */
+		process_world_player(i);
+	}
+}
+
+#ifdef DUNGEON_VISIT_BONUS
+/* Keep track of frequented dungeons, called every minute. */
+static void process_dungeon_boni(void) {
+	int i;
+	dungeon_type *d_ptr;
+	wilderness_type *w_ptr;
+	player_type *p_ptr;
+ #ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+	int depthrange;
+ #endif
+
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		if (p_ptr->wpos.wz == 0) continue;
+		w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+		if (p_ptr->wpos.wz < 0) d_ptr = w_ptr->dungeon;
+		else if (p_ptr->wpos.wz > 0) d_ptr = w_ptr->tower;
+		else continue; //paranoia
+
+ #if 0
+		/* NOTE: We're currently counting up for -each- player in there.
+		   Maybe should be changed to generic 'visited or not visited'. */
+		if (dungeon_visit_frequency[d_ptr->id] < VISIT_TIME_CAP)
+			dungeon_visit_frequency[d_ptr->id]++;
+ #else
+		/* NOTE about NOTE: Not anymore. Now # of players doesn't matter: */
+		if (dungeon_visit_frequency[d_ptr->id] < VISIT_TIME_CAP)
+			dungeon_visit_check[d_ptr->id] = TRUE;
+ #endif
+
+ #ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+		/* Also keep track of which depths are mostly frequented */
+		depthrange = getlevel(&p_ptr->wpos) / 10;
+		/* Excempt Valinor (dlv 200) */
+		if (depthrange < 20
+		    && depthrange_visited[depthrange] < VISIT_TIME_CAP);
+			depthrange_visited[depthrange]++;
+ #endif
+	}
+
+ #if 1
+	for (i = 1; i <= dungeon_id_max; i++)
+		if (dungeon_visit_check[i]) {
+			dungeon_visit_check[i] = FALSE;
+			dungeon_visit_frequency[i]++;
+		}
+ #endif
+}
+/* Decay visit frequency for all dungeons over time. */
+/* Also update the 'rest bonus' each dungeon gives:
+   Use <startfloor + 2/3 * (startfloor-endfloor)> as main comparison value.
+   Called every 10 minutes. */
+static void process_dungeon_boni_decay(void) {
+	int i;
+
+ #ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+	for (i = 0; i < 20; i++) {
+		if (depthrange_visited[i])
+			depthrange_visited[i]--;
+
+		/* update the depth-range scale in regards to its most contributing dungeon */
+		//todo; see below
+	}
+ #endif
+	for (i = 1; i <= dungeon_id_max; i++) {
+		if (dungeon_visit_frequency[i])
+			dungeon_visit_frequency[i]--;
+
+		/* update bonus of this dungeon */
+ #ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
+		/* more sophisticated algoritm.
+		   Todo: find a good way how to do this :-p.
+		   Idea (C. Blue):
+		   players increase the depthrange_visited counter for the dlvl they are on,
+		   dungeons then compare it with their average depth (which is as stated above
+		   start + 2/3 * (end-start) floor), and only start counting as "not visited"
+		   if the dungeon depths that ARE visited actually are comparable to the
+		   avg depth of the dungeon in question.
+		   Main problem: Handle multiple dungeons adding to the same depthrange in
+		   pretty different scales, eg 'player A is all the time in dungeon A which
+		   only is lvl 1-9, while player B spends even much more time in the very first
+		   level of dungeon B which goes from lvl 1-49. Now how are the numbers scaled
+		   down to determine the actual 'visitedness' of dungeon A for example? */
+ #endif
+
+		/* straightforward simple way without DUNGEON_VISIT_BONUS_DEPTHRANGE */
+		set_dungeon_bonus(i, FALSE);
+	}
+}
+#endif
+
+#ifdef FLUENT_ARTIFACT_RESETS
+/* Process timing out of artifacts.
+   Handled in 1-minute resolution - assuming we have less artifacts than 60*cfg.fps. */
+static void process_artifacts(void) {
+	int i = turn % (cfg.fps * 60);
+	player_type *p_ptr;
+
+	if (!cfg.persistent_artifacts && i < max_a_idx && a_info[i].timeout > 0) {
+ #if defined(IDDC_ARTIFACT_FAST_TIMEOUT) || defined(WINNER_ARTIFACT_FAST_TIMEOUT)
+		bool double_speed = FALSE;
+ #endif
+
+ #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+		if (a_info[i].iddc) {
+			a_info[i].timeout -= 2;
+			double_speed = TRUE;
+
+			/* hack: don't accidentally skip erasure/warning */
+			if (a_info[i].timeout == -1) a_info[i].timeout = 0;
+			//Not required because of double_speed calc:
+			//else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING - 1) a_info[i].timeout = FLUENT_ARTIFACT_WARNING;
+		} else
+ #endif
+ #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
+		if (a_info[i].winner) {
+			a_info[i].timeout -= 2;
+			double_speed = TRUE;
+
+			/* hack: don't accidentally skip erasure/warning */
+			if (a_info[i].timeout == -1) a_info[i].timeout = 0;
+			//Not required because of double_speed calc:
+			//else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING - 1) a_info[i].timeout = FLUENT_ARTIFACT_WARNING;
+		} else
+ #endif
+		a_info[i].timeout--;
+
+		/* erase? */
+		if (a_info[i].timeout == 0) erase_artifact(i);
+		/* just warn? */
+ #if defined(IDDC_ARTIFACT_FAST_TIMEOUT) || defined(WINNER_ARTIFACT_FAST_TIMEOUT)
+		else if ((double_speed ? a_info[i].timeout / 2 : a_info[i].timeout) == FLUENT_ARTIFACT_WARNING) {
+ #else
+		else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING) {
+ #endif
+			int j, k;
+			char o_name[ONAME_LEN];
+
+			for (j = 1; j <= NumPlayers; j++) {
+				p_ptr = Players[j];
+				if (p_ptr->id != a_info[i].carrier) continue;
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				for (k = 0; k < INVEN_TOTAL; k++) {
+					if (!p_ptr->inventory[k].k_idx) continue;
+					if (p_ptr->inventory[k].name1 != i) continue;
+					if (!(p_ptr->inventory[k].ident & ID_MENTAL)) continue;
+					object_desc(j, o_name, &p_ptr->inventory[k], TRUE, 128 + 256);
+					msg_format(j, "\374\377RYour %s will vanish soon!", o_name);
+					j = NumPlayers;
+					break;
+				}
+			}
+		}
+	}
+}
+#endif
+
+#ifdef ENABLE_MERCHANT_MAIL
+static void process_merchant_mail(void) {
+	int i = turn % MAX_MERCHANT_MAILS; //fast enough >_>
+
+	if (mail_sender[i][0]) {
+		if (mail_duration[i]) {
+ #ifndef MERCHANT_MAIL_INFINITE
+			bool erase = FALSE;
+ #endif
+
+			if (mail_duration[i] < 0) {
+				/* we bounced back to sender, but now stop bouncing and erase it if he doesn't want it either, if MERCHANT_MAIL_INFINITE */
+				mail_duration[i]++;
+ #ifndef MERCHANT_MAIL_INFINITE
+				erase = TRUE;
+ #endif
+			} else
+			/* normal case (1st send, or infinite bouncing enabled) */
+			mail_duration[i]--;
+
+			if (!mail_duration[i]) {
+				int j;
+
+				/* set timeout for expiry */
+				if (lookup_player_id(mail_target[i]))
+					/* normal */
+ #ifdef MERCHANT_MAIL_INFINITE
+					mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
+ #else
+				{
+					if (erase) mail_timeout[i] = - 2 - MERCHANT_MAIL_TIMEOUT;
+					else mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
+				}
+ #endif
+				else
+					/* hack for players who no longer exist */
+					mail_timeout[i] = -1;
+
+				/* notify him */
+				for (j = 1; j <= NumPlayers; j++) {
+					if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
+						if (strcmp(Players[j]->name, mail_target[i])) {
+							msg_print(j, "\374\377yThe merchant guild has mail for another character of yours!");
+ #ifdef USE_SOUND_2010
+							sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+						} else {
+							if (Players[j]->store_num == STORE_MERCHANTS_GUILD) {
+ #ifdef USE_SOUND_2010
+								sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+								merchant_mail_delivery(j);
+							} else {
+								msg_print(j, "\374\377yThe merchant guild has mail for you!");
+ #ifdef USE_SOUND_2010
+								sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+							}
+						}
+					}
+				}
+			}
+		} else if (mail_timeout[i] != 0) {
+			bool erase, quiet;
+
+			if (mail_timeout[i] == -1) {
+				/* character timed out and was deleted */
+				mail_timeout[i] = 0;
+				erase = TRUE;
+				quiet = FALSE;
+			} else if (mail_timeout[i] == -2) {
+				/* player refused to pay for COD mail */
+				mail_timeout[i] = 0;
+				erase = FALSE;
+				quiet = TRUE;
+			} else if (mail_timeout[i] < -2) {
+				/* we just bounced back, might result in erasure if not picked up and not MERCHANT_MAIL_INFINITE */
+				mail_timeout[i]++;
+				if (mail_timeout[i] == -2)
+ #ifdef MERCHANT_MAIL_INFINITE
+					mail_timeout[i] = 0;
+ #else
+				{
+  #if 1
+					/* notify sloth */
+					int j;
+
+					for (j = 1; j <= NumPlayers; j++) {
+						if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
+							if (strcmp(Players[j]->name, mail_target[i]))
+								msg_print(j, "\374\377yA mail package for another character of yours just expired!");
+							else
+								msg_print(j, "\374\377yA mail package for you just expired!");
+						}
+					}
+  #endif
+
+					s_printf("MAIL_ERROR_ERASED (1st bounce).\n");
+					/* delete mail! */
+					mail_sender[i][0] = 0;
+					/* leave structure */
+					mail_timeout[i] = 1;
+				}
+ #endif
+				erase = FALSE;
+				quiet = FALSE;
+			} else {
+				/* normal expiry countdown */
+				mail_timeout[i]--;
+				erase = FALSE;
+				quiet = FALSE;
+			}
+
+			if (!mail_timeout[i]) {
+				/* send it back */
+				char tmp[NAME_LEN];
+				u32b pid;
+				cptr acc;
+				int j;
+
+				/* notify receipient that he didn't make it in time */
+				if (!erase && !quiet)
+					for (j = 1; j <= NumPlayers; j++) {
+						if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
+							if (strcmp(Players[j]->name, mail_target[i]))
+								msg_print(j, "\374\377yA mail package for another character of yours just expired and was returned!");
+							else
+								msg_print(j, "\374\377yA mail package for you just expired and was returned to the sender!");
+						}
+					}
+
+ #ifndef MERCHANT_MAIL_INFINITE
+				erase = TRUE;
+				mail_duration[i] = -MERCHANT_MAIL_DURATION;
+ #else
+				mail_duration[i] = MERCHANT_MAIL_DURATION;
+ #endif
+				strcpy(tmp, mail_sender[i]);
+				strcpy(mail_sender[i], mail_target[i]);
+				strcpy(mail_target[i], tmp);
+
+
+				pid = lookup_player_id(mail_target[i]);
+				if (!pid) {
+					s_printf("MAIL_ERROR: no pid - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+					/* special: the mail bounced back to a character that no longer exists!
+					   if this happens with the new receipient too, the mail gets deleted,
+					   since noone can pick it up anymore. */
+					if (erase) {
+						s_printf("MAIL_ERROR_ERASED.\n");
+						/* delete mail! */
+						mail_sender[i][0] = 0;
+					}
+				} else {
+					acc = lookup_accountname(pid);
+					if (acc) strcpy(mail_target_acc[i], acc);
+					else s_printf("MAIL_ERROR_RETURN: no acc - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+				}
+			}
+		}
+	}
+}
+#endif
+
 
 int find_player(s32b id) {
 	int i;
@@ -7292,17 +7952,6 @@ void dungeon(void) {
 
 	/* Handle any network stuff */
 	Net_input();
-#if 0
-	/* Hack -- Compact the object list occasionally */
-	if (o_top + 16 > MAX_O_IDX) compact_objects(32, FALSE);
-
-	/* Hack -- Compact the monster list occasionally */
-	if (m_top + 32 > MAX_M_IDX) compact_monsters(64, FALSE);
-
-	/* Hack -- Compact the trap list occasionally */
-	if (t_top + 16 > MAX_TR_IDX) compact_traps(32, FALSE);
-#endif
-
 
 
 	/* Note -- this is the END of the last turn */
@@ -7373,13 +8022,14 @@ void dungeon(void) {
 #ifdef PLAYER_STORES
  #ifdef EXPORT_PLAYER_STORE_OFFERS
   #if EXPORT_PLAYER_STORE_OFFERS > 0
-	/* export player store items every n hours */
+	/* Export player store items every n hours */
 	if (!(turn % (cfg.fps * 60 * EXPORT_PLAYER_STORE_OFFERS))) export_player_store_offers(&export_turns);
 	else if (export_turns) export_player_store_offers(&export_turns);
   #endif
  #endif
 #endif
 
+	/* Process solo-reking timers (if enabled) and quest (de)activations, once a minute. */
 	if (!(turn % (cfg.fps * 60))) {
 #ifdef SOLO_REKING
 		/* Process fallen winners */
@@ -7393,11 +8043,9 @@ void dungeon(void) {
 		process_quests();
 	}
 
-	/* process some things once each second.
-	   NOTE: Some of these (global events) mustn't
-	   be handled _after_ a player got set to 'dead',
-	   or gameplay might in very rare occasions get
-	   screwed up (someone dying when he shouldn't) - C. Blue */
+	/* Process some things once each second.
+	   NOTE: Some of these (global events) mustn't be handled _after_ a player got set to 'dead',
+	   or gameplay might in very rare occasions get screwed up (someone dying when he shouldn't) - C. Blue */
 	if (!(turn % cfg.fps)) {
 		/* Process global_events */
 		process_global_events();
@@ -7443,7 +8091,7 @@ void dungeon(void) {
 		}
 	}
 
-	/* process every 1/5th second */
+	/* Nether Realm collapsing animations - process every 1/5th second */
 	if (!(turn % (cfg.fps / 5))) {
 		if (nether_realm_collapsing && !rand_int(8)) {
 			struct worldpos wpos = {netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_end_wz};
@@ -7524,15 +8172,15 @@ void dungeon(void) {
 			/* Play server-side animations (consisting of cycling/random colour choices,
 			   instead of animated colours which are circled client-side) */
 			/* Flicker invisible player? (includes colour animation!) */
-//			if (p_ptr->invis) update_player(i);
+			//if (p_ptr->invis) update_player(i);
 			if (p_ptr->invis) {
 				update_player_flicker(i);
 				update_player(i);
 			}
 			/* Otherwise only take care of colour animation */
-//			else { /* && p_ptr->body_monster */
+			//else { /* && p_ptr->body_monster */
 				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-//			}
+			//}
 		}
 
 		/* Do non-self-related animations and checks too */
@@ -7568,577 +8216,37 @@ void dungeon(void) {
 	}
 
 #ifdef FLUENT_ARTIFACT_RESETS
-	/* handle in 1-minute resolution - assume we have less artifacts than 60*cfg.fps */
-	i = turn % (cfg.fps * 60);
-	if (!cfg.persistent_artifacts && i < max_a_idx && a_info[i].timeout > 0) {
- #if defined(IDDC_ARTIFACT_FAST_TIMEOUT) || defined(WINNER_ARTIFACT_FAST_TIMEOUT)
-		bool double_speed = FALSE;
- #endif
-
- #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
-		if (a_info[i].iddc) {
-			a_info[i].timeout -= 2;
-			double_speed = TRUE;
-
-			/* hack: don't accidentally skip erasure/warning */
-			if (a_info[i].timeout == -1) a_info[i].timeout = 0;
-			//Not required because of double_speed calc:
-			//else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING - 1) a_info[i].timeout = FLUENT_ARTIFACT_WARNING;
-		} else
- #endif
- #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
-		if (a_info[i].winner) {
-			a_info[i].timeout -= 2;
-			double_speed = TRUE;
-
-			/* hack: don't accidentally skip erasure/warning */
-			if (a_info[i].timeout == -1) a_info[i].timeout = 0;
-			//Not required because of double_speed calc:
-			//else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING - 1) a_info[i].timeout = FLUENT_ARTIFACT_WARNING;
-		} else
- #endif
-		a_info[i].timeout--;
-
-		/* erase? */
-		if (a_info[i].timeout == 0) erase_artifact(i);
-		/* just warn? */
- #if defined(IDDC_ARTIFACT_FAST_TIMEOUT) || defined(WINNER_ARTIFACT_FAST_TIMEOUT)
-		else if ((double_speed ? a_info[i].timeout / 2 : a_info[i].timeout) == FLUENT_ARTIFACT_WARNING) {
- #else
-		else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING) {
- #endif
-			int j, k;
-			char o_name[ONAME_LEN];
-
-			for (j = 1; j <= NumPlayers; j++) {
-				p_ptr = Players[j];
-				if (p_ptr->id != a_info[i].carrier) continue;
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				for (k = 0; k < INVEN_TOTAL; k++) {
-					if (!p_ptr->inventory[k].k_idx) continue;
-					if (p_ptr->inventory[k].name1 != i) continue;
-					if (!(p_ptr->inventory[k].ident & ID_MENTAL)) continue;
-					object_desc(j, o_name, &p_ptr->inventory[k], TRUE, 128 + 256);
-					msg_format(j, "\374\377RYour %s will vanish soon!", o_name);
-					j = NumPlayers;
-					break;
-				}
-			}
-		}
-	}
+	process_artifacts();
 #endif
 
 #ifdef ENABLE_MERCHANT_MAIL
-	i = turn % MAX_MERCHANT_MAILS; //fast enough >_>
-	if (mail_sender[i][0]) {
-		if (mail_duration[i]) {
- #ifndef MERCHANT_MAIL_INFINITE
-			bool erase = FALSE;
- #endif
-
-			if (mail_duration[i] < 0) {
-				/* we bounced back to sender, but now stop bouncing and erase it if he doesn't want it either, if MERCHANT_MAIL_INFINITE */
-				mail_duration[i]++;
- #ifndef MERCHANT_MAIL_INFINITE
-				erase = TRUE;
- #endif
-			} else
-			/* normal case (1st send, or infinite bouncing enabled) */
-			mail_duration[i]--;
-
-			if (!mail_duration[i]) {
-				int j;
-
-				/* set timeout for expiry */
-				if (lookup_player_id(mail_target[i]))
-					/* normal */
- #ifdef MERCHANT_MAIL_INFINITE
-					mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
- #else
-				{
-					if (erase) mail_timeout[i] = - 2 - MERCHANT_MAIL_TIMEOUT;
-					else mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
-				}
- #endif
-				else
-					/* hack for players who no longer exist */
-					mail_timeout[i] = -1;
-
-				/* notify him */
-				for (j = 1; j <= NumPlayers; j++) {
-					if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
-						if (strcmp(Players[j]->name, mail_target[i])) {
-							msg_print(j, "\374\377yThe merchant guild has mail for another character of yours!");
- #ifdef USE_SOUND_2010
-							sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
- #endif
-						} else {
-							if (Players[j]->store_num == STORE_MERCHANTS_GUILD) {
- #ifdef USE_SOUND_2010
-								sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
- #endif
-								merchant_mail_delivery(j);
-							} else {
-								msg_print(j, "\374\377yThe merchant guild has mail for you!");
- #ifdef USE_SOUND_2010
-								sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
- #endif
-							}
-						}
-					}
-				}
-			}
-		} else if (mail_timeout[i] != 0) {
-			bool erase, quiet;
-
-			if (mail_timeout[i] == -1) {
-				/* character timed out and was deleted */
-				mail_timeout[i] = 0;
-				erase = TRUE;
-				quiet = FALSE;
-			} else if (mail_timeout[i] == -2) {
-				/* player refused to pay for COD mail */
-				mail_timeout[i] = 0;
-				erase = FALSE;
-				quiet = TRUE;
-			} else if (mail_timeout[i] < -2) {
-				/* we just bounced back, might result in erasure if not picked up and not MERCHANT_MAIL_INFINITE */
-				mail_timeout[i]++;
-				if (mail_timeout[i] == -2)
- #ifdef MERCHANT_MAIL_INFINITE
-					mail_timeout[i] = 0;
- #else
-				{
-  #if 1
-					/* notify sloth */
-					int j;
-
-					for (j = 1; j <= NumPlayers; j++) {
-						if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
-							if (strcmp(Players[j]->name, mail_target[i]))
-								msg_print(j, "\374\377yA mail package for another character of yours just expired!");
-							else
-								msg_print(j, "\374\377yA mail package for you just expired!");
-						}
-					}
-  #endif
-
-					s_printf("MAIL_ERROR_ERASED (1st bounce).\n");
-					/* delete mail! */
-					mail_sender[i][0] = 0;
-					/* leave structure */
-					mail_timeout[i] = 1;
-				}
- #endif
-				erase = FALSE;
-				quiet = FALSE;
-			} else {
-				/* normal expiry countdown */
-				mail_timeout[i]--;
-				erase = FALSE;
-				quiet = FALSE;
-			}
-
-			if (!mail_timeout[i]) {
-				/* send it back */
-				char tmp[NAME_LEN];
-				u32b pid;
-				cptr acc;
-				int j;
-
-				/* notify receipient that he didn't make it in time */
-				if (!erase && !quiet)
-					for (j = 1; j <= NumPlayers; j++) {
-						if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
-							if (strcmp(Players[j]->name, mail_target[i]))
-								msg_print(j, "\374\377yA mail package for another character of yours just expired and was returned!");
-							else
-								msg_print(j, "\374\377yA mail package for you just expired and was returned to the sender!");
-						}
-					}
-
- #ifndef MERCHANT_MAIL_INFINITE
-				erase = TRUE;
-				mail_duration[i] = -MERCHANT_MAIL_DURATION;
- #else
-				mail_duration[i] = MERCHANT_MAIL_DURATION;
- #endif
-				strcpy(tmp, mail_sender[i]);
-				strcpy(mail_sender[i], mail_target[i]);
-				strcpy(mail_target[i], tmp);
-
-
-				pid = lookup_player_id(mail_target[i]);
-				if (!pid) {
-					s_printf("MAIL_ERROR: no pid - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
-					/* special: the mail bounced back to a character that no longer exists!
-					   if this happens with the new receipient too, the mail gets deleted,
-					   since noone can pick it up anymore. */
-					if (erase) {
-						s_printf("MAIL_ERROR_ERASED.\n");
-						/* delete mail! */
-						mail_sender[i][0] = 0;
-					}
-				} else {
-					acc = lookup_accountname(pid);
-					if (acc) strcpy(mail_target_acc[i], acc);
-					else s_printf("MAIL_ERROR_RETURN: no acc - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
-				}
-			}
-		}
-	}
+	process_merchant_mail();
 #endif
 
 	/* Process all of the monsters */
 #ifdef ASTAR_DISTRIBUTE
 	process_monsters_astar();
 #endif
+#ifdef PROCESS_MONSTERS_DISTRIBUTE
+	process_monsters();
+#else
 	if (!(turn % MONSTER_TURNS))
 		process_monsters();
+#endif
 
 	/* Process programmable NPCs */
 	if (!(turn % NPC_TURNS))
 		process_npcs();
 
 	/* Process all of the objects */
-#if 0 /* way too fast: currently, process_objects() only recharges rods on the floor and in trap kits. \
-         It must be called as frequently as process_player_end_aux(), which recharges rods in inventory, \
-         so they're both recharging at the same rate! */
-	if ((turn % 10) == 5) process_objects();
-#else
-	process_objects(); //note: the exact timing is done inside the function now
-#endif
+	/* Currently, process_objects() only recharges rods on the floor and in trap kits.
+	   It must be called as frequently as process_player_end_aux(), which recharges rods in inventory,
+	   so they're both recharging at the same rate.
+	   Note: the exact timing for each object is measured inside the function. */
+	process_objects();
 
 	/* Process the world */
-	if (!(turn % 50)) {
-		if (cfg.runlevel < 6 && time(NULL) - cfg.closetime > 120)
-			set_runlevel(cfg.runlevel - 1);
-
-		if (cfg.runlevel < 5) {
-			for (i = NumPlayers; i > 0 ;i--) {
-				if (Players[i]->conn == NOT_CONNECTED) continue;
-				if (Players[i]->wpos.wz != 0) break;
-			}
-			if (!i) set_runlevel(0);
-		}
-
-		if (cfg.runlevel == 2049) {
-			shutdown_server();
-		} else if (cfg.runlevel == 2052) {
-			/* same as /shutdown 0, except server will return -2 instead of -1.
-			   can be used by scripts to initiate maintenance downtime etc. */
-			set_runlevel(-1);
-
-			/* paranoia - set_runlevel() will call exit() */
-			time(&cfg.closetime);
-			return;
-		} else if (cfg.runlevel == 2051) {
-			int n = 0;
-			for (i = NumPlayers; i > 0 ;i--) {
-				p_ptr = Players[i];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				/* Ignore admins that are loged in */
-				if (admin_p(i)) continue;
-				/* count players */
-				n++;
-
-				/* Ignore characters that are afk and not in a dungeon/tower */
-//				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
-
-				/* Ignore chars in fixed irondeepdive towns */
-				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
-				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#endif
-
-				/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
-				if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
-
-				/* Ignore characters that are not in a dungeon/tower */
-				if (p_ptr->wpos.wz == 0) {
-					/* Don't interrupt events though */
-					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
-				}
-				break;
-			}
-			if (!i && (n <= 3)) {
-				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-				cfg.runlevel = 2049;
-			}
-		}
-#ifdef ENABLE_GO_GAME
-		else if (cfg.runlevel == 2048 && !go_game_up) {
-#else
-		else if (cfg.runlevel == 2048) {
-#endif
-			for (i = NumPlayers; i > 0 ;i--) {
-				p_ptr = Players[i];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-
-				/* Ignore admins that are loged in */
-				if (admin_p(i)) continue;
-
-				/* Ignore chars in fixed irondeepdive towns */
-				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
-				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#endif
-
-				/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
-				if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
-
-				/* Ignore characters that are afk and not in a dungeon/tower */
-				//if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
-
-				/* Ignore characters that are not in a dungeon/tower */
-				if (p_ptr->wpos.wz == 0) {
-					/* Don't interrupt events though */
-					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
-				}
-				break;
-			}
-			if (!i) {
-				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-				cfg.runlevel = 2049;
-			}
-		} else if (cfg.runlevel == 2047) {
-			int n = 0;
-			for (i = NumPlayers; i > 0 ;i--) {
-				p_ptr = Players[i];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				/* Ignore admins that are loged in */
-				if (admin_p(i)) continue;
-				/* count players */
-				n++;
-
-				/* Ignore characters that are afk and not in a dungeon/tower */
-//				if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
-
-				/* Ignore chars in fixed irondeepdive towns */
-				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
-				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#endif
-
-				/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
-				if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
-
-				/* Ignore characters that are not in a dungeon/tower */
-				if (p_ptr->wpos.wz == 0) {
-					/* Don't interrupt events though */
-					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
-				}
-				break;
-			}
-			if (!i && (n <= 8)) {
-				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-				cfg.runlevel = 2049;
-			}
-		} else if (cfg.runlevel == 2046) {
-			int n = 0;
-			for (i = NumPlayers; i > 0 ;i--) {
-				p_ptr = Players[i];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				/* Ignore admins that are loged in */
-				if (admin_p(i)) continue;
-				/* count players */
-				n++;
-
-				/* Ignore characters that are afk and not in a dungeon/tower */
-				//if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
-
-				/* Ignore chars in fixed irondeepdive towns */
-				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
-				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#endif
-
-				/* extra, just for /shutempty: Ignore all iddc chars who are afk/idle */
-				if (SHUTDOWN_IGNORE_IDDC(p_ptr)) continue;
-
-				/* Ignore characters that are not in a dungeon/tower */
-				if (p_ptr->wpos.wz == 0) {
-					/* Don't interrupt events though */
-					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
-				}
-				break;
-			}
-			if (!i && (n <= 5)) {
-				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-				cfg.runlevel = 2049;
-			}
-		} else if (cfg.runlevel == 2045) {
-			int n = 0;
-			for (i = NumPlayers; i > 0 ;i--) {
-				if (Players[i]->conn == NOT_CONNECTED) continue;
-				/* Ignore admins that are loged in */
-				if (admin_p(i)) continue;
-				/* count players */
-				n++;
-			}
-			if (!n) {
-				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-				cfg.runlevel = 2049;
-			}
-		} else if (cfg.runlevel == 2044) {
-			int n = 0;
-			for (i = NumPlayers; i > 0 ;i--) {
-				p_ptr = Players[i];
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-
-				/* Ignore admins that are loged in */
-				if (admin_p(i)) continue;
-
-				/* Ignore perma-afk players! */
-				//if (p_ptr->afk && 
-				if (is_inactive(i) >= 30 * 20) /* 20 minutes idle? */
-					continue;
-
-				/* count players */
-				n++;
-
-				/* Ignore characters that are afk and not in a dungeon/tower */
-//				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
-
-				/* Ignore chars in fixed irondeepdive towns */
-				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
-				if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#endif
-
-				/* Ignore characters that are not in a dungeon/tower */
-				if (p_ptr->wpos.wz == 0) {
-					/* Don't interrupt events though */
-					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
-				}
-				break;
-			}
-			if (!i && (n <= 6)) {
-				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-				cfg.runlevel = 2049;
-			}
-		}
-
-		if (cfg.runlevel == 2043 || cfg.runlevel == 2042) {
-			if (shutdown_recall_timer <= 60 && shutdown_recall_state < 3) {
-				if (cfg.runlevel == 2043)
-					msg_broadcast(0, "\374\377I*** \377RServer restart in max 1 minute (auto-recall). \377I***");
-				else
-					msg_broadcast(0, "\374\377I*** \377RServer shutdown in max 1 minute (auto-recall). \377I***");
-				shutdown_recall_state = 3;
-			}
-			else if (shutdown_recall_timer <= 300 && shutdown_recall_state < 2) {
-				if (cfg.runlevel == 2043)
-					msg_broadcast(0, "\374\377I*** \377RServer restart in max 5 minutes (auto-recall). \377I***");
-				else
-					msg_broadcast(0, "\374\377I*** \377RServer shutdown in max 5 minutes (auto-recall). \377I***");
-				shutdown_recall_state = 2;
-			}
-			else if (shutdown_recall_timer <= 900 && shutdown_recall_state < 1) {
-				if (cfg.runlevel == 2043)
-					msg_broadcast(0, "\374\377I*** \377RServer restart in max 15 minutes (auto-recall). \377I***");
-				else
-					msg_broadcast(0, "\374\377I*** \377RServer shutdown in max 15 minutes (auto-recall). \377I***");
-				shutdown_recall_state = 1;
-			}
-			if (!shutdown_recall_timer) {
-				for (i = NumPlayers; i > 0 ;i--) {
-					p_ptr = Players[i];
-					if (p_ptr->conn == NOT_CONNECTED) continue;
-
-					/* Don't remove loot from ghosts waiting for res */
-					if (admin_p(i) || p_ptr->ghost) continue;
-
-					/* Don't free people from the Ironman Deep Dive Challenge */
-					if (in_irondeepdive(&p_ptr->wpos)) continue;
-
-					if (p_ptr->wpos.wz) {
-						p_ptr->recall_pos.wx = p_ptr->wpos.wx;
-						p_ptr->recall_pos.wy = p_ptr->wpos.wy;
-						p_ptr->recall_pos.wz = 0;
-						p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
-						recall_player(i, "");
-					}
-				}
-				if (cfg.runlevel == 2043) {
-					msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-					cfg.runlevel = 2049;
-				} else { //if (cfg.runlevel == 2042) {
-					msg_broadcast(-1, "\374\377G<<<\377oServer is now going down for maintenance.\377G>>>");
-					cfg.runlevel = 2052;
-				}
-			} else {
-				for (i = NumPlayers; i > 0 ;i--) {
-					p_ptr = Players[i];
-					if (p_ptr->conn == NOT_CONNECTED) continue;
-
-					/* Ignore admins that are loged in */
-					if (admin_p(i)) continue;
-
-					/* Ignore chars in fixed irondeepdive towns */
-					if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
-					if (is_extra_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
-#endif
-
-					/* Ignore characters that are afk and not in a dungeon/tower */
-					//if ((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
-
-					/* Ignore characters that are not in a dungeon/tower */
-					if (p_ptr->wpos.wz == 0) {
-						/* Don't interrupt events though */
-						if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
-					}
-					break;
-				}
-				if (!i) {
-					if (cfg.runlevel == 2043) {
-						msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
-						cfg.runlevel = 2049;
-					} else { //if (cfg.runlevel == 2042)
-						msg_broadcast(-1, "\374\377G<<<\377oServer is now going down for maintenance.\377G>>>");
-						cfg.runlevel = 2052;
-					}
-				}
-			}
-		}
-
-		/* Hack -- Compact the object list occasionally */
-		if (o_top + 160 > MAX_O_IDX) compact_objects(320, TRUE);
-
-		/* Hack -- Compact the monster list occasionally */
-		if (m_top + 320 > MAX_M_IDX) compact_monsters(640, TRUE);
-
-		/* Hack -- Compact the trap list occasionally */
-		//if (t_top + 160 > MAX_TR_IDX) compact_traps(320, TRUE);
-
-		/* Tell a day passed */
-		//if (((turn + (DAY_START * 10L)) % (10L * DAY)) == 0)
-		if (!(turn % DAY)) { /* midnight */
-			char buf[20];
-
-			snprintf(buf, 20, "%s", get_day(bst(YEAR, turn))); /* hack: abuse get_day()'s capabilities */
-			msg_broadcast_format(0,
-				"\377GToday it is %s of the %s year of the third age.",
-				get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
-
-#ifdef MUCHO_RUMOURS
-			/* the_sandman prints a rumour */
-			if (NumPlayers) {
-				msg_print(1, "Suddenly a thought comes to your mind:");
-				fortune(1, TRUE);
-			}
-#endif
-		}
-
-		for (i = 1; i <= NumPlayers; i++) {
-			if (Players[i]->conn == NOT_CONNECTED)
-				continue;
-
-			/* Process the world of that player */
-			process_world(i);
-		}
-	}
+	if (!(turn % 50)) process_world();
 
 	/* Clean up Bree regularly to prevent too dangerous towns in which weaker characters cant move around */
 	//if (!(turn % 650000)) { /* 650k ~ 3hours */
@@ -8177,90 +8285,9 @@ void dungeon(void) {
 
 #ifdef DUNGEON_VISIT_BONUS
 	/* Keep track of frequented dungeons, every minute */
-	if (!(turn % (cfg.fps * 60))) {
-		dungeon_type *d_ptr;
-		wilderness_type *w_ptr;
-# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
-		int depthrange;
-# endif
-
-		for (i = 1; i <= NumPlayers; i++) {
-			p_ptr = Players[i];
-			if (p_ptr->conn == NOT_CONNECTED) continue;
-
-			if (p_ptr->wpos.wz == 0) continue;
-			w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-			if (p_ptr->wpos.wz < 0) d_ptr = w_ptr->dungeon;
-			else if (p_ptr->wpos.wz > 0) d_ptr = w_ptr->tower;
-			else continue; //paranoia
-
-# if 0
-			/* NOTE: We're currently counting up for -each- player in there.
-			   Maybe should be changed to generic 'visited or not visited'. */
-			if (dungeon_visit_frequency[d_ptr->id] < VISIT_TIME_CAP)
-				dungeon_visit_frequency[d_ptr->id]++;
-# else
-			/* NOTE about NOTE: Not anymore. Now # of players doesn't matter: */
-			if (dungeon_visit_frequency[d_ptr->id] < VISIT_TIME_CAP)
-				dungeon_visit_check[d_ptr->id] = TRUE;
-# endif
-
-# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
-			/* Also keep track of which depths are mostly frequented */
-			depthrange = getlevel(&p_ptr->wpos) / 10;
-			/* Excempt Valinor (dlv 200) */
-			if (depthrange < 20
-			    && depthrange_visited[depthrange] < VISIT_TIME_CAP);
-				depthrange_visited[depthrange]++;
-# endif
-		}
-
-# if 1
-		for (i = 1; i <= dungeon_id_max; i++)
-			if (dungeon_visit_check[i]) {
-				dungeon_visit_check[i] = FALSE;
-				dungeon_visit_frequency[i]++;
-			}
-# endif
-	}
-	/* Decay visit frequency for all dungeons over time. */
-	/* Also update the 'rest bonus' each dungeon gives:
-	   Use <startfloor + 2/3 * (startfloor-endfloor)> as main comparison value. */
-	if (!(turn % (cfg.fps * 60 * 10))) {
-# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
-		for (i = 0; i < 20; i++) {
-			if (depthrange_visited[i])
-				depthrange_visited[i]--;
-
-			/* update the depth-range scale in regards to its most contributing dungeon */
-			//todo; see below
-		}
-# endif
-		for (i = 1; i <= dungeon_id_max; i++) {
-			if (dungeon_visit_frequency[i])
-				dungeon_visit_frequency[i]--;
-
-			/* update bonus of this dungeon */
-# ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
-			/* more sophisticated algoritm.
-			   Todo: find a good way how to do this :-p.
-			   Idea (C. Blue):
-			   players increase the depthrange_visited counter for the dlvl they are on,
-			   dungeons then compare it with their average depth (which is as stated above
-			   start + 2/3 * (end-start) floor), and only start counting as "not visited"
-			   if the dungeon depths that ARE visited actually are comparable to the
-			   avg depth of the dungeon in question.
-			   Main problem: Handle multiple dungeons adding to the same depthrange in
-			   pretty different scales, eg 'player A is all the time in dungeon A which
-			   only is lvl 1-9, while player B spends even much more time in the very first
-			   level of dungeon B which goes from lvl 1-49. Now how are the numbers scaled
-			   down to determine the actual 'visitedness' of dungeon A for example? */
-# endif
-
-			/* straightforward simple way without DUNGEON_VISIT_BONUS_DEPTHRANGE */
-			set_dungeon_bonus(i, FALSE);
-		}
-	}
+	if (!(turn % (cfg.fps * 60))) process_dungeon_boni();
+	/* Decay visit frequency for all dungeons over time, every 10 minutes */
+	if (!(turn % (cfg.fps * 60 * 10))) process_dungeon_boni_decay();
 #endif
 
 	/* Process day/night changes on world_surface */
@@ -8288,7 +8315,7 @@ void dungeon(void) {
 
 	/* Animate player's @ in his own view here on server side */
 	/* This animation is only for mana shield / GOI indication */
-	if (!(turn % 5))
+	if (!(turn % (cfg.fps / 12)))
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Colour animation is done in lite_spot */
 		lite_spot(i, Players[i]->py, Players[i]->px);
@@ -8308,7 +8335,7 @@ void dungeon(void) {
 
 #ifdef ENABLE_GO_GAME
 	/* Process Go AI engine communication (its replies) */
-	if (go_engine_processing) go_engine_process();
+	if (!(turn % (cfg.fps / 10))) go_engine_processing) go_engine_process();
 #endif
 
 	/* Send any information over the network */

@@ -9484,7 +9484,11 @@ void process_monsters(void) {
 
 
 	/* Process the monsters */
+#ifdef PROCESS_MONSTERS_DISTRIBUTE
+	for (k = m_top - 1 - turn % MONSTER_TURNS; k >= 0; k -= MONSTER_TURNS) {
+#else
 	for (k = m_top - 1; k >= 0; k--) {
+#endif
 		/*int closest = -1, dis_to_closest = 9999, lowhp = 9999;
 		bool blos = FALSE, new_los;	*/
 
@@ -9978,8 +9982,7 @@ void process_monsters(void) {
 /* Due to incapability of adding new item flags,
  * this curse seems too soft.. pfft		- Jir -
  */
-void curse_equipment(int Ind, int chance, int heavy_chance)
-{
+void curse_equipment(int Ind, int chance, int heavy_chance) {
 	player_type *p_ptr = Players[Ind];
 	bool changed = FALSE;
 	u32b f1, f2, f3, f4, f5, f6, esp;
@@ -9993,8 +9996,7 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 
 
 	/* Extra, biased saving throw for blessed items */
-	if ((f3 & (TR3_BLESSED)) && (randint(888) > chance))
-	{
+	if ((f3 & (TR3_BLESSED)) && (randint(888) > chance)) {
 		char o_name[ONAME_LEN];
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		msg_format(Ind, "Your %s resist%s cursing!", o_name,
@@ -10005,10 +10007,8 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 
 #if 0	// l8r..
 	if ((randint(100) <= heavy_chance) &&
-		(o_ptr->name1 || o_ptr->name2 || o_ptr->art_name))
-	{
-		if (!(f3 & TR3_HEAVY_CURSE))
-			changed = TRUE;
+	    (o_ptr->name1 || o_ptr->name2 || o_ptr->art_name)) {
+		if (!(f3 & TR3_HEAVY_CURSE)) changed = TRUE;
 		o_ptr->art_flags3 |= TR3_HEAVY_CURSE;
 		o_ptr->art_flags3 |= TR3_CURSED;
 		o_ptr->ident |= IDENT_CURSED;
@@ -10016,9 +10016,8 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 	else
 #endif	// 0
 	{
-		if (!(o_ptr->ident & (ID_CURSED)))
-			changed = TRUE;
-//		o_ptr->art_flags3 |= TR3_CURSED;
+		if (!(o_ptr->ident & (ID_CURSED))) changed = TRUE;
+		//o_ptr->art_flags3 |= TR3_CURSED;
 		o_ptr->ident |= ID_CURSED;
 	}
 
@@ -10031,5 +10030,3 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 		}
 	}
 }
-
-
