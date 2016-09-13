@@ -3166,7 +3166,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		}
 
 		if (rand_int(2)) {
-s_printf("ROOM4_BONES\n");
+s_printf("ROOM4_BONES (%d,%d,%d)\n", wpos->wx, wpos->wy, wpos->wz);
 			/* Place bones, skulls and skeletons */
 			object_type forge;
 
@@ -3188,7 +3188,7 @@ s_printf("ROOM4_BONES\n");
 				monster_level = lev;
 			}
 		} else {
-s_printf("ROOM4_TREASURE\n");
+s_printf("ROOM4_TREASURE (%d,%d,%d)\n", wpos->wx, wpos->wy, wpos->wz);
 			/* Place monetary treasure */
 			//for (y = yval; y <= yval; y++)
 				//for (x = xval; x <= xval; x++)
