@@ -7375,7 +7375,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	/* Hack: Inns count as houses */
 	if (!p_ptr->wpos.wz && ((c_ptr->info & CAVE_PROT) || (f_info[c_ptr->feat].flags1 & FF1_PROTECTED))) inn = TRUE;
 
-	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || inn) {
+	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || inn || p_ptr->store_num != -1) {
 		if (!p_ptr->grid_house) {
 			p_ptr->grid_house = TRUE;
 			if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);

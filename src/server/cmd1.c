@@ -5996,7 +5996,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		    ((ddy[q_ptr->last_dir] == -(ddy[dir]) &&
 		    ddx[q_ptr->last_dir] == (-ddx[dir]))) ||
 		    (player_in_party(p_ptr->party, Ind2) &&
-		    !q_ptr->store_num) )||
+		    q_ptr->store_num == -1) )||
 		    (q_ptr->admin_dm) )
 #else
 		else if (((!p_ptr->ghost && !q_ptr->ghost &&
@@ -6416,7 +6416,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		zcave[oy][ox].m_idx = 0;
 		zcave[y][x].m_idx = 0 - Ind;
 
-		moved_player(Ind, p_ptr, zcave, ox, oy);
 
 
 		/* Spontaneous Searching */
@@ -6501,6 +6500,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		/* Check BEFORE setting ;) */
 		if (p_ptr->master_move_hook)
 			p_ptr->master_move_hook(Ind, NULL);
+
+		/* Moved this down so it's after 'do_cmd_trad_house()' which sets store_num (used for ambient sfx in moved_player()->grid_affects_player()) */
+		moved_player(Ind, p_ptr, zcave, ox, oy);
 
 		if (rnd) run_init(Ind, dir);
 	}
