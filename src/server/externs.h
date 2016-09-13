@@ -1188,6 +1188,7 @@ extern bool purge_acc_file(void);
 extern sockbuf_t *get_conn_q(int Ind);
 
 extern int Send_martyr(int ind);
+extern int Send_confirm(int Ind, int confirmed_command);
 
 
 /* object1.c */

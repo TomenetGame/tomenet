@@ -158,8 +158,9 @@
 #define PKT_AUTOINSCRIBE	135
 #define PKT_MARTYR		136	/* client lua notification client for updating spell mana costs */
 
-//XXX 137-147
+//XXX 137-146
 
+#define PKT_CONFIRM		146	/* Hacky: Signal the client to break an ongoing sync_sleep() early since its previous command has finished being processed by the server. */
 #define PKT_KEYPRESS		147	/* Quest/hint guidance: actually send keypresses to the client as if the player entered them */
 
 #define PKT_SFX_VOLUME		148	/* Tell client to modify volume level of ambient and/or weather sfx  */

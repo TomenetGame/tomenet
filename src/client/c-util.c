@@ -345,7 +345,7 @@ static void sync_sleep(int milliseconds) {
 	char ch;
 #endif
 
-
+	command_confirmed = -1;
 	inkey_sleep = TRUE;
 
 #ifdef WINDOWS
@@ -425,7 +425,11 @@ static void sync_sleep(int milliseconds) {
 		       So in that case if a server-reply came in before we're done waiting, we can just
 		       stop waiting now, because usually the purpose of \wXX is to actually wait for an
 		       (item) input request from the server. - C. Blue */
-		    || inkey_sleep_semaphore) {
+		    || inkey_sleep_semaphore
+		    /* hack: For commands where the server doesn't conveniently sends us another input
+		       request as described above, starting at 4.6.2 the server might send us a special
+		       PKT_CONFIRM though to signal that we can stop sleeping now. */
+		    || command_confirmed != -1) {
 #ifdef ACCEPT_KEYS
  #ifndef PEEK_ONLY_KEYS
 			if (Term->keys_old) {

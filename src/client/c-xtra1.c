@@ -1474,6 +1474,9 @@ static void fix_inven(void) {
 		/* Restore */
 		Term_activate(old);
 	}
+
+	/* Assume that this could've been in respone to a wield/takeoff/swap command we issued */
+	command_confirmed = PKT_UNDEFINED; //..we don't know which one (doesn't matter)
 }
 
 

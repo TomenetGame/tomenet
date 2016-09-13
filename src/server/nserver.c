@@ -7875,6 +7875,35 @@ int Send_martyr(int Ind) {
 	return Packet_printf(&connp->c, "%c%c", PKT_MARTYR, (char)Players[Ind]->martyr);
 }
 
+/* Send a signal to the client that his previous command has finished being processed and
+   he may leave any sync_sleep() loop he's in early now.
+   This is used by \wXX delays that wait for things like w/W/t/x/shapeshift to be completed
+   before an ongoing macro can proceed any further as its further actions might rely on
+   those commands having finished.
+   NOTE: For commands that will in turn have the server send status updates to the client
+         this function is only used for _failure_ cases.
+         When it actually succeeds, the client itself will instead locally set 'command_confirmed'
+         when it receives the updated data!
+         Eg: Client sends mimic change, server will confirm it if it failed.
+             If it didn't fail, the server will as usual send the updated monster spell
+             list to the client - which it obviously needs before it can proceed!
+             So when the client receives monster spells it will set 'command_confirmed' for itself. */
+int Send_confirm(int Ind, int confirmed_command) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) return(0);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for confirm (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c%c", PKT_CONFIRM, confirmed_command);
+}
+
+
+
 /*
  * Return codes for the "Receive_XXX" functions are as follows:
  *

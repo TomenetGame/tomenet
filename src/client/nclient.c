@@ -54,6 +54,8 @@ static int		(*receive_tbl[256])(void);
 static int		last_send_anything;
 static char		initialized = 0;
 
+int			command_confirmed = -1;
+
 /*
  * Initialize the function dispatch tables.
  */
@@ -147,6 +149,10 @@ static void Receive_init(void) {
 	receive_tbl[PKT_MUSIC]		= Receive_music;
 	receive_tbl[PKT_BONI_COL]	= Receive_boni_col;
 	receive_tbl[PKT_AUTOINSCRIBE]	= Receive_apply_auto_insc;
+
+	receive_tbl[PKT_CONFIRM]	= Receive_confirm;
+	receive_tbl[PKT_KEYPRESS]	= Receive_keypress;
+
 	receive_tbl[PKT_SFX_VOLUME]	= Receive_sfx_volume;
 	receive_tbl[PKT_SFX_AMBIENT]	= Receive_sfx_ambient;
 	receive_tbl[PKT_MINI_MAP_POS]	= Receive_mini_map_pos;
@@ -2586,6 +2592,9 @@ int Receive_spell_info(void) {
 	p_ptr->innate_spells[1] = spells[1];
 	p_ptr->innate_spells[2] = spells[2];
 
+	/* Assume that this was in respone to a shapeshift command we issued */
+	command_confirmed = PKT_ACTIVATE_SKILL;
+
 	return 1;
 }
 
@@ -4189,6 +4198,27 @@ int Receive_martyr(void) {
 
 	return 1;
 }
+
+/* Receive a confirmation for a particular PKT_.. command we issued earlier to the server */
+int Receive_confirm(void) {
+	int	n;
+	char	ch, ch_confirmed;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &ch_confirmed)) <= 0) return n;
+	command_confirmed = ch_confirmed;
+
+	return 1;
+}
+
+//not implemented
+int Receive_keypress(void) {
+	int	n;
+	char	ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
+	return 1;
+}
+
 
 int Send_search(void) {
 	int	n;

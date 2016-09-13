@@ -778,7 +778,10 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	/* Catch items that we have already equipped -
 	   this can happen when entering items by name (@ key)
 	   and it looks kinda bad to get repeated 'You are ...' messages for something already in place. */
-	if (item > INVEN_PACK) return;
+	if (item > INVEN_PACK) {
+		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+		return;
+	}
 
 	/* Restrict the choices */
 	/*item_tester_hook = item_tester_hook_wear;*/
@@ -788,8 +791,10 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	if (item >= 0) {
 		o_ptr = &(p_ptr->inventory[item]);
 	} else { /* Get the item (on the floor) */
-		if (-item >= o_max)
+		if (-item >= o_max) {
+			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return; /* item doesn't exist */
+		}
 
 		o_ptr = &o_list[0 - item];
 	}
@@ -803,6 +808,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	if (check_guard_inscription(o_ptr->note, 'w')) {
 		msg_print(Ind, "The item's inscription prevents it.");
+		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return;
 	}
 
@@ -811,15 +817,20 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	if (!item_tester_hook_wear(Ind, slot)) {
 		msg_print(Ind, "You may not wield that item.");
+		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return;
 	}
 
-	if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) {
+		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+		return;
+	}
 
 	/* Costumes allowed during halloween and xmas */
 	if (!season_halloween && !season_xmas) {
 		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
 			msg_print(Ind, "It's not that time of the year anymore.");
+			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
 		}
 	}
@@ -869,6 +880,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	if ((alt_slots & 0x4) && p_ptr->inventory[slot].k_idx) {
 		object_desc(Ind, o_name, &(p_ptr->inventory[slot]), FALSE, 0);
 		msg_format(Ind, "Take off your %s first.", o_name);
+		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return;
 	}
 
@@ -892,6 +904,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			msg_format(Ind, "The %s you are %s appears to be cursed.", o_name, describe_use(Ind, slot));
 
 		/* Cancel the command */
+		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return;
 	}
 
@@ -905,31 +918,63 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			msg_format(Ind, "You cannot wield your %s with a shield or a secondary weapon.", o_name);
 		else
 			msg_format(Ind, "You cannot wield your %s with a shield.", o_name);
+		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return;
 #else /* b) take off the left-hand item too */
 		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't' )) {
 			msg_print(Ind, "Your secondary item's inscription prevents taking it off.");
+			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
 		};
 		if (cursed_p(&p_ptr->inventory[INVEN_ARM]) && !is_admin(p_ptr)) {
 			msg_print(Ind, "Hmmm, the secondary item you're wielding seems to be cursed.");
+			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
 		}
 		inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
 		if (item >= 0) {
 			item = replay_inven_changes(Ind, item);
 			o_ptr = &(p_ptr->inventory[item]);
-			if (item == 0xFF) return; //item is gone, shouldn't happen
+			if (item == 0xFF) {
+				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+				return; //item is gone, shouldn't happen
+			}
 		}
 #endif
 	}
+
+	/* Dual-wield not with 1.5h */
 	if ((f4 & TR4_SHOULD2H) &&
-	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) { /* dual-wield not with 1.5h */
+	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) {
+#if 0 /* a) either give error msg, or.. */
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		msg_format(Ind, "You cannot wield your %s with a secondary weapon.", o_name);
+		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return;
+#else /* b) take off the secondary weapon */
+		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't' )) {
+			msg_print(Ind, "Your secondary weapon's inscription prevents taking it off.");
+			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+			return;
+		};
+		if (cursed_p(&p_ptr->inventory[INVEN_ARM]) && !is_admin(p_ptr)) {
+			msg_print(Ind, "Hmmm, the secondary weapon you're wielding seems to be cursed.");
+			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+			return;
+		}
+		inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
+		if (item >= 0) {
+			item = replay_inven_changes(Ind, item);
+			o_ptr = &(p_ptr->inventory[item]);
+			if (item == 0xFF) {
+				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+				return; //item is gone, shouldn't happen
+			}
+		}
+#endif
 	}
 
+	/* Shields can't be wielded with a two-handed weapon */
 	if (o_ptr->tval == TV_SHIELD && (x_ptr = &p_ptr->inventory[INVEN_WIELD])) {
 		/* Extract the flags */
 		object_flags(x_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -938,13 +983,27 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 #if 0 /* Prevent shield from being put on if wielding 2H */
 			object_desc(Ind, o_name, o_ptr, FALSE, 0);
 			msg_format(Ind, "You cannot wield your %s with a two-handed weapon.", o_name);
+			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
 #else /* Take off 2h weapon when equipping a shield */
+			if (check_guard_inscription(p_ptr->inventory[INVEN_WIELD].note, 't' )) {
+				msg_print(Ind, "Your weapon's inscription prevents taking it off.");
+				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+				return;
+			};
+			if (cursed_p(&p_ptr->inventory[INVEN_WIELD]) && !is_admin(p_ptr)) {
+				msg_print(Ind, "Hmmm, the weapon you're wielding seems to be cursed.");
+				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+				return;
+			}
 			inven_takeoff(Ind, INVEN_WIELD, 255, TRUE);
 			if (item >= 0) {
 				item = replay_inven_changes(Ind, item);
 				o_ptr = &(p_ptr->inventory[item]);
-				if (item == 0xFF) return; //item is gone, shouldn't happen
+				if (item == 0xFF) {
+					Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+					return; //item is gone, shouldn't happen
+				}
 			}
 #endif
 		}
@@ -959,6 +1018,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	if (check_guard_inscription(x_ptr->note, 't') && !highlander) {
 		msg_print(Ind, "The inscription of your equipped item prevents it.");
+		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return;
 	};
 
@@ -991,11 +1051,13 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			bypass_invuln = TRUE;
 			take_hit(Ind, 10000, "the Massive Iron Crown of Morgoth", 0);
 			bypass_invuln = FALSE;
+			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
 		}
 		/* Attempting to wield Grond isn't so bad. */
 		if (o_ptr->name1 == ART_GROND) {
 			msg_print(Ind, "You are far too weak to wield the mighty Grond.");
+			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
 		}
 	}
@@ -1267,9 +1329,15 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 	/* Catch items that we have already unequipped -
 	   this can happen when entering items by name (@ key)
 	   and it looks kinda bad to get repeated 'You are ...' messages for something already in place. */
-	if (item <= INVEN_PACK) return;
+	if (item <= INVEN_PACK) {
+		Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
+		return;
+	}
 
-	if (amt <= 0) return;
+	if (amt <= 0) {
+		Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
+		return;
+	}
 
 #if 0
 	/* Verify potential overflow */
@@ -1285,12 +1353,16 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max) return; /* item doesn't exist */
+		if (-item >= o_max) {
+			Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
+			return; /* item doesn't exist */
+		}
 		o_ptr = &o_list[0 - item];
 	}
 
 	if (check_guard_inscription( o_ptr->note, 'T' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
+		Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
 		return;
 	}
 
@@ -1302,6 +1374,7 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 			/* Oops */
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			/* Nope */
+			Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
 			return;
 		}
 	}
