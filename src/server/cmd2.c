@@ -325,6 +325,26 @@ void do_cmd_go_up(int Ind) {
 		}
 		/* disable WoR hint */
 		p_ptr->warning_wor = 1;
+#if 1
+		/* Give him some free ID scrolls when entering IDDC? */
+		{ object_type forge;
+		invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY));
+		forge.number = 20;
+		forge.level = 0;
+		forge.discount = 0;
+		forge.ident |= ID_MENTAL;
+		forge.owner = p_ptr->id;
+		forge.mode = p_ptr->mode;
+		object_aware(Ind, &forge);
+		object_known(&forge);
+		i = inven_carry(Ind, &forge);
+		if (i != -1 ) {
+			char o_name[ONAME_LEN];
+
+			object_desc(Ind, o_name, &forge, TRUE, 3);
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+		}}
+#endif
 	}
 
 	/* S(he) is no longer afk */
@@ -1047,7 +1067,7 @@ void do_cmd_go_down(int Ind) {
 		return;
 	}
 
-	if (p_ptr->wpos.wz == 0 && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && WPOS_IRONDEEPDIVE_Z < 0) {
+	if (surface && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && WPOS_IRONDEEPDIVE_Z < 0) {
 		if (p_ptr->mode & MODE_PVP) {
 			msg_format(Ind, "\377DPvP-mode characters are not eligible to enter the Ironman Deep Dive Challenge!");
 			if (!is_admin(p_ptr)) return;
@@ -1060,6 +1080,26 @@ void do_cmd_go_down(int Ind) {
 		}
 		/* disable WoR hint */
 		p_ptr->warning_wor = 1;
+#if 1
+		/* Give him some free ID scrolls when entering IDDC? */
+		{ object_type forge;
+		invcopy(&forge, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY));
+		forge.number = 20;
+		forge.level = 0;
+		forge.discount = 0;
+		forge.ident |= ID_MENTAL;
+		forge.owner = p_ptr->id;
+		forge.mode = p_ptr->mode;
+		object_aware(Ind, &forge);
+		object_known(&forge);
+		i = inven_carry(Ind, &forge);
+		if (i != -1 ) {
+			char o_name[ONAME_LEN];
+
+			object_desc(Ind, o_name, &forge, TRUE, 3);
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+		}}
+#endif
 	}
 
 	/* S(he) is no longer afk */

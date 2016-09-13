@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. September 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 13. September 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7120,6 +7120,8 @@ Ironman Deep Dive Challenge (IDDC)
     characters will also randomly gain knowledge of some item flavours on
     entering the IDDC dungeon. (Flavoured items are: potions, scrolls, rings,
     amulets, magic devices, mushrooms.)
+    All characters that enter the IDDC will also get 20 scrolls of identify
+    for free, which will automatically be placed into their inventory.
 
     Players in the IDDC receive a 20% experience gain bonus in addition to the
     usual 15% experience bonus all ironman dungeons provide, so overall you
