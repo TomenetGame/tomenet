@@ -4688,6 +4688,15 @@ Miscellanous escape sequences:
                 NOTE: You must always specify TWO digits. For example if you
                       want to wait for 200 ms, you need to enter "\w02" and
                       NOT "\w2"!
+                Setting a too high delay is actually not necessarily bad:
+                For the most common use cases, wielding/taking off/swapping
+                items or polymorphing yourself, the server will actually send
+                an internal confirmation to the client when that action has
+                finished processing and the client will then exit the \w delay
+                early, so you're not losing any time that way. So if you have
+                a network connection that suffers of continuous lag spikes it
+                might even be an advantage to crank up the \w times. Actually
+                you should just switch your ISP though.
 
 
 (3.9a) Creating a chat macro for your party
