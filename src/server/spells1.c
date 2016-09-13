@@ -3066,10 +3066,37 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 		randint(HURT_CHANCE) == 1 && breakable)
 		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
-	if (magik(hurt_eq) && breakable) equip_damage(Ind, GF_FIRE);
+	if (magik(hurt_eq) && breakable) {
+		/* This check is currently only needed for fire damage (lava) as there are no other terrain tiles to inflict item damage (just nether) */
+		if (-Ind_attacker != PROJECTOR_TERRAIN) equip_damage(Ind, GF_FIRE);
+		else {
+			/* only damage boots, as the damage is coming from the floor - maybe sometimes cloak too.
+			   (from lava, we also do the same for fires though, too complicated to distinguish those here..) */
+			object_type *o_ptr = &p_ptr->inventory[rand_int(4) ? INVEN_FEET : INVEN_OUTER];
+			if (o_ptr->k_idx && set_fire_destroy(o_ptr)) {
+				u32b dummy, f2, f5;
+
+				object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy, &dummy);
+				if (!((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) &&
+				    /* No damage left to be done? */
+				    o_ptr->ac + o_ptr->to_a > 0) {
+					char o_name[ONAME_LEN];
+
+					object_desc(Ind, o_name, o_ptr, FALSE, 0);
+					msg_format(Ind, "\376\377oYour %s is damaged!", o_name);
+
+					/* Damage the item */
+					o_ptr->to_a--;
+
+					p_ptr->update |= (PU_BONUS);
+					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+				}
+			}
+		}
+	}
 
 	/* Take damage */
-//	take_hit(Ind, dam, kb_str, Ind_attacker);
+	//take_hit(Ind, dam, kb_str, Ind_attacker);
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_fire && p_ptr->oppose_fire) && breakable)
