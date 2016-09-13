@@ -4980,7 +4980,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 
 		/* Require identical charges */
-#ifdef NEW_MDEV_STACKING
+#ifndef NEW_MDEV_STACKING
 		if (o_ptr->pval != j_ptr->pval) return (FALSE);
 #endif
 
