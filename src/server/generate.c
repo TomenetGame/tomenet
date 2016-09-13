@@ -8695,7 +8695,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* copy dun flags to dunlev */
 	if ((dflags1 & DF1_FORGET)) {
 		dun->l_ptr->flags1 |= LF1_NO_MAP;
-		s_printf("FORGET\n");
+//s_printf("FORGET\n");
 	}
 	if ((dflags2 & DF2_NO_MAGIC_MAP)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 	if ((dflags1 & DF1_NO_DESTROY)) dun->l_ptr->flags1 |= LF1_NO_DESTROY;
