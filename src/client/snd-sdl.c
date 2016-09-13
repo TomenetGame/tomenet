@@ -1636,13 +1636,32 @@ void ambient_handle_fading(void) {
 	}
 }
 
-
 /*
  * Play a music of type "event".
  */
 static bool play_music(int event) {
 	/* Paranoia */
-	if (event < -1 || event >= MUSIC_MAX) return FALSE;
+	if (event < -3 || event >= MUSIC_MAX) return FALSE;
+
+	/* 'shuffle_music' option changed? */
+	if (event == -3) {
+		if (c_cfg.shuffle_music) {
+			music_next = -1;
+			Mix_FadeOutMusic(500);
+		} else {
+			music_next = music_cur; //hack
+			music_next_song = music_cur_song;
+		}
+		return TRUE; //whatever..
+	}
+
+	/* We previously failed to play both music and alternative music.
+	   Stop currently playing music before returning */
+	if (event == -2) {
+		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
+			Mix_FadeOutMusic(500);
+		return TRUE; //whatever..
+	}
 
 #ifdef ATMOSPHERIC_INTRO
 	/* New, for title screen -> character screen switch: Halt current music */
@@ -1655,13 +1674,11 @@ static bool play_music(int event) {
 #endif
 
 	/* Check there are samples for this event */
-	if (!songs[event].num) {
-		/* Stop currently playing music though, before returning */
-		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
-			Mix_FadeOutMusic(500);
+	if (!songs[event].num) return FALSE;
 
-		return FALSE;
-	}
+	/* if music event is the same as is already running, don't do anything */
+	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
+		return TRUE; //pretend we played it
 
 	music_next = event;
 	music_next_song = rand_int(songs[music_next].num);

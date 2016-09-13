@@ -8364,6 +8364,9 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		Term_set_cursor(0);
 		if (screen_icky) Term_switch(0);
 	}
+
+	/* Refresh music when shuffle_music is toggled */
+	if (option_info[i].o_var == &c_cfg.shuffle_music) music(-3);
 }
 
 /* Helper functions for DONT_CLEAR_TOPLINE_IF_AVOIDABLE - C. Blue */

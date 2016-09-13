@@ -3138,7 +3138,8 @@ int Receive_music(void) {
 #ifdef USE_SOUND_2010
 	/* Play background music (if enabled) */
 	if (!use_sound) return 1;
-	if (!music(m)) music(m2);
+	/* Try to play music, if fails try alternative music, if fails too stop playing any music. */
+	if (!music(m) && !music(m2)) music(-2);
 #endif
 
 	return 1;
