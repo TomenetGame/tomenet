@@ -675,7 +675,7 @@ s32b tdi[18];	// PREPARE_RADIUS + 2
 #ifdef PROJECTION_FLUSH_LIMIT
 s16b count_project = 0;
 s16b count_project_times = 0;
-#endif	// PROJECTION_FLUSH_LIMIT
+#endif
 
 /* Hack -- 'default' values for obj_theme.	- Jir -
  * Only a makeshift till d_info thingie will be implemented. */

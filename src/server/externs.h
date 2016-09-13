@@ -158,8 +158,10 @@ extern int teamscore[];
 extern int teams[];
 extern int gametype;
 extern obj_theme default_obj_theme;
+#ifdef PROJECTION_FLUSH_LIMIT
 extern s16b count_project;
 extern s16b count_project_times;
+#endif
 extern char tdy[662];
 extern char tdx[662];
 extern s32b tdi[18];	/* PREPARE_RADIUS + 2 */

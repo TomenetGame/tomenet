@@ -11402,9 +11402,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #ifndef OPTIMIZED_ANIMATIONS
 	/* Display the "blast area" */
 	if (!(flg & PROJECT_HIDE))
-#ifdef PROJECTION_FLUSH_LIMIT
+ #ifdef PROJECTION_FLUSH_LIMIT
 		if (count_project < PROJECTION_FLUSH_LIMIT)
-#endif	// PROJECTION_FLUSH_LIMIT
+ #endif	// PROJECTION_FLUSH_LIMIT
 	{
 		/* Then do the "blast", from inside out */
 		for (t = 0; t <= rad; t++) {
@@ -11706,9 +11706,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #ifdef OPTIMIZED_ANIMATIONS
 	/* Display the "blast area" */
 	if (!(flg & PROJECT_HIDE))
-#ifdef PROJECTION_FLUSH_LIMIT
+ #ifdef PROJECTION_FLUSH_LIMIT
 			if (count_project < PROJECTION_FLUSH_LIMIT)
-#endif	// PROJECTION_FLUSH_LIMIT
+ #endif	// PROJECTION_FLUSH_LIMIT
 	{
 		/* Then do the "blast", from inside out */
 		for (t = 0; t <= rad; t++) {

@@ -9480,7 +9480,6 @@ void process_monsters(void) {
 		count_project = 0;
 		count_project_times = 0;
 	}
-
 #endif	// PROJECTION_FLUSH_LIMIT
 
 
