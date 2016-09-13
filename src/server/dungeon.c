@@ -8335,7 +8335,7 @@ void dungeon(void) {
 
 #ifdef ENABLE_GO_GAME
 	/* Process Go AI engine communication (its replies) */
-	if (!(turn % (cfg.fps / 10))) go_engine_processing) go_engine_process();
+	if (go_engine_processing && !(turn % (cfg.fps / 10))) go_engine_process();
 #endif
 
 	/* Send any information over the network */
