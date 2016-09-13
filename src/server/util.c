@@ -5603,7 +5603,7 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 		felt = TRUE;
 	} else if ((l_ptr->flags2 & LF2_VAULT_OPEN) || // <- TODO: implement :/
 		 ((l_ptr->flags2 & LF2_VAULT) && (l_ptr->flags2 & LF2_OOD_FREE))) {
-		msg_print(Ind, "\374\377yYou sense an air of danger..");
+		msg_print(Ind, "\374\377yYou sense an air of danger.."); //this is pretty rare actually, maybe not worth it?
 		felt = TRUE;
 	} else if (l_ptr->flags2 & LF2_VAULT) {
 		msg_print(Ind, "\374\377yFeels somewhat dangerous around here..");
