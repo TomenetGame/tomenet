@@ -7090,6 +7090,10 @@ void process_player_change_wpos(int Ind) {
 	char o_name_short[ONAME_LEN];
 	bool smooth_ambient = FALSE, travel_ambient = FALSE, sickbay = FALSE;
 
+	/* un-snow */
+	p_ptr->dummy_option_8 = FALSE;
+	//update_player(Ind); //un-snowing restores lack of visibility by others - required?
+
 	/* IDDC specialties */
 	if (in_irondeepdive(&p_ptr->wpos_old)) {
 		/* for obtaining statistical IDDC information: */

@@ -2733,8 +2733,8 @@ void update_player(int Ind) {
 			    (!p_ptr->see_inv ||
 			    ((q_ptr->inventory[INVEN_OUTER].k_idx) &&
 			    (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) &&
-			    (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))))
-			{
+			    (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK)))
+			    && !q_ptr->dummy_option_8) { //snowed by a snowball? =p
 				/* in PvP, invis shouldn't help too greatly probably */
 				if ((q_ptr->lev > p_ptr->lev && !hostile) ||
 				    q_ptr->invis_phase >= (hostile ? 85 : 20))
@@ -2744,7 +2744,9 @@ void update_player(int Ind) {
 			/* Hack: Currently cloaking is set to be effectless for PvP-mode chars here */
 			if (q_ptr->cloaked == 1 && !q_ptr->cloak_neutralized &&
 			    !player_in_party(p_ptr->party, Ind)
-			    && !(q_ptr->mode & MODE_PVP)) flag = FALSE;
+			    && !(q_ptr->mode & MODE_PVP)
+			    && !q_ptr->dummy_option_8) //snowed by a snowball? =p
+				flag = FALSE;
 
 			/* Dungeon masters can see invisible players */
 			if (p_ptr->admin_dm || player_sees_dm(i)) flag = TRUE;

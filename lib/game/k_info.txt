@@ -3172,7 +3172,17 @@ $ENABLE_OCCULT$A:50/50:100/50
 $ENABLE_OCCULT$P:0:1d1:0:0:0
 $ENABLE_OCCULT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE
 
-# --- hole: 381-384
+N:381:& Snowball~
+G:*:w
+I:13:16:0
+W:127:0:5:0
+A:127/255
+P:0:1d1:0:0:0
+F:EASY_KNOW
+D:The weapon of choice in snowball fights. Melts relatively easily.
+
+
+# --- hole: 382-384
 
 
 # Extra weapons to buff some categories away from too high rarity
@@ -6790,6 +6800,7 @@ I:13:1:0
 W:127:0:2000:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 D:Carry it across the field and score a point for your team!
 
 # The Amulet of Grom, the Wyrm Hunter -- see artifact list
@@ -6833,6 +6844,7 @@ I:13:2:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:937:& Black piece~
 G:*:D
@@ -6840,6 +6852,7 @@ I:13:3:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:938:& White Pawn~
 G:-:w
@@ -6847,6 +6860,7 @@ I:13:4:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:939:& White King~
 G:+:w
@@ -6854,6 +6868,7 @@ I:13:5:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:940:& White Queen~
 G:*:w
@@ -6861,6 +6876,7 @@ I:13:6:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:941:& White Rook~
 G:#:w
@@ -6868,6 +6884,7 @@ I:13:7:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:942:& White Knight~
 G:?:w
@@ -6875,6 +6892,7 @@ I:13:8:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:943:& White Bishop~
 G:|:w
@@ -6882,6 +6900,7 @@ I:13:9:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:944:& Black Pawn~
 G:-:D
@@ -6889,6 +6908,7 @@ I:13:10:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:945:& Black King~
 G:+:D
@@ -6896,6 +6916,7 @@ I:13:11:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:946:& Black Queen~
 G:*:D
@@ -6903,6 +6924,7 @@ I:13:12:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:947:& Black Rook~
 G:#:D
@@ -6910,6 +6932,7 @@ I:13:13:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:948:& Black Knight~
 G:?:D
@@ -6917,6 +6940,7 @@ I:13:14:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 N:949:& Black Bishop~
 G:|:D
@@ -6924,6 +6948,7 @@ I:13:15:0
 W:127:255:1:0
 A:127/255
 P:0:1d1:0:0:0
+F:EASY_KNOW
 
 #950-951 are druid tomes
 

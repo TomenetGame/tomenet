@@ -6695,12 +6695,6 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
 
-	/* Handle rugby ball */
-	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL && !bashing) {
-		msg_print(Ind, "\377yYou pass the ball");
-		msg_format_near(Ind, "\377y%s passes the ball", p_ptr->name);
-	}
-
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
@@ -6747,6 +6741,20 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
+
+
+	/* Handle rugby ball */
+	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL && !bashing) {
+		msg_print(Ind, "\377yYou pass the ball");
+		msg_format_near(Ind, "\377y%s passes the ball", p_ptr->name);
+	}
+
+	/* Handle snowball */
+	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) {
+		/* Bashing will destroy it */
+		if (bashing) return;
+	}
+
 
 	/* Find the color and symbol for the object for throwing */
 	missile_attr = object_attr(o_ptr);
@@ -6892,8 +6900,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #else /* OPTIMIZED_ANIMATIONS */
 
 		/* Save the projectile path */
-		if (path_num < MAX_RANGE)
-		{
+		if (path_num < MAX_RANGE) {
 			path_y[path_num] = y;
 			path_x[path_num] = x;
 			path_num++;
@@ -6905,12 +6912,14 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			/* rugby */
 			if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) {
 				cave_type *c_ptr = &zcave[y][x];
+
+				q_ptr = Players[0 - c_ptr->m_idx];
 				if (rand_int(11) > 6) {
-					msg_format_near(0 - c_ptr->m_idx, "\377y%s catches the ball", Players[0 - c_ptr->m_idx]->name);
+					msg_format_near(0 - c_ptr->m_idx, "\377y%s catches the ball", q_ptr->name);
 					msg_print(0 - c_ptr->m_idx, "\377yYou catch the ball");
 					inven_carry(0 - c_ptr->m_idx, o_ptr);
 				} else {
-					msg_format_near(0 - c_ptr->m_idx, "\377r%s misses the ball", Players[0 - c_ptr->m_idx]->name);
+					msg_format_near(0 - c_ptr->m_idx, "\377r%s misses the ball", q_ptr->name);
 					msg_print(0 - c_ptr->m_idx, "\377rYou miss the ball");
 					o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 					drop_near(0, o_ptr, -1, wpos, y, x);
@@ -6918,6 +6927,21 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				/* and stop */
 				return;
 			}
+			/* snowball fight */
+			else if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) {
+				cave_type *c_ptr = &zcave[y][x];
+
+				q_ptr = Players[0 - c_ptr->m_idx];
+				msg_format_near(0 - c_ptr->m_idx, "%s hits %s with a snowball", p_ptr->name, q_ptr->name);
+				msg_format(0 - c_ptr->m_idx, "%s hits you with a snowball", p_ptr->name);
+				q_ptr->dummy_option_8 = TRUE; //snowed
+				note_spot(0 - c_ptr->m_idx, q_ptr->py, q_ptr->px);
+				update_player(0 - c_ptr->m_idx); //becomes visible!
+				everyone_lite_spot(&q_ptr->wpos, q_ptr->py, q_ptr->px);
+				/* snowball doesn't survive it though (and never deals any damage) */
+				return;
+			}
+
 			if (cfg.use_pk_rules == PK_RULES_NEVER) {
 				/* Stop looking */
 				break;
@@ -7087,6 +7111,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
 
+				/* Snowballs deal no damage */
+				if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) tdam = 0;
+
 				if (p_ptr->admin_godly_strike) {
 					p_ptr->admin_godly_strike--;
 					tdam = m_ptr->hp + 1;
@@ -7182,6 +7209,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		p_ptr = q_ptr;
 	}
 #endif /* OPTIMIZED_ANIMATIONS */
+
+	/* Snowballs never survive a throw */
+	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) return;
 
 	/* Chance of breakage (during attacks) */
 	j = (hit_body ? breakage_chance(o_ptr) : 0);

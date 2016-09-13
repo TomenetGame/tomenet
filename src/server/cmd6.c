@@ -1418,10 +1418,31 @@ void do_cmd_drink_fountain(int Ind) {
 			msg_print(Ind, "The fountain is dried out.");
 		}
 		return;
-	}
+	} else if (season == SEASON_WINTER && /* during winter we can make snowballs~ */
+	    /* not in dungeons (helcaraxe..?) */
+	    !p_ptr->wpos.wz &&
+	    /* must be floor or tree/bush to grab snow from, just not solid walls basically: */
+	    (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_MOUNTAIN) &&
+	    /* there must be snow here actually, ie shaded white (hackz) */
+	    manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, f_info[c_ptr->feat].f_attr) == TERM_WHITE) {
+		object_type forge;
 
+		invcopy(&forge, lookup_kind(TV_GAME, SV_SNOWBALL));
+		forge.number = 1;
+		object_aware(Ind, &forge);
+		object_known(&forge);
+		forge.discount = 0;
+		forge.level = 1; //not 0 :)
+		forge.ident |= ID_MENTAL;
+		inven_carry(Ind, &forge);
+		msg_print(Ind, "You pick up some snow and form a snowball.");
+		return;
+	}
 	if (c_ptr->feat != FEAT_FOUNTAIN) {
-		msg_print(Ind, "You see no fountain here.");
+		if (season != SEASON_WINTER || p_ptr->wpos.wz)
+			msg_print(Ind, "You see no fountain here.");
+		else //different message if we could actually make snowballs instead of just filling bottles..
+			msg_print(Ind, "You see nothing usable here.");
 		return;
 	}
 
@@ -1629,7 +1650,7 @@ void do_cmd_fill_bottle(int Ind) {
 			return;
 		}
 
-		msg_print(Ind, "You see no fountain here.");
+		msg_print(Ind, "You see nothing here to fill bottles with.");
 		return;
 	}
 

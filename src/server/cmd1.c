@@ -5626,6 +5626,9 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 	cave_type *c_ptr = &zcave[y][x];
 	struct c_special *cs_ptr;
 
+	/* un-snow */
+	p_ptr->dummy_option_8 = FALSE;
+
 	grid_affects_player(Ind, ox, oy);
 
 	cave_midx_debug(wpos, y, x, -Ind);

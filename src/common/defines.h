@@ -3070,6 +3070,7 @@
 #define SV_BLACK_ROOK			13
 #define SV_BLACK_KNIGHT			14
 #define SV_BLACK_BISHOP			15
+#define SV_SNOWBALL			16
 
 
 

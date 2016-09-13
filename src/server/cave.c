@@ -2192,7 +2192,7 @@ byte get_rune_color(int Ind, int typ) {
  * Manipulate map grid colours, for example outside on world surface,
  * depending on clima or daytime!  - C. Blue
  */
-static int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
+int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
 	bool old_rand = Rand_quick;
 	u32b tmp_seed = Rand_value; /* save RNG */
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
@@ -3252,14 +3252,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 			else c = '@';
 
 #endif
-			/* Always show party members as dark grey @. Allow pvp flickers still */
+			/* Always show party members as dark grey @? Allow pvp flickers still */
 			if (p_ptr->consistent_players) {
 				c = '@';
 				a = TERM_L_DARK;
-				if (p_ptr->black_breath && magik(50)) {
+				if (p2_ptr->black_breath && magik(50)) {
 					a = TERM_SLATE;
 				}
 			}
+
+			/* snowed by a snowball hit? */
+			if (p2_ptr->dummy_option_8) a = TERM_WHITE;
 
 			/* part 'A' end */
 
@@ -3552,7 +3555,7 @@ void lite_spot(int Ind, int y, int x) {
 			if (p_ptr->body_monster == RI_DOOR_MIMIC && p_ptr->dummy_option_7) c = '\'';
 #endif
 
-/*			if (p_ptr->invis && !p_ptr->body_monster) {  - hmm why not always TERM_VIOLET */
+			/*if (p_ptr->invis && !p_ptr->body_monster) {  - hmm why not always TERM_VIOLET */
 			if (p_ptr->invis) {
 				/* special invis colour */
 				a = TERM_VIOLET;
@@ -3675,6 +3678,8 @@ void lite_spot(int Ind, int y, int x) {
 				}
 			}
 
+			/* snowed by a snowball hit? */
+			if (p_ptr->dummy_option_8) a = TERM_WHITE;
 
 			/* >4.5.4: Mark that it is the player himself */
 			if (p_ptr->hilite_player) is_us = TRUE;
