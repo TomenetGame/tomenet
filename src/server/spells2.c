@@ -4141,13 +4141,13 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 				/* Reduce and describe inventory */
 				if (item >= 0) {
-					inven_item_increase(Ind, item, -999);
+					inven_item_increase(Ind, item, -3 + rand_int(o_ptr->number - 2));
 					inven_item_describe(Ind, item);
 					inven_item_optimize(Ind, item);
 				}
 				/* Reduce and describe floor item */
 				else {
-					floor_item_increase(0 - item, -999);
+					floor_item_increase(0 - item, -3 + rand_int(o_ptr->number - 2));
 					floor_item_describe(0 - item);
 					floor_item_optimize(0 - item);
 				}
