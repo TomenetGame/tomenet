@@ -1178,6 +1178,37 @@ void cmd_look(void) {
 
 		if (!ch) continue;
 
+	    if (c_cfg.rogue_like_commands) {
+		switch (ch) {
+		case ESCAPE:
+		case 'q':
+			/* Clear top line */
+			clear_topline();
+			return;
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			break;
+		case 'p':
+			/* Toggle manual ground-targetting */
+			position = !position;
+
+			/* Tell the server to reset ground-target */
+			Send_look(128 + 0);
+			break;
+		case 'x':
+			/* actually look at the ground-targetted grid */
+			if (position) Send_look(128 + 5);
+			break;
+		default:
+			d = keymap_dirs[ch & 0x7F];
+			if (!d) bell();
+			else {
+				if (position) Send_look(128 + d); /* do manual ground-targetting */
+				else Send_look(d); /* do normal looking */
+			}
+			break;
+		}
+	    } else {
 		switch (ch) {
 		case ESCAPE:
 		case 'q':
@@ -1207,6 +1238,7 @@ void cmd_look(void) {
 			}
 			break;
 		}
+	    }
 	}
 }
 

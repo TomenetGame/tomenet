@@ -3209,7 +3209,8 @@ void do_cmd_look(int Ind, int dir) {
 		/* Just manually ground-targetting - do not spam look-info for each single grid */
 		else {
 			/* Info */
-			strcpy(out_val, "[<dir>, l, p, q] ");
+			if (p_ptr->rogue_like_commands) strcpy(out_val, "[<dir>, x, p, q] ");
+			else strcpy(out_val, "[<dir>, l, p, q] ");
 
 			/* Tell the client */
 			Send_target_info(Ind, x - p_ptr->panel_col_prt, y - p_ptr->panel_row_prt, out_val);
