@@ -1415,8 +1415,11 @@ errr file_character(cptr name, bool full) {
 	/* Dump part of the screen */
 	for (y = 1; y < 22; y++) {
 		/* Dump each row */
-		//for (x = 0; x < Term->wid; x++) {
+#if 0 /* this is actually correct */
+		for (x = 0; x < Term->wid; x++) {
+#else /* bad hack actually, just to avoid spacer lines on oook.cz */
 		for (x = 0; x < 79; x++) {
+#endif
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
 			/* Dump it */
@@ -1434,8 +1437,11 @@ errr file_character(cptr name, bool full) {
 	/* Dump part of the screen */
 	for (y = 14; y < 19; y++) {
 		/* Dump each row */
-		//for (x = 0; x < Term->wid; x++) {
+#if 0 /* this is actually correct */
+		for (x = 0; x < Term->wid; x++) {
+#else /* bad hack actually, just to avoid spacer lines on oook.cz */
 		for (x = 0; x < 79; x++) {
+#endif
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
 			/* Dump it */
