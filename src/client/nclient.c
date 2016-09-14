@@ -519,12 +519,12 @@ void Receive_login(void) {
  #ifdef USE_SOUND_2010
   #if 0
 	/* Stop music playback from login screen - the character screen has no music, just the firelight sound! */
-	if (use_sound) music(-1);
+	if (use_sound) music(-4);
   #else
 	if (use_sound) {
 		/* switch to login screen music if available, or fade music out */
 		if (!music(exec_lua(0, "return get_music_index(\"account\")")))
-			music(-1);
+			music(-4);
 	}
   #endif
 

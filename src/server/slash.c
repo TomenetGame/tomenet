@@ -8060,7 +8060,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 				msg_format(Ind, "Playing <%d>.", k);
-				Send_music(Ind, k, -1);
+				Send_music(Ind, k, -4);
 				return;
 			}
 #endif

@@ -6917,8 +6917,11 @@ int Send_music(int Ind, int music, int musicalt) {
 	}
 
 	if (Players[Ind]->music_current == music) return(-1);
-	Players[Ind]->music_current = music;
-	Players[Ind]->musicalt_current = musicalt;
+	/* -1 means 'keep playing your current music', we don't need to modify music_current for that */
+	if (music != -1) {
+		Players[Ind]->music_current = music;
+		Players[Ind]->musicalt_current = musicalt;
+	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
