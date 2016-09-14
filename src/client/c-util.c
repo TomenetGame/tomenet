@@ -7793,15 +7793,15 @@ static void print_tomb(cptr reason) {
 
 				/* 2nd: Try to end name at a relative word such as "that", "which" etc.
 				        "The disembodied hand that strangled people" -> "The disembodied hand". */
-				else if ((cp == strstr(buf, " that "))) *(cp - 1) = 0;
-				else if ((cp == strstr(buf, " who "))) *(cp - 1) = 0;
-				else if ((cp == strstr(buf, " which "))) *(cp - 1) = 0;
-				else if ((cp == strstr(buf, " whose "))) *(cp - 1) = 0;
-				else if ((cp == strstr(buf, " what "))) *(cp - 1) = 0;
+				else if ((cp = strstr(buf, " that "))) *cp = 0;
+				else if ((cp = strstr(buf, " who "))) *cp = 0;
+				else if ((cp = strstr(buf, " which "))) *cp = 0;
+				else if ((cp = strstr(buf, " whose "))) *cp = 0;
+				else if ((cp = strstr(buf, " what "))) *cp = 0;
 
 				/* 3rd: Try to end name at lineage descriptions aka " of ".
 				        "Angamaite of Umbar" -> "Angamaite" (Note that Angamaite's name is actually not too long, just taken as example here). */
-				else if ((cp == strstr(buf, " of "))) *(cp - 1) = 0;
+				else if ((cp = strstr(buf, " of "))) *cp = 0;
 
 				strcpy(reason2, buf);
 			}
