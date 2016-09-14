@@ -6010,6 +6010,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
 			if ((r_ptr->flags4 & (RF4_BR_SHAR)) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				res1 = 1;
+			//(Note: RF8_NO_CUT doesn't help here.)
 			if ((r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS) || prefix(name, "Plasma")) {
 				res2 = res3 = 1;
 			}
@@ -6233,7 +6234,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
 				//note = " resists";
 				k = (k * 3) / (randint(6) + 6);
+			} else if (r_ptr->flags8 & RF8_NO_CUT) {
+				//note = " resists somewhat";
+				k /= 2;
 			}
+
 			dam = dam + k;
 			break;
 
@@ -6785,8 +6790,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			case 5:
 				if (seen) obvious = TRUE;
 				if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
-						note = " resists";
-						dam *= 3; dam /= (randint(6) + 6);
+					note = " resists";
+					dam *= 3; dam /= (randint(6) + 6);
+				} else if (r_ptr->flags8 & RF8_NO_CUT) {
+					note = " resists somewhat";
+					dam /= 2;
 				}
 				break;
 			case 2: // Water
@@ -12087,6 +12095,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
 			if ((r_ptr->flags4 & (RF4_BR_SHAR)) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				res1 = 1;
+			//(Note: RF8_NO_CUT doesn't help here.)
 			if ((r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS) || prefix(name, "Plasma")) {
 				res2 = res3 = 1;
 			}
@@ -12205,6 +12214,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 			k = (k * 2) / 5;/* 40% SHARDS damage */
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				k /= 3;
+			else if (r_ptr->flags8 & RF8_NO_CUT)
+				k /= 2;
 			dam = dam + k;
 			break;
 
@@ -12379,6 +12390,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 			k = (dam * 3) / 5;
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				k /= 3;
+			else if (r_ptr->flags8 & RF8_NO_CUT)
+				k /= 2;
 			j = k;
 
 			k = dam / 5;
