@@ -1886,8 +1886,8 @@ static void store_create(store_type *st_ptr) {
 
 		/* no OP mage staves from IDDC town magic shop */
 		if (st_ptr->st_idx == STORE_MAGIC_DUN &&
-		    o_ptr->tval == TV_MSTAFF && o_ptr->pval > 10)
-			o_ptr->pval = 10;
+		    o_ptr->tval == TV_MSTAFF && o_ptr->pval > 8)
+			o_ptr->pval = 8;
 
 		e_ptr = &e_info[o_ptr->name2];
 		e2_ptr = &e_info[o_ptr->name2b];
