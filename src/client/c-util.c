@@ -7612,7 +7612,7 @@ static void center_string(char *buf, cptr str) {
 	i = strlen(str);
 
 	/* Necessary border */
-	j = 15 - i / 2;
+	j = 16 - (i + 1) / 2;
 
 	/* Mega-Hack */
 	(void)sprintf(buf, "%*s%s%*s", j, "", str, 31 - i - j, "");
@@ -7624,10 +7624,10 @@ static void center_string_short(char *buf, cptr str) {
 	i = strlen(str);
 
 	/* Necessary border */
-	j = 10 - i / 2;
+	j = 10 - (i + 1) / 2;
 
 	/* Mega-Hack */
-	(void)sprintf(buf, "%*s%s%*s", j, "", str, 21 - i - j, "");
+	(void)sprintf(buf, "%*s%s%*s", j, "", str, 20 - i - j, "");
 }
 
 
@@ -7635,6 +7635,8 @@ static void center_string_short(char *buf, cptr str) {
  * Display a "tomb-stone"
  */
 /* ToME parts. */
+#define STONE_COL 11
+#define STONE_COL_SHORT (11+6)
 static void print_tomb(cptr reason) {
 	bool done = FALSE;
 
@@ -7721,36 +7723,36 @@ static void print_tomb(cptr reason) {
 #endif	/* 0 */
 
 		center_string(buf, cname);
-		c_put_str(TERM_L_UMBER, buf, 6, 11);
+		c_put_str(TERM_L_UMBER, buf, 6, STONE_COL);
 
 		center_string(buf, format("the %s %s", race_info[race].title, class_info[class].title));
-		c_put_str(TERM_L_UMBER, buf, 7, 11);
+		c_put_str(TERM_L_UMBER, buf, 7, STONE_COL);
 
 #if 0
 		center_string(buf, race_info[race].title);
-		c_put_str(TERM_L_UMBER, buf, 8, 11);
+		c_put_str(TERM_L_UMBER, buf, 8, STONE_COL);
 
 		center_string(buf, class_info[class].title);
-		c_put_str(TERM_L_UMBER, buf, 9, 11);
+		c_put_str(TERM_L_UMBER, buf, 9, STONE_COL);
 #endif
 
 #if 0
 		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
 		center_string_short(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 11-2, 11+5);
+		c_put_str(TERM_L_UMBER, buf, 11-2, STONE_COL_SHORT);
 
 		(void)sprintf(tmp, "Exp: %d", p_ptr->exp);
 		center_string_short(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 12-2, 11+5);
+		c_put_str(TERM_L_UMBER, buf, 12-2, STONE_COL_SHORT);
 #else
 		(void)sprintf(tmp, "Lv: %d, Exp: %d", (int)p_ptr->lev, p_ptr->exp);
 		center_string_short(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 11-2, 11+5);
+		c_put_str(TERM_L_UMBER, buf, 11-2, STONE_COL_SHORT);
 #endif
 		/* XXX usually 0 */
 		(void)sprintf(tmp, "AU: %d", p_ptr->au);
 		center_string_short(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 12-2, 11+5);
+		c_put_str(TERM_L_UMBER, buf, 12-2, STONE_COL_SHORT);
 
 		/* Location */
 		if (c_cfg.depth_in_feet)
@@ -7758,7 +7760,7 @@ static void print_tomb(cptr reason) {
 		else
 			(void)sprintf(tmp, "Died on Lv %d %s", p_ptr->wpos.wz, location_pre);
 		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 13-1, 11);
+		c_put_str(TERM_L_UMBER, buf, 13-1, STONE_COL);
 
 		if (location_name2[0])
 			sprintf(tmp, format("%s", location_name2));
@@ -7767,33 +7769,33 @@ static void print_tomb(cptr reason) {
 		else
 			sprintf(tmp, format("world map region (%d,%d)", p_ptr->wpos.wx, p_ptr->wpos.wy));
 		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 14-1, 11);
+		c_put_str(TERM_L_UMBER, buf, 14-1, STONE_COL);
 
 		/* Time of death */
 		(void)sprintf(tmp, "%-.24s", ctime(&ct));
 		center_string(buf, tmp);
-		c_put_str(TERM_L_UMBER, buf, 17-3, 11);
+		c_put_str(TERM_L_UMBER, buf, 17-3, STONE_COL);
 
 		/* Death cause */
 		strcpy(reason2, reason);
-		if (strchr(reason2, '(')) *(strchr(reason2, '(')) = 0;
+		if (strchr(reason2, '(')) *(strchr(reason2, '(') - 1) = 0; //also eat the space before the '('
 
 		if (strstr(reason2, "Killed by")) {
 			center_string(buf, "Killed by");
-			c_put_str(TERM_L_UMBER, buf, 18-3, 11);
+			c_put_str(TERM_L_UMBER, buf, 18-3, STONE_COL);
 			center_string(buf, reason2 + 10);
-			c_put_str(TERM_L_UMBER, buf, 21-5, 11);
+			c_put_str(TERM_L_UMBER, buf, 21-5, STONE_COL);
 		} else if (strstr(reason2, "Committed suicide")) {
 			if (p_ptr->total_winner) {
 				center_string(buf, "Died from ripe old age");
-				c_put_str(TERM_L_UMBER, buf, 19-3, 11);
+				c_put_str(TERM_L_UMBER, buf, 19-3, STONE_COL);
 			} else {
 				center_string(buf, "Committed suicide");
-				c_put_str(TERM_L_UMBER, buf, 19-3, 11);
+				c_put_str(TERM_L_UMBER, buf, 19-3, STONE_COL);
 			}
 		} else {
 			center_string(buf, reason2);
-			c_put_str(TERM_L_UMBER, buf, 21-5, 11);
+			c_put_str(TERM_L_UMBER, buf, 21-5, STONE_COL);
 		}
 	}
 }
