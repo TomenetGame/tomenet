@@ -468,7 +468,7 @@ void cmd_map(char mode) {
 				break;
 			}
 			/* user abort? */
-			else if (ch == ESCAPE) break;
+			else if (ch == ESCAPE || ch == 'M') break;
 #ifdef USE_SOUND_2010
 			else if (ch == KTRL('C')) toggle_music();
 			else if (ch == KTRL('N')) toggle_audio();
@@ -483,7 +483,7 @@ void cmd_map(char mode) {
 		minimap_posx = -1;
 
 		/* user abort? */
-		if (ch == ESCAPE) break;
+		if (ch == ESCAPE || ch == 'M') break;
 
 		/* re-retrieve map */
 		continue;
@@ -514,7 +514,7 @@ void cmd_locate(void) {
 			ch = inkey();
 
 			/* Check for cancel */
-			if (ch == ESCAPE || ch == ' ') break;
+			if (ch == ESCAPE || ch == ' ' || ch == (c_cfg.rogue_like_commands ? 'W' : 'L')) break;
 
 			/* Take a screenshot */
 			if (ch == KTRL('T'))
