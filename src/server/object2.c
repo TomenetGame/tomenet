@@ -6727,14 +6727,14 @@ static int kind_is_good(int k_idx, u32b resf) {
 
 		   All left over tvals used to be chance=0, but now that we're matching
 		   kind_is_theme(), any item tval left over here must be possible to spawn: */
-		if (k_ptr->cost <= 200) return 0; //except items that are really not GOOD
+		if (k_ptr->cost < 200) return 0; //except items that are really not GOOD
 		return (100 * tc_p) / 100;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
 	/* svals that we assume are 'not good', but let's give them a tiny
 	   chance nevertheless, to smooth out the item drop choices. */
-	if (k_ptr->cost <= 200) return 0; //except items that are really not GOOD
+	if (k_ptr->cost < 200) return 0; //except items that are really not GOOD
 	return (1 * tc_p) / 100;
 }
 /* A variant of kind_is_good() for DROP_GREAT monsters.
