@@ -7638,6 +7638,14 @@ static void center_string_short(char *buf, cptr str) {
 static void print_tomb(cptr reason) {
 	bool done = FALSE;
 
+#ifdef USE_SOUND_2010
+	/* Fade out any previous ambient and weather sfx, we're at the graveyard now */
+	if (use_sound) {
+		sound_ambient(-1);
+		sound_weather(-1);
+	}
+#endif
+
 #ifdef ATMOSPHERIC_INTRO /* also extro =P */
  #ifdef USE_SOUND_2010
   #if 1
@@ -7648,10 +7656,6 @@ static void print_tomb(cptr reason) {
    #else
 		/* switch to login screen music if available; otherwise just continue playing the current in-game music */
 		music(exec_lua(0, "return get_music_index(\"tomb\")"));
-   #endif
-   #if 1
-		/* fade out any ongoing in-game weather effects? */
-		sound_weather(-1);
    #endif
 	}
   #endif

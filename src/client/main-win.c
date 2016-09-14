@@ -3378,14 +3378,15 @@ static void hook_quit(cptr str) {
 	RECT rc;
 	int i, res = save_chat;
 
+#if 0
 #ifdef USE_SOUND_2010
 	/* let the sound fade out, also helps the user to realize
 	   he's been disconnected or something - C. Blue */
-#ifdef SOUND_SDL
+ #ifdef SOUND_SDL
 	mixer_fadeall();
+ #endif
 #endif
 #endif
-
 	Net_cleanup();
 
 	c_quit = 1;
@@ -3416,6 +3417,16 @@ static void hook_quit(cptr str) {
 			fclose(fp);
 		}
 	}
+
+#if 1
+#ifdef USE_SOUND_2010
+	/* let the sound fade out, also helps the user to realize
+	   he's been disconnected or something - C. Blue */
+ #ifdef SOUND_SDL
+	mixer_fadeall();
+ #endif
+#endif
+#endif
 
 	/* Hack - Save the window positions before destroying them - mikaelh */
 	/* Main window */

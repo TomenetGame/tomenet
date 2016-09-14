@@ -2687,11 +2687,13 @@ static void display_message(cptr msg, cptr title) {
 static void quit_hook(cptr s) {
 	int j, res = save_chat;
 
+#if 0
 #ifdef USE_SOUND_2010
 	/* let the sound fade out, also helps the user to realize
 	   he's been disconnected or something - C. Blue */
-#ifdef SOUND_SDL
+ #ifdef SOUND_SDL
 	mixer_fadeall();
+ #endif
 #endif
 #endif
 
@@ -2727,6 +2729,16 @@ static void quit_hook(cptr s) {
 			fclose(fp);
 		}
 	}
+
+#if 1
+#ifdef USE_SOUND_2010
+	/* let the sound fade out, also helps the user to realize
+	   he's been disconnected or something - C. Blue */
+ #ifdef SOUND_SDL
+	mixer_fadeall();
+ #endif
+#endif
+#endif
 
 #ifdef RETRY_LOGIN
 	/* don't kill the windows and all */
