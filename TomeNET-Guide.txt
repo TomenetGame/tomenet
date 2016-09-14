@@ -11885,6 +11885,10 @@ Note that not every skill is available to every profession (class).
                                 receive a small bonus in their favour.
                                 It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
+                                Being blood magic, auras will feed from your
+                                blood. This means that the speed of your hit
+                                point regeneration will be reduced while the
+                                aura is active.
 
         .Shivering Aura         Monsters that hit you are stunned.
                                 Monsters that are immune to cold and those that
@@ -11899,6 +11903,10 @@ Note that not every skill is available to every profession (class).
                                 arts will be branded by it (cold brand).
                                 It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
+                                Being blood magic, auras will feed from your
+                                blood. This means that the speed of your hit
+                                point regeneration will be reduced while the
+                                aura is active.
 
         .Aura of Death          Monsters that hit you are hit by waves
                                 of plasma and ice, alternating randomly.
@@ -11910,6 +11918,10 @@ Note that not every skill is available to every profession (class).
                                 or cold brand).
                                 It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
+                                Being blood magic, auras will feed from your
+                                blood. This means that the speed of your hit
+                                point regeneration will be reduced while the
+                                aura is active.
 
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
@@ -13287,11 +13299,11 @@ create a character!):
     Arts if you don't want to use weapons, and always keep it maximized.
 
 - Death Knight
-    Death Knights are unfortunate souls who were paladins in life who were
-    unable to die in peace but instead turned into undead warriors.
+    Death Knights are unfortunate souls who were paladins in life. Unable to
+    die in peace they rose again as bloodthirsty, undead warriors.
     They have the same abilities as paladins in all regards but they are not
     able to utilize any kind of prayers and are susceptible to holy effects,
-    instead they command blood magic and occult shadow magic.
+    instead they command unholy blood and shadow magic.
 
 - Ranger
     Second only to adventurers regarding versatility rangers excel at a lot of
