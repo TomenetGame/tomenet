@@ -6405,10 +6405,16 @@ static int kind_is_theme(int k_idx) {
 	case TV_INSTRUMENT:	p = match_theme.tools; break;
 	case TV_TRAPKIT:	p = match_theme.tools; break;
 
-	/* hybrid: can be junk or tools (while being neither..)! */
 	case TV_FIRESTONE:
 	case TV_FOOD:
+#if 0
+		/* Hybrid: Can be junk or tools (while being neither really..)! */
 		if (match_theme.tools > p) p = match_theme.tools;
+#else
+		/* They count as junk, just because 'tools' just sounds so unfitting. :p
+		   And two treasure classes at once is just too messy.
+		   Note: Wow, an entire #else branch just for a comment! */
+#endif
 		break;
 	}
 
@@ -6423,10 +6429,12 @@ static int which_theme(int tval) {
 	case TV_SKELETON:
 	case TV_BOTTLE:
 	case TV_JUNK:
-	case TV_FIRESTONE:
 	case TV_CORPSE:
 	case TV_EGG:
 	case TV_GOLEM:
+
+	case TV_FIRESTONE:
+	case TV_FOOD:
 		return 0; //junk
 
 	case TV_CHEST:
@@ -6481,7 +6489,6 @@ static int which_theme(int tval) {
 	case TV_SPIKE:
 	case TV_DIGGING:
 	case TV_FLASK:
-	case TV_FOOD:
 	case TV_TOOL:
 	case TV_INSTRUMENT:
 	case TV_TRAPKIT:
