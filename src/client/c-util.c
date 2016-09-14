@@ -7781,6 +7781,30 @@ static void print_tomb(cptr reason) {
 		if (strchr(reason2, '(')) *(strchr(reason2, '(') - 1) = 0; //also eat the space before the '('
 
 		if (strstr(reason2, "Killed by")) {
+			/* Monster name too long? Try to extract shorter name from it. */
+			if (strlen(reason2) - 10 > 31) {
+				char *cp;
+
+				strcpy(buf, reason2);
+
+				/* 1st: Try to end name at a comma, skipping the additional description.
+				        "Gothmog, the High Captain of Balrogs" -> "Gothmog". */
+				if ((cp = strchr(buf, ','))) *cp = 0;
+
+				/* 2nd: Try to end name at a relative word such as "that", "which" etc.
+				        "The disembodied hand that strangled people" -> "The disembodied hand". */
+				else if ((cp == strstr(buf, " that "))) *(cp - 1) = 0;
+				else if ((cp == strstr(buf, " who "))) *(cp - 1) = 0;
+				else if ((cp == strstr(buf, " which "))) *(cp - 1) = 0;
+				else if ((cp == strstr(buf, " whose "))) *(cp - 1) = 0;
+				else if ((cp == strstr(buf, " what "))) *(cp - 1) = 0;
+
+				/* 3rd: Try to end name at lineage descriptions aka " of ".
+				        "Angamaite of Umbar" -> "Angamaite" (Note that Angamaite's name is actually not too long, just taken as example here). */
+				else if ((cp == strstr(buf, " of "))) *(cp - 1) = 0;
+
+				strcpy(reason2, buf);
+			}
 			center_string(buf, "Killed by");
 			c_put_str(TERM_L_UMBER, buf, 18-3, STONE_COL);
 			center_string(buf, reason2 + 10);
