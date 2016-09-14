@@ -13286,6 +13286,13 @@ create a character!):
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
     Arts if you don't want to use weapons, and always keep it maximized.
 
+- Death Knight
+    Death Knights are unfortunate souls who were paladins in life who were
+    unable to die in peace but instead turned into undead warriors.
+    They have the same abilities as paladins in all regards but they are not
+    able to utilize any kind of prayers and are susceptible to holy effects,
+    instead they command blood magic and occult shadow magic.
+
 - Ranger
     Second only to adventurers regarding versatility rangers excel at a lot of
     skills: They are able to fight well in close combat and may even dual-wield
