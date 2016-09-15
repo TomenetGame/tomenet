@@ -5617,7 +5617,12 @@ static void purge_old() {
 	{
 		struct worldpos twpos;
 		twpos.wz = 0;
+#if 0 /* we get called every second or even less often? */
 		for (y = 0; y < MAX_WILD_Y; y++) {
+#else /* we get called every frame, to distribute the workload? */
+		y = turn % MAX_WILD_Y;
+		{
+#endif
 			twpos.wy = y;
 			for (x = 0; x < MAX_WILD_X; x++) {
 				struct wilderness_type *w_ptr;
@@ -6137,8 +6142,7 @@ static void process_various(void) {
 		/* bbs_add_line("--- new day line ---"); */
 	}
 
-	/* every 10 seconds */
-	if (!(turn % (cfg.fps * 10))) purge_old();
+	purge_old();
 
 #if 0 /* disable for now - mikaelh */
 	if (!(turn % (cfg.fps * 50))) {
