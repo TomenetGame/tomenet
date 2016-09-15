@@ -11818,6 +11818,10 @@ Note that not every skill is available to every profession (class).
         .Holy Curing            Learn prayers of the Holy Curing branch.
         .Holy Support           Learn prayers of the Holy Support branch.
 
+    +Occultism
+        .Shadow                 Learn spells of the Shadow branch.
+        .Spirit                 Learn spells of the Spirit branch.
+
     +Druidism
         .Arcane Lore            Learn druid magic taught by arcane lore.
         .Physical Lore          Learn druid magic taught by physical lore.
