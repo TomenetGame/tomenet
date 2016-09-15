@@ -10462,6 +10462,25 @@ static void place_street(struct worldpos *wpos, int vert, int place)
 	}
 }
 
+static void switchable_shop_grids(cave_type **zcave) {
+	int x, y, x2, y2;
+
+	/* apply player-switchability so noone cannot block the store too badly */
+	for (x = 1; x < MAX_WID - 1; x++) {
+		for (y = 1; y < MAX_HGT - 1; y++) {
+			if (zcave[y][x].feat != FEAT_SHOP
+			    /* let's not allow to chain-switch someone out of the inn.. o_o */
+			    || zcave[y][x].feat == FEAT_PROTECTED)
+				continue;
+			for (x2 = x - 1; x2 <= x + 1; x2++) {
+				for (y2 = y - 1; y2 <= y + 1; y2++) {
+					if (!in_bounds(y2, x2)) continue;
+					zcave[y2][x2].info |= CAVE_SWITCH;
+				}
+			}
+		}
+	}
+}
 
 
 /*
@@ -10569,6 +10588,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 
 		/* Hack -- use the "complex" RNG -- and we're done here! */
 		Rand_quick = FALSE;
+		switchable_shop_grids(zcave);
 		return;
 	}
 #endif
@@ -10794,6 +10814,8 @@ static void town_gen_hack(struct worldpos *wpos) {
 
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
+
+	switchable_shop_grids(zcave);
 }
 
 
@@ -10825,7 +10847,7 @@ static void town_gen_hack(struct worldpos *wpos) {
  */
 
 static void town_gen(struct worldpos *wpos) {
-	int y, x, type = -1, i, x2, y2;
+	int y, x, type = -1, i;
 	int xstart = 0, ystart = 0;	/* dummy, for now */
 
 	cave_type	*c_ptr;
@@ -10962,61 +10984,42 @@ static void town_gen(struct worldpos *wpos) {
 		Rand_quick = FALSE;
 
  #if 0
-		process_dungeon_file("t_info.txt", wpos, &ystart, &xstart,
-				MAX_HGT, MAX_WID, TRUE);
+		process_dungeon_file("t_info.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
  #endif	// 0
 		switch(type) {
-			case TOWN_BREE:
-#ifndef ARCADE_SERVER
-				process_dungeon_file("t_bree.txt", wpos, &ystart, &xstart,
-						MAX_HGT, MAX_WID, TRUE);
-#else
-				process_dungeon_file("t_bree_arcade.txt", wpos, &ystart, &xstart,
-						MAX_HGT, MAX_WID, TRUE);
-#endif
-				break;
-			case TOWN_GONDOLIN:
-				process_dungeon_file("t_gondol.txt", wpos, &ystart, &xstart,
-						MAX_HGT, MAX_WID, TRUE);
-				break;
-			case TOWN_MINAS_ANOR:
-				process_dungeon_file("t_minas.txt", wpos, &ystart, &xstart,
-						MAX_HGT, MAX_WID, TRUE);
-				break;
-			case TOWN_LOTHLORIEN:
-				process_dungeon_file("t_lorien.txt", wpos, &ystart, &xstart,
-						MAX_HGT, MAX_WID, TRUE);
-				break;
-			case TOWN_KHAZADDUM:
-				process_dungeon_file("t_khazad.txt", wpos, &ystart, &xstart,
-						MAX_HGT, MAX_WID, TRUE);
-				break;
-			default:
-				town_gen_hack(wpos);
-				break;
+		case TOWN_BREE:
+ #ifndef ARCADE_SERVER
+			process_dungeon_file("t_bree.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+ #else
+			process_dungeon_file("t_bree_arcade.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+ #endif
+			break;
+		case TOWN_GONDOLIN:
+			process_dungeon_file("t_gondol.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+			break;
+		case TOWN_MINAS_ANOR:
+			process_dungeon_file("t_minas.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+			break;
+		case TOWN_LOTHLORIEN:
+			process_dungeon_file("t_lorien.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+			break;
+		case TOWN_KHAZADDUM:
+			process_dungeon_file("t_khazad.txt", wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+			break;
+		default:
+			town_gen_hack(wpos);
+			return;
 		}
+	} else {
+		town_gen_hack(wpos);
+		return;
 	}
-	else town_gen_hack(wpos);
 #else
 	process_dungeon_file("t_info.txt", wpos, &ystart, &xstart,
 				MAX_HGT, MAX_WID, TRUE);
 #endif
 
-	/* apply player-switchability so noone cannot block the store too badly */
-	for (x = 1; x < MAX_WID - 1; x++) {
-		for (y = 1; y < MAX_HGT - 1; y++) {
-			if (zcave[y][x].feat != FEAT_SHOP
-			    /* let's not allow to chain-switch someone out of the inn.. o_o */
-			    || zcave[y][x].feat == FEAT_PROTECTED)
-				continue;
-			for (x2 = x - 1; x2 <= x + 1; x2++) {
-				for (y2 = y - 1; y2 <= y + 1; y2++) {
-					if (!in_bounds(y2, x2)) continue;
-					zcave[y2][x2].info |= CAVE_SWITCH;
-				}
-			}
-		}
-	}
+	switchable_shop_grids(zcave);
 }
 
 
