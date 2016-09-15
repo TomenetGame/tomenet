@@ -4298,7 +4298,7 @@ What does that mean?
          currently 'L'ooking around or something)
 )   ->  clear the keyboard buffer (removes all pending keypresses that haven't
         been processed yet due to slow character speed, so we become instantly
-        ready to perform our mana thrust spell _now_)
+        ready to perform our Manathrust spell _now_)
 *t  ->  choose the closest monster as target
 m   ->  invoke an ability
 @   ->  specify an ability code directly
@@ -4381,7 +4381,7 @@ Example 3: Assumed you have the spell Manathrust somewhere in your books and
         *tM@Manathrust\-
     and it will automatically be expanded to '\e)*tm@11\r@Manathrust\r-'.
 
-Example 4: Casting phase door would be..
+Example 4: Casting Phase Door would be..
         M@Phase Door\
     (expanded to '\e)m@11\r@Phase Door\r'.)
 
@@ -4621,9 +4621,9 @@ F12 use a magic device on the closest target        \e)*t/1-        @/1
     Your magic device ability must be good enough
     or you will keep failing; also see (6.10))
 +                                  \e)*tm@11\r@Noxious Cloud\r-    -none-
-    Cast noxious cloud spell on nearest target
--   Cast phase door.                     \e)m@11\r@Phase Door\r    -none-
-0   Cast manathrust at nearest target \e)*tm@11\r@Manathrust\r-    -none-
+    Cast Noxious Cloud spell on nearest target
+-   Cast Phase Door.                     \e)m@11\r@Phase Door\r    -none-
+0   Cast Manathrust at nearest target \e)*tm@11\r@Manathrust\r-    -none-
 
 This low level istar might be armed with a sling to support his yet weak
 magic, so the F1 macro makes sense. Assuming that he uses the numpad keys for
@@ -4759,7 +4759,7 @@ So, instead of inscribing your potions of Healing '@q1' and having a macro
 '\e)q1' you could also just have a macro '\e)q@Healing\r'.
 
 Or, instead of inscribing a Beginner Cantrips book '@m1' and macroing the spell
-manathrust with '\e)*tm@11\r9a-' you could also just make a macro
+Manathrust with '\e)*tm@11\r9a-' you could also just make a macro
 '\e)*tm@11\r@Manathrust\r-' without the need to inscribe your book.
 
 In fact you could make a macro '\e)*tm@Cast a spell\r@Manathrust\r-'.
@@ -4767,7 +4767,7 @@ In fact you could make a macro '\e)*tm@Cast a spell\r@Manathrust\r-'.
 Another example: '\e)m@11\r@Phase Door\r'.
 
 IMPORTANT: Keep in mind that call-by-name is actually case-sensitive!
-(So in the example above, 'manathrust' would not work.)
+(So in the example above, 'Manathrust' would not work.)
 
 Additional details:
 -------------------
@@ -7464,11 +7464,11 @@ larger areas of water.
 Teleportation is the magical, instantaneous relocation of a player or monster.
 
 There are five main types of teleportation:
--Phase door/blink
+-Phase door/Blink
   It follows the same rules as 'teleport self', it's just named differently to
   indicate that it is limited to a rather short range (usually less than 20
   grids away).
-  The spell available to players are usually called 'phase door' while the
+  The spell available to players are usually called 'Phase Door' while the
   spell used by monsters is usually called 'blink', but again that's just a
   matter of naming.
   Note that monsters cannot blink out of vaults.
@@ -14367,7 +14367,7 @@ Small kobold     1  Actually very weak, but it has poison resistance. This way
 (or normal kobold)  this form may help you to kill Rotting corpses (see below)
                     which have poisonous melee attacks. ;)
                     Not really useful other than that.
-Novice mage      2  Sort of weak but has 'blink' spell (aka phase door) and
+Novice mage      2  Sort of weak but has 'Blink' spell (aka Phase Door) and
                     more.
                     It occurs solo at depth 2, but in packs at depth 6!
 Novice priest    2  Sort of weak but can cast fear/curse and self-heal spells.
@@ -14960,7 +14960,7 @@ school.
                     Lv20: Also resist poison.                  (auto-project)
                     Required skill level for first spell level: 20.
 
-    Protection from evil.
+    Protection from evil
                     Evil creatures that try to attack you in melee might get
                     repelled, thereby preventing them from actually hitting
                     you.
@@ -15639,7 +15639,7 @@ Slow                    ..
 Paralyze                Tries to put a monster into stasis (similar to sleep).
 Haste Self              Temporarily increases your speed by 10.
 Heal                    Heals yourself, amount depends on spell level.
-Blink                   Short range teleport, like phase door.
+Blink                   Short range teleport, like Phase Door.
 Teleport                ..
 Teleport To             Tries to teleport a monster towards you.
 Teleport Away           Tries to teleport monsters away (it's a beam!).
