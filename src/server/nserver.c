@@ -5270,7 +5270,7 @@ int Send_stamina(int Ind, int mst, int cst) {
 #ifndef ENABLE_TECHNIQUES
  #ifdef ENABLE_DRACONIAN_TRAITS
 	/* may breathe elements for stamina */
-	if (p_ptr->race != RACE_DRACONIAN)
+	if (p_ptr->prace != RACE_DRACONIAN)
  #endif
 	return(0); /* disabled until client can handle it */
 #endif
