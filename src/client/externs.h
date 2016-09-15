@@ -899,6 +899,7 @@ extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
 extern bool check_dir(cptr s);
 extern void get_screen_font_name(char *buf);
+extern bool win_dontmoveuser;
 #endif
 extern void store_crecedentials(void);
 

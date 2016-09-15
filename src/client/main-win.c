@@ -3554,8 +3554,7 @@ static void init_stuff(void) {
 
 
 	/* XXX XXX XXX */
-	GetPrivateProfileString("Base", "LibPath", "lib",
-	                        path, 1000, ini_file);
+	GetPrivateProfileString("Base", "LibPath", "lib", path, 1000, ini_file);
 
 	/* Analyze the path */
 	i = strlen(path);
@@ -3571,6 +3570,13 @@ static void init_stuff(void) {
 
 	/* Validate the path */
 	validate_dir(path);
+
+
+	/* Windows 7 and higher: Usually user data is moved to the system-
+	   specified user folder, but this option will allow to prevent that
+	   and instead keep using the folder where TomeNET is installed:
+	   Note: This option must be read before init_file_paths() and init_sound(). */
+	win_dontmoveuser = (GetPrivateProfileInt("Base", "DontMoveUser", 0, ini_file) != 0);
 
 
 	/* Init the file paths */

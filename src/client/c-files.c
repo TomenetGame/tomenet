@@ -737,7 +737,7 @@ void init_file_paths(char *path) {
 	strcpy(tail, "user");
 	ANGBAND_DIR_USER = string_make(path);
  #else
-	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		char buf[1024], *btail, out_val[1024];
 
 		strcpy(buf, getenv("HOMEDRIVE"));

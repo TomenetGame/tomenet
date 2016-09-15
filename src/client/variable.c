@@ -435,3 +435,7 @@ char guide_skill[128][MAX_CHARS];
 char guide_school[64][MAX_CHARS];
 char guide_spell[256][MAX_CHARS];
 int guide_races = 0, guide_classes = 0, guide_skills = 0, guide_schools = 0, guide_spells = 0;
+
+#ifdef WINDOWS
+bool win_dontmoveuser = FALSE;
+#endif

@@ -308,7 +308,7 @@ static bool sound_sdl_init(bool no_cache) {
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
-	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
 		strcat(path, "\\TomeNET-sound.cfg");
@@ -502,7 +502,7 @@ static bool sound_sdl_init(bool no_cache) {
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
-	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
 		strcat(path, "\\TomeNET-nosound.cfg");
@@ -542,7 +542,7 @@ static bool sound_sdl_init(bool no_cache) {
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
-	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
 		strcat(path, "\\TomeNET-music.cfg");
@@ -754,7 +754,7 @@ static bool sound_sdl_init(bool no_cache) {
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
-	if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
 		strcat(path, "\\TomeNET-nomusic.cfg");
@@ -2202,7 +2202,7 @@ void do_cmd_options_sfx_sdl(void) {
 #ifndef WINDOWS
 			path_build(buf2, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.$$$");
 #else
-			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+			if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 				strcpy(buf2, getenv("HOMEDRIVE"));
 				strcat(buf2, getenv("HOMEPATH"));
 				strcat(buf2, "\\TomeNET-nosound.cfg");
@@ -2463,7 +2463,7 @@ void do_cmd_options_mus_sdl(void) {
 #ifndef WINDOWS
 			path_build(buf2, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.$$$");
 #else
-			if (getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+			if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 				strcpy(buf2, getenv("HOMEDRIVE"));
 				strcat(buf2, getenv("HOMEPATH"));
 				strcat(buf2, "\\TomeNET-nomusic.cfg");
