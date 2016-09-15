@@ -1531,6 +1531,7 @@ static int kind_is_storeok(int k_idx, u32b resf) {
  */
 static void store_create(store_type *st_ptr) {
 	int i = 0, tries, level, chance, item;
+	int floor_level = 0, p;
 	int value, rarity; /* for ego power checks */
 
 	object_type tmp_obj;
@@ -1642,10 +1643,12 @@ static void store_create(store_type *st_ptr) {
 
 			/* 'Fake town' dungeon stores don't have a sensible 'town level', use dungeon level instead */
 			if (st_ptr->st_idx >= STORE_GENERAL_DUN && st_ptr->st_idx <= STORE_RUNE_DUN) {
-				level = return_level(st_ptr, town[st_ptr->town].dlev_depth);
+				floor_level = town[st_ptr->town].dlev_depth;
+				level = return_level(st_ptr, floor_level);
 			} else {
 				level = return_level(st_ptr, town[st_ptr->town].baselevel); /* note: it's margin is random! */
 			}
+
 			/* note: if this is moved into the i > 10000 part, book stores will mass-produce pval=0 books (manathrust)
 			   note about note: should be fixed by now - was probably apply_magic() -> ego_make() setting pval to a_ptr->pval aka 0. */
 
@@ -1884,10 +1887,23 @@ static void store_create(store_type *st_ptr) {
 			}
 		}
 
-		/* no OP mage staves from IDDC town magic shop */
+		/* No OP ego items from IDDC town stores, depending on their dungeon level */
 		if (st_ptr->st_idx == STORE_MAGIC_DUN &&
-		    o_ptr->tval == TV_MSTAFF && o_ptr->pval > 8)
-			o_ptr->pval = 8;
+		    o_ptr->tval == TV_MSTAFF) {
+			p = 6 + floor_level / 20;
+			if (o_ptr->pval > p) o_ptr->pval = p;
+		}
+		if (st_ptr->st_idx == STORE_ARMOURY_DUN &&
+		    o_ptr->tval == TV_BOOTS) {
+			if (o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) {
+				p = 2 + floor_level / 10;
+				if (o_ptr->pval > p) o_ptr->pval = p;
+			}
+			if (o_ptr->name2 == EGO_ELVENKIND2 || o_ptr->name2b == EGO_ELVENKIND2) {
+				p = 1 + floor_level / 20;
+				if (o_ptr->pval > p) o_ptr->pval = p;
+			}
+		}
 
 		e_ptr = &e_info[o_ptr->name2];
 		e2_ptr = &e_info[o_ptr->name2b];
