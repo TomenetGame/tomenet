@@ -154,9 +154,10 @@ Contents
     (6.7b)  Druid form details
     (6.7c)  Useful low-level humanoid forms for weapon-using mimics
     (6.8)   Magic spells and prayers
-    (6.8a)  Spell failure rate
+    (6.8a)  Mimic powers
     (6.8b)  Runes & Runemastery
     (6.8c)  Runespell tables
+    (6.8d)  Spell failure rate
     (6.9)   Parties, Iron Teams, Guilds
     (6.9a)  Guild halls
     (6.10)  Magic devices, skill and ability
@@ -3226,7 +3227,7 @@ strengths or weaknesses.
 Next you have to choose your class. Spellcasters like Istari or Shamans are
 physically weaker and especially hard to play for beginners.
 If you choose a spellcaster, be aware that his casting ability depends on
-either his INTelligence or his WISdom, depending on the actual class. For more
+either his intelligence or his wisdom, depending on the actual class. For more
 information about classes and their pros and cons see (6.5).
 Spellcasting involves using 'macros' (see (3.6)) and might be a bit difficult
 for beginners.
@@ -7836,7 +7837,6 @@ If several multipliers match the highest one will be used.
 For ranged weapons, the damage calculated from brands/slays applied to ammo
 dice will further be multiplied by the bow's multiplier (x2..x5, depending on
 the type of sling, bow or crossbow).
-
 
 
 (5.3a) Martial Arts, brands
@@ -13938,7 +13938,8 @@ F: flag list
 
 S: spell list
     These spells can be cast by the monster. Most of them are available to
-    the mimic too, some of them have slightly different effects.
+    the mimic too, called 'mimic powers', some of them may have slightly
+    different effects when used by the mimic.
     The chance to successfully use such a monster power is affected by the
     mimic's intelligence (INT).
     Depending on how frequently the monster is able to cast spells, the player
@@ -13961,7 +13962,7 @@ S: spell list
     BR_INERTIA  gives free action.
     MIND_BLAST  Insanity attacks are reduced a little bit.
     BRAIN_SMASH Insanity attacks are reduced somewhat.
-    The mana costs of mimic spells are fixed, the success chance is relatively
+    The mana costs of mimic powers are fixed, the success chance is relatively
     fixed too although it benefits somewhat from 'Magic' skill.
 
 Especially interesting spells of mimics are 'Blink' (Phase Door) and
@@ -14481,7 +14482,7 @@ or Tomes, that contain several different spells) in their inventory.
 
 The failure rate when attempting to successfully cast a spell is usually shown
 when browsing the according spell scroll/crystal, and is determined by your
-intelligence or wisdom, and the spell's level. For details see (6.8a).
+intelligence or wisdom, and the spell's level. For details see (6.8d).
 
 Spell scrolls and some books can be purchased in store '9' (the 'book store',
 usually also sells 'Beginner Cantrips' and sometimes also Codices) or in
@@ -15563,60 +15564,87 @@ though, as all other magic schools do, not the astral level.)
                     This spell requires a character level of at least 62.
 
 
-(6.8a) Spell failure rate
--------------------------
-The chance to not successfully cast a spell, aka the spell fail rate is shown
-in percent when browsing a spell scroll/crystal. An exception are currently
-mimic powers which they inherit from mimicking a monster, whose fail rates are
-not shown anywhere at the moment, this might be subject to improvement.
+(6.8a) Mimic powers
+-------------------
+The monster spells ('S:' line in r_info.txt) are mostly also usable by a player
+transforming into the monster via Mimicry skill, these spells are also called
+'mimic powers', since they're not always spells in a strict sense of the word.
+(In general, monsters' summoning spells are never available as mimic powers.)
 
-The fail rate of a spell depends on..
+All mimic powers use intelligence stat to determine their failure rate.
+Their power usually depends on the level of the monster whose form the
+character is using and on the character's own level.
+As with magic spells, some mimic powers require a target, some don't.
 
-Magic schools:
-    Nearly all magic spells depend on the spell level and your INTelligence,
-    some spells however use WISdom instead of intelligence, those spells are
-    designated in (6.8) in their spell description.
-    Currently, the only magic spell using wisdom is 'Genocide'.
-Prayer schools:
-    All holy spells depend on the spell level and your WISdom.
-Occult schools:
-    Some shadow and most spirit spells use WISdom, the others INTelligence.
-Mindcraft schools:
-    All mind spells depend on the spell level and your INTelligence,
-    except for 'Charm' which uses CHaRisma.
-Druidic schools:
-    All druidic spells depend on the spell level and your WISdom.
-Astral school:
-    Some astral spells depend on the spell level and WISdom, some on the spell
-    level and INTelligence, as designated in (6.8) in the spell descriptions.
+Here is a list of all available mimic powers:
 
-In general, when you learn a new spell that starts at a high fail rate, you
-will observe a great improvement just by further training the spell's school to
-increase the spell's level. Increasing your INT or WIS (depending on what this
-particular spell uses) will also help.
-At a certain point however, usually when the spell's fail chance is already
-rather low, the spell fail rate might not go down further from increasing its
-level. At that point the only thing you can do to further reduce the spell fail
-rate is to increase the stat (INT or WIS) that the spell uses.
-
-Mimic powers use INT to determine fail rate, have a greater fail rate than
-other spells in general, and do not have a 'spell level'. Their effects are
-pretty much fixed.
-
-A spell failure rate of 0% means that you will always successfully cast the
-spell. However, certain status effects can increase your failure rate
-temporarily or even completely prevent spell-casting, even if your fail rate
-used to be 0%:
-
--Blindness
- Some spells can be cast while blind (will say so in the spell description)
--Confusion
- Some spells can be cast while confused (will say so in the spell description)
--Stun
- Stun will increase your fail chance by 15%, heavy stun even by 25%.
- When you're knocked out you can of course not cast any spells (or do anything
- at all).
-
+Shriek                  Aggravates nearby creatures and annoys nearby players.
+Fire Rocket             ..
+Arrow                   Fires an arrow, does not require bow or ammunition.
+Shot                    Fires a shot, does not require bow or ammunition.
+Bolt                    Fires a bolt, does not require bow or ammunition.
+Missile                 Fires a (physical) missile.
+Breathe Acid            ..
+Breathe Lightning       ..
+Breathe Fire            ..
+Breathe Cold            ..
+Breathe Poison          ..
+Breathe Nether          ..
+Breathe Lite            ..
+Breathe Darkness        ..
+Breathe Confusion       ..
+Breathe Sound           ..
+Breathe Chaos           ..
+Breathe Disenchantment  ..
+Breathe Nexus           ..
+Breathe Time            ..
+Breathe Inertia         ..
+Breathe Gravity         ..
+Breathe Shards          ..
+Breathe Plasma          ..
+Breathe Force           ..
+Breathe Mana            ..
+Breathe Disintegration  ..
+Breathe Toxic Waste     ..
+Throw Boulder           Hurls a boulder at a target (giants do this usually).
+Acid Ball               ..
+Lightning Ball          ..
+Fire Ball               ..
+Cold Ball               ..
+Poison Ball             ..
+Nether Ball             ..
+Water Ball              ..
+Mana Storm              .. (casts a mana ball)
+Darkness Storm          .. (casts a darkness ball)
+Mind Blast              Psi attack, similar to Psionic Blast mindcrafter spell.
+Brain Smash             Powerful psi attack, similar to Psionic Blast.
+Cause Wounds            The curse spell, eg used by priests and archpriests.
+Ball Toxic Waste        ..
+Raw Chaos               .. (casts a chaos ball)
+Acid Bolt               ..
+Lightning Bolt          ..
+Fire Bolt               ..
+Cold Bolt               ..
+Poison Bolt             ..
+Nether Bolt             ..
+Water Bolt              ..
+Mana Bolt               ..
+Plasma Bolt             ..
+Ice Bolt                ..
+Magic Missile           ..
+Scare                   ..
+Blind                   ..
+Confusion               ..
+Slow                    ..
+Paralyze                Tries to put a monster into stasis (similar to sleep).
+Haste Self              Temporarily increases your speed by 10.
+Heal                    Heals yourself, amount depends on spell level.
+Blink                   Short range teleport, like phase door.
+Teleport                ..
+Teleport To             Tries to teleport a monster towards you.
+Teleport Away           Tries to teleport monsters away (it's a beam!).
+Darkness                Unlights the area around you.
+Cause Amnesia           Confuses a target.
 
 
 (6.8b) Runes & Runemastery
@@ -15697,7 +15725,7 @@ critical situations. For this reason, beginner runemasters are advised to
 use basic elemental spells that they can easily acquire the according
 resistance for or stick to the Mana element, which has few adverse effects.
 
-INTelligence, DEXterity, and skill level affect spell failure rates for
+Intelligence, dexterity, and skill level affect spell failure rates for
 runespells. Runespell type generally governs the level of a spell, and is
 further modified by the runespell modifier. Highly experienced and talented
 runemasters may achieve 0% spell failure rates, but should be cautioned
@@ -15805,7 +15833,6 @@ element, and Rings of Fire Resistance are readily available in magic shops.
 
 Note that different elemental damage types are reduced more or less when
 resisted, see (5.6) Resistances & caps, Immunities, Susceptibilities for info.
-
 
 
 (6.8c) Runespell Tables
@@ -16002,6 +16029,64 @@ Time           | Sp     | EA   |        |       |       |       | EA    | Sp
 Disenchantment | AM     |      | Ba     | Ba    | Ba    |       |       |
 Ice            | SD     | BrVo |        |       |       |       | Br    |
 Plasma         | Pl     | Br   |        |       |       | Fe    | Br    |
+
+
+(6.8d) Spell failure rate
+-------------------------
+The chance to not successfully cast a spell, aka the spell fail rate is shown
+in percent when browsing a spell scroll/crystal.
+For mimic spells, the failure rate is shown next to their spell name in the
+mimic power menu (accessible with 'm').
+
+The fail rate of a spell depends on..
+
+Magic schools:
+    Nearly all magic spells depend on the spell level and your intelligence,
+    some spells however use wisdom instead of intelligence, those spells are
+    designated in (6.8) in their spell description.
+    Currently, the only magic spell using wisdom is 'Genocide'.
+Prayer schools:
+    All holy spells depend on the spell level and your wisdom.
+Occult schools:
+    Some shadow and most spirit spells use wisdom, the others intelligence.
+Mindcraft schools:
+    All mind spells depend on the spell level and your intelligence,
+    except for 'Charm' which uses charisma.
+Druidic schools:
+    All druidic spells depend on the spell level and your wisdom.
+Astral school:
+    Some astral spells depend on the spell level and wisdom, some on the spell
+    level and intelligence, as designated in (6.8) in the spell descriptions.
+
+Runecraft:
+    Runespells use dexterity, intelligence and spell level to determine failure
+    rate.
+
+Mimic powers:
+    All mimic powers use intelligence to determine fail rate.
+
+In general, when you learn a new spell that starts at a high fail rate, you
+will observe a great improvement just by further training the spell's school to
+increase the spell's level. Increasing your attributes (depending on what this
+particular spell uses, see list above) will also help.
+At a certain point however, usually when the spell's fail chance is already
+rather low, the spell fail rate might not go down further from increasing its
+level. At that point the only thing you can do to further reduce the spell fail
+rate is to increase the stat that the spell uses.
+
+A spell failure rate of 0% means that you will always successfully cast the
+spell. However, certain status effects can increase your failure rate
+temporarily or even completely prevent spell-casting, even if your fail rate
+used to be 0%:
+
+-Blindness
+ Some spells can be cast while blind (will say so in the spell description)
+-Confusion
+ Some spells can be cast while confused (will say so in the spell description)
+-Stun
+ Stun will increase your fail chance by 15%, heavy stun even by 25%.
+ When you're knocked out you can of course not cast any spells (or do anything
+ at all).
 
 
 
