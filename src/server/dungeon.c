@@ -6142,15 +6142,12 @@ static void process_various(void) {
 		/* bbs_add_line("--- new day line ---"); */
 	}
 
-	purge_old();
-
 #if 0 /* disable for now - mikaelh */
 	if (!(turn % (cfg.fps * 50))) {
 		/* Tell the scripts that we're alive */
 		update_check_file();
 	}
 #endif
-
 
 	/* Things handled once per hour */
 	if (!(turn % (cfg.fps * 3600))) {
@@ -6162,7 +6159,6 @@ static void process_various(void) {
 				guild_timeout(i);
 		}
 	}
-
 
 	/* Handle certain things once a minute */
 	if (!(turn % (cfg.fps * 60))) {
@@ -8259,10 +8255,17 @@ void dungeon(void) {
 	/* Clean up Bree regularly to prevent too dangerous towns in which weaker characters cant move around */
 	//if (!(turn % 650000)) { /* 650k ~ 3hours */
 	//if (!(turn % (cfg.fps * 3600))) { /* 1 h */
+#if 0
 	if (!(turn % (cfg.fps * 600))) { /* new timing after function was changed to "thin_surface_spawns()" */
 		thin_surface_spawns();
 		//spam	s_printf("%s Surface spawns thinned.\n", showtime());
 	}
+#else
+	thin_surface_spawns(); //distributes workload now
+#endif
+
+	/* Used to be in process_various(), but changed it to distribute workload over all frames now. */
+	purge_old();
 
 	/* Process everything else */
 	if (!(turn % 10)) {

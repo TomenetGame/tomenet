@@ -754,7 +754,7 @@ void thin_surface_spawns() {
 
 	/* Delete all the monsters, except for dummies and santa,
 	   because those are usually in town, and this function is called periodically for towns. */
-	for (i = m_max - 1; i >= 1; i--) {
+	for (i = m_max - 1 - (turn % (cfg.fps * 600)); i >= 1; i -= cfg.fps * 600) {
 		monster_type *m_ptr = &m_list[i];
 
 		/* Only affect surface monsters, and only 20% of them (randomly) */
