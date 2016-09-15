@@ -2952,6 +2952,8 @@ void client_init(char *argv1, bool skip) {
 
 #ifdef RETRY_LOGIN
 	retry_contact:
+	status = 0; //not required, paranoia?
+	race = class = trait = sex = 0;
 	rl_connection_state = 0;
 	rl_connection_destroyed = FALSE;
 	rl_connection_destructible = FALSE;
