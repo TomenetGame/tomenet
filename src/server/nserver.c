@@ -2480,7 +2480,7 @@ static int Handle_login(int ind) {
 
 	if (!player_birth(NumPlayers + 1, ind, connp)) {
 		/* Failed, connection destroyed */
-		Destroy_connection(ind, "not login");
+		Destroy_connection(ind, "not login (1)");
 		return -1;
 	}
 	p_ptr = Players[NumPlayers + 1];
@@ -4620,7 +4620,7 @@ static int Receive_play(int ind) {
 			}
 			errno = 0;
 			plog(format("Connection not in login state (%02x)", connp->state));
-			Destroy_connection(ind, "not login");
+			Destroy_connection(ind, "not login (2)");
 			return -1;
 		}
 		//if (Send_reliable_old(ind) == -1)
