@@ -13939,7 +13939,8 @@ F: flag list
 S: spell list
     These spells can be cast by the monster. Most of them are available to
     the mimic too, called 'mimic powers', some of them may have slightly
-    different effects when used by the mimic.
+    different effects when used by the mimic. For a list of all available
+    mimic powers see (6.8a).
     The chance to successfully use such a monster power is affected by the
     mimic's intelligence (INT).
     Depending on how frequently the monster is able to cast spells, the player
