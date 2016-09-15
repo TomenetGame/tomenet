@@ -10655,8 +10655,8 @@ then if a vampire (true one, not mimicked) equips it its negative boni will
 flip to positive numbers. Also vampires tend to greatly resist certain bad
 effects that heavily cursed items may exert, making for example Morgul weapons
 and some heavily cursed artifacts quite useful. Note that the curse must be
-heavy, not normal, for this bonus-flipping to work. See (6.4) "- Vampire" for
-more information.
+heavy, not normal, for this bonus-flipping to work. Look up the Vampire race
+description in (6.4) for more information.
 
 
 
