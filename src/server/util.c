@@ -7364,7 +7364,9 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		/* Also take care of inn ambient sfx (fireplace) */
 		handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos, TRUE);
 	}
-	if (p_ptr->music_monster == -4 && !((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(&p_ptr->wpos))) {
+	if (p_ptr->music_monster == -4
+	    && !((f_info[c_ptr->feat].flags1 & FF1_PROTECTED)
+	    && (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos)))) {
 		p_ptr->music_monster = -1; //unhack inn music
 		handle_music(Ind);
 		music = TRUE;
