@@ -14527,8 +14527,8 @@ the player, when trained to a certain extent. The boni are listed below each
 school.
 
 
-Istar schools:
---------------
+- Wizardry -
+------------
 
 - Mana
 
@@ -14898,8 +14898,8 @@ Istar schools:
                     Reduce insanity influence at 40 and especially at 50.
 
 
-Priest schools:
----------------
+- Prayers -
+-----------
 (In general, holy schools are somewhat less affected by antimagic fields.)
 
 - Holy Offense
@@ -15122,8 +15122,9 @@ Priest schools:
                     Keeps the hunger satisfied all the time at 50.
 
 
-Occult schools:
----------------
+- Occultism -
+-------------
+
 - Shadow
 
     Cause Fear      Scares your target.
@@ -15237,8 +15238,8 @@ Occult schools:
                     but never goes below 30% total exp loss) at 50.
 
 
-Druid schools:
---------------
+- Druidism -
+------------
 
 - Arcane Lore
 
@@ -15297,8 +15298,8 @@ Druid schools:
                     Required skill level for first spell level: 1.
 
 
-Mindcraft schools:
-------------------
+- Mindcraft -
+-------------
 (In general, mindcraft schools are less affected by antimagic fields.)
 
 - Psycho-Power
@@ -15490,8 +15491,9 @@ Mindcraft schools:
                     Required skill level for first spell level: 33.
 
 
-Exclusive astral school for Maiar:
-----------------------------------
+- Astral Knowledge -
+---------------------
+The exclusive astral school for Maiar.
 Instead of normal spell level, the spells of this school use an 'astral level'
 to determine damage or effect. This astral level consists to equal parts of
 your character level and your Astral Knowledge school level. This means that
@@ -15499,8 +15501,6 @@ a level 49 character with 1.000 in Astral Knowledge will still cast spells that
 deal damage and have effects as if the spell was actually at level 25 (the
 average value of 1 and 49). (Spell success chance uses the normal spell level
 though, as all other magic schools do, not the astral level.)
-
-- Astral Knowledge
 
     Power Bolt      Casts a bolt of electricity/mana/dispelling depending on
                     your alignment:
