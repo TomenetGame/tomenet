@@ -11804,24 +11804,19 @@ Note that not every skill is available to every profession (class).
         .Udun                   Learn spells of the Udun branch.
         .Mind                   Learn spells of the Mind branch.
 
+        .Spell-power            Increases the power of learned spells by
+                                adding a bonus to the spell level.
+                                At 50, it will raise spell levels by 40%.
+                                (It won't raise the level of spells which you
+                                haven't learned yet.)
+                                Note that Spell-power ONLY affects spells of
+                                the 'Wizardry' schools!
+
     +Prayers
         .Holy Offense           Learn prayers of the Holy Offense branch.
         .Holy Defense           Learn prayers of the Holy Defense branch.
         .Holy Curing            Learn prayers of the Holy Curing branch.
         .Holy Support           Learn prayers of the Holy Support branch.
-
-    .Spell-power                Increases the power of learned spells by
-                                adding a bonus to the spell level.
-                                At 50, it will raise spell levels by 40%.
-                                (It won't raise the level of spells which you
-                                haven't learned yet.)
-                                Note that Spell-power only affects spells of
-                                the 'Magic' and 'Prayer' school!
-                                It does not affect magic of druids,
-                                mindcrafters, runemasters, or the astral school
-                                that maiar can learn.
-                                It does not affect mimic powers or magic
-                                devices either.
 
     +Druidism
         .Arcane Lore            Learn druid magic taught by arcane lore.
