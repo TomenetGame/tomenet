@@ -2505,6 +2505,31 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	my_fclose(fff);
 }
 
+/* Initialize info for the in-client guide search */
+static void init_guide(void) {
+	int i;
+
+	guide_races = exec_lua(0, "return guide_races");
+	for (i = 0; i < guide_races; i++)
+		strcpy(guide_race[i], string_exec_lua(0, format("return guide_race[%d]", i + 1)));
+
+	guide_classes = exec_lua(0, "return guide_classes");
+	for (i = 0; i < guide_classes; i++)
+		strcpy(guide_class[i], string_exec_lua(0, format("return guide_class[%d]", i + 1)));
+
+	guide_skills = exec_lua(0, "return guide_skills");
+	for (i = 0; i < guide_skills; i++)
+		strcpy(guide_skill[i], string_exec_lua(0, format("return guide_skill[%d]", i + 1)));
+
+	guide_schools = exec_lua(0, "return guide_schools");
+	for (i = 0; i < guide_schools; i++)
+		strcpy(guide_school[i], string_exec_lua(0, format("return guide_school[%d]", i + 1)));
+
+	guide_spells = exec_lua(0, "return guide_spells");
+	for (i = 0; i < guide_spells; i++)
+		strcpy(guide_spell[i], string_exec_lua(0, format("return guide_spell[%d]", i + 1)));
+}
+
 
 
 /*
@@ -2887,6 +2912,9 @@ void client_init(char *argv1, bool skip) {
 	init_kind_list();
 	/* Init artifact list from local (client-side) a_info.txt file */
 	init_artifact_list();
+
+	/* For in-client guide search */
+	init_guide();
 
 	GetLocalHostName(host_name, 80);
 

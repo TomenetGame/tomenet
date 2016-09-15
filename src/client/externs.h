@@ -985,3 +985,10 @@ extern bool rl_connection_destructible, rl_connection_destroyed, rl_password;
 extern byte rl_connection_state;
 extern bool player_pref_files_loaded;
 #endif
+
+extern char guide_race[64][MAX_CHARS];
+extern char guide_class[64][MAX_CHARS];
+extern char guide_skill[128][MAX_CHARS];
+extern char guide_school[64][MAX_CHARS];
+extern char guide_spell[256][MAX_CHARS];
+extern int guide_races, guide_classes, guide_skills, guide_schools, guide_spells;

@@ -38,6 +38,7 @@ __update_table = {
 	"scpt/xml.lua",
 
 	"scpt/audio.lua",
+	"scpt/guide.lua",
 
 	"scpt/classes.lua",
 	"scpt/races.lua",
@@ -85,6 +86,7 @@ __update_table = {
 	"scpt/xml.lua",
 
 	"scpt/audio.lua",
+	"scpt/guide.lua",
 
 	"scpt/classes.lua",
 	"scpt/races.lua",

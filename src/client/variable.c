@@ -427,3 +427,11 @@ bool rl_connection_destructible = FALSE, rl_connection_destroyed = FALSE, rl_pas
 byte rl_connection_state = 0;
 bool player_pref_files_loaded = FALSE;
 #endif
+
+/* For in-client guide search */
+char guide_race[64][MAX_CHARS];
+char guide_class[64][MAX_CHARS];
+char guide_skill[128][MAX_CHARS];
+char guide_school[64][MAX_CHARS];
+char guide_spell[256][MAX_CHARS];
+int guide_races = 0, guide_classes = 0, guide_skills = 0, guide_schools = 0, guide_spells = 0;

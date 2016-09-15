@@ -1343,8 +1343,9 @@ void cmd_the_guide(void) {
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int line = 0, lastline = -1, searchline, within_cnt, c, n;
 	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
-	char chapter[8], search[MAX_CHARS], lastsearch[MAX_CHARS], withinsearch[MAX_CHARS];
+	char search[MAX_CHARS], lastsearch[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
 	FILE *fff;
+	int i;
 
 	path_build(path, 1024, "", "TomeNET-Guide.txt");
 	fff = my_fopen(path, "r");
@@ -1417,8 +1418,42 @@ void cmd_the_guide(void) {
 				}
 				*cp2 = 0;
 
+				/* New chapter functionality: Search for a specific chapter tearm? */
+				if (chapter[0] && chapter[0] != '(') {
+					bool ok = FALSE;
+					char *p, *s;
+
+					searchline++;
+					//must be beginning of line or only spaces before
+					p = strstr(buf2, chapter);
+					if (p == buf2) ok = TRUE;
+					else if (p) {
+						s = buf2;
+						ok = TRUE;
+						while (s < p) {
+							if (*s == ' ') s++;
+							else {
+								ok = FALSE;
+								break;
+							}
+						}
+					}
+					if (ok) {
+						/* Hack: Abuse normal 's' search to colourize */
+						strcpy(withinsearch, chapter);
+
+						chapter[0] = 0;
+						line = searchline;
+						/* Redraw line number display */
+						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+					} else {
+						/* Skip all lines until we find the desired chapter */
+						n--;
+						continue;
+					}
+				}
 				/* Search for specific chapter? */
-				if (chapter[0]) {
+				else if (chapter[0]) {
 					searchline++;
 					//accomodate for colour code and '.' must not follow after the chapter marker
 					if (strstr(buf2, chapter) == buf2 + 2 && !strchr(strchr(buf2, ')'), '.')) {
@@ -1456,6 +1491,7 @@ void cmd_the_guide(void) {
 						continue;
 					}
 				}
+
 				/* Colour all search finds */
 				if (withinsearch[0] && strcasestr(buf2, withinsearch)) {
 					strcpy(buf, buf2);
@@ -1518,10 +1554,7 @@ void cmd_the_guide(void) {
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
 
-		inkey_msg_old = inkey_msg;
-		inkey_msg = TRUE;
 		c = inkey();
-		inkey_msg = inkey_msg_old;
 
 		switch (c) {
 		/* specialty: allow chatting from within here */
@@ -1569,13 +1602,62 @@ void cmd_the_guide(void) {
 			if (line < 0) line = 0;
 			continue;
 
-		/* search - uhoh */
+		/* seach for 'chapter': can be either a numerical one or a main term, such as race/class/skill names. */
 		case 'c':
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter chapter to jump to: ");
 			buf[0] = 0;
-			if (!askfor_aux(buf, 7, 0)) continue;
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			//if (!askfor_aux(buf, 7, 0)) continue; //was: numerical chapters only
+			if (!askfor_aux(buf, MAX_CHARS, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue; //allow entering chapter terms too
+			}
+			inkey_msg = inkey_msg_old;
 
+			/* abuse chapter searching for extra functionality: search for chapter about a specific main term? */
+			if (isalpha(buf[0])) {
+				chapter[0] = 0;
+				for (i = 0; i < guide_races; i++) {
+					if (!strcasestr(guide_race[i], buf)) continue;
+					strcpy(chapter, "- ");
+					strcat(chapter, guide_race[i]);
+					break;
+				}
+				if (chapter[0]) continue;
+				for (i = 0; i < guide_classes; i++) {
+					if (!strcasestr(guide_class[i], buf)) continue;
+					strcpy(chapter, "- ");
+					strcat(chapter, guide_class[i]);
+					break;
+				}
+				if (chapter[0]) continue;
+				for (i = 0; i < guide_skills; i++) {
+					if (!strcasestr(guide_skill[i], buf)) continue;
+					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
+					break;
+				}
+				if (chapter[0]) continue;
+				for (i = 0; i < guide_schools; i++) {
+					if (!strcasestr(guide_school[i], buf)) continue;
+					strcpy(chapter, "- ");
+					strcat(chapter, guide_school[i]);
+					break;
+				}
+				if (chapter[0]) continue;
+				for (i = 0; i < guide_spells; i++) {
+					if (!strcasestr(guide_spell[i], buf)) continue;
+					strcpy(chapter, "    ");
+					strcat(chapter, guide_spell[i]);
+					break;
+				}
+				continue;
+			}
+			/* the original use of 'chapter' meant numerical chapters, which can have up to 8 characters, processed below */
+			buf[8] = 0;
+
+			/* search for numerical chapter, aka (nn.nnc) */
 			memset(chapter, 0, sizeof(char) * 8);
 			cp = buf;
 			cp2 = chapter;
@@ -1604,11 +1686,15 @@ void cmd_the_guide(void) {
 			}
 			chapter[0] = 0; //invalid chapter specified
 			continue;
+		/* search for keyword */
 		case 's':
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search string: ");
 			search[0] = 0;
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
 			askfor_aux(search, MAX_CHARS, 0);
+			inkey_msg = inkey_msg_old;
 			if (!search[0]) continue;
 
 			/* Skip the line we're currently in, start with the next line actually */
@@ -1619,6 +1705,7 @@ void cmd_the_guide(void) {
 			strcpy(lastsearch, search);
 			searchline = line - 1; //init searchline for string-search
 			continue;
+		/* search for next occurance of the previously used search keyword */
 		case 'S':
 		case 'd':
 			if (!lastsearch[0]) continue;
@@ -1631,16 +1718,25 @@ void cmd_the_guide(void) {
 			strcpy(search, lastsearch);
 			searchline = line - 1; //init searchline for string-search
 			continue;
+		/* jump to a specific line number */
 		case '#':
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter line number to jump to: ");
 			buf[0] = 0;
-			if (!askfor_aux(buf, 7, 0)) continue;
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
+			if (!askfor_aux(buf, 7, 0)) {
+				inkey_msg = inkey_msg_old;
+				continue;
+			}
+			inkey_msg = inkey_msg_old;
 
 			line = atoi(buf) - 1;
 			if (line > lastline - maxlines) line = lastline - maxlines;
 			if (line < 0) line = 0;
 			continue;
+
+		/* exit */
 		case ESCAPE: //case 'q': case KTRL('Q'):
 			my_fclose(fff);
 			Term_load();

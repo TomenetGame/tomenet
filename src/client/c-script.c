@@ -409,6 +409,9 @@ in time, nor xml.lua/meta.lua which are needed earlier too, so we need to hard-c
 	pern_dofile(0, "audio.lua");
 #endif
 
+	/* We want to init guide info asap, no need to wait for later */
+	pern_dofile(0, "guide.lua");
+
 	init_lua_done = TRUE;
 }
 
