@@ -6915,6 +6915,7 @@ int Send_music(int Ind, int music, int musicalt) {
 				Packet_printf(&connp2->c, "%c%c", PKT_MUSIC, music);
 		}
 	}
+
 	if (Players[Ind]->music_current == music) return(-1);
 	/* -1 means 'keep playing your current music', we don't need to modify music_current for that */
 	if (music != -1) {
