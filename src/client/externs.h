@@ -146,6 +146,7 @@ extern object_type inventory[INVEN_TOTAL];
 extern char inventory_name[INVEN_TOTAL][ONAME_LEN];
 extern int inventory_inscription[INVEN_TOTAL];
 extern int inventory_inscription_len[INVEN_TOTAL];
+extern int item_newest;
 
 extern store_type store;
 extern c_store_extra c_store;

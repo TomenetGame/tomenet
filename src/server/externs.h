@@ -1189,6 +1189,7 @@ extern sockbuf_t *get_conn_q(int Ind);
 
 extern int Send_martyr(int ind);
 extern int Send_confirm(int Ind, int confirmed_command);
+extern int Send_item_newest(int Ind, int item);
 
 
 /* object1.c */

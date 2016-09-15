@@ -2421,6 +2421,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				} else {
 					/* Just standard message */
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+					Send_item_newest(Ind, slot);
 				}
 
 				if (!p_ptr->warning_inspect &&

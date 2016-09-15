@@ -150,6 +150,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_BONI_COL]	= Receive_boni_col;
 	receive_tbl[PKT_AUTOINSCRIBE]	= Receive_apply_auto_insc;
 
+	receive_tbl[PKT_ITEM_NEWEST]	= Receive_item_newest;
 	receive_tbl[PKT_CONFIRM]	= Receive_confirm;
 	receive_tbl[PKT_KEYPRESS]	= Receive_keypress;
 
@@ -4195,6 +4196,17 @@ int Receive_martyr(void) {
 
 	p_ptr->martyr = (s16b)martyr;
 	c_msg_print(format("martyr %d", (s16b)martyr));
+
+	return 1;
+}
+
+/* Receive inventory index of the last item we picked up */
+int Receive_item_newest(void) {
+	int	n;
+	char	ch, item;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &item)) <= 0) return n;
+	item_newest = (int)item;
 
 	return 1;
 }

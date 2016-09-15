@@ -9522,6 +9522,9 @@ void inven_item_increase(int Ind, int item, int num) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[item];
 
+	/* Invalidate 'item_newest' to be safe */
+	if (-num >= o_ptr->number) Send_item_newest(Ind, -1);
+
 	/* Apply */
 	num += o_ptr->number;
 

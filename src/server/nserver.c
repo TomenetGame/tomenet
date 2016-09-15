@@ -7905,6 +7905,20 @@ int Send_confirm(int Ind, int confirmed_command) {
 	return Packet_printf(&connp->c, "%c%c", PKT_CONFIRM, confirmed_command);
 }
 
+int Send_item_newest(int Ind, int item) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) return(0);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for item_newest (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c%c", PKT_ITEM_NEWEST, (char)item);
+}
+
 
 
 /*

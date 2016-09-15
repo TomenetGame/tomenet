@@ -7701,6 +7701,8 @@ void player_death(int Ind) {
 		/* No more item */
 		invwipe(o_ptr);
 	}
+	/* Invalidate 'item_newest' */
+	Send_item_newest(Ind, -1);
 
 	/* Get rid of him if he's a ghost or suffers a no-ghost death */
 	if ((p_ptr->ghost || (hell && p_ptr->alive)) ||

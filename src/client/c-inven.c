@@ -430,7 +430,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	char which = ' ';
 
 	int k, i1, i2, e1, e2, ver;
-	bool done;
+	bool done, spammy = FALSE;
 	byte item;
 
 	char tmp_val[160];
@@ -441,6 +441,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	//bool floor = FALSE;
 	bool extra = FALSE, limit = FALSE;
 	bool special_req = FALSE;
+	bool newest = FALSE;
 
 	bool safe_input = FALSE;
 
@@ -464,7 +465,12 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	//if (mode & (USE_FLOOR)) floor = TRUE;
 	if (mode & (USE_EXTRA)) extra = TRUE;
 	if (mode & (SPECIAL_REQ)) special_req = TRUE;
+	//if (mode & (NEWEST))
+	newest = (item_newest != -1); /* experimental: always on if available */
 	if (mode & (USE_LIMIT)) limit = TRUE;
+
+	/* Too long description - shorten? */
+	if (special_req && newest) spammy = TRUE;
 
 	/* Paranoia */
 	if (!inven && !equip) {
@@ -622,7 +628,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			if (!command_see) strcat(out_val, " * to see,");
 
 			/* Append */
-			if (equip) strcat(out_val, " / for Equip,");
+			if (equip) {
+				if (spammy) strcat(out_val, " / Equip,");
+				else strcat(out_val, " / for Equip,");
+			}
 		}
 		/* Viewing equipment */
 		else {
@@ -643,17 +652,29 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			if (!command_see) strcat(out_val, " * to see,");
 
 			/* Append */
-			if (inven) strcat(out_val, " / for Inven,");
+			if (inven) {
+				if (spammy) strcat(out_val, " / Inven,");
+				else strcat(out_val, " / for Inven,");
+			}
 		}
 
 		/* Extra? */
-		if (extra) strcat(out_val, " @ to name,");
+		if (extra) {
+			if (spammy) strcat(out_val, " @ name,");
+			else strcat(out_val, " @ to name,");
+		}
 
 		/* Limit? */
-		if (limit) strcat(out_val, " # to limit,");
+		if (limit) {
+			if (spammy) strcat(out_val, " # limit,");
+			else strcat(out_val, " # to limit,");
+		}
 
+		if (spammy) strcat(out_val, " - switch, + new,");
 		/* Special request toggle? */
-		if (special_req) strcat(out_val, " - to switch,");
+		else if (special_req) strcat(out_val, " - to switch,");
+		/* Re-use 'newest' item? */
+		else if (newest) strcat(out_val, " + for newest,");
 
 		/* Finish the prompt */
 		strcat(out_val, " ESC");
@@ -804,6 +825,24 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				done = TRUE;
 				item = FALSE;
 				*cp = -3;
+				break;
+			}
+			/* fall through */
+
+		case '+':
+			if (newest) {
+				command_gap = 50;
+				done = TRUE;
+				if (item_newest != -1) {
+					item = TRUE;
+					*cp = item_newest;
+				} else {
+					item = FALSE;
+					*cp = -1;
+
+					command_gap = 50;
+					done = TRUE;
+				}
 				break;
 			}
 			/* fall through */

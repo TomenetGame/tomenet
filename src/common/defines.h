@@ -4128,14 +4128,15 @@
 /*
  * Bit flags for the "c_get_item" function
  */
-#define USE_EQUIP	0x01	/* Allow equip items */
-#define USE_INVEN	0x02	/* Allow inven items */
-#define USE_FLOOR	0x04	/* Allow floor items */
-#define USE_EXTRA	0x08	/* Allow extra items */
-#define INVEN_FIRST	0x10	/* Seach for inscription tag in inventory first */
-#define SPECIAL_REQ	0x20	/* Allow pressing '-' key to switch the request in a special way */
-#define USE_LIMIT	0x40	/* Allow spell level limit */
-#define CHECK_MULTI	0x80	/* For swap command with USE_EXTRA (search by name): Check multiple items and avoid ones that we've already equipped */
+#define USE_EQUIP	0x0001	/* Allow equip items */
+#define USE_INVEN	0x0002	/* Allow inven items */
+#define USE_FLOOR	0x0004	/* Allow floor items */
+#define USE_EXTRA	0x0008	/* Allow extra items */
+#define INVEN_FIRST	0x0010	/* Seach for inscription tag in inventory first */
+#define SPECIAL_REQ	0x0020	/* Allow pressing '-' key to switch the request in a special way */
+#define USE_LIMIT	0x0040	/* Allow spell level limit */
+#define CHECK_MULTI	0x0080	/* For swap command with USE_EXTRA (search by name): Check multiple items and avoid ones that we've already equipped */
+#define NEWEST		0x0100	/* Allow pressing '+' key to re-use the newest item we previously acquired */
 
 /*
  * Bit flags for the "p_ptr->notice" variable
