@@ -9881,6 +9881,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 #ifdef USE_SOUND_2010
 			sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
+			Send_item_newest(Ind, j);
 			return (j);
 		}
 	}
@@ -10043,7 +10044,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 #ifdef USE_SOUND_2010
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
-
+	Send_item_newest(Ind, i);
 	return (i);
 }
 

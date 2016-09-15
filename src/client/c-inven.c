@@ -812,7 +812,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		}
 
 		case '#':
-			if (!limit) break;
+			if (!limit) {
+				bell();
+				break;
+			}
 			hack_force_spell_level = c_get_quantity("Limit spell level (0 for unlimited)? ", -1);
 			if (hack_force_spell_level < 0) hack_force_spell_level = 0;
 			if (hack_force_spell_level > 99) hack_force_spell_level = 99;
@@ -820,32 +823,23 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			break;
 
 		case '-':
-			if (special_req) {
-				command_gap = 50;
-				done = TRUE;
-				item = FALSE;
-				*cp = -3;
+			if (!special_req) {
+				bell();
 				break;
 			}
-			/* fall through */
+			command_gap = 50;
+			done = TRUE;
+			item = FALSE;
+			*cp = -3;
+			break;
 
 		case '+':
-			if (newest) {
-				command_gap = 50;
-				done = TRUE;
-				if (item_newest != -1) {
-					item = TRUE;
-					*cp = item_newest;
-				} else {
-					item = FALSE;
-					*cp = -1;
-
-					command_gap = 50;
-					done = TRUE;
-				}
+			if (!newest) {
+				bell();
 				break;
 			}
-			/* fall through */
+			which = 'a' + item_newest;
+			/* fall through to process 'which' */
 
 		default:
 			/* Extract "query" setting */
