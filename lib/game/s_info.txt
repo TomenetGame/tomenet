@@ -108,7 +108,7 @@ I:1000:0
 #D:Ability to cast sorcery spells faster than one turn
 #I:1000:0
 
-N:13:Fire-Till-Kill
+N:13:Fire-till-kill
 D:Hidden ability for all characters.
 A:4:Toggle fire-till-kill mode
 I:1000:0
@@ -441,7 +441,7 @@ $ENABLE_MAIA$D:Access to the astral spells
 $ENABLE_MAIA$A:11:Cast a spell
 $ENABLE_MAIA$I:1000:111
 
-$DUAL_WIELD$N:78:Dual-Wield
+$DUAL_WIELD$N:78:Dual-wield
 $DUAL_WIELD$D:Ability to wield two one-handed weapons at once.
 $DUAL_WIELD$D:This won't work well if your armour is too heavy.
 $DUAL_WIELD$I:1000:0
@@ -454,7 +454,7 @@ $ENABLE_STANCES$A:13:Switch combat stance
 $ENABLE_STANCES$I:1000:0
 $ENABLE_STANCES$F:MKEY_HARDCODE | AUTO_MAX
 
-$ENABLE_MCRAFT$N:80:Psycho-Power
+$ENABLE_MCRAFT$N:80:Psycho-power
 $ENABLE_MCRAFT$D:Access to psi-spells that create physical or energetical effects.
 $ENABLE_MCRAFT$A:11:Cast a spell
 $ENABLE_MCRAFT$I:1000:111
@@ -701,7 +701,7 @@ f:Physical Lore:Magic%10
 $ENABLE_MAIA$f:Astral Knowledge:Magic%10
 
 #%5 wasn't enough, big lack of MP
-$ENABLE_MCRAFT$f:Psycho-Power:Magic%10
+$ENABLE_MCRAFT$f:Psycho-power:Magic%10
 $ENABLE_MCRAFT$f:Attunement:Magic%10
 $ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 
@@ -762,7 +762,7 @@ T:Weaponmastery:Axe-mastery
 T:Weaponmastery:Blunt-mastery
 T:Weaponmastery:Polearm-mastery
 $ENABLE_STANCES$T:Weaponmastery:Combat Stances
-$DUAL_WIELD$T:Weaponmastery:Dual-Wield
+$DUAL_WIELD$T:Weaponmastery:Dual-wield
 T:Combat:Archery
 T:Archery:Sling-mastery
 T:Archery:Bow-mastery
@@ -813,7 +813,7 @@ T:Prayers:Holy Support
 T:Druidism:Arcane Lore
 T:Druidism:Physical Lore
 
-$ENABLE_MCRAFT$T:Mindcraft:Psycho-Power
+$ENABLE_MCRAFT$T:Mindcraft:Psycho-power
 $ENABLE_MCRAFT$T:Mindcraft:Attunement
 $ENABLE_MCRAFT$T:Mindcraft:Mental Intrusion
 
