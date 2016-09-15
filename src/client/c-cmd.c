@@ -1364,7 +1364,8 @@ void cmd_the_guide(void) {
 	while (TRUE) {
 		Term_clear();
 		Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
-		Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
+		//Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
+		Term_putstr(0, bottomline, -1, TERM_L_BLUE, "Up,Dn,PgUp,PgDn,Home,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
 
 		/* Always begin at zero */
 		fseek(fff, 0, SEEK_SET);
@@ -1561,6 +1562,11 @@ void cmd_the_guide(void) {
 		/* home key to reset */
 		case '7': //rl:?
 			line = 0;
+			continue;
+		/* support end key too.. */
+		case '1': //rl:?
+			line = lastline - maxlines;
+			if (line < 0) line = 0;
 			continue;
 
 		/* search - uhoh */
@@ -2427,12 +2433,12 @@ void cmd_check_misc(void) {
 	Term_putstr( 5, second + 3, -1, TERM_WHITE, "(\377yd\377w) Server settings");
 	Term_putstr( 5, second + 4, -1, TERM_WHITE, "(\377ye\377w) Opinions (if available)");
 	Term_putstr(40, second + 0, -1, TERM_WHITE, "(\377yf\377w) News (Message of the day)");
-	Term_putstr(40, second + 1, -1, TERM_WHITE, "(\377yg\377w) Intro screen");
-	Term_putstr(40, second + 2, -1, TERM_WHITE, "(\377yh\377w) Message history");
-	Term_putstr(40, second + 3, -1, TERM_WHITE, "(\377yi\377w) Chat history");
+	Term_putstr(40, second + 1, -1, TERM_WHITE, "(\377yh\377w) Intro screen");
+	Term_putstr(40, second + 2, -1, TERM_WHITE, "(\377yi\377w) Message history");
+	Term_putstr(40, second + 3, -1, TERM_WHITE, "(\377yj\377w) Chat history");
 	Term_putstr(40, second + 4, -1, TERM_WHITE, "(\377yl\377w) Lag-o-meter");
 	Term_putstr( 5, second + 6, -1, TERM_WHITE, "(\377y?\377w) Help");
-	Term_putstr(40, second + 6, -1, TERM_WHITE, "(\377yG\377w) The Guide");
+	Term_putstr(40, second + 6, -1, TERM_WHITE, "(\377yg\377w) The Guide");
 	Term_putstr(20, second + 8, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat to view extra character information)");
 
 	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
@@ -2514,13 +2520,13 @@ void cmd_check_misc(void) {
 			case 'f':
 				Send_special_line(SPECIAL_FILE_MOTD2, 0);
 				break;
-			case 'g':
+			case 'h':
 				show_motd(0);
 				break;
-			case 'h':
+			case 'i':
 				do_cmd_messages();
 				break;
-			case 'i':
+			case 'j':
 				do_cmd_messages_chatonly();
 				break;
 			case 'l':
@@ -2529,7 +2535,7 @@ void cmd_check_misc(void) {
 			case '?':
 				cmd_help();
 				break;
-			case 'G':
+			case 'g':
 				cmd_the_guide();
 				break;
 			case ESCAPE:
