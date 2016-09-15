@@ -2633,7 +2633,10 @@ bool make_attack_melee(int Ind, int m_idx)
 					    < (rlev + damage + UNAWARENESS(p_ptr))) {
 						if (!p_ptr->dual_wield || magik(90)) {
 							msg_print(Ind, "\376\377rYou lose the grip of your weapon!");
-//							msg_format(Ind, "\377r%^s disarms you!", m_name);
+#ifdef USE_SOUND_2010
+							sound(Ind, "disarm_weapon", "", SFX_TYPE_ATTACK, FALSE);
+#endif
+							//msg_format(Ind, "\377r%^s disarms you!", m_name);
 							bypass_inscrption = TRUE;
 							object_desc(0, o_name, o_ptr, FALSE, 3);
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
@@ -2654,7 +2657,10 @@ bool make_attack_melee(int Ind, int m_idx)
 							}
 						} else { /* dual-wield "feature".. get dual-disarmed :-p */
 							msg_print(Ind, "\376\377rYou lose the grip of your weapons!");
-//							msg_format(Ind, "\377r%^s disarms you!", m_name);
+#ifdef USE_SOUND_2010
+							sound(Ind, "disarm_weapon", "", SFX_TYPE_ATTACK, FALSE);
+#endif
+							//msg_format(Ind, "\377r%^s disarms you!", m_name);
 							bypass_inscrption = TRUE;
 							o_ptr = &p_ptr->inventory[INVEN_WIELD];
 							object_desc(0, o_name, o_ptr, FALSE, 3);

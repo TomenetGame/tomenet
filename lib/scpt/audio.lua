@@ -125,6 +125,7 @@ audio_sfx = {
     "parry_weapon",
     "block_shield",
     "block_shield_projectile",
+    "disarm_weapon",
 
     "fire_shot",
     "fire_arrow",
