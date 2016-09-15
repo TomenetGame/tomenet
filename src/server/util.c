@@ -1796,16 +1796,7 @@ void handle_music(int Ind) {
 			/* Tavern hack */
 			if (p_ptr->music_monster == -4) {
 				//abuse tmus_inverse
-				if (night_surface) switch (town[i].type) {
-				default:
-				case TOWN_VANILLA: tmus_inverse = 68; break; //default town
-				case TOWN_BREE: tmus_inverse = 70; break; //Bree
-				case TOWN_GONDOLIN: tmus_inverse = 72; break; //Gondo
-				case TOWN_MINAS_ANOR: tmus_inverse = 74; break; //Minas
-				case TOWN_LOTHLORIEN: tmus_inverse = 76; break; //Loth
-				case TOWN_KHAZADDUM: tmus_inverse = 78; break; //Khaz
-				}
-				else switch (town[i].type) {
+				if (night_surface) switch (town[i].type) { //nightly music
 				default:
 				case TOWN_VANILLA: tmus_inverse = 69; break; //default town
 				case TOWN_BREE: tmus_inverse = 71; break; //Bree
@@ -1813,6 +1804,15 @@ void handle_music(int Ind) {
 				case TOWN_MINAS_ANOR: tmus_inverse = 75; break; //Minas
 				case TOWN_LOTHLORIEN: tmus_inverse = 77; break; //Loth
 				case TOWN_KHAZADDUM: tmus_inverse = 79; break; //Khaz
+				}
+				else switch (town[i].type) { //daily music
+				default:
+				case TOWN_VANILLA: tmus_inverse = 68; break; //default town
+				case TOWN_BREE: tmus_inverse = 70; break; //Bree
+				case TOWN_GONDOLIN: tmus_inverse = 72; break; //Gondo
+				case TOWN_MINAS_ANOR: tmus_inverse = 74; break; //Minas
+				case TOWN_LOTHLORIEN: tmus_inverse = 76; break; //Loth
+				case TOWN_KHAZADDUM: tmus_inverse = 78; break; //Khaz
 				}
 				Send_music(Ind, tmus_inverse, tmus);
 				return;
