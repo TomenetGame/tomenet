@@ -4960,6 +4960,13 @@ bool monster_death(int Ind, int m_idx) {
 			s_printf("XMAS: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, m_name);
 			santa_claus_timer = 60 + rand_int(120);
 		}
+		/* Actually restore town music (or whichever) if Santa had his own music event */
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->music_monster == 67) {
+				Players[i]->music_monster = -1;
+				handle_music(i);
+			}
+		}
 	}
 
 
