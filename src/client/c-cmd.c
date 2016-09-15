@@ -1364,7 +1364,7 @@ void cmd_the_guide(void) {
 	while (TRUE) {
 		Term_clear();
 		Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
-		Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/S/c/# search/next/chapter/line; ESC to exit");
+		Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
 
 		/* Always begin at zero */
 		fseek(fff, 0, SEEK_SET);
@@ -1614,6 +1614,7 @@ void cmd_the_guide(void) {
 			searchline = line - 1; //init searchline for string-search
 			continue;
 		case 'S':
+		case 'd':
 			if (!lastsearch[0]) continue;
 
 			/* Skip the line we're currently in, start with the next line actually */
