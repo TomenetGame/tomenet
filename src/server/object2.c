@@ -11395,6 +11395,13 @@ void init_treasure_classes(void) {
 		}
 	}
 
+	/* Limit to x10; limiting is needed to prevent div0 anyway. */
+	if (total_treasure < total / 50) total_treasure = total / 50;
+	if (total_combat < total / 50) total_combat = total / 50;
+	if (total_magic < total / 50) total_magic = total / 50;
+	if (total_tools < total / 50) total_tools = total / 50;
+	if (total_junk < total / 50) total_junk = total / 50;
+
 	/* Build bias multipliers (percentages) to even out all treasure classes. */
 	tc_bias_treasure = (100 * total) / (total_treasure * 5);
 	tc_bias_combat = (100 * total) / (total_combat * 5);
@@ -11447,6 +11454,13 @@ void init_treasure_classes(void) {
 		}
 	}
 
+	/* Limit to x10; limiting is needed to prevent div0 anyway. */
+	if (total_treasure < total / 50) total_treasure = total / 50;
+	if (total_combat < total / 50) total_combat = total / 50;
+	if (total_magic < total / 50) total_magic = total / 50;
+	if (total_tools < total / 50) total_tools = total / 50;
+	if (total_junk < total / 50) total_junk = total / 50;
+
 	/* Build bias multipliers (percentages) to even out all treasure classes. */
 	tc_biasg_treasure = (100 * total) / (total_treasure * 5);
 	tc_biasg_combat = (100 * total) / (total_combat * 5);
@@ -11498,6 +11512,13 @@ void init_treasure_classes(void) {
 			continue; //-1, unclassified item (paranoia)
 		}
 	}
+
+	/* Limit to x10; limiting is needed to prevent div0 anyway. */
+	if (total_treasure < total / 50) total_treasure = total / 50;
+	if (total_combat < total / 50) total_combat = total / 50;
+	if (total_magic < total / 50) total_magic = total / 50;
+	if (total_tools < total / 50) total_tools = total / 50;
+	if (total_junk < total / 50) total_junk = total / 50;
 
 	/* Build bias multipliers (percentages) to even out all treasure classes. */
 	tc_biasr_treasure = (100 * total) / (total_treasure * 5);
