@@ -1339,7 +1339,7 @@ void cmd_high_scores(void) {
 }
 
 void cmd_the_guide(void) {
-	bool inkey_msg_old, within, searchwrap = FALSE;
+	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int line = 0, lastline = -1, searchline, within_cnt, c, n;
 	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
@@ -1363,10 +1363,12 @@ void cmd_the_guide(void) {
 	Term_save();
 
 	while (TRUE) {
-		Term_clear();
+		if (!skip_redraw) Term_clear();
 		Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
 		//Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
 		Term_putstr(0, bottomline, -1, TERM_L_BLUE, "Up,Dn,PgUp,PgDn,Home,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
+
+		if (skip_redraw) goto skipped_redraw;
 
 		/* Always begin at zero */
 		fseek(fff, 0, SEEK_SET);
@@ -1550,6 +1552,8 @@ void cmd_the_guide(void) {
 			}
 		}
 
+		skipped_redraw:
+
 		/* hide cursor */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -1560,13 +1564,16 @@ void cmd_the_guide(void) {
 		/* specialty: allow chatting from within here */
 		case ':':
 			cmd_message();
+			skip_redraw = TRUE;
 			continue;
 		/* allow inscribing items (hm) */
 		case '{':
 			cmd_inscribe();
+			skip_redraw = TRUE;
 			continue;
 		case '}':
 			cmd_uninscribe();
+			skip_redraw = TRUE;
 			continue;
 
 		/* navigate (up/down) */
@@ -1618,7 +1625,55 @@ void cmd_the_guide(void) {
 
 			/* abuse chapter searching for extra functionality: search for chapter about a specific main term? */
 			if (isalpha(buf[0])) {
+				int find;
+
 				chapter[0] = 0;
+
+				/* Misc chapters, hardcoded: */
+				find = 0;
+				if (strcasestr(buf, "Iron")) find++;
+				if (strcasestr(buf, "Deep")) find++;
+				if (strcasestr(buf, "Dive")) find++;
+				if (strcasestr(buf, "Challenge")) find++;
+				if (!strcasecmp(buf, "IDDC") || !strcasecmp("Ironman Deep Dive Challenge", buf) || find >= 2) {
+					strcpy(chapter, "Ironman Deep Dive Challenge (IDDC)");
+					continue;
+				}
+				if (!strcasecmp("HT", buf) || !strcasecmp("HL", buf) || strcasestr("Highland", buf) || strcasestr("Tournament", buf)) {
+					strcpy(chapter, "Highlander Tournament");
+					continue;
+				}
+				if (!strcasecmp("AMC", buf) || (strcasestr("Arena", buf) && strcasestr("Challenge", buf))) {
+					strcpy(chapter, "Arena Monster Challenge");
+					continue;
+				}
+				if (!strcasecmp("DK", buf) || !strcasecmp("Dungeon Keeper", buf) || strcasestr("Keeper", buf)) {
+					strcpy(chapter, "Dungeon Keeper");
+					continue;
+				}
+				if (!strcasecmp("XO", buf) || !strcasecmp("Extermination Orders", buf)
+				    || strcasestr(buf, "Extermination") || strcasestr(buf, "Order")) {
+					strcpy(chapter, "Extermination Orders");
+					continue;
+				}
+				if (!strcasecmp("Halloween", buf)) {
+					strcpy(chapter, "Halloween");
+					continue;
+				}
+				if (!strcasecmp("Christmas", buf) || !strcasecmp(buf, "xmas")) {
+					strcpy(chapter, "Christmas");
+					continue;
+				}
+				find = 0;
+				if (strcasestr(buf, "New")) find++;
+				if (strcasestr(buf, "Year")) find++;
+				if (strcasestr(buf, "Eve")) find++;
+				if (strcasestr(buf, "nye") || find >= 2) {
+					strcpy(chapter, "New year's eve");
+					continue;
+				}
+
+				/* Lua-defined chapters */
 				for (i = 0; i < guide_races; i++) {
 					if (!strcasestr(guide_race[i], buf)) continue;
 					strcpy(chapter, "- ");
