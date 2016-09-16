@@ -1510,6 +1510,7 @@ static int kind_is_storeok(int k_idx, u32b resf) {
 		return 0;
 
 	p = kind_is_legal(k_idx, resf);
+	//p = kind_is_normal(k_idx, resf); //hm, how about this..?
 
 	if (k_ptr->tval != store_tval) p = 0;
 	if (k_ptr->level < (store_level / 2)) p = 0;

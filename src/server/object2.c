@@ -6543,8 +6543,20 @@ int kind_is_legal(int k_idx, u32b resf) {
 	return p * 10;
 }
 
+/* Added for applying tc_bias values to kind_is_legal output */
+static int kind_is_normal(int k_idx, u32b resf) {
+	int tc_p = kind_is_legal(k_idx, resf);
 
-
+	switch (which_theme(k_info[k_idx].tval)) {
+	case 1: return (tc_p * tc_bias_treasure) / 500;
+	case 2: return (tc_p * tc_bias_combat) / 500;
+	case 3: return (tc_p * tc_bias_magic) / 500;
+	case 4: return (tc_p * tc_bias_tools) / 500;
+	case 0: return (tc_p * tc_bias_junk) / 500;
+	}
+	//-1, unclassified item (paranoia)
+	return tc_p / 5;
+}
 
 /*
  * Hack -- determine if a template is "good"
@@ -7191,7 +7203,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			/* Normal objects */
 			else {
 				/* Activate normal restriction */
-				get_obj_num_hook = kind_is_legal;
+				get_obj_num_hook = kind_is_normal;
 
 				/* Prepare allocation table */
 				get_obj_num_prep(resf);
@@ -7389,7 +7401,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 			/* Normal objects */
 			else {
 				/* Activate normal restriction */
-				get_obj_num_hook = kind_is_legal;
+				get_obj_num_hook = kind_is_normal;
 
 				/* Prepare allocation table */
 				get_obj_num_prep(resf);
@@ -11341,8 +11353,8 @@ void init_treasure_classes(void) {
 	int total, total_treasure, total_combat, total_magic, total_tools, total_junk;
 	obj_theme theme;
 
-	/* Max object level */
-	int level = 127;
+	/* Max object level, 5*max bias factor */
+	int level = 127, max_bias = 25;
 
 	/* We need a balanced theme for finding any bias */
 	theme.treasure = 20;
@@ -11354,7 +11366,7 @@ void init_treasure_classes(void) {
 
 
 	/* Set filter: Monster is assumed to drop normal / good / great. */
-	get_obj_num_hook = kind_is_legal; //normal monsters
+	get_obj_num_hook = kind_is_legal; //bare, normal allocation. No extra flags.
 
 	total = 0;
 	total_treasure = 0;
@@ -11396,11 +11408,11 @@ void init_treasure_classes(void) {
 	}
 
 	/* Limit to x10; limiting is needed to prevent div0 anyway. */
-	if (total_treasure < total / 50) total_treasure = total / 50;
-	if (total_combat < total / 50) total_combat = total / 50;
-	if (total_magic < total / 50) total_magic = total / 50;
-	if (total_tools < total / 50) total_tools = total / 50;
-	if (total_junk < total / 50) total_junk = total / 50;
+	if (total_treasure < total / max_bias) total_treasure = total / max_bias;
+	if (total_combat < total / max_bias) total_combat = total / max_bias;
+	if (total_magic < total / max_bias) total_magic = total / max_bias;
+	if (total_tools < total / max_bias) total_tools = total / max_bias;
+	if (total_junk < total / max_bias) total_junk = total / max_bias;
 
 	/* Build bias multipliers (percentages) to even out all treasure classes. */
 	tc_bias_treasure = (100 * total) / (total_treasure * 5);
@@ -11455,11 +11467,11 @@ void init_treasure_classes(void) {
 	}
 
 	/* Limit to x10; limiting is needed to prevent div0 anyway. */
-	if (total_treasure < total / 50) total_treasure = total / 50;
-	if (total_combat < total / 50) total_combat = total / 50;
-	if (total_magic < total / 50) total_magic = total / 50;
-	if (total_tools < total / 50) total_tools = total / 50;
-	if (total_junk < total / 50) total_junk = total / 50;
+	if (total_treasure < total / max_bias) total_treasure = total / max_bias;
+	if (total_combat < total / max_bias) total_combat = total / max_bias;
+	if (total_magic < total / max_bias) total_magic = total / max_bias;
+	if (total_tools < total / max_bias) total_tools = total / max_bias;
+	if (total_junk < total / max_bias) total_junk = total / max_bias;
 
 	/* Build bias multipliers (percentages) to even out all treasure classes. */
 	tc_biasg_treasure = (100 * total) / (total_treasure * 5);
@@ -11514,11 +11526,11 @@ void init_treasure_classes(void) {
 	}
 
 	/* Limit to x10; limiting is needed to prevent div0 anyway. */
-	if (total_treasure < total / 50) total_treasure = total / 50;
-	if (total_combat < total / 50) total_combat = total / 50;
-	if (total_magic < total / 50) total_magic = total / 50;
-	if (total_tools < total / 50) total_tools = total / 50;
-	if (total_junk < total / 50) total_junk = total / 50;
+	if (total_treasure < total / max_bias) total_treasure = total / max_bias;
+	if (total_combat < total / max_bias) total_combat = total / max_bias;
+	if (total_magic < total / max_bias) total_magic = total / max_bias;
+	if (total_tools < total / max_bias) total_tools = total / max_bias;
+	if (total_junk < total / max_bias) total_junk = total / max_bias;
 
 	/* Build bias multipliers (percentages) to even out all treasure classes. */
 	tc_biasr_treasure = (100 * total) / (total_treasure * 5);
