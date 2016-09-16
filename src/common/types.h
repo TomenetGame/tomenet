@@ -1217,6 +1217,7 @@ typedef struct dun_level dun_level;
 struct dun_level {
 	int ondepth;
 	time_t lastused;
+	time_t creationtime;
 	time_t total_static_time;
 	u32b id;		/* Unique ID to check if players logged out on the same
 				   floor or not, when they log in again- C. Blue */

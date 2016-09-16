@@ -5513,7 +5513,8 @@ bool stale_level(struct worldpos *wpos, int grace) {
 #if DEBUG_LEVEL > 1
 		s_printf("%s  now:%ld last:%ld diff:%ld grace:%d players:%d\n", wpos_format(0, wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
 #endif
-		if (now - l_ptr->lastused > grace) return TRUE;
+		//if (now - l_ptr->lastused > grace) return TRUE;
+		if (now - l_ptr->creationtime > grace) return TRUE;
 	} else if (now - wild_info[wpos->wy][wpos->wx].lastused > grace) {
 #if 0
 		/* Never allow dealloc where there are houses */
@@ -5612,6 +5613,8 @@ static void scan_houses() {
  */
 static void purge_old() {
 	int x, y, i;
+	struct wilderness_type *w_ptr;
+	struct dungeon_type *d_ptr;
 
 	//if (cfg.level_unstatic_chance > 0)
 	{
@@ -5625,9 +5628,6 @@ static void purge_old() {
 #endif
 			twpos.wy = y;
 			for (x = 0; x < MAX_WILD_X; x++) {
-				struct wilderness_type *w_ptr;
-				struct dungeon_type *d_ptr;
-
 				twpos.wx = x;
 				w_ptr = &wild_info[twpos.wy][twpos.wx];
 

@@ -11029,8 +11029,7 @@ static void town_gen(struct worldpos *wpos) {
 /*
  * Allocate the space needed for a dungeon level
  */
-void alloc_dungeon_level(struct worldpos *wpos)
-{
+void alloc_dungeon_level(struct worldpos *wpos) {
 	int i;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	struct dungeon_type *d_ptr;
@@ -11050,6 +11049,7 @@ void alloc_dungeon_level(struct worldpos *wpos)
 		d_ptr = (wpos->wz > 0 ? w_ptr->tower : w_ptr->dungeon);
 		dlp = &d_ptr->level[ABS(wpos->wz) - 1];
 		dlp->cave = zcave;
+		dlp->creationtime = time(NULL);
 	} else {
 		w_ptr->cave = zcave;
 
