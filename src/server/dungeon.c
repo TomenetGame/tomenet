@@ -5513,8 +5513,11 @@ bool stale_level(struct worldpos *wpos, int grace) {
 #if DEBUG_LEVEL > 1
 		s_printf("%s  now:%ld last:%ld diff:%ld grace:%d players:%d\n", wpos_format(0, wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
 #endif
-		//if (now - l_ptr->lastused > grace) return TRUE;
-		if (now - l_ptr->creationtime > grace) return TRUE;
+		/* Hacky: Combine checks for normal death/quit static time (lastused) and for anti-scum static time (creationtime):
+		   lastused is set by death/quit staticing, but it is 0 when stair-scumming. */
+		if (l_ptr->lastused) {
+			if (now - l_ptr->lastused > grace) return TRUE;
+		} else if (now - l_ptr->creationtime > grace) return TRUE;
 	} else if (now - wild_info[wpos->wy][wpos->wx].lastused > grace) {
 #if 0
 		/* Never allow dealloc where there are houses */
