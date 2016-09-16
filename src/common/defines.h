@@ -3875,6 +3875,7 @@
 #define SV_FOOD_ATHELAS			40
 #define SV_FOOD_GREAT_HEALTH		41	/* annuled for now */
 #define SV_FOOD_FORTUNE_COOKIE		42
+#define SV_FOOD_KHAZAD			43
 /* Another block for mushrooms */
 #define SV_FOOD_UNMAGIC			50
 
