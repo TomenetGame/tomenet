@@ -6765,7 +6765,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
 	int tc_p = kind_is_legal(k_idx, resf);
 
-	/* DROP_GOOD also obeys the monster's treasure class
+	/* DROP_GREAT also obeys the monster's treasure class
 	   (we basically just need its kind_is_theme() call) */
 	if (!tc_p) return 0;
 
@@ -11326,15 +11326,30 @@ void reverse_cursed(object_type *o_ptr) {
 void init_treasure_classes(void) {
 	int i, n, t;
 	alloc_entry *restrict table = alloc_kind_table;
+	int total, total_treasure, total_combat, total_magic, total_tools, total_junk;
+	obj_theme theme;
 
-	int total = 0;
-	int total_treasure = 0, total_combat = 0, total_magic = 0, total_tools = 0, total_junk = 0;
-	int level = 127; /* max object level */
+	/* Max object level */
+	int level = 127;
+
+	/* We need a balanced theme for finding any bias */
+	theme.treasure = 20;
+	theme.combat = 20;
+	theme.magic = 20;
+	theme.tools = 20;
+	//and the remaining 20% of 'junk'
+	init_match_theme(theme);
+
 
 	/* Set filter: Monster is assumed to drop normal / good / great. */
 	get_obj_num_hook = kind_is_legal; //normal monsters
-	//get_obj_num_hook = kind_is_good; //DROP_GOOD monsters
-	//get_obj_num_hook = kind_is_great; //DROP_GREAT monsters
+
+	total = 0;
+	total_treasure = 0;
+	total_combat = 0;
+	total_magic = 0;
+	total_tools = 0;
+	total_junk = 0;
 
 	get_obj_num_prep(RESF_NONE);
 	n = alloc_kind_index_level[level + 1];
@@ -11375,5 +11390,109 @@ void init_treasure_classes(void) {
 	tc_bias_tools = (100 * total) / (total_tools * 5);
 	tc_bias_junk = (100 * total) / (total_junk * 5);
 
-	s_printf("Initialized Treasure Class Biasses: %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_bias_treasure, tc_bias_combat, tc_bias_magic, tc_bias_tools, tc_bias_junk);
+	s_printf("Initialized Treasure Class Biasses (legal): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_bias_treasure, tc_bias_combat, tc_bias_magic, tc_bias_tools, tc_bias_junk);
+
+
+	/* Set filter: Monster is assumed to drop normal / good / great. */
+	get_obj_num_hook = kind_is_good; //DROP_GOOD monsters
+
+	total = 0;
+	total_treasure = 0;
+	total_combat = 0;
+	total_magic = 0;
+	total_tools = 0;
+	total_junk = 0;
+
+	get_obj_num_prep(RESF_NONE);
+	n = alloc_kind_index_level[level + 1];
+	total = 0;
+	for (i = 0; i < n; i++) {
+		total += table[i].prob2;
+		t = which_theme(k_info[table[i].index].tval);
+		switch (t) {
+		case 1:
+			total_treasure += table[i].prob2;
+			//s_printf("1: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		case 2:
+			total_combat += table[i].prob2;
+			//s_printf("2: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		case 3:
+			total_magic += table[i].prob2;
+			//s_printf("3: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		case 4:
+			total_tools += table[i].prob2;
+			//s_printf("4: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		case 0:
+			total_junk += table[i].prob2;
+			//s_printf("5: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		default:
+			continue; //-1, unclassified item (paranoia)
+		}
+	}
+
+	/* Build bias multipliers (percentages) to even out all treasure classes. */
+	tc_bias_treasure = (100 * total) / (total_treasure * 5);
+	tc_bias_combat = (100 * total) / (total_combat * 5);
+	tc_bias_magic = (100 * total) / (total_magic * 5);
+	tc_bias_tools = (100 * total) / (total_tools * 5);
+	tc_bias_junk = (100 * total) / (total_junk * 5);
+
+	s_printf("Initialized Treasure Class Biasses (good): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_bias_treasure, tc_bias_combat, tc_bias_magic, tc_bias_tools, tc_bias_junk);
+
+
+	/* Set filter: Monster is assumed to drop normal / good / great. */
+	get_obj_num_hook = kind_is_great; //DROP_GREAT monsters
+
+	total = 0;
+	total_treasure = 0;
+	total_combat = 0;
+	total_magic = 0;
+	total_tools = 0;
+	total_junk = 0;
+
+	get_obj_num_prep(RESF_NONE);
+	n = alloc_kind_index_level[level + 1];
+	total = 0;
+	for (i = 0; i < n; i++) {
+		total += table[i].prob2;
+		t = which_theme(k_info[table[i].index].tval);
+		switch (t) {
+		case 1:
+			total_treasure += table[i].prob2;
+			//s_printf("1: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		case 2:
+			total_combat += table[i].prob2;
+			//s_printf("2: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		case 3:
+			total_magic += table[i].prob2;
+			//s_printf("3: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		case 4:
+			total_tools += table[i].prob2;
+			//s_printf("4: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		case 0:
+			total_junk += table[i].prob2;
+			//s_printf("5: %s, ", k_name + k_info[table[i].index].name);
+			continue;
+		default:
+			continue; //-1, unclassified item (paranoia)
+		}
+	}
+
+	/* Build bias multipliers (percentages) to even out all treasure classes. */
+	tc_bias_treasure = (100 * total) / (total_treasure * 5);
+	tc_bias_combat = (100 * total) / (total_combat * 5);
+	tc_bias_magic = (100 * total) / (total_magic * 5);
+	tc_bias_tools = (100 * total) / (total_tools * 5);
+	tc_bias_junk = (100 * total) / (total_junk * 5);
+
+	s_printf("Initialized Treasure Class Biasses (great): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_bias_treasure, tc_bias_combat, tc_bias_magic, tc_bias_tools, tc_bias_junk);
 }
