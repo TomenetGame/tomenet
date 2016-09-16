@@ -67,8 +67,7 @@
  * to succeed even if the strings have not been allocated yet,
  * as long as the variables start out as "NULL".
  */
-void init_file_paths(char *path)
-{
+void init_file_paths(char *path) {
 	char *tail;
 
 
@@ -162,8 +161,7 @@ void init_file_paths(char *path)
  * may or may not be initialized, but the "plog()" and "quit()"
  * functions are "supposed" to work under any conditions.
  */
-static void show_news_aux(cptr why)
-{
+static void show_news_aux(cptr why) {
 	/* Why */
 	plog(why);
 
@@ -307,8 +305,7 @@ u32b fake_text_size;
 /*
  * Standard error message text
  */
-static cptr err_str[8] =
-{
+static cptr err_str[8] = {
 	NULL,
 	"parse error",
 	"obsolete file",
@@ -331,12 +328,9 @@ static cptr err_str[8] =
  * Note that we let each entry have a unique "name" and "text" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_f_info(void)
-{
+static errr init_f_info(void) {
 	errr err;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -393,8 +387,7 @@ static errr init_f_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -422,8 +415,7 @@ static errr init_f_info(void)
  * Note that we let each entry have a unique "name" and "text" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_k_info(void)
-{
+static errr init_k_info(void) {
 	errr err;
 
 	FILE *fp;
@@ -482,8 +474,7 @@ static errr init_k_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -497,6 +488,8 @@ static errr init_k_info(void)
 		/* Quit */
 		quit("Error in 'k_info.txt' file.");
 	}
+
+	init_treasure_classes();
 
 	/* Success */
 	return (0);
@@ -631,20 +624,16 @@ static errr init_a_info(void) {
  * Note that we let each entry have a unique "name" and "text" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_s_info(void)
-{
+static errr init_s_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
-
 	/* int i; */
 
 	int mode = 0644;
 #endif	// USE_RAW_FILES
 
 	errr err = 0;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -736,13 +725,13 @@ static errr init_s_info(void)
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "s_info.txt");
 
 	/* Grab permission */
-//	safe_setuid_grab();
+	//safe_setuid_grab();
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");
 
 	/* Drop permission */
-//	safe_setuid_drop();
+	//safe_setuid_drop();
 
 	/* Parse it */
 	if (!fp) quit("Cannot open 's_info.txt' file.");
@@ -792,8 +781,7 @@ static errr init_s_info(void)
 	safe_setuid_drop();
 
 	/* Dump to the file */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 		/* Dump it */
 		fd_write(fd, (char*)(s_head), s_head->head_size);
 
@@ -868,15 +856,11 @@ static errr init_s_info(void)
  * Note that we let each entry have a unique "name" and "text" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_e_info(void)
-{
+static errr init_e_info(void) {
 	errr err;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
-
 	int i, j;
 	s16b *e_tval_aux;
 
@@ -933,8 +917,7 @@ static errr init_e_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -1143,14 +1126,10 @@ static errr init_r_info(void) {
  * Note that we let each entry have a unique "name" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_re_info(void)
-{
+static errr init_re_info(void) {
 	//int mode = 0644;
-
 	errr err = 0;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -1161,54 +1140,53 @@ static errr init_re_info(void)
         MAKE(re_head, header);
 
 	/* Save the "version" */
-        re_head->v_major = VERSION_MAJOR;
-        re_head->v_minor = VERSION_MINOR;
-        re_head->v_patch = VERSION_PATCH;
-        re_head->v_extra = 0;
+	re_head->v_major = VERSION_MAJOR;
+	re_head->v_minor = VERSION_MINOR;
+	re_head->v_patch = VERSION_PATCH;
+	re_head->v_extra = 0;
 
 	/* Save the "record" information */
-        re_head->info_num = MAX_RE_IDX;
-        re_head->info_len = sizeof(monster_ego);
+	re_head->info_num = MAX_RE_IDX;
+	re_head->info_len = sizeof(monster_ego);
 
-        /* Save the size of "re_head" and "re_info" */
-        re_head->head_size = sizeof(header);
-        re_head->info_size = re_head->info_num * re_head->info_len;
+	/* Save the size of "re_head" and "re_info" */
+	re_head->head_size = sizeof(header);
+	re_head->info_size = re_head->info_num * re_head->info_len;
 
 #ifdef ALLOW_TEMPLATES
 
 	/*** Make the fake arrays ***/
 
-        /* Assume the size of "re_name" */
-//	fake_name_size = FAKE_NAME_SIZE;
+	/* Assume the size of "re_name" */
+	//fake_name_size = FAKE_NAME_SIZE;
 	fake_name_size = 20 * 1024L;
 
-        /* Allocate the "re_info" array */
-        C_MAKE(re_info, re_head->info_num, monster_ego);
+	/* Allocate the "re_info" array */
+	C_MAKE(re_info, re_head->info_num, monster_ego);
 
 	/* Hack -- make "fake" arrays */
-        C_MAKE(re_name, fake_name_size, char);
+	C_MAKE(re_name, fake_name_size, char);
 
 
 	/*** Load the ascii template file ***/
 
 	/* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_GAME, "re_info.txt");
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "re_info.txt");
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");
 
 	/* Parse it */
-        if (!fp) quit("Cannot open 're_info.txt' file.");
+	if (!fp) quit("Cannot open 're_info.txt' file.");
 
 	/* Parse the file */
-        err = init_re_info_txt(fp, buf);
+	err = init_re_info_txt(fp, buf);
 
 	/* Close it */
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -1237,8 +1215,7 @@ static errr init_re_info(void)
  * Note that we let each entry have a unique "name" and "short name" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_d_info(void)
-{
+static errr init_d_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
 
@@ -1246,9 +1223,7 @@ static errr init_d_info(void)
 #endif	// USE_RAW_FILES
 
 	errr err = 0;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -1291,14 +1266,13 @@ static errr init_d_info(void)
 	safe_setuid_drop();
 
 	/* Process existing "raw" file */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 #ifdef CHECK_MODIFICATION_TIME
 //#if 1
 		err = check_modification_date(fd, "d_info.txt");
 #endif /* CHECK_MODIFICATION_TIME */
 #ifdef CHECK_MODIFICATION_ALWAYS
-	        err = 0;
+		err = 0;
 #endif
 
 		/* Attempt to parse the "raw" file */
@@ -1361,8 +1335,7 @@ static errr init_d_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -1400,8 +1373,7 @@ static errr init_d_info(void)
 	safe_setuid_drop();
 
 	/* Dump to the file */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 		/* Dump it */
 		fd_write(fd, (char*)(d_head), d_head->head_size);
 
@@ -1475,16 +1447,13 @@ static errr init_d_info(void)
  * Note that we let each entry have a unique "name" and "text" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_t_info(void)
-{
+static errr init_t_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int mode = 0644;
 #endif	// USE_RAW_FILES
 
 	errr err = 0;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -1516,8 +1485,8 @@ static errr init_t_info(void)
 	/* Fake the size of "t_name" and "t_text" */
 	fake_name_size = 20 * 1024L;
 	fake_text_size = 60 * 1024L;
-//	fake_name_size = FAKE_NAME_SIZE;
-//	fake_text_size = FAKE_TEXT_SIZE;
+	//fake_name_size = FAKE_NAME_SIZE;
+	//fake_text_size = FAKE_TEXT_SIZE;
 
 	/* Allocate the "t_info" array */
 	C_MAKE(t_info, t_head->info_num, trap_kind);
@@ -1545,8 +1514,7 @@ static errr init_t_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -1575,12 +1543,9 @@ static errr init_t_info(void)
  * Note that we let each entry have a unique "name" and "text" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_v_info(void)
-{
+static errr init_v_info(void) {
 	errr err;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -1609,7 +1574,7 @@ static errr init_v_info(void)
 	/* Fake the size of "v_name" and "v_text" */
 	fake_name_size = 20 * 1024L;
 	fake_text_size = 170 * 1024L;
-//	fake_text_size = 120 * 1024L;
+	//fake_text_size = 120 * 1024L;
 
 	/* Allocate the "k_info" array */
 	C_MAKE(v_info, v_head->info_num, vault_type);
@@ -1637,8 +1602,7 @@ static errr init_v_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -1664,8 +1628,7 @@ static errr init_v_info(void)
  * Note that we let each entry have a unique "name" and "short name" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_st_info(void)
-{
+static errr init_st_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
 
@@ -1673,9 +1636,7 @@ static errr init_st_info(void)
 #endif	// USE_RAW_FILES
 
 	errr err = 0;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -1718,8 +1679,7 @@ static errr init_st_info(void)
 	safe_setuid_drop();
 
 	/* Process existing "raw" file */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 #ifdef CHECK_MODIFICATION_TIME
 		err = check_modification_date(fd, "st_info.txt");
 #endif /* CHECK_MODIFICATION_TIME */
@@ -1747,7 +1707,7 @@ static errr init_st_info(void)
 	/*** Make the fake arrays ***/
 
 	/* Assume the size of "st_name" and "st_text" */
-//	fake_name_size = FAKE_NAME_SIZE;
+	//fake_name_size = FAKE_NAME_SIZE;
 	fake_name_size = 20 * 1024L;
 
 	/* Allocate the "st_info" array */
@@ -1763,13 +1723,13 @@ static errr init_st_info(void)
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "st_info.txt");
 
 	/* Grab permission */
-//	safe_setuid_grab();
+	//safe_setuid_grab();
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");
 
 	/* Drop permission */
-//	safe_setuid_drop();
+	//safe_setuid_drop();
 
 	/* Parse it */
 	if (!fp) quit("Cannot open 'st_info.txt' file.");
@@ -1781,8 +1741,7 @@ static errr init_st_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -1820,8 +1779,7 @@ static errr init_st_info(void)
 	safe_setuid_drop();
 
 	/* Dump to the file */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 		/* Dump it */
 		fd_write(fd, (char*)(st_head), st_head->head_size);
 
@@ -1891,8 +1849,7 @@ static errr init_st_info(void)
  * Note that we let each entry have a unique "name" and "short name" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_ow_info(void)
-{
+static errr init_ow_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
 
@@ -1900,9 +1857,7 @@ static errr init_ow_info(void)
 #endif	// USE_RAW_FILES
 
 	errr err = 0;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -1936,17 +1891,16 @@ static errr init_ow_info(void)
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "ow_info.raw");
 
 	/* Grab permission */
-//	safe_setuid_grab();
+	//safe_setuid_grab();
 
 	/* Attempt to open the "raw" file */
 	fd = fd_open(buf, O_RDONLY);
 
 	/* Drop permission */
-//	safe_setuid_drop();
+	//safe_setuid_drop();
 
 	/* Process existing "raw" file */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 #ifdef CHECK_MODIFICATION_TIME
 		err = check_modification_date(fd, "ow_info.txt");
 #endif /* CHECK_MODIFICATION_TIME */
@@ -1994,13 +1948,13 @@ static errr init_ow_info(void)
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "ow_info.txt");
 
 	/* Grab permission */
-//	safe_setuid_grab();
+	//safe_setuid_grab();
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");
 
 	/* Drop permission */
-//	safe_setuid_drop();
+	//safe_setuid_drop();
 
 	/* Parse it */
 	if (!fp) quit("Cannot open 'ow_info.txt' file.");
@@ -2012,8 +1966,7 @@ static errr init_ow_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -2051,8 +2004,7 @@ static errr init_ow_info(void)
 	safe_setuid_drop();
 
 	/* Dump to the file */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 		/* Dump it */
 		fd_write(fd, (char*)(ow_head), ow_head->head_size);
 
@@ -2122,8 +2074,7 @@ static errr init_ow_info(void)
  * Note that we let each entry have a unique "name" and "short name" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_ba_info(void)
-{
+static errr init_ba_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
 
@@ -2131,9 +2082,7 @@ static errr init_ba_info(void)
 #endif	// USE_RAW_FILES
 
 	errr err = 0;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -2176,8 +2125,7 @@ static errr init_ba_info(void)
 	safe_setuid_drop();
 
 	/* Process existing "raw" file */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 #ifdef CHECK_MODIFICATION_TIME
 		err = check_modification_date(fd, "ba_info.txt");
 #endif /* CHECK_MODIFICATION_TIME */
@@ -2205,7 +2153,7 @@ static errr init_ba_info(void)
 	/*** Make the fake arrays ***/
 
 	/* Assume the size of "ba_name" and "ba_text" */
-//	fake_name_size = FAKE_NAME_SIZE;
+	//fake_name_size = FAKE_NAME_SIZE;
 	fake_name_size = 20 * 1024L;
 
 	/* Allocate the "ba_info" array */
@@ -2221,13 +2169,13 @@ static errr init_ba_info(void)
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "ba_info.txt");
 
 	/* Grab permission */
-//	safe_setuid_grab();
+	//safe_setuid_grab();
 
 	/* Open the file */
 	fp = my_fopen(buf, "r");
 
 	/* Drop permission */
-//	safe_setuid_drop();
+	//safe_setuid_drop();
 
 	/* Parse it */
 	if (!fp) quit("Cannot open 'ba_info.txt' file.");
@@ -2239,8 +2187,7 @@ static errr init_ba_info(void)
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -2278,8 +2225,7 @@ static errr init_ba_info(void)
 	safe_setuid_drop();
 
 	/* Dump to the file */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 		/* Dump it */
 		fd_write(fd, (char*)(ba_head), ba_head->head_size);
 
@@ -2910,7 +2856,7 @@ void init_swearing() {
 	i = 0;
 
 	do {
-//		if (fscanf(fp, "%s\n", nonswear[i]) == EOF) {
+		//if (fscanf(fp, "%s\n", nonswear[i]) == EOF) {
 		if (!fgets(nonswear[i], NAME_LEN, fp)) {
 			if (!feof(fp))
 				s_printf("Failed to read nonswearing.txt: %s\n", strerror(ferror(fp)));
@@ -3209,41 +3155,35 @@ static errr init_alloc(void) {
 /* 
  * Mark guardians and their artifacts with SPECIAL_GENE flag
  */
-static void init_guardians(void)
-{
+static void init_guardians(void) {
 	int i;
 
 	/* Scan dungeons */
-	for (i = 0; i < max_d_idx; i++)
-	{
+	for (i = 0; i < max_d_idx; i++) {
 		dungeon_info_type *d_ptr = &d_info[i];
 
 		/* Mark the guadian monster */
-		if (d_ptr->final_guardian)
-		{
+		if (d_ptr->final_guardian) {
 			monster_race *r_ptr = &r_info[d_ptr->final_guardian];
 
 			r_ptr->flags9 |= RF9_SPECIAL_GENE;
 
 			/* Mark the final artifact */
-			if (d_ptr->final_artifact)
-			{
+			if (d_ptr->final_artifact) {
 				artifact_type *a_ptr = &a_info[d_ptr->final_artifact];
 
 				a_ptr->flags4 |= TR4_SPECIAL_GENE;
 			}
 
 			/* Mark the final object */
-			if (d_ptr->final_object)
-			{
+			if (d_ptr->final_object) {
 				object_kind *k_ptr = &k_info[d_ptr->final_object];
 
 				k_ptr->flags4 |= TR4_SPECIAL_GENE;
 			}
 
 			/* Give randart if there are no final artifacts */
-			if (!(d_ptr->final_artifact) && !(d_ptr->final_object))
-			{
+			if (!(d_ptr->final_artifact) && !(d_ptr->final_object)) {
 				r_ptr->flags7 |= RF7_DROP_RANDART;
 			}
 		}
@@ -3251,8 +3191,7 @@ static void init_guardians(void)
 }
 #endif	// 0
 
-static bool str_to_boolean(char * str)
-{
+static bool str_to_boolean(char * str) {
 	/* false by default */
 	return !(strcasecmp(str, "true"));
 }
@@ -3490,8 +3429,7 @@ static void set_server_option(char * option, char * value) {
  * Seemingly it caused trouble in win32;
  * Yakina reverted this to strtok.
  */
-static void load_server_cfg_aux(FILE * cfg)
-{
+static void load_server_cfg_aux(FILE * cfg) {
 	char line[256];
 #if 0
 	char * lineofs;
@@ -3504,8 +3442,7 @@ static void load_server_cfg_aux(FILE * cfg)
 	char * value;
 
 	/* Read in lines until we hit EOF */
-	while (fgets(line, 256, cfg) != NULL)
-	{
+	while (fgets(line, 256, cfg) != NULL) {
 		// Chomp off the end of line character
 		line[strlen(line)-1] = '\0';
 
@@ -3555,24 +3492,22 @@ static void load_server_cfg_aux(FILE * cfg)
  * options thave have historically been #defined in config.h.
  */
 
-bool load_server_cfg(void)
-{
+bool load_server_cfg(void) {
 	FILE *cfg_file;
-	
+
 	/* Attempt to open the file */
-//	cfg = fopen("tomenet.cfg", "r");
+	//cfg = fopen("tomenet.cfg", "r");
 	cfg_file = fopen(MANGBAND_CFG, "r");
 
 	/* Failure */
-	if (cfg_file == (FILE*)NULL)
-	{
-//		printf("Error : cannot open file tomenet.cfg\n");
+	if (cfg_file == (FILE*)NULL) {
+		//printf("Error : cannot open file tomenet.cfg\n");
 		printf("Error : cannot open file '%s'\n", MANGBAND_CFG);
 		return (FALSE);
 	}
 
-        /* Default value */
-        cfg.bind_name = NULL;
+	/* Default value */
+	cfg.bind_name = NULL;
 
 	/* Actually parse the file */
 	load_server_cfg_aux(cfg_file);
@@ -3594,15 +3529,14 @@ bool load_server_cfg(void)
  * often contain errors.  This means that macros and message recall
  * and things like that are not available until after they are done.
  */
-void init_some_arrays(void)
-{
+void init_some_arrays(void) {
 	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
 	time_t now;
 	struct tm *tmp;
 
-        /* Init lua */
+	/* Init lua */
 	s_printf("[Initializing lua... (scripts)]\n");
-        init_lua();
+	init_lua();
 
 	/* By calling this before info files are even initialized we can
 	   control parsing them by lua. - C. Blue */
@@ -3704,12 +3638,9 @@ void init_some_arrays(void)
 
 static errr reinit_r_info(void) {
 	errr err;
-
 	s16b idx[MAX_R_IDX];
 	int i, j, total = 0, tmp;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -3763,8 +3694,7 @@ static errr reinit_r_info(void) {
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -3806,9 +3736,7 @@ static errr reinit_r_info(void) {
 
 static errr reinit_k_info(void) {
 	errr err;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -3860,8 +3788,7 @@ static errr reinit_k_info(void) {
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -3883,12 +3810,9 @@ static errr reinit_k_info(void) {
 #if 0 /*not done*/
 static errr reinit_e_info(void) {
 	errr err;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
-
 	int i, j;
 	s16b *e_tval_aux;
 
@@ -3930,8 +3854,7 @@ static errr reinit_e_info(void) {
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
@@ -3996,9 +3919,7 @@ static errr reinit_e_info(void) {
 
 static errr reinit_a_info(void) {
 	errr err;
-
 	FILE *fp;
-
 	/* General buffer */
 	char buf[1024];
 
@@ -4039,8 +3960,7 @@ static errr reinit_a_info(void) {
 	my_fclose(fp);
 
 	/* Errors */
-	if (err)
-	{
+	if (err) {
 		cptr oops;
 
 		/* Error string */
