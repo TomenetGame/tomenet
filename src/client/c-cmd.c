@@ -1338,14 +1338,35 @@ void cmd_high_scores(void) {
 	peruse_file();
 }
 
+static char *fgets_inverse(char *buf, int max, FILE *f) {
+	int c, res, pos;
+	char *ress;
+
+	/* We expect to start positioned on the '\n' of the line we want to read, aka at its very end */
+	fseek(f, -1, SEEK_CUR);
+	while ((c = fgetc(f)) != '\n') {
+		res = fseek(f, -2, SEEK_CUR);
+		/* Did we hit the beginning of the file? Emulate 'EOF' aka return 'NULL' */
+		if (res == -1) return NULL;
+	}
+	/* We're now on the beginning of the line we want to read */
+	pos = ftell(f);
+	ress = fgets(buf, max, f);
+
+	/* Rewind by this line + 1, to fulful our starting expectation for next time again */
+	fseek(f, pos - 1, SEEK_SET);
+
+	return ress;
+}
 void cmd_the_guide(void) {
-	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE;
+	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int line = 0, lastline = -1, searchline, within_cnt, c, n;
-	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
+	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, bufdummy[MAX_CHARS + 1];
 	char search[MAX_CHARS], lastsearch[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
 	FILE *fff;
 	int i;
+	char *res;
 
 	path_build(path, 1024, "", "TomeNET-Guide.txt");
 	fff = my_fopen(path, "r");
@@ -1364,24 +1385,31 @@ void cmd_the_guide(void) {
 
 	while (TRUE) {
 		if (!skip_redraw) Term_clear();
-		Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
+		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
 		//Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
 		Term_putstr(0, bottomline, -1, TERM_L_BLUE, "Up,Dn,PgUp,PgDn,Home,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
-
 		if (skip_redraw) goto skipped_redraw;
 
 		/* Always begin at zero */
-		fseek(fff, 0, SEEK_SET);
+		if (backwards) fseek(fff, 0, SEEK_END);
+		else fseek(fff, 0, SEEK_SET);
 
 		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
 		if (!chapter[0]) {
-			if (!searchwrap) for (n = 0; n < line; n++) fgets(buf, 81, fff);
+			if (backwards) {
+				if (!searchwrap) for (n = 0; n < line; n++) fgets_inverse(buf, 81, fff);
+			} else {
+				if (!searchwrap) for (n = 0; n < line; n++) fgets(buf, 81, fff);
+			}
 		} else searchline = -1; //init searchline for chapter-search
 
 		/* Display as many lines as fit on the screen, starting at the desired position */
 		withinsearch[0] = 0;
 		for (n = 0; n < maxlines; n++) {
-			if (fgets(buf, 81, fff)) {
+			if (backwards) res = fgets_inverse(buf, 81, fff);
+			else res = fgets(buf, 81, fff);
+			if (res) {
 				buf[strlen(buf) - 1] = 0; //strip trailing newlines
 
 				/* Automatically add colours to "(x.yza)" formatted chapter markers */
@@ -1447,7 +1475,8 @@ void cmd_the_guide(void) {
 						chapter[0] = 0;
 						line = searchline;
 						/* Redraw line number display */
-						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
+						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
 					} else {
 						/* Skip all lines until we find the desired chapter */
 						n--;
@@ -1462,7 +1491,8 @@ void cmd_the_guide(void) {
 						chapter[0] = 0;
 						line = searchline;
 						/* Redraw line number display */
-						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
+						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
 					} else {
 						/* Skip all lines until we find the desired chapter */
 						n--;
@@ -1480,6 +1510,17 @@ void cmd_the_guide(void) {
 						withinsearch[0] = 0;
 					/* We found a result */
 					} else if (strcasestr(buf2, search)) {
+						/* Reverse again to normal direction/location */
+						if (backwards) {
+							backwards = FALSE;
+							searchline = lastline - searchline;
+							searchline++;
+							/* Skip end of line, advancing to next line */
+							fseek(fff, 1, SEEK_CUR);
+							/* This line has already been read too, by fgets_inverse(), so skip too */
+							fgets(bufdummy, 81, fff);
+						}
+
 						strcpy(withinsearch, search);
 						search[0] = 0;
 						searchwrap = FALSE;
@@ -1550,6 +1591,12 @@ void cmd_the_guide(void) {
 				search[0] = 0;
 				searchwrap = FALSE;
 			}
+		}
+		/* Reverse again to normal direction/location */
+		if (backwards) {
+			backwards = FALSE;
+			line = lastline - line;
+			line++;
 		}
 
 		skipped_redraw:
@@ -1764,6 +1811,24 @@ void cmd_the_guide(void) {
 		case 'S':
 		case 'd':
 			if (!lastsearch[0]) continue;
+
+			/* Skip the line we're currently in, start with the next line actually */
+			line++;
+			if (line > lastline - maxlines) line = lastline - maxlines;
+			if (line < 0) line = 0;
+
+			strcpy(search, lastsearch);
+			searchline = line - 1; //init searchline for string-search
+			continue;
+		/* search for previous occurance of the previously used search keyword */
+		case 'D':
+		case 'f':
+			if (!lastsearch[0]) continue;
+
+			/* Inverse location/direction */
+			backwards = TRUE;
+			line = lastline - line;
+			line++;
 
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
