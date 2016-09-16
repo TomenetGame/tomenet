@@ -49,6 +49,18 @@ static int tc_bias_magic = 100;
 static int tc_bias_tools = 100;
 static int tc_bias_junk = 100;
 
+static int tc_biasg_treasure = 100;
+static int tc_biasg_combat = 100;
+static int tc_biasg_magic = 100;
+static int tc_biasg_tools = 100;
+static int tc_biasg_junk = 100;
+
+static int tc_biasr_treasure = 100;
+static int tc_biasr_combat = 100;
+static int tc_biasr_magic = 100;
+static int tc_biasr_tools = 100;
+static int tc_biasr_junk = 100;
+
 
 
 /*
@@ -11436,13 +11448,13 @@ void init_treasure_classes(void) {
 	}
 
 	/* Build bias multipliers (percentages) to even out all treasure classes. */
-	tc_bias_treasure = (100 * total) / (total_treasure * 5);
-	tc_bias_combat = (100 * total) / (total_combat * 5);
-	tc_bias_magic = (100 * total) / (total_magic * 5);
-	tc_bias_tools = (100 * total) / (total_tools * 5);
-	tc_bias_junk = (100 * total) / (total_junk * 5);
+	tc_biasg_treasure = (100 * total) / (total_treasure * 5);
+	tc_biasg_combat = (100 * total) / (total_combat * 5);
+	tc_biasg_magic = (100 * total) / (total_magic * 5);
+	tc_biasg_tools = (100 * total) / (total_tools * 5);
+	tc_biasg_junk = (100 * total) / (total_junk * 5);
 
-	s_printf("Initialized Treasure Class Biasses (good): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_bias_treasure, tc_bias_combat, tc_bias_magic, tc_bias_tools, tc_bias_junk);
+	s_printf("Initialized Treasure Class Biasses (good): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_biasg_treasure, tc_biasg_combat, tc_biasg_magic, tc_biasg_tools, tc_biasg_junk);
 
 
 	/* Set filter: Monster is assumed to drop normal / good / great. */
@@ -11488,11 +11500,11 @@ void init_treasure_classes(void) {
 	}
 
 	/* Build bias multipliers (percentages) to even out all treasure classes. */
-	tc_bias_treasure = (100 * total) / (total_treasure * 5);
-	tc_bias_combat = (100 * total) / (total_combat * 5);
-	tc_bias_magic = (100 * total) / (total_magic * 5);
-	tc_bias_tools = (100 * total) / (total_tools * 5);
-	tc_bias_junk = (100 * total) / (total_junk * 5);
+	tc_biasr_treasure = (100 * total) / (total_treasure * 5);
+	tc_biasr_combat = (100 * total) / (total_combat * 5);
+	tc_biasr_magic = (100 * total) / (total_magic * 5);
+	tc_biasr_tools = (100 * total) / (total_tools * 5);
+	tc_biasr_junk = (100 * total) / (total_junk * 5);
 
-	s_printf("Initialized Treasure Class Biasses (great): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_bias_treasure, tc_bias_combat, tc_bias_magic, tc_bias_tools, tc_bias_junk);
+	s_printf("Initialized Treasure Class Biasses (great): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_biasr_treasure, tc_biasr_combat, tc_biasr_magic, tc_biasr_tools, tc_biasr_junk);
 }
