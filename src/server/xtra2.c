@@ -11716,7 +11716,7 @@ void unstatic_level(struct worldpos *wpos){
 			teleport_player_level(i, TRUE);
 		}
 	}
-	new_players_on_depth(wpos,0,FALSE);
+	new_players_on_depth(wpos, 0, FALSE);
 }
 
 /* these Dungeon Master commands should probably be added somewhere else, but I am
@@ -11748,7 +11748,7 @@ bool master_level(int Ind, char * parms) {
 	case 's':
 		/* Increase the number of players on the dungeon
 		 * masters level by one. */
-		new_players_on_depth(&p_ptr->wpos,1,TRUE);
+		new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 		msg_format(Ind, "The level %s has been staticed.", wpos_format(Ind, &p_ptr->wpos));
 		break;
 
@@ -11901,7 +11901,7 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms) {
 	case 's':
 		/* Increase the number of players on the dungeon
 		 * masters level by one. */
-		new_players_on_depth(&p_ptr->wpos,1,TRUE);
+		new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 		msg_print(Ind, "The level has been staticed.");
 		break;
 	/* default -- do nothing. */
