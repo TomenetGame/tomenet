@@ -6731,6 +6731,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		/* Specialty: Left over tvals.
 		   Probably potions and scrolls mostly, these don't need any special treatment:
 		   Monsters specialized on dropping them are already highly valued for that.
+		   Further, notably are food and golem items, books and runes.
 
 		   All left over tvals used to be chance=0, but now that we're matching
 		   kind_is_theme(), any item tval left over here must be possible to spawn: */
@@ -6739,7 +6740,8 @@ static int kind_is_good(int k_idx, u32b resf) {
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
-	/* svals that we assume are 'not good', but let's give them a tiny
+	/* Left over svals (belonging to tvals treated in dedicated switch-cases above),
+	   that we assume are definitely 'not good', but let's give them a tiny
 	   chance nevertheless, to smooth out the item drop choices. */
 	if (k_ptr->cost < 200) return 0; //except items that are really not GOOD
 	return (1 * tc_p) / 100;
@@ -6967,6 +6969,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		/* Specialty: Left over tvals.
 		   Probably potions and scrolls mostly, these don't need any special treatment:
 		   Monsters specialized on dropping them are already highly valued for that.
+		   Further, notably are food and golem items, books and runes.
 
 		   However, low-level DROP_GREAT monsters *might* need treasure class changes
 		   if they're really expected to provide great starter weapons/armour.
@@ -6975,12 +6978,13 @@ static int kind_is_great(int k_idx, u32b resf) {
 
 		   All left over tvals used to be chance=0, but now that we're matching
 		   kind_is_theme(), any item tval left over here must be possible to spawn: */
-		if (k_ptr->cost <= 7000) return 0; //except items that are really not GREAT
+		if (k_ptr->cost <= 7000) return 0; //except items that are really not GREAT (Note though: Artifact Ale is 5k :/)
 		return (100 * tc_p) / 100;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
-	/* svals that we assume are 'not good', but let's give them a tiny
+	/* Left over svals (belonging to tvals treated in dedicated switch-cases above),
+	   that we assume are definitely 'not good', but let's give them a tiny
 	   chance nevertheless, to smooth out the item drop choices. */
 	if (k_ptr->cost <= 7000) return 0; //except items that are really not GREAT
 	return (1 * tc_p) / 100;
