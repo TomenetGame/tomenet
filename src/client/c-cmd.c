@@ -1392,7 +1392,7 @@ void cmd_the_guide(void) {
 		if (skip_redraw) goto skipped_redraw;
 
 		/* Always begin at zero */
-		if (backwards) fseek(fff, 0, SEEK_END);
+		if (backwards) fseek(fff, -1, SEEK_END);
 		else fseek(fff, 0, SEEK_SET);
 
 		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
@@ -1814,8 +1814,10 @@ void cmd_the_guide(void) {
 
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
+#if 0
 			if (line > lastline - maxlines) line = lastline - maxlines;
 			if (line < 0) line = 0;
+#endif
 
 			strcpy(search, lastsearch);
 			searchline = line - 1; //init searchline for string-search
@@ -1832,8 +1834,10 @@ void cmd_the_guide(void) {
 
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
+#if 0
 			if (line > lastline - maxlines) line = lastline - maxlines;
 			if (line < 0) line = 0;
+#endif
 
 			strcpy(search, lastsearch);
 			searchline = line - 1; //init searchline for string-search
