@@ -8607,7 +8607,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 		/* all floors are static? */
 		if (q_qstage->dun_static)
-			new_players_on_depth(wpos, FALSE, 1);
+			new_players_on_depth(wpos, 1, FALSE);
 
 		/* final floor is premade? */
 		if (ABS(wpos->wz) == d_ptr->maxdepth && q_qstage->dun_final_tpref) {
