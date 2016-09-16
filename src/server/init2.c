@@ -489,8 +489,6 @@ static errr init_k_info(void) {
 		quit("Error in 'k_info.txt' file.");
 	}
 
-	init_treasure_classes();
-
 	/* Success */
 	return (0);
 }
