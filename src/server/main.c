@@ -397,6 +397,9 @@ int main(int argc, char *argv[]) {
 	/* Initialize the arrays */
 	init_some_arrays();
 
+	/* After init_alloc() has been called: */
+	init_treasure_classes();
+
 #ifdef COMBO_AM_IC_CAP
 	/* Initialize various stuff */
 	init_combo_am_ic_cap();

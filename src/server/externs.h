@@ -1319,6 +1319,7 @@ void inverse_cursed(object_type *o_ptr);
 void reverse_cursed(object_type *o_ptr);
 #endif
 extern void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr);
+extern void init_treasure_classes(void);
 
 /* party.c */
 extern void account_check(int Ind);
