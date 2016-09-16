@@ -2286,7 +2286,7 @@ void do_cmd_check_server_settings(int Ind) {
 	fprintf(fff,"\n");
 
 	//fprintf(fff, "A dungeon level will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
-	fprintf(fff, "A dungeon level will be erased about %d seconds after you left.\n", cfg.anti_scum); //distributed purge_old() isn't called every 10s anymore
+	fprintf(fff, "An empty, non-static level will be erased after %d seconds minimum lifetime.\n", cfg.anti_scum); //distributed purge_old() isn't called every 10s anymore; use creationtime instead of lastused
 	if ((k = cfg.level_unstatic_chance) && cfg.min_unstatic_level) {
 		if (cfg.preserve_death_level < 201)
 			fprintf(fff, "Ghost-dying on dungeon level %d or deeper, or logging out on dungeon level %d\n or deeper keeps the floor static for %d*dunlevel minutes\n", cfg.preserve_death_level, cfg.min_unstatic_level, k);
