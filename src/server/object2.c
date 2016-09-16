@@ -11429,7 +11429,7 @@ void init_treasure_classes(void) {
 
 
 	/* Set filter: Monster is assumed to drop normal / good / great. */
-	get_obj_num_hook = kind_is_legal; //bare, normal allocation. No extra flags.
+	get_obj_num_hook = kind_is_normal; //bare, normal allocation. No extra flags.
 
 	total = 0;
 	total_treasure = 0;
@@ -11470,6 +11470,8 @@ void init_treasure_classes(void) {
 		}
 	}
 
+	s_printf("Accumulated Treasure Class Biasses (normal) : %5d, %5d, %5d, %5d, %5d.\n", total_treasure, total_combat, total_magic, total_tools, total_junk);
+
 	/* Limit to x10; limiting is needed to prevent div0 anyway. */
 	if (total_treasure < total / max_bias) total_treasure = total / max_bias;
 	if (total_combat < total / max_bias) total_combat = total / max_bias;
@@ -11484,7 +11486,7 @@ void init_treasure_classes(void) {
 	tc_bias_tools = (100 * total) / (total_tools * 5);
 	tc_bias_junk = (100 * total) / (total_junk * 5);
 
-	s_printf("Initialized Treasure Class Biasses (legal): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_bias_treasure, tc_bias_combat, tc_bias_magic, tc_bias_tools, tc_bias_junk);
+	s_printf("Initialized Treasure Class Biasses (normal) : %4d%%, %4d%%, %4d%%, %4d%%, %4d%%.\n", tc_bias_treasure, tc_bias_combat, tc_bias_magic, tc_bias_tools, tc_bias_junk);
 
 
 	/* Set filter: Monster is assumed to drop normal / good / great. */
@@ -11529,6 +11531,8 @@ void init_treasure_classes(void) {
 		}
 	}
 
+	s_printf("Accumulated Treasure Class Biasses (good)   : %5d, %5d, %5d, %5d, %5d.\n", total_treasure, total_combat, total_magic, total_tools, total_junk);
+
 	/* Limit to x10; limiting is needed to prevent div0 anyway. */
 	if (total_treasure < total / max_bias) total_treasure = total / max_bias;
 	if (total_combat < total / max_bias) total_combat = total / max_bias;
@@ -11543,7 +11547,7 @@ void init_treasure_classes(void) {
 	tc_biasg_tools = (100 * total) / (total_tools * 5);
 	tc_biasg_junk = (100 * total) / (total_junk * 5);
 
-	s_printf("Initialized Treasure Class Biasses (good): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_biasg_treasure, tc_biasg_combat, tc_biasg_magic, tc_biasg_tools, tc_biasg_junk);
+	s_printf("Initialized Treasure Class Biasses (good)   : %4d%%, %4d%%, %4d%%, %4d%%, %4d%%.\n", tc_biasg_treasure, tc_biasg_combat, tc_biasg_magic, tc_biasg_tools, tc_biasg_junk);
 
 
 	/* Set filter: Monster is assumed to drop normal / good / great. */
@@ -11588,6 +11592,8 @@ void init_treasure_classes(void) {
 		}
 	}
 
+	s_printf("Accumulated Treasure Class Biasses (great)  : %5d, %5d, %5d, %5d, %5d.\n", total_treasure, total_combat, total_magic, total_tools, total_junk);
+
 	/* Limit to x10; limiting is needed to prevent div0 anyway. */
 	if (total_treasure < total / max_bias) total_treasure = total / max_bias;
 	if (total_combat < total / max_bias) total_combat = total / max_bias;
@@ -11602,5 +11608,5 @@ void init_treasure_classes(void) {
 	tc_biasr_tools = (100 * total) / (total_tools * 5);
 	tc_biasr_junk = (100 * total) / (total_junk * 5);
 
-	s_printf("Initialized Treasure Class Biasses (great): %d%%, %d%%, %d%%, %d%%, %d%%.\n", tc_biasr_treasure, tc_biasr_combat, tc_biasr_magic, tc_biasr_tools, tc_biasr_junk);
+	s_printf("Initialized Treasure Class Biasses (great)  : %4d%%, %4d%%, %4d%%, %4d%%, %4d%%.\n", tc_biasr_treasure, tc_biasr_combat, tc_biasr_magic, tc_biasr_tools, tc_biasr_junk);
 }
