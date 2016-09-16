@@ -5511,7 +5511,7 @@ bool stale_level(struct worldpos *wpos, int grace) {
 		if (!d_ptr) return FALSE;
 		l_ptr = &d_ptr->level[ABS(wpos->wz) - 1];
 #if DEBUG_LEVEL > 1
-		s_printf("%s  now:%d last:%d diff:%d grace:%d players:%d\n", wpos_format(0, wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
+		s_printf("%s  now:%ld last:%ld diff:%ld grace:%d players:%d\n", wpos_format(0, wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
 #endif
 		if (now - l_ptr->lastused > grace) return TRUE;
 	} else if (now - wild_info[wpos->wy][wpos->wx].lastused > grace) {
