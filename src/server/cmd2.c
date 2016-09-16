@@ -1294,7 +1294,11 @@ void do_cmd_go_down(int Ind) {
 #endif
 		}
 		else if (wpos->wz == 1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
+#ifndef PROBTRAVEL_AVOIDS_OTHERS
 		else msg_print(Ind, "You float downwards.");
+#else
+		else if (p_ptr->ghost) msg_print(Ind, "You float downwards.");
+#endif
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
 #ifndef PROBTRAVEL_AVOIDS_OTHERS
 		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
