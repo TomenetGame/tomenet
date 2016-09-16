@@ -6577,15 +6577,17 @@ static int kind_is_good(int k_idx, u32b resf) {
 	/* Armor -- Good unless damaged */
 	case TV_HARD_ARMOR:
 	case TV_SOFT_ARMOR:
-	case TV_DRAG_ARMOR:
 	case TV_SHIELD:
 	case TV_CLOAK:
 	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
+		if (k_ptr->to_a < 0) return 0;
+		return (tc_p * tc_biasg_combat) / 500;
+	case TV_DRAG_ARMOR:
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return 0;
-		return (100 * tc_p) / 100;
+		return (tc_p * tc_biasg_treasure) / 500;
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -6594,23 +6596,27 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_POLEARM:
 	case TV_AXE:
 	case TV_BOOMERANG:
+		if (k_ptr->to_h < 0) return 0;
+		if (k_ptr->to_d < 0) return 0;
+		return (tc_p * tc_biasg_combat) / 500;
 	/* Diggers are similar to weapons in this regard */
 	case TV_DIGGING:
 		if (k_ptr->to_h < 0) return 0;
 		if (k_ptr->to_d < 0) return 0;
-		return (100 * tc_p) / 100;
+		return (tc_p * tc_biasg_tools) / 500;
 
 	/* Ammo -- Arrows/Bolts are good */
 	case TV_BOLT:
 	case TV_ARROW:
 	case TV_SHOT:
 		if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
+		return (tc_p * tc_biasg_combat) / 500;
 	case TV_MSTAFF:
-		return (100 * tc_p) / 100;
+		return (tc_p * tc_biasg_magic) / 500;
 
 	/* Trap kits are good now, since weapons are, too. */
 	case TV_TRAPKIT:
-		return (25 * tc_p) / 100;
+		return (tc_p * tc_biasg_tools) / 500;
 
 	/* Rings -- Rings of Speed are good */
 	case TV_RING:
@@ -6639,7 +6645,6 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_RING_RES_CHAOS:
 		case SV_RING_INVIS:
 #endif
-			return (35 * tc_p) / 100;
 #if 1 /* 4.6.2; lesser rings, but still ok for when we're matching monster themes (kind_is_legal() call above): */
 		case SV_RING_RESIST_POIS:
 		case SV_RING_RES_BLINDNESS:
@@ -6648,8 +6653,8 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_RING_ICE:
 		case SV_RING_ACID:
 		case SV_RING_ELEC:
-			return (15 * tc_p) / 100;
 #endif
+			return (tc_p * tc_biasg_magic) / 500;
 		}
 		break;
 
@@ -6664,7 +6669,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_LITE_PALANTIR:
 		case SV_ANCHOR_SPACETIME:
 		case SV_STONE_LORE:
-			return (50 * tc_p) / 100;
+			return (tc_p * tc_biasg_tools) / 500;
 		}
 		break;
 
@@ -6692,7 +6697,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_AMULET_SSHARD:
 		case SV_AMULET_SPEED:
 		case SV_AMULET_TERKEN:
-			return (25 * tc_p) / 100;
+			return (tc_p * tc_biasg_magic) / 500;
 		}
 		break;
 
@@ -6710,7 +6715,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_STAFF_EARTHQUAKES:
 		case SV_STAFF_DESTRUCTION:
 		case SV_STAFF_STAR_IDENTIFY:
-			return (13 * tc_p) / 100;
+			return (tc_p * tc_biasg_magic) / 500;
 		}
 		break;
 	case TV_WAND:
@@ -6731,7 +6736,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_WAND_ROCKETS:
 		case SV_WAND_TELEPORT_AWAY:
 		//case SV_WAND_WALL_CREATION:
-			return (13 * tc_p) / 100;
+			return (tc_p * tc_biasg_magic) / 500;
 		}
 		break;
 	case TV_ROD:
@@ -6756,7 +6761,7 @@ static int kind_is_good(int k_idx, u32b resf) {
 		case SV_ROD_COLD_BALL:
 		case SV_ROD_FIRE_BALL:
 		case SV_ROD_HAVOC:
-			return (5 * tc_p) / 100;
+			return (tc_p * tc_biasg_magic) / 500;
 		}
 		break;
 	default:
@@ -6768,7 +6773,16 @@ static int kind_is_good(int k_idx, u32b resf) {
 		   All left over tvals used to be chance=0, but now that we're matching
 		   kind_is_theme(), any item tval left over here must be possible to spawn: */
 		if (k_ptr->cost < 200) return 0; //except items that are really not GOOD
-		return (100 * tc_p) / 100;
+
+		switch (which_theme(k_ptr->tval)) {
+		case 1: return (tc_p * tc_biasg_treasure) / 500;
+		case 2: return (tc_p * tc_biasg_combat) / 500;
+		case 3: return (tc_p * tc_biasg_magic) / 500;
+		case 4: return (tc_p * tc_biasg_tools) / 500;
+		case 0: return (tc_p * tc_biasg_junk) / 500;
+		}
+		//-1, unclassified item (paranoia)
+		return tc_p / 5;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
@@ -6776,7 +6790,24 @@ static int kind_is_good(int k_idx, u32b resf) {
 	   that we assume are definitely 'not good', but let's give them a tiny
 	   chance nevertheless, to smooth out the item drop choices. */
 	if (k_ptr->cost < 200) return 0; //except items that are really not GOOD
-	return (1 * tc_p) / 100;
+
+#if 0
+	switch (which_theme(k_ptr->tval)) {
+	case 1: return (tc_p * tc_biasg_treasure) / 500;
+	case 2: return (tc_p * tc_biasg_combat) / 500;
+	case 3: return (tc_p * tc_biasg_magic) / 500;
+	case 4: return (tc_p * tc_biasg_tools) / 500;
+	case 0: return (tc_p * tc_biasg_junk) / 500;
+	}
+	//-1, unclassified item (paranoia)
+	return tc_p / 5;
+#endif
+#if 1
+	return (tc_p * 1) / 100; //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
+#endif
+#if 0
+	return 0;
+#endif
 }
 /* A variant of kind_is_good() for DROP_GREAT monsters.
    The main difference is, that flavoured objects do not have 'great' enchantments,
@@ -6798,15 +6829,17 @@ static int kind_is_great(int k_idx, u32b resf) {
 	/* Armor -- Good unless damaged */
 	case TV_HARD_ARMOR:
 	case TV_SOFT_ARMOR:
-	case TV_DRAG_ARMOR:
 	case TV_SHIELD:
 	case TV_CLOAK:
 	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
+		if (k_ptr->to_a < 0) return 0;
+		return (tc_p * tc_biasr_combat) / 500;
+	case TV_DRAG_ARMOR:
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return 0;
-		return (100 * tc_p) / 100;
+		return (tc_p * tc_biasr_magic) / 500;
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -6815,23 +6848,27 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TV_POLEARM:
 	case TV_AXE:
 	case TV_BOOMERANG:
+		if (k_ptr->to_h < 0) return 0;
+		if (k_ptr->to_d < 0) return 0;
+		return (tc_p * tc_biasr_combat) / 500;
 	/* Diggers are similar to weapons in this regard */
 	case TV_DIGGING:
 		if (k_ptr->to_h < 0) return 0;
 		if (k_ptr->to_d < 0) return 0;
-		return (100 * tc_p) / 100;
+		return (tc_p * tc_biasr_tools) / 500;
 
 	/* Ammo -- Arrows/Bolts are good */
 	case TV_BOLT:
 	case TV_ARROW:
 	case TV_SHOT:
 		if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
+		return (tc_p * tc_biasr_combat) / 500;
 	case TV_MSTAFF:
-		return (100 * tc_p) / 100;
+		return (tc_p * tc_biasr_magic) / 500;
 
 	/* Trap kits are good now, since weapons are, too. */
 	case TV_TRAPKIT:
-		return (25 * tc_p) / 100;
+		return (tc_p * tc_biasr_tools) / 500;
 
 	/* Rings -- Rings of Speed are good */
 	case TV_RING:
@@ -6855,7 +6892,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_RING_RES_CHAOS:
 		case SV_RING_INVIS:
 #endif
-			return (35 * tc_p) / 100;
+			return (tc_p * tc_biasr_magic) / 500;
 		}
 		break;
 
@@ -6874,7 +6911,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_LITE_PALANTIR:
 		case SV_ANCHOR_SPACETIME:
 		case SV_STONE_LORE:
-			return (50 * tc_p) / 100;
+			return (tc_p * tc_biasr_tools) / 500;
 		}
 		break;
 
@@ -6904,7 +6941,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_AMULET_RAGE:
 		case SV_AMULET_GROM:
 		case SV_AMULET_SSHARD:
-			return (25 * tc_p) / 100;
+			return (tc_p * tc_biasr_magic) / 500;
 		}
 		break;
 
@@ -6927,7 +6964,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_STAFF_THE_MAGI:
 		case SV_STAFF_HOLINESS:
 		case SV_STAFF_STAR_IDENTIFY:
-			return (13 * tc_p) / 100;
+			return (tc_p * tc_biasr_magic) / 500;
 		}
 		break;
 	case TV_WAND:
@@ -6950,7 +6987,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_WAND_DRAIN_LIFE:
 		case SV_WAND_ANNIHILATION:
 		case SV_WAND_ROCKETS:
-			return (13 * tc_p) / 100;
+			return (tc_p * tc_biasr_magic) / 500;
 		}
 		break;
 	case TV_ROD:
@@ -6980,7 +7017,7 @@ static int kind_is_great(int k_idx, u32b resf) {
 		case SV_ROD_SPEED:
 		case SV_ROD_DRAIN_LIFE:
 		case SV_ROD_HAVOC:
-			return (5 * tc_p) / 100;
+			return (tc_p * tc_biasr_magic) / 500;
 		}
 		break;
 
@@ -6991,11 +7028,11 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TV_BOOK:
 		/* No handbooks, even though they're pretty costly. */
 		if (k_ptr->cost <= 20000) return 0; //Tomes+Grimoires
-		return (100 * tc_p) / 100;
+		return (tc_p * tc_biasr_magic) / 500;
 	case TV_GOLEM:
 		/* Only rare massive pieces (gold+), no arms/legs/scrolls */
 		if (k_ptr->cost < 20000) return 0;
-		return (100 * tc_p) / 100;
+		return (tc_p * tc_biasr_junk) / 500;
 
 	default:
 		/* Specialty: Left over tvals.
@@ -7011,7 +7048,16 @@ static int kind_is_great(int k_idx, u32b resf) {
 		   All left over tvals used to be chance=0, but now that we're matching
 		   kind_is_theme(), any item tval left over here must be possible to spawn: */
 		if (k_ptr->cost <= 7000) return 0; //except items that are really not GREAT (Note though: Artifact Ale is 5k :/)
-		return (100 * tc_p) / 100;
+
+		switch (which_theme(k_ptr->tval)) {
+		case 1: return (tc_p * tc_biasr_treasure) / 500;
+		case 2: return (tc_p * tc_biasr_combat) / 500;
+		case 3: return (tc_p * tc_biasr_magic) / 500;
+		case 4: return (tc_p * tc_biasr_tools) / 500;
+		case 0: return (tc_p * tc_biasr_junk) / 500;
+		}
+		//-1, unclassified item (paranoia)
+		return tc_p / 5;
 	}
 	//note: no tools atm :/ could add +2/+3 diggers?
 
@@ -7019,7 +7065,24 @@ static int kind_is_great(int k_idx, u32b resf) {
 	   that we assume are definitely 'not good', but let's give them a tiny
 	   chance nevertheless, to smooth out the item drop choices. */
 	if (k_ptr->cost <= 7000) return 0; //except items that are really not GREAT
-	return (1 * tc_p) / 100;
+
+#if 0
+	switch (which_theme(k_ptr->tval)) {
+	case 1: return (tc_p * tc_biasr_treasure) / 500;
+	case 2: return (tc_p * tc_biasr_combat) / 500;
+	case 3: return (tc_p * tc_biasr_magic) / 500;
+	case 4: return (tc_p * tc_biasr_tools) / 500;
+	case 0: return (tc_p * tc_biasr_junk) / 500;
+	}
+	//-1, unclassified item (paranoia)
+	return tc_p / 5;
+#endif
+#if 1
+	return (tc_p * 1) / 100; //absolute minimum chance that is guaranteed to be not 0 for any rarest item: 1%.
+#endif
+#if 0
+	return 0;
+#endif
 }
 
 /* Variant of kind_is_good() that includes trap kits,
