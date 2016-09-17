@@ -8394,7 +8394,11 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	}
 
 	/* Refresh music when shuffle_music is toggled */
-	if (option_info[i].o_var == &c_cfg.shuffle_music) music(-3);
+	if (option_info[i].o_var == &c_cfg.shuffle_music) {
+		/* ..but only if we're not already in the process of changing music! */
+		if (music_next == -1)
+			music(-3); //refresh!
+	}
 }
 
 /* Helper functions for DONT_CLEAR_TOPLINE_IF_AVOIDABLE - C. Blue */
