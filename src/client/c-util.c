@@ -6943,7 +6943,7 @@ static void do_cmd_options_fonts(void) {
 			if ((window_flag[y] & PW_MINIMAP) && graphic_fonts > 0)
 			{
 				//Include the graphic fonts, because we are cycling the mini-map
-				for (j = 0; j < graphic_fonts - 1; j++) {
+				for (j = 1; j < graphic_fonts; j++) {
 					if (!strcmp(graphic_font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j - 1]);
