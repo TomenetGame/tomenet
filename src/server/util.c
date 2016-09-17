@@ -1770,29 +1770,6 @@ void handle_music(int Ind) {
 			case TOWN_KHAZADDUM: tmus = 7; tmus_inverse = 54; break; //Khaz
 			}
 
-			/* Seasonal music, overrides the music of the place (usually Bree) where it mainly takes place */
-			if (season_halloween) {
-				/* Designated place: Bree */
-				if (istown(&p_ptr->wpos) && (tmus == 1 || tmus_inverse == 1)) {
-					Send_music(Ind, 83, tmus);
-					return;
-				}
-			}
-			else if (season_xmas) {
-				/* Designated place: Bree */
-				if (istown(&p_ptr->wpos) && (tmus == 1 || tmus_inverse == 1)) {
-					Send_music(Ind, 84, tmus);
-					return;
-				}
-			}
-			else if (season_newyearseve) {
-				/* Designated place: Bree */
-				if (istown(&p_ptr->wpos) && (tmus == 1 || tmus_inverse == 1)) {
-					Send_music(Ind, 85, tmus);
-					return;
-				}
-			}
-
 			/* Sickbay hack */
 			if (p_ptr->music_monster == -3) {
 				Send_music(Ind, 86, tmus);
@@ -1821,6 +1798,20 @@ void handle_music(int Ind) {
 				}
 				Send_music(Ind, tmus_inverse, tmus);
 				return;
+			}
+
+			/* Seasonal music, overrides the music of the place (usually Bree) where it mainly takes place */
+			if (season_halloween) {
+				/* Designated place: Bree */
+				if (town[i].type == TOWN_BREE) tmus = tmus_inverse = 83;
+			}
+			else if (season_xmas) {
+				/* Designated place: Bree */
+				if (town[i].type == TOWN_BREE) tmus = tmus_inverse = 84;
+			}
+			else if (season_newyearseve) {
+				/* Designated place: Bree */
+				if (town[i].type == TOWN_BREE) tmus = tmus_inverse = 85;
 			}
 
 			/* now the specialty: If we're coming from elsewhere,
