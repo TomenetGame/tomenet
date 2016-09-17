@@ -1722,6 +1722,11 @@ void handle_music(int Ind) {
 		p_ptr->music_monster = -2;
 		Send_music(Ind, sector00music, sector00musicalt);
 		return;
+	} else if (in_sector00_dun(&p_ptr->wpos)) {
+		//hack: init music as 'higher priority than boss-specific':
+		p_ptr->music_monster = -2;
+		Send_music(Ind, sector00music_dun, sector00musicalt_dun);
+		return;
 	}
 
 	/* No-tele grid: Re-use 'terrifying' bgm for this */

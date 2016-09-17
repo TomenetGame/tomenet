@@ -7829,8 +7829,8 @@ static void process_global_event(int ge_id) {
 				s_printf("EVENT_LAYOUT: Dungeon already in place.\n");
 			}
 
-			sector00music = 62;
-			sector00musicalt = 0;
+			sector00music_dun = 62;
+			sector00musicalt_dun = 0;
 
 			/* teleport the participants into the dungeon */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
@@ -7902,8 +7902,8 @@ static void process_global_event(int ge_id) {
 			}
 			break;
 		case 2: /* final exp phase after the warning has been issued - end prematurely if needed (see above) */
-			sector00music = 63;
-			sector00musicalt = 0;
+			sector00music_dun = 63;
+			sector00musicalt_dun = 0;
 
 			n = 0;
 			k = 0;
@@ -8542,6 +8542,9 @@ static void process_global_event(int ge_id) {
 			sector00music = 65;
 			sector00musicalt = 47; /* death match music */
 			for (i = 1; i <= NumPlayers; i++)
+				if (!Players[i]->admin_dm &&
+				    Players[i]->wpos.wx == WPOS_SECTOR00_X &&
+				    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
 				handle_music(i);
 
 			ge->state[0] = 2;

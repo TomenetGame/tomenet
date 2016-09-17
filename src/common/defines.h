@@ -8334,6 +8334,7 @@ extern int PlayerUID;
 #define WPOS_SECTOR00_X		0       /* location of our protected and used-for-special-cases sector 'sector00' */
 #define WPOS_SECTOR00_Y		0
 #define WPOS_SECTOR00_Z		0
+#define WPOS_SECTOR00_Z_DUN	-1
 #define WPOS_SECTOR00_ADJAC_X	1	/* if we want to get out of sector00, what coord can be used for x? */
 #define WPOS_SECTOR00_ADJAC_Y	1	/* if we want to get out of sector00, what coord can be used for y? */
 
@@ -8530,6 +8531,8 @@ extern int PlayerUID;
 /* in sector00, and it is active (separated)? */
 #define in_sector00(wpos) \
 	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz == WPOS_SECTOR00_Z)
+#define in_sector00_dun(wpos) \
+	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * WPOS_SECTOR00_Z_DUN > 0)
 
 /* Is given wpos-pointer one of the two fixed towns, Menegroth or Nargothrond
    at dlvl 40 and 80 respectively, in the Ironman Deep Dive Challenge dungeon? */
