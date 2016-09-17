@@ -2379,7 +2379,7 @@ void do_cmd_options_sfx_sdl(void) {
 /* Display options page UI that allows to comment out music easily */
 void do_cmd_options_mus_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
-	int y = 0;//, max_events = 0;
+	int y = 0, j_sel = 0;//, max_events = 0;
 	char ch;
 	byte a, a2;
 	cptr lua_name;
@@ -2431,10 +2431,11 @@ void do_cmd_options_mus_sdl(void) {
 				sprintf(out_val, "return get_music_name(%d)", j);
 				lua_name = string_exec_lua(0, out_val);
 			} else lua_name = "<nothing>";
+			if (i == y) j_sel = j;
 
 			/* set colour depending on enabled/disabled state */
 			//todo - c_cfg.use_color D: yadayada
-			if (songs[i].disabled) {
+			if (songs[j].disabled) {
 				a = TERM_L_DARK;
 				a2 = TERM_UMBER;
 			} else {
@@ -2444,7 +2445,7 @@ void do_cmd_options_mus_sdl(void) {
 
 			Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, a2, format("%3d", i + 1));
 			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                ");
-			if (i == music_cur) {
+			if (j == music_cur) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%s    (playing)", (char*)lua_name));
 			} else
@@ -2575,26 +2576,26 @@ void do_cmd_options_mus_sdl(void) {
 			break;
 
 		case 't':
-			songs[y].disabled = !songs[y].disabled;
-			if (songs[y].disabled) {
-				if (music_cur == y && Mix_PlayingMusic()) Mix_HaltMusic();
+			songs[j_sel].disabled = !songs[j_sel].disabled;
+			if (songs[j_sel].disabled) {
+				if (music_cur == j_sel && Mix_PlayingMusic()) Mix_HaltMusic();
 			} else {
-				if (music_cur == y) {
+				if (music_cur == j_sel) {
 					music_cur = -1; //allow restarting it
-					play_music(y);
+					play_music(j_sel);
 				}
 			}
 			break;
 		case 'y':
-			songs[y].disabled = FALSE;
-			if (music_cur == y) {
+			songs[j_sel].disabled = FALSE;
+			if (music_cur == j_sel) {
 				music_cur = -1; //allow restarting it
-				play_music(y);
+				play_music(j_sel);
 			}
 			break;
 		case 'n':
-			songs[y].disabled = TRUE;
-			if (music_cur == y && Mix_PlayingMusic()) Mix_HaltMusic();
+			songs[j_sel].disabled = TRUE;
+			if (music_cur == j_sel && Mix_PlayingMusic()) Mix_HaltMusic();
 			break;
 
 		case '#':
