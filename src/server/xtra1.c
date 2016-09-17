@@ -7642,6 +7642,7 @@ static void process_global_event(int ge_id) {
 						if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
+							msg_broadcast_format(j, "\377s%s has gained experience and is no longer eligible.", p_ptr->name);
 #ifdef USE_SOUND_2010
 							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
 #endif
@@ -7652,6 +7653,7 @@ static void process_global_event(int ge_id) {
 						if (d_ptr && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_RECALL)) || (d_ptr->flags2 & (DF2_IRON | DF2_NO_EXIT_WOR)))) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
+							msg_broadcast_format(j, "\377s%s isn't allowed to leave the dungeon to participate.", p_ptr->name);
 #ifdef USE_SOUND_2010
 							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
 #endif
@@ -7664,6 +7666,7 @@ static void process_global_event(int ge_id) {
 						if ((p_ptr->max_plv > 14) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
+							msg_broadcast_format(j, "\377s%s is no longer eligible due to character level.", p_ptr->name);
 #ifdef USE_SOUND_2010
 							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
 #endif
@@ -7674,6 +7677,7 @@ static void process_global_event(int ge_id) {
 						if (d_ptr && ((d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_RECALL)) || (d_ptr->flags2 & (DF2_IRON | DF2_NO_EXIT_WOR)))) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
+							msg_broadcast_format(j, "\377s%s isn't allowed to leave the dungeon to participate.", p_ptr->name);
 #ifdef USE_SOUND_2010
 							sound(j, "failure", NULL, SFX_TYPE_MISC, FALSE);
 #endif
