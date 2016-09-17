@@ -10608,7 +10608,8 @@ s16b floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr)
 }
 #endif	// 0
 
-/* Easier unified artifact handling */
+/* Easier unified artifact handling.
+   Note: ONLY call these if SURE that aidx isn't ART_RANDART but a true_artifact_p()! */
 void handle_art_i(int aidx) {
 	if (a_info[aidx].cur_num < 255) a_info[aidx].cur_num++;
 	a_info[aidx].known = TRUE;
