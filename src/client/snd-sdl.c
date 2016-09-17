@@ -1091,6 +1091,7 @@ static void play_sound_weather(int event) {
 		puts(format("w-2: wco %d, ev %d", weather_channel, event));
 #endif
 		Mix_HaltChannel(weather_channel);
+		weather_current = -1;
 		return;
 	}
 
@@ -1113,6 +1114,7 @@ static void play_sound_weather(int event) {
 			if (!weather_channel_volume) Mix_HaltChannel(weather_channel); else //hack: workaround SDL bug that doesn't terminate a sample playing at 0 volume after a FadeOut
 			Mix_FadeOutChannel(weather_channel, 2000);
 		}
+		weather_current = -1;
 		return;
 	}
 
@@ -1255,6 +1257,7 @@ static void play_sound_weather_vol(int event, int vol) {
 		puts(format("w-2: wco %d, ev %d", weather_channel, event));
 #endif
 		Mix_HaltChannel(weather_channel);
+		weather_current = -1;
 		return;
 	}
 
@@ -1277,6 +1280,7 @@ static void play_sound_weather_vol(int event, int vol) {
 			if (!weather_channel_volume) Mix_HaltChannel(weather_channel); else //hack: workaround SDL bug that doesn't terminate a sample playing at 0 volume after a FadeOut
 			Mix_FadeOutChannel(weather_channel, 2000);
 		}
+		weather_current = -1;
 		return;
 	}
 
@@ -1466,6 +1470,7 @@ static void play_sound_ambient(int event) {
 		puts(format("w-2: wco %d, ev %d", ambient_channel, event));
 #endif
 		Mix_HaltChannel(ambient_channel);
+		ambient_current = -1;
 		return;
 	}
 
@@ -1488,6 +1493,7 @@ static void play_sound_ambient(int event) {
 			if (!ambient_channel_volume) Mix_HaltChannel(ambient_channel); else //hack: workaround SDL bug that doesn't terminate a sample playing at 0 volume after a FadeOut
 			Mix_FadeOutChannel(ambient_channel, 2000);
 		}
+		ambient_current = -1;
 		return;
 	}
 
@@ -1653,6 +1659,7 @@ static bool play_music(int event) {
 	if (event == -2) {
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(500);
+		music_cur = -1;
 		return TRUE; //whatever..
 	}
 
@@ -1674,6 +1681,7 @@ static bool play_music(int event) {
 		/* Stop currently playing music though, before returning */
 		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
 			Mix_FadeOutMusic(2000);
+		music_cur = -1;
 		return TRUE; /* claim that it 'succeeded' */
 	}
 #endif
@@ -2108,7 +2116,7 @@ static Mix_Music* load_song(int idx, int subidx) {
 /* Display options page UI that allows to comment out sounds easily */
 void do_cmd_options_sfx_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
-	int y = 0;
+	int y = 0, j_sel = 0;
 	char ch;
 	byte a, a2;
 	cptr lua_name;
@@ -2160,10 +2168,11 @@ void do_cmd_options_sfx_sdl(void) {
 				sprintf(out_val, "return get_sound_name(%d)", j);
 				lua_name = string_exec_lua(0, out_val);
 			} else lua_name = "<nothing>";
+			if (i == y) j_sel = j;
 
 			/* set colour depending on enabled/disabled state */
 			//todo - c_cfg.use_color D: yadayada
-			if (samples[i].disabled) {
+			if (samples[j].disabled) {
 				a = TERM_L_DARK;
 				a2 = TERM_UMBER;
 			} else {
@@ -2174,7 +2183,7 @@ void do_cmd_options_sfx_sdl(void) {
 			Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, a2, format("%3d", i + 1));
 			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                ");
 			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
-			if (i == weather_current || i == ambient_current) {
+			if (j == weather_current || j == ambient_current) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%s    (playing)", (char*)lua_name));
 			} else
@@ -2305,38 +2314,38 @@ void do_cmd_options_sfx_sdl(void) {
 			break;
 
 		case 't':
-			samples[y].disabled = !samples[y].disabled;
-			if (samples[y].disabled) {
-				if (y == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
-				if (y == ambient_current && ambient_channel != -1 && Mix_Playing(ambient_channel)) Mix_HaltChannel(ambient_channel);
+			samples[j_sel].disabled = !samples[j_sel].disabled;
+			if (samples[j_sel].disabled) {
+				if (j_sel == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
+				if (j_sel == ambient_current && ambient_channel != -1 && Mix_Playing(ambient_channel)) Mix_HaltChannel(ambient_channel);
 			} else {
-				if (y == weather_current) {
+				if (j_sel == weather_current) {
 					weather_current = -1; //allow restarting it
-					if (weather_current_vol != -1) play_sound_weather(y);
-					else play_sound_weather_vol(y, weather_current_vol);
+					if (weather_current_vol != -1) play_sound_weather(j_sel);
+					else play_sound_weather_vol(j_sel, weather_current_vol);
 				}
-				if (y == ambient_current) {
+				if (j_sel == ambient_current) {
 					ambient_current = -1; //allow restarting it
-					play_sound_ambient(y);
+					play_sound_ambient(j_sel);
 				}
 			}
 			break;
 		case 'y':
-			samples[y].disabled = FALSE;
-			if (y == weather_current) {
+			samples[j_sel].disabled = FALSE;
+			if (j_sel == weather_current) {
 				weather_current = -1; //allow restarting it
-				if (weather_current_vol != -1) play_sound_weather(y);
-				else play_sound_weather_vol(y, weather_current_vol);
+				if (weather_current_vol != -1) play_sound_weather(j_sel);
+				else play_sound_weather_vol(j_sel, weather_current_vol);
 			}
-			if (y == ambient_current) {
+			if (j_sel == ambient_current) {
 				ambient_current = -1; //allow restarting it
-				play_sound_ambient(y);
+				play_sound_ambient(j_sel);
 			}
 			break;
 		case 'n':
-			samples[y].disabled = TRUE;
-			if (y == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
-			if (y == ambient_current && ambient_channel != -1 && Mix_Playing(ambient_channel)) Mix_HaltChannel(ambient_channel);
+			samples[j_sel].disabled = TRUE;
+			if (j_sel == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
+			if (j_sel == ambient_current && ambient_channel != -1 && Mix_Playing(ambient_channel)) Mix_HaltChannel(ambient_channel);
 			break;
 
 		case '#':
