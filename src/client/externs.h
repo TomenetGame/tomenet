@@ -536,6 +536,7 @@ extern void flush(void);
 extern void flush_now(void);
 #ifdef RETRY_LOGIN
 extern void RL_revert_input(void);
+extern void clear_macros(void);
 #endif
 extern void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag);
 extern bool macro_del(cptr pat);

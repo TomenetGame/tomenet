@@ -8493,3 +8493,20 @@ void handle_process_font_file(void) {
 	}
 #endif
 }
+
+#ifdef RETRY_LOGIN
+void clear_macros(void) {
+	int i;
+
+	for (i = 0; i < macro__num; i++) {
+		string_free(macro__pat[i]);
+		macro__pat[i] = NULL;
+		string_free(macro__act[i]);
+		macro__act[i] = NULL;
+		macro__cmd[i] = FALSE;
+		macro__hyb[i] = FALSE;
+	}
+	macro__num = 0;
+	for (i = 0; i < 256; i++) macro__use[i] = 0;
+}
+#endif
