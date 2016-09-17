@@ -1443,7 +1443,7 @@ static void store_delete(store_type *st_ptr) {
 	if (rand_int(100) < 50) num = 1;
 
 	/* Hack -- preserve artifacts */
-	if (artifact_p(o_ptr)) {
+	if (true_artifact_p(o_ptr)) {
 		/* Preserve this one */
 		handle_art_d(o_ptr->name1);
 	}

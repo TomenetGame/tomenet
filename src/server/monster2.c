@@ -5659,7 +5659,7 @@ void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr) {
 		m_ptr->hold_o_idx = o_idx;
 	} else {
 		/* Hack -- Preserve artifacts */
-		if (q_ptr->name1) handle_art_d(q_ptr->name1);
+		if (true_artifact_p(q_ptr)) handle_art_d(q_ptr->name1);
 		questitem_d(q_ptr, q_ptr->number);
 	}
 }

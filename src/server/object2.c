@@ -681,7 +681,7 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
 		/* We now preserve ALL artifacts, known or not */
-		if (artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/) {
+		if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/) {
 			/* Info */
 			/* s_printf("Preserving artifact %d.\n", o_ptr->name1); */
 
