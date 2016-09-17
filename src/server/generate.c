@@ -8679,7 +8679,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #else
 	if (dun_lev < 100 && magik(NO_MAGIC_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC;
 	if (magik(NO_GENO_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_GENO;
- 	if (magik(NO_MAP_CHANCE) && dun_lev >= 5) dun->l_ptr->flags1 |= LF1_NO_MAP;
+	if (magik(NO_MAP_CHANCE) && dun_lev >= 5) dun->l_ptr->flags1 |= LF1_NO_MAP;
 	if (magik(NO_MAGIC_MAP_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 	if (magik(NO_DESTROY_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_DESTROY;
 #endif
@@ -9479,7 +9479,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	    ((k = d_info[d_ptr->type].final_guardian)
 	    && d_ptr->maxdepth == ABS(wpos->wz)
 	    && !rand_int(r_info[k].rarity))) {
-//		s_printf("Attempting to generate FINAL_GUARDIAN %d (1 in %d)\n", k, r_info[k].rarity);
+		//s_printf("Attempting to generate FINAL_GUARDIAN %d (1 in %d)\n", k, r_info[k].rarity);
 		summon_override_checks = SO_FORCE_DEPTH; /* allow >20 level OoD if desired */
 		alloc_monster_specific(wpos, k, 20, TRUE);
 		summon_override_checks = SO_NONE;
@@ -9719,8 +9719,8 @@ for(mx = 1; mx < 131; mx++) {
 	/* Create secret dungeon shop entrances (never on Morgoth's depth) -C. Blue */
 	/* No stores in Valinor */
 	if (in_valinor(wpos)) return;
-	/* Nether Realm has an overriding shop creation routing. */
-	if (!netherrealm_level) {
+	/* Nether Realm has an overriding shop creation routine. */
+	if (!netherrealm_level && d_ptr->maxdepth != ABS(wpos->wz)) {
 		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around */
 
 		/* Check for building deep store (Rare & expensive stores) */
@@ -9728,7 +9728,7 @@ for(mx = 1; mx < 131; mx++) {
 			build_special_store = 1;
 
 		/* Not for special dungeons (easy csw/resattr): */
-//		if ((!challenge_dungeon && !(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) ||
+		//if ((!challenge_dungeon && !(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) ||
 		if (!(d_ptr->flags3 & DF3_NO_SIMPLE_STORES)) {
 			/* Check for building low-level store (Herbalist) */
 			if ((!build_special_store) &&
@@ -9745,7 +9745,7 @@ for(mx = 1; mx < 131; mx++) {
 #else
  #ifdef RPG_SERVER
 			if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_lev >= 13)) {
-//			    ((dun_lev + rand_int(3) - 1) % 5 == 0)) build_special_store = 3;
+				//((dun_lev + rand_int(3) - 1) % 5 == 0)) build_special_store = 3;
 				if (!rand_int(5)) build_special_store = 3;
 				else store_failed = TRUE;
 			}
@@ -9867,7 +9867,7 @@ for(mx = 1; mx < 131; mx++) {
 								} else if (build_special_store == 3) {
 									//Add specialist stores? - the_sandman
 									switch (rand_int(7)) {
-/*									case 1: cs_ptr->sc.omni = STORE_SPEC_AXE;break;
+									/*case 1: cs_ptr->sc.omni = STORE_SPEC_AXE;break;
 									case 2: cs_ptr->sc.omni = STORE_SPEC_BLUNT;break;
 									case 3: cs_ptr->sc.omni = STORE_SPEC_POLE;break;
 									case 4: cs_ptr->sc.omni = STORE_SPEC_SWORD;break;*/
