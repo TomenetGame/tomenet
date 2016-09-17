@@ -1690,7 +1690,7 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "Highlander Tournament");
 					continue;
 				}
-				if (!strcasecmp("AMC", buf) || (strcasestr("Arena", buf) && strcasestr("Challenge", buf))) {
+				if (!strcasecmp("AMC", buf) || (strcasestr("Arena", buf))) {// && strcasestr("Challenge", buf))) {
 					strcpy(chapter, "Arena Monster Challenge");
 					continue;
 				}
