@@ -1933,7 +1933,7 @@ void handle_seasonal_music(void) {
 
 		/* Currently all seasonal events take place in Bree */
 		if (p_ptr->wpos.wz == 0 &&
-		    istown(&p_ptr->wpos) &&
+		    istownarea(&p_ptr->wpos, MAX_TOWNAREA) &&
 		    town[wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx].type == TOWN_BREE)
 			handle_music(i);
 	}
