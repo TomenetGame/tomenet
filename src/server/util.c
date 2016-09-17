@@ -1924,6 +1924,20 @@ void handle_music(int Ind) {
 	/* Shouldn't happen - send default (dungeon) music */
 	Send_music(Ind, 0, 0);
 }
+void handle_seasonal_music(void) {
+	player_type *p_ptr;
+	int i;
+
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+
+		/* Currently all seasonal events take place in Bree */
+		if (p_ptr->wpos.wz == 0 &&
+		    istown(&p_ptr->wpos) &&
+		    town[wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx].type == TOWN_BREE)
+			handle_music(i);
+	}
+}
 
 void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool smooth) {
 	player_type *p_ptr = Players[Ind];

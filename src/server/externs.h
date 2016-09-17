@@ -1804,6 +1804,7 @@ extern void sound_house_knock(int h_idx, int dx, int dy);
 extern void sound_near_monster(int m_idx, cptr name, cptr alternative, int type);
 extern void sound_near_monster_atk(int m_idx, int Ind, cptr name, cptr alternative, int type);
 extern void handle_music(int Ind);
+extern void handle_seasonal_music(void);
 extern void handle_ambient_sfx(int Ind, cave_type *cptr, struct worldpos *wpos, bool smooth);
 #ifdef USE_SOUND_2010
 extern void process_ambient_sfx(void);
