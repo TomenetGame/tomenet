@@ -5614,7 +5614,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			o_ptr->level = 0;
 
 		/* Hack -- Mark the artifact as "created" */
-		handle_art_inumpara(o_ptr->name1);
+		if (true_artifact_p(o_ptr)) handle_art_inumpara(o_ptr->name1);
 
 		/* Info */
 		/* s_printf("Created artifact %d.\n", o_ptr->name1); */

@@ -2253,7 +2253,7 @@ static errr rd_inventory(int Ind) {
 #ifdef FLUENT_ARTIFACT_RESETS
 		/* hack: If an artifact wasn't successfully erased when it should have been
 		   (happens if the save file was temporarily removed), fix it now. */
-		if (forge.name1 && forge.name1 != ART_RANDART && !multiple_artifact_p(&forge) &&
+		if (true_artifact_p(&forge) && !multiple_artifact_p(&forge) &&
 		    (!a_info[forge.name1].cur_num || a_info[forge.name1].carrier != p_ptr->id)) {
 			s_printf("Warning! Already redistributed artifact %d detected (erased).\n", forge.name1);
 			continue;
@@ -2263,8 +2263,7 @@ static errr rd_inventory(int Ind) {
 #if 0
 		/* Mega-Hack -- Handle artifacts that aren't yet "created" */
 if (p_ptr->updated_savegame == 3) { // <- another megahack, see lua_arts_fix()
-		if (artifact_p(&forge))
-		{
+		if (true_artifact_p(&forge)) {
 			/* If this artifact isn't created, mark it as created */
 			/* Only if this isn't a "death" restore */
 			if (!a_info[forge.name1].cur_num && !p_ptr->death)
