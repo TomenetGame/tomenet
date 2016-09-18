@@ -8549,8 +8549,7 @@ void handle_process_font_file(void) {
 		if (p > buf) strcpy(fname, p + 1);
 		/* Cut off extension even, not necessary, but looks better:
 		   'font-custom-5X8.prf' instead of 'font-custom-5X8.FON.prf' */
-		p = strcasecmp(&fname[strlen(fname) - 4], ".FON");
-		if (p) *p = 0;
+		if (!strcasecmp(&fname[strlen(fname) - 4], ".FON")) fname[strlen(fname) - 4] = 0;
  #endif
 		/* Create prf file name from font file name */
 		sprintf(buf, "font-custom-%s.prf", fname);
