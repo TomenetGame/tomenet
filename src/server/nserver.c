@@ -4493,13 +4493,14 @@ static int Receive_play(int ind) {
 		connp->trait = trait;
 
 		//if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
-		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0) ? RECEIVE_PLAY_SIZE_462 :
-		    (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1) ? RECEIVE_PLAY_SIZE :
-		    (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0) ? RECEIVE_PLAY_SIZE_OPTMAXCOMPAT : RECEIVE_PLAY_SIZE_OPTMAXOLD))
-		    > connp->r.len - (connp->r.ptr - connp->r.buf)) {
+		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = RECEIVE_PLAY_SIZE_462;
+		else if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) limit = RECEIVE_PLAY_SIZE;
+		else if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) limit = RECEIVE_PLAY_SIZE_OPTMAXCOMPAT;
+		else limit = RECEIVE_PLAY_SIZE_OPTMAXOLD;
+		if (limit > connp->r.len - (connp->r.ptr - connp->r.buf)) {
 //#if DEBUG_LEVEL > 2
-			plog(format("Play packet is not large enough yet (%d)",
-			    connp->r.len - (connp->r.ptr - connp->r.buf)));
+			plog(format("Play packet is not large enough yet (%d > %d)",
+			    limit, connp->r.len - (connp->r.ptr - connp->r.buf)));
 //#endif	// DEBUG_LEVEL
 			connp->r.ptr = connp->r.buf;
 			return 1;
