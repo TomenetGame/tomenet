@@ -3782,6 +3782,9 @@ static void get_macro_trigger(char *buf)
 	Term_addstr(-1, TERM_WHITE, tmp);
 }
 
+/* When reinitializing macros, also reload font/graf prefs?
+   Shoudln't be needed. */
+//#define FORGET_MACRO_VISUALS
 void interact_macros(void) {
 	int i, j = 0, l;
 
@@ -4439,8 +4442,10 @@ void interact_macros(void) {
 			/* Access the "basic" system pref file */
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
+#ifdef FORGET_MACRO_VISUALS
 			/* Access the "visual" system pref file (if any) */
 			handle_process_font_file();
+#endif
 #if 0 /* skip exactly these here */
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
@@ -4490,8 +4495,10 @@ void interact_macros(void) {
 			/* Access the "basic" system pref file */
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
+#ifdef FORGET_MACRO_VISUALS
 			/* Access the "visual" system pref file (if any) */
 			handle_process_font_file();
+#endif
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
 			process_pref_file(buf);
@@ -4541,8 +4548,10 @@ void interact_macros(void) {
 			/* Access the "basic" system pref file */
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
+#ifdef FORGET_MACRO_VISUALS
 			/* Access the "visual" system pref file (if any) */
 			handle_process_font_file();
+#endif
 #if 0 /* skip these here */
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
@@ -4594,8 +4603,10 @@ void interact_macros(void) {
 			/* Access the "basic" system pref file */
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
+#ifdef FORGET_MACRO_VISUALS
 			/* Access the "visual" system pref file (if any) */
 			handle_process_font_file();
+#endif
 #if 0 /* skip these here */
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
@@ -4666,8 +4677,10 @@ void interact_macros(void) {
 			/* Access the "basic" system pref file */
 			sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 			process_pref_file(buf);
+#ifdef FORGET_MACRO_VISUALS
 			/* Access the "visual" system pref file (if any) */
 			handle_process_font_file();
+#endif
 			/* Access the "global" macro file */
 			sprintf(buf, "global.prf");
 			process_pref_file(buf);
@@ -8536,19 +8549,19 @@ void handle_process_font_file(void) {
 		if (p > buf) strcpy(fname, p + 1);
 		/* Cut off extension even, not necessary, but looks better:
 		   'font-custom-5X8.prf' instead of 'font-custom-5X8.FON.prf' */
-		p = strstr(fname, ".FON");
+		p = strcasecmp(&fname[strlen(fname) - 4], ".FON");
 		if (p) *p = 0;
  #endif
 		/* Create prf file name from font file name */
 		sprintf(buf, "font-custom-%s.prf", fname);
 		/* Abuse fname to build the file path */
 		path_build(fname, 1024, ANGBAND_DIR_USER, buf);
-//if (in_game) c_message_add(format("Trying to load file '%s'..", fname));
+if (in_game) c_message_add(format("Trying to load file '%s'..", fname));
 		fff = my_fopen(fname, "r");
 		/* If custom file doesn't exist, fallback to normal font pref file: */
 		if (!fff) sprintf(buf, "font-%s.prf", ANGBAND_SYS);
 		else fclose(fff);
-//if (in_game) c_message_add(format("Loading file '%s'.", buf));
+if (in_game) c_message_add(format("Loading file '%s'.", buf));
 		process_pref_file(buf);
 	} else {
 #endif
