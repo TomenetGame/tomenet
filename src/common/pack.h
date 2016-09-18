@@ -158,8 +158,9 @@
 #define PKT_AUTOINSCRIBE	135
 #define PKT_MARTYR		136	/* client lua notification client for updating spell mana costs */
 
-//XXX 137-146
+//XXX 137-143
 
+#define PKT_CLIENT_SETUP	144	/* Resend F:/R:/K:/U: definitions */
 #define PKT_ITEM_NEWEST		145	/* Transmit inventory index of the latest item the character picked up */
 #define PKT_CONFIRM		146	/* Hacky: Signal the client to break an ongoing sync_sleep() early since its previous command has finished being processed by the server. */
 #define PKT_KEYPRESS		147	/* Quest/hint guidance: actually send keypresses to the client as if the player entered them */

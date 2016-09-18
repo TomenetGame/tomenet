@@ -8562,6 +8562,9 @@ if (in_game) c_message_add(format("Trying to load file '%s'..", fname));
 		else fclose(fff);
 if (in_game) c_message_add(format("Loading file '%s'.", buf));
 		process_pref_file(buf);
+
+		/* Resend definitions to the server */
+		Send_client_setup();
 	} else {
 #endif
 	/* Access the "visual" system pref file (if any) */

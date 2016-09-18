@@ -381,6 +381,8 @@ static void Init_receive(void) {
 	playing_receive[PKT_REQUEST_NUM]	= Receive_request_num;
 	playing_receive[PKT_REQUEST_STR]	= Receive_request_str;
 	playing_receive[PKT_REQUEST_CFR]	= Receive_request_cfr;
+
+	playing_receive[PKT_CLIENT_SETUP]	= Receive_client_setup;
 }
 
 static int Init_setup(void) {
@@ -2441,66 +2443,18 @@ static void sync_options(int Ind, bool *options) {
     }
 }
 
-/*
- * A client has requested to start active play.
- * See if we can allocate a player structure for it
- * and if this succeeds update the player information
- * to all connected players.
- */
-static int Handle_login(int ind) {
+/* Set font/graf visuals mapping according to the player's wishes,
+   while applying some restrictions. */
+static void set_player_font_definitions(int ind, int player) {
 	connection_t *connp = Conn[ind];
-	player_type *p_ptr = NULL;
-	object_type forge, *o_ptr = &forge;
+	player_type *p_ptr = Players[player];
 	int i, j;
-#ifdef FLUENT_ARTIFACT_RESETS
-	int timeout;
-#endif
-	bool options[OPT_MAX], greeting;
-	char msgbuf[80], o_name[ONAME_LEN];
-	cptr title = "";
-	char traffic[50+1];
-	bool newly_created_msg = FALSE;
 
-	if (Id >= MAX_ID) {
-		errno = 0;
-		plog(format("Id too big (%d)", Id));
-		return -1;
+	//paranoia
+	if (player <= 0) {
+		s_printf("Connection not ready for set_player_font_definitions(ind=%d,Ind=%d)\n", ind, player);
+		return;
 	}
-
-	/* This will cause problems for account/char with same name */
-#if 0
-	for (i = 1; i <= NumPlayers; i++) {
-		if (strcasecmp(Players[i]->name, connp->nick) == 0) {
-			errno = 0;
-			plog(format("Name already in use %s", connp->nick));
-			return -1;
-		}
-	}
-#endif
-
-	if (!player_birth(NumPlayers + 1, ind, connp)) {
-		/* Failed, connection destroyed */
-		Destroy_connection(ind, "not login (1)");
-		return -1;
-	}
-	p_ptr = Players[NumPlayers + 1];
-	p_ptr->Ind = NumPlayers + 1;
-	strcpy(p_ptr->realname, connp->real);
-	strncpy(p_ptr->hostname, connp->host, 25); /* cap ridiculously long hostnames - C. Blue */
-	strcpy(p_ptr->accountname, connp->nick);
-	strcpy(p_ptr->addr, connp->addr);
-	p_ptr->version = connp->version; /* this actually copies the extended version structure */
-	p_ptr->v_unknown = is_newer_than(&p_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, !VERSION_BUILD ? 1 : VERSION_BUILD); /* +1: account for 'test' client! */
-	p_ptr->v_test_latest = is_same_as(&p_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, !VERSION_BUILD ? 1 : VERSION_BUILD);
-	p_ptr->v_test = !p_ptr->v_unknown && is_newer_than(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
-	p_ptr->v_outdated = !is_newer_than(&p_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
-	p_ptr->v_latest = is_same_as(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
-	p_ptr->audio_sfx = connp->audio_sfx;
-	p_ptr->audio_mus = connp->audio_mus;
-
-	/* Copy the client preferences to the player struct */
-	for (i = 0; i < OPT_MAX; i++)
-		options[i] = connp->Client_setup.options[i];
 
 	for (i = 0; i < TV_MAX; i++) {
 		if (!connp->Client_setup.u_attr[i] &&
@@ -2653,7 +2607,7 @@ static int Handle_login(int ind) {
 	   that cannot be remapped by the player, because they're supposed to be
 	   chameleons of certain other things/features in the game! */
 	//items (Death Sword, Cloaker)
-	i= p_ptr->d_char[lookup_kind(TV_SWORD, rand_int(2) ? SV_LONG_SWORD : SV_BROAD_SWORD)];
+	i = p_ptr->d_char[lookup_kind(TV_SWORD, rand_int(2) ? SV_LONG_SWORD : SV_BROAD_SWORD)];
 	p_ptr->r_char[107] = i;
 	p_ptr->r_attr[107] = r_info[107].d_attr;
 	// + they arent chameleons but should still have sword-visuals: Hellblade, The Stormbringer
@@ -2752,6 +2706,70 @@ static int Handle_login(int ind) {
 	p_ptr->r_attr[239] = r_info[239].d_attr;
 	p_ptr->r_char[423] = p_ptr->d_char[lookup_kind(TV_GOLD, 18)];
 	p_ptr->r_attr[423] = r_info[423].d_attr;
+}
+
+/*
+ * A client has requested to start active play.
+ * See if we can allocate a player structure for it
+ * and if this succeeds update the player information
+ * to all connected players.
+ */
+static int Handle_login(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	object_type forge, *o_ptr = &forge;
+	int i, j;
+#ifdef FLUENT_ARTIFACT_RESETS
+	int timeout;
+#endif
+	bool options[OPT_MAX], greeting;
+	char msgbuf[80], o_name[ONAME_LEN];
+	cptr title = "";
+	char traffic[50+1];
+	bool newly_created_msg = FALSE;
+
+	if (Id >= MAX_ID) {
+		errno = 0;
+		plog(format("Id too big (%d)", Id));
+		return -1;
+	}
+
+	/* This will cause problems for account/char with same name */
+#if 0
+	for (i = 1; i <= NumPlayers; i++) {
+		if (strcasecmp(Players[i]->name, connp->nick) == 0) {
+			errno = 0;
+			plog(format("Name already in use %s", connp->nick));
+			return -1;
+		}
+	}
+#endif
+
+	if (!player_birth(NumPlayers + 1, ind, connp)) {
+		/* Failed, connection destroyed */
+		Destroy_connection(ind, "not login (1)");
+		return -1;
+	}
+	p_ptr = Players[NumPlayers + 1];
+	p_ptr->Ind = NumPlayers + 1;
+	strcpy(p_ptr->realname, connp->real);
+	strncpy(p_ptr->hostname, connp->host, 25); /* cap ridiculously long hostnames - C. Blue */
+	strcpy(p_ptr->accountname, connp->nick);
+	strcpy(p_ptr->addr, connp->addr);
+	p_ptr->version = connp->version; /* this actually copies the extended version structure */
+	p_ptr->v_unknown = is_newer_than(&p_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, !VERSION_BUILD ? 1 : VERSION_BUILD); /* +1: account for 'test' client! */
+	p_ptr->v_test_latest = is_same_as(&p_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, !VERSION_BUILD ? 1 : VERSION_BUILD);
+	p_ptr->v_test = !p_ptr->v_unknown && is_newer_than(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
+	p_ptr->v_outdated = !is_newer_than(&p_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
+	p_ptr->v_latest = is_same_as(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
+	p_ptr->audio_sfx = connp->audio_sfx;
+	p_ptr->audio_mus = connp->audio_mus;
+
+	/* Copy the client preferences to the player struct */
+	for (i = 0; i < OPT_MAX; i++)
+		options[i] = connp->Client_setup.options[i];
+
+	set_player_font_definitions(ind, NumPlayers + 1);
 
 	sync_options(NumPlayers + 1, options);
 
@@ -11912,6 +11930,71 @@ static int Receive_request_cfr(int ind) {
 	return 2;
 }
 
+/* Receive F:/R:/K:/U: definitions again (usually only transmitted once on startup,
+   but since we allow changing fonts we need to allow changing these with them. */
+static int Receive_client_setup(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int i, n, player = -1;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	} else {
+		s_printf("Connection not ready for Receive_client_setup(ind=%d)\n", ind);
+		return -1;
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	/* Read the "unknown" char/attrs */
+	for (i = 0; i < TV_MAX; i++) {
+		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+		if (n <= 0) {
+			Destroy_connection(ind, "Misread unknown redefinitions");
+			return n;
+		}
+	}
+
+	/* Read the "feature" char/attrs */
+	for (i = 0; i < MAX_F_IDX_COMPAT; i++) {
+		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+		if (n <= 0) {
+			Destroy_connection(ind, "Misread feature redefinitions");
+			return n;
+		}
+	}
+
+	/* Read the "object" char/attrs */
+	for (i = 0; i < MAX_K_IDX_COMPAT; i++) {
+		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+		if (n <= 0) {
+			Destroy_connection(ind, "Misread object redefinitions");
+			return n;
+		}
+	}
+
+	/* Read the "monster" char/attrs */
+	for (i = 0; i < MAX_R_IDX_COMPAT; i++) {
+		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+		if (n <= 0) {
+			Destroy_connection(ind, "Misread monster redefinitions");
+			return n;
+		}
+	}
+
+	set_player_font_definitions(ind, player);
+
+s_printf("Received client_setup(%d)\n", player);
+
+	//note: no cooldown here atm, could be spammable..
+	p_ptr->redraw |= PR_MAP;
+	return 1;
+}
 
 /* return some connection data for improved log handling - C. Blue */
 char *get_conn_userhost(int ind) {

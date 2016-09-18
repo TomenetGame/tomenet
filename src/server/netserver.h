@@ -166,6 +166,8 @@ static int Receive_request_num(int ind);
 static int Receive_request_str(int ind);
 static int Receive_request_cfr(int ind);
 
+static int Receive_client_setup(int ind);
+
 
 int Setup_net_server(void);
 bool Destroy_connection(int ind, char *reason);

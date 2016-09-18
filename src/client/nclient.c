@@ -5094,6 +5094,32 @@ int Send_request_cfr(int id, int cfr) {
 	return 1;
 }
 
+/* Resend F:/R:/K:/U: definitions, used after a font change. */
+int Send_client_setup(void) {
+	int n, i;
+	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP)) <= 0) return n;
+
+c_message_add("Sending client_setup.");
+
+	/* Send the "unknown" redefinitions */
+	for (i = 0; i < TV_MAX; i++)
+		Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
+
+	/* Send the "feature" redefinitions */
+	for (i = 0; i < MAX_F_IDX_COMPAT; i++)
+		Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
+
+	/* Send the "object" redefinitions */
+	for (i = 0; i < MAX_K_IDX_COMPAT; i++)
+		Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
+
+	/* Send the "monster" redefinitions */
+	for (i = 0; i < MAX_R_IDX_COMPAT; i++)
+		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
+
+	return 1;
+}
+
 /* Returns the amount of microseconds to the next frame (according to fps) - mikaelh */
 int next_frame() {
 	struct timeval tv;
