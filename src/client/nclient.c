@@ -5131,7 +5131,13 @@ int Send_client_setup(void) {
 
 	/* Send the "object" redefinitions */
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP3)) <= 0) return n;
-	for (i = 0; i < MAX_K_IDX_COMPAT; i++)
+	for (i = 0; i < MAX_K_IDX_COMPAT / 2; i++)
+		Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
+	Net_flush();
+
+	/* Send the "object" redefinitions */
+	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP3B)) <= 0) return n;
+	for (i = MAX_K_IDX_COMPAT / 2; i < MAX_K_IDX_COMPAT; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
 	Net_flush();
 
@@ -5140,6 +5146,7 @@ int Send_client_setup(void) {
 	for (i = 0; i < MAX_R_IDX_COMPAT; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
 	Net_flush();
+
 #endif
 
 	return 1;
