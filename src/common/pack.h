@@ -161,12 +161,10 @@
 //XXX 137-143
 
 //debugging:
-#define PKT_CLIENT_SETUP4B	138
-#define PKT_CLIENT_SETUP3B	139
-#define PKT_CLIENT_SETUP1	140
-#define PKT_CLIENT_SETUP2	141
-#define PKT_CLIENT_SETUP3	142
-#define PKT_CLIENT_SETUP4	143
+#define PKT_CLIENT_SETUP_U	140
+#define PKT_CLIENT_SETUP_F	141
+#define PKT_CLIENT_SETUP_K	142
+#define PKT_CLIENT_SETUP_R	143
 
 #define PKT_CLIENT_SETUP	144	/* Resend F:/R:/K:/U: definitions */
 #define PKT_ITEM_NEWEST		145	/* Transmit inventory index of the latest item the character picked up */

@@ -384,12 +384,10 @@ static void Init_receive(void) {
 
 	playing_receive[PKT_CLIENT_SETUP]	= Receive_client_setup;
 
-	playing_receive[PKT_CLIENT_SETUP3B]	= Receive_client_setup3b;
-	playing_receive[PKT_CLIENT_SETUP4B]	= Receive_client_setup4b;
-	playing_receive[PKT_CLIENT_SETUP1]	= Receive_client_setup1;
-	playing_receive[PKT_CLIENT_SETUP2]	= Receive_client_setup2;
-	playing_receive[PKT_CLIENT_SETUP3]	= Receive_client_setup3;
-	playing_receive[PKT_CLIENT_SETUP4]	= Receive_client_setup4;
+	playing_receive[PKT_CLIENT_SETUP_U]	= Receive_client_setup_U;
+	playing_receive[PKT_CLIENT_SETUP_F]	= Receive_client_setup_F;
+	playing_receive[PKT_CLIENT_SETUP_K]	= Receive_client_setup_K;
+	playing_receive[PKT_CLIENT_SETUP_R]	= Receive_client_setup_R;
 }
 
 static int Init_setup(void) {
@@ -12002,11 +12000,12 @@ s_printf("Receive_client_setup(%d)\n", player);
 	return 1;
 }
 //debugging:
-static int Receive_client_setup1(int ind) {
+static int Receive_client_setup_U(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
 	int i, n, player = -1;
+	int begin, end;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12016,17 +12015,17 @@ static int Receive_client_setup1(int ind) {
 		return -1;
 	}
 
-s_printf("Receive_client_setup1(%d)\n", player);
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
 	/* Read the "unknown" char/attrs */
-	for (i = 0; i < TV_MAX; i++) {
+	//for (i = 0; i < TV_MAX; i++) {
+	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
 		if (n <= 0) {
-			Destroy_connection(ind, "Misread unknown redefinitions");
+			Destroy_connection(ind, format("Misread unknown redefinitions (%d,%d:%d)", begin, end, i));
 			return n;
 		}
 	}
@@ -12037,11 +12036,12 @@ s_printf("Receive_client_setup1(%d)\n", player);
 	p_ptr->redraw |= PR_MAP;
 	return 1;
 }
-static int Receive_client_setup2(int ind) {
+static int Receive_client_setup_F(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
 	int i, n, player = -1;
+	int begin, end;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12051,17 +12051,17 @@ static int Receive_client_setup2(int ind) {
 		return -1;
 	}
 
-s_printf("Receive_client_setup2(%d)\n", player);
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
 	/* Read the "feature" char/attrs */
-	for (i = 0; i < MAX_F_IDX_COMPAT; i++) {
+	//for (i = 0; i < MAX_F_IDX_COMPAT; i++) {
+	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
 		if (n <= 0) {
-			Destroy_connection(ind, "Misread feature redefinitions");
+			Destroy_connection(ind, format("Misread feature redefinitions (%d,%d:%d)", begin, end, i));
 			return n;
 		}
 	}
@@ -12072,11 +12072,12 @@ s_printf("Receive_client_setup2(%d)\n", player);
 	p_ptr->redraw |= PR_MAP;
 	return 1;
 }
-static int Receive_client_setup3(int ind) {
+static int Receive_client_setup_K(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
 	int i, n, player = -1;
+	int begin, end;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12086,17 +12087,17 @@ static int Receive_client_setup3(int ind) {
 		return -1;
 	}
 
-s_printf("Receive_client_setup3(%d)\n", player);
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
 	/* Read the "object" char/attrs */
-	for (i = 0; i < MAX_K_IDX_COMPAT / 2; i++) {
+	//for (i = 0; i < MAX_K_IDX_COMPAT; i++) {
+	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
 		if (n <= 0) {
-			Destroy_connection(ind, "Misread object redefinitions");
+			Destroy_connection(ind, format("Misread object redefinitions (%d,%d:%d)", begin, end, i));
 			return n;
 		}
 	}
@@ -12107,11 +12108,12 @@ s_printf("Receive_client_setup3(%d)\n", player);
 	p_ptr->redraw |= PR_MAP;
 	return 1;
 }
-static int Receive_client_setup3b(int ind) {
+static int Receive_client_setup_R(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
 	int i, n, player = -1;
+	int begin, end;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12121,52 +12123,17 @@ static int Receive_client_setup3b(int ind) {
 		return -1;
 	}
 
-s_printf("Receive_client_setup3b(%d)\n", player);
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
-	}
-
-	/* Read the "object" char/attrs */
-	for (i = MAX_K_IDX_COMPAT / 2; i < MAX_K_IDX_COMPAT; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, "Misread object redefinitions (a)");
-			return n;
-		}
-	}
-
-	set_player_font_definitions(ind, player);
-
-	//note: no cooldown here atm, could be spammable..
-	p_ptr->redraw |= PR_MAP;
-	return 1;
-}
-static int Receive_client_setup4(int ind) {
-	connection_t *connp = Conn[ind];
-	player_type *p_ptr = NULL;
-	char ch;
-	int i, n, player = -1;
-
-	if (connp->id != -1) {
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-	} else {
-		s_printf("Connection not ready for Receive_client_setup(ind=%d)\n", ind);
-		return -1;
-	}
-
-s_printf("Receive_client_setup4(%d)\n", player);
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
 	/* Read the "monster" char/attrs */
-	for (i = 0; i < MAX_R_IDX_COMPAT / 2; i++) {
+	//for (i = 0; i < MAX_R_IDX_COMPAT; i++) {
+	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 		if (n <= 0) {
-			Destroy_connection(ind, format("Misread monster redefinitions (%d)", i));
+			Destroy_connection(ind, format("Misread monster redefinitions (%d,%d:%d)", begin, end, i));
 			return n;
 		}
 	}
@@ -12177,42 +12144,6 @@ s_printf("Receive_client_setup4(%d)\n", player);
 	p_ptr->redraw |= PR_MAP;
 	return 1;
 }
-static int Receive_client_setup4b(int ind) {
-	connection_t *connp = Conn[ind];
-	player_type *p_ptr = NULL;
-	char ch;
-	int i, n, player = -1;
-
-	if (connp->id != -1) {
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-	} else {
-		s_printf("Connection not ready for Receive_client_setup(ind=%d)\n", ind);
-		return -1;
-	}
-
-s_printf("Receive_client_setup4b(%d)\n", player);
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
-	}
-
-	/* Read the "monster" char/attrs */
-	for (i = MAX_R_IDX_COMPAT / 2; i < MAX_R_IDX_COMPAT; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, format("Misread monster redefinitions-B (%d)", i));
-			return n;
-		}
-	}
-
-	set_player_font_definitions(ind, player);
-
-	//note: no cooldown here atm, could be spammable..
-	p_ptr->redraw |= PR_MAP;
-	return 1;
-}
-
 
 /* return some connection data for improved log handling - C. Blue */
 char *get_conn_userhost(int ind) {

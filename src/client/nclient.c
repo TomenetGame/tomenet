@@ -5116,43 +5116,26 @@ int Send_client_setup(void) {
 	/* Send the "monster" redefinitions */
 	for (i = 0; i < MAX_R_IDX_COMPAT; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
-#else /* debugging */
+#else
 	/* Send the "unknown" redefinitions */
-	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP1)) <= 0) return n;
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_CLIENT_SETUP_U, 0, TV_MAX)) <= 0) return n;
 	for (i = 0; i < TV_MAX; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
-	Net_flush();
 
 	/* Send the "feature" redefinitions */
-	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP2)) <= 0) return n;
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_CLIENT_SETUP_F, 0, MAX_F_IDX_COMPAT)) <= 0) return n;
 	for (i = 0; i < MAX_F_IDX_COMPAT; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
-	Net_flush();
 
 	/* Send the "object" redefinitions */
-	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP3)) <= 0) return n;
-	for (i = 0; i < MAX_K_IDX_COMPAT / 2; i++)
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_CLIENT_SETUP_K, 0, MAX_K_IDX_COMPAT)) <= 0) return n;
+	for (i = 0; i < MAX_K_IDX_COMPAT; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
-	Net_flush();
-
-	/* Send the "object" redefinitions */
-	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP3B)) <= 0) return n;
-	for (i = MAX_K_IDX_COMPAT / 2; i < MAX_K_IDX_COMPAT; i++)
-		Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
-	Net_flush();
 
 	/* Send the "monster" redefinitions */
-	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP4)) <= 0) return n;
-	for (i = 0; i < MAX_R_IDX_COMPAT / 2; i++)
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_CLIENT_SETUP_R, 0, MAX_R_IDX_COMPAT)) <= 0) return n;
+	for (i = 0; i < MAX_R_IDX_COMPAT; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
-	Net_flush();
-
-	/* Send the "monster" redefinitions */
-	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP4B)) <= 0) return n;
-	for (i = MAX_R_IDX_COMPAT / 2; i < MAX_R_IDX_COMPAT; i++)
-		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
-	Net_flush();
-
 #endif
 
 	return 1;
