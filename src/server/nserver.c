@@ -4376,6 +4376,7 @@ static int Receive_login(int ind) {
 	return(0);
 }
 
+#define RECEIVE_PLAY_SIZE_462 (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
 #define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
 #define RECEIVE_PLAY_SIZE_OPTMAXCOMPAT (2*6+OPT_MAX_COMPAT+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
 #define RECEIVE_PLAY_SIZE_OPTMAXOLD (2*6+OPT_MAX_OLD+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
@@ -4383,7 +4384,7 @@ static int Receive_login(int ind) {
 static int Receive_play(int ind) {
 	connection_t *connp = Conn[ind];
 	unsigned char ch;
-	int i, n;
+	int i, n, limit;
 	s16b sex, race, class, trait = 0;
         short int sfx = -1, mus = -1;
 
@@ -4492,7 +4493,8 @@ static int Receive_play(int ind) {
 		connp->trait = trait;
 
 //		if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
-		if ((is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1) ? RECEIVE_PLAY_SIZE :
+		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0) ? RECEIVE_PLAY_SIZE_462 :
+		    (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1) ? RECEIVE_PLAY_SIZE :
 		    (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0) ? RECEIVE_PLAY_SIZE_OPTMAXCOMPAT : RECEIVE_PLAY_SIZE_OPTMAXOLD))
 		    > connp->r.len - (connp->r.ptr - connp->r.buf)) {
 #if DEBUG_LEVEL > 2
@@ -4598,7 +4600,9 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "feature" char/attrs */
-		for (i = 0; i < MAX_F_IDX_COMPAT; i++) {
+		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_F_IDX;
+		else limit = MAX_F_IDX_COMPAT;
+		for (i = 0; i < limit; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
@@ -4611,7 +4615,9 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "object" char/attrs */
-		for (i = 0; i < MAX_K_IDX_COMPAT; i++) {
+		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_K_IDX;
+		else limit = MAX_K_IDX_COMPAT;
+		for (i = 0; i < limit; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
@@ -4624,7 +4630,9 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "monster" char/attrs */
-		for (i = 0; i < MAX_R_IDX_COMPAT; i++) {
+		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_R_IDX;
+		else limit = MAX_R_IDX_COMPAT;
+		for (i = 0; i < limit; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
@@ -11951,7 +11959,6 @@ static int Receive_client_setup(int ind) {
 		return -1;
 	}
 
-s_printf("Receive_client_setup(%d)\n", player);
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
@@ -11967,7 +11974,7 @@ s_printf("Receive_client_setup(%d)\n", player);
 	}
 
 	/* Read the "feature" char/attrs */
-	for (i = 0; i < MAX_F_IDX_COMPAT; i++) {
+	for (i = 0; i < MAX_F_IDX; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
 		if (n <= 0) {
 			Destroy_connection(ind, "Misread feature redefinitions");
@@ -11976,7 +11983,7 @@ s_printf("Receive_client_setup(%d)\n", player);
 	}
 
 	/* Read the "object" char/attrs */
-	for (i = 0; i < MAX_K_IDX_COMPAT; i++) {
+	for (i = 0; i < MAX_K_IDX; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
 		if (n <= 0) {
 			Destroy_connection(ind, "Misread object redefinitions");
@@ -11985,7 +11992,7 @@ s_printf("Receive_client_setup(%d)\n", player);
 	}
 
 	/* Read the "monster" char/attrs */
-	for (i = 0; i < MAX_R_IDX_COMPAT; i++) {
+	for (i = 0; i < MAX_R_IDX; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 		if (n <= 0) {
 			Destroy_connection(ind, "Misread monster redefinitions");
@@ -12021,7 +12028,10 @@ static int Receive_client_setup_U(int ind) {
 	}
 
 	/* Read the "unknown" char/attrs */
-	//for (i = 0; i < TV_MAX; i++) {
+	if (begin < 0 || begin >= TV_MAX || end < 0 || end >= TV_MAX || end <= begin) {
+		Destroy_connection(ind, "bad u-setup");
+		return -1;
+	}
 	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
 		if (n <= 0) {
@@ -12057,7 +12067,10 @@ static int Receive_client_setup_F(int ind) {
 	}
 
 	/* Read the "feature" char/attrs */
-	//for (i = 0; i < MAX_F_IDX_COMPAT; i++) {
+	if (begin < 0 || begin >= MAX_F_IDX || end < 0 || end >= MAX_F_IDX || end <= begin) {
+		Destroy_connection(ind, "bad f-setup");
+		return -1;
+	}
 	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
 		if (n <= 0) {
@@ -12093,7 +12106,10 @@ static int Receive_client_setup_K(int ind) {
 	}
 
 	/* Read the "object" char/attrs */
-	//for (i = 0; i < MAX_K_IDX_COMPAT; i++) {
+	if (begin < 0 || begin >= MAX_K_IDX || end < 0 || end >= MAX_K_IDX || end <= begin) {
+		Destroy_connection(ind, "bad k-setup");
+		return -1;
+	}
 	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
 		if (n <= 0) {
@@ -12129,7 +12145,10 @@ static int Receive_client_setup_R(int ind) {
 	}
 
 	/* Read the "monster" char/attrs */
-	//for (i = 0; i < MAX_R_IDX_COMPAT; i++) {
+	if (begin < 0 || begin >= MAX_R_IDX || end < 0 || end >= MAX_R_IDX || end <= begin) {
+		Destroy_connection(ind, "bad r-setup");
+		return -1;
+	}
 	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 		if (n <= 0) {
