@@ -5097,6 +5097,8 @@ int Send_request_cfr(int id, int cfr) {
 /* Resend F:/R:/K:/U: definitions, used after a font change. */
 int Send_client_setup(void) {
 	int n, i;
+
+#if 0
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP)) <= 0) return n;
 
 	/* Send the "unknown" redefinitions */
@@ -5114,6 +5116,31 @@ int Send_client_setup(void) {
 	/* Send the "monster" redefinitions */
 	for (i = 0; i < MAX_R_IDX_COMPAT; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
+#else /* debugging */
+	/* Send the "unknown" redefinitions */
+	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP1)) <= 0) return n;
+	for (i = 0; i < TV_MAX; i++)
+		Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
+	Net_flush();
+
+	/* Send the "feature" redefinitions */
+	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP2)) <= 0) return n;
+	for (i = 0; i < MAX_F_IDX_COMPAT; i++)
+		Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
+	Net_flush();
+
+	/* Send the "object" redefinitions */
+	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP3)) <= 0) return n;
+	for (i = 0; i < MAX_K_IDX_COMPAT; i++)
+		Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
+	Net_flush();
+
+	/* Send the "monster" redefinitions */
+	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP4)) <= 0) return n;
+	for (i = 0; i < MAX_R_IDX_COMPAT; i++)
+		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
+	Net_flush();
+#endif
 
 	return 1;
 }

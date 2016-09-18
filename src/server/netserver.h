@@ -167,7 +167,11 @@ static int Receive_request_str(int ind);
 static int Receive_request_cfr(int ind);
 
 static int Receive_client_setup(int ind);
-
+//debugging:
+static int Receive_client_setup1(int ind);
+static int Receive_client_setup2(int ind);
+static int Receive_client_setup3(int ind);
+static int Receive_client_setup4(int ind);
 
 int Setup_net_server(void);
 bool Destroy_connection(int ind, char *reason);

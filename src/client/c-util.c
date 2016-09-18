@@ -8562,7 +8562,7 @@ void handle_process_font_file(void) {
 		process_pref_file(buf);
 
 		/* Resend definitions to the server */
-		Send_client_setup();
+		if (in_game) Send_client_setup();
 	} else {
 #endif
 	/* Access the "visual" system pref file (if any) */

@@ -160,6 +160,12 @@
 
 //XXX 137-143
 
+//debugging:
+#define PKT_CLIENT_SETUP1	140
+#define PKT_CLIENT_SETUP2	141
+#define PKT_CLIENT_SETUP3	142
+#define PKT_CLIENT_SETUP4	143
+
 #define PKT_CLIENT_SETUP	144	/* Resend F:/R:/K:/U: definitions */
 #define PKT_ITEM_NEWEST		145	/* Transmit inventory index of the latest item the character picked up */
 #define PKT_CONFIRM		146	/* Hacky: Signal the client to break an ongoing sync_sleep() early since its previous command has finished being processed by the server. */
