@@ -8491,19 +8491,64 @@ u32b parse_color_code(const char *str) {
 #define CUSTOM_FONT_PRF /* enable custom pref files? */
 void handle_process_font_file(void) {
 	char buf[1024];
-	char fname[1024];
-
 #ifdef CUSTOM_FONT_PRF
+	char fname[1024];
+	int i;
+
+ #if 1
+	/* Delete all font info we currently know */
+	//feat info (terrain tiles)
+	for (i = 0; i < MAX_F_IDX; i++) {
+		Client_setup.f_attr[i] = 0;
+		Client_setup.f_char[i] = 0;
+	}
+	//race info (monsters)
+	for (i = 0; i < MAX_R_IDX; i++) {
+		Client_setup.r_attr[i] = 0;
+		Client_setup.r_char[i] = 0;
+	}
+	//kind info (objects)
+	for (i = 0; i < MAX_K_IDX; i++) {
+		Client_setup.k_attr[i] = 0;
+		Client_setup.k_char[i] = 0;
+	}
+	//unknown items (objects)
+	for (i = 0; i < TV_MAX; i++) {
+		Client_setup.u_attr[i] = 0;
+		Client_setup.u_char[i] = 0;
+	}
+ #endif
+
 	/* Actually try to load a custom font-xxx.prf file, depending on the main screen font */
 	get_screen_font_name(fname);
 	if (!use_graphics && fname[0]) {
 		FILE *fff;
+		/* Linux: fname has this format: '5x8' */
+		/* Windows: fname has this format: '.\lib\xtra\font\16X24X.FON' */
+ #ifdef WINDOWS
+		char *p;
 
+		strcpy(buf, fname);
+		p = (buf + strlen(buf)) - 1;
+		/* Look for last '\' */
+		while (*p != '\\' && p > buf) p--;
+		/* Found a path\file separator? Cut off file name, discard path */
+		if (p > buf) strcpy(fname, p + 1);
+		/* Cut off extension even, not necessary, but looks better:
+		   'font-custom-5X8.prf' instead of 'font-custom-5X8.FON.prf' */
+		p = strstr(fname, ".FON");
+		if (p) *p = 0;
+ #endif
+		/* Create prf file name from font file name */
 		sprintf(buf, "font-custom-%s.prf", fname);
-		fff = my_fopen(buf, "r");
+		/* Abuse fname to build the file path */
+		path_build(fname, 1024, ANGBAND_DIR_USER, buf);
+//if (in_game) c_message_add(format("Trying to load file '%s'..", fname));
+		fff = my_fopen(fname, "r");
 		/* If custom file doesn't exist, fallback to normal font pref file: */
 		if (!fff) sprintf(buf, "font-%s.prf", ANGBAND_SYS);
 		else fclose(fff);
+//if (in_game) c_message_add(format("Loading file '%s'.", buf));
 		process_pref_file(buf);
 	} else {
 #endif
