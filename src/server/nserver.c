@@ -385,6 +385,7 @@ static void Init_receive(void) {
 	playing_receive[PKT_CLIENT_SETUP]	= Receive_client_setup;
 
 	playing_receive[PKT_CLIENT_SETUP3B]	= Receive_client_setup3b;
+	playing_receive[PKT_CLIENT_SETUP4B]	= Receive_client_setup4b;
 	playing_receive[PKT_CLIENT_SETUP1]	= Receive_client_setup1;
 	playing_receive[PKT_CLIENT_SETUP2]	= Receive_client_setup2;
 	playing_receive[PKT_CLIENT_SETUP3]	= Receive_client_setup3;
@@ -12162,7 +12163,42 @@ s_printf("Receive_client_setup4(%d)\n", player);
 	}
 
 	/* Read the "monster" char/attrs */
-	for (i = 0; i < MAX_R_IDX_COMPAT; i++) {
+	for (i = 0; i < MAX_R_IDX_COMPAT / 2; i++) {
+		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+		if (n <= 0) {
+			Destroy_connection(ind, "Misread monster redefinitions");
+			return n;
+		}
+	}
+
+	set_player_font_definitions(ind, player);
+
+	//note: no cooldown here atm, could be spammable..
+	p_ptr->redraw |= PR_MAP;
+	return 1;
+}
+static int Receive_client_setup4b(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int i, n, player = -1;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	} else {
+		s_printf("Connection not ready for Receive_client_setup(ind=%d)\n", ind);
+		return -1;
+	}
+
+s_printf("Receive_client_setup4b(%d)\n", player);
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	/* Read the "monster" char/attrs */
+	for (i = MAX_R_IDX_COMPAT / 2; i < MAX_R_IDX_COMPAT; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 		if (n <= 0) {
 			Destroy_connection(ind, "Misread monster redefinitions");

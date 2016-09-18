@@ -173,6 +173,7 @@ static int Receive_client_setup2(int ind);
 static int Receive_client_setup3(int ind);
 static int Receive_client_setup3b(int ind);
 static int Receive_client_setup4(int ind);
+static int Receive_client_setup4b(int ind);
 
 int Setup_net_server(void);
 bool Destroy_connection(int ind, char *reason);
