@@ -8555,12 +8555,10 @@ void handle_process_font_file(void) {
 		sprintf(buf, "font-custom-%s.prf", fname);
 		/* Abuse fname to build the file path */
 		path_build(fname, 1024, ANGBAND_DIR_USER, buf);
-if (in_game) c_message_add(format("Trying to load file '%s'..", fname));
 		fff = my_fopen(fname, "r");
 		/* If custom file doesn't exist, fallback to normal font pref file: */
 		if (!fff) sprintf(buf, "font-%s.prf", ANGBAND_SYS);
 		else fclose(fff);
-if (in_game) c_message_add(format("Loading file '%s'.", buf));
 		process_pref_file(buf);
 
 		/* Resend definitions to the server */

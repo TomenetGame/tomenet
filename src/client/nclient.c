@@ -5099,8 +5099,6 @@ int Send_client_setup(void) {
 	int n, i;
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP)) <= 0) return n;
 
-c_message_add("Sending client_setup.");
-
 	/* Send the "unknown" redefinitions */
 	for (i = 0; i < TV_MAX; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);

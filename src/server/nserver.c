@@ -11989,8 +11989,6 @@ static int Receive_client_setup(int ind) {
 
 	set_player_font_definitions(ind, player);
 
-s_printf("Received client_setup(%d)\n", player);
-
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
 	return 1;
