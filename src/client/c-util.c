@@ -6938,7 +6938,7 @@ static void do_cmd_options_fonts(void) {
 			{
 				//Include the graphic fonts, because we are cycling the mini-map
 				for (j = 0; j < graphic_fonts - 1; j++) {
-					if (!strcmp(graphic_font_name[j], get_font_name(y))) {
+					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j + 1]);
 						break;
@@ -6946,7 +6946,7 @@ static void do_cmd_options_fonts(void) {
 				}
 			} else {
 				for (j = 0; j < fonts - 1; j++) {
-					if (!strcmp(font_name[j], get_font_name(y))) {
+					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, font_name[j + 1]);
 						break;
@@ -6961,7 +6961,7 @@ static void do_cmd_options_fonts(void) {
 			{
 				//Include the graphic fonts, because we are cycling the mini-map
 				for (j = 1; j < graphic_fonts; j++) {
-					if (!strcmp(graphic_font_name[j], get_font_name(y))) {
+					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j - 1]);
 						break;
@@ -6969,7 +6969,7 @@ static void do_cmd_options_fonts(void) {
 				}
 			} else {
 				for (j = 1; j < fonts; j++) {
-					if (!strcmp(font_name[j], get_font_name(y))) {
+					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, font_name[j - 1]);
 						break;
