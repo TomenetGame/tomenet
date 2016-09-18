@@ -11951,6 +11951,7 @@ static int Receive_client_setup(int ind) {
 		return -1;
 	}
 
+s_printf("Receive_client_setup(%d)\n", player);
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
@@ -12013,6 +12014,7 @@ static int Receive_client_setup1(int ind) {
 		return -1;
 	}
 
+s_printf("Receive_client_setup1(%d)\n", player);
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
@@ -12047,6 +12049,7 @@ static int Receive_client_setup2(int ind) {
 		return -1;
 	}
 
+s_printf("Receive_client_setup2(%d)\n", player);
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
@@ -12081,6 +12084,7 @@ static int Receive_client_setup3(int ind) {
 		return -1;
 	}
 
+s_printf("Receive_client_setup3(%d)\n", player);
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
@@ -12115,6 +12119,7 @@ static int Receive_client_setup4(int ind) {
 		return -1;
 	}
 
+s_printf("Receive_client_setup4(%d)\n", player);
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
