@@ -4424,7 +4424,7 @@ static int Receive_play(int ind) {
 	  //return -1;
 	  return 0;
 	}
-//	else
+	//else
 	{
 		if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0)) {
 			if ((n = Packet_scanf(&connp->r, "%hd%hd%hd%hd%hd%hd", &sex, &race, &class, &trait, &sfx, &mus)) <= 0) {
@@ -4492,15 +4492,15 @@ static int Receive_play(int ind) {
 		connp->class = class;
 		connp->trait = trait;
 
-//		if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
+		//if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0) ? RECEIVE_PLAY_SIZE_462 :
 		    (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1) ? RECEIVE_PLAY_SIZE :
 		    (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0) ? RECEIVE_PLAY_SIZE_OPTMAXCOMPAT : RECEIVE_PLAY_SIZE_OPTMAXOLD))
 		    > connp->r.len - (connp->r.ptr - connp->r.buf)) {
-#if DEBUG_LEVEL > 2
+//#if DEBUG_LEVEL > 2
 			plog(format("Play packet is not large enough yet (%d)",
 			    connp->r.len - (connp->r.ptr - connp->r.buf)));
-#endif	// DEBUG_LEVEL
+//#endif	// DEBUG_LEVEL
 			connp->r.ptr = connp->r.buf;
 			return 1;
 		}
