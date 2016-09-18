@@ -12166,7 +12166,7 @@ s_printf("Receive_client_setup4(%d)\n", player);
 	for (i = 0; i < MAX_R_IDX_COMPAT / 2; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 		if (n <= 0) {
-			Destroy_connection(ind, "Misread monster redefinitions");
+			Destroy_connection(ind, format("Misread monster redefinitions (%d)", i));
 			return n;
 		}
 	}
@@ -12201,7 +12201,7 @@ s_printf("Receive_client_setup4b(%d)\n", player);
 	for (i = MAX_R_IDX_COMPAT / 2; i < MAX_R_IDX_COMPAT; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 		if (n <= 0) {
-			Destroy_connection(ind, "Misread monster redefinitions");
+			Destroy_connection(ind, format("Misread monster redefinitions-B (%d)", i));
 			return n;
 		}
 	}
