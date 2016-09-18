@@ -4056,7 +4056,10 @@ void interact_macros(void) {
 				sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 				process_pref_file(buf);
 
+ #ifdef FORGET_MACRO_VISUALS
+				/* Access the "visual" system pref file (if any) */
 				handle_process_font_file();
+ #endif
 
 				macro_trigger_exclusive[0] = 0; //unhack
 				macro_processing_exclusive = FALSE;
