@@ -1782,7 +1782,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 			break;
 
-		case KTRL('T'): /* Party */
+		case KTRL('Y'): /* Party */
 			if (mode & ASKFOR_CHATTING) {
 				chat_mode = CHAT_MODE_PARTY;
 				c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
@@ -1890,6 +1890,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (k < 0) k = l = 0;
 			break;
 			}
+
+		case KTRL('T'): /* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			break;
 
 		default:
 			/* inkey_letter_all hack for c_get_quantity() */
@@ -7840,7 +7844,20 @@ void c_close_game(cptr reason) {
 	/* You are dead */
 	print_tomb(reason);
 
+#if 0
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+
+	/* Display tomb screen without an input prompt, allow taking a 'clear' screenshot! */
+	//while (inkey() == KTRL('T')) xhtml_screenshot("screenshot????");
+	if (inkey() == KTRL('T')) xhtml_screenshot("screenshot????");
+#endif
+
 	put_str("ESC to quit, 'f' to dump the record or any other key to proceed", 23, 0);
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 
 	/* TODO: bandle them in one loop instead of 2 */
 	while (1) {

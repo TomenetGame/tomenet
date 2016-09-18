@@ -1663,12 +1663,10 @@ void cmd_the_guide(void) {
 			buf[0] = 0;
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
-			//if (!askfor_aux(buf, 7, 0)) continue; //was: numerical chapters only
-			if (!askfor_aux(buf, MAX_CHARS, 0)) {
-				inkey_msg = inkey_msg_old;
-				continue; //allow entering chapter terms too
-			}
+			//askfor_aux(buf, 7, 0)); //was: numerical chapters only
+			askfor_aux(buf, MAX_CHARS, 0); //allow entering chapter terms too
 			inkey_msg = inkey_msg_old;
+			if (!buf[0]) continue;
 
 			/* abuse chapter searching for extra functionality: search for chapter about a specific main term? */
 			if (isalpha(buf[0])) {
