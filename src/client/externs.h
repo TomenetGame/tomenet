@@ -606,6 +606,8 @@ extern void restore_prompt(void); /* DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
 extern u32b parse_color_code(const char *str);
 extern void handle_process_font_file(void);
 
+extern void sync_sleep(int milliseconds);
+
 /* c-store.c */
 extern bool leave_store;
 extern void display_inventory(void);

@@ -336,7 +336,7 @@ static int diff_ms(struct timeval *begin, struct timeval *end) {
    (recharge, enchant, identify). */
 //#define ACCEPT_KEYS
 //#define PEEK_ONLY_KEYS /* only check for ESC key but don't touch/process key queue yet; currently broken! */
-static void sync_sleep(int milliseconds) {
+void sync_sleep(int milliseconds) {
 	static char animation[4] = { '-', '\\', '|', '/' };
 	int result, net_fd;
 	struct timeval begin, now;
