@@ -4376,7 +4376,7 @@ static int Receive_login(int ind) {
 	return(0);
 }
 
-#define RECEIVE_PLAY_SIZE_462 (2*6+OPT_MAX+8+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
+#define RECEIVE_PLAY_SIZE_462 (2*6+OPT_MAX+8+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX)) /*todo: fix*/
 #define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
 #define RECEIVE_PLAY_SIZE_OPTMAXCOMPAT (2*6+OPT_MAX_COMPAT+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
 #define RECEIVE_PLAY_SIZE_OPTMAXOLD (2*6+OPT_MAX_OLD+2*(TV_MAX+MAX_F_IDX_COMPAT+MAX_K_IDX_COMPAT+MAX_R_IDX_COMPAT))
@@ -4493,8 +4493,11 @@ static int Receive_play(int ind) {
 		connp->trait = trait;
 
 		//if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
+#if 0 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = RECEIVE_PLAY_SIZE_462;
-		else if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) limit = RECEIVE_PLAY_SIZE;
+		else
+#endif
+		if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) limit = RECEIVE_PLAY_SIZE;
 		else if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) limit = RECEIVE_PLAY_SIZE_OPTMAXCOMPAT;
 		else limit = RECEIVE_PLAY_SIZE_OPTMAXOLD;
 		if (limit > connp->r.len - (connp->r.ptr - connp->r.buf)) {
@@ -4601,8 +4604,11 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "feature" char/attrs */
+#if 0 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_F_IDX;
-		else limit = MAX_F_IDX_COMPAT;
+		else
+#endif
+		limit = MAX_F_IDX_COMPAT;
 		for (i = 0; i < limit; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
 			if (n <= 0) {
@@ -4616,8 +4622,11 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "object" char/attrs */
+#if 0 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_K_IDX;
-		else limit = MAX_K_IDX_COMPAT;
+		else
+#endif
+		limit = MAX_K_IDX_COMPAT;
 		for (i = 0; i < limit; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
 			if (n <= 0) {
@@ -4631,8 +4640,11 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "monster" char/attrs */
+#if 0 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_R_IDX;
-		else limit = MAX_R_IDX_COMPAT;
+		else
+#endif
+		limit = MAX_R_IDX_COMPAT;
 		for (i = 0; i < limit; i++) {
 			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
 			if (n <= 0) {
