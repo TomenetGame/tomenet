@@ -5282,41 +5282,8 @@ static void process_player_end(int Ind) {
 	/* calculate effective running speed */
 	eff_running_speed(&real_speed, p_ptr, c_ptr);
 
-#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
- #ifdef XID_REPEAT
-	{
-	sockbuf_t *connpq = get_conn_q(Ind);
-	/* hack: inject the delayed ID-spell cast command */
-	switch (p_ptr->delayed_spell) {
-	case 0: break; /* nothing */
-	case -1: /* item activation */
-		p_ptr->command_rep = PKT_ACTIVATE;
-		Packet_printf(connpq, "%c%hd", PKT_ACTIVATE, p_ptr->delayed_index);
-		p_ptr->delayed_spell = 0;
-		break;
-	case -2: /* perception staff use */
-		p_ptr->command_rep = PKT_USE;
-		Packet_printf(connpq, "%c%hd", PKT_USE, p_ptr->delayed_index);
-		p_ptr->delayed_spell = 0;
-		break;
-	case -3: /* perception rod zap */
-		p_ptr->command_rep = PKT_ZAP;
-		Packet_printf(connpq, "%c%hd", PKT_ZAP, p_ptr->delayed_index);
-		p_ptr->delayed_spell = 0;
-		break;
-	case -4: /* ID / *ID* scroll read (Note: This is of course a one-time thing, won't get repeated - scrolls always succeed) */
-		p_ptr->command_rep = PKT_READ;
-		Packet_printf(connpq, "%c%hd", PKT_READ, p_ptr->delayed_index);
-		p_ptr->delayed_spell = 0;
-		break;
-	default: /* spell */
-		p_ptr->command_rep = PKT_ACTIVATE_SKILL;
-		Packet_printf(connpq, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, p_ptr->delayed_index, p_ptr->delayed_spell, -1, -1, 0);
-		p_ptr->delayed_spell = 0;
-	}
-	}
- #endif
-#endif
+	/* inject a delayed command? */
+	handle_XID();
 
 	/* Try to execute any commands on the command queue. */
 	process_pending_commands(p_ptr->conn);
@@ -9927,4 +9894,46 @@ int get_recall_depth(struct worldpos *wpos, player_type *p_ptr) {
 	int i = recall_depth_idx(wpos, p_ptr);
 	if (i == -1) return 0;
 	return p_ptr->max_depth[i];
+}
+
+/* Inject a delayed command into the command queue, used for handling !X inscription:
+   It simulates the player executing an ID command after the item has been picked up. */
+void handle_XID(int Ind) {
+#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
+ #ifdef XID_REPEAT
+	{
+	sockbuf_t *connpq = get_conn_q(Ind);
+	player_type *p_ptr = Players[Ind];
+
+	/* hack: inject the delayed ID-spell cast command */
+	switch (p_ptr->delayed_spell) {
+	case 0: break; /* nothing */
+	case -1: /* item activation */
+		p_ptr->command_rep = PKT_ACTIVATE;
+		Packet_printf(connpq, "%c%hd", PKT_ACTIVATE, p_ptr->delayed_index);
+		p_ptr->delayed_spell = 0;
+		break;
+	case -2: /* perception staff use */
+		p_ptr->command_rep = PKT_USE;
+		Packet_printf(connpq, "%c%hd", PKT_USE, p_ptr->delayed_index);
+		p_ptr->delayed_spell = 0;
+		break;
+	case -3: /* perception rod zap */
+		p_ptr->command_rep = PKT_ZAP;
+		Packet_printf(connpq, "%c%hd", PKT_ZAP, p_ptr->delayed_index);
+		p_ptr->delayed_spell = 0;
+		break;
+	case -4: /* ID / *ID* scroll read (Note: This is of course a one-time thing, won't get repeated - scrolls always succeed) */
+		p_ptr->command_rep = PKT_READ;
+		Packet_printf(connpq, "%c%hd", PKT_READ, p_ptr->delayed_index);
+		p_ptr->delayed_spell = 0;
+		break;
+	default: /* spell */
+		p_ptr->command_rep = PKT_ACTIVATE_SKILL;
+		Packet_printf(connpq, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, p_ptr->delayed_index, p_ptr->delayed_spell, -1, -1, 0);
+		p_ptr->delayed_spell = 0;
+	}
+	}
+ #endif
+#endif
 }
