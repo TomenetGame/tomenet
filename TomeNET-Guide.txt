@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. September 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 20. September 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -54,6 +54,8 @@ Contents
     (2.3)   Client options
     (2.3a)  Client options configuration files
     (2.4)   Installing voice chat
+    (2.5)   Fonts
+    (2.5a)  Custom fonts
 (3) Creating a character & starting to play
     (3.1)   Creating a new character; character modes
     (3.2)   The display (user-interface)
@@ -3182,6 +3184,90 @@ SOLUTION: Can be caused by some firewalls interacting with mumble's quality of
            -look up to the top right corner and activate "Advanced".
            -click on "Network" tab.
            -deactivate/uncheck "Use Quality of Service".
+
+
+
+(2.5) Fonts
+-----------
+The Windows client comes with a few default fonts of different size, located
+in folder lib/xtra/font.
+If you aren't happy with the text size in the game, try switching the fonts
+used for the main window and the other subwindows: Press '=' to enter the
+options menu. Now you can either press 'f' for the fonts menu where you can
+change all fonts in detail, or you can hit 'c' to automatically cycle through
+predefined font sizes for all windows at once.
+
+Fonts can also be pseudo-graphical, some such fonts might come shipped with the
+client. Again press = f and then use + and - keys to switch the main window
+font. These two keys allow you to switch through all fonts available in the
+lib/xtra/font folder.
+
+For the Linux client, the game doesn't use the lib/xtra/font folder but instead
+assumes that some standard fonts are provided by your system and tries to
+select those when cycling with 'c' key in the fonts menu.
+
+
+(2.5a) Custom fonts
+-------------------
+For the Windows client it is possible to create your own custom fonts for the
+game. You can use "Fony" for example: http://hukka.ncn.fi/?fony
+(Up to client 4.6.1a it was not possible to use characters of numbers 128-255
+but this has been addressed, so the full range of characters is available now.)
+
+Since you might need/want to use mapping files to remap terrain features to the
+characters in your font, you can create font-preference files that contain
+mapping information.
+The default font mapping file is lib/user/font-win.prf. If it exists, this file
+will automatically be loaded by the game client.
+However, the client first checks for the existance of a specific, custom font
+mapping file that has a filename: lib/user/font-custom-FONTNAME.prf and loads
+this instead of attempting to load font-win.prf.
+This allows you to have a custom mapping file for each of your fonts.
+
+Example:
+You go to the fonts menu by pressing = f and switch to a font named 10X16X.FON.
+Now the client will automatically try to not only load the font from the font
+folder lib/xtra/font/10X16X.FON but also a mapping file to go with it, named
+lib/user/font-custom-10X16X.prf.
+(On switching fonts, the client will automatically discard all mapping info it
+loaded for the previously used font.)
+
+Note that this mapping file loading only happens if you switch the font for the
+main window, not when you switch fonts of the subwindows.
+
+Font mapping files have the following syntax for mapping lines:
+  F:index:attribute:character
+This will remap a feature of a specific index (see lib/game/f_info.txt file for
+all terrain features and their indices, it's the number after 'N:') to the
+symbol with the number 'character' in your font and display it in the colour
+'attribute' which may range from 0 to 55 (up to 4.6.1a client) or 57 (in later
+clients), with colours 0 to 15 being static colours and the higher ones being
+animated.
+
+Example:
+  F:56:2/127
+Maps the terrain feature 'granite wall' (#56 in f_info.txt) to the font symbol
+#127 and the colour 2 (which is 'slate').
+
+Here is a list of all supported colours:
+----------------------------------------
+Static colours:
+ 0  black           1  white           2  slate           3  orange
+ 4  red             5  green           6  blue            7  umber
+ 8  dark grey       9  light grey     10  violet         11  yellow
+12  light red      13  light green    14  light blue     15  light umber
+Animated (flickering in multiple hues) colours:
+16  multi          17  poison         18  fire           19  cold
+20  acid           21  electricity    22  confusion      23  sound
+24  shards         25  light          26  darkness       27  mana-shield
+28  invulnerable   29  curse          30  annihilation   31  half-multi
+32  psi            33  nexus          34  nether         35  disenchantment
+36  inertia        37  force          38  gravity        39  time
+40  meteor         41  mana           42  disintegration 43  water
+44  ice            45  plasma         46  detonations    47  nuke (toxic waste)
+48  unbreath       49  holy orb       50  holy fire      51  hellfire
+52  thunder        (53  lamp)         (54  dark lamp)    55  ember
+(56 thin fire)     57  starlight
 
 
 
