@@ -5138,6 +5138,7 @@ bool monster_death(int Ind, int m_idx) {
 	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
 	if (r_ptr->flags0 & RF0_DROP_1) number++;
 	if (r_ptr->flags1 & RF1_DROP_1D2) number += damroll(1, 2);
+	if (r_ptr->flags0 & RF0_DROP_2) number += 2;
 	if (r_ptr->flags1 & RF1_DROP_2D2) number += damroll(2, 2);
 	if (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);
 	if (r_ptr->flags1 & RF1_DROP_4D2) number += damroll(4, 2);
@@ -6312,6 +6313,27 @@ if (cfg.unikill_format) {
 			} else if (strstr((r_name + r_ptr->name), "Saruman of Many Colours")) {
 				a_idx = ART_ELENDIL;
 				chance = 30;
+
+				/* If Elendil drop fails, go for a top mage staff instead */
+				if (magik(chance) && !cfg.arts_disabled && (a_info[a_idx].cur_num == 0)) chance = 100;
+				else {
+					a_idx = 0;
+
+					/* Mage staff drop - added after treasure classes were fixed. */
+					qq_ptr = &forge;
+					object_wipe(qq_ptr);
+					invcopy(qq_ptr, lookup_kind(TV_MSTAFF, SV_MSTAFF));
+					qq_ptr->number = 1;
+					qq_ptr->note = local_quark;
+					qq_ptr->note_utag = strlen(quark_str(local_quark));
+					apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_drops);
+					/* hack ego power if not art already */
+					if (!qq_ptr->name1) {
+						qq_ptr->name2 = EGO_MWIZARDRY;
+						qq_ptr->pval = 10;
+					}
+					drop_near(0, qq_ptr, -1, wpos, y, x);
+				}
 			} else if (strstr((r_name + r_ptr->name), "Gorlim, Betrayer of Barahir")) {
 				a_idx = ART_GORLIM;
 				chance = 30;
@@ -6343,7 +6365,7 @@ if (cfg.unikill_format) {
 			if (chance < 100 / SEMI_PROMISED_ARTS_MODIFIER) /* never turn into zero */
 				chance = 1;
 			else if (chance < 101) /* 101 = always drops */
-				chance = chance * SEMI_PROMISED_ARTS_MODIFIER / 100;
+				chance = (chance * SEMI_PROMISED_ARTS_MODIFIER) / 100;
 #endif
 
 			//if ((a_idx > 0) && ((randint(99)<chance) || (wizard)))
@@ -6452,13 +6474,15 @@ if (cfg.unikill_format) {
 	    || (firework_dungeon_chance && d_ptr && d_ptr->type == firework_dungeon && !rand_int(firework_dungeon_chance))
 #endif
 	    ) &&
+	    /* Monster is one of these common, non-aquatic humanoids? Then it's eligible. */
 	    ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT)) || /*note: demons/undead don't do fireworks..*/
 	    (strchr("hHkpty", r_ptr->d_char))) &&
 	    !(r_ptr->flags7 & RF7_AQUATIC) &&
 #if 0
+	    /* Monster does usually drop at least one item? Then it's eligible. */
 	    do_item &&
 	    ((r_ptr->flags1 & (RF1_DROP_60 | RF1_DROP_90 | RF1_DROP_1D2 | RF1_DROP_2D2 | RF1_DROP_3D2 | RF1_DROP_4D2))
-	    || (r_ptr->flags0 & RF0_DROP_1)) &&
+	    || (r_ptr->flags0 & (RF0_DROP_1 | RF0_DROP_2))) &&
 #endif
 	    (!rand_int(100)
 	    || p_ptr->admin_dm || p_ptr->admin_wiz)) {
@@ -9429,6 +9453,7 @@ void monster_death_mon(int am_idx, int m_idx) {
 	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
 	if (r_ptr->flags0 & RF0_DROP_1) number++;
 	if (r_ptr->flags1 & RF1_DROP_1D2) number += damroll(1, 2);
+	if (r_ptr->flags0 & RF0_DROP_2) number += 2;
 	if (r_ptr->flags1 & RF1_DROP_2D2) number += damroll(2, 2);
 	if (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);
 	if (r_ptr->flags1 & RF1_DROP_4D2) number += damroll(4, 2);

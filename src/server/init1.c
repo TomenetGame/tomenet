@@ -532,7 +532,7 @@ static cptr r_info_flags0[] = {
 	"DROP_1",
 	"CAN_CLIMB",//12
 	"RAND_5",
-	"X00002000",
+	"DROP_2",
 	"X00004000",
 	"X00008000",//16
 	"X00010000",

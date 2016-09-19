@@ -5638,6 +5638,8 @@
 #define RF0_DROP_1		0x00000400		/* Drop exactly 1 item/gold pile */
 #define RF0_CAN_CLIMB		0x00000800		/* Monster can climb */
 #define RF0_RAND_5			0x00001000	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
+#define RF0_DROP_2			0x00002000	/* Drop exactly 2 items/gold piles */
+
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 
 #define RF0_PLAYER_SPELLS (0L)
