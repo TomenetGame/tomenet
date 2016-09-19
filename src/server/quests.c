@@ -583,26 +583,47 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 			/* assume non-dungeon town */
 			wpos->wz = 0;
 
+
 			switch (choice) { /* TODO: such hardcode. wow. */
 			case QI_STOWN_BREE:
-				wpos->wx = 32;
-				wpos->wy = 32;
+				for (i = 0; i < numtowns; i++)
+					if (town[i].type == TOWN_BREE) {
+						wpos->wx = town[i].x;
+						wpos->wy = town[i].y;
+						break;
+					}
 				break;
 			case QI_STOWN_GONDOLIN:
-				wpos->wx = 27;
-				wpos->wy = 13;
+				for (i = 0; i < numtowns; i++)
+					if (town[i].type == TOWN_GONDOLIN) {
+						wpos->wx = town[i].x;
+						wpos->wy = town[i].y;
+						break;
+					}
 				break;
 			case QI_STOWN_MINASANOR:
-				wpos->wx = 25;
-				wpos->wy = 58;
+				for (i = 0; i < numtowns; i++)
+					if (town[i].type == TOWN_MINAS_ANOR) {
+						wpos->wx = town[i].x;
+						wpos->wy = town[i].y;
+						break;
+					}
 				break;
 			case QI_STOWN_LOTHLORIEN:
-				wpos->wx = 59;
-				wpos->wy = 51;
+				for (i = 0; i < numtowns; i++)
+					if (town[i].type == TOWN_LOTHLORIEN) {
+						wpos->wx = town[i].x;
+						wpos->wy = town[i].y;
+						break;
+					}
 				break;
 			case QI_STOWN_KHAZADDUM:
-				wpos->wx = 26;
-				wpos->wy = 5;
+				for (i = 0; i < numtowns; i++)
+					if (town[i].type == TOWN_KHAZADDUM) {
+						wpos->wx = town[i].x;
+						wpos->wy = town[i].y;
+						break;
+					}
 				break;
 			case QI_STOWN_WILD:
 				return FALSE;
