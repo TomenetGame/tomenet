@@ -11766,13 +11766,16 @@ static int Receive_inventory_revision(int ind) {
 			case PKT_USE:
 			case PKT_ZAP:
 			case PKT_ACTIVATE_SKILL:
+				if (p_ptr->command_rep > 0) {
+					p_ptr->command_rep_temp = p_ptr->command_rep;
+					//p_ptr->delayed_spell_temp is already set in handle_XID()
+					p_ptr->delayed_index_temp = p_ptr->delayed_index;
+					p_ptr->current_item_temp = p_ptr->current_item;
+				}
 				break;
-			default:
-				p_ptr->command_rep = -1;
 			}
-#else
-			p_ptr->command_rep = -1;
 #endif
+			p_ptr->command_rep = -1;
 		}
 		if (connp->q.len) {
 			/* There are some queued packets, block any further

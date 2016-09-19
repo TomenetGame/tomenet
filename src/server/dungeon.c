@@ -5288,6 +5288,17 @@ static void process_player_end(int Ind) {
 	/* Try to execute any commands on the command queue. */
 	process_pending_commands(p_ptr->conn);
 
+#ifdef XID_REPEAT
+	/* Hack to restore repeated ID command after Receive_inventory_revision() happened: */
+	if (p_ptr && p_ptr->command_rep_temp) {
+		/* Initiate a new delayed command that is identical to the previous one */
+		p_ptr->delayed_index = p_ptr->delayed_index_temp;
+		p_ptr->delayed_spell = p_ptr->delayed_spell_temp;
+		p_ptr->current_item = p_ptr->current_item_temp;
+		p_ptr->command_rep_temp = 0;
+	}
+#endif
+
 	/* Mind Fusion/Control disable the char */
 	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ)) return;
 
@@ -9911,26 +9922,31 @@ void handle_XID(int Ind) {
 	case -1: /* item activation */
 		p_ptr->command_rep = PKT_ACTIVATE;
 		Packet_printf(connpq, "%c%hd", PKT_ACTIVATE, p_ptr->delayed_index);
+		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
 		p_ptr->delayed_spell = 0;
 		break;
 	case -2: /* perception staff use */
 		p_ptr->command_rep = PKT_USE;
 		Packet_printf(connpq, "%c%hd", PKT_USE, p_ptr->delayed_index);
+		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
 		p_ptr->delayed_spell = 0;
 		break;
 	case -3: /* perception rod zap */
 		p_ptr->command_rep = PKT_ZAP;
 		Packet_printf(connpq, "%c%hd", PKT_ZAP, p_ptr->delayed_index);
+		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
 		p_ptr->delayed_spell = 0;
 		break;
 	case -4: /* ID / *ID* scroll read (Note: This is of course a one-time thing, won't get repeated - scrolls always succeed) */
 		p_ptr->command_rep = PKT_READ;
 		Packet_printf(connpq, "%c%hd", PKT_READ, p_ptr->delayed_index);
+		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
 		p_ptr->delayed_spell = 0;
 		break;
 	default: /* spell */
 		p_ptr->command_rep = PKT_ACTIVATE_SKILL;
 		Packet_printf(connpq, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, p_ptr->delayed_index, p_ptr->delayed_spell, -1, -1, 0);
+		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
 		p_ptr->delayed_spell = 0;
 	}
 	}

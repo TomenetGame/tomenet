@@ -2173,6 +2173,12 @@ struct player_type {
 
 	u16b noscore;			/* Has he cheated in some way (hopefully not) */
 	s16b command_rep;		/* Command repetition */
+#ifdef XID_REPEAT
+	s16b command_rep_temp;		/* Command repetition */
+	int delayed_index_temp;
+	int delayed_spell_temp;
+	s16b current_item_temp;
+#endif
 
 	byte last_dir;			/* Last direction moved (used for swapping places) */
 
