@@ -2601,6 +2601,9 @@ static void Input_loop(void) {
 
 		/* Process any commands we got */
 		while (command_cmd) {
+#ifdef RETRY_LOGIN
+			if (!rl_connection_destroyed)
+#endif
 			/* Process it */
 			process_command();
 
