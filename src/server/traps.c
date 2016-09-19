@@ -3618,7 +3618,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_STAFF_STARLITE:
 			/* Hack */
-			typ = GF_LITE;//GF_LITE_WEAK;
+			typ = GF_STARLITE;//GF_LITE;//GF_LITE_WEAK;
 			dam = damroll(6, 8);
 			rad = 3;
 			break;

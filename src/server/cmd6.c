@@ -3158,7 +3158,8 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 			if (msg) msg_print(Ind, "The end of the staff glows brightly...");
 			else msg_print(Ind, "A bright light appears...");
 		}
-		for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], damroll(9, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 100));
+		lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], damroll(5, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 100), TRUE);
 		if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), msg ? "a staff of starlight" : "starlight", 0);
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		ident = TRUE;
@@ -3766,7 +3767,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 
 	case SV_WAND_LITE:
 		msg_print(Ind, "A line of blue shimmering light appears.");
-		lite_line(Ind, dir, damroll(6, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+		lite_line(Ind, dir, damroll(6, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50), FALSE);
 		ident = TRUE;
 		break;
 
@@ -4532,7 +4533,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	case SV_ROD_LITE:
 		msg_print(Ind, "A line of blue shimmering light appears.");
-		lite_line(Ind, dir, damroll(6, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50));
+		lite_line(Ind, dir, damroll(6, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 50), FALSE);
 		ident = TRUE;
 		//o_ptr->pval += 9;
 		/* up to 50% faster with maxed MD - the_sandman */

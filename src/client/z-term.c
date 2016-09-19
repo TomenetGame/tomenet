@@ -680,6 +680,9 @@ byte flick_colour(byte attr){
 		case TERM_EMBER:
 			return (rand_int(6) ? TERM_RED : (rand_int(2) ? TERM_ORANGE : TERM_L_RED));
 
+		case TERM_STARLITE:
+			return (rand_int(16) ? TERM_WHITE : (rand_int(4) ? TERM_BLUE : TERM_L_BLUE));
+
  #ifdef ATMOSPHERIC_INTRO
 		case TERM_FIRETHIN: /* for ascii-art in client login screen */
 			//return (!rand_int(2) ? (randint(5) > 3 ? TERM_ORANGE : (rand_int(2) ? TERM_YELLOW : TERM_RED)) : TERM_DARK);

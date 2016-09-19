@@ -1698,6 +1698,7 @@ byte spell_color(int type) {
 	case GF_INERTIA:	return (TERM_INER);
 	case GF_GRAVITY:	return (TERM_GRAV);
 	case GF_TIME:		return (TERM_TIME);
+	case GF_STARLITE:	return (TERM_STARLITE);
 	case GF_LITE_WEAK:	return (TERM_LITE);
 	case GF_LITE:		return (TERM_LITE);
 	case GF_DARK_WEAK:	return (TERM_DARKNESS);
@@ -4413,6 +4414,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Lite up the grid */
+		case GF_STARLITE:
 		case GF_LITE_WEAK:
 		case GF_LITE:
 			/* don't ruin the mood :> (allow turning on light inside houses though) */
@@ -6863,6 +6865,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Lite -- opposite of Dark */
 		case GF_LITE:
+		case GF_STARLITE:
 			if (seen) obvious = TRUE;
 
 			/* Get blinded later */
@@ -12420,6 +12423,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam = 0;
 			break;
 
+		case GF_STARLITE:
 		case GF_LITE:
 			//do_blind = damroll(3, (dam / 20)) + 1;
 

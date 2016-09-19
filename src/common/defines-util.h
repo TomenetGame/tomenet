@@ -86,6 +86,8 @@
   #define TERM_FIRETHIN	56
  #endif
 
+ #define TERM_STARLITE	57
+
  #ifdef EXTENDED_BG_COLOURS
   #define TERM2_BLUE	63
  #endif

@@ -4590,6 +4590,7 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		case GF_LITE:
 		case GF_DARK:
 		case GF_LITE_WEAK:
+		case GF_STARLITE:
 		case GF_DARK_WEAK:
 		case GF_SHARDS:
 		case GF_SOUND:
