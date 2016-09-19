@@ -1145,8 +1145,7 @@ int Net_start(int sex, int race, int class) {
 	for (i = 0; i < TV_MAX; i++)
 		Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
 
-	//if (!is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) {
-	if (TRUE) {
+	if (!is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) {
 		/* Send the "feature" redefinitions */
 		for (i = 0; i < MAX_F_IDX_COMPAT; i++)
 			Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);

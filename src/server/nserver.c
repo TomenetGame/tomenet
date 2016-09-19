@@ -4493,7 +4493,7 @@ static int Receive_play(int ind) {
 		connp->trait = trait;
 
 		//if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
-#if 0 /*todo: fix*/
+#if 1 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = RECEIVE_PLAY_SIZE_462;
 		else
 #endif
@@ -4604,7 +4604,7 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "feature" char/attrs */
-#if 0 /*todo: fix*/
+#if 1 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_F_IDX;
 		else
 #endif
@@ -4622,7 +4622,7 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "object" char/attrs */
-#if 0 /*todo: fix*/
+#if 1 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_K_IDX;
 		else
 #endif
@@ -4640,7 +4640,7 @@ static int Receive_play(int ind) {
 		}
 
 		/* Read the "monster" char/attrs */
-#if 0 /*todo: fix*/
+#if 1 /*todo: fix*/
 		if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) limit = MAX_R_IDX;
 		else
 #endif
