@@ -3156,7 +3156,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 	case SV_STAFF_STARLITE:
 		if (!p_ptr->blind) {
 			if (msg) msg_print(Ind, "The end of the staff glows brightly...");
-			else msg_print(Ind, "A bright light appear...");
+			else msg_print(Ind, "A bright light appears...");
 		}
 		for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], damroll(9, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 100));
 		if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), msg ? "a staff of starlight" : "starlight", 0);
