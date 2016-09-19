@@ -5283,7 +5283,7 @@ static void process_player_end(int Ind) {
 	eff_running_speed(&real_speed, p_ptr, c_ptr);
 
 	/* inject a delayed command? */
-	handle_XID();
+	handle_XID(Ind);
 
 	/* Try to execute any commands on the command queue. */
 	process_pending_commands(p_ptr->conn);
