@@ -4501,10 +4501,10 @@ static int Receive_play(int ind) {
 		else if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) limit = RECEIVE_PLAY_SIZE_OPTMAXCOMPAT;
 		else limit = RECEIVE_PLAY_SIZE_OPTMAXOLD;
 		if (limit > connp->r.len - (connp->r.ptr - connp->r.buf)) {
-//#if DEBUG_LEVEL > 2
+#if DEBUG_LEVEL > 2
 			plog(format("Play packet is not large enough yet (%d > %d)",
 			    limit, connp->r.len - (connp->r.ptr - connp->r.buf)));
-//#endif	// DEBUG_LEVEL
+#endif
 			connp->r.ptr = connp->r.buf;
 			return 1;
 		}
@@ -4512,7 +4512,7 @@ static int Receive_play(int ind) {
 #if DEBUG_LEVEL > 2
 			plog(format("Play packet is now large enough (%d)",
 			    connp->r.len - (connp->r.ptr - connp->r.buf)));
-#endif	// DEBUG_LEVEL
+#endif
 
 #if 1	// moved from Handle_listening
 		/* Read the stat order */
