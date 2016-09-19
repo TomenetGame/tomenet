@@ -5109,7 +5109,7 @@ int Send_request_cfr(int id, int cfr) {
 }
 
 /* Resend F:/R:/K:/U: definitions, used after a font change. */
-#define SEND_CLIENT_SETUP_FINISH Net_flush(); sync_sleep(10); /* min is 5ms */
+#define SEND_CLIENT_SETUP_FINISH Net_flush(); sync_sleep(20); /* min is 5ms */
 int Send_client_setup(void) {
 	int n, i;
 
