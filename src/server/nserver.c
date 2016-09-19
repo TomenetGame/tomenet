@@ -12041,7 +12041,7 @@ static int Receive_client_setup_U(int ind) {
 	}
 
 	/* Read the "unknown" char/attrs */
-	if (begin < 0 || begin >= TV_MAX || end < 0 || end >= TV_MAX || end <= begin) {
+	if (begin < 0 || begin >= TV_MAX || end < 0 || end > TV_MAX || end < begin) {
 		Destroy_connection(ind, "bad u-setup");
 		return -1;
 	}
@@ -12080,7 +12080,7 @@ static int Receive_client_setup_F(int ind) {
 	}
 
 	/* Read the "feature" char/attrs */
-	if (begin < 0 || begin >= MAX_F_IDX || end < 0 || end >= MAX_F_IDX || end <= begin) {
+	if (begin < 0 || begin >= MAX_F_IDX || end < 0 || end > MAX_F_IDX || end < begin) {
 		Destroy_connection(ind, "bad f-setup");
 		return -1;
 	}
@@ -12119,7 +12119,7 @@ static int Receive_client_setup_K(int ind) {
 	}
 
 	/* Read the "object" char/attrs */
-	if (begin < 0 || begin >= MAX_K_IDX || end < 0 || end >= MAX_K_IDX || end <= begin) {
+	if (begin < 0 || begin >= MAX_K_IDX || end < 0 || end > MAX_K_IDX || end < begin) {
 		Destroy_connection(ind, "bad k-setup");
 		return -1;
 	}
@@ -12158,7 +12158,7 @@ static int Receive_client_setup_R(int ind) {
 	}
 
 	/* Read the "monster" char/attrs */
-	if (begin < 0 || begin >= MAX_R_IDX || end < 0 || end >= MAX_R_IDX || end <= begin) {
+	if (begin < 0 || begin >= MAX_R_IDX || end < 0 || end > MAX_R_IDX || end < begin) {
 		Destroy_connection(ind, "bad r-setup");
 		return -1;
 	}
