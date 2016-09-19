@@ -8756,6 +8756,13 @@ static int Receive_activate_skill(int ind) {
 			/* Sanity check #2 */
 			if (dir == -1) dir = 5;
 
+			/* all this is temp just to make it work */
+			if (p_ptr->command_rep == -1) {
+				p_ptr->command_rep = 0;
+				return(0);
+			}
+			if (p_ptr && p_ptr->command_rep != PKT_ACTIVATE_SKILL) p_ptr->command_rep = -1;
+
 			if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 			cast_school_spell(player, book, spell, dir, item, aux);
 			p_ptr->shooty_till_kill = FALSE;
@@ -9123,6 +9130,13 @@ static int Receive_use(int ind) {
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL) return 1;
 
+	/* all this is temp just to make it work */
+	if (p_ptr->command_rep == -1) {
+		p_ptr->command_rep = 0;
+		return(0);
+	}
+	if (p_ptr && p_ptr->command_rep != PKT_USE) p_ptr->command_rep = -1;
+
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0xFF) {
@@ -9241,6 +9255,13 @@ static int Receive_zap(int ind) {
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL)
 		return 1;
+
+	/* all this is temp just to make it work */
+	if (p_ptr->command_rep == -1) {
+		p_ptr->command_rep = 0;
+		return(0);
+	}
+	if (p_ptr && p_ptr->command_rep != PKT_ZAP) p_ptr->command_rep = -1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
@@ -9490,6 +9511,13 @@ static int Receive_activate(int ind) {
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL)
 		return 1;
+
+	/* all this is temp just to make it work */
+	if (p_ptr->command_rep == -1) {
+		p_ptr->command_rep = 0;
+		return(0);
+	}
+	if (p_ptr && p_ptr->command_rep != PKT_ACTIVATE) p_ptr->command_rep = -1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
