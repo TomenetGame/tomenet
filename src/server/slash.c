@@ -9662,6 +9662,13 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 #endif
+			else if (prefix(message, "/xid")) { //debugging help
+				//xid <id rod> <item to id>
+				p_ptr->delayed_index = k;
+				p_ptr->delayed_spell = -3;//<-rod : -2; <-staff
+				p_ptr->current_item = atoi(token[2]);
+				return;
+			}
 		}
 	}
 
