@@ -3195,16 +3195,21 @@ If you aren't happy with the text size in the game, try switching the fonts
 used for the main window and the other subwindows: Press '=' to enter the
 options menu. Now you can either press 'f' for the fonts menu where you can
 change all fonts in detail, or you can hit 'c' to automatically cycle through
-predefined font sizes for all windows at once.
+predefined font sizes for all windows at once. (You could also enter them
+directly in your TomeNET.ini config file, if you wanted. This is obviously the
+least flexible solution though.)
 
 Fonts can also be pseudo-graphical, some such fonts might come shipped with the
 client. Again press = f and then use + and - keys to switch the main window
 font. These two keys allow you to switch through all fonts available in the
 lib/xtra/font folder.
 
-For the Linux client, the game doesn't use the lib/xtra/font folder but instead
-assumes that some standard fonts are provided by your system and tries to
-select those when cycling with 'c' key in the fonts menu.
+
+For the Linux/OSX client, the game doesn't use the lib/xtra/font folder but
+instead assumes that some standard fonts are provided by your system and tries
+to select those when cycling with 'c' key in the fonts menu.
+You can also set fonts manually with = f if you want to choose specific fonts
+available in your Linux/OSX installation.
 
 
 (2.5a) Custom fonts
@@ -3273,6 +3278,13 @@ Animated (flickering in multiple hues) colours:
 48  unbreath       49  holy orb       50  holy fire      51  hellfire
 52  thunder        (53  lamp)         (54  dark lamp)    55  ember
 (56 thin fire)     57  starlight
+
+
+For the Linux/OSX client you'll need to either convert FON fonts to PCF format
+(bitmap font files) or create fonts directly in PCF format.
+Add them to your system with the usual font-adding procedures for your specific
+Linux distribution, then you can select them in TomeNET via  = f  (or enter
+them directly in your .tomenetrc config file).
 
 
 
