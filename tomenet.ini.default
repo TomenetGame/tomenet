@@ -100,8 +100,8 @@ PositionX=0
 PositionY=1
 Columns=80
 Rows=24
-Font=8X13.FON
-Graf=8X13.BMP
+Font=9X15.FON
+Graf=9X15.BMP
 
 [Mirror window]
 WindowNumber=1
@@ -111,7 +111,7 @@ PositionX=0
 PositionY=522
 Columns=80
 Rows=24
-Font=6X10.FON
+Font=8X13.FON
 Graf=8X13.BMP
 
 [Recall window]
@@ -122,7 +122,7 @@ PositionX=484
 PositionY=359
 Columns=80
 Rows=24
-Font=6X10.FON
+Font=8X13.FON
 Graf=8X13.BMP
 
 [Choice window]
@@ -133,7 +133,7 @@ PositionX=652
 PositionY=1
 Columns=80
 Rows=22
-Font=5X8.FON
+Font=8X13.FON
 Graf=8X13.BMP
 
 [Term-4 window]
@@ -144,7 +144,7 @@ PositionX=652
 PositionY=183
 Columns=80
 Rows=17
-Font=6X10.FON
+Font=8X13.FON
 Graf=8X13.BMP
 
 [Term-5 window]
@@ -155,7 +155,7 @@ PositionX=484
 PositionY=622
 Columns=80
 Rows=14
-Font=6X10.FON
+Font=8X13.FON
 Graf=8X13.BMP
 
 [Term-6 window]
@@ -166,7 +166,7 @@ PositionX=184
 PositionY=549
 Columns=80
 Rows=24
-Font=5X8.FON
+Font=8X13.FON
 Graf=8X13.BMP
 
 [Term-7 window]
@@ -177,5 +177,5 @@ PositionX=676
 PositionY=548
 Columns=80
 Rows=24
-Font=5X8.FON
+Font=8X13.FON
 Graf=8X13.BMP
