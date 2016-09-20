@@ -7069,7 +7069,7 @@ void process_player_change_wpos(int Ind) {
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 	char o_name_short[ONAME_LEN];
-	bool smooth_ambient = FALSE, travel_ambient = FALSE, sickbay = FALSE;
+	bool smooth_ambient = FALSE, travel_ambient = FALSE;
 
 	/* un-snow */
 	p_ptr->dummy_option_8 = FALSE;
@@ -7366,13 +7366,13 @@ void process_player_change_wpos(int Ind) {
 		startx = p_ptr->px;
 
 		/* don't prob into sickbay area (also can't prob into inns) */
-		if (zcave[starty][startx].feat == FEAT_PROTECTED) {
+		if (zcave[starty][startx].feat == FEAT_SICKBAY_AREA) {
 			tries = 1000;
 			do {
 				if (!(--tries)) break;
 				starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT) - 3) + 1;
 				startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID) - 3) + 1;
-			} while (zcave[starty][startx].feat == FEAT_PROTECTED); /* don't recall him into sickbay areas */
+			} while (zcave[starty][startx].feat == FEAT_SICKBAY_AREA); /* don't recall him into sickbay areas */
 			if (!tries) { /* just this one time */
 				starty = p_ptr->py;
 				startx = p_ptr->px;
@@ -7407,7 +7407,7 @@ void process_player_change_wpos(int Ind) {
 		}
 		while (  ((zcave[starty][startx].info & CAVE_ICKY)
 			|| (zcave[starty][startx].feat == FEAT_DEEP_WATER)
-			|| (zcave[starty][startx].feat == FEAT_PROTECTED) /* don't recall him into sickbay areas */
+			|| (zcave[starty][startx].feat == FEAT_SICKBAY_AREA) /* don't recall him into sickbay areas */
 			|| (!cave_floor_bold(zcave, starty, startx)))
 			&& (++tries < 10000) );
 		if (tries == 10000 && emergency_x) {
@@ -7425,7 +7425,6 @@ void process_player_change_wpos(int Ind) {
 					/* Found the temple's sickbay area */
 					startx = x;
 					starty = y;
-					sickbay = TRUE;
 					break;
 				}
 			}
@@ -7520,7 +7519,7 @@ void process_player_change_wpos(int Ind) {
 
 		/* for new sickbay area: */
 		if (p_ptr->new_level_method == LEVEL_TO_TEMPLE
-		    && zcave[y][x].feat != FEAT_PROTECTED) continue;
+		    && zcave[y][x].feat != FEAT_SICKBAY_AREA) continue;
 
 		/* Must be inside the level borders - mikaelh */
 		if (x < 1 || y < 1 || x > p_ptr->cur_wid - 2 || y > p_ptr->cur_hgt - 2)
@@ -7873,8 +7872,7 @@ void process_player_change_wpos(int Ind) {
 
 #ifdef USE_SOUND_2010
 	/* clear boss/floor-specific music */
-	if (sickbay) p_ptr->music_monster = -3;
-	else p_ptr->music_monster = -1;
+	p_ptr->music_monster = -1;
 	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, smooth_ambient);
 #endif
 

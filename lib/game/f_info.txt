@@ -1228,6 +1228,11 @@ D:0:You are not allowed to enter the temple's sickbay.
 D:1:Please do not disturb the patients!
 D:2:You are not allowed to enter the temple's sickbay.
 
+N:232:sickbay area
+G:_:u
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT
+
 
 # NOTE: 255 is reserved for special purpose ('not done yet' indicator)
 

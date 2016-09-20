@@ -7356,8 +7356,16 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	}
 
 #ifdef USE_SOUND_2010
+	/* Handle entering a sickbay area (only possible via logging on into one) */
+	if (p_ptr->music_monster != -3 && p_ptr->music_monster != -4
+	    && (c_ptr->feat == FEAT_SICKBAY_AREA || c_ptr->feat == FEAT_SICKBAY_DOOR)) {
+		p_ptr->music_monster = -3; //hack sickbay music
+		handle_music(Ind);
+		music = TRUE;
+	}
+
 	/* Handle leaving a sickbay area */
-	if (p_ptr->music_monster == -3 && c_ptr->feat != FEAT_PROTECTED && c_ptr->feat != FEAT_SICKBAY_DOOR) {
+	if (p_ptr->music_monster == -3 && c_ptr->feat != FEAT_SICKBAY_AREA && c_ptr->feat != FEAT_SICKBAY_DOOR) {
 		p_ptr->music_monster = -1; //unhack sickbay music
 		handle_music(Ind);
 		music = TRUE;

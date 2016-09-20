@@ -64,6 +64,7 @@ F:m:74:3:0:0:0:0:0:56
 F:v:74:3:0:0:0:0:0:48
 
 F:+:231:3
+F:P:232:3
 
 ############### Town Layout ###############
 D:######################################################################################################################################################################################################
@@ -103,8 +104,8 @@ D:#^ #######bOOOOOOO############III############^OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO--
 D:#^ #######bOOOOOOOO-^^^^^^^^^^MMM^^^^^^^^^^^^OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-------                            @VVV@@      ------OOOO------                                                        #
 D:#^^^######Z-----OOO---#-sSss--OOO-#---------OOOOOOOOOOOOOOOOO-----------OOOOOOO------                 ---------##@VVV@## --------OOOOO-----                                                          #
 D:#^^#########----OOO---#-sSss--OOO-#-sssss--OOOOOO--#######--------sssss-O-OOOOO-----                 --OOOO-----#######--------OOOOOO-----                                                           #
-D:#^^##########---OOO---#-scss--OOO-#-SScSS-OOOOOO---##pp####-------SScSS-O-OOOOO----                 --OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-----                                                            #
-D:#^^############-OOO--##-sSss--OOO-#-sssss-OOOOO--t-##pp+,,##------sssss-O--OOOOO---                --OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-----                                                             #
+D:#^^##########---OOO---#-scss--OOO-#-SScSS-OOOOOO---##PP####-------SScSS-O-OOOOO----                 --OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-----                                                            #
+D:#^^############-OOO--##-sSss--OOO-#-sssss-OOOOO--t-##PP+,,##------sssss-O--OOOOO---                --OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO-----                                                             #
 D:#^^#########----OOO--#--####-OOO--#-sssss-OOOOO-TT-#####-,,#------sssss-O---OOOO---               --OOOOO-OOOOOOOOOOOOOOOOOOOOOOO-------                                                             #
 D:#^^#######------OOO-##-------OOO-##-###3#-OOOOO-Tt-##4#---,#------###0#-O---OOOOO---             --OOOO---------#######---------------                                                               #
 D:#^^-#####-------OOO-#--Ssss--OOO-#--------OOOOO--T-#,-----,#------------O----OOOO----           --OOOO---------##@VVV@##-----------                                                                  #
