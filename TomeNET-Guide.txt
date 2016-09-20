@@ -14916,8 +14916,8 @@ school.
                     Required skill level for first spell level: 9.
 
     Vision          Detects the dungeon layout around you.
-                    Lv26: Maps and lights the whole level.
-                    Required skill level for first spell level: 15.
+                    Lv23: Maps and lights the whole level.
+                    Required skill level for first spell level: 18.
 
     Greater Identify
                     *Identifies* an item.

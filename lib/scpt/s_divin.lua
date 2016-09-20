@@ -82,11 +82,11 @@ IDENTIFY_III = add_spell {
 VISION_I = add_spell {
 	["name"] = 	"Vision I",
 	["school"] = 	{SCHOOL_DIVINATION},
-	["level"] = 	15,
+	["level"] = 	18,
 	["mana"] = 	7,
 	["mana_max"] = 	7,
 --	["stat"] = 	A_WIS,
-	["fail"] = 	10,
+	["fail"] = 	0,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
 			map_area(Ind)
