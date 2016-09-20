@@ -62,17 +62,17 @@ WATERPOISON_III = add_spell {
 	["name"] = 	"Toxic Moisture III",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
-	["level"] = 	30,
+	["level"] = 	33,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
 	["fail"] = 	-70,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			fire_cloud(Ind, GF_ICEPOISON, args.dir, (2 + 106 + get_level(Ind, WATERPOISON_III, 60)), 3, (5 + get_level(Ind, WATERPOISON_I, 14)), 9, " fires icy toxic moisture of")
+			fire_cloud(Ind, GF_ICEPOISON, args.dir, (2 + 106 + get_level(Ind, WATERPOISON_III, 70)), 3, (5 + get_level(Ind, WATERPOISON_I, 14)), 9, " fires icy toxic moisture of")
 			end,
 	["info"] = 	function()
-			return "dam " .. (2 + 106 + get_level(Ind, WATERPOISON_III, 60)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON_I, 14))
+			return "dam " .. (2 + 106 + get_level(Ind, WATERPOISON_III, 70)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON_I, 14))
 			end,
 	["desc"] = 	{ "Creates a mixed cloud of toxic moisture and ice shards.", }
 }

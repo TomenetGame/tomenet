@@ -14632,7 +14632,7 @@ school.
                     Required skill level for first spell level: 1.
 
     Recharge        Recharges a magic staff or wand.
-                    Level 25: Also recharge rods.
+                    Level 21: Also recharge rods.
                     Required skill level for first spell level: 5.
 
     Disperse Magic  Removes magical influences.
@@ -14643,7 +14643,7 @@ school.
                     This spell can be used even while confused or blind.
 
     Remove Curses   Removes curses from carried/worn objects.
-                    Lv20: Removes all curses including heavy curses.
+                    Lv21: Removes all curses including heavy curses.
                     Required skill level for first spell level: 20.
 
     Disruption Shield
@@ -14662,7 +14662,7 @@ school.
 
     Globe of Light  Creates a globe of magical light.
                     Lv10: Hurts monsters that are susceptible to light.
-                    Lv20: Calls a more powerful kind of light. This light
+                    Lv21: Calls a more powerful kind of light. This light
                           hurts all types of monsters.
                           Radius and damage will further increase.
                     Required skill level for first spell level: 2.
@@ -14671,10 +14671,11 @@ school.
                     Required skill level for first spell level: 10.
 
     Elemental Shield
-                    Gives temporary resistance to the elements,
-                    fire/cold/lightning/acid.                       (project)
+                    Gives temporary resistance to heat and cold at first,
+                    later on to all of fire/cold/lightning/acid.    (project)
                     Required skill level for first spell level: 15.
-                    Shared spell (see above): Fire, Earth, Air, Water.
+                    Shared spell (see above): Fire, Water.
+                    For the complete version: Fire, Water, Earth, Air.
 
     Fiery Shield    Creates a shield of flames around you.
                     Required skill level for first spell level: 16.
@@ -14711,15 +14712,16 @@ school.
 
     Elemental Shield
                     Gives temporary resistance to heat and cold at first,
-                    later on to fire/cold/lightning/acid.           (project)
+                    later on to all of fire/cold/lightning/acid.    (project)
                     Required skill level for first spell level: 15.
-                    Shared spell (see above): Fire, Earth, Air, Water.
+                    Shared spell (see above): Fire, Water.
+                    For the complete version: Fire, Water, Earth, Air.
 
     Tidal Wave      Summons a monstrous tidal wave.
                     Required skill level for first spell level: 16.
 
     Frost Barrier   Engulfs you in a storm of roaring cold.
-                    Lv15: Turns into a storm of shards of ice.
+                    Lv16: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
 
     Frost Ball      Conjures a frost ball.
@@ -14733,28 +14735,29 @@ school.
 - Air
 
     Noxious Cloud   Fires a poison cloud at a designated target.
-                    Lv30: Unbreath cloud, harder to resist since it prevents
+                    Lv31: Unbreath cloud, harder to resist since it prevents
                     living creatures from actually breathing.
                     Required skill level for first spell level: 3.
 
     Lightning Bolt  Fires a lightning bolt at a target.
                     Required skill level for first spell level: 6.
 
-    Wings of Wind   Grants feather falling.
-                    Lv16: Lets you levitate.
-                    Required skill level for first spell level: 16.
-                    Shared spell (see above): Air, Conveyance.
-
     Elemental Shield
-                    Gives temporary resistance to the elements,
-                    fire/cold/lightning/acid.                       (project)
+                    Gives temporary resistance to heat and cold at first,
+                    later on to all of fire/cold/lightning/acid.    (project)
                     Required skill level for first spell level: 15.
-                    Shared spell (see above): Fire, Earth, Air, Water.
+                    Shared spell (see above): Fire, Water.
+                    For the complete version: Fire, Water, Earth, Air.
 
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Air, Nature.
+
+    Wings of Wind   Grants feather falling.
+                    Lv16: Lets you levitate.
+                    Required skill level for first spell level: 16.
+                    Shared spell (see above): Air, Conveyance.
 
     Invisibility    Turns you invisible.
                     Required skill level for first spell level: 30.
@@ -14773,16 +14776,17 @@ school.
                     Required skill level for first spell level: 12.
 
     Elemental Shield
-                    Gives temporary resistance to the elements,
-                    fire/cold/lightning/acid.                       (project)
+                    Gives temporary resistance to heat and cold at first,
+                    later on to all of fire/cold/lightning/acid.    (project)
                     Required skill level for first spell level: 15.
-                    Shared spell (see above): Fire, Earth, Air, Water.
+                    Shared spell (see above): Fire, Water.
+                    For the complete version: Fire, Water, Earth, Air.
 
     Stone Prison    Creates a prison of granite walls around you.
                     Required skill level for first spell level: 25.
 
     Strike          Creates a force bolt that may stun enemies.
-                    Lv12: it turns into a small ball.
+                    Lv13: it turns into a small ball.
                     Required skill level for first spell level: 25.
 
     Shake           Creates a local earthquake.
@@ -14797,14 +14801,14 @@ school.
     Healing         Heals a percentage of your hit points.          (project)
                     Required skill level for first spell level: 1.
 
-    Recovery        Neutralizes poison, heals cuts, cures confusion,
-                    stun and blindness.                             (project)
-                    Level 20: Also restores drained stats and lost experience.
-                    Required skill level for first spell level: 15.
-
     Vermin Control  Prevents vermin from breeding any further on
                     your current level.
                     Required skill level for first spell level: 10.
+
+    Recovery        Neutralizes poison, heals cuts, cures confusion,
+                    stun and blindness.                             (project)
+                    Level 21: Also restores drained stats and lost experience.
+                    Required skill level for first spell level: 15.
 
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
@@ -14844,7 +14848,7 @@ school.
                     Shared spell (see above): Air, Conveyance.
 
     Teleport Away   Teleports a line of monsters away.
-                    Lv20: Teleports away all monsters in sight.
+                    Lv21: Teleports away all monsters in sight.
                     Required skill level for first spell level: 23.
 
     Recall          Works like Word of Recall.                      (project)
@@ -14887,25 +14891,25 @@ school.
     Detect Monsters Detects all non-invisible monsters nearby.      (project)
                     Required skill level for first spell level: 3.
 
+    Sense Hidden    Detects traps.                                  (project)
+                    Lv16: Lets you see invisible for a while.       (project)
+                    Required skill level for first spell level: 5.
+
     Identify        Identifies items.
-                    Lv17: Identifies all items that you carry/wear.
-                    Lv27: Also identifies all items on the floor around you.
+                    Lv18: Identifies all items that you carry/wear.
+                    Lv28: Also identifies all items on the floor around you.
                     Required skill level for first spell level: 8.
+
+    Reveal Ways     Detects doors/stairs/ways within a radius.      (project)
+                    Required skill level for first spell level: 9.
+
+    Vision          Detects the dungeon layout around you.
+                    Lv26: Maps and lights the whole level.
+                    Required skill level for first spell level: 15.
 
     Greater Identify
                     *Identifies* an item.
                     Required skill level for first spell level: 35.
-
-    Vision          Detects the dungeon layout around you.
-                    Lv25: Maps and lights the whole level.
-                    Required skill level for first spell level: 15.
-
-    Sense Hidden    Detects traps.                                  (project)
-                    Lv15: Lets you see invisible for a while.       (project)
-                    Required skill level for first spell level: 5.
-
-    Reveal Ways     Detects doors/stairs/ways within a radius.      (project)
-                    Required skill level for first spell level: 9.
 
     BONI:           Automatic identification at 50.
 
@@ -14913,12 +14917,12 @@ school.
 - Temporal
 
     Magelock        Magically locks a door.
-                    Lv40: Creates a Glyph of Warding on the ground that stops
+                    Lv41: Creates a Glyph of Warding on the ground that stops
                           monsters from crossing the field or summoning on it.
                     Required skill level for first spell level: 1.
 
     Slow Monster    Slows down a monster.
-                    Lv20: Affects a zone.
+                    Lv21: Affects a zone.
                     Required skill level for first spell level: 10.
 
     Essence of Speed
@@ -14937,19 +14941,16 @@ school.
 
 - Udun
 
+    Hellfire        Conjures a ball of hellfire which is especially deadly to
+                    GOOD opponents.
+                    Required skill level for first spell level: 20.
+
     Genocide        Genocides all monsters of a race on the level.
                     For details on the effect "genocide" of this spell,
                     please see (5.9) scroll of geno/oblit.
                     (This spell uses WISDOM to determine fail-rates!
                     Genocide-type spells do not yield experience or loot.)
                     Required skill level for first spell level: 25.
-
-    Obliteration    Obliterates all monsters nearby.
-                    For details on the effect "obliteration" of this spell,
-                    please see (5.9) scroll of geno/oblit.
-                    (This spell uses WISDOM to determine fail-rates!
-                    Genocide-type spells do not yield experience or loot.)
-                    Required skill level for first spell level: 40.
 
     Wraithform      Temporarily turns your form immaterial.         (project)
                     Required skill level for first spell level: 35.
@@ -14959,9 +14960,12 @@ school.
                     Conjures a powerful and nearly irresistible bolt.
                     Required skill level for first spell level: 40.
 
-    Hellfire        Conjures a ball of hellfire which is especially deadly to
-                    GOOD opponents.
-                    Required skill level for first spell level: 20.
+    Obliteration    Obliterates all monsters nearby.
+                    For details on the effect "obliteration" of this spell,
+                    please see (5.9) scroll of geno/oblit.
+                    (This spell uses WISDOM to determine fail-rates!
+                    Genocide-type spells do not yield experience or loot.)
+                    Required skill level for first spell level: 40.
 
     BONI:           Hold life at 40.
 
@@ -14969,11 +14973,11 @@ school.
 - Mind
 
     Confuse         Confuses a monsters.
-                    Lv15: Turns into a ball.
+                    Lv16: Turns into a ball.
                     Required skill level for first spell level: 5.
 
     Stun            Stuns a monster.
-                    Lv25: Turns into a ball.
+                    Lv26: Turns into a ball.
                     Required skill level for first spell level: 15.
 
     Sense Minds     Gives you temporary ESP.
@@ -15000,24 +15004,24 @@ school.
 - Holy Offense
 
     Curse           Randomly causes confusion damage or slowness or blindness.
-                    Lv15: Turns from bolt into beam, passing through the
+                    Lv16: Turns from bolt into beam, passing through the
                           target and also hitting those behind.
-                    Lv25: Affects all monsters in line of sight.
+                    Lv26: Affects all monsters in line of sight.
                     Required skill level for first spell level: 1.
 
     Holy Light      Creates a globe of pure light.
                     Lv3:  Hurts monsters that are susceptible to light.
-                    Lv18: Calls a more powerful kind of light. This light
+                    Lv19: Calls a more powerful kind of light. This light
                          hurts all types of monsters.
                          Radius and damage will further increase.
                     Required skill level for first spell level: 2.
                     Shared spell (see above): H.Offense, H.Support.
 
-    Exorcism        *Dispels demons* in your field of view.
-                    Required skill level for first spell level: 20.
-
     Redemption      *Dispels undead* in your field of view.
                     Required skill level for first spell level: 10.
+
+    Exorcism        *Dispels demons* in your field of view.
+                    Required skill level for first spell level: 20.
 
     Orb of Draining Summons a holy orb, devouring monsters.
                     This spell deals double damage against evil monsters.
@@ -15028,7 +15032,7 @@ school.
                     Shared spell (see above): O.Shadow, H.Offense.
 
     Doomed Grounds  Similar to 'Drain Life', weaker, but affects a whole area.
-                    Required skill level for first spell level: 30.
+                    Required skill level for first spell level: 40.
                     Shared spell (see above): H.Offense, O.Shadow.
 
     Earthquake      Creates a local earthquake.
@@ -15045,11 +15049,6 @@ school.
                     Lv30: Same effect as scroll of Holy Prayer.(auto-project)
                     Required skill level for first spell level: 1.
 
-    Holy Resistance Lets you resist heat and cold.             (auto-project)
-                    Lv10: Also resist lightning and acid.      (auto-project)
-                    Lv20: Also resist poison.                  (auto-project)
-                    Required skill level for first spell level: 20.
-
     Protection from evil
                     Evil creatures that try to attack you in melee might get
                     repelled, thereby preventing them from actually hitting
@@ -15064,6 +15063,11 @@ school.
                     Lv13: Speed/Slowness/Stun.
                     Required skill level for first spell level: 18.
                     This spell can be used even while confused or blind.
+
+    Holy Resistance Lets you resist heat and cold.             (auto-project)
+                    Lv11: Also resist lightning and acid.      (auto-project)
+                    Lv21: Also resist poison.                  (auto-project)
+                    Required skill level for first spell level: 20.
 
     Glyph of Warding
                     Creates a rune on the ground that monsters cannot cross
@@ -15106,14 +15110,15 @@ school.
 
 - Holy Curing
 
+    Curing          Slows down the effect of poison            (auto-project)
+                    and cures being gorged.
+                    Lv11: Neutralizes poison, cures blindness, cuts, confusion.
+                    Lv21: Also cures stun and hallucinations.
+                    Required skill level for first spell level: 1.
+
     Cure Wounds     Heals a fixed amount of hit points of a friendly target,
                     which is capped at 14d8, the same amount a potion of cure
                     critical wounds actually heals.
-                    In addition to healing hit points, it will start curing
-                    status ailments at higher spell levels, similar to potions:
-                    Lv9: Cures cuts and blindness.
-                    Lv20: Also cures confusion.
-                    Lv29: Also cures stun.
                     Required skill level for first spell level: 3.
                     (Since this is a bolt spell, use the 'target friendly' key,
                     which is '('. See command reference section (0.2) for
@@ -15124,31 +15129,21 @@ school.
 
     Healing         Heals a percentage of hit points.          (auto-project)
                     Required skill level for first spell level: 3.
-                    In addition to healing hit points, it will start curing
-                    status ailments at higher spell levels:
-                    Lv4: Cures cuts and blindness.             (auto-project)
-                    Lv10: Also cures confusion.                (auto-project)
-                    Lv28: Also cures stun.                     (auto-project)
 
     Break Curses    Removes curses from carried/worn objects.
-                    Lv25: Removes all curses including heavy curses.
+                    Lv26: Removes all curses including heavy curses.
                     Required skill level for first spell level: 10.
 
     Cleansing Light Continuously heals every player who steps inside.
                     It also damages undead creatures.
                     Required skill level for first spell level: 18.
 
-    Curing          Slows down the effect of poison            (auto-project)
-                    and cures being gorged.                                ^
-                    Lv9: Neutralizes poison and cures hallucinations.      ^
-                    Lv18: Cures confusion, blindness and stun.             ^
-                    Required skill level for first spell level: 3.
-
-    Restoration     Restores draind stats and experience.      (auto-project)
-                    Required skill level for first spell level: 31.
-
     Faithful Focus  Cure hallucinations and insanity.          (auto-project)
                     Required skill level for first spell level: 21.
+
+    Soul Curing     Cures Black Breath (See 1.5 for more information about
+                    Black Breath).                             (auto-project)
+                    Required skill level for first spell level: 25.
 
     Resurrection    Resurrect another player's ghost. The resurrected player
                     will lose less experience the higher the spell level is.
@@ -15158,9 +15153,8 @@ school.
                     at 30%.
                     Required skill level for first spell level: 30.
 
-    Soul Curing     Cures Black Breath (See 1.5 for more information about
-                    Black Breath).                             (auto-project)
-                    Required skill level for first spell level: 25.
+    Restoration     Restores draind stats and experience.      (auto-project)
+                    Required skill level for first spell level: 31.
 
     BONI:           Improves HP regeneration rate extraordinarily the further
                     it is trained above 30.
@@ -15179,21 +15173,18 @@ school.
                     Required skill level for first spell level: 1.
 
     Holy Light      Creates a globe of pure light.
-                    Lv3: Damages monsters.
-                    Lv8: Calls a more powerful kind of light.
+                    Lv3:  Hurts monsters that are susceptible to light.
+                    Lv19: Calls a more powerful kind of light. This light
+                         hurts all types of monsters.
+                         Radius and damage will further increase.
                     Required skill level for first spell level: 2.
-                    Note that this is a spell shared between offense and
-                    support school, meaning that increases in one of those
-                    school will increase the spell level by only half as much.
+                    Shared spell (see above): H.Offense, H.Support.
 
     Detect Evil     Detects evil monsters.
                     Required skill level for first spell level: 3.
 
-    Sense Monsters  Gives full temporary ESP.
-                    Required skill level for first spell level: 33.
-
     Sanctuary       Puts nearby monsters asleep.
-                    Lv20: Lets all monsters in line of sight fall asleep.
+                    Lv21: Lets all monsters in line of sight fall asleep.
                     Required skill level for first spell level: 3.
 
     Satisfy Hunger  Satisfies your hunger.                     (auto-project)
@@ -15201,17 +15192,20 @@ school.
 
     Sense Surroundings
                     Maps the dungeon around you.
-                    Lv20: Gives clairvoyance (full enlightened map).
+                    Lv21: Gives clairvoyance (full enlightened map).
                     Required skill level for first spell level: 20.
 
     Zeal            Gives +1 extra attack per round for a while.
-                    Lv9:  Gives +2 EA.                         (auto-project)
-                    Lv18: Gives +3 EA.                         (auto-project)
+                    Lv11: Gives +2 EA.                         (auto-project)
+                    Lv22: Gives +3 EA.                         (auto-project)
                     Friendly players around the caster that are affected by the
                     spell will receive up to +2 EA depending on spell level.
                     Note: The EA effect won't be applied to barehanded players
                     if they don't have Martial Arts skill of at least 01.000.
-                    Required skill level for first spell level: 27, 37, 47.
+                    Required skill level for first spell level: 27.
+
+    Sense Monsters  Gives full temporary ESP.
+                    Required skill level for first spell level: 33.
 
     BONI:           Completely Suppresses DG_CURSE and TY_CURSE at 40.
                     Keeps the hunger satisfied all the time at 50.
@@ -15223,11 +15217,11 @@ school.
 - Shadow
 
     Cause Fear      Scares your target.
-                    At level 17 it scares all nearby creatures.
+                    Lv18: Scares all nearby creatures.
                     Required skill level for first spell level: 1.
 
     Blindness       Blinds your target.
-                    At level 17 it blinds all nearby creatures.
+                    Lv18: Blinds all nearby creatures.
                     Required skill level for first spell level: 3.
 
     Detect Invisible
@@ -15235,12 +15229,12 @@ school.
                     Required skill level for first spell level: 3.
 
     Poisonous Fog   Creates a cloud of poisonous fog.
-                    Lv30: Unbreath cloud, harder to resist since it prevents
+                    Lv31: Unbreath cloud, harder to resist since it prevents
                     living creatures from actually breathing.
                     Required skill level for first spell level: 3.
 
     Veil of Night   Causes your target to fall asleep instantly.
-                    At level 15 it expands around you.
+                    Lv16: It expands around you.
                     Required skill level for first spell level: 5.
 
     Shadow Bolt     Channels shadow into a bolt attack.
@@ -15248,7 +15242,7 @@ school.
 
     Aspect of Peril
                     Temporarily brands your weapon with poison.
-                    At level 10 it grants temporary poison resistance.
+                    Lv10: Grants temporary poison resistance.
                     Required skill level for first spell level: 14.
 
     Shadow Gate     Teleports you to the nearest opponent in line of sight.
@@ -15291,9 +15285,10 @@ school.
                     Required skill level for first spell level: 1.
 
     Starlight       Creates a globe of starlight around you.
-                    At level 10 it damages monsters that are susceptible to
-                    light.
-                    At level 20 it damages all monsters.
+                    Lv10: Damages monsters that are susceptible to light.
+                    Lv21: Calls a more powerful kind of light. This light
+                         damages all types of monsters.
+                         Radius and damage will further increase.
                     Required skill level for first spell level: 2.
 
     Trance          Causes all ghosts, spirits and elementals that see you
@@ -15307,7 +15302,7 @@ school.
                     Required skill level for first spell level: 10.
 
     Lift Curses     Removes curses from carried/worn objects.
-                    Lv20: Removes all curses including heavy curses.
+                    Lv21: Removes all curses including heavy curses.
                     Required skill level for first spell level: 15.
 
     Ethereal Eye    Detects all nearby creatures.
@@ -15324,7 +15319,7 @@ school.
                     Invokes your guardian spirit, guiding and protecting you.
                     Your saving throw is maximised and you are protected from
                     evil.
-                    At level 20 all physical attacks have a chance to miss you,
+                    At level 21 all physical attacks have a chance to miss you,
                     at the cost of your mana.
                     Required skill level for first spell level: 25.
 
@@ -15339,16 +15334,16 @@ school.
 
 - Arcane Lore
 
-    Nature's Call   Quickly grows trees around you.
-                    Required skill level for first spell level: 10.
-
     Toxic Moisture  Creates a cloud of toxic moisture at a designated target,
                     consisting of poisonous gas.
-                    At level 20 it combines the surrounding air into the
+                    At level 18 it combines the surrounding air into the
                     attack, turning it into a water/poison mixture.
-                    At level 30 it condenses the water and turns into
+                    At level 31 it condenses the water and turns into
                     poisonous ice shards.
                     Required skill level for first spell level: 3.
+
+    Nature's Call   Quickly grows trees around you.
+                    Required skill level for first spell level: 10.
 
     Ancient Lore    Identifies all items in your inventory.
                     Required skill level for first spell level: 20.
@@ -15368,13 +15363,9 @@ school.
 
 - Physical Lore
 
-    Forest's Embrace
-                    Creates a cloud around you which heals everyone including
-                    yourself over time.                        (auto-project)
-                    Required skill level for first spell level: 18.
-
-    Quickfeet       Temporarily boosts your speed.             (auto-project)
-                    Required skill level for first spell level: 13.
+    Focus           Increases your accuracy, adding a bonus to your
+                    melee-to-hit and ranged-to-hit.
+                    Required skill level for first spell level: 1.
 
     Herbal Tea      Satisfies your hunger.                     (auto-project)
                     Lv20: Restores your experience.            (auto-project)
@@ -15382,16 +15373,20 @@ school.
                     Lv35: Cures black breath!                  (auto-project)
                     Required skill level for first spell level: 3.
 
+    Quickfeet       Temporarily boosts your speed.             (auto-project)
+                    Required skill level for first spell level: 13.
+
+    Forest's Embrace
+                    Creates a cloud around you which heals everyone including
+                    yourself over time.                        (auto-project)
+                    Required skill level for first spell level: 18.
+
     Extra Growth    Increases your attributes temporarily.
                     Lv1: Increases strength.
                     Lv5: Also increases dexterity.
                     Lv10: Also increases constitution.
                     Lv20: Also increases intelligence.
                     Required skill level for first spell level: 15.
-
-    Focus           Increases your accuracy, adding a bonus to your
-                    melee-to-hit and ranged-to-hit.
-                    Required skill level for first spell level: 1.
 
 
 - Mindcraft -
@@ -15418,7 +15413,8 @@ school.
                     Required skill level for first spell level: 24.
 
     Feedback        Uses telekinetic effects to slow your fall, granting
-                    feather falling. At 15 becomes sufficient for levitation.
+                    feather falling.
+                    Lv15: It becomes sufficient for levitation.
                     Required skill level for first spell level: 18.
 
     Pyrokinesis     Causes a severe inflammation to burn your opponent.
@@ -15516,28 +15512,20 @@ school.
                     Possibly causing various additional effects.
                     Required skill level for first spell level: 1.
 
-    Psi Storm       Psionic storm that damages and disturbs all minds within an
-                    area for a while, causing the usual random Psi side effects
-                    on all targets similar to Psionic Blast.
-                    Required skill level for first spell level: 18.
-
     Scare           Infuses your target's mind with fear.
-                    Lv10: Becomes a ball effect.
-                    Lv20: Affects all monsters in LoS.
+                    Lv15: Affects all monsters in LoS.
                     Required skill level for first spell level: 1.
 
     Confuse         Infuses your target's mind with confusion.
-                    Lv15: Becomes a ball effect.
-                    Lv30: Affects all monsters in LoS.
+                    Lv16: Affects all monsters in LoS.
                     Required skill level for first spell level: 3.
 
     Hypnosis        Puts your target's mind to sleep.
-                    Lv20: Affects all monsters in LoS.
+                    Lv16: Affects all monsters in LoS.
                     Required skill level for first spell level: 5.
 
     Drain Strength  Slows your target down, draining power from its muscles.
-                    Lv10: Becomes a ball effect.
-                    Lv20: Affects all monsters in LoS.
+                    Lv16: Affects all monsters in LoS.
                     Required skill level for first spell level: 7.
 
     Psychic Suppression
@@ -15554,6 +15542,11 @@ school.
                     becomes immune to the effect for the same short amount of
                     time if the attempt was actually unsuccessful.
                     Required skill level for first spell level: 10.
+
+    Psi Storm       Psionic storm that damages and disturbs all minds within an
+                    area for a while, causing the usual random Psi side effects
+                    on all targets similar to Psionic Blast.
+                    Required skill level for first spell level: 18.
 
     Remote Vision   Tries to forcibly enter all sentient creatures' minds
                     (including invisible monsters, but never empty-minded ones)
