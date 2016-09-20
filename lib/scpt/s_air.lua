@@ -213,8 +213,8 @@ THUNDERSTORM = add_spell {
 			return "dam "..(5 + get_level(Ind, THUNDERSTORM, 14)).."d"..(10 + get_level(Ind, THUNDERSTORM, 98) + lev).." dur "..(10 + get_level(Ind, THUNDERSTORM, 25)).."+d10"
 	end,
 	["desc"] = 	{
-			"Charges up the air around you with electricity.",
-			"Each turn it will throw a thunder bolt at a random monster in sight.",
-			"Thunder is a compound damage type, consisting of electricity, sound and light."
+			"Charges up the air around you with electricity,",
+			"throwing thunderbolts at random monsters in sight.",
+			"(Thunderbolts deal compound damage of electricity, sound and light.)"
 	}
 }
