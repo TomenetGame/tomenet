@@ -9624,7 +9624,7 @@ Parchments      These contain informations about the game, they won't
                 disappear if you read them.
 Protection from evil    Repels evil creatures that try to attack you in melee.
                         See the prayer 'Protection from evil' in (6.8)!
-Recharging      Recharges a magical rod/wand/staff (see (5.21)).
+Recharging      Recharges a magical device (rod, wand or staff, see (5.21)).
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
                 as soon as they are uncursed!
@@ -11133,29 +11133,31 @@ though, so take off your shield for best results.)
 
 (5.21) Recharging
 -----------------
-While electricity or disenchantment based attacks may deplete magic devices,
-they can usually also be magically recharged when necessary.
-Wands and staves will need to be actively recharged by the player when depleted
-while rods and other magic devices (jewelry, artifacts, special ego-powered
-items) will automatically recharge themselves over time, displaying 'charging'
-label or just '#' if the item name is very long and there's not enough space.
+Wands, staves and rods are generally called 'magical devices' in the stricter
+sense, this paragraph is about those and those are the only items that can be
+manually recharged by the player at will.
+There are in the broader sense of the word 'magic device' other items too that
+can be activated to unleash a specific kind of magic, such as certain jewelry,
+artifacts and special ego-powered items. These cannot be recharged at will
+however, the user will just have to wait till they are ready again.
 
+While wands and staves use a charges counter to measure if they are depleted or
+not, rods have an internal charge that is completely depleted on using it and
+will slowly build up again on its own - depending on the user's magic device
+skill the depletion may be less severe, the rod will therefore take less time
+to recharge if it had been zapped by a proficient magic device user.
+
+While electricity or disenchantment based attacks may deplete magic devices,
+they can usually also be manually recharged when necessary!
+So wands and staves will need to be actively recharged by the player when
+depleted, while rods (and other, not manually rechargeable items) will
+automatically recharge themselves over time, displaying 'charging' label or
+just '#' if the item name is very long and there's not enough space.
 
 Recharging can be done via shop service, a scroll, another magic device or a
-magic spell. Devices that can be recharged are:
-
--Wands
--Staves
--Rods
--Certain jewelry (eg elemental rings)
--Some artifacts
--Items that possess certain activatable ego-powers (eg weapons of fury)
-
-For wands and staves recharging will replenish their charges, while for the
-other item types recharging will reduce their 'charging' delay.
-
-Note: Rings of polymorphing cannot be recharged.
-
+magic spell.
+For wands and staves recharging will replenish their charges, while for rods
+recharging will reduce their 'charging' delay, aka refill their energy.
 
 When an item is recharged the result depends on the method of recharging and
 the item's base type level. For wands and staves it also depends on the current
@@ -11174,7 +11176,6 @@ depending on your (bad) luck.
 So only recharge those when they are already fully depleted to minimize that
 risk.
 
-
 Means of recharging:
 -Scrolls            (60 power)
 -Thingol artifact   (60..100 power, depending on magic device skill)
@@ -11184,7 +11185,6 @@ Means of recharging:
 
 The power determines both, the chance of succeeding in recharging the item and
 the degree of recharging done to the item.
-
 
 Staves and wands 'of plenty' will receive about twice as many charges from
 recharging (with the risk of breaking remaining unchanged) so look out for
@@ -14632,7 +14632,7 @@ school.
                     Required skill level for first spell level: 1.
 
     Recharge        Recharges a magic staff or wand.
-                    Level 21: Also recharge rods.
+                    Level 21: Also recharges rods.
                     Required skill level for first spell level: 5.
 
     Disperse Magic  Removes magical influences.
