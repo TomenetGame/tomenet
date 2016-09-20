@@ -14632,6 +14632,7 @@ school.
                     Required skill level for first spell level: 1.
 
     Recharge        Recharges a magic staff or wand.
+                    Level 25: Also recharge rods.
                     Required skill level for first spell level: 5.
 
     Disperse Magic  Removes magical influences.
@@ -14641,8 +14642,8 @@ school.
                     Required skill level for first spell level: 15.
                     This spell can be used even while confused or blind.
 
-    Remove Curses   Removes all curses of carried/worn objects.
-                    Lv20: Switches to *remove curses*.
+    Remove Curses   Removes curses from carried/worn objects.
+                    Lv20: Removes all curses including heavy curses.
                     Required skill level for first spell level: 20.
 
     Disruption Shield
@@ -14661,7 +14662,7 @@ school.
 
     Globe of Light  Creates a globe of magical light.
                     Lv10: Hurts monsters that are susceptible to light.
-                    Lv25: Calls a more powerful kind of light. This light
+                    Lv20: Calls a more powerful kind of light. This light
                           hurts all types of monsters.
                           Radius and damage will further increase.
                     Required skill level for first spell level: 2.
@@ -14752,7 +14753,7 @@ school.
 
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
-                    Required skill level for first spell level: 25.
+                    Required skill level for first spell level: 15.
                     Shared spell (see above): Air, Nature.
 
     Invisibility    Turns you invisible.
@@ -14796,12 +14797,14 @@ school.
     Healing         Heals a percentage of your hit points.          (project)
                     Required skill level for first spell level: 1.
 
-    Recovery I      Neutralizes poison, heals cuts, cures confusion,
+    Recovery        Neutralizes poison, heals cuts, cures confusion,
                     stun and blindness.                             (project)
+                    Level 20: Also restores drained stats and lost experience.
                     Required skill level for first spell level: 15.
+
     Vermin Control  Prevents vermin from breeding any further on
                     your current level.
-                    Required skill level for first spell level: 15.
+                    Required skill level for first spell level: 10.
 
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
@@ -14817,10 +14820,6 @@ school.
     Poison Blood    Gives temporary poison resistance
                     and brands melee weapons with venom.
                     Required skill level for first spell level: 30.
-
-    Recovery II     In addition to the effects of Recovery I it also
-                    restores drained stats and lost experience.     (project)
-                    Required skill level for first spell level: 35.
 
     BONI:           Regeneration (faster hit point regeneration, same as from
                     items that provide regeneration) at 30,
@@ -14845,7 +14844,6 @@ school.
                     Shared spell (see above): Air, Conveyance.
 
     Teleport Away   Teleports a line of monsters away.
-                    Lv10: Turns into a ball.
                     Lv20: Teleports away all monsters in sight.
                     Required skill level for first spell level: 23.
 
@@ -14951,10 +14949,11 @@ school.
                     please see (5.9) scroll of geno/oblit.
                     (This spell uses WISDOM to determine fail-rates!
                     Genocide-type spells do not yield experience or loot.)
-                    Required skill level for first spell level: 25.
+                    Required skill level for first spell level: 40.
 
-    Wraithform      Turns your form immaterial.                     (project)
+    Wraithform      Temporarily turns your form immaterial.         (project)
                     Required skill level for first spell level: 35.
+    Stop Wraithform Turns you back to material form immediately.
 
     Disenchantment Bolt
                     Conjures a powerful and nearly irresistible bolt.
@@ -15131,8 +15130,8 @@ school.
                     Lv10: Also cures confusion.                (auto-project)
                     Lv28: Also cures stun.                     (auto-project)
 
-    Break Curses    Removes curses.
-                    Lv25: Removes heavy curses.
+    Break Curses    Removes curses from carried/worn objects.
+                    Lv25: Removes all curses including heavy curses.
                     Required skill level for first spell level: 10.
 
     Cleansing Light Continuously heals every player who steps inside.
@@ -15307,8 +15306,8 @@ school.
     Spear of Light  Conjures up spiritual light into a powerful beam.
                     Required skill level for first spell level: 10.
 
-    Lift Curses     Removes all curses of carried/worn objects.
-                    Lv20: Switches to *remove curses*.
+    Lift Curses     Removes curses from carried/worn objects.
+                    Lv20: Removes all curses including heavy curses.
                     Required skill level for first spell level: 15.
 
     Ethereal Eye    Detects all nearby creatures.
@@ -15319,6 +15318,7 @@ school.
                     At level 9 it turns into a ball.
                     At level 17 it affects all monsters in sight.
                     Required skill level for first spell level: 23.
+    Stop Possess    Stops active possession of monster minds.
 
     Guardian Spirit
                     Invokes your guardian spirit, guiding and protecting you.
@@ -15585,6 +15585,7 @@ school.
                     Being smart, resisting confusion, being powerful.
                     (This spell uses CHARISMA to determine fail-rates!)
                     Required skill level for first spell level: 33.
+    Stop Charm      Cease currently active charming effects.
 
 
 - Astral Knowledge -
