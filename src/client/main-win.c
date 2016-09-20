@@ -88,11 +88,20 @@
 #endif
 
 #ifdef USE_LOGFONT
+# if 0 /* too small */
 #  define DEFAULT_FONTNAME "8X13"
+# else /* fitting for full-hd */
+#  define DEFAULT_FONTNAME "9X15"
+# endif
 #  undef  USE_GRAPHICS
 #else
+# if 0 /* too small */
 #  define DEFAULT_FONTNAME "8X13.FON"
 #  define DEFAULT_TILENAME "8X13.BMP"
+# else /* fitting for full-hd */
+#  define DEFAULT_FONTNAME "9X15.FON"
+#  define DEFAULT_TILENAME "9X15.BMP"
+# endif
 #endif
 
 #define OPTIMIZE_DRAWING
