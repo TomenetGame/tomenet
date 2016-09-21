@@ -12380,6 +12380,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 
 	p_ptr->py = houses[i].y;
 	p_ptr->px = houses[i].x;
+	p_ptr->house_num = i + 1;
 
 	/* that messes it up */
 	/* nzcave[p_ptr->py][p_ptr->px].m_idx = (0-Ind); */

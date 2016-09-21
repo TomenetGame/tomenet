@@ -2301,6 +2301,7 @@ struct player_type {
 	s16b tim_wraith;		/* Timed -- Wraithform */
 	u16b tim_jail;			/* Timed -- Jailed */
 	u16b tim_susp;			/* Suspended sentence (dungeon) */
+	u16b house_num;			/* Added for easier jail-leaving handling: House index of jail we're in */
 	u16b tim_pkill;			/* pkill changeover timer */
 	u16b pkill;			/* pkill flags */
 	u16b tim_store;			/* timed -- how long (s)he can stay in a store */

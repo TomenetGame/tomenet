@@ -4318,13 +4318,20 @@ static bool process_player_end_aux(int Ind) {
 			}
 #endif
 
-			/* only teleport him if he didn't take the ironman exit.
-			   (could add p_ptr->in_jail to handle it 100% safely
-			   or just set p_ptr->tim_jail to 0 on wpos change) */
-			if (p_ptr->wpos.wz == 0 &&
-			    (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) {
+			/* only teleport him if he didn't take the ironman exit. */
+			if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
 				msg_print(Ind, "\377GYou are free to go!");
-				teleport_player_force(Ind, 1);
+
+				/* Get the jail door location */
+				if (!p_ptr->house_num) teleport_player_force(Ind, 1);
+				else {
+					zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+					everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+					p_ptr->px = houses[p_ptr->house_num - 1].dx;
+					p_ptr->py = houses[p_ptr->house_num - 1].dy;
+					p_ptr->house_num = 0;
+					teleport_player_force(Ind, 1);
+				}
 			}
 		}
 	}

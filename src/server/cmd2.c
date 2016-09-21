@@ -394,6 +394,8 @@ void do_cmd_go_up(int Ind) {
 			/* we now 'learned' the base level of this dungeon */
 			d_ptr->known |= 0x2;
 #endif
+			/* for jail dungeons, not actually needed, just to stay clean */
+			p_ptr->house_num = 0;
 		}
 #if 0 /* Disable use of dungeon names */
  #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
@@ -1149,6 +1151,8 @@ void do_cmd_go_down(int Ind) {
 			/* we now 'learned' the base level of this dungeon */
 			d_ptr->known |= 0x2;
 #endif
+			/* for jail dungeons, not actually needed, just to stay clean */
+			p_ptr->house_num = 0;
 		}
 #if 0 /* Disable use of dungeon names */
  #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
