@@ -2116,11 +2116,11 @@ static Mix_Music* load_song(int idx, int subidx) {
 /* Display options page UI that allows to comment out sounds easily */
 void do_cmd_options_sfx_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
-	int y = 0, j_sel = 0;
+	int y = 0, j_sel = 0, tmp;
 	char ch;
 	byte a, a2;
 	cptr lua_name;
-	bool go = TRUE;
+	bool go = TRUE, dis;
 	char buf[1024], buf2[1024], out_val[2048], out_val2[2048], *p, evname[2048];
 	FILE *fff, *fff2;
 
@@ -2146,7 +2146,7 @@ void do_cmd_options_sfx_sdl(void) {
 
 	/* Interact */
 	while (go) {
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 
 		/* Display the events */
@@ -2206,6 +2206,8 @@ void do_cmd_options_sfx_sdl(void) {
 		/* Analyze */
 		switch (ch) {
 		case ESCAPE:
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+
 			/* auto-save */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 #ifndef WINDOWS
@@ -2348,25 +2350,40 @@ void do_cmd_options_sfx_sdl(void) {
 			if (j_sel == ambient_current && ambient_channel != -1 && Mix_Playing(ambient_channel)) Mix_HaltChannel(ambient_channel);
 			break;
 
+		case '\r':
+			dis = samples[j_sel].disabled;
+			samples[j_sel].disabled = FALSE;
+			sound(j_sel, SFX_TYPE_MISC, 100, 0);
+			samples[j_sel].disabled = dis;
+			break;
+
 		case '#':
-			y = c_get_quantity("Enter index number: ", audio_sfx) - 1;
+			tmp = c_get_quantity("Enter index number: ", audio_sfx) - 1;
+			if (!tmp) break;
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			y = tmp;
 			if (y < 0) y = 0;
 			if (y >= audio_sfx) y = audio_sfx - 1;
 			break;
 		case '9':
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 			y = (y - 10 + audio_sfx) % audio_sfx;
 			break;
 		case '3':
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 			y = (y + 10 + audio_sfx) % audio_sfx;
 			break;
 		case '1':
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 			y = audio_sfx - 1;
 			break;
 		case '7':
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 			y = 0;
 			break;
 		case '8':
 		case '2':
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 			d = keymap_dirs[ch & 0x7F];
 			y = (y + ddy[d] + audio_sfx) % audio_sfx;
 			break;
