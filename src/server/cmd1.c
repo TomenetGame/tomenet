@@ -1759,11 +1759,14 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Describe the object */
 		if ((!pickup && !force_pickup) || forbidden) {
 			char pseudoid[13];
+
 			strcpy(pseudoid, "");
 			/* felt an (non-changing!) object of same kind before via pseudo-id? then remember.
 			   Note: currently all objects for which that is true are 'magic', hence we only
 			   use object_value_auxX_MAGIC() below. */
-			if (!object_aware_p(Ind, o_ptr) && !object_known_p(Ind, o_ptr) && object_felt_p(Ind, o_ptr)) {
+			if (!object_aware_p(Ind, o_ptr) && !object_known_p(Ind, o_ptr) && object_felt_p(Ind, o_ptr)
+			    /* Also, rings and amulets aren't covered by auxX_magic, so we have to exempt them (null string!): */
+			    && o_ptr->tval != TV_RING && o_ptr->tval != TV_AMULET) {
 				if (!object_felt_heavy_p(Ind, o_ptr)) {
 					/* only show pseudoid if its current inscription doesn't already tell us! */
 					if (!o_ptr->note || strcmp(quark_str(o_ptr->note), value_check_aux2_magic(o_ptr)))
