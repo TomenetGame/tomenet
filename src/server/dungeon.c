@@ -8637,6 +8637,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 
 	/* Flavor the objects */
 	flavor_init();
+	flavor_hacks();
 
 	s_printf("Object flavors initialized...\n");
 

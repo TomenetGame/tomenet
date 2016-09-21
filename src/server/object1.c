@@ -65,16 +65,25 @@ static cptr ring_adj[MAX_ROCKS] = {
 	"Bloodstone", "Calcite", "Carnelian", "Corundum", "Diamond",
 	"Emerald", "Fluorite", "Garnet", "Granite", "Jade",
 	"Jasper", "Lapis Lazuli", "Malachite", "Marble", "Moonstone",
+
 	"Onyx", "Opal", "Pearl", "Quartz", "Quartzite",
 	"Rhodonite", "Ruby", "Sapphire", "Tiger Eye", "Topaz",
 	"Turquoise", "Zircon", "Platinum", "Bronze", "Gold",
 	"Obsidian", "Silver", "Tortoise Shell", "Mithril", "Jet",
-	"Engagement", "Adamantite",
-	"Wire", "Dilithium", "Bone", "Wooden",
-	"Spikard", "Serpent", "Wedding", "Double",
-	"Plain", "Brass", "Scarab", "Shining",
-	"Rusty", "Transparent", "Copper", "Black Opal", "Nickel",
-	"Glass", "Fluorspar", "Agate",
+
+	"Engagement", "Adamantite", "Wire", "Dilithium", "Bone",
+	"Wooden", "Spikard", "Serpent", "Wedding", "Double",
+	"Plain", "Brass", "Scarab", "Shining", "Rusty",
+	"Transparent", "Copper", "Black Opal", "Nickel", "Glass",
+
+	"Fluorspar", "Agate",
+};
+/* Specialty for flavour_hacks(): Don't use unfitting materials for artifacts */
+static bool ring_cheap[MAX_ROCKS] = {
+	0, 0, 0, 0, 0,   0, 1, 0, 0, 0,   0, 1, 0, 1, 0,   0, 0, 1, 0, 0,
+	0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0, 0,   0, 0, 1, 0, 1,
+	1, 0, 1, 0, 0,   1, 1, 0, 0, 1,   0, 0, 0, 0, 1,   0, 0, 0, 0, 0,
+	0, 1,
 };
 //todo: make money pile colours (gems) consistent with these
 #if 1 /*more animated TERMs*/
@@ -83,16 +92,18 @@ static byte ring_col[MAX_ROCKS] = {
 	TERM_RED, TERM_WHITE, TERM_RED, TERM_SLATE, TERM_COLD,
 	TERM_GREEN, TERM_L_GREEN, TERM_RED, TERM_L_DARK, TERM_L_GREEN,
 	TERM_UMBER, TERM_BLUE, TERM_GREEN, TERM_WHITE, TERM_L_WHITE,
+
 	TERM_L_RED, TERM_L_WHITE, TERM_WHITE, TERM_L_WHITE, TERM_L_WHITE,
 	TERM_L_RED, TERM_RED, TERM_BLUE, TERM_YELLOW, TERM_YELLOW,
 	TERM_L_BLUE, TERM_L_UMBER, TERM_WHITE, TERM_L_UMBER, TERM_YELLOW,
 	TERM_L_DARK, TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_L_DARK,
-	TERM_YELLOW, TERM_VIOLET,
-	TERM_UMBER, TERM_L_WHITE, TERM_WHITE, TERM_UMBER,
-	TERM_BLUE, TERM_GREEN, TERM_YELLOW, TERM_ORANGE,
-	TERM_YELLOW, TERM_ORANGE, TERM_L_GREEN, TERM_LITE,
-	TERM_UMBER, TERM_L_WHITE, TERM_UMBER, TERM_L_DARK, TERM_L_WHITE,
-        TERM_L_WHITE, TERM_BLUE, TERM_L_WHITE
+
+	TERM_YELLOW, TERM_VIOLET, TERM_UMBER, TERM_L_WHITE, TERM_WHITE,
+	TERM_UMBER, TERM_BLUE, TERM_GREEN, TERM_YELLOW, TERM_ORANGE,
+	TERM_YELLOW, TERM_ORANGE, TERM_L_GREEN, TERM_LITE, TERM_UMBER,
+	TERM_L_WHITE, TERM_UMBER, TERM_L_DARK, TERM_L_WHITE, TERM_L_WHITE,
+
+	TERM_BLUE, TERM_L_WHITE
 };
 #else /*classic*/
 static byte ring_col[MAX_ROCKS] = {
@@ -100,16 +111,18 @@ static byte ring_col[MAX_ROCKS] = {
 	TERM_RED, TERM_WHITE, TERM_RED, TERM_SLATE, TERM_WHITE,
 	TERM_GREEN, TERM_L_GREEN, TERM_RED, TERM_L_DARK, TERM_L_GREEN,
 	TERM_UMBER, TERM_BLUE, TERM_GREEN, TERM_WHITE, TERM_L_WHITE,
+
 	TERM_L_RED, TERM_L_WHITE, TERM_WHITE, TERM_L_WHITE, TERM_L_WHITE,
 	TERM_L_RED, TERM_RED, TERM_BLUE, TERM_YELLOW, TERM_YELLOW,
 	TERM_L_BLUE, TERM_L_UMBER, TERM_WHITE, TERM_L_UMBER, TERM_YELLOW,
 	TERM_L_DARK, TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_L_DARK,
-	TERM_YELLOW, TERM_VIOLET,
-	TERM_UMBER, TERM_L_WHITE, TERM_WHITE, TERM_UMBER,
-	TERM_BLUE, TERM_GREEN, TERM_YELLOW, TERM_ORANGE,
-	TERM_YELLOW, TERM_ORANGE, TERM_L_GREEN, TERM_YELLOW,
-	TERM_RED, TERM_WHITE, TERM_UMBER, TERM_L_DARK, TERM_L_WHITE,
-        TERM_WHITE, TERM_BLUE, TERM_L_WHITE
+
+	TERM_YELLOW, TERM_VIOLET, TERM_UMBER, TERM_L_WHITE, TERM_WHITE,
+	TERM_UMBER, TERM_BLUE, TERM_GREEN, TERM_YELLOW, TERM_ORANGE,
+	TERM_YELLOW, TERM_ORANGE, TERM_L_GREEN, TERM_YELLOW, TERM_RED,
+	TERM_WHITE, TERM_UMBER, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE,
+
+	TERM_BLUE, TERM_L_WHITE
 };
 #endif
 
@@ -123,7 +136,7 @@ static cptr amulet_adj[MAX_AMULETS] = {
 	//ingwe: ?
 	//nauglamir: carencet of gold w/ multitude of shining gems (m)
 	//elessar: green gem
-	//evenstar: pure white
+	//evenstar: pure white jewel
 	//grom: well, make it half-hued? or just dark! (h/D/s)
 	//spirit shard: white+silver (use q or c, glass or silver)
 	//-> replace by Z,e,m,(h),c/q
@@ -131,12 +144,20 @@ static cptr amulet_adj[MAX_AMULETS] = {
 	"Obsidian", "Bone", "Brass", "Bronze", "Pewter",
 	"Tortoise Shell", "Golden", "Azure", "Crystal", "Silver",
 	"Copper", "Amethyst", "Mithril", "Sapphire", "Dragon Tooth",
+
 	"Carved Oak", "Sea Shell", "Flint Stone", "Ruby", "Scarab",
 	"Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
 	"Malachite", "Adamantite", "Mother-of-pearl", "Runed", "Sandalwood",
 	"Emerald", "Aquamarine", "Orichalcum", "Shining", "Ebony",
+
 	"Meerschaum", "Jade", "Red Opal",
 	//"Glimmer-Stone",
+};
+/* Specialty for flavour_hacks(): Don't use unfitting materials for artifacts */
+static bool amulet_cheap[MAX_AMULETS] = {
+	0, 1, 1, 0, 0,   0, 1, 0, 0, 1,   1, 0, 0, 0, 0,   0, 0, 0, 0, 1,
+	1, 1, 1, 0, 1,   1, 0, 0, 0, 0,   1, 0, 0, 0, 1,   0, 0, 0, 0, 1,
+	0, 0, 0,
 };
 //todo: make money pile colours (gems) consistent with these
 #if 1 /*more animated TERMs*/
@@ -145,10 +166,12 @@ static byte amulet_col[MAX_AMULETS] = {
 	TERM_L_DARK, TERM_WHITE, TERM_ORANGE, TERM_L_UMBER, TERM_SLATE,
 	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_COLD,
 	TERM_L_UMBER, TERM_VIOLET, TERM_L_BLUE, TERM_BLUE, TERM_L_WHITE,
+
 	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN,
 	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_INER, TERM_L_GREEN,
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER, TERM_L_WHITE,
 	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_MULTI, TERM_L_DARK,
+
 	TERM_L_WHITE, TERM_L_GREEN, TERM_EMBER
 	//TERM_LITE/TERM_VIOLET/TERM_L_BLUE
 };
@@ -158,14 +181,15 @@ static byte amulet_col[MAX_AMULETS] = {
 	TERM_L_DARK, TERM_WHITE, TERM_ORANGE, TERM_L_UMBER, TERM_SLATE,
 	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_L_WHITE,
 	TERM_L_UMBER, TERM_VIOLET, TERM_L_BLUE, TERM_BLUE, TERM_L_WHITE,
+
 	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN,
 	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN,
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER, TERM_L_WHITE,
 	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE, TERM_L_DARK,
+
 	TERM_L_WHITE, TERM_L_GREEN, TERM_RED
 };
 #endif
-
 
 /*
  * Staffs (adjectives and colors)
@@ -437,9 +461,6 @@ static byte scroll_col[MAX_TITLES];
 
 
 
-
-
-
 /*
  * Certain items have a flavor
  * This function is used only by "flavor_init()"
@@ -692,6 +713,7 @@ void flavor_init(void) {
 	int		i, j;
 	byte	temp_col;
 	cptr	temp_adj;
+	bool	temp_cheap;
 
 
 	/* Hack -- Use the "simple" RNG */
@@ -717,6 +739,9 @@ void flavor_init(void) {
 		temp_col = ring_col[i];
 		ring_col[i] = ring_col[j];
 		ring_col[j] = temp_col;
+		temp_cheap = ring_cheap[i];
+		ring_cheap[i] = ring_cheap[j];
+		ring_cheap[j] = temp_cheap;
 	}
 
 	/* Amulets have "amulet colors" */
@@ -728,6 +753,9 @@ void flavor_init(void) {
 		temp_col = amulet_col[i];
 		amulet_col[i] = amulet_col[j];
 		amulet_col[j] = temp_col;
+		temp_cheap = amulet_cheap[i];
+		amulet_cheap[i] = amulet_cheap[j];
+		amulet_cheap[j] = temp_cheap;
 	}
 
 	/* Staffs */
@@ -874,16 +902,135 @@ void flavor_init(void) {
 		k_ptr->has_flavor = object_has_flavor(i);
 
 		/* No flavor yields aware */
-		/*if (!k_ptr->has_flavor) k_ptr->aware = TRUE;*/
-//                if ((!k_ptr->flavor) && (k_ptr->tval != TV_ROD_MAIN)) k_ptr->aware = TRUE;
+		//if (!k_ptr->has_flavor) k_ptr->aware = TRUE;
+		//if ((!k_ptr->flavor) && (k_ptr->tval != TV_ROD_MAIN)) k_ptr->aware = TRUE;
 
 
 		/* Check for "easily known" */
 		k_ptr->easy_know = object_easy_know(i);
 	}
 }
+/* Hack certain flavours for objects that have immutable colour. - C. Blue
+   This means INSTA_ARTs in the ring and amulet department,
+   which have colours determined by lore that must therefore be accurate. */
+void flavor_hacks(void) {
+	int i, j, k;
+	byte temp_col;
+	cptr temp_adj;
+	bool temp_cheap;
 
-
+	/* Check all INSTA_ART rings and amulets in k_info */
+	for (i = 0; i < MAX_K_IDX; i++) {
+		if (!(k_info[i].flags3 & TR3_INSTA_ART)) continue;
+		switch (k_info[i].tval) {
+		case TV_AMULET:
+			/* Hack: TERM_DARK colour means: Don't reassign (keep it random) */
+			if (k_info[i].k_attr == TERM_DARK) {
+				/* At least make sure it doesn't use unfitting material in general */
+				if (!amulet_cheap[k_info[i].sval]) continue;
+				/* Find a fitting colour and switch the current object's colour with it */
+				for (j = 0; j < MAX_AMULETS; j++) {
+					/* Skip unfitting colours */
+					if (amulet_cheap[j]) continue;
+					/* Don't steal colour of another INSTA_ART that has already found its fitting colour */
+					k = lookup_kind(TV_AMULET, j);
+					if ((k_info[k].flags3 & TR3_INSTA_ART) && amulet_col[j] == k_info[k].k_attr) continue;
+					/* Ok! Switch them */
+					temp_col = amulet_col[k_info[i].sval];
+					temp_adj = amulet_adj[k_info[i].sval];
+					temp_cheap = amulet_cheap[k_info[i].sval];
+					amulet_col[k_info[i].sval] = amulet_col[j];
+					amulet_adj[k_info[i].sval] = amulet_adj[j];
+					amulet_cheap[k_info[i].sval] = amulet_cheap[j];
+					amulet_col[j] = temp_col;
+					amulet_adj[j] = temp_adj;
+					amulet_cheap[j] = temp_cheap;
+					break;
+				}
+				if (j == MAX_AMULETS) s_printf(" Flavour couldn't be switched for item %d,%d.\n", k_info[i].tval, k_info[i].sval);
+				continue;
+			}
+			/* Already comes with correct colour assigned? */
+			if (k_info[i].k_attr == amulet_col[k_info[i].sval]) continue;
+			/* Find a fitting colour and switch the current object's colour with it */
+			for (j = 0; j < MAX_AMULETS; j++) {
+				/* Skip unfitting colours */
+				if (amulet_cheap[j]) continue;
+				if (amulet_col[j] != k_info[i].k_attr) continue;
+				/* Don't steal colour of another INSTA_ART that has already found its fitting colour  */
+				k = lookup_kind(TV_AMULET, j);
+				if ((k_info[k].flags3 & TR3_INSTA_ART) && amulet_col[j] == k_info[k].k_attr) continue;
+				/* Ok! Switch them */
+				temp_col = amulet_col[k_info[i].sval];
+				temp_adj = amulet_adj[k_info[i].sval];
+				temp_cheap = amulet_cheap[k_info[i].sval];
+				amulet_col[k_info[i].sval] = amulet_col[j];
+				amulet_adj[k_info[i].sval] = amulet_adj[j];
+				amulet_cheap[k_info[i].sval] = amulet_cheap[j];
+				amulet_col[j] = temp_col;
+				amulet_adj[j] = temp_adj;
+				amulet_cheap[j] = temp_cheap;
+				break;
+			}
+			if (j == MAX_AMULETS) s_printf(" Flavour couldn't be switched for item %d,%d.\n", k_info[i].tval, k_info[i].sval);
+			break;
+		case TV_RING:
+			/* Hack: TERM_DARK colour means: Don't reassign (keep it random) */
+			if (k_info[i].k_attr == TERM_DARK) {
+				/* At least make sure it doesn't use unfitting material in general */
+				if (!ring_cheap[k_info[i].sval]) continue;
+				/* Find a fitting colour and switch the current object's colour with it */
+				for (j = 0; j < MAX_ROCKS; j++) {
+					/* Skip unfitting colours */
+					if (ring_cheap[j]) continue;
+					/* Don't steal colour of another INSTA_ART that has already found its fitting colour */
+					k = lookup_kind(TV_RING, j);
+					if ((k_info[k].flags3 & TR3_INSTA_ART) && amulet_col[j] == k_info[k].k_attr) continue;
+					/* Ok! Switch them */
+					temp_col = ring_col[k_info[i].sval];
+					temp_adj = ring_adj[k_info[i].sval];
+					temp_cheap = ring_cheap[k_info[i].sval];
+					ring_col[k_info[i].sval] = ring_col[j];
+					ring_adj[k_info[i].sval] = ring_adj[j];
+					ring_cheap[k_info[i].sval] = ring_cheap[j];
+					ring_col[j] = temp_col;
+					ring_adj[j] = temp_adj;
+					ring_cheap[j] = temp_cheap;
+					break;
+				}
+				if (j == MAX_ROCKS) s_printf(" Flavour couldn't be switched for item %d,%d.\n", k_info[i].tval, k_info[i].sval);
+				continue;
+			}
+			/* Already comes with correct colour assigned? */
+			if (k_info[i].k_attr == ring_col[k_info[i].sval]) continue;
+			/* Find a fitting colour and switch the current object's colour with it */
+			for (j = 0; j < MAX_ROCKS; j++) {
+				/* Skip unfitting colours */
+				if (ring_cheap[j]) continue;
+				if (ring_col[j] != k_info[i].k_attr) continue;
+				//special hack for The One Ring:
+				if (k_info[i].sval == SV_RING_POWER && strcmp(ring_adj[j], "Gold")) continue;
+				/* Don't steal colour of another INSTA_ART that has already found its fitting colour */
+				k = lookup_kind(TV_RING, j);
+				if ((k_info[k].flags3 & TR3_INSTA_ART) && amulet_col[j] == k_info[k].k_attr) continue;
+				/* Ok! Switch them */
+				temp_col = ring_col[k_info[i].sval];
+				temp_adj = ring_adj[k_info[i].sval];
+				temp_cheap = ring_cheap[k_info[i].sval];
+				ring_col[k_info[i].sval] = ring_col[j];
+				ring_adj[k_info[i].sval] = ring_adj[j];
+				ring_cheap[k_info[i].sval] = ring_cheap[j];
+				ring_col[j] = temp_col;
+				ring_adj[j] = temp_adj;
+				ring_cheap[j] = temp_cheap;
+				break;
+			}
+			if (j == MAX_ROCKS) s_printf(" Flavour couldn't be switched for item %d,%d.\n", k_info[i].tval, k_info[i].sval);
+			break;
+		default: continue;
+		}
+	}
+}
 
 
 /*
@@ -995,12 +1142,6 @@ void reset_visuals(void)
 		tval_to_char[i] = default_tval_to_char(i);
 	}
 }
-
-
-
-
-
-
 
 
 
@@ -1673,7 +1814,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 
 
 
-
 /*
  * Print a char "c" into a string "t", as if by sprintf(t, "%c", c),
  * and return a pointer to the terminator (t + 1).
@@ -2080,10 +2220,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
 			else basenm = "& # Ring~";
 
+#if 0 /* done via flavour_hacks() now */
 			/* Hack -- The One Ring */
 			if (!aware && (o_ptr->sval == SV_RING_POWER)) modstr = "Plain Gold";
+#endif
 			break;
-
 
 		case TV_STAFF:
 			/* Color the object */
