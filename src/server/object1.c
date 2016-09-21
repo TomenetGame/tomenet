@@ -2182,11 +2182,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			/* keep our special randart naming ;) 'the slow digestion of..' */
 			if (o_ptr->name1 == ART_RANDART && known) break;
 
+#if 0
 			/* Suppress flavour */
 			if (artifact_p(o_ptr) && known && !(mode & 512)) {
 				//obsolete	basenm = "& Amulet~";
 				break;
 			}
+#endif
 
 			/* "Amulets of Luck" are just called "Talismans" -C. Blue */
 			if ((o_ptr->sval == SV_AMULET_LUCK) && aware) {
@@ -2212,16 +2214,18 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			if (o_ptr->sval == SV_RING_SPECIAL) basenm = "Ring of Power"; /* except for rings of power */
 			if (o_ptr->name1 == ART_RANDART && known) break;
 
+#if 0
 			/* Suppress flavour */
 			if (artifact_p(o_ptr) && known && !(mode & 512)) {
 				//obsolete	basenm = "& Amulet~";
 				break;
 			}
+#endif
 
 			/* Color the object */
 			modstr = ring_adj[indexx];
 			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)))) append_name = TRUE;
-//			if (aware) append_name = TRUE;
+			//if (aware) append_name = TRUE;
 			if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
 			else basenm = "& # Ring~";
 
@@ -2290,7 +2294,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			if (aware) append_name = TRUE;
 			if (short_item_names) basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
 			else basenm = aware ? "& Scroll~ \"#\"" : "& Scroll~ titled \"#\"";
-//			basenm = "& Scroll~ titled \"#\"";
+			//basenm = "& Scroll~ titled \"#\"";
 			break;
 
 		case TV_POTION:
@@ -2338,7 +2342,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			/* hack for mindcrafter spell scrolls -> spell crystals - C. Blue */
 			if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
 				basenm = "& Spell Crystal~ of #";
-//			basenm = k_name + k_ptr->name;
+			//basenm = k_name + k_ptr->name;
 			if (o_ptr->sval == SV_SPELLBOOK) {
 				if (school_spells[o_ptr->pval].name)
 					modstr = school_spells[o_ptr->pval].name;
@@ -2379,7 +2383,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		cptr ego = NULL;
 
 		/* Grab any ego-item name */
-//		if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
+		//if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 		if (known && (o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN) &&
 		    !(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT))
 		{
@@ -2484,10 +2488,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	}
 
 	/* Grab any ego-item name */
-//	if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
+	//if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 	if (known && (o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN) &&
 	    !(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT)
-//	    && o_ptr->tval != TV_SPECIAL
+	    //&& o_ptr->tval != TV_SPECIAL
 	    )
 	{
 		ego_item_type *e_ptr = &e_info[o_ptr->name2];
@@ -2634,10 +2638,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* Hack -- Append "Artifact" or "Special" names */
 	if (known) {
 		/* Grab any ego-item name */
-//                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
+		//if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 		if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN) &&
 		    !(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT)
-//		    && o_ptr->tval != TV_SPECIAL
+		    //&& o_ptr->tval != TV_SPECIAL
 		    ) {
 			ego_item_type *e_ptr = &e_info[o_ptr->name2];
 			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
