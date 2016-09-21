@@ -2964,9 +2964,9 @@ static int Handle_login(int ind) {
 	}
 #endif
 	/* Since 4.5.7 we can now distinguish (client-side) between disabled and unavailable audio */
-	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 100)
+	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 90)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
-	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 5 - 25 - 1) //-1: for now don't count tomb music, next client will be out soon anyway, then ppl can update..
+	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 5 - 26)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---"); //-5 for 5 optional songs in 4.6.2 (user's choic)
 
 	/* Admin messages */
