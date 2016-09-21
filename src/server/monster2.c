@@ -4840,14 +4840,24 @@ bool multiply_monster(int m_idx) {
 	bool result = FALSE;
 	struct worldpos *wpos = &m_ptr->wpos;
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return(FALSE);
 
-	if (m_ptr->clone > 90) return(FALSE);
+	if (!(zcave = getcave(wpos))) return FALSE;
 
-	/* NO UNIQUES */
-	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)) return FALSE;
 	/* Not in town -_- */
 	if (istown(wpos)) return FALSE;
+
+	/* Don't keep cloning forever */
+	if (m_ptr->clone > 90) return FALSE ;
+
+	/* No uniques or special event monsters */
+	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)
+	    /* No special 'flavour' monsters */
+	    || (r_ptr->flags7 & RF7_NO_DEATH)
+	    /* No questors */
+	    || m_ptr->questor
+	    /* No non-spawning monsters */
+	    || r_ptr->rarity == 255)
+		return FALSE;
 
 	/* Try up to 18 times */
 	for (i = 0; i < 18; i++) {
