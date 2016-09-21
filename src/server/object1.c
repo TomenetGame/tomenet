@@ -54,12 +54,13 @@ static cptr ring_adj[MAX_ROCKS] = {
 	//f'lar: ?
 	//barahir: serpents with emerald eyes
 	//tulkas: ?
-	//narya: ring of fire
+	//narya: ring of fire (use R instead of fmaybe, since it doesn't give anything fire-related really)
 	//nenya: adamant with pure white centerpiece
-	//vilya: sapphire
+	//vilya: sapphire (using b, not e, so we don't have to add anything.)
 	//the one ring: gold
 	//phasing: ?
-	//durin: gold with sapphire, if it's same Thror got from Durin III
+	//durin: gold with sapphire, if it's same Thror got from Durin III. (again, using b)
+	//-> fortunately we have enough TERM_BLUE there..
 	"Alexandrite", "Amethyst", "Aquamarine", "Azurite", "Beryl",
 	"Bloodstone", "Calcite", "Carnelian", "Corundum", "Diamond",
 	"Emerald", "Fluorite", "Garnet", "Granite", "Jade",
@@ -117,14 +118,15 @@ static byte ring_col[MAX_ROCKS] = {
  */
 
 static cptr amulet_adj[MAX_AMULETS] = {
-	//carlammas: fiery circle of bronze
-	//toris: blue stone of orichalcum
+	//carlammas: fiery circle of bronze (Z)
+	//toris: blue stone of orichalcum (e)
 	//ingwe: ?
-	//nauglamir: carencet of gold w/ multitude of shining gems
+	//nauglamir: carencet of gold w/ multitude of shining gems (m)
 	//elessar: green gem
 	//evenstar: pure white
-	//grom: well, make it half-hued?
-	//spirit shard: white+silver
+	//grom: well, make it half-hued? or just dark! (h/D/s)
+	//spirit shard: white+silver (use q or c, glass or silver)
+	//-> replace by Z,e,m,(h),c/q
 	"Amber", "Driftwood", "Coral", "Agate", "Ivory",
 	"Obsidian", "Bone", "Brass", "Bronze", "Pewter",
 	"Tortoise Shell", "Golden", "Azure", "Crystal", "Silver",
@@ -132,21 +134,23 @@ static cptr amulet_adj[MAX_AMULETS] = {
 	"Carved Oak", "Sea Shell", "Flint Stone", "Ruby", "Scarab",
 	"Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
 	"Malachite", "Adamantite", "Mother-of-pearl", "Runed", "Sandalwood",
-	"Emerald", "Aquamarine", "Sapphire", "Glimmer-Stone", "Ebony",
+	"Emerald", "Aquamarine", "Orichalcum", "Shining", "Ebony",
 	"Meerschaum", "Jade", "Red Opal",
+	//"Glimmer-Stone",
 };
 //todo: make money pile colours (gems) consistent with these
 #if 1 /*more animated TERMs*/
 static byte amulet_col[MAX_AMULETS] = {
 	TERM_YELLOW, TERM_L_UMBER, TERM_WHITE, TERM_L_WHITE, TERM_WHITE,
 	TERM_L_DARK, TERM_WHITE, TERM_ORANGE, TERM_L_UMBER, TERM_SLATE,
-	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_L_WHITE,
+	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_COLD,
 	TERM_L_UMBER, TERM_VIOLET, TERM_L_BLUE, TERM_BLUE, TERM_L_WHITE,
 	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN,
-	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_L_WHITE, TERM_L_GREEN,
+	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_INER, TERM_L_GREEN,
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER, TERM_L_WHITE,
-	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE, TERM_L_DARK,
-	TERM_L_WHITE, TERM_L_GREEN, TERM_RED
+	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_MULTI, TERM_L_DARK,
+	TERM_L_WHITE, TERM_L_GREEN, TERM_EMBER
+	//TERM_LITE/TERM_VIOLET/TERM_L_BLUE
 };
 #else
 static byte amulet_col[MAX_AMULETS] = {

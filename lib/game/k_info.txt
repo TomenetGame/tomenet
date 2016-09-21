@@ -261,7 +261,7 @@ F:SHOW_MODS | TUNNEL
 # The Blue Stone 'Toris Mejistos' -- see artifact list
 
 N:29:& Blue Stone~
-G:":B
+G:":e
 I:40:18:0
 W:60:0:3:90000
 F:INSTA_ART
@@ -3989,7 +3989,7 @@ F:INSTA_ART
 # The Ring of Durin -- see artifact list
 
 N:479:& Ring~
-G:=:d
+G:=:b
 I:45:57:0
 W:70:0:2:65000
 F:INSTA_ART
@@ -4183,7 +4183,7 @@ F:INSTA_ART
 # The Amulet of Carlammas -- see artifact list
 
 N:503:& Amulet~
-G:":d
+G:":Z
 I:40:10:0
 W:40:0:3:60000
 F:INSTA_ART
@@ -4199,7 +4199,7 @@ F:INSTA_ART
 # The Necklace 'Nauglamir' -- see artifact list
 
 N:505:& Necklace~
-G:":d
+G:":m
 I:40:12:0
 W:60:0:3:75000
 F:INSTA_ART
@@ -4208,7 +4208,7 @@ F:INSTA_ART
 # The Ring of Barahir -- see artifact list
 
 N:506:& Ring~
-G:=:d
+G:=:g
 I:45:32:0
 W:50:0:2:65000
 F:INSTA_ART
@@ -4224,7 +4224,7 @@ F:INSTA_ART
 # The Ring of Power 'Narya' -- see artifact list
 
 N:508:& Ring~
-G:=:d
+G:=:R
 I:45:34:0
 W:70:0:2:100000
 F:INSTA_ART
@@ -4232,7 +4232,7 @@ F:INSTA_ART
 # The Ring of Power 'Nenya' -- see artifact list
 
 N:509:& Ring~
-G:=:d
+G:=:w
 I:45:35:0
 W:80:0:2:200000
 F:INSTA_ART
@@ -4240,7 +4240,7 @@ F:INSTA_ART
 # The Ring of Power 'Vilya' -- see artifact list
 
 N:510:& Ring~
-G:=:d
+G:=:b
 I:45:36:0
 W:90:0:2:300000
 F:INSTA_ART
@@ -4732,7 +4732,7 @@ D:Affects your armour class.
 # The Ring of F'lar -- see artifact list
 
 N:582:& Ring~
-G:=:y
+G:=:d
 I:45:52:0
 W:40:25:2:75000
 F:INSTA_ART
@@ -6813,7 +6813,7 @@ D:Carry it across the field and score a point for your team!
 # The Amulet of Grom, the Wyrm Hunter -- see artifact list
 
 N:927:& Amulet~
-G:":o
+G:":D
 I:40:38:0
 W:40:0:3:100000
 F:INSTA_ART
@@ -6838,7 +6838,7 @@ D:Luck increases chance to get better enchanted items from monsters and digging.
 
 #The Amulet 'Spirit Shard'
 N:935:& Amulet~
-G:":w
+G:":c
 I:40:40:0
 W:52:0:3:150000
 F:INSTA_ART
