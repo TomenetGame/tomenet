@@ -39,8 +39,7 @@
 
  #define MAX_MODIFIERS	6       /* Used with rings (see below) */
 
-static cptr ring_adj2[MAX_ROCKS2] =
-{
+static cptr ring_adj2[MAX_ROCKS2] = {
 	"", "Brilliant", "Dark", "Enchanting", "Murky", "Bright"
 };
 
@@ -51,8 +50,16 @@ static cptr ring_adj2[MAX_ROCKS2] =
  * Rings (adjectives and colors)
  */
 
-static cptr ring_adj[MAX_ROCKS] =
-{
+static cptr ring_adj[MAX_ROCKS] = {
+	//f'lar: ?
+	//barahir: serpents with emerald eyes
+	//tulkas: ?
+	//narya: ring of fire
+	//nenya: adamant with pure white centerpiece
+	//vilya: sapphire
+	//the one ring: gold
+	//phasing: ?
+	//durin: gold with sapphire, if it's same Thror got from Durin III
 	"Alexandrite", "Amethyst", "Aquamarine", "Azurite", "Beryl",
 	"Bloodstone", "Calcite", "Carnelian", "Corundum", "Diamond",
 	"Emerald", "Fluorite", "Garnet", "Granite", "Jade",
@@ -66,7 +73,7 @@ static cptr ring_adj[MAX_ROCKS] =
 	"Spikard", "Serpent", "Wedding", "Double",
 	"Plain", "Brass", "Scarab", "Shining",
 	"Rusty", "Transparent", "Copper", "Black Opal", "Nickel",
-        "Glass", "Fluorspar", "Agate",
+	"Glass", "Fluorspar", "Agate",
 };
 //todo: make money pile colours (gems) consistent with these
 #if 1 /*more animated TERMs*/
@@ -110,13 +117,21 @@ static byte ring_col[MAX_ROCKS] = {
  */
 
 static cptr amulet_adj[MAX_AMULETS] = {
+	//carlammas: fiery circle of bronze
+	//toris: blue stone of orichalcum
+	//ingwe: ?
+	//nauglamir: carencet of gold w/ multitude of shining gems
+	//elessar: green gem
+	//evenstar: pure white
+	//grom: well, make it half-hued?
+	//spirit shard: white+silver
 	"Amber", "Driftwood", "Coral", "Agate", "Ivory",
 	"Obsidian", "Bone", "Brass", "Bronze", "Pewter",
 	"Tortoise Shell", "Golden", "Azure", "Crystal", "Silver",
-        "Copper", "Amethyst", "Mithril", "Sapphire", "Dragon Tooth",
-        "Carved Oak", "Sea Shell", "Flint Stone", "Ruby", "Scarab",
-        "Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
-        "Malachite", "Adamantite", "Mother-of-pearl", "Runed", "Sandalwood",
+	"Copper", "Amethyst", "Mithril", "Sapphire", "Dragon Tooth",
+	"Carved Oak", "Sea Shell", "Flint Stone", "Ruby", "Scarab",
+	"Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
+	"Malachite", "Adamantite", "Mother-of-pearl", "Runed", "Sandalwood",
 	"Emerald", "Aquamarine", "Sapphire", "Glimmer-Stone", "Ebony",
 	"Meerschaum", "Jade", "Red Opal",
 };
@@ -152,8 +167,7 @@ static byte amulet_col[MAX_AMULETS] = {
  * Staffs (adjectives and colors)
  */
 
-static cptr staff_adj[MAX_WOODS] =
-{
+static cptr staff_adj[MAX_WOODS] = {
 	"Aspen", "Balsa", "Banyan", "Birch", "Cedar",
 	"Cottonwood", "Cypress", "Dogwood", "Elm", "Eucalyptus",
 	"Hemlock", "Hickory", "Ironwood", "Locust", "Mahogany",
@@ -163,9 +177,7 @@ static cptr staff_adj[MAX_WOODS] =
 	"Golden", "Ashen", "Gnarled", "Ivory", "Willow",
 	"Cryptomeria"
 };
-
-static byte staff_col[MAX_WOODS] =
-{
+static byte staff_col[MAX_WOODS] = {
 	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER,
 	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER,
 	TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER, TERM_L_UMBER, TERM_UMBER,
@@ -181,8 +193,7 @@ static byte staff_col[MAX_WOODS] =
  * Wands (adjectives and colors)
  */
 
-static cptr wand_adj[MAX_METALS] =
-{
+static cptr wand_adj[MAX_METALS] = {
 	"Aluminium", "Cast Iron", "Chromium", "Copper", "Gold",
 	"Iron", "Magnesium", "Molybdenum", "Nickel", "Rusty",
 	"Silver", "Steel", "Tin", "Titanium", "Tungsten",
@@ -192,9 +203,7 @@ static cptr wand_adj[MAX_METALS] =
 	"Platinum", "Lead","Lead-Plated", "Ivory" , "Adamantite",
 	"Uridium", "Long", "Short", "Hexagonal"
 };
-
-static byte wand_col[MAX_METALS] =
-{
+static byte wand_col[MAX_METALS] = {
 	TERM_L_BLUE, TERM_L_DARK, TERM_WHITE, TERM_UMBER, TERM_YELLOW,
 	TERM_SLATE, TERM_L_WHITE, TERM_L_WHITE, TERM_L_WHITE, TERM_RED,
 	TERM_L_WHITE, TERM_L_WHITE, TERM_L_WHITE, TERM_WHITE, TERM_WHITE,
@@ -220,16 +229,13 @@ static byte rod_col[MAX_METALS];
  * Mushrooms (adjectives and colors)
  */
 
-static cptr food_adj[MAX_SHROOM] =
-{
+static cptr food_adj[MAX_SHROOM] = {
 	"Blue", "Black", "Black Spotted", "Brown", "Dark Blue",
 	"Dark Green", "Dark Red", "Yellow", "Furry", "Green",
 	"Grey", "Light Blue", "Light Green", "Violet", "Red",
 	"Slimy", "Tan", "White", "White Spotted", "Wrinkled",
 };
-
-static byte food_col[MAX_SHROOM] =
-{
+static byte food_col[MAX_SHROOM] = {
 	TERM_BLUE, TERM_L_DARK, TERM_L_DARK, TERM_UMBER, TERM_BLUE,
 	TERM_GREEN, TERM_RED, TERM_YELLOW, TERM_L_WHITE, TERM_GREEN,
 	TERM_SLATE, TERM_L_BLUE, TERM_L_GREEN, TERM_VIOLET, TERM_RED,
@@ -246,17 +252,15 @@ static byte food_col[MAX_SHROOM] =
 #ifdef EXTRA_FLAVORS//not implemented!
 
 /* 15 */
-static cptr potion_mod[MAX_MOD_COLORS] =
-{
+static cptr potion_mod[MAX_MOD_COLORS] = {
 	"Speckled", "Bubbling", "Cloudy", "Metallic", "Misty", "Smoky",
 	"Pungent", "Clotted", "Viscous", "Oily", "Shimmering", "Coagulated",
 	"Manly", "Stinking", "Whirling",
 };
 
 /* 34 */
-static cptr potion_base[MAX_BASE_COLORS] =
-{
-        "Clear", "Light Brown", "Icky Green", "Phosphorescent",
+static cptr potion_base[MAX_BASE_COLORS] = {
+	"Clear", "Light Brown", "Icky Green", "Phosphorescent",
 	"Azure", "Blue", "Black", "Brown",
 	"Chartreuse", "Crimson", "Cyan", "Dark Blue",
 	"Dark Green", "Dark Red", "Green", "Grey",
@@ -274,7 +278,7 @@ static cptr potion_base[MAX_BASE_COLORS] =
     static byte potion_col[MAX_COLORS] =
  #endif
     {
-        TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_MULTI,
+	TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_MULTI,
 	TERM_L_BLUE, TERM_BLUE, TERM_L_DARK, TERM_UMBER,
 	TERM_L_GREEN, TERM_RED, TERM_L_BLUE, TERM_BLUE,
 	TERM_GREEN, TERM_RED, TERM_GREEN, TERM_SLATE,
@@ -291,7 +295,7 @@ static char potion_adj[MAX_COLORS][24];
 #else /* no EXTRA_FLAVOURS -- (extra flavours aren't implemented yet) */
 
 static cptr potion_adj[MAX_COLORS] = {
-        "Clear", "Light Brown", "Icky Green", "Scarlet", /* instead of "Blood Red", */
+	"Clear", "Light Brown", "Icky Green", "Scarlet", /* instead of "Blood Red", */
 	"Orange", "Cloudy", "Azure", "Blue",
 	"Blue Speckled", "Black", "Brown", "Brown Speckled",
 	"Bubbling", "Chartreuse", "Copper Speckled", "Crimson",
@@ -313,13 +317,13 @@ static cptr potion_adj[MAX_COLORS] = {
 #endif
 
 	/* add more colours to make TV_POTION2 obsolete */
-//	"Turquoise", "Beige",
-	// "Amber",
-	//  "Radiant", "Lilac", <- note, we already have TOO MANY TERM_VIOLET colours..
-//	"Glowing Green", "Glowing Blue", "Glowing Red", "Glittering", "Phosphorescent",
-//	notes: light red is covered by vermillon, ochre is covered by light brown, sky blue by azure, sepia by beige maybe
-//		viridian==turquoise, citron covered by chartreuse, 
-//viridian, sienna, sepia, amber, umber, ivory
+	//"Turquoise", "Beige",
+	//"Amber",
+	//"Radiant", "Lilac", <- note, we already have TOO MANY TERM_VIOLET colours..
+	//"Glowing Green", "Glowing Blue", "Glowing Red", "Glittering", "Phosphorescent",
+	//notes: light red is covered by vermillon, ochre is covered by light brown, sky blue by azure, sepia by beige maybe
+	//viridian==turquoise, citron covered by chartreuse,
+	//viridian, sienna, sepia, amber, umber, ivory
 };
 
  # if 1 /* more sparkly term colours for more visual diversity */
@@ -350,10 +354,10 @@ static cptr potion_adj[MAX_COLORS] = {
 	TERM_WHITE,
 #endif
 
-//	TERM_L_BLUE, TERM_L_WHITE,
+	//TERM_L_BLUE, TERM_L_WHITE,
 	//TERM_LITE, (amber)
 	//lilac:TERM_VIOLET, radiant TERM_COLD,
-//	TERM_POIS, TERM_ELEC, TERM_FIRE, TERM_COLD,
+	//TERM_POIS, TERM_ELEC, TERM_FIRE, TERM_COLD,
     };
  #else /* traditional conservative colour usage, less sparkly */
 
@@ -362,7 +366,7 @@ static cptr potion_adj[MAX_COLORS] = {
   #else
     static byte potion_col[MAX_COLORS] = {
   #endif
-        TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_LITE,
+	TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_LITE,
 	TERM_ORANGE, TERM_WHITE, TERM_L_BLUE, TERM_BLUE,
 	TERM_BLUE, TERM_L_DARK, TERM_UMBER, TERM_UMBER,
 	TERM_L_WHITE, TERM_L_GREEN, TERM_L_UMBER, TERM_RED,
@@ -384,7 +388,7 @@ static cptr potion_adj[MAX_COLORS] = {
 #endif
 
 	//TERM_L_BLUE, TERM_L_UMBER,
-//	TERM_POIS, TERM_ELEC, TERM_FIRE, TERM_COLD,
+	//TERM_POIS, TERM_ELEC, TERM_FIRE, TERM_COLD,
     };
  #endif
 
@@ -394,9 +398,7 @@ static cptr potion_adj[MAX_COLORS] = {
 /*
  * Syllables for scrolls (must be 1-4 letters each)
  */
-
-static cptr syllables[MAX_SYLLABLES] =
-{
+static cptr syllables[MAX_SYLLABLES] = {
 	"a", "ab", "ag", "aks", "ala", "an", "ankh", "app",
 	"arg", "arze", "ash", "aus", "ban", "bar", "bat", "bek",
 	"bie", "bin", "bit", "bjor", "blu", "bot", "bu",
@@ -417,7 +419,7 @@ static cptr syllables[MAX_SYLLABLES] =
 	"ulk", "um", "un", "uni", "ur", "val", "viv", "vly",
 	"vom", "wah", "wed", "werg", "wex", "whon", "wun", "x",
 	"yerg", "yp", "zun", "tri", "blaa", "jah", "bul", "on",
-        "foo", "ju", "xuxu"
+	"foo", "ju", "xuxu"
 };
 
 /*
