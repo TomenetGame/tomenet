@@ -6785,13 +6785,17 @@ static void do_cmd_options_fonts(void) {
 	int j, d, vertikal_offset = 3;
 	int y = 0;
 	char ch;
-	bool go = TRUE;
+	bool go = TRUE, inkey_msg_old;
 
 	char font_name[MAX_FONTS][256], path[1024];
 	int fonts = 0;
 	char tmp_name[256];
 	char graphic_font_name[MAX_FONTS][256];
 	int graphic_fonts=0;
+
+#ifndef WINDOWS
+	int x11_refresh = 50;
+#endif
 
 #ifdef WINDOWS /* Windows uses the .FON files */
 	DIR *dir;
@@ -6874,7 +6878,7 @@ static void do_cmd_options_fonts(void) {
 
 
 	/* suppress hybrid macros */
-	bool inkey_msg_old = inkey_msg;
+	inkey_msg_old = inkey_msg;
 	inkey_msg = TRUE;
 
 	/* Clear screen */
@@ -6944,6 +6948,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j + 1]);
+#ifndef WINDOWS
+						sync_sleep(x11_refresh);
+#endif
 						break;
 					}
 				}
@@ -6952,6 +6959,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, font_name[j + 1]);
+#ifndef WINDOWS
+						sync_sleep(x11_refresh);
+#endif
 						break;
 					}
 				}
@@ -6967,6 +6977,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j - 1]);
+#ifndef WINDOWS
+						sync_sleep(x11_refresh);
+#endif
 						break;
 					}
 				}
@@ -6975,6 +6988,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, font_name[j - 1]);
+#ifndef WINDOWS
+						sync_sleep(x11_refresh);
+#endif
 						break;
 					}
 				}
@@ -6992,6 +7008,9 @@ static void do_cmd_options_fonts(void) {
 			clear_from(20);
 			if (!tmp_name[0]) break;
 			set_font_name(y, tmp_name);
+#ifndef WINDOWS
+			sync_sleep(x11_refresh);
+#endif
 			break;
 
 		default:
