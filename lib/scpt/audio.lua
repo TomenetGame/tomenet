@@ -196,7 +196,6 @@ audio_sfx = {
     --[misc]
     "shriek",
     "earthquake",
-
     "destruction",
     "detonation",
     "trap_setoff",
@@ -206,7 +205,7 @@ audio_sfx = {
     "shatter_potion",
     "store_doorbell_enter",
     "store_doorbell_leave",
-
+    "jailed",
     "fireworks_big",
     "fireworks_norm",
     "fireworks_small",
@@ -385,6 +384,7 @@ audio_bgm = {
     "season_newyearseve",
 
     "sickbay",
+    "jail",
     "winner",
 }
 function get_music_name(idx)

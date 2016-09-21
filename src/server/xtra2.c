@@ -12415,6 +12415,9 @@ bool imprison(int Ind, u16b time, char *reason) {
 	msg_format(Ind, "\374\377oYou have been jailed for %s.", reason);
 	p_ptr->tim_jail = time + p_ptr->tim_susp;
 	p_ptr->tim_susp = 0;
+#ifdef USE_SOUND_2010
+	sound(Ind, "jailed", NULL, SFX_TYPE_MISC, TRUE);
+#endif
 
 	s_printf("DONE.\n");
 	return (TRUE);

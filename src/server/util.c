@@ -1695,7 +1695,7 @@ void handle_music(int Ind) {
 		//Morgoth
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		if (p_ptr->total_winner) Send_music(Ind, 87, 44);
+		if (p_ptr->total_winner) Send_music(Ind, 88, 44);
 		else Send_music(Ind, 44, 14);
 		return;
 	}
@@ -1730,7 +1730,8 @@ void handle_music(int Ind) {
 	}
 
 	/* No-tele grid: Re-use 'terrifying' bgm for this */
-	if (zcave && (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) {
+	if (p_ptr->music_monster != -5 && //hack: jails are also no-tele
+	    zcave && (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) {
 #if 0 /* hack: init music as 'higher priority than boss-specific': */
 		p_ptr->music_monster = -2;
 #endif
@@ -1740,13 +1741,19 @@ void handle_music(int Ind) {
 
 	/* rest of the music has lower priority than already running, boss-specific music */
 	if (p_ptr->music_monster != -1
-	    /* hacks for sickbay and tavern music */
-	    && p_ptr->music_monster != -3 && p_ptr->music_monster != -4)
+	    /* hacks for sickbay, tavern and jail music */
+	    && p_ptr->music_monster != -3 && p_ptr->music_monster != -4 && p_ptr->music_monster != -5)
 		return;
 
 
 	/* on world surface */
 	if (p_ptr->wpos.wz == 0) {
+		/* Jail hack */
+		if (p_ptr->music_monster == -5) {
+			Send_music(Ind, 87, 46);
+			return;
+		}
+
 		/* play town music also in its surrounding area of houses, if we're coming from the town? */
 		if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
 			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx;
@@ -1870,7 +1877,7 @@ void handle_music(int Ind) {
 		{
 			if (p_ptr->distinct_floor_feeling || is_admin(p_ptr)) {
 				if (l_ptr->flags2 & LF2_OOD_HI) {
-					Send_music(Ind, 46, 11); //what a terrifying place
+					Send_music(Ind, 46, 14); //what a terrifying place
 					return;
 				}
 			}
@@ -7357,8 +7364,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 #ifdef USE_SOUND_2010
 	/* Handle entering a sickbay area (only possible via logging on into one) */
-	if (p_ptr->music_monster != -3 && p_ptr->music_monster != -4
-	    && (c_ptr->feat == FEAT_SICKBAY_AREA || c_ptr->feat == FEAT_SICKBAY_DOOR)) {
+	if (p_ptr->music_monster != -3 && (c_ptr->feat == FEAT_SICKBAY_AREA || c_ptr->feat == FEAT_SICKBAY_DOOR)) {
 		p_ptr->music_monster = -3; //hack sickbay music
 		handle_music(Ind);
 		music = TRUE;
@@ -7391,6 +7397,20 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 		/* Also take care of inn ambient sfx (fireplace) */
 		handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos, TRUE);
+	}
+
+	/* Handle entering a jail */
+	if (p_ptr->music_monster != -5 && (c_ptr->info & CAVE_JAIL)) {
+		p_ptr->music_monster = -5; //hack jail music
+		handle_music(Ind);
+		music = TRUE;
+	}
+
+	/* Handle leaving a jail */
+	if (p_ptr->music_monster == -5 && !(c_ptr->info & CAVE_JAIL)) {
+		p_ptr->music_monster = -1; //unhack jail music
+		handle_music(Ind);
+		music = TRUE;
 	}
 #endif
 
