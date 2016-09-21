@@ -283,7 +283,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.hide_unusable_skills,	TRUE,	4,	0, 35, TRUE,
 	    "hide_unusable_skills",	"Hide unusable skills" },
 	{ &c_cfg.short_item_names,	FALSE,	4,	0, 36, TRUE,
-	    "short_item_names", 	"Don't display 'flavours' in item names" },
+	    "short_item_names", 	"Don't display known 'flavours' in item names" },
 	{ &c_cfg.keep_topline,		FALSE,	4,	0, 37, TRUE,
 	    "keep_topline",		"Don't clear messages in the top line if avoidable" },
 	{ &c_cfg.target_history,	FALSE,	4,	9, 38, TRUE,
