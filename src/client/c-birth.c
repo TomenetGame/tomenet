@@ -1235,7 +1235,13 @@ static bool choose_stat_order(void) {
 					break;
 				}
 			}
-			if (c == '\e') break;
+			if (c == '\e') {
+				if (k > 0) {
+					c_put_str(TERM_NUKE, format("%2d", k), rowA, col3);
+					if (get_check2(format("You still have %d stat points left to distribute! Really continue?", k), FALSE)) break;
+					c_put_str(TERM_L_GREEN, format("%2d", k), rowA, col3);
+				} else break;
+			}
 			if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
 			if (rl_connection_destroyed) return FALSE;
