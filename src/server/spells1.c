@@ -6408,15 +6408,20 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Clone monsters (Ignore "dam") */
 		case GF_OLD_CLONE:
-			if (seen) obvious = TRUE;
+			if (r_ptr->flags7 & RF7_NO_DEATH) { /* don't haste these.. */
+				note = " is unaffected";
+			} else {
+				if (seen) obvious = TRUE;
 
-			/* Heal fully */
-			m_ptr->hp = m_ptr->maxhp;
-			/* Speed up */
-			if (m_ptr->mspeed < 150) m_ptr->mspeed += 10;
+				/* Heal fully */
+				m_ptr->hp = m_ptr->maxhp;
 
-			/* Attempt to clone. */
-			if (multiply_monster(c_ptr->m_idx)) note = " spawns";
+				/* Speed up */
+				if (m_ptr->mspeed < 150) m_ptr->mspeed += 10;
+
+				/* Attempt to clone. */
+				if (multiply_monster(c_ptr->m_idx)) note = " spawns";
+			}
 
 			/* No "real" damage */
 			dam = 0;
