@@ -73,7 +73,7 @@ static cptr ring_adj[MAX_ROCKS] = {
 
 	"Engagement", "Adamantite", "Wire", "Dilithium", "Bone",
 	"Wooden", "Spikard", "Serpent", "Wedding", "Double",
-	"Plain", "Brass", "Scarab", "Shining", "Rusty",
+	"Plain Gold", "Brass", "Scarab", "Shining", "Rusty",
 	"Transparent", "Copper", "Black Opal", "Nickel", "Glass",
 
 	"Fluorspar", "Agate",
@@ -1008,11 +1008,13 @@ void flavor_hacks(void) {
 				/* Skip unfitting colours */
 				if (ring_cheap[j]) continue;
 				if (ring_col[j] != k_info[i].k_attr) continue;
-				//special hack for The One Ring:
-				if (k_info[i].sval == SV_RING_POWER && strcmp(ring_adj[j], "Gold")) continue;
+				//special hack for The One Ring: (part 1/2)
+				if (k_info[i].sval == SV_RING_POWER && strcmp(ring_adj[j], "Plain Gold")) continue;
 				/* Don't steal colour of another INSTA_ART that has already found its fitting colour */
 				k = lookup_kind(TV_RING, j);
-				if ((k_info[k].flags3 & TR3_INSTA_ART) && amulet_col[j] == k_info[k].k_attr) continue;
+				if ((k_info[k].flags3 & TR3_INSTA_ART) && amulet_col[j] == k_info[k].k_attr
+				    && k_info[i].sval != SV_RING_POWER) //special hack fo The One Ring: (part 2/2)
+					continue;
 				/* Ok! Switch them */
 				temp_col = ring_col[k_info[i].sval];
 				temp_adj = ring_adj[k_info[i].sval];
