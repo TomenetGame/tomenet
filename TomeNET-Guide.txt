@@ -3241,26 +3241,47 @@ Note that this mapping file loading only happens if you switch the font for the
 main window, not when you switch fonts of the subwindows.
 
 Font mapping files have the following syntax for mapping lines:
-  F:index:attribute:character
-This will remap a feature of a specific index (see lib/game/f_info.txt file for
-all terrain features and their indices, it's the number after 'N:') to the
-symbol with the number 'character' in your font and display it in the colour
-'attribute' which may range from 0 to 55 (up to 4.6.1a client) or 57 (in later
-clients), with colours 0 to 15 being static colours and the higher ones being
-animated.
+  F:index:attribute/character
+  R:index:attribute/character
+with 'attribute' and 'character' being optional.
 
-Example:
+F-lines:
+The 'F' stands for 'feature', meaning a specific terrain tile such as floors,
+walls, doors. You can see all of these in the file lib/game/f_info.txt, the
+index of each feature is the number located right after 'N:'.
+
+R-lines:
+The 'R' stands for 'monster', meaning a specific base monster type. You can see
+all of these in the client's in-game monster lore (~7) or in the spoiler file
+lib/game/r_info.txt. The monster index is the number located right after 'N:'.
+
+These mapping lines will remap the specified feature or monster to the symbol
+with the number 'character' in your font, which may range from 0 to 255, and
+display it in the colour 'attribute' which may range from 0 to 55 (up to 4.6.1a
+client) or 57 (in later clients), with colours 0 to 15 being static colours and
+the higher ones being animated.
+
+Problems have been reported for mapping characters 2 and 16 to 27, there is
+currently no further information available regarding this issue. If those don't
+work for you, just pick different ones.
+
+Examples:
+
   F:56:2/127
 Maps the terrain feature 'granite wall' (#56 in f_info.txt) to the font symbol
 #127 and the colour 2 (which is 'slate').
 
-When using a custom font you probably want to turn off the option
-'font_map_solid_walls' in = 1, as it interferes with the mapping:
-It will force-remap all affected wall tiles to character 127 and all treasure
-veins ('*' symbol in the game, aka walls with treasure to mine) to character 1.
+  R:862:/255
+Maps the monster 'Morgoth, Lord of Darkness' (#862 in r_info.txt and in ~6) to
+the font symbol #255, leaving its colour at its normal value (the one given in
+r_info.txt) without changing it.
 
-Problems have been reported for mapping characters 2 and 16 to 27,
-there is currently no further information available regarding this issue.
+When using a custom font you probably want to turn off the option
+'font_map_solid_walls' in = 1, as it interferes with the mapping of various
+wall tiles: It will force-remap all affected wall tiles to character 127 for
+Windows clients and to character 1 for Linux/OSX clients and all treasure veins
+('*' symbol in the game, aka walls with treasure to mine) to character 1.
+
 
 Here is a list of all supported colours:
 ----------------------------------------
