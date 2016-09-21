@@ -149,6 +149,8 @@ F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER | NO_ARTICLE
 N:20:open door
 G:':U
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN | DOOR
+#House door: Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now.
+F:NO_SHADE
 
 # 0x22 --> signpost
 
@@ -185,6 +187,8 @@ F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 N:25:closed door
 G:+:U
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
+#House door: Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now.
+F:NO_SHADE
 
 # permanent wall for houses
 

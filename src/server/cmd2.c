@@ -2128,9 +2128,11 @@ bool access_door(int Ind, struct dna_type *dna, bool note) {
 	switch (dna->owner_type) {
 	case OT_PLAYER:
 		/* new doors in new server different */
-		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator)
-			return(TRUE);
-		if (dna->a_flags & ACF_PARTY){
+		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator) return TRUE;
+		/* allow access to houses owned by other characters of your own account as if they were yours (as long as mode is compatible) */
+		if (p_ptr->account == lookup_player_account(dna->owner)) return TRUE;
+		/* party access? */
+		if (dna->a_flags & ACF_PARTY) {
 			if (!p_ptr->party) return(FALSE);
 			if (!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner)))
 				return(TRUE);
@@ -2193,8 +2195,10 @@ int access_door_colour(int Ind, struct dna_type *dna){
 	switch (dna->owner_type) {
 	case OT_PLAYER:
 		/* new doors in new server different */
-		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator)
-			return(TERM_L_GREEN);
+		if (p_ptr->id == dna->owner && p_ptr->dna == dna->creator) return TERM_L_GREEN;
+		/* allow access to houses owned by other characters of your own account as if they were yours (as long as mode is compatible) */
+		if (p_ptr->account == lookup_player_account(dna->owner)) return TERM_GREEN;
+		/* party access with possible restrictions */
 		if (dna->a_flags & ACF_PARTY){
 			if (!p_ptr->party) return(TERM_SLATE);
 			/* exploit fix: create party houses, then promote someone else to leader */
@@ -7511,7 +7515,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 						teleport_player_force(Ind, 1);
 				} else {
 					if (!is_admin(p_ptr)) {
-						msg_print(Ind,"You cannot sell that house");
+						msg_print(Ind,"Only the rightful owner can sell a house");
 						return;
 					} else msg_print(Ind,"The house is reset");
 				}

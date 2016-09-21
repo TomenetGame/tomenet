@@ -2200,6 +2200,9 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 	/* World surface manipulation only */
 	if (wpos->wz) return colour;
 
+	/* Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now. */
+	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return colour;
+
 	/* To use always the same feats for this everytime the player
 	   enters a worldmap sector, we seed the RNG with that particular
 	   worldmap coords. */
@@ -2244,7 +2247,7 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 					if (c_ptr->info & CAVE_LITE) colour = TERM_L_UMBER;
 					else colour = TERM_UMBER;
 					break;
-//				case 7:	colour = TERM_GREEN; break;
+				//case 7: colour = TERM_GREEN; break;
 				}
 				break;
 			case FEAT_TREE:
@@ -2368,6 +2371,9 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
 	/* World surface manipulation only */
 	if (wpos->wz) return colour;
+
+	/* Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now. */
+	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return colour;
 
 	/* Darkness on the world surface at night. Darken all colours. */
 	if (night_surface &&

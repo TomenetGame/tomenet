@@ -6633,6 +6633,10 @@ ie which players may access it:
 
 -a light green house door indicates that you are the owner.
 
+-a dark green house door indicates that another character of yours is the owner
+ which means that you are allowed to enter it too (provided your character is
+ not of incompatible mode).
+
 -a grey door indicates that this house is already owned by someone and you
  don't have access to it.
 
