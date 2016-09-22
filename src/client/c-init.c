@@ -2956,6 +2956,21 @@ void client_init(char *argv1, bool skip) {
 #ifdef RETRY_LOGIN
 	retry_contact:
 
+	/* clear all windows of previous text */
+	for (retries = 1; retries < ANGBAND_TERM_MAX; retries++) {
+		term *old = Term;
+
+		/* No window */
+		if (!ang_term[retries]) continue;
+
+		Term_activate(ang_term[retries]);
+		Term_clear();
+		Term_fresh();
+
+		/* Restore */
+		Term_activate(old);
+	}
+
 	/* also wipe all previously loaded macros, so they don't accidentally get merged */
 	clear_macros();
 
