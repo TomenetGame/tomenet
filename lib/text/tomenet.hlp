@@ -33,7 +33,7 @@ o  Open door                    \{y@  Player list\{w     CTRL+R  Redraw
 p  Open mind   \{yP  Party menu\{w    ~  Knowledge menu  CTRL+S  Spike
 q  Quaff       \{yQ  Suicide\{w       +  Dig             CTRL+T  Screenshot
 r  Read scroll R  Rest          {  Inscribe        \{yCTRL+Q  Quit the game (and
-s  Search      S  Searching     |  Uniques         \{y(auto-save window layout)
+s  Search      S  Searching     |  Uniques           \{y(auto-save window layout)
 t  Take off       mode toggle   }  Uninscribe
 u  Use staff                    '  Inspect nearby/lowbie players/party members
 v  Throw       V  Cloak         _  Sip from fountain/show item on the floor
