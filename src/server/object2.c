@@ -7736,7 +7736,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	player_type *p_ptr = Players[Ind];
 	bool good = TRUE;
 	int base = (min_lv + max_lv) / 2; /* base object level */
-//	int base = 100;
+	//int base = 100;
 	int tries = 0, i = 0, j = 0;
 	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
@@ -7748,7 +7748,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	int maxweight_melee = adj_str_hold[p_ptr->stat_ind[A_STR]] * 10;
 	int maxweight_ranged = adj_str_hold[p_ptr->stat_ind[A_STR]] * 10;
 	int maxweight_shield = ((adj_str_hold[p_ptr->stat_ind[A_STR]] / 7) + 4) * 10;
-//	int maxweight_armor = (adj_str_hold[p_ptr->stat_ind[A_STR]] - 10) * 10; /* not really directly calculatable, since cumber_armor uses TOTAL armor weight, so just estimate something.. pft */
+	//int maxweight_armor = (adj_str_hold[p_ptr->stat_ind[A_STR]] - 10) * 10; /* not really directly calculatable, since cumber_armor uses TOTAL armor weight, so just estimate something.. pft */
 	int maxweight_armor = adj_str_armor[p_ptr->stat_ind[A_STR]] * 10;
 	object_type tmp_obj;
 	int wearable[5], wearables; /* 5 pure (no shields) armour slots, 3 misc slots (tools omitted) */
@@ -7894,7 +7894,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	if (melee_choice == 5) final_choice = 3;
 	if (misc_choice == 4 && (!final_choice || (final_choice && magik(75))) && (!armor_choice || magik(50))) final_choice = 6;
 	if (armor_choice && !final_choice) final_choice = 3;
-/*	if (final_choice == 3 && magik(25)) final_choice = 5; <- no misc items for now, won't be good if not (rand)arts anyway! */
+	/*if (final_choice == 3 && magik(25)) final_choice = 5; <- no misc items for now, won't be good if not (rand)arts anyway! */
 	/* to catch cases where NO result has been chosen at all (paranoia): */
 	if (!final_choice) final_choice = 5;
 
@@ -7933,7 +7933,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case 7: reward_tval = TV_CROWN; break;
 		case 8: reward_tval = TV_CLOAK; break;
 		/* to catch cases where NO result has been chosen at all (paranoia): */
-//		default: reward_tval = TV_CROWN; reward_maxweight = 40; break;
+		//default: reward_tval = TV_CROWN; reward_maxweight = 40; break;
 		}
 		break;
 	case 4: reward_maxweight = 500;
@@ -8453,6 +8453,15 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 		/* Don't generate problematic items at all */
 		if (f3 & (TR3_AGGRAVATE | TR3_DRAIN_EXP | TR3_NO_TELE)) continue;
+
+		/* Don't generate too useless rewards depending on intrinsic character abilities */
+		if ((p_ptr->hold_life || p_ptr->free_act) &&
+		    ((o_ptr->name2 == EGO_CLOAK_TELERI && (!o_ptr->name2b || o_ptr->name2b == EGO_GNOMISH)) ||
+		    (o_ptr->name2b == EGO_CLOAK_TELERI && o_ptr->name2 == EGO_GNOMISH)))
+			continue;
+		if (p_ptr->hold_life && p_ptr->free_act &&
+		    (o_ptr->name2 == EGO_CLOAK_TELERI || o_ptr->name2b == EGO_CLOAK_TELERI))
+			continue;
 
 		/* Don't generate mage-only benefitting reward if we don't use magic */
 		if (!spell_choice && !o_ptr->name2b) { /* as _double ego_, it should be acceptable :-p */
