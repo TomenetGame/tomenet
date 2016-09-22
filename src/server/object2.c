@@ -8235,10 +8235,14 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			invcopy(o_ptr, k_idx);
 			reward_sval = o_ptr->sval;
 
-			/* HACK - Kollas won't pass RESF_LOWVALUE or RESF_MIDVALUE checks in apply_magic - mikaelh */
-			if ((reward_tval == TV_CLOAK) && (reward_sval == SV_KOLLA) && ((resf & (RESF_LOWVALUE | RESF_MIDVALUE)))) {
+			/* Apply value restrictions for base item type too */
+			if ((resf & RESF_NOHIDSM) && (reward_tval == TV_DRAG_ARMOR) &&
+			    !sv_dsm_low(reward_sval) && !sv_dsm_mid(reward_sval))
 				continue;
-			}
+			/* Hack: +3000 Au to accomodate for ego power/enchantments */
+			if ((resf & RESF_LOWVALUE) && (k_info[k_idx].cost + 3000 > 35000)) continue;
+			if ((resf & RESF_MIDVALUE) && (k_info[k_idx].cost + 3000 > 50000)) continue;
+			if ((resf & RESF_NOHIVALUE) && (k_info[k_idx].cost + 3000 > 100000)) continue;
 
 			/* Note that in theory the item's weight might change depending on it's
 			   apply_magic_depth outcome, we're ignoring that here for now though. */
@@ -8258,11 +8262,6 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				   (except if the only available choices keep giving less bpr for some reason after 50 tries huh) */
 				if (weapon_2h && !(k_info[k_idx].flags4 & TR4_MUST2H) && (tries < 50)) continue;
 			}
-
-			if ((resf & RESF_NOHIDSM) &&
-			    (reward_tval == TV_DRAG_ARMOR) &&
-			    !sv_dsm_low(reward_sval) && !sv_dsm_mid(reward_sval))
-				continue;
 
 			/* avoid super light caster armour? */
 			if (go_heavy)
