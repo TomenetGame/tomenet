@@ -841,12 +841,13 @@ CTRL+P  view previous messages.
 CTRL+O  view previous chat messages.
 
 CTRL+Q  save your character & quit the game. (You should do this in town!)
-        This also automatically saves some settings, like window positions on
-        MS-Windows, or mixer settings (CTRL+U to change, CTRL+F on rogue-like
-        key map), and you will be asked to save a chat log.
+        This also automatically saves some settings, like window layout (the
+        windows' positions and sizes) and mixer settings (CTRL+U to change,
+        CTRL+F on rogue-like key map), and you will be asked if you want to
+        save the chat log to a text file.
         Note that if you exit the game just by clicking on the 'x' button in
         the game window's titlebar, these extra features will be skipped, and
-        any changes in settings or window positions will be discarded.
+        any changes in settings or window layout will be discarded.
 
 Q or CTRL+K
         lets your character commit suicide (permanently deletes it!).
