@@ -1684,7 +1684,8 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "Ironman Deep Dive Challenge (IDDC)");
 					continue;
 				}
-				if (!strcasecmp("HT", buf) || !strcasecmp("HL", buf) || strcasestr("Highland", buf) || strcasestr("Tournament", buf)) {
+				if ((!strcasecmp("HT", buf) || !strcasecmp("HL", buf) || strcasestr("Highland", buf) || strcasestr("Tournament", buf))
+				    && strcasecmp("Ent", buf)) { //oops
 					strcpy(chapter, "Highlander Tournament");
 					continue;
 				}
@@ -1692,7 +1693,7 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "Arena Monster Challenge");
 					continue;
 				}
-				if (!strcasecmp("DK", buf) || !strcasecmp("Dungeon Keeper", buf) || strcasestr("Keeper", buf)) {
+				if (!strcasecmp("DK", buf) || !strcasecmp("Dungeon Keeper", buf) || strcasestr("Keeper", buf)) { //sorry, Death Knights
 					strcpy(chapter, "Dungeon Keeper");
 					continue;
 				}
