@@ -5183,10 +5183,10 @@ Chain_Macro:
 								case T_CLOU: { //Storm
 									if (r_imperatives[imperative].flag != I_ENHA) {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius, duration);
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius, duration);
 									} else {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-										color, 'a' + i, "storm", sdiff, cost, fail, damage*15/10, 1, duration*2);
+										color, 'a' + i, "storm", sdiff, cost, fail, rget_level(damage)*15/10, 1, duration*2);
 									}
 								break; }
 
@@ -5315,7 +5315,7 @@ Chain_Macro:
 								case T_WAVE: { //Dispel
 									if (r_imperatives[imperative].flag != I_ENHA) {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
-										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius);
 									} else {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
 										color, 'a' + i, "dispel", sdiff, cost, fail, damage*2);

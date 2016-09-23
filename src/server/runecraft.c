@@ -451,7 +451,6 @@ s_printf("Type: %s\n", r_types[type].name);
 		p_ptr->shoot_till_kill_rcraft = FALSE;
 
 		/* If the spell targets and is instant */
-		//if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BEAM) || (r_types[type].flag == T_BALL)) {
 		if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BALL) || (r_types[type].flag == T_BURS)) {
 			/* If a new spell, update FTK */
 			if (p_ptr->FTK_e_flags != e_flags || p_ptr->FTK_m_flags != m_flags) {
@@ -704,9 +703,9 @@ s_printf("Duration: %d\n", duration);
 
 		case T_CLOU: { //Storm
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-			if (r_imperatives[imperative].flag != I_ENHA) fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
+      if (r_imperatives[imperative].flag != I_ENHA) fire_cloud(Ind, gf_type, dir, rget_level(damage), radius, duration, 9, p_ptr->attacker);
 			else {
-				damage = damage * 15 / 10;
+				damage = (rget_level(damage) * 15) / 10;
 				backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate
 				fire_wave(Ind, gf_type, 0, damage, 1, duration*2, 10, EFF_STORM, p_ptr->attacker);
 			}
@@ -874,7 +873,7 @@ s_printf("Duration: %d\n", duration);
 
 		case T_WAVE: { //Dispel
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, damage, 1, radius, 3, EFF_WAVE, p_ptr->attacker);
+			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, rget_level(damage), 1, radius, 3, EFF_WAVE, p_ptr->attacker);
 			else {
 				damage = damage * 2;
 				backlash = ((damage > dice) ? damage : dice) / BACKLASH_CUT + 1; //Recalculate

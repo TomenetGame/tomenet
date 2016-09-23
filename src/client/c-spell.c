@@ -1691,7 +1691,6 @@ s16b rspell_diff(byte skill, byte level) {
 
 byte rspell_cost(byte imperative, byte type, byte skill) {
 	u16b cost = r_types[type].c_min + rget_level(r_types[type].c_max - r_types[type].c_min);
-
 	cost = cost * r_imperatives[imperative].cost / 10;
 	if (cost < S_COST_MIN) cost = S_COST_MIN;
 	if (cost > S_COST_MAX) cost = S_COST_MAX;
@@ -1865,10 +1864,10 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 			case T_CLOU: { //Storm
 				if (r_imperatives[imperative].flag != I_ENHA) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius, duration);
+					color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius, duration);
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-					color, 'a' + i, "storm", sdiff, cost, fail, damage*15/10, 1, duration*2);
+					color, 'a' + i, "storm", sdiff, cost, fail, rget_level(damage)*15/10, 1, duration*2);
 				}
 			break; }
 
@@ -1997,7 +1996,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 			case T_WAVE: { //Dispel
 				if (r_imperatives[imperative].flag != I_ENHA) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
-					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
+					color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius);
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
 					color, 'a' + i, "dispel", sdiff, cost, fail, damage*2);
