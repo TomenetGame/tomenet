@@ -8388,6 +8388,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 						if (artifact_p(o_ptr)) {
 							c_ptr->o_idx = this_o_idx;
+							nothing_test2(c_ptr, nx, ny, wpos, 5);
 							break;
 						}
 

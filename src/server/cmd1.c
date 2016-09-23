@@ -101,6 +101,26 @@ bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x,
 	}
 	return FALSE;
 }
+bool nothing_test2(cave_type *c_ptr, int x, int y, struct worldpos *wpos, int marker) {
+	object_type *o_ptr;
+
+	if (!c_ptr->o_idx) {
+#if 0 /* happens as it should in object2.c, marker 0, it seems. */
+		s_printf("NOTHING_TEST2: o_idx = 0 (%d)\n", marker);
+#endif
+		return FALSE;
+	}
+
+	o_ptr = &o_list[c_ptr->o_idx];
+	if (inarea(&o_ptr->wpos, wpos) &&
+	    o_ptr->ix == x && o_ptr->iy == y) return TRUE;
+
+	s_printf("NOTHING_TEST2: o_idx %d, iwpos %d,%d,%d, ix,iy %d,%d. wpos %d,%d,%d x,y %d,%d (%d)\n",
+	    c_ptr->o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
+	    wpos->wx, wpos->wy, wpos->wz, x, y,
+	    marker);
+	return FALSE;
+}
 
 /*
  * Determine if the player "hits" a monster (normal combat).
