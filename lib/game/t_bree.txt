@@ -81,13 +81,13 @@ D:#---------TTTCC##,,,--------  OO                                          ,CCC
 D:#------------TC,,###-    ---   OO                                        ,CCTTT...-----SSSSSSSS--.-----------,,.......---TTTCCCC,,       ^^     --            t                                      #
 D:#-------------,TTCCC###    --   OOO                           t        ,,CCTT...-,,,,--ssssssss-..-------------,---......--TTTTCCT,,    ^^t      --                                                  #
 D:#---------  ,,,--TTTCCC    --     OO                                 ,,CCCTT..-------,,##9#####-.--sssssssssss--,------...----TTCCTT,  ^^^        --                                                 #
-D:#--------  ,, ,,----TTTCCt         O                                ,CCC  T..--sssSsss,,,,------.--ScSScSSSScSsss,---o~o~o~o.--TTCCTT,^^^t         --                                     t          #
-D:#------   ,,   ,                   OOt                            t,CCTTT...---ssscSSS---,,,----.--ssssssssssssss,---|p|p|p|..--TTCCT^^^^ ^^        --                           tt                  #
+D:#--------  ,, ,,----TTTCCt         O                                ,CCC  T..--sssSsss,,,,------.--ScSScSSSScSsss,---o~o~o~o~o-TTCCTT,^^^t         --                                     t          #
+D:#------   ,,   ,                   OOt                            t,CCTTT...---ssscSSS---,,,----.--ssssssssssssss,---|p|p|p|p|--TTCCT^^^^ ^^        --                           tt                  #
 D:#------- x,   ,,                    OOt                           ,CCTT...-----sssssss--,,-,,---.--sssssssssss###--..o~sssssss.--TTC^^^   ^t        ----                                             #
 D:#-------     {,                      OO                           ,CTT..---,,,,###6###,,,---,,--.--***********----..-|psppppps..--T^^^^   ^       ---tt--                                            #
 D:#---------                            OOOt                        ,CT..,,,,----,,,,,,,,------,,-.--###b###e###-....,-o~SpppppS-.--T^^   ^         --    --                                           #
-D:#----------               t             OO                       ,CCT.,sssssss----,-----------,,.-----.-----....-,--,|psppppps-.-T^^^   ^  tt    --      -----                                       #
-D:#-------------            t              OO                     ,CCTT.-ScScSSS---,-----ssssss--..-----.--....--,,,,--o~sppppps-.-T^^^      ^      --         --      t      ,,z                      #
+D:#----------               t             OO                       ,CCT.,sssssss----,-----------,,.-----.-----....-,--,,-sppppps-.-T^^^   ^  tt    --      -----                                       #
+D:#-------------            t              OO                     ,CCTT.-ScScSSS---,-----ssssss--..-----.--....--,,,,---,sppppps-.-T^^^      ^      --         --      t      ,,z                      #
 D:#-----------                              OOOOO                 ,CTT-.-sssssss---,-----SSSSSS--.------.-..--,,,,----,-,*ppppp*-.-T^^    ^         --          -----        ,,                        #
 D:#--------                                     OO  t            ,CCT-..-##5####----,----ssssss-..........--ssss,-,,,,--,##8#a##..-^^^  ^t^^  ^    ---             ----    ,,,                         #
 D:#-      --                                     OOOOOOOO        ,C  OOOO--OOOOO----,----#h##4#-.-T-.,----,-SSSS,-ssss---,----..---^^   ^t  ^     ---                 -----,             OOOOOOOOOOOOOO#
