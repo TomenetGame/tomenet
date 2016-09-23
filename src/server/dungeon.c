@@ -9946,7 +9946,7 @@ void handle_XID(int Ind) {
 	case -4: /* ID / *ID* scroll read (Note: This is of course a one-time thing, won't get repeated - scrolls always succeed) */
 		//p_ptr->command_rep = PKT_READ;
 		Packet_printf(connpq, "%c%hd", PKT_READ, p_ptr->delayed_index);
-		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
+		//p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
 		p_ptr->delayed_spell = 0;
 		break;
 	default: /* spell */

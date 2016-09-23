@@ -11797,7 +11797,7 @@ static int Receive_inventory_revision(int ind) {
 				if (p_ptr->command_rep > 0) {
 					p_ptr->command_rep_temp = p_ptr->command_rep;
 					//p_ptr->delayed_spell_temp is already set in handle_XID()
-					p_ptr->delayed_index_temp = p_ptr->delayed_index;
+					p_ptr->delayed_index_temp = replay_inven_changes(player, p_ptr->delayed_index);
 					p_ptr->current_item_temp = p_ptr->current_item;
 				}
 				break;
