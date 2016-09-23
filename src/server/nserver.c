@@ -8979,11 +8979,8 @@ static int Receive_read(int ind) {
 			return 1;
 		}
 
-		/* Hack for repeated id-commands from !X: We're already at the correct index! */
-		if (p_ptr->command_rep == PKT_READ) {
-			item = p_ptr->delayed_index;
-			p_ptr->command_rep = 0; //scrolls always succeed
-		}
+		/* Hack for id-command from !X: We're already at the correct index! */
+		if (p_ptr->current_item != -1) item = p_ptr->delayed_index;
 
 		do_cmd_read_scroll(player, item);
 		return 2;
