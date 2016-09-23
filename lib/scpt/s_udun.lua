@@ -65,7 +65,6 @@ GENOCIDE_I = add_spell {
 	["mana_max"] = 	50,
 	["fail"] = 	0,
 	["stat"] = 	A_WIS,
-	["extra"] = 	FALSE,
 	["spell"] = 	function()
 			genocide(Ind)
 	end,
@@ -82,7 +81,6 @@ GENOCIDE_II = add_spell {
 	["mana_max"] = 	50,
 	["fail"] = 	-40,
 	["stat"] = 	A_WIS,
-	["extra"] = 	TRUE,
 	["spell"] = 	function()
 			obliteration(Ind)
 	end,
