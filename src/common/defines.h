@@ -2192,7 +2192,18 @@
 #define FEAT_VOLCANIC		0x6D
 #define FEAT_PUDDLE		0x6E	/* Like shallow water, but evaporates on its own after a while -- not yet implemented */
 
-/* Features 0x6E - 0x9F -- unused */
+#define FEAT_CORDON_H		0x6F
+#define FEAT_CORDON_V		0x70
+#define FEAT_CORDON_DS		0x71
+#define FEAT_CORDON_DB		0x72
+#define FEAT_CORDON_N		0x73
+#define FEAT_BARS_H		0x74
+#define FEAT_BARS_V		0x75
+#define FEAT_BARS_DS		0x76
+#define FEAT_BARS_DB		0x77
+#define FEAT_BARS_N		0x78
+
+/* Features 0x74 - 0x9F -- unused */
 
 #define FEAT_BETWEEN		0xA0 /* 160 */
 

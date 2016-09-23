@@ -202,7 +202,6 @@ F:LAMP_LITE
 # Note: Could comment out LAMP_LITE to not give away people with lamps idling
 # inside their houses ;)
 
-# XXX XXX XXX
 
 N:27:fountain of blood
 G:_:r
@@ -819,6 +818,7 @@ F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | NO_ARTICLE
 #F:SUPPORT_LIGHT | LAMP_LITE_SNOW
 F:LAMP_LITE_OPTIONAL
 
+# puddle, evaporates over time
 N:110:puddle of water
 G:~:B
 S:B:B:B:B:B:B:b
@@ -826,8 +826,58 @@ F:ATTR_MULTI
 F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | CAN_RUN
 F:DONT_NOTICE_RUNNING
 
+N:111:Cordon
+G:-:u
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot cut this cordon.
 
-# 111..159 unused -------------------------------------------------------------
+N:112:Cordon
+G:|:u
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot cut this cordon.
+
+N:113:Cordon
+G:/:u
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot cut this cordon.
+
+N:114:Cordon
+G:\:u
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot cut this cordon.
+
+N:115:Cordon
+G:o:u
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot cut this cordon.
+
+N:116:Bars
+G:-:s
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down these bars.
+
+N:117:Bars
+G:|:s
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down there bars.
+
+N:118:Bars
+G:/:s
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down these bars.
+
+N:119:Bars
+G:\:s
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down these bars.
+
+N:120:Bars
+G:o:s
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down these bars.
+
+
+# 121..159 unused -------------------------------------------------------------
 
 
 N:160:void jumpgate
