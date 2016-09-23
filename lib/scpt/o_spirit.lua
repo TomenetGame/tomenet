@@ -50,7 +50,8 @@ OCURSEDD_I = add_spell {
 	["info"] = 	function()
 		return "power "..(10 + get_level(Ind, OCURSEDD_I, 100))
 	end,
-	["desc"] = 	{ "Curse an enemy, causing wounds.", }
+	["desc"] = 	{ "Curse an enemy, causing wounds.",
+			  "Does not work against creatures who cannot bleed.", }
 }
 OCURSEDD_II = add_spell {
 	["name"] = 	"Cause Wounds II",
@@ -70,7 +71,8 @@ OCURSEDD_II = add_spell {
 	["info"] = 	function()
 		return "power "..(10 + 100 + get_level(Ind, OCURSEDD_II, 100))
 	end,
-	["desc"] = 	{ "Curse an enemy, causing wounds.", }
+	["desc"] = 	{ "Curse an enemy, causing wounds.",
+			  "Does not work against creatures who cannot bleed.", }
 }
 OCURSEDD_III = add_spell {
 	["name"] = 	"Cause Wounds III",
@@ -90,7 +92,8 @@ OCURSEDD_III = add_spell {
 	["info"] = 	function()
 		return "power "..(10 + 200 + get_level(Ind, OCURSEDD_III, 100))
 	end,
-	["desc"] = 	{ "Curse an enemy, causing wounds.", }
+	["desc"] = 	{ "Curse an enemy, causing wounds.",
+			  "Does not work against creatures who cannot bleed.", }
 }
 
 ODELFEAR = add_spell {
