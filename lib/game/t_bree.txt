@@ -79,7 +79,7 @@ D:#--TTTTCCC###---------,,,--  OO                 t                            ,
 D:#------TTTCCC##-----,,------  O                                            ,,CCCTTTT..................----------TTTTTCCCCCC,,              ^^^t--          t                                         #
 D:#---------TTTCC##,,,--------  OO                                          ,CCCTTT....--ssssssss-...--..........-----TTTTTTCCC,,,          ^^    --          t                                        #
 D:#------------TC,,###-    ---   OO                                        ,CCTTT...-----SSSSSSSS--.--o~o~o~o~o~o.....------TTTCCCC,,       ^^     --            t                                      #
-D:#-------------,TTCCC###    --   OOO                           t        ,,CCTT...-,,,,--ssssssss-..--|-|-|-|-|-|,--......---TTTTCCT,,    ^^t      --                                                  #
+D:#-------------,TTCCC###    --   OOO                           t        ,,CCTT...-,,,,--ssssssss-..--|p|p|p|p|p|,--......---TTTTCCT,,    ^^t      --                                                  #
 D:#---------  ,,,--TTTCCC    --     OO                                 ,,CCCTT..-------,,##9#####-.---sssssssssss,-------...----TTCCTT,  ^^^        --                                                 #
 D:#--------  ,, ,,----TTTCCt         O                                ,CCC  T..--sssSsss,,,,------.---ScSScSSSScSsss-----.-....--TTCCTT,^^^t         --                                     t          #
 D:#------   ,,   ,                   OOt                            t,CCTTT...---ssscSSS---,,,----.---ssssssssssssss---...----..--TTCCT^^^^ ^^        --                           tt                  #
