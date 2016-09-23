@@ -2966,7 +2966,7 @@ static int Handle_login(int ind) {
 	/* Since 4.5.7 we can now distinguish (client-side) between disabled and unavailable audio */
 	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 90)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
-	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 5 - 26)
+	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 31)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---"); //-5 for 5 optional songs in 4.6.2 (user's choic)
 
 	/* Admin messages */
