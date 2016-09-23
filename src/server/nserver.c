@@ -8756,12 +8756,23 @@ static int Receive_activate_skill(int ind) {
 			/* Sanity check #2 */
 			if (dir == -1) dir = 5;
 
+#ifdef XID_REPEAT
+			if (p_ptr->delayed_spell != 0) {
+//msg_print(player, "override");
+				p_ptr->command_rep = PKT_ACTIVATE_SKILL; //hax
+				//paranoia?:
+				p_ptr->delayed_index_temp = -1;
+				p_ptr->command_rep_temp = 0;
+			}
+//msg_format(player, "cr(t/a) %d(%d/%d), di %d, ds %d, ci %d", p_ptr->command_rep, p_ptr->command_rep_temp, p_ptr->command_rep_active, p_ptr->delayed_index, p_ptr->delayed_spell, p_ptr->current_item);
+
 			/* all this is temp just to make it work */
 			if (p_ptr->command_rep == -1) {
 				p_ptr->command_rep = 0;
 				return(0);
 			}
 			if (p_ptr && p_ptr->command_rep != PKT_ACTIVATE_SKILL) p_ptr->command_rep = -1;
+#endif
 
 			if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 			cast_school_spell(player, book, spell, dir, item, aux);
@@ -9127,12 +9138,23 @@ static int Receive_use(int ind) {
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_TOTAL) return 1;
 
+#ifdef XID_REPEAT
+	if (p_ptr->delayed_spell != 0) {
+//msg_print(player, "override");
+		p_ptr->command_rep = PKT_USE; //hax
+		//paranoia?:
+		p_ptr->delayed_index_temp = -1;
+		p_ptr->command_rep_temp = 0;
+	}
+//msg_format(player, "cr(t/a) %d(%d/%d), di %d, ds %d, ci %d", p_ptr->command_rep, p_ptr->command_rep_temp, p_ptr->command_rep_active, p_ptr->delayed_index, p_ptr->delayed_spell, p_ptr->current_item);
+
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
 		return(0);
 	}
 	if (p_ptr && p_ptr->command_rep != PKT_USE) p_ptr->command_rep = -1;
+#endif
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
@@ -9253,12 +9275,23 @@ static int Receive_zap(int ind) {
 	if (item >= INVEN_TOTAL)
 		return 1;
 
+#ifdef XID_REPEAT
+	if (p_ptr->delayed_spell != 0) {
+//msg_print(player, "override");
+		p_ptr->command_rep = PKT_ZAP; //hax
+		//paranoia?:
+		p_ptr->delayed_index_temp = -1;
+		p_ptr->command_rep_temp = 0;
+	}
+//msg_format(player, "cr(t/a) %d(%d/%d), di %d, ds %d, ci %d", p_ptr->command_rep, p_ptr->command_rep_temp, p_ptr->command_rep_active, p_ptr->delayed_index, p_ptr->delayed_spell, p_ptr->current_item);
+
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
 		return(0);
 	}
 	if (p_ptr && p_ptr->command_rep != PKT_ZAP) p_ptr->command_rep = -1;
+#endif
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);

@@ -5299,7 +5299,9 @@ static void process_player_end(int Ind) {
 	/* Hack to restore repeated ID command after Receive_inventory_revision() happened: */
 	if (p_ptr && p_ptr->command_rep_temp) {
 		/* Initiate a new delayed command that is identical to the previous one */
+		//p_ptr->command_rep = p_ptr->command_rep_temp; <- red lag :-p
 		p_ptr->delayed_index = p_ptr->delayed_index_temp;
+		p_ptr->delayed_index_temp = -1;
 		p_ptr->delayed_spell = p_ptr->delayed_spell_temp;
 		p_ptr->current_item = p_ptr->current_item_temp;
 		p_ptr->command_rep_temp = 0;
@@ -9921,6 +9923,10 @@ void handle_XID(int Ind) {
 	{
 	sockbuf_t *connpq = get_conn_q(Ind);
 	player_type *p_ptr = Players[Ind];
+
+	if (!p_ptr->delayed_spell) return;
+	if (p_ptr->command_rep_active) return;
+	p_ptr->command_rep_active = TRUE;
 
 	/* hack: inject the delayed ID-spell cast command */
 	switch (p_ptr->delayed_spell) {

@@ -3335,9 +3335,10 @@ void do_cmd_use_staff(int Ind, int item) {
 
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
-	bool rep = (p_ptr->command_rep == PKT_USE)
+	bool rep = p_ptr->command_rep_active
 	    && p_ptr->current_item != -1; //extra sanity check, superfluous?
 	p_ptr->command_rep = 0;
+	p_ptr->command_rep_active = FALSE;
  #endif
 #endif
 
@@ -3426,6 +3427,7 @@ void do_cmd_use_staff(int Ind, int item) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
 
 			p_ptr->command_rep = PKT_USE;
+			p_ptr->command_rep_active = TRUE;
 			Packet_printf(conn_q, "%c%hd", PKT_USE, item);
 		} else p_ptr->current_item = -1;
  #endif
@@ -4153,9 +4155,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
-	bool rep = (p_ptr->command_rep == PKT_ZAP)
+	bool rep = p_ptr->command_rep_active
 	    && p_ptr->current_item != -1; //extra sanity check, superfluous?
 	p_ptr->command_rep = 0;
+	p_ptr->command_rep_active = FALSE;
  #endif
 #endif
 
@@ -4257,6 +4260,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
 
 			p_ptr->command_rep = PKT_ZAP;
+			p_ptr->command_rep_active = TRUE;
 			Packet_printf(conn_q, "%c%hd", PKT_ZAP, item);
 		} else p_ptr->current_item = -1;
  #endif
@@ -5100,9 +5104,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
-	bool rep = (p_ptr->command_rep == PKT_ACTIVATE)
+	bool rep = p_ptr->command_rep_active
 	    && p_ptr->current_item != -1; //extra sanity check, superfluous?
 	p_ptr->command_rep = 0;
+	p_ptr->command_rep_active = FALSE;
  #endif
 #endif
 
@@ -5195,6 +5200,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
 
 			p_ptr->command_rep = PKT_ACTIVATE;
+			p_ptr->command_rep_active = TRUE;
 			Packet_printf(conn_q, "%c%hd", PKT_ACTIVATE, item);
 		} else p_ptr->current_item = -1;
  #endif

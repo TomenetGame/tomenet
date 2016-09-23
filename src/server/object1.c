@@ -6344,6 +6344,9 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		p_ptr->delayed_index = index;
 		p_ptr->delayed_spell = -4;
 		p_ptr->current_item = slot;
+
+		p_ptr->command_rep_active = FALSE;//paranoia
+		p_ptr->delayed_index_temp = -1;
 		return;
 	}
 
@@ -6373,6 +6376,9 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		p_ptr->delayed_index = index;
 		p_ptr->delayed_spell = -1;
 		p_ptr->current_item = slot;
+
+		p_ptr->command_rep_active = FALSE;//paranoia
+		p_ptr->delayed_index_temp = -1;
 		return;
 	}
 
@@ -6408,6 +6414,9 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		p_ptr->delayed_index = index;
 		p_ptr->delayed_spell = (i_ptr->tval == TV_ROD) ? -3 : -2;
 		p_ptr->current_item = slot;
+
+		p_ptr->command_rep_active = FALSE;//paranoia
+		p_ptr->delayed_index_temp = -1;
 		return;
 	}
 #endif
@@ -6528,6 +6537,9 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		p_ptr->delayed_index = index;
 		p_ptr->delayed_spell = spell;
 		p_ptr->current_item = slot;
+
+		p_ptr->command_rep_active = FALSE;//paranoia
+		p_ptr->delayed_index_temp = -1;
 		return;
 	}
 #endif

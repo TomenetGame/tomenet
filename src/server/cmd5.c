@@ -1639,10 +1639,11 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 #ifdef ENABLE_XID_SPELL
  #ifdef XID_REPEAT
 	/* Note: item and current_item are treated synonymously here, which looks confusing. Could clean this up a bit maybe. */
-	bool rep = (p_ptr->command_rep == PKT_ACTIVATE_SKILL)
+	bool rep = p_ptr->command_rep_active
 	    && p_ptr->current_item != -1; //extra sanity check, superfluous?
 
 	p_ptr->command_rep = 0;
+	p_ptr->command_rep_active = FALSE;
 	if (rep) item = p_ptr->current_item;
  #endif
 #endif
@@ -1754,8 +1755,8 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		/* hack: repeat ID-spell attempt until item is successfully identified */
 		if (rep && ftk_maybe && !object_known_p(Ind, &p_ptr->inventory[item])) {
 			sockbuf_t *conn_q = get_conn_q(Ind);
-
 			p_ptr->command_rep = PKT_ACTIVATE_SKILL;
+			p_ptr->command_rep_active = TRUE;
 			Packet_printf(conn_q, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, book, spell, dir, item, aux);
 		} else {
 			p_ptr->current_item = -1;

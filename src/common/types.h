@@ -2175,6 +2175,7 @@ struct player_type {
 	s16b command_rep;		/* Command repetition */
 #ifdef XID_REPEAT
 	s16b command_rep_temp;		/* Command repetition */
+	bool command_rep_active;	/* Semaphore to avoid packet spam when re-injecting packets after command_rep was temporarily killed by Receive_inventory_revision() */
 	int delayed_index_temp;
 	int delayed_spell_temp;
 	s16b current_item_temp;
