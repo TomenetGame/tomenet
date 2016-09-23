@@ -2996,7 +2996,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
  #endif
 #endif
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else
 				take_hit(Ind, damroll(3, 8), ddesc, 0);
@@ -3014,10 +3014,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
  #endif
 #endif
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
-			else
+			else {
 				take_hit(Ind, damroll(8, 8), ddesc, 0);
+				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), 0);
+			}
 			break;
 		}
 		/* RF5_CAUSE_3 */
@@ -3032,10 +3034,12 @@ bool make_attack_spell(int Ind, int m_idx) {
 			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
  #endif
 #endif
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
-			else
+			else {
 				take_hit(Ind, damroll(10, 15), ddesc, 0);
+				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), 0);
+			}
 			break;
 		}
 		/* RF5_CAUSE_4 */
@@ -3050,7 +3054,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			sound_near_monster_atk(m_idx, Ind, "curse", NULL, SFX_TYPE_MON_SPELL);
  #endif
 #endif
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
 				//take_hit(Ind, damroll(15, 15), ddesc, 0);

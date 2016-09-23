@@ -7217,7 +7217,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* mimic spell 'Cause Wounds' aka monsters' 'Curse' */
 		case GF_CAUSE:
-			if (r_ptr->d_char == 'A' || (r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD))) {
+			if (r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT)) {
 				note = " is unaffected";
 				dam = 0;
 			} else {
@@ -10550,7 +10550,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->suscep_evil) chance = chance + (100 - chance) / 2;
 		if (chance > 95) chance = 95;
 
-		if (rand_int(100) < chance) {
+		if (rand_int(100) < chance || p_ptr->no_cut) {
 			msg_print(Ind, "You resist the effect!");
 			break;
 		}
@@ -12482,7 +12482,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_DISP_ALL:
 			break;
 		case GF_CAUSE:
-			if (r_ptr->d_char == 'A' || (r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD)))
+			if (r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT))
 				dam = 0;
 			else {
 				dam = (dam * (100 - r_ptr->level / 2)) / 100;
