@@ -8981,7 +8981,7 @@ static int Receive_read(int ind) {
 
 		/* Hack for repeated id-commands from !X: We're already at the correct index! */
 		if (p_ptr->command_rep == PKT_READ) {
-			item = p_ptr->delayed_index;
+			//item = p_ptr->delayed_index;
 			p_ptr->command_rep = 0; //scrolls always succeed
 		}
 
