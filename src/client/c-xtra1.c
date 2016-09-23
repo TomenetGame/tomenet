@@ -2455,6 +2455,7 @@ void display_player(int hist) {
 			if (csheet_boni[i].cb[5] & CB6_SRGMP) { c_put_str(TERM_RED, "-", 12, 25 + i); if (header_color[1][11] == TERM_L_DARK) header_color[1][11] = TERM_RED; }
 			if (csheet_boni[i].cb[6] & CB7_RRGMP) { c_put_str(TERM_WHITE, "+", 12, 25 + i); if (header_color[1][11] == TERM_L_DARK) header_color[1][11] = TERM_WHITE; if (header_color[1][11] == TERM_RED || header_color[1][11] == TERM_YELLOW) header_color[1][11] = TERM_YELLOW; } //yellow if both...
 			if (csheet_boni[i].cb[6] & CB7_RFOOD) { c_put_str(TERM_WHITE, "+", 13, 25 + i); if (header_color[1][12] == TERM_L_DARK) header_color[1][12] = TERM_WHITE; }
+			if (p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) { c_put_str(TERM_WHITE, "*", 13, 25 + 14); if (header_color[1][12] == TERM_L_DARK) header_color[1][12] = TERM_WHITE; } //Hack: Ents/Vamps require food but do not gorge! - Kurzel
 			if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 13, 25 + i); if (header_color[1][12] != TERM_L_UMBER) header_color[1][12] = TERM_L_UMBER; }
 			if (csheet_boni[i].cb[6] & CB7_RVAMP) {
 				if ((i == 0) || (i == 1) || (i == 2) || (i == 12) || ((i == 14) && ((p_ptr->body_monster == 365) || (p_ptr->body_monster == 391)))) { //Hack: use * for 100% weapon/ammo or v-bat/mist forms
