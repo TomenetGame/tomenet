@@ -1194,11 +1194,12 @@ bool do_inc_stat(int Ind, int stat) {
    in rare random cases. (The picked up item gets IDed with the 1st
    scroll as it should be, the rest just get read anyway.)
    This function attempts to suppress that... */
-static void XID_paranoia(player_type *p_ptr) {
+void XID_paranoia(player_type *p_ptr) {
 	//p_ptr->current_item = -1;
 	p_ptr->command_rep = 0;
 	p_ptr->command_rep_temp = 0;
 	p_ptr->delayed_spell_temp = 0;
+	p_ptr->delayed_spell = 0; //paranoia inside paranoia
 }
 /*
  * Identify everything being carried.

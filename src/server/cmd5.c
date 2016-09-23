@@ -1757,7 +1757,10 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 
 			p_ptr->command_rep = PKT_ACTIVATE_SKILL;
 			Packet_printf(conn_q, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, book, spell, dir, item, aux);
-		} else p_ptr->current_item = -1;
+		} else {
+			p_ptr->current_item = -1;
+			XID_paranoia(p_ptr);
+		}
  #endif
 #endif
 

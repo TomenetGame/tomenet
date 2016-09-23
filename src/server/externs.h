@@ -1683,6 +1683,7 @@ extern int py_create_gateway(int Ind);
 #ifdef ENABLE_OCCULT /* Occult */
 extern bool do_shadow_gate(int Ind, int range);
 #endif
+extern void XID_paranoia(player_type *p_ptr);
 
 /* store.c */
 extern int store_debug_mode, store_debug_quickmotion, store_debug_startturn;
