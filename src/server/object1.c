@@ -6309,7 +6309,7 @@ byte get_spellbook_name_colour(int pval) {
 /* Allow BAGIDENTIFY spell to be used with !X inscription? */
  #define ALLOW_X_BAGID
 #endif
-void apply_XID(int Ind, object_type *o_ptr, int slot, cave_type *c_ptr) {
+void apply_XID(int Ind, object_type *o_ptr, int slot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr;
 	int index;

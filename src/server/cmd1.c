@@ -2405,7 +2405,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				/* the_sandman: attempt to id a newly picked up item if we have the means to do so.
 				 * Check that we don't know the item and can read a scroll - mikaelh */
 				if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) /* was just object_known_p */
-					apply_XID(Ind, o_ptr, slot, c_ptr);
+					apply_XID(Ind, o_ptr, slot);
 
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
