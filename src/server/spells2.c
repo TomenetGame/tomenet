@@ -1190,6 +1190,16 @@ bool do_inc_stat(int Ind, int stat) {
 
 
 
+/* Two people reported that all their !X id scrolls got read at once,
+   in rare random cases. (The picked up item gets IDed with the 1st
+   scroll as it should be, the rest just get read anyway.)
+   This function attempts to suppress that... */
+static void XID_paranoia(player_type *p_ptr) {
+	//p_ptr->current_item = -1;
+	p_ptr->command_rep = 0;
+	p_ptr->command_rep_temp = 0;
+	p_ptr->delayed_spell_temp = 0;
+}
 /*
  * Identify everything being carried.
  * Done by a potion of "self knowledge".
@@ -1200,6 +1210,8 @@ void identify_pack(int Ind) {
 	int                 i;
 	object_type        *o_ptr;
 	bool inven_unchanged[INVEN_TOTAL];
+
+	XID_paranoia(p_ptr);
 
 	/* Simply identify and know every item */
 	for (i = 0; i < INVEN_TOTAL; i++) {
@@ -3763,6 +3775,8 @@ bool ident_spell_aux(int Ind, int item) {
 	   but now actually used for everything (scrolls etc) */
 	p_ptr->current_item = -1;
 
+	XID_paranoia(p_ptr);
+
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
@@ -3862,6 +3876,8 @@ bool identify_fully_item(int Ind, int item) {
 	   but now actually used for *ID* scrolls too. */
 	p_ptr->current_item = -1;
 
+	XID_paranoia(p_ptr);
+
 	/* Get the item (in the pack) */
 	if (item >= 0)
 		o_ptr = &p_ptr->inventory[item];
@@ -3926,6 +3942,7 @@ bool identify_fully_item(int Ind, int item) {
 }
 
 /* silent version of identify_fully_item() that doesn't display anything - C. Blue */
+//UNUSED
 bool identify_fully_item_quiet(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
@@ -3970,6 +3987,7 @@ bool identify_fully_item_quiet(int Ind, int item) {
 /* variant of identify_fully_item_quiet that doesn't use player inventory,
    added for !X on Iron Helm of Knowledge, which probably doesn't make much
    sense though - C. Blue */
+//UNUSED
 bool identify_fully_object_quiet(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
