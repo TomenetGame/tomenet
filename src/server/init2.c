@@ -4018,6 +4018,8 @@ void init_firework_dungeon(void) {
 			/* never in the Nether Realm/Valinor */
 			if (i == DI_NETHER_REALM) continue;
 			if (i == DI_VALINOR) continue;
+			/* everything would instantly explode? :-p */
+			if (i == DI_MT_DOOM) continue;
 
 			/* exclude town dungeons? */
 			if (!strcmp(d_name + d_info[i].name, "Barrow-Downs") ||
