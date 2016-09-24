@@ -4154,9 +4154,7 @@ static bool process_player_end_aux(int Ind) {
 #endif
 	/* Hack -- regenerate mana 5/3 times faster */
 	if (p_ptr->csp < p_ptr->msp) {
-		if (p_ptr->wpos.wx == WPOS_PVPARENA_X &&
-		    p_ptr->wpos.wy == WPOS_PVPARENA_Y &&
-		    p_ptr->wpos.wz == WPOS_PVPARENA_Z)
+		if (in_pvparena(&p_ptr->wpos))
 			regenmana(Ind, ((regen_amount * 5 * PVP_MANA_REGEN_BOOST) * (p_ptr->regen_mana ? 2 : 1)) / 3);
 		else
 			regenmana(Ind, ((regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1)) / 3);
@@ -5526,10 +5524,10 @@ static void do_unstat(struct worldpos *wpos, bool fast_unstat) {
 	int j;
 
 	/* Highlander Tournament sector00 is static while players are in dungeon! */
-	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z && sector00separation) return;
+	if (in_sector00(wpos) && sector00separation) return;
 
 	/* Arena Monster Challenge */
-	if (ge_special_sector && wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) return;
+	if (ge_special_sector && in_arena(wpos)) return;
 
 	// Anyone on this depth?
 	for (j = 1; j <= NumPlayers; j++)
@@ -7472,7 +7470,7 @@ void process_player_change_wpos(int Ind) {
 
 	/* Highlander Tournament hack: pseudo-teleport the player
 	   after he took a staircase inside the highlander dungeon */
-	if (sector00separation && in_highlander(&p_ptr->wpos) && l_ptr)
+	if (sector00separation && in_highlander_dun(&p_ptr->wpos) && l_ptr)
 		starty = l_ptr->hgt + 1; /* for the code right below :) ("Hack -- handle smaller floors") */
 
 	/* Hack -- handle smaller floors */
@@ -7807,8 +7805,7 @@ void process_player_change_wpos(int Ind) {
 #endif
 
 	/* Brightly lit Arena Monster Challenge */
-	if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X &&
-	    p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z) {
+	if (ge_special_sector && in_arena(&p_ptr->wpos)) {
 		wiz_lite(Ind);
 		/* Also tell him about this place */
 		for (j = 0; j < MAX_GLOBAL_EVENTS; j++) {
@@ -7819,7 +7816,7 @@ void process_player_change_wpos(int Ind) {
 		}
 	}
 
-	if (p_ptr->wpos.wx == WPOS_PVPARENA_X && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) {
+	if (in_pvparena(&p_ptr->wpos)) {
 		/* teleport after entering [the PvP arena],
 		   so stairs won't be camped */
 		teleport_player(Ind, 200, TRUE);
@@ -7829,7 +7826,7 @@ void process_player_change_wpos(int Ind) {
 
 	/* PvP-Mode specialties: */
 	if ((p_ptr->mode & MODE_PVP) && p_ptr->wpos.wz &&
-	    !(p_ptr->wpos.wx == WPOS_PVPARENA_X && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z)) { /* <- not in the pvp arena actually */
+	    !in_pvparena(&p_ptr->wpos)) { /* <- not in the pvp arena actually */
 		/* anti-chicken: Don't allow a high player to 'chase' a very low player */
 		for (j = 1; j <= NumPlayers; j++) {
 			if (Players[j]->conn == NOT_CONNECTED) continue;
@@ -8880,114 +8877,162 @@ void process_timers() {
 		wpos.wx = WPOS_PVPARENA_X;
 		wpos.wy = WPOS_PVPARENA_Y;
 		wpos.wz = WPOS_PVPARENA_Z;
-		if (!(zcave = getcave(&wpos))) return;
+		if ((zcave = getcave(&wpos))) {
 
-		timer_pvparena1--;
-		if (!timer_pvparena1) {
-			/* start next countdown */
-			timer_pvparena1 = 90; //45 was too fast, disallowing ppl to leave the arena sort of
+			timer_pvparena1--;
+			if (!timer_pvparena1) {
+				/* start next countdown */
+				timer_pvparena1 = 90; //45 was too fast, disallowing ppl to leave the arena sort of
 
-			if ((timer_pvparena3 % 2) == 0) { /* cycle preparation? */
-				/* clear old monsters and items */
-				wipe_m_list(&wpos);
-				wipe_o_list_safely(&wpos);
-				/* close all doors */
-				for (i = 1; i <= 6; i++) {
-					y = 2;
-					x = (i * 10) - 3;
-					zcave[y][x].feat = FEAT_SEALED_DOOR;
-					everyone_lite_spot(&wpos, y, x);
+				if ((timer_pvparena3 % 2) == 0) { /* cycle preparation? */
+					/* clear old monsters and items */
+					wipe_m_list(&wpos);
+					wipe_o_list_safely(&wpos);
+					/* close all doors */
+					for (i = 1; i <= 6; i++) {
+						y = 2;
+						x = (i * 10) - 3;
+						zcave[y][x].feat = FEAT_SEALED_DOOR;
+						everyone_lite_spot(&wpos, y, x);
+					}
 				}
-			}
 
-			if (timer_pvparena3 == 0) { /* prepare first cycle */
-				y = 1;
-				x = (1 * 10) - 3;
-				summon_override_checks = SO_ALL;
-				//866 elite uruk, 563 young red dragon
-				//place_monster_aux(&wpos, y, x, 866, FALSE, FALSE, 100, 0);
-				//place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 102, FALSE, FALSE, FALSE, 100, 0);//large k
-				x = (2 * 10) - 3;
-				//487 storm giant
-				//place_monster_aux(&wpos, y, x, 487, FALSE, FALSE, 100, 0);
-				//place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 249, FALSE, FALSE, FALSE, 100, 0);//light Z(271) //vlasta(249)
-				x = (3 * 10) - 3;
-				//609 baron of hell
-				//place_monster_aux(&wpos, y, x, 590, FALSE, FALSE, 100, 0);
-				//place_monster_one(&wpos, y, x, 487, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);//elite o
-				x = (4 * 10) - 3;
-				//590 mature gold d
-				//place_monster_aux(&wpos, y, x, 720, FALSE, FALSE, 100, 0);
-				//place_monster_one(&wpos, y, x, 720, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);//young red d
-				x = (5 * 10) - 3;
-				//995 marilith, 558 colossus
-				//place_monster_aux(&wpos, y, x, 558, FALSE, FALSE, 100, 0);
-				//place_monster_one(&wpos, y, x, 558, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 194, FALSE, FALSE, FALSE, 100, 0);//tengu
-				x = (6 * 10) - 3;
-				//602 bronze D, 720 barbazu
-				//place_monster_aux(&wpos, y, x, 609, FALSE, FALSE, 100, 0);
-				//place_monster_one(&wpos, y, x, 609, FALSE, FALSE, FALSE, 100, 0);
-				place_monster_one(&wpos, y, x, 321, FALSE, FALSE, FALSE, 100, 0);//stone P
-				summon_override_checks = SO_NONE;
-				timer_pvparena3++; /* start releasing cycle */
-				return;
-			} else if (timer_pvparena3 == 2) { /* prepare second cycle */
-				summon_override_checks = SO_ALL;
-				for (i = 1; i <= 6; i++) {
+				if (timer_pvparena3 == 0) { /* prepare first cycle */
 					y = 1;
-					x = (i * 10) - 3;
-					//613 hellhound is too tough, 963 aranea im_pois, 986 3-h hydra, 249 vlasta
-					//440 5-h hydra, 387 4-h hydra, 341 chimaera, 301 2-h hydra, 325 gold dfly
-					//place_monster_aux(&wpos, y, x, 963, FALSE, FALSE, 100, 0);
-					//place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 341 : 325 : 301, FALSE, FALSE, FALSE, 100, 0);
-					place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 295 : 325 : 275, FALSE, FALSE, FALSE, 100, 0);//sphinx,gold dfly,tarantula
+					x = (1 * 10) - 3;
+					summon_override_checks = SO_ALL;
+					//866 elite uruk, 563 young red dragon
+					//place_monster_aux(&wpos, y, x, 866, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 102, FALSE, FALSE, FALSE, 100, 0);//large k
+					x = (2 * 10) - 3;
+					//487 storm giant
+					//place_monster_aux(&wpos, y, x, 487, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 249, FALSE, FALSE, FALSE, 100, 0);//light Z(271) //vlasta(249)
+					x = (3 * 10) - 3;
+					//609 baron of hell
+					//place_monster_aux(&wpos, y, x, 590, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 487, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);//elite o
+					x = (4 * 10) - 3;
+					//590 mature gold d
+					//place_monster_aux(&wpos, y, x, 720, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 720, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);//young red d
+					x = (5 * 10) - 3;
+					//995 marilith, 558 colossus
+					//place_monster_aux(&wpos, y, x, 558, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 558, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 194, FALSE, FALSE, FALSE, 100, 0);//tengu
+					x = (6 * 10) - 3;
+					//602 bronze D, 720 barbazu
+					//place_monster_aux(&wpos, y, x, 609, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 609, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 321, FALSE, FALSE, FALSE, 100, 0);//stone P
+					summon_override_checks = SO_NONE;
+					timer_pvparena3++; /* start releasing cycle */
+				} else if (timer_pvparena3 == 2) { /* prepare second cycle */
+					summon_override_checks = SO_ALL;
+					for (i = 1; i <= 6; i++) {
+						y = 1;
+						x = (i * 10) - 3;
+						//613 hellhound is too tough, 963 aranea im_pois, 986 3-h hydra, 249 vlasta
+						//440 5-h hydra, 387 4-h hydra, 341 chimaera, 301 2-h hydra, 325 gold dfly
+						//place_monster_aux(&wpos, y, x, 963, FALSE, FALSE, 100, 0);
+						//place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 341 : 325 : 301, FALSE, FALSE, FALSE, 100, 0);
+						place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 295 : 325 : 275, FALSE, FALSE, FALSE, 100, 0);//sphinx,gold dfly,tarantula
+						everyone_lite_spot(&wpos, y, x);
+					}
+					summon_override_checks = SO_NONE;
+					timer_pvparena3++; /* start releasing cycle */
+				} else {
+					/* clear previous monster */
+					wipe_m_list_roaming(&wpos);
+					if (timer_pvparena2 > 1) {
+						/* erase monster that didn't come out of its chamber */
+						y = 1;
+						x = ((timer_pvparena2 - 1) * 10) - 3;
+						if (zcave[y][x].m_idx > 0) delete_monster_idx(zcave[y][x].m_idx, TRUE);
+						/* erase monster that stopped on its chamber door */
+						y = 2;
+						if (zcave[y][x].m_idx > 0) delete_monster_idx(zcave[y][x].m_idx, TRUE);
+					}
+
+					/* open current door to release monster */
+					y = 2;
+					x = (timer_pvparena2 * 10) - 3;
+					zcave[y][x].feat = FEAT_UNSEALED_DOOR;
 					everyone_lite_spot(&wpos, y, x);
+
+					/* after 6th monster, take a break and switch wave cycle */
+					if (timer_pvparena2 == 6) {
+						/* prepare next cycle next time */
+						timer_pvparena3++;
+						/* max number of cycles? */
+						timer_pvparena3 = timer_pvparena3 % 4;
+
+						/* next time, begin at monster #1 again */
+						timer_pvparena2 = 1;
+					} else {
+						/* next time, release next monster */
+						timer_pvparena2++;
+					}
 				}
-				summon_override_checks = SO_NONE;
-				timer_pvparena3++; /* start releasing cycle */
-				return;
 			}
-
-			/* clear previous monster */
-			wipe_m_list_roaming(&wpos);
-			if (timer_pvparena2 > 1) {
-				/* erase monster that didn't come out of its chamber */
-				y = 1;
-				x = ((timer_pvparena2 - 1) * 10) - 3;
-				if (zcave[y][x].m_idx > 0) delete_monster_idx(zcave[y][x].m_idx, TRUE);
-				/* erase monster that stopped on its chamber door */
-				y = 2;
-				if (zcave[y][x].m_idx > 0) delete_monster_idx(zcave[y][x].m_idx, TRUE);
-			}
-
-			/* open current door to release monster */
-			y = 2;
-			x = (timer_pvparena2 * 10) - 3;
-			zcave[y][x].feat = FEAT_UNSEALED_DOOR;
-			everyone_lite_spot(&wpos, y, x);
-
-			/* after 6th monster, take a break and switch wave cycle */
-			if (timer_pvparena2 == 6) {
-				/* prepare next cycle next time */
-				timer_pvparena3++;
-				/* max number of cycles? */
-				timer_pvparena3 = timer_pvparena3 % 4;
-
-				/* next time, begin at monster #1 again */
-				timer_pvparena2 = 1;
-				return;
-			}
-
-			/* next time, release next monster */
-			timer_pvparena2++;
 		}
 	}
 
+	/* With addition of horse stables in Bree, cycle horses */
+	if (((turn % (cfg.fps * 600)) / cfg.fps) <= 37) { // '<=' limit check not really needed, it's not like we're wasting much cpu cycles :-s
+		wpos.wx = 32;
+		wpos.wy = 32;
+		wpos.wz = 0;
+		if ((zcave = getcave(&wpos))) {
+			int k, l;
+			static int bree_i, bree_j;
+			static int bree_map[5];
+
+			/* Erase all existing horses */
+			switch ((turn % (cfg.fps * 600)) / cfg.fps) {
+			case 0: delete_monster(&wpos, 25, 118, TRUE); break;
+			case 6: delete_monster(&wpos, 25, 120, TRUE); break;
+			case 14: delete_monster(&wpos, 25, 122, TRUE); break;
+			case 16: delete_monster(&wpos, 25, 124, TRUE); break;
+			case 21: delete_monster(&wpos, 27, 118, TRUE); break;
+			}
+
+			/* Randomly place 0-5 new ones */
+			switch ((turn % (cfg.fps * 600)) / cfg.fps) {
+			case 0:
+				for (i = 0; i < 5; i++) bree_map[i] = 0;
+				bree_i = 0;
+				bree_j = rand_int(3) + rand_int(4);
+				break;
+			case 23:
+			case 26:
+			case 31:
+			case 33:
+			case 37:
+				/* "split up for-loop" */
+				if (bree_i == bree_j) break;
+				k = rand_int(5 - bree_i);
+				k += bree_map[k];
+				summon_override_checks = SO_ALL;
+				switch (k) {
+				case 0: place_monster_one(&wpos, 25, 118, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
+				case 1: place_monster_one(&wpos, 25, 120, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
+				case 2: place_monster_one(&wpos, 25, 122, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
+				case 3: place_monster_one(&wpos, 25, 124, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
+				case 4: place_monster_one(&wpos, 27, 118, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
+				}
+				for (l = k; l < 5; l++) bree_map[l]++;
+				summon_override_checks = SO_NONE;
+				bree_i++;
+				break;
+			}
+		}
+	}
 }
 
 /* during new years eve, cast fireworks! - C. Blue
