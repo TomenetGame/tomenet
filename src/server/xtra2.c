@@ -12675,6 +12675,24 @@ void toggle_aura(int Ind, int aura) {
 	char buf[80];
 	player_type *p_ptr = Players[Ind];
 
+	switch (aura) {
+	case 0:
+		if (!get_skill(p_ptr, SKILL_AURA_FEAR)) {
+			msg_print(Ind, "You don't know how to unleash an aura of fear.");
+			return;
+		}
+	case 1:
+		if (!get_skill(p_ptr, SKILL_AURA_SHIVER)) {
+			msg_print(Ind, "You don't know how to unleash a shivering aura.");
+			return;
+		}
+	case 2:
+		if (!get_skill(p_ptr, SKILL_AURA_DEATH)) {
+			msg_print(Ind, "You don't know how to unleash an aura of death.");
+			return;
+		}
+	}
+
 	if (!p_ptr->aura[aura]) {
 		if (p_ptr->anti_magic) {
 			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
