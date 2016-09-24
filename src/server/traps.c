@@ -3139,6 +3139,11 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	zcave = getcave(&p_ptr->wpos);
 	c_ptr = &zcave[py][px];
 
+	if (!get_skill(p_ptr, SKILL_TRAPPING)) {
+		msg_print(Ind, "You aren't proficient in trapping.");
+		return;
+	}
+
 	/* Check some conditions */
 	if (p_ptr->blind) {
 		msg_print(Ind, "You can't see anything.");
