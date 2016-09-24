@@ -627,7 +627,8 @@ void compact_monsters(int size, bool purge) {
 
 #ifdef MONSTER_ASTAR
 			/* Reassign correct A* index */
-			if (m_list[i].astar_idx != -1) {
+			if (m_list[i].r_idx /* alive monster? */
+			    && m_list[i].astar_idx != -1) {
 				astar_info_open[m_list[i].astar_idx].m_idx = i;
 				s_printf("ASTAR_COMPACT_MONSTERS: Reassigned m_idx %d to %d.\n", i, m_list[i].astar_idx);
 			}
