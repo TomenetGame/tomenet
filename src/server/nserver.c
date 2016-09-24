@@ -5668,14 +5668,14 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		desc = "Valinor";
 	}
 	/* Hack for PvP Arena */
-	else if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) {
+	else if (in_pvparena(wpos)) {
 		ville = TRUE;
 		desc = "Arena";
 		loc_pre = "an";
 	}
 #if 0
 	/* Hack for Arena Monster Challenge */
-	else if (wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) {
+	else if (in_arena(wpos->wx)) {
 		ville = TRUE;
 		desc = "Arena";
 		loc_pre = "an";
@@ -5695,20 +5695,19 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 #endif
 	else if (sector00separation) {
 		/* Hack for Dungeon Keeper  */
-		if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z
-		    && (sector00flags2 & LF2_INDOORS)) {
+		if (in_sector00(wpos) && (sector00flags2 & LF2_INDOORS)) {
 			ville = TRUE;
 			desc = "Lost Vault";
 			loc_pre = "a";
 		}
 		/* Hack for Highlander */
-		else if (wpos->wx == WPOS_HIGHLANDER_X && wpos->wy == WPOS_HIGHLANDER_Y && wpos->wz == WPOS_HIGHLANDER_Z) {
+		else if (in_highlander(wpos)) {
 			ville = TRUE;
 			desc = "Highlands";
 			loc_pre = "in the";
 		}
 		/* Hack for Highlander (dungeon) */
-		else if (in_highlander(wpos)) {
+		else if (in_highlander_dun(wpos)) {
 			ville = TRUE;
 			desc = "Underground";
 			loc_pre = "in the";

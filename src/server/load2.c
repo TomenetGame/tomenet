@@ -3756,7 +3756,7 @@ void fix_max_depth(player_type *p_ptr) {
 			if (p_ptr->max_dlv < d_ptr->baselevel) i = 0;
 			else i = p_ptr->max_dlv - d_ptr->baselevel + 1;
 			if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
-			if (x == WPOS_IRONDEEPDIVE_X && y == WPOS_IRONDEEPDIVE_Y && 1 == WPOS_IRONDEEPDIVE_Z) i = 0;
+			if (in_irondeepdive(&wpos)) i = 0;
 			p_ptr->max_depth[j] = i;
 		}
 		if ((d_ptr = wild_info[y][x].dungeon)) {
@@ -3765,7 +3765,7 @@ void fix_max_depth(player_type *p_ptr) {
 			if (p_ptr->max_dlv < d_ptr->baselevel) i = 0;
 			else i = p_ptr->max_dlv - d_ptr->baselevel + 1;
 			if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
-			if (x == WPOS_IRONDEEPDIVE_X && y == WPOS_IRONDEEPDIVE_Y && -1 == WPOS_IRONDEEPDIVE_Z) i = 0;
+			if (in_irondeepdive(&wpos)) i = 0;
 			p_ptr->max_depth[j] = i;
 		}
 	}

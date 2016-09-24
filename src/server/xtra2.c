@@ -4930,8 +4930,7 @@ bool monster_death(int Ind, int m_idx) {
 	if (!(zcave = getcave(wpos))) return FALSE;
 
 	if (ge_special_sector && /* training tower event running? and we are there? */
-	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
-	    wpos->wz == WPOS_ARENA_Z) {
+	    in_arena(wpos)) {
 		monster_desc(0, m_name, m_idx, 0x00);
 		msg_broadcast_format(0, "\376\377S** %s has defeated %s! **", p_ptr->name, m_name);
 		s_printf("EVENT_RESULT: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->lev, m_name);
@@ -7118,9 +7117,7 @@ void player_death(int Ind) {
 		}
 	}
 
-	if (ge_special_sector &&
-	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
-	    p_ptr->wpos.wz == WPOS_ARENA_Z)) {
+	if (ge_special_sector && in_arena(&p_ptr->wpos)) {
 		secure = TRUE;
 		ge_secure = TRUE; /* extra security for global events */
 	}

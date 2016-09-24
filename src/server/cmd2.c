@@ -725,9 +725,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 #endif
 
 	/* Beacons in sector00 lead to Bree transportation */
-	if (p_ptr->wpos.wx == WPOS_SECTOR00_X &&
-	    p_ptr->wpos.wy == WPOS_SECTOR00_Y &&
-	    p_ptr->wpos.wz == WPOS_SECTOR00_Z) {
+	if (in_sector00(&p_ptr->wpos)) {
 		for (d = 0; d < MAX_GLOBAL_EVENTS; d++) {
 			ge = &global_event[d];
 

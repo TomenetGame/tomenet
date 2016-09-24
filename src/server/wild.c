@@ -658,7 +658,7 @@ void wild_add_monster(struct worldpos *wpos) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
-	if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) return;
+	if (sector00separation && in_sector00(wpos)) return;
 
 	/* reset the monster sorting function */
 	set_mon_num_hook_wild(wpos);

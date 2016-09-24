@@ -8358,9 +8358,7 @@ extern int PlayerUID;
 #define WPOS_HIGHLANDER_X	0	/* deathmatch location of global event 'Highlander Tournament' */
 #define WPOS_HIGHLANDER_Y	0
 #define WPOS_HIGHLANDER_Z	0
-#define WPOS_HIGHLANDER_DUN_X	0	/* dungeon location of global event 'Highlander Tournament' */
-#define WPOS_HIGHLANDER_DUN_Y	0
-#define WPOS_HIGHLANDER_DUN_Z	-1
+#define WPOS_HIGHLANDER_DUN_Z	-1	/* dungeon location of global event 'Highlander Tournament' */
 
 /* important: note connection of WPOS_ARENA_ and 'ge_special_sector' */
 #define WPOS_ARENA_X		cfg.town_x	/* location of global event 'Arena Monster Challenge' */
@@ -8551,6 +8549,14 @@ extern int PlayerUID;
 #define in_sector00_dun(wpos) \
 	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz * WPOS_SECTOR00_Z_DUN > 0)
 
+/* in the arena monster challenge? (which should be in TT) */
+#define in_arena(wpos) \
+	((wpos)->wx == WPOS_ARENA_X && (wpos)->wy == WPOS_ARENA_Y && (wpos)->wz == WPOS_ARENA_Z)
+
+/* in the PvP arena? (which should be on 0,0) */
+#define in_pvparena(wpos) \
+	((wpos)->wx == WPOS_PVPARENA_X && (wpos)->wy == WPOS_PVPARENA_Y && (wpos)->wz == WPOS_PVPARENA_Z)
+
 /* Is given wpos-pointer one of the two fixed towns, Menegroth or Nargothrond
    at dlvl 40 and 80 respectively, in the Ironman Deep Dive Challenge dungeon? */
 #define is_fixed_irondeepdive_town(wpos, dlev) \
@@ -8572,8 +8578,10 @@ extern int PlayerUID;
 	 (l_ptr && (l_ptr->flags1 & LF1_IRON_RECALL) && p_ptr->wpos.wz >= 100)))
 
 /* quickly check if a given wpos is inside the highlander dungeon */
+#define in_highlander_dun(wpos) \
+	((wpos)->wx == WPOS_HIGHLANDER_X && (wpos)->wy == WPOS_HIGHLANDER_Y && (wpos)->wz * WPOS_HIGHLANDER_DUN_Z > 0)
 #define in_highlander(wpos) \
-	((wpos)->wx == WPOS_HIGHLANDER_DUN_X && (wpos)->wy == WPOS_HIGHLANDER_DUN_Y && (wpos)->wz * WPOS_HIGHLANDER_DUN_Z > 0)
+	((wpos)->wx == WPOS_HIGHLANDER_X && (wpos)->wy == WPOS_HIGHLANDER_Y && (wpos)->wz == WPOS_HIGHLANDER_Z)
 
 
 /* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */

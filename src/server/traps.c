@@ -2702,9 +2702,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod) {
 #endif
 
 	/* Not in Arena Monster Challenge, nor PvP Arena */
-	if ((wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) ||
-	    (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z))
-		return;
+	if (in_arena(wpos) || in_pvparena(wpos)) return;
 
 	if (!(zcave = getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;

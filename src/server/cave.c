@@ -2581,9 +2581,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 #if 0
 	/* bad hack to display visible wall instead of clear wall in sector00 events */
 	if (sector00separation &&
-	    *cp == ' ' && feat == FEAT_PERM_CLEAR &&
-	    p_ptr->wpos.wx == WPOS_SECTOR00_X &&
-	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == 0
+	    *cp == ' ' && feat == FEAT_PERM_CLEAR
+	    && in_sector00(&p_ptr->wpos)
 	    && sector00wall) {
 		if (!p_ptr->font_map_solid_walls) {
 			*cp = p_ptr->f_char[sector00wall];
@@ -2596,9 +2595,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 #else
 	/* bad hack to display visible wall instead of clear wall in sector00 events */
 	if (sector00separation &&
-	    feat == FEAT_PERM_CLEAR &&
-	    p_ptr->wpos.wx == WPOS_SECTOR00_X &&
-	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == 0
+	    feat == FEAT_PERM_CLEAR
+	    && in_sector00(&p_ptr->wpos)
 	    && sector00wall)
 		feat = sector00wall;
 #endif
@@ -8372,7 +8370,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool sector00 = (in_sector00(wpos));
 	bool valinor = in_valinor(wpos);
 	bool nr_bottom = in_netherrealm(wpos) && getlevel(wpos) == netherrealm_end;
-	bool arena_pvp = (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z);
+	bool arena_pvp = in_pvparena(wpos);
 	bool arena_monster = (ge_special_sector && wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z);
 
 	/* usually allow all changes (normal dungeons and town-unrelated world map) */

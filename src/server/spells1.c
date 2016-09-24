@@ -1842,8 +1842,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	if (p_ptr->admin_set_defeat &&
 	    -Ind_attacker != PROJECTOR_TERRAIN &&
 	    ge_special_sector &&
-	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
-	    p_ptr->wpos.wz == WPOS_ARENA_Z)) {
+	    in_arena(&p_ptr->wpos)) {
 		p_ptr->admin_set_defeat--;
 		p_ptr->chp = -1;
 		p_ptr->deathblow = 1;
@@ -11812,9 +11811,7 @@ int safe_area(int Ind) {
 	//dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 
 	/* For 'Arena Monster Challenge' event: */
-	if (ge_special_sector &&
-	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z))
-		return 1;
+	if (ge_special_sector && in_arena(&p_ptr->wpos)) return 1;
 
 	/* default: usual situation - not safe */
 	return 0;

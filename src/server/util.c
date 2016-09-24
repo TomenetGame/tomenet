@@ -1705,14 +1705,12 @@ void handle_music(int Ind) {
 		p_ptr->music_monster = -2;
 		Send_music(Ind, 8, 1); //Valinor
 		return;
-	} else if (p_ptr->wpos.wx == WPOS_PVPARENA_X &&
-	    p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) {
+	} else if (in_pvparena(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
 		Send_music(Ind, 66, 47); //PvP Arena (Highlander Deathmatch as alternative)
 		return;
-	} else if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X &&
-	    p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z) {
+	} else if (ge_special_sector && in_arena(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
 		Send_music(Ind, 48, 0); //Monster Arena Challenge
@@ -6839,8 +6837,8 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool
 	    tower == (WPOS_PVPARENA_Z > 0))
 		return pvp_arena;
 
-	if (x == WPOS_HIGHLANDER_DUN_X &&
-	    y == WPOS_HIGHLANDER_DUN_Y &&
+	if (x == WPOS_HIGHLANDER_X &&
+	    y == WPOS_HIGHLANDER_Y &&
 	    tower == (WPOS_HIGHLANDER_DUN_Z > 0))
 		return highlander;
 

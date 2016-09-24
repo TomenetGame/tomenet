@@ -9384,8 +9384,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 			}
 
 			/* items dropped in pvp arena are deleted quickly - C. Blue */
-			if (wpos->wz == WPOS_PVPARENA_Z && wpos->wy == WPOS_PVPARENA_Y && wpos->wx == WPOS_PVPARENA_X)
-				o_ptr->marked2 = ITEM_REMOVAL_QUICK;
+			if (in_pvparena(wpos)) o_ptr->marked2 = ITEM_REMOVAL_QUICK;
 
 #ifdef ALLOW_NR_CROSS_ITEMS
 			/* Allow the item to be traded as long as it doesn't leave the Nether Realm - C. Blue */

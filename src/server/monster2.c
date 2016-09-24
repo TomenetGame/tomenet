@@ -2430,7 +2430,7 @@ void update_mon(int m_idx, bool dist) {
 			if (p_ptr->admin_dm || player_sees_dm(Ind)) flag = TRUE;
 
 			/* Arena Monster Challenge event provides wizard-esp too */
-			if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)
+			if (ge_special_sector && in_arena(&p_ptr->wpos))
 				flag = TRUE;
 
 			if ((in_sector00(wpos) && (sector00flags2 & LF2_ESP)) ||
@@ -2638,8 +2638,7 @@ void update_player(int Ind) {
 		dis = distance(py, px, p_ptr->py, p_ptr->px);
 
 		c_hostile = check_hostile(i, Ind);
-		hostile = ((p_ptr->wpos.wx == WPOS_PVPARENA_X &&
-		    p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) ||
+		hostile = (in_pvparena(&p_ptr->wpos) ||
 		    ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) ||
 		    c_hostile);
 
@@ -2752,12 +2751,11 @@ void update_player(int Ind) {
 			if (p_ptr->admin_dm || player_sees_dm(i)) flag = TRUE;
 
 			/* Arena Monster Challenge event provides wizard-esp too */
-			if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)
-				flag = TRUE;
+			if (ge_special_sector && in_arena(&p_ptr->wpos)) flag = TRUE;
 
 #if 0 /* uses p_ptr->invis_phase too now, see 'hostile' above */
 			/* PvP-Arena provides wizard-esp too */
-			if (p_ptr->wpos.wx == WPOS_PVPARENA_X && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) flag = TRUE;
+			if (in_pvparena(&p_ptr->wpos)) flag = TRUE;
 
 			/* hack: PvP-mode players can ESP each other */
 			if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) flag = TRUE;
@@ -3019,8 +3017,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 		if (isdungeontown(wpos)) return 10;
 #endif
 		/* Keep Ironman Deep Dive Challenge entrance sector clean too */
-		if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y && !wpos->wz)
-			return 11;
+		if (in_irondeepdive(wpos)) return 11;
 	}
 
 	if (!(summon_override_checks & SO_GRID_EMPTY)) {
@@ -3080,13 +3077,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 4\n");
 
 	if (!(summon_override_checks & SO_EVENTS)) {
 		/* No live spawns allowed in training tower during global event */
-		if (ge_special_sector &&
-		    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
-		    wpos->wz == WPOS_ARENA_Z)
-			return 18;
+		if (ge_special_sector && in_arena(wpos)) return 18;
 
 		/* No spawns in 0,0 pvp arena tower */
-		if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) return 19;
+		if (in_pvparena(wpos)) return 19;
 
 		/* Note: Spawns in 0,0 surface during events are caught in wild_add_monster() */
 	}

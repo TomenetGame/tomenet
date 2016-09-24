@@ -7290,7 +7290,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 		}
 #if 0 /* need to be in Bree or in the arena? */
 		if (!in_bree(&p_ptr->wpos) &&
-		    (p_ptr->wpos.wx != WPOS_ARENA_X || p_ptr->wpos.wy != WPOS_ARENA_Y || p_ptr->wpos.wz != WPOS_ARENA_Z)) {
+		    !in_arena(&p_ptr->wpos)) {
 			msg_print(Ind, "\377yYou have to be in Bree or in the arena to sign up for this event!");
 #else /* need to be in Bree or in the training tower? */
 		if (!in_bree(&p_ptr->wpos) && !in_trainingtower(&p_ptr->wpos)
@@ -7841,10 +7841,10 @@ static void process_global_event(int ge_id) {
 
 					p_ptr = Players[i];
 
-					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y) {
-						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
-						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
-						p_ptr->recall_pos.wz = -1;
+					if (p_ptr->wpos.wx != WPOS_HIGHLANDER_X || p_ptr->wpos.wy != WPOS_HIGHLANDER_Y) {
+						p_ptr->recall_pos.wx = WPOS_HIGHLANDER_X;
+						p_ptr->recall_pos.wy = WPOS_HIGHLANDER_Y;
+						p_ptr->recall_pos.wz = WPOS_HIGHLANDER_DUN_Z;
 						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 |
 						    PEVF_SAFEDUN_00 | PEVF_SEPDUN_00;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
@@ -8054,8 +8054,7 @@ static void process_global_event(int ge_id) {
 			}
 
 			p_ptr = Players[j];
-			if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y
-			    || p_ptr->wpos.wz != 0) { /* not ok.. */
+			if (!in_sector00(&p_ptr->wpos)) { /* not ok.. */
 				ge->state[0] = 255; /* no winner, d'oh */
 				break;
 			}
@@ -8105,8 +8104,7 @@ static void process_global_event(int ge_id) {
 
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
-				if (p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y
-				    && p_ptr->wpos.wz == 0) {
+				if (in_sector00(&p_ptr->wpos)) {
 					for (j = INVEN_TOTAL; j >= 0; j--) /* Erase the highlander amulets */
 						if (p_ptr->inventory[j].tval == TV_AMULET &&
 						    ((p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) ||
@@ -8527,9 +8525,7 @@ static void process_global_event(int ge_id) {
 			/* everyone has escaped or died? */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm &&
-				    Players[i]->wpos.wx == WPOS_SECTOR00_X &&
-				    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
+				if (!Players[i]->admin_dm && in_sector00(&Players[i]->wpos))
 					n++;
 			if (!n) {
 				ge->state[0] = 255;
@@ -8542,10 +8538,8 @@ static void process_global_event(int ge_id) {
 			sector00music = 65;
 			sector00musicalt = 47; /* death match music */
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm &&
-				    Players[i]->wpos.wx == WPOS_SECTOR00_X &&
-				    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
-				handle_music(i);
+				if (!Players[i]->admin_dm && in_sector00(&Players[i]->wpos))
+					handle_music(i);
 
 			ge->state[0] = 2;
 			break;
@@ -8553,8 +8547,7 @@ static void process_global_event(int ge_id) {
 			/* everyone has escaped or died? */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR00_X &&
-				    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
+				if (!Players[i]->admin_dm && in_sector00(&Players[i]->wpos))
 					n++;
 			if (!n) {
 				ge->state[0] = 255;
