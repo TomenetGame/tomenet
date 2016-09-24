@@ -12023,6 +12023,7 @@ static int Receive_client_setup(int ind) {
 	player_type *p_ptr = NULL;
 	char ch;
 	int i, n, player = -1;
+	char *stored_sbuf_ptr = connp->r.ptr;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12033,15 +12034,17 @@ static int Receive_client_setup(int ind) {
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
+		if (n == 0) goto rollback;
+		else Destroy_connection(ind, "read error");
 		return n;
 	}
 
 	/* Read the "unknown" char/attrs */
 	for (i = 0; i < TV_MAX; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, "Misread unknown redefinitions");
+		if (n == 0) goto rollback;
+		else if (n < 0) {
+			Destroy_connection(ind, "read error");
 			return n;
 		}
 	}
@@ -12049,8 +12052,9 @@ static int Receive_client_setup(int ind) {
 	/* Read the "feature" char/attrs */
 	for (i = 0; i < MAX_F_IDX; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, "Misread feature redefinitions");
+		if (n == 0) goto rollback;
+		else if (n < 0) {
+			Destroy_connection(ind, "read error");
 			return n;
 		}
 	}
@@ -12058,8 +12062,9 @@ static int Receive_client_setup(int ind) {
 	/* Read the "object" char/attrs */
 	for (i = 0; i < MAX_K_IDX; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, "Misread object redefinitions");
+		if (n == 0) goto rollback;
+		else if (n < 0) {
+			Destroy_connection(ind, "read error");
 			return n;
 		}
 	}
@@ -12067,8 +12072,9 @@ static int Receive_client_setup(int ind) {
 	/* Read the "monster" char/attrs */
 	for (i = 0; i < MAX_R_IDX; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, "Misread monster redefinitions");
+		if (n == 0) goto rollback;
+		else if (n < 0) {
+			Destroy_connection(ind, "read error");
 			return n;
 		}
 	}
@@ -12078,6 +12084,11 @@ static int Receive_client_setup(int ind) {
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
 	return 1;
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	connp->r.ptr = stored_sbuf_ptr;
+	return 0;
 }
 //debugging:
 static int Receive_client_setup_U(int ind) {
@@ -12086,6 +12097,7 @@ static int Receive_client_setup_U(int ind) {
 	char ch;
 	int i, n, player = -1;
 	int begin, end;
+	char *stored_sbuf_ptr = connp->r.ptr;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12096,7 +12108,8 @@ static int Receive_client_setup_U(int ind) {
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
+		if (n == 0) goto rollback;
+		else Destroy_connection(ind, "read error");
 		return n;
 	}
 
@@ -12107,8 +12120,9 @@ static int Receive_client_setup_U(int ind) {
 	}
 	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, format("Misread unknown redefinitions (%d,%d:%d)", begin, end, i));
+		if (n == 0) goto rollback;
+		else if (n < 0) {
+			Destroy_connection(ind, "read error");
 			return n;
 		}
 	}
@@ -12118,6 +12132,11 @@ static int Receive_client_setup_U(int ind) {
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
 	return 1;
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	connp->r.ptr = stored_sbuf_ptr;
+	return 0;
 }
 static int Receive_client_setup_F(int ind) {
 	connection_t *connp = Conn[ind];
@@ -12125,6 +12144,7 @@ static int Receive_client_setup_F(int ind) {
 	char ch;
 	int i, n, player = -1;
 	int begin, end;
+	char *stored_sbuf_ptr = connp->r.ptr;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12135,7 +12155,8 @@ static int Receive_client_setup_F(int ind) {
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
+		if (n == 0) goto rollback;
+		else Destroy_connection(ind, "read error");
 		return n;
 	}
 
@@ -12146,8 +12167,9 @@ static int Receive_client_setup_F(int ind) {
 	}
 	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, format("Misread feature redefinitions (%d,%d:%d)", begin, end, i));
+		if (n == 0) goto rollback;
+		else if (n < 0) {
+			Destroy_connection(ind, "read error");
 			return n;
 		}
 	}
@@ -12157,6 +12179,11 @@ static int Receive_client_setup_F(int ind) {
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
 	return 1;
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	connp->r.ptr = stored_sbuf_ptr;
+	return 0;
 }
 static int Receive_client_setup_K(int ind) {
 	connection_t *connp = Conn[ind];
@@ -12164,6 +12191,7 @@ static int Receive_client_setup_K(int ind) {
 	char ch;
 	int i, n, player = -1;
 	int begin, end;
+	char *stored_sbuf_ptr = connp->r.ptr;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12174,7 +12202,8 @@ static int Receive_client_setup_K(int ind) {
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
+		if (n == 0) goto rollback;
+		else Destroy_connection(ind, "read error");
 		return n;
 	}
 
@@ -12185,8 +12214,9 @@ static int Receive_client_setup_K(int ind) {
 	}
 	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, format("Misread object redefinitions (%d,%d:%d)", begin, end, i));
+		if (n == 0) goto rollback;
+		else if (n < 0) {
+			Destroy_connection(ind, "read error");
 			return n;
 		}
 	}
@@ -12196,6 +12226,11 @@ static int Receive_client_setup_K(int ind) {
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
 	return 1;
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	connp->r.ptr = stored_sbuf_ptr;
+	return 0;
 }
 static int Receive_client_setup_R(int ind) {
 	connection_t *connp = Conn[ind];
@@ -12203,6 +12238,7 @@ static int Receive_client_setup_R(int ind) {
 	char ch;
 	int i, n, player = -1;
 	int begin, end;
+	char *stored_sbuf_ptr = connp->r.ptr;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -12213,7 +12249,8 @@ static int Receive_client_setup_R(int ind) {
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &begin, &end)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
+		if (n == 0) goto rollback;
+		else Destroy_connection(ind, "read error");
 		return n;
 	}
 
@@ -12224,8 +12261,9 @@ static int Receive_client_setup_R(int ind) {
 	}
 	for (i = begin; i < end; i++) {
 		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
-		if (n <= 0) {
-			Destroy_connection(ind, format("Misread monster redefinitions (%d,%d:%d)", begin, end, i));
+		if (n == 0) goto rollback;
+		else if (n < 0) {
+			Destroy_connection(ind, "read error");
 			return n;
 		}
 	}
@@ -12235,6 +12273,11 @@ static int Receive_client_setup_R(int ind) {
 	//note: no cooldown here atm, could be spammable..
 	p_ptr->redraw |= PR_MAP;
 	return 1;
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	connp->r.ptr = stored_sbuf_ptr;
+	return 0;
 }
 
 /* return some connection data for improved log handling - C. Blue */
