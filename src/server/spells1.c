@@ -4018,7 +4018,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 
-		/* Burn trees and grass */
+		/* Burn trees, grass, etc. depending on specific fire type */
 		case GF_HOLY_FIRE:
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Holy Fire doesn't destroy trees! */
@@ -4068,10 +4068,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				cave_set_feat_live(wpos, y, x, FEAT_ASH);
 
 			/* misc flavour: turn mud to dirt and/or shallow water into nothing (steam)? */
-			//if (c_ptr->feat == FEAT_MUD) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
-			if (c_ptr->feat == FEAT_SHAL_WATER) cave_set_feat_live(wpos, y, x, FEAT_MUD);
+			if (c_ptr->feat == FEAT_MUD && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+			if (c_ptr->feat == FEAT_SHAL_WATER && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_MUD);
 
-#if 1			/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
+#if 1
+			/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
 			if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
 				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
 #endif
