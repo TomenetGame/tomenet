@@ -337,7 +337,7 @@ audio_bgm = {
     "feeling_Terrifying",
 
     "event_Highlander_deathmatch",
-    "event_AreanaMonsterChallenge",
+    "event_ArenaMonsterChallenge",
 
     "town_generic_night",
     "Bree_night",--50
