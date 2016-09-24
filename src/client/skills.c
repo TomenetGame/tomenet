@@ -658,7 +658,7 @@ bool item_tester_hook_armour_no_shield(object_type *o_ptr) {
 /*
  * set a trap .. it's out of place somewhat.	- Jir -
  */
-static void do_trap(int item_kit) {
+void do_trap(int item_kit) {
 	int item_load;
 	object_type *o_ptr;
 

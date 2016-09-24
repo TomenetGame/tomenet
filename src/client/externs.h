@@ -812,6 +812,7 @@ extern void do_cmd_activate_skill(void);
 extern void dump_skills(FILE *fff);
 extern s16b get_skill_scale(player_type *pfft, int skill, u32b scale);
 extern void do_redraw_skills(void);
+extern void do_trap(int item_kit);
 
 /* c-script.c */
 extern void init_lua(void);

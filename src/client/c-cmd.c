@@ -150,13 +150,20 @@ static void cmd_all_in_one(void) {
 	case TV_INSTRUMENT:
 		Send_wield(item);
 		break;
+	case TV_TRAPKIT:
+		do_trap(item);
+		break;
+	case TV_RUNE:
+		/* (Un)Combine it */
+		Send_activate(item);
+		break;
 	/* Presume it's sort of spellbook */
 	case TV_BOOK:
-	case TV_TRAPKIT:
 	default:
 	{
 		int i;
 		bool done = FALSE;
+
 		for (i = 1; i < MAX_SKILLS; i++) {
 			if (s_info[i].tval == inventory[item].tval &&
 			    s_info[i].action_mkey && p_ptr->s_info[i].value) {
@@ -165,19 +172,19 @@ static void cmd_all_in_one(void) {
 				break;
 				/* Now a number of skills shares same mkey */
 			}
-			if (!done) {
-				/* XXX there should be more generic 'use' command */
-				/* Does item require aiming? (Always does if not yet identified) */
-				if (inventory[item].uses_dir == 0) {
-					/* (also called if server is outdated, since uses_dir will be 0 then) */
-					Send_activate(item);
-				} else {
-					if (!get_dir(&dir)) return;
-					Send_activate_dir(item, dir);
-				}
-			}
-			break;
 		}
+		if (!done) {
+			/* XXX there should be more generic 'use' command */
+			/* Does item require aiming? (Always does if not yet identified) */
+			if (inventory[item].uses_dir == 0) {
+				/* (also called if server is outdated, since uses_dir will be 0 then) */
+				Send_activate(item);
+			} else {
+				if (!get_dir(&dir)) return;
+				Send_activate_dir(item, dir);
+			}
+		}
+		break;
 	}
 	}
 }
