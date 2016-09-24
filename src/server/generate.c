@@ -8711,8 +8711,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 
 	/* PvP arena isn't special except that *destruction* doesn't work */
-	if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z)
-		dun->l_ptr->flags1 = LF1_NO_DESTROY;
+	if (in_pvparena(wpos)) dun->l_ptr->flags1 = LF1_NO_DESTROY;
 
 	/* IRONMAN allows recalling at bottom/top */
 	if (d_ptr && (d_ptr->flags2 & DF2_IRON)
@@ -8830,8 +8829,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 
 	/* not too big levels for 'Arena Monster Challenge' event */
-	if (ge_special_sector &&
-	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) {
+	if (ge_special_sector && in_arena(wpos)) {
 		dun->l_ptr->wid = MAX_WID / 2;
 		dun->l_ptr->hgt = MAX_HGT / 2;
 		dun->l_ptr->flags1 &= ~(LF1_NO_MAGIC | LF1_NO_GENO | LF1_NO_MAP | LF1_NO_MAGIC_MAP);
@@ -9332,7 +9330,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			}
 
 			/* Hack -- add *more* downstairs for Highlander Tournament event */
-			if (sector00separation && in_highlander(wpos) && dun_lev > COMFORT_PASSAGE_DEPTH) {
+			if (sector00separation && in_highlander_dun(wpos) && dun_lev > COMFORT_PASSAGE_DEPTH) {
 				/* Place 3 or 4 down stairs near some walls */
 				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 2, NULL);
 			}
@@ -9717,10 +9715,23 @@ for(mx = 1; mx < 131; mx++) {
 
 
 	/* Create secret dungeon shop entrances (never on Morgoth's depth) -C. Blue */
+
 	/* No stores in Valinor */
-	if (in_valinor(wpos)) return;
+	if (in_valinor(wpos)
+	    /* No dungeon shops on final floor of a dungeon */
+	    || d_ptr->maxdepth == ABS(wpos->wz)
+	    /* No dungeon shops in sector00 dungeons */
+	    || in_sector00_dun(wpos)
+	    /* No dungeon shops in highlander dungeon (usually same as sector00 dungeon) */
+	    || in_highlander_dun(wpos)
+	    /* No dungeon shops in AMC */
+	    || in_arena(wpos)
+	    /* No dungeon shops in PvP arena */
+	    || in_pvparena(wpos))
+		return;
+
 	/* Nether Realm has an overriding shop creation routine. */
-	if (!netherrealm_level && d_ptr->maxdepth != ABS(wpos->wz)) {
+	if (!netherrealm_level) {
 		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around */
 
 		/* Check for building deep store (Rare & expensive stores) */
