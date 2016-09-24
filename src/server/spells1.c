@@ -1823,8 +1823,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	} */
 
 	/* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
-	if (IS_PLAYER(Ind_attacker) ||
-	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1)) {
+	if (IS_PLAYER(Ind_attacker) || in_pvparena(&p_ptr->wpos)) {
 		p_ptr->pvp_prevent_tele = PVP_COOLDOWN_TELEPORT;
 		p_ptr->redraw |= PR_DEPTH;
 	}

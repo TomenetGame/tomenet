@@ -2690,8 +2690,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			/* transport out of arena? */
-			if (!p_ptr->wpos.wx && !p_ptr->wpos.wy &&
-			    p_ptr->wpos.wz == 1) {
+			if (in_pvparena(&p_ptr->wpos)) {
 				if (p_ptr->pvp_prevent_tele) {
 					msg_print(Ind, "\377oThere is no easy way out of this fight!");
 					if (!is_admin(p_ptr)) return;
