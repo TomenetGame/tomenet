@@ -3292,6 +3292,12 @@ s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_t
 
 void toggle_dual_mode(int Ind) {
 	player_type *p_ptr = Players[Ind];
+
+	if (!get_skill(p_ptr, SKILL_DUAL)) {
+		msg_print(Ind, "You are not proficient in dual-wielding.");
+		return;
+	}
+
 	if (p_ptr->dual_mode)
 		msg_print(Ind, "\377wDual-wield mode: Main-hand. (This disables all dual-wield boni.)");
 	else
