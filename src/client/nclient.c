@@ -1258,7 +1258,10 @@ static int Net_packet(void) {
 			break;
 		} else {
 			old_ptr = rbuf.ptr;
-			if ((result = (*receive_tbl[type])()) <= 0) {
+			rbuf.state |= SOCKBUF_LOCK; /* needed for rollbacks to work properly */
+			result = (*receive_tbl[type])();
+			rbuf.state &= ~SOCKBUF_LOCK;
+			if (result <= 0) {
 				if (result == -1) {
 					if (type != PKT_QUIT) {
 						errno = 0;
@@ -3845,17 +3848,16 @@ int Receive_ping(void) {
    weather_type +10 * n: pre-generate n steps
 */
 int Receive_weather(void) {
-	int	n, i, clouds, bytes_read;
+	int	n, i, clouds;
 	char	ch;
-    	int	wg, wt, ww, wi, ws, wx, wy;
-    	int	cnum, cidx, cx1, cy1, cx2, cy2, cd, cxm, cym;
+	int	wg, wt, ww, wi, ws, wx, wy;
+	int	cnum, cidx, cx1, cy1, cx2, cy2, cd, cxm, cym;
+	char *stored_sbuf_ptr = rbuf.ptr;
 
 	/* base packet: weather + number of clouds */
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d%d",
 	    &ch, &wt, &ww, &wg, &wi, &ws, &wx, &wy,
 	    &cnum)) <= 0) return n;
-
-	bytes_read = n;
 
 	/* fix limit */
 	if (cnum >= 0) clouds = cnum;
@@ -3872,14 +3874,9 @@ int Receive_weather(void) {
 		/* proceed normally */
 		if ((n = Packet_scanf(&rbuf, "%d%d%d%d%d%d%d%d",
 		    &cidx, &cx1, &cy1, &cx2, &cy2, &cd, &cxm, &cym)) <= 0) {
-			/* Rollback the socket buffer */
-			Sockbuf_rollback(&rbuf, bytes_read);
-
-			/* Packet isn't complete, graceful failure */
+			if (n == 0) goto rollback;
 			return n;
 		}
-
-		bytes_read += 4 * n;
 
 		/* potential forward-compatibility hack:
 		   ignore if too many clouds are sent */
@@ -3967,6 +3964,11 @@ int Receive_weather(void) {
 	}
 
 	return 1;
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	rbuf.ptr = stored_sbuf_ptr;
+	return 0;
 }
 
 int Receive_inventory_revision(void) {
@@ -5115,7 +5117,7 @@ int Send_client_setup(void) {
 
 	if (!is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) return -1;
 
-#if 0 /* send it all at once (too much for buffers on Windows) */
+#if 1 /* send it all at once (too much for buffers on Windows) */
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLIENT_SETUP)) <= 0) return n;
 
 	/* Send the "unknown" redefinitions */

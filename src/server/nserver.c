@@ -3439,7 +3439,9 @@ void process_pending_commands(int ind) {
 			connp->inactive_ping = 0;
 			if (connp->id != -1) p_ptr->idle = 0;
 		}
+		connp->r.state |= SOCKBUF_LOCK; /* needed for rollbacks to work properly */
 		result = (*receive_tbl[type])(ind);
+		connp->r.state &= ~SOCKBUF_LOCK;
 
 		/* Check that the player wasn't disconnected - mikaelh */
 		if (!Conn[ind]) return;
