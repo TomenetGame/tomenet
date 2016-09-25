@@ -1002,7 +1002,7 @@ void cmd_aim_wand(void) {
 	get_item_hook_find_obj_what = "Wand name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED)))
 		return;
 
 	if (!get_dir(&dir)) return;
@@ -1018,7 +1018,7 @@ void cmd_use_staff(void) {
 	get_item_hook_find_obj_what = "Staff name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED)))
 		return;
 
 	/* Send it */
@@ -1032,7 +1032,7 @@ void cmd_zap_rod(void) {
 	get_item_hook_find_obj_what = "Rod name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED)))
 		return;
 
 	/* Send it */

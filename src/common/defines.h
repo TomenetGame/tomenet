@@ -4150,6 +4150,7 @@
 #define USE_LIMIT	0x0040	/* Allow spell level limit */
 #define CHECK_MULTI	0x0080	/* For swap command with USE_EXTRA (search by name): Check multiple items and avoid ones that we've already equipped */
 #define NEWEST		0x0100	/* Allow pressing '+' key to re-use the newest item we previously acquired */
+#define CHECK_CHARGED	0x0200	/* For Havoc rods: Try to find non-charging ones */
 
 /*
  * Bit flags for the "p_ptr->notice" variable
