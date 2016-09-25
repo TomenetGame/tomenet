@@ -6765,12 +6765,14 @@ static void do_cmd_options_win(void) {
 }
 
 #ifdef ENABLE_SUBWINDOW_MENU
-#if defined(WINDOWS) || defined(USE_X11)
+ #if defined(WINDOWS) || defined(USE_X11)
 #define MAX_FONTS 50
+  #ifdef WINDOWS
+
 static int font_name_cmp(const void *a, const void *b) {
- #if 0 /* simple way */
+   #if 0 /* simple way */
 	return strcmp((const char*)a, (const char*)b);
- #else /* sort in single-digit numbers before double-digit ones */
+   #else /* sort in single-digit numbers before double-digit ones */
 	char at[256], bt[256];
 	at[0] = '0';
 	bt[0] = '0';
@@ -6779,8 +6781,10 @@ static int font_name_cmp(const void *a, const void *b) {
 	if (atoi((char*)b) < 10) strcpy(bt + 1, (char *)b);
 	else strcpy(bt, (char *)b);
 	return strcmp(at, bt);
- #endif
+   #endif
 }
+  #endif
+
 static void do_cmd_options_fonts(void) {
 	int j, d, vertikal_offset = 3;
 	int y = 0;
@@ -6793,12 +6797,12 @@ static void do_cmd_options_fonts(void) {
 	char graphic_font_name[MAX_FONTS][256];
 	int graphic_fonts=0;
 
-#ifndef WINDOWS
+  #ifndef WINDOWS
 	int x11_refresh = 50;
 	FILE *fff;
-#endif
+  #endif
 
-#ifdef WINDOWS /* Windows uses the .FON files */
+  #ifdef WINDOWS /* Windows uses the .FON files */
 	DIR *dir;
 	struct dirent *ent;
 
@@ -6827,9 +6831,9 @@ static void do_cmd_options_fonts(void) {
 		}
 	}
 	closedir(dir);
-#endif
+  #endif
 
-#ifdef USE_X11 /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) - C. Blue */
+  #ifdef USE_X11 /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) - C. Blue */
 	/* Get bitmap font folder ('misc') and scan fonts.alias in it for basic bitmap fonts:
 	   'cat `xset q | grep -o "[/a-z]*misc"`/fonts.alias | grep -o "^[0-9][0-9]*x[0-9]*\(bold\)\? " | grep -o "[^ ]*"' <- note the trailing space! */
 	j = system("cat `xset q | grep -o \"[/a-z]*misc\"`/fonts.alias | grep -o \"^[0-9][0-9]*x[0-9]*\\(bold\\)\\? \" | grep -o \"[^ ]*\" > /tmp/tomenet-fonts.tmp");
@@ -6855,11 +6859,12 @@ static void do_cmd_options_fonts(void) {
 	}
 
 	/* Additionally, read font names from a user-edited text file 'fonts.txt' to allow adding arbitrary system fonts to the cycleable list */
-	path_build(path, 1024, ANGBAND_DIR_XTRA, "font");
-	fff = fopen("fonts.txt", "r");
+	path_build(path, 1024, ANGBAND_DIR_XTRA, "font/fonts-x11.txt");
+	fff = fopen(path, "r");
 	if (fff) {
 		while (fonts < MAX_FONTS) {
 			if (!fgets(tmp_name, 256, fff)) break;
+			if (tmp_name[0] == '#') continue; //skip commented out lines ('#' character at the beginning)
 			tmp_name[strlen(tmp_name) - 1] = 0; //remove trailing \n
 			strcpy(font_name[fonts], tmp_name);
 			fonts++;
@@ -6867,28 +6872,28 @@ static void do_cmd_options_fonts(void) {
 		fclose(fff);
 	}
 
-	//todo: test for more available, good fonts
-	/*
-	    lucidasanstypewriter-8/10/12/18
+	//todo: auto-check system fonts for more good fonts available, such as:
+	/*  lucidasanstypewriter-8/10/12/18
 	    -misc-fixed-medium-r-normal--15-140-75-75-c-90-iso8859-1
 	    -sony-fixed-medium-r-normal--16-*-*-*-*-*-jisx0201.1976-0
 	    -misc-fixed-medium-r-normal--20-200-75-75-c-100-iso8859-1
 	    -sony-fixed-medium-r-normal--24-170-100-100-c-120-jisx0201.1976-0
 	*/
-#endif
+  #endif
 
 	if (!fonts) {
 		c_msg_format("No .fon font files found in directory (%s).", path);
 		return;
 	}
 
+  #ifdef WINDOWS /* actually never sort fonts on X11, because they come in a sorted manner from fonts.alias and fonts.txt files already. */
 	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
-#ifdef WINDOWS /* Windows supports graphic fonts for the mini map */
+   #ifdef WINDOWS /* Windows supports graphic fonts for the mini map */
 	qsort(graphic_font_name, graphic_fonts, sizeof(char[256]), font_name_cmp);
-#endif
-//	for (j = 0; j < fonts; j++) c_msg_format("'%s'", font_name[j]);
+   #endif
+  #endif
 
-#ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
+  #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
 	for (j = 0; j < fonts; j++) {
 		strcpy(tmp_name, font_name[j]);
 		//path_build(font_name[j], 1024, path, font_name[j]);
@@ -6904,7 +6909,7 @@ static void do_cmd_options_fonts(void) {
 		strcat(graphic_font_name[j], "\\");
 		strcat(graphic_font_name[j], tmp_name);
 	}
-#endif
+  #endif
 
 	/* suppress hybrid macros */
 	inkey_msg_old = inkey_msg;
@@ -6978,9 +6983,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j + 1]);
-#ifndef WINDOWS
+  #ifndef WINDOWS
 						sync_sleep(x11_refresh);
-#endif
+  #endif
 						break;
 					}
 				}
@@ -6989,9 +6994,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* advance to next font file in lib/xtra/font */
 						set_font_name(y, font_name[j + 1]);
-#ifndef WINDOWS
+  #ifndef WINDOWS
 						sync_sleep(x11_refresh);
-#endif
+  #endif
 						break;
 					}
 				}
@@ -7007,9 +7012,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(graphic_font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, graphic_font_name[j - 1]);
-#ifndef WINDOWS
+  #ifndef WINDOWS
 						sync_sleep(x11_refresh);
-#endif
+  #endif
 						break;
 					}
 				}
@@ -7018,9 +7023,9 @@ static void do_cmd_options_fonts(void) {
 					if (!strcasecmp(font_name[j], get_font_name(y))) {
 						/* retreat to previous font file in lib/xtra/font */
 						set_font_name(y, font_name[j - 1]);
-#ifndef WINDOWS
+  #ifndef WINDOWS
 						sync_sleep(x11_refresh);
-#endif
+  #endif
 						break;
 					}
 				}
@@ -7038,9 +7043,9 @@ static void do_cmd_options_fonts(void) {
 			clear_from(20);
 			if (!tmp_name[0]) break;
 			set_font_name(y, tmp_name);
-#ifndef WINDOWS
+  #ifndef WINDOWS
 			sync_sleep(x11_refresh);
-#endif
+  #endif
 			break;
 
 		default:
@@ -7053,8 +7058,8 @@ static void do_cmd_options_fonts(void) {
 	/* restore responsiveness to hybrid macros */
 	inkey_msg = inkey_msg_old;
 }
-#endif
-#endif
+ #endif /* WINDOWS || USE_X11 */
+#endif /* ENABLE_SUBWINDOW_MENU */
 
 static void do_cmd_options_sfx(void) {
 #if SOUND_SDL
@@ -7665,6 +7670,11 @@ void do_cmd_options(void) {
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
 
 	inkey_msg = inkey_msg_old;
+
+	/* hide cursor -- just for when the main screen font has been changed, it seems after
+	   that the cursor is now visible for some reason (and jumping around annoyingly) */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 
 	/* Resend options to server */
 	Send_options();
