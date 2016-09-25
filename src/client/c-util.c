@@ -6841,6 +6841,7 @@ static void do_cmd_options_fonts(void) {
 			strcpy(font_name[fonts], tmp_name);
 			fonts++;
 		}
+		remove("/tmp/tomenet-fonts.tmp"); //clean up
 	} else {
 		/* We boldly assume that these exist by default somehow! - They probably don't though,
 		   if the above command failed, but what else can we try at this point.. #despair */
