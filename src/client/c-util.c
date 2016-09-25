@@ -6795,6 +6795,7 @@ static void do_cmd_options_fonts(void) {
 
 #ifndef WINDOWS
 	int x11_refresh = 50;
+	FILE *fff;
 #endif
 
 #ifdef WINDOWS /* Windows uses the .FON files */
@@ -6828,15 +6829,43 @@ static void do_cmd_options_fonts(void) {
 	closedir(dir);
 #endif
 
-#ifdef USE_X11 /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) */
-	/* we boldly assume that these exist by default! */
-	strcpy(font_name[0], "5x8");
-	strcpy(font_name[1], "6x9");
-	strcpy(font_name[2], "8x13");
-	strcpy(font_name[3], "9x15");
-	strcpy(font_name[4], "10x20");
-	strcpy(font_name[5], "12x24");
-	fonts = 6;
+#ifdef USE_X11 /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) - C. Blue */
+	/* Get bitmap font folder ('misc') and scan fonts.alias in it for basic bitmap fonts:
+	   'cat `xset q | grep -o "[/a-z]*misc"`/fonts.alias | grep -o "^[0-9][0-9]*x[0-9]*\(bold\)\? " | grep -o "[^ ]*"' <- note the trailing space! */
+	j = system("cat `xset q | grep -o \"[/a-z]*misc\"`/fonts.alias | grep -o \"^[0-9][0-9]*x[0-9]*\\(bold\\)\\? \" | grep -o \"[^ ]*\" > /tmp/tomenet-fonts.tmp");
+	fff = fopen("/tmp/tomenet-fonts.tmp", "r");
+	if (fff) {
+		while (fonts < MAX_FONTS) {
+			if (!fgets(tmp_name, 256, fff)) break;
+			tmp_name[strlen(tmp_name) - 1] = 0; //remove trailing \n
+			strcpy(font_name[fonts], tmp_name);
+			fonts++;
+		}
+	} else {
+		/* We boldly assume that these exist by default somehow! - They probably don't though,
+		   if the above command failed, but what else can we try at this point.. #despair */
+		strcpy(font_name[0], "5x8");
+		strcpy(font_name[1], "6x9");
+		strcpy(font_name[2], "8x13");
+		strcpy(font_name[3], "9x15");
+		strcpy(font_name[4], "10x20");
+		strcpy(font_name[5], "12x24");
+		fonts = 6;
+	}
+
+	/* Additionally, read font names from a user-edited text file 'fonts.txt' to allow adding arbitrary system fonts to the cycleable list */
+	path_build(path, 1024, ANGBAND_DIR_XTRA, "font");
+	fff = fopen("fonts.txt", "r");
+	if (fff) {
+		while (fonts < MAX_FONTS) {
+			if (!fgets(tmp_name, 256, fff)) break;
+			tmp_name[strlen(tmp_name) - 1] = 0; //remove trailing \n
+			strcpy(font_name[fonts], tmp_name);
+			fonts++;
+		}
+		fclose(fff);
+	}
+
 	//todo: test for more available, good fonts
 	/*
 	    lucidasanstypewriter-8/10/12/18
@@ -6876,7 +6905,6 @@ static void do_cmd_options_fonts(void) {
 	}
 #endif
 
-
 	/* suppress hybrid macros */
 	inkey_msg_old = inkey_msg;
 	inkey_msg = TRUE;
@@ -6888,6 +6916,7 @@ static void do_cmd_options_fonts(void) {
 	while (go) {
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yv\377w (visibility), \377y-\377w/\377y+\377w (smaller/bigger), \377yENTER\377w (enter font name), \377yESC\377w)");
+		Term_putstr(0, 1, -1, TERM_WHITE, format("  (%d fonts available)", fonts));
 
 		/* Display the windows */
 		for (j = 0; j < ANGBAND_TERM_MAX; j++) {
