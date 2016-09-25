@@ -6859,26 +6859,34 @@ static void do_cmd_options_fonts(void) {
 	}
 
 	/* Additionally, read font names from a user-edited text file 'fonts.txt' to allow adding arbitrary system fonts to the cycleable list */
-	path_build(path, 1024, ANGBAND_DIR_XTRA, "font/fonts-x11.txt");
+	path_build(path, 1024, ANGBAND_DIR_XTRA, "fonts-x11.txt");
 	fff = fopen(path, "r");
 	if (fff) {
+		char tmp[256], *cp;
 		while (fonts < MAX_FONTS) {
 			if (!fgets(tmp_name, 256, fff)) break;
-			if (tmp_name[0] == '#') continue; //skip commented out lines ('#' character at the beginning)
 			tmp_name[strlen(tmp_name) - 1] = 0; //remove trailing \n
+
+			/* Trim spaces (abuse 'path') */
+			strcpy(tmp, tmp_name);
+			cp = tmp;
+			while (*cp == ' ') cp++;
+			strcpy(tmp_name, cp);
+
+			cp = tmp_name + (strlen(tmp_name) - 1);
+			while (*cp == ' ') {
+				*cp = 0;
+				cp--;
+			}
+
+			if (!tmp_name[0]) continue; //skip empty lines
+			if (tmp_name[0] == '#') continue; //skip commented out lines ('#' character at the beginning)
+
 			strcpy(font_name[fonts], tmp_name);
 			fonts++;
 		}
 		fclose(fff);
 	}
-
-	//todo: auto-check system fonts for more good fonts available, such as:
-	/*  lucidasanstypewriter-8/10/12/18
-	    -misc-fixed-medium-r-normal--15-140-75-75-c-90-iso8859-1
-	    -sony-fixed-medium-r-normal--16-*-*-*-*-*-jisx0201.1976-0
-	    -misc-fixed-medium-r-normal--20-200-75-75-c-100-iso8859-1
-	    -sony-fixed-medium-r-normal--24-170-100-100-c-120-jisx0201.1976-0
-	*/
   #endif
 
 	if (!fonts) {
