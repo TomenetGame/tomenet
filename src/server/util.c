@@ -6448,6 +6448,10 @@ void note_toggle_empty(object_type *o_ptr, bool empty) {
 
 	/* inscription already exists? */
 	if (strstr(note2, "empty")) return;
+
+	/* don't add 'empty' inscription to items that show "(0 charges)" already, aka identified items */
+	if (o_ptr->ident & ID_KNOWN) return;
+
 	/* append the new empty-state indicator */
 	if (note2[0]) strcat(note2, "-");
 	if (empty) {
