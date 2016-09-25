@@ -1,0 +1,8 @@
+# This file allows you to add arbitrary system bitmap fonts to the list of
+# fonts the TomeNET client shows in the fonts menu (press =f to invoke).
+# It is auto-loaded by X11 (Linux/OSX) clients on entering the font menu.
+# This file has no effect on the Windows client, use the 'fonts' folder there.
+
+# Example (think the '#' character in the beginning of the line removed):
+#-misc-fixed-medium-r-normal--15-140-75-75-c-90-iso8859-1
+
