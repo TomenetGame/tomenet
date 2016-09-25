@@ -2687,16 +2687,16 @@ int Receive_flush(void) {
 
 int Receive_line_info(void) {
 	char	ch, c;
-	int	x, i, n, bytes_read;
+	int	x, i, n;
 	s16b	y;
 	byte	a;
 	byte	rep;
 	bool	draw = FALSE;
+	char *stored_sbuf_ptr = rbuf.ptr;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0) return n;
 
-	/* Keep track of how many bytes have been read from the sockbuf */
-	bytes_read = 3;
+	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(0);
 
 #if 0
 	/* If this is the mini-map then we can draw if the screen is icky */
@@ -2704,8 +2704,6 @@ int Receive_line_info(void) {
 		draw = TRUE;
 #else
 	draw = TRUE;
-
-	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(0);
 #endif
 	/* Check the max line count */
 	if (y > last_line_info)
@@ -2719,14 +2717,9 @@ int Receive_line_info(void) {
 	for (x = 0; x < 80; x++) {
 		/* Read the char/attr pair */
 		if ((n = Packet_scanf(&rbuf, "%c%c", &c, &a)) <= 0) {
-			/* Rollback the socket buffer */
-			Sockbuf_rollback(&rbuf, bytes_read);
-
-			/* Packet isn't complete, graceful failure */
+			if (n == 0) goto rollback;
 			return n;
 		}
-
-		bytes_read += n;
 
 		/* 4.4.3.1 servers use a = 0xFF to signal RLE */
 		if (is_newer_than(&server_version, 4, 4, 3, 0, 0, 5)) {
@@ -2734,14 +2727,9 @@ int Receive_line_info(void) {
 			if (a == 0xFF) {
 				/* Read the real attr and number of repetitions */
 				if ((n = Packet_scanf(&rbuf, "%c%c", &a, &rep)) <= 0) {
-					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, bytes_read);
-
-					/* Packet isn't complete, graceful failure */
+					if (n == 0) goto rollback;
 					return n;
 				}
-
-				bytes_read += n;
 			} else {
 				/* No RLE, just one instance */
 				rep = 1;
@@ -2754,14 +2742,9 @@ int Receive_line_info(void) {
 
 				/* Read the number of repetitions */
 				if ((n = Packet_scanf(&rbuf, "%c", &rep)) <= 0) {
-					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, bytes_read);
-
-					/* Packet isn't complete, graceful failure */
+					if (n == 0) goto rollback;
 					return n;
 				}
-
-				bytes_read += n;
 			} else {
 				/* No RLE, just one instance */
 				rep = 1;
@@ -2808,6 +2791,12 @@ int Receive_line_info(void) {
 		request_redraw = TRUE;
 
 	return 1;
+
+	/* Rollback the socket buffer in case the packet isn't complete */
+	rollback:
+	rbuf.ptr = stored_sbuf_ptr;
+	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(0); /* needed to avoid garbage on screen */
+	return 0;
 }
 
 /*
