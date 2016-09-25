@@ -643,7 +643,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 		/* Actually output a warning to combat message window */
 		topline_icky = FALSE;
-		c_msg_print("You do not have an eligible item.");
+		if (!(mode & NO_FAIL_MSG)) c_msg_print("You do not have an eligible item.");
 
 		/* Flush any events */
 		Flush_queue();//this will cancel macro execution already, so an additional 'c_cfg.safe_macros' check isn't needed here

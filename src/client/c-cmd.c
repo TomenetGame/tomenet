@@ -967,8 +967,10 @@ void cmd_quaff(void) {
 	get_item_hook_find_obj_what = "Potion name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Quaff which potion? ", (USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Quaff which potion? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+		if (item == -2) c_msg_print("You don't have any potions.");
 		return;
+	}
 
 	/* Send it */
 	Send_quaff(item);
@@ -988,8 +990,10 @@ void cmd_read_scroll(void) {
 	get_item_hook_find_obj_what = "Scroll name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Read which scroll? ", (USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Read which scroll? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+		if (item == -2) c_msg_print("You don't have any scrolls.");
 		return;
+	}
 
 	/* Send it */
 	Send_read(item);
@@ -1002,8 +1006,10 @@ void cmd_aim_wand(void) {
 	get_item_hook_find_obj_what = "Wand name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED)))
+	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+		if (item == -2) c_msg_print("You don't have any wands.");
 		return;
+	}
 
 	if (!get_dir(&dir)) return;
 
@@ -1018,8 +1024,10 @@ void cmd_use_staff(void) {
 	get_item_hook_find_obj_what = "Staff name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED)))
+	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+		if (item == -2) c_msg_print("You don't have any staves.");
 		return;
+	}
 
 	/* Send it */
 	Send_use(item);
@@ -1032,8 +1040,10 @@ void cmd_zap_rod(void) {
 	get_item_hook_find_obj_what = "Rod name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED)))
+	if (!c_get_item(&item, "Zap which rod? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG))) {
+		if (item == -2) c_msg_print("You don't have any rods.");
 		return;
+	}
 
 	/* Send it */
 	if (inventory[item].uses_dir == 0) {
@@ -1072,8 +1082,10 @@ void cmd_eat(void) {
 	get_item_hook_find_obj_what = "Food name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Eat what? ", (USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Eat what? ", (USE_INVEN | USE_EXTRA))) {
+		if (item == -2) c_msg_print("You do not have anything edible.");
 		return;
+	}
 
 	/* Send it */
 	Send_eat(item);
@@ -3280,7 +3292,7 @@ void cmd_browse(void) {
 
 	item_tester_hook = item_tester_browsable;
 
-	if (!c_get_item(&item, "Browse which book? ", (USE_INVEN | USE_EXTRA))) {
+	if (!c_get_item(&item, "Browse which book? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
 		if (item == -2) c_msg_print("You have no books that you can read.");
 		return;
 	}
@@ -3398,8 +3410,8 @@ static void cmd_house_paint(int dir) {
 	item_tester_hook = item_tester_quaffable;
 	get_item_hook_find_obj_what = "Potion name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
-	if (!c_get_item(&item, "Use which potion for colouring? ", (USE_INVEN | USE_EXTRA))) {
-		c_msg_print("You need a potion to extract the colour from!");
+	if (!c_get_item(&item, "Use which potion for colouring? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+		if (item == -2) c_msg_print("You need a potion to extract the colour from!");
 		return;
 	}
 

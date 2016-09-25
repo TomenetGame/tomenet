@@ -4151,6 +4151,7 @@
 #define CHECK_MULTI	0x0080	/* For swap command with USE_EXTRA (search by name): Check multiple items and avoid ones that we've already equipped */
 #define NEWEST		0x0100	/* Allow pressing '+' key to re-use the newest item we previously acquired */
 #define CHECK_CHARGED	0x0200	/* For Havoc rods: Try to find non-charging ones */
+#define NO_FAIL_MSG	0x0400	/* Don't display 'You do not have an eligible item.' message. Because our calling function will give a more specific message instead. */
 
 /*
  * Bit flags for the "p_ptr->notice" variable

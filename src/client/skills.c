@@ -666,7 +666,7 @@ void do_trap(int item_kit) {
 		item_tester_tval = TV_TRAPKIT;
 		get_item_hook_find_obj_what = "Trap kit name? ";
 		get_item_extra_hook = get_item_hook_find_obj;
-		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN | USE_EXTRA))) {
+		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
 			if (item_kit == -2) c_msg_print("You have no trapping kits.");
 			if (c_cfg.safe_macros) flush_now();//Term_flush();
 			return;
@@ -703,7 +703,7 @@ void do_trap(int item_kit) {
 
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
-	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) {
+	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
 		if (item_load == -2) c_msg_print("You have nothing to load that trap with.");
 		if (c_cfg.safe_macros) flush_now();//Term_flush();
 		return;
@@ -788,9 +788,8 @@ void do_activate_skill(int x_idx, int item) {
 	} else if (s_info[x_idx].flags1 & SKF1_MKEY_SPELL) {
 		if (item < 0) {
 			item_tester_tval = s_info[x_idx].tval;
-			if (!c_get_item(&item, "Cast from which book? ", (USE_INVEN))) {
-				if (item == -2)
-					c_msg_print("You have no books that you can cast from.");
+			if (!c_get_item(&item, "Cast from which book? ", (USE_INVEN | NO_FAIL_MSG))) {
+				if (item == -2) c_msg_print("You have no books that you can cast from.");
 				return;
 			}
 		}
