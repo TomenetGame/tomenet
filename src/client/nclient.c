@@ -1297,6 +1297,9 @@ int Net_input(void) {
 
 	netfd = Net_fd();
 
+	/* SOCKBUF_LOCK may be enabled if we are in a nested input loop */
+	rbuf.state &= ~SOCKBUF_LOCK;
+
 	/* Keep reading as long as we have something on the socket */
 	while (SocketReadable(netfd)) {
 		n = Sockbuf_read(&rbuf);
