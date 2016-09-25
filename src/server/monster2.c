@@ -3018,7 +3018,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 		if (isdungeontown(wpos)) return 10;
 #endif
 		/* Keep Ironman Deep Dive Challenge entrance sector clean too */
-		if (in_irondeepdive(wpos)) return 11;
+		if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y && !wpos->wz) return 11;
 	}
 
 	if (!(summon_override_checks & SO_GRID_EMPTY)) {
