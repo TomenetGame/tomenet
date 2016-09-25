@@ -257,6 +257,7 @@ audio_sfx = {
     "ambient_fireplace",
     "ambient_shore",
     "ambient_lake",
+    "ambient_fire",
 
     "animal_bird",
     "animal_owl",
