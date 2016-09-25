@@ -47,7 +47,6 @@ extern void flicker(void);
 int			ticks = 0; /* Keeps track of time in 100ms "ticks" */
 int			ticks10 = 0; /* 'deci-ticks', counting just 0..9 in 10ms intervals */
 int			existing_characters = 0;
-static bool		request_redraw;
 
 static sockbuf_t	rbuf, wbuf, qbuf;
 static int		(*receive_tbl[256])(void);
@@ -1342,12 +1341,6 @@ int Flush_queue(void) {
 	Sockbuf_clear(&qbuf);
 
 	Net_packet();
-
-	/* If a redraw has been requested, send the request */
-	if (request_redraw) {
-		Send_redraw(0);
-		request_redraw = FALSE;
-	}
 
 	return 1;
 }
@@ -2785,10 +2778,6 @@ int Receive_line_info(void) {
 	}
 
 	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(0);
-
-	/* Request a redraw if the screen was icky */
-	if (screen_icky)
-		request_redraw = TRUE;
 
 	return 1;
 
