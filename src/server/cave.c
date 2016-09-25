@@ -2617,7 +2617,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 
 	/* Floors (etc) */
 	/* XXX XXX Erm, it is DIRTY.  should be replaced soon */
-//	if (feat <= FEAT_INVIS)
+	//if (feat <= FEAT_INVIS)
 	if (f_ptr->flags1 & (FF1_FLOOR)) {
 
 		/* Memorized (or visible) floor */
@@ -2648,16 +2648,22 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP)) && c_ptr->feat != FEAT_ILLUS_WALL) {
 				/* Hack -- random hallucination */
 				if (p_ptr->image) {
-/*					image_random(ap, cp); */
+					/*image_random(ap, cp); */
 					image_object(ap, cp);
 					a = randint(15);
 				} else {
 					/* If trap isn't on door display it */
 					/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
-//					(*cp) = ';';
+					//(*cp) = ';';
 					a = get_monster_trap_color(Ind,
 					    cs_ptr->sc.montrap.trap_kit,
 					    feat);
+
+#if 0 /* currently this doesn't make sense because montraps are their own feature (like runes) instead of using just the cs_ptr (like normal traps)! This means they cancel the water grid! ew. */
+					/* Hack -- always l.blue if underwater */
+					if (cs_ptr->sc.montrap.feat == FEAT_DEEP_WATER || cs_ptr->sc.montrap.feat == FEAT_SHAL_WATER)
+						a = TERM_L_BLUE;
+#endif
 				}
 				keep = TRUE;
 			}
@@ -3113,7 +3119,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 				(*ap) = object_attr(o_ptr);
 
 				/* Hack -- always l.blue if underwater */
-//				if (feat == FEAT_WATER)
 				if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
 					(*ap) = TERM_L_BLUE;
 
@@ -7494,26 +7499,17 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 	}
 }
 
-/*
- * This is a copy of cave_set_feat that is used for "live" changes to the world
- * by players and monsters. More specific restrictions can be placed here.
- * NOTE: We assume, that allow_terraforming() has already been checked before
- *       cave_set_feat_live() is actually called.
- */
-void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
-	player_type *p_ptr;
+/* Helper function - like cave_set_feat_live() but doesn't set anything, just tests.
+   Added for monster traps: Those mustn't be set on DEEP_WATER/DEEP_LAVA since cave_set_feat_live()
+   would prevent the feature from getting placed, resulting in bugginess and (nothing)s. */
+bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat) {
 	cave_type **zcave;
 	cave_type *c_ptr;
-	struct c_special *cs_ptr;
 	int i;
 	//struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
-	/* for Submerged Ruins: ensure all deep water; also affects Small Water Cave. */
-	dun_level *l_ptr = getfloor(wpos);
-	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
-
-	if (!(zcave = getcave(wpos))) return;
-	if (!in_bounds(y, x)) return;
+	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!in_bounds(y, x)) return FALSE;
 	c_ptr = &zcave[y][x];
 
 	/* apply town-specific restrictions, preserving the intended town layout */
@@ -7524,57 +7520,57 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		switch (feat) {
 		case FEAT_TREE:
 		case FEAT_BUSH:
-			if (TOWN_TERRAFORM_TREES == 0) return;
+			if (TOWN_TERRAFORM_TREES == 0) return FALSE;
 			break;
 		case FEAT_WALL_EXTRA:
 		case FEAT_QUARTZ:
 		case FEAT_MAGMA:
-			if (TOWN_TERRAFORM_WALLS == 0) return;
+			if (TOWN_TERRAFORM_WALLS == 0) return FALSE;
 			break;
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return;
+			if (TOWN_TERRAFORM_WATER == 0) return FALSE;
 			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
-			if (TOWN_TERRAFORM_GLYPHS == 0) return;
+			if (TOWN_TERRAFORM_GLYPHS == 0) return FALSE;
 			break;
 		}
 
 		switch (c_ptr->feat) {
 		case FEAT_TREE:
 		case FEAT_BUSH:
-			if (TOWN_TERRAFORM_TREES == 0) return;
+			if (TOWN_TERRAFORM_TREES == 0) return FALSE;
 			break;
 		case FEAT_WALL_EXTRA:
 		case FEAT_QUARTZ:
 		case FEAT_MAGMA:
-			if (TOWN_TERRAFORM_WALLS == 0) return;
+			if (TOWN_TERRAFORM_WALLS == 0) return FALSE;
 			break;
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
-			if (TOWN_TERRAFORM_WATER == 0) return;
+			if (TOWN_TERRAFORM_WATER == 0) return FALSE;
 			break;
 		case FEAT_GLYPH:
 		case FEAT_RUNE:
-			if (TOWN_TERRAFORM_GLYPHS == 0) return;
+			if (TOWN_TERRAFORM_GLYPHS == 0) return FALSE;
 			break;
 		}
 #else
 		/* hack: only allow around store entrances */
 		if (feat == FEAT_GLYPH || feat == FEAT_RUNE) {
-			return; //disallow glyphs
+			return FALSE; //disallow glyphs
 
 			for (i = 0; i < 9; i++)
 				if (zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat == FEAT_SHOP) break;
 			/* no nearby store entrance found? */
-			if (i == 9) return;
+			if (i == 9) return FALSE;
 		}
 #endif
 	}
 
 	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
-	if ((feat == FEAT_GLYPH || feat == FEAT_RUNE) && !(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
+	if ((feat == FEAT_GLYPH || feat == FEAT_RUNE || feat == FEAT_MON_TRAP) && !(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
 	    ((c_ptr->feat == FEAT_NONE) ||
 	    (c_ptr->feat == FEAT_FLOOR) ||
 	    (c_ptr->feat == FEAT_DIRT) ||
@@ -7588,10 +7584,10 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	    (c_ptr->feat == FEAT_MUD) ||
 	    (c_ptr->feat == FEAT_FLOWER) ||
 	    (c_ptr->feat == FEAT_NETHER_MIST))))
-		return;
+		return FALSE;
 
 	/* Don't mess with inns please! */
-	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
+	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return FALSE;
 
 	/* No terraforming on impossible ground -
 	   compare twall_erosion() for consistency */
@@ -7604,7 +7600,122 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 #else
 	if (c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
 #endif
-		return;
+		return FALSE;
+
+	return TRUE;
+}
+
+/*
+ * This is a copy of cave_set_feat that is used for "live" changes to the world
+ * by players and monsters. More specific restrictions can be placed here.
+ * NOTE: We assume, that allow_terraforming() has already been checked before
+ *       cave_set_feat_live() is actually called.
+ */
+bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
+	player_type *p_ptr;
+	cave_type **zcave;
+	cave_type *c_ptr;
+	struct c_special *cs_ptr;
+	int i;
+	//struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
+
+	/* for Submerged Ruins: ensure all deep water; also affects Small Water Cave. */
+	dun_level *l_ptr = getfloor(wpos);
+	bool deep_water = l_ptr && (l_ptr->flags1 & LF1_DEEP_WATER);
+
+	if (!(zcave = getcave(wpos))) return FALSE;
+	if (!in_bounds(y, x)) return FALSE;
+	c_ptr = &zcave[y][x];
+
+	/* apply town-specific restrictions, preserving the intended town layout */
+	if (istown(wpos)) {
+#if 0
+		t_ptr = &town[wild_info[wpos->wx][wpos->wy].town_idx];
+
+		switch (feat) {
+		case FEAT_TREE:
+		case FEAT_BUSH:
+			if (TOWN_TERRAFORM_TREES == 0) return FALSE;
+			break;
+		case FEAT_WALL_EXTRA:
+		case FEAT_QUARTZ:
+		case FEAT_MAGMA:
+			if (TOWN_TERRAFORM_WALLS == 0) return FALSE;
+			break;
+		case FEAT_SHAL_WATER:
+		case FEAT_DEEP_WATER:
+			if (TOWN_TERRAFORM_WATER == 0) return FALSE;
+			break;
+		case FEAT_GLYPH:
+		case FEAT_RUNE:
+			if (TOWN_TERRAFORM_GLYPHS == 0) return FALSE;
+			break;
+		}
+
+		switch (c_ptr->feat) {
+		case FEAT_TREE:
+		case FEAT_BUSH:
+			if (TOWN_TERRAFORM_TREES == 0) return FALSE;
+			break;
+		case FEAT_WALL_EXTRA:
+		case FEAT_QUARTZ:
+		case FEAT_MAGMA:
+			if (TOWN_TERRAFORM_WALLS == 0) return FALSE;
+			break;
+		case FEAT_SHAL_WATER:
+		case FEAT_DEEP_WATER:
+			if (TOWN_TERRAFORM_WATER == 0) return FALSE;
+			break;
+		case FEAT_GLYPH:
+		case FEAT_RUNE:
+			if (TOWN_TERRAFORM_GLYPHS == 0) return FALSE;
+			break;
+		}
+#else
+		/* hack: only allow around store entrances */
+		if (feat == FEAT_GLYPH || feat == FEAT_RUNE) {
+			return FALSE; //disallow glyphs
+
+			for (i = 0; i < 9; i++)
+				if (zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat == FEAT_SHOP) break;
+			/* no nearby store entrance found? */
+			if (i == 9) return FALSE;
+		}
+#endif
+	}
+
+	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
+	if ((feat == FEAT_GLYPH || feat == FEAT_RUNE || feat == FEAT_MON_TRAP) && !(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
+	    ((c_ptr->feat == FEAT_NONE) ||
+	    (c_ptr->feat == FEAT_FLOOR) ||
+	    (c_ptr->feat == FEAT_DIRT) ||
+	    (c_ptr->feat == FEAT_LOOSE_DIRT) || /* used for gardens (fields) in wild.c */
+	    (c_ptr->feat == FEAT_CROP) || /* used for gardens (fields) in wild.c */
+	    (c_ptr->feat == FEAT_GRASS) ||
+	    (c_ptr->feat == FEAT_SNOW) ||
+	    (c_ptr->feat == FEAT_ICE) ||
+	    (c_ptr->feat == FEAT_SAND) ||
+	    (c_ptr->feat == FEAT_ASH) ||
+	    (c_ptr->feat == FEAT_MUD) ||
+	    (c_ptr->feat == FEAT_FLOWER) ||
+	    (c_ptr->feat == FEAT_NETHER_MIST))))
+		return FALSE;
+
+	/* Don't mess with inns please! */
+	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return FALSE;
+
+	/* No terraforming on impossible ground -
+	   compare twall_erosion() for consistency */
+#if 0
+	if ((feat == FEAT_TREE || feat == FEAT_BUSH || feat == FEAT_FLOOR ||
+	    feat == FEAT_WALL_EXTRA || feat == FEAT_QUARTZ || feat == FEAT_MAGMA) &&
+	    feat_mud, feat_dirt, etc.... just #else maybe easier?..
+	    (c_ptr->feat == FEAT_DEEP_LAVA ||
+	    c_ptr->feat == FEAT_DEEP_WATER))
+#else
+	if (c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
+#endif
+		return FALSE;
 
 	/* in Nether Realm, floor is always nether mist (or lava)! */
 	if (in_netherrealm(wpos)) switch (feat) {
@@ -7673,11 +7784,12 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_DISTANCE);
-//		p_ptr->update |= PU_FLOW;
+		//p_ptr->update |= PU_FLOW;
 
-//		p_ptr->redraw |= PR_MAP;
-//		p_ptr->window |= PW_OVERHEAD;
+		//p_ptr->redraw |= PR_MAP;
+		//p_ptr->window |= PW_OVERHEAD;
 	}
+	return TRUE;
 }
 
 

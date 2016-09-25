@@ -4480,7 +4480,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Require a "naked" floor grid */
 			if (!cave_clean_bold(zcave, y, x)) break;
 			if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
-			cave_set_feat_live(wpos, y, x, FEAT_GLYPH);
+			if (allow_terraforming(&p_ptr->wpos, FEAT_GLYPH))
+				cave_set_feat_live(wpos, y, x, FEAT_GLYPH);
 			break;
 #endif
 

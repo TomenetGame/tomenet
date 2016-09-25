@@ -517,7 +517,8 @@ extern c_special *ReplaceCS(cave_type *c_ptr, byte type);
 extern void FreeCS(cave_type *c_ptr);
 extern dun_level *getfloor(struct worldpos *wpos);
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
-extern void cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
+extern bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
+extern bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat);
 #ifdef ARCADE_SERVER
 extern int check_feat(worldpos *wpos, int y, int x);
 #endif

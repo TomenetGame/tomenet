@@ -3167,8 +3167,9 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	/* Only set traps on clean floor grids */
 	/* TODO: allow to set traps on poisoned floor */
 	if (!cave_clean_bold(zcave, py, px) ||
+	    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
 	    c_ptr->special) {
-		msg_print(Ind, "You cannot set a trap on this.");
+		msg_print(Ind, "You cannot set a trap here.");
 		return;
 	}
 
