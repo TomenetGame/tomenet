@@ -4015,10 +4015,12 @@ void init_firework_dungeon(void) {
 			/* dungeon must exist */
 			if (!d_info[i].name) continue;
  #endif
-			/* never in the Nether Realm/Valinor */
+			/* never in the Post-king dungeons */
+			if (i == DI_CLOUD_PLANES) continue;
 			if (i == DI_NETHER_REALM) continue;
+			/* not Valinor, no monsters there */
 			if (i == DI_VALINOR) continue;
-			/* everything would instantly explode? :-p */
+			/* logic: scrolls would either burn or explode on lava? :-p */
 			if (i == DI_MT_DOOM) continue;
 
 			/* exclude town dungeons? */
