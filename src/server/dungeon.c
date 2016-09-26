@@ -8999,7 +8999,7 @@ void process_timers() {
 			case 6: delete_monster(&wpos, 25, 120, TRUE); break;
 			case 14: delete_monster(&wpos, 25, 122, TRUE); break;
 			case 16: delete_monster(&wpos, 25, 124, TRUE); break;
-			case 21: delete_monster(&wpos, 27, 118, TRUE); break;
+			//case 21: delete_monster(&wpos, 27, 118, TRUE); break;
 			}
 
 			/* Randomly place 0-5 new ones */
@@ -9024,7 +9024,7 @@ void process_timers() {
 				case 1: place_monster_one(&wpos, 25, 120, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
 				case 2: place_monster_one(&wpos, 25, 122, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
 				case 3: place_monster_one(&wpos, 25, 124, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
-				case 4: place_monster_one(&wpos, 27, 118, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
+				//case 4: place_monster_one(&wpos, 27, 118, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
 				}
 				for (l = k; l < 5; l++) bree_map[l]++;
 				summon_override_checks = SO_NONE;
