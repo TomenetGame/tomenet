@@ -2490,16 +2490,20 @@ void do_slash_cmd(int Ind, char *message) {
 					o_ptr->name3 += rand_int(0xFFFF);
 				}
 			}
-			else o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
+			else o_ptr->number = o_ptr->weight >= 30 ? 1 : 99;
 
 			apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
 			if (tk > 3) o_ptr->discount = atoi(token[4]);
 			else o_ptr->discount = 100;
 			object_known(o_ptr);
 			o_ptr->owner = 0;
-//			if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
+			//if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
 			//o_ptr->owner = p_ptr->id;
 			o_ptr->level = 1;
+
+ #ifdef NEW_MDEV_STACKING
+			if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
+ #endif
 			(void)inven_carry(Ind, o_ptr);
 
 			return;
@@ -5135,7 +5139,7 @@ void do_slash_cmd(int Ind, char *message) {
 						o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 						o_ptr->name3 += rand_int(0xFFFF);
 					}
-				} else o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
+				} else o_ptr->number = o_ptr->weight >= 30 ? 1 : 99;
 
 //				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
 				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
@@ -5146,6 +5150,10 @@ void do_slash_cmd(int Ind, char *message) {
 				if (tk > 2) o_ptr->pval = atoi(token[3]);
 				//o_ptr->owner = p_ptr->id;
 				o_ptr->level = 1;
+
+ #ifdef NEW_MDEV_STACKING
+				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
+ #endif
 				(void)inven_carry(Ind, o_ptr);
 
 				return;
