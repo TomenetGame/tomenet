@@ -3414,6 +3414,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp, flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF;
 	//object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	bool perc = FALSE;
 
 	cave_type **zcave;
 	zcave = getcave(&m_ptr->wpos);
@@ -3467,7 +3468,8 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 		break;
 	case SV_ROD_DRAIN_LIFE:
 		typ = GF_OLD_DRAIN;
-		dam = 75;
+		dam = 10 + rand_int(5);
+		perc = TRUE;
 		break;
 	case SV_ROD_POLYMORPH:
 		typ = GF_OLD_POLY;
@@ -3534,7 +3536,10 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	if (dam) identify_mon_trap_load(who, o_ptr);
 
 	/* Trapping skill influences damage - C. Blue */
-	if (typ != GF_CURING) {
+	if (perc) {
+		/* it's a percentage, don't go crazy */
+		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty / 10;
+	} else if (typ != GF_CURING) {
 		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 	}
@@ -3938,6 +3943,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	cave_type **zcave;
 	zcave = getcave(&m_ptr->wpos);
 	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO;
+	bool perc = FALSE;
 
 	/* Depend on wand type */
 	switch ((o_ptr->sval == SV_WAND_WONDER) ? rand_int(SV_WAND_WONDER) : o_ptr->sval) {
@@ -3987,7 +3993,8 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_WAND_DRAIN_LIFE:
 			typ = GF_OLD_DRAIN;
-			dam = 75;
+			dam = 10 + rand_int(5);
+			perc = TRUE;
 			break;
 		case SV_WAND_POLYMORPH:
 			typ = GF_OLD_POLY;
@@ -4056,7 +4063,8 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 		case SV_WAND_ANNIHILATION:
 			typ = GF_ANNIHILATION;
 			//dam = 15 + get_skill_scale(...who > 0.., SKILL_TRAPPING, 15); --hmm, maybe not, trap is the caster after all
-			dam = 20 + randint(20); //raise the base a bit.. for now.
+			dam = 10 + randint(10); //raise the base a bit.. for now.
+			perc = TRUE;
 			break;
 		case SV_WAND_DRAGON_FIRE:
 			typ = GF_FIRE;
@@ -4104,8 +4112,14 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	identify_mon_trap_load(who, o_ptr);
 
 	/* Trapping skill influences damage - C. Blue */
-	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2); dam /= 50;
-	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
+	if (perc) {
+		/* it's a percentage, don't go crazy */
+		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty / 10;
+	} else {
+		/* normal damage increase */
+		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2); dam /= 50;
+		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
+	}
 
 #ifdef USE_SOUND_2010
 	if (rad && who > 0) { /* TODO: make it audible for ALL players in LOS maybe? probably too much */
