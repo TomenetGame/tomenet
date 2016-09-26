@@ -87,8 +87,8 @@ static void choose_name(void) {
   #endif
  #endif
 	c_put_str(TERM_SLATE, "Welcome! In order to play, you need to create an account.", LOGIN_ROW, 2);
-	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice, and don't", LOGIN_ROW + 1, 2);
-	c_put_str(TERM_SLATE, "forget name and password. Players may only own one account each at a time.", LOGIN_ROW + 2, 2);
+	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice. Remember", LOGIN_ROW + 1, 2);
+	c_put_str(TERM_SLATE, "your name and password. Players may only own one account each at a time.", LOGIN_ROW + 2, 2);
 	c_put_str(TERM_SLATE, "If you are new to TomeNET, this guide may prove useful:", LOGIN_ROW + 9, 2);
 	prt("http://www.tomenet.eu/guide.php", LOGIN_ROW + 10, 2);
 #endif
@@ -131,6 +131,9 @@ static void choose_name(void) {
 		*cp = 0;
 		cp--;
 	}
+
+	/* Always start on upper-case */
+	nick[0] = toupper(nick[0]);
 
 	/* Pad the name (to clear junk) */
 	sprintf(fmt, "%%-%d.%ds", ACCOUNTNAME_LEN - 1, ACCOUNTNAME_LEN - 1);
@@ -1654,7 +1657,7 @@ void get_char_name(void) {
 #else
 	put_str("Name        :", LOGIN_ROW + 4, 1);
 	put_str("Password    :", LOGIN_ROW + 5, 1);
-	c_put_str(TERM_SLATE, "Make sure you enter letters in correct upper/lower case!", LOGIN_ROW + 7, 3);
+	c_put_str(TERM_SLATE, "Name and password are case-sensitive! Name always starts with upper-case.", LOGIN_ROW + 7, 2);
 #endif
 	/* Dump the default name */
 #ifndef SIMPLE_LOGIN
