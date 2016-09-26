@@ -7320,7 +7320,7 @@ void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos) {
    check whether he is affected in certain ways.. */
 void grid_affects_player(int Ind, int ox, int oy) {
 	player_type *p_ptr = Players[Ind];
-	int x = p_ptr->px, y = p_ptr->py, shop = -1;
+	int x = p_ptr->px, y = p_ptr->py;
 	cave_type **zcave;
 	cave_type *c_ptr;
 	bool inn = FALSE, music = FALSE;
@@ -7389,7 +7389,6 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	}
 
 	/* Handle entering/leaving taverns. (-3 check is for distinguishing inn from sickbay) */
-	if (c_ptr->feat == FEAT_SHOP) shop = GetCS(c_ptr, CS_SHOP)->sc.omni;
 	if (p_ptr->music_monster != -3 && p_ptr->music_monster != -4 && inn) {
 		p_ptr->music_monster = -4; //hack inn music
 		handle_music(Ind);
