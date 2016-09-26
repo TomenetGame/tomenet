@@ -8243,7 +8243,7 @@ int fake_Receive_tunnel(int Ind, int dir) {
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		return 0;
+		if (p_ptr->command_rep_discard == PKT_TUNNEL) return 0;
 	}
 
 	/* please redesign ALL of this out of higher level */
@@ -8251,8 +8251,10 @@ int fake_Receive_tunnel(int Ind, int dir) {
 
 	if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_tunnel(Ind, dir, FALSE);
-		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", PKT_TUNNEL, dir);
-
+		if (p_ptr->command_rep) {
+			Packet_printf(&connp->q, "%c%c", PKT_TUNNEL, dir);
+			p_ptr->command_rep_discard = PKT_TUNNEL;
+		}
 		return 2;
 	}
 
@@ -8285,7 +8287,7 @@ static int Receive_tunnel(int ind) {
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		return 0;
+		if (p_ptr->command_rep_discard == PKT_TUNNEL) return 0;
 	}
 
 	/* please redesign ALL of this out of higher level */
@@ -8293,8 +8295,10 @@ static int Receive_tunnel(int ind) {
 
 	if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_tunnel(player, dir, FALSE);
-		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
-
+		if (p_ptr->command_rep) {
+			Packet_printf(&connp->q, "%c%c", ch, dir);
+			p_ptr->command_rep_discard = PKT_TUNNEL;
+		}
 		return 2;
 	}
 
@@ -8860,14 +8864,17 @@ static int Receive_open(int ind) {
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		return 0;
+		if (p_ptr->command_rep_discard == PKT_OPEN) return 0;
 	}
 	if (p_ptr && p_ptr->command_rep != PKT_OPEN)
 		p_ptr->command_rep = -1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_open(player, dir);
-		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
+		if (p_ptr->command_rep) {
+			Packet_printf(&connp->q, "%c%c", ch, dir);
+			p_ptr->command_rep_discard = PKT_OPEN;
+		}
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);
@@ -9024,7 +9031,7 @@ static int Receive_search(int ind) {
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		return(0);
+		if (p_ptr->command_rep_discard == PKT_SEARCH) return(0);
 	}
 	if (p_ptr && p_ptr->command_rep != PKT_SEARCH) {
 		p_ptr->command_rep = -1;
@@ -9032,7 +9039,10 @@ static int Receive_search(int ind) {
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_search(player);
-		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c", ch);
+		if (p_ptr->command_rep) {
+			Packet_printf(&connp->q, "%c", ch);
+			p_ptr->command_rep_discard = PKT_SEARCH;
+		}
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
@@ -9289,9 +9299,11 @@ static int Receive_zap(int ind) {
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		return(0);
+		if (p_ptr->command_rep_discard == PKT_ZAP) return(0);
 	}
-	if (p_ptr && p_ptr->command_rep != PKT_ZAP) p_ptr->command_rep = -1;
+	if (p_ptr && p_ptr->command_rep != PKT_ZAP) {
+		p_ptr->command_rep = -1;
+	}
 #endif
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -9304,6 +9316,7 @@ static int Receive_zap(int ind) {
 		/* Hack for repeated id-commands from !X: We're already at the correct index! */
 		if (p_ptr->command_rep == PKT_ZAP) item = p_ptr->delayed_index;
 		do_cmd_zap_rod(player, item, 0);
+		if (p_ptr->command_rep) p_ptr->command_rep_discard = PKT_ZAP;
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
@@ -9631,7 +9644,7 @@ static int Receive_bash(int ind) {
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		return(0);
+		if (p_ptr->command_rep_discard == PKT_BASH) return(0);
 	}
 
 	if (p_ptr && p_ptr->command_rep != PKT_BASH) {
@@ -9639,7 +9652,10 @@ static int Receive_bash(int ind) {
 	}
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_bash(player, dir);
-		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
+		if (p_ptr->command_rep) {
+			Packet_printf(&connp->q, "%c%c", ch, dir);
+			p_ptr->command_rep_discard = PKT_BASH;
+		}
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);
@@ -9672,13 +9688,16 @@ static int Receive_disarm(int ind) {
 	/* all this is temp just to make it work */
 	if (p_ptr->command_rep == -1) {
 		p_ptr->command_rep = 0;
-		return(0);
+		if (p_ptr->command_rep_discard == PKT_DISARM) return(0);
 	}
 	if (p_ptr && p_ptr->command_rep != PKT_DISARM) p_ptr->command_rep = -1;
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_disarm(player, dir);
-		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
+		if (p_ptr->command_rep) {
+			Packet_printf(&connp->q, "%c%c", ch, dir);
+			p_ptr->command_rep_discard = PKT_DISARM;
+		}
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);

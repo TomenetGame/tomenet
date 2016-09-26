@@ -2173,6 +2173,9 @@ struct player_type {
 
 	u16b noscore;			/* Has he cheated in some way (hopefully not) */
 	s16b command_rep;		/* Command repetition */
+	s16b command_rep_discard;	/* Command repetition assist: Don't discard the first of the new repeated action packets.
+					   Needed addition for when command_rep is now used in vital functions such as zapping rods, because of '!X':
+					   Healing rod zaps must not be discarded! So far it wasn't important or even noticable for minor stuff like bash/disarm/open/tunnel.. */
 #ifdef XID_REPEAT
 	s16b command_rep_temp;		/* Command repetition */
 	bool command_rep_active;	/* Semaphore to avoid packet spam when re-injecting packets after command_rep was temporarily killed by Receive_inventory_revision() */
