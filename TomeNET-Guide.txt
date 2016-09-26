@@ -6161,7 +6161,7 @@ The Paths of the Dead        |  Feagwath             | Doomcaller
 Angband                      |  - (*)                | -
 ------Non-town dungeons------+-----------------------+-------------------------
 Death Fate                   |  -                    | -
-The Halls of Mandos          |  -                    | -
+The Halls of Mandos (****)   |  -                    | -
 The Orc Cave                 |  Azog                 | -
 Mirkwood                     |  -                    | -
 The Old Forest               |  Old Man Willow       | Boomerang of Beor
@@ -6201,6 +6201,9 @@ When you kill Sauron, you will be able to recall out from that dungeon level!
 Note: If you kill Sauron, you will automatically also get kill credit for the
 Shadow of Dol Guldur, meaning that the Shadow won't spawn for you anymore if
 you didn't kill it before killing Sauron.
+
+(****) Getting out of the Halls of Mandos will be complemented with an entry
+into 'Noteworthy Occurances' list.
 
 
 
