@@ -297,7 +297,7 @@ I:1000:0
 
 N:44:Digging
 D:Allows you to tunnel through walls and obstacles faster.
-D:Also affects finding items, treasure, and special features.
+D:Also improves uncovering items, treasure, and special features by digging.
 I:1000:0
 
 ## DELETEME
