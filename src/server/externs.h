@@ -652,6 +652,7 @@ extern int pick_house(struct worldpos *wpos, int y, int x);
 extern int pick_player(house_type *h_ptr);
 extern bool inside_house(struct worldpos *wpos, int x, int y);
 extern int inside_which_house(struct worldpos *wpos, int x, int y);
+extern bool inside_inn(player_type *p_ptr, cave_type *c_ptr);
 extern void house_admin(int Ind, int dir, char *args);
 extern void do_cmd_cloak(int Ind);
 extern void shadow_run(int Ind);

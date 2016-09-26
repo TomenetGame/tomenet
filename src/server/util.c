@@ -1962,7 +1962,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	}
 
 	/* disable certain ambient sounds if they shouldn't be up here */
-	if (p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE && ((!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) || !istown(wpos))) {
+	if (p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE && !inside_inn(p_ptr, c_ptr)) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, smooth);
 	} else if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE && (wpos->wz != 0 || (wild_info[wpos->wy][wpos->wx].type != WILD_OCEAN && wild_info[wpos->wy][wpos->wx].bled != WILD_OCEAN))) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, smooth);
@@ -1976,8 +1976,10 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	/* enable/switch to certain ambient loops */
 #if 0 /* buggy: enable no_house_sfx while inside a house, and the sfx will stay looping even when leaving the house */
 	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos) && p_ptr->sfx_house) { /* sfx_house check is redundant with grid_affects_player() */
-#else /* still buggy :-p */
+#elif 0 /* still buggy :-p */
 	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos)) {
+#else /* dunno */
+	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && inside_inn(p_ptr, c_ptr)) {
 #endif
 		Send_sfx_ambient(Ind, SFX_AMBIENT_FIREPLACE, smooth);
 	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE &&
@@ -7318,13 +7320,14 @@ void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos) {
    check whether he is affected in certain ways.. */
 void grid_affects_player(int Ind, int ox, int oy) {
 	player_type *p_ptr = Players[Ind];
-	int x = p_ptr->px, y = p_ptr->py;
+	int x = p_ptr->px, y = p_ptr->py, shop = -1;
 	cave_type **zcave;
 	cave_type *c_ptr;
 	bool inn = FALSE, music = FALSE;
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+	inn = inside_inn(p_ptr, c_ptr);
 
 	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
 	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
@@ -7386,9 +7389,8 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	}
 
 	/* Handle entering/leaving taverns. (-3 check is for distinguishing inn from sickbay) */
-	if (p_ptr->music_monster != -3 && p_ptr->music_monster != -4
-	    && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED)
-	    && (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos))) {
+	if (c_ptr->feat == FEAT_SHOP) shop = GetCS(c_ptr, CS_SHOP)->sc.omni;
+	if (p_ptr->music_monster != -3 && p_ptr->music_monster != -4 && inn) {
 		p_ptr->music_monster = -4; //hack inn music
 		handle_music(Ind);
 		music = TRUE;
@@ -7396,9 +7398,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		/* Also take care of inn ambient sfx (fireplace) */
 		handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos, TRUE);
 	}
-	if (p_ptr->music_monster == -4
-	    && !((f_info[c_ptr->feat].flags1 & FF1_PROTECTED)
-	    && (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos)))) {
+	if (p_ptr->music_monster == -4 && !inn) {
 		p_ptr->music_monster = -1; //unhack inn music
 		handle_music(Ind);
 		music = TRUE;
@@ -7422,9 +7422,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	}
 #endif
 
-	/* Hack: Inns count as houses */
-	if (!p_ptr->wpos.wz && ((c_ptr->info & CAVE_PROT) || (f_info[c_ptr->feat].flags1 & FF1_PROTECTED))) inn = TRUE;
-
+	/* Hack: Inns count as houses too */
 	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || inn || p_ptr->store_num != -1) {
 		if (!p_ptr->grid_house) {
 			p_ptr->grid_house = TRUE;
