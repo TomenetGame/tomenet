@@ -72,7 +72,7 @@ D:Pseudo-id ranged weapons and ammunition faster and (at 11+) in more detail.
 A:6:Shooting techniques
 I:1000:0
 F:MKEY_HARDCODE
-#A:9:Create ammunition from bones or nearby rubble <- absorbed by 'Archer techniques'
+#A:9:Craft ammunition from bones or nearby rubble <- absorbed by 'Archer techniques'
 
 N:8:Sling-mastery
 D:Allows more skillful use of slings and reduces break chance of shots.

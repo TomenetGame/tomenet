@@ -100,7 +100,7 @@ __classes_diz = {
     "archer is. They are bad at close quarters, and may",
     "get hindered when trying to shoot, but can train",
     "calmness to overcome this. One of the techniques",
-    "they learn is to create ammunition from rubble",
+    "they learn is to craft ammunition from rubble",
     "(slings) and bones (bows/crossbows). Dexterity is",
     "their primary stat, and the lighter armour they",
     "wear, the better is their aim.",},

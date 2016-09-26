@@ -1262,7 +1262,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		}
 		if (p_ptr->ranged_double) {
 			p_ptr->ranged_double = 0;
-			msg_print(Ind, "You stop using double-shots.");
+			msg_print(Ind, "You stop using double shots.");
 		}
 		if (p_ptr->ranged_barrage) {
 			p_ptr->ranged_barrage = 0;

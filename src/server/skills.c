@@ -405,17 +405,17 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 	case SKILL_ARCHERY:
 		if (old_value < 40 && new_value >= 40)
-			msg_print(Ind, "\374\377GYou learn the shooting technique 'Flare missile'! (press '\377gm\377G')");
+			msg_print(Ind, "\374\377GYou learn the shooting technique 'Flare Missile'! (press '\377gm\377G')");
 		if (old_value < 80 && new_value >= 80)
-			msg_print(Ind, "\374\377GYou learn the shooting technique 'Precision shot'!");
+			msg_print(Ind, "\374\377GYou learn the shooting technique 'Precision Shot'!");
 		if (old_value < 100 && new_value >= 100)
-			msg_print(Ind, "\374\377GYou learn how to create ammunition from bones and rubble!");
+			msg_print(Ind, "\374\377GYou learn how to craft ammunition from bones and rubble!");
 		if (old_value < 110 && new_value >= 110)
 			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown ranged weapons and ammo!");
 		if (old_value < 160 && new_value >= 160)
-			msg_print(Ind, "\374\377GYou learn the shooting technique 'Double-shot'!");
+			msg_print(Ind, "\374\377GYou learn the shooting technique 'Double Shot'!");
 		if (old_value < 200 && new_value >= 200)
-			msg_print(Ind, "\374\377GYour ability to create ammunition improved remarkably!");
+			msg_print(Ind, "\374\377GYour ability to craft ammunition improved remarkably!");
 		if (old_value < 250 && new_value >= 250)
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Barrage'!");
 //		if (old_value < 500 && new_value >= 500)

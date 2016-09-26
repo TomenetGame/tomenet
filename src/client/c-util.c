@@ -4930,7 +4930,7 @@ Chain_Macro:
 					case mw_shoot:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact technique name.");// and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GFlare missile");
+						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GFlare Missile");
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact technique name:");
 						break;

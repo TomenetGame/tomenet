@@ -5320,7 +5320,7 @@ void do_cmd_fire(int Ind, int dir) {
 			msg_print(Ind, "You cannot use shooting techniques with a boomerang!");
 			p_ptr->ranged_double = FALSE;
 		} else if (o_ptr->number < 2) {
-			msg_print(Ind, "You need at least 2 projectiles for a double-shot!");
+			msg_print(Ind, "You need at least 2 projectiles for a double shot!");
 			p_ptr->ranged_double = FALSE;
 		}
 		else if (p_ptr->cst >= 1) { /* don't toggle off even if we reach 0 stamina */

@@ -7124,7 +7124,7 @@ void do_cmd_fletchery(int Ind) {
 		return;
 	}
 	if (get_skill(p_ptr, SKILL_ARCHERY) < 10) {
-		msg_print(Ind, "You don't know how to create ammo well.");
+		msg_print(Ind, "You don't know how to craft ammo well.");
 		return;
 	}
 
@@ -7161,7 +7161,7 @@ void do_cmd_fletchery(int Ind) {
 			x = p_ptr->px + ddx[dir];
 			c_ptr = &zcave[y][x];
 			if (c_ptr->feat == FEAT_RUBBLE) {
-				/* new: actually tunnel through the rubble in order to create ammo from it - C. Blue */
+				/* new: actually tunnel through the rubble in order to craft ammo from it - C. Blue */
 
 				/* need this here since we abuse it to reset current_create_sling_ammo */
 				stop_precision(Ind);
@@ -7876,8 +7876,8 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 			p_ptr->ranged_flare = FALSE; p_ptr->ranged_precision = FALSE; p_ptr->ranged_barrage = FALSE;
 		}
 		p_ptr->ranged_double = !p_ptr->ranged_double; /* toggle */
-		if (p_ptr->ranged_double) msg_print(Ind, "You switch to shooting double-shots.");
-		else msg_print(Ind, "You stop using double-shots.");
+		if (p_ptr->ranged_double) msg_print(Ind, "You switch to shooting double shots.");
+		else msg_print(Ind, "You stop using double shots.");
 s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		break;

@@ -4397,7 +4397,7 @@ void check_experience(int Ind) {
 	if (old_lev < mtech_lev[p_ptr->pclass][7] && p_ptr->lev >= mtech_lev[p_ptr->pclass][7])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Perceive Noise'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][8] && p_ptr->lev >= mtech_lev[p_ptr->pclass][8])
-		msg_print(Ind, "\374\377GYou learn the fighting technique 'Flash bomb'!");
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Flash Bomb'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][10] && p_ptr->lev >= mtech_lev[p_ptr->pclass][10])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Spin'!");
 #ifdef ENABLE_ASSASSINATE
@@ -4408,7 +4408,7 @@ void check_experience(int Ind) {
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Berserk'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][14] && p_ptr->lev >= mtech_lev[p_ptr->pclass][14]
 	    && p_ptr->total_winner)
-		msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow run'!");
+		msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow Run'!");
 
 	/* update the client's 'm' menu for fighting techniques */
 	calc_techniques(Ind);

@@ -1772,6 +1772,26 @@ void cmd_the_guide(void) {
 					strcat(chapter, guide_spell[i]);
 					break;
 				}
+				if (chapter[0]) continue;
+
+				/* Fighting/ranged techniques, hard-coded in the client */
+				for (i = 0; i < 16; i++) {
+					if (!strcasestr(melee_techniques[i], buf)) continue;
+					if (strstr(melee_techniques[i], "Tech") == melee_techniques[i]) continue; //skip placeholders
+					if (strstr(melee_techniques[i], "XXX") == melee_techniques[i]) continue; //skip placeholders
+					strcpy(chapter, "    ");
+					strcat(chapter, melee_techniques[i]);
+					break;
+				}
+				for (i = 0; i < 16; i++) {
+					if (!strcasestr(ranged_techniques[i], buf)) continue;
+					if (strstr(ranged_techniques[i], "Tech") == ranged_techniques[i]) continue; //skip placeholders
+					if (strstr(ranged_techniques[i], "XXX") == ranged_techniques[i]) continue; //skip placeholders
+					strcpy(chapter, "    ");
+					strcat(chapter, ranged_techniques[i]);
+					break;
+				}
+
 				continue;
 			}
 			/* the original use of 'chapter' meant numerical chapters, which can have up to 8 characters, processed below */

@@ -1549,7 +1549,7 @@ static int get_ranged_technique(int *sn) {
 		else if (choice == '@') {
 			char buf[80];
 
-			strcpy(buf, "Flare missile");
+			strcpy(buf, "Flare Missile");
 			if (!get_string("Technique? ", buf, 79)) {
 				if (redraw) {
 					Term_load();
