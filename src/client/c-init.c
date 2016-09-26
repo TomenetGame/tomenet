@@ -342,7 +342,7 @@ static void init_monster_list() {
 	char buf[1024], *p1, *p2;
 	int v1 = 0, v2 = 0, v3 = 0;
 	FILE *fff;
-	bool discard = FALSE, multihued = FALSE, breathhued = FALSE;
+	bool discard = FALSE, multihued = FALSE, breathhued = FALSE, basehued = FALSE;
 	bool halloween; /* Don't display 'level 127' for townies during Halloween */
 
 	/* actually use local r_info.txt - a novum */
@@ -414,16 +414,20 @@ static void init_monster_list() {
 				discard = FALSE;
 			}
 
-			if (multihued) monster_list_any[monster_list_idx - 1] = TRUE;
-			else if (breathhued) monster_list_breath[monster_list_idx - 1] = TRUE;
+			if (!basehued) {
+				if (multihued) monster_list_any[monster_list_idx - 1] = TRUE;
+				else if (breathhued) monster_list_breath[monster_list_idx - 1] = TRUE;
+			}
 			multihued = FALSE;
 			breathhued = FALSE;
+			basehued = FALSE;
 		}
 		if (buf[0] == 'F' && strstr(buf, "JOKEANGBAND")) discard = TRUE;
 		if (buf[0] == 'F' && strstr(buf, "PET")) discard = TRUE;
 		if (buf[0] == 'F' && strstr(buf, "NEUTRAL")) discard = TRUE;
 		if (buf[0] == 'F' && strstr(buf, "ATTR_ANY")) multihued = TRUE;
 		if (buf[0] == 'F' && strstr(buf, "ATTR_MULTI")) breathhued = TRUE;
+		if (buf[0] == 'F' && strstr(buf, "ATTR_BASE")) basehued = TRUE;
 
 		if (buf[0] == 'N' && strstr(buf, "Test Blob")) discard = TRUE;
 
@@ -473,6 +477,7 @@ static void init_monster_list() {
 			if (buf[0] == 'F' && strstr(buf, "NEUTRAL")) discard = TRUE;
 			if (buf[0] == 'F' && strstr(buf, "ATTR_ANY")) multihued = TRUE;
 			if (buf[0] == 'F' && strstr(buf, "ATTR_MULTI")) breathhued = TRUE;
+			if (buf[0] == 'F' && strstr(buf, "ATTR_BASE")) basehued = TRUE;
 
 			if (buf[0] == 'N' && strstr(buf, "Test Blob")) discard = TRUE;
 
