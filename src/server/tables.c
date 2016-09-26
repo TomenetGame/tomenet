@@ -1852,6 +1852,9 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_WATER,
 			'+', 0,
 			'%', 120, },
+		{ SKILL_NATURE,
+			'+', 0,
+			'%', 120, },
 		{ SKILL_FIRE, /* But hates fire */
 			'+', 0,
 			'%', 60, },
