@@ -6307,6 +6307,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (m_ptr->hp > 9362) dam = (m_ptr->hp / 100) * dam;
 			else if (m_ptr->hp > 936) dam = ((m_ptr->hp / 10) * dam) / 10;
 			else dam = (m_ptr->hp * dam) / 100;
+
 			/* Make it have an effect on low-HP monsters such as townies */
 			if (!dam) dam = 1;
 
@@ -6318,28 +6319,26 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if ((r_ptr->flags3 & RF3_UNDEAD) ||
 			    //(r_ptr->flags3 & RF3_DEMON) ||
 			    (r_ptr->flags3 & RF3_NONLIVING) ||
-			    (r_ptr->flags1 & RF1_UNIQUE) ||
-			    (strchr("Egv", r_ptr->d_char))) {
+			    strchr("Egv", r_ptr->d_char)) {
 #ifdef OLD_MONSTER_LORE
-				if (r_ptr->flags3 & RF3_UNDEAD) {
-					if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
-				}
-				//if (r_ptr->flags3 & RF3_DEMON) {
-					//if (seen) r_ptr->r_flags3 |= RF3_DEMON;
-				//}
-				if (r_ptr->flags3 & RF3_NONLIVING) {
-					if (seen) r_ptr->r_flags3 |= RF3_NONLIVING;
-				}
-				if (r_ptr->flags1 & RF1_UNIQUE) {
-					if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
-				}
+				if ((r_ptr->flags3 & RF3_UNDEAD) && seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+				//if ((r_ptr->flags3 & RF3_DEMON) && seen) r_ptr->r_flags3 |= RF3_DEMON;
+				if ((r_ptr->flags3 & RF3_NONLIVING) && seen) r_ptr->r_flags3 |= RF3_NONLIVING;
 #endif
-
 				note = " is unaffected";
 				obvious = FALSE;
 				dam = 0;
 				quiet_dam = TRUE;
 				if (!quiet) p_ptr->ret_dam = 0;
+			} else if (r_ptr->flags1 & RF1_UNIQUE) {
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
+#endif
+				note = " resists";
+				dam *= 3; dam /= (randint(6) + 6);
+
+				/* Make it have an effect on low-HP monsters such as townies */
+				if (!dam) dam = 1;
 			}
 
 			/* the_sandman: return 15% of the damage to player. This is special
@@ -6361,28 +6360,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (m_ptr->hp > 9362) dam = (m_ptr->hp / 100) * dam;
 			else if (m_ptr->hp > 936) dam = ((m_ptr->hp / 10) * dam) / 10;
 			else dam = (m_ptr->hp * dam) / 100;
+
+			if (r_ptr->flags1 & RF1_UNIQUE) {
+				note = " resists";
+				dam *= 3; dam /= (randint(6) + 6);
+			}
+
 			/* Make it have an effect on low-HP monsters such as townies */
 			if (!dam) dam = 1;
-
-			if (dam > i * 200) {
-				dam = i * 200;
-				if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				(r_ptr->flags3 & RF3_UNDEAD) ||
-				(r_ptr->flags3 & RF3_NONLIVING)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-				}
-			}
-
-			if (dam < i * 10 + 100) {
-				dam = i * 10 + 100;
-				if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				(r_ptr->flags3 & RF3_UNDEAD) ||
-				(r_ptr->flags3 & RF3_NONLIVING)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-				}
-			}
 			break;
 
 		/* Polymorph monster (Use "dam" as "power") */
