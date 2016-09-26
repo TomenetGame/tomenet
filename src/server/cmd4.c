@@ -423,22 +423,22 @@ void do_cmd_check_uniques(int Ind, int line) {
 			fprintf(fff, "\377%c", c_out);
 
 			/* Hack -- Show the ID for admin -- and also the level */
-			if (admin) fprintf(fff, "(%4d, L%d) ", k, r_ptr->level);
+			if (admin) fprintf(fff, "(%4d) ", k);
 
 			/* Format message */
 			//fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
 			/* different colour for uniques higher than Morgoth (the 'boss') */
 			//if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name); else
 			if (!(p_ptr->uniques_alive)) {
-				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (100)\377%c was slain by", r_name + r_ptr->name, c_out);
-				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
-				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
-				else fprintf(fff, "%s (%d) was slain by", r_name + r_ptr->name, r_ptr->level);
+				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (L100)\377%c was slain by", r_name + r_ptr->name, c_out);
+				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (L%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
+				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (L%d)\377%c was slain by", r_name + r_ptr->name, r_ptr->level, c_out);
+				else fprintf(fff, "%s (L%d) was slain by", r_name + r_ptr->name, r_ptr->level);
 			} else {
-				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (100)\377%c", r_name + r_ptr->name, c_out);
-				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
-				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
-				else fprintf(fff, "%s (%d)", r_name + r_ptr->name, r_ptr->level);
+				if (k == RI_MORGOTH) fprintf(fff, "\377v%s (L100)\377%c", r_name + r_ptr->name, c_out);
+				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
+				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
+				else fprintf(fff, "%s (L%d)", r_name + r_ptr->name, r_ptr->level);
 			}
 			
 			for (i = 1; i <= NumPlayers; i++) {
