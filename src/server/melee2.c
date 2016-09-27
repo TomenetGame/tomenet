@@ -5180,18 +5180,11 @@ static void get_moves(int Ind, int m_idx, int *mm){
 	bool close_combat = FALSE;
 	bool robin = (m_ptr->r_idx == RI_ROBIN && !m_ptr->extra);
 
-	/* If player is next to us, we might attack instead of avoiding terrain problems */
+
+	/* If player is next to us, we might eventually decide to attack instead of avoiding terrain problems etc */
 	if (ABS(m_ptr->fx - x2) <= 1 && ABS(m_ptr->fy - y2) <= 1 &&
 	    (!(r_ptr->flags7 & RF7_AI_ANNOY) || m_ptr->taunted))
 		close_combat = TRUE;
-
-#ifdef MONSTER_FLOW
-	/* Flow towards the player */
-	if (flow_by_sound) {
-		/* Flow towards the player */
-		(void)get_moves_aux(Ind, m_idx, &y2, &x2);
-	}
-#endif
 
 #ifdef MONSTER_ASTAR
 	/* Monster uses A* pathfinding algorithm? - C. Blue */
@@ -5204,14 +5197,16 @@ static void get_moves(int Ind, int m_idx, int *mm){
 			break;
 		default: ; /* Nothing, either we're fine or we don't want to do anything special */
 		}
+ #ifdef MONSTER_FLOW
+	else
+ #endif
 #endif
-
-
-#if 0 /* moved to process_monsters */
-	/* for C_BLUE_AI (to remember if the player stood beside us and
-	   then runs away from us to make us follow him): */
-	if ((ABS(m_ptr->fy - y2) <= 1) && (ABS(m_ptr->fx - x2) <= 1))
-		m_ptr->last_target = p_ptr->id;
+#ifdef MONSTER_FLOW
+	/* Flow towards the player */
+	if (flow_by_sound) {
+		/* Flow towards the player */
+		(void)get_moves_aux(Ind, m_idx, &y2, &x2);
+	}
 #endif
 
 	/* Extract the "pseudo-direction" */
@@ -5222,7 +5217,6 @@ static void get_moves(int Ind, int m_idx, int *mm){
 		done = TRUE;
 		m_ptr->last_target = 0;
 	}
-
 #if SAFETY_RADIUS > 0
 	else if ((m_ptr->ai_state & AI_STATE_EFFECT)
 	    && !close_combat) {
@@ -5287,13 +5281,13 @@ static void get_moves(int Ind, int m_idx, int *mm){
 			done = TRUE;
 			m_ptr->last_target = 0;
 		}
-#endif	// SAFETY_RADIUS
+#endif	/* SAFETY_RADIUS */
 	}
-
-
 	/* Tease the player */
 	else if (((r_ptr->flags7 & RF7_AI_ANNOY) || robin) && !m_ptr->taunted) {
-		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < ANNOY_DISTANCE) {
+		/* Cheeze note: Use of distance() makes diagonal approaching preferable, with the monster
+		   keeping only 2-3 grids distance instead of 3-4 for straight vertical/horizontal distances */
+		if (distance(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px) < ANNOY_DISTANCE) {
 			y = -y;
 			x = -x;
 			/* so that they never get reversed again */
@@ -5418,7 +5412,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 	if (r_ptr->flags2 & RF2_DEATH_ORB) {
 		if (!los(m_ptr->fy, m_ptr->fx, y2, x2)) return (FALSE);
 	}
-#endif	// 0
+#endif
 
 	//if (!stupid_monsters && (is_friend(m_ptr) < 0))
 #ifndef STUPID_MONSTERS
@@ -5427,7 +5421,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 		cave_type **zcave;
 		/* paranoia */
 		if (!(zcave = getcave(&m_ptr->wpos))) return;
-#ifdef	MONSTERS_HIDE_HEADS
+ #ifdef	MONSTERS_HIDE_HEADS
 		/*
 		 * Animal packs try to get the player out of corridors
 		 * (...unless they can move through walls -- TY)
@@ -5455,8 +5449,8 @@ static void get_moves(int Ind, int m_idx, int *mm){
 				if (find_hiding(Ind, m_idx, &y, &x)) done = TRUE;
 			}
 		}
-#endif	// MONSTERS_HIDE_HEADS
-#ifdef	MONSTERS_GREEDY
+ #endif	// MONSTERS_HIDE_HEADS
+ #ifdef	MONSTERS_GREEDY
 		/* Monsters try to pick things up */
 		if (!done && (r_ptr->flags2 & (RF2_TAKE_ITEM | RF2_KILL_ITEM)) &&
 		    (zcave[m_ptr->fy][m_ptr->fx].o_idx) && magik(80)) {
@@ -5498,8 +5492,8 @@ static void get_moves(int Ind, int m_idx, int *mm){
 				}
 			}
 		}
-#endif	// MONSTERS_GREEDY
-#ifdef	MONSTERS_HEMM_IN
+ #endif	// MONSTERS_GREEDY
+ #ifdef	MONSTERS_HEMM_IN
 		/* Monster groups try to surround the player */
 		if (!done && (r_ptr->flags1 & RF1_FRIENDS)) {
 			int i;
@@ -5533,7 +5527,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 			done = TRUE;
 		}
 	}
-#endif	// MONSTERS_HEMM_IN
+ #endif	// MONSTERS_HEMM_IN
 #endif	// STUPID_MONSTERS
 
 #ifdef C_BLUE_AI
