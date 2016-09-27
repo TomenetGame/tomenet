@@ -1547,18 +1547,6 @@ void admin_outfit(int Ind, int realm) {
 	o_ptr->number = 1;
 	do_admin_outfit();
 
-	invcopy(o_ptr, lookup_kind(TV_BOW, SV_LONG_BOW));
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
-	o_ptr->to_h = 200;
-	o_ptr->to_d = 200;
-	o_ptr->number = 1;
-	do_admin_outfit();
-
-	invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
-	o_ptr->number = 1;
-	do_admin_outfit();
-
 	invcopy(o_ptr, lookup_kind(TV_ROD, SV_ROD_PROBING));
 	o_ptr->number = 3;
 	o_ptr->name2 = EGO_RISTARI;
@@ -1571,17 +1559,33 @@ void admin_outfit(int Ind, int realm) {
 	o_ptr->number = 1;
 	do_admin_outfit();
 
-	/* either to inscribe @Ox or to one-hit-kill */
-	invcopy(o_ptr, lookup_kind(TV_POLEARM, SV_SCYTHE));
-	o_ptr->name1 = ART_SCYTHE_DM;
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
-	o_ptr->number = 1;
-	do_admin_outfit();
+	if (!p_ptr->fruit_bat) {
+		invcopy(o_ptr, lookup_kind(TV_BOW, SV_LONG_BOW));
+		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
+		o_ptr->to_h = 200;
+		o_ptr->to_d = 200;
+		o_ptr->number = 1;
+		do_admin_outfit();
 
+		invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
+		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
+		o_ptr->number = 1;
+		do_admin_outfit();
+
+		/* either to inscribe @Ox or to one-hit-kill */
+		invcopy(o_ptr, lookup_kind(TV_POLEARM, SV_SCYTHE));
+		o_ptr->name1 = ART_SCYTHE_DM;
+		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
+		o_ptr->number = 1;
+		do_admin_outfit();
+	}
+
+#if 0
 #ifdef TEST_SERVER
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
 	o_ptr->number = 1;
 	do_admin_outfit();
+#endif
 #endif
 }
 
