@@ -1115,6 +1115,7 @@ s16b get_obj_num(int max_level, u32b resf) {
 	/* Calculate loop bounds */
 	n = alloc_kind_index_level[max_level + 1];
 
+	/* If we're opening a chest, prevent generating another chest from it */
 	if (opening_chest) {
 		/* Process probabilities */
 		for (i = 0; i < n; i++) {
