@@ -5433,9 +5433,16 @@ s_printf("ASTAR_INCOMPLETE\n");
 			y2 = p_ptr->py; //since they were marker-hacked by get_moves_astar().
 			break;
 #else
-			/* Skip turn (and must nevertheless consume energy!)
-			   to wait for A* path-finding to complete.
-			   Hm, results seem not noticable? :/ */
+			/* Skip turn to wait for A* path-finding to complete.
+			   Hm, results seem not really noticable? :/ */
+
+			/* Note: We need assume that we need to consume energy nevertheless, so we don't stack it like crazy.
+			   However, monster code that refills energy actually doesn't allow having more than level_speed
+			   (1 turn) worth of energy, so it doesn't matter.
+			   The advantage of not consuming energy is that we can move right away when ASTAR_DISTRIBUTE
+			   finishes. So, compensate here to keep our energy up: */
+			m_ptr->energy += level_speed(&m_ptr->wpos); //cancel out energy reduction applied after returning
+
 			return TRUE;
 #endif
 		}
