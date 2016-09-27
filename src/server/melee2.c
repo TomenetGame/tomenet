@@ -4008,7 +4008,7 @@ int mon_will_run(int Ind, int m_idx) {
  * being close enough to chase directly.  I have no idea what will
  * happen if you combine "smell" with low "aaf" values.
  */
-static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp) {
+static bool get_moves_flow(int Ind, int m_idx, int *yp, int *xp) {
 	int i, y, x, y1, x1, when = 0, cost = 999;
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
@@ -4183,15 +4183,25 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 			break;
 		/* Result was 'no moves'? */
 		case 0:
-			/* Don't do anything then */
+			/* We can't move at all, aka entombed?
+			   get_moves() will try to blink or teleport in this case. */
 			break;
-		/* Result was 'indirect'? */
+		/* Result was 'indirect'? (aka out of reach/memory) */
 		case 1:
-//todo:
+			/* Currently we just try to get any closer at all in this case,
+			   even if we might find out afterwards that this wasn't a good route.
+			   (Still not worse than if we fell back to normal movement, so it's fine.) */
+			//todo: use some optimized, higher-level pathing routine maybe, using rooms and hallways as nodes etc..
+
+			/* Use our 'hope' result to determine our movement */
+			*xp = acnode[0].x;
+			*yp = acnode[0].y;
 			break;
 		/* Result was 'no good moves'? */
 		case 2:
-//todo:
+			/* We don't have moves that bring us closer.
+			   get_moves() will sometimes try to blink in this case,
+			   to possibly get past a hindering wall and open up a new path. */
 			break;
 		}
 
@@ -4305,7 +4315,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 
 				/* Does the open list node have same position as the current successor node? */
 				if (aonode[i].x == tmp_node.x && aonode[i].y == tmp_node.y) {
-					/* ..it also hasn't better F than we do? */
+					/* ..it also hasn't better G than we do? */
 					if (aonode[i].G <= tmp_node.G) {
 						/* Then just discard this successor. */
 						skip = TRUE;
@@ -4326,7 +4336,7 @@ static int get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 
 				/* Does the closed list node have same position as the current successor node? */
 				if (acnode[i].x == tmp_node.x && acnode[i].y == tmp_node.y) {
-					/* ..it also hasn't better F than we do? */
+					/* ..it also hasn't better G than we do? */
 					if (acnode[i].G <= tmp_node.G) {
 						/* Then just discard this successor. */
 						skip = TRUE;
@@ -4414,14 +4424,18 @@ s_printf("ASTAR: 0 (no moves, %d,%d,%d)\n", aoc, acc, turn);
 		if (*xp == mx && *yp == my) //hack: we abused xp/yp to indicate that it's not yet our turn
 			ao->result = 0;
  #endif
-		/* Don't do anything herre if we can't move.. */
+		/* Don't do anything herre if we can't move..
+		   get_moves() will try to cast blink or teleport in this case. */
 		return 0;
 	}
 
-	/* We didn't find a clear way. */
-//todo:
+	/* We didn't find a clear way, ending up out of memory.
+	   Two possible reasons:
+	   - target is too far or unreachable, but we can at least still move in a way that brings us closer.
+	   - we just can't get closer (ways are blocked). */
 
 	/* We found a way to get closer to the target at least? */
+#if 0
 #ifdef TEST_SERVER
 s_printf("ASTAR: 1 (indirect, %d,%d,%d)\n", aoc, acc, turn);
 #endif
@@ -4431,9 +4445,61 @@ s_printf("ASTAR: 1 (indirect, %d,%d,%d)\n", aoc, acc, turn);
 		ao->result = 1;
  #endif
 	return 1;
+#else
+	/* Scan all grids on the closed list to find the one closest to the target.
+	   Condition: Must be an improvement over our current position! (Otherwise
+	   we'll have to return result '2' aka 'no good moves' instead.) */
+	minF = distance(mx, my, px, py); //abuse for distance
+	destIdx = -1;
+	for (i = 0, ireal = 0; ireal < acc; i++) {
+		/* skip notes marked as 'deleted' */
+		if (!acnode[i].in_use) continue;
+		ireal++;
 
+		if ((j = distance(acnode[i].x, acnode[i].y, px, py)) < minF) {
+			minF = j;
+			destIdx = i;
+		}
+	}
+	if (destIdx != -1) {
+		/* Backtrace the path from destination (player) to start (monster)
+		   through the closed list, from player position to monster position. */
+		i = destIdx;
+#ifdef TEST_SERVER
+s_printf("ASTAR: 1 (indirect, %d,%d,%d) -> [%d]:%d,%d d:%d\n", aoc, acc, turn, i, acnode[i].x, acnode[i].y, minF);
+#endif
 
-	/* We had moves but didn't find any way that could get us closer to the target */
+		while (TRUE) {
+			/* Stop one grid before the very first node (parent_idx = 0) aka
+			   the monster's grid, as the first node after that one is our goal. */
+			if (!acnode[i].parent_idx) break;
+			/* Go back another step */
+			i = acnode[i].parent_idx;
+		}
+
+ #ifdef ASTAR_DISTRIBUTE
+		/* Remember result for when it's actually our turn? */
+		if (*xp == mx && *yp == my) { //hack: we abused xp/yp to indicate that it's not yet our turn
+			ao->result = 1;
+			//another hack: abuse first closed node to store our x,y result temporarily
+			acnode[0].x = acnode[i].x;
+			acnode[0].y = acnode[i].y;
+		} else {
+			/* Return our movement coordinates */
+			*xp = acnode[i].x;
+			*yp = acnode[i].y;
+		}
+ #else
+		/* Return our movement coordinates */
+		*xp = acnode[i].x;
+		*yp = acnode[i].y;
+ #endif
+
+		return 1;
+	}
+#endif
+
+	/* We can move, but didn't find any move that could get us closer to the target */
 #ifdef TEST_SERVER
 s_printf("ASTAR: 2 (no good moves, %d,%d,%d)\n", aoc, acc, turn);
 #endif
@@ -5164,8 +5230,12 @@ bool mon_allowed_pickup(int tval) {
  */
 /*
  * TODO: Aquatic out of water should rush for one
+ * Changed to bool for get_moves_astar():
+ *  get_moves_astar() may actually use movement spells!
+ *  So we need to know if that was done and end our turn prematurely accordingly,
+ *  it will return FALSE usually, and TRUE if A* movement spells were used. - C. Blue
  */
-static void get_moves(int Ind, int m_idx, int *mm){
+static bool get_moves(int Ind, int m_idx, int *mm) {
 	player_type *p_ptr = Players[Ind];
 
 	monster_type *m_ptr = &m_list[m_idx];
@@ -5190,12 +5260,184 @@ static void get_moves(int Ind, int m_idx, int *mm){
 	/* Monster uses A* pathfinding algorithm? - C. Blue */
 	if ((r_ptr->flags0 & RF0_ASTAR) && (m_ptr->astar_idx != -1))
 		switch (get_moves_astar(Ind, m_idx, &y2, &x2)) {
-		case 0: /* No moves - blink or teleport */
+		case 0: /* No moves (entombed) - blink or teleport */
 			//no worky: m_ptr->ai_state |= AI_STATE_EFFECT;
+
+			if (!(r_ptr->flags6 & (RF6_BLINK | RF6_TPORT))) break; //proceed normally.
+
+			{
+			int spellmove = 0; //two choices, blink or teleport
+			char m_name[MNAME_LEN];
+			int chance, rlev;
+			cave_type **zcave = getcave(&m_ptr->wpos);
+
+			chance = (r_ptr->freq_innate + r_ptr->freq_spell) / 2;
+			/* Only do spells occasionally */
+			if (rand_int(100) >= chance) break; //proceed normally.
+
+			if (r_ptr->flags6 & RF6_BLINK) spellmove += 2;
+			if (r_ptr->flags6 & RF6_TPORT) spellmove += 4;
+
+			switch (spellmove + rand_int(2)) {
+			case 2: case 3: case 6:
+				/* We blink */
+				spellmove = 1;
+				break;
+			case 4: case 5: case 7:
+				/* We teleport */
+				spellmove = 2;
+				break;
+			}
+
+			/* --- COPY/PASTED from make_attack_spell() --- keep in sync! --- */
+
+			/* Get the monster name (or "it") */
+			monster_desc(Ind, m_name, m_idx, 0x00);
+
+			/* Extract the monster level */
+			rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+
+#ifndef STUPID_MONSTER_SPELLS
+			if (!(r_ptr->flags2 & (RF2_STUPID))) {
+				int factor = 0;
+
+				/* Extract the 'stun' factor */
+				if (m_ptr->stunned > 50) factor += 25;
+				if (m_ptr->stunned) factor += 15;
+
+				if (magik(25 - (rlev + 3) / 4) || magik(factor)) return TRUE;
+ #ifdef GENERIC_INTERCEPTION
+				if (monst_check_grab(m_idx, 85, "cast")) return TRUE;
+ #else
+				if (monst_check_grab(m_idx, 75, "cast")) return TRUE;
+ #endif
+			}
+#endif
+
+			if (monst_check_antimagic(Ind, m_idx)) return TRUE;
+
+			/* No teleporting within no-tele vaults and such */
+			if (zcave && //paranoia
+			    zcave[m_ptr->fy][m_ptr->fx].info & CAVE_STCK) {
+				//msg_format(Ind, "%^s fails to blink.", m_name);
+				return TRUE;
+			}
+
+			if (monst_check_grab(m_idx, 50, "teleport")) return TRUE;
+
+			switch (spellmove) {
+			case 1:
+				if (teleport_away(m_idx, 10) && p_ptr->mon_vis[m_idx]) {
+					if (p_ptr->blind) msg_print(Ind, "You hear something blink away.");
+					else msg_format(Ind, "%^s blinks away.", m_name);
+				}
+				return TRUE;
+			case 2:
+				if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && p_ptr->mon_vis[m_idx]) {
+					if (p_ptr->blind) msg_print(Ind, "You hear something teleport away.");
+					else msg_format(Ind, "%^s teleports away.", m_name);
+#ifdef USE_SOUND_2010
+					sound_near_monster(m_idx, "teleport", NULL, SFX_TYPE_MON_SPELL);
+#endif
+				}
+				return TRUE;
+			}
+			break; //we didn't do anything - can't happen anymore at this point though - paranoia
+			}
+		case 2: /* No good moves (can't get closer) - blink or wait */
+			if (!(r_ptr->flags6 & RF6_BLINK)) break; //we can't blink. Proceed normally.
+			if (rand_int(3)) break; //we decided to not to blink, but just wait..
+
+			/* Blink to try and get past a hindering wall possibly */
+			{
+			char m_name[MNAME_LEN];
+			int chance, rlev;
+			cave_type **zcave = getcave(&m_ptr->wpos);
+
+			chance = (r_ptr->freq_innate + r_ptr->freq_spell) / 2;
+			/* Only do spells occasionally */
+			if (rand_int(100) >= chance) break; //proceed normally.
+
+			/* --- COPY/PASTED from make_attack_spell() --- keep in sync! --- */
+
+			/* Get the monster name (or "it") */
+			monster_desc(Ind, m_name, m_idx, 0x00);
+
+			/* Extract the monster level */
+			rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+
+#ifndef STUPID_MONSTER_SPELLS
+			if (!(r_ptr->flags2 & (RF2_STUPID))) {
+				int factor = 0;
+
+				/* Extract the 'stun' factor */
+				if (m_ptr->stunned > 50) factor += 25;
+				if (m_ptr->stunned) factor += 15;
+
+				if (magik(25 - (rlev + 3) / 4) || magik(factor)) return TRUE;
+ #ifdef GENERIC_INTERCEPTION
+				if (monst_check_grab(m_idx, 85, "cast")) return TRUE;
+ #else
+				if (monst_check_grab(m_idx, 75, "cast")) return TRUE;
+ #endif
+			}
+#endif
+
+			if (monst_check_antimagic(Ind, m_idx)) return TRUE;
+
+			/* No teleporting within no-tele vaults and such */
+			if (zcave && //paranoia
+			    zcave[m_ptr->fy][m_ptr->fx].info & CAVE_STCK) {
+				//msg_format(Ind, "%^s fails to blink.", m_name);
+				return TRUE;
+			}
+
+			if (monst_check_grab(m_idx, 50, "teleport")) return TRUE;
+
+			if (teleport_away(m_idx, 10) && p_ptr->mon_vis[m_idx]) {
+				if (p_ptr->blind) msg_print(Ind, "You hear something blink away.");
+				else msg_format(Ind, "%^s blinks away.", m_name);
+			}
+			return TRUE;
+			}
+		/* Either we're fine or we don't want to do anything special:
+		   -1 = we're performing A* fine.
+		    1 = we can't find a path to the target, but we can at least get closer. */
+		case -1:
+		case 1:
 			break;
-		case 2: /* No good moves - blink or wait */
+		case -2:
+			/* We couldn't acquire an A* slot,
+			   or we actually have LoS to the player.
+			   -> Fall back to normal movement. */
+#ifdef TEST_SERVER
+s_printf("ASTAR_FALLBACK\n");
+#endif
 			break;
-		default: ; /* Nothing, either we're fine or we don't want to do anything special */
+		case -3:
+#ifdef TEST_SERVER
+s_printf("ASTAR_INCOMPLETE\n");
+#endif
+			/* Shouldn't happen here. -3 should only be returned in process_monsters_astar().
+			   It can happen though if ASTAR_DISTRIBUTE is too small compared to ASTAR_MAX_NODES
+			   and therefore cannot finish up the path-finding before the monster can move again.
+			   Or in other words, if the monster moves too fast for the path-finding to complete.
+			   So in case this actually does happen, we could..
+			   -fall back to normal movement routine in between while A* has not yet finished.
+			    This is bad and can cause wrong movement, but still better than nothing.
+			   -actually stop the monster for this turn, to allow path-finding hopefully finish
+			    next turn (or even worse, later..). */
+#if 0
+			/* Fall back to normal movement */
+			x2 = p_ptr->px; //repair coordinates for normal movement,
+			y2 = p_ptr->py; //since they were marker-hacked by get_moves_astar().
+			break;
+#else
+			/* Skip turn (and must nevertheless consume energy!)
+			   to wait for A* path-finding to complete.
+			   Hm, results seem not noticable? :/ */
+			return TRUE;
+#endif
 		}
  #ifdef MONSTER_FLOW
 	else
@@ -5205,7 +5447,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 	/* Flow towards the player */
 	if (flow_by_sound) {
 		/* Flow towards the player */
-		(void)get_moves_aux(Ind, m_idx, &y2, &x2);
+		(void)get_moves_flow(Ind, m_idx, &y2, &x2);
 	}
 #endif
 
@@ -5373,7 +5615,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 				bool tested_so_far = FALSE;
 				/* Often stay still and don't move at all to save your
 				   turn for attacking in case the player appraoches. */
-				if (rand_int(100)) return;
+				if (rand_int(100)) return FALSE;
 				/* Move randomly without getting closer -
 				   this will cancel the actual point of C_BLUE_AI!
 				   Moving randomly is merely eye-candy, that's why
@@ -5401,7 +5643,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 				}
 				/* If monster didn't want to move randomly,
 				   just stay still (shouldn't happen though) */
-				if (!c_blue_ai_done) return;
+				if (!c_blue_ai_done) return FALSE;
 			}
 		}
 	}
@@ -5410,7 +5652,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 #if 0
 	/* Death orbs .. */
 	if (r_ptr->flags2 & RF2_DEATH_ORB) {
-		if (!los(m_ptr->fy, m_ptr->fx, y2, x2)) return (FALSE);
+		if (!los(m_ptr->fy, m_ptr->fx, y2, x2)) return FALSE;
 	}
 #endif
 
@@ -5420,7 +5662,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 		int tx = x2, ty = y2;
 		cave_type **zcave;
 		/* paranoia */
-		if (!(zcave = getcave(&m_ptr->wpos))) return;
+		if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
  #ifdef	MONSTERS_HIDE_HEADS
 		/*
 		 * Animal packs try to get the player out of corridors
@@ -5459,7 +5701,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 			if (o_ptr->k_idx && mon_allowed_pickup(o_ptr->tval) &&
 			    monster_can_pickup(r_ptr, o_ptr)) {
 				/* Just Stay */
-				return;
+				return FALSE;
 			}
 		}
 		if (!done && (r_ptr->flags2 & RF2_TAKE_ITEM) && magik(MONSTERS_GREEDY)) {
@@ -5571,7 +5813,7 @@ static void get_moves(int Ind, int m_idx, int *mm){
 	{
 		/* Stay still if we have a perfect position towards the player -
 		   no need to waste our turn then */
-		if ((ABS(m_ptr->fy - y2) == 0) || (ABS(m_ptr->fx - x2) == 0)) return;
+		if ((ABS(m_ptr->fy - y2) == 0) || (ABS(m_ptr->fx - x2) == 0)) return FALSE;
 	}
 #endif /* C_BLUE_AI */
 
@@ -5728,6 +5970,8 @@ static void get_moves(int Ind, int m_idx, int *mm){
 		}
 		break;
 	}
+
+	return FALSE;
 }
 
 #ifdef ARCADE_SERVER
@@ -7443,7 +7687,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		} else
 #endif
 		if (m_ptr->questor) get_moves_questor(Ind, m_idx, mm); /* note: we're not using a 'process_monster_questor()' for now */
-		else get_moves(Ind, m_idx, mm);
+		else if (get_moves(Ind, m_idx, mm)) {
+			/* TRUE result can only come from get_moves_astar() and means we decided to use a movement spell.
+			   In that case we're done now. */
+			m_ptr->energy -= level_speed(&m_ptr->wpos);
+			return;
+		}
 	}
 
 #ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster has planned an actual movement' */
@@ -9367,6 +9616,7 @@ void process_monsters(void) {
 
 	int		closest, dis_to_closest, lowhp;
 	bool		blos, new_los;
+	bool		interval = ((turn % cfg.fps) == 0); //assumes that cfg.fps is divisable by MONSTER_TURNS!
 
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
@@ -9448,7 +9698,7 @@ void process_monsters(void) {
 		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
 
 		/* Target dummy "snowiness" hack, checked once per second */
-		if (!m_ptr->wpos.wz) {
+		if (interval && !m_ptr->wpos.wz) {
 			if (((m_ptr->r_idx == RI_TARGET_DUMMY1) || (m_ptr->r_idx == RI_TARGET_DUMMY2)) &&
 			    (m_ptr->extra < 60) && (turn % cfg.fps == 0) &&
 			    (wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].weather_type == 2)) {
@@ -9471,6 +9721,7 @@ void process_monsters(void) {
 
 		/* Not enough energy to move */
 		if (m_ptr->energy < tmp) continue;
+
 
 		/* Make sure we don't store up too much energy */
 		//if (m_ptr->energy > tmp) m_ptr->energy = tmp;

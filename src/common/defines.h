@@ -196,8 +196,12 @@
  #define ASTAR_HEURISTICS(sx,sy,dx,dy)	(ABS((sx) - (dx)) > ABS((sy) - (dy)) ? ABS((sx) - (dx)) : ABS((sy) - (dy)))
  /* Distribute calculations onto multiple server frames?
     Assumption: Monster doesn't really move INSANELY fast: Divide cfg.fps by how often it can move at most per second.
-                Suggested default: 3 times (for monsters with +20 base speed maybe). */
- #define ASTAR_DISTRIBUTE	(ASTAR_MAX_NODES / (cfg.fps / 3))
+                Test results for ASTAR_MAX_NODES 1000 and monster vision 200:
+                 3 is not enough for a +20 monster at very shallow dungeon depths.
+                 4 is fine even for +40 there, if it's not a huge maze.
+                 5 works even in a maze.
+                Suggested default: 5 times. */
+ #define ASTAR_DISTRIBUTE	(ASTAR_MAX_NODES / (cfg.fps / 5))
 #endif
 
 /* for MONSTER_FLOW_BY_SOUND */
