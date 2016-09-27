@@ -20163,16 +20163,17 @@ D:to means such as teleport.
 
 N:1133:Star Test Blob
 G:j:p
-I:120:1d1:200:0:0
+I:110:1d1:200:0:0
 W:127:255:0:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*
 F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR
 #F:CAN_FLY
-F:AI_ANNOY
-S:1_IN_3
-S:TPORT | BLINK
+#F:AI_ANNOY
+#S:1_IN_3
+#S:BLINK
+#S:TPORT
 D:For testing
 
 #***secret message found***: Watch/read 'Game of Thrones'
