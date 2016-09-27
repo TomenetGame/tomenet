@@ -9020,11 +9020,11 @@ void process_timers() {
 				k += bree_map[k];
 				summon_override_checks = SO_ALL;
 				switch (k) {
-				case 0: place_monster_one(&wpos, 25, 118, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
-				case 1: place_monster_one(&wpos, 25, 120, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
-				case 2: place_monster_one(&wpos, 25, 122, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
-				case 3: place_monster_one(&wpos, 25, 124, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
-				//case 4: place_monster_one(&wpos, 27, 118, 1136 + rand_int(5), FALSE, FALSE, FALSE, 100, 0); break;
+				case 0: place_monster_one(&wpos, 25, 118, 1136 + rand_int(5), FALSE, FALSE, FALSE, 0, 0); break;
+				case 1: place_monster_one(&wpos, 25, 120, 1136 + rand_int(5), FALSE, FALSE, FALSE, 0, 0); break;
+				case 2: place_monster_one(&wpos, 25, 122, 1136 + rand_int(5), FALSE, FALSE, FALSE, 0, 0); break;
+				case 3: place_monster_one(&wpos, 25, 124, 1136 + rand_int(5), FALSE, FALSE, FALSE, 0, 0); break;
+				//case 4: place_monster_one(&wpos, 27, 118, 1136 + rand_int(5), FALSE, FALSE, FALSE, 0, 0); break;
 				}
 				for (l = k; l < 5; l++) bree_map[l]++;
 				summon_override_checks = SO_NONE;
