@@ -3038,7 +3038,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
 	if (((p_ptr->ghost) || (p_ptr->tim_wraith) || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
-	    && !p_ptr->admin_dm) {
+	    && !is_admin(p_ptr)) {
 		/* Message */
 		msg_print(Ind, "You cannot tunnel.");
 		return;
@@ -3118,11 +3118,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		}
 
 		/* No tunnelling through doors */
-//		else if (c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_HOME_HEAD)
-		else if ((f_info[c_ptr->feat].flags1 & FF1_DOOR) &&
-				c_ptr->feat != FEAT_SECRET)
-		{
-//                      msg_print(Ind, "You cannot tunnel through doors.");
+		//else if (c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_HOME_HEAD)
+		else if ((f_info[c_ptr->feat].flags1 & FF1_DOOR) && c_ptr->feat != FEAT_SECRET) {
+			//msg_print(Ind, "You cannot tunnel through doors.");
 
 			/* Try opening it instead */
 			do_cmd_open(Ind, dir);
@@ -3217,8 +3215,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			//do_cmd_tunnel_test(int y, int x, FALSE)
 			/* Must be tunnelable */
 			if (!(f_info[c_ptr->feat].flags1 & FF1_TUNNELABLE) ||
-				(f_info[c_ptr->feat].flags1 & FF1_PERMANENT))
-			{
+			    (f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) {
 				/* Message */
 				msg_print(Ind, f_text + f_info[c_ptr->feat].tunnel);
 
@@ -3477,7 +3474,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							invcopy(&forge, special_k_idx);
 							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
-//							forge.level = ;
+							//forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							drop_near(0, &forge, -1, wpos, y, x);
 							s_printf("DIGGING: %s found a metal piece.\n", p_ptr->name);
@@ -3510,13 +3507,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					    dug_feat != FEAT_WAY_LESS) {
 						if (magik(100)) {
 							cave_set_feat_live(wpos, y, x, dug_feat);
-//							s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
+							//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 						}
 					} else if (!rand_int(10) && special_k_idx && (tval == TV_RUNE)) {
 							invcopy(&forge, special_k_idx);
 							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
-//							forge.level = ;
+							//forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
 							drop_near(0, &forge, -1, wpos, y, x);
@@ -3654,13 +3651,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 						    dug_feat != FEAT_WAY_LESS) {
 							if (magik(100)) {
 								cave_set_feat_live(wpos, y, x, dug_feat);
-//								s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
+								//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 							}
 						} else if (!rand_int(20) && special_k_idx && (tval == TV_RUNE)) {
 							invcopy(&forge, special_k_idx);
 							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
-//							forge.level = ;
+							//forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
 							msg_print(Ind, "You have found something!");
 							drop_near(0, &forge, -1, wpos, y, x);
@@ -3772,8 +3769,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 /*
  * Try to identify a trap when disarming it.	- Jir -
  */
-static void do_id_trap(int Ind, int t_idx)
-{
+static void do_id_trap(int Ind, int t_idx) {
 	player_type *p_ptr = Players[Ind];
 	trap_kind *tr_ptr = &t_info[t_idx];
 	int power;
@@ -3782,8 +3778,8 @@ static void do_id_trap(int Ind, int t_idx)
 	if (p_ptr->trap_ident[t_idx]) return;
 
 	/* Need proper skill */
-//	if (get_skill(p_ptr, SKILL_DISARM) < 20) return;
-//	if (!get_skill(p_ptr, SKILL_DISARM)) return;
+	//if (get_skill(p_ptr, SKILL_DISARM) < 20) return;
+	//if (!get_skill(p_ptr, SKILL_DISARM)) return;
 	if (!get_skill(p_ptr, SKILL_TRAPPING)) return;
 
 	/* Impossible? */
@@ -3794,7 +3790,7 @@ static void do_id_trap(int Ind, int t_idx)
 	power = (tr_ptr->difficulty + 2) * (tr_ptr->minlevel + 10) * 5;
 	if (tr_ptr->flags & FTRAP_EASY_ID) power /= 10;
 
-//	if (randint(power) > get_skill(p_ptr, SKILL_DISARM)) return;
+	//if (randint(power) > get_skill(p_ptr, SKILL_DISARM)) return;
 	if (randint(power) > get_skill(p_ptr, SKILL_TRAPPING)) return;
 
 	/* Good job */
