@@ -200,7 +200,8 @@
                  3 is not enough for a +20 monster at very shallow dungeon depths.
                  4 is fine even for +40 there, if it's not a huge maze.
                  5 works even in a maze.
-                Suggested default: 5 times. */
+                Suggested default: 5 times.
+    Note that it's still really bad at huge maze levels. */
  #define ASTAR_DISTRIBUTE	(ASTAR_MAX_NODES / (cfg.fps / 5))
 #endif
 
