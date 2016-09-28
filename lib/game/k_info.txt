@@ -6547,7 +6547,7 @@ D:*Identifies* an item, revealing all its hidden powers.
 
 N:903:& Picklock~
 G:`:B
-I:12:2:3
+I:12:2:0
 W:10:0:2:500
 A:10/3
 F:HIDE_TYPE | DISARM | EASY_KNOW
