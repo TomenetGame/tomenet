@@ -6794,13 +6794,24 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			/* for now only loads Valinor */
 			else if (prefix(message, "/loadmap")) {
-				int xstart = 0, ystart = 0;
+				int xstart = 0, ystart = 0, x, y;
+				cave_type **zcave = getcave(&p_ptr->wpos);
+
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /loadmap t_<mapname>.txt");
 					return;
 				}
 				msg_print(Ind, "Trying to load map..");
-//				process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
+
+				/* To nullify the ' ' floor feature in process_dungeon_file(), clear the map first */
+				for (y = 1; y < MAX_HGT - 1; y++) {
+					for (x = 1; x < MAX_WID - 1; x++) {
+						zcave[y][x].info = 0;
+						zcave[y][x].feat = 0;
+					}
+				}
+
+				//process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
 				process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 				wpos_apply_season_daytime(&p_ptr->wpos, getcave(&p_ptr->wpos));
 				msg_print(Ind, "done.");
