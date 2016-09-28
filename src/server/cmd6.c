@@ -3922,7 +3922,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		break;
 
 	case SV_WAND_ANNIHILATION:
-		if (annihilate(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))
+		if (annihilate(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))
 			ident = TRUE;
 		break;
 
