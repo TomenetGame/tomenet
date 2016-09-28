@@ -290,7 +290,7 @@ HDRAINCLOUD = add_spell {
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			--fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), 10, " drains for")
-			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 4 + get_level(Ind, HDRAINCLOUD, 39) / 4, 10, " drains for")
+			fire_cloud(Ind, GF_ANNIHILATION, args.dir, 9999, 3, 4 + get_level(Ind, HDRAINCLOUD, 39) / 4, 10, " damages for")
 			-- dmgs a Power D for 2050 (307 goes to hp), Balance D for 1286 (192 goes to hp) from full hp
 			-- (with, of course, maxed spell power and h_offense schools)
 			-- The amount of what goes to player is 15% of the damage the monster taken.
@@ -306,8 +306,8 @@ HDRAINCLOUD = add_spell {
 			return "dam ".."var".." rad 3 dur "..(4 + get_level(Ind, HDRAINCLOUD, 39) / 4)
 	end,
 	["desc"] = 	{
-			"Curses an area temporarily, sucking life force of those walking it.",
-			"15% of the damage is fed back to the caster's hit points."
+			"Curses an area temporarily, damaging those walking across.",
+			--"15% of the damage is fed back to the caster's hit points."
 	}
 }
 

@@ -3861,6 +3861,10 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_OLD_SLEEP:
 	case GF_TURN_ALL:
 
+	/* For priest spell (Doomed Grounds) -- carries hack (9999) or percentual damage (2%) */
+	case GF_OLD_DRAIN:
+	case GF_ANNIHILATION:
+
 	/* These must not be reduced, since 'dam' stores the functionality */
 	case GF_RECALL_PLAYER: /* not for recall (dam is timeout) - mikaelh */
 	case GF_CURE_PLAYER:
@@ -5239,11 +5243,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* fix me XXX XXX XXX */
 
 	int priest_spell = 0;
-	/* the_sandman: the priest spell? (0 or 1) */
-	if (dam == 9999 && typ == GF_OLD_DRAIN) {
-		priest_spell = 1;
-		dam = 2;	// the real damage
-	}
 
 	/* Polymorph setting (true or false) */
 	int do_poly = 0;
@@ -5282,6 +5281,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
+
+	/* the_sandman: the priest spell? (0 or 1) */
+	if (dam == 9999 && (typ == GF_OLD_DRAIN || typ == GF_ANNIHILATION)) {
+		priest_spell = 1;
+		dam = 2; // the real damage (percentage drain)
+	}
 
 	/* hack -- by trap */
 	quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : (0 - Ind == c_ptr->m_idx ? TRUE : FALSE));
@@ -11817,7 +11822,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 	monster_race *r_ptr = race_inf(m_ptr);
 	cptr name = r_name_get(m_ptr);
 
-	if (dam == 9999 && typ == GF_OLD_DRAIN) dam = 2; /* Priest drain-life spell hack */
+	/* Priest drain-life/annihilation spell hack */
+	if (dam == 9999 && (typ == GF_OLD_DRAIN || typ == GF_ANNIHILATION)) dam = 2;
 
 #if 0
 	int do_poly = 0;
@@ -12253,14 +12259,18 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else
 				dam = (m_ptr->hp * dam) / 100;
 
+			if (dam > 900) dam = 900;
+
+			if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
+			if (!dam) dam = 1;
+
 			if ((r_ptr->flags3 & RF3_UNDEAD) ||
 			    //(r_ptr->flags3 & RF3_DEMON) ||
 			    (r_ptr->flags3 & RF3_NONLIVING) ||
-			    (r_ptr->flags1 & RF1_UNIQUE) ||
 			    (strchr("Egv", r_ptr->d_char)))
 				dam = 0;
 			break;
-			
+
 		case GF_ANNIHILATION:
 			j = dam - 1;
 			if (m_ptr->hp > 9362)
@@ -12269,26 +12279,12 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam = ((m_ptr->hp / 10) * dam) / 10;
 			else
 				dam = (m_ptr->hp * dam) / 100;
-			
-			if (dam > j * 200) {
-				dam = j * 200;
-				if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				    (r_ptr->flags3 & RF3_UNDEAD) ||
-				    (r_ptr->flags3 & RF3_NONLIVING)) {
-					dam /= 3;
-				}
-			}
-			
-			if (dam < j * 10 + 100) {
-				dam = j * 10 + 100;
-				if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				    (r_ptr->flags3 & RF3_UNDEAD) ||
-				    (r_ptr->flags3 & RF3_NONLIVING)) {
-					dam /= 3;
-				}
-			}
-			
-			break; 
+
+			if (dam > 1200) dam = 1200;
+
+			if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
+			if (!dam) dam = 1;
+			break;
 
 		case GF_OLD_POLY:
 			//do_poly = TRUE;

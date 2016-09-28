@@ -66,6 +66,7 @@ static void proj_dam_wraith(int typ, int *dam) {
 		*dam = (*dam & 0x3C00) + (*dam & 0x03FF) / 2;
 		return;
 	case GF_OLD_DRAIN:
+	case GF_ANNIHILATION:
 		/* - sorry, 9999 is the priest spell hack :P */
 		if (*dam == 9999) return;
 	default:
