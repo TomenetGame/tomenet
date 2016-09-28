@@ -6008,7 +6008,7 @@ void display_trad_house(int Ind, house_type *h_ptr) {
 		} else strcpy(owner, "nobody's home"); /* paranoia */
 
 		/* Don't display capacity, since with long owner names it could be too wide */
-		Send_store_info(Ind, p_ptr->store_num, owner, "", h_ptr->stock_num, 0, c ? c : TERM_L_UMBER, '+');
+		Send_store_info(Ind, p_ptr->store_num, owner, "", h_ptr->stock_num, 0, c ? c - 1 : TERM_L_UMBER, '+');
 	}
 
 	/* Display the current gold */
