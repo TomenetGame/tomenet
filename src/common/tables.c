@@ -13,8 +13,7 @@
 /*
  * Stat Table (INT/WIS) -- Minimum failure rate (percentage)
  */
-byte adj_mag_fail[] =
-{
+byte adj_mag_fail[] = {
         99      /* 3 */,
         99      /* 4 */,
         99      /* 5 */,
@@ -58,8 +57,7 @@ byte adj_mag_fail[] =
 /*
  * Stat Table (INT/WIS) -- Various things
  */
-byte adj_mag_stat[] =
-{
+byte adj_mag_stat[] = {
         0       /* 3 */,
         0       /* 4 */,
         0       /* 5 */,
@@ -103,8 +101,7 @@ byte adj_mag_stat[] =
 /*
  * Stat Table (INT) for mimicry powers fail rate modifier (%)
  */
-byte adj_int_pow[] =
-{
+byte adj_int_pow[] = {
         250     /* 3 */,
         210     /* 4 */,
         190     /* 5 */,
@@ -153,8 +150,7 @@ byte adj_int_pow[] =
  * Mimic 'spells' -- they should be integrated to the realm spells
  * (slevel, smana, sfail, sexp, ftk)
  */
-magic_type innate_powers[96] =
-{
+magic_type innate_powers[96] = {
 /* 0, mana, fail, 0 */
 // RF4_SHRIEK                   0x00000001      /* Shriek for help */
   {0, 2, 0, 0, 0},
@@ -325,8 +321,7 @@ magic_type innate_powers[96] =
 
 };
 
-monster_spell_type monster_spells4[32] =
-{
+monster_spell_type monster_spells4[32] = {
   {"Shriek", FALSE},
   {"Negate magic", FALSE},
   {"XXX", TRUE},
@@ -368,8 +363,7 @@ monster_spell_type monster_spells4[32] =
   {"Throw Boulder", TRUE},      /* "XXX", */
 };
 
-monster_spell_type monster_spells5[32] =
-{
+monster_spell_type monster_spells5[32] = {
   {"Acid Ball", TRUE},
   {"Lightning Ball", TRUE},
   {"Fire Ball", TRUE},
@@ -411,8 +405,7 @@ monster_spell_type monster_spells5[32] =
   {"Paralyze", TRUE},
 };
 
-monster_spell_type monster_spells6[32] =
-{
+monster_spell_type monster_spells6[32] = {
   {"Haste Self", FALSE},
   {"Hand of Doom", TRUE},
   {"Heal", FALSE},
@@ -438,17 +431,17 @@ monster_spell_type monster_spells6[32] =
   {"XXX", TRUE},
   {"XXX", TRUE},
   {"XXX", TRUE},
-  
+
   {"XXX", TRUE},
   {"XXX", TRUE},
   {"XXX", TRUE},
   {"XXX", TRUE},
-  
+
   {"XXX", TRUE},
   {"XXX", TRUE},
   {"XXX", TRUE},
   {"XXX", TRUE},
-  
+
   {"XXX", TRUE},
   {"XXX", TRUE},
   {"XXX", TRUE},
@@ -458,8 +451,7 @@ monster_spell_type monster_spells6[32] =
 
 /* Runecraft --------------------------------------------------------------- */
 
-r_element r_elements[RCRAFT_MAX_ELEMENTS] =
-{
+r_element r_elements[RCRAFT_MAX_ELEMENTS] = {
 { R_LITE, "Light",    SKILL_R_LITE },
 { R_DARK, "Darkness", SKILL_R_DARK },
 { R_NEXU, "Nexus",    SKILL_R_NEXU },
@@ -491,8 +483,7 @@ r_type r_types[RCRAFT_MAX_TYPES] =                                      // |   M
 { T_BURS, "burst", 35,  3, 15, 1,  1, 32, 32, 21, 519, 1,  2,  0,  0 }, // |  519 |  432 |  726 |  605 [ 1056 ]  870 | Flare; +10% dps over swarm (and not area restricted), but -33% HP efficiency. oO Intended to mimic average bolt damage.
 };                                                                      // +------+------+------+------+------+------+
                                                                         // | 1200 |  400 | 1200 |  400 | 1200 |  400 |
-r_projection r_projections[RCRAFT_MAX_PROJECTIONS] =
-{
+r_projection r_projections[RCRAFT_MAX_PROJECTIONS] = {
 { R_LITE,          GF_LITE,       400, "light",           TR2_RES_LITE },
 { R_DARK,          GF_DARK,       550, "darkness",        TR2_RES_DARK },
 { R_NEXU,          GF_NEXUS,      250, "nexus",           TR2_RES_NEXUS },
@@ -520,4 +511,3 @@ r_projection r_projections[RCRAFT_MAX_PROJECTIONS] =
 
 { R_CHAO | R_MANA, GF_PLASMA,     933, "plasma",          TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND },
 };
-
