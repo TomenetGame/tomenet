@@ -911,6 +911,8 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 	/* Window size */
 	td->cols = GetPrivateProfileInt(sec_name, "Columns", td->cols, ini_file);
 	td->rows = GetPrivateProfileInt(sec_name, "Rows", td->rows, ini_file);
+	if (!td->cols) td->cols = 80;
+	if (!td->rows) td->rows = 24;
 	if (td == &data[0]) {
 		if (td->cols != 80) td->cols = 80;
 		screen_wid = td->cols - SCREEN_PAD_X;
