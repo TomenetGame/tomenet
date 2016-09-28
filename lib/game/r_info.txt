@@ -20161,19 +20161,16 @@ F:ALLOW_RUNNING | GENO_PERSIST | GENO_NO_THIN
 D:Just a dummy placeholder for making grids inaccessible
 D:to means such as teleport.
 
-N:1133:Star Test Blob
-G:j:p
-I:110:1d1:200:0:0
-W:127:255:0:0
+N:1133:Susceptible Test Blob
+G:j:Z
+I:110:100d10:0:75:0
+W:1:255:500:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*
-F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR
-#F:CAN_FLY
-#F:AI_ANNOY
-#S:1_IN_3
-#S:BLINK
-#S:TPORT
+F:BLUEBAND | NEVER_MOVE | NONLIVING | EMPTY_MIND | COLD_BLOOD | NO_DEATH
+F:ALLOW_RUNNING | RES_TELE | RES_NEXU | IM_TELE | FORCE_MAXHP
+F:GOOD | EVIL | ANIMAL | HURT_LITE | SUSCEP_ACID | DRAGON | DEMON | UNDEAD
 D:For testing
 
 #***secret message found***: Watch/read 'Game of Thrones'
@@ -20263,7 +20260,6 @@ F:WILD_TOO | WILD_WOOD | BLUEBAND | NO_DEATH | NO_TARGET | NO_AUTORET
 D:A domesticated palomino horse.
 
 # For testing LoS stuff - C. Blue
-
 N:1141:Charged Test Blob
 G:j:M
 I:120:100d10:50:50:0
@@ -20380,19 +20376,34 @@ D:is an untamed, huge, crackling ball of energy, zapping around at blinding
 D:speed, showing no signs of depletion but continuously firing powerful magical
 D:and electrical discharges into all directions.
 
-N:1148:Susceptible Test Blob
-G:j:Z
-I:110:100d10:0:75:0
-W:1:255:500:0
+N:1148:Star Test Blob
+G:j:p
+I:110:1d1:200:0:0
+W:127:255:0:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*
-F:BLUEBAND | NEVER_MOVE | NONLIVING | EMPTY_MIND | COLD_BLOOD | NO_DEATH
-F:ALLOW_RUNNING | RES_TELE | RES_NEXU | IM_TELE | FORCE_MAXHP
-F:GOOD | EVIL | ANIMAL | HURT_LITE | SUSCEP_ACID | DRAGON | DEMON | UNDEAD
+F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR
+#F:CAN_FLY
+#F:AI_ANNOY
 D:For testing
 
-N:1149:Loot Test Blob
+N:1149:Blinky Star Test Blob
+G:j:k
+I:110:1d1:200:0:0
+W:127:255:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR
+#F:CAN_FLY
+#F:AI_ANNOY
+S:1_IN_4
+S:BLINK
+#S:TPORT
+D:For testing
+
+N:1150:Loot Test Blob
 G:j:y
 I:110:1d1:1:0:0
 W:127:255:0:0
@@ -20404,7 +20415,6 @@ F:DROP_4D2 | DROP_3D2 | DROP_2D2 | DROP_1D2 | DROP_1 | DROP_90 | DROP_60
 F:DROP_GOOD
 #F:DROP_GREAT
 D:For testing
-
 
 
 # N: serial number : monster name
