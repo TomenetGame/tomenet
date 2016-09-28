@@ -145,7 +145,7 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 	chance -= 3 * (level - skill_level);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[stat]] - 1);
+	chance -= adj_mag_stat[p_ptr->stat_ind[stat]] - 3;
 
 	 /* Not enough mana to cast */
 	if (chance < 0) chance = 0;

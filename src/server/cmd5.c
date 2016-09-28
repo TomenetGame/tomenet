@@ -68,7 +68,7 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 	chance -= 3 * (get_skill(p_ptr, find_realm_skill(realm)) - s_ptr->slevel);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-	//chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[magic_info[realm].spell_stat]] - 1);
+	//chance -= adj_mag_stat[p_ptr->stat_ind[magic_info[realm].spell_stat]] - 3;
 
 	/* Not enough mana to cast */
 	if (s_ptr->smana > p_ptr->csp)

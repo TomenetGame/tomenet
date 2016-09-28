@@ -174,7 +174,7 @@ byte rspell_fail(int Ind, byte imperative, byte type, s16b diff, u16b penalty) {
 	fail += penalty; //Place before stat modifier; casters of great ability can reduce the penalty for casting while hindered?
 
 	/* Reduce failure rate by STAT adjustment */
-	fail -= 3 * ((adj_mag_stat[p_ptr->stat_ind[A_INT]] * 65 + adj_mag_stat[p_ptr->stat_ind[A_DEX]] * 35) / 100 - 1);
+	fail -= ((adj_mag_stat[p_ptr->stat_ind[A_INT]] * 65 + adj_mag_stat[p_ptr->stat_ind[A_DEX]] * 35) / 100) - 3;
 
 	/* Extract the minimum failure rate */
 	s16b minfail = (adj_mag_fail[p_ptr->stat_ind[A_INT]] * 65 + adj_mag_fail[p_ptr->stat_ind[A_DEX]] * 35) / 100;

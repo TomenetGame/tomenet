@@ -2340,12 +2340,12 @@ void do_cmd_steal(int Ind, int dir) {
 	success += 2 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
 
 	/* Compute base chance of being noticed */
-	notice = 5 * (adj_mag_stat[q_ptr->stat_ind[A_INT]] - p_ptr->skill_stl);
+	notice = (5 * (adj_mag_stat[q_ptr->stat_ind[A_INT]] - p_ptr->skill_stl)) / 3;
 
 	/* Reversed this as suggested by Potter - mikaelh */
 	notice -= 1 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
 
-//	notice -= q_ptr->skill_fos; /* perception */
+	//notice -= q_ptr->skill_fos; /* perception */
 
 	/* Hack -- Rogues get bonuses to chances */
 	if (get_skill(p_ptr, SKILL_STEALING)) {
@@ -2362,7 +2362,7 @@ void do_cmd_steal(int Ind, int dir) {
 
 	/* Always small chance to fail */
 	if (success > 95) success = 95;
-//	if (notice < 5) notice = 5;
+	//if (notice < 5) notice = 5;
 
 	/* Hack -- Always small chance to succeed */
 	if (success < 2) success = 2;
@@ -2486,7 +2486,7 @@ void do_cmd_steal(int Ind, int dir) {
 
 			/* Easier to notice heavier objects */
 			notice += forge.weight;
-//			/ (get_skill_scale(SKILL_STEALING, 19) + 1);
+			//	/ (get_skill_scale(SKILL_STEALING, 19) + 1);
 
 			/* Always small chance to be noticed */
 			if (notice < 5) notice = 5;
