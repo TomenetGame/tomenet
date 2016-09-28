@@ -2680,11 +2680,11 @@ D:user against the elements of nature.
 #todo: check/verify if level makes sense.. (with anti-ood code)
 
 N:214:of Bilbo Baggins
-I:12:2:5
+I:12:2:4
 #W:25:40:2:30000
-W:15:1:2:30000
+W:15:1:2:20000
 P:0:1d1:0:0:0
-F:DEX | SUST_DEX | SEE_INVIS | STEALTH | DISARM | SEARCH | HIDE_TYPE
+F:DEX | SUST_DEX | SEE_INVIS | DISARM | HIDE_TYPE
 F:ACTIVATE
 D:It's no surprise that a thief of highest caliber would come with the best
 D:tools available for his line of work.
