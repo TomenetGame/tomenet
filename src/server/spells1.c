@@ -6310,6 +6310,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			/* Make it have an effect on low-HP monsters such as townies */
 			if (!dam) dam = 1;
+			/* Cap */
+			if (dam > 1000) dam = 1000;
 
 			if (!quiet) {
 				if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
@@ -6368,6 +6370,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			/* Make it have an effect on low-HP monsters such as townies */
 			if (!dam) dam = 1;
+			/* Cap */
+			if (dam > 1200) dam = 1200;
 			break;
 
 		/* Polymorph monster (Use "dam" as "power") */
