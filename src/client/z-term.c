@@ -2690,28 +2690,43 @@ errr refresh_minimap() {
 	h = Term->hgt;
 
 	//Look for the first map screen
-	for(i = 0; i < ANGBAND_TERM_MAX; i++) {
+	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
 		if (window_flag[i] & PW_MINIMAP) {
 			//Found a map screen. Activate and size it correctly.
 			Term_activate(ang_term[i]);
 
 			//Sometimes NULL on start up
-			if (Term == NULL) break; 
+			if (Term == NULL) break;
 
-			if (Term->wid!=w || Term->hgt!=h) {
-				Term_resize(w,h);
+			if (Term->wid != w || Term->hgt != h) {
+				Term_resize(w, h);
 				Term_redraw();
 			}
 
+			//If we're not yet/anymore logged in, keep it clear
+			if (!in_game) {
+				//Clear map (copy/pasted from below)
+				c_put_str(TERM_WHITE, "                              ", 0, 0);
+				c_put_str(TERM_WHITE, "                              ", 0, 30);
+				c_put_str(TERM_WHITE, "                              ", 0, 60);
+				for (j = 1; j < h - 2; j++) c_put_str(TERM_WHITE, "             ", j, 0);
+				c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 0);
+				c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 30);
+				c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 60);
+
+				//Get out of the loop. We don't support more than one extra map screen.
+				break;
+			}
+
 			//Update the map
-			scr_b=Term->scr;
+			scr_b = Term->scr;
 			term_win_copy(scr_b, scr_a, w, h);
 
 			//Remove text, which is in the wrong font.
 			c_put_str(TERM_WHITE, "                              ", 0, 0);
 			c_put_str(TERM_WHITE, "                              ", 0, 30);
 			c_put_str(TERM_WHITE, "                              ", 0, 60);
-			for (j = 1; j < 22; j++) c_put_str(TERM_WHITE, "             ", j, 0);
+			for (j = 1; j < h - 2; j++) c_put_str(TERM_WHITE, "             ", j, 0);
 			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 0);
 			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 30);
 			c_put_str(TERM_WHITE, "                              ", ROW_DEPTH, 60);
