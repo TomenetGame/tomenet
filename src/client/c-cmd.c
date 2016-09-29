@@ -1380,7 +1380,7 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 void cmd_the_guide(void) {
 	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
-	int line = 0, lastline = -1, searchline, within_cnt, c, n;
+	int line = 0, lastline = -1, searchline = -1, within_cnt, c, n;
 	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, bufdummy[MAX_CHARS + 1];
 	char search[MAX_CHARS], lastsearch[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
 	FILE *fff;
