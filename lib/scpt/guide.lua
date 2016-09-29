@@ -284,6 +284,7 @@ guide_spell = {
     "Chaos Bolt",
     "Nether Bolt",
     "Drain Life",
+    "Darkness Storm",
 
     "Cause Wounds",
     "Tame Fear",
