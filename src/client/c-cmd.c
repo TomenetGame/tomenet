@@ -1417,9 +1417,9 @@ void cmd_the_guide(void) {
 		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
 		if (!chapter[0]) {
 			if (backwards) {
-				if (!searchwrap) for (n = 0; n < line; n++) fgets_inverse(buf, 81, fff);
+				if (!searchwrap) for (n = 0; n < line; n++) res = fgets_inverse(buf, 81, fff); //res just slays non-existant compiler warning..what
 			} else {
-				if (!searchwrap) for (n = 0; n < line; n++) fgets(buf, 81, fff);
+				if (!searchwrap) for (n = 0; n < line; n++) res = fgets(buf, 81, fff); //res just slays compiler warning
 			}
 		} else searchline = -1; //init searchline for chapter-search
 
@@ -1537,7 +1537,7 @@ void cmd_the_guide(void) {
 							/* Skip end of line, advancing to next line */
 							fseek(fff, 1, SEEK_CUR);
 							/* This line has already been read too, by fgets_inverse(), so skip too */
-							fgets(bufdummy, 81, fff);
+							res = fgets(bufdummy, 81, fff); //res just slays compiler warning
 						}
 
 						strcpy(withinsearch, search);
