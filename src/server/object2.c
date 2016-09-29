@@ -10468,7 +10468,7 @@ void process_objects(void) {
 #endif
 					break;
 				case TV_GAME: //basically just SV_SNOWBALL
-					if (season == season_winter) break; //not melting while it's cold
+					if (season == SEASON_WINTER) break; //not melting while it's cold
 					Ind = pick_player(h_ptr);
 					o_ptr->pval--;
 					/* poof */

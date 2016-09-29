@@ -4981,7 +4981,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 
 		/* SV_SNOWBALL melting */
-		if (o_ptr->tval == TV_GAME && o_ptr->pval && season != season_winter) { //not melting while it's cold)
+		if (o_ptr->tval == TV_GAME && o_ptr->pval && season != SEASON_WINTER) { //not melting while it's cold)
 			o_ptr->pval--;
 #ifdef LIVE_TIMEOUTS
 			if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
