@@ -886,11 +886,23 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			/* Ignore illegal locations */
 			if (!in_bounds4(l_ptr, y, x)) continue;
 
-			/* Require floor space if not ghost */
-			if (!p_ptr->ghost && !cave_free_bold(zcave, y, x)) continue;
+			if (!left_shop) {
+				/* Require floor space if not ghost */
+				if (!p_ptr->ghost && !cave_free_bold(zcave, y, x)) continue;
 
-			/* never teleport onto perma-walls (happens to ghosts in khazad) */
-			if (cave_perma_bold(zcave, y, x)) continue;
+				/* never teleport onto perma-walls (happens to ghosts in khazad) */
+				if (cave_perma_bold(zcave, y, x)) continue;
+			} else {
+				/* Require floor space if not ghost */
+				if (!p_ptr->ghost && !cave_free_bold(zcave, y, x)
+				    && !player_can_enter(Ind, zcave[y][x].feat, TRUE))
+					continue;
+
+				/* never teleport onto perma-walls (happens to ghosts in khazad) */
+				if (cave_perma_bold(zcave, y, x)
+				    && !player_can_enter(Ind, zcave[y][x].feat, TRUE))
+					continue;
+			}
 
 			/* Require empty space if a ghost */
 			if (p_ptr->ghost && zcave[y][x].m_idx) continue;
@@ -909,6 +921,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			if (zcave[y][x].feat == FEAT_SHOP) continue;
 
 			if (left_shop) {
+				/* Copy/paste from player_can_enter(), could replace it with that (with comfortably=TRUE flag) */
 				if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
 				    zcave[y][x].feat == FEAT_DEEP_LAVA)
 					if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire)))
