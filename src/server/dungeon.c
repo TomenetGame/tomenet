@@ -4963,20 +4963,38 @@ static bool process_player_end_aux(int Ind) {
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
-		if (!(o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) || !o_ptr->timeout) continue;
-
-		o_ptr->timeout--;
+		/* Potions of blood */
+		if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) {
+			o_ptr->timeout--;
 #ifdef LIVE_TIMEOUTS
-		if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
+			if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
 #endif
-		/* Notice changes */
-		if (!(o_ptr->timeout)) {
-			/* todo: Maybe give extra message for SV_POTION_BLOOD? */
+			/* Notice changes */
+			if (!(o_ptr->timeout)) {
+				/* todo: Maybe give extra message for SV_POTION_BLOOD? */
 
-			inven_item_increase(Ind, i, -o_ptr->number);
-			inven_item_describe(Ind, i);
-			inven_item_optimize(Ind, i);
-			j++;
+				inven_item_increase(Ind, i, -o_ptr->number);
+				inven_item_describe(Ind, i);
+				inven_item_optimize(Ind, i);
+				j++;
+			}
+		}
+
+		/* SV_SNOWBALL melting */
+		if (o_ptr->tval == TV_GAME && o_ptr->pval && season != season_winter) { //not melting while it's cold)
+			o_ptr->pval--;
+#ifdef LIVE_TIMEOUTS
+			if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
+#endif
+			/* Notice changes */
+			if (!(o_ptr->pval)) {
+				/* todo: Maybe give extra message for SV_POTION_BLOOD? */
+
+				inven_item_increase(Ind, i, -o_ptr->number);
+				inven_item_describe(Ind, i);
+				inven_item_optimize(Ind, i);
+				j++;
+			}
 		}
 	}
 

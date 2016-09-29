@@ -10467,6 +10467,20 @@ void process_objects(void) {
 					else if (Ind && Players[Ind]->live_timeouts) display_house_entry(Ind, i, h_ptr);
 #endif
 					break;
+				case TV_GAME: //basically just SV_SNOWBALL
+					if (season == season_winter) break; //not melting while it's cold
+					Ind = pick_player(h_ptr);
+					o_ptr->pval--;
+					/* poof */
+					if (!(o_ptr->pval)) {
+						home_item_increase(h_ptr, i, -o_ptr->number);
+						home_item_optimize(h_ptr, i);
+						if (Ind) display_trad_house(Ind, h_ptr); //display_house_inventory(Ind, h_ptr);
+					}
+#ifdef LIVE_TIMEOUTS
+					else if (Ind && Players[Ind]->live_timeouts) display_house_entry(Ind, i, h_ptr);
+#endif
+					break;
 				}
 			}
 
