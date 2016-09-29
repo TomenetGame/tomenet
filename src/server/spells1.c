@@ -4866,7 +4866,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			do_smash_effect = FALSE;
 			do_kill = TRUE;
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
-						: (plural ? " is pulverized!" : " is pulverized!");
+						: (plural ? " are pulverized!" : " is pulverized!");
 			//note_kill = (plural ? " evaporate!" : " evaporates!");
 			break;
 
@@ -4874,7 +4874,22 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) break;
 			if (artifact_p(o_ptr) && magik(100)) break;
 
-			if (o_ptr->timeout) o_ptr->timeout /= 2;
+			if (o_ptr->tval != TV_LITE && o_ptr->tval != TV_POTION && o_ptr->tval != TV_FOOD) {
+				if (o_ptr->timeout) o_ptr->timeout /= 2;
+			}
+
+			/* Special treatment for new ego-type: Ethereal (ammunition):
+			   Ethereal items don't get disenchanted, but rather disappear completely! */
+			if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) {
+				int i = randint(o_ptr->number / 5);
+
+				if (!i) i = 1;
+				if (i < o_ptr->number) o_ptr->number -= i;
+				else {
+					do_kill = TRUE;
+					note_kill = plural ? " fade!" : " fades!";
+				}
+			}
 
 			if (o_ptr->to_h > k_ptr->to_h) o_ptr->to_h--;
 			if (o_ptr->to_d > k_ptr->to_d) o_ptr->to_d--;
@@ -4911,7 +4926,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			do_smash_effect = TRUE; /* allow coolness, while preventing exploiting via m_ptr->hit_proj_id; */
 			do_kill = TRUE;
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
-						: (plural ? " is pulverized!" : " is pulverized!");
+						: (plural ? " are pulverized!" : " is pulverized!");
 			//note_kill = (plural ? " evaporate!" : " evaporates!");
 			break;
 
