@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. September 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 29. September 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.6.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -16340,6 +16340,9 @@ Parties:
     If you aren't in a party, you will see "Add yourself to party" instead!
     This will allow you to add this character to a party, provided that at
     least one of your other characters is already a member of it.
+    This does not work for cross-adding to nether realm parties.
+    It only works for cross-adding to IDDC parties if your already partied
+    character is currently in the IDDC.
 
 -Delete a player from your party
     This can only be done by the party owner.

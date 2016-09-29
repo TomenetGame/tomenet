@@ -1889,12 +1889,12 @@ int party_add(int adder, cptr name) {
 	}
 
 	if (
-#ifdef ALLOW_NR_CROSS_PARTIES
+#ifdef ALLOW_NR_CROSS_PARTIES /* Note: Currently unnecessarily restricted: Actually q_ptr check is not needed, also not enabled for party_add_self(). */
 	    (!q_ptr->total_winner || !p_ptr->total_winner ||
 	    !at_netherrealm(&q_ptr->wpos) || !at_netherrealm(&p_ptr->wpos)) &&
 #endif
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
-	    (!in_irondeepdive(&q_ptr->wpos) || !in_irondeepdive(&p_ptr->wpos)) &&
+	    !in_irondeepdive(&p_ptr->wpos) &&
 #endif
 	/* Everlasting and other chars cannot be in the same party */
 	    (compat_mode(parties[party_id].cmode, p_ptr->mode))) {
@@ -1952,14 +1952,50 @@ int party_add_self(int Ind, cptr party) {
 	player_type *p_ptr = Players[Ind];
 	int party_id = party_lookup(party), i, *id_list, ids;
 	struct account acc;
+	bool success;
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+	struct worldpos wpos_other = { -1, -1, -1};
+#endif
 
 	if (party_id == -1) {
 		msg_print(Ind, "That party does not exist.");
 		return FALSE;
 	}
 
+	/* check if he has a character in there already, to be eligible to self-add */
+	success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+	/* paranoia */
+	if (!success) {
+		/* uhh.. */
+		msg_print(Ind, "Sorry, self-adding has failed.");
+		return FALSE;
+	}
+	success = FALSE;
+	ids = player_id_list(&id_list, acc.id);
+	for (i = 0; i < ids; i++) {
+		if (lookup_player_party(id_list[i]) == party_id) {
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+			wpos_other = lookup_player_wpos(id_list[i]);
+#endif
+			/* success */
+			success = TRUE;
+			break;
+		}
+	}
+	if (ids) C_KILL(id_list, ids, int);
+
 	/* Everlasting and other chars cannot be in the same party */
-	if (compat_mode(p_ptr->mode, parties[party_id].cmode)) {
+	if (
+#if 0 /* hm */
+#ifdef ALLOW_NR_CROSS_PARTIES
+	    (!p_ptr->total_winner || !at_netherrealm(&p_ptr->wpos)) &&
+#endif
+#endif
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+	    !(in_irondeepdive(&p_ptr->wpos) &&
+	    in_irondeepdive(&wpos_other)) && //not strictly needed, but might get kinda messy otherwise
+#endif
+	    compat_mode(p_ptr->mode, parties[party_id].cmode)) {
 		msg_format(Ind, "\377yYou cannot join %s parties.", compat_mode(p_ptr->mode, parties[party_id].cmode));
 		return FALSE;
 	}
@@ -1970,24 +2006,8 @@ int party_add_self(int Ind, cptr party) {
 		return FALSE;
 	}
 
-	/* check if he has a character in there already, to be eligible to self-add */
-	bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
-	/* paranoia */
-	if (!success) {
-		/* uhh.. */
-		msg_print(Ind, "Sorry, self-adding has failed.");
-		return FALSE;
-	}
-	ids = player_id_list(&id_list, acc.id);
-	for (i = 0; i < ids; i++) {
-		if (lookup_player_party(id_list[i]) == party_id) {
-			/* success */
-			break;
-		}
-	}
-	if (ids) C_KILL(id_list, ids, int);
 	/* failure? */
-	if (i == ids) {
+	if (!success) {
 		msg_print(Ind, "You do not have any character that is member of that party.");
 		return FALSE;
 	}
