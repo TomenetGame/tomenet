@@ -3421,9 +3421,9 @@ bool res_stat(int Ind, int stat) {
  */
 bool apply_disenchant(int Ind, int mode) {
 	player_type *p_ptr = Players[Ind];
-	int			t = mode;
-	object_type		*o_ptr;
-	char		o_name[ONAME_LEN];
+	int t = mode;
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (safe_area(Ind)) return(FALSE);
@@ -3436,15 +3436,15 @@ bool apply_disenchant(int Ind, int mode) {
 
 	/* Pick a random slot */
 	switch (mode) {
-		case 1: t = INVEN_WIELD; break;
-		case 2: t = INVEN_BOW; break;
-		case 3: t = INVEN_BODY; break;
-		case 4: t = INVEN_OUTER; break;
-		case 5: t = INVEN_ARM; break;
-		case 6: t = INVEN_HEAD; break;
-		case 7: t = INVEN_HANDS; break;
-		case 8: t = INVEN_FEET; break;
-		case 9: t = INVEN_AMMO; break;
+	case 1: t = INVEN_WIELD; break;
+	case 2: t = INVEN_BOW; break;
+	case 3: t = INVEN_BODY; break;
+	case 4: t = INVEN_OUTER; break;
+	case 5: t = INVEN_ARM; break;
+	case 6: t = INVEN_HEAD; break;
+	case 7: t = INVEN_HANDS; break;
+	case 8: t = INVEN_FEET; break;
+	case 9: t = INVEN_AMMO; break;
 	}
 
 	/* Get the item */
@@ -4891,6 +4891,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			default:
 				/* changed from >0 to >1 to make items retain a slice of their actual abilities */
 				if ((o_ptr->pval > 1 || o_ptr->bpval > 1)
+				    && o_ptr->tval != TV_GAME
 				    && !is_ammo(o_ptr->tval)
 				    && o_ptr->tval != TV_CHEST
 				    && o_ptr->tval != TV_BOOK
