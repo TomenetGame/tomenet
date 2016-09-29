@@ -15082,12 +15082,14 @@ school.
     Chaos Bolt      Channels the powers of chaos into a bolt attack.
                     Required skill level for first spell level: 30.
                     Shared spell (see above): O.Shadow, H.Offense.
+                    This spell cannot be not found in the Holy Offense tome.
 
     Doomed Grounds  Similar to 'Drain Life', weaker, but affects a whole area.
                     Unique monsters may resist, undead and nonliving monsters
                     are unaffected.
                     Required skill level for first spell level: 40.
                     Shared spell (see above): H.Offense, O.Shadow.
+                    This spell cannot be not found in the Shadow tome.
 
     Earthquake      Creates a local earthquake.
                     Required skill level for first spell level: 42.
@@ -15308,6 +15310,7 @@ school.
     Chaos Bolt      Channels the powers of chaos into a bolt attack.
                     Required skill level for first spell level: 30.
                     Shared spell (see above): O.Shadow, H.Offense.
+                    This spell cannot be not found in the Holy Offense tome.
 
     Nether Bolt     Channels lingering nether into a bolt attack.
                     Required skill level for first spell level: 30.
@@ -15319,10 +15322,16 @@ school.
                     Unique monsters may resist, undead and nonliving monsters
                     are unaffected. Damage caps at 900.
                     Required skill level for first spell level: 37.
+                    Shared spell (see above): O.Shadow, Necromancy.
+                    (Necromancy isn't actually a school, but a normal skill.)
 
     Doomed Grounds  Temporarily applies a weak annihilation effect to an area.
                     Required skill level for first spell level: 40.
                     Shared spell (see above): H.Offense, O.Shadow.
+                    This spell cannot be not found in the Shadow tome.
+
+    Darkness Storm  Conjures up a storm of darkness.
+                    Required skill level for first spell level: 42.
 
     BONI:           At 30 grants darkness resistance and a stealth bonus that
                     increases the further the school is trained.

@@ -57,6 +57,193 @@ OCURSEDD = add_spell {
 end
 ]]
 
+OFEAR_I = add_spell {
+	["name"] = 	"Cause Fear I",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	1,
+	["mana"] = 	2,
+	["mana_max"] = 	2,
+	["fail"] = 	0,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_TURN_ALL, args.dir, 5 + get_level(Ind, OFEAR_I, 65), "hisses")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OFEAR_I, 65))
+	end,
+	["desc"] = { "Temporarily scares a target.", }
+}
+__lua_OFEAR = OFEAR_I
+OFEAR_II = add_spell {
+	["name"] = 	"Cause Fear II",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	18,
+	["mana"] = 	16,
+	["mana_max"] = 	16,
+	["fail"] = 	-25,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+		project_los(Ind, GF_TURN_ALL, 5 + get_level(Ind, OFEAR_I, 65), "hisses")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OFEAR_I, 65))
+	end,
+	["desc"] = { "Temporarily scares all nearby foes.", }
+}
+
+OBLIND_I = add_spell {
+	["name"] = 	"Blindness I",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	3,
+	["mana"] = 	2,
+	["mana_max"] = 	2,
+	["fail"] = 	0,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_BLIND, args.dir, 5 + get_level(Ind, OBLIND_I, 80), "hisses")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OBLIND_I, 80))
+	end,
+	["desc"] = { "Temporarily blinds a target.", }
+}
+OBLIND_II = add_spell {
+	["name"] = 	"Blindness II",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	20,
+	["mana"] = 	16,
+	["mana_max"] = 	16,
+	["fail"] = 	-25,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+		project_los(Ind, GF_BLIND, 5 + get_level(Ind, OBLIND_I, 80), "hisses")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OBLIND_I, 80))
+	end,
+	["desc"] = { "Temporarily blinds all nearby foes.", }
+}
+
+DETECTINVIS = add_spell {
+	["name"] = 	"Detect Invisible",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	3,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
+	["fail"] = 	10,
+	["spell"] = 	function()
+		detect_invisible(Ind)
+	end,
+	["info"] = 	function()
+		--return "rad "..(10 + get_level(Ind, DETECTMONSTERS, 40))
+		return ""
+	end,
+	["desc"] = 	{ "Detects all nearby invisible creatures.", }
+}
+
+POISONFOG_I = add_spell {
+	["name"] = 	"Poisonous Fog I",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	3,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
+	["fail"] = 	15,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_cloud(Ind, GF_POIS, args.dir, (1 + get_level(Ind, POISONFOG_I, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
+	end,
+	["info"] = 	function()
+		return "dam "..(1 + get_level(Ind, POISONFOG_I, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
+	end,
+	["desc"] = {
+		"Creates a cloud of poisonous fog.",
+		"The cloud will persist for some turns, damaging all monsters passing by.",
+	}
+}
+POISONFOG_II = add_spell {
+	["name"] = 	"Poisonous Fog II",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	18,
+	["mana"] = 	9,
+	["mana_max"] = 	9,
+	["fail"] = 	-30,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_cloud(Ind, GF_POIS, args.dir, (1 + 38 + get_level(Ind, POISONFOG_II, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
+	end,
+	["info"] = 	function()
+		return "dam "..(1 + 38 + get_level(Ind, POISONFOG_II, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
+	end,
+	["desc"] = {
+		"Creates a cloud of poison.",
+		"The cloud will persist for some turns, damaging all monsters passing by.",
+	}
+}
+POISONFOG_III = add_spell {
+	["name"] = 	"Poisonous Fog III",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	33,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	-60,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_cloud(Ind, GF_UNBREATH, args.dir, (1 + 76 + get_level(Ind, POISONFOG_III, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
+	end,
+	["info"] = 	function()
+		return "dam "..(1 + 76 + get_level(Ind, POISONFOG_III, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
+	end,
+	["desc"] = {
+		"Creates a cloud of thick fog, not just poisoning but also preventing",
+		"living beings from breathing. The cloud will persist for some turns.",
+	}
+}
+
+OSLEEP_I = add_spell {
+	["name"] = 	"Veil of Night I",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	5,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
+	["fail"] = 	0,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_bolt(Ind, GF_OLD_SLEEP, args.dir, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OSLEEP_I, 80))
+	end,
+	["desc"] = { "Causes the target to fall asleep instantly.", }
+}
+OSLEEP_II = add_spell {
+	["name"] = 	"Veil of Night II",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
+	["level"] = 	20,--22
+	["mana"] = 	19,
+	["mana_max"] = 	19,
+	["fail"] = 	-25,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+		--project_los(Ind, GF_OLD_SLEEP, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
+		fire_wave(Ind, GF_OLD_SLEEP, 0, 5 + get_level(Ind, OSLEEP_I, 80), 1, 10, 3, EFF_WAVE, "mumbles softly")
+	end,
+	["info"] = 	function()
+		return "power "..(5 + get_level(Ind, OSLEEP_I, 80)).." rad 10"
+	end,
+	--["desc"] = { "Lets all nearby monsters fall asleep.", }
+	["desc"] = { "Expanding veil that lets monsters fall asleep.", }
+}
+
 function get_darkbolt_dam(Ind, limit_lev)
 	--return 5 + get_level(Ind, DARKBOLT, 25), 7 + get_level(Ind, DARKBOLT, 25) + 1
 	local lev
@@ -130,147 +317,6 @@ DARKBOLT_III = add_spell {
 	["desc"] = 	{ "Conjures up darkness into a powerful bolt.", }
 }
 
-POISONFOG_I = add_spell {
-	["name"] = 	"Poisonous Fog I",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	3,
-	["mana"] = 	3,
-	["mana_max"] = 	3,
-	["fail"] = 	15,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		fire_cloud(Ind, GF_POIS, args.dir, (1 + get_level(Ind, POISONFOG_I, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
-	end,
-	["info"] = 	function()
-		return "dam "..(1 + get_level(Ind, POISONFOG_I, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
-	end,
-	["desc"] = {
-		"Creates a cloud of poisonous fog.",
-		"The cloud will persist for some turns, damaging all monsters passing by.",
-	}
-}
-POISONFOG_II = add_spell {
-	["name"] = 	"Poisonous Fog II",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	18,
-	["mana"] = 	9,
-	["mana_max"] = 	9,
-	["fail"] = 	-30,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		fire_cloud(Ind, GF_POIS, args.dir, (1 + 38 + get_level(Ind, POISONFOG_II, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
-	end,
-	["info"] = 	function()
-		return "dam "..(1 + 38 + get_level(Ind, POISONFOG_II, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
-	end,
-	["desc"] = {
-		"Creates a cloud of poison.",
-		"The cloud will persist for some turns, damaging all monsters passing by.",
-	}
-}
-POISONFOG_III = add_spell {
-	["name"] = 	"Poisonous Fog III",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	33,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
-	["fail"] = 	-60,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		fire_cloud(Ind, GF_UNBREATH, args.dir, (1 + 76 + get_level(Ind, POISONFOG_III, 40)), 3, 5 + get_level(Ind, POISONFOG_I, 14), 9, " fires a noxious cloud of")
-	end,
-	["info"] = 	function()
-		return "dam "..(1 + 76 + get_level(Ind, POISONFOG_III, 40)).." rad 3 dur "..(5 + get_level(Ind, POISONFOG_I, 14))
-	end,
-	["desc"] = {
-		"Creates a cloud of thick fog, not just poisoning but also preventing",
-		"living beings from breathing. The cloud will persist for some turns.",
-	}
-}
-
---[[
-ODRAINLIFE_I = add_spell {
-	["name"] = 	"Drain Life I",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["am"] = 	75,
-	["spell_power"] = 0,
-	["level"] = 	20,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
-	["fail"] = 	0,
-	["stat"] = 	A_WIS,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		drain_life(Ind, args.dir, 9 + get_level(Ind, ODRAINLIFE_I, 5))
-		hp_player(Ind, player.ret_dam / 6)
-	end,
-	["info"] = 	function()
-		return "drain "..(9 + get_level(Ind, ODRAINLIFE_I, 5)).."%, heal for 17%"
-	end,
-	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
-}
-ODRAINLIFE = add_spell {
-	["name"] = 	"Drain Life",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["am"] = 	75,
-	["spell_power"] = 0,
-	["level"] = 	40,
-	["mana"] = 	50,
-	["mana_max"] = 	50,
-	["fail"] = 	-65,
-	["stat"] = 	A_WIS,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE_I, 9))
-		hp_player(Ind, player.ret_dam / 4)
-	end,
-	["info"] = 	function()
-		return "drain "..(10 + get_level(Ind, ODRAINLIFE_I, 9)).."%, heal for 25%"
-	end,
-	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
-}]]--
-ODRAINLIFE = add_spell {
-	["name"] = 	"Drain Life",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["am"] = 	75,
-	["level"] = 	37,
-	["mana"] = 	45,
-	["mana_max"] = 	45,
-	["fail"] = 	-20,
-	["stat"] = 	A_WIS,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		drain_life(Ind, args.dir, 14 + get_level(Ind, ODRAINLIFE, 22))
-		hp_player(Ind, player.ret_dam / 4)
-	end,
-	["info"] = 	function()
-		return "drain "..(14 + get_level(Ind, ODRAINLIFE, 22)).."%, heal for 25%"
-	end,
-	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
-}
-
-DETECTINVIS = add_spell {
-	["name"] = 	"Detect Invisible",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	3,
-	["mana"] = 	3,
-	["mana_max"] = 	3,
-	["fail"] = 	10,
-	["spell"] = 	function()
-		detect_invisible(Ind)
-	end,
-	["info"] = 	function()
-		--return "rad "..(10 + get_level(Ind, DETECTMONSTERS, 40))
-		return ""
-	end,
-	["desc"] = 	{ "Detects all nearby invisible creatures.", }
-}
-
 POISONRES = add_spell {
 	["name"] = 	"Aspect of Peril",
 	["school"] = 	{SCHOOL_OSHADOW},
@@ -296,113 +342,6 @@ POISONRES = add_spell {
 	}
 }
 
-OFEAR_I = add_spell {
-	["name"] = 	"Cause Fear I",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	1,
-	["mana"] = 	2,
-	["mana_max"] = 	2,
-	["fail"] = 	0,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_TURN_ALL, args.dir, 5 + get_level(Ind, OFEAR_I, 65), "hisses")
-	end,
-	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, OFEAR_I, 65))
-	end,
-	["desc"] = { "Temporarily scares a target.", }
-}
-__lua_OFEAR = OFEAR_I
-OFEAR_II = add_spell {
-	["name"] = 	"Cause Fear II",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	18,
-	["mana"] = 	16,
-	["mana_max"] = 	16,
-	["fail"] = 	-25,
-	["direction"] = FALSE,
-	["spell"] = 	function()
-		project_los(Ind, GF_TURN_ALL, 5 + get_level(Ind, OFEAR_I, 65), "hisses")
-	end,
-	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, OFEAR_I, 65))
-	end,
-	["desc"] = { "Temporarily scares all nearby foes.", }
-}
-
-OBLIND_I = add_spell {
-	["name"] = 	"Blindness I",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	3,
-	["mana"] = 	2,
-	["mana_max"] = 	2,
-	["fail"] = 	0,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_BLIND, args.dir, 5 + get_level(Ind, OBLIND_I, 80), "hisses")
-	end,
-	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, OBLIND_I, 80))
-	end,
-	["desc"] = { "Temporarily blinds a target.", }
-}
-OBLIND_II = add_spell {
-	["name"] = 	"Blindness II",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	20,
-	["mana"] = 	16,
-	["mana_max"] = 	16,
-	["fail"] = 	-25,
-	["direction"] = FALSE,
-	["spell"] = 	function()
-		project_los(Ind, GF_BLIND, 5 + get_level(Ind, OBLIND_I, 80), "hisses")
-	end,
-	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, OBLIND_I, 80))
-	end,
-	["desc"] = { "Temporarily blinds all nearby foes.", }
-}
-
-OSLEEP_I = add_spell {
-	["name"] = 	"Veil of Night I",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	5,
-	["mana"] = 	3,
-	["mana_max"] = 	3,
-	["fail"] = 	0,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_OLD_SLEEP, args.dir, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
-	end,
-	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, OSLEEP_I, 80))
-	end,
-	["desc"] = { "Causes the target to fall asleep instantly.", }
-}
-OSLEEP_II = add_spell {
-	["name"] = 	"Veil of Night II",
-	["school"] = 	{SCHOOL_OSHADOW},
-	["spell_power"] = 0,
-	["level"] = 	20,--22
-	["mana"] = 	19,
-	["mana_max"] = 	19,
-	["fail"] = 	-25,
-	["direction"] = FALSE,
-	["spell"] = 	function()
-		--project_los(Ind, GF_OLD_SLEEP, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
-		fire_wave(Ind, GF_OLD_SLEEP, 0, 5 + get_level(Ind, OSLEEP_I, 80), 1, 10, 3, EFF_WAVE, "mumbles softly")
-	end,
-	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, OSLEEP_I, 80)).." rad 10"
-	end,
-	--["desc"] = { "Lets all nearby monsters fall asleep.", }
-	["desc"] = { "Expanding veil that lets monsters fall asleep.", }
-}
 SHADOWGATE = add_spell {
 	["name"] = 	"Shadow Gate",
 	["school"] = 	{SCHOOL_OSHADOW},
@@ -496,4 +435,84 @@ NETHERBOLT = add_spell {
 		return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Channels lingering nether into a bolt.", }
+}
+
+--[[
+ODRAINLIFE_I = add_spell {
+	["name"] = 	"Drain Life I",
+	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_NECROMANCY},
+	["am"] = 	75,
+	["spell_power"] = 0,
+	["level"] = 	20,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	0,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		drain_life(Ind, args.dir, 9 + get_level(Ind, ODRAINLIFE_I, 5))
+		hp_player(Ind, player.ret_dam / 6)
+	end,
+	["info"] = 	function()
+		return "drain "..(9 + get_level(Ind, ODRAINLIFE_I, 5)).."%, heal for 17%"
+	end,
+	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
+}
+ODRAINLIFE = add_spell {
+	["name"] = 	"Drain Life",
+	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_NECROMANCY},
+	["am"] = 	75,
+	["spell_power"] = 0,
+	["level"] = 	40,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
+	["fail"] = 	-65,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		drain_life(Ind, args.dir, 10 + get_level(Ind, ODRAINLIFE_I, 9))
+		hp_player(Ind, player.ret_dam / 4)
+	end,
+	["info"] = 	function()
+		return "drain "..(10 + get_level(Ind, ODRAINLIFE_I, 9)).."%, heal for 25%"
+	end,
+	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
+}]]--
+ODRAINLIFE = add_spell {
+	["name"] = 	"Drain Life",
+	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_NECROMANCY},
+	["spell_power"] = 0,
+	["am"] = 	75,
+	["level"] = 	37,
+	["mana"] = 	45,
+	["mana_max"] = 	45,
+	["fail"] = 	-60,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		drain_life(Ind, args.dir, 14 + get_level(Ind, ODRAINLIFE, 22))
+		hp_player(Ind, player.ret_dam / 4)
+	end,
+	["info"] = 	function()
+		return "drain "..(14 + get_level(Ind, ODRAINLIFE, 22)).."%, heal for 25%"
+	end,
+	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
+}
+
+ODARKBALL = add_spell {
+	["name"] = 	"Darkness Storm",
+	["school"] = 	{SCHOOL_OSHADOW},
+	["level"] = 	42,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	-70,
+	["direction"] = TRUE,
+	["ftk"] = 	2,
+	["spell"] = 	function(args)
+			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 600 + get_level(Ind, ODARKBALL, 750), 2 + get_level(Ind, ODARKBALL, 8), " conjures up a darkness storm for")
+	end,
+	["info"] = 	function()
+		return "dam d100+"..(600 + get_level(Ind, ODARKBALL, 750)).." rad "..(2 + get_level(Ind, ODARKBALL, 8))
+	end,
+	["desc"] = 	{ "Conjures up a storm of darkness.", }
 }
