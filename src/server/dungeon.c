@@ -4971,7 +4971,10 @@ static bool process_player_end_aux(int Ind) {
 #endif
 			/* Notice changes */
 			if (!(o_ptr->timeout)) {
-				/* todo: Maybe give extra message for SV_POTION_BLOOD? */
+				char o_name[ONAME_LEN];
+
+				object_desc(Ind, o_name, o_ptr, FALSE, 3);
+				msg_format(Ind, "Your %s %s gone bad.", o_name, o_ptr->number == 1 ? "has" : "have");
 
 				inven_item_increase(Ind, i, -o_ptr->number);
 				inven_item_describe(Ind, i);
@@ -4988,7 +4991,10 @@ static bool process_player_end_aux(int Ind) {
 #endif
 			/* Notice changes */
 			if (!(o_ptr->pval)) {
-				/* todo: Maybe give extra message for SV_POTION_BLOOD? */
+				char o_name[ONAME_LEN];
+
+				object_desc(Ind, o_name, o_ptr, FALSE, 3);
+				msg_format(Ind, "Your %s %s!", o_name, o_ptr->number == 1 ? "melts" : "melt");
 
 				inven_item_increase(Ind, i, -o_ptr->number);
 				inven_item_describe(Ind, i);

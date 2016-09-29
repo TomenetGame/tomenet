@@ -2375,6 +2375,10 @@ static bool hates_acid(object_type *o_ptr) {
 	case TV_SKELETON:
 	case TV_JUNK:
 		return (TRUE);
+
+	case TV_GAME:
+		if (o_ptr->sval == SV_SNOWBALL) return TRUE;
+		break;
 	}
 
 	return (FALSE);
@@ -2443,6 +2447,10 @@ bool hates_fire(object_type *o_ptr) {
 	/* Junk, partially */
 	case TV_SKELETON:
 		return TRUE;
+
+	case TV_GAME:
+		if (o_ptr->sval == SV_SNOWBALL) return TRUE;
+		break;
 	}
 
 	return (FALSE);
@@ -2490,6 +2498,9 @@ bool hates_water(object_type *o_ptr) {
 	case TV_PARCHMENT:	/* fades */
 	case TV_BOOK:
 		return (TRUE);
+	case TV_GAME:
+		if (o_ptr->sval == SV_SNOWBALL) return TRUE;
+		break;
 	}
 
 	return (FALSE);
