@@ -4981,10 +4981,11 @@ static bool process_player_end_aux(int Ind) {
 				inven_item_optimize(Ind, i);
 				j++;
 			}
+			continue;
 		}
 
 		/* SV_SNOWBALL melting */
-		if (o_ptr->tval == TV_GAME && o_ptr->pval && season != SEASON_WINTER) { //not melting while it's cold)
+		if (o_ptr->tval == TV_GAME && o_ptr->pval && !cold_place(&p_ptr->wpos)) {
 			o_ptr->pval--;
 #ifdef LIVE_TIMEOUTS
 			if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
@@ -5001,6 +5002,7 @@ static bool process_player_end_aux(int Ind) {
 				inven_item_optimize(Ind, i);
 				j++;
 			}
+			continue;
 		}
 	}
 
@@ -10032,4 +10034,47 @@ void handle_XID(int Ind) {
 	}
  #endif
 #endif
+}
+
+/* Helper function to determine snowballs melting */
+bool cold_place(struct worldpos *wpos) {
+	bool cold;
+
+	/* not melting while it's cold */
+	if (season == SEASON_WINTER) cold = TRUE;
+	else cold = FALSE;
+
+	/* not melting snowballs in always-winter regions, but melting in never-winter regions */
+	switch (wild_info[wpos->wy][wpos->wx].type) {
+	case WILD_ICE:
+		cold = TRUE;
+		break;
+	case WILD_DESERT:
+		cold = FALSE;
+		break;
+	}
+
+	/* don't melt in icy dungeons, but melt in other dungeons */
+	if (wpos->wz > 0) {
+		switch (wild_info[wpos->wy][wpos->wx].tower->type) {
+		case DI_HELCARAXE:
+		case DI_CLOUD_PLANES:
+			cold = TRUE;
+			break;
+		default:
+			cold = FALSE;
+		}
+	}
+	else if (wpos->wz < 0) {
+		switch (wild_info[wpos->wy][wpos->wx].dungeon->type) {
+		case DI_HELCARAXE:
+		case DI_CLOUD_PLANES:
+			cold = TRUE;
+			break;
+		default:
+			cold = FALSE;
+		}
+	}
+
+	return cold;
 }

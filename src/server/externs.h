@@ -827,6 +827,7 @@ extern void local_weather_update(void);
 #endif
 //extern int pseudo_id_result(object_type *o_ptr, bool heavy);
 extern void handle_XID(int Ind);
+extern bool cold_place(struct worldpos *wpos);
 
 /* files.c */
 extern int highscore_send(char *buffer, int max);

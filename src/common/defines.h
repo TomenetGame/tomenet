@@ -1207,6 +1207,7 @@
 #define DI_HALLS_OF_MANDOS	8
 #define DI_PATHS_DEAD		16
 #define DI_SANDWORM_LAIR	27
+#define DI_HELCARAXE		29
 #define DI_VALINOR		31
 #define DI_CLOUD_PLANES		32
 

@@ -10420,6 +10420,30 @@ void process_objects(void) {
 
 		/* timing fix - see description in dungeon() */
 		if (turn % (level_speed(&o_ptr->wpos) / 120)) continue;
+
+		/* Handle Timeouts */
+		if (o_ptr->timeout) {
+			switch (o_ptr->tval) {
+			case TV_RING: case TV_LITE:
+				//don't decrement, they don't time out in player inventory either
+				continue;
+			case TV_POTION: case TV_FOOD: //SV_POTION_BLOOD going bad
+				o_ptr->timeout--;
+				/* poof */
+				if (!(o_ptr->timeout)) delete_object_idx(i, TRUE);
+				continue;
+			}
+		}
+		/* SV_SNOWBALL melts */
+		if (o_ptr->tval == TV_GAME && o_ptr->pval) {
+			if (cold_place(&o_ptr->wpos)) continue;
+
+			o_ptr->pval--;
+			/* poof */
+			if (!(o_ptr->pval)) delete_object_idx(i, TRUE);
+			continue;
+		}
+
 		/* Recharge rods on the ground and inside trap kits */
 		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
 #ifndef NEW_MDEV_STACKING
@@ -10430,6 +10454,7 @@ void process_objects(void) {
 			/* Reset it from 'charging' state to charged state */
 			if (!o_ptr->pval) o_ptr->bpval = 0;
 #endif
+			continue;
 		}
 	}
 
@@ -10466,22 +10491,25 @@ void process_objects(void) {
 #ifdef LIVE_TIMEOUTS
 					else if (Ind && Players[Ind]->live_timeouts) display_house_entry(Ind, i, h_ptr);
 #endif
-					break;
-				case TV_GAME: //basically just SV_SNOWBALL
-					if (season == SEASON_WINTER) break; //not melting while it's cold
-					Ind = pick_player(h_ptr);
-					o_ptr->pval--;
-					/* poof */
-					if (!(o_ptr->pval)) {
-						home_item_increase(h_ptr, i, -o_ptr->number);
-						home_item_optimize(h_ptr, i);
-						if (Ind) display_trad_house(Ind, h_ptr); //display_house_inventory(Ind, h_ptr);
-					}
-#ifdef LIVE_TIMEOUTS
-					else if (Ind && Players[Ind]->live_timeouts) display_house_entry(Ind, i, h_ptr);
-#endif
-					break;
+					continue;
 				}
+			}
+			/* SV_SNOWBALL melts */
+			if (o_ptr->tval == TV_GAME && o_ptr->pval) {
+				if (cold_place(&o_ptr->wpos)) continue;
+
+				Ind = pick_player(h_ptr);
+				o_ptr->pval--;
+				/* poof */
+				if (!(o_ptr->pval)) {
+					home_item_increase(h_ptr, i, -o_ptr->number);
+					home_item_optimize(h_ptr, i);
+					if (Ind) display_trad_house(Ind, h_ptr); //display_house_inventory(Ind, h_ptr);
+				}
+#ifdef LIVE_TIMEOUTS
+				else if (Ind && Players[Ind]->live_timeouts) display_house_entry(Ind, i, h_ptr);
+#endif
+				continue;
 			}
 
 			/* Recharge rods in the list house */
@@ -10494,6 +10522,7 @@ void process_objects(void) {
 				/* Reset it from 'charging' state to charged state */
 				if (!o_ptr->pval) o_ptr->bpval = 0;
 #endif
+				continue;
 			}
 		}
 	}
