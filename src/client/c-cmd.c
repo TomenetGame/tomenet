@@ -2,8 +2,8 @@
 #include "angband.h"
 
 #ifdef WINDOWS
-static char *strcasestr(char *big, char *little) {
-	char *ret;
+static const char *strcasestr(const char *big, const char *little) {
+	const char *ret;
 	int cnt = 0, cnt2 = 0;
 	int L = strlen(little),l = 0;
 
@@ -22,7 +22,7 @@ static char *strcasestr(char *big, char *little) {
 		if (L == l) return ret;
 		cnt++;
 	} while (big[cnt] != '\0');
-	return 0;
+	return NULL;
 }
 #endif
 
