@@ -2188,7 +2188,7 @@ dangers but also fantastic treasure. Players on the same server can also play
 together by forming parties and sharing their experience! Players will acquire
 new ranks as their experience grows, allowing them to learn new abilities and
 to become stronger. Morgoth is said not to show up until his servant Sauron,
-the Sorceror has been defeated. (See 1.5 for more information about Morgoth.)
+the Sorceror has been defeated. (See (1.3a) for details about Morgoth.)
 
 On their journey through wilderness and remote towns, towers and dungeons,
 characters will gain experience points that increase their level up to 50.
@@ -2282,6 +2282,8 @@ is a chance that you will be infected by the Black Breath. This dark aura is
 able to infect other players if you come too close to them. It will drain your
 stats and permanently drain your experience. Slowly, but steadily. There are
 several possibilities to cure Black Breath, for example Sprigs of Athelas.
+Players cannot infect other players with Black Breath if they are in Bree or in
+the Training Tower, those are safe zones.
 
 Each Nazgul will drop a ring of power, which is a random artifact ring bearing
 the Nazgul's name. These rings have a lot of random mods (ie abilities) and
@@ -5850,7 +5852,7 @@ The 1..9 are standard shops, namely..
                         Will *identify* an item for a fee.
                         See (5.7) for more information about ID, *ID*, shops!
         Herbal Healing Service
-                        Will cure black breath for a high fee. (See 1.5 for
+                        Will cure black breath for a high fee. (See (1.3a) for
                         more information about Black Breath.)
         Morph Restoration Service
                         Restores your form to normal in case you were
@@ -9949,7 +9951,7 @@ Codex, Spellbook, Grimoire
                     the most space (5).
                     (Note that you cannot use these books if your game client
                     version is below 4.4.2!)
-Sprig of Athelas    Eat this one to cure Black Breath (see 1.5 for more
+Sprig of Athelas    Eat this one to cure Black Breath (see (1.3a) for more
                     information about Black Breath),
                     also cures poison/stun/cuts.
 Tarpaulin           When equipped a tarp prevents your inventory and equipment
@@ -10640,7 +10642,7 @@ LITE            Light or blindness resistance.
                 resistance and gets amplified by susceptibility.
 
 Getting hit by higher undead creatures may also infect you with the
-Black Breath! (See 1.5 for more information about Black Breath.)
+Black Breath! (See (1.3a) for more information about Black Breath.)
 
 
 Further, monsters may have one or more spells they can cast. Breathing elements
@@ -15197,7 +15199,7 @@ school.
     Faithful Focus  Cure hallucinations and insanity.          (auto-project)
                     Required skill level for first spell level: 21.
 
-    Soul Curing     Cures Black Breath (See 1.5 for more information about
+    Soul Curing     Cures Black Breath (See (1.3a) for more information about
                     Black Breath).                             (auto-project)
                     Required skill level for first spell level: 25.
 
@@ -17062,7 +17064,7 @@ Higher characters (up to 35)
   to give you Black Breath.
   You can leave the sprig in your house since Black Breath saps your soul very
   slowly, so there should be enough time to finish business in the dungeon and
-  recall to town afterwards to eat a sprig. (See 1.5 for more information
+  recall to town afterwards to eat a sprig. (See (1.3a) for more information
   about Black Breath.)
 + Scrolls of *Remove Curse*. These are expensive in the black market, but are
   sometimes sold in the temple cheaply, so always check the temple when you
