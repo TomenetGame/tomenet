@@ -4783,7 +4783,7 @@ static bool process_player_end_aux(int Ind) {
 				if (o_ptr->sval == SV_LITE_TORCH && !o_ptr->timeout) {
 					/* Decrease the item, optimize. */
 					inven_item_increase(Ind, INVEN_LITE, -1);
-					//						inven_item_describe(Ind, INVEN_LITE);
+					//inven_item_describe(Ind, INVEN_LITE);
 					inven_item_optimize(Ind, INVEN_LITE);
 				}
 #endif
@@ -4955,7 +4955,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Note changes */
 	j = 0;
 
-	/* Process inventory (blood potions going bad) */
+	/* Process inventory (blood potions, snowballs) */
 	for (i = 0; i < INVEN_PACK; i++) {
 		/* Get the object */
 		o_ptr = &p_ptr->inventory[i];
@@ -4963,7 +4963,7 @@ static bool process_player_end_aux(int Ind) {
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
-		/* Potions of blood */
+		/* SV_POTION_BLOOD going bad */
 		if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) {
 			o_ptr->timeout--;
 #ifdef LIVE_TIMEOUTS
@@ -5008,9 +5008,8 @@ static bool process_player_end_aux(int Ind) {
 
 		/* Recharge activatable objects */
 		/* (well, light-src should be handled here too? -Jir- */
-		if ((o_ptr->timeout > 0) && ((o_ptr->tval != TV_LITE) || o_ptr->name1) &&
-		    !((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)))
-		{
+		if (o_ptr->timeout > 0 && o_ptr->tval != TV_LITE &&
+		    !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)) {
 			/* Recharge */
 			o_ptr->timeout--;
 
