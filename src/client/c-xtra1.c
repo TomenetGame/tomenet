@@ -2334,7 +2334,7 @@ void display_player(int hist) {
 					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, 10);//hist ? 10 : 1);
 		}
 	} else { //Character sheet boni page, finally!
-		int i, j, k, amfi1, amfi2;
+		int i, j, k, amfi1 = 0, amfi2 = 0;
 		int header_color[4][19];
 
 		int color;
