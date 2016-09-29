@@ -2237,7 +2237,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						msg_print(Ind, "You keep hold of your life force!");
 					else {
 						s32b d = damroll(10, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
 						else if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
 							lose_exp(Ind, d/10);
@@ -2283,7 +2283,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						msg_print(Ind, "You keep hold of your life force!");
 					else {
 						s32b d = damroll(20, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
 						else if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
 							lose_exp(Ind, d/10);
@@ -2329,7 +2329,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						msg_print(Ind, "You keep hold of your life force!");
 					else {
 						s32b d = damroll(40, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
 						else if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
 							lose_exp(Ind, d/10);
@@ -2375,7 +2375,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						msg_print(Ind, "You keep hold of your life force!");
 					else {
 						s32b d = damroll(80, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
 						else if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
 							lose_exp(Ind, d/10);
@@ -2498,7 +2498,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					switch (p_ptr->resist_time ? randint(9) : randint(10)) {
 					case 1: case 2: case 3: case 4: case 5: {
-						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
 						else {
 							msg_print(Ind, "You feel life has clocked back.");
 							lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);

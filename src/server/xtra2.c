@@ -4700,7 +4700,7 @@ void lose_exp(int Ind, s32b amount) {
 	}
 #endif
 
-	if (p_ptr->lev == 99) {
+	if (p_ptr->keep_life) {
 		//msg_print(Ind, "You are impervious to life force drain!");
 		return;
 	}

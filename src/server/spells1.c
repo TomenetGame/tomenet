@@ -2220,7 +2220,7 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		stop_precision(Ind);
 	}
 
-	if (p_ptr->lev == 99) {
+	if (p_ptr->keep_life) {
 		//msg_print(Ind, "You are impervious to life force drain!");
 		return;
 	}
@@ -9156,7 +9156,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who); /* Prevent going down to level 1 and then taking full damage -> instakill */
 
-			if (p_ptr->lev == 99 || (p_ptr->mode & MODE_PVP))
+			if (p_ptr->keep_life || (p_ptr->mode & MODE_PVP))
 				msg_print(Ind, "You are unaffected!");
 			else if (p_ptr->hold_life && (rand_int(100) < 75))
 				msg_print(Ind, "You keep hold of your life force!");
@@ -9263,7 +9263,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!p_ptr->resist_chaos && !(p_ptr->mode & MODE_PVP))
 			(void)set_image(Ind, p_ptr->image + randint(10));
 		if (!p_ptr->resist_neth && !p_ptr->resist_chaos) {
-			if (p_ptr->lev == 99 || (p_ptr->mode & MODE_PVP))
+			if (p_ptr->keep_life || (p_ptr->mode & MODE_PVP))
 				msg_print(Ind, "You are unaffected!");
 			else if (p_ptr->hold_life && (rand_int(100) < 75))
 				msg_print(Ind, "You keep hold of your life force!");
@@ -9416,7 +9416,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (p_ptr->resist_time) {
 					/* let's disable it for now to improve time resistance: */
 					if (magik(25)) {
-						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
 						else {
 							msg_print(Ind, "You feel life has clocked back.");
 							lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE / 4);
@@ -9425,7 +9425,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 						msg_print(Ind, "You feel as if life has clocked back, but the feeling passes.");
 					}
 				} else {
-					if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected.");
+					if (p_ptr->keep_life) msg_print(Ind, "You are unaffected.");
 					else {
 						msg_print(Ind, "You feel life has clocked back.");
 						lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);

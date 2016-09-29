@@ -2996,6 +2996,7 @@ void calc_boni(int Ind) {
 	p_ptr->resist_water = FALSE;
 	p_ptr->regen_mana = FALSE;
 	p_ptr->feather_fall = FALSE;
+	p_ptr->keep_life = FALSE;
 	p_ptr->hold_life = FALSE;
 	p_ptr->telepathy = 0;
 	p_ptr->lite = FALSE;
@@ -3154,6 +3155,9 @@ void calc_boni(int Ind) {
 	    (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RES_HEAL)))
 		p_ptr->no_heal = TRUE;
 
+
+	/* Obtain ultimate life force hold at 99 */
+	if (p_ptr->lev == 99) { p_ptr->keep_life = TRUE; /*csheet_boni[14].cb[5] |= CB6_RLIFE; --todo*/ }
 
 	/* Calc bonus body */
 	if (!p_ptr->body_monster) {
@@ -5789,6 +5793,7 @@ void calc_boni(int Ind) {
 	}
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 30) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
 #endif
+	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50) { p_ptr->keep_life = TRUE; /*csheet_boni[14].cb[5] |= CB6_RLIFE; --todo*/ }
 
 	/* Take note when "heavy bow" changes */
 	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
