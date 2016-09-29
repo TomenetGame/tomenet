@@ -11997,6 +11997,9 @@ Note that not every skill is available to every profession (class).
                                 high as the monster level.
                                 Necromancy has no effect on undead and
                                 nonliving monsters.
+                                At 50.000 the character gains ultimate hold
+                                on his life force, rendering him immune to
+                                experience drain.
 
         .Traumaturgy            Drains mana from monsters when you inflict
                                 damage on them, replenishing your MP.
