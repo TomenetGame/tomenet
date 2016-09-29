@@ -1293,7 +1293,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* Obtain the item */
 						o_ptr = &p_ptr->inventory[i];
 
-						/* Drain charged wands/staffs */
+						/* Drain charged wands/staffs/rods/polyrings -- what about activatable items? */
 						if ((((o_ptr->tval == TV_STAFF) ||
 						     (o_ptr->tval == TV_WAND)) &&
 						    (o_ptr->pval)) ||
