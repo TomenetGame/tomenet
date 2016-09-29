@@ -494,7 +494,8 @@ ODRAINLIFE = add_spell {
 		hp_player(Ind, player.ret_dam / 4)
 	end,
 	["info"] = 	function()
-		return "drain "..(14 + get_level(Ind, ODRAINLIFE, 22)).."%, heal for 25%"
+		--return "drain "..(14 + get_level(Ind, ODRAINLIFE, 22)).."%, heal for 25%"
+		return (14 + get_level(Ind, ODRAINLIFE, 22)).."% (max 900), 25% heal"
 	end,
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
