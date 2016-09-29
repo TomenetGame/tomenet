@@ -1418,8 +1418,8 @@ void do_cmd_drink_fountain(int Ind) {
 			msg_print(Ind, "The fountain is dried out.");
 		}
 		return;
-	} else if (season == SEASON_WINTER && /* during winter we can make snowballs~ */
-	    /* not in dungeons (helcaraxe..?) */
+	} else if (cold_place(&p_ptr->wpos) && /* during winter we can make snowballs~ */
+	    /* not in dungeons (helcaraxe..?) -- IC we assume they're just ice, not really snow, snow is only found on the world surface :p */
 	    !p_ptr->wpos.wz &&
 	    /* must be floor or tree/bush to grab snow from, just not solid walls basically: */
 	    (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_MOUNTAIN) &&
@@ -1443,10 +1443,8 @@ void do_cmd_drink_fountain(int Ind) {
 		return;
 	}
 	if (c_ptr->feat != FEAT_FOUNTAIN) {
-		if (season != SEASON_WINTER || p_ptr->wpos.wz)
-			msg_print(Ind, "You see no fountain here.");
-		else //different message if we could actually make snowballs instead of just filling bottles..
-			msg_print(Ind, "You see nothing usable here.");
+		//non-fountain-specific message, since we could also make snowballs instead of just filling bottles..
+		msg_print(Ind, "There is nothing here.");
 		return;
 	}
 
