@@ -6538,6 +6538,9 @@ void black_breath_infection(int Ind, int Ind2) {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr = Players[Ind2];
 
+	/* Bree is a safe zone */
+	if (in_bree(&p_ptr->wpos) || in_trainingtower(&p_ptr->wpos) || in_valinor(&p_ptr->wpos)) return;
+
 	/* Prevent players who are AFK from getting infected in towns - mikaelh */
 	if (p_ptr->black_breath && !q_ptr->black_breath &&
 #ifdef VAMPIRES_BB_IMMUNE
