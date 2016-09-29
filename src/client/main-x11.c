@@ -3029,6 +3029,12 @@ void store_crecedentials(void) {
 	write_mangrc(TRUE);
 }
 void get_screen_font_name(char *buf) {
+	/* fonts aren't available in command-line mode */
+	if (!strcmp(ANGBAND_SYS, "gcu")) {
+		buf[0] = 0;
+		return;
+	}
+
 	if (screen.fnt->name) strcpy(buf, screen.fnt->name);
 	else strcpy(buf, "");
 }
