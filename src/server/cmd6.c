@@ -1437,7 +1437,7 @@ void do_cmd_drink_fountain(int Ind) {
 		/* Can melt: We don't use o_ptr->timeout because
 		    a) it needs too many extra checks everywhere and
 		    b) timeout is shown while pval is hidden. */
-		forge.pval = 5000 + rand_int(1001);
+		forge.pval = 75 + rand_int(26);
 		inven_carry(Ind, &forge);
 		msg_print(Ind, "You pick up some snow and form a snowball.");
 		return;
