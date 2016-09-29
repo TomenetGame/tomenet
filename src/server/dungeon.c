@@ -10039,6 +10039,7 @@ void handle_XID(int Ind) {
 /* Helper function to determine snowballs melting */
 bool cold_place(struct worldpos *wpos) {
 	bool cold;
+	dungeon_type *d_ptr = NULL;
 
 	/* not melting while it's cold */
 	if (season == SEASON_WINTER) cold = TRUE;
@@ -10055,18 +10056,18 @@ bool cold_place(struct worldpos *wpos) {
 	}
 
 	/* don't melt in icy dungeons, but melt in other dungeons */
-	if (wpos->wz > 0) {
-		switch (wild_info[wpos->wy][wpos->wx].tower->type) {
-		case DI_HELCARAXE:
-		case DI_CLOUD_PLANES:
-			cold = TRUE;
-			break;
-		default:
-			cold = FALSE;
-		}
-	}
-	else if (wpos->wz < 0) {
-		switch (wild_info[wpos->wy][wpos->wx].dungeon->type) {
+	if (wpos->wz > 0) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
+	else if (wpos->wz < 0) d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+	if (d_ptr) {
+		int dun_type;
+
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+		else
+#endif
+		dun_type = d_ptr->theme ? d_ptr->theme : d_ptr->type;
+
+		switch (dun_type) {
 		case DI_HELCARAXE:
 		case DI_CLOUD_PLANES:
 			cold = TRUE;
