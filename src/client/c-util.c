@@ -484,7 +484,7 @@ void sync_sleep(int milliseconds) {
 		}
 
 		/* Redraw windows if necessary */
-		if (p_ptr->window) window_stuff();
+		window_stuff();
 	}
 }
 
@@ -651,7 +651,7 @@ static char inkey_aux(void) {
 			}
 
 			/* Redraw windows if necessary */
-			if (p_ptr->window) window_stuff();
+			window_stuff();
 		} while (!ch);
 	}
 
@@ -1038,7 +1038,7 @@ if (c_cfg.keep_topline)
  #endif
 
 				/* Redraw windows if necessary */
-				if (p_ptr->window) window_stuff();
+				window_stuff();
 			} while (1);
 #endif
 

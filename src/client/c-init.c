@@ -2629,7 +2629,7 @@ static void Input_loop(void) {
 		flush_now();
 
 		/* Redraw windows if necessary */
-		if (p_ptr->window) window_stuff();
+		window_stuff();
 
 #ifdef RETRY_LOGIN
 		/* player used quit command? */
