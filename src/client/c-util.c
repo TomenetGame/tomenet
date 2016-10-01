@@ -3839,9 +3839,9 @@ void interact_macros(void) {
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377un\377s) ..create a normal macro     (persists everywhere, even in chat)");
 //		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u4\377s) Create a identity macro  (erases a macro)");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ue\377s) Create an empty macro       (completely disables a key)");
-//		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
+		//Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s) Enter and create a 'quick & dirty' macro"),
-//		Term_putstr(5, l++, -1, TERM_SLATE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
+		//Term_putstr(5, l++, -1, TERM_SLATE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ur\377s) Record a macro");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377up\377s) Paste currently shown macro action to chat");
 		l++;
@@ -3879,7 +3879,7 @@ void interact_macros(void) {
 			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
-//			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+			//sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
 			/* Use the character name by default - mikaelh */
 			sprintf(tmp, "%s.prf", cname);
 
@@ -3902,9 +3902,27 @@ void interact_macros(void) {
 			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
-//			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+			//sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
 			/* Use the character name by default - mikaelh */
 			sprintf(tmp, "%s.prf", cname);
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Dump the macros */
+			(void)macro_dump(tmp);
+		}
+
+		/* Save a 'macro' file as 'global.prf' */
+		else if (i == 'S') {
+			/* Prompt */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file to global.prf");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
+
+			/* Default filename */
+			strcpy(tmp, "global.prf");
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
