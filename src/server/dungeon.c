@@ -5007,7 +5007,7 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Process equipment */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+	for (i = 0; i < INVEN_TOTAL; i++) {
 		/* Get the object */
 		o_ptr = &p_ptr->inventory[i];
 
