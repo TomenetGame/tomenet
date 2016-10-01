@@ -11177,8 +11177,11 @@ bool set_recall_timer(int Ind, int v) {
 	    p_ptr->anti_tele ||
 #endif
 	    iddc_recall_fail(p_ptr, l_ptr))) {
-		msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
-		return FALSE;
+		if (p_ptr->word_recall) v = 0;
+		else {
+			msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
+			return FALSE;
+		}
 	}
 
 	/* Hack -- Force good values */

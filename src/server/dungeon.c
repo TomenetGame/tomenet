@@ -5171,6 +5171,10 @@ static bool process_player_end_aux(int Ind) {
 		if (p_ptr->anti_tele) {
 			msg_print(Ind, "\377oA tension leaves the air around you...");
 			p_ptr->word_recall = 0;
+			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+			/* Redraw the depth(colour) */
+			p_ptr->redraw |= (PR_DEPTH);
+			handle_stuff(Ind);
 		} else
 #endif
 		{

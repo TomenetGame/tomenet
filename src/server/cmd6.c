@@ -5479,6 +5479,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			o_ptr->timeout = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
 		case ART_AVAVIR:
+			msg_print(Ind, "Your scythe glows soft white...");
 			set_recall(Ind, rand_int(20) + 15, o_ptr);
 			o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
@@ -5927,32 +5928,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 			o_ptr->timeout = 500 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 			break;
-#if 0
-		case ART_AVAVIR: {
-			struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
-
-			if (dlev && (max_dlv[dungeon_type] > dlev)) {
-				if (get_check("Reset recall depth? "))
-					max_dlv[dungeon_type] = dlev;
-			}
-
-			msg_print(Ind, "Your scythe glows soft white...");
-			if (
- #if ANTI_TELE_CHEEZE
-			    p_ptr->anti_tele ||
- #endif
-			    iddc_recall_fail(p_ptr, l_ptr)) {
-				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
-			} else if (!p_ptr->word_recall) {
-				p_ptr->word_recall = randint(20) + 15;
-				msg_print(Ind, "\377oThe air about you becomes charged...");
-			} else {
-				p_ptr->word_recall = 0;
-				msg_print(Ind, "\377oA tension leaves the air around you...");
-			}
-			o_ptr->timeout = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
-			break; }
-#endif
 		case ART_EVENSTAR:
 			restore_level(Ind);
 			(void)do_res_stat(Ind, A_STR);
