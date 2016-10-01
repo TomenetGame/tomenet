@@ -15147,6 +15147,7 @@ school.
                     -any malicious effects such as poisoning, fear, blindness,
                      confusion, paralyzation, slowness, stun or cuts,
                     -nexus, polymorph and teleportation effects.
+                    Martyrdom doesn't protect your inventory from harm though.
                     The heavens won't accept another martyrium until 1000
                     seconds have passed.
                     Note: To check whether you can use the spell again,
