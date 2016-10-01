@@ -2199,6 +2199,7 @@ bool set_martyr(int Ind, int v) {
 			s_printf("MARTYRDOM: %s\n", p_ptr->name);
 		} else {
 			msg_print(Ind, "\377wYou burn in holy fire!");
+			msg_format_near(Ind, "\377w%s burns in holy fire!", p_ptr->name);
 			/* assumes that martyr starts at -15 turns! : */
 			p_ptr->chp = (p_ptr->mhp * p_ptr->martyr) / p_ptr->martyr_dur;
 			/* Update health bars */

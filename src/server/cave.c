@@ -2104,12 +2104,20 @@ static byte player_color(int Ind) {
 
 	/* Holy Martyr or shadow running */
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
-	if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz)
+	if (p_ptr->shadow_running || p_ptr->admin_wiz)
 #ifdef EXTENDED_TERM_COLOURS
 		pcolor |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
 #else
 		pcolor |= TERM_BNW;
 #endif
+	if (p_ptr->martyr) { //'holy fire'
+#ifdef EXTENDED_TERM_COLOURS
+		if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) pcolor |= TERM_OLD_BNW;
+		else if (rand_int(2)) pcolor = TERM_HOLYFIRE;
+#else
+		pcolor |= TERM_BNW;
+#endif
+	}
 
 	/* Team colours have highest priority */
 	if (p_ptr->team) {
