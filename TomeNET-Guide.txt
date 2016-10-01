@@ -13077,7 +13077,8 @@ create a character!):
     of all races since they are either greatly respected or feared by all other
     creatures.
     They gain experience extremely slowly, and rarely need to feed before
-    initiation. Afterwards they have no more need for any worldly food at all.
+    initiation. Afterwards they have no more need for any worldly food at all
+    (and they cannot become gorged either).
     Alignment-dependant boni are..
 
     Enlightened:
@@ -15274,7 +15275,8 @@ school.
                     Required skill level for first spell level: 33.
 
     BONI:           Completely Suppresses DG_CURSE and TY_CURSE at 40.
-                    Keeps the hunger satisfied all the time at 50.
+                    Keeps the hunger satisfied all the time at 50
+                    (you also cannot become gorged anymore).
 
 
 - Occultism -
