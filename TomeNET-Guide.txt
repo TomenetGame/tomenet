@@ -9196,13 +9196,13 @@ LUCK ('It affects your luck.')
         Note: Luck has NO effect on 'acquirement' and 'artifact creation'.
         Note: Luck does NOT affect which base item type drops, ie whether it is
         a dragon scale mail or a cloth hat.
-NO_MAGIC ('Antimagic shell')
+NO_MAGIC ('Anti-magic shell')
         Raises your saving throw to 95%, making you nearly immune to any
         malicious magical influence (like paralysation or slowness, but also to
         monsters cursing you). Also prevents you from using any magic device or
         casting spells. You can still use scrolls and potions though.
         For more information about Saving Throw see (6.3).
-ANTIMAGIC ('Antimagic field')
+ANTIMAGIC ('Anti-magic field')
         Prevents you from using any magic device or casting spells, also
         prevents nearby monsters and other players from casting spells (but
         not from using magic devices). You can still use scrolls and potions
@@ -9210,12 +9210,12 @@ ANTIMAGIC ('Antimagic field')
         The field has less influence on _party members_ who try to cast.
         Usage of magic devices by party members is not hindered.
         The radius is approximately the field power / 9, and is cumulative
-        to the 'Antimagic' skill. The field power is the chance of
+        to the 'Anti-magic' skill. The field power is the chance of
         suppressing a spell. It caps at 75% and is cumulative to the
-        'Antimagic' skill. Make sure to read up on antimagic skill at (6.2).
+        'Anti-magic' skill. Make sure to read up on anti-magic skill at (6.2).
         The chance to interrupt spells is quartered for your party members,
-        so they are not affected much by your antimagic field.
-        The antimagic field's radius caps at range 9.
+        so they are not affected much by your anti-magic field.
+        The anti-magic field's radius caps at range 9.
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
         without penalties, even if they are not blunt.
@@ -9360,7 +9360,7 @@ Weapons & Armour
 Blade of Chaos  Resists chaos and produces chaotic effects (see (5.8)).
 Bluesteel Blade Cannot rust (not damaged by water attacks) and are especially
                 sharp (see 'VORPAL' under (5.8)).
-Dark Sword      Dark Swords have a so-called 'antimagic field', which
+Dark Sword      Dark Swords have a so-called 'anti-magic field', which
                 prevents the user from using magic devices or casting spells,
                 and also has a chance to interrupt nearby monsters and players
                 who try to cast spells but doesn't affect their magic devices.
@@ -9369,24 +9369,24 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 to-hit and to-dam values of the dark sword. Example:
                 A Dark Sword (+3,+7) has 30 - (3+7) * 3/5 = 24% chance of
                 interrupting spellcasters. The chance is further quartered for
-                party members, so they are hardly affected by your antimagic
+                party members, so they are hardly affected by your anti-magic
                 field. Usage of magic devices by party members is not hindered.
-                The radius of the antimagic field is several fields (chance
+                The radius of the anti-magic field is several fields (chance
                 to interrupt spells, divided by 9), getting smaller if the
                 chance is smaller than 30%.
                 Dark Swords never give more than 30% AM, even if tohit and
                 todam boni added together result in a negative number.
-                They also never give 'negative antimagic', 0% AM is the
+                They also never give 'negative anti-magic', 0% AM is the
                 minimum, even if tohit+todam are greater than its AM.
-                AC boni on Dark Swords won't affect the antimagic field.
-                The antimagic chance and field radius of a dark sword stacks
-                with the 'Antimagic' skill (see 6.2).
+                AC boni on Dark Swords won't affect the anti-magic field.
+                The anti-magic chance and field radius of a dark sword stacks
+                with the 'Anti-magic' skill (see 6.2).
 
                 Note that if you dual-wield dark swords the stronger AM field
                 will override the weaker one, so they don't stack.
 
                 Similarly, if there are multiple players around nearby who have
-                antimagic fields affecting the same monster then only the
+                anti-magic fields affecting the same monster then only the
                 strongest AM field will work, overriding the weaker ones.
 Demon Hammer    Slays demons.
 Hunting Spear   Slays animals.
@@ -9973,7 +9973,7 @@ such as..
  ability consists mainly of your 'Magic Device' skill and also somewhat of your
  intelligence.
  See (6.10) for more information on the Magic Device skill.
--whether you have trained your Antimagic skill
+-whether you have trained your Anti-magic skill
 -if you have the item equipped
 
 An activated item will usually have a cooldown (timeout) until it can be
@@ -10436,14 +10436,15 @@ HOLD            Paralyses you from afar.
 FORGET          Blanks your mind, makes you forget the dungeon map and details
                 of your items (unidentifies items).
 TRAPS           Can place traps around you (from afar).
-DISBELIEVE      Monster has an antimagic field, the strength depending on its
+DISBELIEVE      Monster has an anti-magic field, the strength depending on its
                 level.
 
-                Like training the 'Antimagic' skill, having intrinsic antimagic
-                from the DISBELIEVE flag will also shorten the duration of
-                certain magical temporary buffs and debuffs on your character!
+                Like training the 'Anti-magic' skill, having intrinsic anti-
+                magic from the DISBELIEVE flag will also shorten the duration
+                of certain magical temporary buffs and debuffs on your
+                character!
                 To see which those are and to see more information about
-                antimagic, see 'Antimagic' skill in (6.2) and 'Dark Sword' in
+                anti-magic, see 'Anti-magic' skill in (6.2) and 'Dark Sword' in
                 (5.9).
 
 DROP_GOOD       The monster usually drops enchanted items.
@@ -10647,7 +10648,7 @@ Black Breath! (See (1.3a) for more information about Black Breath.)
 
 Further, monsters may have one or more spells they can cast. Breathing elements
 and shooting or throwing boulders belong to those too (but aren't affected by
-antimagic fields since they aren't 'real spells' but rather physical actions).
+anti-magic fields since they aren't 'real spells' but rather physical actions).
 
 Among the monster spells, such as casting bolt or ball spells, teleporting,
 healing, trying to blind/scare/confuse/paralyze/slow the player, summoning
@@ -10772,7 +10773,7 @@ DG_CURSE        Rarely summons a random monster on you, even if uncursed.
                 (DG_CURSE will stay, even if the 'normal' curse is broken!)
                 Greatly lowers the items value by 25000 Au.
                 This curse will be on hold while you're in a town.
-                Note that an antimagic field has a chance to suppress it.
+                Note that an anti-magic field has a chance to suppress it.
                 Having 'Holy Support' skill at 40.000 or better will completely
                 negate TY_CURSE effects.
                 ("It carries an ancient morgothian curse.")
@@ -11844,8 +11845,8 @@ Note that not every skill is available to every profession (class).
                                 intercept will override the others.
 
                                 Regarding spell suppression, interception
-                                combines with Antimagic in a special way, see
-                                'Antimagic' skill for details.
+                                combines with Anti-magic in a special way, see
+                                'Anti-magic' skill for details.
 
     +Archery                    Improves ranged to-damage bonus somewhat, by +1
                                 for every 5.000 increase in skill.
@@ -12093,42 +12094,42 @@ Note that not every skill is available to every profession (class).
                                 See (6.10) for more information on magic
                                 devices, the skill and the ability.
 
-.Antimagic                      Generated from your strong disbelief in magic
-                                an antimagic field surrounds you, preventing
+.Anti-magic                     Generated from your strong disbelief in magic
+                                an anti-magic field surrounds you, preventing
                                 nearby monsters and players from casting
                                 spells (but does not prevent them from using
                                 magic devices).
-                                This effect is cumulative with the antimagic
+                                This effect is cumulative with the anti-magic
                                 field of a Dark Sword. (See 5.9 for more info
                                 about dark swords.)
                                 It's capped at 75% chance of interrupting
                                 enemy spells. The capped chance is further
                                 quartered for party members, so they are hardly
-                                affected by your antimagic field. Usage of
+                                affected by your anti-magic field. Usage of
                                 magic devices by party members is not hindered.
-                                The radius of your antimagic field is approx.
+                                The radius of your anti-magic field is approx.
                                 the field's power / 9 and caps at range 9.
-                                Each point in Antimagic adds 1% to your
+                                Each point in Anti-magic adds 1% to your
                                 AM chance, so the max gain is +50% from skill.
                                 If you use a dark sword that gives the maximum
-                                amount of antimagic they can give (+30%) then
-                                you only need Antimagic skill at 45 instead of
-                                50 to reach the antimagic cap value of 75%
+                                amount of anti-magic they can give (+30%) then
+                                you only need Anti-magic skill at 45 instead of
+                                50 to reach the anti-magic cap value of 75%
                                 (30% from dark sword + 45% from skill = 75%).
                                 Note: While ball/bolt attacks are spells,
                                       breathing is NOT.
-                                Warriors that specialize in Antimagic are
-                                called 'Unbelievers' (The antimagic powers
+                                Warriors that specialize in Anti-magic are
+                                called 'Unbelievers' (The anti-magic powers
                                 result from their strong disbelief in magic).
 
                                 Note that as soon as you invest a point into
                                 this skill you won't be able to use any spells
                                 or magic devices (wands, staves, rods, items
                                 that can be activated) anymore!
-                                Being antimagic still allows you to use scrolls
-                                and potions though.
+                                Being anti-magic still allows you to use
+                                scrolls and potions though.
 
-                                Training the Antimagic skill will shorten the
+                                Training the Anti-magic skill will shorten the
                                 duration of certain magical temporary buffs
                                 and debuffs on your character, which are:
                                 ESP, space/time anchor, probability travel,
@@ -12137,18 +12138,18 @@ Note that not every skill is available to every profession (class).
                                 invulnerability obtained from a potion,
                                 deflection, shield.
 
-                                Regarding spell suppression, Antimagic fields
+                                Regarding spell suppression, Anti-magic fields
                                 combine with interception in a special way:
                                 The total chance to suppress a monster's
                                 attempt to cast a spell will yield diminishing
                                 returns if the monster's attempt gets hindered
-                                by both, Interception and Antimagic. This means
-                                that having high values in both, Interception
-                                and Antimagic, will still give benefits for
-                                spell suppression, but the total chance of
-                                suppression that results from applying both to
-                                a single spell casting attempt will actually
-                                come out somewhat reduced.
+                                by both, Interception and Anti-magic. This
+                                means that having high values in both,
+                                Interception and Anti-magic, will still give
+                                benefits for spell suppression, but the total
+                                chance of suppression that results from
+                                applying both to a single spell casting attempt
+                                will actually come out somewhat reduced.
 
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
@@ -12517,10 +12518,10 @@ Take care on the following combinations:
         Weaponmastery   <->     Sorcery
         Archery         <->     Sorcery
         Martial Arts    <->     Sorcery
-        Antimagic       <->     excludes any type of magic and magic devices,
+        Anti-magic      <->     excludes any type of magic and magic devices,
                                 including mimicry.
                                 However, a mimicking player won't lose his
-                                current form on training in Antimagic.
+                                current form on training in Anti-magic.
                                 He just won't be able to transform ever again
                                 by using his mimic powers.
                                 His form CAN still change though, if he is
@@ -12991,7 +12992,7 @@ create a character!):
     conjure holy fire or utilize magic of water or nature school. Neither can
     they make use of mimicry techniques (with the exception of vampire bat,
     see below) or holy or spirit spells. They are unable to try and suppress
-    magic, but can make use of items that provide antimagic effects.
+    magic, but can make use of items that provide anti-magic effects.
     Aside from darkness they also resist sanity-draining effects (somewhat),
     time, nether, poison, and it's hard to drain their life force - as a
     specialty this is also true for life force drained by items a vampire has
@@ -13213,7 +13214,7 @@ create a character!):
     heavy armour which dual-wielding doesn't.
     Warriors have more melee attacks per round than any other class.
     They may decide to become 'Unbelievers' by spending points irreversibly
-    into the 'Antimagic' skill. As soon as they spend the first point here
+    into the 'Anti-magic' skill. As soon as they spend the first point here
     they will immediately become unable to use any magic wand/staff/rod!
     The full opposite of sorcerers, unbelievers so strongly despise magic that
     not only do they refuse to use magic spells, they refuse all training in
@@ -13221,7 +13222,7 @@ create a character!):
     trying to use a magic item, although they can still quaff potions and read
     scrolls. Because they are so unattuned to magic, trained unbelievers will
     suppress any sort of magic from occurring around them at high probability,
-    which is dubbed 'antimagic field'. They can further strengthen it by
+    which is dubbed 'anti-magic field'. They can further strengthen it by
     wielding a Dark Sword (see (5.9)).
     Warriors can also choose to become monk-like fighters, by training the
     'Martial Arts' skill. This will require them to wear no armour or only very
@@ -14029,8 +14030,8 @@ F: flag list
     NO_STUN     Sound resistance.
     NO_CUT      The player can't be cut and won't bleed continously from
                 wounds.
-    DISBELIEVE  Will increase the player's antimagic field by
-                ((monsterlevel / 2) + 10) percent. The range of the antimagic
+    DISBELIEVE  Will increase the player's anti-magic field by
+                ((monsterlevel / 2) + 10) percent. The range of the anti-magic
                 field is increased by ((monsterlevel / 50) + 2) fields.
     ARROW_1, ARROW_2, ARROW_3
                 The player will receive an extra shot per round with slings or
@@ -15053,7 +15054,7 @@ school.
 
 - Prayers -
 -----------
-(In general, holy schools are somewhat less affected by antimagic fields.)
+(In general, holy schools are somewhat less affected by anti-magic fields.)
 
 - Holy Offense
 
@@ -15458,7 +15459,7 @@ school.
 
 - Mindcraft -
 -------------
-(In general, mindcraft schools are less affected by antimagic fields.)
+(In general, mindcraft schools are less affected by anti-magic fields.)
 
 - Psycho-power
 
@@ -16119,7 +16120,7 @@ staves, boomerangs, and crowns (see (8.4) Artifact Creation).
 Note: Non-enhanced sigils will always produce the element's according resist.
 
 Abbreviations (in alphabetical order):
-AM - Antimagic shell
+AM - Anti-magic shell
 Au - Aura
 Ba - Base resist (acid/elec/fire/cold)
 Bl - Blind resist
@@ -16313,7 +16314,7 @@ Parties:
     Be aware that his houses will be wiped too, so the party might lose quite
     an amount of items that way.
 
-    'Antimagic fields' of fellow party members have greatly reduced effect
+    'Anti-magic fields' of fellow party members have greatly reduced effect
     on spell-users in the same party, to allow the party to still be a vital
     combination. Usage of magic devices by party members is not hindered.
 
@@ -17502,7 +17503,7 @@ Mistakes / Carelessness:
  quickly.
 
 -Teleport out of trouble
- If you are not an antimagic-user, you should buy a staff of teleportation as
+ If you are not an anti-magic-user, you should buy a staff of teleportation as
  soon as possible since it can take you out of dangerous situations.
  However, the staff is no guarantee :)
  After you bought it, try if you can actually use it well or if you keep
@@ -18087,7 +18088,7 @@ Mage staves
 Boomerangs (also see 'Weapons' above)
         Extra shots
 Dark swords (also see 'Weapons' above)
-        Increased antimagic (not over 30% in total, see (5.9)).
+        Increased anti-magic (not over 30% in total, see (5.9)).
 Ammunition
         All elemental brands (acid/elec/fire/cold/poison)
         All SLAY mods
@@ -18238,7 +18239,7 @@ General mods:
         Slow digestion
         Faster mana regeneration
         Faster HP regeneration
-        Antimagic shell
+        Anti-magic shell
             (Legendary saving throw is raised to 95% cap)
 
 
@@ -18260,7 +18261,7 @@ Items cannot give more than +3 extra attacks. Gloves can only give up to +2.
 Items cannot give more than +3 life (+30% base hit points).
 Items that give both extra attacks and life are capped at +1.
 Items that add mana, give mana regeneration or are blessed will never have an
- antimagic shell.
+ anti-magic shell.
 
 Headgear cannot give more than +6 infra-vision.
 Headgear cannot give more than +3 speed.
@@ -18327,7 +18328,7 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   chance to get a crown instead of helmet/cap.
   Note: Critical-strike skill will aim at sword-type weapons, same as if you
   skilled Sword-mastery skill.
-  If you have Sword-mastery and Antimagic skill, you will get a Dark Sword in
+  If you have Sword-mastery and Anti-magic skill, you will get a Dark Sword in
   case you receive a weapon as reward.
 - wear roughly the appropriate type of armour (ie light vs heavy) and..
 - wield the type of weapon (dual, 1-handed or 2-handed) that you prefer.

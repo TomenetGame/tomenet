@@ -116,7 +116,7 @@ guide_skill = {
     ".Aura of Death",
     ".Mimicry",
     ".Magic device",
-    ".Antimagic",
+    ".Anti-magic",
     "+Sneakiness",
     ".Stealth",
     ".Stealing",

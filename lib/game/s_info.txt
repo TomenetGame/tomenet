@@ -189,7 +189,7 @@ D:Drains spiritual energy from the death of your opponents, provided you
 D:can actually see them, replenishing your hit points and mana.
 I:1000:0
 
-N:26:Antimagic
+N:26:Anti-magic
 D:A field surrounding you, preventing any creature from casting spells.
 D:Permanently renders you unable to use magic (including Blood) or magic devices!
 I:1000:0
@@ -677,18 +677,18 @@ f:Mimicry:Magic%7
 #f:Revelation:Prayer%10
 #f:Revelation:Magic%5
 
-# Antimagic exclude all magic
-E:Magic device:Antimagic
-E:Sorcery:Antimagic
-E:Mimicry:Antimagic
+# Anti-magic exclude all magic
+E:Magic device:Anti-magic
+E:Sorcery:Anti-magic
+E:Mimicry:Anti-magic
 
-##E:Casting-speed:Antimagic
-#E:Magery:Antimagic
-#E:Shadow:Antimagic
-##E:Spell-length:Antimagic
-#E:Prayer:Antimagic
-##E:Revelation:Antimagic
-#E:Hunting Lore:Antimagic
+##E:Casting-speed:Anti-magic
+#E:Magery:Anti-magic
+#E:Shadow:Anti-magic
+##E:Spell-length:Anti-magic
+#E:Prayer:Anti-magic
+##E:Revelation:Anti-magic
+#E:Hunting Lore:Anti-magic
 
 f:Holy Offense:Magic%10
 f:Holy Defense:Magic%10
@@ -840,7 +840,7 @@ T:Blood Magic:Aura of Fear
 T:Blood Magic:Shivering Aura
 T:Blood Magic:Aura of Death
 
-T:Main:Antimagic
+T:Main:Anti-magic
 
 #T:Main:Monster-lore
 #T:Monster-lore:Summoning

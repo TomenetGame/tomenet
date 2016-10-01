@@ -532,7 +532,7 @@ They say that every housewife should stock athelas for special cuisine.
 They say that lembas remedes many things, including overeat.
 They say that Black Breath is contagious beware the carriers!
 They say that levitation never allows you to leave the ground.
-They say that not all the antimagic devices have the same effect.
+They say that not all the anti-magic devices have the same effect.
 They say that you should never ask 'What does ... do?'
 They say that a weakest being often has a toughest friend.
 Ever dropped a piece of {vadamantite{w?
@@ -561,8 +561,8 @@ They say that some cursed articles are too lovely to discard.
 They say that some creatures don't believe in magic.
 They say that you should learn to shoot yeeks.
 They say that even a level-100 priest might need potions of wisdom still.
-They say that antimagic shell is something other than antimagic shield.
-They say that amulet of anti-magic doesn't give antimagic shield.
+They say that anti-magic shell is something other than anti-magic shield.
+They say that amulet of anti-magic doesn't give anti-magic shield.
 Behold the eyes! Eye the Beholders!
 They say that you should bring some fine wine when invited to an elven dinner.
 They say that if you see a {vm {won the top of dungeon, just don't touch it.
@@ -655,7 +655,7 @@ They say that a feeling often comes with a treasure.
 They say that a feeling often comes with a trouble.
 They say that some wizards love to wear a cap of stupidity. Huh?
 Ever tried to fix a shattered weapon?
-They say antimagic shell wraps you while antimagic field radiates from you.
+They say anti-magic shell wraps you while anti-magic field radiates from you.
 Flirting with incubus drives you mad while sleeping with him drives you sad.
 Flirting with succubus drives you mad while sleeping with her drives you sad.
 They say that some skills demand perfection, some useful from the first step.

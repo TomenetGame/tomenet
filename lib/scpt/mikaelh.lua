@@ -101,7 +101,7 @@ end
 	if get_skill_value(p, SKILL_AURA_FEAR) > 0 then		msg_print(Ind, "     . Aura of Fear               " .. get_skill_formatted(p, SKILL_AURA_FEAR)) end
 	if get_skill_value(p, SKILL_AURA_SHIVER) > 0 then	msg_print(Ind, "     . Shivering Aura             " .. get_skill_formatted(p, SKILL_AURA_SHIVER)) end
 	if get_skill_value(p, SKILL_AURA_DEATH) > 0 then	msg_print(Ind, "     . Aura of Death              " .. get_skill_formatted(p, SKILL_AURA_DEATH)) end
-	if get_skill_value(p, SKILL_ANTIMAGIC) > 0 then		msg_print(Ind, " . Antimagic                      " .. get_skill_formatted(p, SKILL_ANTIMAGIC)) end
+	if get_skill_value(p, SKILL_ANTIMAGIC) > 0 then		msg_print(Ind, " . Anti-magic                     " .. get_skill_formatted(p, SKILL_ANTIMAGIC)) end
 	if get_skill_value(p, SKILL_HEALTH) > 0 then		msg_print(Ind, " - Health                         " .. get_skill_formatted(p, SKILL_HEALTH)) end
 --	if get_skill_value(p, SKILL_TRAINING) > 0 then		msg_print(Ind, "     . Training                   " .. get_skill_formatted(p, SKILL_TRAINING)) end
 	if get_skill_value(p, SKILL_SWIM) > 0 then		msg_print(Ind, "     . Swimming                   " .. get_skill_formatted(p, SKILL_SWIM)) end

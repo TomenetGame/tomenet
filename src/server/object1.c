@@ -5037,14 +5037,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #endif
 
 #ifndef NEW_ID_SCREEN
-	if (am > 0) fprintf(fff, "It generates an antimagic field that has %d%% chance of supressing magic.\n", am);
-	else if (am < 0) fprintf(fff, "It generates a suppressed antimagic field.\n");
+	if (am > 0) fprintf(fff, "It generates an anti-magic field that has %d%% chance of supressing magic.\n", am);
+	else if (am < 0) fprintf(fff, "It generates a suppressed anti-magic field.\n");
 #else
 	if (full || (!o_ptr->name1 && id)) {
-		if (am > 0) fprintf(fff, "It generates an antimagic field that has %d%% chance of supressing magic.\n", am);
-		else if (am < 0) fprintf(fff, "It generates a suppressed antimagic field.\n");
+		if (am > 0) fprintf(fff, "It generates an anti-magic field that has %d%% chance of supressing magic.\n", am);
+		else if (am < 0) fprintf(fff, "It generates a suppressed anti-magic field.\n");
 	}
-	else if (am_unknown) fprintf(fff, "It generates an unknown antimagic field.\n");
+	else if (am_unknown) fprintf(fff, "It generates an unknown anti-magic field.\n");
 #endif
 
 	/* And then describe it fully */
@@ -6367,7 +6367,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 
 		/* Can't use them? skip */
 		if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-			msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
+			msg_format(Ind, "\377%cYour anti-magic prevents you from using your magic device.", COLOUR_AM_OWN);
 			failure |= 0x2;
 			break; /* can't activate any other items either */
 		}
@@ -6405,7 +6405,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
 
 		if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-			msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
+			msg_format(Ind, "\377%cYour anti-magic prevents you from using your magic device.", COLOUR_AM_OWN);
 			failure |= 0x2;
 			break; /* can't activate any other items either */
 		}
@@ -6441,7 +6441,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		}
 
 		if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-			msg_format(Ind, "\377%cYour antimagic prevents you from casting your spell.", COLOUR_AM_OWN);
+			msg_format(Ind, "\377%cYour anti-magic prevents you from casting your spell.", COLOUR_AM_OWN);
 			failure |= 0x8;
 			break; /* can't activate any other items either */
 		}
@@ -6554,13 +6554,13 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		msg_print(Ind, "You cannot read identify scrolls while blinded, confused or without light.");
 		return;
 	case 0x2:
-		msg_print(Ind, "Your antimagic prevents using your magic device to identify the item.");
+		msg_print(Ind, "Your anti-magic prevents using your magic device to identify the item.");
 		return;
 	case 0x4:
 		msg_print(Ind, "You cannot cast identify spells while blinded, confused or without light.");
 		return;
 	case 0x8:
-		msg_print(Ind, "Your antimagic prevents you from casting your identify spell.");
+		msg_print(Ind, "Your anti-magic prevents you from casting your identify spell.");
 		return;
 	}
 	/* Multiple failures occurred */
