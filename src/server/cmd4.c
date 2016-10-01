@@ -2743,9 +2743,10 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 	struct dna_type *dna;
 	cptr name;
 
-	int	i, total = 0;	//j, num,
-	bool	shown = FALSE;
-	bool	admin = is_admin(p_ptr);
+	int i, total = 0;	//j, num,
+	bool shown = FALSE;
+	bool admin = is_admin(p_ptr);
+	char a;
 
 	FILE *fff;
 
@@ -2795,7 +2796,8 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 		total++;
 
 		/* use door colour for the list entry too */
-		fprintf(fff, "\377%c", color_attr_to_char((char)access_door_colour(Ind, h_ptr->dna)));
+		a = access_door_colour(Ind, h_ptr->dna);
+		fprintf(fff, "\377%c", color_attr_to_char(a));
 
 		fprintf(fff, "%3d)   [%d,%d] in %s", total,
 		    h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
@@ -2828,6 +2830,9 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 			} else { /* paranoia */
 				fprintf(fff, "  ID: %d", dna->owner);
 			}
+		} else if (a == TERM_GREEN && dna->owner_type == OT_PLAYER) {
+			name = lookup_player_name(houses[i].dna->owner);
+			if (name) fprintf(fff, "  owned by %s", name);
 		}
 
 #if 1
@@ -2848,7 +2853,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 
 		case OT_PARTY:
 			name = parties[dna->owner].name;
-			if(strlen(name)) fprintf(fff, "  as party %s", name);
+			if (strlen(name)) fprintf(fff, " of party '%s'", name);
 #if 0	// nothig so far.
 			else {
 				s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
@@ -2858,15 +2863,15 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 			break;
 		case OT_CLASS:
 			name = class_info[dna->owner].title;
-			if(strlen(name)) fprintf(fff, "  as class %s", name);
+			if(strlen(name)) fprintf(fff, " of class %s", name);
 			break;
 		case OT_RACE:
 			name = race_info[dna->owner].title;
-			if(strlen(name)) fprintf(fff, "  as race %s", name);
+			if(strlen(name)) fprintf(fff, " of race %s", name);
 			break;
 		case OT_GUILD:
 			name = guilds[dna->owner].name;
-			if(strlen(name)) fprintf(fff, "  as guild %s", name);
+			if(strlen(name)) fprintf(fff, " of guild '%s'", name);
 			break;
 		}
 #endif	// 0
