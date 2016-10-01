@@ -1299,7 +1299,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						    (o_ptr->pval)) ||
 						    o_ptr->tval == TV_ROD ||
 						     ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) &&
-						      (o_ptr->timeout > 1)))
+						      (o_ptr->timeout_magic > 1)))
 						{
 							s16b chance = rand_int(get_skill_scale(p_ptr, SKILL_DEVICE, 80));
 
@@ -1315,7 +1315,7 @@ bool make_attack_melee(int Ind, int m_idx)
 							/* Heal */
 							j = rlev;
 							if (o_ptr->tval == TV_RING)
-								m_ptr->hp += j * (o_ptr->timeout / 2000) * o_ptr->number;
+								m_ptr->hp += j * (o_ptr->timeout_magic / 2000) * o_ptr->number;
 							else if (o_ptr->tval == TV_ROD)
 								m_ptr->hp += j * (k_info[o_ptr->k_idx].level >> 3) * o_ptr->number;
 							else
@@ -1328,17 +1328,17 @@ bool make_attack_melee(int Ind, int m_idx)
 							/* Uncharge */
 							if (o_ptr->tval == TV_RING) {
 								if (i < INVEN_PACK) {
-									o_ptr->timeout = 1; /* leave 0 to the dungeon.c routine.. */
+									o_ptr->timeout_magic = 1; /* leave 0 to the dungeon.c routine.. */
 								} else if (magik(chance)) {
-									if (o_ptr->timeout > 8000) o_ptr->timeout -= (o_ptr->timeout / 100);
-									else if (o_ptr->timeout > 2000) o_ptr->timeout -= (o_ptr->timeout / 50);
-									else if (o_ptr->timeout > 500) o_ptr->timeout -= (o_ptr->timeout / 25);
-									else o_ptr->timeout = 1;
+									if (o_ptr->timeout_magic > 8000) o_ptr->timeout_magic -= (o_ptr->timeout_magic / 100);
+									else if (o_ptr->timeout_magic > 2000) o_ptr->timeout_magic -= (o_ptr->timeout_magic / 50);
+									else if (o_ptr->timeout_magic > 500) o_ptr->timeout_magic -= (o_ptr->timeout_magic / 25);
+									else o_ptr->timeout_magic = 1;
 								} else {
-									if (o_ptr->timeout > 8000) o_ptr->timeout -= (o_ptr->timeout / 20);
-									else if (o_ptr->timeout > 2000) o_ptr->timeout -= (o_ptr->timeout / 10);
-									else if (o_ptr->timeout > 500) o_ptr->timeout -= (o_ptr->timeout / 5);
-									else o_ptr->timeout = 1;
+									if (o_ptr->timeout_magic > 8000) o_ptr->timeout_magic -= (o_ptr->timeout_magic / 20);
+									else if (o_ptr->timeout_magic > 2000) o_ptr->timeout_magic -= (o_ptr->timeout_magic / 10);
+									else if (o_ptr->timeout_magic > 500) o_ptr->timeout_magic -= (o_ptr->timeout_magic / 5);
+									else o_ptr->timeout_magic = 1;
 								}
 							} else if (o_ptr->tval == TV_ROD) {
 								if (magik(chance)) discharge_rod(o_ptr, 5 + rand_int(5));
@@ -1613,9 +1613,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					o_ptr = &p_ptr->inventory[INVEN_LITE];
 
 					/* Drain fuel */
-//					if ((o_ptr->pval > 0) && (o_ptr->sval < SV_LITE_DWARVEN))
-					if (o_ptr->timeout > 0)	// hope this won't cause trouble..
-					{
+					//if ((o_ptr->pval > 0) && (o_ptr->sval < SV_LITE_DWARVEN))
+					if (o_ptr->timeout > 0) { // hope this won't cause trouble..
 						/* Reduce fuel */
 						o_ptr->timeout -= (250 + randint(250)) * damage;
 						if (o_ptr->timeout < 1) o_ptr->timeout = 1;

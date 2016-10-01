@@ -401,13 +401,35 @@ static void rd_item(object_type *o_ptr) {
 		o_ptr->name2 = old_name2;
 	}
 	rd_s32b(&o_ptr->name3);
-	if (!older_than(4, 2, 1))
+	if (!older_than(4, 6, 10)) {
 		rd_s32b(&o_ptr->timeout);
-	else {
-		/* Increase portability with pointers to correct type - mikaelh */
-		s16b old_timeout;
-		rd_s16b(&old_timeout);
-		o_ptr->timeout = old_timeout;
+		rd_s32b(&o_ptr->timeout_magic);
+		rd_s32b(&o_ptr->recharging);
+	} else {
+		if (!older_than(4, 2, 1)) {
+			rd_s32b(&o_ptr->timeout);
+		} else {
+			/* Increase portability with pointers to correct type - mikaelh */
+			s16b old_timeout;
+			rd_s16b(&old_timeout);
+			o_ptr->timeout = old_timeout;
+		}
+
+		if (o_ptr->tval != TV_LITE && o_ptr->tval != TV_FOOD && o_ptr->tval != TV_POTION) {
+			o_ptr->timeout_magic = o_ptr->timeout;
+			o_ptr->timeout = 0;
+			o_ptr->recharging = 0;
+			if (o_ptr->tval == TV_RING && o_ptr->sval != SV_RING_POLYMORPH) {
+				o_ptr->recharging = o_ptr->timeout_magic;
+				o_ptr->timeout_magic = 0;
+			}
+		} else if (o_ptr->tval == TV_LITE) {
+			//hack to distinguish activatable lights from fueled ones
+			if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) {
+				o_ptr->recharging = o_ptr->timeout;
+				o_ptr->timeout = 0;
+			}
+		}
 	}
 
 	rd_s16b(&o_ptr->to_h);

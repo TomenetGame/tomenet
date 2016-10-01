@@ -3498,6 +3498,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 			/* Hack -- Never stack recharging items */
 			if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
+			if (o_ptr->timeout_magic != j_ptr->timeout_magic) return (FALSE);
+			if (o_ptr->recharging != j_ptr->recharging) return (FALSE);
 
 			/* Require identical "values" */
 			if (o_ptr->ac != j_ptr->ac) return (FALSE);
@@ -3744,7 +3746,7 @@ void invcopy(object_type *o_ptr, int k_idx) {
 	o_ptr->sval = k_ptr->sval;
 
 	/* Default "pval" */
-//	o_ptr->pval = k_ptr->pval;
+	//o_ptr->pval = k_ptr->pval;
 	if (o_ptr->tval == TV_POTION ||
 	    o_ptr->tval == TV_POTION2 ||
 	    o_ptr->tval == TV_FLASK ||
@@ -3752,7 +3754,6 @@ void invcopy(object_type *o_ptr, int k_idx) {
 		o_ptr->pval = k_ptr->pval;
 	else if (o_ptr->tval == TV_LITE)
 		o_ptr->timeout = k_ptr->pval;//hack
-
 	else if (o_ptr->tval != TV_ROD)
 		o_ptr->bpval = k_ptr->pval;
 
@@ -4876,7 +4877,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 
 			/* Be sure to be a player */
 			o_ptr->pval = 0;
-			o_ptr->timeout = 0;
+			o_ptr->timeout_magic = 0;
 
 			if (magik(45)) {
 				monster_race *r_ptr;
@@ -4897,7 +4898,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 				if (tries < 1000) {
 					o_ptr->pval = i;
 					o_ptr->level = ring_of_polymorph_level(r_info[i].level);
-					o_ptr->timeout = 3000 + rand_int(3001);
+					o_ptr->timeout_magic = 3000 + rand_int(3001);
 				} else o_ptr->level = 1;
 			} else o_ptr->level = 1;
 			break;
@@ -5364,14 +5365,14 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 		/* Hack -- Torches -- random fuel */
 		if (f4 & TR4_FUEL_LITE) {
 			if (o_ptr->sval == SV_LITE_TORCH) {
-//				if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
+				//if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
 				o_ptr->timeout = randint(FUEL_TORCH);
 			}
 
 			/* Hack -- Lanterns -- random fuel */
 			else if (o_ptr->sval == SV_LITE_LANTERN) {
 				o_ptr->timeout = randint(FUEL_LAMP);
-//				if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
+				//if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
 			}
 		}
 
@@ -5636,7 +5637,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		/* Hack -- no bundled arts (esp.missiles) */
 		o_ptr->number = 1;
-		o_ptr->timeout = 0;
+
+		//o_ptr->timeout = 0;
+		o_ptr->timeout_magic = 0;
+		o_ptr->recharging = 0;
 
 		/* clear flags from pre-artified item, simulating
 		   generation of a brand new object. */
@@ -10424,14 +10428,21 @@ void process_objects(void) {
 		/* Handle Timeouts */
 		if (o_ptr->timeout) {
 			switch (o_ptr->tval) {
-			case TV_RING: case TV_LITE:
+			case TV_LITE:
 				//don't decrement, they don't time out in player inventory either
-				continue;
+				break;
 			case TV_POTION: case TV_FOOD: //SV_POTION_BLOOD going bad
 				o_ptr->timeout--;
 				/* poof */
 				if (!(o_ptr->timeout)) delete_object_idx(i, TRUE);
 				continue;
+			}
+		}
+		if (o_ptr->timeout_magic) { //polymorph ring only atm
+			switch (o_ptr->tval) {
+			case TV_RING:
+				//don't decrement, they don't time out in player inventory either
+				break;
 			}
 		}
 		/* SV_SNOWBALL melts */
@@ -10443,7 +10454,8 @@ void process_objects(void) {
 			if (!(o_ptr->pval)) delete_object_idx(i, TRUE);
 			continue;
 		}
-
+		/* Recharge activatable items on the ground */
+		if (o_ptr->recharging) o_ptr->recharging--;
 		/* Recharge rods on the ground and inside trap kits */
 		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
 #ifndef NEW_MDEV_STACKING
@@ -10454,7 +10466,6 @@ void process_objects(void) {
 			/* Reset it from 'charging' state to charged state */
 			if (!o_ptr->pval) o_ptr->bpval = 0;
 #endif
-			continue;
 		}
 	}
 
@@ -10476,9 +10487,9 @@ void process_objects(void) {
 			/* Handle Timeouts */
 			if (o_ptr->timeout) {
 				switch (o_ptr->tval) {
-				case TV_RING: case TV_LITE:
+				case TV_LITE:
 					//don't decrement, they don't time out in player inventory either
-					continue;
+					break;
 				case TV_POTION: case TV_FOOD: //basically just SV_POTION_BLOOD
 					Ind = pick_player(h_ptr);
 					o_ptr->timeout--;
@@ -10487,11 +10498,18 @@ void process_objects(void) {
 						home_item_increase(h_ptr, i, -o_ptr->number);
 						home_item_optimize(h_ptr, i);
 						if (Ind) display_trad_house(Ind, h_ptr); //display_house_inventory(Ind, h_ptr);
+						continue;
 					}
 #ifdef LIVE_TIMEOUTS
 					else if (Ind && Players[Ind]->live_timeouts) display_house_entry(Ind, i, h_ptr);
 #endif
-					continue;
+				}
+			}
+			if (o_ptr->timeout_magic) { //Polymorph rings only, atm
+				switch (o_ptr->tval) {
+				case TV_RING:
+					//don't decrement, they don't time out in player inventory either
+					break;
 				}
 			}
 			/* SV_SNOWBALL melts */
@@ -10505,13 +10523,15 @@ void process_objects(void) {
 					home_item_increase(h_ptr, i, -o_ptr->number);
 					home_item_optimize(h_ptr, i);
 					if (Ind) display_trad_house(Ind, h_ptr); //display_house_inventory(Ind, h_ptr);
+					continue;
 				}
 #ifdef LIVE_TIMEOUTS
 				else if (Ind && Players[Ind]->live_timeouts) display_house_entry(Ind, i, h_ptr);
 #endif
 				continue;
 			}
-
+			/* Recharge activatable items in list house */
+			if (o_ptr->recharging) o_ptr->recharging--;
 			/* Recharge rods in the list house */
 			if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) {
 #ifndef NEW_MDEV_STACKING
@@ -10522,7 +10542,6 @@ void process_objects(void) {
 				/* Reset it from 'charging' state to charged state */
 				if (!o_ptr->pval) o_ptr->bpval = 0;
 #endif
-				continue;
 			}
 		}
 	}

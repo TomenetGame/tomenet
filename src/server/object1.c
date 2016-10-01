@@ -3119,7 +3119,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 		/* Polymorph rings that run out.. */
 		t = object_desc_str(t, !(mode & 8) ? " (" : "(");
-		t = object_desc_num(t, o_ptr->timeout);
+		t = object_desc_num(t, o_ptr->timeout_magic);
 		t = object_desc_str(t, !(mode & 8) ? " turns of energy)" : "t)");
 	}
 
@@ -3136,13 +3136,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			t = object_desc_num(t, o_ptr->timeout);
 			t = object_desc_str(t, !(mode & 8) ? " turns of shelf life)" : "t)");
 		}
-
-		/* Indicate "charging" artifacts XXX XXX XXX */
-		else if (!((o_ptr->tval == TV_LITE) && (f4 & TR4_FUEL_LITE))
-		    && !((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))) {
-			/* Hack -- Dump " (charging)" if relevant */
-			t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
-		}
+	}
+	if (known && o_ptr->recharging) {
+		/* Hack -- Dump " (charging)" if relevant */
+		t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
 	}
 
 
@@ -6363,7 +6360,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		if (!check_guard_inscription(i_ptr->note, 'X')) continue;
 
 		/* Item is still charging up? */
-		if (i_ptr->timeout) continue;
+		if (i_ptr->recharging) continue;
 
 		/* Can't use them? skip */
 		if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {

@@ -3606,12 +3606,12 @@ bool apply_discharge(int Ind, int dam) {
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 		/* damage it */
-		if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_LITE && o_ptr->tval != TV_POTION && o_ptr->tval != TV_FOOD) {
-			if (o_ptr->timeout) damaged = TRUE;
-			if (o_ptr->timeout > 1000) o_ptr->timeout -= 80 + rand_int(41);
-			else if (o_ptr->timeout > 100) o_ptr->timeout -= 15 + rand_int(11);
-			else if (o_ptr->timeout > 10) o_ptr->timeout -= 3 + rand_int(3);
-			else if (o_ptr->timeout) o_ptr->timeout--;
+		if (o_ptr->timeout_magic) {
+			damaged = TRUE;
+			if (o_ptr->timeout_magic > 1000) o_ptr->timeout_magic -= 80 + rand_int(41);
+			else if (o_ptr->timeout_magic > 100) o_ptr->timeout_magic -= 15 + rand_int(11);
+			else if (o_ptr->timeout_magic > 10) o_ptr->timeout_magic -= 3 + rand_int(3);
+			else if (o_ptr->timeout_magic) o_ptr->timeout_magic--;
 		} else if (o_ptr->tval == TV_ROD) {
 			discharge_rod(o_ptr, 5 + rand_int(5));
 			damaged = TRUE;
@@ -3679,12 +3679,12 @@ bool apply_discharge_item(int o_idx, int dam) {
 	    (f2 & TR2_RES_ELEC)) return(FALSE);
 
 	/* damage it */
-	if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_LITE && o_ptr->tval != TV_POTION && o_ptr->tval != TV_FOOD) {
-		if (o_ptr->timeout) damaged = TRUE;
-		if (o_ptr->timeout > 1000) o_ptr->timeout -= 80 + rand_int(41);
-		else if (o_ptr->timeout > 100) o_ptr->timeout -= 15 + rand_int(11);
-		else if (o_ptr->timeout > 10) o_ptr->timeout -= 3 + rand_int(3);
-		else if (o_ptr->timeout) o_ptr->timeout--;
+	if (o_ptr->timeout_magic) {
+		damaged = TRUE;
+		if (o_ptr->timeout_magic > 1000) o_ptr->timeout_magic -= 80 + rand_int(41);
+		else if (o_ptr->timeout_magic > 100) o_ptr->timeout_magic -= 15 + rand_int(11);
+		else if (o_ptr->timeout_magic > 10) o_ptr->timeout_magic -= 3 + rand_int(3);
+		else if (o_ptr->timeout_magic) o_ptr->timeout_magic--;
 	} else if (o_ptr->tval == TV_ROD) {
 		discharge_rod(o_ptr, 5 + rand_int(5));
 		damaged = TRUE;
@@ -4885,9 +4885,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) break;
 			if (artifact_p(o_ptr) && magik(100)) break;
 
-			if (o_ptr->tval != TV_LITE && o_ptr->tval != TV_POTION && o_ptr->tval != TV_FOOD) {
-				if (o_ptr->timeout) o_ptr->timeout /= 2;
-			}
+			if (o_ptr->timeout_magic) o_ptr->timeout_magic /= 2;
 
 			/* Special treatment for new ego-type: Ethereal (ammunition):
 			   Ethereal items don't get disenchanted, but rather disappear completely! */

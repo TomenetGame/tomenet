@@ -4659,15 +4659,15 @@ static bool process_player_end_aux(int Ind) {
 	/* Check polymorph rings with timeouts */
 	for (i = INVEN_LEFT; i <= INVEN_RIGHT; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) && (o_ptr->timeout > 0) &&
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) && (o_ptr->timeout_magic > 0) &&
 		    (p_ptr->body_monster == o_ptr->pval)) {
 			/* Decrease life-span */
-			o_ptr->timeout--;
+			o_ptr->timeout_magic--;
  #ifndef LIVE_TIMEOUTS
 			/* Hack -- notice interesting energy steps */
-			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+			if ((o_ptr->timeout_magic < 100) || (!(o_ptr->timeout_magic % 100)))
  #else
-			if (p_ptr->live_timeouts || (o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+			if (p_ptr->live_timeouts_magic || (o_ptr->timeout_magic < 100) || (!(o_ptr->timeout_magic % 100)))
  #endif
 			{
 				/* Window stuff */
@@ -4675,12 +4675,12 @@ static bool process_player_end_aux(int Ind) {
 			}
 
 			/* Hack -- notice interesting fuel steps */
-			if ((o_ptr->timeout > 0) && (o_ptr->timeout < 100) && !(o_ptr->timeout % 10)) {
+			if ((o_ptr->timeout_magic > 0) && (o_ptr->timeout_magic < 100) && !(o_ptr->timeout_magic % 10)) {
 				if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
 				msg_print(Ind, "\376\377LYour ring flickers and fades, flashes of light run over its surface.");
 				/* Window stuff */
 				p_ptr->window |= PW_EQUIP;
-			} else if (o_ptr->timeout == 0) {
+			} else if (o_ptr->timeout_magic == 0) {
 				disturb(Ind, 0, 0);
 				msg_print(Ind, "\376\377LYour ring disintegrates!");
 
@@ -5016,13 +5016,12 @@ static bool process_player_end_aux(int Ind) {
 
 		/* Recharge activatable objects */
 		/* (well, light-src should be handled here too? -Jir- */
-		if (o_ptr->timeout > 0 && o_ptr->tval != TV_LITE &&
-		    !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)) {
+		if (o_ptr->recharging) {
 			/* Recharge */
-			o_ptr->timeout--;
+			o_ptr->recharging--;
 
 			/* Notice changes */
-			if (!(o_ptr->timeout)) {
+			if (!(o_ptr->recharging)) {
 				object_desc(Ind, o_name, o_ptr, FALSE, 256);
 				msg_format(Ind, "Your %s (%c) ha%s finished charging.", o_name, index_to_label(i), o_ptr->number == 1 ? "s" : "ve");
 				j++;

@@ -623,9 +623,9 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	if (o_ptr->xtra1 || j_ptr->xtra1) return (0);
 
 	/* Hack -- Never stack recharging items */
-	/* Megahack -- light sources are allowed (hoping it's
-	 * not non-fuel activable one..) */
 	if (o_ptr->timeout != j_ptr->timeout) return (0);
+	if (o_ptr->timeout_magic != j_ptr->timeout_magic) return (0);
+	if (o_ptr->recharging != j_ptr->recharging) return (0);
 
 	/* Require many identical values */
 	if (o_ptr->ac    !=  j_ptr->ac)   return (0);
@@ -5133,6 +5133,8 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 
 		/* Hack -- Never stack recharging items */
 		if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
+		if (o_ptr->timeout_magic != j_ptr->timeout_magic) return (FALSE);
+		if (o_ptr->recharging != j_ptr->recharging) return (FALSE);
 #if 0
 		if (o_ptr->timeout || j_ptr->timeout) {
 			if ((o_ptr->timeout != j_ptr->timeout) ||
@@ -5151,6 +5153,9 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	case TV_GOLEM:
 		if (o_ptr->pval != j_ptr->pval) return(FALSE);
 		break;
+
+	case TV_GAME:
+		/* snowballs may be stacked even with different timeouts */
 
 	/* Various */
 	default:

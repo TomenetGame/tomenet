@@ -749,7 +749,9 @@ struct object_type {
 	byte dd, ds;			/* Damage dice/sides */
 
 	u16b ident;			/* Special flags  */
-	s32b timeout;			/* Timeout Counter */
+	s32b timeout;			/* Timeout Counter: amount of fuel left until it is depleted. */
+	s32b timeout_magic;		/* Timeout Counter: amount of power left until it is depleted, can be discharged. */
+	s32b recharging;		/* Auto-recharge-state of auto-recharging items (rods and activatable items). */
 
 	s32b marked;			/* Object is marked (for deletion after a certain time) */
 	byte marked2;			/* additional parameters */

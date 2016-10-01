@@ -6005,6 +6005,8 @@ void do_slash_cmd(int Ind, char *message) {
 						return;
 					}
 					o_ptr->timeout = 0;
+					o_ptr->timeout_magic = 0;
+					o_ptr->recharging = 0;
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
 
 					/* restrictions? */
@@ -6070,6 +6072,8 @@ void do_slash_cmd(int Ind, char *message) {
 						return;
 					}
 					o_ptr->timeout = 0;
+					o_ptr->timeout_magic = 0;
+					o_ptr->recharging = 0;
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 
 #ifndef TO_AC_CAP_30
@@ -6104,6 +6108,8 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 
 				o_ptr->timeout = 0;
+				o_ptr->timeout_magic = 0;
+				o_ptr->recharging = 0;
 				return;/* see create_reward for proper loop */
 				apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, RESF_NOART);
 
@@ -8141,6 +8147,8 @@ void do_slash_cmd(int Ind, char *message) {
 						return;
 					}
 					o_ptr->timeout = 0;
+					o_ptr->timeout_magic = 0;
+					o_ptr->recharging = 0;
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 
 					i = 0;
@@ -8236,6 +8244,8 @@ void do_slash_cmd(int Ind, char *message) {
 						return;
 					}
 					o_ptr->timeout = 0;
+					o_ptr->timeout_magic = 0;
+					o_ptr->recharging = 0;
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 
 					//if (a_ptr->flags2 & TR2_IM_ELEC) m1++;

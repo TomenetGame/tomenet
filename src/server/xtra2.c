@@ -6123,7 +6123,7 @@ if (cfg.unikill_format) {
 			}
 			if (qq_ptr->pval < 6) object_copy(qq_ptr, &forge_fallback);
 #endif
-			qq_ptr->timeout = 0;
+			qq_ptr->timeout_magic = 0;
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 			object_wipe(qq_ptr);
@@ -6182,7 +6182,7 @@ if (cfg.unikill_format) {
 			}
 			if (!tries) msg_format(Ind, "RI_LIVING_LIGHTNING: Re-rolling out of tries!");
 
-			qq_ptr->timeout = 0;
+			qq_ptr->timeout_magic = 0;
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		} else if (m_ptr->r_idx == RI_HELLRAISER) {

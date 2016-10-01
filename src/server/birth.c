@@ -1966,7 +1966,7 @@ static void player_outfit(int Ind) {
                         o_ptr->level = 10;
 		}
 		/* Make the ring last only a certain period of time >:) - C. Blue */ 
-        	o_ptr->timeout = 3000 + rand_int(3001);
+		o_ptr->timeout_magic = 3000 + rand_int(3001);
  #endif
 		do_player_outfit();
 	}
