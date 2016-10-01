@@ -4182,7 +4182,7 @@ static bool process_player_end_aux(int Ind) {
 		regen_amount = 0;
 
 	/* But Biofeedback always helps */
-	if (p_ptr->biofeedback) regen_amount += randint(0x400) + regen_amount;
+	if (p_ptr->biofeedback) regen_amount += randint(1024) + regen_amount;
 
 	/* Regenerate Hit Points if needed */
 	if (p_ptr->chp < p_ptr->mhp && regen_amount && !p_ptr->martyr)
