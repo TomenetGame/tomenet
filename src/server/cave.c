@@ -2054,9 +2054,9 @@ static byte player_color(int Ind) {
 	if (p_ptr->ghost) {
 		if (p_ptr->admin_wiz)
 #ifdef EXTENDED_TERM_COLOURS
-			return TERM_L_DARK + (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW);
+			return (TERM_L_DARK | (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW));
 #else
-			return TERM_L_DARK + TERM_BNW;
+			return (TERM_L_DARK | TERM_BNW);
 #endif
 		return TERM_L_DARK;
 	}
@@ -2088,25 +2088,27 @@ static byte player_color(int Ind) {
 	if (!is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
 		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
 		else if (p_ptr->tim_manashield) return TERM_NEXU;
-	} else
-#endif
-	if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
 
-#ifdef EXTENDED_TERM_COLOURS
-	if (!is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
 		if (p_ptr->invuln > 5) return TERM_SHIELDI;
 		else if (p_ptr->invuln && p_ptr->invuln_dur >= 5) return TERM_NUKE;
+
+		if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_BNW;
+		else if (p_ptr->kinetic_shield) return pcolor |= TERM_BNW; //no alternative atm
 	} else
 #endif
-	if (p_ptr->invuln > 5) return TERM_SHIELDI;
+	{
+		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
+		if (p_ptr->invuln > 5) return TERM_SHIELDI;
+		if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_BNW;
+	}
 
 	/* Holy Martyr or shadow running */
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
 	if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz)
 #ifdef EXTENDED_TERM_COLOURS
-		pcolor += is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+		pcolor |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
 #else
-		pcolor += TERM_BNW;
+		pcolor |= TERM_BNW;
 #endif
 
 	/* Team colours have highest priority */
@@ -3582,7 +3584,7 @@ void lite_spot(int Ind, int y, int x) {
 					else
 						a = (randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
 				} else {
-					a = TERM_BNW;
+					a = TERM_BNW; // todo? -> TERM_NEXU:
 				}
 			}
 			if (p_ptr->invuln && rand_int(4)) {
@@ -3595,9 +3597,21 @@ void lite_spot(int Ind, int y, int x) {
 					case 5: a = TERM_VIOLET; break;
 					}
 				} else if (p_ptr->invuln_dur >= 5) { /* avoid animating normal stair-GoI */
-					a = TERM_BNW;
+					a = TERM_BNW; // todo? -> TERM_NUKE:
 				}
 			}
+			if (p_ptr->martyr)
+#ifdef EXTENDED_TERM_COLOURS
+				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+#else
+				a |= TERM_BNW;
+#endif
+			if (p_ptr->kinetic_shield)
+#ifdef EXTENDED_TERM_COLOURS
+				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+#else
+				a |= TERM_BNW;
+#endif
 
 			/* notice own Black Breath by colour instead just from occasional message */
 			if (p_ptr->black_breath && magik(50)) a = TERM_L_DARK;
@@ -3617,9 +3631,9 @@ void lite_spot(int Ind, int y, int x) {
 			/* Admin wizards sometimes flicker black & white (TERM_BNW) */
 			if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz)
 #ifdef EXTENDED_TERM_COLOURS
-				a += is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
 #else
-				a += TERM_BNW;
+				a |= TERM_BNW;
 #endif
 
 			if (p_ptr->team) {
