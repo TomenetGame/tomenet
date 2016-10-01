@@ -1501,10 +1501,11 @@ F:INT
 #R:100
 #F:CHEAPNESS
 
-#All axes/blunt except Clubs/Whips/Hatchets
+#All axes/blunt except Clubs/Whips/Hatchets/Cleavers
 N:132:Dwarvish
-T:24:2:255
 T:21:3:255
+T:24:2:4
+T:24:6:255
 X:B:30:15
 W:0:1:60:5000
 C:5:5:0:2
