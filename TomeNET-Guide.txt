@@ -12408,7 +12408,7 @@ Note that not every skill is available to every profession (class).
                                 Increases your hit point regeneration rate:
                                  (skill_level * 2)% chance to regenerate 1.5x
                                  the normal amount of HP per turn (stacks with
-                                 REGEN items).
+                                 other regeneration effects and item flag).
                                 Increases your stamina regeneration rate.
 
                                 Helps you to recover from temporary stats drain
@@ -12809,11 +12809,12 @@ create a character!):
     very stupid and slow. They make great warriors and iffy priests. They are
     bad at searching, disarming, perception, and stealth. They are so ugly
     that a Half-Orc grimaces in their presence. They need to eat often but
-    they also regenerate hit point especially quickly. Thanks to their thick
-    skin, they also get an (albeit very small) bonus to armour class.
-    Half-Trolls get bonus on 'Blunt-mastery', 'Health'. They receive a penalty
-    on 'Critical-strike' and 'Swimming' and large penalties on 'Climbing',
-    'Swimming', 'Archery', 'Magic' and 'Sorcery'.
+    they also regenerate hit point especially quickly (same as if wearing an
+    item providing regeneration, doesn't stack with item ability). Thanks to
+    their thick skin, they also get an (albeit very small) bonus to armour
+    class. Half-Trolls get bonus on 'Blunt-mastery', 'Health'. They receive a
+    penalty on 'Critical-strike' and 'Swimming' and large penalties on
+    'Climbing', 'Swimming', 'Archery', 'Magic' and 'Sorcery'.
 
 - Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
@@ -14015,7 +14016,8 @@ F: flag list
                 These immaterial forms also drain the hit points of their
                 user.
     KILL_WALL   The mimic will dig *easily* through walls.
-    REGENERATE  Faster hit point regeneration.
+    REGENERATE  Faster hit point regeneration (same as item ability, doesn't
+                stack with regeneration obtained from item flag).
     REFLECTING  Gives 'reflect' ability to the player, see (5.8) for details.
                 (Side note about monster reflection in general:
                 The 'REFLECTING' flag on monsters gives them a flat 50% chance
@@ -14392,7 +14394,7 @@ Elder aranea            speedy and smart (INT bonus) greater spider;
                         immune to either fire or poison;
                         susceptible to 'good' and to light;
                         can't be confused or paralyzed;
-                        regenerates HP quickly;
+                        regenerates HP quickly (same as item flag);
                         has a medium array of spells at its disposal
 
 Plasma hound            speedy;
@@ -14471,7 +14473,7 @@ Firebird                speedy and tough; can fly and passes most terrains;
 (Code 1127)             fiery attacks and fire aura;
                         immune to fire and susceptible to cold;
                         resists poison, plasma and light;
-                        regenerates HP quickly;
+                        regenerates HP quickly (same as item flag);
                         can breathe fire and light
 
 (*) "Aquatic" means that this form requires deep water to breathe, you will get
@@ -14587,7 +14589,8 @@ Uruk            16  Good HP, good melee damage, good AC, +1 extra shot w/
                     a confusion effect (which makes fighting it in close combat
                     a bit dangerous).
                     (Does not occur in packs.)
-*Forest troll   17  High HP, good AC, can pass trees, gives 'HP regeneration'.
+*Forest troll   17  High HP, good AC, can pass trees, gives 'HP regeneration'
+                    (same as item flag).
 *Earth spirit   17  Useful only for shamans because it has no limbs!
                     Since this is an 'E' form, shamans learn it very quickly.
                     Similar to Air spirit (see further above) this form comes
@@ -14871,6 +14874,7 @@ school.
                     Shared spell (see above): Air, Nature.
 
     Regeneration    Increases your hit point regeneration rate.
+                    (Stacks with other regeneration effects and item flag.)
                     Required skill level for first spell level: 20.
 
     Grow Trees      Grows trees quickly around you.
@@ -14881,7 +14885,8 @@ school.
                     Required skill level for first spell level: 30.
 
     BONI:           Regeneration (faster hit point regeneration, same as from
-                    items that provide regeneration) at 30,
+                    items that provide regeneration, so doesn't stack with
+                    item flag regeneration) at 30,
                     pass trees and water easily at 30,
                     poison resistance at 40.
 
@@ -15218,6 +15223,7 @@ school.
 
     BONI:           Improves HP regeneration rate extraordinarily the further
                     it is trained above 30.
+                    (Stacks with other regeneration effects and item flag.)
                     Reduces duration of various bad effects on the body at
                     30 (blindness, poison) / 40 (stun, cuts) / 50
                     (hallucination).
