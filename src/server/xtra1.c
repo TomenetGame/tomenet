@@ -6318,7 +6318,7 @@ void calc_boni(int Ind) {
 						}
 						if (f5 & TR5_RES_TELE) csheet_boni[i].cb[4] |= CB5_RTELE;
 						if (f3 & TR3_NO_TELE) csheet_boni[i].cb[4] |= CB5_ITELE;
-            if (f3 & TR3_SEE_INVIS) csheet_boni[i].cb[4] |= CB5_RSINV;
+						if (f3 & TR3_SEE_INVIS) csheet_boni[i].cb[4] |= CB5_RSINV;
 						if (f5 & TR5_INVIS) csheet_boni[i].cb[4] |= CB5_RINVS;
 						if (f3 & TR3_FEATHER) csheet_boni[i].cb[5] |= CB6_RFFAL;
 						if (f4 & TR4_LEVITATE) csheet_boni[i].cb[5] |= CB6_RLVTN;
