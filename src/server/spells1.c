@@ -6393,9 +6393,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			   (drain cloud) it will be too much) we aim for balance
 			   HACK: the priest_spell variable is defined above.
 			*/
-			if (priest_spell && !quiet) {
+			if (priest_spell) {
 				//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
-				if (dam) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
+				if (dam && !quiet) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
 				p_ptr->ret_dam = 0;
 			}
 
@@ -10609,16 +10609,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else dam = (p_ptr->chp * dam) / 100;
 		if (!dam) dam = 1;
 
-#if 0
-		if (!quiet) {
+		if (!fuzzy) {
 			if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
 			else p_ptr->ret_dam = 0; /* paranoia */
 		}
-#endif
 
 		if (p_ptr->prace == RACE_VAMPIRE) {
 			dam = 0;
-//			if (!quiet) p_ptr->ret_dam = 0;
+			p_ptr->ret_dam = 0;
 		} else if (magik(p_ptr->skill_sav / 2)) {
 			dam *= 3; dam /= (randint(6) + 6);
 			if (!dam) dam = 1;
@@ -10632,9 +10630,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		   HACK: the priest_spell variable is defined above.
 		*/
 
-		if (priest_spell && IS_PVP) {
-			//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
-			if (dam) hp_player_quiet(-who, (dam * 15) / 100, TRUE);
+		if (priest_spell) {
+			if (!fuzzy && IS_PLAYER(-who)) {
+				//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
+				if (dam) hp_player_quiet(-who, (dam * 15) / 100, TRUE);
+			}
 			p_ptr->ret_dam = 0;
 		}
 
