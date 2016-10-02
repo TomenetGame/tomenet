@@ -33,16 +33,20 @@ static void display_entry(int pos, int entries) {
 	char out_val[MSG_LEN];
 
 	int maxwid = 75;
+	int wgt;
 
 	/* Get the item */
 	o_ptr = &store.stock[pos];
+	wgt = o_ptr->weight;
 
 	/* Get the "offset" */
 	i = (pos % entries);
 
 	/* Label it, clear the line --(-- */
-	(void)sprintf(out_val, "%c) ", I2A(i));
-	prt(out_val, i + 6, 0);
+	if (wgt >= 0 || store_num == STORE_HOME || store_num == STORE_HOME_DUN) { /* <0: player store hack */
+		(void)sprintf(out_val, "%c) ", I2A(i));
+		prt(out_val, i + 6, 0);
+	}
 
 	/* Describe an item in the home */
 	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
@@ -64,30 +68,41 @@ static void display_entry(int pos, int entries) {
 			put_str(out_val, i + 6, 68);
 		}
 	} else {
-		/* Must leave room for the "price" */
-		maxwid = 65;
+		//wgt<0: pstore 'sign' hack
+		if (wgt < 0) {
+			maxwid = 70;
 
-		/* Leave room for weights, if necessary -DRS- */
-		if (c_cfg.show_weights) maxwid -= 7;
+			/* Describe the object (fully) */
+			strcpy(o_name, store_names[pos]);
 
-		/* Describe the object (fully) */
-		strcpy(o_name, store_names[pos]);
-	        o_name[maxwid] = '\0';
-	        c_put_str(o_ptr->attr, o_name, i + 6, 3);
+			o_name[maxwid] = '\0';
+			c_put_str(o_ptr->attr, o_name, i + 6, 0);
+		} else {
+			/* Must leave room for the "price" */
+			maxwid = 65;
 
-	        /* Show weights */
-	        if (c_cfg.show_weights) {
-	                /* Only show the weight of an individual item */
-	                int wgt = o_ptr->weight;
-	                (void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
-	                put_str(out_val, i + 6, 61);
-		}
+			/* Leave room for weights, if necessary -DRS- */
+			if (c_cfg.show_weights) maxwid -= 7;
 
-		x = store_prices[pos];
-		if (x >= 0) {
-			/* Actually draw the price (not fixed) */
-			(void)sprintf(out_val, "%9d  ", x);
-			c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i + 6, 68);
+			/* Describe the object (fully) */
+			strcpy(o_name, store_names[pos]);
+
+			o_name[maxwid] = '\0';
+			c_put_str(o_ptr->attr, o_name, i + 6, 3);
+
+			/* Show weights */
+			if (c_cfg.show_weights) {
+				/* Only show the weight of an individual item */
+				(void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
+				put_str(out_val, i + 6, 61);
+			}
+
+			x = store_prices[pos];
+			if (x >= 0) { /* <0: player store hack */
+				/* Actually draw the price (not fixed) */
+				(void)sprintf(out_val, "%9d  ", x);
+				c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i + 6, 68);
+			}
 		}
 	}
 }

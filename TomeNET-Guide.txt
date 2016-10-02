@@ -6777,6 +6777,11 @@ can inscribe the items
   @S-
 which will make them unsellable, yet they will be on display on your store.
 
+You can also put up 'signs' in your store by inscribing any item "@S:" followed
+by the desired sign inscription. Signs are just for viewing and cannot be
+purchased by customers. For example inscribe any item in your shop this way:
+  @S:Welcome to my store!
+
 If another player buys your item, there will be a 10% fee that is cut from your
 profits.
 The rest of the price the customer paid will be imprinted into a cheque. This

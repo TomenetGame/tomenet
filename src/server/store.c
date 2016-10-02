@@ -2257,8 +2257,12 @@ static void display_entry(int Ind, int pos) {
 	byte		attr;
 	int		wgt;
 	int		i;
-//	int maxwid = 75;
+	//int maxwid = 75;
 	bool museum = FALSE;
+#ifdef PLAYER_STORES
+	char *ps_sign = NULL;
+#endif
+
 
 	i = gettown(Ind);
 	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
@@ -2274,7 +2278,7 @@ static void display_entry(int Ind, int pos) {
 		museum = (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) ? TRUE : FALSE;
 	}
 
-//	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
+	//ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
 	/* Get the item */
@@ -2303,7 +2307,7 @@ static void display_entry(int Ind, int pos) {
 #else
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 #endif
-//		o_name[maxwid] = '\0';
+		//o_name[maxwid] = '\0';
 		o_name[ONAME_LEN - 1] = '\0';
 
 		attr = get_attr_from_tval(o_ptr);
@@ -2336,7 +2340,7 @@ static void display_entry(int Ind, int pos) {
 	/* Describe an item (fully) in a store */
 	else {
 		/* Must leave room for the "price" */
-//		maxwid = 65;
+		//maxwid = 65;
 
 		/* Leave room for weights, if necessary -DRS- */
 		/*if (show_weights) maxwid -= 7;*/
@@ -2355,13 +2359,23 @@ static void display_entry(int Ind, int pos) {
 #endif
 #ifdef PLAYER_STORES
 		/* Don't display items as fake *ID*ed in player stores! */
-		if (p_ptr->store_num <= -2)
+		if (p_ptr->store_num <= -2) {
+			/* Items inscribed '@S:' are just 'sign' dummies */
+			if (o_ptr->note && (ps_sign = strstr(quark_str(o_ptr->note), "@S:"))) {
+				ps_sign += 3;
+				strcpy(o_name, " =[ ");
+				if (!strlen(ps_sign)) strcat(o_name, "<an empty sign>");
+				else strncat(o_name, ps_sign, 70);
+				strcat(o_name, " ]=");
+				handle_censor(o_name);
+			} else
+
  #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 			object_desc(Ind, o_name, o_ptr, TRUE, 3 + 64);
  #else
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
  #endif
-		else
+		} else
 #endif
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		object_desc_store(Ind, o_name, o_ptr, TRUE, 3 + 64);
@@ -2374,9 +2388,13 @@ static void display_entry(int Ind, int pos) {
 #else
 		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
 #endif
-//		o_name[maxwid] = '\0';
+		//o_name[maxwid] = '\0';
 		o_name[ONAME_LEN - 1] = '\0';
 
+#ifdef PLAYER_STORES
+		if (ps_sign) attr = TERM_VIOLET;
+		else
+#endif
 		attr = get_attr_from_tval(o_ptr);
 
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
@@ -2398,10 +2416,15 @@ static void display_entry(int Ind, int pos) {
 			/* Extract the "minimum" price */
 #ifdef PLAYER_STORES
 			if (p_ptr->store_num <= -2) {
-				x = price_item_player_store(0, o_ptr);
+				if (ps_sign) {
+					x = -1;
+					wgt = -1;
+				} else {
+					x = price_item_player_store(0, o_ptr);
 
-				/* just to make it look slightly less odd on older clients */
-				if (x == -2) x = -1;
+					/* just to make it look slightly less odd on older clients */
+					if (x == -2) x = -1;
+				}
 			} else
 #endif
 			x = price_item(Ind, o_ptr, ot_ptr->min_inflate, FALSE);
@@ -2413,6 +2436,7 @@ static void display_entry(int Ind, int pos) {
 		   Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination. */
 		if (o_ptr->note) player_stores_cut_inscription(o_name);
 #endif
+
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
 			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
@@ -3243,6 +3267,11 @@ void store_purchase(int Ind, int item, int amt) {
 
 		if (strstr(quark_str(ho_ptr->note), "@S-")) {
 			msg_print(Ind, "That item is not for sale.");
+			return;
+		}
+
+		if (strstr(quark_str(ho_ptr->note), "@S:")) {
+			msg_print(Ind, "That is not an item.");
 			return;
 		}
 	}
