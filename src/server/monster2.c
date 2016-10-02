@@ -4450,7 +4450,8 @@ static bool summon_specific_okay(int r_idx) {
 #if 1	// welcome, Julian Lighton Hack ;)
 		case SUMMON_KIN:
 			okay = ((r_ptr->d_char == summon_kin_type) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			       !(r_ptr->flags1 & (RF1_UNIQUE)) &&
+			       (r_ptr->flags8 & (RF8_DUNGEON))); //<-hack: rat king shouldn't summon wild rabbits
 			break;
 #endif	// 0
 		case SUMMON_DAWN:
