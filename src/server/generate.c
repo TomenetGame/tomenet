@@ -3244,13 +3244,6 @@ bool dungeon_aux(int r_idx) {
 		return TRUE;
 	else
 		return FALSE;
-#if 0
-	if (dun->watery) return(TRUE);
-
-	/* No aquatic life in the dungeon */
-	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
-	return TRUE;
-#endif	/* 0 */
 }
 
 /*
