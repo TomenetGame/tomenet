@@ -7804,7 +7804,7 @@ int similar_names(const char *name1, const char *name2) {
 	char tmpname[MAX_CHARS];
 	const char *ptr, *ptr2;
 	char *ptr3;
-	int diff, min;
+	int diff, min, diff_bonus;
 	int diff_loc, diff2;
 	bool words = FALSE;
 
@@ -7882,10 +7882,14 @@ int similar_names(const char *name1, const char *name2) {
 	diff = 0;
 	ptr2 = name2;
 	diff_loc = -1;
+	diff_bonus = 0;
 	for (ptr = name1; *ptr && *ptr2; ) {
 		if (tolower(*ptr) != tolower(*ptr2)) {
 			diff++;
 			if (diff_loc == -1) diff_loc = ptr - name1;//remember where they started to be different
+			//consonant vs vowel = big difference
+			if (diff_loc < min / 2 - 1) /* see below (*) */
+				if (is_a_vowel(tolower(*ptr)) != is_a_vowel(tolower(*ptr2))) diff_bonus++;
 		}
 		ptr++;
 		ptr2++;
@@ -7897,9 +7901,9 @@ int similar_names(const char *name1, const char *name2) {
 	//too little difference between names? forbidden!
 	if (diff <= (min - 5) / 2 + 1) {
 		//special check: if they differ early on, it weighs slightly more :)
-		if (diff_loc < min / 2 - 1) {
+		if (diff_loc < min / 2 - 1) { /* see above (*) */
 			//loosened up slightly
-			if (diff <= (min - 6) / 2 + 1) {
+			if (diff <= (min - 6 - (diff_bonus ? 1 : 0)) / 2 + 1) {
 				s_printf("similar_names (3a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
 				return 3;
 			}
