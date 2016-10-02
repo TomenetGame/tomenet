@@ -3450,10 +3450,6 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '<': lcopy[i] = 'c'; break;
 			case '!': lcopy[i] = 'i'; break;
 			case '|': lcopy[i] = 'l'; break;//hm, could be i too :/
-			//case '(': lcopy[i] = 'c'; break;
-			//case ')': lcopy[i] = 'i'; break;
-			//case '/': lcopy[i] = 'i'; break;
-			//case '\\': lcopy[i] = 'i'; break;
 			case '$': lcopy[i] = 's'; break;
 			case '+': lcopy[i] = 't'; break;
 			case '1': lcopy[i] = 'i'; break;
@@ -3464,6 +3460,17 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '8': lcopy[i] = 'b'; break;
 			case '9': lcopy[i] = 'g'; break;
 			case '0': lcopy[i] = 'o'; break;
+
+			/* important characters that are usually not leet speek but must be turned
+			   into characters that will not get filtered out later, because these
+			   characters listed here could actually break words and there by break
+			   false positives. Eg 'headless (h, l27, 427)' would otherwise wrongly turn
+			   into 'headlesshltxaxtx' and trigger false 'shit' positive. */
+			case '(': lcopy[i] = 'c'; break;
+			case ')': lcopy[i] = 'l'; break; //all of these could be c,i,l I guess.. pick the least problematic one (l)
+			case '/': lcopy[i] = 'l'; break;
+			case '\\': lcopy[i] = 'l'; break;
+
 #ifdef HIGHLY_EFFECTIVE_CENSOR
 			/* hack: Actually _counter_ the capabilities of highly-effective
 			   censoring being done further below after this. Reason:
@@ -3495,6 +3502,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			i++;
 		}
 	}
+
 #ifdef REDUCE_H_CONSONANT
 	/* reduce 'h' before consonant */
 	//TODO: do HIGHLY_EFFECTIVE_CENSOR first probably
@@ -3938,7 +3946,7 @@ static int censor(char *line) {
 		if (i && lcopy[i] == lcopy[i - 1]) continue;
 		/* build un-leeted, mapped string */
 		if ((lcopy[i] >= '0' && lcopy[i] <= '9') || (lcopy[i] >= 'a' && lcopy[i] <= 'z')
-		    || lcopy[i] == '@' || lcopy[i] == '$' || lcopy[i] == '!' || lcopy[i] == '|'
+		    || lcopy[i] == '@' || lcopy[i] == '$' || lcopy[i] == '!' || lcopy[i] == '|' || lcopy[i] == '+'
 		    ) {
 			switch (lcopy[i]) {
 			case '@': lcopy2[j] = 'a'; break;
@@ -3949,6 +3957,7 @@ static int censor(char *line) {
 			case '!': lcopy2[j] = 'i'; break;
 			case '|': lcopy2[j] = 'l'; break;
 			case '3': lcopy2[j] = 'e'; break;
+			case '+': lcopy2[j] = 't'; break;
 			default: lcopy2[j] = lcopy[i];
 			}
 			cc_pre[j] = i;
