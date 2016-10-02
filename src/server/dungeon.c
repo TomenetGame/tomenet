@@ -3801,26 +3801,24 @@ static bool process_player_end_aux(int Ind) {
 
 			/* note: TODO (bug): items should get damaged even if player can_swim,
 			   but this might devalue swimming too much compared to levitation. Dunno. */
-			if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim)
-			    && !carry_wood
-			    ) {
-				/* Take damage */
-				if (!(p_ptr->body_monster) || (
-				    !(r_info[p_ptr->body_monster].flags7 &
-				    (RF7_AQUATIC | RF7_CAN_SWIM)) ))
-				{
-					int hit = p_ptr->mhp >> 6;
-					int swim = get_skill_scale(p_ptr, SKILL_SWIM, 4500);
-					hit += randint(p_ptr->mhp >> 5);
-					if (!hit) hit = 1;
+			if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim) &&
+			    !(p_ptr->body_monster && (r_info[p_ptr->body_monster].flags7 & (RF7_AQUATIC | RF7_CAN_SWIM)))) {
+				int hit = p_ptr->mhp >> 6;
+				int swim = get_skill_scale(p_ptr, SKILL_SWIM, 4500);
+				hit += randint(p_ptr->mhp >> 5);
+				if (!hit) hit = 1;
 
-					/* Take CON into consideration(max 30%) */
-					//note: if hit was 1, this can each result in 0 aka no hit!
-					hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
-					if (p_ptr->suscep_life) hit >>= 1;
+				/* Take CON into consideration(max 30%) */
+				//note: if hit was 1, this can each result in 0 aka no hit!
+				hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
+				if (p_ptr->suscep_life) hit >>= 1;
 
-					/* temporary abs weight calc */
-					if (p_ptr->wt + p_ptr->total_weight/10 > 170 + swim * 2) { // 190
+				/* temporary abs weight calc */
+				if (p_ptr->wt + p_ptr->total_weight / 10 > 170 + swim * 2) { // 190
+					if (carry_wood) {
+						/* Clinging to the massive piece of wood, we're safe */
+						if (!rand_int(5)) msg_print(Ind, "You cling to the wood!");
+					} else { /* Take damage from drowning */
 						long factor = (p_ptr->wt + p_ptr->total_weight / 10) - 150 - swim * 2; // 170
 						/* too heavy, always drown? */
 						if (factor < 300 && randint(factor) < 20) hit = 0;
@@ -3845,13 +3843,9 @@ static bool process_player_end_aux(int Ind) {
 							}
 						}
 
-						if (randint(1000 - factor) < 10) {
-							//if (p_ptr->prace != RACE_HALF_TROLL) {
-							if (!p_ptr->sustain_str) {
-								msg_print(Ind,"\377oYou are weakened by the exertion of swimming!");
-								//do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
-								dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
-							}
+						if (randint(1000 - factor) < 10 && !p_ptr->sustain_str) {
+							msg_print(Ind,"\377oYou are weakened by the exertion of swimming!");
+							dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
 						}
 						take_hit(Ind, hit, "drowning", 0);
 					}
