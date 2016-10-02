@@ -3334,6 +3334,16 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 						forge.marked2 = ITEM_REMOVAL_NORMAL;
 						msg_print(Ind, "You have found something!");
 						drop_near(0, &forge, -1, wpos, y, x);
+						s_printf("DIGGING: %s found a massive wood piece.\n", p_ptr->name);
+					} else if (!rand_int(65 - get_skill(p_ptr, SKILL_DIG) / 2)) {
+						/* for player store signs: (non-massive) wood pieces */
+						invcopy(&forge, lookup_kind(TV_JUNK, SV_WOOD_PIECE));
+						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+						forge.number = 1;
+//						forge.level = ;
+						forge.marked2 = ITEM_REMOVAL_NORMAL;
+						msg_print(Ind, "You have found something!");
+						drop_near(0, &forge, -1, wpos, y, x);
 						s_printf("DIGGING: %s found a wood piece.\n", p_ptr->name);
 					}
 

@@ -2447,6 +2447,9 @@ bool hates_fire(object_type *o_ptr) {
 	/* Junk, partially */
 	case TV_SKELETON:
 		return TRUE;
+	case TV_JUNK:
+		if (o_ptr->sval == SV_WOODEN_STICK || o_ptr->sval == SV_WOOD_PIECE) return TRUE;
+		break;
 
 	case TV_GAME:
 		if (o_ptr->sval == SV_SNOWBALL) return TRUE;

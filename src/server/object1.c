@@ -518,10 +518,10 @@ static bool object_easy_know(int i)
 		case TV_BOTTLE:
 		case TV_SKELETON:
 		case TV_SPIKE:
-                case TV_EGG:
-                case TV_FIRESTONE:
-                case TV_CORPSE:
-                case TV_HYPNOS:
+		case TV_EGG:
+		case TV_FIRESTONE:
+		case TV_CORPSE:
+		case TV_HYPNOS:
 		case TV_RUNE:
 		{
 			return (TRUE);
@@ -534,8 +534,8 @@ static bool object_easy_know(int i)
 		case TV_SCROLL:
 		case TV_PARCHMENT:
 		case TV_ROD:
-                case TV_ROD_MAIN:
-                case TV_BATERIE:
+		case TV_ROD_MAIN:
+		case TV_BATERIE:
 		{
 			return (TRUE);
 		}
@@ -611,8 +611,8 @@ static byte default_tval_to_attr(int tval) {
 		case TV_DRAG_ARMOR:
 			return (TERM_SLATE);
 
-                case TV_GOLEM:
-                        return (TERM_VIOLET);
+		case TV_GOLEM:
+			return (TERM_VIOLET);
 
 		case TV_AMULET:
 			return (TERM_ORANGE);
@@ -6266,17 +6266,22 @@ byte get_attr_from_tval(object_type *o_ptr) {
 
 #ifdef PLAYER_STORES
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE)
-		attr = TERM_L_UMBER;
+		return TERM_L_UMBER;
 #endif
 
 	if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
 		if (!o_ptr->xtra1) o_ptr->xtra1 = attr;
-		attr = o_ptr->xtra1;
+		return o_ptr->xtra1;
 	}
 
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST)
-		attr = o_ptr->xtra2;
+		return o_ptr->xtra2;
+
+#if 0
+	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOOD_PIECE)
+		return TERM_UMBER;
+#endif
 
 	return(attr);
 }

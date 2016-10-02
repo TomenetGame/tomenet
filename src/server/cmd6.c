@@ -7014,7 +7014,7 @@ static int fletchery_items(int Ind) {
 		if (!o_ptr->k_idx) continue;
 		if (!can_use_admin(Ind, o_ptr)) continue;
 		/* Broken Stick */
-		if (o_ptr->tval == TV_JUNK && o_ptr->sval == 6) return (i);
+		if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOODEN_STICK) return (i);
 		if (o_ptr->tval == TV_SKELETON) return (i);
 	}
 

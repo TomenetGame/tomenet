@@ -2361,7 +2361,8 @@ static void display_entry(int Ind, int pos) {
 		/* Don't display items as fake *ID*ed in player stores! */
 		if (p_ptr->store_num <= -2) {
 			/* Items inscribed '@S:' are just 'sign' dummies */
-			if (o_ptr->note && (ps_sign = strstr(quark_str(o_ptr->note), "@S:"))) {
+			if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOOD_PIECE && /* only 'wood pieces' can become store signs */
+			    o_ptr->note && (ps_sign = strstr(quark_str(o_ptr->note), "@S:"))) {
 				ps_sign += 3;
 				strcpy(o_name, " =[ ");
 				if (!strlen(ps_sign)) strcat(o_name, "<an empty sign>");

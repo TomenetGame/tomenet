@@ -3049,6 +3049,10 @@
 /* sval for TV_BOTTLE */
 #define SV_EMPTY_BOTTLE			1
 
+/* sval for TV_JUNK */
+#define SV_WOODEN_STICK			6
+#define SV_WOOD_PIECE			7
+
 /* svals for TV_KEY */
 #define SV_HOUSE_KEY			1
 #define SV_GUILD_KEY			2
