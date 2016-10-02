@@ -1328,7 +1328,7 @@ void do_cmd_drink_fountain(int Ind) {
 
 	/* decided to allow players in WRAITHFORM to drink ;) */
 	if (p_ptr->ghost) {
-		msg_print(Ind, "You cannot drink.");
+		msg_print(Ind, "Ghosts cannot interact.");
 		return;
 	}
 
