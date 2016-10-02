@@ -3471,7 +3471,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000, },
 		{ SKILL_UDUN,
 			'+', 0,
-			'+', 900, },
+			'+', 800, },
  #if 0
 		{ SKILL_META,
 			'+', 0,
@@ -3486,7 +3486,7 @@ player_class class_info[MAX_CLASS] = {
  #else
 			'+', 1000,
  #endif
-			'+', 900, },
+			'+', 800, },
 		{ SKILL_HDEFENSE,
 			'+', 0,
 			'+', 900, },
@@ -3577,7 +3577,7 @@ player_class class_info[MAX_CLASS] = {
  #else
 			'+', 1000,
  #endif
-			'+', 1000, },
+			'+', 800, },
 		{ SKILL_FIRE,
 			'+', 0,
 			'+', 1000, },
@@ -3598,7 +3598,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000, },
 		{ SKILL_UDUN,
 			'+', 0,
-			'+', 900, },
+			'+', 800, },
  #if 0
 		{ SKILL_META,
 			'+', 0,
@@ -3613,7 +3613,7 @@ player_class class_info[MAX_CLASS] = {
  #else
 			'+', 1000,
  #endif
-			'+', 900, },//'+', 1000,
+			'+', 800, },//'+', 1000,
 		{ SKILL_HDEFENSE,
 			'+', 0,
 			'+', 900, },//'+', 1000,
