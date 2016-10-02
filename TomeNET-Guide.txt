@@ -11243,6 +11243,7 @@ Means of recharging:
 
 The power determines both, the chance of succeeding in recharging the item and
 the degree of recharging done to the item.
+Some lesser means of recharging might not be powerful enough to recharge rods.
 
 Staves and wands 'of plenty' will receive about twice as many charges from
 recharging (with the risk of breaking remaining unchanged) so look out for
