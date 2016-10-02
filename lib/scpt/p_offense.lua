@@ -76,14 +76,18 @@ HGLOBELIGHT_I = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		if get_level(Ind, HGLOBELIGHT_I, 50) >= 3 then
-			lite_area(Ind, 10, 4)
+			lite_area(Ind, 19 + get_level(Ind, HGLOBELIGHT_I, 50), 3)
 		else
 			msg_print(Ind, "You are surrounded by a white light")
 			lite_room(Ind, player.wpos, player.py, player.px)
 		end
 	end,
 	["info"] = 	function()
+		if get_level(Ind, HGLOBELIGHT_I, 50) >= 3 then
+			return "dam "..((19 + get_level(Ind, HGLOBELIGHT_I, 50)) / 2).." rad 3"
+		else
 			return ""
+		end
 	end,
 	["desc"] = 	{
 			"Creates a globe of pure light.",
@@ -103,10 +107,10 @@ HGLOBELIGHT_II = add_spell {
 	["spell"] = 	function()
 			msg_print(Ind, "You are surrounded by a white light")
 			lite_room(Ind, player.wpos, player.py, player.px)
-			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT_I, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT_I, 6), " calls light for")
+			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT_I, 100)) * 2, 1 + get_level(Ind, HGLOBELIGHT_I, 6), " calls light for")
 	end,
 	["info"] = 	function()
-			return "dam "..(10 + get_level(Ind, HGLOBELIGHT_I, 100)).." rad "..(5 + get_level(Ind, HGLOBELIGHT_I, 6))
+			return "dam "..(10 + get_level(Ind, HGLOBELIGHT_I, 100)).." rad "..(1 + get_level(Ind, HGLOBELIGHT_I, 6))
 	end,
 	["desc"] = 	{ "Creates a powerful globe of pure light that hurts all foes.", }
 }
