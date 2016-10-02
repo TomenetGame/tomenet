@@ -4865,6 +4865,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Mana -- destroys everything -- except IGNORE_MANA items :p */
 		case GF_ANNIHILATION:
+			/* Hack: Doomed Grounds is too weak to kill items */
+			if (dam < 10) break;
 		case GF_MANA:
 			if (!(f5 & (TR5_IGNORE_MANA | TR5_RES_MANA))) {
 				do_smash_effect = TRUE;
@@ -6387,9 +6389,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 
 			/* the_sandman: return 15% of the damage to player. This is special
-			   since (we're not using the upto 35% rule because for the spell 
-			   (drain cloud) it will be too much) we aim for balance 
-			   HACK: the priest_spell variable is defined above. 
+			   since (we're not using the upto 35% rule because for the spell
+			   (drain cloud) it will be too much) we aim for balance
+			   HACK: the priest_spell variable is defined above.
 			*/
 			if (priest_spell && !quiet) {
 				//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
@@ -6400,7 +6402,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 
 		case GF_ANNIHILATION:
-			i = dam - 1;
 			if (seen) obvious = TRUE;
 			if (m_ptr->hp > 9362) dam = (m_ptr->hp / 100) * dam;
 			else if (m_ptr->hp > 936) dam = ((m_ptr->hp / 10) * dam) / 10;
@@ -8349,6 +8350,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	dun_level *l_ptr = getfloor(wpos);
 
+	int priest_spell = 0;
+
 
 	/* Bad player number */
 	if (Ind <= 0) return (FALSE);
@@ -8371,6 +8374,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 		hack_dam = dam & 0x3C00;
 		dam = dam & 0x03FF;
+	}
+
+	/* the_sandman: the priest spell? (0 or 1) */
+	if (dam == 9999 && (typ == GF_OLD_DRAIN || typ == GF_ANNIHILATION)) {
+		priest_spell = 1;
+		dam = 2; // the real damage (percentage drain)
 	}
 
 	/* shadow running protects from taking ranged damage - C. Blue
@@ -10588,6 +10597,64 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		take_hit(Ind, dam, killer, -who);
 		break; }
+
+	/* Drain Life */
+	case GF_OLD_DRAIN:
+		/* lower damage in pvp */
+		dam /= 2;
+
+		/* Prevent internal overflow (int) - allow up to 35% leech */
+		if (p_ptr->chp > 9362) dam = (p_ptr->chp / 100) * dam;
+		else if (p_ptr->chp > 936) dam = ((p_ptr->chp / 10) * dam) / 10;
+		else dam = (p_ptr->chp * dam) / 100;
+		if (!dam) dam = 1;
+
+#if 0
+		if (!quiet) {
+			if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
+			else p_ptr->ret_dam = 0; /* paranoia */
+		}
+#endif
+
+		if (p_ptr->prace == RACE_VAMPIRE) {
+			dam = 0;
+//			if (!quiet) p_ptr->ret_dam = 0;
+		} else if (magik(p_ptr->skill_sav / 2)) {
+			dam *= 3; dam /= (randint(6) + 6);
+			if (!dam) dam = 1;
+		}
+
+		take_hit(Ind, dam, killer, -who);
+
+		/* the_sandman: return 15% of the damage to player. This is special
+		   since (we're not using the upto 35% rule because for the spell
+		   (drain cloud) it will be too much) we aim for balance
+		   HACK: the priest_spell variable is defined above.
+		*/
+
+		if (priest_spell && IS_PVP) {
+			//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
+			if (dam) hp_player_quiet(-who, (dam * 15) / 100, TRUE);
+			p_ptr->ret_dam = 0;
+		}
+
+		break;
+
+	case GF_ANNIHILATION:
+		/* lower damage in pvp */
+		dam /= 2;
+
+		if (p_ptr->chp > 9362) dam = (p_ptr->chp / 100) * dam;
+		else if (p_ptr->chp > 936) dam = ((p_ptr->chp / 10) * dam) / 10;
+		else dam = (p_ptr->chp * dam) / 100;
+
+		if (magik(p_ptr->skill_sav / 2)) {
+			dam *= 3; dam /= (randint(6) + 6);
+		}
+
+		if (!dam) dam = 1;
+		take_hit(Ind, dam, killer, -who);
+		break;
 
 	/* Default */
 	default:
