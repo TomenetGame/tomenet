@@ -5858,7 +5858,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->old_awkward_wield != p_ptr->awkward_wield) {
 		/* Message */
 		if (p_ptr->awkward_wield)
-			msg_print(Ind, "\377oYou find it hard to fight with your weapon and shield.");
+			msg_print(Ind, "\377yUsing this large weapon together with a shield makes fighting harder.");
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx)
 			msg_print(Ind, "\377gYou feel comfortable with your weapon.");
 		else if (!p_ptr->inventory[INVEN_ARM].k_idx)

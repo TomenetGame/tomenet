@@ -7766,7 +7766,7 @@ Some larger weapons that should be used two-handed can also be used
 single-handed, but you will receive penalties to to-hit and to-dam bonus if
 you use it that way. Look at your character screen ('C') to compare the
 to-hit/to-dam boni and see if it's worth it. You'll see a warning message
-"You find it hard to fight with your weapon and shield.".
+"Using this large weapon together with a shield makes fighting harder."
 
 Medium weapons which 'may' be used two-handed won't give malus if used
 single-handed, but you might get more blows per round if you wield them with
