@@ -136,3 +136,4 @@ cunti
 cunte
 cuntu
 alfa
+laptop
