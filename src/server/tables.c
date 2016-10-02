@@ -3495,7 +3495,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 900, },
 		{ SKILL_HSUPPORT,
 			'+', 0,
-			'+', 900, },
+			'+', 800, },
  #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
@@ -3623,7 +3623,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 900, },//'+', 1000,
 		{ SKILL_HSUPPORT,
 			'+', 0,
-			'+', 900, },//'+', 1000,
+			'+', 800, },//'+', 1000,
  #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
