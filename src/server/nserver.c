@@ -6292,8 +6292,11 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 		if (ovl_offset_x != 9999) {
 			ox = x + ovl_offset_x;
 			oy = y + ovl_offset_y;
+			/* Only place overlay over the actual map, not over gui elements */
 			if (x >= SCREEN_PAD_LEFT && x < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
-			    y >= SCREEN_PAD_TOP && y < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+			    y >= SCREEN_PAD_TOP && y < p_ptr->screen_hgt + SCREEN_PAD_TOP &&
+			    /* Verify that we're not exceeding our overlay buffer */
+			    ox >= 0 && oy >= 0 && ox < MAX_WINDOW_WID && oy < MAX_WINDOW_HGT) {
 				co = p_ptr->ovl_info[oy][ox].c;
 				ao = p_ptr->ovl_info[oy][ox].a;
 				if (co && ao) {
@@ -6336,8 +6339,11 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			if (ovl_offset_x != 9999) {
 				ox = x1 + ovl_offset_x;
 				oy = y + ovl_offset_y;
+				/* Only place overlay over the actual map, not over gui elements */
 				if (x1 >= SCREEN_PAD_LEFT && x1 < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
-				    y >= SCREEN_PAD_TOP && y < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+				    y >= SCREEN_PAD_TOP && y < p_ptr->screen_hgt + SCREEN_PAD_TOP &&
+				    /* Verify that we're not exceeding our overlay buffer */
+				    ox >= 0 && oy >= 0 && ox < MAX_WINDOW_WID && oy < MAX_WINDOW_HGT) {
 					co = p_ptr->ovl_info[oy][ox].c;
 					ao = p_ptr->ovl_info[oy][ox].a;
 					if (co && ao) {
