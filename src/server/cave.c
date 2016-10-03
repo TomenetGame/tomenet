@@ -3733,7 +3733,7 @@ void lite_spot(int Ind, int y, int x) {
 		    p_ptr->scr_info[dispy][dispx].a != a ||
 		    (x == p_ptr->px && y == p_ptr->py && !p_ptr->afk) /* let's try disabling this when AFK to save bandwidth - mikaelh */
 		    /* for clearing overlay that displays auto-updating things (monsters who meanwhile moved away): clear it as soon as it comes into LOS */
-		    || ((p_ptr->cave_flag[y][x] & CAVE_AOVL) && (p_ptr->cave_flag[y][x] & CAVE_VIEW))) {
+		    || ((p_ptr->cave_flag[y][x] & CAVE_AOVL) && (p_ptr->cave_flag[y][x] & CAVE_VIEW) && (p_ptr->cave_flag[y][x] & CAVE_LITE))) {
 			/* Modify screen buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;
 			p_ptr->scr_info[dispy][dispx].a = a;
