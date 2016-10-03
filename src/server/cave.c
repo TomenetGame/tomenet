@@ -3787,6 +3787,8 @@ void draw_spot_ovl(int Ind, int y, int x, byte a, char c) {
 			p_ptr->ovl_info[dispy][dispx].c = c;
 			p_ptr->ovl_info[dispy][dispx].a = a;
 
+			p_ptr->cave_flag[y][x] |= CAVE_AOVL;
+
 			/* Tell client to redraw this grid */
 			Send_char(Ind, dispx, dispy, a, c);
 		}
@@ -3819,12 +3821,16 @@ void clear_ovl_spot(int Ind, int y, int x) {
 				p_ptr->scr_info[dispy][dispx].c = 0;
 				p_ptr->scr_info[dispy][dispx].a = 0;
 
+				p_ptr->cave_flag[y][x] &= ~CAVE_AOVL;
+
 				/* Redraw */
 				lite_spot(Ind, y, x);
 			} else {
 				/* Clear the overlay buffer */
 				p_ptr->ovl_info[dispy][dispx].c = 0;
 				p_ptr->ovl_info[dispy][dispx].a = 0;
+
+				p_ptr->cave_flag[y][x] &= ~CAVE_AOVL;
 
 				/* No redraw needed */
 			}
@@ -5093,7 +5099,9 @@ void update_lite(int Ind)
 		x = p_ptr->lite_x[i];
 
 		/* Update fresh grids */
-		if (zcave[y][x].info & CAVE_TEMP) continue;
+		if ((zcave[y][x].info & CAVE_TEMP)
+		    && !(p_ptr->cave_flag[y][x] & CAVE_AOVL))
+			continue;
 
 		/* Note */
 		note_spot_depth(wpos, y, x);
@@ -5111,7 +5119,9 @@ void update_lite(int Ind)
 		zcave[y][x].info &= ~CAVE_TEMP;
 
 		/* Update stale grids */
-		if (p_ptr->cave_flag[y][x] & CAVE_LITE) continue;
+		if ((p_ptr->cave_flag[y][x] & CAVE_LITE)
+		    && !(p_ptr->cave_flag[y][x] & CAVE_AOVL))
+			continue;
 
 		/* Redraw */
 		everyone_lite_spot(wpos, y, x);
@@ -5882,7 +5892,9 @@ void update_view(int Ind)
 		c_ptr->info &= ~CAVE_XTRA;
 
 		/* Update only newly viewed grids */
-		if (c_ptr->info & CAVE_TEMP) continue;
+		if ((c_ptr->info & CAVE_TEMP)
+		    && !(p_ptr->cave_flag[y][x] & CAVE_AOVL))
+			continue;
 
 		/* Note */
 		note_spot(Ind, y, x);
@@ -5905,7 +5917,9 @@ void update_view(int Ind)
 		c_ptr->info &= ~CAVE_TEMP;
 
 		/* Update only non-viewable grids */
-		if (*w_ptr & CAVE_VIEW) continue;
+		if ((*w_ptr & CAVE_VIEW)
+		    && !(*w_ptr & CAVE_AOVL))
+			continue;
 
 		/* Forget it, dude */
 		if (unmap)
@@ -6675,7 +6689,9 @@ void update_view(int Ind)
 		if (c_ptr->info & CAVE_TEMP) continue;
 #endif	/* 0 */
 
-		if (!((*w_ptr & (CAVE_XTRA)) && !(c_ptr->info & (CAVE_TEMP)))) continue;
+		if (!((*w_ptr & CAVE_XTRA) && !(c_ptr->info & CAVE_TEMP))
+		    && !(w_ptr & CAVE_AOVL))
+			continue;
 
 		/* Note */
 		note_spot(Ind, y, x);

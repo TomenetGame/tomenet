@@ -3490,12 +3490,15 @@ void do_cmd_locate(int Ind, int dir) {
 					ox = x1 + ovl_offset_x;
 					oy = y1 + ovl_offset_y;
 					/* Verify that we're not exceeding our overlay buffer */
-					if (ox >= 0 && oy >= 0 && ox < MAX_WINDOW_WID && oy < MAX_WINDOW_HGT)
+					if (ox >= 0 && oy >= 0 && ox < MAX_WINDOW_WID && oy < MAX_WINDOW_HGT) {
 						p_ptr->ovl_info[y1][x1] = p_ptr->ovl_info[oy][ox];
-					else {
+						if (p_ptr->ovl_info[y1][x1].c)
+							p_ptr->cave_flag[y1 + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt] |= CAVE_AOVL;
+					} else {
 						/* Clear all the cropped parts */
 						p_ptr->ovl_info[y1][x1].c = 0;
 						p_ptr->ovl_info[y1][x1].a = 0;
+						p_ptr->cave_flag[y1 + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt] &= ~CAVE_AOVL;
 					}
 				}
 		}
