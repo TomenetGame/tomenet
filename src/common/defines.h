@@ -4238,6 +4238,12 @@
 #define PR_BPR_WRAITH	0x00400000L	/* Re-use (!) to display BpR and also Wraithform */
 
 /*
+ * Bit flags for the "p_ptr->redraw2" variable
+ */
+#define PR2_MAP_FWD	0x00000001L	/* Redraw the map just for a mind-linking player */
+#define PR2_MAP_SCR	0x00000002L	/* Redraw just the scr map, not the ovl one */
+
+/*
  * Bit flags for the "p_ptr->window" variable (etc)
  */
 #if 0
@@ -7187,9 +7193,8 @@ extern int PlayerUID;
 /* Additional link flags */
 #define LINKF_HIDDEN		0x0080 /* No link status messages */
 #define LINKF_VIEW_DEDICATED	0x0100 /* View dedicated for watching other player */
-#define LINKF_TMP_FMAP		0x0200 /* Hack: Forward map once (temporary helper flag for PR_MAP) - We need this because PR_... has no more capacity for further flags. */
-#define LINKF_MSG		0x0400 /* Share non-chat messages */
-#define LINKF_CHAT		0x0800 /* Share chat messages */
+#define LINKF_MSG		0x0200 /* Share non-chat messages */
+#define LINKF_CHAT		0x0400 /* Share chat messages */
 
 
 /* Monster gaining levels */

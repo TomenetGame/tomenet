@@ -3376,7 +3376,7 @@ void do_cmd_look(int Ind, int dir) {
 		}
 
 		/* Hack -- special description for store doors */
-//		if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
+		//if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
 		if (feat == FEAT_SHOP) {
 			p1 = "The entrance to ";
 
@@ -3430,6 +3430,7 @@ void do_cmd_look(int Ind, int dir) {
 /*
  * Allow the player to examine other sectors on the map
  */
+//#define LOCATE_KEEPS_OVL
 void do_cmd_locate(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
@@ -3446,13 +3447,22 @@ void do_cmd_locate(int Ind, int dir) {
 		/* Recenter map around the player */
 		verify_panel(Ind);
 
+#ifdef LOCATE_KEEPS_OVL
+		/* Undo: Was possibly set by verify_panel() if ESC'ing out of do_cmd_locate() before switching back to your home panel */
+		p_ptr->redraw &= ~PR_MAP;
+#endif
+
 		/* Any change? otherwise no need to redraw */
 		if ((prow != p_ptr->panel_row) || (pcol != p_ptr->panel_col)) {
 			/* Update stuff */
 			p_ptr->update |= (PU_MONSTERS);
 
 			/* Redraw map */
+#ifdef LOCATE_KEEPS_OVL
+			p_ptr->redraw2 |= (PR2_MAP_SCR);
+#else
 			p_ptr->redraw |= (PR_MAP);
+#endif
 
 			/* Window stuff */
 			p_ptr->window |= (PW_OVERHEAD);
@@ -3516,8 +3526,8 @@ void do_cmd_locate(int Ind, int dir) {
 
 	/* Prepare to ask which way to look */
 	sprintf(out_val,
-    	    "Map sector [%d,%d], which is%s your sector%s. Direction (or ESC)?",
-    	    y2, x2, tmp_val, trad_val);
+	    "Map sector [%d,%d], which is%s your sector%s. Direction (or ESC)?",
+	    y2, x2, tmp_val, trad_val);
 
 	msg_print(Ind, out_val);
 
@@ -3534,7 +3544,11 @@ void do_cmd_locate(int Ind, int dir) {
 		p_ptr->panel_changed = TRUE;
 
 		/* Redraw map */
+#ifdef LOCATE_KEEPS_OVL
+		p_ptr->redraw2 |= (PR2_MAP_SCR);
+#else
 		p_ptr->redraw |= (PR_MAP);
+#endif
 
 		/* Update stuff */
 		p_ptr->update |= (PU_MONSTERS);

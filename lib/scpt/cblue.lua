@@ -754,9 +754,9 @@ function vnc(name)
     players(p).esp_link = id
     players(p).esp_link_type = 1
     players(p).esp_link_end = 0
-    players(p).esp_link_flags = bor(players(p).esp_link_flags, 1 + 16 + 128 + 512)
+    players(p).esp_link_flags = bor(players(p).esp_link_flags, 1 + 16 + 128)
     player.esp_link_flags = bor(player.esp_link_flags, 256)
-    players(p).redraw = bor(players(p).redraw, 67108864) -- 67108864 = PR_MAP
+    players(p).redraw2 = bor(players(p).redraw2, 1)
 
     --redraw target's (client-side) weather to refresh own weather too
     players(p).panel_changed = 1
@@ -775,7 +775,7 @@ function vncoff(name)
     players(p).esp_link_flags = band(players(p).esp_link_flags, bnot(1 + 16 + 128 + 512))
 
     player.esp_link_flags = band(player.esp_link_flags, bnot(256))
-    player.redraw = bor(player.redraw, 67108864)
+    player.redraw = bor(player.redraw, 67108864) -- PR_MAP
     msg_print(Ind, "Mind link broken with '"..players(p).name.."'.")
 end
 
@@ -785,7 +785,7 @@ function vncrs()
 
     --clean up own mind-link state
     player.esp_link_flags = band(player.esp_link_flags, bnot(256))
-    player.redraw = bor(player.redraw, 67108864)
+    player.redraw = bor(player.redraw, 67108864) -- PR_MAP
 
     --clean up any linked player's mind-link too
     id = player.id

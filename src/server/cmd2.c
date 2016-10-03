@@ -5656,8 +5656,8 @@ void do_cmd_fire(int Ind, int dir) {
 					dispx = x - p_ptr->panel_col_prt;
 
 					/* Remember the projectile */
-					p_ptr->scr_info[dispy][dispx].c = missile_char;
-					p_ptr->scr_info[dispy][dispx].a = missile_attr;
+					p_ptr->scr_info[y][x].c = missile_char;
+					p_ptr->scr_info[y][x].a = missile_attr;
 
 					/* Tell the client */
 					Send_char(i, dispx, dispy, missile_attr, missile_char);
@@ -6394,8 +6394,8 @@ void do_cmd_fire(int Ind, int dir) {
 					dispx = x - p_ptr->panel_col_prt;
 
 					/* Remember the projectile */
-					p_ptr->scr_info[dispy][dispx].c = missile_char;
-					p_ptr->scr_info[dispy][dispx].a = missile_attr;
+					p_ptr->scr_info[y][x].c = missile_char;
+					p_ptr->scr_info[y][x].a = missile_attr;
 
 					/* Tell the client */
 					Send_char(i, dispx, dispy, missile_attr, missile_char);
@@ -6443,8 +6443,8 @@ void do_cmd_fire(int Ind, int dir) {
 				dispx = nx - p_ptr->panel_col_prt;
 
 				/* Remember the projectile */
-				p_ptr->scr_info[dispy][dispx].c = missile_char;
-				p_ptr->scr_info[dispy][dispx].a = missile_attr;
+				p_ptr->scr_info[ny][nx].c = missile_char;
+				p_ptr->scr_info[ny][nx].a = missile_attr;
 
 				/* Tell the client */
 				Send_char(i, dispx, dispy, missile_attr, missile_char);
@@ -6947,8 +6947,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				dispx = x - p_ptr->panel_col_prt;
 
 				/* Remember the projectile */
-				p_ptr->scr_info[dispy][dispx].c = missile_char;
-				p_ptr->scr_info[dispy][dispx].a = missile_attr;
+				p_ptr->scr_info[y][x].c = missile_char;
+				p_ptr->scr_info[y][x].a = missile_attr;
 
 				/* Tell the client */
 				Send_char(i, dispx, dispy, missile_attr, missile_char);
@@ -7258,8 +7258,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				dispx = nx - p_ptr->panel_col_prt;
 
 				/* Remember the projectile */
-				p_ptr->scr_info[dispy][dispx].c = missile_char;
-				p_ptr->scr_info[dispy][dispx].a = missile_attr;
+				p_ptr->scr_info[ny][nx].c = missile_char;
+				p_ptr->scr_info[ny][nx].a = missile_attr;
 
 				/* Tell the client */
 				Send_char(i, dispx, dispy, missile_attr, missile_char);

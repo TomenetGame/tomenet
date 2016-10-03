@@ -3729,17 +3729,17 @@ void lite_spot(int Ind, int y, int x) {
 		dispy = y - p_ptr->panel_row_prt;
 
 		/* Only draw if different than buffered */
-		if (p_ptr->scr_info[dispy][dispx].c != c ||
-		    p_ptr->scr_info[dispy][dispx].a != a ||
+		if (p_ptr->scr_info[y][x].c != c ||
+		    p_ptr->scr_info[y][x].a != a ||
 		    (x == p_ptr->px && y == p_ptr->py && !p_ptr->afk)) /* let's try disabling this when AFK to save bandwidth - mikaelh */
 		{
 			/* Modify screen buffer */
-			p_ptr->scr_info[dispy][dispx].c = c;
-			p_ptr->scr_info[dispy][dispx].a = a;
+			p_ptr->scr_info[y][x].c = c;
+			p_ptr->scr_info[y][x].a = a;
 
 			/* Compare against the overlay buffer */
-			if ((p_ptr->ovl_info[dispy][dispx].c != c) ||
-			    (p_ptr->ovl_info[dispy][dispx].a != a))
+			if ((p_ptr->ovl_info[y][x].c != c) ||
+			    (p_ptr->ovl_info[y][x].a != a))
 			{
 				/* Old cfg.hilite_player implementation has been disabled after 4.6.1.1 because it interferes with custom fonts */
 				if (!is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 1)) {
@@ -3751,8 +3751,8 @@ void lite_spot(int Ind, int y, int x) {
 			}
 
 			/* Clear the overlay buffer */
-			p_ptr->ovl_info[dispy][dispx].c = 0;
-			p_ptr->ovl_info[dispy][dispx].a = 0;
+			p_ptr->ovl_info[y][x].c = 0;
+			p_ptr->ovl_info[y][x].a = 0;
 		}
 	}
 }
@@ -3781,11 +3781,11 @@ void draw_spot_ovl(int Ind, int y, int x, byte a, char c) {
 		dispy = y - p_ptr->panel_row_prt;
 
 		/* Only draw if different than buffered */
-		if (p_ptr->ovl_info[dispy][dispx].c != c ||
-		    p_ptr->ovl_info[dispy][dispx].a != a) {
+		if (p_ptr->ovl_info[y][x].c != c ||
+		    p_ptr->ovl_info[y][x].a != a) {
 			/* Modify internal buffer */
-			p_ptr->ovl_info[dispy][dispx].c = c;
-			p_ptr->ovl_info[dispy][dispx].a = a;
+			p_ptr->ovl_info[y][x].c = c;
+			p_ptr->ovl_info[y][x].a = a;
 
 			/* Tell client to redraw this grid */
 			Send_char(Ind, dispx, dispy, a, c);
@@ -3807,24 +3807,24 @@ void clear_ovl_spot(int Ind, int y, int x) {
 		dispx = x - p_ptr->panel_col_prt;
 		dispy = y - p_ptr->panel_row_prt;
 
-		if (p_ptr->ovl_info[dispy][dispx].c) {
+		if (p_ptr->ovl_info[y][x].c) {
 			/* Check if the overlay buffer is different from the screen buffer */
-			if ((p_ptr->ovl_info[dispy][dispx].a != p_ptr->scr_info[dispy][dispx].a) ||
-			    (p_ptr->ovl_info[dispy][dispx].c != p_ptr->scr_info[dispy][dispx].c)) {
+			if ((p_ptr->ovl_info[y][x].a != p_ptr->scr_info[y][x].a) ||
+			    (p_ptr->ovl_info[y][x].c != p_ptr->scr_info[y][x].c)) {
 				/* Clear the overlay buffer */
-				p_ptr->ovl_info[dispy][dispx].c = 0;
-				p_ptr->ovl_info[dispy][dispx].a = 0;
+				p_ptr->ovl_info[y][x].c = 0;
+				p_ptr->ovl_info[y][x].a = 0;
 
 				/* Clear the screen buffer to force redraw */
-				p_ptr->scr_info[dispy][dispx].c = 0;
-				p_ptr->scr_info[dispy][dispx].a = 0;
+				p_ptr->scr_info[y][x].c = 0;
+				p_ptr->scr_info[y][x].a = 0;
 
 				/* Redraw */
 				lite_spot(Ind, y, x);
 			} else {
 				/* Clear the overlay buffer */
-				p_ptr->ovl_info[dispy][dispx].c = 0;
-				p_ptr->ovl_info[dispy][dispx].a = 0;
+				p_ptr->ovl_info[y][x].c = 0;
+				p_ptr->ovl_info[y][x].a = 0;
 
 				/* No redraw needed */
 			}
@@ -3857,9 +3857,12 @@ void clear_ovl(int Ind) {
  * Note that, for efficiency, we contain an "optimized" version
  * of both "lite_spot()" and "print_rel()", and that we use the
  * "lite_spot()" function to display the player grid, if needed.
+ *
+ * scr_only: If we're using do_cmd_locate(), don't clear the overlay map,
+ *           to keep detected monsters etc. visible! (LOCATE_KEEPS_OVL)
  */
 
-void prt_map(int Ind) {
+void prt_map(int Ind, bool scr_only) {
 	player_type *p_ptr = Players[Ind];
 
 	int x, y;
@@ -3873,16 +3876,17 @@ void prt_map(int Ind) {
 	/* First clear the old stuff */
 	memset(p_ptr->scr_info, 0, sizeof(p_ptr->scr_info));
 
-	/* Clear the overlay buffer */
-	memset(p_ptr->ovl_info, 0, sizeof(p_ptr->ovl_info));
+	if (!scr_only) {
+		/* Clear the overlay buffer */
+		memset(p_ptr->ovl_info, 0, sizeof(p_ptr->ovl_info));
+	}
 
 	/* Dump the map */
 	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++) {
 		dispy = y - p_ptr->panel_row_prt;
 
 		/* Scan the columns of row "y" */
-		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
-		{
+		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++) {
 			/* Determine what is there */
 			map_info(Ind, y, x, &a, &c);
 
@@ -3892,8 +3896,8 @@ void prt_map(int Ind) {
 			dispx = x - p_ptr->panel_col_prt;
 
 			/* Redraw that grid of the map */
-			p_ptr->scr_info[dispy][dispx].c = c;
-			p_ptr->scr_info[dispy][dispx].a = a;
+			p_ptr->scr_info[y][x].c = c;
+			p_ptr->scr_info[y][x].a = a;
 		}
 
 		/* Send that line of info */
@@ -7145,7 +7149,7 @@ void mind_map_level(int Ind, int pow) {
 #if 0 /* this will be overheady, since it requires prt_map() here as a bad \
          hack, and PR_MAP/PU_MONSTERS commented out in for-loop below. \
          See same for-loop for clean solution as good alternative! */
-		prt_map(plist[i]); /* bad hack */
+		prt_map(plist[i], FALSE); /* bad hack */
 		/* like detect_creatures(), not excluding invisible monsters though */
 		for (i = 0; i < plist_size; i++) {
 			if (Players[plist[i]]->mon_vis[m_fast[m]]) continue;

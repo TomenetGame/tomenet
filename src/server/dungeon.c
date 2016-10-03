@@ -5488,6 +5488,7 @@ static void process_player_end(int Ind) {
 
 	/* Redraw stuff (if needed) */
 	if (p_ptr->redraw) redraw_stuff(Ind);
+	if (p_ptr->redraw2) redraw2_stuff(Ind);
 
 	/* Redraw stuff (if needed) */
 	if (p_ptr->window) window_stuff(Ind);
@@ -8326,6 +8327,7 @@ void dungeon(void) {
 
 		/* Redraw stuff */
 		if (p_ptr->redraw) redraw_stuff(i);
+		if (p_ptr->redraw2) redraw2_stuff(i);
 
 		/* Window stuff */
 		if (p_ptr->window) window_stuff(i);

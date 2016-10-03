@@ -6718,7 +6718,6 @@ void redraw_stuff(int Ind) {
 	/* Redraw stuff */
 	if (!p_ptr->redraw) return;
 
-
 	/* Character is not ready yet, no screen updates */
 	/*if (!character_generated) return;*/
 
@@ -6731,26 +6730,18 @@ void redraw_stuff(int Ind) {
 
 	if (p_ptr->redraw & PR_MAP) {
 		p_ptr->redraw &= ~(PR_MAP);
-
-		/* hack */
-		if (p_ptr->esp_link_flags & LINKF_TMP_FMAP) {
-			p_ptr->esp_link_flags &= ~LINKF_TMP_FMAP;
-			prt_map_forward(Ind);
-
-		/* normal */
-		} else {
-			prt_map(Ind);
+		prt_map(Ind, FALSE);
 
 #ifdef CLIENT_SIDE_WEATHER
-			/* hack: update weather if it was just a panel-change
-			   (ie level-sector) and not a level-change.
-			   Note: this could become like PR_WEATHER_PANEL,
-			   however, PR_ flags are already in use completely atm. */
-			if (p_ptr->panel_changed) player_weather(Ind, FALSE, FALSE, TRUE);
+		/* hack: update weather if it was just a panel-change
+		   (ie level-sector) and not a level-change.
+		   Note: this could become like PR_WEATHER_PANEL,
+		   however, PR_ flags are already in use completely atm. */
+		if (p_ptr->panel_changed) player_weather(Ind, FALSE, FALSE, TRUE);
 #endif
-			p_ptr->panel_changed = FALSE;
-		}
+		p_ptr->panel_changed = FALSE;
 	}
+
 
 	if (p_ptr->redraw & PR_BASIC) {
 		p_ptr->redraw &= ~(PR_BASIC);
@@ -6928,7 +6919,22 @@ void redraw_stuff(int Ind) {
 		}
 	}
 }
+void redraw2_stuff(int Ind) {
+	player_type *p_ptr = Players[Ind];
 
+	/* Redraw stuff */
+	if (!p_ptr->redraw2) return;
+
+	if (p_ptr->redraw2 & PR2_MAP_FWD) {
+		p_ptr->redraw2 &= ~(PR2_MAP_FWD);
+		prt_map_forward(Ind);
+	}
+
+	if (p_ptr->redraw2 & PR2_MAP_SCR) {
+		p_ptr->redraw2 &= ~(PR2_MAP_SCR);
+		prt_map(Ind, TRUE);
+	}
+}
 
 /*
  * Handle "p_ptr->window"
@@ -6991,6 +6997,7 @@ void handle_stuff(int Ind) {
 
 	/* Redraw stuff */
 	if (p_ptr->redraw) redraw_stuff(Ind);
+	if (p_ptr->redraw2) redraw2_stuff(Ind);
 
 	/* Window stuff */
 	if (p_ptr->window) window_stuff(Ind);

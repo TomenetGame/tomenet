@@ -3649,6 +3649,7 @@ void Handle_input(int fd, int arg) {
 
 			/* Redraw stuff */
 			if (p_ptr->redraw) redraw_stuff(player);
+			if (p_ptr->redraw2) redraw2_stuff(player);
 
 			/* Window stuff */
 			if (p_ptr->window) window_stuff(player);
@@ -6248,12 +6249,17 @@ int Send_flush(int Ind) {
  * repeated at least twice, then bit 0x40 of the attribute is set, and
  * the next byte contains the number of repetitions of the previous grid.
  */
+//#define LOCATE_KEEPS_OVL
 int Send_line_info(int Ind, int y) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
-	char c;
-	byte a;
+	char c, c2;
+	byte a, a2;
+#ifdef LOCATE_KEEPS_OVL
+	char co;
+	byte ao;
+#endif
 	int Ind2 = 0;
 #ifdef EXTENDED_TERM_COLOURS
 	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
@@ -6268,7 +6274,7 @@ int Send_line_info(int Ind, int y) {
 	}
 
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0; /* bad hack for shortcut */
-//	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED)) return 0;
+	//if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED)) return 0;
 
 	Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2);
 
@@ -6279,8 +6285,19 @@ int Send_line_info(int Ind, int y) {
 	/* Each column */
 	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */
-		c = p_ptr->scr_info[y][x].c;
-		a = p_ptr->scr_info[y][x].a;
+#ifdef LOCATE_KEEPS_OVL
+		co = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
+		ao = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
+		if (co && ao) {
+			c = co;
+			a = ao;
+		} else {
+#endif
+			c = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
+			a = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
+#ifdef LOCATE_KEEPS_OVL
+		}
+#endif
 
 #ifdef EXTENDED_TERM_COLOURS
 		if (old_colours) {
@@ -6297,8 +6314,24 @@ int Send_line_info(int Ind, int y) {
 		n = 1;
 
 		/* Count repetitions of this grid */
-		while (x1 < 80 && p_ptr->scr_info[y][x1].c == c &&
-		    p_ptr->scr_info[y][x1].a == a) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
+		while (x1 < 80) {
+#ifdef LOCATE_KEEPS_OVL
+			co = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c;
+			ao = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a;
+			if (co && ao) {
+				c2 = co;
+				a2 = ao;
+			} else {
+#endif
+				c2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c;
+				//TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old (see a_c above), but it doesn't matter.
+				a2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a;
+#ifdef LOCATE_KEEPS_OVL
+			}
+#endif
+
+			if (c != c2 || a != a2) break;
+
 			/* Increment count and column */
 			n++;
 			x1++;
@@ -6390,8 +6423,8 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	/* Each column */
 	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */
-		c = p_ptr2->scr_info[y][x].c;
-		a = p_ptr2->scr_info[y][x].a;
+		c = p_ptr2->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
+		a = p_ptr2->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
 
 #ifdef EXTENDED_TERM_COLOURS
 		if (old_colours) {
@@ -6408,8 +6441,8 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		n = 1;
 
 		/* Count repetitions of this grid */
-		while (p_ptr2->scr_info[y][x1].c == c &&
-		    p_ptr2->scr_info[y][x1].a == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
+		while (p_ptr2->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c == c &&
+		    p_ptr2->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
 			/* Increment count and column */
 			n++;
 			x1++;

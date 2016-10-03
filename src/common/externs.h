@@ -209,7 +209,7 @@ extern void note_spot(int Ind, int y, int x);
 extern void note_spot_depth(int Depth, int y, int x);
 extern void everyone_lite_spot(int Depth, int y, int x);
 extern void lite_spot(int Ind, int y, int x);
-extern void prt_map(int Ind);
+extern void prt_map(int Ind, bool scr_only);
 extern void display_map(int *cy, int *cx);
 extern void do_cmd_view_map(void);
 extern void forget_lite(int Ind);
@@ -674,6 +674,7 @@ extern s16b modify_stat_value(int value, int amount);
 extern void notice_stuff(int Ind);
 extern void update_stuff(int Ind);
 extern void redraw_stuff(int Ind);
+extern void redraw2_stuff(int Ind);
 extern void window_stuff(int Ind);
 extern void handle_stuff(int Ind);
 
