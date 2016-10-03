@@ -6259,7 +6259,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 #ifdef LOCATE_KEEPS_OVL
 	char co;
 	byte ao;
-	int ovl_offset_x = scr_only ? (p_ptr->panel_col - p_ptr->panel_col_old) * (p_ptr->screen_wid / 2) : 0;
+	int ovl_offset_x = scr_only ? (p_ptr->panel_col - p_ptr->panel_col_old) * (p_ptr->screen_wid / 2) : 9999; //marker 'no'
 	int ovl_offset_y = scr_only ? (p_ptr->panel_row - p_ptr->panel_row_old) * (p_ptr->screen_hgt / 2) : 0;
 	int ox, oy;
 #endif
@@ -6289,15 +6289,20 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */
 #ifdef LOCATE_KEEPS_OVL
-		ox = x + ovl_offset_x;
-		oy = y + ovl_offset_y;
-		if (ox >= SCREEN_PAD_LEFT && ox < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
-		    oy >= SCREEN_PAD_TOP && oy < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
-			co = p_ptr->ovl_info[oy][ox].c;
-			ao = p_ptr->ovl_info[oy][ox].a;
-			if (co && ao) {
-				c = co;
-				a = ao;
+		if (ovl_offset_x != 9999) {
+			ox = x + ovl_offset_x;
+			oy = y + ovl_offset_y;
+			if (ox >= SCREEN_PAD_LEFT && ox < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
+			    oy >= SCREEN_PAD_TOP && oy < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+				co = p_ptr->ovl_info[oy][ox].c;
+				ao = p_ptr->ovl_info[oy][ox].a;
+				if (co && ao) {
+					c = co;
+					a = ao;
+				} else {
+					c = p_ptr->scr_info[y][x].c;
+					a = p_ptr->scr_info[y][x].a;
+				}
 			} else {
 				c = p_ptr->scr_info[y][x].c;
 				a = p_ptr->scr_info[y][x].a;
@@ -6328,15 +6333,20 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 		/* Count repetitions of this grid */
 		while (x1 < 80) {
 #ifdef LOCATE_KEEPS_OVL
-			ox = x1 + ovl_offset_x;
-			oy = y + ovl_offset_y;
-			if (ox >= SCREEN_PAD_LEFT && ox < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
-			    oy >= SCREEN_PAD_TOP && oy < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
-				co = p_ptr->ovl_info[oy][ox].c;
-				ao = p_ptr->ovl_info[oy][ox].a;
-				if (co && ao) {
-					c2 = co;
-					a2 = ao;
+			if (ovl_offset_x != 9999) {
+				ox = x1 + ovl_offset_x;
+				oy = y + ovl_offset_y;
+				if (ox >= SCREEN_PAD_LEFT && ox < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
+				    oy >= SCREEN_PAD_TOP && oy < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+					co = p_ptr->ovl_info[oy][ox].c;
+					ao = p_ptr->ovl_info[oy][ox].a;
+					if (co && ao) {
+						c2 = co;
+						a2 = ao;
+					} else {
+						c2 = p_ptr->scr_info[y][x1].c;
+						a2 = p_ptr->scr_info[y][x1].a;
+					}
 				} else {
 					c2 = p_ptr->scr_info[y][x1].c;
 					a2 = p_ptr->scr_info[y][x1].a;
