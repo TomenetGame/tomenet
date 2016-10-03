@@ -3729,17 +3729,17 @@ void lite_spot(int Ind, int y, int x) {
 		dispy = y - p_ptr->panel_row_prt;
 
 		/* Only draw if different than buffered */
-		if (p_ptr->scr_info[y][x].c != c ||
-		    p_ptr->scr_info[y][x].a != a ||
+		if (p_ptr->scr_info[dispy][dispx].c != c ||
+		    p_ptr->scr_info[dispy][dispx].a != a ||
 		    (x == p_ptr->px && y == p_ptr->py && !p_ptr->afk)) /* let's try disabling this when AFK to save bandwidth - mikaelh */
 		{
 			/* Modify screen buffer */
-			p_ptr->scr_info[y][x].c = c;
-			p_ptr->scr_info[y][x].a = a;
+			p_ptr->scr_info[dispy][dispx].c = c;
+			p_ptr->scr_info[dispy][dispx].a = a;
 
 			/* Compare against the overlay buffer */
-			if ((p_ptr->ovl_info[y][x].c != c) ||
-			    (p_ptr->ovl_info[y][x].a != a))
+			if ((p_ptr->ovl_info[dispy][dispx].c != c) ||
+			    (p_ptr->ovl_info[dispy][dispx].a != a))
 			{
 				/* Old cfg.hilite_player implementation has been disabled after 4.6.1.1 because it interferes with custom fonts */
 				if (!is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 1)) {
@@ -3751,8 +3751,8 @@ void lite_spot(int Ind, int y, int x) {
 			}
 
 			/* Clear the overlay buffer */
-			p_ptr->ovl_info[y][x].c = 0;
-			p_ptr->ovl_info[y][x].a = 0;
+			p_ptr->ovl_info[dispy][dispx].c = 0;
+			p_ptr->ovl_info[dispy][dispx].a = 0;
 		}
 	}
 }
@@ -3781,11 +3781,11 @@ void draw_spot_ovl(int Ind, int y, int x, byte a, char c) {
 		dispy = y - p_ptr->panel_row_prt;
 
 		/* Only draw if different than buffered */
-		if (p_ptr->ovl_info[y][x].c != c ||
-		    p_ptr->ovl_info[y][x].a != a) {
+		if (p_ptr->ovl_info[dispy][dispx].c != c ||
+		    p_ptr->ovl_info[dispy][dispx].a != a) {
 			/* Modify internal buffer */
-			p_ptr->ovl_info[y][x].c = c;
-			p_ptr->ovl_info[y][x].a = a;
+			p_ptr->ovl_info[dispy][dispx].c = c;
+			p_ptr->ovl_info[dispy][dispx].a = a;
 
 			/* Tell client to redraw this grid */
 			Send_char(Ind, dispx, dispy, a, c);
@@ -3807,24 +3807,24 @@ void clear_ovl_spot(int Ind, int y, int x) {
 		dispx = x - p_ptr->panel_col_prt;
 		dispy = y - p_ptr->panel_row_prt;
 
-		if (p_ptr->ovl_info[y][x].c) {
+		if (p_ptr->ovl_info[dispy][dispx].c) {
 			/* Check if the overlay buffer is different from the screen buffer */
-			if ((p_ptr->ovl_info[y][x].a != p_ptr->scr_info[y][x].a) ||
-			    (p_ptr->ovl_info[y][x].c != p_ptr->scr_info[y][x].c)) {
+			if ((p_ptr->ovl_info[dispy][dispx].a != p_ptr->scr_info[dispy][dispx].a) ||
+			    (p_ptr->ovl_info[dispy][dispx].c != p_ptr->scr_info[dispy][dispx].c)) {
 				/* Clear the overlay buffer */
-				p_ptr->ovl_info[y][x].c = 0;
-				p_ptr->ovl_info[y][x].a = 0;
+				p_ptr->ovl_info[dispy][dispx].c = 0;
+				p_ptr->ovl_info[dispy][dispx].a = 0;
 
 				/* Clear the screen buffer to force redraw */
-				p_ptr->scr_info[y][x].c = 0;
-				p_ptr->scr_info[y][x].a = 0;
+				p_ptr->scr_info[dispy][dispx].c = 0;
+				p_ptr->scr_info[dispy][dispx].a = 0;
 
 				/* Redraw */
 				lite_spot(Ind, y, x);
 			} else {
 				/* Clear the overlay buffer */
-				p_ptr->ovl_info[y][x].c = 0;
-				p_ptr->ovl_info[y][x].a = 0;
+				p_ptr->ovl_info[dispy][dispx].c = 0;
+				p_ptr->ovl_info[dispy][dispx].a = 0;
 
 				/* No redraw needed */
 			}
@@ -3896,12 +3896,12 @@ void prt_map(int Ind, bool scr_only) {
 			dispx = x - p_ptr->panel_col_prt;
 
 			/* Redraw that grid of the map */
-			p_ptr->scr_info[y][x].c = c;
-			p_ptr->scr_info[y][x].a = a;
+			p_ptr->scr_info[dispy][dispx].c = c;
+			p_ptr->scr_info[dispy][dispx].a = a;
 		}
 
 		/* Send that line of info */
-		Send_line_info(Ind, dispy);
+		Send_line_info(Ind, dispy, scr_only);
 	}
 
 	/* Display player */

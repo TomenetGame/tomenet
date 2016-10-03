@@ -3430,7 +3430,7 @@ void do_cmd_look(int Ind, int dir) {
 /*
  * Allow the player to examine other sectors on the map
  */
-//#define LOCATE_KEEPS_OVL
+#define LOCATE_KEEPS_OVL
 void do_cmd_locate(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 

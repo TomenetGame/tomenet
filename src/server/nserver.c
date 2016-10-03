@@ -6249,8 +6249,8 @@ int Send_flush(int Ind) {
  * repeated at least twice, then bit 0x40 of the attribute is set, and
  * the next byte contains the number of repetitions of the previous grid.
  */
-//#define LOCATE_KEEPS_OVL
-int Send_line_info(int Ind, int y) {
+#define LOCATE_KEEPS_OVL
+int Send_line_info(int Ind, int y, bool scr_only) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
@@ -6259,6 +6259,9 @@ int Send_line_info(int Ind, int y) {
 #ifdef LOCATE_KEEPS_OVL
 	char co;
 	byte ao;
+	int ovl_offset_x = scr_only ? (p_ptr->panel_col - p_ptr->panel_col_old) * (p_ptr->screen_wid / 2) : 0;
+	int ovl_offset_y = scr_only ? (p_ptr->panel_row - p_ptr->panel_row_old) * (p_ptr->screen_hgt / 2) : 0;
+	int ox, oy;
 #endif
 	int Ind2 = 0;
 #ifdef EXTENDED_TERM_COLOURS
@@ -6286,17 +6289,26 @@ int Send_line_info(int Ind, int y) {
 	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */
 #ifdef LOCATE_KEEPS_OVL
-		co = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
-		ao = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
-		if (co && ao) {
-			c = co;
-			a = ao;
+		ox = x + ovl_offset_x;
+		oy = y + ovl_offset_y;
+		if (ox >= SCREEN_PAD_LEFT && ox < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
+		    oy >= SCREEN_PAD_TOP && oy < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+			co = p_ptr->ovl_info[oy][ox].c;
+			ao = p_ptr->ovl_info[oy][ox].a;
+			if (co && ao) {
+				c = co;
+				a = ao;
+			} else {
+				c = p_ptr->scr_info[y][x].c;
+				a = p_ptr->scr_info[y][x].a;
+			}
 		} else {
-#endif
-			c = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
-			a = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
-#ifdef LOCATE_KEEPS_OVL
+			c = p_ptr->scr_info[y][x].c;
+			a = p_ptr->scr_info[y][x].a;
 		}
+#else
+		c = p_ptr->scr_info[y][x].c;
+		a = p_ptr->scr_info[y][x].a;
 #endif
 
 #ifdef EXTENDED_TERM_COLOURS
@@ -6316,18 +6328,27 @@ int Send_line_info(int Ind, int y) {
 		/* Count repetitions of this grid */
 		while (x1 < 80) {
 #ifdef LOCATE_KEEPS_OVL
-			co = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c;
-			ao = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a;
-			if (co && ao) {
-				c2 = co;
-				a2 = ao;
+			ox = x1 + ovl_offset_x;
+			oy = y + ovl_offset_y;
+			if (ox >= SCREEN_PAD_LEFT && ox < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
+			    oy >= SCREEN_PAD_TOP && oy < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+				co = p_ptr->ovl_info[oy][ox].c;
+				ao = p_ptr->ovl_info[oy][ox].a;
+				if (co && ao) {
+					c2 = co;
+					a2 = ao;
+				} else {
+					c2 = p_ptr->scr_info[y][x1].c;
+					a2 = p_ptr->scr_info[y][x1].a;
+				}
 			} else {
-#endif
-				c2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c;
-				//TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old (see a_c above), but it doesn't matter.
-				a2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a;
-#ifdef LOCATE_KEEPS_OVL
+				c2 = p_ptr->scr_info[y][x1].c;
+				a2 = p_ptr->scr_info[y][x1].a;
 			}
+#else
+			c2 = p_ptr->scr_info[y][x1].c;
+			//TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old (see a_c above), but it doesn't matter.
+			a2 = p_ptr->scr_info[y][x1].a;
 #endif
 
 			if (c != c2 || a != a2) break;
@@ -6423,8 +6444,8 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	/* Each column */
 	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */
-		c = p_ptr2->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
-		a = p_ptr2->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
+		c = p_ptr2->scr_info[y][x].c;
+		a = p_ptr2->scr_info[y][x].a;
 
 #ifdef EXTENDED_TERM_COLOURS
 		if (old_colours) {
@@ -6441,8 +6462,8 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		n = 1;
 
 		/* Count repetitions of this grid */
-		while (p_ptr2->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c == c &&
-		    p_ptr2->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
+		while (p_ptr2->scr_info[y][x1].c == c &&
+		    p_ptr2->scr_info[y][x1].a == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
 			/* Increment count and column */
 			n++;
 			x1++;

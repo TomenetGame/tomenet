@@ -1123,7 +1123,7 @@ extern int Send_item_request(int Ind, signed char tester_hook); //paranoia @ 'si
 extern int Send_spell_request(int Ind, int item);
 extern int Send_state(int Ind, bool paralyzed, bool searching, bool resting);
 extern int Send_flush(int Ind);
-extern int Send_line_info(int Ind, int y);
+extern int Send_line_info(int Ind, int y, bool scr_only);
 extern int Send_line_info_forward(int Ind, int Ind_src, int y);
 extern int Send_mini_map(int Ind, int y, byte *sa, char *sc);
 extern int Send_mini_map_pos(int Ind, int x, int y, byte a, char c);
