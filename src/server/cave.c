@@ -3802,11 +3802,6 @@ void clear_ovl_spot(int Ind, int y, int x) {
 
 	/* Redraw if on screen */
 	if (panel_contains(y, x)) {
-		int dispx, dispy;
-
-		dispx = x - p_ptr->panel_col_prt;
-		dispy = y - p_ptr->panel_row_prt;
-
 		if (p_ptr->ovl_info[y][x].c) {
 			/* Check if the overlay buffer is different from the screen buffer */
 			if ((p_ptr->ovl_info[y][x].a != p_ptr->scr_info[y][x].a) ||
@@ -3837,14 +3832,11 @@ void clear_ovl_spot(int Ind, int y, int x) {
  * Clear the entire overlay ler.
  */
 void clear_ovl(int Ind) {
-	player_type *p_ptr = Players[Ind];
 	int y, x;
 
-	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++) {
-		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++) {
+	for (y = 0; y <= MAX_HGT; y++)
+		for (x = 0; x <= MAX_WID; x++)
 			clear_ovl_spot(Ind, y, x);
-		}
-	}
 }
 
 
