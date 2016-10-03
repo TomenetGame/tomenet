@@ -6292,8 +6292,8 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 		if (ovl_offset_x != 9999) {
 			ox = x + ovl_offset_x;
 			oy = y + ovl_offset_y;
-			if (ox >= SCREEN_PAD_LEFT && ox < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
-			    oy >= SCREEN_PAD_TOP && oy < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+			if (x >= SCREEN_PAD_LEFT && x < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
+			    y >= SCREEN_PAD_TOP && y < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
 				co = p_ptr->ovl_info[oy][ox].c;
 				ao = p_ptr->ovl_info[oy][ox].a;
 				if (co && ao) {
@@ -6336,8 +6336,8 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			if (ovl_offset_x != 9999) {
 				ox = x1 + ovl_offset_x;
 				oy = y + ovl_offset_y;
-				if (ox >= SCREEN_PAD_LEFT && ox < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
-				    oy >= SCREEN_PAD_TOP && oy < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+				if (x1 >= SCREEN_PAD_LEFT && x1 < p_ptr->screen_wid + SCREEN_PAD_LEFT &&
+				    y >= SCREEN_PAD_TOP && y < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
 					co = p_ptr->ovl_info[oy][ox].c;
 					ao = p_ptr->ovl_info[oy][ox].a;
 					if (co && ao) {
