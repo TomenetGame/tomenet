@@ -3732,7 +3732,8 @@ void lite_spot(int Ind, int y, int x) {
 		if (p_ptr->scr_info[dispy][dispx].c != c ||
 		    p_ptr->scr_info[dispy][dispx].a != a ||
 		    (x == p_ptr->px && y == p_ptr->py && !p_ptr->afk) /* let's try disabling this when AFK to save bandwidth - mikaelh */
-		    || (p_ptr->cave_flag[y][x] & CAVE_AOVL)) {
+		    /* for clearing overlay that displays auto-updating things (monsters who meanwhile moved away): clear it as soon as it comes into LOS */
+		    || ((p_ptr->cave_flag[y][x] & CAVE_AOVL) && (p_ptr->cave_flag[y][x] & CAVE_VIEW))) {
 			/* Modify screen buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;
 			p_ptr->scr_info[dispy][dispx].a = a;
@@ -5089,9 +5090,7 @@ void update_lite(int Ind) {
 		x = p_ptr->lite_x[i];
 
 		/* Update fresh grids */
-		if ((zcave[y][x].info & CAVE_TEMP)
-		    && !(p_ptr->cave_flag[y][x] & CAVE_AOVL))
-			continue;
+		if (zcave[y][x].info & CAVE_TEMP) continue;
 
 		/* Note */
 		note_spot_depth(wpos, y, x);
@@ -5109,9 +5108,7 @@ void update_lite(int Ind) {
 		zcave[y][x].info &= ~CAVE_TEMP;
 
 		/* Update stale grids */
-		if ((p_ptr->cave_flag[y][x] & CAVE_LITE)
-		    && !(p_ptr->cave_flag[y][x] & CAVE_AOVL))
-			continue;
+		if (p_ptr->cave_flag[y][x] & CAVE_LITE) continue;
 
 		/* Redraw */
 		everyone_lite_spot(wpos, y, x);
@@ -5789,9 +5786,7 @@ void update_view(int Ind) {
 		c_ptr->info &= ~CAVE_XTRA;
 
 		/* Update only newly viewed grids */
-		if ((c_ptr->info & CAVE_TEMP)
-		    && !(p_ptr->cave_flag[y][x] & CAVE_AOVL))
-			continue;
+		if (c_ptr->info & CAVE_TEMP) continue;
 
 		/* Note */
 		note_spot(Ind, y, x);
@@ -5813,9 +5808,7 @@ void update_view(int Ind) {
 		c_ptr->info &= ~CAVE_TEMP;
 
 		/* Update only non-viewable grids */
-		if ((*w_ptr & CAVE_VIEW)
-		    && !(*w_ptr & CAVE_AOVL))
-			continue;
+		if (*w_ptr & CAVE_VIEW) continue;
 
 		/* Forget it, dude */
 		if (unmap) {
@@ -6583,8 +6576,7 @@ void update_view(int Ind)
 		if (c_ptr->info & CAVE_TEMP) continue;
 #endif	/* 0 */
 
-		if (!((*w_ptr & CAVE_XTRA) && !(c_ptr->info & CAVE_TEMP))
-		    && !(w_ptr & CAVE_AOVL))
+		if (!((*w_ptr & CAVE_XTRA) && !(c_ptr->info & CAVE_TEMP)))
 			continue;
 
 		/* Note */
