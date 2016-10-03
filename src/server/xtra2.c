@@ -6331,6 +6331,7 @@ if (cfg.unikill_format) {
 					if (!qq_ptr->name1) {
 						qq_ptr->name2 = EGO_MWIZARDRY;
 						qq_ptr->pval = 10;
+						determine_level_req(object_level, qq_ptr);
 					}
 					drop_near(0, qq_ptr, -1, wpos, y, x);
 				}
