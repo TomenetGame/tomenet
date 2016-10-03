@@ -2194,11 +2194,14 @@ int Receive_message(void) {
 		} else we_sent_offset = 0; /* just paranoid initialization */
 
 		/* Is it non-private chat? */
-		if ((sptr = strchr(buf, '[')) /* a '[' occurs somewhere at the start? */
+		if (strlen(buf) > 2 && //paranoia, not needed
+		    (sptr = strchr(buf, '[')) /* a '[' occurs somewhere at the start? */
 		    && sptr <= buf + 7 + ((strstr(buf, "(IRC)") <= buf + 7) ? 9 : 0)
-//		    && (*(sptr - 1) != 'y')
-//		    && (*(sptr - 1) != 'G')
-		    && (*(sptr - 1) != 'g')) { /* and it's not coloured as a private message? */
+		    //&& (*(sptr - 1) != 'y')
+		    //&& (*(sptr - 1) != 'G')
+		    && (*(sptr - 1) != 'g') /* and it's not coloured as a private message? */
+		    && tolower(buf[2]) == toupper(buf[2]) /* even safer check, that it isn't a generic server message */
+		    ) {
 			/* strcasestr() is _GNU_SOURCE specific -_- */
 			strcpy(l_buf, buf);
 			ptr = l_buf;
