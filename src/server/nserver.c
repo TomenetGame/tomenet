@@ -6249,7 +6249,7 @@ int Send_flush(int Ind) {
  * repeated at least twice, then bit 0x40 of the attribute is set, and
  * the next byte contains the number of repetitions of the previous grid.
  */
-//#define LOCATE_KEEPS_OVL
+#define LOCATE_KEEPS_OVL
 int Send_line_info(int Ind, int y) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn];
@@ -6286,17 +6286,24 @@ int Send_line_info(int Ind, int y) {
 	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */
 #ifdef LOCATE_KEEPS_OVL
-		co = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
-		ao = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
-		if (co && ao) {
-			c = co;
-			a = ao;
+		if (x >= SCREEN_PAD_LEFT && y >= SCREEN_PAD_TOP &&
+		    x < p_ptr->screen_wid + SCREEN_PAD_LEFT && y < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+			co = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
+			ao = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
+			if (co && ao) {
+				c = co;
+				a = ao;
+			} else {
+				c = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
+				a = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
+			}
 		} else {
-#endif
 			c = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
 			a = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
-#ifdef LOCATE_KEEPS_OVL
 		}
+#else
+		c = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].c;
+		a = p_ptr->scr_info[y + p_ptr->panel_row_prt][x + p_ptr->panel_col_prt].a;
 #endif
 
 #ifdef EXTENDED_TERM_COLOURS
@@ -6316,18 +6323,27 @@ int Send_line_info(int Ind, int y) {
 		/* Count repetitions of this grid */
 		while (x1 < 80) {
 #ifdef LOCATE_KEEPS_OVL
-			co = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c;
-			ao = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a;
-			if (co && ao) {
-				c2 = co;
-				a2 = ao;
+			if (x1 >= SCREEN_PAD_LEFT && y >= SCREEN_PAD_TOP &&
+			    x1 < p_ptr->screen_wid + SCREEN_PAD_LEFT && y < p_ptr->screen_hgt + SCREEN_PAD_TOP) {
+				co = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c;
+				ao = p_ptr->ovl_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a;
+				if (co && ao) {
+					c2 = co;
+					a2 = ao;
+				} else {
+					c2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c;
+					//TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old (see a_c above), but it doesn't matter.
+					a2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a;
+				}
 			} else {
-#endif
 				c2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c;
 				//TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old (see a_c above), but it doesn't matter.
 				a2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a;
-#ifdef LOCATE_KEEPS_OVL
 			}
+#else
+			c2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].c;
+			//TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old (see a_c above), but it doesn't matter.
+			a2 = p_ptr->scr_info[y + p_ptr->panel_row_prt][x1 + p_ptr->panel_col_prt].a;
 #endif
 
 			if (c != c2 || a != a2) break;
