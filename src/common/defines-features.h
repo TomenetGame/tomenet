@@ -280,6 +280,10 @@
 /* New experimental room types: Generate pits of bones or treasure - C. Blue */
 #define BONE_AND_TREASURE_CHAMBERS
 
+/* Don't erase ovl_info overlay displaying detected monsters (mostly) when
+   using cmd_locate(). */
+#define LOCATE_KEEPS_OVL
+
 
 /* --------------------- Server-type dependant features -------------------- */
 

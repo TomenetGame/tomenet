@@ -6249,7 +6249,6 @@ int Send_flush(int Ind) {
  * repeated at least twice, then bit 0x40 of the attribute is set, and
  * the next byte contains the number of repetitions of the previous grid.
  */
-#define LOCATE_KEEPS_OVL
 int Send_line_info(int Ind, int y, bool scr_only) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn];
@@ -6286,7 +6285,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	if (Ind2) Packet_printf(&(Conn[p_ptr2->conn]->c), "%c%hd", PKT_LINE_INFO, y);
 
 	/* Each column */
-	for (x = 0; x < 80; x++) {
+	for (x = 0; x < MAX_WINDOW_WID; x++) {
 		/* Obtain the char/attr pair */
 #ifdef LOCATE_KEEPS_OVL
 		if (ovl_offset_x != 9999) {
@@ -6334,7 +6333,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 		n = 1;
 
 		/* Count repetitions of this grid */
-		while (x1 < 80) {
+		while (x1 < MAX_WINDOW_WID) {
 #ifdef LOCATE_KEEPS_OVL
 			if (ovl_offset_x != 9999) {
 				ox = x1 + ovl_offset_x;
@@ -10975,7 +10974,7 @@ static int Receive_screen_dimensions(int ind) {
 		if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
 		else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
 
-#ifdef ALERT_OFFPANEL_DAM
+#if defined(ALERT_OFFPANEL_DAM) || defined(LOCATE_KEEPS_OVL)
 		/* For alert-beeps on damage: Reset remembered panel */
 		p_ptr->panel_row_old = p_ptr->panel_row;
 		p_ptr->panel_col_old = p_ptr->panel_col;

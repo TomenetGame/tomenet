@@ -3430,7 +3430,6 @@ void do_cmd_look(int Ind, int dir) {
 /*
  * Allow the player to examine other sectors on the map
  */
-#define LOCATE_KEEPS_OVL
 void do_cmd_locate(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
@@ -3444,8 +3443,63 @@ void do_cmd_locate(int Ind, int dir) {
 
 	/* No direction, recenter */
 	if (!dir) {
+#ifdef LOCATE_KEEPS_OVL
+		/* Problem: verify_panel() does recenter, but not necessarily to the
+		   same panel_row_old/panel_col_old, because sometimes a 1-panel-change
+		   doesn't require snapping back!
+		   However, even if not snapping back, if we changed the panel we do
+		   need to shift our overlay panel accordingly, below.
+		   So, remember the real old panel coords to know how far we need to shift. */
+		int prow_old = p_ptr->panel_row_old;
+		int pcol_old = p_ptr->panel_col_old;
+#endif
+
 		/* Recenter map around the player */
 		verify_panel(Ind);
+
+#ifdef LOCATE_KEEPS_OVL
+		/* For LOCATE_KEEPS_OVL: adjust-shift existing overlay to new panel,
+		   as it should still be partially lay within it. */
+		if (prow_old != p_ptr->panel_row || pcol_old != p_ptr->panel_col) {
+			int ovl_offset_x = (p_ptr->panel_col - pcol_old) * (p_ptr->screen_wid / 2);
+			int ovl_offset_y = (p_ptr->panel_row - prow_old) * (p_ptr->screen_hgt / 2);
+			int ox, oy;
+			int sx, sy, ex, ey, ix, iy;
+
+			if (ovl_offset_x > 0) {
+				sx = 0;
+				ex = MAX_WINDOW_WID;
+				ix = 1;
+			} else {
+				sx = MAX_WINDOW_WID;
+				ex = 0;
+				ix = -1;
+			}
+			if (ovl_offset_y > 0) {
+				sy = 0;
+				ey = MAX_WINDOW_HGT;
+				iy = 1;
+			} else {
+				sy = MAX_WINDOW_HGT;
+				ey = 0;
+				iy = -1;
+			}
+
+			for (x1 = sx; x1 != ex; x1 += ix)
+				for (y1 = sy; y1 != ey; y1 += iy) {
+					ox = x1 + ovl_offset_x;
+					oy = y1 + ovl_offset_y;
+					/* Verify that we're not exceeding our overlay buffer */
+					if (ox >= 0 && oy >= 0 && ox < MAX_WINDOW_WID && oy < MAX_WINDOW_HGT)
+						p_ptr->ovl_info[y1][x1] = p_ptr->ovl_info[oy][ox];
+					else {
+						/* Clear all the cropped parts */
+						p_ptr->ovl_info[y1][x1].c = 0;
+						p_ptr->ovl_info[y1][x1].a = 0;
+					}
+				}
+		}
+#endif
 
 #ifdef LOCATE_KEEPS_OVL
 		/* Undo: Was possibly set by verify_panel() if ESC'ing out of do_cmd_locate() before switching back to your home panel */
@@ -3471,7 +3525,8 @@ void do_cmd_locate(int Ind, int dir) {
 			handle_stuff(Ind);
 		}
 
-#ifdef ALERT_OFFPANEL_DAM
+		//redundant, already done in verify_panel()?
+#if defined(ALERT_OFFPANEL_DAM) || defined(LOCATE_KEEPS_OVL)
 		/* For alert-beeps on damage: Reset remembered panel */
 		p_ptr->panel_row_old = p_ptr->panel_row;
 		p_ptr->panel_col_old = p_ptr->panel_col;
