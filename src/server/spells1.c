@@ -11072,8 +11072,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 				attr = spell_color(typ);
 
-				p_ptr->scr_info[y][x].c = '*';
-				p_ptr->scr_info[y][x].a = attr;
+				p_ptr->scr_info[dispy][dispx].c = '*';
+				p_ptr->scr_info[dispy][dispx].a = attr;
 
 				Send_char(j, dispx, dispy, attr, '*');
 			}
@@ -11287,8 +11287,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				ch = bolt_char(y, x, y9, x9);
 				attr = spell_color(typ);
 
-				p_ptr->scr_info[y9][x9].c = ch;
-				p_ptr->scr_info[y9][x9].a = attr;
+				p_ptr->scr_info[dispy][dispx].c = ch;
+				p_ptr->scr_info[dispy][dispx].a = attr;
 
 				Send_char(j, dispx, dispy, attr, ch);
 
@@ -11364,8 +11364,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			ch = bolt_char(y, x, y9, x9);
 			attr = spell_color(typ);
 
-			p_ptr->scr_info[y9][x9].c = ch;
-			p_ptr->scr_info[y9][x9].a = attr;
+			p_ptr->scr_info[dispy][dispx].c = ch;
+			p_ptr->scr_info[dispy][dispx].a = attr;
 
 			Send_char(j, dispx, dispy, attr, ch);
 
@@ -11559,8 +11559,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 					dispx = x - p_ptr->panel_col_prt;
 					dispy = y - p_ptr->panel_row_prt;
 
-					p_ptr->scr_info[y][x].c = '*';
-					p_ptr->scr_info[y][x].a = attr;
+					p_ptr->scr_info[dispy][dispx].c = '*';
+					p_ptr->scr_info[dispy][dispx].a = attr;
 
 					Send_char(j, dispx, dispy, attr, '*');
 
@@ -11863,8 +11863,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 					dispx = x - p_ptr->panel_col_prt;
 					dispy = y - p_ptr->panel_row_prt;
 
-					p_ptr->scr_info[y][x].c = '*';
-					p_ptr->scr_info[y][x].a = attr;
+					p_ptr->scr_info[dispy][dispx].c = '*';
+					p_ptr->scr_info[dispy][dispx].a = attr;
 
 					Send_char(j, dispx, dispy, attr, '*');
 

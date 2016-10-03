@@ -2153,10 +2153,10 @@ struct player_type {
 	s16b screen_hgt;
 
 	/* What he should be seeing */
-	cave_view_type scr_info[MAX_HGT][MAX_WID];
+	cave_view_type scr_info[MAX_WINDOW_HGT][MAX_WINDOW_WID]; /* Hard-coded Y*X display */
 
 	/* Overlay layer used for detection */
-	cave_view_type ovl_info[MAX_HGT][MAX_WID];
+	cave_view_type ovl_info[MAX_WINDOW_HGT][MAX_WINDOW_WID]; /* Hard-coded Y*X display */
 
 	s32b mimic_seed;		/* seed for random mimic immunities etc. */
 	char mimic_immunity;		/* preferred immunity when mimicking (overrides mimic_seed) */
@@ -2417,7 +2417,6 @@ struct player_type {
 	u32b notice;			/* Special Updates (bit flags) */
 	u32b update;			/* Pending Updates (bit flags) */
 	u32b redraw;			/* Normal Redraws (bit flags) */
-	u32b redraw2;			/* more Normal Redraws (bit flags) */
 	u32b window;			/* Window Redraws (bit flags) */
 
 	s16b stat_use[6];		/* Current modified stats */
