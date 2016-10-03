@@ -3731,16 +3731,15 @@ void lite_spot(int Ind, int y, int x) {
 		/* Only draw if different than buffered */
 		if (p_ptr->scr_info[dispy][dispx].c != c ||
 		    p_ptr->scr_info[dispy][dispx].a != a ||
-		    (x == p_ptr->px && y == p_ptr->py && !p_ptr->afk)) /* let's try disabling this when AFK to save bandwidth - mikaelh */
-		{
+		    (x == p_ptr->px && y == p_ptr->py && !p_ptr->afk) /* let's try disabling this when AFK to save bandwidth - mikaelh */
+		    || (p_ptr->cave_flag[y][x] & CAVE_AOVL)) {
 			/* Modify screen buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;
 			p_ptr->scr_info[dispy][dispx].a = a;
 
 			/* Compare against the overlay buffer */
 			if ((p_ptr->ovl_info[dispy][dispx].c != c) ||
-			    (p_ptr->ovl_info[dispy][dispx].a != a))
-			{
+			    (p_ptr->ovl_info[dispy][dispx].a != a)) {
 				/* Old cfg.hilite_player implementation has been disabled after 4.6.1.1 because it interferes with custom fonts */
 				if (!is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 1)) {
 					if (is_us && is_newer_than(&p_ptr->version, 4, 5, 4, 0, 0, 0)) c |= 0x80;
@@ -4774,10 +4773,9 @@ void do_cmd_view_map(int Ind, char mode) {
 /*
  * Actually erase the entire "lite" array, redrawing every grid
  */
-void forget_lite(int Ind)
-{
+void forget_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int i, x, y;
+	int i, x, y, j;
 
 	cave_type **zcave;
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -4788,10 +4786,7 @@ void forget_lite(int Ind)
 	if (!(p_ptr->lite_n)) return;
 
 	/* Clear them all */
-	for (i = 0; i < p_ptr->lite_n; i++)
-	{
-		int j;
-
+	for (i = 0; i < p_ptr->lite_n; i++) {
 		y = p_ptr->lite_y[i];
 		x = p_ptr->lite_x[i];
 
@@ -4799,8 +4794,7 @@ void forget_lite(int Ind)
 		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
 		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
 
-		for (j = 1; j <= NumPlayers; j++)
-		{
+		for (j = 1; j <= NumPlayers; j++) {
 			/* Make sure player is connected */
 			if (Players[j]->conn == NOT_CONNECTED)
 				continue;
@@ -4818,7 +4812,7 @@ void forget_lite(int Ind)
 				zcave[y][x].info |= CAVE_LITE;
 				switch (Players[j]->lite_type) {
 				case 1: zcave[y][x].info |= CAVE_LITE_VAMP; break;
-				case 2: zcave[y][x].info |= CAVE_LITE_WHITE;
+				case 2: zcave[y][x].info |= CAVE_LITE_WHITE; break;
 				}
 			}
 		}
@@ -4848,7 +4842,7 @@ void forget_lite(int Ind)
     switch (p_ptr->lite_type) { \
     case 0: zcave[Y][X].info &= ~(CAVE_LITE_WHITE | CAVE_LITE_VAMP); break; \
     case 1: if (!(zcave[Y][X].info & (CAVE_LITE | CAVE_LITE_WHITE))) zcave[Y][X].info |= CAVE_LITE_VAMP; break; \
-    case 2: if (!(zcave[Y][X].info & CAVE_LITE)) zcave[Y][X].info |= CAVE_LITE_WHITE; \
+    case 2: if (!(zcave[Y][X].info & CAVE_LITE)) zcave[Y][X].info |= CAVE_LITE_WHITE; break; \
     } \
     zcave[Y][X].info |= CAVE_LITE; \
     p_ptr->cave_flag[Y][X] |= CAVE_LITE; \
@@ -4883,8 +4877,7 @@ void forget_lite(int Ind)
  *                 ***         *****
  *                              ***
  */
-void update_lite(int Ind)
-{
+void update_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, x, y, min_x, max_x, min_y, max_y;
 
@@ -4895,8 +4888,7 @@ void update_lite(int Ind)
 	/*** Special case ***/
 
 	/* Hack -- Player has no lite */
-	if (p_ptr->cur_lite <= 0 && p_ptr->cur_vlite <= 0)
-	{
+	if (p_ptr->cur_lite <= 0 && p_ptr->cur_vlite <= 0) {
 		/* Forget the old lite */
 		forget_lite(Ind);
 
@@ -4911,8 +4903,7 @@ void update_lite(int Ind)
 	/*** Save the old "lite" grids for later ***/
 
 	/* Clear them all */
-	for (i = 0; i < p_ptr->lite_n; i++)
-	{
+	for (i = 0; i < p_ptr->lite_n; i++) {
 		int j;
 
 		y = p_ptr->lite_y[i];
@@ -4922,8 +4913,7 @@ void update_lite(int Ind)
 		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
 		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
 
-		for (j = 1; j <= NumPlayers; j++)
-		{
+		for (j = 1; j <= NumPlayers; j++) {
 			/* Make sure player is connected */
 			if (Players[j]->conn == NOT_CONNECTED)
 				continue;
@@ -4939,10 +4929,10 @@ void update_lite(int Ind)
 			/* If someone else also lites this spot relite it */
 			if (Players[j]->cave_flag[y][x] & CAVE_LITE) {
 				zcave[y][x].info |= CAVE_LITE;
-                                switch (Players[j]->lite_type) {
-                                case 1: zcave[y][x].info |= CAVE_LITE_VAMP; break;
-                                case 2: zcave[y][x].info |= CAVE_LITE_WHITE;
-                                }
+				switch (Players[j]->lite_type) {
+				case 1: zcave[y][x].info |= CAVE_LITE_VAMP; break;
+				case 2: zcave[y][x].info |= CAVE_LITE_WHITE; break;
+				}
 			}
 		}
 		/* Mark the grid as "seen" */
@@ -4981,7 +4971,7 @@ void update_lite(int Ind)
 	/* Radius 2 -- lantern radius */
 	if (p_ptr->cur_lite >= 2 || p_ptr->cur_vlite >= 2) {
 		/* South of the player */
-//		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px))
+		//if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px))
 		/* cave_los includes dark pits */
 		if (cave_los(zcave, p_ptr->py+1, p_ptr->px))
 		{
@@ -4991,7 +4981,7 @@ void update_lite(int Ind)
 		}
 
 		/* North of the player */
-//		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px))
+		//if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px))
 		if (cave_los(zcave, p_ptr->py-1, p_ptr->px)) {
 			cave_lite_hack(p_ptr->py-2, p_ptr->px);
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+1);
@@ -4999,7 +4989,7 @@ void update_lite(int Ind)
 		}
 
 		/* East of the player */
-//		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px+1))
+		//if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px+1))
 		if (cave_los(zcave, p_ptr->py, p_ptr->px+1)) {
 			cave_lite_hack(p_ptr->py, p_ptr->px+2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px+2);
@@ -5007,7 +4997,7 @@ void update_lite(int Ind)
 		}
 
 		/* West of the player */
-//		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px-1))
+		//if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px-1))
 		if (cave_los(zcave, p_ptr->py, p_ptr->px-1)) {
 			cave_lite_hack(p_ptr->py, p_ptr->px-2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px-2);
@@ -5027,25 +5017,25 @@ void update_lite(int Ind)
 		if (p > LITE_CAP) p = LITE_CAP;
 
 		/* South-East of the player */
-//		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px+1))
+		//if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px+1))
 		if (cave_los(zcave, p_ptr->py+1, p_ptr->px+1)) {
 			cave_lite_hack(p_ptr->py+2, p_ptr->px+2);
 		}
 
 		/* South-West of the player */
-//		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px-1))
+		//if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px-1))
 		if (cave_los(zcave, p_ptr->py+1, p_ptr->px-1)) {
 			cave_lite_hack(p_ptr->py+2, p_ptr->px-2);
 		}
 
 		/* North-East of the player */
-//		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px+1))
+		//if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px+1))
 		if (cave_los(zcave, p_ptr->py-1, p_ptr->px+1)) {
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+2);
 		}
 
 		/* North-West of the player */
-//		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px-1))
+		//if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px-1))
 		if (cave_los(zcave, p_ptr->py-1, p_ptr->px-1)) {
 			cave_lite_hack(p_ptr->py-2, p_ptr->px-2);
 		}
@@ -5140,8 +5130,7 @@ void update_lite(int Ind)
 /*
  * Clear the viewable space
  */
-void forget_view(int Ind)
-{
+void forget_view(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
@@ -5151,8 +5140,7 @@ void forget_view(int Ind)
 	if (!(p_ptr->view_n)) return;
 
 	/* Clear them all */
-	for (i = 0; i < p_ptr->view_n; i++)
-	{
+	for (i = 0; i < p_ptr->view_n; i++) {
 		int y = p_ptr->view_y[i];
 		int x = p_ptr->view_x[i];
 
@@ -5208,12 +5196,9 @@ void forget_view(int Ind)
  */
 
 
-static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x2)
-{
+static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x2) {
 	player_type *p_ptr = Players[Ind];
-
 	bool f1, f2, v1, v2, z1, z2, wall;
-
 	cave_type *c_ptr;
 	byte *w_ptr;
 
@@ -5225,6 +5210,8 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+
+
 	if (!(zcave = getcave(wpos))) return FALSE;
 
 	if (y < 0 || y >= MAX_HGT || x < 0 || x >= MAX_WID) return(FALSE);
@@ -5267,49 +5254,30 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 	z2 = (v2 && (g2_c_ptr->info & CAVE_XTRA));
 
 	/* Hack -- "easy" plus "easy" yields "easy" */
-	if (z1 && z2)
-	{
+	if (z1 && z2) {
 		c_ptr->info |= CAVE_XTRA;
-
 		cave_view_hack(w_ptr, y, x);
-
 		return (wall);
 	}
-
 	/* Hack -- primary "easy" yields "viewed" */
-	if (z1)
-	{
+	if (z1) {
 		cave_view_hack(w_ptr, y, x);
-
 		return (wall);
 	}
-
-
 	/* Hack -- "view" plus "view" yields "view" */
-	if (v1 && v2)
-	{
+	if (v1 && v2) {
 		/* c_ptr->info |= CAVE_XTRA; */
-
 		cave_view_hack(w_ptr, y, x);
-
 		return (wall);
 	}
-
-
 	/* Mega-Hack -- the "los()" function works poorly on walls */
-	if (wall)
-	{
+	if (wall) {
 		cave_view_hack(w_ptr, y, x);
-
 		return (wall);
 	}
-
-
 	/* Hack -- check line of sight */
-	if (los(wpos, p_ptr->py, p_ptr->px, y, x))
-	{
+	if (los(wpos, p_ptr->py, p_ptr->px, y, x)) {
 		cave_view_hack(w_ptr, y, x);
-
 		return (wall);
 	}
 
@@ -5426,14 +5394,10 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 /* TODO: Hrm, recent variants seem to get better algorithm
  * - let's port them! */
 
-void update_view(int Ind)
-{
+void update_view(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	int n, m, d, k, y, x, z;
-
 	int se, sw, ne, nw, es, en, ws, wn;
-
 	int full, over;
 
 	int y_max = MAX_HGT - 1;
@@ -5446,6 +5410,8 @@ void update_view(int Ind)
 	cave_type **zcave;
 	struct worldpos *wpos;
 	wpos = &p_ptr->wpos;
+
+
 	if (!(zcave = getcave(wpos))) return;
 
 	if (p_ptr->wpos.wz) {
@@ -5457,25 +5423,21 @@ void update_view(int Ind)
 	/*** Initialize ***/
 
 	/* Optimize */
-	if (p_ptr->view_reduce_view && istown(wpos)) /* town */
-	{
+	if (p_ptr->view_reduce_view && istown(wpos)) { /* town */
 		/* Full radius (10) */
 		full = MAX_SIGHT / 2;
 
 		/* Octagon factor (15) */
 		over = MAX_SIGHT * 3 / 4;
 	}
-
 	/* Normal */
-	else
-	{
+	else {
 		/* Full radius (20) */
 		full = MAX_SIGHT;
 
 		/* Octagon factor (30) */
 		over = MAX_SIGHT * 3 / 2;
 	}
-
 
 	/*** Step 0 -- Begin ***/
 
@@ -5528,7 +5490,6 @@ void update_view(int Ind)
 
 	/* Scan south-east */
 	for (d = 1; d <= z; d++) {
-//superfluous		if (!in_bounds_array(y+d, x+d)) break;
 		if (y + d >= MAX_HGT) break;
 		c_ptr = &zcave[y+d][x+d];
 		w_ptr = &p_ptr->cave_flag[y+d][x+d];
@@ -5539,7 +5500,6 @@ void update_view(int Ind)
 
 	/* Scan south-west */
 	for (d = 1; d <= z; d++) {
-//superfluous		if (!in_bounds_array(y+d, x-d)) break;
 		if (y + d >= MAX_HGT) break;
 		c_ptr = &zcave[y+d][x-d];
 		w_ptr = &p_ptr->cave_flag[y+d][x-d];
@@ -5550,7 +5510,6 @@ void update_view(int Ind)
 
 	/* Scan north-east */
 	for (d = 1; d <= z; d++) {
-//superfluous		if (!in_bounds_array(y-d, x+d)) break;
 		if (d > y) break;
 		c_ptr = &zcave[y-d][x+d];
 		w_ptr = &p_ptr->cave_flag[y-d][x+d];
@@ -5561,7 +5520,6 @@ void update_view(int Ind)
 
 	/* Scan north-west */
 	for (d = 1; d <= z; d++) {
-//superfluous		if (!in_bounds_array(y-d, x-d)) break;
 		if (d > y) break;
 		c_ptr = &zcave[y-d][x-d];
 		w_ptr = &p_ptr->cave_flag[y-d][x-d];
@@ -5581,7 +5539,6 @@ void update_view(int Ind)
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y+d, x);
 		if (!cave_los_grid(c_ptr)) break;
-//superfluous		if (!in_bounds_array(y+d+1, x)) break;
 	}
 
 	/* Initialize the "south strips" */
@@ -5595,7 +5552,6 @@ void update_view(int Ind)
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y-d, x);
 		if (!cave_los_grid(c_ptr)) break;
-//superfluous		if (!in_bounds_array(y-d-1, x)) break;
 	}
 
 	/* Initialize the "north strips" */
@@ -5608,7 +5564,6 @@ void update_view(int Ind)
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y, x+d);
 		if (!cave_los_grid(c_ptr)) break;
-//superfluous		if (!in_bounds_array(y, x+d+1)) break;
 	}
 
 	/* Initialize the "east strips" */
@@ -5621,7 +5576,6 @@ void update_view(int Ind)
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y, x-d);
 		if (!cave_los_grid(c_ptr)) break;
-//superfluous		if (!in_bounds_array(y, x-d-1)) break;
 	}
 
 	/* Initialize the "west strips" */
@@ -5660,16 +5614,11 @@ void update_view(int Ind)
 					/*if (ypn + d >= MAX_HGT) break; */
 
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(Ind, ypn+d, xpn, ypn+d-1, xpn-1, ypn+d-1, xpn))
-					{
+					if (update_view_aux(Ind, ypn+d, xpn, ypn+d-1, xpn-1, ypn+d-1, xpn)) {
 						if (n + d >= se) break;
 					}
-
 					/* Track most distant "non-blockage" */
-					else
-					{
-						k = n + d;
-					}
+					else k = n + d;
 				}
 
 				/* Limit the next strip */
@@ -5683,17 +5632,11 @@ void update_view(int Ind)
 					/*if (ypn + d >= MAX_HGT) break;*/
 
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(Ind, ypn+d, xmn, ypn+d-1, xmn+1, ypn+d-1, xmn))
-					{
+					if (update_view_aux(Ind, ypn+d, xmn, ypn+d-1, xmn+1, ypn+d-1, xmn)) {
 						if (n + d >= sw) break;
 					}
-
 					/* Track most distant "non-blockage" */
-					else
-					{
-						k = n + d;
-					}
-
+					else k = n + d;
 				}
 
 				/* Limit the next strip */
@@ -5703,30 +5646,22 @@ void update_view(int Ind)
 
 
 		/* North strip */
-		if (ymn > 0)
-		{
+		if (ymn > 0) {
 			/* Maximum distance */
 			m = MIN(z, ymn);
 
 			/* East side */
-			if ((xpn <= x_max) && (n < ne))
-			{
+			if ((xpn <= x_max) && (n < ne)) {
 				/* Scan */
-				for (k = n, d = 1; d <= m; d++)
-				{
+				for (k = n, d = 1; d <= m; d++) {
 					/*if (d > ymn) break;*/
 
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(Ind, ymn-d, xpn, ymn-d+1, xpn-1, ymn-d+1, xpn))
-					{
+					if (update_view_aux(Ind, ymn-d, xpn, ymn-d+1, xpn-1, ymn-d+1, xpn)) {
 						if (n + d >= ne) break;
 					}
-
 					/* Track most distant "non-blockage" */
-					else
-					{
-						k = n + d;
-					}
+					else k = n + d;
 				}
 
 				/* Limit the next strip */
@@ -5734,24 +5669,17 @@ void update_view(int Ind)
 			}
 
 			/* West side */
-			if ((xmn >= 0) && (n < nw))
-			{
+			if ((xmn >= 0) && (n < nw)) {
 				/* Scan */
-				for (k = n, d = 1; d <= m; d++)
-				{
+				for (k = n, d = 1; d <= m; d++) {
 					/*if (d > ymn) break;*/
 
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(Ind, ymn-d, xmn, ymn-d+1, xmn+1, ymn-d+1, xmn))
-					{
+					if (update_view_aux(Ind, ymn-d, xmn, ymn-d+1, xmn+1, ymn-d+1, xmn)) {
 						if (n + d >= nw) break;
 					}
-
 					/* Track most distant "non-blockage" */
-					else
-					{
-						k = n + d;
-					}
+					else k = n + d;
 				}
 
 				/* Limit the next strip */
@@ -5761,30 +5689,22 @@ void update_view(int Ind)
 
 
 		/* East strip */
-		if (xpn < x_max)
-		{
+		if (xpn < x_max) {
 			/* Maximum distance */
 			m = MIN(z, x_max - xpn);
 
 			/* South side */
-			if ((ypn <= x_max) && (n < es))
-			{
+			if ((ypn <= x_max) && (n < es)) {
 				/* Scan */
-				for (k = n, d = 1; d <= m; d++)
-				{
+				for (k = n, d = 1; d <= m; d++) {
 					/*if (ypn >= MAX_HGT) break;*/
 
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(Ind, ypn, xpn+d, ypn-1, xpn+d-1, ypn, xpn+d-1))
-					{
+					if (update_view_aux(Ind, ypn, xpn+d, ypn-1, xpn+d-1, ypn, xpn+d-1)) {
 						if (n + d >= es) break;
 					}
-
 					/* Track most distant "non-blockage" */
-					else
-					{
-						k = n + d;
-					}
+					else k = n + d;
 				}
 
 				/* Limit the next strip */
@@ -5792,24 +5712,17 @@ void update_view(int Ind)
 			}
 
 			/* North side */
-			if ((ymn >= 0) && (n < en))
-			{
+			if ((ymn >= 0) && (n < en)) {
 				/* Scan */
-				for (k = n, d = 1; d <= m; d++)
-				{
+				for (k = n, d = 1; d <= m; d++) {
 					/*if (ymn >= MAX_HGT) break;*/
 
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(Ind, ymn, xpn+d, ymn+1, xpn+d-1, ymn, xpn+d-1))
-					{
+					if (update_view_aux(Ind, ymn, xpn+d, ymn+1, xpn+d-1, ymn, xpn+d-1)) {
 						if (n + d >= en) break;
 					}
-
 					/* Track most distant "non-blockage" */
-					else
-					{
-						k = n + d;
-					}
+					else k = n + d;
 				}
 
 				/* Limit the next strip */
@@ -5819,30 +5732,22 @@ void update_view(int Ind)
 
 
 		/* West strip */
-		if (xmn > 0)
-		{
+		if (xmn > 0) {
 			/* Maximum distance */
 			m = MIN(z, xmn);
 
 			/* South side */
-			if ((ypn <= y_max) && (n < ws))
-			{
+			if ((ypn <= y_max) && (n < ws)) {
 				/* Scan */
-				for (k = n, d = 1; d <= m; d++)
-				{
+				for (k = n, d = 1; d <= m; d++) {
 					/*if (ypn >= MAX_HGT) break;*/
 
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(Ind, ypn, xmn-d, ypn-1, xmn-d+1, ypn, xmn-d+1))
-					{
+					if (update_view_aux(Ind, ypn, xmn-d, ypn-1, xmn-d+1, ypn, xmn-d+1)) {
 						if (n + d >= ws) break;
 					}
-
 					/* Track most distant "non-blockage" */
-					else
-					{
-						k = n + d;
-					}
+					else k = n + d;
 				}
 
 				/* Limit the next strip */
@@ -5850,24 +5755,17 @@ void update_view(int Ind)
 			}
 
 			/* North side */
-			if ((ymn >= 0) && (n < wn))
-			{
+			if ((ymn >= 0) && (n < wn)) {
 				/* Scan */
-				for (k = n, d = 1; d <= m; d++)
-				{
+				for (k = n, d = 1; d <= m; d++) {
 					/*if (ymn >= MAX_HGT) break;*/
 
 					/* Check grid "d" in strip "n", notice "blockage" */
-					if (update_view_aux(Ind, ymn, xmn-d, ymn+1, xmn-d+1, ymn, xmn-d+1))
-					{
+					if (update_view_aux(Ind, ymn, xmn-d, ymn+1, xmn-d+1, ymn, xmn-d+1)) {
 						if (n + d >= wn) break;
 					}
-
 					/* Track most distant "non-blockage" */
-					else
-					{
-						k = n + d;
-					}
+					else k = n + d;
 				}
 
 				/* Limit the next strip */
@@ -5880,8 +5778,7 @@ void update_view(int Ind)
 	/*** Step 5 -- Complete the algorithm ***/
 
 	/* Update all the new grids */
-	for (n = 0; n < p_ptr->view_n; n++)
-	{
+	for (n = 0; n < p_ptr->view_n; n++) {
 		y = p_ptr->view_y[n];
 		x = p_ptr->view_x[n];
 
@@ -5904,8 +5801,7 @@ void update_view(int Ind)
 	}
 
 	/* Wipe the old grids, update as needed */
-	for (n = 0; n < p_ptr->temp_n; n++)
-	{
+	for (n = 0; n < p_ptr->temp_n; n++) {
 		y = p_ptr->temp_y[n];
 		x = p_ptr->temp_x[n];
 
@@ -5922,16 +5818,14 @@ void update_view(int Ind)
 			continue;
 
 		/* Forget it, dude */
-		if (unmap)
-		{
+		if (unmap) {
 			u16b this_o_idx, next_o_idx = 0;
 
 			*w_ptr &= ~CAVE_MARK;
 
 			/* make player forget of objects too */
 			/* too bad, traps cannot be forgotten this way.. */
-			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-			{
+			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
 				/* Acquire next object */
 				next_o_idx = o_list[this_o_idx].next_o_idx;
 
