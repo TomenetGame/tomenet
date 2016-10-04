@@ -754,6 +754,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	const char a_key = 'u', a_val = 's', a_atk = 's', a_flag = 's'; /* 'Speed:', 'Normal', 4xmelee */
 	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE, ta_atk = TERM_SLATE, ta_flag = TERM_SLATE; /* 'Speed:', 'Normal', 4xmelee */
 	bool hands, fishy, spider;
+	bool any_except_fingers, hands_or_claws; //for Disembodied hand/Hand Druj recognition hack
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
@@ -946,12 +947,15 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				Term_putstr(1, 7 + (l++), -1, ta_key, info);
 				break;
 			case 'E': /* weapons, torso, arms, fingers, head, legs */
+				any_except_fingers = FALSE;
+				hands_or_claws = FALSE;
 				sprintf(info, "Usable limbs (mimicry users): \377%c", a_val);
 				strcpy(info_tmp, "");
 				info_val = 0;
 			    /* weapons */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1)) {
+					any_except_fingers = TRUE;
 					/* specialty: tentacles count as finger-limbs + hand-limbs (for weapon-wielding)*/
 					if (fishy) strcat(info_tmp, "Tentacles");
 					else strcat(info_tmp, "Hands");
@@ -962,6 +966,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			    /* torso */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1)) {
+					any_except_fingers = TRUE;
 					if (info_val) strcat(info_tmp, format("\377%c, \377%ctorso", a_key, a_val));
 					else strcat(info_tmp, "Torso");
 					info_val = 1;
@@ -970,6 +975,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			    /* arms */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1) && !fishy) {
+					any_except_fingers = TRUE;
 					if (info_val) strcat(info_tmp, format("\377%c, \377%carms", a_key, a_val));
 					else strcat(info_tmp, "Arms");
 					info_val = 1;
@@ -980,6 +986,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			       -- spiders are hacky, they got pseudo-'fingers' to enable them to be more effective */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1) && !fishy && !spider) {
+					hands_or_claws = TRUE;
 					if (hands) {
 						if (info_val) strcat(info_tmp, format("\377%c, \377%cfinger%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
 						else strcat(info_tmp, format("Finger%s", atoi(p1) == 1 ? "" : "s"));
@@ -993,6 +1000,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			    /* head */
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1)) {
+					any_except_fingers = TRUE;
 					if (info_val) strcat(info_tmp, format("\377%c, \377%chead", a_key, a_val));
 					else strcat(info_tmp, "Head");
 					info_val = 1;
@@ -1000,11 +1008,18 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				p1 = p2;
 			    /* legs */
 				if (atoi(p1)) {
+					any_except_fingers = TRUE;
 					if (info_val) strcat(info_tmp, format("\377%c, \377%cleg%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
 					else strcat(info_tmp, format("Leg%s", atoi(p1) == 1 ? "" : "s"));
 					info_val = 1;
 				}
 			    /* all done, display: */
+				/* hack for Disembondied hand and Hand Druj: */
+				if (!any_except_fingers && hands_or_claws) {
+					strcpy(info_tmp, "Hand, Fingers");
+					info_val = 1;
+				}
+
 				if (!info_val) strcat(info_tmp, "None");
 				strcat(info_tmp, ".");
 				sprintf(paste_lines[++pl], "\377%cLimbs (mimicry): \377%c", a_key, a_val);
