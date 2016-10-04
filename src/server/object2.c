@@ -6276,6 +6276,26 @@ void determine_level_req(int level, object_type *o_ptr) {
 	    (a_ptr->flags1 & TR1_LIFE) && (o_ptr->level <= 50))
 		o_ptr->level = 51 + rand_int(2);
 
+#if 1 /* experimental */
+	/* Tone down some very high true artifact levels to make them more tradable */
+	if (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr)) {
+		int alev = a_info[o_ptr->name1].level;
+
+		/* olev depends directly on alev */
+		o_ptr->level = 10 + (alev * 2) / 5;
+		/* Add malus (level increase) for deeper dungeon floors (up to +3 for level 100 arts: lvl 127 bottom Angband) */
+		if (level > alev) o_ptr->level += (level - alev) / 8;
+
+		/* Adjust level > 50 arts back to at most 50 (level 100 arts which got +3 malus above) */
+		if (o_ptr->level > 50) o_ptr->level--;
+		if (o_ptr->level > 50) o_ptr->level--;
+		if (o_ptr->level > 50) o_ptr->level--;
+	}
+#endif
+
+	/* Ring of Phasing (not set here, so this is 'dead' code, but keep consistent with xtra2.c anyway) */
+	if (o_ptr->name1 == ART_PHASING && (o_ptr->level < 60 || o_ptr->level > 65)) o_ptr->level = 60 + rand_int(6);
+
 	/* Special limit for WINNERS_ONLY items */
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && (o_ptr->level <= 50))
 		o_ptr->level = 51 + rand_int(5);

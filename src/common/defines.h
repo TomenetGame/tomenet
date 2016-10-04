@@ -6447,9 +6447,10 @@
 
 /* artifacts that as an exception can by used by winners */
 #define winner_artifact_p(T) \
+	(true_artifact_p(T) && \
 	((k_info[(T)->k_idx].flags5 & TR5_WINNERS_ONLY) || \
 	(T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || \
-	(T)->name1 == ART_PHASING || (T)->name1 == ART_MIRROROFGLORY)
+	(T)->name1 == ART_PHASING || (T)->name1 == ART_MIRROROFGLORY))
 
 /* allow Ring of Phasing to be permanent until someone else beats Zu-Aon */
 #define RING_OF_PHASING_NO_TIMEOUT
