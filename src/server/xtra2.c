@@ -8688,10 +8688,12 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 	msg_format(Ind, "\376\377oThe remaining time to carry it out is \377y%d\377o minutes.", MAX_XORDER_TURNS / (cfg.fps * 60));
 	xorders[i].active++;
 
+//???
 	if (!xorders[i].active) {
 		del_xorder(questid);
 		return(FALSE);
 	}
+
 	s_printf("Added extermination order id %d (players %d), target %d (%s): %d x %s\n",
 	    xorders[i].id, xorders[i].active, target, p_ptr != NULL ? p_ptr->name : "NULL",
 	    num, r_name + r_info[type].name);
@@ -8704,6 +8706,8 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 		else msg_format(Ind, "Extermination order given to %s", p_ptr->name);
 		xorders[i].creator = Players[Ind]->id;
 	}
+
+	if (in_irondeepdive(&p_ptr->wpos)) p_ptr->IDDC_flags |= 0x4;
 	return(TRUE);
 }
 
@@ -8727,6 +8731,12 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	}
 
 	if (!in_irondeepdive(&p_ptr->wpos)) {
+		if (p_ptr->mode & MODE_DED_IDDC) {
+			msg_print(Ind, "\377yYou can only acquire an extermination order when you are inside the IDDC!");
+			msg_print(Ind, "\377yUse the /xo (short for /xorder) command after you entered it.");
+			return FALSE;
+		}
+
 		switch (p_ptr->store_num) {
 		case STORE_MAYOR:
 		case STORE_CASTLE:
@@ -8742,7 +8752,12 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 	if (p_ptr->IDDC_logscum) {
 		msg_print(Ind, "\377yYou cannot acquire an extermination order on a stale floor.");
-		msg_print(Ind, "\377yTake a staircase to move on to a different dungeon level.");
+		msg_print(Ind, "\377yTake a staircase to move on to the next dungeon level.");
+		return FALSE;
+	}
+	if (p_ptr->IDDC_flags & 0x4) {
+		msg_print(Ind, "\377yYou cannot acquire another extermination order on this floor.");
+		msg_print(Ind, "\377yTake a staircase to move on to the next dungeon level.");
 		return FALSE;
 	}
 

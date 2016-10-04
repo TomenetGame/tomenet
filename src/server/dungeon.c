@@ -7124,6 +7124,9 @@ void process_player_change_wpos(int Ind) {
 		    ) p_ptr->IDDC_flags++;//hack: abuse 2 flag bits as a counter
  #endif
 #endif
+
+		/* Allow getting an extermination order again */
+		p_ptr->IDDC_flags &= ~0x4;
 	}
 
 	/* Decide whether we stayed long enough on the previous
