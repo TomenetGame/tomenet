@@ -957,6 +957,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				if (atoi(p1)) {
 					any_except_fingers = TRUE;
 					/* specialty: tentacles count as finger-limbs + hand-limbs (for weapon-wielding)*/
+					//todo: correct plural, most r_info entries only have a 1 here
 					if (fishy) strcat(info_tmp, "Tentacles");
 					else strcat(info_tmp, "Hands");
 					info_val = 1;
@@ -976,8 +977,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1) && !fishy) {
 					any_except_fingers = TRUE;
-					if (info_val) strcat(info_tmp, format("\377%c, \377%carms", a_key, a_val));
-					else strcat(info_tmp, "Arms");
+					if (info_val) strcat(info_tmp, format("\377%c, \377%carm%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
+					else strcat(info_tmp, format("Arm%s", atoi(p1) == 1 ? "" : "s"));
 					info_val = 1;
 					spider = FALSE; //unhack: for driders
 				}
@@ -1001,8 +1002,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				p2 = strchr(p1, ':') + 1;
 				if (atoi(p1)) {
 					any_except_fingers = TRUE;
-					if (info_val) strcat(info_tmp, format("\377%c, \377%chead", a_key, a_val));
-					else strcat(info_tmp, "Head");
+					if (info_val) strcat(info_tmp, format("\377%c, \377%chead%s", a_key, a_val, atoi(p1) == 1 ? "" : "s"));
+					else strcat(info_tmp, format("Head%s", atoi(p1) == 1 ? "" : "s"));
 					info_val = 1;
 				}
 				p1 = p2;
