@@ -1017,7 +1017,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			    /* all done, display: */
 				/* hack for Disembondied hand and Hand Druj: */
 				if (!any_except_fingers && hands_or_claws) {
-					strcpy(info_tmp, "Hand, Fingers");
+					strcpy(info_tmp, "Hand, fingers");
 					info_val = 1;
 				}
 
