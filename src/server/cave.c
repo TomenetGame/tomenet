@@ -3753,6 +3753,7 @@ void lite_spot(int Ind, int y, int x) {
 			/* Clear the overlay buffer */
 			p_ptr->ovl_info[dispy][dispx].c = 0;
 			p_ptr->ovl_info[dispy][dispx].a = 0;
+			p_ptr->cave_flag[y][x] &= ~CAVE_AOVL;
 		}
 	}
 }
