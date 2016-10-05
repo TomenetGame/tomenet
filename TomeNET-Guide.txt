@@ -5948,6 +5948,9 @@ The 1..9 are standard shops, namely..
         ..and various miscellaneous store services, of which some currently may
         not have an actual effect.
 
+
+Price limits:
+-------------
 Shops that buy and sell items will have a price limit that they will pay for
 an item a players wants to sell. The limit varies from 50,000 to 300,000 Au
 depending on the shop owner. The shop owners change regularly, if a shop makes
@@ -5957,6 +5960,9 @@ they may use the same number '1'..'9' and '+' for their entrance symbols.
 If the item is worth more than 300,000 Au maybe you can find a fellow player
 who is wealthy and in urgent need of your items.
 
+
+Item orders
+-----------
 The basic town stores also allow you to order specific basic items that they
 usually offer in their store template. These items will come without any
 hit/damage/ac enchantments or ego powers, but in their plain versions.
@@ -5971,6 +5977,9 @@ can accept or decline. If you accept, the money will be deduced from your purse
 and the shopkeeper will let you know how long the delivery of your order will
 approximately take, in in-game time. So if it takes "about an hour" that will
 be much less in real world time for you to wait.
+Note that for spells and runes you don't need to type out the full item name!
+Just typing the spell name or rune name will be sufficient.
+
 Items that are very common in that store will cost about the same amount of
 money that you'd pay when buying them the regular way, while items that occur
 only very rarely in a shop can be much more expensive to order.
@@ -5978,12 +5987,20 @@ Ordering a pile of items instead of just one will prolong the delivery time.
 You can only have one order in process at any time. If you want to order a
 different item you will have to wait until your order is delivered and fetch
 it.
+
 When you enter a shop where you had an order placed and the item has arrived
 then it will be automatically placed in your inventory. If you meanwhile
 purchase the same type of item in the shop's regular stock that will not affect
 your delivery in any way.
 The delivered item will carry an inscription containing the shop name.
+It is possible that the item arrives earlier than expected, as part of the
+store's regular stock. In that case the shop owner will inform you and hand you
+out as many of those items as possible (if you have ordered a pile of them),
+that amount will then automatically be deduced from your outstanding order.
 
+
+Shop scumming:
+--------------
 Shops regularly change their inventory on a random basis: Roughly every 33
 seconds there is a chance that some items might get dropped and/or some new
 items might get added to the store inventory.
@@ -14648,11 +14665,21 @@ The failure rate when attempting to successfully cast a spell is usually shown
 when browsing the according spell scroll/crystal, and is determined by your
 intelligence or wisdom, and the spell's level. For details see (6.8d).
 
+Some spells have an instant effect, other spells have a lasting effect over a
+certain duration, most commonly storm-type or cloud-type spells which deal
+damage over time. Such spells that have lasting effects on the map grids do not
+stack! For example, casting Noxious Cloud and immediately afterwards Vapor will
+cause the Noxious Cloud getting replaced by Vapor on all map grids where they
+would overlap.
+
 Spell scrolls and some books can be purchased in store '9' (the 'book store',
 usually also sells 'Beginner Cantrips' and sometimes also Codices) or in
 '7' (the 'black market' - very expensive but you often find tomes here!).
 Book stores in higher-level towns on average also tend to sell higher-level
-spells.
+spells. You can also use the 'o' key in the book store to order specific
+spells! Note that in the book store it is sufficient to just enter the spell
+name when ordering, you don't need to type out the full item name of the
+spell scroll/crystal.
 
 Note that you must spend enough points into a particular magic school (or
 into sorcery) for the spell turning from grey into green in your spell book,
