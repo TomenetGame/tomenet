@@ -1204,8 +1204,10 @@
 /* Dungeon indices (d_ptr->type) hardcoded from d_info.txt file: */
 #define DI_MT_DOOM		5
 #define DI_NETHER_REALM		6
+#define DI_SUBMERGED_RUINS	7
 #define DI_HALLS_OF_MANDOS	8
 #define DI_PATHS_DEAD		16
+#define DI_SMALL_WATER_CAVE	24
 #define DI_SANDWORM_LAIR	27
 #define DI_HELCARAXE		29
 #define DI_VALINOR		31

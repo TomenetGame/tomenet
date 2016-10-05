@@ -6469,8 +6469,8 @@ if (cfg.unikill_format) {
  #endif
 #endif
 
-	/* Hack - can find fireworks on new years eve */
-	if ((season_newyearseve
+	/* Hack - can find fireworks on new years eve (just exclude dungeons where the scroll would instantly be destroyed on drop in most cases) */
+	if (((season_newyearseve && !(d_ptr && (d_ptr->type == DI_MT_DOOM || d_ptr->type == DI_SMALL_WATER_CAVE || d_ptr->type == DI_SUBMERGED_RUINS)))
 #ifdef FIREWORK_DUNGEON
 	    || (firework_dungeon_chance && d_ptr && d_ptr->type == firework_dungeon && !rand_int(firework_dungeon_chance))
 #endif
