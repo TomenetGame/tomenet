@@ -489,12 +489,17 @@ z       a       use (zap) a magic rod.
 
 u       Z       use a magic staff.
 
+,       ,       or..
 g       g       pick up an item from the floor. You have to stand on the item
                 to do that. You can also pick up an item by pressing '5' on
                 the number pad while numlock is turned off. Gold is always
                 picked up automatically.
                 If you stand on a pile of different items, the top-most type of
                 item will be picked.
+                Note that ',' key has by default a "reply to last private chat"
+                macro on it, so you'll have to use 'g' key instead or delete
+                the macro from the comma key, if you want to use it to pick up
+                items.
 
 CTRL+G  CTRL+Z  pick up exactly one piece from a stack of same type of items.
 
