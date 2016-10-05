@@ -9439,11 +9439,12 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 }
 
 void monster_death_mon(int am_idx, int m_idx) {
-	int			i, j, y, x, ny, nx;
-	int			number = 0;
-	cave_type		*c_ptr;
+	int i, j, y, x, ny, nx;
+	int number = 0;
+	cave_type *c_ptr;
+	int dlev, rlev, tol_lev;
 
-	monster_type	*m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 
 	bool good = (r_ptr->flags1 & RF1_DROP_GOOD) ? TRUE : FALSE;
@@ -9462,6 +9463,9 @@ void monster_death_mon(int am_idx, int m_idx) {
 	wpos = &m_ptr->wpos;
 	if (!(zcave = getcave(wpos))) return;
 
+	dlev = getlevel(wpos);
+	rlev = r_ptr->level;
+
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
 	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
@@ -9471,6 +9475,16 @@ void monster_death_mon(int am_idx, int m_idx) {
 	if (r_ptr->flags1 & RF1_DROP_2D2) number += damroll(2, 2);
 	if (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);
 	if (r_ptr->flags1 & RF1_DROP_4D2) number += damroll(4, 2);
+
+	/* Questors: Usually drop no items, except if specified */
+	if (m_ptr->questor) {
+		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
+			if (!(q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops & 0x1)) number = 0;
+		} else {
+			s_printf("QUESTOR_DEPRECATED (monster_dead)\n");
+			number = 0;
+		}
+	}
 
 	/* Drop some objects */
 	for (j = 0; j < number; j++) {
@@ -9490,11 +9504,28 @@ void monster_death_mon(int am_idx, int m_idx) {
 			/* Hack -- handle creeping coins */
 			coin_type = force_coin;
 
+#ifdef TRADITIONAL_LOOT_LEVEL
 			/* Average dungeon and monster levels */
-			object_level = (getlevel(wpos) + r_ptr->level) / 2;
+			object_level = (dlev + rlev) / 2;
+ #ifdef RANDOMIZED_LOOT_LEVEL
+			if (object_level < rlev) tol_lev = rlev - object_level;
+			else tol_lev = dlev - object_level;
+			if (tol_lev > 11) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters */
+			object_level += rand_int(tol_lev);
+ #endif
+#else
+			/* Monster level is more important than floor level */
+			object_level = (dlev + rlev * 2) / 3;
+ #ifdef RANDOMIZED_LOOT_LEVEL
+			if (object_level < rlev) tol_lev = rlev - object_level;
+			else tol_lev = dlev - object_level;
+			if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters */
+			object_level += rand_int(tol_lev);
+ #endif
+#endif
 
 			/* No easy item hunting in towns.. */
-			if (wpos->wz == 0) object_level = r_ptr->level / 2;
+			if (wpos->wz == 0) object_level = rlev / 2;
 
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50)))
@@ -9502,11 +9533,11 @@ void monster_death_mon(int am_idx, int m_idx) {
 			/* Place Object */
 			else {
 				place_object_restrictor = RESF_NONE;
-				place_object(wpos, ny, nx, good, great, FALSE, RESF_LOW, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
+				place_object(wpos, ny, nx, good, great, FALSE, RESF_LOW, r_ptr->drops, 0, ITEM_REMOVAL_NORMAL);
 			}
 
 			/* Reset the object level */
-			object_level = getlevel(wpos);
+			object_level = dlev;
 
 			/* Reset "coin" type */
 			coin_type = 0;
@@ -9529,6 +9560,21 @@ void monster_death_mon(int am_idx, int m_idx) {
 #ifdef RPG_SERVER
 	else if (m_ptr->pet) s_printf("MONSTER_DEATH_MON: Pet of '%s'.\n", lookup_player_name(m_ptr->owner));
 #endif
+
+	/* for when a quest giver turned non-invincible */
+	if (m_ptr->questor) {
+		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
+#if 0 /* For now, no player->no specific drop - oops. Todo: Review and improve maybe. */
+			/* Drop a specific item? */
+			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops & 0x2)
+				questor_drop_specific(Ind, m_ptr->quest, m_ptr->questor_idx, wpos, x, y);
+#endif
+			/* Quest progression/fail effect? */
+			questor_death(m_ptr->quest, m_ptr->questor_idx, wpos, 0);
+		} else {
+			s_printf("QUESTOR DEPRECATED (monster_dead2)\n");
+		}
+	}
 
 	FREE(m_ptr->r_ptr, monster_race);
 }
