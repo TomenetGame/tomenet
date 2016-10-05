@@ -965,9 +965,14 @@ void get_name(int Ind)
 /*
  * Hack -- commit suicide
  */
-void do_cmd_suicide(int Ind)
-{
+void do_cmd_suicide(int Ind) {
 	player_type *p_ptr = Players[Ind];
+
+	/* Don't allow PvP characters this way to deny their opponent the kill credit */
+	if (in_pvparena(&p_ptr->wpos)) {
+		msg_print(Ind, "\377yThere's no easy way out of this fight!");
+		return;
+	}
 
 	/* Mark as suicide */
 	p_ptr->alive = FALSE;
