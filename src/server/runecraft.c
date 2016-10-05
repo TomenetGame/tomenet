@@ -1175,3 +1175,13 @@ bool warding_rune_break(int m_idx)
 	return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
 }
 
+/* previous commit:
+> - dispel type renamed to surge
+> - sigil boni updated to comply with randart boni limits (MHDSM, Shields,
+> Boomerangs)
+> - runie annihilation now scales like wands (10-20%)
+> - runie annihilation is reflectable, enforcing the intended 1200 dpr cap
+> - runie annihilation now supports FTK
+> - rune spells that require a rune now appear light red in the mkey menu and
+> macro wizard if no rune is present in your inventory
+*/
