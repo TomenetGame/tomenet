@@ -274,6 +274,17 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 	ot_ptr = &ow_info[st_ptr->owner];
 
+#if 1 /* IDDC-only mode characters -- EXPERIMENTAL */
+	if ((Players[Ind]->mode & MODE_DED_IDDC) && !in_irondeepdive(&Players[Ind]->wpos)) {
+		int dis = o_ptr->discount;
+
+		/* IDDC-mode characters get at least a 50% discount on all
+		   town store items in Bree (or in general outside of the IDDC) */
+		if (o_ptr->discount < 50) o_ptr->discount = 50;
+		price = object_value(flip ? Ind : 0, o_ptr);
+		o_ptr->discount = dis;
+	} else
+#endif
 	/* Get the value of one of the items */
 	price = object_value(flip ? Ind : 0, o_ptr);
 
