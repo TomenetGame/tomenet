@@ -8758,8 +8758,8 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 		return FALSE;
 	}
 	if (p_ptr->IDDC_flags & 0xC) {
-		msg_print(Ind, "\377yYou cannot acquire another extermination order on this floor.");
-		msg_print(Ind, "\377yTake a staircase to move on to the next dungeon level.");
+		msg_print(Ind, "\377yYou cannot acquire an extermination order on this floor.");
+		//msg_print(Ind, "\377yTake a staircase to move on to the next dungeon level.");
 		return FALSE;
 	}
 
