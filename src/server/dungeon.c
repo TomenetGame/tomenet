@@ -7121,12 +7121,21 @@ void process_player_change_wpos(int Ind) {
   #if IDDC_EASY_SPEED_RINGS > 1
 		    || wpos->wz == 80
   #endif
-		    ) p_ptr->IDDC_flags++;//hack: abuse 2 flag bits as a counter
+		    ) {
+			//hack: abuse 2 flag bits as a counter, increment
+			j = (p_ptr->IDDC_flags & 0x3) + 1;
+			p_ptr->IDDC_flags = (p_ptr->IDDC_flags & ~0x3) | j;
+		}
  #endif
 #endif
 
 		/* Allow getting an extermination order again */
-		p_ptr->IDDC_flags &= ~0x4;
+		//p_ptr->IDDC_flags &= ~0xC;
+		//decrement the 2-bits-number..
+		if (p_ptr->IDDC_flags & 0xC) {
+			j = (p_ptr->IDDC_flags & 0xC) - 1;
+			p_ptr->IDDC_flags = (p_ptr->IDDC_flags & ~0xC) | j;
+		}
 	}
 
 	/* Decide whether we stayed long enough on the previous

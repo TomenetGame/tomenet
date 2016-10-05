@@ -6447,7 +6447,9 @@ if (cfg.unikill_format) {
 	    !rand_int(15)) {
   #endif
 		s_printf("Player '%s' : IDDC_flags %d -> ", p_ptr->name, p_ptr->IDDC_flags);
-		p_ptr->IDDC_flags--;
+		/* decrement the last-2-bits-number by 1 */
+		i = (p_ptr->IDDC_flags & 0x3) - 1;
+		p_ptr->IDDC_flags = (p_ptr->IDDC_flags & ~0x3) | i;
 		s_printf("%d\n", p_ptr->IDDC_flags);
 
 		/* Get local object */
@@ -8707,7 +8709,7 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 		xorders[i].creator = Players[Ind]->id;
 	}
 
-	if (in_irondeepdive(&p_ptr->wpos)) p_ptr->IDDC_flags |= 0x4;
+	if (in_irondeepdive(&p_ptr->wpos)) p_ptr->IDDC_flags |= 0xC;
 	return(TRUE);
 }
 
@@ -8755,7 +8757,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 		msg_print(Ind, "\377yTake a staircase to move on to the next dungeon level.");
 		return FALSE;
 	}
-	if (p_ptr->IDDC_flags & 0x4) {
+	if (p_ptr->IDDC_flags & 0xC) {
 		msg_print(Ind, "\377yYou cannot acquire another extermination order on this floor.");
 		msg_print(Ind, "\377yTake a staircase to move on to the next dungeon level.");
 		return FALSE;
