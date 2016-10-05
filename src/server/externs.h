@@ -158,6 +158,7 @@ extern int teamscore[];
 extern int teams[];
 extern int gametype;
 extern obj_theme default_obj_theme;
+extern obj_theme acquirement_obj_theme;
 #ifdef PROJECTION_FLUSH_LIMIT
 extern s16b count_project;
 extern s16b count_project_times;

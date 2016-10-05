@@ -680,6 +680,7 @@ s16b count_project_times = 0;
 /* Hack -- 'default' values for obj_theme.	- Jir -
  * Only a makeshift till d_info thingie will be implemented. */
 obj_theme default_obj_theme = {20, 20, 20, 20};
+obj_theme acquirement_obj_theme = {0, 100, 0, 0};
 
 /*
  * The spell list of schools

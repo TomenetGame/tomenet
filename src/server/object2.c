@@ -7585,9 +7585,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 /*
  * Scatter some "great" objects near the player
  */
-void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf)
-{
-//	int        y, x, i, d;
+void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf) {
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
@@ -7595,7 +7593,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 	for (; num > 0; --num) {
 		/* Place a good (or great) object */
 		place_object_restrictor = RESF_NONE;
-		place_object(wpos, y1, x1, TRUE, great, verygreat, resf, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
+		place_object(wpos, y1, x1, TRUE, great, verygreat, resf, acquirement_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 		/* Notice */
 		note_spot_depth(wpos, y1, x1);
 		/* Redraw */
@@ -7605,16 +7603,13 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 /*
  * Same as acquirement, except it doesn't drop the item to the floor. Creates one "great" object.
  */
-void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf)
-{
+void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf) {
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Place a good (or great) object */
 	place_object_restrictor = RESF_NONE;
-//s_printf("generating object...");
-	generate_object(o_ptr, wpos, TRUE, great, verygreat, resf, default_obj_theme, 0);
-//s_printf("object acquired %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
+	generate_object(o_ptr, wpos, TRUE, great, verygreat, resf, acquirement_obj_theme, 0);
 }
 
 
