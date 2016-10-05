@@ -4241,7 +4241,7 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Pretender", "Pretender", "Pretender", "Pretender", },
 		{"Modifier", "Modifier", "Modifier", "Modifier", },
 		{"Elastic", "Elastic", "Elastic", "Elastic", },
-		{"Copier", "Copyier", "Copier", "Copyier", },
+		{"Copier", "Copier", "Copier", "Copier", },
 		{"Multiple (1st)", "Multiple (1st)", "Multiple I", "Multiple I", },
 		{"Multiple (2nd)", "Multiple (2nd)", "Multiple II", "Multiple II", },
 		{"Metamorph", "Metamorph", "Metamorph", "Metamorph", },
