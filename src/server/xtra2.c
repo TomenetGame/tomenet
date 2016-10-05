@@ -5738,8 +5738,10 @@ if (cfg.unikill_format) {
 				/* Complete generation, especially level requirements check */
 				apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, resf_chosen);
 
-				qq_ptr->note = local_quark;
-				qq_ptr->note_utag = strlen(quark_str(local_quark));
+				if (local_quark) {
+					qq_ptr->note = local_quark;
+					qq_ptr->note_utag = strlen(quark_str(local_quark));
+				}
 
 				/* Little sanity hack for level requirements
 				   of the Ring of Phasing - would be 92 otherwise */
@@ -5777,8 +5779,10 @@ if (cfg.unikill_format) {
 			object_desc(Ind, o_name, qq_ptr, TRUE, 3);
 			s_printf(" '%s'", o_name);
 
-			qq_ptr->note = local_quark;
-			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			if (local_quark) {
+				qq_ptr->note = local_quark;
+				qq_ptr->note_utag = strlen(quark_str(local_quark));
+			}
 
 			/* Drop the object from heaven */
 #ifdef PRE_OWN_DROP_CHOSEN
@@ -6458,8 +6462,10 @@ if (cfg.unikill_format) {
 
 		invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_SPEED));
 		qq_ptr->number = 1;
-		qq_ptr->note = local_quark;
-		qq_ptr->note_utag = strlen(quark_str(local_quark));
+		if (local_quark) {
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+		}
 		apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
 		qq_ptr->bpval = 8 + rand_int(3); //make it decent
