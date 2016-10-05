@@ -17601,6 +17601,34 @@ Teamplay:
  of staying close you will greatly increase your risk of dying to something.
 
 
+Manage your spells and items:
+-----------------------------
+It can happen often that you die in a specific situation that you could have
+survived had you actually used everything at your disposal, that you forgot
+about, either because..
+-you panicked or because
+-you expected a new, strong opponent to perform just as weakly as the other
+ hundred monsters you slew before even though it gives away that it is special
+ by its blinking colour or by being represented by a symbol/letter that you are
+ not familiar with and haven't seen before in that dungeon.
+
+Some examples:
+-Forgetting to apply a buff, such as a berserk strength potion or resist heat
+ against strong fire breathers (which are one of the early threats in the game)
+-Neglecting to use a protective/defensive spell before engaging in a fight
+-Not casting 'damage-add' spells, ie spells that don't deal high damage but
+ that deal _additional_ damage to your main damage spells, which is a welcome
+ bonus that can make a difference. Examples are mainly storm-type spells but
+ can also be cloud spells, ie all spells that continue to deal damage over time
+ after being initially cast, allowing you to cast direct damage spells in
+ addition to them being active, increasing your total overall damage output.
+-Not using items because you weren't aware of their beneficial uses. Such as
+ throwing a potion of salt water at a pack of monsters that is trying to
+ surround you, to temporarily blind them (which has the same result as applying
+ confusion state to them), allowing you to either escape or kill them while
+ they're groping around blindly, even though it only lasts for a moment.
+
+
 
 (7.4) Spoiler files
 -------------------
@@ -17677,6 +17705,11 @@ spells - compare (4.12)).
 
 -Minas Anor, Lothlorien and especially Khazad-dum can spawn swordmasters or
  even grand swordmasters, which can disarm you and deal heavy damage. Beware.
+
+-Before challenging a dungeon boss, look it up in the monster lore (press ~7)
+ because dungeon bosses sometimes have extraordinary abilities or stats that
+ you want to be aware of. They do give extraordinary amounts of experience
+ points and sometimes special item drops too.
 
 
 
