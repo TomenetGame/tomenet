@@ -1401,7 +1401,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_ELEC) { //Lightning      | Im     | Br   |        |       | Au    |       | BrD+  |
-				if (!((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
+				if (!((*f2) & TR2_IM_ELEC) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
 				if (!((*f1) & TR1_DEX) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_DEX; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
@@ -1421,7 +1421,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_FIRE) { //Fire           | Im     | Br   |        |       | Au    |       | BrS+  |
-				if (!((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
+				if (!((*f2) & TR2_IM_FIRE) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
 				if (!((*f1) & TR1_STR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STR; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
@@ -1441,7 +1441,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_WATE) { //Water          | Im     |      |        |       |       |       |       |
-				if (!((*f5) & TR5_IM_WATER)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_WATER; flag_count++; }
+				if (!((*f5) & TR5_IM_WATER) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_WATER; flag_count++; }
 			}
 
 			else if (sigil == SV_R_GRAV) { //Gravity        | NT     |      |        |       | Lv    |       |       | Lv
@@ -1457,7 +1457,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_COLD) { //Frost          | Im     | Br   |        |       | Au    |       | BrS+  |
-				if (!((*f2) & TR2_IM_COLD)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_COLD; flag_count++; }
+				if (!((*f2) & TR2_IM_COLD) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_COLD; flag_count++; }
 				if (!((*f1) & TR1_STR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STR; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
@@ -1477,7 +1477,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_ACID) { //Acid           | Im     | Br   |        |       |       |       | Brc+  |
-				if (!((*f2) & TR2_IM_ACID)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ACID; flag_count++; }
+				if (!((*f2) & TR2_IM_ACID) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ACID; flag_count++; }
 				if (!((*f1) & TR1_CHR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_CHR; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
@@ -1494,7 +1494,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_POIS) { //Poison         | Im     | Br   |        | C+    |       |       | BrC+  |
-				if (!((*f5) & TR5_IM_POISON)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_POISON; flag_count++; }
+				if (!((*f5) & TR5_IM_POISON) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_POISON; flag_count++; }
 				if (!((*f1) & TR1_CON) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_CON; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
@@ -1561,6 +1561,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 
 			else if (sigil == SV_R_TIME) { //Time           | Sp     | EA   |        |       |       |       | EA    | Sp
 				if (!((*f1) & TR1_SPEED) && pval
+				    && !(o_ptr->tval == TV_BOOMERANG) && !(o_ptr->tval == TV_SHIELD) //No speed at all on some randart types. - Kurzel
 				&& !(is_melee_weapon(o_ptr->tval) && !(((*f4) & TR4_SHOULD2H) || ((*f4) & TR4_MUST2H)) && (pval > 3))
 				&& !((((*f4) & TR4_SHOULD2H) || ((*f4) & TR4_MUST2H)) && (pval > 5))
 				&& !((((*f5) & TR5_CRIT) || ((*f1) & TR1_MANA)) && (pval > 7))
@@ -1745,7 +1746,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				case SV_R_ICEE: //Hack, manually add.. - Kurzel
 					if (!((*f2) & TR2_IM_COLD)) (*f2) |= TR2_RES_COLD;
 					(*f2) |= TR2_RES_SHARDS;
-					//(*f2) |= TR2_RES_SOUND;
 				break;
 				case SV_R_PLAS: //Hack, manually add.. - Kurzel
 					if (!((*f2) & TR2_IM_ELEC)) (*f2) |= TR2_RES_ELEC;

@@ -16075,7 +16075,7 @@ Bolt       |   5 | Fires a single target bolt, may be reflected.     | Beam
 Cloud      |  10 | Damages an area about your target over time.      | Storm
 Sign   (*) |  15 | Specific buff or effect, see Sign Effects.        | Glyph
 Ball       |  20 | Targeted area damage that diminishes with radius. | Swarm
-Wave       |  25 | High damage in an expanding area about yourself.  | Dispel
+Wave       |  25 | High damage in an expanding area about yourself.  | Surge
 Sigil  (&) |  30 | Grants worn equipment the according resistance.   | Boon
 Burst      |  35 | Focussed area damage, full damage across radius.  | Flare
 
@@ -16092,7 +16092,7 @@ Beam       |  15 | Fires a beam, damaging all grids in a line.       | Bolt
 Storm      |  20 | A high damage, radius 1 cloud that follows you.   | Cloud
 Glyph  (*) |  25 | Set or retrieve a damaging glyph of warding.      | Sign
 Swarm      |  30 | Fires a spread of level/10, radius 1 mini balls.  | Ball
-Dispel     |  35 | Instantly damages all monsters in line of sight.  | Wave
+Surge      |  35 | Instantly damages all monsters in line of sight.  | Wave
 Boon   (&) |  40 | Enhances worn equipment, see Enhanced Sigil Boni. | Sigil
 Flare      |  45 | High damage non-reflectable bolt, 33% backlash.   | Burst
 
@@ -16118,12 +16118,12 @@ Darkness | Nexus    | Gravity        | Mass Teleport-To  | Pulls monsters.
 Darkness | Nether   | Frost          | Infusion      (P) | Brand, resist cold.
 Darkness | Chaos    | Acid           | Infusion      (P) | Brand, resist acid.
 Darkness | Mana     | Poison         | Infusion      (P) | Brand, resist pois.
-Nexus    | Nether   | Shards         | Dig               | Breaks walls.
+Nexus    | Nether   | Shards         | Dig               | Breaks walls/doors.
 Nexus    | Chaos    | Sound          | Disarm            | Breaks traps/doors.
 Nexus    | Mana     | Time           | Haste         (P) | Temporary speed.
 Nether   | Chaos    | Disenchantment | Resistance    (P) | Base (four) resists.
-Nether   | Mana     | Ice            | Ice Shield        | AC, ice damage.
-Chaos    | Mana     | Plasma         | Plasma Shield     | AC, plasma damage.
+Nether   | Mana     | Ice            | Ice Shield        | +AC, ice damage.
+Chaos    | Mana     | Plasma         | Plasma Shield     | +AC, plasma damage.
 
 Enhanced Sigil Boni
 -------------------

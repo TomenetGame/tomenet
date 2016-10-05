@@ -451,7 +451,7 @@ s_printf("Type: %s\n", r_types[type].name);
 		p_ptr->shoot_till_kill_rcraft = FALSE;
 
 		/* If the spell targets and is instant */
-		if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BALL) || (r_types[type].flag == T_BURS)) {
+		if ((r_types[type].flag == T_BOLT) || (r_types[type].flag == T_BALL) || (r_types[type].flag == T_BURS) || (r_types[type].flag == T_SIGN && projection == SV_R_NETH)) { //Annihilation can FTK, but not Dig... - Kurzel
 			/* If a new spell, update FTK */
 			if (p_ptr->FTK_e_flags != e_flags || p_ptr->FTK_m_flags != m_flags) {
 				p_ptr->FTK_e_flags = e_flags;
@@ -741,7 +741,11 @@ s_printf("Duration: %d\n", duration);
 					break; }
 
 					case SV_R_NETH: { //Annihilation
-						fire_bolt(Ind, GF_ANNIHILATION, dir, 1+damage/10, p_ptr->attacker);
+						//Hardcoded balance at 10-20% (as wand), since GF_ANNIHILATION is now capped at 1200 per shot. - Kurzel
+						//This means 2x _brief_ bolts (13% cap) would deal about 25%, but are up to 2400/round if 13% >= 1200! - Kurzel
+						//I will leave runie-annihilation as a _reflectable_ bolt, since this ~halves dps again for Morgy, A, N, D and other high-hp reflectors. - Kurzel
+						//fire_grid_bolt(Ind, GF_ANNIHILATION, dir, 8 + (damage + 5) / 10, p_ptr->attacker);
+						fire_bolt(Ind, GF_ANNIHILATION, dir, 8 + (damage + 5) / 10, p_ptr->attacker);
 					break; }
 
 					case SV_R_CHAO: { //Polymorph Self
@@ -871,7 +875,7 @@ s_printf("Duration: %d\n", duration);
 			else fire_swarm(Ind, gf_type, dir, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), type, skill, projection), (((3+(skill-level)/10) > 3) ? (3+(skill-level)/10) : 3), p_ptr->attacker);
 		break; }
 
-		case T_WAVE: { //Dispel
+		case T_WAVE: { //Surge
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, rget_level(damage), 1, radius, 3, EFF_WAVE, p_ptr->attacker);
 			else {

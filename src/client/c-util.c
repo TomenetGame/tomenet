@@ -5081,6 +5081,12 @@ Chain_Macro:
 						/* Analyze parameters */
 						byte element[RCRAFT_MAX_ELEMENTS];
 						byte elements = flags_to_elements(element, e_flags);
+						/* Rune check for the restricted spells; enhanced, sign, glyph, sigil, boon. - Kurzel */
+						byte projection = flags_to_projection(e_flags);
+						bool has_rune = 0;
+						for (i = 0; i < INVEN_PACK; i++) {
+							if (inventory[i].tval == TV_RUNE && inventory[i].sval == projection) has_rune = 1;
+						}
 						byte skill = rspell_skill(element, elements);
 
 						/* Fill the list */
@@ -5089,7 +5095,7 @@ Chain_Macro:
 						for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
 
 							/* Get the line color */
-							if (r_imperatives[i].level+4 < skill) color = 'G'; //Ew, hardcode the 1st spell type level-1 - Kurzel
+							if (r_imperatives[i].level+4 < skill) color = (r_imperatives[i].flag == I_ENHA && !has_rune) ? 'R' : 'G'; //Ew, hardcode the 1st spell type level-1 - Kurzel
 							else color = 'D';
 
 							/* Fill a line */
@@ -5151,7 +5157,6 @@ Chain_Macro:
 						else if (p_ptr->stun) penalty += 15;
 
 						/* Analyze more parameters */
-						byte projection = flags_to_projection(e_flags);
 						byte imperative = flags_to_imperative(m_flags);
 						byte level, cost, fail;
 						s16b diff, sdiff;
@@ -5180,6 +5185,7 @@ Chain_Macro:
 								color = 'G';
 								if (penalty) color = 'y';
 								if (p_ptr->msp < cost) color = 'o';
+								if (r_imperatives[imperative].flag == I_ENHA && !has_rune) color = 'R';
 								//if (p_ptr->anti_magic && r_types[i].flag != T_SIGL) color = 'r'; //#define ENABLE_SHELL_ENCHANT
 								if (p_ptr->anti_magic) color = 'r';
 							}
@@ -5209,6 +5215,7 @@ Chain_Macro:
 								break; }
 
 								case T_SIGN: { //Glyph
+									if (!has_rune && color != 'D') color = 'R';
 									if (r_imperatives[imperative].flag != I_ENHA) {
 										switch (projection) {
 
@@ -5239,7 +5246,7 @@ Chain_Macro:
 
 											case SV_R_NETH: { //Annihilation
 												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d annihilation (bolt)",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, 1+damage/10);
+												color, 'a' + i, r_types[i].name, sdiff, cost, fail, 8+(damage+5)/10);
 											break; }
 
 											case SV_R_CHAO: { //Polymorph Self
@@ -5330,17 +5337,18 @@ Chain_Macro:
 									}
 								break; }
 
-								case T_WAVE: { //Dispel
+								case T_WAVE: { //Surge
 									if (r_imperatives[imperative].flag != I_ENHA) {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
 										color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius);
 									} else {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
-										color, 'a' + i, "dispel", sdiff, cost, fail, damage*2);
+										color, 'a' + i, "surge", sdiff, cost, fail, damage*2);
 									}
 								break; }
 
 								case T_SIGL: { //Boon
+									if (!has_rune && color != 'D') color = 'R';
 									if (r_imperatives[imperative].flag != I_ENHA) {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% %s resistance",
 										color, 'a' + i, r_types[i].name, sdiff, cost, fail, r_projections[projection].name);
