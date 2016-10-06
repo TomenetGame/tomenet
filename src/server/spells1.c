@@ -6424,7 +6424,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (!dam) dam = 1;
 			/* Cap */
 			if (brief_rune_spell) {
-				if (dam > 720) dam = 720;
+				if (dam > 600) dam = 600;
 			} else {
 				if (dam > 1200) dam = 1200;
 			}
@@ -8362,7 +8362,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	dun_level *l_ptr = getfloor(wpos);
 
-	int priest_spell = FALSE; //brief_rune_spell = FALSE; -- not needed
+	int priest_spell = FALSE, brief_rune_spell = FALSE;
 
 
 	/* Bad player number */
@@ -8395,7 +8395,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 	//marker to apply reduced damage cap, since it's a 'Brief' runecraft spell
 	if (typ == GF_ANNIHILATION && (dam & 8192)) {
-		//brief_rune_spell = TRUE; --not needed
+		brief_rune_spell = TRUE;
 		dam &= ~8192;
 	}
 
@@ -10669,7 +10669,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			dam *= 3; dam /= (randint(6) + 6);
 		}
 
-		//no need to check for 720 (brief_rune_spell) or 1200 (normal) damage caps, since these cannot be reached in pvp
+		//no need to check for 1200 damage cap as it cannot be reached in pvp
+		if (brief_rune_spell && dam > 600) dam = 600;
 
 		if (!dam) dam = 1;
 		take_hit(Ind, dam, killer, -who);
@@ -12412,7 +12413,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam = (m_ptr->hp * dam) / 100;
 
 			if (dam > 1200) dam = 1200;
-			//ignoring the 720 cap for 'Brief' runespells
+			//ignoring the 600 cap for 'Brief' runespells
 
 			if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
 			if (!dam) dam = 1;
