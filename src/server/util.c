@@ -2540,6 +2540,10 @@ void msg_print(int Ind, cptr msg_raw) {
 				    msg[msg_scan - 1] == '{' ||
 #if 1 /* don't break smileys? */
 				    msg[msg_scan - 1] == ':' || msg[msg_scan - 1] == ';' ||
+				    msg[msg_scan - 1] == '^' || msg[msg_scan - 1] == '-' ||
+#endif
+#if 1 /* don't break quotes right at the start */
+				    msg[msg_scan - 1] == '"' || msg[msg_scan - 1] == '\'' ||
 #endif
 #if 0
 				    msg[msg_scan - 1] == ')' ||
@@ -2556,13 +2560,18 @@ void msg_print(int Ind, cptr msg_raw) {
 				    (msg[msg_scan] >= 'A' && msg[msg_scan] <= 'Z') ||
 				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z') ||
 				    (msg[msg_scan] >= '0' && msg[msg_scan] <= '9') ||
-#if 0
+#if 1 /* specialty: don't break quotes */
+				    //(msg[msg_scan] != ' ' && msg[msg_scan - 1] == '"') ||
+				    msg[msg_scan - 1] == '"' || msg[msg_scan - 1] == '\'' ||
+#endif
+#if 1 /* don't break moar smileys? */
 				    msg[msg_scan] == '(' ||
 				    msg[msg_scan] == '[' ||
 				    msg[msg_scan] == '{' ||
 #endif
 #if 1 /* don't break smileys? */
 				    msg[msg_scan] == '-' ||
+				    msg[msg_scan] == '^' ||
 #endif
 				    msg[msg_scan] == '_' ||/* for pasting lore-flags to chat! */
 				    msg[msg_scan] == ')' ||
