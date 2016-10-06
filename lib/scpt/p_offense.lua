@@ -293,21 +293,14 @@ HDRAINCLOUD = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			--fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), 10, " drains for")
-			fire_cloud(Ind, GF_ANNIHILATION, args.dir, 2, 3, 4 + get_level(Ind, HDRAINCLOUD, 39) / 4, 10, " damages for")
-			-- dmgs a Power D for 2050 (307 goes to hp), Balance D for 1286 (192 goes to hp) from full hp
-			-- (with, of course, maxed spell power and h_offense schools)
-			-- The amount of what goes to player is 15% of the damage the monster taken.
-			-- 9999 is a hack handled in spells1.c. Sorry for this. For the moment this
-			-- the only possible way (i think) to do this spell without affecting the
-			-- current ability of wands and artifacts (that can be activated) that uses
-			-- GF_OLD_DRAIN as well. Once I get to know my way around better, I'll fix this.
-			-- By the way, the real value there is 2.
+			--fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 2 + 4096, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), 10, " drains for")
+			fire_cloud(Ind, GF_ANNIHILATION, args.dir, 3, 3, 5 + get_level(Ind, HDRAINCLOUD, 39) / 4, 10, " damages for")
+			-- 4096 is a hack handled in spells1.c.
 			-- HUGE note about this spell: it can NOT kill a monster!
 			--                                                      -the_sandman
 	end,
 	["info"] = 	function()
-			return "dam ".."var".." rad 3 dur "..(4 + get_level(Ind, HDRAINCLOUD, 39) / 4)
+			return "dam ".."var".." rad 3 dur "..(5 + get_level(Ind, HDRAINCLOUD, 39) / 4)
 	end,
 	["desc"] = 	{
 			"Curses an area temporarily, damaging those walking across.",

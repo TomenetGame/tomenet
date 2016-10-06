@@ -66,9 +66,13 @@ static void proj_dam_wraith(int typ, int *dam) {
 		*dam = (*dam & 0x3C00) + (*dam & 0x03FF) / 2;
 		return;
 	case GF_OLD_DRAIN:
+		/* - sorry, 4096 is the priest spell hack :P */
+		*dam = (*dam & 0x1000) + (*dam & 0x0FFF) / 2;
+		break;
 	case GF_ANNIHILATION:
-		/* - sorry, 9999 is the priest spell hack :P */
-		if (*dam == 9999) return;
+		/* - sorry, 8192 is the 'Brief' rune spell hack :P */
+		*dam = (*dam & 0x2000) + (*dam & 0x1FFF) / 2;
+		break;
 	default:
 		*dam /= 2;
 	}

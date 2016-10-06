@@ -4869,7 +4869,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Mana -- destroys everything -- except IGNORE_MANA items :p */
 		case GF_ANNIHILATION:
 			/* Hack: Doomed Grounds is too weak to kill items */
-			if (dam < 10) break;
+			if (dam < 7) break;
 		case GF_MANA:
 			if (!(f5 & (TR5_IGNORE_MANA | TR5_RES_MANA))) {
 				do_smash_effect = TRUE;
@@ -5285,7 +5285,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* do not notice things the player did to themselves by ball spell */
 	/* fix me XXX XXX XXX */
 
-	int priest_spell = 0;
+	bool priest_spell = FALSE, brief_rune_spell = FALSE;
 
 	/* Polymorph setting (true or false) */
 	int do_poly = 0;
@@ -5325,10 +5325,15 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
 
-	/* the_sandman: the priest spell? (0 or 1) */
-	if (dam == 9999 && (typ == GF_OLD_DRAIN || typ == GF_ANNIHILATION)) {
-		priest_spell = 1;
-		dam = 2; // the real damage (percentage drain)
+	/* the_sandman: the priest spell? (0 or 1) - doomed grounds hack for applying proper heal feedback */
+	if (typ == GF_OLD_DRAIN && (dam & 4096)) { //currently unused since doomed grounds deals annihilation instead
+		priest_spell = TRUE;
+		dam &= ~4096; // the real damage (percentage drain)
+	}
+	//marker to apply reduced damage cap, since it's a 'Brief' runecraft spell
+	if (typ == GF_ANNIHILATION && (dam & 8192)) {
+		brief_rune_spell = TRUE;
+		dam &= ~8192;
 	}
 
 	/* hack -- by trap */
@@ -6418,7 +6423,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Make it have an effect on low-HP monsters such as townies */
 			if (!dam) dam = 1;
 			/* Cap */
-			if (dam > 1200) dam = 1200;
+			if (brief_rune_spell) {
+				if (dam > 720) dam = 720;
+			} else {
+				if (dam > 1200) dam = 1200;
+			}
 			break;
 
 		/* Polymorph monster (Use "dam" as "power") */
@@ -8353,7 +8362,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	dun_level *l_ptr = getfloor(wpos);
 
-	int priest_spell = 0;
+	int priest_spell = FALSE; //brief_rune_spell = FALSE; -- not needed
 
 
 	/* Bad player number */
@@ -8379,10 +8388,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = dam & 0x03FF;
 	}
 
-	/* the_sandman: the priest spell? (0 or 1) */
-	if (dam == 9999 && (typ == GF_OLD_DRAIN || typ == GF_ANNIHILATION)) {
-		priest_spell = 1;
-		dam = 2; // the real damage (percentage drain)
+	/* the_sandman: the priest spell? (0 or 1) - doomed grounds hack for applying proper heal feedback */
+	if (typ == GF_OLD_DRAIN && (dam & 4096)) { //currently unused since doomed grounds deals annihilation instead
+		priest_spell = TRUE;
+		dam &= ~4096; // the real damage (percentage drain)
+	}
+	//marker to apply reduced damage cap, since it's a 'Brief' runecraft spell
+	if (typ == GF_ANNIHILATION && (dam & 8192)) {
+		//brief_rune_spell = TRUE; --not needed
+		dam &= ~8192;
 	}
 
 	/* shadow running protects from taking ranged damage - C. Blue
@@ -10655,6 +10669,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			dam *= 3; dam /= (randint(6) + 6);
 		}
 
+		//no need to check for 720 (brief_rune_spell) or 1200 (normal) damage caps, since these cannot be reached in pvp
+
 		if (!dam) dam = 1;
 		take_hit(Ind, dam, killer, -who);
 		break;
@@ -11930,8 +11946,15 @@ int approx_damage(int m_idx, int dam, int typ) {
 	monster_race *r_ptr = race_inf(m_ptr);
 	cptr name = r_name_get(m_ptr);
 
-	/* Priest drain-life/annihilation spell hack */
-	if (dam == 9999 && (typ == GF_OLD_DRAIN || typ == GF_ANNIHILATION)) dam = 2;
+	/* Priest drain-life/Brief runespell annihilation spell hack */
+	switch (typ) {
+	case GF_OLD_DRAIN:
+		dam &= ~4096;
+		break;
+	case GF_ANNIHILATION:
+		dam &= ~8192;
+		break;
+	}
 
 #if 0
 	int do_poly = 0;
@@ -12389,6 +12412,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam = (m_ptr->hp * dam) / 100;
 
 			if (dam > 1200) dam = 1200;
+			//ignoring the 720 cap for 'Brief' runespells
 
 			if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
 			if (!dam) dam = 1;
