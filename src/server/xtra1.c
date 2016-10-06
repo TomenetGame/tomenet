@@ -7036,7 +7036,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 	ge->signup_time = 0; /* 0 = during announcement time */
 	ge->first_announcement = TRUE; /* first announcement will also display available commands */
 	ge->start_turn = turn;
-//	ge->start_turn = turn + 1; /* +1 is a small hack, to prevent double-announcement */
+	//ge->start_turn = turn + 1; /* +1 is a small hack, to prevent double-announcement */
 	/* hack - synch start_turn to cfg.fps, since process_global_events is only called every
 	   (turn % cfg.fps == 0), and its announcement timer checks will fail otherwise */
 	ge->start_turn += (cfg.fps - (turn % cfg.fps));
@@ -7083,11 +7083,13 @@ int start_global_event(int Ind, int getype, char *parm) {
 								so players will sign on via /evsign <n> */
 		switch(rand_int(2)) { /* Determine terrain type! */
 		case 0: ge->extra[2] = WILD_WASTELAND; break;
-//		case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
+		//case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
 		case 1: ge->extra[2] = WILD_GRASSLAND; break;
 		}
 		switch(rand_int(3)) { /* Load premade layout? (Arenas) */
-		case 0: ge->extra[4] = 1; break;
+		case 1: ge->extra[4] = 1; break; //mountain region
+		//case 2: ge->extra[4] = 2; break; //city ruins
+		default: ge->extra[4] = 0; break; //no premade layout, just plain wilderness
 		}
 		if (!ge->extra[0]) ge->extra[0] = 95; /* there are no objects of lvl 96..99 anyways */
 		if (atoi(parm)) ge->announcement_time = atoi(parm);
@@ -7106,7 +7108,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[4], " of you, created by the wizards of 'Arena Monster Challenge (tm)' will ");
 		strcpy(ge->description[5], " actually do the fighting. For the duration of the spell it will seem  ");
 		strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
-//		strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
+		//strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
 		strcpy(ge->description[7], format(" (Example: '\377U/evsign %d black orc vet\377w' gets you a veteran archer!)", n+1));
 		strcpy(ge->description[8], "");
 		strcpy(ge->description[9], "");
@@ -7114,7 +7116,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 #if 0
 		switch(rand_int(2)) { /* Determine terrain type! */
 		case 0: ge->extra[2] = WILD_WASTELAND; break;
-//		case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
+		//case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
 		case 1: ge->extra[2] = WILD_GRASSLAND; break;
 		}
 		switch(rand_int(3)) { /* Load premade layout? (Arenas) */
