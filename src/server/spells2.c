@@ -56,8 +56,6 @@
  * actually stores their functionality. - C. Blue
  */
 static void proj_dam_wraith(int typ, int *dam) {
-	u32b f;
-
 	switch (typ) {
 	case GF_RECALL_PLAYER: /* <- dam is timeout! */
 	case GF_RESTORE_PLAYER:
@@ -65,18 +63,15 @@ static void proj_dam_wraith(int typ, int *dam) {
 	case GF_CURING:
 		return;
 	case GF_HEAL_PLAYER:
-		f = (*dam & 0x3C00);
-		*dam = f + (*dam & 0x03FF) / 2;
+		*dam = (*dam & 0x3C00) + (*dam & 0x03FF) / 2;
 		return;
 	case GF_OLD_DRAIN:
 		/* - sorry, 4096 is the priest spell hack :P */
-		f = (*dam & 0x1000);
-		*dam = f + (*dam & 0x0FFF) / 2;
+		*dam = (*dam & 0x1000) + (*dam & 0x0FFF) / 2;
 		break;
 	case GF_ANNIHILATION:
 		/* - sorry, 8192 is the 'Brief' rune spell hack :P */
-		f = (*dam & 0x2000);
-		*dam = f + (*dam & 0x1FFF) / 2;
+		*dam = (*dam & 0x2000) + (*dam & 0x1FFF) / 2;
 		break;
 	default:
 		*dam /= 2;
