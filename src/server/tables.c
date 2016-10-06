@@ -4557,8 +4557,8 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 #ifdef ENABLE_DEATHKNIGHT
 	/* Death Knight (Vampire Paladin) */
 	{
+		{"Dark Legate", "Dark Legate", "Dark Legate", "Dark Legate", },
 		{"Crypt Lord", "Crypt Lord", "Crypt Lord", "Crypt Lord", },
-		{"Nether Lord", "Nether Lord", "Nether Lord", "Nether Lord", },
 		//{"Avenger", "Avenger", "Avenger", "Avenger", },
 		{"Unholy Avenger", "Unholy Avenger", "Unholy Avenger", "Unholy Avenger", },
 		//{"Holy Defender", "Holy Defender", }, defender comes before avenger if at all;
