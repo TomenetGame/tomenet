@@ -1382,7 +1382,7 @@ errr file_character(cptr name, bool full) {
 	cptr		paren = ")";
 	int		fd = -1;
 	FILE		*fff = NULL;
-	char		buf[1024];
+	char		buf[1024], *cp;
 	(void) full; /* suppress compiler warning */
 
 	/* Build the filename */
@@ -1462,8 +1462,19 @@ errr file_character(cptr name, bool full) {
 
 	/* Dump the equipment */
 	fprintf(fff, "  [Character Equipment]\n\n");
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-		fprintf(fff, "%c%s %s\n", index_to_label(i), paren, inventory_name[i]);
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		/* For coloured rune sigils in item names: Strip colour codes! */
+		cp = inventory_name[i];
+		x = 0;
+		while (*cp) {
+			if (*cp == '\377') cp++;
+			else buf[x++] = *cp;
+			cp++;
+		}
+		buf[x] = 0;
+
+		fprintf(fff, "%c%s %s\n", index_to_label(i), paren, buf);
+	}
 	fprintf(fff, "\n\n");
 
 	/* Dump the inventory */
