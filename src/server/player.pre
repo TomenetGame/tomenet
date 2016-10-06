@@ -609,6 +609,7 @@ struct player_type
 	bool resist_water;	/* Resist Water */
 	bool resist_plasma;     /* Resist Plasma */
 	bool regen_mana;	/* Regenerate mana */
+	bool keep_life;		/* Immune to life draining */
 	bool hold_life;		/* Resist life draining */
 	u32b telepathy;		/* Telepathy */
 	bool slow_digest;	/* Slower digestion */
