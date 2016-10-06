@@ -211,6 +211,18 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	//cave_type **zcave;
 	struct worldpos *wpos = &o_ptr->wpos;
 
+#if 1 /* extra logging for artifact timeout debugging */
+	if (true_artifact_p(o_ptr) && o_ptr->owner) {
+		char o_name[ONAME_LEN];
+
+		object_desc_store(0, o_name, o_ptr, TRUE, 3);
+
+		s_printf("%s owned true artifact deleted at (%d,%d,%d):\n  %s\n",
+		    showtime(),
+		    wpos->wx, wpos->wy, wpos->wz,
+		    o_name);
+	}
+#endif
 
 	/* Artifact becomes 'not found' status */
 	if (true_artifact_p(o_ptr) && unfound_art)
@@ -9192,6 +9204,21 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 		/* Message */
 		/*msg_format("The %s disappear%s.",
 		           o_name, ((o_ptr->number == 1) ? "s" : ""));*/
+
+#if 1 /* extra logging for artifact timeout debugging */
+		if (true_artifact_p(o_ptr) && o_ptr->owner) {
+			cptr name = lookup_player_name(o_ptr->owner);
+			int lev = lookup_player_level(o_ptr->owner);
+			char o_name[ONAME_LEN];
+
+			object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s owned true artifact dropped by %s(%d) at (%d,%d,%d):\n  %s\n",
+			    showtime(), name ? name : "(Dead player)", lev,
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
+#endif
 
 		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 		questitem_d(o_ptr, o_ptr->number);
