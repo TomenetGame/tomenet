@@ -397,7 +397,7 @@ CHAOSBOLT = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_CHAOS, args.dir, damroll(get_chaosbolt_dam(Ind), " casts a chaos bolt for"))
+		fire_bolt(Ind, GF_CHAOS, args.dir, damroll(get_chaosbolt_dam(Ind)), " casts a chaos bolt for")
 	end,
 	["info"] = 	function()
 		local x, y
@@ -427,7 +427,7 @@ NETHERBOLT = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-		fire_bolt(Ind, GF_NETHER, args.dir, damroll(get_netherbolt_dam(Ind), " casts a nether bolt for"))
+		fire_bolt(Ind, GF_NETHER, args.dir, damroll(get_netherbolt_dam(Ind)), " casts a nether bolt for")
 	end,
 	["info"] = 	function()
 		local x, y
