@@ -6925,7 +6925,8 @@ bool drain_life(int Ind, int dir, int dam) {
 }
 
 bool annihilate(int Ind, int dir, int dam) {
-	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
+	//int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO; //old
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG;
 	return(project_hook(Ind, GF_ANNIHILATION, dir, dam, flg, ""));
 }
 
