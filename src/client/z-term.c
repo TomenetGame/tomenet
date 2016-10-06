@@ -2106,7 +2106,11 @@ errr Term_putstr(int x, int y, int n, byte a, char *s)
 		} else {
 #if 1 /* enable {- for local client-side messages that don't pass through the server's {- feature filter already */
 			if (*ptr == '-') {
-				/* restore previous colour */
+				/* restore previous colour (on server-side this restores chat messages to _first_ colour actually) */
+				a = prev_a;
+				ptr++;
+			} else if (*ptr == '.') {
+				/* restore previous colour (on client-side, this is same as '{-' above) */
 				a = prev_a;
 				ptr++;
 			} else

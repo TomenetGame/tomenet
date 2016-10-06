@@ -2326,9 +2326,9 @@ void msg_print(int Ind, cptr msg_raw) {
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
 	char msg_minibuf[3]; /* temp buffer for adding characters */
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0, tmp;
-	char colour_code = 'w';
+	char colour_code = 'w', prev_colour_code = 'w';
 	bool no_colour_code = FALSE;
-	bool first_character = TRUE, text_begun = TRUE;
+	bool first_character = TRUE;
 	//bool is_chat = ((msg_raw != NULL) && (strlen(msg_raw) > 2) && (msg_raw[2] == '['));
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
 
@@ -2425,7 +2425,8 @@ void msg_print(int Ind, cptr msg_raw) {
 				if (!no_colour_code) {
 					/* broken \377 at the end of the text? ignore */
 					if (color_char_to_attr(msg[msg_scan + 1]) == -1
-					    && msg[msg_scan + 1] != '-'	/* {- and {{ are handled (further) below */
+					    && msg[msg_scan + 1] != '-' /* {-, {. and {{ are handled (further) below */
+					    && msg[msg_scan + 1] != '.'
 					    && msg[msg_scan + 1] != '\377') {
 						msg_scan++;
 						continue;
@@ -2436,12 +2437,16 @@ void msg_print(int Ind, cptr msg_raw) {
 						msg_minibuf[0] = msg[msg_scan];
 						msg_scan++;
 
+						/* needed for rune sigil on items, pasted to chat */
+						if (msg[msg_scan] == '.') {
+							msg[msg_scan] = colour_code = prev_colour_code;
 						/* needed for new '\377-' feature in multi-line messages: resolve it to actual colour */
-						if (msg[msg_scan] == '-') {
+						} else if (msg[msg_scan] == '-') {
 							msg[msg_scan] = colour_code = first_colour_code;
 						} else {
+							prev_colour_code = colour_code;
 							colour_code = msg[msg_scan];
-							if (!first_colour_code_set || !text_begun) {
+							if (!first_colour_code_set) {
 								first_colour_code_set = TRUE;
 								first_colour_code = colour_code;
 							}
@@ -2457,9 +2462,6 @@ void msg_print(int Ind, cptr msg_raw) {
 				} else no_colour_code = FALSE;
 				/* fall through if it's a '{' character */
 			default: /* Text length increases by another character.. */
-				/* Unhack item-pasting colouring */
-				if (!text_begun && msg[msg_scan] != ' ') text_begun = TRUE;
-
 				/* Depending on message type, remember to tab the following
 				   lines accordingly to make it look better ^^
 				   depending on the first character of this line. */
@@ -2516,7 +2518,6 @@ void msg_print(int Ind, cptr msg_raw) {
 				    ((msg[msg_scan + 1] == ' ' && msg[msg_scan + 2] == '\377') ||
 #endif
 					if (msg[msg_scan + 1] == '\377') first_colour_code_set = FALSE;
-					text_begun = FALSE; //added this for equip-pasting of items with rune sigils!
 				}
 
 				/* Process text.. */

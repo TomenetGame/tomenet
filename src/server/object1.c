@@ -2727,7 +2727,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	if (o_ptr->sigil) {
 		/* Older clients cannot unhack the colour code from character dumps, making the equipment look bad */
 		if (!Ind || is_newer_than(&p_ptr->version, 4, 6, 1, 2, 0, 0))
-			t = object_desc_str(t, " <\377B&\377->");
+			t = object_desc_str(t, " <\377B&\377.>");
 		else
 			t = object_desc_str(t, " <&>");
 	}
