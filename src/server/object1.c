@@ -2725,26 +2725,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* Sigil - Perhaps add colour for the '&' in the future. */
 	if (o_ptr->sigil) {
-#if 0 /* colour the '&' ? -- nope, because currently not possible to do this well: \
-	 The object's colour is different depending on where it appears: \
-	 *ID* screen? pasted into chat? inven/equip? - \
-	 So we cannot determine the correct colour to return to, unfortunately, \
-	 except if we changed ALL object_desc() calls to take an attr parameter.. */
-		int attr;
-
-		/* Get a color */
-		if (can_use_admin(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
-		else attr = TERM_L_DARK;
-
-		/* Get a color for a book */
-		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
-
-		/* Hack -- fake monochrome */
-		if (!use_color) attr = TERM_WHITE;
-
-		t = object_desc_str(t, " <\377B&\377");
-		t = object_desc_chr(t, color_attr_to_char(attr));
-		t = object_desc_chr(t, '>');
+#if 1
+		t = object_desc_str(t, " <\377B&\377->");
 #else
 		t = object_desc_str(t, " <&>");
 #endif
