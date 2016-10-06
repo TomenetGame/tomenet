@@ -741,11 +741,10 @@ s_printf("Duration: %d\n", duration);
 					break; }
 
 					case SV_R_NETH: { //Annihilation
-						//Hardcoded balance at 10-20% (as wand), since GF_ANNIHILATION is now capped at 1200 per shot. - Kurzel
-						//This means 2x _brief_ bolts (13% cap) would deal about 25%, but are up to 2400/round if 13% >= 1200! - Kurzel
-						//I will leave runie-annihilation as a _reflectable_ bolt, since this ~halves dps again for Morgy, A, N, D and other high-hp reflectors. - Kurzel
-						//fire_grid_bolt(Ind, GF_ANNIHILATION, dir, 8 + (damage + 5) / 10, p_ptr->attacker);
-						fire_bolt(Ind, GF_ANNIHILATION, dir, 8 + (damage + 5) / 10, p_ptr->attacker);
+						damage = 8 + (damage + 5) / 10; //Hardcoded balance at 10-20% (as wand).
+						if (r_imperatives[imperative].flag == I_BRIE) damage |= 8192; //Half-cap flag for GF_ANNIHILATION to cap brief at 600/shot, thanks C.Blue. - Kurzel
+						//fire_grid_bolt(Ind, GF_ANNIHILATION, dir, damage, p_ptr->attacker);
+						annihilate(Ind, dir, damage); //keep consistent with other annihilation calls for now
 					break; }
 
 					case SV_R_CHAO: { //Polymorph Self
