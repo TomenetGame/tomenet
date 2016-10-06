@@ -4387,18 +4387,18 @@ cptr player_title[MAX_CLASS][11][4] = {
 #ifdef ENABLE_DEATHKNIGHT
 	/* Death Knight (Vampire Paladin) */
 	{
-		{"Faithless", "Faithless", "Faithless", "Faithless", },
-		{"Forfeit", "Forfeit", "Forfeit", "Forfeit", },
+		{"Faithless", "Faithless", "Faithless", "Faithless", }, //neutral, could also be hellish
+		{"Forfeit", "Forfeit", "Forfeit", "Forfeit", }, //maybe hellish
 		//{"Heretic", "Heretic", "Heretic", "Heretic", }, //hellish
 		{"Unresting", "Unresting", "Unresting", "Unresting", },
 		{"Hungering", "Hungering", "Hungering", "Hungering", },
-		{"Tainted", "Tainted", "Tainted", "Tainted", }, //maybe hellish?
+		{"Tainted", "Tainted", "Tainted", "Tainted", }, //maybe hellish
 		{"Unhallowed", "Unhallowed", "Unhallowed", "Unhallowed", },
 		//{"Cultist", "Cultist", "Cultist", "Cultist", }, //hellish
 		{"Dark Adept", "Dark Adept", "Dark Adept", "Dark Adept", },
 		{"Crypt Keeper", "Crypt Keeper", "Crypt Keeper", "Crpyt Keeper", },
 		//{"Sacrificer", "Sacrificer", "Sacricifer", "Sacrificer", }, //hellish
-		{"Unholy Zealot", "Unholy Zealot", "U.Zealot", "U.Zealot", },
+		{"Unholy Zealot", "Unholy Zealot", "U.Zealot", "U.Zealot", }, //neutral, could also be hellish
 		{"Antipaladin", "Antipaladin", "A.Paladin", "A.Paladin", }, //maybe hellish?
 		{"Death Knight", "Death Knight", "Death Knight", "Death Knight", },
 	},
