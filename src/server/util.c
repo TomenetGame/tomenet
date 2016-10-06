@@ -2328,7 +2328,7 @@ void msg_print(int Ind, cptr msg_raw) {
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0, tmp;
 	char colour_code = 'w';
 	bool no_colour_code = FALSE;
-	bool first_character = TRUE;
+	bool first_character = TRUE, text_begun = TRUE;
 	//bool is_chat = ((msg_raw != NULL) && (strlen(msg_raw) > 2) && (msg_raw[2] == '['));
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
 
@@ -2441,7 +2441,7 @@ void msg_print(int Ind, cptr msg_raw) {
 							msg[msg_scan] = colour_code = first_colour_code;
 						} else {
 							colour_code = msg[msg_scan];
-							if (!first_colour_code_set) {
+							if (!first_colour_code_set || !text_begun) {
 								first_colour_code_set = TRUE;
 								first_colour_code = colour_code;
 							}
@@ -2457,6 +2457,9 @@ void msg_print(int Ind, cptr msg_raw) {
 				} else no_colour_code = FALSE;
 				/* fall through if it's a '{' character */
 			default: /* Text length increases by another character.. */
+				/* Unhack item-pasting colouring */
+				if (!text_begun && msg[msg_scan] != ' ') text_begun = TRUE;
+
 				/* Depending on message type, remember to tab the following
 				   lines accordingly to make it look better ^^
 				   depending on the first character of this line. */
@@ -2508,12 +2511,12 @@ void msg_print(int Ind, cptr msg_raw) {
 				   However, if there is no new colour specified before
 				   beginning of chat text then use the one we had, or {-
 				   wouldn't work correctly in private chat anymore. - C. Blue */
-				if (msg[msg_scan] == ']' &&
+				if (msg[msg_scan] == ']') {
 #if 0  /* this is wrong, because the colour code COULD already be from \\a feature! */
 				    ((msg[msg_scan + 1] == ' ' && msg[msg_scan + 2] == '\377') ||
 #endif
-				    msg[msg_scan + 1] == '\377') {
-					first_colour_code_set = FALSE;
+					if (msg[msg_scan + 1] == '\377') first_colour_code_set = FALSE;
+					text_begun = FALSE; //added this for equip-pasting of items with rune sigils!
 				}
 
 				/* Process text.. */
