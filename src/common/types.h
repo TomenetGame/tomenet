@@ -2478,7 +2478,6 @@ struct player_type {
 	bool immune_poison;		/* Poison immunity */
 	bool immune_water;		/* Makes immune to water */
 	bool resist_water;		/* Resist Water */
-	bool resist_plasma;		/* Resist Plasma */
 	bool regen_mana;		/* Regenerate mana */
 	bool keep_life;			/* Immune to life draining */
 	bool hold_life;			/* Resist life draining */

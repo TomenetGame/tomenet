@@ -607,7 +607,6 @@ struct player_type
 	bool immune_poison;     /* Poison Immunity */
 	bool immune_water;      /* Water Immunity, would also let you breathe under water. */
 	bool resist_water;	/* Resist Water */
-	bool resist_plasma;     /* Resist Plasma */
 	bool regen_mana;	/* Regenerate mana */
 	bool keep_life;		/* Immune to life draining */
 	bool hold_life;		/* Resist life draining */

@@ -2412,12 +2412,6 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if (r_ptr->flags9 & RF9_RES_DARK) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
 	if (r_ptr->flags9 & RF9_RES_BLIND) { p_ptr->resist_blind = TRUE; csheet_boni->cb[1] |= CB2_RBLND; }
 	if (r_ptr->flags9 & RF9_RES_SOUND) { p_ptr->resist_sound = TRUE; csheet_boni->cb[2] |= CB3_RSOUN; }
-	if (r_ptr->flags3 & RF3_RES_PLAS) {
-		p_ptr->resist_plasma = TRUE;
-		p_ptr->resist_fire = TRUE; csheet_boni->cb[0] |= CB1_RFIRE;
-		p_ptr->resist_elec = TRUE; csheet_boni->cb[0] |= CB1_RELEC;
-		p_ptr->resist_sound = TRUE; csheet_boni->cb[2] |= CB3_RSOUN;
-	}
 	if (r_ptr->flags9 & RF9_RES_CHAOS) { p_ptr->resist_chaos = TRUE; csheet_boni->cb[3] |= CB4_RCHAO; }
 	if (r_ptr->flags9 & RF9_RES_TIME) { p_ptr->resist_time = TRUE; csheet_boni->cb[3] |= CB4_RTIME; }
 	if (r_ptr->flags9 & RF9_RES_MANA) { p_ptr->resist_mana = TRUE; csheet_boni->cb[3] |= CB4_RMANA; }
@@ -2468,8 +2462,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if (r_ptr->flags4 & RF4_BR_TIME) { p_ptr->resist_time = TRUE; csheet_boni->cb[3] |= CB4_RTIME; }
 	if (r_ptr->flags4 & RF4_BR_MANA) { p_ptr->resist_mana = TRUE; csheet_boni->cb[3] |= CB4_RMANA; }
 	if (r_ptr->flags4 & RF4_BR_PLAS) {
-		p_ptr->resist_plasma = TRUE;
-		p_ptr->resist_fire = TRUE; csheet_boni->cb[0] |= CB1_RFIRE;
+		p_ptr->immune_fire = TRUE; csheet_boni->cb[0] |= CB1_IFIRE;
 		p_ptr->resist_elec = TRUE; csheet_boni->cb[0] |= CB1_RELEC;
 		p_ptr->resist_sound = TRUE; csheet_boni->cb[2] |= CB3_RSOUN;
 	}
@@ -2990,7 +2983,6 @@ void calc_boni(int Ind) {
 	p_ptr->regenerate = FALSE;
 	p_ptr->resist_time = FALSE;
 	p_ptr->resist_mana = FALSE;
-	p_ptr->resist_plasma = FALSE;
 	p_ptr->immune_poison = FALSE;
 	p_ptr->immune_water = FALSE;
 	p_ptr->resist_water = FALSE;
@@ -3969,12 +3961,6 @@ void calc_boni(int Ind) {
 		if (f3 & TR3_XTRA_MIGHT) { p_ptr->xtra_might++; csheet_boni[i-INVEN_WIELD].migh++; }
 		if (f3 & TR3_SLOW_DIGEST) { p_ptr->slow_digest = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RFOOD; }
 		if (f3 & TR3_REGEN) { p_ptr->regenerate = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RRGHP; }
-		if (f5 & TR5_RES_PLASMA) {
-			p_ptr->resist_plasma = TRUE;
-			p_ptr->resist_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_RFIRE;
-			p_ptr->resist_elec = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_RELEC;
-			p_ptr->resist_sound = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RSOUN;
-		}
 		if (f5 & TR5_RES_TIME) { p_ptr->resist_time = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RTIME; }
 		if (f5 & TR5_RES_MANA) { p_ptr->resist_mana = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RMANA; }
 		if (f5 & TR5_IM_POISON) { p_ptr->immune_poison = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IPOIS; }
@@ -6061,7 +6047,6 @@ void calc_boni(int Ind) {
 		p_ptr->resist_shard = FALSE;
 		p_ptr->resist_nexus = FALSE;
 		p_ptr->resist_neth = FALSE;
-		p_ptr->resist_plasma = FALSE;
 		p_ptr->resist_water = FALSE;
 		p_ptr->resist_time = FALSE;
 		p_ptr->resist_mana = FALSE;

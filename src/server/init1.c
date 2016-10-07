@@ -252,7 +252,7 @@ static cptr r_info_flags3[] = {
 	"RES_TELE",	// "IM_PSI",
 	"RES_NETH",
 	"RES_WATE",
-	"RES_PLAS",
+	"XXX",
 	"RES_NEXU",
 	"RES_DISE",
 	"UNIQUE_4",	// "RES_PSI",
@@ -4437,7 +4437,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 	r_ptr->mexp = 1L;
 
 	for (i = 1; i < MAX_R_IDX; i++) {
-		/* Invert flag WILD_ONLY <-> RF8_DUNGEON */
+		/* Invert flag RF8_WILD_ONLY <-> RF8_DUNGEON */
 		r_info[i].flags8 ^= 1L;
 
 		/* WILD_TOO without any other wilderness flags from WILD_TOO_MASK enables all flags */
@@ -4469,10 +4469,9 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 		/* As we know, chaos resistance implies confusion resistance.. */
 		if ((r_info[i].flags9 & RF9_RES_CHAOS)) r_info[i].flags3 |= RF3_NO_CONF;
-		/* Newer fix, plasma implies fire/elec/sound - but actually we should just get rid of the dedicated RES_PLAS flag. */
-		if ((r_info[i].flags3 & RF3_RES_PLAS) || (r_info[i].flags4 & RF4_BR_PLAS)) {
-			r_info[i].flags3 |= RF3_RES_PLAS; //in case of BR_ only
-			r_info[i].flags9 |= RF9_RES_FIRE;
+		/* Newer fix, plasma implies fire/elec/sound. */
+		if (r_info[i].flags4 & RF4_BR_PLAS) {
+			r_info[i].flags3 |= RF3_IM_FIRE;
 			r_info[i].flags9 |= RF9_RES_ELEC;
 			r_info[i].flags9 |= RF9_RES_SOUND;
 		}
@@ -4480,6 +4479,11 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		if (r_info[i].flags4 & RF4_BR_NUKE) {
 			r_info[i].flags9 |= RF9_RES_ACID;
 			r_info[i].flags9 |= RF9_RES_POIS;
+		}
+		/* Breathing force means we have sound/stun resistance */
+		if (r_info[i].flags4 & RF4_BR_WALL) {
+			r_info[i].flags9 |= RF9_RES_SOUND;
+			r_info[i].flags3 |= RF3_NO_STUN;
 		}
 
 		/* For d_info rules: Formally an immunity implies the according resistance. */

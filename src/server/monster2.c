@@ -5700,7 +5700,6 @@ static bool monster_lava(int r_idx) {
 
 	if (((r_ptr->flags3 & RF3_IM_FIRE) ||
 	     (r_ptr->flags9 & RF9_RES_FIRE) ||
-	     (r_ptr->flags3 & RF3_RES_PLAS) ||
 	     (r_ptr->flags7 & RF7_CAN_FLY)) &&
 	    !(r_ptr->flags3 & RF3_AURA_COLD))
 		return TRUE;
@@ -5764,7 +5763,6 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b 
 	    (feat == FEAT_DEEP_LAVA)) {
 		if ((r_ptr->flags3 & RF3_IM_FIRE) ||
 		    (r_ptr->flags9 & RF9_RES_FIRE) ||
-		    (r_ptr->flags3 & RF3_RES_PLAS) ||
 		    (r_ptr->flags7 & RF7_CAN_FLY))
 			return TRUE;
 		else

@@ -5231,8 +5231,6 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		fprintf(fff, "It provides complete protection from unleashed water.\n");
 	else if (f5 & (TR5_RES_WATER))
 		fprintf(fff, "It provides resistance to unleashed water.\n");
-	if (f5 & (TR5_RES_PLASMA))
-		fprintf(fff, "It provides resistance to plasma.\n");
 	if (f5 & (TR5_RES_TIME))
 		fprintf(fff, "It provides resistance to time.\n");
 	if (f5 & (TR5_RES_MANA))

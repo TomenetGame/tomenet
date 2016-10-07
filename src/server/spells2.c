@@ -7101,12 +7101,11 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr) {
 	//Hack, gestalt elements add mixture.. - Kurzel
 	//case SV_R_ICEE: r_ptr->flags3 |= RF3_IM_COLD; r_ptr->flags9 |= RF9_RES_SHARDS; r_ptr->flags9 |= RF9_RES_SOUND; break; //See common/tables.c - Kurzel
 	case SV_R_ICEE: r_ptr->flags3 |= RF3_IM_COLD; r_ptr->flags9 |= RF9_RES_SHARDS; break; //See common/tables.c - Kurzel
-	//case SV_R_PLAS: r_ptr->flags9 |= RF9_RES_ELEC; r_ptr->flags9 |= RF9_RES_FIRE; r_ptr->flags9 |= RF9_RES_SOUND; break; //r_ptr->flags3 |= RF3_RES_PLAS;
+	//case SV_R_PLAS: r_ptr->flags9 |= RF9_RES_ELEC; r_ptr->flags9 |= RF9_RES_FIRE; r_ptr->flags9 |= RF9_RES_SOUND; break;
 #endif
 	case SV_R_PLAS:
 #if 0
-		r_ptr->flags3 |= RF3_RES_PLAS;
-		r_ptr->flags9 |= RF9_RES_FIRE;
+		r_ptr->flags3 |= RF3_IM_FIRE;
 		r_ptr->flags9 |= RF9_RES_ELEC;
 		r_ptr->flags9 |= RF9_RES_SOUND;
 #else

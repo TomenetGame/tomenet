@@ -4879,7 +4879,7 @@
  #define TR5_WOUNDING			0x00000080L	/* Wounds monsters -- not implemented -- (maybe give +hit/+dam bonus?) */
  #define TR5_FULL_NAME		0x00000100L		/* Uses direct name from k_info - UNUSED appearently/not implemented -- */
 #define TR5_LUCK		0x00000200L		/* Luck += pval */
-#define TR5_RES_PLASMA		0x00000400L		/* For the runecraft sigil */
+#define TR5_XXX			0x00000400L	//hole (was plasma res)
  #define TR5_LEVELS		0x00000800L		/* Can gain exp/exp levels !! -- unused -- */
 #define TR5_FORCE_DEPTH			0x00001000L	/* Can only occur on depth >= its k_info level */
 #define TR5_WHITE_LIGHT			0x00002000L	/* Light source colour is white instead of flame-yellow (for CAVE_LITE_COLOURS) */
@@ -5384,7 +5384,7 @@
 #define RF3_RES_TELE			0x00200000      /* Resist teleportation */
 #define RF3_RES_NETH			0x00400000	/* Resist nether a lot */
 #define RF3_RES_WATE			0x00800000	/* Resist water */
-#define RF3_RES_PLAS		0x01000000	/* Resist plasma */
+#define RF3_XXX			0x01000000 //unused- was plasma res
 #define RF3_RES_NEXU		0x02000000	/* Resist nexus */
 #define RF3_RES_DISE		0x04000000	/* Resist disenchantment */
 #define RF3_UNIQUE_4		0x08000000      /* Is a "Nazgul" unique -- UNUSED*/
@@ -5572,7 +5572,7 @@
 /*
  * Monster race flags
  */
-#define RF8_DUNGEON		0x00000001
+#define RF8_DUNGEON		0x00000001		/* inverse of non-existing 'RF8_WILD_ONLY' */
 #define RF8_WILD_TOWN		0x00000002
 #define RF8_WILD_EASY		0x00000004
 #define RF8_WILD_SHORE		0x00000008

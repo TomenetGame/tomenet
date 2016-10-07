@@ -5932,37 +5932,29 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Plasma -- Fire/Elec/Force */
 		case GF_PLASMA: {
-			bool res_plas = prefix(name, "Plasma") || (r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS);
-
 			if (seen) obvious = TRUE;
-			do_stun = randint(15) / div;
 
-			if ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags3 & RF3_IM_ELEC)) {
-				note = " resists a lot";
-				dam /= 9;
-			} else {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if (res_plas) {
-					note = " resists";
-					dam *= 3; dam /= (randint(6) + 6);
-					do_stun = 0;
-				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
-					note = " resists somewhat";
-					dam *= 3;
-					dam /= 5;
-				} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
-					note = " is hit hard";
-					dam = (dam * 3) / 2;
-				}
+			/* 50% fire */
+			k = (dam + 1) / 2;
+			if (r_ptr->flags3 & RF3_IM_FIRE) k = 0;
+			else if (r_ptr->flags9 & RF9_RES_FIRE) k = (k + 3) / 4;
+			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) k *= 2;
+			/* 25% elec */
+			k_elec = (dam + 3) / 4;
+			if (r_ptr->flags3 & RF3_IM_ELEC) k = 0;
+			else if (r_ptr->flags9 & RF9_RES_ELEC) k = (k + 3) / 4;
+			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k *= 2;
+			/* 25% force */
+			k_sound = (dam + 3) / 4;
+			if (r_ptr->flags3 & RF3_NO_STUN) k_sound = (k + 1) / 2;
+			else do_stun = randint(15) / div;
 
-				if (((r_ptr->flags9 & RF9_RES_ELEC) && !res_plas) || (r_ptr->flags3 & RF3_IM_ELEC)) {
-					dam *= 4;
-					dam /= 5;
-				} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && !res_plas)
-					dam = (dam * 4) / 3;
-			}
+			k += k_elec + k_sound;
+			if (k < dam / 4) note = " resists a lot";
+			else if (k < dam / 2) note = " resists";
+			else if (k < dam) note = " resists somewhat";
+			else if (k > dam) note = " is hit hard";
+			dam = k;
 			break;
 		}
 
@@ -6049,32 +6041,19 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Rocket: Shard resistance helps (PernA) */
 		case GF_INFERNO:
 		case GF_DETONATION:
-		case GF_ROCKET:
-#if 0
-			//if (magik(12)) do_cut = (10 + randint(15) +r) / (r + 1);
-			if ((r_ptr->flags4 & (RF4_BR_SHAR)) || (r_ptr->flags9 & RF9_RES_SHARDS) ||
-			    (r_ptr->flags3 & RF3_IM_FIRE) || prefix(name, "Plasma") ||
-			    (r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS) ||
-			    (r_ptr->flags9 & RF9_RES_FIRE)) {
-				note = " resists somewhat";
-				dam /= 2;
-				//do_cut = 0;
-			}
-#else /* more distinct */
-		{
+		case GF_ROCKET: {
 			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
-			if ((r_ptr->flags4 & (RF4_BR_SHAR)) || (r_ptr->flags9 & RF9_RES_SHARDS))
+
+			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				res1 = 1;
-			//(Note: RF8_NO_CUT doesn't help here.)
-			if ((r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS) || prefix(name, "Plasma")) {
-				res2 = res3 = 1;
-			}
-			if ((r_ptr->flags4 & (RF4_BR_SOUN)) || (r_ptr->flags9 & RF9_RES_SOUND))
+			//RF8_NO_CUT doesn't help here
+			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
 				res2 = 1;
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 				res3 = 3;
 			else if (r_ptr->flags9 & RF9_RES_FIRE)
 				res3 = 1;
+			//no SUSCEP_FIRE check
 
 			switch (res1 + res2 + res3) {
 			case 0: break;
@@ -6088,10 +6067,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam /= 2;
 				break;
 			}
-		}
-#endif
 			if (seen) obvious = TRUE;
-			break;
+			break; }
 
 		/* Sound -- Sound breathers resist */
 		case GF_STUN:
@@ -6318,7 +6295,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " is hit hard by lightning";
 				k_elec *= 2;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_ELEC;
+				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ELEC;
 #endif
 			}
 
@@ -7933,6 +7910,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Sound and Impact breathers never stun */
 	if (do_stun &&
 	    !(r_ptr->flags4 & RF4_BR_SOUN) &&
+	    !(r_ptr->flags9 & RF9_RES_SOUND) &&
 	    !(r_ptr->flags4 & RF4_BR_PLAS) &&
 	    !(r_ptr->flags4 & RF4_BR_WALL) &&
 	    !(r_ptr->flags3 & RF3_NO_STUN)) {
@@ -9144,27 +9122,30 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
 			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
 
-			if (p_ptr->immune_fire && p_ptr->immune_elec) dam = (dam + 8) / 9;
-			else {
-				if (p_ptr->immune_fire) dam = (dam + 3) / 4;
-				else if (p_ptr->resist_plasma) { dam *= 3; dam = (dam + 6) / (randint(6) + 6); }
-				else if (p_ptr->resist_fire || p_ptr->oppose_fire) { dam *= 3; dam = (dam + 4) / 5; }
-				else if (p_ptr->suscep_fire) dam = (dam * 3) / 2;
-
-				if (p_ptr->resist_elec || p_ptr->oppose_elec || p_ptr->immune_elec) dam = ((dam + 4) * 4) / 5;
-				else if (p_ptr->suscep_elec) dam = (dam * 4) / 3;
-			}
-
+			/* 50% fire */
+			k = (dam + 1) / 2;
+			if (p_ptr->immune_fire) k = 0;
+			else if (p_ptr->resist_fire || p_ptr->oppose_fire) {
+				if (p_ptr->resist_fire) k = (k + 2) / 3;
+				if (p_ptr->oppose_fire) k = (k + 2) / 3;
+			} else if (p_ptr->suscep_fire) k *= 2;
+			/* 25% elec */
+			k_elec = (dam + 3) / 4;
+			if (p_ptr->immune_elec) k_elec = 0;
+			else if (p_ptr->resist_elec || p_ptr->oppose_elec) {
+				if (p_ptr->resist_elec) k_elec = (k_elec + 2) / 3;
+				if (p_ptr->oppose_elec) k_elec = (k_elec + 2) / 3;
+			} else if (p_ptr->suscep_elec) k_elec *= 2;
+			/* 25% force */
+			k_sound = (dam + 3) / 4;
+			if (p_ptr->resist_sound) k_sound = (k_sound + 1) / 2;
+			else (void)set_stun(Ind, p_ptr->stun + (randint((k_sound > 22) ? 35 : (k_sound * 4 / 3 + 5)))); //strong stun
+			dam = k + k_elec + k_sound;
 
 			if (fuzzy) msg_format(Ind, "You are hit by something hot for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 
 			take_hit(Ind, dam, killer, -who);
-
-			if (!p_ptr->resist_sound) {
-				int k = (randint((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
-				(void)set_stun(Ind, p_ptr->stun + k);
-			}
 
 			/* Reduce stats */
 			if (!ignore_fire && !ignore_elec) {
@@ -12148,25 +12129,22 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_PLASMA: {
-			bool res_plas = prefix(name, "Plasma") || (r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS);
+			/* 50% fire */
+			k = dam / 2;
+			if (r_ptr->flags3 & RF3_IM_FIRE) k = 0;
+			else if (r_ptr->flags9 & RF9_RES_FIRE) k /= 4;
+			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) k *= 2;
+			/* 25% elec */
+			k_elec = dam / 4;
+			if (r_ptr->flags3 & RF3_IM_ELEC) k_elec = 0;
+			else if (r_ptr->flags9 & RF9_RES_ELEC) k_elec /= 4;
+			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k_elec *= 2;
+			/* 25% force */
+			k_sound = dam / 4;
+			if (r_ptr->flags3 & RF3_NO_STUN) k_sound /= 2;
+			//else do_stun = randint(15) / div;
 
-			if ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags3 & RF3_IM_ELEC))
-				dam /= 9;
-			else {
-				if (r_ptr->flags3 & RF3_IM_FIRE)
-					dam /= 4;
-				else if (res_plas)
-					dam /= 3;
-				else if (r_ptr->flags9 & RF9_RES_FIRE)
-					dam = (dam * 3) / 5;
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-					dam = (dam * 3) / 2;
-
-				if (((r_ptr->flags9 & RF9_RES_ELEC) && !res_plas) || (r_ptr->flags3 & RF3_IM_ELEC))
-					dam = (dam * 4) / 5;
-				else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && !res_plas)
-					dam = (dam * 4) / 3;
-			}
+			dam = k + k_elec + k_sound;
 			break;
 		}
 
@@ -12226,18 +12204,16 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_ROCKET:
 		{
 			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
-			if ((r_ptr->flags4 & (RF4_BR_SHAR)) || (r_ptr->flags9 & RF9_RES_SHARDS))
+			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				res1 = 1;
-			//(Note: RF8_NO_CUT doesn't help here.)
-			if ((r_ptr->flags4 & RF4_BR_PLAS) || (r_ptr->flags3 & RF3_RES_PLAS) || prefix(name, "Plasma")) {
-				res2 = res3 = 1;
-			}
-			if ((r_ptr->flags4 & (RF4_BR_SOUN)) || (r_ptr->flags9 & RF9_RES_SOUND))
+			//RF8_NO_CUT doesn't help here
+			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
 				res2 = 1;
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 				res3 = 3;
 			else if (r_ptr->flags9 & RF9_RES_FIRE)
 				res3 = 1;
+			//No SUSCEP_FIRE check
 
 			switch (res1 + res2 + res3) {
 			case 0: break;

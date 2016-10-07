@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. September 2016 - written by C. Blue (c_blue@gmx.net)
-| for TomeNET version v4.6.2 - official websites are:
+| Latest update: 7. October 2016 - written by C. Blue (c_blue@gmx.net)
+| for TomeNET version v4.7.0 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 |
@@ -8657,29 +8657,11 @@ Combined damage types:
 Ice             Ice attacks combine shard and cold damage.
                 Ice damage (bolt only) is (6d6)+monsterlevel.
                 Ice damage consists of 60% cold damage and 40% shards damage.
-Plasma          Plasma attacks combine raw force, electricity and immense heat.
-                Being immune to both, fire and lightning will cut damage to
-                1/9. If that's not the case two checks are applied, for fire
-                and for lightning, whose results stack with each other as
-                follows:
-                1) Fire check:
-                -Fire immunity will cut damage to 1/4. If you don't have this..
-                -Plasma resistance (very rare) will cut damage to 3/7..3/12
-                 and protect from stun effect. If you don't have this..
-                -Fire resistance will cut damage to 3/5.
-                -Fire susceptibility will increase damage by 1/2.
-                (Note that having fire immunity and plasma resistance will give
-                the damage reduction of fire immunity and the stun protection
-                of plasma resistance accordingly.)
-                2) Lightning check:
-                -Lightning resistance or immunity will cut damage to 4/5.
-                -Lightning susceptibility will increase damage by 1/3.
-                (Note that lightning resistance and susceptibility only have
-                any effect if you don't have plasma resistance.)
-                Plasma also has stun effect if sound resistance (or plasma
-                resistance) is missing.
-                Plasma resistance will also give you resistance to fire,
-                lightning and sound!
+Plasma          Plasma attacks combine raw force, electricity and, mostly of
+                all, immense heat. The usual resistances, susceptibilities
+                and immunities for fire, electricity and sound apply as
+                available.
+                Plasma also has stun effect if sound resistance is missing.
                 Breath damage is monster HP/6. Plasma breath caps at 150.
                 Plasma bolts do 10+level+(8d7) damage.
 Radiation/Nuke/ This is a poisonous attack (player suffers pure poison damage)
@@ -14137,7 +14119,7 @@ S: spell list
     About specific spells:
     BR_xxx      (breathing) will give the according resistance to the player
                 (if that specific attack CAN be resisted at all).
-    BR_PLASMA   gives plasma & fire resistance.
+    BR_PLASMA   gives fire immunity and resistance to electricity and sound.
     BR_GRAVITY  gives feather falling.
     BR_INERTIA  gives free action.
     MIND_BLAST  Insanity attacks are reduced a little bit.
@@ -14430,8 +14412,7 @@ Elder aranea            speedy and smart (INT bonus) greater spider;
                         has a medium array of spells at its disposal
 
 Plasma hound            speedy;
-(Code 726)              resists plasma (implying lightning and sound
-                        resistance too), light; immune to fire;
+(Code 726)              immune to fire, resistant to lightning and sound;
                         susceptible to cold;
                         can't be stunned (by magic), cut, confused or
                         paralyzed;
@@ -14504,7 +14485,7 @@ Level 60:
 Firebird                speedy and tough; can fly and passes most terrains;
 (Code 1127)             fiery attacks and fire aura;
                         immune to fire and susceptible to cold;
-                        resists poison, plasma and light;
+                        resists poison, sound and light;
                         regenerates HP quickly (same as item flag);
                         can breathe fire and light
 
