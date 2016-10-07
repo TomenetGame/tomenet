@@ -5039,6 +5039,9 @@
 #define CB13_XNCUT	0x40
 #define CB13_XLITE	0x80
 
+#define CB14_ILIFE	0x01
+
+/* Added CB14 CB15 and CB16 for now - Kurzel */
 
 /* Allow fallen winners to wear/wield WINNERS_ONLY items? */
 #define FALLEN_WINNERSONLY

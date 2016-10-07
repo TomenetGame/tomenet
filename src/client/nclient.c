@@ -3195,18 +3195,24 @@ int Receive_sfx_volume(void) {
 int Receive_boni_col(void) {
 	int	n, j;
 
-	byte	ch, i;
+	byte ch, i;
 	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr, amfi = 0, sigl = 0;
-	byte cb[13];
+	byte cb[16];
 	char color, symbol;
 
-	if (is_newer_than(&server_version, 4, 5, 9, 0, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 6, 1, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, //1+22+16+2 bytes in total
+		&i, &spd, &slth, &srch, &infr, &lite, &dig, &blow, &crit, &shot,
+		&migh, &mxhp, &mxmp, &luck, &pstr, &pint, &pwis, &pdex, &pcon, &pchr, &amfi, &sigl,
+		&cb[0], &cb[1], &cb[2], &cb[3], &cb[4], &cb[5], &cb[6], &cb[7], &cb[8], &cb[9],
+		&cb[10], &cb[11], &cb[12], &cb[13], &cb[14], &cb[15], &color, &symbol)) <= 0) return n;
+	} else if (is_newer_than(&server_version, 4, 5, 9, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, //1+22+13+2 bytes in total
 		&i, &spd, &slth, &srch, &infr, &lite, &dig, &blow, &crit, &shot,
 		&migh, &mxhp, &mxmp, &luck, &pstr, &pint, &pwis, &pdex, &pcon, &pchr, &amfi, &sigl,
 		&cb[0], &cb[1], &cb[2], &cb[3], &cb[4], &cb[5], &cb[6], &cb[7], &cb[8], &cb[9],
 		&cb[10], &cb[11], &cb[12], &color, &symbol)) <= 0) return n;
-	} else { //send the old info to old players
+	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, //1+20+13+2 bytes in total
 		&i, &spd, &slth, &srch, &infr, &lite, &dig, &blow, &crit, &shot,
 		&migh, &mxhp, &mxmp, &luck, &pstr, &pint, &pwis, &pdex, &pcon, &pchr,
@@ -3236,7 +3242,7 @@ int Receive_boni_col(void) {
 	csheet_boni[i].pchr = pchr;
 	csheet_boni[i].amfi = amfi;
 	csheet_boni[i].sigl = sigl;
-	for (j = 0; j < 13; j++)
+	for (j = 0; j < 16; j++)
 	csheet_boni[i].cb[j] = cb[j];
 	csheet_boni[i].color = color;
 	csheet_boni[i].symbol = symbol;

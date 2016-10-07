@@ -2439,6 +2439,7 @@ void display_player(int hist) {
 			if (csheet_boni[i].cb[4] & CB5_RSINV) { c_put_str(TERM_WHITE, "+", 4, 25 + i); if (header_color[1][3] == TERM_L_DARK) header_color[1][3] = TERM_WHITE; }
 			if (csheet_boni[i].cb[4] & CB5_RINVS) { c_put_str(TERM_WHITE, "+", 5, 25 + i); header_color[1][4] = TERM_WHITE; }
 			if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 6, 25 + i); header_color[1][5] = TERM_WHITE; }
+			if (csheet_boni[i].cb[13] & CB14_ILIFE) { c_put_str(TERM_L_UMBER, "*", 6, 25 + i); header_color[1][5] = TERM_L_UMBER; }
 			if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 7, 25 + i); header_color[1][6] = TERM_WHITE; }
 			if (csheet_boni[i].cb[5] & CB6_RFFAL) { c_put_str(TERM_WHITE, "+", 8, 25 + i); header_color[1][7] = TERM_WHITE; }
 			if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 9, 25 + i); if (header_color[1][8] == TERM_L_DARK) header_color[1][8] = TERM_YELLOW; }

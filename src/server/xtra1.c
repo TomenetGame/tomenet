@@ -2865,7 +2865,7 @@ void calc_boni(int Ind) {
 		csheet_boni[kk].amfi = 0;
 		csheet_boni[kk].sigl = 0;
 		/* Clear the byte flags */
-		for (jj = 0; jj < 13; jj++)
+		for (jj = 0; jj < 16; jj++)
 			csheet_boni[kk].cb[jj] = 0;
 		csheet_boni[kk].color = TERM_DARK;
 		csheet_boni[kk].symbol = ' '; //Empty item / form slot.
@@ -3157,7 +3157,7 @@ void calc_boni(int Ind) {
 
 
 	/* Obtain ultimate life force hold at 99 */
-	if (p_ptr->lev == 99) { p_ptr->keep_life = TRUE; /*csheet_boni[14].cb[5] |= CB6_RLIFE; --todo*/ }
+	if (p_ptr->lev == 99) { p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }
 
 	/* Calc bonus body */
 	if (!p_ptr->body_monster) {
@@ -5793,7 +5793,7 @@ void calc_boni(int Ind) {
 	}
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 30) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
 #endif
-	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50) { p_ptr->keep_life = TRUE; /*csheet_boni[14].cb[5] |= CB6_RLIFE; --todo*/ }
+	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50) { p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }
 
 	/* Take note when "heavy bow" changes */
 	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
