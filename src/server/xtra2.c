@@ -8596,7 +8596,7 @@ void kill_xorder(int Ind) {
 		}
 	} else {
 		object_type forge, *o_ptr = &forge;
-		int avg;
+		int avg, rlev = r_info[xorders[pos].type].level, plev = p_ptr->lev;
 
 		msg_format(Ind, "\374\377yYou have carried out the %s extermination order!", r_name + r_info[xorders[pos].type].name);
 		s_printf("r_info quest: %s won the %s extermination order\n", p_ptr->name, r_name + r_info[xorders[pos].type].name);
@@ -8605,25 +8605,33 @@ void kill_xorder(int Ind) {
 		unique_quark = quark_add(temp);
 
 		/* grant verygreat rerolls for better value? */
-		avg = ((r_info[xorders[pos].type].level * 2) + (p_ptr->lev * 4)) / 2;
+		avg = ((rlev * 2) + (plev * 4)) / 2;
 		avg = avg > 100 ? 100 : avg;
 		//if (great && p_ptr->lev >= 25) verygreat = magik(r_info[xorders[pos].type].level - (5 - (p_ptr->lev / 5)));
 		//if (great) verygreat = magik(((r_info[xorders[pos].type].level * 2) + (p_ptr->lev * 4)) / 5);
 		avg /= 2; avg = 540 / (57 - avg) + 5; /* same as exp calculation ;) phew, Heureka.. (14..75) */
 
+#if 0
 		/* boost quest rewards for the iron price */
-#ifndef RPG_SERVER
+ #ifndef RPG_SERVER
 		if (in_irondeepdive(&p_ptr->wpos)) {
-#endif
+ #endif
 			great = TRUE;
 			verygreat = magik(avg);
 			resf = RESF_LOW2;
-#ifndef RPG_SERVER
+ #ifndef RPG_SERVER
 		} else {
-			great = magik(50 + p_ptr->lev * 2);
+			great = magik(50 + (plev > rlev ? rlev : plev) * 2);
 			if (great) verygreat = magik(avg);
 			resf = RESF_LOW;
 		}
+ #endif
+#else
+		/* extermination orders have been buffed for IDDC by being based on floor level instead of player level,
+		   buffing the quality on top of this would be too much. */
+		great = magik(50 + (plev > rlev ? rlev : plev) * 2);
+		if (great) verygreat = magik(avg);
+		resf = RESF_LOW;
 #endif
 
 #if 0 /* needs more care, otherwise acquirement could even be BETTER than create_reward, depending on RESF.. */
@@ -8723,6 +8731,7 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num){
 	int r = *type, i = *num, lev = *level, k = 0;
 	player_type *p_ptr = Players[j];
+	bool iddc;
 
 	if (p_ptr->xorder_id) {
 		for (i = 0; i < MAX_XORDERS; i++) {
@@ -8739,6 +8748,8 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	}
 
 	if (!in_irondeepdive(&p_ptr->wpos)) {
+		iddc = FALSE;
+
 		if (p_ptr->mode & MODE_DED_IDDC) {
 			msg_print(Ind, "\377yYou can only acquire an extermination order when you are inside the IDDC!");
 			msg_print(Ind, "\377yUse the /xo (short for /xorder) command after you entered it.");
@@ -8756,7 +8767,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 			msg_print(Ind, "\377yPlease visit your local town hall or seat of ruling to receive an order!");
 			return FALSE;
 		}
-	}
+	} else iddc = TRUE;
 
 	if (p_ptr->IDDC_logscum) {
 		msg_print(Ind, "\377yYou cannot acquire an extermination order on a stale floor.");
@@ -8771,7 +8782,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 	/* don't start too early -C. Blue */
 #ifndef RPG_SERVER
-	if (p_ptr->lev < 5 && !in_irondeepdive(&p_ptr->wpos)) {
+	if (p_ptr->lev < 5 && !iddc) {
 		msg_print(Ind, "\377oYou need to be level 5 or higher to receive an extermination order!");
 #else /* for ironman there's no harm in allowing early quests */
 	if (p_ptr->lev < 3) {
@@ -8780,9 +8791,15 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 		return FALSE;
 	}
 
-	/* plev 1..50 -> mlev 1..100 (!) */
-	if (lev <= 50) lev += (lev * lev) / 83;
-	else lev = 80 + rand_int(20);
+	if (iddc || in_hallsofmandos(&p_ptr->wpos)) {
+		/* Specialty: In IDDC and Halls of Mandos, base the monster level on the floor level! */
+		lev = getlevel(&p_ptr->wpos);
+		lev += rand_int(lev / 20 + 3);
+	} else {
+		/* Normal: lev is the player's level. plev 1..50 -> mlev 1..100. */
+		if (lev <= 50) lev += (lev * lev) / 83;
+		else lev = 80 + rand_int(20);
+	}
 
 	get_mon_num_hook = xorder_aux;
 	get_mon_num_prep(0, NULL);
@@ -8801,7 +8818,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 	/* easier in Ironman environments */
 #ifndef RPG_SERVER
-	if (in_irondeepdive(&p_ptr->wpos)) {
+	if (iddc) {
 #endif
 		if (lev < 40) {
 			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 3 + randint(4);

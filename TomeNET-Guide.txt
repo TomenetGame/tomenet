@@ -6228,6 +6228,8 @@ you didn't kill it before killing Sauron.
 
 (****) Getting out of the Halls of Mandos will be complemented with an entry
 into 'Noteworthy Occurances' list.
+Extermination orders in the Halls of Mandos will (same as for the IDDC) have
+its monster level depend on the floor level rather than on the player's level.
 
 
 
@@ -7094,9 +7096,10 @@ location information (except if they are using the super compact @-screen
 layout that shows only two lines per player).
 
 On an Ironman server or within the Ironman Deep Dive Challenge dungeon, the
-quality of the items rewarded is boosted somewhat, while the amount of
-monsters that need to be slain is somewhat lower (especially for low level
-orders).
+amount of monsters that need to be slain is somewhat lower (especially for low
+level orders). Also, in the IDDC and in the Halls of Mandos, the monster level
+of the extermination order will depend on the floor level rather than on the
+player's level.
 
 
 Events (use /evinfo and /evsign commands to get information and to sign up)
@@ -7340,8 +7343,9 @@ Ironman Deep Dive Challenge (IDDC)
 
     Inside the challenge dungeon you can acquire an extermination order via
     /xorder command at level 1 already, instead of the usual minimum level 5.
-    On average, extermination orders in here require less monsters to be slain
-    yet provide slightly boosted item quality.
+    On average, extermination orders in here require less monsters to be slain.
+    Also, the monster level of the order will depend on the floor level instead
+    of the player's level.
 
     The IDDC is randomly using themes of all the other dungeons, the selection
     is randomly rerolled every 24 hours. The final floor of each theme might
@@ -18478,8 +18482,7 @@ The differences between Ironman ruleset and normal servers are as follows:
    required mimicry skill to actually see the learn-message show up.)
   -Item level restrictions are disabled and have no effect.
   -Extermination orders can be acquired as early as at level 3 instead of level
-   5, and the quality of the rewarded items is somewhat boosted on average,
-   while the amount of monsters that needs to be slain is even somewhat lower.
+   5 and the amount of monsters that needs to be slain is even somewhat lower.
   -Temporary luck bonus from deeds is somewhat longer.
   -Usually, scheduled artifact resets happen less frequently (if at all).
    (See (5.9b) for more information about artifact resets.)
