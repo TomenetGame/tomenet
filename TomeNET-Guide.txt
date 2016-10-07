@@ -314,7 +314,7 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  read. They don't do anything, just a short read containing some information.
 
 -If your character gains a new level it also gains skill points. To distribute
- those, invoke the skill screen with SHIFT+G. (See 3.10, 6.2 and 7.5.)
+ those, invoke the skill screen with SHIFT+G. (See (3.10), (6.2) and (7.5).)
 
 -If you don't like your character and want to delete it, you may commit
  suicide by pressing SHIFT+q or CTRL+k and double-confirming the following
@@ -888,7 +888,6 @@ TAB or CTRL+I
 
 (0.2a) Text editing keys
 ------------------------
-
 When typing in a line of text (eg to chat), the following control keys are
 available for text editing:
 
@@ -912,7 +911,6 @@ CTRL+D      Delete character under the cursor.
 
 (0.2b) Slash commands
 ---------------------
-
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
 
@@ -1744,7 +1742,7 @@ GoI         Globe of invulnerability. This only exists as 'Stair GoI', see
 Gorth       Room in the dungeon, divided into 4 chambers, similar to a pit.
             Also see 'Room', 'Pit' and (4.6).
 
-GV          Greater Vault. (See 4.6)
+GV          Greater Vault. (See (4.6))
 
 GCV         Greater Checkerboard Vault (looks remotely like a checkerboard).
 
@@ -1795,7 +1793,7 @@ klevel, olevel
 Loot        Items that have been dropped by dead monsters or players and
             are waiting to be picked up by someone. :)
 
-LV          Lesser Vault. (See 4.6)
+LV          Lesser Vault. (See (4.6))
 
 mlevel, rlevel
             Somewhat more technical terms, these stand for the exact type of
@@ -2206,7 +2204,7 @@ Queen respectively, or Emperor/Empress if their character is of unworldly or
 hellish mode. A player must be at least level 40 to get credit for this.
 
 When you win the game, an automatic chardump is generated in /lib/user called
-'<charname>-victory.txt' (see 8.2) which you can view with any text editor.
+'<charname>-victory.txt' (see (8.2)) which you can view with any text editor.
 Also, a screenshot is made automatically, displaying your situation, saved
 to '<charname>-victory-screenshot.xhtml'.
 (You can view xhtml files in most webbrowsers.)
@@ -4688,7 +4686,7 @@ F10 zap some rod                                    \e)z1           @z1
     you will keep failing; also see (6.10))
 F11 eat something.                                  \e)E1           @E1
     (Draconians could inscribe some firestones
-    (see 5.9) instead of normal food, to quickly
+    (see (5.9)) instead of normal food, to quickly
     boost their powers if needed.)
 F12 use a magic device on the closest target        \e)*t/1-        @/1
     (Magic devices are wands, staves or rods.
@@ -5113,7 +5111,7 @@ Lev.   Experience   Lev.   Experience   Lev.   Experience   Lev.   Experience
 Death
 -----
 If a player dies, an automatic chardump is generated in /lib/user called
-'<charname>-death.txt' (see 8.2) which you can view with any text editor.
+'<charname>-death.txt' (see (8.2)) which you can view with any text editor.
 Also, a screenshot is made automatically, displaying your situation, saved
 to '<charname>-death-screenshot.xhtml'.
 (You can view xhtml files in most webbrowsers.)
@@ -8014,7 +8012,7 @@ the type of sling, bow or crossbow).
 
 (5.3a) Martial Arts, brands
 ---------------------------
-The "auto-retaliator" (see 4.1a) also works if you fight bare-handed.
+The "auto-retaliator" (see (4.1a)) also works if you fight bare-handed.
 
 Training Martial Arts will give you..
 -a bonus to-hit and to-dam.
@@ -9394,7 +9392,7 @@ Dark Sword      Dark Swords have a so-called 'anti-magic field', which
                 minimum, even if tohit+todam are greater than its AM.
                 AC boni on Dark Swords won't affect the anti-magic field.
                 The anti-magic chance and field radius of a dark sword stacks
-                with the 'Anti-magic' skill (see 6.2).
+                with the 'Anti-magic' skill (see (6.2)).
 
                 Note that if you dual-wield dark swords the stronger AM field
                 will override the weaker one, so they don't stack.
@@ -12115,7 +12113,7 @@ Note that not every skill is available to every profession (class).
                                 spells (but does not prevent them from using
                                 magic devices).
                                 This effect is cumulative with the anti-magic
-                                field of a Dark Sword. (See 5.9 for more info
+                                field of a Dark Sword. (See (5.9) for more info
                                 about dark swords.)
                                 It's capped at 75% chance of interrupting
                                 enemy spells. The capped chance is further
@@ -12676,9 +12674,9 @@ Blows/Round
 Shots/Round
     How often per round you are able to use your ranged weapon.
     Spending points into specific archery skills will give you additional shots
-    (see 6.2 for details).
+    (see (6.2) for details).
     Mimics may get additional shots per round if the monster form they use has
-    the ability to shoot with ranged weapons (see 6.7 for details).
+    the ability to shoot with ranged weapons (see (6.7) for details).
 Infra-Vision
     How far you can see warm-blooded monsters in the dark.
     10 ft equal a distance of 1 field.
@@ -17224,7 +17222,7 @@ Higher characters (up to 35)
 + Try to Get Confusion Resistance, so you can always read teleport scrolls!
   Note that chaos resistance also provides confusion resistance.
 + Get Nexus Resistance. Nexus attacks can scramble your body, swapping your
-  stats, which can mess up your character. (See 5.6.)
+  stats, which can mess up your character. (See (5.6).)
 + Try to get Blindness Resistance, so you can always read teleport scrolls!
   Helms or Caps of seeing give this!
 + Before venturing into Mordor you should have basic (fire/cold/lightning/acid)
