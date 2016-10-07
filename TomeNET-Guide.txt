@@ -30,7 +30,9 @@ Contents
 (0) Quickstart (If you don't like to read much :)
     (0.1)   Start & play
     (0.2)   Command reference & key sets
-    (0.2a)  IRC bot commands
+    (0.2a)  Text editing keys
+    (0.2b)  Slash command reference
+    (0.2c)  IRC bot commands
     (0.3)   Important inscriptions, Word of Recall
     (0.3a)  The auto-inscription feature
     (0.4)   Typical slang/abbreviations
@@ -884,8 +886,8 @@ TAB or CTRL+I
         most wounded player in general if you aren't in a party.)
 
 
-Text editing keys
------------------
+(0.2a) Text editing keys
+------------------------
 
 When typing in a line of text (eg to chat), the following control keys are
 available for text editing:
@@ -908,8 +910,8 @@ CTRL+A/S    Move cursor back/forward by one character.
 CTRL+D      Delete character under the cursor.
 
 
-Slash commands
---------------
+(0.2b) Slash commands
+---------------------
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
@@ -1431,7 +1433,7 @@ or shorter: /tym [rs]
             on race, class and level.
 
 
-(0.2a) IRC bot commands
+(0.2c) IRC bot commands
 -----------------------
 When in an IRC channel where the 'TomeNET' bot relays chat to and from a
 game server, you may enter these IRC commands:
@@ -1452,7 +1454,7 @@ game server, you may enter these IRC commands:
 --------------------------------------------
 To inscribe an item, press the { key. To uninscribe, press }.
 You can also mass-inscribe/uninscribe items by using the commands /tag or /t
-and /untag or /ut respectively (see 0.2 for command details).
+and /untag or /ut respectively (see (0.2b) for command details).
 
 All items:
     Inscribing an item with an '!' followed by a key will cause that key to
@@ -2094,7 +2096,7 @@ with other players and developers via the following media:
       you to read what's going on in-game, and to chat with players simply
       with any IRC client.
       See below (1.1b) for how to set up IRC chat in detail.
-      See (0.2a) for commands you can send to the TomeNET IRC bot.
+      See (0.2c) for commands you can send to the TomeNET IRC bot.
 -Voice chat via mumble, get it from http://mumble.sourceforge.net/.
       IP is 'europe.tomenet.eu', port is '23348', password is 'tomenet'.
       For details see "(2.4) Installing voice chat".
@@ -2134,7 +2136,7 @@ Joining a channel will relay chat from and to the TomeNET server, allowing you
 to read what's going on in-game, and to chat with the players.
 (Note that not all kinds of messages are actually relayed, for example AFK
 messages are not.)
-See (0.2a) for commands you can send to the TomeNET IRC bot.
+See (0.2c) for commands you can send to the TomeNET IRC bot.
 
 Usually all IRC clients offer a possibility to configure them to connect a
 specific network (Freenode) and to join specific channels (#tomenet etc.)
@@ -3732,7 +3734,7 @@ press  = 2  and toggle the client option "censor_swearing". (Requires client
 version newer than 4.4.8a.)
 
 You can also enter slash commands in the chat line. For details about slash
-commands see (0.2).
+commands see (0.2b).
 
 To type a private message to someone, enter <name>:<text>
 Example:    Hi!             <- goes to everyone
@@ -5333,7 +5335,7 @@ Runes:          Auto-retaliate with the inscribed rune. The format is modifier
                 a non-damaging runespell will disable auto-retaliation.
 
 Mimic powers:   Use the /autoret or for short /ar command to set these up,
-    /ar tg      compare (0.2). Usage (t is optional for 'town-only'):
+    /ar tg      compare (0.2b). Usage (t is optional for 'town-only'):
                 /ar [t]<power>
 
 If you want an auto-retaliation-enabling inscription to only work while you are
@@ -6729,7 +6731,7 @@ night the colours will not be accurate but darker, until you come close enough
 that the door is within your lamp's light radius.
 
 Special gimmick: You can press 'h' or use the /paint command to paint your
-house, see the "/paint" command in (0.2) for more information.
+house, see the "/paint" command in (0.2b) for more information.
 
 WARNING:
 Items on the floor within a house don't form piles! If you drop too many
@@ -6828,11 +6830,11 @@ cancelled and the customer will see a message:
 Usually, player stores may only pop up if a player doesn't have access to that
 house door. If you want to test your own player store though, you can just
 press 'h' key or use the /pstore command when standing next to your house door
-(see (0.2)).
+(see (0.2b)).
 
 To indicate that your house is a player store, you can use 'h' key or the
 "/paint" command to paint your house entrance for other players to see!
-Please see (0.2) for more information about painting.
+Please see (0.2b) for more information about painting.
 
 
 
@@ -9859,7 +9861,7 @@ Device of theft prevention
                     When equipped, greatly reduces chance of thieves succeeding
                     in stealing items from your backpack.
 Empty bottles       You can /fill these at fountains to turn them into
-                    potions. (See 0.2 for more details.)
+                    potions. (See (0.2b) for more details.)
 (Small) Firestones  These can be eaten by Draconians and players in dragon
                     forms and have various random effects (small firestones
                     have reduced duration):
@@ -11469,7 +11471,7 @@ If you rise in character levels by gaining experience, you also get skill
 points to distribute on various abilities. To invoke the skill system overview
 press 'G' (capital G!).
 If you make a mistake while distributing skill points, look up the /undoskills
-command in (0.2). "/undoskills" can only be used once per level.
+command in (0.2b). "/undoskills" can only be used once per level.
 
 
 Skills of dark grey colour cannot be used by your character at all.
@@ -19109,7 +19111,7 @@ PROBLEM 21: My (mixer) settings or window positions (MS Windows only) aren't
 SOLUTION:   Don't use ALT+F4 or the 'x' button in the title bar of the game
             window to quit the game. It will result in skipping the normal exit
             routine, which asks you to save chat and which also saves certain
-            settings. Instead, use CTRL+Q for 'save & quit' (compare 0.2).
+            settings. Instead, use CTRL+Q for 'save & quit' (compare (0.2)).
 
 PROBLEM 22: When I try to login, I get a 'security violation'.
 SOLUTION:   Either your host name (that's your PC's network name you can set in
