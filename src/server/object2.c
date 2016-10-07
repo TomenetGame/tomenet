@@ -217,8 +217,8 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 
 		object_desc_store(0, o_name, o_ptr, TRUE, 3);
 
-		s_printf("%s owned true artifact deleted at (%d,%d,%d):\n  %s\n",
-		    showtime(),
+		s_printf("%s owned true artifact (ua=%d) deleted at (%d,%d,%d):\n  %s\n",
+		    showtime(), unfound_art,
 		    wpos->wx, wpos->wy, wpos->wz,
 		    o_name);
 	}
@@ -9213,7 +9213,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 
 			object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
 
-			s_printf("%s owned true artifact dropped by %s(%d) at (%d,%d,%d):\n  %s\n",
+			s_printf("%s owned true artifact failed to drop by %s(%d) at (%d,%d,%d):\n  %s\n",
 			    showtime(), name ? name : "(Dead player)", lev,
 			    wpos->wx, wpos->wy, wpos->wz,
 			    o_name);
@@ -9387,7 +9387,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 
 		/* Make a new object */
 		o_idx = o_pop();
-		
+
 		/* Sigil (reset it) */
 		if (o_ptr->sigil) {
 			//msg_print(Ind, "The sigil fades away.");
@@ -9487,6 +9487,21 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 			questitem_d(o_ptr, o_ptr->number);
 		}
 	}
+
+#if 1 /* extra logging for artifact timeout debugging */
+	if (true_artifact_p(o_ptr) && o_ptr->owner) {
+		cptr name = lookup_player_name(o_ptr->owner);
+		int lev = lookup_player_level(o_ptr->owner);
+		char o_name[ONAME_LEN];
+
+		object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+
+		s_printf("%s owned true artifact (oidx=%d) dropped by %s(%d) at (%d,%d,%d):\n  %s\n",
+		    showtime(), o_idx, name ? name : "(Dead player)", lev,
+		    wpos->wx, wpos->wy, wpos->wz,
+		    o_name);
+	}
+#endif
 
 	/* Result */
 	return (o_idx);
