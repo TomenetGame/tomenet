@@ -5946,7 +5946,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k *= 2;
 			/* 25% force */
 			k_sound = (dam + 3) / 4;
-			if (r_ptr->flags3 & RF3_NO_STUN) k_sound = (k + 1) / 2;
+			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound = (k + 1) / 2;
 			else do_stun = randint(15) / div;
 
 			k += k_elec + k_sound;
@@ -12141,7 +12141,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k_elec *= 2;
 			/* 25% force */
 			k_sound = dam / 4;
-			if (r_ptr->flags3 & RF3_NO_STUN) k_sound /= 2;
+			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound /= 2;
 			//else do_stun = randint(15) / div;
 
 			dam = k + k_elec + k_sound;
