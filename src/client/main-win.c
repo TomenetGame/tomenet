@@ -2855,11 +2855,11 @@ static void handle_wm_paint(HWND hWnd, term_data *td)
 
 
 #ifdef BEN_HACK
-LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
+LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
                                           WPARAM wParam, LPARAM lParam);
 #endif
 
-LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
+LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
                                           WPARAM wParam, LPARAM lParam)
 {
 	HDC             hdc;
@@ -3119,11 +3119,11 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 
 
 #ifdef BEN_HACK
-LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
+LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
                                            WPARAM wParam, LPARAM lParam);
 #endif
 
-LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
+LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
                                            WPARAM wParam, LPARAM lParam)
 {
 	term_data      *td;
