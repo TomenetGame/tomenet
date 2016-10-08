@@ -710,7 +710,7 @@ void do_mimic() {
 			Flush_queue();
 		}
 
-		if (c) Send_activate_skill(MKEY_MIMICRY, 0, 20000, c, 0, 0);
+		if (c) Send_activate_skill(MKEY_MIMICRY, 0, 25000, c, 0, 0);
 		return;
 	}
 

@@ -8717,7 +8717,7 @@ static int Receive_activate_skill(int ind) {
 		switch (mkey) {
 		case MKEY_MIMICRY:
 			if (get_skill(p_ptr, SKILL_MIMIC)) {
-				if (spell == 20000 && dir) {
+				if (spell == 25000 && dir) {
 					switch (dir) {
 					case 1:
 						switch (p_ptr->mimic_immunity) {
