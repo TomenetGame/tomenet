@@ -2831,7 +2831,7 @@ static void init_sound() {
 	int i;
 
 	/* One-time popup dialogue, to inform and instruct user of audio capabilities */
-	if (sound_hint) plog("*******************************************\nTomeNET supports music and sound effects!\nTo enable those, you need to install a sound pack,\nsee http://www.tomenet.eu/ forum and downloads.\n*******************************************\n");
+	if (sound_hint) plog("*******************************************\nTomeNET supports music and sound effects!\nTo enable those, you need to have audio packs installed,\nsee http://www.tomenet.eu/ forum and downloads.\n*******************************************\n");
 
 	if (!use_sound) {
 		/* Don't initialize sound modules */
