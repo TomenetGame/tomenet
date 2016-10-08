@@ -48,7 +48,7 @@ extern const char *ANGBAND_DIR;
 
 #define OLD_TNF_SEND	256	/* old value of MAX_TNF_SEND */
 
-struct ft_data{
+struct ft_data {
 	char buffer[MAX_TNF_SEND];
 	char fname[256];	/* actual filename */
 	char tname[256];	/* temporary filename */
@@ -110,6 +110,33 @@ static int new_fileid() {
 	return(c_id);
 }
 
+/* Hack: Replace a path aimed at ANGBAND_DIR+user or ANGBAND_DIR+scpt by ANGBAND_DIR_USER and ANGBAND_DIR_SCPT respectively.
+   The reason we need to do this is that on Windows clients those two folders might not be in the TomeNET lib folder but
+   actually in the OS home path of that user.
+   Returns TRUE if newpath has been rebuilt and is therefore ready to use. */
+static bool client_user_path(char *newpath, cptr oldpath) {
+	if (!is_client_side) {
+		strcpy(newpath, oldpath);
+		return FALSE;
+	}
+
+	/* replace ANGBAND_DIR by ANGBAND_DIR_SCPT/USER, as those might be in the user's home folder on Windows, instead of in the TomeNET folder. */
+	if (!strncmp(oldpath, "scpt/", 5)) {
+		strcpy(newpath, ANGBAND_DIR_SCPT);
+		strcat(newpath, "\\");
+		strcat(newpath, oldpath + 5);
+		return TRUE;
+	} else if (!strncmp(oldpath, "user/", 5)) {
+		strcpy(newpath, ANGBAND_DIR_USER);
+		strcat(newpath, "\\");
+		strcat(newpath, oldpath + 5);
+		return TRUE;
+	}
+
+	strcpy(newpath, oldpath);
+	return FALSE;
+}
+
 /* acknowledge recipient ready to receive more */
 int local_file_ack(int ind, unsigned short fnum) {
 	struct ft_data *c_fd;
@@ -144,7 +171,8 @@ int local_file_send(int ind, char *fname, unsigned short chunksize) {
 
 	c_fd = getfile(ind, 0);
 	if (c_fd == (struct ft_data*)NULL) return(0);
-	path_build(buf, sizeof(buf), ANGBAND_DIR, fname);
+	if (!client_user_path(buf, fname))
+		path_build(buf, sizeof(buf), ANGBAND_DIR, fname);
 	fp = fopen(buf, "rb");
 	if (!fp) return(0);
 	c_fd->fp = fp;
@@ -172,26 +200,6 @@ int remote_update(int ind, char *fname, unsigned short chunksize) {
 	return(1);
 }
 
-/* Hack: Replace a path aimed at ANGBAND_DIR+user or ANGBAND_DIR+scpt by ANGBAND_DIR_USER and ANGBAND_DIR_SCPT respectively.
-   The reason we need to do this is that on Windows clients those two folders might not be in the TomeNET lib folder but
-   actually in the OS home path of that user. */
-void client_user_path(char *newpath, cptr oldpath) {
-//#if defined(WINDOWS) && defined(WINDOWS_USER_HOME)
-	if (is_client_side) {
-		/* replace ANGBAND_DIR by ANGBAND_DIR_SCPT/USER, as those might be in the user's home folder on Windows, instead of in the TomeNET folder. */
-		if (!strncmp(oldpath, "scpt/", 5)) {
-			strcpy(newpath, ANGBAND_DIR_SCPT);
-			strcat(newpath, "\\");
-			strcat(newpath, oldpath + 5);
-		} else if (!strncmp(oldpath, "user/", 5)) {
-			strcpy(newpath, ANGBAND_DIR_USER);
-			strcat(newpath, "\\");
-			strcat(newpath, oldpath + 5);
-		} else strcpy(newpath, oldpath);
-	} else strcpy(newpath, oldpath);
-//#endif
-}
-
 /* compare checksums of local/remote files - update if
    necessary */
 int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
@@ -199,7 +207,6 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 	FILE* fp;
 	u32b lsum;
 	char buf[256];
-	char tmpname[256];
 
 	/* check how many LUA files were already checked (for 4.4.8.1.0.0 crash bug) */
 	if (Ind) Players[Ind]->warning_lua_count--;
@@ -208,8 +215,8 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 	if (c_fd == (struct ft_data*)NULL) {
 		return(0);
 	}
-	client_user_path(tmpname, c_fd->fname);
-	local_file_check(tmpname, &lsum);
+	//client_user_path(tmpname, c_fd->fname);
+	local_file_check(c_fd->fname, &lsum);
 	if (!(c_fd->state & FS_CHECK)) {
 		return(0);
 	}
@@ -230,8 +237,8 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 			return 0;
 		}
 
-		path_build(tmpname, sizeof(buf), ANGBAND_DIR, c_fd->fname);
-		client_user_path(buf, tmpname);
+		if (!client_user_path(buf, c_fd->fname))
+			path_build(buf, sizeof(buf), ANGBAND_DIR, c_fd->fname);
 		fp = fopen(buf, "rb");
 		if (!fp) {
 			remove_ft(c_fd);
@@ -240,8 +247,8 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 		c_fd->fp = fp;
 		c_fd->ind = ind;
 		c_fd->state = (FS_SEND | FS_NEW);
-		client_user_path(tmpname, c_fd->fname);
-		Send_file_init(c_fd->ind, c_fd->id, tmpname);
+		//client_user_path(tmpname, c_fd->fname);
+		Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 		return(1);
 	}
 	remove_ft(c_fd);
@@ -256,7 +263,6 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 	FILE* fp;
 	unsigned char local_digest[16];
 	char buf[256];
-	char tmpname[256];
 
 	/* check how many LUA files were already checked (for 4.4.8.1.0.0 crash bug) */
 	if (Ind) Players[Ind]->warning_lua_count--;
@@ -265,8 +271,8 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 	if (c_fd == (struct ft_data*)NULL) {
 		return(0);
 	}
-	client_user_path(tmpname, c_fd->fname);
-	local_file_check_new(tmpname, local_digest);
+	//client_user_path(tmpname, c_fd->fname);
+	local_file_check_new(c_fd->fname, local_digest);
 	if (!(c_fd->state & FS_CHECK)) {
 		return(0);
 	}
@@ -287,8 +293,8 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 			return 0;
 		}
 
-		path_build(tmpname, sizeof(buf), ANGBAND_DIR, c_fd->fname);
-		client_user_path(buf, tmpname);
+		if (!client_user_path(buf, c_fd->fname))
+			path_build(buf, sizeof(buf), ANGBAND_DIR, c_fd->fname);
 		fp = fopen(buf, "rb");
 		if (!fp) {
 			remove_ft(c_fd);
@@ -297,8 +303,8 @@ int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16
 		c_fd->fp = fp;
 		c_fd->ind = ind;
 		c_fd->state = (FS_SEND | FS_NEW);
-		client_user_path(tmpname, c_fd->fname);
-		Send_file_init(c_fd->ind, c_fd->id, tmpname);
+		//client_user_path(tmpname, c_fd->fname);
+		Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 		return(1);
 	}
 	remove_ft(c_fd);
@@ -398,7 +404,7 @@ int local_file_init(int ind, unsigned short fnum, char *fname) {
 	int fd;
 #endif
 	char tname[256] = "tomexfer.XXXXXX";
-	char tmpname[256];
+	//char tmpname[256];
 
 	c_fd = getfile(ind, 0);		/* get empty space */
 	if (c_fd == (struct ft_data*)NULL) return(0);
@@ -420,8 +426,8 @@ int local_file_init(int ind, unsigned short fnum, char *fname) {
 #endif
 		c_fd->id = fnum;
 		c_fd->ind = ind;	/* not really needed for client */
-		client_user_path(tmpname, c_fd->fname);
-		strncpy(tmpname, fname, 255);
+		//client_user_path(tmpname, c_fd->fname);
+		strncpy(c_fd->fname, fname, 255);
 		strncpy(c_fd->tname, tname, 255);
 		return(1);
 	}
@@ -457,15 +463,14 @@ int local_file_close(int ind, unsigned short fnum) {
 	size_t bytes;
 	struct ft_data *c_fd;
 	char buf[4096];
-	char tmpname[4096];
 	int size = 4096;
 	int success = 1;
 	FILE *wp;
 	c_fd = getfile(ind, fnum);
 	if(c_fd == (struct ft_data *) NULL) return 0;
 
-	path_build(tmpname, 4096, ANGBAND_DIR, c_fd->fname);
-	client_user_path(buf, tmpname);
+	if (!client_user_path(buf, c_fd->fname))
+		path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);
 
 	wp = fopen(buf, "wb");	/* b for windows */
 	if (wp) {
@@ -532,10 +537,9 @@ int local_file_check(char *fname, u32b *sum) {
 	int success = 0; /* 0 = success, 1 = failure */
 	char buffer[4096];
 	char pathbuf[256];
-	char tmpname[256];
 
-	path_build(tmpname, sizeof(pathbuf), ANGBAND_DIR, fname);
-	client_user_path(pathbuf, tmpname);
+	if (!client_user_path(pathbuf, fname))
+		path_build(pathbuf, sizeof(pathbuf), ANGBAND_DIR, fname);
 
 	fp = fopen(pathbuf, "rb");	/* b for windows.. */
 	if (!fp) {
@@ -567,10 +571,9 @@ int local_file_check_new(char *fname, unsigned char digest_out[16]) {
 	char buffer[4096];
 	char pathbuf[256];
 	MD5_CTX ctx;
-	char tmpname[256];
 
-	path_build(tmpname, sizeof(pathbuf), ANGBAND_DIR, fname);
-	client_user_path(pathbuf, tmpname);
+	if (!client_user_path(pathbuf, fname))
+		path_build(pathbuf, sizeof(pathbuf), ANGBAND_DIR, fname);
 
 	fp = fopen(pathbuf, "rb");	/* b for windows.. */
 	if (!fp) {
