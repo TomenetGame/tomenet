@@ -1530,7 +1530,7 @@ static void Delete_player(int Ind) {
 bool Destroy_connection(int ind, char *reason_orig) {
 	connection_t	*connp = Conn[ind];
 	int		id = -1, len, sock;
-	char		pkt[MAX_CHARS];
+	char		pkt[MAX_CHARS_WIDE];
 	char		*reason;
 	int		i, player = 0;
 	char		traffic[50+1];

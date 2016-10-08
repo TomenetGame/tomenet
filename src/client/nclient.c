@@ -1389,7 +1389,7 @@ int Receive_reply(int *replyto, int *result) {
 
 int Receive_quit(void) {
 	unsigned char		pkt;
-	char			reason[MAX_CHARS];
+	char			reason[MAX_CHARS_WIDE];
 
 	/* game ends, so leave all other screens like
 	   shops or browsed books or skill screen etc */
