@@ -112,9 +112,14 @@ static int new_fileid() {
 
 /* Hack: Replace a path aimed at ANGBAND_DIR+user or ANGBAND_DIR+scpt by ANGBAND_DIR_USER and ANGBAND_DIR_SCPT respectively.
    The reason we need to do this is that on Windows clients those two folders might not be in the TomeNET lib folder but
-   actually in the OS home path of that user.
+   actually in the OS home path of that user. This function is only really does anything useful if WINDOWS_USER_HOME is defined and used.
    Returns TRUE if newpath has been rebuilt and is therefore ready to use. */
 static bool client_user_path(char *newpath, cptr oldpath) {
+#if !defined(WINDOWS)
+	strcpy(newpath, oldpath);
+	return FALSE;
+#endif
+
 	if (!is_client_side) {
 		strcpy(newpath, oldpath);
 		return FALSE;
