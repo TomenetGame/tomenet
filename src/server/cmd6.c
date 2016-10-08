@@ -7721,7 +7721,7 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 15 :if (!(p_ptr->melee_techniques & MT_SRUN)) return; /* Shadow Run */
+	case 14 :if (!(p_ptr->melee_techniques & MT_SRUN)) return; /* Shadow Run */
 		shadow_run(Ind);
 s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
