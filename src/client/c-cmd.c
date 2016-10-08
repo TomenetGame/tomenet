@@ -3,7 +3,7 @@
 
 #ifdef WINDOWS
 static const char *strcasestr(const char *big, const char *little) {
-	const char *ret;
+	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0;
 	int L = strlen(little),l = 0;
 
