@@ -195,13 +195,9 @@ void (*quit_aux)(cptr) = NULL;
  * Otherwise, plog() 'str' and exit with an error code of -1.
  * But always use 'quit_aux', if set, before anything else.
  */
-#ifdef CLIENT_SIDE /* all RETRY_LOGIN stuff here is for client-side only */
- #define RETRY_LOGIN
-#endif
-#ifdef RETRY_LOGIN
+extern bool is_client_side;
 extern bool rl_connection_destructible, rl_connection_destroyed;
 extern byte rl_connection_state;
-#endif
 void quit(cptr str) {
 	char buf[1024];
 
@@ -212,8 +208,8 @@ void quit(cptr str) {
 	} else
 		buf[0] = '\0';
 
-#ifdef RETRY_LOGIN
-	if (rl_connection_destructible && rl_connection_state < 2) {
+	/* Needed for RETRY_LOGIN */
+	if (is_client_side && rl_connection_destructible && rl_connection_state < 2) {
 		/* partially execute quit_aux(): */
 		/* Display the quit reason */
 		if (str && *str) plog(str);
@@ -222,18 +218,16 @@ void quit(cptr str) {
 		rl_connection_destroyed = TRUE;
 		return;
 	}
-#endif
 
 	/* Attempt to use the aux function */
 	if (quit_aux) (*quit_aux)(str ? buf : NULL);
 
-#ifdef RETRY_LOGIN
-	if (rl_connection_destructible && rl_connection_state >= 2) {
+	/* Needed for RETRY_LOGIN */
+	if (is_client_side && rl_connection_destructible && rl_connection_state >= 2) {
 		/* prepare for revival */
 		rl_connection_destroyed = TRUE;
 		return;
 	}
-#endif
 
 	/* Success */
 	if (!str) (void)(exit(0));

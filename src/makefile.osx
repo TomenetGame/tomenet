@@ -200,10 +200,7 @@ LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 
 
 # Compile a client with 'test client' version/tag
-tomenet.test: CFLAGS += -DTEST_CLIENT -O0 -DCLIENT_SIDE
-
-# Add client-side flag to normal client too
-tomenet: CFLAGS += -DCLIENT_SIDE
+tomenet.test: CFLAGS += -DTEST_CLIENT -O0
 
 
 # Lua

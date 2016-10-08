@@ -1050,3 +1050,10 @@ s32b mail_timeout[MAX_MERCHANT_MAILS];
 bool mail_COD[MAX_MERCHANT_MAILS];
 u32b mail_xfee[MAX_MERCHANT_MAILS];
 #endif
+
+/* We are not the client */
+bool is_client_side = FALSE;
+
+/* Needed for RETRY_LOGIN in the client */
+bool rl_connection_destructible = FALSE, rl_connection_destroyed = FALSE;
+byte rl_connection_state = 0;
