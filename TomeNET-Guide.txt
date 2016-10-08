@@ -6805,6 +6805,11 @@ You can also put up 'signs' in your store by inscribing a (non-massive)
 piece of wood "@S:" followed by the desired sign text. Signs are just for
 viewing and cannot be purchased by customers. For example inscribe it:
   @S:Welcome to my store!
+Items in stores are sorted by their type. Inscribed store signs however are not
+sorted, and other items that are sorted in will pass them by when checking
+where they are to be sorted in. This allows you to rearrange the store signs at
+will, but might need some experimenting and shuffling around all other items
+till you achieve the desired result.
 
 If another player buys your item, there will be a 10% fee that is cut from your
 profits.

@@ -1204,48 +1204,55 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	if (st_ptr->stock_num >= st_ptr->stock_size) return (-1);
 
 
-    if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)) {
-
-	/* Check existing slots to see if we must "slide" */
-	for (slot = 0; slot < st_ptr->stock_num; slot++) {
-		/* Get that item */
-		j_ptr = &st_ptr->stock[slot];
-
-		/* Objects sort by decreasing type */
-		if (o_ptr->tval > j_ptr->tval) break;
-		if (o_ptr->tval < j_ptr->tval) continue;
-
-		/* Objects sort by increasing sval */
-		if (o_ptr->sval < j_ptr->sval) break;
-		if (o_ptr->sval > j_ptr->sval) continue;
-
-		/* (experimental) for libaries/book stores: sort [spell scrolls] by school? */
-		if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
-			if (get_spellbook_store_order(o_ptr->pval) < get_spellbook_store_order(j_ptr->pval)) break;
-			if (get_spellbook_store_order(o_ptr->pval) > get_spellbook_store_order(j_ptr->pval)) continue;
-#ifdef STORE_SORT_SPELLS_BY_NAME
-			if (strcmp(school_spells[o_ptr->pval].name, school_spells[j_ptr->pval].name) < 0) break;
-			continue;
+	if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)
+#ifdef PLAYER_STORES
+	    /* Don't sort store signs */
+	    && !(st_ptr->player_owner && o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOOD_PIECE && o_ptr->note && strstr(quark_str(o_ptr->note), "@S:"))
 #endif
+	    ) {
+
+		/* Check existing slots to see if we must "slide" */
+		for (slot = 0; slot < st_ptr->stock_num; slot++) {
+			/* Get that item */
+			j_ptr = &st_ptr->stock[slot];
+
+#ifdef PLAYER_STORES
+			/* Always skip store signs, since they are usually 'titles', aka above objects they describe */
+			if (st_ptr->player_owner && j_ptr->tval == TV_JUNK && j_ptr->sval == SV_WOOD_PIECE && j_ptr->note && strstr(quark_str(j_ptr->note), "@S:")) continue;
+#endif
+
+			/* Objects sort by decreasing type */
+			if (o_ptr->tval > j_ptr->tval) break;
+			if (o_ptr->tval < j_ptr->tval) continue;
+
+			/* Objects sort by increasing sval */
+			if (o_ptr->sval < j_ptr->sval) break;
+			if (o_ptr->sval > j_ptr->sval) continue;
+
+			/* (experimental) for libaries/book stores: sort [spell scrolls] by school? */
+			if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
+				if (get_spellbook_store_order(o_ptr->pval) < get_spellbook_store_order(j_ptr->pval)) break;
+				if (get_spellbook_store_order(o_ptr->pval) > get_spellbook_store_order(j_ptr->pval)) continue;
+#ifdef STORE_SORT_SPELLS_BY_NAME
+				if (strcmp(school_spells[o_ptr->pval].name, school_spells[j_ptr->pval].name) < 0) break;
+				continue;
+#endif
+			}
+
+			/* Evaluate that slot */
+			j_value = object_value(0, j_ptr);
+
+			/* Objects sort by decreasing value */
+			if (value > j_value) break;
+			if (value < j_value) continue;
 		}
 
-		/* Evaluate that slot */
-		j_value = object_value(0, j_ptr);
-
-		/* Objects sort by decreasing value */
-		if (value > j_value) break;
-		if (value < j_value) continue;
+		/* Slide the others up */
+		for (i = st_ptr->stock_num; i > slot; i--)
+			st_ptr->stock[i] = st_ptr->stock[i-1];
+	} else { /* is museum -> don't order items! */
+		slot = st_ptr->stock_num;
 	}
-
-	/* Slide the others up */
-	for (i = st_ptr->stock_num; i > slot; i--)
-		st_ptr->stock[i] = st_ptr->stock[i-1];
-
-    } else { /* is museum -> don't order items! */
-
-	slot = st_ptr->stock_num;
-
-    }
 
 	/* More stuff now */
 	st_ptr->stock_num++;
