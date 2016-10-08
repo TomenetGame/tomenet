@@ -5289,57 +5289,70 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	/* Determine the "value" of the item */
 	value = object_value(Ind, o_ptr);
 
-	/* Check existing slots to see if we must "slide" */
-	for (slot = 0; slot < h_ptr->stock_num; slot++) {
-		/* Get that item */
-		j_ptr = &h_ptr->stock[slot];
+#ifdef PLAYER_STORES
+	/* Don't sort store signs */
+	if (!(o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOOD_PIECE && o_ptr->note && strstr(quark_str(o_ptr->note), "@S:")))
+#endif
+	{
+		/* Check existing slots to see if we must "slide" */
+		for (slot = 0; slot < h_ptr->stock_num; slot++) {
+			/* Get that item */
+			j_ptr = &h_ptr->stock[slot];
 
-		/* Hack -- readable books always come first */
+#ifdef PLAYER_STORES
+			/* Always skip store signs, since they are usually 'titles', aka above objects they describe */
+			if (j_ptr->tval == TV_JUNK && j_ptr->sval == SV_WOOD_PIECE && j_ptr->note && strstr(quark_str(j_ptr->note), "@S:")) continue;
+#endif
+
+			/* Hack -- readable books always come first */
 #if 0
-		if ((o_ptr->tval == cp_ptr->spell_book) &&
-			(j_ptr->tval != cp_ptr->spell_book)) break;
-		if ((j_ptr->tval == cp_ptr->spell_book) &&
-			(o_ptr->tval != cp_ptr->spell_book)) continue;
+			if ((o_ptr->tval == cp_ptr->spell_book) &&
+				(j_ptr->tval != cp_ptr->spell_book)) break;
+			if ((j_ptr->tval == cp_ptr->spell_book) &&
+				(o_ptr->tval != cp_ptr->spell_book)) continue;
 #endif	// 0
 
-		/* Objects sort by decreasing type */
-		if (o_ptr->tval > j_ptr->tval) break;
-		if (o_ptr->tval < j_ptr->tval) continue;
+			/* Objects sort by decreasing type */
+			if (o_ptr->tval > j_ptr->tval) break;
+			if (o_ptr->tval < j_ptr->tval) continue;
 
-		/* Can happen in the home */
-		if (!object_aware_p(Ind, o_ptr)) continue;
-		if (!object_aware_p(Ind, j_ptr)) break;
+			/* Can happen in the home */
+			if (!object_aware_p(Ind, o_ptr)) continue;
+			if (!object_aware_p(Ind, j_ptr)) break;
 
-		/* Objects sort by increasing sval */
-		if (o_ptr->sval < j_ptr->sval) break;
-		if (o_ptr->sval > j_ptr->sval) continue;
+			/* Objects sort by increasing sval */
+			if (o_ptr->sval < j_ptr->sval) break;
+			if (o_ptr->sval > j_ptr->sval) continue;
 
-		/* (experimental) for libaries/book stores: sort [spell scrolls] by school? */
-		if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
-			if (get_spellbook_store_order(o_ptr->pval) < get_spellbook_store_order(j_ptr->pval)) break;
-			if (get_spellbook_store_order(o_ptr->pval) > get_spellbook_store_order(j_ptr->pval)) continue;
-		}
+			/* (experimental) for libaries/book stores: sort [spell scrolls] by school? */
+			if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
+				if (get_spellbook_store_order(o_ptr->pval) < get_spellbook_store_order(j_ptr->pval)) break;
+				if (get_spellbook_store_order(o_ptr->pval) > get_spellbook_store_order(j_ptr->pval)) continue;
+			}
 
-		/* Objects in the home can be unknown */
-		if (!object_known_p(Ind, o_ptr)) continue;
-		if (!object_known_p(Ind, j_ptr)) break;
+			/* Objects in the home can be unknown */
+			if (!object_known_p(Ind, o_ptr)) continue;
+			if (!object_known_p(Ind, j_ptr)) break;
 
 
-		/*
-		 * Hack:  otherwise identical rods sort by
-		 * increasing recharge time --dsb
-		 */
+			/*
+			 * Hack:  otherwise identical rods sort by
+			 * increasing recharge time --dsb
+			 */
 #if 0
-		if (o_ptr->tval == TV_ROD_MAIN) {
-			if (o_ptr->timeout < j_ptr->timeout) break;
-			if (o_ptr->timeout > j_ptr->timeout) continue;
-		}
+			if (o_ptr->tval == TV_ROD_MAIN) {
+				if (o_ptr->timeout < j_ptr->timeout) break;
+				if (o_ptr->timeout > j_ptr->timeout) continue;
+			}
 #endif	// 0
 
-		/* Objects sort by decreasing value */
-		j_value = object_value(Ind, j_ptr);
-		if (value > j_value) break;
-		if (value < j_value) continue;
+			/* Objects sort by decreasing value */
+			j_value = object_value(Ind, j_ptr);
+			if (value > j_value) break;
+			if (value < j_value) continue;
+		}
+	} else {
+		slot = h_ptr->stock_num;
 	}
 
 	/* Slide the others up */
