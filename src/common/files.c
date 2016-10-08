@@ -115,7 +115,7 @@ static int new_fileid() {
    actually in the OS home path of that user. This function is only really does anything useful if WINDOWS_USER_HOME is defined and used.
    Returns TRUE if newpath has been rebuilt and is therefore ready to use. */
 static bool client_user_path(char *newpath, cptr oldpath) {
-#if !defined(WINDOWS)
+#ifndef WINDOWS
 	strcpy(newpath, oldpath);
 	return FALSE;
 #endif
