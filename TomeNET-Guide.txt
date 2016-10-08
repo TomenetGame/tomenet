@@ -16720,6 +16720,8 @@ The techniques are as follows:
         weapon that you have equipped. If you have two weapons equipped, it is
         applied to both. This technique does not work without a weapon. If you
         take off a weapon, the poison branding will fade away.
+        The poison will last for a short while, so it's best to apply it before
+        engaging in a fight.
     Perceive Noise      3 stamina
         Listen carefully to every sound in your surroundings, thereby locating
         creatures. Some entities are so quiet that they cannot be detected this
