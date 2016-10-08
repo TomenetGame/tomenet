@@ -8599,7 +8599,7 @@ void kill_xorder(int Ind) {
 		int avg, rlev = r_info[xorders[pos].type].level, plev = p_ptr->lev;
 
 		msg_format(Ind, "\374\377yYou have carried out the %s extermination order!", r_name + r_info[xorders[pos].type].name);
-		s_printf("r_info quest: %s won the %s extermination order\n", p_ptr->name, r_name + r_info[xorders[pos].type].name);
+		s_printf("r_info quest: %s won the %s extermination order (%d,%d,%d)\n", p_ptr->name, r_name + r_info[xorders[pos].type].name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		strcpy(temp, r_name + r_info[xorders[pos].type].name);
 		strcat(temp, " extermination");
 		unique_quark = quark_add(temp);
@@ -8710,9 +8710,10 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 		return(FALSE);
 	}
 
-	s_printf("Added extermination order id %d (players %d), target %d (%s): %d x %s\n",
+	s_printf("Added extermination order id %d (players %d), target %d (%s): %d x %s (%d,%d,%d)\n",
 	    xorders[i].id, xorders[i].active, target, p_ptr != NULL ? p_ptr->name : "NULL",
-	    num, r_name + r_info[type].name);
+	    num, r_name + r_info[type].name,
+	    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 	questid++;
 	if (questid == 0) questid = 1;
 	if (target != Ind) {
