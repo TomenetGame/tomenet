@@ -4014,7 +4014,7 @@ static int Receive_login(int ind) {
 		WIPE(&acc, struct account);
 
 		if (!connp->nick[0]) {
-			Destroy_connection(ind, "You need to enter a name and password! If you're a new player, just enter a name and password of your choice!");
+			Destroy_connection(ind, "Pick a name and password!"); //for older clients up to 4.6.1a which didn't prevent entering empty creds
 			return -1;
 		}
 		if (!connp->pass[0]) {
