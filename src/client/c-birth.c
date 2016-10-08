@@ -96,6 +96,8 @@ static void choose_name(void) {
 	prt("Enter your account name above.", 21, 2);
 #endif
 
+	enter_name:
+
 	/* Ask until happy */
 	while (1) {
 		/* Go to the "name" area */
@@ -130,6 +132,12 @@ static void choose_name(void) {
 	while (*cp == ' ') {
 		*cp = 0;
 		cp--;
+	}
+
+	/* Don't allow empty name */
+	if (!nick[0]) {
+		rl_password = FALSE; //paranoia, effectless
+		goto enter_name;
 	}
 
 	/* Always start on upper-case */
@@ -179,6 +187,9 @@ static bool enter_password(void) {
 		if (askfor_aux(tmp, PASSWORD_LEN - 1, ASKFOR_PRIVATE)) strcpy(pass, tmp);
 		/* abort and jump back to name prompt? */
 		else return FALSE;
+
+		/* Don't allow empty password */
+		if (!pass[0]) continue;
 
 		/* All done */
 		break;
