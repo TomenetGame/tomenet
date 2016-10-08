@@ -284,6 +284,14 @@
    using cmd_locate(). */
 #define LOCATE_KEEPS_OVL
 
+/* Enable o_*.lua 'Occult' magic schools (shamans, rogues, adventurers) */
+#define ENABLE_OCCULT
+
+/* Allow 'Vampire Paladins' aka Death Knights. Requires ENABLE_OCCULT. */
+#ifdef ENABLE_OCCULT
+ #define ENABLE_DEATHKNIGHT
+#endif
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
@@ -302,11 +310,6 @@
 #endif
 
 #ifdef TEST_SERVER
- #define ENABLE_OCCULT		/* Enable o_*.lua 'Occult' magic schools (shamans, rogues, adventurers) */
- #ifdef ENABLE_OCCULT
-  #define ENABLE_DEATHKNIGHT	/* Allow 'Vampire Paladins' aka Death Knights. Requires ENABLE_OCCULT. */
- #endif
-
  #define NEW_REMOVE_CURSE	/* rc has fail chance; allow projecting rc spell on others */
 
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
@@ -353,9 +356,6 @@
  #ifdef TEST_CLIENT
   #define BIGMAP_MINDLINK_HACK
  #endif
-
- /* Death Knight class? (ENABLE_OCCULT -> Vampire Paladin) */
- #define ENABLE_DEATHKNIGHT
 
  /* Atmospheric login screens, with animation, sound and music? */
  #define ATMOSPHERIC_INTRO
