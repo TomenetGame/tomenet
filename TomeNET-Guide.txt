@@ -6803,8 +6803,7 @@ which will make them unsellable, yet they will be on display on your store.
 
 You can also put up 'signs' in your store by inscribing a (non-massive)
 piece of wood "@S:" followed by the desired sign text. Signs are just for
-viewing and cannot be purchased by customers. For example inscribe any item
-in your shop this way:
+viewing and cannot be purchased by customers. For example inscribe it:
   @S:Welcome to my store!
 
 If another player buys your item, there will be a 10% fee that is cut from your
