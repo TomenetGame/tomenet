@@ -435,6 +435,9 @@ u32b client_color_map[16] = {
 	0xc79d55,	/* LIGHT UMBER */
 };
 
+/* Allow code in src/common/ to dynamically check that this is the client */
+bool is_client_side = TRUE;
+
 #ifdef RETRY_LOGIN
 bool rl_connection_destructible = FALSE, rl_connection_destroyed = FALSE, rl_password = FALSE;
 byte rl_connection_state = 0;

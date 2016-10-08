@@ -6956,7 +6956,11 @@ bool backup_estate(bool partial) {
 	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
 
 	/* create folder lib/save/estate if not existing */
+#ifdef WINDOWS
+	mkdir(buf2);
+#else
 	mkdir(buf2, 0770);
+#endif
 
 	/* scan all houses */
 	for (i = 0; i < num_houses; i++) {

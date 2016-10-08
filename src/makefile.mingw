@@ -223,10 +223,7 @@ NCC = gcc
 
 # Compile a client with 'test client' version/tag
 #tomenet.test.exe: CFLAGS += -DTEST_CLIENT -Og
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0 -DCLIENT_SIDE
-
-# Add client-side flag to normal client too
-tomenet: CFLAGS += -DCLIENT_SIDE
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
 
 
 # Lua

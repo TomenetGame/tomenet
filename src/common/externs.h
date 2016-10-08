@@ -763,9 +763,8 @@ extern int stricmp(cptr a, cptr b);
 extern cptr longVersion;
 extern cptr shortVersion;
 
-/* only for sockbuf.c, on client-side */
-#ifdef CLIENT_SIDE
- #ifdef RETRY_LOGIN
-  extern bool rl_connection_destructible, rl_connection_destroyed;
- #endif
-#endif
+/* Defined as TRUE in src/client/variable.c and FALSE in src/server/variable.c */
+extern bool is_client_side;
+
+/* Needed for RETRY_LOGIN in the client */
+extern bool rl_connection_destructible, rl_connection_destroyed, rl_connection_state;

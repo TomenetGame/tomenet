@@ -681,7 +681,11 @@ void Receive_login(void) {
 			xhtml_screenshot("screenshot????");
 			/* Redraw title line */
 			Term_fresh();
+#ifdef WINDOWS
+			Sleep(1000);
+#else
 			usleep(1000000);
+#endif
 			prt("", 0, 0); //clear line
 			c_put_str(CHARSCREEN_COLOUR, "Character Overview", 0, 30);
 		}
