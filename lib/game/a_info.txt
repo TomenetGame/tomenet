@@ -2083,7 +2083,7 @@ D:is perfect against the terrible powers of Morgoth.
 N:153:of the Sandworm
 I:36:4:4
 W:30:3:80:85000
-P:6:0d0:0:0:35
+P:6:0d0:0:0:30
 F:IM_POISON | RES_ELEC | RES_FIRE | RES_ACID | SPECIAL_GENE
 F:TUNNEL | STR | STEALTH | INFRA | ESP_ANIMAL | HIDE_TYPE
 D:This powerful piece of armour was made using the remains of
