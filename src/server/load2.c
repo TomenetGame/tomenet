@@ -486,17 +486,26 @@ static void rd_item(object_type *o_ptr) {
 		rd_s16b(&o_ptr->xtra8);
 		rd_s16b(&o_ptr->xtra9);
 	} else {
-		rd_byte(&o_ptr->xtra1);
-		rd_byte(&o_ptr->xtra2);
+		rd_byte(&tmpbyte);
+		o_ptr->xtra1 = (s16b)tmpbyte;
+		rd_byte(&tmpbyte);
+		o_ptr->xtra2 = (s16b)tmpbyte;
 		/* more special powers (for self-made spellbook feature) */
 		if (!older_than(4, 3, 16)) {
-			rd_byte(&o_ptr->xtra3);
-			rd_byte(&o_ptr->xtra4);
-			rd_byte(&o_ptr->xtra5);
-			rd_byte(&o_ptr->xtra6);
-			rd_byte(&o_ptr->xtra7);
-			rd_byte(&o_ptr->xtra8);
-			rd_byte(&o_ptr->xtra9);
+			rd_byte(&tmpbyte);
+			o_ptr->xtra3 = (s16b)tmpbyte;
+			rd_byte(&tmpbyte);
+			o_ptr->xtra4 = (s16b)tmpbyte;
+			rd_byte(&tmpbyte);
+			o_ptr->xtra5 = (s16b)tmpbyte;
+			rd_byte(&tmpbyte);
+			o_ptr->xtra6 = (s16b)tmpbyte;
+			rd_byte(&tmpbyte);
+			o_ptr->xtra7 = (s16b)tmpbyte;
+			rd_byte(&tmpbyte);
+			o_ptr->xtra8 = (s16b)tmpbyte;
+			rd_byte(&tmpbyte);
+			o_ptr->xtra9 = (s16b)tmpbyte;
 		}
 	}
 
