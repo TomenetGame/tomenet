@@ -838,7 +838,7 @@ extern school_type *grab_school_type(s16b num);
 extern s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus);
 extern s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat);
 extern int get_inven_sval(int Ind, int inven_slot);
-extern int get_inven_xtra(int Ind, int inven_slot, int n);
+extern s16b get_inven_xtra(int Ind, int inven_slot, int n);
 extern bool get_item_aux(int *cp, cptr pmt, bool equip, bool inven, bool floor);
 extern int get_inven_pval(int Ind, int inven_slot);
 

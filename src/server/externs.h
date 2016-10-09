@@ -1130,7 +1130,7 @@ extern int Send_mini_map(int Ind, int y, byte *sa, char *sc);
 extern int Send_mini_map_pos(int Ind, int x, int y, byte a, char c);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval);
 extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval,
-    s16b xtra1, byte xtra2, byte xtra3, byte xtra4, byte xtra5, byte xtra6, byte xtra7, byte xtra8, byte xtra9);
+    s16b xtra1, s16b xtra2, s16b xtra3, s16b xtra4, s16b xtra5, s16b xtra6, s16b xtra7, s16b xtra8, s16b xtra9);
 extern int Send_store_special_str(int ind, char line, char col, char attr, char *str);
 extern int Send_store_special_char(int ind, char line, char col, char attr, char c);
 extern int Send_store_special_clr(int ind, char line_start, char line_end);
@@ -2242,7 +2242,7 @@ extern s32b lua_get_skill_mod(int Ind, int i);
 extern s32b lua_get_skill_value(int Ind, int i);
 extern void lua_fix_equip_slots(int Ind);
 extern int get_inven_sval(int Ind, int inven_slot);
-extern int get_inven_xtra(int Ind, int inven_slot, int n);
+extern s16b get_inven_xtra(int Ind, int inven_slot, int n);
 extern void lua_fix_skill_chart(int Ind);
 extern void lua_takeoff_costumes(int Ind);
 extern bool lua_is_unique(int r_idx);
