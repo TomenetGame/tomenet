@@ -1642,6 +1642,10 @@ void cmd_the_guide(void) {
 			cmd_uninscribe();
 			skip_redraw = TRUE;
 			continue;
+		case KTRL('T'):
+			xhtml_screenshot("screenshot????");
+			skip_redraw = TRUE;
+			continue;
 
 		/* navigate (up/down) */
 		case '8': case '\010': case 0x7F: //rl:'k'
