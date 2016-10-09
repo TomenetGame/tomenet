@@ -1750,7 +1750,7 @@ struct skill_player {
 	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
 	bool dev;                               /* Is the branch developped ? */
 	bool touched;				/* need refresh? */
-	char flags1;                            /* Skill flags */
+	u32b flags1;                            /* Skill flags */
 };
 
 
