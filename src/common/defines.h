@@ -88,8 +88,8 @@
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
-#define SF_VERSION_MINOR	6
-#define SF_VERSION_PATCH	10
+#define SF_VERSION_MINOR	7
+#define SF_VERSION_PATCH	0
 #define SF_VERSION_EXTRA	0
 
 /* For quests savefile purpose only */

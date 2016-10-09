@@ -701,7 +701,7 @@ static void wr_extra(int Ind) {
 		wr_byte(p_ptr->s_info[i].hidden);
 		wr_byte(p_ptr->s_info[i].dummy);
 #else
-		wr_byte(p_ptr->s_info[i].flags1);
+		wr_u32b(p_ptr->s_info[i].flags1);
 		wr_s32b(p_ptr->s_info[i].base_value);
 #endif
 	}
@@ -717,7 +717,7 @@ static void wr_extra(int Ind) {
 		wr_byte(p_ptr->s_info_old[i].hidden);
 		wr_byte(p_ptr->s_info_old[i].dummy);
 #else
-		wr_byte(p_ptr->s_info_old[i].flags1);
+		wr_u32b(p_ptr->s_info_old[i].flags1);
 		wr_s32b(p_ptr->s_info_old[i].base_value);
 #endif
 	}

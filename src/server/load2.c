@@ -1552,29 +1552,34 @@ static bool rd_extra(int Ind) {
 			rd_u16b(&p_ptr->s_info[i].mod);
 			rd_byte(&tmp8u);
 			p_ptr->s_info[i].dev = tmp8u;
-			rd_byte(&tmp8u);
-			if (!older_than(4, 4, 3)) {
-				p_ptr->s_info[i].flags1 = tmp8u;
+			if (!older_than(4, 7, 0)) {
+				rd_u32b(&p_ptr->s_info[i].flags1);
 				rd_s32b(&p_ptr->s_info[i].base_value);
 			} else {
-#if 0 //SMOOTHSKILLS
-				p_ptr->s_info[i].hidden = tmp8u;
-#else
-				if (tmp8u) p_ptr->s_info[i].flags1 |= SKF1_HIDDEN;
-#endif
-				if (!older_than(4, 3, 17)) {
-					rd_byte(&tmp8u);
-#if 0 //SMOOTHSKILLS
-					p_ptr->s_info[i].dummy = (tmp8u) ? TRUE : FALSE;
-#else
-					if (tmp8u) p_ptr->s_info[i].flags1 |= SKF1_DUMMY;
-#endif
+				rd_byte(&tmp8u);
+				if (!older_than(4, 4, 3)) {
+					p_ptr->s_info[i].flags1 = tmp8u;
+					rd_s32b(&p_ptr->s_info[i].base_value);
 				} else {
 #if 0 //SMOOTHSKILLS
-					p_ptr->s_info[i].dummy = FALSE;
+					p_ptr->s_info[i].hidden = tmp8u;
 #else
-					p_ptr->s_info[i].flags1 &= ~SKF1_DUMMY;
+					if (tmp8u) p_ptr->s_info[i].flags1 |= SKF1_HIDDEN;
 #endif
+					if (!older_than(4, 3, 17)) {
+						rd_byte(&tmp8u);
+#if 0 //SMOOTHSKILLS
+						p_ptr->s_info[i].dummy = (tmp8u) ? TRUE : FALSE;
+#else
+						if (tmp8u) p_ptr->s_info[i].flags1 |= SKF1_DUMMY;
+#endif
+					} else {
+#if 0 //SMOOTHSKILLS
+						p_ptr->s_info[i].dummy = FALSE;
+#else
+						p_ptr->s_info[i].flags1 &= ~SKF1_DUMMY;
+#endif
+					}
 				}
 			}
 			p_ptr->s_info[i].touched = TRUE;
@@ -1583,14 +1588,16 @@ static bool rd_extra(int Ind) {
 
 		/* /undoskills - mikaelh */
 		if (!older_than(4, 4, 4)) {
-			for (i = 0; i < tmp16u; ++i)
-			{
+			for (i = 0; i < tmp16u; ++i) {
 				rd_s32b(&p_ptr->s_info_old[i].value);
 				rd_u16b(&p_ptr->s_info_old[i].mod);
 				rd_byte(&tmp8u);
 				p_ptr->s_info_old[i].dev = tmp8u;
-				rd_byte(&tmp8u);
-				p_ptr->s_info_old[i].flags1 = tmp8u;
+				if (!older_than(4, 7, 0)) rd_u32b(&p_ptr->s_info_old[i].flags1);
+				else {
+					rd_byte(&tmp8u);
+					p_ptr->s_info_old[i].flags1 = tmp8u;
+				}
 				rd_s32b(&p_ptr->s_info_old[i].base_value);
 				p_ptr->s_info_old[i].touched = TRUE;
 			}
