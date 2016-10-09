@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		7
 #define VERSION_PATCH		0
-#define VERSION_EXTRA		0
+#define VERSION_EXTRA		1
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -52,25 +52,25 @@
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	7
 #define VERSION_PATCH_LATEST	0
-#define VERSION_EXTRA_LATEST	0
+#define VERSION_EXTRA_LATEST	1
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
-#define VERSION_MINOR_OUTDATED	6
-#define VERSION_PATCH_OUTDATED	1
-#define VERSION_EXTRA_OUTDATED	2
+#define VERSION_MINOR_OUTDATED	7
+#define VERSION_PATCH_OUTDATED	0
+#define VERSION_EXTRA_OUTDATED	0
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	1 /* should always be 1 to invalidate previous 'test' versions */
 
 /* Server release version tag (such as "a", "b" etc):
    Minimum client version tag required to "play 100%". */
-#define SERVER_VERSION_TAG	""
+#define SERVER_VERSION_TAG	"a"
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG	""
+#define CLIENT_VERSION_TAG	"a"
 
 
 /* Minimum client version required to be allowed to log in */
@@ -89,8 +89,8 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	7
-#define SF_VERSION_PATCH	0
-#define SF_VERSION_EXTRA	0
+#define SF_VERSION_PATCH	1
+#define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
 #define QUEST_SF_VERSION_MAJOR	1

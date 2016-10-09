@@ -3143,16 +3143,16 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 				/* hack: colour of fancy shirts or custom objects can vary  */
 				if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 				    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
-					if (!o_ptr->xtra1) o_ptr->xtra1 = (*ap); //wut.. remove this hack? should be superfluous anyway
-					(*ap) = o_ptr->xtra1;
+					if (!o_ptr->xtra1) o_ptr->xtra1 = (s16b)(*ap); //wut.. remove this hack? should be superfluous anyway
+					(*ap) = (byte)o_ptr->xtra1;
 					/* new: also allow custom char */
-					if (o_ptr->xtra2) (*cp) = o_ptr->xtra2;
+					if (o_ptr->xtra2) (*cp) = (char)o_ptr->xtra2;
 				}
 
 				/* quest items can have custom appearance too */
 				if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) {
-					(*cp) = o_ptr->xtra1;
-					(*ap) = o_ptr->xtra2;
+					(*cp) = (char)o_ptr->xtra1;
+					(*ap) = (byte)o_ptr->xtra2;
 				}
 
 				/* Abnormal attr */

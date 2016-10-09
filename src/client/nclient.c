@@ -1634,21 +1634,28 @@ int Receive_inven_wide(void) {
 	int	n;
 	char	ch;
 	char pos, attr, tval, sval, *insc;
-	byte xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
+	s16b xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
 
-	if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
-		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
+	if (is_newer_than(&server_version, 4, 7, 0, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
 		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
+		byte xtra1b = xtra1 & 0xFF, xtra2b = xtra2 & 0xFF, xtra3b = xtra3 & 0xFF, xtra4b = xtra4 & 0xFF, xtra5b = xtra5 & 0xFF, xtra6b = xtra6 & 0xFF, xtra7b = xtra7 & 0xFF, xtra8b = xtra8 & 0xFF, xtra9b = xtra9 & 0xFF;
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b, name)) <= 0)
 			return n;
 	} else if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
+		byte xtra1b = xtra1 & 0xFF, xtra2b = xtra2 & 0xFF, xtra3b = xtra3 & 0xFF, xtra4b = xtra4 & 0xFF, xtra5b = xtra5 & 0xFF, xtra6b = xtra6 & 0xFF, xtra7b = xtra7 & 0xFF, xtra8b = xtra8 & 0xFF, xtra9b = xtra9 & 0xFF;
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
-		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b, name)) <= 0)
 			return n;
 	} else {
+		byte xtra1b = xtra1 & 0xFF, xtra2b = xtra2 & 0xFF, xtra3b = xtra3 & 0xFF, xtra4b = xtra4 & 0xFF, xtra5b = xtra5 & 0xFF, xtra6b = xtra6 & 0xFF, xtra7b = xtra7 & 0xFF, xtra8b = xtra8 & 0xFF, xtra9b = xtra9 & 0xFF;
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
-		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b, name)) <= 0)
 			return n;
 	}
 
@@ -2922,15 +2929,21 @@ int Receive_store_wide(void) {
 	char	ch, pos, name[ONAME_LEN], tval, sval;
 	byte	attr;
 	s16b	wgt, num, pval;
-	byte	xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
+	s16b	xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 
 	if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%hd%c%c%c%c%c%c%c%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
 		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9)) <= 0)
 			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
+		byte xtra1b = xtra1 & 0xFF, xtra2b = xtra2 & 0xFF, xtra3b = xtra3 & 0xFF, xtra4b = xtra4 & 0xFF, xtra5b = xtra5 & 0xFF, xtra6b = xtra6 & 0xFF, xtra7b = xtra7 & 0xFF, xtra8b = xtra8 & 0xFF, xtra9b = xtra9 & 0xFF;
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%hd%c%c%c%c%c%c%c%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b)) <= 0)
+			return n;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c%hd%c%c%c%c%c%c%c%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
-		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9)) <= 0)
+		byte xtra1b = xtra1 & 0xFF, xtra2b = xtra2 & 0xFF, xtra3b = xtra3 & 0xFF, xtra4b = xtra4 & 0xFF, xtra5b = xtra5 & 0xFF, xtra6b = xtra6 & 0xFF, xtra7b = xtra7 & 0xFF, xtra8b = xtra8 & 0xFF, xtra9b = xtra9 & 0xFF;
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b)) <= 0)
 			return n;
 	}
 

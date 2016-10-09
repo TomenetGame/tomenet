@@ -6251,12 +6251,12 @@ byte get_attr_from_tval(object_type *o_ptr) {
 
 	if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
-		if (!o_ptr->xtra1) o_ptr->xtra1 = attr;
-		return o_ptr->xtra1;
+		if (!o_ptr->xtra1) o_ptr->xtra1 = (s16b)attr;
+		return (byte)o_ptr->xtra1;
 	}
 
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST)
-		return o_ptr->xtra2;
+		return (byte)o_ptr->xtra2;
 
 #if 0
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOOD_PIECE)

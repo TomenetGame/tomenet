@@ -1175,7 +1175,7 @@ void lua_get_date(int *weekday, int *day, int *month, int *year)
 int get_inven_sval(int Ind, int inven_slot) {
 	return (Players[Ind]->inventory[inven_slot].sval);
 }
-int get_inven_xtra(int Ind, int inven_slot, int n) {
+s16b get_inven_xtra(int Ind, int inven_slot, int n) {
 	switch (n) {
 	case 1: return (Players[Ind]->inventory[inven_slot].xtra1);
 	case 2: return (Players[Ind]->inventory[inven_slot].xtra2);

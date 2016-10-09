@@ -4064,11 +4064,11 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 	/* hack: colour of fancy shirts or custom objects can vary  */
 	if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
-		if (!o_ptr->xtra1) o_ptr->xtra1 = attr; //wut.. remove this hack? should be superfluous anyway
-			attr = o_ptr->xtra1;
+		if (!o_ptr->xtra1) o_ptr->xtra1 = (s16b)attr; //wut.. remove this hack? should be superfluous anyway
+			attr = (byte)o_ptr->xtra1;
 	}
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST)
-		attr = o_ptr->xtra2; //^^
+		attr = (byte)o_ptr->xtra2; //^^
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI))
 	    //#ifdef CLIENT_SHIMMER whatever..
 		attr = TERM_HALF;

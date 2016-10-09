@@ -320,7 +320,7 @@ int get_inven_pval(int Ind, int inven_slot) {
 	(void) Ind; /* suppress compiler warning */
 	return (inventory[inven_slot].pval);
 }
-int get_inven_xtra(int Ind, int inven_slot, int n) {
+s16b get_inven_xtra(int Ind, int inven_slot, int n) {
 	(void) Ind; /* suppress compiler warning */
 	/* browsing item in a store? */
 	if (inven_slot < 0) {

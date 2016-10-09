@@ -1130,7 +1130,7 @@ extern int Send_mini_map(int Ind, int y, byte *sa, char *sc);
 extern int Send_mini_map_pos(int Ind, int x, int y, byte a, char c);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval);
 extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval,
-    byte xtra1, byte xtra2, byte xtra3, byte xtra4, byte xtra5, byte xtra6, byte xtra7, byte xtra8, byte xtra9);
+    s16b xtra1, byte xtra2, byte xtra3, byte xtra4, byte xtra5, byte xtra6, byte xtra7, byte xtra8, byte xtra9);
 extern int Send_store_special_str(int ind, char line, char col, char attr, char *str);
 extern int Send_store_special_char(int ind, char line, char col, char attr, char c);
 extern int Send_store_special_clr(int ind, char line_start, char line_end);

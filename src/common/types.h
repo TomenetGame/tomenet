@@ -722,16 +722,16 @@ struct object_type {
 
 	byte mode;			/* Mode of player who found it */
 
-	byte xtra1;			/* Extra info type, for various purpose */
-	byte xtra2;			/* Extra info index */
+	s16b xtra1;			/* Extra info type, for various purpose */
+	s16b xtra2;			/* Extra info index */
 	/* more info added for self-made spellbook feature Adam suggested - C. Blue */
-	byte xtra3;			/* Extra info */
-	byte xtra4;			/* Extra info */
-	byte xtra5;			/* Extra info */
-	byte xtra6;			/* Extra info */
-	byte xtra7;			/* Extra info */
-	byte xtra8;			/* Extra info */
-	byte xtra9;			/* Extra info */
+	s16b xtra3;			/* Extra info */
+	s16b xtra4;			/* Extra info */
+	s16b xtra5;			/* Extra info */
+	s16b xtra6;			/* Extra info */
+	s16b xtra7;			/* Extra info */
+	s16b xtra8;			/* Extra info */
+	s16b xtra9;			/* Extra info */
 
 	char uses_dir;			/* Client-side: Uses a direction or not? (for rods) */
 

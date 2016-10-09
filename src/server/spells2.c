@@ -8271,7 +8271,7 @@ void tome_creation_aux(int Ind, int item) {
 	bool		okay = FALSE;
 	object_type	*o_ptr, *o2_ptr;
 	char		o_name[ONAME_LEN];
-	byte		*xtra;
+	s16b		*xtra;
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];

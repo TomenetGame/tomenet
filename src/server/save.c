@@ -177,16 +177,16 @@ static void wr_item(object_type *o_ptr) {
 
 	wr_u16b(o_ptr->name2b);
 
-	wr_byte(o_ptr->xtra1);
-	wr_byte(o_ptr->xtra2);
+	wr_s16b(o_ptr->xtra1);
+	wr_s16b(o_ptr->xtra2);
 	/* more info, originally for self-made spellbook feature */
-	wr_byte(o_ptr->xtra3);
-	wr_byte(o_ptr->xtra4);
-	wr_byte(o_ptr->xtra5);
-	wr_byte(o_ptr->xtra6);
-	wr_byte(o_ptr->xtra7);
-	wr_byte(o_ptr->xtra8);
-	wr_byte(o_ptr->xtra9);
+	wr_s16b(o_ptr->xtra3);
+	wr_s16b(o_ptr->xtra4);
+	wr_s16b(o_ptr->xtra5);
+	wr_s16b(o_ptr->xtra6);
+	wr_s16b(o_ptr->xtra7);
+	wr_s16b(o_ptr->xtra8);
+	wr_s16b(o_ptr->xtra9);
 
 	wr_s32b(o_ptr->marked);
 	wr_byte(o_ptr->marked2);
