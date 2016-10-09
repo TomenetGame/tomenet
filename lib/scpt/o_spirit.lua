@@ -174,7 +174,7 @@ DETECTCREATURES = add_spell {
 	["level"] = 	20,
 	["mana"] = 	5,
 	["mana_max"] = 	5,
-	["fail"] = 	10,
+	["fail"] = 	-10,
 	["spell"] = 	function()
 		detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
 	end,
