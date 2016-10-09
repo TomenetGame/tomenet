@@ -2,7 +2,7 @@
 |      TomeNET Guide      |
 +=========================+-
 | Latest update: 8. October 2016 - written by C. Blue (c_blue@gmx.net)
-| for TomeNET version v4.7.0 - official websites are:
+| for TomeNET version v4.7.0a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 |
