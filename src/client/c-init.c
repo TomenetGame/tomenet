@@ -3337,6 +3337,15 @@ void client_init(char *argv1, bool skip) {
 		message__next_impscroll = message__last_impscroll = message__head_impscroll = message__tail_impscroll = 0;
  #endif
 
+		/* reset inventory */
+		for (bytes = 0; bytes < INVEN_TOTAL; bytes++) {
+			WIPE(&inventory[bytes], object_type);
+			inventory_name[bytes][0] = 0;
+			inventory_inscription[bytes] = 0;
+			inventory_inscription_len[bytes] = 0;
+		}
+		item_newest = -1;
+
 		/* retuuurrrnnnn... */
 		goto retry_contact;
 	}
