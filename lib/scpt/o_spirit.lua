@@ -66,10 +66,10 @@ OCURSEDD_II = add_spell {
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + 100 + get_level(Ind, OCURSEDD_II, 100), "points and curses for")
+		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 170), "points and curses for")
 	end,
 	["info"] = 	function()
-		return "power "..(10 + 100 + get_level(Ind, OCURSEDD_II, 100))
+		return "power "..(10 + get_level(Ind, OCURSEDD_I, 170))
 	end,
 	["desc"] = 	{ "Curse an enemy, causing wounds.",
 			  "Does not work against creatures who cannot bleed.", }
@@ -80,17 +80,17 @@ OCURSEDD_III = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
 	["fail"] = 	-80,
 	["stat"] = 	A_WIS,
 	["ftk"] = 1,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + 200 + get_level(Ind, OCURSEDD_III, 100), "points and curses for")
+		fire_grid_bolt(Ind, GF_CAUSE, args.dir, 10 + get_level(Ind, OCURSEDD_I, 290), "points and curses for")
 	end,
 	["info"] = 	function()
-		return "power "..(10 + 200 + get_level(Ind, OCURSEDD_III, 100))
+		return "power "..(10 + get_level(Ind, OCURSEDD_I, 290))
 	end,
 	["desc"] = 	{ "Curse an enemy, causing wounds.",
 			  "Does not work against creatures who cannot bleed.", }
@@ -192,7 +192,7 @@ function get_litebeam_dam(Ind, limit_lev)
 	lev = get_level(Ind, LITEBEAM_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 5 + (lev / 2), 7 + (lev / 2) + 1
+	return 5 + (lev / 2), 7 + ((lev * 2) / 3) + 1
 end
 LITEBEAM_I = add_spell {
 	["name"] = 	"Spear of Light I",
@@ -265,7 +265,7 @@ function get_olightningbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, OLIGHTNINGBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 3 + (lev / 2), 5 + (lev / 2) - 1
+	return 3 + (lev / 2), 5 + ((lev * 2) / 3) - 1
 end
 OLIGHTNINGBOLT_I = add_spell {
 	["name"] = 	"Lightning I",

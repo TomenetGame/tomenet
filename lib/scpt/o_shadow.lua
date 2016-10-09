@@ -251,7 +251,7 @@ function get_darkbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, DARKBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 5 + (lev / 2), 7 + (lev / 2) + 1
+	return 5 + (lev / 2), 7 + ((lev * 2) / 3) + 1
 end
 DARKBOLT_I = add_spell {
 	["name"] = 	"Shadow Bolt I",
@@ -384,7 +384,7 @@ function get_chaosbolt_dam(Ind)
 	--lev = get_level(Ind, CHAOSBOLT, 50) + 20
 	--slightly more damage:
 	lev = get_level(Ind, CHAOSBOLT, 50) + 21
-	return 5 + (lev / 2), 7 + (lev / 2) + 1
+	return 5 + (lev / 2), 7 + ((lev * 2) / 3) + 1
 end
 CHAOSBOLT = add_spell {
 	["name"] = 	"Chaos Bolt",
@@ -414,7 +414,7 @@ function get_netherbolt_dam(Ind)
 	--lev = get_level(Ind, NETHERBOLT, 50) + 20
 	--slightly more damage:
 	lev = get_level(Ind, NETHERBOLT, 50) + 21
-	return 5 + (lev / 2), 7 + (lev / 2) + 0
+	return 5 + (lev / 2), 7 + ((lev * 2) / 3) + 0
 end
 NETHERBOLT = add_spell {
 	["name"] = 	"Nether Bolt",
