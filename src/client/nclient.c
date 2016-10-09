@@ -2941,8 +2941,8 @@ int Receive_store_wide(void) {
 		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b)) <= 0)
 			return n;
 	} else {
-		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c%hd%c%c%c%c%c%c%c%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
 		byte xtra1b = xtra1 & 0xFF, xtra2b = xtra2 & 0xFF, xtra3b = xtra3 & 0xFF, xtra4b = xtra4 & 0xFF, xtra5b = xtra5 & 0xFF, xtra6b = xtra6 & 0xFF, xtra7b = xtra7 & 0xFF, xtra8b = xtra8 & 0xFF, xtra9b = xtra9 & 0xFF;
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c%hd%c%c%c%c%c%c%c%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
 		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b)) <= 0)
 			return n;
 	}
