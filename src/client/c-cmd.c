@@ -1619,6 +1619,7 @@ void cmd_the_guide(void) {
 		}
 
 		skipped_redraw:
+		skip_redraw = FALSE;
 
 		/* hide cursor */
 		Term->scr->cx = Term->wid;
