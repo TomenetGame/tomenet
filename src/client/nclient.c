@@ -1635,6 +1635,7 @@ int Receive_inven_wide(void) {
 	char	ch;
 	char pos, attr, tval, sval, *insc;
 	s16b xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
+	byte xtra1b, xtra2b, xtra3b, xtra4b, xtra5b, xtra6b, xtra7b, xtra8b, xtra9b;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
 
@@ -1644,16 +1645,25 @@ int Receive_inven_wide(void) {
 			return n;
 	} else if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
-		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b, name)) <= 0)
 			return n;
+		xtra1 = (s16b)xtra1b; xtra2 = (s16b)xtra2b; xtra3 = (s16b)xtra3b;
+		xtra4 = (s16b)xtra4b; xtra5 = (s16b)xtra5b; xtra6 = (s16b)xtra6b;
+		xtra7 = (s16b)xtra7b; xtra8 = (s16b)xtra8b; xtra9 = (s16b)xtra9b;
 	} else if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
-		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b, name)) <= 0)
 			return n;
+		xtra1 = (s16b)xtra1b; xtra2 = (s16b)xtra2b; xtra3 = (s16b)xtra3b;
+		xtra4 = (s16b)xtra4b; xtra5 = (s16b)xtra5b; xtra6 = (s16b)xtra6b;
+		xtra7 = (s16b)xtra7b; xtra8 = (s16b)xtra8b; xtra9 = (s16b)xtra9b;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
-		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b, name)) <= 0)
 			return n;
+		xtra1 = (s16b)xtra1b; xtra2 = (s16b)xtra2b; xtra3 = (s16b)xtra3b;
+		xtra4 = (s16b)xtra4b; xtra5 = (s16b)xtra5b; xtra6 = (s16b)xtra6b;
+		xtra7 = (s16b)xtra7b; xtra8 = (s16b)xtra8b; xtra9 = (s16b)xtra9b;
 	}
 
 	/* Check that the inventory slot is valid - mikaelh */
@@ -2927,6 +2937,7 @@ int Receive_store_wide(void) {
 	byte	attr;
 	s16b	wgt, num, pval;
 	s16b	xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
+	byte	xtra1b, xtra2b, xtra3b, xtra4b, xtra5b, xtra6b, xtra7b, xtra8b, xtra9b;
 
 	if (is_newer_than(&server_version, 4, 7, 0, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
@@ -2934,12 +2945,18 @@ int Receive_store_wide(void) {
 			return n;
 	} else if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%hd%c%c%c%c%c%c%c%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
-		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9)) <= 0)
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b)) <= 0)
 			return n;
+		xtra1 = (s16b)xtra1b; xtra2 = (s16b)xtra2b; xtra3 = (s16b)xtra3b;
+		xtra4 = (s16b)xtra4b; xtra5 = (s16b)xtra5b; xtra6 = (s16b)xtra6b;
+		xtra7 = (s16b)xtra7b; xtra8 = (s16b)xtra8b; xtra9 = (s16b)xtra9b;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c%hd%c%c%c%c%c%c%c%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
-		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9)) <= 0)
+		    &xtra1b, &xtra2b, &xtra3b, &xtra4b, &xtra5b, &xtra6b, &xtra7b, &xtra8b, &xtra9b)) <= 0)
 			return n;
+		xtra1 = (s16b)xtra1b; xtra2 = (s16b)xtra2b; xtra3 = (s16b)xtra3b;
+		xtra4 = (s16b)xtra4b; xtra5 = (s16b)xtra5b; xtra6 = (s16b)xtra6b;
+		xtra7 = (s16b)xtra7b; xtra8 = (s16b)xtra8b; xtra9 = (s16b)xtra9b;
 	}
 
 	store.stock[(int)pos].sval = sval;
