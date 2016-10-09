@@ -729,6 +729,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Explosive Device */
 		case TRAP_OF_EXPLOSIVE_DEVICE:
 			msg_print(Ind, "A hidden explosive device explodes in your face.");
+#ifdef USE_SOUND_2010
+			sound(Ind, "fireworks_norm", NULL, SFX_TYPE_MISC, TRUE); //"detonation"
+#endif
 			take_hit(Ind, damroll(5, 8), "an explosion", 0);
 			ident = TRUE;
 			destroy_chest(i_ptr);
