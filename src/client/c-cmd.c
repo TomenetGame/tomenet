@@ -1378,9 +1378,9 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 	return ress;
 }
 void cmd_the_guide(void) {
-	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE;
+	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
-	int line = 0, lastline = -1, searchline = -1, within_cnt, c, n;
+	int line = 0, lastline = -1, searchline = -1, within_cnt, c, n, line_presearch = line;
 	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, bufdummy[MAX_CHARS + 1];
 	char search[MAX_CHARS], lastsearch[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
 	FILE *fff;
@@ -1407,8 +1407,9 @@ void cmd_the_guide(void) {
 		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
 		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
 		//Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
-		Term_putstr(0, bottomline, -1, TERM_L_BLUE, "Up,Dn,PgUp,PgDn,Home,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
+		Term_putstr(0, bottomline, -1, TERM_L_BLUE, " Space/n,p,Enter,Back; s,S/d,D/f,c,# search,next,prev,chapter,line; ESC to exit");
 		if (skip_redraw) goto skipped_redraw;
+		restore_pos = FALSE;
 
 		/* Always begin at zero */
 		if (backwards) fseek(fff, -1, SEEK_END);
@@ -1527,6 +1528,16 @@ void cmd_the_guide(void) {
 						search[0] = 0;
 						searchwrap = FALSE;
 						withinsearch[0] = 0;
+
+						/* we cannot search for further results if there was none (would result in glitchy visuals) */
+						lastsearch[0] = 0;
+
+						/* correct our line number again */
+						line = line_presearch;
+						backwards = FALSE;
+						/* return to that position again */
+						restore_pos = TRUE;
+						break;
 					/* We found a result */
 					} else if (strcasestr(buf2, search)) {
 						/* Reverse again to normal direction/location */
@@ -1605,12 +1616,18 @@ void cmd_the_guide(void) {
 				searchline = -1; //start from the beginning of the file again
 				searchwrap = TRUE;
 				continue;
-			} else {
+			} else { //never reached now, since searchwrap = FALSE is set in search code above already
 				/* finally end search, without any results */
 				search[0] = 0;
 				searchwrap = FALSE;
+
+				/* correct our line number again */
+				line = line_presearch = line;
+				if (backwards) backwards = FALSE;
+				continue;
 			}
 		}
+		if (restore_pos) continue;
 		/* Reverse again to normal direction/location */
 		if (backwards) {
 			backwards = FALSE;
@@ -1842,6 +1859,7 @@ void cmd_the_guide(void) {
 			inkey_msg = inkey_msg_old;
 			if (!search[0]) continue;
 
+			line_presearch = line;
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
 			if (line > lastline - maxlines) line = lastline - maxlines;
@@ -1855,6 +1873,7 @@ void cmd_the_guide(void) {
 		case 'd':
 			if (!lastsearch[0]) continue;
 
+			line_presearch = line;
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
 #if 0
@@ -1870,6 +1889,7 @@ void cmd_the_guide(void) {
 		case 'f':
 			if (!lastsearch[0]) continue;
 
+			line_presearch = line;
 			/* Inverse location/direction */
 			backwards = TRUE;
 			line = lastline - line;
