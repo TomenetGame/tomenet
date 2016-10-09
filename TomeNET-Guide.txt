@@ -15123,9 +15123,8 @@ school.
                     Shared spell (see above): O.Shadow, H.Offense.
                     This spell cannot be not found in the Holy Offense tome.
 
-    Doomed Grounds  Similar to 'Drain Life', weaker, but affects a whole area.
-                    Unique monsters may resist, undead and nonliving monsters
-                    are unaffected.
+    Doomed Grounds  Has an annihilation effect, much weaker, but affecting a
+                    whole area. Unique monsters may resist.
                     Required skill level for first spell level: 40.
                     Shared spell (see above): H.Offense, O.Shadow.
                     This spell cannot be not found in the Shadow tome.
