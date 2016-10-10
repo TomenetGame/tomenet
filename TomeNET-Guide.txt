@@ -14156,6 +14156,8 @@ Yeeks           Feather falling.
 All animals     Able to pass trees.
 All spiders     Able to pass mountains, able to pass spider webs.
 All ghosts      See invisible, Infra-vision +4 (stacks with undeads' +1 bonus).
+                Ghosts are susceptible to light.
+                Almost all ghosts can pass solid walls.
 All orcs        Resist darkness.
 All trolls and giants
                 Sustain strength.
