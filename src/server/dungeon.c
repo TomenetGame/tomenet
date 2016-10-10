@@ -4323,6 +4323,12 @@ static bool process_player_end_aux(int Ind) {
 					p_ptr->py = houses[p_ptr->house_num - 1].dy;
 					p_ptr->house_num = 0;
 					teleport_player_force(Ind, 1);
+
+					/* Hack: We started on the prison door, which isn't CAVE_STCK.
+					   So we have to manually add a message and redraw the no-tele indicators. */
+					msg_print(Ind, "\377sFresh air greets you as you leave the prison.");
+					p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+					p_ptr->redraw |= PR_BPR_WRAITH;
 				}
 			}
 		}
