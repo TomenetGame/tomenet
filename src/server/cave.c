@@ -3916,9 +3916,14 @@ void prt_map(int Ind, bool scr_only) {
 	   This happens if the client starts in big screen, but the character chosen
 	   for login has a small screen.
 	   This hack is a bit nasty in that it assumes that PR_EXTRA is done afterwards. */
-	if (p_ptr->redraw & PR_EXTRA)
-		for (x = SCREEN_PAD_LEFT; x < p_ptr->screen_wid; x++)
-			Send_char(Ind, x, p_ptr->screen_hgt + SCREEN_PAD_TOP, TERM_DARK, ' ');
+	if (p_ptr->redraw & PR_EXTRA) {
+		y = p_ptr->screen_hgt + SCREEN_PAD_TOP;
+		for (x = SCREEN_PAD_LEFT; x < p_ptr->screen_wid; x++) {
+			p_ptr->scr_info[y][x].c = p_ptr->ovl_info[y][x].c = ' ';
+			p_ptr->scr_info[y][x].a = p_ptr->ovl_info[y][x].a = TERM_DARK;
+		}
+		Send_line_info(Ind, y, FALSE);
+	}
 #endif
 
 	/* Display player */
