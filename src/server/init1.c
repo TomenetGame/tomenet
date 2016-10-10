@@ -4531,6 +4531,15 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			r_info[i].flags3 |= (RF3_NO_FEAR | RF3_NO_CONF);
 		}
 
+		/* Fix paradoxa */
+		if (r_info[i].flags9 & RF9_RES_LITE) r_info[i].flags3 &= ~RF3_HURT_LITE;
+		if (r_info[i].flags9 & RF9_RES_SHARDS) r_info[i].flags3 &= ~RF3_HURT_ROCK;
+		if (r_info[i].flags9 & RF9_RES_FIRE) r_info[i].flags3 &= ~RF3_SUSCEP_FIRE;
+		if (r_info[i].flags9 & RF9_RES_COLD) r_info[i].flags3 &= ~RF3_SUSCEP_COLD;
+		if (r_info[i].flags9 & RF9_RES_ACID) r_info[i].flags9 &= ~RF9_SUSCEP_ACID;
+		if (r_info[i].flags9 & RF9_RES_ELEC) r_info[i].flags9 &= ~RF9_SUSCEP_ELEC;
+		if (r_info[i].flags9 & RF9_RES_POIS) r_info[i].flags9 &= ~RF9_SUSCEP_POIS;
+
 		/* For d_info rules: Formally an immunity implies the according resistance. */
 		if ((r_info[i].flags9 & RF9_IM_PSI)) r_info[i].flags9 |= RF9_RES_PSI;
 		if ((r_info[i].flags9 & RF9_IM_WATER)) r_info[i].flags3 |= RF3_RES_WATE;
