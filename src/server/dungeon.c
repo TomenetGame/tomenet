@@ -2218,7 +2218,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	/* Spell to cast */
 	if (inscription != NULL) {
 		choice = *inscription - 96 - 1;
-		if (choice < 0 || choice > 9) choice = 0;
+		if (choice < 0 || choice > 15) choice = 0; //allow a-o (15 spells, currently biggest tome has 13)
 	}
 
 	switch (o_ptr->tval) {
