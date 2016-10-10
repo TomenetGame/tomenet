@@ -14161,6 +14161,8 @@ All ghosts      See invisible, Infra-vision +4 (stacks with undeads' +1 bonus).
 All orcs        Resist darkness.
 All trolls and giants
                 Sustain strength.
+All monsters with stone skin (HURT_ROCK flag)
+                Shard resistance.
 All dragonriders
                 ESP_DRAGON at level 5, feather falling,
                 levitation at level 30.
