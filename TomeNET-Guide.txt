@@ -14188,8 +14188,8 @@ All demons ('u')
                 Take 2x damage from holy orbs or holy fire and suffer
                 from a couple of 'good' effects/spells (similar to undead).
 All greater demons (capital 'U')
-                Resist poison (usually immunity, depends on ~7 flags).
                 Resist darkness.
+                Resist poison (usually immunity, depends on ~7 flags).
                 Take 2x damage from holy orbs or holy fire and suffer
                 from a couple of 'good' effects/spells (similar to undead).
 All non-living creatures
