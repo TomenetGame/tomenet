@@ -3914,9 +3914,11 @@ void prt_map(int Ind, bool scr_only) {
 #ifdef BIG_MAP
 	/* Hack to clear wrongly sent map_info artifacts from the last screen line.
 	   This happens if the client starts in big screen, but the character chosen
-	   for login has a small screen. */
-	for (x = SCREEN_PAD_LEFT; x < p_ptr->screen_wid; x++)
-		Send_char(Ind, x, p_ptr->screen_hgt + SCREEN_PAD_TOP, TERM_DARK, ' ');
+	   for login has a small screen.
+	   This hack is a bit nasty in that it assumes that PR_EXTRA is done afterwards. */
+	if (p_ptr->redraw & PR_EXTRA)
+		for (x = SCREEN_PAD_LEFT; x < p_ptr->screen_wid; x++)
+			Send_char(Ind, x, p_ptr->screen_hgt + SCREEN_PAD_TOP, TERM_DARK, ' ');
 #endif
 
 	/* Display player */
