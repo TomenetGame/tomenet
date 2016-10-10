@@ -570,7 +570,7 @@
 /*
  * OPTION: Person to bother if something goes wrong.
  */
-#define MAINTAINER	"darkgod@t-o-m-e.net"
+#define MAINTAINER	"c_blue@gmx.net"
 
 
 /*
