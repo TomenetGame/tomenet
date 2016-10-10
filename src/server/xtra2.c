@@ -12773,16 +12773,19 @@ void toggle_aura(int Ind, int aura) {
 			msg_print(Ind, "You don't know how to unleash an aura of fear.");
 			return;
 		}
+		break;
 	case 1:
 		if (!get_skill(p_ptr, SKILL_AURA_SHIVER)) {
 			msg_print(Ind, "You don't know how to unleash a shivering aura.");
 			return;
 		}
+		break;
 	case 2:
 		if (!get_skill(p_ptr, SKILL_AURA_DEATH)) {
 			msg_print(Ind, "You don't know how to unleash an aura of death.");
 			return;
 		}
+		break;
 	}
 
 	if (!p_ptr->aura[aura]) {
