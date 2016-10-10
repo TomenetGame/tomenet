@@ -244,6 +244,8 @@ struct player_type
 	s16b px;
 	struct worldpos wpos;
 
+	bool aura[MAX_AURAS];
+
 	s16b cur_hgt;		/* Height and width of their dungeon level */
 	s16b cur_wid;
 
