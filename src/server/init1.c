@@ -4469,21 +4469,66 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 		/* As we know, chaos resistance implies confusion resistance.. */
 		if ((r_info[i].flags9 & RF9_RES_CHAOS)) r_info[i].flags3 |= RF3_NO_CONF;
+
+		/* -- Breathes imply resistances -- */
+		if (r_info[i].flags4 & RF4_BR_ACID) r_info[i].flags9 |= RF9_RES_ACID;
+		if (r_info[i].flags4 & RF4_BR_ELEC) r_info[i].flags9 |= RF9_RES_ELEC;
+		if (r_info[i].flags4 & RF4_BR_FIRE) r_info[i].flags9 |= RF9_RES_FIRE;
+		if (r_info[i].flags4 & RF4_BR_COLD) r_info[i].flags9 |= RF9_RES_COLD;
+		if (r_info[i].flags4 & RF4_BR_POIS) r_info[i].flags9 |= RF9_RES_POIS;
+		if (r_info[i].flags4 & RF4_BR_NETH) r_info[i].flags3 |= RF3_RES_NETH;
+		if (r_info[i].flags4 & RF4_BR_LITE) r_info[i].flags9 |= RF9_RES_LITE;
+		if (r_info[i].flags4 & RF4_BR_DARK) r_info[i].flags9 |= RF9_RES_DARK;
+		if (r_info[i].flags4 & RF4_BR_CONF) r_info[i].flags3 |= RF3_NO_CONF;
+		if (r_info[i].flags4 & RF4_BR_SOUN) r_info[i].flags9 |= RF9_RES_SOUND;
+		if (r_info[i].flags4 & RF4_BR_CHAO) {
+			r_info[i].flags3 |= RF3_NO_CONF;
+			r_info[i].flags9 |= RF9_RES_CHAOS;
+		}
+		if (r_info[i].flags4 & RF4_BR_DISE) r_info[i].flags3 |= RF3_RES_DISE;
+		if (r_info[i].flags4 & RF4_BR_NEXU) r_info[i].flags3 |= RF3_RES_NEXU;
+		if (r_info[i].flags4 & RF4_BR_TIME) r_info[i].flags9 |= RF9_RES_TIME;
+		if (r_info[i].flags4 & RF4_BR_INER) r_info[i].flags3 |= RF3_NO_STUN;
+		//if (r_info[i].flags4 & RF4_BR_GRAV) r_info[i].flags9 |= RF9_RES_; //feather falling
+		if (r_info[i].flags4 & RF4_BR_SHAR) r_info[i].flags9 |= RF9_RES_SHARDS;
 		/* Newer fix, plasma implies fire/elec/sound. */
 		if (r_info[i].flags4 & RF4_BR_PLAS) {
 			r_info[i].flags3 |= RF3_IM_FIRE;
 			r_info[i].flags9 |= RF9_RES_ELEC;
 			r_info[i].flags9 |= RF9_RES_SOUND;
+			//note: no RES_LITE
+		}
+		/* Breathing force means we have sound/stun resistance */
+		if (r_info[i].flags4 & RF4_BR_WALL) {
+			r_info[i].flags9 |= RF9_RES_SOUND;
+			r_info[i].flags3 |= RF3_NO_STUN;
 		}
 		/* ..and toxic waste = poison + acid */
 		if (r_info[i].flags4 & RF4_BR_NUKE) {
 			r_info[i].flags9 |= RF9_RES_ACID;
 			r_info[i].flags9 |= RF9_RES_POIS;
 		}
-		/* Breathing force means we have sound/stun resistance */
-		if (r_info[i].flags4 & RF4_BR_WALL) {
-			r_info[i].flags9 |= RF9_RES_SOUND;
-			r_info[i].flags3 |= RF3_NO_STUN;
+		if (r_info[i].flags4 & RF4_BR_MANA) r_info[i].flags9 |= RF9_RES_MANA;
+
+		/* Certain monster races get intrinsic boni */
+		if (r_info[i].flags3 & RF3_ORC) r_info[i].flags9 |= RF9_RES_DARK;
+		if (r_info[i].flags3 & RF3_DRAGONRIDER) r_info[i].flags7 |= RF7_CAN_FLY;
+		if (r_info[i].flags3 & RF3_DEMON) {
+			r_info[i].flags9 |= RF9_RES_DARK;
+			if (r_info[i].d_char == 'U') r_info[i].flags9 |= RF9_RES_POIS;
+		}
+		if (r_info[i].flags3 & RF3_UNDEAD) {
+			r_info[i].flags9 |= (RF9_RES_DARK | RF9_RES_POIS);
+			//note: UNDEAD don't get NO_FEAR at the moment, not even lesser ones
+			if (r_info[i].d_char == 'V') r_info[i].flags3 |= RF3_HURT_LITE;
+		}
+		if (r_info[i].flags3 & RF3_NONLIVING) {
+			r_info[i].flags9 |= RF9_RES_POIS;
+			r_info[i].flags3 |= RF3_NO_FEAR;
+		}
+		if (r_info[i].d_char == 'A') {
+			r_info[i].flags9 |= (RF9_RES_LITE | RF9_RES_POIS);
+			r_info[i].flags3 |= (RF3_NO_FEAR | RF3_NO_CONF);
 		}
 
 		/* For d_info rules: Formally an immunity implies the according resistance. */
