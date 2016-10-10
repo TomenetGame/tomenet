@@ -5771,8 +5771,8 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 30) {
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		/* Stealth bonus: */
-		p_ptr->skill_stl += (get_skill(p_ptr, SKILL_OSHADOW) - 29) / 3;
-		csheet_boni[14].slth += (get_skill(p_ptr, SKILL_OSHADOW) - 29) / 3;
+		p_ptr->skill_stl += (get_skill(p_ptr, SKILL_OSHADOW) - 30) / 5;
+		csheet_boni[14].slth += (get_skill(p_ptr, SKILL_OSHADOW) - 30) / 5;
 	}
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 45 && get_skill(p_ptr, SKILL_HDEFENSE) >= 45) {
 		p_ptr->resist_chaos = TRUE; csheet_boni[14].cb[3] |= CB4_RCHAO;

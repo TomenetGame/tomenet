@@ -15374,8 +15374,9 @@ school.
     Darkness Storm  Conjures up a storm of darkness.
                     Required skill level for first spell level: 42.
 
-    BONI:           At 30 grants darkness resistance and a stealth bonus that
-                    increases the further the school is trained.
+    BONI:           At 30 grants darkness resistance.
+                    At 35 and higher it will also grant a stealth bonus that
+                    increases by +1 every five skill points, up to +4 at 50.
                     If both Holy Defense and Shadow school are at least 45,
                     chaos resistance is granted. (Note that chaos resistance
                     also always implies confusion resistance.)
