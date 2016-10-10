@@ -2609,7 +2609,7 @@ player_class class_info[MAX_CLASS] = {
 #else
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'+', 700, },
+			'+', 600, },
 #endif
 		{ SKILL_DEVICE,
 			'+', 1000,
@@ -3244,10 +3244,10 @@ player_class class_info[MAX_CLASS] = {
 #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'+', 500, },
+			'+', 450, },
 		{ SKILL_OSPIRIT,
 			'+', 0,
-			'+', 500, },
+			'+', 450, },
 #endif
 		{ SKILL_R_LITE,
 			'+', 0,
@@ -3499,10 +3499,10 @@ player_class class_info[MAX_CLASS] = {
  #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'+', 1000, },
+			'+', 900, },
 		{ SKILL_OSPIRIT,
 			'+', 1000,
-			'+', 1000, },
+			'+', 900, },
  #endif
 		{ SKILL_MIMIC,
 			'+', 1000,
@@ -3627,10 +3627,10 @@ player_class class_info[MAX_CLASS] = {
  #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'+', 1000, },
+			'+', 900, },
 		{ SKILL_OSPIRIT,
 			'+', 1000,
-			'+', 1000, },
+			'+', 900, },
  #endif
 		{ SKILL_MIMIC,
 			'+', 1000,
