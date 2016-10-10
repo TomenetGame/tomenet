@@ -8923,7 +8923,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	    (!(r_ptr->flags3 & RF3_UNDEAD)) &&
 	    (!(r_ptr->flags3 & RF3_NONLIVING)) &&
 	    (!(strchr("AEgv", r_ptr->d_char)))) {
-		if (magik((p_ptr->antimagic * 8) / 5)) {
+		if (magik(p_ptr->antimagic)) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
