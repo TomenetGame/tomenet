@@ -4470,6 +4470,9 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		/* As we know, chaos resistance implies confusion resistance.. */
 		if ((r_info[i].flags9 & RF9_RES_CHAOS)) r_info[i].flags3 |= RF3_NO_CONF;
 
+		/* Monsters with stone skin resist shards */
+		if (r_info[i].flags3 & RF3_HURT_ROCK) r_info[i].flags9 |= RF9_RES_SHARDS;
+
 		/* -- Breathes imply resistances -- */
 		if (r_info[i].flags4 & RF4_BR_ACID) r_info[i].flags9 |= RF9_RES_ACID;
 		if (r_info[i].flags4 & RF4_BR_ELEC) r_info[i].flags9 |= RF9_RES_ELEC;
@@ -4533,7 +4536,6 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 		/* Fix paradoxa */
 		if (r_info[i].flags9 & RF9_RES_LITE) r_info[i].flags3 &= ~RF3_HURT_LITE;
-		if (r_info[i].flags9 & RF9_RES_SHARDS) r_info[i].flags3 &= ~RF3_HURT_ROCK;
 		if (r_info[i].flags9 & RF9_RES_FIRE) r_info[i].flags3 &= ~RF3_SUSCEP_FIRE;
 		if (r_info[i].flags9 & RF9_RES_COLD) r_info[i].flags3 &= ~RF3_SUSCEP_COLD;
 		if (r_info[i].flags9 & RF9_RES_ACID) r_info[i].flags9 &= ~RF9_SUSCEP_ACID;
