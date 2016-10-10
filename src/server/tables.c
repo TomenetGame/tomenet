@@ -2245,7 +2245,7 @@ char *special_prace_lookup[MAX_RACE] = {
 /* Experimental: Unlock Necromancy (and for Mimics Traumaturgy) for some unusual classes?
    Disabled this with the addition of Death Knight. Understanding is: Only classes very
    proficient in magic or specifically aligned to nether should be able to learn it. */
-//#define EXP_NECRO
+#define EXP_NECRO
 
 player_class class_info[MAX_CLASS] = {
 	{ "Warrior",
