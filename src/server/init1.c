@@ -4520,7 +4520,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		if (r_info[i].flags3 & RF3_UNDEAD) {
 			r_info[i].flags9 |= (RF9_RES_DARK | RF9_RES_POIS);
 			//note: UNDEAD don't get NO_FEAR at the moment, not even lesser ones
-			if (r_info[i].d_char == 'V') r_info[i].flags3 |= RF3_HURT_LITE;
+			if (r_info[i].d_char == 'V' || r_info[i].d_char == 'G') r_info[i].flags3 |= RF3_HURT_LITE;
 		}
 		if (r_info[i].flags3 & RF3_NONLIVING) {
 			r_info[i].flags9 |= RF9_RES_POIS;
