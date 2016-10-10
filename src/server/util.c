@@ -3479,10 +3479,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			   characters listed here could actually break words and there by break
 			   false positives. Eg 'headless (h, l27, 427)' would otherwise wrongly turn
 			   into 'headlesshltxaxtx' and trigger false 'shit' positive. */
-			case '(': lcopy[i] = 'c'; break;
-			case ')': lcopy[i] = 'l'; break; //all of these could be c,i,l I guess.. pick the least problematic one (l)
-			case '/': lcopy[i] = 'l'; break;
-			case '\\': lcopy[i] = 'l'; break;
+			case '(': lcopy[i] = 'c'; break; //all of these could be c,i,l I guess.. pick the least problematic one (i)
+			case ')': lcopy[i] = 'i'; break; // l prob: "mana/" -> mANAL :-p
+			case '/': lcopy[i] = 'i'; break;
+			case '\\': lcopy[i] = 'i'; break;
 
 #ifdef HIGHLY_EFFECTIVE_CENSOR
 			/* hack: Actually _counter_ the capabilities of highly-effective
