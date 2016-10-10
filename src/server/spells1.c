@@ -7421,7 +7421,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			dam = 0;
 
 			if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
-			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
+			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
 			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
 				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 			} else {
