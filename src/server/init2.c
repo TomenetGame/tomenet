@@ -4024,6 +4024,8 @@ void init_firework_dungeon(void) {
 			if (i == DI_MT_DOOM) continue;
 			/* scrolls would instantly get soaked */
 			if (i == DI_SMALL_WATER_CAVE || i == DI_SUBMERGED_RUINS) continue;
+			/* kinda wasted.. */
+			if (i == DI_DEATH_FATE) continue;
 
 			/* exclude town dungeons? */
 			if (!strcmp(d_name + d_info[i].name, "Barrow-Downs") ||
