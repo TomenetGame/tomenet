@@ -510,10 +510,10 @@ ODARKBALL = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 600 + get_level(Ind, ODARKBALL, 750), 2 + get_level(Ind, ODARKBALL, 8), " conjures up a darkness storm for")
+			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 515 + get_level(Ind, ODARKBALL, 750), 2 + get_level(Ind, ODARKBALL, 8), " conjures up a darkness storm for")
 	end,
 	["info"] = 	function()
-		return "dam d100+"..(600 + get_level(Ind, ODARKBALL, 750)).." rad "..(2 + get_level(Ind, ODARKBALL, 8))
+		return "dam d100+"..(515 + get_level(Ind, ODARKBALL, 750)).." rad "..(2 + get_level(Ind, ODARKBALL, 8))
 	end,
 	["desc"] = 	{ "Conjures up a storm of darkness.", }
 }
