@@ -3919,9 +3919,11 @@ void prt_map(int Ind, bool scr_only) {
 	if (p_ptr->redraw & PR_EXTRA) {
 		y = p_ptr->screen_hgt + SCREEN_PAD_TOP;
 		for (x = SCREEN_PAD_LEFT; x < p_ptr->screen_wid; x++) {
+ #if 0
 			/* Note: Clearing scr and ovl isn't required */
 			p_ptr->scr_info[y][x].c = p_ptr->ovl_info[y][x].c = ' ';
 			p_ptr->scr_info[y][x].a = p_ptr->ovl_info[y][x].a = TERM_DARK;
+ #endif
 			/* Clear wrongly sent map grid - most of these will be overwritten by the status bar anyway, but some aren't. */
 			Send_char(Ind, x, y, TERM_DARK, ' ');
 		}
