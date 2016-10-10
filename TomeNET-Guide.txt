@@ -14168,7 +14168,7 @@ All evil creatures
                 Becomes susceptible to certain 'good' or 'holy' effects.
 All undead creatures
                 Resist darkness, blindness, poison (usually immunity, depends
-                on ~7 flags);
+                on ~7 flags), time and nether;
                 can't bleed (no_cut), infra-vision +1, insanity attacks are
                 reduced by a little bit.
                 Also helps somewhat against the effects of encountering an
@@ -14185,13 +14185,8 @@ All undead creatures
 All greater undead creatures
                 See 'All undead creatures' above, and in addtion they get
                 another +4 bonus to infra-vision (ie +5 in total).
-All demons ('u')
-                Resist darkness.
-                Take 2x damage from holy orbs or holy fire and suffer
-                from a couple of 'good' effects/spells (similar to undead).
 All greater demons (capital 'U')
-                Resist darkness.
-                Resist poison (usually immunity, depends on ~7 flags).
+                Resist poison (usually immunity, depends on ~7 flags) and time.
                 Take 2x damage from holy orbs or holy fire and suffer
                 from a couple of 'good' effects/spells (similar to undead).
 All non-living creatures
