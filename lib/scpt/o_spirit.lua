@@ -175,6 +175,7 @@ DETECTCREATURES = add_spell {
 	["mana"] = 	5,
 	["mana_max"] = 	5,
 	["fail"] = 	-10,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		detect_creatures_xxx(Ind, 0) --detect ALL monsters? (even invis+emptymind)
 	end,
@@ -338,6 +339,7 @@ ODELCURSES_I = add_spell {
 	["mana"] = 	20,
 	["mana_max"] =	20,
 	["fail"] = 	20,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local done
 			done = remove_curse(Ind)
@@ -355,6 +357,7 @@ ODELCURSES_II = add_spell {
 	["mana"] = 	45,
 	["mana_max"] =	45,
 	["fail"] = 	-20,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local done
 			done = remove_all_curse(Ind)

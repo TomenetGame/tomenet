@@ -492,13 +492,13 @@ $ENABLE_MCRAFT$F:DUMMY
 
 $ENABLE_OCCULT$N:87:Shadow
 $ENABLE_OCCULT$D:Ability to learn and use spells from the Shadow school.
-$ENABLE_OCCULT$D:Spells mainly use the intelligence stat.
+$ENABLE_OCCULT$D:Most spells use the intelligence stat, some wisdom.
 $ENABLE_OCCULT$A:11:Cast a spell
 $ENABLE_OCCULT$I:1000:111
 
 $ENABLE_OCCULT$N:88:Spirit
 $ENABLE_OCCULT$D:Ability to learn and use spells from the Spirit school.
-$ENABLE_OCCULT$D:Some spells use wisdom stat, some intelligence stat.
+$ENABLE_OCCULT$D:Most spells use the wisdom stat, some intelligence.
 $ENABLE_OCCULT$A:11:Cast a spell
 $ENABLE_OCCULT$I:1000:111
 
