@@ -7422,7 +7422,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
 			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
-			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
+			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+			    (m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
+			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 			} else {
 				for (i = 0; i < 4; i++) {
@@ -7461,7 +7463,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_DEC_DEX:
 			if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
 			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
-			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
+			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+			    (m_ptr->r_idx == 74 || m_ptr->r_idx == 539) ||
+			    (m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
+			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 				//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 			} else {
 				if (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) {
@@ -7482,7 +7487,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_DEC_CON:
 			if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
 			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
-			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
+			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+			    (m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
+			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 				//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 			} else {
 				if (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) {
@@ -7684,6 +7691,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = 0;
 
 				/* -STR */
+				if (!(r_ptr->flags3 & (RF3_TROLL | RF3_GIANT)) &&
+				    !(m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
+				    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
 				for (i = 0; i < 4; i++) {
 					/* prevent div0 if monster has no damaging attack */
 					if (!m_ptr->blow[i].org_d_dice) continue;
@@ -7710,7 +7720,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				}
 
 				/* -DEX */
-				if (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) {
+				if (!(m_ptr->r_idx == 74 || m_ptr->r_idx == 539) &&
+				    !(m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
+				    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL) &&
+				    (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2)) {
 					if (m_ptr->ac) {
 						m_ptr->ac = (m_ptr->ac * 7) / 8;
 						if (m_ptr->ac > 10) m_ptr->ac -= 2;
@@ -7720,7 +7733,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				}
 
 				/* -CON */
-				if (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) {
+				if (!(m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
+				    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL) &&
+				    (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2)) {
 					if (m_ptr->maxhp > 3) {
 						m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
 						if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
