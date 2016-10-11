@@ -8488,6 +8488,14 @@ void resurrect_player(int Ind, int loss_factor) {
 		msg_print(Ind, "\375\377y      Make sure to read up on it in the \377oguide\377y to understand pros and cons!");
 		s_printf("warning_instares: %s\n", p_ptr->name);
 	}
+
+	/* Hack -- jail her/him */
+	if (!p_ptr->wpos.wz && p_ptr->tim_susp
+#ifdef JAIL_TOWN_AREA
+	    && istownarea(&p_ptr->wpos, MAX_TOWNAREA)
+#endif
+	    )
+		imprison(Ind, JAIL_OLD_CRIMES, "old crimes");
 }
 
 void check_xorders(){
@@ -12358,6 +12366,13 @@ bool imprison(int Ind, u16b time, char *reason) {
 	char string[160];
 	cave_type **zcave, **nzcave;
 	struct worldpos old_wpos;
+
+	/* Can't jail ghosts */
+	if (p_ptr->ghost) {
+		p_ptr->tim_susp += time;
+		s_printf("TIM_SUSP_GHOST.\n");
+		return FALSE;
+	}
 
 	if (!jails_enabled) {
 		p_ptr->tim_susp = 0;
