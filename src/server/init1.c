@@ -4534,6 +4534,54 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			r_info[i].flags3 |= (RF3_NO_FEAR | RF3_NO_CONF);
 		}
 
+		/* Elemental melee attack effects give the according resistance (experimental) */
+		for (j = 0; j < 4; j++) {
+			switch (r_info[i].blow[j].effect) {
+			case RBE_POISON:
+			case RBE_DISEASE:
+			case RBE_PARASITE:
+				r_info[i].flags9 |= RF9_RES_POIS;
+				break;
+			case RBE_ACID:
+				r_info[i].flags9 |= RF9_RES_ACID;
+				break;
+			case RBE_ELEC:
+				r_info[i].flags9 |= RF9_RES_ELEC;
+				break;
+			case RBE_FIRE:
+				r_info[i].flags9 |= RF9_RES_FIRE;
+				break;
+			case RBE_COLD:
+				r_info[i].flags9 |= RF9_RES_COLD;
+				break;
+			case RBE_BLIND:
+			case RBE_CONFUSE:
+				r_info[i].flags3 |= RF3_NO_CONF;
+				break;
+			case RBE_TERRIFY:
+				r_info[i].flags3 |= RF3_NO_FEAR;
+				break;
+			case RBE_PARALYZE:
+				r_info[i].flags3 |= RF3_NO_SLEEP;
+				break;
+			case RBE_TIME:
+				r_info[i].flags9 |= RF9_RES_TIME;
+				break;
+			case RBE_SANITY:
+				r_info[i].flags9 |= RF9_RES_PSI;
+				break;
+			case RBE_HALLU:
+				r_info[i].flags9 |= RF9_RES_PSI;
+				break;
+			case RBE_LITE:
+				r_info[i].flags9 |= RF9_RES_LITE;
+				break;
+			case RBE_UN_BONUS:
+				r_info[i].flags3 |= RF3_RES_DISE;
+				break;
+			}
+		}
+
 		/* Fix paradoxa */
 		if (r_info[i].flags9 & RF9_RES_LITE) r_info[i].flags3 &= ~RF3_HURT_LITE;
 		if (r_info[i].flags9 & RF9_RES_FIRE) r_info[i].flags3 &= ~RF3_SUSCEP_FIRE;
