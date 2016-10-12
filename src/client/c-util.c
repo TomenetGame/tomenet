@@ -3835,7 +3835,7 @@ void interact_macros(void) {
 		l++;
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ua\377s) Enter a new macro action manually. Afterwards..");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uh\377s) ..create a hybrid macro     (usually preferable over command/normal)");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uc\377s) ..create a command macro    (eg for using / and * key)");
+		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uc\377s) ..create a command macro    (most compatible, eg for using / and * key)");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377un\377s) ..create a normal macro     (persists everywhere, even in chat)");
 //		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u4\377s) Create a identity macro  (erases a macro)");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ue\377s) Create an empty macro       (completely disables a key)");
