@@ -14202,8 +14202,8 @@ All vampires and vampiric monsters (vampire bats and others)
                 (half their attacks are hits, the other half is biting).
                 For details see '(5.15) Vampirism'.
 All angels      Resist light and dark, blindness and poison (usually immunity,
-                see ~7 flags), resist fear, resist confusion, see invisible,
-                strong resistance to insanity-inducing attacks.
+                see ~7 flags), resist fear, resist confusion, free action,
+                strong resistance to insanity-inducing attacks, see invisible.
                 Note: 'Fallen Angel' doesn't get light resistances.
 Mist and fume   Feather falling.
 
