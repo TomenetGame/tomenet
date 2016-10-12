@@ -54,7 +54,7 @@ function get_acidbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, ACIDBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 6 + (lev / 2), 8 + (lev / 2) + 1
+	return 6 + ((lev * 3) / 5), 8 + (lev / 2) + 1
 end
 ACIDBOLT_I = add_spell {
 	["name"] = 	"Acid Bolt I",

@@ -387,7 +387,7 @@ function get_chaosbolt_dam(Ind)
 	--lev = get_level(Ind, CHAOSBOLT, 50) + 20
 	--slightly more damage:
 	lev = get_level(Ind, CHAOSBOLT, 50) + 21
-	return 5 + (lev / 2), 7 + ((lev * 2) / 3) + 1
+	return (lev * 3) / 5, lev
 end
 CHAOSBOLT = add_spell {
 	["name"] = 	"Chaos Bolt",
@@ -417,8 +417,8 @@ function get_netherbolt_dam(Ind)
 	--same damage as shadow bolt iii at 50:
 	--lev = get_level(Ind, NETHERBOLT, 50) + 20
 	--slightly more damage:
-	lev = get_level(Ind, NETHERBOLT, 50) + 21
-	return 5 + (lev / 2), 7 + ((lev * 2) / 3) + 0
+	lev = get_level(Ind, NETHERBOLT, 50) + 20
+	return (lev * 3) / 5, lev
 end
 NETHERBOLT = add_spell {
 	["name"] = 	"Nether Bolt",
