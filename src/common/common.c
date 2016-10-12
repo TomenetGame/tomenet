@@ -319,3 +319,28 @@ int find_realm(int book)
         };
         return -1;
 }
+
+#ifndef _GNU_SOURCE
+const char *strcasestr(const char *big, const char *little) {
+	const char *ret = NULL;
+	int cnt = 0, cnt2 = 0;
+	int L = strlen(little),l = 0;
+
+	if (little == NULL) return big;
+
+	do {
+		cnt2 = 0;
+		while (little[cnt2] != 0) {
+			if (big[cnt + cnt2] == little[cnt2] || big[cnt + cnt2] == little[cnt2] - 32 || big[cnt + cnt2] == little[cnt2] + 32) l++;
+			else l = 0;
+
+			if (l == 1) ret = big + cnt;
+			cnt2++;
+		}
+
+		if (L == l) return ret;
+		cnt++;
+	} while (big[cnt] != '\0');
+	return NULL;
+}
+#endif

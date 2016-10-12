@@ -851,6 +851,9 @@ extern int find_realm(int book);
 extern char color_attr_to_char(int a);
 extern int color_char_to_attr(char c);
 extern byte mh_attr(int max);
+#ifndef _GNU_SOURCE
+extern const char *strcasestr(const char *big, const char *little);
+#endif
 
 /* common/files.c */
 extern int local_file_init(int ind, unsigned short fnum, char *fname);

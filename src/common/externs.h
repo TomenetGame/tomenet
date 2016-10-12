@@ -730,6 +730,9 @@ extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
 /* common.c */
 extern int find_realm(int book);
 extern void version_build(void);
+#ifndef _GNU_SOURCE
+extern const char *strcasestr(const char *big, const char *little);
+#endif
 
 /*
  * Hack -- conditional (or "bizarre") externs

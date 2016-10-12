@@ -32,6 +32,7 @@ extern int color_char_to_attr(char c);
 extern char color_attr_to_char(int a);
 extern void version_build(void);
 extern byte mh_attr(int max);
+extern const char *strcasestr(const char *big, const char *little);
 
 
 /* common/files.c */
