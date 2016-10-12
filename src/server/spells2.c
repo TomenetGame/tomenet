@@ -709,6 +709,7 @@ bool do_shadow_gate(int Ind, int range) {
 
 	for (nx = p_ptr->px - range; nx <= p_ptr->px + range; nx++)
 	for (ny = p_ptr->py - range; ny <= p_ptr->py + range; ny++) {
+		if (!in_bounds(ny, nx)) continue;
 		/* out of range? */
 		if ((dist = distance(ny, nx, p_ptr->py, p_ptr->px)) > range) continue;
 		/* not a monster or hostile player? */
