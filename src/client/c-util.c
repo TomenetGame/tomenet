@@ -3983,6 +3983,7 @@ void interact_macros(void) {
 			if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
 			    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
 			    (*buf >= 'a' && *buf <= 'w') || /* inventory */
+			    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 			    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
 			    )
 				c_msg_print("\377oWarning: This key may only work with command macros, not hybrid or normal ones!");
@@ -4013,6 +4014,7 @@ void interact_macros(void) {
 			if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
 			    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
 			    (*buf >= 'a' && *buf <= 'w') || /* inventory */
+			    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 			    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
 			    )
 				c_msg_print("\377oWarning: This key may only work with command macros, not hybrid or normal ones!");
@@ -4361,7 +4363,8 @@ void interact_macros(void) {
 				//hybrid macros: all others, maybe even also normal-macro-keys
 				if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
 				    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
-				    (*buf >= 'a' && *buf <= 'w') ||
+				    (*buf >= 'a' && *buf <= 'w') || /* inventory */
+				    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 				    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
 				    ) {
 					/* make it a command macro */
@@ -6105,7 +6108,8 @@ Chain_Macro:
 					//hybrid macros: all others, maybe even also normal-macro-keys
 					if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
 					    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
-					    (*buf >= 'a' && *buf <= 'w') ||
+					    (*buf >= 'a' && *buf <= 'w') || /* inventory */
+					    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 					    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
 					    ) {
 						/* make it a command macro */
