@@ -354,10 +354,11 @@ SHADOWGATE = add_spell {
 	["mana_max"] = 	20,
 	["fail"] = 	-30,
 	["spell"] = 	function()
-		do_shadow_gate(Ind, 5 + get_level(Ind, SHADOWGATE, 5))
+		--begin at ANNOY_DISTANCE as a minimum, to overcome
+		do_shadow_gate(Ind, 4 + get_level(Ind, SHADOWGATE, 12))
 		end,
 	["info"] = 	function()
-		return "range "..(5 + get_level(Ind, SHADOWGATE, 5))
+		return "range "..(4 + get_level(Ind, SHADOWGATE, 12))
 		end,
 	["desc"] = 	{ "Teleports you to the nearest opponent in line of sight.", }
 }
