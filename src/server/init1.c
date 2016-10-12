@@ -4530,8 +4530,9 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			r_info[i].flags3 |= RF3_NO_FEAR;
 		}
 		if (r_info[i].d_char == 'A') {
-			r_info[i].flags9 |= (RF9_RES_LITE | RF9_RES_POIS);
+			r_info[i].flags9 |= (RF9_RES_LITE | RF9_RES_DARK | RF9_RES_POIS | RF9_IM_PSI);
 			r_info[i].flags3 |= (RF3_NO_FEAR | RF3_NO_CONF);
+			if (strcasestr(r_name + r_info[i].name, "Fallen")) r_info[i].flags9 &= ~RF9_RES_LITE;
 		}
 
 		/* Elemental melee attack effects give the according resistance (experimental) */
