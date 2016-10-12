@@ -14201,10 +14201,10 @@ All vampires and vampiric monsters (vampire bats and others)
                 real vampire forms (and vampiric ixitxachitl) have 50% chance
                 (half their attacks are hits, the other half is biting).
                 For details see '(5.15) Vampirism'.
-All angels      Resist light, blindness and poison (usually immunity, see
-                ~7 flags), resist fear, resist confusion, see invisible,
+All angels      Resist light and dark, blindness and poison (usually immunity,
+                see ~7 flags), resist fear, resist confusion, see invisible,
                 strong resistance to insanity-inducing attacks.
-                Note: 'Fallen Angel' doesn't get light/confusion resistances.
+                Note: 'Fallen Angel' doesn't get light resistances.
 Mist and fume   Feather falling.
 
 Keep in mind that by changing forms you can potentially lose abilities that
