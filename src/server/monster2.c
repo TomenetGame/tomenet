@@ -4244,8 +4244,13 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 		/* Require "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) continue;
 
+		/* This check is performed in place_monster_aux()->place_monster_one(),
+		   so dungeon boss generation can fail if we don't keep it consistent here */
+		if (!monster_can_cross_terrain(zcave[y][x].feat, &r_info[r_idx], TRUE, zcave[y][x].info)) continue;
+
 
 		/* ---------- specific location restrictions for this monster? ---------- */
+
 		/* does monster require open area to be spawned in? */
 		if ((r_info[r_idx].flags8 & RF8_AVOID_PERMAWALLS)
 		    && !(summon_override_checks & (SO_GRID_EMPTY | SO_GRID_TERRAIN))) {
@@ -4279,6 +4284,7 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 		    && !(summon_override_checks & (SO_GRID_EMPTY | SO_GRID_TERRAIN))) {
 			if ((zcave[y][x].info & (CAVE_ICKY | CAVE_NEST_PIT))) continue;
 		}
+
 
 		/* Accept far away grids */
 		min_dis = 999;
