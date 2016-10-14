@@ -3469,6 +3469,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '3': lcopy[i] = 'e'; break;
 			case '4': lcopy[i] = 'a'; break;
 			case '5': lcopy[i] = 's'; break;
+			case '6': lcopy[i] = 'g'; break;
 			case '7': lcopy[i] = 't'; break;
 			case '8': lcopy[i] = 'b'; break;
 			case '9': lcopy[i] = 'g'; break;
