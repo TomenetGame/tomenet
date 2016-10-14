@@ -2978,9 +2978,9 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (dam < 10) inv = 0;
 
 	/* Resist the damage */
-	if (p_ptr->suscep_acid) dam = dam * 2;
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
+	if (p_ptr->suscep_acid && !(p_ptr->resist_acid || p_ptr->oppose_acid)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
@@ -3029,9 +3029,9 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (dam < 10) inv = 0;
 
 	/* Resist the damage */
-	if (p_ptr->suscep_elec) dam = dam * 2;
 	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
+	if (p_ptr->suscep_elec && !(p_ptr->resist_elec || p_ptr->oppose_elec)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
@@ -3076,9 +3076,9 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (dam < 10) inv = 0;
 
 	/* Resist the damage */
-	if (p_ptr->suscep_fire) dam = dam * 2;
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_fire) dam = (dam + 2) / 3;
+	if (p_ptr->suscep_fire && !(p_ptr->resist_fire || p_ptr->oppose_fire)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
@@ -3148,9 +3148,9 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (dam < 10) inv = 0;
 
 	/* Resist the damage */
-	if (p_ptr->suscep_cold) dam = dam * 2;
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
+	if (p_ptr->suscep_cold && !(p_ptr->resist_cold || p_ptr->oppose_cold)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
@@ -9045,7 +9045,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		} else {
 			if (p_ptr->resist_pois) dam = (dam + 2) / 3;
 			if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
-			if (p_ptr->suscep_pois) dam = (dam + 2) * 2;
+			if (p_ptr->suscep_pois && !(p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2;
 
 			if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -9112,7 +9112,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else {
 			if (p_ptr->resist_fire) dam = ((dam + 2) * 3) / 4;
 			if (p_ptr->oppose_fire) dam = ((dam + 2) * 3) / 4;
-			if (p_ptr->suscep_fire) dam = ((dam + 2) * 4) / 3;
+			if (p_ptr->suscep_fire && !(p_ptr->resist_fire || p_ptr->oppose_fire)) dam = ((dam + 2) * 4) / 3;
 		}
 		if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
 		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
@@ -9434,8 +9434,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Lite -- blinding */
 	case GF_LITE:
-		if (p_ptr->suscep_lite) dam *= 2;
 		if (p_ptr->resist_lite) { dam *= 4; dam /= (randint(6) + 6); }
+		else if (p_ptr->suscep_lite) dam *= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		if (!p_ptr->resist_lite && !blind && !p_ptr->resist_blind)
@@ -9565,17 +9565,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			k_elec = elec_dam(Ind, k_elec, killer, -who);
 			k_sound = dam / 3; /* 33% SOUND damage, total sound damage is saved in 'k_sound' */
 			if (p_ptr->biofeedback) k_sound /= 2;
-			if (p_ptr->resist_sound)
-			{
+			if (p_ptr->resist_sound) {
 				k_sound *= 5;
 				k_sound /= (randint(6) + 6);
 			}
 			k_lite = dam / 3; /* 33% LIGHT damage, total light damage is saved in 'k_site' */
-			if (p_ptr->suscep_lite) {
-				k_lite *= 2;
-			}
 			if (p_ptr->resist_lite) {
 				k_lite *= 4; k_lite /= (randint(6) + 6);
+			} else if (p_ptr->suscep_lite) {
+				k_lite *= 2;
 			}
 			dam = k_elec + k_sound + k_lite;
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
@@ -9599,7 +9597,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					} else {
 						if (p_ptr->resist_pois) dam = (dam + 2) / 3;
 						if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
-						if (p_ptr->suscep_pois) dam = (dam + 2) * 2;
+						if (p_ptr->suscep_pois && !(p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2;
 						if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 						else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 						take_hit(Ind, dam, killer, -who);
@@ -9695,7 +9693,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					} else {
 						if (p_ptr->resist_pois) dam = (dam + 2) / 3;
 						if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
-						if (p_ptr->suscep_pois) dam = (dam + 2) * 2;
+						if (p_ptr->suscep_pois && !(p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2;
 						if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 						else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 						take_hit(Ind, dam, killer, -who);
@@ -10264,7 +10262,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			} else {
 				if (p_ptr->resist_pois) dam = (2 * dam + 2) / 5;
 				if (p_ptr->oppose_pois) dam = (2 * dam + 2) / 5;
-				if (p_ptr->suscep_pois) dam = (5 * dam + 2) / 3;
+				if (p_ptr->suscep_pois && !(p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (5 * dam + 2) / 3;
 				if (fuzzy) msg_format(Ind, "You are hit by radiation for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 				take_hit(Ind, dam, killer, -who);
