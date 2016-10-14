@@ -441,8 +441,8 @@ bool get_item_hook_find_obj(int *item, int mode) {
 
 		if (!item_tester_okay(o_ptr)) continue;
 
-#if 0		/* strcasestr() is _GNU_SOURCE specific -_- */
-		if (strcasestr(inventory_name[i], buf)) {
+#if 0
+		if (my_strcasestr(inventory_name[i], buf)) {
 #else
 		strcpy(buf1, inventory_name[i]);
 		strcpy(buf2, buf);

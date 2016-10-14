@@ -320,8 +320,8 @@ int find_realm(int book)
         return -1;
 }
 
-#ifndef _GNU_SOURCE
-const char *strcasestr(const char *big, const char *little) {
+/* strcasestr() is only defined in _GNU_SOURCE, so we need our own implementation to be safe */
+const char *my_strcasestr(const char *big, const char *little) {
 	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0;
 	int L = strlen(little),l = 0;
@@ -343,4 +343,3 @@ const char *strcasestr(const char *big, const char *little) {
 	} while (big[cnt] != '\0');
 	return NULL;
 }
-#endif

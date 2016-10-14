@@ -2220,7 +2220,7 @@ int Receive_message(void) {
 		    && (*(sptr - 1) != 'g') /* and it's not coloured as a private message? */
 		    && tolower(buf[2]) == toupper(buf[2]) /* even safer check, that it isn't a generic server message */
 		    ) {
-			/* strcasestr() is _GNU_SOURCE specific -_- */
+			/* my_strcasestr() */
 			strcpy(l_buf, buf);
 			ptr = l_buf;
 			while (*ptr) { *ptr = tolower(*ptr); ptr++; }

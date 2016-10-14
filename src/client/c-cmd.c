@@ -1514,7 +1514,7 @@ void cmd_the_guide(void) {
 						restore_pos = TRUE;
 						break;
 					/* We found a result */
-					} else if (strcasestr(buf2, search)) {
+					} else if (my_strcasestr(buf2, search)) {
 						/* Reverse again to normal direction/location */
 						if (backwards) {
 							backwards = FALSE;
@@ -1541,7 +1541,7 @@ void cmd_the_guide(void) {
 				}
 
 				/* Colour all search finds */
-				if (withinsearch[0] && strcasestr(buf2, withinsearch)) {
+				if (withinsearch[0] && my_strcasestr(buf2, withinsearch)) {
 					strcpy(buf, buf2);
 
 					cp = buf;
@@ -1692,29 +1692,29 @@ void cmd_the_guide(void) {
 
 				/* Misc chapters, hardcoded: */
 				find = 0;
-				if (strcasestr(buf, "Iron")) find++;
-				if (strcasestr(buf, "Deep")) find++;
-				if (strcasestr(buf, "Dive")) find++;
-				if (strcasestr(buf, "Challenge")) find++;
+				if (my_strcasestr(buf, "Iron")) find++;
+				if (my_strcasestr(buf, "Deep")) find++;
+				if (my_strcasestr(buf, "Dive")) find++;
+				if (my_strcasestr(buf, "Challenge")) find++;
 				if (!strcasecmp(buf, "IDDC") || !strcasecmp("Ironman Deep Dive Challenge", buf) || find >= 2) {
 					strcpy(chapter, "Ironman Deep Dive Challenge (IDDC)");
 					continue;
 				}
-				if ((!strcasecmp("HT", buf) || !strcasecmp("HL", buf) || strcasestr("Highland", buf) || strcasestr("Tournament", buf))
+				if ((!strcasecmp("HT", buf) || !strcasecmp("HL", buf) || my_strcasestr("Highland", buf) || my_strcasestr("Tournament", buf))
 				    && strcasecmp("Ent", buf)) { //oops
 					strcpy(chapter, "Highlander Tournament");
 					continue;
 				}
-				if (!strcasecmp("AMC", buf) || (strcasestr("Arena", buf))) {// && strcasestr("Challenge", buf))) {
+				if (!strcasecmp("AMC", buf) || (my_strcasestr("Arena", buf))) {// && my_strcasestr("Challenge", buf))) {
 					strcpy(chapter, "Arena Monster Challenge");
 					continue;
 				}
-				if (!strcasecmp("DK", buf) || !strcasecmp("Dungeon Keeper", buf) || strcasestr("Keeper", buf)) { //sorry, Death Knights
+				if (!strcasecmp("DK", buf) || !strcasecmp("Dungeon Keeper", buf) || my_strcasestr("Keeper", buf)) { //sorry, Death Knights
 					strcpy(chapter, "Dungeon Keeper");
 					continue;
 				}
 				if (!strcasecmp("XO", buf) || !strcasecmp("Extermination Orders", buf)
-				    || strcasestr(buf, "Extermination") || strcasestr(buf, "Order")) {
+				    || my_strcasestr(buf, "Extermination") || my_strcasestr(buf, "Order")) {
 					strcpy(chapter, "Extermination Orders");
 					continue;
 				}
@@ -1727,44 +1727,44 @@ void cmd_the_guide(void) {
 					continue;
 				}
 				find = 0;
-				if (strcasestr(buf, "New")) find++;
-				if (strcasestr(buf, "Year")) find++;
-				if (strcasestr(buf, "Eve")) find++;
-				if (strcasestr(buf, "nye") || find >= 2) {
+				if (my_strcasestr(buf, "New")) find++;
+				if (my_strcasestr(buf, "Year")) find++;
+				if (my_strcasestr(buf, "Eve")) find++;
+				if (my_strcasestr(buf, "nye") || find >= 2) {
 					strcpy(chapter, "New year's eve");
 					continue;
 				}
 
 				/* Lua-defined chapters */
 				for (i = 0; i < guide_races; i++) {
-					if (!strcasestr(guide_race[i], buf)) continue;
+					if (!my_strcasestr(guide_race[i], buf)) continue;
 					strcpy(chapter, "- ");
 					strcat(chapter, guide_race[i]);
 					break;
 				}
 				if (chapter[0]) continue;
 				for (i = 0; i < guide_classes; i++) {
-					if (!strcasestr(guide_class[i], buf)) continue;
+					if (!my_strcasestr(guide_class[i], buf)) continue;
 					strcpy(chapter, "- ");
 					strcat(chapter, guide_class[i]);
 					break;
 				}
 				if (chapter[0]) continue;
 				for (i = 0; i < guide_skills; i++) {
-					if (!strcasestr(guide_skill[i], buf)) continue;
+					if (!my_strcasestr(guide_skill[i], buf)) continue;
 					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
 					break;
 				}
 				if (chapter[0]) continue;
 				for (i = 0; i < guide_schools; i++) {
-					if (!strcasestr(guide_school[i], buf)) continue;
+					if (!my_strcasestr(guide_school[i], buf)) continue;
 					strcpy(chapter, "- ");
 					strcat(chapter, guide_school[i]);
 					break;
 				}
 				if (chapter[0]) continue;
 				for (i = 0; i < guide_spells; i++) {
-					if (!strcasestr(guide_spell[i], buf)) continue;
+					if (!my_strcasestr(guide_spell[i], buf)) continue;
 					strcpy(chapter, "    ");
 					strcat(chapter, guide_spell[i]);
 					break;
@@ -1773,7 +1773,7 @@ void cmd_the_guide(void) {
 
 				/* Fighting/ranged techniques, hard-coded in the client */
 				for (i = 0; i < 16; i++) {
-					if (!strcasestr(melee_techniques[i], buf)) continue;
+					if (!my_strcasestr(melee_techniques[i], buf)) continue;
 					if (strstr(melee_techniques[i], "Tech") == melee_techniques[i]) continue; //skip placeholders
 					if (strstr(melee_techniques[i], "XXX") == melee_techniques[i]) continue; //skip placeholders
 					strcpy(chapter, "    ");
@@ -1781,7 +1781,7 @@ void cmd_the_guide(void) {
 					break;
 				}
 				for (i = 0; i < 16; i++) {
-					if (!strcasestr(ranged_techniques[i], buf)) continue;
+					if (!my_strcasestr(ranged_techniques[i], buf)) continue;
 					if (strstr(ranged_techniques[i], "Tech") == ranged_techniques[i]) continue; //skip placeholders
 					if (strstr(ranged_techniques[i], "XXX") == ranged_techniques[i]) continue; //skip placeholders
 					strcpy(chapter, "    ");
