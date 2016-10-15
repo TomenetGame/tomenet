@@ -12759,7 +12759,7 @@ create a character!):
     stealth, bows, and magic, but they are not as good at hand weapons.
     Half-elves resist light intrinsically.
     They get bonus on 'Bow-mastery' and 'Interception' and a small bonus on
-    the magic 'Nature' school.
+    the 'Nature' and 'Spirit' magic schools.
 
 - Elf
     Elves resist light effects intrinsically and see invisible creatures.
@@ -12769,8 +12769,8 @@ create a character!):
     Elves are better at searching, disarming, perception, stealth, bows, and
     magic, but they are not as good at hand weapons.
     Elves get bonus on 'Bow-mastery', 'Magic', 'Stealth', 'Dodging',
-    'Calmness', 'Sneakiness' and the magic 'Water' school and a large bonus on
-    the magic 'Nature' school.
+    'Calmness', 'Sneakiness' and the magic 'Water' and occult 'Spirit' schools
+    and a large bonus on the magic 'Nature' school.
 
 - Hobbit
     Hobbits have their dexterity sustained. Further, they get a dexterity bonus
@@ -12822,8 +12822,8 @@ create a character!):
     good warriors and rogues, for the simple reason that Half-Orcs tend to
     have great constitutions and lots of hit points.
     They get a slight bonus on 'Backstabbing', a large bonus on 'Weaponmastery'
-    and a bonus on 'Necromancy' and receive penalties on 'Magic' and 'Sorcery'
-    and a slight penalty on 'Swimming'.
+    and a bonus on 'Necromancy' and occult 'Shadow' magic and receive penalties
+    on 'Magic' and 'Sorcery' and a slight penalty on 'Swimming'.
 
 - Half-Troll
     Half-trolls have their strength sustained. They are very strong, but also
@@ -12854,7 +12854,7 @@ create a character!):
     hard for them to gain.
     High-Elves receive boni on 'Bow-mastery', 'Magic', 'Stealth', 'Dodging'
     and the magic 'Nature' school, a large bonus on 'Calmness' and a slight
-    bonus on 'Swimming'.
+    bonus on 'Swimming' and on occult 'Spirit' magic.
 
 - Yeek
     Being weak and losing many childhood fights, they have learned the
@@ -12878,7 +12878,8 @@ create a character!):
     like a side of meat. They are as sturdy as Dwarves and are quite agile
     making them good fighters, rogues, and mimics. Being creatures of the
     night, Goblins have natural resistance to darkness.
-    They receive bonus on 'Boomerang-mastery' and 'Stealing'.
+    They receive bonus on 'Boomerang-mastery', 'Stealing' and occult 'Shadow'
+    magic.
 
 - Ent
     The Ents are a powerful race dating from the beginning of the world,
@@ -12981,7 +12982,8 @@ create a character!):
     Dark-Elves are good fighters and sorcerors, but also decent priests.
     Dark-Elves intrinsically resist darkness, but are susceptible to light.
     At level 20 they learn to see the invisible.
-    They get bonus on 'Stealth', 'Dodging', 'Sneakiness' and 'Backstabbing'.
+    They get bonus on 'Stealth', 'Dodging', 'Sneakiness', 'Backstabbing' and
+    occult 'Shadow' magic.
 
 - Vampire
     These powerful undead creatues move out in the night to hunt living prey
