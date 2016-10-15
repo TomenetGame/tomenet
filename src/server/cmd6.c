@@ -7633,12 +7633,14 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 			return;
 		}
 		for (i = 0; i < INVEN_WIELD; i++)
-			if (p_ptr->inventory[i].tval == TV_POTION && p_ptr->inventory[i].sval == SV_POTION_POISON) {
+			if ((p_ptr->inventory[i].tval == TV_POTION && p_ptr->inventory[i].sval == SV_POTION_POISON) ||
+			    (p_ptr->inventory[i].tval == TV_FOOD &&
+			    (p_ptr->inventory[i].sval == SV_FOOD_POISON || p_ptr->inventory[i].sval == SV_FOOD_UNHEALTH || p_ptr->inventory[i].sval == SV_FOOD_DISEASE))) {
 				//p_ptr->cst -= 2;
 				inven_item_increase(Ind, i, -1);
 				inven_item_describe(Ind, i);
 				inven_item_optimize(Ind, i);
-				msg_print(Ind, "You apply a potion of poison..");
+				msg_print(Ind, "You apply the poisonous essence to your weapon..");
 				set_brand(Ind, 50 + randint(20), BRAND_POIS, 0);
 				break;
 			}
