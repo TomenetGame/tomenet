@@ -9695,8 +9695,8 @@ void inven_item_increase(int Ind, int item, int num) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[item];
 
-	/* Invalidate 'item_newest' to be safe */
-	if (-num >= o_ptr->number) Send_item_newest(Ind, -1);
+	/* Lost all 'item_newest'? */
+	if (-num >= o_ptr->number && item == p_ptr->item_newest) Send_item_newest(Ind, -1);
 
 	/* Apply */
 	num += o_ptr->number;
@@ -9742,10 +9742,8 @@ void inven_item_increase(int Ind, int item, int num) {
  * processes items and goes from lower value upwards to higher value if you don't
  * intend that result for some reason!! - C. Blue
  */
-bool inven_item_optimize(int Ind, int item)
-{
+bool inven_item_optimize(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-
 	object_type *o_ptr = &p_ptr->inventory[item];
 
 	/* Only optimize real items */
@@ -9758,18 +9756,18 @@ bool inven_item_optimize(int Ind, int item)
 	if (o_ptr->number) return (FALSE);
 
 	/* The item is in the pack */
-	if (item < INVEN_WIELD)
-	{
+	if (item < INVEN_WIELD) {
 		int i;
 
 		/* One less item */
 		p_ptr->inven_cnt--;
 
 		/* Slide everything down */
-		for (i = item; i < INVEN_PACK; i++)
-		{
+		for (i = item; i < INVEN_PACK; i++) {
 			/* Structure copy */
 			p_ptr->inventory[i] = p_ptr->inventory[i+1];
+
+			if (i == p_ptr->item_newest) Send_item_newest(Ind, i - 1);
 		}
 
 		/* Update inventory indeces - mikaelh */
@@ -9781,8 +9779,7 @@ bool inven_item_optimize(int Ind, int item)
 	}
 
 	/* The item is being wielded */
-	else
-	{
+	else {
 		/* One less item */
 		p_ptr->equip_cnt--;
 
@@ -10432,6 +10429,8 @@ void reorder_pack(int Ind) {
 
 		/* Insert the moved item */
 		p_ptr->inventory[j] = temp;
+
+		if (p_ptr->item_newest == i) Send_item_newest(Ind, j);
 
 		/* Update inventory indeces - mikaelh */
 		inven_index_slide(Ind, j, 1, i - 1);

@@ -8050,6 +8050,8 @@ int Send_item_newest(int Ind, int item) {
 		return 0;
 	}
 
+	Players[Ind]->item_newest = item;
+
 	return Packet_printf(&connp->c, "%c%c", PKT_ITEM_NEWEST, (char)item);
 }
 

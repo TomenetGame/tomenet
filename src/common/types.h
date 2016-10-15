@@ -2975,6 +2975,8 @@ struct player_type {
 	s32b mail_xfee;
 	bool mail_COD;
 #endif
+
+	int item_newest;
 };
 
 typedef struct boni_col boni_col;
