@@ -16733,10 +16733,11 @@ The techniques are as follows:
     -----------------------------------
     Apply Poison        -
         Searches your inventory for a potion of poison or a mushroom of poison,
-        unhealth or disease, and spends it to apply poison to any melee weapon
-        that you have equipped. If you have two weapons equipped, it is applied
-        to both. This technique does not work without a weapon. If you take off
-        a weapon, the poison branding will fade away.
+        or of unhealth, and spends it to apply poison to any melee weapon that
+        you have equipped.
+        If you have two weapons equipped, it is applied to both. This technique
+        does not work without a weapon. If you take off a weapon the poison
+        branding will fade away.
         The poison will only last for a short while, so it's best to apply it
         before engaging in a fight.
     Perceive Noise      3 stamina
