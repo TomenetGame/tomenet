@@ -3934,7 +3934,7 @@ static int project_m_y;
  *
  * XXX XXX XXX Perhaps we should affect doors?
  */
-static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ) {
+static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int flg) {
 	bool obvious = FALSE;
 	//bool quiet = ((Ind <= 0) ? TRUE : FALSE);
 	bool quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : FALSE);
@@ -4447,54 +4447,62 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_STARLITE:
 		case GF_LITE_WEAK:
 		case GF_LITE:
+			/* Exception: Bolt-type spells have no special effect */
+			if (!(flg & (PROJECT_NORF | PROJECT_JUMP))) break;
+
 			/* don't ruin the mood :> (allow turning on light inside houses though) */
-			if ((!(wpos->wz == 0 && (season_halloween || season_newyearseve))) || (c_ptr->info & CAVE_ICKY)) {
-				/* Turn on the light */
-				c_ptr->info |= CAVE_GLOW;
+			if ((!wpos->wz && (season_halloween || season_newyearseve)) && !(c_ptr->info & CAVE_ICKY)) break;
 
-				if (!quiet) {
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
-					/* Observe */
-					if (player_can_see_bold(Ind, y, x)) obvious = TRUE;
-				}
+			/* Turn on the light */
+			c_ptr->info |= CAVE_GLOW;
 
-				/* Mega-Hack -- Update the monster in the affected grid */
-				/* This allows "spear of light" (etc) to work "correctly" */
-				if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
+			if (!quiet) {
+				/* Notice */
+				note_spot_depth(wpos, y, x);
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+				/* Observe */
+				if (player_can_see_bold(Ind, y, x)) obvious = TRUE;
 			}
+
+			/* Mega-Hack -- Update the monster in the affected grid */
+			/* This allows "spear of light" (etc) to work "correctly" */
+			if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
+
 			break;
 
 		/* Darken the grid */
 		case GF_DARK_WEAK:
 		case GF_DARK:
+			/* Exception: Bolt-type spells have no special effect */
+			if (!(flg & (PROJECT_NORF | PROJECT_JUMP))) break;
+
+			/* don't ruin the mood :> (allow turning on light inside houses though) */
+			if ((!wpos->wz && (season_halloween || season_newyearseve)) && !(c_ptr->info & CAVE_ICKY)) break;
+
 			/* Notice */
 			if (!quiet && player_can_see_bold(Ind, y, x)) obvious = TRUE;
 
-			/* don't ruin the mood :> (allow turning on light inside houses though) */
-			if ((!(wpos->wz == 0 && (season_halloween || season_newyearseve))) || (c_ptr->info & CAVE_ICKY)) {
-				/* Turn off the light. */
-				c_ptr->info &= ~CAVE_GLOW;
+			/* Turn off the light. */
+			c_ptr->info &= ~CAVE_GLOW;
 
-				/* Hack -- Forget "boring" grids */
-				    //if (c_ptr->feat <= FEAT_INVIS)
-				if (cave_plain_floor_grid(c_ptr)) {
-					/* Forget the wall */
-					everyone_forget_spot(wpos, y, x);
-					if (!quiet)
-						/* Notice */
-						note_spot(Ind, y, x);
-				}
+			/* Hack -- Forget "boring" grids */
+			    //if (c_ptr->feat <= FEAT_INVIS)
+			if (cave_plain_floor_grid(c_ptr)) {
+				/* Forget the wall */
+				everyone_forget_spot(wpos, y, x);
 				if (!quiet)
-					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
-
-				/* Mega-Hack -- Update the monster in the affected grid */
-				/* This allows "spear of light" (etc) to work "correctly" */
-				if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
+					/* Notice */
+					note_spot(Ind, y, x);
 			}
+			if (!quiet)
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+
+			/* Mega-Hack -- Update the monster in the affected grid */
+			/* This allows "spear of light" (etc) to work "correctly" */
+			if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
+
 			break;
 
 		case GF_KILL_GLYPH:
@@ -6920,8 +6928,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_DARK_WEAK:
 			if (seen) obvious = TRUE;
 
-			/* Get blinded later */
-			do_blind = damroll(3, (dam / 20)) + 1;
+			/* Exception: Bolt-type spells have no special effect */
+			if (flg & (PROJECT_NORF | PROJECT_JUMP)) {
+				/* Get blinded later */
+				do_blind = damroll(3, (dam / 20)) + 1;
+			}
 
 			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
 			    || (r_ptr->flags3 & RF3_UNDEAD)) {
@@ -6938,8 +6949,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			//TODO: Light Hounds could be susceptible.
 			if (seen) obvious = TRUE;
 
-			/* Get blinded later */
-			do_blind = damroll(3, (dam / 20)) + 1;
+			/* Exception: Bolt-type spells have no special effect */
+			if (flg & (PROJECT_NORF | PROJECT_JUMP)) {
+				/* Get blinded later */
+				do_blind = damroll(3, (dam / 20)) + 1;
+			}
 
 			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
 			    || (r_ptr->flags3 & RF3_UNDEAD)) {
@@ -8556,7 +8570,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ == GF_RESTORE_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 		    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 		    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
-                    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) || (typ == GF_PUSH) ||
+		    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) || (typ == GF_PUSH) ||
 		    (typ == GF_HEALINGCLOUD) || /* Also not a hostile spell */
 		    (typ == GF_MINDBOOST_PLAYER) || (typ == GF_IDENTIFY) ||
 		    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
@@ -8599,7 +8613,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ != GF_RESTORE_PLAYER) && (typ != GF_REMCURSE_PLAYER) &&
 		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
-                    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
+		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
@@ -9070,10 +9084,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 #ifdef ARCADE_SERVER
-                case GF_PUSH:
-          //    msg_print(Ind, "You are pushed by something!");
-                msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-                (void)set_pushed(Ind, dam);
+		case GF_PUSH:
+	  //    msg_print(Ind, "You are pushed by something!");
+		msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		(void)set_pushed(Ind, dam);
 		break;
 #endif
 
@@ -9449,7 +9463,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		if (!p_ptr->resist_dark && !blind && !p_ptr->resist_blind)
-			(void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
+			/* Exception: Bolt-type spells have no special effect */
+			if (flg & (PROJECT_NORF | PROJECT_JUMP))
+				(void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
 		take_hit(Ind, dam, killer, -who);
 		break;
 
@@ -11334,7 +11350,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	/* Hack: Usually, elemental bolt spells will not hurt floor/item if they already hurt a monster/player.
 	         Some bolt spells (poly) don't need this flag, since they don't hurt items/floor at all. */
 	if ((flg & PROJECT_EVSG) && zcave[y][x].m_idx != 0)
-                flg &= ~(PROJECT_GRID | PROJECT_ITEM);
+		flg &= ~(PROJECT_GRID | PROJECT_ITEM);
 
 	/* hack: FF1_BLOCK_CONTACT grids prevent explosions,
 	   since those would carry over on the other side if it's
@@ -11641,12 +11657,12 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #endif
 #ifdef ARCADE_SERVER
 #if 0
-                                                if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
-                                        	    project_time_effect & EFF_CROSSHAIR_C) {
-	                                                msg_broadcast(0, "making an effect");
-    	        	                                player_type *pfft_ptr = Players[project_interval];
-        	                                        pfft_ptr->e = effect;
-                                                }
+						if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
+						    project_time_effect & EFF_CROSSHAIR_C) {
+							msg_broadcast(0, "making an effect");
+							player_type *pfft_ptr = Players[project_interval];
+							pfft_ptr->e = effect;
+						}
 #endif
 #endif
 			} else {
@@ -11670,7 +11686,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			if(!in_bounds(y,x)) continue;
 			/* Affect the feature */
 			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
-			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 
 			/* Effect ? */
 			if (flg & PROJECT_STAY) {
@@ -11979,7 +11995,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) |
 			    (r_ptr->flags0 & RF0_SPELLCASTER_MASK)) ||
 			    (r_ptr->level >= 98 && (r_ptr->flags1 & RF1_UNIQUE)))
-			        dam = 0;
+				dam = 0;
 			else if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags2 & RF2_POWERFUL))
 				dam /= 2;
@@ -12550,7 +12566,9 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_DARK:
-			//do_blind = damroll(3, (dam / 20)) + 1;
+			/* Exception: Bolt-type spells have no special effect */
+			//if (flg & (PROJECT_NORF | PROJECT_JUMP))
+				//do_blind = damroll(3, (dam / 20)) + 1;
 			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
 			    || (r_ptr->flags3 & RF3_UNDEAD)) {
 				dam /= 3;
