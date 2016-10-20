@@ -540,15 +540,30 @@ static int do_cmd_activate_skill_aux() {
 				ret = i;
 				break;
 			}
-
+			/* If the desired skill couldn't be found, stop macro execution if we're on safe_macros! */
+			if (parse_macro && c_cfg.safe_macros) {
+				flush_now();
+				ret = -1;
+				break;
+			}
 		} else {
 			which = tolower(which);
 			if (start + A2I(which) >= max) {
 				bell();
+				if (parse_macro && c_cfg.safe_macros) {
+					flush_now();
+					ret = -1;
+					break;
+				}
 				continue;
 			}
 			if (start + A2I(which) < 0) {
 				bell();
+				if (parse_macro && c_cfg.safe_macros) {
+					flush_now();
+					ret = -1;
+					break;
+				}
 				continue;
 			}
 
