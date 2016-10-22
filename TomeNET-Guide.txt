@@ -7450,11 +7450,13 @@ Ironman Deep Dive Challenge (IDDC)
 Seasonal events
 ---------------
 At certain times of the year, some seasonal events will occur for a couple of
-days each. The exact time of the day when they start can vary depending on your
-time zone, even a date difference of +/-1 day is possible for that reason:
+days each. The exact time of the day when they start or end can vary depending
+on your time zone, even a date difference of +/-1 day is possible for that
+reason. The ending date means that somewhen after the beginning of that day,
+the event will end:
 
 Halloween
-    Running from 28th October to 2nd November.
+    Running from 26th October till 2nd November.
     The server will recall all players (20 minutes ahead warning will be
     displayed) and restart. After that, Halloween is live and costumes can be
     found and stored costumes can be worn again.
