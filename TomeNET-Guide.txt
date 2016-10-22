@@ -15339,6 +15339,7 @@ school.
 
     Veil of Night   Causes your target to fall asleep instantly.
                     Lv16: It expands around you.
+                    (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 5.
 
     Shadow Bolt     Channels shadow into a bolt attack.

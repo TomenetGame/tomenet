@@ -218,6 +218,7 @@ OSLEEP_I = add_spell {
 	["mana_max"] = 	3,
 	["fail"] = 	0,
 	["direction"] = TRUE,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
 		fire_bolt(Ind, GF_OLD_SLEEP, args.dir, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
 	end,
@@ -235,6 +236,7 @@ OSLEEP_II = add_spell {
 	["mana_max"] = 	19,
 	["fail"] = 	-25,
 	["direction"] = FALSE,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		--project_los(Ind, GF_OLD_SLEEP, 5 + get_level(Ind, OSLEEP_I, 80), "mumbles softly")
 		fire_wave(Ind, GF_OLD_SLEEP, 0, 5 + get_level(Ind, OSLEEP_I, 80), 1, 10, 3, EFF_WAVE, "mumbles softly")
