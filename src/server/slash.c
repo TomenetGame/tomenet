@@ -1304,8 +1304,7 @@ void do_slash_cmd(int Ind, char *message) {
 			do_cmd_check_other_prepare(Ind, path, "Help");
 #else /* this is the same help file you get by pressing '?' key */
 			/* mimic pressing '?' key, which does cmd_help() on client-side, invoking do_cmd_help() */
-			cptr q = format("tomenet.hlp");
-			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, q);
+			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, p_ptr->rogue_like_commands ? "tomenet-rl.hlp" : "tomenet.hlp");
 			do_cmd_check_other_prepare(Ind, path, "");
 #endif
 			return;
