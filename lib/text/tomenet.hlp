@@ -35,7 +35,7 @@ q  Quaff       \{yQ  Suicide\{w       +  Dig             CTRL+T  Screenshot
 r  Read scroll R  Rest          {  Inscribe        \{yCTRL+Q  Quit the game (and
 s  Search      S  Searching     |  Uniques           \{y(auto-save window layout)
 t  Take off       mode toggle   }  Uninscribe
-u  Use staff                    '  Inspect nearby/lowbie players/party members
+u  Use staff   T  Tunnel (dig)  '  Inspect nearby/lowbie players/party members
 v  Throw       V  Cloak         _  Sip from fountain/show item on the floor
 \{yw  Wear/Wield\{w  W  Wear/Wield 2  =  Options
 x  Swap        X  Predefined    <  Go up           (*) Use X to quickly switch
