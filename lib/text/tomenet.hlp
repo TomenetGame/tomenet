@@ -18,23 +18,23 @@ experienced, you will become better at surviving. Have fun!
  Use the NUMBER PAD (or arrows) to move. Press together with SHIFT key to run.
 a  Aim wand    A  Activate      !  Show BBS        ,  Predefined 'reply' macro
 b  Browse book B  Bash door     #  Highscores         for private chat messages
-c  Close door  C  Character     $  Drop gold       SPACE   Stop auto-repeating
-d  Drop        D  Disarm        %  Macro menu
-e  Equip       E  Eat           &  Auto inscribe   CTRL+C  Toggle music
-f  Fire        F  Refill        (  Friendly target CTRL+N  Toggle all audio
-\{yg  Take item\{w   G  Skills        )  Clear buffer    \{yCTRL+U  Audio mixer\{w or
-h  Houses      H  Auto inscribe *  Target/look             switch chat mode
-i  Inventory   I  Examine       .  Run             CTRL+I  Lagometer or
-j  Steal                        /  Use item                switch chat mode
-k  Destroy     K  Force-stack   \{y:  Chat\{w
+c  Close door  C  Character     $  Drop gold       "  Load prf file (abs path)
+d  Drop        D  Disarm        %  Macro menu      SPACE   Stop auto-repeating
+e  Equip       E  Eat           &  Auto inscribe
+f  Fire        F  Refill        (  Friendly target CTRL+C  Toggle music
+\{yg  Take item\{w   G  Skills        )  Clear buffer    CTRL+N  Toggle all audio
+h  Houses      H  Auto inscribe *  Target/look     \{yCTRL+U  Audio mixer\{w or
+i  Inventory   I  Examine       .  Run                     switch chat mode
+j  Steal                        /  Use item        CTRL+I  Lagometer or
+k  Destroy     K  Force-stack   \{y:  Chat\{w                    switch chat mode
 l  Look        L  Locate (map)  ;  Walk            CTRL+O  Chat history
 m  Use skill   M  Show minimap  ?  Help            CTRL+P  All message history
 o  Open door                    \{y@  Player list\{w     CTRL+R  Redraw
 p  Open mind   \{yP  Party menu\{w    ~  Knowledge menu  CTRL+S  Spike
 q  Quaff       \{yQ  Suicide\{w       +  Dig             CTRL+T  Screenshot
 r  Read scroll R  Rest          {  Inscribe        \{yCTRL+Q  Quit the game (and
-s  Search      S  Searching     |  Uniques           \{y(auto-save window layout)
-t  Take off       mode toggle   }  Uninscribe
+s  Search      S  Searching     }  Uninscribe        \{y(auto-save window layout)
+t  Take off       mode toggle   |  Uniques
 u  Use staff   T  Tunnel (dig)  '  Inspect nearby/lowbie players/party members
 v  Throw       V  Cloak         _  Sip from fountain/show item on the floor
 \{yw  Wear/Wield\{w  W  Wear/Wield 2  =  Options
