@@ -20,7 +20,7 @@ a  Aim wand    A  Activate      !  Show BBS        ,  Predefined 'reply' macro
 b  Browse book B  Bash door     #  Highscores         for private chat messages
 c  Close door  C  Character     $  Drop gold       "  Load prf file (abs path)
 d  Drop        D  Disarm        %  Macro menu      SPACE   Stop auto-repeating
-e  Equip       E  Eat           &  Auto inscribe
+e  Equip       E  Eat           &  Auto inscribe   CTRL+G  Pick up one
 f  Fire        F  Refill        (  Friendly target CTRL+C  Toggle music
 \{yg  Take item\{w   G  Skills        )  Clear buffer    CTRL+N  Toggle all audio
 h  Houses      H  Auto inscribe *  Target/look     \{yCTRL+U  Audio mixer\{w or
@@ -33,8 +33,8 @@ o  Open door                    \{y@  Player list\{w     CTRL+R  Redraw
 p  Open mind   \{yP  Party menu\{w    ~  Knowledge menu  CTRL+S  Spike
 q  Quaff       \{yQ  Suicide\{w       +  Dig             CTRL+T  Screenshot
 r  Read scroll R  Rest          {  Inscribe        \{yCTRL+Q  Quit the game (and
-s  Search      S  Searching     }  Uninscribe        \{y(auto-save window layout)
-t  Take off       mode toggle   |  Uniques
+s  Search      S  Search mode   }  Uninscribe        \{y(auto-save window layout)
+t  Take off       (toggle)      |  Uniques
 u  Use staff   T  Tunnel (dig)  '  Inspect nearby/lowbie players/party members
 v  Throw       V  Cloak         _  Sip from fountain/show item on the floor
 \{yw  Wear/Wield\{w  W  Wear/Wield 2  =  Options
