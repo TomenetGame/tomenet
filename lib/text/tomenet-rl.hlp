@@ -1,0 +1,42 @@
+If you are new to TomeNET, look at the 'TomeNET-Guide.txt' in your TomeNET
+directory. Latest version is available online at http://www.tomenet.eu/.
+
+Listen to this bit of advice: Don't get discouraged!
+If you are new to TomeNET, you will die..... a lot. But, as you get more
+experienced, you will become better at surviving. Have fun!
+
+1. chat with ':' (colon) key, say hi after logging on.
+2. the training tower is a good place to start. It's entrance is symbol is '\{g<\{w'.
+   Press SHIFT+m to see a map of town to see where it is located.
+3. press CTRL+q to save and quit the game, but do it in town to be safe!
+
+\{D===============================================================================
+            Press SPACEBAR to scroll down or ESC to exit this help
+                              Default keys:
+ (non-rogue-like, you can find the rogue-like key set in the guide in (0.2))
+\{D===============================================================================
+ Use the NUMBER PAD (or arrows) to move. Press together with SHIFT key to run.
+z  Zap wand    A  Activate      !  Show BBS        ,  Predefined 'reply' macro
+P  Browse book f  Bash door     #  Highscores         for private chat messages
+c  Close door  C  Character     $  Drop gold       "  Load prf file (abs path)
+d  Drop        D  Disarm        %  Macro menu      SPACE   Stop auto-repeating
+e  Equip       E  Eat           &  Auto inscribe   ^Z  Pick up one item
+t  Fire        F  Refill        (  Friendly target ^X  Toggle music
+\{yg  Take item\{w   G  Skills        )  Clear buffer    ^V  Toggle all audio
+^E Houses      ^G Auto inscribe *  Target/look     \{y^F  Audio mixer\{w or
+i  Inventory   I  Examine       .  Run                 switch chat mode
+S  Steal                        /  Use item        ^I  Lagometer or
+^D Destroy     ^C Force-stack   \{y:  Chat\{w                switch chat mode
+x  Look        ^W Locate (map)  ;  Walk            ^O  Chat history
+m  Use skill   M  Show minimap  ?  Help            ^P  All message history
+o  Open door                    \{y@  Player list\{w     ^R  Redraw
+p  Open mind   \{yO  Party menu\{w    ~  Knowledge menu  ^S  Spike
+q  Quaff       \{yQ  Suicide\{w       +  Dig             ^T  Screenshot
+r  Read scroll R  Rest          {  Inscribe        \{y^Q  Quit the game (and
+s  Search      #  Search mode   }  Uninscribe        \{y(auto-save window layout)
+T  Take off       (toggle)      |  Uniques
+Z  Use staff   +  Tunnel (dig)  '  Inspect nearby/lowbie players/party members
+v  Throw       V  Cloak         _  Sip from fountain/show item on the floor
+\{yw  Wear/Wield\{w  ^W Wear/Wield 2  =  Options
+^A Swap        X  Predefined    <  Go up           (*) Use X to quickly switch
+a  Aim rod        x0-macro (*)  >  Go down         equipment inscribed @x0.
