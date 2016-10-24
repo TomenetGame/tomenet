@@ -9954,17 +9954,16 @@ Spell crystal       They are like "spell scrolls", except they are used for
                     scrolls).
 Codex, Spellbook, Grimoire
                     These are magic books that may contain magic spells of any
-                    type and school, be it for mages, priests, druids or
-                    mindcrafters.
+                    type and school.
                     However, these books start out empty, devoid of any spells
                     and it's up to the player to add spells of his choice to
                     them.
                     To do so, he needs to find or buy spell scrolls in the
-                    library (store '9'), then press 'A' to activate the Codex,
-                    Spellbook or Grimoire, then choose the spell scroll he
-                    wants to transcribe into the book. The scroll will vanish
-                    and the spell will be permanently and irreversibly added
-                    to the book.
+                    book store (orange '9' in town), then press 'A' to activate
+                    the Codex, Spellbook or Grimoire, then choose the spell
+                    scroll he wants to transcribe into the book. The scroll
+                    will vanish and the spell will be permanently and
+                    irreversibly added to the book.
                     Condition for this to work is that the book still has free
                     space left, and that the player has actually learned the
                     spell he wants to transcribe.
