@@ -4200,7 +4200,7 @@ These files can be used for saving your macros to without problems:
 <class>.prf (for the specific class)
 <character name>.prf (for the specific character the player logged in with)
 
-It is recommended to use only race/class/account/character preference files
+It is recommended to use only race/class/character preference files
 for storing your macros.
 
 
