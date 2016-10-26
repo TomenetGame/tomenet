@@ -2650,7 +2650,7 @@ static void set_player_font_definitions(int ind, int player) {
 	p_ptr->r_char[1064] = p_ptr->f_char[FEAT_IVY];
 	p_ptr->r_attr[1064] = r_info[1064].d_attr;
 #endif
-	//walls (Stunwall, Livingstone, Lesser/Greater wall monster, Roper, Athu, Glass Golem? it's non-granite rather, Golgarach)
+	//walls (Stunwall, Livingstone, Lesser/Greater wall monster, Roper, Ahtu?, Glass Golem?, Golgarach)
 	p_ptr->r_char[326] = p_ptr->f_char[FEAT_WALL_EXTRA];
 	p_ptr->r_attr[326] = r_info[326].d_attr;
 	p_ptr->r_char[336] = p_ptr->f_char[FEAT_WALL_EXTRA];
@@ -2661,10 +2661,12 @@ static void set_player_font_definitions(int ind, int player) {
 	p_ptr->r_attr[718] = r_info[718].d_attr;
 	p_ptr->r_char[426] = p_ptr->f_char[FEAT_WALL_EXTRA];
 	p_ptr->r_attr[426] = r_info[426].d_attr;
-	p_ptr->r_char[761] = p_ptr->f_char[FEAT_WALL_EXTRA];
+ #if 0
+	p_ptr->r_char[761] = p_ptr->f_char[FEAT_WALL_EXTRA];//Ahtu
 	p_ptr->r_attr[761] = r_info[761].d_attr;
-	p_ptr->r_char[1033] = p_ptr->f_char[FEAT_WALL_EXTRA];//glass golem
+	p_ptr->r_char[1033] = p_ptr->f_char[FEAT_WALL_EXTRA];//Glass Golem
 	p_ptr->r_attr[1033] = r_info[1033].d_attr;
+ #endif
 	p_ptr->r_char[1035] = p_ptr->f_char[FEAT_WALL_EXTRA];
 	p_ptr->r_attr[1035] = r_info[1035].d_attr;
 	//doors (Door Mimic, Void Jumpgate Mimic)
