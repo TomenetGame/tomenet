@@ -2664,7 +2664,7 @@ static void set_player_font_definitions(int ind, int player) {
 	//doors (Door Mimic, Void Jumpgate Mimic)
 	p_ptr->r_char[311] = p_ptr->f_char[FEAT_HOME];
 	p_ptr->r_attr[311] = r_info[311].d_attr;
-	p_ptr->r_char[1082] = p_ptr->f_char[FEAT_HOME];
+	p_ptr->r_char[1082] = p_ptr->f_char[FEAT_BETWEEN];
 	p_ptr->r_attr[1082] = r_info[1082].d_attr;
 	//shrooms (mushroom patches)
 #if 0 /* pft - actually not all of these are really mushrooms.. and food could look differently anyway */
