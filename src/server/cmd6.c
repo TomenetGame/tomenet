@@ -7189,6 +7189,7 @@ void do_cmd_fletchery(int Ind) {
 		//q_ptr->number = (byte)rand_range(15,25);
 		invcopy(q_ptr, lookup_kind(TV_SHOT, SV_AMMO_LIGHT));
 		q_ptr->number = (p_ptr->inventory[item].weight * 2) / (q_ptr->weight + 1) + randint(5);
+		if (q_ptr->number > 99) q_ptr->number = 99;
 		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
@@ -7245,6 +7246,7 @@ void do_cmd_fletchery(int Ind) {
 		//q_ptr->number = (byte)rand_range(15,25);
 		invcopy(q_ptr, lookup_kind(TV_ARROW, m_bonus(1, tlev) + 1));
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
+		if (q_ptr->number > 99) q_ptr->number = 99;
 		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
@@ -7301,6 +7303,7 @@ void do_cmd_fletchery(int Ind) {
 		invcopy(q_ptr, lookup_kind(TV_BOLT, m_bonus(1, tlev) + 1));
 		//q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
+		if (q_ptr->number > 99) q_ptr->number = 99;
 		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
