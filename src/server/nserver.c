@@ -2626,8 +2626,12 @@ static void set_player_font_definitions(int ind, int player) {
 	p_ptr->r_char[803] = p_ptr->f_char[FEAT_FLOOR];
 	p_ptr->r_attr[803] = r_info[803].d_attr;
 	//trees (Old Man Willow, Huorn, Xiclotlan)
-	p_ptr->r_char[458] = p_ptr->f_char[FEAT_FLOOR];
-	p_ptr->r_attr[458] = r_info[458].d_attr;
+	p_ptr->r_char[206] = p_ptr->f_char[FEAT_TREE];
+	p_ptr->r_attr[206] = r_info[206].d_attr;
+	p_ptr->r_char[329] = p_ptr->f_char[FEAT_TREE];
+	p_ptr->r_attr[329] = r_info[458].d_attr;
+	p_ptr->r_char[396] = p_ptr->f_char[FEAT_TREE];
+	p_ptr->r_attr[396] = r_info[458].d_attr;
 	//ivy (Tangleweed, Poison Ivy, Giant Venus Flytrap)
 	p_ptr->r_char[248] = p_ptr->f_char[FEAT_IVY];
 	p_ptr->r_attr[248] = r_info[248].d_attr;
@@ -2636,6 +2640,7 @@ static void set_player_font_definitions(int ind, int player) {
 	p_ptr->r_char[317] = p_ptr->f_char[FEAT_IVY];
 	p_ptr->r_attr[317] = r_info[317].d_attr;
 	//mist (Vampiric mist, Mist giant, Weird fume, Dark mist)
+#if 0 /* there is currently no 'mist' tile except for 'nether mist' which is normal floor though. Using FEAT_IVY (or any other '#' symbol) doesn't cut it for custom font mapping. */
 	p_ptr->r_char[365] = p_ptr->f_char[FEAT_IVY];
 	p_ptr->r_attr[365] = r_info[365].d_attr;
 	p_ptr->r_char[552] = p_ptr->f_char[FEAT_IVY];
@@ -2644,6 +2649,7 @@ static void set_player_font_definitions(int ind, int player) {
 	p_ptr->r_attr[625] = r_info[625].d_attr;
 	p_ptr->r_char[1064] = p_ptr->f_char[FEAT_IVY];
 	p_ptr->r_attr[1064] = r_info[1064].d_attr;
+#endif
 	//walls (Stunwall, Livingstone, Lesser/Greater wall monster, Roper, Athu, Glass Golem? it's non-granite rather, Golgarach)
 	p_ptr->r_char[326] = p_ptr->f_char[FEAT_WALL_EXTRA];
 	p_ptr->r_attr[326] = r_info[326].d_attr;
