@@ -3053,6 +3053,7 @@
 #define SV_EMPTY_BOTTLE			1
 
 /* sval for TV_JUNK */
+#define SV_POTTERY			3
 #define SV_WOODEN_STICK			6
 #define SV_WOOD_PIECE			7
 

@@ -6923,7 +6923,7 @@ bool unmagic(int Ind) {
 		set_oppose_pois(Ind, 0) |
 		set_zeal(Ind, 0, 0) |
 		set_mindboost(Ind, 0, 0) |
-//		set_martyr(Ind, 0) |
+		//set_martyr(Ind, 0) |
 		set_sh_fire_tim(Ind, 0) |
 		set_sh_cold_tim(Ind, 0) |
 		set_sh_elec_tim(Ind, 0) |
@@ -6955,7 +6955,7 @@ void fortune(int Ind, bool broadcast) {
 	strcpy(Broadcast, "Suddenly a thought comes to your mind:");
 	msg_print(Ind, NULL);
 
-//	switch(randint(20))
+	//switch(randint(20))
 	switch(randint(80)) {
 	case 1:
 		get_rnd_line("chainswd.txt",0 , Rumor, MAX_CHARS_WIDE);
@@ -6977,7 +6977,7 @@ void fortune(int Ind, bool broadcast) {
 	}
 
 	bracer_ff(Rumor);
-//	msg_format(Ind, "%s", Rumor);
+	//msg_format(Ind, "%s", Rumor);
 	msg_print(Ind, Rumor);
 	msg_print(Ind, NULL);
 
@@ -6989,7 +6989,7 @@ void fortune(int Ind, bool broadcast) {
 }
 
 char random_colour() {
-//	char tmp[] = "wWrRbBgGdDuUoyvs";
+	//char tmp[] = "wWrRbBgGdDuUoyvs";
 	char tmp[] = "dwsorgbuDWvyRGBU";
 
 	return(tmp[randint(15)]);	// never 'd'
@@ -7001,21 +7001,34 @@ char random_colour() {
  */
 
 /*
- * Hook to determine if an object is convertible in an arrow/bolt
+ * Hook to determine if an object is convertible in an arrow/bolt or pebble
  */
-
-static int fletchery_items(int Ind) {
+static int fletchery_items(int Ind, int type) {
 	player_type *p_ptr = Players[Ind];
 	object_type     *o_ptr;
 	int i;
 
-	for (i = 0; i < INVEN_PACK; i++) {
-		o_ptr = &p_ptr->inventory[i];
-		if (!o_ptr->k_idx) continue;
-		if (!can_use_admin(Ind, o_ptr)) continue;
-		/* Broken Stick */
-		if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOODEN_STICK) return (i);
-		if (o_ptr->tval == TV_SKELETON) return (i);
+	switch (type) {
+	case SKILL_BOW:
+	case SKILL_XBOW:
+		for (i = 0; i < INVEN_PACK; i++) {
+			o_ptr = &p_ptr->inventory[i];
+			if (!o_ptr->k_idx) continue;
+			if (!can_use_admin(Ind, o_ptr)) continue;
+			/* Broken Stick */
+			if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_WOODEN_STICK) return (i);
+			if (o_ptr->tval == TV_SKELETON) return (i);
+		}
+		break;
+	case SKILL_SLING:
+		for (i = 0; i < INVEN_PACK; i++) {
+			o_ptr = &p_ptr->inventory[i];
+			if (!o_ptr->k_idx) continue;
+			if (!can_use_admin(Ind, o_ptr)) continue;
+			/* Shards of Pottery */
+			if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_POTTERY) return (i);
+		}
+		break;
 	}
 
 	/* Failed */
@@ -7060,7 +7073,7 @@ void create_sling_ammo_aux(int Ind) {
 
 	(void)inven_carry(Ind, q_ptr);
 
-//	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
+	//p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
 	p_ptr->update |= (PU_VIEW | PU_FLOW);
 	p_ptr->window |= (PW_OVERHEAD);
 
@@ -7082,13 +7095,10 @@ void do_cmd_fletchery(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int ext = 0, tlev = 0, raw_materials, raw_amount;
 	//char ch;
-
-	object_type	forge;
-	object_type     *q_ptr;
-
-	//char com[80];
-
+	object_type forge, *q_ptr;
+	int item;
 	cave_type **zcave;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 
@@ -7115,71 +7125,109 @@ void do_cmd_fletchery(int Ind) {
 		return;
 	}
 
+
+	/* Prepare for object creation */
+
 	tlev = get_skill_scale(p_ptr, SKILL_ARCHERY, 50) - 20
 		+ get_skill_scale(p_ptr, ext, 35);
 
-	/* Prepare for object creation */
-//	q_ptr = &forge;
+	item = fletchery_items(Ind, ext);
 
 	/**********Create shots*********/
-//	if (ext == 1)
 	if (ext == SKILL_SLING) {
-		int x,y, dir;
+		int x, y, dir;
 		cave_type *c_ptr;
 
-		if (p_ptr->tim_wraith) { /* Not in WRAITHFORM ^^ */
-			msg_print(Ind, "You can't pick up rubble in incorporeal form!");
+		if (item < 0) { //no item available? check for rubble then
+#if 0
+			/* Get the item (on the floor) */
+			else if (-item >= o_max)
+				return; /* item doesn't exist */
+			    q_ptr = &o_list[0 - item];
+#endif
+
+			if (p_ptr->tim_wraith) { /* Not in WRAITHFORM ^^ */
+				msg_print(Ind, "You can't pick up rubble in incorporeal form!");
+				return;
+			}
+
+			for (dir = 1; dir <= 9; dir++) {
+				y = p_ptr->py + ddy[dir];
+				x = p_ptr->px + ddx[dir];
+				c_ptr = &zcave[y][x];
+				if (c_ptr->feat == FEAT_RUBBLE) {
+					/* new: actually tunnel through the rubble in order to craft ammo from it - C. Blue */
+
+					/* need this here since we abuse it to reset current_create_sling_ammo */
+					stop_precision(Ind);
+
+					/* start digging the rubble.. */
+					p_ptr->current_create_sling_ammo = TRUE;
+					fake_Receive_tunnel(Ind, dir);
+					return;
+				}
+			}
+			msg_print(Ind, "There are no appropriate materials available.");
 			return;
 		}
 
-//		if (!get_rep_dir(&dir)) return;
-		for (dir = 1; dir <= 9; dir++) {
-			y = p_ptr->py + ddy[dir];
-			x = p_ptr->px + ddx[dir];
-			c_ptr = &zcave[y][x];
-			if (c_ptr->feat == FEAT_RUBBLE) {
-				/* new: actually tunnel through the rubble in order to craft ammo from it - C. Blue */
+		/* Get the item (in the pack) */
+		q_ptr = &p_ptr->inventory[item];
 
-				/* need this here since we abuse it to reset current_create_sling_ammo */
-				stop_precision(Ind);
+		/* S(he) is no longer afk */
+		un_afk_idle(Ind);
 
-				/* start digging the rubble.. */
-				p_ptr->current_create_sling_ammo = TRUE;
-				fake_Receive_tunnel(Ind, dir);
-				return;
-			}
+		/* Remember amount of raw materials used for this */
+		raw_materials = q_ptr->number;
+		/* Prevent large pack overflow which results in much lost ammo */
+		if (raw_materials > 10) raw_materials = 10;
+
+		/* Get local object */
+		q_ptr = &forge;
+
+		/* Hack -- Give the player some arrows */
+		//q_ptr->number = (byte)rand_range(15,25);
+		invcopy(q_ptr, lookup_kind(TV_SHOT, SV_AMMO_LIGHT));
+		q_ptr->number = (p_ptr->inventory[item].weight * 2) / (q_ptr->weight + 1) + randint(5);
+		raw_amount = q_ptr->number * raw_materials;
+		do_fletchery_aux();
+
+		if (item >= 0) {
+			inven_item_increase(Ind, item, -raw_materials);//, -1)
+			inven_item_describe(Ind, item);
+			inven_item_optimize(Ind, item);
+		} else {
+			floor_item_increase(0 - item, -raw_materials);//, -1)
+			floor_item_describe(0 - item);
+			floor_item_optimize(0 - item);
 		}
-		msg_print(Ind, "You need rubble to create sling shots.");
+
+		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= ETHEREAL_AMMO_REDUCTION;
+
+		while (raw_amount > 99) {
+			q_ptr->number = 99;
+			raw_amount -= 99;
+			(void)inven_carry(Ind, q_ptr);
+		}
+		if (raw_amount) {
+			q_ptr->number = raw_amount;
+			(void)inven_carry(Ind, q_ptr);
+		}
 	}
 
 	/**********Create arrows*********/
-//	else if (ext == 2)
 	else if (ext == SKILL_BOW) {
-		int item;
-#if 0
-		cptr q, s;
-
-		item_tester_hook = item_tester_hook_convertible;
-
-		/* Get an item */
-		q = "Convert which item? ";
-		s = "You have no item to convert.";
-		if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
-#endif	// 0
-
-		item = fletchery_items(Ind);
-
 		/* Get the item (in the pack) */
 		if (item >= 0) q_ptr = &p_ptr->inventory[item];
 		/* Get the item (on the floor) */
 		else {
 			msg_print(Ind, "You don't have appropriate materials.");
 			return;
-
-//			if (-item >= o_max)
-//				return; /* item doesn't exist */
-
-//			q_ptr = &o_list[0 - item];
+#if 0
+			if (-item >= o_max)
+				return; /* item doesn't exist */
+			q_ptr = &o_list[0 - item];
+#endif
 		}
 
 		/* S(he) is no longer afk */
@@ -7194,7 +7242,7 @@ void do_cmd_fletchery(int Ind) {
 		q_ptr = &forge;
 
 		/* Hack -- Give the player some arrows */
-//		q_ptr->number = (byte)rand_range(15,25);
+		//q_ptr->number = (byte)rand_range(15,25);
 		invcopy(q_ptr, lookup_kind(TV_ARROW, m_bonus(1, tlev) + 1));
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
 		raw_amount = q_ptr->number * raw_materials;
@@ -7224,33 +7272,18 @@ void do_cmd_fletchery(int Ind) {
 	}
 
 	/**********Create bolts*********/
-//	else if (ext == 3)
 	else if (ext == SKILL_XBOW) {
-		int item;
-#if 0
-		cptr q, s;
-
-		item_tester_hook = item_tester_hook_convertible;
-
-		/* Get an item */
-		q = "Convert which item? ";
-		s = "You have no item to convert.";
-		if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
-#endif	// 0
-
-		item = fletchery_items(Ind);
-
 		/* Get the item (in the pack) */
 		if (item >= 0) q_ptr = &p_ptr->inventory[item];
 		/* Get the item (on the floor) */
 		else {
 			msg_print(Ind, "You don't have appropriate materials.");
 			return;
-
-//			if (-item >= o_max)
-//				return; /* item doesn't exist */
-
-//			q_ptr = &o_list[0 - item];
+#if 0
+			if (-item >= o_max)
+				return; /* item doesn't exist */
+			q_ptr = &o_list[0 - item];
+#endif
 		}
 
 		/* S(he) is no longer afk */
@@ -7266,7 +7299,7 @@ void do_cmd_fletchery(int Ind) {
 
 		/* Hack -- Give the player some bolts */
 		invcopy(q_ptr, lookup_kind(TV_BOLT, m_bonus(1, tlev) + 1));
-//		q_ptr->number = (byte)rand_range(15,25);
+		//q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
 		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
