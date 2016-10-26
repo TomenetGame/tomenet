@@ -1718,7 +1718,7 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "Extermination Orders");
 					continue;
 				}
-				if (!strcasestr("Halloween", buf)) {
+				if (my_strcasestr("Halloween", buf)) {
 					strcpy(chapter, "Halloween");
 					continue;
 				}
