@@ -1389,6 +1389,7 @@ void auction_list(int Ind)
 	if (!printed) msg_print(Ind, "\377B[@]  \377w<none>");
 }
 
+#if 0 /* common.c has an implementation already, since this one is currently TEST_SERVER only */
 cptr my_strcasestr(cptr haystack, cptr needle)
 {
 	int i = 0, len;
@@ -1406,6 +1407,7 @@ cptr my_strcasestr(cptr haystack, cptr needle)
 
 	return NULL;
 }
+#endif
 
 void auction_search(int Ind, cptr search)
 {
