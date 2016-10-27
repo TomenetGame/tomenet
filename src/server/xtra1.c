@@ -3343,7 +3343,11 @@ void calc_boni(int Ind) {
 		/* sense surroundings without light source! (virtual lite / dark light) */
 		p_ptr->cur_vlite = 1 + p_ptr->lev / 10; csheet_boni[14].lite = 1 + p_ptr->lev / 10;
 		csheet_boni[14].cb[12] |= CB13_XLITE;
-//		if (p_ptr->lev >= 30) p_ptr->levitate = TRUE; can poly into bat instead
+		//if (p_ptr->lev >= 30) p_ptr->levitate = TRUE; can poly into bat instead
+
+#ifdef ENABLE_DEATHKNIGHT
+		if (p_ptr->pclass == CLASS_DEATHKNIGHT) p_ptr->resist_fear = TRUE;
+#endif
 	}
 #ifdef ENABLE_MAIA
 	else if (p_ptr->prace == RACE_MAIA) {
