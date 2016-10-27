@@ -1627,7 +1627,7 @@ void sound_near_monster_atk(int m_idx, int Ind, cptr name, cptr alternative, int
 void handle_music(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = NULL;
-	int i = -1, tmus = 0, tmus_inverse = 0, dlev = getlevel(&p_ptr->wpos);
+	int i = -1, dlev = getlevel(&p_ptr->wpos);
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	cave_type **zcave = getcave(&p_ptr->wpos);
 
@@ -1754,6 +1754,9 @@ void handle_music(int Ind) {
 
 		/* play town music also in its surrounding area of houses, if we're coming from the town? */
 		if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
+			int tmus = 0, tmus_inverse = 0;
+			int tmus_reserve = 1; //generic town day music
+
 			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].town_idx;
 
 			if (night_surface) switch (town[i].type) { //nightly music
@@ -1808,15 +1811,27 @@ void handle_music(int Ind) {
 			/* Seasonal music, overrides the music of the place (usually Bree) where it mainly takes place */
 			if (season_halloween) {
 				/* Designated place: Bree */
-				if (town[i].type == TOWN_BREE) tmus = tmus_inverse = 83;
+				if (town[i].type == TOWN_BREE) {
+					tmus_reserve = tmus_inverse; //correctly counter-switch day vs night music again, as replacement for dedicated event music
+					tmus_inverse = tmus;
+					tmus = 83;
+				}
 			}
 			else if (season_xmas) {
 				/* Designated place: Bree */
-				if (town[i].type == TOWN_BREE) tmus = tmus_inverse = 84;
+				if (town[i].type == TOWN_BREE) {
+					tmus_reserve = tmus_inverse; //correctly counter-switch day vs night music again, as replacement for dedicated event music
+					tmus_inverse = tmus;
+					tmus = 84;
+				}
 			}
 			else if (season_newyearseve) {
 				/* Designated place: Bree */
-				if (town[i].type == TOWN_BREE) tmus = tmus_inverse = 85;
+				if (town[i].type == TOWN_BREE) {
+					tmus_reserve = tmus_inverse; //correctly counter-switch day vs night music again, as replacement for dedicated event music
+					tmus_inverse = tmus;
+					tmus = 85;
+				}
 			}
 
 			/* now the specialty: If we're coming from elsewhere,
@@ -1826,7 +1841,7 @@ void handle_music(int Ind) {
 			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus
 			    /* don't switch from town area music to wild music on day/night change: */
 			    || p_ptr->music_current == tmus_inverse)
-				Send_music(Ind, tmus, night_surface ? tmus_inverse : 1);
+				Send_music(Ind, tmus, night_surface ? tmus_inverse : tmus_reserve);
 			/* Wilderness music */
 			else if (night_surface) Send_music(Ind, 10, 0);
 			else Send_music(Ind, 9, 0);
