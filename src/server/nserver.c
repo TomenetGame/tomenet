@@ -3297,14 +3297,18 @@ static int Handle_login(int ind) {
 	p_ptr->count_cut_sfx_attack = 500;
 #endif
 
+	/* Don't init these if player got insta-recalled on joining via check_Morgoth(),
+	   or it could cause a panic save due to unallocated target floor. */
+	if (!p_ptr->new_level_flag) {
 #ifdef USE_SOUND_2010
-	/* Update ambient sound effects if needed.
-	   Note: This should be called before grid_affects_player() to correctly have no_house_sfx/quiet_house_sfx applied to it afterwards. */
-	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
+		/* Update ambient sound effects if needed.
+		   Note: This should be called before grid_affects_player() to correctly have no_house_sfx/quiet_house_sfx applied to it afterwards. */
+		handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
 #endif
 
-	/* Note: p_ptr->sound_ambient must be initialised to -1 before calling this. */
-	grid_affects_player(NumPlayers, -1, -1);
+		/* Note: p_ptr->sound_ambient must be initialised to -1 before calling this. */
+		grid_affects_player(NumPlayers, -1, -1);
+	}
 
 	/* Initialize the client's unique list;
 	it will become further updated each time he kills another unique */
