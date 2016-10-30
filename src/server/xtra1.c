@@ -2550,32 +2550,32 @@ bool monk_heavy_armor(int Ind) {
 
 /* Are all the weapons wielded of the right type ? */
 int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
-	int skill = 0;
+	/* no item */
+	if (!o_ptr->k_idx) return -1;
 
-	if (!o_ptr->k_idx || o_ptr->tval == TV_SHIELD) return -1;
+#if 1
+	/* EXPERIMENTAL - Hack for priests:
+	   They always get full weapon skill if the weapon is BLESSED,
+	   even if it's not a 'Blunt' type weapon: */
+	if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT) {
+		u32b dummy, f3;
+
+		object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
+		if (f3 & TR3_BLESSED) return SKILL_BLUNT;
+	}
+#endif
 
 	switch (o_ptr->tval) {
-	case TV_SWORD:
-		if ((!skill) || (skill == SKILL_SWORD)) skill = SKILL_SWORD;
-		else skill = -1;
-		break;
-	case TV_AXE:
-		if ((!skill) || (skill == SKILL_AXE)) skill = SKILL_AXE;
-		else skill = -1;
-		break;
-	case TV_BLUNT:
-		if ((!skill) || (skill == SKILL_BLUNT)) skill = SKILL_BLUNT;
-		else skill = -1;
-		break;
-//	case SKILL_POLEARM:
-	case TV_POLEARM:
-		if ((!skill) || (skill == SKILL_POLEARM)) skill = SKILL_POLEARM;
-		else skill = -1;
-		break;
+	/* known weapon types */
+	case TV_SWORD:		return SKILL_SWORD;
+	case TV_AXE:		return SKILL_AXE;
+	case TV_BLUNT:		return SKILL_BLUNT;
+	case TV_POLEARM:	return SKILL_POLEARM;
+	/* not a weapon */
+	case TV_SHIELD:		return -1;
+	/* unknown weapon type */
+	default:		return -1;
 	}
-
-	/* Everything is ok */
-	return skill;
 }
 
 /* Are all the ranged weapons wielded of the right type ? */
@@ -2687,8 +2687,8 @@ otherwise, let's compromise for now: */
 	if (num_blow < 1) num_blow = 1;
 
 	/* Boost blows with masteries */
-	if (get_weaponmastery_skill(p_ptr, o_ptr) != -1)
-		num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr, o_ptr), 2);
+	if ((num = get_weaponmastery_skill(p_ptr, o_ptr)) != -1)
+		num_blow += get_skill_scale(p_ptr, num, 2);
 
 #if 0
 	f1 = k_info[o_ptr->k_idx].flags1;
@@ -5224,17 +5224,17 @@ void calc_boni(int Ind) {
 		p_ptr->num_blow = calc_blows_weapons(Ind);
 
 		/* Get intrinsic blow boni for column display (so everything adds up) */
-		if (get_weaponmastery_skill(p_ptr, o_ptr) != -1)
-			csheet_boni[14].blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr, o_ptr), 2);
+		if ((i = get_weaponmastery_skill(p_ptr, o_ptr)) != -1)
+			csheet_boni[14].blow += get_skill_scale(p_ptr, i, 2);
 		
 		p_ptr->num_blow += p_ptr->extra_blows;
 		/* Boost blows with masteries */
 		/* note for dual-wield: instead of using two different p_ptr->to_h/d_melee for each
 		   weapon, we just average the mastery boni we'd receive on each - C. Blue */
-		if (get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_WIELD]) != -1)
-			lev1 = get_skill(p_ptr, get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_WIELD]));
-		if (get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_ARM]) != -1)
-			lev2 = get_skill(p_ptr, get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_ARM]));
+		if ((i = get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_WIELD])) != -1)
+			lev1 = get_skill(p_ptr, i);
+		if ((i = get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_ARM])) != -1)
+			lev2 = get_skill(p_ptr, i);
 		/* if we don't wear any weapon at all, we get 0 bonus */
 		if (lev1 == -1 && lev2 == -1) lev2 = 0;
 		/* if we don't dual-wield, we mustn't average things */
