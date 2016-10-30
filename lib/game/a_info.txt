@@ -2992,7 +2992,7 @@ W:60:70:300:120000
 P:0:5d9:20:30:0
 F:STR | WIS | HIDE_TYPE | RES_FEAR | FREE_ACT | SEE_INVIS | SHOW_MODS |
 F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_TROLL | SLAY_ORC |
-F:BRAND_FIRE | LITE3 | IM_FIRE | RES_LITE | BLESSED
+F:BRAND_FIRE | LITE3 | IM_FIRE | RES_LITE
 D:This radiating and beautifully shaped weapon was carried down to earth in the
 D:southern regions by a mighty guardian of the skies.
 
@@ -3005,7 +3005,7 @@ W:60:70:300:180000
 P:0:5d9:20:30:0
 F:BLOWS | CON | LIFE | HIDE_TYPE | RES_FEAR | FREE_ACT | SHOW_MODS |
 F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
-F:BRAND_ELEC | SH_ELEC | IM_ELEC | BLESSED
+F:BRAND_ELEC | SH_ELEC | IM_ELEC
 D:This flashing and beautifully shaped weapon was carried down to earth in the
 D:northern regions by a mighty guardian of the skies.
 
