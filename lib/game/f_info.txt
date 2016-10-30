@@ -36,7 +36,8 @@ F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_AR
 # 0x02 -> fountain
 N:2:fountain
 #G:_:w
-G:_:e
+#G:_:e
+G:_:Y
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 D:0:The liquid here seems magical.
 
@@ -771,8 +772,8 @@ D:0:The nether mist engulfs you
 N:103:glittering water
 #G:~:B
 #S:B:B:B:b:W:g:w
-#G:~:e
-#S:e:e:e:e:e:e:e
+#G:~:Y
+#S:Y:Y:Y:Y:Y:Y:Y
 #G:~:c
 G:~:b
 S:b:B:B:B:B:b:B
