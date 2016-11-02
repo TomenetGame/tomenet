@@ -50,7 +50,7 @@ GROWTREE = add_spell {
 	["level"] = 	30,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	20,
+	["fail"] = 	-30,
 	["spell"] = 	function()
 			grow_trees(Ind, 1 + get_level(Ind, GROWTREE, 6))
 	end,
