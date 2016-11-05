@@ -6096,12 +6096,22 @@ void determine_level_req(int level, object_type *o_ptr) {
 	}
 
 	/* Hack -- analyze ego-items */
-	if (o_ptr->name2 || o_ptr->name2b) {
-		if (o_ptr->name2) base += e_info[o_ptr->name2].rating;
-		if (o_ptr->name2b) base += e_info[o_ptr->name2b].rating;
+	if (o_ptr->name2) {
+		i = e_info[o_ptr->name2].rating;
+		base += i;
+
+		if (o_ptr->name2b) {
+			j = e_info[o_ptr->name2b].rating;
+			base += j;
+		} else j = 0;
+
+		/* Extremes: Give priority to either bad or especially rare good power */
+		if ((j && !e_info[j].cost) || j > i) i = o_ptr->name2b;
+		else i = o_ptr->name2;
+
 		/* general level boost for ego items!
 		   except very basic ones */
-		switch (o_ptr->name2) {
+		switch (i) {
 		case EGO_LEPROUS:
 		case EGO_STUPIDITY:	case EGO_NAIVETY:
 		case EGO_UGLINESS:	case EGO_SICKLINESS:
@@ -6149,13 +6159,20 @@ void determine_level_req(int level, object_type *o_ptr) {
 		case EGO_MOTION:
 		case EGO_RISTARI:
 		case EGO_AURA_COLD2:	case EGO_AURA_FIRE2:	case EGO_AURA_ELEC2:
+
+		case EGO_BRAND_ACID:	case EGO_BRAND_COLD:	case EGO_BRAND_FIRE:
+		case EGO_BRAND_ELEC:	case EGO_BRAND_POIS:
+
+		case EGO_SLAY_ANIMAL:	case EGO_SLAY_EVIL:	case EGO_SLAY_UNDEAD:
+		case EGO_SLAY_DEMON:	case EGO_SLAY_ORC:	case EGO_SLAY_TROLL:
+		case EGO_SLAY_GIANT:	case EGO_SLAY_DRAGON:
 			base += 10;
 			break;
 
 		case EGO_KILL_EVIL:
 		case EGO_HA: /* 'Aman' */
 		case EGO_GONDOLIN:
-			base += 25;
+			base += 20;
 			break;
 
 		case EGO_ELVENKIND:
