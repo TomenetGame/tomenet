@@ -8744,7 +8744,7 @@ static int Receive_activate_skill(int ind) {
 		case MKEY_MIMICRY:
 			if (get_skill(p_ptr, SKILL_MIMIC)) {
 				if (spell == 25000 && dir) {
-s_printf("MIMIC_IMMUNITY (%s): %s(%d) having %d calls %d,%d\n", showtime(), p_ptr->name, p_ptr->body_monster, p_ptr->mimic_immunity, spell, dir);
+s_printf("MIMIC_IMMUNITY (%s): %s(%d) having %d calls %d(%d),%d\n", showtime(), p_ptr->name, p_ptr->body_monster, p_ptr->mimic_immunity, spell, dir - 2, dir);
 					switch (dir) {
 					case 1:
 						switch (p_ptr->mimic_immunity) {
