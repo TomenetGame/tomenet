@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. October 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 5. November 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.0a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -60,6 +60,7 @@ Contents
     (2.5a)  Custom fonts
 (3) Creating a character & starting to play
     (3.1)   Creating a new character; character modes
+    (3.1a)  Character names, collisions and reservations
     (3.2)   The display (user-interface)
     (3.2a)  The encumberment bar
     (3.3)   Behaviour, chat messages and chat modes
@@ -3526,6 +3527,20 @@ Creation of your character is now finished and you are asked to press a key to
 start the actual game. Do so and take a minute to read the text that will
 appear. It is called news or motd (message of the day) and often contains
 important server-specific information or announcements to the players.
+
+
+(3.1a) Character names, collisions and reservations
+---------------------------------------------------
+You cannot pick names of characters that are already in use by other players or
+that are very similar to another player's account name.
+However, if your character dies and gets erased, its name will be reserved for
+you for 24 hours, allowing you to recreate it if you want to.
+Certain swear words are also not allowed in character or account names.
+Last but not least you cannot create an account with a name of an existing
+character or account of someone else, but your actual account name will at the
+same time always be reserved as a character name for you personally, so there
+is no need to hurry and create a character of the same name as your account
+just to reserve it for you.
 
 
 
