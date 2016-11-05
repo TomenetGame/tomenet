@@ -589,6 +589,8 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	struct account acc;
 
 
+	if (allow_similar_names) return FALSE; //hack: always allow?
+
 	/* special exceptions (admins and their player accounts) */
 	if (!strcasecmp(name, "mikaelh") || /* vs 'mikael' */
 	    !strcasecmp(name, "c. blue")) /* vs 'c.blue' */

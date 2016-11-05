@@ -2491,3 +2491,5 @@ extern s32b mail_timeout[MAX_MERCHANT_MAILS];
 extern bool mail_COD[MAX_MERCHANT_MAILS];
 extern u32b mail_xfee[MAX_MERCHANT_MAILS];
 #endif
+
+extern bool allow_similar_names;
