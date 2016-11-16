@@ -3832,12 +3832,12 @@ void interact_macros(void) {
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yI\377w) Reinitialize all macros     (discards all unsaved macros)");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yG\377w/\377yC\377w/\377yB\377w/\377yU\377w/\377yA\377w) Forget global.prf / <character>.prf / both / most / all");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yt\377w/\377yi\377w) Test a key for an existing macro / list all currently defined macros");
-		l++;
+		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yw\377w) Switch the macro(s) of two keys");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ua\377s) Enter a new macro action manually. Afterwards..");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uh\377s) ..create a hybrid macro     (usually preferable over command/normal)");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uc\377s) ..create a command macro    (most compatible, eg for using / and * key)");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377un\377s) ..create a normal macro     (persists everywhere, even in chat)");
-//		Term_putstr(5, l++, -1, TERM_SLATE, "(\377u4\377s) Create a identity macro  (erases a macro)");
+		//Term_putstr(5, l++, -1, TERM_SLATE, "(\377u4\377s) Create a identity macro  (erases a macro)");
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ue\377s) Create an empty macro       (completely disables a key)");
 		//Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
 		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s) Enter and create a 'quick & dirty' macro"),
@@ -4148,6 +4148,51 @@ void interact_macros(void) {
 			if (i == macro__num) {
 				/* Message */
 				c_msg_print("No macro was found.");
+			}
+		}
+
+		/* Switch macros */
+		else if (i == 'w') {
+			int mi1, mi2;
+			char mpat1[1024], mpat2[1024];
+
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Switch macro(s) of two keys");
+
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Press first key: ");
+			mpat1[0] = 0;
+			get_macro_trigger(mpat1);
+			Term_erase(18, l + 1, 255);
+
+			for (mi1 = 0; mi1 < macro__num; mi1++)
+				if (streq(macro__pat[mi1], mpat1)) break;
+
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "Press second key: ");
+			mpat2[0] = 0;
+			get_macro_trigger(mpat2);
+
+			for (mi2 = 0; mi2 < macro__num; mi2++)
+				if (streq(macro__pat[mi2], mpat2)) break;
+
+			if (mi1 == macro__num && mi2 == macro__num) {
+				c_msg_print("Neither key has a macro on it.");
+				continue;
+			}
+			if (mi1 == macro__num)
+				c_msg_format("Moving %s macro from second key to first key.", !macro__act[mi2][0] ? "empty" : (macro__hyb[mi2] ? "hybrid" : (macro__cmd[mi2] ? "command" : "normal")));
+			else if (mi2 == macro__num)
+				c_msg_format("Moving %s macro from first key to second key.", !macro__act[mi1][0] ? "empty" : (macro__hyb[mi1] ? "hybrid" : (macro__cmd[mi1] ? "command" : "normal")));
+			else
+				c_msg_format("Switching macros of first key (%s) and second key (%s).",
+				    !macro__act[mi1][0] ? "empty" : (macro__hyb[mi1] ? "hybrid" : (macro__cmd[mi1] ? "command" : "normal")),
+				    !macro__act[mi2][0] ? "empty" : (macro__hyb[mi2] ? "hybrid" : (macro__cmd[mi2] ? "command" : "normal")));
+
+			if (mi1 < macro__num) {
+				string_free(macro__pat[mi1]);
+				macro__pat[mi1] = string_make(mpat2);
+			}
+			if (mi2 < macro__num) {
+				string_free(macro__pat[mi2]);
+				macro__pat[mi2] = string_make(mpat1);
 			}
 		}
 
