@@ -1762,7 +1762,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				return(FALSE);
 			}
 
-			/* hack - actually load that player */
+			/* hack - actually load that character (same account as us) */
 			loaded = TRUE;
 			NumPlayers++;
 			MAKE(Players[NumPlayers], player_type);
@@ -1914,9 +1914,12 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				p_ptr->houses_owned--;
 				if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
 
-				//ACC_HOUSE_LIMIT
-				acc_houses--;
-				acc_set_houses(p_ptr->accountname, acc_houses);
+				//ACC_HOUSE_LIMIT:
+				if (!loaded) { /* actually not if we transfer to ourselves.. */
+					acc_houses--;
+					acc_set_houses(p_ptr->accountname, acc_houses);
+				}
+
 				clockin(Ind, 8);
 			} else if (dna->owner_type == OT_GUILD) {
 				guilds[dna->owner].h_idx = 0;
@@ -1949,7 +1952,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			return FALSE;
 		}
 
-		/* guild master 'loses' one own house */
+		/* guild master loses one own house (side note: stays imprinted as 'creator' though), gets transferred to the guild as 'guild hall' */
 		if (dna->owner_type == OT_PLAYER) {
 			p_ptr->houses_owned--;
 			if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
@@ -1957,6 +1960,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			//ACC_HOUSE_LIMIT
 			acc_houses--;
 			acc_set_houses(p_ptr->accountname, acc_houses);
+
 			clockin(Ind, 8);
 		}
 		newowner = p_ptr->guild;
@@ -1998,7 +2002,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				ex = h_ptr->x + h_ptr->coords.rect.width - 1;
 			}
 #endif
-			for (i = 1; i <= NumPlayers; i++) {     /* in game? maybe long winded */
+			for (i = 1; i <= NumPlayers; i++) { /* in game? maybe long winded */
 				p2_ptr = Players[i];
 				if (p2_ptr->id == newowner) {
 					//if (dna->owner_type == OT_PLAYER) p_ptr->houses_owned--;
@@ -2008,10 +2012,13 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 						p2_ptr->castles_owned++;
 					}
 
-					//ACC_HOUSE_LIMIT
-					acc_houses2 = acc_get_houses(p2_ptr->accountname);
-					acc_houses2++;
-					acc_set_houses(p2_ptr->accountname, acc_houses2);
+					//ACC_HOUSE_LIMIT:
+					if (!loaded) { /* actually not if we tried to transfer to ourselves.. */
+						acc_houses2 = acc_get_houses(p2_ptr->accountname);
+						acc_houses2++;
+						acc_set_houses(p2_ptr->accountname, acc_houses2);
+					}
+
 					clockin(i, 8);
 
 					dna->creator = p2_ptr->dna;
@@ -2049,13 +2056,16 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				}
 #endif
 			}
-			//hard paranoia: undo!
+			//hard paranoia: undo the house transfer!
 			p_ptr->houses_owned++;
 			if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned++;
 
-			//ACC_HOUSE_LIMIT
-			acc_houses++;
-			acc_set_houses(p_ptr->accountname, acc_houses);
+			//ACC_HOUSE_LIMIT:
+			if (!loaded) { /* actually not if we tried to transfer to ourselves.. */
+				acc_houses++;
+				acc_set_houses(p_ptr->accountname, acc_houses);
+			}
+
 			clockin(Ind, 8);
 
 			/* unhack */
@@ -2094,7 +2104,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 bool access_door(int Ind, struct dna_type *dna, bool note) {
 	player_type *p_ptr = Players[Ind];
 	if (!dna->owner) return(FALSE); /* house doesn't belong to anybody */
-/*	if (is_admin(p_ptr))
+	/*if (is_admin(p_ptr))
 		return(TRUE); - moved to allow more overview for admins when looking at
 				house door colours on the world surface - C. Blue */
 
