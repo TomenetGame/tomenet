@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. November 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 17. November 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.0a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -16792,6 +16792,8 @@ The techniques are as follows:
         Prepares an oil-drenched shot for the next time you shoot, which will
         burn brightly, lighting up the area where it lands or hits a wall.
         If that spot is inside a room, the whole room will be lit up.
+        If it hits a monster, instead of lighting up an area the monster will
+        absorb it and suffer extra fire damage.
         This technique consumes 1 flask of oil and your shot/arrow/bolt.
         Note that this destroys magic ammunition too.
         (Preparing a flare missile costs a turn of energy.)
