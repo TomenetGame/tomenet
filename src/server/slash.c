@@ -546,7 +546,7 @@ void do_slash_cmd(int Ind, char *message) {
 		else if ((prefix(message, "/dispose")) || prefix(message, "/dis")) {
 			object_type *o_ptr;
 			u32b f1, f2, f3, f4, f5, f6, esp;
-			bool nontag = FALSE, baseonly = FALSE;
+			bool nontag = FALSE, baseonly = FALSE, pile = FALSE;
 
 			//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			if (p_ptr->energy < 0) return;
@@ -557,7 +557,8 @@ void do_slash_cmd(int Ind, char *message) {
 				char *parm = token[1];
 				bool floor = FALSE;
 
-				if (*parm == 'f') {
+				if (*parm == 'f' || *parm == 'F') {
+					if (*parm == 'F') pile = TRUE;
 					floor = TRUE;
 					parm++;
 				}
@@ -567,7 +568,7 @@ void do_slash_cmd(int Ind, char *message) {
 				else if (*parm == 'b')
 					nontag = baseonly = TRUE;
 				else if (!floor || *parm) {
-					msg_print(Ind, "\377oUsage:    /dis [f][a|b]");
+					msg_print(Ind, "\377oUsage:    /dis [f|F][a|b]");
 					msg_print(Ind, "\377oExample:  /dis fb");
 					return;
 				}
@@ -590,24 +591,59 @@ void do_slash_cmd(int Ind, char *message) {
 						return;
 					}
 
-					/* Get the object */
-					o_ptr = &o_list[c_ptr->o_idx];
-					if (!o_ptr->k_idx) return;
+					if (pile) {
+						int noidx;
 
-					/* keep inscribed items? */
-					if (!nontag && o_ptr->note) return;
+						/* Get the object */
+						o_ptr = &o_list[c_ptr->o_idx];
 
-					/* destroy base items (non-egos)? */
-					if (baseonly && object_known_p(Ind, o_ptr) &&
-					    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
-					    /* let exploding ammo count as ego.. pft */
-					    (is_ammo(o_ptr->tval) && o_ptr->pval))
-					    && !cursed_p(o_ptr))
+						while (o_ptr->k_idx) {
+							noidx = o_ptr->next_o_idx;
+
+							/* keep inscribed items? */
+							if (!nontag && o_ptr->note) {
+								if (!noidx) return;
+								o_ptr = &o_list[noidx];
+								continue;
+							}
+
+							/* destroy base items (non-egos)? */
+							if (baseonly && object_known_p(Ind, o_ptr) &&
+							    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
+							    /* let exploding ammo count as ego.. pft */
+							    (is_ammo(o_ptr->tval) && o_ptr->pval))
+							    && !cursed_p(o_ptr)) {
+								if (!noidx) return;
+								o_ptr = &o_list[noidx];
+								continue;
+							}
+
+							do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number);
+
+							if (!noidx) return;
+							o_ptr = &o_list[noidx];
+						}
 						return;
+					} else {
+						/* Get the object */
+						o_ptr = &o_list[c_ptr->o_idx];
+						if (!o_ptr->k_idx) return;
 
-					if (do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number))
-						whats_under_your_feet(Ind, FALSE);
-					return;
+						/* keep inscribed items? */
+						if (!nontag && o_ptr->note) return;
+
+						/* destroy base items (non-egos)? */
+						if (baseonly && object_known_p(Ind, o_ptr) &&
+						    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
+						    /* let exploding ammo count as ego.. pft */
+						    (is_ammo(o_ptr->tval) && o_ptr->pval))
+						    && !cursed_p(o_ptr))
+							return;
+
+						if (do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number))
+							whats_under_your_feet(Ind, FALSE);
+						return;
+					}
 				}
 			}
 

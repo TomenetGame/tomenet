@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. November 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 24. November 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.0a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1042,6 +1042,9 @@ They all start with a slash '/' hence they're called slash commands:
             provided they aren't cursed.
             It also skips (non-cursed) exploding ammo, although it isn't really
             an ego item.
+
+/dis F[a|b] Same as '/dis f', also accepts optional parameters a or b, but this
+            command destroys the whole ITEM PILE you're standing on.
 
 /dr [tag]   Without tag it equips all items in your inventory that are: not
 (/dress)    cursed, not {worthless}, not {broken}, not {terrible}, and that are
