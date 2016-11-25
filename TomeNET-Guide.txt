@@ -6094,16 +6094,16 @@ The Orc Cave                   |   500..1150/ 10..23   |        3
 Mirkwood                       |   550..1700/ 11..34   |        5
 The Old Forest                 |   650..1300/ 13..26   |        5
 The Helcaraxe                  |  1000..2050/ 20..41   |       10
-The Sandworm lair              |  1100..1500/ 22..30   |       12
+The Sandworm Lair              |  1100..1500/ 22..30   |       12
 The Heart of the Earth         |  1250..1850/ 25..37   |       10
 The Maze                       |  1250..1900/ 25..38   |       15
 Cirith Ungol                   |  1250..2550/ 25..51   |       10
-The Land Of Rhun               |  1300..2050/ 26..41   |       13
-Moria                          |  1500..2500/ 30..50   |       15
+The Land of Rhun               |  1300..2050/ 26..41   |       13
+The Mines of Moria             |  1500..2500/ 30..50   |       15
 The Small Water Cave           |  1600..1750/ 32..35   |       15
 Submerged Ruins                |  1750..2550/ 35..51   |       15
 The Illusory Castle            |  1750..2600/ 35..52   |       10
-The Sacred Land Of Mountains   |  2000..2250/ 40..45   |       20
+The Sacred Land of Mountains   |  2000..2250/ 40..45   |       20
 Erebor                         |  2500..3050/ 50..61   |       35
 Dol Guldur                     |  2850..3550/ 57..71   |       28
 Mount Doom                     |  4250..5000/ 85..99   |       38
