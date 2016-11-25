@@ -324,17 +324,19 @@ int find_realm(int book)
 const char *my_strcasestr(const char *big, const char *little) {
 	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0;
-	int L = strlen(little),l = 0;
+	int L = strlen(little), l;
 
 	if (little == NULL) return big;
 
 	do {
 		cnt2 = 0;
+		l = 0;
 		while (little[cnt2] != 0) {
 			if (big[cnt + cnt2] == little[cnt2] || big[cnt + cnt2] == little[cnt2] - 32 || big[cnt + cnt2] == little[cnt2] + 32) l++;
-			else l = 0;
+			else break;
 
 			if (l == 1) ret = big + cnt;
+
 			cnt2++;
 		}
 
