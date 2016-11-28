@@ -682,9 +682,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->limit_chat) {
 		text_silent = TRUE;
 		if (text_pk)
-			fprintf(fff, ", Silent");
+			fprintf(fff, ", Silent mode");
 		else
-			fprintf(fff, "  (Silent");
+			fprintf(fff, "  (Silent mode");
 	}
 	/* AFK */
 	if (q_ptr->afk) {
@@ -705,9 +705,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->ignoring_chat) {
 		text_ignoring_chat = TRUE;
 		if (text_pk || text_silent || text_afk) {
-			fprintf(fff, ", Private mode");
+			fprintf(fff, ", %s", q_ptr->ignoring_chat == 1 ? "Private mode" : "*Private* mode");
 		} else {
-			fprintf(fff, "  (Private mode");
+			fprintf(fff, "  (%s", q_ptr->ignoring_chat == 1 ? "Private mode" : "*Private* mode");
 		}
 	}
 	if (q_ptr->admin_dm_chat) {
@@ -812,9 +812,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->limit_chat) {
 		text_silent = TRUE;
 		if (text_pk)
-			fprintf(fff, ", Silent");
+			fprintf(fff, ", Silent mode");
 		else
-			fprintf(fff, "  (Silent");
+			fprintf(fff, "  (Silent mode");
 	}
 	/* AFK */
 	if (q_ptr->afk) {
@@ -835,9 +835,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->ignoring_chat) {
 		text_ignoring_chat = TRUE;
 		if (text_pk || text_silent || text_afk) {
-			fprintf(fff, ", Private mode");
+			fprintf(fff, ", %s", q_ptr->ignoring_chat == 1 ? "Private mode" : "*Private* mode");
 		} else {
-			fprintf(fff, "  (Private mode");
+			fprintf(fff, "  (%s", q_ptr->ignoring_chat == 1 ? "Private mode" : "*Private* mode");
 		}
 	}
 	if (q_ptr->admin_dm_chat) {
@@ -972,9 +972,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->ignoring_chat) {
 		text_ignoring_chat = TRUE;
 		if (text_pk || text_silent || text_afk) {
-			fprintf(fff, ", Private");
+			fprintf(fff, ", %s", q_ptr->ignoring_chat == 1 ? "Private" : "*Private*");
 		} else {
-			fprintf(fff, " (Private");
+			fprintf(fff, " (%s", q_ptr->ignoring_chat == 1 ? "Private" : "*Private*");
 		}
 	}
 	if (q_ptr->admin_dm_chat) {
@@ -1173,9 +1173,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->limit_chat) {
 		text_silent = TRUE;
 		if (text_pk)
-			fprintf(fff, ", Silent");
+			fprintf(fff, ", Silent mode");
 		else
-			fprintf(fff, "   (Silent");
+			fprintf(fff, "   (Silent mode");
 	}
 	/* AFK */
 	if (q_ptr->afk) {
@@ -1196,9 +1196,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->ignoring_chat) {
 		text_ignoring_chat = TRUE;
 		if (text_pk || text_silent || text_afk) {
-			fprintf(fff, ", Private mode");
+			fprintf(fff, ", %s", q_ptr->ignoring_chat == 1 ? "Private mode" : "*Private* mode");
 		} else {
-			fprintf(fff, "   (Private mode");
+			fprintf(fff, "   (%s", q_ptr->ignoring_chat == 1 ? "Private mode" : "*Private* mode");
 		}
 	}
 	if (q_ptr->admin_dm_chat) {

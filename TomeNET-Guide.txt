@@ -744,11 +744,15 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         add the other one.
 
         Additional info that may be shown in @ screen:
-        'Silent'        Means the player has enabled the 'limit_chat' option,
+        'Silent mode'   Means the player has enabled the 'limit_chat' option,
                         which restricts chat to players on the same dungeon
                         floor as him, except for private/party/guild messages.
         'Private mode'  The player has used the '/ic' command to ignore all
-                        chat except for private/party/guild messages.
+                        chat except for private or party messages.
+        '*Private* mode'
+                        The player has used the '/ic *' command to ignore all
+                        chat except for party messages and private messages
+                        from party members.
 
         If the server has specific PK-rules enabled, there are additionally:
         'PK'            Player participates in player-killing.
@@ -1168,10 +1172,15 @@ They all start with a slash '/' hence they're called slash commands:
             he tries to send you any private message or page you.
 
 /ic         ignore all normal chat messages which are neither private messages
- (/ignchat) nor party messages. ('Private mode' will be displayed after the
-            player's name in the player overview screen which can be invoked
-            by pressing '@', indicating that this player currently cannot read
-            normal chat messages.)
+ (/ignchat) nor party messages. ('Private mode' will be displayed after
+            the player's name in the player overview screen which can be
+            invoked by pressing '@', indicating that this player currently
+            cannot read normal chat messages.)
+            (This is similar to 'limit_chat' option, which however still allows
+            all floor-chat occurring on the same dungeon floor and guild chat.)
+/ic *       Same as above, but also disables all private messages except from
+            party members! (Will display '*Private* mode' after the player's
+            name in the @ screen.)
 
 /info <msg>
             Sets an informative message that is displayed to other players in

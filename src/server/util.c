@@ -4621,9 +4621,14 @@ static void player_talk_aux(int Ind, char *message) {
 
 	/* Send to appropriate player */
 	if (len && target > 0) {
-		if (!check_ignore(target, Ind)) {
-			/* Set target player */
-			q_ptr = Players[target];
+		/* Set target player */
+		q_ptr = Players[target];
+
+		if (q_ptr->ignoring_chat == 2 && (!q_ptr->party || q_ptr->party != p_ptr->party)) {
+			msg_print(Ind, "(That player is currently in *private* mode.)");
+			return;
+		}
+		else if (!check_ignore(target, Ind)) {
 			/* Remember sender, to be able to reply to him quickly */
 #if 0
 			strcpy(q_ptr->reply_name, sender);

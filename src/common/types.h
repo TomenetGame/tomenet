@@ -2695,7 +2695,7 @@ struct player_type {
 	s16b corner_turn;		/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
 	byte auto_transport;		/* automatic (scripted) transport sequences */
 	byte paging;			/* Player being paged by others? (Beep counter) */
-	bool ignoring_chat;		/* Ignoring normal chat? (Will only see private & party messages then) */
+	byte ignoring_chat;		/* Ignoring normal chat? (Will only see private & party messages then) */
 	bool muted;			/* Being an ass? - the_sandman */
 	byte has_pet;			/* Pet limiter */
 	/* Is the player auto-retaliating? (required for hack that fixes a lock bug) */

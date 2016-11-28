@@ -486,13 +486,19 @@ void do_slash_cmd(int Ind, char *message) {
 			return;
 		}
 		if (prefix(message, "/ignchat") || prefix(message, "/ic")) {
-			if (p_ptr->ignoring_chat) {
+			bool prv = (tk && token[1][0] == '*');
+
+			if (p_ptr->ignoring_chat && !prv) {
 				p_ptr->ignoring_chat = FALSE;
-				msg_print(Ind, "\377yYou're no longer ignoring normal chat messages.");
-			} else {
-				p_ptr->ignoring_chat = TRUE;
-				msg_print(Ind, "\377yYou're now ignoring normal chat messages.");
+				msg_print(Ind, "\377yYou're no longer ignoring any chat messages.");
+			} else if (!prv) {
+				p_ptr->ignoring_chat = 1;
+				msg_print(Ind, "\377yYou're now ignoring global and guild chat messages.");
 				msg_print(Ind, "\377yYou will only receive private and party messages.");
+			} else {
+				p_ptr->ignoring_chat = 2;
+				msg_print(Ind, "\377yYou're now ignoring global, guild and non-partied private chat messages.");
+				msg_print(Ind, "\377yYou will only receive party messages and private chat from party members.");
 			}
 			return;
 		}
