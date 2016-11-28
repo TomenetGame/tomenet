@@ -2627,7 +2627,7 @@ int Receive_spell_info(void) {
 	p_ptr->innate_spells[1] = spells[1];
 	p_ptr->innate_spells[2] = spells[2];
 
-	/* Assume that this was in respone to a shapeshift command we issued */
+	/* Assume that this was in response to a shapeshift command we issued */
 	command_confirmed = PKT_ACTIVATE_SKILL;
 
 	return 1;
