@@ -485,10 +485,14 @@ void do_slash_cmd(int Ind, char *message) {
 			add_ignore(Ind, token[1]);
 			return;
 		}
-		if (prefix(message, "/ignchat") || prefix(message, "/ic")) {
-			bool prv = (tk && token[1][0] == '*');
+		if (prefix(message, "/ignchat") || prefix(message, "/ic") || prefix(message, "/dnd")) {
+			bool dnd = prefix(message, "/dnd");
+			bool prv = (tk && token[1][0] == '*') || dnd;
 
-			if (p_ptr->ignoring_chat && !prv) {
+			if (p_ptr->ignoring_chat == 2 && dnd) {
+				p_ptr->ignoring_chat = FALSE;
+				msg_print(Ind, "\377yYou're no longer ignoring any chat messages.");
+			} else if (p_ptr->ignoring_chat && !prv) {
 				p_ptr->ignoring_chat = FALSE;
 				msg_print(Ind, "\377yYou're no longer ignoring any chat messages.");
 			} else if (!prv) {
