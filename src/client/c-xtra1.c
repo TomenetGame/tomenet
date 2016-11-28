@@ -1475,7 +1475,9 @@ static void fix_inven(void) {
 		Term_activate(old);
 	}
 
-	/* Assume that this could've been in respone to a wield/takeoff/swap command we issued */
+	if (showing_inven) show_inven();
+
+	/* Assume that this could've been in response to a wield/takeoff/swap command we issued */
 	command_confirmed = PKT_UNDEFINED; //..we don't know which one (doesn't matter)
 }
 
@@ -1508,6 +1510,8 @@ static void fix_equip(void) {
 		/* Restore */
 		Term_activate(old);
 	}
+
+	if (showing_equip) show_equip();
 }
 
 

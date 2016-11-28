@@ -1331,8 +1331,8 @@ void peruse_file(void)
 		/* allow chatting, as it's now also possible within stores */
 		if (k == ':') cmd_message();
 		/* and very handy for *ID*ing: inscribe this item */
-		if (k == '{') cmd_inscribe();
-		if (k == '}') cmd_uninscribe();
+		if (k == '{') cmd_inscribe(USE_INVEN | USE_EQUIP);
+		if (k == '}') cmd_uninscribe(USE_INVEN | USE_EQUIP);
 
 		/* Exit on escape */
 		if (k == ESCAPE || k == KTRL('Q')) break;

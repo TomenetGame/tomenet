@@ -455,3 +455,5 @@ int guide_races = 0, guide_classes = 0, guide_skills = 0, guide_schools = 0, gui
 #ifdef WINDOWS
 bool win_dontmoveuser = FALSE;
 #endif
+
+bool showing_inven = FALSE, showing_equip = FALSE;

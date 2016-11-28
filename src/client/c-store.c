@@ -693,7 +693,7 @@ static void store_process_command(int cmd) {
 
 		/* allow inspecting _own_ items while in a store! */
 		case 'I':
-			cmd_observe();
+			cmd_observe(USE_INVEN | USE_EQUIP);
 			break;
 
 		/* Ignore return */
@@ -722,10 +722,10 @@ static void store_process_command(int cmd) {
 #endif
 
 		case '{':
-			cmd_inscribe();
+			cmd_inscribe(USE_INVEN | USE_EQUIP);
 			break;
 		case '}':
-			cmd_uninscribe();
+			cmd_uninscribe(USE_INVEN | USE_EQUIP);
 			break;
 
 		/* special feat for some stores: allow wear/wield and take-off..

@@ -227,18 +227,18 @@ void process_command() {
 
 	case 'i': cmd_inven(); break;
 	case 'e': cmd_equip(); break;
-	case 'd': cmd_drop(); break;
+	case 'd': cmd_drop(USE_INVEN | USE_EQUIP); break;
 	case '$': cmd_drop_gold(); break;
 	case 'w': cmd_wield(); break;
 	case 't': cmd_take_off(); break;
 	case 'x': cmd_swap(); break;
-	case 'k': cmd_destroy(); break;
+	case 'k': cmd_destroy(USE_INVEN | USE_EQUIP); break;
 #if 0 /* currently no effect on server-side */
 	case 'K': cmd_king(); break;
 #endif
 	case 'K': cmd_force_stack(); break;
-	case '{': cmd_inscribe(); break;
-	case '}': cmd_uninscribe(); break;
+	case '{': cmd_inscribe(USE_INVEN | USE_EQUIP); break;
+	case '}': cmd_uninscribe(USE_INVEN | USE_EQUIP); break;
 	case 'H': cmd_apply_autoins(); break;
 	case 'j': cmd_steal(); break;
 
@@ -270,7 +270,7 @@ void process_command() {
 	case '*': cmd_target(); break;
 	case '(': cmd_target_friendly(); break;
 	case 'l': cmd_look(); break;
-	case 'I': cmd_observe(); break;
+	case 'I': cmd_observe(USE_INVEN | USE_EQUIP); break;
 
 	/*** Information ***/
 
@@ -580,6 +580,7 @@ void cmd_inven(void) {
 	int c;
 	char buf[MSG_LEN];
 
+	showing_inven = TRUE;
 
 	/* First, erase our current location */
 
@@ -590,26 +591,59 @@ void cmd_inven(void) {
 
 	show_inven();
 
-	ch = inkey();
-	if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
-	/* allow pasting item into chat */
-	else if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
-		c = ch - 'A';
-
-		if (inventory[c].tval) {
-			snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[c]);
-			buf[MSG_LEN - 1] = 0;
-			/* if item inscriptions contains a colon we might need
-			   another colon to prevent confusing it with a private message */
-			if (strchr(inventory_name[c], ':')) {
-				buf[strchr(inventory_name[c], ':') - inventory_name[c] + strlen(buf) - strlen(inventory_name[c]) + 1] = '\0';
-				if (strchr(buf, ':') == &buf[strlen(buf) - 1])
-					strcat(buf, ":");
-				strcat(buf, strchr(inventory_name[c], ':') + 1);
-			}
-			Send_paste_msg(buf);
+	while (TRUE) {
+		ch = inkey();
+		if (ch == KTRL('T')) {
+			xhtml_screenshot("screenshot????");
+			break;
 		}
+		/* allow pasting item into chat */
+		else if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+			c = ch - 'A';
+
+			if (inventory[c].tval) {
+				snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[c]);
+				buf[MSG_LEN - 1] = 0;
+				/* if item inscriptions contains a colon we might need
+				   another colon to prevent confusing it with a private message */
+				if (strchr(inventory_name[c], ':')) {
+					buf[strchr(inventory_name[c], ':') - inventory_name[c] + strlen(buf) - strlen(inventory_name[c]) + 1] = '\0';
+					if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+						strcat(buf, ":");
+					strcat(buf, strchr(inventory_name[c], ':') + 1);
+				}
+				Send_paste_msg(buf);
+			}
+			break;
+		}
+		else if (ch == 'x') {
+			cmd_observe(USE_INVEN);
+			continue;
+		}
+		else if (ch == 'd') {
+			cmd_drop(USE_INVEN);
+			continue;
+		}
+		else if (ch == 'k' || ch == KTRL('D')) {
+			cmd_destroy(USE_INVEN);
+			continue;
+		}
+		else if (ch == '{') {
+			cmd_inscribe(USE_INVEN);
+			continue;
+		}
+		else if (ch == '}') {
+			cmd_uninscribe(USE_INVEN);
+			continue;
+		}
+		else if (ch == ':') {
+			cmd_message();
+			continue;
+		}
+		break;
 	}
+
+	showing_inven = FALSE;
 
 	/* restore the screen */
 	Term_load();
@@ -624,6 +658,7 @@ void cmd_equip(void) {
 	int c;
 	char buf[MSG_LEN];
 
+	showing_equip = TRUE;
 
 	Term_save();
 
@@ -637,26 +672,51 @@ void cmd_equip(void) {
 	/* Undo the hack above */
 	item_tester_full = FALSE;
 
-	ch = inkey();
-	if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
-	/* allow pasting item into chat */
-	else if (ch >= 'A' && ch < 'A' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
-		c = ch - 'A';
-		if (inventory[INVEN_WIELD + c].tval) {
-			snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[INVEN_WIELD + c]);
-			buf[MSG_LEN - 1] = 0;
-			/* if item inscriptions contains a colon we might need
-			   another colon to prevent confusing it with a private message */
-			if (strchr(inventory_name[INVEN_WIELD + c], ':')) {
-				buf[strchr(inventory_name[INVEN_WIELD + c], ':') - inventory_name[INVEN_WIELD + c]
-				    + strlen(buf) - strlen(inventory_name[INVEN_WIELD + c]) + 1] = '\0';
-				if (strchr(buf, ':') == &buf[strlen(buf) - 1])
-					strcat(buf, ":");
-				strcat(buf, strchr(inventory_name[INVEN_WIELD + c], ':') + 1);
-			}
-			Send_paste_msg(buf);
+	while (TRUE) {
+		ch = inkey();
+		if (ch == KTRL('T')) {
+			xhtml_screenshot("screenshot????");
+			break;
 		}
+		/* allow pasting item into chat */
+		else if (ch >= 'A' && ch < 'A' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+			c = ch - 'A';
+			if (inventory[INVEN_WIELD + c].tval) {
+				snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[INVEN_WIELD + c]);
+				buf[MSG_LEN - 1] = 0;
+				/* if item inscriptions contains a colon we might need
+				   another colon to prevent confusing it with a private message */
+				if (strchr(inventory_name[INVEN_WIELD + c], ':')) {
+					buf[strchr(inventory_name[INVEN_WIELD + c], ':') - inventory_name[INVEN_WIELD + c]
+					    + strlen(buf) - strlen(inventory_name[INVEN_WIELD + c]) + 1] = '\0';
+					if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+						strcat(buf, ":");
+					strcat(buf, strchr(inventory_name[INVEN_WIELD + c], ':') + 1);
+				}
+				Send_paste_msg(buf);
+			}
+			break;
+		}
+		else if (ch == 'x') {
+			cmd_observe(USE_EQUIP);
+			continue;
+		}
+		else if (ch == '{') {
+			cmd_inscribe(USE_EQUIP);
+			continue;
+		}
+		else if (ch == '}') {
+			cmd_uninscribe(USE_EQUIP);
+			continue;
+		}
+		else if (ch == ':') {
+			cmd_message();
+			continue;
+		}
+		break;
 	}
+
+	showing_equip = FALSE;
 
 	Term_load();
 
@@ -664,14 +724,14 @@ void cmd_equip(void) {
 	Flush_queue();
 }
 
-void cmd_drop(void) {
+void cmd_drop(byte flag) {
 	int item, amt;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Drop what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Drop what? ", (flag | USE_EXTRA))) return;
 
 	/* Get an amount */
 	if (inventory[item].number > 1) {
@@ -728,14 +788,14 @@ void cmd_wield2(void) {
 	Send_wield2(item);
 }
 
-void cmd_observe(void) {
+void cmd_observe(byte mode) {
 	int item;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Examine which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Examine which item? ", (mode | USE_EXTRA)))
 		return;
 
 	/* Send it */
@@ -821,7 +881,7 @@ void cmd_swap(void) {
 }
 
 
-void cmd_destroy(void) {
+void cmd_destroy(byte flag) {
 	int item, amt;
 	char out_val[MSG_LEN];
 
@@ -829,7 +889,7 @@ void cmd_destroy(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Destroy what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Destroy what? ", (flag | USE_EXTRA))) return;
 
 	/* Get an amount */
 	if (inventory[item].number > 1) {
@@ -856,7 +916,7 @@ void cmd_destroy(void) {
 }
 
 
-void cmd_inscribe(void) {
+void cmd_inscribe(byte flag) {
 	int item;
 	char buf[1024];
 
@@ -864,7 +924,7 @@ void cmd_inscribe(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | SPECIAL_REQ))) {
+	if (!c_get_item(&item, "Inscribe what? ", (flag | USE_EXTRA | SPECIAL_REQ))) {
 		if (item != -3) return;
 
 		/* '-3' hack: Get inscription before item (SPECIAL_REQ) */
@@ -887,14 +947,14 @@ void cmd_inscribe(void) {
 		Send_inscribe(item, buf);
 }
 
-void cmd_uninscribe(void) {
+void cmd_uninscribe(byte flag) {
 	int item;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Uninscribe what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Uninscribe what? ", (flag | USE_EXTRA)))
 		return;
 
 	/* Send it */
@@ -1627,11 +1687,11 @@ void cmd_the_guide(void) {
 			continue;
 		/* allow inscribing items (hm) */
 		case '{':
-			cmd_inscribe();
+			cmd_inscribe(USE_INVEN | USE_EQUIP);
 			skip_redraw = TRUE;
 			continue;
 		case '}':
-			cmd_uninscribe();
+			cmd_uninscribe(USE_INVEN | USE_EQUIP);
 			skip_redraw = TRUE;
 			continue;
 		case KTRL('T'):
@@ -2181,11 +2241,11 @@ static void artifact_lore(void) {
 		}
 		/* allow copying the artifact details into an item inscription ;) */
 		if (c == '{') {
-			cmd_inscribe();
+			cmd_inscribe(USE_INVEN | USE_EQUIP);
 			continue;
 		}
 		if (c == '}') {
-			cmd_uninscribe();
+			cmd_uninscribe(USE_INVEN | USE_EQUIP);
 			continue;
 		}
 
@@ -2290,11 +2350,11 @@ static void artifact_lore(void) {
 			}
 			/* allow copying the artifact details into an item inscription ;) */
 			if (c == '{') {
-				cmd_inscribe();
+				cmd_inscribe(USE_INVEN | USE_EQUIP);
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
 			}
 			if (c == '}') {
-				cmd_uninscribe();
+				cmd_uninscribe(USE_INVEN | USE_EQUIP);
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
 			}
 
@@ -2601,11 +2661,11 @@ static void monster_lore(void) {
 		}
 		/* just because you can do this in artifact lore too.. */
 		if (c == '{') {
-			cmd_inscribe();
+			cmd_inscribe(USE_INVEN | USE_EQUIP);
 			continue;
 		}
 		if (c == '}') {
-			cmd_uninscribe();
+			cmd_uninscribe(USE_INVEN | USE_EQUIP);
 			continue;
 		}
 
@@ -2710,11 +2770,11 @@ static void monster_lore(void) {
 			}
 			/* just because you can do this in artifact lore too.. */
 			if (c == '{') {
-				cmd_inscribe();
+				cmd_inscribe(USE_INVEN | USE_EQUIP);
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
 			}
 			if (c == '}') {
-				cmd_uninscribe();
+				cmd_uninscribe(USE_INVEN | USE_EQUIP);
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
 			}
 
