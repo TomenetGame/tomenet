@@ -1960,6 +1960,13 @@ void cmd_the_guide(void) {
 					strcat(chapter, ranged_techniques[i]);
 					break;
 				}
+				if (chapter[0]) continue;
+
+				/* Additions */
+				if (my_strcasestr(buf, "Linea")) {
+					strcpy(chapter, "    Lineage");
+					continue;
+				}
 
 				continue;
 			}
