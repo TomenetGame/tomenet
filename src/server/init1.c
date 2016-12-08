@@ -7560,7 +7560,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* we have 3 sub-types of 'm' lines */
 			if (buf[1] == ':') { /* init */
 				int amt, grp, scat, clo, ridx, reidx, lvmin, lvmax;
-				char rchar, rattr;
+				unsigned char rchar, rattr;
 
 				s = buf + 2;
 				if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%c:%c:%d:%d%79[^:]",
@@ -7729,7 +7729,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'S' for questor changes/polymorphing/hostility */
 		if (buf[0] == 'S') {
 			int q, talk, despawn, invinc, dfail, ridx, reidx, lev;
-			char rchar, rattr;
+			unsigned char rchar, rattr;
 
 			s = buf + 2;
 			if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d:%c:%c:%d",
@@ -8274,7 +8274,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				for (j = k; j < 10; j++) q_kill->reidx[j] = -1;
 				continue;
 			} else if (buf[1] == 'V') { /* specify visuals */
-				char rchar[5], rattr[5];
+				unsigned char rchar[5], rattr[5];
 				s = buf + 3;
 				if (4 > (k = sscanf(s, "%d:%d:%c:%c:%c:%c:%c:%c:%c:%c:%c:%c",
 				    &stage, &goal, &rchar[0], &rattr[0], &rchar[1], &rattr[1], &rchar[2], &rattr[2], &rchar[3], &rattr[3], &rchar[4], &rattr[4])))

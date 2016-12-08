@@ -91,7 +91,7 @@ typedef struct qi_questor {
 	/* QI_QUESTOR_NPC */
 	s16b ridx;
 	s16b reidx;
-	char rchar;
+	unsigned char rchar;
 	byte rattr;
 	byte rlevmin, rlevmax;
 
@@ -154,7 +154,7 @@ typedef struct qi_questor_morph {
 	cptr name;					/* questor changes optional pseudo-unique name during this stage? */
 	s16b ridx; 					/* questor changes to this base monster type */
 	s16b reidx; 					/* questor changes to this ego monster type */
-	char rchar;
+	unsigned char rchar;
 	byte rattr;
 	byte rlev;
 } qi_questor_morph;
@@ -214,7 +214,7 @@ typedef struct qi_kill {
 	s16b reidx[10];					/* kill certain ego monster(s), -1 for any (default for non-specified values). */
 
 	cptr name[5];					/* partial name that can match. AND's with char/attr/lev */
-	char rchar[5];					/*  ..certain types, 126 for any, 127 for none. AND's with name/attr/lev. */
+	unsigned char rchar[5];				/*  ..certain types, 126 for any, 127 for none. AND's with name/attr/lev. */
 	byte rattr[5];					/*  ..certain colours, 254 for any, 255 for none. AND's with name/char/lev. */
 	byte rlevmin, rlevmax;				/* 0 for any. AND's with char/attr. */
 
@@ -306,7 +306,7 @@ typedef struct qi_reward {
    multiple quest items in retrieval quest goals. */
 typedef struct qi_questitem {
 	s16b opval;					/* only used to distinguish between them (by retrieve-goals) */
-	char ochar;
+	unsigned char ochar;
 	byte oattr;
 	s16b oweight;
 	byte olev;
@@ -342,7 +342,7 @@ typedef struct qi_monsterspawn {
 	s16b reidx;					/* exact reidx, ANDs with block of partial criteria below, -1 for any */
 
 	cptr name;					/* partial name that can match. AND's with char/attr/lev */
-	char rchar;
+	unsigned char rchar;
 	byte rattr;
 	byte rlevmin, rlevmax;
 
