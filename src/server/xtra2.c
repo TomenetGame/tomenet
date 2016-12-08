@@ -7368,6 +7368,7 @@ void player_death(int Ind) {
 
 		if (instant_res_possible) {
 			int loss_factor, reduce;
+			bool has_exp = p_ptr->max_exp != 0;
  #ifndef FALLEN_WINNERSONLY
 			int i;
 			u32b dummy, f5;
@@ -7483,6 +7484,9 @@ void player_death(int Ind) {
 			reduce = reduce > 99999 ?
 			reduce / 100 * loss_factor : reduce * loss_factor / 100;
 			p_ptr->exp -= reduce;
+
+			/* Prevent cheezing exp to 0 to become eligible for certain events */
+			if (!p_ptr->max_exp && has_exp) p_ptr->exp = p_ptr->max_exp = 1;
 
 			check_experience(Ind);
 
@@ -8415,6 +8419,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 void resurrect_player(int Ind, int loss_factor) {
 	player_type *p_ptr = Players[Ind];
 	int reduce;
+	bool has_exp = p_ptr->max_exp != 0;
 
 	/* Hack -- the dungeon master can not resurrect */
 	if (p_ptr->admin_dm) return;	// TRUE;
@@ -8447,6 +8452,9 @@ void resurrect_player(int Ind, int loss_factor) {
 	reduce = reduce > 99999 ?
 	    reduce / 100 * loss_factor : reduce * loss_factor / 100;
 	p_ptr->exp -= reduce;
+
+	/* Prevent cheezing exp to 0 to become eligible for certain events */
+	if (!p_ptr->max_exp && has_exp) p_ptr->exp = p_ptr->max_exp = 1;
 
 	p_ptr->safe_sane = TRUE;
 	check_experience(Ind);
