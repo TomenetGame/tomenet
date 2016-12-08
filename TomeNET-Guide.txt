@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. November 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 8. December 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.0a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7424,13 +7424,14 @@ Ironman Deep Dive Challenge (IDDC)
     enter will give you a progressively increasing (with floor depth) luck
     bonus, making it more and more likely to obtain better items.
 
-    Everlasting and non-everlasting characters can team up and trade items
-    while they are inside the ironman deep dive dungeon.
+    The IDDC does not allow forming a party or adding someone to an existing
+    party, so you have to do this while everyone who wants to join the party is
+    still outside of the IDDC.
+    IDDC allows partying and trading between everlasting and non-everlasting
+    characters. To form a party between those, everyone must be within the
+    worldmap sector where the IDDC entrance is located.
     Level requirements on items are not in effect while inside the ironman deep
     dive challenge either, so item levels are meaningless.
-    An exception are items brought from outside the IDDC into it:
-    Apart from food and torches, these can only be dropped when a player
-    reaches at least dungeon floor #5.
 
     Party bonus experience is higher than outside of IDDC. This means that the
     experience you get per killed monster is much closer to the experience you
