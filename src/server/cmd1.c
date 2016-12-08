@@ -1662,8 +1662,14 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #ifdef IDDC_IRON_COOP
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    && (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
-			if (!p_ptr->party) msg_print(Ind, "\377yYou cannot pick up money from strangers.");
-			else msg_print(Ind, "\377yYou cannot pick up money from strangers outside your party.");
+			msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
+			return;
+		}
+#endif
+#ifdef IRON_IRON_TEAM
+		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner &&
+		    lookup_player_party(o_ptr->owner) != p_ptr->party) {
+			msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
 			return;
 		}
 #endif
@@ -1830,8 +1836,14 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #ifdef IDDC_IRON_COOP
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    && (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
-			if (!p_ptr->party) msg_print(Ind, "\377yYou cannot pick up items from strangers.");
-			else msg_print(Ind, "\377yYou cannot pick up items from strangers outside your party.");
+			msg_print(Ind, "\377yYou cannot pick up items from outsiders.");
+			return;
+		}
+#endif
+#ifdef IRON_IRON_TEAM
+		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner &&
+		    lookup_player_party(o_ptr->owner) != p_ptr->party) {
+			msg_print(Ind, "\377yYou cannot pick up items from outsiders.");
 			return;
 		}
 #endif

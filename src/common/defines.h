@@ -905,6 +905,10 @@
    Can only trade with party members. */
 #define IDDC_IRON_COOP
 
+/* Specialty: Make normal 'Iron Teams' (anywhere, outside of the IDDC too) same as parties within IDDC,
+   applying the IDDC_IRON_COOP rules to them too! */
+#define IRON_IRON_TEAM
+
 /* Special anti-cheeze hack: Disallow carrying items from town to IDDC and
    giving them to another character inside IDDC, for the first n floors. */
 #ifndef IDDC_IRON_COOP
