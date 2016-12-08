@@ -10744,7 +10744,8 @@ bool target_set(int Ind, int dir) {
 
 		/* Check for completion */
 		if (dir == 128 + 5) {
-			p_ptr->target_who = MAX_M_IDX + 1;
+			//p_ptr->target_who = MAX_M_IDX + 1;
+			p_ptr->target_who = 0;
 			return TRUE;
 		}
 
