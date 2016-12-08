@@ -1767,6 +1767,7 @@ ID, *ID*    Identify and *Identify* magic respectively, which is used to
 Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
+            Also, members can only trade items and money with other members.
 
 kinging     The process of beating Morgoth, the game boss, and thereby
             acquiring a royal title (king/queen/emperor/empress).
