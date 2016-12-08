@@ -899,9 +899,17 @@
    (form party, trade items) while inside the Ironman Deep Dive Challenge? */
 #define IRONDEEPDIVE_ALLOW_INCOMPAT
 
+/* Real Iron: Un-cheeze IDDC, also indirectly removing shop-scumming craziness from infinite money supplies:
+   Allow forming a party _outside_ of the IDDC but within the IDDC sector.
+   Cannot re-party inside the IDDC.
+   Can only trade with party members. */
+#define IDDC_IRON_COOP
+
 /* Special anti-cheeze hack: Disallow carrying items from town to IDDC and
    giving them to another character inside IDDC, for the first n floors. */
-#define IDDC_NO_TRADE_CHEEZE 5
+#ifndef IDDC_IRON_COOP
+ #define IDDC_NO_TRADE_CHEEZE 5
+#endif
 
 /* Give a crazy form learning boost inside Ironman Deep Dive Challenge? [9] */
 #define IDDC_MIMICRY_BOOST 9
@@ -8557,6 +8565,7 @@ extern int PlayerUID;
 //#define in_netherrealm(wpos) (getlevel(wpos) >= netherrealm_start)
 #define in_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z > 0)
 #define at_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z >= 0)
+#define on_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && !(wpos)->wz)
 #define netherrealm_bottom(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz == netherrealm_end_wz)
 
 #define in_hallsofmandos(wpos) ((wpos)->wx == hallsofmandos_wpos_x && (wpos)->wy == hallsofmandos_wpos_y && (wpos)->wz * hallsofmandos_wpos_z > 0)
@@ -8570,6 +8579,10 @@ extern int PlayerUID;
 /* quickly check if a given wpos is within certain special dungeons */
 #define in_irondeepdive(wpos) \
 	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z > 0)
+#define at_irondeepdive(wpos) \
+	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z >= 0)
+#define on_irondeepdive(wpos) \
+	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && !(wpos)->wz)
 
 /* in sector00, and it is active (separated)? */
 #define in_sector00(wpos) \

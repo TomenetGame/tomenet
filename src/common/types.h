@@ -2792,9 +2792,7 @@ struct player_type {
 
 	u16b tim_deflect;
 
-#if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES)
-	struct worldpos wpos_old;
-#endif
+	struct worldpos wpos_old; /* used for dungeon-visit-boni, nether-realm cross-mode and ironman deep dive challenge stuff */
 
 #if 0 /* deprecated */
 	/* NOT IMPLEMENTED YET: add spell array for quick access via new method of macroing spells

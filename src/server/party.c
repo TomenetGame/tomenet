@@ -1409,6 +1409,13 @@ int party_create(int Ind, cptr name) {
 		return FALSE;
 	}
 
+#ifdef IDDC_IRON_COOP
+	if (in_irondeepdive(&p_ptr->wpos)) {
+		msg_print(Ind, "\377yCharacters must be outside the Ironman Deep Dive Challenge to form a party.");
+		return FALSE;
+	}
+#endif
+
 	/* Find the "best" party index */
 	for (i = 1; i < MAX_PARTIES; i++) {
 		/* Check deletion time of disbanded parties */
@@ -1500,6 +1507,11 @@ int party_create_ironteam(int Ind, cptr name) {
 		msg_print(Ind, "\377yA party by that name already exists.");
 		return FALSE;
 	}
+	/* Check for already existing guild by that name */
+	if (guild_lookup(name) != -1) {
+		msg_print(Ind, "\377yThere's already a guild using that name.");
+		return FALSE;
+	}
 
 	/* If he's party owner, it's name change */
 	if (streq(parties[p_ptr->party].owner, p_ptr->name)) {
@@ -1522,6 +1534,13 @@ int party_create_ironteam(int Ind, cptr name) {
 		msg_print(Ind, "\377yYou already belong to a party!");
 		return FALSE;
 	}
+
+#ifdef IDDC_IRON_COOP
+	if (in_irondeepdive(&p_ptr->wpos)) {
+		msg_print(Ind, "\377yCharacters must be outside the Ironman Deep Dive Challenge to form a party.");
+		return FALSE;
+	}
+#endif
 
 	/* Find the "best" party index */
 	for (i = 1; i < MAX_PARTIES; i++) {
@@ -1890,13 +1909,24 @@ int party_add(int adder, cptr name) {
 		return FALSE;
 	}
 
+#ifdef IDDC_IRON_COOP
+	if (in_irondeepdive(&p_ptr->wpos) || in_irondeepdive(&q_ptr->wpos)) {
+		msg_print(adder, "\377yCharacters must be outside the Ironman Deep Dive Challenge to form a party.");
+		return FALSE;
+	}
+#endif
+
 	if (
 #ifdef ALLOW_NR_CROSS_PARTIES /* Note: Currently unnecessarily restricted: Actually q_ptr check is not needed, also not enabled for party_add_self(). */
 	    (!q_ptr->total_winner || !p_ptr->total_winner ||
 	    !at_netherrealm(&q_ptr->wpos) || !at_netherrealm(&p_ptr->wpos)) &&
 #endif
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+ #ifndef IDDC_IRON_COOP
 	    !in_irondeepdive(&p_ptr->wpos) &&
+ #else
+	    !on_irondeepdive(&p_ptr->wpos) &&
+ #endif
 #endif
 	/* Everlasting and other chars cannot be in the same party */
 	    (compat_mode(parties[party_id].cmode, p_ptr->mode))) {
@@ -1986,6 +2016,13 @@ int party_add_self(int Ind, cptr party) {
 	}
 	if (ids) C_KILL(id_list, ids, int);
 
+#ifdef IDDC_IRON_COOP
+	if (in_irondeepdive(&p_ptr->wpos) || in_irondeepdive(&wpos_other)) {
+		msg_print(Ind, "\377yCharacters must be outside the Ironman Deep Dive Challenge to form a party.");
+		return FALSE;
+	}
+#endif
+
 	/* Everlasting and other chars cannot be in the same party */
 	if (
 #if 0 /* hm */
@@ -1994,8 +2031,11 @@ int party_add_self(int Ind, cptr party) {
 #endif
 #endif
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
-	    !(in_irondeepdive(&p_ptr->wpos) &&
-	    in_irondeepdive(&wpos_other)) && //not strictly needed, but might get kinda messy otherwise
+ #ifndef IDDC_IRON_COOP
+	    !(in_irondeepdive(&p_ptr->wpos) && in_irondeepdive(&wpos_other)) &&
+ #else
+	    !(on_irondeepdive(&p_ptr->wpos) && on_irondeepdive(&wpos_other)) &&
+ #endif
 #endif
 	    compat_mode(p_ptr->mode, parties[party_id].cmode)) {
 		msg_format(Ind, "\377yYou cannot join %s parties.", compat_mode(p_ptr->mode, parties[party_id].cmode));
@@ -2878,7 +2918,11 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 
 #ifdef ALLOW_NR_CROSS_PARTIES
 	/* quick and dirty anti-cheeze (for if NR surface already allows partying up) */
-	if (at_netherrealm(wpos) && !wpos->wz) return;
+	if (on_netherrealm(wpos)) return;
+#endif
+#ifdef IDDC_IRON_COOP
+	/* quick and dirty anti-cheeze (for if IDDC surface already allows partying up) */
+	if (on_irondeepdive(wpos)) return;
 #endif
 
 	/* Calculate the average level and iron team presence */

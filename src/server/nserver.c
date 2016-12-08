@@ -3269,9 +3269,7 @@ static int Handle_login(int ind) {
 	/* Initialise his temporary quest helper information */
 	quest_check_player_location(NumPlayers);
 
-#if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES) || defined(ALLOW_NR_CROSS_ITEMS)
 	wpcopy(&Players[NumPlayers]->wpos_old, &p_ptr->wpos);
-#endif
 
 #ifdef CLIENT_SIDE_WEATHER
 	/* update his client-side weather */

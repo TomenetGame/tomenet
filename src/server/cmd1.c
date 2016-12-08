@@ -1659,6 +1659,15 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			return;
 		}
 
+#ifdef IDDC_IRON_COOP
+		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
+		    && (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
+			if (!p_ptr->party) msg_print(Ind, "\377yYou cannot pick up money from strangers.");
+			else msg_print(Ind, "\377yYou cannot pick up money from strangers outside your party.");
+			return;
+		}
+#endif
+
 #ifdef NEWBIES_CANT_GRAB_IN_BREE
 		/* Avoid people picking up things that they cannot drop again? */
 		if (in_bree(wpos) &&
@@ -1817,6 +1826,15 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
 			return;
 		}
+
+#ifdef IDDC_IRON_COOP
+		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
+		    && (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
+			if (!p_ptr->party) msg_print(Ind, "\377yYou cannot pick up items from strangers.");
+			else msg_print(Ind, "\377yYou cannot pick up items from strangers outside your party.");
+			return;
+		}
+#endif
 
 		/* cannot carry the same questor twice */
 		if (o_ptr->questor) {

@@ -7347,6 +7347,13 @@ void process_player_change_wpos(int Ind) {
 		/* need to leave party, since we might be teamed up with incompatible char mode players! */
 		party_leave(Ind, FALSE);
 #endif
+#ifdef IDDC_IRON_COOP
+	if (p_ptr->party && at_irondeepdive(&p_ptr->wpos_old) && !at_irondeepdive(&p_ptr->wpos)
+	    && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)
+	    && !p_ptr->admin_dm)
+		/* need to leave party, since we might be teamed up with incompatible char mode players! */
+		party_leave(Ind, FALSE);
+#endif
 #ifdef ALLOW_NR_CROSS_ITEMS
 	if (in_netherrealm(&p_ptr->wpos_old) && !in_netherrealm(&p_ptr->wpos))
 		for (j = 1; j < INVEN_TOTAL; j++)
@@ -7370,9 +7377,7 @@ void process_player_change_wpos(int Ind) {
 	}
 #endif
 
-#if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES) || defined(ALLOW_NR_CROSS_ITEMS)
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
-#endif
 
 	/* Allow the player again to find another random IDDC town, if he hit a static IDDC town */
 	if (is_fixed_irondeepdive_town(&p_ptr->wpos, dlv)) p_ptr->IDDC_found_rndtown = FALSE;
