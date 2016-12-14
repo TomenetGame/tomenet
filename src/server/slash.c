@@ -4178,6 +4178,62 @@ void do_slash_cmd(int Ind, char *message) {
 			msg_format(Ind, "\377uYou are currently in %s.", get_dun_name(p_ptr->wpos.wx, p_ptr->wpos.wy, (p_ptr->wpos.wz > 0), d_ptr, 0, TRUE));
 			return;
 		}
+		else if (prefix(message, "/kifu")) {
+#ifdef ENABLE_GO_GAME
+			char *c, *email;
+			bool c_at = FALSE;
+
+			/* Prevent silyl exploits (getting _everyone's_ SGFs emailed to you by naming your character after one of the AI players).
+			   Note that these names are now already checked in forbidden_names() on character creation. */
+			if (strstr(p_ptr->name, " (AI)") || strstr(p_ptr->name, "Godalf, The ")) {
+				msg_print(Ind, "Sorry, the /kifu command isn't available to you in particular. :-p");
+				return;
+			}
+
+			if (tk != 1) { //Assume spaces aren't allowed in email address */
+				msg_print(Ind, "To request an email with your new kifus, enter:  /kifu <email address>");
+				msg_print(Ind, "Example:  /kifu alphago@google.com");
+				return;
+			}
+
+			/* Trim spaces.. */
+			c = token[1];
+			while (*c == ' ') c++;
+			email = c;
+			while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
+			/* Note: This doesn't adhere to RFC 5322/5321 */
+			while (*c) {
+				/* Allow one '@' */
+				if (*c == '@') {
+					if (c_at) break;
+					c_at = TRUE;
+				}
+				/* Only allow -_.~ for non-alphanum characters */
+				else if (!isalpha(*c) && !isdigit(*c)
+				    && *c != '-' && *c != '_' && *c != '.' && *c != '~')
+					break;
+				c++;
+			}
+			if (*c) {
+				msg_print(Ind, "That email address contains illegal characters.");
+				return;
+			}
+
+			if (p_ptr->go_mail_cooldown) {
+				if (p_ptr->go_mail_cooldown >= 120) msg_format(Ind, "You have to wait for %d more minutes to email kifus.", p_ptr->go_mail_cooldown / 60);
+				else msg_format(Ind, "You have to wait for %d more seconds to email kifus.", p_ptr->go_mail_cooldown);
+				return;
+			}
+			p_ptr->go_mail_cooldown = 600;
+
+			/* Send him an email to the requested address with all his new kifus.. */
+			system(format("sh ./go/email-kifu.sh %s \"%s\" &", email, p_ptr->name));
+			msg_format(Ind, "Mailed all new kifus to %s. (If you didn't have any new kifus, no email would be dispatched.)", email);
+#else
+			msg_print(Ind, "Go game functionality are currently not available.");
+#endif
+			return;
+		}
 
 
 

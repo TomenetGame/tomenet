@@ -8116,6 +8116,7 @@ void dungeon(void) {
 
 		/* process certain player-related timers */
 		for (i = 1; i <= NumPlayers; i++) {
+			/* CTRL+R spam control */
 			if (Players[i]->redraw_cooldown) Players[i]->redraw_cooldown--;
 
 			/* Arbitrary max number, just to prevent integer overflow.
@@ -8123,6 +8124,11 @@ void dungeon(void) {
 			if (!Players[i]->wpos.wz && /* <- redundant check sort of, caught in process_player_change_wpos() anyway */
 			    Players[i]->ambient_sfx_timer < 200)
 				Players[i]->ambient_sfx_timer++;
+
+#ifdef ENABLE_GO_GAME
+			/* Kifu email spam control */
+			if (Players[i]->go_mail_cooldown) Players[i]->go_mail_cooldown--;
+#endif
 		}
 	}
 

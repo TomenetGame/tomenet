@@ -842,6 +842,10 @@ static bool forbidden_name(char *cname) {
 	/* For logging chat relayed from IRC */
 	if (!strcmp(name, "irc")) return TRUE;
 
+//ENABLE_GO_GAME - don't allow posing as one of the AI players
+	if (strstr(name, " (AI)")) return TRUE;
+	if (strstr(name, "Godalf, The ")) return TRUE;
+
 
 	path_build(path_buf, 1024, ANGBAND_DIR_CONFIG, "badnames.txt");
 
@@ -3293,6 +3297,10 @@ static int Handle_login(int ind) {
 
 	/* Don't skip the first attack sfx (in case player enabled half_sfx_attack or cut_sfx_attack) */
 	p_ptr->count_cut_sfx_attack = 500;
+#endif
+
+#ifdef ENABLE_GO_GAME
+	p_ptr->go_mail_cooldown = 600;
 #endif
 
 	/* Don't init these if player got insta-recalled on joining via check_Morgoth(),
