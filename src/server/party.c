@@ -1414,6 +1414,19 @@ int party_create(int Ind, cptr name) {
 		msg_print(Ind, "\377yCharacters must be outside the Ironman Deep Dive Challenge to form a party.");
 		return FALSE;
 	}
+ #ifdef IDDC_IRON_TEAM_ONLY
+	/* we might just be passing by and not intending to enter IDDC, but we probably do intend to enter */
+	if (on_irondeepdive(&p_ptr->wpos)) {
+		msg_print(Ind, "\377yYou can only form 'Iron Team' parties for the Ironman Deep Dive Challenge.");
+		return FALSE;
+	}
+ #endif
+#elif IDDC_IRON_TEAM_ONLY
+	/* we might just be passing by and not intending to enter IDDC, but we probably do intend to enter */
+	if (at_irondeepdive(&p_ptr->wpos)) {
+		msg_print(Ind, "\377yYou can only form 'Iron Team' parties for the Ironman Deep Dive Challenge.");
+		return FALSE;
+	}
 #endif
 
 	/* Find the "best" party index */

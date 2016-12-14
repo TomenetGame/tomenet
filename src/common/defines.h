@@ -902,12 +902,17 @@
 /* Real Iron: Un-cheeze IDDC, also indirectly removing shop-scumming craziness from infinite money supplies:
    Allow forming a party _outside_ of the IDDC but within the IDDC sector.
    Cannot re-party inside the IDDC.
-   Can only trade with party members. */
+   Can only trade with party members.
+   Note: These rules are applied to 'Iron Team' type parties in IDDC too. */
 #define IDDC_IRON_COOP
 
 /* Specialty: Make normal 'Iron Teams' (anywhere, outside of the IDDC too) same as parties within IDDC,
    applying the IDDC_IRON_COOP rules to them too! */
 #define IRON_IRON_TEAM
+
+/* Make 'Iron Team' the only possible party mode in IDDC.
+   Note: IRON_IRON_TEAM or IDDC_IRON_COOP should be enabled for this, to enforce trading rules too. */
+#define IDDC_IRON_TEAM_ONLY
 
 /* Special anti-cheeze hack: Disallow carrying items from town to IDDC and
    giving them to another character inside IDDC, for the first n floors. */

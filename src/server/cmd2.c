@@ -323,6 +323,12 @@ void do_cmd_go_up(int Ind) {
 			else msg_print(Ind, "\377DYou may not enter once you gained any experience!");
 			if (!is_admin(p_ptr)) return;
 		}
+#ifdef IDDC_IRON_TEAM_ONLY
+		if (p_ptr->party && !(parties[p_ptr->party].mode & PA_IRONTEAM)) {
+			msg_print(Ind, "\377yYour party must be an 'Iron Team' to enter the Ironman Deep Dive Challenge.");
+			if (!is_admin(p_ptr)) return;
+		}
+#endif
 		/* disable WoR hint */
 		p_ptr->warning_wor = 1;
 #if 1
@@ -1078,6 +1084,13 @@ void do_cmd_go_down(int Ind) {
 			else msg_print(Ind, "\377DYou may not enter once you gained any experience!");
 			if (!is_admin(p_ptr)) return;
 		}
+#ifdef IDDC_IRON_TEAM_ONLY
+		if (p_ptr->party && !(parties[p_ptr->party].mode & PA_IRONTEAM)) {
+			msg_print(Ind, "\377yYour party must be an 'Iron Team' to enter the Ironman Deep Dive Challenge.");
+			if (!is_admin(p_ptr)) return;
+		}
+#endif
+
 		/* disable WoR hint */
 		p_ptr->warning_wor = 1;
 #if 1
