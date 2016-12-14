@@ -1667,8 +1667,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		}
 #endif
 #ifdef IRON_IRON_TEAM
-		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner &&
-		    lookup_player_party(o_ptr->owner) != p_ptr->party) {
+		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
+		    && lookup_player_party(o_ptr->owner) != p_ptr->party) {
 			msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
 			return;
 		}
@@ -1841,8 +1841,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		}
 #endif
 #ifdef IRON_IRON_TEAM
-		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner &&
-		    lookup_player_party(o_ptr->owner) != p_ptr->party) {
+		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
+		    && lookup_player_party(o_ptr->owner) != p_ptr->party) {
 			msg_print(Ind, "\377yYou cannot pick up items from outsiders.");
 			return;
 		}
