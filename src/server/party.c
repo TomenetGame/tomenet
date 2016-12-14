@@ -1421,12 +1421,14 @@ int party_create(int Ind, cptr name) {
 		return FALSE;
 	}
  #endif
-#elif IDDC_IRON_TEAM_ONLY
+#else
+ #ifdef IDDC_IRON_TEAM_ONLY
 	/* we might just be passing by and not intending to enter IDDC, but we probably do intend to enter */
 	if (at_irondeepdive(&p_ptr->wpos)) {
 		msg_print(Ind, "\377yYou can only form 'Iron Team' parties for the Ironman Deep Dive Challenge.");
 		return FALSE;
 	}
+ #endif
 #endif
 
 	/* Find the "best" party index */
