@@ -4224,7 +4224,7 @@ void do_slash_cmd(int Ind, char *message) {
 				else msg_format(Ind, "You have to wait for %d more seconds to email kifus.", p_ptr->go_mail_cooldown);
 				return;
 			}
-			p_ptr->go_mail_cooldown = 600;
+			p_ptr->go_mail_cooldown = 300;
 
 			/* Send him an email to the requested address with all his new kifus.. */
 			i = system(format("sh ./go/email-kifu.sh %s \"%s\" &", email, p_ptr->name));

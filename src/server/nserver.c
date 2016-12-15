@@ -3300,7 +3300,7 @@ static int Handle_login(int ind) {
 #endif
 
 #ifdef ENABLE_GO_GAME
-	p_ptr->go_mail_cooldown = 600;
+	p_ptr->go_mail_cooldown = 300;
 #endif
 
 	/* Don't init these if player got insta-recalled on joining via check_Morgoth(),
