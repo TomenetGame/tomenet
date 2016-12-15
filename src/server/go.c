@@ -187,6 +187,9 @@ static int wait_for_response(void); /* blocking read */
 #if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 static int handle_loading(void);
 #endif
+#if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
+static int prev_level = 0;
+#endif
 static void go_engine_move_CPU(void);
 static void go_engine_move_result(int move_result);
 static void go_challenge_cleanup(bool server_shutdown);
@@ -1279,14 +1282,14 @@ void go_challenge_start(int Ind) {
 		else writeToPipe("uct_param_player ponder 1");
 
 		if (CPU_has_white) {
-			sprintf(tmp, "go_set_info player_black %s %dd", p_ptr->name, p_ptr->go_level);
+			sprintf(tmp, "go_set_info player_black %s", p_ptr->name);
 			writeToPipe(tmp);
 			sprintf(tmp, "go_set_info player_white %s", avatar_name);
 			writeToPipe(tmp);
 		} else {
 			sprintf(tmp, "go_set_info player_black %s", avatar_name);
 			writeToPipe(tmp);
-			sprintf(tmp, "go_set_info player_white %s %dd", p_ptr->name, p_ptr->go_level);
+			sprintf(tmp, "go_set_info player_white %s", p_ptr->name);
 			writeToPipe(tmp);
 		}
 	}
@@ -1357,6 +1360,9 @@ void go_challenge_start(int Ind) {
 		else s_printf("GO_SGF: Couldn't open file.\n");
  #endif
 	}
+ #if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO)
+	else prev_level = p_ptr->go_level;
+ #endif
 #endif
 
 	/* Initiate human player input loop */
@@ -2910,10 +2916,39 @@ static void go_challenge_cleanup(bool server_shutdown) {
 		/* Fix sgf displaying correct +1 bonus point on w 1st pass */
 		if (current_komi) writeToPipe("komi 1");
 
-		sprintf(tmp, "savesgf go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
+		sprintf(sgf_name, "go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
 		    1900 + tmstart->tm_year, tmstart->tm_mon + 1, tmstart->tm_mday,
 		    tmstart->tm_hour, tmstart->tm_min, tmstart->tm_sec);
+		sprintf(tmp, "savesgf %s", sgf_name);
 		writeToPipe(tmp); //(saves current game (and tree if some global flag was set) to sgf)
+
+		/* Fix sgf, adding the player's pseudo-rank -- fuego apparently has no go_set_info option for this */
+		{
+			char buf[1024], *ck;
+			FILE *fp;
+
+			rename(sgf_name, "tmp$$$.sgf");
+			sgf = fopen("tmp$$$.sgf", "r");
+			fp = fopen(sgf_name, "w");
+
+			while (!feof(sgf)) {
+				rc = fgets(buf, 1024, sgf);
+				if (!rc) break;
+				if (CPU_has_white) {
+					ck = strstr(buf, "PB[");
+					if (ck) strcat(buf, format("BR[%d]", prev_level);
+				} else {
+					ck = strstr(buf, "PW[");
+					if (ck) strcat(buf, format("WR[%d]", prev_level);
+				}
+				fputs(buf, fp);
+			}
+			fclose(fp);
+			fclose(sgf);
+
+			remove("tmp$$$.sgf");
+		}
+
 		if (server_shutdown) wait_for_response();
 	}
 #endif
