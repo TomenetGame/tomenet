@@ -1284,10 +1284,10 @@ void go_challenge_start(int Ind) {
 		if (CPU_has_white) {
 			sprintf(tmp, "go_set_info player_black %s", p_ptr->name);
 			writeToPipe(tmp);
-			sprintf(tmp, "go_set_info player_white %s", avatar_name);
+			sprintf(tmp, "go_set_info player_white %s (AI)", avatar_name);
 			writeToPipe(tmp);
 		} else {
-			sprintf(tmp, "go_set_info player_black %s", avatar_name);
+			sprintf(tmp, "go_set_info player_black %s (AI)", avatar_name);
 			writeToPipe(tmp);
 			sprintf(tmp, "go_set_info player_white %s", p_ptr->name);
 			writeToPipe(tmp);
@@ -2936,10 +2936,10 @@ static void go_challenge_cleanup(bool server_shutdown) {
 				if (!rc) break;
 				if (CPU_has_white) {
 					ck = strstr(buf, "PB[");
-					if (ck) strcat(buf, format("BR[%d]", prev_level));
+					if (ck) strcat(buf, format("BR[%dp]", prev_level));
 				} else {
 					ck = strstr(buf, "PW[");
-					if (ck) strcat(buf, format("WR[%d]", prev_level));
+					if (ck) strcat(buf, format("WR[%dp]", prev_level));
 				}
 				fputs(buf, fp);
 			}
