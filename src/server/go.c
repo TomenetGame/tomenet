@@ -2936,10 +2936,10 @@ static void go_challenge_cleanup(bool server_shutdown) {
 				if (!rc) break;
 				if (CPU_has_white) {
 					ck = strstr(buf, "PB[");
-					if (ck) strcat(buf, format("BR[%d]", prev_level);
+					if (ck) strcat(buf, format("BR[%d]", prev_level));
 				} else {
 					ck = strstr(buf, "PW[");
-					if (ck) strcat(buf, format("WR[%d]", prev_level);
+					if (ck) strcat(buf, format("WR[%d]", prev_level));
 				}
 				fputs(buf, fp);
 			}
