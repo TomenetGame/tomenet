@@ -8893,6 +8893,12 @@ Rocket          Rockets combine fire, shard & sound effects and can also damage
 Detonation      Same as rocket.
 Inferno         Same as detonation, except it does not destroy walls.
 
+There is also a special 'Teleportation Resistance', giving the self-knowledge
+line: "You resist incoming teleportation effects.".
+Having this will give the character a good chance to not be affected by most
+teleportation effects from traps or monsters (teleport-away and teleport-to).
+Nexus-related teleportation is also affected by this, gravity however is not.
+
 
 Immunities
 ----------
