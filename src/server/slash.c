@@ -3263,7 +3263,7 @@ void do_slash_cmd(int Ind, char *message) {
 			sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "slap", "", SFX_TYPE_COMMAND, TRUE);
 #endif
 			if (Ind != j) {
-				msg_format(j, "\377o%s slaps you!", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
+				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s slaps you!", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
 				msg_format_near(j, "\377y%s slaps %s!", p_ptr->name, Players[j]->name);
 			} else {
 				msg_print(j, "\377oYou slap yourself.");
@@ -3293,7 +3293,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			if (Ind != j) {
-				msg_format(j, "\377o%s pats you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
+				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s pats you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
 				msg_format_near(j, "\377y%s pats %s.", p_ptr->name, Players[j]->name);
 			} else {
 				msg_print(j, "\377oYou pat yourself.");
@@ -3323,7 +3323,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			if (Ind != j) {
-				msg_format(j, "\377o%s hugs you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
+				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s hugs you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
 				msg_format_near(j, "\377y%s hugs %s.", p_ptr->name, Players[j]->name);
 			} else {
 				msg_print(j, "\377oYou hug yourself.");
@@ -3353,7 +3353,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			if (Ind != j) {
-				msg_format(j, "\377o%s pokes you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
+				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s pokes you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
 				msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, Players[j]->name);
 			} else {
 				msg_print(j, "\377oYou poke yourself.");
