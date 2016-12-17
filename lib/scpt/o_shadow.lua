@@ -348,10 +348,10 @@ POISONRES = add_spell {
 
 SHADOWGATE = add_spell {
 	["name"] = 	"Shadow Gate",
-	["school"] = 	{SCHOOL_OSHADOW},
+	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_CONVEYANCE},
 	["am"] = 	75,
 	["spell_power"] = 0,
-	["level"] = 	24,
+	["level"] = 	26,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
 	["fail"] = 	-30,

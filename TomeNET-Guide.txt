@@ -15557,7 +15557,9 @@ school.
                     Required skill level for first spell level: 14.
 
     Shadow Gate     Teleports you to the nearest opponent in line of sight.
-                    Required skill level for first spell level: 24.
+                    Required skill level for first spell level: 26.
+                    Shared spell (see above): O.Shadow, Conveyance.
+                    This spell cannot be found in the Conveyance tome.
 
     Shadow Shroud   Grants temporary invisibility.
                     Required skill level for first spell level: 30.
