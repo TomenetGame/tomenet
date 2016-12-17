@@ -73,6 +73,10 @@ static void proj_dam_wraith(int typ, int *dam) {
 		/* - sorry, 8192 is the 'Brief' rune spell hack :P */
 		*dam = (*dam & 0x2000) + (*dam & 0x1FFF) / 2;
 		break;
+	case GF_DARK_WEAK:
+		/* - sorry, 8192 is the shadow spell hack :P */
+		*dam = (*dam & 0x2000) + (*dam & 0x1FFF) / 2;
+		break;
 	default:
 		*dam /= 2;
 	}

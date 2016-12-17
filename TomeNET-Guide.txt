@@ -15531,7 +15531,6 @@ school.
                     Required skill level for first spell level: 1.
 
     Blindness       Blinds your target.
-                    Lv18: Blinds all nearby creatures.
                     Required skill level for first spell level: 3.
 
     Detect Invisible
@@ -15555,6 +15554,10 @@ school.
                     Temporarily brands your weapon with poison.
                     Lv10: Grants temporary poison resistance.
                     Required skill level for first spell level: 14.
+
+    Darkness        Causes a burst of darkness around you, possibly blinding
+                    nearby creatures.
+                    Required skill level for first spell level: 20.
 
     Shadow Gate     Teleports you to the nearest opponent in line of sight.
                     Required skill level for first spell level: 26.

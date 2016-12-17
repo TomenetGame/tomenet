@@ -279,6 +279,7 @@ guide_spell = {
     "Veil of Night",
     "Shadow Bolt",
     "Aspect of Peril",
+    "Darkness",
     "Shadow Gate",
     "Shadow Shroud",
     "Chaos Bolt",

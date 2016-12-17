@@ -3901,6 +3901,10 @@ static int radius_damage(int dam, int div, int typ) {
 	//case GF_ZEAL_PLAYER:
 
 		return (dam);
+
+	case GF_DARK_WEAK:
+		/* May carry special flag for occult shadow darkness spell */
+		return (dam & 0x2000) + (dam & 0x1FFF) / div;
 	}
 
 	/* default: half damage per grid of distance */
@@ -5293,7 +5297,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* do not notice things the player did to themselves by ball spell */
 	/* fix me XXX XXX XXX */
 
-	bool priest_spell = FALSE, brief_rune_spell = FALSE;
+	bool priest_spell = FALSE, brief_rune_spell = FALSE, dark_spell = FALSE;
 
 	/* Polymorph setting (true or false) */
 	int do_poly = 0;
@@ -5341,6 +5345,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	//marker to apply reduced damage cap, since it's a 'Brief' runecraft spell
 	if (typ == GF_ANNIHILATION && (dam & 8192)) {
 		brief_rune_spell = TRUE;
+		dam &= ~8192;
+	}
+	//marker to handle blindness power differently
+	if (typ == GF_DARK_WEAK && (dam & 8192)) {
+		dark_spell = TRUE;
 		dam &= ~8192;
 	}
 
@@ -6931,7 +6940,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Exception: Bolt-type spells have no special effect */
 			if (flg & (PROJECT_NORF | PROJECT_JUMP)) {
 				/* Get blinded later */
-				do_blind = damroll(3, (dam / 20)) + 1;
+				if (dark_spell) do_blind = dam; //occult shadow spell
+				else do_blind = damroll(3, (dam / 20)) + 1; //normal
 			}
 
 			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
@@ -8369,7 +8379,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	dun_level *l_ptr = getfloor(wpos);
 
-	int priest_spell = FALSE, brief_rune_spell = FALSE;
+	int priest_spell = FALSE, brief_rune_spell = FALSE, dark_spell = FALSE;
 
 
 	/* Bad player number */
@@ -8403,6 +8413,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	//marker to apply reduced damage cap, since it's a 'Brief' runecraft spell
 	if (typ == GF_ANNIHILATION && (dam & 8192)) {
 		brief_rune_spell = TRUE;
+		dam &= ~8192;
+	}
+	//marker to handle blindness power differently
+	if (typ == GF_DARK_WEAK && (dam & 8192)) {
+		dark_spell = TRUE;
 		dam &= ~8192;
 	}
 
@@ -9457,7 +9472,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer, -who);
 		break;
 
-		/* Dark -- blinding */
+	/* Dark -- blinding */
+	case GF_DARK_WEAK:
+		if (!p_ptr->resist_dark && !blind && !p_ptr->resist_blind)
+			/* Exception: Bolt-type spells have no special effect */
+			if (flg & (PROJECT_NORF | PROJECT_JUMP)) {
+				//note: we make no difference for now here, both do 1..5+2, since pvp-effects are supposed to be greatly diminished anyway
+				if (dark_spell) (void)set_blind(Ind, p_ptr->blind + randint(5) + 2); //occult shadow spell in pvp?
+				else (void)set_blind(Ind, p_ptr->blind + randint(5) + 2); //normal
+			}
+		dam = 0;
+		break;
 	case GF_DARK:
 		if (p_ptr->resist_dark) { dam *= 4; dam /= (randint(6) + 6); }
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);

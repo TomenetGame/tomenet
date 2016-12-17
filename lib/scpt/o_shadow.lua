@@ -96,7 +96,7 @@ OFEAR_II = add_spell {
 }
 
 OBLIND_I = add_spell {
-	["name"] = 	"Blindness I",
+	["name"] = 	"Blindness",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	3,
@@ -113,7 +113,7 @@ OBLIND_I = add_spell {
 	["desc"] = { "Temporarily blinds a target.", }
 }
 OBLIND_II = add_spell {
-	["name"] = 	"Blindness II",
+	["name"] = 	"Darkness",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -122,12 +122,16 @@ OBLIND_II = add_spell {
 	["fail"] = 	-25,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-		project_los(Ind, GF_BLIND, 5 + get_level(Ind, OBLIND_I, 80), "hisses")
+		--project_los(Ind, GF_BLIND, 5 + get_level(Ind, OBLIND_I, 80), "hisses")
+		--1..gl(7) starting at rad 2, or just gl(9) starting at rad 1
+		msg_print(Ind, "You are surrounded by darkness")
+		fire_ball(Ind, GF_DARK_WEAK, 0, 8192 + 10 + get_level(Ind, OBLIND_I, 80), 1 + get_level(Ind, OBLIND_II, 7), " calls darkness for")
 	end,
 	["info"] = 	function()
-		return "power "..(5 + get_level(Ind, OBLIND_I, 80))
+		return "power "..(10 + get_level(Ind, OBLIND_I, 80)).." rad "..(1 + get_level(Ind, OBLIND_II, 7))
 	end,
-	["desc"] = { "Temporarily blinds all nearby foes.", }
+	--["desc"] = { "Temporarily blinds all nearby foes.", }
+	["desc"] = { "Causes a burst of darkness around you, blinding nearby foes.", }
 }
 
 DETECTINVIS = add_spell {
