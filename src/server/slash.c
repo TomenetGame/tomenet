@@ -4228,7 +4228,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 			/* Send him an email to the requested address with all his new kifus.. */
 			i = system(format("sh ./go/email-kifu.sh %s \"%s\" &", email, p_ptr->name));
-			msg_format(Ind, "Mailed all new kifus to %s. (If you didn't have any new kifus, no email would be dispatched.)", email);
+			msg_format(Ind, "Mailing all new kifus of games played by character \377y%s\377w to \377y%s\377w. (If there are no new kifus, no email will be dispatched.)", p_ptr->name, email);
 #else
 			msg_print(Ind, "Go game functionality are currently not available.");
 #endif
