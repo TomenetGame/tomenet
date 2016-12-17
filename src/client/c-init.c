@@ -632,6 +632,7 @@ const char *mon_flags2highlight2[] = {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID
 const char *mon_flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", "NONLIVING", ""};//omitting DRAGONRIDER, NONLIVING, SPIDER
 const char *mon_flags2highlight4[] = {"UNIQUE", "NAZGUL", ""};//no hints about dungeon/game boss status available or used
 const char *mon_flags2highlight5[] = {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR", ""};//currently unavailable
+const char *mon_flags2highlight6[] = {"AQUATIC", ""};
 static int mon_highlit_flags(char *line) {
 	const char **f = mon_flags2highlight;
 	char *p2;
@@ -671,6 +672,14 @@ static int mon_highlit_flags(char *line) {
 	}
 
 	f = mon_flags2highlight5;
+	while (*f[0]) {
+		if ((p2 = strstr(line, *f)) &&
+		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
+			i += 4;
+		f++;
+	}
+
+	f = mon_flags2highlight6;
 	while (*f[0]) {
 		if ((p2 = strstr(line, *f)) &&
 		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
@@ -732,6 +741,17 @@ static void mon_highlight_flags(char *info) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
 			strcpy(info_tmp, info);
 			sprintf(info_tmp + (p2 - info), "\377g%s\377%c", *f, a_flag);
+			strcat(info_tmp, p2 + strlen(*f));
+			strcpy(info, info_tmp);
+		}
+		f++;
+	}
+
+	f = mon_flags2highlight6;
+	while (*f[0]) {
+		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
+			strcpy(info_tmp, info);
+			sprintf(info_tmp + (p2 - info), "\377B%s\377%c", *f, a_flag);
 			strcat(info_tmp, p2 + strlen(*f));
 			strcpy(info, info_tmp);
 		}
