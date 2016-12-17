@@ -4221,8 +4221,8 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			if (p_ptr->go_mail_cooldown) {
-				if (p_ptr->go_mail_cooldown >= 120) msg_format(Ind, "You have to wait for %d more minutes to email kifus.", p_ptr->go_mail_cooldown / 60);
-				else msg_format(Ind, "You have to wait for %d more seconds to email kifus.", p_ptr->go_mail_cooldown);
+				if (p_ptr->go_mail_cooldown >= 120) msg_format(Ind, "You have to wait for \377y%d\377w more minutes to email kifus.", p_ptr->go_mail_cooldown / 60);
+				else msg_format(Ind, "You have to wait for \377y%d\377w more seconds to email kifus.", p_ptr->go_mail_cooldown);
 				if (!is_admin(p_ptr)) return;
 			}
 			p_ptr->go_mail_cooldown = 300;
