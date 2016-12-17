@@ -1483,7 +1483,12 @@ void go_engine_clocks(void) {
 		Send_store_special_str(Ind, GO_BOARD_Y + 1, GO_BOARD_X - 8, TERM_SLATE, clock);
 	else if (player_timeleft_sec > 10)
 		Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_ORANGE, clock);
-	else Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, clock);
+	else {
+		Send_store_special_str(Ind, GO_BOARD_Y + 9, GO_BOARD_X - 8, TERM_L_RED, clock);
+#ifdef USE_SOUND_2010
+		sound(Ind, "bell", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+	}
 }
 
 void go_challenge_cancel(void) {
