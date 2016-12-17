@@ -1799,8 +1799,8 @@ static errr CheckEvent(bool wait) {
 				Infowin_resize(wid, hgt);
 
 				/* Make the changes go live (triggers on next c_message_add() call) */
-		                Term_activate(&td->t);
-            			Term_resize(cols, rows);
+				Term_activate(&td->t);
+				Term_resize(cols, rows);
 
 				/* only change rows/cols of outer infowin if we really have to,
 				   or it'll cause freeze/slowing loop on OSX. For some reason,
@@ -1813,7 +1813,7 @@ static errr CheckEvent(bool wait) {
 				/* basically obsolete, since these values are unused once they were
 				   read and used in the very begining of client initialisation, but w/e */
 				term_prefs[t_idx].columns = cols;
-			        term_prefs[t_idx].lines = rows;
+				term_prefs[t_idx].lines = rows;
 
 				/* In case we resized Chat/Msg/Msg+Chat window,
 				   refresh contents so they are displayed properly,
@@ -1829,13 +1829,13 @@ static errr CheckEvent(bool wait) {
 				if (rows == 24) {
 					/* turn off big_map */
 					c_cfg.big_map = FALSE;
-            				Client_setup.options[CO_BIGMAP] = FALSE;
-        			        screen_hgt = SCREEN_HGT;
+					Client_setup.options[CO_BIGMAP] = FALSE;
+					screen_hgt = SCREEN_HGT;
 				} else {
 					/* turn on big_map */
 					c_cfg.big_map = TRUE;
-            				Client_setup.options[CO_BIGMAP] = TRUE;
-        			        screen_hgt = MAX_SCREEN_HGT;
+					Client_setup.options[CO_BIGMAP] = TRUE;
+					screen_hgt = MAX_SCREEN_HGT;
 				}
 				Term_clear();
 				Send_screen_dimensions();
@@ -2123,8 +2123,8 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	Infowin_set_mask(StructureNotifyMask | KeyPressMask);
 	if (!strcmp(name, ang_term_name[0])) {
 		char version[MAX_CHARS];
-	        sprintf(version, "TomeNET %d.%d.%d%s",
-                    VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
+		sprintf(version, "TomeNET %d.%d.%d%s",
+		    VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 		Infowin_set_name(version);
 	} else Infowin_set_name(name);
 	Infowin_set_class_hint(name);
@@ -2258,33 +2258,33 @@ static void enable_common_colormap_x11() {
 
 typedef struct BITMAPFILEHEADER
 {
-     u16b bfAlign;    /* HATE this */
-     u16b bfType;
-     u32b bfSize;
-     u16b bfReserved1;
-     u16b bfReserved2;
-     u32b bfOffBits;
+	u16b bfAlign;    /* HATE this */
+	u16b bfType;
+	u32b bfSize;
+	u16b bfReserved1;
+	u16b bfReserved2;
+	u32b bfOffBits;
 } BITMAPFILEHEADER;
 
 typedef struct BITMAPINFOHEADER
 {
-     u32b biSize;
-     u32b biWidth;
-     u32b biHeight;
-     u16b biPlanes;
-     u16b biBitCount;
-     u32b biCompresion;
-     u32b biSizeImage;
-     u32b biXPelsPerMeter;
-     u32b biYPelsPerMeter;
-     u32b biClrUsed;
-     u32b biClrImportand;
+	u32b biSize;
+	u32b biWidth;
+	u32b biHeight;
+	u16b biPlanes;
+	u16b biBitCount;
+	u32b biCompresion;
+	u32b biSizeImage;
+	u32b biXPelsPerMeter;
+	u32b biYPelsPerMeter;
+	u32b biClrUsed;
+	u32b biClrImportand;
 } BITMAPINFOHEADER;
 
 typedef struct RGB
 {
-     unsigned char r,g,b;
-     unsigned char filler;
+	unsigned char r,g,b;
+	unsigned char filler;
 } RGB;
 
 static Pixell Infoclr_Pixell(cptr name);
