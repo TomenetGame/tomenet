@@ -15258,8 +15258,8 @@ school.
                     Required skill level for first spell level: 35.
     Stop Wraithform Turns you back to material form immediately.
 
-    Disenchantment Bolt
-                    Conjures a powerful and nearly irresistible bolt.
+    Disenchantment Beam
+                    Conjures a powerful and nearly irresistible beam.
                     Required skill level for first spell level: 40.
 
     Obliteration    Obliterates all monsters nearby.
