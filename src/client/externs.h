@@ -130,7 +130,7 @@ extern char path[1024];
 extern char real_name[MAX_CHARS];
 extern char server_name[MAX_CHARS];
 extern s32b server_port;
-extern char cname[MAX_CHARS];
+extern char cname[MAX_CHARS], prev_cname[MAX_CHARS];
 
 extern char message_history[MSG_HISTORY_MAX][MSG_LEN];
 extern char message_history_chat[MSG_HISTORY_MAX][MSG_LEN];

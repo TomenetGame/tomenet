@@ -393,6 +393,7 @@ void Receive_login(void) {
 	int offset, total_cpa;
 
 	bool new_ok = TRUE, exclusive_ok = TRUE;
+	bool found_nick = FALSE;
 
 
 	/* Check if the server wanted to destroy the connection - mikaelh */
@@ -578,6 +579,9 @@ void Receive_login(void) {
 		   that exists, so we log in with it straight away? */
 		if (streq(cname, c_name)) return;
 
+		/* do we possess a character of same name as our account? */
+		if (streq(c_name, nick)) found_nick = TRUE;
+
 		strcpy(names[i], c_name);
 
 		//sprintf(tmp, "%c) %s%s the level %d %s %s", 'a' + i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
@@ -691,7 +695,16 @@ void Receive_login(void) {
 		}
 	}
 	if (ch == 'N' || ch == 'E') {
-		if (!cname[0]) strcpy(c_name, nick);
+		/* We didn't read a desired charname from commandline? */
+		if (!cname[0]) {
+			/* Reuse last name if we just died? */
+			if (prev_cname[0]) strcpy(c_name, prev_cname);
+			/* Use account name for character name? */
+			else if (!found_nick) strcpy(c_name, nick);
+			/* Don't suggest a name */
+			else c_name[0] = 0;
+		}
+		/* Use desired charname from commandline */
 		else strcpy(c_name, cname);
 
 		if (total_cpa <= 15)

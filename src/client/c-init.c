@@ -2592,6 +2592,7 @@ static void Input_loop(void) {
 
 	/* For term-resizing hacks */
 	in_game = TRUE;
+	prev_cname[0] = 0; //(re)init
 
 	for (;;) {
 		/* Send out a keepalive packet if need be */

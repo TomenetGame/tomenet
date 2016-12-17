@@ -8002,6 +8002,9 @@ void c_close_game(cptr reason) {
 	/* You are dead */
 	print_tomb(reason);
 
+	/* Remember deceased char's name if we will just recreate the same.. */
+	strcpy(prev_cname, cname);
+
 #if 0
 	/* hack: hide cursor */
 	Term->scr->cx = Term->wid;

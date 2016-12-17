@@ -12,7 +12,7 @@ char path[1024] = "";
 char real_name[MAX_CHARS] = "";
 char server_name[MAX_CHARS] = "";
 s32b server_port;
-char cname[MAX_CHARS] = "";
+char cname[MAX_CHARS] = "", prev_cname[MAX_CHARS];
 
 int max_chars_per_account = 9;
 
