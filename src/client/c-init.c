@@ -3264,6 +3264,10 @@ void client_init(char *argv1, bool skip) {
 	/* Show the MOTD */
 	if (!skip_motd)
 		show_motd(0); /* could be 2 for example to have ppl look at it.. */
+#ifdef RETRY_LOGIN
+	/* Show the MotD only once, ie on the initial login, not on every character switch */
+	skip_motd = TRUE;
+#endif
 
 	/* Clear the screen again */
 	Term_clear();
