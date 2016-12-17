@@ -197,6 +197,7 @@ I:100:Neutralize Poison
 #Scroll of Life
 T:100:70:56
 T:100:70:56
+I:100:Light
 $ENABLE_ITEM_ORDER$A:67:72:1:2:3:4
 $ENABLE_ITEM_ORDER!A:67:0:1:2:3:4
 O:26:27:28:29:26:43
@@ -1285,6 +1286,7 @@ I:100:Neutralize Poison
 #Scroll of Life
 T:100:70:56
 T:100:70:56
+I:100:Light
 A:0:0:1:2:3:0
 O:26:27:28:29:26:43
 G:4:g
