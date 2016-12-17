@@ -4192,7 +4192,8 @@ void do_slash_cmd(int Ind, char *message) {
 
 			if (tk != 1) { //Assume spaces aren't allowed in email address */
 				msg_print(Ind, "To request an email with your new kifus, enter:  /kifu <email address>");
-				msg_print(Ind, "Example:  /kifu alphago@google.com");
+				msg_print(Ind, " Example:  /kifu alphago@google.com");
+				msg_print(Ind, " Note: Game kifus are picked by character name, not account-wide.");
 				return;
 			}
 
