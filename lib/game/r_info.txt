@@ -2971,7 +2971,7 @@ D:A fast-breeding, annoying pest.
 
 N:198:Panther
 G:f:D
-I:120:10d8:40:30:0
+I:118:10d8:40:30:0
 W:10:2:1300:25
 E:0:1:0:2:1:4
 O:0:0:0:0
