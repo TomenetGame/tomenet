@@ -11,6 +11,7 @@ Some games playable among players are planned for the future (I hope).
 
 For all the games, you can bet up to 1000*level AU per game, except for
 players below level 10 who can bet up to 100*level AU.
+The game of Go has fixed bets for each stage that you cannot change.
 
 
 \{D==============================================================================
@@ -59,6 +60,7 @@ Two different short video tutorials on YouTube:
 \{Bhttp://youtu.be/gECcsSeRcNo
 Nice read: \{Bhttp://users.eniinternet.com/bradleym/America.html
 On Android (free): \{BGo Free\{w or \{BGOdroid\{w, on iOS: \{BLittle Go\{w or \{BIgowin\{w for example.
+Western online Go servers (english language): www.gokgs.com, www.online-go.com.
 
 You will play the ~3000 year old asian strategy game of Go, also often
 dubbed 'the divine game', on a 9x9 board against an opponent that gets
@@ -78,6 +80,11 @@ Surround as much 'territory' as possible with your stones (territory just
 means an area of the board). Each grid you surround counts 1 point, and
 every stone you place also counts 1 point. The player who ends up with more
 territory wins.
+(Note: Online Go servers and tournaments usually use japanese rules by default:
+Under those rules, your own stones don't count as points but in turn prisoners
+count as points. The result is almost always the same as under chinese rules!
+The reason the casino uses chinese rules is that japanese rules are more
+troubling for Go bots to handle.)
 
 Capturing: A stone has up to four 'liberties', which means free board grids
 adjacent to it: North, south, east and west. If the opponent places a stone
@@ -139,6 +146,5 @@ Strategy:
 -Usually Go is played on a 19x19 board, which allows for a huge amount of
  strategy. Smaller boards are used for non-serious games, 9x9 somewhat common,
  whereby the games become purely tactical and lack much of the 19x19 strategy.
-
 
 Enjoy!

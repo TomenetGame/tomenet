@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. December 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 17. December 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.0a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -90,6 +90,7 @@ Contents
     (4.4)   Terrain
     (4.5)   Towns, shops, the dungeons
     (4.5a)  Shops and their services
+    (4.5a2) The casino
     (4.5b)  Towns & town dungeons
     (4.5c)  Dungeons
     (4.5c2) Example dungeon depth relations
@@ -5878,6 +5879,8 @@ The 1..9 are standard shops, namely..
                         (There are various gambling opportunities, and also
                         the ancient board game 'Go' which can be played on a
                         9x9 board for a one-time fee on each difficulty level.)
+                        For details about the gambling rules of the casino, see
+                        subsequent (4.5a2) paragraph.
         Mass Identify Service
                         Will identify all items you currently carry for a fee.
                         See (5.7) for more information about identification.
@@ -6040,6 +6043,171 @@ pretty relaxed scumming by checking about every 5 1/2 minutes.
 Or anywhere between 33 seconds and 5 1/2 minutes, as you personally prefer.
 
 See (5.7) for more information about ID, *ID* and shops!
+
+
+(4.5a2) The casino
+------------------
+The casino is a very special 'store', located in Minas Anor and in the special
+dungeon towns in the Ironman Deep Dive Challenge at 2000 and 4000 ft.
+
+It provides a variety of games that you can play for money.
+Most of these are pure luck, but there's also the ancient board game of Go,
+which you can play on a 9x9 board.
+
+Below you'll find the gamling rules, you can also view these in-game when
+entering the casino and pressing 'r' there:
+
+           /---------------------------------------------+
+           |          Tome-NET Gambling Rules            |
+           +---------------------------------------------/
+
+Welcome to the TomeNET Casino!
+
+Currently, two games 'In Between' and 'Craps' are available for playing.
+('Spin the Wheel' and 'Dice Slots' are under construction.)
+Some games playable among players are planned for the future (I hope).
+
+
+For all the games, you can bet up to 1000*level AU per game, except for
+players below level 10 who can bet up to 100*level AU.
+The game of Go has fixed bets for each stage that you cannot change.
+
+
+==============================================================================
+1. 'In Between'
+
+Three 10-faced dice are used for this game. Two black, one red.
+
+First, the dealer rolls the two black dice.
+Then you roll the red die - you win if the roll is 'in between' the two black
+dice and you'll receive the payoff at odds of 3 to 1.
+
+eg.
+if two black dice are 4 and 7, and you rolled 6, you win.
+if two black dice are 2 and 9, and you rolled 1, you lose.
+if two black dice are 2 and 9, and you rolled 2, you lose.
+
+
+==============================================================================
+2. 'Craps'
+
+Two 6-faced (cube) dice are used for this game.
+
+You cast the two dice; if the sum of rolls is 7 or 11, you win at once.
+if the sum is 2, 3 or 12, you lose at once(craps!).
+
+If the sum isn't one of the numbers above, you cast them once more.
+If the sum matches to the first sum, you win.
+If the sum is 7, you lose.
+In all the other cases, you reroll till you roll the first sum or 7.
+
+If you win, you'll be paid at odds of 1 to 1.
+
+eg.
+[2, 3](5) {first roll}
+[3, 3](6) {reroll - still not settled}
+[4, 1](5) {you win}
+
+[5, 6](11) {you lose with the first roll}
+
+
+==============================================================================
+3. 'Go challenge'
+
+Two different short video tutorials on YouTube:
+http://youtu.be/qhBQasS5IRI
+http://youtu.be/gECcsSeRcNo
+Nice read: http://users.eniinternet.com/bradleym/America.html
+On Android (free): Go Free or GOdroid, on iOS: Little Go or Igowin for example.
+Western online Go servers (english language): www.gokgs.com, www.online-go.com.
+
+You will play the ~3000 year old asian strategy game of Go, also often
+dubbed 'the divine game', on a 9x9 board against an opponent that gets
+picked for you based on your past results, for cold hard money!
+
+You pay a wager only once on each of the 8 difficulty levels. You may then
+play for free until you manage to win on your current level. If you win you
+will be paid twice your bet and advance into the next difficulty level.
+
+Progress: Two players take turns placing black and white stones on the board
+respectively. Those stones cannot be moved once placed, they can however be
+captured (explained below). There is no limit to the stone supply.
+Black moves first (which is an advantage).
+
+Goal (chinese rules):
+Surround as much 'territory' as possible with your stones (territory just
+means an area of the board). Each grid you surround counts 1 point, and
+every stone you place also counts 1 point. The player who ends up with more
+territory wins.
+(Note: Online Go servers and tournaments usually use japanese rules by default:
+Under those rules, your own stones don't count as points but in turn prisoners
+count as points. The result is almost always the same as under chinese rules!
+The reason the casino uses chinese rules is that japanese rules are more
+troubling for Go bots to handle.)
+
+Capturing: A stone has up to four 'liberties', which means free board grids
+adjacent to it: North, south, east and west. If the opponent places a stone
+on the last liberty of your stone, it is removed from the board.
+Friendly stones that are adjacent to each other horizontally or vertically
+(just not diagonally) count as 'connected' and share their liberties,
+forming chains of stones that can grow quite large and end up with a lot of
+liberties. A chain of stones is also captured accordingly if ALL of its
+shared liberties are occupied by opponent stones.
+Note that stones on the edges of the board have less than 4 liberties.
+
+Ko rule ('Eternity'): Repetition of a board position is forbidden. If you
+want to 'capture back' (common application of the Ko rule), you will have
+to play elsewhere first to change the board layout.
+
+Pass: If a player wishes to skip his turn (usually pointless except at the
+end of the game) he may pass instead of playing a stone.
+
+End of the game:
+-A player may lose on time if his clock runs out before he made a move.
+-A player may resign the game if he feels he's too far behind.
+-If a player feels there are no more good moves left to play, he passes.
+ Now if both players pass consecutively then the game ends and the territory
+ of each player on the board is counted to determine who wins.
+ (If white passes first, he gets +1 point added to his final score. This sort
+ of makes up for black's advantage of playing the first move in the game.)
+
+Examples on a 5x5 board (o = stone, . = free grid):
+WHITE stones are written as 'x' and BLACK stones as 'o'.
+
+ooox.
+o.ox.  The black group has only 1 liberty left (the '.' inside),
+ooox.  if w plays on that '.' the whole black group is therefore captured.
+xxxx.  The white group has 8 liberties on its outside so it's quite safe yet.
+.....
+
+.o..o  Due to having at least 'two eyes' (two _separated_ enclosed liberties)
+..ooo  neiter group can be captured since it would require two moves at once.
+oooxx  A group that has at least two eyes is therefore said to be 'alive'.
+xxxx.  Since there is nothing left to do, both players will pass and the game
+x.x..  ends. The score is: black 13 - white 12. Black wins by 1 point.
+
+Strategy:
+-Stones have a balance between securing territory (if they stand lower, ie on
+ 3rd line) and radiating influence (if they stand higher, ie 4th line or more,
+ which can't really happen well on small boards such as 9x9 though).
+-Moves on the first line should be avoided in the beginning of the game,
+ because they neither secure territory below them, nor do they have influence
+ because they are much too far away from the centre.
+-Typical opening moves on 9x9 are within the imaginary square C3,C7,G7,G3.
+ Other moves, ie moves on the 1st or 2nd board lines, are too close to the edge
+ to be good openers.
+-Separate & Connect is an important principle:
+ Cut stones of your opponent apart from each other if possible.
+ Keep your own stones somewhat in connection, so they can support each other.
+-Note that the Ko rule (see above) prevents you from immediately recapturing a
+ single stone of your opponent, which just captured your own stone, since the
+ previous board position would be repeated by that. So, play elsewhere first,
+ then you may recapture.
+-Usually Go is played on a 19x19 board, which allows for a huge amount of
+ strategy. Smaller boards are used for non-serious games, 9x9 somewhat common,
+ whereby the games become purely tactical and lack much of the 19x19 strategy.
+
+Enjoy!
 
 
 (4.5b) Towns & town dungeons
