@@ -15538,9 +15538,9 @@ school.
                     Required skill level for first spell level: 3.
 
     Poisonous Fog   Creates a cloud of poisonous fog.
-                    Lv31: Unbreath cloud, harder to resist since it prevents
+                    Lv26: Unbreath cloud, harder to resist since it prevents
                     living creatures from actually breathing.
-                    Required skill level for first spell level: 3.
+                    Required skill level for first spell level: 8.
 
     Veil of Night   Causes your target to fall asleep instantly.
                     Lv16: It expands around you.
