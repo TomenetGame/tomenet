@@ -15332,13 +15332,13 @@ school.
     Chaos Bolt      Channels the powers of chaos into a bolt attack.
                     Required skill level for first spell level: 30.
                     Shared spell (see above): O.Shadow, H.Offense.
-                    This spell cannot be not found in the Holy Offense tome.
+                    This spell cannot be found in the Holy Offense tome.
 
     Doomed Grounds  Has an annihilation effect, much weaker, but affecting a
                     whole area. Unique monsters may resist.
                     Required skill level for first spell level: 40.
                     Shared spell (see above): H.Offense, O.Shadow.
-                    This spell cannot be not found in the Shadow tome.
+                    This spell cannot be found in the Shadow tome.
 
     Earthquake      Creates a local earthquake.
                     Required skill level for first spell level: 42.
@@ -15565,7 +15565,7 @@ school.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 30.
                     Shared spell (see above): O.Shadow, H.Offense.
-                    This spell cannot be not found in the Holy Offense tome.
+                    This spell cannot be found in the Holy Offense tome.
 
     Nether Bolt     Channels lingering nether into a bolt attack.
                     (This spell uses WISDOM to determine fail-rates!)
@@ -15586,7 +15586,7 @@ school.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 40.
                     Shared spell (see above): H.Offense, O.Shadow.
-                    This spell cannot be not found in the Shadow tome.
+                    This spell cannot be found in the Shadow tome.
 
     Darkness Storm  Conjures up a storm of darkness.
                     Required skill level for first spell level: 42.
