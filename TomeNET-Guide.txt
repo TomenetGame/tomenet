@@ -14904,7 +14904,9 @@ Casting spells on other players:
 Some spells have effect on fellow players too, this works regardless of whether
 they are in the same party or not. In most cases the player needs to stand next
 to the caster for it to work.
-The spells which are projectable are marked by a '(project)' tag below.
+This area effect around the caster, in which a spell affects other players
+standing next to him, is called spell "projection". The spells which project
+onto other players are marked by an '(auto-project)' tag.
 Some Mindcrafter spells require the target player to open his mind ('p' key) to
 receive the spell effect.
 Just for completeness: Rune magic that can affect other players does so
@@ -14971,8 +14973,8 @@ school.
                     Required skill level for first spell level: 10.
 
     Elemental Shield
-                    Gives temporary resistance to heat and cold at first,
-                    later on to all of fire/cold/lightning/acid.    (project)
+                    Gives temporary resistance to heat and cold, and at
+                    higher tier also to lightning and acid.    (auto-project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Water.
                     For the complete version: Fire, Water, Earth, Air.
@@ -15011,8 +15013,8 @@ school.
                     Required skill level for first spell level: 14.
 
     Elemental Shield
-                    Gives temporary resistance to heat and cold at first,
-                    later on to all of fire/cold/lightning/acid.    (project)
+                    Gives temporary resistance to heat and cold, and at
+                    higher tier also to lightning and acid.    (auto-project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Water.
                     For the complete version: Fire, Water, Earth, Air.
@@ -15043,8 +15045,8 @@ school.
                     Required skill level for first spell level: 6.
 
     Elemental Shield
-                    Gives temporary resistance to heat and cold at first,
-                    later on to all of fire/cold/lightning/acid.    (project)
+                    Gives temporary resistance to heat and cold, and at
+                    higher tier also to lightning and acid.    (auto-project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Water.
                     For the complete version: Fire, Water, Earth, Air.
@@ -15076,8 +15078,8 @@ school.
                     Required skill level for first spell level: 12.
 
     Elemental Shield
-                    Gives temporary resistance to heat and cold at first,
-                    later on to all of fire/cold/lightning/acid.    (project)
+                    Gives temporary resistance to heat and cold, and at
+                    higher tier also to lightning and acid.    (auto-project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Water.
                     For the complete version: Fire, Water, Earth, Air.
@@ -15098,7 +15100,7 @@ school.
 
 - Nature
 
-    Healing         Heals a percentage of your hit points.          (project)
+    Healing         Heals a percentage of your hit points.     (auto-project)
                     Required skill level for first spell level: 1.
 
     Vermin Control  Prevents vermin from breeding any further on
@@ -15106,7 +15108,7 @@ school.
                     Required skill level for first spell level: 10.
 
     Recovery        Neutralizes poison, heals cuts, cures confusion,
-                    stun and blindness.                             (project)
+                    stun and blindness.                        (auto-project)
                     Level 21: Also restores drained stats and lost experience.
                     Required skill level for first spell level: 15.
 
@@ -15135,13 +15137,13 @@ school.
 
 - Conveyance
 
-    Phase Door      Teleports you on a small scale range.           (project)
+    Phase Door      Teleports you on a small scale range.
                     Required skill level for first spell level: 2.
 
     Disarm          Destroys traps and visible doors around you.
                     Required skill level for first spell level: 5.
 
-    Teleport        Teleports you within the level.                 (project)
+    Teleport        Teleports you within the level.
                     Required skill level for first spell level: 10.
 
     Wings of Wind   Grants feather falling.
@@ -15153,11 +15155,10 @@ school.
                     Lv21: Teleports away all monsters in sight.
                     Required skill level for first spell level: 23.
 
-    Recall          Works like Word of Recall.                      (project)
+    Recall          Works like Word of Recall.
                     Inscribe your spell scroll or book like you would inscribe
                     a scroll, in order to specify a destination.
                     Required skill level for first spell level: 30.
-                    Projecting this spell does not work on players who are AFK.
                     See "(0.3) Important inscriptions, Word of Recall" for more
                     info about Word of Recall!
 
@@ -15190,11 +15191,11 @@ school.
 
 - Divination
 
-    Detect Monsters Detects all non-invisible monsters nearby.      (project)
+    Detect Monsters Detects all non-invisible monsters nearby. (auto-project)
                     Required skill level for first spell level: 3.
 
-    Sense Hidden    Detects traps.                                  (project)
-                    Lv16: Lets you see invisible for a while.       (project)
+    Sense Hidden    Detects traps.                             (auto-project)
+                    Lv16: Lets you see invisible for a while.  (auto-project)
                     Required skill level for first spell level: 5.
 
     Identify        Identifies items.
@@ -15202,7 +15203,7 @@ school.
                     Lv28: Also identifies all items on the floor around you.
                     Required skill level for first spell level: 8.
 
-    Reveal Ways     Detects doors/stairs/ways within a radius.      (project)
+    Reveal Ways     Detects doors/stairs/ways within a radius. (auto-project)
                     Required skill level for first spell level: 9.
 
     Vision          Detects the dungeon layout around you.
@@ -15228,7 +15229,7 @@ school.
                     Required skill level for first spell level: 10.
 
     Essence of Speed
-                    Hastes you for a while.                         (project)
+                    Hastes you for a while.                    (auto-project)
                     While istari can gain up to +19 speed from it and even up
                     to +24 if they have maxed 'Spell-power', for all other
                     classes the effect will cap at +10.
@@ -15254,7 +15255,7 @@ school.
                     Genocide-type spells do not yield experience or loot.)
                     Required skill level for first spell level: 25.
 
-    Wraithform      Temporarily turns your form immaterial.         (project)
+    Wraithform      Temporarily turns your form immaterial.    (auto-project)
                     Required skill level for first spell level: 35.
     Stop Wraithform Turns you back to material form immediately.
 
