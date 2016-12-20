@@ -1418,7 +1418,7 @@ void cmd_the_guide(void) {
 
 	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
-	int lastline = -1, searchline = -1, within_cnt, c, n, line_presearch = line;
+	int lastline = -1, searchline = -1, within_cnt = 0, c, n, line_presearch = line;
 	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, bufdummy[MAX_CHARS + 1];
 	char search[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
 	FILE *fff;
