@@ -766,6 +766,24 @@ static void rd_item(object_type *o_ptr) {
 
 	/* hack: remove (due to bug) created explodingness from magic ammo */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr->pval = 0;
+
+	/* New cap on +HP for weapons (paranoia: also fix +Speed while at it) */
+	if ((is_melee_weapon(o_ptr->tval) || o_ptr->tval == TV_SHIELD)
+	    && (o_ptr->name2 || o_ptr->name1 == ART_RANDART)) {
+		artifact_type *a_ptr;
+
+		if (o_ptr->name2) a_ptr = ego_make(o_ptr);
+		else a_ptr = randart_make(o_ptr);
+
+		if (!(k_ptr->flags4 & (TR4_SHOULD2H | TR4_MUST2H))) {
+			if ((a_ptr->flags1 & TR1_SPEED) && (o_ptr->pval > 3)) a_ptr->pval = o_ptr->pval = 3;
+			if ((a_ptr->flags1 & TR1_LIFE) && (o_ptr->pval > 1)) a_ptr->pval = o_ptr->pval = 1;
+		} else { //must be a 1.5h/2h weapon
+			if ((a_ptr->flags1 & TR1_SPEED) && (o_ptr->pval > 6)) a_ptr->pval = o_ptr->pval = 6;
+			/* Limit big weapons to +2 LIFE */
+			if ((a_ptr->flags1 & TR1_LIFE) && (o_ptr->pval > 2)) a_ptr->pval = o_ptr->pval = 2;
+		}
+	}
 }
 
 

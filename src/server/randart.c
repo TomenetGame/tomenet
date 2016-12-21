@@ -662,9 +662,12 @@ static void add_ability (artifact_type *a_ptr) {
 				if (a_ptr->tval == TV_BOOMERANG) {
 					a_ptr->flags3 |= TR3_XTRA_SHOTS;
 				} else if (a_ptr->tval != TV_DIGGING) { /* no +LIFE on diggers! */
+					//melee weapons only:
 					a_ptr->flags1 |= TR1_LIFE;
-					do_pval (a_ptr);
-					if (a_ptr->pval > 3) a_ptr->pval = 3;
+					if (k_ptr->flags4 & (TR4_SHOULD2H | TR4_MUST2H)) {
+						do_pval (a_ptr);
+						if (a_ptr->pval > 2) a_ptr->pval = 2;
+					} else a_ptr->pval = 1;
 				}
 			} else if (r < 87) {
 				a_ptr->to_d += 2 + rand_int(10);
@@ -1472,10 +1475,9 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 /* -------------------------------------- pval-fixing limits -------------------------------------- */
 
-	/* Never more than +3 LIFE or +3 EA */
+	/* Never more than +3 LIFE (currently some armour only) or +3 EA */
 	if ((a_ptr->flags1 & (TR1_LIFE | TR1_BLOWS)) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 	if ((a_ptr->tval == TV_GLOVES) && (a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 2)) a_ptr->pval = 2;
-
 	/* Never have super EA _and_ LIFE at the same time o_o */
 	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 1)) a_ptr->pval = 1;
 
@@ -1498,12 +1500,15 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
         }
 
 	/* Limit speed on 1-hand weapons and shields (balances both, dual-wiel and 2-handed weapons) */
-	/* Limit +LIFE to +2 under same circumstances */
+	/* Limit +LIFE to +1 under same circumstances */
 	if (k_ptr->tval == TV_SHIELD || is_melee_weapon(k_ptr->tval)) {
-		if (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)) {
+		if (!(k_ptr->flags4 & (TR4_SHOULD2H | TR4_MUST2H))) {
 			if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+			if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 1)) a_ptr->pval = 1;
+		} else { //1.5h/2h melee weapons
+			if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 6)) a_ptr->pval = 6;
 			if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
-		} else if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 6)) a_ptr->pval = 6;
+		}
 	}
 
 	/* Note: Neither luck nor disarm can actually newly appear on a randart except if coming from k_info. */
@@ -1744,7 +1749,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 /* -------------------------------------- pval-fixing limits -------------------------------------- */
 
-	/* Never more than +3 LIFE (doesn't occur on randarts anyways, yet) or +3 EA */
+	/* Never more than +3 LIFE (currently some armour only) or +3 EA */
 	if ((a_ptr->flags1 & (TR1_LIFE | TR1_BLOWS)) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 	/* Never have super EA _and_ LIFE at the same time o_o */
 	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 1)) a_ptr->pval = 1;
@@ -1768,12 +1773,16 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	}
 
 	/* Limit speed on 1-hand weapons and shields (balances both, dual-wiel and 2-handed weapons) */
-	/* Limit +LIFE to +2 under same circumstances */
+	/* Limit +LIFE to +1 under same circumstances */
 	if (k_ptr->tval == TV_SHIELD || is_melee_weapon(k_ptr->tval)) {
-		if (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)) {
+		if (!(k_ptr->flags4 & (TR4_SHOULD2H | TR4_MUST2H))) {
 			if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+			if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 1)) a_ptr->pval = 1;
+		} else { //must be a 1.5h/2h weapon
+			if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 6)) a_ptr->pval = 6;
+			/* Limit big weapons to +2 LIFE */
 			if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
-		} else if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 6)) a_ptr->pval = 6;
+		}
 	}
 
 	/* Note: Neither luck nor disarm can actually newly appear on a randart except if coming from k_info. */
@@ -2603,14 +2612,15 @@ try_an_other_ego:
 	if (a_ptr->flags1 & TR1_BLOWS) {
 		if (o_ptr->tval == TV_GLOVES) {
 			//if (a_ptr->pval > 2) a_ptr->pval /= 3;
-	                if (a_ptr->pval > 2) a_ptr->pval = 2;
+			if (a_ptr->pval > 2) a_ptr->pval = 2;
 		} else {
 			//if (a_ptr->pval > 3) a_ptr->pval /= 2;
-	                if (a_ptr->pval > 3) a_ptr->pval = 3;
+			if (a_ptr->pval > 3) a_ptr->pval = 3;
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
-        }
-	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 1)) a_ptr->pval = 1;
+	}
+	/* LIFE and BLOWS on same item cap pval at +1 */
+	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->flags1 & TR1_BLOWS) && a_ptr->pval > 1) a_ptr->pval = 1;
 
 	apply_enchantment_limits(o_ptr);
 #if 0 /* removed LIFE from VAMPIRIC items for now */
@@ -2621,19 +2631,18 @@ try_an_other_ego:
 		else o_ptr->pval = o_ptr->pval > 2 ? -2 : 0 - o_ptr->pval;
 	}
 #endif
-	if ((a_ptr->flags1 & (TR1_LIFE | TR1_BLOWS)) && (a_ptr->pval > 3)) {
-		a_ptr->pval = 3;
-	}
-
+	/* Limit +EA to +3 */
+	if ((a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 	/* Limit +LIFE on 1-hand weapons +2 (balances both, dual-wiel and 2-handed weapons) */
-	if (o_ptr->tval == TV_SHIELD ||
-	    (is_melee_weapon(o_ptr->tval) &&
-	    !(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)) ) {
-		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
-	}
-	/* Limit +LIFE on armour (including shields) to +1 (in case of shields balancing dual/2h wield) */
-	if (is_armour(o_ptr->tval)) {
-		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 1)) a_ptr->pval = 1;
+	if (a_ptr->flags1 & TR1_LIFE) {
+		if (o_ptr->tval == TV_SHIELD ||
+		    (is_melee_weapon(o_ptr->tval) &&
+		    !(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H))
+		    /* Limit +LIFE on armour (including shields) to +1 (in case of shields balancing dual/2h wield) */
+		    || is_armour(o_ptr->tval)) {
+			if (a_ptr->pval > 1) a_ptr->pval = 1;
+		/* 2-/1.5-handed weapons may get +2 LIFE */
+		} else if (a_ptr->pval > 2) a_ptr->pval = 2;
 	}
 
 	/* Restore RNG */
