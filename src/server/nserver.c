@@ -5756,7 +5756,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		    TURNS_FOR_EXTRA_FEELING && p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
 			colour = TERM_L_BLUE;
 		/* in a town? ignore town level */
-		else if (ville) colour = TERM_WHITE;
+		else if (ville || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour = TERM_WHITE;
 		/* way too low to get good exp? */
 		else if (dlev < det_req_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
 		/* too low to get 100% exp? */
@@ -5831,7 +5831,7 @@ int Send_depth_hack(int Ind, struct worldpos *wpos, bool town, cptr desc) {
 			/* able to get extra level feeling on next floor? */
 			else if (TURNS_FOR_EXTRA_FEELING && (p_ptr2->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour2 = TERM_L_BLUE;
 			/* in a town? ignore town level */
-			else if (town) colour2 = TERM_WHITE;
+			else if (town || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour2 = TERM_WHITE;
 			/* way too low to get good exp? */
 			else if (getlevel(wpos) < det_req_level(p_ptr2->lev) - 5) colour2 = TERM_L_DARK;
 			/* too low to get 100% exp? */
@@ -5859,7 +5859,7 @@ int Send_depth_hack(int Ind, struct worldpos *wpos, bool town, cptr desc) {
 		/* able to get extra level feeling on next floor? */
 		else if (TURNS_FOR_EXTRA_FEELING && (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour = TERM_L_BLUE;
 		/* in a town? ignore town level */
-		else if (town) colour = TERM_WHITE;
+		else if (town || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour = TERM_WHITE;
 		/* way too low to get good exp? */
 		else if (getlevel(wpos) < det_req_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
 		/* too low to get 100% exp? */
