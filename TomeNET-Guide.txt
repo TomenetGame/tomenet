@@ -5076,6 +5076,9 @@ after attaining level 66 will sharply decrease outside of the Nether Realm.
 The Nether Realm is by far the deepest dungeon in the game and allows players
 of very high character levels to accumulate excellent experience.
 
+These depth restrictions regarding experience gain are applied to all dungeons
+except in Ironman Deep Dive Challenge and Halls of Mandos (which is Ironman).
+
 
 (3.10a) Experience point table
 ------------------------------
