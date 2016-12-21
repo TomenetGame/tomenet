@@ -1970,6 +1970,10 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "    Lineage");
 					continue;
 				}
+				if (my_strcasestr(buf, "Depth")) {
+					strcpy(chapter, "    Character level");
+					continue;
+				}
 
 				continue;
 			}
