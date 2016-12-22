@@ -1663,14 +1663,14 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    && (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
 			msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 #endif
 #ifdef IRON_IRON_TEAM
 		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    && lookup_player_party(o_ptr->owner) != p_ptr->party) {
 			msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 #endif
 
@@ -1690,7 +1690,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 		if (compat_pomode(Ind, o_ptr)) {
 			msg_format(Ind, "You cannot take money of %s players.", compat_pomode(Ind, o_ptr));
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 
 		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
@@ -1830,21 +1830,21 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 		if (p_ptr->IDDC_logscum && !o_ptr->owner) {//o_ptr->owner != p_ptr->id) {
 			msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 
 #ifdef IDDC_IRON_COOP
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    && (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
 			msg_print(Ind, "\377yYou cannot pick up items from outsiders.");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 #endif
 #ifdef IRON_IRON_TEAM
 		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    && lookup_player_party(o_ptr->owner) != p_ptr->party) {
 			msg_print(Ind, "\377yYou cannot pick up items from outsiders.");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 #endif
 
@@ -1908,7 +1908,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				o_ptr->mode = p_ptr->mode;
 			} else {
 				msg_format(Ind, "You cannot take items of %s players.", compat_pomode(Ind, o_ptr));
-				return;
+				if (!is_admin(p_ptr)) return;
 			}
 		}
 
