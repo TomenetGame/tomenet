@@ -9043,9 +9043,9 @@ void do_slash_cmd(int Ind, char *message) {
 				/* list declared IDDC themes for current IDDC layout */
 				for (i = 1; i <= 127; i++) {
 					if (ft != iddc[i].type
-					    && i != 40 && i != 80
+					    && i != IDDC_TOWN1_FIXED && i != IDDC_TOWN2_FIXED
  #ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
-					    && i != 20 && i != 60
+					    && i != IDDC_TOWN1_WILD && i != IDDC_TOWN2_WILD
  #endif
 					    ) { /* added to fix the list visuals for the reverse approach (127..1) theme generation */
 						if (ft != -1) {
@@ -9053,14 +9053,14 @@ void do_slash_cmd(int Ind, char *message) {
 							    last * 50, i - last, d_name + d_info[ft].name, !(last <= d_info[ft].maxdepth && i > d_info[ft].maxdepth) ? "" :
 							    (d_info[ft].final_guardian ? "\377o(Boss)" : "\377D(Boss)"));
 
-							if (last < 40 && i >= 40)
+							if (last < IDDC_TOWN1_FIXED && i >= IDDC_TOWN1_FIXED)
 								msg_format(Ind, "%c2000 ft: \377yMenegroth", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
-							else if (last < 80 && i >= 80)
+							else if (last < IDDC_TOWN2_FIXED && i >= IDDC_TOWN2_FIXED)
 								msg_format(Ind, "%c4000 ft: \377yNargothrond", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
  #ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
-							if (last < 20 && i >= 20)
+							if (last < IDDC_TOWN1_WILD && i >= IDDC_TOWN1_WILD)
 								msg_format(Ind, "%c1000 ft: \377y<town>", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
-							else if (last < 60 && i >= 60)
+							else if (last < IDDC_TOWN2_WILD && i >= IDDC_TOWN2_WILD)
 								msg_format(Ind, "%c3000 ft: \377y<town>", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
  #endif
 

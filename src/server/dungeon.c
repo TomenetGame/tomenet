@@ -3271,7 +3271,7 @@ void recall_player(int Ind, char *message) {
 		int i, j;
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
 		bool success = TRUE;
-		if (getlevel(&old_wpos) == 40 || getlevel(&old_wpos) == 80) success = FALSE;
+		if (getlevel(&old_wpos) == IDDC_TOWN1_FIXED || getlevel(&old_wpos) == IDDC_TOWN2_FIXED) success = FALSE;
 		if (success)
 #endif
 		for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
@@ -7123,9 +7123,9 @@ void process_player_change_wpos(int Ind) {
  #if IDDC_EASY_SPEED_RINGS > 0
 		/* IDDC_EASY_SPEED_RINGS - allow easy speed-ring finding for the first 1-2 rings,
 		   from floor 60+ and optionally another one from floor 80+? */
-		if (wpos->wz == 60
+		if (wpos->wz == IDDC_TOWN2_WILD
   #if IDDC_EASY_SPEED_RINGS > 1
-		    || wpos->wz == 80
+		    || wpos->wz == IDDC_TOWN2_FIXED
   #endif
 		    ) {
 			//hack: abuse 2 flag bits as a counter, increment
@@ -7728,10 +7728,10 @@ void process_player_change_wpos(int Ind) {
 
 	/* Is arriving in a fixed IDDC-town noteworthy maybe? */
 	if (is_fixed_irondeepdive_town(&p_ptr->wpos, dlv) && !is_admin(p_ptr)) {
-		if (dlv == 40) {
+		if (dlv == IDDC_TOWN1_FIXED) {
 			msg_broadcast_format(0, "\374\377s%s has reached Menegroth.", p_ptr->name);
 			l_printf("%s \\{s%s reached Menegroth\n", showdate(), p_ptr->name);
-		} else if (dlv == 80) {
+		} else if (dlv == IDDC_TOWN2_FIXED) {
 			msg_broadcast_format(0, "\374\377s%s has reached Nargothrond.", p_ptr->name);
 			l_printf("%s \\{s%s reached Nargothrond\n", showdate(), p_ptr->name);
 		}

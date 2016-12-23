@@ -2716,7 +2716,7 @@ static errr init_iddc() {
 
 	for (i = 127; i > 0; i--) {
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
-		if (i == 39 || i == 79 || i == 119) { //immediate change
+		if (i + 1 == IDDC_TOWN1_FIXED || i + 2 == IDDC_TOWN2_FIXED) { //immediate change
 			type = getiddctype(i, type);
 			short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
 			step = 0;
@@ -2724,7 +2724,6 @@ static errr init_iddc() {
 			n = 0;
 		} else
 #endif
-		
 
 		switch (step) {
 		case 2:
@@ -2738,11 +2737,13 @@ static errr init_iddc() {
 			break;
 		case 0:
 		default:
-		
-#ifdef IRONDEEPDIVE_FIXED_TOWNS //Create pure types about towns for at least 3 floors (except when out of depth range for a dungeon)
-			if ((i < 41 && i > 37) || (i < 81 && i > 77) || (i < 121 && i > 117))
-			{n++; break;}
-#endif			
+#ifdef IRONDEEPDIVE_FIXED_TOWNS
+			/* Create pure types about towns for at least 3 floors (except when out of depth range for a dungeon) */
+			if ((i < IDDC_TOWN1_FIXED + 1 && i > IDDC_TOWN1_FIXED - 3) || (i < IDDC_TOWN2_FIXED + 1 && i > IDDC_TOWN2_FIXED - 3)) {
+				n++;
+				break;
+			}
+#endif
 
 			//Scan d_info[] for dungeon boss levels
 			if (i > 3) //Prevent icky transition at start
@@ -2751,9 +2752,10 @@ static errr init_iddc() {
 				if ((i == d_info[j].maxdepth + 2) && ((n >= (short_theme ? 3 : 6)) || (randint(3) == 1 && !step))
 				    //Hardcoded exclusions from d_info.txt indices:
 				    && (j != 0) //Wilderness
-				    && (j != 6) //Nether Realm (paranoia, too deep anyhow!)
-				    && (j != 28) //Death Fate
-				    && (j != 31)) //Valinor (more paranoia)
+				    && (j != DI_NETHER_REALM) //Nether Realm (paranoia, too deep anyhow!)
+				    && (j != DI_DEATH_FATE) //Death Fate
+				    && (j != DI_VALINOR) //Valinor (more paranoia)
+				    && (j != DI_HALLS_OF_MANDOS)) //Problem: Halls of Mandos doesn't allow any unique monsters(!)
 				{
 					n = 0;
 					next = type;
@@ -2766,8 +2768,8 @@ static errr init_iddc() {
 			if (step) break;
 			
 			if (i > 3 && ((!indepthrange(i, type)
-			|| (n >= (short_theme ? 3 : 6)
-			&& randint(short_theme ? 3 : 15) < n)))) {
+			    || (n >= (short_theme ? 3 : 6)
+			    && randint(short_theme ? 3 : 15) < n)))) {
 				n = 0;
 				next = type;
 				type = getiddctype(i, type);
@@ -2777,12 +2779,12 @@ static errr init_iddc() {
 			} else n++;
 			break;
 		}
-		
+
 		//Save the values
 		iddc[i].type = type;
 		iddc[i].step = step;
 		iddc[i].next = next;
-		
+
 		//Debug Log; print to server?
 		//s_printf("IDDC %d -- Type: %d Step: %d Next: %d Boss: %s\n", i, iddc[i].type, iddc[i].step, iddc[i].next, (i == d_info[type].maxdepth) ? "yes" : "no");
 	}

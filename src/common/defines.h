@@ -8609,13 +8609,17 @@ extern int PlayerUID;
 
 /* Is given wpos-pointer one of the two fixed towns, Menegroth or Nargothrond
    at dlvl 40 and 80 respectively, in the Ironman Deep Dive Challenge dungeon? */
+#define IDDC_TOWN1_FIXED 40
+#define IDDC_TOWN2_FIXED 80
+#define IDDC_TOWN1_WILD 20
+#define IDDC_TOWN2_WILD 60
 #define is_fixed_irondeepdive_town(wpos, dlev) \
 	(in_irondeepdive(wpos) && \
-        ((dlev) == 40 || (dlev) == 80))
+        ((dlev) == IDDC_TOWN1_FIXED || (dlev) == IDDC_TOWN2_FIXED))
 /* For guaranteed 'wild' towns at the intermediate floors of 1k and 3k */
 #define is_extra_fixed_irondeepdive_town(wpos, dlev) \
 	(in_irondeepdive(wpos) && \
-        ((dlev) == 20 || (dlev) == 60))
+        ((dlev) == IDDC_TOWN1_WILD || (dlev) == IDDC_TOWN2_WILD))
 
 /* Are we on the final floor and therefore eligile for recalling out? */
 #define irondeepdive_bottom(wpos) \
@@ -8669,12 +8673,12 @@ extern int PlayerUID;
 
 #define MT_FLASH	0x0100
 #define MT_CLOAK	0x0200
-#define MT_SPIN	0x0400
-#define MT_ASSA	0x0800
+#define MT_SPIN		0x0400
+#define MT_ASSA		0x0800
 
 #define MT_BERSERK	0x1000
 #define MT_SJUMP	0x2000
-#define MT_SRUN	0x4000
+#define MT_SRUN		0x4000
 #define MT_ICLOAK	0x8000
 
 /* Ranged techniques */

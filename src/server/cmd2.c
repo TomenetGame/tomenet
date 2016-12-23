@@ -405,7 +405,7 @@ void do_cmd_go_up(int Ind) {
 		}
 #if 0 /* Disable use of dungeon names */
  #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
-		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == 40 || ABS(wpos->wz) == 80 || ABS(wpos->wz) == 120) && ABS(wpos->wz) != 127) {
+		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == IDDC_TOWN1_FIXED || ABS(wpos->wz) == IDDC_TOWN2_FIXED) && ABS(wpos->wz) != 127) {
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
  #ifdef DED_IDDC_AWARE
 			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");
@@ -1167,7 +1167,7 @@ void do_cmd_go_down(int Ind) {
 		}
 #if 0 /* Disable use of dungeon names */
  #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
-		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == 40 || ABS(wpos->wz) == 80 || ABS(wpos->wz) == 120) && ABS(wpos->wz) != 127) {
+		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == IDDC_TOWN1_FIXED || ABS(wpos->wz) == IDDC_TOWN2_FIXED) && ABS(wpos->wz) != 127) {
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
  #ifdef DED_IDDC_AWARE
 			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");

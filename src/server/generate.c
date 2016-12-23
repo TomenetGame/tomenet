@@ -10546,7 +10546,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 		/* Kurzel suggested to use the cities of Menegroth and Nargothrond, seems good */
 
 		/* 2000ft - generate Menegroth */
-		if (k == 40) {
+		if (k == IDDC_TOWN1_FIXED) {
 			/* overlay town */
 			x = y = 0;
 			process_dungeon_file("t_menegroth.txt", wpos, &y, &x, MAX_HGT, MAX_WID, TRUE);
@@ -10568,7 +10568,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 		}
 
 		/* 4000ft - generate Nargothrond */
-		else if (k == 80) {
+		else if (k == IDDC_TOWN2_FIXED) {
 			/* overlay town */
 			x = y = 0;
 			process_dungeon_file("t_nargothrond.txt", wpos, &y, &x, MAX_HGT, MAX_WID, TRUE);
