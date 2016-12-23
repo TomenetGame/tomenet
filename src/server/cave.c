@@ -680,7 +680,7 @@ void check_Morgoth(int Ind) {
 			{
 				/* Replace Morgoth with Sauron if Sauron is missing,
 				   the other two cases have no repercussions for now -- just allow - C. Blue */
-				if (in_irondeepdive(&p_ptr->wpos)) {
+				if (in_irondeepdive(&p_ptr->wpos) || in_hallsofmandos(&p_ptr->wpos)) {
 					if (p_ptr->r_killed[RI_SAURON] != 1) {
 						dun_level *l_ptr = getfloor(wpos);
 
@@ -701,13 +701,13 @@ void check_Morgoth(int Ind) {
 						s_printf("Morgoth left level (inserting Sauron) due to %s\n", p_ptr->name);
 
 						/* place Sauron so players can kill him first */
-						summon_override_checks = SO_ALL; /* (SO_IDDC?) */
+						summon_override_checks = SO_ALL; /* (SO_IDDC?) -- Halls of Mandos too */
 						place_monster_one(&p_ptr->wpos, y, x, RI_SAURON, FALSE, FALSE, FALSE, 0, 0);
 						summon_override_checks = SO_NONE;
 
 						/* Notice */
 						note_spot_depth(&p_ptr->wpos, y, x);
-					/* Display */
+						/* Display */
 						everyone_lite_spot(&p_ptr->wpos, y, x);
 					}
 					/* the rest is allowed..
