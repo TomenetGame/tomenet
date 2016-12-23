@@ -630,7 +630,7 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 const char *mon_flags2highlight[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", ""};
 const char *mon_flags2highlight2[] = {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC", "SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", ""};
 const char *mon_flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", "NONLIVING", ""};//omitting DRAGONRIDER, NONLIVING, SPIDER
-const char *mon_flags2highlight4[] = {"UNIQUE", "NAZGUL", ""};//no hints about dungeon/game boss status available or used
+const char *mon_flags2highlight4[] = {"UNIQUE", "NAZGUL", "NO_DEATH", ""};//no hints about dungeon/game boss status available or used
 const char *mon_flags2highlight5[] = {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR", ""};//currently unavailable
 const char *mon_flags2highlight6[] = {"AQUATIC", ""};
 static int mon_highlit_flags(char *line) {
@@ -740,7 +740,7 @@ static void mon_highlight_flags(char *info) {
 	while (*f[0]) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
 			strcpy(info_tmp, info);
-			sprintf(info_tmp + (p2 - info), "\377g%s\377%c", *f, a_flag);
+			sprintf(info_tmp + (p2 - info), "\377G%s\377%c", *f, a_flag);
 			strcat(info_tmp, p2 + strlen(*f));
 			strcpy(info, info_tmp);
 		}
