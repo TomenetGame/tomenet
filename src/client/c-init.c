@@ -1216,6 +1216,12 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 					strcat(info_tmp, p2 + 10);
 					strcpy(info, info_tmp);
 				}
+				if ((p2 = strstr(info, "AI_SPECIAL"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 11);
+					strcpy(info, info_tmp);
+				}
 
 				/* Highlight certain important flags for quick readability */
 				mon_highlight_flags(info);
