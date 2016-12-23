@@ -9775,7 +9775,7 @@ for(mx = 1; mx < 131; mx++) {
 		    (!build_special_store) && (d_ptr->flags3 & DF3_DEEPSUPPLY) && (dun_lev >= 80)) {
 			if (!rand_int(5)) build_special_store = 5;
 			else {
-				s_printf("DUNGEON_STORE: DEEPSUPPLY failed.\n");
+				s_printf("DUNGEON_STORE: DEEPSUPPLY roll failed.\n");
 				store_failed = TRUE;
 			}
 		}
