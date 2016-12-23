@@ -1966,12 +1966,16 @@ void cmd_the_guide(void) {
 				if (chapter[0]) continue;
 
 				/* Additions */
-				if (my_strcasestr(buf, "Linea")) {
+				if (my_strcasestr(buf, "Linea")) { //draconian lineages
 					strcpy(chapter, "    Lineage");
 					continue;
 				}
-				if (my_strcasestr(buf, "Depth")) {
+				if (my_strcasestr(buf, "Depth")) { //min depth for exp in relation to char lv
 					strcpy(chapter, "    Character level");
+					continue;
+				}
+				if (my_strcasestr(buf, "Boss")) { //dungeon bosses
+					strcpy(chapter, "Dungeon, sorted by depth");
 					continue;
 				}
 
