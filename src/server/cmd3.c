@@ -1747,6 +1747,10 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 //	sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
 #endif
 
+	/* log big oopsies */
+	if ((esp = object_value_real(0, o_ptr)) >= 100000)
+		s_printf("DESTROYED_VALUABLE: %s: %s (%d)\n", p_ptr->name, o_name, esp);
+
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 	questitem_d(o_ptr, quantity);
 
