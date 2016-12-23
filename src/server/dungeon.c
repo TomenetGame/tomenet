@@ -5524,7 +5524,7 @@ bool stale_level(struct worldpos *wpos, int grace) {
 		d_ptr = getdungeon(wpos);
 		if (!d_ptr) return FALSE;
 		l_ptr = &d_ptr->level[ABS(wpos->wz) - 1];
-#if DEBUG_LEVEL > 1
+#if DEBUG_LEVEL > 3
 		s_printf("%s  now:%ld last:%ld diff:%ld grace:%d players:%d\n", wpos_format(0, wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
 #endif
 		/* Hacky: Combine checks for normal death/quit static time (lastused) and for anti-scum static time (creationtime):
