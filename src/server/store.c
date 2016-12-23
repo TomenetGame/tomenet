@@ -1634,13 +1634,13 @@ static void store_create(store_type *st_ptr) {
 
 				/* Clear restriction */
 				get_obj_num_hook = NULL;
-	
+
 				/* Prepare allocation table */
 				get_obj_num_prep(resf);
-	
+
 				/* Random item (usually of given level) */
 				i = get_obj_num(level, resf);
-    				
+
 				/* Handle failure */
 				if (!i) continue;
 			}
@@ -1695,7 +1695,7 @@ static void store_create(store_type *st_ptr) {
 				i = get_obj_num(level, resf);
 
 				/* Invalidate the cached allocation table */
-//				alloc_kind_table_valid = FALSE;
+				//alloc_kind_table_valid = FALSE;
 			}
 
 			if (!i) continue;
@@ -1877,11 +1877,11 @@ static void store_create(store_type *st_ptr) {
 				switch (o_ptr->sval) {
 				case SV_POTION_AUGMENTATION:
 #ifdef EXPAND_TV_POTION
-//				case SV_POTION_CURE_LIGHT_SANITY:
+				//case SV_POTION_CURE_LIGHT_SANITY:
 				case SV_POTION_CURE_SERIOUS_SANITY:
 				case SV_POTION_CURE_CRITICAL_SANITY:
 				case SV_POTION_CURE_SANITY:
-//				case SV_POTION_CHAUVE_SOURIS:
+				//case SV_POTION_CHAUVE_SOURIS:
 #endif
 					continue;
 				default:
@@ -1890,11 +1890,11 @@ static void store_create(store_type *st_ptr) {
 				break;
 			case TV_POTION2:
 				switch (o_ptr->sval) {
-//				case SV_POTION2_CURE_LIGHT_SANITY:
+				//case SV_POTION2_CURE_LIGHT_SANITY:
 				case SV_POTION2_CURE_SERIOUS_SANITY:
 				case SV_POTION2_CURE_CRITICAL_SANITY:
 				case SV_POTION2_CURE_SANITY:
-//				case SV_POTION_CHAUVE_SOURIS:
+				//case SV_POTION_CHAUVE_SOURIS:
 					continue;
 				default:
 					break;
@@ -1922,6 +1922,11 @@ static void store_create(store_type *st_ptr) {
 				if (o_ptr->pval > p) o_ptr->pval = p;
 			}
 		}
+
+		/* No reliably purchasable high-end speed rings - find them! */
+		if (//st_ptr->st_idx == STORE_RARE_JEWELRY &&
+		    o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->bpval > 10)
+			o_ptr->bpval = 10;
 
 		e_ptr = &e_info[o_ptr->name2];
 		e2_ptr = &e_info[o_ptr->name2b];
