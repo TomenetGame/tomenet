@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. December 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 23. December 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.0b - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6270,7 +6270,7 @@ Dungeon                        |     Depth* / Level    | Min. required player
                                |  (*relative to Lv.1)  |   level to enter(**)
 -------------------------------+-----------------------+---------------------
 Death Fate (***)               |    50..  50/  1..1    |        1
-The Halls of Mandos            |    50..5000/  1..100  |        1
+The Halls of Mandos (******)   |    50..5000/  1..100  |        1
 The Orc Cave                   |   500..1150/ 10..23   |        3
 Mirkwood                       |   550..1700/ 11..34   |        5
 The Old Forest                 |   650..1300/ 13..26   |        5
@@ -6324,6 +6324,16 @@ die to monsters (unlikely) or starvation (very likely).
 -Note that the amount of experience is already very high even without this
  depth-bonus, since creatures in the Nether Realm are of a very high level.
 -Instant resurrection does not work in the Nether Realm.
+
+(******) Halls of Mandos details:
+-Getting out of the Halls of Mandos will be complemented with an entry
+ into 'Noteworthy Occurances' list.
+-Extermination orders in the Halls of Mandos will (same as for the IDDC) have
+ its monster level depend on the floor level rather than on the player's level.
+-Also same as in IDDC, minimum floor depth vs character level regarding
+ experience gain is not enforced: Normal experience is gained on any depth
+ regardless of your character's level.
+-The Halls of Mandos are barred to any unique monsters!
 
 
 (4.5c2) Example dungeon depth relations
@@ -6425,13 +6435,7 @@ Note: If you kill Sauron, you will automatically also get kill credit for the
 Shadow of Dol Guldur, meaning that the Shadow won't spawn for you anymore if
 you didn't kill it before killing Sauron.
 
-(****) Getting out of the Halls of Mandos will be complemented with an entry
-into 'Noteworthy Occurances' list.
-Extermination orders in the Halls of Mandos will (same as for the IDDC) have
-its monster level depend on the floor level rather than on the player's level.
-Also same as in IDDC, minimum floor depth vs character level regarding
-experience gain is not enforced: Normal experience is gained on any depth
-regardless of your character's level.
+(****) The Halls of Mandos are barred to ANY unique monsters!
 
 
 
