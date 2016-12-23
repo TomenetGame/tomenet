@@ -3137,11 +3137,12 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 
 			/* wrong monster, or not at the bottom of the dungeon? */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
+			/* Allow all dungeon bosses in IDDC within their respective dungeon theme and at their native depth */
 			if (in_irondeepdive(wpos)) {
 				if ((r_idx != dinfo_ptr->final_guardian ||
 				    d_info[iddc[ABS(wpos->wz)].type].maxdepth != ABS(wpos->wz))
-				    /* allow Sauron in any dungeon in IDDC, and at any depth starting at 99 */
-				    && r_idx != RI_SAURON) {
+				    /* allow Sauron in any dungeon in IDDC, and at any depth starting at his native depth (99) */
+				    && !(r_idx == RI_SAURON && ABS(wpos->wz) >= r_ptr->level)) {
  #if DEBUG_LEVEL > 2
 					s_printf("rejected FINAL_GUARDIAN %d in IDDC\n", r_idx);
  #endif
@@ -3149,6 +3150,17 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 				}
 			} else
 #endif
+			/* Allow all dungeon bosses in Halls of Mandos, at their native depth */
+			if (in_hallsofmandos(wpos)) {
+				if (r_ptr->level != ABS(wpos->wz)
+				    /* allow Sauron in Halls of Mandos, at any depth starting at his native depth (99) */
+				    && !(r_idx == RI_SAURON && ABS(wpos->wz) >= r_ptr->level)) {
+ #if DEBUG_LEVEL > 2
+					s_printf("rejected FINAL_GUARDIAN %d in Halls of Mandos\n", r_idx);
+ #endif
+					return 25;
+				}
+			} else
 			if (r_idx != dinfo_ptr->final_guardian ||
 			    d_ptr->maxdepth != ABS(wpos->wz)) {
 #if DEBUG_LEVEL > 2
@@ -3231,13 +3243,13 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
  #if DEBUG_LEVEL > 2
 						if (level_generation_time) {
 							if (p_ptr->total_winner) {
-					    		        s_printf("Morgoth generation prevented due to winner %s\n", p_ptr->name);
+							        s_printf("Morgoth generation prevented due to winner %s\n", p_ptr->name);
 							} else {
 							        s_printf("Morgoth generation prevented due to Sauron-misser %s\n", p_ptr->name);
 							}
 						} else {
 							if (p_ptr->total_winner) {
-					    		        s_printf("Morgoth live spawn prevented due to winner %s\n", p_ptr->name);
+							        s_printf("Morgoth live spawn prevented due to winner %s\n", p_ptr->name);
 							} else {
 							        s_printf("Morgoth live spawn prevented due to Sauron-misser %s\n", p_ptr->name);
 							}
