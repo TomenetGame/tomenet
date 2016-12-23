@@ -1547,6 +1547,9 @@ void whats_under_your_feet(int Ind, bool force) {
  * Note that we ONLY handle things that can be picked up.
  * See "move_player()" for handling of other things.
  *
+ * 'pickup':   0 = don't pick up anything
+ *             1 = pick up ('g') or autopickup-on-move (client option)
+ *             2 = explicit pickup ('g' key)
  * 'pick_one': Only pick up one piece from a stack of same item type
  *             (currently not implemented for ammo)
  */
@@ -1577,7 +1580,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Hack -- nothing here to pick up */
-	if (!(c_ptr->o_idx)) return;
+	if (!(c_ptr->o_idx)) {
+		if (pickup == 2) (void)create_snowball(Ind, c_ptr);
+		return;
+	}
 
 	/* Ghosts cannot pick things up */
 	if (p_ptr->ghost && !is_admin(p_ptr)) {

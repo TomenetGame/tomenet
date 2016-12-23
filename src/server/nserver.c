@@ -8586,7 +8586,7 @@ static int Receive_stand(int ind) {
 
 	//if (p_ptr) { 		/* disallow picking up items while paralyzed: */
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-		do_cmd_stay(player, 1, FALSE);
+		do_cmd_stay(player, 2, FALSE);
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);
@@ -8614,7 +8614,7 @@ static int Receive_stand_one(int ind) {
 
 	//if (p_ptr) { 		/* disallow picking up items while paralyzed: */
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-		do_cmd_stay(player, 1, TRUE);
+		do_cmd_stay(player, 2, TRUE);
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c", ch);

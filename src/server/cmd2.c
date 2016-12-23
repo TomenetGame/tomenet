@@ -4770,6 +4770,7 @@ int do_cmd_run(int Ind, int dir) {
 /*
  * Stay still.  Search.  Enter stores.
  * Pick up treasure if "pickup" is true.
+ * Specialty: pickup == 2 -> explicit pickup (not autopickup, per client option)
  */
 void do_cmd_stay(int Ind, int pickup, bool one) {
 	player_type *p_ptr = Players[Ind];

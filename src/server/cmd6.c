@@ -1418,30 +1418,8 @@ void do_cmd_drink_fountain(int Ind) {
 			msg_print(Ind, "The fountain is dried out.");
 		}
 		return;
-	} else if (cold_place(&p_ptr->wpos) && /* during winter we can make snowballs~ */
-	    /* not in dungeons (helcaraxe..?) -- IC we assume they're just ice, not really snow, snow is only found on the world surface :p */
-	    !p_ptr->wpos.wz &&
-	    /* must be floor or tree/bush to grab snow from, just not solid walls basically: */
-	    (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_MOUNTAIN) &&
-	    /* there must be snow here actually, ie shaded white (hackz) */
-	    manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, f_info[c_ptr->feat].f_attr) == TERM_WHITE) {
-		object_type forge;
+	} else if (create_snowball(Ind, c_ptr)) return;
 
-		invcopy(&forge, lookup_kind(TV_GAME, SV_SNOWBALL));
-		forge.number = 1;
-		object_aware(Ind, &forge);
-		object_known(&forge);
-		forge.discount = 0;
-		forge.level = 1; //not 0 :)
-		forge.ident |= ID_MENTAL;
-		/* Can melt: We don't use o_ptr->timeout because
-		    a) it needs too many extra checks everywhere and
-		    b) timeout is shown while pval is hidden, which is nice! */
-		forge.pval = 75 + rand_int(26);
-		inven_carry(Ind, &forge);
-		msg_print(Ind, "You pick up some snow and form a snowball.");
-		return;
-	}
 	if (c_ptr->feat != FEAT_FOUNTAIN) {
 		//non-fountain-specific message, since we could also make snowballs instead of just filling bottles..
 		msg_print(Ind, "There is nothing here.");
@@ -8056,4 +8034,35 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 		msg_print(Ind, "\377yYou fail to breathe elements.");
 		p_ptr->cst += 3; /* reimburse */
 	}
+}
+
+bool create_snowball(int Ind, cave_type *c_ptr) {
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
+
+	if (cold_place(wpos) && /* during winter we can make snowballs~ */
+	    /* not in dungeons (helcaraxe..?) -- IC we assume they're just ice, not really snow, snow is only found on the world surface :p */
+	    !wpos->wz &&
+	    /* must be floor or tree/bush to grab snow from, just not solid walls basically: */
+	    (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_MOUNTAIN) &&
+	    /* there must be snow here actually, ie shaded white (hackz) */
+	    manipulate_cave_colour_season(c_ptr, wpos, p_ptr->px, p_ptr->py, f_info[c_ptr->feat].f_attr) == TERM_WHITE) {
+		object_type forge;
+
+		invcopy(&forge, lookup_kind(TV_GAME, SV_SNOWBALL));
+		forge.number = 1;
+		object_aware(Ind, &forge);
+		object_known(&forge);
+		forge.discount = 0;
+		forge.level = 1; //not 0 :)
+		forge.ident |= ID_MENTAL;
+		/* Can melt: We don't use o_ptr->timeout because
+		    a) it needs too many extra checks everywhere and
+		    b) timeout is shown while pval is hidden, which is nice! */
+		forge.pval = 75 + rand_int(26);
+		inven_carry(Ind, &forge);
+		msg_print(Ind, "You pick up some snow and form a snowball.");
+		return TRUE;
+	}
+	return FALSE;
 }
