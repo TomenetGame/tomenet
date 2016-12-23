@@ -8572,6 +8572,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case EGO_CHARMING:
 			case EGO_NOLDOR: //well, could give +1 BPR and useful in Orc Cave actually =P -- still leaving it here though because pval is limited to just +2 in e_info
 			case EGO_SLOW_DESCENT: //has a high res, but still maybe not helpful enough
+			case EGO_STABILITY: //since EGO_SLOW_DESCENT was added too..
 				continue;
 		}
 
