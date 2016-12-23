@@ -1966,7 +1966,7 @@ void cmd_the_guide(void) {
 				if (chapter[0]) continue;
 
 				/* Additions */
-				if (my_strcasestr(buf, "Linea")) { //draconian lineages
+				if (my_strcasestr(buf, "Line")) { //draconian lineages
 					strcpy(chapter, "    Lineage");
 					continue;
 				}
