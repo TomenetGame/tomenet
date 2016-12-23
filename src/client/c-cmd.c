@@ -1974,8 +1974,16 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "    Character level");
 					continue;
 				}
+				if (my_strcasestr(buf, "Dung")) { //dungeons
+					strcpy(chapter, "Dungeon                 ");
+					continue;
+				}
 				if (my_strcasestr(buf, "Boss")) { //dungeon bosses
 					strcpy(chapter, "Dungeon, sorted by depth");
+					continue;
+				}
+				if (my_strcasestr(buf, "Stair") || my_strcasestr(buf, "Typ") ) { //staircase colours/dungeon types
+					strcpy(chapter, "Dungeon types");
 					continue;
 				}
 
