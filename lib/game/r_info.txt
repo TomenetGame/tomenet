@@ -19604,7 +19604,7 @@ E:0:0:0:0:0:0
 O:0:0:0:0
 #F:UNIQUE -- hack: He isn't technically one.
 F:GOOD | NO_FEAR | FORCE_MAXHP | PASS_WALL | ATTR_ANY
-F:REGENERATE | POWERFUL | MOVE_BODY
+F:REGENERATE | POWERFUL | MOVE_BODY | PSEUDO_UNIQUE
 F:BLUEBAND | NO_DEATH | NEVER_ACT | NO_AUTORET | NO_TARGET
 D:The hunter might be the first to spot you on the shores of valinor.
 D:How about returning his spear at the opportunity.
