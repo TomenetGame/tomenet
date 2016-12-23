@@ -3088,7 +3088,7 @@ static errr init_alloc(void) {
 
 			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
 			if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) {
-				/* exception: Sauron in the IDDC (real check is done in place_monster_one() anyway..) */
+				/* exception: Sauron in the IDDC/Halls of Mandos (real check is done in place_monster_one() anyway..) */
 				if (i != RI_SAURON) p = 0;
 			}
 
