@@ -1413,7 +1413,7 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 	return ress;
 }
 void cmd_the_guide(void) {
-	static int line = 0;
+	static int line = 0, line_before_search = 0;
 	static char lastsearch[MAX_CHARS] = "";
 
 	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
@@ -1446,6 +1446,7 @@ void cmd_the_guide(void) {
 		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
 		//Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
 		Term_putstr(0, bottomline, -1, TERM_L_BLUE, " Space/n,p,Enter,Back; s,S/d,D/f,c,# search,next,prev,chapter,line; ESC to exit");
+		Term_putstr(0, bottomline, -1, TERM_L_BLUE, " Space/n,p,Enter,Back; s,d,D/f,S,c,# srch,nxt,prv,reset,chapter,line; ESC exits");
 		if (skip_redraw) goto skipped_redraw;
 		restore_pos = FALSE;
 
@@ -1506,7 +1507,7 @@ void cmd_the_guide(void) {
 				}
 				*cp2 = 0;
 
-				/* New chapter functionality: Search for a specific chapter tearm? */
+				/* New chapter functionality: Search for a specific chapter keyword? */
 				if (chapter[0] && chapter[0] != '(') {
 					bool ok = FALSE;
 					char *p, *s;
@@ -1526,12 +1527,14 @@ void cmd_the_guide(void) {
 							}
 						}
 					}
+					/* Found it? */
 					if (ok) {
 						/* Hack: Abuse normal 's' search to colourize */
 						strcpy(withinsearch, chapter);
 
 						chapter[0] = 0;
 						line = searchline;
+						line_before_search = line;
 						/* Redraw line number display */
 						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
 						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
@@ -1544,10 +1547,11 @@ void cmd_the_guide(void) {
 				/* Search for specific chapter? */
 				else if (chapter[0]) {
 					searchline++;
-					//accomodate for colour code and '.' must not follow after the chapter marker
+					/* Found it? Accomodate for colour code and '.' must not follow after the chapter marker */
 					if (strstr(buf2, chapter) == buf2 + 2 && !strchr(strchr(buf2, ')'), '.')) {
 						chapter[0] = 0;
 						line = searchline;
+						line_before_search = line;
 						/* Redraw line number display */
 						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
 						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
@@ -1707,16 +1711,19 @@ void cmd_the_guide(void) {
 			line--;
 			if (line < 0) line = lastline - maxlines;
 			if (line < 0) line = 0;
+			line_before_search = line;
 			continue;
 		case '2': case '\r': case '\n': //rl:'j'
 			line++;
 			if (line > lastline - maxlines) line = 0;
+			line_before_search = line;
 			continue;
 		/* page up/down */
 		case '9': case 'p': //rl:?
 			if (line == 0) line = lastline - maxlines;
 			else line -= maxlines;
 			if (line < 0) line = 0;
+			line_before_search = line;
 			continue;
 		case '3': case 'n': case ' ': //rl:?
 			if (line < lastline - maxlines) {
@@ -1724,15 +1731,18 @@ void cmd_the_guide(void) {
 				if (line > lastline - maxlines) line = lastline - maxlines;
 				if (line < 0) line = 0;
 			} else line = 0;
+			line_before_search = line;
 			continue;
 		/* home key to reset */
 		case '7': //rl:?
 			line = 0;
+			line_before_search = line;
 			continue;
 		/* support end key too.. */
 		case '1': //rl:?
 			line = lastline - maxlines;
 			if (line < 0) line = 0;
+			line_before_search = line;
 			continue;
 
 		/* seach for 'chapter': can be either a numerical one or a main term, such as race/class/skill names. */
@@ -2041,8 +2051,11 @@ void cmd_the_guide(void) {
 			strcpy(lastsearch, search);
 			searchline = line - 1; //init searchline for string-search
 			continue;
-		/* search for next occurance of the previously used search keyword */
+		/* special function now: Reset search. Means: Go to where I was before searching. */
 		case 'S':
+			line = line_before_search;
+			continue;
+		/* search for next occurance of the previously used search keyword */
 		case 'd':
 			if (!lastsearch[0]) continue;
 
@@ -2094,6 +2107,7 @@ void cmd_the_guide(void) {
 			line = atoi(buf) - 1;
 			if (line > lastline - maxlines) line = lastline - maxlines;
 			if (line < 0) line = 0;
+			line_before_search = line;
 			continue;
 
 		/* exit */
