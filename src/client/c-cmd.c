@@ -1534,7 +1534,6 @@ void cmd_the_guide(void) {
 
 						chapter[0] = 0;
 						line = searchline;
-						line_before_search = line;
 						/* Redraw line number display */
 						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
 						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
@@ -1551,7 +1550,6 @@ void cmd_the_guide(void) {
 					if (strstr(buf2, chapter) == buf2 + 2 && !strchr(strchr(buf2, ')'), '.')) {
 						chapter[0] = 0;
 						line = searchline;
-						line_before_search = line;
 						/* Redraw line number display */
 						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
 						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
@@ -1586,7 +1584,6 @@ void cmd_the_guide(void) {
 						if (backwards) {
 							backwards = FALSE;
 							searchline = lastline - searchline;
-							searchline++;
 							/* Skip end of line, advancing to next line */
 							fseek(fff, 1, SEEK_CUR);
 							/* This line has already been read too, by fgets_inverse(), so skip too */
@@ -1711,19 +1708,16 @@ void cmd_the_guide(void) {
 			line--;
 			if (line < 0) line = lastline - maxlines;
 			if (line < 0) line = 0;
-			line_before_search = line;
 			continue;
 		case '2': case '\r': case '\n': //rl:'j'
 			line++;
 			if (line > lastline - maxlines) line = 0;
-			line_before_search = line;
 			continue;
 		/* page up/down */
 		case '9': case 'p': //rl:?
 			if (line == 0) line = lastline - maxlines;
 			else line -= maxlines;
 			if (line < 0) line = 0;
-			line_before_search = line;
 			continue;
 		case '3': case 'n': case ' ': //rl:?
 			if (line < lastline - maxlines) {
@@ -1731,18 +1725,15 @@ void cmd_the_guide(void) {
 				if (line > lastline - maxlines) line = lastline - maxlines;
 				if (line < 0) line = 0;
 			} else line = 0;
-			line_before_search = line;
 			continue;
 		/* home key to reset */
 		case '7': //rl:?
 			line = 0;
-			line_before_search = line;
 			continue;
 		/* support end key too.. */
 		case '1': //rl:?
 			line = lastline - maxlines;
 			if (line < 0) line = 0;
-			line_before_search = line;
 			continue;
 
 		/* seach for 'chapter': can be either a numerical one or a main term, such as race/class/skill names. */
@@ -2042,6 +2033,7 @@ void cmd_the_guide(void) {
 			inkey_msg = inkey_msg_old;
 			if (!search[0]) continue;
 
+			line_before_search = line;
 			line_presearch = line;
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
@@ -2079,15 +2071,13 @@ void cmd_the_guide(void) {
 			/* Inverse location/direction */
 			backwards = TRUE;
 			line = lastline - line;
-			line++;
-
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
+
 #if 0
 			if (line > lastline - maxlines) line = lastline - maxlines;
 			if (line < 0) line = 0;
 #endif
-
 			strcpy(search, lastsearch);
 			searchline = line - 1; //init searchline for string-search
 			continue;
@@ -2107,7 +2097,6 @@ void cmd_the_guide(void) {
 			line = atoi(buf) - 1;
 			if (line > lastline - maxlines) line = lastline - maxlines;
 			if (line < 0) line = 0;
-			line_before_search = line;
 			continue;
 
 		/* exit */
