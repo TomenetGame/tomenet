@@ -1403,15 +1403,15 @@ static void Delete_player(int Ind) {
 	if (p_ptr->alive && !p_ptr->death) {
 		if (!p_ptr->admin_dm || !cfg.secret_dungeon_master) {
 			cptr title = "";
-			if (p_ptr->total_winner) {
-				if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
-					title = (p_ptr->male)?"Emperor ":((!strcmp(p_ptr->name,"Tina"))?"Tiny ":"Empress ");
-				} else {
-					title = (p_ptr->male)?"King ":"Queen ";
-				}
+			if (p_ptr->admin_dm) title = p_ptr->male ? "Dungeon Master " : "Dungeon Mistress ";
+			else if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+			else if (p_ptr->mode & MODE_PVP) title = "Gladiator ";
+			else if (p_ptr->total_winner) {
+				if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
+					title = (p_ptr->male) ? "Emperor ": ((!strcmp(p_ptr->name, "Tina")) ? "Tiny " : "Empress ");
+				else title = (p_ptr->male) ? "King ":"Queen ";
 			}
-			if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
-			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+			else if (p_ptr->iron_winner) title = "Iron Champion ";
 
 #ifdef TOMENET_WORLDS /* idea: maybe use the 'quiet' flag as 'dungeon master' flag instead? */
 			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE); /* last flag is 'quiet' mode -> no public msg */
@@ -3333,13 +3333,14 @@ static int Handle_login(int ind) {
 	title = "";
 	if (p_ptr->admin_dm) title = (p_ptr->male) ? "Dungeon Master " : "Dungeon Mistress ";
 	else if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+	else if (p_ptr->mode & MODE_PVP) title = "Gladiator ";
 	else if (p_ptr->total_winner) {
-		if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
-			title = (p_ptr->male)?"Emperor ":((!strcmp(p_ptr->name,"Tina"))?"Tiny ":"Empress ");
-		} else {
-			title = (p_ptr->male) ? "King " : "Queen ";
-		}
-	} else if (p_ptr->mode & MODE_PVP) title = "Gladiator ";
+		if (p_ptr->iron_winner) title = p_ptr->male ? "Iron Emperor" : "Iron Empress";
+		else if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
+			title = (p_ptr->male)? "Emperor ": ((!strcmp(p_ptr->name, "Tina")) ? "Tiny ": "Empress ");
+		else	title = (p_ptr->male) ? "King " : "Queen ";
+	}
+	else if (p_ptr->iron_winner) title = "Iron Champion ";
 
 	/* Handle the cfg_secret_dungeon_master option: Only tell other admins. */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
