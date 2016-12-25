@@ -3992,7 +3992,7 @@ static bool process_player_end_aux(int Ind) {
 	   Water helps much, natural floor helps some. */
 	if (!p_ptr->ghost && p_ptr->prace == RACE_ENT && p_ptr->resting) {
 		if (c_ptr->feat == FEAT_SHAL_WATER || c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_MUD) {
-			i = 500; //Delicious!
+			i = 200; //Delicious!
 		} else if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_DIRT) {
 			i = 100;
 		} else if (c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE) {
@@ -4002,6 +4002,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 		if (i > 0 && set_food(Ind, p_ptr->food + i)) {
 			msg_print(Ind, "You gain some nourishment from around you.");
+#if 0 /* spammy in town */
 			switch(i) {
 				case 70:
 					msg_format_near(Ind, "\374\377wYou hear strange sounds coming from the direction of %s.", p_ptr->name);
@@ -4009,9 +4010,10 @@ static bool process_player_end_aux(int Ind) {
 				case 100:
 					msg_format_near(Ind, "\374\377w%s digs %s roots deep into the ground.", p_ptr->name, (p_ptr->male?"his":"her"));
 					break;
-				case 500:
+				case 200:
 					msg_format_near(Ind, "\374\377w%s absorbs all the water around %s.", p_ptr->name, (p_ptr->male?"him":"her"));
 			}
+#endif
 		}
 	}
 	/* Ghosts don't need food */
