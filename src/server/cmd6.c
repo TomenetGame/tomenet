@@ -1418,7 +1418,8 @@ void do_cmd_drink_fountain(int Ind) {
 			msg_print(Ind, "The fountain is dried out.");
 		}
 		return;
-	} else if (create_snowball(Ind, c_ptr)) return;
+	}
+	//else if (create_snowball(Ind, c_ptr)) return;
 
 	if (c_ptr->feat != FEAT_FOUNTAIN) {
 		//non-fountain-specific message, since we could also make snowballs instead of just filling bottles..
