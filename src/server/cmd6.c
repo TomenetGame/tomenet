@@ -8043,6 +8043,8 @@ bool create_snowball(int Ind, cave_type *c_ptr) {
 	if (cold_place(wpos) && /* during winter we can make snowballs~ */
 	    /* not in dungeons (helcaraxe..?) -- IC we assume they're just ice, not really snow, snow is only found on the world surface :p */
 	    !wpos->wz &&
+	    /* not inside houses =p */
+	    !(c_ptr->info & CAVE_ICKY) &&
 	    /* must be floor or tree/bush to grab snow from, just not solid walls basically: */
 	    (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_MOUNTAIN) &&
 	    /* there must be snow here actually, ie shaded white (hackz) */
